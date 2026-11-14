@@ -5647,6 +5647,750 @@
     "modeEnfant": "Guided interface",
     "modeStandard": "Standard mode"
   },
+  "tc": {
+    "groupe": {
+      "mesGroupes": {
+        "titre": "My classes",
+        "aucun": "No class yet",
+        "aucunDetail": "The academy will place you in a class as soon as a slot suits you."
+      },
+      "commun": {
+        "erreur": "Your classes could not be read",
+        "reessayer": "Try again"
+      },
+      "carte": {
+        "ouvrir": "Open the class {libelle}",
+        "capacite": "{membres} / {seuil}",
+        "capacitePhrase(param=membres)": {
+          "one": "{membres} student out of {seuil} places",
+          "other": "{membres} students out of {seuil} places"
+        },
+        "complet": "Full",
+        "prochainCours": "Next class",
+        "aucuneSeance": "No session scheduled",
+        "aucuneSeanceDetail": "This class's schedule is not set yet.",
+        "duree": "Length {valeur}",
+        "dureeLibelle": "Length",
+        "rejoindre": "Join",
+        "entreeSePrepare": "Your entry is being prepared. Try again in a moment.",
+        "entreeAttendReseau": "You will be able to enter as soon as the network is back."
+      },
+      "enseignant": {
+        "sayyid": "Sayyid",
+        "sayyida": "Sayyida",
+        "photoManquante": "Photo to provide",
+        "photoManquanteDetail": "The teacher's photo has not been saved yet."
+      },
+      "cours": {
+        "coursEtNiveau": "{cours} · {niveau}"
+      },
+      "temps": {
+        "dansMinutes": "Class in {minutes} min",
+        "dansHeures": "Class in {heures} h {minutes}",
+        "demainA": "Class tomorrow at {heure}",
+        "dansJours(param=jours)": {
+          "one": "Class in {jours} day",
+          "other": "Class in {jours} days"
+        },
+        "imminent": "Class about to start",
+        "salleOuverte": "Room open · {reste}",
+        "salleOuverteCourt": "Room open",
+        "attente": "You are in the room. The class has not started yet.",
+        "attenteDetail": "This waiting time does not count towards your attendance.",
+        "enSalle": "In the room",
+        "resteMinutes": "{minutes} min left",
+        "resteHeures": "{heures} h {minutes} left",
+        "enCours": "Live session · {reste}",
+        "enDirect": "Live",
+        "prolongee": "Session still live",
+        "depassement": "Running over",
+        "terminee": "Class ended"
+      },
+      "duree": {
+        "heures": "{heures} h",
+        "heuresMinutes": "{heures} h {minutes}"
+      },
+      "horloges": {
+        "votreHeure": "Your time",
+        "chezEnseignant": "Where {nomme} is",
+        "heureGroupe": "Class time",
+        "heureMecque": "Makkah time",
+        "apercuClasse": "At Makkah time, the class will take place on {jour} at {heure}.",
+        "apercuOuEnseignant": "At the teacher's ({ville})",
+        "apercuChez": "{ou}: {heure} all year.",
+        "apercuChezPuis": "{ou}: {heure}, then {apres} from {date}.",
+        "heureEtVille": "{heure} {ville}",
+        "mecqueEnSecond": "Makkah time: {heure}",
+        "heureDeVille": "{heure} ({deVille} time)",
+        "laMecque": "Makkah",
+        "chezVous": "Where you are",
+        "chezEnseignantAnonyme": "Where your teacher is",
+        "familles(plural, param=n)": {
+          "one": "{n} family",
+          "other": "{n} families"
+        },
+        "aConfirmer": "Time to be confirmed",
+        "enCeMoment": "Right now"
+      },
+      "dst": {
+        "j30": "Clock change in one month",
+        "j7": "Clock change next week",
+        "j1": "Clock change tomorrow",
+        "detail": "Your class will move from {avant} to {apres}."
+      },
+      "session": {
+        "conseilAppareil": "A tablet or computer is recommended for class. The phone is still supported."
+      },
+      "espace": {
+        "retour": "My classes",
+        "avantProchainCours": "Before the next class",
+        "aucuneAction": "Nothing to prepare for now",
+        "bibliotheque": "Library",
+        "bibliothequeVoirTout": "See all",
+        "progression": "Progress",
+        "roster": "Class students",
+        "reprendreLeCours": "Resume the class",
+        "introuvable": "This class is not open to you",
+        "introuvableDetail": "It may have been closed, or it concerns another profile."
+      },
+      "emplacement": {
+        "nonBranche": "Coming soon",
+        "nonBrancheDetail": "This content will be attached to this space soon."
+      }
+    },
+    "bibliotheque": {
+      "titre": "Library",
+      "rechercheIndication": "Title, level, surah or page",
+      "rechercheLibelle": "Search for a document",
+      "effacerRecherche": "Show all",
+      "filtre": {
+        "type": "Type",
+        "disponibilite": "Availability"
+      },
+      "sections": {
+        "continuer": "Continue",
+        "pourCeGroupe": "For this class",
+        "groupe": "Documents to display",
+        "recents": "Recent",
+        "tousLesSupports": "All documents",
+        "resultats": "Results"
+      },
+      "vide": {
+        "message": "No document published yet",
+        "invitation": "Your teachers will place the documents for your classes here."
+      },
+      "aucunResultat": {
+        "message": "No document matches",
+        "invitation": "Try another word, or relax the filters."
+      },
+      "indisponible": {
+        "message": "The library could not be loaded",
+        "invitation": "The request may not have reached Rewayah. Try again in a moment.",
+        "action": "Try again"
+      },
+      "introuvable": {
+        "message": "This document is not open to you",
+        "invitation": "It may have been withdrawn, or it is reserved for another class. Your teacher can reopen it for you."
+      },
+      "offline": {
+        "aTelecharger": "To download",
+        "enCours": "Downloading",
+        "enCache": "Cached",
+        "telecharge": "Downloaded",
+        "indisponible": "Offline unavailable"
+      },
+      "type": {
+        "audio": "Audio",
+        "video": "Video",
+        "lienExterne": "External link",
+        "quran": "Quran",
+        "texteStructure": "Text",
+        "pdf": "PDF",
+        "image": "Image",
+        "lecon": "Lesson"
+      },
+      "detail": {
+        "titre": "Document",
+        "lecture": "Quran recitation style",
+        "ecole": "Legal school followed",
+        "capacites": "What this document allows",
+        "niveaux": "Levels",
+        "sansVersion": "No version published: nothing to open for now.",
+        "apercuIndisponible": "The preview of this format is not yet available in the app. You can save a copy.",
+        "renduCoran": "The Quran opens in its dedicated reader.",
+        "entreeDetail": "All your revision resources, in one place.",
+        "entreeDetailEnseignant": "All the class documents, in one place.",
+        "entreeLigne": "Open the library"
+      },
+      "action": {
+        "telecharger": "Make available offline",
+        "liberer": "Free up the space",
+        "enregistrerCopie": "Save a copy"
+      },
+      "message": {
+        "copieEnregistree": "Copy saved",
+        "copieImpossible": "The copy could not be prepared. Try again in a moment.",
+        "telechargementImpossible": "This document is not available offline yet",
+        "horsLigneNonTelecharge": "Available once downloaded or back online",
+        "aucunTelechargement": "No file to download for this version."
+      },
+      "classe": {
+        "titre": "Choose a document",
+        "sousTitre": "The chosen document replaces the one displayed. The class continues."
+      },
+      "rendu": {
+        "sansLecteur": "This type of document does not have a reader in the app yet.",
+        "confirmerTitre": "This link leaves the app",
+        "confirmerPhrase": "It opens another site, outside Rewayah Academy. You can come back here afterwards.",
+        "confirmerOuvrir": "Open the link",
+        "confirmerRester": "Stay in the app",
+        "ouvrirLien": "Open the link",
+        "lienAutreSite": "This link opens on another site.",
+        "lienSansNavigateur": "This link opens from the web version of the app.",
+        "lienAbsent": "This document has no content to open yet.",
+        "imageInaccessible": "The image could not be loaded for now.",
+        "imageIllisible": "This image file cannot be displayed.",
+        "reessayer": "Try again",
+        "ouvrir": "Open",
+        "ouvrirMushaf": "Open the Mushaf",
+        "lienEchec": "The reading link could not be obtained for now.",
+        "lienIndisponible": "Opening is not available for this document.",
+        "lienHorsLigne": "Opening will be possible when the connection returns.",
+        "lienBloque": "Your browser blocked the opening. Allow pop-ups for this site, then try again."
+      },
+      "actif": {
+        "indisponibleTitre": "Presented document not open yet",
+        "indisponible": "Following the presented document will open once the server is connected.",
+        "sansDonnees": "the presented document",
+        "erreur": "The presented document could not be loaded. Try again.",
+        "aucun": "No document presented",
+        "aucunDetail": "When your teacher presents a document, it will appear here without you doing anything.",
+        "titre": "Presented document",
+        "version": "Version {numero}",
+        "page": "Page {page}",
+        "ouvrirFiche": "Open the document sheet",
+        "ouvrirCoran": "Open in the Quran reader",
+        "retire": "\"{titre}\" has been withdrawn",
+        "retireDetail": "Your teacher has withdrawn this document from the session. It is no longer accessible."
+      }
+    },
+    "coran": {
+      "modes": {
+        "mushaf": "Mushaf page",
+        "verset": "Enlarged reading",
+        "focus": "Focus",
+        "choisir": "Reading mode",
+        "versets": "v. {debut} to {fin}",
+        "versetsEntre": "{debut} to {fin}"
+      },
+      "mushaf": {
+        "coteDroite": "Right-hand page",
+        "coteGauche": "Left-hand page",
+        "ouverture": "Opening, pages {droite} and {gauche}",
+        "page15": {
+          "creditMiseEnPage": "Layout: KFGQPC, quran.ws (CC BY 4.0)",
+          "aProposOuvrir": "About this edition",
+          "aProposTitre": "About this edition",
+          "aProposPolice": "Font: KFGQPC UthmanicHafs v3.0 (King Fahd Complex)",
+          "aProposLicences": "Licences: the text and the font belong to the KFGQPC, the layout is published under CC BY 4.0 (quran.ws), the hizb quarters come from quran-meta (MIT).",
+          "aProposTanzil": "Tanzil asks that the source be clearly stated and that tanzil.net be reachable."
+        }
+      },
+      "fidelite": {
+        "approchee": "Approximate layout",
+        "approcheeDetail": "The verses on this page are exactly those of the Madinah Mushaf page. Their split across lines, however, is that of this screen: the edition's line breaks are not imported yet.",
+        "fidele": "Edition layout"
+      },
+      "zoom": {
+        "bride": "Zoom limited by the width: beyond this, a word would be cut.",
+        "valeur": "{pourcent}%",
+        "renvoiLectureAgrandie": "To enlarge the text, switch to enlarged reading: the Mushaf page keeps its geometry.",
+        "maximale": "Maximum size reached"
+      },
+      "navigation": {
+        "titre": "Go to",
+        "ouvrir": "Go to a page",
+        "champ": "Page, surah, juz or reference",
+        "indice": "For example 18, Al-Kahf, juz 15, 2:255",
+        "limite": "The search covers page numbers, references and surah names. Searching within the Quran text is not available yet.",
+        "aucunResultat": "No reference found",
+        "aucunResultatDetail": "Try a page number, a surah name, or a reference like 2:255.",
+        "pageNumero": "Page {page}"
+      },
+      "sommaire": {
+        "titre": "Surahs",
+        "detail": "{versets} verses · page {page}",
+        "allerA": "Go to surah {sourate}, page {page}",
+        "indisponible": "The list of surahs could not be read",
+        "indisponibleDetail": "The connection may have been cut.",
+        "absent": "The Quran text is not installed",
+        "absentDetail": "There is nothing to display."
+      },
+      "reprise": {
+        "groupe": "Resume the class",
+        "groupeDetail": "The class was at page {page}"
+      },
+      "focus": {
+        "aucunePlage": "No passage highlighted",
+        "aucunePlageDetail": "Focus follows the passage the teacher points to. Outside class, it centres the open page.",
+        "quitter": "Exit focus"
+      }
+    },
+    "outils": {
+      "dock": {
+        "titre": "Tools",
+        "deplacer": "Move the tools",
+        "position": {
+          "bas": "At the bottom",
+          "gauche": "On the left",
+          "droite": "On the right"
+        },
+        "bibliotheque": "Library",
+        "focus": "Focus",
+        "marquer": "Mark",
+        "masquer": "Hide",
+        "stylet": "Stylus",
+        "pointeur": "Pointer",
+        "revision": "Revision"
+      },
+      "intention": {
+        "aApprendre": "To learn",
+        "aRevoir": "To review",
+        "aRenforcer": "To reinforce",
+        "aEntretenir": "To maintain",
+        "pourEvaluation": "For the assessment"
+      },
+      "trait": {
+        "stylet": "Pen",
+        "surligneur": "Highlight",
+        "gomme": "Eraser",
+        "annuler": "Undo",
+        "plus": "More",
+        "ardoise": "Annotation slate, optional: the class stays readable without it",
+        "effacerDernier": "Erase my last stroke"
+      },
+      "portee": {
+        "temporaire": "Just while explaining",
+        "seance": "Until the end of class",
+        "enregistree": "Save",
+        "aide": "How long should these annotations be kept?"
+      },
+      "marquer": {
+        "titre": "Mark this passage",
+        "aide": "Choose what this passage calls for.",
+        "retirer": "Remove the marker"
+      },
+      "revision": {
+        "titre": "To prepare",
+        "aide": "The selected passage becomes work to prepare.",
+        "groupeEntier": "Whole class",
+        "consigne": "Short instruction (optional)",
+        "creer": "Set the work",
+        "posee": "Work to prepare set"
+      },
+      "masquer": {
+        "reveler": "Reveal",
+        "refermer": "Hide again",
+        "tout": "Unhide all"
+      },
+      "focus": {
+        "quitter": "Exit focus"
+      },
+      "annotation": {
+        "ancrageDegrade": "This passage has no text anchor: the annotation will follow the page, not the words.",
+        "horsPage": "Annotations hidden: their passage is not on screen.",
+        "aucuneSelection": "Select a passage first."
+      }
+    },
+    "classe": {
+      "entete": {
+        "titreEnseignant": {
+          "sayyid": "Sayyid",
+          "sayyida": "Sayyida"
+        }
+      },
+      "roster": {
+        "titre": "Students",
+        "compteur": "Students: {presents} present out of {attendus} expected",
+        "indisponible": "Roster unavailable",
+        "indisponibleDetail": "Your students' statuses could not be read. The class continues.",
+        "vide": "No student registered",
+        "videDetail": "This session has no registered student.",
+        "ouvrirFiche": "Open {dePrenom}'s sheet",
+        "places": "{inscrits} / {plafond} places"
+      },
+      "etat": {
+        "inconnu": "Attendance not known yet",
+        "attendu": "Expected",
+        "enConnexion": "Connecting",
+        "present": "Present",
+        "enRetard": "Late",
+        "deconnecte": "Disconnected",
+        "enReconnexion": "Reconnecting",
+        "sorti": "Left",
+        "absent": "Absent"
+      },
+      "fiche": {
+        "niveau": "Level",
+        "objectif": "Current goal",
+        "derniereSeance": "Last session",
+        "aReprendre": "To resume",
+        "presenceRecente": "Recent attendance",
+        "travailActuel": "Current work",
+        "page": "Page {page}",
+        "travailEnCours": "{nombre} item(s)",
+        "assiduite": "{presences} / {total} classes",
+        "interfaceGuidee": "Guided interface",
+        "sansPedagogie": "Learning follow-up unavailable",
+        "sansPedagogieDetail": "The journey, goals and work in progress are not yet open to the teacher."
+      },
+      "action": {
+        "noter": "Note",
+        "rappel": "Discreet reminder",
+        "reciter": "Choose to recite",
+        "signaler": "Report a need",
+        "contexte": "Open the context"
+      },
+      "rappel": {
+        "recu": "Your teacher is calling you",
+        "echec": "The reminder got no answer from the network. Try again in a moment.",
+        "echecDroit": "Your access to this session does not allow calling a student",
+        "cooldown": "Already called. Again in {secondes} s"
+      },
+      "recitation": {
+        "titre": "Recitation",
+        "actif": "{prenom} is reciting",
+        "pastille": "Reciting",
+        "personne": "No one is reciting",
+        "suivants": "Next",
+        "arreter": "Stop the recitation"
+      },
+      "prevol": {
+        "titre": "Before opening the class",
+        "microOk": "Microphone detected",
+        "microAbsent": "No usable microphone",
+        "cameraOk": "Camera detected",
+        "cameraAbsente": "No camera. The class is still possible.",
+        "permissionRefusee": "Microphone access denied. Allow it to open the class.",
+        "reessayer": "Check again"
+      }
+    },
+    "realtime": {
+      "transport": {
+        "partage_indisponible": "Sharing the document is not available on this server. The class continues, but other devices will not follow the page."
+      },
+      "etat": {
+        "restauration_impossible": "Cannot find the current document again. Ask the teacher to present it again."
+      }
+    },
+    "observation": {
+      "o1": {
+        "regardeInvisible": "You are watching without being seen: no microphone, no camera, no announcement to participants.",
+        "videoIndisponible": "The session video could not open. Leave, then come back in a moment.",
+        "reconnexion": "Reconnecting to the room."
+      },
+      "entree": {
+        "titre": "Observe the session",
+        "tuteurIntro": "You can watch your child's class for a short while. Your microphone and camera stay off.",
+        "adminIntro": "Choose your mode before entering. It does not change afterwards.",
+        "controleurIntro": "You are entering invisible observation. No microphone, no camera.",
+        "entrer": "Enter",
+        "modeDiscret": "Observe discreetly",
+        "modeDiscretDetail": "Invisible to participants. No microphone or camera, no announcement.",
+        "modeVisible": "Join the class",
+        "modeVisibleDetail": "Visible to everyone under the name Rewayah Administration. Microphone and camera allowed, announcement made.",
+        "nomInstitutionnel": "Rewayah Administration",
+        "visiteJournalisee": "Visit logged: identity, session, entry, exit and duration.",
+        "roleSansObservation": "Your account does not observe sessions.",
+        "retourClasse": "Back to the class"
+      },
+      "explication": {
+        "titre": "A glimpse of their learning",
+        "regleUne": "{n} visit of {duree}",
+        "regle": {
+          "one": "{n} visit of {duree}",
+          "other": "{n} visits of {duree}"
+        },
+        "regleDetail": "Per session and per parent, even if several of your children are in the class.",
+        "ecoute": "Listen to the teacher and the students",
+        "ecouteDetail": "You hear the teacher and the students who speak, including your child.",
+        "sansMedia": "No microphone or camera",
+        "sansMediaDetail": "Your microphone and camera stay off so as not to interrupt the class.",
+        "revenir": "If another student is reciting during your first visit, you can come back later to listen to your child.",
+        "ecourtee": "A visit left before the end counts as a whole visit: unused time is not carried over.",
+        "sansIntervenir": "To protect concentration, you observe without intervening.",
+        "informes": "Your child and their teacher are informed.",
+        "observer": "Observe now",
+        "pasMaintenant": "Not now",
+        "restanteUne": "{restantes}/{max} visit left for this session",
+        "restantes": "{restantes}/{max} visits left for this session",
+        "aucuneRestante": "No visit left for this session"
+      },
+      "disponibilite": {
+        "visitesEpuiseesTitre": "No visit left for this session",
+        "visitesEpuisees": "You have used your visits. You can observe the next session.",
+        "tempsEpuiseTitre": "Observation time used up",
+        "tempsEpuise": "Your observation time for this session is used. You can observe the next session.",
+        "seanceNonCommenceeTitre": "The session has not started yet",
+        "seanceNonCommencee": "Observation opens during the session.",
+        "seanceTermineeTitre": "The session is over",
+        "seanceTerminee": "You can observe the next session.",
+        "seanceNonTenueTitre": "This session is not taking place",
+        "seanceNonTenue": "It was cancelled, postponed or not held.",
+        "horsFenetreTitre": "The session is not open right now",
+        "horsFenetre": "Observation is possible only during the session.",
+        "desactiveeTitre": "Observation closed for this class",
+        "desactivee": "The administration has closed observation of this class.",
+        "lienAbsentTitre": "None of your children is in this session",
+        "lienAbsent": "Observation is reserved for the parents of the session's students.",
+        "enfantAbsentTitre": "Your child is not in the session",
+        "enfantAbsent": "Observation opens when your child is present.",
+        "presenceTitre": "Attendance being checked",
+        "presence": "Observation opens as soon as your child's attendance is confirmed.",
+        "visiteOuverteTitre": "A visit is already open",
+        "visiteOuverte": "One of your visits is still open for this session, on this device or another. It counts among your visits.",
+        "fermeeTitre": "Observation not open yet",
+        "fermee": "Observation of sessions by parents is not open yet. It will be offered here as soon as it opens.",
+        "reseauTitre": "Check impossible",
+        "reseau": "The availability of observation could not be checked. No visit has started.",
+        "capaciteTitre": "Observation unavailable",
+        "capacite": "Observation cannot open for this session. No visit has started."
+      },
+      "connexion": {
+        "titre": "Connection and check",
+        "phrase": "Your remaining visits are being checked. The visit starts as soon as entry is accepted, video connection included.",
+        "enCours": "Connection and check in progress",
+        "prolongee": "Stay on this page: the check continues.",
+        "impossibleTitre": "Entry impossible",
+        "impossible": "Entry into the session did not go through. Try again: your remaining visits will be checked again."
+      },
+      "duree": {
+        "secondes": {
+          "one": "{n} second",
+          "other": "{n} seconds"
+        },
+        "minutes": {
+          "one": "{n} minute",
+          "other": "{n} minutes"
+        },
+        "minutesSecondes": "{m} min {s} s"
+      },
+      "refus": {
+        "politiqueDesactivee": "Observation is turned off for this class.",
+        "quotaVisites": "You have already used your visits for this session.",
+        "tempsEpuise": "Your observation time is used up for this session.",
+        "lienTuteur": "You are not linked to any student in this session.",
+        "seanceNonActive": "The session is not in progress.",
+        "horsFenetre": "The room is not open at this time.",
+        "indisponible": "Observation could not open.",
+        "indisponibleInvitation": "The request may not have reached Rewayah. Try again in a moment.",
+        "capaciteAbsente": "Observation is not yet turned on for this installation."
+      },
+      "visite": {
+        "titre": "Observation in progress",
+        "quitter": "Leave",
+        "supportIndisponible": "The document shared by the teacher appears here.",
+        "enseignant": "Teacher",
+        "monEnfant": "Your child",
+        "budgetIncertain": "Remaining time not confirmed by the server.",
+        "videoIndisponible": "The session video could not open. Your observation time keeps running.",
+        "sortieNonConfirmee": "The end of your visit could not be confirmed. It will be closed by the server.",
+        "restantes": "left",
+        "decompteLu": "Time left: {duree}",
+        "enDirect": "Live",
+        "connexion": "Connection",
+        "reconnexion": "Reconnecting",
+        "videoCoupee": "Video unavailable",
+        "reconnexionDetail": "The connection is interrupted, reconnecting. Your observation time keeps running.",
+        "sonRecu": "Sound received",
+        "sonInterrompu": "Sound interrupted",
+        "agrandir": "Enlarge",
+        "reduire": "Shrink",
+        "cameraFermee": "Camera off",
+        "pasEncoreLa": "Not in the room yet",
+        "parle": "{nom} is speaking",
+        "quitterQuestion": "Leave the visit?",
+        "quitterConsequence": "You have {duree} left. A visit left before the end counts as a whole visit: unused time is not carried over.",
+        "quitterConsequenceSansTemps": "A visit left before the end counts as a whole visit: unused time is not carried over.",
+        "quitterConfirmer": "Leave the visit"
+      },
+      "fin": {
+        "sortieVolontaire": "You left the observation.",
+        "quotaAtteint": "Your observation time is used up.",
+        "seanceTerminee": "The session is over.",
+        "revocationServeur": "Your observation was interrupted.",
+        "deconnexion": "The connection was lost."
+      },
+      "resultat": {
+        "premiereTerminee": "Your first visit is over",
+        "derniereTerminee": "Your last visit is over",
+        "terminee": "Your visit is over",
+        "dureeAtteinte": "Visit length reached",
+        "interrompue": "Observation interrupted",
+        "continuePour": "The session continues for {prenom}.",
+        "continueSansPrenom": "The session continues.",
+        "resteUne": "You have one visit of {duree} left. Come back later to listen in.",
+        "restent": {
+          "one": "You have {n} visit of {duree} left. Come back later to listen in.",
+          "other": "You have {n} visits of {duree} left. Come back later to listen in."
+        },
+        "resteUneSansDuree": "You have one visit left. Come back later to listen in.",
+        "restentSansDuree": {
+          "one": "You have {n} visit left. Come back later to listen in.",
+          "other": "You have {n} visits left. Come back later to listen in."
+        },
+        "aucune": "You have used your visits for this session. You can observe the next session.",
+        "prochaineSeance": "You can observe the next session.",
+        "verification": "Checking your remaining visits",
+        "inconnues": "Your remaining visits could not be checked. They will be checked again in the class.",
+        "voirObservations": "See my observations"
+      },
+      "annonce": {
+        "tuteurObserve": "{dePrenomEnfant}'s guardian is observing",
+        "restant": "{secondes} s",
+        "enfantIndicateur": "Your guardian is watching the class",
+        "tuteursObservent(param=nombre)": {
+          "one": "{nombre} guardian is observing",
+          "other": "{nombre} guardians are observing"
+        }
+      },
+      "reglages": {
+        "titre": "Observation by guardians",
+        "intro": "A guardian can watch their child's class for a short while, without microphone or camera. This setting decides what applies to this class.",
+        "heriter": "Inherit from the Academy",
+        "personnaliser": "Customize for this class",
+        "desactiver": "Turn off for this class",
+        "maxVisites": "Visits per session",
+        "tempsTotal": "Total time per session",
+        "plafondVisite": "Maximum length of a visit",
+        "diminuer": "Decrease",
+        "augmenter": "Increase",
+        "enregistrer": "Save",
+        "invalideVisites": "At least one visit per session.",
+        "invalideTemps": "At least thirty seconds per session.",
+        "valeurHeritee": "Academy: {valeur}",
+        "uniteVisiteUne": "{n} visit",
+        "uniteVisites": {
+          "one": "{n} visit",
+          "other": "{n} visits"
+        },
+        "uniteSecondes": "{n} s",
+        "versionPolitique": "Version {version}"
+      }
+    },
+    "parcours": {
+      "avant": {
+        "titre": "Before the next class",
+        "rien": "Nothing to prepare for the next class.",
+        "rienDetail": "Your teacher will propose the work at the end of the next session.",
+        "nonBranche": "The work to prepare is not yet linked to this space.",
+        "nonBrancheDetail": "This does not mean there is nothing to prepare: this screen cannot read it yet.",
+        "reprendre": "Resume the class",
+        "reprendreDepuis": "Resume the class at {position}"
+      },
+      "intention": {
+        "apprendre": "To learn",
+        "revoir": "To review",
+        "renforcer": "To reinforce",
+        "entretenir": "To maintain",
+        "evaluation": "For the assessment"
+      },
+      "plage": {
+        "versets": "Surah {sourate}, verses {premier} to {dernier}",
+        "versetUnique": "Surah {sourate}, verse {premier}",
+        "versetsCroisee": "Surah {sourateDebut}, verse {versetDebut} to surah {sourateFin}, verse {versetFin}",
+        "pages": "Pages {premiere} to {derniere}",
+        "pageUnique": "Page {premiere}",
+        "section": "Section {section}",
+        "ressource": "The whole document"
+      },
+      "feedback": {
+        "cours": {
+          "intitule": "How was the class today?",
+          "difficile": "Difficult",
+          "bien": "Good",
+          "tresBien": "Very good"
+        },
+        "comprehension": {
+          "intitule": "Did you understand what was worked on?",
+          "intituleTu": "Did you understand what was worked on?",
+          "difficile": "Not really",
+          "bien": "Mostly yes",
+          "tresBien": "Completely"
+        },
+        "rythme": {
+          "intitule": "The pace of the session was…",
+          "difficile": "Too slow",
+          "bien": "Just right",
+          "tresBien": "Too fast"
+        },
+        "participation": {
+          "intitule": "Were you able to take part?",
+          "intituleTu": "Were you able to take part?",
+          "difficile": "A little",
+          "bien": "Enough",
+          "tresBien": "A lot"
+        },
+        "technique": {
+          "intitule": "Were the sound and image comfortable?",
+          "difficile": "Bothersome",
+          "bien": "Fine",
+          "tresBien": "Very good"
+        },
+        "confiance": {
+          "intitule": "Do you feel ready for the next class?",
+          "difficile": "Not yet",
+          "bien": "Fairly",
+          "tresBien": "Completely"
+        },
+        "nonPartie": "Your answer did not go out.",
+        "merci": "Thank you.",
+        "tendance": {
+          "illisible": "The students' feedback could not be read. Try again.",
+          "ligne": "{reponse}: {part}%",
+          "titre": "Students' feedback",
+          "sousSeuil": "Not enough feedback yet to show a trend.",
+          "anonyme": "Feedback is anonymous and aggregated. Alone, it is never enough for a decision."
+        }
+      },
+      "signalement": {
+        "titre": "Report a need",
+        "categorie": "What is it about?",
+        "categorieValeur": {
+          "pedagogique": "Teaching",
+          "presence": "Attendance",
+          "technique": "Technical",
+          "changement": "Change",
+          "securiteEnfant": "A child's safety",
+          "autre": "Other"
+        },
+        "interne": "Internal note",
+        "interneAide": "Read by the administration only. It is never sent automatically to the family.",
+        "famille": "Message for the family",
+        "familleAide": "Optional. The administration alone decides to pass it on, in one click.",
+        "contexte": "Student {eleve}. The session, the class and your name are already attached.",
+        "envoyer": "Send the report",
+        "envoye": "Report passed on to the administration.",
+        "interneRequis": "Write at least what the administration needs to know.",
+        "horsLigne": "Nothing was sent: there is no network. Try again as soon as it returns.",
+        "echec": "The report could not be passed on. Try again."
+      },
+      "postCours": {
+        "titre": "After the class",
+        "duree": "Actual length {minutes} min",
+        "exceptions": "To confirm",
+        "toutEstNominal": "Nothing needs your attention.",
+        "reprise": "Suggested resume point",
+        "repriseInconnue": "No resume position known for this session.",
+        "travail": "Suggested work",
+        "travailAucun": "No work suggested for now.",
+        "valider": "Confirm",
+        "enFile": "Saved. It will go out as soon as the network returns.",
+        "envoye": "Class closed."
+      }
+    },
+    "indisponible": "This feature is not available yet. Nothing is lost, the class continues and it will arrive soon."
+  },
   "adulte": {
     "nav": {
       "accueil": "Home",

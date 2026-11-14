@@ -84,6 +84,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$controleur$en controleur = _Traductions$controleur$en._(_root);
 	@override late final _Traductions$aConstruire$en aConstruire = _Traductions$aConstruire$en._(_root);
 	@override late final _Traductions$galerie$en galerie = _Traductions$galerie$en._(_root);
+	@override late final _Traductions$tc$en tc = _Traductions$tc$en._(_root);
 	@override late final _Traductions$adulte$en adulte = _Traductions$adulte$en._(_root);
 	@override late final _Traductions$formulaire$en formulaire = _Traductions$formulaire$en._(_root);
 	@override late final _Traductions$motifs$en motifs = _Traductions$motifs$en._(_root);
@@ -1478,6 +1479,24 @@ class _Traductions$galerie$en extends Traductions$galerie$fr {
 	@override String get composants => 'Shared components';
 	@override String get modeEnfant => 'Guided interface';
 	@override String get modeStandard => 'Standard mode';
+}
+
+// Path: tc
+class _Traductions$tc$en extends Traductions$tc$fr {
+	_Traductions$tc$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$groupe$en groupe = _Traductions$tc$groupe$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$en bibliotheque = _Traductions$tc$bibliotheque$en._(_root);
+	@override late final _Traductions$tc$coran$en coran = _Traductions$tc$coran$en._(_root);
+	@override late final _Traductions$tc$outils$en outils = _Traductions$tc$outils$en._(_root);
+	@override late final _Traductions$tc$classe$en classe = _Traductions$tc$classe$en._(_root);
+	@override late final _Traductions$tc$realtime$en realtime = _Traductions$tc$realtime$en._(_root);
+	@override late final _Traductions$tc$observation$en observation = _Traductions$tc$observation$en._(_root);
+	@override late final _Traductions$tc$parcours$en parcours = _Traductions$tc$parcours$en._(_root);
+	@override String get indisponible => 'This feature is not available yet. Nothing is lost, the class continues and it will arrive soon.';
 }
 
 // Path: adulte
@@ -6911,6 +6930,153 @@ class _Traductions$controleur$controle$en extends Traductions$controleur$control
 	@override String get erreur => 'Your next visit could not be read. Try again in a moment.';
 }
 
+// Path: tc.groupe
+class _Traductions$tc$groupe$en extends Traductions$tc$groupe$fr {
+	_Traductions$tc$groupe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$groupe$mesGroupes$en mesGroupes = _Traductions$tc$groupe$mesGroupes$en._(_root);
+	@override late final _Traductions$tc$groupe$commun$en commun = _Traductions$tc$groupe$commun$en._(_root);
+	@override late final _Traductions$tc$groupe$carte$en carte = _Traductions$tc$groupe$carte$en._(_root);
+	@override late final _Traductions$tc$groupe$enseignant$en enseignant = _Traductions$tc$groupe$enseignant$en._(_root);
+	@override late final _Traductions$tc$groupe$cours$en cours = _Traductions$tc$groupe$cours$en._(_root);
+	@override late final _Traductions$tc$groupe$temps$en temps = _Traductions$tc$groupe$temps$en._(_root);
+	@override late final _Traductions$tc$groupe$duree$en duree = _Traductions$tc$groupe$duree$en._(_root);
+	@override late final _Traductions$tc$groupe$horloges$en horloges = _Traductions$tc$groupe$horloges$en._(_root);
+	@override late final _Traductions$tc$groupe$dst$en dst = _Traductions$tc$groupe$dst$en._(_root);
+	@override late final _Traductions$tc$groupe$session$en session = _Traductions$tc$groupe$session$en._(_root);
+	@override late final _Traductions$tc$groupe$espace$en espace = _Traductions$tc$groupe$espace$en._(_root);
+	@override late final _Traductions$tc$groupe$emplacement$en emplacement = _Traductions$tc$groupe$emplacement$en._(_root);
+}
+
+// Path: tc.bibliotheque
+class _Traductions$tc$bibliotheque$en extends Traductions$tc$bibliotheque$fr {
+	_Traductions$tc$bibliotheque$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Library';
+	@override String get rechercheIndication => 'Title, level, surah or page';
+	@override String get rechercheLibelle => 'Search for a document';
+	@override String get effacerRecherche => 'Show all';
+	@override late final _Traductions$tc$bibliotheque$filtre$en filtre = _Traductions$tc$bibliotheque$filtre$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$sections$en sections = _Traductions$tc$bibliotheque$sections$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$vide$en vide = _Traductions$tc$bibliotheque$vide$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$aucunResultat$en aucunResultat = _Traductions$tc$bibliotheque$aucunResultat$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$indisponible$en indisponible = _Traductions$tc$bibliotheque$indisponible$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$introuvable$en introuvable = _Traductions$tc$bibliotheque$introuvable$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$offline$en offline = _Traductions$tc$bibliotheque$offline$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$type$en type = _Traductions$tc$bibliotheque$type$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$detail$en detail = _Traductions$tc$bibliotheque$detail$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$action$en action = _Traductions$tc$bibliotheque$action$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$message$en message = _Traductions$tc$bibliotheque$message$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$classe$en classe = _Traductions$tc$bibliotheque$classe$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$rendu$en rendu = _Traductions$tc$bibliotheque$rendu$en._(_root);
+	@override late final _Traductions$tc$bibliotheque$actif$en actif = _Traductions$tc$bibliotheque$actif$en._(_root);
+}
+
+// Path: tc.coran
+class _Traductions$tc$coran$en extends Traductions$tc$coran$fr {
+	_Traductions$tc$coran$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$coran$modes$en modes = _Traductions$tc$coran$modes$en._(_root);
+	@override late final _Traductions$tc$coran$mushaf$en mushaf = _Traductions$tc$coran$mushaf$en._(_root);
+	@override late final _Traductions$tc$coran$fidelite$en fidelite = _Traductions$tc$coran$fidelite$en._(_root);
+	@override late final _Traductions$tc$coran$zoom$en zoom = _Traductions$tc$coran$zoom$en._(_root);
+	@override late final _Traductions$tc$coran$navigation$en navigation = _Traductions$tc$coran$navigation$en._(_root);
+	@override late final _Traductions$tc$coran$sommaire$en sommaire = _Traductions$tc$coran$sommaire$en._(_root);
+	@override late final _Traductions$tc$coran$reprise$en reprise = _Traductions$tc$coran$reprise$en._(_root);
+	@override late final _Traductions$tc$coran$focus$en focus = _Traductions$tc$coran$focus$en._(_root);
+}
+
+// Path: tc.outils
+class _Traductions$tc$outils$en extends Traductions$tc$outils$fr {
+	_Traductions$tc$outils$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$outils$dock$en dock = _Traductions$tc$outils$dock$en._(_root);
+	@override late final _Traductions$tc$outils$intention$en intention = _Traductions$tc$outils$intention$en._(_root);
+	@override late final _Traductions$tc$outils$trait$en trait = _Traductions$tc$outils$trait$en._(_root);
+	@override late final _Traductions$tc$outils$portee$en portee = _Traductions$tc$outils$portee$en._(_root);
+	@override late final _Traductions$tc$outils$marquer$en marquer = _Traductions$tc$outils$marquer$en._(_root);
+	@override late final _Traductions$tc$outils$revision$en revision = _Traductions$tc$outils$revision$en._(_root);
+	@override late final _Traductions$tc$outils$masquer$en masquer = _Traductions$tc$outils$masquer$en._(_root);
+	@override late final _Traductions$tc$outils$focus$en focus = _Traductions$tc$outils$focus$en._(_root);
+	@override late final _Traductions$tc$outils$annotation$en annotation = _Traductions$tc$outils$annotation$en._(_root);
+}
+
+// Path: tc.classe
+class _Traductions$tc$classe$en extends Traductions$tc$classe$fr {
+	_Traductions$tc$classe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$classe$entete$en entete = _Traductions$tc$classe$entete$en._(_root);
+	@override late final _Traductions$tc$classe$roster$en roster = _Traductions$tc$classe$roster$en._(_root);
+	@override late final _Traductions$tc$classe$etat$en etat = _Traductions$tc$classe$etat$en._(_root);
+	@override late final _Traductions$tc$classe$fiche$en fiche = _Traductions$tc$classe$fiche$en._(_root);
+	@override late final _Traductions$tc$classe$action$en action = _Traductions$tc$classe$action$en._(_root);
+	@override late final _Traductions$tc$classe$rappel$en rappel = _Traductions$tc$classe$rappel$en._(_root);
+	@override late final _Traductions$tc$classe$recitation$en recitation = _Traductions$tc$classe$recitation$en._(_root);
+	@override late final _Traductions$tc$classe$prevol$en prevol = _Traductions$tc$classe$prevol$en._(_root);
+}
+
+// Path: tc.realtime
+class _Traductions$tc$realtime$en extends Traductions$tc$realtime$fr {
+	_Traductions$tc$realtime$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$realtime$transport$en transport = _Traductions$tc$realtime$transport$en._(_root);
+	@override late final _Traductions$tc$realtime$etat$en etat = _Traductions$tc$realtime$etat$en._(_root);
+}
+
+// Path: tc.observation
+class _Traductions$tc$observation$en extends Traductions$tc$observation$fr {
+	_Traductions$tc$observation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$observation$o1$en o1 = _Traductions$tc$observation$o1$en._(_root);
+	@override late final _Traductions$tc$observation$entree$en entree = _Traductions$tc$observation$entree$en._(_root);
+	@override late final _Traductions$tc$observation$explication$en explication = _Traductions$tc$observation$explication$en._(_root);
+	@override late final _Traductions$tc$observation$disponibilite$en disponibilite = _Traductions$tc$observation$disponibilite$en._(_root);
+	@override late final _Traductions$tc$observation$connexion$en connexion = _Traductions$tc$observation$connexion$en._(_root);
+	@override late final _Traductions$tc$observation$duree$en duree = _Traductions$tc$observation$duree$en._(_root);
+	@override late final _Traductions$tc$observation$refus$en refus = _Traductions$tc$observation$refus$en._(_root);
+	@override late final _Traductions$tc$observation$visite$en visite = _Traductions$tc$observation$visite$en._(_root);
+	@override late final _Traductions$tc$observation$fin$en fin = _Traductions$tc$observation$fin$en._(_root);
+	@override late final _Traductions$tc$observation$resultat$en resultat = _Traductions$tc$observation$resultat$en._(_root);
+	@override late final _Traductions$tc$observation$annonce$en annonce = _Traductions$tc$observation$annonce$en._(_root);
+	@override late final _Traductions$tc$observation$reglages$en reglages = _Traductions$tc$observation$reglages$en._(_root);
+}
+
+// Path: tc.parcours
+class _Traductions$tc$parcours$en extends Traductions$tc$parcours$fr {
+	_Traductions$tc$parcours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$parcours$avant$en avant = _Traductions$tc$parcours$avant$en._(_root);
+	@override late final _Traductions$tc$parcours$intention$en intention = _Traductions$tc$parcours$intention$en._(_root);
+	@override late final _Traductions$tc$parcours$plage$en plage = _Traductions$tc$parcours$plage$en._(_root);
+	@override late final _Traductions$tc$parcours$feedback$en feedback = _Traductions$tc$parcours$feedback$en._(_root);
+	@override late final _Traductions$tc$parcours$signalement$en signalement = _Traductions$tc$parcours$signalement$en._(_root);
+	@override late final _Traductions$tc$parcours$postCours$en postCours = _Traductions$tc$parcours$postCours$en._(_root);
+}
+
 // Path: adulte.nav
 class _Traductions$adulte$nav$en extends Traductions$adulte$nav$fr {
 	_Traductions$adulte$nav$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -10876,6 +11042,1165 @@ class _Traductions$enseignant$ficheGroupe$pause$en extends Traductions$enseignan
 	@override String get illisible => 'The break setting could not be loaded.';
 }
 
+// Path: tc.groupe.mesGroupes
+class _Traductions$tc$groupe$mesGroupes$en extends Traductions$tc$groupe$mesGroupes$fr {
+	_Traductions$tc$groupe$mesGroupes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'My classes';
+	@override String get aucun => 'No class yet';
+	@override String get aucunDetail => 'The academy will place you in a class as soon as a slot suits you.';
+}
+
+// Path: tc.groupe.commun
+class _Traductions$tc$groupe$commun$en extends Traductions$tc$groupe$commun$fr {
+	_Traductions$tc$groupe$commun$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get erreur => 'Your classes could not be read';
+	@override String get reessayer => 'Try again';
+}
+
+// Path: tc.groupe.carte
+class _Traductions$tc$groupe$carte$en extends Traductions$tc$groupe$carte$fr {
+	_Traductions$tc$groupe$carte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String ouvrir({required Object libelle}) => 'Open the class ${libelle}';
+	@override String capacite({required Object membres, required Object seuil}) => '${membres} / ${seuil}';
+	@override String capacitePhrase({required num membres, required Object seuil}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(membres,
+		one: '${membres} student out of ${seuil} places',
+		other: '${membres} students out of ${seuil} places',
+	);
+	@override String get complet => 'Full';
+	@override String get prochainCours => 'Next class';
+	@override String get aucuneSeance => 'No session scheduled';
+	@override String get aucuneSeanceDetail => 'This class\'s schedule is not set yet.';
+	@override String duree({required Object valeur}) => 'Length ${valeur}';
+	@override String get dureeLibelle => 'Length';
+	@override String get rejoindre => 'Join';
+	@override String get entreeSePrepare => 'Your entry is being prepared. Try again in a moment.';
+	@override String get entreeAttendReseau => 'You will be able to enter as soon as the network is back.';
+}
+
+// Path: tc.groupe.enseignant
+class _Traductions$tc$groupe$enseignant$en extends Traductions$tc$groupe$enseignant$fr {
+	_Traductions$tc$groupe$enseignant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sayyid => 'Sayyid';
+	@override String get sayyida => 'Sayyida';
+	@override String get photoManquante => 'Photo to provide';
+	@override String get photoManquanteDetail => 'The teacher\'s photo has not been saved yet.';
+}
+
+// Path: tc.groupe.cours
+class _Traductions$tc$groupe$cours$en extends Traductions$tc$groupe$cours$fr {
+	_Traductions$tc$groupe$cours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String coursEtNiveau({required Object cours, required Object niveau}) => '${cours} · ${niveau}';
+}
+
+// Path: tc.groupe.temps
+class _Traductions$tc$groupe$temps$en extends Traductions$tc$groupe$temps$fr {
+	_Traductions$tc$groupe$temps$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String dansMinutes({required Object minutes}) => 'Class in ${minutes} min';
+	@override String dansHeures({required Object heures, required Object minutes}) => 'Class in ${heures} h ${minutes}';
+	@override String demainA({required Object heure}) => 'Class tomorrow at ${heure}';
+	@override String dansJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'Class in ${jours} day',
+		other: 'Class in ${jours} days',
+	);
+	@override String get imminent => 'Class about to start';
+	@override String salleOuverte({required Object reste}) => 'Room open · ${reste}';
+	@override String get salleOuverteCourt => 'Room open';
+	@override String get attente => 'You are in the room. The class has not started yet.';
+	@override String get attenteDetail => 'This waiting time does not count towards your attendance.';
+	@override String get enSalle => 'In the room';
+	@override String resteMinutes({required Object minutes}) => '${minutes} min left';
+	@override String resteHeures({required Object heures, required Object minutes}) => '${heures} h ${minutes} left';
+	@override String enCours({required Object reste}) => 'Live session · ${reste}';
+	@override String get enDirect => 'Live';
+	@override String get prolongee => 'Session still live';
+	@override String get depassement => 'Running over';
+	@override String get terminee => 'Class ended';
+}
+
+// Path: tc.groupe.duree
+class _Traductions$tc$groupe$duree$en extends Traductions$tc$groupe$duree$fr {
+	_Traductions$tc$groupe$duree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String heures({required Object heures}) => '${heures} h';
+	@override String heuresMinutes({required Object heures, required Object minutes}) => '${heures} h ${minutes}';
+}
+
+// Path: tc.groupe.horloges
+class _Traductions$tc$groupe$horloges$en extends Traductions$tc$groupe$horloges$fr {
+	_Traductions$tc$groupe$horloges$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get votreHeure => 'Your time';
+	@override String chezEnseignant({required Object nomme}) => 'Where ${nomme} is';
+	@override String get heureGroupe => 'Class time';
+	@override String get heureMecque => 'Makkah time';
+	@override String apercuClasse({required Object jour, required Object heure}) => 'At Makkah time, the class will take place on ${jour} at ${heure}.';
+	@override String apercuOuEnseignant({required Object ville}) => 'At the teacher\'s (${ville})';
+	@override String apercuChez({required Object ou, required Object heure}) => '${ou}: ${heure} all year.';
+	@override String apercuChezPuis({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou}: ${heure}, then ${apres} from ${date}.';
+	@override String heureEtVille({required Object heure, required Object ville}) => '${heure} ${ville}';
+	@override String mecqueEnSecond({required Object heure}) => 'Makkah time: ${heure}';
+	@override String heureDeVille({required Object heure, required Object deVille}) => '${heure} (${deVille} time)';
+	@override String get laMecque => 'Makkah';
+	@override String get chezVous => 'Where you are';
+	@override String get chezEnseignantAnonyme => 'Where your teacher is';
+	@override String familles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} family',
+		other: '${n} families',
+	);
+	@override String get aConfirmer => 'Time to be confirmed';
+	@override String get enCeMoment => 'Right now';
+}
+
+// Path: tc.groupe.dst
+class _Traductions$tc$groupe$dst$en extends Traductions$tc$groupe$dst$fr {
+	_Traductions$tc$groupe$dst$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get j30 => 'Clock change in one month';
+	@override String get j7 => 'Clock change next week';
+	@override String get j1 => 'Clock change tomorrow';
+	@override String detail({required Object avant, required Object apres}) => 'Your class will move from ${avant} to ${apres}.';
+}
+
+// Path: tc.groupe.session
+class _Traductions$tc$groupe$session$en extends Traductions$tc$groupe$session$fr {
+	_Traductions$tc$groupe$session$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get conseilAppareil => 'A tablet or computer is recommended for class. The phone is still supported.';
+}
+
+// Path: tc.groupe.espace
+class _Traductions$tc$groupe$espace$en extends Traductions$tc$groupe$espace$fr {
+	_Traductions$tc$groupe$espace$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get retour => 'My classes';
+	@override String get avantProchainCours => 'Before the next class';
+	@override String get aucuneAction => 'Nothing to prepare for now';
+	@override String get bibliotheque => 'Library';
+	@override String get bibliothequeVoirTout => 'See all';
+	@override String get progression => 'Progress';
+	@override String get roster => 'Class students';
+	@override String get reprendreLeCours => 'Resume the class';
+	@override String get introuvable => 'This class is not open to you';
+	@override String get introuvableDetail => 'It may have been closed, or it concerns another profile.';
+}
+
+// Path: tc.groupe.emplacement
+class _Traductions$tc$groupe$emplacement$en extends Traductions$tc$groupe$emplacement$fr {
+	_Traductions$tc$groupe$emplacement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonBranche => 'Coming soon';
+	@override String get nonBrancheDetail => 'This content will be attached to this space soon.';
+}
+
+// Path: tc.bibliotheque.filtre
+class _Traductions$tc$bibliotheque$filtre$en extends Traductions$tc$bibliotheque$filtre$fr {
+	_Traductions$tc$bibliotheque$filtre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get type => 'Type';
+	@override String get disponibilite => 'Availability';
+}
+
+// Path: tc.bibliotheque.sections
+class _Traductions$tc$bibliotheque$sections$en extends Traductions$tc$bibliotheque$sections$fr {
+	_Traductions$tc$bibliotheque$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get continuer => 'Continue';
+	@override String get pourCeGroupe => 'For this class';
+	@override String get groupe => 'Documents to display';
+	@override String get recents => 'Recent';
+	@override String get tousLesSupports => 'All documents';
+	@override String get resultats => 'Results';
+}
+
+// Path: tc.bibliotheque.vide
+class _Traductions$tc$bibliotheque$vide$en extends Traductions$tc$bibliotheque$vide$fr {
+	_Traductions$tc$bibliotheque$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'No document published yet';
+	@override String get invitation => 'Your teachers will place the documents for your classes here.';
+}
+
+// Path: tc.bibliotheque.aucunResultat
+class _Traductions$tc$bibliotheque$aucunResultat$en extends Traductions$tc$bibliotheque$aucunResultat$fr {
+	_Traductions$tc$bibliotheque$aucunResultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'No document matches';
+	@override String get invitation => 'Try another word, or relax the filters.';
+}
+
+// Path: tc.bibliotheque.indisponible
+class _Traductions$tc$bibliotheque$indisponible$en extends Traductions$tc$bibliotheque$indisponible$fr {
+	_Traductions$tc$bibliotheque$indisponible$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'The library could not be loaded';
+	@override String get invitation => 'The request may not have reached Rewayah. Try again in a moment.';
+	@override String get action => 'Try again';
+}
+
+// Path: tc.bibliotheque.introuvable
+class _Traductions$tc$bibliotheque$introuvable$en extends Traductions$tc$bibliotheque$introuvable$fr {
+	_Traductions$tc$bibliotheque$introuvable$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'This document is not open to you';
+	@override String get invitation => 'It may have been withdrawn, or it is reserved for another class. Your teacher can reopen it for you.';
+}
+
+// Path: tc.bibliotheque.offline
+class _Traductions$tc$bibliotheque$offline$en extends Traductions$tc$bibliotheque$offline$fr {
+	_Traductions$tc$bibliotheque$offline$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aTelecharger => 'To download';
+	@override String get enCours => 'Downloading';
+	@override String get enCache => 'Cached';
+	@override String get telecharge => 'Downloaded';
+	@override String get indisponible => 'Offline unavailable';
+}
+
+// Path: tc.bibliotheque.type
+class _Traductions$tc$bibliotheque$type$en extends Traductions$tc$bibliotheque$type$fr {
+	_Traductions$tc$bibliotheque$type$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get audio => 'Audio';
+	@override String get video => 'Video';
+	@override String get lienExterne => 'External link';
+	@override String get quran => 'Quran';
+	@override String get texteStructure => 'Text';
+	@override String get pdf => 'PDF';
+	@override String get image => 'Image';
+	@override String get lecon => 'Lesson';
+}
+
+// Path: tc.bibliotheque.detail
+class _Traductions$tc$bibliotheque$detail$en extends Traductions$tc$bibliotheque$detail$fr {
+	_Traductions$tc$bibliotheque$detail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Document';
+	@override String get lecture => 'Quran recitation style';
+	@override String get ecole => 'Legal school followed';
+	@override String get capacites => 'What this document allows';
+	@override String get niveaux => 'Levels';
+	@override String get sansVersion => 'No version published: nothing to open for now.';
+	@override String get apercuIndisponible => 'The preview of this format is not yet available in the app. You can save a copy.';
+	@override String get renduCoran => 'The Quran opens in its dedicated reader.';
+	@override String get entreeDetail => 'All your revision resources, in one place.';
+	@override String get entreeDetailEnseignant => 'All the class documents, in one place.';
+	@override String get entreeLigne => 'Open the library';
+}
+
+// Path: tc.bibliotheque.action
+class _Traductions$tc$bibliotheque$action$en extends Traductions$tc$bibliotheque$action$fr {
+	_Traductions$tc$bibliotheque$action$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get telecharger => 'Make available offline';
+	@override String get liberer => 'Free up the space';
+	@override String get enregistrerCopie => 'Save a copy';
+}
+
+// Path: tc.bibliotheque.message
+class _Traductions$tc$bibliotheque$message$en extends Traductions$tc$bibliotheque$message$fr {
+	_Traductions$tc$bibliotheque$message$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get copieEnregistree => 'Copy saved';
+	@override String get copieImpossible => 'The copy could not be prepared. Try again in a moment.';
+	@override String get telechargementImpossible => 'This document is not available offline yet';
+	@override String get horsLigneNonTelecharge => 'Available once downloaded or back online';
+	@override String get aucunTelechargement => 'No file to download for this version.';
+}
+
+// Path: tc.bibliotheque.classe
+class _Traductions$tc$bibliotheque$classe$en extends Traductions$tc$bibliotheque$classe$fr {
+	_Traductions$tc$bibliotheque$classe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Choose a document';
+	@override String get sousTitre => 'The chosen document replaces the one displayed. The class continues.';
+}
+
+// Path: tc.bibliotheque.rendu
+class _Traductions$tc$bibliotheque$rendu$en extends Traductions$tc$bibliotheque$rendu$fr {
+	_Traductions$tc$bibliotheque$rendu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sansLecteur => 'This type of document does not have a reader in the app yet.';
+	@override String get confirmerTitre => 'This link leaves the app';
+	@override String get confirmerPhrase => 'It opens another site, outside Rewayah Academy. You can come back here afterwards.';
+	@override String get confirmerOuvrir => 'Open the link';
+	@override String get confirmerRester => 'Stay in the app';
+	@override String get ouvrirLien => 'Open the link';
+	@override String get lienAutreSite => 'This link opens on another site.';
+	@override String get lienSansNavigateur => 'This link opens from the web version of the app.';
+	@override String get lienAbsent => 'This document has no content to open yet.';
+	@override String get imageInaccessible => 'The image could not be loaded for now.';
+	@override String get imageIllisible => 'This image file cannot be displayed.';
+	@override String get reessayer => 'Try again';
+	@override String get ouvrir => 'Open';
+	@override String get ouvrirMushaf => 'Open the Mushaf';
+	@override String get lienEchec => 'The reading link could not be obtained for now.';
+	@override String get lienIndisponible => 'Opening is not available for this document.';
+	@override String get lienHorsLigne => 'Opening will be possible when the connection returns.';
+	@override String get lienBloque => 'Your browser blocked the opening. Allow pop-ups for this site, then try again.';
+}
+
+// Path: tc.bibliotheque.actif
+class _Traductions$tc$bibliotheque$actif$en extends Traductions$tc$bibliotheque$actif$fr {
+	_Traductions$tc$bibliotheque$actif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get indisponibleTitre => 'Presented document not open yet';
+	@override String get indisponible => 'Following the presented document will open once the server is connected.';
+	@override String get sansDonnees => 'the presented document';
+	@override String get erreur => 'The presented document could not be loaded. Try again.';
+	@override String get aucun => 'No document presented';
+	@override String get aucunDetail => 'When your teacher presents a document, it will appear here without you doing anything.';
+	@override String get titre => 'Presented document';
+	@override String version({required Object numero}) => 'Version ${numero}';
+	@override String page({required Object page}) => 'Page ${page}';
+	@override String get ouvrirFiche => 'Open the document sheet';
+	@override String get ouvrirCoran => 'Open in the Quran reader';
+	@override String retire({required Object titre}) => '"${titre}" has been withdrawn';
+	@override String get retireDetail => 'Your teacher has withdrawn this document from the session. It is no longer accessible.';
+}
+
+// Path: tc.coran.modes
+class _Traductions$tc$coran$modes$en extends Traductions$tc$coran$modes$fr {
+	_Traductions$tc$coran$modes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get mushaf => 'Mushaf page';
+	@override String get verset => 'Enlarged reading';
+	@override String get focus => 'Focus';
+	@override String get choisir => 'Reading mode';
+	@override String versets({required Object debut, required Object fin}) => 'v. ${debut} to ${fin}';
+	@override String versetsEntre({required Object debut, required Object fin}) => '${debut} to ${fin}';
+}
+
+// Path: tc.coran.mushaf
+class _Traductions$tc$coran$mushaf$en extends Traductions$tc$coran$mushaf$fr {
+	_Traductions$tc$coran$mushaf$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get coteDroite => 'Right-hand page';
+	@override String get coteGauche => 'Left-hand page';
+	@override String ouverture({required Object droite, required Object gauche}) => 'Opening, pages ${droite} and ${gauche}';
+	@override late final _Traductions$tc$coran$mushaf$page15$en page15 = _Traductions$tc$coran$mushaf$page15$en._(_root);
+}
+
+// Path: tc.coran.fidelite
+class _Traductions$tc$coran$fidelite$en extends Traductions$tc$coran$fidelite$fr {
+	_Traductions$tc$coran$fidelite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get approchee => 'Approximate layout';
+	@override String get approcheeDetail => 'The verses on this page are exactly those of the Madinah Mushaf page. Their split across lines, however, is that of this screen: the edition\'s line breaks are not imported yet.';
+	@override String get fidele => 'Edition layout';
+}
+
+// Path: tc.coran.zoom
+class _Traductions$tc$coran$zoom$en extends Traductions$tc$coran$zoom$fr {
+	_Traductions$tc$coran$zoom$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get bride => 'Zoom limited by the width: beyond this, a word would be cut.';
+	@override String valeur({required Object pourcent}) => '${pourcent}%';
+	@override String get renvoiLectureAgrandie => 'To enlarge the text, switch to enlarged reading: the Mushaf page keeps its geometry.';
+	@override String get maximale => 'Maximum size reached';
+}
+
+// Path: tc.coran.navigation
+class _Traductions$tc$coran$navigation$en extends Traductions$tc$coran$navigation$fr {
+	_Traductions$tc$coran$navigation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Go to';
+	@override String get ouvrir => 'Go to a page';
+	@override String get champ => 'Page, surah, juz or reference';
+	@override String get indice => 'For example 18, Al-Kahf, juz 15, 2:255';
+	@override String get limite => 'The search covers page numbers, references and surah names. Searching within the Quran text is not available yet.';
+	@override String get aucunResultat => 'No reference found';
+	@override String get aucunResultatDetail => 'Try a page number, a surah name, or a reference like 2:255.';
+	@override String pageNumero({required Object page}) => 'Page ${page}';
+}
+
+// Path: tc.coran.sommaire
+class _Traductions$tc$coran$sommaire$en extends Traductions$tc$coran$sommaire$fr {
+	_Traductions$tc$coran$sommaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Surahs';
+	@override String detail({required Object versets, required Object page}) => '${versets} verses · page ${page}';
+	@override String allerA({required Object sourate, required Object page}) => 'Go to surah ${sourate}, page ${page}';
+	@override String get indisponible => 'The list of surahs could not be read';
+	@override String get indisponibleDetail => 'The connection may have been cut.';
+	@override String get absent => 'The Quran text is not installed';
+	@override String get absentDetail => 'There is nothing to display.';
+}
+
+// Path: tc.coran.reprise
+class _Traductions$tc$coran$reprise$en extends Traductions$tc$coran$reprise$fr {
+	_Traductions$tc$coran$reprise$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get groupe => 'Resume the class';
+	@override String groupeDetail({required Object page}) => 'The class was at page ${page}';
+}
+
+// Path: tc.coran.focus
+class _Traductions$tc$coran$focus$en extends Traductions$tc$coran$focus$fr {
+	_Traductions$tc$coran$focus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunePlage => 'No passage highlighted';
+	@override String get aucunePlageDetail => 'Focus follows the passage the teacher points to. Outside class, it centres the open page.';
+	@override String get quitter => 'Exit focus';
+}
+
+// Path: tc.outils.dock
+class _Traductions$tc$outils$dock$en extends Traductions$tc$outils$dock$fr {
+	_Traductions$tc$outils$dock$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Tools';
+	@override String get deplacer => 'Move the tools';
+	@override late final _Traductions$tc$outils$dock$position$en position = _Traductions$tc$outils$dock$position$en._(_root);
+	@override String get bibliotheque => 'Library';
+	@override String get focus => 'Focus';
+	@override String get marquer => 'Mark';
+	@override String get masquer => 'Hide';
+	@override String get stylet => 'Stylus';
+	@override String get pointeur => 'Pointer';
+	@override String get revision => 'Revision';
+}
+
+// Path: tc.outils.intention
+class _Traductions$tc$outils$intention$en extends Traductions$tc$outils$intention$fr {
+	_Traductions$tc$outils$intention$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aApprendre => 'To learn';
+	@override String get aRevoir => 'To review';
+	@override String get aRenforcer => 'To reinforce';
+	@override String get aEntretenir => 'To maintain';
+	@override String get pourEvaluation => 'For the assessment';
+}
+
+// Path: tc.outils.trait
+class _Traductions$tc$outils$trait$en extends Traductions$tc$outils$trait$fr {
+	_Traductions$tc$outils$trait$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get stylet => 'Pen';
+	@override String get surligneur => 'Highlight';
+	@override String get gomme => 'Eraser';
+	@override String get annuler => 'Undo';
+	@override String get plus => 'More';
+	@override String get ardoise => 'Annotation slate, optional: the class stays readable without it';
+	@override String get effacerDernier => 'Erase my last stroke';
+}
+
+// Path: tc.outils.portee
+class _Traductions$tc$outils$portee$en extends Traductions$tc$outils$portee$fr {
+	_Traductions$tc$outils$portee$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get temporaire => 'Just while explaining';
+	@override String get seance => 'Until the end of class';
+	@override String get enregistree => 'Save';
+	@override String get aide => 'How long should these annotations be kept?';
+}
+
+// Path: tc.outils.marquer
+class _Traductions$tc$outils$marquer$en extends Traductions$tc$outils$marquer$fr {
+	_Traductions$tc$outils$marquer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Mark this passage';
+	@override String get aide => 'Choose what this passage calls for.';
+	@override String get retirer => 'Remove the marker';
+}
+
+// Path: tc.outils.revision
+class _Traductions$tc$outils$revision$en extends Traductions$tc$outils$revision$fr {
+	_Traductions$tc$outils$revision$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'To prepare';
+	@override String get aide => 'The selected passage becomes work to prepare.';
+	@override String get groupeEntier => 'Whole class';
+	@override String get consigne => 'Short instruction (optional)';
+	@override String get creer => 'Set the work';
+	@override String get posee => 'Work to prepare set';
+}
+
+// Path: tc.outils.masquer
+class _Traductions$tc$outils$masquer$en extends Traductions$tc$outils$masquer$fr {
+	_Traductions$tc$outils$masquer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reveler => 'Reveal';
+	@override String get refermer => 'Hide again';
+	@override String get tout => 'Unhide all';
+}
+
+// Path: tc.outils.focus
+class _Traductions$tc$outils$focus$en extends Traductions$tc$outils$focus$fr {
+	_Traductions$tc$outils$focus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get quitter => 'Exit focus';
+}
+
+// Path: tc.outils.annotation
+class _Traductions$tc$outils$annotation$en extends Traductions$tc$outils$annotation$fr {
+	_Traductions$tc$outils$annotation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ancrageDegrade => 'This passage has no text anchor: the annotation will follow the page, not the words.';
+	@override String get horsPage => 'Annotations hidden: their passage is not on screen.';
+	@override String get aucuneSelection => 'Select a passage first.';
+}
+
+// Path: tc.classe.entete
+class _Traductions$tc$classe$entete$en extends Traductions$tc$classe$entete$fr {
+	_Traductions$tc$classe$entete$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$classe$entete$titreEnseignant$en titreEnseignant = _Traductions$tc$classe$entete$titreEnseignant$en._(_root);
+}
+
+// Path: tc.classe.roster
+class _Traductions$tc$classe$roster$en extends Traductions$tc$classe$roster$fr {
+	_Traductions$tc$classe$roster$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Students';
+	@override String compteur({required Object presents, required Object attendus}) => 'Students: ${presents} present out of ${attendus} expected';
+	@override String get indisponible => 'Roster unavailable';
+	@override String get indisponibleDetail => 'Your students\' statuses could not be read. The class continues.';
+	@override String get vide => 'No student registered';
+	@override String get videDetail => 'This session has no registered student.';
+	@override String ouvrirFiche({required Object dePrenom}) => 'Open ${dePrenom}\'s sheet';
+	@override String places({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places';
+}
+
+// Path: tc.classe.etat
+class _Traductions$tc$classe$etat$en extends Traductions$tc$classe$etat$fr {
+	_Traductions$tc$classe$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get inconnu => 'Attendance not known yet';
+	@override String get attendu => 'Expected';
+	@override String get enConnexion => 'Connecting';
+	@override String get present => 'Present';
+	@override String get enRetard => 'Late';
+	@override String get deconnecte => 'Disconnected';
+	@override String get enReconnexion => 'Reconnecting';
+	@override String get sorti => 'Left';
+	@override String get absent => 'Absent';
+}
+
+// Path: tc.classe.fiche
+class _Traductions$tc$classe$fiche$en extends Traductions$tc$classe$fiche$fr {
+	_Traductions$tc$classe$fiche$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get niveau => 'Level';
+	@override String get objectif => 'Current goal';
+	@override String get derniereSeance => 'Last session';
+	@override String get aReprendre => 'To resume';
+	@override String get presenceRecente => 'Recent attendance';
+	@override String get travailActuel => 'Current work';
+	@override String page({required Object page}) => 'Page ${page}';
+	@override String travailEnCours({required Object nombre}) => '${nombre} item(s)';
+	@override String assiduite({required Object presences, required Object total}) => '${presences} / ${total} classes';
+	@override String get interfaceGuidee => 'Guided interface';
+	@override String get sansPedagogie => 'Learning follow-up unavailable';
+	@override String get sansPedagogieDetail => 'The journey, goals and work in progress are not yet open to the teacher.';
+}
+
+// Path: tc.classe.action
+class _Traductions$tc$classe$action$en extends Traductions$tc$classe$action$fr {
+	_Traductions$tc$classe$action$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get noter => 'Note';
+	@override String get rappel => 'Discreet reminder';
+	@override String get reciter => 'Choose to recite';
+	@override String get signaler => 'Report a need';
+	@override String get contexte => 'Open the context';
+}
+
+// Path: tc.classe.rappel
+class _Traductions$tc$classe$rappel$en extends Traductions$tc$classe$rappel$fr {
+	_Traductions$tc$classe$rappel$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get recu => 'Your teacher is calling you';
+	@override String get echec => 'The reminder got no answer from the network. Try again in a moment.';
+	@override String get echecDroit => 'Your access to this session does not allow calling a student';
+	@override String cooldown({required Object secondes}) => 'Already called. Again in ${secondes} s';
+}
+
+// Path: tc.classe.recitation
+class _Traductions$tc$classe$recitation$en extends Traductions$tc$classe$recitation$fr {
+	_Traductions$tc$classe$recitation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Recitation';
+	@override String actif({required Object prenom}) => '${prenom} is reciting';
+	@override String get pastille => 'Reciting';
+	@override String get personne => 'No one is reciting';
+	@override String get suivants => 'Next';
+	@override String get arreter => 'Stop the recitation';
+}
+
+// Path: tc.classe.prevol
+class _Traductions$tc$classe$prevol$en extends Traductions$tc$classe$prevol$fr {
+	_Traductions$tc$classe$prevol$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Before opening the class';
+	@override String get microOk => 'Microphone detected';
+	@override String get microAbsent => 'No usable microphone';
+	@override String get cameraOk => 'Camera detected';
+	@override String get cameraAbsente => 'No camera. The class is still possible.';
+	@override String get permissionRefusee => 'Microphone access denied. Allow it to open the class.';
+	@override String get reessayer => 'Check again';
+}
+
+// Path: tc.realtime.transport
+class _Traductions$tc$realtime$transport$en extends Traductions$tc$realtime$transport$fr {
+	_Traductions$tc$realtime$transport$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get partage_indisponible => 'Sharing the document is not available on this server. The class continues, but other devices will not follow the page.';
+}
+
+// Path: tc.realtime.etat
+class _Traductions$tc$realtime$etat$en extends Traductions$tc$realtime$etat$fr {
+	_Traductions$tc$realtime$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get restauration_impossible => 'Cannot find the current document again. Ask the teacher to present it again.';
+}
+
+// Path: tc.observation.o1
+class _Traductions$tc$observation$o1$en extends Traductions$tc$observation$o1$fr {
+	_Traductions$tc$observation$o1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get regardeInvisible => 'You are watching without being seen: no microphone, no camera, no announcement to participants.';
+	@override String get videoIndisponible => 'The session video could not open. Leave, then come back in a moment.';
+	@override String get reconnexion => 'Reconnecting to the room.';
+}
+
+// Path: tc.observation.entree
+class _Traductions$tc$observation$entree$en extends Traductions$tc$observation$entree$fr {
+	_Traductions$tc$observation$entree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Observe the session';
+	@override String get tuteurIntro => 'You can watch your child\'s class for a short while. Your microphone and camera stay off.';
+	@override String get adminIntro => 'Choose your mode before entering. It does not change afterwards.';
+	@override String get controleurIntro => 'You are entering invisible observation. No microphone, no camera.';
+	@override String get entrer => 'Enter';
+	@override String get modeDiscret => 'Observe discreetly';
+	@override String get modeDiscretDetail => 'Invisible to participants. No microphone or camera, no announcement.';
+	@override String get modeVisible => 'Join the class';
+	@override String get modeVisibleDetail => 'Visible to everyone under the name Rewayah Administration. Microphone and camera allowed, announcement made.';
+	@override String get nomInstitutionnel => 'Rewayah Administration';
+	@override String get visiteJournalisee => 'Visit logged: identity, session, entry, exit and duration.';
+	@override String get roleSansObservation => 'Your account does not observe sessions.';
+	@override String get retourClasse => 'Back to the class';
+}
+
+// Path: tc.observation.explication
+class _Traductions$tc$observation$explication$en extends Traductions$tc$observation$explication$fr {
+	_Traductions$tc$observation$explication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'A glimpse of their learning';
+	@override String regleUne({required Object n, required Object duree}) => '${n} visit of ${duree}';
+	@override String regle({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} visit of ${duree}',
+		other: '${n} visits of ${duree}',
+	);
+	@override String get regleDetail => 'Per session and per parent, even if several of your children are in the class.';
+	@override String get ecoute => 'Listen to the teacher and the students';
+	@override String get ecouteDetail => 'You hear the teacher and the students who speak, including your child.';
+	@override String get sansMedia => 'No microphone or camera';
+	@override String get sansMediaDetail => 'Your microphone and camera stay off so as not to interrupt the class.';
+	@override String get revenir => 'If another student is reciting during your first visit, you can come back later to listen to your child.';
+	@override String get ecourtee => 'A visit left before the end counts as a whole visit: unused time is not carried over.';
+	@override String get sansIntervenir => 'To protect concentration, you observe without intervening.';
+	@override String get informes => 'Your child and their teacher are informed.';
+	@override String get observer => 'Observe now';
+	@override String get pasMaintenant => 'Not now';
+	@override String restanteUne({required Object restantes, required Object max}) => '${restantes}/${max} visit left for this session';
+	@override String restantes({required Object restantes, required Object max}) => '${restantes}/${max} visits left for this session';
+	@override String get aucuneRestante => 'No visit left for this session';
+}
+
+// Path: tc.observation.disponibilite
+class _Traductions$tc$observation$disponibilite$en extends Traductions$tc$observation$disponibilite$fr {
+	_Traductions$tc$observation$disponibilite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get visitesEpuiseesTitre => 'No visit left for this session';
+	@override String get visitesEpuisees => 'You have used your visits. You can observe the next session.';
+	@override String get tempsEpuiseTitre => 'Observation time used up';
+	@override String get tempsEpuise => 'Your observation time for this session is used. You can observe the next session.';
+	@override String get seanceNonCommenceeTitre => 'The session has not started yet';
+	@override String get seanceNonCommencee => 'Observation opens during the session.';
+	@override String get seanceTermineeTitre => 'The session is over';
+	@override String get seanceTerminee => 'You can observe the next session.';
+	@override String get seanceNonTenueTitre => 'This session is not taking place';
+	@override String get seanceNonTenue => 'It was cancelled, postponed or not held.';
+	@override String get horsFenetreTitre => 'The session is not open right now';
+	@override String get horsFenetre => 'Observation is possible only during the session.';
+	@override String get desactiveeTitre => 'Observation closed for this class';
+	@override String get desactivee => 'The administration has closed observation of this class.';
+	@override String get lienAbsentTitre => 'None of your children is in this session';
+	@override String get lienAbsent => 'Observation is reserved for the parents of the session\'s students.';
+	@override String get enfantAbsentTitre => 'Your child is not in the session';
+	@override String get enfantAbsent => 'Observation opens when your child is present.';
+	@override String get presenceTitre => 'Attendance being checked';
+	@override String get presence => 'Observation opens as soon as your child\'s attendance is confirmed.';
+	@override String get visiteOuverteTitre => 'A visit is already open';
+	@override String get visiteOuverte => 'One of your visits is still open for this session, on this device or another. It counts among your visits.';
+	@override String get fermeeTitre => 'Observation not open yet';
+	@override String get fermee => 'Observation of sessions by parents is not open yet. It will be offered here as soon as it opens.';
+	@override String get reseauTitre => 'Check impossible';
+	@override String get reseau => 'The availability of observation could not be checked. No visit has started.';
+	@override String get capaciteTitre => 'Observation unavailable';
+	@override String get capacite => 'Observation cannot open for this session. No visit has started.';
+}
+
+// Path: tc.observation.connexion
+class _Traductions$tc$observation$connexion$en extends Traductions$tc$observation$connexion$fr {
+	_Traductions$tc$observation$connexion$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Connection and check';
+	@override String get phrase => 'Your remaining visits are being checked. The visit starts as soon as entry is accepted, video connection included.';
+	@override String get enCours => 'Connection and check in progress';
+	@override String get prolongee => 'Stay on this page: the check continues.';
+	@override String get impossibleTitre => 'Entry impossible';
+	@override String get impossible => 'Entry into the session did not go through. Try again: your remaining visits will be checked again.';
+}
+
+// Path: tc.observation.duree
+class _Traductions$tc$observation$duree$en extends Traductions$tc$observation$duree$fr {
+	_Traductions$tc$observation$duree$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String secondes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} second',
+		other: '${n} seconds',
+	);
+	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} minute',
+		other: '${n} minutes',
+	);
+	@override String minutesSecondes({required Object m, required Object s}) => '${m} min ${s} s';
+}
+
+// Path: tc.observation.refus
+class _Traductions$tc$observation$refus$en extends Traductions$tc$observation$refus$fr {
+	_Traductions$tc$observation$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get politiqueDesactivee => 'Observation is turned off for this class.';
+	@override String get quotaVisites => 'You have already used your visits for this session.';
+	@override String get tempsEpuise => 'Your observation time is used up for this session.';
+	@override String get lienTuteur => 'You are not linked to any student in this session.';
+	@override String get seanceNonActive => 'The session is not in progress.';
+	@override String get horsFenetre => 'The room is not open at this time.';
+	@override String get indisponible => 'Observation could not open.';
+	@override String get indisponibleInvitation => 'The request may not have reached Rewayah. Try again in a moment.';
+	@override String get capaciteAbsente => 'Observation is not yet turned on for this installation.';
+}
+
+// Path: tc.observation.visite
+class _Traductions$tc$observation$visite$en extends Traductions$tc$observation$visite$fr {
+	_Traductions$tc$observation$visite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Observation in progress';
+	@override String get quitter => 'Leave';
+	@override String get supportIndisponible => 'The document shared by the teacher appears here.';
+	@override String get enseignant => 'Teacher';
+	@override String get monEnfant => 'Your child';
+	@override String get budgetIncertain => 'Remaining time not confirmed by the server.';
+	@override String get videoIndisponible => 'The session video could not open. Your observation time keeps running.';
+	@override String get sortieNonConfirmee => 'The end of your visit could not be confirmed. It will be closed by the server.';
+	@override String get restantes => 'left';
+	@override String decompteLu({required Object duree}) => 'Time left: ${duree}';
+	@override String get enDirect => 'Live';
+	@override String get connexion => 'Connection';
+	@override String get reconnexion => 'Reconnecting';
+	@override String get videoCoupee => 'Video unavailable';
+	@override String get reconnexionDetail => 'The connection is interrupted, reconnecting. Your observation time keeps running.';
+	@override String get sonRecu => 'Sound received';
+	@override String get sonInterrompu => 'Sound interrupted';
+	@override String get agrandir => 'Enlarge';
+	@override String get reduire => 'Shrink';
+	@override String get cameraFermee => 'Camera off';
+	@override String get pasEncoreLa => 'Not in the room yet';
+	@override String parle({required Object nom}) => '${nom} is speaking';
+	@override String get quitterQuestion => 'Leave the visit?';
+	@override String quitterConsequence({required Object duree}) => 'You have ${duree} left. A visit left before the end counts as a whole visit: unused time is not carried over.';
+	@override String get quitterConsequenceSansTemps => 'A visit left before the end counts as a whole visit: unused time is not carried over.';
+	@override String get quitterConfirmer => 'Leave the visit';
+}
+
+// Path: tc.observation.fin
+class _Traductions$tc$observation$fin$en extends Traductions$tc$observation$fin$fr {
+	_Traductions$tc$observation$fin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sortieVolontaire => 'You left the observation.';
+	@override String get quotaAtteint => 'Your observation time is used up.';
+	@override String get seanceTerminee => 'The session is over.';
+	@override String get revocationServeur => 'Your observation was interrupted.';
+	@override String get deconnexion => 'The connection was lost.';
+}
+
+// Path: tc.observation.resultat
+class _Traductions$tc$observation$resultat$en extends Traductions$tc$observation$resultat$fr {
+	_Traductions$tc$observation$resultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get premiereTerminee => 'Your first visit is over';
+	@override String get derniereTerminee => 'Your last visit is over';
+	@override String get terminee => 'Your visit is over';
+	@override String get dureeAtteinte => 'Visit length reached';
+	@override String get interrompue => 'Observation interrupted';
+	@override String continuePour({required Object prenom}) => 'The session continues for ${prenom}.';
+	@override String get continueSansPrenom => 'The session continues.';
+	@override String resteUne({required Object duree}) => 'You have one visit of ${duree} left. Come back later to listen in.';
+	@override String restent({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'You have ${n} visit of ${duree} left. Come back later to listen in.',
+		other: 'You have ${n} visits of ${duree} left. Come back later to listen in.',
+	);
+	@override String get resteUneSansDuree => 'You have one visit left. Come back later to listen in.';
+	@override String restentSansDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'You have ${n} visit left. Come back later to listen in.',
+		other: 'You have ${n} visits left. Come back later to listen in.',
+	);
+	@override String get aucune => 'You have used your visits for this session. You can observe the next session.';
+	@override String get prochaineSeance => 'You can observe the next session.';
+	@override String get verification => 'Checking your remaining visits';
+	@override String get inconnues => 'Your remaining visits could not be checked. They will be checked again in the class.';
+	@override String get voirObservations => 'See my observations';
+}
+
+// Path: tc.observation.annonce
+class _Traductions$tc$observation$annonce$en extends Traductions$tc$observation$annonce$fr {
+	_Traductions$tc$observation$annonce$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String tuteurObserve({required Object dePrenomEnfant}) => '${dePrenomEnfant}\'s guardian is observing';
+	@override String restant({required Object secondes}) => '${secondes} s';
+	@override String get enfantIndicateur => 'Your guardian is watching the class';
+	@override String tuteursObservent({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} guardian is observing',
+		other: '${nombre} guardians are observing',
+	);
+}
+
+// Path: tc.observation.reglages
+class _Traductions$tc$observation$reglages$en extends Traductions$tc$observation$reglages$fr {
+	_Traductions$tc$observation$reglages$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Observation by guardians';
+	@override String get intro => 'A guardian can watch their child\'s class for a short while, without microphone or camera. This setting decides what applies to this class.';
+	@override String get heriter => 'Inherit from the Academy';
+	@override String get personnaliser => 'Customize for this class';
+	@override String get desactiver => 'Turn off for this class';
+	@override String get maxVisites => 'Visits per session';
+	@override String get tempsTotal => 'Total time per session';
+	@override String get plafondVisite => 'Maximum length of a visit';
+	@override String get diminuer => 'Decrease';
+	@override String get augmenter => 'Increase';
+	@override String get enregistrer => 'Save';
+	@override String get invalideVisites => 'At least one visit per session.';
+	@override String get invalideTemps => 'At least thirty seconds per session.';
+	@override String valeurHeritee({required Object valeur}) => 'Academy: ${valeur}';
+	@override String uniteVisiteUne({required Object n}) => '${n} visit';
+	@override String uniteVisites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} visit',
+		other: '${n} visits',
+	);
+	@override String uniteSecondes({required Object n}) => '${n} s';
+	@override String versionPolitique({required Object version}) => 'Version ${version}';
+}
+
+// Path: tc.parcours.avant
+class _Traductions$tc$parcours$avant$en extends Traductions$tc$parcours$avant$fr {
+	_Traductions$tc$parcours$avant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Before the next class';
+	@override String get rien => 'Nothing to prepare for the next class.';
+	@override String get rienDetail => 'Your teacher will propose the work at the end of the next session.';
+	@override String get nonBranche => 'The work to prepare is not yet linked to this space.';
+	@override String get nonBrancheDetail => 'This does not mean there is nothing to prepare: this screen cannot read it yet.';
+	@override String get reprendre => 'Resume the class';
+	@override String reprendreDepuis({required Object position}) => 'Resume the class at ${position}';
+}
+
+// Path: tc.parcours.intention
+class _Traductions$tc$parcours$intention$en extends Traductions$tc$parcours$intention$fr {
+	_Traductions$tc$parcours$intention$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get apprendre => 'To learn';
+	@override String get revoir => 'To review';
+	@override String get renforcer => 'To reinforce';
+	@override String get entretenir => 'To maintain';
+	@override String get evaluation => 'For the assessment';
+}
+
+// Path: tc.parcours.plage
+class _Traductions$tc$parcours$plage$en extends Traductions$tc$parcours$plage$fr {
+	_Traductions$tc$parcours$plage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String versets({required Object sourate, required Object premier, required Object dernier}) => 'Surah ${sourate}, verses ${premier} to ${dernier}';
+	@override String versetUnique({required Object sourate, required Object premier}) => 'Surah ${sourate}, verse ${premier}';
+	@override String versetsCroisee({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Surah ${sourateDebut}, verse ${versetDebut} to surah ${sourateFin}, verse ${versetFin}';
+	@override String pages({required Object premiere, required Object derniere}) => 'Pages ${premiere} to ${derniere}';
+	@override String pageUnique({required Object premiere}) => 'Page ${premiere}';
+	@override String section({required Object section}) => 'Section ${section}';
+	@override String get ressource => 'The whole document';
+}
+
+// Path: tc.parcours.feedback
+class _Traductions$tc$parcours$feedback$en extends Traductions$tc$parcours$feedback$fr {
+	_Traductions$tc$parcours$feedback$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$tc$parcours$feedback$cours$en cours = _Traductions$tc$parcours$feedback$cours$en._(_root);
+	@override late final _Traductions$tc$parcours$feedback$comprehension$en comprehension = _Traductions$tc$parcours$feedback$comprehension$en._(_root);
+	@override late final _Traductions$tc$parcours$feedback$rythme$en rythme = _Traductions$tc$parcours$feedback$rythme$en._(_root);
+	@override late final _Traductions$tc$parcours$feedback$participation$en participation = _Traductions$tc$parcours$feedback$participation$en._(_root);
+	@override late final _Traductions$tc$parcours$feedback$technique$en technique = _Traductions$tc$parcours$feedback$technique$en._(_root);
+	@override late final _Traductions$tc$parcours$feedback$confiance$en confiance = _Traductions$tc$parcours$feedback$confiance$en._(_root);
+	@override String get nonPartie => 'Your answer did not go out.';
+	@override String get merci => 'Thank you.';
+	@override late final _Traductions$tc$parcours$feedback$tendance$en tendance = _Traductions$tc$parcours$feedback$tendance$en._(_root);
+}
+
+// Path: tc.parcours.signalement
+class _Traductions$tc$parcours$signalement$en extends Traductions$tc$parcours$signalement$fr {
+	_Traductions$tc$parcours$signalement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Report a need';
+	@override String get categorie => 'What is it about?';
+	@override late final _Traductions$tc$parcours$signalement$categorieValeur$en categorieValeur = _Traductions$tc$parcours$signalement$categorieValeur$en._(_root);
+	@override String get interne => 'Internal note';
+	@override String get interneAide => 'Read by the administration only. It is never sent automatically to the family.';
+	@override String get famille => 'Message for the family';
+	@override String get familleAide => 'Optional. The administration alone decides to pass it on, in one click.';
+	@override String contexte({required Object eleve}) => 'Student ${eleve}. The session, the class and your name are already attached.';
+	@override String get envoyer => 'Send the report';
+	@override String get envoye => 'Report passed on to the administration.';
+	@override String get interneRequis => 'Write at least what the administration needs to know.';
+	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it returns.';
+	@override String get echec => 'The report could not be passed on. Try again.';
+}
+
+// Path: tc.parcours.postCours
+class _Traductions$tc$parcours$postCours$en extends Traductions$tc$parcours$postCours$fr {
+	_Traductions$tc$parcours$postCours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'After the class';
+	@override String duree({required Object minutes}) => 'Actual length ${minutes} min';
+	@override String get exceptions => 'To confirm';
+	@override String get toutEstNominal => 'Nothing needs your attention.';
+	@override String get reprise => 'Suggested resume point';
+	@override String get repriseInconnue => 'No resume position known for this session.';
+	@override String get travail => 'Suggested work';
+	@override String get travailAucun => 'No work suggested for now.';
+	@override String get valider => 'Confirm';
+	@override String get enFile => 'Saved. It will go out as soon as the network returns.';
+	@override String get envoye => 'Class closed.';
+}
+
 // Path: adulte.recharge.formules
 class _Traductions$adulte$recharge$formules$en extends Traductions$adulte$recharge$formules$fr {
 	_Traductions$adulte$recharge$formules$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -12507,6 +13832,153 @@ class _Traductions$enseignant$journee$absence$etats$en extends Traductions$ensei
 	@override String get aucunRemplacant => 'No replacement confirmed';
 	@override String get seanceAnnulee => 'Session cancelled';
 	@override String get demandeAnnulee => 'Request cancelled';
+}
+
+// Path: tc.coran.mushaf.page15
+class _Traductions$tc$coran$mushaf$page15$en extends Traductions$tc$coran$mushaf$page15$fr {
+	_Traductions$tc$coran$mushaf$page15$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get creditMiseEnPage => 'Layout: KFGQPC, quran.ws (CC BY 4.0)';
+	@override String get aProposOuvrir => 'About this edition';
+	@override String get aProposTitre => 'About this edition';
+	@override String get aProposPolice => 'Font: KFGQPC UthmanicHafs v3.0 (King Fahd Complex)';
+	@override String get aProposLicences => 'Licences: the text and the font belong to the KFGQPC, the layout is published under CC BY 4.0 (quran.ws), the hizb quarters come from quran-meta (MIT).';
+	@override String get aProposTanzil => 'Tanzil asks that the source be clearly stated and that tanzil.net be reachable.';
+}
+
+// Path: tc.outils.dock.position
+class _Traductions$tc$outils$dock$position$en extends Traductions$tc$outils$dock$position$fr {
+	_Traductions$tc$outils$dock$position$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get bas => 'At the bottom';
+	@override String get gauche => 'On the left';
+	@override String get droite => 'On the right';
+}
+
+// Path: tc.classe.entete.titreEnseignant
+class _Traductions$tc$classe$entete$titreEnseignant$en extends Traductions$tc$classe$entete$titreEnseignant$fr {
+	_Traductions$tc$classe$entete$titreEnseignant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sayyid => 'Sayyid';
+	@override String get sayyida => 'Sayyida';
+}
+
+// Path: tc.parcours.feedback.cours
+class _Traductions$tc$parcours$feedback$cours$en extends Traductions$tc$parcours$feedback$cours$fr {
+	_Traductions$tc$parcours$feedback$cours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intitule => 'How was the class today?';
+	@override String get difficile => 'Difficult';
+	@override String get bien => 'Good';
+	@override String get tresBien => 'Very good';
+}
+
+// Path: tc.parcours.feedback.comprehension
+class _Traductions$tc$parcours$feedback$comprehension$en extends Traductions$tc$parcours$feedback$comprehension$fr {
+	_Traductions$tc$parcours$feedback$comprehension$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intitule => 'Did you understand what was worked on?';
+	@override String get intituleTu => 'Did you understand what was worked on?';
+	@override String get difficile => 'Not really';
+	@override String get bien => 'Mostly yes';
+	@override String get tresBien => 'Completely';
+}
+
+// Path: tc.parcours.feedback.rythme
+class _Traductions$tc$parcours$feedback$rythme$en extends Traductions$tc$parcours$feedback$rythme$fr {
+	_Traductions$tc$parcours$feedback$rythme$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intitule => 'The pace of the session was…';
+	@override String get difficile => 'Too slow';
+	@override String get bien => 'Just right';
+	@override String get tresBien => 'Too fast';
+}
+
+// Path: tc.parcours.feedback.participation
+class _Traductions$tc$parcours$feedback$participation$en extends Traductions$tc$parcours$feedback$participation$fr {
+	_Traductions$tc$parcours$feedback$participation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intitule => 'Were you able to take part?';
+	@override String get intituleTu => 'Were you able to take part?';
+	@override String get difficile => 'A little';
+	@override String get bien => 'Enough';
+	@override String get tresBien => 'A lot';
+}
+
+// Path: tc.parcours.feedback.technique
+class _Traductions$tc$parcours$feedback$technique$en extends Traductions$tc$parcours$feedback$technique$fr {
+	_Traductions$tc$parcours$feedback$technique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intitule => 'Were the sound and image comfortable?';
+	@override String get difficile => 'Bothersome';
+	@override String get bien => 'Fine';
+	@override String get tresBien => 'Very good';
+}
+
+// Path: tc.parcours.feedback.confiance
+class _Traductions$tc$parcours$feedback$confiance$en extends Traductions$tc$parcours$feedback$confiance$fr {
+	_Traductions$tc$parcours$feedback$confiance$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intitule => 'Do you feel ready for the next class?';
+	@override String get difficile => 'Not yet';
+	@override String get bien => 'Fairly';
+	@override String get tresBien => 'Completely';
+}
+
+// Path: tc.parcours.feedback.tendance
+class _Traductions$tc$parcours$feedback$tendance$en extends Traductions$tc$parcours$feedback$tendance$fr {
+	_Traductions$tc$parcours$feedback$tendance$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get illisible => 'The students\' feedback could not be read. Try again.';
+	@override String ligne({required Object reponse, required Object part}) => '${reponse}: ${part}%';
+	@override String get titre => 'Students\' feedback';
+	@override String get sousSeuil => 'Not enough feedback yet to show a trend.';
+	@override String get anonyme => 'Feedback is anonymous and aggregated. Alone, it is never enough for a decision.';
+}
+
+// Path: tc.parcours.signalement.categorieValeur
+class _Traductions$tc$parcours$signalement$categorieValeur$en extends Traductions$tc$parcours$signalement$categorieValeur$fr {
+	_Traductions$tc$parcours$signalement$categorieValeur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pedagogique => 'Teaching';
+	@override String get presence => 'Attendance';
+	@override String get technique => 'Technical';
+	@override String get changement => 'Change';
+	@override String get securiteEnfant => 'A child\'s safety';
+	@override String get autre => 'Other';
 }
 
 // Path: adulte.recharge.source.motifs
@@ -18095,6 +19567,540 @@ extension on TraductionsEn {
 			'galerie.composants' => 'Shared components',
 			'galerie.modeEnfant' => 'Guided interface',
 			'galerie.modeStandard' => 'Standard mode',
+			'tc.groupe.mesGroupes.titre' => 'My classes',
+			'tc.groupe.mesGroupes.aucun' => 'No class yet',
+			'tc.groupe.mesGroupes.aucunDetail' => 'The academy will place you in a class as soon as a slot suits you.',
+			'tc.groupe.commun.erreur' => 'Your classes could not be read',
+			'tc.groupe.commun.reessayer' => 'Try again',
+			'tc.groupe.carte.ouvrir' => ({required Object libelle}) => 'Open the class ${libelle}',
+			'tc.groupe.carte.capacite' => ({required Object membres, required Object seuil}) => '${membres} / ${seuil}',
+			'tc.groupe.carte.capacitePhrase' => ({required num membres, required Object seuil}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(membres, one: '${membres} student out of ${seuil} places', other: '${membres} students out of ${seuil} places', ), 
+			'tc.groupe.carte.complet' => 'Full',
+			'tc.groupe.carte.prochainCours' => 'Next class',
+			'tc.groupe.carte.aucuneSeance' => 'No session scheduled',
+			'tc.groupe.carte.aucuneSeanceDetail' => 'This class\'s schedule is not set yet.',
+			'tc.groupe.carte.duree' => ({required Object valeur}) => 'Length ${valeur}',
+			'tc.groupe.carte.dureeLibelle' => 'Length',
+			'tc.groupe.carte.rejoindre' => 'Join',
+			'tc.groupe.carte.entreeSePrepare' => 'Your entry is being prepared. Try again in a moment.',
+			'tc.groupe.carte.entreeAttendReseau' => 'You will be able to enter as soon as the network is back.',
+			'tc.groupe.enseignant.sayyid' => 'Sayyid',
+			'tc.groupe.enseignant.sayyida' => 'Sayyida',
+			'tc.groupe.enseignant.photoManquante' => 'Photo to provide',
+			'tc.groupe.enseignant.photoManquanteDetail' => 'The teacher\'s photo has not been saved yet.',
+			'tc.groupe.cours.coursEtNiveau' => ({required Object cours, required Object niveau}) => '${cours} · ${niveau}',
+			'tc.groupe.temps.dansMinutes' => ({required Object minutes}) => 'Class in ${minutes} min',
+			'tc.groupe.temps.dansHeures' => ({required Object heures, required Object minutes}) => 'Class in ${heures} h ${minutes}',
+			'tc.groupe.temps.demainA' => ({required Object heure}) => 'Class tomorrow at ${heure}',
+			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Class in ${jours} day', other: 'Class in ${jours} days', ), 
+			'tc.groupe.temps.imminent' => 'Class about to start',
+			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Room open · ${reste}',
+			'tc.groupe.temps.salleOuverteCourt' => 'Room open',
+			'tc.groupe.temps.attente' => 'You are in the room. The class has not started yet.',
+			'tc.groupe.temps.attenteDetail' => 'This waiting time does not count towards your attendance.',
+			'tc.groupe.temps.enSalle' => 'In the room',
+			'tc.groupe.temps.resteMinutes' => ({required Object minutes}) => '${minutes} min left',
+			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes} left',
+			_ => null,
+		} ?? switch (path) {
+			'tc.groupe.temps.enCours' => ({required Object reste}) => 'Live session · ${reste}',
+			'tc.groupe.temps.enDirect' => 'Live',
+			'tc.groupe.temps.prolongee' => 'Session still live',
+			'tc.groupe.temps.depassement' => 'Running over',
+			'tc.groupe.temps.terminee' => 'Class ended',
+			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
+			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
+			'tc.groupe.horloges.votreHeure' => 'Your time',
+			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Where ${nomme} is',
+			'tc.groupe.horloges.heureGroupe' => 'Class time',
+			'tc.groupe.horloges.heureMecque' => 'Makkah time',
+			'tc.groupe.horloges.apercuClasse' => ({required Object jour, required Object heure}) => 'At Makkah time, the class will take place on ${jour} at ${heure}.',
+			'tc.groupe.horloges.apercuOuEnseignant' => ({required Object ville}) => 'At the teacher\'s (${ville})',
+			'tc.groupe.horloges.apercuChez' => ({required Object ou, required Object heure}) => '${ou}: ${heure} all year.',
+			'tc.groupe.horloges.apercuChezPuis' => ({required Object ou, required Object heure, required Object apres, required Object date}) => '${ou}: ${heure}, then ${apres} from ${date}.',
+			'tc.groupe.horloges.heureEtVille' => ({required Object heure, required Object ville}) => '${heure} ${ville}',
+			'tc.groupe.horloges.mecqueEnSecond' => ({required Object heure}) => 'Makkah time: ${heure}',
+			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object deVille}) => '${heure} (${deVille} time)',
+			'tc.groupe.horloges.laMecque' => 'Makkah',
+			'tc.groupe.horloges.chezVous' => 'Where you are',
+			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Where your teacher is',
+			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} family', other: '${n} families', ), 
+			'tc.groupe.horloges.aConfirmer' => 'Time to be confirmed',
+			'tc.groupe.horloges.enCeMoment' => 'Right now',
+			'tc.groupe.dst.j30' => 'Clock change in one month',
+			'tc.groupe.dst.j7' => 'Clock change next week',
+			'tc.groupe.dst.j1' => 'Clock change tomorrow',
+			'tc.groupe.dst.detail' => ({required Object avant, required Object apres}) => 'Your class will move from ${avant} to ${apres}.',
+			'tc.groupe.session.conseilAppareil' => 'A tablet or computer is recommended for class. The phone is still supported.',
+			'tc.groupe.espace.retour' => 'My classes',
+			'tc.groupe.espace.avantProchainCours' => 'Before the next class',
+			'tc.groupe.espace.aucuneAction' => 'Nothing to prepare for now',
+			'tc.groupe.espace.bibliotheque' => 'Library',
+			'tc.groupe.espace.bibliothequeVoirTout' => 'See all',
+			'tc.groupe.espace.progression' => 'Progress',
+			'tc.groupe.espace.roster' => 'Class students',
+			'tc.groupe.espace.reprendreLeCours' => 'Resume the class',
+			'tc.groupe.espace.introuvable' => 'This class is not open to you',
+			'tc.groupe.espace.introuvableDetail' => 'It may have been closed, or it concerns another profile.',
+			'tc.groupe.emplacement.nonBranche' => 'Coming soon',
+			'tc.groupe.emplacement.nonBrancheDetail' => 'This content will be attached to this space soon.',
+			'tc.bibliotheque.titre' => 'Library',
+			'tc.bibliotheque.rechercheIndication' => 'Title, level, surah or page',
+			'tc.bibliotheque.rechercheLibelle' => 'Search for a document',
+			'tc.bibliotheque.effacerRecherche' => 'Show all',
+			'tc.bibliotheque.filtre.type' => 'Type',
+			'tc.bibliotheque.filtre.disponibilite' => 'Availability',
+			'tc.bibliotheque.sections.continuer' => 'Continue',
+			'tc.bibliotheque.sections.pourCeGroupe' => 'For this class',
+			'tc.bibliotheque.sections.groupe' => 'Documents to display',
+			'tc.bibliotheque.sections.recents' => 'Recent',
+			'tc.bibliotheque.sections.tousLesSupports' => 'All documents',
+			'tc.bibliotheque.sections.resultats' => 'Results',
+			'tc.bibliotheque.vide.message' => 'No document published yet',
+			'tc.bibliotheque.vide.invitation' => 'Your teachers will place the documents for your classes here.',
+			'tc.bibliotheque.aucunResultat.message' => 'No document matches',
+			'tc.bibliotheque.aucunResultat.invitation' => 'Try another word, or relax the filters.',
+			'tc.bibliotheque.indisponible.message' => 'The library could not be loaded',
+			'tc.bibliotheque.indisponible.invitation' => 'The request may not have reached Rewayah. Try again in a moment.',
+			'tc.bibliotheque.indisponible.action' => 'Try again',
+			'tc.bibliotheque.introuvable.message' => 'This document is not open to you',
+			'tc.bibliotheque.introuvable.invitation' => 'It may have been withdrawn, or it is reserved for another class. Your teacher can reopen it for you.',
+			'tc.bibliotheque.offline.aTelecharger' => 'To download',
+			'tc.bibliotheque.offline.enCours' => 'Downloading',
+			'tc.bibliotheque.offline.enCache' => 'Cached',
+			'tc.bibliotheque.offline.telecharge' => 'Downloaded',
+			'tc.bibliotheque.offline.indisponible' => 'Offline unavailable',
+			'tc.bibliotheque.type.audio' => 'Audio',
+			'tc.bibliotheque.type.video' => 'Video',
+			'tc.bibliotheque.type.lienExterne' => 'External link',
+			'tc.bibliotheque.type.quran' => 'Quran',
+			'tc.bibliotheque.type.texteStructure' => 'Text',
+			'tc.bibliotheque.type.pdf' => 'PDF',
+			'tc.bibliotheque.type.image' => 'Image',
+			'tc.bibliotheque.type.lecon' => 'Lesson',
+			'tc.bibliotheque.detail.titre' => 'Document',
+			'tc.bibliotheque.detail.lecture' => 'Quran recitation style',
+			'tc.bibliotheque.detail.ecole' => 'Legal school followed',
+			'tc.bibliotheque.detail.capacites' => 'What this document allows',
+			'tc.bibliotheque.detail.niveaux' => 'Levels',
+			'tc.bibliotheque.detail.sansVersion' => 'No version published: nothing to open for now.',
+			'tc.bibliotheque.detail.apercuIndisponible' => 'The preview of this format is not yet available in the app. You can save a copy.',
+			'tc.bibliotheque.detail.renduCoran' => 'The Quran opens in its dedicated reader.',
+			'tc.bibliotheque.detail.entreeDetail' => 'All your revision resources, in one place.',
+			'tc.bibliotheque.detail.entreeDetailEnseignant' => 'All the class documents, in one place.',
+			'tc.bibliotheque.detail.entreeLigne' => 'Open the library',
+			'tc.bibliotheque.action.telecharger' => 'Make available offline',
+			'tc.bibliotheque.action.liberer' => 'Free up the space',
+			'tc.bibliotheque.action.enregistrerCopie' => 'Save a copy',
+			'tc.bibliotheque.message.copieEnregistree' => 'Copy saved',
+			'tc.bibliotheque.message.copieImpossible' => 'The copy could not be prepared. Try again in a moment.',
+			'tc.bibliotheque.message.telechargementImpossible' => 'This document is not available offline yet',
+			'tc.bibliotheque.message.horsLigneNonTelecharge' => 'Available once downloaded or back online',
+			'tc.bibliotheque.message.aucunTelechargement' => 'No file to download for this version.',
+			'tc.bibliotheque.classe.titre' => 'Choose a document',
+			'tc.bibliotheque.classe.sousTitre' => 'The chosen document replaces the one displayed. The class continues.',
+			'tc.bibliotheque.rendu.sansLecteur' => 'This type of document does not have a reader in the app yet.',
+			'tc.bibliotheque.rendu.confirmerTitre' => 'This link leaves the app',
+			'tc.bibliotheque.rendu.confirmerPhrase' => 'It opens another site, outside Rewayah Academy. You can come back here afterwards.',
+			'tc.bibliotheque.rendu.confirmerOuvrir' => 'Open the link',
+			'tc.bibliotheque.rendu.confirmerRester' => 'Stay in the app',
+			'tc.bibliotheque.rendu.ouvrirLien' => 'Open the link',
+			'tc.bibliotheque.rendu.lienAutreSite' => 'This link opens on another site.',
+			'tc.bibliotheque.rendu.lienSansNavigateur' => 'This link opens from the web version of the app.',
+			'tc.bibliotheque.rendu.lienAbsent' => 'This document has no content to open yet.',
+			'tc.bibliotheque.rendu.imageInaccessible' => 'The image could not be loaded for now.',
+			'tc.bibliotheque.rendu.imageIllisible' => 'This image file cannot be displayed.',
+			'tc.bibliotheque.rendu.reessayer' => 'Try again',
+			'tc.bibliotheque.rendu.ouvrir' => 'Open',
+			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Open the Mushaf',
+			'tc.bibliotheque.rendu.lienEchec' => 'The reading link could not be obtained for now.',
+			'tc.bibliotheque.rendu.lienIndisponible' => 'Opening is not available for this document.',
+			'tc.bibliotheque.rendu.lienHorsLigne' => 'Opening will be possible when the connection returns.',
+			'tc.bibliotheque.rendu.lienBloque' => 'Your browser blocked the opening. Allow pop-ups for this site, then try again.',
+			'tc.bibliotheque.actif.indisponibleTitre' => 'Presented document not open yet',
+			'tc.bibliotheque.actif.indisponible' => 'Following the presented document will open once the server is connected.',
+			'tc.bibliotheque.actif.sansDonnees' => 'the presented document',
+			'tc.bibliotheque.actif.erreur' => 'The presented document could not be loaded. Try again.',
+			'tc.bibliotheque.actif.aucun' => 'No document presented',
+			'tc.bibliotheque.actif.aucunDetail' => 'When your teacher presents a document, it will appear here without you doing anything.',
+			'tc.bibliotheque.actif.titre' => 'Presented document',
+			'tc.bibliotheque.actif.version' => ({required Object numero}) => 'Version ${numero}',
+			'tc.bibliotheque.actif.page' => ({required Object page}) => 'Page ${page}',
+			'tc.bibliotheque.actif.ouvrirFiche' => 'Open the document sheet',
+			'tc.bibliotheque.actif.ouvrirCoran' => 'Open in the Quran reader',
+			'tc.bibliotheque.actif.retire' => ({required Object titre}) => '"${titre}" has been withdrawn',
+			'tc.bibliotheque.actif.retireDetail' => 'Your teacher has withdrawn this document from the session. It is no longer accessible.',
+			'tc.coran.modes.mushaf' => 'Mushaf page',
+			'tc.coran.modes.verset' => 'Enlarged reading',
+			'tc.coran.modes.focus' => 'Focus',
+			'tc.coran.modes.choisir' => 'Reading mode',
+			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} to ${fin}',
+			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
+			'tc.coran.mushaf.coteDroite' => 'Right-hand page',
+			'tc.coran.mushaf.coteGauche' => 'Left-hand page',
+			'tc.coran.mushaf.ouverture' => ({required Object droite, required Object gauche}) => 'Opening, pages ${droite} and ${gauche}',
+			'tc.coran.mushaf.page15.creditMiseEnPage' => 'Layout: KFGQPC, quran.ws (CC BY 4.0)',
+			'tc.coran.mushaf.page15.aProposOuvrir' => 'About this edition',
+			'tc.coran.mushaf.page15.aProposTitre' => 'About this edition',
+			'tc.coran.mushaf.page15.aProposPolice' => 'Font: KFGQPC UthmanicHafs v3.0 (King Fahd Complex)',
+			'tc.coran.mushaf.page15.aProposLicences' => 'Licences: the text and the font belong to the KFGQPC, the layout is published under CC BY 4.0 (quran.ws), the hizb quarters come from quran-meta (MIT).',
+			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil asks that the source be clearly stated and that tanzil.net be reachable.',
+			'tc.coran.fidelite.approchee' => 'Approximate layout',
+			'tc.coran.fidelite.approcheeDetail' => 'The verses on this page are exactly those of the Madinah Mushaf page. Their split across lines, however, is that of this screen: the edition\'s line breaks are not imported yet.',
+			'tc.coran.fidelite.fidele' => 'Edition layout',
+			'tc.coran.zoom.bride' => 'Zoom limited by the width: beyond this, a word would be cut.',
+			'tc.coran.zoom.valeur' => ({required Object pourcent}) => '${pourcent}%',
+			'tc.coran.zoom.renvoiLectureAgrandie' => 'To enlarge the text, switch to enlarged reading: the Mushaf page keeps its geometry.',
+			'tc.coran.zoom.maximale' => 'Maximum size reached',
+			'tc.coran.navigation.titre' => 'Go to',
+			'tc.coran.navigation.ouvrir' => 'Go to a page',
+			'tc.coran.navigation.champ' => 'Page, surah, juz or reference',
+			'tc.coran.navigation.indice' => 'For example 18, Al-Kahf, juz 15, 2:255',
+			'tc.coran.navigation.limite' => 'The search covers page numbers, references and surah names. Searching within the Quran text is not available yet.',
+			'tc.coran.navigation.aucunResultat' => 'No reference found',
+			'tc.coran.navigation.aucunResultatDetail' => 'Try a page number, a surah name, or a reference like 2:255.',
+			'tc.coran.navigation.pageNumero' => ({required Object page}) => 'Page ${page}',
+			'tc.coran.sommaire.titre' => 'Surahs',
+			'tc.coran.sommaire.detail' => ({required Object versets, required Object page}) => '${versets} verses · page ${page}',
+			'tc.coran.sommaire.allerA' => ({required Object sourate, required Object page}) => 'Go to surah ${sourate}, page ${page}',
+			'tc.coran.sommaire.indisponible' => 'The list of surahs could not be read',
+			'tc.coran.sommaire.indisponibleDetail' => 'The connection may have been cut.',
+			'tc.coran.sommaire.absent' => 'The Quran text is not installed',
+			'tc.coran.sommaire.absentDetail' => 'There is nothing to display.',
+			'tc.coran.reprise.groupe' => 'Resume the class',
+			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'The class was at page ${page}',
+			'tc.coran.focus.aucunePlage' => 'No passage highlighted',
+			'tc.coran.focus.aucunePlageDetail' => 'Focus follows the passage the teacher points to. Outside class, it centres the open page.',
+			'tc.coran.focus.quitter' => 'Exit focus',
+			'tc.outils.dock.titre' => 'Tools',
+			'tc.outils.dock.deplacer' => 'Move the tools',
+			'tc.outils.dock.position.bas' => 'At the bottom',
+			'tc.outils.dock.position.gauche' => 'On the left',
+			'tc.outils.dock.position.droite' => 'On the right',
+			'tc.outils.dock.bibliotheque' => 'Library',
+			'tc.outils.dock.focus' => 'Focus',
+			'tc.outils.dock.marquer' => 'Mark',
+			'tc.outils.dock.masquer' => 'Hide',
+			'tc.outils.dock.stylet' => 'Stylus',
+			'tc.outils.dock.pointeur' => 'Pointer',
+			'tc.outils.dock.revision' => 'Revision',
+			'tc.outils.intention.aApprendre' => 'To learn',
+			'tc.outils.intention.aRevoir' => 'To review',
+			'tc.outils.intention.aRenforcer' => 'To reinforce',
+			'tc.outils.intention.aEntretenir' => 'To maintain',
+			'tc.outils.intention.pourEvaluation' => 'For the assessment',
+			'tc.outils.trait.stylet' => 'Pen',
+			'tc.outils.trait.surligneur' => 'Highlight',
+			'tc.outils.trait.gomme' => 'Eraser',
+			'tc.outils.trait.annuler' => 'Undo',
+			'tc.outils.trait.plus' => 'More',
+			'tc.outils.trait.ardoise' => 'Annotation slate, optional: the class stays readable without it',
+			'tc.outils.trait.effacerDernier' => 'Erase my last stroke',
+			'tc.outils.portee.temporaire' => 'Just while explaining',
+			'tc.outils.portee.seance' => 'Until the end of class',
+			'tc.outils.portee.enregistree' => 'Save',
+			'tc.outils.portee.aide' => 'How long should these annotations be kept?',
+			'tc.outils.marquer.titre' => 'Mark this passage',
+			'tc.outils.marquer.aide' => 'Choose what this passage calls for.',
+			'tc.outils.marquer.retirer' => 'Remove the marker',
+			'tc.outils.revision.titre' => 'To prepare',
+			'tc.outils.revision.aide' => 'The selected passage becomes work to prepare.',
+			'tc.outils.revision.groupeEntier' => 'Whole class',
+			'tc.outils.revision.consigne' => 'Short instruction (optional)',
+			'tc.outils.revision.creer' => 'Set the work',
+			'tc.outils.revision.posee' => 'Work to prepare set',
+			'tc.outils.masquer.reveler' => 'Reveal',
+			'tc.outils.masquer.refermer' => 'Hide again',
+			'tc.outils.masquer.tout' => 'Unhide all',
+			'tc.outils.focus.quitter' => 'Exit focus',
+			'tc.outils.annotation.ancrageDegrade' => 'This passage has no text anchor: the annotation will follow the page, not the words.',
+			'tc.outils.annotation.horsPage' => 'Annotations hidden: their passage is not on screen.',
+			'tc.outils.annotation.aucuneSelection' => 'Select a passage first.',
+			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
+			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
+			'tc.classe.roster.titre' => 'Students',
+			'tc.classe.roster.compteur' => ({required Object presents, required Object attendus}) => 'Students: ${presents} present out of ${attendus} expected',
+			'tc.classe.roster.indisponible' => 'Roster unavailable',
+			'tc.classe.roster.indisponibleDetail' => 'Your students\' statuses could not be read. The class continues.',
+			'tc.classe.roster.vide' => 'No student registered',
+			'tc.classe.roster.videDetail' => 'This session has no registered student.',
+			'tc.classe.roster.ouvrirFiche' => ({required Object dePrenom}) => 'Open ${dePrenom}\'s sheet',
+			'tc.classe.roster.places' => ({required Object inscrits, required Object plafond}) => '${inscrits} / ${plafond} places',
+			'tc.classe.etat.inconnu' => 'Attendance not known yet',
+			'tc.classe.etat.attendu' => 'Expected',
+			'tc.classe.etat.enConnexion' => 'Connecting',
+			'tc.classe.etat.present' => 'Present',
+			'tc.classe.etat.enRetard' => 'Late',
+			'tc.classe.etat.deconnecte' => 'Disconnected',
+			'tc.classe.etat.enReconnexion' => 'Reconnecting',
+			'tc.classe.etat.sorti' => 'Left',
+			'tc.classe.etat.absent' => 'Absent',
+			'tc.classe.fiche.niveau' => 'Level',
+			'tc.classe.fiche.objectif' => 'Current goal',
+			'tc.classe.fiche.derniereSeance' => 'Last session',
+			'tc.classe.fiche.aReprendre' => 'To resume',
+			'tc.classe.fiche.presenceRecente' => 'Recent attendance',
+			'tc.classe.fiche.travailActuel' => 'Current work',
+			'tc.classe.fiche.page' => ({required Object page}) => 'Page ${page}',
+			'tc.classe.fiche.travailEnCours' => ({required Object nombre}) => '${nombre} item(s)',
+			'tc.classe.fiche.assiduite' => ({required Object presences, required Object total}) => '${presences} / ${total} classes',
+			'tc.classe.fiche.interfaceGuidee' => 'Guided interface',
+			'tc.classe.fiche.sansPedagogie' => 'Learning follow-up unavailable',
+			'tc.classe.fiche.sansPedagogieDetail' => 'The journey, goals and work in progress are not yet open to the teacher.',
+			'tc.classe.action.noter' => 'Note',
+			'tc.classe.action.rappel' => 'Discreet reminder',
+			'tc.classe.action.reciter' => 'Choose to recite',
+			'tc.classe.action.signaler' => 'Report a need',
+			'tc.classe.action.contexte' => 'Open the context',
+			'tc.classe.rappel.recu' => 'Your teacher is calling you',
+			'tc.classe.rappel.echec' => 'The reminder got no answer from the network. Try again in a moment.',
+			'tc.classe.rappel.echecDroit' => 'Your access to this session does not allow calling a student',
+			'tc.classe.rappel.cooldown' => ({required Object secondes}) => 'Already called. Again in ${secondes} s',
+			'tc.classe.recitation.titre' => 'Recitation',
+			'tc.classe.recitation.actif' => ({required Object prenom}) => '${prenom} is reciting',
+			'tc.classe.recitation.pastille' => 'Reciting',
+			'tc.classe.recitation.personne' => 'No one is reciting',
+			'tc.classe.recitation.suivants' => 'Next',
+			'tc.classe.recitation.arreter' => 'Stop the recitation',
+			'tc.classe.prevol.titre' => 'Before opening the class',
+			'tc.classe.prevol.microOk' => 'Microphone detected',
+			'tc.classe.prevol.microAbsent' => 'No usable microphone',
+			'tc.classe.prevol.cameraOk' => 'Camera detected',
+			'tc.classe.prevol.cameraAbsente' => 'No camera. The class is still possible.',
+			'tc.classe.prevol.permissionRefusee' => 'Microphone access denied. Allow it to open the class.',
+			'tc.classe.prevol.reessayer' => 'Check again',
+			'tc.realtime.transport.partage_indisponible' => 'Sharing the document is not available on this server. The class continues, but other devices will not follow the page.',
+			'tc.realtime.etat.restauration_impossible' => 'Cannot find the current document again. Ask the teacher to present it again.',
+			'tc.observation.o1.regardeInvisible' => 'You are watching without being seen: no microphone, no camera, no announcement to participants.',
+			'tc.observation.o1.videoIndisponible' => 'The session video could not open. Leave, then come back in a moment.',
+			'tc.observation.o1.reconnexion' => 'Reconnecting to the room.',
+			'tc.observation.entree.titre' => 'Observe the session',
+			'tc.observation.entree.tuteurIntro' => 'You can watch your child\'s class for a short while. Your microphone and camera stay off.',
+			'tc.observation.entree.adminIntro' => 'Choose your mode before entering. It does not change afterwards.',
+			'tc.observation.entree.controleurIntro' => 'You are entering invisible observation. No microphone, no camera.',
+			'tc.observation.entree.entrer' => 'Enter',
+			'tc.observation.entree.modeDiscret' => 'Observe discreetly',
+			'tc.observation.entree.modeDiscretDetail' => 'Invisible to participants. No microphone or camera, no announcement.',
+			'tc.observation.entree.modeVisible' => 'Join the class',
+			'tc.observation.entree.modeVisibleDetail' => 'Visible to everyone under the name Rewayah Administration. Microphone and camera allowed, announcement made.',
+			'tc.observation.entree.nomInstitutionnel' => 'Rewayah Administration',
+			'tc.observation.entree.visiteJournalisee' => 'Visit logged: identity, session, entry, exit and duration.',
+			'tc.observation.entree.roleSansObservation' => 'Your account does not observe sessions.',
+			'tc.observation.entree.retourClasse' => 'Back to the class',
+			'tc.observation.explication.titre' => 'A glimpse of their learning',
+			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visit of ${duree}',
+			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
+			'tc.observation.explication.regleDetail' => 'Per session and per parent, even if several of your children are in the class.',
+			'tc.observation.explication.ecoute' => 'Listen to the teacher and the students',
+			'tc.observation.explication.ecouteDetail' => 'You hear the teacher and the students who speak, including your child.',
+			'tc.observation.explication.sansMedia' => 'No microphone or camera',
+			'tc.observation.explication.sansMediaDetail' => 'Your microphone and camera stay off so as not to interrupt the class.',
+			'tc.observation.explication.revenir' => 'If another student is reciting during your first visit, you can come back later to listen to your child.',
+			'tc.observation.explication.ecourtee' => 'A visit left before the end counts as a whole visit: unused time is not carried over.',
+			'tc.observation.explication.sansIntervenir' => 'To protect concentration, you observe without intervening.',
+			'tc.observation.explication.informes' => 'Your child and their teacher are informed.',
+			'tc.observation.explication.observer' => 'Observe now',
+			'tc.observation.explication.pasMaintenant' => 'Not now',
+			'tc.observation.explication.restanteUne' => ({required Object restantes, required Object max}) => '${restantes}/${max} visit left for this session',
+			'tc.observation.explication.restantes' => ({required Object restantes, required Object max}) => '${restantes}/${max} visits left for this session',
+			'tc.observation.explication.aucuneRestante' => 'No visit left for this session',
+			'tc.observation.disponibilite.visitesEpuiseesTitre' => 'No visit left for this session',
+			'tc.observation.disponibilite.visitesEpuisees' => 'You have used your visits. You can observe the next session.',
+			'tc.observation.disponibilite.tempsEpuiseTitre' => 'Observation time used up',
+			'tc.observation.disponibilite.tempsEpuise' => 'Your observation time for this session is used. You can observe the next session.',
+			'tc.observation.disponibilite.seanceNonCommenceeTitre' => 'The session has not started yet',
+			'tc.observation.disponibilite.seanceNonCommencee' => 'Observation opens during the session.',
+			'tc.observation.disponibilite.seanceTermineeTitre' => 'The session is over',
+			'tc.observation.disponibilite.seanceTerminee' => 'You can observe the next session.',
+			'tc.observation.disponibilite.seanceNonTenueTitre' => 'This session is not taking place',
+			'tc.observation.disponibilite.seanceNonTenue' => 'It was cancelled, postponed or not held.',
+			'tc.observation.disponibilite.horsFenetreTitre' => 'The session is not open right now',
+			'tc.observation.disponibilite.horsFenetre' => 'Observation is possible only during the session.',
+			'tc.observation.disponibilite.desactiveeTitre' => 'Observation closed for this class',
+			'tc.observation.disponibilite.desactivee' => 'The administration has closed observation of this class.',
+			'tc.observation.disponibilite.lienAbsentTitre' => 'None of your children is in this session',
+			'tc.observation.disponibilite.lienAbsent' => 'Observation is reserved for the parents of the session\'s students.',
+			'tc.observation.disponibilite.enfantAbsentTitre' => 'Your child is not in the session',
+			'tc.observation.disponibilite.enfantAbsent' => 'Observation opens when your child is present.',
+			'tc.observation.disponibilite.presenceTitre' => 'Attendance being checked',
+			'tc.observation.disponibilite.presence' => 'Observation opens as soon as your child\'s attendance is confirmed.',
+			'tc.observation.disponibilite.visiteOuverteTitre' => 'A visit is already open',
+			'tc.observation.disponibilite.visiteOuverte' => 'One of your visits is still open for this session, on this device or another. It counts among your visits.',
+			'tc.observation.disponibilite.fermeeTitre' => 'Observation not open yet',
+			'tc.observation.disponibilite.fermee' => 'Observation of sessions by parents is not open yet. It will be offered here as soon as it opens.',
+			'tc.observation.disponibilite.reseauTitre' => 'Check impossible',
+			'tc.observation.disponibilite.reseau' => 'The availability of observation could not be checked. No visit has started.',
+			'tc.observation.disponibilite.capaciteTitre' => 'Observation unavailable',
+			'tc.observation.disponibilite.capacite' => 'Observation cannot open for this session. No visit has started.',
+			'tc.observation.connexion.titre' => 'Connection and check',
+			'tc.observation.connexion.phrase' => 'Your remaining visits are being checked. The visit starts as soon as entry is accepted, video connection included.',
+			'tc.observation.connexion.enCours' => 'Connection and check in progress',
+			'tc.observation.connexion.prolongee' => 'Stay on this page: the check continues.',
+			'tc.observation.connexion.impossibleTitre' => 'Entry impossible',
+			'tc.observation.connexion.impossible' => 'Entry into the session did not go through. Try again: your remaining visits will be checked again.',
+			'tc.observation.duree.secondes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} second', other: '${n} seconds', ), 
+			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} minute', other: '${n} minutes', ), 
+			'tc.observation.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
+			'tc.observation.refus.politiqueDesactivee' => 'Observation is turned off for this class.',
+			'tc.observation.refus.quotaVisites' => 'You have already used your visits for this session.',
+			'tc.observation.refus.tempsEpuise' => 'Your observation time is used up for this session.',
+			'tc.observation.refus.lienTuteur' => 'You are not linked to any student in this session.',
+			'tc.observation.refus.seanceNonActive' => 'The session is not in progress.',
+			'tc.observation.refus.horsFenetre' => 'The room is not open at this time.',
+			'tc.observation.refus.indisponible' => 'Observation could not open.',
+			'tc.observation.refus.indisponibleInvitation' => 'The request may not have reached Rewayah. Try again in a moment.',
+			'tc.observation.refus.capaciteAbsente' => 'Observation is not yet turned on for this installation.',
+			'tc.observation.visite.titre' => 'Observation in progress',
+			'tc.observation.visite.quitter' => 'Leave',
+			'tc.observation.visite.supportIndisponible' => 'The document shared by the teacher appears here.',
+			'tc.observation.visite.enseignant' => 'Teacher',
+			'tc.observation.visite.monEnfant' => 'Your child',
+			'tc.observation.visite.budgetIncertain' => 'Remaining time not confirmed by the server.',
+			'tc.observation.visite.videoIndisponible' => 'The session video could not open. Your observation time keeps running.',
+			'tc.observation.visite.sortieNonConfirmee' => 'The end of your visit could not be confirmed. It will be closed by the server.',
+			'tc.observation.visite.restantes' => 'left',
+			'tc.observation.visite.decompteLu' => ({required Object duree}) => 'Time left: ${duree}',
+			'tc.observation.visite.enDirect' => 'Live',
+			'tc.observation.visite.connexion' => 'Connection',
+			'tc.observation.visite.reconnexion' => 'Reconnecting',
+			'tc.observation.visite.videoCoupee' => 'Video unavailable',
+			'tc.observation.visite.reconnexionDetail' => 'The connection is interrupted, reconnecting. Your observation time keeps running.',
+			'tc.observation.visite.sonRecu' => 'Sound received',
+			'tc.observation.visite.sonInterrompu' => 'Sound interrupted',
+			'tc.observation.visite.agrandir' => 'Enlarge',
+			'tc.observation.visite.reduire' => 'Shrink',
+			'tc.observation.visite.cameraFermee' => 'Camera off',
+			'tc.observation.visite.pasEncoreLa' => 'Not in the room yet',
+			'tc.observation.visite.parle' => ({required Object nom}) => '${nom} is speaking',
+			'tc.observation.visite.quitterQuestion' => 'Leave the visit?',
+			'tc.observation.visite.quitterConsequence' => ({required Object duree}) => 'You have ${duree} left. A visit left before the end counts as a whole visit: unused time is not carried over.',
+			'tc.observation.visite.quitterConsequenceSansTemps' => 'A visit left before the end counts as a whole visit: unused time is not carried over.',
+			'tc.observation.visite.quitterConfirmer' => 'Leave the visit',
+			'tc.observation.fin.sortieVolontaire' => 'You left the observation.',
+			'tc.observation.fin.quotaAtteint' => 'Your observation time is used up.',
+			'tc.observation.fin.seanceTerminee' => 'The session is over.',
+			'tc.observation.fin.revocationServeur' => 'Your observation was interrupted.',
+			'tc.observation.fin.deconnexion' => 'The connection was lost.',
+			'tc.observation.resultat.premiereTerminee' => 'Your first visit is over',
+			'tc.observation.resultat.derniereTerminee' => 'Your last visit is over',
+			'tc.observation.resultat.terminee' => 'Your visit is over',
+			'tc.observation.resultat.dureeAtteinte' => 'Visit length reached',
+			'tc.observation.resultat.interrompue' => 'Observation interrupted',
+			'tc.observation.resultat.continuePour' => ({required Object prenom}) => 'The session continues for ${prenom}.',
+			'tc.observation.resultat.continueSansPrenom' => 'The session continues.',
+			'tc.observation.resultat.resteUne' => ({required Object duree}) => 'You have one visit of ${duree} left. Come back later to listen in.',
+			'tc.observation.resultat.restent' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You have ${n} visit of ${duree} left. Come back later to listen in.', other: 'You have ${n} visits of ${duree} left. Come back later to listen in.', ), 
+			'tc.observation.resultat.resteUneSansDuree' => 'You have one visit left. Come back later to listen in.',
+			'tc.observation.resultat.restentSansDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You have ${n} visit left. Come back later to listen in.', other: 'You have ${n} visits left. Come back later to listen in.', ), 
+			'tc.observation.resultat.aucune' => 'You have used your visits for this session. You can observe the next session.',
+			'tc.observation.resultat.prochaineSeance' => 'You can observe the next session.',
+			'tc.observation.resultat.verification' => 'Checking your remaining visits',
+			'tc.observation.resultat.inconnues' => 'Your remaining visits could not be checked. They will be checked again in the class.',
+			'tc.observation.resultat.voirObservations' => 'See my observations',
+			'tc.observation.annonce.tuteurObserve' => ({required Object dePrenomEnfant}) => '${dePrenomEnfant}\'s guardian is observing',
+			'tc.observation.annonce.restant' => ({required Object secondes}) => '${secondes} s',
+			'tc.observation.annonce.enfantIndicateur' => 'Your guardian is watching the class',
+			'tc.observation.annonce.tuteursObservent' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} guardian is observing', other: '${nombre} guardians are observing', ), 
+			'tc.observation.reglages.titre' => 'Observation by guardians',
+			'tc.observation.reglages.intro' => 'A guardian can watch their child\'s class for a short while, without microphone or camera. This setting decides what applies to this class.',
+			'tc.observation.reglages.heriter' => 'Inherit from the Academy',
+			'tc.observation.reglages.personnaliser' => 'Customize for this class',
+			'tc.observation.reglages.desactiver' => 'Turn off for this class',
+			'tc.observation.reglages.maxVisites' => 'Visits per session',
+			'tc.observation.reglages.tempsTotal' => 'Total time per session',
+			'tc.observation.reglages.plafondVisite' => 'Maximum length of a visit',
+			'tc.observation.reglages.diminuer' => 'Decrease',
+			'tc.observation.reglages.augmenter' => 'Increase',
+			'tc.observation.reglages.enregistrer' => 'Save',
+			'tc.observation.reglages.invalideVisites' => 'At least one visit per session.',
+			'tc.observation.reglages.invalideTemps' => 'At least thirty seconds per session.',
+			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Academy: ${valeur}',
+			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visit',
+			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit', other: '${n} visits', ), 
+			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
+			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
+			'tc.parcours.avant.titre' => 'Before the next class',
+			'tc.parcours.avant.rien' => 'Nothing to prepare for the next class.',
+			'tc.parcours.avant.rienDetail' => 'Your teacher will propose the work at the end of the next session.',
+			'tc.parcours.avant.nonBranche' => 'The work to prepare is not yet linked to this space.',
+			'tc.parcours.avant.nonBrancheDetail' => 'This does not mean there is nothing to prepare: this screen cannot read it yet.',
+			'tc.parcours.avant.reprendre' => 'Resume the class',
+			'tc.parcours.avant.reprendreDepuis' => ({required Object position}) => 'Resume the class at ${position}',
+			'tc.parcours.intention.apprendre' => 'To learn',
+			'tc.parcours.intention.revoir' => 'To review',
+			'tc.parcours.intention.renforcer' => 'To reinforce',
+			'tc.parcours.intention.entretenir' => 'To maintain',
+			'tc.parcours.intention.evaluation' => 'For the assessment',
+			'tc.parcours.plage.versets' => ({required Object sourate, required Object premier, required Object dernier}) => 'Surah ${sourate}, verses ${premier} to ${dernier}',
+			'tc.parcours.plage.versetUnique' => ({required Object sourate, required Object premier}) => 'Surah ${sourate}, verse ${premier}',
+			'tc.parcours.plage.versetsCroisee' => ({required Object sourateDebut, required Object versetDebut, required Object sourateFin, required Object versetFin}) => 'Surah ${sourateDebut}, verse ${versetDebut} to surah ${sourateFin}, verse ${versetFin}',
+			'tc.parcours.plage.pages' => ({required Object premiere, required Object derniere}) => 'Pages ${premiere} to ${derniere}',
+			'tc.parcours.plage.pageUnique' => ({required Object premiere}) => 'Page ${premiere}',
+			'tc.parcours.plage.section' => ({required Object section}) => 'Section ${section}',
+			'tc.parcours.plage.ressource' => 'The whole document',
+			'tc.parcours.feedback.cours.intitule' => 'How was the class today?',
+			'tc.parcours.feedback.cours.difficile' => 'Difficult',
+			'tc.parcours.feedback.cours.bien' => 'Good',
+			'tc.parcours.feedback.cours.tresBien' => 'Very good',
+			'tc.parcours.feedback.comprehension.intitule' => 'Did you understand what was worked on?',
+			'tc.parcours.feedback.comprehension.intituleTu' => 'Did you understand what was worked on?',
+			'tc.parcours.feedback.comprehension.difficile' => 'Not really',
+			'tc.parcours.feedback.comprehension.bien' => 'Mostly yes',
+			'tc.parcours.feedback.comprehension.tresBien' => 'Completely',
+			'tc.parcours.feedback.rythme.intitule' => 'The pace of the session was…',
+			'tc.parcours.feedback.rythme.difficile' => 'Too slow',
+			'tc.parcours.feedback.rythme.bien' => 'Just right',
+			'tc.parcours.feedback.rythme.tresBien' => 'Too fast',
+			'tc.parcours.feedback.participation.intitule' => 'Were you able to take part?',
+			'tc.parcours.feedback.participation.intituleTu' => 'Were you able to take part?',
+			'tc.parcours.feedback.participation.difficile' => 'A little',
+			'tc.parcours.feedback.participation.bien' => 'Enough',
+			'tc.parcours.feedback.participation.tresBien' => 'A lot',
+			'tc.parcours.feedback.technique.intitule' => 'Were the sound and image comfortable?',
+			'tc.parcours.feedback.technique.difficile' => 'Bothersome',
+			'tc.parcours.feedback.technique.bien' => 'Fine',
+			'tc.parcours.feedback.technique.tresBien' => 'Very good',
+			'tc.parcours.feedback.confiance.intitule' => 'Do you feel ready for the next class?',
+			'tc.parcours.feedback.confiance.difficile' => 'Not yet',
+			'tc.parcours.feedback.confiance.bien' => 'Fairly',
+			'tc.parcours.feedback.confiance.tresBien' => 'Completely',
+			'tc.parcours.feedback.nonPartie' => 'Your answer did not go out.',
+			'tc.parcours.feedback.merci' => 'Thank you.',
+			'tc.parcours.feedback.tendance.illisible' => 'The students\' feedback could not be read. Try again.',
+			'tc.parcours.feedback.tendance.ligne' => ({required Object reponse, required Object part}) => '${reponse}: ${part}%',
+			'tc.parcours.feedback.tendance.titre' => 'Students\' feedback',
+			'tc.parcours.feedback.tendance.sousSeuil' => 'Not enough feedback yet to show a trend.',
+			'tc.parcours.feedback.tendance.anonyme' => 'Feedback is anonymous and aggregated. Alone, it is never enough for a decision.',
+			'tc.parcours.signalement.titre' => 'Report a need',
+			'tc.parcours.signalement.categorie' => 'What is it about?',
+			'tc.parcours.signalement.categorieValeur.pedagogique' => 'Teaching',
+			'tc.parcours.signalement.categorieValeur.presence' => 'Attendance',
+			'tc.parcours.signalement.categorieValeur.technique' => 'Technical',
+			'tc.parcours.signalement.categorieValeur.changement' => 'Change',
+			'tc.parcours.signalement.categorieValeur.securiteEnfant' => 'A child\'s safety',
+			'tc.parcours.signalement.categorieValeur.autre' => 'Other',
+			'tc.parcours.signalement.interne' => 'Internal note',
+			'tc.parcours.signalement.interneAide' => 'Read by the administration only. It is never sent automatically to the family.',
+			'tc.parcours.signalement.famille' => 'Message for the family',
+			'tc.parcours.signalement.familleAide' => 'Optional. The administration alone decides to pass it on, in one click.',
+			'tc.parcours.signalement.contexte' => ({required Object eleve}) => 'Student ${eleve}. The session, the class and your name are already attached.',
+			'tc.parcours.signalement.envoyer' => 'Send the report',
+			'tc.parcours.signalement.envoye' => 'Report passed on to the administration.',
+			'tc.parcours.signalement.interneRequis' => 'Write at least what the administration needs to know.',
+			'tc.parcours.signalement.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it returns.',
+			'tc.parcours.signalement.echec' => 'The report could not be passed on. Try again.',
+			'tc.parcours.postCours.titre' => 'After the class',
+			'tc.parcours.postCours.duree' => ({required Object minutes}) => 'Actual length ${minutes} min',
+			'tc.parcours.postCours.exceptions' => 'To confirm',
+			'tc.parcours.postCours.toutEstNominal' => 'Nothing needs your attention.',
+			'tc.parcours.postCours.reprise' => 'Suggested resume point',
+			'tc.parcours.postCours.repriseInconnue' => 'No resume position known for this session.',
+			'tc.parcours.postCours.travail' => 'Suggested work',
+			'tc.parcours.postCours.travailAucun' => 'No work suggested for now.',
+			'tc.parcours.postCours.valider' => 'Confirm',
+			'tc.parcours.postCours.enFile' => 'Saved. It will go out as soon as the network returns.',
+			'tc.parcours.postCours.envoye' => 'Class closed.',
+			'tc.indisponible' => 'This feature is not available yet. Nothing is lost, the class continues and it will arrive soon.',
 			'adulte.nav.accueil' => 'Home',
 			'adulte.nav.maClasse' => 'My class',
 			'adulte.nav.coran' => 'Quran',
@@ -18109,6 +20115,8 @@ extension on TraductionsEn {
 			'adulte.accueil.retourFoyerTitre' => 'Back to your family\'s home',
 			'adulte.accueil.retourFoyerPhrase' => 'Find your relatives\' classes and sessions.',
 			'adulte.accueil.financesPhrase' => 'Your balance, your funded period and your monthly fee.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.accueil.sansDonnees' => 'Your next session and your latest sessions could not be loaded',
 			'adulte.accueil.echec' => 'Your next session and your latest sessions could not be loaded: your request may not have reached Rewayah. Try again in a moment.',
 			'adulte.historique.titre' => 'My past sessions',
@@ -18129,8 +20137,6 @@ extension on TraductionsEn {
 			'adulte.recharge.phrase' => 'Choose the profiles and the amounts.',
 			'adulte.recharge.verifier' => 'Check the top-up',
 			'adulte.recharge.raisonAucun' => 'Select at least one profile to continue.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.sansDonnees' => 'The beneficiaries to top up could not be loaded',
 			'adulte.recharge.indisponibleTitre' => 'Top-up not available yet',
 			'adulte.recharge.indisponiblePhrase' => 'Top-up is not yet available in the app. No payment is possible here for now.',
@@ -18623,6 +20629,8 @@ extension on TraductionsEn {
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'You can choose another slot for ${prenom}.',
 			'suiviFamille.close.suiteSansChoix' => 'Nothing else to do on your side.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choose another slot for ${prenom}',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.close.motif.retraitFamille' => 'You withdrew this request.',
 			'suiviFamille.close.motif.offreRetiree' => 'This slot is no longer offered.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'The class for this slot could not be formed.',
@@ -18643,8 +20651,6 @@ extension on TraductionsEn {
 			'suiviDemandes.etapes.envoyee' => 'Request sent',
 			'suiviDemandes.etapes.classeValidee' => 'Class approved',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Teacher assigned',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.etapes.listeAttente' => 'On the waiting list',
 			'suiviDemandes.etapes.eleveIntegre' => 'Student placed in the class',
 			'suiviDemandes.etapes.coursCommences' => 'Classes start',
@@ -19137,6 +21143,8 @@ extension on TraductionsEn {
 			'avis.admin.liens.creePhrase' => 'Copy this link now. It will no longer be shown once this box is closed. If you lose it, close this link and create a new one.',
 			'avis.admin.liens.creeAdresse' => 'Link address',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valid until ${date}.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.copier' => 'Copy the link',
 			'avis.admin.liens.copie' => 'Link copied.',
 			'avis.admin.liens.creeFermer' => 'I copied the link',
@@ -19157,8 +21165,6 @@ extension on TraductionsEn {
 			'avis.admin.liens.vide' => 'No links for now. Create one to collect reviews.',
 			'avis.admin.liens.erreur' => 'The links could not be loaded. Try again.',
 			'avis.admin.liens.sansDonnees' => 'The links could not be loaded',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.titre' => 'Emails',
 			'courriels.admin.sousTitre' => 'Write to a person and follow the emails that leave the academy.',
 			'courriels.admin.outil' => 'Emails',
@@ -19651,6 +21657,8 @@ extension on TraductionsEn {
 			'suiviAttente.cloture.titreRetiree' => 'This request is withdrawn',
 			'suiviAttente.cloture.titreClose' => 'This request is closed',
 			'suiviAttente.cloture.motif.retraitFamille' => 'You withdrew this request.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.motif.offreRetiree' => 'The academy removed this slot from its offers.',
 			'suiviAttente.cloture.motif.classeNonConstituee' => 'The class for this slot could not be formed.',
 			'suiviAttente.cloture.motif.refusDirection' => 'The management did not accept this request.',
@@ -19671,8 +21679,6 @@ extension on TraductionsEn {
 			'suiviAttente.enseignant.origine' => 'Country of origin',
 			'suiviAttente.enseignant.residence' => 'Country of residence',
 			'suiviAttente.enseignant.mot' => 'Their introduction',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.enseignant.peutSePresenter' => 'Your teacher can introduce themselves to the families of the class with a message in Messages.',
 			'suiviAttente.vide.message' => 'You have not chosen a class yet.',
 			'suiviAttente.vide.invitation' => 'Choose a class: the academy then follows you step by step.',
