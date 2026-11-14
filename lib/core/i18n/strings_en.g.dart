@@ -66,6 +66,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$eleveConnexion$en eleveConnexion = _Traductions$eleveConnexion$en._(_root);
 	@override late final _Traductions$recrutement$en recrutement = _Traductions$recrutement$en._(_root);
 	@override late final _Traductions$dossiers$en dossiers = _Traductions$dossiers$en._(_root);
+	@override late final _Traductions$admin$en admin = _Traductions$admin$en._(_root);
 	@override late final _Traductions$agent$en agent = _Traductions$agent$en._(_root);
 	@override late final _Traductions$vide$en vide = _Traductions$vide$en._(_root);
 	@override late final _Traductions$pin$en pin = _Traductions$pin$en._(_root);
@@ -940,6 +941,21 @@ class _Traductions$dossiers$en extends Traductions$dossiers$fr {
 		other: 'Registered for ${jours} days',
 	);
 	@override late final _Traductions$dossiers$accesKyc$en accesKyc = _Traductions$dossiers$accesKyc$en._(_root);
+}
+
+// Path: admin
+class _Traductions$admin$en extends Traductions$admin$fr {
+	_Traductions$admin$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$candidatures$en candidatures = _Traductions$admin$candidatures$en._(_root);
+	@override late final _Traductions$admin$importInscriptions$en importInscriptions = _Traductions$admin$importInscriptions$en._(_root);
+	@override late final _Traductions$admin$tableau$en tableau = _Traductions$admin$tableau$en._(_root);
+	@override late final _Traductions$admin$traitement$en traitement = _Traductions$admin$traitement$en._(_root);
+	@override late final _Traductions$admin$demandes$en demandes = _Traductions$admin$demandes$en._(_root);
+	@override late final _Traductions$admin$groupes$en groupes = _Traductions$admin$groupes$en._(_root);
 }
 
 // Path: agent
@@ -5101,6 +5117,341 @@ class _Traductions$dossiers$accesKyc$en extends Traductions$dossiers$accesKyc$fr
 	@override String get verificationEchec => 'Your access rights to this document could not be verified.';
 	@override String get reessayer => 'Try again';
 	@override late final _Traductions$dossiers$accesKyc$refus$en refus = _Traductions$dossiers$accesKyc$refus$en._(_root);
+}
+
+// Path: admin.candidatures
+class _Traductions$admin$candidatures$en extends Traductions$admin$candidatures$fr {
+	_Traductions$admin$candidatures$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$candidatures$liste$en liste = _Traductions$admin$candidatures$liste$en._(_root);
+	@override late final _Traductions$admin$candidatures$lot$en lot = _Traductions$admin$candidatures$lot$en._(_root);
+	@override String get titre => 'Applications';
+	@override String get sousTitre => 'Teaching applications, from invitation to the Ready-to-teach room.';
+	@override late final _Traductions$admin$candidatures$exception$en exception = _Traductions$admin$candidatures$exception$en._(_root);
+	@override String get aTraiter => 'To handle';
+	@override late final _Traductions$admin$candidatures$alertes$en alertes = _Traductions$admin$candidatures$alertes$en._(_root);
+	@override String get recherche => 'Search for a name, a reference or an email';
+	@override String get rechercheAide => 'Name, reference or email';
+	@override late final _Traductions$admin$candidatures$filtres$en filtres = _Traductions$admin$candidatures$filtres$en._(_root);
+	@override late final _Traductions$admin$candidatures$tri$en tri = _Traductions$admin$candidatures$tri$en._(_root);
+	@override String total({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} application',
+		other: '${n} applications',
+	);
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'Applications ${debut} to ${fin} of ${total}';
+	@override late final _Traductions$admin$candidatures$pagination$en pagination = _Traductions$admin$candidatures$pagination$en._(_root);
+	@override late final _Traductions$admin$candidatures$colonnes$en colonnes = _Traductions$admin$candidatures$colonnes$en._(_root);
+	@override late final _Traductions$admin$candidatures$ligne$en ligne = _Traductions$admin$candidatures$ligne$en._(_root);
+	@override late final _Traductions$admin$candidatures$selection$en selection = _Traductions$admin$candidatures$selection$en._(_root);
+	@override String get vide => 'No application yet';
+	@override String get videDetail => 'An application appears here as soon as the person signs up through the website link or with an invitation.';
+	@override String get aucunResultat => 'No application matches these filters.';
+	@override late final _Traductions$admin$candidatures$rappel$en rappel = _Traductions$admin$candidatures$rappel$en._(_root);
+	@override String get lectureEchec => 'The applications could not be read.';
+	@override String get sansDonnees => 'The applications list could not be loaded';
+	@override String get accesRefuse => 'You do not have access to the applications.';
+	@override String get genreInconnuTitre => 'Applications are not showing';
+	@override String get genreInconnu => 'Your file does not say which side you work on. Ask the management to complete it.';
+	@override late final _Traductions$admin$candidatures$etats$en etats = _Traductions$admin$candidatures$etats$en._(_root);
+	@override late final _Traductions$admin$candidatures$detail$en detail = _Traductions$admin$candidatures$detail$en._(_root);
+	@override late final _Traductions$admin$candidatures$controles$en controles = _Traductions$admin$candidatures$controles$en._(_root);
+	@override late final _Traductions$admin$candidatures$historique$en historique = _Traductions$admin$candidatures$historique$en._(_root);
+	@override late final _Traductions$admin$candidatures$gestes$en gestes = _Traductions$admin$candidatures$gestes$en._(_root);
+	@override late final _Traductions$admin$candidatures$consequences$en consequences = _Traductions$admin$candidatures$consequences$en._(_root);
+	@override late final _Traductions$admin$candidatures$feuille$en feuille = _Traductions$admin$candidatures$feuille$en._(_root);
+	@override late final _Traductions$admin$candidatures$complement$en complement = _Traductions$admin$candidatures$complement$en._(_root);
+	@override late final _Traductions$admin$candidatures$retrait$en retrait = _Traductions$admin$candidatures$retrait$en._(_root);
+	@override late final _Traductions$admin$candidatures$pause$en pause = _Traductions$admin$candidatures$pause$en._(_root);
+	@override late final _Traductions$admin$candidatures$moyens$en moyens = _Traductions$admin$candidatures$moyens$en._(_root);
+	@override late final _Traductions$admin$candidatures$responsables$en responsables = _Traductions$admin$candidatures$responsables$en._(_root);
+	@override late final _Traductions$admin$candidatures$modeles$en modeles = _Traductions$admin$candidatures$modeles$en._(_root);
+	@override late final _Traductions$admin$candidatures$erreurs$en erreurs = _Traductions$admin$candidatures$erreurs$en._(_root);
+	@override late final _Traductions$admin$candidatures$retours$en retours = _Traductions$admin$candidatures$retours$en._(_root);
+	@override late final _Traductions$admin$candidatures$creneaux$en creneaux = _Traductions$admin$candidatures$creneaux$en._(_root);
+	@override late final _Traductions$admin$candidatures$entretien$en entretien = _Traductions$admin$candidatures$entretien$en._(_root);
+}
+
+// Path: admin.importInscriptions
+class _Traductions$admin$importInscriptions$en extends Traductions$admin$importInscriptions$fr {
+	_Traductions$admin$importInscriptions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get onglet => 'Import';
+	@override String get titre => 'Import the registrations';
+	@override String get sousTitre => 'Families and teachers already registered are welcomed without re-entering everything.';
+	@override String get intro => 'Drop the two CSV files of the forms workbook, as they are. Nothing is written before your confirmation.';
+	@override late final _Traductions$admin$importInscriptions$eleves$en eleves = _Traductions$admin$importInscriptions$eleves$en._(_root);
+	@override late final _Traductions$admin$importInscriptions$enseignants$en enseignants = _Traductions$admin$importInscriptions$enseignants$en._(_root);
+	@override String get choisir => 'Choose a CSV file';
+	@override String fichierCharge({required Object nom}) => 'File loaded: ${nom}';
+	@override String get fichierIllisible => 'This file could not be read. Save it as CSV (UTF-8) or paste its content in the field.';
+	@override String get voirApercu => 'See the preview';
+	@override String get manqueFichier => 'Paste or choose at least one file to continue.';
+	@override late final _Traductions$admin$importInscriptions$apercu$en apercu = _Traductions$admin$importInscriptions$apercu$en._(_root);
+	@override late final _Traductions$admin$importInscriptions$serveur$en serveur = _Traductions$admin$importInscriptions$serveur$en._(_root);
+	@override String ligne({required Object fichier, required Object ligne, required Object motif}) => '${fichier}, row ${ligne}: ${motif}';
+	@override late final _Traductions$admin$importInscriptions$fichier$en fichier = _Traductions$admin$importInscriptions$fichier$en._(_root);
+	@override String autresLignes({required Object n}) => 'Other rows not shown: ${n}';
+	@override late final _Traductions$admin$importInscriptions$motif$en motif = _Traductions$admin$importInscriptions$motif$en._(_root);
+	@override late final _Traductions$admin$importInscriptions$mots$en mots = _Traductions$admin$importInscriptions$mots$en._(_root);
+	@override late final _Traductions$admin$importInscriptions$foyer$en foyer = _Traductions$admin$importInscriptions$foyer$en._(_root);
+	@override String get confirmer => 'Confirm the import';
+	@override late final _Traductions$admin$importInscriptions$confirmation$en confirmation = _Traductions$admin$importInscriptions$confirmation$en._(_root);
+	@override String get horsLigne => 'The import will be confirmed as soon as the network is back. Nothing is created until then.';
+	@override late final _Traductions$admin$importInscriptions$resultat$en resultat = _Traductions$admin$importInscriptions$resultat$en._(_root);
+	@override late final _Traductions$admin$importInscriptions$echec$en echec = _Traductions$admin$importInscriptions$echec$en._(_root);
+	@override late final _Traductions$admin$importInscriptions$acces$en acces = _Traductions$admin$importInscriptions$acces$en._(_root);
+	@override String get indisponibleTitre => 'Registrations import unavailable';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+	@override String get erreur => 'The import rights could not be read. Try again.';
+	@override String get sansDonnees => 'the registrations import';
+}
+
+// Path: admin.tableau
+class _Traductions$admin$tableau$en extends Traductions$admin$tableau$fr {
+	_Traductions$admin$tableau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Command centre';
+	@override String get dossiers => 'Files to validate';
+	@override String get dossiersDetail => 'Open the queue, oldest first.';
+	@override String get demandesDetail => 'Families and teachers are waiting for an answer.';
+	@override String get foyers => 'Students without a teacher';
+	@override String get rapports => 'Missing handover notebooks';
+	@override String get incidents => 'Incidents (24 h)';
+	@override String get comptes => 'Expired access';
+	@override String get incidentsEtAcces => 'Incidents and access';
+	@override String get demandes => 'Requests to decide';
+	@override String get compteursErreur => 'The counters could not be read. Try again in a moment.';
+	@override String get calme => 'Nothing awaits a decision today.';
+	@override String get apercuErreur => 'The list could not be read.';
+	@override String get outils => 'Tools';
+	@override String get outilsComptes => 'Accounts';
+	@override String get outilsComptesDetail => 'All the people registered, those awaiting a decision first. Including those who have not yet submitted a document.';
+	@override String get outilsAccesAgents => 'AI agents access';
+	@override String get outilsAccesAgentsDetail => 'Open read-only access, limited in time, on a person\'s journey.';
+	@override String get outilsGroupesDetail => 'Classes, their students and their teacher.';
+	@override String ligneDossier({required Object dePrenom}) => '${dePrenom}\'s identity file';
+	@override String ligneReaffectation({required Object prenom}) => 'Teacher change for ${prenom}';
+	@override String lignePlafond({required Object dePrenom}) => '${dePrenom}\'s student ceiling';
+	@override String ligneRegle({required Object prenom}) => 'Rule change for ${prenom}';
+	@override String get attenteAujourdhui => 'Submitted today';
+	@override String get attenteUnJour => 'Waiting for 1 day';
+	@override String get sousTitre => 'Overview of the activity and of the items to handle.';
+	@override late final _Traductions$admin$tableau$activite$en activite = _Traductions$admin$tableau$activite$en._(_root);
+	@override String get outilsTraitement => 'Processing space';
+	@override String get outilsTraitementDetail => 'Identity files and pending requests, in a single queue.';
+	@override String get outilsRegroupements => 'Classes to open';
+	@override String get outilsRegroupementsDetail => 'Family requests grouped when they look alike, and the creation of their class.';
+	@override String get outilsOffres => 'Showcase offers';
+	@override String get outilsOffresDetail => 'Create, publish and withdraw the slots families see in the showcase.';
+	@override String attenteJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'Waiting for ${jours} day',
+		other: 'Waiting for ${jours} days',
+	);
+	@override String get outilsPilotage => 'Schedule steering';
+	@override String get outilsPilotageDetail => 'By timetable: classes, how full they are, pending requests and teachers free or missing.';
+	@override String get outilsPlanning => 'Week planning';
+	@override String get outilsPlanningDetail => 'The week\'s sessions, day by day, with their class and their teacher.';
+}
+
+// Path: admin.traitement
+class _Traductions$admin$traitement$en extends Traductions$admin$traitement$fr {
+	_Traductions$admin$traitement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Processing space';
+	@override String get filtreTous => 'All';
+	@override String get filtreDossiers => 'Files';
+	@override String get filtreDemandes => 'Requests';
+	@override String get tri => 'Sort';
+	@override String get triRecent => 'Most recent';
+	@override String get triAncien => 'Oldest';
+	@override String get groupeAujourdhui => 'Today';
+	@override String get groupeHier => 'Yesterday';
+	@override String get groupeSemaine => 'This week';
+	@override String get groupePlusAncien => 'Older';
+	@override String get natureDossier => 'Identity file · Teacher';
+	@override String get natureReaffectation => 'Request · Teacher change';
+	@override String get naturePlafond => 'Request · Student ceiling';
+	@override String get natureRegle => 'Request · Rule change';
+	@override String get natureDemande => 'Request';
+	@override String get cleDepot => 'Submission date';
+	@override String get clePiece => 'ID document';
+	@override String get pieceAVerifier => 'Submitted, to verify';
+	@override String get cleConcerne => 'Person concerned';
+	@override String get cleParQui => 'Requested by';
+	@override String get colonneDepuis => 'Since';
+	@override String get vide => 'Nothing to process for now';
+	@override String get videDetail => 'Identity files and pending requests arrive here as soon as they are submitted.';
+	@override String get videFiltre => 'No item with this filter';
+	@override String get videFiltreDetail => 'Choose "All" to see the whole queue again.';
+	@override String get erreurDossiers => 'The identity files could not be read: the request may not have reached Rewayah. Try again in a moment. The requests stay displayed.';
+	@override String get erreurDemandes => 'The requests could not be read: the request may not have reached Rewayah. Try again in a moment. The files stay displayed.';
+	@override String get erreur => 'The queue could not be read: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: admin.demandes
+class _Traductions$admin$demandes$en extends Traductions$admin$demandes$fr {
+	_Traductions$admin$demandes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Requests and rules';
+	@override String get restanteUne => '1 request pending';
+	@override String restantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} request pending',
+		other: '${n} requests pending',
+	);
+	@override String get aucune => 'No request pending';
+	@override String get aucuneDetail => 'Requests from families, independent students and teachers arrive here, oldest first.';
+	@override String faitePar({required Object date, required Object role}) => 'Requested on ${date}, by ${role}';
+	@override String get roleGuardian => 'a guardian';
+	@override String get roleTeacher => 'a teacher';
+	@override String get roleStudent => 'an independent student';
+	@override String get roleAdmin => 'the administration';
+	@override String get roleController => 'a reviewer';
+	@override String get roleInconnu => 'a party to the file';
+	@override String get reclame => 'What is requested';
+	@override String reclameReaffectation({required Object dePrenom}) => 'Change ${dePrenom}\'s teacher';
+	@override String reclameRegle({required Object regle, required Object valeur}) => 'Raise ${regle} to ${valeur} min';
+	@override String reclameRegleSansValeur({required Object regle}) => 'Review ${regle}';
+	@override String get motifDemande => 'Reason given';
+	@override String get verdict => 'Decision';
+	@override String get accorder => 'Grant';
+	@override String get refuser => 'Decline';
+	@override String get motif => 'What motivates this refusal, in one sentence';
+	@override String get motifRequis => 'A refusal must say why: it is the only sentence the party will receive.';
+	@override String get effet => 'Granting applies the effect in the database: the assignment closes, or the rule is set. This screen only gives the verdict.';
+	@override String get journalisation => 'Each decision and each rule set is written in the audit log, with your name.';
+	@override String feuille({required Object dePrenom}) => '${dePrenom}\'s rules';
+	@override String get feuilleIntro => 'The platform\'s value and the one that applies, side by side. A rule can be changed here without a request existing.';
+	@override String get regleDuree => 'Session length';
+	@override String get regleMinimum => 'Minimum payable length';
+	@override String get reglePause => 'Break between two classes';
+	@override String get reglePlafond => 'Student ceiling';
+	@override String get regleInconnue => 'Rule not recognized';
+	@override String plateforme({required Object valeur}) => 'Platform: ${valeur}';
+	@override String effective({required Object valeur}) => 'Applied: ${valeur}';
+	@override String minutes({required Object valeur}) => '${valeur} min';
+	@override String surchargeDepuis({required Object date, required Object motif}) => 'Set on ${date}: ${motif}';
+	@override String get sansSurcharge => 'This student follows the platform\'s rule.';
+	@override String get changer => 'Change';
+	@override String get clore => 'Go back to the platform\'s rule';
+	@override String get historique => 'Closed overrides';
+	@override String historiqueLigne({required Object valeur, required Object debut, required Object fin}) => '${valeur}, from ${debut} to ${fin}';
+	@override String historiqueMotifs({required Object motif, required Object cloture}) => 'Set: ${motif}. Closed: ${cloture}.';
+	@override String poserTitre({required Object regle, required Object prenom}) => '${regle}, for ${prenom}';
+	@override String cloreTitre({required Object dePrenom}) => 'Close ${dePrenom}\'s override';
+	@override String get poserMotif => 'Why this change?';
+	@override String get poserMotifRequis => 'A rule without a reason cannot be re-read six months later.';
+	@override String get manqueValeur => 'The value is missing: choose one from the list, or tap "Other" and write it.';
+	@override String get poserEnvoyer => 'Set the rule';
+	@override String get cloreEnvoyer => 'Close the override';
+	@override String get erreurFile => 'The requests queue could not load. Try again in a moment.';
+	@override String reclamePlafond({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(valeur,
+		one: 'Raise the ceiling to ${valeur} student',
+		other: 'Raise the ceiling to ${valeur} students',
+	);
+	@override String eleves({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(valeur,
+		one: '${valeur} student',
+		other: '${valeur} students',
+	);
+}
+
+// Path: admin.groupes
+class _Traductions$admin$groupes$en extends Traductions$admin$groupes$fr {
+	_Traductions$admin$groupes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Classes';
+	@override String get filtreToutes => 'All classes';
+	@override String get filtreActives => 'Active';
+	@override String get filtreCloturees => 'Closed';
+	@override String get filtrePublic => 'Audience';
+	@override String get inspecteurFermer => 'Close the inspector';
+	@override String get inspecteurInfos => 'General information';
+	@override String get intro => 'Each class brings together a teacher and their students around a common slot: this is where the class is given.';
+	@override String get colonneGroupe => 'Class';
+	@override String get colonneEnseignant => 'Teacher';
+	@override String get colonnePays => 'Teacher\'s country';
+	@override String get colonneType => 'Audience';
+	@override String get colonneMembres => 'Members';
+	@override String get colonneCreneau => 'Slot';
+	@override String get colonneEtat => 'Status';
+	@override String get typeEnfant => 'Children';
+	@override String get typeAdulte => 'Adults';
+	@override String get filtreTousTypes => 'All audiences';
+	@override late final _Traductions$admin$groupes$liste$en liste = _Traductions$admin$groupes$liste$en._(_root);
+	@override String get etatActif => 'Active';
+	@override String get etatCloture => 'Closed';
+	@override String membresSur({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}';
+	@override String get aucun => 'No class created';
+	@override String get aucunDetail => 'Create a first class to give a teacher and students a common slot.';
+	@override String get aucunAvecCeFiltre => 'No class with this filter';
+	@override String get aucunAvecCeFiltreDetail => 'Change the filter to see the other classes.';
+	@override String get erreur => 'The classes could not be read. Try again in a moment.';
+	@override String get sansDonnees => 'The classes list could not be loaded';
+	@override String get creer => 'New class';
+	@override String get creerTitre => 'New class';
+	@override String get champLibelle => 'Class name';
+	@override String get manqueNom => 'The class name is missing: write it in the first field.';
+	@override String get manqueEnseignant => 'The teacher is missing: choose one from the list.';
+	@override String get champType => 'Audience';
+	@override String get champJour => 'Day';
+	@override String get champHeure => 'Hour (0-23)';
+	@override String get champSeuil => 'Maximum ceiling';
+	@override String get creerEnvoyer => 'Create the class';
+	@override String creerErreur({required Object message}) => 'The creation did not go through: ${message}';
+	@override late final _Traductions$admin$groupes$refusCreation$en refusCreation = _Traductions$admin$groupes$refusCreation$en._(_root);
+	@override late final _Traductions$admin$groupes$c1$en c1 = _Traductions$admin$groupes$c1$en._(_root);
+	@override String detailTitre({required Object libelle}) => 'Class ${libelle}';
+	@override String get detailMembres => 'Members';
+	@override String get detailAucunMembre => 'No student in this class yet.';
+	@override String get actionAjouter => 'Add a student';
+	@override String get actionRetirer => 'Remove';
+	@override String get actionModifierSeuil => 'Change the ceiling';
+	@override late final _Traductions$admin$groupes$nomClasse$en nomClasse = _Traductions$admin$groupes$nomClasse$en._(_root);
+	@override String get actionObservation => 'Observation settings';
+	@override String get actionCloturer => 'Close the class';
+	@override String get actionAjouterCreneau => 'Add a slot';
+	@override late final _Traductions$admin$groupes$reglagesClasse$en reglagesClasse = _Traductions$admin$groupes$reglagesClasse$en._(_root);
+	@override late final _Traductions$admin$groupes$creneau$en creneau = _Traductions$admin$groupes$creneau$en._(_root);
+	@override String ajouterTitre({required Object libelle}) => 'Add a student to ${libelle}';
+	@override String get manqueEleve => 'The student is missing: choose one from the list.';
+	@override String get champMotif => 'Reason';
+	@override String get motifRequis => 'A reason is required, it is written in the audit log.';
+	@override String get ajouterEnvoyer => 'Add';
+	@override String ajouterErreur({required Object message}) => 'The addition did not go through: ${message}';
+	@override String retirerTitre({required Object prenom, required Object deLibelle}) => 'Remove ${prenom} ${deLibelle}';
+	@override String get retirerEnvoyer => 'Remove';
+	@override String retirerErreur({required Object message}) => 'The removal did not go through: ${message}';
+	@override String modifierSeuilTitre({required Object deLibelle}) => 'Maximum ceiling ${deLibelle}';
+	@override String get modifierSeuilEnvoyer => 'Save';
+	@override String modifierSeuilErreur({required Object message}) => 'The change did not go through: ${message}';
+	@override late final _Traductions$admin$groupes$refusDeplacement$en refusDeplacement = _Traductions$admin$groupes$refusDeplacement$en._(_root);
+	@override String cloturerTitre({required Object libelle}) => 'Close ${libelle}';
+	@override String get cloturerDetail => 'All active members will be removed from the class. This action cannot be undone.';
+	@override String get cloturerEnvoyer => 'Close';
+	@override String cloturerErreur({required Object message}) => 'The closing did not go through: ${message}';
+	@override String get journalisation => 'Each creation, addition, removal and closing is written in the audit log.';
+	@override String observationTitre({required Object libelle}) => 'Observation: ${libelle}';
+	@override String get observationErreur => 'The setting could not be saved.';
+	@override String get observationCapaciteAbsente => 'This installation does not yet have the server update this setting requires (migration 0036). Trying again will change nothing: it must first be applied to the database.';
+	@override late final _Traductions$admin$groupes$cahiers$en cahiers = _Traductions$admin$groupes$cahiers$en._(_root);
+	@override late final _Traductions$admin$groupes$partage$en partage = _Traductions$admin$groupes$partage$en._(_root);
 }
 
 // Path: nav.eleve
@@ -11826,6 +12177,1049 @@ class _Traductions$dossiers$accesKyc$refus$en extends Traductions$dossiers$acces
 	@override String get profilNonAutorise => 'Your profile cannot view ID documents.';
 }
 
+// Path: admin.candidatures.liste
+class _Traductions$admin$candidatures$liste$en extends Traductions$admin$candidatures$liste$fr {
+	_Traductions$admin$candidatures$liste$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreGesteNonFait => 'Action not done';
+	@override String get ouvrirDossier => 'Open the file';
+	@override String ouverture({required Object nom}) => 'Reading the file: ${nom}';
+	@override String retourLigne({required Object nom, required Object retour}) => '${nom}. ${retour}';
+	@override String gestePlusPossible({required Object etat}) => 'This action is no longer possible from the status "${etat}". Nothing was done. The list is refreshed.';
+	@override String get dossierIllisible => 'The file could not be read. Nothing was done. Try again.';
+	@override late final _Traductions$admin$candidatures$liste$synthese$en synthese = _Traductions$admin$candidatures$liste$synthese$en._(_root);
+}
+
+// Path: admin.candidatures.lot
+class _Traductions$admin$candidatures$lot$en extends Traductions$admin$candidatures$lot$fr {
+	_Traductions$admin$candidatures$lot$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String selectionnees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} selected',
+		other: '${n} selected',
+	);
+	@override String dontPage({required Object n}) => 'of which ${n} on this page';
+	@override String avecDont({required Object selection, required Object dont}) => '${selection}, ${dont}';
+	@override String get autresGestes => 'The other actions are done one by one, from the row or the file.';
+	@override String get refuser => 'Decline';
+	@override String plafond({required Object n}) => 'You can keep at most ${n} applications at a time.';
+	@override String get selectionRetiree => 'The selection was cleared, because the search or the filters changed.';
+	@override late final _Traductions$admin$candidatures$lot$feuille$en feuille = _Traductions$admin$candidatures$lot$feuille$en._(_root);
+	@override late final _Traductions$admin$candidatures$lot$erreurs$en erreurs = _Traductions$admin$candidatures$lot$erreurs$en._(_root);
+}
+
+// Path: admin.candidatures.exception
+class _Traductions$admin$candidatures$exception$en extends Traductions$admin$candidatures$exception$fr {
+	_Traductions$admin$candidatures$exception$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Reading both sides';
+	@override String get message => 'You are reading the applications of women and men. Each reading is written in the log.';
+	@override String get candidature => 'This application is from the other side: its reading is written in the log.';
+}
+
+// Path: admin.candidatures.alertes
+class _Traductions$admin$candidatures$alertes$en extends Traductions$admin$candidatures$alertes$fr {
+	_Traductions$admin$candidatures$alertes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get bloquees => 'Blocked';
+	@override String get entretiensEnRetard => 'Interviews overdue';
+	@override String get informationsManquantes => 'Information missing';
+	@override String get confirmeesIndisponibles => 'Confirmed unavailable';
+	@override String get rien => 'Nothing to handle';
+}
+
+// Path: admin.candidatures.filtres
+class _Traductions$admin$candidatures$filtres$en extends Traductions$admin$candidatures$filtres$fr {
+	_Traductions$admin$candidatures$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get toutes => 'All';
+	@override String get gardees => 'Kept for follow-up';
+	@override String get invitees => 'Invited';
+	@override String get tous => 'All';
+	@override String get etat => 'Status';
+	@override String get issue => 'Outcome';
+	@override String get enCours => 'In progress';
+	@override String get pause => 'Pause';
+	@override String get sansPause => 'Not paused';
+	@override String get versement => 'Payout';
+	@override String get pays => 'Country of residence';
+	@override late final _Traductions$admin$candidatures$filtres$talents$en talents = _Traductions$admin$candidatures$filtres$talents$en._(_root);
+}
+
+// Path: admin.candidatures.tri
+class _Traductions$admin$candidatures$tri$en extends Traductions$admin$candidatures$tri$fr {
+	_Traductions$admin$candidatures$tri$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sort by';
+	@override String get activite => 'Last activity';
+	@override String get reception => 'Date received';
+}
+
+// Path: admin.candidatures.pagination
+class _Traductions$admin$candidatures$pagination$en extends Traductions$admin$candidatures$pagination$fr {
+	_Traductions$admin$candidatures$pagination$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get precedente => 'Previous page of applications';
+	@override String get suivante => 'Next page of applications';
+	@override String positionSemantique({required Object page, required Object total}) => 'Page ${page} of ${total} of the applications list';
+}
+
+// Path: admin.candidatures.colonnes
+class _Traductions$admin$candidatures$colonnes$en extends Traductions$admin$candidatures$colonnes$fr {
+	_Traductions$admin$candidatures$colonnes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nom => 'Name';
+	@override String get salle => 'Room';
+	@override String get etat => 'Status';
+	@override String get pays => 'Country of residence';
+	@override String get versement => 'Payout';
+	@override String get activite => 'Last activity';
+}
+
+// Path: admin.candidatures.ligne
+class _Traductions$admin$candidatures$ligne$en extends Traductions$admin$candidatures$ligne$fr {
+	_Traductions$admin$candidatures$ligne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String versement({required Object etat}) => 'Payout: ${etat}';
+	@override String activite({required Object date}) => 'Last activity on ${date}';
+	@override String pays({required Object pays}) => 'Residence: ${pays}';
+	@override String get courrielAObtenir => 'Email to obtain';
+	@override String get indicatifAConfirmer => 'Country code to confirm';
+	@override String reprise({required Object date}) => 'Resumption planned on ${date}';
+	@override String indisponibleJusquAu({required Object date}) => 'Unavailable until ${date}';
+}
+
+// Path: admin.candidatures.selection
+class _Traductions$admin$candidatures$selection$en extends Traductions$admin$candidatures$selection$fr {
+	_Traductions$admin$candidatures$selection$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get selectionner => 'Select';
+	@override String get quitter => 'Leave the selection';
+	@override String retenues({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} application kept',
+		other: '${n} applications kept',
+	);
+	@override String get phrase => 'Choose the action to run on these applications.';
+	@override String get agir => 'Act on the selection';
+	@override String get relacher => 'Release all';
+	@override String get horsLigne => 'Actions can be run when the connection returns.';
+}
+
+// Path: admin.candidatures.rappel
+class _Traductions$admin$candidatures$rappel$en extends Traductions$admin$candidatures$rappel$fr {
+	_Traductions$admin$candidatures$rappel$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String filtres({required Object filtres}) => 'Filters applied: ${filtres}';
+	@override String recherche({required Object texte}) => 'Search: "${texte}"';
+}
+
+// Path: admin.candidatures.etats
+class _Traductions$admin$candidatures$etats$en extends Traductions$admin$candidatures$etats$fr {
+	_Traductions$admin$candidatures$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get gardee => 'Kept for follow-up';
+	@override String get invitee => 'Invited';
+	@override String get aCompleter => 'To complete';
+	@override String get enExamen => 'Under review';
+	@override String get versementImpossible => 'Payout not possible yet';
+	@override String get entretienAPlanifier => 'Interview to schedule';
+	@override String get entretienPlanifie => 'Interview scheduled';
+	@override String get decisionEnAttente => 'Decision pending';
+	@override String get refusee => 'Declined';
+	@override String get retiree => 'Withdrawn';
+	@override String get enPause => 'Paused';
+	@override String get restreinte => 'Restricted';
+	@override String get restreintePiece => 'Restricted: document';
+	@override String get restreinteVersement => 'Restricted: payout';
+	@override String get restreinteDirection => 'Restricted: management decision';
+	@override String get indisponible => 'Unavailable';
+	@override late final _Traductions$admin$candidatures$etats$provenance$en provenance = _Traductions$admin$candidatures$etats$provenance$en._(_root);
+	@override late final _Traductions$admin$candidatures$etats$versement$en versement = _Traductions$admin$candidatures$etats$versement$en._(_root);
+}
+
+// Path: admin.candidatures.detail
+class _Traductions$admin$candidatures$detail$en extends Traductions$admin$candidatures$detail$fr {
+	_Traductions$admin$candidatures$detail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get retour => 'Back to applications';
+	@override String recue({required Object date}) => 'Received on ${date}';
+	@override late final _Traductions$admin$candidatures$detail$photo$en photo = _Traductions$admin$candidatures$detail$photo$en._(_root);
+	@override String provenance({required Object provenance}) => 'Origin: ${provenance}';
+	@override String messagePause({required Object nom}) => 'Message chosen for the pause: ${nom}';
+	@override String messageRefus({required Object nom}) => 'Message chosen for the refusal: ${nom}';
+	@override String get responsableDesigne => 'A manager is assigned';
+	@override String get aucunResponsable => 'No manager';
+	@override String get blocages => 'What blocks';
+	@override String get aucunBlocage => 'Nothing blocks for now.';
+	@override String get prochaineAction => 'Next action';
+	@override String get enAttentePersonne => 'Waiting for the person';
+	@override String get aucuneAction => 'No action is available for now.';
+	@override String get fermee => 'This application is closed. You can reopen it.';
+	@override String get autresGestes => 'Other actions';
+	@override String get reponses => 'Answers';
+	@override String reponsesVersion({required Object version}) => 'Questionnaire version: ${version}';
+	@override String get preRempli => 'From the old form';
+	@override String get aucuneReponse => 'No answer has been sent yet.';
+	@override String moyensIndiques({required Object n}) => 'Methods indicated: ${n}';
+	@override late final _Traductions$admin$candidatures$detail$cartes$en cartes = _Traductions$admin$candidatures$detail$cartes$en._(_root);
+	@override String get controles => 'Checks';
+	@override String get entretien => 'Interview';
+	@override String get affectation => 'Assignment';
+	@override String get courriels => 'Emails';
+	@override String get ouvrirDossier => 'Open in Files to validate';
+	@override String get responsable => 'Manager';
+	@override late final _Traductions$admin$candidatures$detail$contact$en contact = _Traductions$admin$candidatures$detail$contact$en._(_root);
+	@override String get historiqueVide => 'No event yet';
+	@override String get plusAnciens => 'See older events';
+	@override String get historiqueEchec => 'The history could not be read.';
+	@override String get sansDonnees => 'The application could not be loaded';
+	@override String get titreHorsPortee => 'You do not have access to this application.';
+	@override String get titreAbsente => 'This application does not exist, or no longer exists.';
+	@override String get titreLecture => 'The application could not be read.';
+	@override String get revenirALaFile => 'Go back to the applications list.';
+	@override String controleLigne({required Object nom, required Object cause}) => '${nom} (${cause})';
+	@override String get separateurControles => ', ';
+	@override String groupeJours({required Object jours, required Object heures}) => '${jours}: ${heures}';
+	@override late final _Traductions$admin$candidatures$detail$etatsPiece$en etatsPiece = _Traductions$admin$candidatures$detail$etatsPiece$en._(_root);
+	@override String get controlesVrai => 'Satisfied';
+	@override String get controlesFaux => 'Not satisfied';
+	@override late final _Traductions$admin$candidatures$detail$talents$en talents = _Traductions$admin$candidatures$detail$talents$en._(_root);
+}
+
+// Path: admin.candidatures.controles
+class _Traductions$admin$candidatures$controles$en extends Traductions$admin$candidatures$controles$fr {
+	_Traductions$admin$candidatures$controles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$candidatures$controles$noms$en noms = _Traductions$admin$candidatures$controles$noms$en._(_root);
+	@override late final _Traductions$admin$candidatures$controles$causes$en causes = _Traductions$admin$candidatures$controles$causes$en._(_root);
+}
+
+// Path: admin.candidatures.historique
+class _Traductions$admin$candidatures$historique$en extends Traductions$admin$candidatures$historique$fr {
+	_Traductions$admin$candidatures$historique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$candidatures$historique$auteur$en auteur = _Traductions$admin$candidatures$historique$auteur$en._(_root);
+	@override late final _Traductions$admin$candidatures$historique$types$en types = _Traductions$admin$candidatures$historique$types$en._(_root);
+	@override String deA({required Object avant, required Object apres}) => 'From "${avant}" to "${apres}"';
+	@override String motif({required Object motif}) => 'Reason: ${motif}';
+	@override String le({required Object date, required Object heure}) => 'On ${date} at ${heure}';
+	@override String get separateur => ' · ';
+}
+
+// Path: admin.candidatures.gestes
+class _Traductions$admin$candidatures$gestes$en extends Traductions$admin$candidatures$gestes$fr {
+	_Traductions$admin$candidatures$gestes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueillir => 'Welcome into the team';
+	@override String get admettre => 'Admit to the Verification and interview room';
+	@override String get confirmerMoyen => 'Confirm the payout method';
+	@override String get ecarterMoyen => 'Set this payout method aside';
+	@override String get demanderComplement => 'Ask for additional information';
+	@override String get cloreComplement => 'Close the request for additional information';
+	@override String get mettreEnPause => 'Pause';
+	@override String get leverPause => 'Lift the pause';
+	@override String get refuser => 'Decline the application';
+	@override String get retrait => 'Record a requested withdrawal';
+	@override String get rouvrir => 'Reopen the application';
+	@override String get responsable => 'Choose the manager';
+}
+
+// Path: admin.candidatures.consequences
+class _Traductions$admin$candidatures$consequences$en extends Traductions$admin$candidatures$consequences$fr {
+	_Traductions$admin$candidatures$consequences$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueillir => 'Their teacher account is activated and their space opens. The person teaches only once assigned to a class.';
+	@override String get admettre => 'The application moves to the Verification and interview room.';
+	@override String get confirmerMoyen => 'This method lets Rewayah pay the remuneration in the person\'s country.';
+	@override String get ecarterMoyen => 'This method is no longer kept. With no other possible method, the application waits for a method to become possible.';
+	@override String get demanderComplement => 'The application goes back to "to complete". The person will read the list of chosen items.';
+	@override String get cloreComplement => 'The requested additional information is closed. The application stays in its room.';
+	@override String get mettreEnPause => 'The application does not move forward until the pause is lifted.';
+	@override String get leverPause => 'The application resumes where it had stopped.';
+	@override String get refuser => 'The application is closed. You can reopen it.';
+	@override String get retrait => 'The application is closed at the person\'s request. You can reopen it.';
+	@override String get rouvrir => 'The application returns to its original stage, if the server\'s checks allow it.';
+	@override String get responsable => 'The manager follows this application.';
+}
+
+// Path: admin.candidatures.feuille
+class _Traductions$admin$candidatures$feuille$en extends Traductions$admin$candidatures$feuille$fr {
+	_Traductions$admin$candidatures$feuille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get motif => 'Internal reason';
+	@override String get motifSeul => 'The person will not read it.';
+	@override String get motifAide => 'The person will not read it. They will read only the message chosen.';
+	@override String get modele => 'Message for the person';
+	@override String get modeleLu => 'The person will read this template\'s message.';
+	@override String get motifManquant => 'Give the reason.';
+	@override String get modeleManquant => 'Choose the message the person will read.';
+	@override String get enCours => 'Sending to the server';
+	@override String get actualiser => 'Refresh the application';
+}
+
+// Path: admin.candidatures.complement
+class _Traductions$admin$candidatures$complement$en extends Traductions$admin$candidatures$complement$fr {
+	_Traductions$admin$candidatures$complement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get elements => 'What is missing';
+	@override String get aide => 'The person will read this list.';
+	@override String get manquant => 'Choose at least one item.';
+}
+
+// Path: admin.candidatures.retrait
+class _Traductions$admin$candidatures$retrait$en extends Traductions$admin$candidatures$retrait$fr {
+	_Traductions$admin$candidatures$retrait$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get canal => 'How the request arrived';
+	@override late final _Traductions$admin$candidatures$retrait$canaux$en canaux = _Traductions$admin$candidatures$retrait$canaux$en._(_root);
+	@override String get date => 'Day of the request';
+	@override String get canalManquant => 'Choose how the request arrived.';
+	@override String get dateManquante => 'Choose the day of the request.';
+	@override String get aide => 'Between receiving the application and today.';
+}
+
+// Path: admin.candidatures.pause
+class _Traductions$admin$candidatures$pause$en extends Traductions$admin$candidatures$pause$fr {
+	_Traductions$admin$candidatures$pause$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reprise => 'Planned resumption';
+	@override String get repriseAide => 'Optional. Without a date, the pause lasts until you lift it.';
+	@override String get effacerReprise => 'Do not set a date';
+}
+
+// Path: admin.candidatures.moyens
+class _Traductions$admin$candidatures$moyens$en extends Traductions$admin$candidatures$moyens$fr {
+	_Traductions$admin$candidatures$moyens$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Payout method';
+	@override String get manquant => 'Choose the method.';
+	@override String get virement => 'Bank transfer';
+	@override String mobile({required Object nom}) => 'Mobile money: ${nom}';
+	@override String get mobileSansNom => 'Mobile money';
+	@override String get aucunDeclare => 'The person declared no payout method.';
+}
+
+// Path: admin.candidatures.responsables
+class _Traductions$admin$candidatures$responsables$en extends Traductions$admin$candidatures$responsables$fr {
+	_Traductions$admin$candidatures$responsables$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get choisir => 'Choose the manager of this application.';
+	@override String get aucun => 'No manager';
+	@override String get lectureEchec => 'The list of managers could not be read.';
+}
+
+// Path: admin.candidatures.modeles
+class _Traductions$admin$candidatures$modeles$en extends Traductions$admin$candidatures$modeles$fr {
+	_Traductions$admin$candidatures$modeles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get refusGeneral => 'General refusal';
+	@override String get refusNiveau => 'Level not yet sufficient';
+	@override String get refusBesoins => 'No need for this profile';
+	@override String get refusSansReponse => 'No answer from the person';
+	@override String get pauseAttenteBesoin => 'Waiting for a need';
+	@override String get pauseAttenteInformations => 'Waiting for information';
+	@override String get pauseDemandeCandidat => 'At the person\'s request';
+	@override String get pauseGeneral => 'General pause';
+	@override String get autre => 'Other message';
+}
+
+// Path: admin.candidatures.erreurs
+class _Traductions$admin$candidatures$erreurs$en extends Traductions$admin$candidatures$erreurs$fr {
+	_Traductions$admin$candidatures$erreurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String controles({required Object controles}) => 'Nothing was done. Missing: ${controles}. Check these points, then try again.';
+	@override String transition({required Object etat}) => 'This action is not possible from the status "${etat}". Nothing was done. Refresh the application.';
+	@override String get conflit => 'This application changed since it was opened. Refresh it before acting.';
+	@override String get horsPortee => 'You do not have access to this application. Go back to the applications list.';
+	@override String get absente => 'This application does not exist, or no longer exists. Go back to the applications list.';
+	@override String get horsLigne => 'Actions return as soon as the network is back: try again then.';
+	@override String get motifRequis => 'Nothing was done. Give the reason.';
+	@override String get modeleRequis => 'Nothing was done. Choose the message the person will read.';
+	@override String get modeleInconnu => 'This message is no longer offered. Choose another.';
+	@override String get elementsRequis => 'Nothing was done. Choose at least one item.';
+	@override String get elementsInvalides => 'One of the chosen items is not possible in this room. Nothing was done.';
+	@override String get aucunComplement => 'No additional information request is in progress: nothing to close. Refresh the application.';
+	@override String get repriseInvalide => 'The resumption must be an upcoming day. Nothing was done. Choose another day.';
+	@override String get dateDemande => 'The day of the request can be neither upcoming nor before the application was received. Nothing was done. Choose another day.';
+	@override String get moyenNonDeclare => 'The person did not declare this method. Nothing was done. Choose another method.';
+	@override String get moyenNonConfirmable => 'This method cannot be confirmed: no confirmed line for the payout country covers it. Nothing was done. Choose another method.';
+	@override String get responsableInvalide => 'This person cannot be the manager of this application. Nothing was done. Choose another person.';
+	@override String get cleReutilisee => 'This action has already been used for another action. Close this window and start again.';
+	@override String get nonConfirme => 'This action may not have reached Rewayah. Try again: it will not be done twice.';
+	@override String get generique => 'The action did not go through. Nothing is confirmed. Try again in a moment.';
+	@override String get permission => 'You are not allowed to do this action. Report it if this seems wrong.';
+	@override String get titre => 'Action refused';
+	@override String get nonConfirmeTitre => 'Action not confirmed';
+}
+
+// Path: admin.candidatures.retours
+class _Traductions$admin$candidatures$retours$en extends Traductions$admin$candidatures$retours$fr {
+	_Traductions$admin$candidatures$retours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueillir => 'The person is welcomed into the team.';
+	@override String get admettre => 'The application is in the Verification and interview room.';
+	@override String get confirmerMoyen => 'The payout method is confirmed.';
+	@override String get ecarterMoyen => 'The payout method is set aside.';
+	@override String get demanderComplement => 'Additional information is requested.';
+	@override String get cloreComplement => 'The additional information request is closed.';
+	@override String get mettreEnPause => 'The application is paused.';
+	@override String get leverPause => 'The pause is lifted.';
+	@override String get refuser => 'The application is declined.';
+	@override String get retrait => 'The withdrawal is recorded.';
+	@override String get rouvrir => 'The application is reopened.';
+	@override String get responsable => 'The manager is recorded.';
+	@override String get rejoue => 'This action had already been done: nothing was written a second time.';
+}
+
+// Path: admin.candidatures.creneaux
+class _Traductions$admin$candidatures$creneaux$en extends Traductions$admin$candidatures$creneaux$fr {
+	_Traductions$admin$candidatures$creneaux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'Interview slots';
+	@override String get titre => 'Interview slots';
+	@override String get intro => 'The times you open here are offered to the candidates waiting for their interview, on this side and in one of the chosen languages.';
+	@override String get ouvrir => 'Open a slot';
+	@override String get ouvrirConsequence => 'The slot is offered right away to candidates on this side who speak one of these languages. The first to book it takes it.';
+	@override String get cote => 'Side';
+	@override String get coteHommes => 'Men';
+	@override String get coteFemmes => 'Women';
+	@override String get coteManquant => 'Choose a side.';
+	@override String get langues => 'Interview languages';
+	@override String get languesAide => 'The candidate sees this slot if they speak at least one of these languages.';
+	@override String get languesManquantes => 'Choose at least one language.';
+	@override String get languesEchec => 'The languages could not be read. Try again.';
+	@override String get envoyer => 'Open this slot';
+	@override String get aucun => 'No slot in the next 30 days.';
+	@override String get aucunInvitation => 'Open a slot: candidates waiting for their interview will be able to book it.';
+	@override String get libre => 'Free';
+	@override String get reserve => 'Booked';
+	@override String get retire => 'Withdrawn';
+	@override String participants({required Object n}) => 'People leading the interview: ${n}';
+	@override String fondateurs({required Object n}) => 'Founders: ${n}';
+	@override String get retirer => 'Withdraw this slot';
+	@override String get retirerConsequence => 'The slot is no longer offered to candidates. A slot already booked cannot be withdrawn here.';
+	@override String get retirerEnvoyer => 'Withdraw the slot';
+	@override String get ouvert => 'Slot opened.';
+	@override String get retireFait => 'Slot withdrawn.';
+	@override String get lectureEchec => 'The slots could not be read. Try again.';
+	@override String get sansDonnees => 'The interview slots could not be loaded';
+	@override String get refusReserve => 'This slot is already booked: it can no longer be withdrawn.';
+	@override String get refusAbsent => 'This slot no longer exists. Reload the list.';
+	@override String get refusLangues => 'One of the chosen languages is not accepted for a slot. Remove it and try again.';
+	@override String get refusHorsPortee => 'This side is not yours: you cannot open a slot there.';
+}
+
+// Path: admin.candidatures.entretien
+class _Traductions$admin$candidatures$entretien$en extends Traductions$admin$candidatures$entretien$fr {
+	_Traductions$admin$candidatures$entretien$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucun => 'No interview scheduled.';
+	@override String get planifier => 'Schedule the interview';
+	@override String quand({required Object date, required Object heure, required Object duree}) => 'On ${date} at ${heure} (this device\'s time), for ${duree} min.';
+	@override String quandProfil({required Object date, required Object heure, required Object duree}) => 'On ${date} at ${heure}, for ${duree} min.';
+	@override String fondateurs({required Object n}) => 'Founders among the participants: ${n}';
+	@override String minimum({required Object n}) => 'Minimum required: ${n}';
+	@override String get regleInactive => 'The founders rule is turned off.';
+	@override String get fondateur => 'Founder';
+	@override String retirerNom({required Object nom}) => 'Remove ${nom}';
+	@override String get ajouter => 'Add a participant';
+	@override String get comptesRendus => 'Reports';
+	@override String get aucunCompteRendu => 'No report yet.';
+	@override String get auteurInconnu => 'A participant';
+	@override String get presences => 'Entries and exits of the room';
+	@override String get aucunePresence => 'No one has entered the room yet.';
+	@override String entree({required Object nom, required Object heure}) => '${nom} entered at ${heure}';
+	@override String sortie({required Object nom, required Object heure}) => '${nom} left at ${heure}';
+	@override String get consigner => 'Record the outcome';
+	@override String dernier({required Object date, required Object issue}) => 'Last interview: ${date}. ${issue}.';
+	@override String get lectureEchec => 'The interview could not be read.';
+	@override String get rejoindre => 'Join the interview';
+	@override late final _Traductions$admin$candidatures$entretien$compteRendu$en compteRendu = _Traductions$admin$candidatures$entretien$compteRendu$en._(_root);
+	@override late final _Traductions$admin$candidatures$entretien$avis$en avis = _Traductions$admin$candidatures$entretien$avis$en._(_root);
+	@override late final _Traductions$admin$candidatures$entretien$issues$en issues = _Traductions$admin$candidatures$entretien$issues$en._(_root);
+	@override late final _Traductions$admin$candidatures$entretien$feuille$en feuille = _Traductions$admin$candidatures$entretien$feuille$en._(_root);
+	@override late final _Traductions$admin$candidatures$entretien$refus$en refus = _Traductions$admin$candidatures$entretien$refus$en._(_root);
+	@override late final _Traductions$admin$candidatures$entretien$retours$en retours = _Traductions$admin$candidatures$entretien$retours$en._(_root);
+}
+
+// Path: admin.importInscriptions.eleves
+class _Traductions$admin$importInscriptions$eleves$en extends Traductions$admin$importInscriptions$eleves$fr {
+	_Traductions$admin$importInscriptions$eleves$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Students file';
+	@override String get aide => '"Students (Responses)" tab of the workbook: paste its content or choose the file.';
+	@override String get champ => 'Content of the students file';
+}
+
+// Path: admin.importInscriptions.enseignants
+class _Traductions$admin$importInscriptions$enseignants$en extends Traductions$admin$importInscriptions$enseignants$fr {
+	_Traductions$admin$importInscriptions$enseignants$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Teachers file';
+	@override String get aide => '"Teachers (Responses)" tab of the workbook: paste its content or choose the file.';
+	@override String get champ => 'Content of the teachers file';
+}
+
+// Path: admin.importInscriptions.apercu
+class _Traductions$admin$importInscriptions$apercu$en extends Traductions$admin$importInscriptions$apercu$fr {
+	_Traductions$admin$importInscriptions$apercu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Preview before the import';
+	@override String get intro => 'Nothing is written yet. Check the refused rows and those to look at, then confirm.';
+	@override String get lignesEleves => 'Students file rows';
+	@override String get lignesEnseignants => 'Teachers file rows';
+	@override String get foyers => 'Households to create';
+	@override String get personnes => 'People to import';
+	@override String get refusees => 'Rows refused';
+	@override String get alertes => 'Rows to look at';
+	@override String get refusAide => 'These rows will not be imported. Fix the file and start again, or continue without them.';
+	@override String get alertesAide => 'These rows will be imported. Look at them before confirming.';
+	@override String get vide => 'No row can be imported. Fix the files, then start again.';
+	@override String get modifier => 'Edit the files';
+}
+
+// Path: admin.importInscriptions.serveur
+class _Traductions$admin$importInscriptions$serveur$en extends Traductions$admin$importInscriptions$serveur$fr {
+	_Traductions$admin$importInscriptions$serveur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Checked by the server';
+	@override String get foyers => 'Households counted by the server';
+	@override String get personnes => 'People counted by the server';
+	@override String get refusees => 'Rows refused by the server';
+	@override String get indisponible => 'The server could not confirm this preview. Go back and start again.';
+}
+
+// Path: admin.importInscriptions.fichier
+class _Traductions$admin$importInscriptions$fichier$en extends Traductions$admin$importInscriptions$fichier$fr {
+	_Traductions$admin$importInscriptions$fichier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get eleves => 'Students';
+	@override String get enseignants => 'Teachers';
+}
+
+// Path: admin.importInscriptions.motif
+class _Traductions$admin$importInscriptions$motif$en extends Traductions$admin$importInscriptions$motif$fr {
+	_Traductions$admin$importInscriptions$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligneVide => 'The row is empty.';
+	@override String get colonnesDifferentes => 'The number of columns does not match the header.';
+	@override String get ligneTest => 'This is a test row: it is ignored.';
+	@override String get personneSansNom => 'No person is named (surname and first name).';
+	@override String get emailManquant => 'The email address is missing.';
+	@override String get emailInvalide => 'The email address is badly written.';
+	@override String get dateInvalide => 'The date of birth must be written day/month/year, for example 25/03/2012.';
+	@override String get enteteEmailAbsent => 'The header has no Email column: this file cannot be imported.';
+	@override String get guillemetNonFerme => 'A quotation mark is never closed: fix the file.';
+	@override String doublonAdresse({required Object autre}) => 'Same address as row ${autre}: the two rows form a single household.';
+	@override String doublonPersonne({required Object autre}) => 'Same person as row ${autre}: they will be imported only once.';
+	@override String get dateFuture => 'The date of birth is in the future.';
+	@override String get ageTropJeune => 'This person is younger than the minimum age for classes.';
+	@override String get adulteTropJeune => 'This person, named as an adult, is a minor.';
+	@override String get foyerSansAdulte => 'No adult is named for this household of minors.';
+	@override String get serveur => 'The server refuses this row.';
+}
+
+// Path: admin.importInscriptions.mots
+class _Traductions$admin$importInscriptions$mots$en extends Traductions$admin$importInscriptions$mots$fr {
+	_Traductions$admin$importInscriptions$mots$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Welcome messages';
+	@override String get intro => 'Each household receives a welcome message filled in with the known first names. You can attach your own message, for all households or for one.';
+	@override String get lotChamp => 'Message common to all households (optional)';
+	@override String get lotAide => 'If filled in, it replaces the automatic message of each household that has no message of its own.';
+	@override String get lotPatience => 'All the families were patient';
+	@override String get lotPatienceAide => 'They receive the patience message, filled in with their first names.';
+}
+
+// Path: admin.importInscriptions.foyer
+class _Traductions$admin$importInscriptions$foyer$en extends Traductions$admin$importInscriptions$foyer$fr {
+	_Traductions$admin$importInscriptions$foyer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String adresse({required Object adresse}) => 'Address: ${adresse}';
+	@override String eleves({required Object eleves}) => 'Students: ${eleves}';
+	@override String get patiente => 'Waited patiently';
+	@override String retoucher({required Object dePrenom}) => 'Edit ${dePrenom}\'s message';
+	@override String champAccueil({required Object dePrenom}) => '${dePrenom}\'s welcome message';
+	@override String champPatience({required Object dePrenom}) => '${dePrenom}\'s patience message';
+	@override String get motAide => 'Leave empty to keep the automatic message.';
+	@override String get fermer => 'Close';
+	@override String nonAffiches({required Object n}) => 'Households not shown, with the common settings: ${n}';
+}
+
+// Path: admin.importInscriptions.confirmation
+class _Traductions$admin$importInscriptions$confirmation$en extends Traductions$admin$importInscriptions$confirmation$fr {
+	_Traductions$admin$importInscriptions$confirmation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Import these registrations?';
+	@override String get consequence => 'Households and people are created in the app. Replaying the import creates no duplicate. Refused rows are not imported.';
+}
+
+// Path: admin.importInscriptions.resultat
+class _Traductions$admin$importInscriptions$resultat$en extends Traductions$admin$importInscriptions$resultat$fr {
+	_Traductions$admin$importInscriptions$resultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Import finished';
+	@override String get personnesCreees => 'People created';
+	@override String get personnesPresentes => 'People already present';
+	@override String get foyersCrees => 'Households created';
+	@override String get foyersVus => 'Households processed';
+	@override String get refusees => 'Rows refused';
+	@override String get invitations => 'Invitations to send';
+	@override String get invitationsAide => 'Each new household awaits your invitation. At their first sign-in, the family proves their email address, then reads their welcome message.';
+	@override String get rienDeNouveau => 'Everything was already imported: nothing was added.';
+	@override String get refusAide => 'These rows were not imported. Fix the file, then replay the import: people already present are not recreated.';
+	@override String get recommencer => 'Import other files';
+}
+
+// Path: admin.importInscriptions.echec
+class _Traductions$admin$importInscriptions$echec$en extends Traductions$admin$importInscriptions$echec$fr {
+	_Traductions$admin$importInscriptions$echec$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get horsLigne => 'The import could not be confirmed: run the confirmation again as soon as the network is back. Nothing will be created twice.';
+	@override String get refuse => 'Nothing was imported: this import requires two-step verification. Turn it on in Account > Security, then try again.';
+	@override String get invalide => 'The server cannot read these files. Check the header and the quotation marks, then try again.';
+	@override String get serveur => 'The import could not be confirmed. Try again: nothing will be created twice.';
+	@override String get apercu => 'The server\'s dry run did not go through. Try again in a moment.';
+}
+
+// Path: admin.importInscriptions.acces
+class _Traductions$admin$importInscriptions$acces$en extends Traductions$admin$importInscriptions$acces$fr {
+	_Traductions$admin$importInscriptions$acces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get doubleTitre => 'Two-step verification required';
+	@override String get doublePhrase => 'Sign in with your second factor, then come back here to import the registrations.';
+}
+
+// Path: admin.tableau.activite
+class _Traductions$admin$tableau$activite$en extends Traductions$admin$tableau$activite$fr {
+	_Traductions$admin$tableau$activite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Recent activity';
+	@override String get voirTout => 'See the whole log';
+	@override String get vide => 'No recent activity.';
+	@override String get erreur => 'The recent activity could not be read: the request may not have reached Rewayah. Try again in a moment; the counters stay accurate.';
+	@override String ligne({required Object qui, required Object quand}) => '${qui} · ${quand}';
+}
+
+// Path: admin.groupes.liste
+class _Traductions$admin$groupes$liste$en extends Traductions$admin$groupes$liste$fr {
+	_Traductions$admin$groupes$liste$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get rechercheLibelle => 'Search for a class';
+	@override String get rechercheAide => 'Name, code or teacher';
+	@override String get filtreAttente => 'Waiting for a teacher';
+	@override String get filtreOuvertes => 'Open';
+	@override String get filtreJour => 'Day';
+	@override String get filtreTousJours => 'All days';
+	@override String get filtreHeure => 'Time';
+	@override String get filtreToutesHeures => 'All times';
+	@override String get filtreFuseau => 'Time zone';
+	@override String get filtreTousFuseaux => 'All time zones';
+	@override String get filtreGenre => 'Gender';
+	@override String get filtreTousGenres => 'All genders';
+	@override String get genreMasculin => 'Boys or men';
+	@override String get genreFeminin => 'Girls or women';
+	@override String get filtreEnseignant => 'Teacher';
+	@override String get filtreTousEnseignants => 'All teachers';
+	@override String get sansEnseignant => 'No teacher';
+	@override String get etatAttente => 'Waiting for a teacher';
+	@override String positionSemantique({required Object page, required Object total}) => 'Page ${page} of ${total} of the classes list';
+	@override String get precedente => 'Previous page of classes';
+	@override String get suivante => 'Next page of classes';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'Classes ${debut} to ${fin} of ${total}';
+	@override String get filtreRemplissage => 'Fill level';
+	@override String get filtreTousRemplissages => 'All fill levels';
+	@override String get remplissagePleines => 'Full classes';
+	@override String get remplissagePlaces => 'Classes with places';
+}
+
+// Path: admin.groupes.refusCreation
+class _Traductions$admin$groupes$refusCreation$en extends Traductions$admin$groupes$refusCreation$fr {
+	_Traductions$admin$groupes$refusCreation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get reservee => 'The class is not created: your account is not allowed to create a class.';
+	@override String get compteEnseignant => 'The class is not created: this person\'s account no longer exists or is not active. Choose another person from the list.';
+	@override String get enseignantNonEligible => 'The class is not created: this person cannot receive a class yet (ID document not validated, access ended, incomplete teacher profile or gender not filled in). Choose another person from the list.';
+	@override String get genreIncompatible => 'The class is not created: this person\'s gender does not match the class\'s audience. Choose another person from the list.';
+	@override String get plafond => 'The class is not created: it would exceed this person\'s weekly hours ceiling. Choose another person from the list.';
+	@override String get chevauchementClasse => 'The class is not created: this person already has a class or a student at the same time. Change the slot or choose another person from the list.';
+	@override String get chevauchementSeance => 'The class is not created: this person already has a session planned at the same time. Change the slot or choose another person from the list.';
+	@override String plafondClasses({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'The class is not created: this teacher already holds ${n} active class, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.',
+		other: 'The class is not created: this teacher already holds ${n} active classes, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.',
+	);
+	@override String get plafondClassesSansNombre => 'The class is not created: this teacher already holds the maximum number of active classes. Close one of their classes, or raise the maximum in the Rules.';
+	@override String get creneaux => 'The class is not created: a slot is incomplete or duplicated. Check the week\'s slots, then press again.';
+	@override String get releverMaximum => 'Raise the maximum in the Rules';
+	@override String get inconnu => 'The class is not created: the server refused these choices. Check the teacher and the slot, then press again.';
+}
+
+// Path: admin.groupes.c1
+class _Traductions$admin$groupes$c1$en extends Traductions$admin$groupes$c1$fr {
+	_Traductions$admin$groupes$c1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get autresCreneauxContexte => 'A class usually meets three times a week, on fixed days. Add one line for each other class day; no date to enter.';
+	@override String prisNommee({required Object nom, required Object classe, required Object quand}) => '${nom} already teaches the class "${classe}" on ${quand}: change the slot or choose another person from the list.';
+	@override String classeNommee({required Object classe, required Object quand}) => 'The class is not created: this person already teaches the class "${classe}" on ${quand}. Change the slot or choose another person from the list.';
+	@override String seanceNommee({required Object classe, required Object quand}) => 'The class is not created: this person already has a session of the class "${classe}" on ${quand}. Change the slot or choose another person from the list.';
+	@override String seanceDatee({required Object quand}) => 'The class is not created: this person already has a session planned on ${quand}. Change the slot or choose another person from the list.';
+	@override String get creneauxPropres => 'The class is not created: two of its slots overlap, the first runs into the next. Space these slots out or shorten the length, then press again.';
+	@override String quand({required Object jour, required Object heure, required Object deVille}) => '${jour} at ${heure}, ${deVille} time';
+	@override String quandMecque({required Object jour, required Object heure}) => '${jour} at ${heure}, Makkah time';
+	@override String quandSansVille({required Object jour, required Object heure}) => '${jour} at ${heure}';
+	@override String jourDate({required Object jour, required Object mois, required Object numero}) => '${jour} ${mois} ${numero}';
+	@override String heurePleine({required Object h}) => '${h}:00';
+	@override String heureMinutes({required Object h, required Object mm}) => '${h}:${mm}';
+	@override String fuseauEnseignant({required Object deVille}) => 'Times in ${deVille} time, the teacher\'s time zone.';
+	@override String fuseauDefaut({required Object deVille}) => 'Times in ${deVille} time, the time zone kept by default.';
+	@override String get fuseauAcademie => 'Times in Makkah time.';
+	@override String fuseauNonTransmis({required Object deVille}) => 'Times in ${deVille} time, the time zone the server keeps for now. The teacher\'s time zone will be taken into account as soon as the server accepts it.';
+	@override String get abandonQuestion => 'Abandon the new class?';
+	@override String get abandonConsequence => 'The choices made in this form (audience, teacher, slots, name) will be lost.';
+	@override String get abandonConfirmer => 'Abandon the new class';
+	@override String get abandonContinuer => 'Continue editing';
+	@override String get eleveDejaEnClasse => 'this student is already in an active class. First remove them from that class, or transfer them, then press again.';
+	@override String get eleveInvalide => 'this student\'s account no longer exists or is not active. Choose another student from the list.';
+	@override String get eleveNonMembre => 'this student is no longer in this class. Reload the list to see its members.';
+	@override String get classeDejaClose => 'this class is already closed. Reload the classes list.';
+	@override String get motifManquant => 'the reason is missing. Choose one, then press again.';
+	@override String get reservee => 'your account is not allowed to do this action. Ask the management for it.';
+	@override String get refusInconnu => 'the server refused this action without giving the reason. Check your choices, then press again.';
+	@override String get connexion => 'the request may not have reached Rewayah. Press again in a moment.';
+}
+
+// Path: admin.groupes.nomClasse
+class _Traductions$admin$groupes$nomClasse$en extends Traductions$admin$groupes$nomClasse$fr {
+	_Traductions$admin$groupes$nomClasse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get action => 'Change the name';
+	@override String titre({required Object nom}) => 'Change the name of the class ${nom}';
+	@override String get champ => 'Class name';
+	@override String get aide => 'This name is shown to families, students and the class teacher.';
+	@override String get manque => 'The class name is missing: write it in the field.';
+	@override String erreur({required Object message}) => 'The name was not changed: ${message} Try again in a moment.';
+	@override String get erreurHoraire => 'The name was not changed: the classes list was no longer up to date. Close this sheet, then start again.';
+	@override String get dejaPris => 'Another class already has this name: choose another.';
+	@override String get enregistrer => 'Save';
+	@override String get horsLigne => 'The name can be saved when the connection has returned. Your entry stays displayed.';
+}
+
+// Path: admin.groupes.reglagesClasse
+class _Traductions$admin$groupes$reglagesClasse$en extends Traductions$admin$groupes$reglagesClasse$fr {
+	_Traductions$admin$groupes$reglagesClasse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get action => 'Slots and gender';
+	@override String titre({required Object deLibelle}) => 'Slots and gender ${deLibelle}';
+	@override String get creneauxTitre => 'Slots of the week';
+	@override String get creneauxContexte => 'Each slot gives one session a week, in the class\'s time zone. No date to enter.';
+	@override String get modifierCreneau => 'Edit this slot';
+	@override String get retirerCreneau => 'Remove this slot';
+	@override String get ajouterCreneau => 'Add a slot';
+	@override String get genreTitre => 'Class gender';
+	@override String get genreNonRegle => 'Gender not set';
+	@override String get genreNonRegleDetail => 'Automatic grouping adds no student to this class until its gender is chosen. Students already registered do not change.';
+	@override String get modifierGenre => 'Change the gender';
+	@override String get genreContexte => 'A class is not mixed, unless the management sets otherwise when teachers of one gender are missing. Students already registered do not change.';
+	@override String get consequence => 'The upcoming sessions of this slot are cancelled, never deleted; families and the teacher are notified. Past sessions do not change.';
+	@override String get motif => 'Reason';
+	@override String get motifAide => 'It is kept with the cancelled sessions and in the log.';
+	@override String get envoyerModifier => 'Save the slot';
+	@override String get envoyerRetirer => 'Remove the slot';
+	@override String get envoyerGenre => 'Save the gender';
+	@override String get retour => 'Back to the slots';
+	@override String get manqueMotif => 'Write the reason: it is kept with the cancelled sessions.';
+	@override String get manqueGenre => 'Choose the class\'s gender.';
+	@override String get refusDernier => 'A class keeps at least one slot: add another before removing this one.';
+	@override String get refusExistant => 'The class already has this slot: choose another day or another time.';
+	@override String get refusIntrouvable => 'This slot has already changed: go back to the slots to see the updated list.';
+	@override String get refusConversion => 'This timetable change is not yet available: try again in a few minutes.';
+	@override String get refusRecharger => 'Reload the app to change a timetable.';
+	@override String get refusClasseFermee => 'This class is closed: its slots no longer change.';
+	@override String get erreur => 'The change is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get lectureErreur => 'This class\'s slots cannot be read for now.';
+	@override String get horsLigne => 'The change can go out when the connection has returned. Your choices stay displayed.';
+	@override String get faitGenre => 'The class\'s gender is saved.';
+	@override String faitModifie({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'Slot moved: no upcoming session created for now.',
+		one: 'Slot moved: ${n} upcoming session created.',
+		other: 'Slot moved: ${n} upcoming sessions created.',
+	);
+	@override String faitRetire({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'Slot removed: no upcoming session to cancel.',
+		one: 'Slot removed: ${n} upcoming session cancelled.',
+		other: 'Slot removed: ${n} upcoming sessions cancelled.',
+	);
+	@override String get dureeContexte => 'Changing only the length cancels no session: the upcoming sessions of this slot take it.';
+	@override String faitDuree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'Length saved: no upcoming session to change for now.',
+		one: 'Length saved: ${n} upcoming session takes it.',
+		other: 'Length saved: ${n} upcoming sessions take it.',
+	);
+}
+
+// Path: admin.groupes.creneau
+class _Traductions$admin$groupes$creneau$en extends Traductions$admin$groupes$creneau$fr {
+	_Traductions$admin$groupes$creneau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object deLibelle}) => 'New slot ${deLibelle}';
+	@override String get contexte => 'One more day and time, every week, for the same class. The sessions of the next four weeks are created right away.';
+	@override String fuseauSaisie({required Object deVille}) => '${deVille} time';
+	@override String get envoyer => 'Add this slot';
+	@override String get dejaLa => 'This class already has this slot: nothing changed. Choose another day or another time.';
+	@override String get erreur => 'The slot is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get horsLigne => 'The slot can be added when the connection has returned. Your choices stay displayed.';
+	@override String get journalisation => 'Each slot added is written in the audit log.';
+}
+
+// Path: admin.groupes.refusDeplacement
+class _Traductions$admin$groupes$refusDeplacement$en extends Traductions$admin$groupes$refusDeplacement$fr {
+	_Traductions$admin$groupes$refusDeplacement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enseignantIndisponible => 'The timetable is not changed: the teacher\'s account, ID document, course language or gender filled in no longer allow this class. Check their file, then press again.';
+	@override String get genreIncompatible => 'The timetable is not changed: the teacher\'s gender does not match the class\'s audience.';
+	@override String get plafond => 'The timetable is not changed: the teacher would exceed their weekly hours ceiling.';
+	@override String get nonDisponible => 'The timetable is not changed: the teacher has not declared all the hours of this class, from its start to its end. Choose another timetable.';
+	@override String get chevauchementClasse => 'The timetable is not changed: the teacher already has a class or a student at this time. Choose another timetable.';
+	@override String get chevauchementSeance => 'The timetable is not changed: a session is already planned at this time, for the teacher (in this class at its old timetable or in another class). Choose another timetable.';
+	@override String plafondClasses({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'The timetable is not changed: the teacher already holds ${n} active class, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.',
+		other: 'The timetable is not changed: the teacher already holds ${n} active classes, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.',
+	);
+	@override String get plafondClassesSansNombre => 'The timetable is not changed: the teacher already holds the maximum number of active classes. Close one of their classes, or raise the maximum in the Rules.';
+	@override String get inconnu => 'The timetable is not changed: the server refused this choice. Check the teacher and the timetable, then press again.';
+	@override String get seuil => 'The ceiling is not changed: this class\'s timetable shown here is no longer valid for its teacher. Refresh the list, then start again.';
+}
+
+// Path: admin.groupes.cahiers
+class _Traductions$admin$groupes$cahiers$en extends Traductions$admin$groupes$cahiers$fr {
+	_Traductions$admin$groupes$cahiers$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'See the class handover notebooks';
+	@override String get titre => 'Class handover notebooks';
+	@override String get aide => 'Read-only. Each opening of a notebook is written in the audit log, with your name.';
+	@override String get filtre => 'Status';
+	@override String get filtreTous => 'All statuses';
+	@override String get vide => 'No notebook matches for this class.';
+	@override String get plus => 'Show more notebooks';
+	@override String titreCahier({required Object dePrenom}) => '${dePrenom}\'s session notebook';
+	@override String get lectureSeule => 'Read-only';
+	@override String get evaluation => 'Teacher\'s assessment of this student';
+	@override String get aucuneEvaluation => 'No assessment has been recorded for this student.';
+	@override String get detailsInternes => 'Internal details';
+	@override String get interne => 'Internal, never shown to the family';
+	@override String get aucunInterne => 'No internal detail has been recorded.';
+	@override String get apercu => 'See the family preview';
+	@override String get nonValide => 'The notebook is not validated yet.';
+	@override String corrigeLe({required Object date}) => 'Corrected on ${date}';
+	@override String get enseignant => 'Teacher';
+	@override String seanceDu({required Object date}) => 'Session of ${date}';
+	@override String get rubriqueTravail => 'Work to prepare';
+	@override String get rubriqueObjectif => 'Personal goal';
+	@override String get rubriqueSuite => 'Decided next step';
+	@override String get rubriqueMotif => 'Reason for the exception';
+}
+
+// Path: admin.groupes.partage
+class _Traductions$admin$groupes$partage$en extends Traductions$admin$groupes$partage$fr {
+	_Traductions$admin$groupes$partage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sharing of teaching reports';
+	@override String get interrupteur => 'Share automatically with families';
+	@override String get aide => 'Families see the shareable observations once the notebook is validated. Internal notes stay private.';
+	@override String get priorite => 'Student exception → class → Default setting';
+	@override String get gererExceptions => 'Manage individual exceptions';
+	@override String get indisponible => 'The sharing setting is not available yet.';
+	@override String get refuse => 'You are not allowed to change this setting.';
+	@override String get illisible => 'The sharing setting cannot be read for now.';
+	@override String get horsLigne => 'A connection is needed to read or change sharing.';
+	@override String get enregistrement => 'Saving';
+	@override String get confirme => 'The sharing setting is saved.';
+	@override String get conflit => 'Another member of the management has just changed this setting. The up-to-date value is shown: check it, then start again if needed.';
+	@override String get echec => 'The change is not confirmed, the previous value is kept. Try again in a moment.';
+	@override String get classeVide => 'This class has no student yet.';
+	@override String modifiePar({required Object date, required Object auteur}) => 'Last change: ${date}, by ${auteur}';
+	@override String modifieLe({required Object date}) => 'Last change: ${date}';
+	@override String get etatActif => 'Turned on for the class';
+	@override String get etatInactif => 'Turned off for the class';
+	@override String get confirmerActiver => 'Turn on automatic sharing for this class?';
+	@override String get consequenceActiver => 'Reports already shared become readable again for families. Those held back during the deactivation are not published all at once.';
+	@override String get confirmerDesactiver => 'Turn off automatic sharing for this class?';
+	@override String get consequenceDesactiver => 'Families no longer see, right away, the reports shared automatically. Notebooks, validated sessions and pay do not change.';
+	@override String get actionActiver => 'Turn on sharing';
+	@override String get actionDesactiver => 'Turn off sharing';
+	@override String get enregistrer => 'Save';
+	@override String get exceptionsTitre => 'Individual exceptions';
+	@override String get exceptionsAide => 'An exception concerns only the chosen student. It never passes on another student\'s data.';
+	@override String get rechercheEleve => 'Search for a student';
+	@override String get colonneEleve => 'Student';
+	@override String get colonneRegle => 'Rule applied';
+	@override String get colonneVisibilite => 'Visible to the family';
+	@override String get colonneModification => 'Last change';
+	@override String get sourceClasse => 'Class rule';
+	@override String get sourceException => 'Individual exception';
+	@override String get sourceDefaut => 'Default setting';
+	@override String get visible => 'Visible';
+	@override String get nonVisible => 'Not visible';
+	@override String get eleveRetire => 'Removed from the class';
+	@override String get plusEleves => 'Show more students';
+	@override String modifierEleve({required Object dePrenom}) => 'Edit ${dePrenom}\'s rule';
+	@override String get regleClasse => 'Use the class rule';
+	@override String get regleClasseAide => 'Choose this when the student has no particular need: their family follows the class setting.';
+	@override String get regleToujours => 'Always share automatically';
+	@override String get regleToujoursAide => 'Choose this when their family must always see the reports, even if the class does not share.';
+	@override String get regleJamais => 'Do not share automatically';
+}
+
 // Path: compte.page.sections
 class _Traductions$compte$page$sections$en extends Traductions$compte$page$sections$fr {
 	_Traductions$compte$page$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -17857,6 +19251,404 @@ class _Traductions$recrutement$talents$disponibilite$pas_maintenant$en extends T
 	@override String get description => 'You just want the academy to know your talents.';
 }
 
+// Path: admin.candidatures.liste.synthese
+class _Traductions$admin$candidatures$liste$synthese$en extends Traductions$admin$candidatures$liste$synthese$fr {
+	_Traductions$admin$candidatures$liste$synthese$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String informationsManquantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} piece of information missing',
+		other: '${n} pieces of information missing',
+	);
+	@override String confirmeesIndisponibles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} confirmed unavailable',
+		other: '${n} confirmed unavailable',
+	);
+}
+
+// Path: admin.candidatures.lot.feuille
+class _Traductions$admin$candidatures$lot$feuille$en extends Traductions$admin$candidatures$lot$feuille$fr {
+	_Traductions$admin$candidatures$lot$feuille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String sousTitre({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} application selected',
+		other: '${n} applications selected',
+	);
+	@override String get lecture => 'Checking the selection.';
+	@override String seront({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} application will be affected',
+		other: '${n} applications will be affected',
+	);
+	@override String neSeront({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} application will not be affected',
+		other: '${n} applications will not be affected',
+	);
+	@override String etAutres({required Object n}) => 'and ${n} others';
+	@override String get effetPause => 'The applications concerned do not move forward until the pause is lifted.';
+	@override String get effetLever => 'The applications concerned resume where they had stopped.';
+	@override String get effetRefuser => 'The applications concerned are closed. You can reopen them one by one.';
+	@override String get motifCommun => 'The same reason and the same message apply to all the applications concerned.';
+	@override String get nombre => 'Number of applications concerned';
+	@override String nombreAide({required Object n}) => 'Enter ${n} to confirm.';
+	@override String nombreFaux({required Object n}) => 'That is not the right number. Enter ${n}.';
+	@override String get actualiserApercu => 'Refresh the preview';
+	@override String get terminer => 'Finish';
+	@override late final _Traductions$admin$candidatures$lot$feuille$raisons$en raisons = _Traductions$admin$candidatures$lot$feuille$raisons$en._(_root);
+	@override late final _Traductions$admin$candidatures$lot$feuille$rapport$en rapport = _Traductions$admin$candidatures$lot$feuille$rapport$en._(_root);
+}
+
+// Path: admin.candidatures.lot.erreurs
+class _Traductions$admin$candidatures$lot$erreurs$en extends Traductions$admin$candidatures$lot$erreurs$fr {
+	_Traductions$admin$candidatures$lot$erreurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Processing refused';
+	@override String get jetonPerime => 'The applications changed since the preview. Nothing was done. Refresh the preview.';
+	@override String get aucunEligible => 'No application in the selection can receive this action. Nothing was done.';
+	@override String get nonGroupable => 'This action cannot be done for several applications at once. Open each one\'s file to do it.';
+	@override String get cleReutilisee => 'This request has already been used for another action. Close this window and start again.';
+	@override String get horsPortee => 'An application in the selection is outside your access. Nothing was done. Refresh the preview.';
+	@override String get lectureApercu => 'The preview could not be read. Nothing was done. Try again.';
+}
+
+// Path: admin.candidatures.filtres.talents
+class _Traductions$admin$candidatures$filtres$talents$en extends Traductions$admin$candidatures$filtres$talents$fr {
+	_Traductions$admin$candidatures$filtres$talents$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get domaine => 'Other skills';
+	@override String familleToutes({required Object famille}) => '${famille}: all';
+	@override String get niveau => 'Skill level';
+	@override String get niveauExperience => 'Has experience or more';
+	@override String get niveauMetier => 'Does it as a profession';
+	@override String get disponibilite => 'Availability for a mission';
+	@override String get accord => 'Agreement to be contacted';
+	@override String get accordDonne => 'Agreement given';
+	@override String get accordAbsent => 'Answered without agreement';
+}
+
+// Path: admin.candidatures.etats.provenance
+class _Traductions$admin$candidatures$etats$provenance$en extends Traductions$admin$candidatures$etats$provenance$fr {
+	_Traductions$admin$candidatures$etats$provenance$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lienPublic => 'Website link';
+	@override String get invitation => 'Invitation';
+	@override String get formulairesImportes => 'Imported forms';
+}
+
+// Path: admin.candidatures.etats.versement
+class _Traductions$admin$candidatures$etats$versement$en extends Traductions$admin$candidatures$etats$versement$fr {
+	_Traductions$admin$candidatures$etats$versement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get inconnu => 'No method declared';
+	@override String get aVerifier => 'To check';
+	@override String get compatible => 'Confirmed';
+	@override String get incompatible => 'No method possible';
+}
+
+// Path: admin.candidatures.detail.photo
+class _Traductions$admin$candidatures$detail$photo$en extends Traductions$admin$candidatures$detail$photo$fr {
+	_Traductions$admin$candidatures$detail$photo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Photo sent with the application';
+	@override String get aucune => 'No photo was sent with this application.';
+	@override String figeeLe({required Object date}) => 'Kept as sent, on ${date}.';
+	@override String get echec => 'The photo could not be read.';
+	@override String alt({required Object deNom}) => '${deNom}\'s photo, sent with the application';
+}
+
+// Path: admin.candidatures.detail.cartes
+class _Traductions$admin$candidatures$detail$cartes$en extends Traductions$admin$candidatures$detail$cartes$fr {
+	_Traductions$admin$candidatures$detail$cartes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get langues => 'Languages';
+	@override String get recitation => 'Recitation';
+	@override String get disponibilites => 'Availability';
+	@override String get publics => 'Audiences';
+	@override String get versement => 'Country and payout';
+}
+
+// Path: admin.candidatures.detail.contact
+class _Traductions$admin$candidatures$detail$contact$en extends Traductions$admin$candidatures$detail$contact$fr {
+	_Traductions$admin$candidatures$detail$contact$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Contact';
+	@override String get masque => 'Contact hidden';
+	@override String get voir => 'See the contact';
+	@override String get journal => 'This opening is written in the log.';
+	@override String get courriel => 'Email';
+	@override String get telephone => 'Phone';
+	@override String get aucun => 'No contact details are known.';
+	@override String get aConfirmer => 'To confirm';
+	@override String get lectureEchec => 'The contact could not be read.';
+}
+
+// Path: admin.candidatures.detail.etatsPiece
+class _Traductions$admin$candidatures$detail$etatsPiece$en extends Traductions$admin$candidatures$detail$etatsPiece$fr {
+	_Traductions$admin$candidatures$detail$etatsPiece$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aDeposer => 'To submit';
+	@override String get deposee => 'Submitted';
+	@override String get aCorriger => 'To correct';
+	@override String get validee => 'Validated';
+}
+
+// Path: admin.candidatures.detail.talents
+class _Traductions$admin$candidatures$detail$talents$en extends Traductions$admin$candidatures$detail$talents$fr {
+	_Traductions$admin$candidatures$detail$talents$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Other skills';
+	@override String get aucune => 'This person did not fill in "Your other talents".';
+	@override late final _Traductions$admin$candidatures$detail$talents$niveaux$en niveaux = _Traductions$admin$candidatures$detail$talents$niveaux$en._(_root);
+	@override String autre({required Object texte}) => 'Other area: ${texte}';
+	@override String get competenceInconnue => 'Skill with no label available';
+	@override String get disponibilite => 'Availability for a mission';
+	@override String get accord => 'Agreement to be contacted';
+	@override String accordDonne({required Object date}) => 'Given on ${date}';
+	@override String get accordAbsent => 'Not given: offer no mission';
+	@override String misesAJour({required Object date}) => 'Last updated on ${date}.';
+}
+
+// Path: admin.candidatures.controles.noms
+class _Traductions$admin$candidatures$controles$noms$en extends Traductions$admin$candidatures$controles$noms$fr {
+	_Traductions$admin$candidatures$controles$noms$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get compteConforme => 'Account compliant';
+	@override String get cadreReligieux => 'Religious and teaching framework accepted';
+	@override String get questionnaireComplet => 'Questionnaire complete at the current version';
+	@override String get entretienConclu => 'Interview concluded';
+	@override String get evaluationValidee => 'Assessment validated';
+	@override String get accordsSignes => 'Agreements signed';
+	@override String get profilRenseigne => 'Profile filled in';
+	@override String get profilUnique => 'Unique profile';
+	@override String get aucuneRestriction => 'No restriction or pause';
+	@override String get pieceValidee => 'ID document validated';
+	@override String get inconnu => 'Server check';
+}
+
+// Path: admin.candidatures.controles.causes
+class _Traductions$admin$candidatures$controles$causes$en extends Traductions$admin$candidatures$controles$causes$fr {
+	_Traductions$admin$candidatures$controles$causes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get supprime => 'Account deleted';
+	@override String get role => 'Account of another type';
+	@override String get statut => 'The account\'s status does not allow it';
+	@override String get expire => 'Account access expired';
+	@override String get engagement => 'A teacher commitment is already in progress';
+	@override String get nonPublie => 'The framework is not published yet';
+	@override String get nonAccepte => 'The person has not accepted it yet';
+	@override String get questionnaireAbsent => 'No questionnaire is published';
+	@override String get absent => 'No answer sent';
+	@override String get perime => 'Answers given to an old version';
+	@override String get incomplet => 'Answers are missing';
+	@override String get entretienNonTenu => 'The interview did not take place';
+	@override String get avisNonFavorable => 'No favourable opinion is recorded';
+	@override String get constatIncomplet => 'The report is incomplete (memorization, riwayas or ijaza)';
+	@override String get entretienNonDisponible => 'The interview is not concluded yet';
+	@override String get reponsesIncompletes => 'Questionnaire answers are missing';
+	@override String get inconnue => 'Cause not specified';
+}
+
+// Path: admin.candidatures.historique.auteur
+class _Traductions$admin$candidatures$historique$auteur$en extends Traductions$admin$candidatures$historique$auteur$fr {
+	_Traductions$admin$candidatures$historique$auteur$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get direction => 'The management';
+	@override String get personne => 'The person';
+	@override String get automatique => 'Automatic';
+}
+
+// Path: admin.candidatures.historique.types
+class _Traductions$admin$candidatures$historique$types$en extends Traductions$admin$candidatures$historique$types$fr {
+	_Traductions$admin$candidatures$historique$types$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get creee => 'Application created';
+	@override String get transition => 'Change of status';
+	@override String get pause => 'Put on pause';
+	@override String get reprise => 'Resumption';
+	@override String get restriction => 'Restriction applied';
+	@override String get leveeRestriction => 'Restriction lifted';
+	@override String get responsable => 'Manager changed';
+	@override String get controle => 'Check changed';
+	@override String get importation => 'Answers imported';
+	@override String get correctionImport => 'Answers corrected';
+	@override String get lectureContact => 'Contact viewed';
+	@override String get lectureHorsPortee => 'Reading refused: other side';
+	@override String get entretien => 'Interview';
+	@override String get engagement => 'Agreement given';
+	@override String get prevenu => 'Person notified';
+	@override String get inconnu => 'Event';
+}
+
+// Path: admin.candidatures.retrait.canaux
+class _Traductions$admin$candidatures$retrait$canaux$en extends Traductions$admin$candidatures$retrait$canaux$fr {
+	_Traductions$admin$candidatures$retrait$canaux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get conversation => 'In the conversation';
+	@override String get courriel => 'By email';
+}
+
+// Path: admin.candidatures.entretien.compteRendu
+class _Traductions$admin$candidatures$entretien$compteRendu$en extends Traductions$admin$candidatures$entretien$compteRendu$fr {
+	_Traductions$admin$candidatures$entretien$compteRendu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ecrire => 'Write my report';
+	@override String get consequence => 'Your report is read by the management only. You can rewrite it until the outcome is recorded.';
+	@override String get texte => 'Report';
+	@override String get avis => 'Your opinion';
+	@override String get constat => 'Finding (optional)';
+	@override String get constatAide => 'To welcome the person into the team, a complete finding is needed in a single report: memorization, at least one riwaya and ijaza.';
+	@override String get texteManquant => 'Write the report.';
+	@override String get avisManquant => 'Choose an opinion.';
+	@override String get enregistrer => 'Save my report';
+	@override String get enregistre => 'Your report is saved.';
+	@override String get pasCommence => 'The interview has not started yet: the report is written after it starts.';
+	@override String get consigne => 'The outcome is already recorded: the report no longer changes.';
+	@override String get texteInvalide => 'The report is 1 to 4000 characters. Shorten it.';
+	@override String get constatInvalide => 'A choice in the finding was refused. Check it.';
+	@override String get echec => 'The report was not saved. Try again.';
+}
+
+// Path: admin.candidatures.entretien.avis
+class _Traductions$admin$candidatures$entretien$avis$en extends Traductions$admin$candidatures$entretien$avis$fr {
+	_Traductions$admin$candidatures$entretien$avis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get favorable => 'Favourable opinion';
+	@override String get reserve => 'Reserved opinion';
+	@override String get defavorable => 'Unfavourable opinion';
+}
+
+// Path: admin.candidatures.entretien.issues
+class _Traductions$admin$candidatures$entretien$issues$en extends Traductions$admin$candidatures$entretien$issues$fr {
+	_Traductions$admin$candidatures$entretien$issues$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tenu => 'Interview held';
+	@override String get annule => 'Interview cancelled';
+	@override String get manqueCandidat => 'The candidate was absent';
+	@override String get manqueIntervieweur => 'A person leading the interview was absent';
+}
+
+// Path: admin.candidatures.entretien.feuille
+class _Traductions$admin$candidatures$entretien$feuille$en extends Traductions$admin$candidatures$entretien$feuille$fr {
+	_Traductions$admin$candidatures$entretien$feuille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get planifierConsequence => 'The person receives the interview date. Participants find it among their interviews.';
+	@override String get jourAide => 'Within the next 90 days.';
+	@override String get participantsAide => 'Choose freely from the staff on this side.';
+	@override String fondateursChoisis({required Object n}) => 'Founders chosen: ${n}';
+	@override String get jourManquant => 'Choose a day.';
+	@override String get heureManquante => 'Choose a time.';
+	@override String get dureeManquante => 'Choose a length.';
+	@override String get participantsManquants => 'Choose at least one participant.';
+	@override String get personnelVide => 'No staff member can take part in this interview.';
+	@override String get personnelEchec => 'The staff could not be read.';
+	@override String get ajouterConsequence => 'This person takes part in the interview and finds it among their interviews.';
+	@override String get aucunAAjouter => 'All the staff on this side already take part in the interview.';
+	@override String get personne => 'Person to add';
+	@override String get personneManquante => 'Choose a person.';
+	@override String retirerConsequence({required Object nom}) => '${nom} will no longer take part in this interview.';
+	@override String get consignerConsequence => 'The outcome is written in the application\'s history and no longer changes.';
+	@override String get issueManquante => 'Choose the outcome.';
+	@override String get envoyerConsigner => 'Record';
+}
+
+// Path: admin.candidatures.entretien.refus
+class _Traductions$admin$candidatures$entretien$refus$en extends Traductions$admin$candidatures$entretien$refus$fr {
+	_Traductions$admin$candidatures$entretien$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String fondateurs({required Object exiges, required Object presents}) => 'At least ${exiges} founders are needed among the participants. Founders chosen: ${presents}.';
+	@override String fondateursRetrait({required Object exiges, required Object presents}) => 'At least ${exiges} founders are needed among the participants. After this removal, ${presents} would remain.';
+	@override String get debut => 'Choose a start at least 5 minutes from now, within the next 90 days.';
+	@override String get duree => 'The length ranges from 15 to 120 minutes.';
+	@override String get tropNombreux => 'Twelve participants at most.';
+	@override String get nonAutorise => 'A person chosen is not an active staff member.';
+	@override String get autreCote => 'A person chosen is not on the side of this application.';
+	@override String get sansCompte => 'The person does not have an account yet: the interview cannot be scheduled.';
+	@override String get dejaPlanifie => 'An interview is already scheduled for this application.';
+	@override String get consigne => 'This interview is already recorded: it no longer changes.';
+	@override String get dernier => 'The interview keeps at least one participant.';
+	@override String get absent => 'This person no longer takes part in the interview.';
+	@override String get compteRendu => '"Interview held" requires at least one report from a participant.';
+	@override String get introuvable => 'This interview no longer exists on this side.';
+	@override String personneOccupee({required Object nom, required Object date, required Object debut, required Object fin}) => '${nom} already has a session or an interview on ${date}, from ${debut} to ${fin} (this device\'s time). Choose another time or another person.';
+	@override String personneOccupeeProfil({required Object nom, required Object date, required Object debut, required Object fin}) => '${nom} already has a session or an interview on ${date}, from ${debut} to ${fin}. Choose another time or another person.';
+	@override String personneOccupeeSansHeure({required Object nom}) => '${nom} already has a session or an interview at this time. Choose another time or another person.';
+	@override String get personneChoisie => 'A person chosen';
+}
+
+// Path: admin.candidatures.entretien.retours
+class _Traductions$admin$candidatures$entretien$retours$en extends Traductions$admin$candidatures$entretien$retours$fr {
+	_Traductions$admin$candidatures$entretien$retours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get planifie => 'Interview scheduled.';
+	@override String ajoute({required Object nom}) => '${nom} takes part in the interview.';
+	@override String retire({required Object nom}) => '${nom} no longer takes part in the interview.';
+	@override String get consigne => 'Outcome recorded.';
+}
+
 // Path: classe.entree.demo.roles
 class _Traductions$classe$entree$demo$roles$en extends Traductions$classe$entree$demo$roles$fr {
 	_Traductions$classe$entree$demo$roles$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -19501,6 +21293,64 @@ class _Traductions$recrutement$parcours$q$compteBancaire$options$en extends Trad
 	// Translations
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$oui$en oui = _Traductions$recrutement$parcours$q$compteBancaire$options$oui$en._(_root);
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$non$en non = _Traductions$recrutement$parcours$q$compteBancaire$options$non$en._(_root);
+}
+
+// Path: admin.candidatures.lot.feuille.raisons
+class _Traductions$admin$candidatures$lot$feuille$raisons$en extends Traductions$admin$candidatures$lot$feuille$raisons$fr {
+	_Traductions$admin$candidatures$lot$feuille$raisons$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get absente => 'This application no longer exists.';
+	@override String get horsPortee => 'You do not have access to it.';
+	@override String get dejaEnPause => 'It is already paused.';
+	@override String get pasEnPause => 'It is not paused.';
+	@override String get pause => 'Its pause does not allow this action.';
+	@override String etat({required Object etat}) => 'This action is not possible from the status "${etat}".';
+	@override String get conflit => 'It changed in the meantime.';
+	@override String get erreurServeur => 'The server could not process it. Try again from its file.';
+	@override String get inconnue => 'The server refused this action.';
+}
+
+// Path: admin.candidatures.lot.feuille.rapport
+class _Traductions$admin$candidatures$lot$feuille$rapport$en extends Traductions$admin$candidatures$lot$feuille$rapport$fr {
+	_Traductions$admin$candidatures$lot$feuille$rapport$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Result';
+	@override String reussies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} application processed',
+		other: '${n} applications processed',
+	);
+	@override String exclues({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} excluded',
+		other: '${n} excluded',
+	);
+	@override String refusees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} refused by the server',
+		other: '${n} refused by the server',
+	);
+	@override String get rejoue => 'This processing had already been done: nothing was written a second time.';
+	@override String ligneEtRaison({required Object statut, required Object raison}) => '${statut}: ${raison}';
+	@override String get ligneReussie => 'Done';
+	@override String get ligneExclue => 'Excluded';
+	@override String get ligneRefusee => 'Refused';
+	@override String get sansNom => 'Application without a readable name';
+}
+
+// Path: admin.candidatures.detail.talents.niveaux
+class _Traductions$admin$candidatures$detail$talents$niveaux$en extends Traductions$admin$candidatures$detail$talents$niveaux$fr {
+	_Traductions$admin$candidatures$detail$talents$niveaux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get debutant => 'Beginner';
+	@override String get experience => 'Has experience';
+	@override String get metier => 'Does it as a profession';
 }
 
 // Path: com.annonces.administration.moderation.regleMotif
@@ -23097,6 +24947,977 @@ extension on TraductionsEn {
 			'dossiers.accesKyc.refus.genreDifferent' => 'This document is reserved for an administrator of the same gender as the applicant.',
 			'dossiers.accesKyc.refus.adminSansGenre' => 'Your gender is not recorded: no document can be opened. Ask the management to record it.',
 			'dossiers.accesKyc.refus.profilNonAutorise' => 'Your profile cannot view ID documents.',
+			'admin.candidatures.liste.titreGesteNonFait' => 'Action not done',
+			'admin.candidatures.liste.ouvrirDossier' => 'Open the file',
+			'admin.candidatures.liste.ouverture' => ({required Object nom}) => 'Reading the file: ${nom}',
+			'admin.candidatures.liste.retourLigne' => ({required Object nom, required Object retour}) => '${nom}. ${retour}',
+			'admin.candidatures.liste.gestePlusPossible' => ({required Object etat}) => 'This action is no longer possible from the status "${etat}". Nothing was done. The list is refreshed.',
+			'admin.candidatures.liste.dossierIllisible' => 'The file could not be read. Nothing was done. Try again.',
+			'admin.candidatures.liste.synthese.informationsManquantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} piece of information missing', other: '${n} pieces of information missing', ), 
+			'admin.candidatures.liste.synthese.confirmeesIndisponibles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} confirmed unavailable', other: '${n} confirmed unavailable', ), 
+			'admin.candidatures.lot.selectionnees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} selected', other: '${n} selected', ), 
+			'admin.candidatures.lot.dontPage' => ({required Object n}) => 'of which ${n} on this page',
+			'admin.candidatures.lot.avecDont' => ({required Object selection, required Object dont}) => '${selection}, ${dont}',
+			'admin.candidatures.lot.autresGestes' => 'The other actions are done one by one, from the row or the file.',
+			'admin.candidatures.lot.refuser' => 'Decline',
+			'admin.candidatures.lot.plafond' => ({required Object n}) => 'You can keep at most ${n} applications at a time.',
+			'admin.candidatures.lot.selectionRetiree' => 'The selection was cleared, because the search or the filters changed.',
+			'admin.candidatures.lot.feuille.sousTitre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} application selected', other: '${n} applications selected', ), 
+			'admin.candidatures.lot.feuille.lecture' => 'Checking the selection.',
+			'admin.candidatures.lot.feuille.seront' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} application will be affected', other: '${n} applications will be affected', ), 
+			'admin.candidatures.lot.feuille.neSeront' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} application will not be affected', other: '${n} applications will not be affected', ), 
+			'admin.candidatures.lot.feuille.etAutres' => ({required Object n}) => 'and ${n} others',
+			'admin.candidatures.lot.feuille.effetPause' => 'The applications concerned do not move forward until the pause is lifted.',
+			'admin.candidatures.lot.feuille.effetLever' => 'The applications concerned resume where they had stopped.',
+			'admin.candidatures.lot.feuille.effetRefuser' => 'The applications concerned are closed. You can reopen them one by one.',
+			'admin.candidatures.lot.feuille.motifCommun' => 'The same reason and the same message apply to all the applications concerned.',
+			'admin.candidatures.lot.feuille.nombre' => 'Number of applications concerned',
+			'admin.candidatures.lot.feuille.nombreAide' => ({required Object n}) => 'Enter ${n} to confirm.',
+			'admin.candidatures.lot.feuille.nombreFaux' => ({required Object n}) => 'That is not the right number. Enter ${n}.',
+			'admin.candidatures.lot.feuille.actualiserApercu' => 'Refresh the preview',
+			'admin.candidatures.lot.feuille.terminer' => 'Finish',
+			'admin.candidatures.lot.feuille.raisons.absente' => 'This application no longer exists.',
+			'admin.candidatures.lot.feuille.raisons.horsPortee' => 'You do not have access to it.',
+			'admin.candidatures.lot.feuille.raisons.dejaEnPause' => 'It is already paused.',
+			'admin.candidatures.lot.feuille.raisons.pasEnPause' => 'It is not paused.',
+			'admin.candidatures.lot.feuille.raisons.pause' => 'Its pause does not allow this action.',
+			'admin.candidatures.lot.feuille.raisons.etat' => ({required Object etat}) => 'This action is not possible from the status "${etat}".',
+			'admin.candidatures.lot.feuille.raisons.conflit' => 'It changed in the meantime.',
+			'admin.candidatures.lot.feuille.raisons.erreurServeur' => 'The server could not process it. Try again from its file.',
+			'admin.candidatures.lot.feuille.raisons.inconnue' => 'The server refused this action.',
+			'admin.candidatures.lot.feuille.rapport.titre' => 'Result',
+			'admin.candidatures.lot.feuille.rapport.reussies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} application processed', other: '${n} applications processed', ), 
+			'admin.candidatures.lot.feuille.rapport.exclues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} excluded', other: '${n} excluded', ), 
+			'admin.candidatures.lot.feuille.rapport.refusees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} refused by the server', other: '${n} refused by the server', ), 
+			'admin.candidatures.lot.feuille.rapport.rejoue' => 'This processing had already been done: nothing was written a second time.',
+			'admin.candidatures.lot.feuille.rapport.ligneEtRaison' => ({required Object statut, required Object raison}) => '${statut}: ${raison}',
+			'admin.candidatures.lot.feuille.rapport.ligneReussie' => 'Done',
+			'admin.candidatures.lot.feuille.rapport.ligneExclue' => 'Excluded',
+			'admin.candidatures.lot.feuille.rapport.ligneRefusee' => 'Refused',
+			'admin.candidatures.lot.feuille.rapport.sansNom' => 'Application without a readable name',
+			'admin.candidatures.lot.erreurs.titre' => 'Processing refused',
+			'admin.candidatures.lot.erreurs.jetonPerime' => 'The applications changed since the preview. Nothing was done. Refresh the preview.',
+			'admin.candidatures.lot.erreurs.aucunEligible' => 'No application in the selection can receive this action. Nothing was done.',
+			'admin.candidatures.lot.erreurs.nonGroupable' => 'This action cannot be done for several applications at once. Open each one\'s file to do it.',
+			'admin.candidatures.lot.erreurs.cleReutilisee' => 'This request has already been used for another action. Close this window and start again.',
+			'admin.candidatures.lot.erreurs.horsPortee' => 'An application in the selection is outside your access. Nothing was done. Refresh the preview.',
+			'admin.candidatures.lot.erreurs.lectureApercu' => 'The preview could not be read. Nothing was done. Try again.',
+			'admin.candidatures.titre' => 'Applications',
+			'admin.candidatures.sousTitre' => 'Teaching applications, from invitation to the Ready-to-teach room.',
+			'admin.candidatures.exception.titre' => 'Reading both sides',
+			'admin.candidatures.exception.message' => 'You are reading the applications of women and men. Each reading is written in the log.',
+			'admin.candidatures.exception.candidature' => 'This application is from the other side: its reading is written in the log.',
+			'admin.candidatures.aTraiter' => 'To handle',
+			'admin.candidatures.alertes.bloquees' => 'Blocked',
+			'admin.candidatures.alertes.entretiensEnRetard' => 'Interviews overdue',
+			'admin.candidatures.alertes.informationsManquantes' => 'Information missing',
+			'admin.candidatures.alertes.confirmeesIndisponibles' => 'Confirmed unavailable',
+			'admin.candidatures.alertes.rien' => 'Nothing to handle',
+			'admin.candidatures.recherche' => 'Search for a name, a reference or an email',
+			'admin.candidatures.rechercheAide' => 'Name, reference or email',
+			'admin.candidatures.filtres.toutes' => 'All',
+			'admin.candidatures.filtres.gardees' => 'Kept for follow-up',
+			'admin.candidatures.filtres.invitees' => 'Invited',
+			'admin.candidatures.filtres.tous' => 'All',
+			'admin.candidatures.filtres.etat' => 'Status',
+			'admin.candidatures.filtres.issue' => 'Outcome',
+			'admin.candidatures.filtres.enCours' => 'In progress',
+			'admin.candidatures.filtres.pause' => 'Pause',
+			'admin.candidatures.filtres.sansPause' => 'Not paused',
+			'admin.candidatures.filtres.versement' => 'Payout',
+			'admin.candidatures.filtres.pays' => 'Country of residence',
+			'admin.candidatures.filtres.talents.domaine' => 'Other skills',
+			'admin.candidatures.filtres.talents.familleToutes' => ({required Object famille}) => '${famille}: all',
+			'admin.candidatures.filtres.talents.niveau' => 'Skill level',
+			'admin.candidatures.filtres.talents.niveauExperience' => 'Has experience or more',
+			'admin.candidatures.filtres.talents.niveauMetier' => 'Does it as a profession',
+			'admin.candidatures.filtres.talents.disponibilite' => 'Availability for a mission',
+			'admin.candidatures.filtres.talents.accord' => 'Agreement to be contacted',
+			'admin.candidatures.filtres.talents.accordDonne' => 'Agreement given',
+			'admin.candidatures.filtres.talents.accordAbsent' => 'Answered without agreement',
+			'admin.candidatures.tri.titre' => 'Sort by',
+			'admin.candidatures.tri.activite' => 'Last activity',
+			'admin.candidatures.tri.reception' => 'Date received',
+			'admin.candidatures.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} application', other: '${n} applications', ), 
+			'admin.candidatures.resume' => ({required Object debut, required Object fin, required Object total}) => 'Applications ${debut} to ${fin} of ${total}',
+			'admin.candidatures.pagination.precedente' => 'Previous page of applications',
+			'admin.candidatures.pagination.suivante' => 'Next page of applications',
+			'admin.candidatures.pagination.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} of ${total} of the applications list',
+			'admin.candidatures.colonnes.nom' => 'Name',
+			'admin.candidatures.colonnes.salle' => 'Room',
+			'admin.candidatures.colonnes.etat' => 'Status',
+			'admin.candidatures.colonnes.pays' => 'Country of residence',
+			'admin.candidatures.colonnes.versement' => 'Payout',
+			'admin.candidatures.colonnes.activite' => 'Last activity',
+			'admin.candidatures.ligne.versement' => ({required Object etat}) => 'Payout: ${etat}',
+			'admin.candidatures.ligne.activite' => ({required Object date}) => 'Last activity on ${date}',
+			'admin.candidatures.ligne.pays' => ({required Object pays}) => 'Residence: ${pays}',
+			'admin.candidatures.ligne.courrielAObtenir' => 'Email to obtain',
+			'admin.candidatures.ligne.indicatifAConfirmer' => 'Country code to confirm',
+			'admin.candidatures.ligne.reprise' => ({required Object date}) => 'Resumption planned on ${date}',
+			'admin.candidatures.ligne.indisponibleJusquAu' => ({required Object date}) => 'Unavailable until ${date}',
+			'admin.candidatures.selection.selectionner' => 'Select',
+			'admin.candidatures.selection.quitter' => 'Leave the selection',
+			'admin.candidatures.selection.retenues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} application kept', other: '${n} applications kept', ), 
+			'admin.candidatures.selection.phrase' => 'Choose the action to run on these applications.',
+			'admin.candidatures.selection.agir' => 'Act on the selection',
+			'admin.candidatures.selection.relacher' => 'Release all',
+			'admin.candidatures.selection.horsLigne' => 'Actions can be run when the connection returns.',
+			'admin.candidatures.vide' => 'No application yet',
+			'admin.candidatures.videDetail' => 'An application appears here as soon as the person signs up through the website link or with an invitation.',
+			'admin.candidatures.aucunResultat' => 'No application matches these filters.',
+			'admin.candidatures.rappel.filtres' => ({required Object filtres}) => 'Filters applied: ${filtres}',
+			'admin.candidatures.rappel.recherche' => ({required Object texte}) => 'Search: "${texte}"',
+			'admin.candidatures.lectureEchec' => 'The applications could not be read.',
+			'admin.candidatures.sansDonnees' => 'The applications list could not be loaded',
+			'admin.candidatures.accesRefuse' => 'You do not have access to the applications.',
+			'admin.candidatures.genreInconnuTitre' => 'Applications are not showing',
+			'admin.candidatures.genreInconnu' => 'Your file does not say which side you work on. Ask the management to complete it.',
+			'admin.candidatures.etats.gardee' => 'Kept for follow-up',
+			'admin.candidatures.etats.invitee' => 'Invited',
+			'admin.candidatures.etats.aCompleter' => 'To complete',
+			'admin.candidatures.etats.enExamen' => 'Under review',
+			'admin.candidatures.etats.versementImpossible' => 'Payout not possible yet',
+			'admin.candidatures.etats.entretienAPlanifier' => 'Interview to schedule',
+			'admin.candidatures.etats.entretienPlanifie' => 'Interview scheduled',
+			'admin.candidatures.etats.decisionEnAttente' => 'Decision pending',
+			'admin.candidatures.etats.refusee' => 'Declined',
+			'admin.candidatures.etats.retiree' => 'Withdrawn',
+			'admin.candidatures.etats.enPause' => 'Paused',
+			'admin.candidatures.etats.restreinte' => 'Restricted',
+			'admin.candidatures.etats.restreintePiece' => 'Restricted: document',
+			'admin.candidatures.etats.restreinteVersement' => 'Restricted: payout',
+			'admin.candidatures.etats.restreinteDirection' => 'Restricted: management decision',
+			'admin.candidatures.etats.indisponible' => 'Unavailable',
+			'admin.candidatures.etats.provenance.lienPublic' => 'Website link',
+			'admin.candidatures.etats.provenance.invitation' => 'Invitation',
+			'admin.candidatures.etats.provenance.formulairesImportes' => 'Imported forms',
+			'admin.candidatures.etats.versement.inconnu' => 'No method declared',
+			'admin.candidatures.etats.versement.aVerifier' => 'To check',
+			'admin.candidatures.etats.versement.compatible' => 'Confirmed',
+			'admin.candidatures.etats.versement.incompatible' => 'No method possible',
+			'admin.candidatures.detail.retour' => 'Back to applications',
+			'admin.candidatures.detail.recue' => ({required Object date}) => 'Received on ${date}',
+			'admin.candidatures.detail.photo.titre' => 'Photo sent with the application',
+			'admin.candidatures.detail.photo.aucune' => 'No photo was sent with this application.',
+			'admin.candidatures.detail.photo.figeeLe' => ({required Object date}) => 'Kept as sent, on ${date}.',
+			'admin.candidatures.detail.photo.echec' => 'The photo could not be read.',
+			'admin.candidatures.detail.photo.alt' => ({required Object deNom}) => '${deNom}\'s photo, sent with the application',
+			'admin.candidatures.detail.provenance' => ({required Object provenance}) => 'Origin: ${provenance}',
+			'admin.candidatures.detail.messagePause' => ({required Object nom}) => 'Message chosen for the pause: ${nom}',
+			'admin.candidatures.detail.messageRefus' => ({required Object nom}) => 'Message chosen for the refusal: ${nom}',
+			'admin.candidatures.detail.responsableDesigne' => 'A manager is assigned',
+			'admin.candidatures.detail.aucunResponsable' => 'No manager',
+			'admin.candidatures.detail.blocages' => 'What blocks',
+			'admin.candidatures.detail.aucunBlocage' => 'Nothing blocks for now.',
+			'admin.candidatures.detail.prochaineAction' => 'Next action',
+			'admin.candidatures.detail.enAttentePersonne' => 'Waiting for the person',
+			'admin.candidatures.detail.aucuneAction' => 'No action is available for now.',
+			'admin.candidatures.detail.fermee' => 'This application is closed. You can reopen it.',
+			'admin.candidatures.detail.autresGestes' => 'Other actions',
+			'admin.candidatures.detail.reponses' => 'Answers',
+			'admin.candidatures.detail.reponsesVersion' => ({required Object version}) => 'Questionnaire version: ${version}',
+			'admin.candidatures.detail.preRempli' => 'From the old form',
+			'admin.candidatures.detail.aucuneReponse' => 'No answer has been sent yet.',
+			'admin.candidatures.detail.moyensIndiques' => ({required Object n}) => 'Methods indicated: ${n}',
+			'admin.candidatures.detail.cartes.langues' => 'Languages',
+			'admin.candidatures.detail.cartes.recitation' => 'Recitation',
+			'admin.candidatures.detail.cartes.disponibilites' => 'Availability',
+			'admin.candidatures.detail.cartes.publics' => 'Audiences',
+			'admin.candidatures.detail.cartes.versement' => 'Country and payout',
+			'admin.candidatures.detail.controles' => 'Checks',
+			'admin.candidatures.detail.entretien' => 'Interview',
+			'admin.candidatures.detail.affectation' => 'Assignment',
+			'admin.candidatures.detail.courriels' => 'Emails',
+			'admin.candidatures.detail.ouvrirDossier' => 'Open in Files to validate',
+			'admin.candidatures.detail.responsable' => 'Manager',
+			'admin.candidatures.detail.contact.titre' => 'Contact',
+			'admin.candidatures.detail.contact.masque' => 'Contact hidden',
+			'admin.candidatures.detail.contact.voir' => 'See the contact',
+			'admin.candidatures.detail.contact.journal' => 'This opening is written in the log.',
+			'admin.candidatures.detail.contact.courriel' => 'Email',
+			'admin.candidatures.detail.contact.telephone' => 'Phone',
+			'admin.candidatures.detail.contact.aucun' => 'No contact details are known.',
+			'admin.candidatures.detail.contact.aConfirmer' => 'To confirm',
+			'admin.candidatures.detail.contact.lectureEchec' => 'The contact could not be read.',
+			'admin.candidatures.detail.historiqueVide' => 'No event yet',
+			'admin.candidatures.detail.plusAnciens' => 'See older events',
+			'admin.candidatures.detail.historiqueEchec' => 'The history could not be read.',
+			'admin.candidatures.detail.sansDonnees' => 'The application could not be loaded',
+			'admin.candidatures.detail.titreHorsPortee' => 'You do not have access to this application.',
+			'admin.candidatures.detail.titreAbsente' => 'This application does not exist, or no longer exists.',
+			'admin.candidatures.detail.titreLecture' => 'The application could not be read.',
+			'admin.candidatures.detail.revenirALaFile' => 'Go back to the applications list.',
+			'admin.candidatures.detail.controleLigne' => ({required Object nom, required Object cause}) => '${nom} (${cause})',
+			'admin.candidatures.detail.separateurControles' => ', ',
+			'admin.candidatures.detail.groupeJours' => ({required Object jours, required Object heures}) => '${jours}: ${heures}',
+			'admin.candidatures.detail.etatsPiece.aDeposer' => 'To submit',
+			'admin.candidatures.detail.etatsPiece.deposee' => 'Submitted',
+			_ => null,
+		} ?? switch (path) {
+			'admin.candidatures.detail.etatsPiece.aCorriger' => 'To correct',
+			'admin.candidatures.detail.etatsPiece.validee' => 'Validated',
+			'admin.candidatures.detail.controlesVrai' => 'Satisfied',
+			'admin.candidatures.detail.controlesFaux' => 'Not satisfied',
+			'admin.candidatures.detail.talents.titre' => 'Other skills',
+			'admin.candidatures.detail.talents.aucune' => 'This person did not fill in "Your other talents".',
+			'admin.candidatures.detail.talents.niveaux.debutant' => 'Beginner',
+			'admin.candidatures.detail.talents.niveaux.experience' => 'Has experience',
+			'admin.candidatures.detail.talents.niveaux.metier' => 'Does it as a profession',
+			'admin.candidatures.detail.talents.autre' => ({required Object texte}) => 'Other area: ${texte}',
+			'admin.candidatures.detail.talents.competenceInconnue' => 'Skill with no label available',
+			'admin.candidatures.detail.talents.disponibilite' => 'Availability for a mission',
+			'admin.candidatures.detail.talents.accord' => 'Agreement to be contacted',
+			'admin.candidatures.detail.talents.accordDonne' => ({required Object date}) => 'Given on ${date}',
+			'admin.candidatures.detail.talents.accordAbsent' => 'Not given: offer no mission',
+			'admin.candidatures.detail.talents.misesAJour' => ({required Object date}) => 'Last updated on ${date}.',
+			'admin.candidatures.controles.noms.compteConforme' => 'Account compliant',
+			'admin.candidatures.controles.noms.cadreReligieux' => 'Religious and teaching framework accepted',
+			'admin.candidatures.controles.noms.questionnaireComplet' => 'Questionnaire complete at the current version',
+			'admin.candidatures.controles.noms.entretienConclu' => 'Interview concluded',
+			'admin.candidatures.controles.noms.evaluationValidee' => 'Assessment validated',
+			'admin.candidatures.controles.noms.accordsSignes' => 'Agreements signed',
+			'admin.candidatures.controles.noms.profilRenseigne' => 'Profile filled in',
+			'admin.candidatures.controles.noms.profilUnique' => 'Unique profile',
+			'admin.candidatures.controles.noms.aucuneRestriction' => 'No restriction or pause',
+			'admin.candidatures.controles.noms.pieceValidee' => 'ID document validated',
+			'admin.candidatures.controles.noms.inconnu' => 'Server check',
+			'admin.candidatures.controles.causes.supprime' => 'Account deleted',
+			'admin.candidatures.controles.causes.role' => 'Account of another type',
+			'admin.candidatures.controles.causes.statut' => 'The account\'s status does not allow it',
+			'admin.candidatures.controles.causes.expire' => 'Account access expired',
+			'admin.candidatures.controles.causes.engagement' => 'A teacher commitment is already in progress',
+			'admin.candidatures.controles.causes.nonPublie' => 'The framework is not published yet',
+			'admin.candidatures.controles.causes.nonAccepte' => 'The person has not accepted it yet',
+			'admin.candidatures.controles.causes.questionnaireAbsent' => 'No questionnaire is published',
+			'admin.candidatures.controles.causes.absent' => 'No answer sent',
+			'admin.candidatures.controles.causes.perime' => 'Answers given to an old version',
+			'admin.candidatures.controles.causes.incomplet' => 'Answers are missing',
+			'admin.candidatures.controles.causes.entretienNonTenu' => 'The interview did not take place',
+			'admin.candidatures.controles.causes.avisNonFavorable' => 'No favourable opinion is recorded',
+			'admin.candidatures.controles.causes.constatIncomplet' => 'The report is incomplete (memorization, riwayas or ijaza)',
+			'admin.candidatures.controles.causes.entretienNonDisponible' => 'The interview is not concluded yet',
+			'admin.candidatures.controles.causes.reponsesIncompletes' => 'Questionnaire answers are missing',
+			'admin.candidatures.controles.causes.inconnue' => 'Cause not specified',
+			'admin.candidatures.historique.auteur.direction' => 'The management',
+			'admin.candidatures.historique.auteur.personne' => 'The person',
+			'admin.candidatures.historique.auteur.automatique' => 'Automatic',
+			'admin.candidatures.historique.types.creee' => 'Application created',
+			'admin.candidatures.historique.types.transition' => 'Change of status',
+			'admin.candidatures.historique.types.pause' => 'Put on pause',
+			'admin.candidatures.historique.types.reprise' => 'Resumption',
+			'admin.candidatures.historique.types.restriction' => 'Restriction applied',
+			'admin.candidatures.historique.types.leveeRestriction' => 'Restriction lifted',
+			'admin.candidatures.historique.types.responsable' => 'Manager changed',
+			'admin.candidatures.historique.types.controle' => 'Check changed',
+			'admin.candidatures.historique.types.importation' => 'Answers imported',
+			'admin.candidatures.historique.types.correctionImport' => 'Answers corrected',
+			'admin.candidatures.historique.types.lectureContact' => 'Contact viewed',
+			'admin.candidatures.historique.types.lectureHorsPortee' => 'Reading refused: other side',
+			'admin.candidatures.historique.types.entretien' => 'Interview',
+			'admin.candidatures.historique.types.engagement' => 'Agreement given',
+			'admin.candidatures.historique.types.prevenu' => 'Person notified',
+			'admin.candidatures.historique.types.inconnu' => 'Event',
+			'admin.candidatures.historique.deA' => ({required Object avant, required Object apres}) => 'From "${avant}" to "${apres}"',
+			'admin.candidatures.historique.motif' => ({required Object motif}) => 'Reason: ${motif}',
+			'admin.candidatures.historique.le' => ({required Object date, required Object heure}) => 'On ${date} at ${heure}',
+			'admin.candidatures.historique.separateur' => ' · ',
+			'admin.candidatures.gestes.accueillir' => 'Welcome into the team',
+			'admin.candidatures.gestes.admettre' => 'Admit to the Verification and interview room',
+			'admin.candidatures.gestes.confirmerMoyen' => 'Confirm the payout method',
+			'admin.candidatures.gestes.ecarterMoyen' => 'Set this payout method aside',
+			'admin.candidatures.gestes.demanderComplement' => 'Ask for additional information',
+			'admin.candidatures.gestes.cloreComplement' => 'Close the request for additional information',
+			'admin.candidatures.gestes.mettreEnPause' => 'Pause',
+			'admin.candidatures.gestes.leverPause' => 'Lift the pause',
+			'admin.candidatures.gestes.refuser' => 'Decline the application',
+			'admin.candidatures.gestes.retrait' => 'Record a requested withdrawal',
+			'admin.candidatures.gestes.rouvrir' => 'Reopen the application',
+			'admin.candidatures.gestes.responsable' => 'Choose the manager',
+			'admin.candidatures.consequences.accueillir' => 'Their teacher account is activated and their space opens. The person teaches only once assigned to a class.',
+			'admin.candidatures.consequences.admettre' => 'The application moves to the Verification and interview room.',
+			'admin.candidatures.consequences.confirmerMoyen' => 'This method lets Rewayah pay the remuneration in the person\'s country.',
+			'admin.candidatures.consequences.ecarterMoyen' => 'This method is no longer kept. With no other possible method, the application waits for a method to become possible.',
+			'admin.candidatures.consequences.demanderComplement' => 'The application goes back to "to complete". The person will read the list of chosen items.',
+			'admin.candidatures.consequences.cloreComplement' => 'The requested additional information is closed. The application stays in its room.',
+			'admin.candidatures.consequences.mettreEnPause' => 'The application does not move forward until the pause is lifted.',
+			'admin.candidatures.consequences.leverPause' => 'The application resumes where it had stopped.',
+			'admin.candidatures.consequences.refuser' => 'The application is closed. You can reopen it.',
+			'admin.candidatures.consequences.retrait' => 'The application is closed at the person\'s request. You can reopen it.',
+			'admin.candidatures.consequences.rouvrir' => 'The application returns to its original stage, if the server\'s checks allow it.',
+			'admin.candidatures.consequences.responsable' => 'The manager follows this application.',
+			'admin.candidatures.feuille.motif' => 'Internal reason',
+			'admin.candidatures.feuille.motifSeul' => 'The person will not read it.',
+			'admin.candidatures.feuille.motifAide' => 'The person will not read it. They will read only the message chosen.',
+			'admin.candidatures.feuille.modele' => 'Message for the person',
+			'admin.candidatures.feuille.modeleLu' => 'The person will read this template\'s message.',
+			'admin.candidatures.feuille.motifManquant' => 'Give the reason.',
+			'admin.candidatures.feuille.modeleManquant' => 'Choose the message the person will read.',
+			'admin.candidatures.feuille.enCours' => 'Sending to the server',
+			'admin.candidatures.feuille.actualiser' => 'Refresh the application',
+			'admin.candidatures.complement.elements' => 'What is missing',
+			'admin.candidatures.complement.aide' => 'The person will read this list.',
+			'admin.candidatures.complement.manquant' => 'Choose at least one item.',
+			'admin.candidatures.retrait.canal' => 'How the request arrived',
+			'admin.candidatures.retrait.canaux.conversation' => 'In the conversation',
+			'admin.candidatures.retrait.canaux.courriel' => 'By email',
+			'admin.candidatures.retrait.date' => 'Day of the request',
+			'admin.candidatures.retrait.canalManquant' => 'Choose how the request arrived.',
+			'admin.candidatures.retrait.dateManquante' => 'Choose the day of the request.',
+			'admin.candidatures.retrait.aide' => 'Between receiving the application and today.',
+			'admin.candidatures.pause.reprise' => 'Planned resumption',
+			'admin.candidatures.pause.repriseAide' => 'Optional. Without a date, the pause lasts until you lift it.',
+			'admin.candidatures.pause.effacerReprise' => 'Do not set a date',
+			'admin.candidatures.moyens.titre' => 'Payout method',
+			'admin.candidatures.moyens.manquant' => 'Choose the method.',
+			'admin.candidatures.moyens.virement' => 'Bank transfer',
+			'admin.candidatures.moyens.mobile' => ({required Object nom}) => 'Mobile money: ${nom}',
+			'admin.candidatures.moyens.mobileSansNom' => 'Mobile money',
+			'admin.candidatures.moyens.aucunDeclare' => 'The person declared no payout method.',
+			'admin.candidatures.responsables.choisir' => 'Choose the manager of this application.',
+			'admin.candidatures.responsables.aucun' => 'No manager',
+			'admin.candidatures.responsables.lectureEchec' => 'The list of managers could not be read.',
+			'admin.candidatures.modeles.refusGeneral' => 'General refusal',
+			'admin.candidatures.modeles.refusNiveau' => 'Level not yet sufficient',
+			'admin.candidatures.modeles.refusBesoins' => 'No need for this profile',
+			'admin.candidatures.modeles.refusSansReponse' => 'No answer from the person',
+			'admin.candidatures.modeles.pauseAttenteBesoin' => 'Waiting for a need',
+			'admin.candidatures.modeles.pauseAttenteInformations' => 'Waiting for information',
+			'admin.candidatures.modeles.pauseDemandeCandidat' => 'At the person\'s request',
+			'admin.candidatures.modeles.pauseGeneral' => 'General pause',
+			'admin.candidatures.modeles.autre' => 'Other message',
+			'admin.candidatures.erreurs.controles' => ({required Object controles}) => 'Nothing was done. Missing: ${controles}. Check these points, then try again.',
+			'admin.candidatures.erreurs.transition' => ({required Object etat}) => 'This action is not possible from the status "${etat}". Nothing was done. Refresh the application.',
+			'admin.candidatures.erreurs.conflit' => 'This application changed since it was opened. Refresh it before acting.',
+			'admin.candidatures.erreurs.horsPortee' => 'You do not have access to this application. Go back to the applications list.',
+			'admin.candidatures.erreurs.absente' => 'This application does not exist, or no longer exists. Go back to the applications list.',
+			'admin.candidatures.erreurs.horsLigne' => 'Actions return as soon as the network is back: try again then.',
+			'admin.candidatures.erreurs.motifRequis' => 'Nothing was done. Give the reason.',
+			'admin.candidatures.erreurs.modeleRequis' => 'Nothing was done. Choose the message the person will read.',
+			'admin.candidatures.erreurs.modeleInconnu' => 'This message is no longer offered. Choose another.',
+			'admin.candidatures.erreurs.elementsRequis' => 'Nothing was done. Choose at least one item.',
+			'admin.candidatures.erreurs.elementsInvalides' => 'One of the chosen items is not possible in this room. Nothing was done.',
+			'admin.candidatures.erreurs.aucunComplement' => 'No additional information request is in progress: nothing to close. Refresh the application.',
+			'admin.candidatures.erreurs.repriseInvalide' => 'The resumption must be an upcoming day. Nothing was done. Choose another day.',
+			'admin.candidatures.erreurs.dateDemande' => 'The day of the request can be neither upcoming nor before the application was received. Nothing was done. Choose another day.',
+			'admin.candidatures.erreurs.moyenNonDeclare' => 'The person did not declare this method. Nothing was done. Choose another method.',
+			'admin.candidatures.erreurs.moyenNonConfirmable' => 'This method cannot be confirmed: no confirmed line for the payout country covers it. Nothing was done. Choose another method.',
+			'admin.candidatures.erreurs.responsableInvalide' => 'This person cannot be the manager of this application. Nothing was done. Choose another person.',
+			'admin.candidatures.erreurs.cleReutilisee' => 'This action has already been used for another action. Close this window and start again.',
+			'admin.candidatures.erreurs.nonConfirme' => 'This action may not have reached Rewayah. Try again: it will not be done twice.',
+			'admin.candidatures.erreurs.generique' => 'The action did not go through. Nothing is confirmed. Try again in a moment.',
+			'admin.candidatures.erreurs.permission' => 'You are not allowed to do this action. Report it if this seems wrong.',
+			'admin.candidatures.erreurs.titre' => 'Action refused',
+			'admin.candidatures.erreurs.nonConfirmeTitre' => 'Action not confirmed',
+			'admin.candidatures.retours.accueillir' => 'The person is welcomed into the team.',
+			'admin.candidatures.retours.admettre' => 'The application is in the Verification and interview room.',
+			'admin.candidatures.retours.confirmerMoyen' => 'The payout method is confirmed.',
+			'admin.candidatures.retours.ecarterMoyen' => 'The payout method is set aside.',
+			'admin.candidatures.retours.demanderComplement' => 'Additional information is requested.',
+			'admin.candidatures.retours.cloreComplement' => 'The additional information request is closed.',
+			'admin.candidatures.retours.mettreEnPause' => 'The application is paused.',
+			'admin.candidatures.retours.leverPause' => 'The pause is lifted.',
+			'admin.candidatures.retours.refuser' => 'The application is declined.',
+			'admin.candidatures.retours.retrait' => 'The withdrawal is recorded.',
+			'admin.candidatures.retours.rouvrir' => 'The application is reopened.',
+			'admin.candidatures.retours.responsable' => 'The manager is recorded.',
+			'admin.candidatures.retours.rejoue' => 'This action had already been done: nothing was written a second time.',
+			'admin.candidatures.creneaux.lien' => 'Interview slots',
+			'admin.candidatures.creneaux.titre' => 'Interview slots',
+			'admin.candidatures.creneaux.intro' => 'The times you open here are offered to the candidates waiting for their interview, on this side and in one of the chosen languages.',
+			'admin.candidatures.creneaux.ouvrir' => 'Open a slot',
+			'admin.candidatures.creneaux.ouvrirConsequence' => 'The slot is offered right away to candidates on this side who speak one of these languages. The first to book it takes it.',
+			'admin.candidatures.creneaux.cote' => 'Side',
+			'admin.candidatures.creneaux.coteHommes' => 'Men',
+			'admin.candidatures.creneaux.coteFemmes' => 'Women',
+			'admin.candidatures.creneaux.coteManquant' => 'Choose a side.',
+			'admin.candidatures.creneaux.langues' => 'Interview languages',
+			'admin.candidatures.creneaux.languesAide' => 'The candidate sees this slot if they speak at least one of these languages.',
+			'admin.candidatures.creneaux.languesManquantes' => 'Choose at least one language.',
+			'admin.candidatures.creneaux.languesEchec' => 'The languages could not be read. Try again.',
+			'admin.candidatures.creneaux.envoyer' => 'Open this slot',
+			'admin.candidatures.creneaux.aucun' => 'No slot in the next 30 days.',
+			'admin.candidatures.creneaux.aucunInvitation' => 'Open a slot: candidates waiting for their interview will be able to book it.',
+			'admin.candidatures.creneaux.libre' => 'Free',
+			'admin.candidatures.creneaux.reserve' => 'Booked',
+			'admin.candidatures.creneaux.retire' => 'Withdrawn',
+			'admin.candidatures.creneaux.participants' => ({required Object n}) => 'People leading the interview: ${n}',
+			'admin.candidatures.creneaux.fondateurs' => ({required Object n}) => 'Founders: ${n}',
+			'admin.candidatures.creneaux.retirer' => 'Withdraw this slot',
+			'admin.candidatures.creneaux.retirerConsequence' => 'The slot is no longer offered to candidates. A slot already booked cannot be withdrawn here.',
+			'admin.candidatures.creneaux.retirerEnvoyer' => 'Withdraw the slot',
+			'admin.candidatures.creneaux.ouvert' => 'Slot opened.',
+			'admin.candidatures.creneaux.retireFait' => 'Slot withdrawn.',
+			'admin.candidatures.creneaux.lectureEchec' => 'The slots could not be read. Try again.',
+			'admin.candidatures.creneaux.sansDonnees' => 'The interview slots could not be loaded',
+			'admin.candidatures.creneaux.refusReserve' => 'This slot is already booked: it can no longer be withdrawn.',
+			'admin.candidatures.creneaux.refusAbsent' => 'This slot no longer exists. Reload the list.',
+			'admin.candidatures.creneaux.refusLangues' => 'One of the chosen languages is not accepted for a slot. Remove it and try again.',
+			'admin.candidatures.creneaux.refusHorsPortee' => 'This side is not yours: you cannot open a slot there.',
+			'admin.candidatures.entretien.aucun' => 'No interview scheduled.',
+			'admin.candidatures.entretien.planifier' => 'Schedule the interview',
+			'admin.candidatures.entretien.quand' => ({required Object date, required Object heure, required Object duree}) => 'On ${date} at ${heure} (this device\'s time), for ${duree} min.',
+			'admin.candidatures.entretien.quandProfil' => ({required Object date, required Object heure, required Object duree}) => 'On ${date} at ${heure}, for ${duree} min.',
+			'admin.candidatures.entretien.fondateurs' => ({required Object n}) => 'Founders among the participants: ${n}',
+			'admin.candidatures.entretien.minimum' => ({required Object n}) => 'Minimum required: ${n}',
+			'admin.candidatures.entretien.regleInactive' => 'The founders rule is turned off.',
+			'admin.candidatures.entretien.fondateur' => 'Founder',
+			'admin.candidatures.entretien.retirerNom' => ({required Object nom}) => 'Remove ${nom}',
+			'admin.candidatures.entretien.ajouter' => 'Add a participant',
+			'admin.candidatures.entretien.comptesRendus' => 'Reports',
+			'admin.candidatures.entretien.aucunCompteRendu' => 'No report yet.',
+			'admin.candidatures.entretien.auteurInconnu' => 'A participant',
+			'admin.candidatures.entretien.presences' => 'Entries and exits of the room',
+			'admin.candidatures.entretien.aucunePresence' => 'No one has entered the room yet.',
+			'admin.candidatures.entretien.entree' => ({required Object nom, required Object heure}) => '${nom} entered at ${heure}',
+			'admin.candidatures.entretien.sortie' => ({required Object nom, required Object heure}) => '${nom} left at ${heure}',
+			'admin.candidatures.entretien.consigner' => 'Record the outcome',
+			'admin.candidatures.entretien.dernier' => ({required Object date, required Object issue}) => 'Last interview: ${date}. ${issue}.',
+			'admin.candidatures.entretien.lectureEchec' => 'The interview could not be read.',
+			'admin.candidatures.entretien.rejoindre' => 'Join the interview',
+			'admin.candidatures.entretien.compteRendu.ecrire' => 'Write my report',
+			'admin.candidatures.entretien.compteRendu.consequence' => 'Your report is read by the management only. You can rewrite it until the outcome is recorded.',
+			'admin.candidatures.entretien.compteRendu.texte' => 'Report',
+			'admin.candidatures.entretien.compteRendu.avis' => 'Your opinion',
+			'admin.candidatures.entretien.compteRendu.constat' => 'Finding (optional)',
+			'admin.candidatures.entretien.compteRendu.constatAide' => 'To welcome the person into the team, a complete finding is needed in a single report: memorization, at least one riwaya and ijaza.',
+			'admin.candidatures.entretien.compteRendu.texteManquant' => 'Write the report.',
+			'admin.candidatures.entretien.compteRendu.avisManquant' => 'Choose an opinion.',
+			'admin.candidatures.entretien.compteRendu.enregistrer' => 'Save my report',
+			'admin.candidatures.entretien.compteRendu.enregistre' => 'Your report is saved.',
+			'admin.candidatures.entretien.compteRendu.pasCommence' => 'The interview has not started yet: the report is written after it starts.',
+			'admin.candidatures.entretien.compteRendu.consigne' => 'The outcome is already recorded: the report no longer changes.',
+			'admin.candidatures.entretien.compteRendu.texteInvalide' => 'The report is 1 to 4000 characters. Shorten it.',
+			'admin.candidatures.entretien.compteRendu.constatInvalide' => 'A choice in the finding was refused. Check it.',
+			'admin.candidatures.entretien.compteRendu.echec' => 'The report was not saved. Try again.',
+			'admin.candidatures.entretien.avis.favorable' => 'Favourable opinion',
+			'admin.candidatures.entretien.avis.reserve' => 'Reserved opinion',
+			'admin.candidatures.entretien.avis.defavorable' => 'Unfavourable opinion',
+			'admin.candidatures.entretien.issues.tenu' => 'Interview held',
+			'admin.candidatures.entretien.issues.annule' => 'Interview cancelled',
+			'admin.candidatures.entretien.issues.manqueCandidat' => 'The candidate was absent',
+			'admin.candidatures.entretien.issues.manqueIntervieweur' => 'A person leading the interview was absent',
+			'admin.candidatures.entretien.feuille.planifierConsequence' => 'The person receives the interview date. Participants find it among their interviews.',
+			'admin.candidatures.entretien.feuille.jourAide' => 'Within the next 90 days.',
+			'admin.candidatures.entretien.feuille.participantsAide' => 'Choose freely from the staff on this side.',
+			'admin.candidatures.entretien.feuille.fondateursChoisis' => ({required Object n}) => 'Founders chosen: ${n}',
+			'admin.candidatures.entretien.feuille.jourManquant' => 'Choose a day.',
+			'admin.candidatures.entretien.feuille.heureManquante' => 'Choose a time.',
+			'admin.candidatures.entretien.feuille.dureeManquante' => 'Choose a length.',
+			'admin.candidatures.entretien.feuille.participantsManquants' => 'Choose at least one participant.',
+			'admin.candidatures.entretien.feuille.personnelVide' => 'No staff member can take part in this interview.',
+			'admin.candidatures.entretien.feuille.personnelEchec' => 'The staff could not be read.',
+			'admin.candidatures.entretien.feuille.ajouterConsequence' => 'This person takes part in the interview and finds it among their interviews.',
+			'admin.candidatures.entretien.feuille.aucunAAjouter' => 'All the staff on this side already take part in the interview.',
+			'admin.candidatures.entretien.feuille.personne' => 'Person to add',
+			'admin.candidatures.entretien.feuille.personneManquante' => 'Choose a person.',
+			'admin.candidatures.entretien.feuille.retirerConsequence' => ({required Object nom}) => '${nom} will no longer take part in this interview.',
+			'admin.candidatures.entretien.feuille.consignerConsequence' => 'The outcome is written in the application\'s history and no longer changes.',
+			'admin.candidatures.entretien.feuille.issueManquante' => 'Choose the outcome.',
+			'admin.candidatures.entretien.feuille.envoyerConsigner' => 'Record',
+			'admin.candidatures.entretien.refus.fondateurs' => ({required Object exiges, required Object presents}) => 'At least ${exiges} founders are needed among the participants. Founders chosen: ${presents}.',
+			'admin.candidatures.entretien.refus.fondateursRetrait' => ({required Object exiges, required Object presents}) => 'At least ${exiges} founders are needed among the participants. After this removal, ${presents} would remain.',
+			'admin.candidatures.entretien.refus.debut' => 'Choose a start at least 5 minutes from now, within the next 90 days.',
+			'admin.candidatures.entretien.refus.duree' => 'The length ranges from 15 to 120 minutes.',
+			'admin.candidatures.entretien.refus.tropNombreux' => 'Twelve participants at most.',
+			'admin.candidatures.entretien.refus.nonAutorise' => 'A person chosen is not an active staff member.',
+			'admin.candidatures.entretien.refus.autreCote' => 'A person chosen is not on the side of this application.',
+			'admin.candidatures.entretien.refus.sansCompte' => 'The person does not have an account yet: the interview cannot be scheduled.',
+			'admin.candidatures.entretien.refus.dejaPlanifie' => 'An interview is already scheduled for this application.',
+			'admin.candidatures.entretien.refus.consigne' => 'This interview is already recorded: it no longer changes.',
+			'admin.candidatures.entretien.refus.dernier' => 'The interview keeps at least one participant.',
+			'admin.candidatures.entretien.refus.absent' => 'This person no longer takes part in the interview.',
+			'admin.candidatures.entretien.refus.compteRendu' => '"Interview held" requires at least one report from a participant.',
+			'admin.candidatures.entretien.refus.introuvable' => 'This interview no longer exists on this side.',
+			'admin.candidatures.entretien.refus.personneOccupee' => ({required Object nom, required Object date, required Object debut, required Object fin}) => '${nom} already has a session or an interview on ${date}, from ${debut} to ${fin} (this device\'s time). Choose another time or another person.',
+			'admin.candidatures.entretien.refus.personneOccupeeProfil' => ({required Object nom, required Object date, required Object debut, required Object fin}) => '${nom} already has a session or an interview on ${date}, from ${debut} to ${fin}. Choose another time or another person.',
+			'admin.candidatures.entretien.refus.personneOccupeeSansHeure' => ({required Object nom}) => '${nom} already has a session or an interview at this time. Choose another time or another person.',
+			'admin.candidatures.entretien.refus.personneChoisie' => 'A person chosen',
+			'admin.candidatures.entretien.retours.planifie' => 'Interview scheduled.',
+			'admin.candidatures.entretien.retours.ajoute' => ({required Object nom}) => '${nom} takes part in the interview.',
+			'admin.candidatures.entretien.retours.retire' => ({required Object nom}) => '${nom} no longer takes part in the interview.',
+			'admin.candidatures.entretien.retours.consigne' => 'Outcome recorded.',
+			'admin.importInscriptions.onglet' => 'Import',
+			'admin.importInscriptions.titre' => 'Import the registrations',
+			'admin.importInscriptions.sousTitre' => 'Families and teachers already registered are welcomed without re-entering everything.',
+			'admin.importInscriptions.intro' => 'Drop the two CSV files of the forms workbook, as they are. Nothing is written before your confirmation.',
+			'admin.importInscriptions.eleves.titre' => 'Students file',
+			'admin.importInscriptions.eleves.aide' => '"Students (Responses)" tab of the workbook: paste its content or choose the file.',
+			'admin.importInscriptions.eleves.champ' => 'Content of the students file',
+			'admin.importInscriptions.enseignants.titre' => 'Teachers file',
+			'admin.importInscriptions.enseignants.aide' => '"Teachers (Responses)" tab of the workbook: paste its content or choose the file.',
+			'admin.importInscriptions.enseignants.champ' => 'Content of the teachers file',
+			'admin.importInscriptions.choisir' => 'Choose a CSV file',
+			'admin.importInscriptions.fichierCharge' => ({required Object nom}) => 'File loaded: ${nom}',
+			'admin.importInscriptions.fichierIllisible' => 'This file could not be read. Save it as CSV (UTF-8) or paste its content in the field.',
+			'admin.importInscriptions.voirApercu' => 'See the preview',
+			'admin.importInscriptions.manqueFichier' => 'Paste or choose at least one file to continue.',
+			'admin.importInscriptions.apercu.titre' => 'Preview before the import',
+			'admin.importInscriptions.apercu.intro' => 'Nothing is written yet. Check the refused rows and those to look at, then confirm.',
+			'admin.importInscriptions.apercu.lignesEleves' => 'Students file rows',
+			'admin.importInscriptions.apercu.lignesEnseignants' => 'Teachers file rows',
+			'admin.importInscriptions.apercu.foyers' => 'Households to create',
+			'admin.importInscriptions.apercu.personnes' => 'People to import',
+			'admin.importInscriptions.apercu.refusees' => 'Rows refused',
+			'admin.importInscriptions.apercu.alertes' => 'Rows to look at',
+			'admin.importInscriptions.apercu.refusAide' => 'These rows will not be imported. Fix the file and start again, or continue without them.',
+			'admin.importInscriptions.apercu.alertesAide' => 'These rows will be imported. Look at them before confirming.',
+			'admin.importInscriptions.apercu.vide' => 'No row can be imported. Fix the files, then start again.',
+			'admin.importInscriptions.apercu.modifier' => 'Edit the files',
+			'admin.importInscriptions.serveur.titre' => 'Checked by the server',
+			'admin.importInscriptions.serveur.foyers' => 'Households counted by the server',
+			'admin.importInscriptions.serveur.personnes' => 'People counted by the server',
+			'admin.importInscriptions.serveur.refusees' => 'Rows refused by the server',
+			'admin.importInscriptions.serveur.indisponible' => 'The server could not confirm this preview. Go back and start again.',
+			'admin.importInscriptions.ligne' => ({required Object fichier, required Object ligne, required Object motif}) => '${fichier}, row ${ligne}: ${motif}',
+			'admin.importInscriptions.fichier.eleves' => 'Students',
+			'admin.importInscriptions.fichier.enseignants' => 'Teachers',
+			'admin.importInscriptions.autresLignes' => ({required Object n}) => 'Other rows not shown: ${n}',
+			'admin.importInscriptions.motif.ligneVide' => 'The row is empty.',
+			'admin.importInscriptions.motif.colonnesDifferentes' => 'The number of columns does not match the header.',
+			'admin.importInscriptions.motif.ligneTest' => 'This is a test row: it is ignored.',
+			'admin.importInscriptions.motif.personneSansNom' => 'No person is named (surname and first name).',
+			'admin.importInscriptions.motif.emailManquant' => 'The email address is missing.',
+			'admin.importInscriptions.motif.emailInvalide' => 'The email address is badly written.',
+			'admin.importInscriptions.motif.dateInvalide' => 'The date of birth must be written day/month/year, for example 25/03/2012.',
+			'admin.importInscriptions.motif.enteteEmailAbsent' => 'The header has no Email column: this file cannot be imported.',
+			'admin.importInscriptions.motif.guillemetNonFerme' => 'A quotation mark is never closed: fix the file.',
+			'admin.importInscriptions.motif.doublonAdresse' => ({required Object autre}) => 'Same address as row ${autre}: the two rows form a single household.',
+			'admin.importInscriptions.motif.doublonPersonne' => ({required Object autre}) => 'Same person as row ${autre}: they will be imported only once.',
+			'admin.importInscriptions.motif.dateFuture' => 'The date of birth is in the future.',
+			'admin.importInscriptions.motif.ageTropJeune' => 'This person is younger than the minimum age for classes.',
+			'admin.importInscriptions.motif.adulteTropJeune' => 'This person, named as an adult, is a minor.',
+			'admin.importInscriptions.motif.foyerSansAdulte' => 'No adult is named for this household of minors.',
+			'admin.importInscriptions.motif.serveur' => 'The server refuses this row.',
+			'admin.importInscriptions.mots.titre' => 'Welcome messages',
+			'admin.importInscriptions.mots.intro' => 'Each household receives a welcome message filled in with the known first names. You can attach your own message, for all households or for one.',
+			'admin.importInscriptions.mots.lotChamp' => 'Message common to all households (optional)',
+			'admin.importInscriptions.mots.lotAide' => 'If filled in, it replaces the automatic message of each household that has no message of its own.',
+			'admin.importInscriptions.mots.lotPatience' => 'All the families were patient',
+			'admin.importInscriptions.mots.lotPatienceAide' => 'They receive the patience message, filled in with their first names.',
+			'admin.importInscriptions.foyer.adresse' => ({required Object adresse}) => 'Address: ${adresse}',
+			'admin.importInscriptions.foyer.eleves' => ({required Object eleves}) => 'Students: ${eleves}',
+			'admin.importInscriptions.foyer.patiente' => 'Waited patiently',
+			'admin.importInscriptions.foyer.retoucher' => ({required Object dePrenom}) => 'Edit ${dePrenom}\'s message',
+			'admin.importInscriptions.foyer.champAccueil' => ({required Object dePrenom}) => '${dePrenom}\'s welcome message',
+			'admin.importInscriptions.foyer.champPatience' => ({required Object dePrenom}) => '${dePrenom}\'s patience message',
+			'admin.importInscriptions.foyer.motAide' => 'Leave empty to keep the automatic message.',
+			'admin.importInscriptions.foyer.fermer' => 'Close',
+			'admin.importInscriptions.foyer.nonAffiches' => ({required Object n}) => 'Households not shown, with the common settings: ${n}',
+			'admin.importInscriptions.confirmer' => 'Confirm the import',
+			'admin.importInscriptions.confirmation.question' => 'Import these registrations?',
+			'admin.importInscriptions.confirmation.consequence' => 'Households and people are created in the app. Replaying the import creates no duplicate. Refused rows are not imported.',
+			'admin.importInscriptions.horsLigne' => 'The import will be confirmed as soon as the network is back. Nothing is created until then.',
+			'admin.importInscriptions.resultat.titre' => 'Import finished',
+			'admin.importInscriptions.resultat.personnesCreees' => 'People created',
+			'admin.importInscriptions.resultat.personnesPresentes' => 'People already present',
+			'admin.importInscriptions.resultat.foyersCrees' => 'Households created',
+			'admin.importInscriptions.resultat.foyersVus' => 'Households processed',
+			'admin.importInscriptions.resultat.refusees' => 'Rows refused',
+			'admin.importInscriptions.resultat.invitations' => 'Invitations to send',
+			'admin.importInscriptions.resultat.invitationsAide' => 'Each new household awaits your invitation. At their first sign-in, the family proves their email address, then reads their welcome message.',
+			'admin.importInscriptions.resultat.rienDeNouveau' => 'Everything was already imported: nothing was added.',
+			'admin.importInscriptions.resultat.refusAide' => 'These rows were not imported. Fix the file, then replay the import: people already present are not recreated.',
+			'admin.importInscriptions.resultat.recommencer' => 'Import other files',
+			'admin.importInscriptions.echec.horsLigne' => 'The import could not be confirmed: run the confirmation again as soon as the network is back. Nothing will be created twice.',
+			'admin.importInscriptions.echec.refuse' => 'Nothing was imported: this import requires two-step verification. Turn it on in Account > Security, then try again.',
+			'admin.importInscriptions.echec.invalide' => 'The server cannot read these files. Check the header and the quotation marks, then try again.',
+			'admin.importInscriptions.echec.serveur' => 'The import could not be confirmed. Try again: nothing will be created twice.',
+			'admin.importInscriptions.echec.apercu' => 'The server\'s dry run did not go through. Try again in a moment.',
+			'admin.importInscriptions.acces.doubleTitre' => 'Two-step verification required',
+			'admin.importInscriptions.acces.doublePhrase' => 'Sign in with your second factor, then come back here to import the registrations.',
+			'admin.importInscriptions.indisponibleTitre' => 'Registrations import unavailable',
+			'admin.importInscriptions.indisponiblePhrase' => 'This feature will be available once the server is connected.',
+			'admin.importInscriptions.erreur' => 'The import rights could not be read. Try again.',
+			'admin.importInscriptions.sansDonnees' => 'the registrations import',
+			'admin.tableau.titre' => 'Command centre',
+			'admin.tableau.dossiers' => 'Files to validate',
+			'admin.tableau.dossiersDetail' => 'Open the queue, oldest first.',
+			'admin.tableau.demandesDetail' => 'Families and teachers are waiting for an answer.',
+			'admin.tableau.foyers' => 'Students without a teacher',
+			'admin.tableau.rapports' => 'Missing handover notebooks',
+			'admin.tableau.incidents' => 'Incidents (24 h)',
+			'admin.tableau.comptes' => 'Expired access',
+			'admin.tableau.incidentsEtAcces' => 'Incidents and access',
+			'admin.tableau.demandes' => 'Requests to decide',
+			'admin.tableau.compteursErreur' => 'The counters could not be read. Try again in a moment.',
+			'admin.tableau.calme' => 'Nothing awaits a decision today.',
+			'admin.tableau.apercuErreur' => 'The list could not be read.',
+			'admin.tableau.outils' => 'Tools',
+			'admin.tableau.outilsComptes' => 'Accounts',
+			'admin.tableau.outilsComptesDetail' => 'All the people registered, those awaiting a decision first. Including those who have not yet submitted a document.',
+			'admin.tableau.outilsAccesAgents' => 'AI agents access',
+			'admin.tableau.outilsAccesAgentsDetail' => 'Open read-only access, limited in time, on a person\'s journey.',
+			'admin.tableau.outilsGroupesDetail' => 'Classes, their students and their teacher.',
+			'admin.tableau.ligneDossier' => ({required Object dePrenom}) => '${dePrenom}\'s identity file',
+			'admin.tableau.ligneReaffectation' => ({required Object prenom}) => 'Teacher change for ${prenom}',
+			'admin.tableau.lignePlafond' => ({required Object dePrenom}) => '${dePrenom}\'s student ceiling',
+			'admin.tableau.ligneRegle' => ({required Object prenom}) => 'Rule change for ${prenom}',
+			'admin.tableau.attenteAujourdhui' => 'Submitted today',
+			'admin.tableau.attenteUnJour' => 'Waiting for 1 day',
+			'admin.tableau.sousTitre' => 'Overview of the activity and of the items to handle.',
+			'admin.tableau.activite.titre' => 'Recent activity',
+			'admin.tableau.activite.voirTout' => 'See the whole log',
+			'admin.tableau.activite.vide' => 'No recent activity.',
+			'admin.tableau.activite.erreur' => 'The recent activity could not be read: the request may not have reached Rewayah. Try again in a moment; the counters stay accurate.',
+			'admin.tableau.activite.ligne' => ({required Object qui, required Object quand}) => '${qui} · ${quand}',
+			'admin.tableau.outilsTraitement' => 'Processing space',
+			'admin.tableau.outilsTraitementDetail' => 'Identity files and pending requests, in a single queue.',
+			'admin.tableau.outilsRegroupements' => 'Classes to open',
+			'admin.tableau.outilsRegroupementsDetail' => 'Family requests grouped when they look alike, and the creation of their class.',
+			'admin.tableau.outilsOffres' => 'Showcase offers',
+			'admin.tableau.outilsOffresDetail' => 'Create, publish and withdraw the slots families see in the showcase.',
+			'admin.tableau.attenteJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Waiting for ${jours} day', other: 'Waiting for ${jours} days', ), 
+			'admin.tableau.outilsPilotage' => 'Schedule steering',
+			'admin.tableau.outilsPilotageDetail' => 'By timetable: classes, how full they are, pending requests and teachers free or missing.',
+			'admin.tableau.outilsPlanning' => 'Week planning',
+			'admin.tableau.outilsPlanningDetail' => 'The week\'s sessions, day by day, with their class and their teacher.',
+			'admin.traitement.titre' => 'Processing space',
+			'admin.traitement.filtreTous' => 'All',
+			'admin.traitement.filtreDossiers' => 'Files',
+			'admin.traitement.filtreDemandes' => 'Requests',
+			'admin.traitement.tri' => 'Sort',
+			'admin.traitement.triRecent' => 'Most recent',
+			'admin.traitement.triAncien' => 'Oldest',
+			'admin.traitement.groupeAujourdhui' => 'Today',
+			'admin.traitement.groupeHier' => 'Yesterday',
+			'admin.traitement.groupeSemaine' => 'This week',
+			'admin.traitement.groupePlusAncien' => 'Older',
+			'admin.traitement.natureDossier' => 'Identity file · Teacher',
+			'admin.traitement.natureReaffectation' => 'Request · Teacher change',
+			'admin.traitement.naturePlafond' => 'Request · Student ceiling',
+			'admin.traitement.natureRegle' => 'Request · Rule change',
+			'admin.traitement.natureDemande' => 'Request',
+			'admin.traitement.cleDepot' => 'Submission date',
+			'admin.traitement.clePiece' => 'ID document',
+			'admin.traitement.pieceAVerifier' => 'Submitted, to verify',
+			'admin.traitement.cleConcerne' => 'Person concerned',
+			'admin.traitement.cleParQui' => 'Requested by',
+			'admin.traitement.colonneDepuis' => 'Since',
+			'admin.traitement.vide' => 'Nothing to process for now',
+			'admin.traitement.videDetail' => 'Identity files and pending requests arrive here as soon as they are submitted.',
+			'admin.traitement.videFiltre' => 'No item with this filter',
+			'admin.traitement.videFiltreDetail' => 'Choose "All" to see the whole queue again.',
+			'admin.traitement.erreurDossiers' => 'The identity files could not be read: the request may not have reached Rewayah. Try again in a moment. The requests stay displayed.',
+			'admin.traitement.erreurDemandes' => 'The requests could not be read: the request may not have reached Rewayah. Try again in a moment. The files stay displayed.',
+			'admin.traitement.erreur' => 'The queue could not be read: the request may not have reached Rewayah. Try again in a moment.',
+			'admin.demandes.titre' => 'Requests and rules',
+			'admin.demandes.restanteUne' => '1 request pending',
+			'admin.demandes.restantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} request pending', other: '${n} requests pending', ), 
+			'admin.demandes.aucune' => 'No request pending',
+			'admin.demandes.aucuneDetail' => 'Requests from families, independent students and teachers arrive here, oldest first.',
+			'admin.demandes.faitePar' => ({required Object date, required Object role}) => 'Requested on ${date}, by ${role}',
+			'admin.demandes.roleGuardian' => 'a guardian',
+			'admin.demandes.roleTeacher' => 'a teacher',
+			'admin.demandes.roleStudent' => 'an independent student',
+			'admin.demandes.roleAdmin' => 'the administration',
+			'admin.demandes.roleController' => 'a reviewer',
+			'admin.demandes.roleInconnu' => 'a party to the file',
+			'admin.demandes.reclame' => 'What is requested',
+			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'Change ${dePrenom}\'s teacher',
+			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Raise ${regle} to ${valeur} min',
+			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'Review ${regle}',
+			'admin.demandes.motifDemande' => 'Reason given',
+			'admin.demandes.verdict' => 'Decision',
+			'admin.demandes.accorder' => 'Grant',
+			'admin.demandes.refuser' => 'Decline',
+			'admin.demandes.motif' => 'What motivates this refusal, in one sentence',
+			'admin.demandes.motifRequis' => 'A refusal must say why: it is the only sentence the party will receive.',
+			'admin.demandes.effet' => 'Granting applies the effect in the database: the assignment closes, or the rule is set. This screen only gives the verdict.',
+			'admin.demandes.journalisation' => 'Each decision and each rule set is written in the audit log, with your name.',
+			'admin.demandes.feuille' => ({required Object dePrenom}) => '${dePrenom}\'s rules',
+			'admin.demandes.feuilleIntro' => 'The platform\'s value and the one that applies, side by side. A rule can be changed here without a request existing.',
+			'admin.demandes.regleDuree' => 'Session length',
+			'admin.demandes.regleMinimum' => 'Minimum payable length',
+			'admin.demandes.reglePause' => 'Break between two classes',
+			'admin.demandes.reglePlafond' => 'Student ceiling',
+			'admin.demandes.regleInconnue' => 'Rule not recognized',
+			'admin.demandes.plateforme' => ({required Object valeur}) => 'Platform: ${valeur}',
+			'admin.demandes.effective' => ({required Object valeur}) => 'Applied: ${valeur}',
+			'admin.demandes.minutes' => ({required Object valeur}) => '${valeur} min',
+			'admin.demandes.surchargeDepuis' => ({required Object date, required Object motif}) => 'Set on ${date}: ${motif}',
+			'admin.demandes.sansSurcharge' => 'This student follows the platform\'s rule.',
+			'admin.demandes.changer' => 'Change',
+			'admin.demandes.clore' => 'Go back to the platform\'s rule',
+			'admin.demandes.historique' => 'Closed overrides',
+			'admin.demandes.historiqueLigne' => ({required Object valeur, required Object debut, required Object fin}) => '${valeur}, from ${debut} to ${fin}',
+			'admin.demandes.historiqueMotifs' => ({required Object motif, required Object cloture}) => 'Set: ${motif}. Closed: ${cloture}.',
+			'admin.demandes.poserTitre' => ({required Object regle, required Object prenom}) => '${regle}, for ${prenom}',
+			'admin.demandes.cloreTitre' => ({required Object dePrenom}) => 'Close ${dePrenom}\'s override',
+			'admin.demandes.poserMotif' => 'Why this change?',
+			'admin.demandes.poserMotifRequis' => 'A rule without a reason cannot be re-read six months later.',
+			'admin.demandes.manqueValeur' => 'The value is missing: choose one from the list, or tap "Other" and write it.',
+			'admin.demandes.poserEnvoyer' => 'Set the rule',
+			'admin.demandes.cloreEnvoyer' => 'Close the override',
+			'admin.demandes.erreurFile' => 'The requests queue could not load. Try again in a moment.',
+			'admin.demandes.reclamePlafond' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(valeur, one: 'Raise the ceiling to ${valeur} student', other: 'Raise the ceiling to ${valeur} students', ), 
+			'admin.demandes.eleves' => ({required num valeur}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(valeur, one: '${valeur} student', other: '${valeur} students', ), 
+			'admin.groupes.titre' => 'Classes',
+			'admin.groupes.filtreToutes' => 'All classes',
+			'admin.groupes.filtreActives' => 'Active',
+			'admin.groupes.filtreCloturees' => 'Closed',
+			'admin.groupes.filtrePublic' => 'Audience',
+			'admin.groupes.inspecteurFermer' => 'Close the inspector',
+			'admin.groupes.inspecteurInfos' => 'General information',
+			'admin.groupes.intro' => 'Each class brings together a teacher and their students around a common slot: this is where the class is given.',
+			'admin.groupes.colonneGroupe' => 'Class',
+			'admin.groupes.colonneEnseignant' => 'Teacher',
+			'admin.groupes.colonnePays' => 'Teacher\'s country',
+			'admin.groupes.colonneType' => 'Audience',
+			'admin.groupes.colonneMembres' => 'Members',
+			'admin.groupes.colonneCreneau' => 'Slot',
+			'admin.groupes.colonneEtat' => 'Status',
+			_ => null,
+		} ?? switch (path) {
+			'admin.groupes.typeEnfant' => 'Children',
+			'admin.groupes.typeAdulte' => 'Adults',
+			'admin.groupes.filtreTousTypes' => 'All audiences',
+			'admin.groupes.liste.rechercheLibelle' => 'Search for a class',
+			'admin.groupes.liste.rechercheAide' => 'Name, code or teacher',
+			'admin.groupes.liste.filtreAttente' => 'Waiting for a teacher',
+			'admin.groupes.liste.filtreOuvertes' => 'Open',
+			'admin.groupes.liste.filtreJour' => 'Day',
+			'admin.groupes.liste.filtreTousJours' => 'All days',
+			'admin.groupes.liste.filtreHeure' => 'Time',
+			'admin.groupes.liste.filtreToutesHeures' => 'All times',
+			'admin.groupes.liste.filtreFuseau' => 'Time zone',
+			'admin.groupes.liste.filtreTousFuseaux' => 'All time zones',
+			'admin.groupes.liste.filtreGenre' => 'Gender',
+			'admin.groupes.liste.filtreTousGenres' => 'All genders',
+			'admin.groupes.liste.genreMasculin' => 'Boys or men',
+			'admin.groupes.liste.genreFeminin' => 'Girls or women',
+			'admin.groupes.liste.filtreEnseignant' => 'Teacher',
+			'admin.groupes.liste.filtreTousEnseignants' => 'All teachers',
+			'admin.groupes.liste.sansEnseignant' => 'No teacher',
+			'admin.groupes.liste.etatAttente' => 'Waiting for a teacher',
+			'admin.groupes.liste.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} of ${total} of the classes list',
+			'admin.groupes.liste.precedente' => 'Previous page of classes',
+			'admin.groupes.liste.suivante' => 'Next page of classes',
+			'admin.groupes.liste.resume' => ({required Object debut, required Object fin, required Object total}) => 'Classes ${debut} to ${fin} of ${total}',
+			'admin.groupes.liste.filtreRemplissage' => 'Fill level',
+			'admin.groupes.liste.filtreTousRemplissages' => 'All fill levels',
+			'admin.groupes.liste.remplissagePleines' => 'Full classes',
+			'admin.groupes.liste.remplissagePlaces' => 'Classes with places',
+			'admin.groupes.etatActif' => 'Active',
+			'admin.groupes.etatCloture' => 'Closed',
+			'admin.groupes.membresSur' => ({required Object actifs, required Object seuil}) => '${actifs} / ${seuil}',
+			'admin.groupes.aucun' => 'No class created',
+			'admin.groupes.aucunDetail' => 'Create a first class to give a teacher and students a common slot.',
+			'admin.groupes.aucunAvecCeFiltre' => 'No class with this filter',
+			'admin.groupes.aucunAvecCeFiltreDetail' => 'Change the filter to see the other classes.',
+			'admin.groupes.erreur' => 'The classes could not be read. Try again in a moment.',
+			'admin.groupes.sansDonnees' => 'The classes list could not be loaded',
+			'admin.groupes.creer' => 'New class',
+			'admin.groupes.creerTitre' => 'New class',
+			'admin.groupes.champLibelle' => 'Class name',
+			'admin.groupes.manqueNom' => 'The class name is missing: write it in the first field.',
+			'admin.groupes.manqueEnseignant' => 'The teacher is missing: choose one from the list.',
+			'admin.groupes.champType' => 'Audience',
+			'admin.groupes.champJour' => 'Day',
+			'admin.groupes.champHeure' => 'Hour (0-23)',
+			'admin.groupes.champSeuil' => 'Maximum ceiling',
+			'admin.groupes.creerEnvoyer' => 'Create the class',
+			'admin.groupes.creerErreur' => ({required Object message}) => 'The creation did not go through: ${message}',
+			'admin.groupes.refusCreation.reservee' => 'The class is not created: your account is not allowed to create a class.',
+			'admin.groupes.refusCreation.compteEnseignant' => 'The class is not created: this person\'s account no longer exists or is not active. Choose another person from the list.',
+			'admin.groupes.refusCreation.enseignantNonEligible' => 'The class is not created: this person cannot receive a class yet (ID document not validated, access ended, incomplete teacher profile or gender not filled in). Choose another person from the list.',
+			'admin.groupes.refusCreation.genreIncompatible' => 'The class is not created: this person\'s gender does not match the class\'s audience. Choose another person from the list.',
+			'admin.groupes.refusCreation.plafond' => 'The class is not created: it would exceed this person\'s weekly hours ceiling. Choose another person from the list.',
+			'admin.groupes.refusCreation.chevauchementClasse' => 'The class is not created: this person already has a class or a student at the same time. Change the slot or choose another person from the list.',
+			'admin.groupes.refusCreation.chevauchementSeance' => 'The class is not created: this person already has a session planned at the same time. Change the slot or choose another person from the list.',
+			'admin.groupes.refusCreation.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The class is not created: this teacher already holds ${n} active class, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.', other: 'The class is not created: this teacher already holds ${n} active classes, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.', ), 
+			'admin.groupes.refusCreation.plafondClassesSansNombre' => 'The class is not created: this teacher already holds the maximum number of active classes. Close one of their classes, or raise the maximum in the Rules.',
+			'admin.groupes.refusCreation.creneaux' => 'The class is not created: a slot is incomplete or duplicated. Check the week\'s slots, then press again.',
+			'admin.groupes.refusCreation.releverMaximum' => 'Raise the maximum in the Rules',
+			'admin.groupes.refusCreation.inconnu' => 'The class is not created: the server refused these choices. Check the teacher and the slot, then press again.',
+			'admin.groupes.c1.autresCreneauxContexte' => 'A class usually meets three times a week, on fixed days. Add one line for each other class day; no date to enter.',
+			'admin.groupes.c1.prisNommee' => ({required Object nom, required Object classe, required Object quand}) => '${nom} already teaches the class "${classe}" on ${quand}: change the slot or choose another person from the list.',
+			'admin.groupes.c1.classeNommee' => ({required Object classe, required Object quand}) => 'The class is not created: this person already teaches the class "${classe}" on ${quand}. Change the slot or choose another person from the list.',
+			'admin.groupes.c1.seanceNommee' => ({required Object classe, required Object quand}) => 'The class is not created: this person already has a session of the class "${classe}" on ${quand}. Change the slot or choose another person from the list.',
+			'admin.groupes.c1.seanceDatee' => ({required Object quand}) => 'The class is not created: this person already has a session planned on ${quand}. Change the slot or choose another person from the list.',
+			'admin.groupes.c1.creneauxPropres' => 'The class is not created: two of its slots overlap, the first runs into the next. Space these slots out or shorten the length, then press again.',
+			'admin.groupes.c1.quand' => ({required Object jour, required Object heure, required Object deVille}) => '${jour} at ${heure}, ${deVille} time',
+			'admin.groupes.c1.quandMecque' => ({required Object jour, required Object heure}) => '${jour} at ${heure}, Makkah time',
+			'admin.groupes.c1.quandSansVille' => ({required Object jour, required Object heure}) => '${jour} at ${heure}',
+			'admin.groupes.c1.jourDate' => ({required Object jour, required Object mois, required Object numero}) => '${jour} ${mois} ${numero}',
+			'admin.groupes.c1.heurePleine' => ({required Object h}) => '${h}:00',
+			'admin.groupes.c1.heureMinutes' => ({required Object h, required Object mm}) => '${h}:${mm}',
+			'admin.groupes.c1.fuseauEnseignant' => ({required Object deVille}) => 'Times in ${deVille} time, the teacher\'s time zone.',
+			'admin.groupes.c1.fuseauDefaut' => ({required Object deVille}) => 'Times in ${deVille} time, the time zone kept by default.',
+			'admin.groupes.c1.fuseauAcademie' => 'Times in Makkah time.',
+			'admin.groupes.c1.fuseauNonTransmis' => ({required Object deVille}) => 'Times in ${deVille} time, the time zone the server keeps for now. The teacher\'s time zone will be taken into account as soon as the server accepts it.',
+			'admin.groupes.c1.abandonQuestion' => 'Abandon the new class?',
+			'admin.groupes.c1.abandonConsequence' => 'The choices made in this form (audience, teacher, slots, name) will be lost.',
+			'admin.groupes.c1.abandonConfirmer' => 'Abandon the new class',
+			'admin.groupes.c1.abandonContinuer' => 'Continue editing',
+			'admin.groupes.c1.eleveDejaEnClasse' => 'this student is already in an active class. First remove them from that class, or transfer them, then press again.',
+			'admin.groupes.c1.eleveInvalide' => 'this student\'s account no longer exists or is not active. Choose another student from the list.',
+			'admin.groupes.c1.eleveNonMembre' => 'this student is no longer in this class. Reload the list to see its members.',
+			'admin.groupes.c1.classeDejaClose' => 'this class is already closed. Reload the classes list.',
+			'admin.groupes.c1.motifManquant' => 'the reason is missing. Choose one, then press again.',
+			'admin.groupes.c1.reservee' => 'your account is not allowed to do this action. Ask the management for it.',
+			'admin.groupes.c1.refusInconnu' => 'the server refused this action without giving the reason. Check your choices, then press again.',
+			'admin.groupes.c1.connexion' => 'the request may not have reached Rewayah. Press again in a moment.',
+			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Class ${libelle}',
+			'admin.groupes.detailMembres' => 'Members',
+			'admin.groupes.detailAucunMembre' => 'No student in this class yet.',
+			'admin.groupes.actionAjouter' => 'Add a student',
+			'admin.groupes.actionRetirer' => 'Remove',
+			'admin.groupes.actionModifierSeuil' => 'Change the ceiling',
+			'admin.groupes.nomClasse.action' => 'Change the name',
+			'admin.groupes.nomClasse.titre' => ({required Object nom}) => 'Change the name of the class ${nom}',
+			'admin.groupes.nomClasse.champ' => 'Class name',
+			'admin.groupes.nomClasse.aide' => 'This name is shown to families, students and the class teacher.',
+			'admin.groupes.nomClasse.manque' => 'The class name is missing: write it in the field.',
+			'admin.groupes.nomClasse.erreur' => ({required Object message}) => 'The name was not changed: ${message} Try again in a moment.',
+			'admin.groupes.nomClasse.erreurHoraire' => 'The name was not changed: the classes list was no longer up to date. Close this sheet, then start again.',
+			'admin.groupes.nomClasse.dejaPris' => 'Another class already has this name: choose another.',
+			'admin.groupes.nomClasse.enregistrer' => 'Save',
+			'admin.groupes.nomClasse.horsLigne' => 'The name can be saved when the connection has returned. Your entry stays displayed.',
+			'admin.groupes.actionObservation' => 'Observation settings',
+			'admin.groupes.actionCloturer' => 'Close the class',
+			'admin.groupes.actionAjouterCreneau' => 'Add a slot',
+			'admin.groupes.reglagesClasse.action' => 'Slots and gender',
+			'admin.groupes.reglagesClasse.titre' => ({required Object deLibelle}) => 'Slots and gender ${deLibelle}',
+			'admin.groupes.reglagesClasse.creneauxTitre' => 'Slots of the week',
+			'admin.groupes.reglagesClasse.creneauxContexte' => 'Each slot gives one session a week, in the class\'s time zone. No date to enter.',
+			'admin.groupes.reglagesClasse.modifierCreneau' => 'Edit this slot',
+			'admin.groupes.reglagesClasse.retirerCreneau' => 'Remove this slot',
+			'admin.groupes.reglagesClasse.ajouterCreneau' => 'Add a slot',
+			'admin.groupes.reglagesClasse.genreTitre' => 'Class gender',
+			'admin.groupes.reglagesClasse.genreNonRegle' => 'Gender not set',
+			'admin.groupes.reglagesClasse.genreNonRegleDetail' => 'Automatic grouping adds no student to this class until its gender is chosen. Students already registered do not change.',
+			'admin.groupes.reglagesClasse.modifierGenre' => 'Change the gender',
+			'admin.groupes.reglagesClasse.genreContexte' => 'A class is not mixed, unless the management sets otherwise when teachers of one gender are missing. Students already registered do not change.',
+			'admin.groupes.reglagesClasse.consequence' => 'The upcoming sessions of this slot are cancelled, never deleted; families and the teacher are notified. Past sessions do not change.',
+			'admin.groupes.reglagesClasse.motif' => 'Reason',
+			'admin.groupes.reglagesClasse.motifAide' => 'It is kept with the cancelled sessions and in the log.',
+			'admin.groupes.reglagesClasse.envoyerModifier' => 'Save the slot',
+			'admin.groupes.reglagesClasse.envoyerRetirer' => 'Remove the slot',
+			'admin.groupes.reglagesClasse.envoyerGenre' => 'Save the gender',
+			'admin.groupes.reglagesClasse.retour' => 'Back to the slots',
+			'admin.groupes.reglagesClasse.manqueMotif' => 'Write the reason: it is kept with the cancelled sessions.',
+			'admin.groupes.reglagesClasse.manqueGenre' => 'Choose the class\'s gender.',
+			'admin.groupes.reglagesClasse.refusDernier' => 'A class keeps at least one slot: add another before removing this one.',
+			'admin.groupes.reglagesClasse.refusExistant' => 'The class already has this slot: choose another day or another time.',
+			'admin.groupes.reglagesClasse.refusIntrouvable' => 'This slot has already changed: go back to the slots to see the updated list.',
+			'admin.groupes.reglagesClasse.refusConversion' => 'This timetable change is not yet available: try again in a few minutes.',
+			'admin.groupes.reglagesClasse.refusRecharger' => 'Reload the app to change a timetable.',
+			'admin.groupes.reglagesClasse.refusClasseFermee' => 'This class is closed: its slots no longer change.',
+			'admin.groupes.reglagesClasse.erreur' => 'The change is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'admin.groupes.reglagesClasse.lectureErreur' => 'This class\'s slots cannot be read for now.',
+			'admin.groupes.reglagesClasse.horsLigne' => 'The change can go out when the connection has returned. Your choices stay displayed.',
+			'admin.groupes.reglagesClasse.faitGenre' => 'The class\'s gender is saved.',
+			'admin.groupes.reglagesClasse.faitModifie' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'Slot moved: no upcoming session created for now.', one: 'Slot moved: ${n} upcoming session created.', other: 'Slot moved: ${n} upcoming sessions created.', ), 
+			'admin.groupes.reglagesClasse.faitRetire' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'Slot removed: no upcoming session to cancel.', one: 'Slot removed: ${n} upcoming session cancelled.', other: 'Slot removed: ${n} upcoming sessions cancelled.', ), 
+			'admin.groupes.reglagesClasse.dureeContexte' => 'Changing only the length cancels no session: the upcoming sessions of this slot take it.',
+			'admin.groupes.reglagesClasse.faitDuree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'Length saved: no upcoming session to change for now.', one: 'Length saved: ${n} upcoming session takes it.', other: 'Length saved: ${n} upcoming sessions take it.', ), 
+			'admin.groupes.creneau.titre' => ({required Object deLibelle}) => 'New slot ${deLibelle}',
+			'admin.groupes.creneau.contexte' => 'One more day and time, every week, for the same class. The sessions of the next four weeks are created right away.',
+			'admin.groupes.creneau.fuseauSaisie' => ({required Object deVille}) => '${deVille} time',
+			'admin.groupes.creneau.envoyer' => 'Add this slot',
+			'admin.groupes.creneau.dejaLa' => 'This class already has this slot: nothing changed. Choose another day or another time.',
+			'admin.groupes.creneau.erreur' => 'The slot is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'admin.groupes.creneau.horsLigne' => 'The slot can be added when the connection has returned. Your choices stay displayed.',
+			'admin.groupes.creneau.journalisation' => 'Each slot added is written in the audit log.',
+			'admin.groupes.ajouterTitre' => ({required Object libelle}) => 'Add a student to ${libelle}',
+			'admin.groupes.manqueEleve' => 'The student is missing: choose one from the list.',
+			'admin.groupes.champMotif' => 'Reason',
+			'admin.groupes.motifRequis' => 'A reason is required, it is written in the audit log.',
+			'admin.groupes.ajouterEnvoyer' => 'Add',
+			'admin.groupes.ajouterErreur' => ({required Object message}) => 'The addition did not go through: ${message}',
+			'admin.groupes.retirerTitre' => ({required Object prenom, required Object deLibelle}) => 'Remove ${prenom} ${deLibelle}',
+			'admin.groupes.retirerEnvoyer' => 'Remove',
+			'admin.groupes.retirerErreur' => ({required Object message}) => 'The removal did not go through: ${message}',
+			'admin.groupes.modifierSeuilTitre' => ({required Object deLibelle}) => 'Maximum ceiling ${deLibelle}',
+			'admin.groupes.modifierSeuilEnvoyer' => 'Save',
+			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'The change did not go through: ${message}',
+			'admin.groupes.refusDeplacement.enseignantIndisponible' => 'The timetable is not changed: the teacher\'s account, ID document, course language or gender filled in no longer allow this class. Check their file, then press again.',
+			'admin.groupes.refusDeplacement.genreIncompatible' => 'The timetable is not changed: the teacher\'s gender does not match the class\'s audience.',
+			'admin.groupes.refusDeplacement.plafond' => 'The timetable is not changed: the teacher would exceed their weekly hours ceiling.',
+			'admin.groupes.refusDeplacement.nonDisponible' => 'The timetable is not changed: the teacher has not declared all the hours of this class, from its start to its end. Choose another timetable.',
+			'admin.groupes.refusDeplacement.chevauchementClasse' => 'The timetable is not changed: the teacher already has a class or a student at this time. Choose another timetable.',
+			'admin.groupes.refusDeplacement.chevauchementSeance' => 'The timetable is not changed: a session is already planned at this time, for the teacher (in this class at its old timetable or in another class). Choose another timetable.',
+			'admin.groupes.refusDeplacement.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The timetable is not changed: the teacher already holds ${n} active class, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.', other: 'The timetable is not changed: the teacher already holds ${n} active classes, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.', ), 
+			'admin.groupes.refusDeplacement.plafondClassesSansNombre' => 'The timetable is not changed: the teacher already holds the maximum number of active classes. Close one of their classes, or raise the maximum in the Rules.',
+			'admin.groupes.refusDeplacement.inconnu' => 'The timetable is not changed: the server refused this choice. Check the teacher and the timetable, then press again.',
+			'admin.groupes.refusDeplacement.seuil' => 'The ceiling is not changed: this class\'s timetable shown here is no longer valid for its teacher. Refresh the list, then start again.',
+			'admin.groupes.cloturerTitre' => ({required Object libelle}) => 'Close ${libelle}',
+			'admin.groupes.cloturerDetail' => 'All active members will be removed from the class. This action cannot be undone.',
+			'admin.groupes.cloturerEnvoyer' => 'Close',
+			'admin.groupes.cloturerErreur' => ({required Object message}) => 'The closing did not go through: ${message}',
+			'admin.groupes.journalisation' => 'Each creation, addition, removal and closing is written in the audit log.',
+			'admin.groupes.observationTitre' => ({required Object libelle}) => 'Observation: ${libelle}',
+			'admin.groupes.observationErreur' => 'The setting could not be saved.',
+			'admin.groupes.observationCapaciteAbsente' => 'This installation does not yet have the server update this setting requires (migration 0036). Trying again will change nothing: it must first be applied to the database.',
+			'admin.groupes.cahiers.lien' => 'See the class handover notebooks',
+			'admin.groupes.cahiers.titre' => 'Class handover notebooks',
+			'admin.groupes.cahiers.aide' => 'Read-only. Each opening of a notebook is written in the audit log, with your name.',
+			'admin.groupes.cahiers.filtre' => 'Status',
+			'admin.groupes.cahiers.filtreTous' => 'All statuses',
+			'admin.groupes.cahiers.vide' => 'No notebook matches for this class.',
+			'admin.groupes.cahiers.plus' => 'Show more notebooks',
+			'admin.groupes.cahiers.titreCahier' => ({required Object dePrenom}) => '${dePrenom}\'s session notebook',
+			'admin.groupes.cahiers.lectureSeule' => 'Read-only',
+			'admin.groupes.cahiers.evaluation' => 'Teacher\'s assessment of this student',
+			'admin.groupes.cahiers.aucuneEvaluation' => 'No assessment has been recorded for this student.',
+			'admin.groupes.cahiers.detailsInternes' => 'Internal details',
+			'admin.groupes.cahiers.interne' => 'Internal, never shown to the family',
+			'admin.groupes.cahiers.aucunInterne' => 'No internal detail has been recorded.',
+			'admin.groupes.cahiers.apercu' => 'See the family preview',
+			'admin.groupes.cahiers.nonValide' => 'The notebook is not validated yet.',
+			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'Corrected on ${date}',
+			'admin.groupes.cahiers.enseignant' => 'Teacher',
+			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'Session of ${date}',
+			'admin.groupes.cahiers.rubriqueTravail' => 'Work to prepare',
+			'admin.groupes.cahiers.rubriqueObjectif' => 'Personal goal',
+			'admin.groupes.cahiers.rubriqueSuite' => 'Decided next step',
+			'admin.groupes.cahiers.rubriqueMotif' => 'Reason for the exception',
+			'admin.groupes.partage.titre' => 'Sharing of teaching reports',
+			'admin.groupes.partage.interrupteur' => 'Share automatically with families',
+			'admin.groupes.partage.aide' => 'Families see the shareable observations once the notebook is validated. Internal notes stay private.',
+			'admin.groupes.partage.priorite' => 'Student exception → class → Default setting',
+			'admin.groupes.partage.gererExceptions' => 'Manage individual exceptions',
+			'admin.groupes.partage.indisponible' => 'The sharing setting is not available yet.',
+			'admin.groupes.partage.refuse' => 'You are not allowed to change this setting.',
+			'admin.groupes.partage.illisible' => 'The sharing setting cannot be read for now.',
+			'admin.groupes.partage.horsLigne' => 'A connection is needed to read or change sharing.',
+			'admin.groupes.partage.enregistrement' => 'Saving',
+			'admin.groupes.partage.confirme' => 'The sharing setting is saved.',
+			'admin.groupes.partage.conflit' => 'Another member of the management has just changed this setting. The up-to-date value is shown: check it, then start again if needed.',
+			'admin.groupes.partage.echec' => 'The change is not confirmed, the previous value is kept. Try again in a moment.',
+			'admin.groupes.partage.classeVide' => 'This class has no student yet.',
+			'admin.groupes.partage.modifiePar' => ({required Object date, required Object auteur}) => 'Last change: ${date}, by ${auteur}',
+			'admin.groupes.partage.modifieLe' => ({required Object date}) => 'Last change: ${date}',
+			'admin.groupes.partage.etatActif' => 'Turned on for the class',
+			'admin.groupes.partage.etatInactif' => 'Turned off for the class',
+			'admin.groupes.partage.confirmerActiver' => 'Turn on automatic sharing for this class?',
+			'admin.groupes.partage.consequenceActiver' => 'Reports already shared become readable again for families. Those held back during the deactivation are not published all at once.',
+			'admin.groupes.partage.confirmerDesactiver' => 'Turn off automatic sharing for this class?',
+			'admin.groupes.partage.consequenceDesactiver' => 'Families no longer see, right away, the reports shared automatically. Notebooks, validated sessions and pay do not change.',
+			'admin.groupes.partage.actionActiver' => 'Turn on sharing',
+			'admin.groupes.partage.actionDesactiver' => 'Turn off sharing',
+			'admin.groupes.partage.enregistrer' => 'Save',
+			'admin.groupes.partage.exceptionsTitre' => 'Individual exceptions',
+			'admin.groupes.partage.exceptionsAide' => 'An exception concerns only the chosen student. It never passes on another student\'s data.',
+			'admin.groupes.partage.rechercheEleve' => 'Search for a student',
+			'admin.groupes.partage.colonneEleve' => 'Student',
+			'admin.groupes.partage.colonneRegle' => 'Rule applied',
+			'admin.groupes.partage.colonneVisibilite' => 'Visible to the family',
+			'admin.groupes.partage.colonneModification' => 'Last change',
+			'admin.groupes.partage.sourceClasse' => 'Class rule',
+			'admin.groupes.partage.sourceException' => 'Individual exception',
+			'admin.groupes.partage.sourceDefaut' => 'Default setting',
+			'admin.groupes.partage.visible' => 'Visible',
+			'admin.groupes.partage.nonVisible' => 'Not visible',
+			'admin.groupes.partage.eleveRetire' => 'Removed from the class',
+			'admin.groupes.partage.plusEleves' => 'Show more students',
+			'admin.groupes.partage.modifierEleve' => ({required Object dePrenom}) => 'Edit ${dePrenom}\'s rule',
+			'admin.groupes.partage.regleClasse' => 'Use the class rule',
+			'admin.groupes.partage.regleClasseAide' => 'Choose this when the student has no particular need: their family follows the class setting.',
+			'admin.groupes.partage.regleToujours' => 'Always share automatically',
+			'admin.groupes.partage.regleToujoursAide' => 'Choose this when their family must always see the reports, even if the class does not share.',
+			'admin.groupes.partage.regleJamais' => 'Do not share automatically',
 			'agent.titre' => 'Agent entry',
 			'agent.intro' => 'This page opens the app in read-only mode, with the token provided by the academy.',
 			'agent.jeton' => 'Observation token',
@@ -23303,8 +26124,6 @@ extension on TraductionsEn {
 			'nav.admin.menu' => 'Menu',
 			'nav.compte' => 'My account',
 			'nav.principale' => 'Main navigation',
-			_ => null,
-		} ?? switch (path) {
 			'nav.motSymbole' => 'Rewayah',
 			'nav.logoAccueil' => 'Rewayah Academy, home',
 			'nav.replier' => 'Collapse navigation',
@@ -23362,6 +26181,8 @@ extension on TraductionsEn {
 			'compte.donnees.suppression.confirmerAction' => 'Request deletion',
 			'compte.donnees.suppression.confirmerRester' => 'Keep my account',
 			'compte.donnees.suppression.enCoursTitre' => 'Deletion request in progress',
+			_ => null,
+		} ?? switch (path) {
 			'compte.donnees.suppression.enCoursDetail' => ({required Object demandee, required Object echeance}) => 'Requested on ${demandee}. The management can process it from ${echeance}.',
 			'compte.donnees.suppression.annuler' => 'Cancel my request',
 			'compte.donnees.suppression.demandeEnvoyee' => 'Your request is saved. You can cancel it until it is processed.',
@@ -23817,8 +26638,6 @@ extension on TraductionsEn {
 			'notifications.types.mentionStudio' => 'Mention in The Studio',
 			'notifications.types.reponseStudio' => 'Reply in The Studio',
 			'notifications.types.decisionDemandee' => 'Decision requested',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.types.elementAssigne' => 'Assigned item',
 			'notifications.types.annonceInterne' => 'Internal announcement',
 			'notifications.types.evenementContextuel' => 'Event',
@@ -23876,6 +26695,8 @@ extension on TraductionsEn {
 			'eleve.coran.reduire' => 'Reduce the text',
 			'eleve.coran.source' => 'Quran text: Tanzil Project',
 			'eleve.coran.sourceLien' => 'tanzil.net',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.coran.edition' => 'Madinah Mushaf, Hafs riwaya',
 			'eleve.suivi.colonneDate' => 'Date',
 			'eleve.suivi.colonneCours' => 'Class',
@@ -24331,8 +27152,6 @@ extension on TraductionsEn {
 			'enseignant.journee.pasEncoreRejoint' => ({required Object eleve}) => '${eleve} has not joined the room yet.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} lost the connection.',
 			'enseignant.journee.revenusDetail' => 'Your estimated pay for the month, class by class.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.revenusLecteur' => 'See your estimated income for the month',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'The ${heure} class is cancelled.',
 			'enseignant.journee.rapportsTitre' => 'Pending reports',
@@ -24390,6 +27209,8 @@ extension on TraductionsEn {
 			'enseignant.journee.absence.etats.recherche' => 'Looking for a replacement',
 			'enseignant.journee.absence.etats.remplacantConfirme' => 'Replacement confirmed',
 			'enseignant.journee.absence.etats.aucunRemplacant' => 'No replacement confirmed',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.absence.etats.seanceAnnulee' => 'Session cancelled',
 			'enseignant.journee.absence.etats.demandeAnnulee' => 'Request cancelled',
 			'enseignant.journee.remplacement.titre' => 'Take this replacement?',
@@ -24845,8 +27666,6 @@ extension on TraductionsEn {
 			'controleur.mfa.videPhrase' => 'Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here. For help, write to the academy\'s administration.',
 			'controleur.mfa.videRetour' => 'I installed the app',
 			'controleur.mfa.seDeconnecter' => 'Sign out',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.mfa.chargement' => 'Checking your account',
 			'controleur.historique.titre' => 'History',
 			'controleur.historique.provisoire' => 'This screen is being prepared.',
@@ -24904,6 +27723,8 @@ extension on TraductionsEn {
 			'controleur.complement.envoyePhrase' => 'It appears below the original report, which stays unchanged.',
 			'controleur.complement.revenir' => 'Back to the report',
 			'controleur.compteRendu.titre' => 'Report',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.provisoire' => 'This screen is being prepared.',
 			'controleur.compteRendu.revenir' => 'Back to the review',
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '${classe} · ${heure}',
@@ -25359,8 +28180,6 @@ extension on TraductionsEn {
 			'tc.classe.recitation.suivants' => 'Next',
 			'tc.classe.recitation.arreter' => 'Stop the recitation',
 			'tc.classe.prevol.titre' => 'Before opening the class',
-			_ => null,
-		} ?? switch (path) {
 			'tc.classe.prevol.microOk' => 'Microphone detected',
 			'tc.classe.prevol.microAbsent' => 'No usable microphone',
 			'tc.classe.prevol.cameraOk' => 'Camera detected',
@@ -25418,6 +28237,8 @@ extension on TraductionsEn {
 			'tc.observation.disponibilite.desactivee' => 'The administration has closed observation of this class.',
 			'tc.observation.disponibilite.lienAbsentTitre' => 'None of your children is in this session',
 			'tc.observation.disponibilite.lienAbsent' => 'Observation is reserved for the parents of the session\'s students.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.disponibilite.enfantAbsentTitre' => 'Your child is not in the session',
 			'tc.observation.disponibilite.enfantAbsent' => 'Observation opens when your child is present.',
 			'tc.observation.disponibilite.presenceTitre' => 'Attendance being checked',
@@ -25873,8 +28694,6 @@ extension on TraductionsEn {
 			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} left your family plan.',
 			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.',
 			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.delaiTitre' => 'New invitation unavailable',
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'A new request can be made from ${date}. It will then have to be approved by the administration.',
 			'adulte.sortie.pourquoi' => 'Why this wait?',
@@ -25932,6 +28751,8 @@ extension on TraductionsEn {
 			'adulte.demo.titre' => 'Adult student demo',
 			'adulte.demo.mention' => 'The data is fictitious and nothing is sent.',
 			'adulte.demo.intro' => 'Choose a screen, then a situation of the Diallo household.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.demo.ecrans' => 'The screens',
 			'adulte.demo.situations' => 'The household situations',
 			'adulte.demo.variantes' => 'The variants',
@@ -26387,8 +29208,6 @@ extension on TraductionsEn {
 			'com.socle.composants.pieceJointe.retirerLecteur' => ({required Object nom}) => 'Remove ${nom}',
 			'com.socle.composants.pieceJointe.tailleOctets' => ({required Object taille}) => '${taille} bytes',
 			'com.socle.composants.pieceJointe.tailleKo' => ({required Object taille}) => '${taille} KB',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.pieceJointe.tailleMo' => ({required Object taille}) => '${taille} MB',
 			'com.socle.composants.pieceJointe.autorisee' => 'Ready to send',
 			'com.socle.composants.pieceJointe.tropVolumineuse' => 'File too large',
@@ -26446,6 +29265,8 @@ extension on TraductionsEn {
 			'com.socle.lexique.modeFocus' => 'Focus mode',
 			'com.socle.lexique.quitterFocus' => 'Exit focus',
 			'com.socle.lexique.aTraiter' => 'To handle',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.lexique.actionRequise' => 'Action required',
 			'com.socle.lexique.brouillon' => 'Draft',
 			'com.socle.lexique.elementsEpingles' => 'Pinned items',
@@ -26901,8 +29722,6 @@ extension on TraductionsEn {
 			'com.studio.visibilite.visibleDetail' => 'Open to the whole team.',
 			'com.studio.visibilite.restreintDetail' => 'Open to part of the team, which you belong to.',
 			'com.studio.visibilite.priveDetail' => 'Private channel, open to its members only. You belong to it.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.canal.membresUn' => '1 member',
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} members',
 			'com.studio.canal.aide' => ({required Object nom}) => 'Write in ${nom}',
@@ -26960,6 +29779,8 @@ extension on TraductionsEn {
 			'com.studio.demo.horsDemo' => ({required Object module}) => 'In the app, this line opens ${module}. The demo stays on this page.',
 			'com.studio.demo.choisir' => 'Choose a situation to try.',
 			'com.studio.demo.normale' => 'The Studio and its channels',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.echec' => 'Sending not confirmed',
 			'com.studio.demo.horsLigne' => 'Offline',
 			'com.studio.demo.canalPrive' => 'Address of a private channel not open to you',
@@ -27415,8 +30236,6 @@ extension on TraductionsEn {
 			'comptable.aujourdhui.alertesVide' => 'No alert right now.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alerts to watch: ${n}',
 			'comptable.aujourdhui.paiementsAEffectuer' => 'Payments to make',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Each payment is checked in its list before being paid.',
 			'comptable.aujourdhui.paiementsVide' => 'No payment to make.',
 			'comptable.aujourdhui.echeancesVide' => 'No upcoming deadline.',
@@ -27474,6 +30293,8 @@ extension on TraductionsEn {
 			'comptable.paiements.confirmation.prestataires' => 'Providers',
 			'comptable.paiements.confirmation.plafond' => 'Remaining delegation',
 			'comptable.paiements.confirmation.exclusTitre' => 'Excluded from this batch: they will not go out',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.aucunPretTitre' => 'No payment ready',
 			'comptable.paiements.confirmation.aucunPret' => 'Nothing will go out. Open each excluded payment to lift its reason, then run the check again.',
 			'comptable.paiements.confirmation.erreursTitre' => 'Errors returned by the check',
@@ -27929,8 +30750,6 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.aide.adresseEtat' => 'Only in the United States and Canada, for example TX.',
 			'comptable.beneficiaires.recevoir.wise.journalEnregistrees' => 'Details saved',
 			'comptable.beneficiaires.recevoir.wise.journalRetirees' => 'Details removed',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.versementsTitre' => 'Payments received',
 			'comptable.beneficiaires.recevoir.wise.versementsVide' => 'No payment noted yet. Each pay paid will appear here.',
 			'comptable.beneficiaires.recevoir.wise.versementMois' => ({required Object mois}) => 'Pay for ${mois}',
@@ -27988,6 +30807,8 @@ extension on TraductionsEn {
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'Validation: ${validation}',
 			'comptable.contractuels.payerAide' => 'Payment opens in the payment details, with the exact amount.',
 			'comptable.contractuels.approuverAide' => 'After approval, the amount is frozen and the obligation becomes payable.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.renvoyerInvitation' => 'Resend the invitation',
 			'comptable.contractuels.invitationAide' => 'This external beneficiary enters their own payment method, from their secure invitation.',
 			'comptable.contractuels.invitationRenvoyee' => 'Invitation resent',
@@ -28443,8 +31264,6 @@ extension on TraductionsEn {
 			'avis.form.accord.erreur' => 'Accept publication by ticking the box, otherwise your feedback cannot be sent.',
 			'avis.form.lecture' => ({required Object courriel}) => 'Your feedback will be read by the management before being published. To have it removed later, write to ${courriel}.',
 			'avis.form.regles.titre' => 'What the management publishes',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.regles.intro' => 'A respectful review is published, even when it is critical. The management never edits your text. It only refuses a review that contains:',
 			'avis.form.regles.insulte' => 'an insult',
 			'avis.form.regles.tiers' => 'personal data of a third party, such as the name of a child or a teacher',
@@ -28502,6 +31321,8 @@ extension on TraductionsEn {
 			'avis.admin.actions.publier' => 'Publish',
 			'avis.admin.actions.refuser' => 'Refuse',
 			'avis.admin.actions.retirer' => 'Remove',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.publier.question' => ({required Object deNom}) => 'Publish ${deNom}\'s review?',
 			'avis.admin.publier.consequence' => 'The review, display name, country and date will appear on the Rewayah Academy website at the site\'s next update. The text is not edited.',
 			'avis.admin.publier.action' => 'Publish the review',
@@ -28957,8 +31778,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'the formatting is not that of a CSV export',
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'its content is not that of a CSV export',
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Export the sheet as CSV again from Google Sheets, then choose the file.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Currently read in column ${n}. Choosing it here removes it from that column.',
 			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Column ${n}: ${titre}',
 			'candidatsFlux.importFormulaires.colonnes.question' => 'Does each column really contain what Rewayah thinks?',
@@ -29016,6 +31835,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'Try the analysis again',
 			'candidatsFlux.importFormulaires.apercu.question' => 'Is this the right file?',
 			'candidatsFlux.importFormulaires.apercu.explication' => 'Here is what Rewayah read. Nothing is saved yet.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'Contacts are hidden in the preview.',
 			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} row read', other: '${n} rows read', ), 
 			'candidatsFlux.importFormulaires.apercu.colonnesReconnues' => ({required Object reconnues, required Object total}) => 'Columns recognized: ${reconnues} of ${total}',
@@ -29471,8 +32292,6 @@ extension on TraductionsEn {
 			'suiviAttente.presentation.effacerPays' => 'Do not provide',
 			'suiviAttente.mePresenter.lien' => 'Introduce myself to the families',
 			'suiviAttente.mePresenter.titre' => 'Introduce myself',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.mePresenter.contexte' => 'A message is already written. You can edit it before sending. It goes in Messages, to the families of the class and to adult students.',
 			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyid ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
 			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyida ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
@@ -29530,6 +32349,8 @@ extension on TraductionsEn {
 			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '${nombre}, ${duree}',
 			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'Exits from the app: ${resume}',
 			'journalSorties.reglages.section' => 'Exits from the app during a session',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.reglages.intro' => 'The delay applies to all students. The exits log records nothing without the agreement of the guardian, or of the adult student.',
 			'journalSorties.reglages.journal' => 'Record exits from the app',
 			'journalSorties.reglages.journalDetail' => 'Turn on only after the director has validated the agreement texts. Once on, the guardian and the adult student see the agreement page in their Account.',
