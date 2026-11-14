@@ -84,6 +84,7 @@ S'il passe sans conflit, le contenu est dans `main`. Un diff nul ne contient rie
 ## Lots de construction du 12-13/11
 
 | Lot | Branche | Statut | Preuve |
+| PERF-AUDIT (14/11, décision du pilote par délégation du directeur) : `log_sensitive_access` ne verrouille plus `audit_logs` ; chaîne posée chaque minute par `private.audit_chainer` dans `app_private.audit_chaine` (append-only), vérifiée par `verifier_chaine_audit` (même signature) | `claude/perf-audit-verrou` | **À LIVRER** (PR brouillon ; migration `20261126200000_audit_chaine_differee.sql` à coller le soir par le directeur, contient le mot DELETE dans un déclencheur qui interdit l'effacement ; NON PROUVÉ en production) | 202 scénarios de la CI, `adm04` deux fois, `perf_audit_verrou`, L2-11 verts sur Postgres 16 local ; deux sessions parallèles ne s'attendent plus |
 | :-- | :-- | :-- | :-- |
 | SUIVI-ATTENTE (suivi de l'attente de la classe, « comme une livraison ») | `claude/suivi-attente` | **À LIVRER** (agent de construction, ordre de l'architecte pédagogique du 12/11 ; aucune PR : l'architecte l'ouvre et fusionne) | Fiche `docs/current/pedagogie/lots/LOT-SUIVI-ATTENTE.md`, §6 ; migrations `20261123960000`, `20261123961000` (mot d'effacement, collée par le directeur), `20261123962000` ; scénario `supabase/tests/scenarios_suivi_attente.sql` ; captures `docs/current/captures/E2E/suivi-attente/`. **Non prouvé** : production, que seul le directeur prouve ; `ci.yml` ne rejoue pas encore le scénario (zone interdite au lot). |
 
