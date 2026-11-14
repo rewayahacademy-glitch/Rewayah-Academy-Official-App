@@ -195,6 +195,12 @@ class EspaceTravailAdaptatif extends StatefulWidget {
     'espace-ouvrir-contexte',
   );
 
+  /// Ce qui ouvre le contexte depuis l'en-tete du contenu (le meme geste que
+  /// (i)), ou `null` quand le contexte est deja en vue ou hors d'un espace.
+  static VoidCallback? ouvrirContexteDe(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<_ActionsEspace>()
+      ?.ouvrirContexte;
+
   /// Cle du bouton de retour a la liste.
   static const ValueKey<String> cleRetourListe = ValueKey<String>(
     'espace-retour-liste',

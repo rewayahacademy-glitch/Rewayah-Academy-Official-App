@@ -4169,6 +4169,22 @@
         "ouvrir": "فتح الرابط (\u2066{site}\u2069)",
         "ouvrirLu": "فتح الرابط إلى \u2066{site}\u2069 في علامة تبويب جديدة"
       },
+      "apercu": {
+        "titre": "الملف الشخصي",
+        "typeEnseignant": "طلب انضمام معلم",
+        "genre": "الجنس",
+        "pays": "البلد",
+        "situation": "أين وصل الطلب",
+        "piece": "وثيقة الهوية",
+        "entretien": "المقابلة",
+        "aucunEntretien": "لا مقابلة بعد",
+        "entretienPrevu": "مقررة في \u2068{quand}\u2069",
+        "decisions": "آخر القرارات",
+        "aucuneDecision": "لا قرار حتى الآن",
+        "voirDossier": "عرض الملف كاملًا",
+        "nonServi": "غير متاح بعد",
+        "ouvrir": "عرض الملف الشخصي لـ\u2068{nom}\u2069"
+      },
       "direct": {
         "nouveau": "وصلتك رسالة جديدة.",
         "horsDirect": "الرسائل لا تصل مباشرة الآن (الاتصال). تحديث كل 30 ثانية.",

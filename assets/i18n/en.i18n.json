@@ -11912,6 +11912,22 @@
         "ouvrir": "Open the link ({site})",
         "ouvrirLu": "Open the link to {site} in a new tab"
       },
+      "apercu": {
+        "titre": "Profile",
+        "typeEnseignant": "Teacher application",
+        "genre": "Gender",
+        "pays": "Country",
+        "situation": "Where the application stands",
+        "piece": "ID document",
+        "entretien": "Interview",
+        "aucunEntretien": "No interview yet",
+        "entretienPrevu": "Planned for {quand}",
+        "decisions": "Latest decisions",
+        "aucuneDecision": "No decision yet",
+        "voirDossier": "See the full file",
+        "nonServi": "Not available yet",
+        "ouvrir": "See {nom}'s profile"
+      },
       "direct": {
         "nouveau": "You have received a new message.",
         "horsDirect": "Messages are not live right now (connection). Updating every 30 seconds.",

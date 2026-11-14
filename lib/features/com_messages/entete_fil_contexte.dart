@@ -17,6 +17,8 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/badge_non_lu.dart';
+import '../../core/widgets/espace_travail_adaptatif.dart';
+import '../../core/widgets/raccourci_tactile.dart';
 import 'avatar_participant.dart';
 import 'port_messages_metier.dart';
 
@@ -182,6 +184,27 @@ class EnteteFilContexte extends StatelessWidget {
   /// La cle de l'en-tete, pour les tests.
   static const ValueKey<String> cle = ValueKey<String>('entete-fil-contexte');
 
+  /// La cle du raccourci vers le contexte, pour les tests.
+  static const ValueKey<String> cleRaccourci = ValueKey<String>(
+    'entete-fil-raccourci-contexte',
+  );
+
+  /// Apercu du profil (directeur, 14/11/2026) : toucher la photo ou le nom
+  /// ouvre le contexte (le profil, les participants), le meme geste que (i),
+  /// qui reste le controle lu et atteint au clavier. Contexte deja en vue, ou
+  /// hors d'un espace : l'identite seule.
+  static Widget _raccourciContexte(BuildContext context, Widget identite) {
+    final VoidCallback? ouvrir = EspaceTravailAdaptatif.ouvrirContexteDe(
+      context,
+    );
+    if (ouvrir == null) return identite;
+    return RaccourciTactile(
+      key: cleRaccourci,
+      onPress: ouvrir,
+      child: identite,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -232,25 +255,28 @@ class EnteteFilContexte extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  AvatarNom.enLigne(
-                    prenom: prenom,
-                    // Lot K : a l'affichage seulement (la phrase lue est
-                    // celle de l'en-tete), le trait d'union insecable
-                    // (U+2011) garde « An-Nour » entier : a 1440, le nom se
-                    // coupait en « An- » puis « Nour ».
-                    nom: noms.replaceAll('-', '\u2011'),
-                    role: ligneObjets,
-                    // PHOTOS-2b et #Ra_staff : l'avatar du premier
-                    // interlocuteur.
-                    avatar: AvatarParticipant(
-                      participant: interlocuteurs.isEmpty
-                          ? null
-                          : interlocuteurs.first,
-                      repli: prenom,
-                      diametre: AppAvatar.moyen,
-                    ),
-                    styleNom: palette.inkStrong.applyTo(
-                      textes.titleMedium ?? const TextStyle(),
+                  _raccourciContexte(
+                    context,
+                    AvatarNom.enLigne(
+                      prenom: prenom,
+                      // Lot K : a l'affichage seulement (la phrase lue est
+                      // celle de l'en-tete), le trait d'union insecable
+                      // (U+2011) garde « An-Nour » entier : a 1440, le nom se
+                      // coupait en « An- » puis « Nour ».
+                      nom: noms.replaceAll('-', '\u2011'),
+                      role: ligneObjets,
+                      // PHOTOS-2b et #Ra_staff : l'avatar du premier
+                      // interlocuteur.
+                      avatar: AvatarParticipant(
+                        participant: interlocuteurs.isEmpty
+                            ? null
+                            : interlocuteurs.first,
+                        repli: prenom,
+                        diametre: AppAvatar.moyen,
+                      ),
+                      styleNom: palette.inkStrong.applyTo(
+                        textes.titleMedium ?? const TextStyle(),
+                      ),
                     ),
                   ),
                   // Sous l'identite, jamais a cote : a texte agrandi, le badge ne

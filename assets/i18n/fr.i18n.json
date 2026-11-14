@@ -11900,6 +11900,22 @@
         "ouvrir": "Ouvrir le lien ({site})",
         "ouvrirLu": "Ouvrir le lien vers {site} dans un nouvel onglet"
       },
+      "apercu": {
+        "titre": "Profil",
+        "typeEnseignant": "Candidature d'enseignant",
+        "genre": "Genre",
+        "pays": "Pays",
+        "situation": "Où en est la candidature",
+        "piece": "Pièce d'identité",
+        "entretien": "Entretien",
+        "aucunEntretien": "Pas encore d'entretien",
+        "entretienPrevu": "Prévu le {quand}",
+        "decisions": "Dernières décisions",
+        "aucuneDecision": "Aucune décision pour le moment",
+        "voirDossier": "Voir tout le dossier",
+        "nonServi": "Pas encore disponible",
+        "ouvrir": "Voir le profil de {nom}"
+      },
       "direct": {
         "nouveau": "Vous avez reçu un nouveau message.",
         "horsDirect": "Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.",
