@@ -31,7 +31,7 @@ class _FauxAttentes implements PortAttentesRecrutement {
   Future<AttentesRecrutement> lire() async {
     appels++;
     final Object? e = erreur;
-    if (e != null) throw e;
+    if (e != null) Error.throwWithStackTrace(e, StackTrace.current);
     return rendu;
   }
 }
@@ -48,13 +48,13 @@ AttentesRecrutement _attentes({bool deuxCotes = false}) =>
               .toUtc()
               .toIso8601String(),
         },
-        'a_completer': <String, Object?>{'nombre': 18},
-        'paiement_non_disponible': <String, Object?>{'nombre': 11},
-        'entretien_a_planifier': <String, Object?>{'nombre': 1},
-        'decision_en_attente': <String, Object?>{'nombre': 0},
-        'etat_inconnu_du_client': <String, Object?>{'nombre': 3},
+        'a_completer': const <String, Object?>{'nombre': 18},
+        'paiement_non_disponible': const <String, Object?>{'nombre': 11},
+        'entretien_a_planifier': const <String, Object?>{'nombre': 1},
+        'decision_en_attente': const <String, Object?>{'nombre': 0},
+        'etat_inconnu_du_client': const <String, Object?>{'nombre': 3},
       },
-      'pieceAValider': <String, Object?>{'nombre': 13},
+      'pieceAValider': const <String, Object?>{'nombre': 13},
       'enPause': 0,
       'creneauxOuverts': 0,
       'entretiensSansIssue': 0,
