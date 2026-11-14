@@ -7,6 +7,7 @@
 import { clientService, json, refus } from '../_shared/clients.ts'
 import { composer } from '../_shared/courriel/gabarit.ts'
 import { rendre } from '../_shared/courriel/modeles.ts'
+import { porteLiberationReelle, preparerAdresseInvitee } from '../_shared/invitation/liberer_adresse.ts'
 import { traduireContenu } from '../_shared/courriel/traduction.ts'
 import { envoyer, lienUnClic } from '../_shared/courriel/transport.ts'
 
@@ -38,6 +39,7 @@ Deno.serve(async (req) => {
   if (!secret || !egal(req.headers.get('x-courriels-secret') ?? '', secret)) return refus('acces refuse', 401)
 
   const db = clientService()
+  const liberation = porteLiberationReelle(db)
   const urlDesinscription = `${Deno.env.get('SUPABASE_URL')}/functions/v1/courriel-desinscription`
   const debut = Date.now()
   let envoyes = 0
@@ -55,6 +57,13 @@ Deno.serve(async (req) => {
       let id: string | undefined
       let erreur: string | undefined
       try {
+        // ADRESSE-LIBEREE (14/11/2026) : pour toute invitation d'equipe ou de candidat
+        // valide, l'ancienne adresse d'un compte supprime est liberee et le compte
+        // neuf (sans profil) cree AVANT l'envoi : Google, lien et code marchent tous.
+        // Si l'adresse tient encore, le courriel ne part pas (ligne a reessayer).
+        if ((await preparerAdresseInvitee(l.modele, l.donnees, l.a, liberation)) === 'echec') {
+          throw new Error('adresse invitee non preparee')
+        }
         // COURRIELS-2 : dans la langue du destinataire ; traduit du francais (ou de
         // la langue d'ecriture de la direction) quand elle n'est pas ecrite.
         const langue = l.langue ?? 'fr'

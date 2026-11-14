@@ -1225,6 +1225,7 @@
     "codeInvitationReconnu": "Code d'invitation\u00a0: {code} reconnu",
     "erreurServeur": "Le lien n'a pas pu partir. Réessayez dans un instant\u00a0; si cela se répète, écrivez à l'académie.",
     "invitationCreationImpossible": "Votre compte n'a pas pu être créé avec cette invitation. Le code est peut-être échu ou déjà utilisé, ou il ne correspond pas à cette adresse. Vérifiez l'adresse saisie\u00a0; sinon, demandez une nouvelle invitation à l'académie.",
+    "erreurCompteSupprime": "Cette adresse appartenait à un compte supprimé. Ouvrez le lien d'invitation reçu par e-mail ou saisissez votre code d'invitation ci-dessous.",
     "modeConnexion": "J'ai déjà un compte",
     "modeCreation": "Créer un compte",
     "titreCreation": "Créer votre compte",
@@ -1286,6 +1287,8 @@
       "lienExpire": "Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.",
       "lienRefuseTitre": "La connexion n'a pas abouti",
       "lienRefuse": "Ce lien n'a pas pu vous connecter. Demandez-en un nouveau ci-dessous.",
+      "compteSupprimeTitre": "Cette adresse appartenait à un compte supprimé",
+      "compteSupprimeDetail": "Ni un lien de connexion ni Google ne peuvent la rouvrir. Ouvrez le lien d'invitation reçu par e-mail, ou saisissez votre code d'invitation.",
       "envoyer": "Recevoir un nouveau lien",
       "envoyeTitre": "Nouveau lien envoyé",
       "envoye": "Ouvrez le message envoyé à {courriel}, puis suivez le lien.",
@@ -15745,6 +15748,9 @@
     },
     "programme": {
       "vide": "L'étape apparaîtra dès l'entrée dans une classe",
+      "sansEtape": "Votre programme ne s'affiche pas encore : aucune étape n'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.",
+      "titreProgramme": "Le programme de l'académie",
+      "votrePlace": "Votre place dans le programme sera indiquée par votre enseignant.",
       "datesEcole": "Dates de l'académie",
       "datesEcoleVide": "Les dates de l'académie seront affichées ici",
       "genre": {

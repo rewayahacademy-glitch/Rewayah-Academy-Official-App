@@ -25,6 +25,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/apprendre/dates_ecole.dart';
+import '../../core/apprendre/programme_publie.dart';
 import '../../core/capacites/port_progression_famille.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -42,6 +43,15 @@ import '../suivi_foyer/carte_suivi_pedagogique.dart';
 abstract final class ClesProgramme {
   /// L'etat « pas encore de classe ».
   static const Key vide = ValueKey<String>('programme-vide');
+
+  /// Le programme de l'academie, montre sans etape propre.
+  static const Key programmePublie = ValueKey<String>('programme-publie');
+
+  /// La phrase « votre place sera indiquee par votre enseignant ».
+  static const Key votrePlace = ValueKey<String>('programme-votre-place');
+
+  /// Aucune etape publiee : la carte n'a que des sourates, ou un niveau.
+  static const Key sansEtape = ValueKey<String>('programme-sans-etape');
 
   /// La section des dates de l'academie.
   static const Key datesEcole = ValueKey<String>('programme-dates-ecole');
@@ -86,12 +96,19 @@ class OngletProgramme extends ConsumerWidget {
         !jalon &&
         !niveauDeclare;
     final bool dates = lecture.value?.suivi?.eleveVoitDates ?? false;
+    // Constat du directeur (14/11/2026) : la carte ne montrait
+    // que « sourates de fondation », sans etape ni parcours, et rien ne disait
+    // pourquoi. Une lecture sans etape ni cycle le dit, sans ecran vide.
+    final MaProgression? lue = lecture.value;
+    final bool sansEtape =
+        !rien && lue != null && lue.suivi == null && lue.cycle.isEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (rien) const _Vide(),
         const CarteSuiviPedagogique(),
+        if (sansEtape) _ProgrammeSansEtape(eleveId: eleveId),
         // Un enfant de 6 a 9 ans ne voit aucune date : pas de section.
         if (dates) _DatesEcole(eleveId: eleveId),
       ],
@@ -179,6 +196,106 @@ class _DatesEcole extends ConsumerWidget {
         Ecart.vMd,
         corps,
       ],
+    );
+  }
+}
+
+/// Sans etape propre : le programme de l'academie, tel que le serveur le
+/// publie, et la phrase qui dit que l'enseignant indiquera la place de la
+/// personne. Si le serveur n'en publie aucun (ou s'il n'y a pas de port), la
+/// phrase sans etape reste, sans ecran vide.
+class _ProgrammeSansEtape extends ConsumerWidget {
+  const _ProgrammeSansEtape({required this.eleveId});
+
+  final String eleveId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<ProgrammePublie?> lecture = ref.watch(
+      programmePublieProvider(eleveId),
+    );
+    final ProgrammePublie? programme = lecture.value;
+    if (lecture.hasError && !lecture.hasValue) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+        child: EmptyState(
+          message: t.suiviPedagogique.erreur,
+          icone: AppIcons.avertissement,
+          libelleAction: t.commun.reessayer,
+          onAction: () => ref.invalidate(programmePublieProvider(eleveId)),
+        ),
+      );
+    }
+    if (!lecture.hasValue && ref.watch(portProgrammePublieProvider) != null) {
+      return const Padding(
+        padding: EdgeInsets.only(bottom: AppSpacing.xl),
+        child: Skeleton.liste(lignes: 3),
+      );
+    }
+    if (programme == null || programme.vide) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+        child: EmptyState(
+          key: ClesProgramme.sansEtape,
+          message: t.apprendre.programme.sansEtape,
+          icone: AppIcons.chemin,
+          registre: RegistreVide.subi,
+        ),
+      );
+    }
+    final TextTheme textes = Theme.of(context).textTheme;
+    final s = t.suiviPedagogique;
+    return Padding(
+      key: ClesProgramme.programmePublie,
+      padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          SectionHeader(titre: t.apprendre.programme.titreProgramme),
+          Ecart.vSm,
+          Text(
+            t.apprendre.programme.votrePlace,
+            key: ClesProgramme.votrePlace,
+            style: textes.bodyMedium,
+          ),
+          for (final CycleProgramme cycle in programme.cycles)
+            if (cycle.etapes.isNotEmpty) ...<Widget>[
+              Ecart.vXl,
+              SectionHeader(titre: cycle.nom),
+              Ecart.vMd,
+              GroupeReglages(
+                lignes: <LigneRubrique>[
+                  for (final EtapeProgramme e in cycle.etapes)
+                    LigneRubrique(
+                      cle: ValueKey<String>('programme-etape-${e.code}'),
+                      icone: AppIcons.coran,
+                      libelle: e.nom,
+                      legende: <String>[
+                        ...e.objectifs,
+                        if (e.matierePrincipale case final String m)
+                          LibellesGroupe.insecable(
+                            '${s.matierePrincipale}\u00a0: $m',
+                          ),
+                        if (e.matiereSecondaire case final String m)
+                          LibellesGroupe.insecable(
+                            '${s.matiereSecondaire}\u00a0: $m',
+                          ),
+                        if (e.dureePrevueSemaines != null &&
+                            e.dateLimiteSemaines != null)
+                          LibellesGroupe.insecable(
+                            s.dureesEtape(
+                              prevue: '${e.dureePrevueSemaines}',
+                              limite: '${e.dateLimiteSemaines}',
+                            ),
+                          ),
+                      ].join('\n'),
+                    ),
+                ],
+              ),
+            ],
+        ],
+      ),
     );
   }
 }

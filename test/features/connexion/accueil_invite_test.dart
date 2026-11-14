@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/features/connexion/accueil_invite.dart';
 import 'package:rewayah_academy/features/connexion/accueil_invite_supabase.dart';
+import 'package:rewayah_academy/features/inscription/invitation_en_cours.dart';
 
 import '../../support/harnais.dart';
 
@@ -336,6 +337,50 @@ void main() {
       attente.complete(null);
       await tester.pumpAndSettle();
       expect(find.text('questionnaire'), findsOneWidget);
+    },
+  );
+
+  group(
+    'INVITATION-CODE-ACCUEIL : l\'inscription de l\'invite, quel que soit le chemin',
+    () {
+      setUp(oublierInvitationEnCours);
+      tearDown(oublierInvitationEnCours);
+
+      testWidgets('candidat sans profil : directement le depot de candidature, '
+          'sans accueil ni « Pour qui »', (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _Port(const InvitationAccueil(role: RoleInvite.candidat)),
+        );
+        expect(find.text('questionnaire'), findsOneWidget);
+        expect(find.byKey(AccueilInvitePage.continuerKey), findsNothing);
+        final InvitationEnCours? marque = lireInvitationEnCours();
+        expect(marque?.candidature, isTrue);
+        // L'inscription ouvre alors le depot : l'ecran de l'invitation avec
+        // `candidature=1`, comme le lien CAND-04.
+        expect(marque?.route, contains('candidature=1'));
+      });
+
+      testWidgets('enseignant : « Continuer » retient le code du serveur', (
+        WidgetTester tester,
+      ) async {
+        await _monter(
+          tester,
+          _Port(
+            const InvitationAccueil(
+              role: RoleInvite.enseignant,
+              code: 'ABCD-EFGH-JKMN',
+            ),
+          ),
+        );
+        expect(lireInvitationEnCours(), isNull);
+        await _appuyer(tester, AccueilInvitePage.continuerKey);
+        expect(lireInvitationEnCours()?.code, 'ABCD-EFGH-JKMN');
+        expect(
+          lireInvitationEnCours()?.route,
+          contains('code=ABCD-EFGH-JKMN'),
+        );
+      });
     },
   );
 }

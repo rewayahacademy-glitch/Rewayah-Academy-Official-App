@@ -253,11 +253,11 @@ void main() {
     });
   });
 
-  testWidgets('adresse encore tenue par un compte supprime : la phrase de '
-      'l\'invitation, pas un echec generique', (WidgetTester tester) async {
+  testWidgets('« User is banned » a l\'envoi : la phrase du compte supprime, '
+      'et le champ du code est ouvert dessous', (WidgetTester tester) async {
     await _monter(
       tester,
-      _avecCode,
+      _sansCode,
       <String>[],
       erreur: const AuthApiException(
         'User is banned',
@@ -266,8 +266,23 @@ void main() {
       ),
     );
     await _envoyer(tester);
-    expect(find.text(t.connexion.invitationCreationImpossible), findsOneWidget);
+    expect(find.text(t.connexion.erreurCompteSupprime), findsOneWidget);
+    expect(_clef('connexion-code-invitation'), findsOneWidget);
   });
+
+  testWidgets(
+    'arrivee avec invitation=1 sans code : le champ est deja ouvert',
+    (WidgetTester tester) async {
+      await _monter(
+        tester,
+        Uri.parse(
+          'https://app.rewayahacademy.com/#/connexion?mode=creer&invitation=1',
+        ),
+        <String>[],
+      );
+      expect(_clef('connexion-code-invitation'), findsOneWidget);
+    },
+  );
 
   group('l\'ecran d\'un lien en echec dit la vraie cause', () {
     Future<void> monter(WidgetTester tester, String adresse) async {
@@ -299,6 +314,38 @@ void main() {
       expect(find.text(t.i1.lien.dejaServiTitre), findsNothing);
       expect(find.text(t.i1.lien.refuseTitre), findsOneWidget);
       expect(find.text(t.i1.lien.refuseDetail), findsOneWidget);
+    });
+
+    test('user_banned (callback ou verify) : motif « compte supprime »', () {
+      for (final String adresse in <String>[
+        'https://app.rewayahacademy.com/?error=access_denied&error_code=user_banned&error_description=User+is+banned',
+        'https://app.rewayahacademy.com/#error=access_denied&error_description=403%3A+User+is+banned',
+      ]) {
+        expect(
+          motifDepuisUrlRetour(Uri.parse(adresse)),
+          MotifRecuperation.compteSupprime,
+          reason: adresse,
+        );
+      }
+    });
+
+    testWidgets('compte supprime : la cause, quoi faire, et le lien du code', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        'https://app.rewayahacademy.com/?error=access_denied&error_code=user_banned#/x',
+      );
+      expect(
+        find.text(t.connexion.recuperation.compteSupprimeTitre),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.connexion.recuperation.compteSupprimeDetail),
+        findsOneWidget,
+      );
+      expect(find.text(t.connexion.avoirCodeInvitation), findsOneWidget);
+      expect(find.text(t.i1.lien.dejaServiTitre), findsNothing);
     });
 
     testWidgets('lien ouvert dans un autre navigateur : on le dit', (

@@ -15,6 +15,7 @@ import 'package:rewayah_academy/core/apprendre/affichage_planche.dart';
 import 'package:rewayah_academy/core/apprendre/dates_ecole.dart';
 import 'package:rewayah_academy/core/apprendre/document_planche.dart';
 import 'package:rewayah_academy/core/apprendre/documents_apprendre.dart';
+import 'package:rewayah_academy/core/apprendre/programme_publie.dart';
 import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
@@ -264,6 +265,7 @@ Future<GoRouter> monterApprendre(
   Object? documents = _vraiAdaptateur,
   LectureSuivi? suivi,
   PortDatesEcole? dates,
+  PortProgrammePublie? programme,
   bool horsLigne = false,
   PlanFil? planFil,
   AppRole? role,
@@ -300,6 +302,8 @@ Future<GoRouter> monterApprendre(
       if (suivi != null)
         portMaProgressionProvider.overrideWithValue(_PortSuivi(suivi)),
       if (dates != null) portDatesEcoleProvider.overrideWithValue(dates),
+      if (programme != null)
+        portProgrammePublieProvider.overrideWithValue(programme),
       serviceCoranProvider.overrideWithValue(_CoranVide()),
       horsLigneProvider.overrideWith((Ref _) => Stream<bool>.value(horsLigne)),
       ...autres,
@@ -358,5 +362,57 @@ Future<void> preferer(WidgetTester tester, AffichagePlanche affichage) async {
   c.read(affichagePlancheProvider);
   for (int i = 0; i < 6; i++) {
     await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
+/// Le programme publie, tel que `programme_publie` le rend : un cycle de deux
+/// etapes. [avecDurees] : vrai pour un tuteur ou un adulte (le serveur retient
+/// les durees de l'enfant de 6 a 9 ans qui lit pour lui-meme).
+class ProgrammePublieDemo implements PortProgrammePublie {
+  /// Cree le port.
+  const ProgrammePublieDemo({this.avecDurees = false, this.echec = false});
+
+  /// Les durees sont rendues.
+  final bool avecDurees;
+
+  /// La lecture echoue.
+  final bool echec;
+
+  @override
+  Future<ProgrammePublie> pourEleve(String eleveId) async {
+    if (echec) throw StateError('programme');
+    return ProgrammePublie.depuisJson(<String, Object?>{
+      'version': const <String, Object?>{'numero': 1},
+      'eleve_voit_dates': avecDurees,
+      'cycles': <Object?>[
+        <String, Object?>{
+          'code': 'bases',
+          'nom': 'Les bases',
+          'ordre': 1,
+          'etapes': <Object?>[
+            <String, Object?>{
+              'code': 'BASES-1',
+              'ordre': 1,
+              'nom': 'Reconnaître les lettres',
+              'objectifs': const <Object?>['Nomme les 28 lettres'],
+              'matiere_principale': 'Le livre de lecture de Rewayah',
+              'matiere_secondaire': null,
+              'duree_prevue_semaines': avecDurees ? 9 : null,
+              'date_limite_semaines': avecDurees ? 12 : null,
+            },
+            const <String, Object?>{
+              'code': 'BASES-2',
+              'ordre': 2,
+              'nom': 'Lire avec les voyelles',
+              'objectifs': <Object?>['Lit un mot de trois lettres'],
+              'matiere_principale': null,
+              'matiere_secondaire': null,
+              'duree_prevue_semaines': null,
+              'date_limite_semaines': null,
+            },
+          ],
+        },
+      ],
+    });
   }
 }
