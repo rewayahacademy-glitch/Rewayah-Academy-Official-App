@@ -38,6 +38,7 @@ import '../../router/support_routeur.dart' show lieu;
 import '../../support/aucun_mot_coupe.dart';
 import '../../support/demo/coran_demo_adulte.dart';
 import '../../support/demo/demo_adulte_page.dart';
+import '../../support/ouvrir_coran.dart';
 import '../../teaching_core/c/faux/faux_corpus_coran.dart';
 import '../../teaching_core/c/goldens/corpus_reference.dart';
 import 'support_accueil_adulte_route.dart';
@@ -152,8 +153,13 @@ void main() {
       expect(_actif(tester), 0);
 
       // Lot B2 : la barre de l'adulte, Aujourd'hui, Apprendre, Suivi, Profil.
+      // ESPACE-APPRENDRE (lot 5) : « Apprendre » ouvre l'espace ; le Coran est
+      // un document de sa Bibliotheque, dont on touche la carte.
       await tester.tap(_onglet(t.nav.eleve.apprendre));
       await _poser(tester);
+      expect(lieu(routeur), Routes.eleveApprendre);
+      expect(_actif(tester), 1);
+      await ouvrirLeCoranParApprendre(tester);
 
       expect(lieu(routeur), Routes.eleveCoran);
       expect(find.byType(MushafPage), findsOneWidget);
@@ -200,8 +206,7 @@ void main() {
       expect(lieu(routeur), Routes.eleve);
       expect(find.byType(AccueilAdultePage), findsNothing);
 
-      await tester.tap(_onglet(t.nav.eleve.coran));
-      await _poser(tester);
+      await ouvrirLeCoranParApprendre(tester);
       expect(lieu(routeur), Routes.eleveCoran);
       expect(find.byType(MushafPage), findsOneWidget);
       expect(_actif(tester), 2);
@@ -346,8 +351,7 @@ void main() {
             echelle: echelle,
             direction: sens,
           );
-          await tester.tap(_onglet(t.nav.eleve.apprendre));
-          await _poser(tester);
+          await ouvrirLeCoranParApprendre(tester);
           expect(lieu(routeur), Routes.eleveCoran);
           expect(find.byType(MushafPage), findsOneWidget);
           verifierEcranSansMotCoupe(tester);

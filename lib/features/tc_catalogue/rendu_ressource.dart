@@ -38,6 +38,7 @@ import '../../core/tc_bibliotheque/library_resource.dart';
 import '../../core/tc_bibliotheque/ouvreur_onglet.dart';
 import '../../core/tc_telechargement/download_asset.dart';
 import '../../core/tc_telechargement/port_telechargement.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -250,7 +251,13 @@ class _EtatRenduLien extends ConsumerState<_RenduLien> {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          TexteSansCoupure(r.confirmerPhrase),
+          // L'Interface guidee (l'enfant) est tutoyee ; la phrase des autres
+          // espaces ne change pas.
+          TexteSansCoupure(
+            AppMetriques.of(context).estEnfant
+                ? r.confirmerPhraseTu
+                : r.confirmerPhrase,
+          ),
           Ecart.vSm,
           SelectableText(adresse.toString()),
         ],

@@ -9971,6 +9971,7 @@
         "sansLecteur": "This type of document does not have a reader in the app yet.",
         "confirmerTitre": "This link leaves the app",
         "confirmerPhrase": "It opens another site, outside Rewayah Academy. You can come back here afterwards.",
+        "confirmerPhraseTu": "It opens another site, outside Rewayah Academy. You will be able to come back here afterwards.",
         "confirmerOuvrir": "Open the link",
         "confirmerRester": "Stay in the app",
         "ouvrirLien": "Open the link",
@@ -15576,6 +15577,68 @@
     "attenteEntretien": "Your stage will be set after the reading interview with the management.",
     "attenteEntretienTu": "Your stage will be set after the reading interview with the management.",
     "attenteEntretienPour": "For {prenom}, the stage will be set after the reading interview with the management."
+  },
+  "apprendre": {
+    "sections": {
+      "libelle": "Sections of the Learn space",
+      "bibliotheque": "Library",
+      "programme": "Programme",
+      "livret": "My booklet"
+    },
+    "bibliotheque": {
+      "rayonCours": "Course documents",
+      "rayonClasse": "For this class",
+      "classeErreur": {
+        "message": "This class's documents are not showing right now",
+        "invitation": "Tap Try again in a moment."
+      },
+      "rayonPlusLoin": "To go further",
+      "rayonCoursVide": {
+        "message": "Course documents will arrive here",
+        "invitation": "They appear as soon as the academy publishes them."
+      },
+      "rayonPlusLoinVide": "More documents will arrive here",
+      "affichage": {
+        "libelle": "Document display",
+        "grille": "Grid",
+        "liste": "List"
+      },
+      "filtres": {
+        "libelle": "Document type"
+      },
+      "type": {
+        "document": "Document",
+        "audio": "Audio",
+        "video": "Video",
+        "lienExterne": "External link"
+      },
+      "aucunResultat": {
+        "message": "No document of this type for now",
+        "invitation": "Remove the filter to see all documents again."
+      },
+      "coran": {
+        "titre": "The Quran",
+        "edition": "Medina edition"
+      },
+      "carte": {
+        "document": "{titre}, {type}",
+        "lien": "{titre}, external link, opens outside the app"
+      }
+    },
+    "programme": {
+      "vide": "The stage will appear as soon as you join a class",
+      "datesEcole": "Academy dates",
+      "datesEcoleVide": "The academy's dates will be shown here",
+      "genre": {
+        "evaluation": "Assessment",
+        "fermeture": "Academy closure",
+        "rencontre": "Recitation meeting"
+      }
+    },
+    "livret": {
+      "vide": "Your results, your reports and your certificates will appear here",
+      "videTu": "Your results, your reports and your certificates will appear here"
+    }
   },
   "suiviAttente": {
     "titre": "Where your request stands",

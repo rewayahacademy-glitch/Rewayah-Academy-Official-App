@@ -108,6 +108,7 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/apprendre/routes_apprendre.dart';
 import '../../features/attente_classe/entree_demandes_attente.dart';
 import '../../features/attente_classe/me_presenter_page.dart';
 import '../../features/attente_classe/presentation_familles_page.dart';
@@ -899,6 +900,10 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
+              // ESPACE-APPRENDRE (lot 5) : l'espace a trois onglets, premiere
+              // route de la branche donc destination de la barre ; le Coran
+              // s'ouvre depuis la carte « Coran » de sa Bibliotheque.
+              ...routesApprendre(),
               GoRouteSure(
                 path: Routes.eleveCoran,
                 // Pointe sur le nouveau moteur Mushaf (Teaching Core, lot C) :
@@ -3562,9 +3567,16 @@ class _CoquilleNavigation extends ConsumerWidget {
             // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
             // rendait la derniere page de la branche, et le parcours d'un profil
             // (tache de la branche Foyer) revenait a la place de la liste.
+            //
+            // ESPACE-APPRENDRE (lot 5, 12/11/2026) : de meme pour Apprendre. Le
+            // Coran s'ouvre depuis la Bibliotheque, dans la meme branche ; sans
+            // cela, toucher Apprendre depuis un autre onglet rendait la
+            // derniere page de la branche (le lecteur du Coran) au lieu de
+            // l'espace a trois onglets.
             initialLocation:
                 index == navigationShell.currentIndex ||
-                destination == Routes.tuteurFoyer,
+                destination == Routes.tuteurFoyer ||
+                destination == Routes.eleveApprendre,
           );
         },
         secondaires: secondairesPour(role: role),

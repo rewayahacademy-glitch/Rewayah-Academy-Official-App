@@ -133,6 +133,9 @@ const Map<String, int> _domaines = <String, int>{
   'suiviPedagogique': 10,
   // SOURATES (11/11/2026) : les sourates des bases au cahier.
   'cahierSourates': 3,
+  // ESPACE-APPRENDRE (12/11/2026) : l'espace Apprendre (Bibliotheque,
+  // Programme, Mon livret), entierement traduit.
+  'apprendre': 33,
   // CORRIGER-SOURATE-DIRECTION (12/11/2026) : les sourates retirables d'une
   // Classe.
   'souratesRetirables': 7,

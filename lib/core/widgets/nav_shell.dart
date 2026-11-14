@@ -125,8 +125,8 @@ List<Destination> destinationsPour({
 }) {
   final List<Destination> completes = switch (role) {
     // Lot B2 : Aujourd'hui mene a `/eleve` (que le routeur ouvre sur
-    // l'accueil adulte), Apprendre au Coran, Suivi a ses seances, Profil au
-    // compte.
+    // l'accueil adulte), Apprendre a l'espace Apprendre (lot 5), Suivi a ses
+    // seances, Profil au compte.
     AppRole.student when eleveAdulte => <Destination>[
       Destination(
         libelle: t.nav.eleve.aujourdhui,
@@ -135,8 +135,8 @@ List<Destination> destinationsPour({
       ),
       Destination(
         libelle: t.nav.eleve.apprendre,
-        icone: AppIcons.coran,
-        chemin: Routes.eleveCoran,
+        icone: AppIcons.apprendre,
+        chemin: Routes.eleveApprendre,
       ),
       Destination(
         libelle: t.nav.eleve.suivi,
@@ -151,7 +151,7 @@ List<Destination> destinationsPour({
       ),
     ],
     // L'ordre est celui des branches de la coquille eleve dans
-    // `app_router.dart` (Accueil, Ma classe, Coran) : les deux doivent rester
+    // `app_router.dart` (Accueil, Ma classe, Apprendre) : les deux doivent rester
     // d'accord. Mon espace n'a pas de branche, il se rejoint par `go`.
     AppRole.student => <Destination>[
       Destination(
@@ -165,12 +165,14 @@ List<Destination> destinationsPour({
         chemin: Routes.eleveSuivi,
       ),
       Destination(
-        libelle: t.nav.eleve.coran,
-        icone: AppIcons.coran,
-        chemin: Routes.eleveCoran,
-        // MA-CMD-1 (02/10/2026) : le Coran RESTE dans la barre du Mode
-        // Accessibilite (4 destinations ; DECISIONS_DELEGUEES_2026-10-02,
-        // MA-NAV-1) ; de MA-NAV-1 seule la presentation est reportee.
+        // ESPACE-APPRENDRE (lot 5, 12/11/2026) : l'onglet s'appelle
+        // « Apprendre » pour le mineur comme pour l'adulte ; il ouvre
+        // l'espace a trois onglets, le Coran est un document de sa
+        // Bibliotheque. MA-CMD-1 (02/10/2026) : la destination RESTE dans la
+        // barre du Mode Accessibilite (4 destinations).
+        libelle: t.nav.eleve.apprendre,
+        icone: AppIcons.apprendre,
+        chemin: Routes.eleveApprendre,
       ),
       Destination(
         libelle: t.nav.eleve.monEspace,

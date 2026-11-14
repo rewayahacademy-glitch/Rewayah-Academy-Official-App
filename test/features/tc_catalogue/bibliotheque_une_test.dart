@@ -140,7 +140,16 @@ Future<GoRouter> _monter(
 }) => monterRouteur(
   tester,
   adresse,
-  source: FausseSourceSession(sessionActive(AppRole.student)),
+  // ESPACE-APPRENDRE (lot 5) : l'eleve n'a plus l'ancienne liste (il a celle
+  // d'Apprendre) ; la LISTE se lit ici en tuteur, la fiche d'un document
+  // reste celle de l'eleve.
+  source: FausseSourceSession(
+    sessionActive(
+      Uri.parse(adresse).path == Routes.tcBibliotheque
+          ? AppRole.guardian
+          : AppRole.student,
+    ),
+  ),
   taille: taille,
   surcharges: surcharges,
   echelle: echelle,
