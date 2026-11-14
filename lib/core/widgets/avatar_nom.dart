@@ -364,7 +364,12 @@ class TuileSansImage extends StatelessWidget {
     this.personneId,
     this.couleurPersonne = false,
     this.diametre = AppAvatar.moyen,
+    this.avatar,
   });
+
+  /// RA-STAFF (14/11/2026) : un avatar deja compose a la place de celui de la
+  /// personne (l'icone de l'academie, `MarqueStaff.avatar`), ou `null`.
+  final Widget? avatar;
 
   /// Le diametre du cercle, pris dans [AppAvatar] : [AppAvatar.moyen] par
   /// defaut ; un grand cadre de visage pose [AppAvatar.grand] (VISAGES).
@@ -440,14 +445,18 @@ class TuileSansImage extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   ExcludeSemantics(
-                    child: _AvatarDePersonne(
-                      key: const ValueKey<String>('tuile-sans-image-cercle'),
-                      prenom: prenom,
-                      personneId: personneId,
-                      urlSignee: urlSignee,
-                      diametre: diametre,
-                      couleurPersonne: couleurPersonne,
-                    ),
+                    child:
+                        avatar ??
+                        _AvatarDePersonne(
+                          key: const ValueKey<String>(
+                            'tuile-sans-image-cercle',
+                          ),
+                          prenom: prenom,
+                          personneId: personneId,
+                          urlSignee: urlSignee,
+                          diametre: diametre,
+                          couleurPersonne: couleurPersonne,
+                        ),
                   ),
                   if (avecRangee) ...<Widget>[
                     Ecart.vXs,

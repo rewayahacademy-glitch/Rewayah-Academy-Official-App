@@ -52,11 +52,8 @@ List<CamaradeSeance> camaradesDepuisReponse(Object? brut) {
     for (final Object? ligne in brut)
       if (ligne is Map)
         if ((ligne['profile_id'], ligne['prenom'], ligne['est_moi'])
-            case (
-              final String id,
-              final String prenom,
-              final Object? moi,
-            ) when id.isNotEmpty && prenom.trim().isNotEmpty && moi != true)
+            case (final String id, final String prenom, final Object? moi)
+            when id.isNotEmpty && prenom.trim().isNotEmpty && moi != true)
           (id: id, prenom: prenom.trim()),
   ];
 }

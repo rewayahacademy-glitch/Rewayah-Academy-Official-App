@@ -39,8 +39,9 @@ class _Session extends SessionControleur {
 }
 
 class _Moteur extends MoteurSalleControleurDemo {
-  _Moteur(this.liste);
+  _Moteur(this.liste, {this.video = true});
   final List<ParticipantSalle> Function(String role) liste;
+  final bool video;
   final StreamController<List<ParticipantSalle>> _p =
       StreamController<List<ParticipantSalle>>.broadcast();
   @override
@@ -52,8 +53,12 @@ class _Moteur extends MoteurSalleControleurDemo {
   @override
   Stream<List<ParticipantSalle>> get participants => _p.stream;
   @override
-  Widget? renduVideo(String identite) =>
-      ColoredBox(key: ValueKey<String>('video-$identite'), color: Colors.green);
+  Widget? renduVideo(String identite) => !video
+      ? null
+      : ColoredBox(
+          key: ValueKey<String>('video-$identite'),
+          color: Colors.green,
+        );
 }
 
 ParticipantSalle _q(String id, String nom, String role, bool local) =>
@@ -73,8 +78,9 @@ Future<void> _mesurer(
   String nom,
   Size taille,
   String roleJeton,
-  List<ParticipantSalle> Function(String) liste,
-) async {
+  List<ParticipantSalle> Function(String) liste, {
+  bool video = true,
+}) async {
   fixerVueCapture(tester, taille, 1);
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
@@ -82,7 +88,9 @@ Future<void> _mesurer(
       ProviderScope(
         overrides: <Override>[
           sessionProvider.overrideWith(() => _Session(AppRole.teacher)),
-          moteurSalleProvider.overrideWith((Ref _) => _Moteur(liste)),
+          moteurSalleProvider.overrideWith(
+            (Ref _) => _Moteur(liste, video: video),
+          ),
           serviceVideoProvider.overrideWithValue(
             ServiceVideoControleurDemo(role: roleJeton),
           ),
@@ -180,6 +188,45 @@ void main() {
           s,
           'teacher',
           cours,
+        ),
+      );
+    }
+  });
+
+  // RA-STAFF (directeur, 14/11/2026) : camera eteinte, la direction est
+  // montree par l'icone de l'academie et « #Ra_staff », jamais son prenom.
+  group('RA-STAFF', skip: sautSansCapture, () {
+    List<ParticipantSalle> entretien(String role) => <ParticipantSalle>[
+      _q('moi', 'Moi', role, true),
+      _q('dir', 'Hafsa', 'intervieweur', false),
+      _q('dir2', 'Amina', 'intervieweur', false),
+    ];
+    List<ParticipantSalle> cours(String role) => <ParticipantSalle>[
+      _q('moi', 'Moi', role, true),
+      _q('admin', 'Administration Rewayah', 'admin_visible', false),
+      _q('e1', 'Yasmine', 'student', false),
+    ];
+    for (final Size s in <Size>[const Size(1440, 900), const Size(390, 844)]) {
+      testWidgets(
+        'staff vu par le candidat ${s.width}',
+        (WidgetTester t) => _mesurer(
+          t,
+          '04_ra_staff_candidat_${s.width.toInt()}',
+          s,
+          'candidat',
+          entretien,
+          video: false,
+        ),
+      );
+      testWidgets(
+        'direction visible vue par l enseignant ${s.width}',
+        (WidgetTester t) => _mesurer(
+          t,
+          '05_ra_staff_cours_${s.width.toInt()}',
+          s,
+          'teacher',
+          cours,
+          video: false,
         ),
       );
     }

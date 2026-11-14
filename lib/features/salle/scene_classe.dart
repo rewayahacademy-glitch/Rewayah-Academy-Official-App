@@ -397,6 +397,8 @@ class _CadreParticipantEtat extends ConsumerState<_CadreParticipant> {
       libelleNom: widget.libelleNom,
       coin: widget.coin,
       detache: widget.detache,
+      // RA-STAFF : la direction est montree par l'icone de l'academie.
+      staff: estStaff(p.role),
     );
   }
 }

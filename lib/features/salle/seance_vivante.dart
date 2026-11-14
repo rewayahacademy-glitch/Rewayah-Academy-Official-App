@@ -42,6 +42,7 @@ import '../../core/video/gestes_salle.dart';
 import '../../core/video/publication_differee.dart' show roleQuiConduit;
 import '../../core/video/signal_rappel.dart';
 import '../../core/video/video_session_provider.dart';
+import '../../core/widgets/marque_staff.dart';
 import '../salle_seance/chrono_salle.dart' show horlogeChronoProvider;
 import '../salle_seance/marque_chrono.dart';
 import '../salle_seance/pilote_dynamique.dart';
@@ -506,6 +507,7 @@ SeanceVivante creerSeanceVivante({
     maintenant: () => lire(horlogeChronoProvider)().toUtc(),
     portPause: () => lire(portPauseSeanceProvider),
     relirePause: relirePause,
+    designationStaff: MarqueStaff.designation,
   );
   if (terminerRecitationALEntree && acces.capacites.peutModerer) {
     try {
