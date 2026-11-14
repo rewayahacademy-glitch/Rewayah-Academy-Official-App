@@ -40,6 +40,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/capacites_communication.dart';
+import '../../core/communications/veille_messages.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -50,6 +51,7 @@ import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import 'bandeau_messages_hors_direct.dart';
 import 'port_messages_metier.dart';
 
 /// Le nombre de conversations rendues sur un objet ; au-dela, « Voir toutes
@@ -179,11 +181,13 @@ class _EntreeMessagesContexteState
     }
   }
 
-  Future<void> _charger() async {
+  /// [silencieux] : relecture sur un signal du serveur (MESSAGERIE-TEMPS-REEL,
+  /// 14/11/2026) ; ce qui est montre reste en place, un echec ne l'efface pas.
+  Future<void> _charger({bool silencieux = false}) async {
     final TypeObjetLie? type = widget.type;
     final String? objetId = widget.objetId;
     if (type == null || objetId == null) {
-      if (!_attention.isLoading) {
+      if (!silencieux && !_attention.isLoading) {
         setState(
           () => _attention = const AsyncValue<IndicateurAttention>.loading(),
         );
@@ -196,10 +200,11 @@ class _EntreeMessagesContexteState
             }
             return total;
           });
+      if (silencieux && lue.hasError) return;
       if (mounted && widget.type == null) setState(() => _attention = lue);
       return;
     }
-    if (!_conversations.isLoading) {
+    if (!silencieux && !_conversations.isLoading) {
       setState(
         () => _conversations =
             const AsyncValue<List<ConversationPossible>>.loading(),
@@ -210,6 +215,7 @@ class _EntreeMessagesContexteState
           () => _port.conversationsPourObjet(type, objetId),
         );
     if (!mounted || widget.type != type || widget.objetId != objetId) return;
+    if (silencieux && lues.hasError) return;
     setState(() => _conversations = lues);
   }
 
@@ -276,6 +282,12 @@ class _EntreeMessagesContexteState
 
   @override
   Widget build(BuildContext context) {
+    // MESSAGERIE-TEMPS-REEL (14/11/2026) : un message recu ou une lecture
+    // faite ailleurs relit l'entree (badge, conversations), sans geste.
+    ref.listen<int>(
+      etatVeilleMessagesProvider.select((EtatVeilleMessages e) => e.rang),
+      (int? _, int _) => unawaited(_charger(silencieux: true)),
+    );
     final String? liste = _cheminMessages(context);
     if (liste == null) return const SizedBox.shrink();
     final Widget? contenu = _general
@@ -287,7 +299,14 @@ class _EntreeMessagesContexteState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[?widget.ecartAvant, contenu, ?widget.ecartApres],
+        children: <Widget>[
+          ?widget.ecartAvant,
+          // K-59 : sur l'entree d'un objet (le dossier du candidat), dire que
+          // les messages n'arrivent plus en direct.
+          if (!_general) const BandeauMessagesHorsDirect(ecartApres: Ecart.vLg),
+          contenu,
+          ?widget.ecartApres,
+        ],
       ),
     );
   }

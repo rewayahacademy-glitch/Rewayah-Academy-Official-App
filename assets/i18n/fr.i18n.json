@@ -11845,6 +11845,13 @@
       }
     },
     "messages": {
+      "direct": {
+        "nouveau": "Vous avez reçu un nouveau message.",
+        "horsDirect": "Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.",
+        "icone": "Messages",
+        "iconeUnNonLu": "Messages, 1 non lu",
+        "iconeNonLus": "Messages, {nombre} non lus"
+      },
       "entree": {
         "titreClasse": "Échanger sur cette classe",
         "titreDossier": "Échanger sur ce dossier",

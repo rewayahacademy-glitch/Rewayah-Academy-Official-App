@@ -39,6 +39,11 @@ abstract final class AppDelais {
   /// avertissement part vers la supervision (29/10/2026).
   static const Duration veilleNonRejointe = Duration(seconds: 15);
 
+  /// MESSAGERIE-TEMPS-REEL (14/11/2026) : quand le canal temps reel des
+  /// messages est tombe, et seulement alors, les messages se relisent a ce
+  /// rythme jusqu'a son retour (repli demande par le directeur).
+  static const Duration repliMessages = Duration(seconds: 30);
+
   /// Le plus long qu'un appel du demarrage (session, profil) peut retenir
   /// l'ouverture (lot ouverture rapide, 29/10/2026). Passe ce delai, l'ecran
   /// dit ce qui manque et propose « Reessayer », au lieu de rester bloque.

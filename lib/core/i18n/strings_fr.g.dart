@@ -21623,6 +21623,7 @@ class Traductions$com$messages$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$messages$direct$fr direct = Traductions$com$messages$direct$fr.internal(_root);
 	late final Traductions$com$messages$entree$fr entree = Traductions$com$messages$entree$fr.internal(_root);
 
 	/// fr: 'Une conversation s'ouvre depuis une classe, un élève ou un dossier.'
@@ -38282,6 +38283,30 @@ class Traductions$com$socle$navigation$fr {
 
 	late final Traductions$com$socle$navigation$provisoire$fr provisoire = Traductions$com$socle$navigation$provisoire$fr.internal(_root);
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
+}
+
+// Path: com.messages.direct
+class Traductions$com$messages$direct$fr {
+	Traductions$com$messages$direct$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vous avez reçu un nouveau message.'
+	String get nouveau => 'Vous avez reçu un nouveau message.';
+
+	/// fr: 'Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.'
+	String get horsDirect => 'Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.';
+
+	/// fr: 'Messages'
+	String get icone => 'Messages';
+
+	/// fr: 'Messages, 1 non lu'
+	String get iconeUnNonLu => 'Messages, 1 non lu';
+
+	/// fr: 'Messages, {nombre} non lus'
+	String iconeNonLus({required Object nombre}) => 'Messages, ${nombre} non lus';
 }
 
 // Path: com.messages.entree
@@ -62302,6 +62327,11 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
+			'com.messages.direct.nouveau' => 'Vous avez reçu un nouveau message.',
+			'com.messages.direct.horsDirect' => 'Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.',
+			'com.messages.direct.icone' => 'Messages',
+			'com.messages.direct.iconeUnNonLu' => 'Messages, 1 non lu',
+			'com.messages.direct.iconeNonLus' => ({required Object nombre}) => 'Messages, ${nombre} non lus',
 			'com.messages.entree.titreClasse' => 'Échanger sur cette classe',
 			'com.messages.entree.titreDossier' => 'Échanger sur ce dossier',
 			'com.messages.entree.titreCandidature' => 'Échanger au sujet de la candidature',
@@ -62461,13 +62491,13 @@ extension on Traductions {
 			'com.vocal.demo.nonConfirme' => 'Non confirmé',
 			'com.vocal.demo.indisponible' => 'Indisponible',
 			'com.vocal.demo.recu' => 'Message vocal reçu',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
 			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
 			'com.vocal.demo.messageRecu' => 'Bonjour, voici mes remarques sur la récitation de cette semaine.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.demo.horodatage' => 'Aujourd\'hui, 10:28',
 			'com.vocal.titre' => 'Message vocal',
 			'com.communaute.garde.aide' => 'Aucune publicité. Aucun lien affilié. Aucune vente.',
@@ -62975,13 +63005,13 @@ extension on Traductions {
 			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
 			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la classe',
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
 			'com.annonces.videPublier' => 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
 			'com.annonces.lire' => 'Lire l\'annonce en entier',
@@ -63489,13 +63519,13 @@ extension on Traductions {
 			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
 			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Famille',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.colReference' => 'Référence',
 			'comptable.encaissements.colBrut' => 'Brut',
 			'comptable.encaissements.colFrais' => 'Frais',
 			'comptable.encaissements.colNet' => 'Net',
 			'comptable.encaissements.colMoyen' => 'Moyen',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.colEtat' => 'État',
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
 			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
@@ -64003,13 +64033,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'Le Comptable ne peut rien exécuter sans votre validation.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension en cours',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
 			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
@@ -64517,13 +64547,13 @@ extension on Traductions {
 			'avis.admin.liens.libelleAide' => 'Par exemple : Familles octobre 2026.',
 			'avis.admin.liens.libelleErreur' => 'Donnez un nom au lien.',
 			'avis.admin.liens.jours' => 'Durée en jours',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.joursAide' => '90 par défaut, 365 au plus.',
 			'avis.admin.liens.joursErreur' => 'Entrez un nombre de jours de 1 à 365.',
 			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
 			'avis.admin.liens.maxAide' => '200 par défaut, 2000 au plus.',
 			'avis.admin.liens.maxErreur' => 'Entrez un nombre d\'avis de 1 à 2000.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.creer' => 'Créer le lien',
 			'avis.admin.liens.echecCreation' => 'La création du lien n\'est pas confirmée. Regardez la liste des liens avant de recommencer.',
 			'avis.admin.liens.creeTitre' => 'Lien créé',
@@ -65031,13 +65061,13 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Langue maternelle',
 			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Facultatif.',
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Langues d\'explication',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'Les langues dans lesquelles la personne peut expliquer et corriger.',
 			'candidatsFlux.importFormulaires.champ.memorisation' => 'Mémorisation du Coran',
 			'candidatsFlux.importFormulaires.champ.memorisationAide' => 'Une déclaration, pas un constat : le niveau se constate à l\'entretien.',
 			'candidatsFlux.importFormulaires.champ.ijaza' => 'Ijaza ou certificat à présenter',
 			'candidatsFlux.importFormulaires.champ.ijazaAide' => 'Ce que la personne peut montrer à l\'entretien.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.experience' => 'Expérience avec les débutants',
 			'candidatsFlux.importFormulaires.champ.experienceAide' => 'Facultatif.',
 			'candidatsFlux.importFormulaires.champ.creneaux' => 'Créneaux (heure de La Mecque)',
@@ -65545,13 +65575,13 @@ extension on Traductions {
 			'journalSorties.rapport.dureeTotale' => 'Durée totale',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'De ${debut} à ${fin}',
 			'journalSorties.rapport.sortieSalle' => 'Sortie de la salle après le délai',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',
 			'journalSorties.rapport.minutes' => ({required Object n}) => '${n} min',
 			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '${nombre}, ${duree}',
 			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'Sorties de l\'application : ${resume}',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.reglages.section' => 'Sorties de l\'application pendant une séance',
 			'journalSorties.reglages.intro' => 'Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l\'accord du tuteur, ou de l\'élève adulte.',
 			'journalSorties.reglages.journal' => 'Noter les sorties de l\'application',
