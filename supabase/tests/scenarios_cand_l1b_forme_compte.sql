@@ -889,9 +889,10 @@ SELECT pg_catalog.set_config('test.piece_b', (SELECT id::text FROM public.kyc_do
   WHERE profile_id = 'cb1b0000-0000-4000-8000-0000000000c2' AND storage_backend = 'supabase'), true);
 SELECT pg_temp.qui('cb1b0000-0000-4000-8000-0000000000a1', 'admin');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus(pg_catalog.format($q$SELECT public.decider_dossier(%L, true)$q$, current_setting('test.piece_a')),
-  '23514', 'compte_candidat_actif_avant_salle_3',
-  'A : valider sa piece en salle 2 ne l''active pas (contrats signes : seule la forme refuse)');
+-- SALLE2-ENTRETIEN (14/11/2026) : valider la piece en salle 2 l'approuve
+-- et laisse le compte pending_kyc (avant : refus de toute la transaction).
+SELECT pg_temp.passe(pg_catalog.format($q$SELECT public.decider_dossier(%L, true)$q$, current_setting('test.piece_a')),
+  'A : valider sa piece en salle 2 l''approuve sans ouvrir le compte');
 SELECT pg_temp.refus($$UPDATE public.profiles SET account_status = 'active'
   WHERE id = 'cb1b0000-0000-4000-8000-0000000000c1'$$, '23514', 'compte_candidat_actif_avant_salle_3',
   'A : la direction la passe active par la table : refuse');
@@ -905,10 +906,10 @@ SELECT pg_temp.refus($$UPDATE public.profiles SET role = 'controller'
 SELECT pg_temp.passe(pg_catalog.format($q$SELECT public.decider_dossier(%L, true)$q$, current_setting('test.piece_b')),
   'B (sans candidature) : approbation de la piece inchangee');
 RESET ROLE;
-SELECT pg_temp.vrai((SELECT status FROM public.kyc_documents WHERE id = current_setting('test.piece_a')::uuid) = 'pending'
+SELECT pg_temp.vrai((SELECT status FROM public.kyc_documents WHERE id = current_setting('test.piece_a')::uuid) = 'approved'
   AND (SELECT account_status FROM public.profiles WHERE id = 'cb1b0000-0000-4000-8000-0000000000c1') = 'pending_kyc'
   AND (SELECT account_status FROM public.profiles WHERE id = 'cb1b0000-0000-4000-8000-0000000000c2') = 'active',
-  'apres coup : piece de A en attente, A pending_kyc ; B active');
+  'apres coup : piece de A approuvee, A pending_kyc ; B active');
 
 -- La transaction d'entree en salle 3 (L2) : l'ordre ne compte pas une fois la
 -- verification differee ; un compte actif sans salle 3 reste refuse a la fin.
