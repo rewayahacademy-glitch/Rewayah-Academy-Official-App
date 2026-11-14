@@ -44,6 +44,8 @@ Future<void> monterCandidature(
   autres: const <String>[
     Routes.adminPersonnesCandidatures,
     Routes.adminPersonnesDossiers,
+    // VISION-RECRUTEMENT : « Rejoindre l'entretien » y mene, billet en extra.
+    Routes.salle,
   ],
   surcharges: <Override>[
     portCandidaturesDirectionProvider.overrideWithValue(port),

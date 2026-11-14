@@ -316,6 +316,11 @@ class _EntretienOuvert extends ConsumerWidget {
                 extra: BilletSalle(
                   sessionId: entretien.sessionId,
                   emisA: DateTime.now(),
+                  // VISION-RECRUTEMENT (directeur, 14/11/2026) : la sortie
+                  // de la salle ramene au dossier du candidat.
+                  retour: Routes.adminPersonnesCandidaturePour(
+                    detail.ligne.reference,
+                  ),
                 ),
               ),
             ),

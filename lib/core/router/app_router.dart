@@ -3120,6 +3120,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 groupeId: billet?.groupeId,
                 eleveId: billet?.eleveId,
                 interfaceGuidee: billet?.interfaceGuidee ?? false,
+                retour: billet?.retour,
               ),
             ),
           );
