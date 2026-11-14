@@ -67,6 +67,7 @@ import 'gestes_proposes.dart';
 import 'libelles_candidature.dart';
 import 'piece_sur_place.dart';
 import 'reponses_candidature.dart';
+import 'volet_conversation.dart';
 
 /// L'ecran « Candidature ».
 class CandidatureDirectionPage extends ConsumerStatefulWidget {
@@ -105,6 +106,34 @@ class _EtatCandidatureDirectionPage
   /// V2-a : le retour local du dernier geste d'entretien, dit dans la section
   /// Entretien.
   String? _retourEntretien;
+
+  /// RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026) : la conversation
+  /// ouverte dans le dossier (volet de cote sur ordinateur), ou `null`.
+  ConversationEnPlace? _conversation;
+
+  /// Relit l'entree des messages (ses badges) apres une lecture faite dans
+  /// le volet ou la feuille.
+  int _rangMessages = 0;
+
+  void _messagesLus() {
+    if (mounted) setState(() => _rangMessages++);
+  }
+
+  /// Ouvre la conversation sans quitter le dossier : volet a droite sur
+  /// ordinateur, surface plein ecran au telephone et a la tablette.
+  void _ouvrirConversation(ConversationEnPlace c) {
+    if (MediaQuery.sizeOf(context).width >= AppGabarit.seuilEtendu) {
+      setState(() => _conversation = c);
+      return;
+    }
+    unawaited(
+      ouvrirFeuilleConversation(
+        context,
+        conversation: c,
+        onLu: _messagesLus,
+      ).whenComplete(_messagesLus),
+    );
+  }
 
   DemandeDossier get _demande =>
       DemandeDossier(widget.reference, id: widget.identifiant);
@@ -229,7 +258,7 @@ class _EtatCandidatureDirectionPage
     final DetailCandidature? detail = valeur.value;
     final r = t.admin.candidatures;
 
-    return PageShell(
+    final Widget page = PageShell(
       key: CandidatureDirectionPage.clePage,
       titre: detail == null
           ? referenceDuDossier(widget.reference)
@@ -259,7 +288,12 @@ class _EtatCandidatureDirectionPage
           horsLigne: horsLigne,
           retour: _retour,
           onGeste: (GesteCandidature g) => _geste(g, d, capacites),
-          onOuvrirDossier: () => context.go(Routes.adminPersonnesDossiers),
+          // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ; son
+          // retour ramene ici.
+          onOuvrirDossier: () =>
+              unawaited(context.push<void>(Routes.adminPersonnesDossiers)),
+          onOuvrirConversation: _ouvrirConversation,
+          rangMessages: _rangMessages,
           retourEntretien: _retourEntretien,
           onEntretien: (String message) {
             _relire(identifiant: d.ligne.id);
@@ -270,6 +304,30 @@ class _EtatCandidatureDirectionPage
           },
         ),
       ),
+    );
+    final ConversationEnPlace? conversation = _conversation;
+    if (conversation == null ||
+        MediaQuery.sizeOf(context).width < AppGabarit.seuilEtendu) {
+      return page;
+    }
+    // Sur ordinateur, le volet de cote : le dossier reste a gauche, lisible
+    // et utilisable ; la croix du volet le replie.
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(child: page),
+        SizedBox(
+          width: AppPage.largeurVolet,
+          child: VoletConversation(
+            conversation: conversation,
+            onLu: _messagesLus,
+            onReplier: () => setState(() {
+              _conversation = null;
+              _rangMessages++;
+            }),
+          ),
+        ),
+      ],
     );
   }
 }
@@ -287,6 +345,8 @@ class _Contenu extends ConsumerWidget {
     required this.onGeste,
     required this.onOuvrirDossier,
     required this.onEntretien,
+    required this.onOuvrirConversation,
+    this.rangMessages = 0,
     this.retour,
     this.retourEntretien,
   });
@@ -297,6 +357,12 @@ class _Contenu extends ConsumerWidget {
   final String? retour;
   final ValueChanged<GesteCandidature> onGeste;
   final VoidCallback onOuvrirDossier;
+
+  /// Ouvre une conversation dans le dossier (RECRUTEMENT-SANS-SORTIE).
+  final ValueChanged<ConversationEnPlace> onOuvrirConversation;
+
+  /// Change quand l'entree des messages doit relire ses badges.
+  final int rangMessages;
 
   /// V2-a : un geste d'entretien est fait, avec son retour local.
   final ValueChanged<String> onEntretien;
@@ -395,9 +461,13 @@ class _Contenu extends ConsumerWidget {
     final Widget historique = BlocHistorique(candidatureId: detail.ligne.id);
     // MESSAGES-CANDIDAT (CAND-Q06) : ecrire a la personne, et ses messages non
     // lus. Rien n'est rendu sans fil possible (pas de compte, autre cote).
+    // RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026) : la conversation
+    // s'ouvre dans le dossier, jamais en le quittant.
     final Widget messages = EntreeMessagesContexte(
+      key: ValueKey<String>('entree-messages-$rangMessages'),
       type: TypeObjetLie.candidature,
       objetId: detail.ligne.id,
+      onOuvrirEnPlace: onOuvrirConversation,
     );
 
     Widget colonne(List<Widget> blocs) => Column(

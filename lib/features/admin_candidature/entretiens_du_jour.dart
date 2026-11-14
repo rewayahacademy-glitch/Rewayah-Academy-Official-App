@@ -204,9 +204,13 @@ class _Ligne extends StatelessWidget {
                 ),
               ),
               alignerEnDebut: true,
-              onPress: () => GoRouter.of(
-                context,
-              ).go(Routes.adminPersonnesCandidaturePour(entretien.reference)),
+              // RECRUTEMENT-SANS-SORTIE : la fiche s'empile ; son retour
+              // ramene ici, a la meme position.
+              onPress: () => unawaited(
+                GoRouter.of(context).push<void>(
+                  Routes.adminPersonnesCandidaturePour(entretien.reference),
+                ),
+              ),
             ),
           ),
         ],

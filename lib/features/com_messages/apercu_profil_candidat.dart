@@ -16,6 +16,8 @@
 // ne la rend pas) ; elle n'est pas inventee.
 library;
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
@@ -221,7 +223,9 @@ class ApercuProfilCandidat extends ConsumerWidget {
             if (ouvrir != null) {
               ouvrir(chemin);
             } else {
-              GoRouter.of(context).go(chemin, extra: l.id);
+              // RECRUTEMENT-SANS-SORTIE : le dossier s'empile sur les
+              // Messages ; son retour ramene a la conversation.
+              unawaited(GoRouter.of(context).push<void>(chemin, extra: l.id));
             }
           },
         ),

@@ -434,8 +434,12 @@ void main() {
       expect(find.text('route-piece'), findsOneWidget);
     });
 
-    testWidgets('SALLE-1-TOUT-ICI : pendant l\'examen de la candidature '
-        'envoyee, la piece n\'est pas proposee', (WidgetTester tester) async {
+    // RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026 ; migration
+    // 20261126300000) : la piece demandee en salle 1 se depose aussi apres
+    // l'envoi, tant que la candidature est en salle 1 ; avant, elle n'etait
+    // plus proposee et 27 candidats ne trouvaient plus de page.
+    testWidgets('pendant l\'examen de la candidature envoyee, la piece suit '
+        'les accords', (WidgetTester tester) async {
       final FauxServiceDossier dossier = FauxServiceDossier()
         ..demonstration = true
         ..etatRendu = const EtatDossier(
@@ -455,10 +459,9 @@ void main() {
       await _cocher(tester, t.contrat.clauseControle.caseReligion);
       await _appuyerSuivant(tester);
 
-      // Les accords sont signes ; le serveur refuserait la piece maintenant.
+      // Les accords sont signes ; la piece, que le serveur accepte, suit.
       expect(dossier.contratsAcceptes, isNotEmpty);
-      expect(find.text('portail'), findsOneWidget);
-      expect(find.text('route-piece'), findsNothing);
+      expect(find.text('route-piece'), findsOneWidget);
     });
 
     testWidgets(

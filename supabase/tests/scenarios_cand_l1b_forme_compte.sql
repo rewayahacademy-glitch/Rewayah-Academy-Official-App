@@ -464,24 +464,23 @@ SELECT pg_temp.vrai((SELECT count(*) = 2 AND bool_and(status = 'pending' AND ver
   'pieces de A et B : une chacune, en attente, sans decision');
 
 -- La piece se depose en Salle de verification et d'entretien ou apres (spec
--- 2.1), et, depuis SALLE-1 (07/11/2026, plan des trois salles §2.1), en salle 1
--- tant que la candidature est a completer : D, en Salle d'examen PENDANT
--- L'EXAMEN (en_examen), ne la depose par aucune voie. Le depot en salle 1 a
--- completer est prouve par scenarios_salle1_tout_ici.sql.
+-- 2.1), et, depuis SALLE-1 (07/11/2026, plan des trois salles §2.1), en salle
+-- 1. RECRUTEMENT-SANS-SORTIE (14/11/2026, migration 20261126300000) : aussi
+-- apres l'envoi, pendant l'examen (en_examen), tant que la candidature est en
+-- cours : la porte R2 s'ouvre, la reservation et la pose par la voie serveur
+-- passent (annulees ici : D reste sans piece pour la suite). Apres un refus,
+-- la porte reste fermee (A, ci-dessous).
 UPDATE public.candidatures SET etat = 'en_examen' WHERE id = 'cb1bcccc-0000-4000-8000-000000000004';
 SELECT pg_temp.qui('cb1b0000-0000-4000-8000-0000000000c5', 'teacher');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.refus($$INSERT INTO public.kyc_documents (profile_id, doc_type, object_key)
-  VALUES ('cb1b0000-0000-4000-8000-0000000000c5', 'passport', 'c5/piece.jpg')$$,
-  '42501', 'depot_piece_hors_etape', 'D (salle d''examen, en examen) : piece deposee par la policy : refusee');
-SELECT pg_temp.vrai(NOT public.peut_deposer_piece_identite('cb1b0000-0000-4000-8000-0000000000c5'),
-  'D (salle d''examen, en examen) : la porte du depot R2 reste fermee');
-SELECT pg_temp.refus($$SELECT public.preparer_depot_piece_identite('cb1b0000-0000-4000-8000-0000000000c5', 'passport')$$,
-  '42501', 'depot refuse pour ce profil', 'D (salle d''examen, en examen) : reservation R2 refusee');
+SELECT pg_temp.vrai(public.peut_deposer_piece_identite('cb1b0000-0000-4000-8000-0000000000c5'),
+  'D (salle d''examen, en examen) : la porte du depot R2 s''ouvre');
+SELECT pg_temp.passe_annule($$SELECT public.preparer_depot_piece_identite('cb1b0000-0000-4000-8000-0000000000c5', 'passport')$$,
+  'D (salle d''examen, en examen) : reservation R2 acceptee');
 RESET ROLE;
-SELECT pg_temp.refus($$INSERT INTO public.kyc_documents (profile_id, doc_type, object_key)
+SELECT pg_temp.passe_annule($$INSERT INTO public.kyc_documents (profile_id, doc_type, object_key)
   VALUES ('cb1b0000-0000-4000-8000-0000000000c5', 'passport', 'c5/service.jpg')$$,
-  '42501', 'depot_piece_hors_etape', 'D (salle d''examen, en examen) : piece posee par la cle de service : refusee');
+  'D (salle d''examen, en examen) : piece posee par la voie serveur : acceptee par le declencheur');
 UPDATE public.candidatures SET etat = 'a_completer' WHERE id = 'cb1bcccc-0000-4000-8000-000000000004';
 -- Apres un refus, la porte se ferme aussi pour A.
 UPDATE public.candidatures SET issue = 'refusee' WHERE id = 'cb1bcccc-0000-4000-8000-000000000001';
@@ -1054,8 +1053,12 @@ BEGIN
       current_setting('test.n', true), current_setting('test.rouges');
   END IF;
   -- 133 depuis CAND-PHOTO (06/11) : le candidat pose sa photo (+1 controle).
-  IF current_setting('test.n')::int <> 133 THEN
-    RAISE EXCEPTION 'CAND-L1B ROUGE : % controles executes, 133 attendus', current_setting('test.n');
+  -- 132 depuis RECRUTEMENT-SANS-SORTIE (14/11) : D en examen depose sa piece ;
+  -- quatre refus deviennent trois acceptations (porte, reservation, voie
+  -- serveur) ; le refus par la policy sans contenu confirme ne prouvait plus
+  -- l'etape et n'est plus compte.
+  IF current_setting('test.n')::int <> 132 THEN
+    RAISE EXCEPTION 'CAND-L1B ROUGE : % controles executes, 132 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L1B forme du compte : % controles verts', current_setting('test.n');
 END $fin$;
