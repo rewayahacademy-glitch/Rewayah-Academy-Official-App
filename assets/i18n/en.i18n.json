@@ -25,6 +25,9 @@
       "enseignant": "{libelle} · with {enseignant}"
     },
     "marque": "Rewayah Academy",
+    "staff": {
+      "designation": "#Ra_staff"
+    },
     "continuer": "Continue",
     "retour": "Back",
     "valider": "Confirm",
@@ -1430,7 +1433,10 @@
       "francaisExplication": "The app and the academy's messages are written in French.",
       "francaisExemple": "buttons, explanations and messages are shown from left to right.",
       "arabeExplication": "The app and the academy's messages are written in Arabic.",
-      "arabeExemple": "buttons, explanations and messages are shown from right to left."
+      "arabeExemple": "buttons, explanations and messages are shown from right to left.",
+      "anglais": "English",
+      "anglaisExplication": "The app and the academy's messages are written in English.",
+      "anglaisExemple": "buttons, explanations and messages are shown from left to right."
     },
     "confidentialite": {
       "case": "I have read and accept the privacy policy.",
@@ -1441,6 +1447,7 @@
       "creationEchec": "Your application may not have been sent. Try again in a moment.",
       "envoyer": "Send my application",
       "accueil": "You are submitting an application to teach at Rewayah. It does not commit you to anything.",
+      "gratuit": "Applying costs nothing: you have nothing to pay, at any step.",
       "ensuite": "Next, the management reads your application and writes to you in the app.",
       "horsLigne": "The application can be sent when the connection is back.",
       "courrielAConfirmer": "Confirm your address first: open the link you received by email.",
@@ -2732,7 +2739,9 @@
     "sallesCandidat": {
       "candidature": "Your application",
       "connaissance": "Let's get to know each other",
-      "equipe": "Welcome to the team"
+      "equipe": "Welcome to the team",
+      "retenue": "Good news: the academy has accepted your application. Next step: let's get to know each other.",
+      "arrivee": "Welcome: you are joining the academy's team."
     },
     "paiement": {
       "inconnu": "No payout method declared",
@@ -2803,6 +2812,10 @@
       "termine": "The time of your interview has passed. The academy will write to you with what comes next.",
       "pasEncore": "The interview is not open yet for your application.",
       "portailChoisir": "Choose a time for our interview",
+      "commenceDans(param=n)": {"one": "Your interview starts in {n} minute.", "other": "Your interview starts in {n} minutes."},
+      "aCommence": "Your interview has started: we are waiting for you. Join it now.",
+      "prevu": "Your interview is set: {horaire}.",
+      "jour": {"titre": "Today's interviews", "intro": "The interviews you lead today. The join button appears 10 minutes before the start, in the same room as the candidate.", "candidat": "Candidate", "rejoindreAvec": "Join the interview with {nom}", "ouvreA": "You can join from {heure}.", "voirFiche": "See {deNom}'s application"},
       "portailVoir": "See my interview",
       "notifications": {
         "reserve": "Your interview is set. The day and time are in \"Let's get to know each other\".",
@@ -3017,7 +3030,9 @@
         "recherche": "Search for a riwaya",
         "rechercheAide": "Riwaya name",
         "aucune": "No riwaya matches.",
-        "retour": "Back to the riwayat offered"
+        "retour": "Back to the riwayat offered",
+        "toutes": "I recite all the riwayat",
+        "toutesDescription": "The twenty riwayat of the ten readings. This answer replaces the others."
       },
       "fuseau": {
         "heureChezVous": "Is it {heure} where you are?",
@@ -3093,6 +3108,7 @@
       "recap": {
         "titre": "Review your application",
         "explication": "Tap an answer to change it. Nothing is sent before the \"Send my application\" button.",
+        "gratuit": "Sending your application costs nothing: you have nothing to pay.",
         "jours(param=n)": {
           "one": "One day per week",
           "other": "{n} days per week"
@@ -3843,6 +3859,10 @@
       "erreur": "The file could not be approved.",
       "horsLigne": "The approval was not sent. Try again when the connection is back.",
       "inconnu": "The result of the approval is not confirmed yet.",
+      "candidatSalle2": "This person is a candidate, still at the interview step. Their account only opens when they are welcomed into the team. Validate their ID from their application file, with \"Welcome into the team\", once the interview is concluded.",
+      "candidatAffecte": "This person is a candidate and already has a class or a session in their name. Remove them from that class, then validate again.",
+      "candidatRole": "This person's account does not have the role of their application. Open their application file to correct the role, then validate again.",
+      "raisonServeur": "{erreur} Server response: \"{raison}\". Try again; if it happens again, pass this sentence on to the technical team.",
       "plusPret": "This file is no longer ready to be approved.",
       "interdit": "You can no longer approve this file.",
       "succes": "File approved."
@@ -3997,6 +4017,7 @@
         "pause": "Pause",
         "sansPause": "Not paused",
         "versement": "Payout",
+        "genre": "Gender",
         "pays": "Country of residence",
         "talents": {
           "domaine": "Other skills",
@@ -4029,6 +4050,7 @@
         "nom": "Name",
         "salle": "Room",
         "etat": "Status",
+        "genre": "Gender",
         "pays": "Country of residence",
         "versement": "Payout",
         "activite": "Last activity"
@@ -4036,6 +4058,7 @@
       "ligne": {
         "versement": "Payout: {etat}",
         "activite": "Last activity on {date}",
+        "genre": "Gender: {genre}",
         "pays": "Residence: {pays}",
         "courrielAObtenir": "Email to obtain",
         "indicatifAConfirmer": "Country code to confirm",
@@ -4133,6 +4156,9 @@
         "entretien": "Interview",
         "affectation": "Assignment",
         "courriels": "Emails",
+        "pieceEchec": "The ID document could not be read. Try again.",
+        "pieceSansCompte": "No account is linked to this application yet: the ID is uploaded after sign-up.",
+        "pieceMotif": "{etat}: {motif}",
         "ouvrirDossier": "Open in Files to validate",
         "responsable": "Manager",
         "contact": {
@@ -4369,6 +4395,8 @@
         "responsable": "The manager is recorded.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
+      "genres": {"male": "Man", "female": "Woman"},
+      "decision": {"accepter": "Accept", "refuser": "Refuse", "preciser": "Ask for a clarification", "nePasAccueillir": "Do not welcome"},
       "creneaux": {
         "lien": "Interview slots",
         "titre": "Interview slots",
@@ -4401,6 +4429,12 @@
         "refusReserve": "This slot is already booked: it can no longer be withdrawn.",
         "refusAbsent": "This slot no longer exists. Reload the list.",
         "refusLangues": "One of the chosen languages is not accepted for a slot. Remove it and try again.",
+        "finPlage": "End of the range",
+        "unSeulMoment": "A single interview",
+        "finPlageAide": "Choose an end time to publish several times at once, of the chosen length. Each candidate chooses their own time; a time taken disappears for the others.",
+        "plagePubliee": "The times are published. Candidates see them right away.",
+        "refusPlageCourte": "The range is shorter than one interview. Choose a later end time.",
+        "refusPlageLongue": "A range lasts 12 hours at most. Choose an earlier end time.",
         "refusHorsPortee": "This side is not yours: you cannot open a slot there."
       },
       "entretien": {
@@ -4421,6 +4455,8 @@
         "aucunePresence": "No one has entered the room yet.",
         "entree": "{nom} entered at {heure}",
         "sortie": "{nom} left at {heure}",
+        "autreIssue": "Other outcome (cancelled, absence)",
+        "resultat": {"titre": "Interview result", "concluant": "Conclusive", "nonConcluant": "Not conclusive", "aRefaire": "To redo", "texteConcluant": "Conclusive interview.", "texteNonConcluant": "Interview not conclusive.", "motifARefaire": "Interview to redo.", "retourConcluant": "Conclusive interview. You can welcome them into the team.", "retourNonConcluant": "Interview not conclusive. You can choose not to welcome them.", "retourARefaire": "Interview to redo. The person chooses a new time.", "refusNonParticipant": "Only a person who led the interview can give its result. Ask them to do it from this file.", "refusPasCommence": "The interview has not started yet. Come back at the start time.", "refusDejaConsigne": "The result is already recorded. Reload the file.", "refusAutre": "The result is not confirmed. Try again in a moment."},
         "consigner": "Record the outcome",
         "dernier": "Last interview: {date}. {issue}.",
         "lectureEchec": "The interview could not be read.",
@@ -8561,7 +8597,7 @@
       "remplacement": "Replacement",
       "mentionCommunaute": "Mention in the Community",
       "reponseCommunaute": "Reply in the Community",
-      "messageAdministration": "Message from the Administration",
+      "messageAdministration": "Message from \u2066@:commun.staff.designation\u2069",
       "dossierATraiter": "File to handle",
       "signalementCommunaute": "Report in the Community",
       "reponseFil": "Reply in a conversation",
@@ -8569,7 +8605,7 @@
       "evenementOperationnel": "Academy event",
       "mission": "Mission",
       "changementMission": "Mission change",
-      "reponseAdministration": "Reply from the Administration",
+      "reponseAdministration": "Reply from \u2066@:commun.staff.designation\u2069",
       "mentionStudio": "Mention in The Studio",
       "reponseStudio": "Reply in The Studio",
       "decisionDemandee": "Decision requested",
@@ -9854,7 +9890,7 @@
       "echecRien": "The sending is not confirmed: it may not have reached Rewayah. Your choice stays selected; try again in a moment. If the problem continues, write to the administration.",
       "envoyeTitre": "Report sent",
       "envoyePhrase": "It has been passed on to the administration. To come back to it, open it in History and choose \"Add an addendum\".",
-      "ecrireAdmin": "Write to the administration",
+      "ecrireAdmin": "Write to \u2066@:commun.staff.designation\u2069",
       "visiteEnCours": "Passing the visit on to the administration.",
       "visiteTransmise": "The visit and its automatic log have been passed on to the administration.",
       "visiteEchec": "Passing on the visit is not confirmed: it may not have reached Rewayah. Try again; the visit's log stays saved on the server.",
@@ -11749,6 +11785,7 @@
           "vocalAVenir": "Voice message coming soon",
           "enCours": "Sending",
           "envoye": "Sent",
+          "lu": "Read",
           "nonConfirme": "This message has not been confirmed yet.",
           "reessayer": "Try again",
           "auteurSoi": "You",
@@ -11857,13 +11894,24 @@
       }
     },
     "messages": {
+      "liens": {
+        "ouvrir": "Open the link ({site})",
+        "ouvrirLu": "Open the link to {site} in a new tab"
+      },
+      "direct": {
+        "nouveau": "You have received a new message.",
+        "horsDirect": "Messages are not live right now (connection). Updating every 30 seconds.",
+        "icone": "Messages",
+        "iconeUnNonLu": "Messages, 1 unread",
+        "iconeNonLus": "Messages, {nombre} unread"
+      },
       "entree": {
         "titreClasse": "Talk about this class",
         "titreDossier": "Talk about this file",
         "titreCandidature": "Talk about the application",
         "titreObjet": "Talk about this",
         "ecrireFamille": "Write to the family",
-        "ecrireAdministration": "Write to the Administration",
+        "ecrireAdministration": "Write to \u2066@:commun.staff.designation\u2069",
         "ecrireA": "Write to {nom}",
         "conversationAvec": "Conversation with {nom}",
         "voirTout": "See all conversations",
@@ -14982,9 +15030,9 @@
       "erreur": "The academy messages could not be read: the request may not have reached Rewayah. Try again in a moment."
     },
     "notifications": {
-      "message": "The management has passed on a message to you.",
-      "messageEnfant": "The management has passed on a message about {prenom}.",
-      "messageSoi": "The management has passed on a message to you."
+      "message": "\u2066@:commun.staff.designation\u2069 has written to you.",
+      "messageEnfant": "\u2066@:commun.staff.designation\u2069 has written to you about {prenom}.",
+      "messageSoi": "\u2066@:commun.staff.designation\u2069 has written to you."
     }
   },
   "snt": {
@@ -15697,6 +15745,7 @@
       "demandeHoraireRecue": "A new schedule request needs review.",
       "creneauPersonnalise": "A custom schedule is requested.",
       "pieceIdentite": "An ID document needs checking.",
+      "messageCandidat": "A candidate has written to you: reply in Messages.",
       "signalementEleve": "A report is waiting for your decision.",
       "suppressionCompte": "An account deletion is requested.",
       "personneEnSalle": "No one is in a class's room: find a replacement.",

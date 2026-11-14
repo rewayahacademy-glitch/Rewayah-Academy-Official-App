@@ -22,6 +22,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../candidature/carte_entretien_proche.dart';
 import '../candidature/portail_candidature.dart';
 import '../com_messages/entree_messages_candidature.dart';
 import '../connexion/recuperation_page.dart'
@@ -216,6 +217,9 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              // SALLE2-ENTRETIEN (directeur, 14/11/2026) : l'entretien proche
+              // ou ouvert, en tete, avec sa lumiere.
+              if (candidature != null) const CarteEntretienProche(),
               // En-tete de la salle, pour les etats qui gardent leurs ecrans.
               if (candidature != null &&
                   !vueCand &&

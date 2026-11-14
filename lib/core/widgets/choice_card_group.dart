@@ -129,7 +129,24 @@ class ChoiceCardGroup extends StatefulWidget {
     this.enLigne = false,
     this.lettres = false,
     this.indicationMultiple = true,
+    this.compacte = false,
   });
+
+  /// Vrai pour une **longue liste** (langues, pays, riwayat : CANDIDATURE-UX,
+  /// directeur, 14/11/2026, « les cartes sont enormes, 5 par ecran ») : chaque
+  /// option est une ligne compacte (repere, libelle, description courte) de
+  /// la hauteur de la cible tactile, 48 a 56, empilee a 16 de la suivante
+  /// (K-55 : jamais moins de 16 entre deux cartes).
+  /// Jamais de bento, d'illustration ni de cote a cote.
+  final bool compacte;
+
+  /// Au-dela de ce nombre d'options, les cartes ne s'alignent plus sur la
+  /// taille de texte de leurs voisines ([TexteSansCoupure.voisins]) : chaque
+  /// carte mesurait les mots de toutes les autres, a chaque toucher (N x N
+  /// mesures ; avec des centaines de langues, environ 1 s de gel apres chaque
+  /// toucher, CANDIDATURE-UX). Dans une longue liste, chaque ligne garde sa
+  /// propre taille.
+  static const int maxVoisins = 6;
 
   /// Vrai pour poser deux options courtes **en ligne, a toutes les largeurs**
   /// (AVIS-UI, 24/10/2026) : cartes de liste (radio et libelle) de meme
@@ -299,15 +316,16 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     coteACote: widget.coteACote,
     explication: option.explication,
     exemple: option.exemple,
-    illustration:
-        option.illustration ??
-        (option.icone == null ? null : IllustrationChoix(option.icone!)),
+    illustration: widget.compacte
+        ? null
+        : option.illustration ??
+              (option.icone == null ? null : IllustrationChoix(option.icone!)),
     // Cartes empilees de meme largeur : titres et descriptions gardent la meme
     // taille d'une carte a l'autre (COUPE-MOTS-1 point 6).
-    voisinsLibelle: verticale || bento != null
+    voisinsLibelle: _sansVoisins(verticale: verticale, bento: bento)
         ? const <String>[]
         : <String>[for (final OptionChoix o in widget.options) o.libelle],
-    voisinsDescription: verticale || bento != null
+    voisinsDescription: _sansVoisins(verticale: verticale, bento: bento)
         ? const <String>[]
         : <String>[
             for (final OptionChoix o in widget.options) ...<String>[
@@ -316,7 +334,7 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
             ],
           ],
     libelle: option.libelle,
-    icone: option.icone,
+    icone: widget.compacte ? null : option.icone,
     description: option.description,
     raisonIndisponible: option.disponible
         ? null
@@ -324,8 +342,31 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
     retenue: _selection.contains(option.valeur),
     radio: !widget.selectionMultiple,
     verticale: verticale,
-    compacte: widget.enLigne && !verticale,
+    compacte: (widget.enLigne && !verticale) || widget.compacte,
     onPress: option.disponible ? () => _basculer(option.valeur) : null,
+  );
+
+  /// Vrai quand une carte n'aligne pas sa taille de texte sur ses voisines :
+  /// disposition verticale ou bento, ligne compacte, ou liste trop longue
+  /// ([ChoiceCardGroup.maxVoisins]).
+  bool _sansVoisins({required bool verticale, _FormeBento? bento}) =>
+      verticale ||
+      bento != null ||
+      widget.compacte ||
+      widget.options.length > ChoiceCardGroup.maxVoisins;
+
+  /// [ChoiceCardGroup.compacte] : des lignes de la hauteur de la cible
+  /// tactile, a 16 l'une de l'autre (K-55).
+  Widget _listeCompacte() => Padding(
+    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      spacing: AppSpacing.lg,
+      children: <Widget>[
+        for (final OptionChoix option in widget.options)
+          _carteOption(option, verticale: false),
+      ],
+    ),
   );
 
   /// Vrai quand chaque mot de chaque libelle tient sur une ligne d'une
@@ -526,7 +567,9 @@ class _ChoiceCardGroupState extends State<ChoiceCardGroup> {
         // Lot E2 : au-dela de [ChoiceCardGroup.seuilBento] d'ecran, et si le
         // groupe a la place de quatre colonnes a l'echelle du texte, les
         // options passent en bento ; sinon la disposition du telephone.
-        if (widget.enLigne)
+        if (widget.compacte)
+          _listeCompacte()
+        else if (widget.enLigne)
           _rangeeEnLigne()
         else if (widget.options.isNotEmpty &&
             !(widget.choixEgaux && widget.coteACote) &&

@@ -340,6 +340,8 @@ NotificationContenu contenuNotificationPour(
     'demande_horaire_recue' => push1.demandeHoraireRecue,
     'creneau_personnalise_demande' => push1.creneauPersonnalise,
     'piece_identite_deposee' => push1.pieceIdentite,
+    // MESSAGERIE-PUSH (14/11/2026) : un candidat a ecrit a la direction.
+    'message_candidat_recu' => push1.messageCandidat,
     'signalement_eleve_recu' => push1.signalementEleve,
     'suppression_compte_demandee' => push1.suppressionCompte,
     'remplacement_personne_en_salle' => push1.personneEnSalle,

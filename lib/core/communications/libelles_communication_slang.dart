@@ -5,6 +5,7 @@
 // Aucun libelle nouveau : chaque mot reprend une cle deja traduite.
 
 import '../i18n/strings.g.dart';
+import '../widgets/marque_staff.dart';
 import 'communications_supabase.dart';
 import 'modeles_communication.dart';
 
@@ -17,8 +18,10 @@ class LibellesCommunicationSlang implements LibellesCommunication {
   String classe(String libelle) =>
       t.admin.groupes.detailTitre(libelle: libelle);
 
+  /// #Ra_staff (directeur, 14/11/2026) : l'equipe, identique dans toutes les
+  /// langues (`MarqueStaff.designation`).
   @override
-  String administration() => t.controleur.echanges.auteurAdmin;
+  String administration() => MarqueStaff.designation;
 
   @override
   String famille() => t.com.messages.demo.roles.tuteur;

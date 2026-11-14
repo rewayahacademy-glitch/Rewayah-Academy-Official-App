@@ -616,7 +616,6 @@ void main() {
         // Dire quelles langues Rewayah enseigne n'a pas de sens ici.
         expect(_texte(l.dansReferentiel), findsNothing);
         expect(_texte(l.horsReferentiel), findsNothing);
-        await toucherCle(tester, 'choix-recherche-autre');
         await tester.enterText(
           find.byKey(ChoixAvecRecherche.champKey),
           'pacht',
@@ -627,11 +626,9 @@ void main() {
           find.byKey(const ValueKey<String>('option-langueMaternelle-ps')),
           findsOneWidget,
         );
-        expect(find.byKey(ChoixAvecRecherche.ligneKey('ps')), findsNothing);
         expect(_texte(l.poular), findsNothing);
+        // Un seul choix : le toucher vide la recherche.
         await toucherCle(tester, 'option-langueMaternelle-ps');
-        await tester.tap(_texte(l.retour));
-        await tester.pumpAndSettle();
         // Elle devient une carte retenue de la liste.
         expect(_texte(l.ps), findsOneWidget);
         await continuer(tester);
@@ -649,7 +646,6 @@ void main() {
     ) async {
       await monterQuestionnaire(tester, port: FauxMaCandidature());
       await repondreAvant(tester, 'languesExplication');
-      await toucherCle(tester, 'choix-recherche-autre');
       for (final String mot in <String>['peul', 'fulfulde', 'poular']) {
         await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), mot);
         await tester.pumpAndSettle();
@@ -693,7 +689,6 @@ void main() {
         expect(_texte(l.dansReferentiel), findsNWidgets(5));
         expect(_texte(l.horsReferentiel), findsNWidgets(6));
         expect(_texte(l.autreDescription), findsOneWidget);
-        await toucherCle(tester, 'choix-recherche-autre');
         await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'arab');
         await tester.pumpAndSettle();
         expect(_texte(l.aucune), findsOneWidget);
@@ -734,7 +729,6 @@ void main() {
       (WidgetTester tester) async {
         await monterQuestionnaire(tester, port: FauxMaCandidature());
         await passerLaPresentation(tester);
-        await toucherCle(tester, 'choix-recherche-autre');
         await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'zzzz');
         await tester.pumpAndSettle();
         expect(_texte(t.recrutement.parcours.langues.aucune), findsOneWidget);
@@ -759,14 +753,18 @@ void main() {
           findsOneWidget,
         );
         // Un pays rare passe par la recherche, en francais comme en arabe.
-        await toucherCle(tester, 'choix-recherche-autre');
         await tester.enterText(
           find.byKey(ChoixAvecRecherche.champKey),
           'moldavie',
         );
         await tester.pumpAndSettle();
-        expect(find.byKey(ChoixAvecRecherche.ligneKey('MD')), findsOneWidget);
-        await tester.tap(find.byKey(ChoixAvecRecherche.ligneKey('MD')));
+        expect(
+          find.byKey(const ValueKey<String>('option-paysResidence-MD')),
+          findsOneWidget,
+        );
+        await tester.tap(
+          find.byKey(const ValueKey<String>('option-paysResidence-MD')),
+        );
         await tester.pumpAndSettle();
         expect(
           find.byKey(const ValueKey<String>('option-paysResidence-MD')),

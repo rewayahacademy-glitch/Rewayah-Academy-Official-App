@@ -240,9 +240,7 @@ void main() {
       },
     );
 
-    testWidgets('aucun courriel, telephone ni genre dans le rendu', (
-      tester,
-    ) async {
+    testWidgets('aucun courriel ni telephone dans le rendu', (tester) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
@@ -635,6 +633,29 @@ void main() {
       expect(port.appels.last.filtre.etat, EtatCandidature.entretienAPlanifier);
       expect(find.text('Bilal Haddad'), findsOneWidget);
       expect(find.text('Amina Diallo'), findsNothing);
+    });
+
+    testWidgets('SALLE2-GENRE : le genre se lit en mots et filtre au serveur', (
+      tester,
+    ) async {
+      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+        lignes: <LigneCandidature>[
+          ligneTest(id: 'a1', nom: 'Amina Diallo', genre: 'female'),
+          ligneTest(id: 'b2', nom: 'Bilal Haddad', genre: 'male'),
+        ],
+      );
+      await monterCandidatures(tester, port: port);
+      expect(
+        find.textContaining(t.admin.candidatures.genres.female),
+        findsWidgets,
+      );
+      expect(find.textContaining('female'), findsNothing);
+      await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-genre'));
+      await tester.tap(find.text(t.admin.candidatures.genres.male).last);
+      await tester.pumpAndSettle();
+      await fermerPlus(tester);
+      await laisser(tester);
+      expect(port.appels.last.filtre.genre, 'male');
     });
 
     testWidgets('le tri part au serveur et revient a la page 1', (

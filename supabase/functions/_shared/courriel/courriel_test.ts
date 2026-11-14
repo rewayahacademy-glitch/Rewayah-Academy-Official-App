@@ -44,7 +44,8 @@ Deno.test('paiement recu : le montant est ecrit dans la devise de la commande, o
 Deno.test('chaque evenement de notification a son modele', () => {
   for (const e of [...EVENEMENTS, 'invitation_foyer', 'lien_inscription', 'attente_candidat', 'admission_recue',
     'admission_acceptee', 'admission_refusee', 'admission_precisions', 'compte_enseignant_valide', 'retenu_entretien',
-    'invitation_enseignant', 'invitation_famille_importee', 'invitation_candidat_importe', 'message_libre', 'nouvelles']) {
+    'invitation_enseignant', 'invitation_famille_importee', 'invitation_candidat_importe', 'message_libre', 'nouvelles',
+    'message_candidat_recu']) {
     assert(modelesConnus.includes(e), e)
   }
 })

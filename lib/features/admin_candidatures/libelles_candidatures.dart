@@ -96,8 +96,7 @@ EtatAffiche? libelleEtatDansEtape(EtatCandidature? etat) {
 }
 
 /// Le mot d'un etat dans l'etape (menu « Etat »).
-String libelleEtat(EtatCandidature etat) =>
-    libelleEtatDansEtape(etat)!.libelle;
+String libelleEtat(EtatCandidature etat) => libelleEtatDansEtape(etat)!.libelle;
 
 /// Le mot d'une issue (menu « Issue »).
 String libelleIssue(IssueCandidature issue) => switch (issue) {
@@ -119,6 +118,14 @@ String libelleVersement(EtatVersement versement) {
 
 /// Le nom du pays de residence dans la langue de l'interface, ou `null`.
 String? libellePays(String? code) => code == null ? null : nomDuPays(code);
+
+/// SALLE2-GENRE (directeur, 14/11/2026) : « Homme » ou « Femme », en mots
+/// (jamais par la couleur seule), ou `null` quand le serveur ne le rend pas.
+String? libelleGenre(String? code) => switch (code) {
+  'male' => t.admin.candidatures.genres.male,
+  'female' => t.admin.candidatures.genres.female,
+  _ => null,
+};
 
 /// La reference `CAND-…` telle qu'elle s'affiche : traits d'union insecables,
 /// comme les autres identifiants (`UX`, « TEACHER-AS-000001 »). Elle ne se

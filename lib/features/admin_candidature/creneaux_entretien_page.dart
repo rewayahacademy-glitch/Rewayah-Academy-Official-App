@@ -24,6 +24,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/candidature/creneaux_direction.dart';
+import '../../core/candidature/entretiens_temps_reel.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
@@ -96,6 +97,8 @@ class _EtatPage extends ConsumerState<CreneauxEntretienPage> {
 
   @override
   Widget build(BuildContext context) {
+    // SALLE2-ENTRETIEN : une reservation apparait aussitot (temps reel).
+    ref.watch(veilleEntretiensProvider);
     final c = t.admin.candidatures.creneaux;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final AsyncValue<List<CreneauDirection>> lecture = ref.watch(

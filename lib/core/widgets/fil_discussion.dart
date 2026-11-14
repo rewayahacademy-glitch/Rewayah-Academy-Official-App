@@ -177,6 +177,7 @@ class MessageFil {
     required this.deSoi,
     this.complement,
     this.annonceTexte,
+    this.remise,
   });
 
   /// Identifiant stable, pour qu'un message ne soit jamais annonce deux fois.
@@ -201,6 +202,25 @@ class MessageFil {
   /// Le texte annonce a l'arrivee du message, quand il differe de [texte]
   /// (un vocal se dit par sa duree) ; `null` : [texte].
   final String? annonceTexte;
+
+  /// MESSAGERIE-LU : pour un message de soi, envoye ou lu par l'autre partie ;
+  /// `null` : aucun signe (le fil ne connait pas la lecture de l'autre).
+  final RemiseMessage? remise;
+}
+
+/// MESSAGERIE-LU (directeur, 14/11/2026, « comme WhatsApp ») : ou en est un
+/// message de soi. Trois signaux, jamais la couleur seule : l'icone (horloge,
+/// une coche, deux coches), le mot (« Envoi en cours », « Envoye », « Lu ») et
+/// l'encre (pale tant qu'il n'est pas lu, foncee une fois lu).
+enum RemiseMessage {
+  /// L'envoi n'a pas encore repondu.
+  enCours,
+
+  /// Le serveur l'a recu ; l'autre partie ne l'a pas encore lu.
+  envoye,
+
+  /// L'autre partie l'a lu.
+  lu,
 }
 
 /// Les textes du fil, fournis par l'ecran (cles i18n de son role).
@@ -221,6 +241,7 @@ class TextesFilDiscussion {
     this.aucunMessageTitre,
     this.aucunMessage,
     this.brouillonRestaure,
+    this.lu,
   });
 
   /// L'aide dans le champ vide : « Repondre a l'administration… ».
@@ -263,6 +284,10 @@ class TextesFilDiscussion {
   /// La phrase dite tant qu'un brouillon remis n'a pas ete touche ; `null` :
   /// « Brouillon restaure ».
   final String? brouillonRestaure;
+
+  /// L'etat d'un message de soi lu par l'autre partie (MESSAGERIE-LU) ;
+  /// `null` : « Lu ».
+  final String? lu;
 }
 
 /// L'etat d'envoi d'un message ecrit dans le fil.
@@ -729,6 +754,17 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _vocalOuvert = false;
       _microDisponible = false;
     }
+    // MESSAGERIE-TEMPS-REEL (14/11/2026) : un message arrive en direct
+    // descend la lecture jusqu'a lui, si elle etait deja en bas (un lecteur
+    // remonte dans l'historique n'est pas deplace).
+    if (widget.messages.length > ancien.messages.length &&
+        _defilement.hasClients) {
+      final ScrollPosition p = _defilement.position;
+      if (p.hasContentDimensions &&
+          p.maxScrollExtent - p.pixels <= AppSpacing.xxxl * 2) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(true));
+      }
+    }
     if (ancien.demandeSaisieVisible != widget.demandeSaisieVisible) {
       // N-4 : la saisie dans la liste revient a l'ecran (le Focus montre
       // le champ a l'entree). Bornee sous la liste, elle y est deja.
@@ -974,20 +1010,43 @@ class _FilDiscussionState extends State<FilDiscussion> {
   @override
   Widget build(BuildContext context) {
     final TextesFilDiscussion x = widget.textes;
+    // MESSAGERIE-TEMPS-REEL (14/11/2026) : le fil ouvert se relit en direct ;
+    // un message envoye d'ici revient alors du serveur. Sa bulle locale
+    // confirmee s'efface devant lui (meme texte, un pour un) : jamais deux
+    // bulles pour un message. Une bulle en cours ou non confirmee reste.
+    final List<String> revenusDuServeur = <String>[
+      for (final MessageFil m in widget.messages)
+        if (m.deSoi && !_presentsALOuverture.contains(m.id)) m.texte.trim(),
+    ];
+    final List<_MessageLocal> locauxMontres = <_MessageLocal>[
+      for (final _MessageLocal m in _locaux)
+        if (m.etat != EtatEnvoiMessage.envoye ||
+            !revenusDuServeur.remove(m.texte.trim()))
+          m,
+    ];
     final List<Widget> bulles = <Widget>[
       for (final MessageFil m in widget.messages)
         _Bulle(
           key: ValueKey<String>('message-${m.id}'),
           auteur: m.auteur,
           texte: m.texte,
-          pied: m.horodatage,
+          pied: switch (m.remise) {
+            null => m.horodatage,
+            RemiseMessage.lu =>
+              '${m.horodatage} · ${x.lu ?? t.com.socle.composants.composer.lu}',
+            RemiseMessage.envoye ||
+            RemiseMessage.enCours => '${m.horodatage} · ${x.envoye}',
+          },
+          remise: m.remise,
           deSoi: m.deSoi,
           complement: m.complement,
-          annonce: _presentsALOuverture.contains(m.id)
+          // Son propre message, revenu du serveur, a deja ete annonce par sa
+          // bulle locale : il ne l'est pas une seconde fois.
+          annonce: _presentsALOuverture.contains(m.id) || m.deSoi
               ? null
               : x.annonce(m.auteur, m.annonceTexte ?? m.texte),
         ),
-      for (final _MessageLocal m in _locaux)
+      for (final _MessageLocal m in locauxMontres)
         _Bulle(
           key: ValueKey<String>('message-${m.id}'),
           auteur: x.auteurSoi,
@@ -996,6 +1055,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
             EtatEnvoiMessage.enCours => x.enCours,
             EtatEnvoiMessage.envoye => x.envoye,
             EtatEnvoiMessage.echec => m.refus ?? x.echec,
+          },
+          remise: switch (m.etat) {
+            EtatEnvoiMessage.enCours => RemiseMessage.enCours,
+            EtatEnvoiMessage.envoye => RemiseMessage.envoye,
+            EtatEnvoiMessage.echec => null,
           },
           deSoi: true,
           // L'etat change sous les yeux : il est annonce a chaque etape.
@@ -1275,12 +1339,14 @@ class _Bulle extends StatelessWidget {
     this.echec = false,
     this.libelleReessayer,
     this.onReessayer,
+    this.remise,
   });
 
   final String auteur;
   final String texte;
   final String pied;
   final bool deSoi;
+  final RemiseMessage? remise;
   final Widget? complement;
   final String? annonce;
   final bool etatVivant;
@@ -1329,12 +1395,19 @@ class _Bulle extends StatelessWidget {
           Ecart.vSm,
           Semantics(
             liveRegion: etatVivant,
-            child: Text(
-              pied,
-              style: (echec ? palette.inkAlert : palette.inkMuted).applyTo(
-                textes.bodySmall ?? const TextStyle(),
+            child: switch (remise) {
+              null => Text(
+                pied,
+                style: (echec ? palette.inkAlert : palette.inkMuted).applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
               ),
-            ),
+              final RemiseMessage r => _PiedRemise(
+                pied: pied,
+                remise: r,
+                style: textes.bodySmall ?? const TextStyle(),
+              ),
+            },
           ),
           if (libelleReessayer != null) ...<Widget>[
             Ecart.vXs,
@@ -1379,6 +1452,52 @@ class _Bulle extends StatelessWidget {
           child: bulle,
         ),
       ),
+    );
+  }
+}
+
+/// MESSAGERIE-LU : le pied d'un message de soi, avec son signe. Pale (encre
+/// discrete, une coche) tant qu'il n'est pas lu ; fonce (encre d'accent, deux
+/// coches) une fois lu. Le mot est toujours ecrit. L'icone reste au trait : la
+/// graisse pleine de `checks` dessine un carre plein, illisible a 16.
+class _PiedRemise extends StatelessWidget {
+  const _PiedRemise({
+    required this.pied,
+    required this.remise,
+    required this.style,
+  });
+
+  final String pied;
+  final RemiseMessage remise;
+  final TextStyle style;
+
+  /// La cle du signe, pour les tests.
+  static Key cle(RemiseMessage r) => ValueKey<String>('remise-${r.name}');
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final bool lu = remise == RemiseMessage.lu;
+    final AppInkColor encre = lu ? palette.inkAccent : palette.inkMuted;
+    final AppIcon icone = switch (remise) {
+      RemiseMessage.enCours => AppIcons.horloge,
+      RemiseMessage.envoye => AppIcons.messageEnvoye,
+      RemiseMessage.lu => AppIcons.messageLu,
+    };
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        ExcludeSemantics(
+          child: Icon(
+            icone.repos,
+            key: cle(remise),
+            size: AppSpacing.lg,
+            color: encre.asBorderSide().color,
+          ),
+        ),
+        Ecart.hXs,
+        Flexible(child: Text(pied, style: encre.applyTo(style))),
+      ],
     );
   }
 }

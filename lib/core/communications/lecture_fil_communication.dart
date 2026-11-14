@@ -64,15 +64,26 @@ String horodatageMessage(DateTime instant) {
 /// La bulle d'un message du socle : l'auteur (« Vous » pour soi), le texte
 /// sans ses pieces, le texte complet pour l'annonce, et [complement] (les
 /// cartes et lecteurs des pieces, que l'ecran compose) sous le texte.
-MessageFil messageFilDe(MessageCommunication m, {Widget? complement}) =>
-    MessageFil(
-      id: m.id,
-      auteur: m.deSoi
-          ? t.com.socle.composants.composer.auteurSoi
-          : m.auteur.nomAffiche,
-      texte: texteDuMessage(m, avecVocaux: false, avecDocuments: false),
-      annonceTexte: texteDuMessage(m),
-      complement: complement,
-      horodatage: horodatageMessage(m.envoyeLe),
-      deSoi: m.deSoi,
-    );
+MessageFil messageFilDe(
+  MessageCommunication m, {
+  Widget? complement,
+  bool suiviLecture = false,
+  DateTime? luParAutresLe,
+}) => MessageFil(
+  id: m.id,
+  auteur: m.deSoi
+      ? t.com.socle.composants.composer.auteurSoi
+      : m.auteur.nomAffiche,
+  texte: texteDuMessage(m, avecVocaux: false, avecDocuments: false),
+  annonceTexte: texteDuMessage(m),
+  complement: complement,
+  horodatage: horodatageMessage(m.envoyeLe),
+  deSoi: m.deSoi,
+  // MESSAGERIE-LU : avec [suiviLecture], un message de soi dit s'il est lu
+  // par l'autre partie (lu au plus tard a [luParAutresLe]).
+  remise: !suiviLecture || !m.deSoi
+      ? null
+      : luParAutresLe != null && !m.envoyeLe.isAfter(luParAutresLe)
+      ? RemiseMessage.lu
+      : RemiseMessage.envoye,
+);

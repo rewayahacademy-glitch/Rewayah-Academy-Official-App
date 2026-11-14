@@ -149,6 +149,11 @@ export const MODELES: Record<string, Fabrique> = {
       `Vous menez un entretien qui commence dans 15 minutes${quand ? `, le ${quand}` : ''}. Rejoignez-le depuis la fiche de la candidature.`,
       'Voir les candidatures', '/admin/personnes/candidatures')
   },
+  // MESSAGERIE-PUSH (14/11/2026) : a la direction, quand un candidat ecrit.
+  // Aucun nom ni texte : le message se lit dans l'application.
+  message_candidat_recu: (d) => avis(d, 'Un candidat vous a écrit', 'Un candidat vous a écrit',
+    'Un candidat a écrit à la direction au sujet de sa candidature. Lisez son message et répondez-lui depuis l’application.',
+    'Lire le message', '/admin/operations/communications/messages'),
   entretien_tenu: (d) => avis(d, 'Merci pour cet entretien', 'Merci pour cet entretien',
     'Votre entretien a bien eu lieu. La direction étudie votre candidature et vous écrit la suite dans l’application.',
     'Voir ma candidature', '/attente/entretien'),
@@ -575,6 +580,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'invitation_candidat_importe',
   // SALLE-2-ENTRETIEN (07/11/2026) : ecrits en francais et en arabe.
   'entretien_reserve', 'entretien_rappel', 'entretien_rappel_direction', 'entretien_tenu', 'entretien_a_replanifier',
+  // MESSAGERIE-PUSH (14/11/2026) : ecrit en francais et en arabe.
+  'message_candidat_recu',
 ]
 
 export const FRANCAIS: LangueEcrite = {

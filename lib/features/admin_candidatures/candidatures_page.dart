@@ -80,6 +80,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../admin_candidature/entretiens_du_jour.dart';
 import '../admin_candidature/feuille_geste.dart';
 import '../admin_candidature/gestes_proposes.dart';
 import '../admin_candidature/libelles_candidature.dart';
@@ -530,6 +531,24 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           onChoix: (EtatVersement? v) =>
               _filtrer(_filtre.avec(paiement: () => v)),
         ),
+        // SALLE2-GENRE (directeur, 14/11/2026) : filtrer par genre.
+        MenuFiltre<String>(
+          key: const ValueKey<String>('candidatures-filtre-genre'),
+          libelle: f.genre,
+          valeur: _filtre.genre,
+          entrees: <EntreeFiltre<String>>[
+            tous<String>(),
+            EntreeFiltre<String>(
+              valeur: 'male',
+              libelle: t.admin.candidatures.genres.male,
+            ),
+            EntreeFiltre<String>(
+              valeur: 'female',
+              libelle: t.admin.candidatures.genres.female,
+            ),
+          ],
+          onChoix: (String? g) => _filtrer(_filtre.avec(genre: () => g)),
+        ),
         MenuFiltre<String>(
           key: const ValueKey<String>('candidatures-filtre-pays'),
           libelle: f.pays,
@@ -934,6 +953,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // SALLE2-ENTRETIEN (directeur, 14/11/2026) : les entretiens du jour
+          // et leur porte, en tete de la file.
+          const EntretiensDuJour(ficheOuverte: true),
           // CAND-F01 : la page des invitations (l'invitation d'un enseignant
           // ou d'un comptable, la revocation) a perdu son onglet. Le lien est
           // en tete, rendu dans tous les etats (file vide, en erreur, serveur

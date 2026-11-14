@@ -221,6 +221,9 @@ void main() {
         );
         // Lot 4 SALLE-1-TOUT-ICI : jamais un nom de salle de la direction.
         expect(find.textContaining('Salle'), findsNothing);
+        // CANDIDATURE-UX : « Etape 1 sur 3 », sans phrase de passage.
+        expect(_texte(t.commun.etape.surLue(n: 1, total: 3)), findsOneWidget);
+        expect(_cle('portail-passage'), findsNothing);
         expect(_texte(t.recrutement.portail.aCompleterTitre), findsOneWidget);
         expect(_texte(t.recrutement.portail.completer), findsOneWidget);
         // Aucun code d'etat ne s'affiche.
@@ -433,6 +436,14 @@ void main() {
           _texte(t.recrutement.sallesCandidat.connaissance),
           findsOneWidget,
         );
+        // CANDIDATURE-UX (directeur, 14/11/2026) : la bonne nouvelle au-dessus,
+        // puis « Etape 2 sur 3 », lus de l'etape rendue par le serveur.
+        expect(_texte(t.recrutement.sallesCandidat.retenue), findsOneWidget);
+        expect(_texte(t.commun.etape.surLue(n: 2, total: 3)), findsOneWidget);
+        expect(
+          tester.getTopLeft(_cle('portail-passage')).dy,
+          lessThan(tester.getTopLeft(_cle('portail-salle')).dy),
+        );
         // Lot 4 SALLE-1-TOUT-ICI : jamais un nom de salle de la direction.
         expect(find.textContaining('Salle'), findsNothing);
         expect(_texte(t.recrutement.portail.aCompleterTitre), findsNothing);
@@ -452,6 +463,8 @@ void main() {
           ),
         );
         expect(_texte(t.recrutement.sallesCandidat.equipe), findsOneWidget);
+        expect(_texte(t.recrutement.sallesCandidat.arrivee), findsOneWidget);
+        expect(_texte(t.commun.etape.surLue(n: 3, total: 3)), findsOneWidget);
         expect(_texte(t.recrutement.salles.prets), findsNothing);
         expect(find.textContaining('Salle'), findsNothing);
       },
