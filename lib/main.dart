@@ -621,7 +621,7 @@ List<Override> _surchargesAppReelle() => <Override>[
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
   ),
-  // VISION-RECRUTEMENT (14/11/2026, migration 20261126400000) : qui attend
+  // VISION-RECRUTEMENT (14/11/2026, migration 20261126500000) : qui attend
   // quoi, au-dessus de la file. Sans migration, la carte ne s'affiche pas.
   portAttentesRecrutementProvider.overrideWithValue(
     AttentesRecrutementSupabase(Supabase.instance.client),

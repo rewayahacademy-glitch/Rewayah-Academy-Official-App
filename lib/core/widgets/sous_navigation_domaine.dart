@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../admin/sous_liens_coquille.dart';
 import '../i18n/strings.g.dart';
 import 'controle_segmente.dart';
 import 'selecteur_section.dart';
@@ -56,6 +57,15 @@ class SousNavigationDomaine extends StatelessWidget {
     // n'en rester qu'un ; une sous-navigation d'un seul onglet n'en est pas
     // une, elle n'est pas montree.
     if (onglets.length < 2) {
+      return const SizedBox.shrink();
+    }
+    // NAV-SOUS-LIENS (14/11/2026) : sur tablette et ordinateur, quand le
+    // panneau de la direction montre deja chacune de ces pages en sous-lien,
+    // la page ne repete pas la navigation en onglets ou en menu deroulant.
+    if (SousLiensCoquille.couvre(
+      context,
+      onglets.map((({String libelle, String chemin}) o) => o.chemin),
+    )) {
       return const SizedBox.shrink();
     }
     return SelecteurSection<int>(

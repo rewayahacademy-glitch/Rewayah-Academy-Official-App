@@ -131,12 +131,21 @@ EtatRevueDemo _etat({
 );
 
 Future<void> _domaine(WidgetTester tester, AdminDomaine domaine) async {
-  await tester.tap(
-    find.descendant(
-      of: find.byKey(AdminShell.barreLateraleKey),
-      matching: find.text(domaine.libelle),
-    ),
+  final Finder barre = find.byKey(AdminShell.barreLateraleKey);
+  final Finder entree = find.descendant(
+    of: barre,
+    matching: find.text(domaine.libelle),
   );
+  // NAV-SOUS-LIENS : le panneau deplie (pages du domaine ouvert) peut
+  // defiler ; on l'y fait defiler comme un utilisateur.
+  await tester.scrollUntilVisible(
+    entree.hitTestable(),
+    48,
+    scrollable: find
+        .descendant(of: barre, matching: find.byType(Scrollable))
+        .first,
+  );
+  await tester.tap(entree);
   await _stabiliser(tester);
 }
 

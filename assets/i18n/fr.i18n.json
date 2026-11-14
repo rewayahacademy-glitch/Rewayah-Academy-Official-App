@@ -8008,7 +8008,16 @@
       "recherche": "Recherche",
       "rechercheIndication": "Rechercher un écran",
       "notificationsTitre": "Notifications",
-      "menu": "Menu"
+      "menu": "Menu",
+      "sections": {
+        "quotidien": "Au quotidien",
+        "academie": "Académie",
+        "reglages": "Réglages et contrôle"
+      },
+      "sousLiens": {
+        "admissions": "Demandes d'admission",
+        "pagesDe": "Pages de {domaine}"
+      }
     },
     "compte": "Mon compte",
     "principale": "Navigation principale",

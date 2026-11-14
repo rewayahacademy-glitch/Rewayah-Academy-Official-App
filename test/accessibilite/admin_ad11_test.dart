@@ -222,6 +222,12 @@ Future<void> _domaine(WidgetTester tester, AdminDomaine domaine) async {
           )
           .first,
     );
+    // NAV-SOUS-LIENS : un domaine qui a des pages ouvre leur menu ; sa
+    // premiere page est celle ou menait le domaine.
+    final Finder pages = find.byType(PopupMenuItem<int>);
+    if (pages.evaluate().isNotEmpty) {
+      await _toucher(tester, pages.first);
+    }
   } else {
     await _toucher(tester, find.bySemanticsLabel(t.nav.admin.menu));
     // A 400 % le tiroir defile et ne construit que ses premieres entrees :

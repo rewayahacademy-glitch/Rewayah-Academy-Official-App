@@ -1,4 +1,4 @@
--- VISION-RECRUTEMENT (14/11/2026 ; migration 20261126400000) : le super-admin
+-- VISION-RECRUTEMENT (14/11/2026 ; migration 20261126500000) : le super-admin
 -- agit aussi en lot, et la direction voit « qui attend quoi ».
 --
 -- Ce que le scenario prouve :

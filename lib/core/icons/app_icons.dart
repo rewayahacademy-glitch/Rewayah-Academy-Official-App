@@ -334,6 +334,13 @@ abstract final class AppIcons {
     IconData(0xe182, fontFamily: _actif),
   );
 
+  /// NAV-SOUS-LIENS (14/11/2026) : la page ouverte, dans le menu des pages
+  /// d'un domaine du rail (Phosphor `check`).
+  static const AppIcon pageOuverte = AppIcon._(
+    IconData(0xe182, fontFamily: _repos),
+    IconData(0xe182, fontFamily: _actif),
+  );
+
   /// MESSAGERIE-LU (14/11/2026) : message lu par l'autre partie (Phosphor
   /// `checks`, deux coches).
   static const AppIcon messageLu = AppIcon._(

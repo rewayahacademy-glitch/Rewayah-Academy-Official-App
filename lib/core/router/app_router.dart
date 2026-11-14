@@ -316,6 +316,7 @@ import '../widgets/halo_compte.dart';
 import '../widgets/nav_shell.dart';
 import '../widgets/page_shell.dart';
 import 'billet_salle.dart';
+import 'etat_routeur_sur.dart' show adresseRouteurSur;
 import 'etats_routeur.dart';
 import 'go_route_sure.dart';
 import 'page_differee.dart';
@@ -3841,6 +3842,18 @@ class _CoquilleAdmin extends ConsumerWidget {
         onStudio: ref.watch(studioOuvertProvider)
             ? () => aller(Routes.adminStudio)
             : null,
+        // NAV-SOUS-LIENS (14/11/2026) : les pages de chaque domaine dans le
+        // panneau (tablette et ordinateur), avec les memes interrupteurs que
+        // les pages (PORTS-DIRECTION). La politique KYC n'y est pas : savoir
+        // qui peut la regler demande de lire la politique, et la coquille ne
+        // lit rien de plus sur chaque page ; quand elle s'ouvre a quelqu'un,
+        // les pages de Configuration gardent leur selecteur (le panneau ne
+        // porte pas toutes leurs sections).
+        sousLiens: sousLiensAdmin(
+          vueGlobaleFinance: ref.watch(vueGlobaleFinanceOuverteProvider),
+          reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
+        ),
+        cheminCourant: adresseRouteurSur(context)?.path,
         child: child,
       ),
     );

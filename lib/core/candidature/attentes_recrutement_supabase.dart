@@ -1,5 +1,5 @@
 // L'adaptateur Supabase de `PortAttentesRecrutement` : la RPC
-// `attentes_recrutement()` (migration 20261126400000). Les refus sont typés
+// `attentes_recrutement()` (migration 20261126500000). Les refus sont typés
 // comme ceux de la file (`CandidaturesDirectionSupabase`).
 library;
 

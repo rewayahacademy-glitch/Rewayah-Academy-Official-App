@@ -8011,7 +8011,16 @@
       "recherche": "Search",
       "rechercheIndication": "Search for a screen",
       "notificationsTitre": "Notifications",
-      "menu": "Menu"
+      "menu": "Menu",
+      "sections": {
+        "quotidien": "Day to day",
+        "academie": "Academy",
+        "reglages": "Settings and control"
+      },
+      "sousLiens": {
+        "admissions": "Admission requests",
+        "pagesDe": "{domaine} pages"
+      }
     },
     "compte": "My account",
     "principale": "Main navigation",

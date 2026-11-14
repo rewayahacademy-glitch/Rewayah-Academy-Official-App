@@ -1,7 +1,7 @@
 // VISION-RECRUTEMENT (directeur, 14/11/2026) : « qui attend quoi de qui ».
 //
 // Une seule lecture serveur, `attentes_recrutement()` (migration
-// 20261126400000), des nombres seulement, dans la portee du lecteur (son
+// 20261126500000), des nombres seulement, dans la portee du lecteur (son
 // genre, ou les deux pour le super-admin). L'ecran ne recalcule rien : il
 // range les etats rendus en trois attentes (l'academie, la personne, un moyen
 // de versement) et lit les dates rendues.
@@ -17,7 +17,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../capacites/capacite_indisponible.dart';
 import 'modeles_candidature.dart';
 
-/// L'identifiant de la dependance serveur (migration 20261126400000), pour la
+/// L'identifiant de la dependance serveur (migration 20261126500000), pour la
 /// trace et les tests : jamais affiche.
 const String dependanceAttentesRecrutement = 'VISION-RECRUTEMENT';
 

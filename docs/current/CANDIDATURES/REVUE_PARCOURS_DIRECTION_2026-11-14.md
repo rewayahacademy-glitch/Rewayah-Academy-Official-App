@@ -34,4 +34,4 @@ prouvé en production tant que le directeur ne l'a pas fait lui-même.
   laisse agir le super-admin des deux côtés depuis V1-a-bis (03/11), avec
   trace ; aucun refus hors côté n'est enregistré en production. Seuls les
   gestes **en lot** restaient bornés : ouverts au super-admin par la migration
-  20261126400000 (décision A15 du 14/11).
+  20261126500000 (décision A15 du 14/11).

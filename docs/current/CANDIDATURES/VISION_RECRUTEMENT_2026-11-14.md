@@ -47,7 +47,7 @@ d'un coup d'œil.
 | **Inscription** | Nom en lettres, genre, langue, confidentialité (PR #481) | 8 comptes de connexion sans profil, invisibles de la direction ; 1 personne aiguillée à tort comme tuteur (audit du matin) | Il faut une requête SQL pour les voir | **G** | Non : il faut une file « comptes incomplets », lot à part |
 | **Salle 1** (cadre, accords, pièce, questionnaire, envoi) | Brouillon gardé ; pièce déposable dès la salle 1 et après l'envoi (#485) | Pas de correction des réponses après l'envoi ; pays de résidence vide tant que rien n'est envoyé (les 18 `a_completer`) | Une erreur de réponse oblige un échange de messages, puis « Demander une précision » | **G** | Non : décision (rouvrir le questionnaire après envoi ?) |
 | **Examen par la direction** | Liste serveur triée, filtres, recherche ; dossier complet avec la conversation dans le dossier (#485) et l'aperçu dans Messages (#484) | **Aucune vue « qui attend quoi »** : il fallait poser les filtres un par un ; « À traiter » ne compte que 2 alertes sur 4 ; 0 responsable nommé | Filtre, retour, autre filtre | **B** | **Oui** : carte « Qui attend quoi » |
-| **Super-admin hors côté** | Gestes un par un (décider, vérifier, « Valider la pièce », entretien) déjà permis depuis V1-a-bis (03/11), avec trace | Les **gestes en lot** (pause, reprise, refus) excluaient l'autre côté, même pour le super-admin | Refaire un par un | **B** | **Oui** : migration 20261126400000 |
+| **Super-admin hors côté** | Gestes un par un (décider, vérifier, « Valider la pièce », entretien) déjà permis depuis V1-a-bis (03/11), avec trace | Les **gestes en lot** (pause, reprise, refus) excluaient l'autre côté, même pour le super-admin | Refaire un par un | **B** | **Oui** : migration 20261126500000 |
 | **Salle 2** (vérifications, entretien) | Planifier, participants, compte rendu, issue : sur place, en feuilles | **0 créneau ouvert** : aucun candidat ne peut réserver ; la sortie de la salle d'entretien menait à l'accueil, pas au dossier | Accueil, Personnes, Candidatures, recherche, dossier | **B** | **Oui** pour la sortie ; les créneaux sont un geste du directeur (« Créneaux d'entretien ») |
 | **Versement** (CAND-Q05) | Référentiel des moyens par pays ; la candidature est gardée, jamais refusée en silence | 11 personnes sans moyen confirmé (Yémen 3, Tchad 2, Égypte, Ghana, Maroc, Bénin, Guinée, Liberia, Sénégal) | Aucune issue tant que rien n'est décidé | **B** | Non : décision métier (recommandation §5) |
 | **Salle 3** puis accueil comme enseignant | « Valider la pièce » active le compte, pose langues, fuseau et disponibilités, envoie le courriel de bienvenue | 1 seule personne arrivée là : chaîne peu éprouvée en vrai | — | C | Non |
@@ -84,7 +84,7 @@ d'un coup d'œil.
 
 ## 6. Ce que cette PR change
 
-1. **Migration `20261126400000_super_admin_lots_et_attentes.sql`**, sans mot d'effacement :
+1. **Migration `20261126500000_super_admin_lots_et_attentes.sql`**, sans mot d'effacement :
    - les gestes en lot du super-admin portent aussi sur l'autre côté ; le moteur écrit
      déjà chaque geste au journal (`super_admin_hors_cote`) ;
    - nouvelle lecture `attentes_recrutement()` : des nombres seulement, dans la portée du

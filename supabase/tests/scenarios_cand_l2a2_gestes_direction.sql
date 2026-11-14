@@ -1433,7 +1433,7 @@ BEGIN
       'D16 : ' || v.nom || ' : ' || (r ->> 'erreur') || ', une trace (evenement et ligne d''audit) pour la candidate de l''autre cote');
   END LOOP;
   PERFORM pg_temp.vrai(n = 10, 'D16 : dix refus rendus avant la boucle, chacun trace');
-  -- VISION-RECRUTEMENT (directeur, 14/11/2026, migration 20261126400000) : le
+  -- VISION-RECRUTEMENT (directeur, 14/11/2026, migration 20261126500000) : le
   -- super-admin agit aussi en lot ; la candidate de l'autre cote est dans sa
   -- portee, donc aucune trace hors portee. Le jeton invente reste refuse.
   b := pg_temp.hp(pg_temp.c('06'));

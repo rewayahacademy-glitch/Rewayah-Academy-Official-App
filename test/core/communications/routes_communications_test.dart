@@ -24,7 +24,6 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
-import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
@@ -438,31 +437,29 @@ void main() {
     // COM-F-b (UX_REV-03) : la seconde entree reelle de COM-W04, avec la
     // recherche. La racine Operations mene a Groupes, jamais ici.
     testWidgets(
-      'tableau de bord : la ligne Communications, Operations allume',
+      'tableau de bord : Communications sous Operations, Operations allume',
       (WidgetTester tester) async {
         final GoRouter routeur = await _monterAdmin(tester, Routes.admin);
-        final Finder ligne = find.byKey(
-          const ValueKey<String>('tableau-communications'),
+        // NAV-SOUS-LIENS (14/11/2026, point 2) : sur ordinateur, l'Accueil
+        // n'a plus la ligne Communications ; elle est un sous-lien
+        // d'Operations dans le panneau (au telephone, la ligne reste).
+        expect(
+          find.byKey(const ValueKey<String>('tableau-communications')),
+          findsNothing,
         );
-        await tester.scrollUntilVisible(
-          ligne,
-          200,
-          scrollable: find
-              .descendant(
-                of: find.byType(TableauDeBordPage),
-                matching: find.byType(Scrollable),
-              )
-              .first,
+        await tester.tap(
+          _dans(
+            AdminShell.barreLateraleKey,
+            find.text(AdminDomaine.operations.libelle),
+          ),
         );
         await stabiliser(tester);
-        expect(
-          find.descendant(
-            of: ligne,
-            matching: find.text(t.com.socle.navigation.communications),
+        await tester.tap(
+          _dans(
+            AdminShell.barreLateraleKey,
+            find.text(t.com.socle.navigation.communications),
           ),
-          findsOneWidget,
         );
-        await tester.tap(ligne);
         await stabiliser(tester);
         expect(_chemin(routeur), Routes.adminCommunicationsAnnonces);
         expect(find.byType(AdministrationCommunicationsPage), findsOneWidget);

@@ -79,6 +79,10 @@ Future<void> _voirPiece(WidgetTester tester, String prenom) async {
           )
           .first,
     );
+    // NAV-SOUS-LIENS : Personnes ouvre le menu de ses pages ; la premiere
+    // (les dossiers) est celle ou menait le domaine.
+    await _stabiliser(tester);
+    await tester.tap(find.text(t.dossiers.titre).last);
   } else if (mobile) {
     await tester.tap(find.bySemanticsLabel(t.nav.admin.menu));
     await _stabiliser(tester);
