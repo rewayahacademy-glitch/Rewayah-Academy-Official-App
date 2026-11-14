@@ -328,6 +328,10 @@ class _ServiceAuthEspion implements ServiceAuth {
   }) async => appels++;
 
   @override
+  Future<void> verifierCodeCourriel(String courriel, String code) async =>
+      appels++;
+
+  @override
   Future<void> connexionGoogle() async => appels++;
 
   @override

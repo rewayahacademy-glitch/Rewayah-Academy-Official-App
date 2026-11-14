@@ -1251,6 +1251,17 @@
     "appareilEleve": "Connect a student's device",
     "renvoyer": "Resend the link",
     "renvoye": "A new link was sent to {courriel}. Use the one in the most recent message.",
+    "code": {
+      "titre": "Or enter the code you received",
+      "aide": "The message also contains a 6-digit code. Enter it here: it works even if the link opens in another browser.",
+      "etiquette": "Code from the message",
+      "indice": "6 digits",
+      "valider": "Confirm the code",
+      "erreurLongueur": "Some digits are missing: the code has 6. Copy it from the most recent message.",
+      "erreurCode": "This code is wrong or no longer valid. Check the most recent message, or ask for a new link.",
+      "erreurReseau": "The check did not go through, probably because the connection dropped. Try again in a moment."
+    },
+    "revoirReponses": "Review my answers",
     "inscriptionFermee": "Sign-ups are currently by invitation only. Did you apply to teach? You will receive a personal email from us: there is nothing for you to do. Are you a family? Sign-ups reopen soon.",
     "invitationFoyer": {
       "titre": "Invitation to join a household",
@@ -1326,6 +1337,8 @@
       "acces": {
         "titre": "Last step: your access",
         "reponsesGardees": "Your answers are saved.",
+        "absentesTitre": "Your answers stayed on the other device or browser",
+        "absentesPhrase": "The link opened here, where the questionnaire was not filled in. Do it again: it takes a few minutes. Or go back to where you asked for the link and enter the 6-digit code from the message there.",
         "resteAcces": "All that is left is to receive your access link, or to continue with Google."
       }
     },

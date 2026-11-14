@@ -39,6 +39,9 @@ class _AuthLente implements ServiceAuth {
   }
 
   @override
+  Future<void> verifierCodeCourriel(String courriel, String code) async {}
+
+  @override
   Future<void> connexionGoogle() async {}
 
   @override
@@ -59,6 +62,9 @@ class _AuthLente implements ServiceAuth {
 class _AuthEnEchec implements ServiceAuth {
   @override
   Future<void> deconnexion() async => throw StateError('coffre illisible');
+
+  @override
+  Future<void> verifierCodeCourriel(String courriel, String code) async {}
 
   @override
   Future<void> connexionGoogle() async {}

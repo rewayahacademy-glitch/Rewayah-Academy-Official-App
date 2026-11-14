@@ -178,6 +178,15 @@ class _PorteAccueilInviteState extends ConsumerState<PorteAccueilInvite> {
     if (lecture.hasValue && !lecture.isLoading) {
       final InvitationAccueil? invitation = lecture.value;
       if (invitation == null) return widget.enfant;
+      // Un candidat connecte (Google, lien ou code), sans profil, avec une
+      // invitation de candidat en attente pour son adresse : directement le
+      // depot de candidature, comme le lien `candidature=1` (CAND-04), jamais
+      // « Pour qui creez-vous ce compte ? ». La marque est posee ici, avant le
+      // rendu de l'inscription, qui la lit pour ouvrir l'ecran de l'invitation.
+      if (invitation.role == RoleInvite.candidat) {
+        retenirInvitationEnCours(candidature: true);
+        return widget.enfant;
+      }
       return AccueilInvitePage(
         invitation: invitation,
         onContinuer: () {

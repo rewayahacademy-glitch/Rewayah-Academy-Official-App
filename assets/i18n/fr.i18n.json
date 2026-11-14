@@ -1251,6 +1251,17 @@
     "appareilEleve": "Connecter l'appareil d'un élève",
     "renvoyer": "Renvoyer le lien",
     "renvoye": "Un nouveau lien est parti à {courriel}. Utilisez celui du message le plus récent.",
+    "code": {
+      "titre": "Ou saisissez le code reçu",
+      "aide": "Le message contient aussi un code à 6 chiffres. Saisissez-le ici : il marche même si le lien s'ouvre dans un autre navigateur.",
+      "etiquette": "Code du message",
+      "indice": "6 chiffres",
+      "valider": "Valider le code",
+      "erreurLongueur": "Il manque des chiffres : le code en compte 6. Saisissez-le en entier, tel qu'il figure dans le message le plus récent.",
+      "erreurCode": "Ce code n'est pas bon ou n'est plus valable. Vérifiez le message le plus récent, ou demandez un nouveau lien.",
+      "erreurReseau": "La vérification n'a pas abouti, sans doute faute de connexion. Réessayez dans un instant."
+    },
+    "revoirReponses": "Revoir mes réponses",
     "inscriptionFermee": "Les inscriptions se font pour l'instant sur invitation. Vous avez proposé votre candidature pour enseigner ? Vous recevrez un courriel personnel de notre part : vous n'avez rien à faire. Vous êtes une famille ? Les inscriptions rouvrent bientôt.",
     "invitationFoyer": {
       "titre": "Invitation à rejoindre un foyer",
@@ -1326,6 +1337,8 @@
       "acces": {
         "titre": "Dernière étape\u00a0: votre accès",
         "reponsesGardees": "Vos réponses sont gardées.",
+        "absentesTitre": "Vos réponses sont restées sur l'autre appareil ou navigateur",
+        "absentesPhrase": "Le lien s'est ouvert ici, où le questionnaire n'a pas été rempli. Refaites-le : cela prend quelques minutes. Ou retournez là où vous avez demandé le lien, et saisissez-y le code à 6 chiffres du message.",
         "resteAcces": "Il ne reste qu'à recevoir votre lien d'accès, ou à continuer avec Google."
       }
     },
