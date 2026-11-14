@@ -975,6 +975,12 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	@override late final _Traductions$admin$agents$en agents = _Traductions$admin$agents$en._(_root);
 	@override late final _Traductions$admin$notifications$en notifications = _Traductions$admin$notifications$en._(_root);
 	@override late final _Traductions$admin$finance$en finance = _Traductions$admin$finance$en._(_root);
+	@override late final _Traductions$admin$planning$en planning = _Traductions$admin$planning$en._(_root);
+	@override late final _Traductions$admin$incidents$en incidents = _Traductions$admin$incidents$en._(_root);
+	@override late final _Traductions$admin$pilotage$en pilotage = _Traductions$admin$pilotage$en._(_root);
+	@override late final _Traductions$admin$fusion$en fusion = _Traductions$admin$fusion$en._(_root);
+	@override late final _Traductions$admin$tirage$en tirage = _Traductions$admin$tirage$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$en bibliotheque = _Traductions$admin$bibliotheque$en._(_root);
 }
 
 // Path: agent
@@ -6417,6 +6423,347 @@ class _Traductions$admin$finance$en extends Traductions$admin$finance$fr {
 	@override String get politiques => 'Commercial policies';
 	@override late final _Traductions$admin$finance$vue$en vue = _Traductions$admin$finance$vue$en._(_root);
 	@override late final _Traductions$admin$finance$pol$en pol = _Traductions$admin$finance$pol$en._(_root);
+	@override String get reserveDelegation => 'Reserve and delegation';
+	@override String get aValider => 'To validate';
+	@override String get paiements => 'Payments';
+	@override String get paieEnseignants => 'Teachers\' pay';
+	@override late final _Traductions$admin$finance$paieWise$en paieWise = _Traductions$admin$finance$paieWise$en._(_root);
+	@override late final _Traductions$admin$finance$pai$en pai = _Traductions$admin$finance$pai$en._(_root);
+	@override late final _Traductions$admin$finance$tarifs$en tarifs = _Traductions$admin$finance$tarifs$en._(_root);
+	@override late final _Traductions$admin$finance$fac$en fac = _Traductions$admin$finance$fac$en._(_root);
+	@override late final _Traductions$admin$finance$autres$en autres = _Traductions$admin$finance$autres$en._(_root);
+}
+
+// Path: admin.planning
+class _Traductions$admin$planning$en extends Traductions$admin$planning$fr {
+	_Traductions$admin$planning$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$planning$o1$en o1 = _Traductions$admin$planning$o1$en._(_root);
+	@override String get titre => 'Planning';
+	@override String get sousTitre => 'The week\'s sessions, all classes together, day by day.';
+	@override String semaine({required Object date}) => 'Week of ${date}';
+	@override String semaineSemantique({required Object date}) => 'Week of ${date}';
+	@override String get precedente => 'Previous week';
+	@override String get suivante => 'Next week';
+	@override String get cetteSemaine => 'Back to this week';
+	@override String horaire({required Object debut, required Object fin}) => '${debut} to ${fin}';
+	@override String get sansEnseignant => 'No teacher';
+	@override String avecEnseignant({required Object nom}) => 'Teacher: ${nom}';
+	@override String get vide => 'No session this week';
+	@override String get videDetail => 'Sessions appear here as soon as a class has a timetable this week. Try another week.';
+	@override String get sansDonnees => 'The planning could not be loaded';
+	@override String get erreur => 'The planning could not be read: the read may not have reached Rewayah. Try again in a moment.';
+	@override String get indisponiblePhrase => 'The planning will be shown here once the server is connected. Until then, nothing is shown: no session is invented.';
+	@override String get statutPrevue => 'Planned';
+	@override String get statutPreparation => 'Being prepared';
+	@override String get statutTerminee => 'Ended';
+	@override String get statutIncident => 'Technical incident';
+	@override String get statutEnseignantAbsent => 'Teacher absent';
+	@override String get statutEleveAbsent => 'Student absent';
+	@override late final _Traductions$admin$planning$remplacement$en remplacement = _Traductions$admin$planning$remplacement$en._(_root);
+}
+
+// Path: admin.incidents
+class _Traductions$admin$incidents$en extends Traductions$admin$incidents$fr {
+	_Traductions$admin$incidents$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Incidents of the last 24 hours';
+	@override String get sousTitre => 'Sessions that went into technical incident, teacher absent or student absent in the last 24 hours: what the "Incidents (24 h)" tile counts.';
+	@override String get liste => 'Sessions in incident';
+	@override String get natureTechnique => 'Technical incident';
+	@override String get natureEnseignantAbsent => 'Teacher absent';
+	@override String get natureEleveAbsent => 'Student absent';
+	@override String survenu({required Object date, required Object heure}) => '${date}, ${heure}';
+	@override String get vide => 'No incident in 24 hours';
+	@override String get videDetail => 'A session that went into incident, teacher absence or student absence appears here as soon as it changes status.';
+	@override String get sansDonnees => 'The incidents could not be loaded';
+	@override String get erreur => 'The incidents could not be read: the read may not have reached Rewayah. Try again in a moment.';
+	@override String get indisponiblePhrase => 'Incidents will be shown here once the server is connected. Until then, nothing is shown: no incident is invented.';
+}
+
+// Path: admin.pilotage
+class _Traductions$admin$pilotage$en extends Traductions$admin$pilotage$fr {
+	_Traductions$admin$pilotage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Schedule steering';
+	@override String get sousTitre => 'For each timetable and each audience: classes, how full they are, pending requests, and teachers free or missing.';
+	@override String get sansDonnees => 'The steering board could not be loaded';
+	@override String get erreur => 'The steering board could not be read: the read may not have reached Rewayah. Try again in a moment.';
+	@override String get indisponibleTitre => 'Available once the server is connected';
+	@override String get indisponiblePhrase => 'Steering by timetable will be shown here once the server is connected. Until then, nothing is shown: no figure is invented.';
+	@override String get vide => 'No timetable to steer';
+	@override String get videDetail => 'Timetables will appear here as soon as a class or a request exists.';
+	@override String get aucunAvecCeFiltre => 'No timetable with this filter';
+	@override String get aucunAvecCeFiltreDetail => 'Change the filter to see the other timetables.';
+	@override String get vueEnsemble => 'Overview';
+	@override String get cleClasses => 'Classes';
+	@override String get cleAttente => 'Waiting for a teacher';
+	@override String get cleSousMinimum => 'Below the minimum';
+	@override String get cleDemandes => 'Requests pending';
+	@override String get cleLibres => 'Free teachers';
+	@override String get cleManquants => 'Missing teachers';
+	@override String get attenteTitre => 'Classes waiting for a teacher';
+	@override String get attenteDetail => 'Confirm a teacher for each: the family is notified as soon as it is done.';
+	@override String attenteHoraire({required Object horaire}) => 'Timetable: ${horaire}';
+	@override String get voirToutes => 'See all classes waiting';
+	@override String get horairesTitre => 'Timetables';
+	@override String horaire({required Object jour, required Object heure, required Object ville}) => '${jour} · ${heure} · ${ville}';
+	@override String get colonneHoraire => 'Timetable';
+	@override String get colonnePublic => 'Audience';
+	@override String get colonneClasses => 'Classes';
+	@override String get colonneRemplissage => 'Fill level';
+	@override String get colonneDemandes => 'Requests pending';
+	@override String get colonneLibres => 'Free teachers';
+	@override String get colonneManquants => 'Missing teachers';
+	@override String get colonneEtat => 'To flag';
+	@override String remplissage({required Object taux, required Object effectif, required Object capacite}) => '${taux}% (${effectif} of ${capacite})';
+	@override String get remplissageInconnu => 'No place open';
+	@override String get aucun => 'None';
+	@override String nombreEtGenres({required Object n, required Object genres}) => '${n} (${genres})';
+	@override String genreHommes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} male teacher',
+		other: '${n} male teachers',
+	);
+	@override String genreFemmes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} female teacher',
+		other: '${n} female teachers',
+	);
+	@override String genreIndetermine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} teacher, gender to confirm',
+		other: '${n} teachers, gender to confirm',
+	);
+	@override String get etatPenurie => 'Teacher shortage';
+	@override String etatSousMinimum({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} class below the minimum',
+		other: '${n} classes below the minimum',
+	);
+	@override String etatAttente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} class waiting for a teacher',
+		other: '${n} classes waiting for a teacher',
+	);
+	@override String get etatCouvert => 'Covered';
+	@override String get filtreTous => 'All timetables';
+	@override String get filtrePenurie => 'Shortage';
+	@override String get filtreSousMinimum => 'Below the minimum';
+	@override String get filtreAttente => 'Waiting for a teacher';
+	@override String get filtrePublic => 'Audience';
+	@override String get filtreTousPublics => 'All audiences';
+	@override String positionSemantique({required Object page, required Object total}) => 'Page ${page} of ${total} of the steering board';
+	@override String get precedente => 'Previous page of the steering board';
+	@override String get suivante => 'Next page of the steering board';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'Timetables ${debut} to ${fin} of ${total}';
+}
+
+// Path: admin.fusion
+class _Traductions$admin$fusion$en extends Traductions$admin$fusion$fr {
+	_Traductions$admin$fusion$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get actionFusionner => 'Merge with a parallel class';
+	@override String get actionTransferer => 'Transfer a student';
+	@override String get actionHistorique => 'Class history';
+	@override String fusionTitre({required Object libelle}) => 'Merge ${libelle}';
+	@override String get fusionContexte => 'The students of this class will join a parallel class at the same timetable and in the same category that has room. This class\'s teacher is freed. Nothing is done without your confirmation.';
+	@override String get choixTitre => 'Class that welcomes the students';
+	@override String placesLibres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} free place',
+		other: '${n} free places',
+	);
+	@override String enseignantDe({required Object nom}) => 'Teacher: ${nom}';
+	@override String get sansEnseignant => 'No teacher for now';
+	@override String get aucuneCible => 'No parallel class has enough room';
+	@override String get aucuneCibleDetail => 'A class at the same timetable and in the same category is needed, with room for all of this class\'s students.';
+	@override String get erreurCibles => 'The parallel classes could not be read. Try again in a moment.';
+	@override String get sansDonneesCibles => 'The list of parallel classes could not be loaded';
+	@override String get apercuTitre => 'What will happen';
+	@override String get apercuErreur => 'The merge preview could not be calculated. Try again in a moment.';
+	@override String apercuMembres({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student moves to ${cible}',
+		other: '${n} students move to ${cible}',
+	);
+	@override String apercuEffectif({required Object cible, required Object apres, required Object capacite}) => '${cible} will have ${apres} students out of ${capacite}.';
+	@override String apercuEnseignantLibere({required Object enseignant}) => '${enseignant} no longer has this class and becomes free at this timetable.';
+	@override String get apercuSansEnseignant => 'This class has no teacher: no one is freed.';
+	@override String apercuFamilles({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} family is notified.',
+		other: '${n} families are notified.',
+	);
+	@override String get apercuIrreversible => 'The merged class is closed, and the history of both classes is kept. This decision cannot be undone.';
+	@override String get confirmerFusion => 'Merge the two classes';
+	@override String get fusionHorsLigne => 'The merge can be confirmed when the connection has returned. Your choice stays displayed.';
+	@override String fusionFaite({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Merge done: ${n} student is now in ${cible}.',
+		other: 'Merge done: ${n} students are now in ${cible}.',
+	);
+	@override String get famillesPrevenues => 'The families have been notified.';
+	@override String get fusionDejaFaite => 'Another member of the management has just merged this class: nothing was done twice. Close this sheet to see the up-to-date list.';
+	@override String fusionRefusee({required Object motif}) => 'The merge did not take place: ${motif}. Check the classes, then start again.';
+	@override late final _Traductions$admin$fusion$motif$en motif = _Traductions$admin$fusion$motif$en._(_root);
+	@override String get fusionNonConfirmee => 'The merge is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate merge.';
+	@override String get manqueCible => 'The class that welcomes the students is missing: choose one from the list.';
+	@override String transfertTitre({required Object deLibelle}) => 'Transfer a student ${deLibelle}';
+	@override String get transfertContexte => 'Choose the student, then the parallel class that welcomes them. The transfer is traced, and the family is notified.';
+	@override String get eleveTitre => 'Student to transfer';
+	@override String get aucunEleve => 'This class has no student';
+	@override String get aucunEleveDetail => 'There is no one to transfer.';
+	@override String get erreurEleves => 'The class\'s students could not be read. Try again in a moment.';
+	@override String get transfertCibleTitre => 'Class that welcomes the student';
+	@override String get manqueEleve => 'The student is missing: choose one from the list.';
+	@override String get confirmerTransfert => 'Transfer the student';
+	@override String get transfertHorsLigne => 'The transfer can be confirmed when the connection has returned. Your choice stays displayed.';
+	@override String transfertFait({required Object prenom, required Object cible}) => '${prenom} is now in ${cible}.';
+	@override String get transfertDejaFait => 'This transfer was already done: nothing was done twice. Close this sheet to see the up-to-date list.';
+	@override String refusChevauchement({required Object prenom, required Object cible}) => '${prenom} already attends a class that takes place at the same time as ${cible}: a student cannot be in two classes that overlap. Choose another class.';
+	@override String refusClassePleine({required Object cible}) => '${cible} has no more room. Choose another class.';
+	@override String refusAutre({required Object motif}) => 'The transfer did not take place: ${motif}. Check the class, then start again.';
+	@override String get transfertNonConfirme => 'The transfer is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate transfer.';
+	@override String historiqueTitre({required Object deLibelle}) => '${deLibelle} history';
+	@override String get historiqueVide => 'No movement';
+	@override String get historiqueVideDetail => 'This class\'s merges and transfers will appear here.';
+	@override String get historiqueErreur => 'The history could not be read. Try again in a moment.';
+	@override String evenementFusionSortante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Merged into ${autre}: ${n} student moved',
+		other: 'Merged into ${autre}: ${n} students moved',
+	);
+	@override String evenementFusionEntrante({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Merge with ${autre}: ${n} student welcomed',
+		other: 'Merge with ${autre}: ${n} students welcomed',
+	);
+	@override String evenementTransfertSortant({required Object prenom, required Object autre}) => '${prenom} transferred to ${autre}';
+	@override String evenementTransfertEntrant({required Object prenom, required Object autre}) => '${prenom} transferred from ${autre}';
+}
+
+// Path: admin.tirage
+class _Traductions$admin$tirage$en extends Traductions$admin$tirage$fr {
+	_Traductions$admin$tirage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Review draw';
+	@override String get sousTitre => 'The server randomly draws the session each reviewer receives. The management sets the rules; the reviewer never chooses their class.';
+	@override String get sansDonnees => 'The draws could not be loaded';
+	@override String get erreur => 'The draws could not be read: the read may not have reached Rewayah. Try again in a moment.';
+	@override String get indisponibleTitre => 'Available once the server is connected';
+	@override String get indisponiblePhrase => 'The draw rules and history will be shown here once the server is connected. Until then, nothing is shown: no draw is invented.';
+	@override String get reserveTitre => 'This screen is reserved for the management';
+	@override String get reservePhrase => 'Your account does not have access to the draws: they are reserved for the management, so that no one can predict who will be reviewed. If you need them, ask the management for access.';
+	@override String get reglesTitre => 'Draw rules';
+	@override String get reglesIntro => 'These rules apply to the next draws. Missions already assigned do not change. Each save creates a new version; the old ones are kept and never changed, and each is written in the audit log.';
+	@override String get frequenceTitre => 'Frequency';
+	@override String get frequenceDetail => 'The number of missions a reviewer receives per week, at most: from 0 to 50. The server applies this number.';
+	@override String versionEnVigueur({required Object n}) => 'Rules in force: version ${n}';
+	@override String get aucuneVersion => 'No rules are saved yet.';
+	@override String get zeroPhrase => 'With 0, no session is drawn for review.';
+	@override String get nombreInvalide => 'Enter a whole number from 0 to 50, or choose one of the values offered.';
+	@override String get frequenceAutreChamp => 'Number';
+	@override String enregistreesVersion({required Object n}) => 'Rules saved, version ${n}. They apply to the next draws.';
+	@override String missionsParSemaine({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} mission per week',
+		other: '${n} missions per week',
+	);
+	@override String get ponderationTitre => 'Weighting';
+	@override String get ponderationDetail => 'The higher the weight, the more likely these sessions are to be drawn. The draw stays unpredictable for the teacher and for the reviewer.';
+	@override String get critereEnseignantsRecents => 'Recently arrived teachers';
+	@override String get critereClassesSignalees => 'Classes reported to the administration';
+	@override String get critereHeuresDePointe => 'Peak hours';
+	@override String get niveauAucun => 'No weight';
+	@override String get niveauNormal => 'Normal weight';
+	@override String get niveauFort => 'High weight';
+	@override String get ciblesTitre => 'Classes or teachers to target';
+	@override String get ciblesDetail => 'A target is drawn first when its session is live. It is never announced to the reviewer or the teacher.';
+	@override String get aucuneCible => 'No target: all live sessions have the same chances, apart from the weight.';
+	@override String get cibleClasse => 'Class';
+	@override String get cibleEnseignant => 'Teacher';
+	@override String retirerCible({required Object libelle}) => 'Remove ${libelle}';
+	@override String get ajouterCible => 'Add a target';
+	@override String get ajouterTitre => 'Add a target';
+	@override String get ajouterContexte => 'Choose the class or teacher to draw first. The target is added to the rules, which you then save.';
+	@override String get ajouterChoix => 'Class or teacher to target';
+	@override String get ajouterConfirmer => 'Add this target';
+	@override String get manqueCible => 'The target is missing: choose one from the list.';
+	@override String get aucunCandidat => 'No class or teacher to target';
+	@override String get aucunCandidatDetail => 'All classes and teachers are already targeted, or no session exists yet.';
+	@override String get erreurCandidats => 'The list of targets could not be read. Try again in a moment.';
+	@override String get enregistrer => 'Save the rules';
+	@override String get enregistrees => 'Rules saved. They apply to the next draws.';
+	@override String get nonConfirmees => 'The saving is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate.';
+	@override String refusees({required Object motif}) => 'The rules were not saved: ${motif}. Check them, then start again.';
+	@override String get horsLigne => 'The rules can be saved when the connection has returned. Your choices stay displayed.';
+	@override String get lectureSeule => 'You can read these rules, but not change them: changing them is reserved for a member of the management who has the right.';
+	@override String get historiqueTitre => 'Draw history';
+	@override String get historiqueDetail => 'Each draw and each mission not reviewed are kept with their date. Only the management reads them: the reviewer sees only their own mission.';
+	@override String get rechercheLibelle => 'Search for a draw';
+	@override String get rechercheAide => 'Class, teacher or reviewer';
+	@override String get filtreTous => 'All';
+	@override String get filtreAttribuees => 'Assigned';
+	@override String get filtreEnCours => 'Reviews in progress';
+	@override String get filtreControlees => 'Reviewed';
+	@override String get filtreNonControlees => 'Not reviewed';
+	@override String get filtreDejaControlees => 'Already reviewed';
+	@override String get colonneQuand => 'Drawn on';
+	@override String get colonneClasse => 'Class';
+	@override String get colonneEnseignant => 'Teacher';
+	@override String get colonneControleur => 'Reviewer';
+	@override String get colonneCritere => 'Draw';
+	@override String get colonneStatut => 'Mission';
+	@override String get statutAttribuee => 'Assigned';
+	@override String get statutEnCours => 'Review in progress';
+	@override String get statutControlee => 'Reviewed';
+	@override String get statutNonControlee => 'Not reviewed';
+	@override String get statutDejaControlee => 'Already reviewed by another';
+	@override String get rapportEnvoye => 'Report sent to the administration';
+	@override String get critereAleatoire => 'At random';
+	@override String get criterePonderation => 'By weight';
+	@override String get critereCible => 'Target';
+	@override String get vide => 'No draw for now';
+	@override String get videDetail => 'Draws will appear here as soon as sessions are live.';
+	@override String get aucunAvecCeFiltre => 'No draw with this filter';
+	@override String get aucunAvecCeFiltreDetail => 'Change the filter to see the other draws.';
+	@override String positionSemantique({required Object page, required Object total}) => 'Page ${page} of ${total} of the draw history';
+	@override String get precedente => 'Previous page of the draw history';
+	@override String get suivante => 'Next page of the draw history';
+	@override String resume({required Object debut, required Object fin, required Object total}) => 'Draws ${debut} to ${fin} of ${total}';
+}
+
+// Path: admin.bibliotheque
+class _Traductions$admin$bibliotheque$en extends Traductions$admin$bibliotheque$fr {
+	_Traductions$admin$bibliotheque$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Library';
+	@override String get intro => 'Teaching documents: submit them, check their rights, publish a version, assign them to classes.';
+	@override String get brouillonAlerte => 'A draft gives no access to students or teachers.';
+	@override String get ajouter => 'Add a document';
+	@override String get vide => 'No document';
+	@override String get videDetail => 'Add a first document to prepare it, check its rights, then publish it.';
+	@override String get erreur => 'The catalogue could not be loaded. Try again.';
+	@override String get nonAutorise => 'You do not have access to the administration library.';
+	@override String get indisponibleTitre => 'Library not open yet';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+	@override String get sansDonnees => 'the catalogue';
+	@override String get ficheTitre => 'Document';
+	@override String get retourCatalogue => 'Back to the catalogue';
+	@override String get introuvable => 'This document does not exist or is not accessible.';
+	@override late final _Traductions$admin$bibliotheque$libelles$en libelles = _Traductions$admin$bibliotheque$libelles$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$catalogue$en catalogue = _Traductions$admin$bibliotheque$catalogue$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$fiche$en fiche = _Traductions$admin$bibliotheque$fiche$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$import$en import = _Traductions$admin$bibliotheque$import$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$publication$en publication = _Traductions$admin$bibliotheque$publication$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$attribution$en attribution = _Traductions$admin$bibliotheque$attribution$en._(_root);
 }
 
 // Path: nav.eleve
@@ -14931,6 +15278,515 @@ class _Traductions$admin$finance$pol$en extends Traductions$admin$finance$pol$fr
 	@override String get apercuRecalculer => 'Run the calculation again';
 	@override String get apercuRecalcul => 'Recalculating';
 	@override String get apercuRecalculDetail => 'The amounts below match the previous choice: they update as soon as the calculation succeeds.';
+	@override String get historique => 'Version history';
+	@override String get historiqueDetail => 'All versions, most recent first. Nothing in it changes: a published version stays as it is.';
+	@override String historiqueVersion({required Object version}) => 'Version ${version}';
+	@override String get historiqueActive => 'Active version';
+	@override String get historiqueVide => 'No other version for now: only the active version exists.';
+	@override String get sansDonnees => 'The published prices could not be loaded';
+	@override String get apercuPresentsChoix => 'Students present';
+	@override String get apercuPresentsDetail => 'Only a student present is paid; there is no minimum.';
+	@override String apercuPresents({required Object presents, required Object capacite}) => '${presents} of ${capacite}';
+	@override String get apercuPresentsMoins => 'One student present fewer';
+	@override String get apercuPresentsPlus => 'One student present more';
+	@override String get apercuParEleve => 'Per student present';
+	@override String get apercuHeure => 'For one session hour';
+	@override String apercuHeureDetail({required Object presents, required Object capacite}) => '${presents} students present of ${capacite}';
+	@override String get apercuAbsentLigne => 'One absent student';
+	@override String get apercuSansTaux => 'This version carries no per-student-present rate: the example applies only to a version that has one.';
+}
+
+// Path: admin.finance.paieWise
+class _Traductions$admin$finance$paieWise$en extends Traductions$admin$finance$paieWise$fr {
+	_Traductions$admin$finance$paieWise$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get valider => 'Details to validate';
+	@override String get aucunAValider => 'No details await validation.';
+	@override String get validerTitre => 'Validate the details';
+	@override String get validerIntro => 'Check with the teacher, by a means other than the app, that these details are the ones they gave. They enter the Wise file only after your validation.';
+	@override String get titulaire => 'Account holder';
+	@override String get compteDeLEnseignant => 'In the teacher\'s name';
+	@override String compteTiers({required Object lien}) => 'In a third party\'s name: ${lien}';
+	@override String accordLe({required Object date}) => 'Teacher\'s agreement given on ${date}';
+	@override String get numero => 'Account number';
+	@override String get pays => 'Country';
+	@override String enregistreLe({required Object date}) => 'Saved on ${date}';
+	@override String get validerAction => 'Validate these details';
+	@override String get validees => 'Details validated: they will enter the next Wise file.';
+	@override String get erreurValider => 'The validation is not confirmed: the details may have changed in the meantime. Close, reopen the list, then try again.';
+	@override String get manquantAValider => 'Waiting for validation';
+	@override late final _Traductions$admin$finance$paieWise$lien$en lien = _Traductions$admin$finance$paieWise$lien$en._(_root);
+	@override String get titre => 'Teachers\' pay through Wise';
+	@override String get phrase => 'Prepare the month\'s pay file, import it into Wise (batch payments), then note each payment made.';
+	@override String get exporter => 'Prepare the month\'s Wise file';
+	@override String get noter => 'Note a payment made';
+	@override String get exportTitre => 'Pay Wise file';
+	@override String get exportIntro => 'One line per teacher whose details are complete, with the month\'s remaining amount to pay set by the server. The file is prepared once a month; each preparation is recorded.';
+	@override String moisPrecedent({required Object mois}) => 'Pay for ${mois}';
+	@override String get moisPrecedentDetail => 'The month just ended: pay is paid before the 5th.';
+	@override String moisEnCours({required Object mois}) => 'Pay for ${mois}';
+	@override String get moisEnCoursDetail => 'The current month, if an advance must be paid.';
+	@override String get preparer => 'Prepare the file';
+	@override String get enregistrerFichier => 'Save the file';
+	@override String pret({required Object n, required Object total}) => '${n} lines, total ${total}.';
+	@override String get aucuneLigne => 'No teacher has pay to pay this month with complete details.';
+	@override String get manquantsTitre => 'Missing details';
+	@override String get manquantsPhrase => 'These teachers are not in the file: remind them to fill in their details in "Receive my payments".';
+	@override String manquantLigne({required Object nom, required Object montant}) => '${nom}: ${montant} to pay';
+	@override String get manquantAucune => 'No details';
+	@override String get manquantIncompletes => 'Incomplete details';
+	@override String get modeleAbsent => 'The Wise template is not set yet. The management must first download, in Wise, the "Send to bank accounts" template as CSV, then pass it on so it is set once.';
+	@override String get erreurExport => 'The file could not be prepared. Try again in a moment; if this continues, the month\'s pay statement may be incomplete.';
+	@override String get fichierEnregistre => 'File saved.';
+	@override String get noterTitre => 'Note a payment made';
+	@override String get noterIntro => 'Note a payment already made in Wise or by another means. The teacher sees it in "Payments received".';
+	@override String get enseignant => 'Teacher';
+	@override String montant({required Object devise}) => 'Amount paid (${devise})';
+	@override String get montantAide => 'The exact amount sent, for example 25.87.';
+	@override String get date => 'Payment date';
+	@override String get dateAide => 'In YYYY-MM-DD format, for example 2026-12-03.';
+	@override String get mois => 'Pay month';
+	@override String get moyenVersement => 'Method';
+	@override String get reference => 'Operation reference';
+	@override String get referenceAide => 'The transaction number given by Wise or the bank. Never an account number.';
+	@override String get note => 'Internal note';
+	@override String get noteAide => 'Read by the management and accounting only.';
+	@override String get noterAction => 'Note the payment';
+	@override String get versementNote => 'Payment noted.';
+	@override String get erreurNoter => 'The payment is not confirmed: check the amount, the date and the reference, then try again.';
+	@override String get erreurChamp => 'This field is empty or badly written: correct it, then note the payment.';
+	@override String get aucunEnseignant => 'No teacher to pay is registered yet.';
+}
+
+// Path: admin.finance.pai
+class _Traductions$admin$finance$pai$en extends Traductions$admin$finance$pai$fr {
+	_Traductions$admin$finance$pai$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sousTitre => 'A payment received outside the app (transfer, cash) is recorded here, for a student. Their month is then invoiced, then settled if the payment covers it. Entered by accounting, it is credited after the management\'s validation.';
+	@override String get aRegulariser => 'To settle';
+	@override String get aJour => 'Up to date';
+	@override String get aJourValeur => 'Up to date';
+	@override String get videTitre => 'No student for now';
+	@override String get videPhrase => 'Registered students will appear here with what they still have to pay.';
+	@override String feuilleTitre({required Object prenom}) => 'Payment received for ${prenom}';
+	@override String get eleve => 'Student';
+	@override String get resteAPayer => 'Remaining to pay';
+	@override String montantRecu({required Object devise}) => 'Amount received, in ${devise}';
+	@override String get montantAide => 'Pre-filled with the remaining to pay. Correct it if the family paid another sum.';
+	@override String get erreurMontant => 'This amount is not readable. Write an amount greater than zero, for example 50 or 50.50.';
+	@override String get reference => 'Payment reference (optional)';
+	@override String get referenceAide => 'For example the transfer number: it helps find this payment later.';
+	@override String enregistrer({required Object dePrenom}) => 'Record ${dePrenom}\'s payment';
+	@override String get annuler => 'Cancel';
+	@override String get fermer => 'Close';
+	@override String get rembChargement => 'Reading the payments…';
+	@override String get rembAucun => 'No payment to refund for this student.';
+	@override String get rembErreur => 'The refund could not be confirmed. Try again: it will go out only once.';
+	@override String get rembRefusePhrase => 'The payment provider refused it: nothing went out. You can try again.';
+	@override String get rembRefuseTitre => 'Refund refused';
+	@override String get rembEnvoyePhrase => 'It will appear in the student\'s balance once the payment provider has confirmed it.';
+	@override String get rembEnvoyeTitre => 'Refund sent';
+	@override String rembConfirmer({required Object montant}) => 'Refund ${montant}';
+	@override String get rembOui => 'Yes, refund';
+	@override String get rembSansRetour => 'The money goes to the payment provider, and this refund cannot be cancelled.';
+	@override String rembQuestion({required Object montant, required Object prenom}) => 'Refund ${montant} to ${prenom}?';
+	@override String get rembRien => 'Nothing to give back on this payment.';
+	@override String get rembReglePrepaiement => 'Plan paid in advance: months begun are due at the normal monthly price, with no discount; the rest is returned.';
+	@override String rembRegleDelai({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'Paid less than a day ago: what was paid is returned, minus the sessions attended.',
+		other: 'Paid less than ${jours} days ago: what was paid is returned, minus the sessions attended.',
+	);
+	@override String get rembPropose => 'Fair amount, calculated by the server';
+	@override String rembFois({required Object n, required Object prix}) => '${n} × ${prix}';
+	@override String get rembMois => 'Months begun, at the normal price';
+	@override String get rembSeances => 'Sessions attended since the payment';
+	@override String get rembDejaRendu => 'Already returned or in progress';
+	@override String get rembPaye => 'Paid for this student';
+	@override String get rembReference => 'Reference';
+	@override String rembPaiement({required Object date}) => 'Payment of ${date}';
+	@override String rembTitre({required Object prenom}) => 'Refund ${prenom}';
+	@override String get rembourser => 'Refund';
+	@override String get reessayer => 'Try again';
+	@override String get horsLigne => 'Nothing can be recorded for now. Reopen this sheet when the network has returned.';
+	@override String get faitTitre => 'Payment recorded';
+	@override String moisRegle({required Object dePrenom}) => '${dePrenom}\'s month is settled.';
+	@override String ilManque({required Object dePrenom}) => '${dePrenom}\'s month is not yet settled. It will be as soon as the balance is recorded.';
+	@override String enregistreSansEtat({required Object prenom}) => 'The payment is credited to ${prenom}.';
+	@override String get dejaEnregistre => 'This payment was already recorded: nothing was added.';
+	@override String get refusTitre => 'Payment refused';
+	@override String get refusDroits => 'Only the management and accounting can record a payment. Nothing was recorded.';
+	@override String get refusInvalide => 'The amount, currency or student was not accepted. Nothing was recorded: check the amount and try again from the list.';
+	@override String get inconnuTitre => 'Payment not confirmed';
+	@override String get inconnuPhrase => 'The answer did not arrive. Tap "Try again": the same payment will never be counted twice.';
+	@override String get demandeTitre => 'Validation requested';
+	@override String demandePhrase({required Object prenom}) => 'The payment is passed to the management. It will be credited to ${prenom} as soon as they have validated it.';
+	@override String get demandeDejaFaite => 'This payment is already awaiting the management\'s validation: nothing was added.';
+	@override String get refuseTitre => 'Payment refused by the management';
+	@override String refusePhrase({required Object motif}) => 'Nothing was credited. Reason: ${motif}';
+	@override String get enAttente => 'Waiting for validation';
+	@override String get refusesRecemment => 'Recently refused';
+}
+
+// Path: admin.finance.tarifs
+class _Traductions$admin$finance$tarifs$en extends Traductions$admin$finance$tarifs$fr {
+	_Traductions$admin$finance$tarifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Free access and special prices';
+	@override String get phrase => 'Free access (nothing to pay) or a special price (a discount or a price per month) is granted to a student until the month you choose, with its reason. Open a student in the list below, then "Free access or special price". The month\'s invoice takes it into account.';
+	@override String get vide => 'No free access or special price for now.';
+	@override String get accorder => 'Free access or special price';
+	@override String feuilleTitre({required Object prenom}) => 'Free access or special price for ${prenom}';
+	@override String get choixOffert => 'Free access';
+	@override String get choixPrix => 'Special price';
+	@override String offertAide({required Object prenom}) => '${prenom} has nothing to pay until the end of the chosen month. Their access opens right away.';
+	@override String get reduction => 'Discount (%)';
+	@override String get reductionAide => 'A whole number from 1 to 99. The rest of the price is paid as usual.';
+	@override String get erreurReduction => 'Enter a whole number from 1 to 99.';
+	@override String get choixPourcentage => 'As a percentage';
+	@override String get choixMontant => 'Price per month';
+	@override String montant({required Object devise}) => 'Price per month, excluding taxes (${devise})';
+	@override String get montantAide => 'The price the family pays each month, excluding taxes. It must be lower than the student\'s normal price.';
+	@override String get erreurMontant => 'Enter an amount greater than 0, for example 40 or 42.50.';
+	@override String get moisFin => 'Until the end of';
+	@override String get raison => 'Reason';
+	@override String get raisonAide => 'It stays in the management\'s log.';
+	@override String get erreurRaison => 'Write the reason, it is required.';
+	@override String get enregistrer => 'Grant';
+	@override String valeurOffert({required Object mois}) => 'Free access until the end of ${mois}';
+	@override String valeurPrix({required Object pourcent, required Object mois}) => '${pourcent}% off until the end of ${mois}';
+	@override String valeurMontant({required Object montant, required Object mois}) => '${montant} per month until the end of ${mois}';
+	@override String get faitTitre => 'Granted';
+	@override String faitPhrase({required Object dePrenom}) => '${dePrenom}\'s invoice takes it into account from this month.';
+	@override String get refusTitre => 'Nothing was granted';
+	@override String get refusDroits => 'Only the management grants free access or a special price.';
+	@override String get refusInvalide => 'A value was refused: check the discount, the month and the reason.';
+	@override String refusDejaActive({required Object prenom}) => '${prenom} already has free access, a special price or a scholarship. Remove it first.';
+	@override String refusMontant({required Object dePrenom}) => 'This price is not lower than ${dePrenom}\'s normal price. Enter a lower price, or choose "Free access".';
+	@override String get inconnuTitre => 'Answer not received';
+	@override String get inconnuPhrase => 'We do not know whether it is recorded. Reopen the list before trying again.';
+	@override String retirerTitre({required Object prenom}) => 'Remove for ${prenom}';
+	@override String retirerPhrase({required Object dePrenom}) => '${dePrenom}\'s next invoices will return to the normal price. Invoices already issued do not change.';
+	@override String get retirer => 'Remove';
+	@override String get retireTitre => 'Removed';
+}
+
+// Path: admin.finance.fac
+class _Traductions$admin$finance$fac$en extends Traductions$admin$finance$fac$fr {
+	_Traductions$admin$finance$fac$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get factures => 'Month\'s invoices';
+	@override String ligne({required Object deMois}) => '${deMois} invoices';
+	@override String get moisCourant => 'The current month.';
+	@override String get moisSuivant => 'Next month, to issue before it starts.';
+	@override String get emettre => 'Issue';
+	@override String emettreMois({required Object deMois}) => 'Issue the ${deMois} invoices';
+	@override String get explication => 'Each registered student receives their month\'s invoice, at the published price in force, with the family discount. Credits already received settle right away the months they cover. An invoice already issued is never issued a second time.';
+	@override String get faitTitre => 'Issuing finished';
+	@override String get faitPhrase => 'Families see their invoice and what they still have to pay.';
+	@override String get dejaEmises => 'All of this month\'s invoices had already been issued: nothing was added.';
+	@override String get emises => 'Invoices issued';
+	@override String get financees => 'Months settled by credits received';
+	@override String get refusTitre => 'Issuing refused';
+	@override String get refusDroits => 'Only the management and accounting issue invoices. Nothing was issued.';
+	@override String get refusMois => 'Only the current month and the next can be invoiced. Nothing was issued: close this sheet and choose one of the two.';
+	@override String get refusSansPrix => 'No published price applies to this month. Nothing was issued: first publish the prices in the prices tab, then try again.';
+	@override String get inconnuTitre => 'Issuing not confirmed';
+	@override String get inconnuPhrase => 'The answer did not arrive. Tap "Try again": an invoice already issued is never issued twice.';
+}
+
+// Path: admin.finance.autres
+class _Traductions$admin$finance$autres$en extends Traductions$admin$finance$autres$fr {
+	_Traductions$admin$finance$autres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Other earnings';
+	@override String get intro => 'Internet allowance, bonuses and missions of this month, paid with the pay.';
+	@override String get vide => 'No other earnings for this month.';
+	@override String get attribuer => 'Grant a bonus, a mission or the Internet allowance';
+	@override String feuilleTitre({required Object nom}) => 'Other earnings for ${nom}';
+	@override String get feuilleIntro => 'This amount is paid at the end of the month with the pay. The teacher sees it on "My earnings".';
+	@override String get natureChoix => 'Nature';
+	@override String get naturePrimeDetail => 'An extra sum, decided by the management.';
+	@override String get natureMissionDetail => 'Work entrusted in addition to sessions.';
+	@override String get natureAideInternetDetail => 'The monthly allowance for connection, one per month. The policy does not set the amount yet.';
+	@override String natureAideInternetPolitique({required Object montant}) => 'The monthly allowance for connection, one per month. Policy amount: ${montant}.';
+	@override String get libelle => 'Label';
+	@override String get libelleAide => 'What the teacher will read, for example "Replacement of 12 November".';
+	@override String montant({required Object devise}) => 'Amount in ${devise}';
+	@override String get montantAide => 'For example 25 or 12.50.';
+	@override String confirmer({required Object montant}) => 'Grant ${montant}';
+	@override String get confirmerSansMontant => 'Grant';
+	@override String get erreurLibelle => 'Write a label of 120 characters at most: the teacher will read it.';
+	@override String get erreurMontant => 'Enter an amount greater than 0, for example 25 or 12.50.';
+	@override String get erreurEnvoi => 'The grant is not confirmed: the request may not have reached Rewayah. Try again: nothing will be granted twice.';
+	@override String get erreurLecture => 'The other earnings could not be read: the request may not have reached Rewayah. Try again.';
+	@override String get erreurAnnulation => 'The cancellation is not confirmed: the request may not have reached Rewayah. Try again: nothing will be cancelled twice.';
+	@override String annuler({required Object libelle}) => 'Cancel "${libelle}"';
+	@override String get annulerTitre => 'Cancel these other earnings?';
+	@override String annulerPhrase({required Object libelle}) => '"${libelle}" will not be paid. The line stays in the management\'s history.';
+	@override String get annulerOui => 'Yes, cancel';
+	@override String get annulerNon => 'Keep';
+}
+
+// Path: admin.planning.o1
+class _Traductions$admin$planning$o1$en extends Traductions$admin$planning$o1$fr {
+	_Traductions$admin$planning$o1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String regarder({required Object deClasse}) => 'Watch ${deClasse}\'s room';
+}
+
+// Path: admin.planning.remplacement
+class _Traductions$admin$planning$remplacement$en extends Traductions$admin$planning$remplacement$fr {
+	_Traductions$admin$planning$remplacement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get absenceSansRemplacant => 'Absence declared by the teacher, no replacement';
+	@override String remplacePar({required Object nom}) => 'Replaced by ${nom}';
+	@override String remplaceParHorsGenre({required Object nom}) => 'Replaced by ${nom}, outside the class\'s gender (management\'s choice)';
+	@override String action({required Object deClasse}) => 'Assign a replacement for this ${deClasse} session';
+	@override String titre({required Object deClasse}) => 'Replacement for the ${deClasse} session';
+	@override String quand({required Object jour, required Object horaire}) => '${jour}, ${horaire}';
+	@override String get contexte => 'Only teachers free at the exact time of the session are offered. Those of the class\'s gender come first.';
+	@override String get mentionLibre => 'Free at this time';
+	@override String get mentionHorsGenre => 'Free at this time, but not of the class\'s gender: choose only if no one else fits';
+	@override String get avertissementHorsGenre => 'You are choosing a teacher who is not of the class\'s gender. This choice is recorded in the management\'s name.';
+	@override String get confirmer => 'Assign this replacement';
+	@override String get confirmerHorsGenre => 'Assign this replacement despite the gender';
+	@override String get horsLigne => 'No connection: the assignment will be made once the device is reconnected.';
+	@override String get choixManquant => 'Choose the teacher who will take the session.';
+	@override String get aucun => 'No teacher is free at the exact time of this session.';
+	@override String designe({required Object nom}) => '${nom} takes this session. The replacement appears in the planning.';
+	@override String get refusOccupe => 'This teacher is no longer free at the session\'s time: the list was read again. Choose another teacher.';
+	@override String get refusIncompatible => 'This replacement was not accepted: this teacher\'s account does not allow it. Choose another teacher.';
+	@override String get refusDejaPris => 'This session already has a replacement: nothing was changed.';
+	@override String get refusSeance => 'This session is no longer upcoming: nothing was changed.';
+	@override String get erreur => 'The assignment is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get bilanTitre => 'Replacements of the week';
+	@override String get bilanContexte => 'By regular teacher and by class. Giving the class to another teacher remains a decision of the management.';
+	@override String get bilanVide => 'No teacher absence this week.';
+	@override String bilanLigne({required Object titulaire, required Object classe}) => '${titulaire} · ${classe}';
+	@override String bilanDetail({required Object seances, required Object remplacees, required Object sans}) => 'Sessions concerned: ${seances} · replaced: ${remplacees} · without a replacement: ${sans}';
+	@override String get bilanErreur => 'The week\'s replacements could not be read: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get voirClasses => 'See the classes';
+	@override late final _Traductions$admin$planning$remplacement$reaffecter$en reaffecter = _Traductions$admin$planning$remplacement$reaffecter$en._(_root);
+}
+
+// Path: admin.fusion.motif
+class _Traductions$admin$fusion$motif$en extends Traductions$admin$fusion$motif$fr {
+	_Traductions$admin$fusion$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get classeIntrouvable => 'one of the two classes cannot be found';
+	@override String get sourceCloturee => 'the class to merge is already closed';
+	@override String get cibleCloturee => 'the class that welcomes is closed';
+	@override String get cibleIncompatible => 'the two classes do not have the same timetable or the same category';
+	@override String get ciblePleine => 'the class that welcomes no longer has enough room';
+	@override String get eleveAbsent => 'the student is no longer part of this class';
+	@override String get inconnu => 'Rewayah refused the operation without giving the reason';
+}
+
+// Path: admin.bibliotheque.libelles
+class _Traductions$admin$bibliotheque$libelles$en extends Traductions$admin$bibliotheque$libelles$fr {
+	_Traductions$admin$bibliotheque$libelles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$bibliotheque$libelles$type$en type = _Traductions$admin$bibliotheque$libelles$type$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$libelles$version$en version = _Traductions$admin$bibliotheque$libelles$version$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$libelles$droits$en droits = _Traductions$admin$bibliotheque$libelles$droits$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$libelles$visibilite$en visibilite = _Traductions$admin$bibliotheque$libelles$visibilite$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$libelles$langue$en langue = _Traductions$admin$bibliotheque$libelles$langue$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$libelles$usage$en usage = _Traductions$admin$bibliotheque$libelles$usage$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$libelles$horsLigne$en horsLigne = _Traductions$admin$bibliotheque$libelles$horsLigne$en._(_root);
+}
+
+// Path: admin.bibliotheque.catalogue
+class _Traductions$admin$bibliotheque$catalogue$en extends Traductions$admin$bibliotheque$catalogue$fr {
+	_Traductions$admin$bibliotheque$catalogue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get recherche => 'Search the catalogue';
+	@override late final _Traductions$admin$bibliotheque$catalogue$segments$en segments = _Traductions$admin$bibliotheque$catalogue$segments$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$catalogue$filtres$en filtres = _Traductions$admin$bibliotheque$catalogue$filtres$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$catalogue$colonnes$en colonnes = _Traductions$admin$bibliotheque$catalogue$colonnes$en._(_root);
+	@override String modifieLe({required Object date}) => 'Modified on ${date}';
+	@override String get videRecherche => 'No result';
+	@override String get videRechercheDetail => 'No document matches your search or your filters.';
+	@override String get effacerFiltres => 'Clear the filters';
+	@override String get voirPlus => 'See more documents';
+	@override String get pageErreur => 'The rest of the catalogue could not be loaded.';
+	@override String ouvrir({required Object titre}) => 'Open the document ${titre}';
+	@override String get droitsEchus => 'Rights lapsed';
+	@override String get alerteTitre => 'Drafts';
+	@override String get pasDeAcces => 'You cannot change the library.';
+}
+
+// Path: admin.bibliotheque.fiche
+class _Traductions$admin$bibliotheque$fiche$en extends Traductions$admin$bibliotheque$fiche$fr {
+	_Traductions$admin$bibliotheque$fiche$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$bibliotheque$fiche$sections$en sections = _Traductions$admin$bibliotheque$fiche$sections$en._(_root);
+	@override String afficherSection({required Object nom}) => 'Show the ${nom} section';
+	@override String masquerSection({required Object nom}) => 'Hide the ${nom} section';
+	@override String get apercuAucunFichier => 'No file is submitted for this version.';
+	@override String get apercuFichier => 'A file is submitted. Its rendering is checked at the "Check and publish" step.';
+	@override String get apercuPublie => 'Published version: the content is frozen.';
+	@override String get deposer => 'Submit a file';
+	@override String get remplacer => 'Replace the file';
+	@override late final _Traductions$admin$bibliotheque$fiche$champs$en champs = _Traductions$admin$bibliotheque$fiche$champs$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$fiche$meta$en meta = _Traductions$admin$bibliotheque$fiche$meta$en._(_root);
+	@override String get enregistrer => 'Save the changes';
+	@override String get enregistre => 'Changes saved.';
+	@override String get conflit => 'Another administrator changed this document. Reload the sheet before continuing.';
+	@override String get recharger => 'Reload the sheet';
+	@override String get echecEnregistrer => 'The changes could not be confirmed. Try again.';
+	@override String get titreVide => 'The title is required.';
+	@override String get retirerVignette => 'Remove the thumbnail';
+	@override String get figee => 'Published and frozen version: to change it, create a new version.';
+	@override String retireMotif({required Object motif}) => 'Withdrawn from the catalogue. Reason: ${motif}';
+	@override String get retireSansMotif => 'Withdrawn from the catalogue.';
+	@override String get retireRestaurer => 'It can be republished only after a new rights check.';
+	@override late final _Traductions$admin$bibliotheque$fiche$actions$en actions = _Traductions$admin$bibliotheque$fiche$actions$en._(_root);
+	@override String get nouvelleVersionOk => 'New version created as a draft.';
+	@override String get nouvelleVersionEchec => 'The new version could not be confirmed. Try again.';
+	@override late final _Traductions$admin$bibliotheque$fiche$version$en version = _Traductions$admin$bibliotheque$fiche$version$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$fiche$droitsChamps$en droitsChamps = _Traductions$admin$bibliotheque$fiche$droitsChamps$en._(_root);
+	@override String classesServies({required Object nombre}) => 'Classes served: ${nombre}';
+	@override String get historiqueVide => 'No event.';
+	@override late final _Traductions$admin$bibliotheque$fiche$audit$en audit = _Traductions$admin$bibliotheque$fiche$audit$en._(_root);
+	@override String auditMotif({required Object motif}) => 'Reason: ${motif}';
+	@override String auditVersion({required Object numero}) => 'Version ${numero}';
+}
+
+// Path: admin.bibliotheque.import
+class _Traductions$admin$bibliotheque$import$en extends Traductions$admin$bibliotheque$import$fr {
+	_Traductions$admin$bibliotheque$import$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$admin$bibliotheque$import$classement$en classement = _Traductions$admin$bibliotheque$import$classement$en._(_root);
+	@override String get vignette => 'Thumbnail';
+	@override String get choisirVignette => 'Choose a thumbnail';
+	@override String get choisirAutreVignette => 'Choose another thumbnail';
+	@override String get vignetteAide => 'An image (PNG, JPEG or WebP, 2 MB at most), optional. Without a thumbnail, the screen shows a cover according to the type.';
+	@override String get completerLien => 'Enter the link address (https): an external link or a video requires it, and an external link also requires its description.';
+	@override String get lienInvalide => 'This address is not accepted: it must start with https and lead to a site.';
+	@override String get sansFichierAide => 'Nothing to submit for this type: enter the link address, then continue.';
+	@override String get completer => 'Complete the document';
+	@override late final _Traductions$admin$bibliotheque$import$sections$en sections = _Traductions$admin$bibliotheque$import$sections$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$import$champs$en champs = _Traductions$admin$bibliotheque$import$champs$en._(_root);
+	@override String get completerDabord => 'First enter the title, type, language and category.';
+	@override String get choisirFichier => 'Choose a file';
+	@override String get choisirAutre => 'Choose another file';
+	@override String get annulerDepot => 'Cancel the upload';
+	@override String get progression => 'Upload progress';
+	@override late final _Traductions$admin$bibliotheque$import$formats$en formats = _Traductions$admin$bibliotheque$import$formats$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$import$etats$en etats = _Traductions$admin$bibliotheque$import$etats$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$import$erreurs$en erreurs = _Traductions$admin$bibliotheque$import$erreurs$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$import$droits$en droits = _Traductions$admin$bibliotheque$import$droits$en._(_root);
+	@override String get poursuivre => 'Continue to verification';
+	@override String get poursuivreAide => 'The file must be verified by the server before continuing.';
+	@override String get retour => 'Back to the catalogue';
+}
+
+// Path: admin.bibliotheque.publication
+class _Traductions$admin$bibliotheque$publication$en extends Traductions$admin$bibliotheque$publication$fr {
+	_Traductions$admin$bibliotheque$publication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Check and publish';
+	@override String get intro => 'Each point is checked by the server. Publishing freezes the version.';
+	@override String get apercuTitre => 'Source and file';
+	@override String get apercuAucunFichier => 'No file is submitted: the rendering cannot be checked.';
+	@override String get apercuFichier => 'File submitted. Its rendering is checked in the reader for its type; the server says below whether it was tested.';
+	@override String empreinte({required Object valeur}) => 'Fingerprint ${valeur}';
+	@override String get droitsTitre => 'Rights review';
+	@override String get confirmerControle => 'I have checked the source and the proof of this version.';
+	@override String get enregistrerDroits => 'Save the rights review';
+	@override String get droitsEnregistres => 'Rights review saved.';
+	@override String get droitsEchec => 'The rights review could not be confirmed. Try again.';
+	@override String get droitsFiges => 'The rights of a published version can no longer be changed: create a new version.';
+	@override String get checklistTitre => 'Version check';
+	@override late final _Traductions$admin$bibliotheque$publication$criteres$en criteres = _Traductions$admin$bibliotheque$publication$criteres$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$publication$explications$en explications = _Traductions$admin$bibliotheque$publication$explications$en._(_root);
+	@override late final _Traductions$admin$bibliotheque$publication$etats$en etats = _Traductions$admin$bibliotheque$publication$etats$en._(_root);
+	@override String get blocagesTitre => 'What blocks publication';
+	@override String get aucunBlocage => 'All points are validated by the server.';
+	@override String get publier => 'Publish the version';
+	@override String get bloque => 'This version cannot be published until the server has validated all the points of the check.';
+	@override String confirmerTitre({required Object numero}) => 'Publish version ${numero}?';
+	@override String get confirmerEffet => 'The version becomes immutable and visible to the classes the document is assigned to. To change it, you will create a new version.';
+	@override String get confirmerBouton => 'Publish';
+	@override String get publiee => 'Version published.';
+	@override String get dejaPubliee => 'This version is already published.';
+	@override String get echec => 'The publication could not be confirmed. Nothing is half-published: check the sheet before trying again.';
+	@override String get versLaFiche => 'See the sheet';
+	@override String get pasDeCapacite => 'You can view the check, but not publish.';
+}
+
+// Path: admin.bibliotheque.attribution
+class _Traductions$admin$bibliotheque$attribution$en extends Traductions$admin$bibliotheque$attribution$fr {
+	_Traductions$admin$bibliotheque$attribution$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Assign to classes';
+	@override String get intro => 'Choose the classes that will see this published version. What you assign here is visible to their students and teacher.';
+	@override String get classesTitre => 'Classes';
+	@override String get classeServie => 'Already assigned';
+	@override String get classeEpinglee => 'Pinned';
+	@override String get epingler => 'Pin at the top of these classes\' library';
+	@override String get aucune => 'No class is open to assignment for now.';
+	@override String get plusDeClasses => 'See more classes';
+	@override String get chargementPlus => 'Loading…';
+	@override String get nonPublie => 'This document is not published. Publish a version before assigning it to classes.';
+	@override String get erreur => 'The classes could not be loaded. Try again.';
+	@override String attribuer({required Object nombre}) => 'Assign to ${nombre} class(es)';
+	@override String get attribuerAucune => 'Choose at least one class before assigning.';
+	@override String get attribuee => 'Document assigned. The chosen classes see it now.';
+	@override String get attribueEchec => 'The assignment did not go through. Try again in a moment.';
+	@override String get retraitTitre => 'Withdraw from the catalogue';
+	@override String get retraitIntro => 'A withdrawal hides the document from all classes. It deletes nothing: the file and history are kept.';
+	@override String get motif => 'Reason for withdrawal';
+	@override String get motifRequis => 'Write the reason for withdrawal before continuing: it is kept in the history.';
+	@override String get retirer => 'Withdraw this document';
+	@override String retraitConfirmerTitre({required Object titre}) => 'Withdraw "${titre}" from the catalogue?';
+	@override String get retraitConfirmerEffet => 'Classes will no longer see it, including those already using it. The reason is kept in the history.';
+	@override String get retraitConfirmerBouton => 'Withdraw the document';
+	@override String get retire => 'Document withdrawn from the catalogue.';
+	@override String get retraitEchec => 'The withdrawal did not go through. Try again in a moment.';
+	@override String get conflit => 'Someone changed this document in the meantime. Reload before continuing.';
 }
 
 // Path: compte.page.sections
@@ -21451,6 +22307,484 @@ class _Traductions$admin$finance$vue$alerte$en extends Traductions$admin$finance
 	@override String get quiInconnu => 'A profile';
 	@override String get ouvrirComptes => 'Open the accounts';
 	@override String get ouvrirClasses => 'Open the classes';
+}
+
+// Path: admin.finance.paieWise.lien
+class _Traductions$admin$finance$paieWise$lien$en extends Traductions$admin$finance$paieWise$lien$fr {
+	_Traductions$admin$finance$paieWise$lien$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get parent => 'parent';
+	@override String get conjoint => 'spouse';
+	@override String get frereSoeur => 'brother or sister';
+	@override String get autre => 'another person';
+}
+
+// Path: admin.planning.remplacement.reaffecter
+class _Traductions$admin$planning$remplacement$reaffecter$en extends Traductions$admin$planning$remplacement$reaffecter$fr {
+	_Traductions$admin$planning$remplacement$reaffecter$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object classe}) => 'Give the class ${classe} to another teacher';
+	@override String consequence({required Object titulaire}) => '${titulaire} will no longer take this class. Upcoming sessions go to the chosen teacher; past sessions and their pay do not change. Both teachers and the class\'s families are notified.';
+	@override String get mention => 'Free at the class\'s times';
+	@override String get aucun => 'No other teacher can take over this class at its times. Check the teachers\' accounts and classes, then reopen this sheet.';
+	@override String get confirmer => 'Give the class to this teacher';
+	@override String get choixManquant => 'Choose the teacher who will take over the class.';
+	@override String get horsLigne => 'No connection: the decision will be made once the device is reconnected.';
+	@override String fait({required Object nom}) => '${nom} now takes this class. Upcoming sessions are entrusted to them.';
+	@override String dejaEnPlace({required Object nom}) => '${nom} already takes this class: nothing was changed.';
+	@override String get refusOccupe => 'This teacher is no longer free at the class\'s times: the list was read again. Choose another teacher.';
+	@override String get refusIncompatible => 'This teacher cannot take over this class (account, language, audience or number of classes): the list was read again. Choose another teacher.';
+	@override String get refusClasse => 'This class is no longer active or has no teacher: nothing was changed.';
+	@override String get erreur => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: admin.bibliotheque.libelles.type
+class _Traductions$admin$bibliotheque$libelles$type$en extends Traductions$admin$bibliotheque$libelles$type$fr {
+	_Traductions$admin$bibliotheque$libelles$type$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get audio => 'Audio';
+	@override String get video => 'Video';
+	@override String get lienExterne => 'External link';
+	@override String get quran => 'Quran';
+	@override String get texteStructure => 'Structured text';
+	@override String get pdf => 'PDF';
+	@override String get image => 'Image';
+	@override String get lecon => 'Lesson';
+}
+
+// Path: admin.bibliotheque.libelles.version
+class _Traductions$admin$bibliotheque$libelles$version$en extends Traductions$admin$bibliotheque$libelles$version$fr {
+	_Traductions$admin$bibliotheque$libelles$version$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get brouillon => 'Draft';
+	@override String get publiee => 'Published';
+	@override String get archivee => 'Archived';
+	@override String get retire => 'Withdrawn';
+	@override String numero({required Object numero}) => 'Version ${numero}';
+	@override String get aucune => 'No version';
+}
+
+// Path: admin.bibliotheque.libelles.droits
+class _Traductions$admin$bibliotheque$libelles$droits$en extends Traductions$admin$bibliotheque$libelles$droits$fr {
+	_Traductions$admin$bibliotheque$libelles$droits$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aVerifier => 'To check';
+	@override String get approuve => 'Approved';
+	@override String get refuse => 'Declined';
+	@override String get expire => 'Expired';
+}
+
+// Path: admin.bibliotheque.libelles.visibilite
+class _Traductions$admin$bibliotheque$libelles$visibilite$en extends Traductions$admin$bibliotheque$libelles$visibilite$fr {
+	_Traductions$admin$bibliotheque$libelles$visibilite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get publique => 'Public';
+	@override String get inscrits => 'Registered';
+	@override String get groupeAssigne => 'Assigned classes';
+	@override String get enseignantSeul => 'Teacher only';
+	@override String get admin => 'Administration only';
+}
+
+// Path: admin.bibliotheque.libelles.langue
+class _Traductions$admin$bibliotheque$libelles$langue$en extends Traductions$admin$bibliotheque$libelles$langue$fr {
+	_Traductions$admin$bibliotheque$libelles$langue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fr => 'French';
+	@override String get ar => 'Arabic';
+	@override String get en => 'English';
+}
+
+// Path: admin.bibliotheque.libelles.usage
+class _Traductions$admin$bibliotheque$libelles$usage$en extends Traductions$admin$bibliotheque$libelles$usage$fr {
+	_Traductions$admin$bibliotheque$libelles$usage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get application => 'In the app';
+	@override String get classe => 'In class';
+	@override String get telechargement => 'Download';
+	@override String get horsLigne => 'Reading without internet';
+}
+
+// Path: admin.bibliotheque.libelles.horsLigne
+class _Traductions$admin$bibliotheque$libelles$horsLigne$en extends Traductions$admin$bibliotheque$libelles$horsLigne$fr {
+	_Traductions$admin$bibliotheque$libelles$horsLigne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get jamais => 'Never';
+	@override String get surDemande => 'On request';
+	@override String get automatique => 'Automatic';
+}
+
+// Path: admin.bibliotheque.catalogue.segments
+class _Traductions$admin$bibliotheque$catalogue$segments$en extends Traductions$admin$bibliotheque$catalogue$segments$fr {
+	_Traductions$admin$bibliotheque$catalogue$segments$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'All';
+	@override String get brouillons => 'Drafts';
+	@override String get aVerifier => 'To check';
+	@override String get publies => 'Published';
+	@override String get retires => 'Withdrawn';
+	@override String get droitsExpires => 'Rights expired';
+}
+
+// Path: admin.bibliotheque.catalogue.filtres
+class _Traductions$admin$bibliotheque$catalogue$filtres$en extends Traductions$admin$bibliotheque$catalogue$filtres$fr {
+	_Traductions$admin$bibliotheque$catalogue$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get type => 'Type';
+	@override String get niveau => 'Level';
+	@override String get langue => 'Language';
+	@override String get tous => 'All';
+}
+
+// Path: admin.bibliotheque.catalogue.colonnes
+class _Traductions$admin$bibliotheque$catalogue$colonnes$en extends Traductions$admin$bibliotheque$catalogue$colonnes$fr {
+	_Traductions$admin$bibliotheque$catalogue$colonnes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get support => 'Document';
+	@override String get type => 'Type';
+	@override String get langue => 'Language';
+	@override String get categorie => 'Category';
+	@override String get version => 'Version';
+	@override String get publication => 'Publication';
+	@override String get droits => 'Rights';
+	@override String get visibilite => 'Visibility';
+	@override String get modifie => 'Modified';
+}
+
+// Path: admin.bibliotheque.fiche.sections
+class _Traductions$admin$bibliotheque$fiche$sections$en extends Traductions$admin$bibliotheque$fiche$sections$fr {
+	_Traductions$admin$bibliotheque$fiche$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get apercu => 'Preview';
+	@override String get edition => 'Editing';
+	@override String get metadonnees => 'Metadata';
+	@override String get workflow => 'Publication';
+	@override String get versions => 'Versions';
+	@override String get droits => 'Rights';
+	@override String get perimetre => 'Scope';
+	@override String get historique => 'History';
+}
+
+// Path: admin.bibliotheque.fiche.champs
+class _Traductions$admin$bibliotheque$fiche$champs$en extends Traductions$admin$bibliotheque$fiche$champs$fr {
+	_Traductions$admin$bibliotheque$fiche$champs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Title';
+	@override String get titreCourt => 'Short title';
+	@override String get edition => 'Edition';
+	@override String get organisme => 'Organization, author or publisher';
+	@override String get description => 'Short description (shown on the card)';
+	@override String get rayon => 'Shelf';
+	@override String get ordre => 'Display order';
+	@override String get lien => 'Link address (https)';
+	@override String get conditions => 'Assignment conditions';
+}
+
+// Path: admin.bibliotheque.fiche.meta
+class _Traductions$admin$bibliotheque$fiche$meta$en extends Traductions$admin$bibliotheque$fiche$meta$fr {
+	_Traductions$admin$bibliotheque$fiche$meta$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get type => 'Type';
+	@override String get langue => 'Language';
+	@override String get categorie => 'Category';
+	@override String get niveau => 'Level';
+	@override String get annee => 'Year';
+	@override String get visibilite => 'Visibility';
+	@override String get horsLigne => 'Reading without internet';
+	@override String get rayon => 'Shelf';
+	@override String get etapes => 'Programme stages';
+	@override String get vignette => 'Thumbnail';
+	@override String get vignetteOui => 'Submitted';
+	@override String get vignetteNon => 'Default, depending on the type';
+	@override String get lien => 'Link address';
+	@override String get nonRenseigne => 'Not provided';
+}
+
+// Path: admin.bibliotheque.fiche.actions
+class _Traductions$admin$bibliotheque$fiche$actions$en extends Traductions$admin$bibliotheque$fiche$actions$fr {
+	_Traductions$admin$bibliotheque$fiche$actions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get verifier => 'Check and publish';
+	@override String get nouvelleVersion => 'Create a new version';
+	@override String get completerDroits => 'Complete the rights';
+	@override String get associer => 'Link to classes';
+	@override String get retirer => 'Withdraw from the catalogue';
+}
+
+// Path: admin.bibliotheque.fiche.version
+class _Traductions$admin$bibliotheque$fiche$version$en extends Traductions$admin$bibliotheque$fiche$version$fr {
+	_Traductions$admin$bibliotheque$fiche$version$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String publieeLe({required Object date}) => 'Published on ${date}';
+	@override String empreinte({required Object valeur}) => 'Fingerprint ${valeur}';
+	@override String get sansFichier => 'No file';
+}
+
+// Path: admin.bibliotheque.fiche.droitsChamps
+class _Traductions$admin$bibliotheque$fiche$droitsChamps$en extends Traductions$admin$bibliotheque$fiche$droitsChamps$fr {
+	_Traductions$admin$bibliotheque$fiche$droitsChamps$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get revue => 'Rights review';
+	@override String get source => 'Source';
+	@override String get titulaire => 'Rights holder';
+	@override String get preuve => 'Proof of permission';
+	@override String get preuveOui => 'Submitted';
+	@override String get preuveNon => 'Missing';
+	@override String get usages => 'Permitted uses';
+	@override String get aucunUsage => 'No permitted use';
+	@override String get attribution => 'Attribution';
+	@override String get echeance => 'Expiry';
+}
+
+// Path: admin.bibliotheque.fiche.audit
+class _Traductions$admin$bibliotheque$fiche$audit$en extends Traductions$admin$bibliotheque$fiche$audit$fr {
+	_Traductions$admin$bibliotheque$fiche$audit$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get creation => 'Draft created';
+	@override String get depot => 'File submitted';
+	@override String get revueDroits => 'Rights reviewed';
+	@override String get publication => 'Version published';
+	@override String get attribution => 'Assigned to classes';
+	@override String get retrait => 'Withdrawn from the catalogue';
+	@override String get restauration => 'Restored';
+}
+
+// Path: admin.bibliotheque.import.classement
+class _Traductions$admin$bibliotheque$import$classement$en extends Traductions$admin$bibliotheque$import$classement$fr {
+	_Traductions$admin$bibliotheque$import$classement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tranchesTitre => 'For which ages?';
+	@override String get tranchesAide => 'A student sees only the documents for their age group. Tick all the groups concerned.';
+	@override String get tranchesAideLien => 'A link leads outside the app: the 6 to 9 years group is not ticked by default. Tick it only if you are sure of the site.';
+	@override String get tranchesAucune => 'Tick at least one age group.';
+	@override String get etapesTitre => 'Programme stages';
+	@override String get etapesAide => 'Link the document to the stages where it is used (optional).';
+	@override String get etapesVide => 'The stages will appear when the programme is published.';
+	@override String get etapesIndisponible => 'The stages could not be read for now. The document can be saved without a stage.';
+	@override String get lectureTitre => 'Quran recitation style';
+	@override String get lectureAucune => 'No recitation style specified';
+	@override String get ecoleLibelle => 'Legal school followed (prayer, ablutions; optional)';
+	@override String get depotInconnu => 'It is not possible to check for now whether file upload is turned on. You can already add a document by its link.';
+	@override String get ecoleTrop => 'The legal school\'s name is 80 characters at most.';
+	@override String get depotInactif => 'File upload is not turned on yet. You can already add a document by its link.';
+	@override String get videoLien => 'For a video, paste its link.';
+}
+
+// Path: admin.bibliotheque.import.sections
+class _Traductions$admin$bibliotheque$import$sections$en extends Traductions$admin$bibliotheque$import$sections$fr {
+	_Traductions$admin$bibliotheque$import$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ressource => 'Resource';
+	@override String get fichier => 'File';
+	@override String get droits => 'Rights and access';
+}
+
+// Path: admin.bibliotheque.import.champs
+class _Traductions$admin$bibliotheque$import$champs$en extends Traductions$admin$bibliotheque$import$champs$fr {
+	_Traductions$admin$bibliotheque$import$champs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Title';
+	@override String get description => 'Short description (shown on the card)';
+	@override String get rayon => 'Shelf';
+	@override String get ordre => 'Display order (optional)';
+	@override String get lien => 'Link address (https)';
+	@override String get categorie => 'Category';
+	@override String get type => 'Type';
+	@override String get langue => 'Language';
+	@override String get niveau => 'Level';
+}
+
+// Path: admin.bibliotheque.import.formats
+class _Traductions$admin$bibliotheque$import$formats$en extends Traductions$admin$bibliotheque$import$formats$fr {
+	_Traductions$admin$bibliotheque$import$formats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pdf => 'Accepted format: PDF.';
+	@override String get image => 'Accepted formats: PNG, JPEG, WebP.';
+	@override String get json => 'Accepted format: structured JSON.';
+	@override String get audio => 'Accepted formats: MP3, M4A, OGG.';
+	@override String get lien => 'This document is given by a link: no file to submit. A video is given by its link.';
+	@override String get aucun => 'This type accepts no file.';
+}
+
+// Path: admin.bibliotheque.import.etats
+class _Traductions$admin$bibliotheque$import$etats$en extends Traductions$admin$bibliotheque$import$etats$fr {
+	_Traductions$admin$bibliotheque$import$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get attente => 'Preparing the upload…';
+	@override String envoi({required Object pourcent}) => 'Sending: ${pourcent}%';
+	@override String get confirmation => 'Sending finished, waiting for the server\'s confirmation…';
+	@override String get verification => 'Checking the file…';
+	@override String get pret => 'File verified. Go on to the rights.';
+	@override String get annule => 'Upload cancelled.';
+}
+
+// Path: admin.bibliotheque.import.erreurs
+class _Traductions$admin$bibliotheque$import$erreurs$en extends Traductions$admin$bibliotheque$import$erreurs$fr {
+	_Traductions$admin$bibliotheque$import$erreurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get taille => 'This file is too large. Choose a lighter file.';
+	@override String get type => 'This file type is not supported for this document. Choose another file.';
+	@override String get reseau => 'No answer arrived: the request may not have reached Rewayah. Nothing was saved. Try again in a moment.';
+	@override String get refuse => 'This upload was refused: your account is not allowed to do it. Nothing was submitted. Ask the management to check your access.';
+	@override String get empreinte => 'The file received does not match the one sent. Try again.';
+	@override String get nonActive => 'File upload is not turned on yet: nothing was sent. Meanwhile, you can add a document by its link.';
+	@override String get creation => 'The draft could not be created. Try again.';
+	@override String get droits => 'The rights could not be saved. Try again.';
+	@override String get session => 'Your session has expired: nothing was submitted. Sign in again, then try again.';
+	@override String get stockage => 'The academy\'s file storage refused the upload. It is not your connection: it is a server setting. Try once more; if it happens again, this setting must be fixed before any new upload.';
+	@override String get envoi => 'The file upload got no answer, while the server is responding. Most likely: file storage does not yet accept uploads from this address, and it is a server setting; otherwise, the connection dropped during the upload. Try once more; if it happens again, it is the setting that needs fixing.';
+	@override String get service => 'The upload did not go through: the answer received is not the one expected. It is not your connection, and nothing was saved. Try again in a few minutes; if it happens again, the upload service needs checking.';
+	@override String get reglage => 'The file arrived, but the server cannot confirm it: its confirmation key is not the same on both sides. It is a setting to fix; trying again will change nothing.';
+	@override String get delai => 'Checking the file took too long and stopped. Nothing was saved. Try again; if the file is very large, choose a lighter version.';
+	@override String get vide => 'This file is empty. Choose another file.';
+	@override String get nonModifiable => 'This document can no longer be changed: it was published or withdrawn since this page was opened. Nothing was submitted. Reload the page.';
+	@override String get dejaDepose => 'This document already has its file. Nothing was submitted. To replace it, open its sheet and create a new version.';
+	@override String get expire => 'The upload request expired before the end. Nothing was submitted. Try again.';
+	@override String get contenu => 'This file\'s content is not that of its type: it is not a valid PDF, audio or image. Choose another file.';
+	@override String get introuvable => 'The file sent could not be found: the upload did not go through. Nothing was submitted. Try again.';
+}
+
+// Path: admin.bibliotheque.import.droits
+class _Traductions$admin$bibliotheque$import$droits$en extends Traductions$admin$bibliotheque$import$droits$fr {
+	_Traductions$admin$bibliotheque$import$droits$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aide => 'No right is presumed: an unknown value blocks publication.';
+	@override String get source => 'Original source';
+	@override String get titulaire => 'Rights holder';
+	@override String get attribution => 'Attribution required';
+	@override String get usages => 'Permitted uses';
+	@override String get preuve => 'Proof of permission';
+	@override String get deposerPreuve => 'Submit the proof';
+	@override String get preuveDeposee => 'Proof submitted.';
+}
+
+// Path: admin.bibliotheque.publication.criteres
+class _Traductions$admin$bibliotheque$publication$criteres$en extends Traductions$admin$bibliotheque$publication$criteres$fr {
+	_Traductions$admin$bibliotheque$publication$criteres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get source => 'Source confirmed';
+	@override String get titulaire => 'Rights holder known';
+	@override String get preuve => 'Proof of permission verified';
+	@override String get usageApplication => 'Use in the app permitted';
+	@override String get usageClasse => 'Display in class permitted';
+	@override String get usageTelechargement => 'Download and reading without internet decided';
+	@override String get expirationAttribution => 'Expiry and attribution in order';
+	@override String get fichierSain => 'File clean (server scan)';
+	@override String get renduTeste => 'Rendering tested in the reader for the type';
+	@override String get langueNiveau => 'Language and level filled in';
+	@override String get versionEmpreinte => 'Version and fingerprint frozen';
+}
+
+// Path: admin.bibliotheque.publication.explications
+class _Traductions$admin$bibliotheque$publication$explications$en extends Traductions$admin$bibliotheque$publication$explications$fr {
+	_Traductions$admin$bibliotheque$publication$explications$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get source => 'Give the original source in the rights review.';
+	@override String get titulaire => 'Give the rights holder, or the institutional origin.';
+	@override String get preuve => 'Submit the proof of permission for this version.';
+	@override String get usageApplication => 'Allow use in the app in the rights review.';
+	@override String get usageClasse => 'Allow display in class in the rights review.';
+	@override String get usageTelechargement => 'The server must be able to decide on download and reading without internet.';
+	@override String get expirationAttribution => 'The licence has expired or its attribution is missing: renew it.';
+	@override String get fichierSain => 'Submit a file: the server must scan it.';
+	@override String get renduTeste => 'The rendering has not yet been tested by the server.';
+	@override String get langueNiveau => 'Fill in the language and level on the sheet.';
+	@override String get versionEmpreinte => 'Submit a file to freeze the version and its fingerprint.';
+}
+
+// Path: admin.bibliotheque.publication.etats
+class _Traductions$admin$bibliotheque$publication$etats$en extends Traductions$admin$bibliotheque$publication$etats$fr {
+	_Traductions$admin$bibliotheque$publication$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get valide => 'Validated';
+	@override String get bloque => 'Blocked';
+	@override String get inconnu => 'Not evaluated yet';
 }
 
 // Path: classe.entree.demo.roles
@@ -28998,6 +30332,815 @@ extension on TraductionsEn {
 			'admin.finance.pol.apercuRecalculer' => 'Run the calculation again',
 			'admin.finance.pol.apercuRecalcul' => 'Recalculating',
 			'admin.finance.pol.apercuRecalculDetail' => 'The amounts below match the previous choice: they update as soon as the calculation succeeds.',
+			'admin.finance.pol.historique' => 'Version history',
+			'admin.finance.pol.historiqueDetail' => 'All versions, most recent first. Nothing in it changes: a published version stays as it is.',
+			'admin.finance.pol.historiqueVersion' => ({required Object version}) => 'Version ${version}',
+			'admin.finance.pol.historiqueActive' => 'Active version',
+			'admin.finance.pol.historiqueVide' => 'No other version for now: only the active version exists.',
+			'admin.finance.pol.sansDonnees' => 'The published prices could not be loaded',
+			'admin.finance.pol.apercuPresentsChoix' => 'Students present',
+			'admin.finance.pol.apercuPresentsDetail' => 'Only a student present is paid; there is no minimum.',
+			'admin.finance.pol.apercuPresents' => ({required Object presents, required Object capacite}) => '${presents} of ${capacite}',
+			'admin.finance.pol.apercuPresentsMoins' => 'One student present fewer',
+			'admin.finance.pol.apercuPresentsPlus' => 'One student present more',
+			'admin.finance.pol.apercuParEleve' => 'Per student present',
+			'admin.finance.pol.apercuHeure' => 'For one session hour',
+			'admin.finance.pol.apercuHeureDetail' => ({required Object presents, required Object capacite}) => '${presents} students present of ${capacite}',
+			'admin.finance.pol.apercuAbsentLigne' => 'One absent student',
+			_ => null,
+		} ?? switch (path) {
+			'admin.finance.pol.apercuSansTaux' => 'This version carries no per-student-present rate: the example applies only to a version that has one.',
+			'admin.finance.reserveDelegation' => 'Reserve and delegation',
+			'admin.finance.aValider' => 'To validate',
+			'admin.finance.paiements' => 'Payments',
+			'admin.finance.paieEnseignants' => 'Teachers\' pay',
+			'admin.finance.paieWise.valider' => 'Details to validate',
+			'admin.finance.paieWise.aucunAValider' => 'No details await validation.',
+			'admin.finance.paieWise.validerTitre' => 'Validate the details',
+			'admin.finance.paieWise.validerIntro' => 'Check with the teacher, by a means other than the app, that these details are the ones they gave. They enter the Wise file only after your validation.',
+			'admin.finance.paieWise.titulaire' => 'Account holder',
+			'admin.finance.paieWise.compteDeLEnseignant' => 'In the teacher\'s name',
+			'admin.finance.paieWise.compteTiers' => ({required Object lien}) => 'In a third party\'s name: ${lien}',
+			'admin.finance.paieWise.accordLe' => ({required Object date}) => 'Teacher\'s agreement given on ${date}',
+			'admin.finance.paieWise.numero' => 'Account number',
+			'admin.finance.paieWise.pays' => 'Country',
+			'admin.finance.paieWise.enregistreLe' => ({required Object date}) => 'Saved on ${date}',
+			'admin.finance.paieWise.validerAction' => 'Validate these details',
+			'admin.finance.paieWise.validees' => 'Details validated: they will enter the next Wise file.',
+			'admin.finance.paieWise.erreurValider' => 'The validation is not confirmed: the details may have changed in the meantime. Close, reopen the list, then try again.',
+			'admin.finance.paieWise.manquantAValider' => 'Waiting for validation',
+			'admin.finance.paieWise.lien.parent' => 'parent',
+			'admin.finance.paieWise.lien.conjoint' => 'spouse',
+			'admin.finance.paieWise.lien.frereSoeur' => 'brother or sister',
+			'admin.finance.paieWise.lien.autre' => 'another person',
+			'admin.finance.paieWise.titre' => 'Teachers\' pay through Wise',
+			'admin.finance.paieWise.phrase' => 'Prepare the month\'s pay file, import it into Wise (batch payments), then note each payment made.',
+			'admin.finance.paieWise.exporter' => 'Prepare the month\'s Wise file',
+			'admin.finance.paieWise.noter' => 'Note a payment made',
+			'admin.finance.paieWise.exportTitre' => 'Pay Wise file',
+			'admin.finance.paieWise.exportIntro' => 'One line per teacher whose details are complete, with the month\'s remaining amount to pay set by the server. The file is prepared once a month; each preparation is recorded.',
+			'admin.finance.paieWise.moisPrecedent' => ({required Object mois}) => 'Pay for ${mois}',
+			'admin.finance.paieWise.moisPrecedentDetail' => 'The month just ended: pay is paid before the 5th.',
+			'admin.finance.paieWise.moisEnCours' => ({required Object mois}) => 'Pay for ${mois}',
+			'admin.finance.paieWise.moisEnCoursDetail' => 'The current month, if an advance must be paid.',
+			'admin.finance.paieWise.preparer' => 'Prepare the file',
+			'admin.finance.paieWise.enregistrerFichier' => 'Save the file',
+			'admin.finance.paieWise.pret' => ({required Object n, required Object total}) => '${n} lines, total ${total}.',
+			'admin.finance.paieWise.aucuneLigne' => 'No teacher has pay to pay this month with complete details.',
+			'admin.finance.paieWise.manquantsTitre' => 'Missing details',
+			'admin.finance.paieWise.manquantsPhrase' => 'These teachers are not in the file: remind them to fill in their details in "Receive my payments".',
+			'admin.finance.paieWise.manquantLigne' => ({required Object nom, required Object montant}) => '${nom}: ${montant} to pay',
+			'admin.finance.paieWise.manquantAucune' => 'No details',
+			'admin.finance.paieWise.manquantIncompletes' => 'Incomplete details',
+			'admin.finance.paieWise.modeleAbsent' => 'The Wise template is not set yet. The management must first download, in Wise, the "Send to bank accounts" template as CSV, then pass it on so it is set once.',
+			'admin.finance.paieWise.erreurExport' => 'The file could not be prepared. Try again in a moment; if this continues, the month\'s pay statement may be incomplete.',
+			'admin.finance.paieWise.fichierEnregistre' => 'File saved.',
+			'admin.finance.paieWise.noterTitre' => 'Note a payment made',
+			'admin.finance.paieWise.noterIntro' => 'Note a payment already made in Wise or by another means. The teacher sees it in "Payments received".',
+			'admin.finance.paieWise.enseignant' => 'Teacher',
+			'admin.finance.paieWise.montant' => ({required Object devise}) => 'Amount paid (${devise})',
+			'admin.finance.paieWise.montantAide' => 'The exact amount sent, for example 25.87.',
+			'admin.finance.paieWise.date' => 'Payment date',
+			'admin.finance.paieWise.dateAide' => 'In YYYY-MM-DD format, for example 2026-12-03.',
+			'admin.finance.paieWise.mois' => 'Pay month',
+			'admin.finance.paieWise.moyenVersement' => 'Method',
+			'admin.finance.paieWise.reference' => 'Operation reference',
+			'admin.finance.paieWise.referenceAide' => 'The transaction number given by Wise or the bank. Never an account number.',
+			'admin.finance.paieWise.note' => 'Internal note',
+			'admin.finance.paieWise.noteAide' => 'Read by the management and accounting only.',
+			'admin.finance.paieWise.noterAction' => 'Note the payment',
+			'admin.finance.paieWise.versementNote' => 'Payment noted.',
+			'admin.finance.paieWise.erreurNoter' => 'The payment is not confirmed: check the amount, the date and the reference, then try again.',
+			'admin.finance.paieWise.erreurChamp' => 'This field is empty or badly written: correct it, then note the payment.',
+			'admin.finance.paieWise.aucunEnseignant' => 'No teacher to pay is registered yet.',
+			'admin.finance.pai.sousTitre' => 'A payment received outside the app (transfer, cash) is recorded here, for a student. Their month is then invoiced, then settled if the payment covers it. Entered by accounting, it is credited after the management\'s validation.',
+			'admin.finance.pai.aRegulariser' => 'To settle',
+			'admin.finance.pai.aJour' => 'Up to date',
+			'admin.finance.pai.aJourValeur' => 'Up to date',
+			'admin.finance.pai.videTitre' => 'No student for now',
+			'admin.finance.pai.videPhrase' => 'Registered students will appear here with what they still have to pay.',
+			'admin.finance.pai.feuilleTitre' => ({required Object prenom}) => 'Payment received for ${prenom}',
+			'admin.finance.pai.eleve' => 'Student',
+			'admin.finance.pai.resteAPayer' => 'Remaining to pay',
+			'admin.finance.pai.montantRecu' => ({required Object devise}) => 'Amount received, in ${devise}',
+			'admin.finance.pai.montantAide' => 'Pre-filled with the remaining to pay. Correct it if the family paid another sum.',
+			'admin.finance.pai.erreurMontant' => 'This amount is not readable. Write an amount greater than zero, for example 50 or 50.50.',
+			'admin.finance.pai.reference' => 'Payment reference (optional)',
+			'admin.finance.pai.referenceAide' => 'For example the transfer number: it helps find this payment later.',
+			'admin.finance.pai.enregistrer' => ({required Object dePrenom}) => 'Record ${dePrenom}\'s payment',
+			'admin.finance.pai.annuler' => 'Cancel',
+			'admin.finance.pai.fermer' => 'Close',
+			'admin.finance.pai.rembChargement' => 'Reading the payments…',
+			'admin.finance.pai.rembAucun' => 'No payment to refund for this student.',
+			'admin.finance.pai.rembErreur' => 'The refund could not be confirmed. Try again: it will go out only once.',
+			'admin.finance.pai.rembRefusePhrase' => 'The payment provider refused it: nothing went out. You can try again.',
+			'admin.finance.pai.rembRefuseTitre' => 'Refund refused',
+			'admin.finance.pai.rembEnvoyePhrase' => 'It will appear in the student\'s balance once the payment provider has confirmed it.',
+			'admin.finance.pai.rembEnvoyeTitre' => 'Refund sent',
+			'admin.finance.pai.rembConfirmer' => ({required Object montant}) => 'Refund ${montant}',
+			'admin.finance.pai.rembOui' => 'Yes, refund',
+			'admin.finance.pai.rembSansRetour' => 'The money goes to the payment provider, and this refund cannot be cancelled.',
+			'admin.finance.pai.rembQuestion' => ({required Object montant, required Object prenom}) => 'Refund ${montant} to ${prenom}?',
+			'admin.finance.pai.rembRien' => 'Nothing to give back on this payment.',
+			'admin.finance.pai.rembReglePrepaiement' => 'Plan paid in advance: months begun are due at the normal monthly price, with no discount; the rest is returned.',
+			'admin.finance.pai.rembRegleDelai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Paid less than a day ago: what was paid is returned, minus the sessions attended.', other: 'Paid less than ${jours} days ago: what was paid is returned, minus the sessions attended.', ), 
+			'admin.finance.pai.rembPropose' => 'Fair amount, calculated by the server',
+			'admin.finance.pai.rembFois' => ({required Object n, required Object prix}) => '${n} × ${prix}',
+			'admin.finance.pai.rembMois' => 'Months begun, at the normal price',
+			'admin.finance.pai.rembSeances' => 'Sessions attended since the payment',
+			'admin.finance.pai.rembDejaRendu' => 'Already returned or in progress',
+			'admin.finance.pai.rembPaye' => 'Paid for this student',
+			'admin.finance.pai.rembReference' => 'Reference',
+			'admin.finance.pai.rembPaiement' => ({required Object date}) => 'Payment of ${date}',
+			'admin.finance.pai.rembTitre' => ({required Object prenom}) => 'Refund ${prenom}',
+			'admin.finance.pai.rembourser' => 'Refund',
+			'admin.finance.pai.reessayer' => 'Try again',
+			'admin.finance.pai.horsLigne' => 'Nothing can be recorded for now. Reopen this sheet when the network has returned.',
+			'admin.finance.pai.faitTitre' => 'Payment recorded',
+			'admin.finance.pai.moisRegle' => ({required Object dePrenom}) => '${dePrenom}\'s month is settled.',
+			'admin.finance.pai.ilManque' => ({required Object dePrenom}) => '${dePrenom}\'s month is not yet settled. It will be as soon as the balance is recorded.',
+			'admin.finance.pai.enregistreSansEtat' => ({required Object prenom}) => 'The payment is credited to ${prenom}.',
+			'admin.finance.pai.dejaEnregistre' => 'This payment was already recorded: nothing was added.',
+			'admin.finance.pai.refusTitre' => 'Payment refused',
+			'admin.finance.pai.refusDroits' => 'Only the management and accounting can record a payment. Nothing was recorded.',
+			'admin.finance.pai.refusInvalide' => 'The amount, currency or student was not accepted. Nothing was recorded: check the amount and try again from the list.',
+			'admin.finance.pai.inconnuTitre' => 'Payment not confirmed',
+			'admin.finance.pai.inconnuPhrase' => 'The answer did not arrive. Tap "Try again": the same payment will never be counted twice.',
+			'admin.finance.pai.demandeTitre' => 'Validation requested',
+			'admin.finance.pai.demandePhrase' => ({required Object prenom}) => 'The payment is passed to the management. It will be credited to ${prenom} as soon as they have validated it.',
+			'admin.finance.pai.demandeDejaFaite' => 'This payment is already awaiting the management\'s validation: nothing was added.',
+			'admin.finance.pai.refuseTitre' => 'Payment refused by the management',
+			'admin.finance.pai.refusePhrase' => ({required Object motif}) => 'Nothing was credited. Reason: ${motif}',
+			'admin.finance.pai.enAttente' => 'Waiting for validation',
+			'admin.finance.pai.refusesRecemment' => 'Recently refused',
+			'admin.finance.tarifs.titre' => 'Free access and special prices',
+			'admin.finance.tarifs.phrase' => 'Free access (nothing to pay) or a special price (a discount or a price per month) is granted to a student until the month you choose, with its reason. Open a student in the list below, then "Free access or special price". The month\'s invoice takes it into account.',
+			'admin.finance.tarifs.vide' => 'No free access or special price for now.',
+			'admin.finance.tarifs.accorder' => 'Free access or special price',
+			'admin.finance.tarifs.feuilleTitre' => ({required Object prenom}) => 'Free access or special price for ${prenom}',
+			'admin.finance.tarifs.choixOffert' => 'Free access',
+			'admin.finance.tarifs.choixPrix' => 'Special price',
+			'admin.finance.tarifs.offertAide' => ({required Object prenom}) => '${prenom} has nothing to pay until the end of the chosen month. Their access opens right away.',
+			'admin.finance.tarifs.reduction' => 'Discount (%)',
+			'admin.finance.tarifs.reductionAide' => 'A whole number from 1 to 99. The rest of the price is paid as usual.',
+			'admin.finance.tarifs.erreurReduction' => 'Enter a whole number from 1 to 99.',
+			'admin.finance.tarifs.choixPourcentage' => 'As a percentage',
+			'admin.finance.tarifs.choixMontant' => 'Price per month',
+			'admin.finance.tarifs.montant' => ({required Object devise}) => 'Price per month, excluding taxes (${devise})',
+			'admin.finance.tarifs.montantAide' => 'The price the family pays each month, excluding taxes. It must be lower than the student\'s normal price.',
+			'admin.finance.tarifs.erreurMontant' => 'Enter an amount greater than 0, for example 40 or 42.50.',
+			'admin.finance.tarifs.moisFin' => 'Until the end of',
+			'admin.finance.tarifs.raison' => 'Reason',
+			'admin.finance.tarifs.raisonAide' => 'It stays in the management\'s log.',
+			'admin.finance.tarifs.erreurRaison' => 'Write the reason, it is required.',
+			'admin.finance.tarifs.enregistrer' => 'Grant',
+			'admin.finance.tarifs.valeurOffert' => ({required Object mois}) => 'Free access until the end of ${mois}',
+			'admin.finance.tarifs.valeurPrix' => ({required Object pourcent, required Object mois}) => '${pourcent}% off until the end of ${mois}',
+			'admin.finance.tarifs.valeurMontant' => ({required Object montant, required Object mois}) => '${montant} per month until the end of ${mois}',
+			'admin.finance.tarifs.faitTitre' => 'Granted',
+			'admin.finance.tarifs.faitPhrase' => ({required Object dePrenom}) => '${dePrenom}\'s invoice takes it into account from this month.',
+			'admin.finance.tarifs.refusTitre' => 'Nothing was granted',
+			'admin.finance.tarifs.refusDroits' => 'Only the management grants free access or a special price.',
+			'admin.finance.tarifs.refusInvalide' => 'A value was refused: check the discount, the month and the reason.',
+			'admin.finance.tarifs.refusDejaActive' => ({required Object prenom}) => '${prenom} already has free access, a special price or a scholarship. Remove it first.',
+			'admin.finance.tarifs.refusMontant' => ({required Object dePrenom}) => 'This price is not lower than ${dePrenom}\'s normal price. Enter a lower price, or choose "Free access".',
+			'admin.finance.tarifs.inconnuTitre' => 'Answer not received',
+			'admin.finance.tarifs.inconnuPhrase' => 'We do not know whether it is recorded. Reopen the list before trying again.',
+			'admin.finance.tarifs.retirerTitre' => ({required Object prenom}) => 'Remove for ${prenom}',
+			'admin.finance.tarifs.retirerPhrase' => ({required Object dePrenom}) => '${dePrenom}\'s next invoices will return to the normal price. Invoices already issued do not change.',
+			'admin.finance.tarifs.retirer' => 'Remove',
+			'admin.finance.tarifs.retireTitre' => 'Removed',
+			'admin.finance.fac.factures' => 'Month\'s invoices',
+			'admin.finance.fac.ligne' => ({required Object deMois}) => '${deMois} invoices',
+			'admin.finance.fac.moisCourant' => 'The current month.',
+			'admin.finance.fac.moisSuivant' => 'Next month, to issue before it starts.',
+			'admin.finance.fac.emettre' => 'Issue',
+			'admin.finance.fac.emettreMois' => ({required Object deMois}) => 'Issue the ${deMois} invoices',
+			'admin.finance.fac.explication' => 'Each registered student receives their month\'s invoice, at the published price in force, with the family discount. Credits already received settle right away the months they cover. An invoice already issued is never issued a second time.',
+			'admin.finance.fac.faitTitre' => 'Issuing finished',
+			'admin.finance.fac.faitPhrase' => 'Families see their invoice and what they still have to pay.',
+			'admin.finance.fac.dejaEmises' => 'All of this month\'s invoices had already been issued: nothing was added.',
+			'admin.finance.fac.emises' => 'Invoices issued',
+			'admin.finance.fac.financees' => 'Months settled by credits received',
+			'admin.finance.fac.refusTitre' => 'Issuing refused',
+			'admin.finance.fac.refusDroits' => 'Only the management and accounting issue invoices. Nothing was issued.',
+			'admin.finance.fac.refusMois' => 'Only the current month and the next can be invoiced. Nothing was issued: close this sheet and choose one of the two.',
+			'admin.finance.fac.refusSansPrix' => 'No published price applies to this month. Nothing was issued: first publish the prices in the prices tab, then try again.',
+			'admin.finance.fac.inconnuTitre' => 'Issuing not confirmed',
+			'admin.finance.fac.inconnuPhrase' => 'The answer did not arrive. Tap "Try again": an invoice already issued is never issued twice.',
+			'admin.finance.autres.titre' => 'Other earnings',
+			'admin.finance.autres.intro' => 'Internet allowance, bonuses and missions of this month, paid with the pay.',
+			'admin.finance.autres.vide' => 'No other earnings for this month.',
+			'admin.finance.autres.attribuer' => 'Grant a bonus, a mission or the Internet allowance',
+			'admin.finance.autres.feuilleTitre' => ({required Object nom}) => 'Other earnings for ${nom}',
+			'admin.finance.autres.feuilleIntro' => 'This amount is paid at the end of the month with the pay. The teacher sees it on "My earnings".',
+			'admin.finance.autres.natureChoix' => 'Nature',
+			'admin.finance.autres.naturePrimeDetail' => 'An extra sum, decided by the management.',
+			'admin.finance.autres.natureMissionDetail' => 'Work entrusted in addition to sessions.',
+			'admin.finance.autres.natureAideInternetDetail' => 'The monthly allowance for connection, one per month. The policy does not set the amount yet.',
+			'admin.finance.autres.natureAideInternetPolitique' => ({required Object montant}) => 'The monthly allowance for connection, one per month. Policy amount: ${montant}.',
+			'admin.finance.autres.libelle' => 'Label',
+			'admin.finance.autres.libelleAide' => 'What the teacher will read, for example "Replacement of 12 November".',
+			'admin.finance.autres.montant' => ({required Object devise}) => 'Amount in ${devise}',
+			'admin.finance.autres.montantAide' => 'For example 25 or 12.50.',
+			'admin.finance.autres.confirmer' => ({required Object montant}) => 'Grant ${montant}',
+			'admin.finance.autres.confirmerSansMontant' => 'Grant',
+			'admin.finance.autres.erreurLibelle' => 'Write a label of 120 characters at most: the teacher will read it.',
+			'admin.finance.autres.erreurMontant' => 'Enter an amount greater than 0, for example 25 or 12.50.',
+			'admin.finance.autres.erreurEnvoi' => 'The grant is not confirmed: the request may not have reached Rewayah. Try again: nothing will be granted twice.',
+			'admin.finance.autres.erreurLecture' => 'The other earnings could not be read: the request may not have reached Rewayah. Try again.',
+			'admin.finance.autres.erreurAnnulation' => 'The cancellation is not confirmed: the request may not have reached Rewayah. Try again: nothing will be cancelled twice.',
+			'admin.finance.autres.annuler' => ({required Object libelle}) => 'Cancel "${libelle}"',
+			'admin.finance.autres.annulerTitre' => 'Cancel these other earnings?',
+			'admin.finance.autres.annulerPhrase' => ({required Object libelle}) => '"${libelle}" will not be paid. The line stays in the management\'s history.',
+			'admin.finance.autres.annulerOui' => 'Yes, cancel',
+			'admin.finance.autres.annulerNon' => 'Keep',
+			'admin.planning.o1.regarder' => ({required Object deClasse}) => 'Watch ${deClasse}\'s room',
+			'admin.planning.titre' => 'Planning',
+			'admin.planning.sousTitre' => 'The week\'s sessions, all classes together, day by day.',
+			'admin.planning.semaine' => ({required Object date}) => 'Week of ${date}',
+			'admin.planning.semaineSemantique' => ({required Object date}) => 'Week of ${date}',
+			'admin.planning.precedente' => 'Previous week',
+			'admin.planning.suivante' => 'Next week',
+			'admin.planning.cetteSemaine' => 'Back to this week',
+			'admin.planning.horaire' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
+			'admin.planning.sansEnseignant' => 'No teacher',
+			'admin.planning.avecEnseignant' => ({required Object nom}) => 'Teacher: ${nom}',
+			'admin.planning.vide' => 'No session this week',
+			'admin.planning.videDetail' => 'Sessions appear here as soon as a class has a timetable this week. Try another week.',
+			'admin.planning.sansDonnees' => 'The planning could not be loaded',
+			'admin.planning.erreur' => 'The planning could not be read: the read may not have reached Rewayah. Try again in a moment.',
+			'admin.planning.indisponiblePhrase' => 'The planning will be shown here once the server is connected. Until then, nothing is shown: no session is invented.',
+			'admin.planning.statutPrevue' => 'Planned',
+			'admin.planning.statutPreparation' => 'Being prepared',
+			'admin.planning.statutTerminee' => 'Ended',
+			'admin.planning.statutIncident' => 'Technical incident',
+			'admin.planning.statutEnseignantAbsent' => 'Teacher absent',
+			'admin.planning.statutEleveAbsent' => 'Student absent',
+			'admin.planning.remplacement.absenceSansRemplacant' => 'Absence declared by the teacher, no replacement',
+			'admin.planning.remplacement.remplacePar' => ({required Object nom}) => 'Replaced by ${nom}',
+			'admin.planning.remplacement.remplaceParHorsGenre' => ({required Object nom}) => 'Replaced by ${nom}, outside the class\'s gender (management\'s choice)',
+			'admin.planning.remplacement.action' => ({required Object deClasse}) => 'Assign a replacement for this ${deClasse} session',
+			'admin.planning.remplacement.titre' => ({required Object deClasse}) => 'Replacement for the ${deClasse} session',
+			'admin.planning.remplacement.quand' => ({required Object jour, required Object horaire}) => '${jour}, ${horaire}',
+			'admin.planning.remplacement.contexte' => 'Only teachers free at the exact time of the session are offered. Those of the class\'s gender come first.',
+			'admin.planning.remplacement.mentionLibre' => 'Free at this time',
+			'admin.planning.remplacement.mentionHorsGenre' => 'Free at this time, but not of the class\'s gender: choose only if no one else fits',
+			'admin.planning.remplacement.avertissementHorsGenre' => 'You are choosing a teacher who is not of the class\'s gender. This choice is recorded in the management\'s name.',
+			'admin.planning.remplacement.confirmer' => 'Assign this replacement',
+			'admin.planning.remplacement.confirmerHorsGenre' => 'Assign this replacement despite the gender',
+			'admin.planning.remplacement.horsLigne' => 'No connection: the assignment will be made once the device is reconnected.',
+			'admin.planning.remplacement.choixManquant' => 'Choose the teacher who will take the session.',
+			'admin.planning.remplacement.aucun' => 'No teacher is free at the exact time of this session.',
+			'admin.planning.remplacement.designe' => ({required Object nom}) => '${nom} takes this session. The replacement appears in the planning.',
+			'admin.planning.remplacement.refusOccupe' => 'This teacher is no longer free at the session\'s time: the list was read again. Choose another teacher.',
+			'admin.planning.remplacement.refusIncompatible' => 'This replacement was not accepted: this teacher\'s account does not allow it. Choose another teacher.',
+			'admin.planning.remplacement.refusDejaPris' => 'This session already has a replacement: nothing was changed.',
+			'admin.planning.remplacement.refusSeance' => 'This session is no longer upcoming: nothing was changed.',
+			'admin.planning.remplacement.erreur' => 'The assignment is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'admin.planning.remplacement.bilanTitre' => 'Replacements of the week',
+			'admin.planning.remplacement.bilanContexte' => 'By regular teacher and by class. Giving the class to another teacher remains a decision of the management.',
+			'admin.planning.remplacement.bilanVide' => 'No teacher absence this week.',
+			'admin.planning.remplacement.bilanLigne' => ({required Object titulaire, required Object classe}) => '${titulaire} · ${classe}',
+			'admin.planning.remplacement.bilanDetail' => ({required Object seances, required Object remplacees, required Object sans}) => 'Sessions concerned: ${seances} · replaced: ${remplacees} · without a replacement: ${sans}',
+			'admin.planning.remplacement.bilanErreur' => 'The week\'s replacements could not be read: the request may not have reached Rewayah. Try again in a moment.',
+			'admin.planning.remplacement.voirClasses' => 'See the classes',
+			'admin.planning.remplacement.reaffecter.titre' => ({required Object classe}) => 'Give the class ${classe} to another teacher',
+			'admin.planning.remplacement.reaffecter.consequence' => ({required Object titulaire}) => '${titulaire} will no longer take this class. Upcoming sessions go to the chosen teacher; past sessions and their pay do not change. Both teachers and the class\'s families are notified.',
+			'admin.planning.remplacement.reaffecter.mention' => 'Free at the class\'s times',
+			'admin.planning.remplacement.reaffecter.aucun' => 'No other teacher can take over this class at its times. Check the teachers\' accounts and classes, then reopen this sheet.',
+			'admin.planning.remplacement.reaffecter.confirmer' => 'Give the class to this teacher',
+			'admin.planning.remplacement.reaffecter.choixManquant' => 'Choose the teacher who will take over the class.',
+			'admin.planning.remplacement.reaffecter.horsLigne' => 'No connection: the decision will be made once the device is reconnected.',
+			'admin.planning.remplacement.reaffecter.fait' => ({required Object nom}) => '${nom} now takes this class. Upcoming sessions are entrusted to them.',
+			'admin.planning.remplacement.reaffecter.dejaEnPlace' => ({required Object nom}) => '${nom} already takes this class: nothing was changed.',
+			'admin.planning.remplacement.reaffecter.refusOccupe' => 'This teacher is no longer free at the class\'s times: the list was read again. Choose another teacher.',
+			'admin.planning.remplacement.reaffecter.refusIncompatible' => 'This teacher cannot take over this class (account, language, audience or number of classes): the list was read again. Choose another teacher.',
+			'admin.planning.remplacement.reaffecter.refusClasse' => 'This class is no longer active or has no teacher: nothing was changed.',
+			'admin.planning.remplacement.reaffecter.erreur' => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'admin.incidents.titre' => 'Incidents of the last 24 hours',
+			'admin.incidents.sousTitre' => 'Sessions that went into technical incident, teacher absent or student absent in the last 24 hours: what the "Incidents (24 h)" tile counts.',
+			'admin.incidents.liste' => 'Sessions in incident',
+			'admin.incidents.natureTechnique' => 'Technical incident',
+			'admin.incidents.natureEnseignantAbsent' => 'Teacher absent',
+			'admin.incidents.natureEleveAbsent' => 'Student absent',
+			'admin.incidents.survenu' => ({required Object date, required Object heure}) => '${date}, ${heure}',
+			'admin.incidents.vide' => 'No incident in 24 hours',
+			'admin.incidents.videDetail' => 'A session that went into incident, teacher absence or student absence appears here as soon as it changes status.',
+			'admin.incidents.sansDonnees' => 'The incidents could not be loaded',
+			'admin.incidents.erreur' => 'The incidents could not be read: the read may not have reached Rewayah. Try again in a moment.',
+			'admin.incidents.indisponiblePhrase' => 'Incidents will be shown here once the server is connected. Until then, nothing is shown: no incident is invented.',
+			'admin.pilotage.titre' => 'Schedule steering',
+			'admin.pilotage.sousTitre' => 'For each timetable and each audience: classes, how full they are, pending requests, and teachers free or missing.',
+			'admin.pilotage.sansDonnees' => 'The steering board could not be loaded',
+			'admin.pilotage.erreur' => 'The steering board could not be read: the read may not have reached Rewayah. Try again in a moment.',
+			'admin.pilotage.indisponibleTitre' => 'Available once the server is connected',
+			'admin.pilotage.indisponiblePhrase' => 'Steering by timetable will be shown here once the server is connected. Until then, nothing is shown: no figure is invented.',
+			'admin.pilotage.vide' => 'No timetable to steer',
+			'admin.pilotage.videDetail' => 'Timetables will appear here as soon as a class or a request exists.',
+			'admin.pilotage.aucunAvecCeFiltre' => 'No timetable with this filter',
+			'admin.pilotage.aucunAvecCeFiltreDetail' => 'Change the filter to see the other timetables.',
+			'admin.pilotage.vueEnsemble' => 'Overview',
+			'admin.pilotage.cleClasses' => 'Classes',
+			'admin.pilotage.cleAttente' => 'Waiting for a teacher',
+			'admin.pilotage.cleSousMinimum' => 'Below the minimum',
+			'admin.pilotage.cleDemandes' => 'Requests pending',
+			'admin.pilotage.cleLibres' => 'Free teachers',
+			'admin.pilotage.cleManquants' => 'Missing teachers',
+			'admin.pilotage.attenteTitre' => 'Classes waiting for a teacher',
+			'admin.pilotage.attenteDetail' => 'Confirm a teacher for each: the family is notified as soon as it is done.',
+			'admin.pilotage.attenteHoraire' => ({required Object horaire}) => 'Timetable: ${horaire}',
+			'admin.pilotage.voirToutes' => 'See all classes waiting',
+			'admin.pilotage.horairesTitre' => 'Timetables',
+			'admin.pilotage.horaire' => ({required Object jour, required Object heure, required Object ville}) => '${jour} · ${heure} · ${ville}',
+			'admin.pilotage.colonneHoraire' => 'Timetable',
+			'admin.pilotage.colonnePublic' => 'Audience',
+			'admin.pilotage.colonneClasses' => 'Classes',
+			'admin.pilotage.colonneRemplissage' => 'Fill level',
+			'admin.pilotage.colonneDemandes' => 'Requests pending',
+			'admin.pilotage.colonneLibres' => 'Free teachers',
+			'admin.pilotage.colonneManquants' => 'Missing teachers',
+			'admin.pilotage.colonneEtat' => 'To flag',
+			'admin.pilotage.remplissage' => ({required Object taux, required Object effectif, required Object capacite}) => '${taux}% (${effectif} of ${capacite})',
+			'admin.pilotage.remplissageInconnu' => 'No place open',
+			'admin.pilotage.aucun' => 'None',
+			'admin.pilotage.nombreEtGenres' => ({required Object n, required Object genres}) => '${n} (${genres})',
+			'admin.pilotage.genreHommes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} male teacher', other: '${n} male teachers', ), 
+			'admin.pilotage.genreFemmes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} female teacher', other: '${n} female teachers', ), 
+			'admin.pilotage.genreIndetermine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} teacher, gender to confirm', other: '${n} teachers, gender to confirm', ), 
+			'admin.pilotage.etatPenurie' => 'Teacher shortage',
+			'admin.pilotage.etatSousMinimum' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} class below the minimum', other: '${n} classes below the minimum', ), 
+			'admin.pilotage.etatAttente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} class waiting for a teacher', other: '${n} classes waiting for a teacher', ), 
+			'admin.pilotage.etatCouvert' => 'Covered',
+			'admin.pilotage.filtreTous' => 'All timetables',
+			'admin.pilotage.filtrePenurie' => 'Shortage',
+			'admin.pilotage.filtreSousMinimum' => 'Below the minimum',
+			'admin.pilotage.filtreAttente' => 'Waiting for a teacher',
+			'admin.pilotage.filtrePublic' => 'Audience',
+			'admin.pilotage.filtreTousPublics' => 'All audiences',
+			'admin.pilotage.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} of ${total} of the steering board',
+			'admin.pilotage.precedente' => 'Previous page of the steering board',
+			'admin.pilotage.suivante' => 'Next page of the steering board',
+			'admin.pilotage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Timetables ${debut} to ${fin} of ${total}',
+			'admin.fusion.actionFusionner' => 'Merge with a parallel class',
+			'admin.fusion.actionTransferer' => 'Transfer a student',
+			'admin.fusion.actionHistorique' => 'Class history',
+			'admin.fusion.fusionTitre' => ({required Object libelle}) => 'Merge ${libelle}',
+			'admin.fusion.fusionContexte' => 'The students of this class will join a parallel class at the same timetable and in the same category that has room. This class\'s teacher is freed. Nothing is done without your confirmation.',
+			'admin.fusion.choixTitre' => 'Class that welcomes the students',
+			'admin.fusion.placesLibres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} free place', other: '${n} free places', ), 
+			'admin.fusion.enseignantDe' => ({required Object nom}) => 'Teacher: ${nom}',
+			'admin.fusion.sansEnseignant' => 'No teacher for now',
+			'admin.fusion.aucuneCible' => 'No parallel class has enough room',
+			'admin.fusion.aucuneCibleDetail' => 'A class at the same timetable and in the same category is needed, with room for all of this class\'s students.',
+			'admin.fusion.erreurCibles' => 'The parallel classes could not be read. Try again in a moment.',
+			'admin.fusion.sansDonneesCibles' => 'The list of parallel classes could not be loaded',
+			'admin.fusion.apercuTitre' => 'What will happen',
+			'admin.fusion.apercuErreur' => 'The merge preview could not be calculated. Try again in a moment.',
+			'admin.fusion.apercuMembres' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student moves to ${cible}', other: '${n} students move to ${cible}', ), 
+			'admin.fusion.apercuEffectif' => ({required Object cible, required Object apres, required Object capacite}) => '${cible} will have ${apres} students out of ${capacite}.',
+			'admin.fusion.apercuEnseignantLibere' => ({required Object enseignant}) => '${enseignant} no longer has this class and becomes free at this timetable.',
+			'admin.fusion.apercuSansEnseignant' => 'This class has no teacher: no one is freed.',
+			'admin.fusion.apercuFamilles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} family is notified.', other: '${n} families are notified.', ), 
+			'admin.fusion.apercuIrreversible' => 'The merged class is closed, and the history of both classes is kept. This decision cannot be undone.',
+			'admin.fusion.confirmerFusion' => 'Merge the two classes',
+			'admin.fusion.fusionHorsLigne' => 'The merge can be confirmed when the connection has returned. Your choice stays displayed.',
+			'admin.fusion.fusionFaite' => ({required num n, required Object cible}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Merge done: ${n} student is now in ${cible}.', other: 'Merge done: ${n} students are now in ${cible}.', ), 
+			'admin.fusion.famillesPrevenues' => 'The families have been notified.',
+			'admin.fusion.fusionDejaFaite' => 'Another member of the management has just merged this class: nothing was done twice. Close this sheet to see the up-to-date list.',
+			'admin.fusion.fusionRefusee' => ({required Object motif}) => 'The merge did not take place: ${motif}. Check the classes, then start again.',
+			'admin.fusion.motif.classeIntrouvable' => 'one of the two classes cannot be found',
+			'admin.fusion.motif.sourceCloturee' => 'the class to merge is already closed',
+			'admin.fusion.motif.cibleCloturee' => 'the class that welcomes is closed',
+			'admin.fusion.motif.cibleIncompatible' => 'the two classes do not have the same timetable or the same category',
+			'admin.fusion.motif.ciblePleine' => 'the class that welcomes no longer has enough room',
+			'admin.fusion.motif.eleveAbsent' => 'the student is no longer part of this class',
+			'admin.fusion.motif.inconnu' => 'Rewayah refused the operation without giving the reason',
+			'admin.fusion.fusionNonConfirmee' => 'The merge is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate merge.',
+			'admin.fusion.manqueCible' => 'The class that welcomes the students is missing: choose one from the list.',
+			'admin.fusion.transfertTitre' => ({required Object deLibelle}) => 'Transfer a student ${deLibelle}',
+			'admin.fusion.transfertContexte' => 'Choose the student, then the parallel class that welcomes them. The transfer is traced, and the family is notified.',
+			'admin.fusion.eleveTitre' => 'Student to transfer',
+			'admin.fusion.aucunEleve' => 'This class has no student',
+			'admin.fusion.aucunEleveDetail' => 'There is no one to transfer.',
+			'admin.fusion.erreurEleves' => 'The class\'s students could not be read. Try again in a moment.',
+			'admin.fusion.transfertCibleTitre' => 'Class that welcomes the student',
+			'admin.fusion.manqueEleve' => 'The student is missing: choose one from the list.',
+			'admin.fusion.confirmerTransfert' => 'Transfer the student',
+			'admin.fusion.transfertHorsLigne' => 'The transfer can be confirmed when the connection has returned. Your choice stays displayed.',
+			'admin.fusion.transfertFait' => ({required Object prenom, required Object cible}) => '${prenom} is now in ${cible}.',
+			'admin.fusion.transfertDejaFait' => 'This transfer was already done: nothing was done twice. Close this sheet to see the up-to-date list.',
+			'admin.fusion.refusChevauchement' => ({required Object prenom, required Object cible}) => '${prenom} already attends a class that takes place at the same time as ${cible}: a student cannot be in two classes that overlap. Choose another class.',
+			'admin.fusion.refusClassePleine' => ({required Object cible}) => '${cible} has no more room. Choose another class.',
+			'admin.fusion.refusAutre' => ({required Object motif}) => 'The transfer did not take place: ${motif}. Check the class, then start again.',
+			'admin.fusion.transfertNonConfirme' => 'The transfer is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate transfer.',
+			'admin.fusion.historiqueTitre' => ({required Object deLibelle}) => '${deLibelle} history',
+			'admin.fusion.historiqueVide' => 'No movement',
+			'admin.fusion.historiqueVideDetail' => 'This class\'s merges and transfers will appear here.',
+			'admin.fusion.historiqueErreur' => 'The history could not be read. Try again in a moment.',
+			'admin.fusion.evenementFusionSortante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Merged into ${autre}: ${n} student moved', other: 'Merged into ${autre}: ${n} students moved', ), 
+			'admin.fusion.evenementFusionEntrante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Merge with ${autre}: ${n} student welcomed', other: 'Merge with ${autre}: ${n} students welcomed', ), 
+			'admin.fusion.evenementTransfertSortant' => ({required Object prenom, required Object autre}) => '${prenom} transferred to ${autre}',
+			'admin.fusion.evenementTransfertEntrant' => ({required Object prenom, required Object autre}) => '${prenom} transferred from ${autre}',
+			'admin.tirage.titre' => 'Review draw',
+			'admin.tirage.sousTitre' => 'The server randomly draws the session each reviewer receives. The management sets the rules; the reviewer never chooses their class.',
+			'admin.tirage.sansDonnees' => 'The draws could not be loaded',
+			'admin.tirage.erreur' => 'The draws could not be read: the read may not have reached Rewayah. Try again in a moment.',
+			'admin.tirage.indisponibleTitre' => 'Available once the server is connected',
+			'admin.tirage.indisponiblePhrase' => 'The draw rules and history will be shown here once the server is connected. Until then, nothing is shown: no draw is invented.',
+			'admin.tirage.reserveTitre' => 'This screen is reserved for the management',
+			'admin.tirage.reservePhrase' => 'Your account does not have access to the draws: they are reserved for the management, so that no one can predict who will be reviewed. If you need them, ask the management for access.',
+			'admin.tirage.reglesTitre' => 'Draw rules',
+			'admin.tirage.reglesIntro' => 'These rules apply to the next draws. Missions already assigned do not change. Each save creates a new version; the old ones are kept and never changed, and each is written in the audit log.',
+			'admin.tirage.frequenceTitre' => 'Frequency',
+			'admin.tirage.frequenceDetail' => 'The number of missions a reviewer receives per week, at most: from 0 to 50. The server applies this number.',
+			'admin.tirage.versionEnVigueur' => ({required Object n}) => 'Rules in force: version ${n}',
+			'admin.tirage.aucuneVersion' => 'No rules are saved yet.',
+			'admin.tirage.zeroPhrase' => 'With 0, no session is drawn for review.',
+			'admin.tirage.nombreInvalide' => 'Enter a whole number from 0 to 50, or choose one of the values offered.',
+			'admin.tirage.frequenceAutreChamp' => 'Number',
+			'admin.tirage.enregistreesVersion' => ({required Object n}) => 'Rules saved, version ${n}. They apply to the next draws.',
+			'admin.tirage.missionsParSemaine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} mission per week', other: '${n} missions per week', ), 
+			'admin.tirage.ponderationTitre' => 'Weighting',
+			'admin.tirage.ponderationDetail' => 'The higher the weight, the more likely these sessions are to be drawn. The draw stays unpredictable for the teacher and for the reviewer.',
+			'admin.tirage.critereEnseignantsRecents' => 'Recently arrived teachers',
+			'admin.tirage.critereClassesSignalees' => 'Classes reported to the administration',
+			'admin.tirage.critereHeuresDePointe' => 'Peak hours',
+			'admin.tirage.niveauAucun' => 'No weight',
+			'admin.tirage.niveauNormal' => 'Normal weight',
+			'admin.tirage.niveauFort' => 'High weight',
+			'admin.tirage.ciblesTitre' => 'Classes or teachers to target',
+			'admin.tirage.ciblesDetail' => 'A target is drawn first when its session is live. It is never announced to the reviewer or the teacher.',
+			'admin.tirage.aucuneCible' => 'No target: all live sessions have the same chances, apart from the weight.',
+			'admin.tirage.cibleClasse' => 'Class',
+			'admin.tirage.cibleEnseignant' => 'Teacher',
+			'admin.tirage.retirerCible' => ({required Object libelle}) => 'Remove ${libelle}',
+			'admin.tirage.ajouterCible' => 'Add a target',
+			'admin.tirage.ajouterTitre' => 'Add a target',
+			'admin.tirage.ajouterContexte' => 'Choose the class or teacher to draw first. The target is added to the rules, which you then save.',
+			'admin.tirage.ajouterChoix' => 'Class or teacher to target',
+			'admin.tirage.ajouterConfirmer' => 'Add this target',
+			'admin.tirage.manqueCible' => 'The target is missing: choose one from the list.',
+			'admin.tirage.aucunCandidat' => 'No class or teacher to target',
+			'admin.tirage.aucunCandidatDetail' => 'All classes and teachers are already targeted, or no session exists yet.',
+			'admin.tirage.erreurCandidats' => 'The list of targets could not be read. Try again in a moment.',
+			'admin.tirage.enregistrer' => 'Save the rules',
+			'admin.tirage.enregistrees' => 'Rules saved. They apply to the next draws.',
+			'admin.tirage.nonConfirmees' => 'The saving is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate.',
+			'admin.tirage.refusees' => ({required Object motif}) => 'The rules were not saved: ${motif}. Check them, then start again.',
+			'admin.tirage.horsLigne' => 'The rules can be saved when the connection has returned. Your choices stay displayed.',
+			'admin.tirage.lectureSeule' => 'You can read these rules, but not change them: changing them is reserved for a member of the management who has the right.',
+			'admin.tirage.historiqueTitre' => 'Draw history',
+			'admin.tirage.historiqueDetail' => 'Each draw and each mission not reviewed are kept with their date. Only the management reads them: the reviewer sees only their own mission.',
+			'admin.tirage.rechercheLibelle' => 'Search for a draw',
+			'admin.tirage.rechercheAide' => 'Class, teacher or reviewer',
+			'admin.tirage.filtreTous' => 'All',
+			'admin.tirage.filtreAttribuees' => 'Assigned',
+			'admin.tirage.filtreEnCours' => 'Reviews in progress',
+			'admin.tirage.filtreControlees' => 'Reviewed',
+			'admin.tirage.filtreNonControlees' => 'Not reviewed',
+			'admin.tirage.filtreDejaControlees' => 'Already reviewed',
+			'admin.tirage.colonneQuand' => 'Drawn on',
+			'admin.tirage.colonneClasse' => 'Class',
+			'admin.tirage.colonneEnseignant' => 'Teacher',
+			'admin.tirage.colonneControleur' => 'Reviewer',
+			'admin.tirage.colonneCritere' => 'Draw',
+			'admin.tirage.colonneStatut' => 'Mission',
+			'admin.tirage.statutAttribuee' => 'Assigned',
+			'admin.tirage.statutEnCours' => 'Review in progress',
+			'admin.tirage.statutControlee' => 'Reviewed',
+			'admin.tirage.statutNonControlee' => 'Not reviewed',
+			'admin.tirage.statutDejaControlee' => 'Already reviewed by another',
+			'admin.tirage.rapportEnvoye' => 'Report sent to the administration',
+			'admin.tirage.critereAleatoire' => 'At random',
+			'admin.tirage.criterePonderation' => 'By weight',
+			'admin.tirage.critereCible' => 'Target',
+			'admin.tirage.vide' => 'No draw for now',
+			'admin.tirage.videDetail' => 'Draws will appear here as soon as sessions are live.',
+			'admin.tirage.aucunAvecCeFiltre' => 'No draw with this filter',
+			'admin.tirage.aucunAvecCeFiltreDetail' => 'Change the filter to see the other draws.',
+			'admin.tirage.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} of ${total} of the draw history',
+			'admin.tirage.precedente' => 'Previous page of the draw history',
+			'admin.tirage.suivante' => 'Next page of the draw history',
+			'admin.tirage.resume' => ({required Object debut, required Object fin, required Object total}) => 'Draws ${debut} to ${fin} of ${total}',
+			'admin.bibliotheque.titre' => 'Library',
+			'admin.bibliotheque.intro' => 'Teaching documents: submit them, check their rights, publish a version, assign them to classes.',
+			'admin.bibliotheque.brouillonAlerte' => 'A draft gives no access to students or teachers.',
+			'admin.bibliotheque.ajouter' => 'Add a document',
+			'admin.bibliotheque.vide' => 'No document',
+			'admin.bibliotheque.videDetail' => 'Add a first document to prepare it, check its rights, then publish it.',
+			'admin.bibliotheque.erreur' => 'The catalogue could not be loaded. Try again.',
+			'admin.bibliotheque.nonAutorise' => 'You do not have access to the administration library.',
+			'admin.bibliotheque.indisponibleTitre' => 'Library not open yet',
+			'admin.bibliotheque.indisponiblePhrase' => 'This feature will be available once the server is connected.',
+			'admin.bibliotheque.sansDonnees' => 'the catalogue',
+			'admin.bibliotheque.ficheTitre' => 'Document',
+			'admin.bibliotheque.retourCatalogue' => 'Back to the catalogue',
+			'admin.bibliotheque.introuvable' => 'This document does not exist or is not accessible.',
+			'admin.bibliotheque.libelles.type.audio' => 'Audio',
+			'admin.bibliotheque.libelles.type.video' => 'Video',
+			'admin.bibliotheque.libelles.type.lienExterne' => 'External link',
+			'admin.bibliotheque.libelles.type.quran' => 'Quran',
+			'admin.bibliotheque.libelles.type.texteStructure' => 'Structured text',
+			'admin.bibliotheque.libelles.type.pdf' => 'PDF',
+			'admin.bibliotheque.libelles.type.image' => 'Image',
+			'admin.bibliotheque.libelles.type.lecon' => 'Lesson',
+			'admin.bibliotheque.libelles.version.brouillon' => 'Draft',
+			'admin.bibliotheque.libelles.version.publiee' => 'Published',
+			'admin.bibliotheque.libelles.version.archivee' => 'Archived',
+			'admin.bibliotheque.libelles.version.retire' => 'Withdrawn',
+			'admin.bibliotheque.libelles.version.numero' => ({required Object numero}) => 'Version ${numero}',
+			'admin.bibliotheque.libelles.version.aucune' => 'No version',
+			'admin.bibliotheque.libelles.droits.aVerifier' => 'To check',
+			'admin.bibliotheque.libelles.droits.approuve' => 'Approved',
+			'admin.bibliotheque.libelles.droits.refuse' => 'Declined',
+			'admin.bibliotheque.libelles.droits.expire' => 'Expired',
+			'admin.bibliotheque.libelles.visibilite.publique' => 'Public',
+			'admin.bibliotheque.libelles.visibilite.inscrits' => 'Registered',
+			'admin.bibliotheque.libelles.visibilite.groupeAssigne' => 'Assigned classes',
+			'admin.bibliotheque.libelles.visibilite.enseignantSeul' => 'Teacher only',
+			'admin.bibliotheque.libelles.visibilite.admin' => 'Administration only',
+			'admin.bibliotheque.libelles.langue.fr' => 'French',
+			_ => null,
+		} ?? switch (path) {
+			'admin.bibliotheque.libelles.langue.ar' => 'Arabic',
+			'admin.bibliotheque.libelles.langue.en' => 'English',
+			'admin.bibliotheque.libelles.usage.application' => 'In the app',
+			'admin.bibliotheque.libelles.usage.classe' => 'In class',
+			'admin.bibliotheque.libelles.usage.telechargement' => 'Download',
+			'admin.bibliotheque.libelles.usage.horsLigne' => 'Reading without internet',
+			'admin.bibliotheque.libelles.horsLigne.jamais' => 'Never',
+			'admin.bibliotheque.libelles.horsLigne.surDemande' => 'On request',
+			'admin.bibliotheque.libelles.horsLigne.automatique' => 'Automatic',
+			'admin.bibliotheque.catalogue.recherche' => 'Search the catalogue',
+			'admin.bibliotheque.catalogue.segments.tous' => 'All',
+			'admin.bibliotheque.catalogue.segments.brouillons' => 'Drafts',
+			'admin.bibliotheque.catalogue.segments.aVerifier' => 'To check',
+			'admin.bibliotheque.catalogue.segments.publies' => 'Published',
+			'admin.bibliotheque.catalogue.segments.retires' => 'Withdrawn',
+			'admin.bibliotheque.catalogue.segments.droitsExpires' => 'Rights expired',
+			'admin.bibliotheque.catalogue.filtres.type' => 'Type',
+			'admin.bibliotheque.catalogue.filtres.niveau' => 'Level',
+			'admin.bibliotheque.catalogue.filtres.langue' => 'Language',
+			'admin.bibliotheque.catalogue.filtres.tous' => 'All',
+			'admin.bibliotheque.catalogue.colonnes.support' => 'Document',
+			'admin.bibliotheque.catalogue.colonnes.type' => 'Type',
+			'admin.bibliotheque.catalogue.colonnes.langue' => 'Language',
+			'admin.bibliotheque.catalogue.colonnes.categorie' => 'Category',
+			'admin.bibliotheque.catalogue.colonnes.version' => 'Version',
+			'admin.bibliotheque.catalogue.colonnes.publication' => 'Publication',
+			'admin.bibliotheque.catalogue.colonnes.droits' => 'Rights',
+			'admin.bibliotheque.catalogue.colonnes.visibilite' => 'Visibility',
+			'admin.bibliotheque.catalogue.colonnes.modifie' => 'Modified',
+			'admin.bibliotheque.catalogue.modifieLe' => ({required Object date}) => 'Modified on ${date}',
+			'admin.bibliotheque.catalogue.videRecherche' => 'No result',
+			'admin.bibliotheque.catalogue.videRechercheDetail' => 'No document matches your search or your filters.',
+			'admin.bibliotheque.catalogue.effacerFiltres' => 'Clear the filters',
+			'admin.bibliotheque.catalogue.voirPlus' => 'See more documents',
+			'admin.bibliotheque.catalogue.pageErreur' => 'The rest of the catalogue could not be loaded.',
+			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'Open the document ${titre}',
+			'admin.bibliotheque.catalogue.droitsEchus' => 'Rights lapsed',
+			'admin.bibliotheque.catalogue.alerteTitre' => 'Drafts',
+			'admin.bibliotheque.catalogue.pasDeAcces' => 'You cannot change the library.',
+			'admin.bibliotheque.fiche.sections.apercu' => 'Preview',
+			'admin.bibliotheque.fiche.sections.edition' => 'Editing',
+			'admin.bibliotheque.fiche.sections.metadonnees' => 'Metadata',
+			'admin.bibliotheque.fiche.sections.workflow' => 'Publication',
+			'admin.bibliotheque.fiche.sections.versions' => 'Versions',
+			'admin.bibliotheque.fiche.sections.droits' => 'Rights',
+			'admin.bibliotheque.fiche.sections.perimetre' => 'Scope',
+			'admin.bibliotheque.fiche.sections.historique' => 'History',
+			'admin.bibliotheque.fiche.afficherSection' => ({required Object nom}) => 'Show the ${nom} section',
+			'admin.bibliotheque.fiche.masquerSection' => ({required Object nom}) => 'Hide the ${nom} section',
+			'admin.bibliotheque.fiche.apercuAucunFichier' => 'No file is submitted for this version.',
+			'admin.bibliotheque.fiche.apercuFichier' => 'A file is submitted. Its rendering is checked at the "Check and publish" step.',
+			'admin.bibliotheque.fiche.apercuPublie' => 'Published version: the content is frozen.',
+			'admin.bibliotheque.fiche.deposer' => 'Submit a file',
+			'admin.bibliotheque.fiche.remplacer' => 'Replace the file',
+			'admin.bibliotheque.fiche.champs.titre' => 'Title',
+			'admin.bibliotheque.fiche.champs.titreCourt' => 'Short title',
+			'admin.bibliotheque.fiche.champs.edition' => 'Edition',
+			'admin.bibliotheque.fiche.champs.organisme' => 'Organization, author or publisher',
+			'admin.bibliotheque.fiche.champs.description' => 'Short description (shown on the card)',
+			'admin.bibliotheque.fiche.champs.rayon' => 'Shelf',
+			'admin.bibliotheque.fiche.champs.ordre' => 'Display order',
+			'admin.bibliotheque.fiche.champs.lien' => 'Link address (https)',
+			'admin.bibliotheque.fiche.champs.conditions' => 'Assignment conditions',
+			'admin.bibliotheque.fiche.meta.type' => 'Type',
+			'admin.bibliotheque.fiche.meta.langue' => 'Language',
+			'admin.bibliotheque.fiche.meta.categorie' => 'Category',
+			'admin.bibliotheque.fiche.meta.niveau' => 'Level',
+			'admin.bibliotheque.fiche.meta.annee' => 'Year',
+			'admin.bibliotheque.fiche.meta.visibilite' => 'Visibility',
+			'admin.bibliotheque.fiche.meta.horsLigne' => 'Reading without internet',
+			'admin.bibliotheque.fiche.meta.rayon' => 'Shelf',
+			'admin.bibliotheque.fiche.meta.etapes' => 'Programme stages',
+			'admin.bibliotheque.fiche.meta.vignette' => 'Thumbnail',
+			'admin.bibliotheque.fiche.meta.vignetteOui' => 'Submitted',
+			'admin.bibliotheque.fiche.meta.vignetteNon' => 'Default, depending on the type',
+			'admin.bibliotheque.fiche.meta.lien' => 'Link address',
+			'admin.bibliotheque.fiche.meta.nonRenseigne' => 'Not provided',
+			'admin.bibliotheque.fiche.enregistrer' => 'Save the changes',
+			'admin.bibliotheque.fiche.enregistre' => 'Changes saved.',
+			'admin.bibliotheque.fiche.conflit' => 'Another administrator changed this document. Reload the sheet before continuing.',
+			'admin.bibliotheque.fiche.recharger' => 'Reload the sheet',
+			'admin.bibliotheque.fiche.echecEnregistrer' => 'The changes could not be confirmed. Try again.',
+			'admin.bibliotheque.fiche.titreVide' => 'The title is required.',
+			'admin.bibliotheque.fiche.retirerVignette' => 'Remove the thumbnail',
+			'admin.bibliotheque.fiche.figee' => 'Published and frozen version: to change it, create a new version.',
+			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'Withdrawn from the catalogue. Reason: ${motif}',
+			'admin.bibliotheque.fiche.retireSansMotif' => 'Withdrawn from the catalogue.',
+			'admin.bibliotheque.fiche.retireRestaurer' => 'It can be republished only after a new rights check.',
+			'admin.bibliotheque.fiche.actions.verifier' => 'Check and publish',
+			'admin.bibliotheque.fiche.actions.nouvelleVersion' => 'Create a new version',
+			'admin.bibliotheque.fiche.actions.completerDroits' => 'Complete the rights',
+			'admin.bibliotheque.fiche.actions.associer' => 'Link to classes',
+			'admin.bibliotheque.fiche.actions.retirer' => 'Withdraw from the catalogue',
+			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'New version created as a draft.',
+			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'The new version could not be confirmed. Try again.',
+			'admin.bibliotheque.fiche.version.publieeLe' => ({required Object date}) => 'Published on ${date}',
+			'admin.bibliotheque.fiche.version.empreinte' => ({required Object valeur}) => 'Fingerprint ${valeur}',
+			'admin.bibliotheque.fiche.version.sansFichier' => 'No file',
+			'admin.bibliotheque.fiche.droitsChamps.revue' => 'Rights review',
+			'admin.bibliotheque.fiche.droitsChamps.source' => 'Source',
+			'admin.bibliotheque.fiche.droitsChamps.titulaire' => 'Rights holder',
+			'admin.bibliotheque.fiche.droitsChamps.preuve' => 'Proof of permission',
+			'admin.bibliotheque.fiche.droitsChamps.preuveOui' => 'Submitted',
+			'admin.bibliotheque.fiche.droitsChamps.preuveNon' => 'Missing',
+			'admin.bibliotheque.fiche.droitsChamps.usages' => 'Permitted uses',
+			'admin.bibliotheque.fiche.droitsChamps.aucunUsage' => 'No permitted use',
+			'admin.bibliotheque.fiche.droitsChamps.attribution' => 'Attribution',
+			'admin.bibliotheque.fiche.droitsChamps.echeance' => 'Expiry',
+			'admin.bibliotheque.fiche.classesServies' => ({required Object nombre}) => 'Classes served: ${nombre}',
+			'admin.bibliotheque.fiche.historiqueVide' => 'No event.',
+			'admin.bibliotheque.fiche.audit.creation' => 'Draft created',
+			'admin.bibliotheque.fiche.audit.depot' => 'File submitted',
+			'admin.bibliotheque.fiche.audit.revueDroits' => 'Rights reviewed',
+			'admin.bibliotheque.fiche.audit.publication' => 'Version published',
+			'admin.bibliotheque.fiche.audit.attribution' => 'Assigned to classes',
+			'admin.bibliotheque.fiche.audit.retrait' => 'Withdrawn from the catalogue',
+			'admin.bibliotheque.fiche.audit.restauration' => 'Restored',
+			'admin.bibliotheque.fiche.auditMotif' => ({required Object motif}) => 'Reason: ${motif}',
+			'admin.bibliotheque.fiche.auditVersion' => ({required Object numero}) => 'Version ${numero}',
+			'admin.bibliotheque.import.classement.tranchesTitre' => 'For which ages?',
+			'admin.bibliotheque.import.classement.tranchesAide' => 'A student sees only the documents for their age group. Tick all the groups concerned.',
+			'admin.bibliotheque.import.classement.tranchesAideLien' => 'A link leads outside the app: the 6 to 9 years group is not ticked by default. Tick it only if you are sure of the site.',
+			'admin.bibliotheque.import.classement.tranchesAucune' => 'Tick at least one age group.',
+			'admin.bibliotheque.import.classement.etapesTitre' => 'Programme stages',
+			'admin.bibliotheque.import.classement.etapesAide' => 'Link the document to the stages where it is used (optional).',
+			'admin.bibliotheque.import.classement.etapesVide' => 'The stages will appear when the programme is published.',
+			'admin.bibliotheque.import.classement.etapesIndisponible' => 'The stages could not be read for now. The document can be saved without a stage.',
+			'admin.bibliotheque.import.classement.lectureTitre' => 'Quran recitation style',
+			'admin.bibliotheque.import.classement.lectureAucune' => 'No recitation style specified',
+			'admin.bibliotheque.import.classement.ecoleLibelle' => 'Legal school followed (prayer, ablutions; optional)',
+			'admin.bibliotheque.import.classement.depotInconnu' => 'It is not possible to check for now whether file upload is turned on. You can already add a document by its link.',
+			'admin.bibliotheque.import.classement.ecoleTrop' => 'The legal school\'s name is 80 characters at most.',
+			'admin.bibliotheque.import.classement.depotInactif' => 'File upload is not turned on yet. You can already add a document by its link.',
+			'admin.bibliotheque.import.classement.videoLien' => 'For a video, paste its link.',
+			'admin.bibliotheque.import.vignette' => 'Thumbnail',
+			'admin.bibliotheque.import.choisirVignette' => 'Choose a thumbnail',
+			'admin.bibliotheque.import.choisirAutreVignette' => 'Choose another thumbnail',
+			'admin.bibliotheque.import.vignetteAide' => 'An image (PNG, JPEG or WebP, 2 MB at most), optional. Without a thumbnail, the screen shows a cover according to the type.',
+			'admin.bibliotheque.import.completerLien' => 'Enter the link address (https): an external link or a video requires it, and an external link also requires its description.',
+			'admin.bibliotheque.import.lienInvalide' => 'This address is not accepted: it must start with https and lead to a site.',
+			'admin.bibliotheque.import.sansFichierAide' => 'Nothing to submit for this type: enter the link address, then continue.',
+			'admin.bibliotheque.import.completer' => 'Complete the document',
+			'admin.bibliotheque.import.sections.ressource' => 'Resource',
+			'admin.bibliotheque.import.sections.fichier' => 'File',
+			'admin.bibliotheque.import.sections.droits' => 'Rights and access',
+			'admin.bibliotheque.import.champs.titre' => 'Title',
+			'admin.bibliotheque.import.champs.description' => 'Short description (shown on the card)',
+			'admin.bibliotheque.import.champs.rayon' => 'Shelf',
+			'admin.bibliotheque.import.champs.ordre' => 'Display order (optional)',
+			'admin.bibliotheque.import.champs.lien' => 'Link address (https)',
+			'admin.bibliotheque.import.champs.categorie' => 'Category',
+			'admin.bibliotheque.import.champs.type' => 'Type',
+			'admin.bibliotheque.import.champs.langue' => 'Language',
+			'admin.bibliotheque.import.champs.niveau' => 'Level',
+			'admin.bibliotheque.import.completerDabord' => 'First enter the title, type, language and category.',
+			'admin.bibliotheque.import.choisirFichier' => 'Choose a file',
+			'admin.bibliotheque.import.choisirAutre' => 'Choose another file',
+			'admin.bibliotheque.import.annulerDepot' => 'Cancel the upload',
+			'admin.bibliotheque.import.progression' => 'Upload progress',
+			'admin.bibliotheque.import.formats.pdf' => 'Accepted format: PDF.',
+			'admin.bibliotheque.import.formats.image' => 'Accepted formats: PNG, JPEG, WebP.',
+			'admin.bibliotheque.import.formats.json' => 'Accepted format: structured JSON.',
+			'admin.bibliotheque.import.formats.audio' => 'Accepted formats: MP3, M4A, OGG.',
+			'admin.bibliotheque.import.formats.lien' => 'This document is given by a link: no file to submit. A video is given by its link.',
+			'admin.bibliotheque.import.formats.aucun' => 'This type accepts no file.',
+			'admin.bibliotheque.import.etats.attente' => 'Preparing the upload…',
+			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'Sending: ${pourcent}%',
+			'admin.bibliotheque.import.etats.confirmation' => 'Sending finished, waiting for the server\'s confirmation…',
+			'admin.bibliotheque.import.etats.verification' => 'Checking the file…',
+			'admin.bibliotheque.import.etats.pret' => 'File verified. Go on to the rights.',
+			'admin.bibliotheque.import.etats.annule' => 'Upload cancelled.',
+			'admin.bibliotheque.import.erreurs.taille' => 'This file is too large. Choose a lighter file.',
+			'admin.bibliotheque.import.erreurs.type' => 'This file type is not supported for this document. Choose another file.',
+			'admin.bibliotheque.import.erreurs.reseau' => 'No answer arrived: the request may not have reached Rewayah. Nothing was saved. Try again in a moment.',
+			'admin.bibliotheque.import.erreurs.refuse' => 'This upload was refused: your account is not allowed to do it. Nothing was submitted. Ask the management to check your access.',
+			'admin.bibliotheque.import.erreurs.empreinte' => 'The file received does not match the one sent. Try again.',
+			'admin.bibliotheque.import.erreurs.nonActive' => 'File upload is not turned on yet: nothing was sent. Meanwhile, you can add a document by its link.',
+			'admin.bibliotheque.import.erreurs.creation' => 'The draft could not be created. Try again.',
+			'admin.bibliotheque.import.erreurs.droits' => 'The rights could not be saved. Try again.',
+			'admin.bibliotheque.import.erreurs.session' => 'Your session has expired: nothing was submitted. Sign in again, then try again.',
+			'admin.bibliotheque.import.erreurs.stockage' => 'The academy\'s file storage refused the upload. It is not your connection: it is a server setting. Try once more; if it happens again, this setting must be fixed before any new upload.',
+			'admin.bibliotheque.import.erreurs.envoi' => 'The file upload got no answer, while the server is responding. Most likely: file storage does not yet accept uploads from this address, and it is a server setting; otherwise, the connection dropped during the upload. Try once more; if it happens again, it is the setting that needs fixing.',
+			'admin.bibliotheque.import.erreurs.service' => 'The upload did not go through: the answer received is not the one expected. It is not your connection, and nothing was saved. Try again in a few minutes; if it happens again, the upload service needs checking.',
+			'admin.bibliotheque.import.erreurs.reglage' => 'The file arrived, but the server cannot confirm it: its confirmation key is not the same on both sides. It is a setting to fix; trying again will change nothing.',
+			'admin.bibliotheque.import.erreurs.delai' => 'Checking the file took too long and stopped. Nothing was saved. Try again; if the file is very large, choose a lighter version.',
+			'admin.bibliotheque.import.erreurs.vide' => 'This file is empty. Choose another file.',
+			'admin.bibliotheque.import.erreurs.nonModifiable' => 'This document can no longer be changed: it was published or withdrawn since this page was opened. Nothing was submitted. Reload the page.',
+			'admin.bibliotheque.import.erreurs.dejaDepose' => 'This document already has its file. Nothing was submitted. To replace it, open its sheet and create a new version.',
+			'admin.bibliotheque.import.erreurs.expire' => 'The upload request expired before the end. Nothing was submitted. Try again.',
+			'admin.bibliotheque.import.erreurs.contenu' => 'This file\'s content is not that of its type: it is not a valid PDF, audio or image. Choose another file.',
+			'admin.bibliotheque.import.erreurs.introuvable' => 'The file sent could not be found: the upload did not go through. Nothing was submitted. Try again.',
+			'admin.bibliotheque.import.droits.aide' => 'No right is presumed: an unknown value blocks publication.',
+			'admin.bibliotheque.import.droits.source' => 'Original source',
+			'admin.bibliotheque.import.droits.titulaire' => 'Rights holder',
+			'admin.bibliotheque.import.droits.attribution' => 'Attribution required',
+			'admin.bibliotheque.import.droits.usages' => 'Permitted uses',
+			'admin.bibliotheque.import.droits.preuve' => 'Proof of permission',
+			'admin.bibliotheque.import.droits.deposerPreuve' => 'Submit the proof',
+			'admin.bibliotheque.import.droits.preuveDeposee' => 'Proof submitted.',
+			'admin.bibliotheque.import.poursuivre' => 'Continue to verification',
+			'admin.bibliotheque.import.poursuivreAide' => 'The file must be verified by the server before continuing.',
+			'admin.bibliotheque.import.retour' => 'Back to the catalogue',
+			'admin.bibliotheque.publication.titre' => 'Check and publish',
+			'admin.bibliotheque.publication.intro' => 'Each point is checked by the server. Publishing freezes the version.',
+			'admin.bibliotheque.publication.apercuTitre' => 'Source and file',
+			'admin.bibliotheque.publication.apercuAucunFichier' => 'No file is submitted: the rendering cannot be checked.',
+			'admin.bibliotheque.publication.apercuFichier' => 'File submitted. Its rendering is checked in the reader for its type; the server says below whether it was tested.',
+			'admin.bibliotheque.publication.empreinte' => ({required Object valeur}) => 'Fingerprint ${valeur}',
+			'admin.bibliotheque.publication.droitsTitre' => 'Rights review',
+			'admin.bibliotheque.publication.confirmerControle' => 'I have checked the source and the proof of this version.',
+			'admin.bibliotheque.publication.enregistrerDroits' => 'Save the rights review',
+			'admin.bibliotheque.publication.droitsEnregistres' => 'Rights review saved.',
+			'admin.bibliotheque.publication.droitsEchec' => 'The rights review could not be confirmed. Try again.',
+			'admin.bibliotheque.publication.droitsFiges' => 'The rights of a published version can no longer be changed: create a new version.',
+			'admin.bibliotheque.publication.checklistTitre' => 'Version check',
+			'admin.bibliotheque.publication.criteres.source' => 'Source confirmed',
+			'admin.bibliotheque.publication.criteres.titulaire' => 'Rights holder known',
+			'admin.bibliotheque.publication.criteres.preuve' => 'Proof of permission verified',
+			'admin.bibliotheque.publication.criteres.usageApplication' => 'Use in the app permitted',
+			'admin.bibliotheque.publication.criteres.usageClasse' => 'Display in class permitted',
+			'admin.bibliotheque.publication.criteres.usageTelechargement' => 'Download and reading without internet decided',
+			'admin.bibliotheque.publication.criteres.expirationAttribution' => 'Expiry and attribution in order',
+			'admin.bibliotheque.publication.criteres.fichierSain' => 'File clean (server scan)',
+			'admin.bibliotheque.publication.criteres.renduTeste' => 'Rendering tested in the reader for the type',
+			'admin.bibliotheque.publication.criteres.langueNiveau' => 'Language and level filled in',
+			'admin.bibliotheque.publication.criteres.versionEmpreinte' => 'Version and fingerprint frozen',
+			'admin.bibliotheque.publication.explications.source' => 'Give the original source in the rights review.',
+			'admin.bibliotheque.publication.explications.titulaire' => 'Give the rights holder, or the institutional origin.',
+			'admin.bibliotheque.publication.explications.preuve' => 'Submit the proof of permission for this version.',
+			'admin.bibliotheque.publication.explications.usageApplication' => 'Allow use in the app in the rights review.',
+			'admin.bibliotheque.publication.explications.usageClasse' => 'Allow display in class in the rights review.',
+			'admin.bibliotheque.publication.explications.usageTelechargement' => 'The server must be able to decide on download and reading without internet.',
+			'admin.bibliotheque.publication.explications.expirationAttribution' => 'The licence has expired or its attribution is missing: renew it.',
+			'admin.bibliotheque.publication.explications.fichierSain' => 'Submit a file: the server must scan it.',
+			'admin.bibliotheque.publication.explications.renduTeste' => 'The rendering has not yet been tested by the server.',
+			'admin.bibliotheque.publication.explications.langueNiveau' => 'Fill in the language and level on the sheet.',
+			'admin.bibliotheque.publication.explications.versionEmpreinte' => 'Submit a file to freeze the version and its fingerprint.',
+			'admin.bibliotheque.publication.etats.valide' => 'Validated',
+			'admin.bibliotheque.publication.etats.bloque' => 'Blocked',
+			'admin.bibliotheque.publication.etats.inconnu' => 'Not evaluated yet',
+			'admin.bibliotheque.publication.blocagesTitre' => 'What blocks publication',
+			'admin.bibliotheque.publication.aucunBlocage' => 'All points are validated by the server.',
+			'admin.bibliotheque.publication.publier' => 'Publish the version',
+			'admin.bibliotheque.publication.bloque' => 'This version cannot be published until the server has validated all the points of the check.',
+			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publish version ${numero}?',
+			'admin.bibliotheque.publication.confirmerEffet' => 'The version becomes immutable and visible to the classes the document is assigned to. To change it, you will create a new version.',
+			'admin.bibliotheque.publication.confirmerBouton' => 'Publish',
+			'admin.bibliotheque.publication.publiee' => 'Version published.',
+			'admin.bibliotheque.publication.dejaPubliee' => 'This version is already published.',
+			'admin.bibliotheque.publication.echec' => 'The publication could not be confirmed. Nothing is half-published: check the sheet before trying again.',
+			'admin.bibliotheque.publication.versLaFiche' => 'See the sheet',
+			'admin.bibliotheque.publication.pasDeCapacite' => 'You can view the check, but not publish.',
+			'admin.bibliotheque.attribution.titre' => 'Assign to classes',
+			'admin.bibliotheque.attribution.intro' => 'Choose the classes that will see this published version. What you assign here is visible to their students and teacher.',
+			'admin.bibliotheque.attribution.classesTitre' => 'Classes',
+			'admin.bibliotheque.attribution.classeServie' => 'Already assigned',
+			'admin.bibliotheque.attribution.classeEpinglee' => 'Pinned',
+			'admin.bibliotheque.attribution.epingler' => 'Pin at the top of these classes\' library',
+			'admin.bibliotheque.attribution.aucune' => 'No class is open to assignment for now.',
+			'admin.bibliotheque.attribution.plusDeClasses' => 'See more classes',
+			'admin.bibliotheque.attribution.chargementPlus' => 'Loading…',
+			'admin.bibliotheque.attribution.nonPublie' => 'This document is not published. Publish a version before assigning it to classes.',
+			'admin.bibliotheque.attribution.erreur' => 'The classes could not be loaded. Try again.',
+			'admin.bibliotheque.attribution.attribuer' => ({required Object nombre}) => 'Assign to ${nombre} class(es)',
+			'admin.bibliotheque.attribution.attribuerAucune' => 'Choose at least one class before assigning.',
+			'admin.bibliotheque.attribution.attribuee' => 'Document assigned. The chosen classes see it now.',
+			'admin.bibliotheque.attribution.attribueEchec' => 'The assignment did not go through. Try again in a moment.',
+			'admin.bibliotheque.attribution.retraitTitre' => 'Withdraw from the catalogue',
+			'admin.bibliotheque.attribution.retraitIntro' => 'A withdrawal hides the document from all classes. It deletes nothing: the file and history are kept.',
+			'admin.bibliotheque.attribution.motif' => 'Reason for withdrawal',
+			'admin.bibliotheque.attribution.motifRequis' => 'Write the reason for withdrawal before continuing: it is kept in the history.',
+			'admin.bibliotheque.attribution.retirer' => 'Withdraw this document',
+			'admin.bibliotheque.attribution.retraitConfirmerTitre' => ({required Object titre}) => 'Withdraw "${titre}" from the catalogue?',
+			'admin.bibliotheque.attribution.retraitConfirmerEffet' => 'Classes will no longer see it, including those already using it. The reason is kept in the history.',
+			'admin.bibliotheque.attribution.retraitConfirmerBouton' => 'Withdraw the document',
+			'admin.bibliotheque.attribution.retire' => 'Document withdrawn from the catalogue.',
+			'admin.bibliotheque.attribution.retraitEchec' => 'The withdrawal did not go through. Try again in a moment.',
+			'admin.bibliotheque.attribution.conflit' => 'Someone changed this document in the meantime. Reload before continuing.',
 			'agent.titre' => 'Agent entry',
 			'agent.intro' => 'This page opens the app in read-only mode, with the token provided by the academy.',
 			'agent.jeton' => 'Observation token',
@@ -29013,8 +31156,6 @@ extension on TraductionsEn {
 			'agent.bandeauMasque' => 'First names hidden',
 			'agent.bandeauExpire' => ({required Object heure}) => 'until ${heure}',
 			'vide.aucunCours' => 'No class today',
-			_ => null,
-		} ?? switch (path) {
 			'vide.aucunCoursDetail' => 'Your next class will appear here.',
 			'vide.aucunCreneau' => 'No slot available for now',
 			'vide.aucunRapport' => 'No handover notebook yet',
@@ -29234,6 +31375,8 @@ extension on TraductionsEn {
 			'compte.page.matricule' => ({required Object valeur}) => 'Student ID ${valeur}',
 			'compte.page.identiteVide' => 'Your information is not available yet. Your preferences and signing out remain accessible.',
 			'compte.page.identiteEchec' => 'Your information could not be loaded.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.donnees.titre' => 'My data',
 			'compte.donnees.sousTitre' => 'A copy of your data, or the deletion of your account.',
 			'compte.donnees.ligne' => 'Copy of my data and account deletion',
@@ -29527,8 +31670,6 @@ extension on TraductionsEn {
 			'historique.observations.tronquee' => 'Only the most recent visits are shown.',
 			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations of ${date}, ${classe}, ${etat}',
 			'historique.seance.titreSansClasse' => ({required Object date}) => 'Session of ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'historique.seance.blocSeance' => 'The session',
 			'historique.seance.blocPresence' => ({required Object dePrenom}) => '${dePrenom}\'s attendance',
 			'historique.seance.date' => 'Date',
@@ -29748,6 +31889,8 @@ extension on TraductionsEn {
 			'eleve.accueil.erreurCours' => 'Your classes could not be loaded. Try again in a moment.',
 			'eleve.accueil.erreurCoursHorsLigneTitre' => 'Your classes are not available',
 			'eleve.accueil.prochainAujourdhui' => 'Your next class is later today.',
+			_ => null,
+		} ?? switch (path) {
 			'eleve.accueil.prochainDemain' => 'Your next class is tomorrow.',
 			'eleve.accueil.annulee' => 'This class will not take place',
 			'eleve.accueil.horsLigne' => 'Entry pending',
@@ -30041,8 +32184,6 @@ extension on TraductionsEn {
 			'classe.cartes.lienCopie' => 'Link copied. Paste it into your browser to open it.',
 			'classe.cartes.indisponibleTitre' => 'Class cards are not open yet',
 			'classe.cartes.indisponiblePhrase' => 'They will appear here as soon as they open. Nothing to do on your side.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.erreurLecture' => 'The class cards could not be loaded. Try again in a moment.',
 			'classe.cartes.sansDonnees' => 'The class cards could not be loaded',
 			'classe.cartes.enregistree' => 'Card saved. The class sees it now.',
@@ -30262,6 +32403,8 @@ extension on TraductionsEn {
 			'enseignant.journee.remplacementsVide' => 'No class from a colleague to take on for now.',
 			'enseignant.journee.voirTousRemplacements' => ({required Object nombre}) => 'See all: the ${nombre} confirmed replacements',
 			'enseignant.journee.heure' => 'Time',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.eleves' => 'Students',
 			'enseignant.journee.classe' => 'Class',
 			'enseignant.journee.preparerSeance' => 'Prepare the session',
@@ -30555,8 +32698,6 @@ extension on TraductionsEn {
 			'enseignant.creneaux.refusDejaPris' => 'This student has just been taken by another teacher. The list below is up to date.',
 			'enseignant.creneaux.refusDejaSuivi' => 'This student already has a teacher. The list below is up to date.',
 			'enseignant.creneaux.refusCreneauRetire' => 'This family no longer offers this slot. The list below is up to date.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.refusHorsMesHeures' => 'This slot is no longer in your times. Set it again in My times to be able to take it.',
 			'enseignant.creneaux.refusPlafond' => 'You have reached your maximum number of students. Ask for an increase to follow one more.',
 			'enseignant.creneaux.mesDisponibilites' => 'My availability',
@@ -30776,6 +32917,8 @@ extension on TraductionsEn {
 			'controleur.historique.cleElevesPresents' => 'Present',
 			'controleur.historique.cleReponse' => 'Reply',
 			'controleur.historique.sansComplement' => 'No addendum.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.historique.faitsIndisponibles' => 'The automatic log of this visit (times, students present, reconnections) has not been received yet: the session has just ended or the connection was cut. It will appear here as soon as it is received. The rest of the report remains reliable.',
 			'controleur.historique.motif' => ({required Object motif}) => 'Reason: ${motif}',
 			'controleur.historique.ajouterComplement' => 'Add an addendum',
@@ -31069,8 +33212,6 @@ extension on TraductionsEn {
 			'tc.bibliotheque.offline.indisponible' => 'Offline unavailable',
 			'tc.bibliotheque.type.audio' => 'Audio',
 			'tc.bibliotheque.type.video' => 'Video',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.type.lienExterne' => 'External link',
 			'tc.bibliotheque.type.quran' => 'Quran',
 			'tc.bibliotheque.type.texteStructure' => 'Text',
@@ -31290,6 +33431,8 @@ extension on TraductionsEn {
 			'tc.observation.explication.regleUne' => ({required Object n, required Object duree}) => '${n} visit of ${duree}',
 			'tc.observation.explication.regle' => ({required num n, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit of ${duree}', other: '${n} visits of ${duree}', ), 
 			'tc.observation.explication.regleDetail' => 'Per session and per parent, even if several of your children are in the class.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.observation.explication.ecoute' => 'Listen to the teacher and the students',
 			'tc.observation.explication.ecouteDetail' => 'You hear the teacher and the students who speak, including your child.',
 			'tc.observation.explication.sansMedia' => 'No microphone or camera',
@@ -31583,8 +33726,6 @@ extension on TraductionsEn {
 			'adulte.recharge.resultat.attenteBandeauTitre' => 'Do not pay a second time.',
 			'adulte.recharge.resultat.attenteBandeauPhrase' => 'This payment may have already gone through. Reload in a few moments to see its status.',
 			'adulte.recharge.resultat.confirmeTitre' => 'Payment confirmed',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.confirmePhrase' => 'The payment is confirmed. Balances are about to be updated.',
 			'adulte.recharge.resultat.allocationPhrase' => 'Updating balances...',
 			'adulte.recharge.resultat.terminePhrase' => ({required Object montant}) => 'Your payment of ${montant} was made and split between the selected profiles.',
@@ -31804,6 +33945,8 @@ extension on TraductionsEn {
 			'adulte.reprise.depotEchecTitre' => 'The request was not confirmed.',
 			'adulte.reprise.echecPhrase' => 'Check before trying again.',
 			'adulte.reprise.motif' => 'Reason',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.motifDeces' => 'Reported death of the account holder',
 			'adulte.reprise.deposeeLe' => 'Submitted on',
 			'adulte.reprise.etat' => 'Status',
@@ -32097,8 +34240,6 @@ extension on TraductionsEn {
 			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: classes have started',
 			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: student already in a class, request filed',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: your class was merged with another, see the new class',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: new class, see the details',
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '${date} at ${heure}, ${duree}',
 			'suiviDemandes.jalon.aussitot' => 'immediately',
@@ -32318,6 +34459,8 @@ extension on TraductionsEn {
 			'com.socle.composants.composer.brouillonRestaure' => 'Draft restored',
 			'com.socle.composants.composer.enregistrerVocal' => _root.com.vocal.composer.enregistrer,
 			'com.socle.composants.composer.aucunMessageTitre' => 'No message yet',
+			_ => null,
+		} ?? switch (path) {
 			'com.socle.composants.composer.aucunMessage' => 'Write the first message of this conversation: it will appear here.',
 			'com.socle.composants.etats.chargement' => 'Loading',
 			'com.socle.composants.etats.videTitre' => 'Nothing here yet',
@@ -32611,8 +34754,6 @@ extension on TraductionsEn {
 			'com.communaute.publication.choisir' => 'Choose a post from the list to read it and reply.',
 			'com.communaute.publication.introuvableTitre' => 'Post unavailable',
 			'com.communaute.publication.introuvable' => 'This post has been withdrawn or is no longer accessible to you. Go back to the posts to choose another.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.publication.revenir' => 'Back to the posts',
 			'com.communaute.reponses.titre' => ({required Object nombre}) => 'Replies (${nombre})',
 			'com.communaute.reponses.vide' => 'No reply yet.',
@@ -32832,6 +34973,8 @@ extension on TraductionsEn {
 			'com.studio.enregistrer.semantiqueRetirer' => ({required Object titre}) => 'Remove ${titre} from saved items',
 			'com.studio.enregistrer.ajoute' => ({required Object titre}) => 'Added to saved items: ${titre}.',
 			'com.studio.enregistrer.retire' => ({required Object titre}) => 'Removed from saved items: ${titre}.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.enregistrer.nonConfirme' => 'Saving has not been confirmed yet. Try again in a moment.',
 			'com.studio.enregistres.detail' => 'The channels and items you keep at hand. Each opens in its original place.',
 			'com.studio.enregistres.videTitre' => 'No saved item',
@@ -33125,8 +35268,6 @@ extension on TraductionsEn {
 			'com.annonces.demo.f.adminPlanifiee' => 'A scheduled announcement needs checking before publication',
 			'com.annonces.demo.f.adminOperationnel' => 'An-Nour class: full',
 			'com.annonces.demo.f.controleurMission' => 'New mission: visit to the An-Nour class',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.controleurChangement' => 'Your Thursday mission is moved to 6 pm',
 			'com.annonces.demo.f.controleurReponse' => 'Administration\'s reply to your report',
 			'com.annonces.titre' => 'Announcements',
@@ -33346,6 +35487,8 @@ extension on TraductionsEn {
 			'comptable.paiements.confirmation.titreUn' => 'Confirm the payment',
 			'comptable.paiements.confirmation.titreLot' => 'Confirm the batch',
 			'comptable.paiements.confirmation.titreValidation' => 'Request a validation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.payerMaintenant' => 'Pay now',
 			'comptable.paiements.confirmation.controleEchoueTitre' => 'Check interrupted',
 			'comptable.paiements.confirmation.controleEchoue' => 'The check of the selection did not go through. Nothing was sent. Run the check again.',
@@ -33639,8 +35782,6 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.candidats' => 'Proposed matches',
 			'comptable.encaissements.rap.candidatsAucun' => 'The source proposes no match for this transaction.',
 			'comptable.encaissements.rap.relieA' => ({required Object libelle}) => 'Linked to: ${libelle}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.rapprocher' => 'Reconcile',
 			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Reconcile with ${libelle}',
 			'comptable.encaissements.rap.doublonTitre' => 'Potential duplicate',
@@ -33860,6 +36001,8 @@ extension on TraductionsEn {
 			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'New obligation unavailable: ${raison}.',
 			'comptable.contractuels.videObligations' => 'No obligation in progress',
 			'comptable.contractuels.videObligationsDetail' => 'Obligations created appear here, with their due date and status.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.videAApprouver' => 'Nothing to approve',
 			'comptable.contractuels.videAApprouverDetail' => 'Obligations awaiting approval appear here.',
 			'comptable.contractuels.videAPayer' => 'Nothing to pay',
@@ -34153,8 +36296,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'A payment above the ceilings set above.',
 			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Off-cycle payment',
 			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'A payment that does not follow the usual pay period.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Beneficiary linked to the operator',
 			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'A payment to a person linked to the payment operator.',
 			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Provider unavailable',
@@ -34374,6 +36515,8 @@ extension on TraductionsEn {
 			'avis.admin.sections.libelle' => 'Review sections',
 			'avis.admin.sections.avis' => 'Reviews',
 			'avis.admin.sections.liens' => 'Links',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.statut.tous' => 'All',
 			'avis.admin.statut.enAttente' => 'Pending',
 			'avis.admin.statut.publie' => 'Published',
@@ -34667,8 +36810,6 @@ extension on TraductionsEn {
 			'i1.invitations.dejaInvite' => 'An invitation is already active for this address. It is in the list below; its email is not sent a second time.',
 			'i1.familles.choixTitre' => 'A family already registered',
 			'i1.familles.choixExplication' => 'To choose for imported families: each receives an email to open their space, with nothing to re-enter.',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.titre' => 'Families to invite',
 			'i1.familles.aide' => 'Each imported family receives, on your action, an email inviting them to sign in with their address. Nothing is sent automatically.',
 			'i1.familles.personnes' => ({required Object n}) => 'People: ${n}',
@@ -34888,6 +37029,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.nature.courriel' => 'Same email',
 			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'Same phone',
 			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Rows ${liste}',
 			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'and ${n} row already saved', other: 'and ${n} rows already saved', ), 
 			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'Choose the row to keep, or say these are different people.',
@@ -35181,8 +37324,6 @@ extension on TraductionsEn {
 			'push1.evenements.remboursementDemande' => 'A refund is requested.',
 			'push1.evenements.remboursementEchec' => 'A refund did not go through.',
 			'push1.evenements.cahierEnRetard' => 'A session\'s handover notebook is waiting for your information.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.gestes.examiner' => 'Review',
 			'push1.gestes.verifierPiece' => 'Check the document',
 			'push1.gestes.traiterSignalement' => 'Handle the report',
@@ -35402,6 +37543,8 @@ extension on TraductionsEn {
 			'journalSorties.texte.adulte.caseAccord' => 'I agree that my exits from the app during sessions be recorded.',
 			'journalSorties.accord.titre' => 'Exits from the app',
 			'journalSorties.accord.ligne' => 'Exits from the app during class',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.accord.ligneDetail' => 'Your agreement, for each child',
 			'journalSorties.accord.ligneDetailAdulte' => 'Your agreement',
 			'journalSorties.accord.intro' => 'Read this text, then choose for each child. Nothing is recorded without your agreement.',
