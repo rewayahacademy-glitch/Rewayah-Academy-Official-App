@@ -195,7 +195,7 @@ const NOUVEAUX = [
   'admission_recue', 'candidature_enseignant_a_examiner', 'demande_horaire_recue', 'creneau_personnalise_demande',
   'piece_identite_deposee', 'signalement_eleve_recu', 'suppression_compte_demandee', 'remplacement_personne_en_salle',
   'paiement_echoue', 'versement_coordonnees_a_valider', 'versement_coordonnees_validees', 'remboursement_demande',
-  'remboursement_echec', 'cahier_en_retard',
+  'remboursement_echec', 'cahier_en_retard', 'message_candidat_recu',
 ]
 // PUSH-TEXTES (07/11/2026) : les evenements du recrutement. Leur contrainte
 // `notifications_evenement_check` est posee par des migrations qui lisent la
@@ -236,7 +236,8 @@ Deno.test('textes : aucun mot interdit, aucun tiret long, aucun emoji, aucun cod
       assert(!/groupe|admin|enseignante|mode enfant|échec/i.test(s), `${cle} : mot interdit dans « ${s} »`)
       assert(!/[—–]/.test(s), `${cle} : tiret long`)
       assert(!EMOJI.test(s), `${cle} : emoji`)
-      assert(!/_/.test(s), `${cle} : code interne`)
+      // « #Ra_staff » est le nom de l'equipe (directeur, 14/11/2026), pas un code.
+      assert(!/_/.test(s.replaceAll('#Ra_staff', '')), `${cle} : code interne`)
       assert(!/[$€]|\d+[.,]\d\d/.test(s), `${cle} : montant`)
     }
     assert(titre.length <= 40, `${cle} : titre trop long`)
@@ -275,6 +276,13 @@ Deno.test('regroupement : le nombre apparait, accord arabe 2 / 3-10 / 11-99 / 10
   assertEquals(texteDuPush('admission_recue', 'direction', 'ar', 11, 'candidatures').texte, '11 طلبًا جديدًا بانتظار الدراسة.')
   assertEquals(texteDuPush('admission_recue', 'direction', 'ar', 100, 'candidatures').texte, '100 طلب جديد بانتظار الدراسة.')
   assertEquals(texteDuPush('piece_identite_deposee', 'direction', 'fr', 4, 'pieces').texte, '4 pièces d\'identité à vérifier.')
+  // MESSAGERIE-PUSH (14/11/2026) : une alerte par fil, regroupees par etiquette.
+  assertEquals(texteDuPush('message_candidat_recu', 'direction', 'fr', 1).texte,
+    'Un candidat vous a écrit : lisez son message dans l\'application.')
+  assertEquals(texteDuPush('message_candidat_recu', 'direction', 'fr', 3, 'messages_candidats').texte,
+    '3 candidats vous ont écrit : lisez leurs messages dans l\'application.')
+  assertEquals(texteDuPush('message_candidat_recu', 'direction', 'ar', 2, 'messages_candidats').texte,
+    'كتب إليكم مرشّحان: اقرؤوا رسائلهما في التطبيق.')
   // Sans etiquette, pas de regroupement : le texte reste au singulier.
   assertEquals(texteDuPush('admission_recue', 'direction', 'fr', 3, null), texteDuPush('admission_recue', 'direction', 'fr', 1))
   // Un evenement sans pluriel propre prend le pluriel generique, avec le nombre.

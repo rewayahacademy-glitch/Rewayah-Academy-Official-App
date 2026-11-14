@@ -257,5 +257,6 @@ FilMetier filMetierJson(
     capacites: <CapaciteFil>{
       if (fil['peut_ecrire'] == true) CapaciteFil.ecrire,
     },
+    luParAutresLe: instantOptionnel(fil, 'lu_par_autres_le'),
   );
 }
