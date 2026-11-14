@@ -114,6 +114,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$cahierSourates$en cahierSourates = _Traductions$cahierSourates$en._(_root);
 	@override late final _Traductions$souratesRetirables$en souratesRetirables = _Traductions$souratesRetirables$en._(_root);
 	@override late final _Traductions$accueilHoraire$en accueilHoraire = _Traductions$accueilHoraire$en._(_root);
+	@override late final _Traductions$candidatsFlux$en candidatsFlux = _Traductions$candidatsFlux$en._(_root);
 	@override late final _Traductions$push1$en push1 = _Traductions$push1$en._(_root);
 	@override late final _Traductions$nouveautes$en nouveautes = _Traductions$nouveautes$en._(_root);
 	@override late final _Traductions$suiviPedagogique$en suiviPedagogique = _Traductions$suiviPedagogique$en._(_root);
@@ -880,13 +881,21 @@ class _Traductions$recrutement$en extends Traductions$recrutement$fr {
 
 	// Translations
 	@override late final _Traductions$recrutement$nomLatin$en nomLatin = _Traductions$recrutement$nomLatin$en._(_root);
+	@override late final _Traductions$recrutement$invitations$en invitations = _Traductions$recrutement$invitations$en._(_root);
 	@override late final _Traductions$recrutement$candidat$en candidat = _Traductions$recrutement$candidat$en._(_root);
 	@override late final _Traductions$recrutement$signature$en signature = _Traductions$recrutement$signature$en._(_root);
+	@override late final _Traductions$recrutement$statuts$en statuts = _Traductions$recrutement$statuts$en._(_root);
+	@override late final _Traductions$recrutement$salles$en salles = _Traductions$recrutement$salles$en._(_root);
+	@override late final _Traductions$recrutement$sallesCandidat$en sallesCandidat = _Traductions$recrutement$sallesCandidat$en._(_root);
+	@override late final _Traductions$recrutement$paiement$en paiement = _Traductions$recrutement$paiement$en._(_root);
 	@override late final _Traductions$recrutement$cadre$en cadre = _Traductions$recrutement$cadre$en._(_root);
 	@override late final _Traductions$recrutement$portail$en portail = _Traductions$recrutement$portail$en._(_root);
 	@override late final _Traductions$recrutement$entretien$en entretien = _Traductions$recrutement$entretien$en._(_root);
+	@override late final _Traductions$recrutement$partage$en partage = _Traductions$recrutement$partage$en._(_root);
+	@override late final _Traductions$recrutement$retrait$en retrait = _Traductions$recrutement$retrait$en._(_root);
 	@override late final _Traductions$recrutement$questionnaire$en questionnaire = _Traductions$recrutement$questionnaire$en._(_root);
 	@override late final _Traductions$recrutement$parcours$en parcours = _Traductions$recrutement$parcours$en._(_root);
+	@override late final _Traductions$recrutement$talents$en talents = _Traductions$recrutement$talents$en._(_root);
 }
 
 // Path: dossiers
@@ -2112,6 +2121,23 @@ class _Traductions$accueilHoraire$en extends Traductions$accueilHoraire$fr {
 	@override String get demandeTitre => 'Request saved';
 	@override String demandeDetail({required Object prenom}) => 'We will let you know as soon as a time slot opens for ${prenom}.';
 	@override String get erreurEnvoi => 'Your request was not confirmed. Try again in a moment.';
+}
+
+// Path: candidatsFlux
+class _Traductions$candidatsFlux$en extends Traductions$candidatsFlux$fr {
+	_Traductions$candidatsFlux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$candidatsFlux$importFormulaires$en importFormulaires = _Traductions$candidatsFlux$importFormulaires$en._(_root);
+	@override late final _Traductions$candidatsFlux$prevenir$en prevenir = _Traductions$candidatsFlux$prevenir$en._(_root);
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$en invitationsPersonnelles = _Traductions$candidatsFlux$invitationsPersonnelles$en._(_root);
+	@override late final _Traductions$candidatsFlux$file$en file = _Traductions$candidatsFlux$file$en._(_root);
+	@override late final _Traductions$candidatsFlux$importDouble$en importDouble = _Traductions$candidatsFlux$importDouble$en._(_root);
+	@override late final _Traductions$candidatsFlux$langues$en langues = _Traductions$candidatsFlux$langues$en._(_root);
+	@override late final _Traductions$candidatsFlux$publication$en publication = _Traductions$candidatsFlux$publication$en._(_root);
+	@override late final _Traductions$candidatsFlux$photo$en photo = _Traductions$candidatsFlux$photo$en._(_root);
 }
 
 // Path: push1
@@ -4470,6 +4496,44 @@ class _Traductions$recrutement$nomLatin$en extends Traductions$recrutement$nomLa
 	@override String get echec => 'Your name is not confirmed. Try again in a moment.';
 }
 
+// Path: recrutement.invitations
+class _Traductions$recrutement$invitations$en extends Traductions$recrutement$invitations$fr {
+	_Traductions$recrutement$invitations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Invite a teacher';
+	@override String get onglet => 'Invitations';
+	@override String get sousTitre => 'A teacher can sign up only with an invitation code. The code works once and expires.';
+	@override String get champEmail => 'Teacher\'s email address';
+	@override String get aideEmail => 'The code is created for this address. Pass it on to the person: it is not sent automatically.';
+	@override String get inviter => 'Create the invitation';
+	@override String get emailInvalide => 'This address does not look like an email address. Check it, then try again.';
+	@override String get compteExistant => 'An account already exists for this address: no invitation is needed.';
+	@override String get dejaInvite => 'An invitation is already active for this address. It is in the list below.';
+	@override String get nonAutorise => 'You are not allowed to invite a teacher. Contact the management.';
+	@override String get horsLigne => 'The invitation was not created. Try again in a moment.';
+	@override String get erreur => 'The creation of the invitation is not confirmed. It may exist: look at the list before trying again.';
+	@override String creee({required Object code}) => 'Invitation created. Pass this code on to the teacher: ${code}';
+	@override String get liste => 'Invitations';
+	@override String get vide => 'No invitation yet';
+	@override String get videDetail => 'Invite a teacher with their email address: the code appears here.';
+	@override String get erreurListe => 'The invitations could not be read. Try again in a moment.';
+	@override String get sansDonnees => 'The invitations cannot be read offline.';
+	@override String get indisponibleTitre => 'Teacher invitations';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+	@override late final _Traductions$recrutement$invitations$etat$en etat = _Traductions$recrutement$invitations$etat$en._(_root);
+	@override String expireLe({required Object date}) => 'Expires on ${date}';
+	@override String utiliseeLe({required Object date}) => 'Used on ${date}';
+	@override String get revoquer => 'Revoke';
+	@override String revoquerPour({required Object email}) => 'Revoke the invitation for ${email}';
+	@override String revoquerQuestion({required Object email}) => 'Revoke the invitation for ${email}?';
+	@override String get revoquerConsequence => 'The code will no longer work. You can invite the same address again.';
+	@override String get revoquerEchec => 'The revocation is not confirmed. Refresh the list before trying again.';
+	@override late final _Traductions$recrutement$invitations$comptable$en comptable = _Traductions$recrutement$invitations$comptable$en._(_root);
+}
+
 // Path: recrutement.candidat
 class _Traductions$recrutement$candidat$en extends Traductions$recrutement$candidat$fr {
 	_Traductions$recrutement$candidat$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4535,6 +4599,64 @@ class _Traductions$recrutement$signature$en extends Traductions$recrutement$sign
 	@override String get sansDonnees => 'The contract cannot be read offline.';
 	@override String get indisponible => 'Signing the contract will be available once the server is connected.';
 	@override String get retour => 'Back';
+}
+
+// Path: recrutement.statuts
+class _Traductions$recrutement$statuts$en extends Traductions$recrutement$statuts$fr {
+	_Traductions$recrutement$statuts$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Contract and acknowledgement';
+	@override String get contrat => 'Teacher contract';
+	@override String get accuse => 'Acknowledgement of recording and review';
+	@override String get signeCourante => 'Signed, current version';
+	@override String signeAncienne({required Object version}) => 'Signed, old version ${version}';
+	@override String get nonSigne => 'Not signed';
+	@override String get bloque => 'Contract not signed at the current version: the file cannot be approved until the contract and the acknowledgement are signed at the current version.';
+	@override String get refuse => 'Contract not signed at the current version. The file was not activated: the teacher must sign, then refresh the file.';
+	@override String get manqueContrat => 'Missing: the contract.';
+	@override String get manqueAccuse => 'Missing: the acknowledgement.';
+	@override String get manqueLesDeux => 'Missing: the contract and the acknowledgement.';
+	@override String get inviter => 'Invite a teacher';
+}
+
+// Path: recrutement.salles
+class _Traductions$recrutement$salles$en extends Traductions$recrutement$salles$fr {
+	_Traductions$recrutement$salles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get examen => 'Exam room';
+	@override String get verification => 'Verification and interview room';
+	@override String get prets => 'Ready-to-teach room';
+}
+
+// Path: recrutement.sallesCandidat
+class _Traductions$recrutement$sallesCandidat$en extends Traductions$recrutement$sallesCandidat$fr {
+	_Traductions$recrutement$sallesCandidat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get candidature => 'Your application';
+	@override String get connaissance => 'Let\'s get to know each other';
+	@override String get equipe => 'Welcome to the team';
+}
+
+// Path: recrutement.paiement
+class _Traductions$recrutement$paiement$en extends Traductions$recrutement$paiement$fr {
+	_Traductions$recrutement$paiement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get inconnu => 'No payout method declared';
+	@override String get aVerifier => 'Payout method to be checked by the academy';
+	@override String get compatible => 'Payout method confirmed';
+	@override String get incompatible => 'No payout method possible for now';
 }
 
 // Path: recrutement.cadre
@@ -4624,6 +4746,49 @@ class _Traductions$recrutement$entretien$en extends Traductions$recrutement$entr
 	@override late final _Traductions$recrutement$entretien$notifications$en notifications = _Traductions$recrutement$entretien$notifications$en._(_root);
 }
 
+// Path: recrutement.partage
+class _Traductions$recrutement$partage$en extends Traductions$recrutement$partage$fr {
+	_Traductions$recrutement$partage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Help someone learn the word of Allah.';
+	@override String get titreFemme => 'Help a sister learn the word of Allah.';
+	@override String get facultatif => 'Optional: sharing changes nothing about your application.';
+	@override String get langueCarte => 'Card language';
+	@override String get apercu => 'Preview of the card to share';
+	@override String get partager => 'I\'m sharing';
+	@override String get partagerLaCarte => 'Share the offer card';
+	@override String get enregistrer => 'Save the image';
+	@override String get copier => 'Copy the link';
+	@override String lien({required Object lien}) => 'Offer link: ${lien}';
+	@override String get sansMenu => 'This device does not offer direct sharing. Save the image to send it yourself, or copy the link.';
+	@override String get lienSeul => 'This device shares the link without the image. Save the image if you want to send it too.';
+	@override late final _Traductions$recrutement$partage$fait$en fait = _Traductions$recrutement$partage$fait$en._(_root);
+	@override late final _Traductions$recrutement$partage$echec$en echec = _Traductions$recrutement$partage$echec$en._(_root);
+	@override String get nonOuvert => 'The card to share is not available yet. Come back to this page later.';
+}
+
+// Path: recrutement.retrait
+class _Traductions$recrutement$retrait$en extends Traductions$recrutement$retrait$fr {
+	_Traductions$recrutement$retrait$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'Withdraw my application';
+	@override String get question => 'Withdraw your application?';
+	@override String get consequence => 'Only the academy will be able to reopen your application.';
+	@override String get consequenceEntretien => 'Your interview will be cancelled. Only the academy will be able to reopen your application.';
+	@override String get confirmer => 'Withdraw my application';
+	@override String get echec => 'The withdrawal did not go through. Try again in a moment.';
+	@override String get incertain => 'Your withdrawal may not have reached Rewayah. Try again: it will not be recorded twice.';
+	@override String get horsLigne => 'The withdrawal can be done when the connection returns.';
+	@override String get interdit => 'Your application can no longer be withdrawn from this page.';
+	@override String get conflit => 'Your application has changed since this page was opened. Read it again, then try again.';
+}
+
 // Path: recrutement.questionnaire
 class _Traductions$recrutement$questionnaire$en extends Traductions$recrutement$questionnaire$fr {
 	_Traductions$recrutement$questionnaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -4704,6 +4869,25 @@ class _Traductions$recrutement$parcours$en extends Traductions$recrutement$parco
 	@override String get choisirJour => 'Choose at least one day to continue.';
 	@override String get choisirHeure => 'Choose at least one start time to continue.';
 	@override String choisirHeureJour({required Object jour}) => 'Choose at least one start time for ${jour}.';
+}
+
+// Path: recrutement.talents
+class _Traductions$recrutement$talents$en extends Traductions$recrutement$talents$fr {
+	_Traductions$recrutement$talents$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Your other talents';
+	@override late final _Traductions$recrutement$talents$tuile$en tuile = _Traductions$recrutement$talents$tuile$en._(_root);
+	@override late final _Traductions$recrutement$talents$intro$en intro = _Traductions$recrutement$talents$intro$en._(_root);
+	@override late final _Traductions$recrutement$talents$competences$en competences = _Traductions$recrutement$talents$competences$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$en c = _Traductions$recrutement$talents$c$en._(_root);
+	@override late final _Traductions$recrutement$talents$niveaux$en niveaux = _Traductions$recrutement$talents$niveaux$en._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$en disponibilite = _Traductions$recrutement$talents$disponibilite$en._(_root);
+	@override late final _Traductions$recrutement$talents$lecture$en lecture = _Traductions$recrutement$talents$lecture$en._(_root);
+	@override late final _Traductions$recrutement$talents$etats$en etats = _Traductions$recrutement$talents$etats$en._(_root);
+	@override late final _Traductions$recrutement$talents$erreurs$en erreurs = _Traductions$recrutement$talents$erreurs$en._(_root);
 }
 
 // Path: dossiers.file
@@ -8671,6 +8855,188 @@ class _Traductions$a3bis$regles$en extends Traductions$a3bis$regles$fr {
 	@override String bornesTardive({required Object min, required Object max}) => 'Between ${min} and ${max} before the start.';
 }
 
+// Path: candidatsFlux.importFormulaires
+class _Traductions$candidatsFlux$importFormulaires$en extends Traductions$candidatsFlux$importFormulaires$fr {
+	_Traductions$candidatsFlux$importFormulaires$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Import the application forms';
+	@override String get intro => 'The import is used to recognize people and pre-fill their application. It creates no account.';
+	@override String get lienEntree => 'Import the forms';
+	@override String get retourCandidatures => 'Back to the applications';
+	@override String get lectureDroits => 'Your import rights could not be read. Try again in a moment.';
+	@override String get sansDonnees => 'your form import rights';
+	@override late final _Traductions$candidatsFlux$importFormulaires$acces$en acces = _Traductions$candidatsFlux$importFormulaires$acces$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$pas$en pas = _Traductions$candidatsFlux$importFormulaires$pas$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$depot$en depot = _Traductions$candidatsFlux$importFormulaires$depot$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$fichier$en fichier = _Traductions$candidatsFlux$importFormulaires$fichier$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$colonnes$en colonnes = _Traductions$candidatsFlux$importFormulaires$colonnes$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$en doublons = _Traductions$candidatsFlux$importFormulaires$doublons$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$analyse$en analyse = _Traductions$candidatsFlux$importFormulaires$analyse$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$apercu$en apercu = _Traductions$candidatsFlux$importFormulaires$apercu$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$issue$en issue = _Traductions$candidatsFlux$importFormulaires$issue$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$champ$en champ = _Traductions$candidatsFlux$importFormulaires$champ$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$en controle = _Traductions$candidatsFlux$importFormulaires$controle$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$motif$en motif = _Traductions$candidatsFlux$importFormulaires$motif$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$avertissement$en avertissement = _Traductions$candidatsFlux$importFormulaires$avertissement$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$en comptes = _Traductions$candidatsFlux$importFormulaires$comptes$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$unite$en unite = _Traductions$candidatsFlux$importFormulaires$unite$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$confirmation$en confirmation = _Traductions$candidatsFlux$importFormulaires$confirmation$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$rapport$en rapport = _Traductions$candidatsFlux$importFormulaires$rapport$en._(_root);
+}
+
+// Path: candidatsFlux.prevenir
+class _Traductions$candidatsFlux$prevenir$en extends Traductions$candidatsFlux$prevenir$fr {
+	_Traductions$candidatsFlux$prevenir$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lien => 'Notify by email';
+	@override String get titre => 'Notify by email';
+	@override String get contexte => 'The sign-up link is sent by email to the people in the imported forms who left an address and do not have an account yet. The same address never receives the message twice.';
+	@override String get lecture => 'Counting the people to notify.';
+	@override late final _Traductions$candidatsFlux$prevenir$comptes$en comptes = _Traductions$candidatsFlux$prevenir$comptes$en._(_root);
+	@override String get message => 'The message recalls the date of the answer and the name of the form, asks the person to create their account with the same address, and says there is nothing to pay.';
+	@override String get delai => 'Messages go out in the minutes after sending, not instantly.';
+	@override String groupes({required Object n}) => 'Sending goes out in batches of ${n} people at most.';
+	@override String get fermee => 'Online sign-up must be opened first: while it is closed, the link would lead to a closed page and no message goes out.';
+	@override String get videTitre => 'Everyone is already notified';
+	@override String get vide => 'Everyone who left an address is already notified or already signed up. There is nothing to send.';
+	@override String envoyer({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Send the link to ${n} person',
+		other: 'Send the link to ${n} people',
+	);
+	@override String envoyerSuivantes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Send to the next person',
+		other: 'Send to the next ${n}',
+	);
+	@override String get sansDonnees => 'The number of people to notify could not be loaded.';
+	@override String get horsLigne => 'Sending will be possible as soon as the network returns.';
+	@override late final _Traductions$candidatsFlux$prevenir$resultat$en resultat = _Traductions$candidatsFlux$prevenir$resultat$en._(_root);
+	@override late final _Traductions$candidatsFlux$prevenir$erreurs$en erreurs = _Traductions$candidatsFlux$prevenir$erreurs$en._(_root);
+}
+
+// Path: candidatsFlux.invitationsPersonnelles
+class _Traductions$candidatsFlux$invitationsPersonnelles$en extends Traductions$candidatsFlux$invitationsPersonnelles$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucuneImportee => 'No form answer is imported yet. Import the forms first: without them, the codes would find no answer, and no sending is possible.';
+	@override String varianteA({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'including ${n} person who received the end-of-October waiting email',
+		other: 'including ${n} people who received the end-of-October waiting email',
+	);
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$en lienCopie = _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$en._(_root);
+	@override String get lien => 'Send the personal codes';
+	@override String get titre => 'Personal codes for imported candidates';
+	@override String get contexte => 'Each person in the imported forms who left an address receives their own sign-up code by email. With this code, they create their account even if online sign-up is closed, and find their answers already filled in.';
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$comptes$en comptes = _Traductions$candidatsFlux$invitationsPersonnelles$comptes$en._(_root);
+	@override String rythme({required Object plafond, required Object limite, required Object reste}) => 'At most ${plafond} messages a day for this sending, and ${limite} per sending. Still possible today: ${reste}.';
+	@override String get videTitre => 'No one to invite';
+	@override String get vide => 'Everyone who left an address already has a valid code or an account. There is nothing to send.';
+	@override String plafond({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'The daily limit is reached. ${n} person is still to invite: continue tomorrow.',
+		other: 'The daily limit is reached. ${n} people are still to invite: continue tomorrow.',
+	);
+	@override String get nombreChange => 'The number of people changed since it was displayed. Nothing was sent: check the number again, then send.';
+	@override String envoyer({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Send their code to ${n} person',
+		other: 'Send their code to ${n} people',
+	);
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$resultat$en resultat = _Traductions$candidatsFlux$invitationsPersonnelles$resultat$en._(_root);
+	@override String get sansDonnees => 'The number of people to invite could not be loaded.';
+}
+
+// Path: candidatsFlux.file
+class _Traductions$candidatsFlux$file$en extends Traductions$candidatsFlux$file$fr {
+	_Traductions$candidatsFlux$file$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String rythme({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'To avoid ending up in spam folders, at most ${n} message of this type goes out each day. The others wait their turn and go out by themselves on the following days.',
+		other: 'To avoid ending up in spam folders, at most ${n} messages of this type go out each day. The others wait their turn and go out by themselves on the following days.',
+	);
+	@override String attente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} message is waiting its turn.',
+		other: '${n} messages are waiting their turn.',
+	);
+	@override String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Everything should be sent within about a day.',
+		other: 'Everything should be sent within about ${n} days.',
+	);
+	@override String get rienEnAttente => 'No message is waiting its turn.';
+	@override String misEnFile({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} message queued',
+		other: '${n} messages queued',
+	);
+	@override String desinscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person asked to stop receiving recruitment messages: they will not receive the link.',
+		other: '${n} people asked to stop receiving recruitment messages: they will not receive the link.',
+	);
+	@override late final _Traductions$candidatsFlux$file$reglage$en reglage = _Traductions$candidatsFlux$file$reglage$en._(_root);
+}
+
+// Path: candidatsFlux.importDouble
+class _Traductions$candidatsFlux$importDouble$en extends Traductions$candidatsFlux$importDouble$fr {
+	_Traductions$candidatsFlux$importDouble$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get suite => 'Tap "Enter my code": you enter the code from your verification app, then the import resumes here. Nothing was saved.';
+	@override String get action => 'Enter my code';
+}
+
+// Path: candidatsFlux.langues
+class _Traductions$candidatsFlux$langues$en extends Traductions$candidatsFlux$langues$fr {
+	_Traductions$candidatsFlux$langues$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get man => 'Malinke (Mandinka)';
+}
+
+// Path: candidatsFlux.publication
+class _Traductions$candidatsFlux$publication$en extends Traductions$candidatsFlux$publication$fr {
+	_Traductions$candidatsFlux$publication$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Publication on the website';
+	@override String get texte => 'Your name, photo and country may appear on the Rewayah Academy public website. This choice is separate from your application: it changes nothing about its review.';
+	@override String get kCase => 'I agree that my name, photo and country be on the Rewayah public website.';
+	@override String signature({required Object nom}) => 'Your name counts as a signature: ${nom}';
+	@override String signe({required Object date, required Object nom}) => 'Agreement given on ${date}, signed ${nom}.';
+	@override String get donner => 'Give my agreement';
+	@override String get retirer => 'Withdraw my agreement';
+	@override String get retirerQuestion => 'Withdraw your publication agreement?';
+	@override String get retirerConsequence => 'Your name, photo and country will no longer appear on the public website. You can give your agreement again later.';
+	@override String get echec => 'Your choice is not confirmed. Try again.';
+	@override String get lectureEchec => 'Your publication agreement could not be read.';
+	@override String get nonPublie => 'The text of the publication agreement is not published yet.';
+	@override String get horsLigne => 'Your choice can be saved when the connection returns.';
+}
+
+// Path: candidatsFlux.photo
+class _Traductions$candidatsFlux$photo$en extends Traductions$candidatsFlux$photo$fr {
+	_Traductions$candidatsFlux$photo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Your photo';
+	@override String get requise => 'Add your photo before sending your application.';
+}
+
 // Path: push1.invitation
 class _Traductions$push1$invitation$en extends Traductions$push1$invitation$fr {
 	_Traductions$push1$invitation$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -10145,6 +10511,41 @@ class _Traductions$priere$direction$feuille$en extends Traductions$priere$direct
 	@override String get erreurEnregistrement => 'The location may not have reached Rewayah, or a value was refused. Check the form, then try again in a moment.';
 }
 
+// Path: recrutement.invitations.etat
+class _Traductions$recrutement$invitations$etat$en extends Traductions$recrutement$invitations$etat$fr {
+	_Traductions$recrutement$invitations$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get active => 'Active';
+	@override String get utilisee => 'Used';
+	@override String get expiree => 'Expired';
+	@override String get revoquee => 'Revoked';
+}
+
+// Path: recrutement.invitations.comptable
+class _Traductions$recrutement$invitations$comptable$en extends Traductions$recrutement$invitations$comptable$fr {
+	_Traductions$recrutement$invitations$comptable$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titrePage => 'Invite a person';
+	@override String get sousTitrePage => 'Choose the person\'s role, then enter their address. Each code works once and expires.';
+	@override String get choixQuestion => 'What role will this person have?';
+	@override String get enseignantTitre => 'A teacher';
+	@override String get enseignantExplication => 'They lead classes. After signing up, they sign their contract before their first session.';
+	@override String get comptableTitre => 'An accountant';
+	@override String get comptableExplication => 'They follow payments, collections and cash flow. They lead no class.';
+	@override String get champEmail => 'Accountant\'s email address';
+	@override String creee({required Object code}) => 'Invitation created. Pass this code on to the accountant: ${code}';
+	@override String get doubleVerification => 'Nothing was sent: inviting an accountant requires two-step verification. Turn it on in Account > Security, then try again.';
+	@override String get liste => 'Accountant invitations';
+	@override String get vide => 'No accountant invitation yet';
+	@override String get videDetail => 'Invite an accountant with their email address: the code appears here.';
+}
+
 // Path: recrutement.candidat.comptable
 class _Traductions$recrutement$candidat$comptable$en extends Traductions$recrutement$candidat$comptable$fr {
 	_Traductions$recrutement$candidat$comptable$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -10176,6 +10577,31 @@ class _Traductions$recrutement$entretien$notifications$en extends Traductions$re
 	@override String reserveDirectionQuand({required Object quand}) => 'An applicant has booked an interview you conduct, on ${quand}.';
 	@override String get rappelDirection => 'You are conducting an interview that starts soon.';
 	@override String rappelDirectionQuand({required Object quand}) => 'You are conducting an interview on ${quand}.';
+}
+
+// Path: recrutement.partage.fait
+class _Traductions$recrutement$partage$fait$en extends Traductions$recrutement$partage$fait$fr {
+	_Traductions$recrutement$partage$fait$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get partage => 'The card is shared.';
+	@override String get enregistre => 'The image is saved.';
+	@override String get copie => 'The link is copied.';
+}
+
+// Path: recrutement.partage.echec
+class _Traductions$recrutement$partage$echec$en extends Traductions$recrutement$partage$echec$fr {
+	_Traductions$recrutement$partage$echec$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get partage => 'The share menu did not open: your device refused it this time. You can save the image or copy the link.';
+	@override String get enregistrement => 'Saving the image is not confirmed. Try again, or copy the link.';
+	@override String get copie => 'The link could not be copied. Select it on the page to copy it by hand.';
+	@override String get carte => 'The card could not be prepared. Try again in a moment.';
 }
 
 // Path: recrutement.parcours.presentation
@@ -10418,6 +10844,181 @@ class _Traductions$recrutement$parcours$moyens$en extends Traductions$recrutemen
 	@override String get virement => 'Bank transfer';
 	@override String get explication => 'Choose it if it is common where you live.';
 	@override String get nonElimine => 'This question is optional and eliminates no one: your application does not depend on your answer. It helps the academy know the methods used where you live.';
+}
+
+// Path: recrutement.talents.tuile
+class _Traductions$recrutement$talents$tuile$en extends Traductions$recrutement$talents$tuile$fr {
+	_Traductions$recrutement$talents$tuile$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get facultatif => 'Optional. This changes nothing about your teacher application.';
+	@override String get enregistre => 'Your answers are saved. You can edit them.';
+	@override String get enregistreClose => 'Your answers are saved. You can withdraw them.';
+}
+
+// Path: recrutement.talents.intro
+class _Traductions$recrutement$talents$intro$en extends Traductions$recrutement$talents$intro$fr {
+	_Traductions$recrutement$talents$intro$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get texte => 'The academy is growing. It will need help to organize itself, support families, keep its accounts or make itself known. If you can do something else, tell us: we will contact you first, before posting an announcement.';
+	@override late final _Traductions$recrutement$talents$intro$facultatif$en facultatif = _Traductions$recrutement$talents$intro$facultatif$en._(_root);
+	@override late final _Traductions$recrutement$talents$intro$usage$en usage = _Traductions$recrutement$talents$intro$usage$en._(_root);
+	@override late final _Traductions$recrutement$talents$intro$liberte$en liberte = _Traductions$recrutement$talents$intro$liberte$en._(_root);
+	@override late final _Traductions$recrutement$talents$intro$missions$en missions = _Traductions$recrutement$talents$intro$missions$en._(_root);
+}
+
+// Path: recrutement.talents.competences
+class _Traductions$recrutement$talents$competences$en extends Traductions$recrutement$talents$competences$fr {
+	_Traductions$recrutement$talents$competences$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What else can you do?';
+	@override String get explication => 'Tap all the skills you have. Each card gives an example. If yours is not there, choose "Other area" at the bottom of the list.';
+	@override late final _Traductions$recrutement$talents$competences$familles$en familles = _Traductions$recrutement$talents$competences$familles$en._(_root);
+	@override String choisies({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'No skill chosen',
+		one: '${n} skill chosen',
+		other: '${n} skills chosen',
+	);
+	@override String get nonProposee => 'This skill is no longer offered. You can keep it or untick it.';
+	@override String get autreChamp => 'Your area, in a few words';
+	@override String get autreAide => 'One line is enough.';
+	@override String get manque => 'Choose at least one skill to continue.';
+	@override String get autreVide => 'Say in a few words which area it is, or untick "Other area".';
+	@override String autreTropLong({required Object max}) => 'Your text is too long: ${max} characters at most. Shorten it.';
+}
+
+// Path: recrutement.talents.c
+class _Traductions$recrutement$talents$c$en extends Traductions$recrutement$talents$c$fr {
+	_Traductions$recrutement$talents$c$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$talents$c$reseaux_sociaux$en reseaux_sociaux = _Traductions$recrutement$talents$c$reseaux_sociaux$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$relations_publiques$en relations_publiques = _Traductions$recrutement$talents$c$relations_publiques$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$design_graphique$en design_graphique = _Traductions$recrutement$talents$c$design_graphique$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$montage_video$en montage_video = _Traductions$recrutement$talents$c$montage_video$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$photographie$en photographie = _Traductions$recrutement$talents$c$photographie$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$redaction_contenus$en redaction_contenus = _Traductions$recrutement$talents$c$redaction_contenus$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$publicite_en_ligne$en publicite_en_ligne = _Traductions$recrutement$talents$c$publicite_en_ligne$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$traduction$en traduction = _Traductions$recrutement$talents$c$traduction$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$assistanat$en assistanat = _Traductions$recrutement$talents$c$assistanat$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$coordination_groupe$en coordination_groupe = _Traductions$recrutement$talents$c$coordination_groupe$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$accueil_familles$en accueil_familles = _Traductions$recrutement$talents$c$accueil_familles$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$gestion_projet$en gestion_projet = _Traductions$recrutement$talents$c$gestion_projet$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$ressources_humaines$en ressources_humaines = _Traductions$recrutement$talents$c$ressources_humaines$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$comptabilite$en comptabilite = _Traductions$recrutement$talents$c$comptabilite$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$gestion_financiere$en gestion_financiere = _Traductions$recrutement$talents$c$gestion_financiere$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$juridique_donnees$en juridique_donnees = _Traductions$recrutement$talents$c$juridique_donnees$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$conception_programmes$en conception_programmes = _Traductions$recrutement$talents$c$conception_programmes$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$formation_enseignants$en formation_enseignants = _Traductions$recrutement$talents$c$formation_enseignants$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$qualite_cours$en qualite_cours = _Traductions$recrutement$talents$c$qualite_cours$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$tests_niveau$en tests_niveau = _Traductions$recrutement$talents$c$tests_niveau$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$accompagnement_enfants$en accompagnement_enfants = _Traductions$recrutement$talents$c$accompagnement_enfants$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$developpement$en developpement = _Traductions$recrutement$talents$c$developpement$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$assistance_technique$en assistance_technique = _Traductions$recrutement$talents$c$assistance_technique$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$donnees_tableurs$en donnees_tableurs = _Traductions$recrutement$talents$c$donnees_tableurs$en._(_root);
+	@override late final _Traductions$recrutement$talents$c$autre$en autre = _Traductions$recrutement$talents$c$autre$en._(_root);
+}
+
+// Path: recrutement.talents.niveaux
+class _Traductions$recrutement$talents$niveaux$en extends Traductions$recrutement$talents$niveaux$fr {
+	_Traductions$recrutement$talents$niveaux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What is your level?';
+	@override String get explication => 'For each skill, say where you stand. This helps the academy offer you a mission that suits you.';
+	@override String get legende => 'How to choose';
+	@override late final _Traductions$recrutement$talents$niveaux$debutant$en debutant = _Traductions$recrutement$talents$niveaux$debutant$en._(_root);
+	@override late final _Traductions$recrutement$talents$niveaux$experience$en experience = _Traductions$recrutement$talents$niveaux$experience$en._(_root);
+	@override late final _Traductions$recrutement$talents$niveaux$metier$en metier = _Traductions$recrutement$talents$niveaux$metier$en._(_root);
+	@override String niveauDe({required Object competence}) => 'Level for ${competence}';
+	@override String manque({required Object competence}) => 'Choose your level in "${competence}" to continue.';
+}
+
+// Path: recrutement.talents.disponibilite
+class _Traductions$recrutement$talents$disponibilite$en extends Traductions$recrutement$talents$disponibilite$fr {
+	_Traductions$recrutement$talents$disponibilite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'When could you help?';
+	@override String get explication => 'Say how much time you could give to a mission, alongside teaching. Below, say whether the academy may contact you.';
+	@override late final _Traductions$recrutement$talents$disponibilite$quelques_heures$en quelques_heures = _Traductions$recrutement$talents$disponibilite$quelques_heures$en._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$mi_temps$en mi_temps = _Traductions$recrutement$talents$disponibilite$mi_temps$en._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$plus$en plus = _Traductions$recrutement$talents$disponibilite$plus$en._(_root);
+	@override late final _Traductions$recrutement$talents$disponibilite$pas_maintenant$en pas_maintenant = _Traductions$recrutement$talents$disponibilite$pas_maintenant$en._(_root);
+	@override String get accord => 'I agree that the academy may contact me for a mission in these areas.';
+	@override String get accordNote => 'Without this box, the academy reads your answers but offers you no mission.';
+	@override String get manque => 'Choose your availability to continue.';
+	@override String get enregistrer => 'Save my answers';
+}
+
+// Path: recrutement.talents.lecture
+class _Traductions$recrutement$talents$lecture$en extends Traductions$recrutement$talents$lecture$fr {
+	_Traductions$recrutement$talents$lecture$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enregistre => 'Your answers are saved.';
+	@override String misesAJour({required Object date}) => 'Last updated on ${date}.';
+	@override String get competences => 'Your skills';
+	@override String autreDomaine({required Object texte}) => 'Other area: ${texte}';
+	@override String get disponibilite => 'Your availability';
+	@override String get contact => 'Contact for a mission';
+	@override String get contactOui => 'You agree that the academy may contact you.';
+	@override String get contactNon => 'You have not given this agreement: the academy will not contact you.';
+	@override String get modifier => 'Edit my answers';
+	@override String get retirer => 'Withdraw my answers';
+	@override String get retraitQuestion => 'Withdraw your answers?';
+	@override String get retraitConsequence => 'The academy will no longer have your skills or the agreement that allows it to contact you. You can answer again whenever you want.';
+	@override String get retraitConfirmer => 'Withdraw my answers';
+	@override String get close => 'Your teacher application is finished: you can no longer edit these answers. You can still withdraw them.';
+	@override String get retire => 'Your answers are withdrawn.';
+}
+
+// Path: recrutement.talents.etats
+class _Traductions$recrutement$talents$etats$en extends Traductions$recrutement$talents$etats$fr {
+	_Traductions$recrutement$talents$etats$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nonEnvoyeTitre => 'This step is not open yet';
+	@override String get nonEnvoye => 'It opens when your application is sent. Finish your application first.';
+	@override String get closTitre => 'This step is finished';
+	@override String get clos => 'Your teacher application is no longer in progress: there is nothing to add here.';
+	@override String get nonCharge => 'Your other talents could not be loaded.';
+}
+
+// Path: recrutement.talents.erreurs
+class _Traductions$recrutement$talents$erreurs$en extends Traductions$recrutement$talents$erreurs$fr {
+	_Traductions$recrutement$talents$erreurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get conflit => 'Your answers have changed since this page was opened (on another device, for example). Review them, then save again.';
+	@override String get desactivee => 'One of the chosen skills is no longer offered: it has been removed from your choice. Review your answers, then save again.';
+	@override String get invalides => 'One of your answers is not valid. Review them, then save again.';
+	@override String get incertain => 'Your answers may not have reached Rewayah. Try again: they will not be saved twice.';
+	@override String get horsLigne => 'Your answers can be saved later, when the connection returns.';
+	@override String get echec => 'Your answers could not be saved. Try again in a moment.';
+	@override String get retraitIncertain => 'The withdrawal may not have reached Rewayah. Try again: it will not be done twice.';
+	@override String get retraitHorsLigne => 'The withdrawal can be done later, when the connection returns.';
+	@override String get retraitEchec => 'The withdrawal did not go through. Try again in a moment.';
 }
 
 // Path: dossiers.revue.etats
@@ -13113,6 +13714,538 @@ class _Traductions$i1$familles$etat$en extends Traductions$i1$familles$etat$fr {
 	@override String get compteCree => 'Space opened';
 }
 
+// Path: candidatsFlux.importFormulaires.acces
+class _Traductions$candidatsFlux$importFormulaires$acces$en extends Traductions$candidatsFlux$importFormulaires$acces$fr {
+	_Traductions$candidatsFlux$importFormulaires$acces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get refuseTitre => 'Import reserved';
+	@override String get refusePhrase => 'Only the super administrator can import the application forms. Ask them to do it.';
+	@override String get doublePhrase => 'This import requires your second factor.';
+	@override String get doubleSuite => 'Tap "Sign in again": your session closes and you return to sign-in to use your second factor. Nothing was saved.';
+	@override String get doubleAction => 'Sign in again';
+}
+
+// Path: candidatsFlux.importFormulaires.pas
+class _Traductions$candidatsFlux$importFormulaires$pas$en extends Traductions$candidatsFlux$importFormulaires$pas$fr {
+	_Traductions$candidatsFlux$importFormulaires$pas$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get liste => 'The eight steps of the import';
+	@override String get depot => 'Drop the file';
+	@override String get apercu => 'Preview';
+	@override String get colonnes => 'Columns';
+	@override String get doublons => 'Duplicates';
+	@override String get controle => 'Errors';
+	@override String get comptes => 'Accounts';
+	@override String get confirmation => 'Confirmation';
+	@override String get rapport => 'Report';
+	@override String surTotal({required Object n, required Object total}) => 'Step ${n} of ${total}';
+	@override String surTotalNomme({required Object n, required Object total, required Object nom}) => 'Step ${n} of ${total}: ${nom}';
+	@override String get fait => 'Done';
+	@override String get enCours => 'In progress';
+	@override String get aVenir => 'Upcoming';
+}
+
+// Path: candidatsFlux.importFormulaires.depot
+class _Traductions$candidatsFlux$importFormulaires$depot$en extends Traductions$candidatsFlux$importFormulaires$depot$fr {
+	_Traductions$candidatsFlux$importFormulaires$depot$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Which file do you want to import?';
+	@override String get explication => 'Choose the CSV export of the forms sheet (in Google Sheets: File, Download, Comma-separated values). Nothing is sent before "Analyze the file".';
+	@override String get carteTitre => 'Choose a CSV file';
+	@override String get carteDescription => 'The file is read on this device. It goes to Rewayah only when you tap "Analyze the file". Maximum size: 5 MB.';
+	@override String carteChoisi({required Object nom}) => 'File chosen: ${nom}';
+	@override String lignesLues({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} row of answers in this file',
+		other: '${n} rows of answers in this file',
+	);
+	@override String get autreFichier => 'Choose another file';
+	@override late final _Traductions$candidatsFlux$importFormulaires$depot$noms$en noms = _Traductions$candidatsFlux$importFormulaires$depot$noms$en._(_root);
+	@override String get manqueFichier => 'First choose a file so it can be analyzed.';
+	@override String get analyser => 'Analyze the file';
+	@override String get analyseEnCours => 'Rewayah is reading your file. Nothing is saved yet.';
+	@override String get horsLigne => 'The analysis can be done when the connection returns.';
+	@override String get vide => 'This file contains no row to import.';
+	@override String get videAide => 'Check that you exported the right sheet.';
+}
+
+// Path: candidatsFlux.importFormulaires.fichier
+class _Traductions$candidatsFlux$importFormulaires$fichier$en extends Traductions$candidatsFlux$importFormulaires$fichier$fr {
+	_Traductions$candidatsFlux$importFormulaires$fichier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Unreadable file';
+	@override String illisibleLigne({required Object ligne, required Object cause}) => 'This file could not be read, row ${ligne}: ${cause}.';
+	@override String illisible({required Object cause}) => 'This file could not be read: ${cause}.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$fichier$cause$en cause = _Traductions$candidatsFlux$importFormulaires$fichier$cause$en._(_root);
+	@override String get quoiFaire => 'Export the sheet as CSV again from Google Sheets, then choose the file.';
+}
+
+// Path: candidatsFlux.importFormulaires.colonnes
+class _Traductions$candidatsFlux$importFormulaires$colonnes$en extends Traductions$candidatsFlux$importFormulaires$colonnes$fr {
+	_Traductions$candidatsFlux$importFormulaires$colonnes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String dejaAssocie({required Object n}) => 'Currently read in column ${n}. Choosing it here removes it from that column.';
+	@override String titreColonne({required Object n, required Object titre}) => 'Column ${n}: ${titre}';
+	@override String get question => 'Does each column really contain what Rewayah thinks?';
+	@override String get explication => 'Rewayah recognizes each column by its title. Tap a column to change what it contains.';
+	@override String sansTitreNumero({required Object n}) => 'Column ${n}, untitled';
+	@override String get nonLue => 'Not read';
+	@override String get nonLueAide => 'This column is not used by the import.';
+	@override String choisir({required Object n}) => 'What does column ${n} contain?';
+	@override String get sansTitre => 'Untitled column';
+	@override String get choixActuel => 'Current choice';
+	@override String get nePasLire => 'Do not read this column';
+	@override String get nePasLireAide => 'Its content is ignored by the import.';
+	@override String get fermer => 'Close this choice';
+	@override String manquants({required Object champs}) => 'First match these columns: ${champs}.';
+	@override String ambigu({required Object champs}) => 'Several columns carry the title of: ${champs}. Tap the one to read, then choose what it contains.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$colonnes$libelles$en libelles = _Traductions$candidatsFlux$importFormulaires$colonnes$libelles$en._(_root);
+	@override String get relecture => 'Your corrections require the file to be read again before continuing.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons
+class _Traductions$candidatsFlux$importFormulaires$doublons$en extends Traductions$candidatsFlux$importFormulaires$doublons$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String casTitre({required Object nature, required Object n, required Object total}) => '${nature}: case ${n} of ${total}';
+	@override String get question => 'Do these rows come from the same person?';
+	@override String get explication => 'When rows share an email or a phone number, Rewayah proposes them as one person. Without your choice, the most recent row is kept and the others stay in the history. Nothing is deleted.';
+	@override String get aucun => 'No probable duplicate in this file.';
+	@override String get aucunAide => 'No row shares an email or a phone number with another.';
+	@override String total({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} case to look at',
+		other: '${n} cases to look at',
+	);
+	@override String tranches({required Object choisis, required Object total}) => 'Choices made by you: ${choisis} of ${total}. For the others, the most recent row is kept.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$nature$en nature = _Traductions$candidatsFlux$importFormulaires$doublons$nature$en._(_root);
+	@override String lignes({required Object liste}) => 'Rows ${liste}';
+	@override String dansLaBase({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'and ${n} row already saved',
+		other: 'and ${n} rows already saved',
+	);
+	@override String get choisirLigne => 'Choose the row to keep, or say these are different people.';
+	@override String get ouvrir => 'See the choices for this case';
+	@override String get fermer => 'Close the choices for this case';
+	@override String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'See ${n} more case',
+		other: 'See ${n} more cases',
+	);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$etat$en etat = _Traductions$candidatsFlux$importFormulaires$doublons$etat$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$en option = _Traductions$candidatsFlux$importFormulaires$doublons$option$en._(_root);
+}
+
+// Path: candidatsFlux.importFormulaires.analyse
+class _Traductions$candidatsFlux$importFormulaires$analyse$en extends Traductions$candidatsFlux$importFormulaires$analyse$fr {
+	_Traductions$candidatsFlux$importFormulaires$analyse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get echec => 'The analysis did not go through.';
+	@override String get echecPhrase => 'Nothing was saved. Try again in a moment.';
+	@override String get refus => 'The server cannot read this file with these names. Check the workbook, the tab and the file, then try again.';
+	@override String get reessayer => 'Try the analysis again';
+}
+
+// Path: candidatsFlux.importFormulaires.apercu
+class _Traductions$candidatsFlux$importFormulaires$apercu$en extends Traductions$candidatsFlux$importFormulaires$apercu$fr {
+	_Traductions$candidatsFlux$importFormulaires$apercu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Is this the right file?';
+	@override String get explication => 'Here is what Rewayah read. Nothing is saved yet.';
+	@override String get contactsMasques => 'Contacts are hidden in the preview.';
+	@override String lignes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} row read',
+		other: '${n} rows read',
+	);
+	@override String colonnesReconnues({required Object reconnues, required Object total}) => 'Columns recognized: ${reconnues} of ${total}';
+	@override String get premieres => 'The first rows';
+	@override String ligne({required Object ligne}) => 'Row ${ligne}';
+	@override String autres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} other row is not shown here.',
+		other: '${n} other rows are not shown here.',
+	);
+	@override String get sansLignes => 'The rows will be read as soon as the columns are matched.';
+	@override String get colonnesATitre => 'Some columns still need matching';
+	@override String mappageIncomplet({required Object champs}) => 'First match these columns: ${champs}.';
+	@override String get ambiguTitre => 'Two columns look alike';
+	@override String ambigu({required Object champs}) => 'Several columns carry the title of: ${champs}. Say which one to read, at the next step.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$apercu$marque$en marque = _Traductions$candidatsFlux$importFormulaires$apercu$marque$en._(_root);
+	@override String get aideMarques => '"Email to obtain": no valid email, the person cannot be invited. "Country code to confirm": the phone has no recognized country code. "Ignored": empty or repeated row.';
+}
+
+// Path: candidatsFlux.importFormulaires.issue
+class _Traductions$candidatsFlux$importFormulaires$issue$en extends Traductions$candidatsFlux$importFormulaires$issue$fr {
+	_Traductions$candidatsFlux$importFormulaires$issue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelle => 'New';
+	@override String get corrigee => 'Corrected';
+	@override String get dejaConnue => 'Already known';
+	@override String get ignoree => 'Ignored';
+	@override String get aCorriger => 'To correct';
+	@override String get historique => 'In history';
+}
+
+// Path: candidatsFlux.importFormulaires.champ
+class _Traductions$candidatsFlux$importFormulaires$champ$en extends Traductions$candidatsFlux$importFormulaires$champ$fr {
+	_Traductions$candidatsFlux$importFormulaires$champ$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get horodatage => 'Date of the answer';
+	@override String get horodatageAide => 'Used to recognize the answer if you replay the file.';
+	@override String get genre => 'Gender';
+	@override String get genreAide => 'Used to file the answer on the right side. Never shown in the preview.';
+	@override String get nom => 'Full name';
+	@override String get nomAide => 'Used to recognize the person. Never shown here.';
+	@override String get telephone => 'WhatsApp phone';
+	@override String get telephoneAide => 'With the country code. Never completed or guessed.';
+	@override String get langueMaternelle => 'Mother tongue';
+	@override String get langueMaternelleAide => 'Optional.';
+	@override String get languesExplication => 'Languages of explanation';
+	@override String get languesExplicationAide => 'The languages in which the person can explain and correct.';
+	@override String get memorisation => 'Quran memorization';
+	@override String get memorisationAide => 'A declaration, not a finding: the level is established at the interview.';
+	@override String get ijaza => 'Ijaza or certificate to present';
+	@override String get ijazaAide => 'What the person can show at the interview.';
+	@override String get experience => 'Experience with beginners';
+	@override String get experienceAide => 'Optional.';
+	@override String get creneaux => 'Time slots (Makkah time)';
+	@override String get creneauxAide => 'Kept as they are, without a day. Never read as availability.';
+	@override String get heures => 'Hours per week';
+	@override String get heuresAide => 'Converted into a number of classes wanted.';
+	@override String get debut => 'Possible start';
+	@override String get debutAide => 'Optional.';
+	@override String get whatsapp => 'Agreement to be contacted on WhatsApp';
+	@override String get whatsappAide => 'Applies to this contact only.';
+	@override String get courriel => 'Email';
+	@override String get courrielAide => 'Used to recognize the person when they sign up. Never shown here.';
+	@override String get contact => 'Phone or email';
+}
+
+// Path: candidatsFlux.importFormulaires.controle
+class _Traductions$candidatsFlux$importFormulaires$controle$en extends Traductions$candidatsFlux$importFormulaires$controle$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Are there rows to correct?';
+	@override String get explication => 'A row to correct is not imported. Correct it in the workbook, export the file again, then replay the import: rows already imported are not added twice.';
+	@override String get aucune => 'No error or warning in this file.';
+	@override String get aucuneAide => 'Every row could be read.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$aCorriger$en aCorriger = _Traductions$candidatsFlux$importFormulaires$controle$aCorriger$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$avertissements$en avertissements = _Traductions$candidatsFlux$importFormulaires$controle$avertissements$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$controle$ignorees$en ignorees = _Traductions$candidatsFlux$importFormulaires$controle$ignorees$en._(_root);
+	@override String ligne({required Object ligne, required Object motif}) => 'Row ${ligne}: ${motif}';
+	@override String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'See ${n} more row',
+		other: 'See ${n} more rows',
+	);
+}
+
+// Path: candidatsFlux.importFormulaires.motif
+class _Traductions$candidatsFlux$importFormulaires$motif$en extends Traductions$candidatsFlux$importFormulaires$motif$fr {
+	_Traductions$candidatsFlux$importFormulaires$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligneVide => 'empty row';
+	@override String get horodatageIllisible => 'the date of the answer is unreadable';
+	@override String get genreIllisible => 'the gender is not recognized';
+	@override String get nomAbsent => 'the name is missing';
+	@override String get nomTropLong => 'the name is too long';
+	@override String get memeReferenceMemeContenu => 'row repeated identically';
+	@override String get memeReferenceContenuDifferent => 'same answer date as another row, but different content';
+	@override String get genreChangeSurLigneSuivie => 'the gender changed while the person is being followed: it fixes their side';
+	@override String get inscription1210 => 'already known from the registrations import';
+	@override String get inconnu => 'a point in this row needs checking';
+}
+
+// Path: candidatsFlux.importFormulaires.avertissement
+class _Traductions$candidatsFlux$importFormulaires$avertissement$en extends Traductions$candidatsFlux$importFormulaires$avertissement$fr {
+	_Traductions$candidatsFlux$importFormulaires$avertissement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get telephoneIllisible => 'the phone is unreadable';
+	@override String get formatNational => 'the phone has no country code';
+	@override String get indicatifInconnu => 'the phone\'s country code is unknown';
+	@override String get longueurImplausible => 'the phone\'s length is unusual';
+	@override String get indicatifAConfirmer => 'the phone\'s country code needs confirming';
+	@override String get zeroNationalEnTrop => 'an extra zero after the phone\'s country code';
+	@override String get courrielMalforme => 'the email is badly written: it must be obtained';
+	@override String get langueMaternelleVersAutre => 'unknown mother tongue, filed under other language';
+	@override String get langueInconnueVersAutre => 'an unknown language of explanation is filed under other language';
+	@override String get arabeRetire => 'Arabic is removed from the languages of explanation (it is not a teaching language)';
+	@override String get libelleInconnu => 'a multiple-choice answer is not recognized';
+	@override String get ijazaDeclareeEnG => 'ijaza declared as memorization: memorization is for the person to fill in';
+	@override String get experiencePretTest => '"ready for a test" has no equivalent for experience: for the person to fill in';
+	@override String get moinsDe3Heures => 'less than 3 hours a week: that does not make a class, for the person to fill in';
+	@override String get creneauxContradictoires => 'contradictory time slots, kept as they are';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes
+class _Traductions$candidatsFlux$importFormulaires$comptes$en extends Traductions$candidatsFlux$importFormulaires$comptes$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Are these the numbers you expected?';
+	@override String get explication => 'Here is what Rewayah counted in the file. Compare with your own count before confirming.';
+	@override String get nouvelles => 'New';
+	@override String get nouvellesAide => 'Not known yet: they will be saved.';
+	@override String get dejaConnues => 'Already known';
+	@override String get dejaConnuesAide => 'Already saved: nothing changes.';
+	@override String get ignorees => 'Ignored';
+	@override String get ignoreesAide => 'Empty or repeated rows.';
+	@override String get aCorriger => 'To correct';
+	@override String get aCorrigerAide => 'Unreadable rows: they are not imported.';
+	@override String get corrigees => 'Corrected on the spot';
+	@override String get personnes => 'People concerned';
+	@override String get lignesLues => 'Rows read';
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$en attendus = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$en._(_root);
+	@override String get choisir => 'Say which count to compare to continue.';
+	@override String get saisirNombre => 'Enter at least one number to continue.';
+	@override String get ecartTitre => 'A difference to check';
+	@override String ecart({required Object attendu, required Object lu}) => 'Difference with the expected counts: expected ${attendu}, read ${lu}. Check before confirming: you can still import.';
+	@override String get accord => 'The numbers match what you expected.';
+}
+
+// Path: candidatsFlux.importFormulaires.unite
+class _Traductions$candidatsFlux$importFormulaires$unite$en extends Traductions$candidatsFlux$importFormulaires$unite$fr {
+	_Traductions$candidatsFlux$importFormulaires$unite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String lignes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} row',
+		other: '${n} rows',
+	);
+	@override String personnes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person',
+		other: '${n} people',
+	);
+}
+
+// Path: candidatsFlux.importFormulaires.confirmation
+class _Traductions$candidatsFlux$importFormulaires$confirmation$en extends Traductions$candidatsFlux$importFormulaires$confirmation$fr {
+	_Traductions$candidatsFlux$importFormulaires$confirmation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'Import these answers now?';
+	@override String get explication => 'Review what the import will do. It cannot be undone from this screen.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$confirmation$resume$en resume = _Traductions$candidatsFlux$importFormulaires$confirmation$resume$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$confirmation$garanties$en garanties = _Traductions$candidatsFlux$importFormulaires$confirmation$garanties$en._(_root);
+	@override String get importer => 'Import the answers';
+	@override String get envoi => 'Sending. The import is confirmed only when Rewayah answers.';
+	@override String get horsLigne => 'The import can be confirmed when the connection returns.';
+	@override String get nonConfirme => 'The import is not confirmed: it may not have reached Rewayah. Tap "Import the answers" again: the same request is saved only once.';
+	@override String get jetonPerime => 'The file or its settings changed since the preview. Run the analysis again to continue.';
+	@override String get choixInvalide => 'A duplicate choice no longer matches the file. Run the analysis again, then choose again.';
+	@override String get cleReutilisee => 'This request cannot be replayed as it is. Run the analysis again to start cleanly.';
+	@override String get refus => 'The server refuses this import. Check that you are signed in with two-step verification, then try again.';
+	@override String get titreNonConfirme => 'Import not confirmed';
+	@override String get titreARefaire => 'The analysis must be redone';
+	@override String get relancer => 'Run the analysis again';
+}
+
+// Path: candidatsFlux.importFormulaires.rapport
+class _Traductions$candidatsFlux$importFormulaires$rapport$en extends Traductions$candidatsFlux$importFormulaires$rapport$fr {
+	_Traductions$candidatsFlux$importFormulaires$rapport$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Import finished';
+	@override String get question => 'Here is what the import did.';
+	@override String get rejoue => 'This request had already been saved: nothing was added a second time.';
+	@override String get sansCandidature => 'These answers create no application: they are used to recognize people when they sign up.';
+	@override late final _Traductions$candidatsFlux$importFormulaires$rapport$compteurs$en compteurs = _Traductions$candidatsFlux$importFormulaires$rapport$compteurs$en._(_root);
+	@override String historique({required Object n}) => 'Replaced by a more recent one: ${n}';
+	@override late final _Traductions$candidatsFlux$importFormulaires$rapport$lignes$en lignes = _Traductions$candidatsFlux$importFormulaires$rapport$lignes$en._(_root);
+	@override String plus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'See ${n} more row',
+		other: 'See ${n} more rows',
+	);
+	@override String get autreFichier => 'Import another file';
+}
+
+// Path: candidatsFlux.prevenir.comptes
+class _Traductions$candidatsFlux$prevenir$comptes$en extends Traductions$candidatsFlux$prevenir$comptes$fr {
+	_Traductions$candidatsFlux$prevenir$comptes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String aPrevenir({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person to notify',
+		other: '${n} people to notify',
+	);
+	@override String dejaPrevenus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person already notified',
+		other: '${n} people already notified',
+	);
+	@override String dejaInscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person already signed up',
+		other: '${n} people already signed up',
+	);
+}
+
+// Path: candidatsFlux.prevenir.resultat
+class _Traductions$candidatsFlux$prevenir$resultat$en extends Traductions$candidatsFlux$prevenir$resultat$fr {
+	_Traductions$candidatsFlux$prevenir$resultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sending started';
+	@override String mis({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} message goes out in the next few minutes',
+		other: '${n} messages go out in the next few minutes',
+	);
+	@override String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person still to notify.',
+		other: '${n} people still to notify.',
+	);
+	@override String get tout => 'No one is waiting for the link any more: everyone is notified.';
+	@override String get pasDeuxFois => 'The same address never receives the message twice, even if you send again.';
+}
+
+// Path: candidatsFlux.prevenir.erreurs
+class _Traductions$candidatsFlux$prevenir$erreurs$en extends Traductions$candidatsFlux$prevenir$erreurs$fr {
+	_Traductions$candidatsFlux$prevenir$erreurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Sending not confirmed';
+	@override String get nonConfirme => 'The sending may not have reached Rewayah. Try again: no address will receive the message twice.';
+	@override String get generique => 'The sending did not go through and nothing is confirmed. Try again: no address will receive the message twice.';
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie
+class _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$en extends Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get action => 'Copy the sign-up link';
+	@override String get titre => 'Personal sign-up link';
+	@override String get contexte => 'This person did not leave an email address. Enter the one they will use to create their account: it is saved on their answer, and the code works only with it. No email is sent: you pass the link on yourself.';
+	@override String get champ => 'The person\'s email address';
+	@override String get preparer => 'Prepare the link';
+	@override String get code => 'Personal code';
+	@override String get lien => 'Personal link';
+	@override String echeance({required Object date}) => 'Valid until ${date}, once, with this address only.';
+	@override String get copier => 'Copy the link';
+	@override String get copie => 'Link copied.';
+	@override String get copieEchec => 'The copy did not go through: select the link above, then copy it.';
+	@override String get nonConfirme => 'The preparation is not confirmed. Try again with the same address: you will get the same code.';
+	@override late final _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$en refus = _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$en._(_root);
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.comptes
+class _Traductions$candidatsFlux$invitationsPersonnelles$comptes$en extends Traductions$candidatsFlux$invitationsPersonnelles$comptes$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$comptes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String aInviter({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person to invite',
+		other: '${n} people to invite',
+	);
+	@override String aRenvoyer({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} expired code to resend',
+		other: '${n} expired codes to resend',
+	);
+	@override String dejaInvites({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person already has a valid code',
+		other: '${n} people already have a valid code',
+	);
+	@override String dejaInscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person already signed up: an account exists at their address, no invitation goes out',
+		other: '${n} people already signed up: an account exists at their address, no invitation goes out',
+	);
+	@override String revoquees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} code withdrawn by the management: no group sending for this person',
+		other: '${n} codes withdrawn by the management: no group sending for these people',
+	);
+	@override String desinscrits({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person no longer wants to receive recruitment messages',
+		other: '${n} people no longer want to receive recruitment messages',
+	);
+	@override String sansAdresse({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} answer without an email address',
+		other: '${n} answers without an email address',
+	);
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.resultat
+class _Traductions$candidatsFlux$invitationsPersonnelles$resultat$en extends Traductions$candidatsFlux$invitationsPersonnelles$resultat$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$resultat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String restants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person still to invite.',
+		other: '${n} people still to invite.',
+	);
+	@override String get tout => 'No one is waiting for their code any more.';
+	@override String get pasDeuxFois => 'The same person never receives two valid codes at the same time, even if you send again.';
+}
+
+// Path: candidatsFlux.file.reglage
+class _Traductions$candidatsFlux$file$reglage$en extends Traductions$candidatsFlux$file$reglage$fr {
+	_Traductions$candidatsFlux$file$reglage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Messages of this type per day';
+	@override String get aide => 'From 1 to 2,000. Messages tied to an account, a class, a registration or a payment always go out without waiting.';
+	@override String get enregistrer => 'Save the setting';
+	@override String enregistre({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Setting saved: ${n} message per day.',
+		other: 'Setting saved: ${n} messages per day.',
+	);
+	@override String get invalide => 'Enter a whole number from 1 to 2,000, without spaces.';
+	@override String get echec => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.';
+}
+
 // Path: suiviAttente.cloture.motif
 class _Traductions$suiviAttente$cloture$motif$en extends Traductions$suiviAttente$cloture$motif$fr {
 	_Traductions$suiviAttente$cloture$motif$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -13773,6 +14906,441 @@ class _Traductions$recrutement$parcours$q$moyensAccessibles$en extends Traductio
 	@override String get court => 'Payment methods of the country';
 }
 
+// Path: recrutement.talents.intro.facultatif
+class _Traductions$recrutement$talents$intro$facultatif$en extends Traductions$recrutement$talents$intro$facultatif$fr {
+	_Traductions$recrutement$talents$intro$facultatif$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Optional';
+	@override String get texte => 'This changes nothing about your teacher application.';
+}
+
+// Path: recrutement.talents.intro.usage
+class _Traductions$recrutement$talents$intro$usage$en extends Traductions$recrutement$talents$intro$usage$fr {
+	_Traductions$recrutement$talents$intro$usage$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What we do with it';
+	@override String get texte => 'Your answers are used only to offer you an academy mission. The management reads them, and only the management.';
+}
+
+// Path: recrutement.talents.intro.liberte
+class _Traductions$recrutement$talents$intro$liberte$en extends Traductions$recrutement$talents$intro$liberte$fr {
+	_Traductions$recrutement$talents$intro$liberte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'You stay in control';
+	@override String get texte => 'You can edit or withdraw your answers whenever you want, and withdraw the agreement that allows us to contact you.';
+}
+
+// Path: recrutement.talents.intro.missions
+class _Traductions$recrutement$talents$intro$missions$en extends Traductions$recrutement$talents$intro$missions$fr {
+	_Traductions$recrutement$talents$intro$missions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Each mission has its conditions';
+	@override String get texte => 'The academy presents them to you when it contacts you. This page promises no mission.';
+}
+
+// Path: recrutement.talents.competences.familles
+class _Traductions$recrutement$talents$competences$familles$en extends Traductions$recrutement$talents$competences$familles$fr {
+	_Traductions$recrutement$talents$competences$familles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get communication => 'Communication and image';
+	@override String get administration => 'Administration and organization';
+	@override String get financesDroit => 'Finance and law';
+	@override String get pedagogie => 'Teaching';
+	@override String get technique => 'Technical';
+	@override String get autre => 'Other area';
+}
+
+// Path: recrutement.talents.c.reseaux_sociaux
+class _Traductions$recrutement$talents$c$reseaux_sociaux$en extends Traductions$recrutement$talents$c$reseaux_sociaux$fr {
+	_Traductions$recrutement$talents$c$reseaux_sociaux$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Social media management';
+	@override String get description => 'Run the academy\'s social media accounts.';
+	@override String get exemple => 'Post every week, answer messages and comments';
+}
+
+// Path: recrutement.talents.c.relations_publiques
+class _Traductions$recrutement$talents$c$relations_publiques$en extends Traductions$recrutement$talents$c$relations_publiques$fr {
+	_Traductions$recrutement$talents$c$relations_publiques$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Public relations and partnerships';
+	@override String get description => 'Make the academy known to those who can support it.';
+	@override String get exemple => 'Present the academy to a mosque, an association or a media outlet';
+}
+
+// Path: recrutement.talents.c.design_graphique
+class _Traductions$recrutement$talents$c$design_graphique$en extends Traductions$recrutement$talents$c$design_graphique$fr {
+	_Traductions$recrutement$talents$c$design_graphique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Graphic design';
+	@override String get description => 'Create clear, polished visuals.';
+	@override String get exemple => 'A poster, a card to share, a visual for social media';
+}
+
+// Path: recrutement.talents.c.montage_video
+class _Traductions$recrutement$talents$c$montage_video$en extends Traductions$recrutement$talents$c$montage_video$fr {
+	_Traductions$recrutement$talents$c$montage_video$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Video editing and animation';
+	@override String get description => 'Edit and animate short videos.';
+	@override String get exemple => 'Cut a video, add subtitles, animate a title';
+}
+
+// Path: recrutement.talents.c.photographie
+class _Traductions$recrutement$talents$c$photographie$en extends Traductions$recrutement$talents$c$photographie$fr {
+	_Traductions$recrutement$talents$c$photographie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Photography and shooting';
+	@override String get description => 'Take quality photos, videos or sound recordings.';
+	@override String get exemple => 'Photograph an event, record a short presentation';
+}
+
+// Path: recrutement.talents.c.redaction_contenus
+class _Traductions$recrutement$talents$c$redaction_contenus$en extends Traductions$recrutement$talents$c$redaction_contenus$fr {
+	_Traductions$recrutement$talents$c$redaction_contenus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Writing and content creation';
+	@override String get description => 'Write accurate texts that are pleasant to read.';
+	@override String get exemple => 'An article, a text for social media, a newsletter';
+}
+
+// Path: recrutement.talents.c.publicite_en_ligne
+class _Traductions$recrutement$talents$c$publicite_en_ligne$en extends Traductions$recrutement$talents$c$publicite_en_ligne$fr {
+	_Traductions$recrutement$talents$c$publicite_en_ligne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Online advertising';
+	@override String get description => 'Prepare and follow advertising campaigns on the internet.';
+	@override String get exemple => 'Choose the target audience, launch a campaign, follow the results';
+}
+
+// Path: recrutement.talents.c.traduction
+class _Traductions$recrutement$talents$c$traduction$en extends Traductions$recrutement$talents$c$traduction$fr {
+	_Traductions$recrutement$talents$c$traduction$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Translation';
+	@override String get description => 'Translate texts from one language to another.';
+	@override String get exemple => 'Messages to families, subtitles, a text for the website';
+}
+
+// Path: recrutement.talents.c.assistanat
+class _Traductions$recrutement$talents$c$assistanat$en extends Traductions$recrutement$talents$c$assistanat$fr {
+	_Traductions$recrutement$talents$c$assistanat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Administrative or executive assistance';
+	@override String get description => 'Help the management organize day to day.';
+	@override String get exemple => 'Keep a diary, write letters, follow files';
+}
+
+// Path: recrutement.talents.c.coordination_groupe
+class _Traductions$recrutement$talents$c$coordination_groupe$en extends Traductions$recrutement$talents$c$coordination_groupe$fr {
+	_Traductions$recrutement$talents$c$coordination_groupe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Community coordination';
+	@override String get description => 'Run and support a community of people, for example the sisters\' or the parents\'.';
+	@override String get exemple => 'Welcome newcomers, answer questions, circulate information';
+}
+
+// Path: recrutement.talents.c.accueil_familles
+class _Traductions$recrutement$talents$c$accueil_familles$en extends Traductions$recrutement$talents$c$accueil_familles$fr {
+	_Traductions$recrutement$talents$c$accueil_familles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Family welcome and follow-up';
+	@override String get description => 'Be the first contact for families who sign up.';
+	@override String get exemple => 'Answer a question, support a registration, check in';
+}
+
+// Path: recrutement.talents.c.gestion_projet
+class _Traductions$recrutement$talents$c$gestion_projet$en extends Traductions$recrutement$talents$c$gestion_projet$fr {
+	_Traductions$recrutement$talents$c$gestion_projet$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Project planning and management';
+	@override String get description => 'Organize teamwork from start to finish.';
+	@override String get exemple => 'Draw up a schedule, share out tasks, follow progress';
+}
+
+// Path: recrutement.talents.c.ressources_humaines
+class _Traductions$recrutement$talents$c$ressources_humaines$en extends Traductions$recrutement$talents$c$ressources_humaines$fr {
+	_Traductions$recrutement$talents$c$ressources_humaines$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Human resources and recruitment';
+	@override String get description => 'Choose and welcome the people who join the team.';
+	@override String get exemple => 'Conduct an interview, compare applications, welcome a new teacher';
+}
+
+// Path: recrutement.talents.c.comptabilite
+class _Traductions$recrutement$talents$c$comptabilite$en extends Traductions$recrutement$talents$c$comptabilite$fr {
+	_Traductions$recrutement$talents$c$comptabilite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Accounting';
+	@override String get description => 'Keep the academy\'s accounts.';
+	@override String get exemple => 'Record invoices, follow payments, prepare a balance sheet';
+}
+
+// Path: recrutement.talents.c.gestion_financiere
+class _Traductions$recrutement$talents$c$gestion_financiere$en extends Traductions$recrutement$talents$c$gestion_financiere$fr {
+	_Traductions$recrutement$talents$c$gestion_financiere$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Financial management';
+	@override String get description => 'Follow the money and prepare decisions.';
+	@override String get exemple => 'Build a budget, follow cash flow';
+}
+
+// Path: recrutement.talents.c.juridique_donnees
+class _Traductions$recrutement$talents$c$juridique_donnees$en extends Traductions$recrutement$talents$c$juridique_donnees$fr {
+	_Traductions$recrutement$talents$c$juridique_donnees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Legal and data protection';
+	@override String get description => 'Make sure the academy complies with the law and protects personal data.';
+	@override String get exemple => 'Review a contract, write terms of use, protect privacy';
+}
+
+// Path: recrutement.talents.c.conception_programmes
+class _Traductions$recrutement$talents$c$conception_programmes$en extends Traductions$recrutement$talents$c$conception_programmes$fr {
+	_Traductions$recrutement$talents$c$conception_programmes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Curriculum and materials design';
+	@override String get description => 'Prepare what students learn, and the materials to teach it.';
+	@override String get exemple => 'A lesson plan, a worksheet, a series of exercises';
+}
+
+// Path: recrutement.talents.c.formation_enseignants
+class _Traductions$recrutement$talents$c$formation_enseignants$en extends Traductions$recrutement$talents$c$formation_enseignants$fr {
+	_Traductions$recrutement$talents$c$formation_enseignants$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Teacher training and support';
+	@override String get description => 'Help teachers improve.';
+	@override String get exemple => 'Train a new teacher, advise them after a session';
+}
+
+// Path: recrutement.talents.c.qualite_cours
+class _Traductions$recrutement$talents$c$qualite_cours$en extends Traductions$recrutement$talents$c$qualite_cours$fr {
+	_Traductions$recrutement$talents$c$qualite_cours$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Class observation and quality';
+	@override String get description => 'Observe sessions and help improve them.';
+	@override String get exemple => 'Attend a session, give written feedback';
+}
+
+// Path: recrutement.talents.c.tests_niveau
+class _Traductions$recrutement$talents$c$tests_niveau$en extends Traductions$recrutement$talents$c$tests_niveau$fr {
+	_Traductions$recrutement$talents$c$tests_niveau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Placement tests';
+	@override String get description => 'Determine a new student\'s level.';
+	@override String get exemple => 'Listen to a new student recite before they join a class';
+}
+
+// Path: recrutement.talents.c.accompagnement_enfants
+class _Traductions$recrutement$talents$c$accompagnement_enfants$en extends Traductions$recrutement$talents$c$accompagnement_enfants$fr {
+	_Traductions$recrutement$talents$c$accompagnement_enfants$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Support for children';
+	@override String get description => 'Help children who need particular attention.';
+	@override String get exemple => 'Child psychology, special needs, very shy children';
+}
+
+// Path: recrutement.talents.c.developpement
+class _Traductions$recrutement$talents$c$developpement$en extends Traductions$recrutement$talents$c$developpement$fr {
+	_Traductions$recrutement$talents$c$developpement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Web or mobile development';
+	@override String get description => 'Program websites and apps.';
+	@override String get exemple => 'A website, an app, an internal tool';
+}
+
+// Path: recrutement.talents.c.assistance_technique
+class _Traductions$recrutement$talents$c$assistance_technique$en extends Traductions$recrutement$talents$c$assistance_technique$fr {
+	_Traductions$recrutement$talents$c$assistance_technique$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Technical support for families and teachers';
+	@override String get description => 'Troubleshoot remotely for people with a technical problem.';
+	@override String get exemple => 'Help sign in, adjust the sound or the camera';
+}
+
+// Path: recrutement.talents.c.donnees_tableurs
+class _Traductions$recrutement$talents$c$donnees_tableurs$en extends Traductions$recrutement$talents$c$donnees_tableurs$fr {
+	_Traductions$recrutement$talents$c$donnees_tableurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Data and spreadsheets';
+	@override String get description => 'Organize figures and turn them into clear tables.';
+	@override String get exemple => 'A tracking table, statistics, a report';
+}
+
+// Path: recrutement.talents.c.autre
+class _Traductions$recrutement$talents$c$autre$en extends Traductions$recrutement$talents$c$autre$fr {
+	_Traductions$recrutement$talents$c$autre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Other area';
+	@override String get description => 'A skill that is not in the list.';
+}
+
+// Path: recrutement.talents.niveaux.debutant
+class _Traductions$recrutement$talents$niveaux$debutant$en extends Traductions$recrutement$talents$niveaux$debutant$fr {
+	_Traductions$recrutement$talents$niveaux$debutant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'I\'m a beginner';
+	@override String get description => 'You know the basics and are still learning.';
+}
+
+// Path: recrutement.talents.niveaux.experience
+class _Traductions$recrutement$talents$niveaux$experience$en extends Traductions$recrutement$talents$niveaux$experience$fr {
+	_Traductions$recrutement$talents$niveaux$experience$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'I have experience';
+	@override String get description => 'You have already done it several times, for yourself or for others.';
+}
+
+// Path: recrutement.talents.niveaux.metier
+class _Traductions$recrutement$talents$niveaux$metier$en extends Traductions$recrutement$talents$niveaux$metier$fr {
+	_Traductions$recrutement$talents$niveaux$metier$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'It\'s my profession';
+	@override String get description => 'You do it, or have done it, as a profession.';
+}
+
+// Path: recrutement.talents.disponibilite.quelques_heures
+class _Traductions$recrutement$talents$disponibilite$quelques_heures$en extends Traductions$recrutement$talents$disponibilite$quelques_heures$fr {
+	_Traductions$recrutement$talents$disponibilite$quelques_heures$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'A few hours a week';
+	@override String get description => 'Light help, alongside your other activities.';
+}
+
+// Path: recrutement.talents.disponibilite.mi_temps
+class _Traductions$recrutement$talents$disponibilite$mi_temps$en extends Traductions$recrutement$talents$disponibilite$mi_temps$fr {
+	_Traductions$recrutement$talents$disponibilite$mi_temps$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Half-time';
+	@override String get description => 'About half of a full-time job.';
+}
+
+// Path: recrutement.talents.disponibilite.plus
+class _Traductions$recrutement$talents$disponibilite$plus$en extends Traductions$recrutement$talents$disponibilite$plus$fr {
+	_Traductions$recrutement$talents$disponibilite$plus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'More than half-time';
+	@override String get description => 'A large part of your time.';
+}
+
+// Path: recrutement.talents.disponibilite.pas_maintenant
+class _Traductions$recrutement$talents$disponibilite$pas_maintenant$en extends Traductions$recrutement$talents$disponibilite$pas_maintenant$fr {
+	_Traductions$recrutement$talents$disponibilite$pas_maintenant$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Not for now';
+	@override String get description => 'You just want the academy to know your talents.';
+}
+
 // Path: classe.entree.demo.roles
 class _Traductions$classe$entree$demo$roles$en extends Traductions$classe$entree$demo$roles$fr {
 	_Traductions$classe$entree$demo$roles$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -14118,6 +15686,213 @@ class _Traductions$courriels$admin$adresses$champs$en extends Traductions$courri
 	@override String get type => 'Type';
 }
 
+// Path: candidatsFlux.importFormulaires.depot.noms
+class _Traductions$candidatsFlux$importFormulaires$depot$noms$en extends Traductions$candidatsFlux$importFormulaires$depot$noms$fr {
+	_Traductions$candidatsFlux$importFormulaires$depot$noms$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'This file will be saved as';
+	@override String ligne({required Object classeur, required Object onglet}) => 'Workbook "${classeur}", tab "${onglet}"';
+	@override String get aide => 'These two names are used to recognize each answer. If you replay the same corrected file later, keep exactly the same names: no answer will be added twice.';
+	@override String get corriger => 'Correct these names';
+	@override String get garder => 'Keep these names';
+	@override String get classeur => 'Workbook name';
+	@override String get onglet => 'Tab name';
+	@override String get ongletManquant => 'The file name does not give the tab. Enter it to continue.';
+	@override String get invalide => 'A name cannot be empty, exceed 200 characters or contain the vertical bar. Correct it to continue.';
+}
+
+// Path: candidatsFlux.importFormulaires.fichier.cause
+class _Traductions$candidatsFlux$importFormulaires$fichier$cause$en extends Traductions$candidatsFlux$importFormulaires$fichier$cause$fr {
+	_Traductions$candidatsFlux$importFormulaires$fichier$cause$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get guillemetNonFerme => 'an opening quotation mark is never closed';
+	@override String get tropVolumineux => 'the file exceeds 5 MB';
+	@override String get malForme => 'the formatting is not that of a CSV export';
+	@override String get inconnue => 'its content is not that of a CSV export';
+}
+
+// Path: candidatsFlux.importFormulaires.colonnes.libelles
+class _Traductions$candidatsFlux$importFormulaires$colonnes$libelles$en extends Traductions$candidatsFlux$importFormulaires$colonnes$libelles$fr {
+	_Traductions$candidatsFlux$importFormulaires$colonnes$libelles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'How answers are read';
+	@override String get texte => 'Multiple-choice answers (gender, languages, memorization level, possible start) are read using Rewayah\'s table of labels. A label that is not in it is flagged row by row, at the "Errors" step.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.nature
+class _Traductions$candidatsFlux$importFormulaires$doublons$nature$en extends Traductions$candidatsFlux$importFormulaires$doublons$nature$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$nature$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get courriel => 'Same email';
+	@override String get telephone => 'Same phone';
+	@override String get courrielEtTelephone => 'Same email and same phone';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.etat
+class _Traductions$candidatsFlux$importFormulaires$doublons$etat$en extends Traductions$candidatsFlux$importFormulaires$doublons$etat$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get recente => 'The most recent is kept';
+	@override String get base => 'The row already saved is kept';
+	@override String ligne({required Object ligne}) => 'Row ${ligne} kept';
+	@override String get distinctes => 'Different people';
+	@override String get enregistre => 'Choice already saved';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$en extends Traductions$candidatsFlux$importFormulaires$doublons$option$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$recente$en recente = _Traductions$candidatsFlux$importFormulaires$doublons$option$recente$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$base$en base = _Traductions$candidatsFlux$importFormulaires$doublons$option$base$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$en enregistre = _Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$en ligne = _Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$en distinctes = _Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$en._(_root);
+}
+
+// Path: candidatsFlux.importFormulaires.apercu.marque
+class _Traductions$candidatsFlux$importFormulaires$apercu$marque$en extends Traductions$candidatsFlux$importFormulaires$apercu$marque$fr {
+	_Traductions$candidatsFlux$importFormulaires$apercu$marque$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get courrielAObtenir => 'Email to obtain';
+	@override String get indicatifAConfirmer => 'Country code to confirm';
+}
+
+// Path: candidatsFlux.importFormulaires.controle.aCorriger
+class _Traductions$candidatsFlux$importFormulaires$controle$aCorriger$en extends Traductions$candidatsFlux$importFormulaires$controle$aCorriger$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$aCorriger$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'To correct';
+	@override String get aide => 'These rows will not be imported.';
+}
+
+// Path: candidatsFlux.importFormulaires.controle.avertissements
+class _Traductions$candidatsFlux$importFormulaires$controle$avertissements$en extends Traductions$candidatsFlux$importFormulaires$controle$avertissements$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$avertissements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'To look at';
+	@override String get aide => 'These rows are imported, with a point to check.';
+}
+
+// Path: candidatsFlux.importFormulaires.controle.ignorees
+class _Traductions$candidatsFlux$importFormulaires$controle$ignorees$en extends Traductions$candidatsFlux$importFormulaires$controle$ignorees$fr {
+	_Traductions$candidatsFlux$importFormulaires$controle$ignorees$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Ignored';
+	@override String get aide => 'Empty rows or rows repeated identically.';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$en extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get question => 'What count did you expect?';
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$en fichier2110 = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$en autres = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$en._(_root);
+	@override late final _Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$en aucun = _Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$en._(_root);
+	@override String get lignes => 'Rows expected';
+	@override String get personnes => 'People expected';
+	@override String get aide => 'A whole number. Leave empty what you do not compare.';
+}
+
+// Path: candidatsFlux.importFormulaires.confirmation.resume
+class _Traductions$candidatsFlux$importFormulaires$confirmation$resume$en extends Traductions$candidatsFlux$importFormulaires$confirmation$resume$fr {
+	_Traductions$candidatsFlux$importFormulaires$confirmation$resume$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What will be saved';
+	@override String get fichier => 'File';
+	@override String doublons({required Object choisis, required Object total}) => 'Duplicates: ${choisis} cases decided by you out of ${total}. For the others, the most recent row is kept.';
+	@override String get aucunDoublon => 'No probable duplicate to resolve.';
+}
+
+// Path: candidatsFlux.importFormulaires.confirmation.garanties
+class _Traductions$candidatsFlux$importFormulaires$confirmation$garanties$en extends Traductions$candidatsFlux$importFormulaires$confirmation$garanties$fr {
+	_Traductions$candidatsFlux$importFormulaires$confirmation$garanties$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What the import does not do';
+	@override String get texte => 'It creates no account, no invitation and no application, and sends no message. It saves answers used to recognize people when they sign up. Replaying the same file adds nothing.';
+}
+
+// Path: candidatsFlux.importFormulaires.rapport.compteurs
+class _Traductions$candidatsFlux$importFormulaires$rapport$compteurs$en extends Traductions$candidatsFlux$importFormulaires$rapport$compteurs$fr {
+	_Traductions$candidatsFlux$importFormulaires$rapport$compteurs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouvelles => 'Saved.';
+	@override String get dejaConnues => 'Already saved: nothing changed.';
+	@override String get aCorriger => 'Unreadable rows: not imported.';
+}
+
+// Path: candidatsFlux.importFormulaires.rapport.lignes
+class _Traductions$candidatsFlux$importFormulaires$rapport$lignes$en extends Traductions$candidatsFlux$importFormulaires$rapport$lignes$fr {
+	_Traductions$candidatsFlux$importFormulaires$rapport$lignes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Row by row';
+	@override String get aide => 'Each row is recognized by the date of its answer, never by the person\'s name.';
+	@override String reference({required Object reference}) => 'Answer of ${reference}';
+	@override String get sansReference => 'No reference';
+}
+
+// Path: candidatsFlux.invitationsPersonnelles.lienCopie.refus
+class _Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$en extends Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$fr {
+	_Traductions$candidatsFlux$invitationsPersonnelles$lienCopie$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ligneIntrouvable => 'This application no longer awaits a link: it changed in the meantime. Close, then read it again.';
+	@override String get adresseConnue => 'This person already has an address: their code goes out with the sending of personal codes.';
+	@override String get adresseRequise => 'Enter the email address the person will use.';
+	@override String get emailInvalide => 'This address does not look like an email address. Check it.';
+	@override String get dejaInscrit => 'An account already exists at this address: the person can sign in with it.';
+	@override String get adresseUtilisee => 'Another person already uses this address. Ask for an address that belongs to them alone.';
+	@override String get desinscrit => 'This address asked to stop receiving recruitment messages.';
+}
+
 // Path: calendrier.dates.notification.conflit
 class _Traductions$calendrier$dates$notification$conflit$en extends Traductions$calendrier$dates$notification$conflit$fr {
 	_Traductions$calendrier$dates$notification$conflit$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -14438,6 +16213,96 @@ class _Traductions$recrutement$parcours$q$compteBancaire$options$en extends Trad
 	// Translations
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$oui$en oui = _Traductions$recrutement$parcours$q$compteBancaire$options$oui$en._(_root);
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$options$non$en non = _Traductions$recrutement$parcours$q$compteBancaire$options$non$en._(_root);
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.recente
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$recente$en extends Traductions$candidatsFlux$importFormulaires$doublons$option$recente$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$recente$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object ligne}) => 'Keep the most recent (row ${ligne})';
+	@override String get description => 'The other rows stay in the history, nothing is deleted. This is what Rewayah does without your choice.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.base
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$base$en extends Traductions$candidatsFlux$importFormulaires$doublons$option$base$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$base$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Keep the row already saved';
+	@override String get description => 'A previous import already kept a row for this person. The rows in this file stay in the history.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.enregistre
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$en extends Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$enregistre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Keep your previous choice';
+	@override String get distinctes => 'You already said these are different people.';
+	@override String get ligne => 'You already chose the row to keep for this person.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.ligne
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$en extends Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$ligne$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String titre({required Object ligne}) => 'Keep row ${ligne} instead';
+	@override String get description => 'This row becomes the person\'s answer. The others go into the history.';
+}
+
+// Path: candidatsFlux.importFormulaires.doublons.option.distinctes
+class _Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$en extends Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$fr {
+	_Traductions$candidatsFlux$importFormulaires$doublons$option$distinctes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Different people';
+	@override String get description => 'Choose this if these rows come from different people who share a contact. Each keeps their answer.';
+	@override String get exemple => 'two people from the same family who answered with the same number';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus.fichier2110
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$en extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$fichier2110$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'The file of 21 October';
+	@override String get description => '440 rows, that is 409 people once duplicates are merged: the count noted in the workbook that day.';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus.autres
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$en extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$autres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Other numbers';
+	@override String get description => 'You know the number of rows or people in your file. Enter it: Rewayah flags any difference.';
+}
+
+// Path: candidatsFlux.importFormulaires.comptes.attendus.aucun
+class _Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$en extends Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$fr {
+	_Traductions$candidatsFlux$importFormulaires$comptes$attendus$aucun$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'No count to compare';
+	@override String get description => 'You confirm by relying on the preview.';
 }
 
 // Path: recrutement.parcours.q.niveauMemorisationDeclare.options.aucune
@@ -16971,6 +18836,50 @@ extension on TraductionsEn {
 			'recrutement.nomLatin.plusTard' => 'Later',
 			'recrutement.nomLatin.erreur' => 'Write your name using Latin alphabet letters (a, b, c) to continue.',
 			'recrutement.nomLatin.echec' => 'Your name is not confirmed. Try again in a moment.',
+			'recrutement.invitations.titre' => 'Invite a teacher',
+			'recrutement.invitations.onglet' => 'Invitations',
+			'recrutement.invitations.sousTitre' => 'A teacher can sign up only with an invitation code. The code works once and expires.',
+			'recrutement.invitations.champEmail' => 'Teacher\'s email address',
+			'recrutement.invitations.aideEmail' => 'The code is created for this address. Pass it on to the person: it is not sent automatically.',
+			'recrutement.invitations.inviter' => 'Create the invitation',
+			'recrutement.invitations.emailInvalide' => 'This address does not look like an email address. Check it, then try again.',
+			'recrutement.invitations.compteExistant' => 'An account already exists for this address: no invitation is needed.',
+			'recrutement.invitations.dejaInvite' => 'An invitation is already active for this address. It is in the list below.',
+			'recrutement.invitations.nonAutorise' => 'You are not allowed to invite a teacher. Contact the management.',
+			'recrutement.invitations.horsLigne' => 'The invitation was not created. Try again in a moment.',
+			'recrutement.invitations.erreur' => 'The creation of the invitation is not confirmed. It may exist: look at the list before trying again.',
+			'recrutement.invitations.creee' => ({required Object code}) => 'Invitation created. Pass this code on to the teacher: ${code}',
+			'recrutement.invitations.liste' => 'Invitations',
+			'recrutement.invitations.vide' => 'No invitation yet',
+			'recrutement.invitations.videDetail' => 'Invite a teacher with their email address: the code appears here.',
+			'recrutement.invitations.erreurListe' => 'The invitations could not be read. Try again in a moment.',
+			'recrutement.invitations.sansDonnees' => 'The invitations cannot be read offline.',
+			'recrutement.invitations.indisponibleTitre' => 'Teacher invitations',
+			'recrutement.invitations.indisponiblePhrase' => 'This feature will be available once the server is connected.',
+			'recrutement.invitations.etat.active' => 'Active',
+			'recrutement.invitations.etat.utilisee' => 'Used',
+			'recrutement.invitations.etat.expiree' => 'Expired',
+			'recrutement.invitations.etat.revoquee' => 'Revoked',
+			'recrutement.invitations.expireLe' => ({required Object date}) => 'Expires on ${date}',
+			'recrutement.invitations.utiliseeLe' => ({required Object date}) => 'Used on ${date}',
+			'recrutement.invitations.revoquer' => 'Revoke',
+			'recrutement.invitations.revoquerPour' => ({required Object email}) => 'Revoke the invitation for ${email}',
+			'recrutement.invitations.revoquerQuestion' => ({required Object email}) => 'Revoke the invitation for ${email}?',
+			'recrutement.invitations.revoquerConsequence' => 'The code will no longer work. You can invite the same address again.',
+			'recrutement.invitations.revoquerEchec' => 'The revocation is not confirmed. Refresh the list before trying again.',
+			'recrutement.invitations.comptable.titrePage' => 'Invite a person',
+			'recrutement.invitations.comptable.sousTitrePage' => 'Choose the person\'s role, then enter their address. Each code works once and expires.',
+			'recrutement.invitations.comptable.choixQuestion' => 'What role will this person have?',
+			'recrutement.invitations.comptable.enseignantTitre' => 'A teacher',
+			'recrutement.invitations.comptable.enseignantExplication' => 'They lead classes. After signing up, they sign their contract before their first session.',
+			'recrutement.invitations.comptable.comptableTitre' => 'An accountant',
+			'recrutement.invitations.comptable.comptableExplication' => 'They follow payments, collections and cash flow. They lead no class.',
+			'recrutement.invitations.comptable.champEmail' => 'Accountant\'s email address',
+			'recrutement.invitations.comptable.creee' => ({required Object code}) => 'Invitation created. Pass this code on to the accountant: ${code}',
+			'recrutement.invitations.comptable.doubleVerification' => 'Nothing was sent: inviting an accountant requires two-step verification. Turn it on in Account > Security, then try again.',
+			'recrutement.invitations.comptable.liste' => 'Accountant invitations',
+			'recrutement.invitations.comptable.vide' => 'No accountant invitation yet',
+			'recrutement.invitations.comptable.videDetail' => 'Invite an accountant with their email address: the code appears here.',
 			'recrutement.candidat.titre' => 'Your code',
 			'recrutement.candidat.intro' => 'To sign up as a teacher, enter the invitation code you received from the management.',
 			'recrutement.candidat.champ' => 'Invitation code',
@@ -16987,6 +18896,8 @@ extension on TraductionsEn {
 			'recrutement.candidat.dejaUtiliseeDetail' => 'If it was you, sign in with the account you created.',
 			'recrutement.candidat.seConnecter' => 'Sign in',
 			'recrutement.candidat.inconnue' => 'Code not recognised.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.candidat.inconnueDetail' => 'Check the code, then enter it again.',
 			'recrutement.candidat.ressaisir' => 'Enter another code',
 			'recrutement.candidat.horsLigne' => 'The code was not checked. Try again in a moment.',
@@ -17023,6 +18934,28 @@ extension on TraductionsEn {
 			'recrutement.signature.sansDonnees' => 'The contract cannot be read offline.',
 			'recrutement.signature.indisponible' => 'Signing the contract will be available once the server is connected.',
 			'recrutement.signature.retour' => 'Back',
+			'recrutement.statuts.titre' => 'Contract and acknowledgement',
+			'recrutement.statuts.contrat' => 'Teacher contract',
+			'recrutement.statuts.accuse' => 'Acknowledgement of recording and review',
+			'recrutement.statuts.signeCourante' => 'Signed, current version',
+			'recrutement.statuts.signeAncienne' => ({required Object version}) => 'Signed, old version ${version}',
+			'recrutement.statuts.nonSigne' => 'Not signed',
+			'recrutement.statuts.bloque' => 'Contract not signed at the current version: the file cannot be approved until the contract and the acknowledgement are signed at the current version.',
+			'recrutement.statuts.refuse' => 'Contract not signed at the current version. The file was not activated: the teacher must sign, then refresh the file.',
+			'recrutement.statuts.manqueContrat' => 'Missing: the contract.',
+			'recrutement.statuts.manqueAccuse' => 'Missing: the acknowledgement.',
+			'recrutement.statuts.manqueLesDeux' => 'Missing: the contract and the acknowledgement.',
+			'recrutement.statuts.inviter' => 'Invite a teacher',
+			'recrutement.salles.examen' => 'Exam room',
+			'recrutement.salles.verification' => 'Verification and interview room',
+			'recrutement.salles.prets' => 'Ready-to-teach room',
+			'recrutement.sallesCandidat.candidature' => 'Your application',
+			'recrutement.sallesCandidat.connaissance' => 'Let\'s get to know each other',
+			'recrutement.sallesCandidat.equipe' => 'Welcome to the team',
+			'recrutement.paiement.inconnu' => 'No payout method declared',
+			'recrutement.paiement.aVerifier' => 'Payout method to be checked by the academy',
+			'recrutement.paiement.compatible' => 'Payout method confirmed',
+			'recrutement.paiement.incompatible' => 'No payout method possible for now',
 			'recrutement.cadre.titre' => 'The religious and educational framework',
 			'recrutement.cadre.caseAccord' => 'I confirm I have read this framework and I adhere to it.',
 			'recrutement.cadre.accepter' => 'Accept the framework',
@@ -17031,8 +18964,6 @@ extension on TraductionsEn {
 			'recrutement.cadre.refuse' => 'This framework cannot be accepted for now: your application is no longer at this step.',
 			'recrutement.portail.aCompleterTitre' => 'Your application needs to be completed',
 			'recrutement.portail.aCompleter' => 'To complete',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.portail.elementCadre' => 'The religious and educational framework',
 			'recrutement.portail.etatAEnvoyer' => 'To send',
 			'recrutement.portail.completer' => 'Complete my application',
@@ -17092,6 +19023,36 @@ extension on TraductionsEn {
 			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'An applicant has booked an interview you conduct, on ${quand}.',
 			'recrutement.entretien.notifications.rappelDirection' => 'You are conducting an interview that starts soon.',
 			'recrutement.entretien.notifications.rappelDirectionQuand' => ({required Object quand}) => 'You are conducting an interview on ${quand}.',
+			'recrutement.partage.titre' => 'Help someone learn the word of Allah.',
+			'recrutement.partage.titreFemme' => 'Help a sister learn the word of Allah.',
+			'recrutement.partage.facultatif' => 'Optional: sharing changes nothing about your application.',
+			'recrutement.partage.langueCarte' => 'Card language',
+			'recrutement.partage.apercu' => 'Preview of the card to share',
+			'recrutement.partage.partager' => 'I\'m sharing',
+			'recrutement.partage.partagerLaCarte' => 'Share the offer card',
+			'recrutement.partage.enregistrer' => 'Save the image',
+			'recrutement.partage.copier' => 'Copy the link',
+			'recrutement.partage.lien' => ({required Object lien}) => 'Offer link: ${lien}',
+			'recrutement.partage.sansMenu' => 'This device does not offer direct sharing. Save the image to send it yourself, or copy the link.',
+			'recrutement.partage.lienSeul' => 'This device shares the link without the image. Save the image if you want to send it too.',
+			'recrutement.partage.fait.partage' => 'The card is shared.',
+			'recrutement.partage.fait.enregistre' => 'The image is saved.',
+			'recrutement.partage.fait.copie' => 'The link is copied.',
+			'recrutement.partage.echec.partage' => 'The share menu did not open: your device refused it this time. You can save the image or copy the link.',
+			'recrutement.partage.echec.enregistrement' => 'Saving the image is not confirmed. Try again, or copy the link.',
+			'recrutement.partage.echec.copie' => 'The link could not be copied. Select it on the page to copy it by hand.',
+			'recrutement.partage.echec.carte' => 'The card could not be prepared. Try again in a moment.',
+			'recrutement.partage.nonOuvert' => 'The card to share is not available yet. Come back to this page later.',
+			'recrutement.retrait.lien' => 'Withdraw my application',
+			'recrutement.retrait.question' => 'Withdraw your application?',
+			'recrutement.retrait.consequence' => 'Only the academy will be able to reopen your application.',
+			'recrutement.retrait.consequenceEntretien' => 'Your interview will be cancelled. Only the academy will be able to reopen your application.',
+			'recrutement.retrait.confirmer' => 'Withdraw my application',
+			'recrutement.retrait.echec' => 'The withdrawal did not go through. Try again in a moment.',
+			'recrutement.retrait.incertain' => 'Your withdrawal may not have reached Rewayah. Try again: it will not be recorded twice.',
+			'recrutement.retrait.horsLigne' => 'The withdrawal can be done when the connection returns.',
+			'recrutement.retrait.interdit' => 'Your application can no longer be withdrawn from this page.',
+			'recrutement.retrait.conflit' => 'Your application has changed since this page was opened. Read it again, then try again.',
 			'recrutement.questionnaire.titre' => 'Your application',
 			'recrutement.questionnaire.conditionsTitre' => 'Pay terms',
 			'recrutement.questionnaire.part' => ({required Object part}) => 'Your share: ${part} of the public price, for each student present.',
@@ -17449,6 +19410,8 @@ extension on TraductionsEn {
 			'recrutement.parcours.q.compteBancaire.titre' => 'Do you have a bank account to receive your payment, in your name or a relative\'s?',
 			'recrutement.parcours.q.compteBancaire.explication' => 'Pay is paid by bank transfer where the academy has confirmed it. Your details are only requested before the first payment.',
 			'recrutement.parcours.q.compteBancaire.court' => 'Bank account',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'Yes, in my name or a relative\'s',
 			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'An account at a bank, in your name or a relative\'s.',
 			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'Bank transfer can be your payment method, if the academy has confirmed it in your country.',
@@ -17479,6 +19442,162 @@ extension on TraductionsEn {
 			'recrutement.parcours.choisirJour' => 'Choose at least one day to continue.',
 			'recrutement.parcours.choisirHeure' => 'Choose at least one start time to continue.',
 			'recrutement.parcours.choisirHeureJour' => ({required Object jour}) => 'Choose at least one start time for ${jour}.',
+			'recrutement.talents.titre' => 'Your other talents',
+			'recrutement.talents.tuile.facultatif' => 'Optional. This changes nothing about your teacher application.',
+			'recrutement.talents.tuile.enregistre' => 'Your answers are saved. You can edit them.',
+			'recrutement.talents.tuile.enregistreClose' => 'Your answers are saved. You can withdraw them.',
+			'recrutement.talents.intro.texte' => 'The academy is growing. It will need help to organize itself, support families, keep its accounts or make itself known. If you can do something else, tell us: we will contact you first, before posting an announcement.',
+			'recrutement.talents.intro.facultatif.titre' => 'Optional',
+			'recrutement.talents.intro.facultatif.texte' => 'This changes nothing about your teacher application.',
+			'recrutement.talents.intro.usage.titre' => 'What we do with it',
+			'recrutement.talents.intro.usage.texte' => 'Your answers are used only to offer you an academy mission. The management reads them, and only the management.',
+			'recrutement.talents.intro.liberte.titre' => 'You stay in control',
+			'recrutement.talents.intro.liberte.texte' => 'You can edit or withdraw your answers whenever you want, and withdraw the agreement that allows us to contact you.',
+			'recrutement.talents.intro.missions.titre' => 'Each mission has its conditions',
+			'recrutement.talents.intro.missions.texte' => 'The academy presents them to you when it contacts you. This page promises no mission.',
+			'recrutement.talents.competences.titre' => 'What else can you do?',
+			'recrutement.talents.competences.explication' => 'Tap all the skills you have. Each card gives an example. If yours is not there, choose "Other area" at the bottom of the list.',
+			'recrutement.talents.competences.familles.communication' => 'Communication and image',
+			'recrutement.talents.competences.familles.administration' => 'Administration and organization',
+			'recrutement.talents.competences.familles.financesDroit' => 'Finance and law',
+			'recrutement.talents.competences.familles.pedagogie' => 'Teaching',
+			'recrutement.talents.competences.familles.technique' => 'Technical',
+			'recrutement.talents.competences.familles.autre' => 'Other area',
+			'recrutement.talents.competences.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'No skill chosen', one: '${n} skill chosen', other: '${n} skills chosen', ), 
+			'recrutement.talents.competences.nonProposee' => 'This skill is no longer offered. You can keep it or untick it.',
+			'recrutement.talents.competences.autreChamp' => 'Your area, in a few words',
+			'recrutement.talents.competences.autreAide' => 'One line is enough.',
+			'recrutement.talents.competences.manque' => 'Choose at least one skill to continue.',
+			'recrutement.talents.competences.autreVide' => 'Say in a few words which area it is, or untick "Other area".',
+			'recrutement.talents.competences.autreTropLong' => ({required Object max}) => 'Your text is too long: ${max} characters at most. Shorten it.',
+			'recrutement.talents.c.reseaux_sociaux.libelle' => 'Social media management',
+			'recrutement.talents.c.reseaux_sociaux.description' => 'Run the academy\'s social media accounts.',
+			'recrutement.talents.c.reseaux_sociaux.exemple' => 'Post every week, answer messages and comments',
+			'recrutement.talents.c.relations_publiques.libelle' => 'Public relations and partnerships',
+			'recrutement.talents.c.relations_publiques.description' => 'Make the academy known to those who can support it.',
+			'recrutement.talents.c.relations_publiques.exemple' => 'Present the academy to a mosque, an association or a media outlet',
+			'recrutement.talents.c.design_graphique.libelle' => 'Graphic design',
+			'recrutement.talents.c.design_graphique.description' => 'Create clear, polished visuals.',
+			'recrutement.talents.c.design_graphique.exemple' => 'A poster, a card to share, a visual for social media',
+			'recrutement.talents.c.montage_video.libelle' => 'Video editing and animation',
+			'recrutement.talents.c.montage_video.description' => 'Edit and animate short videos.',
+			'recrutement.talents.c.montage_video.exemple' => 'Cut a video, add subtitles, animate a title',
+			'recrutement.talents.c.photographie.libelle' => 'Photography and shooting',
+			'recrutement.talents.c.photographie.description' => 'Take quality photos, videos or sound recordings.',
+			'recrutement.talents.c.photographie.exemple' => 'Photograph an event, record a short presentation',
+			'recrutement.talents.c.redaction_contenus.libelle' => 'Writing and content creation',
+			'recrutement.talents.c.redaction_contenus.description' => 'Write accurate texts that are pleasant to read.',
+			'recrutement.talents.c.redaction_contenus.exemple' => 'An article, a text for social media, a newsletter',
+			'recrutement.talents.c.publicite_en_ligne.libelle' => 'Online advertising',
+			'recrutement.talents.c.publicite_en_ligne.description' => 'Prepare and follow advertising campaigns on the internet.',
+			'recrutement.talents.c.publicite_en_ligne.exemple' => 'Choose the target audience, launch a campaign, follow the results',
+			'recrutement.talents.c.traduction.libelle' => 'Translation',
+			'recrutement.talents.c.traduction.description' => 'Translate texts from one language to another.',
+			'recrutement.talents.c.traduction.exemple' => 'Messages to families, subtitles, a text for the website',
+			'recrutement.talents.c.assistanat.libelle' => 'Administrative or executive assistance',
+			'recrutement.talents.c.assistanat.description' => 'Help the management organize day to day.',
+			'recrutement.talents.c.assistanat.exemple' => 'Keep a diary, write letters, follow files',
+			'recrutement.talents.c.coordination_groupe.libelle' => 'Community coordination',
+			'recrutement.talents.c.coordination_groupe.description' => 'Run and support a community of people, for example the sisters\' or the parents\'.',
+			'recrutement.talents.c.coordination_groupe.exemple' => 'Welcome newcomers, answer questions, circulate information',
+			'recrutement.talents.c.accueil_familles.libelle' => 'Family welcome and follow-up',
+			'recrutement.talents.c.accueil_familles.description' => 'Be the first contact for families who sign up.',
+			'recrutement.talents.c.accueil_familles.exemple' => 'Answer a question, support a registration, check in',
+			'recrutement.talents.c.gestion_projet.libelle' => 'Project planning and management',
+			'recrutement.talents.c.gestion_projet.description' => 'Organize teamwork from start to finish.',
+			'recrutement.talents.c.gestion_projet.exemple' => 'Draw up a schedule, share out tasks, follow progress',
+			'recrutement.talents.c.ressources_humaines.libelle' => 'Human resources and recruitment',
+			'recrutement.talents.c.ressources_humaines.description' => 'Choose and welcome the people who join the team.',
+			'recrutement.talents.c.ressources_humaines.exemple' => 'Conduct an interview, compare applications, welcome a new teacher',
+			'recrutement.talents.c.comptabilite.libelle' => 'Accounting',
+			'recrutement.talents.c.comptabilite.description' => 'Keep the academy\'s accounts.',
+			'recrutement.talents.c.comptabilite.exemple' => 'Record invoices, follow payments, prepare a balance sheet',
+			'recrutement.talents.c.gestion_financiere.libelle' => 'Financial management',
+			'recrutement.talents.c.gestion_financiere.description' => 'Follow the money and prepare decisions.',
+			'recrutement.talents.c.gestion_financiere.exemple' => 'Build a budget, follow cash flow',
+			'recrutement.talents.c.juridique_donnees.libelle' => 'Legal and data protection',
+			'recrutement.talents.c.juridique_donnees.description' => 'Make sure the academy complies with the law and protects personal data.',
+			'recrutement.talents.c.juridique_donnees.exemple' => 'Review a contract, write terms of use, protect privacy',
+			'recrutement.talents.c.conception_programmes.libelle' => 'Curriculum and materials design',
+			'recrutement.talents.c.conception_programmes.description' => 'Prepare what students learn, and the materials to teach it.',
+			'recrutement.talents.c.conception_programmes.exemple' => 'A lesson plan, a worksheet, a series of exercises',
+			'recrutement.talents.c.formation_enseignants.libelle' => 'Teacher training and support',
+			'recrutement.talents.c.formation_enseignants.description' => 'Help teachers improve.',
+			'recrutement.talents.c.formation_enseignants.exemple' => 'Train a new teacher, advise them after a session',
+			'recrutement.talents.c.qualite_cours.libelle' => 'Class observation and quality',
+			'recrutement.talents.c.qualite_cours.description' => 'Observe sessions and help improve them.',
+			'recrutement.talents.c.qualite_cours.exemple' => 'Attend a session, give written feedback',
+			'recrutement.talents.c.tests_niveau.libelle' => 'Placement tests',
+			'recrutement.talents.c.tests_niveau.description' => 'Determine a new student\'s level.',
+			'recrutement.talents.c.tests_niveau.exemple' => 'Listen to a new student recite before they join a class',
+			'recrutement.talents.c.accompagnement_enfants.libelle' => 'Support for children',
+			'recrutement.talents.c.accompagnement_enfants.description' => 'Help children who need particular attention.',
+			'recrutement.talents.c.accompagnement_enfants.exemple' => 'Child psychology, special needs, very shy children',
+			'recrutement.talents.c.developpement.libelle' => 'Web or mobile development',
+			'recrutement.talents.c.developpement.description' => 'Program websites and apps.',
+			'recrutement.talents.c.developpement.exemple' => 'A website, an app, an internal tool',
+			'recrutement.talents.c.assistance_technique.libelle' => 'Technical support for families and teachers',
+			'recrutement.talents.c.assistance_technique.description' => 'Troubleshoot remotely for people with a technical problem.',
+			'recrutement.talents.c.assistance_technique.exemple' => 'Help sign in, adjust the sound or the camera',
+			'recrutement.talents.c.donnees_tableurs.libelle' => 'Data and spreadsheets',
+			'recrutement.talents.c.donnees_tableurs.description' => 'Organize figures and turn them into clear tables.',
+			'recrutement.talents.c.donnees_tableurs.exemple' => 'A tracking table, statistics, a report',
+			'recrutement.talents.c.autre.libelle' => 'Other area',
+			'recrutement.talents.c.autre.description' => 'A skill that is not in the list.',
+			'recrutement.talents.niveaux.titre' => 'What is your level?',
+			'recrutement.talents.niveaux.explication' => 'For each skill, say where you stand. This helps the academy offer you a mission that suits you.',
+			'recrutement.talents.niveaux.legende' => 'How to choose',
+			'recrutement.talents.niveaux.debutant.libelle' => 'I\'m a beginner',
+			'recrutement.talents.niveaux.debutant.description' => 'You know the basics and are still learning.',
+			'recrutement.talents.niveaux.experience.libelle' => 'I have experience',
+			'recrutement.talents.niveaux.experience.description' => 'You have already done it several times, for yourself or for others.',
+			'recrutement.talents.niveaux.metier.libelle' => 'It\'s my profession',
+			'recrutement.talents.niveaux.metier.description' => 'You do it, or have done it, as a profession.',
+			'recrutement.talents.niveaux.niveauDe' => ({required Object competence}) => 'Level for ${competence}',
+			'recrutement.talents.niveaux.manque' => ({required Object competence}) => 'Choose your level in "${competence}" to continue.',
+			'recrutement.talents.disponibilite.titre' => 'When could you help?',
+			'recrutement.talents.disponibilite.explication' => 'Say how much time you could give to a mission, alongside teaching. Below, say whether the academy may contact you.',
+			'recrutement.talents.disponibilite.quelques_heures.libelle' => 'A few hours a week',
+			'recrutement.talents.disponibilite.quelques_heures.description' => 'Light help, alongside your other activities.',
+			'recrutement.talents.disponibilite.mi_temps.libelle' => 'Half-time',
+			'recrutement.talents.disponibilite.mi_temps.description' => 'About half of a full-time job.',
+			'recrutement.talents.disponibilite.plus.libelle' => 'More than half-time',
+			'recrutement.talents.disponibilite.plus.description' => 'A large part of your time.',
+			'recrutement.talents.disponibilite.pas_maintenant.libelle' => 'Not for now',
+			'recrutement.talents.disponibilite.pas_maintenant.description' => 'You just want the academy to know your talents.',
+			'recrutement.talents.disponibilite.accord' => 'I agree that the academy may contact me for a mission in these areas.',
+			'recrutement.talents.disponibilite.accordNote' => 'Without this box, the academy reads your answers but offers you no mission.',
+			'recrutement.talents.disponibilite.manque' => 'Choose your availability to continue.',
+			'recrutement.talents.disponibilite.enregistrer' => 'Save my answers',
+			'recrutement.talents.lecture.enregistre' => 'Your answers are saved.',
+			'recrutement.talents.lecture.misesAJour' => ({required Object date}) => 'Last updated on ${date}.',
+			'recrutement.talents.lecture.competences' => 'Your skills',
+			'recrutement.talents.lecture.autreDomaine' => ({required Object texte}) => 'Other area: ${texte}',
+			'recrutement.talents.lecture.disponibilite' => 'Your availability',
+			'recrutement.talents.lecture.contact' => 'Contact for a mission',
+			'recrutement.talents.lecture.contactOui' => 'You agree that the academy may contact you.',
+			'recrutement.talents.lecture.contactNon' => 'You have not given this agreement: the academy will not contact you.',
+			'recrutement.talents.lecture.modifier' => 'Edit my answers',
+			'recrutement.talents.lecture.retirer' => 'Withdraw my answers',
+			'recrutement.talents.lecture.retraitQuestion' => 'Withdraw your answers?',
+			'recrutement.talents.lecture.retraitConsequence' => 'The academy will no longer have your skills or the agreement that allows it to contact you. You can answer again whenever you want.',
+			'recrutement.talents.lecture.retraitConfirmer' => 'Withdraw my answers',
+			'recrutement.talents.lecture.close' => 'Your teacher application is finished: you can no longer edit these answers. You can still withdraw them.',
+			'recrutement.talents.lecture.retire' => 'Your answers are withdrawn.',
+			'recrutement.talents.etats.nonEnvoyeTitre' => 'This step is not open yet',
+			'recrutement.talents.etats.nonEnvoye' => 'It opens when your application is sent. Finish your application first.',
+			'recrutement.talents.etats.closTitre' => 'This step is finished',
+			'recrutement.talents.etats.clos' => 'Your teacher application is no longer in progress: there is nothing to add here.',
+			'recrutement.talents.etats.nonCharge' => 'Your other talents could not be loaded.',
+			'recrutement.talents.erreurs.conflit' => 'Your answers have changed since this page was opened (on another device, for example). Review them, then save again.',
+			'recrutement.talents.erreurs.desactivee' => 'One of the chosen skills is no longer offered: it has been removed from your choice. Review your answers, then save again.',
+			'recrutement.talents.erreurs.invalides' => 'One of your answers is not valid. Review them, then save again.',
+			'recrutement.talents.erreurs.incertain' => 'Your answers may not have reached Rewayah. Try again: they will not be saved twice.',
+			'recrutement.talents.erreurs.horsLigne' => 'Your answers can be saved later, when the connection returns.',
+			'recrutement.talents.erreurs.echec' => 'Your answers could not be saved. Try again in a moment.',
+			'recrutement.talents.erreurs.retraitIncertain' => 'The withdrawal may not have reached Rewayah. Try again: it will not be done twice.',
+			'recrutement.talents.erreurs.retraitHorsLigne' => 'The withdrawal can be done later, when the connection returns.',
+			'recrutement.talents.erreurs.retraitEchec' => 'The withdrawal did not go through. Try again in a moment.',
 			'dossiers.titre' => 'Files to approve',
 			'dossiers.aucun' => 'No file is waiting for approval.',
 			'dossiers.aucunDetail' => 'New files will appear here when they are ready.',
@@ -17545,8 +19664,6 @@ extension on TraductionsEn {
 			'dossiers.pieceNonVisibleDetail' => 'A document was submitted, but the gender rule prevents you from viewing it. A staff member of the same gender as this person must check it.',
 			'dossiers.rienATrancher' => 'Nothing to decide for now',
 			'dossiers.apercu' => 'The submitted document',
-			_ => null,
-		} ?? switch (path) {
 			'dossiers.apercuIndisponible' => 'Preview unavailable',
 			'dossiers.verifications' => 'Checks',
 			'dossiers.pointLisible' => 'The document is readable',
@@ -17807,6 +19924,8 @@ extension on TraductionsEn {
 			'nav.admin.menu' => 'Menu',
 			'nav.compte' => 'My account',
 			'nav.principale' => 'Main navigation',
+			_ => null,
+		} ?? switch (path) {
 			'nav.motSymbole' => 'Rewayah',
 			'nav.logoAccueil' => 'Rewayah Academy, home',
 			'nav.replier' => 'Collapse navigation',
@@ -18059,8 +20178,6 @@ extension on TraductionsEn {
 			'compte.tuteur.pageLegal.textes' => 'Terms and privacy',
 			'historique.titre' => 'History',
 			'historique.detailSeance' => 'Session details',
-			_ => null,
-		} ?? switch (path) {
 			'historique.segments.seances' => 'Sessions',
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'Jan',
@@ -18321,6 +20438,8 @@ extension on TraductionsEn {
 			'notifications.types.mentionStudio' => 'Mention in The Studio',
 			'notifications.types.reponseStudio' => 'Reply in The Studio',
 			'notifications.types.decisionDemandee' => 'Decision requested',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.types.elementAssigne' => 'Assigned item',
 			'notifications.types.annonceInterne' => 'Internal announcement',
 			'notifications.types.evenementContextuel' => 'Event',
@@ -18573,8 +20692,6 @@ extension on TraductionsEn {
 			'classe.indisponiblePhrase' => 'The class details are not yet available here.',
 			'classe.introuvableTitre' => 'This class is not open to this profile',
 			'classe.introuvablePhrase' => 'It may have ended, or it concerns another student in the household.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.disparue' => 'This class no longer exists.',
 			'classe.seance.aucune' => 'No session planned',
 			'classe.seance.aucuneDetail' => ({required Object dePrenom}) => '${dePrenom}\'s next session will appear here as soon as it is scheduled.',
@@ -18835,6 +20952,8 @@ extension on TraductionsEn {
 			'enseignant.journee.pasEncoreRejoint' => ({required Object eleve}) => '${eleve} has not joined the room yet.',
 			'enseignant.journee.coupureDetectee' => ({required Object eleve}) => '${eleve} lost the connection.',
 			'enseignant.journee.revenusDetail' => 'Your estimated pay for the month, class by class.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.journee.revenusLecteur' => 'See your estimated income for the month',
 			'enseignant.journee.coursAnnule' => ({required Object heure}) => 'The ${heure} class is cancelled.',
 			'enseignant.journee.rapportsTitre' => 'Pending reports',
@@ -19087,8 +21206,6 @@ extension on TraductionsEn {
 			'enseignant.profil.verificationEnAttente' => 'Pending',
 			'enseignant.profil.verificationValidee' => 'Approved',
 			'enseignant.profil.verificationRefusee' => 'To redo',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.contratSection' => 'Contract and acknowledgements',
 			'enseignant.profil.contratEnseignant' => 'Teacher contract',
 			'enseignant.profil.contratConditions' => 'Terms of use',
@@ -19349,6 +21466,8 @@ extension on TraductionsEn {
 			'controleur.mfa.videPhrase' => 'Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here. For help, write to the academy\'s administration.',
 			'controleur.mfa.videRetour' => 'I installed the app',
 			'controleur.mfa.seDeconnecter' => 'Sign out',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.mfa.chargement' => 'Checking your account',
 			'controleur.historique.titre' => 'History',
 			'controleur.historique.provisoire' => 'This screen is being prepared.',
@@ -19601,8 +21720,6 @@ extension on TraductionsEn {
 			'tc.groupe.temps.enSalle' => 'In the room',
 			'tc.groupe.temps.resteMinutes' => ({required Object minutes}) => '${minutes} min left',
 			'tc.groupe.temps.resteHeures' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes} left',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.temps.enCours' => ({required Object reste}) => 'Live session · ${reste}',
 			'tc.groupe.temps.enDirect' => 'Live',
 			'tc.groupe.temps.prolongee' => 'Session still live',
@@ -19863,6 +21980,8 @@ extension on TraductionsEn {
 			'tc.classe.recitation.suivants' => 'Next',
 			'tc.classe.recitation.arreter' => 'Stop the recitation',
 			'tc.classe.prevol.titre' => 'Before opening the class',
+			_ => null,
+		} ?? switch (path) {
 			'tc.classe.prevol.microOk' => 'Microphone detected',
 			'tc.classe.prevol.microAbsent' => 'No usable microphone',
 			'tc.classe.prevol.cameraOk' => 'Camera detected',
@@ -20115,8 +22234,6 @@ extension on TraductionsEn {
 			'adulte.accueil.retourFoyerTitre' => 'Back to your family\'s home',
 			'adulte.accueil.retourFoyerPhrase' => 'Find your relatives\' classes and sessions.',
 			'adulte.accueil.financesPhrase' => 'Your balance, your funded period and your monthly fee.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.accueil.sansDonnees' => 'Your next session and your latest sessions could not be loaded',
 			'adulte.accueil.echec' => 'Your next session and your latest sessions could not be loaded: your request may not have reached Rewayah. Try again in a moment.',
 			'adulte.historique.titre' => 'My past sessions',
@@ -20377,6 +22494,8 @@ extension on TraductionsEn {
 			'adulte.sortie.notificationQuitte' => ({required Object prenom}) => '${prenom} left your family plan.',
 			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.',
 			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'You were removed from ${dePrenom}\'s family plan.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.delaiTitre' => 'New invitation unavailable',
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'A new request can be made from ${date}. It will then have to be approved by the administration.',
 			'adulte.sortie.pourquoi' => 'Why this wait?',
@@ -20629,8 +22748,6 @@ extension on TraductionsEn {
 			'suiviFamille.close.suite' => ({required Object prenom}) => 'You can choose another slot for ${prenom}.',
 			'suiviFamille.close.suiteSansChoix' => 'Nothing else to do on your side.',
 			'suiviFamille.close.choisirAutre' => ({required Object prenom}) => 'Choose another slot for ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.close.motif.retraitFamille' => 'You withdrew this request.',
 			'suiviFamille.close.motif.offreRetiree' => 'This slot is no longer offered.',
 			'suiviFamille.close.motif.classeNonConstituee' => 'The class for this slot could not be formed.',
@@ -20891,6 +23008,8 @@ extension on TraductionsEn {
 			'reprisesAdmin.foyer' => 'Household',
 			'reprisesAdmin.deposeeLe' => 'Submitted on',
 			'reprisesAdmin.etat.aExaminer' => 'To review',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.etat.refuseeParTitulaire' => 'Declined by the account holder',
 			'reprisesAdmin.examenLe' => ({required Object date}) => 'Review possible from ${date}.',
 			'reprisesAdmin.refuseeInfo' => 'The account holder declined this request. No decision is expected.',
@@ -21143,8 +23262,6 @@ extension on TraductionsEn {
 			'avis.admin.liens.creePhrase' => 'Copy this link now. It will no longer be shown once this box is closed. If you lose it, close this link and create a new one.',
 			'avis.admin.liens.creeAdresse' => 'Link address',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valid until ${date}.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.copier' => 'Copy the link',
 			'avis.admin.liens.copie' => 'Link copied.',
 			'avis.admin.liens.creeFermer' => 'I copied the link',
@@ -21405,6 +23522,8 @@ extension on TraductionsEn {
 			'd1ter.messages.introSoi' => 'The management has passed on these messages to you.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'Passed on on ${date}',
 			'd1ter.messages.erreur' => 'The academy messages could not be read: the request may not have reached Rewayah. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.notifications.message' => 'The management has passed on a message to you.',
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'The management has passed on a message about ${prenom}.',
 			'd1ter.notifications.messageSoi' => 'The management has passed on a message to you.',
@@ -21499,6 +23618,363 @@ extension on TraductionsEn {
 			'accueilHoraire.demandeTitre' => 'Request saved',
 			'accueilHoraire.demandeDetail' => ({required Object prenom}) => 'We will let you know as soon as a time slot opens for ${prenom}.',
 			'accueilHoraire.erreurEnvoi' => 'Your request was not confirmed. Try again in a moment.',
+			'candidatsFlux.importFormulaires.titre' => 'Import the application forms',
+			'candidatsFlux.importFormulaires.intro' => 'The import is used to recognize people and pre-fill their application. It creates no account.',
+			'candidatsFlux.importFormulaires.lienEntree' => 'Import the forms',
+			'candidatsFlux.importFormulaires.retourCandidatures' => 'Back to the applications',
+			'candidatsFlux.importFormulaires.lectureDroits' => 'Your import rights could not be read. Try again in a moment.',
+			'candidatsFlux.importFormulaires.sansDonnees' => 'your form import rights',
+			'candidatsFlux.importFormulaires.acces.refuseTitre' => 'Import reserved',
+			'candidatsFlux.importFormulaires.acces.refusePhrase' => 'Only the super administrator can import the application forms. Ask them to do it.',
+			'candidatsFlux.importFormulaires.acces.doublePhrase' => 'This import requires your second factor.',
+			'candidatsFlux.importFormulaires.acces.doubleSuite' => 'Tap "Sign in again": your session closes and you return to sign-in to use your second factor. Nothing was saved.',
+			'candidatsFlux.importFormulaires.acces.doubleAction' => 'Sign in again',
+			'candidatsFlux.importFormulaires.pas.liste' => 'The eight steps of the import',
+			'candidatsFlux.importFormulaires.pas.depot' => 'Drop the file',
+			'candidatsFlux.importFormulaires.pas.apercu' => 'Preview',
+			'candidatsFlux.importFormulaires.pas.colonnes' => 'Columns',
+			'candidatsFlux.importFormulaires.pas.doublons' => 'Duplicates',
+			'candidatsFlux.importFormulaires.pas.controle' => 'Errors',
+			'candidatsFlux.importFormulaires.pas.comptes' => 'Accounts',
+			'candidatsFlux.importFormulaires.pas.confirmation' => 'Confirmation',
+			'candidatsFlux.importFormulaires.pas.rapport' => 'Report',
+			'candidatsFlux.importFormulaires.pas.surTotal' => ({required Object n, required Object total}) => 'Step ${n} of ${total}',
+			'candidatsFlux.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'Step ${n} of ${total}: ${nom}',
+			'candidatsFlux.importFormulaires.pas.fait' => 'Done',
+			'candidatsFlux.importFormulaires.pas.enCours' => 'In progress',
+			'candidatsFlux.importFormulaires.pas.aVenir' => 'Upcoming',
+			'candidatsFlux.importFormulaires.depot.question' => 'Which file do you want to import?',
+			'candidatsFlux.importFormulaires.depot.explication' => 'Choose the CSV export of the forms sheet (in Google Sheets: File, Download, Comma-separated values). Nothing is sent before "Analyze the file".',
+			'candidatsFlux.importFormulaires.depot.carteTitre' => 'Choose a CSV file',
+			'candidatsFlux.importFormulaires.depot.carteDescription' => 'The file is read on this device. It goes to Rewayah only when you tap "Analyze the file". Maximum size: 5 MB.',
+			'candidatsFlux.importFormulaires.depot.carteChoisi' => ({required Object nom}) => 'File chosen: ${nom}',
+			'candidatsFlux.importFormulaires.depot.lignesLues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} row of answers in this file', other: '${n} rows of answers in this file', ), 
+			'candidatsFlux.importFormulaires.depot.autreFichier' => 'Choose another file',
+			'candidatsFlux.importFormulaires.depot.noms.titre' => 'This file will be saved as',
+			'candidatsFlux.importFormulaires.depot.noms.ligne' => ({required Object classeur, required Object onglet}) => 'Workbook "${classeur}", tab "${onglet}"',
+			'candidatsFlux.importFormulaires.depot.noms.aide' => 'These two names are used to recognize each answer. If you replay the same corrected file later, keep exactly the same names: no answer will be added twice.',
+			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'Correct these names',
+			'candidatsFlux.importFormulaires.depot.noms.garder' => 'Keep these names',
+			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'Workbook name',
+			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'Tab name',
+			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'The file name does not give the tab. Enter it to continue.',
+			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'A name cannot be empty, exceed 200 characters or contain the vertical bar. Correct it to continue.',
+			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'First choose a file so it can be analyzed.',
+			'candidatsFlux.importFormulaires.depot.analyser' => 'Analyze the file',
+			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'Rewayah is reading your file. Nothing is saved yet.',
+			'candidatsFlux.importFormulaires.depot.horsLigne' => 'The analysis can be done when the connection returns.',
+			'candidatsFlux.importFormulaires.depot.vide' => 'This file contains no row to import.',
+			'candidatsFlux.importFormulaires.depot.videAide' => 'Check that you exported the right sheet.',
+			'candidatsFlux.importFormulaires.fichier.titre' => 'Unreadable file',
+			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'This file could not be read, row ${ligne}: ${cause}.',
+			'candidatsFlux.importFormulaires.fichier.illisible' => ({required Object cause}) => 'This file could not be read: ${cause}.',
+			'candidatsFlux.importFormulaires.fichier.cause.guillemetNonFerme' => 'an opening quotation mark is never closed',
+			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'the file exceeds 5 MB',
+			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'the formatting is not that of a CSV export',
+			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'its content is not that of a CSV export',
+			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Export the sheet as CSV again from Google Sheets, then choose the file.',
+			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Currently read in column ${n}. Choosing it here removes it from that column.',
+			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Column ${n}: ${titre}',
+			'candidatsFlux.importFormulaires.colonnes.question' => 'Does each column really contain what Rewayah thinks?',
+			'candidatsFlux.importFormulaires.colonnes.explication' => 'Rewayah recognizes each column by its title. Tap a column to change what it contains.',
+			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'Column ${n}, untitled',
+			'candidatsFlux.importFormulaires.colonnes.nonLue' => 'Not read',
+			'candidatsFlux.importFormulaires.colonnes.nonLueAide' => 'This column is not used by the import.',
+			'candidatsFlux.importFormulaires.colonnes.choisir' => ({required Object n}) => 'What does column ${n} contain?',
+			'candidatsFlux.importFormulaires.colonnes.sansTitre' => 'Untitled column',
+			'candidatsFlux.importFormulaires.colonnes.choixActuel' => 'Current choice',
+			'candidatsFlux.importFormulaires.colonnes.nePasLire' => 'Do not read this column',
+			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'Its content is ignored by the import.',
+			'candidatsFlux.importFormulaires.colonnes.fermer' => 'Close this choice',
+			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'First match these columns: ${champs}.',
+			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Several columns carry the title of: ${champs}. Tap the one to read, then choose what it contains.',
+			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'How answers are read',
+			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'Multiple-choice answers (gender, languages, memorization level, possible start) are read using Rewayah\'s table of labels. A label that is not in it is flagged row by row, at the "Errors" step.',
+			'candidatsFlux.importFormulaires.colonnes.relecture' => 'Your corrections require the file to be read again before continuing.',
+			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '${nature}: case ${n} of ${total}',
+			'candidatsFlux.importFormulaires.doublons.question' => 'Do these rows come from the same person?',
+			'candidatsFlux.importFormulaires.doublons.explication' => 'When rows share an email or a phone number, Rewayah proposes them as one person. Without your choice, the most recent row is kept and the others stay in the history. Nothing is deleted.',
+			'candidatsFlux.importFormulaires.doublons.aucun' => 'No probable duplicate in this file.',
+			'candidatsFlux.importFormulaires.doublons.aucunAide' => 'No row shares an email or a phone number with another.',
+			'candidatsFlux.importFormulaires.doublons.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} case to look at', other: '${n} cases to look at', ), 
+			'candidatsFlux.importFormulaires.doublons.tranches' => ({required Object choisis, required Object total}) => 'Choices made by you: ${choisis} of ${total}. For the others, the most recent row is kept.',
+			'candidatsFlux.importFormulaires.doublons.nature.courriel' => 'Same email',
+			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'Same phone',
+			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
+			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Rows ${liste}',
+			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'and ${n} row already saved', other: 'and ${n} rows already saved', ), 
+			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'Choose the row to keep, or say these are different people.',
+			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'See the choices for this case',
+			'candidatsFlux.importFormulaires.doublons.fermer' => 'Close the choices for this case',
+			'candidatsFlux.importFormulaires.doublons.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'See ${n} more case', other: 'See ${n} more cases', ), 
+			'candidatsFlux.importFormulaires.doublons.etat.recente' => 'The most recent is kept',
+			'candidatsFlux.importFormulaires.doublons.etat.base' => 'The row already saved is kept',
+			'candidatsFlux.importFormulaires.doublons.etat.ligne' => ({required Object ligne}) => 'Row ${ligne} kept',
+			'candidatsFlux.importFormulaires.doublons.etat.distinctes' => 'Different people',
+			'candidatsFlux.importFormulaires.doublons.etat.enregistre' => 'Choice already saved',
+			'candidatsFlux.importFormulaires.doublons.option.recente.titre' => ({required Object ligne}) => 'Keep the most recent (row ${ligne})',
+			'candidatsFlux.importFormulaires.doublons.option.recente.description' => 'The other rows stay in the history, nothing is deleted. This is what Rewayah does without your choice.',
+			'candidatsFlux.importFormulaires.doublons.option.base.titre' => 'Keep the row already saved',
+			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'A previous import already kept a row for this person. The rows in this file stay in the history.',
+			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'Keep your previous choice',
+			'candidatsFlux.importFormulaires.doublons.option.enregistre.distinctes' => 'You already said these are different people.',
+			'candidatsFlux.importFormulaires.doublons.option.enregistre.ligne' => 'You already chose the row to keep for this person.',
+			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'Keep row ${ligne} instead',
+			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'This row becomes the person\'s answer. The others go into the history.',
+			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'Different people',
+			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'Choose this if these rows come from different people who share a contact. Each keeps their answer.',
+			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'two people from the same family who answered with the same number',
+			'candidatsFlux.importFormulaires.analyse.echec' => 'The analysis did not go through.',
+			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'Nothing was saved. Try again in a moment.',
+			'candidatsFlux.importFormulaires.analyse.refus' => 'The server cannot read this file with these names. Check the workbook, the tab and the file, then try again.',
+			'candidatsFlux.importFormulaires.analyse.reessayer' => 'Try the analysis again',
+			'candidatsFlux.importFormulaires.apercu.question' => 'Is this the right file?',
+			'candidatsFlux.importFormulaires.apercu.explication' => 'Here is what Rewayah read. Nothing is saved yet.',
+			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'Contacts are hidden in the preview.',
+			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} row read', other: '${n} rows read', ), 
+			'candidatsFlux.importFormulaires.apercu.colonnesReconnues' => ({required Object reconnues, required Object total}) => 'Columns recognized: ${reconnues} of ${total}',
+			'candidatsFlux.importFormulaires.apercu.premieres' => 'The first rows',
+			'candidatsFlux.importFormulaires.apercu.ligne' => ({required Object ligne}) => 'Row ${ligne}',
+			'candidatsFlux.importFormulaires.apercu.autres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} other row is not shown here.', other: '${n} other rows are not shown here.', ), 
+			'candidatsFlux.importFormulaires.apercu.sansLignes' => 'The rows will be read as soon as the columns are matched.',
+			'candidatsFlux.importFormulaires.apercu.colonnesATitre' => 'Some columns still need matching',
+			'candidatsFlux.importFormulaires.apercu.mappageIncomplet' => ({required Object champs}) => 'First match these columns: ${champs}.',
+			'candidatsFlux.importFormulaires.apercu.ambiguTitre' => 'Two columns look alike',
+			'candidatsFlux.importFormulaires.apercu.ambigu' => ({required Object champs}) => 'Several columns carry the title of: ${champs}. Say which one to read, at the next step.',
+			'candidatsFlux.importFormulaires.apercu.marque.courrielAObtenir' => 'Email to obtain',
+			'candidatsFlux.importFormulaires.apercu.marque.indicatifAConfirmer' => 'Country code to confirm',
+			'candidatsFlux.importFormulaires.apercu.aideMarques' => '"Email to obtain": no valid email, the person cannot be invited. "Country code to confirm": the phone has no recognized country code. "Ignored": empty or repeated row.',
+			'candidatsFlux.importFormulaires.issue.nouvelle' => 'New',
+			'candidatsFlux.importFormulaires.issue.corrigee' => 'Corrected',
+			'candidatsFlux.importFormulaires.issue.dejaConnue' => 'Already known',
+			'candidatsFlux.importFormulaires.issue.ignoree' => 'Ignored',
+			'candidatsFlux.importFormulaires.issue.aCorriger' => 'To correct',
+			'candidatsFlux.importFormulaires.issue.historique' => 'In history',
+			'candidatsFlux.importFormulaires.champ.horodatage' => 'Date of the answer',
+			'candidatsFlux.importFormulaires.champ.horodatageAide' => 'Used to recognize the answer if you replay the file.',
+			'candidatsFlux.importFormulaires.champ.genre' => 'Gender',
+			'candidatsFlux.importFormulaires.champ.genreAide' => 'Used to file the answer on the right side. Never shown in the preview.',
+			'candidatsFlux.importFormulaires.champ.nom' => 'Full name',
+			'candidatsFlux.importFormulaires.champ.nomAide' => 'Used to recognize the person. Never shown here.',
+			'candidatsFlux.importFormulaires.champ.telephone' => 'WhatsApp phone',
+			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'With the country code. Never completed or guessed.',
+			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Mother tongue',
+			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Optional.',
+			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Languages of explanation',
+			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'The languages in which the person can explain and correct.',
+			'candidatsFlux.importFormulaires.champ.memorisation' => 'Quran memorization',
+			'candidatsFlux.importFormulaires.champ.memorisationAide' => 'A declaration, not a finding: the level is established at the interview.',
+			'candidatsFlux.importFormulaires.champ.ijaza' => 'Ijaza or certificate to present',
+			'candidatsFlux.importFormulaires.champ.ijazaAide' => 'What the person can show at the interview.',
+			'candidatsFlux.importFormulaires.champ.experience' => 'Experience with beginners',
+			'candidatsFlux.importFormulaires.champ.experienceAide' => 'Optional.',
+			'candidatsFlux.importFormulaires.champ.creneaux' => 'Time slots (Makkah time)',
+			'candidatsFlux.importFormulaires.champ.creneauxAide' => 'Kept as they are, without a day. Never read as availability.',
+			'candidatsFlux.importFormulaires.champ.heures' => 'Hours per week',
+			'candidatsFlux.importFormulaires.champ.heuresAide' => 'Converted into a number of classes wanted.',
+			'candidatsFlux.importFormulaires.champ.debut' => 'Possible start',
+			'candidatsFlux.importFormulaires.champ.debutAide' => 'Optional.',
+			'candidatsFlux.importFormulaires.champ.whatsapp' => 'Agreement to be contacted on WhatsApp',
+			'candidatsFlux.importFormulaires.champ.whatsappAide' => 'Applies to this contact only.',
+			'candidatsFlux.importFormulaires.champ.courriel' => 'Email',
+			'candidatsFlux.importFormulaires.champ.courrielAide' => 'Used to recognize the person when they sign up. Never shown here.',
+			'candidatsFlux.importFormulaires.champ.contact' => 'Phone or email',
+			'candidatsFlux.importFormulaires.controle.question' => 'Are there rows to correct?',
+			'candidatsFlux.importFormulaires.controle.explication' => 'A row to correct is not imported. Correct it in the workbook, export the file again, then replay the import: rows already imported are not added twice.',
+			'candidatsFlux.importFormulaires.controle.aucune' => 'No error or warning in this file.',
+			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'Every row could be read.',
+			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'To correct',
+			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'These rows will not be imported.',
+			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'To look at',
+			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'These rows are imported, with a point to check.',
+			'candidatsFlux.importFormulaires.controle.ignorees.titre' => 'Ignored',
+			'candidatsFlux.importFormulaires.controle.ignorees.aide' => 'Empty rows or rows repeated identically.',
+			'candidatsFlux.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'Row ${ligne}: ${motif}',
+			'candidatsFlux.importFormulaires.controle.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'See ${n} more row', other: 'See ${n} more rows', ), 
+			'candidatsFlux.importFormulaires.motif.ligneVide' => 'empty row',
+			'candidatsFlux.importFormulaires.motif.horodatageIllisible' => 'the date of the answer is unreadable',
+			'candidatsFlux.importFormulaires.motif.genreIllisible' => 'the gender is not recognized',
+			'candidatsFlux.importFormulaires.motif.nomAbsent' => 'the name is missing',
+			'candidatsFlux.importFormulaires.motif.nomTropLong' => 'the name is too long',
+			'candidatsFlux.importFormulaires.motif.memeReferenceMemeContenu' => 'row repeated identically',
+			'candidatsFlux.importFormulaires.motif.memeReferenceContenuDifferent' => 'same answer date as another row, but different content',
+			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'the gender changed while the person is being followed: it fixes their side',
+			'candidatsFlux.importFormulaires.motif.inscription1210' => 'already known from the registrations import',
+			'candidatsFlux.importFormulaires.motif.inconnu' => 'a point in this row needs checking',
+			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'the phone is unreadable',
+			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'the phone has no country code',
+			'candidatsFlux.importFormulaires.avertissement.indicatifInconnu' => 'the phone\'s country code is unknown',
+			'candidatsFlux.importFormulaires.avertissement.longueurImplausible' => 'the phone\'s length is unusual',
+			'candidatsFlux.importFormulaires.avertissement.indicatifAConfirmer' => 'the phone\'s country code needs confirming',
+			'candidatsFlux.importFormulaires.avertissement.zeroNationalEnTrop' => 'an extra zero after the phone\'s country code',
+			'candidatsFlux.importFormulaires.avertissement.courrielMalforme' => 'the email is badly written: it must be obtained',
+			'candidatsFlux.importFormulaires.avertissement.langueMaternelleVersAutre' => 'unknown mother tongue, filed under other language',
+			'candidatsFlux.importFormulaires.avertissement.langueInconnueVersAutre' => 'an unknown language of explanation is filed under other language',
+			'candidatsFlux.importFormulaires.avertissement.arabeRetire' => 'Arabic is removed from the languages of explanation (it is not a teaching language)',
+			'candidatsFlux.importFormulaires.avertissement.libelleInconnu' => 'a multiple-choice answer is not recognized',
+			'candidatsFlux.importFormulaires.avertissement.ijazaDeclareeEnG' => 'ijaza declared as memorization: memorization is for the person to fill in',
+			'candidatsFlux.importFormulaires.avertissement.experiencePretTest' => '"ready for a test" has no equivalent for experience: for the person to fill in',
+			'candidatsFlux.importFormulaires.avertissement.moinsDe3Heures' => 'less than 3 hours a week: that does not make a class, for the person to fill in',
+			'candidatsFlux.importFormulaires.avertissement.creneauxContradictoires' => 'contradictory time slots, kept as they are',
+			'candidatsFlux.importFormulaires.comptes.question' => 'Are these the numbers you expected?',
+			'candidatsFlux.importFormulaires.comptes.explication' => 'Here is what Rewayah counted in the file. Compare with your own count before confirming.',
+			'candidatsFlux.importFormulaires.comptes.nouvelles' => 'New',
+			'candidatsFlux.importFormulaires.comptes.nouvellesAide' => 'Not known yet: they will be saved.',
+			'candidatsFlux.importFormulaires.comptes.dejaConnues' => 'Already known',
+			'candidatsFlux.importFormulaires.comptes.dejaConnuesAide' => 'Already saved: nothing changes.',
+			'candidatsFlux.importFormulaires.comptes.ignorees' => 'Ignored',
+			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'Empty or repeated rows.',
+			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'To correct',
+			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'Unreadable rows: they are not imported.',
+			'candidatsFlux.importFormulaires.comptes.corrigees' => 'Corrected on the spot',
+			'candidatsFlux.importFormulaires.comptes.personnes' => 'People concerned',
+			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'Rows read',
+			'candidatsFlux.importFormulaires.comptes.attendus.question' => 'What count did you expect?',
+			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.titre' => 'The file of 21 October',
+			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.description' => '440 rows, that is 409 people once duplicates are merged: the count noted in the workbook that day.',
+			'candidatsFlux.importFormulaires.comptes.attendus.autres.titre' => 'Other numbers',
+			'candidatsFlux.importFormulaires.comptes.attendus.autres.description' => 'You know the number of rows or people in your file. Enter it: Rewayah flags any difference.',
+			'candidatsFlux.importFormulaires.comptes.attendus.aucun.titre' => 'No count to compare',
+			'candidatsFlux.importFormulaires.comptes.attendus.aucun.description' => 'You confirm by relying on the preview.',
+			'candidatsFlux.importFormulaires.comptes.attendus.lignes' => 'Rows expected',
+			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'People expected',
+			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'A whole number. Leave empty what you do not compare.',
+			'candidatsFlux.importFormulaires.comptes.choisir' => 'Say which count to compare to continue.',
+			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'Enter at least one number to continue.',
+			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'A difference to check',
+			'candidatsFlux.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'Difference with the expected counts: expected ${attendu}, read ${lu}. Check before confirming: you can still import.',
+			'candidatsFlux.importFormulaires.comptes.accord' => 'The numbers match what you expected.',
+			'candidatsFlux.importFormulaires.unite.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} row', other: '${n} rows', ), 
+			'candidatsFlux.importFormulaires.unite.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person', other: '${n} people', ), 
+			'candidatsFlux.importFormulaires.confirmation.question' => 'Import these answers now?',
+			'candidatsFlux.importFormulaires.confirmation.explication' => 'Review what the import will do. It cannot be undone from this screen.',
+			'candidatsFlux.importFormulaires.confirmation.resume.titre' => 'What will be saved',
+			'candidatsFlux.importFormulaires.confirmation.resume.fichier' => 'File',
+			'candidatsFlux.importFormulaires.confirmation.resume.doublons' => ({required Object choisis, required Object total}) => 'Duplicates: ${choisis} cases decided by you out of ${total}. For the others, the most recent row is kept.',
+			'candidatsFlux.importFormulaires.confirmation.resume.aucunDoublon' => 'No probable duplicate to resolve.',
+			'candidatsFlux.importFormulaires.confirmation.garanties.titre' => 'What the import does not do',
+			'candidatsFlux.importFormulaires.confirmation.garanties.texte' => 'It creates no account, no invitation and no application, and sends no message. It saves answers used to recognize people when they sign up. Replaying the same file adds nothing.',
+			'candidatsFlux.importFormulaires.confirmation.importer' => 'Import the answers',
+			'candidatsFlux.importFormulaires.confirmation.envoi' => 'Sending. The import is confirmed only when Rewayah answers.',
+			'candidatsFlux.importFormulaires.confirmation.horsLigne' => 'The import can be confirmed when the connection returns.',
+			'candidatsFlux.importFormulaires.confirmation.nonConfirme' => 'The import is not confirmed: it may not have reached Rewayah. Tap "Import the answers" again: the same request is saved only once.',
+			'candidatsFlux.importFormulaires.confirmation.jetonPerime' => 'The file or its settings changed since the preview. Run the analysis again to continue.',
+			'candidatsFlux.importFormulaires.confirmation.choixInvalide' => 'A duplicate choice no longer matches the file. Run the analysis again, then choose again.',
+			'candidatsFlux.importFormulaires.confirmation.cleReutilisee' => 'This request cannot be replayed as it is. Run the analysis again to start cleanly.',
+			'candidatsFlux.importFormulaires.confirmation.refus' => 'The server refuses this import. Check that you are signed in with two-step verification, then try again.',
+			'candidatsFlux.importFormulaires.confirmation.titreNonConfirme' => 'Import not confirmed',
+			'candidatsFlux.importFormulaires.confirmation.titreARefaire' => 'The analysis must be redone',
+			'candidatsFlux.importFormulaires.confirmation.relancer' => 'Run the analysis again',
+			'candidatsFlux.importFormulaires.rapport.titre' => 'Import finished',
+			'candidatsFlux.importFormulaires.rapport.question' => 'Here is what the import did.',
+			'candidatsFlux.importFormulaires.rapport.rejoue' => 'This request had already been saved: nothing was added a second time.',
+			'candidatsFlux.importFormulaires.rapport.sansCandidature' => 'These answers create no application: they are used to recognize people when they sign up.',
+			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'Saved.',
+			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'Already saved: nothing changed.',
+			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'Unreadable rows: not imported.',
+			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'Replaced by a more recent one: ${n}',
+			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'Row by row',
+			'candidatsFlux.importFormulaires.rapport.lignes.aide' => 'Each row is recognized by the date of its answer, never by the person\'s name.',
+			'candidatsFlux.importFormulaires.rapport.lignes.reference' => ({required Object reference}) => 'Answer of ${reference}',
+			'candidatsFlux.importFormulaires.rapport.lignes.sansReference' => 'No reference',
+			'candidatsFlux.importFormulaires.rapport.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'See ${n} more row', other: 'See ${n} more rows', ), 
+			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'Import another file',
+			'candidatsFlux.prevenir.lien' => 'Notify by email',
+			'candidatsFlux.prevenir.titre' => 'Notify by email',
+			'candidatsFlux.prevenir.contexte' => 'The sign-up link is sent by email to the people in the imported forms who left an address and do not have an account yet. The same address never receives the message twice.',
+			'candidatsFlux.prevenir.lecture' => 'Counting the people to notify.',
+			'candidatsFlux.prevenir.comptes.aPrevenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person to notify', other: '${n} people to notify', ), 
+			'candidatsFlux.prevenir.comptes.dejaPrevenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person already notified', other: '${n} people already notified', ), 
+			'candidatsFlux.prevenir.comptes.dejaInscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person already signed up', other: '${n} people already signed up', ), 
+			'candidatsFlux.prevenir.message' => 'The message recalls the date of the answer and the name of the form, asks the person to create their account with the same address, and says there is nothing to pay.',
+			'candidatsFlux.prevenir.delai' => 'Messages go out in the minutes after sending, not instantly.',
+			'candidatsFlux.prevenir.groupes' => ({required Object n}) => 'Sending goes out in batches of ${n} people at most.',
+			'candidatsFlux.prevenir.fermee' => 'Online sign-up must be opened first: while it is closed, the link would lead to a closed page and no message goes out.',
+			'candidatsFlux.prevenir.videTitre' => 'Everyone is already notified',
+			'candidatsFlux.prevenir.vide' => 'Everyone who left an address is already notified or already signed up. There is nothing to send.',
+			'candidatsFlux.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send the link to ${n} person', other: 'Send the link to ${n} people', ), 
+			'candidatsFlux.prevenir.envoyerSuivantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send to the next person', other: 'Send to the next ${n}', ), 
+			'candidatsFlux.prevenir.sansDonnees' => 'The number of people to notify could not be loaded.',
+			'candidatsFlux.prevenir.horsLigne' => 'Sending will be possible as soon as the network returns.',
+			'candidatsFlux.prevenir.resultat.titre' => 'Sending started',
+			'candidatsFlux.prevenir.resultat.mis' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message goes out in the next few minutes', other: '${n} messages go out in the next few minutes', ), 
+			'candidatsFlux.prevenir.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person still to notify.', other: '${n} people still to notify.', ), 
+			'candidatsFlux.prevenir.resultat.tout' => 'No one is waiting for the link any more: everyone is notified.',
+			'candidatsFlux.prevenir.resultat.pasDeuxFois' => 'The same address never receives the message twice, even if you send again.',
+			'candidatsFlux.prevenir.erreurs.titre' => 'Sending not confirmed',
+			'candidatsFlux.prevenir.erreurs.nonConfirme' => 'The sending may not have reached Rewayah. Try again: no address will receive the message twice.',
+			'candidatsFlux.prevenir.erreurs.generique' => 'The sending did not go through and nothing is confirmed. Try again: no address will receive the message twice.',
+			'candidatsFlux.invitationsPersonnelles.aucuneImportee' => 'No form answer is imported yet. Import the forms first: without them, the codes would find no answer, and no sending is possible.',
+			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'including ${n} person who received the end-of-October waiting email', other: 'including ${n} people who received the end-of-October waiting email', ), 
+			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copy the sign-up link',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Personal sign-up link',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'This person did not leave an email address. Enter the one they will use to create their account: it is saved on their answer, and the code works only with it. No email is sent: you pass the link on yourself.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'The person\'s email address',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Prepare the link',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Personal code',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Personal link',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valid until ${date}, once, with this address only.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copy the link',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'Link copied.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.copieEchec' => 'The copy did not go through: select the link above, then copy it.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'The preparation is not confirmed. Try again with the same address: you will get the same code.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'This application no longer awaits a link: it changed in the meantime. Close, then read it again.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'This person already has an address: their code goes out with the sending of personal codes.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Enter the email address the person will use.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'This address does not look like an email address. Check it.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'An account already exists at this address: the person can sign in with it.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseUtilisee' => 'Another person already uses this address. Ask for an address that belongs to them alone.',
+			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.desinscrit' => 'This address asked to stop receiving recruitment messages.',
+			'candidatsFlux.invitationsPersonnelles.lien' => 'Send the personal codes',
+			'candidatsFlux.invitationsPersonnelles.titre' => 'Personal codes for imported candidates',
+			'candidatsFlux.invitationsPersonnelles.contexte' => 'Each person in the imported forms who left an address receives their own sign-up code by email. With this code, they create their account even if online sign-up is closed, and find their answers already filled in.',
+			'candidatsFlux.invitationsPersonnelles.comptes.aInviter' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person to invite', other: '${n} people to invite', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.aRenvoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} expired code to resend', other: '${n} expired codes to resend', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.dejaInvites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person already has a valid code', other: '${n} people already have a valid code', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.dejaInscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person already signed up: an account exists at their address, no invitation goes out', other: '${n} people already signed up: an account exists at their address, no invitation goes out', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.revoquees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} code withdrawn by the management: no group sending for this person', other: '${n} codes withdrawn by the management: no group sending for these people', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person no longer wants to receive recruitment messages', other: '${n} people no longer want to receive recruitment messages', ), 
+			'candidatsFlux.invitationsPersonnelles.comptes.sansAdresse' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} answer without an email address', other: '${n} answers without an email address', ), 
+			'candidatsFlux.invitationsPersonnelles.rythme' => ({required Object plafond, required Object limite, required Object reste}) => 'At most ${plafond} messages a day for this sending, and ${limite} per sending. Still possible today: ${reste}.',
+			'candidatsFlux.invitationsPersonnelles.videTitre' => 'No one to invite',
+			'candidatsFlux.invitationsPersonnelles.vide' => 'Everyone who left an address already has a valid code or an account. There is nothing to send.',
+			'candidatsFlux.invitationsPersonnelles.plafond' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The daily limit is reached. ${n} person is still to invite: continue tomorrow.', other: 'The daily limit is reached. ${n} people are still to invite: continue tomorrow.', ), 
+			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'The number of people changed since it was displayed. Nothing was sent: check the number again, then send.',
+			'candidatsFlux.invitationsPersonnelles.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send their code to ${n} person', other: 'Send their code to ${n} people', ), 
+			'candidatsFlux.invitationsPersonnelles.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person still to invite.', other: '${n} people still to invite.', ), 
+			'candidatsFlux.invitationsPersonnelles.resultat.tout' => 'No one is waiting for their code any more.',
+			'candidatsFlux.invitationsPersonnelles.resultat.pasDeuxFois' => 'The same person never receives two valid codes at the same time, even if you send again.',
+			'candidatsFlux.invitationsPersonnelles.sansDonnees' => 'The number of people to invite could not be loaded.',
+			'candidatsFlux.file.rythme' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'To avoid ending up in spam folders, at most ${n} message of this type goes out each day. The others wait their turn and go out by themselves on the following days.', other: 'To avoid ending up in spam folders, at most ${n} messages of this type go out each day. The others wait their turn and go out by themselves on the following days.', ), 
+			'candidatsFlux.file.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message is waiting its turn.', other: '${n} messages are waiting their turn.', ), 
+			'candidatsFlux.file.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Everything should be sent within about a day.', other: 'Everything should be sent within about ${n} days.', ), 
+			'candidatsFlux.file.rienEnAttente' => 'No message is waiting its turn.',
+			'candidatsFlux.file.misEnFile' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message queued', other: '${n} messages queued', ), 
+			'candidatsFlux.file.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person asked to stop receiving recruitment messages: they will not receive the link.', other: '${n} people asked to stop receiving recruitment messages: they will not receive the link.', ), 
+			'candidatsFlux.file.reglage.libelle' => 'Messages of this type per day',
+			'candidatsFlux.file.reglage.aide' => 'From 1 to 2,000. Messages tied to an account, a class, a registration or a payment always go out without waiting.',
+			'candidatsFlux.file.reglage.enregistrer' => 'Save the setting',
+			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Setting saved: ${n} message per day.', other: 'Setting saved: ${n} messages per day.', ), 
+			'candidatsFlux.file.reglage.invalide' => 'Enter a whole number from 1 to 2,000, without spaces.',
+			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
+			'candidatsFlux.importDouble.suite' => 'Tap "Enter my code": you enter the code from your verification app, then the import resumes here. Nothing was saved.',
+			'candidatsFlux.importDouble.action' => 'Enter my code',
+			'candidatsFlux.langues.man' => 'Malinke (Mandinka)',
+			'candidatsFlux.publication.titre' => 'Publication on the website',
+			'candidatsFlux.publication.texte' => 'Your name, photo and country may appear on the Rewayah Academy public website. This choice is separate from your application: it changes nothing about its review.',
+			'candidatsFlux.publication.kCase' => 'I agree that my name, photo and country be on the Rewayah public website.',
+			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Your name counts as a signature: ${nom}',
+			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'Agreement given on ${date}, signed ${nom}.',
+			'candidatsFlux.publication.donner' => 'Give my agreement',
+			'candidatsFlux.publication.retirer' => 'Withdraw my agreement',
+			'candidatsFlux.publication.retirerQuestion' => 'Withdraw your publication agreement?',
+			'candidatsFlux.publication.retirerConsequence' => 'Your name, photo and country will no longer appear on the public website. You can give your agreement again later.',
+			'candidatsFlux.publication.echec' => 'Your choice is not confirmed. Try again.',
+			'candidatsFlux.publication.lectureEchec' => 'Your publication agreement could not be read.',
+			'candidatsFlux.publication.nonPublie' => 'The text of the publication agreement is not published yet.',
+			'candidatsFlux.publication.horsLigne' => 'Your choice can be saved when the connection returns.',
+			'candidatsFlux.photo.titre' => 'Your photo',
+			'candidatsFlux.photo.requise' => 'Add your photo before sending your application.',
 			'push1.invitation.titre' => 'Receive notifications?',
 			'push1.invitation.phrase' => 'An alert on this device when your class changes or you are expected, even with the app closed. You can turn it off at any time in Preferences.',
 			'push1.invitation.activer' => 'Turn on',
@@ -21560,6 +24036,8 @@ extension on TraductionsEn {
 			'push1.reglages.erreur' => 'Your settings could not be loaded: the connection may have dropped. Try again in a moment.',
 			'push1.reglages.horsLigne' => 'Notification settings can be changed when the connection is back.',
 			'push1.reglages.changementNonConfirme' => 'The change is not yet confirmed: the connection may have dropped. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'nouveautes.badge' => 'New',
 			'nouveautes.lu' => 'new',
 			'suiviPedagogique.titreSoi' => 'Where I stand',
@@ -21657,8 +24135,6 @@ extension on TraductionsEn {
 			'suiviAttente.cloture.titreRetiree' => 'This request is withdrawn',
 			'suiviAttente.cloture.titreClose' => 'This request is closed',
 			'suiviAttente.cloture.motif.retraitFamille' => 'You withdrew this request.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.cloture.motif.offreRetiree' => 'The academy removed this slot from its offers.',
 			'suiviAttente.cloture.motif.classeNonConstituee' => 'The class for this slot could not be formed.',
 			'suiviAttente.cloture.motif.refusDirection' => 'The management did not accept this request.',

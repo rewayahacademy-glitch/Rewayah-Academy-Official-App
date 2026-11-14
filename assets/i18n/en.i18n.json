@@ -2451,6 +2451,56 @@
       "erreur": "Write your name using Latin alphabet letters (a, b, c) to continue.",
       "echec": "Your name is not confirmed. Try again in a moment."
     },
+    "invitations": {
+      "titre": "Invite a teacher",
+      "onglet": "Invitations",
+      "sousTitre": "A teacher can sign up only with an invitation code. The code works once and expires.",
+      "champEmail": "Teacher's email address",
+      "aideEmail": "The code is created for this address. Pass it on to the person: it is not sent automatically.",
+      "inviter": "Create the invitation",
+      "emailInvalide": "This address does not look like an email address. Check it, then try again.",
+      "compteExistant": "An account already exists for this address: no invitation is needed.",
+      "dejaInvite": "An invitation is already active for this address. It is in the list below.",
+      "nonAutorise": "You are not allowed to invite a teacher. Contact the management.",
+      "horsLigne": "The invitation was not created. Try again in a moment.",
+      "erreur": "The creation of the invitation is not confirmed. It may exist: look at the list before trying again.",
+      "creee": "Invitation created. Pass this code on to the teacher: {code}",
+      "liste": "Invitations",
+      "vide": "No invitation yet",
+      "videDetail": "Invite a teacher with their email address: the code appears here.",
+      "erreurListe": "The invitations could not be read. Try again in a moment.",
+      "sansDonnees": "The invitations cannot be read offline.",
+      "indisponibleTitre": "Teacher invitations",
+      "indisponiblePhrase": "This feature will be available once the server is connected.",
+      "etat": {
+        "active": "Active",
+        "utilisee": "Used",
+        "expiree": "Expired",
+        "revoquee": "Revoked"
+      },
+      "expireLe": "Expires on {date}",
+      "utiliseeLe": "Used on {date}",
+      "revoquer": "Revoke",
+      "revoquerPour": "Revoke the invitation for {email}",
+      "revoquerQuestion": "Revoke the invitation for {email}?",
+      "revoquerConsequence": "The code will no longer work. You can invite the same address again.",
+      "revoquerEchec": "The revocation is not confirmed. Refresh the list before trying again.",
+      "comptable": {
+        "titrePage": "Invite a person",
+        "sousTitrePage": "Choose the person's role, then enter their address. Each code works once and expires.",
+        "choixQuestion": "What role will this person have?",
+        "enseignantTitre": "A teacher",
+        "enseignantExplication": "They lead classes. After signing up, they sign their contract before their first session.",
+        "comptableTitre": "An accountant",
+        "comptableExplication": "They follow payments, collections and cash flow. They lead no class.",
+        "champEmail": "Accountant's email address",
+        "creee": "Invitation created. Pass this code on to the accountant: {code}",
+        "doubleVerification": "Nothing was sent: inviting an accountant requires two-step verification. Turn it on in Account > Security, then try again.",
+        "liste": "Accountant invitations",
+        "vide": "No accountant invitation yet",
+        "videDetail": "Invite an accountant with their email address: the code appears here."
+      }
+    },
     "candidat": {
       "titre": "Your code",
       "intro": "To sign up as a teacher, enter the invitation code you received from the management.",
@@ -2508,6 +2558,36 @@
       "sansDonnees": "The contract cannot be read offline.",
       "indisponible": "Signing the contract will be available once the server is connected.",
       "retour": "Back"
+    },
+    "statuts": {
+      "titre": "Contract and acknowledgement",
+      "contrat": "Teacher contract",
+      "accuse": "Acknowledgement of recording and review",
+      "signeCourante": "Signed, current version",
+      "signeAncienne": "Signed, old version {version}",
+      "nonSigne": "Not signed",
+      "bloque": "Contract not signed at the current version: the file cannot be approved until the contract and the acknowledgement are signed at the current version.",
+      "refuse": "Contract not signed at the current version. The file was not activated: the teacher must sign, then refresh the file.",
+      "manqueContrat": "Missing: the contract.",
+      "manqueAccuse": "Missing: the acknowledgement.",
+      "manqueLesDeux": "Missing: the contract and the acknowledgement.",
+      "inviter": "Invite a teacher"
+    },
+    "salles": {
+      "examen": "Exam room",
+      "verification": "Verification and interview room",
+      "prets": "Ready-to-teach room"
+    },
+    "sallesCandidat": {
+      "candidature": "Your application",
+      "connaissance": "Let's get to know each other",
+      "equipe": "Welcome to the team"
+    },
+    "paiement": {
+      "inconnu": "No payout method declared",
+      "aVerifier": "Payout method to be checked by the academy",
+      "compatible": "Payout method confirmed",
+      "incompatible": "No payout method possible for now"
     },
     "cadre": {
       "titre": "The religious and educational framework",
@@ -2586,6 +2666,44 @@
         "rappelDirection": "You are conducting an interview that starts soon.",
         "rappelDirectionQuand": "You are conducting an interview on {quand}."
       }
+    },
+    "partage": {
+      "titre": "Help someone learn the word of Allah.",
+      "titreFemme": "Help a sister learn the word of Allah.",
+      "facultatif": "Optional: sharing changes nothing about your application.",
+      "langueCarte": "Card language",
+      "apercu": "Preview of the card to share",
+      "partager": "I'm sharing",
+      "partagerLaCarte": "Share the offer card",
+      "enregistrer": "Save the image",
+      "copier": "Copy the link",
+      "lien": "Offer link: {lien}",
+      "sansMenu": "This device does not offer direct sharing. Save the image to send it yourself, or copy the link.",
+      "lienSeul": "This device shares the link without the image. Save the image if you want to send it too.",
+      "fait": {
+        "partage": "The card is shared.",
+        "enregistre": "The image is saved.",
+        "copie": "The link is copied."
+      },
+      "echec": {
+        "partage": "The share menu did not open: your device refused it this time. You can save the image or copy the link.",
+        "enregistrement": "Saving the image is not confirmed. Try again, or copy the link.",
+        "copie": "The link could not be copied. Select it on the page to copy it by hand.",
+        "carte": "The card could not be prepared. Try again in a moment."
+      },
+      "nonOuvert": "The card to share is not available yet. Come back to this page later."
+    },
+    "retrait": {
+      "lien": "Withdraw my application",
+      "question": "Withdraw your application?",
+      "consequence": "Only the academy will be able to reopen your application.",
+      "consequenceEntretien": "Your interview will be cancelled. Only the academy will be able to reopen your application.",
+      "confirmer": "Withdraw my application",
+      "echec": "The withdrawal did not go through. Try again in a moment.",
+      "incertain": "Your withdrawal may not have reached Rewayah. Try again: it will not be recorded twice.",
+      "horsLigne": "The withdrawal can be done when the connection returns.",
+      "interdit": "Your application can no longer be withdrawn from this page.",
+      "conflit": "Your application has changed since this page was opened. Read it again, then try again."
     },
     "questionnaire": {
       "titre": "Your application",
@@ -3199,6 +3317,260 @@
       "choisirJour": "Choose at least one day to continue.",
       "choisirHeure": "Choose at least one start time to continue.",
       "choisirHeureJour": "Choose at least one start time for {jour}."
+    },
+    "talents": {
+      "titre": "Your other talents",
+      "tuile": {
+        "facultatif": "Optional. This changes nothing about your teacher application.",
+        "enregistre": "Your answers are saved. You can edit them.",
+        "enregistreClose": "Your answers are saved. You can withdraw them."
+      },
+      "intro": {
+        "texte": "The academy is growing. It will need help to organize itself, support families, keep its accounts or make itself known. If you can do something else, tell us: we will contact you first, before posting an announcement.",
+        "facultatif": {
+          "titre": "Optional",
+          "texte": "This changes nothing about your teacher application."
+        },
+        "usage": {
+          "titre": "What we do with it",
+          "texte": "Your answers are used only to offer you an academy mission. The management reads them, and only the management."
+        },
+        "liberte": {
+          "titre": "You stay in control",
+          "texte": "You can edit or withdraw your answers whenever you want, and withdraw the agreement that allows us to contact you."
+        },
+        "missions": {
+          "titre": "Each mission has its conditions",
+          "texte": "The academy presents them to you when it contacts you. This page promises no mission."
+        }
+      },
+      "competences": {
+        "titre": "What else can you do?",
+        "explication": "Tap all the skills you have. Each card gives an example. If yours is not there, choose \"Other area\" at the bottom of the list.",
+        "familles": {
+          "communication": "Communication and image",
+          "administration": "Administration and organization",
+          "financesDroit": "Finance and law",
+          "pedagogie": "Teaching",
+          "technique": "Technical",
+          "autre": "Other area"
+        },
+        "choisies(param=n)": {
+          "zero": "No skill chosen",
+          "one": "{n} skill chosen",
+          "other": "{n} skills chosen"
+        },
+        "nonProposee": "This skill is no longer offered. You can keep it or untick it.",
+        "autreChamp": "Your area, in a few words",
+        "autreAide": "One line is enough.",
+        "manque": "Choose at least one skill to continue.",
+        "autreVide": "Say in a few words which area it is, or untick \"Other area\".",
+        "autreTropLong": "Your text is too long: {max} characters at most. Shorten it."
+      },
+      "c": {
+        "reseaux_sociaux": {
+          "libelle": "Social media management",
+          "description": "Run the academy's social media accounts.",
+          "exemple": "Post every week, answer messages and comments"
+        },
+        "relations_publiques": {
+          "libelle": "Public relations and partnerships",
+          "description": "Make the academy known to those who can support it.",
+          "exemple": "Present the academy to a mosque, an association or a media outlet"
+        },
+        "design_graphique": {
+          "libelle": "Graphic design",
+          "description": "Create clear, polished visuals.",
+          "exemple": "A poster, a card to share, a visual for social media"
+        },
+        "montage_video": {
+          "libelle": "Video editing and animation",
+          "description": "Edit and animate short videos.",
+          "exemple": "Cut a video, add subtitles, animate a title"
+        },
+        "photographie": {
+          "libelle": "Photography and shooting",
+          "description": "Take quality photos, videos or sound recordings.",
+          "exemple": "Photograph an event, record a short presentation"
+        },
+        "redaction_contenus": {
+          "libelle": "Writing and content creation",
+          "description": "Write accurate texts that are pleasant to read.",
+          "exemple": "An article, a text for social media, a newsletter"
+        },
+        "publicite_en_ligne": {
+          "libelle": "Online advertising",
+          "description": "Prepare and follow advertising campaigns on the internet.",
+          "exemple": "Choose the target audience, launch a campaign, follow the results"
+        },
+        "traduction": {
+          "libelle": "Translation",
+          "description": "Translate texts from one language to another.",
+          "exemple": "Messages to families, subtitles, a text for the website"
+        },
+        "assistanat": {
+          "libelle": "Administrative or executive assistance",
+          "description": "Help the management organize day to day.",
+          "exemple": "Keep a diary, write letters, follow files"
+        },
+        "coordination_groupe": {
+          "libelle": "Community coordination",
+          "description": "Run and support a community of people, for example the sisters' or the parents'.",
+          "exemple": "Welcome newcomers, answer questions, circulate information"
+        },
+        "accueil_familles": {
+          "libelle": "Family welcome and follow-up",
+          "description": "Be the first contact for families who sign up.",
+          "exemple": "Answer a question, support a registration, check in"
+        },
+        "gestion_projet": {
+          "libelle": "Project planning and management",
+          "description": "Organize teamwork from start to finish.",
+          "exemple": "Draw up a schedule, share out tasks, follow progress"
+        },
+        "ressources_humaines": {
+          "libelle": "Human resources and recruitment",
+          "description": "Choose and welcome the people who join the team.",
+          "exemple": "Conduct an interview, compare applications, welcome a new teacher"
+        },
+        "comptabilite": {
+          "libelle": "Accounting",
+          "description": "Keep the academy's accounts.",
+          "exemple": "Record invoices, follow payments, prepare a balance sheet"
+        },
+        "gestion_financiere": {
+          "libelle": "Financial management",
+          "description": "Follow the money and prepare decisions.",
+          "exemple": "Build a budget, follow cash flow"
+        },
+        "juridique_donnees": {
+          "libelle": "Legal and data protection",
+          "description": "Make sure the academy complies with the law and protects personal data.",
+          "exemple": "Review a contract, write terms of use, protect privacy"
+        },
+        "conception_programmes": {
+          "libelle": "Curriculum and materials design",
+          "description": "Prepare what students learn, and the materials to teach it.",
+          "exemple": "A lesson plan, a worksheet, a series of exercises"
+        },
+        "formation_enseignants": {
+          "libelle": "Teacher training and support",
+          "description": "Help teachers improve.",
+          "exemple": "Train a new teacher, advise them after a session"
+        },
+        "qualite_cours": {
+          "libelle": "Class observation and quality",
+          "description": "Observe sessions and help improve them.",
+          "exemple": "Attend a session, give written feedback"
+        },
+        "tests_niveau": {
+          "libelle": "Placement tests",
+          "description": "Determine a new student's level.",
+          "exemple": "Listen to a new student recite before they join a class"
+        },
+        "accompagnement_enfants": {
+          "libelle": "Support for children",
+          "description": "Help children who need particular attention.",
+          "exemple": "Child psychology, special needs, very shy children"
+        },
+        "developpement": {
+          "libelle": "Web or mobile development",
+          "description": "Program websites and apps.",
+          "exemple": "A website, an app, an internal tool"
+        },
+        "assistance_technique": {
+          "libelle": "Technical support for families and teachers",
+          "description": "Troubleshoot remotely for people with a technical problem.",
+          "exemple": "Help sign in, adjust the sound or the camera"
+        },
+        "donnees_tableurs": {
+          "libelle": "Data and spreadsheets",
+          "description": "Organize figures and turn them into clear tables.",
+          "exemple": "A tracking table, statistics, a report"
+        },
+        "autre": {
+          "libelle": "Other area",
+          "description": "A skill that is not in the list."
+        }
+      },
+      "niveaux": {
+        "titre": "What is your level?",
+        "explication": "For each skill, say where you stand. This helps the academy offer you a mission that suits you.",
+        "legende": "How to choose",
+        "debutant": {
+          "libelle": "I'm a beginner",
+          "description": "You know the basics and are still learning."
+        },
+        "experience": {
+          "libelle": "I have experience",
+          "description": "You have already done it several times, for yourself or for others."
+        },
+        "metier": {
+          "libelle": "It's my profession",
+          "description": "You do it, or have done it, as a profession."
+        },
+        "niveauDe": "Level for {competence}",
+        "manque": "Choose your level in \"{competence}\" to continue."
+      },
+      "disponibilite": {
+        "titre": "When could you help?",
+        "explication": "Say how much time you could give to a mission, alongside teaching. Below, say whether the academy may contact you.",
+        "quelques_heures": {
+          "libelle": "A few hours a week",
+          "description": "Light help, alongside your other activities."
+        },
+        "mi_temps": {
+          "libelle": "Half-time",
+          "description": "About half of a full-time job."
+        },
+        "plus": {
+          "libelle": "More than half-time",
+          "description": "A large part of your time."
+        },
+        "pas_maintenant": {
+          "libelle": "Not for now",
+          "description": "You just want the academy to know your talents."
+        },
+        "accord": "I agree that the academy may contact me for a mission in these areas.",
+        "accordNote": "Without this box, the academy reads your answers but offers you no mission.",
+        "manque": "Choose your availability to continue.",
+        "enregistrer": "Save my answers"
+      },
+      "lecture": {
+        "enregistre": "Your answers are saved.",
+        "misesAJour": "Last updated on {date}.",
+        "competences": "Your skills",
+        "autreDomaine": "Other area: {texte}",
+        "disponibilite": "Your availability",
+        "contact": "Contact for a mission",
+        "contactOui": "You agree that the academy may contact you.",
+        "contactNon": "You have not given this agreement: the academy will not contact you.",
+        "modifier": "Edit my answers",
+        "retirer": "Withdraw my answers",
+        "retraitQuestion": "Withdraw your answers?",
+        "retraitConsequence": "The academy will no longer have your skills or the agreement that allows it to contact you. You can answer again whenever you want.",
+        "retraitConfirmer": "Withdraw my answers",
+        "close": "Your teacher application is finished: you can no longer edit these answers. You can still withdraw them.",
+        "retire": "Your answers are withdrawn."
+      },
+      "etats": {
+        "nonEnvoyeTitre": "This step is not open yet",
+        "nonEnvoye": "It opens when your application is sent. Finish your application first.",
+        "closTitre": "This step is finished",
+        "clos": "Your teacher application is no longer in progress: there is nothing to add here.",
+        "nonCharge": "Your other talents could not be loaded."
+      },
+      "erreurs": {
+        "conflit": "Your answers have changed since this page was opened (on another device, for example). Review them, then save again.",
+        "desactivee": "One of the chosen skills is no longer offered: it has been removed from your choice. Review your answers, then save again.",
+        "invalides": "One of your answers is not valid. Review them, then save again.",
+        "incertain": "Your answers may not have reached Rewayah. Try again: they will not be saved twice.",
+        "horsLigne": "Your answers can be saved later, when the connection returns.",
+        "echec": "Your answers could not be saved. Try again in a moment.",
+        "retraitIncertain": "The withdrawal may not have reached Rewayah. Try again: it will not be done twice.",
+        "retraitHorsLigne": "The withdrawal can be done later, when the connection returns.",
+        "retraitEchec": "The withdrawal did not go through. Try again in a moment."
+      }
     }
   },
   "dossiers": {
@@ -8181,6 +8553,579 @@
     "demandeTitre": "Request saved",
     "demandeDetail": "We will let you know as soon as a time slot opens for {prenom}.",
     "erreurEnvoi": "Your request was not confirmed. Try again in a moment."
+  },
+  "candidatsFlux": {
+    "importFormulaires": {
+      "titre": "Import the application forms",
+      "intro": "The import is used to recognize people and pre-fill their application. It creates no account.",
+      "lienEntree": "Import the forms",
+      "retourCandidatures": "Back to the applications",
+      "lectureDroits": "Your import rights could not be read. Try again in a moment.",
+      "sansDonnees": "your form import rights",
+      "acces": {
+        "refuseTitre": "Import reserved",
+        "refusePhrase": "Only the super administrator can import the application forms. Ask them to do it.",
+        "doublePhrase": "This import requires your second factor.",
+        "doubleSuite": "Tap \"Sign in again\": your session closes and you return to sign-in to use your second factor. Nothing was saved.",
+        "doubleAction": "Sign in again"
+      },
+      "pas": {
+        "liste": "The eight steps of the import",
+        "depot": "Drop the file",
+        "apercu": "Preview",
+        "colonnes": "Columns",
+        "doublons": "Duplicates",
+        "controle": "Errors",
+        "comptes": "Accounts",
+        "confirmation": "Confirmation",
+        "rapport": "Report",
+        "surTotal": "Step {n} of {total}",
+        "surTotalNomme": "Step {n} of {total}: {nom}",
+        "fait": "Done",
+        "enCours": "In progress",
+        "aVenir": "Upcoming"
+      },
+      "depot": {
+        "question": "Which file do you want to import?",
+        "explication": "Choose the CSV export of the forms sheet (in Google Sheets: File, Download, Comma-separated values). Nothing is sent before \"Analyze the file\".",
+        "carteTitre": "Choose a CSV file",
+        "carteDescription": "The file is read on this device. It goes to Rewayah only when you tap \"Analyze the file\". Maximum size: 5 MB.",
+        "carteChoisi": "File chosen: {nom}",
+        "lignesLues(param=n)": {
+          "one": "{n} row of answers in this file",
+          "other": "{n} rows of answers in this file"
+        },
+        "autreFichier": "Choose another file",
+        "noms": {
+          "titre": "This file will be saved as",
+          "ligne": "Workbook \"{classeur}\", tab \"{onglet}\"",
+          "aide": "These two names are used to recognize each answer. If you replay the same corrected file later, keep exactly the same names: no answer will be added twice.",
+          "corriger": "Correct these names",
+          "garder": "Keep these names",
+          "classeur": "Workbook name",
+          "onglet": "Tab name",
+          "ongletManquant": "The file name does not give the tab. Enter it to continue.",
+          "invalide": "A name cannot be empty, exceed 200 characters or contain the vertical bar. Correct it to continue."
+        },
+        "manqueFichier": "First choose a file so it can be analyzed.",
+        "analyser": "Analyze the file",
+        "analyseEnCours": "Rewayah is reading your file. Nothing is saved yet.",
+        "horsLigne": "The analysis can be done when the connection returns.",
+        "vide": "This file contains no row to import.",
+        "videAide": "Check that you exported the right sheet."
+      },
+      "fichier": {
+        "titre": "Unreadable file",
+        "illisibleLigne": "This file could not be read, row {ligne}: {cause}.",
+        "illisible": "This file could not be read: {cause}.",
+        "cause": {
+          "guillemetNonFerme": "an opening quotation mark is never closed",
+          "tropVolumineux": "the file exceeds 5 MB",
+          "malForme": "the formatting is not that of a CSV export",
+          "inconnue": "its content is not that of a CSV export"
+        },
+        "quoiFaire": "Export the sheet as CSV again from Google Sheets, then choose the file."
+      },
+      "colonnes": {
+        "dejaAssocie": "Currently read in column {n}. Choosing it here removes it from that column.",
+        "titreColonne": "Column {n}: {titre}",
+        "question": "Does each column really contain what Rewayah thinks?",
+        "explication": "Rewayah recognizes each column by its title. Tap a column to change what it contains.",
+        "sansTitreNumero": "Column {n}, untitled",
+        "nonLue": "Not read",
+        "nonLueAide": "This column is not used by the import.",
+        "choisir": "What does column {n} contain?",
+        "sansTitre": "Untitled column",
+        "choixActuel": "Current choice",
+        "nePasLire": "Do not read this column",
+        "nePasLireAide": "Its content is ignored by the import.",
+        "fermer": "Close this choice",
+        "manquants": "First match these columns: {champs}.",
+        "ambigu": "Several columns carry the title of: {champs}. Tap the one to read, then choose what it contains.",
+        "libelles": {
+          "titre": "How answers are read",
+          "texte": "Multiple-choice answers (gender, languages, memorization level, possible start) are read using Rewayah's table of labels. A label that is not in it is flagged row by row, at the \"Errors\" step."
+        },
+        "relecture": "Your corrections require the file to be read again before continuing."
+      },
+      "doublons": {
+        "casTitre": "{nature}: case {n} of {total}",
+        "question": "Do these rows come from the same person?",
+        "explication": "When rows share an email or a phone number, Rewayah proposes them as one person. Without your choice, the most recent row is kept and the others stay in the history. Nothing is deleted.",
+        "aucun": "No probable duplicate in this file.",
+        "aucunAide": "No row shares an email or a phone number with another.",
+        "total(param=n)": {
+          "one": "{n} case to look at",
+          "other": "{n} cases to look at"
+        },
+        "tranches": "Choices made by you: {choisis} of {total}. For the others, the most recent row is kept.",
+        "nature": {
+          "courriel": "Same email",
+          "telephone": "Same phone",
+          "courrielEtTelephone": "Same email and same phone"
+        },
+        "lignes": "Rows {liste}",
+        "dansLaBase(param=n)": {
+          "one": "and {n} row already saved",
+          "other": "and {n} rows already saved"
+        },
+        "choisirLigne": "Choose the row to keep, or say these are different people.",
+        "ouvrir": "See the choices for this case",
+        "fermer": "Close the choices for this case",
+        "plus(param=n)": {
+          "one": "See {n} more case",
+          "other": "See {n} more cases"
+        },
+        "etat": {
+          "recente": "The most recent is kept",
+          "base": "The row already saved is kept",
+          "ligne": "Row {ligne} kept",
+          "distinctes": "Different people",
+          "enregistre": "Choice already saved"
+        },
+        "option": {
+          "recente": {
+            "titre": "Keep the most recent (row {ligne})",
+            "description": "The other rows stay in the history, nothing is deleted. This is what Rewayah does without your choice."
+          },
+          "base": {
+            "titre": "Keep the row already saved",
+            "description": "A previous import already kept a row for this person. The rows in this file stay in the history."
+          },
+          "enregistre": {
+            "titre": "Keep your previous choice",
+            "distinctes": "You already said these are different people.",
+            "ligne": "You already chose the row to keep for this person."
+          },
+          "ligne": {
+            "titre": "Keep row {ligne} instead",
+            "description": "This row becomes the person's answer. The others go into the history."
+          },
+          "distinctes": {
+            "titre": "Different people",
+            "description": "Choose this if these rows come from different people who share a contact. Each keeps their answer.",
+            "exemple": "two people from the same family who answered with the same number"
+          }
+        }
+      },
+      "analyse": {
+        "echec": "The analysis did not go through.",
+        "echecPhrase": "Nothing was saved. Try again in a moment.",
+        "refus": "The server cannot read this file with these names. Check the workbook, the tab and the file, then try again.",
+        "reessayer": "Try the analysis again"
+      },
+      "apercu": {
+        "question": "Is this the right file?",
+        "explication": "Here is what Rewayah read. Nothing is saved yet.",
+        "contactsMasques": "Contacts are hidden in the preview.",
+        "lignes(param=n)": {
+          "one": "{n} row read",
+          "other": "{n} rows read"
+        },
+        "colonnesReconnues": "Columns recognized: {reconnues} of {total}",
+        "premieres": "The first rows",
+        "ligne": "Row {ligne}",
+        "autres(param=n)": {
+          "one": "{n} other row is not shown here.",
+          "other": "{n} other rows are not shown here."
+        },
+        "sansLignes": "The rows will be read as soon as the columns are matched.",
+        "colonnesATitre": "Some columns still need matching",
+        "mappageIncomplet": "First match these columns: {champs}.",
+        "ambiguTitre": "Two columns look alike",
+        "ambigu": "Several columns carry the title of: {champs}. Say which one to read, at the next step.",
+        "marque": {
+          "courrielAObtenir": "Email to obtain",
+          "indicatifAConfirmer": "Country code to confirm"
+        },
+        "aideMarques": "\"Email to obtain\": no valid email, the person cannot be invited. \"Country code to confirm\": the phone has no recognized country code. \"Ignored\": empty or repeated row."
+      },
+      "issue": {
+        "nouvelle": "New",
+        "corrigee": "Corrected",
+        "dejaConnue": "Already known",
+        "ignoree": "Ignored",
+        "aCorriger": "To correct",
+        "historique": "In history"
+      },
+      "champ": {
+        "horodatage": "Date of the answer",
+        "horodatageAide": "Used to recognize the answer if you replay the file.",
+        "genre": "Gender",
+        "genreAide": "Used to file the answer on the right side. Never shown in the preview.",
+        "nom": "Full name",
+        "nomAide": "Used to recognize the person. Never shown here.",
+        "telephone": "WhatsApp phone",
+        "telephoneAide": "With the country code. Never completed or guessed.",
+        "langueMaternelle": "Mother tongue",
+        "langueMaternelleAide": "Optional.",
+        "languesExplication": "Languages of explanation",
+        "languesExplicationAide": "The languages in which the person can explain and correct.",
+        "memorisation": "Quran memorization",
+        "memorisationAide": "A declaration, not a finding: the level is established at the interview.",
+        "ijaza": "Ijaza or certificate to present",
+        "ijazaAide": "What the person can show at the interview.",
+        "experience": "Experience with beginners",
+        "experienceAide": "Optional.",
+        "creneaux": "Time slots (Makkah time)",
+        "creneauxAide": "Kept as they are, without a day. Never read as availability.",
+        "heures": "Hours per week",
+        "heuresAide": "Converted into a number of classes wanted.",
+        "debut": "Possible start",
+        "debutAide": "Optional.",
+        "whatsapp": "Agreement to be contacted on WhatsApp",
+        "whatsappAide": "Applies to this contact only.",
+        "courriel": "Email",
+        "courrielAide": "Used to recognize the person when they sign up. Never shown here.",
+        "contact": "Phone or email"
+      },
+      "controle": {
+        "question": "Are there rows to correct?",
+        "explication": "A row to correct is not imported. Correct it in the workbook, export the file again, then replay the import: rows already imported are not added twice.",
+        "aucune": "No error or warning in this file.",
+        "aucuneAide": "Every row could be read.",
+        "aCorriger": {
+          "titre": "To correct",
+          "aide": "These rows will not be imported."
+        },
+        "avertissements": {
+          "titre": "To look at",
+          "aide": "These rows are imported, with a point to check."
+        },
+        "ignorees": {
+          "titre": "Ignored",
+          "aide": "Empty rows or rows repeated identically."
+        },
+        "ligne": "Row {ligne}: {motif}",
+        "plus(param=n)": {
+          "one": "See {n} more row",
+          "other": "See {n} more rows"
+        }
+      },
+      "motif": {
+        "ligneVide": "empty row",
+        "horodatageIllisible": "the date of the answer is unreadable",
+        "genreIllisible": "the gender is not recognized",
+        "nomAbsent": "the name is missing",
+        "nomTropLong": "the name is too long",
+        "memeReferenceMemeContenu": "row repeated identically",
+        "memeReferenceContenuDifferent": "same answer date as another row, but different content",
+        "genreChangeSurLigneSuivie": "the gender changed while the person is being followed: it fixes their side",
+        "inscription1210": "already known from the registrations import",
+        "inconnu": "a point in this row needs checking"
+      },
+      "avertissement": {
+        "telephoneIllisible": "the phone is unreadable",
+        "formatNational": "the phone has no country code",
+        "indicatifInconnu": "the phone's country code is unknown",
+        "longueurImplausible": "the phone's length is unusual",
+        "indicatifAConfirmer": "the phone's country code needs confirming",
+        "zeroNationalEnTrop": "an extra zero after the phone's country code",
+        "courrielMalforme": "the email is badly written: it must be obtained",
+        "langueMaternelleVersAutre": "unknown mother tongue, filed under other language",
+        "langueInconnueVersAutre": "an unknown language of explanation is filed under other language",
+        "arabeRetire": "Arabic is removed from the languages of explanation (it is not a teaching language)",
+        "libelleInconnu": "a multiple-choice answer is not recognized",
+        "ijazaDeclareeEnG": "ijaza declared as memorization: memorization is for the person to fill in",
+        "experiencePretTest": "\"ready for a test\" has no equivalent for experience: for the person to fill in",
+        "moinsDe3Heures": "less than 3 hours a week: that does not make a class, for the person to fill in",
+        "creneauxContradictoires": "contradictory time slots, kept as they are"
+      },
+      "comptes": {
+        "question": "Are these the numbers you expected?",
+        "explication": "Here is what Rewayah counted in the file. Compare with your own count before confirming.",
+        "nouvelles": "New",
+        "nouvellesAide": "Not known yet: they will be saved.",
+        "dejaConnues": "Already known",
+        "dejaConnuesAide": "Already saved: nothing changes.",
+        "ignorees": "Ignored",
+        "ignoreesAide": "Empty or repeated rows.",
+        "aCorriger": "To correct",
+        "aCorrigerAide": "Unreadable rows: they are not imported.",
+        "corrigees": "Corrected on the spot",
+        "personnes": "People concerned",
+        "lignesLues": "Rows read",
+        "attendus": {
+          "question": "What count did you expect?",
+          "fichier2110": {
+            "titre": "The file of 21 October",
+            "description": "440 rows, that is 409 people once duplicates are merged: the count noted in the workbook that day."
+          },
+          "autres": {
+            "titre": "Other numbers",
+            "description": "You know the number of rows or people in your file. Enter it: Rewayah flags any difference."
+          },
+          "aucun": {
+            "titre": "No count to compare",
+            "description": "You confirm by relying on the preview."
+          },
+          "lignes": "Rows expected",
+          "personnes": "People expected",
+          "aide": "A whole number. Leave empty what you do not compare."
+        },
+        "choisir": "Say which count to compare to continue.",
+        "saisirNombre": "Enter at least one number to continue.",
+        "ecartTitre": "A difference to check",
+        "ecart": "Difference with the expected counts: expected {attendu}, read {lu}. Check before confirming: you can still import.",
+        "accord": "The numbers match what you expected."
+      },
+      "unite": {
+        "lignes(param=n)": {
+          "one": "{n} row",
+          "other": "{n} rows"
+        },
+        "personnes(param=n)": {
+          "one": "{n} person",
+          "other": "{n} people"
+        }
+      },
+      "confirmation": {
+        "question": "Import these answers now?",
+        "explication": "Review what the import will do. It cannot be undone from this screen.",
+        "resume": {
+          "titre": "What will be saved",
+          "fichier": "File",
+          "doublons": "Duplicates: {choisis} cases decided by you out of {total}. For the others, the most recent row is kept.",
+          "aucunDoublon": "No probable duplicate to resolve."
+        },
+        "garanties": {
+          "titre": "What the import does not do",
+          "texte": "It creates no account, no invitation and no application, and sends no message. It saves answers used to recognize people when they sign up. Replaying the same file adds nothing."
+        },
+        "importer": "Import the answers",
+        "envoi": "Sending. The import is confirmed only when Rewayah answers.",
+        "horsLigne": "The import can be confirmed when the connection returns.",
+        "nonConfirme": "The import is not confirmed: it may not have reached Rewayah. Tap \"Import the answers\" again: the same request is saved only once.",
+        "jetonPerime": "The file or its settings changed since the preview. Run the analysis again to continue.",
+        "choixInvalide": "A duplicate choice no longer matches the file. Run the analysis again, then choose again.",
+        "cleReutilisee": "This request cannot be replayed as it is. Run the analysis again to start cleanly.",
+        "refus": "The server refuses this import. Check that you are signed in with two-step verification, then try again.",
+        "titreNonConfirme": "Import not confirmed",
+        "titreARefaire": "The analysis must be redone",
+        "relancer": "Run the analysis again"
+      },
+      "rapport": {
+        "titre": "Import finished",
+        "question": "Here is what the import did.",
+        "rejoue": "This request had already been saved: nothing was added a second time.",
+        "sansCandidature": "These answers create no application: they are used to recognize people when they sign up.",
+        "compteurs": {
+          "nouvelles": "Saved.",
+          "dejaConnues": "Already saved: nothing changed.",
+          "aCorriger": "Unreadable rows: not imported."
+        },
+        "historique": "Replaced by a more recent one: {n}",
+        "lignes": {
+          "titre": "Row by row",
+          "aide": "Each row is recognized by the date of its answer, never by the person's name.",
+          "reference": "Answer of {reference}",
+          "sansReference": "No reference"
+        },
+        "plus(param=n)": {
+          "one": "See {n} more row",
+          "other": "See {n} more rows"
+        },
+        "autreFichier": "Import another file"
+      }
+    },
+    "prevenir": {
+      "lien": "Notify by email",
+      "titre": "Notify by email",
+      "contexte": "The sign-up link is sent by email to the people in the imported forms who left an address and do not have an account yet. The same address never receives the message twice.",
+      "lecture": "Counting the people to notify.",
+      "comptes": {
+        "aPrevenir": {
+          "one": "{n} person to notify",
+          "other": "{n} people to notify"
+        },
+        "dejaPrevenus": {
+          "one": "{n} person already notified",
+          "other": "{n} people already notified"
+        },
+        "dejaInscrits": {
+          "one": "{n} person already signed up",
+          "other": "{n} people already signed up"
+        }
+      },
+      "message": "The message recalls the date of the answer and the name of the form, asks the person to create their account with the same address, and says there is nothing to pay.",
+      "delai": "Messages go out in the minutes after sending, not instantly.",
+      "groupes": "Sending goes out in batches of {n} people at most.",
+      "fermee": "Online sign-up must be opened first: while it is closed, the link would lead to a closed page and no message goes out.",
+      "videTitre": "Everyone is already notified",
+      "vide": "Everyone who left an address is already notified or already signed up. There is nothing to send.",
+      "envoyer": {
+        "one": "Send the link to {n} person",
+        "other": "Send the link to {n} people"
+      },
+      "envoyerSuivantes": {
+        "one": "Send to the next person",
+        "other": "Send to the next {n}"
+      },
+      "sansDonnees": "The number of people to notify could not be loaded.",
+      "horsLigne": "Sending will be possible as soon as the network returns.",
+      "resultat": {
+        "titre": "Sending started",
+        "mis": {
+          "one": "{n} message goes out in the next few minutes",
+          "other": "{n} messages go out in the next few minutes"
+        },
+        "restants": {
+          "one": "{n} person still to notify.",
+          "other": "{n} people still to notify."
+        },
+        "tout": "No one is waiting for the link any more: everyone is notified.",
+        "pasDeuxFois": "The same address never receives the message twice, even if you send again."
+      },
+      "erreurs": {
+        "titre": "Sending not confirmed",
+        "nonConfirme": "The sending may not have reached Rewayah. Try again: no address will receive the message twice.",
+        "generique": "The sending did not go through and nothing is confirmed. Try again: no address will receive the message twice."
+      }
+    },
+    "invitationsPersonnelles": {
+      "aucuneImportee": "No form answer is imported yet. Import the forms first: without them, the codes would find no answer, and no sending is possible.",
+      "varianteA": {
+        "one": "including {n} person who received the end-of-October waiting email",
+        "other": "including {n} people who received the end-of-October waiting email"
+      },
+      "lienCopie": {
+        "action": "Copy the sign-up link",
+        "titre": "Personal sign-up link",
+        "contexte": "This person did not leave an email address. Enter the one they will use to create their account: it is saved on their answer, and the code works only with it. No email is sent: you pass the link on yourself.",
+        "champ": "The person's email address",
+        "preparer": "Prepare the link",
+        "code": "Personal code",
+        "lien": "Personal link",
+        "echeance": "Valid until {date}, once, with this address only.",
+        "copier": "Copy the link",
+        "copie": "Link copied.",
+        "copieEchec": "The copy did not go through: select the link above, then copy it.",
+        "nonConfirme": "The preparation is not confirmed. Try again with the same address: you will get the same code.",
+        "refus": {
+          "ligneIntrouvable": "This application no longer awaits a link: it changed in the meantime. Close, then read it again.",
+          "adresseConnue": "This person already has an address: their code goes out with the sending of personal codes.",
+          "adresseRequise": "Enter the email address the person will use.",
+          "emailInvalide": "This address does not look like an email address. Check it.",
+          "dejaInscrit": "An account already exists at this address: the person can sign in with it.",
+          "adresseUtilisee": "Another person already uses this address. Ask for an address that belongs to them alone.",
+          "desinscrit": "This address asked to stop receiving recruitment messages."
+        }
+      },
+      "lien": "Send the personal codes",
+      "titre": "Personal codes for imported candidates",
+      "contexte": "Each person in the imported forms who left an address receives their own sign-up code by email. With this code, they create their account even if online sign-up is closed, and find their answers already filled in.",
+      "comptes": {
+        "aInviter": {
+          "one": "{n} person to invite",
+          "other": "{n} people to invite"
+        },
+        "aRenvoyer": {
+          "one": "{n} expired code to resend",
+          "other": "{n} expired codes to resend"
+        },
+        "dejaInvites": {
+          "one": "{n} person already has a valid code",
+          "other": "{n} people already have a valid code"
+        },
+        "dejaInscrits": {
+          "one": "{n} person already signed up: an account exists at their address, no invitation goes out",
+          "other": "{n} people already signed up: an account exists at their address, no invitation goes out"
+        },
+        "revoquees": {
+          "one": "{n} code withdrawn by the management: no group sending for this person",
+          "other": "{n} codes withdrawn by the management: no group sending for these people"
+        },
+        "desinscrits": {
+          "one": "{n} person no longer wants to receive recruitment messages",
+          "other": "{n} people no longer want to receive recruitment messages"
+        },
+        "sansAdresse": {
+          "one": "{n} answer without an email address",
+          "other": "{n} answers without an email address"
+        }
+      },
+      "rythme": "At most {plafond} messages a day for this sending, and {limite} per sending. Still possible today: {reste}.",
+      "videTitre": "No one to invite",
+      "vide": "Everyone who left an address already has a valid code or an account. There is nothing to send.",
+      "plafond": {
+        "one": "The daily limit is reached. {n} person is still to invite: continue tomorrow.",
+        "other": "The daily limit is reached. {n} people are still to invite: continue tomorrow."
+      },
+      "nombreChange": "The number of people changed since it was displayed. Nothing was sent: check the number again, then send.",
+      "envoyer": {
+        "one": "Send their code to {n} person",
+        "other": "Send their code to {n} people"
+      },
+      "resultat": {
+        "restants": {
+          "one": "{n} person still to invite.",
+          "other": "{n} people still to invite."
+        },
+        "tout": "No one is waiting for their code any more.",
+        "pasDeuxFois": "The same person never receives two valid codes at the same time, even if you send again."
+      },
+      "sansDonnees": "The number of people to invite could not be loaded."
+    },
+    "file": {
+      "rythme": {
+        "one": "To avoid ending up in spam folders, at most {n} message of this type goes out each day. The others wait their turn and go out by themselves on the following days.",
+        "other": "To avoid ending up in spam folders, at most {n} messages of this type go out each day. The others wait their turn and go out by themselves on the following days."
+      },
+      "attente": {
+        "one": "{n} message is waiting its turn.",
+        "other": "{n} messages are waiting their turn."
+      },
+      "jours": {
+        "one": "Everything should be sent within about a day.",
+        "other": "Everything should be sent within about {n} days."
+      },
+      "rienEnAttente": "No message is waiting its turn.",
+      "misEnFile": {
+        "one": "{n} message queued",
+        "other": "{n} messages queued"
+      },
+      "desinscrits": {
+        "one": "{n} person asked to stop receiving recruitment messages: they will not receive the link.",
+        "other": "{n} people asked to stop receiving recruitment messages: they will not receive the link."
+      },
+      "reglage": {
+        "libelle": "Messages of this type per day",
+        "aide": "From 1 to 2,000. Messages tied to an account, a class, a registration or a payment always go out without waiting.",
+        "enregistrer": "Save the setting",
+        "enregistre": {
+          "one": "Setting saved: {n} message per day.",
+          "other": "Setting saved: {n} messages per day."
+        },
+        "invalide": "Enter a whole number from 1 to 2,000, without spaces.",
+        "echec": "Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment."
+      }
+    },
+    "importDouble": {
+      "suite": "Tap \"Enter my code\": you enter the code from your verification app, then the import resumes here. Nothing was saved.",
+      "action": "Enter my code"
+    },
+    "langues": {
+      "man": "Malinke (Mandinka)"
+    },
+    "publication": {
+      "titre": "Publication on the website",
+      "texte": "Your name, photo and country may appear on the Rewayah Academy public website. This choice is separate from your application: it changes nothing about its review.",
+      "case": "I agree that my name, photo and country be on the Rewayah public website.",
+      "signature": "Your name counts as a signature: {nom}",
+      "signe": "Agreement given on {date}, signed {nom}.",
+      "donner": "Give my agreement",
+      "retirer": "Withdraw my agreement",
+      "retirerQuestion": "Withdraw your publication agreement?",
+      "retirerConsequence": "Your name, photo and country will no longer appear on the public website. You can give your agreement again later.",
+      "echec": "Your choice is not confirmed. Try again.",
+      "lectureEchec": "Your publication agreement could not be read.",
+      "nonPublie": "The text of the publication agreement is not published yet.",
+      "horsLigne": "Your choice can be saved when the connection returns."
+    },
+    "photo": {
+      "titre": "Your photo",
+      "requise": "Add your photo before sending your application."
+    }
   },
   "push1": {
     "invitation": {
