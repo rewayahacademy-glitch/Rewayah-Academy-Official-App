@@ -28,6 +28,7 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/pile_cartes.dart';
+import 'apercu_profil_candidat.dart';
 import 'avatar_participant.dart';
 import 'entete_fil_contexte.dart';
 import 'port_messages_metier.dart';
@@ -59,6 +60,19 @@ class PanneauContexteFil extends StatelessWidget {
     'panneau-fichiers',
   );
 
+  /// Le candidat d'un fil de candidature lu par l'equipe, ou `null`.
+  static Participant? _candidatPourLEquipe(FilMetier fil) {
+    if (fil.objet.type != TypeObjetLie.candidature) return null;
+    final bool equipeLit = fil.participants.any(
+      (Participant p) => p.estSoi && p.equipe,
+    );
+    if (!equipeLit) return null;
+    for (final Participant p in fil.participants) {
+      if (!p.estSoi && !p.equipe && p.profilId != null) return p;
+    }
+    return null;
+  }
+
   void _ouvrir(BuildContext context, String chemin) {
     final ValueChanged<String>? ouvrir = onOuvrirObjet;
     if (ouvrir != null) {
@@ -76,6 +90,18 @@ class PanneauContexteFil extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Apercu du profil (directeur, 14/11/2026) : dans un fil de
+        // candidature, quand la personne qui lit est l'equipe (rendu par le
+        // serveur), le profil du candidat d'abord.
+        if (_candidatPourLEquipe(fil)
+            case final Participant candidat) ...<Widget>[
+          ApercuProfilCandidat(
+            candidatureId: fil.objet.id,
+            candidat: candidat,
+            onOuvrir: onOuvrirObjet,
+          ),
+          Ecart.vXl,
+        ],
         GroupeReglages(
           key: cleObjets,
           titre: p.objets,
