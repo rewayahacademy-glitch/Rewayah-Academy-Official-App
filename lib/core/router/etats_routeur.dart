@@ -10,6 +10,7 @@ import '../../features/connexion/recuperation_page.dart'
     show
         MotifRecuperation,
         cheminRecuperation,
+        cheminSaisieCode,
         lienOuvertDansUnAutreNavigateurDepuisUrlRetour,
         motifDepuisUrlRetour;
 import '../domain/enums.dart';
@@ -74,12 +75,17 @@ class PageIntrouvable extends ConsumerWidget {
       // autre refus ont leur propre phrase.
       final bool autreNavigateur =
           lienOuvertDansUnAutreNavigateurDepuisUrlRetour(adresse ?? Uri.base);
-      final String titre = autreNavigateur
+      final bool supprime = motif == MotifRecuperation.compteSupprime;
+      final String titre = supprime
+          ? t.connexion.recuperation.compteSupprimeTitre
+          : autreNavigateur
           ? t.i1.lien.autreNavigateurTitre
           : motif == MotifRecuperation.expire
           ? t.i1.lien.dejaServiTitre
           : t.i1.lien.refuseTitre;
-      final String phrase = autreNavigateur
+      final String phrase = supprime
+          ? t.connexion.recuperation.compteSupprimeDetail
+          : autreNavigateur
           ? t.i1.lien.autreNavigateurDetail
           : motif == MotifRecuperation.expire
           ? t.i1.lien.dejaServiDetail
@@ -90,12 +96,16 @@ class PageIntrouvable extends ConsumerWidget {
         titre: titre,
         phrase: phrase,
         libelleAction: visiteur
-            ? t.i1.lien.nouveauLien
+            ? (supprime
+                  ? t.connexion.avoirCodeInvitation
+                  : t.i1.lien.nouveauLien)
             : t.commun.etats.actions.retourAccueil,
         // Le visiteur va droit a la recuperation d'acces, qui envoie un
         // nouveau lien ; un compte connecte retourne a son accueil.
         onAction: () => GoRouter.of(context).go(
-          visiteur ? cheminRecuperation(motif) : destinationAutorisee(session),
+          visiteur
+              ? (supprime ? cheminSaisieCode : cheminRecuperation(motif))
+              : destinationAutorisee(session),
         ),
       );
     }

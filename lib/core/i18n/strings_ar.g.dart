@@ -1180,6 +1180,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String codeInvitationReconnu({required Object code}) => 'تم التعرّف على رمز الدعوة ⁨${code}⁩';
 	@override String get erreurServeur => 'تعذّر إرسال الرابط. أعد المحاولة بعد قليل؛ وإن تكرر ذلك فاكتب إلى الأكاديمية.';
 	@override String get invitationCreationImpossible => 'تعذّر إنشاء حسابك بهذه الدعوة. قد يكون الرمز منتهي الصلاحية أو سبق استعماله، أو لا يطابق هذا العنوان. تحقق من العنوان الذي أدخلته؛ وإلا فاطلب من الأكاديمية دعوة جديدة.';
+	@override String get erreurCompteSupprime => 'كان هذا العنوان لحساب محذوف. افتح رابط الدعوة الذي وصلك بالبريد الإلكتروني أو أدخل رمز الدعوة أدناه.';
 	@override String get modeConnexion => 'لدي حساب';
 	@override String get modeCreation => 'إنشاء حساب';
 	@override String get titreCreation => 'أنشئ حسابك';
@@ -8865,6 +8866,8 @@ class _Traductions$connexion$recuperation$ar extends Traductions$connexion$recup
 	@override String get lienExpire => 'رابط الدخول يُستخدم مرة واحدة وتنتهي صلاحيته بعد مدة. اطلب رابطًا جديدًا أدناه.';
 	@override String get lienRefuseTitre => 'لم يكتمل الدخول';
 	@override String get lienRefuse => 'تعذّر الدخول بهذا الرابط. اطلب رابطًا جديدًا أدناه.';
+	@override String get compteSupprimeTitre => 'كان هذا العنوان لحساب محذوف';
+	@override String get compteSupprimeDetail => 'لا يستطيع رابط الدخول ولا Google إعادة فتحه. افتح رابط الدعوة الذي وصلك بالبريد الإلكتروني، أو أدخل رمز الدعوة.';
 	@override String get envoyer => 'استلام رابط جديد';
 	@override String get envoyeTitre => 'أُرسل رابط جديد';
 	@override String envoye({required Object courriel}) => 'افتح الرسالة المرسلة إلى ⁨${courriel}⁩، ثم اتبع الرابط.';
@@ -36032,6 +36035,8 @@ extension on TraductionsAr {
 			'connexion.recuperation.lienExpire' => 'رابط الدخول يُستخدم مرة واحدة وتنتهي صلاحيته بعد مدة. اطلب رابطًا جديدًا أدناه.',
 			'connexion.recuperation.lienRefuseTitre' => 'لم يكتمل الدخول',
 			'connexion.recuperation.lienRefuse' => 'تعذّر الدخول بهذا الرابط. اطلب رابطًا جديدًا أدناه.',
+			'connexion.recuperation.compteSupprimeTitre' => 'كان هذا العنوان لحساب محذوف',
+			'connexion.recuperation.compteSupprimeDetail' => 'لا يستطيع رابط الدخول ولا Google إعادة فتحه. افتح رابط الدعوة الذي وصلك بالبريد الإلكتروني، أو أدخل رمز الدعوة.',
 			'connexion.recuperation.envoyer' => 'استلام رابط جديد',
 			'connexion.recuperation.envoyeTitre' => 'أُرسل رابط جديد',
 			'connexion.recuperation.envoye' => ({required Object courriel}) => 'افتح الرسالة المرسلة إلى ⁨${courriel}⁩، ثم اتبع الرابط.',
@@ -36057,6 +36062,7 @@ extension on TraductionsAr {
 			'connexion.codeInvitationReconnu' => ({required Object code}) => 'تم التعرّف على رمز الدعوة ⁨${code}⁩',
 			'connexion.erreurServeur' => 'تعذّر إرسال الرابط. أعد المحاولة بعد قليل؛ وإن تكرر ذلك فاكتب إلى الأكاديمية.',
 			'connexion.invitationCreationImpossible' => 'تعذّر إنشاء حسابك بهذه الدعوة. قد يكون الرمز منتهي الصلاحية أو سبق استعماله، أو لا يطابق هذا العنوان. تحقق من العنوان الذي أدخلته؛ وإلا فاطلب من الأكاديمية دعوة جديدة.',
+			'connexion.erreurCompteSupprime' => 'كان هذا العنوان لحساب محذوف. افتح رابط الدعوة الذي وصلك بالبريد الإلكتروني أو أدخل رمز الدعوة أدناه.',
 			'connexion.modeConnexion' => 'لدي حساب',
 			'connexion.modeCreation' => 'إنشاء حساب',
 			'connexion.titreCreation' => 'أنشئ حسابك',
@@ -36493,11 +36499,11 @@ extension on TraductionsAr {
 			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.source.motifs.sessionExpiree' => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.recharge.sansDonnees' => 'تعذّر تحميل المستفيدين المطلوب شحن رصيدهم',
 			'adulte.recharge.phraseUnique' => 'ضع علامة على الملف، ثم اختر المبلغ.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.profils' => 'ملفات لشحن رصيدها',
 			'adulte.recharge.profilUnique' => 'ملف لشحن رصيده',
 			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'الرصيد الحالي: ⁨${montant}⁩',
@@ -37007,11 +37013,11 @@ extension on TraductionsAr {
 			'contrat.politique.s2.blocs.2' => '- **لا تُبلَّغ بوقت** الزيارة. تُبلَّغ **مسبقًا بأنها قد تقع**: بهذا النص، وبعقدك، وبالشريط الدائم في القاعة «زيارة مراقبة محتملة».',
 			'contrat.politique.s2.blocs.3' => '- يرى المراقب المادة وفيديو المعلّم ومصغّرات الطلاب. ويستطيع سماع الصوت. ليس لديه **لا ميكروفون ولا كاميرا ولا دردشة**. لا يستطيع التحدث إليك ولا إلى الطلاب.',
 			'contrat.politique.s2.blocs.4' => '- هو **لا يسجّل شيئًا**. لقطة الشاشة محظورة على جهازه (B10).',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.politique.s2.blocs.5' => '- تستطيع الإدارة سحب وصوله **بنقرة واحدة** (B3).',
 			'contrat.politique.s3.titre' => '3. ما يُكتب',
 			'contrat.politique.s3.blocs.0' => '- **كشف تلقائي للحصة**: الوقت المقرر، والوقت الفعلي، والمدة، والطلاب الحاضرون، وحالات إعادة الاتصال. لا أحد يدخله يدويًا.',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.politique.s3.blocs.1' => '- **تقرير المراقب**: «لا شيء يستحق الذكر»، أو ملاحظة عن الدرس (طبيعتها، ومجالها، والشخص المعني، والنص). لا يكتب إلا ما لاحظه في الدرس.',
 			'contrat.politique.s3.blocs.2' => '- التقرير **لا يُعاد كتابته أبدًا**. يمكن إضافة تكملة مؤرَّخة.',
 			'contrat.politique.s3.blocs.3' => '- مسودة المراقب **لا تخرج من التطبيق أبدًا** وتُمحى بعد الإرسال (B11).',
@@ -37521,11 +37527,11 @@ extension on TraductionsAr {
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩',
 			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
 			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
 			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
 			'recrutement.nomLatin.aide' => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى، ثم أكّد.',
@@ -38035,11 +38041,11 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'اختر كل الساعات التي تستطيع أن تبدأ فيها درسًا. تُحسب نهاية الدرس لك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁨${heures}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.explication' => 'يمكنك تغيير يوم قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.exemple' => 'تبدأ في الساعة 18:00 أيام الاثنين والأربعاء والجمعة.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.libelle' => 'لا، يومًا بيوم',
@@ -38549,11 +38555,11 @@ extension on TraductionsAr {
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
 			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
 			'juridique.enfants.titre' => 'حماية الأطفال',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
 			'juridique.enfants.s1.blocs.1' => 'صيغة الأطفال من ٦ إلى ١٧ سنة. ولا يوضَع أي قاصر في فصل للكبار.',
 			'juridique.enfants.s1.blocs.2' => 'من ٦ إلى ٩ سنوات تكون الواجهة الموجَّهة مفعّلة افتراضيًا: شاشات أبسط بأزرار كبيرة.',
@@ -39063,11 +39069,11 @@ extension on TraductionsAr {
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.jour' => 'يوم الحصة الجديدة',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.heure' => 'الساعة',
 			'snt.planning.quand' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'snt.planning.choixManquant' => 'اختاروا يوم الحصة الجديدة وساعتها.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.confirmer' => 'تحديد هذا الموعد',
 			'snt.planning.horsLigne' => 'لا يوجد اتصال: يُحدَّد الموعد حين يعود الاتصال بالجهاز.',
 			'snt.planning.fixee' => ({required Object quand}) => 'حُدّد الموعد الجديد: ⁨${quand}⁩. أُبلغ الفصل.',
@@ -39577,11 +39583,11 @@ extension on TraductionsAr {
 			'suiviPedagogique.souratesDe' => ({required Object validees, required Object total}) => '⁨${validees}⁩ من ⁨${total}⁩',
 			'suiviPedagogique.revision' => 'المراجعة أسبوعيًا',
 			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '⁨${heures}⁩ س',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.repetitions' => 'التكرارات المقدّرة',
 			'suiviPedagogique.repetitionsNombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ تكرار', one: '⁨${n}⁩ تكرار', two: '⁨${n}⁩ تكرار', few: '⁨${n}⁩ تكرارات', many: '⁨${n}⁩ تكرارًا', other: '⁨${n}⁩ تكرار', ), 
 			'suiviPedagogique.dernierJalon' => 'آخر محطة',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.niveauDeclare' => 'المستوى المصرّح به',
 			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
 			'suiviPedagogique.erreur' => 'تعذرت قراءة مرحلة البرنامج. حاول مرة أخرى بعد قليل.',
@@ -40091,11 +40097,11 @@ extension on TraductionsAr {
 			'presentationTuteur.accueil.voir' => 'الرد',
 			'presentationTuteur.notification' => ({required Object prenom}) => 'يطلب ⁨${prenom}⁩ العرض العادي',
 			'reprisesAdmin.onglet' => 'طلبات الاستلام',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.titre' => 'استلام الأسرة',
 			'reprisesAdmin.sousTitre' => 'طلبات بالغ ثانٍ ليصبح صاحب حساب الأسرة. تقرر الإدارة.',
 			'reprisesAdmin.demandeur' => 'مقدِّم الطلب',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.foyer' => 'الأسرة',
 			'reprisesAdmin.deposeeLe' => 'قُدِّم في',
 			'reprisesAdmin.etat.aExaminer' => 'بانتظار الدراسة',

@@ -206,10 +206,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     final IssueEnvoiLien issue = issueEchecEnvoi(erreur);
     // Une invitation dont l'adresse reste tenue par un compte supprime (la
     // liberation n'a pas abouti) : le serveur refuse l'envoi (`user_banned`).
-    if (erreur is AuthException &&
-        erreur.code == 'user_banned' &&
-        _invitationRetenue != null) {
-      return t.connexion.invitationCreationImpossible;
+    if (erreur is AuthException && erreur.code == 'user_banned') {
+      // Le champ du code est ouvert juste dessous (ADRESSE-LIBEREE).
+      _codeOuvert = true;
+      return t.connexion.erreurCompteSupprime;
     }
     if (issue == IssueEnvoiLien.inscriptionFermee) {
       final TypeInvitationCompte? type = _invitationRetenue?.type;
@@ -249,6 +249,15 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     retenirInvitationDepuisAdresse(retour);
     // INVITATION-COMPTE (07/11/2026) : le code d'une invitation, lu une fois.
     _invitation = invitationDansAdresse(retour);
+    // Arrivee depuis un echec « compte supprime » (ou lien d'invitation sans
+    // code) : le champ du code est deja ouvert.
+    _codeOuvert =
+        _invitation == null &&
+        ({
+              ...retour.queryParameters,
+              ...?Uri.tryParse(retour.fragment)?.queryParameters,
+            }['invitation'] ==
+            '1');
     _lienAilleurs = lienOuvertAilleursIci(retour);
     // Google refuse un nouveau compte quand les inscriptions sont fermees :
     // la phrase se dit ici, la recuperation d'acces n'y peut rien.

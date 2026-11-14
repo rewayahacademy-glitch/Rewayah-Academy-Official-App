@@ -15,6 +15,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/controle_anti_robot.dart';
+import '../../core/widgets/lien_fleche.dart';
 import 'coquille_entree.dart';
 
 /// Pourquoi l'usager arrive sur la recuperation d'acces.
@@ -28,6 +29,10 @@ enum MotifRecuperation {
 
   /// Le fournisseur a refuse l'ouverture de session pour une autre raison.
   refuse,
+
+  /// L'adresse appartenait a un compte supprime (`user_banned`, « 403: User is
+  /// banned ») : ni le lien ni Google n'y peuvent rien ; l'invitation seule.
+  compteSupprime,
 }
 
 /// Le motif porte par une URL de retour du fournisseur, ou `null`.
@@ -44,6 +49,10 @@ MotifRecuperation? motifDepuisUrlRetour(Uri url) {
   final String? erreur = champs['error'];
   if (code == null && erreur == null) {
     return null;
+  }
+  if (code == 'user_banned' ||
+      (champs['error_description'] ?? '').toLowerCase().contains('banned')) {
+    return MotifRecuperation.compteSupprime;
   }
   return code == 'otp_expired'
       ? MotifRecuperation.expire
@@ -91,6 +100,10 @@ Map<String, String> _champsFragment(String fragment) {
     return const <String, String>{};
   }
 }
+
+/// La page de creation de compte, champ du code d'invitation ouvert (un
+/// compte supprime ne se rouvre que par une invitation).
+const String cheminSaisieCode = '${Routes.connexion}?mode=creer&invitation=1';
 
 /// Le chemin de la recuperation pour un motif.
 String cheminRecuperation(MotifRecuperation? motif) => motif == null
@@ -329,6 +342,7 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
               envoi: _envoi,
               onEnvoyer: () => unawaited(_envoyer()),
               onRevenir: _revenir,
+              onCode: () => GoRouter.of(context).go(cheminSaisieCode),
             ),
     );
   }
@@ -365,9 +379,14 @@ class _Saisie extends StatelessWidget {
     required this.envoi,
     required this.onEnvoyer,
     required this.onRevenir,
+    required this.onCode,
   });
 
   final bool bureau;
+
+  /// Mene a la saisie du code d'invitation (page de creation de compte, champ
+  /// du code deja ouvert).
+  final VoidCallback onCode;
 
   /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
   final Widget? controle;
@@ -387,6 +406,7 @@ class _Saisie extends StatelessWidget {
       textes.bodyMedium ?? const TextStyle(),
     );
     final bool expire = motif == MotifRecuperation.expire;
+    final bool supprime = motif == MotifRecuperation.compteSupprime;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -405,18 +425,31 @@ class _Saisie extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
                 Text(
-                  expire
+                  supprime
+                      ? t.connexion.recuperation.compteSupprimeTitre
+                      : expire
                       ? t.connexion.recuperation.lienExpireTitre
                       : t.connexion.recuperation.lienRefuseTitre,
                   style: textes.titleMedium,
                 ),
                 Ecart.vSm,
                 Text(
-                  expire
+                  supprime
+                      ? t.connexion.recuperation.compteSupprimeDetail
+                      : expire
                       ? t.connexion.recuperation.lienExpire
                       : t.connexion.recuperation.lienRefuse,
                   style: discret,
                 ),
+                if (supprime) ...<Widget>[
+                  Ecart.vSm,
+                  LienFleche(
+                    key: const ValueKey<String>('recuperation-code-lien'),
+                    libelle: t.connexion.avoirCodeInvitation,
+                    onPress: onCode,
+                    alignerEnDebut: true,
+                  ),
+                ],
               ],
             ),
           ),
