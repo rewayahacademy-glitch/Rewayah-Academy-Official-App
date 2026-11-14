@@ -1,4 +1,5 @@
 {
+  "commun.staff.designation": "directeur 14/11/2026 : partout où l'administration ou la direction apparaît dans une interaction, l'expéditeur s'affiche avec l'icône de l'app et le nom exact « #Ra_staff », identique dans toutes les langues, jamais le nom de la personne de l'équipe (relayé par le pilote)",
   "push1.evenements.messageCandidat": "pilote, 14/11/2026 (MESSAGERIE-PUSH, après #477) : push et courriel à la direction à chaque message d'un candidat ; rédigé par l'agent, à faire valider par le directeur",
   "com.messages.direct.nouveau": "directeur, 14/11/2026, retour en production relayé par le pilote : « la messagerie entre candidat et administration n'est pas en temps réel et ne notifie rien » ; lot MESSAGERIE-TEMPS-REEL ; rédigé par l'agent, à faire valider par le directeur",
   "com.messages.direct.horsDirect": "directeur, 14/11/2026, retour en production relayé par le pilote : « la messagerie entre candidat et administration n'est pas en temps réel et ne notifie rien » ; lot MESSAGERIE-TEMPS-REEL ; rédigé par l'agent, à faire valider par le directeur",

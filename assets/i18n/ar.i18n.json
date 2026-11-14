@@ -497,6 +497,9 @@
       }
     },
     "marque": "Rewayah Academy",
+    "staff": {
+      "designation": "#Ra_staff"
+    },
     "continuer": "متابعة",
     "retour": "رجوع",
     "valider": "تأكيد",
@@ -16310,7 +16313,7 @@
       "demandeHoraireRecue": "طلب موعد جديد بانتظار الدراسة.",
       "creneauPersonnalise": "طُلب موعد خاص.",
       "pieceIdentite": "وثيقة هوية بانتظار التحقق.",
-      "messageCandidat": "كتب إليكم مرشّح: ردّوا عليه في الرسائل.",
+      "messageCandidat": "كتب إليكم مرشّح: ردوا عليه في الرسائل.",
       "signalementEleve": "بلاغ بانتظار قراركم.",
       "suppressionCompte": "طُلب حذف حساب.",
       "personneEnSalle": "لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.",

@@ -25,6 +25,9 @@
       "enseignant": "{libelle} · avec {enseignant}"
     },
     "marque": "Rewayah Academy",
+    "staff": {
+      "designation": "#Ra_staff"
+    },
     "continuer": "Continuer",
     "retour": "Retour",
     "valider": "Valider",
