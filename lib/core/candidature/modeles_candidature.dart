@@ -380,14 +380,16 @@ class CandidatureDossier {
       etape == EtapeCandidature.verifications &&
       issue == IssueCandidature.enCours;
 
-  /// Vrai pendant l'examen de la candidature envoyee (Salle d'examen, plus a
-  /// completer) : le serveur refuse alors le depot de la piece
-  /// (`private.candidature_accepte_depot_piece`, SALLE-1-TOUT-ICI, migration
-  /// 20261119100000). La piece se depose en salle 1 tant que la candidature
-  /// est a completer, puis de nouveau en salle 2 : l'ecran ne la propose pas
-  /// entre les deux.
-  bool get depotPieceSuspendu =>
-      enSalleExamen && etat != EtatCandidature.aCompleter;
+  /// Vrai quand le serveur refuse le depot de la piece a cette candidature
+  /// (`private.candidature_accepte_depot_piece`).
+  ///
+  /// RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026 ; migration
+  /// 20261126300000) : la piece demandee en salle 1 se depose pendant toute la
+  /// salle 1, candidature en cours, avant comme apres l'envoi (a completer,
+  /// en examen, versement pas encore possible), puis en salle 2. Avant, le
+  /// depot etait refuse des l'envoi : 27 candidats en examen ne trouvaient
+  /// plus de page pour la donner. Il n'est donc jamais suspendu en salle 1.
+  bool get depotPieceSuspendu => false;
 
   /// Vrai quand le questionnaire s'ouvre en ecriture : Salle d'examen, a
   /// completer, hors pause.

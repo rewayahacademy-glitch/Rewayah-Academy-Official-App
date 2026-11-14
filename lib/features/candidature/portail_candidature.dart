@@ -108,6 +108,16 @@ bool pieceADeposer(EtatDossier d) =>
   EtatDossier? dossier,
 }) {
   if (!c.questionnaireOuvert) {
+    // RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026) : la candidature est
+    // envoyee (en examen, versement pas encore possible), mais la piece
+    // demandee en salle 1 manque et le serveur l'accepte encore : c'est la
+    // seule chose a faire, elle passe en premier. Pas pendant une pause.
+    if (dossier != null &&
+        c.enSalleExamen &&
+        !c.enPause &&
+        pieceADeposer(dossier)) {
+      return (libelle: t.attente.deposerLaPiece, chemin: Routes.attentePiece);
+    }
     return null;
   }
   // Le cadre religieux et pedagogique d'abord, quand une case est a cocher :

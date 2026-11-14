@@ -72,6 +72,15 @@ String? cheminMessagesDepuis(String chemin) {
   return null;
 }
 
+/// Une conversation a ouvrir DANS la page hote, sans la quitter (directeur,
+/// 14/11/2026) : le fil, le nom de l'interlocuteur et l'adresse du meme fil
+/// dans la page Messages (le lien secondaire « Ouvrir dans Messages »).
+typedef ConversationEnPlace = ({
+  String filId,
+  String nom,
+  String cheminMessages,
+});
+
 /// L'emplacement d'entree des Messages metier dans une page existante.
 ///
 /// **Contrat d'ecart, fixe par le socle** : c'est la page hote qui dit de
@@ -90,6 +99,7 @@ class EntreeMessagesContexte extends ConsumerStatefulWidget {
     this.objetId,
     this.ecartAvant,
     this.ecartApres,
+    this.onOuvrirEnPlace,
   }) : assert(
          (type == null) == (objetId == null),
          'Un objet lie porte son type et son identifiant, ou aucun des deux.',
@@ -108,6 +118,11 @@ class EntreeMessagesContexte extends ConsumerStatefulWidget {
   /// L'ecart a poser apres le contenu (emplacement en tete), ou `null`.
   /// Jamais rendu tant que l'emplacement est vide.
   final Widget? ecartApres;
+
+  /// Ouvre la conversation dans la page hote (volet, feuille), ou `null` :
+  /// l'entree mene alors a la page Messages, comme avant. Le serveur ouvre le
+  /// fil de la meme facon dans les deux cas (paire autorisee seulement).
+  final ValueChanged<ConversationEnPlace>? onOuvrirEnPlace;
 
   /// La cle de l'entree generale (sans objet), pour les tests.
   static const ValueKey<String> cleGenerale = ValueKey<String>(
@@ -237,7 +252,7 @@ class _EntreeMessagesContexteState
     final String? existant = c.filId;
     if (existant != null) {
       setState(() => _echec = null);
-      GoRouter.of(context).go('$liste/${Uri.encodeComponent(existant)}');
+      _montrer(c, existant, liste);
       return;
     }
     setState(() {
@@ -277,7 +292,23 @@ class _EntreeMessagesContexteState
       return;
     }
     setState(() => _ouverture = null);
-    GoRouter.of(context).go('$liste/${Uri.encodeComponent(fil.id)}');
+    _montrer(c, fil.id, liste);
+  }
+
+  /// Montre le fil [filId] : dans la page hote si elle le sait, sinon dans
+  /// la page Messages.
+  void _montrer(ConversationPossible c, String filId, String liste) {
+    final String chemin = '$liste/${Uri.encodeComponent(filId)}';
+    final ValueChanged<ConversationEnPlace>? enPlace = widget.onOuvrirEnPlace;
+    if (enPlace != null) {
+      enPlace((
+        filId: filId,
+        nom: c.interlocuteur.nomAffiche,
+        cheminMessages: chemin,
+      ));
+      return;
+    }
+    GoRouter.of(context).go(chemin);
   }
 
   @override

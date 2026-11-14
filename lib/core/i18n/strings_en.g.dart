@@ -18854,6 +18854,8 @@ class _Traductions$com$messages$entree$en extends Traductions$com$messages$entre
 	@override String get ecrireAdministration => 'Write to ⁦${_root.commun.staff.designation}⁩';
 	@override String ecrireA({required Object nom}) => 'Write to ${nom}';
 	@override String conversationAvec({required Object nom}) => 'Conversation with ${nom}';
+	@override String get replier => 'Fold the conversation';
+	@override String get ouvrirDansMessages => 'Open in Messages';
 	@override String get voirTout => 'See all conversations';
 	@override String get toutes => 'All your conversations';
 	@override String get aLireUne => '1 conversation to read';
@@ -36586,6 +36588,8 @@ extension on TraductionsEn {
 			'com.messages.entree.ecrireAdministration' => 'Write to ⁦${_root.commun.staff.designation}⁩',
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Write to ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation with ${nom}',
+			'com.messages.entree.replier' => 'Fold the conversation',
+			'com.messages.entree.ouvrirDansMessages' => 'Open in Messages',
 			'com.messages.entree.voirTout' => 'See all conversations',
 			'com.messages.entree.toutes' => 'All your conversations',
 			'com.messages.entree.aLireUne' => '1 conversation to read',
@@ -36650,10 +36654,10 @@ extension on TraductionsEn {
 			'com.messages.demo.f.parentYasmine' => 'Yasmine\'s parent',
 			'com.messages.demo.f.karim' => 'Karim',
 			'com.messages.demo.f.parentYusuf' => 'Yusuf\'s parent',
-			'com.messages.demo.f.administration' => 'Administration',
-			'com.messages.demo.f.directionRewayah' => 'Rewayah management',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.demo.f.administration' => 'Administration',
+			'com.messages.demo.f.directionRewayah' => 'Rewayah management',
 			'com.messages.demo.f.rachid' => 'Mr Rachid',
 			'com.messages.demo.f.controleurPedagogique' => 'Teaching reviewer',
 			'com.messages.demo.f.youssef' => 'Youssef',
@@ -37164,10 +37168,10 @@ extension on TraductionsEn {
 			'com.annonces.administration.horsLigne' => 'You are offline. Announcements cannot be refreshed.',
 			'com.annonces.administration.indicateurs.titre' => 'Communications indicators',
 			'com.annonces.administration.indicateurs.publiees' => 'Announcements published',
-			'com.annonces.administration.indicateurs.planifiees' => 'Announcements scheduled',
-			'com.annonces.administration.indicateurs.moderation' => 'Content in moderation',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.indicateurs.planifiees' => 'Announcements scheduled',
+			'com.annonces.administration.indicateurs.moderation' => 'Content in moderation',
 			'com.annonces.administration.indicateurs.regles' => 'Publishing rights',
 			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle}: not available yet',
 			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle}: not loaded. The request may not have reached Rewayah: reload the page.',
@@ -37678,10 +37682,10 @@ extension on TraductionsEn {
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Usage rule: ${regle}',
 			'comptable.tresorerie.coffresVide' => 'No vault is returned yet.',
 			'comptable.tresorerie.coffresVidePhrase' => 'The seven vaults will appear here as soon as the source returns them.',
-			'comptable.tresorerie.descriptions.fondsClientsEngages' => 'Money collected, tied to services not yet earned.',
-			'comptable.tresorerie.descriptions.paieADecaisser' => 'Pay already calculated and due.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.descriptions.fondsClientsEngages' => 'Money collected, tied to services not yet earned.',
+			'comptable.tresorerie.descriptions.paieADecaisser' => 'Pay already calculated and due.',
 			'comptable.tresorerie.descriptions.chargesEssentielles' => 'Infrastructure, indispensable subscriptions, fixed functions.',
 			'comptable.tresorerie.descriptions.taxesObligations' => 'Provision for tax, social or regulatory obligations.',
 			'comptable.tresorerie.descriptions.reserveStrategique' => 'Continuity and security vault.',
@@ -38192,10 +38196,10 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.montantCible' => 'Target amount',
 			'comptable.direction.reservePanneau.montantCibleDetail' => 'The sum the Strategic reserve must reach.',
 			'comptable.direction.reservePanneau.nombreMois' => 'Number of months of coverage',
-			'comptable.direction.reservePanneau.nombreMoisDetail' => 'How many months of essential expenses the Reserve must cover.',
-			'comptable.direction.reservePanneau.alimentationTitre' => 'Automatic funding',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.reservePanneau.nombreMoisDetail' => 'How many months of essential expenses the Reserve must cover.',
+			'comptable.direction.reservePanneau.alimentationTitre' => 'Automatic funding',
 			'comptable.direction.reservePanneau.alimentationDetail' => 'How the Reserve fills up without action from the Accountant.',
 			'comptable.direction.reservePanneau.regle.desactivee' => 'Off',
 			'comptable.direction.reservePanneau.regle.desactiveeDetail' => 'No automatic funding.',
@@ -38706,10 +38710,10 @@ extension on TraductionsEn {
 			'avis.form.regles.tiers' => 'personal data of a third party, such as the name of a child or a teacher',
 			'avis.form.regles.publicite' => 'advertising',
 			'avis.form.regles.horsSujet' => 'an off-topic remark',
-			'avis.form.regles.doublon' => 'a duplicate of a review already received',
-			'avis.form.regles.donnees' => 'Do not give the name of a child, nor email, nor phone number.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.regles.doublon' => 'a duplicate of a review already received',
+			'avis.form.regles.donnees' => 'Do not give the name of a child, nor email, nor phone number.',
 			'avis.form.regles.publie' => 'A respectful review is published, even a critical one. The management only refuses an insult, a third party\'s data, advertising, an off-topic remark or a duplicate.',
 			'avis.form.envoyer' => 'Send my feedback',
 			'avis.form.aCorriger' => 'A few fields need to be corrected before sending.',
@@ -39220,10 +39224,10 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'its content is not that of a CSV export',
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Export the sheet as CSV again from Google Sheets, then choose the file.',
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Currently read in column ${n}. Choosing it here removes it from that column.',
-			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Column ${n}: ${titre}',
-			'candidatsFlux.importFormulaires.colonnes.question' => 'Does each column really contain what Rewayah thinks?',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Column ${n}: ${titre}',
+			'candidatsFlux.importFormulaires.colonnes.question' => 'Does each column really contain what Rewayah thinks?',
 			'candidatsFlux.importFormulaires.colonnes.explication' => 'Rewayah recognizes each column by its title. Tap a column to change what it contains.',
 			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'Column ${n}, untitled',
 			'candidatsFlux.importFormulaires.colonnes.nonLue' => 'Not read',
@@ -39734,10 +39738,10 @@ extension on TraductionsEn {
 			'suiviAttente.enseignant.sayyid' => 'Sayyid',
 			'suiviAttente.enseignant.sayyida' => 'Sayyida',
 			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '${prenom}',
-			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom}) => '${titre} ${prenom}',
-			'suiviAttente.enseignant.langue' => 'Class language',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom}) => '${titre} ${prenom}',
+			'suiviAttente.enseignant.langue' => 'Class language',
 			'suiviAttente.enseignant.origine' => 'Country of origin',
 			'suiviAttente.enseignant.residence' => 'Country of residence',
 			'suiviAttente.enseignant.mot' => 'Their introduction',

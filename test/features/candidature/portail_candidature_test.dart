@@ -213,16 +213,74 @@ void main() {
       },
     );
 
+    // RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026 ; migration
+    // 20261126300000) : la piece demandee en salle 1 se depose pendant toute
+    // la salle 1, apres l'envoi aussi. L'ancienne regle (suspendue en examen)
+    // laissait 27 candidats sans page pour la donner.
+    test('apres l\'envoi, en salle 1, la piece n\'est plus suspendue', () {
+      const CandidatureDossier envoyee = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.enExamen,
+      );
+      expect(envoyee.depotPieceSuspendu, isFalse);
+      expect(candidatureAFaire().depotPieceSuspendu, isFalse);
+    });
+
+    test('en examen sans piece : « Deposer la piece » est la prochaine '
+        'action', () {
+      final r = prochaineCandidature(
+        _enExamen,
+        dossier: etatCandidat(candidature: _enExamen, pieceDeposee: false),
+      );
+      expect(r?.chemin, Routes.attentePiece);
+      expect(r?.libelle, t.attente.deposerLaPiece);
+    });
+
+    test('versement pas encore possible, sans piece : la piece aussi', () {
+      const CandidatureDossier versement = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.paiementNonDisponible,
+      );
+      final r = prochaineCandidature(
+        versement,
+        dossier: etatCandidat(candidature: versement, pieceDeposee: false),
+      );
+      expect(r?.chemin, Routes.attentePiece);
+    });
+
     test(
-      'pendant l\'examen de la candidature envoyee, la piece est suspendue',
+      'en examen, piece deposee : rien a faire (aucune demande ajoutee)',
       () {
-        const CandidatureDossier envoyee = CandidatureDossier(
-          existe: true,
-          etape: EtapeCandidature.prequalification,
-          etat: EtatCandidature.enExamen,
+        final r = prochaineCandidature(
+          _enExamen,
+          dossier: etatCandidat(candidature: _enExamen),
         );
-        expect(envoyee.depotPieceSuspendu, isTrue);
-        expect(candidatureAFaire().depotPieceSuspendu, isFalse);
+        expect(r, isNull);
+      },
+    );
+
+    test('en examen, en pause, sans piece : rien n\'est propose', () {
+      const CandidatureDossier pause = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.enExamen,
+        enPause: true,
+      );
+      final r = prochaineCandidature(
+        pause,
+        dossier: etatCandidat(candidature: pause, pieceDeposee: false),
+      );
+      expect(r, isNull);
+    });
+
+    testWidgets(
+      'en examen sans piece : le portail montre « Deposer la piece »',
+      (WidgetTester tester) async {
+        await _portail(tester, _enExamen, pieceDeposee: false);
+        expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
+        verifierUnSeulBoutonPlein(tester);
       },
     );
   });
