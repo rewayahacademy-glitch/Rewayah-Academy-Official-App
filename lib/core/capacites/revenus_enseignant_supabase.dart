@@ -46,7 +46,32 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
         'p_mois': mois == null ? null : _jour(DateTime(mois.year, mois.month)),
       },
     );
-    return decoderRevenus(brut);
+    return decoderRevenus(brut, await _durees(mois));
+  }
+
+  /// REVENUS-DUREE-PAYEE : la duree payee et les minutes connectees dans la
+  /// fenetre, par seance, lues par `mes_durees_payees_enseignant`. Une lecture
+  /// absente (migration non installee) ou en echec ne casse pas les revenus :
+  /// les durees restent `null` et l'ecran le dit, sans rien inventer.
+  Future<Map<String, Map<String, dynamic>>> _durees(DateTime? mois) async {
+    try {
+      final Object? brut = await appelerFinance(
+        _appel,
+        'mes_durees_payees_enseignant',
+        _dependance,
+        <String, dynamic>{
+          'p_mois': mois == null
+              ? null
+              : _jour(DateTime(mois.year, mois.month)),
+        },
+      );
+      return <String, Map<String, dynamic>>{
+        for (final Object? d in listeJson(brut, 'durees'))
+          texteJson(objetJson(d, 'duree'), 'seanceId'): objetJson(d, 'duree'),
+      };
+    } on Object {
+      return const <String, Map<String, dynamic>>{};
+    }
   }
 
   @override
@@ -68,7 +93,14 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
       Future<List<LigneReleve>>.error(const CapaciteIndisponible(_dependance));
 
   /// Decode la reponse de `mes_revenus_enseignant`, sans rien recalculer.
-  static RevenusEnseignant decoderRevenus(Object? brut) {
+  ///
+  /// [durees] : les durees payees par seance (`mes_durees_payees_enseignant`),
+  /// vides quand la lecture manque.
+  static RevenusEnseignant decoderRevenus(
+    Object? brut, [
+    Map<String, Map<String, dynamic>> durees =
+        const <String, Map<String, dynamic>>{},
+  ]) {
     final Map<String, dynamic> j = objetJson(brut, 'revenus');
     if (j['regle'] == null) throw const CapaciteIndisponible(_dependance);
     final Map<String, dynamic> t = objetJson(j['total'], 'total');
@@ -83,7 +115,7 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
       seances: List<RevenusSeance>.unmodifiable(<RevenusSeance>[
         if (j['seances'] != null)
           for (final Object? s in listeJson(j['seances'], 'seances'))
-            _seance(objetJson(s, 'seance')),
+            _seance(objetJson(s, 'seance'), durees),
       ]),
       total: TotalRevenus(
         minutesAssurees: entierJson(t, 'minutesAssurees'),
@@ -113,6 +145,10 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
         j['totalAttenteCahier'],
         'totalAttenteCahier',
       ),
+      // REVENUS-DUREE-PAYEE (migration 20261125310000) : absent avant.
+      seancesSansDureePayee: j['seancesSansDureePayee'] is num
+          ? (j['seancesSansDureePayee'] as num).toInt()
+          : null,
     );
   }
 
@@ -143,8 +179,21 @@ class RevenusEnseignantSupabase implements PortRevenusEnseignant {
     enRemplacement: booleenJson(c, 'enRemplacement'),
   );
 
-  static RevenusSeance _seance(Map<String, dynamic> s) => RevenusSeance(
+  static int? _minutesOuNul(Map<String, dynamic>? d, String cle) {
+    final Object? v = d?[cle];
+    return v is num ? v.toInt() : null;
+  }
+
+  static RevenusSeance _seance(
+    Map<String, dynamic> s,
+    Map<String, Map<String, dynamic>> durees,
+  ) => RevenusSeance(
     seanceId: texteJson(s, 'seanceId'),
+    minutesPayees: _minutesOuNul(durees[s['seanceId']], 'minutesPayees'),
+    minutesConnectees: _minutesOuNul(
+      durees[s['seanceId']],
+      'minutesConnectees',
+    ),
     debut: instantJson(s['debut'], 'debut'),
     classeId: texteJson(s, 'classeId'),
     classe: texteJson(s, 'classe'),

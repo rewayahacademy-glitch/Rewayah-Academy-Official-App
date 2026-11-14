@@ -19,8 +19,8 @@ import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/connexion/saisie_code_courriel.dart';
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
-import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_inscription.dart';
+import 'package:rewayah_academy/features/inscription/questionnaire/questionnaire_page.dart';
 import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart';
 
 import '../router/support_routeur.dart' hide stabiliser;

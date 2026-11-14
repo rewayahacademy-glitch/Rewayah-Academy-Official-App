@@ -183,7 +183,81 @@ void main() {
       expect(r.seances.last.eleves.single.montant, isNull);
       expect(r.versement!.du, DateTime(2026, 11));
       expect(r.versement!.au, DateTime(2026, 11, 10));
-      expect(faux.appels.single.$2, <String, dynamic>{'p_mois': null});
+      // REVENUS-DUREE-PAYEE : une seconde lecture, celle des durees payees ;
+      // sans reponse pour elle, les durees restent nulles (rien d'invente).
+      expect(faux.appels.first.$1, 'mes_revenus_enseignant');
+      expect(faux.appels.first.$2, <String, dynamic>{'p_mois': null});
+      expect(faux.appels.last.$1, 'mes_durees_payees_enseignant');
+      expect(faux.appels, hasLength(2));
+      expect(s1.minutesPayees, isNull);
+      expect(s1.minutesConnectees, isNull);
+    });
+
+    test('REVENUS-DUREE-PAYEE : la duree payee et les minutes connectees '
+        'sont lues du serveur, par seance', () async {
+      final _Faux faux = _Faux(
+        <String, Object? Function(Map<String, dynamic>?)>{
+          'mes_revenus_enseignant': (_) => _revenus,
+          'mes_durees_payees_enseignant': (_) => <Object?>[
+            <String, Object?>{
+              'seanceId': 's1',
+              'minutesPayees': 60,
+              'minutesConnectees': 55,
+              'fenetreMinutes': 60,
+            },
+            <String, Object?>{
+              'seanceId': 's2',
+              'minutesPayees': null,
+              'minutesConnectees': 12,
+              'fenetreMinutes': 90,
+            },
+          ],
+        },
+      );
+      final RevenusEnseignant r = await RevenusEnseignantSupabase.avecAppel(
+        faux.call,
+      ).duMois(DateTime(2026, 10, 17));
+      expect(r.seances.first.minutesPayees, 60);
+      expect(r.seances.first.minutesConnectees, 55);
+      expect(r.seances.last.minutesPayees, isNull);
+      expect(r.seances.last.minutesConnectees, 12);
+      expect(faux.appels.last.$2, <String, dynamic>{'p_mois': '2026-10-01'});
+    });
+
+    test('REVENUS-DUREE-PAYEE : seancesSansDureePayee lu du serveur, nul '
+        'avec un serveur plus ancien', () async {
+      final _Faux faux = _Faux(
+        <String, Object? Function(Map<String, dynamic>?)>{
+          'mes_revenus_enseignant': (_) => <String, Object?>{
+            ..._revenus,
+            'seancesSansDureePayee': 2,
+          },
+        },
+      );
+      final RevenusEnseignant r = await RevenusEnseignantSupabase.avecAppel(
+        faux.call,
+      ).moisEnCours();
+      expect(r.seancesSansDureePayee, 2);
+      final RevenusEnseignant ancien = RevenusEnseignantSupabase.decoderRevenus(
+        _revenus,
+      );
+      expect(ancien.seancesSansDureePayee, isNull);
+    });
+
+    test('REVENUS-DUREE-PAYEE : la lecture des durees absente ou en echec '
+        'ne casse pas les revenus', () async {
+      final RevenusEnseignant r = await RevenusEnseignantSupabase.avecAppel((
+        String f,
+        Map<String, dynamic>? p,
+      ) async {
+        if (f == 'mes_revenus_enseignant') return _revenus;
+        throw const PostgrestException(message: 'absente', code: 'PGRST202');
+      }).moisEnCours();
+      expect(r.seances, hasLength(2));
+      expect(
+        r.seances.every((RevenusSeance s) => s.minutesPayees == null),
+        isTrue,
+      );
     });
 
     test('duMois envoie le premier jour du mois', () async {
@@ -194,7 +268,8 @@ void main() {
       );
       await RevenusEnseignantSupabase.avecAppel(faux.call)
           .duMois(DateTime(2026, 8, 17));
-      expect(faux.appels.single.$2, <String, dynamic>{'p_mois': '2026-08-01'});
+      expect(faux.appels.first.$2, <String, dynamic>{'p_mois': '2026-08-01'});
+      expect(faux.appels.last.$2, <String, dynamic>{'p_mois': '2026-08-01'});
     });
 
     test('sans regle de remuneration : capacite indisponible', () async {
