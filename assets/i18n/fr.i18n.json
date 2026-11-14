@@ -1430,7 +1430,10 @@
       "francaisExplication": "L'application et les messages de l'académie sont écrits en français.",
       "francaisExemple": "les boutons, les explications et les messages s'affichent de gauche à droite.",
       "arabeExplication": "L'application et les messages de l'académie sont écrits en arabe.",
-      "arabeExemple": "les boutons, les explications et les messages s'affichent de droite à gauche."
+      "arabeExemple": "les boutons, les explications et les messages s'affichent de droite à gauche.",
+      "anglais": "English",
+      "anglaisExplication": "L'application et les messages de l'académie sont écrits en anglais.",
+      "anglaisExemple": "les boutons, les explications et les messages s'affichent de gauche à droite."
     },
     "confidentialite": {
       "case": "J'ai lu et j'accepte la politique de confidentialité.",
@@ -1441,6 +1444,7 @@
       "creationEchec": "Votre candidature n'est peut-être pas partie. Réessayez dans un instant.",
       "envoyer": "Envoyer ma candidature",
       "accueil": "Vous déposez une candidature pour enseigner à Rewayah. Cela ne vous engage à rien.",
+      "gratuit": "Candidater ne coûte rien\u00a0: vous n'avez rien à payer, à aucune étape.",
       "ensuite": "Ensuite, la direction lit votre candidature et vous écrit dans l'application.",
       "horsLigne": "La candidature pourra être envoyée quand la connexion reviendra.",
       "courrielAConfirmer": "Confirmez d'abord votre adresse\u00a0: ouvrez le lien reçu par courriel.",
@@ -2732,7 +2736,9 @@
     "sallesCandidat": {
       "candidature": "Votre candidature",
       "connaissance": "Faisons connaissance",
-      "equipe": "Bienvenue dans l'équipe"
+      "equipe": "Bienvenue dans l'équipe",
+      "retenue": "Bonne nouvelle\u00a0: l'académie a retenu votre candidature. Prochaine étape\u00a0: faisons connaissance.",
+      "arrivee": "Bienvenue\u00a0: vous entrez dans l'équipe de l'académie."
     },
     "paiement": {
       "inconnu": "Aucun moyen de versement déclaré",
@@ -3021,7 +3027,9 @@
         "recherche": "Rechercher une riwaya",
         "rechercheAide": "Nom de la riwaya",
         "aucune": "Aucune riwaya ne correspond.",
-        "retour": "Revenir aux riwayat proposées"
+        "retour": "Revenir aux riwayat proposées",
+        "toutes": "Je récite toutes les riwayat",
+        "toutesDescription": "Les vingt riwayat des dix lectures. Cette réponse remplace les autres."
       },
       "fuseau": {
         "heureChezVous": "Chez vous, il est {heure}\u00a0?",
@@ -3097,6 +3105,7 @@
       "recap": {
         "titre": "Relisez votre candidature",
         "explication": "Touchez une réponse pour la changer. Rien n'est envoyé avant le bouton «\u00a0Envoyer ma candidature\u00a0».",
+        "gratuit": "Envoyer votre candidature ne coûte rien\u00a0: vous n'avez rien à payer.",
         "jours(param=n)": {
           "one": "Un jour par semaine",
           "other": "{n} jours par semaine"

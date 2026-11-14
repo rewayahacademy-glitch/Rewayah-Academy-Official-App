@@ -179,6 +179,62 @@ void main() {
     expect(serveur.ecritures, <String>['theme:sombre', 'langue:ar']);
   });
 
+  test('CANDIDATURE-UX : la langue choisie sans compte devient celle du compte '
+      'qui nait, jamais la langue de l appareil', () async {
+    // L'appareil du directeur parle arabe ; le candidat choisit le francais.
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .platformDispatcher
+        .localesTestValue = const <Locale>[
+      Locale('ar'),
+    ];
+    final StockagePreferencesMemoire appareil = StockagePreferencesMemoire();
+    final _Serveur serveur = _Serveur();
+    final ProviderContainer c = _lancer(appareil, serveur);
+    // Connecte a Google, sans profil encore : personne.
+    c.read(_compte.notifier).personne();
+    await pumpEventQueue();
+    c
+        .read(preferencesLocalesProvider.notifier)
+        .langue(PreferenceLangue.francais);
+    await pumpEventQueue();
+    expect(LocaleSettings.currentLocale, AppLocale.fr);
+
+    // « Envoyer ma candidature » cree le profil : le compte nait.
+    await _connecter(c, serveur, _a);
+    expect(_prefs(c).langue, PreferenceLangue.francais);
+    expect(LocaleSettings.currentLocale, AppLocale.fr);
+    expect(appareil.valeurs['$clefPreferenceLangue.$_a'], 'francais');
+    expect(serveur.langues[_a], 'fr', reason: 'la langue part au compte');
+
+    // Deconnexion puis retour : la langue du compte revient.
+    await oublierPreferencesDuCompte(appareil);
+    c.dispose();
+    final ProviderContainer d = _lancer(appareil, serveur);
+    d.read(_compte.notifier).personne();
+    await pumpEventQueue();
+    await _connecter(d, serveur, _a);
+    expect(_prefs(d).langue, PreferenceLangue.francais);
+    expect(LocaleSettings.currentLocale, AppLocale.fr);
+  });
+
+  test(
+    'CANDIDATURE-UX : l anglais choisi sans compte part au compte',
+    () async {
+      final StockagePreferencesMemoire appareil = StockagePreferencesMemoire();
+      final _Serveur serveur = _Serveur();
+      final ProviderContainer c = _lancer(appareil, serveur);
+      c.read(_compte.notifier).personne();
+      await pumpEventQueue();
+      c
+          .read(preferencesLocalesProvider.notifier)
+          .langue(PreferenceLangue.anglais);
+      await pumpEventQueue();
+      await _connecter(c, serveur, _a);
+      expect(_prefs(c).langue, PreferenceLangue.anglais);
+      expect(serveur.langues[_a], 'en');
+    },
+  );
+
   test('B a ses propres reglages : ils s appliquent, ceux de A non', () async {
     final StockagePreferencesMemoire appareil = StockagePreferencesMemoire(
       <String, String>{

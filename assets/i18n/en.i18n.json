@@ -1430,7 +1430,10 @@
       "francaisExplication": "The app and the academy's messages are written in French.",
       "francaisExemple": "buttons, explanations and messages are shown from left to right.",
       "arabeExplication": "The app and the academy's messages are written in Arabic.",
-      "arabeExemple": "buttons, explanations and messages are shown from right to left."
+      "arabeExemple": "buttons, explanations and messages are shown from right to left.",
+      "anglais": "English",
+      "anglaisExplication": "The app and the academy's messages are written in English.",
+      "anglaisExemple": "buttons, explanations and messages are shown from left to right."
     },
     "confidentialite": {
       "case": "I have read and accept the privacy policy.",
@@ -1441,6 +1444,7 @@
       "creationEchec": "Your application may not have been sent. Try again in a moment.",
       "envoyer": "Send my application",
       "accueil": "You are submitting an application to teach at Rewayah. It does not commit you to anything.",
+      "gratuit": "Applying costs nothing: you have nothing to pay, at any step.",
       "ensuite": "Next, the management reads your application and writes to you in the app.",
       "horsLigne": "The application can be sent when the connection is back.",
       "courrielAConfirmer": "Confirm your address first: open the link you received by email.",
@@ -2732,7 +2736,9 @@
     "sallesCandidat": {
       "candidature": "Your application",
       "connaissance": "Let's get to know each other",
-      "equipe": "Welcome to the team"
+      "equipe": "Welcome to the team",
+      "retenue": "Good news: the academy has accepted your application. Next step: let's get to know each other.",
+      "arrivee": "Welcome: you are joining the academy's team."
     },
     "paiement": {
       "inconnu": "No payout method declared",
@@ -3021,7 +3027,9 @@
         "recherche": "Search for a riwaya",
         "rechercheAide": "Riwaya name",
         "aucune": "No riwaya matches.",
-        "retour": "Back to the riwayat offered"
+        "retour": "Back to the riwayat offered",
+        "toutes": "I recite all the riwayat",
+        "toutesDescription": "The twenty riwayat of the ten readings. This answer replaces the others."
       },
       "fuseau": {
         "heureChezVous": "Is it {heure} where you are?",
@@ -3097,6 +3105,7 @@
       "recap": {
         "titre": "Review your application",
         "explication": "Tap an answer to change it. Nothing is sent before the \"Send my application\" button.",
+        "gratuit": "Sending your application costs nothing: you have nothing to pay.",
         "jours(param=n)": {
           "one": "One day per week",
           "other": "{n} days per week"

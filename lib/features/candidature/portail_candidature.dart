@@ -34,6 +34,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/page_etape.dart' show RangeeEtape;
 
 /// Vrai quand le portail montre l'etat de la candidature plutot que les cinq
 /// etats du dossier : en Salle d'examen, ou apres un refus ou un retrait. En
@@ -56,6 +57,34 @@ String nomDeSalle(CandidatureDossier c) => switch (c.etape) {
   EtapeCandidature.confirmee => t.recrutement.sallesCandidat.equipe,
   _ => t.recrutement.sallesCandidat.candidature,
 };
+
+/// Le rang de la salle du candidat sur les trois (PLAN-TROIS-SALLES-2026-11-07 :
+/// 1 « Votre candidature », 2 « Faisons connaissance », 3 « Bienvenue dans
+/// l'equipe »), lu de l'etape que le serveur rend (`etat_dossier()`), jamais
+/// deduit ; `null` pour une etape que cette version ne connait pas.
+int? rangDeSalle(CandidatureDossier c) => switch (c.etape) {
+  EtapeCandidature.recue ||
+  EtapeCandidature.invitee ||
+  EtapeCandidature.prequalification => 1,
+  EtapeCandidature.verifications => 2,
+  EtapeCandidature.confirmee => 3,
+  null => null,
+};
+
+/// Le nombre de salles du parcours du candidat.
+const int sallesDuCandidat = 3;
+
+/// La phrase de contexte d'un passage d'etape (CANDIDATURE-UX, directeur,
+/// 14/11/2026) : en salle 2 ou 3, tant que la candidature est en cours ;
+/// `null` sinon (salle 1, pause, refus, retrait).
+String? phrasePassage(CandidatureDossier c) {
+  if (c.issue != IssueCandidature.enCours || c.enPause) return null;
+  return switch (c.etape) {
+    EtapeCandidature.verifications => t.recrutement.sallesCandidat.retenue,
+    EtapeCandidature.confirmee => t.recrutement.sallesCandidat.arrivee,
+    _ => null,
+  };
+}
 
 /// Vrai quand le contrat, l'avis d'enregistrement et le code de conduite sont
 /// acceptes (lus dans `etat_dossier()`, jamais deduits).
@@ -129,13 +158,44 @@ class EnteteSalle extends StatelessWidget {
   /// Le lien vers « Faisons connaissance ».
   static const Key entretienKey = ValueKey<String>('portail-entretien');
 
+  /// La phrase de passage d'etape.
+  static const Key passageKey = ValueKey<String>('portail-passage');
+
+  /// La rangee « Etape X sur 3 ».
+  static const Key rangKey = ValueKey<String>('portail-rang');
+
   @override
   Widget build(BuildContext context) {
-    final Widget entete = Text(
-      nomDeSalle(candidature),
-      key: salleKey,
-      style: AppPalette.of(context).inkMuted
-          .applyTo(Theme.of(context).textTheme.titleSmall ?? const TextStyle()),
+    final TextTheme textes = Theme.of(context).textTheme;
+    final String? passage = phrasePassage(candidature);
+    final int? rang = rangDeSalle(candidature);
+    // CANDIDATURE-UX (directeur, 14/11/2026) : la phrase du passage d'etape
+    // au-dessus, puis le nom de la salle et « Etape X sur 3 », avec la
+    // rangee d'etapes de l'inscription (`RangeeEtape`), jamais recomposee.
+    final Widget entete = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (passage != null) ...<Widget>[
+          Text(passage, key: passageKey, style: textes.bodyLarge),
+          Ecart.vMd,
+        ],
+        Text(
+          nomDeSalle(candidature),
+          key: salleKey,
+          style: AppPalette.of(context).inkMuted
+              .applyTo(textes.titleSmall ?? const TextStyle()),
+        ),
+        if (rang != null) ...<Widget>[
+          Ecart.vSm,
+          RangeeEtape(
+            key: rangKey,
+            numero: rang,
+            total: sallesDuCandidat,
+            libelleComplet: true,
+          ),
+        ],
+      ],
     );
     final String? entretien = libelleEntretienPortail(candidature);
     if (entretien == null) return entete;

@@ -531,6 +531,8 @@ Future<AppLocale> _appliquerLangue(AppLocale? imposee) async {
 ///   dernier compte connecte sur cet appareil ([lirePreferenceAuLancement]).
 /// * A la connexion d'un compte : son cache sur l'appareil, puis sa valeur au
 ///   serveur, qui fait foi. Rien du compte precedent ne passe.
+///   Exception : un choix fait sans compte juste avant (candidat qui choisit
+///   sa langue, puis dont le compte nait a l'envoi) devient celui du compte.
 /// * Sans personne connectee apres un compte (deconnexion, session expiree) :
 ///   retour au defaut de l'appareil (« Systeme »), jamais aux reglages du
 ///   compte sorti. Sans compte avant, le choix fait sur l'appareil reste.
@@ -553,6 +555,7 @@ void _persisterParCompte<T extends Enum>({
   required bool Function() choisi,
   required Future<T?> Function() lireServeur,
   Future<void> Function(T valeur)? ecrireServeur,
+  Future<void> Function(T valeur)? transmettreChoix,
   void Function(T valeur)? appliquer,
 }) {
   final StockagePreferences stockage = ref.watch(stockagePreferencesProvider);
@@ -604,6 +607,26 @@ void _persisterParCompte<T extends Enum>({
     final String? ancien = profil;
     profil = nouveau;
     if (nouveau != null) {
+      // CANDIDATURE-UX (directeur, 14/11/2026) : un choix fait sans compte
+      // (le candidat choisit sa langue, puis son compte est cree a l'envoi)
+      // passe au compte qui vient d'etre cree. Avant, l'arrivee du compte
+      // remettait « Systeme » (aucun cache pour ce compte neuf) : l'interface
+      // prenait la langue de l'appareil, l'arabe pour le directeur.
+      if (ancien == null && choisi()) {
+        final T courant = ref.read(selection);
+        await ecrire(clefPointeurCompte, nouveau);
+        await ecrire(clefDuCompte(clef, nouveau), courant.name);
+        final Future<void> Function(T valeur)? versServeur =
+            transmettreChoix ?? ecrireServeur;
+        if (versServeur != null && ref.mounted && g == generation) {
+          try {
+            await versServeur(courant);
+          } on Object catch (erreur) {
+            journalDev('Preference $nom non transmise au compte : $erreur');
+          }
+        }
+        return;
+      }
       oublierChoix();
       await ecrire(clefPointeurCompte, nouveau);
       appliquerSiCourant(
@@ -761,6 +784,15 @@ final Provider<void> persistanceLangueProvider = Provider<void>((Ref ref) {
     lireServeur: () async => langueCompteDepuis(
       await ref.read(portLanguesCommunicationProvider).maLangue(),
     ),
+    // Le choix fait avant la creation du compte part au serveur une fois,
+    // a la naissance du compte (« Systeme » n'existe pas au serveur).
+    transmettreChoix: (PreferenceLangue valeur) async {
+      if (valeur != PreferenceLangue.systeme) {
+        await ref
+            .read(portLanguesCommunicationProvider)
+            .regler(codeLangueCompte(valeur));
+      }
+    },
     appliquer: (PreferenceLangue valeur) =>
         unawaited(appliquerPreferenceLangue(valeur)),
   );
