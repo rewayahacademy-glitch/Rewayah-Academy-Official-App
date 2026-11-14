@@ -104,19 +104,20 @@ $migration$;
 -- d. Reinviter une adresse dont le compte a ete supprime ---------------------
 -- Decision de l'architecte (14/11/2026) : une invitation d'EQUIPE (code
 -- d'enseignant ou de comptable, type `equipe`) ou de CANDIDAT valide pour une
--- adresse dont le compte est banni PAR SUPPRESSION ne reste plus bloquee,
--- journalise dans audit_logs. Correctif du meme jour : lever le seul
--- bannissement laissait le profil retire, qui bloque l'inscription ; l'adresse
--- est donc liberee (voir plus bas) et le parcours normal cree un compte neuf.
--- Jamais pour `foyer`. Appelee par la fonction
--- Edge `invitation-compte` (service_role seul), qui reverifie ici le code :
--- valide, non utilise, non revoque, non remplace, non echu, de cette adresse.
+-- adresse dont le compte est banni PAR SUPPRESSION ne reste pas bloquee. Lever
+-- le seul bannissement ne suffit pas : le profil retire (deleted_at) bloque
+-- l'inscription (`inscrire_enseignant_invite` exige une session SANS profil).
+-- L'adresse est donc LIBEREE, puis un compte neuf est cree. Cette fonction ne
+-- touche JAMAIS au schema `auth` : elle verifie l'invitation, RENVOIE l'id de
+-- l'ancien compte et journalise ; la fonction Edge `invitation-compte` libere
+-- l'adresse par l'API admin native (updateUserById : GoTrue gere les
+-- identites), puis cree le compte neuf, puis consomme le code. Jamais pour
+-- `foyer`. service_role seul.
 -- « Banni par suppression » : le profil est retire (deleted_at) ou porte un
 -- retrait non restaure dans private.retraits_comptes. Un compte banni pour une
--- autre raison n'est jamais leve ici. Un compte deja anonymise (adresse
--- `efface-...`) ne correspond a aucune adresse invitee. Rien n'est consomme.
-CREATE OR REPLACE FUNCTION public.invitation_compte_lever_bannissement(p_type text, p_code text, p_email text)
-RETURNS boolean
+-- autre raison n'est jamais rendu ici. Rien n'est consomme.
+CREATE OR REPLACE FUNCTION public.invitation_compte_ancien_a_liberer(p_type text, p_code text, p_email text)
+RETURNS uuid
 LANGUAGE plpgsql
 VOLATILE
 SECURITY DEFINER
@@ -126,15 +127,9 @@ DECLARE
   v_email text := pg_catalog.lower(pg_catalog.btrim(coalesce(p_email, '')));
   v_valide boolean := false;
   v_user uuid;
-  v_banni timestamptz;
 BEGIN
   IF v_email = '' OR p_type IS NULL OR p_type NOT IN ('equipe', 'candidat') THEN
-    RETURN false;
-  END IF;
-  IF NOT EXISTS (SELECT 1 FROM information_schema.columns c
-                  WHERE c.table_schema = 'auth' AND c.table_name = 'users'
-                    AND c.column_name = 'banned_until') THEN
-    RETURN false;
+    RETURN NULL;
   END IF;
 
   IF p_type = 'candidat' THEN
@@ -155,52 +150,28 @@ BEGIN
     END IF;
   END IF;
   IF NOT coalesce(v_valide, false) THEN
-    RETURN false;
+    RETURN NULL;
   END IF;
 
-  EXECUTE 'SELECT u.id, u.banned_until FROM auth.users u WHERE pg_catalog.lower(u.email) = $1 LIMIT 1'
-     INTO v_user, v_banni USING v_email;
-  IF v_user IS NULL OR v_banni IS NULL THEN
-    RETURN false;
+  SELECT u.id INTO v_user FROM auth.users u WHERE pg_catalog.lower(u.email) = v_email LIMIT 1;
+  IF v_user IS NULL THEN
+    RETURN NULL;
   END IF;
   IF NOT EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = v_user AND p.deleted_at IS NOT NULL)
      AND NOT EXISTS (SELECT 1 FROM private.retraits_comptes r
                       WHERE r.profile_id = v_user AND r.restaure_le IS NULL) THEN
-    RETURN false;
+    RETURN NULL;
   END IF;
 
-  -- Le profil retire (deleted_at, statut disabled) bloque l'inscription :
-  -- `inscrire_enseignant_invite` exige une session SANS profil, et la ligne
-  -- `profiles` ne se supprime pas. On ne rend donc pas l'ancien compte : on
-  -- LIBERE L'ADRESSE. L'ancien compte garde son profil retire, reste banni
-  -- (date finie) et passe sous une adresse `efface-...` (comme a
-  -- l'anonymisation, `private.cpt_anonymiser`) ; sa restauration par la
-  -- direction reste possible mais il n'a plus d'adresse de connexion. La
-  -- fonction Edge cree ensuite un compte NEUF pour l'adresse invitee, sans
-  -- profil : le parcours d'inscription habituel s'ouvre. Aucun DELETE.
-  EXECUTE pg_catalog.format(
-    'UPDATE auth.users SET email = %L, banned_until = %L::timestamptz WHERE id = %L',
-    'efface-' || v_user::text || '@invalide.rewayah.invalid',
-    '2999-12-31 00:00:00+00', v_user);
-  IF pg_catalog.to_regclass('auth.identities') IS NOT NULL
-     AND EXISTS (SELECT 1 FROM information_schema.columns c
-                  WHERE c.table_schema = 'auth' AND c.table_name = 'identities'
-                    AND c.column_name = 'provider_id') THEN
-    -- Sinon l'ancienne identite (provider_id = l'adresse) ferait echouer la
-    -- creation du compte neuf.
-    EXECUTE pg_catalog.format(
-      'UPDATE auth.identities SET provider_id = %L, identity_data = ''{}''::jsonb WHERE user_id = %L',
-      'efface-' || v_user::text, v_user);
-  END IF;
   PERFORM public.log_sensitive_access(
     'invitation_adresse_liberee', 'auth_users', v_user::text,
     pg_catalog.jsonb_build_object('type', p_type));
-  RETURN true;
+  RETURN v_user;
 END;
 $function$;
-ALTER FUNCTION public.invitation_compte_lever_bannissement(text, text, text) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.invitation_compte_lever_bannissement(text, text, text)
+ALTER FUNCTION public.invitation_compte_ancien_a_liberer(text, text, text) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.invitation_compte_ancien_a_liberer(text, text, text)
   FROM PUBLIC, anon, authenticated, agent_ro;
-GRANT EXECUTE ON FUNCTION public.invitation_compte_lever_bannissement(text, text, text) TO service_role;
-COMMENT ON FUNCTION public.invitation_compte_lever_bannissement(text, text, text) IS
-  'BANNISSEMENT-DATE-FINIE (14/11/2026) : libere l''adresse d''un compte supprime reinvite (equipe, candidat ; jamais foyer). service_role seul, via la fonction Edge invitation-compte.';
+GRANT EXECUTE ON FUNCTION public.invitation_compte_ancien_a_liberer(text, text, text) TO service_role;
+COMMENT ON FUNCTION public.invitation_compte_ancien_a_liberer(text, text, text) IS
+  'BANNISSEMENT-DATE-FINIE (14/11/2026) : renvoie l''id du compte supprime a liberer pour une adresse reinvitee (equipe, candidat ; jamais foyer) et journalise ; ne touche pas a auth. service_role seul, via la fonction Edge invitation-compte.';

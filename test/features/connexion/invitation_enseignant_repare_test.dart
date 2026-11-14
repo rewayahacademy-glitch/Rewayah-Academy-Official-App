@@ -253,6 +253,22 @@ void main() {
     });
   });
 
+  testWidgets('adresse encore tenue par un compte supprime : la phrase de '
+      'l\'invitation, pas un echec generique', (WidgetTester tester) async {
+    await _monter(
+      tester,
+      _avecCode,
+      <String>[],
+      erreur: const AuthApiException(
+        'User is banned',
+        statusCode: '403',
+        code: 'user_banned',
+      ),
+    );
+    await _envoyer(tester);
+    expect(find.text(t.connexion.invitationCreationImpossible), findsOneWidget);
+  });
+
   group('l\'ecran d\'un lien en echec dit la vraie cause', () {
     Future<void> monter(WidgetTester tester, String adresse) async {
       await tester.pumpWidget(

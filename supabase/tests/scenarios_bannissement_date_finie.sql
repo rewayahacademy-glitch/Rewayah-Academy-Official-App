@@ -128,8 +128,8 @@ SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.banned_until = 'infinity'::timestamptz),
   'C.1 la requete de rattrapage de la migration ne laisse aucun infini');
 
--- D. Reinviter une adresse dont le compte a ete supprime.
--- A1 (retiree par la direction, reste retiree) est reinvitee comme enseignante.
+-- D. Reinviter une adresse dont le compte a ete supprime : la fonction renvoie
+-- l'id de l'ancien compte et journalise, sans toucher a auth.
 SET session_replication_role = replica;
 INSERT INTO public.invitations_enseignant (code, email, cree_par, cree_le, expire_le)
 VALUES ('BAND-2345-6789', 'bandf-a1@example.test', pg_temp.u('31'), now(), now() + interval '14 days'),
@@ -140,41 +140,34 @@ SELECT pg_temp.qui(pg_temp.u('31'), 'admin', 'aal2');
 SELECT public.direction_supprimer_comptes(ARRAY[pg_temp.u('1'), pg_temp.u('2')], 'second retrait', false);
 RESET ROLE;
 SELECT pg_temp.vrai(
-  pg_catalog.has_function_privilege('service_role', 'public.invitation_compte_lever_bannissement(text,text,text)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('anon', 'public.invitation_compte_lever_bannissement(text,text,text)', 'EXECUTE')
-  AND NOT pg_catalog.has_function_privilege('authenticated', 'public.invitation_compte_lever_bannissement(text,text,text)', 'EXECUTE'),
-  'D.1 seul service_role execute la levee du bannissement');
+  pg_catalog.has_function_privilege('service_role', 'public.invitation_compte_ancien_a_liberer(text,text,text)', 'EXECUTE')
+  AND NOT pg_catalog.has_function_privilege('anon', 'public.invitation_compte_ancien_a_liberer(text,text,text)', 'EXECUTE')
+  AND NOT pg_catalog.has_function_privilege('authenticated', 'public.invitation_compte_ancien_a_liberer(text,text,text)', 'EXECUTE'),
+  'D.1 seul service_role execute la recherche du compte a liberer');
 SELECT pg_temp.vrai(
-  NOT public.invitation_compte_lever_bannissement('foyer', 'BAND-2345-6789', 'bandf-a1@example.test')
-  AND NOT public.invitation_compte_lever_bannissement('equipe', 'BAND-2345-0000', 'bandf-a1@example.test')
-  AND NOT public.invitation_compte_lever_bannissement('equipe', 'BAND-2345-6789', 'autre@example.test')
-  AND NOT public.invitation_compte_lever_bannissement('equipe', 'BAND-2345-ECHU', 'bandf-a2@example.test')
-  AND (SELECT u.banned_until IS NOT NULL AND u.email = 'bandf-a1@example.test' FROM auth.users u WHERE u.id = pg_temp.u('1')),
-  'D.2 jamais pour foyer, un faux code, une autre adresse ou un code echu : rien ne change');
-SELECT pg_catalog.set_config('test.leve', public.invitation_compte_lever_bannissement(
-  'equipe', 'band-2345-6789', 'Bandf-A1@Example.test')::text, true);
+  public.invitation_compte_ancien_a_liberer('foyer', 'BAND-2345-6789', 'bandf-a1@example.test') IS NULL
+  AND public.invitation_compte_ancien_a_liberer('equipe', 'BAND-2345-0000', 'bandf-a1@example.test') IS NULL
+  AND public.invitation_compte_ancien_a_liberer('equipe', 'BAND-2345-6789', 'autre@example.test') IS NULL
+  AND public.invitation_compte_ancien_a_liberer('equipe', 'BAND-2345-ECHU', 'bandf-a2@example.test') IS NULL
+  AND NOT EXISTS (SELECT 1 FROM public.audit_logs l WHERE l.action = 'invitation_adresse_liberee'),
+  'D.2 jamais pour foyer, un faux code, une autre adresse ou un code echu : aucun id, aucun audit');
+SELECT pg_catalog.set_config('test.ancien', coalesce(public.invitation_compte_ancien_a_liberer(
+  'equipe', 'band-2345-6789', 'Bandf-A1@Example.test')::text, ''), true);
 SELECT pg_temp.vrai(
-  pg_catalog.current_setting('test.leve') = 'true'
-  AND NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.email = 'bandf-a1@example.test')
-  AND (SELECT u.banned_until IS NOT NULL AND u.banned_until <> 'infinity'::timestamptz
-              AND u.email LIKE 'efface-%' FROM auth.users u WHERE u.id = pg_temp.u('1'))
-  AND (SELECT p.deleted_at IS NOT NULL FROM public.profiles p WHERE p.id = pg_temp.u('1'))
-  AND EXISTS (SELECT 1 FROM public.audit_logs l WHERE l.action = 'invitation_adresse_liberee'),
-  'D.3 un code valide libere l''adresse : ancien compte banni sous une adresse effacee, profil retire garde, journalise');
--- Le parcours normal peut alors creer un compte neuf pour l'adresse : l'autorisation l'accepte.
-SELECT pg_temp.vrai(
-  (public.invitation_compte_autoriser('equipe', 'BAND-2345-6789', 'bandf-a1@example.test') ->> 'autorise')::boolean,
-  'D.3b l''autorisation d''invitation-compte accepte maintenant l''adresse (aucun compte), la creation du compte neuf suit');
--- Un compte banni pour une autre raison (profil actif, aucun retrait) n'est jamais leve.
+  pg_catalog.current_setting('test.ancien') = pg_temp.u('1')::text
+  AND EXISTS (SELECT 1 FROM public.audit_logs l WHERE l.action = 'invitation_adresse_liberee')
+  AND (SELECT u.email FROM auth.users u WHERE u.id = pg_temp.u('1')) = 'bandf-a1@example.test'
+  AND (SELECT p.deleted_at IS NOT NULL FROM public.profiles p WHERE p.id = pg_temp.u('1')),
+  'D.3 un code valide : l''id de l''ancien compte est rendu et journalise ; auth.users n''est pas touche (l''Edge libere par l''API admin)');
+-- Un compte banni pour une autre raison (profil actif, aucun retrait) : rien.
 UPDATE auth.users SET banned_until = '2999-12-31 00:00:00+00'::timestamptz WHERE id = pg_temp.u('31');
 SET session_replication_role = replica;
 INSERT INTO public.invitations_enseignant (code, email, cree_par, expire_le)
 VALUES ('BAND-2345-7777', 'bandf-d@example.test', pg_temp.u('31'), now() + interval '14 days');
 SET session_replication_role = origin;
 SELECT pg_temp.vrai(
-  NOT public.invitation_compte_lever_bannissement('equipe', 'BAND-2345-7777', 'bandf-d@example.test')
-  AND (SELECT u.banned_until IS NOT NULL FROM auth.users u WHERE u.id = pg_temp.u('31')),
-  'D.4 un compte banni pour une autre raison que la suppression n''est jamais leve');
+  public.invitation_compte_ancien_a_liberer('equipe', 'BAND-2345-7777', 'bandf-d@example.test') IS NULL,
+  'D.4 un compte banni pour une autre raison que la suppression n''est jamais rendu');
 
 DO $fin$ BEGIN RAISE NOTICE 'BANNISSEMENT-DATE-FINIE : scenario vert'; END $fin$;
 ROLLBACK;

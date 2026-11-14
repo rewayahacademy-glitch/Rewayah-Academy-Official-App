@@ -203,6 +203,13 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// renvoi a la personne qui invite (seconde lecture, 07/11/2026).
   String _phraseEchec(Object erreur) {
     final IssueEnvoiLien issue = issueEchecEnvoi(erreur);
+    // Une invitation dont l'adresse reste tenue par un compte supprime (la
+    // liberation n'a pas abouti) : le serveur refuse l'envoi (`user_banned`).
+    if (erreur is AuthException &&
+        erreur.code == 'user_banned' &&
+        _invitationRetenue != null) {
+      return t.connexion.invitationCreationImpossible;
+    }
     if (issue == IssueEnvoiLien.inscriptionFermee) {
       final TypeInvitationCompte? type = _invitationRetenue?.type;
       if (type == TypeInvitationCompte.foyer) {
