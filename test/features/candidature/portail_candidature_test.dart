@@ -869,4 +869,36 @@ void main() {
       });
     }
   }, skip: sautSansCapture);
+
+  // SIGNER-APRES-ENVOI (14/11/2026), captures R3 (sautees sans CAPTURE_DIR) :
+  // CAPTURE_DIR=docs/current/captures/E2E. Envoyee sans signer : le portail
+  // propose « Lire et accepter » avant la piece. 1440 et 390, fr et ar.
+  group('captures signer apres envoi', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(1440, 900),
+        const Size(390, 844),
+      ]) {
+        final String nom =
+            'portail-accords-a-signer-${taille.width.toInt()}-'
+            '${langue.languageCode}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _portail(
+            tester,
+            _enExamen,
+            accordsFaits: false,
+            pieceDeposee: false,
+            taille: taille,
+            direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+          );
+          expect(_texte(t.attente.lireEtAccepter), findsWidgets);
+          await stabiliser(tester);
+          await capturerVue(tester, 'signer-apres-envoi/$nom');
+        });
+      }
+    }
+  }, skip: sautSansCapture);
 }
