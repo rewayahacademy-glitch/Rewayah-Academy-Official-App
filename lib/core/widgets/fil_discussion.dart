@@ -729,6 +729,17 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _vocalOuvert = false;
       _microDisponible = false;
     }
+    // MESSAGERIE-TEMPS-REEL (14/11/2026) : un message arrive en direct
+    // descend la lecture jusqu'a lui, si elle etait deja en bas (un lecteur
+    // remonte dans l'historique n'est pas deplace).
+    if (widget.messages.length > ancien.messages.length &&
+        _defilement.hasClients) {
+      final ScrollPosition p = _defilement.position;
+      if (p.hasContentDimensions &&
+          p.maxScrollExtent - p.pixels <= AppSpacing.xxxl * 2) {
+        WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(true));
+      }
+    }
     if (ancien.demandeSaisieVisible != widget.demandeSaisieVisible) {
       // N-4 : la saisie dans la liste revient a l'ecran (le Focus montre
       // le champ a l'entree). Bornee sous la liste, elle y est deja.
@@ -974,6 +985,20 @@ class _FilDiscussionState extends State<FilDiscussion> {
   @override
   Widget build(BuildContext context) {
     final TextesFilDiscussion x = widget.textes;
+    // MESSAGERIE-TEMPS-REEL (14/11/2026) : le fil ouvert se relit en direct ;
+    // un message envoye d'ici revient alors du serveur. Sa bulle locale
+    // confirmee s'efface devant lui (meme texte, un pour un) : jamais deux
+    // bulles pour un message. Une bulle en cours ou non confirmee reste.
+    final List<String> revenusDuServeur = <String>[
+      for (final MessageFil m in widget.messages)
+        if (m.deSoi && !_presentsALOuverture.contains(m.id)) m.texte.trim(),
+    ];
+    final List<_MessageLocal> locauxMontres = <_MessageLocal>[
+      for (final _MessageLocal m in _locaux)
+        if (m.etat != EtatEnvoiMessage.envoye ||
+            !revenusDuServeur.remove(m.texte.trim()))
+          m,
+    ];
     final List<Widget> bulles = <Widget>[
       for (final MessageFil m in widget.messages)
         _Bulle(
@@ -983,11 +1008,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
           pied: m.horodatage,
           deSoi: m.deSoi,
           complement: m.complement,
-          annonce: _presentsALOuverture.contains(m.id)
+          // Son propre message, revenu du serveur, a deja ete annonce par sa
+          // bulle locale : il ne l'est pas une seconde fois.
+          annonce: _presentsALOuverture.contains(m.id) || m.deSoi
               ? null
               : x.annonce(m.auteur, m.annonceTexte ?? m.texte),
         ),
-      for (final _MessageLocal m in _locaux)
+      for (final _MessageLocal m in locauxMontres)
         _Bulle(
           key: ValueKey<String>('message-${m.id}'),
           auteur: x.auteurSoi,

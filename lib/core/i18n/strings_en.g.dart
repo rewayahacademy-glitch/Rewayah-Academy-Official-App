@@ -1017,6 +1017,7 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	@override late final _Traductions$admin$fusion$en fusion = _Traductions$admin$fusion$en._(_root);
 	@override late final _Traductions$admin$tirage$en tirage = _Traductions$admin$tirage$en._(_root);
 	@override late final _Traductions$admin$bibliotheque$en bibliotheque = _Traductions$admin$bibliotheque$en._(_root);
+	@override late final _Traductions$admin$planClasse$en planClasse = _Traductions$admin$planClasse$en._(_root);
 }
 
 // Path: agent
@@ -6918,6 +6919,63 @@ class _Traductions$admin$bibliotheque$en extends Traductions$admin$bibliotheque$
 	@override late final _Traductions$admin$bibliotheque$attribution$en attribution = _Traductions$admin$bibliotheque$attribution$en._(_root);
 }
 
+// Path: admin.planClasse
+class _Traductions$admin$planClasse$en extends Traductions$admin$planClasse$fr {
+	_Traductions$admin$planClasse$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get etapeCle => 'Stage';
+	@override String get aucuneEtape => 'No stage yet';
+	@override String sansEtapeMembres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student in the class without a stage',
+		other: '${n} students in the class without a stage',
+	);
+	@override String get donnerEtape => 'Give the class a stage';
+	@override String get changerEtape => 'Change the class stage';
+	@override String get donnerTitre => 'Class stage';
+	@override String get donnerIntro => 'Choose the stage the class is at. Students in the class who do not have a stage yet receive it: a beginner starts at stage 1, a student who can already read waits for your placement decision. A student who already has a stage keeps it.';
+	@override String get donnerChamp => 'Class stage';
+	@override String get donnerManque => 'The stage is missing: choose it from the list.';
+	@override String get donnerEnvoyer => 'Give this stage';
+	@override String donnerErreur({required Object message}) => 'The class stage is not confirmed: ${message}';
+	@override String get aucunProgramme => 'No version of the programme is published. Publish it in Pedagogy, Programmes, then come back here.';
+	@override String get programmeErreur => 'The stages could not be read. Try again in a moment.';
+	@override String get motifChamp => 'Reason';
+	@override String get motifRequis => 'A reason is required, it is recorded in the audit log.';
+	@override late final _Traductions$admin$planClasse$motifs$en motifs = _Traductions$admin$planClasse$motifs$en._(_root);
+	@override String get dateAction => 'Say when they started';
+	@override String get dateTitre => 'Start of the stage';
+	@override String get dateIntro => 'If this student was already under way before being followed here, say which day they started their stage, even before their account was created. The deadline is counted from that day.';
+	@override String get dateChamp => 'Start day';
+	@override String get dateAide => 'A past day, up to today (Mecca day).';
+	@override String get dateManque => 'The start day is missing: choose it in the calendar.';
+	@override String get dateEnvoyer => 'Save the start day';
+	@override String dateErreur({required Object message}) => 'The start day is not confirmed: ${message}';
+	@override late final _Traductions$admin$planClasse$dateMotifs$en dateMotifs = _Traductions$admin$planClasse$dateMotifs$en._(_root);
+	@override late final _Traductions$admin$planClasse$refus$en refus = _Traductions$admin$planClasse$refus$en._(_root);
+	@override String get debutChamp => 'Did they start before today?';
+	@override String get debutAide => 'Leave empty if the student starts today. Otherwise, choose the day they really started.';
+	@override String get debutRetirer => 'They start today';
+	@override String apercuLimite({required Object date}) => 'With this start day, the deadline for the stage will be ${date}.';
+	@override String apercuPassee({required Object date}) => 'With this start day, the deadline for the stage was ${date}: it has already passed. The student will appear as late on this stage right away. No message is sent. You can choose a more recent day.';
+	@override String get apercuInconnue => 'The deadline cannot be calculated for this student (unknown duration or age group).';
+	@override String get apercuRefus => 'This start day cannot be saved (in the future, or older than the oldest accepted day). Choose another day.';
+	@override String get apercuErreur => 'The resulting deadline could not be read. The server calculates it when you save.';
+	@override String get jourErreur => 'The reference day could not be read. Try again in a moment.';
+	@override String get jourRelire => 'Read the day again';
+	@override String get placerAction => 'Decide their placement';
+	@override String get placerTitre => 'Student placement';
+	@override String get placerIntro => 'This student can already read. Choose the stage where they start, after the reading interview. If they were already under way, also say which day they started.';
+	@override String get placerChamp => 'Placement stage';
+	@override String get placerManque => 'The stage is missing: choose it from the list.';
+	@override String get placerEnvoyer => 'Decide the placement';
+	@override String placerErreur({required Object message}) => 'The placement is not confirmed: ${message}';
+	@override late final _Traductions$admin$planClasse$sansEtape$en sansEtape = _Traductions$admin$planClasse$sansEtape$en._(_root);
+	@override late final _Traductions$admin$planClasse$brouillon$en brouillon = _Traductions$admin$planClasse$brouillon$en._(_root);
+}
+
 // Path: nav.eleve
 class _Traductions$nav$eleve$en extends Traductions$nav$eleve$fr {
 	_Traductions$nav$eleve$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -10215,6 +10273,7 @@ class _Traductions$com$messages$en extends Traductions$com$messages$fr {
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$messages$direct$en direct = _Traductions$com$messages$direct$en._(_root);
 	@override late final _Traductions$com$messages$entree$en entree = _Traductions$com$messages$entree$en._(_root);
 	@override String get videDetail => 'A conversation opens from a class, a student or a file.';
 	@override String get choisirTitre => 'Choose a conversation';
@@ -16322,6 +16381,92 @@ class _Traductions$admin$bibliotheque$attribution$en extends Traductions$admin$b
 	@override String get conflit => 'Someone changed this document in the meantime. Reload before continuing.';
 }
 
+// Path: admin.planClasse.motifs
+class _Traductions$admin$planClasse$motifs$en extends Traductions$admin$planClasse$motifs$fr {
+	_Traductions$admin$planClasse$motifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get classe => 'The class is already at this point';
+	@override String get reprise => 'Class taken over mid-course';
+	@override String get correction => 'Correction of the class stage';
+}
+
+// Path: admin.planClasse.dateMotifs
+class _Traductions$admin$planClasse$dateMotifs$en extends Traductions$admin$planClasse$dateMotifs$fr {
+	_Traductions$admin$planClasse$dateMotifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get avant => 'Already under way before the launch';
+	@override String get correction => 'Correction of the start day';
+	@override String get confirme => 'Day confirmed with the teacher';
+}
+
+// Path: admin.planClasse.refus
+class _Traductions$admin$planClasse$refus$en extends Traductions$admin$planClasse$refus$fr {
+	_Traductions$admin$planClasse$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get dateFuture => 'This day has not come yet. Choose today or a past day.';
+	@override String dateSousPlancher({required Object date}) => 'This day is too old. The oldest accepted day is ${date}. Choose a day from that date onwards.';
+	@override String get eleveSansEtape => 'This student does not have a stage yet. Place them first in Pedagogy, Diagnostics.';
+	@override String get niveauNonPublie => 'This stage is not in the published version of the programme. Choose a stage from the list.';
+	@override String get classeClose => 'This class is closed.';
+	@override String get aucunProgrammePublie => 'No version of the programme is published.';
+	@override String get motif => 'The reason is missing.';
+}
+
+// Path: admin.planClasse.sansEtape
+class _Traductions$admin$planClasse$sansEtape$en extends Traductions$admin$planClasse$sansEtape$fr {
+	_Traductions$admin$planClasse$sansEtape$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Students without a stage';
+	@override String get intro => 'These students are already in a class, but do not have a programme stage yet.';
+	@override String get classesTitre => 'Classes without a stage';
+	@override String membres({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student',
+		other: '${n} students',
+	);
+	@override String get raisonAucunProgramme => 'No version of the programme is published';
+	@override String get raisonAttente => 'Can already read: their stage is decided after the reading interview (Decide a placement, below)';
+	@override String get raisonDebutant => 'Beginner: they will receive stage 1 when attached';
+	@override String get rattacher => 'Attach the beginners and the classes';
+	@override String get rattacherTitre => 'Attachment';
+	@override String get rattacherDetail => 'Stage 1 of the basics will be given to all open classes without a stage and to the beginner students in the list, starting today. Students who can already read are not affected. You can then say which day each one really started.';
+	@override String get rattacherEnvoyer => 'Attach now';
+	@override String rattacherErreur({required Object message}) => 'The attachment is not confirmed: ${message}';
+	@override String get rattacherFait => 'Attachment done: the list is up to date.';
+	@override String get erreurLecture => 'The list of students without a stage could not be read. Try again in a moment.';
+	@override String get relire => 'Read the list again';
+	@override String get toutPlace => 'Every student who is a member of a class has a stage.';
+}
+
+// Path: admin.planClasse.brouillon
+class _Traductions$admin$planClasse$brouillon$en extends Traductions$admin$planClasse$brouillon$fr {
+	_Traductions$admin$planClasse$brouillon$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String incomplet({required Object etape}) => 'This draft cannot be published: the stage “${etape}” does not yet have all its objectives and durations. Complete it, or start again from the basics.';
+	@override String incoherent({required Object niveau}) => 'This draft cannot be published: for ${niveau}, the stage durations do not add up to the level duration. Correct them, or start again from the basics.';
+	@override String get sansBases => 'This draft cannot be published: it does not have the four stages of the basics. Start again from the basics.';
+	@override String get autre => 'This draft cannot be published for now. You can start again from the basics.';
+	@override String get repartir => 'Start again from the basics';
+	@override String get repartirTitre => 'Start again from the basics';
+	@override String get repartirDetail => 'Creates a new version with the four stages of the basics, their objectives, their subjects and their durations. This draft is neither changed nor deleted: it stays in the list. Read the new version, then publish it.';
+	@override String get repartirEnvoyer => 'Create the version with the basics';
+	@override String repartirErreur({required Object message}) => 'The new version is not confirmed: ${message}';
+}
+
 // Path: compte.page.sections
 class _Traductions$compte$page$sections$en extends Traductions$compte$page$sections$fr {
 	_Traductions$compte$page$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -18542,6 +18687,20 @@ class _Traductions$com$socle$navigation$en extends Traductions$com$socle$navigat
 	@override String get bientot => 'Coming soon';
 	@override late final _Traductions$com$socle$navigation$provisoire$en provisoire = _Traductions$com$socle$navigation$provisoire$en._(_root);
 	@override late final _Traductions$com$socle$navigation$demo$en demo = _Traductions$com$socle$navigation$demo$en._(_root);
+}
+
+// Path: com.messages.direct
+class _Traductions$com$messages$direct$en extends Traductions$com$messages$direct$fr {
+	_Traductions$com$messages$direct$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nouveau => 'You have received a new message.';
+	@override String get horsDirect => 'Messages are not live right now (connection). Updating every 30 seconds.';
+	@override String get icone => 'Messages';
+	@override String get iconeUnNonLu => 'Messages, 1 unread';
+	@override String iconeNonLus({required Object nombre}) => 'Messages, ${nombre} unread';
 }
 
 // Path: com.messages.entree
@@ -32712,6 +32871,86 @@ extension on TraductionsEn {
 			'admin.bibliotheque.attribution.retire' => 'Document withdrawn from the catalogue.',
 			'admin.bibliotheque.attribution.retraitEchec' => 'The withdrawal did not go through. Try again in a moment.',
 			'admin.bibliotheque.attribution.conflit' => 'Someone changed this document in the meantime. Reload before continuing.',
+			'admin.planClasse.etapeCle' => 'Stage',
+			'admin.planClasse.aucuneEtape' => 'No stage yet',
+			'admin.planClasse.sansEtapeMembres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student in the class without a stage', other: '${n} students in the class without a stage', ), 
+			'admin.planClasse.donnerEtape' => 'Give the class a stage',
+			'admin.planClasse.changerEtape' => 'Change the class stage',
+			'admin.planClasse.donnerTitre' => 'Class stage',
+			'admin.planClasse.donnerIntro' => 'Choose the stage the class is at. Students in the class who do not have a stage yet receive it: a beginner starts at stage 1, a student who can already read waits for your placement decision. A student who already has a stage keeps it.',
+			'admin.planClasse.donnerChamp' => 'Class stage',
+			'admin.planClasse.donnerManque' => 'The stage is missing: choose it from the list.',
+			'admin.planClasse.donnerEnvoyer' => 'Give this stage',
+			'admin.planClasse.donnerErreur' => ({required Object message}) => 'The class stage is not confirmed: ${message}',
+			'admin.planClasse.aucunProgramme' => 'No version of the programme is published. Publish it in Pedagogy, Programmes, then come back here.',
+			'admin.planClasse.programmeErreur' => 'The stages could not be read. Try again in a moment.',
+			'admin.planClasse.motifChamp' => 'Reason',
+			'admin.planClasse.motifRequis' => 'A reason is required, it is recorded in the audit log.',
+			'admin.planClasse.motifs.classe' => 'The class is already at this point',
+			'admin.planClasse.motifs.reprise' => 'Class taken over mid-course',
+			'admin.planClasse.motifs.correction' => 'Correction of the class stage',
+			'admin.planClasse.dateAction' => 'Say when they started',
+			'admin.planClasse.dateTitre' => 'Start of the stage',
+			'admin.planClasse.dateIntro' => 'If this student was already under way before being followed here, say which day they started their stage, even before their account was created. The deadline is counted from that day.',
+			'admin.planClasse.dateChamp' => 'Start day',
+			'admin.planClasse.dateAide' => 'A past day, up to today (Mecca day).',
+			'admin.planClasse.dateManque' => 'The start day is missing: choose it in the calendar.',
+			'admin.planClasse.dateEnvoyer' => 'Save the start day',
+			'admin.planClasse.dateErreur' => ({required Object message}) => 'The start day is not confirmed: ${message}',
+			'admin.planClasse.dateMotifs.avant' => 'Already under way before the launch',
+			'admin.planClasse.dateMotifs.correction' => 'Correction of the start day',
+			'admin.planClasse.dateMotifs.confirme' => 'Day confirmed with the teacher',
+			'admin.planClasse.refus.dateFuture' => 'This day has not come yet. Choose today or a past day.',
+			'admin.planClasse.refus.dateSousPlancher' => ({required Object date}) => 'This day is too old. The oldest accepted day is ${date}. Choose a day from that date onwards.',
+			'admin.planClasse.refus.eleveSansEtape' => 'This student does not have a stage yet. Place them first in Pedagogy, Diagnostics.',
+			'admin.planClasse.refus.niveauNonPublie' => 'This stage is not in the published version of the programme. Choose a stage from the list.',
+			'admin.planClasse.refus.classeClose' => 'This class is closed.',
+			'admin.planClasse.refus.aucunProgrammePublie' => 'No version of the programme is published.',
+			_ => null,
+		} ?? switch (path) {
+			'admin.planClasse.refus.motif' => 'The reason is missing.',
+			'admin.planClasse.debutChamp' => 'Did they start before today?',
+			'admin.planClasse.debutAide' => 'Leave empty if the student starts today. Otherwise, choose the day they really started.',
+			'admin.planClasse.debutRetirer' => 'They start today',
+			'admin.planClasse.apercuLimite' => ({required Object date}) => 'With this start day, the deadline for the stage will be ${date}.',
+			'admin.planClasse.apercuPassee' => ({required Object date}) => 'With this start day, the deadline for the stage was ${date}: it has already passed. The student will appear as late on this stage right away. No message is sent. You can choose a more recent day.',
+			'admin.planClasse.apercuInconnue' => 'The deadline cannot be calculated for this student (unknown duration or age group).',
+			'admin.planClasse.apercuRefus' => 'This start day cannot be saved (in the future, or older than the oldest accepted day). Choose another day.',
+			'admin.planClasse.apercuErreur' => 'The resulting deadline could not be read. The server calculates it when you save.',
+			'admin.planClasse.jourErreur' => 'The reference day could not be read. Try again in a moment.',
+			'admin.planClasse.jourRelire' => 'Read the day again',
+			'admin.planClasse.placerAction' => 'Decide their placement',
+			'admin.planClasse.placerTitre' => 'Student placement',
+			'admin.planClasse.placerIntro' => 'This student can already read. Choose the stage where they start, after the reading interview. If they were already under way, also say which day they started.',
+			'admin.planClasse.placerChamp' => 'Placement stage',
+			'admin.planClasse.placerManque' => 'The stage is missing: choose it from the list.',
+			'admin.planClasse.placerEnvoyer' => 'Decide the placement',
+			'admin.planClasse.placerErreur' => ({required Object message}) => 'The placement is not confirmed: ${message}',
+			'admin.planClasse.sansEtape.titre' => 'Students without a stage',
+			'admin.planClasse.sansEtape.intro' => 'These students are already in a class, but do not have a programme stage yet.',
+			'admin.planClasse.sansEtape.classesTitre' => 'Classes without a stage',
+			'admin.planClasse.sansEtape.membres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student', other: '${n} students', ), 
+			'admin.planClasse.sansEtape.raisonAucunProgramme' => 'No version of the programme is published',
+			'admin.planClasse.sansEtape.raisonAttente' => 'Can already read: their stage is decided after the reading interview (Decide a placement, below)',
+			'admin.planClasse.sansEtape.raisonDebutant' => 'Beginner: they will receive stage 1 when attached',
+			'admin.planClasse.sansEtape.rattacher' => 'Attach the beginners and the classes',
+			'admin.planClasse.sansEtape.rattacherTitre' => 'Attachment',
+			'admin.planClasse.sansEtape.rattacherDetail' => 'Stage 1 of the basics will be given to all open classes without a stage and to the beginner students in the list, starting today. Students who can already read are not affected. You can then say which day each one really started.',
+			'admin.planClasse.sansEtape.rattacherEnvoyer' => 'Attach now',
+			'admin.planClasse.sansEtape.rattacherErreur' => ({required Object message}) => 'The attachment is not confirmed: ${message}',
+			'admin.planClasse.sansEtape.rattacherFait' => 'Attachment done: the list is up to date.',
+			'admin.planClasse.sansEtape.erreurLecture' => 'The list of students without a stage could not be read. Try again in a moment.',
+			'admin.planClasse.sansEtape.relire' => 'Read the list again',
+			'admin.planClasse.sansEtape.toutPlace' => 'Every student who is a member of a class has a stage.',
+			'admin.planClasse.brouillon.incomplet' => ({required Object etape}) => 'This draft cannot be published: the stage “${etape}” does not yet have all its objectives and durations. Complete it, or start again from the basics.',
+			'admin.planClasse.brouillon.incoherent' => ({required Object niveau}) => 'This draft cannot be published: for ${niveau}, the stage durations do not add up to the level duration. Correct them, or start again from the basics.',
+			'admin.planClasse.brouillon.sansBases' => 'This draft cannot be published: it does not have the four stages of the basics. Start again from the basics.',
+			'admin.planClasse.brouillon.autre' => 'This draft cannot be published for now. You can start again from the basics.',
+			'admin.planClasse.brouillon.repartir' => 'Start again from the basics',
+			'admin.planClasse.brouillon.repartirTitre' => 'Start again from the basics',
+			'admin.planClasse.brouillon.repartirDetail' => 'Creates a new version with the four stages of the basics, their objectives, their subjects and their durations. This draft is neither changed nor deleted: it stays in the list. Read the new version, then publish it.',
+			'admin.planClasse.brouillon.repartirEnvoyer' => 'Create the version with the basics',
+			'admin.planClasse.brouillon.repartirErreur' => ({required Object message}) => 'The new version is not confirmed: ${message}',
 			'agent.titre' => 'Agent entry',
 			'agent.intro' => 'This page opens the app in read-only mode, with the token provided by the academy.',
 			'agent.jeton' => 'Observation token',
@@ -32747,8 +32986,6 @@ extension on TraductionsEn {
 			'lieu.aide' => 'The first letters of the name are enough, with or without accents.',
 			'lieu.propositions' => 'Cities in this device\'s time',
 			'lieu.resultats' => 'Cities found',
-			_ => null,
-		} ?? switch (path) {
 			'lieu.credit' => 'City list: GeoNames (geonames.org), CC BY 4.0 licence.',
 			'lieu.aucune' => ({required Object texte}) => 'No city starts with "${texte}". Try the first letters of the name, without accents.',
 			'lieu.chargeEchec' => 'The city list did not load',
@@ -33183,6 +33420,8 @@ extension on TraductionsEn {
 			'historique.moisCourts.6' => 'Jul',
 			'historique.moisCourts.7' => 'Aug',
 			'historique.moisCourts.8' => 'Sep',
+			_ => null,
+		} ?? switch (path) {
 			'historique.moisCourts.9' => 'Oct',
 			'historique.moisCourts.10' => 'Nov',
 			'historique.moisCourts.11' => 'Dec',
@@ -33261,8 +33500,6 @@ extension on TraductionsEn {
 			'historique.seance.annulePhrase' => 'The session was cancelled.',
 			'historique.seance.introuvableTitre' => 'Session not found',
 			'historique.seance.introuvablePhrase' => 'This session is not in your household\'s history.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observation.titreSansClasse' => ({required Object date}) => 'Observations of ${date}',
 			'historique.observation.blocResume' => 'Summary',
 			'historique.observation.blocVisites' => 'Visits',
@@ -33697,6 +33934,8 @@ extension on TraductionsEn {
 			'classe.observation.uneVisite' => '1 visit available',
 			'classe.observation.resume' => ({required Object visites, required Object duree}) => '${visites} · ${duree} per visit',
 			'classe.observation.restanteAucune' => 'No visit left for this session',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.restanteUne' => '1 visit left for this session',
 			'classe.observation.minutesSecondes' => ({required Object minutes, required Object secondes}) => '${minutes} min ${secondes} s',
 			'classe.observation.secondes' => ({required Object secondes}) => '${secondes} s',
@@ -33775,8 +34014,6 @@ extension on TraductionsEn {
 			'classe.cartes.feuille.titreModifier' => ({required Object titre}) => 'Edit the card "${titre}"',
 			'classe.cartes.feuille.contexte' => 'Choose a template: it pre-fills the card. It is immediately visible to the class students and their families.',
 			'classe.cartes.feuille.modele' => 'Card template',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.champTitre' => 'Card title',
 			'classe.cartes.feuille.champTexte' => 'Card text (optional)',
 			'classe.cartes.feuille.champLien' => 'Card link (optional)',
@@ -34211,6 +34448,8 @@ extension on TraductionsEn {
 			'enseignant.profil.contratErreur' => 'Your contracts could not be loaded.',
 			'enseignant.profil.contratLectureSeule' => 'These documents are read-only.',
 			'enseignant.profil.personnel' => 'My settings',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.deconnexionQuestion' => 'Sign out of this device?',
 			'enseignant.profil.deconnexionConfirmer' => 'Sign me out now',
 			'enseignant.profil.deconnexionConsequence' => 'Your day, your slots and your handover notebooks stay saved. You will need a new sign-in link to come back.',
@@ -34289,8 +34528,6 @@ extension on TraductionsEn {
 			'enseignant.creneaux.revenir' => 'Go back',
 			'enseignant.creneaux.cleNiveau' => 'Level',
 			'enseignant.creneaux.cleLangue' => 'Language',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.cleRecurrence' => 'Recurrence',
 			'enseignant.creneaux.cleFuseau' => 'Reference time zone',
 			'enseignant.creneaux.cleHeureLocale' => 'Local time',
@@ -34725,6 +34962,8 @@ extension on TraductionsEn {
 			'tc.groupe.duree.heures' => ({required Object heures}) => '${heures} h',
 			'tc.groupe.duree.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
 			'tc.groupe.horloges.votreHeure' => 'Your time',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.horloges.chezEnseignant' => ({required Object nomme}) => 'Where ${nomme} is',
 			'tc.groupe.horloges.heureGroupe' => 'Class time',
 			'tc.groupe.horloges.heureMecque' => 'Makkah time',
@@ -34803,8 +35042,6 @@ extension on TraductionsEn {
 			'tc.bibliotheque.detail.entreeDetail' => 'All your revision resources, in one place.',
 			'tc.bibliotheque.detail.entreeDetailEnseignant' => 'All the class documents, in one place.',
 			'tc.bibliotheque.detail.entreeLigne' => 'Open the library',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.action.telecharger' => 'Make available offline',
 			'tc.bibliotheque.action.liberer' => 'Free up the space',
 			'tc.bibliotheque.action.enregistrerCopie' => 'Save a copy',
@@ -35239,6 +35476,8 @@ extension on TraductionsEn {
 			'adulte.historique.echec' => 'Your past sessions could not be loaded: your request may not have reached Rewayah. Try again in a moment.',
 			'adulte.historique.vide' => 'No past sessions for now.',
 			'adulte.historique.videDetail' => 'Your sessions will appear here after your first class.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.maClasse.aPropos' => 'About this class',
 			'adulte.maClasse.participants' => 'Participants',
 			'adulte.maClasse.vous' => ({required Object prenom}) => '${prenom} (you)',
@@ -35317,8 +35556,6 @@ extension on TraductionsEn {
 			'adulte.recharge.resultat.echecTitre' => 'The payment failed',
 			'adulte.recharge.resultat.echecPhrase' => 'No balance was credited. Your selection is kept: you can try again or change payment method.',
 			'adulte.recharge.resultat.echecMotif' => 'Reason',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.reessayer' => 'Try again',
 			'adulte.recharge.resultat.changerMoyen' => 'Change payment method',
 			'adulte.recharge.resultat.annuleTitre' => 'Payment cancelled',
@@ -35753,6 +35990,8 @@ extension on TraductionsEn {
 			'suiviFamille.close.motif.dejaEnClasse' => ({required Object prenom}) => '${prenom} already has a place in a class: this request is no longer needed.',
 			'suiviFamille.close.motif.inconnu' => 'This request is closed.',
 			'suiviDemandes.titre' => 'Tracking of time slot requests',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.contexte' => 'Each request moves forward step by step. You are notified at each stage.',
 			'suiviDemandes.carteTitre' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request',
 			'suiviDemandes.joursChoisis' => 'Chosen days',
@@ -35831,8 +36070,6 @@ extension on TraductionsEn {
 			'suiviDemandes.changement.date' => 'Change made on',
 			'suiviDemandes.changement.lien' => 'See the new class',
 			'suiviDemandes.changement.lienPour' => ({required Object dePrenom}) => 'See ${dePrenom}\'s new class',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.changement.retour' => 'Back to the tracking of requests',
 			'suiviDemandes.changement.introuvable' => 'This class change no longer needs to be shown',
 			'suiviDemandes.changement.introuvableDetail' => 'Go back to the tracking to see where your requests stand.',
@@ -36114,6 +36351,11 @@ extension on TraductionsEn {
 			'com.socle.navigation.demo.titre' => 'Communications demo',
 			'com.socle.navigation.demo.detail' => 'Fictional data, absent from production versions.',
 			'com.socle.navigation.demo.choisir' => 'Choose a space to try.',
+			'com.messages.direct.nouveau' => 'You have received a new message.',
+			'com.messages.direct.horsDirect' => 'Messages are not live right now (connection). Updating every 30 seconds.',
+			'com.messages.direct.icone' => 'Messages',
+			'com.messages.direct.iconeUnNonLu' => 'Messages, 1 unread',
+			'com.messages.direct.iconeNonLus' => ({required Object nombre}) => 'Messages, ${nombre} unread',
 			'com.messages.entree.titreClasse' => 'Talk about this class',
 			'com.messages.entree.titreDossier' => 'Talk about this file',
 			'com.messages.entree.titreCandidature' => 'Talk about the application',
@@ -36262,6 +36504,8 @@ extension on TraductionsEn {
 			'com.vocal.lecteur.enPause' => 'Playback paused',
 			'com.vocal.lecteur.fin' => 'Listened to in full',
 			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} of ${duree}',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.lecteur.indisponible' => 'Playback is not available here yet. The message stays in the conversation: come back later to listen to it.',
 			'com.vocal.lecteur.erreurLectureTitre' => 'This voice message could not be played.',
 			'com.vocal.lecteur.erreurLectureAction' => 'Try again',
@@ -36345,8 +36589,6 @@ extension on TraductionsEn {
 			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions on ${nom}\'s reply',
 			'com.communaute.reponses.signaler' => 'Report the reply',
 			'com.communaute.reponses.signalee' => 'You reported this reply.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.signalement.politique.publicite' => 'Advertising is not allowed in the Teachers community.',
 			'com.communaute.signalement.politique.sollicitation' => 'Commercial solicitation is not allowed in this space.',
 			'com.communaute.signalement.motifManquant' => 'Choose a reason to send the report.',
@@ -36776,6 +37018,8 @@ extension on TraductionsEn {
 			'com.annonces.demoPublication.audiencesDirection' => 'The whole academy, an audience or a class',
 			'com.annonces.demoPublication.audiencesEnseignant' => 'Its class only',
 			'com.annonces.demoPublication.vacancesTitre' => 'Winter holiday calendar',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.vacancesTexte' => 'Classes stop from 21 December to 5 January. Sessions resume on Monday 6 January at the usual times.',
 			'com.annonces.demoPublication.reunionTitre' => 'Thursday teachers\' meeting',
 			'com.annonces.demoPublication.reunionTexte' => 'Thursday\'s teaching meeting starts at 6 pm, by video. The agenda is in The Studio.',
@@ -36859,8 +37103,6 @@ extension on TraductionsEn {
 			'comptable.graphiques.mensuelResume' => ({required Object debut, required Object fin}) => 'Inflows and outflows from ${debut} to ${fin}.',
 			'comptable.graphiques.fluxTitre' => 'Cash flow over 30 days',
 			'comptable.graphiques.fluxResume' => ({required Object debut, required Object fin}) => 'Collections and disbursements from ${debut} to ${fin}.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.evolutionTitre' => 'Trend over 6 months',
 			'comptable.graphiques.evolutionResume' => ({required Object debut, required Object fin}) => 'Cash held from ${debut} to ${fin}.',
 			'comptable.graphiques.legendeEntrees' => 'Inflows',
@@ -37290,6 +37532,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.sousTitre' => 'Free cash is the only spendable figure.',
 			'comptable.tresorerie.alimenter' => 'Fund the Strategic reserve',
 			'comptable.tresorerie.erreurPartielle' => 'Part of the page could not be read: the rest is up to date. Try again to complete it.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.erreurPartielleAction' => 'Try again',
 			'comptable.encaissements.filtreTous' => 'All',
 			'comptable.encaissements.filtreConfirmes' => 'Confirmed',
@@ -37373,8 +37617,6 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.source' => 'Source',
 			'comptable.encaissements.rap.demandeLe' => ({required Object date}) => 'Requested on ${date}',
 			'comptable.encaissements.rap.approbationRequise' => 'Approval required by the policy',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.approbationNon' => 'No approval required by the policy',
 			'comptable.encaissements.rap.politiqueNote' => 'Refund rules belong to the Finance policy. Here, they are applied; they are not rewritten.',
 			'comptable.encaissements.rap.executer' => 'Execute the refund',
@@ -37804,6 +38046,8 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.reactiverDetail' => 'The delegations are suspended. Lifting them is an act of the management, with a written reason.',
 			'comptable.direction.delegationPanneau.reactiverAction' => 'Reactivate the delegations',
 			'comptable.direction.delegationPanneau.reactiverPhrase' => 'The Accountant will be able to act again within the limits of the policy. An expired delegation is never restored: it will have to be renewed. Cancelled outflows stay cancelled. The reactivation is written in the log.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.reactiverRaison' => 'Reason for reactivation',
 			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'It is kept in the log with your name.',
 			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'Write the reason to reactivate the delegations.',
@@ -37887,8 +38131,6 @@ extension on TraductionsEn {
 			'comptable.demo.montantsMasques' => 'Amounts hidden',
 			'comptable.demo.montantsAffiches' => 'Amounts shown',
 			'comptable.demo.groupeComptable' => 'Accountant shell',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.demo.groupeCompte' => 'Account and beneficiary',
 			'comptable.demo.groupeDirection' => 'Management',
 			'comptable.paiementsFamilles.titre' => 'Family payments',
@@ -38318,6 +38560,8 @@ extension on TraductionsEn {
 			'avis.admin.retour.refuse' => 'The review is refused.',
 			'avis.admin.retour.retire' => 'The review is removed.',
 			'avis.admin.retour.etatChange' => 'This review is no longer in the expected state. The list is updated.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retour.introuvable' => 'This review no longer exists. The list is updated.',
 			'avis.admin.retour.motifManque' => 'The reason is missing. Choose one.',
 			'avis.admin.retour.refus' => 'Only the signed-in management can decide on a review.',
@@ -38401,8 +38645,6 @@ extension on TraductionsEn {
 			'courriels.admin.file.filtre.tous' => 'All',
 			'courriels.admin.file.filtre.enAttente' => 'Queued',
 			'courriels.admin.file.filtre.envoi' => 'Being sent',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.filtre.envoye' => 'Sent',
 			'courriels.admin.file.filtre.echec' => 'Not sent',
 			'courriels.admin.file.filtre.annule' => 'Cancelled',
@@ -38832,6 +39074,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.issue.ignoree' => 'Ignored',
 			'candidatsFlux.importFormulaires.issue.aCorriger' => 'To correct',
 			'candidatsFlux.importFormulaires.issue.historique' => 'In history',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.horodatage' => 'Date of the answer',
 			'candidatsFlux.importFormulaires.champ.horodatageAide' => 'Used to recognize the answer if you replay the file.',
 			'candidatsFlux.importFormulaires.champ.genre' => 'Gender',
@@ -38915,8 +39159,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.titre' => 'The file of 21 October',
 			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.description' => '440 rows, that is 409 people once duplicates are merged: the count noted in the workbook that day.',
 			'candidatsFlux.importFormulaires.comptes.attendus.autres.titre' => 'Other numbers',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.attendus.autres.description' => 'You know the number of rows or people in your file. Enter it: Rewayah flags any difference.',
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.titre' => 'No count to compare',
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.description' => 'You confirm by relying on the preview.',
@@ -39346,6 +39588,8 @@ extension on TraductionsEn {
 			'journalSorties.accord.manque' => 'Tick a box to save your agreement.',
 			'journalSorties.accord.erreur' => 'Your choice is not confirmed: it may not have reached Rewayah. Try again in a moment.',
 			'journalSorties.accord.lectureErreur' => 'Your agreements could not be read. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.accord.horsService' => 'This log is not in service: nothing is recorded. Go back to Account.',
 			'journalSorties.accord.versionPerimee' => 'The text has just changed. Read it again, then tick again.',
 			'journalSorties.accord.eteint' => 'The management has just turned this log off: nothing is recorded. Go back to Account.',
@@ -39429,8 +39673,6 @@ extension on TraductionsEn {
 			'calendrier.dates.notification.conflit.rappelSansNom' => ({required Object classe, required Object jour, required Object heure}) => 'Reminder: the session of class ${classe}, on ${jour} at ${heure} (Makkah time), still cannot be restored: the teacher has another class at the same time. Free them to restore it.',
 			'calendrier.dates.notification.quandLocal' => ({required Object local, required Object mecque}) => '${local} (${mecque}, Makkah time)',
 			'calendrier.dates.notification.quandMecque' => ({required Object jour, required Object heure}) => '${jour} at ${heure}, Makkah time',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.notification.annoncee.une' => ({required Object du, required Object au, required Object quand}) => 'The academy is closed from ${du} to ${au}. The session of ${quand} will not take place.',
 			'calendrier.dates.notification.annoncee.plusieurs' => ({required Object du, required Object au, required Object n, required Object quand}) => 'The academy is closed from ${du} to ${au}. Sessions that will not take place: ${n}, including the one of ${quand}.',
 			'calendrier.dates.notification.levee.une' => ({required Object quand}) => 'The academy\'s closure is removed. The session of ${quand} is restored.',

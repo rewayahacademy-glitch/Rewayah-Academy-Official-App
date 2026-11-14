@@ -32,6 +32,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/communications/capacites_communication.dart';
+import '../../core/communications/veille_messages.dart';
 import '../../core/fluidite/action_anticipee.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -43,6 +44,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
+import 'bandeau_messages_hors_direct.dart';
 import 'fil_contextuel.dart';
 import 'liste_fils.dart';
 import 'panneau_contexte_fil.dart';
@@ -199,10 +201,20 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
 
   PortMessagesMetier get _port => ref.read(portMessagesMetierProvider);
 
+  /// MESSAGERIE-TEMPS-REEL : le porteur du fil a l'ecran, garde pour le
+  /// fermer au demontage (le `ref` n'y est plus lisible).
+  late final FilAfficheControleur _filAffiche;
+
   @override
   void dispose() {
     for (final ActionAnticipee a in _lectures.values) {
       a.dispose();
+    }
+    final String? id = widget.filId;
+    if (id != null) {
+      // Apres le rendu en cours : un fournisseur ne change pas pendant un
+      // demontage.
+      Future<void>.microtask(() => _filAffiche.fermer(id));
     }
     super.dispose();
   }
@@ -228,6 +240,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
   @override
   void initState() {
     super.initState();
+    _filAffiche = ref.read(filAfficheProvider.notifier);
     // Une liste deja lue a une autre adresse se montre tout de suite, puis se
     // relit sans squelette.
     final List<ResumeFil>? connue = ref.read(memoireMessagesProvider).liste;
@@ -245,7 +258,31 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
   void didUpdateWidget(EspaceMessagesMetier ancien) {
     super.didUpdateWidget(ancien);
     final String? id = widget.filId;
+    final String? avant = ancien.filId;
+    if (id != avant && avant != null) {
+      Future<void>.microtask(() => _filAffiche.fermer(avant));
+    }
     if (id != ancien.filId && id != null) _chargerFil(id);
+  }
+
+  /// MESSAGERIE-TEMPS-REEL (14/11/2026) : un signal du serveur (message recu,
+  /// lecture faite ailleurs) relit la liste et le fil ouvert, sans squelette ;
+  /// un echec garde ce qui est montre. Un message arrive dans le fil ouvert
+  /// est marque lu, puisqu'il est a l'ecran.
+  Future<void> _relireEnDirect() async {
+    unawaited(_chargerListe(silencieux: true));
+    final String? id = widget.filId;
+    final FilMetier? avant = _fil.value;
+    if (id == null || avant == null || avant.id != id) return;
+    final AsyncValue<FilMetier?> lu = await AsyncValue.guard<FilMetier?>(
+      () => _port.fil(id),
+    );
+    if (!mounted || widget.filId != id) return;
+    final FilMetier? fil = lu.value;
+    if (fil == null || fil.id != id) return;
+    final bool nouveau = fil.messages.length > avant.messages.length;
+    setState(() => _fil = AsyncValue<FilMetier?>.data(fil));
+    if (nouveau) unawaited(_marquerLu(id));
   }
 
   /// Lit la liste. [silencieux] : relecture apres une action (lu, envoi),
@@ -284,7 +321,10 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     );
     if (!mounted || widget.filId != id) return;
     setState(() => _fil = lu);
-    if (lu.value != null) unawaited(_marquerLu(id));
+    if (lu.value != null) {
+      _filAffiche.ouvrir(id);
+      unawaited(_marquerLu(id));
+    }
   }
 
   /// FLUIDITE-2 (DECISION-FLUIDITE §1, action instantanee) : le badge du fil
@@ -347,6 +387,10 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     // HEURES-PROFIL H2 (12/11/2026) : la page ecoute le fuseau du profil ;
     // quand il arrive apres son premier rendu, ses heures se redessinent.
     ref.watch(monHorlogeProvider);
+    ref.listen<int>(
+      etatVeilleMessagesProvider.select((EtatVeilleMessages e) => e.rang),
+      (int? _, int _) => unawaited(_relireEnDirect()),
+    );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final RechercheFilsControleur recherche = ref
         .watch(memoireMessagesProvider)
@@ -362,6 +406,9 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
           const BandeauHorsLigneCommunication(encadre: true),
           Ecart.vLg,
         ],
+        // K-59 (MESSAGERIE-TEMPS-REEL) : le temps reel est tombe, la page le
+        // dit et se relit d'elle-meme.
+        const BandeauMessagesHorsDirect(ecartApres: Ecart.vLg),
         Expanded(
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints contraintes) =>

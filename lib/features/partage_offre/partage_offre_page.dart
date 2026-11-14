@@ -231,6 +231,12 @@ class _PartageState extends ConsumerState<_Partage> {
   /// La variante de la carte, lue sur le profil de la personne.
   VarianteCarte get _variante => widget.reglages.variante;
 
+  /// Le lien partage : l'accueil du site public dans la langue de la carte
+  /// (`/fr/`, `/ar/`, `/en/`, `/pt/`), jamais l'application (directeur,
+  /// 14/11/2026). La carte, son QR, le message et « Copier le lien » portent
+  /// le meme.
+  Uri get _lien => lienOffreDepuis(widget.lien, _langue.code);
+
   @override
   void initState() {
     super.initState();
@@ -323,7 +329,7 @@ class _PartageState extends ConsumerState<_Partage> {
         // ce qu'elle y gagne.
         titre: carte.titre,
         texte: carte.sousTitre,
-        lien: widget.lien,
+        lien: _lien,
       );
       // Fermer le menu n'est pas une erreur : aucun message.
       retour = issue == IssuePartage.partage
@@ -384,7 +390,7 @@ class _PartageState extends ConsumerState<_Partage> {
     setState(() => _retour = null);
     _Retour retour;
     try {
-      await Clipboard.setData(ClipboardData(text: widget.lien.toString()));
+      await Clipboard.setData(ClipboardData(text: _lien.toString()));
       retour = _Retour(c.fait.copie, echec: false);
     } on Object {
       retour = _Retour(c.echec.copie, echec: true);
@@ -577,7 +583,7 @@ class _PartageState extends ConsumerState<_Partage> {
         if (message != null && !messageEnHaut) ...<Widget>[Ecart.vLg, message],
         Ecart.vLg,
         Text(
-          c.lien(lien: isolerSens(lienLisible(widget.lien))),
+          c.lien(lien: isolerSens(lienLisible(_lien))),
           key: _Partage.lienKey,
           style: palette.inkMuted.applyTo(
             textes.bodyMedium ?? const TextStyle(),
@@ -588,7 +594,7 @@ class _PartageState extends ConsumerState<_Partage> {
 
     final Widget apercu = _Apercu(
       cle: _cle,
-      lien: widget.lien,
+      lien: _lien,
       langue: _langue,
       variante: _variante,
       largeur: large ? _Apercu.largeurLarge : _Apercu.largeurMobile,

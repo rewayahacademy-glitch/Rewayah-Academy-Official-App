@@ -156,6 +156,18 @@ declare
     'decider_demande(uuid,boolean,text)',
     'decider_dossier(uuid,boolean,text)',
     'decider_placement(uuid,uuid,text)',
+    -- PLAN-DE-CLASSE A (migration 20261125700000) : gestes de la direction sur
+    -- l'etape de la classe et le jour de debut. SECURITY DEFINER, garde
+    -- positive app_account_valid() ET direction (capacite), 42501 sinon ; elles
+    -- n'ecrivent que niveau et jour de debut de l'eleve, avec motif et ligne
+    -- d'audit, jamais de suppression. Relues par l'agent du lot le 14/11/2026.
+    'donner_niveau_classe(uuid,uuid,text)',
+    'dater_entree_etape(uuid,date,text)',
+    'decider_placement_depuis(uuid,uuid,text,date)',
+    'apercu_date_limite(uuid,date,uuid)',
+    'rattacher_eleves_et_classes()',
+    'etat_publication_brouillon(uuid)',
+    'repartir_des_bases_programme()',
     'decider_reprise_foyer(uuid,boolean,uuid)',
     'decider_tresorerie_duree(bigint,timestamp with time zone,timestamp with time zone)',
     'decider_tresorerie_montant(bigint,bigint,text)',

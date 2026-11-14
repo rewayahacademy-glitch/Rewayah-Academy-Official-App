@@ -12,6 +12,7 @@ import '../../core/admin/personnes_proposables.dart';
 import '../../core/admin/port_classes_admin.dart';
 import '../../core/admin/service_comptes.dart';
 import '../../core/admin/service_groupes.dart';
+import '../../core/admin/service_plan_classe.dart';
 import '../../core/capacites/port_creation_classe.dart';
 import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/formulaires/motifs_proposes.dart';
@@ -68,6 +69,7 @@ import 'duree_creneau.dart';
 import 'feuille_observation_groupe.dart';
 import 'feuille_reglages_classe.dart';
 import 'genre_classe_libelles.dart';
+import 'niveau_classe.dart';
 import 'refus_creation_classe_libelles.dart';
 import 'refus_deplacement_libelles.dart';
 import 'refus_serveur_libelles.dart';
@@ -651,6 +653,12 @@ class FicheClasseAdminPage extends ConsumerWidget {
                 sansEnseignant: relu.teacherId.isEmpty,
               ));
     final GoRouter routeur = GoRouter.of(context);
+    // PLAN-DE-CLASSE A : le libelle du geste suit ce que le serveur dit de la
+    // classe (donner une etape, ou changer celle qu'elle a).
+    final AsyncValue<EtapeClasse?> etape = ref.watch(
+      etapeClasseProvider(groupeId),
+    );
+    final bool aUneEtape = etape.value?.niveauId != null;
 
     return PageShell(
       titre: fiche?.nom ?? t.admin.groupes.titre,
@@ -661,6 +669,7 @@ class FicheClasseAdminPage extends ConsumerWidget {
         final ClasseListee c => _CorpsFiche(
           key: cleFiche,
           classe: c,
+          aUneEtape: aUneEtape,
           onRetirer: (String studentId, String prenom) => _ouvrirRetrait(
             context,
             ref,
@@ -683,6 +692,12 @@ class FicheClasseAdminPage extends ConsumerWidget {
           ),
           onObservation: () =>
               _ouvrirObservation(context, ref, c.groupe, nom: c.nom),
+          onDonnerEtape: () => ouvrirDonnerEtapeClasse(
+            context,
+            ref,
+            groupeId: c.groupe.id,
+            nomClasse: c.nom,
+          ),
           // La classe close quitte la vue Ouvertes : retour a la liste,
           // relue.
           onCloturer: () => _ouvrirCloture(
@@ -719,17 +734,22 @@ class FicheClasseAdminPage extends ConsumerWidget {
 class _CorpsFiche extends ConsumerWidget {
   const _CorpsFiche({
     required this.classe,
+    required this.aUneEtape,
     required this.onRetirer,
     required this.onAjouter,
     required this.onModifierSeuil,
     required this.onChangerNom,
     required this.onAjouterCreneau,
     required this.onObservation,
+    required this.onDonnerEtape,
     required this.onCloturer,
     super.key,
   });
 
   final ClasseListee classe;
+
+  /// Vrai quand le serveur dit que la classe porte deja une etape.
+  final bool aUneEtape;
   final void Function(String studentId, String prenom) onRetirer;
   final VoidCallback onAjouter;
   final VoidCallback onModifierSeuil;
@@ -738,6 +758,9 @@ class _CorpsFiche extends ConsumerWidget {
   final VoidCallback onChangerNom;
   final VoidCallback onAjouterCreneau;
   final VoidCallback onObservation;
+
+  /// PLAN-DE-CLASSE A : donner (ou changer) l'etape de la classe.
+  final VoidCallback onDonnerEtape;
   final VoidCallback onCloturer;
 
   GroupeAdmin get groupe => classe.groupe;
@@ -782,6 +805,9 @@ class _CorpsFiche extends ConsumerWidget {
           ),
           chiffres: true,
         ),
+        Ecart.vMd,
+        // PLAN-DE-CLASSE A : l'etape du programme de la classe, lue du serveur.
+        LigneEtapeClasse(groupeId: groupe.id),
         Ecart.vXxl,
         _FeuilleDetail(groupe: groupe, onRetirer: onRetirer),
         if (groupe.actif) ...<Widget>[
@@ -806,6 +832,12 @@ class _CorpsFiche extends ConsumerWidget {
                   EntreeAction(
                     libelle: t.admin.groupes.reglagesClasse.action,
                     onChoix: onAjouterCreneau,
+                  ),
+                  EntreeAction(
+                    libelle: aUneEtape
+                        ? t.admin.planClasse.changerEtape
+                        : t.admin.planClasse.donnerEtape,
+                    onChoix: onDonnerEtape,
                   ),
                   EntreeAction(
                     libelle: t.admin.groupes.actionObservation,
@@ -2089,6 +2121,16 @@ class _FeuilleDetail extends ConsumerWidget {
                             points: true,
                             objet: membre.libelle,
                             actions: <EntreeAction>[
+                              EntreeAction(
+                                libelle: t.admin.planClasse.dateAction,
+                                onChoix: () => ouvrirDaterEntreeEtape(
+                                  context,
+                                  ref,
+                                  studentId: membre.studentId,
+                                  libelleEleve: membre.libelle,
+                                  groupeId: groupe.id,
+                                ),
+                              ),
                               EntreeAction(
                                 libelle: t.admin.groupes.actionRetirer,
                                 destructif: true,

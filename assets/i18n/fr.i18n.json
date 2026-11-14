@@ -5420,6 +5420,102 @@
         "other": "Inscrit depuis {jours} jours"
       }
     },
+    "planClasse": {
+      "etapeCle": "Étape",
+      "aucuneEtape": "Aucune étape pour le moment",
+      "sansEtapeMembres": {
+        "one": "{n} élève de la classe sans étape",
+        "other": "{n} élèves de la classe sans étape"
+      },
+      "donnerEtape": "Donner une étape à la classe",
+      "changerEtape": "Changer l'étape de la classe",
+      "donnerTitre": "Étape de la classe",
+      "donnerIntro": "Choisissez l'étape où en est la classe. Les élèves de la classe qui n'ont pas encore d'étape la reçoivent\u00a0: un débutant commence à l'étape 1, un élève qui sait déjà lire attend votre décision de placement. Un élève qui a déjà son étape la garde.",
+      "donnerChamp": "Étape de la classe",
+      "donnerManque": "Il manque l'étape\u00a0: choisissez-la dans la liste.",
+      "donnerEnvoyer": "Donner cette étape",
+      "donnerErreur": "L'étape de la classe n'est pas confirmée\u00a0: {message}",
+      "aucunProgramme": "Aucune version du programme n'est publiée. Publiez-la dans Pédagogie, Programmes, puis revenez ici.",
+      "programmeErreur": "Les étapes n'ont pas pu être lues. Réessayez dans un instant.",
+      "motifChamp": "Motif",
+      "motifRequis": "Un motif est requis, il s'inscrit au journal d'audit.",
+      "motifs": {
+        "classe": "La classe en est déjà là",
+        "reprise": "Classe reprise en cours de route",
+        "correction": "Correction de l'étape de la classe"
+      },
+      "dateAction": "Dire quand il a commencé",
+      "dateTitre": "Début de l'étape",
+      "dateIntro": "Si cet élève était déjà en cours avant d'être suivi ici, dites quel jour il a commencé son étape, même avant la création de son compte. La date limite se compte à partir de ce jour.",
+      "dateChamp": "Jour de début",
+      "dateAide": "Un jour passé, jusqu'à aujourd'hui (jour de La Mecque).",
+      "dateManque": "Il manque le jour de début\u00a0: choisissez-le dans le calendrier.",
+      "dateEnvoyer": "Enregistrer le jour de début",
+      "dateErreur": "Le jour de début n'est pas confirmé\u00a0: {message}",
+      "dateMotifs": {
+        "avant": "Il était déjà en cours avant le lancement",
+        "correction": "Correction du jour de début",
+        "confirme": "Jour confirmé avec l'enseignant"
+      },
+      "refus": {
+        "dateFuture": "Ce jour n'est pas encore arrivé. Choisissez aujourd'hui ou un jour passé.",
+        "dateSousPlancher": "Ce jour est trop ancien. Le plus ancien jour accepté est le {date}. Choisissez un jour à partir de cette date.",
+        "eleveSansEtape": "Cet élève n'a pas encore d'étape. Placez-le d'abord dans Pédagogie, Diagnostics.",
+        "niveauNonPublie": "Cette étape n'est pas dans la version publiée du programme. Choisissez une étape de la liste.",
+        "classeClose": "Cette classe est clôturée.",
+        "aucunProgrammePublie": "Aucune version du programme n'est publiée.",
+        "motif": "Le motif manque."
+      },
+      "debutChamp": "A-t-il commencé avant aujourd'hui\u00a0?",
+      "debutAide": "Laissez vide si l'élève commence aujourd'hui. Sinon, choisissez le jour où il a vraiment commencé.",
+      "debutRetirer": "Il commence aujourd'hui",
+      "apercuLimite": "Avec ce jour de début, la date limite de l'étape sera le {date}.",
+      "apercuPassee": "Avec ce jour de début, la date limite de l'étape était le {date}\u00a0: elle est déjà passée. L'élève apparaîtra tout de suite en retard sur cette étape. Aucun message n'est envoyé. Vous pouvez choisir un jour plus récent.",
+      "apercuInconnue": "La date limite ne peut pas être calculée pour cet élève (durée ou tranche d'âge inconnue).",
+      "apercuRefus": "Ce jour de début ne pourra pas être enregistré (à venir, ou plus ancien que le plus ancien jour accepté). Choisissez un autre jour.",
+      "apercuErreur": "La date limite qui en résulte n'a pas pu être lue. Le serveur la calcule à l'enregistrement.",
+      "jourErreur": "Le jour de référence n'a pas pu être lu. Réessayez dans un instant.",
+      "jourRelire": "Relire le jour",
+      "placerAction": "Décider son placement",
+      "placerTitre": "Placement de l'élève",
+      "placerIntro": "Cet élève sait déjà lire. Choisissez l'étape où il commence, après l'entretien de lecture. S'il était déjà en cours, dites aussi quel jour il a commencé.",
+      "placerChamp": "Étape de placement",
+      "placerManque": "Il manque l'étape\u00a0: choisissez-la dans la liste.",
+      "placerEnvoyer": "Décider le placement",
+      "placerErreur": "Le placement n'est pas confirmé\u00a0: {message}",
+      "sansEtape": {
+        "titre": "Élèves sans étape",
+        "intro": "Ces élèves sont déjà dans une classe, mais n'ont pas encore d'étape du programme.",
+        "classesTitre": "Classes sans étape",
+        "membres": {
+          "one": "{n} élève",
+          "other": "{n} élèves"
+        },
+        "raisonAucunProgramme": "Aucune version du programme n'est publiée",
+        "raisonAttente": "Sait déjà lire\u00a0: son étape se décide après l'entretien de lecture (Décider un placement, plus bas)",
+        "raisonDebutant": "Débutant\u00a0: il recevra l'étape 1 au rattachement",
+        "rattacher": "Rattacher les débutants et les classes",
+        "rattacherTitre": "Rattachement",
+        "rattacherDetail": "L'étape 1 des bases sera donnée à toutes les classes ouvertes sans étape et aux élèves débutants de la liste, à partir d'aujourd'hui. Les élèves qui savent déjà lire ne sont pas touchés. Vous pourrez ensuite dire quel jour chacun a vraiment commencé.",
+        "rattacherEnvoyer": "Rattacher maintenant",
+        "rattacherErreur": "Le rattachement n'est pas confirmé\u00a0: {message}",
+        "rattacherFait": "Rattachement fait\u00a0: la liste est à jour.",
+        "erreurLecture": "La liste des élèves sans étape n'a pas pu être lue. Réessayez dans un instant.",
+      "relire": "Relire la liste",
+        "toutPlace": "Chaque élève membre d'une classe a son étape."
+      },
+      "brouillon": {
+        "incomplet": "Ce brouillon ne peut pas être publié\u00a0: l'étape «\u00a0{etape}\u00a0» n'a pas encore tous ses objectifs et toutes ses durées. Complétez-la, ou repartez des bases.",
+        "incoherent": "Ce brouillon ne peut pas être publié\u00a0: pour {niveau}, les durées des étapes ne font pas la durée du niveau. Corrigez-les, ou repartez des bases.",
+        "sansBases": "Ce brouillon ne peut pas être publié\u00a0: il n'a pas les quatre étapes des bases. Repartez des bases.",
+        "autre": "Ce brouillon ne peut pas être publié pour le moment. Vous pouvez repartir des bases.",
+        "repartir": "Repartir des bases",
+        "repartirTitre": "Repartir des bases",
+        "repartirDetail": "Crée une nouvelle version avec les quatre étapes des bases, leurs objectifs, leurs matières et leurs durées. Ce brouillon n'est ni modifié ni effacé\u00a0: il reste dans la liste. Relisez la nouvelle version, puis publiez-la.",
+        "repartirEnvoyer": "Créer la version avec les bases",
+        "repartirErreur": "La nouvelle version n'est pas confirmée\u00a0: {message}"
+      }
+    },
     "qualite": {
       "titre": "Qualité",
       "intro": "Les anomalies pédagogiques détectées\u00a0: rapports manquants, blocages sans suivi, évaluations en retard.",
@@ -11762,6 +11858,13 @@
       }
     },
     "messages": {
+      "direct": {
+        "nouveau": "Vous avez reçu un nouveau message.",
+        "horsDirect": "Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.",
+        "icone": "Messages",
+        "iconeUnNonLu": "Messages, 1 non lu",
+        "iconeNonLus": "Messages, {nombre} non lus"
+      },
       "entree": {
         "titreClasse": "Échanger sur cette classe",
         "titreDossier": "Échanger sur ce dossier",

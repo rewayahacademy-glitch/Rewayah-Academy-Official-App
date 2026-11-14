@@ -93,7 +93,7 @@ SELECT pg_temp.vrai(
     = 'acf60aea3a0fe1f12348ffa6fc20a19f63eb28e117340eb82713cc8c521312a7'
   AND (SELECT t.sha256 FROM public.contract_texts t WHERE t.contract_kind = 'teacher_religious_framework'
         AND t.version = '2026-11-07' AND t.locale = 'ar')
-    = '2623d7ef94165c86771c6aa9ba3dac13df0c1c763d2be1ac06f420d805009845'
+    = 'b0bb7668e35135c3df423ff96c271ecbacec17b9b10cbade6b0d1493a7a25ffb'
   AND (SELECT r.version FROM public.contract_required_versions r
         WHERE r.contract_kind = 'teacher_religious_framework') = '2026-11-07'
   AND (SELECT pg_catalog.count(*) FROM public.contract_texts t
