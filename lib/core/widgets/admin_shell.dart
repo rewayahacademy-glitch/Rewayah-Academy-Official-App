@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../admin/admin_domaine.dart';
+import '../admin/sous_liens_coquille.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../preferences/preferences_locales.dart' show navigationReplieeProvider;
@@ -28,7 +29,6 @@ import 'menu_actions.dart';
 import 'nav_shell.dart' show BoutonPanneau, Destination, PiedComptePanneau;
 import 'page_shell.dart';
 import 'pressable.dart';
-import 'sous_liens_coquille.dart';
 
 /// La coquille de navigation du panneau admin : huit domaines, jamais plus
 /// granulaire (gel d'architecture, `docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md`).
@@ -1267,6 +1267,9 @@ class _SousLiens extends StatelessWidget {
     final double cible = AppMetriques.of(context).cibleTactile;
     final TextStyle base =
         Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+    final double retrait = MediaQuery.textScalerOf(context).scale(1) > 1.3
+        ? AppSpacing.lg
+        : AppSpacing.lg + AppSpacing.xxl + AppSpacing.md;
     return Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: Column(
@@ -1297,10 +1300,11 @@ class _SousLiens extends StatelessWidget {
                         constraints: BoxConstraints(minHeight: cible),
                         child: Padding(
                           // Sur la colonne du libelle du domaine : 16, icone
-                          // de 24, 12.
-                          padding: const EdgeInsetsDirectional.only(
-                            start:
-                                AppSpacing.lg + AppSpacing.xxl + AppSpacing.md,
+                          // de 24, 12. Texte agrandi (au-dela de 130 %) : le
+                          // retrait tombe a 16, pour qu'un mot long
+                          // (« Communications ») tienne entier (WCAG 1.4.4).
+                          padding: EdgeInsetsDirectional.only(
+                            start: retrait,
                             end: AppSpacing.lg,
                             top: AppSpacing.sm,
                             bottom: AppSpacing.sm,

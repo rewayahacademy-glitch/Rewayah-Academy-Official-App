@@ -3188,7 +3188,7 @@
       },
       "sousLiens": {
         "admissions": "طلبات القبول",
-        "pagesDe": "صفحات {domaine}"
+        "pagesDe": "صفحات \u2068{domaine}\u2069"
       }
     },
     "compte": "حسابي",

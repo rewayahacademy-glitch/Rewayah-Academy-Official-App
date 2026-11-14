@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accueil/signaux_accueils.dart';
 import '../../core/admin/service_admin.dart';
+import '../../core/admin/sous_liens_coquille.dart';
 import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
@@ -23,7 +24,6 @@ import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
-import '../../core/widgets/sous_liens_coquille.dart';
 import '../alertes/section_alertes.dart';
 import 'activite_recente.dart';
 import 'tuiles_compteur.dart';

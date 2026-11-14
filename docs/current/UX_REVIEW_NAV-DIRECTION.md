@@ -37,11 +37,12 @@ Captures : `docs/current/captures/E2E/nav-sous-liens/` (1440, 1024, 800 et 390 ;
 
 ### Ce que fait le lot, en plus des sept points
 
-- **Sous-liens dans le panneau.** Le domaine ouvert déplie ses pages sous lui, en retrait sur la colonne de son libellé. Les pages viennent des mêmes listes que les sélecteurs des pages : mêmes adresses, mêmes droits. Les pages sans serveur ne sont pas montrées (PORTS-DIRECTION : vue globale de la Finance, réserve de délégation) ; la politique KYC ne l'est qu'à qui peut la régler.
+- **Sous-liens dans le panneau.** Le domaine ouvert déplie ses pages sous lui, en retrait sur la colonne de son libellé. Les pages viennent des mêmes listes que les sélecteurs des pages : mêmes adresses, mêmes droits. Les pages sans serveur ne sont pas montrées (PORTS-DIRECTION : vue globale de la Finance, réserve de délégation). La politique KYC n'est pas un sous-lien : savoir qui peut la régler demande de lire la politique, et la coquille ne lit rien de plus à chaque page. Le jour où elle s'ouvre à quelqu'un, les pages de Configuration gardent leur sélecteur.
 - **La page ouverte** a trois signaux : fond doux, encre d'accent et graisse. Elle est annoncée « sélectionnée » et « lien » au lecteur d'écran (Material 3 ; WCAG 1.4.1).
 - **Sélecteur retiré sur ordinateur.** `SousNavigationDomaine` ne se montre plus quand le panneau porte déjà toutes ses sections (`SousLiensCoquille`). Au téléphone, et pour la comptabilité (autre coquille), rien ne change.
 - **Clavier (WCAG 2.4.3 et 2.4.11).** Tab suit l'ordre des entrées du panneau (`WidgetOrderTraversalPolicy`), puis passe à la page. L'entrée qui reçoit le focus est amenée dans la vue quand le panneau déplié défile.
-- **Texte à 200 % (WCAG 1.4.4).** Un sous-lien n'est jamais coupé : il passe à la ligne et sa rangée grandit.
+- **Texte à 200 % (WCAG 1.4.4).** Un sous-lien n'est jamais coupé : il passe à la ligne et sa rangée grandit. Au-delà de 130 %, son retrait tombe à 16, pour qu'un mot long (« Communications ») tienne entier.
+- **Garde bureau.** La tête fixe de 8 pages de Pédagogie et de Sécurité et audit repasse sous 160 px sans le sélecteur : 8 exceptions B6 sont retirées de `test/web_bureau/exceptions_bureau.txt`.
 - **Inchangé.** Huit domaines au plus ; mêmes noms, ordre, routes et droits ; « l'académie » ; `#Ra_staff` et le logo (`BrandLogo`) intacts ; aucun neuvième domaine (Communications et Le Studio restent des pages).
 
 ### Vérifications locales (14/11/2026)

@@ -14288,7 +14288,7 @@ class _Traductions$nav$admin$sousLiens$ar extends Traductions$nav$admin$sousLien
 
 	// Translations
 	@override String get admissions => 'طلبات القبول';
-	@override String pagesDe({required Object domaine}) => 'صفحات ${domaine}';
+	@override String pagesDe({required Object domaine}) => 'صفحات ⁨${domaine}⁩';
 }
 
 // Path: tc.groupe.mesGroupes
@@ -30313,7 +30313,7 @@ extension on TraductionsAr {
 			'nav.admin.sections.academie' => 'الأكاديمية',
 			'nav.admin.sections.reglages' => 'الإعدادات والرقابة',
 			'nav.admin.sousLiens.admissions' => 'طلبات القبول',
-			'nav.admin.sousLiens.pagesDe' => ({required Object domaine}) => 'صفحات ${domaine}',
+			'nav.admin.sousLiens.pagesDe' => ({required Object domaine}) => 'صفحات ⁨${domaine}⁩',
 			'nav.compte' => 'حسابي',
 			'nav.principale' => 'التنقل الرئيسي',
 			'nav.motSymbole' => 'Rewayah',

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../admin/sous_liens_coquille.dart';
 import '../i18n/strings.g.dart';
 import 'controle_segmente.dart';
 import 'selecteur_section.dart';
-import 'sous_liens_coquille.dart';
 
 /// La sous-navigation d'un domaine admin qui a plusieurs fonctions pairs.
 ///
