@@ -21,6 +21,7 @@ import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/port_ma_candidature.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/domain/enums.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/isolat_bidi.dart';
@@ -91,10 +92,28 @@ String? phrasePassage(CandidatureDossier c) {
 bool accordsFaits(EtatDossier d) =>
     d.contratSigne && d.accuseSigne && d.codeConduiteSigne;
 
-/// Vrai quand la piece est a deposer en salle 1 : pas encore deposee, et le
-/// serveur l'accepte maintenant (SALLE-1-TOUT-ICI).
+/// Vrai quand la piece refusee par la direction est a redeposer.
+bool pieceRefusee(EtatDossier d) =>
+    d.pieceDeposee && d.statutPiece == StatutPiece.refusee;
+
+/// Vrai quand la piece est a deposer en salle 1 : pas encore deposee, ou
+/// refusee par la direction, et le serveur l'accepte maintenant
+/// (SALLE-1-TOUT-ICI).
+///
+/// AUDIT-PORTAIL-CANDIDAT (directeur, 14/11/2026) : une piece refusee en
+/// salle 1 comptait pour « deposee » ; la ligne disait « Fait » et le portail
+/// ne proposait plus aucun depot, alors que le serveur en accepte un nouveau.
 bool pieceADeposer(EtatDossier d) =>
-    !d.pieceDeposee && !d.candidature.depotPieceSuspendu;
+    (!d.pieceDeposee || pieceRefusee(d)) && !d.candidature.depotPieceSuspendu;
+
+/// AUDIT-PORTAIL-CANDIDAT (directeur, 14/11/2026) : en Salle de verification
+/// et d'entretien, une nouvelle version du cadre religieux et pedagogique est
+/// a accepter (`etat_dossier().candidature.aCompleter` porte
+/// `cadre_religieux`, 4.3 : re-acceptee avant la salle 3). Le portail de la
+/// salle 2 ne montrait que les accords et la piece : aucun chemin vers le
+/// cadre. Pas pendant une pause.
+bool cadreAAccepterEnSalle2(CandidatureDossier c) =>
+    c.enSalleVerification && !c.enPause && c.cadre.publie && !c.cadre.accepte;
 
 /// La prochaine action du candidat sur le portail : un libelle et une route,
 /// ou `null` quand il n'a rien a faire (examen, pause, refus, retrait).
@@ -353,10 +372,15 @@ class StatutCandidature extends StatelessWidget {
                 LigneRubrique(
                   icone: AppIcons.profil,
                   libelle: r.elementPiece,
-                  valeur: etat(d.pieceDeposee, r.etatADeposer),
+                  valeur: etat(!pieceADeposer(d), r.etatADeposer),
                   // INCIDENT-CANDIDATS (14/11/2026) : la piece recue se dit
-                  // en mots, pas seulement par « Fait ».
-                  legende: d.pieceDeposee ? r.pieceRecue : null,
+                  // en mots, pas seulement par « Fait ». AUDIT-PORTAIL-
+                  // CANDIDAT : une piece refusee se dit a reprendre.
+                  legende: pieceRefusee(d)
+                      ? t.attente.refuseDetail(element: r.elementPiece)
+                      : d.pieceDeposee
+                      ? r.pieceRecue
+                      : null,
                 ),
               // HARMONISATION-E : la photo et l'accord de publication, lus
               // dans etat_dossier() ; ils se posent au recapitulatif des
@@ -408,7 +432,17 @@ class StatutCandidature extends StatelessWidget {
       ];
     } else {
       // En examen : la direction lit les reponses.
-      corps = <Widget>[titre(r.enExamenTitre), paragraphe(r.enExamen)];
+      corps = <Widget>[
+        titre(r.enExamenTitre),
+        paragraphe(r.enExamen),
+        // AUDIT-PORTAIL-CANDIDAT : la piece refusee se dit, avec son
+        // chemin (« Deposer ma piece », sous la carte).
+        if (dossier != null && pieceRefusee(dossier!))
+          paragraphe(
+            t.attente.refuseDetail(element: r.elementPiece),
+            cle: const ValueKey<String>('portail-piece-refusee'),
+          ),
+      ];
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

@@ -5541,6 +5541,14 @@
           "constatIncomplet": "المحضر ناقص (الحفظ أو الروايات أو الإجازة)",
           "entretienNonDisponible": "المقابلة لم تنته بعد",
           "reponsesIncompletes": "بعض إجابات الاستبيان ناقصة",
+          "contratNonSigne": "لم يُوقَّع عقد المعلم بعد",
+          "avisNonAccepte": "لم يُقبَل «ما يجب أن تعرفه» بعد",
+          "conduiteNonAcceptee": "لم تُقبَل مدونة السلوك بعد",
+          "cadreNonAccepte": "لم يُقبَل الإطار الديني والتربوي بعد",
+          "compteAbsent": "ليس للشخص حساب بعد",
+          "pieceAbsente": "لم تُودَع أي وثيقة هوية",
+          "pieceAVerifier": "الوثيقة مودَعة، في انتظار التحقق",
+          "pieceARedeposer": "رُفضت الوثيقة، يجب إيداعها من جديد",
           "inconnue": "السبب غير محدد"
         }
       },
