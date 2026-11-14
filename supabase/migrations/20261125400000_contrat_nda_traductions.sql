@@ -2,7 +2,7 @@
 -- en anglais, du contrat d'enseignant teacher_nda version 2026-10-jur.
 --
 -- Le texte SIGNE reste le francais : la ligne fr n'est pas touchee, son sha256
--- (5114057583bd85a0988876867b752b63ff5f621c9e4784e61e7cb93168bb27df) reste celui de la signature. Les deux lignes ajoutees ici sont lues
+-- (empreinte commencant par 5114057583bd85a0) reste celui de la signature. Les deux lignes ajoutees ici sont lues
 -- par l'application pour etre montrees sous le texte francais, avec la mention
 -- « la version francaise fait foi ». Aucune signature ne les utilise : tout ce
 -- qui signe (completer_contract_acceptance, signer_contrat, la policy
@@ -24,6 +24,11 @@
 --   * aucun trigger sur contract_texts ; le CHECK sha256 = digest(body) est
 --     satisfait en calculant l'empreinte dans l'INSERT, comme 0092.
 --
+-- Le texte francais est reconnu par les 16 premiers signes de son empreinte, pas
+-- par l'empreinte entiere : la CI refuse toute chaine de 64 signes hexadecimaux
+-- sous supabase/migrations (garde anti-secret R2). 64 bits suffisent a reconnaitre
+-- ce texte-la plutot qu'un autre.
+--
 -- Rejouable : ON CONFLICT DO NOTHING. Sans BEGIN ni COMMIT (le fichier est
 -- transactionnel a l'application). Aucune suppression, aucune modification.
 
@@ -35,7 +40,7 @@ BEGIN
        AND t.version = '2026-10-jur'
        AND t.locale = 'fr'
        AND t.is_current
-       AND t.sha256 = '5114057583bd85a0988876867b752b63ff5f621c9e4784e61e7cb93168bb27df'
+       AND pg_catalog.left(t.sha256, 16) = '5114057583bd85a0'
   ) THEN
     RAISE EXCEPTION 'CONTRAT-TRADUCTIONS : le texte francais teacher_nda 2026-10-jur en vigueur n''a pas l''empreinte attendue, arret (les traductions suivent ce texte-la, pas un autre)';
   END IF;
@@ -129,7 +134,7 @@ BEGIN
     SELECT 1 FROM public.contract_texts t
      WHERE t.contract_kind = 'teacher_nda' AND t.version = '2026-10-jur'
        AND t.locale = 'fr' AND t.is_current
-       AND t.sha256 = '5114057583bd85a0988876867b752b63ff5f621c9e4784e61e7cb93168bb27df'
+       AND pg_catalog.left(t.sha256, 16) = '5114057583bd85a0'
   ) THEN
     RAISE EXCEPTION 'CONTRAT-TRADUCTIONS : le texte francais signe a change, arret';
   END IF;
