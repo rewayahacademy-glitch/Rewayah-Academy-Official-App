@@ -57,7 +57,12 @@ import 'package:rewayah_academy/features/foyer/photo_eleve.dart';
 import 'package:rewayah_academy/features/parcours_offres/parcours_offres_page.dart';
 
 import '../../capture/outil_capture.dart'
-    show capturerVue, chargerPolicesDuDepot, masquerRubanDebug, sautSansCapture;
+    show
+        capturerVue,
+        chargerPolicesDuDepot,
+        dossierCapture,
+        masquerRubanDebug,
+        sautSansCapture;
 import '../../fixtures/tuteur/faux_classes_foyer.dart';
 import '../../fixtures/tuteur/foyers.dart';
 import '../../parcours/faux_service_offres.dart';
@@ -439,6 +444,8 @@ void main() {
   });
 
   group('Informations et photo', () {
+    // Captures seulement : les vraies polices (CAPTURE_DIR).
+    if (dossierCapture != null) setUpAll(chargerPolicesDuDepot);
     Future<(GoRouter, FauxServiceAvatar, _AppairagePilote)> monterPhoto(
       WidgetTester tester, {
       PhotoEnfant? photo,
@@ -476,6 +483,25 @@ void main() {
       await _ouvrirLigne(tester, t.ficheEleve.lignes.informations);
       return (routeur, avatar, appairage);
     }
+
+    // CAMARADES (directeur, 12/11/2026) : la legende dit aux parents qui
+    // voit la photo (son enseignant, les eleves de sa classe, la direction).
+    testWidgets('la legende de la photo dit qui la voit', (
+      WidgetTester tester,
+    ) async {
+      if (dossierCapture != null) masquerRubanDebug();
+      await monterPhoto(tester);
+      expect(
+        find.textContaining(
+          'les élèves de sa classe et la direction la voient',
+        ),
+        findsOneWidget,
+      );
+      if (dossierCapture != null) {
+        await stabiliser(tester);
+        await capturerVue(tester, 'legende-photo-fiche-eleve-390');
+      }
+    });
 
     testWidgets('identite en lecture, sans code interne ni age invente', (
       WidgetTester tester,

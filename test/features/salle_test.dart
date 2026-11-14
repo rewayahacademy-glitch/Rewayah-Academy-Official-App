@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/tc_classe/roster_enseignant.dart';
 import 'package:rewayah_academy/core/tc_classe/teacher_student_projection.dart';
 import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
 import 'package:rewayah_academy/core/tc_groupe/group_summary_vm.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_groupe/port_groupes.dart';
 import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
@@ -47,6 +48,7 @@ import 'package:rewayah_academy/core/tc_realtime/port_realtime_pedagogique.dart'
     show MessagePedagogique;
 import 'package:rewayah_academy/core/tc_realtime/types_message.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/video/garde_fermeture.dart';
 import 'package:rewayah_academy/core/video/gestes_salle.dart';
 import 'package:rewayah_academy/core/video/livekit_session_provider.dart';
@@ -64,12 +66,12 @@ import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle/synchro_salle.dart'
     show typeParoleSalle;
 import 'package:rewayah_academy/features/salle_enseignant/page_coran_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/annonce_geste.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/commandes_pedagogiques.dart'
     show DeclencheurCommandes;
 import 'package:rewayah_academy/features/salle_seance/depuis_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show diffusionEcritureProvider;
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
@@ -614,41 +616,43 @@ void main() {
       expect(_commande(t.salle.ouvrirCamera), findsOneWidget);
     });
 
-    testWidgets('D14 : un refus de camera dit la phrase du navigateur', (
-      WidgetTester tester,
-    ) async {
-      // Le directeur a touche « Camera » cinquante fois sans que rien ne se
-      // passe : l'echec ne doit plus etre silencieux (K-59).
-      final FauxMoteurSalle moteur = FauxMoteurSalle()
-        ..erreurCamera = StateError(
-          'NotReadableError: Could not start video source',
+    testWidgets(
+      'D14 : un refus de camera dit sa cause, sans la phrase du navigateur',
+      (WidgetTester tester) async {
+        // Le directeur a touche « Camera » cinquante fois sans que rien ne se
+        // passe : l'echec ne doit plus etre silencieux (K-59).
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreurCamera = StateError(
+            'NotReadableError: Could not start video source',
+          );
+        await _monterSalle(
+          tester,
+          surcharges: _surcharges(
+            video: FauxServiceVideo(acces0: _acces('student', camera: true)),
+            moteur: moteur,
+            preVol: FauxServicePreVol(),
+          ),
         );
-      await _monterSalle(
-        tester,
-        surcharges: _surcharges(
-          video: FauxServiceVideo(acces0: _acces('student', camera: true)),
-          moteur: moteur,
-          preVol: FauxServicePreVol(),
-        ),
-      );
 
-      await tester.tap(_commande(t.salle.ouvrirCamera));
-      await tester.pumpAndSettle();
+        await tester.tap(_commande(t.salle.ouvrirCamera));
+        await tester.pumpAndSettle();
 
-      expect(moteur.cameraDemandee, <bool>[true]);
-      expect(find.text(t.salle.cameraEchec), findsOneWidget);
-      expect(find.text(t.salle.cameraEchecOccupee), findsOneWidget);
-      expect(
-        find.textContaining('NotReadableError: Could not start video source'),
-        findsOneWidget,
-      );
+        expect(moteur.cameraDemandee, <bool>[true]);
+        expect(find.text(t.salle.cameraEchec), findsOneWidget);
+        expect(find.text(t.salle.cameraEchecOccupee), findsOneWidget);
+        // ENTREE-ROBUSTE (directeur, 12/11/2026 au soir) : la phrase technique
+        // du navigateur ne s'affiche plus a l'eleve (elle part a la
+        // supervision) ; la cause probable et quoi faire restent.
+        expect(find.textContaining('NotReadableError'), findsNothing);
+        expect(find.textContaining('Could not start'), findsNothing);
 
-      // Un essai qui aboutit efface le message.
-      moteur.erreurCamera = null;
-      await tester.tap(_commande(t.salle.ouvrirCamera));
-      await tester.pumpAndSettle();
-      expect(find.text(t.salle.cameraEchec), findsNothing);
-    });
+        // Un essai qui aboutit efface le message.
+        moteur.erreurCamera = null;
+        await tester.tap(_commande(t.salle.ouvrirCamera));
+        await tester.pumpAndSettle();
+        expect(find.text(t.salle.cameraEchec), findsNothing);
+      },
+    );
 
     testWidgets('Lot salle 3 : le message de la camera se ferme, et revient '
         'si un nouvel essai echoue', (WidgetTester tester) async {
@@ -1890,6 +1894,194 @@ void main() {
       expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
     });
 
+    // ENTREE-ROBUSTE (directeur, 12/11/2026, point 11 : « l'eleve suivant a
+    // du mal a rejoindre ; ca marche, mais apres plusieurs tentatives ») :
+    // le moteur reessaie seul la premiere connexion (immediat, 2 s, 4 s),
+    // sans ecran d'echec entre deux essais ; un refus n'est jamais reessaye.
+    group('ENTREE-ROBUSTE', () {
+      List<Override> surcharges(FauxMoteurSalle moteur) => _surcharges(
+        video: FauxServiceVideo(acces0: _acces('student')),
+        moteur: moteur,
+        preVol: FauxServicePreVol(),
+      );
+
+      testWidgets('(a) un essai manque puis la connexion : l eleve entre '
+          'sans toucher « Reessayer »', (WidgetTester tester) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(StateError('coupure'));
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        expect(moteur.essaisFaits, 1);
+        // Entre deux essais : aucun ecran d'echec.
+        expect(find.text(t.salle.refusReseau), findsNothing);
+        expect(find.text(t.commun.reessayer), findsNothing);
+
+        await tester.pump(const Duration(seconds: 2));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 2);
+        expect(moteur.entrees, hasLength(1));
+        expect(find.text(t.salle.refusReseau), findsNothing);
+        expect(find.text(t.commun.reessayer), findsNothing);
+        expect(find.text(t.salle.bandeauPermanent), findsOneWidget);
+        expect(
+          moteur.echecsSignales,
+          <({int essai, NatureEchecEntree nature, bool definitif})>[
+            (essai: 1, nature: NatureEchecEntree.transport, definitif: false),
+          ],
+        );
+      });
+
+      testWidgets('(b) trois coupures : l ecran d echec arrive, avec '
+          '« Reessayer »', (WidgetTester tester) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.addAll(<Object>[
+            StateError('premiere'),
+            StateError('deuxieme'),
+            StateError('troisieme'),
+          ]);
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        await tester.pump(const Duration(seconds: 2));
+        expect(moteur.essaisFaits, 2);
+        expect(find.text(t.commun.reessayer), findsNothing);
+
+        await tester.pump(const Duration(seconds: 4));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 3);
+        expect(moteur.entrees, isEmpty);
+        expect(find.text(t.salle.refusReseau), findsOneWidget);
+        expect(find.text(t.commun.reessayer), findsOneWidget);
+        expect(
+          moteur.echecsSignales.map(
+            (({int essai, NatureEchecEntree nature, bool definitif}) e) =>
+                e.definitif,
+          ),
+          <bool>[false, false, true],
+        );
+      });
+
+      testWidgets('(c) un refus du serveur : aucun essai de plus', (
+        WidgetTester tester,
+      ) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(const EchecSalle(MotifRefusSalle.acces));
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        await tester.pump(const Duration(seconds: 10));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 1);
+        expect(
+          moteur.echecsSignales,
+          <({int essai, NatureEchecEntree nature, bool definitif})>[
+            (essai: 1, nature: NatureEchecEntree.refus, definitif: true),
+          ],
+        );
+        expect(find.text(t.commun.reessayer), findsOneWidget);
+      });
+
+      testWidgets('(d) la salle quittee pendant l attente : aucun essai '
+          'apres, aucune connexion fantome', (WidgetTester tester) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(StateError('coupure'));
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        expect(moteur.essaisFaits, 1);
+        final int departsAvant = moteur.departs;
+
+        // L'ecran se ferme pendant l'attente du deuxieme essai.
+        await tester.pumpWidget(const SizedBox.shrink());
+        expect(moteur.departs, greaterThan(departsAvant));
+        await tester.pump(const Duration(seconds: 10));
+
+        expect(moteur.essaisFaits, 1);
+        expect(moteur.entrees, isEmpty);
+        expect(moteur.echecsSignales, hasLength(1));
+      });
+
+      testWidgets('(e) le son recu bloque par le navigateur : « Activer le '
+          'son » apparait, le toucher le relance, et l annonce disparait', (
+        WidgetTester tester,
+      ) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle();
+        await _monterSalle(tester, surcharges: surcharges(moteur));
+        expect(find.byKey(SallePage.sonBloqueKey), findsNothing);
+
+        moteur.bloquerSon(bloque: true);
+        await tester.pumpAndSettle();
+
+        expect(find.byKey(SallePage.sonBloqueKey), findsOneWidget);
+        expect(find.text(t.salle.sonBloque), findsOneWidget);
+        expect(find.text(t.salle.activerSon), findsOneWidget);
+
+        await tester.tap(find.text(t.salle.activerSon));
+        await tester.pumpAndSettle();
+
+        expect(moteur.activationsSon, 1);
+        expect(find.byKey(SallePage.sonBloqueKey), findsNothing);
+        expect(find.text(t.salle.activerSon), findsNothing);
+      });
+
+      // Directeur, 12/11/2026 au soir : le meme compte deja dans la salle sur
+      // un autre appareil affichait le message de reseau. Jamais un essai
+      // seul apres lui (deux appareils se chasseraient sans fin) ; la salle
+      // dit « ouverte ailleurs », et seul « Reessayer » entre ici.
+      testWidgets('(f) le meme compte deja dans la salle ailleurs : zero '
+          'nouvel essai, « ouverte ailleurs » et non « reseau »', (
+        WidgetTester tester,
+      ) async {
+        final FauxMoteurSalle moteur = FauxMoteurSalle()
+          ..erreursDesEssais.add(const EntreeOuverteAilleurs());
+        await _monterSalle(
+          tester,
+          surcharges: surcharges(moteur),
+          auRepos: false,
+          images: 1,
+        );
+        await tester.pump(const Duration(seconds: 10));
+        await tester.pumpAndSettle();
+
+        expect(moteur.essaisFaits, 1);
+        expect(
+          moteur.echecsSignales,
+          <({int essai, NatureEchecEntree nature, bool definitif})>[
+            (
+              essai: 1,
+              nature: NatureEchecEntree.ouverteAilleurs,
+              definitif: true,
+            ),
+          ],
+        );
+        expect(find.text(t.salle.ouverteAilleurs), findsOneWidget);
+        expect(find.text(t.salle.ouverteAilleursDetail), findsOneWidget);
+        expect(find.text(t.salle.refusReseau), findsNothing);
+
+        // Seul le geste de la personne reprend la salle ici.
+        await tester.tap(find.text(t.commun.reessayer));
+        await tester.pumpAndSettle();
+        expect(moteur.essaisFaits, 2);
+        expect(moteur.entrees, hasLength(1));
+      });
+    });
+
     testWidgets('rentrer mene a la racine de son role', (
       WidgetTester tester,
     ) async {
@@ -1991,10 +2183,11 @@ void main() {
       await tester.pump();
       await tester.pump();
       // Le serveur a ferme les micros des camarades ; l'enseignant le lit.
+      // DYNAMIQUE-CHRONO-2 : dans la Dynamique chrono, montre a tous.
       expect(gestes.recitations, <String?>['e1']);
       expect(
         find.descendant(
-          of: find.byKey(CoucheAnnonceGeste.cle),
+          of: find.byKey(DynamiqueChrono.cleAlerte),
           matching: find.text(
             t.salle.gestes.recitationOuverte(prenom: 'Yusuf'),
           ),
@@ -2009,7 +2202,7 @@ void main() {
       expect(annonce.charge['profil'], 'e1');
       expect(moteur.donneesPubliees.last.fiable, isTrue);
 
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pump(AppMouvement.alerteChrono);
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(const ValueKey<String>('gestes-e1')));
       await tester.pumpAndSettle();
@@ -2027,7 +2220,7 @@ void main() {
       )!;
       expect(fin.type, typeParoleSalle);
       expect(fin.charge['profil'], isNull);
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pump(AppMouvement.alerteChrono);
       await tester.pumpAndSettle();
     });
 
@@ -2203,9 +2396,10 @@ void main() {
       recevoirParole('e2', 'Aicha', 1);
       await tester.pump();
       await tester.pump();
+      // DYNAMIQUE-CHRONO-2 : dans la Dynamique chrono.
       expect(
         find.descendant(
-          of: find.byKey(CoucheAnnonceGeste.cle),
+          of: find.byKey(DynamiqueChrono.cleAlerte),
           matching: find.text(t.salle.gestes.autreReciteTitre(prenom: 'Aicha')),
         ),
         findsOneWidget,
@@ -2216,7 +2410,14 @@ void main() {
       recevoirParole(null, '', 2);
       await tester.pump();
       await tester.pump();
-      expect(find.text(t.salle.gestes.finRecitationTitre), findsOneWidget);
+      // La fin remplace l'alerte de la recitation, sans attendre.
+      expect(
+        find.descendant(
+          of: find.byKey(DynamiqueChrono.cleAlerte),
+          matching: find.text(t.salle.gestes.finRecitationTitre),
+        ),
+        findsOneWidget,
+      );
       expect(find.text(t.salle.gestes.finRecitation), findsOneWidget);
 
       // C'est a lui : il lit « ouvrez votre micro », et son appareil sonne.
@@ -2226,7 +2427,7 @@ void main() {
       expect(find.text(t.salle.gestes.aVousTitre), findsOneWidget);
       expect(find.text(t.salle.gestes.aVous), findsOneWidget);
       expect(signaux, 1);
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      await tester.pump(AppMouvement.alerteChrono);
       await tester.pumpAndSettle();
     });
 
@@ -2544,21 +2745,35 @@ void main() {
       );
       await tester.pump();
       await tester.pump();
-      // GESTES-POINTEUR (11/11/2026) : en tete de la salle, dans la couche
-      // des annonces (jamais dans une couche que le telephone masque).
+      // DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026, point 5) : l'appel se
+      // dit dans la Dynamique chrono, en plus du son et de la vibration.
       expect(
         find.descendant(
-          of: find.byKey(CoucheAnnonceGeste.cle),
+          of: find.byKey(DynamiqueChrono.cleAlerte),
           matching: find.text(t.salle.gestes.appelRecuTitre),
         ),
         findsOneWidget,
       );
       expect(find.text(t.salle.gestes.appelRecu), findsOneWidget);
       expect(signaux, 1);
+      // Point 6 : la sonnerie se repete (trois fois, espacee).
+      await tester.pump(AppMouvement.sonnerieAppelEspace);
+      expect(signaux, 2);
+      await tester.pump(AppMouvement.sonnerieAppelEspace);
+      expect(signaux, 3);
 
-      await tester.pump(AppMouvement.annonceGesteMaintien);
+      // L'alerte se replie seule ; sa marque reste jusqu'au toucher de la
+      // barre.
+      await tester.pump(AppMouvement.alerteChrono);
+      await tester.pumpAndSettle();
+      expect(find.byKey(DynamiqueChrono.cleAlerte), findsNothing);
+      expect(find.text(t.salle.gestes.appelRecu), findsNothing);
+      await tester.tap(find.byKey(DynamiqueChrono.cleDeplier).first);
+      await tester.pumpAndSettle();
+      await tester.pump(AppMouvement.dynamiqueChronoDepliee);
       await tester.pumpAndSettle();
       expect(find.text(t.salle.gestes.appelRecuTitre), findsNothing);
+      expect(signaux, 3);
     });
 
     testWidgets('31/10/2026 : le retour du telephone ou du navigateur quitte '
@@ -2678,6 +2893,110 @@ void main() {
       await tester.pumpAndSettle();
       expect(video.sorties, <String>[_seance]);
       expect(GardeFermeture.armee, isFalse);
+    });
+  });
+
+  // HORS-SALLE-1 (directeur, 12/11/2026 au soir).
+  group('HORS-SALLE-1 : l eleve hors de l application', () {
+    Future<(FauxMoteurSalle, FauxServiceVideo)> entrer(
+      WidgetTester tester, {
+      String role = 'student',
+    }) async {
+      addTearDown(GardeFermeture.remettre);
+      addTearDown(
+        () => tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        ),
+      );
+      final FauxMoteurSalle moteur = FauxMoteurSalle();
+      final FauxServiceVideo video = FauxServiceVideo(acces0: _acces(role));
+      await _monterSalle(
+        tester,
+        surcharges: _surcharges(
+          video: video,
+          moteur: moteur,
+          preVol: FauxServicePreVol(),
+          role: role == 'teacher' ? AppRole.teacher : AppRole.student,
+        ),
+      );
+      moteur.poser(EtatSalle.connecte);
+      await tester.pumpAndSettle();
+      return (moteur, video);
+    }
+
+    void cacher(WidgetTester tester) {
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    }
+
+    Future<void> montrer(WidgetTester tester) async {
+      tester.binding
+        ..handleAppLifecycleStateChanged(AppLifecycleState.inactive)
+        ..handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('revenu avant 30 s : rien n est coupe, rien ne s affiche', (
+      WidgetTester tester,
+    ) async {
+      final (FauxMoteurSalle moteur, FauxServiceVideo video) = await entrer(
+        tester,
+      );
+      final int departs = moteur.departs;
+      cacher(tester);
+      await tester.pump(const Duration(seconds: 29));
+      await montrer(tester);
+      expect(video.sorties, isEmpty);
+      expect(moteur.departs, departs);
+      expect(
+        find.byKey(const ValueKey<String>('resultat-seance')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('plus de 30 s : sorti par le chemin de « Quitter », l ecran '
+        'du retour le dit, et « Retourner dans la salle » y ramene', (
+      WidgetTester tester,
+    ) async {
+      final (FauxMoteurSalle moteur, FauxServiceVideo video) = await entrer(
+        tester,
+      );
+      final int departs = moteur.departs;
+      cacher(tester);
+      await tester.pump(const Duration(seconds: 31));
+      await montrer(tester);
+      expect(video.sorties, <String>[_seance], reason: 'annonce de sortie');
+      expect(moteur.departs, departs + 1, reason: 'puis deconnexion');
+      expect(find.text(t.salle.fin.horsApplication.titre), findsOneWidget);
+      expect(
+        find.text(
+          LibellesGroupe.insecable(t.salle.fin.horsApplication.phrase(n: 30)),
+        ),
+        findsOneWidget,
+      );
+      verifierUnSeulBoutonPlein(tester);
+
+      final int entrees = video.demandes.length;
+      await tester.tap(find.byKey(ResultatSeance.revenirKey));
+      await tester.pumpAndSettle();
+      expect(video.demandes.length, entrees + 1, reason: 'le chemin d entree');
+      expect(find.text(t.salle.fin.horsApplication.titre), findsNothing);
+    });
+
+    testWidgets('qui modere la seance (l enseignant) : cache 10 min, jamais '
+        'coupe', (WidgetTester tester) async {
+      final (FauxMoteurSalle moteur, FauxServiceVideo video) = await entrer(
+        tester,
+        role: 'teacher',
+      );
+      final int departs = moteur.departs;
+      cacher(tester);
+      await tester.pump(const Duration(minutes: 10));
+      await montrer(tester);
+      expect(video.sorties, isEmpty);
+      expect(moteur.departs, departs);
+      expect(find.text(t.salle.fin.horsApplication.titre), findsNothing);
     });
   });
 
@@ -2901,8 +3220,14 @@ void main() {
         ),
       );
 
-      // S0.2 : sa pastille dans l'en-tete, lue « Votre presence ».
-      expect(find.bySemanticsLabel(RegExp(t.presence.mienne)), findsOneWidget);
+      // S0.2, DYNAMIQUE-CHRONO-1 (12/11/2026) : son etat est une marque de
+      // la Dynamique chrono (la pastille posee a cote, sur la page, n'existe
+      // plus) : lue « En retard » ; ecrite en clair (ici, sans chrono, la
+      // barre ne porte que ses marques, en mots).
+      expect(
+        find.bySemanticsLabel(RegExp(t.presence.enRetard)),
+        findsOneWidget,
+      );
       expect(find.text(t.presence.enRetard), findsOneWidget);
       // Aucune liste : l'eleve n'y a pas droit, et le bouton qui l'ouvrirait
       // n'existe pas non plus.
@@ -3967,9 +4292,16 @@ void main() {
           avecFleches: true,
         );
         expect(boite.width, closeTo(attendue.width, 0.5));
-        // La page composee remplit la hauteur de sa boite.
+        // La page composee remplit la hauteur de sa boite, moins la reserve
+        // du haut et du bas (PAGES-FLUIDES, demande du directeur du
+        // 12/11/2026 : un cadre et des marges ; avant, zero marge).
         final Rect page = tester.getRect(find.byKey(PageCoranSalle.cle));
-        expect(page.height, closeTo(boite.height, 0.5));
+        expect(
+          page.height,
+          closeTo(boite.height - margesPageSalle(boite.size).vertical, 0.5),
+        );
+        expect(page.left - boite.left, greaterThanOrEqualTo(AppSpacing.lg));
+        expect(boite.right - page.right, greaterThanOrEqualTo(AppSpacing.lg));
         // Les quinze lignes se partagent la hauteur de la boite.
         final double ligne = tester
             .getRect(find.byKey(cleLigneMadina15(3)))
@@ -4030,7 +4362,12 @@ void main() {
         // Telephone : la fenetre. Ordinateur (plan du 26/10/2026) : tout le
         // centre, sous la ligne du titre.
         if (taille.width < 840) {
-          expect(canevas, Offset.zero & taille);
+          // DYNAMIQUE-CHRONO-1 (12/11/2026) : la fenetre sous la rangee
+          // reservee de la Dynamique chrono.
+          final double haut = tester
+              .getRect(find.byKey(TelephonePleinEcran.cleRangeeChrono))
+              .bottom;
+          expect(canevas, Rect.fromLTRB(0, haut, taille.width, taille.height));
         } else {
           final Rect centre = tester.getRect(
             find.byKey(SalleOrdinateur.cleCentre),

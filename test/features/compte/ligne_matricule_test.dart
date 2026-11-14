@@ -43,6 +43,7 @@ void main() {
   // L'arabe se charge hors du temps simule des tests (sinon l'attente pend).
   setUpAll(() async {
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 

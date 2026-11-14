@@ -12,7 +12,14 @@
 // - 320 et 1440, texte x1 et x2, clair et sombre, RTL.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderParagraph;
+import 'package:flutter/rendering.dart'
+    show
+        RenderAnimatedOpacity,
+        RenderObject,
+        RenderOffstage,
+        RenderOpacity,
+        RenderParagraph;
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart'
@@ -92,11 +99,228 @@ double _contraste(Color a, Color b) {
   return (haut + 0.05) / (bas + 0.05);
 }
 
+/// Le libelle est REELLEMENT peint : une couleur opaque, et aucun ancetre qui
+/// le rend transparent (opacite, fondu) ou le sort de l'ecran (hors scene).
+void _verifierPeint(WidgetTester tester, Finder texte, String raison) {
+  final Text t = tester.widget<Text>(texte);
+  final Color? couleur = t.style?.color;
+  expect(couleur, isNotNull, reason: '$raison : couleur posee');
+  expect(couleur!.a, 1, reason: '$raison : couleur opaque');
+  RenderObject? r = tester.renderObject(texte);
+  while (r != null) {
+    if (r is RenderOpacity) {
+      expect(r.opacity, 1, reason: '$raison : opacite');
+    }
+    if (r is RenderAnimatedOpacity) {
+      expect(r.opacity.value, 1, reason: '$raison : fondu');
+    }
+    if (r is RenderOffstage) {
+      expect(r.offstage, isFalse, reason: '$raison : hors scene');
+    }
+    r = r.parent;
+  }
+}
+
+/// Les rangees des onglets de la pilule (sans le cercle du Compte), du haut
+/// vers le bas.
+List<List<Destination>> _rangeesDeLaPilule(
+  WidgetTester tester,
+  List<Destination> d,
+) {
+  final List<(Destination, Rect)> m = <(Destination, Rect)>[
+    for (final Destination x in d)
+      if (!x.compte) (x, tester.getRect(_onglet(x.libelle))),
+  ];
+  final List<List<(Destination, Rect)>> rangees = <List<(Destination, Rect)>>[];
+  for (final (Destination, Rect) e in m) {
+    final List<(Destination, Rect)>? r = rangees
+        .where(
+          (List<(Destination, Rect)> r) =>
+              (r.first.$2.top - e.$2.top).abs() < 1,
+        )
+        .firstOrNull;
+    if (r == null) {
+      rangees.add(<(Destination, Rect)>[e]);
+    } else {
+      r.add(e);
+    }
+  }
+  rangees.sort(
+    (List<(Destination, Rect)> a, List<(Destination, Rect)> b) =>
+        a.first.$2.top.compareTo(b.first.$2.top),
+  );
+  return <List<Destination>>[
+    for (final List<(Destination, Rect)> r in rangees)
+      <Destination>[for (final (Destination, Rect) e in r) e.$1],
+  ];
+}
+
+/// Les controles de la barre guidee a 320 : chaque libelle entier (aucun mot
+/// coupe, jamais tronque, echelle au plancher de lisibilite ou au-dessus),
+/// cibles de 72 en largeur comme en hauteur, ecart de 4 au moins entre deux
+/// onglets d'une meme rangee et entre deux rangees, rangees alignees (meme
+/// haut, meme hauteur), ordre de lecture (de la rangee du haut vers celle du
+/// bas, dans le sens de l'ecriture).
+void _verifierBarreGuidee(
+  WidgetTester tester,
+  List<Destination> d, {
+  required double echelle,
+  TextDirection sens = TextDirection.ltr,
+  String? reason,
+}) {
+  final Finder barre = find.byKey(NavShell.barreBasseKey);
+  expect(barre, findsOneWidget, reason: reason);
+  expect(motsCoupes(tester, barre), isEmpty, reason: reason);
+  final List<(Destination, Rect)> mesures = <(Destination, Rect)>[];
+  for (final Destination x in d) {
+    // Libelle toujours visible, entier.
+    final Finder texte = find.descendant(
+      of: barre,
+      matching: find.text(x.libelle),
+    );
+    expect(texte, findsOneWidget, reason: '$reason ${x.libelle}');
+    final RenderParagraph p = tester.renderObject<RenderParagraph>(texte);
+    expect(p.didExceedMaxLines, isFalse, reason: '$reason ${x.libelle}');
+    expect(p.overflow, isNot(TextOverflow.ellipsis));
+    expect(
+      p.textScaler.scale(10),
+      greaterThanOrEqualTo(10 * echelleMinimaleLisible - 0.001),
+      reason: '$reason ${x.libelle}',
+    );
+    _verifierPeint(tester, texte, '$reason ${x.libelle}');
+    final Rect onglet = tester.getRect(_onglet(x.libelle));
+    expect(
+      onglet.height,
+      greaterThanOrEqualTo(AppTouchTarget.enfant),
+      reason: '$reason ${x.libelle}',
+    );
+    expect(
+      onglet.width,
+      greaterThanOrEqualTo(AppTouchTarget.enfant),
+      reason: '$reason ${x.libelle}',
+    );
+    // Libelle sous l'icone (la tuile Compte porte l'avatar).
+    final Rect icone = tester.getRect(
+      find.descendant(
+        of: _onglet(x.libelle),
+        matching: x.compte ? find.byType(AvatarTile) : find.byType(Icon),
+      ),
+    );
+    expect(
+      tester.getRect(texte).top,
+      greaterThanOrEqualTo(icone.bottom),
+      reason: '$reason ${x.libelle}',
+    );
+    // Tout reste dans l'ecran.
+    expect(onglet.left, greaterThanOrEqualTo(0), reason: x.libelle);
+    expect(onglet.right, lessThanOrEqualTo(320), reason: x.libelle);
+    mesures.add((x, onglet));
+  }
+  // Le cercle du Compte n'est pas une rangee de la pilule : il se regle seul
+  // (dans l'ecran, cible de 72), mais compte pour les ecarts.
+  final List<(Destination, Rect)> pilule = <(Destination, Rect)>[
+    for (final (Destination, Rect) m in mesures)
+      if (!m.$1.compte) m,
+  ];
+  // Rangees : meme haut a 1 point pres.
+  final List<List<(Destination, Rect)>> rangees = <List<(Destination, Rect)>>[];
+  for (final (Destination, Rect) m in pilule) {
+    final List<(Destination, Rect)>? rangee = rangees
+        .where(
+          (List<(Destination, Rect)> r) =>
+              (r.first.$2.top - m.$2.top).abs() < 1,
+        )
+        .firstOrNull;
+    if (rangee == null) {
+      rangees.add(<(Destination, Rect)>[m]);
+    } else {
+      rangee.add(m);
+    }
+  }
+  expect(rangees.length, lessThanOrEqualTo(2), reason: reason);
+  for (final List<(Destination, Rect)> r in rangees) {
+    // Rangee alignee : meme haut, meme hauteur.
+    for (final (Destination, Rect) m in r) {
+      expect(m.$2.height, closeTo(r.first.$2.height, 1), reason: reason);
+    }
+    // Ecart de 4 au moins entre deux onglets voisins.
+    final List<Rect> triees = <Rect>[
+      for (final (Destination, Rect) m in r) m.$2,
+    ]..sort((Rect a, Rect b) => a.left.compareTo(b.left));
+    for (int i = 1; i < triees.length; i++) {
+      expect(
+        triees[i].left - triees[i - 1].right,
+        greaterThanOrEqualTo(AppSpacing.xs - 0.01),
+        reason: reason,
+      );
+    }
+  }
+  if (rangees.length == 2) {
+    rangees.sort(
+      (List<(Destination, Rect)> a, List<(Destination, Rect)> b) =>
+          a.first.$2.top.compareTo(b.first.$2.top),
+    );
+    // Ecart de 4 au moins entre les deux rangees.
+    final double basHaut = rangees.first
+        .map(((Destination, Rect) m) => m.$2.bottom)
+        .reduce((double a, double b) => a > b ? a : b);
+    expect(
+      rangees.last.first.$2.top - basHaut,
+      greaterThanOrEqualTo(AppSpacing.xs - 0.01),
+      reason: reason,
+    );
+  }
+  // Ordre de lecture : rangee du haut d'abord, puis dans le sens de
+  // l'ecriture ; c'est l'ordre des destinations de la pilule.
+  final List<String> lus = <String>[
+    for (final (Destination, Rect) m
+        in (<(Destination, Rect)>[...pilule]..sort((a, b) {
+          final int rang = ((a.$2.top - b.$2.top).abs() < 1)
+              ? 0
+              : a.$2.top.compareTo(b.$2.top);
+          if (rang != 0) return rang;
+          return sens == TextDirection.rtl
+              ? b.$2.left.compareTo(a.$2.left)
+              : a.$2.left.compareTo(b.$2.left);
+        })))
+      m.$1.libelle,
+  ];
+  expect(lus, <String>[
+    for (final Destination x in d)
+      if (!x.compte) x.libelle,
+  ], reason: 'ordre de lecture $reason');
+}
+
+/// L'ordre de tabulation suit l'ordre de lecture : les destinations de la
+/// barre recoivent le focus dans l'ordre de la liste.
+Future<void> _verifierOrdreTabulation(
+  WidgetTester tester,
+  List<Destination> d, {
+  required TextDirection sens,
+}) async {
+  final List<String> vus = <String>[];
+  final Set<String> noms = <String>{for (final Destination x in d) x.libelle};
+  for (int i = 0; i < 12 && vus.length < noms.length; i++) {
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    final BuildContext? c = FocusManager.instance.primaryFocus?.context;
+    final Pressable? p = c?.findAncestorWidgetOfExactType<Pressable>();
+    final String? nom = p?.libelleSemantique;
+    if (nom != null && noms.contains(nom) && !vus.contains(nom)) vus.add(nom);
+  }
+  expect(vus, <String>[for (final Destination x in d) x.libelle]);
+}
+
 void main() {
   // COUPE-MOTS-4 : vraies polices. La police de test (carres de 1 em) rend
   // chaque mot plus large qu'un onglet : la barre passerait a deux rangees
   // pour un defaut que l'application n'a pas.
-  setUpAll(chargerPolicesDuDepot);
+  setUpAll(() async {
+    await chargerPolicesDuDepot();
+    // La locale arabe est differee : chargee une fois, hors des tests.
+    await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.fr);
+  });
 
   group('les routes ne changent pas', () {
     test('le Mode Accessibilite est un sous-ensemble de la liste standard', () {
@@ -130,7 +354,7 @@ void main() {
           <String>[
             Routes.eleve,
             Routes.eleveSuivi,
-            Routes.eleveCoran,
+            Routes.eleveApprendre,
             Routes.compte,
           ],
         );
@@ -202,55 +426,115 @@ void main() {
               echelle: echelle,
               luminosite: luminosite,
             );
-            expect(find.byKey(NavShell.barreBasseKey), findsOneWidget);
-            double? finPrecedent;
-            for (final Destination x in d) {
-              // Libelle toujours visible.
-              expect(find.text(x.libelle), findsOneWidget, reason: x.libelle);
-              final Rect onglet = tester.getRect(_onglet(x.libelle));
-              expect(
-                onglet.height,
-                greaterThanOrEqualTo(AppTouchTarget.enfant),
-                reason: x.libelle,
-              );
-              expect(
-                onglet.width,
-                greaterThanOrEqualTo(AppTouchTarget.enfant),
-                reason: x.libelle,
-              );
-              // Libelle sous l'icone.
-              // NAV-REFONTE : la tuile Compte porte l'avatar a la place de
-              // l'icone ; le nom reste dessous.
-              final Rect icone = tester.getRect(
-                find.descendant(
-                  of: _onglet(x.libelle),
-                  matching: x.compte
-                      ? find.byType(AvatarTile)
-                      : find.byType(Icon),
-                ),
-              );
-              final Rect texte = tester.getRect(find.text(x.libelle));
-              expect(texte.top, greaterThanOrEqualTo(icone.bottom));
-              // Tout reste dans l'ecran.
-              expect(onglet.left, greaterThanOrEqualTo(0));
-              expect(onglet.right, lessThanOrEqualTo(320));
-              // Onglets espaces.
-              if (finPrecedent != null) {
-                expect(
-                  onglet.left - finPrecedent,
-                  // MA-CMD-1 : quatre onglets de 72 a 320, l'ecart se
-                  // resserre a 4.
-                  greaterThanOrEqualTo(
-                    d.length >= 4 ? AppSpacing.xs : AppSpacing.sm,
-                  ),
-                  reason: x.libelle,
-                );
-              }
-              finPrecedent = onglet.right;
-            }
+            _verifierBarreGuidee(tester, d, echelle: echelle);
             expect(tester.takeException(), isNull);
           },
         );
+      }
+    }
+
+    // ESPACE-APPRENDRE (lot 5), contre-lecture de l'architecte du 13/11/2026 :
+    // « Apprendre » (104 points a 20) ne tient plus sur une rangee a 320 avec
+    // trois autres onglets ; la barre guidee a le droit de passer sur DEUX
+    // rangees (MA-NAV-1 : libelle toujours visible, cibles de 72), et ce test
+    // est strict pour cette disposition : les QUATRE roles, CHAQUE onglet
+    // tour a tour comme onglet actif, francais et arabe (RTL), texte x1, x1,5
+    // et x2.
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final AppRole role in <AppRole>[
+        AppRole.student,
+        AppRole.guardian,
+        AppRole.teacher,
+        AppRole.controller,
+      ]) {
+        for (final double echelle in <double>[1, 1.5, 2]) {
+          testWidgets(
+            '320, ${langue.name}, ${role.valeurSql}, texte x$echelle : '
+            'libelles entiers, cibles de 72, ecarts, rangees alignees, ordre '
+            'de lecture et de tabulation, chaque onglet actif',
+            (WidgetTester tester) async {
+              LocaleSettings.setLocaleSync(langue);
+              addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+              final List<Destination> d = destinationsPour(
+                role: role,
+                mode: InterfaceMode.enfant,
+              );
+              final TextDirection sens = langue == AppLocale.ar
+                  ? TextDirection.rtl
+                  : TextDirection.ltr;
+              for (int actif = 0; actif < d.length; actif++) {
+                await _monter(
+                  tester,
+                  mode: InterfaceMode.enfant,
+                  destinations: d,
+                  indexActif: actif,
+                  echelle: echelle,
+                  direction: sens,
+                );
+                _verifierBarreGuidee(
+                  tester,
+                  d,
+                  echelle: echelle,
+                  sens: sens,
+                  reason: 'actif $actif',
+                );
+                await _verifierOrdreTabulation(tester, d, sens: sens);
+              }
+              expect(tester.takeException(), isNull);
+            },
+          );
+        }
+      }
+    }
+
+    // Des que la largeur le permet (480 a 599, au-dela c'est le rail), la pilule tient sur UNE
+    // seule rangee : le repli a deux rangees n'est que pour ce qui ne tient pas.
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final AppRole role in <AppRole>[
+        AppRole.student,
+        AppRole.guardian,
+        AppRole.teacher,
+        AppRole.controller,
+      ]) {
+        for (final double largeur in <double>[480, 540, 599]) {
+          testWidgets('${langue.name}, ${role.valeurSql}, $largeur, texte x1 : '
+              'UNE seule rangee, libelles peints', (WidgetTester tester) async {
+            LocaleSettings.setLocaleSync(langue);
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            final List<Destination> d = destinationsPour(
+              role: role,
+              mode: InterfaceMode.enfant,
+            );
+            for (int actif = 0; actif < d.length; actif++) {
+              await _monter(
+                tester,
+                mode: InterfaceMode.enfant,
+                destinations: d,
+                indexActif: actif,
+                taille: Size(largeur, 700),
+                direction: langue == AppLocale.ar
+                    ? TextDirection.rtl
+                    : TextDirection.ltr,
+              );
+              expect(
+                _rangeesDeLaPilule(tester, d).length,
+                1,
+                reason: 'actif $actif',
+              );
+              for (final Destination x in d) {
+                _verifierPeint(
+                  tester,
+                  find.descendant(
+                    of: find.byKey(NavShell.barreBasseKey),
+                    matching: find.text(x.libelle),
+                  ),
+                  'actif $actif ${x.libelle}',
+                );
+              }
+            }
+            expect(tester.takeException(), isNull);
+          });
+        }
       }
     }
 

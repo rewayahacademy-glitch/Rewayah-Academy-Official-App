@@ -15,6 +15,8 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/journal_sorties/libelles_sorties.dart';
+import '../../core/journal_sorties/port_journal_sorties.dart';
 import '../../core/presence/vue_presence.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
@@ -365,6 +367,12 @@ class _CahierState extends ConsumerState<_Cahier> {
               vue: vue,
               decisions: _decisions,
               projections: _projections(vue),
+              // HORS-SALLE-2 : les sorties de l'application de chaque eleve,
+              // lues (rien a saisir) ; vide sans accord ni journal allume.
+              sorties: ResumeSorties.parEleve(
+                ref.watch(sortiesSeanceProvider(widget.seanceId)).value ??
+                    const <SortieApp>[],
+              ),
               lectureSeule: lectureSeule,
               aValider: !lectureSeule && !_enCorrection,
               onAjuster: _ajuster,
@@ -687,6 +695,7 @@ class _Constat extends StatelessWidget {
     required this.decisions,
     required this.projections,
     required this.lectureSeule,
+    this.sorties = const <String, ResumeSorties>{},
     required this.aValider,
     required this.onAjuster,
     required this.onCorriger,
@@ -697,6 +706,9 @@ class _Constat extends StatelessWidget {
   final VueCahier vue;
   final Map<String, DecisionEleve> decisions;
   final Map<String, ProjectionEleve> projections;
+
+  /// HORS-SALLE-2 : le resume des sorties de l'application, par eleve.
+  final Map<String, ResumeSorties> sorties;
   final bool lectureSeule;
   final bool aValider;
   final Future<void> Function(ParticipantBrouillon participant) onAjuster;
@@ -820,6 +832,14 @@ class _Constat extends StatelessWidget {
         : devoir != null
         ? '${t.enseignant.cahier.travailMaison(deEleve: deDevant(p.membre.libelle))} : $devoir'
         : p.unite?.nomHumain;
+    // HORS-SALLE-2 (directeur, 12/11/2026 au soir) : « 3 sorties, 4 min »,
+    // une ligne lue, jamais une corvee ; seulement quand le journal en a.
+    final ResumeSorties? sortiesEleve = sorties[p.membre.studentId];
+    final String? resumeSorties = sortiesEleve == null
+        ? null
+        : t.journalSorties.rapport.ligneEleve(
+            resume: LibellesSorties.resume(sortiesEleve),
+          );
     return LigneRubrique(
       // La photo s'affiche chez l'enseignant (E5, K-44) ; les initiales en
       // repli seulement, sans cle d'avatar.
@@ -831,7 +851,12 @@ class _Constat extends StatelessWidget {
         diametre: AppAvatar.petit,
       ),
       libelle: p.membre.libelle,
-      legende: legende,
+      legende: switch ((legende, resumeSorties)) {
+        (final String l, final String s) => '$l\n$s',
+        (final String l, null) => l,
+        (null, final String s) => s,
+        (null, null) => null,
+      },
       marque: StatusPill(
         libelle: LignePresence.libelle(presence.etat),
         ton: tonCahier(presence.ton),

@@ -18,7 +18,6 @@ import '../../core/capacites/port_enseignants_classe.dart';
 import '../../core/formulaires/motifs_proposes.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/offres/affectation_refusee.dart';
 import '../../core/planning/service_planning.dart' show Creneau;
@@ -26,6 +25,10 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart' show horsLigneProvider;
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/apercu_creneau.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart';
+import '../../core/tc_horloge/fuseaux_interlocuteurs.dart' show FuseauVu;
+import '../../core/tc_horloge/mon_horloge.dart' show horlogeAcademie;
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -281,7 +284,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
           for (final String fuseau in reference?.fuseaux ?? const <String>[])
             EntreeFiltre<String>(
               valeur: fuseau,
-              libelle: villeDuFuseauLibelle(fuseau),
+              libelle: nomFuseauClasse(fuseau),
             ),
         ],
         onChoix: (String? fuseau) =>
@@ -544,7 +547,7 @@ class _GroupesPageEtat extends ConsumerState<GroupesPage> {
         ),
       if (f.fuseau case final String fuseau)
         FiltreActif(
-          libelle: axe(l.filtreFuseau, villeDuFuseauLibelle(fuseau)),
+          libelle: axe(l.filtreFuseau, nomFuseauClasse(fuseau)),
           onRetirer: () => _filtrer(f.avec(fuseau: () => null)),
         ),
       if (f.genre case final GenreClasse genre)
@@ -728,7 +731,7 @@ class FicheClasseAdminPage extends ConsumerWidget {
 }
 
 /// Le corps de la fiche d'une classe ([FicheClasseAdminPage]).
-class _CorpsFiche extends StatelessWidget {
+class _CorpsFiche extends ConsumerWidget {
   const _CorpsFiche({
     required this.classe,
     required this.aUneEtape,
@@ -763,7 +766,7 @@ class _CorpsFiche extends StatelessWidget {
   GroupeAdmin get groupe => classe.groupe;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final TextTheme textes = Theme.of(context).textTheme;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -788,7 +791,10 @@ class _CorpsFiche extends StatelessWidget {
         Ecart.vMd,
         LigneCleValeur(
           cle: t.admin.groupes.colonneCreneau,
-          valeur: _creneau(groupe),
+          valeur: _creneau(
+            groupe,
+            fuseauxDesCreneaux(ref, <String>[groupe.creneau.fuseau]),
+          ),
         ),
         Ecart.vMd,
         LigneCleValeur(
@@ -876,7 +882,7 @@ class _CorpsFiche extends StatelessWidget {
 
 /// Le tableau des classes : une page de la liste filtree (R17), chaque classe
 /// nommee sans ambiguite (R16), les classes sans enseignant visibles (R7).
-class _Corps extends StatelessWidget {
+class _Corps extends ConsumerWidget {
   const _Corps({
     required this.page,
     required this.tete,
@@ -904,10 +910,16 @@ class _Corps extends StatelessWidget {
   final void Function(ClasseListee classe) onCloturer;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final List<ClasseListee> visibles = page.lignes;
     final l = t.admin.groupes.liste;
     final bool bureau = DataCollection.enTableau(context);
+    // HORLOGE-ET-LIEU (B1) : l'heure de chaque creneau chez la personne, puis
+    // « Heure de La Mecque » en second, jamais l'heure enregistree brute.
+    final Map<String, FuseauVu?> fuseaux = fuseauxDesCreneaux(
+      ref,
+      visibles.map((ClasseListee c) => c.groupe.creneau.fuseau),
+    );
 
     if (visibles.isEmpty) {
       final bool aucune = page.totalSansFiltre == 0;
@@ -1043,7 +1055,7 @@ class _Corps extends StatelessWidget {
         ColonneDonnees<ClasseListee>(
           titre: t.admin.groupes.colonneCreneau,
           flex: 2,
-          texte: (ClasseListee c) => _creneau(c.groupe),
+          texte: (ClasseListee c) => _creneau(c.groupe, fuseaux),
         ),
         ColonneDonnees<ClasseListee>(
           titre: t.admin.groupes.colonneMembres,
@@ -1136,9 +1148,15 @@ String _nomType(TypePublicGroupe type) => switch (type) {
   TypePublicGroupe.adulte => t.admin.groupes.typeAdulte,
 };
 
-String _creneau(GroupeAdmin groupe) =>
-    '${t.disponibilites.joursLongs[(groupe.creneau.jour - 1).clamp(0, 6)]} '
-    '${groupe.creneau.heure}h';
+/// « Mercredi 19:00 · Heure de La Mecque : 21:00 » : l'heure de la personne,
+/// puis celle de La Mecque (B1, 13/11/2026). Sans lecture du fuseau du creneau,
+/// son heure avec la ville de son fuseau.
+String _creneau(GroupeAdmin groupe, Map<String, FuseauVu?> fuseaux) =>
+    libelleCreneauLu(fuseaux, (
+      jour: groupe.creneau.jour.clamp(1, 7),
+      heure: groupe.creneau.heure,
+      fuseau: groupe.creneau.fuseau,
+    ));
 
 /// La phrase d'un echec venu du serveur (C1, UX-019) : jamais le texte brut
 /// de l'exception, ni un code (`P0001`), ni le mot interne « groupe ».
@@ -1368,6 +1386,13 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
   late int? _seuil = _seuilParDefaut(_type);
   bool _seuilChoisi = false;
   bool _envoi = false;
+
+  /// Le fuseau dans lequel les heures de la feuille sont saisies, et les fuseaux
+  /// lus des classes (HORLOGE-ET-LIEU, B1) : pour comparer une heure saisie a
+  /// l'horaire d'une classe enregistre dans un autre fuseau.
+  String _fuseauSaisie = fuseauAcademieDefaut;
+  Map<String, FuseauVu?> _fuseauxLus = const <String, FuseauVu?>{};
+
   String? _erreur;
 
   /// FN-113 : le dernier refus est le maximum de Classes de l'enseignant ;
@@ -1405,15 +1430,13 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       );
     }
     final String? propre = enseignant?.fuseauIana;
+    // HORLOGE-ET-LIEU (12/11/2026, H1) : sans fuseau connu pour l'enseignant,
+    // les heures se lisent a l'heure de l'academie (La Mecque), jamais a une
+    // heure de Paris inventee.
     return propre == null
         ? (
-            fuseau: fuseauServeurParDefaut,
-            phrase: c1.fuseauDefaut(
-              deVille: deFuseau(
-                fuseauServeurParDefaut,
-                cle: 'admin.groupes.c1.fuseauDefaut',
-              ),
-            ),
+            fuseau: horlogeAcademie?.fuseau ?? fuseauAcademieDefaut,
+            phrase: c1.fuseauAcademie,
           )
         : (
             fuseau: propre,
@@ -1456,7 +1479,9 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         return t.admin.groupes.c1.prisNommee(
           nom: choisi.enseignant.libelle,
           classe: classe,
-          quand: quandConflit(ConflitHoraire(jour: _jour!, heure: _heure!)),
+          quand: quandConflit(
+            ConflitHoraire(jour: _jour!, heure: _heure!, fuseau: _fuseauSaisie),
+          ),
         );
       }
       return manqueEnseignantClasse(choisi, genre, _type);
@@ -1479,14 +1504,31 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
     return groupes
         ?.where(
           (GroupeAdmin g) =>
-              g.actif &&
-              g.teacherId == choisi.enseignant.id &&
-              g.creneau.jour == _jour &&
-              g.creneau.heure == _heure,
+              g.actif && g.teacherId == choisi.enseignant.id && _memeCreneau(g),
         )
         .map((GroupeAdmin g) => g.libelle)
         .where((String l) => l.trim().isNotEmpty)
         .firstOrNull;
+  }
+
+  /// Le creneau de [g] est-il celui qui est saisi ? L'horaire d'une classe est
+  /// enregistre a l'heure de La Mecque, l'heure saisie l'est dans le fuseau de
+  /// la feuille : on les compare dans le meme fuseau, jamais heure contre heure.
+  bool _memeCreneau(GroupeAdmin g) {
+    if (g.creneau.fuseau == _fuseauSaisie) {
+      return g.creneau.jour == _jour && g.creneau.heure == _heure;
+    }
+    final FuseauVu? origine = _fuseauxLus[g.creneau.fuseau];
+    final FuseauVu? vers = _fuseauxLus[_fuseauSaisie];
+    if (origine == null || vers == null) return false;
+    final ({int jour, int heure})? lu = creneauDansFuseau(
+      jour: g.creneau.jour,
+      heure: g.creneau.heure,
+      origine: origine,
+      vers: vers,
+      maintenant: maintenantDesCreneaux(),
+    );
+    return lu != null && lu.jour == _jour && lu.heure == _heure;
   }
 
   Future<void> _creer(EnseignantClasse? choisi, String fuseau) async {
@@ -1603,6 +1645,13 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
       creation,
       choisi?.enseignant,
     );
+    _fuseauSaisie = fuseau.fuseau;
+    _fuseauxLus = fuseauxDesCreneaux(ref, <String>[
+      fuseau.fuseau,
+      ...(ref.watch(groupesProvider).value ?? const <GroupeAdmin>[]).map(
+        (GroupeAdmin g) => g.creneau.fuseau,
+      ),
+    ]);
     // Ce que la source sait vraiment : les phrases qui promettent un filtre
     // par genre ou un classement par creneau libre n'apparaissent que si
     // elle le dit (repli sur les comptes : ni l'un ni l'autre).
@@ -1792,6 +1841,15 @@ class _FeuilleCreationEtat extends ConsumerState<_FeuilleCreation> {
         ),
         Ecart.vSm,
         TexteSansCoupure(fuseau.phrase, style: textes.bodySmall),
+        // H3 : a quelle heure de La Mecque le creneau sera enregistre, et ce que
+        // devient l'heure de l'enseignant au prochain changement d'heure.
+        if (jour != null && heure != null && choisi != null)
+          if (choisi.enseignant.fuseauIana case final String fuseauEnseignant)
+            LigneApercuClasse(
+              fuseauEnseignant: fuseauEnseignant,
+              jour: jour,
+              heure: heure,
+            ),
         Ecart.vXl,
 
         // 4 bis. Les autres creneaux de la semaine (D2, 29/10/2026).

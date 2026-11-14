@@ -3,13 +3,19 @@ import 'dart:async';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../features/salle/seance_vivante.dart' show creerSeanceVivante;
+import '../journal_sorties/port_journal_sorties.dart';
 import '../observabilite/journal_dev.dart';
+import '../pause_seance/port_pause_seance.dart' show pauseSeanceProvider;
 import '../tc_horloge/session_clock_vm.dart';
+import '../theme/app_delais.dart';
+import '../video/diagnostic_transport.dart';
 import '../video/ecran_eveille.dart';
 import '../video/livekit_session_provider.dart';
 import '../video/pre_vol.dart';
 import '../video/service_video.dart';
 import '../video/video_session_provider.dart';
+import 'garde_hors_application.dart';
 import 'port_session_persistante.dart';
 
 /// Ce que l'application sait de la classe en cours, a un instant donne.
@@ -30,6 +36,7 @@ class EtatSessionPersistante {
     this.acces,
     this.refus,
     this.lienPerdu = false,
+    this.sortieHorsApplication,
   });
 
   /// Aucun cours, aucune entree en route.
@@ -76,6 +83,14 @@ class EtatSessionPersistante {
   /// seance qui s'entend encore.
   final bool lienPerdu;
 
+  /// HORS-SALLE-1 (directeur, 12/11/2026 au soir) : l'eleve est sorti de la
+  /// salle parce qu'il a quitte l'application plus longtemps que le delai
+  /// permis. Porte la seance quittee, pour l'ecran du retour
+  /// (`IssueSeance.horsApplication`) ; `null` sinon. Retombe des que la salle
+  /// l'a lu ([ControleurSessionPersistante.oublierSortieHorsApplication]) ou
+  /// a la prochaine entree.
+  final SessionEnCours? sortieHorsApplication;
+
   /// Vrai quand une salle est rejointe pour cette seance.
   bool estOuvertePour(String sessionId) => cours?.sessionId == sessionId;
 
@@ -91,6 +106,7 @@ class EtatSessionPersistante {
     acces: acces,
     refus: refus,
     lienPerdu: lienPerdu,
+    sortieHorsApplication: sortieHorsApplication,
   );
 
   /// Le meme etat, avec un autre lien.
@@ -103,6 +119,7 @@ class EtatSessionPersistante {
         acces: acces,
         refus: refus,
         lienPerdu: perdu,
+        sortieHorsApplication: sortieHorsApplication,
       );
 
   @override
@@ -114,7 +131,8 @@ class EtatSessionPersistante {
       other.materielPret == materielPret &&
       identical(other.acces, acces) &&
       other.refus == refus &&
-      other.lienPerdu == lienPerdu;
+      other.lienPerdu == lienPerdu &&
+      other.sortieHorsApplication == sortieHorsApplication;
 
   @override
   int get hashCode => Object.hash(
@@ -125,8 +143,30 @@ class EtatSessionPersistante {
     acces,
     refus,
     lienPerdu,
+    sortieHorsApplication,
   );
 }
+
+/// SYNCHRO-SESSION (13/11/2026, `docs/current/salle/HARMONIE-2026-11-13.md`
+/// section 7) : ce qui vit le temps d'un appel confie, a cote de lui (la
+/// synchronisation de la salle et la Dynamique chrono de la seance,
+/// `SeanceVivante`). Il nait quand le controleur adopte l'appel et meurt
+/// quand l'appel finit, par l'un des trois chemins : « Quitter », fin subie,
+/// sortie de l'eleve hors de l'application.
+abstract interface class CompagnonAppel {
+  /// La seance accompagnee.
+  String get sessionId;
+
+  /// Coupe tout abonnement et toute minuterie, tout de suite.
+  Future<void> liberer();
+}
+
+/// Cree le compagnon d'un appel qu'on vient d'adopter, ou `null`.
+typedef FabriqueCompagnonAppel = CompagnonAppel? Function({
+  required SessionEnCours cours,
+  required AccesSalle acces,
+  required VideoSessionProvider moteur,
+});
 
 /// Le proprietaire **applicatif** du cycle de vie de la salle.
 ///
@@ -143,7 +183,9 @@ class EtatSessionPersistante {
 /// revient a couper le cours des qu'on regarde ailleurs.
 ///
 /// **Ce controleur n'appelle `quitter()` sur le moteur qu'en deux endroits** :
-/// dans [quitter], atteint seulement par un geste explicite, et dans
+/// dans [_quitter], atteint par un geste explicite ([quitter]) ou, pour
+/// l'eleve seulement, apres une absence hors de l'application plus longue
+/// que le delai permis (HORS-SALLE-1, [_sortirHorsApplication]), et dans
 /// [_fermerApresFin], quand le moteur dit que l'appel est deja fini (seance
 /// close par le serveur, lien perdu pour de bon, participant retire) : il ne
 /// reste alors qu'a liberer le micro. C'est verifiable d'un `grep` sur ce
@@ -156,7 +198,10 @@ class EtatSessionPersistante {
 /// La barre « Seance toujours en direct » (`BarreSeanceEnDirect`) le lit sur
 /// tous les autres ecrans.
 ///
-/// Passage en arriere-plan : rien n'est coupe. La machine de reconnexion du
+/// Passage en arriere-plan : rien n'est coupe chez qui modere la seance.
+/// Chez l'eleve, depuis le 12/11/2026 (HORS-SALLE-1, directeur), un court
+/// delai sans coupure, puis la sortie de la salle ([GardeHorsApplication]).
+/// La machine de reconnexion du
 /// moteur existe deja (`EtatSalle.reconnexion`, `retabli`, `echec`), et c'est
 /// elle qui decide. L'ecran lit [EtatSessionPersistante.enArrierePlan] pour **ne
 /// pas promettre** une connexion que la plateforme ne permet pas quand le
@@ -173,16 +218,145 @@ class ControleurSessionPersistante
   ///
   /// [ecranEveille] : le gardien de l'ecran allume (ECRAN-EVEILLE) ; celui
   /// de la plateforme par defaut, un double dans les tests.
+  ///
+  /// HORS-SALLE-1 : [delaiHorsApplication] et [coupureSuspendue] sont lus a
+  /// chaque absence (`delaiHorsApplicationProvider`,
+  /// `coupureSuspendueProvider`) ; [maintenant] et [minuterie] sont l'horloge
+  /// et la minuterie de la garde (doubles dans les tests) ; [signalerAbsence]
+  /// recoit les traces de l'enseignant (`signalerAbsencePage` par defaut).
+  ///
+  /// HORS-SALLE-2 : [noterSortieApp] note une absence de l'eleve a son
+  /// retour (le port du journal des sorties ; le serveur n'ecrit qu'avec un
+  /// accord) ; rien par defaut.
   ControleurSessionPersistante(
     this._moteur,
     this._serviceVideo, {
     this.observeLeCycleDeVie = true,
     EcranEveille? ecranEveille,
+    Duration Function()? delaiHorsApplication,
+    bool Function()? coupureSuspendue,
+    DateTime Function()? maintenant,
+    Timer Function(Duration, void Function())? minuterie,
+    void Function(String evenement, Map<String, Object?> donnees)?
+    signalerAbsence,
+    this.noterSortieApp,
+    this._fabriqueCompagnon,
   }) : _ecran = ecranEveille ?? EcranEveille.dePlateforme() {
+    _garde = GardeHorsApplication(
+      regle: _regleHorsApplication,
+      sortir: _sortirHorsApplication,
+      delai: delaiHorsApplication ?? () => AppDelais.horsApplicationEleve,
+      coupureSuspendue: coupureSuspendue ?? () => false,
+      // Le nom opaque de la salle seulement, jamais une identite.
+      signaler: (String evenement, Map<String, Object?> donnees) =>
+          (signalerAbsence ?? signalerAbsencePage)(evenement, <String, Object?>{
+            'salle': _moteur.accesCourant?.nomSalle ?? _etat.acces?.nomSalle,
+            ...donnees,
+          }),
+      etatConnexion: () => _moteur.etatCourant.name,
+      reprises: () => _reprises,
+      sonBloque: () => switch (_moteur) {
+        final SonRecuBloque son => son.sonBloque,
+        _ => false,
+      },
+      noter: _noterSortie,
+      maintenant: maintenant,
+      minuterie: minuterie,
+    );
     if (observeLeCycleDeVie) {
       WidgetsBinding.instance.addObserver(this);
     }
     _suiviMoteur = _moteur.etats.listen(_moteurDit);
+  }
+
+  /// HORS-SALLE-1 : ce qui se passe quand la page est cachee pendant un
+  /// appel tenu ([GardeHorsApplication]).
+  late final GardeHorsApplication _garde;
+
+  /// SYNCHRO-SESSION : cree le compagnon de l'appel adopte ; `null` (tests
+  /// du controleur seul) : aucun.
+  final FabriqueCompagnonAppel? _fabriqueCompagnon;
+  CompagnonAppel? _compagnon;
+
+  /// SYNCHRO-SESSION : le compagnon de l'appel tenu, ou `null` (aucun appel,
+  /// ou aucune fabrique). Il change avant que [etats] ne le dise.
+  CompagnonAppel? get compagnon => _compagnon;
+
+  void _libererCompagnon() {
+    final CompagnonAppel? compagnon = _compagnon;
+    _compagnon = null;
+    if (compagnon != null) unawaited(compagnon.liberer());
+  }
+
+  /// HORS-SALLE-2 : note une absence de l'eleve au journal des sorties.
+  final Future<bool> Function({
+    required String seanceId,
+    required int secondes,
+    required bool sortieSalle,
+    String? eleveId,
+  })?
+  noterSortieApp;
+
+  /// HORS-SALLE-2 : la seance tenue quand la page a ete cachee (apres une
+  /// sortie de la salle, l'etat ne la porte plus).
+  SessionEnCours? _coursCache;
+
+  /// HORS-SALLE-2 : au retour de l'eleve, la duree mesuree par l'horloge part
+  /// au port ; rien ne s'affiche, quoi que le serveur reponde.
+  void _noterSortie(Duration absence, bool sortieSalle) {
+    final SessionEnCours? cours = _coursCache;
+    final noter = noterSortieApp;
+    if (cours == null || noter == null) return;
+    unawaited(
+      noter(
+        seanceId: cours.sessionId,
+        secondes: absence.inSeconds,
+        sortieSalle: sortieSalle,
+        eleveId: cours.eleveId,
+      ),
+    );
+  }
+
+  /// HORS-SALLE-1 : les reprises de la connexion depuis le debut (chaque
+  /// passage a `reconnexion`), pour les traces de l'enseignant.
+  int _reprises = 0;
+
+  /// HORS-SALLE-1 : la regle de l'appel tenu, lue sur les capacites signees
+  /// par le serveur (jamais sur un role).
+  RegleHorsApplication _regleHorsApplication() {
+    final AccesSalle? acces = _moteur.accesCourant ?? _etat.acces;
+    return regleHorsApplication(
+      appelTenu: _etat.cours != null && _etat.acces != null,
+      peutModerer: acces?.capacites.peutModerer ?? false,
+      peutPublier: acces?.capacites.peutPublier ?? false,
+      publicationDifferee: acces?.publicationDifferee ?? false,
+      invisible: acces?.capacites.invisible ?? false,
+    );
+  }
+
+  /// HORS-SALLE-1 : l'eleve a quitte l'application trop longtemps. Le meme
+  /// chemin que « Quitter » (annonce, puis deconnexion) ; l'etat garde la
+  /// seance quittee pour l'ecran du retour.
+  Future<void> _sortirHorsApplication() async {
+    final SessionEnCours? cours = _etat.cours;
+    if (cours == null) return;
+    await _quitter(horsApplication: cours);
+  }
+
+  /// HORS-SALLE-1 : la salle a lu la sortie et montre l'ecran du retour.
+  void oublierSortieHorsApplication() {
+    if (_etat.sortieHorsApplication == null) return;
+    _poser(
+      EtatSessionPersistante(
+        cours: _etat.cours,
+        enArrierePlan: _etat.enArrierePlan,
+        retourDeSuspension: _etat.retourDeSuspension,
+        materielPret: _etat.materielPret,
+        acces: _etat.acces,
+        refus: _etat.refus,
+        lienPerdu: _etat.lienPerdu,
+      ),
+    );
   }
 
   StreamSubscription<EtatSalle>? _suiviMoteur;
@@ -322,6 +496,22 @@ class ControleurSessionPersistante
   /// ferait deux entrees qui divergeraient. Elle rejoint, puis confie l'appel.
   /// Des cet instant, quitter l'ecran de la salle ne coupe plus rien.
   void adopter({required SessionEnCours cours, required AccesSalle acces}) {
+    // SYNCHRO-SESSION : le compagnon nait avec l'appel adopte. Une seconde
+    // adoption de la meme seance (droits de publication rendus par le
+    // serveur, `_confier` de la salle) garde le sien : rien ne repart de
+    // zero ; une autre seance en a un neuf (`_poser` libere l'ancien).
+    if (_compagnon?.sessionId != cours.sessionId) {
+      _libererCompagnon();
+      try {
+        _compagnon = _fabriqueCompagnon?.call(
+          cours: cours,
+          acces: acces,
+          moteur: _moteur,
+        );
+      } on Object catch (erreur) {
+        journalDev('compagnon de l appel impossible : $erreur');
+      }
+    }
     _poser(
       EtatSessionPersistante(
         cours: cours,
@@ -331,6 +521,9 @@ class ControleurSessionPersistante
         lienPerdu: _moteur.etatCourant == EtatSalle.reconnexion,
       ),
     );
+    // HORS-SALLE-2 : lit le delai de la direction des l'entree, pour que la
+    // premiere absence l'applique deja (la constante tant qu'il n'est pas lu).
+    _garde.delai();
   }
 
   /// Vrai quand l'appel de [sessionId] est ouvert et confie a ce controleur.
@@ -359,7 +552,10 @@ class ControleurSessionPersistante
       case EtatSalle.instable:
         if (_etat.lienPerdu) _poser(_etat.avecLien(perdu: false));
       case EtatSalle.reconnexion:
-        if (!_etat.lienPerdu) _poser(_etat.avecLien(perdu: true));
+        if (!_etat.lienPerdu) {
+          _reprises++;
+          _poser(_etat.avecLien(perdu: true));
+        }
       case EtatSalle.echec || EtatSalle.retire:
         unawaited(_fermerApresFin());
       // `absent` ne vient que de nos propres `quitter()` (le moteur cesse
@@ -373,6 +569,7 @@ class ControleurSessionPersistante
   /// L'appel est fini sans geste de l'usager : la barre se ferme, et le
   /// micro est libere. Aucune annonce de sortie : elle n'a pas ete voulue.
   Future<void> _fermerApresFin() async {
+    _garde.annuler();
     _poser(EtatSessionPersistante(enArrierePlan: _etat.enArrierePlan));
     await _moteur.quitter();
   }
@@ -406,11 +603,25 @@ class ControleurSessionPersistante
 
   @override
   Future<void> quitter() async {
+    // HORS-SALLE-1 : une sortie voulue pendant le delai de l'eleve hors de
+    // l'application : plus rien a couper, une seule sortie.
+    _garde.annuler();
+    await _quitter();
+  }
+
+  /// La sortie, voulue ([quitter]) ou apres une absence trop longue de
+  /// l'eleve ([horsApplication], la seance quittee).
+  Future<void> _quitter({SessionEnCours? horsApplication}) async {
     final SessionEnCours? cours = _etat.cours;
     // Poser l'etat AVANT les appels reseau : l'interface doit refermer la barre
     // compacte sans attendre le serveur, et un second appui sur « Quitter »
     // pendant l'attente ne doit pas relancer l'annonce.
-    _poser(EtatSessionPersistante(enArrierePlan: _etat.enArrierePlan));
+    _poser(
+      EtatSessionPersistante(
+        enArrierePlan: _etat.enArrierePlan,
+        sortieHorsApplication: horsApplication,
+      ),
+    );
 
     if (cours != null) {
       // **L'annonce precede la deconnexion.** LiveKit emet le meme evenement
@@ -437,6 +648,14 @@ class ControleurSessionPersistante
       _visible = visible;
       if (_moteur case final RepriseAutomatique moteur) {
         moteur.premierPlan(visible: visible);
+      }
+      // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : l'enseignant n'est
+      // jamais coupe ; l'eleve a un court delai, puis il sort de la salle.
+      if (visible) {
+        unawaited(_garde.revenue());
+      } else {
+        _coursCache = _etat.cours;
+        _garde.cachee();
       }
     }
     final bool suspendu =
@@ -492,6 +711,12 @@ class ControleurSessionPersistante
   }
 
   void _poser(EtatSessionPersistante etat) {
+    // SYNCHRO-SESSION : un etat sans cette seance (« Quitter », fin subie,
+    // sortie hors de l'application, nouvelle entree) libere le compagnon,
+    // avant que quiconque ne lise l'etat : un seul endroit.
+    if (_compagnon != null && etat.cours?.sessionId != _compagnon!.sessionId) {
+      _libererCompagnon();
+    }
     _etat = etat;
     _suivreLAppel(etat.cours);
     if (!_sortie.isClosed) {
@@ -537,6 +762,8 @@ class ControleurSessionPersistante
     }
     unawaited(_suiviMoteur?.cancel());
     _suiviMoteur = null;
+    _garde.liberer();
+    _libererCompagnon();
     _ecran.rendre();
     unawaited(_sortie.close());
   }
@@ -555,6 +782,40 @@ final Provider<ControleurSessionPersistante> controleurSessionProvider =
             // la barre lit ce controleur sur tous les ecrans, et le service
             // video reel ouvre Supabase (31/10/2026).
             _ServiceVideoDiffere(() => ref.read(serviceVideoProvider)),
+            // HORS-SALLE-1 : lus a chaque absence, pour qu'un reglage de la
+            // direction s'applique sans recreer le controleur.
+            delaiHorsApplication: () => ref.read(delaiHorsApplicationProvider),
+            coupureSuspendue: () => ref.read(coupureSuspendueProvider),
+            // HORS-SALLE-2 : le journal des sorties, lu au moment de noter.
+            noterSortieApp:
+                ({
+                  required String seanceId,
+                  required int secondes,
+                  required bool sortieSalle,
+                  String? eleveId,
+                }) => ref
+                    .read(portJournalSortiesProvider)
+                    .noterSortie(
+                      seanceId: seanceId,
+                      secondes: secondes,
+                      sortieSalle: sortieSalle,
+                      eleveId: eleveId,
+                    ),
+            // SYNCHRO-SESSION : la synchronisation de la salle et la
+            // Dynamique chrono vivent avec l'appel, pas avec l'ecran.
+            fabriqueCompagnon:
+                ({
+                  required SessionEnCours cours,
+                  required AccesSalle acces,
+                  required VideoSessionProvider moteur,
+                }) => creerSeanceVivante(
+                  cours: cours,
+                  acces: acces,
+                  moteur: moteur,
+                  lire: ref.read,
+                  relirePause: () =>
+                      ref.invalidate(pauseSeanceProvider(cours.sessionId)),
+                ),
           );
       ref.onDispose(controleur.liberer);
       return controleur;

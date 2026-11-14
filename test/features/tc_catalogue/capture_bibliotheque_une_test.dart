@@ -128,7 +128,15 @@ Future<void> _eleve(
   await monterRouteur(
     tester,
     adresse,
-    source: FausseSourceSession(sessionActive(AppRole.student)),
+    // ESPACE-APPRENDRE (lot 5) : la liste se lit en tuteur (l'eleve a celle
+    // d'Apprendre) ; une fiche reste celle de l'eleve.
+    source: FausseSourceSession(
+      sessionActive(
+        Uri.parse(adresse).path == Routes.tcBibliotheque
+            ? AppRole.guardian
+            : AppRole.student,
+      ),
+    ),
     taille: taille,
     surcharges: surcharges,
     themeMode: mode,

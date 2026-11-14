@@ -8,6 +8,7 @@ import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/identite/port_matricule.dart';
+import '../../core/journal_sorties/port_journal_sorties.dart';
 import '../../core/photos/photo_personne.dart';
 import '../../core/preferences/preferences_locales.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -55,6 +56,9 @@ class ComptePage extends ConsumerStatefulWidget {
 
   /// La ligne « Aide et contact » de l'eleve.
   static const Key aideEleveKey = ValueKey<String>('compte-aide-eleve');
+
+  /// HORS-SALLE-2 : la ligne de l'accord du journal des sorties.
+  static const Key accordSortiesKey = ValueKey<String>('compte-accord-sorties');
 
   @override
   ConsumerState<ComptePage> createState() => _ComptePageState();
@@ -183,6 +187,17 @@ class _ComptePageState extends ConsumerState<ComptePage> {
           // CPT-BEN-2 : « Recevoir mes paiements », selon la capacite du port.
           SectionCompte.paiements: <LigneRubrique>[?recevoir],
           SectionCompte.compteSecurite: <LigneRubrique>[
+            // HORS-SALLE-2 : l'eleve adulte autonome decide pour lui-meme du
+            // journal des sorties ; seulement quand la direction l'a allume
+            // (capacite servie par `accords_sorties`, jamais un role).
+            if (ref.watch(accordSortiesProposeProvider))
+              LigneRubrique(
+                cle: ComptePage.accordSortiesKey,
+                icone: AppIcons.attente,
+                libelle: t.journalSorties.accord.ligne,
+                legende: t.journalSorties.accord.ligneDetailAdulte,
+                onPress: () => unawaited(context.push(Routes.compteSorties)),
+              ),
             // MFA-DIRECTION : la double verification (capacite de la session).
             if (session.peutActiverDoubleVerification)
               LigneRubrique(

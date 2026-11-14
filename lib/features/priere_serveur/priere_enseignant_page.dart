@@ -22,6 +22,7 @@ import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
+import 'position_priere.dart';
 
 /// « Mes heures de priere » : l'enseignant lit les cinq heures de son jour et
 /// ajuste chacune de 30 minutes au plus (PRIERE-1, P3).
@@ -64,10 +65,7 @@ class PriereEnseignantPage extends ConsumerWidget {
     } else if (!lieu.hasValue || !heures.hasValue) {
       corps = const Skeleton.liste(lignes: 5);
     } else if (lieu.requireValue == null) {
-      corps = EmptyState(
-        message: t.priere.enseignant.vide,
-        icone: AppIcons.priere,
-      );
+      corps = SansLieuPriere(onFait: relire);
     } else {
       corps = _Heures(
         lieu: lieu.requireValue!,
@@ -253,10 +251,17 @@ class _FeuilleAjustementEtat extends ConsumerState<_FeuilleAjustement> {
           ),
         ],
         Ecart.vLg,
-        ActionPrincipale(
-          libelle: t.priere.enseignant.enregistrer,
-          enCours: _envoi,
-          onPress: _enregistrer,
+        // Un bouton plein ne s'etire pas sur tout un ecran d'ordinateur (B5, 640 px).
+        Align(
+          alignment: AlignmentDirectional.topStart,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 640),
+            child: ActionPrincipale(
+              libelle: t.priere.enseignant.enregistrer,
+              enCours: _envoi,
+              onPress: _enregistrer,
+            ),
+          ),
         ),
       ],
     );

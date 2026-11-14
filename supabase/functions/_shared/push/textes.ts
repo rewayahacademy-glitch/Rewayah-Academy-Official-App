@@ -72,9 +72,29 @@ export const TEXTES: Record<string, Ligne> = {
     fr: 'Personne n\'est dans la salle d\'une classe : trouvez un remplaçant ou prévenez les familles.',
     ar: 'لا أحد في قاعة أحد الفصول: ابحثوا عن بديل أو أبلغوا الأسر.',
   },
+  // HORLOGE-ET-LIEU (I1, 13/11/2026) : l'annonce d'un changement d'heure (portee
+  // `heure_ete`, `heure_hiver`, `heure_classe`) et le refus d'une conversion
+  // (`conversion_refusee`, direction) ont leur propre texte, vrai et sans prenom ;
+  // tout autre changement de creneau garde la phrase de l'horaire.
   creneau_change: {
-    fr: 'L\'horaire de la classe change : consultez le nouvel horaire dans l\'application.',
-    ar: 'تغيّر موعد الفصل: اطّلعوا على الموعد الجديد في التطبيق.',
+    fr: (p) => p === 'heure_ete'
+      ? 'L\'heure de votre cours change avec le passage à l\'heure d\'été. Ouvrez l\'application.'
+      : p === 'heure_hiver'
+      ? 'L\'heure de votre cours change avec le passage à l\'heure d\'hiver. Ouvrez l\'application.'
+      : p === 'heure_classe'
+      ? 'L\'heure de votre cours change avec un changement d\'heure. Ouvrez l\'application.'
+      : p === 'conversion_refusee'
+      ? 'Une classe n\'a pas pu passer à l\'heure de La Mecque : consultez les classes dans l\'application.'
+      : 'L\'horaire de la classe change : consultez le nouvel horaire dans l\'application.',
+    ar: (p) => p === 'heure_ete'
+      ? 'تتغيّر ساعة حصتكم مع الانتقال إلى التوقيت الصيفي. افتحوا التطبيق.'
+      : p === 'heure_hiver'
+      ? 'تتغيّر ساعة حصتكم مع الانتقال إلى التوقيت الشتوي. افتحوا التطبيق.'
+      : p === 'heure_classe'
+      ? 'تتغيّر ساعة حصتكم بسبب تغيير الساعة. افتحوا التطبيق.'
+      : p === 'conversion_refusee'
+      ? 'تعذّر نقل فصل إلى توقيت مكة المكرمة: اطّلعوا على الفصول في التطبيق.'
+      : 'تغيّر موعد الفصل: اطّلعوا على الموعد الجديد في التطبيق.',
   },
   titulaire_en_retard: {
     fr: (p) => estStaff(p)
@@ -108,13 +128,22 @@ export const TEXTES: Record<string, Ligne> = {
     fr: 'La classe est fermée : la direction vous donne la suite dans l\'application.',
     ar: 'أُغلق الفصل: تُعلمكم الإدارة بما يلي في التطبيق.',
   },
+  // SUIVI-ATTENTE (S5, S8) : l'enseignant (portee « classe ») a sa propre
+  // phrase et le geste « Me presenter » ; la famille et l'eleve adulte lisent
+  // que l'enseignant est affecte. Aucun prenom, d'enfant ou d'enseignant.
   enseignant_affecte: {
-    fr: (p) => p === 'soi'
-      ? 'Une classe vous est confiée : consultez-la dans l\'application.'
-      : 'Un enseignant est affecté à la classe : consultez la classe dans l\'application.',
-    ar: (p) => p === 'soi'
-      ? 'أُسند إليكم فصل: اطّلعوا عليه في التطبيق.'
-      : 'عُيّن معلم للفصل: اطّلعوا على الفصل في التطبيق.',
+    fr: (p) => p === 'classe'
+      ? 'Une classe vous est confiée : présentez-vous aux familles dans l\'application.'
+      : 'Un enseignant est affecté à la classe : consultez le suivi dans l\'application.',
+    ar: (p) => p === 'classe'
+      ? 'أُسند إليكم فصل: عرّفوا بأنفسكم للأسر في التطبيق.'
+      : 'عُيّن معلم للفصل: اطّلعوا على المتابعة في التطبيق.',
+  },
+  // SUIVI-ATTENTE (S8) : « Tout est pret », a la famille ou a l'eleve adulte ; jamais
+  // a un enfant, aucun prenom.
+  tout_est_pret: {
+    fr: 'Tout est prêt pour le premier cours : consultez le suivi dans l\'application.',
+    ar: 'كل شيء جاهز للحصة الأولى: اطّلعوا على المتابعة في التطبيق.',
   },
   enseignant_change: {
     fr: 'L\'enseignant de la classe change : consultez la classe dans l\'application.',

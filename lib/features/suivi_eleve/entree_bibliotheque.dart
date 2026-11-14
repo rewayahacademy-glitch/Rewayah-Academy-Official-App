@@ -20,7 +20,13 @@ import '../../core/widgets/groupe_reglages.dart';
 /// L'entree de la Bibliotheque, posee en tete de la page des Classes.
 class EntreeBibliothequeMaClasse extends ConsumerWidget {
   /// Cree l'entree.
-  const EntreeBibliothequeMaClasse({super.key, this.legende});
+  const EntreeBibliothequeMaClasse({super.key, this.legende, this.chemin});
+
+  /// ESPACE-APPRENDRE (lot 5) : l'endroit ou la ligne mene, quand ce n'est pas
+  /// la Bibliotheque d'origine de `/tc/bibliotheque` (l'enseignant). L'eleve y
+  /// passe `Routes.eleveApprendre` : un raccourci vers l'espace Apprendre, pas
+  /// une seconde Bibliotheque.
+  final String? chemin;
 
   /// La cle de la ligne.
   static const Key ligneKey = ValueKey<String>('ma-classe-bibliotheque');
@@ -51,7 +57,9 @@ class EntreeBibliothequeMaClasse extends ConsumerWidget {
             icone: AppIcons.bibliotheque,
             libelle: t.tc.bibliotheque.titre,
             legende: legende ?? t.tc.bibliotheque.detail.entreeDetail,
-            onPress: () => unawaited(context.push(Routes.tcBibliotheque)),
+            onPress: () => chemin == null
+                ? unawaited(context.push(Routes.tcBibliotheque))
+                : context.go(chemin!),
           ),
         ],
       ),

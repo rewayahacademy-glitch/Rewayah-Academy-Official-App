@@ -61,6 +61,8 @@ import '../../core/widgets/skeleton.dart';
 import '../acces_finance/acces_finance.dart'
     show BandeauPlace, OuvertureSeances, accesEleveProvider, ouvertureSeances;
 import '../acces_finance/carte_acces_finance.dart';
+import '../attente_classe/carte_suivi_attente.dart';
+import '../attente_classe/suivi_attente_page.dart' show CheminsAttente;
 import '../classe_tuteur/rejoindre_avec_eleve.dart';
 import '../consentements/consentement_observation_page.dart';
 import '../foyer/foyer_second_adulte.dart';
@@ -551,7 +553,10 @@ class _CorpsAccueil extends ConsumerWidget {
     if (sansClasse) {
       return contenuProfil(selecteur, <Widget>[
         Ecart.vXl,
-        const CarteSuiviDemandes(),
+        const CarteSuiviAttente(
+          chemins: CheminsAttente.tuteur,
+          repli: CarteSuiviDemandes(),
+        ),
         const CarteDemandePresentation(),
         // L9 : les comptes d'avant l'accord des visites y sont conduits.
         const InviteConsentementObservation(),
@@ -781,7 +786,10 @@ class _CorpsAccueil extends ConsumerWidget {
     final double echelle = MediaQuery.textScalerOf(context).scale(1);
     return contenuProfil(selecteurAvec(horlogeClasse), <Widget>[
       Ecart.vXl,
-      const CarteSuiviDemandes(),
+      const CarteSuiviAttente(
+        chemins: CheminsAttente.tuteur,
+        repli: CarteSuiviDemandes(),
+      ),
       const CarteDemandePresentation(),
       // L9 : les comptes d'avant l'accord des visites y sont conduits.
       const InviteConsentementObservation(),

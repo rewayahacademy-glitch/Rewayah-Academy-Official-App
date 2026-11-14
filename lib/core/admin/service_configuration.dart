@@ -98,6 +98,46 @@ final Provider<ServiceConfiguration> serviceConfigurationProvider =
 /// La cle du reglage « Depassement autorise apres la fin prevue ».
 const String cleDepassementSeance = 'grace_after_end_minutes';
 
+/// PAUSE-SERVEUR (directeur, 12/11/2026) : la duree de la pause par defaut
+/// d'une classe d'adultes (10 min, decision du 18/10).
+const String clePauseAdultes = 'seance.pause_minutes_adulte';
+
+/// La duree de la pause par defaut d'une classe d'enfants (5 min, 12/10).
+const String clePauseEnfants = 'seance.pause_minutes_enfant';
+
+/// Le delai avant de reproposer la pause apres un Non (5 min par defaut).
+const String clePauseRappel = 'seance.pause_rappel_minutes';
+
+/// Le cours qui doit rester apres la pause pour qu'elle soit proposee
+/// (15 min par defaut).
+const String clePauseResteMinimum = 'seance.pause_reste_minimum_minutes';
+
+/// Les quatre reglages de la pause pendant la seance
+/// (`20261124100000_pause_proposee.sql`). Un serveur d'avant ce lot ne rend
+/// pas les deux derniers : la section n'est alors pas montree.
+const List<String> clesPause = <String>[
+  clePauseAdultes,
+  clePauseEnfants,
+  clePauseRappel,
+  clePauseResteMinimum,
+];
+
+/// HORS-SALLE-2 : le journal des sorties de l'application est-il allume ?
+/// Faux par defaut : la direction ne l'allume qu'apres la validation des
+/// textes de l'accord par le directeur.
+const String cleSortiesJournalActif = 'salle.sorties.journal_actif';
+
+/// HORS-SALLE-2 : le delai hors de l'application avant la sortie de la salle,
+/// en secondes (30 par defaut, de 5 a 600, verifie par le serveur).
+const String cleSortiesDelai = 'salle.sorties.delai_secondes';
+
+/// Les deux reglages des sorties de l'application
+/// (`20261124200000_journal_sorties.sql`).
+const List<String> clesSorties = <String>[
+  cleSortiesJournalActif,
+  cleSortiesDelai,
+];
+
 /// Les cles du domaine Configuration > Regles -- les defauts de plateforme,
 /// jamais les surcharges par profil (Operations > Regles individuelles).
 const List<String> clesRegles = <String>[
@@ -140,6 +180,13 @@ const List<String> clesRegles = <String>[
   // un objet {"jourDebut", "jourFin"}. Un serveur d'avant ce lot ne le rend
   // pas.
   clePaieFenetreVersement,
+  // PAUSE-SERVEUR (directeur, 12/11/2026) : la pause est un reglage, le
+  // rappel apres un Non est reglable par la direction.
+  ...clesPause,
+  // HORS-SALLE-2 (directeur, 12/11/2026 au soir) : le delai hors de
+  // l'application avant la sortie de la salle, et le journal des sorties
+  // (eteint par defaut). Un serveur d'avant le lot ne les rend pas.
+  ...clesSorties,
   // PRIERE-1 (12/11/2026, migration 20261123930000) : les reglages de la
   // priere de toute l'academie. Un serveur d'avant ce lot ne les rend pas.
   ...clesPriere,
@@ -176,6 +223,9 @@ const String clePriereMargeAvant = 'priere.marge_avant_cours_minutes';
 /// Le debut de cette pause, apres le debut du cours.
 const String clePriereDelaiFermeture = 'priere.delai_fermeture_minutes';
 
+/// La methode usuelle du pays du lieu s'applique (PRIERE-2, vrai par defaut).
+const String clePriereMethodeSelonPays = 'priere.methode_selon_pays';
+
 /// Toutes les cles de la priere de l'academie.
 const List<String> clesPriere = <String>[
   clePriereMethode,
@@ -188,6 +238,7 @@ const List<String> clesPriere = <String>[
   clePriereHorizon,
   clePriereMargeAvant,
   clePriereDelaiFermeture,
+  clePriereMethodeSelonPays,
 ];
 
 /// REVENUS-VERITE : la fenetre du jour de paie, du jour `jourDebut` au jour

@@ -1477,10 +1477,14 @@ class _LignesATerminer extends ConsumerWidget {
             legende: enFile.contains(cahier.seanceId)
                 ? t.enseignant.cahier.enFileTitre
                 : t.enseignant.journee.cahierDetail(
-                    jour: t.commun.dates.jours[cahier.debut.weekday - 1]
+                    // Le jour, comme l'heure, au fuseau du profil : jamais le
+                    // jour de l'appareil avec l'heure du profil
+                    // (HORLOGE-ET-LIEU, 12/11/2026).
+                    jour: t.commun.dates.jours[chezMoi(cahier.debut).weekday -
+                            1]
                         .toLowerCase(),
-                    numero: '${cahier.debut.day}',
-                    mois: t.commun.dates.mois[cahier.debut.month - 1],
+                    numero: '${chezMoi(cahier.debut).day}',
+                    mois: t.commun.dates.mois[chezMoi(cahier.debut).month - 1],
                     heure: _hhmm(cahier.debut),
                   ),
             onPress: () async {
@@ -1733,7 +1737,9 @@ class _RienAujourdhui extends StatelessWidget {
           Ecart.vXs,
           Text(
             t.enseignant.journee.rienAujourdhuiDetail(
-              jour: t.disponibilites.joursLongs[cours.debut.weekday - 1],
+              // Le jour au fuseau du profil, comme l'heure.
+              jour: t.disponibilites.joursLongs[chezMoi(cours.debut).weekday -
+                  1],
               heure: _hhmm(cours.debut),
             ),
             style: palette.inkMuted.applyTo(

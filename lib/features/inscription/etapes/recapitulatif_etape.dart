@@ -863,9 +863,14 @@ class _ChoixLangue extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final r = t.inscription.langue;
-    final String active = LocaleSettings.currentLocale == AppLocale.ar
-        ? 'ar'
-        : 'fr';
+    // LANGUES-1 : l'inscription du candidat ne propose que le francais et
+    // l'arabe (le serveur n'accepte que ces deux codes) ; en anglais, aucune
+    // carte n'est cochee.
+    final String active = switch (LocaleSettings.currentLocale) {
+      AppLocale.ar => 'ar',
+      AppLocale.fr => 'fr',
+      AppLocale.en => '',
+    };
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -877,7 +882,9 @@ class _ChoixLangue extends StatelessWidget {
             key: groupeKey,
             autoriserSaisieLibre: false,
             coteACote: true,
-            valeurInitiale: ReponseChoix(valeurs: <String>{active}),
+            valeurInitiale: ReponseChoix(
+              valeurs: active.isEmpty ? <String>{} : <String>{active},
+            ),
             options: <OptionChoix>[
               OptionChoix(
                 cle: carteKey('fr'),

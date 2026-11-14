@@ -8,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../offres/affectation_refusee.dart';
 import '../planning/service_planning.dart';
 import 'creation_classe_refusee.dart';
+import 'creneaux_classe.dart' show CreneauRefuse, MotifRefusCreneau;
 import 'personnes_modifiees.dart';
 
 /// Le public d'un groupe : fixe le seuil par defaut (5 enfants, 6 adultes).
@@ -69,7 +70,10 @@ class GroupeAdmin {
       creneau: Creneau(
         jour: entier('weekday'),
         heure: entier('hour_local'),
-        fuseau: 'Europe/Paris',
+        // `groupes_admin()` rend le fuseau de la classe : depuis HORLOGE-ET-LIEU
+        // (12/11/2026) c'est celui de l'academie, plus Paris. Paris reste le repli
+        // d'un serveur qui ne le rendrait pas.
+        fuseau: json['timezone_iana'] as String? ?? 'Europe/Paris',
       ),
       nombreMembres: entier('nombre_membres'),
       actif: json['actif'] as bool? ?? false,
@@ -296,23 +300,49 @@ class ServiceGroupesSupabase implements ServiceGroupes {
     required Creneau creneau,
   }) async {
     try {
-      await _client.rpc<void>(
-        'modifier_groupe',
-        params: <String, dynamic>{
-          'p_groupe_id': groupeId,
-          'p_libelle': libelle,
-          'p_seuil_max': seuilMax,
-          'p_weekday': creneau.jour,
-          'p_hour_local': creneau.heure,
-          // L3-06 : signature gardee (7 arguments). null laisse fuseau et
-          // couleur inchanges cote serveur.
-          'p_timezone_iana': null,
-          'p_couleur_jeton': null,
-        },
-      );
+      try {
+        // HORLOGE-ET-LIEU (B2) : l'heure est envoyee avec son fuseau ; le serveur
+        // la convertit vers le fuseau de la classe.
+        await _client.rpc<void>(
+          'modifier_groupe_fuseau',
+          params: <String, dynamic>{
+            'p_groupe_id': groupeId,
+            'p_libelle': libelle,
+            'p_seuil_max': seuilMax,
+            'p_weekday': creneau.jour,
+            'p_hour_local': creneau.heure,
+            'p_fuseau': creneau.fuseau,
+            'p_couleur_jeton': null,
+          },
+        );
+      } on PostgrestException catch (e) {
+        // Serveur pas encore a jour (PGRST202, 42883) : l'ancienne fonction,
+        // qui lit l'heure dans le fuseau de la classe, quand c'est le fuseau
+        // de l'heure envoyee (renommer, changer le seuil).
+        if (e.code != 'PGRST202' && e.code != '42883') rethrow;
+        await _client.rpc<void>(
+          'modifier_groupe',
+          params: <String, dynamic>{
+            'p_groupe_id': groupeId,
+            'p_libelle': libelle,
+            'p_seuil_max': seuilMax,
+            'p_weekday': creneau.jour,
+            'p_hour_local': creneau.heure,
+            // L3-06 : signature gardee (7 arguments). null laisse fuseau et
+            // couleur inchanges cote serveur.
+            'p_timezone_iana': null,
+            'p_couleur_jeton': null,
+          },
+        );
+      }
     } on PostgrestException catch (e) {
       // NOMS-CLASSES (08/11/2026) : une autre classe active porte deja ce nom.
       if (e.message == NomClasseDejaPris.code) throw const NomClasseDejaPris();
+      // HORLOGE-ET-LIEU (B2) : l'ancienne fonction, sans fuseau, a voulu
+      // deplacer une heure : le serveur refuse, rien n'est modifie.
+      if (e.message.startsWith('RechargerPourModifier')) {
+        throw const CreneauRefuse(MotifRefusCreneau.rechargerApplication);
+      }
       final MotifRefusAffectation? motif = motifRefusDeplacementClasse(
         code: e.code,
         message: e.message,

@@ -16,6 +16,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/page_shell.dart';
 import '../compte/carte_rubriques.dart';
 import '../dossier/politique_controle.dart';
+import 'mention_traduction.dart';
 import 'textes_juridiques.dart';
 
 /// Le retour d'une page juridique : la page precedente si elle existe (Compte,
@@ -96,6 +97,7 @@ class JuridiquePage extends StatelessWidget {
                 textes.bodyMedium ?? const TextStyle(),
               ),
             ),
+            const MentionTraduction(),
             Ecart.vLg,
             const ListeTextesJuridiques(),
           ],
@@ -153,6 +155,7 @@ class TexteJuridiquePage extends ConsumerWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             Text(ligneVersionJuridique(), style: attenue),
+            const MentionTraduction(),
             Ecart.vSm,
             Text(texte.intro, style: textes.bodyLarge),
             for (final SectionPolitique s in sections) ...<Widget>[

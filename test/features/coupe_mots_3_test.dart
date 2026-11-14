@@ -194,6 +194,7 @@ void main() {
     await chargerPolicesDuDepot();
     // La traduction arabe est differee : chargee hors du temps simule.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 
@@ -229,7 +230,9 @@ void main() {
     });
   });
 
-  for (final AppLocale langue in AppLocale.values) {
+  // Ces textes sont verifies en francais et en arabe (l anglais a ses propres
+  // tests : test/i18n/en_parcours_test.dart).
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     for (final InterfaceMode interface in _interfaces) {
       final String cas =
           '320 px x2, ${langue.languageCode}, ${_nomInterface(interface)}';

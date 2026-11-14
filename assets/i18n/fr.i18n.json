@@ -3,7 +3,8 @@
     "langue": {
       "systeme": "Système",
       "francais": "Français",
-      "arabe": "العربية"
+      "arabe": "العربية",
+      "anglais": "English"
     },
     "formats": {
       "dateHeure": "{date} à {heure}",
@@ -285,6 +286,8 @@
     "saisieVide": "Écrivez le prénom {prenom} pour confirmer"
   },
   "salle": {
+    "sonBloque": "Le son est coupé par le navigateur",
+    "activerSon": "Activer le son",
     "vignette": {
       "ranger": "Ranger la vidéo {deNom}",
       "montrer": "Montrer la vidéo {deNom}"
@@ -396,9 +399,37 @@
     "ile": {
       "deplier": "Voir le détail de la séance",
       "deplierEtat": "Voir l'état de la salle",
+      "replierEtat": "Réduire l'état de la salle",
       "replier": "Réduire le détail de la séance",
       "conclure": "Moins de 5 minutes\u00a0: pensez à conclure.",
       "finAtteinte": "Fin prévue atteinte\u00a0: séance toujours en direct."
+    },
+    "dynamique": {
+      "arriveePrenom": "{prenom} rejoint la salle",
+      "arrivees(plural, param=n)": {
+        "one": "élève rejoint la salle",
+        "other": "élèves rejoignent la salle"
+      },
+      "arriveeMarquePrenom": "{prenom} dans la salle",
+      "arriveesMarque(plural, param=n)": {
+        "one": "Un élève de plus dans la salle",
+        "other": "{n} élèves de plus dans la salle"
+      },
+      "unEleveRecite": "Un élève récite",
+      "pauseQuestion": "Pause de {minutes}\u00a0min\u00a0?",
+      "oui": "Oui",
+      "non": "Non",
+      "pauseProposee": "Pause proposée",
+      "pauseDebut": "Pause de {minutes} min. Reprise à {heure}",
+      "pausePriereDebut": "Pause de prière. Reprise à {heure}",
+      "pauseFinie": "La pause est finie",
+      "pauseFinNonConfirmee": "La fin de la pause n'est pas confirmée",
+      "priereDepartNonConfirme": "Le début de la pause de prière n'est pas confirmé",
+      "priereNom": "Pause de prière",
+      "priereA": "Pause de prière à {heure}",
+      "priereDans": "Pause de prière dans {minutes} min",
+      "commencerMaintenant": "Commencer maintenant",
+      "decaler": "Décaler de {minutes} min"
     },
     "supports": {
       "coran": "Coran, Mushaf de Médine",
@@ -567,6 +598,10 @@
         "ecoule": "{temps}\u00a0écoulé",
         "restant": "{temps}\u00a0restant",
         "tempsPrevuEcoule": "Temps prévu écoulé",
+        "reste": "Reste",
+        "apresFin": "Après la fin",
+        "resteSeance": "Reste {temps}",
+        "pause": "Pause",
         "annonce": "Séance\u00a0: {ecoule}, {restant}.",
         "minutesEcoulees(plural, param=minutes)": {
           "one": "{minutes} min écoulée",
@@ -583,6 +618,7 @@
         "dans": "Pause dans {minutes} min",
         "prevue": "Pause prévue",
         "enCours": "Pause, reprise à {heure}",
+        "repriseA": "Reprise à {heure}",
         "prise": "Pause prise",
         "demarrer": "Démarrer la pause",
         "terminer": "Terminer la pause",
@@ -895,6 +931,20 @@
       "quitteTitre": "Vous avez quitté la séance.",
       "quittePhrase": "Vous pourrez revenir tant qu'elle reste ouverte.",
       "accesRetireTitre": "Votre accès à cette séance a pris fin.",
+      "horsApplication": {
+        "titre": "Vous êtes sorti de la salle.",
+        "titreGuidee": "Tu es sorti de la salle.",
+        "phrase": {
+          "one": "Vous avez quitté l'application plus de {n} seconde pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte.",
+          "other": "Vous avez quitté l'application plus de {n} secondes pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte."
+        },
+        "phraseGuidee": {
+          "one": "Tu as quitté l'application plus de {n} seconde pendant la séance. Tu peux revenir tant qu'elle reste ouverte.",
+          "other": "Tu as quitté l'application plus de {n} secondes pendant la séance. Tu peux revenir tant qu'elle reste ouverte."
+        },
+        "phraseSansDelai": "Vous avez quitté l'application trop longtemps pendant la séance. Vous pouvez revenir tant qu'elle reste ouverte.",
+        "phraseGuideeSansDelai": "Tu as quitté l'application trop longtemps pendant la séance. Tu peux revenir tant qu'elle reste ouverte."
+      },
       "titreGuidee": "La séance est terminée.",
       "retourAccueil": "Retour à l'accueil",
       "enseignant": {
@@ -920,9 +970,6 @@
       }
     },
     "micro": "Micro",
-    "ruban": {
-      "voirLaClasse": "Voir la classe"
-    },
     "scene": {
       "parle": "en train de parler",
       "precedents": "Visages précédents",
@@ -938,8 +985,7 @@
     "cameraEchecRefus": "Le navigateur refuse l'accès à la caméra. Autorisez la caméra dans les réglages du site (à gauche de l'adresse), puis touchez de nouveau la caméra.",
     "cameraEchecOccupee": "La caméra est déjà utilisée par une autre application ou une autre fenêtre. Fermez-la, puis touchez de nouveau la caméra.",
     "cameraEchecAbsente": "Aucune caméra n'est trouvée sur cet appareil. Branchez-en une, puis touchez de nouveau la caméra.",
-    "cameraEchecAutre": "Touchez de nouveau la caméra. Si rien ne change, prévenez la direction avec le message ci-dessous.",
-    "cameraEchecMessage": "Message du navigateur\u00a0: {erreur}",
+    "cameraEchecAutre": "Touchez de nouveau la caméra. Si rien ne change, prévenez la direction.",
     "quitter": "Quitter",
     "ouvrirCoran": "Ouvrir le Coran",
     "confirmerSortie": "Quitter le cours\u00a0?",
@@ -952,8 +998,8 @@
     "retire": "Votre enseignant vous a fait sortir du cours",
     "rappelRecuDetail": "Regardez l'écran et écoutez votre enseignant.",
     "retireDetail": "Vous pourrez revenir quand votre enseignant vous aura réadmis. Touchez alors «\u00a0Réessayer\u00a0».",
-    "ouverteAilleurs": "La salle est ouverte sur un autre onglet ou appareil",
-    "ouverteAilleursDetail": "Votre compte ne peut être dans la salle qu'à un seul endroit à la fois. Fermez l'autre onglet, ou touchez «\u00a0Réessayer\u00a0» pour revenir ici.",
+    "ouverteAilleurs": "Ce compte est déjà dans la salle sur un autre appareil",
+    "ouverteAilleursDetail": "Quittez la salle sur l'autre appareil, ou touchez «\u00a0Réessayer\u00a0» pour la rejoindre ici\u00a0: l'autre appareil sortira de la salle.",
     "fermeture": {
       "sansEnseignantTitre": "Votre enseignant n'est plus dans la salle",
       "sansEnseignantTitreTutoie": "Ton enseignant n'est plus dans la salle",
@@ -1173,6 +1219,12 @@
     "sessionTermineePhrase": "Votre session a pris fin\u00a0: ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.",
     "lienAilleursTitre": "Ce lien a été ouvert sur un autre appareil",
     "lienAilleursPhrase": "Un lien de connexion ne s'ouvre que dans le navigateur où vous l'avez demandé. Ouvrez-le sur cet appareil-là\u00a0: si vous avez commencé une inscription, vos réponses y sont gardées. Sinon, demandez ici un nouveau lien.",
+    "avoirCodeInvitation": "J'ai un code d'invitation",
+    "codeInvitation": "Code d'invitation",
+    "codeInvitationIndice": "XXXX-XXXX-XXXX",
+    "codeInvitationReconnu": "Code d'invitation\u00a0: {code} reconnu",
+    "erreurServeur": "Le lien n'a pas pu partir. Réessayez dans un instant\u00a0; si cela se répète, écrivez à l'académie.",
+    "invitationCreationImpossible": "Votre compte n'a pas pu être créé avec cette invitation. Le code est peut-être échu ou déjà utilisé, ou il ne correspond pas à cette adresse. Vérifiez l'adresse saisie\u00a0; sinon, demandez une nouvelle invitation à l'académie.",
     "modeConnexion": "J'ai déjà un compte",
     "modeCreation": "Créer un compte",
     "titreCreation": "Créer votre compte",
@@ -2015,7 +2067,7 @@
       "trancheInconnue": "Pas encore connue",
       "trancheNonLue": "Non lue",
       "photo": "Photo",
-      "photoLegende": "Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité.",
+      "photoLegende": "Une photo du visage {dePrenom}. Ce n'est pas une pièce d'identité. Son enseignant, les élèves de sa classe et la direction la voient.",
       "photoAucune": "Pas encore de photo",
       "photoPresente": "Photo enregistrée",
       "choisir": "Choisir une photo",
@@ -2310,7 +2362,11 @@
       "intro": "Les heures du jour, calculées par Rewayah pour votre lieu. Vous pouvez ajuster chaque prière de 30 minutes au plus.",
       "ligne": "Mes heures de prière",
       "ligneDetail": "Voir vos heures du jour et les ajuster",
-      "vide": "Votre lieu de prière n'est pas encore posé. La direction le pose\u00a0: vos heures apparaîtront ici.",
+      "vide": "Votre lieu de prière n'est pas encore connu. Un toucher suffit\u00a0: Rewayah lit la position de cet appareil, l'arrondit à environ un kilomètre et calcule vos heures.",
+      "utiliserPosition": "Utiliser ma position",
+      "positionRefusee": "Position non partagée. Vous pouvez réessayer, ou la direction posera votre lieu.",
+      "positionErreur": "Il est possible que votre position ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "positionDirection": "La direction a déjà posé votre lieu. Il ne change pas d'un toucher.",
       "erreur": "Vos heures de prière ne se sont pas affichées. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
       "aucunAjustement": "Aucun ajustement",
       "plus": "{minutes} min en plus",
@@ -2324,7 +2380,18 @@
     "direction": {
       "onglet": "Prière",
       "titre": "Lieux de prière",
-      "intro": "Le lieu de prière de chaque enseignant fixe ses heures. Seuls l'enseignant et la direction le voient\u00a0: les élèves et les tuteurs ne lisent que l'heure de la pause.",
+      "intro": "Rewayah calcule les heures de chaque enseignant à partir de sa position et choisit la méthode d'après le pays. Vous lisez cette liste\u00a0; vous ne corrigez qu'une exception. Seuls l'enseignant et la direction voient le lieu\u00a0: les élèves et les tuteurs ne lisent que l'heure de la pause.",
+      "attente": "En attente\u00a0: l'enseignant n'a pas encore partagé sa position",
+      "corriger": "Corriger",
+      "corrigerDe": "Corriger les réglages de prière {dePrenom}",
+      "sourceDirection": "lieu posé par la direction",
+      "sourceEnseignant": "position partagée par l'enseignant",
+      "sourceAuto": "lieu pris de sa ville",
+      "origineEnseignant": "choisie par la direction",
+      "originePays": "usuelle du pays",
+      "origineAcademie": "celle de l'académie",
+      "zoneLigne": "{lieu}, {source}",
+      "methodeLigne": "Méthode\u00a0: {methode} ({origine})",
       "sansLieu": "Aucun lieu\u00a0: pas de pause de prière",
       "vide": "Aucun enseignant actif pour le moment.",
       "erreur": "Les lieux de prière ne se sont pas affichés. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
@@ -2337,6 +2404,14 @@
     "incoherencePaysFuseau": "{prenom}\u00a0: le pays du compte et son fuseau ne se correspondent pas ({detail}).",
       "feuille": {
         "titre": "Lieu et heures de prière {dePrenom}",
+        "avance": "Réglage avancé",
+        "avanceAide": "Rewayah choisit la méthode toute seule d'après le pays du lieu. Ne la changez que pour une exception.",
+        "methodeAuto": "Automatique\u00a0: d'après le pays, sinon l'académie",
+        "ecoleAuto": "Automatique",
+        "poserMain": "Poser le lieu à la main",
+        "poserLieu": "Poser ce lieu",
+        "sansLieuAide": "Aucun lieu pour le moment\u00a0: l'enseignant le partage lui-même d'un toucher. Vous pouvez le poser à la main sous «\u00a0Réglage avancé\u00a0».",
+        "vendrediAide": "Un créneau qui chevauche cette prière est signalé à la direction, sans blocage.",
         "nomLieu": "Nom du lieu",
         "latitude": "Latitude",
         "longitude": "Longitude",
@@ -2398,6 +2473,10 @@
       "delaiFermetureDetail": "Cette pause commence ce temps après le début du cours.",
       "horizon": "Recalcul de nuit",
       "horizonDetail": "Chaque nuit, les pauses des séances de ces prochains jours sont recalculées.",
+      "valeurs": "Valeurs chiffrées",
+      "valeursDetail": "Durées, marges et recalcul de nuit\u00a0: Rewayah applique ces valeurs, ne les changez que pour une exception.",
+      "methodeSelonPays": "Méthode selon le pays",
+      "methodeSelonPaysDetail": "Activé, la méthode usuelle du pays du lieu s'applique (Arabie saoudite, Qatar, Koweït, Émirats, Égypte, Pakistan, Singapour, Turquie, Iran)\u00a0; ailleurs, la méthode de l'académie. À valider par le directeur.",
       "lieux": "Lieux de prière des enseignants",
       "lieuxDetail": "Le lieu de chaque enseignant, la prière du vendredi, les heures du jour.",
       "unite": "{n} min",
@@ -2587,6 +2666,7 @@
     },
     "signature": {
       "titre": "Contrat",
+      "traductionTitre": "Traduction de courtoisie",
       "version": "Version {version}",
       "empreinte": "Empreinte du texte : {empreinte}",
       "texteAltere": "Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.",
@@ -4758,12 +4838,14 @@
         "seanceDatee": "La classe n'est pas créée\u00a0: cette personne a déjà une séance prévue le {quand}. Changez de créneau ou choisissez une autre personne dans la liste.",
         "creneauxPropres": "La classe n'est pas créée\u00a0: deux de ses créneaux se chevauchent, le premier déborde sur le suivant. Écartez ces créneaux ou raccourcissez la durée, puis pressez de nouveau.",
         "quand": "{jour} à {heure}, heure {deVille}",
+        "quandMecque": "{jour} à {heure}, heure de La Mecque",
         "quandSansVille": "{jour} à {heure}",
         "jourDate": "{jour} {numero} {mois}",
         "heurePleine": "{h}\u00a0h",
         "heureMinutes": "{h}\u00a0h\u00a0{mm}",
         "fuseauEnseignant": "Heures à l'heure {deVille}, le fuseau de l'enseignant.",
         "fuseauDefaut": "Heures à l'heure {deVille}, le fuseau retenu par défaut.",
+        "fuseauAcademie": "Heures à l'heure de La Mecque.",
         "fuseauNonTransmis": "Heures à l'heure {deVille}, le fuseau que le serveur retient pour l'instant. Le fuseau de l'enseignant sera pris en compte dès que le serveur l'acceptera.",
         "abandonQuestion": "Abandonner la nouvelle classe\u00a0?",
         "abandonConsequence": "Les choix faits dans ce formulaire (public, enseignant, créneaux, nom) seront perdus.",
@@ -4824,6 +4906,8 @@
         "refusDernier": "Une classe garde au moins un créneau\u00a0: ajoutez-en un autre avant de retirer celui-ci.",
         "refusExistant": "La classe a déjà ce créneau\u00a0: choisissez un autre jour ou une autre heure.",
         "refusIntrouvable": "Ce créneau a déjà changé\u00a0: revenez aux créneaux pour voir la liste à jour.",
+        "refusConversion": "Ce changement d'horaire n'est pas encore disponible\u00a0: réessayez dans quelques minutes.",
+        "refusRecharger": "Rechargez l'application pour modifier un horaire.",
         "refusClasseFermee": "Cette classe est fermée\u00a0: ses créneaux ne changent plus.",
         "erreur": "Le changement n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
         "lectureErreur": "Les créneaux de cette classe ne se lisent pas pour le moment.",
@@ -4849,7 +4933,7 @@
       "creneau": {
         "titre": "Nouveau créneau {deLibelle}",
         "contexte": "Un jour et une heure de plus, chaque semaine, pour la même classe. Les séances des quatre prochaines semaines sont créées tout de suite.",
-        "fuseau": "L'heure est celle du fuseau horaire de la classe.",
+        "fuseauSaisie": "Heure {deVille}",
         "envoyer": "Ajouter ce créneau",
         "dejaLa": "Cette classe a déjà ce créneau\u00a0: rien n'a changé. Choisissez un autre jour ou une autre heure.",
         "erreur": "Le créneau n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
@@ -5489,6 +5573,21 @@
       "fondateursMinimum": "Fondateurs au minimum",
       "fondateursMinimumDetail": "Le nombre de fondateurs exigé parmi les participants d'un entretien.",
       "fondateursBornes": "De 1 à 99.",
+      "pause": {
+        "section": "Pause pendant la séance",
+        "intro": "Par défaut, chaque séance d'une classe a une pause, juste après le milieu. La barre du chrono la propose à l'enseignant, qui accepte ou refuse. L'enseignant peut aussi régler la pause de sa classe.",
+        "adultes": "Pause des classes d'adultes",
+        "adultesDetail": "La durée de la pause par défaut d'une classe d'adultes. 0\u00a0: pas de pause. Arrondie aux 5 minutes, de 5 à 30.",
+        "enfants": "Pause des classes d'enfants",
+        "enfantsDetail": "La durée de la pause par défaut d'une classe d'enfants. 0\u00a0: pas de pause. Arrondie aux 5 minutes, de 5 à 30.",
+        "rappel": "Rappel après un refus",
+        "rappelDetail": "Si l'enseignant refuse la pause, elle lui est proposée de nouveau après ce délai\u00a0: la pause est un droit.",
+        "reste": "Cours restant après la pause",
+        "resteDetail": "La pause n'est plus proposée s'il restait, après elle, moins que ce temps de cours.",
+        "bornesDuree": "De 0 à 30 minutes.",
+        "bornesRappel": "De 1 à 60 minutes.",
+        "bornesReste": "De 0 à 60 minutes."
+      },
       "paie": {
         "section": "Paie des enseignants",
         "intro": "La paie d'un mois est versée entre ces deux jours du mois suivant. Les enseignants voient ces dates sur «\u00a0Mes revenus\u00a0».",
@@ -7513,6 +7612,49 @@
     "selectionMultiple": "Plusieurs réponses possibles",
     "exemple": "Par exemple\u00a0: {texte}"
   },
+  "lieu": {
+    "titre": "Votre ville",
+    "consigneTuteur": "Choisissez la ville où vous habitez. Elle sert à afficher les heures de cours à votre heure. Seuls vous, votre foyer et la direction la voient.",
+    "consigneEnseignant": "Choisissez la ville où vous enseignez. Elle sert à afficher vos heures de cours à votre heure, et la direction la vérifie. Seuls vous et la direction la voient.",
+    "champ": "Rechercher votre ville",
+    "aide": "Les premières lettres du nom suffisent, avec ou sans accent.",
+    "propositions": "Villes à l'heure de cet appareil",
+    "resultats": "Villes trouvées",
+    "credit": "Liste des villes\u00a0: GeoNames (geonames.org), licence CC BY 4.0.",
+    "aucune": "Aucune ville ne commence par «\u00a0{texte}\u00a0». Essayez les premières lettres du nom, sans accent.",
+    "chargeEchec": "La liste des villes ne s'est pas chargée",
+    "chargeEchecPhrase": "La liste n'a pas pu s'afficher. Réessayez dans un instant.",
+    "choisie": "Ville choisie\u00a0: {ville}, {pays}.",
+    "enregistrer": "Enregistrer ma ville",
+    "plusTard": "Plus tard",
+    "plusTardPhrase": "Vous pouvez encore reporter cette étape. Tant qu'elle n'est pas faite, vos heures de cours s'affichent à l'heure de cet appareil.",
+    "obligatoire": "Cette étape est maintenant nécessaire pour afficher vos heures de cours à votre heure.",
+    "echec": "Votre ville n'est pas confirmée. Réessayez dans un instant.",
+    "disponibilitesTitre": "Relisez vos disponibilités",
+    "disponibilitesPhrase": "Votre ville a changé de fuseau. Vos disponibilités gardent leurs heures exactes, mais elles s'affichent maintenant à votre nouvelle heure\u00a0: relisez-les.",
+    "disponibilitesLien": "Relire mes disponibilités",
+    "heureAppareil": "Heure de cet appareil",
+    "heureAppareilVoyage": "Heure de cet appareil\u00a0: elle diffère de celle de votre ville ({ville}).",
+    "colonneVille": "Ville",
+    "villeAbsente": "Ville non choisie",
+    "verifiee": "Ville vérifiée",
+    "nonVerifiee": "Ville à vérifier",
+    "verifier": "Vérifier la ville {deNom}",
+    "villeVerifiee": "La ville {deNom} est vérifiée.",
+    "verifierEchec": "La vérification n'est pas confirmée. Réessayez dans un instant.",
+    "incoherencesTitre": "Villes à vérifier",
+    "incSansVille": "n'a pas encore choisi sa ville",
+    "incFuseauDifferent": "son fuseau enregistré ne correspond pas à sa ville",
+    "incPaysDifferent": "son pays enregistré ne correspond pas au pays de sa ville",
+    "incPaysFuseau": "son pays et son fuseau enregistrés ne vont pas ensemble",
+    "villeLigne": "{ville} ({pays})",
+    "incoherencesCompte": "{n} à vérifier",
+    "changementsTitre": "Prochains changements d'heure",
+    "changementsLigne": "{date}, {ville}\u00a0: familles\u00a0: {familles}\u00a0; enseignants\u00a0: {enseignants}\u00a0; de {avant} à {apres}.",
+    "changementsAucun": "Aucun changement d'heure dans les {jours} prochains jours chez les familles et les enseignants.",
+    "changementsErreur": "La liste des changements d'heure ne s'est pas chargée. Rechargez la page pour la relire.",
+    "incoherencesVide": "Aucune ville à vérifier pour le moment."
+  },
   "parcours": {
     "titre": "Le parcours {dePrenom}",
     "intro": "Quelques questions pour personnaliser votre parcours. Vous ne verrez ensuite que les horaires et options adaptés à votre situation.",
@@ -8158,6 +8300,10 @@
     "evenements": {
       "bienvenueEquipe": "Bienvenue dans l'équipe. Il vous reste à configurer votre espace.",
       "retenuEntretien": "Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l'application.",
+      "pauseRepondueAcceptee": "La pause d'un mois {dePrenom} est acceptée pour {mois}. Sa date limite recule d'autant. Sa place est gardée.",
+      "pauseRepondueAccepteeAdulte": "Votre pause d'un mois est acceptée pour {mois}. Votre date limite recule d'autant. Votre place est gardée.",
+      "pauseRepondueRefusee": "La pause d'un mois {dePrenom} pour {mois} n'est pas acceptée. Le motif est dans l'application.",
+      "pauseRepondueRefuseeAdulte": "Votre pause d'un mois pour {mois} n'est pas acceptée. Le motif est dans l'application.",
       "demandeRecue": "Une nouvelle demande de créneau a été reçue.",
       "demandePresentation": "Une demande de présentation standard a été reçue.",
       "classeValidee": "La classe est prête et attend son enseignant.",
@@ -8182,6 +8328,9 @@
       "litigeClosPerdu": "La contestation est close\u00a0: le paiement est remboursé, les frais vont au solde du foyer.",
       "litigeClosDirection": "Une contestation de paiement est close.",
       "enseignantAffecteSoi": "Un enseignant a été affecté à votre classe.",
+      "toutEstPret": "Tout est prêt\u00a0: consultez le suivi de votre demande.",
+      "toutEstPretSoi": "Tout est prêt\u00a0: votre classe, votre enseignant et votre premier cours sont confirmés.",
+      "toutEstPretPour": "Tout est prêt pour {prenom}\u00a0: consultez le suivi de la demande.",
       "enseignantAffecteClasse": "Une classe vous est confiée.",
       "remplacementPrisQuand": "La séance du {quand} sera assurée par un enseignant remplaçant.",
       "classeCreee": "Une classe vient d'être créée.",
@@ -8199,6 +8348,20 @@
       "eleveRetireFoyer": "Un élève de votre foyer ne fait plus partie de sa classe.",
       "eleveRetireClasse": "Un élève quitte une de vos classes.",
       "creneauChange": "L'horaire de la classe a changé.",
+      "changementHeureUn": "À partir du {date}, {cours} du {jour} passe de {avant} à {apres}.",
+      "changementHeurePlusieurs": "À partir du {date}, l'heure {cours} change\u00a0: {liste}.",
+      "changementHeureUnJour": "À partir du {date}, {cours} passe du {jourAvant} {avant} au {jourApres} {apres}.",
+      "changementHeureLigneJour": "du {jourAvant} {avant} au {jourApres} {apres}",
+      "changementHeureMecque": "Le cours reste à la même heure à La Mecque\u00a0: c'est l'heure de votre ville qui change.",
+      "conversionRefusee": "La classe {classe} n'a pas pu passer à l'heure de La Mecque\u00a0: {raison} Elle sera réessayée cette nuit.",
+      "conversionRefuseeProche": "un changement d'heure approche (moins de 28 jours).",
+      "conversionRefuseeDemiHeure": "un de ses créneaux n'a pas d'heure pleine à La Mecque.",
+      "conversionRefuseeAutre": "une vérification a échoué, consultez la classe.",
+      "changementHeureLigne": "le {jour} de {avant} à {apres}",
+      "changementHeureCoursUn": "votre cours",
+      "changementHeureCoursUnFoyer": "le cours de la classe",
+      "changementHeureCoursPlusieurs": "de vos cours",
+      "changementHeureCoursPlusieursFoyer": "des cours de la classe",
       "seanceAnnulee": "Une séance est annulée.",
       "seanceAnnuleeQuand": "La séance du {quand} est annulée.",
       "seanceDeplacee": "Une séance est déplacée.",
@@ -8487,7 +8650,6 @@
       "intro": "Ces réglages s'appliquent à la séance suivante, jamais pendant un cours.",
       "photo": "Photo",
       "photoAucune": "{prenom} n'a pas encore de photo. Elle reste visible du seul foyer.",
-      "photoPresente": "La photo {dePrenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.",
       "photoAjouter": "Ajouter une photo",
       "photoChanger": "Changer la photo",
       "photoTropLourde": "Cette photo dépasse {taille}\u00a0Mo. Reprenez-la en qualité plus basse.",
@@ -9409,11 +9571,17 @@
       "tauxMoyen": "Taux horaire moyen",
       "total": "Total",
       "seanceDate": "{date} à {heure}",
-      "seanceDuree": "Durée retenue",
+      "seanceDuree": "Durée rémunérée",
+      "seanceDureeNonPrecisee": "Voir le relevé de l'académie",
+      "seanceConnecte": "Connecté pendant la fenêtre de paie",
       "present": "Présent",
       "absent": "Absent",
       "presentPartiel": "Présent en partie",
       "partielleNote": "Une présence en partie est payée comme une présence.",
+      "sansDureePayee(param=n)": {
+        "one": "{n}\u00a0séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.",
+        "other": "{n}\u00a0séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi."
+      },
       "aucunMontant": "Aucun montant pour cette séance.",
       "partielle": "4. Une présence en partie compte",
       "partielleDetail": "Un élève présent pendant une partie de la séance est payé comme un élève présent.",
@@ -9771,7 +9939,15 @@
         "votreHeure": "Votre heure",
         "chezEnseignant": "Chez {nomme}",
         "heureGroupe": "Heure de la classe",
+        "heureMecque": "Heure de La Mecque",
+        "apercuClasse": "À l'heure de La Mecque, la classe aura lieu le {jour} à {heure}.",
+        "apercuOuEnseignant": "Chez l'enseignant ({ville})",
+        "apercuChez": "{ou}\u00a0: {heure} toute l'année.",
+        "apercuChezPuis": "{ou}\u00a0: {heure}, puis {apres} à partir du {date}.",
         "heureEtVille": "{heure} {ville}",
+        "mecqueEnSecond": "Heure de La Mecque\u00a0: {heure}",
+        "heureDeVille": "{heure} (heure {deVille})",
+        "laMecque": "La Mecque",
         "chezVous": "Chez vous",
         "chezEnseignantAnonyme": "Chez votre enseignant",
         "familles(plural, param=n)": {
@@ -9891,6 +10067,7 @@
         "sansLecteur": "Ce type de document n'a pas encore de lecteur dans l'application.",
         "confirmerTitre": "Ce lien quitte l'application",
         "confirmerPhrase": "Il ouvre un autre site, en dehors de Rewayah Academy. Vous pouvez revenir ici ensuite.",
+        "confirmerPhraseTu": "Il ouvre un autre site, en dehors de Rewayah Academy. Tu pourras revenir ici ensuite.",
         "confirmerOuvrir": "Ouvrir le lien",
         "confirmerRester": "Rester dans l'application",
         "ouvrirLien": "Ouvrir le lien",
@@ -13787,6 +13964,7 @@
   "juridique": {
     "titre": "Informations légales",
     "intro": "Les textes qui encadrent le service. Ils se lisent sans compte.",
+    "traduction": "En cas de divergence, la version française fait foi.",
     "version": "Version {version}, texte du {date}",
     "contact": "Pour toute question, écrivez à {contact}.",
     "lire": "Lire",
@@ -14658,7 +14836,11 @@
     "lien": {
       "dejaServiTitre": "Ce lien a déjà servi ou a expiré",
       "dejaServiDetail": "Un lien de connexion ne sert qu'une fois, et pour peu de temps. Demandez-en un nouveau : saisissez votre adresse e-mail sur la page de connexion.",
-      "nouveauLien": "Recevoir un nouveau lien"
+      "nouveauLien": "Recevoir un nouveau lien",
+      "autreNavigateurDetail": "Ce lien ne s'ouvre que dans le navigateur où vous avez saisi votre adresse. Ouvrez-le dans ce même navigateur, ou demandez-en un nouveau ici\u00a0: saisissez votre adresse e-mail sur la page de connexion.",
+      "autreNavigateurTitre": "Ouvrez ce lien dans le même navigateur",
+      "refuseTitre": "La connexion n'a pas abouti",
+      "refuseDetail": "Ce lien n'a pas pu ouvrir votre session. Demandez-en un nouveau\u00a0: saisissez votre adresse e-mail sur la page de connexion. Si cela se répète, écrivez à l'académie."
     }
   },
   "d1ter": {
@@ -15495,5 +15677,537 @@
     "attenteEntretien": "Votre étape sera fixée après l'entretien de lecture avec la direction.",
     "attenteEntretienTu": "Ton étape sera fixée après l'entretien de lecture avec la direction.",
     "attenteEntretienPour": "Pour {prenom}, l'étape sera fixée après l'entretien de lecture avec la direction."
+  },
+  "apprendre": {
+    "sections": {
+      "libelle": "Sections de l'espace Apprendre",
+      "bibliotheque": "Bibliothèque",
+      "programme": "Programme",
+      "livret": "Mon livret"
+    },
+    "bibliotheque": {
+      "rayonCours": "Documents des cours",
+      "rayonClasse": "Pour cette classe",
+      "classeErreur": {
+        "message": "Les documents de cette classe ne s'affichent pas pour l'instant",
+        "invitation": "Touchez Réessayer dans un instant."
+      },
+      "rayonPlusLoin": "Pour aller plus loin",
+      "rayonCoursVide": {
+        "message": "Les documents des cours arriveront ici",
+        "invitation": "Ils apparaissent dès que l'académie les publie."
+      },
+      "rayonPlusLoinVide": "D'autres documents arriveront ici",
+      "affichage": {
+        "libelle": "Affichage des documents",
+        "grille": "Grille",
+        "liste": "Liste"
+      },
+      "filtres": {
+        "libelle": "Type de document"
+      },
+      "type": {
+        "document": "Document",
+        "audio": "Audio",
+        "video": "Vidéo",
+        "lienExterne": "Lien externe"
+      },
+      "aucunResultat": {
+        "message": "Aucun document de ce type pour le moment",
+        "invitation": "Retirez le filtre pour revoir tous les documents."
+      },
+      "coran": {
+        "titre": "Le Coran",
+        "edition": "Édition de Médine"
+      },
+      "carte": {
+        "document": "{titre}, {type}",
+        "lien": "{titre}, lien externe, s'ouvre hors de l'application"
+      }
+    },
+    "programme": {
+      "vide": "L'étape apparaîtra dès l'entrée dans une classe",
+      "datesEcole": "Dates de l'académie",
+      "datesEcoleVide": "Les dates de l'académie seront affichées ici",
+      "genre": {
+        "evaluation": "Évaluation",
+        "fermeture": "Fermeture de l'académie",
+        "rencontre": "Rencontre de récitation"
+      }
+    },
+    "livret": {
+      "vide": "Vos résultats, vos bilans et vos attestations apparaîtront ici",
+      "videTu": "Tes résultats, tes bilans et tes attestations apparaîtront ici"
+    }
+  },
+  "suiviAttente": {
+    "titre": "Où en est votre demande",
+    "titreSimple": "Où en est ta demande",
+    "tu": {
+      "formationListeAttente": "Toutes les classes de ce créneau sont pleines. Ta demande attend qu'une place s'ouvre.",
+      "confirmeeFait": "Ta classe est confirmée.",
+      "confirmeeFaitNom": "Ta classe «\u00a0{classe}\u00a0» est confirmée.",
+      "enseignantEnAttente": "Ta classe attend son enseignant. L'académie le désigne et te prévient.",
+      "pretEnCours": "L'académie fixe ton premier cours. Elle te prévient dès que la date est connue.",
+      "pretAVenir": "Ton premier cours est annoncé une fois l'enseignant affecté.",
+      "premierCoursPasse": "Ton premier cours a eu lieu le {quand}.",
+      "premierCoursPetit": "Ton premier cours arrive. Ton tuteur te dit quand.",
+      "premierCoursPassePetit": "Ton premier cours a eu lieu.",
+      "depasse": "La formation de ta classe prend plus de temps que prévu.",
+      "changement": "Le créneau de la classe a changé le {date}. Ton tuteur a reçu l'avis.",
+      "titreRefusee": "Ta demande n'a pas été retenue",
+      "retraitFamille": "Ton tuteur a retiré cette demande.",
+      "erreur": "Nous n'avons pas pu lire ta demande. Cela vient souvent de la connexion. Réessaie dans un instant.",
+      "sansDonnees": "Ta demande n'a pas pu être chargée",
+      "introuvable": "Cette demande n'existe plus."
+    },
+    "contexte": "L'académie confirme chaque étape. Vous êtes prévenu à chaque passage.",
+    "contexteSimple": "Voici où en est ta demande. L'académie te prévient à chaque étape.",
+    "pour": "Pour {prenom}",
+    "etapeSurTotal": "Étape {n} sur {total} : {etape}",
+    "etapes": {
+      "recue": "Demande reçue",
+      "formation": "Classe en formation",
+      "confirmee": "Classe confirmée",
+      "enseignant": "Enseignant affecté",
+      "pret": "Tout est prêt"
+    },
+    "etats": {
+      "fait": "Fait",
+      "enCours": "En cours",
+      "aVenir": "À venir"
+    },
+    "dit": {
+      "recueFait": "Votre demande est arrivée à l'académie.",
+      "recueFaitSimple": "Ta demande est arrivée à l'académie.",
+      "formationEnCours": "L'académie réunit les élèves de cette classe.",
+      "formationListeAttente": "Toutes les classes de ce créneau sont pleines. Votre demande attend qu'une place s'ouvre.",
+      "formationFait": "Les élèves de la classe sont réunis.",
+      "formationAVenir": "L'académie réunit les élèves de la classe une fois la demande reçue.",
+      "confirmeeFait": "Votre classe est confirmée.",
+      "confirmeeFaitNom": "Votre classe «\u00a0{classe}\u00a0» est confirmée.",
+      "confirmeeAVenir": "L'académie confirme la classe quand ses élèves sont réunis.",
+      "enseignantEnCours": "L'académie désigne l'enseignant de la classe.",
+      "enseignantEnAttente": "Votre classe attend son enseignant. L'académie le désigne et vous prévient.",
+      "enseignantFait": "Votre enseignant est connu.",
+      "enseignantFaitSimple": "Ton enseignant est connu.",
+      "enseignantAVenir": "L'académie désigne l'enseignant une fois la classe confirmée.",
+      "pretFait": "La classe, l'enseignant et le premier cours sont connus.",
+      "pretEnCours": "L'académie fixe votre premier cours. Vous êtes prévenu dès que la date est connue.",
+      "pretAVenir": "Votre premier cours est annoncé une fois l'enseignant affecté."
+    },
+    "premierCours": "Votre premier cours : {quand}",
+    "premierCoursSimple": "Ton premier cours : {quand}",
+    "premierCoursPasse": "Votre premier cours a eu lieu le {quand}.",
+    "depuis": "Depuis le {date}",
+    "ensuite": "Ensuite : {etape}",
+    "delai": {
+      "depasse": "La formation de votre classe prend plus de temps que prévu."
+    },
+    "changement": "Le créneau de la classe a changé le {date}. Vous avez reçu l'avis dans vos notifications.",
+    "cloture": {
+      "titreRefusee": "Votre demande n'a pas été retenue",
+      "titreRetiree": "Cette demande est retirée",
+      "titreClose": "Cette demande est close",
+      "motif": {
+        "retraitFamille": "Vous avez retiré cette demande.",
+        "offreRetiree": "L'académie a retiré ce créneau de ses offres.",
+        "classeNonConstituee": "La classe de ce créneau n'a pas pu être constituée.",
+        "refusDirection": "La direction n'a pas retenu cette demande.",
+        "dejaEnClasse": "Cet élève a déjà une place en classe\u00a0: la demande n'est plus nécessaire.",
+        "inconnu": "Cette demande est close."
+      },
+      "suite": "Vous pouvez choisir un autre créneau.",
+      "autreCreneau": "Choisir un autre créneau",
+      "simple": {
+        "refusee": "Ta demande n'a pas été retenue. Ton tuteur peut choisir un autre créneau.",
+        "retiree": "Cette demande est retirée.",
+        "close": "Cette demande est close."
+      }
+    },
+    "enseignant": {
+      "titre": "Votre enseignant",
+      "titreSimple": "Ton enseignant",
+      "sayyid": "Sayyid",
+      "sayyida": "Sayyida",
+      "nomPlein": "{prenom}",
+      "nomAvecTitre": "{titre} {prenom}",
+      "langue": "Langue du cours",
+      "origine": "Pays d'origine",
+      "residence": "Pays de résidence",
+      "mot": "Son mot de présentation",
+      "peutSePresenter": "Votre enseignant peut se présenter aux familles de la classe par un message dans Messages."
+    },
+    "vide": {
+      "message": "Vous n'avez pas encore choisi de classe.",
+      "invitation": "Choisissez une classe\u00a0: l'académie vous suit ensuite étape par étape.",
+      "action": "Choisir une classe",
+      "messageSimple": "Il n'y a pas encore de demande de classe pour toi.",
+      "invitationSimple": "Ton tuteur peut en faire une."
+    },
+    "erreur": "Nous n'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.",
+    "sansDonnees": "Le suivi de votre demande n'a pas pu être chargé",
+    "introuvable": "Cette demande n'existe plus dans votre suivi.",
+    "retour": "Retour",
+    "carte": {
+      "titre": "Votre demande de classe",
+      "titreSimple": "Ta demande de classe",
+      "ligne": "{prenom} : étape {n} sur {total}, {etape}",
+      "suivre": "Suivre ma demande",
+      "pret": "{prenom} : tout est prêt. Premier cours : {quand}",
+      "pretSansDate": "{prenom}\u00a0: tout est prêt."
+    },
+    "presentation": {
+      "titre": "Ce que les familles voient de vous",
+      "phrase": "Les familles de vos classes voient déjà, comme partout dans l'application, votre civilité, votre prénom, la langue du cours, votre photo et votre pays, s'il est renseigné. Ce réglage ne concerne que la carte du suivi de leur demande\u00a0: vous choisissez d'y montrer aussi vos deux pays et un mot de présentation, quand vous les avez saisis.",
+      "montrer": "Montrer mes pays et mon mot sur la carte du suivi",
+      "paysOrigine": "Pays d'origine",
+      "paysResidence": "Pays de résidence",
+      "choisirPays": "Choisir un pays",
+      "nonRenseigne": "Non renseigné",
+      "mot": "Mon mot de présentation",
+      "motAide": "500 caractères au plus. Les familles le lisent tel que vous l'écrivez.",
+      "nonConfirme": "Vous n'avez pas encore confirmé ce choix. Tant que vous ne l'avez pas fait, vos pays et votre mot, s'ils sont saisis, sont montrés sur la carte du suivi.",
+      "enregistrer": "Enregistrer",
+      "enregistre": "Enregistré.",
+      "erreur": "Votre choix n'est pas confirmé\u00a0: il n'est peut-être pas parvenu jusqu'à Rewayah. Réessayez dans un instant.",
+      "effacerPays": "Ne pas renseigner"
+    },
+    "mePresenter": {
+      "lien": "Me présenter aux familles",
+      "titre": "Me présenter",
+      "contexte": "Un message est déjà rédigé. Vous pouvez le modifier avant de l'envoyer. Il part dans Messages, aux familles de la classe et aux élèves adultes.",
+      "messageSayyid": "Bonjour, je suis Sayyid {nom}, votre enseignant de la classe «\u00a0{classe}\u00a0». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
+      "messageSayyida": "Bonjour, je suis Sayyida {nom}, votre enseignante de la classe «\u00a0{classe}\u00a0». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.",
+      "champ": "Votre message",
+      "rappel": "Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n'est jamais envoyé à un mineur. N'échangez ni téléphone ni adresse\u00a0: tout passe par l'application.",
+      "envoyer": "Envoyer aux familles",
+      "envoye(param=n)": {
+        "one": "Message envoyé à {n} famille.",
+        "other": "Message envoyé à {n} familles."
+      },
+      "dejaEcrit(param=n)": {
+        "one": "{n} famille a déjà un échange avec vous\u00a0: elle ne reçoit pas ce message.",
+        "other": "{n} familles ont déjà un échange avec vous\u00a0: elles ne reçoivent pas ce message."
+      },
+      "aucune": "Aucune famille de cette classe ne peut recevoir de message pour le moment.",
+      "echec": "Le message n'est pas confirmé pour certaines familles\u00a0: il n'est peut-être pas parvenu jusqu'à elles. Réessayez\u00a0: celles qui l'ont reçu ne le reçoivent pas deux fois.",
+      "chargement": "Chargement des familles de la classe",
+      "erreur": "Les familles de la classe n'ont pas pu être lues. Réessayez dans un instant.",
+      "vide": "Écrivez un message avant de l'envoyer."
+    }
+  },
+  "journalSorties": {
+    "texte": {
+      "titre": "Les sorties de l'application pendant le cours",
+      "parent": {
+        "quoi": "Ce qui est noté : chaque fois que votre enfant quitte l'application pendant une séance, l'heure où il la quitte, l'heure où il revient, et si cette absence l'a fait sortir de la salle. Rien d'autre : ni ce qu'il fait ailleurs, ni son écran, ni son image, ni sa voix.",
+        "pourquoi": "Pourquoi : suivre l'attention de votre enfant pendant le cours, pour vous et pour son enseignant.",
+        "qui": "Qui peut le lire : vous, votre enfant, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.",
+        "retrait": "Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.",
+        "sansAccord": "Sans votre accord, rien n'est noté et rien ne change pour le cours. Un élève qui reste trop longtemps hors de l'application sort de la salle, avec ou sans accord : cela ne garde rien.",
+        "caseAccord": "J'accepte que les sorties de l'application {dePrenom} pendant les séances soient notées."
+      },
+      "adulte": {
+        "quoi": "Ce qui est noté : chaque fois que vous quittez l'application pendant une séance, l'heure où vous la quittez, l'heure où vous revenez, et si cette absence vous a fait sortir de la salle. Rien d'autre : ni ce que vous faites ailleurs, ni votre écran, ni votre image, ni votre voix.",
+        "pourquoi": "Pourquoi : suivre votre attention pendant le cours, pour vous et pour votre enseignant.",
+        "qui": "Qui peut le lire : vous, l'enseignant de la séance et la direction. Jamais les autres élèves ni leurs familles.",
+        "retrait": "Vous pouvez retirer votre accord à tout moment, ici même. Dès que vous le retirez, plus rien n'est noté.",
+        "sansAccord": "Sans votre accord, rien n'est noté et rien ne change pour le cours. Si vous restez trop longtemps hors de l'application, vous sortez de la salle, avec ou sans accord : cela ne garde rien.",
+        "caseAccord": "J'accepte que mes sorties de l'application pendant les séances soient notées."
+      }
+    },
+    "accord": {
+      "titre": "Sorties de l'application",
+      "ligne": "Sorties de l'application pendant le cours",
+      "ligneDetail": "Votre accord, pour chaque enfant",
+      "ligneDetailAdulte": "Votre accord",
+      "intro": "Lisez ce texte, puis choisissez pour chaque enfant. Rien n'est noté sans votre accord.",
+      "introAdulte": "Lisez ce texte, puis choisissez. Rien n'est noté sans votre accord.",
+      "accepteLe": "Accepté le {date}",
+      "pasAccepte": "Pas d'accord : rien n'est noté.",
+      "retirerPour": "Retirer mon accord pour {prenom}",
+      "retirer": "Retirer mon accord",
+      "enregistrer": "Enregistrer mon accord",
+      "manque": "Cochez une case pour enregistrer votre accord.",
+      "erreur": "Votre choix n'est pas confirmé\u00a0: il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Réessayez dans un instant.",
+      "lectureErreur": "Vos accords n'ont pas pu être lus. Réessayez dans un instant.",
+      "horsService": "Ce relevé n'est pas en service : rien n'est noté. Revenez au Compte.",
+      "versionPerimee": "Le texte vient de changer. Relisez-le, puis cochez de nouveau.",
+      "eteint": "La direction vient d'arrêter ce relevé : rien n'est noté. Revenez au Compte.",
+      "merci": "Votre accord est enregistré.",
+      "retire": "Votre accord est retiré : plus rien n'est noté."
+    },
+    "rapport": {
+      "titre": "Sorties de l'application",
+      "nombreCle": "Nombre",
+      "nombre(param=n)": {
+        "one": "{n} sortie",
+        "other": "{n} sorties"
+      },
+      "dureeTotale": "Durée totale",
+      "plage": "De {debut} à {fin}",
+      "sortieSalle": "Sortie de la salle après le délai",
+      "secondes": "{n} s",
+      "minutes": "{n} min",
+      "minutesSecondes": "{m} min {s} s",
+      "resume": "{nombre}, {duree}",
+      "ligneEleve": "Sorties de l'application : {resume}"
+    },
+    "reglages": {
+      "section": "Sorties de l'application pendant une séance",
+      "intro": "Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l'accord du tuteur, ou de l'élève adulte.",
+      "journal": "Noter les sorties de l'application",
+      "journalDetail": "N'allumez qu'après la validation des textes de l'accord par le directeur. Allumé, le tuteur et l'élève adulte voient la page de l'accord dans leur Compte.",
+      "delai": "Délai avant la sortie de la salle",
+      "delaiDetail": "Le temps laissé à l'élève hors de l'application avant qu'il sorte de la salle.",
+      "bornes": "De 5 à 600 secondes.",
+      "unite": "{n} s"
+    }
+  },
+  "calendrier": {
+    "titre": "Calendrier",
+    "sections": {
+      "libelle": "Sections du calendrier",
+      "dates": "Dates de l'académie",
+      "pauses": "Pauses"
+    },
+    "indisponible": "Le calendrier n'a pas pu être ouvert\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "refusNouvelleDateFermee": "La date n'est pas fixée\u00a0: la classe est fermée ce jour-là. Choisissez un autre jour, ou retirez la fermeture pour cette classe.",
+    "dates": {
+      "intro": "Les dates de l'année, saisies par la direction chaque année. Seules les dates publiées agissent\u00a0: une fermeture recule la date limite des étapes concernées et met de côté les séances qui n'ont pas encore commencé ces jours-là. Les jours se comptent à l'heure de La Mecque.",
+      "ajouter": "Ajouter une date",
+      "erreur": "Les dates n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "videTitre": "Aucune date saisie",
+      "videDetail": "Ajoutez les fermetures de l'année, les rencontres de récitation et les dates d'évaluation.",
+      "type": {
+        "fermeture": "Fermeture",
+        "rencontre": "Rencontre de récitation",
+        "evaluation": "Évaluation",
+        "autre": "Autre date"
+      },
+      "categorie": {
+        "ramadan": "Ramadan, 20 jours au plus",
+        "aidAlAdha": "Aïd al-Adha, 10 jours au plus",
+        "autre": "Autre fermeture"
+      },
+      "categorieAide": "Ramadan\u00a0: du 20 Ramadan au 7 Shawwal inclus. Aïd al-Adha\u00a0: du 9 au 18 Dhu al-Hijja inclus.",
+      "portee": {
+        "ecole": "Toute l'académie",
+        "tranche": "Une tranche d'âge",
+        "classe": "Une classe"
+      },
+      "publiee": "Publiée",
+      "nonPubliee": "Non publiée",
+      "publier": "Publier",
+      "retirer": "Retirer de la publication",
+      "modifier": "Modifier",
+      "periode": "Du {du} au {au}",
+      "unJour": "Le {jour}",
+      "pour": "Pour\u00a0: {cible}",
+      "elevesVises": "Élèves concernés\u00a0: {n}",
+      "seancesNeutralisees": "Séances déjà prévues pendant ces jours\u00a0: {n}. Elles sont mises de côté, sans être supprimées, et rétablies si vous retirez la fermeture avant son début.",
+      "aucuneSeance": "Aucune séance n'est encore prévue pendant ces jours.",
+      "commencee": "Cette fermeture a commencé\u00a0: elle ne peut plus être retirée ni raccourcie, seulement prolongée.",
+      "feuille": {
+        "titreAjout": "Ajouter une date",
+        "titreModif": "Modifier la date",
+        "champType": "Genre de date",
+        "champCategorie": "Quelle fermeture",
+        "champTitre": "Titre",
+        "aideTitre": "Le titre que les familles liront.",
+        "champPortee": "À qui elle s'adresse",
+        "champTranche": "Tranche d'âge",
+        "champClasse": "Classe",
+        "champDu": "Premier jour",
+        "champAu": "Dernier jour",
+        "aideDates": "Les dates sont celles du calendrier grégorien, saisies chaque année\u00a0: l'application ne calcule pas le calendrier lunaire.",
+        "enregistrer": "Enregistrer",
+        "aucuneClasse": "Aucune classe à choisir pour le moment."
+      },
+      "publication": {
+        "titre": "Publier la fermeture",
+        "phrase": "Pendant ces jours, aucune nouvelle séance n'est créée et la date limite de l'étape de chaque élève concerné recule d'autant. Les séances qui n'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées\u00a0; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l'enseignant n'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.",
+        "confirmer": "Publier la fermeture"
+      },
+        "notification": {
+          "conflit": {
+            "generale": "Une séance n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: l'enseignant a pris un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.",
+            "avecNom": "La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: {enseignant} a un autre cours à la même heure. Libérez l'enseignant, la séance sera rétablie la nuit suivante.",
+            "sansNom": "La séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), n'est plus sous une fermeture mais ne peut pas être rétablie\u00a0: l'enseignant a un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.",
+            "rappelGenerale": "Rappel : une séance qui n'est plus sous une fermeture ne peut toujours pas être rétablie : l'enseignant a un autre cours à la même heure. Libérez-le pour la rétablir.",
+            "rappelAvecNom": "Rappel : la séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), ne peut toujours pas être rétablie : {enseignant} a un autre cours à la même heure. Libérez l'enseignant pour la rétablir.",
+            "rappelSansNom": "Rappel : la séance de la classe {classe}, le {jour} à {heure} (heure de La Mecque), ne peut toujours pas être rétablie : l'enseignant a un autre cours à la même heure. Libérez-le pour la rétablir."
+          },
+          "quandLocal": "{local} ({mecque}, heure de La Mecque)",
+          "quandMecque": "{jour} à {heure}, heure de La Mecque",
+          "annoncee": {
+            "une": "L'académie est fermée du {du} au {au}. La séance du {quand} n'aura pas lieu.",
+            "plusieurs": "L'académie est fermée du {du} au {au}. Séances qui n'auront pas lieu\u00a0: {n}, dont celle du {quand}."
+          },
+          "levee": {
+            "une": "La fermeture de l'académie est retirée. La séance du {quand} est rétablie.",
+            "plusieurs": "La fermeture de l'académie est retirée. Séances rétablies\u00a0: {n}, dont celle du {quand}.",
+            "abandonUne": "La fermeture de l'académie est retirée, mais la séance du {quand} n'aura pas lieu.",
+            "abandonPlusieurs": "La fermeture de l'académie est retirée, mais des séances n'auront pas lieu\u00a0: {n}, dont celle du {quand}.",
+            "mixte": "La fermeture de l'académie est retirée. Séances rétablies\u00a0: {retablies}. Séances qui n'auront pas lieu\u00a0: {abandonnees}. Ouvrez la classe pour les voir."
+          }
+        },
+        "concernees": {
+          "titre": "Séances concernées",
+          "heureMecque": "Les jours et les heures sont ceux de La Mecque.",
+          "ligne": "{classe}, {quand}, {enseignant}",
+          "deCote": "mise de côté",
+          "autres": "Et {n} autres séances.",
+          "erreur": "Les séances concernées n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+        },
+        "conflits": {
+          "titre": "Séances qui ne peuvent pas être rétablies",
+          "intro": "Ces séances ont été mises de côté par la fermeture, mais l'enseignant a pris un autre cours à la même heure. Libérez l'enseignant puis réessayez, ou confirmez l'abandon de ces séances\u00a0: elles ne seront jamais rétablies. Les heures sont celles de La Mecque.",
+          "ligne": "{classe}, {quand}, {enseignant}",
+          "autre": "Autre cours\u00a0: {cours}, {quand}",
+          "autreSansNom": "Autre cours à la même heure, {quand}",
+          "abandonner": "Retirer la fermeture et abandonner ces séances ({n})"
+        },
+      "refus": {
+        "fermetureTropLongue": "Cette fermeture est plus longue que le maximum permis (Ramadan\u00a0: 20 jours, Aïd al-Adha\u00a0: 10 jours). Raccourcissez-la.",
+        "fermetureCommencee": "Cette fermeture a déjà commencé ou est passée\u00a0: elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.",
+        "fermeturePassee": "Cette fermeture commence avant aujourd'hui\u00a0: elle ne peut pas être publiée. Choisissez une date à partir d'aujourd'hui.",
+        "retraitConflits": "La fermeture n'est pas retirée\u00a0: des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l'enseignant ou confirmez l'abandon de ces séances.",
+        "raccourcissementConflits": "La fermeture n'est pas modifiée\u00a0: des séances mises de côté ne pourraient pas être rétablies. Retirez la fermeture entière ou libérez l'enseignant.",
+        "datesInvalides": "Le dernier jour doit venir après le premier, à moins d'un an.",
+        "porteeInvalide": "Choisissez la tranche d'âge ou la classe visée.",
+        "evenementInvalide": "Le titre manque ou le genre de date est illisible. Vérifiez-les, puis réessayez.",
+        "introuvable": "Cette date n'existe plus. Rechargez la liste.",
+        "nonAutorise": "Seule la direction peut modifier le calendrier.",
+        "inconnu": "L'enregistrement n'est pas confirmé\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+      }
+    },
+    "pauses": {
+      "aTraiter": "Demandes à traiter",
+      "aTraiterIntro": "Ces demandes dépassent le plafond de pauses d'une famille\u00a0: la direction décide. Les autres demandes sont acceptées tout de suite et n'apparaissent pas ici.",
+      "erreur": "Les pauses n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+      "videTitre": "Aucune demande en attente",
+      "videDetail": "Une demande au-delà du plafond apparaîtra ici.",
+      "ligneDescription": "Mois demandé\u00a0: {mois}. Mois déjà accordés\u00a0: {n}.",
+      "repondreAvant": "Répondre avant le {date}",
+      "enRetard": "Délai dépassé",
+      "accepter": "Accepter",
+      "refuser": "Refuser",
+      "refusTitre": "Répondre à la demande",
+      "refusPhrase": "Le motif est obligatoire pour refuser\u00a0; la famille le lit dans l'application.",
+      "refusMotif": "Motif",
+      "refusEnvoyer": "Refuser la pause",
+      "decisionsRecentes": "Décisions récentes",
+      "decisionsVide": "Aucune décision pour le moment.",
+      "statut": {
+        "demandee": "En attente",
+        "acceptee": "Acceptée",
+        "refusee": "Refusée",
+        "annulee": "Annulée"
+      },
+      "periode": "Du {du} au {au}",
+      "typeMois": "Pause d'un mois",
+      "typeException": "Pause d'exception",
+      "accordeePar": "Accordée par {nom}",
+      "motifLigne": "Motif\u00a0: {motif}",
+      "exceptionAction": "Accorder une pause d'exception",
+      "exceptionTitre": "Pause d'exception",
+      "exceptionPhrase": "Pour une maladie soudaine ou une interruption accordée. Elle commence aujourd'hui, sans préavis\u00a0; la date limite de l'étape recule de sa durée\u00a0; elle ne compte pas dans le plafond de la famille.",
+      "exceptionRecherche": "Chercher l'élève par son nom",
+      "exceptionRechercheAide": "Deux lettres au moins.",
+      "exceptionAucun": "Aucun élève trouvé.",
+      "exceptionEleve": "Élève\u00a0: {nom}",
+      "exceptionChanger": "Choisir un autre élève",
+      "exceptionMotif": "Motif",
+      "exceptionDuree": "Elle dure {mois} mois au plus\u00a0; au-delà, vous accordez une nouvelle pause.",
+      "exceptionMotifAide": "Un mot suffit (maladie, interruption). Aucun détail de santé.",
+      "exceptionFin": "Dernier jour de la pause",
+      "exceptionEnregistrer": "Accorder la pause",
+      "terminerAction": "Terminer la pause",
+      "terminerTitre": "Terminer la pause d'exception",
+      "terminerPhrase": "L'élève reprend les cours après le dernier jour choisi. La fin d'origine et votre geste sont gardés\u00a0; les jours déjà passés restent comptés dans la date limite.",
+      "terminerChamp": "Dernier jour de la pause",
+      "terminerEnvoyer": "Terminer la pause",
+      "finInitiale": "Fin d'origine\u00a0: {date}",
+      "termineePar": "Terminée plus tôt par {nom}",
+      "refus": {
+        "motifRequis": "Un motif d'au moins trois lettres est demandé.",
+        "dejaDecidee": "Cette demande a déjà reçu une réponse. Rechargez la liste.",
+        "debutPasse": "Le mois a déjà commencé\u00a0: cette pause ne peut plus être acceptée. Vous pouvez la refuser.",
+        "datesInvalides": "Le dernier jour doit être aujourd'hui ou après, à moins d'un an.",
+        "exceptionTropLongue": "Une pause d'exception dure {mois} mois au plus. Raccourcissez-la\u00a0; vous pourrez en accorder une nouvelle ensuite.",
+        "nonTerminable": "Cette pause est déjà terminée ou n'est pas une pause d'exception.",
+        "eleveIntrouvable": "Cet élève est introuvable.",
+        "nonAutorise": "Seule la direction peut décider d'une pause.",
+        "inconnu": "La décision n'est pas confirmée\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+      }
+    }
+  },
+  "pause": {
+    "titre": "Pause des cours",
+    "entree": "Demander une pause d'un mois",
+    "sousTitre": "Pause {dePrenom}",
+    "indisponible": "Les pauses n'ont pas pu être ouvertes\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "erreur": "Les pauses n'ont pas pu être lues\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+    "regleTitre": "La règle",
+    "regle": {
+      "moisEntier": "Une pause dure un mois civil entier, du premier au dernier jour du mois.",
+      "preavis(plural, param=jours)": {
+        "one": "Vous la demandez au moins {jours} jour avant le début du mois.",
+        "other": "Vous la demandez au moins {jours} jours avant le début du mois."
+      },
+      "plafond(plural, param=delai)": {
+        "one": "Jusqu'à {mois} mois de pause sur {fenetre} mois. Au-delà, la direction décide et répond sous {delai} jour.",
+        "other": "Jusqu'à {mois} mois de pause sur {fenetre} mois. Au-delà, la direction décide et répond sous {delai} jours."
+      },
+      "placeGardee": "Pendant la pause, la place est gardée.",
+      "dateLimite": "La date limite de l'étape recule de la durée de la pause.",
+      "absence": "Une absence de quelques jours reste une absence\u00a0: on ne demande que des mois entiers."
+    },
+    "choisir": "Choisissez le mois",
+    "moisDansRegle": "Acceptée tout de suite",
+    "moisALaDirection(plural, param=delai)": {
+      "one": "La direction répond sous {delai} jour",
+      "other": "La direction répond sous {delai} jours"
+    },
+    "moisDejaDemande": "Déjà demandé",
+    "moisDejaAccepte": "Déjà accepté",
+    "aucunMois": "Aucun mois n'est proposé pour le moment.",
+    "fermeeTitre": "La demande de pause n'est pas ouverte pour le moment",
+    "fermeeDetail": "Pour interrompre les cours, contactez la direction de l'académie.",
+    "choisirPourDemander": "Choisissez un mois pour demander la pause.",
+    "demander": "Demander la pause",
+    "reponse": {
+      "acceptee": "La pause de {mois} est acceptée. La place est gardée et la date limite de l'étape recule d'autant.",
+      "demandee(plural, param=delai)": {
+        "one": "Votre demande est transmise à la direction, qui répond sous {delai} jour.",
+        "other": "Votre demande est transmise à la direction, qui répond sous {delai} jours."
+      }
+    },
+    "demandesTitre": "Les pauses",
+    "demandesVide": "Aucune pause pour le moment.",
+    "statut": {
+      "demandee": "En attente",
+      "acceptee": "Acceptée",
+      "refusee": "Refusée",
+      "annulee": "Annulée"
+    },
+    "periode": "Du {du} au {au}",
+    "reponseAvant": "La direction répond avant le {date}.",
+    "reponseMotif": "Réponse de la direction\u00a0: {motif}",
+    "exceptionAccordee": "Pause accordée par la direction.",
+    "annuler": "Annuler la pause de {mois}",
+    "refus": {
+      "preavis(plural, param=jours)": {
+        "one": "Ce mois commence trop tôt\u00a0: une pause se demande au moins {jours} jour avant son début. Choisissez un mois plus lointain.",
+        "other": "Ce mois commence trop tôt\u00a0: une pause se demande au moins {jours} jours avant son début. Choisissez un mois plus lointain."
+      },
+      "dejaDemandee": "Ce mois est déjà demandé ou accepté.",
+      "moisInvalide": "Ce mois n'est pas lisible. Choisissez un mois dans la liste.",
+      "nonAnnulable": "Cette pause ne peut plus être annulée\u00a0: elle a déjà commencé, ou elle est déjà refusée ou annulée.",
+      "nonAutorise": "Vous ne pouvez pas demander de pause depuis ce compte.",
+      "inconnu": "La demande n'est pas confirmée\u00a0: il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
+    }
   }
 }

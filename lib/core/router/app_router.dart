@@ -74,6 +74,8 @@ import '../../features/admin_pedagogie_bibliotheque/import/import_page.dart'
     deferred as d_import_page;
 import '../../features/admin_pedagogie_bibliotheque/publication/publication_page.dart'
     deferred as d_publication_page;
+import '../../features/admin_pedagogie_calendrier/calendrier_page.dart'
+    deferred as d_calendrier_page;
 import '../../features/admin_pedagogie_diagnostics/diagnostics_page.dart'
     deferred as d_diagnostics_page;
 import '../../features/admin_pedagogie_evaluations/evaluations_page.dart'
@@ -106,6 +108,11 @@ import '../../features/appareils/ajouter_enfant_page.dart';
 import '../../features/appareils/appairage_page.dart';
 import '../../features/appareils/appareils_eleve_page.dart';
 import '../../features/appareils/appareils_page.dart';
+import '../../features/apprendre/routes_apprendre.dart';
+import '../../features/attente_classe/entree_demandes_attente.dart';
+import '../../features/attente_classe/me_presenter_page.dart';
+import '../../features/attente_classe/presentation_familles_page.dart';
+import '../../features/attente_classe/suivi_attente_page.dart';
 import '../../features/avis_public/avis_public_page.dart';
 import '../../features/bienvenue_enseignant/bienvenue_page.dart';
 import '../../features/cahier/cahier_page.dart';
@@ -223,9 +230,12 @@ import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/telephone_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
+import '../../features/inscription/invitation_en_cours.dart'
+    show retenirInvitationDepuisAdresse;
 import '../../features/inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import '../../features/inscription/questionnaire/questionnaire_page.dart';
+import '../../features/journal_sorties/accord_sorties_page.dart';
 import '../../features/journee/journee_page.dart';
 import '../../features/juridique/juridique_pages.dart';
 import '../../features/juridique/textes_juridiques.dart';
@@ -236,6 +246,7 @@ import '../../features/notifications/notifications_page.dart';
 import '../../features/paiements_recus/recevoir_paiements_page.dart';
 import '../../features/parcours_offres/parcours_offres_page.dart';
 import '../../features/partage_offre/partage_offre_page.dart';
+import '../../features/pause_famille/pause_page.dart';
 import '../../features/presentation_tuteur/demandes_presentation_page.dart';
 import '../../features/priere_serveur/lieux_priere_page.dart'
     deferred as d_lieux_priere_page;
@@ -253,7 +264,6 @@ import '../../features/salle/salle_page.dart' deferred as d_salle_page;
 import '../../features/salle_seance/portee_outils_salle.dart';
 import '../../features/suivi_demandes/changement_classe_page.dart';
 import '../../features/suivi_eleve/suivi_eleve_page.dart';
-import '../../features/suivi_famille/suivi_famille_page.dart';
 import '../../features/suivi_foyer/detail_observations_page.dart';
 import '../../features/suivi_foyer/detail_seance_page.dart';
 import '../../features/suivi_foyer/observations_page.dart';
@@ -264,6 +274,7 @@ import '../../features/tc_mes_groupes/routes_tc_a.dart';
 import '../../features/tc_mushaf/mushaf_page.dart' deferred as d_mushaf_page;
 import '../../features/tc_mushaf/routes_tc_c.dart';
 import '../../features/tc_observation_ui/routes_tc_g.dart';
+import '../../features/ville/ville_page.dart';
 import '../accessibilite/mode_accessibilite.dart';
 import '../admin/admin_domaine.dart';
 import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
@@ -285,6 +296,7 @@ import '../fraicheur/relecture_page.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../import_inscriptions/accueil_inscrits.dart';
+import '../lieu/lieu.dart';
 import '../mouvement/transitions.dart';
 import '../recherche/controleur_recherche.dart';
 import '../recherche/modeles_recherche.dart';
@@ -326,6 +338,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_beneficiaires_page', d_beneficiaires_page.loadLibrary),
   ('d_candidature_page', d_candidature_page.loadLibrary),
   ('d_creneaux_entretien_page', d_creneaux_entretien_page.loadLibrary),
+  ('d_calendrier_page', d_calendrier_page.loadLibrary),
   ('d_candidatures_page', d_candidatures_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
@@ -428,6 +441,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
     rafraichisseur.declencher();
   });
 
+  // HORLOGE-ET-LIEU (partie B) : l'etape de la ville se decide apres la
+  // session (lecture serveur) ; le routeur se reveille quand elle change.
+  ref.listen<bool>(villeAFournirProvider, (bool? _, bool _) {
+    rafraichisseur.declencher();
+  });
+
   // Lu une fois, a la construction du routeur : un role ne change pas sans
   // reconnexion, qui recree ce provider. `routesTcA` n'en a besoin que pour
   // distinguer l'affichage eleve/tuteur au sein de l'Espace Groupe -- la
@@ -435,6 +454,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   final RoleEspaceGroupe sessionRole = _roleEspaceGroupePour(
     ref.read(sessionProvider).role,
   );
+
+  // INVITATION-ENSEIGNANT-REPARE (14/11/2026) : le code d'un lien d'invitation
+  // est retenu des l'ouverture de l'application, avant toute redirection (une
+  // session deja ouverte, un retour a la connexion simple) : la creation du
+  // compte le retrouve, la fonction `invitation-compte` est appelee avec lui.
+  retenirInvitationDepuisAdresse(Uri.base);
 
   return GoRouter(
     initialLocation: Routes.racine,
@@ -455,6 +480,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         resignatureContrat: ref.read(resignatureContratEnseignantProvider),
         atterrissageAdulte: ref.read(atterrissageAdulteProvider),
         accueilInscrits: ref.read(accueilInscritsEnAttenteProvider),
+        villeAFournir: ref.read(villeAFournirProvider),
       );
     },
     // Un chemin qu'aucune route ne sert : une page d'etat dans la charte, qui
@@ -768,6 +794,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         builder: (BuildContext _, GoRouterState _) =>
             const _CoquilleSecondaire(child: MesDonneesPage()),
       ),
+      // HORS-SALLE-2 : l'accord de l'eleve adulte au journal des sorties.
+      GoRouteSure(
+        path: Routes.compteSorties,
+        builder: (BuildContext context, GoRouterState _) => _CoquilleSecondaire(
+          child: AccordSortiesPage(
+            onRetour: () => GoRouter.of(context).go(Routes.compte),
+          ),
+        ),
+      ),
       GoRouteSure(
         path: Routes.compteProfils,
         redirect: (BuildContext _, GoRouterState _) => Routes.compte,
@@ -832,6 +867,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       onRetour: () => GoRouter.of(contexte).go(Routes.eleve),
                     ),
               ),
+              // SUIVI-ATTENTE : le suivi de l'attente, version simple, de l'eleve
+              // mineur dans son espace (sa propre route, sans le redirect de
+              // l'Accueil).
+              GoRouteSure(
+                path: '${Routes.eleveAttente}/:demandeId',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    SuiviAttentePage(
+                      demandeId: _parametre(etat, 'demandeId'),
+                      chemins: CheminsAttente.enfant,
+                    ),
+              ),
               // --- DASH-EA-PROD : Accueil adulte et historique -------------
               // Dans la branche Accueil : la destination reste allumee.
               ...routesAccueilAdulte(),
@@ -844,11 +890,28 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.eleveSuivi,
                 builder: (BuildContext _, GoRouterState _) =>
                     const SuiviElevePage(),
+                routes: <RouteBase>[
+                  // CALENDRIER-ET-PAUSES (12/11/2026) : la demande de pause de
+                  // l'eleve adulte ; un enfant en est renvoye au Suivi.
+                  GoRouteSure(
+                    path: 'pause',
+                    redirect: (BuildContext _, GoRouterState _) =>
+                        ref.read(sessionProvider).barreEleveAdulte
+                        ? null
+                        : Routes.eleveSuivi,
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PausePage(),
+                  ),
+                ],
               ),
             ],
           ),
           StatefulShellBranch(
             routes: <GoRoute>[
+              // ESPACE-APPRENDRE (lot 5) : l'espace a trois onglets, premiere
+              // route de la branche donc destination de la barre ; le Coran
+              // s'ouvre depuis la carte « Coran » de sa Bibliotheque.
+              ...routesApprendre(),
               GoRouteSure(
                 path: Routes.eleveCoran,
                 // Pointe sur le nouveau moteur Mushaf (Teaching Core, lot C) :
@@ -981,6 +1044,16 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState _) => const NotificationsPage(),
                     ),
                   ),
+                  // SUIVI-ATTENTE : le suivi de l'attente de la classe d'un enfant.
+                  GoRouteSure(
+                    path: 'attente/:demandeId',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) => SuiviAttentePage(
+                        demandeId: _parametre(etat, 'demandeId'),
+                        chemins: CheminsAttente.tuteur,
+                      ),
+                    ),
+                  ),
                   GoRouteSure(
                     path: 'presentation',
                     pageBuilder: glissee(
@@ -990,14 +1063,23 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                   GoRouteSure(
                     path: 'demandes',
                     pageBuilder: glissee(
-                      (GoRouterState _) => const SuiviDemandesEntree(),
+                      // SUIVI-ATTENTE : un seul suivi en cours, l'adresse des
+                      // notifications ouvre le suivi ; sinon la liste.
+                      (GoRouterState etat) => EntreeDemandesAttente(
+                        // Le detail d'une demande empile cette page sous lui :
+                        // seule l'adresse de la liste elle-meme redirige.
+                        redirige: etat.uri.path == Routes.tuteurDemandes,
+                      ),
                     ),
                     routes: <RouteBase>[
                       GoRouteSure(
                         path: ':demandeId',
                         pageBuilder: glissee(
-                          (GoRouterState etat) => FriseDemandePage(
+                          // SUIVI-ATTENTE : un seul ecran de suivi ; l'ancienne
+                          // frise reste le repli sans port.
+                          (GoRouterState etat) => DetailDemandeEntree(
                             demandeId: _parametre(etat, 'demandeId'),
+                            attente: CheminsAttente.tuteur,
                           ),
                         ),
                       ),
@@ -1342,6 +1424,15 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       (GoRouterState _) => const ObservationsPage(),
                     ),
                   ),
+                  // CALENDRIER-ET-PAUSES (12/11/2026) : la demande de pause
+                  // pour l'enfant choisi (?eleve=).
+                  GoRouteSure(
+                    path: 'pause',
+                    pageBuilder: glissee(
+                      (GoRouterState etat) =>
+                          PausePage(eleveId: etat.uri.queryParameters['eleve']),
+                    ),
+                  ),
                 ],
               ),
               GoRouteSure(
@@ -1438,6 +1529,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                     path: 'consentements',
                     pageBuilder: glissee(
                       (GoRouterState _) => const ConsentementObservationPage(),
+                    ),
+                  ),
+                  // HORS-SALLE-2 : l'accord du journal des sorties, par
+                  // enfant.
+                  GoRouteSure(
+                    path: 'sorties',
+                    pageBuilder: glissee(
+                      (GoRouterState _) => const AccordSortiesPage(),
                     ),
                   ),
                   GoRouteSure(
@@ -1539,6 +1638,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 path: Routes.enseignantClasses,
                 builder: (BuildContext _, GoRouterState _) =>
                     const MesClassesPage(),
+                routes: <RouteBase>[
+                  // SUIVI-ATTENTE : « Me presenter aux familles ».
+                  GoRouteSure(
+                    path: ':groupeId/presentation',
+                    builder: (BuildContext _, GoRouterState etat) =>
+                        MePresenterPage(groupeId: _parametre(etat, 'groupeId')),
+                  ),
+                ],
               ),
             ],
           ),
@@ -1580,6 +1687,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                 // pages du titulaire du compte, communes au tuteur ; le
                 // retour ramene au Compte de l'enseignant.
                 routes: <RouteBase>[
+                  // SUIVI-ATTENTE : ce que les familles voient de l'enseignant.
+                  GoRouteSure(
+                    path: 'presentation',
+                    builder: (BuildContext _, GoRouterState _) =>
+                        const PresentationFamillesPage(),
+                  ),
                   GoRouteSure(
                     path: 'informations',
                     builder: (BuildContext contexte, GoRouterState _) =>
@@ -1658,6 +1771,11 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRouteSure(
         path: Routes.enseignantContrat,
         builder: (BuildContext _, GoRouterState _) => const ContratPage(),
+      ),
+      // HORLOGE-ET-LIEU (partie B) : la ville du tuteur et de l'enseignant.
+      GoRouteSure(
+        path: Routes.ville,
+        builder: (BuildContext _, GoRouterState _) => const VillePage(),
       ),
       GoRouteSure(
         path: '${Routes.enseignantSeance}/:seanceId/cahier',
@@ -2290,6 +2408,17 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_evaluations_page',
             charger: d_evaluations_page.loadLibrary,
             construire: () => d_evaluations_page.EvaluationsPage(),
+          ),
+        ),
+      ),
+      GoRouteSure(
+        path: Routes.adminPedagogieCalendrier,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.pedagogie,
+          child: PageDifferee(
+            cle: 'd_calendrier_page',
+            charger: d_calendrier_page.loadLibrary,
+            construire: () => d_calendrier_page.CalendrierPage(),
           ),
         ),
       ),
@@ -3446,9 +3575,16 @@ class _CoquilleNavigation extends ConsumerWidget {
             // Foyer ouvre TOUJOURS la liste des profils. Sans cela, `goBranch`
             // rendait la derniere page de la branche, et le parcours d'un profil
             // (tache de la branche Foyer) revenait a la place de la liste.
+            //
+            // ESPACE-APPRENDRE (lot 5, 12/11/2026) : de meme pour Apprendre. Le
+            // Coran s'ouvre depuis la Bibliotheque, dans la meme branche ; sans
+            // cela, toucher Apprendre depuis un autre onglet rendait la
+            // derniere page de la branche (le lecteur du Coran) au lieu de
+            // l'espace a trois onglets.
             initialLocation:
                 index == navigationShell.currentIndex ||
-                destination == Routes.tuteurFoyer,
+                destination == Routes.tuteurFoyer ||
+                destination == Routes.eleveApprendre,
           );
         },
         secondaires: secondairesPour(role: role),

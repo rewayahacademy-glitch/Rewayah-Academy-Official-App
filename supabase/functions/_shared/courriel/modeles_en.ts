@@ -2,8 +2,9 @@
 // (`modeles_fr.ts`) ; memes liens, memes boutons. Competence `mots-rewayah`.
 
 import { APP } from './gabarit.ts'
+import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from './outils.ts'
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
-  precisions, type Precisions } from './outils.ts'
+  precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
 
 const PAROLE: Parole = {
@@ -34,6 +35,28 @@ const RAISON: Record<string, string> = {
   nouvelles: 'You are receiving this e-mail because you follow the news from Rewayah Academy.',
 }
 
+export const MOTS_CHANGEMENT_HEURE_EN: MotsChangementHeure = {
+  locale: 'en-GB',
+  un: (date, jour, avant, apres, foyer) => `From ${date}, ${foyer ? 'the class session' : 'your class'} on ${jour} moves from ${avant} to ${apres}.`,
+  plusieurs: (date, liste, foyer) => `From ${date}, the time of ${foyer ? 'the class sessions' : 'your classes'} changes: ${liste}.`,
+  ligne: (jour, avant, apres) => `${jour}, from ${avant} to ${apres}`,
+  unJour: (date, ja, avant, jb, apres, foyer) => `From ${date}, ${foyer ? 'the class session' : 'your class'} moves from ${ja} ${avant} to ${jb} ${apres}.`,
+  ligneJour: (ja, avant, jb, apres) => `from ${ja} ${avant} to ${jb} ${apres}`,
+  mecque: 'The class stays at the same time in Mecca: it is the time in your city that changes.',
+  separateur: '; ',
+}
+
+/// Avis a la direction : une classe que la tache de nuit refuse de convertir
+/// (HORLOGE-ET-LIEU, I5). Cause fermee, jamais le texte SQL ni un identifiant.
+export const MOTS_CONVERSION_REFUSEE_EN: MotsConversionRefusee = {
+  sujet: 'A class could not move to Mecca time',
+  phrase: (classe, cause) => {
+    const raison = { proche: 'a clock change is less than 28 days away', demi_heure: 'one of its slots has no whole hour in Mecca', autre: 'a check failed, please look at the class' }[cause]
+    return classe ? `The class ${classe} could not move to Mecca time: ${raison}. No schedule has changed; it will be tried again tonight.` : 'A class could not move to Mecca time. No schedule has changed; it will be tried again tonight.'
+  },
+  bouton: 'View the schedule',
+}
+
 const MODELES: Record<string, Fabrique> = {
   demande_recue: (d) => avis(d, 'We have received your request', 'We have received your request',
     'We have received your request for a time slot. The management is reviewing it and will reply in the app.',
@@ -44,9 +67,39 @@ const MODELES: Record<string, Fabrique> = {
   classe_validee: (d) => avis(d, 'Your class is ready', 'Your class is ready',
     'The class matching your request is ready. A teacher still has to be assigned to it; you will be notified.',
     'View the class', '/tuteur/demandes'),
-  enseignant_affecte: (d) => avis(d, 'A teacher has been assigned to the class', 'Your class has a teacher',
+  // SUIVI-ATTENTE (12/11/2026) : courriel de l'enseignant a l'affectation.
+  enseignant_affecte: (d) => {
+    if (d.portee === 'classe') {
+      const P = PRECISIONS_EN
+      const n = Number(d.eleves_n)
+      const tranche = d.public === 'adulte' ? 'adults' : d.public === 'enfant' ? 'children' : ''
+      const eleves = Number.isInteger(n) && n > 0 ? `Students: ${n}${tranche ? ` (${tranche})` : ''}.` : ''
+      const q = quandSeance(d, P.locale, P.a)
+      const detail = [typeof d.classe === 'string' && d.classe ? P.classe(d.classe) : '', eleves, q ? `First class: ${q}.` : ''].filter(Boolean).join(' ')
+      return avis(d, 'A class is entrusted to you', 'A class is entrusted to you',
+        avec('A class is entrusted to you.', detail)
+          + ' Introduce yourself to the families from the app: a message is already written, and you can edit it.',
+        'Introduce myself', '/enseignant/classes')
+    }
+    return avis(d, 'A teacher has been assigned to the class', 'Your class has a teacher',
     'A teacher has been assigned to the class. You will find their name and the schedule in the app.',
-    'View the class', '/tuteur/demandes'),
+    'View the class', '/tuteur/demandes')
+  },
+  // SUIVI-ATTENTE (12/11/2026): "Everything is ready" (step 5), to the family or the adult
+  // student, never to a child.
+  tout_est_pret: (d) => {
+    const P = PRECISIONS_EN
+    if (d.portee === 'soi') {
+      return avis(d, 'Everything is ready for your first class', 'Everything is ready',
+        avec('Everything is ready: your class, your teacher and your schedule are confirmed.', precisions(d, P, { premiere: true }))
+          + ' You can follow it in the app.',
+        'See the tracking', '/eleve')
+    }
+    return avis(d, 'Everything is ready for the first class', 'Everything is ready',
+      avec('Everything is ready: the class, the teacher and the schedule are confirmed.', precisions(d, P, { premiere: true }))
+        + ' You can follow it in the app.',
+      'See the tracking', '/tuteur/demandes')
+  },
   demande_close: (d) => avis(d, 'Your request has been closed', 'Your request has been closed',
     'Your time slot request has been closed. The management’s reply is in the app.',
     'Read the reply', '/tuteur/demandes'),
@@ -86,9 +139,23 @@ const MODELES: Record<string, Fabrique> = {
   eleve_retire: (d) => avis(d, 'A student leaves your class', 'A student leaves your class',
     'A student leaves your class. The updated list is in the app.',
     'View my classes', '/enseignant/classes'),
-  creneau_change: (d) => avis(d, 'The class schedule is changing', 'The class schedule is changing',
-    'The class schedule is changing. The new schedule is in the app.',
-    'View the new schedule', '/tuteur'),
+  creneau_change: (d) => {
+    // I5 (13/11/2026) : l'avis de la direction n'est pas celui d'une famille.
+    const cause = causeConversionRefusee(d)
+    if (cause) {
+      return avis(d, MOTS_CONVERSION_REFUSEE_EN.sujet, MOTS_CONVERSION_REFUSEE_EN.sujet,
+        MOTS_CONVERSION_REFUSEE_EN.phrase(nomClasse(d), cause), MOTS_CONVERSION_REFUSEE_EN.bouton,
+        '/admin/operations/planning')
+    }
+    const annonce = phraseChangementHeure(d, MOTS_CHANGEMENT_HEURE_EN)
+    if (annonce) {
+      return avis(d, 'The time of your class changes', 'The time of your class changes', annonce,
+        'View my schedule', '/tuteur')
+    }
+    return avis(d, 'The class schedule is changing', 'The class schedule is changing',
+      'The class schedule is changing. The new schedule is in the app.',
+      'View the new schedule', '/tuteur')
+  },
   seance_annulee: (d) => {
     const quand = quandSeance(d, 'en-GB', 'at')
     return avis(d, 'A session is cancelled', 'A session is cancelled',

@@ -60,6 +60,7 @@ String phraseRefusNouvelleDate(NouvelleDateRefusee refus) {
     MotifNouvelleDateRefusee.datePassee => p.refusDatePassee,
     MotifNouvelleDateRefusee.dejaFixee => p.refusDejaFixee,
     MotifNouvelleDateRefusee.classeClose => p.refusClasseClose,
+    MotifNouvelleDateRefusee.jourFerme => t.calendrier.refusNouvelleDateFermee,
     MotifNouvelleDateRefusee.nonAutorisee => p.refusNonAutorisee,
     MotifNouvelleDateRefusee.inconnu => p.erreur,
   };

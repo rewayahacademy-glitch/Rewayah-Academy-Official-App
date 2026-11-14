@@ -24,7 +24,10 @@ class CreneauxClasseSupabase implements ServiceCreneauxClasse {
       return await appel();
     } on PostgrestException catch (e) {
       final String message = e.message;
-      final MotifRefusCreneau? geste = message.startsWith('DernierCreneau')
+      final MotifRefusCreneau? geste =
+          message.startsWith('RechargerPourModifier')
+          ? MotifRefusCreneau.rechargerApplication
+          : message.startsWith('DernierCreneau')
           ? MotifRefusCreneau.dernier
           : message.startsWith('CreneauExistant')
           ? MotifRefusCreneau.existant
@@ -43,12 +46,40 @@ class CreneauxClasseSupabase implements ServiceCreneauxClasse {
     }
   }
 
+  /// PGRST202 et 42883 : la fonction n'est pas encore installee sur le serveur.
+  static bool _absente(PostgrestException e) =>
+      e.code == 'PGRST202' || e.code == '42883';
+
   @override
   Future<int> ajouter({
     required String groupeId,
     required int jour,
     required int heure,
+    String? fuseau,
+    String? fuseauClasse,
   }) => _traduire<int>(() async {
+    if (fuseau != null) {
+      try {
+        final int? n = await _client.rpc<int?>(
+          'ajouter_creneau_classe_fuseau',
+          params: <String, dynamic>{
+            'p_groupe_id': groupeId,
+            'p_weekday': jour,
+            'p_hour_local': heure,
+            'p_duree_minutes': null,
+            'p_fuseau': fuseau,
+          },
+        );
+        return n ?? 0;
+      } on PostgrestException catch (e) {
+        if (!_absente(e)) rethrow;
+        // Serveur pas encore a jour : l'ancienne fonction lit l'heure dans le
+        // fuseau de la Classe ; elle n'est appelee que si c'est le fuseau saisi.
+        if (fuseauClasse != null && fuseau != fuseauClasse) {
+          throw const CreneauRefuse(MotifRefusCreneau.conversionIndisponible);
+        }
+      }
+    }
     final int? n = await _client.rpc<int?>(
       'ajouter_creneau_classe_admin',
       params: <String, dynamic>{
@@ -84,7 +115,35 @@ class CreneauxClasseSupabase implements ServiceCreneauxClasse {
     required CreneauClasse ancien,
     required CreneauClasse nouveau,
     required String motif,
+    String? fuseau,
+    String? fuseauClasse,
   }) => _traduire<int>(() async {
+    if (fuseau != null) {
+      try {
+        final int? n = await _client.rpc<int?>(
+          'modifier_creneau_classe_fuseau',
+          params: <String, dynamic>{
+            'p_groupe_id': groupeId,
+            'p_weekday': ancien.jour,
+            'p_hour_local': ancien.heure,
+            'p_nouveau_weekday': nouveau.jour,
+            'p_nouvelle_heure': nouveau.heure,
+            'p_nouvelle_duree': nouveau.duree,
+            'p_motif': motif,
+            'p_fuseau': fuseau,
+          },
+        );
+        return n ?? 0;
+      } on PostgrestException catch (e) {
+        if (!_absente(e)) rethrow;
+        // La duree seule ne deplace aucune heure : l'ancienne fonction sait.
+        final bool memeHeure =
+            ancien.jour == nouveau.jour && ancien.heure == nouveau.heure;
+        if (!memeHeure && fuseauClasse != null && fuseau != fuseauClasse) {
+          throw const CreneauRefuse(MotifRefusCreneau.conversionIndisponible);
+        }
+      }
+    }
     final int? n = await _client.rpc<int?>(
       'modifier_creneau_classe_admin',
       params: <String, dynamic>{

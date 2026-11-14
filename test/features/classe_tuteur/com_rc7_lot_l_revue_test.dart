@@ -151,6 +151,7 @@ void main() {
     // La bibliotheque arabe est differee : chargee une fois hors du
     // `FakeAsync` des tests, pour que `setLocaleSync` la trouve.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 

@@ -21,6 +21,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/controle_anti_robot.dart';
 import '../../core/widgets/controle_segmente.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
 import '../inscription/invitation_en_cours.dart';
@@ -172,15 +173,51 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// compte de l'adresse invitee, et seulement elle.
   InvitationDansAdresse? _invitation;
 
+  /// INVITATION-ENSEIGNANT-REPARE (14/11/2026) : sans code dans l'adresse, le
+  /// visiteur saisit le sien ici : avant la connexion, aucun autre ecran ne
+  /// l'accepte (la route du code est reservee aux comptes connectes).
+  final TextEditingController _code = TextEditingController();
+  bool _codeOuvert = false;
+
+  /// L'invitation prise en compte : celle de l'adresse, sinon le code saisi
+  /// (type equipe : le serveur dit lui-meme enseignant ou comptable).
+  InvitationDansAdresse? get _invitationRetenue {
+    final InvitationDansAdresse? dansAdresse = _invitation;
+    if (dansAdresse != null) return dansAdresse;
+    if (_mode != ModeConnexion.creation) return null;
+    final String code = _code.text.trim().isNotEmpty
+        ? _code.text.trim()
+        : (_codeRetenu ?? '');
+    if (code.isEmpty) return null;
+    return InvitationDansAdresse(type: TypeInvitationCompte.equipe, code: code);
+  }
+
+  /// Le code d'un lien d'invitation ouvert plus tot sur cet appareil (retenu
+  /// des l'ouverture de l'application, meme si l'adresse a change depuis :
+  /// session deja ouverte, retour a la connexion simple).
+  String? get _codeRetenu => lireInvitationEnCours()?.code;
+
   /// La phrase d'un envoi manque. Le lien d'une invitation de foyer dont le
   /// compte n'a pas pu etre cree (code deja utilise, echec de la creation :
   /// l'instance refuse alors l'inscription) dit quoi faire : demander un
   /// renvoi a la personne qui invite (seconde lecture, 07/11/2026).
   String _phraseEchec(Object erreur) {
     final IssueEnvoiLien issue = issueEchecEnvoi(erreur);
-    if (issue == IssueEnvoiLien.inscriptionFermee &&
-        _invitation?.type == TypeInvitationCompte.foyer) {
-      return t.connexion.invitationFoyer.creationImpossible;
+    // Une invitation dont l'adresse reste tenue par un compte supprime (la
+    // liberation n'a pas abouti) : le serveur refuse l'envoi (`user_banned`).
+    if (erreur is AuthException &&
+        erreur.code == 'user_banned' &&
+        _invitationRetenue != null) {
+      return t.connexion.invitationCreationImpossible;
+    }
+    if (issue == IssueEnvoiLien.inscriptionFermee) {
+      final TypeInvitationCompte? type = _invitationRetenue?.type;
+      if (type == TypeInvitationCompte.foyer) {
+        return t.connexion.invitationFoyer.creationImpossible;
+      }
+      // Equipe ou candidat : la creation du compte a echoue (code echu, deja
+      // utilise, autre adresse) ; on le dit, avec quoi faire (K-59).
+      if (type != null) return t.connexion.invitationCreationImpossible;
     }
     return phraseEchecEnvoi(issue);
   }
@@ -188,8 +225,13 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// Demande la creation du compte de l'adresse saisie, si le lien porte une
   /// invitation. Ne leve jamais : le lien part ensuite dans tous les cas.
   Future<void> _ouvrirCompteInvite() async {
-    final InvitationDansAdresse? invitation = _invitation;
+    final InvitationDansAdresse? invitation = _invitationRetenue;
     if (invitation == null) return;
+    if (_invitation == null && _code.text.trim().isNotEmpty) {
+      // Le code saisi suit le meme chemin que celui du lien : il reste retenu
+      // sur cet appareil pour l'inscription qui suit le lien de connexion.
+      retenirInvitationEnCours(code: invitation.code, candidature: false);
+    }
     await ref
         .read(portInvitationCompteProvider)
         .ouvrir(invitation, _courriel.text);
@@ -230,6 +272,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   @override
   void dispose() {
     _courriel.dispose();
+    _code.dispose();
     _motDePasse.dispose();
     _controle.dispose();
     super.dispose();
@@ -470,6 +513,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               motDePasse: _motDePasse,
               demo: _demo,
               mode: _mode,
+              codeDansAdresse: _invitation?.code ?? _codeRetenu,
+              code: _code,
+              codeOuvert: _codeOuvert,
+              onOuvrirCode: () => setState(() => _codeOuvert = true),
               onMode: (ModeConnexion m) {
                 // Admission, lot B : creer un compte commence par le
                 // questionnaire (fiche du 29/10, « compte en dernier »).
@@ -561,6 +608,10 @@ class _Saisie extends StatelessWidget {
     required this.motDePasse,
     required this.demo,
     required this.mode,
+    required this.codeDansAdresse,
+    required this.code,
+    required this.codeOuvert,
+    required this.onOuvrirCode,
     required this.onMode,
     required this.erreur,
     required this.envoi,
@@ -586,6 +637,14 @@ class _Saisie extends StatelessWidget {
   final TextEditingController motDePasse;
   final bool demo;
   final ModeConnexion mode;
+
+  /// Le code d'invitation que l'adresse porte deja, ou nul.
+  final String? codeDansAdresse;
+
+  /// Le champ du code saisi, quand l'adresse n'en porte pas.
+  final TextEditingController code;
+  final bool codeOuvert;
+  final VoidCallback onOuvrirCode;
   final ValueChanged<ModeConnexion> onMode;
   final String? erreur;
   final bool envoi;
@@ -691,6 +750,41 @@ class _Saisie extends StatelessWidget {
           clavier: TextInputType.emailAddress,
           autofill: const <String>[AutofillHints.email],
         ),
+        // INVITATION-ENSEIGNANT-REPARE : le code d'invitation a une place. Pris
+        // dans l'adresse, il se dit ; sinon un lien ouvre son champ.
+        if (creation && codeDansAdresse != null) ...<Widget>[
+          Ecart.vSm,
+          Text(
+            t.connexion.codeInvitationReconnu(
+              code: codeDansAdresse!.trim().toUpperCase(),
+            ),
+            key: const ValueKey<String>('connexion-code-reconnu'),
+            style: palette.inkMuted.applyTo(
+              textes.bodySmall ?? const TextStyle(),
+            ),
+          ),
+        ] else if (creation && codeOuvert) ...<Widget>[
+          Ecart.vMd,
+          ChampEntree(
+            cle: 'connexion-code-invitation',
+            etiquette: t.connexion.codeInvitation,
+            indice: t.connexion.codeInvitationIndice,
+            controleur: code,
+            erreur: null,
+            onChanged: onChanged,
+            onSoumettre: demo ? null : onSoumettre,
+            clavier: TextInputType.text,
+            autofill: const <String>[],
+          ),
+        ] else if (creation) ...<Widget>[
+          Ecart.vSm,
+          LienFleche(
+            key: const ValueKey<String>('connexion-code-lien'),
+            libelle: t.connexion.avoirCodeInvitation,
+            onPress: onOuvrirCode,
+            alignerEnDebut: true,
+          ),
+        ],
         if (demo) ...<Widget>[
           Ecart.vMd,
           ChampEntree(

@@ -292,6 +292,7 @@ void main() {
   setUpAll(() async {
     await chargerPolicesDuDepot();
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 
@@ -311,7 +312,9 @@ void main() {
     expect(isolerSiAutreSens('60 %', TextDirection.rtl), '60 %');
   });
 
-  for (final AppLocale langue in AppLocale.values) {
+  // Ces textes sont verifies en francais et en arabe (l anglais a ses propres
+  // tests : test/i18n/en_parcours_test.dart).
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     final String cas = '320 px x2, ${langue.languageCode}';
 
     testWidgets(

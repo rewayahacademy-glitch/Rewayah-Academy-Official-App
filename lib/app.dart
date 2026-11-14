@@ -22,6 +22,7 @@ import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
 import 'core/widgets/selection_racine.dart';
 import 'features/salle_seance/barre_seance_en_direct.dart';
+import 'features/salle_seance/hors_salle.dart';
 
 /// Racine de l'application.
 ///
@@ -122,6 +123,11 @@ class RewayahApp extends ConsumerWidget {
                   const BandeauInvitationPush(),
                   if (observation != null)
                     BandeauObservation(observation: observation),
+                  // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le son
+                  // bloque, salle reduite ; l'eleve sorti pendant son absence
+                  // hors de l'application retrouve l'ecran du retour.
+                  BandeauSonBloqueHorsSalle(routeur: routeur),
+                  RetourHorsApplication(routeur: routeur),
                   // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
                   // relire au retour sur un onglet ou dans l'application.
                   // Directeur, 31/10/2026 : « Seance toujours en direct » sur

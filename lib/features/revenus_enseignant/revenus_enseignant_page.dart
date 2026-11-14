@@ -431,6 +431,17 @@ class _Resume extends StatelessWidget {
             valeurForte: true,
             valeurEnFin: true,
           ),
+          // REVENUS-DUREE-PAYEE : des seances comptees faute de mieux au
+          // temps de connexion : dit, jamais une duree inventee.
+          if (revenus.seancesSansDureePayee case final int n
+              when n > 0) ...<Widget>[
+            Ecart.vXs,
+            Text(
+              t.enseignant.revenus.sansDureePayee(n: n),
+              key: const ValueKey<String>('revenus-sans-duree-payee'),
+              style: attenue,
+            ),
+          ],
           if (revenus.versement case final FenetreVersement v)
             LigneCleValeur(
               key: RevenusEnseignantPage.versementKey,
@@ -758,12 +769,27 @@ class _SectionSeance extends StatelessWidget {
           ),
         ],
         Ecart.vXs,
+        // REVENUS-DUREE-PAYEE : la duree PAYEE dite par le serveur ; sans
+        // elle, une phrase qui renvoie au releve de l'academie (jamais les
+        // minutes connectees presentees comme payees). Les minutes
+        // connectees dans la fenetre viennent en second.
         LigneCleValeur(
+          key: ValueKey<String>('revenus-duree-payee-${seance.seanceId}'),
           cle: r.seanceDuree,
-          valeur: _duree(seance.minutes),
-          chiffres: true,
+          valeur: seance.minutesPayees == null
+              ? r.seanceDureeNonPrecisee
+              : _duree(seance.minutesPayees!),
+          chiffres: seance.minutesPayees != null,
           valeurEnFin: true,
         ),
+        if (seance.minutesConnectees != null)
+          LigneCleValeur(
+            key: ValueKey<String>('revenus-connecte-${seance.seanceId}'),
+            cle: r.seanceConnecte,
+            valeur: _duree(seance.minutesConnectees!),
+            chiffres: true,
+            valeurEnFin: true,
+          ),
         for (final RevenusEleveSeance e in seance.eleves)
           // Une part seulement quand la seance a un montant : un absent, ou
           // une seance sans montant, n'affiche aucun montant.

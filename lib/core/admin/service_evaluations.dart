@@ -121,9 +121,7 @@ class EvaluationAdmin {
         datePrevue:
             DateTime.tryParse(json['date_prevue'] as String? ?? '') ??
             DateTime.now(),
-        dateRealisee: DateTime.tryParse(
-          json['date_realisee'] as String? ?? '',
-        ),
+        dateRealisee: DateTime.tryParse(json['date_realisee'] as String? ?? ''),
         resultat: ResultatEvaluation.depuisSql(json['resultat'] as String?),
         notes: json['notes'] as String?,
       );
@@ -257,16 +255,14 @@ class ServiceEvaluationsSupabase implements ServiceEvaluations {
   );
 
   @override
-  Future<void> annuler({
-    required String evaluationId,
-    required String motif,
-  }) => _client.rpc<void>(
-    'annuler_evaluation',
-    params: <String, dynamic>{
-      'p_evaluation_id': evaluationId,
-      'p_motif': motif,
-    },
-  );
+  Future<void> annuler({required String evaluationId, required String motif}) =>
+      _client.rpc<void>(
+        'annuler_evaluation',
+        params: <String, dynamic>{
+          'p_evaluation_id': evaluationId,
+          'p_motif': motif,
+        },
+      );
 }
 
 /// Le service des evaluations employe par l'application.

@@ -308,9 +308,10 @@ class ServiceJournalSupabase implements ServiceJournal {
 }
 
 /// Le service de journal employe par l'application.
-final Provider<ServiceJournal> serviceJournalProvider = Provider<ServiceJournal>(
-  (Ref ref) => ServiceJournalSupabase(Supabase.instance.client),
-);
+final Provider<ServiceJournal> serviceJournalProvider =
+    Provider<ServiceJournal>(
+      (Ref ref) => ServiceJournalSupabase(Supabase.instance.client),
+    );
 
 /// Les filtres de `ADM-04`.
 final FutureProvider<FiltresJournal> filtresJournalProvider =

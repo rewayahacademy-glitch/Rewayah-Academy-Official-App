@@ -12,6 +12,7 @@ import '../../core/offres/offre_horaire.dart';
 import '../../core/offres/service_offres.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/apercu_offre.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -975,7 +976,7 @@ class _CarteOffre extends ConsumerWidget {
             ),
           );
 
-    return ScheduleOption(
+    final ScheduleOption carte = ScheduleOption(
       day: libelleJours(offre.creneaux),
       hours: libelleHeures(offre.creneaux),
       // L'ecart d'heure est EXPLIQUE plutot que subi : une famille de Conakry
@@ -990,6 +991,15 @@ class _CarteOffre extends ConsumerWidget {
       selected: offre.dejaChoisie,
       enabled: onChoisir != null && !offre.dejaChoisie,
       onSelected: onChoisir,
+    );
+    // HORLOGE-ET-LIEU : ce que devient l'heure du cours chez la famille au
+    // prochain changement d'heure. Rien quand elle ne change jamais.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        carte,
+        LigneApercuOffre(offreId: offre.id, fuseau: fuseauVu),
+      ],
     );
   }
 }

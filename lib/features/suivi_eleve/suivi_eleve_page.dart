@@ -27,6 +27,7 @@ import '../../core/widgets/pastille_etat_seance.dart';
 import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import '../pause_famille/entree_pause.dart';
 import '../suivi_foyer/carte_messages_academie.dart';
 import '../suivi_foyer/carte_suivi_pedagogique.dart';
 import '../suivi_foyer/filtres_historique.dart' show libelleStatut, statutDe;
@@ -159,9 +160,14 @@ class _Corps extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026).
-        EntreeBibliothequeMaClasse(),
+        // La Bibliotheque en tete de « Ma classe » (garde-cap, 11/11/2026) :
+        // un raccourci vers l'espace Apprendre (lot 5), qui n'a qu'une
+        // Bibliotheque.
+        EntreeBibliothequeMaClasse(chemin: Routes.eleveApprendre),
         CarteSuiviPedagogique(),
+        // CALENDRIER-ET-PAUSES (12/11/2026) : l'eleve adulte demande sa pause ;
+        // jamais rendue a un enfant.
+        EntreePause(),
         CarteMessagesAcademie(),
       ],
     );

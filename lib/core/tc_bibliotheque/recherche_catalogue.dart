@@ -64,9 +64,9 @@ abstract final class RechercheCatalogue {
     return source
         .where((LibraryResource r) {
           final Set<TypeRessource>? types = filtre.types;
-          if (types != null && types.isNotEmpty && !types.contains(
-            r.resourceType,
-          )) {
+          if (types != null &&
+              types.isNotEmpty &&
+              !types.contains(r.resourceType)) {
             return false;
           }
           if (filtre.langue != null && r.language != filtre.langue) {

@@ -19,19 +19,20 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/carte_lignes.dart';
 import '../../core/widgets/champ_etiquete.dart';
-import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 
-/// Les enseignants et l'etat de leur lieu de priere, lus par la direction.
-final FutureProvider<List<EnseignantPriere>> enseignantsPriereProvider =
-    FutureProvider<List<EnseignantPriere>>(
-      (Ref ref) => ref.watch(servicePriereProvider).enseignants(),
+/// La liste a lire de la direction : zone, cinq heures du jour, methode appliquee
+/// et son origine, par enseignant. Aucune coordonnee.
+final FutureProvider<List<VueEnseignantPriere>> vueEnseignantsPriereProvider =
+    FutureProvider<List<VueEnseignantPriere>>(
+      (Ref ref) => ref.watch(servicePriereProvider).vueEnseignants(),
     );
 
 /// Les comptes dont le fuseau, le pays et le lieu de priere different.
@@ -47,20 +48,14 @@ final FutureProviderFamily<LieuPriere?, String> lieuEnseignantProvider =
           ref.watch(servicePriereProvider).lieu(enseignantId: id),
     );
 
-/// Les cinq heures du jour d'un enseignant, lues par la direction.
-final FutureProviderFamily<List<HeurePriere>, String>
-horairesEnseignantProvider = FutureProvider.family<List<HeurePriere>, String>(
-  (Ref ref, String id) =>
-      ref.watch(servicePriereProvider).horairesDuJour(enseignantId: id),
-);
-
-/// « Lieux de priere » : la direction pose le lieu de chaque enseignant, avec
-/// l'apercu de ses cinq heures du jour (PRIERE-1, P3).
+/// « Lieux de priere » : une liste a LIRE (PRIERE-2, « zero saisie »).
 ///
-/// Un onglet de la Configuration. La position est une donnee personnelle : elle
-/// ne se lit qu'ici, par la direction, et chez l'enseignant. Les signalements
-/// « a verifier » (fuseau, pays, longitude) sont des avertissements : rien n'est
-/// corrige automatiquement.
+/// Par enseignant : sa zone, ses cinq heures du jour, la methode appliquee et
+/// d'ou elle vient ; sans lieu, « en attente » (il le partage lui-meme d'un
+/// toucher). Aucun champ visible : la direction ne corrige qu'une exception,
+/// par « Corriger », qui ouvre une feuille courte. Ouverte depuis la section
+/// « La priere » des Regles. Les signalements « a verifier » (fuseau, pays,
+/// longitude) sont des avertissements : rien n'est corrige automatiquement.
 ///
 /// Cinq etats : chargement, contenu, vide (aucun enseignant actif), erreur,
 /// hors ligne (bandeau de la page).
@@ -74,8 +69,8 @@ class LieuxPrierePage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<EnseignantPriere>> liste = ref.watch(
-      enseignantsPriereProvider,
+    final AsyncValue<List<VueEnseignantPriere>> liste = ref.watch(
+      vueEnseignantsPriereProvider,
     );
     final List<IncoherencePriere> incoherences =
         ref.watch(incoherencesPriereProvider).value ??
@@ -83,7 +78,7 @@ class LieuxPrierePage extends ConsumerWidget {
     final TextTheme textes = Theme.of(context).textTheme;
 
     void relire() => ref
-      ..invalidate(enseignantsPriereProvider)
+      ..invalidate(vueEnseignantsPriereProvider)
       ..invalidate(incoherencesPriereProvider);
 
     final Widget corps;
@@ -123,18 +118,18 @@ class LieuxPrierePage extends ConsumerWidget {
           ],
           CarteLignes(
             lignes: <Widget>[
-              for (final EnseignantPriere e in liste.requireValue)
+              for (final VueEnseignantPriere e in liste.requireValue)
                 SettingRow(
                   key: cleLigne(e.enseignantId),
                   title: e.prenom,
-                  description: e.aUnLieu
-                      ? <String>[
-                          '${e.lieu}',
-                          if (e.assisteVendredi) t.priere.direction.vendredi,
-                        ].join('\n')
-                      : t.priere.direction.sansLieu,
+                  description: _description(e),
+                  value: t.priere.direction.corriger,
                   icon: AppIcons.priere,
-                  onPress: () => _ouvrir(context, ref, e),
+                  lien: true,
+                  libelleSemantique: t.priere.direction.corrigerDe(
+                    dePrenom: deDevant(e.prenom),
+                  ),
+                  onPress: () => _ouvrir(context, e),
                 ),
             ],
           ),
@@ -148,7 +143,7 @@ class LieuxPrierePage extends ConsumerWidget {
         onglets: ongletsConfiguration(
           politiqueRevueKyc: ref.watch(peutReglerPolitiqueKycProvider),
         ),
-        // Ouverte depuis la section « La prière » de Règles.
+        // Ouverte depuis la section « La priere » de Regles.
         indexActif: 0,
       ),
       // Un texte suivi ne s'etire pas sur tout un ecran d'ordinateur (B4, 800 px).
@@ -169,7 +164,7 @@ class LieuxPrierePage extends ConsumerWidget {
     );
   }
 
-  void _ouvrir(BuildContext context, WidgetRef ref, EnseignantPriere e) {
+  void _ouvrir(BuildContext context, VueEnseignantPriere e) {
     unawaited(
       AppBottomSheet.ouvrir<void>(
         context,
@@ -178,6 +173,40 @@ class LieuxPrierePage extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// Les lignes de lecture d'un enseignant : la zone et d'ou elle vient, les cinq
+/// heures du jour, la methode appliquee et son origine.
+String _description(VueEnseignantPriere e) {
+  if (!e.aUnLieu) {
+    return t.priere.direction.attente;
+  }
+  final String source = switch (e.source) {
+    'enseignant' => t.priere.direction.sourceEnseignant,
+    'auto' => t.priere.direction.sourceAuto,
+    _ => t.priere.direction.sourceDirection,
+  };
+  final String origine = switch (e.origineMethode) {
+    'enseignant' => t.priere.direction.origineEnseignant,
+    'pays' => t.priere.direction.originePays,
+    _ => t.priere.direction.origineAcademie,
+  };
+  return <String>[
+    t.priere.direction.zoneLigne(lieu: e.lieu ?? '', source: source),
+    if (e.horaires.isNotEmpty)
+      e.horaires
+          .map(
+            (HeurePriere h) =>
+                '${libellePriere(h.priere)} ${heureChezMoi(h.instant)}',
+          )
+          .join(' \u00b7 '),
+    if (e.methode != null)
+      t.priere.direction.methodeLigne(
+        methode: libelleMethode(e.methode!),
+        origine: origine,
+      ),
+    if (e.assisteVendredi) t.priere.direction.vendredi,
+  ].join('\n');
 }
 
 String _phrase(IncoherencePriere i) => switch (i.motif) {
@@ -196,13 +225,19 @@ String _phrase(IncoherencePriere i) => switch (i.motif) {
   _ => t.priere.direction.incoherencePays(prenom: i.prenom, detail: i.detail),
 };
 
-/// La feuille « Lieu et heures de priere » d'un enseignant.
+/// La feuille « Corriger » d'un enseignant : une exception, jamais un formulaire.
+///
+/// Visible : ce que le serveur a deduit (zone et origine), l'interrupteur du
+/// vendredi (les heures seulement s'il est active) et un seul bouton plein.
+/// Replie sous « Reglage avance » : la methode de calcul et l'ecole d'Asr
+/// (automatiques par defaut) et la pose du lieu a la main, pour l'enseignant qui
+/// n'a pas pu partager sa position.
 class FeuilleLieuPriere extends ConsumerStatefulWidget {
   /// Cree la feuille.
   const FeuilleLieuPriere({required this.enseignant, super.key});
 
-  /// L'enseignant dont on pose le lieu.
-  final EnseignantPriere enseignant;
+  /// L'enseignant que l'on corrige.
+  final VueEnseignantPriere enseignant;
 
   @override
   ConsumerState<FeuilleLieuPriere> createState() => _FeuilleLieuEtat();
@@ -219,6 +254,7 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
   Madhab? _ecole;
   bool _vendredi = false;
   bool _initialise = false;
+  bool _avance = false;
   bool _envoi = false;
   String? _erreur;
 
@@ -237,15 +273,19 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
     super.dispose();
   }
 
-  /// Reprend le lieu deja pose, une seule fois.
+  /// Reprend les reglages deja poses, une seule fois. Les champs de la main ne
+  /// sont remplis que pour un lieu pose par la direction : la position d'un
+  /// enseignant n'est pas recopiee.
   void _reprendre(LieuPriere? lieu) {
     if (_initialise) return;
     _initialise = true;
     if (lieu == null) return;
-    _nom.text = lieu.lieu;
-    _latitude.text = '${lieu.latitude}';
-    _longitude.text = '${lieu.longitude}';
-    _fuseau.text = lieu.fuseau;
+    if (lieu.source == 'direction') {
+      _nom.text = lieu.lieu;
+      _latitude.text = '${lieu.latitude}';
+      _longitude.text = '${lieu.longitude}';
+      _fuseau.text = lieu.fuseau;
+    }
     _methode = lieu.methodeSurchargee ? lieu.methode : null;
     _ecole = lieu.ecoleSurchargee ? lieu.ecoleAsr : null;
     _vendredi = lieu.assisteVendredi;
@@ -258,11 +298,22 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
   double? _nombre(TextEditingController c) =>
       double.tryParse(c.text.trim().replaceAll(',', '.'));
 
+  /// La plage du vendredi, valide ou nulle.
+  (String, String)? _plage() {
+    final String debut = _debut.text.trim();
+    final String fin = _fin.text.trim();
+    if (!_heure.hasMatch(debut) ||
+        !_heure.hasMatch(fin) ||
+        debut.compareTo(fin) >= 0) {
+      return null;
+    }
+    return (debut, fin);
+  }
+
   DefinitionLieu? _definition() {
     final double? lat = _nombre(_latitude);
     final double? lon = _nombre(_longitude);
-    final String debut = _debut.text.trim();
-    final String fin = _fin.text.trim();
+    final (String, String)? plage = _plage();
     if (_nom.text.trim().isEmpty ||
         _nom.text.trim().length > 80 ||
         lat == null ||
@@ -272,9 +323,7 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
         lon < -180 ||
         lon > 180 ||
         _fuseau.text.trim().isEmpty ||
-        !_heure.hasMatch(debut) ||
-        !_heure.hasMatch(fin) ||
-        debut.compareTo(fin) >= 0) {
+        plage == null) {
       return null;
     }
     return DefinitionLieu(
@@ -286,129 +335,75 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
       methode: _methode,
       ecoleAsr: _ecole,
       assisteVendredi: _vendredi,
-      vendrediDebut: debut,
-      vendrediFin: fin,
+      vendrediDebut: plage.$1,
+      vendrediFin: plage.$2,
     );
   }
 
   void _rafraichir() {
     final String id = widget.enseignant.enseignantId;
     ref
-      ..invalidate(enseignantsPriereProvider)
+      ..invalidate(vueEnseignantsPriereProvider)
       ..invalidate(incoherencesPriereProvider)
       ..invalidate(lieuEnseignantProvider(id))
-      ..invalidate(horairesEnseignantProvider(id))
       ..invalidate(pausePrevueProvider);
   }
 
-  Future<void> _enregistrer() async {
+  /// Lance une ecriture : l'erreur se dit en mots, la feuille se referme au succes.
+  Future<void> _ecrire(Future<void> Function() action) async {
+    setState(() {
+      _envoi = true;
+      _erreur = null;
+    });
+    try {
+      await action();
+      _rafraichir();
+      if (mounted) Navigator.of(context).pop();
+    } catch (_) {
+      if (mounted) {
+        setState(
+          () => _erreur = t.priere.direction.feuille.erreurEnregistrement,
+        );
+      }
+    } finally {
+      if (mounted) setState(() => _envoi = false);
+    }
+  }
+
+  Future<void> _corriger() async {
+    final (String, String)? plage = _plage();
+    if (plage == null) {
+      setState(() => _erreur = t.priere.direction.feuille.invalide);
+      return;
+    }
+    await _ecrire(
+      () => ref
+          .read(servicePriereProvider)
+          .corriger(
+            enseignantId: widget.enseignant.enseignantId,
+            methode: _methode,
+            ecoleAsr: _ecole,
+            assisteVendredi: _vendredi,
+            vendrediDebut: plage.$1,
+            vendrediFin: plage.$2,
+          ),
+    );
+  }
+
+  Future<void> _poser() async {
     final DefinitionLieu? d = _definition();
     if (d == null) {
       setState(() => _erreur = t.priere.direction.feuille.invalide);
       return;
     }
-    setState(() {
-      _envoi = true;
-      _erreur = null;
-    });
-    try {
-      await ref.read(servicePriereProvider).definirLieu(d);
-      _rafraichir();
-      if (mounted) Navigator.of(context).pop();
-    } catch (_) {
-      if (mounted) {
-        setState(
-          () => _erreur = t.priere.direction.feuille.erreurEnregistrement,
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _envoi = false);
-    }
+    await _ecrire(() => ref.read(servicePriereProvider).definirLieu(d));
   }
 
-  Future<void> _retirer() async {
-    setState(() {
-      _envoi = true;
-      _erreur = null;
-    });
-    try {
-      await ref
-          .read(servicePriereProvider)
-          .retirerLieu(widget.enseignant.enseignantId);
-      _rafraichir();
-      if (mounted) Navigator.of(context).pop();
-    } catch (_) {
-      if (mounted) {
-        setState(
-          () => _erreur = t.priere.direction.feuille.erreurEnregistrement,
-        );
-      }
-    } finally {
-      if (mounted) setState(() => _envoi = false);
-    }
-  }
-
-  Future<void> _choisirMethode() async {
-    final MethodeCalcul? ecole = await _choisir<MethodeCalcul>(
-      titre: t.priere.direction.feuille.methode,
-      defaut: t.priere.direction.feuille.methodeEcole,
-      valeurs: MethodeCalcul.values,
-      libelle: libelleMethode,
-      cle: (MethodeCalcul m) => m.valeurSql,
-      courante: _methode,
-    );
-    if (!mounted) return;
-    setState(() => _methode = ecole);
-  }
-
-  Future<void> _choisirEcole() async {
-    final Madhab? ecole = await _choisir<Madhab>(
-      titre: t.priere.direction.feuille.ecole,
-      defaut: t.priere.direction.feuille.ecoleEcole,
-      valeurs: Madhab.values,
-      libelle: libelleEcoleAsr,
-      cle: (Madhab m) => m.valeurSql,
-      courante: _ecole,
-    );
-    if (!mounted) return;
-    setState(() => _ecole = ecole);
-  }
-
-  /// Une feuille de choix : « celle de l'academie », ou une valeur propre a
-  /// l'enseignant. Rend `null` pour « celle de l'academie ».
-  Future<T?> _choisir<T extends Object>({
-    required String titre,
-    required String defaut,
-    required List<T> valeurs,
-    required String Function(T) libelle,
-    required String Function(T) cle,
-    required T? courante,
-  }) async {
-    T? retenue = courante;
-    await AppBottomSheet.ouvrir<void>(
-      context,
-      titre: titre,
-      constructeur: (BuildContext contexte) => ChoiceCardGroup(
-        autoriserSaisieLibre: false,
-        valeurInitiale: ReponseChoix(
-          valeurs: <String>{courante == null ? '' : cle(courante)},
-        ),
-        options: <OptionChoix>[
-          OptionChoix(valeur: '', libelle: defaut),
-          for (final T v in valeurs)
-            OptionChoix(valeur: cle(v), libelle: libelle(v)),
-        ],
-        onChange: (ReponseChoix r) {
-          final String choix = r.valeurs.isEmpty ? '' : r.valeurs.first;
-          retenue = choix.isEmpty
-              ? null
-              : valeurs.firstWhere((T v) => cle(v) == choix);
-          Navigator.of(contexte).pop();
-        },
-      ),
-    );
-    return retenue;
-  }
+  Future<void> _retirer() => _ecrire(
+    () => ref
+        .read(servicePriereProvider)
+        .retirerLieu(widget.enseignant.enseignantId),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -433,21 +428,22 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
     _reprendre(lecture.requireValue);
     final bool aUnLieu = lecture.requireValue != null;
 
-    return Column(
+    final Widget poseALaMain = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
+        Text(f.poserMain, style: textes.titleSmall),
+        Ecart.vSm,
+        Text(f.coordonneesAide, style: textes.bodyMedium),
+        Ecart.vMd,
         ChampEtiquete(
           libelle: f.nomLieu,
           controller: _nom,
-          obligatoire: true,
           lectureSeule: _envoi,
         ),
         Ecart.vMd,
         ChampEtiquete(
           libelle: f.latitude,
           controller: _latitude,
-          obligatoire: true,
-          aide: f.coordonneesAide,
           keyboardType: const TextInputType.numberWithOptions(
             decimal: true,
             signed: true,
@@ -458,7 +454,6 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
         ChampEtiquete(
           libelle: f.longitude,
           controller: _longitude,
-          obligatoire: true,
           keyboardType: const TextInputType.numberWithOptions(
             decimal: true,
             signed: true,
@@ -469,65 +464,109 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
         ChampEtiquete(
           libelle: f.fuseau(exemple: 'Africa/Conakry'),
           controller: _fuseau,
-          obligatoire: true,
           autocorrection: false,
           lectureSeule: _envoi,
         ),
+        Ecart.vMd,
+        LienFleche(
+          libelle: f.poserLieu,
+          onPress: _envoi ? null : () => unawaited(_poser()),
+        ),
+      ],
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Text(
+          aUnLieu ? _description(widget.enseignant) : f.sansLieuAide,
+          style: textes.bodyMedium,
+        ),
+        if (aUnLieu) ...<Widget>[
+          Ecart.vLg,
+          CarteLignes(
+            lignes: <Widget>[
+              SettingRow(
+                key: const ValueKey<String>('priere-vendredi'),
+                title: f.vendredi,
+                description: f.vendrediAide,
+                controle: Switch.adaptive(
+                  value: _vendredi,
+                  onChanged: _envoi
+                      ? null
+                      : (bool v) => setState(() => _vendredi = v),
+                ),
+              ),
+            ],
+          ),
+          if (_vendredi) ...<Widget>[
+            Ecart.vMd,
+            Text(f.plageAide, style: textes.bodyMedium),
+            Ecart.vMd,
+            ChampEtiquete(
+              libelle: f.vendrediDebut,
+              controller: _debut,
+              lectureSeule: _envoi,
+              autocorrection: false,
+            ),
+            Ecart.vMd,
+            ChampEtiquete(
+              libelle: f.vendrediFin,
+              controller: _fin,
+              lectureSeule: _envoi,
+              autocorrection: false,
+            ),
+          ],
+        ],
         Ecart.vLg,
         CarteLignes(
           lignes: <Widget>[
             SettingRow(
-              title: f.methode,
-              description: t.priere.aValider,
-              value: _methode == null
-                  ? f.methodeEcole
-                  : libelleMethode(_methode!),
-              onPress: _envoi ? null : () => unawaited(_choisirMethode()),
-            ),
-            SettingRow(
-              title: f.ecole,
-              description: t.priere.aValider,
-              value: _ecole == null ? f.ecoleEcole : libelleEcoleAsr(_ecole!),
-              onPress: _envoi ? null : () => unawaited(_choisirEcole()),
+              key: const ValueKey<String>('priere-avance'),
+              title: f.avance,
+              description: f.avanceAide,
+              lien: true,
+              onPress: () => setState(() => _avance = !_avance),
             ),
           ],
         ),
-        Ecart.vLg,
-        Text(f.vendredi, style: textes.titleSmall),
-        Ecart.vSm,
-        ControleSegmente<bool>(
-          valeur: _vendredi,
-          segments: <Segment<bool>>[
-            Segment<bool>(valeur: true, libelle: f.vendrediOui),
-            Segment<bool>(valeur: false, libelle: f.vendrediNon),
+        if (_avance) ...<Widget>[
+          Ecart.vMd,
+          if (aUnLieu) ...<Widget>[
+            Text(f.methode, style: textes.titleSmall),
+            Ecart.vSm,
+            MenuFiltre<MethodeCalcul>(
+              libelle: f.methodeAuto,
+              valeur: _methode,
+              entrees: <EntreeFiltre<MethodeCalcul>>[
+                EntreeFiltre<MethodeCalcul>(
+                  valeur: null,
+                  libelle: f.methodeAuto,
+                ),
+                for (final MethodeCalcul m in MethodeCalcul.values)
+                  EntreeFiltre<MethodeCalcul>(
+                    valeur: m,
+                    libelle: libelleMethode(m),
+                  ),
+              ],
+              onChoix: (MethodeCalcul? m) => setState(() => _methode = m),
+            ),
+            Ecart.vLg,
+            Text(f.ecole, style: textes.titleSmall),
+            Ecart.vSm,
+            ControleSegmente<Madhab?>(
+              valeur: _ecole,
+              segments: <Segment<Madhab?>>[
+                Segment<Madhab?>(valeur: null, libelle: f.ecoleAuto),
+                for (final Madhab m in Madhab.values)
+                  Segment<Madhab?>(valeur: m, libelle: libelleEcoleAsr(m)),
+              ],
+              onChange: (Madhab? m) => setState(() => _ecole = m),
+            ),
+            Ecart.vLg,
           ],
-          onChange: (bool v) => setState(() => _vendredi = v),
-        ),
-        if (_vendredi) ...<Widget>[
-          Ecart.vMd,
-          Text(f.plageAide, style: textes.bodyMedium),
-          Ecart.vMd,
-          ChampEtiquete(
-            libelle: f.vendrediDebut,
-            controller: _debut,
-            lectureSeule: _envoi,
-            autocorrection: false,
-          ),
-          Ecart.vMd,
-          ChampEtiquete(
-            libelle: f.vendrediFin,
-            controller: _fin,
-            lectureSeule: _envoi,
-            autocorrection: false,
-          ),
+          poseALaMain,
         ],
-        Ecart.vLg,
-        Text(f.apercu, style: textes.titleSmall),
-        Ecart.vSm,
-        if (aUnLieu)
-          _Apercu(enseignantId: id)
-        else
-          Text(f.apercuVide, style: textes.bodyMedium),
         if (_erreur != null) ...<Widget>[
           Ecart.vMd,
           Text(
@@ -535,49 +574,19 @@ class _FeuilleLieuEtat extends ConsumerState<FeuilleLieuPriere> {
             style: TextStyle(color: Theme.of(context).colorScheme.error),
           ),
         ],
-        Ecart.vLg,
-        ActionPrincipale(
-          libelle: f.enregistrer,
-          enCours: _envoi,
-          onPress: _enregistrer,
-        ),
         if (aUnLieu) ...<Widget>[
+          Ecart.vLg,
+          ActionPrincipale(
+            libelle: f.enregistrer,
+            enCours: _envoi,
+            onPress: _corriger,
+          ),
           Ecart.vMd,
           LienFleche(
             libelle: f.retirer,
             onPress: _envoi ? null : () => unawaited(_retirer()),
           ),
         ],
-      ],
-    );
-  }
-}
-
-/// L'apercu des cinq heures du jour de l'enseignant.
-class _Apercu extends ConsumerWidget {
-  const _Apercu({required this.enseignantId});
-
-  final String enseignantId;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<List<HeurePriere>> heures = ref.watch(
-      horairesEnseignantProvider(enseignantId),
-    );
-    if (heures.hasError) {
-      return Text(t.priere.direction.erreur);
-    }
-    if (!heures.hasValue) {
-      return const Skeleton.liste(lignes: 5);
-    }
-    return CarteLignes(
-      lignes: <Widget>[
-        for (final HeurePriere h in heures.requireValue)
-          SettingRow(
-            title: libellePriere(h.priere),
-            value: heureChezMoi(h.instant),
-            description: h.approximee ? t.priere.approchee : null,
-          ),
       ],
     );
   }

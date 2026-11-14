@@ -698,8 +698,11 @@ class VueSeance {
   /// Q6 : zoom local de l'eleve standard, qui ne publie rien.
   static const bool optionQ6 = true;
 
-  /// Q7 : l'eleve standard ne voit jamais la video des autres eleves.
-  static const bool optionQ7 = true;
+  // Q7 tranchee par le directeur le 12/11/2026 (CAMARADES, journal D-040) :
+  // chez un eleve, la video d'un camarade n'est montree que pendant qu'il
+  // recite ; sinon sa photo et son prenom. La regle vit a un seul endroit,
+  // `videoMontree` (`media_salle.dart`), et dans le moteur
+  // (`video_camarades.dart`) ; l'ancien drapeau, lu nulle part, est retire.
 
   /// Q8 : guidee desktop, video a cote du support, jamais par-dessus.
   static const bool optionQ8 = true;
@@ -750,7 +753,7 @@ class VueSeance {
   final bool videoSuspendue;
 
   /// RESEAU-ELEVES (defaut C6-4 du constat, 11/11/2026) : la salle porte une
-  /// ile ([PiluleEtatSalle]) toujours posee, et c'est elle, seule, qui dit le
+  /// ile ([DynamiqueChrono]) toujours posee, et c'est elle, seule, qui dit le
   /// reseau de la personne (reseau faible, reconnexion, « on vous entend
   /// peut-etre mal ») ; le bandeau de secours ne le redit pas. Vrai dans
   /// `/salle` la ou l'ile reste posee (eleve, enseignant sur ordinateur) ;
