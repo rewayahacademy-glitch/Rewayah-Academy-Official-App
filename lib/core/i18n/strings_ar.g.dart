@@ -9867,7 +9867,7 @@ class _Traductions$dossiers$validation$ar extends Traductions$dossiers$validatio
 	@override String get candidatSalle2 => 'هذا الشخص مترشح، وما زال في مرحلة المقابلة. لا يُفتح حسابه إلا عند استقباله في الفريق. صادِق على وثيقته من ملف ترشّحه، بزر «استقباله في الفريق»، بعد انتهاء المقابلة.';
 	@override String get candidatAffecte => 'هذا الشخص مترشح وله فصل أو حصة باسمه. أزِله من هذا الفصل، ثم صادِق من جديد.';
 	@override String get candidatRole => 'حساب هذا الشخص لا يحمل دور ترشّحه. افتح ملف ترشّحه لتصحيح الدور، ثم صادِق من جديد.';
-	@override String raisonServeur({required Object erreur, required Object raison}) => '⁨${erreur}⁩ ردّ الخادم: «⁨${raison}⁩». أعد المحاولة، وإن تكرّر ذلك فأرسل هذه الجملة إلى الفريق التقني.';
+	@override String raisonServeur({required Object erreur, required Object raison}) => '⁨${erreur}⁩ رد الخادم: «⁨${raison}⁩». أعد المحاولة، وإن تكرّر ذلك فأرسل هذه الجملة إلى الفريق التقني.';
 	@override String get plusPret => 'هذا الملف لم يعد جاهزًا للاعتماد.';
 	@override String get interdit => 'لم يعد بإمكانك اعتماد هذا الملف.';
 	@override String get succes => 'اعتُمد الملف.';
@@ -37538,7 +37538,7 @@ extension on TraductionsAr {
 			'dossiers.validation.candidatSalle2' => 'هذا الشخص مترشح، وما زال في مرحلة المقابلة. لا يُفتح حسابه إلا عند استقباله في الفريق. صادِق على وثيقته من ملف ترشّحه، بزر «استقباله في الفريق»، بعد انتهاء المقابلة.',
 			'dossiers.validation.candidatAffecte' => 'هذا الشخص مترشح وله فصل أو حصة باسمه. أزِله من هذا الفصل، ثم صادِق من جديد.',
 			'dossiers.validation.candidatRole' => 'حساب هذا الشخص لا يحمل دور ترشّحه. افتح ملف ترشّحه لتصحيح الدور، ثم صادِق من جديد.',
-			'dossiers.validation.raisonServeur' => ({required Object erreur, required Object raison}) => '⁨${erreur}⁩ ردّ الخادم: «⁨${raison}⁩». أعد المحاولة، وإن تكرّر ذلك فأرسل هذه الجملة إلى الفريق التقني.',
+			'dossiers.validation.raisonServeur' => ({required Object erreur, required Object raison}) => '⁨${erreur}⁩ رد الخادم: «⁨${raison}⁩». أعد المحاولة، وإن تكرّر ذلك فأرسل هذه الجملة إلى الفريق التقني.',
 			'dossiers.validation.plusPret' => 'هذا الملف لم يعد جاهزًا للاعتماد.',
 			'dossiers.validation.interdit' => 'لم يعد بإمكانك اعتماد هذا الملف.',
 			'dossiers.validation.succes' => 'اعتُمد الملف.',
