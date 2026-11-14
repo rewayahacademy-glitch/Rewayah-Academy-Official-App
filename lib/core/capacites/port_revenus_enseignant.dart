@@ -211,6 +211,8 @@ class RevenusSeance {
     required this.eleves,
     this.attente,
     this.enRemplacement = false,
+    this.minutesPayees,
+    this.minutesConnectees,
   });
 
   /// L'identifiant de la seance.
@@ -228,8 +230,20 @@ class RevenusSeance {
   /// Le type de la Classe.
   final TypeClasseRevenus type;
 
-  /// La duree payee, en minutes.
+  /// Les minutes ou l'enseignant etait connecte (mesure du releve), en
+  /// minutes. Ce n'est PAS la duree payee : l'ecran dit [minutesPayees].
   final int minutes;
+
+  /// La duree PAYEE par le serveur, en minutes (REVENUS-DUREE-PAYEE,
+  /// `mes_durees_payees_enseignant`) ; `null` quand le serveur ne l'affirme
+  /// pas (seance payee avant la fenetre payable, duree tranchee par la
+  /// direction, lecture absente) : l'ecran renvoie alors au releve de
+  /// l'academie, jamais a une duree inventee. Aucun calcul cote application.
+  final int? minutesPayees;
+
+  /// Les minutes de connexion DANS la fenetre payable, en minutes ; `null`
+  /// quand la fenetre est inconnue ou la lecture absente.
+  final int? minutesConnectees;
 
   /// Le montant ecrit par le serveur pour la seance (0 sans eleve present) ;
   /// `null` quand la direction doit encore trancher.
@@ -282,6 +296,7 @@ class RevenusEnseignant {
     this.allocationInternet,
     this.totalARecevoir,
     this.totalAttenteCahier,
+    this.seancesSansDureePayee,
   });
 
   /// Le debut de la periode.
@@ -326,6 +341,11 @@ class RevenusEnseignant {
   /// Ce qui attend le cahier de la semaine, montre a part du total a
   /// recevoir ; `null` avec un serveur plus ancien.
   final Montant? totalAttenteCahier;
+
+  /// Le nombre de seances du mois comptees au temps de connexion faute d'une
+  /// duree payee affirmable par le serveur (REVENUS-DUREE-PAYEE) ; `null`
+  /// avec un serveur plus ancien. Le serveur compte, l'ecran le dit.
+  final int? seancesSansDureePayee;
 }
 
 /// Les revenus de l'enseignant connecte.

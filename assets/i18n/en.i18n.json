@@ -9487,11 +9487,17 @@
       "tauxMoyen": "Average hourly rate",
       "total": "Total",
       "seanceDate": "{date} at {heure}",
-      "seanceDuree": "Retained length",
+      "seanceDuree": "Paid length",
+      "seanceDureeNonPrecisee": "See the academy statement",
+      "seanceConnecte": "Connected during the pay window",
       "present": "Present",
       "absent": "Absent",
       "presentPartiel": "Partly present",
       "partielleNote": "A partial attendance is paid as an attendance.",
+      "sansDureePayee(param=n)": {
+        "one": "{n} session is counted at connection time: its paid length is not specified. The academy statement is authoritative.",
+        "other": "{n} sessions are counted at connection time: their paid length is not specified. The academy statement is authoritative."
+      },
       "aucunMontant": "No amount for this session.",
       "partielle": "4. A partial attendance counts",
       "partielleDetail": "A student present for part of the session is paid as a present student.",

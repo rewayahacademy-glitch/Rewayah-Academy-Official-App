@@ -8603,11 +8603,17 @@ class _Traductions$enseignant$revenus$en extends Traductions$enseignant$revenus$
 	@override String get tauxMoyen => 'Average hourly rate';
 	@override String get total => 'Total';
 	@override String seanceDate({required Object date, required Object heure}) => '${date} at ${heure}';
-	@override String get seanceDuree => 'Retained length';
+	@override String get seanceDuree => 'Paid length';
+	@override String get seanceDureeNonPrecisee => 'See the academy statement';
+	@override String get seanceConnecte => 'Connected during the pay window';
 	@override String get present => 'Present';
 	@override String get absent => 'Absent';
 	@override String get presentPartiel => 'Partly present';
 	@override String get partielleNote => 'A partial attendance is paid as an attendance.';
+	@override String sansDureePayee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} session is counted at connection time: its paid length is not specified. The academy statement is authoritative.',
+		other: '${n} sessions are counted at connection time: their paid length is not specified. The academy statement is authoritative.',
+	);
 	@override String get aucunMontant => 'No amount for this session.';
 	@override String get partielle => '4. A partial attendance counts';
 	@override String get partielleDetail => 'A student present for part of the session is paid as a present student.';
@@ -34091,11 +34097,14 @@ extension on TraductionsEn {
 			'enseignant.revenus.tauxMoyen' => 'Average hourly rate',
 			'enseignant.revenus.total' => 'Total',
 			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '${date} at ${heure}',
-			'enseignant.revenus.seanceDuree' => 'Retained length',
+			'enseignant.revenus.seanceDuree' => 'Paid length',
+			'enseignant.revenus.seanceDureeNonPrecisee' => 'See the academy statement',
+			'enseignant.revenus.seanceConnecte' => 'Connected during the pay window',
 			'enseignant.revenus.present' => 'Present',
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.presentPartiel' => 'Partly present',
 			'enseignant.revenus.partielleNote' => 'A partial attendance is paid as an attendance.',
+			'enseignant.revenus.sansDureePayee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session is counted at connection time: its paid length is not specified. The academy statement is authoritative.', other: '${n} sessions are counted at connection time: their paid length is not specified. The academy statement is authoritative.', ), 
 			'enseignant.revenus.aucunMontant' => 'No amount for this session.',
 			'enseignant.revenus.partielle' => '4. A partial attendance counts',
 			'enseignant.revenus.partielleDetail' => 'A student present for part of the session is paid as a present student.',
@@ -34589,11 +34598,11 @@ extension on TraductionsEn {
 			'tc.outils.portee.seance' => 'Until the end of class',
 			'tc.outils.portee.enregistree' => 'Save',
 			'tc.outils.portee.aide' => 'How long should these annotations be kept?',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.marquer.titre' => 'Mark this passage',
 			'tc.outils.marquer.aide' => 'Choose what this passage calls for.',
 			'tc.outils.marquer.retirer' => 'Remove the marker',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.revision.titre' => 'To prepare',
 			'tc.outils.revision.aide' => 'The selected passage becomes work to prepare.',
 			'tc.outils.revision.groupeEntier' => 'Whole class',
@@ -35103,11 +35112,11 @@ extension on TraductionsEn {
 			'adulte.invitation.renvoiLimite' => 'The invitation has already been resent three times. Cancel it to send a new one.',
 			'adulte.invitation.renvoiPerimee' => 'This invitation has expired. Go back to the household to send a new one.',
 			'adulte.invitation.renvoiEchecTitre' => 'The resend was not confirmed.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.invitation.renvoyerSiEchec' => 'If the person invited cannot create their account, resend them the invitation.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} invites you to join their family plan.',
 			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'Join ${dePrenom}\'s family plan',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.faisonsTitre' => 'What we do',
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} invites you to their family plan. If you accept, your account is linked to their household. Your account stays yours. Nothing is merged.',
 			'adulte.acceptation.pourquoiTitre' => 'Why',
@@ -35617,11 +35626,11 @@ extension on TraductionsEn {
 			'argent.etat.expire' => 'Access expired',
 			'argent.etat.pause' => 'Paused',
 			'argent.etat.aRegulariser' => 'To settle',
+			_ => null,
+		} ?? switch (path) {
 			'argent.periode.jusquau' => ({required Object date}) => 'Funded until ${date}',
 			'argent.periode.aucune' => 'No funded period',
 			'argent.allocation.credite' => 'Credited',
-			_ => null,
-		} ?? switch (path) {
 			'argent.moyen.webStripe' => 'Bank card',
 			'argent.moyen.webStripeDetail' => 'Payment on the web. Nothing is charged before you confirm.',
 			'argent.soldes.total' => 'Total balances (read-only)',
@@ -36131,11 +36140,11 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.blocs.decisions' => 'Decisions pending',
 			'com.studio.aujourdhui.blocs.echeances' => 'Upcoming deadlines',
 			'com.studio.aujourdhui.blocs.activite' => 'Recent activity',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.brouillons' => 'Drafts',
 			'com.studio.aujourdhui.blocs.acces' => 'Quick access',
 			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Nothing to handle today.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'No mention or reply pending.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'No decision pending.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'No upcoming deadline.',
@@ -36645,11 +36654,11 @@ extension on TraductionsEn {
 			'comptable.statuts.profil.suspendu' => 'Suspended',
 			'comptable.statuts.profil.actionRequise' => 'Action required',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation sent',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.capacite.prisEnCharge' => 'Supported',
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Not supported',
 			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporarily unavailable',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.capacite.verificationRequise' => 'Verification required',
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Provider balance insufficient',
 			'comptable.statuts.reserve.atteint' => 'Target reached',
@@ -37159,11 +37168,11 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'This change is not yet connected to the payment service. Try again later.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'History of my changes',
 			'comptable.beneficiaires.recevoir.journalVide' => 'No change recorded yet.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.seulVous' => 'Only you can change this information: neither accounting nor the management can do it for you.',
 			'comptable.beneficiaires.recevoir.titre' => 'Receive my payments',
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Your payment details, changeable by you alone.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.notice' => 'Payment information to complete',
 			'comptable.beneficiaires.recevoir.configurer' => 'Set up my payments',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise does not pay out in this country: ${pays}. You can give the account of a relative in another country; otherwise the management will pay you another way.',
@@ -37673,11 +37682,11 @@ extension on TraductionsEn {
 			'recherche.contexte.personneFoyer' => 'Profile in your household',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profile in your household · ${classe}',
 			'recherche.contexte.personneParIdentifiant' => 'Found by its identifier',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Found by its identifier · ${classe}',
 			'recherche.contexte.canalStudio' => 'Studio channel',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'Payment received · ${famille}',
-			_ => null,
-		} ?? switch (path) {
 			'sansDonnees.mesDonnees' => 'Your deletion information could not be loaded',
 			'sansDonnees.paiementsRecus' => 'Your payments received could not be loaded',
 			'sansDonnees.revenus' => 'Your earnings could not be loaded',
@@ -38187,11 +38196,11 @@ extension on TraductionsEn {
 			'admissions.refus.enfantEnClasse' => 'A child in this request is already in a class: the acceptance can no longer be undone.',
 			'admissions.refus.autre' => 'The server refused this action. Reopen the request to see its status.',
 			'admissions.modeles.general' => 'No details',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.modeles.generalPhrase' => '"We cannot proceed with your request for now."',
 			'admissions.modeles.besoins' => 'Our classes do not meet the request',
 			'admissions.modeles.besoinsPhrase' => '"Our classes do not yet match what you are looking for."',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.modeles.niveau' => 'Level not offered yet',
 			'admissions.modeles.niveauPhrase' => '"The level requested is not yet offered."',
 			'admissions.modeles.sansReponse' => 'No reply',
@@ -38701,11 +38710,11 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.resultat.tout' => 'No one is waiting for their code any more.',
 			'candidatsFlux.invitationsPersonnelles.resultat.pasDeuxFois' => 'The same person never receives two valid codes at the same time, even if you send again.',
 			'candidatsFlux.invitationsPersonnelles.sansDonnees' => 'The number of people to invite could not be loaded.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.file.rythme' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'To avoid ending up in spam folders, at most ${n} message of this type goes out each day. The others wait their turn and go out by themselves on the following days.', other: 'To avoid ending up in spam folders, at most ${n} messages of this type go out each day. The others wait their turn and go out by themselves on the following days.', ), 
 			'candidatsFlux.file.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message is waiting its turn.', other: '${n} messages are waiting their turn.', ), 
 			'candidatsFlux.file.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Everything should be sent within about a day.', other: 'Everything should be sent within about ${n} days.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.file.rienEnAttente' => 'No message is waiting its turn.',
 			'candidatsFlux.file.misEnFile' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message queued', other: '${n} messages queued', ), 
 			'candidatsFlux.file.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person asked to stop receiving recruitment messages: they will not receive the link.', other: '${n} people asked to stop receiving recruitment messages: they will not receive the link.', ), 
@@ -39215,11 +39224,11 @@ extension on TraductionsEn {
 			'pause.statut.refusee' => 'Refused',
 			'pause.statut.annulee' => 'Cancelled',
 			'pause.periode' => ({required Object du, required Object au}) => 'From ${du} to ${au}',
+			_ => null,
+		} ?? switch (path) {
 			'pause.reponseAvant' => ({required Object date}) => 'The management replies before ${date}.',
 			'pause.reponseMotif' => ({required Object motif}) => 'Reply from the management: ${motif}',
 			'pause.exceptionAccordee' => 'Break granted by the management.',
-			_ => null,
-		} ?? switch (path) {
 			'pause.annuler' => ({required Object mois}) => 'Cancel the break of ${mois}',
 			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'This month starts too soon: a break is requested at least ${jours} day before it starts. Choose a later month.', other: 'This month starts too soon: a break is requested at least ${jours} days before it starts. Choose a later month.', ), 
 			'pause.refus.dejaDemandee' => 'This month is already requested or accepted.',

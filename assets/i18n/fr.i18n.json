@@ -9475,11 +9475,17 @@
       "tauxMoyen": "Taux horaire moyen",
       "total": "Total",
       "seanceDate": "{date} à {heure}",
-      "seanceDuree": "Durée retenue",
+      "seanceDuree": "Durée rémunérée",
+      "seanceDureeNonPrecisee": "Voir le relevé de l'académie",
+      "seanceConnecte": "Connecté pendant la fenêtre de paie",
       "present": "Présent",
       "absent": "Absent",
       "presentPartiel": "Présent en partie",
       "partielleNote": "Une présence en partie est payée comme une présence.",
+      "sansDureePayee(param=n)": {
+        "one": "{n}\u00a0séance est comptée au temps de connexion : sa durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi.",
+        "other": "{n}\u00a0séances sont comptées au temps de connexion : leur durée rémunérée n'est pas précisée. Le relevé de l'académie fait foi."
+      },
       "aucunMontant": "Aucun montant pour cette séance.",
       "partielle": "4. Une présence en partie compte",
       "partielleDetail": "Un élève présent pendant une partie de la séance est payé comme un élève présent.",
