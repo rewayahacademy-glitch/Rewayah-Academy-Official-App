@@ -41,6 +41,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/choice_card_group.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../inscription/invitation_en_cours.dart';
 
 /// Le role pour lequel une adresse est invitee.
 enum RoleInvite {
@@ -66,7 +67,7 @@ enum RoleInvite {
 @immutable
 class InvitationAccueil {
   /// Cree l'invitation lue.
-  const InvitationAccueil({required this.role, this.prenomInvitant});
+  const InvitationAccueil({required this.role, this.prenomInvitant, this.code});
 
   /// Lit la reponse du serveur ; `null` sans invitation, ou pour une forme
   /// inconnue (jamais un role suppose).
@@ -76,8 +77,10 @@ class InvitationAccueil {
     for (final RoleInvite r in RoleInvite.values) {
       if (r.valeur == role) {
         final Object? prenom = brut['prenom_invitant'];
+        final Object? code = brut['code'];
         return InvitationAccueil(
           role: r,
+          code: code is String && code.trim().isNotEmpty ? code.trim() : null,
           prenomInvitant: prenom is String && prenom.trim().isNotEmpty
               ? prenom.trim()
               : null,
@@ -92,6 +95,12 @@ class InvitationAccueil {
 
   /// Le prenom de la personne qui invite au foyer, ou nul.
   final String? prenomInvitant;
+
+  /// Le code de l'invitation d'enseignant de CETTE adresse, retrouve par le
+  /// serveur (INVITATION-CODE-ACCUEIL, 14/11/2026), ou nul. Il permet a la
+  /// personne arrivee par Google ou par « Retrouver mon acces » d'etre menee a
+  /// son inscription sans recopier un code.
+  final String? code;
 }
 
 /// L'issue d'une reponse de la personne invitee dans un foyer, sans profil
@@ -171,7 +180,16 @@ class _PorteAccueilInviteState extends ConsumerState<PorteAccueilInvite> {
       if (invitation == null) return widget.enfant;
       return AccueilInvitePage(
         invitation: invitation,
-        onContinuer: () => setState(() => _passee = true),
+        onContinuer: () {
+          // Le code retrouve par le serveur est retenu : l'inscription ouvre
+          // l'ecran de l'invitation avec lui, quel qu'ait ete le chemin de
+          // connexion.
+          if (invitation.role == RoleInvite.enseignant &&
+              invitation.code != null) {
+            retenirInvitationEnCours(code: invitation.code);
+          }
+          setState(() => _passee = true);
+        },
       );
     }
     // Chargement ou echec : on ne devine pas qu'il n'y a pas d'invitation.
