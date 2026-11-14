@@ -24180,8 +24180,8 @@ class Traductions$d1ter$notifications$fr {
 	/// fr: '⁦#Ra_staff⁩ vous a écrit.'
 	String get message => '⁦${_root.commun.staff.designation}⁩ vous a écrit.';
 
-	/// fr: '⁦#Ra_staff⁩ vous a écrit au sujet de {prenom}.'
-	String messageEnfant({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ vous a écrit au sujet de ${prenom}.';
+	/// fr: '⁦#Ra_staff⁩ vous a écrit sur {prenom}.'
+	String messageEnfant({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ vous a écrit sur ${prenom}.';
 
 	/// fr: '⁦#Ra_staff⁩ vous a écrit.'
 	String get messageSoi => '⁦${_root.commun.staff.designation}⁩ vous a écrit.';
@@ -64865,7 +64865,7 @@ extension on Traductions {
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'Transmis le ${date}',
 			'd1ter.messages.erreur' => 'Les messages de l\'académie n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'd1ter.notifications.message' => '⁦${_root.commun.staff.designation}⁩ vous a écrit.',
-			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ vous a écrit au sujet de ${prenom}.',
+			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ vous a écrit sur ${prenom}.',
 			'd1ter.notifications.messageSoi' => '⁦${_root.commun.staff.designation}⁩ vous a écrit.',
 			'snt.regles.nonTenue' => 'Séance non tenue',
 			'snt.regles.nonTenueDetail' => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.',

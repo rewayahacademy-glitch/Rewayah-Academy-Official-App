@@ -14986,7 +14986,7 @@
     },
     "notifications": {
       "message": "\u2066@:commun.staff.designation\u2069 vous a écrit.",
-      "messageEnfant": "\u2066@:commun.staff.designation\u2069 vous a écrit au sujet de {prenom}.",
+      "messageEnfant": "\u2066@:commun.staff.designation\u2069 vous a écrit sur {prenom}.",
       "messageSoi": "\u2066@:commun.staff.designation\u2069 vous a écrit."
     }
   },
