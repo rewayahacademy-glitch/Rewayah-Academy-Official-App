@@ -10298,6 +10298,7 @@ class _Traductions$com$messages$en extends Traductions$com$messages$fr {
 
 	// Translations
 	@override late final _Traductions$com$messages$liens$en liens = _Traductions$com$messages$liens$en._(_root);
+	@override late final _Traductions$com$messages$apercu$en apercu = _Traductions$com$messages$apercu$en._(_root);
 	@override late final _Traductions$com$messages$direct$en direct = _Traductions$com$messages$direct$en._(_root);
 	@override late final _Traductions$com$messages$entree$en entree = _Traductions$com$messages$entree$en._(_root);
 	@override String get videDetail => 'A conversation opens from a class, a student or a file.';
@@ -18777,6 +18778,29 @@ class _Traductions$com$messages$liens$en extends Traductions$com$messages$liens$
 	// Translations
 	@override String ouvrir({required Object site}) => 'Open the link (${site})';
 	@override String ouvrirLu({required Object site}) => 'Open the link to ${site} in a new tab';
+}
+
+// Path: com.messages.apercu
+class _Traductions$com$messages$apercu$en extends Traductions$com$messages$apercu$fr {
+	_Traductions$com$messages$apercu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Profile';
+	@override String get typeEnseignant => 'Teacher application';
+	@override String get genre => 'Gender';
+	@override String get pays => 'Country';
+	@override String get situation => 'Where the application stands';
+	@override String get piece => 'ID document';
+	@override String get entretien => 'Interview';
+	@override String get aucunEntretien => 'No interview yet';
+	@override String entretienPrevu({required Object quand}) => 'Planned for ${quand}';
+	@override String get decisions => 'Latest decisions';
+	@override String get aucuneDecision => 'No decision yet';
+	@override String get voirDossier => 'See the full file';
+	@override String get nonServi => 'Not available yet';
+	@override String ouvrir({required Object nom}) => 'See ${nom}\'s profile';
 }
 
 // Path: com.messages.direct
@@ -36501,6 +36525,20 @@ extension on TraductionsEn {
 			'com.socle.navigation.demo.choisir' => 'Choose a space to try.',
 			'com.messages.liens.ouvrir' => ({required Object site}) => 'Open the link (${site})',
 			'com.messages.liens.ouvrirLu' => ({required Object site}) => 'Open the link to ${site} in a new tab',
+			'com.messages.apercu.titre' => 'Profile',
+			'com.messages.apercu.typeEnseignant' => 'Teacher application',
+			'com.messages.apercu.genre' => 'Gender',
+			'com.messages.apercu.pays' => 'Country',
+			'com.messages.apercu.situation' => 'Where the application stands',
+			'com.messages.apercu.piece' => 'ID document',
+			'com.messages.apercu.entretien' => 'Interview',
+			'com.messages.apercu.aucunEntretien' => 'No interview yet',
+			'com.messages.apercu.entretienPrevu' => ({required Object quand}) => 'Planned for ${quand}',
+			'com.messages.apercu.decisions' => 'Latest decisions',
+			'com.messages.apercu.aucuneDecision' => 'No decision yet',
+			'com.messages.apercu.voirDossier' => 'See the full file',
+			'com.messages.apercu.nonServi' => 'Not available yet',
+			'com.messages.apercu.ouvrir' => ({required Object nom}) => 'See ${nom}\'s profile',
 			'com.messages.direct.nouveau' => 'You have received a new message.',
 			'com.messages.direct.horsDirect' => 'Messages are not live right now (connection). Updating every 30 seconds.',
 			'com.messages.direct.icone' => 'Messages',
@@ -36592,6 +36630,8 @@ extension on TraductionsEn {
 			'com.messages.demo.f.dossierAdam' => 'Adam\'s registration file',
 			'com.messages.demo.f.missionNour' => 'Review visit, An-Nour class',
 			'com.messages.demo.f.pieceDevoir' => 'Homework_week_3.pdf',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.f.pieceAttestation' => 'Old_certificate.pdf',
 			'com.messages.demo.f.pieceVocal' => 'voice.m4a',
 			'com.messages.demo.f.typeAudio' => 'Audio',
@@ -36606,8 +36646,6 @@ extension on TraductionsEn {
 			'com.messages.demo.f.khadijaRevision' => 'Remember to revise surah Al-Mulk for Thursday.',
 			'com.messages.titre' => _root.com.socle.lexique.messagesMetier,
 			'com.messages.vide' => 'No conversation yet.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.libelle' => 'Voice message',
 			'com.vocal.composer.enregistrer' => 'Record a voice message',
 			'com.vocal.composer.indisponible' => 'The voice message is not available here yet. Write your message in the field above.',
@@ -37106,6 +37144,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.planifiees.vide' => 'No announcement scheduled.',
 			'com.annonces.administration.planifiees.pastille' => 'Scheduled',
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · planned for ${date} at ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.matrice.titre' => 'Announcement publishing rights',
 			'com.annonces.administration.matrice.detail' => 'The academy\'s rule, applied to each publication.',
 			'com.annonces.administration.matrice.auteurs' => 'Who publishes',
@@ -37120,8 +37160,6 @@ extension on TraductionsEn {
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Reported on ${date} at ${heure}',
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Reason: ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Reported content',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.extraitAbsent' => 'This content\'s excerpt is not provided.',
 			'com.annonces.administration.moderation.regle' => 'Rule concerned',
 			'com.annonces.administration.moderation.approuver' => 'Approve after review',
@@ -37620,6 +37658,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.regle.montantFixe' => 'Fixed amount at each due date',
 			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent}% of each consolidated collection',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'Top up to the target amount',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.regle.proposee' => 'Proposal to be confirmed by you',
 			'comptable.tresorerie.cadence' => 'Frequency',
 			'comptable.tresorerie.cadences.clotureCycle' => 'At each cycle closing',
@@ -37634,8 +37674,6 @@ extension on TraductionsEn {
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, in force since ${date}',
 			'comptable.tresorerie.mouvementsTitre' => 'Movements between vaults',
 			'comptable.tresorerie.mouvementsPhrase' => 'Towards a protection: according to your delegation. Outflow from a protected vault: additional validation required.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.preparerMouvement' => 'Prepare a movement',
 			'comptable.tresorerie.retirer' => 'Withdraw from the Strategic reserve',
 			'comptable.tresorerie.retraitBloque' => ({required Object raison}) => 'Withdrawal from the Strategic reserve: ${raison}.',
@@ -38134,6 +38172,8 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.regle.proposee' => 'Proposed',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'A proposal that the Accountant confirms.',
 			'comptable.direction.reservePanneau.montantAuto' => 'Amount to allocate',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.montantAutoDetail' => 'The sum allocated to the Reserve at each due date.',
 			'comptable.direction.reservePanneau.pourcentageAuto' => 'Share of the consolidated collection',
 			'comptable.direction.reservePanneau.pourcentageAutoDetail' => 'The share allocated to the Reserve at each due date.',
@@ -38148,8 +38188,6 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.seuil' => 'Alert threshold',
 			'comptable.direction.reservePanneau.seuilDetail' => 'Below this share of the target, the Reserve is flagged "below target". Leave empty to set no threshold.',
 			'comptable.direction.reservePanneau.seuilIndice' => 'No threshold',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.retraitTitre' => 'Withdrawal',
 			'comptable.direction.reservePanneau.retraitSwitch' => 'A withdrawal requires additional validation',
 			'comptable.direction.reservePanneau.retraitSwitchDetail' => 'Taking money out of the Reserve is a sensitive operation: someone other than the requester validates it.',
@@ -38648,6 +38686,8 @@ extension on TraductionsEn {
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'The management will read it before publishing it on the website, with your display name, your country and the date. To have it removed, write to ${courriel}.',
 			'avis.form.erreurChargement' => 'The form could not be opened. Try again in a moment.',
 			'avis.form.sansDonnees' => 'The form could not be opened',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.indisponibleTitre' => 'Feedback unavailable',
 			'avis.form.indisponiblePhrase' => 'This feature will be available once the server is connected.',
 			'avis.admin.titre' => 'Reviews',
@@ -38662,8 +38702,6 @@ extension on TraductionsEn {
 			'avis.admin.statut.publie' => 'Published',
 			'avis.admin.statut.refuse' => 'Refused',
 			'avis.admin.statut.retire' => 'Removed',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.filtre.tous' => 'All',
 			'avis.admin.filtre.enAttente' => 'Pending',
 			'avis.admin.filtre.publie' => 'Published',
@@ -39162,6 +39200,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.colonnes.fermer' => 'Close this choice',
 			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'First match these columns: ${champs}.',
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Several columns carry the title of: ${champs}. Tap the one to read, then choose what it contains.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'How answers are read',
 			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'Multiple-choice answers (gender, languages, memorization level, possible start) are read using Rewayah\'s table of labels. A label that is not in it is flagged row by row, at the "Errors" step.',
 			'candidatsFlux.importFormulaires.colonnes.relecture' => 'Your corrections require the file to be read again before continuing.',
@@ -39176,8 +39216,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'Same phone',
 			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Rows ${liste}',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'and ${n} row already saved', other: 'and ${n} rows already saved', ), 
 			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'Choose the row to keep, or say these are different people.',
 			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'See the choices for this case',
@@ -39676,6 +39714,8 @@ extension on TraductionsEn {
 			'suiviAttente.erreur' => 'We could not read the tracking of your request. This is often caused by the connection. Try again in a moment.',
 			'suiviAttente.sansDonnees' => 'The tracking of your request could not be loaded',
 			'suiviAttente.introuvable' => 'This request no longer exists in your tracking.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.retour' => 'Back',
 			'suiviAttente.carte.titre' => 'Your class request',
 			'suiviAttente.carte.titreSimple' => 'Your class request',
@@ -39690,8 +39730,6 @@ extension on TraductionsEn {
 			'suiviAttente.presentation.paysResidence' => 'Country of residence',
 			'suiviAttente.presentation.choisirPays' => 'Choose a country',
 			'suiviAttente.presentation.nonRenseigne' => 'Not provided',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.presentation.mot' => 'My introduction',
 			'suiviAttente.presentation.motAide' => '500 characters at most. Families read it exactly as you write it.',
 			'suiviAttente.presentation.nonConfirme' => 'You have not confirmed this choice yet. Until you do, your countries and your introduction, if entered, are shown on the tracking card.',
