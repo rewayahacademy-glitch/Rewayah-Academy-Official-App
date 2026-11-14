@@ -29001,7 +29001,7 @@ class Traductions$admin$candidatures$attentes$fr {
 	);
 
 	/// fr: 'Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.'
-	String get versementAide => 'Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.';
+	String get versementAide => 'Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.';
 
 	/// fr: 'Personne n'attend.'
 	String get rien => 'Personne n\'attend.';
@@ -29025,7 +29025,7 @@ class Traductions$admin$candidatures$attentes$fr {
 	);
 
 	/// fr: 'Filtrer la liste : {etat}, {n}'
-	String filtrer({required Object etat, required Object n}) => 'Filtrer la liste : ${etat}, ${n}';
+	String filtrer({required Object etat, required Object n}) => 'Filtrer la liste : ${etat}, ${n}';
 }
 
 // Path: admin.candidatures.alertes
@@ -56268,12 +56268,12 @@ extension on Traductions {
 			'admin.candidatures.attentes.creneauxOuverts' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} créneau d\'entretien ouvert', other: '${n} créneaux d\'entretien ouverts', ), 
 			_ => null,
 		} ?? switch (path) {
-			'admin.candidatures.attentes.versementAide' => 'Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.',
+			'admin.candidatures.attentes.versementAide' => 'Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.',
 			'admin.candidatures.attentes.rien' => 'Personne n\'attend.',
 			'admin.candidatures.attentes.depuisMinutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La plus ancienne depuis ${n} minute', other: 'La plus ancienne depuis ${n} minutes', ), 
 			'admin.candidatures.attentes.depuisHeures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La plus ancienne depuis ${n} heure', other: 'La plus ancienne depuis ${n} heures', ), 
 			'admin.candidatures.attentes.depuisJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'La plus ancienne depuis ${n} jour', other: 'La plus ancienne depuis ${n} jours', ), 
-			'admin.candidatures.attentes.filtrer' => ({required Object etat, required Object n}) => 'Filtrer la liste : ${etat}, ${n}',
+			'admin.candidatures.attentes.filtrer' => ({required Object etat, required Object n}) => 'Filtrer la liste : ${etat}, ${n}',
 			'admin.candidatures.alertes.bloquees' => 'Bloquées',
 			'admin.candidatures.alertes.entretiensEnRetard' => 'Entretiens en retard',
 			'admin.candidatures.alertes.informationsManquantes' => 'Informations manquantes',

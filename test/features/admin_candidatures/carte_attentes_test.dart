@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/features/admin_candidatures/carte_attentes.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -88,34 +89,43 @@ void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   group('lecture', () {
-    test('les etats rendus, un etat inconnu ignore, jamais un nombre invente', () {
-      final AttentesRecrutement a = _attentes(deuxCotes: true);
-      expect(a.etat(EtatCandidature.enExamen).nombre, 41);
-      expect(a.etat(EtatCandidature.enExamen).plusAncien, isNotNull);
-      expect(a.etat(EtatCandidature.entretienPlanifie).nombre, 0);
-      expect(a.parEtat.length, 5);
-      expect(a.pieceAValider.nombre, 13);
-      expect(a.deuxCotes, isTrue);
-      expect(
-        () => AttentesRecrutement.depuisJson('x'),
-        throwsA(isA<FormatException>()),
-      );
-    });
+    test(
+      'les etats rendus, un etat inconnu ignore, jamais un nombre invente',
+      () {
+        final AttentesRecrutement a = _attentes(deuxCotes: true);
+        expect(a.etat(EtatCandidature.enExamen).nombre, 41);
+        expect(a.etat(EtatCandidature.enExamen).plusAncien, isNotNull);
+        expect(a.etat(EtatCandidature.entretienPlanifie).nombre, 0);
+        expect(a.parEtat.length, 5);
+        expect(a.pieceAValider.nombre, 13);
+        expect(a.deuxCotes, isTrue);
+        expect(
+          () => AttentesRecrutement.depuisJson('x'),
+          throwsA(isA<FormatException>()),
+        );
+      },
+    );
 
     test('depuis quand : minutes, heures, jours', () {
       final DateTime m = DateTime.utc(2026, 11, 14, 12);
       expect(depuisQuand(null, m), isNull);
       expect(
         depuisQuand(m.subtract(const Duration(seconds: 20)), m),
-        t.admin.candidatures.attentes.depuisMinutes(n: 1),
+        LibellesGroupe.insecable(
+          t.admin.candidatures.attentes.depuisMinutes(n: 1),
+        ),
       );
       expect(
         depuisQuand(m.subtract(const Duration(hours: 6, minutes: 5)), m),
-        t.admin.candidatures.attentes.depuisHeures(n: 6),
+        LibellesGroupe.insecable(
+          t.admin.candidatures.attentes.depuisHeures(n: 6),
+        ),
       );
       expect(
         depuisQuand(m.subtract(const Duration(days: 3)), m),
-        t.admin.candidatures.attentes.depuisJours(n: 3),
+        LibellesGroupe.insecable(
+          t.admin.candidatures.attentes.depuisJours(n: 3),
+        ),
       );
     });
   });
@@ -140,7 +150,10 @@ void main() {
         findsOneWidget,
       );
       expect(find.text('41'), findsOneWidget);
-      expect(find.textContaining(a.depuisHeures(n: 6)), findsOneWidget);
+      expect(
+        find.textContaining(LibellesGroupe.insecable(a.depuisHeures(n: 6))),
+        findsOneWidget,
+      );
       // Zero : pas de ligne.
       expect(
         find.byKey(CarteAttentes.cleLigne(EtatCandidature.decisionEnAttente)),
@@ -158,11 +171,7 @@ void main() {
       'toucher une ligne pose le filtre qui compte ce qu elle annonce',
       (tester) async {
         final FauxCandidaturesDirection port = _port();
-        await _monter(
-          tester,
-          port: port,
-          attentes: _FauxAttentes(_attentes()),
-        );
+        await _monter(tester, port: port, attentes: _FauxAttentes(_attentes()));
         final Finder ligne = find.byKey(
           CarteAttentes.cleLigne(EtatCandidature.aCompleter),
         );

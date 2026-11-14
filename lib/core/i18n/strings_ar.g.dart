@@ -16544,7 +16544,7 @@ class _Traductions$admin$candidatures$attentes$ar extends Traductions$admin$cand
 		many: 'الأقدم منذ ⁨${n}⁩ يومًا',
 		other: 'الأقدم منذ ⁨${n}⁩ يوم',
 	);
-	@override String filtrer({required Object etat, required Object n}) => 'تصفية القائمة: ${etat}، ${n}';
+	@override String filtrer({required Object etat, required Object n}) => 'تصفية القائمة: ⁨${etat}⁩، ⁨${n}⁩';
 }
 
 // Path: admin.candidatures.alertes
@@ -31891,7 +31891,7 @@ extension on TraductionsAr {
 			'admin.candidatures.attentes.depuisMinutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'الأقدم منذ أقل من دقيقة', one: 'الأقدم منذ دقيقة واحدة', two: 'الأقدم منذ دقيقتين', few: 'الأقدم منذ ⁨${n}⁩ دقائق', many: 'الأقدم منذ ⁨${n}⁩ دقيقة', other: 'الأقدم منذ ⁨${n}⁩ دقيقة', ), 
 			'admin.candidatures.attentes.depuisHeures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'الأقدم منذ أقل من ساعة', one: 'الأقدم منذ ساعة واحدة', two: 'الأقدم منذ ساعتين', few: 'الأقدم منذ ⁨${n}⁩ ساعات', many: 'الأقدم منذ ⁨${n}⁩ ساعة', other: 'الأقدم منذ ⁨${n}⁩ ساعة', ), 
 			'admin.candidatures.attentes.depuisJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'الأقدم منذ أقل من يوم', one: 'الأقدم منذ يوم واحد', two: 'الأقدم منذ يومين', few: 'الأقدم منذ ⁨${n}⁩ أيام', many: 'الأقدم منذ ⁨${n}⁩ يومًا', other: 'الأقدم منذ ⁨${n}⁩ يوم', ), 
-			'admin.candidatures.attentes.filtrer' => ({required Object etat, required Object n}) => 'تصفية القائمة: ${etat}، ${n}',
+			'admin.candidatures.attentes.filtrer' => ({required Object etat, required Object n}) => 'تصفية القائمة: ⁨${etat}⁩، ⁨${n}⁩',
 			'admin.candidatures.alertes.bloquees' => 'عالقة',
 			'admin.candidatures.alertes.entretiensEnRetard' => 'مقابلات متأخرة',
 			'admin.candidatures.alertes.informationsManquantes' => 'معلومات ناقصة',

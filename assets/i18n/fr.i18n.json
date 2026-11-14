@@ -4024,7 +4024,7 @@
           "one": "{n} créneau d'entretien ouvert",
           "other": "{n} créneaux d'entretien ouverts"
         },
-        "versementAide": "Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.",
+        "versementAide": "Aucun moyen de versement confirmé dans le pays déclaré : une décision de la direction est attendue.",
         "rien": "Personne n'attend.",
         "depuisMinutes": {
           "one": "La plus ancienne depuis {n} minute",
@@ -4038,7 +4038,7 @@
           "one": "La plus ancienne depuis {n} jour",
           "other": "La plus ancienne depuis {n} jours"
         },
-        "filtrer": "Filtrer la liste : {etat}, {n}"
+        "filtrer": "Filtrer la liste : {etat}, {n}"
       },
       "alertes": {
         "bloquees": "Bloquées",

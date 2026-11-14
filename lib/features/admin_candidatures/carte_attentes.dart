@@ -25,6 +25,7 @@ import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/candidature/attentes_recrutement.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
@@ -38,9 +39,16 @@ String? depuisQuand(DateTime? plusAncien, DateTime maintenant) {
   if (plusAncien == null) return null;
   final Duration d = maintenant.difference(plusAncien);
   final a = t.admin.candidatures.attentes;
-  if (d.inDays >= 1) return a.depuisJours(n: d.inDays);
-  if (d.inHours >= 1) return a.depuisHeures(n: d.inHours);
-  return a.depuisMinutes(n: d.inMinutes < 1 ? 1 : d.inMinutes);
+  // DUREE-INSECABLE : le nombre et son unite ne se separent jamais.
+  if (d.inDays >= 1) {
+    return LibellesGroupe.insecable(a.depuisJours(n: d.inDays));
+  }
+  if (d.inHours >= 1) {
+    return LibellesGroupe.insecable(a.depuisHeures(n: d.inHours));
+  }
+  return LibellesGroupe.insecable(
+    a.depuisMinutes(n: d.inMinutes < 1 ? 1 : d.inMinutes),
+  );
 }
 
 String? _lignes(List<String?> morceaux) {
@@ -164,10 +172,7 @@ class CarteAttentes extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Semantics(
-          header: true,
-          child: SectionHeader(titre: a.titre),
-        ),
+        Semantics(header: true, child: SectionHeader(titre: a.titre)),
         Ecart.vXs,
         TexteSansCoupure(
           attentes.deuxCotes ? '${a.aide} ${a.deuxCotes}' : a.aide,
@@ -175,7 +180,9 @@ class CarteAttentes extends StatelessWidget {
         ),
         Ecart.vMd,
         if (cartes.isEmpty)
-          AppCard(child: TexteSansCoupure(a.rien, key: cleRien, style: attenue))
+          AppCard(
+            child: TexteSansCoupure(a.rien, key: cleRien, style: attenue),
+          )
         else
           LayoutBuilder(
             builder: (BuildContext context, BoxConstraints c) {
