@@ -111,16 +111,16 @@ Deno.test('compte cree mais consommation refusee : le compte reste cree', async 
 const equipe: Demande = { type: 'equipe', code: 'ABCD-EFGH-JKMN', adresse: 'prof@example.com' }
 const candidat: Demande = { type: 'candidat', code: 'ABCD-EFGH-JKMN', adresse: 'cand@example.com' }
 
-Deno.test('equipe : compte banni par suppression, code valide : bannissement leve, rien d autre', async () => {
+Deno.test('equipe : adresse d un compte supprime : adresse liberee, puis compte neuf cree', async () => {
   const { p, appels } = porte(true, true, 'cree', true, true)
-  assertEquals(await traiter(equipe, '203.0.113.7', p), 'leve')
-  assertEquals(appels, ['debit:203.0.113.7', 'lever:equipe'])
+  assertEquals(await traiter(equipe, '203.0.113.7', p), 'cree')
+  assertEquals(appels, ['debit:203.0.113.7', 'lever:equipe', 'autoriser:equipe', 'creer:prof@example.com', 'consommer:equipe'])
 })
 
-Deno.test('candidat : meme levee du bannissement', async () => {
+Deno.test('candidat : meme liberation de l adresse', async () => {
   const { p, appels } = porte(true, true, 'cree', true, true)
-  assertEquals(await traiter(candidat, '203.0.113.7', p), 'leve')
-  assertEquals(appels, ['debit:203.0.113.7', 'lever:candidat'])
+  assertEquals(await traiter(candidat, '203.0.113.7', p), 'cree')
+  assertEquals(appels.slice(0, 3), ['debit:203.0.113.7', 'lever:candidat', 'autoriser:candidat'])
 })
 
 Deno.test('equipe sans compte banni : levee tentee, puis le parcours normal cree le compte', async () => {

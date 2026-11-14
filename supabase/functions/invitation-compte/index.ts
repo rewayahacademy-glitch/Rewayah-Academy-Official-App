@@ -15,9 +15,9 @@
 //    de service reverifie l'autorisation metier.
 //    Avant elle, pour `equipe` et `candidat` seulement : si l'adresse a un
 //    compte banni PAR SUPPRESSION et que le code est valide pour elle,
-//    `invitation_compte_lever_bannissement` (service_role seul) leve le
-//    bannissement et journalise (audit_logs) ; le lien de connexion part alors
-//    comme pour tout compte existant. Jamais pour `foyer`.
+//    `invitation_compte_lever_bannissement` (service_role seul) libere
+//    l'adresse (l'ancien compte reste retire et banni) et journalise
+//    (audit_logs) ; un compte neuf est ensuite cree. Jamais pour `foyer`.
 // 3. Creation du compte, adresse confirmee : le code n'a ete remis qu'a cette
 //    boite (e-mail du foyer ou du candidat) ou par la direction a cette
 //    personne (enseignant, comptable), et il est lie a l'adresse. Un compte
@@ -53,8 +53,8 @@ export interface Demande {
 export interface PorteInvitation {
   debit(adresse: string, ip: string): Promise<boolean>
   autoriser(demande: Demande): Promise<boolean>
-  /// Equipe et candidat seulement : leve le bannissement par suppression du
-  /// compte de cette adresse si le code est valide pour elle (rien n'est consomme).
+  /// Equipe et candidat seulement : libere l'adresse d'un compte supprime si
+  /// le code est valide pour elle (rien n'est consomme).
   leverBannissement(demande: Demande): Promise<boolean>
   creerCompte(adresse: string): Promise<'cree' | 'existe' | 'echec'>
   consommer(demande: Demande): Promise<boolean>
@@ -98,15 +98,15 @@ export async function traiter(
   demande: Demande,
   ip: string,
   porte: PorteInvitation,
-): Promise<'cree' | 'leve' | 'rien'> {
+): Promise<'cree' | 'rien'> {
   if (!(await porte.debit(demande.adresse, ip))) return 'rien'
   // Reinvitation d'une adresse dont le compte a ete supprime (decision de
-  // l'architecte, 14/11/2026) : une invitation d'equipe ou de candidat valide
-  // leve le bannissement par suppression, puis le parcours normal continue
-  // (lien de connexion). Jamais pour un foyer. Avant `autoriser`, qui refuse
-  // toute adresse deja titulaire d'un compte.
-  if ((demande.type === 'equipe' || demande.type === 'candidat') && (await porte.leverBannissement(demande))) {
-    return 'leve'
+  // l'architecte, 14/11/2026) : pour `equipe` et `candidat`, un code valide
+  // libere l'adresse du compte retire (profil retire et banni, qui bloquerait
+  // l'inscription) ; l'autorisation et la creation d'un compte NEUF suivent
+  // alors comme pour toute adresse invitee. Jamais pour un foyer.
+  if (demande.type === 'equipe' || demande.type === 'candidat') {
+    await porte.leverBannissement(demande)
   }
   if (!(await porte.autoriser(demande))) return 'rien'
   if ((await porte.creerCompte(demande.adresse)) !== 'cree') return 'rien'

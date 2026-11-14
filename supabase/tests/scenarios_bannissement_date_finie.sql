@@ -149,15 +149,22 @@ SELECT pg_temp.vrai(
   AND NOT public.invitation_compte_lever_bannissement('equipe', 'BAND-2345-0000', 'bandf-a1@example.test')
   AND NOT public.invitation_compte_lever_bannissement('equipe', 'BAND-2345-6789', 'autre@example.test')
   AND NOT public.invitation_compte_lever_bannissement('equipe', 'BAND-2345-ECHU', 'bandf-a2@example.test')
-  AND (SELECT u.banned_until IS NOT NULL FROM auth.users u WHERE u.id = pg_temp.u('1')),
-  'D.2 jamais pour foyer, un faux code, une autre adresse ou un code echu : le bannissement reste');
+  AND (SELECT u.banned_until IS NOT NULL AND u.email = 'bandf-a1@example.test' FROM auth.users u WHERE u.id = pg_temp.u('1')),
+  'D.2 jamais pour foyer, un faux code, une autre adresse ou un code echu : rien ne change');
 SELECT pg_catalog.set_config('test.leve', public.invitation_compte_lever_bannissement(
   'equipe', 'band-2345-6789', 'Bandf-A1@Example.test')::text, true);
 SELECT pg_temp.vrai(
   pg_catalog.current_setting('test.leve') = 'true'
-  AND (SELECT u.banned_until IS NULL FROM auth.users u WHERE u.id = pg_temp.u('1'))
-  AND EXISTS (SELECT 1 FROM public.audit_logs l WHERE l.action = 'invitation_bannissement_leve'),
-  'D.3 un code valide de cette adresse leve le bannissement par suppression et le journalise');
+  AND NOT EXISTS (SELECT 1 FROM auth.users u WHERE u.email = 'bandf-a1@example.test')
+  AND (SELECT u.banned_until IS NOT NULL AND u.banned_until <> 'infinity'::timestamptz
+              AND u.email LIKE 'efface-%' FROM auth.users u WHERE u.id = pg_temp.u('1'))
+  AND (SELECT p.deleted_at IS NOT NULL FROM public.profiles p WHERE p.id = pg_temp.u('1'))
+  AND EXISTS (SELECT 1 FROM public.audit_logs l WHERE l.action = 'invitation_adresse_liberee'),
+  'D.3 un code valide libere l''adresse : ancien compte banni sous une adresse effacee, profil retire garde, journalise');
+-- Le parcours normal peut alors creer un compte neuf pour l'adresse : l'autorisation l'accepte.
+SELECT pg_temp.vrai(
+  (public.invitation_compte_autoriser('equipe', 'BAND-2345-6789', 'bandf-a1@example.test') ->> 'autorise')::boolean,
+  'D.3b l''autorisation d''invitation-compte accepte maintenant l''adresse (aucun compte), la creation du compte neuf suit');
 -- Un compte banni pour une autre raison (profil actif, aucun retrait) n'est jamais leve.
 UPDATE auth.users SET banned_until = '2999-12-31 00:00:00+00'::timestamptz WHERE id = pg_temp.u('31');
 SET session_replication_role = replica;

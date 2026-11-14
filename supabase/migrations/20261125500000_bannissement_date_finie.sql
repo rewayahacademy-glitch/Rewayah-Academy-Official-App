@@ -104,9 +104,11 @@ $migration$;
 -- d. Reinviter une adresse dont le compte a ete supprime ---------------------
 -- Decision de l'architecte (14/11/2026) : une invitation d'EQUIPE (code
 -- d'enseignant ou de comptable, type `equipe`) ou de CANDIDAT valide pour une
--- adresse dont le compte est banni PAR SUPPRESSION leve ce bannissement
--- (banned_until = NULL), journalise dans audit_logs ; le parcours normal
--- continue (lien de connexion). Jamais pour `foyer`. Appelee par la fonction
+-- adresse dont le compte est banni PAR SUPPRESSION ne reste plus bloquee,
+-- journalise dans audit_logs. Correctif du meme jour : lever le seul
+-- bannissement laissait le profil retire, qui bloque l'inscription ; l'adresse
+-- est donc liberee (voir plus bas) et le parcours normal cree un compte neuf.
+-- Jamais pour `foyer`. Appelee par la fonction
 -- Edge `invitation-compte` (service_role seul), qui reverifie ici le code :
 -- valide, non utilise, non revoque, non remplace, non echu, de cette adresse.
 -- « Banni par suppression » : le profil est retire (deleted_at) ou porte un
@@ -167,9 +169,31 @@ BEGIN
     RETURN false;
   END IF;
 
-  EXECUTE 'UPDATE auth.users SET banned_until = NULL WHERE id = $1' USING v_user;
+  -- Le profil retire (deleted_at, statut disabled) bloque l'inscription :
+  -- `inscrire_enseignant_invite` exige une session SANS profil, et la ligne
+  -- `profiles` ne se supprime pas. On ne rend donc pas l'ancien compte : on
+  -- LIBERE L'ADRESSE. L'ancien compte garde son profil retire, reste banni
+  -- (date finie) et passe sous une adresse `efface-...` (comme a
+  -- l'anonymisation, `private.cpt_anonymiser`) ; sa restauration par la
+  -- direction reste possible mais il n'a plus d'adresse de connexion. La
+  -- fonction Edge cree ensuite un compte NEUF pour l'adresse invitee, sans
+  -- profil : le parcours d'inscription habituel s'ouvre. Aucun DELETE.
+  EXECUTE pg_catalog.format(
+    'UPDATE auth.users SET email = %L, banned_until = %L::timestamptz WHERE id = %L',
+    'efface-' || v_user::text || '@invalide.rewayah.invalid',
+    '2999-12-31 00:00:00+00', v_user);
+  IF pg_catalog.to_regclass('auth.identities') IS NOT NULL
+     AND EXISTS (SELECT 1 FROM information_schema.columns c
+                  WHERE c.table_schema = 'auth' AND c.table_name = 'identities'
+                    AND c.column_name = 'provider_id') THEN
+    -- Sinon l'ancienne identite (provider_id = l'adresse) ferait echouer la
+    -- creation du compte neuf.
+    EXECUTE pg_catalog.format(
+      'UPDATE auth.identities SET provider_id = %L, identity_data = ''{}''::jsonb WHERE user_id = %L',
+      'efface-' || v_user::text, v_user);
+  END IF;
   PERFORM public.log_sensitive_access(
-    'invitation_bannissement_leve', 'auth_users', v_user::text,
+    'invitation_adresse_liberee', 'auth_users', v_user::text,
     pg_catalog.jsonb_build_object('type', p_type));
   RETURN true;
 END;
@@ -179,4 +203,4 @@ REVOKE ALL ON FUNCTION public.invitation_compte_lever_bannissement(text, text, t
   FROM PUBLIC, anon, authenticated, agent_ro;
 GRANT EXECUTE ON FUNCTION public.invitation_compte_lever_bannissement(text, text, text) TO service_role;
 COMMENT ON FUNCTION public.invitation_compte_lever_bannissement(text, text, text) IS
-  'BANNISSEMENT-DATE-FINIE (14/11/2026) : leve le bannissement par suppression d''une adresse reinvitee (equipe, candidat ; jamais foyer). service_role seul, via la fonction Edge invitation-compte.';
+  'BANNISSEMENT-DATE-FINIE (14/11/2026) : libere l''adresse d''un compte supprime reinvite (equipe, candidat ; jamais foyer). service_role seul, via la fonction Edge invitation-compte.';
