@@ -1,0 +1,3364 @@
+{
+  "commun": {
+    "langue": {
+      "systeme": "System",
+      "francais": "Français",
+      "arabe": "العربية",
+      "anglais": "English"
+    },
+    "formats": {
+      "dateHeure": "{date} at {heure}",
+      "minutes": "{minutes} min",
+      "pageSur": "Page {page} of {total}"
+    },
+    "roles": {
+      "eleve": "Student",
+      "tuteur": "Guardian",
+      "enseignant": "Teacher",
+      "administration": "Administration",
+      "comptable": "Accountant"
+    },
+    "classeDistincte": {
+      "numero": "{libelle} · no. {numero}",
+      "code": "{libelle} · {code}",
+      "enseignant": "{libelle} · with {enseignant}"
+    },
+    "continuer": "Continue",
+    "retour": "Back",
+    "valider": "Confirm",
+    "annuler": "Cancel",
+    "fermer": "Close",
+    "erreurElement": "This item could not be displayed. Try again in a moment.",
+    "reessayer": "Try again",
+    "chargement": "Loading",
+    "reussite": "Done.",
+    "etape": {
+      "sur": "{n} of {total}",
+      "surLue": "Step {n} of {total}"
+    },
+    "choix": {
+      "indisponible": "Unavailable"
+    },
+    "champDate": {
+      "choisir": "Choose a date",
+      "aide": "Between today and one year from now."
+    },
+    "etats": {
+      "recharge1": {
+        "ouvertureTitre": "This screen did not open",
+        "ouverturePhrase": "Loading was interrupted. Try again; if it keeps happening, reload the page.",
+        "repetePhrase": "Loading was interrupted again. Reload the page to open this screen: you stay signed in.",
+        "versionPhrase": "Reload the page to open this screen: you stay signed in."
+      },
+      "branchementServeur": "Available once the server is connected",
+      "chargementProlonge": {
+        "titre": "The connection is taking longer than expected",
+        "phrase": "You can wait a little longer or try again."
+      },
+      "horsLigne": {
+        "titre": "You are offline",
+        "phrase": "Check your connection. What is already displayed stays available."
+      },
+      "reconnexion": {
+        "titre": "Reconnecting",
+        "phrase": "A new connection attempt is in progress."
+      },
+      "echecServeur": {
+        "titre": "Unable to load this information",
+        "phrase": "Loading did not complete. Try again in a moment."
+      },
+      "introuvable": {
+        "titre": "This page cannot be found",
+        "phrase": "The link may be incomplete, or the page no longer exists."
+      },
+      "accesRefuse": {
+        "titre": "You do not have access to this page",
+        "phrase": "This content is not open to your account."
+      },
+      "sessionExpiree": {
+        "titre": "Your session has expired",
+        "phrase": "Sign in again to continue."
+      },
+      "dossierEnAttente": {
+        "titre": "Your file is pending",
+        "phrase": "One step remains before this space opens."
+      },
+      "aucunResultat": {
+        "titre": "No results",
+        "phrase": "Nothing matches for now."
+      },
+      "permissionRefusee": {
+        "titre": "Permission denied",
+        "phrase": "Without this permission, this feature cannot open. You can change it in your device settings."
+      },
+      "ressourceExpiree": {
+        "titre": "This content is no longer available",
+        "phrase": "It has been removed, or access to it has ended."
+      },
+      "indisponible": {
+        "titre": "Not available yet",
+        "phrase": "This feature is not open yet."
+      },
+      "reessaisEpuises": "Still no answer. Try again a little later.",
+      "horsLigneDemarrageTitre": "Your account could not be verified",
+      "horsLigneDemarrage": "It can be verified when the connection returns. Try again then.",
+      "actions": {
+        "reessayer": "Try again",
+        "retourAccueil": "Back to home",
+        "seConnecter": "Sign in",
+        "seReconnecter": "Sign in again",
+        "voirDossier": "See my file",
+        "reinitialiserFiltres": "Reset filters",
+        "revenir": "Go back"
+      }
+    },
+    "entete": {
+      "retour": "Back",
+      "notifications": "Notifications",
+      "notificationsUneNonLue": "Notifications, one unread",
+      "notificationsNonLues": "Notifications, {nombre} unread"
+    },
+    "selecteurProfils": {
+      "etiquette": "{prenom}, {etat}",
+      "ajouter": "Add",
+      "ajouterSemantique": "Add a student profile"
+    },
+    "theme": {
+      "groupe": "Appearance",
+      "clair": "Light theme",
+      "sombre": "Dark theme"
+    },
+    "demarrage": {
+      "ouverture": "Opening Rewayah"
+    },
+    "fuseaux": {
+      "europeParis": "Paris",
+      "africaConakry": "Conakry",
+      "americaToronto": "Toronto",
+      "europeLondon": "London",
+      "asiaRiyadh": "Riyadh",
+      "americaLosAngeles": "Los Angeles",
+      "africaLagos": "Lagos",
+      "africaAbidjan": "Abidjan",
+      "americaNewYork": "New York",
+      "africaCasablanca": "Casablanca",
+      "asiaTokyo": "Tokyo",
+      "americaArgentinaBuenosAires": "Buenos Aires",
+      "africaDakar": "Dakar",
+      "africaBamako": "Bamako",
+      "africaNouakchott": "Nouakchott",
+      "europeBrussels": "Brussels"
+    },
+    "dates": {
+      "moisAnnee": "{mois} {annee}",
+      "choixMois": "Month",
+      "jours": [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday"
+      ],
+      "mois": [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December"
+      ],
+      "jourDate": "{jour} {mois} {numero}",
+      "premierJour": "1st"
+    },
+    "sections": {
+      "page": "Page sections"
+    },
+    "recherche": {
+      "effacer": "Clear search",
+      "fermer": "Close search"
+    }
+  },
+  "attente": {
+    "titre": "Your file is being reviewed",
+    "dossierIncomplet": "Some documents are still missing from your file.",
+    "enVerification": "We are reviewing your file.",
+    "refuse": "File refused",
+    "suspendu": "Your account is suspended.",
+    "contacterAcademie": "Contact the academy",
+    "deposeLe": "Submitted on {date}",
+    "delai": "Review usually takes less than 48 hours.",
+    "aFournir": "To provide",
+    "pieceIdentite": "An ID document",
+    "signatureContrat": "Signing the contract",
+    "carteAccuse": "What you need to know",
+    "deposerLaPiece": "Submit my document",
+    "signerLeContrat": "Read and sign",
+    "lireLaCarte": "Read",
+    "toutEstDepose": "Everything has been submitted.",
+    "corriger": "Correct",
+    "correctionImpossible": "This file cannot be edited for now.",
+    "actualiser": "Reload the file status",
+    "suspenduDetail": "You can contact the academy to find out what to do.",
+    "copieDonnees": "To get a copy of your data, write to the academy.",
+    "seDeconnecter": "Sign out",
+    "titreDossier": "Your file",
+    "titreCompte": "Your account",
+    "accordsARelire": "You still have our terms to read and accept.",
+    "demandeTitre": "Your request is in progress",
+    "demandeMessage": "The management reads every request before opening an account.",
+    "demandeDetail": "You have nothing to send. We write to your email address as soon as the management has replied.",
+    "demandePour": "Your request concerns: {liste}.",
+    "demandeRefuseeTitre": "We cannot proceed",
+    "demandeRefuseeMessage": "The management has read your request and cannot proceed with it for now.",
+    "demandeRefuseeDetail": "The email we sent you gives the reason. You can reply to it with any question.",
+    "precisionsTitre": "We are missing some information",
+    "precisionsMessage": "To review your request, the management needs a clarification:",
+    "precisionsReponse": "Simply reply to the email we sent you. The management resumes your request as soon as you reply.",
+    "actualiserCompte": "Reload",
+    "lireEtAccepter": "Read and accept our terms",
+    "nosConditions": "Our terms, to read and accept",
+    "etatAAccepter": "To accept",
+    "reste": {
+      "one": "One item remains to be provided.",
+      "other": "{n} items remain to be provided."
+    },
+    "etatAFournir": "To provide",
+    "prochaineEtape": "Next step: {etape}",
+    "refuseDetail": "Item to redo: {element}.",
+    "refuseSansElement": "You can contact the academy to find out what to do.",
+    "illisible": "Your account status cannot be displayed for now.",
+    "horsLigne": "Your account status will be displayed as soon as the network is back."
+  },
+  "accords": {
+    "titre": "Our terms",
+    "intro": "Read each text, then tick the box that follows it. The \"Next\" button becomes active when everything is ticked.",
+    "caseManquante": "Tick this box to continue.",
+    "introCases": "Read each text, then tick the box that follows it.",
+    "lireJusquEnBas": "Read to the bottom to confirm.",
+    "caseSavoir": "I have read and understood what I need to know.",
+    "sectionContrat": "Your contract",
+    "caseContrat": "I have read and accept my contract, including review visits.",
+    "reste": {
+      "one": "One agreement remains to be ticked.",
+      "other": "{n} agreements remain to be ticked."
+    },
+    "toutCoche": "Everything is ticked.",
+    "suivant": "Next",
+    "dejaAcceptes": "Your agreements are already saved.",
+    "cadreNonPublie": "Sending your application will be possible once the religious and educational framework is published."
+  },
+  "connexion": {
+    "titre": "Sign in",
+    "sessionTermineeTitre": "You have been signed out",
+    "sessionTermineePhrase": "Your session has ended: this account, or another one, signed in elsewhere, in this browser or on another device. Sign in again here. To use two accounts at the same time, open the second one in a private window or on another device.",
+    "lienAilleursTitre": "This link was opened on another device",
+    "lienAilleursPhrase": "A sign-in link only opens in the browser where you requested it. Open it on that device: if you started signing up, your answers are saved there. Otherwise, request a new link here.",
+    "modeConnexion": "I already have an account",
+    "modeCreation": "Create an account",
+    "titreCreation": "Create your account",
+    "introCreation": "Enter your address: we send you a link that creates your account. No password to choose.",
+    "envoyerLienCreation": "Get the sign-up link",
+    "intro": "We send you a link by email. No password to remember, so none to lose.",
+    "courriel": "Your email address",
+    "courrielIndice": "you@example.com",
+    "motDePasseDemo": "Demo password",
+    "envoyerLien": "Get the link",
+    "entrerDemo": "Enter the demo",
+    "introDemo": "Demo mode: no link will be sent. You go straight in, without email.",
+    "essayerDemo": "Try the demo",
+    "avecGoogle": "Continue with Google",
+    "ou": "or",
+    "lienEnvoye": "Link sent",
+    "lienEnvoyeDetail": "Open the message sent to {courriel}, then follow the link. You can leave this page open.",
+    "changerAdresse": "Use another address",
+    "erreurCourriel": "This address does not look valid.",
+    "erreurEnvoi": "The message was not sent. Try again in a moment.",
+    "erreurMotDePasse": "Wrong address or password. Check both, or clear the password to receive a link by email.",
+    "appareilEleveAide": "Are you a guardian preparing a student's device?",
+    "appareilEleve": "Connect a student's device",
+    "renvoyer": "Resend the link",
+    "renvoye": "A new link was sent to {courriel}. Use the one in the most recent message.",
+    "inscriptionFermee": "Sign-ups are currently by invitation only. Did you apply to teach? You will receive a personal email from us: there is nothing for you to do. Are you a family? Sign-ups reopen soon.",
+    "invitationFoyer": {
+      "titre": "Invitation to join a household",
+      "autreAdresse": "This invitation is for another address: sign out to open it.",
+      "autreAdressePhrase": "Nothing was used: the invitation stays valid for the person invited.",
+      "creationImpossible": "Your account could not be created with this link. Ask the person who invited you to send the invitation again.",
+      "plusValable": "This invitation is no longer valid.",
+      "plusValablePhrase": "Ask the person who invited you to send it again."
+    },
+    "erreurTropTot": "A link has just been sent. Wait a moment before requesting another.",
+    "horsLigne": "The link cannot be sent right now. Try again when the connection is back.",
+    "controle": {
+      "libelle": "Security check",
+      "chargement": "Security check in progress.",
+      "erreur": "The check did not complete. Try again.",
+      "horsLigne": "The check cannot be done right now. Try again when the connection is back."
+    },
+    "probleme": "Link expired or never received?",
+    "recuperation": {
+      "titre": "Get back into my account",
+      "intro": "There is no password to reset: enter your address and we send you a new sign-in link.",
+      "lienExpireTitre": "This link is no longer valid",
+      "lienExpire": "A sign-in link works only once and expires after a while. Request a new one below.",
+      "lienRefuseTitre": "Sign-in did not complete",
+      "lienRefuse": "This link could not sign you in. Request a new one below.",
+      "envoyer": "Get a new link",
+      "envoyeTitre": "New link sent",
+      "envoye": "Open the message sent to {courriel}, then follow the link.",
+      "envoyeEncart": "The message can take a few minutes to arrive. Remember to check your spam folder.",
+      "autreAdresse": "Use another address",
+      "revenirConnexion": "Back to sign-in"
+    },
+    "feuilleAppareil": {
+      "pourQui": "For guardians who are already registered. This screen gives a student in your household their own access, on their tablet or phone, without handing over your account.",
+      "etapesTitre": "Where to find the code",
+      "etape1": "On your own device, open Household, then Household devices.",
+      "etape2": "Tap the student's profile, then Connect a device.",
+      "etape3": "A QR code and a six-character code appear, with their expiry time.",
+      "etape4": "On the student's device, scan the QR code or enter the code.",
+      "plafond": "The number of devices per student is limited. If the limit is reached, remove one from Household, Household devices.",
+      "saisir": "Enter the code",
+      "fermer": "Close"
+    }
+  },
+  "inscription": {
+    "questionnaire": {
+      "recapLangue": "Course language",
+      "prenomQuestion": "What is your child's name?",
+      "prenomRaison": "Their first name is enough. You can register other children at the end.",
+      "prenomIndice": "For example: Yasmine",
+      "ageQuestion": "How old is {prenom}?",
+      "ageMinimum": "The minimum age is {min}.",
+      "ans": "{n} years old",
+      "adulte": "18 or older",
+      "adulteDetail": "From 18, everyone registers for themselves, with \"I'm signing up for myself\".",
+      "clavierLettres": "On a keyboard, press the letter of an answer to choose it.",
+      "genreQuestion": "{prenom} is…",
+      "garcon": "A boy",
+      "fille": "A girl",
+      "genreRaison": "The academy takes this into account when forming classes.",
+      "niveauQuestionMoi": "Where are you today?",
+      "etapeCourte": "{n} of {total}",
+      "recapTitre": "Here is what we understood",
+      "recapApprenants": "Who is learning",
+      "ligneEnfant": "{prenom}, {age}",
+      "ligneVous": "You",
+      "ajouterProfil": "Add another student profile",
+      "envoyer": "Send my request",
+      "dejaUnCompte": "I already have an account",
+      "aucuneReponse": "The answers to your sign-up are no longer on this device. Go back to the first questions: they take two minutes.",
+      "acces": {
+        "titre": "Last step: your access",
+        "reponsesGardees": "Your answers are saved.",
+        "resteAcces": "All that is left is to receive your access link, or to continue with Google."
+      }
+    },
+    "titre": "Create your account",
+    "etapeSur": "Step {n} of {total}",
+    "tempsRestant": "About {minutes} min",
+    "roleQuestion": "Are you signing up as a parent or as a teacher?",
+    "roleTuteur": "Parent or guardian",
+    "roleEleveAdulte": "Adult student, for myself",
+    "roleEnseignant": "Teacher",
+    "autreAide": "Write to the academy and we will create your access. This page cannot do it for you.",
+    "identiteQuestion": "What is your name?",
+    "identiteQuestionFamille": "What is your own name, as the parent or guardian?",
+    "identiteAideFamille": "Not the child's: their student profile will have its own name.",
+    "identiteRaison": "This name must match your ID document.",
+    "prenom": "First name",
+    "nom": "Last name",
+    "genreQuestion": "You are",
+    "genreHomme": "A man",
+    "genreFemme": "A woman",
+    "genreRaison": "This answer is only used to have your ID document handled by a staff member of the same gender.",
+    "genreHommeExplication": "If you take classes, the academy takes this into account when forming classes and choosing the teacher.",
+    "genreFemmeExplication": "If you take classes, the academy takes this into account when forming classes and choosing the teacher.",
+    "genreHommeEnseignant": "Your ID document will be reviewed by a man on the team.",
+    "genreFemmeEnseignant": "Your ID document will be reviewed by a woman on the team.",
+    "recapitulatif": "Before you continue",
+    "creer": "Create my account",
+    "erreur": "The account could not be created. Try again in a moment.",
+    "champRequis": "This answer is needed to continue.",
+    "etapeCourte": "{n} of {total}",
+    "retourEtape": "Back to the previous step",
+    "seDeconnecter": "Sign out",
+    "modifier": "Edit",
+    "reessayer": "Try again",
+    "erreurActualisation": "Your account is created, but the sign-in could not be refreshed. Try again, or sign out and sign back in.",
+    "erreurInvitation": "Your invitation code could not be used: it has expired, has already been used, or does not match your address. Ask the management for a new code, then enter it again.",
+    "usage": {
+      "question": "Who are you creating this account for?",
+      "moiTitre": "I'm signing up for myself",
+      "moiDescription": "You take the classes yourself. Your student profile is created with your account.",
+      "familleTitre": "I'm registering my child",
+      "familleDescription": "You register one or more children and follow their progress. You can also take classes yourself.",
+      "enseignant": "I have an invitation code",
+      "enseignantInvite": "Are you a teacher? The academy invites you by email.",
+      "comptable": "I have an accountant code",
+      "comptableInvite": "Are you an accountant? The management invites you by email.",
+      "coursQuestion": "Do you also take classes?",
+      "coursOui": "Yes",
+      "coursNon": "No",
+      "moiExemple": "you are 18 or older and you are learning recitation for yourself.",
+      "familleExemple": "you register Yasmine, 9, and Bilal, 12.",
+      "coursOuiExplication": "You take classes yourself too, in addition to those of your family.",
+      "coursOuiExemple": "your children attend their class and you attend yours.",
+      "coursNonExplication": "You register your family and follow their progress, with no classes for yourself. You can change your mind later.",
+      "coursNonExemple": "you register your daughter and follow her sessions from your account.",
+      "enseignantPostuler": "Do you want to teach at Rewayah?",
+      "deposerCandidature": "Submit my application"
+    },
+    "recap": {
+      "usage": "Account type",
+      "identite": "Name",
+      "genre": "Gender",
+      "enseignant": "Teacher",
+      "comptable": "Accountant",
+      "cours": "Your own classes",
+      "coursOui": "You also take classes",
+      "coursNon": "No classes for you",
+      "telephone": "Phone",
+      "langue": "Language"
+    },
+    "telephone": {
+      "question": "Your phone number",
+      "explication": "It is used to avoid duplicates and to link your exchanges with the academy to your application. The academy writes to you in the app. It is never shown to other applicants.",
+      "indicatif": "Country code",
+      "numero": "Number, without the country code",
+      "indicatifManquant": "Choose your country code.",
+      "numeroManquant": "Enter your phone number.",
+      "numeroInvalide": "This number is not readable. Write it in digits, without the country code.",
+      "changerIndicatif": "Change country code",
+      "pays": "Country",
+      "numeroCourt": "Number",
+      "choisirPays": "Choose your country",
+      "rechercherPays": "Search for a country or a code"
+    },
+    "langue": {
+      "question": "In which language do you want to read the app?",
+      "francais": "Français",
+      "arabe": "العربية",
+      "francaisExplication": "The app and the academy's messages are written in French.",
+      "francaisExemple": "buttons, explanations and messages are shown from left to right.",
+      "arabeExplication": "The app and the academy's messages are written in Arabic.",
+      "arabeExemple": "buttons, explanations and messages are shown from right to left."
+    },
+    "confidentialite": {
+      "case": "I have read and accept the privacy policy.",
+      "lire": "Read the privacy policy",
+      "requise": "Tick this box to send your application."
+    },
+    "candidat": {
+      "creationEchec": "Your application may not have been sent. Try again in a moment.",
+      "envoyer": "Send my application",
+      "accueil": "You are submitting an application to teach at Rewayah. It does not commit you to anything.",
+      "ensuite": "Next, the management reads your application and writes to you in the app.",
+      "horsLigne": "The application can be sent when the connection is back.",
+      "courrielAConfirmer": "Confirm your address first: open the link you received by email.",
+      "nonOuverte": "Applications without a code are not open yet. If the management gave you a code, enter it.",
+      "nonConfirmee": "Your request may not have reached Rewayah. Try again in a moment.",
+      "aCorriger(param=champs)": "One answer needs to be corrected: {champs}. Press \"Edit\" next to the answer.",
+      "confidentialitePerimee": "The privacy policy text has changed, and the version shown is no longer up to date. Reload the page or update the app, then read the text again.",
+      "indisponible": "Sign-up is not available right now. Try again a little later."
+    },
+    "nomLatin": {
+      "libelle": "Your name in Latin letters",
+      "raison": "For lists, certificates and exchanges with the academy.",
+      "aide": "Here is our suggestion. Correct it if your name is not written this way.",
+      "erreur": "Write your name using Latin alphabet letters (a, b, c) to continue."
+    }
+  },
+  "codeConduite": {
+    "titre": "Teacher code of conduct",
+    "lien": "Read the code of conduct",
+    "intro": "These rules protect students, and they protect you. Read them, then accept.",
+    "regles": [
+      "Your classes are held in the academy's room. A class may be audio-recorded, and a person in charge of review may follow it live without telling you when. A parent may also attend the class for a limited time, to see how the session goes: you are informed. You accept these measures: they protect children and they protect you.",
+      "You see your students' first names. Their full name is not shown, to keep the screen short. You never see a family's contact details: no email, no phone.",
+      "What you know about a child stays with the academy, to protect their personal data. You do not make it public and you do not show it to other families.",
+      "You never contact a student or their family privately, outside the app.",
+      "In front of the camera, your dress is appropriate and the background behind you is neutral and calm.",
+      "You are on time. You open the room before the class starts.",
+      "You are also callers to the faith: be exemplary in your words and gestures, and patient with each student.",
+      "If a child's safety worries you, report it right away with \"Report a need\", category \"A child's safety\". The management reads it first.",
+      "If you refuse these rules, the academy cannot entrust students to you, because they protect children."
+    ],
+    "caseAccord": "I have read the code of conduct and I accept it.",
+    "accepter": "I accept the code of conduct",
+    "accepteLe": "Accepted on {date}. Version {version}.",
+    "erreur": "Your agreement was not saved. Try again in a moment.",
+    "erreurLecture": "We could not load your agreements. Try again.",
+    "aAccepter": "To accept"
+  },
+  "consentement": {
+    "titre": "Consents",
+    "texte": {
+      "titre": "Parent visits",
+      "quiResponsable": "The parents of the students present can briefly observe the session.",
+      "quiResponsableDetail": "They hear the teacher and the students who speak, including your child. Their microphone and camera stay off: they can neither speak, nor write, nor appear on screen.",
+      "quiAdulte": "The parents of the other students present can briefly observe the session.",
+      "quiAdulteDetail": "They hear the teacher and the students who speak, including you. Their microphone and camera stay off: they can neither speak, nor write, nor appear on screen.",
+      "pourquoi": "To follow learning without interrupting the class.",
+      "pourquoiDetail": "A parent comes to see whether their child is taking part, then leaves. The room constantly reminds that a visit is possible.",
+      "limites": "Short visits, in limited number.",
+      "limitesDetail": "Each parent has a small number of visits per session, set by the academy and recalled in \"How does it work?\". A visit left before the end counts as a visit.",
+      "caseResponsable": "I accept these terms for my child",
+      "caseAdulte": "I accept these terms",
+      "continuer": "Continue",
+      "retour": "Back"
+    },
+    "comment": {
+      "titre": "How does it work?",
+      "visites": {
+        "one": "One visit of {minutes} min per session.",
+        "other": "{n} visits of {minutes} min per session."
+      },
+      "visitesSansDuree": {
+        "one": "One short visit per session.",
+        "other": "{n} short visits per session."
+      },
+      "parParent": "This number applies to each parent, whether the session brings together one or several of their children.",
+      "ecourtee": "A visit left before the end is counted: only the next one remains, up to the last.",
+      "ecouter": "You hear the teacher and the students who speak, including your child.",
+      "sansMicro": "Your microphone and camera stay off during the visit.",
+      "valeursIndisponibles": "The number of visits and their length are shown from your child's class, according to the rules of their class.",
+      "fermee": "Observation visits are not open for this class."
+    },
+    "compte": {
+      "intro": "The academy has added a paragraph on parent visits to its terms. Nothing is considered accepted until you have done so.",
+      "accepteLe": "You accepted these terms on {date}.",
+      "merci": "Thank you, your agreement is saved.",
+      "chargement": "Loading your agreements",
+      "erreur": "Your agreements cannot be displayed for now.",
+      "horsLigne": "Your agreements will be displayed as soon as the network is back.",
+      "sansProfil": "No account signed in: sign in again to read your agreements.",
+      "invite": "A new version to read: parent visits",
+      "inviteAction": "Read"
+    }
+  },
+  "kyc": {
+    "titre": "Your ID document",
+    "intro": "Photograph the side or page that shows your photo and your name. A readable photo is enough. It is kept for the time of the check, then deleted.",
+    "confidentialite": "Your ID document is submitted as it is: it is never public, only the management views it, and it is required by child protection regulations.",
+    "typeQuestion": "Which document are you submitting?",
+    "carteIdentite": "ID card",
+    "passeport": "Passport",
+    "titreSejour": "Residence permit",
+    "autrePiece": "Other official document",
+    "explicationCarteIdentite": "The national ID card of your country, currently valid.",
+    "explicationPasseport": "Your passport, currently valid.",
+    "explicationTitreSejour": "The card of the country where you live without being a citizen, currently valid.",
+    "explicationAutre": "Another official document that shows your photo and your name.",
+    "exempleAutre": "a driving licence or a consular card",
+    "choisirFichier": "Choose the photo",
+    "fichierChoisi": "Photo ready to be sent",
+    "envoyer": "Send my document",
+    "envoiEnCours": "Sending",
+    "deposee": "Document received",
+    "erreur": "The upload did not complete. Try again in a moment.",
+    "erreurFormat": "This file was not accepted: only JPEG, PNG, HEIC or WebP photos and PDF files are. Choose another photo of your document.",
+    "erreurReseau": "The upload did not complete: your request may not have reached Rewayah. Tap \"Send my document\" again in a moment.",
+    "contenuNonConforme": "This file does not open as a photo or as a PDF: it may be damaged, or of another type that was renamed. Choose the photo or PDF of your ID document.",
+    "tropVolumineux": "This photo is larger than {taille} MB. Retake it at a lower quality.",
+    "manqueType": "First choose the document you are submitting."
+  },
+  "enfant": {
+    "titre": "Add a student profile",
+    "aucun": "No student profile in the household",
+    "aucunDetail": "First add a student profile from the Household."
+  },
+  "foyer": {
+    "titre": "Household",
+    "ajouterProfil": "Add a student profile",
+    "sousTitre": "The student profiles of your household",
+    "membres": "Student profiles",
+    "vide": {
+      "titre": "No student profile yet",
+      "phrase": "Add a student profile to register them in a class and link their device.",
+      "moiTitre": "You take the classes",
+      "moiPhrase": "Your student profile is linked to your account. Only add a student profile for another person in your family, a child for example."
+    },
+    "membre": {
+      "sansClasse": "No class yet",
+      "classeEchec": "Class not loaded",
+      "vous": "You",
+      "accesSansEcheance": "Access with no end date",
+      "accesJusquau": "Access until {date}",
+      "accesExpire": "Access expired since {date}",
+      "date": "{mois} {jour}, {annee}"
+    },
+    "classesIndisponibles": "Each student's class is not shown on this page yet.",
+    "classesEchec": "The class of some students could not be loaded.",
+    "relireClasses": "Reload the classes",
+    "profilsSansDonnees": "The student profiles of your household could not be loaded",
+    "titulaireSansDonnees": "Your account holder information could not be loaded",
+    "inscriptionIllisible": "Each student's current registration is not shown on this page yet.",
+    "appareilsPartages": "Shared devices",
+    "appareilsFoyer": "Household devices",
+    "appareilsFoyerLegende": "Connect a device, see those that are linked, remove one",
+    "creerMonProfil": "Create my student profile",
+    "n2": {
+      "invitationRecueMessage": "Read the invitation, then accept or decline it.",
+      "invitationRecueVoir": "See the invitation",
+      "repriseATraiterVoir": "See the takeover request",
+      "demanderReprise": "Request to take over the household",
+      "demanderRepriseLegende": "If the household account holder has passed away"
+    },
+    "monProfil": {
+      "titre": "Create my student profile",
+      "indisponibleTitre": "Not possible yet",
+      "indisponiblePhrase": "Taking classes yourself with your own student profile will be offered soon. Your guardian account stays as it is.",
+      "intro": "With your own student profile, you can take classes yourself, in an adults' class.",
+      "consequence": "Your guardian account does not change: you keep your household and your children's student profiles.",
+      "creer": "Create my student profile",
+      "reessayer": "Try creating my student profile again",
+      "nonConfirme": "The creation of your student profile is not confirmed: your request may not have reached Rewayah. Try again in a moment; if your profile already exists, nothing is created twice.",
+      "horsLigne": "Nothing is created. You can create your student profile yourself when the connection is back.",
+      "sansDonnees": "Your student profile could not be verified",
+      "creeTitre": "Your student profile is created",
+      "creePhrase": "Your guardian account does not change. You keep your household and your children's student profiles.",
+      "dejaTitre": "You already have your student profile",
+      "dejaPhrase": "Your student profile already exists: there is nothing to create.",
+      "dejaOuvertPhrase": "Your student profile already exists: your classes are waiting for you in your student space.",
+      "dejaAttentePhrase": "Your student space will be available as soon as the management has approved your admission request.",
+      "retour": "Back to the household"
+    },
+    "ajout": {
+      "suivant": "Next",
+      "creer": "Create the profile",
+      "porte": {
+        "sansDonneesTitre": "The profiles you can add could not be checked",
+        "illisibleTitre": "Your account could not be read",
+        "illisiblePhrase": "We do not know yet which profiles you can add. Try again in a moment."
+      },
+      "pourQui": {
+        "question": "Who is this student profile for?",
+        "sousTitre": "Choose the person who will take the classes.",
+        "requis": "Choose who this profile is for to continue.",
+        "indisponible": "Unavailable",
+        "enfantTitre": "A child or a minor",
+        "enfantDescription": "A profile attached to your household, which you manage for them.",
+        "enfantAttente": "Possible as soon as your access is open.",
+        "moiTitre": "Myself"
+      },
+      "identite": {
+        "question": "Who is the student?",
+        "sousTitre": "Their first name, last name and age.",
+        "prenom": "First name",
+        "nom": "Last name",
+        "nomAide": "The family name is never shown to the teacher.",
+        "nomAidePrerempli": "Filled in with your account name: change it if the student has a different name. Never shown to the teacher.",
+        "age": "Age, in years",
+        "ageAide": "Age sets the display and the camera to start with. You can change both afterwards. The minimum age is {min}.",
+        "ageFige": "Sending is in progress: the age can be changed after the reply.",
+        "ageAdulte": "From 18, the student creates their own adult account.",
+        "genre": "Boy or girl"
+      },
+      "erreurs": {
+        "prenomRequis": "Enter the student's first name.",
+        "nomRequis": "Enter the student's last name.",
+        "ageRequis": "Choose the student's age to continue.",
+        "ageHorsBornes": "Enter an age between {min} and {max}.",
+        "genreRequis": "Gender is missing: tap \"A boy\" or \"A girl\", then \"Create the profile\"."
+      },
+      "refus": {
+        "compteNonValide": "Your access must be open before you add a student profile.",
+        "ageHorsBornes": "This age is not accepted. Check it and try again.",
+        "refuse": "The creation was not accepted. Check the information and try again.",
+        "titulaire": "This first and last name are yours. A profile added here is a child's: to take classes yourself, use \"Create my student profile\".",
+        "adulte": "From 18, a profile is not added here: this page is for children. To take classes yourself, use \"Create my student profile\"."
+      },
+      "incertaine": {
+        "titre": "The profile may have been created",
+        "phrase": "The reply did not reach us. Check the household before trying again, so the profile is not created twice.",
+        "voirFoyer": "See the household",
+        "reessayer": "Try again anyway"
+      },
+      "horsLigne": "The profile can be created when the connection is back."
+    },
+    "finances": {
+      "titre": "Balances and payments",
+      "rechargerPlusieurs": "Top up several profiles",
+      "rechargerPour": "Top up {prenom}",
+      "recharger": "Top up",
+      "voirDetail": "See the details",
+      "voirDetailSemantique": "See the details of {dePrenom}'s finances",
+      "noteSoldes": "Each child has an individual balance and funded period. Access is tied to the funded period, not simply to the balance.",
+      "vueFinanciere": "Household financial view",
+      "vueFinancierePeriode": "This month",
+      "soldeActuel": "Current balance",
+      "prochainDebit": "Next debit",
+      "prochainDebitValeur": "{date} · {montant}",
+      "aucunDebit": "No debit planned",
+      "essaiSansMax": "Trial: {n} session(s) used",
+      "manque": "{montant} is missing for the next period.",
+      "indisponibleTitre": "Balances cannot be loaded",
+      "sansDonnees": "The balances of your household could not be loaded"
+    },
+    "transactions": {
+      "titre": "Latest transactions",
+      "ligne": "{libelle} · {prenom}",
+      "voirTout": "See all",
+      "voirToutSemantique": "See all: the household's payment history",
+      "videTitre": "No transactions yet",
+      "videPhrase": "Top-ups and monthly fees of the profiles will appear here.",
+      "erreurTitre": "The latest transactions cannot be loaded",
+      "sansDonnees": "The household's latest movements could not be loaded"
+    }
+  },
+  "ficheEleve": {
+    "sansDonnees": "This student's profile could not be loaded",
+    "titreRepli": "Student profile",
+    "parametres": "Student settings",
+    "appareilsGroupe": "Devices",
+    "supprimer": {
+      "groupe": "Delete the profile",
+      "ligne": "Delete {dePrenom}'s profile",
+      "legende": "The profile leaves its classes and can no longer sign in.",
+      "question": "Delete {dePrenom}'s profile?",
+      "consequence": "The profile can no longer sign in, immediately, and leaves its classes. It is anonymised at the end of the retention period. To get it back before then, write to the management.",
+      "confirmer": "Yes, delete {prenom}",
+      "saisieLibelle": "To confirm, write the first name {prenom}",
+      "saisieErreur": "That is not the first name {prenom}. Write it to confirm the deletion.",
+      "rester": "Change nothing",
+      "horsFoyer": "This profile cannot be deleted from your account. Write to the management.",
+      "dejaRetire": "This profile is already deleted. The list is up to date.",
+      "refuse": "Your account cannot delete this profile. Write to the management.",
+      "indisponible": "Deleting a profile is not available yet. Nothing was deleted.",
+      "echec": "The deletion could not be confirmed. Reopen the household to check before trying again.",
+      "horsLigne": "Nothing was sent: there is no network. Try again as soon as it is back."
+    },
+    "introuvable": {
+      "titre": "This student profile cannot be found",
+      "phrase": "It is not part of your household, or the link is incomplete.",
+      "retour": "Back to the household"
+    },
+    "lignes": {
+      "informations": "Information",
+      "informationsLegende": "First name and photo",
+      "inscription": "Journey and registration",
+      "inscriptionLegende": "Questionnaire and class",
+      "interface": "Interface",
+      "camera": "Current camera",
+      "cameraAutorisee": "Allowed",
+      "cameraNonAutorisee": "Not allowed",
+      "acces": "Rewayah access",
+      "appareils": "{dePrenom}'s devices",
+      "appareilsLegende": "Connect a device, see those that are linked, remove one",
+      "couleur": "Profile colour",
+      "couleurAucune": "No colour",
+      "couleurIndisponible": "Not available yet",
+      "couleurEchec": "Colour not loaded",
+      "finances": "Finances"
+    },
+    "informations": {
+      "titre": "Student information",
+      "identite": "Identity",
+      "prenom": "First name",
+      "tranche": "Age group",
+      "trancheInconnue": "Not known yet",
+      "trancheNonLue": "Not loaded",
+      "photo": "Photo",
+      "photoLegende": "A photo of {dePrenom}'s face. It is not an ID document. Their teacher, the students in their class and the management see it.",
+      "photoAucune": "No photo yet",
+      "photoPresente": "Photo saved",
+      "choisir": "Choose a photo",
+      "changer": "Change the photo",
+      "apercuTitre": "Preview",
+      "apercuPhrase": "Check the photo before sending it.",
+      "apercuIllisible": "The preview cannot be displayed on this device. The photo can still be sent.",
+      "envoyer": "Send this photo",
+      "autre": "Choose another photo",
+      "annuler": "Cancel",
+      "etapeEnvoi": "Sending the photo, step 1 of 2",
+      "etapeEnregistrement": "Saving to the profile, step 2 of 2",
+      "succes": "The photo is saved.",
+      "tropLourde": "This photo is larger than {taille} MB. Choose a lighter image.",
+      "echecEnvoi": "The photo could not be sent. Nothing changed on the profile.",
+      "echecEnregistrement": "The photo was sent, but it could not be saved to the profile.",
+      "reprendre": "Try again",
+      "selectionEchec": "The photo could not be opened. Check access to the device's photos, then try again.",
+      "horsLigne": "The photo can be sent when the connection is back."
+    },
+    "inscription": {
+      "titre": "Journey and registration",
+      "intro": "Where {prenom} stands: questionnaire and class.",
+      "questionnaire": "Questionnaire",
+      "classe": "Class",
+      "lecture": "Loading",
+      "etatInconnu": "The questionnaire status cannot be displayed yet.",
+      "aRemplir": "To fill in",
+      "horaireAChoisir": "Filled in, schedule to choose",
+      "horaireRetire": "Schedule withdrawn, to choose again",
+      "echangeAPrevoir": "Preference saved, level conversation to schedule",
+      "echangePrevu": "Level conversation planned",
+      "classeEnConstitution": "Class being formed",
+      "classeConfirmee": "Class confirmed",
+      "classeAucune": "No class yet. Choose a class",
+      "classeIndisponible": "The class cannot be displayed here yet. Choose a class",
+      "classeEchec": "The class could not be loaded.",
+      "relireClasse": "Reload the class"
+    },
+    "interface": {
+      "titre": "Interface",
+      "intro": "Choose how Rewayah is displayed on {dePrenom}'s device. You can change this choice at any time.",
+      "guidee": "Guided interface",
+      "guideeDescription": "When {prenom} prefers airy screens: larger text, one action at a time. Same sections and same rights.",
+      "standard": "Standard display",
+      "standardDescription": "When {prenom} is comfortable with denser screens: more information per screen. Same sections and same rights.",
+      "politique": "You choose this setting. No reason is asked, and the teacher only sees the name of the mode.",
+      "application": "The change applies the next time Rewayah is opened on {dePrenom}'s device.",
+      "demandeEleve": "Requesting the change by the student themselves is not offered yet.",
+      "echec": "The change is not confirmed: it may not have reached Rewayah. Tap your choice again. If it did not arrive, {dePrenom}'s display stays as it was.",
+      "horsLigne": "The display can be changed when the connection is back."
+    },
+    "camera": {
+      "titre": "Current camera",
+      "ligne": "Camera during sessions",
+      "autorisee": "{prenom} can turn on their camera during sessions.",
+      "interdite": "The camera button will not appear for {prenom} during sessions.",
+      "application": "The change counts the next time {dePrenom} joins a session.",
+      "distincte": "This setting does not change the device's camera permission, the one the phone asks for to read a QR code.",
+      "echec": "The change was not saved. Try again.",
+      "horsLigne": "The camera can be set when the connection is back."
+    },
+    "acces": {
+      "titre": "Rewayah access",
+      "ligne": "{dePrenom}'s access",
+      "pastilleSansEcheance": "No end date",
+      "pastilleEnCours": "Active",
+      "pastilleExpire": "Expired",
+      "sansEcheance": "No end date is recorded.",
+      "jusquau": "Until {date}",
+      "expireDepuis": "Expired since {date}",
+      "expirePhrase": "Since this date, {prenom} can no longer enter Rewayah.",
+      "detailIndisponible": "The start of access and its reason are not displayed yet."
+    },
+    "couleur": {
+      "titre": "Profile colour",
+      "contexte": "Choose the colour that distinguishes {prenom} from the other profiles in the household. It is shown behind their photo on household screens. It is neither a status nor a class.",
+      "menthe": "Mint",
+      "ciel": "Sky",
+      "lavande": "Lavender",
+      "rose": "Pink",
+      "peche": "Peach",
+      "sable": "Sand",
+      "dejaPrise": "Already chosen for {prenom}: the colour would no longer distinguish these profiles.",
+      "prenomsEt": "{premiers} and {dernier}",
+      "aucune": "No colour",
+      "choisie": "Colour chosen: {couleur}.",
+      "priseLigne": "{couleur}: already chosen for {prenom}.",
+      "aucuneDetail": "Only the photo and first name distinguish {prenom}.",
+      "echec": "The colour change is not confirmed: it may not have reached Rewayah. Choose the colour again.",
+      "horsLigne": "The colour cannot be changed now. It can be chosen again as soon as sending is possible."
+    },
+    "filAriane": {
+      "foyer": "Household"
+    },
+    "onglets": {
+      "general": "General",
+      "finances": "Finances"
+    },
+    "finances": {
+      "titre": "Finances",
+      "titreBureau": "{prenom} · Finances",
+      "vueTitre": "Financial view",
+      "mensualite": "Monthly fee",
+      "mensualiteValeur": "{montant} / month",
+      "detailTitre": "Monthly fee details",
+      "tarifEnfant": "Child rate",
+      "tarifAdulte": "Adult rate",
+      "remiseRang": "Family discount",
+      "remiseRangDe": "Family discount, member no. {rang}",
+      "prorata": "Calendar reduction",
+      "bourse": "Rewayah scholarship",
+      "accesOffert": "Free access",
+      "prixSpecial": "Special price",
+      "remisePrepaiement": "Advance payment discount",
+      "avoir": "Credit note",
+      "taxe": "Applicable tax",
+      "total": "Total to fund",
+      "regulariserTitre": "Access to settle",
+      "aFinancerTitre": "Next period to fund",
+      "expireTitre": "Access expired",
+      "manqueEtConservation": "{montant} is missing for the next period. The place is kept until {date}.",
+      "sansManque": "The next period is not funded yet.",
+      "manquePourMois": "{montant} is missing to fund {mois}.",
+      "manquePourMoisEtConservation": "{montant} is missing to fund {mois}. The place is kept until {date}.",
+      "moisNonFinance": "The period of {deMois} is not funded yet.",
+      "periodeAFinancer": "Period to fund",
+      "periodeAFinancerValeur": "{mois} {annee} · {montant}",
+      "confirmationTitre": "Payment being confirmed",
+      "confirmationPhrase": "Do not pay a second time: the period updates as soon as it is confirmed.",
+      "indisponibleTitre": "Finances are not available yet",
+      "indisponiblePhrase": "{dePrenom}'s balance and monthly fee will appear here as soon as the academy has published them.",
+      "erreurTitre": "{dePrenom}'s finances cannot be loaded",
+      "videTitre": "No finances recorded for {prenom}",
+      "videPhrase": "No balance or monthly fee is shown yet for this profile. They will appear here after they register in a class.",
+      "voirMouvements": "See the movements",
+      "noteAbsences": "Ordinary absences do not reduce the month once it is funded.",
+      "faitSeance": "No charge per session",
+      "faitPeriode": "Access tied to the funded period",
+      "historiqueTitre": "Transaction history",
+      "voirTout": "See all",
+      "voirToutSemantique": "See all: {dePrenom}'s movements",
+      "voirMouvementsSemantique": "See {dePrenom}'s movements",
+      "telechargerRecu": "Download the receipt",
+      "recuIndisponibleTitre": "The receipt is not available yet",
+      "recuIndisponiblePhrase": "Receipt download arrives with the launch of payments. Each payment stays visible in the movements.",
+      "recuEchecTitre": "The receipt could not be prepared",
+      "recuEchecPhrase": "Your request may not have reached Rewayah. Try again in a moment.",
+      "sansDonnees": "The finances of this profile could not be loaded"
+    },
+    "mouvements": {
+      "titre": "Movements",
+      "dateHeure": "{date} at {heure}",
+      "heureChiffres": "{heures}:{minutes}",
+      "contexte": "{dePrenom}'s top-ups, monthly fees, discounts and credit notes, from the most recent to the oldest. Nothing is erased: a correction is added as a new movement.",
+      "personne": "Person",
+      "colonne": {
+        "date": "Date",
+        "libelle": "Label",
+        "montant": "Amount",
+        "statut": "Status",
+        "recu": "Receipt"
+      },
+      "nature": {
+        "recharge": "Top-up",
+        "mensualite": "Monthly fee",
+        "mensualiteDe": "Monthly fee {mois} {annee}",
+        "avoir": "Credit note",
+        "remise": "Discount",
+        "taxe": "Applicable tax",
+        "debitSeance": "Session debit",
+        "correction": "Balance correction",
+        "remboursement": "Refund"
+      },
+      "statut": {
+        "enregistre": "Recorded",
+        "enConfirmation": "Being confirmed"
+      },
+      "voirRecu": "See the receipt",
+      "voirRecuSemantique": "See receipt {reference}",
+      "recu": {
+        "titre": "Receipt",
+        "fermer": "Close the receipt",
+        "date": "Date",
+        "reference": "Reference",
+        "moyen": "Payment method",
+        "montant": "Amount paid",
+        "repartition": "Breakdown"
+      },
+      "videTitre": "No movements",
+      "videPhrase": "No top-up or monthly fee is recorded yet for {prenom}. Movements will appear here after the first payment.",
+      "erreurTitre": "{dePrenom}'s movements cannot be loaded",
+      "indisponibleTitre": "Movements are not available yet",
+      "indisponiblePhrase": "{dePrenom}'s top-ups and monthly fees will appear here once they are in service.",
+      "sansDonnees": "The movements of this profile could not be loaded"
+    }
+  },
+  "recrutement": {
+    "nomLatin": {
+      "titre": "Your name in Latin letters",
+      "explication": "Your name is written in another script. For lists, certificates and exchanges with the academy, we need it written in Latin letters.",
+      "libelle": "Your name in Latin letters",
+      "aide": "Here is our suggestion. Correct it if your name is not written this way, then confirm.",
+      "origine": "Your name as you wrote it: {nom}",
+      "confirmer": "Confirm my name",
+      "plusTard": "Later",
+      "erreur": "Write your name using Latin alphabet letters (a, b, c) to continue.",
+      "echec": "Your name is not confirmed. Try again in a moment."
+    },
+    "candidat": {
+      "titre": "Your code",
+      "intro": "To sign up as a teacher, enter the invitation code you received from the management.",
+      "champ": "Invitation code",
+      "champVide": "Enter the invitation code you received.",
+      "verifier": "Check the code",
+      "valide": "Invitation valid until {date}.",
+      "valideDetail": "You can create your teacher profile.",
+      "creerProfil": "Create my profile",
+      "expiree": "This invitation has expired.",
+      "expireeDetail": "Ask the academy's management for a new invitation.",
+      "demanderNouvelle": "Request a new invitation",
+      "contactCopie": "The management's address was copied: write to them from your email.",
+      "dejaUtilisee": "This invitation has already been used.",
+      "dejaUtiliseeDetail": "If it was you, sign in with the account you created.",
+      "seConnecter": "Sign in",
+      "inconnue": "Code not recognised.",
+      "inconnueDetail": "Check the code, then enter it again.",
+      "ressaisir": "Enter another code",
+      "horsLigne": "The code was not checked. Try again in a moment.",
+      "erreur": "The code could not be checked. Try again in a moment.",
+      "indisponible": "Checking invitations will be available once the server is connected.",
+      "comptable": {
+        "titre": "Your accountant code",
+        "intro": "To sign up as an accountant, enter the invitation code you received from the management.",
+        "valideDetail": "You can create your accountant profile.",
+        "indisponible": "Checking accountant codes will be available once the server is connected."
+      }
+    },
+    "signature": {
+      "titre": "Contract",
+      "version": "Version {version}",
+      "empreinte": "Text fingerprint: {empreinte}",
+      "texteAltere": "The text received does not match its fingerprint: signing is not offered. Try again later or let the management know.",
+      "champNom": "Signer's name",
+      "aideNom": "Your account name. If it differs from your ID document, let the management know.",
+      "nomCompteVide": "Your account has no name yet: signing is not possible. Let the management know.",
+      "nomCompteLecture": "Your account name is not displayed: signing is waiting. Try again in a moment.",
+      "nomVide": "Enter your full name to sign.",
+      "nomTropLong": "This name is too long: shorten it.",
+      "accuse": "I confirm I have read this contract.",
+      "signer": "Sign the contract",
+      "dejaSigne": "Signed on {date}, version {version}.",
+      "signePar": "Signed by {nom}",
+      "copie": "Download my copy",
+      "copieLien": "The link to your copy is copied. Paste it into your browser: it stays valid for a few minutes.",
+      "copieErreur": "Your copy could not be prepared. Try again in a moment.",
+      "nouvelleVersion": "The contract has been updated since your last signature (version {version}). Read it again, then sign again.",
+      "versionPerimee": "The contract was updated while you were reading. The text is reloaded: read it again, then sign again.",
+      "horsLigne": "The contract is not signed. Try again in a moment.",
+      "erreur": "The signature is not confirmed. Check whether the contract appears signed before trying again.",
+      "nonConnecte": "Your session has expired. Sign in again to sign.",
+      "introuvable": "No contract is published for now. Let the management know.",
+      "erreurLecture": "The contract could not be loaded. Try again in a moment.",
+      "sansDonnees": "The contract cannot be read offline.",
+      "indisponible": "Signing the contract will be available once the server is connected.",
+      "retour": "Back"
+    },
+    "cadre": {
+      "titre": "The religious and educational framework",
+      "caseAccord": "I confirm I have read this framework and I adhere to it.",
+      "accepter": "Accept the framework",
+      "erreurLecture": "The framework could not be loaded. Try again.",
+      "erreurAccord": "Your agreement was not saved. Try again.",
+      "refuse": "This framework cannot be accepted for now: your application is no longer at this step."
+    },
+    "portail": {
+      "aCompleterTitre": "Your application needs to be completed",
+      "aCompleter": "To complete",
+      "elementCadre": "The religious and educational framework",
+      "etatAEnvoyer": "To send",
+      "completer": "Complete my application",
+      "enExamenTitre": "Your application has been sent",
+      "enExamen": "The academy is reading your answers and will notify you here.",
+      "versementImpossible": "Rewayah cannot yet pay you through the means declared in your country. Your application stays on hold. The academy will let you know as soon as a means becomes possible.",
+      "libreDePartir": "You remain free to withdraw your application.",
+      "enPauseTitre": "Your application is on hold",
+      "repriseLe": "Resumes on {date}.",
+      "refuseeTitre": "Your application was not accepted",
+      "retireeTitre": "Application withdrawn",
+      "retiree": "You withdrew your application. Only the academy can reopen it.",
+      "complementDemande": "The academy is asking you for more information.",
+      "complementListe": "To complete: {elements}.",
+      "nonCharge": "The status of your application could not be loaded.",
+      "elementPiece": "Your ID document",
+      "elementContrat": "The teacher contract",
+      "versementImpossibleTitre": "Payment not possible yet",
+      "relire": "Review my application",
+      "toutIci": "Everything is done here. What is already done is marked \"Done\".",
+      "listeTitre": "What is needed to send",
+      "etatFait": "Done",
+      "etatADeposer": "To submit",
+      "elementAccords": "The contract and our agreements",
+      "elementReponses": "Your answers",
+      "reponsesRestantes(plural, param=n)": {
+        "one": "{n} answer remains",
+        "other": "{n} answers remain"
+      },
+      "reponsesPretes": "Ready to send",
+      "elementPhoto": "Your photo",
+      "etatAAjouter": "To add"
+    },
+    "entretien": {
+      "titre": "Let's get to know each other",
+      "intro": "Choose a time for a video interview with the academy.",
+      "heureAppareil": "This device's time",
+      "horaire": "{date}, from {debut} to {fin}",
+      "choisir": "Choose a time.",
+      "reserver": "Book this time",
+      "aucunCreneau": "No time is open for now. Come back later.",
+      "erreurLecture": "The times could not be loaded. Try again.",
+      "pris": "This time has just been taken. Choose another.",
+      "dejaPlanifie": "Your interview is already set.",
+      "perime": "Your application has changed in the meantime. Reload the page.",
+      "erreurReservation": "The booking did not complete. Try again.",
+      "votreEntretien": "Your interview",
+      "rejoindre": "Join the interview",
+      "ouvreA": "You can join from {heure}.",
+      "termine": "The time of your interview has passed. The academy will write to you with what comes next.",
+      "pasEncore": "The interview is not open yet for your application.",
+      "portailChoisir": "Choose a time for our interview",
+      "portailVoir": "See my interview",
+      "notifications": {
+        "reserve": "Your interview is set. The day and time are in \"Let's get to know each other\".",
+        "reserveQuand": "Your interview is set for {quand}.",
+        "veille": "Your interview is tomorrow.",
+        "veilleQuand": "Your interview is tomorrow, {quand}.",
+        "quinze": "Your interview starts in 15 minutes: join it from \"Let's get to know each other\".",
+        "tenu": "Your interview took place. The management is reviewing your application and will write to you with what comes next.",
+        "aReplanifier": "Your interview did not take place. Choose another time.",
+        "reserveDirection": "An applicant has booked an interview you conduct.",
+        "reserveDirectionQuand": "An applicant has booked an interview you conduct, on {quand}.",
+        "rappelDirection": "You are conducting an interview that starts soon.",
+        "rappelDirectionQuand": "You are conducting an interview on {quand}."
+      }
+    },
+    "questionnaire": {
+      "titre": "Your application",
+      "conditionsTitre": "Pay terms",
+      "part": "Your share: {part} of the public price, for each student present.",
+      "partPublic": "{public}: {part} of the public price, for each student present.",
+      "publicEnfant": "Children (6 to 17)",
+      "publicAdulte": "Adults (18 and over)",
+      "coordonneesPlusTard": "Your financial details will only be requested before your first payment.",
+      "montantsSurDemande": "To find out the amounts, ask the administration.",
+      "conditionsDateEffet": "These terms apply from {date}.",
+      "accordRemuneration": "I have read these terms and I accept them.",
+      "accordManquant": "Tick the box to accept these terms and send your application.",
+      "envoyer": "Send my application",
+      "cadreManquant": "First accept the religious and educational framework.",
+      "cadreAccepte": "You have accepted the religious and educational framework.",
+      "langues": "Your languages",
+      "recitation": "Your recitation",
+      "disponibilites": "Your availability",
+      "publics": "The audiences you can teach",
+      "versement": "Your country and your payment",
+      "perime": "The questionnaire has changed since your last visit. Read your answers again before sending.",
+      "incomplet": "An answer is missing: {question}.",
+      "reponseInvalide": "An answer is no longer valid: {question}.",
+      "conflit": "Your application has changed since this page was opened. Read it again, then send it.",
+      "conditionsPerimees": "The pay terms have changed. Read them again, then accept them again.",
+      "interdit": "Your application can no longer be sent from this page.",
+      "echec": "One of your answers needs to be reviewed. Read them again, then send your application again.",
+      "incertain": "Your application may not have reached Rewayah. Try again: it will not be saved twice.",
+      "horsLigne": "Your application can be sent when the connection is back.",
+      "nonOuverte": "This step is not open yet. Your account is kept.",
+      "nonCharge": "The questionnaire could not be loaded.",
+      "conditionsNonCharge": "The pay terms could not be loaded.",
+      "envoyee": "Your application has been sent. The academy will notify you here if it needs to be completed.",
+      "envoyeeLe": "Sent on {date}.",
+      "etatVersement": "Payment method: {etat}",
+      "retourDossier": "Back to my file",
+      "complementCarte": "The academy asks you to complete this part.",
+      "moyenValide": "You receive your pay through a method approved by Rewayah.",
+      "continuite": "By accepting these terms, you commit to holding your class on the same days and at the same times, every week.",
+      "plagesChevauchent": "Your availability overlaps on the same day. Review it, then send your application again."
+    },
+    "parcours": {
+      "choisir": "Choose an answer to continue.",
+      "choisirPlusieurs": "Choose at least one answer to continue.",
+      "trop(param=max)": {
+        "one": "Choose only one answer.",
+        "other": "Choose at most {max} answers."
+      },
+      "aucune": "None",
+      "oui": "Yes",
+      "non": "No",
+      "modifier": "Edit",
+      "sauvegardeEchec": "Your latest answers could not be saved. They stay on screen: continue, they will be sent with your application.",
+      "presentation": {
+        "p1": {
+          "titre": "Who is Rewayah Academy?",
+          "intro": "Before the questions, here is what you need to know about us.",
+          "academie": {
+            "titre": "An online Quran academy",
+            "texte": "Rewayah Academy teaches the Quran remotely, in stable classes, with a dedicated teacher. It has been teaching since 1 May 2024."
+          },
+          "liberte": {
+            "titre": "You remain free",
+            "texte": "As long as you are not a teacher, you can withdraw your application from your file."
+          },
+          "donnees": {
+            "titre": "Your data is protected",
+            "texte": "Your answers are only read by the people at the academy who review your application."
+          },
+          "separation": {
+            "titre": "Women and men separated",
+            "texte": "A woman's application is followed by the management on the women's side, a man's application on the men's side."
+          }
+        },
+        "p2": {
+          "titre": "What a teacher does",
+          "intro": "You teach by video, in a class that stays the same.",
+          "classe": {
+            "titre": "A stable class",
+            "texte": "You keep the same class over time, with the same students."
+          },
+          "horaires": {
+            "titre": "The same schedule every week",
+            "texte": "Your class meets on the same days and at the same times, three times a week."
+          },
+          "visio": {
+            "titre": "By video, in the app",
+            "texte": "Classes are given by video conference, in the Rewayah app."
+          },
+          "remuneration": {
+            "titre": "Pay that is explained",
+            "texte": "Your pay is a share of the price each student present pays. It is explained to you as a percentage before you send your application."
+          }
+        },
+        "p3": {
+          "titre": "How your application works",
+          "intro": "Three steps, in the app.",
+          "examen": {
+            "titre": "Your application",
+            "texte": "You answer the questions, read and accept our agreements, upload your photo and your ID document, then send your application. The management reads it."
+          },
+          "entretien": {
+            "titre": "Let's get to know each other",
+            "texte": "If your application is accepted, you choose a slot and the management meets you by video, in the app."
+          },
+          "verification": {
+            "titre": "Welcome to the team",
+            "texte": "When everything is in order, you join the academy's team of teachers, in the app."
+          }
+        }
+      },
+      "langues": {
+        "poular": "Pulaar (Fula, Fulfulde)",
+        "man": "Malinke",
+        "sus": "Susu",
+        "sw": "Swahili",
+        "ha": "Hausa",
+        "wo": "Wolof",
+        "bm": "Bambara",
+        "snk": "Soninke",
+        "mnk": "Mandinka",
+        "francais": "French",
+        "english": "English",
+        "ar": "Arabic",
+        "ps": "Pashto",
+        "ur": "Urdu",
+        "om": "Oromo",
+        "am": "Amharic",
+        "yo": "Yoruba",
+        "bn": "Bengali",
+        "fa": "Persian",
+        "id": "Indonesian",
+        "so": "Somali",
+        "hi": "Hindi",
+        "uz": "Uzbek",
+        "tr": "Turkish",
+        "de": "German",
+        "pt": "Portuguese",
+        "ru": "Russian",
+        "autre": "Another language",
+        "autreDescription": "A language that is not in the list. The management will see it.",
+        "dansReferentiel": "Rewayah offers classes in this language.",
+        "horsReferentiel": "Rewayah does not yet offer classes in this language. You can choose it: the management will see it.",
+        "chercher": "Search for another language",
+        "recherche": "Search for a language",
+        "rechercheAide": "Language name",
+        "aucune": "No language matches.",
+        "retour": "Back to the languages offered"
+      },
+      "pays": {
+        "autre": "Another country",
+        "recherche": "Search for a country",
+        "rechercheAide": "Country name",
+        "aucun": "No country matches.",
+        "retour": "Back to the countries offered"
+      },
+      "riwayat": {
+        "autre": "Another riwaya",
+        "recherche": "Search for a riwaya",
+        "rechercheAide": "Riwaya name",
+        "aucune": "No riwaya matches.",
+        "retour": "Back to the riwayat offered"
+      },
+      "fuseau": {
+        "heureChezVous": "Is it {heure} where you are?",
+        "lieuPropose": "Suggested time zone: {lieu}.",
+        "retenu": "Time zone kept: {lieu}.",
+        "oui": "Yes, that is my local time",
+        "ouiDescription": "Your time zone is confirmed.",
+        "changer": "No, I want to change it",
+        "changerDescription": "You choose the city closest to you.",
+        "choisirTitre": "Which city is closest to you?",
+        "choisirExplication": "It gives your time zone. The times of your interview will be shown in this time zone.",
+        "recherche": "Search for a city",
+        "rechercheAide": "City name",
+        "aucune": "No city matches.",
+        "autre": "Another city",
+        "retour": "Back to the suggestion",
+        "regions": {
+          "Africa": "Africa",
+          "America": "Americas",
+          "Antarctica": "Antarctica",
+          "Arctic": "Arctic",
+          "Asia": "Asia",
+          "Atlantic": "Atlantic",
+          "Australia": "Australia",
+          "Europe": "Europe",
+          "Indian": "Indian Ocean",
+          "Pacific": "Pacific"
+        },
+        "ouiExplication": "Your availability and your interview will be in your local time.",
+        "changerExplication": "Useful if you travel or if your device's time is wrong."
+      },
+      "creneaux": {
+        "heure": "{h}:00",
+        "heureMinutes": "{h}:{m}",
+        "intervalle": "from {debut} to {fin}",
+        "fuseauRappel": "Times in {lieu}.",
+        "moments": {
+          "nuit": "At night, from 0:00 to 5:00",
+          "matin": "In the morning, from 6:00 to 11:00",
+          "apresMidi": "In the afternoon, from 12:00 to 17:00",
+          "soir": "In the evening, from 18:00 to 23:00"
+        },
+        "raccourcis": "Shortcuts",
+        "raccourciLmv": "Monday, Wednesday, Friday",
+        "raccourciMjs": "Tuesday, Thursday, Saturday",
+        "raccourciFinDeSemaine": "Weekend",
+        "raccourcisAide": "A shortcut chooses several days at once. You can then add or remove some.",
+        "moinsDeTrois(param=n)": {
+          "one": "You chose a single day. A class meets three times a week, on the same days: consider choosing at least three.",
+          "other": "You chose {n} days. A class meets three times a week, on the same days: consider choosing at least three."
+        },
+        "troisSeances": "A class meets three times a week, on the same days and at the same time.",
+        "durees": "A children's class lasts {enfants}, an adults' class lasts {adultes}.",
+        "enseigneEnfants": "Children's classes ({duree}): you teach {intervalles}.",
+        "enseigneAdultes": "Adults' classes ({duree}): you teach {intervalles}.",
+        "heuresChoisies(param=n)": {
+          "zero": "No start time chosen",
+          "one": "One start time chosen",
+          "other": "{n} start times chosen"
+        },
+        "debutsDuJour": "Possible start times: {heures}.",
+        "separateurListe": ", ",
+        "etListe": "{debut} and {dernier}"
+      },
+      "versement": {
+        "virementSeul": "In your country, the academy has confirmed bank transfer. No mobile payment method is offered for now.",
+        "aucunMoyen": "Rewayah does not yet pay teachers in this country. You can send your application: it will stay on hold until a method becomes possible.",
+        "operateurDescription": "Mobile payment",
+        "chargement": "We are looking for the methods possible in your country.",
+        "nonCharge": "The payment methods for your country could not be loaded.",
+        "operateurExplication": "You declare it now. Your details are only requested before your first payment."
+      },
+      "recap": {
+        "titre": "Review your application",
+        "explication": "Tap an answer to change it. Nothing is sent before the \"Send my application\" button.",
+        "jours(param=n)": {
+          "one": "One day per week",
+          "other": "{n} days per week"
+        }
+      },
+      "q": {
+        "langueMaternelle": {
+          "titre": "What is your mother tongue?",
+          "explication": "It is the language you have spoken since childhood. This question is optional: you can continue without answering.",
+          "court": "Mother tongue"
+        },
+        "languesExplication": {
+          "titre": "In which languages can you explain and correct?",
+          "explication": "Choose all the languages in which you can explain a rule to a student and correct their mistakes, with no limit on the number. The student or their parent chooses their language at sign-up, and the academy assigns them a teacher who speaks it: the more you speak, the more you can teach. Arabic is not a class language: it is not in this list.",
+          "court": "Languages of explanation"
+        },
+        "niveauMemorisationDeclare": {
+          "titre": "How much of the Quran have you memorised?",
+          "explication": "You declare it here. Having memorised and having an ijaza are two different things: the ijaza is asked a little further on.",
+          "court": "Memorisation level",
+          "options": {
+            "aucune": {
+              "libelle": "I have not memorised a whole juz",
+              "description": "You may know a few surahs, but not a whole juz.",
+              "explication": "This level is assessed during the interview.",
+              "exemple": "you recite a few short surahs from memory, but not a whole juz."
+            },
+            "moins_10_juz": {
+              "libelle": "I have memorised fewer than 10 juz",
+              "description": "From one whole juz to nine juz, out of the thirty of the Quran.",
+              "explication": "This level is assessed during the interview.",
+              "exemple": "you have memorised five juz out of thirty."
+            },
+            "de_10_a_29_juz": {
+              "libelle": "I have memorised 10 to 29 juz",
+              "description": "From a third of the Quran to almost all of it.",
+              "explication": "This level is assessed during the interview.",
+              "exemple": "you have memorised twenty juz out of thirty."
+            },
+            "coran_entier": {
+              "libelle": "I have memorised the whole Quran",
+              "description": "All 114 surahs, from the first to the last, by heart.",
+              "explication": "This level is assessed during the interview.",
+              "exemple": "you recite Al-Baqara, then An-Nas, without opening the book."
+            }
+          }
+        },
+        "niveauLectureTajwid": {
+          "titre": "How do you read the Quran?",
+          "explication": "Tajwid is the set of rules that say how to pronounce each letter of the Quran.",
+          "court": "Reading and tajwid",
+          "options": {
+            "lecture_sans_regles_tajwid": {
+              "libelle": "I read without applying the tajwid rules",
+              "description": "You read fluently, without following the pronunciation rules.",
+              "explication": "Your reading is assessed during the interview.",
+              "exemple": "you read a page without hesitating, but you do not apply the tajwid rules."
+            },
+            "tajwid_applique": {
+              "libelle": "I apply the tajwid rules when reading",
+              "description": "You follow the pronunciation rules when you read.",
+              "explication": "Your reading is assessed during the interview.",
+              "exemple": "you lengthen and pronounce letters as the tajwid rules require."
+            },
+            "tajwid_enseigne": {
+              "libelle": "I apply tajwid and I can teach it",
+              "description": "You follow the rules and can explain them to a student.",
+              "explication": "Your reading is assessed during the interview.",
+              "exemple": "when a student makes a mistake on a letter, you explain the rule and they repeat it."
+            }
+          }
+        },
+        "riwayat": {
+          "titre": "Which riwayat do you recite?",
+          "explication": "A riwaya is a transmitted way of reciting the Quran. Choose all those you recite.",
+          "court": "Riwayat",
+          "options": {
+            "hafs": {
+              "libelle": "Hafs",
+              "description": "Transmitted from Asim"
+            },
+            "shuba": {
+              "libelle": "Shuba",
+              "description": "Transmitted from Asim"
+            },
+            "warsh": {
+              "libelle": "Warsh",
+              "description": "Transmitted from Nafi"
+            },
+            "qalun": {
+              "libelle": "Qalun",
+              "description": "Transmitted from Nafi"
+            },
+            "al_bazzi": {
+              "libelle": "Al-Bazzi",
+              "description": "Transmitted from Ibn Kathir"
+            },
+            "qunbul": {
+              "libelle": "Qunbul",
+              "description": "Transmitted from Ibn Kathir"
+            },
+            "ad_duri_abi_amr": {
+              "libelle": "Ad-Duri (Abu Amr)",
+              "description": "Transmitted from Abu Amr"
+            },
+            "as_susi": {
+              "libelle": "As-Susi",
+              "description": "Transmitted from Abu Amr"
+            },
+            "hisham": {
+              "libelle": "Hisham",
+              "description": "Transmitted from Ibn Amir"
+            },
+            "ibn_dhakwan": {
+              "libelle": "Ibn Dhakwan",
+              "description": "Transmitted from Ibn Amir"
+            },
+            "khalaf_an_hamza": {
+              "libelle": "Khalaf (Hamza)",
+              "description": "Transmitted from Hamza"
+            },
+            "khallad": {
+              "libelle": "Khallad",
+              "description": "Transmitted from Hamza"
+            },
+            "abu_al_harith": {
+              "libelle": "Abu al-Harith",
+              "description": "Transmitted from Al-Kisai"
+            },
+            "ad_duri_al_kisai": {
+              "libelle": "Ad-Duri (Al-Kisai)",
+              "description": "Transmitted from Al-Kisai"
+            },
+            "ibn_wardan": {
+              "libelle": "Ibn Wardan",
+              "description": "Transmitted from Abu Jafar"
+            },
+            "ibn_jammaz": {
+              "libelle": "Ibn Jammaz",
+              "description": "Transmitted from Abu Jafar"
+            },
+            "ruways": {
+              "libelle": "Ruways",
+              "description": "Transmitted from Yaqub"
+            },
+            "rawh": {
+              "libelle": "Rawh",
+              "description": "Transmitted from Yaqub"
+            },
+            "ishaq": {
+              "libelle": "Ishaq",
+              "description": "Transmitted from Khalaf, the tenth reciter"
+            },
+            "idris": {
+              "libelle": "Idris",
+              "description": "Transmitted from Khalaf, the tenth reciter"
+            }
+          }
+        },
+        "ijazaPresentable": {
+          "titre": "Do you have an ijaza?",
+          "explication": "An ijaza is a written authorisation, given by a teacher, to transmit the Quran. Whoever has an ijaza has memorised, but whoever has memorised does not necessarily have an ijaza: it is a separate question.",
+          "court": "Ijaza",
+          "options": {
+            "oui": {
+              "libelle": "Yes, I have an ijaza to present",
+              "description": "You can show it by video.",
+              "explication": "It is shown during the interview: you have nothing to send now.",
+              "exemple": "a document signed by your teacher, which you keep at home."
+            },
+            "pret_test": {
+              "libelle": "No ijaza, but I can take a test",
+              "description": "You have no ijaza to present, but you agree to take a test.",
+              "explication": "The academy will discuss it with you during the interview.",
+              "exemple": "you learned with a teacher without a written document, and you agree to be tested."
+            },
+            "non": {
+              "libelle": "No, I do not have an ijaza",
+              "description": "You have no ijaza, and you do not plan to take a test for now.",
+              "explication": "Your level is then assessed during the interview.",
+              "exemple": "you learned with a teacher, without receiving a written document."
+            }
+          }
+        },
+        "experienceDebutants": {
+          "titre": "Have you already taught beginners?",
+          "explication": "A beginner is still learning to read the letters and join them.",
+          "court": "Experience with beginners",
+          "options": {
+            "oui": {
+              "libelle": "Yes, I have already taught beginners",
+              "description": "You have already guided students who are just starting.",
+              "explication": "The management knows before the interview.",
+              "exemple": "you taught the Arabic letters to children or to adults."
+            },
+            "non": {
+              "libelle": "No, not yet",
+              "description": "You have not yet taught beginners.",
+              "explication": "You can still send your application.",
+              "exemple": "you have only taught students who already knew how to read."
+            }
+          }
+        },
+        "fuseauIana": {
+          "titre": "Your time zone",
+          "explication": "Your availability is in your local time. So the time must be right.",
+          "court": "Time zone"
+        },
+        "disponibilitesDeclarees": {
+          "titre": "Which days can you teach?",
+          "explication": "A class meets three times a week, on the same days and at the same time. Tap the days you can teach, or use a shortcut.",
+          "court": "Availability",
+          "heures": {
+            "titre": "At what time can you start, on {jour}?",
+            "explication": "Choose all the times at which you can start a class. The end of the class is calculated for you.",
+            "suite": "You will then say whether it is the same on the other days."
+          },
+          "memes": {
+            "titre": "Are these the same times for all these days?",
+            "explication": "You chose {jours}. On {premier}, you start at {heures}.",
+            "oui": {
+              "libelle": "Yes, the same times",
+              "description": "The times for {premier} also apply to {autres}.",
+              "explication": "You can change a day before sending your application.",
+              "exemple": "you can start at 6 pm on Monday, Wednesday and Friday."
+            },
+            "non": {
+              "libelle": "No, day by day",
+              "description": "You set the times for each day, one after the other.",
+              "explication": "The times already chosen stay: you adjust them.",
+              "exemple": "you start at 6 pm on Monday, but at 8 pm on Wednesday."
+            }
+          },
+          "parJour": {
+            "titre": "Set the times, day by day",
+            "explication": "Each day starts from the times already chosen. Add or remove times where it is not the same."
+          },
+          "semaine": {
+            "titre": "Your week",
+            "explication": "Here is when you can teach, in your local time. Review it, then continue."
+          }
+        },
+        "classesSouhaitees": {
+          "titre": "How many classes do you want to hold?",
+          "explication": "A class is a group of students who meet three times a week, on the same days and at the same time, with the same teacher. It is a wish: the academy decides which classes it assigns to you.",
+          "court": "Classes wanted"
+        },
+        "debutPossible": {
+          "titre": "When can you start?",
+          "explication": "This date helps the management know when to offer you a class.",
+          "court": "Start date",
+          "options": {
+            "immediat": {
+              "libelle": "Right now",
+              "description": "You can start as soon as a class is assigned to you.",
+              "exemple": "no commitment holds you back this month."
+            },
+            "mois_prochain": {
+              "libelle": "Next month",
+              "description": "You will be available from next month.",
+              "exemple": "you finish another job at the end of this month."
+            },
+            "sous_3_mois": {
+              "libelle": "In less than three months",
+              "description": "You will be available within the next three months.",
+              "exemple": "you are travelling or sitting exams for a few weeks."
+            },
+            "inconnu": {
+              "libelle": "I don't know yet",
+              "description": "You do not yet know your start date.",
+              "explication": "You can tell the management during the interview.",
+              "exemple": "your schedule depends on an answer you are still waiting for."
+            }
+          }
+        },
+        "publics": {
+          "titre": "Which students can you teach?",
+          "explication": "Choose the age groups you are comfortable teaching. There is no wrong answer: you can choose just one, or several.",
+          "court": "Audiences",
+          "options": {
+            "o_6_9": {
+              "libelle": "Children aged 6 to 9",
+              "description": "They start with Rewayah's reading book, letter by letter, up to the shadda. Then come the first short surahs, the words of the prayer and the ablutions.",
+              "explication": "Classes of 5 children at most (4 for beginners), three one-hour sessions per week. The ablutions and the prayer are shown in practice, with illustrations.",
+              "exemple": "a class of eight-year-olds, on Monday, Wednesday and Friday."
+            },
+            "o_10_13": {
+              "libelle": "Children aged 10 to 13",
+              "description": "Same start with the reading book, and Al-Fatiha from the first week, because at this age the child must pray.",
+              "explication": "Classes of 5 children at most (4 for beginners), three one-hour sessions per week.",
+              "exemple": "a class of twelve-year-olds, three times a week."
+            },
+            "o_14_17": {
+              "libelle": "Teenagers aged 14 to 17",
+              "description": "The same content as for ages 10 to 13: the reading book, and Al-Fatiha from the first week.",
+              "explication": "Classes of 5 teenagers at most (4 for beginners), three one-hour sessions per week.",
+              "exemple": "a class of sixteen-year-olds, three times a week."
+            },
+            "adultes": {
+              "libelle": "Adults (18 and over)",
+              "description": "Adults first learn to read with Rewayah's book. After the basics, the student chooses to read the whole Quran or to memorise it, on the teacher's advice.",
+              "explication": "Classes of 6 adults at most (4 for beginners), three sessions of an hour and a half per week. Adult classes are separate: women with women, men with men.",
+              "exemple": "a women's class, or a men's class, three times a week."
+            }
+          }
+        },
+        "paysResidence": {
+          "titre": "Which country do you live in?",
+          "explication": "Choose the country where you live today.",
+          "court": "Country of residence"
+        },
+        "paysVersement": {
+          "titre": "In which country do you want to receive your pay?",
+          "explication": "The academy checks, country by country, which payment method is possible. We carried over your country of residence: change it if needed.",
+          "court": "Payment country"
+        },
+        "compteBancaire": {
+          "titre": "Do you have a bank account to receive your payment, in your name or a relative's?",
+          "explication": "Pay is paid by bank transfer where the academy has confirmed it. Your details are only requested before the first payment.",
+          "court": "Bank account",
+          "options": {
+            "oui": {
+              "libelle": "Yes, in my name or a relative's",
+              "description": "An account at a bank, in your name or a relative's.",
+              "explication": "Bank transfer can be your payment method, if the academy has confirmed it in your country.",
+              "exemple": "an account opened at a bank, in your brother's name."
+            },
+            "non": {
+              "libelle": "No, I don't have one",
+              "description": "Neither in your name, nor in a relative's.",
+              "explication": "You can then choose a mobile payment method, if there is one in your country.",
+              "exemple": "you only receive and send money with your phone."
+            }
+          }
+        },
+        "operateurs": {
+          "titre": "Which mobile payment methods do you use?",
+          "explication": "Here are the methods the academy has confirmed in your country. Choose those you use, if any.",
+          "court": "Mobile payment methods"
+        },
+        "moyensAccessibles": {
+          "titre": "Which payment methods are common where you live?",
+          "explication": "Here are the methods the academy knows. Choose those that are common in your country, if any.",
+          "court": "Payment methods of the country"
+        }
+      },
+      "classes": {
+        "libelle(param=n)": {
+          "one": "{n} class",
+          "other": "{n} classes"
+        },
+        "seances(param=n)": {
+          "one": "{n} session per week.",
+          "other": "{n} sessions per week."
+        },
+        "heuresEnfants": "That is {heures} per week with children.",
+        "heuresAdultes": "That is {heures} per week with adults.",
+        "heuresLesDeux": "That is {enfants} per week with children, or {adultes} with adults.",
+        "explication": "Each class has its own schedule, which it keeps every week.",
+        "exemple1": "on Monday, Wednesday and Friday at 6 pm.",
+        "exemple2": "on Monday, Wednesday and Friday at 6 pm, then on Tuesday, Thursday and Saturday at 7 pm.",
+        "exemplePlusieurs(param=n)": {
+          "one": "{n} class, with its days and its time.",
+          "other": "{n} classes, each with its days and its time."
+        }
+      },
+      "moyens": {
+        "mobile": "Mobile payment",
+        "virement": "Bank transfer",
+        "explication": "Choose it if it is common where you live.",
+        "nonElimine": "This question is optional and eliminates no one: your application does not depend on your answer. It helps the academy know the methods used where you live."
+      },
+      "choisirJour": "Choose at least one day to continue.",
+      "choisirHeure": "Choose at least one start time to continue.",
+      "choisirHeureJour": "Choose at least one start time for {jour}."
+    }
+  },
+  "parcours": {
+    "titre": "{dePrenom}'s journey",
+    "intro": "A few questions to personalise your journey. You will then only see the schedules and options that fit your situation.",
+    "reprendre": "Resume",
+    "commencer": "Personalise the journey",
+    "modifier": "Edit my answers",
+    "recapNiveau": "Stated level: {niveau}",
+    "recapObjectif": "Goal: {objectif}",
+    "erreur": "This answer could not be saved. Try again.",
+    "chargement": "We are preparing your options.",
+    "pourPrenom": "For {prenom}",
+    "retourAccueil": "Back to home",
+    "retourFoyer": "Back to the Household",
+    "reessayer": "Try again",
+    "indisponibleTitre": "The questionnaire is not available yet",
+    "indisponibleDetail": "The academy has not opened this step yet. You have nothing to do for now: nothing is lost, and you can fill it in as soon as it opens.",
+    "horsLigneTitre": "The journey could not be loaded",
+    "horsLigneDetail": "You can try again when the connection is back. Your answers are saved.",
+    "erreurChargement": "The questionnaire could not be displayed",
+    "erreurChargementDetail": "An error occurred on our side. Try again in a moment; your answers are saved.",
+    "introuvableTitre": "This student profile cannot be found",
+    "introuvableDetail": "It may have been removed from the household. Go back to the Household to choose a student profile.",
+    "finTitre": "Preference saved for {prenom}",
+    "finDetail": "This time slot is noted as your preference. It does not reserve a place yet.",
+    "finAjouterDetail": "Does someone else in the household want to learn?",
+    "finAjouterProfil": "Add a student profile",
+    "ageQuestion": "How old is {prenom}?",
+    "ageRaison": "Age decides the length of sessions and the number of students per class. We do not ask for a date of birth: age in years is enough.",
+    "ageAide": "Choose the age in years from the list, as when adding the profile.",
+    "ageSansTranche": "No class is planned for this age for now. The academy team can guide you.",
+    "langueQuestion": "In which language should the class be taught?",
+    "langueRaison": "This is the language the teacher will speak during the session. It is independent of the app language, which you can change at any time in your settings.",
+    "lieuQuestion": "Where are you?",
+    "lieuRaison": "We only use it to show you schedules in your local time. We never ask for your exact location, and this answer does not leave your file.",
+    "lieuSuggere": "Suggested from your device's time",
+    "niveauQuestion": "Where is {prenom} today?",
+    "niveauRaison": "Your answer guides the first suggestions. It does not set the official level: the academy assigns it after a conversation with a teacher.",
+    "niveauDebutLettres": "We start with the letters",
+    "niveauLettresAvecAide": "Letters are recognised, reading needs help",
+    "niveauLectureLente": "Reading is possible, slowly",
+    "niveauLectureCourante": "The Quran is already read fluently",
+    "niveauMemorisationPartielle": "Part of it is already memorised",
+    "objectifQuestion": "What do you want first?",
+    "objectifRaison": "You can change your goal later: it guides the teacher's work, it does not commit you.",
+    "objectifApprendreALire": "Learn to read",
+    "objectifDevenirFluide": "Read more fluently",
+    "objectifMemoriser": "Memorise",
+    "objectifIndecis": "I don't know yet",
+    "momentsQuestion": "Which times of day suit you best?",
+    "momentsRaison": "This answer creates no schedule and reserves nothing. It is only used to highlight, among the schedules the academy already offers, those that suit you best. You will see all the others just below.",
+    "momentMatin": "Mornings",
+    "momentApresMidi": "Afternoons",
+    "momentSoir": "Evenings",
+    "offresQuestion": "Here are the open schedules for {prenom}",
+    "offresRaison": "These schedules are shown in your local time. Choosing a schedule saves your preference: it does not reserve a place and is not yet a class.",
+    "offreRecommandee": "Closest to your answers",
+    "offresAutres": "Other possible schedules",
+    "offreLangue": "Class in {langue}",
+    "offreFuseau": "Time shown for {fuseau}",
+    "offreTraduite": "Shown in your local time",
+    "offreJours": "{jours}",
+    "offreChoisir": "Choose this schedule",
+    "offreChoisie": "Schedule chosen",
+    "aucuneOffre": "No open schedule matches yet",
+    "aucuneOffreDetail": "The academy opens new schedules as sign-ups come in. You can tell us what you need: it helps us decide which ones to open.",
+    "refusAucun": "None of these schedules suits me",
+    "refusPrevenir": "Let me know if new schedules open",
+    "refusEffet": "We record that the request exists. This does not create a class, does not look for a teacher and does not promise any future schedule.",
+    "refusEnregistre": "Noted. We will let you know if a matching schedule opens.",
+    "etatAPersonnaliser": "Journey to personalise",
+    "etatAPersonnaliserDetail": "A few questions, and we will only show what suits {prenom}.",
+    "etatHoraireAChoisir": "Schedule to choose",
+    "etatHoraireAChoisirDetail": "The open schedules for {prenom} are waiting for you.",
+    "etatOffreIndisponible": "This schedule is no longer offered",
+    "etatOffreIndisponibleDetail": "The schedule chosen for {prenom} was withdrawn before a class was formed. Choose another: nothing is lost.",
+    "etatDiagnosticRequis": "Preference saved",
+    "etatDiagnosticRequisDetail": "One conversation with a teacher remains to place {dePrenom}'s level. The academy will offer you an appointment.",
+    "etatDiagnosticEnAttente": "Appointment planned",
+    "etatDiagnosticEnAttenteDetail": "A conversation is planned to place {dePrenom}'s level.",
+    "etatClasseEnFormation": "Class being formed",
+    "etatClasseEnFormationDetailSansMinimum": "A class starts once there are enough students. We will let you know as soon as it is confirmed.",
+    "etatClasseConfirmee": "Class confirmed",
+    "etatClasseConfirmeeDetail": "{dePrenom}'s class is formed. You will find its sessions in their space.",
+    "fuseauChange": "Your location has changed since this choice",
+    "fuseauChangeDetail": "The schedule is the same for the academy, but it no longer falls at the same time for you. Check that it still suits you.",
+    "voirHoraires": "See the schedules",
+    "changerHoraire": "Change schedule",
+    "renoncerMotif": "The family changed schedule since the journey",
+    "offreRecurrence(param=seances)": {
+      "one": "{seances} session per week, {duree} min",
+      "other": "{seances} sessions per week, {duree} min"
+    },
+    "offreRecurrencePause(param=seances)": {
+      "one": "{seances} session per week, {duree} min including {pause} min of break",
+      "other": "{seances} sessions per week, {duree} min including {pause} min of break"
+    },
+    "etatClasseEnFormationDetail(param=minimum)": {
+      "one": "A class starts once there is {minimum} student. We will let you know as soon as it is confirmed.",
+      "other": "A class starts once there are {minimum} students. We will let you know as soon as it is confirmed."
+    }
+  },
+  "nav": {
+    "eleve": {
+      "accueil": "Home",
+      "maClasse": "My class",
+      "coran": "Quran",
+      "monEspace": "My space",
+      "suivi": "Progress",
+      "compte": "Account",
+      "aujourdhui": "Today",
+      "apprendre": "Learn",
+      "profil": "Profile"
+    },
+    "tuteur": {
+      "accueil": "Home",
+      "foyer": "Household",
+      "disponibilites": "Availability",
+      "reglages": "Settings",
+      "suivi": "Progress",
+      "historique": "History",
+      "compte": "Account"
+    },
+    "enseignant": {
+      "journee": "Today",
+      "classes": "Classes",
+      "creneaux": "Availability",
+      "profil": "Profile",
+      "compte": "Account"
+    },
+    "controleur": {
+      "planning": "Schedule",
+      "controle": "Review",
+      "historique": "History",
+      "echanges": "Messages",
+      "compte": "Account"
+    },
+    "admin": {
+      "tableauDeBord": "Dashboard",
+      "dossiers": "Files",
+      "demandes": "Requests",
+      "journal": "Log",
+      "comptes": "Accounts",
+      "accesAgents": "Agent access",
+      "accueil": "Home",
+      "operations": "Operations",
+      "personnes": "People",
+      "pedagogie": "Teaching",
+      "finance": "Finance",
+      "configuration": "Settings",
+      "securite": "Security and audit",
+      "direction": "Management",
+      "recherche": "Search",
+      "rechercheIndication": "Search for a screen",
+      "notificationsTitre": "Notifications",
+      "menu": "Menu"
+    },
+    "compte": "My account",
+    "principale": "Main navigation",
+    "motSymbole": "Rewayah",
+    "logoAccueil": "Rewayah Academy, home",
+    "replier": "Collapse navigation",
+    "deplier": "Expand navigation",
+    "halo": {
+      "enCeMoment": "Right now",
+      "monCompte": "My account",
+      "urgentNom": "{compte}, one urgent alert",
+      "urgentMot": "Urgent",
+      "ouvrirAlerte": "Open the alert",
+      "nouveauNom(plural, param=n)": {
+        "one": "{compte}, {nombre} new item to read",
+        "other": "{compte}, {nombre} new items to read"
+      },
+      "nouveauTitre(plural, param=n)": {
+        "one": "{nombre} new item to read",
+        "other": "{nombre} new items to read"
+      },
+      "nouveauMot": "To read",
+      "lire": "Read",
+      "salleNom": "{compte}, the room is open"
+    },
+    "filAriane": {
+      "separateur": "›",
+      "suite": "› {libelle}"
+    }
+  },
+  "compte": {
+    "page": {
+      "sections": {
+        "monEspace": "My space",
+        "paiements": "Payments",
+        "preferences": "Preferences",
+        "compteSecurite": "Account and security",
+        "aide": "Help and information"
+      },
+      "langue": {
+        "legende": "For the app and for the academy's emails",
+        "refus": "The app changed language, but the language of your emails is not confirmed. Try again in a moment."
+      },
+      "accessibiliteLegende": "Animations, effects and keyboard shortcuts of the room",
+      "changerPhoto": "Change the photo",
+      "matricule": "Student ID {valeur}",
+      "identiteVide": "Your information is not available yet. Your preferences and signing out remain accessible.",
+      "identiteEchec": "Your information could not be loaded."
+    },
+    "donnees": {
+      "titre": "My data",
+      "sousTitre": "A copy of your data, or the deletion of your account.",
+      "ligne": "Copy of my data and account deletion",
+      "ligneDetail": "Download your data or request the deletion of your account.",
+      "copie": {
+        "titre": "Download a copy",
+        "intro": "A JSON file with your information, your classes, your sessions and your invoices. If you are a guardian, it also contains those of the students in your household.",
+        "exclus": "It contains no sign-in secret and no internal team note.",
+        "action": "Download my data",
+        "reussi": "Your copy is saved.",
+        "echec": "The copy could not be prepared. Nothing was saved. Try again in a moment.",
+        "horsLigne": "Download your data as soon as the network is back.",
+        "refuse": "This account cannot download a copy."
+      },
+      "suppression": {
+        "titre": "Delete my account",
+        "intro(param=n)": {
+          "one": "The management reviews your request after a cooling-off period of {n} day. You can cancel it during that time.",
+          "other": "The management reviews your request after a cooling-off period of {n} days. You can cancel it during that time."
+        },
+        "effacement": "Once the request is processed, your name, your contact details and your photo are erased. You can no longer sign in.",
+        "conservation": "Invoices and payments are kept for accounting. Your student ID is never reassigned.",
+        "aucuneDemande": "No deletion request in progress.",
+        "soldeTitre": "A balance remains to be paid",
+        "soldeDetail": "{montant} remains to be paid. You can request deletion, but this balance stays due.",
+        "seancesTitre": "Sessions are still planned",
+        "seancesDetail(param=n)": {
+          "one": "{n} session is planned. The management must cancel it or entrust it to someone else before deleting your account.",
+          "other": "{n} sessions are planned. The management must cancel them or entrust them to someone else before deleting your account."
+        },
+        "motifLibelle": "Why are you leaving? (optional)",
+        "motifAide": "The management reads it. It is erased when the request is processed.",
+        "demander": "Request the deletion of my account",
+        "confirmerQuestion": "Request the deletion of your account?",
+        "confirmerConsequence(param=n)": {
+          "one": "If you do not cancel it within {n} day, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept.",
+          "other": "If you do not cancel it within {n} days, the management may erase your name, your contact details and your photo. You will no longer be able to sign in. Invoices and payments are kept."
+        },
+        "confirmerAction": "Request deletion",
+        "confirmerRester": "Keep my account",
+        "enCoursTitre": "Deletion request in progress",
+        "enCoursDetail": "Requested on {demandee}. The management can process it from {echeance}.",
+        "annuler": "Cancel my request",
+        "demandeEnvoyee": "Your request is saved. You can cancel it until it is processed.",
+        "demandeAnnulee": "Your request is cancelled. Your account stays open.",
+        "echec": "Your request did not go through. Your account has not changed. Try again in a moment.",
+        "horsLigne": "Your request was not sent. Make it again as soon as the network is back.",
+        "refuse": "This account cannot request its deletion here."
+      }
+    },
+    "titre": "My account",
+    "intro": "Your information, your preferences and your access, in one place.",
+    "informations": "Information",
+    "profil": "Profile",
+    "profilDetail": "See and manage your information",
+    "reglages": "Settings",
+    "reglagesDetail": "Appearance, notifications and accessibility",
+    "profils": "Manage my household",
+    "profilsDetail": "Manage your children's profiles",
+    "appareils": "Household",
+    "appareilsDetail": "The devices and profiles linked to your household",
+    "confidentialite": "Privacy",
+    "confidentialiteDetail": "Coming soon",
+    "espaces": "Spaces",
+    "espacesDetail": "The spaces your account gives access to",
+    "espacesMissionEnCours": "To return to your main space, first leave the visit in progress.",
+    "habilitation": "Authorised",
+    "deconnexion": "Sign out",
+    "deconnexionDetail": "End the session on this device",
+    "version": "Version {version} ({build})",
+    "versionSeule": "Version {version}",
+    "doubleVerification": {
+      "rubriqueDetail": "Double verification for the management's sensitive actions",
+      "saisirCode": "Enter my verification code",
+      "titre": "Security",
+      "sousTitre": "Double verification protects the management's sensitive actions: deleting or restoring an account, processing a deletion request, publishing the commercial policy, importing forms, inviting an accountant.",
+      "titreEnrolement": "Turn on double verification",
+      "introEnrolement": "A stolen sign-in link must not be enough to delete an account. Add a second step with an authentication app on your phone. You only do it once; the code is then asked for at the time of a sensitive action.",
+      "videPhrase": "Install one on your phone, for example Google Authenticator, Microsoft Authenticator or Aegis, then come back here.",
+      "activeeTitre": "Double verification is on",
+      "activeePhrase": "The code from your authentication app will be asked for at the time of a sensitive action, once per sign-in.",
+      "feuille": {
+        "titre": "Verification code",
+        "intro": "This action requires double verification. Open your authentication app and enter the six-digit code shown for this account.",
+        "confirmer": "Confirm the code and continue",
+        "aActiverTitre": "First turn on double verification",
+        "aActiverPhrase": "This action requires double verification. Turn it on once in Account > Security, then repeat the action.",
+        "ouvrirSecurite": "Open Account > Security",
+        "erreur": "The code is not confirmed: the request may not have reached Rewayah. Try again in a moment.",
+        "horsLigne": "Nothing was sent: there is no network. Try again as soon as it is back."
+      }
+    },
+    "identifiant": "Identifier",
+    "nonDisponible": "Not available",
+    "contact": "Contact",
+    "langue": "Language",
+    "francais": "Français",
+    "fuseau": "Time zone",
+    "academie": "Academy",
+    "securite": "Security",
+    "statut": "Status",
+    "reglagesTitre": "Settings",
+    "reglagesIntro": "These preferences apply immediately.",
+    "apparence": "Appearance",
+    "themeContexte": "Follows your account everywhere.",
+    "themeSysteme": "System",
+    "themeClair": "Light",
+    "themeSombre": "Dark",
+    "accessibilite": "Accessibility",
+    "animations": "Reduce animations",
+    "animationsDetail": "Limits movement on screen",
+    "effets": "Reduce effects",
+    "effetsDetail": "Limits transparency and shadows",
+    "lisibiliteDetail": "Text size follows your device setting.",
+    "langueRegion": "Language and region",
+    "francaisDetail": "Interface language",
+    "actif": "Active",
+    "arabe": "Arabic",
+    "arabeDetail": "Coming soon",
+    "fuseauDetail": "Detected automatically",
+    "notifications": "Notifications",
+    "notificationsCours": "Classes",
+    "notificationsCoursDetail": "Reminders before your classes",
+    "notificationsFoyer": "Household",
+    "notificationsFoyerDetail": "Activity of your household's profiles",
+    "notificationsEtat": "Notifications also depend on your device and browser settings.",
+    "coursDonnees": "Classes and data",
+    "lectureGrande": "Large text reading",
+    "lectureGrandeDetail": "Shows the Quran larger by default",
+    "reessayer": "Try again",
+    "ajouterEnfant": "Add a child",
+    "modeEnfant": "Guided interface",
+    "modeStandard": "Standard mode",
+    "cameraAutorisee": "Allowed",
+    "cameraInterdite": "Not allowed",
+    "statutActif": "Active",
+    "statutProvisoire": "Active, provisionally",
+    "matricule": "Student ID {valeur} · {role}",
+    "copier": "Copy",
+    "copierMatricule": "Copy the student ID",
+    "matriculeCopie": "Copied",
+    "roles": {
+      "admin": "Administrator",
+      "accountant": "Accountant",
+      "controller": "Reviewer",
+      "teacher": "Teacher",
+      "guardian": "Guardian",
+      "student": "Student"
+    },
+    "roleDetail": {
+      "admin": "Manages files, assignment and the academy's log",
+      "accountant": "Manages payments and invoices",
+      "controller": "Observes sessions for teaching quality",
+      "teacher": "Gives classes and follows their slots",
+      "guardian": "Follows the household and its children",
+      "student": "Follows their classes and their Quran"
+    },
+    "tuteur": {
+      "dateLongue": "{mois} {jour}, {annee}",
+      "identite": {
+        "statutValide": "Account approved",
+        "statutProvisoire": "Profile to complete",
+        "nomInconnu": "Account holder",
+        "courrielAbsent": "Sign-in address not provided",
+        "connexionLien": "Sign-in by link received by email",
+        "connexionGoogle": "Sign-in with Google",
+        "connexionInconnue": "Sign-in method not specified"
+      },
+      "acces": {
+        "pastilleActif": "Access active",
+        "pastilleExpire": "Access ended",
+        "ligne": "Access of the student profiles",
+        "paiements": "Payments and receipts"
+      },
+      "securite": {
+        "titre": "Sign-in and security",
+        "methode": "Sign-in method",
+        "methodeLien": "Link by email",
+        "methodeGoogle": "Google",
+        "consentements": "Parent visits"
+      },
+      "informations": {
+        "titre": "Personal information",
+        "langueFuseau": "Français · {ville}"
+      },
+      "foyer": {
+        "plusieurs(param=nombre)": {
+          "one": "{nombre} student profile",
+          "other": "{nombre} student profiles"
+        },
+        "creerMonProfil": "Create my student profile"
+      },
+      "aide": {
+        "ligne": "Help and contact",
+        "legal": "Legal information"
+      },
+      "deconnexion": {
+        "question": "Sign out of Rewayah?",
+        "consequence": "You will need to sign in again to return on this device. Your other devices stay signed in.",
+        "confirmer": "Sign me out",
+        "echec": "Signing out did not complete. Try again in a moment.",
+        "rapportsQuestion": "Sign out anyway?",
+        "rapportsConsequence(param=n)": {
+          "one": "{n} handover notebook is not sent. Signing out will lose it.",
+          "other": "{n} handover notebooks are not sent. Signing out will lose them."
+        },
+        "rapportsConfirmer": "Sign out anyway",
+        "rapportsAnnuler": "Cancel"
+      },
+      "pageInformations": {
+        "titre": "Personal information",
+        "prenom": "First name",
+        "nom": "Last name",
+        "courriel": "Sign-in address",
+        "langue": "Interface language",
+        "fuseau": "Time zone of sessions",
+        "fuseauIndisponible": "Not loaded",
+        "fuseauAppareil": "This device's time",
+        "note": "This information is held by the academy. It cannot yet be changed from the app.",
+        "modifier": "Edit my information",
+        "enregistrer": "Save",
+        "prenomVide": "Write your first name.",
+        "nomVide": "Write your last name.",
+        "tropLong": "No more than 80 characters.",
+        "echec": "Your first and last name were not changed.",
+        "horsLigne": "Editing comes back with the connection.",
+        "noteModifiable": "Your sign-in address is changed through the academy."
+      },
+      "pageSecurite": {
+        "titre": "Sign-in and security",
+        "sousTitre": "How you access your account.",
+        "methode": "Sign-in method",
+        "adresse": "Sign-in address",
+        "appareils": "The devices connected to your account are not yet listed in the app.",
+        "deconnexion": "To end the session on this device, use \"Sign out\" at the bottom of My account."
+      },
+      "pageAcces": {
+        "titre": "Access of the student profiles",
+        "sousTitre": "The access status of each student profile.",
+        "sansEcheance": "No end date",
+        "jusqua": "Open until {date}",
+        "expire": "Ended on {date}",
+        "pastilleActif": "Active",
+        "pastilleExpire": "Ended",
+        "aucunTitre": "No student profile",
+        "aucunePhrase": "The access of each student profile will appear here.",
+        "titulaire": "Your account holder account has no end date of its own: access is set profile by profile."
+      },
+      "pagePaiements": {
+        "titre": "Payments",
+        "indisponibleTitre": "Payments cannot be viewed yet",
+        "indisponiblePhrase": "Payment history, receipts and payment methods are not yet available in the app. No payment is asked of you here.",
+        "aucunTitre": "No payment recorded",
+        "aucunePhrase": "Payments recorded by the academy will appear here.",
+        "paiementDu": "Payment of {date}",
+        "justificatif": "Receipt available",
+        "statutConfirme": "Confirmed",
+        "statutEnConfirmation": "Being confirmed",
+        "refusTitre": "Payments handled by the household account holder",
+        "refusPhrase": "Only the household account holder sees the payment history."
+      },
+      "pagePreferences": {
+        "notifications": "Notifications",
+        "notificationsDetail": "This device and what you receive"
+      },
+      "pageAide": {
+        "titre": "Help and support",
+        "indisponibleTitre": "Help not available yet",
+        "indisponiblePhrase": "Frequently asked questions and the academy's contact are not yet open in the app.",
+        "canalCourriel": "Academy email",
+        "canalLien": "Academy help page",
+        "aucunCanal": "No help channel is published for now."
+      },
+      "pageLegal": {
+        "conditionsTuteur": "Guardian terms",
+        "contratEnseignant": "Teacher contract",
+        "accuseEnregistrement": "Class recording acknowledgement",
+        "textes": "Terms and privacy"
+      }
+    }
+  },
+  "historique": {
+    "titre": "History",
+    "detailSeance": "Session details",
+    "segments": {
+      "seances": "Sessions",
+      "observations": "Observations"
+    },
+    "moisCourts": [
+      "Jan",
+      "Feb",
+      "Mar",
+      "Apr",
+      "May",
+      "Jun",
+      "Jul",
+      "Aug",
+      "Sep",
+      "Oct",
+      "Nov",
+      "Dec"
+    ],
+    "dateCourte": "{mois} {jour}, {annee}",
+    "dateLongue": "{jourSemaine}, {mois} {jour}, {annee}",
+    "plage": "{debut} - {fin}",
+    "duree": {
+      "secondes": "{s} s",
+      "minutes": "{m} min",
+      "minutesSecondes": "{m} min {s} s",
+      "heures": "{h} h",
+      "heuresMinutes": "{h} h {m}"
+    },
+    "fuseauListe": "Times shown in this device's time.",
+    "fuseauDetail": "Times shown in this device's time (UTC{decalage}).",
+    "classeInconnue": "Class not available",
+    "selecteur": {
+      "aucune": "No session",
+      "une": "1 session",
+      "plusieurs": {
+        "one": "{n} session",
+        "other": "{n} sessions"
+      }
+    },
+    "filtres": {
+      "classe": "Class",
+      "toutesClasses": "All classes",
+      "periode": "Period",
+      "toutePeriode": "Whole period",
+      "septJours": "Last 7 days",
+      "trenteJours": "Last 30 days",
+      "troisMois": "Last 3 months",
+      "statut": "Status",
+      "tousStatuts": "All statuses"
+    },
+    "retour": "Back to the history",
+    "etat": {
+      "presence": "Present",
+      "retard": "Late {minutes} min",
+      "retardSansDuree": "Late",
+      "verification": "Being verified",
+      "annule": "Class cancelled",
+      "nonTenu": "Class not held",
+      "avecDuree": "{etat} · {duree}"
+    },
+    "presenceIllisible": "Attendance could not be loaded: statuses stay unknown for now.",
+    "seances": {
+      "videTitre": "No past sessions",
+      "videPhrase": "{dePrenom}'s past sessions will appear here.",
+      "videPhraseFoyer": "The past sessions of the student profiles will appear here.",
+      "filtreVideTitre": "No session matches",
+      "filtreVidePhrase": "Change the filters to find the other sessions.",
+      "tronquee": "The {nombre} most recent sessions are shown.",
+      "ouvrir": "Session of {date}, {classe}, {etat}"
+    },
+    "observations": {
+      "indisponibleTitre": "Observation history unavailable",
+      "indisponiblePhrase": "Recorded visits cannot be read in the app yet.",
+      "videTitre": "No observations",
+      "videPhrase": "The visits you make during {dePrenom}'s sessions will appear here.",
+      "videPhraseFoyer": "Your visits during sessions will appear here.",
+      "filtreVideTitre": "No observation matches",
+      "filtreVidePhrase": "Change the filters to find the other visits.",
+      "visiteUne": "1 visit",
+      "visites": {
+        "one": "{n} visit",
+        "other": "{n} visits"
+      },
+      "dureeNonConfirmee": "Duration not confirmed",
+      "terminee": "Ended",
+      "nonRefermee": "Exit not recorded",
+      "eleveInconnu": "Student",
+      "tronquee": "Only the most recent visits are shown.",
+      "ouvrir": "Observations of {date}, {classe}, {etat}"
+    },
+    "seance": {
+      "titreSansClasse": "Session of {date}",
+      "blocSeance": "The session",
+      "blocPresence": "{dePrenom}'s attendance",
+      "date": "Date",
+      "horaire": "Time",
+      "dureePrevue": "Planned duration",
+      "classe": "Class",
+      "enseignant": "Teacher",
+      "presence": "Attendance",
+      "arrivee": "Arrival",
+      "sortie": "Exit",
+      "tempsPresence": "Time present",
+      "minutesSur": "{minutes} min out of {prevues}",
+      "presencePartielle": "Partial attendance",
+      "interruption": "Interruption",
+      "verificationPhrase": "Attendance is not yet confirmed for this session.",
+      "mesureAutomatique": "Attendance measured automatically from connections to the room.",
+      "nonTenuPhrase": "The session did not take place: this is not the student's doing.",
+      "annulePhrase": "The session was cancelled.",
+      "introuvableTitre": "Session not found",
+      "introuvablePhrase": "This session is not in your household's history."
+    },
+    "observation": {
+      "titreSansClasse": "Observations of {date}",
+      "blocResume": "Summary",
+      "blocVisites": "Visits",
+      "observateur": "Observer",
+      "vous": "You",
+      "eleve": "Student",
+      "enseignant": "Teacher",
+      "dureeTotale": "Total duration",
+      "visite": "Visit {n}",
+      "plageOuverte": "Entered at {debut}",
+      "terminee": "Visit ended",
+      "introuvableTitre": "No visit for this session",
+      "introuvablePhrase": "No recorded visit matches this session."
+    },
+    "compteRendu": {
+      "titre": "Teaching report",
+      "travaille": "What was worked on",
+      "appreciation": "Assessment of the session",
+      "aRenforcer": "To reinforce",
+      "aPreparer": "To prepare for the next session",
+      "commentaire": "Shared comment",
+      "corrigeLe": "Corrected on {date}",
+      "nonDisponibleTitre": "Teaching report not available",
+      "nonPartagePhrase": "The observations of this session are not shared with your family for now.",
+      "enAttentePhrase": "The report is not available yet.",
+      "illisiblePhrase": "The report cannot be displayed.",
+      "horsLignePhrase": "A connection is needed to view the report.",
+      "aucunChampPhrase": "No teaching report is available for this session.",
+      "voirTravail": "See the work to prepare",
+      "voirProgression": "See the progress",
+      "etatARenforcer": "To reinforce",
+      "etatAcquis": "Achieved"
+    },
+    "dateCourteSansAnnee": "{mois} {jour}"
+  },
+  "notifications": {
+    "evenements": {
+      "bienvenueEquipe": "Welcome to the team. You still need to set up your space.",
+      "retenuEntretien": "You have been selected for an interview. Let's get to know each other: choose your time in the app.",
+      "pauseRepondueAcceptee": "{dePrenom}'s one-month pause is accepted for {mois}. Their deadline moves back by the same amount. Their place is kept.",
+      "pauseRepondueAccepteeAdulte": "Your one-month pause is accepted for {mois}. Your deadline moves back by the same amount. Your place is kept.",
+      "pauseRepondueRefusee": "{dePrenom}'s one-month pause for {mois} is not accepted. The reason is in the app.",
+      "pauseRepondueRefuseeAdulte": "Your one-month pause for {mois} is not accepted. The reason is in the app.",
+      "demandeRecue": "A new time slot request has been received.",
+      "demandePresentation": "A standard display request has been received.",
+      "classeValidee": "The class is ready and waiting for its teacher.",
+      "enseignantAffecte": "A teacher has been assigned to the class.",
+      "demandeClose": "A time slot request has been closed.",
+      "remplacementPropose": "A class replacement is being offered to you.",
+      "remplacementPris": "A class replacement has been assigned.",
+      "controleMissionAttribuee": "A review mission has been assigned to you.",
+      "controleMissionNonControlee": "A review mission was left without a check.",
+      "classeChangee": "A student in the family has joined another class, at the same time.",
+      "paiementRelance": "A payment is coming due. It is paid in Payments.",
+      "accesSuspenduPaiement": "Access is suspended: this month's payment has not been received.",
+      "accesRetabliPaiement": "Access is restored: the payment has been received.",
+      "paiementRecu": "The payment has been received. The balance is up to date.",
+      "accesSuspenduRemboursement": "Access is suspended: a payment was refunded, the month is no longer paid.",
+      "accesSuspenduLitige": "Access is suspended: a payment is disputed with the bank.",
+      "remboursementEffectue": "A refund has been made. The balance is up to date.",
+      "remboursementEffectueDirection": "A refund has been made to a family.",
+      "litigeOuvert": "A payment is disputed with the bank. Access is suspended during the review.",
+      "litigeOuvertDirection": "A family is disputing a payment with their bank.",
+      "litigeClosGagne": "The dispute is closed: the bank ruled in the academy's favour.",
+      "litigeClosPerdu": "The dispute is closed: the payment is refunded, the fees go to the household balance.",
+      "litigeClosDirection": "A payment dispute is closed.",
+      "enseignantAffecteSoi": "A teacher has been assigned to your class.",
+      "toutEstPret": "All set: see the tracking of your request.",
+      "toutEstPretSoi": "All set: your class, your teacher and your first class are confirmed.",
+      "toutEstPretPour": "All set for {prenom}: see the tracking of the request.",
+      "enseignantAffecteClasse": "A class is entrusted to you.",
+      "remplacementPrisQuand": "The session of {quand} will be taken by a replacement teacher.",
+      "classeCreee": "A class has just been created.",
+      "classeCreeeSoi": "Your class is created. Its schedule is in the app.",
+      "classeCreeeFoyer": "A class is created for a student in your household.",
+      "classeCreeeClasse": "A new class is entrusted to you.",
+      "enseignantChange": "The class teacher has changed.",
+      "enseignantChangeClasse": "The teacher of one of your classes has changed.",
+      "eleveInscrit": "A student is registered in the class.",
+      "eleveInscritSoi": "You are registered in a class.",
+      "eleveInscritFoyer": "A student in your household is registered in a class.",
+      "eleveInscritClasse": "A student joins one of your classes.",
+      "eleveRetire": "A student is no longer part of the class.",
+      "eleveRetireSoi": "You are no longer part of this class.",
+      "eleveRetireFoyer": "A student in your household is no longer part of their class.",
+      "eleveRetireClasse": "A student leaves one of your classes.",
+      "creneauChange": "The class schedule has changed.",
+      "changementHeureUn": "From {date}, {cours} on {jour} moves from {avant} to {apres}.",
+      "changementHeurePlusieurs": "From {date}, the time {cours} changes: {liste}.",
+      "changementHeureUnJour": "From {date}, {cours} moves from {jourAvant} {avant} to {jourApres} {apres}.",
+      "changementHeureLigneJour": "from {jourAvant} {avant} to {jourApres} {apres}",
+      "changementHeureMecque": "The class stays at the same time in Makkah: it is your city's time that changes.",
+      "conversionRefusee": "Class {classe} could not move to Makkah time: {raison} It will be retried tonight.",
+      "conversionRefuseeProche": "a time change is approaching (less than 28 days).",
+      "conversionRefuseeDemiHeure": "one of its slots has no whole hour in Makkah.",
+      "conversionRefuseeAutre": "a check failed, see the class.",
+      "changementHeureLigne": "on {jour} from {avant} to {apres}",
+      "changementHeureCoursUn": "your class",
+      "changementHeureCoursUnFoyer": "the class",
+      "changementHeureCoursPlusieurs": "your classes",
+      "changementHeureCoursPlusieursFoyer": "the classes",
+      "seanceAnnulee": "A session is cancelled.",
+      "seanceAnnuleeQuand": "The session of {quand} is cancelled.",
+      "seanceDeplacee": "A session is moved.",
+      "seanceDeplaceeQuand": "A session is moved to {quand}.",
+      "enseignanteAbsente": "The teacher will be absent from a session. A replacement is being sought.",
+      "enseignanteAbsenteQuand": "The teacher will be absent from the session of {quand}. A replacement is being sought.",
+      "remplacementAvertissement": "You are not in the room yet. Join quickly: otherwise you lose access to today's session.",
+      "remplacementAvertissementMinutes(param=minutes)": {
+        "one": "You are not in the room yet. Join within the minute: otherwise you lose access to today's session.",
+        "other": "You are not in the room yet. Join within {minutes} minutes: otherwise you lose access to today's session."
+      },
+      "remplacementPreAlerte": "A replacement is being prepared: a teacher is not yet in their room. Declare yourself ready in Replacements.",
+      "remplacementInutile": "The replacement is no longer needed: the class teacher has arrived. Thank you for being ready.",
+      "titulaireEnRetard": "The class teacher is late. The academy is looking for a replacement: stay in the room.",
+      "titulaireEnRetardDirection": "A class teacher has not entered their room. A replacement is being sought: see the schedule.",
+      "remplacantArrive": "A replacement is arriving: stay in the room.",
+      "classeSupprimee": "The class is closed.",
+      "classeSupprimeeSoi": "Your class is closed.",
+      "classeSupprimeeFoyer": "The class of a student in your household is closed.",
+      "classeSupprimeeClasse": "One of your classes is closed.",
+      "seanceTerminee": "A session has ended.",
+      "seanceTermineeDe": "The session {deClasse} of {quand} has ended.",
+      "seanceTermineeTravail": "Work to prepare: {travail}",
+      "seanceTermineeAucunTravail": "No work to prepare.",
+      "seanceTermineePresents(plural, param=n)": {
+        "one": "{n} student present out of {total}.",
+        "other": "{n} students present out of {total}."
+      },
+      "seanceTermineeCahierAttend": "The handover notebook is waiting for your information.",
+      "seanceTermineeCahierDepose": "Notebook submitted, thank you.",
+      "seanceTermineePhrases": "{premiere} {suite}",
+      "inconnu": "This notification needs a more recent version of the app. Reload the page to read it."
+    },
+    "filtres": {
+      "libelle": "Filter notifications",
+      "toutes": "All",
+      "nonLues": "Unread"
+    },
+    "filtreVideTitre": "No notification in this filter",
+    "filtreVidePhrase": "Choose \"All\" to see all your notifications again.",
+    "voirToutes": "See all notifications",
+    "sectionAFaire": "To do",
+    "sectionNouvelles": "New",
+    "sectionPlusAnciennes": "Older",
+    "voirPlus": "See more",
+    "voirPlusErreur": "Older notifications could not be loaded.",
+    "toutMarquerLu": "Mark all as read",
+    "ecarter": "Dismiss",
+    "gesteTraiterContestation": "Handle the dispute",
+    "gesteObserver": "Observe the class",
+    "gesteRepondre": "Reply",
+    "gestePrendreSeance": "Take the session",
+    "gesteRecharger": "Reload",
+    "ecartNonConfirme": "The dismissal is not yet confirmed. Try again in a moment.",
+    "repetitions": {
+      "one": "{n} time",
+      "other": "{n} times"
+    },
+    "nonLue": "Unread",
+    "nonLueSemantique": "unread",
+    "lectureNonConfirmee": "Reading is not yet confirmed. Try again in a moment.",
+    "detail": {
+      "recue": "Received on {date} at {heure}",
+      "ouvrir": "Open the page concerned"
+    },
+    "types": {
+      "annonceClasse": "Class announcement",
+      "changementSeance": "Session change",
+      "decisionDossier": "Decision on a file",
+      "messageMetier": "Message",
+      "reponseAttendue": "Reply expected",
+      "accesFinance": "Access and payments",
+      "observation": "Observation",
+      "travailRessource": "Work or resource",
+      "annonceDirection": "Announcement from the management",
+      "changementPlanning": "Schedule change",
+      "remplacement": "Replacement",
+      "mentionCommunaute": "Mention in the Community",
+      "reponseCommunaute": "Reply in the Community",
+      "messageAdministration": "Message from the Administration",
+      "dossierATraiter": "File to handle",
+      "signalementCommunaute": "Report in the Community",
+      "reponseFil": "Reply in a conversation",
+      "annoncePlanifiee": "Scheduled announcement to publish",
+      "evenementOperationnel": "Academy event",
+      "mission": "Mission",
+      "changementMission": "Mission change",
+      "reponseAdministration": "Reply from the Administration",
+      "mentionStudio": "Mention in The Studio",
+      "reponseStudio": "Reply in The Studio",
+      "decisionDemandee": "Decision requested",
+      "elementAssigne": "Assigned item",
+      "annonceInterne": "Internal announcement",
+      "evenementContextuel": "Event",
+      "autre": "Notification"
+    },
+    "titre": "Notifications",
+    "quand": "{date} at {heure}",
+    "indisponibleTitre": "Notifications are not available yet",
+    "indisponiblePhrase": "Session reminders and messages from the academy will appear here once they are open.",
+    "videTitre": "No notifications",
+    "videPhrase": "Session reminders and messages from the academy will appear here.",
+    "ligne": "{titre}, on {date} at {heure}"
+  },
+  "eleve": {
+    "accueil": {
+      "rejoindre": "Join",
+      "coran": "The Quran",
+      "coranDetail": "To read whenever you want",
+      "coranEcouter": "Listen: The Quran",
+      "prochainCours": "Next class",
+      "coursEnDirect": "Your class has started",
+      "avec": "With {prenom}",
+      "dansMinutes": "In {minutes} min",
+      "dansHeures": "In {heures} h {minutes}",
+      "demainA": "Tomorrow at {heure}",
+      "dansJours(param=jours)": {
+        "one": "In {jours} day",
+        "other": "In {jours} days"
+      },
+      "imminent": "It is almost time",
+      "aucunCours": "No class today",
+      "aucunCoursDetail": "Your teacher is preparing the next one.",
+      "erreurCours": "Your classes could not be loaded. Try again in a moment.",
+      "erreurCoursHorsLigneTitre": "Your classes are not available",
+      "prochainAujourdhui": "Your next class is later today.",
+      "prochainDemain": "Your next class is tomorrow.",
+      "annulee": "This class will not take place",
+      "horsLigne": "Entry pending",
+      "horsLigneDetail": "You will be able to enter as soon as the network is back.",
+      "pausePriere": "Prayer break",
+      "pausePriereDetail": "At {heure}",
+      "prochainDansJours(param=jours)": {
+        "one": "Your next class is in {jours} day.",
+        "other": "Your next class is in {jours} days."
+      },
+      "entreeSePrepare": "Your entry is getting ready. Try again in a moment."
+    },
+    "coran": {
+      "titre": "The Quran",
+      "juz": "Juz {juz}",
+      "mecquoise": "Revealed in Makkah",
+      "medinoise": "Revealed in Madinah",
+      "reprendre": "Resume your reading",
+      "reprendreDetail": "You were on page {page}",
+      "chargement": "The text is on its way",
+      "indisponible": "The text could not be loaded",
+      "indisponibleDetail": "As soon as the network is back, your page reopens here.",
+      "reessayer": "Try again",
+      "absent": "This page is empty",
+      "absentDetail": "The text has not been installed on this page. Report it: it is not you.",
+      "pagePrecedente": "Previous page",
+      "pageSuivante": "Next page",
+      "reglages": "Reading settings",
+      "fermerReglages": "Close the settings",
+      "taille": "Text size",
+      "agrandir": "Enlarge the text",
+      "reduire": "Reduce the text",
+      "source": "Quran text: Tanzil Project",
+      "sourceLien": "tanzil.net",
+      "edition": "Madinah Mushaf, Hafs riwaya"
+    },
+    "suivi": {
+      "colonneDate": "Date",
+      "colonneCours": "Class",
+      "colonneEnseignant": "Teacher",
+      "colonneEtat": "Attendance",
+      "cours": "Quran class",
+      "moi": "My attendance",
+      "aujourdhui": "Today, {heure}",
+      "hier": "Yesterday, {heure}",
+      "date": "{date}, {heure}",
+      "annule": "Class cancelled",
+      "nonTenu": "Class not held",
+      "vide": "No class yet",
+      "videDetail": "Your classes will appear here, from the most recent to the oldest, with your attendance.",
+      "erreur": "The tracking could not be loaded. Try again in a moment.",
+      "tronquee": "The {nombre} most recent classes are shown.",
+      "fin": "{nombre} classes in the tracking.",
+      "finUn": "1 class in the tracking."
+    }
+  },
+  "tuteur": {
+    "accueil": {
+      "titre": "Home",
+      "voirLaClasse": "See the class",
+      "prochaineSeance": "Next session",
+      "heureDe": "{deVille} time",
+      "heureAppareil": "This device's time",
+      "dateEtFuseau": "{date} · {fuseau}",
+      "heureClasse": "Class time: {heure} {ville}",
+      "seanceEnDirect": "Live session",
+      "seanceTerminee": "Session ended",
+      "seanceAnnulee": "This session will not take place.",
+      "seanceNonTenue": "This session could not be held.",
+      "horaireIncertain": "Room opening not confirmed for now",
+      "horaireIncertainAvant(param=n)": {
+        "one": "The join button will appear {n} minute before the start.",
+        "other": "The join button will appear {n} minutes before the start."
+      },
+      "horaireIncertainPendant": "We cannot verify whether the room is open. Reload the page.",
+      "pastilleAnnulee": "Cancelled",
+      "pastilleNonTenue": "Not held",
+      "pastilleTerminee": "Ended",
+      "aucuneSeance": "No session planned",
+      "aucuneSeanceDetail": "{dePrenom}'s next session will appear here as soon as it is scheduled.",
+      "seanceIllisible": "The next session could not be loaded.",
+      "classeIndisponible": "The class details are not yet available here.",
+      "classeIllisible": "The class could not be loaded.",
+      "sansClasseTitre": "No class for {prenom}",
+      "sansClassePhrase": "Choose a class so {quePrenom} can start classes.",
+      "financesTitre": "{dePrenom}'s finances",
+      "financesPhrase": "Balance, next debit and what remains to be funded.",
+      "foyerVideTitre": "No student profile yet",
+      "foyerVidePhrase": "Add a student profile to choose a class and follow their sessions.",
+      "ouvrirEspaceEleve": "Open my student space",
+      "autreAppareilFeuille": {
+        "phrase": "Your account follows you on all your devices. On the other device, open the app at this address, then sign in with the same sign-in address.",
+        "aucunCode": "No code to enter: it is your own account.",
+        "adresseApplication": "App address",
+        "adresseConnexion": "Sign-in address",
+        "copier": "Copy the app link",
+        "copie": "Link copied"
+      },
+      "autreAppareil": "Use another device",
+      "ajouterProfil": "Add a student profile",
+      "profilsIllisibles": "The household profiles could not be loaded.",
+      "blocageAppareilTitre": "No device ready for {prenom}",
+      "blocageAppareilPhrase": "Without a connected device, {prenom} will not be able to join class.",
+      "connecterAppareil": "Connect a device",
+      "avantProchainCours": "Before the next class",
+      "voirTout": "See all",
+      "travailIndisponible": "The work to prepare is not yet linked to this space.",
+      "travailIllisible": "The work to prepare could not be loaded.",
+      "rienAPreparer": "Nothing to prepare for now",
+      "derniereSeance": "Last session",
+      "voirHistorique": "See the history",
+      "detailsSeance": "Session details",
+      "aucuneDerniere": "No past session yet",
+      "derniereIllisible": "The last session could not be loaded.",
+      "dateEtDuree": "{date} · {duree}",
+      "etatCourt": {
+        "enDirect": "Live",
+        "salleOuverte": "Room open",
+        "dansMinutes": "In {minutes} min",
+        "dansHeures": "In {heures} h {minutes}",
+        "dansJours": "In {jours} d",
+        "prevue": "Session planned",
+        "annulee": "Session cancelled",
+        "nonTenue": "Session not held",
+        "terminee": "Session ended",
+        "aucune": "No session",
+        "illisible": "Not available"
+      },
+      "assister": "Observe",
+      "assisterRefuse": "The class could not be joined. It may have just ended.",
+      "enCours": "In progress with {prenom}",
+      "depuisMinutes": "Started {minutes} min ago",
+      "depuisInstant": "Just started",
+      "aujourdhui": "Today at {heure}, with {prenom}",
+      "unAutreJour": "{jour} at {heure}, with {prenom}",
+      "rienAujourdhui": "Nothing today",
+      "aucunCoursPrevu": "No class scheduled yet",
+      "aucunCoursPrevuDetail": "The week's classes are prepared in advance. This one will appear here.",
+      "enRecherche": "Looking for a teacher",
+      "enRechercheDepuis": "Request submitted on {date}",
+      "enRechercheSansDate": "A teacher will take {prenom} on from the times offered.",
+      "sansCreneau": "No times offered for {prenom}",
+      "sansCreneauDetail": "Without a slot, no teacher can take {prenom} on.",
+      "poserDesHeures": "Offer times",
+      "annulee": "The {heure} class will not take place",
+      "motifAnnulee": "Session cancelled",
+      "motifAnnuleeTard": "Session cancelled shortly before the start time",
+      "proposeApres": "Next class {jour} at {heure}",
+      "proposeAucun": "A new class will be offered to you.",
+      "gererLeFoyer": "Manage the household",
+      "blocAppareils": "Household devices",
+      "blocAppareilsDetail": "Add a device, or remove one.",
+      "blocReglages": "Settings per child",
+      "blocReglagesDetail": "Photo, camera and display, child by child.",
+      "blocGroupesDetail": "Each child's class, teacher and next class.",
+      "acces": "Access",
+      "aucunEnfant": "No child in the household",
+      "aucunEnfantDetail": "Add your first child to get started.",
+      "erreur": "The household could not be loaded completely. Try again in a moment."
+    },
+    "reglages": {
+      "titre": "Settings per child",
+      "intro": "These settings apply to the next session, never during a class.",
+      "photo": "Photo",
+      "photoAucune": "{prenom} has no photo yet. It stays visible to the household only.",
+      "photoAjouter": "Add a photo",
+      "photoChanger": "Change the photo",
+      "photoTropLourde": "This photo is larger than {taille} MB. Retake it at a lower quality.",
+      "camera": "Camera",
+      "cameraAutorisee": "{prenom} can turn on their camera during class.",
+      "cameraInterdite": "The camera button will not appear for {prenom}.",
+      "cameraAutoriser": "Allow {dePrenom}'s camera",
+      "cameraRetirer": "Remove {dePrenom}'s camera",
+      "mode": "Display",
+      "modeEnfant": "Large display, no reading: {prenom} recognises pictures and listens.",
+      "modeStandard": "Usual display: {prenom} reads their screen.",
+      "modePasserEnfant": "Switch {prenom} to the large display",
+      "modePasserStandard": "Switch {prenom} to the usual display",
+      "aucunEnfant": "No child in the household",
+      "aucunEnfantDetail": "Add a child to set their display and camera.",
+      "erreur": "Saving did not go through: {message}"
+    }
+  },
+  "classe": {
+    "entree": {
+      "coursDans": "Class in {duree}",
+      "coursImminent": "Class in less than a minute",
+      "coursDemainA": "Class tomorrow at {heure}",
+      "coursDansJours(param=jours)": {
+        "one": "Class in {jours} day",
+        "other": "Class in {jours} days"
+      },
+      "revenirAvant": "This class is not open to you right now. Come back 20 minutes before the class time.",
+      "rejoindre": "Join",
+      "rejoindreLecteur": "Join {deClasse}'s session",
+      "salleOuverte": "The room is open. The session starts in {duree}.",
+      "salleOuverteImminent": "The room is open. The session starts in less than a minute.",
+      "preparation": "Getting ready",
+      "attente": "You are in the room. The session starts in {duree}.",
+      "attenteImminent": "You are in the room. The session starts in less than a minute.",
+      "enDirect": "Live session",
+      "tempsEcoule": "Scheduled time elapsed",
+      "terminee": "Session ended",
+      "annulee": "Session cancelled",
+      "aucune": "No session planned",
+      "horsLigne": "You will be able to join the session as soon as the connection is back.",
+      "indisponible": "The session information could not be loaded: the request may not have reached Rewayah. Try again in a moment.",
+      "indisponibleCourt": "The session information could not be loaded",
+      "indisponibleInvitation": "The request may not have reached Rewayah. Try again in a moment.",
+      "accesInverifiable": "Access to the room cannot be verified right now.",
+      "reessayer": "Try again",
+      "chargementSeance": "Loading the next session.",
+      "progressionValeur": "{chapitre} · {pourcentage}%",
+      "dst": "Time change: the class will move from {avant} to {apres}.",
+      "annonce": {
+        "aVenir": "Upcoming session",
+        "fenetreOuverte": "The room is open",
+        "attente": "You are in the room"
+      },
+      "demo": {
+        "titre": "Joining class",
+        "mention": "Demo",
+        "intro": "Fictitious data, no server call. Each link shows what the entry spot says for a role and a moment.",
+        "roles": {
+          "eleve": "Student",
+          "guidee": "Student, Guided interface",
+          "enseignant": "Teacher"
+        },
+        "etats": {
+          "aVenir": "Upcoming",
+          "fenetreOuverte": "Window open",
+          "preparation": "Getting ready",
+          "attente": "Waiting before the start",
+          "enDirect": "Live",
+          "tempsEcoule": "Scheduled time elapsed",
+          "terminee": "Ended",
+          "annulee": "Cancelled",
+          "horsLigne": "Offline",
+          "indisponible": "Information unavailable",
+          "changementHeure": "Time change"
+        },
+        "formeBouton": "Form: button",
+        "formeLigne": "Form: status line",
+        "lecteur": "Screen reader: {texte}",
+        "annonce": "Announcement: {texte}",
+        "detail": "Detail: {texte}",
+        "retour": "Back to the list"
+      }
+    },
+    "planning": "Schedule",
+    "travail": "Before the next class",
+    "ressources": "Library",
+    "progression": "Progress",
+    "observer": "Observe the session",
+    "titre": "Class",
+    "historique": "History",
+    "sousTitre": "{prenom} · {enseignant}",
+    "indisponiblePhrase": "The class details are not yet available here.",
+    "introuvableTitre": "This class is not open to this profile",
+    "introuvablePhrase": "It may have ended, or it concerns another student in the household.",
+    "disparue": "This class no longer exists.",
+    "seance": {
+      "aucune": "No session planned",
+      "aucuneDetail": "{dePrenom}'s next session will appear here as soon as it is scheduled.",
+      "illisible": "The next session could not be loaded.",
+      "presence": "{prenom}: {etat}",
+      "rejoindreAvec": "Join the room with {prenom}",
+      "salleOuvreA": "The room opens at {heure}."
+    },
+    "observation": {
+      "commentCaMarche": "How does it work?",
+      "uneVisite": "1 visit available",
+      "resume": "{visites} · {duree} per visit",
+      "restanteAucune": "No visit left for this session",
+      "restanteUne": "1 visit left for this session",
+      "minutesSecondes": "{minutes} min {secondes} s",
+      "secondes": "{secondes} s",
+      "motif": {
+        "visitesEpuisees": "You have used your visits for this session.",
+        "tempsEpuise": "Your observation time is used up for this session.",
+        "seanceNonCommencee": "Observation opens when the session starts.",
+        "seanceTerminee": "The session has ended.",
+        "seanceNonTenue": "This session is not taking place: there is nothing to observe.",
+        "horsFenetre": "The room is not open at this time.",
+        "observationDesactivee": "Observation is closed for this class.",
+        "lienAbsent": "No student in your household is linked to this session.",
+        "enfantAbsent": "Observation is waiting for {dePrenom} to arrive.",
+        "presenceEnVerification": "{dePrenom}'s attendance is being verified.",
+        "visiteDejaOuverte": "A visit is already open, on this device or another.",
+        "garantieServeurAbsente": "Session observation is not open yet.",
+        "reseau": "The availability of observation could not be verified.",
+        "capaciteAbsente": "Observation cannot open for this session."
+      },
+      "visites(param=nombre)": {
+        "one": "{nombre} visit available",
+        "other": "{nombre} visits available"
+      },
+      "restantes(param=nombre)": {
+        "one": "{nombre} visit left for this session",
+        "other": "{nombre} visits left for this session"
+      }
+    },
+    "pagePlanning": {
+      "prochaines": "Upcoming sessions",
+      "ligne": "{heure} · {duree}",
+      "ligneFuseau": "{heure} ({fuseau}) · {duree}",
+      "aucune": "No upcoming session for now",
+      "aucuneDetail": "{dePrenom}'s next sessions will appear here as soon as they are scheduled.",
+      "habituelIndisponible": "The class's usual days are not shown here yet: only sessions already scheduled appear.",
+      "indisponible": "The class schedule is not yet linked to this space."
+    },
+    "pageTravail": {
+      "aucun": "Nothing to prepare for now",
+      "aucunDetail": "The work given by the teacher will appear here.",
+      "indisponible": "The work to prepare is not yet linked to this space.",
+      "echeance": "Due: {date}",
+      "nonCochable": "Marking work as done is not yet possible here.",
+      "statut": {
+        "aFaire": "To do",
+        "enCours": "Started",
+        "fait": "Done",
+        "expire": "Past due"
+      }
+    },
+    "pageRessources": {
+      "aucune": "No resources for this class yet",
+      "aucuneDetail": "The materials chosen by the teacher will appear here.",
+      "indisponible": "The class library is not yet linked to this space."
+    },
+    "pageProgression": {
+      "indisponible": "{dePrenom}'s progress is not shared here yet.",
+      "niveau": "Level",
+      "jalons": "Stages completed",
+      "aucune": "No stage shared yet",
+      "aucuneDetail": "The progress the teacher shares with the family will appear here."
+    },
+    "cartes": {
+      "titre": "Class cards",
+      "contexteEnseignant": "Tap a card to edit it. Students and their families see it immediately.",
+      "modificationPlusTard": "Cards can be edited when the connection is back.",
+      "aucune": "No cards yet",
+      "aucuneDetail": "The class teacher will post useful information here.",
+      "aucuneEnseignant": "No cards yet. Add one: the class will see it immediately.",
+      "ajouter": "Add a card",
+      "limite": "{max} cards at most: remove one to add another.",
+      "modifierLecteur": "Edit the card \"{titre}\"",
+      "echeance": "Due: {date}",
+      "copierLien": "Copy the link for \"{titre}\"",
+      "copierLienCourt": "Copy the link",
+      "lienCopie": "Link copied. Paste it into your browser to open it.",
+      "indisponibleTitre": "Class cards are not open yet",
+      "indisponiblePhrase": "They will appear here as soon as they open. Nothing to do on your side.",
+      "erreurLecture": "The class cards could not be loaded. Try again in a moment.",
+      "sansDonnees": "The class cards could not be loaded",
+      "enregistree": "Card saved. The class sees it now.",
+      "retiree": "Card removed. The class no longer sees it.",
+      "types": {
+        "annonce": "Announcement",
+        "devoir": "Homework",
+        "lien": "Useful link",
+        "rappel": "Reminder"
+      },
+      "typesDetail": {
+        "annonce": "For information for the whole class.",
+        "devoir": "For work to prepare: the suggested due date is the next session.",
+        "lien": "To share a page or a material: paste its address.",
+        "rappel": "For a date not to forget: outing, exam, schedule change."
+      },
+      "modeles": {
+        "annonce": "Information for the class",
+        "devoir": "To prepare for the next session",
+        "lien": "Material to look at",
+        "rappel": "Do not forget"
+      },
+      "feuille": {
+        "titreNouvelle": "New class card",
+        "titreModifier": "Edit the card \"{titre}\"",
+        "contexte": "Choose a template: it pre-fills the card. It is immediately visible to the class students and their families.",
+        "modele": "Card template",
+        "champTitre": "Card title",
+        "champTexte": "Card text (optional)",
+        "champLien": "Card link (optional)",
+        "aideLongueur": "{max} characters at most",
+        "aideLien": "A full address, starting with https://",
+        "echeanceAucune": "No due date",
+        "choisirEcheance": "Choose the due date",
+        "retirerEcheance": "Remove the due date",
+        "enregistrer": "Save the card",
+        "retirer": "Remove this card",
+        "retirerQuestion": "Remove the card \"{titre}\"?",
+        "retirerConsequence": "It disappears immediately for the class students and their families.",
+        "retirerConfirmer": "Remove the card",
+        "envoiNonConfirme": "The card is not confirmed: the reply did not arrive. Save again in a moment.",
+        "retraitNonConfirme": "The removal is not confirmed: the reply did not arrive. Try again in a moment.",
+        "defauts": {
+          "titreVide": "The title is missing. Write a few words, for example \"Surah to review\".",
+          "titreLong": "The title exceeds {max} characters. Shorten it.",
+          "texteLong": "The text exceeds {max} characters. Shorten it or share a link.",
+          "lienInvalide": "This link is not a full address. Paste an address that starts with https://.",
+          "echeanceManquante": "Homework needs a due date. Choose the due date."
+        }
+      }
+    }
+  },
+  "suiviFamille": {
+    "titre": "Tracking of requests",
+    "contexte": "Each request moves forward step by step. You are notified at each stage.",
+    "carteTitre": "{dePrenom}'s request",
+    "detailTitre": "Tracking of {dePrenom}'s request",
+    "etapeCourante": "Current step: {etape}",
+    "toutFait": "All steps are complete.",
+    "voirSuivi": "See the tracking",
+    "vide": "No request for now.",
+    "faireDemande": "Make a request",
+    "erreur": "The tracking could not be loaded. Try again.",
+    "sansDonnees": "your requests",
+    "introuvable": "This request no longer exists or is not yours.",
+    "retour": "Back to requests",
+    "fuseau": "Times shown: {deVille} time.",
+    "prevue": "Planned for {date} at {heure}",
+    "prevueJour": "Planned for {date}",
+    "etapes": {
+      "envoyee": "Request sent",
+      "enAttente": "On the waiting list",
+      "classeCreee": "Class created",
+      "enseignantAffecte": "Teacher assigned",
+      "eleveIntegre": "Student placed",
+      "premiereSeance": "First session"
+    },
+    "etats": {
+      "fait": "Done",
+      "enCours": "In progress",
+      "aVenir": "Upcoming"
+    },
+    "motif": {
+      "classesPleines": "All classes for this slot are full. You will be notified as soon as a place opens.",
+      "aucunEnseignantLibre": "No teacher is free for this slot for now. You will be notified as soon as that changes.",
+      "inconnu": "Your request is pending. You will be notified as soon as it moves forward."
+    },
+    "intervalle": {
+      "moinsHeure": "Less than an hour later",
+      "heures": {
+        "one": "{n} hour later",
+        "other": "{n} hours later"
+      },
+      "jours": {
+        "one": "{n} day later",
+        "other": "{n} days later"
+      }
+    },
+    "notification": {
+      "enAttente": "{dePrenom}'s request: on the waiting list",
+      "eleveIntegre": "{dePrenom}'s request: student placed in the class",
+      "premiereSeance": "{dePrenom}'s request: first session held",
+      "close": "{dePrenom}'s request: {motif}",
+      "dejaEnClasse": "{dePrenom}'s request: student already in a class, request filed"
+    },
+    "etapeSurTotal": "Step {n} of {total}: {etape}",
+    "close": {
+      "etat": "Request closed",
+      "suite": "You can choose another slot for {prenom}.",
+      "suiteSansChoix": "Nothing else to do on your side.",
+      "choisirAutre": "Choose another slot for {prenom}",
+      "motif": {
+        "retraitFamille": "You withdrew this request.",
+        "offreRetiree": "This slot is no longer offered.",
+        "classeNonConstituee": "The class for this slot could not be formed.",
+        "refusDirection": "The management did not accept this request.",
+        "dejaEnClasse": "{prenom} already has a place in a class: this request is no longer needed.",
+        "inconnu": "This request is closed."
+      }
+    }
+  },
+  "suiviDemandes": {
+    "titre": "Tracking of time slot requests",
+    "contexte": "Each request moves forward step by step. You are notified at each stage.",
+    "carteTitre": "{dePrenom}'s time slot request",
+    "joursChoisis": "Chosen days",
+    "heureChoisie": "Chosen time",
+    "joursEt": "{debut} and {dernier}",
+    "heureFuseau": "{heure}, {deVille} time",
+    "creneauxChoisis": "Chosen days and times",
+    "jourHeure": "{jour} {heure}",
+    "fuseauChoisi": "Time zone",
+    "fuseauValeur": "{deVille} time",
+    "etapes": {
+      "envoyee": "Request sent",
+      "classeValidee": "Class approved",
+      "enseignantAffecte": "Teacher assigned",
+      "listeAttente": "On the waiting list",
+      "eleveIntegre": "Student placed in the class",
+      "coursCommences": "Classes start"
+    },
+    "etats": {
+      "fait": "Done",
+      "enCours": "In progress",
+      "prochaine": "Next step",
+      "aVenir": "Upcoming"
+    },
+    "situation": {
+      "envoyee": "Your request has reached the administration",
+      "classeValidee": "Your class is ready: it is waiting for its teacher",
+      "enseignantAffecte": "Class approved · teacher assigned",
+      "listeAttente": "Your request is on the waiting list",
+      "eleveIntegre": "Class approved · teacher assigned · student placed",
+      "coursCommences": "Classes have started"
+    },
+    "prochaine": {
+      "envoyee": "Next step: forming the class",
+      "classeValidee": "Next step: the class teacher is appointed. We will let you know as soon as it is done.",
+      "listeAttente": "We will let you know as soon as a place opens. No date is announced until it is known.",
+      "eleveIntegre": "Next step: classes start"
+    },
+    "debutCours": "Classes start",
+    "debutValeur": "{date} at {heure}, {deVille} time",
+    "debutAFixer": "The date of the first class will appear here as soon as it is set.",
+    "enseignant": "Teacher",
+    "personnaliseNotice": "This slot will only open if other students choose it and fill the class.",
+    "close": {
+      "retiree": "Request withdrawn",
+      "nonRetenue": "Request not accepted",
+      "close": "Request closed",
+      "motif": {
+        "retraitFamille": "You withdrew this request.",
+        "offreRetiree": "The academy removed this slot from its offers.",
+        "classeNonConstituee": "The class for this slot could not be formed.",
+        "refusDirection": "The management could not accept this request.",
+        "dejaEnClasse": "{prenom} already has a place in a class: this request is no longer needed.",
+        "inconnu": "This request is closed."
+      },
+      "suite": "You can choose another slot among those offered.",
+      "suiteSansChoix": "No other slot is offered for now. Come back to this page later.",
+      "choisirAutre": "Choose another slot for {prenom}"
+    },
+    "vide": "No time slot request in progress.",
+    "erreur": "The tracking of your requests could not be displayed: the reading may not have reached Rewayah. This failure only concerns the display of the tracking: it says nothing about your time slot requests. Try again in a moment.",
+    "sansDonnees": "The tracking of requests could not be loaded",
+    "accueil": {
+      "titre": "Your time slot requests",
+      "ligne": "{prenom}: {etat}",
+      "voir": "See the tracking of requests"
+    },
+    "notification": {
+      "envoyee": "{dePrenom}'s time slot request: your request has reached the administration",
+      "classeValidee": "{dePrenom}'s time slot request: your class is ready, it is waiting for its teacher",
+      "enseignantAffecte": "{dePrenom}'s time slot request: class approved · teacher assigned",
+      "close": "{dePrenom}'s time slot request: {motif}",
+      "listeAttente": "{dePrenom}'s time slot request: your request is on the waiting list",
+      "eleveIntegre": "{dePrenom}'s time slot request: student placed in the class",
+      "coursCommences": "{dePrenom}'s time slot request: classes have started",
+      "dejaEnClasse": "{dePrenom}'s time slot request: student already in a class, request filed",
+      "changementFusion": "{dePrenom}'s time slot request: your class was merged with another, see the new class",
+      "changementTransfert": "{dePrenom}'s time slot request: new class, see the details"
+    },
+    "jalon": {
+      "apres": "{date} at {heure}, {duree}",
+      "aussitot": "immediately",
+      "minutes": {
+        "one": "{n} minute later",
+        "other": "{n} minutes later"
+      },
+      "heures": {
+        "one": "{n} hour later",
+        "other": "{n} hours later"
+      },
+      "jours": {
+        "one": "{n} day later",
+        "other": "{n} days later"
+      }
+    },
+    "changement": {
+      "titrePage": "Class change",
+      "titre": "{dePrenom}'s class has changed",
+      "fusion": "Your class was merged with another. {prenom} now has the class below.",
+      "transfert": "The management moved {prenom} to another class. Here is the new class.",
+      "classe": "New class",
+      "enseignant": "Teacher",
+      "sansEnseignant": "Their teacher will be announced as soon as one is appointed.",
+      "date": "Change made on",
+      "lien": "See the new class",
+      "lienPour": "See {dePrenom}'s new class",
+      "retour": "Back to the tracking of requests",
+      "introuvable": "This class change no longer needs to be shown",
+      "introuvableDetail": "Go back to the tracking to see where your requests stand."
+    }
+  },
+  "juridique": {
+    "titre": "Legal information",
+    "intro": "The texts that govern the service. They can be read without an account.",
+    "version": "Version {version}, text of {date}",
+    "contact": "For any question, write to {contact}.",
+    "lire": "Read",
+    "coord": {
+      "societe": "Company: Rewayah Academy Ltd",
+      "numero": "Registration number: 16624644, England and Wales",
+      "adresse": "Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom"
+    },
+    "aCompleter": "[to be completed by the management: {quoi}]"
+  },
+  "accueilInscrits": {
+    "titre": "We already know you",
+    "phrase": "Your registration has been carried over. You do not have to enter everything again.",
+    "motTitre": "A word from the management",
+    "elevesTitre": "Your children already registered",
+    "elevesPhrase": "Their first name is already filled in. Their age remains to be entered.",
+    "aJour": "Up to date",
+    "aCompleter": "To complete",
+    "ajouterProfil": "Add {dePrenom}'s student profile",
+    "plusTard": "You can also do it later, from the Household.",
+    "sansEleve": "No student profile was carried over for your family. You can add one from the Household.",
+    "finirCompte": "A few questions remain to finish your account.",
+    "continuer": "Continue",
+    "echecTitre": "Your registration could not be verified",
+    "echecPhrase": "Probable cause: the connection to the server was interrupted (not confirmed). Try again in a moment: nothing is created twice.",
+    "sansDonnees": "The check of your registration"
+  },
+  "accueilInvite": {
+    "titre": "Your invitation",
+    "roles": {
+      "foyer": "Rewayah Academy invites you as a guardian.",
+      "enseignant": "Rewayah Academy invites you as a teacher.",
+      "comptable": "Rewayah Academy invites you as an accountant.",
+      "candidat": "Rewayah Academy invites you as a teaching applicant."
+    },
+    "invitant": "Person inviting you to their household: {prenom}.",
+    "foyerIdentite": "Tell us who you are, then answer the invitation. Your account is only created if you accept it.",
+    "suite": "Continue to create your account.",
+    "champsRequis": "Enter your first name, last name and gender."
+  },
+  "payUx": {
+    "repriseTitre": "Did you leave the form without paying?",
+    "reprisePhrase": "Resume the payment: a new form opens. If the payment already went through, nothing is paid twice; reload to see its status.",
+    "reprendre": "Resume payment",
+    "rassurance": "Payment is processed by Stripe. Your card details go directly to Stripe: Rewayah Academy does not see them and does not keep them.",
+    "precedentOuvertTitre": "The payment started earlier could not be closed",
+    "precedentOuvertPhrase": "Nothing is paid twice and no new form opens. Try again in a moment: if that payment has just gone through, it will appear in your payments.",
+    "payer": "Pay",
+    "ouCarte": "Or pay by card",
+    "enCours": "Payment in progress",
+    "refus": "The payment did not go through: some card information is probably incomplete or refused. Check it, then press \"Pay\" again. Nothing was paid."
+  },
+  "accueilHoraire": {
+    "demandeTitre": "Request saved",
+    "demandeDetail": "We will let you know as soon as a time slot opens for {prenom}.",
+    "erreurEnvoi": "Your request was not confirmed. Try again in a moment."
+  },
+  "suiviAttente": {
+    "titre": "Where your request stands",
+    "titreSimple": "Where your request stands",
+    "tu": {
+      "formationListeAttente": "All classes for this slot are full. Your request is waiting for a place to open.",
+      "confirmeeFait": "Your class is confirmed.",
+      "confirmeeFaitNom": "Your class \"{classe}\" is confirmed.",
+      "enseignantEnAttente": "Your class is waiting for its teacher. The academy appoints one and lets you know.",
+      "pretEnCours": "The academy is setting your first class. It lets you know as soon as the date is known.",
+      "pretAVenir": "Your first class is announced once the teacher is assigned.",
+      "premierCoursPasse": "Your first class took place on {quand}.",
+      "premierCoursPetit": "Your first class is coming. Your guardian will tell you when.",
+      "premierCoursPassePetit": "Your first class took place.",
+      "depasse": "Forming your class is taking longer than expected.",
+      "changement": "The class slot changed on {date}. Your guardian received the notice.",
+      "titreRefusee": "Your request was not accepted",
+      "retraitFamille": "Your guardian withdrew this request.",
+      "erreur": "We could not read your request. This is often caused by the connection. Try again in a moment.",
+      "sansDonnees": "Your request could not be loaded",
+      "introuvable": "This request no longer exists."
+    },
+    "contexte": "The academy confirms each step. You are notified at each stage.",
+    "contexteSimple": "Here is where your request stands. The academy lets you know at each step.",
+    "pour": "For {prenom}",
+    "etapeSurTotal": "Step {n} of {total}: {etape}",
+    "etapes": {
+      "recue": "Request received",
+      "formation": "Class being formed",
+      "confirmee": "Class confirmed",
+      "enseignant": "Teacher assigned",
+      "pret": "All set"
+    },
+    "etats": {
+      "fait": "Done",
+      "enCours": "In progress",
+      "aVenir": "Upcoming"
+    },
+    "dit": {
+      "recueFait": "Your request has reached the academy.",
+      "recueFaitSimple": "Your request has reached the academy.",
+      "formationEnCours": "The academy is bringing together the students of this class.",
+      "formationListeAttente": "All classes for this slot are full. Your request is waiting for a place to open.",
+      "formationFait": "The students of the class have been brought together.",
+      "formationAVenir": "The academy brings the class students together once the request is received.",
+      "confirmeeFait": "Your class is confirmed.",
+      "confirmeeFaitNom": "Your class \"{classe}\" is confirmed.",
+      "confirmeeAVenir": "The academy confirms the class when its students are brought together.",
+      "enseignantEnCours": "The academy is appointing the class teacher.",
+      "enseignantEnAttente": "Your class is waiting for its teacher. The academy appoints one and lets you know.",
+      "enseignantFait": "Your teacher is known.",
+      "enseignantFaitSimple": "Your teacher is known.",
+      "enseignantAVenir": "The academy appoints the teacher once the class is confirmed.",
+      "pretFait": "The class, the teacher and the first class are known.",
+      "pretEnCours": "The academy is setting your first class. You are notified as soon as the date is known.",
+      "pretAVenir": "Your first class is announced once the teacher is assigned."
+    },
+    "premierCours": "Your first class: {quand}",
+    "premierCoursSimple": "Your first class: {quand}",
+    "premierCoursPasse": "Your first class took place on {quand}.",
+    "depuis": "Since {date}",
+    "ensuite": "Next: {etape}",
+    "delai": {
+      "depasse": "Forming your class is taking longer than expected."
+    },
+    "changement": "The class slot changed on {date}. You received the notice in your notifications.",
+    "cloture": {
+      "titreRefusee": "Your request was not accepted",
+      "titreRetiree": "This request is withdrawn",
+      "titreClose": "This request is closed",
+      "motif": {
+        "retraitFamille": "You withdrew this request.",
+        "offreRetiree": "The academy removed this slot from its offers.",
+        "classeNonConstituee": "The class for this slot could not be formed.",
+        "refusDirection": "The management did not accept this request.",
+        "dejaEnClasse": "This student already has a place in a class: the request is no longer needed.",
+        "inconnu": "This request is closed."
+      },
+      "suite": "You can choose another slot.",
+      "autreCreneau": "Choose another slot",
+      "simple": {
+        "refusee": "Your request was not accepted. Your guardian can choose another slot.",
+        "retiree": "This request is withdrawn.",
+        "close": "This request is closed."
+      }
+    },
+    "enseignant": {
+      "titre": "Your teacher",
+      "titreSimple": "Your teacher",
+      "sayyid": "Sayyid",
+      "sayyida": "Sayyida",
+      "nomPlein": "{prenom}",
+      "nomAvecTitre": "{titre} {prenom}",
+      "langue": "Class language",
+      "origine": "Country of origin",
+      "residence": "Country of residence",
+      "mot": "Their introduction",
+      "peutSePresenter": "Your teacher can introduce themselves to the families of the class with a message in Messages."
+    },
+    "vide": {
+      "message": "You have not chosen a class yet.",
+      "invitation": "Choose a class: the academy then follows you step by step.",
+      "action": "Choose a class",
+      "messageSimple": "There is no class request for you yet.",
+      "invitationSimple": "Your guardian can make one."
+    },
+    "erreur": "We could not read the tracking of your request. This is often caused by the connection. Try again in a moment.",
+    "sansDonnees": "The tracking of your request could not be loaded",
+    "introuvable": "This request no longer exists in your tracking.",
+    "retour": "Back",
+    "carte": {
+      "titre": "Your class request",
+      "titreSimple": "Your class request",
+      "ligne": "{prenom}: step {n} of {total}, {etape}",
+      "suivre": "Follow my request",
+      "pret": "{prenom}: all set. First class: {quand}",
+      "pretSansDate": "{prenom}: all set."
+    },
+    "presentation": {
+      "titre": "What families see of you",
+      "phrase": "The families of your classes already see, as everywhere in the app, your title, first name, class language, photo and country if it is filled in. This setting only concerns the card tracking their request: you choose to also show your two countries and an introduction there, when you have entered them.",
+      "montrer": "Show my countries and my introduction on the tracking card",
+      "paysOrigine": "Country of origin",
+      "paysResidence": "Country of residence",
+      "choisirPays": "Choose a country",
+      "nonRenseigne": "Not provided",
+      "mot": "My introduction",
+      "motAide": "500 characters at most. Families read it exactly as you write it.",
+      "nonConfirme": "You have not confirmed this choice yet. Until you do, your countries and your introduction, if entered, are shown on the tracking card.",
+      "enregistrer": "Save",
+      "enregistre": "Saved.",
+      "erreur": "Your choice is not confirmed: it may not have reached Rewayah. Try again in a moment.",
+      "effacerPays": "Do not provide"
+    },
+    "mePresenter": {
+      "lien": "Introduce myself to the families",
+      "titre": "Introduce myself",
+      "contexte": "A message is already written. You can edit it before sending. It goes in Messages, to the families of the class and to adult students.",
+      "messageSayyid": "Hello, I am Sayyid {nom}, your teacher for the class \"{classe}\". I am glad to begin with you. Write to me here if you have a question. See you soon.",
+      "messageSayyida": "Hello, I am Sayyida {nom}, your teacher for the class \"{classe}\". I am glad to begin with you. Write to me here if you have a question. See you soon.",
+      "champ": "Your message",
+      "rappel": "This message is read by the guardians of minor students and by adult students. It is never sent to a minor. Do not exchange phone numbers or addresses: everything goes through the app.",
+      "envoyer": "Send to the families",
+      "envoye(param=n)": {
+        "one": "Message sent to {n} family.",
+        "other": "Message sent to {n} families."
+      },
+      "dejaEcrit(param=n)": {
+        "one": "{n} family already has a conversation with you: it does not receive this message.",
+        "other": "{n} families already have a conversation with you: they do not receive this message."
+      },
+      "aucune": "No family in this class can receive a message right now.",
+      "echec": "The message is not confirmed for some families: it may not have reached them. Try again: those who received it do not receive it twice.",
+      "chargement": "Loading the families of the class",
+      "erreur": "The families of the class could not be loaded. Try again in a moment.",
+      "vide": "Write a message before sending it."
+    }
+  }
+}

@@ -289,6 +289,7 @@ void main() {
   setUpAll(() async {
     await chargerPolicesDuDepot();
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 
@@ -301,7 +302,7 @@ void main() {
     expect(phraseAvecValeur((String v) => '$v · 2', 'Page'), 'Page · 2');
   });
 
-  for (final AppLocale langue in AppLocale.values) {
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     final String cas = '320 px x2, ${langue.languageCode}';
     final bool arabe = langue == AppLocale.ar;
 

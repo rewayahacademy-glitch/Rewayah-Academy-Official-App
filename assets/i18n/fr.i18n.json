@@ -3,7 +3,8 @@
     "langue": {
       "systeme": "Système",
       "francais": "Français",
-      "arabe": "العربية"
+      "arabe": "العربية",
+      "anglais": "English"
     },
     "formats": {
       "dateHeure": "{date} à {heure}",

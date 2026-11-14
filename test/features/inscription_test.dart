@@ -355,6 +355,20 @@ Future<void> _jusquAuRecap(WidgetTester tester) async {
 }
 
 void main() {
+  // L'appareil de test est en en-US : depuis LANGUES-1, « Systeme » y ouvre
+  // l'anglais, et la remise a zero de la langue a la deconnexion y renverrait
+  // les tests suivants. Ces ecrans sont verifies en francais : l'appareil
+  // du test est donc francais (comme `localesTestValue = es` ailleurs).
+  setUp(() {
+    final TestWidgetsFlutterBinding liaison =
+        TestWidgetsFlutterBinding.ensureInitialized();
+    liaison.platformDispatcher.localesTestValue = const <Locale>[
+      Locale('fr', 'FR'),
+    ];
+    addTearDown(liaison.platformDispatcher.clearLocalesTestValue);
+  });
+  tearDownAll(() => LocaleSettings.setLocale(AppLocale.fr));
+
   // I1 (02/11/2026, UX-013, UX-017) : l'invitation d'enseignant en cours.
   group('I1 : invitation en cours', () {
     tearDown(oublierInvitationEnCours);

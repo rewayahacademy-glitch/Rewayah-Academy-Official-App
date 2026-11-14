@@ -11,8 +11,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 void main() {
   group('langueDepuisEtiquettes', () {
     const List<String> malFormees = <String>[
-      'en-US@posix',
-      'en_US@posix',
+      'es-ES@posix',
+      'es_ES@posix',
       'C',
       'POSIX',
       'C.UTF-8',
@@ -32,7 +32,7 @@ void main() {
       '\u0000',
       'zz-ZZ-garbage-1234567890',
       'de-DE',
-      'en',
+      'es',
       'zh-Hant-TW',
     ];
 
@@ -51,6 +51,20 @@ void main() {
       expect(langueDepuisEtiquettes(malFormees), AppLocale.fr);
     });
 
+    test(
+      'LANGUES-1 : l anglais est reconnu, sans lever, meme en « en-US@posix »',
+      () {
+        expect(langueDepuisEtiquettes(<String>['en']), AppLocale.en);
+        expect(langueDepuisEtiquettes(<String>['en-US@posix']), AppLocale.en);
+        expect(langueDepuisEtiquettes(<String>['en_GB.UTF-8']), AppLocale.en);
+        expect(
+          langueDepuisEtiquettes(<String>['es', 'en', 'fr']),
+          AppLocale.en,
+          reason: 'la premiere langue traduite de la liste l emporte',
+        );
+      },
+    );
+
     test('les langues traduites restent reconnues, formes BCP 47 et POSIX', () {
       expect(langueDepuisEtiquettes(<String>['fr-FR']), AppLocale.fr);
       expect(langueDepuisEtiquettes(<String>['fr_CA.UTF-8']), AppLocale.fr);
@@ -66,7 +80,7 @@ void main() {
     test("l'ordre de preference est respecte, les etiquettes illisibles "
         'sautees', () {
       expect(
-        langueDepuisEtiquettes(<String>['en-US@posix', '', 'ar-MA', 'fr']),
+        langueDepuisEtiquettes(<String>['es-ES@posix', '', 'ar-MA', 'fr']),
         AppLocale.ar,
       );
       expect(
@@ -102,7 +116,7 @@ void main() {
       for (final List<Locale> langues in <List<Locale>>[
         const <Locale>[],
         const <Locale>[Locale('und')],
-        const <Locale>[Locale('en', 'US'), Locale('de')],
+        const <Locale>[Locale('es', 'ES'), Locale('de')],
         const <Locale>[Locale.fromSubtags(languageCode: 'zz')],
       ]) {
         await LocaleSettings.setLocale(AppLocale.ar);
@@ -129,7 +143,7 @@ void main() {
   testWidgets('au demarrage, les langues reelles du moteur de test, '
       'mal formees, ne font pas lever', (WidgetTester tester) async {
     tester.platformDispatcher.localesTestValue = const <Locale>[
-      Locale('en', 'US'),
+      Locale('es', 'ES'),
       Locale.fromSubtags(languageCode: 'C'),
     ];
     addTearDown(tester.platformDispatcher.clearLocalesTestValue);

@@ -103,6 +103,7 @@ void main() {
       await chargerPolicesDuDepot();
       // L'arabe est charge en differe : une fois ici, hors du FakeAsync.
       await LocaleSettings.setLocale(AppLocale.ar);
+      await LocaleSettings.setLocale(AppLocale.en);
       await LocaleSettings.setLocale(AppLocale.fr);
     });
 

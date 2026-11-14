@@ -3,9 +3,12 @@
 // en sombre et en arabe, deconnexion, compte B en Systeme et en francais, puis
 // retour a A, de nouveau en sombre et en arabe.
 
+import 'dart:ui' show Locale;
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
 import 'package:flutter_riverpod/misc.dart' show Override;
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/port_langues_communication.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -102,7 +105,20 @@ PreferencesLocales _prefs(ProviderContainer c) =>
     c.read(preferencesLocalesProvider);
 
 void main() {
-  tearDown(() async => LocaleSettings.setLocale(AppLocale.fr));
+  // LANGUES-1 : l'appareil de test annonce « en-US », desormais traduit ; ces
+  // tests veulent une langue d'appareil inconnue, qui retombe sur le francais.
+  setUp(() {
+    TestWidgetsFlutterBinding.ensureInitialized()
+        .platformDispatcher
+        .localesTestValue = const <Locale>[
+      Locale('es'),
+    ];
+  });
+  tearDown(() async {
+    TestWidgetsFlutterBinding.ensureInitialized().platformDispatcher
+        .clearLocalesTestValue();
+    await LocaleSettings.setLocale(AppLocale.fr);
+  });
 
   test('A en sombre et en arabe, deconnexion, B en Systeme et en francais, '
       'retour a A en sombre et en arabe', () async {
@@ -284,15 +300,18 @@ void main() {
     expect(lirePreferenceImmediate(appareil, clefPreferenceTheme), 'clair');
   });
 
-  test('la langue du compte : francais et arabe seulement', () {
+  test('la langue du compte : francais, arabe et anglais (LANGUES-1)', () {
     expect(langueCompteDepuis('fr'), PreferenceLangue.francais);
     expect(langueCompteDepuis('ar'), PreferenceLangue.arabe);
-    expect(langueCompteDepuis('en'), isNull);
+    expect(langueCompteDepuis('en'), PreferenceLangue.anglais);
+    expect(langueCompteDepuis('es'), isNull);
     expect(langueCompteDepuis(null), isNull);
     expect(languesDuCompte, <PreferenceLangue>[
       PreferenceLangue.francais,
       PreferenceLangue.arabe,
+      PreferenceLangue.anglais,
     ]);
+    expect(codeLangueCompte(PreferenceLangue.anglais), 'en');
     expect(codeLangueCompte(PreferenceLangue.arabe), 'ar');
     expect(codeLangueCompte(PreferenceLangue.francais), 'fr');
   });

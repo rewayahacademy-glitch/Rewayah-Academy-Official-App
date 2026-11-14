@@ -149,6 +149,7 @@ void balayer(
   setUpAll(() async {
     await chargerPolicesDuDepot();
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   for (final EcranBalayage ecran in ecrans) {
