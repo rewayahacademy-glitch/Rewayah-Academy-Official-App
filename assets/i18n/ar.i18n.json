@@ -5229,6 +5229,7 @@
         "pause": "التوقف المؤقت",
         "sansPause": "غير متوقفة مؤقتًا",
         "versement": "صرف الراتب",
+        "genre": "الجنس",
         "pays": "بلد الإقامة",
         "talents": {
           "domaine": "مهارات أخرى",
@@ -5265,6 +5266,7 @@
         "nom": "الاسم",
         "salle": "القاعة",
         "etat": "الحالة",
+        "genre": "الجنس",
         "pays": "بلد الإقامة",
         "versement": "صرف الراتب",
         "activite": "آخر نشاط"
@@ -5272,6 +5274,7 @@
       "ligne": {
         "versement": "صرف الراتب: \u2068{etat}\u2069",
         "activite": "آخر نشاط في \u2068{date}\u2069",
+        "genre": "الجنس: ⁨{genre}⁩",
         "pays": "الإقامة: \u2068{pays}\u2069",
         "courrielAObtenir": "بريد إلكتروني مطلوب",
         "indicatifAConfirmer": "مفتاح الاتصال بحاجة إلى تأكيد",
@@ -5612,6 +5615,7 @@
         "responsable": "سُجّل المسؤول.",
         "rejoue": "سبق تنفيذ هذا الإجراء: لم يُكتب شيء مرة ثانية."
       },
+      "genres": {"male": "رجل", "female": "امرأة"},
       "decision": {"accepter": "قبول", "refuser": "رفض", "preciser": "طلب توضيح", "nePasAccueillir": "عدم الاستقبال"},
       "creneaux": {
         "lien": "مواعيد المقابلات",

@@ -4005,6 +4005,7 @@
         "pause": "Pause",
         "sansPause": "Not paused",
         "versement": "Payout",
+        "genre": "Gender",
         "pays": "Country of residence",
         "talents": {
           "domaine": "Other skills",
@@ -4037,6 +4038,7 @@
         "nom": "Name",
         "salle": "Room",
         "etat": "Status",
+        "genre": "Gender",
         "pays": "Country of residence",
         "versement": "Payout",
         "activite": "Last activity"
@@ -4044,6 +4046,7 @@
       "ligne": {
         "versement": "Payout: {etat}",
         "activite": "Last activity on {date}",
+        "genre": "Gender: {genre}",
         "pays": "Residence: {pays}",
         "courrielAObtenir": "Email to obtain",
         "indicatifAConfirmer": "Country code to confirm",
@@ -4380,6 +4383,7 @@
         "responsable": "The manager is recorded.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
+      "genres": {"male": "Man", "female": "Woman"},
       "decision": {"accepter": "Accept", "refuser": "Refuse", "preciser": "Ask for a clarification", "nePasAccueillir": "Do not welcome"},
       "creneaux": {
         "lien": "Interview slots",

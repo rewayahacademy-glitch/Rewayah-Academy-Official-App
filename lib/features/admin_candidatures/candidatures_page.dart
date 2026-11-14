@@ -531,6 +531,24 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           onChoix: (EtatVersement? v) =>
               _filtrer(_filtre.avec(paiement: () => v)),
         ),
+        // SALLE2-GENRE (directeur, 14/11/2026) : filtrer par genre.
+        MenuFiltre<String>(
+          key: const ValueKey<String>('candidatures-filtre-genre'),
+          libelle: f.genre,
+          valeur: _filtre.genre,
+          entrees: <EntreeFiltre<String>>[
+            tous<String>(),
+            EntreeFiltre<String>(
+              valeur: 'male',
+              libelle: t.admin.candidatures.genres.male,
+            ),
+            EntreeFiltre<String>(
+              valeur: 'female',
+              libelle: t.admin.candidatures.genres.female,
+            ),
+          ],
+          onChoix: (String? g) => _filtrer(_filtre.avec(genre: () => g)),
+        ),
         MenuFiltre<String>(
           key: const ValueKey<String>('candidatures-filtre-pays'),
           libelle: f.pays,

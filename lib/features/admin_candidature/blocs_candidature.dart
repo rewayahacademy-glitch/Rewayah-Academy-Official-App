@@ -137,6 +137,9 @@ class CarteSituation extends StatelessWidget {
             cle: r.colonnes.versement,
             valeur: libelleVersement(l.paiement),
           ),
+          // SALLE2-GENRE (directeur, 14/11/2026) : en tete de la fiche.
+          if (libelleGenre(l.genre) case final String genre)
+            LigneCleValeur(cle: r.colonnes.genre, valeur: genre),
           if (libellePays(l.paysResidence) case final String pays)
             LigneCleValeur(cle: r.colonnes.pays, valeur: pays),
           Ecart.vSm,

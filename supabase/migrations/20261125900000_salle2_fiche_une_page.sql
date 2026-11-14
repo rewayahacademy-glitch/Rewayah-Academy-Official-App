@@ -11,7 +11,7 @@
 --    Constat en production le 14/11 : refus « Evaluation validee (compte
 --    rendu incomplet : memorisation, riwayas ou ijaza) » sur la fiche de Sam
 --    Tester, qui obligeait a re-cocher tout le declare.
--- 2. public.piece_candidature(p_candidature) : la piece d'identite d'une
+-- 2. public.piece_dossier_candidat(p_candidature) : la piece d'identite d'une
 --    candidature pour la fiche (profil, document le plus recent, son etat),
 --    pour l'ouvrir et la decider sur place. Meme garde que lire_candidature :
 --    direction active, de son cote (super-admin : les deux, trace). Ni
@@ -26,7 +26,7 @@ DO $preflight$
 DECLARE
   v_ctl text := pg_catalog.md5(pg_catalog.pg_get_functiondef('private.candidature_entretien_controles(uuid)'::regprocedure));
 BEGIN
-  IF pg_catalog.to_regprocedure('public.piece_candidature(uuid)') IS NOT NULL THEN
+  IF pg_catalog.to_regprocedure('public.piece_dossier_candidat(uuid)') IS NOT NULL THEN
     RAISE EXCEPTION 'SALLE2-FICHE : deja installee';
   END IF;
   IF v_ctl <> 'a0c5dbcdb8dc36374ba2e82e4cd72185' THEN
@@ -82,7 +82,7 @@ $agent_ro$;
 -- ---------------------------------------------------------------------------
 -- 2. La piece d'une candidature, pour la fiche
 -- ---------------------------------------------------------------------------
-CREATE FUNCTION public.piece_candidature(p_candidature uuid)
+CREATE FUNCTION public.piece_dossier_candidat(p_candidature uuid)
 RETURNS jsonb
 LANGUAGE plpgsql
 STABLE
@@ -125,23 +125,23 @@ BEGIN
     'decideLe', v_doc.verified_at);
 END;
 $function$;
-ALTER FUNCTION public.piece_candidature(uuid) OWNER TO postgres;
-REVOKE ALL ON FUNCTION public.piece_candidature(uuid) FROM PUBLIC, anon, service_role;
+ALTER FUNCTION public.piece_dossier_candidat(uuid) OWNER TO postgres;
+REVOKE ALL ON FUNCTION public.piece_dossier_candidat(uuid) FROM PUBLIC, anon, service_role;
 DO $agent_ro$
 BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'agent_ro') THEN
-    EXECUTE 'REVOKE ALL ON FUNCTION public.piece_candidature(uuid) FROM agent_ro';
+    EXECUTE 'REVOKE ALL ON FUNCTION public.piece_dossier_candidat(uuid) FROM agent_ro';
   END IF;
 END;
 $agent_ro$;
-GRANT EXECUTE ON FUNCTION public.piece_candidature(uuid) TO authenticated;
+GRANT EXECUTE ON FUNCTION public.piece_dossier_candidat(uuid) TO authenticated;
 
 DO $empreintes$
 DECLARE
-  f regprocedure := 'public.piece_candidature(uuid)'::regprocedure;
+  f regprocedure := 'public.piece_dossier_candidat(uuid)'::regprocedure;
 BEGIN
   EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', f,
-    'F86 candidate allowlist: signature=public.piece_candidature(uuid); md5_functiondef='
+    'F86 candidate allowlist: signature=public.piece_dossier_candidat(uuid); md5_functiondef='
     || pg_catalog.md5(pg_catalog.pg_get_functiondef(f))
     || '; guard_type=ROLE_POSITIVE_ADMIN_GENDER_SCOPE_READ; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-14. '
     || 'SALLE2-FICHE : la piece la plus recente d''une candidature (profil, document, etat), pour la decider sur la fiche. '
@@ -155,13 +155,13 @@ BEGIN
                        'constat_incomplet') > 0 THEN
     RAISE EXCEPTION 'SALLE2-FICHE : le constat est encore exige';
   END IF;
-  IF pg_catalog.has_function_privilege('anon', 'public.piece_candidature(uuid)', 'EXECUTE')
-     OR NOT pg_catalog.has_function_privilege('authenticated', 'public.piece_candidature(uuid)', 'EXECUTE')
+  IF pg_catalog.has_function_privilege('anon', 'public.piece_dossier_candidat(uuid)', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege('authenticated', 'public.piece_dossier_candidat(uuid)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'private.candidature_entretien_controles(uuid)', 'EXECUTE') THEN
     RAISE EXCEPTION 'SALLE2-FICHE : droits d''execution inattendus';
   END IF;
   IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
-                  WHERE p.oid = 'public.piece_candidature(uuid)'::regprocedure
+                  WHERE p.oid = 'public.piece_dossier_candidat(uuid)'::regprocedure
                     AND p.prosecdef AND coalesce(p.proconfig @> ARRAY['search_path=""'], false)) THEN
     RAISE EXCEPTION 'SALLE2-FICHE : SECURITY DEFINER et search_path vide attendus';
   END IF;

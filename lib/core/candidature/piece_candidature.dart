@@ -1,5 +1,5 @@
 /// SALLE2-FICHE (directeur, 14/11/2026) : la piece d'identite d'une
-/// candidature, lue pour la fiche de la direction (`piece_candidature`,
+/// candidature, lue pour la fiche de la direction (`piece_dossier_candidat`,
 /// migration 20261125900000) : le profil, le document le plus recent et son
 /// etat. La piece s'ouvre et se decide sur place par le circuit existant des
 /// dossiers (`RevueDossier`, `decider_dossier`), sans quitter la fiche.
@@ -41,7 +41,7 @@ class PieceCandidature {
     this.motifRefus,
   });
 
-  /// Lit la reponse de `piece_candidature` ; `null` hors de portee.
+  /// Lit la reponse de `piece_dossier_candidat` ; `null` hors de portee.
   static PieceCandidature? depuisJson(Object? brut) {
     if (brut is! Map || brut['erreur'] != null) return null;
     return PieceCandidature(
@@ -86,7 +86,7 @@ Future<PieceCandidature?> Function(String) lirePieceCandidatureSupabase(
 ) =>
     (String candidatureId) async => PieceCandidature.depuisJson(
       await client.rpc<Object?>(
-        'piece_candidature',
+        'piece_dossier_candidat',
         params: <String, dynamic>{'p_candidature': candidatureId},
       ),
     );

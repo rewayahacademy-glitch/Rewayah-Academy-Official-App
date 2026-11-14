@@ -363,21 +363,35 @@ void main() {
       }
     });
 
-    testWidgets('aucun code brut, aucun contact, aucun genre a l\'ecran', (
+    testWidgets('SALLE2-GENRE : le genre en mots en tete de la fiche', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, _port(detail: detailTest(courrielAObtenir: true)));
+      await _monter(tester, _port(detail: detailTest(genre: 'female')));
       final String texte = _toutLeTexte(tester);
-      for (final String code in _codesBruts) {
-        expect(texte, isNot(contains(code)), reason: code);
-      }
-      expect(texte, isNot(contains('amina.diallo@exemple.org')));
-      expect(texte, isNot(contains('0771234567')));
-      expect(texte, isNot(contains('@')));
-      expect(texte, isNot(contains('+221')));
-      expect(texte.toLowerCase(), isNot(contains('genre')));
-      expect(texte, contains(t.admin.candidatures.ligne.courrielAObtenir));
+      expect(texte, contains(t.admin.candidatures.colonnes.genre));
+      expect(texte, contains(t.admin.candidatures.genres.female));
+      expect(texte, isNot(contains('female')));
     });
+
+    testWidgets(
+      'aucun code brut, aucun contact a l\'ecran ; sans genre lu, rien',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _port(detail: detailTest(courrielAObtenir: true)),
+        );
+        final String texte = _toutLeTexte(tester);
+        for (final String code in _codesBruts) {
+          expect(texte, isNot(contains(code)), reason: code);
+        }
+        expect(texte, isNot(contains('amina.diallo@exemple.org')));
+        expect(texte, isNot(contains('0771234567')));
+        expect(texte, isNot(contains('@')));
+        expect(texte, isNot(contains('+221')));
+        expect(texte.toLowerCase(), isNot(contains('genre')));
+        expect(texte, contains(t.admin.candidatures.ligne.courrielAObtenir));
+      },
+    );
 
     testWidgets('pause et restriction se disent avec leur cause', (
       WidgetTester tester,
