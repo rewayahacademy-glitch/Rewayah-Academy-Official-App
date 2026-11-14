@@ -397,9 +397,9 @@ SELECT pg_temp.vrai(public.inscrire_comptable_invite(current_setting('test.code_
 SELECT pg_temp.qui('bf100000-0000-4000-8000-0000000000c1', NULL);
 SELECT pg_temp.vrai(public.verifier_invitation_comptable(lower(current_setting('test.code_cpt'))) ->> 'resultat' = 'valide',
   'comptable : le candidat verifie son code');
-SELECT pg_temp.vrai(public.inscrire_comptable_invite(current_setting('test.code_ens'), 'Nadia', 'BF1') ->> 'resultat' = 'inconnue',
+SELECT pg_temp.vrai(public.inscrire_comptable_invite(current_setting('test.code_ens'), 'Nadia', 'Bef') ->> 'resultat' = 'inconnue',
   'comptable : un code enseignant ne cree pas de comptable');
-SELECT pg_temp.vrai(public.inscrire_comptable_invite(current_setting('test.code_cpt'), 'Nadia', 'BF1', 'female') ->> 'resultat' = 'consommee',
+SELECT pg_temp.vrai(public.inscrire_comptable_invite(current_setting('test.code_cpt'), 'Nadia', 'Bef', 'female') ->> 'resultat' = 'consommee',
   'comptable : inscription sur invitation');
 RESET ROLE;
 SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = 'bf100000-0000-4000-8000-0000000000c1'
@@ -411,7 +411,7 @@ SELECT pg_temp.vrai(EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = 'bf1000
   'comptable : profil accountant actif sans foyer, invitation consommee, invitation enseignant intacte');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.qui('bf100000-0000-4000-8000-0000000000c1', NULL);
-SELECT pg_temp.refus($q$SELECT public.inscrire_comptable_invite(current_setting('test.code_cpt'), 'Nadia', 'BF1')$q$, '42501', NULL,
+SELECT pg_temp.refus($q$SELECT public.inscrire_comptable_invite(current_setting('test.code_cpt'), 'Nadia', 'Bef')$q$, '42501', NULL,
   'comptable : une seconde inscription est refusee (profil existant)');
 SELECT pg_temp.vrai(public.verifier_invitation_comptable(current_setting('test.code_cpt')) ->> 'resultat' = 'deja_utilisee',
   'comptable : le code consomme se dit deja utilise');

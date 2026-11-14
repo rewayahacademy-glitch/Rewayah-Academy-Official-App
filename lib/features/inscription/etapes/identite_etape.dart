@@ -6,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/accessibilite/texte_sans_coupure.dart';
 import '../../../core/candidature/nom_latin.dart';
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/identite/nom_propre.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -113,8 +114,14 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
     setState(() {});
   }
 
-  String? _erreur(TextEditingController champ) =>
-      _tente && champ.text.trim().isEmpty ? t.inscription.champRequis : null;
+  /// NOM-PROPRE (INCIDENT-CANDIDATS, 14/11/2026) : vide, la reponse est
+  /// demandee ; sinon, des lettres, sans chiffres ni signes (la regle du
+  /// serveur, `private.nom_propre_valide`).
+  String? _erreur(TextEditingController champ, String enLettres) {
+    if (!_tente) return null;
+    if (champ.text.trim().isEmpty) return t.inscription.champRequis;
+    return nomPropreValide(champ.text) ? null : enLettres;
+  }
 
   String? get _erreurLatin => _tente && !nomEstLatin(_nomLatin.text)
       ? t.inscription.nomLatin.erreur
@@ -122,8 +129,8 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
 
   void _continuer() {
     _attenteBrouillon?.cancel();
-    if (_prenom.text.trim().isEmpty ||
-        _nom.text.trim().isEmpty ||
+    if (!nomPropreValide(_prenom.text) ||
+        !nomPropreValide(_nom.text) ||
         (_demande && !nomEstLatin(_nomLatin.text))) {
       setState(() => _tente = true);
       return;
@@ -190,7 +197,7 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
               textCapitalization: TextCapitalization.words,
               actionClavier: TextInputAction.next,
               remplissage: const <String>[AutofillHints.givenName],
-              erreur: _erreur(_prenom),
+              erreur: _erreur(_prenom, t.inscription.nomEnLettresPrenom),
             ),
             Ecart.vLg,
             ChampEtiquete(
@@ -209,7 +216,10 @@ class _IdentiteEtapeState extends ConsumerState<IdentiteEtape> {
                   ? TextInputAction.next
                   : TextInputAction.done,
               remplissage: const <String>[AutofillHints.familyName],
-              erreur: _erreur(_nom),
+              erreur: _erreur(_nom, t.inscription.nomEnLettresNom),
+              // NOM-PROPRE : le candidat enseignant enverra une piece
+              // d'identite ; la famille n'en entend pas parler (K-47).
+              aide: _enseignant ? t.inscription.commeSurLaPiece : null,
             ),
             if (_demande) ...<Widget>[
               Ecart.vXl,

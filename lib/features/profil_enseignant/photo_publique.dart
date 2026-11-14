@@ -263,6 +263,9 @@ class EditeurPhotoPublique extends ConsumerStatefulWidget {
   /// L'apercu de la photo choisie.
   static const Key apercuKey = Key('photoPublique.apercu');
 
+  /// La phrase « Votre photo est enregistree » (INCIDENT-CANDIDATS).
+  static const Key enregistreeKey = Key('photoPublique.enregistree');
+
   @override
   ConsumerState<EditeurPhotoPublique> createState() =>
       _EditeurPhotoPubliqueState();
@@ -334,6 +337,20 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
     }
   }
 
+  /// Vrai quand le serveur rend deja une photo pour la personne connectee
+  /// (`photoPersonneProvider`, la source unique). Session illisible (test de
+  /// composant) : faux.
+  bool _photoAuServeur() {
+    String? id;
+    try {
+      id = ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    } on Object {
+      return false;
+    }
+    if (id == null || id.isEmpty) return false;
+    return ref.watch(photoPersonneProvider(id)).value != null;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -346,6 +363,11 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final String? cle = ref.watch(photoPubliqueProvider);
+    // INCIDENT-CANDIDATS (14/11/2026) : la photo deja enregistree au serveur
+    // (une visite precedente) compte aussi. Sans elle, l'ecran disait
+    // « Choisir une photo » sous une photo bien recue, et le candidat croyait
+    // l'envoi rate.
+    final bool photoEnregistree = cle != null || _photoAuServeur();
     final PhotoChoisie? photo = _photo;
     final bool avecApercu = photo != null && _phase != _Phase.repos;
 
@@ -455,6 +477,22 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
           ),
           Ecart.vMd,
         ],
+        if (!_succes &&
+            photoEnregistree &&
+            _phase == _Phase.repos &&
+            _refus == null) ...<Widget>[
+          Semantics(
+            liveRegion: true,
+            child: Text(
+              t.enseignant.photo.enregistree,
+              key: EditeurPhotoPublique.enregistreeKey,
+              style: palette.inkSuccess.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          Ecart.vMd,
+        ],
         if (_succes) ...<Widget>[
           Semantics(
             liveRegion: true,
@@ -504,7 +542,7 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
             // PHOTO-LIEN-1) : une ligne de lien, texte et fleche.
             child: LienFleche(
               key: EditeurPhotoPublique.choisirKey,
-              libelle: cle == null
+              libelle: !photoEnregistree
                   ? t.enseignant.photo.choisir
                   : t.enseignant.photo.remplacer,
               onPress: _choisir,

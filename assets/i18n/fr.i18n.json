@@ -1371,6 +1371,15 @@
     "creer": "Créer mon compte",
     "erreur": "La création du compte n'a pas abouti. Réessayez dans un instant.",
     "champRequis": "Cette réponse est nécessaire pour continuer.",
+    "nomEnLettresPrenom": "Écrivez votre prénom en lettres, sans chiffres ni signes.",
+    "nomEnLettresNom": "Écrivez votre nom en lettres, sans chiffres ni signes.",
+    "commeSurLaPiece": "Écrivez votre nom exactement comme sur la pièce d'identité que vous allez envoyer.",
+    "nomPropre": {
+      "titre": "Votre nom est à corriger",
+      "explication": "Votre prénom ou votre nom contient des chiffres ou des signes. Écrivez-les en lettres pour continuer.",
+      "enregistrer": "Enregistrer mon nom",
+      "nonConfirme": "Votre nom n'est pas confirmé. Touchez «\u00a0Enregistrer mon nom\u00a0» de nouveau dans un instant."
+    },
     "etapeCourte": "{n} sur {total}",
     "retourEtape": "Revenir à l'étape précédente",
     "seDeconnecter": "Se déconnecter",
@@ -1778,6 +1787,7 @@
     "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG, PNG, HEIC ou WebP et les fichiers PDF le sont. Choisissez une autre photo de votre pièce.",
     "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
     "contenuNonConforme": "Ce fichier ne s'ouvre pas comme une photo ni comme un PDF\u00a0: il est peut-être abîmé, ou d'un autre type renommé. Choisissez la photo ou le PDF de votre pièce d'identité.",
+    "memeNom": "Envoyez une pièce qui porte exactement le nom écrit dans votre compte.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
     "manqueType": "Choisissez d'abord la pièce que vous déposez."
   },
@@ -2791,7 +2801,10 @@
       },
       "reponsesPretes": "Prêtes à envoyer",
       "elementPhoto": "Votre photo",
-      "etatAAjouter": "À ajouter"
+      "etatAAjouter": "À ajouter",
+      "photoRecue": "Votre photo est bien reçue.",
+      "accordAEnvoyer": "Votre photo est bien reçue. Il reste à cocher l'accord de publication, juste avant d'envoyer vos réponses.",
+      "pieceRecue": "Votre pièce est bien reçue. La direction la vérifie."
     },
     "entretien": {
       "titre": "Faisons connaissance",
@@ -9176,7 +9189,8 @@
       "changer": "Changer la photo",
       "alternatif": "Votre photo publique",
       "succes": "La photo est enregistrée.",
-      "echec": "La photo n'a pas pu être envoyée. Rien n'a changé sur le profil.",
+      "echec": "La photo n'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.",
+      "enregistree": "Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.",
       "selectionEchec": "La photo n'a pas pu être ouverte. Vérifiez l'accès aux photos de l'appareil, puis réessayez.",
       "horsLigne": "La photo pourra être envoyée quand la connexion reviendra."
     },

@@ -335,6 +335,9 @@ class StatutCandidature extends StatelessWidget {
                   icone: AppIcons.profil,
                   libelle: r.elementPiece,
                   valeur: etat(d.pieceDeposee, r.etatADeposer),
+                  // INCIDENT-CANDIDATS (14/11/2026) : la piece recue se dit
+                  // en mots, pas seulement par « Fait ».
+                  legende: d.pieceDeposee ? r.pieceRecue : null,
                 ),
               // HARMONISATION-E : la photo et l'accord de publication, lus
               // dans etat_dossier() ; ils se posent au recapitulatif des
@@ -343,10 +346,17 @@ class StatutCandidature extends StatelessWidget {
                 LigneRubrique(
                   icone: AppIcons.image,
                   libelle: r.elementPhoto,
-                  valeur: etat(
-                    d.photoPosee! && (d.accordPublicationSigne ?? false),
-                    r.etatAAjouter,
-                  ),
+                  // INCIDENT-CANDIDATS (14/11/2026) : la photo envoyee
+                  // s'affichait « A ajouter » tant que l'accord de
+                  // publication (coche a l'envoi des reponses) manquait : le
+                  // candidat croyait l'envoi rate. La photo se lit seule ;
+                  // l'accord qui reste se dit dessous.
+                  valeur: etat(d.photoPosee!, r.etatAAjouter),
+                  legende: !d.photoPosee!
+                      ? null
+                      : (d.accordPublicationSigne ?? false)
+                      ? r.photoRecue
+                      : r.accordAEnvoyer,
                 ),
             ],
             LigneRubrique(

@@ -157,6 +157,8 @@ import 'core/fraicheur/port_veille.dart';
 import 'core/fraicheur/veille_supabase.dart';
 import 'core/i18n/strings.g.dart';
 import 'core/identite/matricule_supabase.dart';
+import 'core/identite/nom_propre.dart';
+import 'core/identite/nom_propre_supabase.dart';
 import 'core/identite/port_matricule.dart';
 import 'core/import_inscriptions/import_inscriptions_supabase.dart';
 import 'core/import_inscriptions/port_import_inscriptions.dart';
@@ -656,6 +658,10 @@ List<Override> _surchargesAppReelle() => <Override>[
       Supabase.instance.client,
       motDePassePossible: Env.authParMotDePasseActive,
     ),
+  ),
+  // NOM-PROPRE (INCIDENT-CANDIDATS, 14/11/2026) : le nom a corriger.
+  portNomPropreProvider.overrideWithValue(
+    NomPropreSupabase(Supabase.instance.client),
   ),
   portMatriculeProvider.overrideWithValue(
     MatriculeSupabase(Supabase.instance.client),

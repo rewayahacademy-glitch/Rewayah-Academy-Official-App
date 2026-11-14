@@ -92,6 +92,19 @@ SELECT pg_temp.vrai(
       AND k.verified_by IS NULL AND k.verified_at IS NULL) = 1,
   'salle 1 a completer : la piece passe le declencheur du depot et nait en attente, sans decision');
 
+-- 1 ter. INCIDENT-CANDIDATS (migration 20261125950000) : la candidate
+-- pending_kyc, identifiee, lit l'horloge sans 403 et n'a pas de ville a
+-- fournir ; rien de son profil dans l'horloge.
+SELECT pg_temp.qui(pg_temp.id('s1'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(
+  (public.mon_horloge() ->> 'maintenant') IS NOT NULL
+  AND public.mon_horloge() -> 'moi' = 'null'::jsonb
+  AND NOT (public.mon_horloge() ? 'lieu_choisi')
+  AND (public.mon_lieu_a_fournir() ->> 'requis')::boolean = false,
+  'candidate pending_kyc : horloge sans profil et aucune ville a fournir, sans refus');
+RESET ROLE;
+
 -- 1 bis. Les accords en salle 1 : aucun changement serveur n'etait
 -- necessaire ; on le prouve. Le contrat par signer_contrat (version en
 -- vigueur), l'avis d'enregistrement et le code de conduite aux versions
@@ -113,15 +126,20 @@ SELECT pg_temp.vrai(
         WHERE r.contract_kind = 'recording_and_control_notice') = '2026-10-jur',
   'salle 1 a completer : contrat, avis d''enregistrement et code de conduite acceptes par la candidate');
 
--- 2. Elle n'entre pas dans la file de la direction avant la salle 2.
+-- 2. INCIDENT-CANDIDATS (14/11/2026, migration 20261125950000) : sa piece
+-- deposee en salle 1 entre dans la file de la direction (avant : cachee
+-- jusqu'a la salle 2, et la direction ne voyait aucune piece de candidat).
+-- Une candidate de salle 1 sans piece (ex) n'y entre pas.
 SELECT pg_temp.qui(pg_temp.id('dir'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(
-  NOT EXISTS (SELECT 1 FROM public.dossiers_en_attente() d WHERE d.profile_id = pg_temp.id('s1'))
+  EXISTS (SELECT 1 FROM public.dossiers_en_attente() d
+           WHERE d.profile_id = pg_temp.id('s1') AND d.etat_piece = 'a_verifier')
+  AND NOT EXISTS (SELECT 1 FROM public.dossiers_en_attente() d WHERE d.profile_id = pg_temp.id('ex'))
   AND (SELECT i.dossiers_en_attente FROM public.indicateurs_admin() i)
       = (SELECT count(DISTINCT d.profile_id)::int FROM public.dossiers_en_attente() d
           WHERE d.account_status = 'pending_kyc'),
-  'piece de salle 1 : ni dans la file d''ADM-02, ni dans le compteur d''ADM-01');
+  'piece de salle 1 : dans la file d''ADM-02 (a verifier) et dans le compteur d''ADM-01 ; sans piece, ni l''un ni l''autre');
 RESET ROLE;
 -- Admise en salle 2 (etat pose comme le ferait la transition 10) : la piece
 -- entre dans la file.

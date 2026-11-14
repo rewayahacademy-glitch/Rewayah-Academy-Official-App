@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
 
+import '../../capture/outil_capture.dart';
 import '../../fixtures/candidature/faux_ma_candidature.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
@@ -118,6 +119,8 @@ void main() {
         expect(_texte(t.recrutement.portail.completer), findsOneWidget);
         expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(3));
         expect(_texte(t.recrutement.portail.elementReponses), findsOneWidget);
+        // INCIDENT-CANDIDATS : la piece recue se dit en mots.
+        expect(_texte(t.recrutement.portail.pieceRecue), findsOneWidget);
         verifierUnSeulBoutonPlein(tester);
       },
     );
@@ -181,7 +184,10 @@ void main() {
       expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(4));
     });
 
-    testWidgets('HARMONISATION-E : photo posee sans accord, « À ajouter »', (
+    // INCIDENT-CANDIDATS (14/11/2026) : la photo envoyee ne s'affiche plus
+    // « À ajouter » quand seul l'accord de publication manque ; l'accord qui
+    // reste se dit en mots sous la ligne.
+    testWidgets('photo posee sans accord : photo recue, accord a cocher', (
       WidgetTester tester,
     ) async {
       await _portail(
@@ -190,8 +196,22 @@ void main() {
         photoPosee: true,
         accordPublicationSigne: false,
       );
-      expect(_texte(t.recrutement.portail.etatAAjouter), findsOneWidget);
+      expect(_texte(t.recrutement.portail.etatAAjouter), findsNothing);
+      expect(_texte(t.recrutement.portail.accordAEnvoyer), findsOneWidget);
     });
+
+    testWidgets(
+      'photo posee et accord signe : « Votre photo est bien reçue »',
+      (WidgetTester tester) async {
+        await _portail(
+          tester,
+          candidatureAFaire(),
+          photoPosee: true,
+          accordPublicationSigne: true,
+        );
+        expect(_texte(t.recrutement.portail.photoRecue), findsOneWidget);
+      },
+    );
 
     test(
       'pendant l\'examen de la candidature envoyee, la piece est suspendue',
@@ -731,4 +751,27 @@ void main() {
       );
     }
   });
+
+  // INCIDENT-CANDIDATS (14/11/2026), captures R3 :
+  // CAPTURE_DIR=docs/current/captures/E2E/incident-candidats.
+  group('captures incident candidats', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
+      ('portail-photo-et-piece-recues-390', AppLocale.fr),
+      ('portail-photo-et-piece-recues-390-arabe', AppLocale.ar),
+    ]) {
+      testWidgets(nom, (WidgetTester tester) async {
+        masquerRubanDebug();
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await _portail(
+          tester,
+          candidatureAFaire(),
+          photoPosee: true,
+          accordPublicationSigne: false,
+          direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+        );
+        await capturerVue(tester, nom);
+      });
+    }
+  }, skip: sautSansCapture);
 }

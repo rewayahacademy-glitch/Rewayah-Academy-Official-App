@@ -900,6 +900,20 @@ void main() {
       expect(find.text('1 sur 3'), findsOneWidget);
     });
 
+    // NOM-PROPRE (INCIDENT-CANDIDATS, 14/11/2026) : « ٠ » ou un chiffre ne
+    // passent pas ; la phrase dit d'ecrire en lettres, et rien n'avance.
+    testWidgets('identite : un nom en chiffres est refuse, en mots', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, questionnaire: _qMoi);
+      await tester.enterText(find.byKey(const Key('inscription-prenom')), '٠');
+      await tester.enterText(find.byKey(const Key('inscription-nom')), 'Bah2');
+      await _continuer(tester);
+      expect(find.text(t.inscription.nomEnLettresPrenom), findsOneWidget);
+      expect(find.text(t.inscription.nomEnLettresNom), findsOneWidget);
+      expect(find.text('1 sur 3'), findsOneWidget);
+    });
+
     testWidgets('UX-005 : la langue du cours se dit par son nom, meme sans '
         'referentiel charge', (WidgetTester tester) async {
       await _monter(tester, questionnaire: _qMoi, languesChargees: false);
