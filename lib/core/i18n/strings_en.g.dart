@@ -18879,6 +18879,8 @@ class _Traductions$com$messages$entree$en extends Traductions$com$messages$entre
 	@override String get ecrireAdministration => 'Write to ⁦${_root.commun.staff.designation}⁩';
 	@override String ecrireA({required Object nom}) => 'Write to ${nom}';
 	@override String conversationAvec({required Object nom}) => 'Conversation with ${nom}';
+	@override String get replier => 'Fold the conversation';
+	@override String get ouvrirDansMessages => 'Open in Messages';
 	@override String get voirTout => 'See all conversations';
 	@override String get toutes => 'All your conversations';
 	@override String get aLireUne => '1 conversation to read';
@@ -36616,6 +36618,8 @@ extension on TraductionsEn {
 			'com.messages.entree.ecrireAdministration' => 'Write to ⁦${_root.commun.staff.designation}⁩',
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Write to ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation with ${nom}',
+			'com.messages.entree.replier' => 'Fold the conversation',
+			'com.messages.entree.ouvrirDansMessages' => 'Open in Messages',
 			'com.messages.entree.voirTout' => 'See all conversations',
 			'com.messages.entree.toutes' => 'All your conversations',
 			'com.messages.entree.aLireUne' => '1 conversation to read',
@@ -36675,10 +36679,10 @@ extension on TraductionsEn {
 			'com.messages.demo.vue' => ({required Object role}) => 'Point of view: ${role}',
 			'com.messages.demo.f.ahmed' => 'Ahmed',
 			'com.messages.demo.f.parentAdam' => 'Adam\'s parent',
-			'com.messages.demo.f.enseignanteNour' => 'Teacher of the An-Nour class',
-			'com.messages.demo.f.fatima' => 'Fatima',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.demo.f.enseignanteNour' => 'Teacher of the An-Nour class',
+			'com.messages.demo.f.fatima' => 'Fatima',
 			'com.messages.demo.f.parentYasmine' => 'Yasmine\'s parent',
 			'com.messages.demo.f.karim' => 'Karim',
 			'com.messages.demo.f.parentYusuf' => 'Yusuf\'s parent',
@@ -37189,10 +37193,10 @@ extension on TraductionsEn {
 			'com.annonces.publieur.classeRefuseeTitre' => 'Publishing reserved',
 			'com.annonces.publieur.classeRefusee' => 'You cannot publish an announcement for this class. Ask the management for access.',
 			'com.annonces.administration.nouvelle' => 'New announcement',
-			'com.annonces.administration.demo' => 'Demo',
-			'com.annonces.administration.demoDetail' => 'Demo data: no real figures.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.demo' => 'Demo',
+			'com.annonces.administration.demoDetail' => 'Demo data: no real figures.',
 			'com.annonces.administration.horsLigne' => 'You are offline. Announcements cannot be refreshed.',
 			'com.annonces.administration.indicateurs.titre' => 'Communications indicators',
 			'com.annonces.administration.indicateurs.publiees' => 'Announcements published',
@@ -37703,10 +37707,10 @@ extension on TraductionsEn {
 			'comptable.tresorerie.coffresTitre' => 'Vaults',
 			'comptable.tresorerie.coffresPhrase' => 'Where the money is allocated. A protected sum is never counted as free.',
 			'comptable.tresorerie.coffreProtege' => 'Protected',
-			'comptable.tresorerie.coffreNonProtege' => 'Not protected',
-			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part}% of the cash held',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.coffreNonProtege' => 'Not protected',
+			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part}% of the cash held',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Usage rule: ${regle}',
 			'comptable.tresorerie.coffresVide' => 'No vault is returned yet.',
 			'comptable.tresorerie.coffresVidePhrase' => 'The seven vaults will appear here as soon as the source returns them.',
@@ -38217,10 +38221,10 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.objectifDetail' => 'What the Strategic reserve must reach.',
 			'comptable.direction.reservePanneau.modeFixe' => 'Fixed amount',
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'A precise sum you choose.',
-			'comptable.direction.reservePanneau.modeMois' => 'Coverage in months',
-			'comptable.direction.reservePanneau.modeMoisDetail' => 'A number of months of essential expenses.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.reservePanneau.modeMois' => 'Coverage in months',
+			'comptable.direction.reservePanneau.modeMoisDetail' => 'A number of months of essential expenses.',
 			'comptable.direction.reservePanneau.montantCible' => 'Target amount',
 			'comptable.direction.reservePanneau.montantCibleDetail' => 'The sum the Strategic reserve must reach.',
 			'comptable.direction.reservePanneau.nombreMois' => 'Number of months of coverage',
@@ -38731,10 +38735,10 @@ extension on TraductionsEn {
 			'avis.form.accord.erreur' => 'Accept publication by ticking the box, otherwise your feedback cannot be sent.',
 			'avis.form.lecture' => ({required Object courriel}) => 'Your feedback will be read by the management before being published. To have it removed later, write to ${courriel}.',
 			'avis.form.regles.titre' => 'What the management publishes',
-			'avis.form.regles.intro' => 'A respectful review is published, even when it is critical. The management never edits your text. It only refuses a review that contains:',
-			'avis.form.regles.insulte' => 'an insult',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.regles.intro' => 'A respectful review is published, even when it is critical. The management never edits your text. It only refuses a review that contains:',
+			'avis.form.regles.insulte' => 'an insult',
 			'avis.form.regles.tiers' => 'personal data of a third party, such as the name of a child or a teacher',
 			'avis.form.regles.publicite' => 'advertising',
 			'avis.form.regles.horsSujet' => 'an off-topic remark',
@@ -39245,10 +39249,10 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'This file could not be read, row ${ligne}: ${cause}.',
 			'candidatsFlux.importFormulaires.fichier.illisible' => ({required Object cause}) => 'This file could not be read: ${cause}.',
 			'candidatsFlux.importFormulaires.fichier.cause.guillemetNonFerme' => 'an opening quotation mark is never closed',
-			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'the file exceeds 5 MB',
-			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'the formatting is not that of a CSV export',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'the file exceeds 5 MB',
+			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'the formatting is not that of a CSV export',
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'its content is not that of a CSV export',
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Export the sheet as CSV again from Google Sheets, then choose the file.',
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Currently read in column ${n}. Choosing it here removes it from that column.',
@@ -39759,10 +39763,10 @@ extension on TraductionsEn {
 			'suiviAttente.cloture.simple.refusee' => 'Your request was not accepted. Your guardian can choose another slot.',
 			'suiviAttente.cloture.simple.retiree' => 'This request is withdrawn.',
 			'suiviAttente.cloture.simple.close' => 'This request is closed.',
-			'suiviAttente.enseignant.titre' => 'Your teacher',
-			'suiviAttente.enseignant.titreSimple' => 'Your teacher',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.enseignant.titre' => 'Your teacher',
+			'suiviAttente.enseignant.titreSimple' => 'Your teacher',
 			'suiviAttente.enseignant.sayyid' => 'Sayyid',
 			'suiviAttente.enseignant.sayyida' => 'Sayyida',
 			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '${prenom}',

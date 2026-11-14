@@ -8,8 +8,9 @@
 --      declencheur du depot et nait en attente ;
 --   2. cette piece n'entre PAS dans la file d'ADM-02 ni dans le compteur
 --      d'ADM-01 : elle y entrera a l'admission en salle 2 ;
---   3. pendant l'examen (en_examen), apres un refus, apres un retrait : refus
---      par toute voie, cause depot_piece_hors_etape ;
+--   3. apres un refus, apres un retrait : refus par toute voie, cause
+--      depot_piece_hors_etape ; pendant l'examen (en_examen), la piece passe
+--      (RECRUTEMENT-SANS-SORTIE, 14/11/2026, migration 20261126300000) ;
 --   4. une candidature d'un autre type que enseignant, en salle 1 a
 --      completer, ne profite pas de la nouvelle regle ;
 --   5. la regle et le declencheur ne sont appelables par aucun client.
@@ -153,12 +154,30 @@ SELECT pg_temp.vrai(
   'admise en salle 2 : la piece deposee en salle 1 entre dans la file d''ADM-02, a verifier');
 RESET ROLE;
 
--- 3. Pendant l'examen, apres un refus, apres un retrait : refus par toute voie.
+-- 3. RECRUTEMENT-SANS-SORTIE (14/11/2026, migration 20261126300000) : la
+-- candidature envoyee, en examen, toujours en salle 1 : la piece demandee en
+-- salle 1 se depose encore (avant : refusee jusqu'a la salle 2).
+SELECT pg_temp.qui(pg_temp.id('ex'), 'teacher');
+SET LOCAL ROLE authenticated;
+SELECT pg_temp.vrai(public.peut_deposer_piece_identite(pg_temp.id('ex')),
+  'en examen : la porte du depot R2 est ouverte');
+SELECT pg_temp.vrai(public.preparer_depot_piece_identite(pg_temp.id('ex'), 'passport') IS NOT NULL,
+  'en examen : la reservation R2 passe');
+RESET ROLE;
+INSERT INTO public.kyc_documents (profile_id, doc_type, object_key)
+VALUES (pg_temp.id('ex'), 'passport', 'ex/piece.jpg');
+SELECT pg_temp.vrai(
+  (SELECT count(*) FROM public.kyc_documents k
+    WHERE k.profile_id = pg_temp.id('ex') AND k.object_key = 'ex/piece.jpg' AND k.status = 'pending'
+      AND k.verified_by IS NULL) = 1,
+  'en examen : la piece passe le declencheur du depot et nait en attente, sans decision');
+
+-- 3 bis. Apres un refus, apres un retrait : refus par toute voie.
 DO $refus$
 DECLARE
   v text;
 BEGIN
-  FOREACH v IN ARRAY ARRAY['ex', 'rf', 'rt'] LOOP
+  FOREACH v IN ARRAY ARRAY['rf', 'rt'] LOOP
     PERFORM pg_temp.qui(pg_temp.id(v), 'teacher');
     SET LOCAL ROLE authenticated;
     PERFORM pg_temp.vrai(NOT public.peut_deposer_piece_identite(pg_temp.id(v)),

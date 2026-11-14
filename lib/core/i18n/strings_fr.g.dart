@@ -38668,6 +38668,12 @@ class Traductions$com$messages$entree$fr {
 	/// fr: 'Conversation avec {nom}'
 	String conversationAvec({required Object nom}) => 'Conversation avec ${nom}';
 
+	/// fr: 'Replier la conversation'
+	String get replier => 'Replier la conversation';
+
+	/// fr: 'Ouvrir dans Messages'
+	String get ouvrirDansMessages => 'Ouvrir dans Messages';
+
 	/// fr: 'Voir toutes les conversations'
 	String get voirTout => 'Voir toutes les conversations';
 
@@ -62811,6 +62817,8 @@ extension on Traductions {
 			'com.messages.entree.ecrireAdministration' => 'Écrire à ⁦${_root.commun.staff.designation}⁩',
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
+			'com.messages.entree.replier' => 'Replier la conversation',
+			'com.messages.entree.ouvrirDansMessages' => 'Ouvrir dans Messages',
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
@@ -62870,10 +62878,10 @@ extension on Traductions {
 			'com.messages.demo.vue' => ({required Object role}) => 'Point de vue : ${role}',
 			'com.messages.demo.f.ahmed' => 'Ahmed',
 			'com.messages.demo.f.parentAdam' => 'Parent d\'Adam',
-			'com.messages.demo.f.enseignanteNour' => 'Enseignante de la classe An-Nour',
-			'com.messages.demo.f.fatima' => 'Fatima',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.demo.f.enseignanteNour' => 'Enseignante de la classe An-Nour',
+			'com.messages.demo.f.fatima' => 'Fatima',
 			'com.messages.demo.f.parentYasmine' => 'Parent de Yasmine',
 			'com.messages.demo.f.karim' => 'Karim',
 			'com.messages.demo.f.parentYusuf' => 'Parent de Yusuf',
@@ -63384,10 +63392,10 @@ extension on Traductions {
 			'com.annonces.publieur.classeRefuseeTitre' => 'Publication réservée',
 			'com.annonces.publieur.classeRefusee' => 'Vous ne pouvez pas publier d\'annonce pour cette classe. Demandez l\'accès à la direction.',
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
-			'com.annonces.administration.demo' => 'Démonstration',
-			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.administration.demo' => 'Démonstration',
+			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
 			'com.annonces.administration.horsLigne' => 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.',
 			'com.annonces.administration.indicateurs.titre' => 'Indicateurs des communications',
 			'com.annonces.administration.indicateurs.publiees' => 'Annonces publiées',
@@ -63898,10 +63906,10 @@ extension on Traductions {
 			'comptable.tresorerie.coffresTitre' => 'Coffres',
 			'comptable.tresorerie.coffresPhrase' => 'Où l\'argent est affecté. Une somme protégée n\'est jamais comptée comme libre.',
 			'comptable.tresorerie.coffreProtege' => 'Protégé',
-			'comptable.tresorerie.coffreNonProtege' => 'Non protégé',
-			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.tresorerie.coffreNonProtege' => 'Non protégé',
+			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Règle d\'usage : ${regle}',
 			'comptable.tresorerie.coffresVide' => 'Aucun coffre n\'est encore rendu.',
 			'comptable.tresorerie.coffresVidePhrase' => 'Les sept coffres apparaîtront ici dès que la source les rendra.',
@@ -64412,10 +64420,10 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.objectifDetail' => 'Ce que la Réserve stratégique doit atteindre.',
 			'comptable.direction.reservePanneau.modeFixe' => 'Montant fixe',
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'Une somme précise que vous choisissez.',
-			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
-			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
+			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
 			'comptable.direction.reservePanneau.montantCible' => 'Montant cible',
 			'comptable.direction.reservePanneau.montantCibleDetail' => 'La somme que la Réserve stratégique doit atteindre.',
 			'comptable.direction.reservePanneau.nombreMois' => 'Nombre de mois de couverture',
@@ -64926,10 +64934,10 @@ extension on Traductions {
 			'avis.form.accord.erreur' => 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.',
 			'avis.form.lecture' => ({required Object courriel}) => 'Votre avis sera lu par la direction avant d\'être publié. Pour le faire retirer plus tard, écrivez à ${courriel}.',
 			'avis.form.regles.titre' => 'Ce que la direction publie',
-			'avis.form.regles.intro' => 'Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient :',
-			'avis.form.regles.insulte' => 'une insulte',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.regles.intro' => 'Un avis respectueux est publié, même quand il est critique. La direction ne modifie jamais votre texte. Elle refuse seulement un avis qui contient :',
+			'avis.form.regles.insulte' => 'une insulte',
 			'avis.form.regles.tiers' => 'des données personnelles d\'un tiers, comme le nom d\'un enfant ou d\'un enseignant',
 			'avis.form.regles.publicite' => 'de la publicité',
 			'avis.form.regles.horsSujet' => 'un propos hors sujet',
@@ -65440,10 +65448,10 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'Ce fichier n\'a pas pu être lu, ligne ${ligne} : ${cause}.',
 			'candidatsFlux.importFormulaires.fichier.illisible' => ({required Object cause}) => 'Ce fichier n\'a pas pu être lu : ${cause}.',
 			'candidatsFlux.importFormulaires.fichier.cause.guillemetNonFerme' => 'un guillemet ouvert n\'est jamais refermé',
-			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'le fichier dépasse 5 Mo',
-			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'la mise en forme n\'est pas celle d\'un export CSV',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.fichier.cause.tropVolumineux' => 'le fichier dépasse 5 Mo',
+			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'la mise en forme n\'est pas celle d\'un export CSV',
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'son contenu n\'est pas celui d\'un export CSV',
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Exportez de nouveau la feuille en CSV depuis Google Sheets, puis choisissez le fichier.',
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Actuellement lu dans la colonne ${n}. Le choisir ici le retire de cette colonne.',
@@ -65954,10 +65962,10 @@ extension on Traductions {
 			'suiviAttente.cloture.simple.refusee' => 'Ta demande n\'a pas été retenue. Ton tuteur peut choisir un autre créneau.',
 			'suiviAttente.cloture.simple.retiree' => 'Cette demande est retirée.',
 			'suiviAttente.cloture.simple.close' => 'Cette demande est close.',
-			'suiviAttente.enseignant.titre' => 'Votre enseignant',
-			'suiviAttente.enseignant.titreSimple' => 'Ton enseignant',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.enseignant.titre' => 'Votre enseignant',
+			'suiviAttente.enseignant.titreSimple' => 'Ton enseignant',
 			'suiviAttente.enseignant.sayyid' => 'Sayyid',
 			'suiviAttente.enseignant.sayyida' => 'Sayyida',
 			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '${prenom}',

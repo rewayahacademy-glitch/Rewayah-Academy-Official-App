@@ -11941,6 +11941,8 @@
         "ecrireAdministration": "Écrire à \u2066@:commun.staff.designation\u2069",
         "ecrireA": "Écrire à {nom}",
         "conversationAvec": "Conversation avec {nom}",
+        "replier": "Replier la conversation",
+        "ouvrirDansMessages": "Ouvrir dans Messages",
         "voirTout": "Voir toutes les conversations",
         "toutes": "Toutes vos conversations",
         "aLireUne": "1 conversation à lire",

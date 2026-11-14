@@ -11953,6 +11953,8 @@
         "ecrireAdministration": "Write to \u2066@:commun.staff.designation\u2069",
         "ecrireA": "Write to {nom}",
         "conversationAvec": "Conversation with {nom}",
+        "replier": "Fold the conversation",
+        "ouvrirDansMessages": "Open in Messages",
         "voirTout": "See all conversations",
         "toutes": "All your conversations",
         "aLireUne": "1 conversation to read",

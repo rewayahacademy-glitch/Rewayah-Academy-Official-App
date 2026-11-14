@@ -78,6 +78,11 @@ abstract final class AppPage {
   static const double largeurGestion = 1440;
   static const double largeurEtatVide = 400;
 
+  /// Largeur d'un volet de cote sur ordinateur (Material 3, « side sheet » :
+  /// 256 a 400) : la conversation ouverte dans le dossier d'un candidat, a
+  /// cote du dossier qui reste lisible (directeur, 14/11/2026).
+  static const double largeurVolet = 400;
+
   /// Largeur maximale d'une surface modale hors telephone : feuille bornee sur
   /// tablette, boite de dialogue sur bureau. Une feuille de telephone etiree
   /// sur toute la largeur d'un ecran large est interdite (manifeste visuel du
