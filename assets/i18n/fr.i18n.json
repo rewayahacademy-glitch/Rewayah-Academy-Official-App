@@ -2660,6 +2660,7 @@
     },
     "signature": {
       "titre": "Contrat",
+      "traductionTitre": "Traduction de courtoisie",
       "version": "Version {version}",
       "empreinte": "Empreinte du texte : {empreinte}",
       "texteAltere": "Le texte reçu ne correspond pas à son empreinte : la signature n'est pas proposée. Réessayez plus tard ou prévenez la direction.",

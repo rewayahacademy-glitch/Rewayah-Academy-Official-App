@@ -4760,6 +4760,7 @@ class _Traductions$recrutement$signature$en extends Traductions$recrutement$sign
 
 	// Translations
 	@override String get titre => 'Contract';
+	@override String get traductionTitre => 'Courtesy translation';
 	@override String version({required Object version}) => 'Version ${version}';
 	@override String empreinte({required Object empreinte}) => 'Text fingerprint: ${empreinte}';
 	@override String get texteAltere => 'The text received does not match its fingerprint: signing is not offered. Try again later or let the management know.';
@@ -28330,6 +28331,7 @@ extension on TraductionsEn {
 			'recrutement.candidat.comptable.valideDetail' => 'You can create your accountant profile.',
 			'recrutement.candidat.comptable.indisponible' => 'Checking accountant codes will be available once the server is connected.',
 			'recrutement.signature.titre' => 'Contract',
+			'recrutement.signature.traductionTitre' => 'Courtesy translation',
 			'recrutement.signature.version' => ({required Object version}) => 'Version ${version}',
 			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'Text fingerprint: ${empreinte}',
 			'recrutement.signature.texteAltere' => 'The text received does not match its fingerprint: signing is not offered. Try again later or let the management know.',
@@ -28751,9 +28753,9 @@ extension on TraductionsEn {
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'You have no ijaza, and you do not plan to take a test for now.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'Your level is then assessed during the interview.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'you learned with a teacher, without receiving a written document.',
-			'recrutement.parcours.q.experienceDebutants.titre' => 'Have you already taught beginners?',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.experienceDebutants.titre' => 'Have you already taught beginners?',
 			'recrutement.parcours.q.experienceDebutants.explication' => 'A beginner is still learning to read the letters and join them.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'Experience with beginners',
 			'recrutement.parcours.q.experienceDebutants.options.oui.libelle' => 'Yes, I have already taught beginners',
@@ -29265,9 +29267,9 @@ extension on TraductionsEn {
 			'admin.candidatures.sansDonnees' => 'The applications list could not be loaded',
 			'admin.candidatures.accesRefuse' => 'You do not have access to the applications.',
 			'admin.candidatures.genreInconnuTitre' => 'Applications are not showing',
-			'admin.candidatures.genreInconnu' => 'Your file does not say which side you work on. Ask the management to complete it.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.candidatures.genreInconnu' => 'Your file does not say which side you work on. Ask the management to complete it.',
 			'admin.candidatures.etats.gardee' => 'Kept for follow-up',
 			'admin.candidatures.etats.invitee' => 'Invited',
 			'admin.candidatures.etats.aCompleter' => 'To complete',
@@ -29779,9 +29781,9 @@ extension on TraductionsEn {
 			'admin.traitement.natureDossier' => 'Identity file · Teacher',
 			'admin.traitement.natureReaffectation' => 'Request · Teacher change',
 			'admin.traitement.naturePlafond' => 'Request · Student ceiling',
-			'admin.traitement.natureRegle' => 'Request · Rule change',
 			_ => null,
 		} ?? switch (path) {
+			'admin.traitement.natureRegle' => 'Request · Rule change',
 			'admin.traitement.natureDemande' => 'Request',
 			'admin.traitement.cleDepot' => 'Submission date',
 			'admin.traitement.clePiece' => 'ID document',
@@ -30293,9 +30295,9 @@ extension on TraductionsEn {
 			'admin.regroupements.indisponibleTitre' => 'Available once the server is connected',
 			'admin.regroupements.indisponiblePhrase' => 'Grouped requests will be shown here once the server is connected. Until then, nothing is shown: no request is invented.',
 			'admin.regroupements.erreur' => 'The grouped requests could not be displayed: the read may not have reached Rewayah. Try again in a moment.',
-			'admin.regroupements.sansDonnees' => 'The grouped requests could not be loaded',
 			_ => null,
 		} ?? switch (path) {
+			'admin.regroupements.sansDonnees' => 'The grouped requests could not be loaded',
 			'admin.regroupements.vide' => 'No request pending',
 			'admin.regroupements.videDetail' => 'New family requests will appear here, grouped when they look alike.',
 			'admin.regroupements.sectionAFinir' => 'Teacher to confirm',
@@ -30807,9 +30809,9 @@ extension on TraductionsEn {
 			'admin.journal.effacerFiltres' => 'Clear the filters',
 			'admin.journal.erreur' => 'The log could not be read. Try again in a moment.',
 			'admin.journal.erreurSuite' => 'The older entries could not be read.',
-			'admin.journal.chargerSuite' => 'Load older entries',
 			_ => null,
 		} ?? switch (path) {
+			'admin.journal.chargerSuite' => 'Load older entries',
 			'admin.journal.fin' => 'You have gone back to the first entry of the log.',
 			'admin.journal.evenements.observationEntree' => 'Observation visit started',
 			'admin.journal.evenements.observationSortie' => 'Observation visit ended',
@@ -31321,9 +31323,9 @@ extension on TraductionsEn {
 			'admin.finance.pol.margeObjectif' => 'Target margin',
 			'admin.finance.pol.margeObjectifDetail' => 'The net margin aimed for, all costs included: a steering guide, never a sanction or a block.',
 			'admin.finance.pol.margeForte' => 'Strong performance',
-			'admin.finance.pol.margeForteDetail' => 'The guide for a very good month; it does not go below the target.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.finance.pol.margeForteDetail' => 'The guide for a very good month; it does not go below the target.',
 			'admin.finance.pol.margeStretch' => 'Stretch scenario',
 			'admin.finance.pol.margeStretchDetail' => 'The ambitious guide; it does not go below the strong performance.',
 			'admin.finance.pol.pourcentValeur' => ({required Object valeur}) => '${valeur}%',
@@ -31835,9 +31837,9 @@ extension on TraductionsEn {
 			'admin.tirage.ajouterContexte' => 'Choose the class or teacher to draw first. The target is added to the rules, which you then save.',
 			'admin.tirage.ajouterChoix' => 'Class or teacher to target',
 			'admin.tirage.ajouterConfirmer' => 'Add this target',
-			'admin.tirage.manqueCible' => 'The target is missing: choose one from the list.',
 			_ => null,
 		} ?? switch (path) {
+			'admin.tirage.manqueCible' => 'The target is missing: choose one from the list.',
 			'admin.tirage.aucunCandidat' => 'No class or teacher to target',
 			'admin.tirage.aucunCandidatDetail' => 'All classes and teachers are already targeted, or no session exists yet.',
 			'admin.tirage.erreurCandidats' => 'The list of targets could not be read. Try again in a moment.',
@@ -32349,9 +32351,9 @@ extension on TraductionsEn {
 			'parcours.etatClasseConfirmeeDetail' => ({required Object dePrenom}) => '${dePrenom}\'s class is formed. You will find its sessions in their space.',
 			'parcours.fuseauChange' => 'Your location has changed since this choice',
 			'parcours.fuseauChangeDetail' => 'The schedule is the same for the academy, but it no longer falls at the same time for you. Check that it still suits you.',
-			'parcours.voirHoraires' => 'See the schedules',
 			_ => null,
 		} ?? switch (path) {
+			'parcours.voirHoraires' => 'See the schedules',
 			'parcours.changerHoraire' => 'Change schedule',
 			'parcours.renoncerMotif' => 'The family changed schedule since the journey',
 			'parcours.offreRecurrence' => ({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(seances, one: '${seances} session per week, ${duree} min', other: '${seances} sessions per week, ${duree} min', ), 
@@ -32863,9 +32865,9 @@ extension on TraductionsEn {
 			'notifications.evenements.seanceTermineeAucunTravail' => 'No work to prepare.',
 			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student present out of ${total}.', other: '${n} students present out of ${total}.', ), 
 			'notifications.evenements.seanceTermineeCahierAttend' => 'The handover notebook is waiting for your information.',
-			'notifications.evenements.seanceTermineeCahierDepose' => 'Notebook submitted, thank you.',
 			_ => null,
 		} ?? switch (path) {
+			'notifications.evenements.seanceTermineeCahierDepose' => 'Notebook submitted, thank you.',
 			'notifications.evenements.seanceTermineePhrases' => ({required Object premiere, required Object suite}) => '${premiere} ${suite}',
 			'notifications.evenements.inconnu' => 'This notification needs a more recent version of the app. Reload the page to read it.',
 			'notifications.filtres.libelle' => 'Filter notifications',
@@ -33377,9 +33379,9 @@ extension on TraductionsEn {
 			'enseignant.bienvenue.dossierIncomplet' => 'Your file is not approved yet.',
 			'enseignant.bienvenue.dossierIncompletDetail' => 'The waiting page tells you what remains to be provided.',
 			'enseignant.bienvenue.versAttente' => 'See my file',
-			'enseignant.bienvenue.erreur' => 'Your profile could not be loaded. Try again in a moment.',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.bienvenue.erreur' => 'Your profile could not be loaded. Try again in a moment.',
 			'enseignant.photo.titre' => 'Professional photo',
 			'enseignant.photo.aide' => 'Your photo is required: families do not entrust their children to a stranger on the internet. It is visible to the families of your students.',
 			'enseignant.photo.obligatoireLecteur' => 'Photo required',
@@ -33891,9 +33893,9 @@ extension on TraductionsEn {
 			'enseignant.revenus.type' => 'Type',
 			'enseignant.revenus.typeEnfants' => 'Children',
 			'enseignant.revenus.typeDebutants' => 'Beginner children',
-			'enseignant.revenus.typeAdultes' => 'Adults',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.revenus.typeAdultes' => 'Adults',
 			'enseignant.revenus.remplacement' => 'Replacement',
 			'enseignant.revenus.tauxMoyen' => 'Average hourly rate',
 			'enseignant.revenus.total' => 'Total',
@@ -34405,9 +34407,9 @@ extension on TraductionsEn {
 			'tc.outils.revision.creer' => 'Set the work',
 			'tc.outils.revision.posee' => 'Work to prepare set',
 			'tc.outils.masquer.reveler' => 'Reveal',
-			'tc.outils.masquer.refermer' => 'Hide again',
 			_ => null,
 		} ?? switch (path) {
+			'tc.outils.masquer.refermer' => 'Hide again',
 			'tc.outils.masquer.tout' => 'Unhide all',
 			'tc.outils.focus.quitter' => 'Exit focus',
 			'tc.outils.annotation.ancrageDegrade' => 'This passage has no text anchor: the annotation will follow the page, not the words.',
@@ -34919,9 +34921,9 @@ extension on TraductionsEn {
 			'adulte.acceptation.pourquoiLui' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, he must see your balance.',
 			'adulte.acceptation.verraTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will see',
 			'adulte.acceptation.verraElle' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. She will also know if you leave the family plan.',
-			'adulte.acceptation.verraLui' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. He will also know if you leave the family plan.',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.verraLui' => 'Your first and last name. Your balance, or the need to top it up. The plan that concerns you. The state of your access, if it prevents payment. He will also know if you leave the family plan.',
 			'adulte.acceptation.verraPasTitre' => ({required Object quePrenom}) => 'What ${quePrenom} will not see',
 			'adulte.acceptation.verraPas' => 'Your class. Your level. Your sessions and your attendance. Your progress. Your messages. Your notifications. Your personal payment methods. Your ID documents.',
 			'adulte.acceptation.vousTitre' => 'What you will not see',
@@ -35433,9 +35435,9 @@ extension on TraductionsEn {
 			'argent.soldes.aPayer' => 'To pay this month',
 			'argent.soldes.profilsFinances' => 'Funded profiles',
 			'argent.soldes.profilsFinancesValeur' => ({required Object n, required Object total}) => '${n} of ${total}',
-			'argent.soldes.paiements' => 'Payments this month',
 			_ => null,
 		} ?? switch (path) {
+			'argent.soldes.paiements' => 'Payments this month',
 			'argent.acces.enfantTitre' => 'Access to this class temporarily unavailable',
 			'argent.acces.enfantMessage' => 'Your guardian can manage access.',
 			'argent.acces.regulariserTitre' => 'Access to settle',
@@ -35947,9 +35949,9 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.videTitre' => 'Nothing to handle for now',
 			'com.studio.aujourdhui.dansCanal' => ({required Object nom}) => 'In ${nom}',
 			'com.studio.aujourdhui.echeance' => ({required Object date}) => 'Due on ${date}',
-			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Handled in ${module}',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.seTraiteDans' => ({required Object module}) => 'Handled in ${module}',
 			'com.studio.aujourdhui.ouvrirDans' => ({required Object module, required Object libelle}) => 'Open in ${module}: ${libelle}',
 			'com.studio.aujourdhui.modules.studio' => _root.com.socle.lexique.studio,
 			'com.studio.aujourdhui.modules.finance' => 'Finance',
@@ -36461,9 +36463,9 @@ extension on TraductionsEn {
 			'comptable.statuts.reserve.depassement' => 'Exceeded',
 			'comptable.statuts.reserve.regleInactive' => 'Rule inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Funding planned',
-			'comptable.statuts.reserve.mouvementSensible' => 'Sensitive movement',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.reserve.mouvementSensible' => 'Sensitive movement',
 			'comptable.statuts.obligation.brouillon' => 'Draft',
 			'comptable.statuts.obligation.aApprouver' => 'To approve',
 			'comptable.statuts.obligation.approuvee' => 'Approved',
@@ -36975,9 +36977,9 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'No, it is in a relative\'s name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.',
-			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Who holds the account?',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Who holds the account?',
 			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'My father or mother',
 			'comptable.beneficiaires.recevoir.wise.lien.conjoint' => 'My spouse',
 			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'My brother or sister',
@@ -37489,9 +37491,9 @@ extension on TraductionsEn {
 			'sansDonnees.paiement' => 'This payment could not be loaded',
 			'sansDonnees.paiementsAEffectuer' => 'The payments to make could not be loaded',
 			'sansDonnees.encaissements' => 'The collections could not be loaded',
-			'sansDonnees.tresorerie' => 'The cash position could not be loaded',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.tresorerie' => 'The cash position could not be loaded',
 			'sansDonnees.obligation' => 'This obligation could not be loaded',
 			'sansDonnees.contractuels' => 'The contractors could not be loaded',
 			'sansDonnees.reserve' => 'The reserve policy could not be loaded',
@@ -38003,9 +38005,9 @@ extension on TraductionsEn {
 			'accueilInscrits.titre' => 'We already know you',
 			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			'accueilInscrits.motTitre' => 'A word from the management',
-			'accueilInscrits.elevesTitre' => 'Your children already registered',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.elevesTitre' => 'Your children already registered',
 			'accueilInscrits.elevesPhrase' => 'Their first name is already filled in. Their age remains to be entered.',
 			'accueilInscrits.aJour' => 'Up to date',
 			'accueilInscrits.aCompleter' => 'To complete',
@@ -38517,9 +38519,9 @@ extension on TraductionsEn {
 			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
 			'candidatsFlux.importDouble.suite' => 'Tap "Enter my code": you enter the code from your verification app, then the import resumes here. Nothing was saved.',
 			'candidatsFlux.importDouble.action' => 'Enter my code',
-			'candidatsFlux.langues.man' => 'Malinke (Mandinka)',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.langues.man' => 'Malinke (Mandinka)',
 			'candidatsFlux.publication.titre' => 'Publication on the website',
 			'candidatsFlux.publication.texte' => 'Your name, photo and country may appear on the Rewayah Academy public website. This choice is separate from your application: it changes nothing about its review.',
 			'candidatsFlux.publication.kCase' => 'I agree that my name, photo and country be on the Rewayah public website.',
