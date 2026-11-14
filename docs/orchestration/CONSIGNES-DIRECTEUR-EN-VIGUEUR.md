@@ -411,6 +411,13 @@ Abréviations des fichiers :
 - Elle remplace GOUTTE-COUPEE du 11/11. La branche `claude/goutte-nappe-travail` est gardée comme archive, jamais rebranchée.
 - Marque : **écrite** : `lib/core/widgets/fondu_contenu_profil.dart` (durées et courbe dans `AppMouvement`), `REGISTRE-LOTS.md` (ligne du 12/11), branche `claude/profils-effet`.
 
+**A15. Le seul super-admin (le directeur) fait tout ce qu'il voit, des deux côtés, sans être bloqué dans sa propre application.** Chaque geste hors de son genre reste écrit au journal sensible (`super_admin_hors_cote`). Une direction qui n'est pas super-admin reste de son côté. Le super-admin est défini par `private.super_admin_kyc` et `app_config.kyc_exception_super_admin = true`, lus par `public.kyc_super_admin_exception_active()` ; on n'en crée pas un second.
+- Date : 14/11 (prolonge V1-a-bis du 03/11 : « moi je peux tout voir, et je peux ajouter des agents féminins tout comme j'ajoute des agents masculins »).
+- Citation : 14/11/2026 : « je suis le seul super admin… je dois tout voir… qu'est-ce qu'il te faut d'autre pour ne pas que tu me bloques dans ma propre app ? »
+- Portée : lire, décider, vérifier, « Valider la pièce », planifier et mener l'entretien (déjà ouverts au super-admin depuis V1-a-bis, migration 20261109100000, vérifié en production le 14/11 : aucun refus hors côté enregistré), **et les gestes en lot** (pause, reprise, refus), qui restaient bornés faute de décision : ouverts par la migration 20261126400000.
+- Limite : les règles métier ne changent pas (KYC, contrôles des salles, mineurs). Le super-admin agit hors côté ; il ne saute aucune vérification.
+- Marque : **écrite** : migration `20261126400000_super_admin_lots_et_attentes.sql`, scénario `supabase/tests/scenarios_vision_recrutement.sql`, `docs/current/CANDIDATURES/VISION_RECRUTEMENT_2026-11-14.md`.
+
 ---
 
 ## 5. Rythme, budget et nuit

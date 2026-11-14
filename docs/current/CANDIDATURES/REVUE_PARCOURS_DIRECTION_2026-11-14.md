@@ -25,12 +25,13 @@ prouvé en production tant que le directeur ne l'a pas fait lui-même.
 
 ## Ce qui reste (non corrigé ici)
 
-- **Sortie de la salle d'entretien** : quitter la salle ne ramène pas au
-  dossier. Corriger demande de toucher `features/salle` (zone d'un autre lot) ;
-  à décider par le pilote.
+- **Sortie de la salle d'entretien** : corrigée le 14/11 au soir
+  (`VISION_RECRUTEMENT_2026-11-14.md`) : la salle ramène au dossier du candidat.
 - **Profil du candidat** : aucun lien « profil » dans le dossier aujourd'hui ;
   rien à corriger, mais rien à prouver non plus.
-- **Décision de pièce hors genre** : le super-admin lit tout (vérifié en
-  production, voir la PR), mais `valider_piece_candidat` exige une direction du
-  même côté que la candidature. C'est une décision, pas une lecture : non
-  changée sans décision datée du directeur.
+- **Décision de pièce hors genre** : la phrase écrite ici plus tôt était
+  **inexacte**. `valider_piece_candidat` passe par le moteur des gestes, qui
+  laisse agir le super-admin des deux côtés depuis V1-a-bis (03/11), avec
+  trace ; aucun refus hors côté n'est enregistré en production. Seuls les
+  gestes **en lot** restaient bornés : ouverts au super-admin par la migration
+  20261126400000 (décision A15 du 14/11).
