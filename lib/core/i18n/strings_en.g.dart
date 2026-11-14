@@ -1738,6 +1738,10 @@ class _Traductions$comptable$en extends Traductions$comptable$fr {
 	@override late final _Traductions$comptable$encaissements$en encaissements = _Traductions$comptable$encaissements$en._(_root);
 	@override late final _Traductions$comptable$beneficiaires$en beneficiaires = _Traductions$comptable$beneficiaires$en._(_root);
 	@override late final _Traductions$comptable$contractuels$en contractuels = _Traductions$comptable$contractuels$en._(_root);
+	@override late final _Traductions$comptable$validation$en validation = _Traductions$comptable$validation$en._(_root);
+	@override late final _Traductions$comptable$direction$en direction = _Traductions$comptable$direction$en._(_root);
+	@override late final _Traductions$comptable$demo$en demo = _Traductions$comptable$demo$en._(_root);
+	@override late final _Traductions$comptable$paiementsFamilles$en paiementsFamilles = _Traductions$comptable$paiementsFamilles$en._(_root);
 }
 
 // Path: presentationTuteur
@@ -8924,6 +8928,180 @@ class _Traductions$comptable$contractuels$en extends Traductions$comptable$contr
 	@override String echeanceLe({required Object date}) => 'Due: ${date}';
 	@override String get payer => 'Pay';
 	@override String payerLecteur({required Object objet}) => 'Pay the obligation ${objet}';
+	@override String get approuver => 'Approve';
+	@override String ouvrirLecteur({required Object objet}) => 'Open the obligation ${objet}';
+	@override String creationBloquee({required Object raison}) => 'New obligation unavailable: ${raison}.';
+	@override String get videObligations => 'No obligation in progress';
+	@override String get videObligationsDetail => 'Obligations created appear here, with their due date and status.';
+	@override String get videAApprouver => 'Nothing to approve';
+	@override String get videAApprouverDetail => 'Obligations awaiting approval appear here.';
+	@override String get videAPayer => 'Nothing to pay';
+	@override String get videAPayerDetail => 'An approved obligation appears here, ready to be paid.';
+	@override String get videHistorique => 'No obligation finished';
+	@override String get videHistoriqueDetail => 'Obligations paid, declined or cancelled appear here.';
+	@override String get montantDefini => 'Amount set at creation, frozen after approval.';
+	@override String get montantFige => 'Amount frozen at approval: it can no longer be changed.';
+	@override String get montantTitre => 'Amount';
+	@override String get sectionLignes => 'Amount details';
+	@override String get sectionInfos => 'Information';
+	@override String get sectionHistorique => 'Obligation history';
+	@override String get historiqueVide => 'No operation recorded for this obligation.';
+	@override String get champBeneficiaire => 'Beneficiary';
+	@override String get champType => 'Type';
+	@override String get champEcheance => 'Due date';
+	@override String get champJustificatif => 'Supporting document';
+	@override String get champCentreCout => 'Cost centre';
+	@override String get champAuteur => 'Author';
+	@override String get champApprobateur => 'Approver';
+	@override String get champProfilPaiement => 'Beneficiary\'s payment';
+	@override String get champMotifRefus => 'Reason for refusal';
+	@override String get aucunJustificatif => 'No supporting document attached';
+	@override String get nonRenseigne => 'Not provided';
+	@override String ligneSource({required Object source}) => 'Source: ${source}';
+	@override String ligneAuteur({required Object auteur}) => 'Added by ${auteur}';
+	@override String ligneValidation({required Object validation}) => 'Validation: ${validation}';
+	@override String get payerAide => 'Payment opens in the payment details, with the exact amount.';
+	@override String get approuverAide => 'After approval, the amount is frozen and the obligation becomes payable.';
+	@override String get renvoyerInvitation => 'Resend the invitation';
+	@override String get invitationAide => 'This external beneficiary enters their own payment method, from their secure invitation.';
+	@override String get invitationRenvoyee => 'Invitation resent';
+	@override String get erreurApprobation => 'We do not know whether the approval was taken into account. Refresh the obligation before trying again.';
+	@override String get erreurInvitation => 'We do not know whether the invitation went out again. Refresh the obligation before trying again.';
+	@override String get formIntro => 'The beneficiary, due date and cost centre are suggested: change them if needed, then enter the purpose and the amount.';
+	@override String get beneficiaireExterne => 'New external beneficiary';
+	@override String get beneficiaireExterneAide => 'They receive a secure invitation to enter their own payment method.';
+	@override String get champNomExterne => 'External beneficiary\'s name';
+	@override String get changerEcheance => 'Change the due date';
+	@override String deviseDe({required Object devise}) => 'Currency: ${devise}';
+	@override String get champObjet => 'Obligation purpose';
+	@override String get aideObjet => 'For example: Invoice #024';
+	@override String get champRefJustificatif => 'Supporting document reference (optional)';
+	@override String get champMontantSaisi => 'Amount';
+	@override String get aideMontant => 'Entered once: it can no longer be changed after approval.';
+	@override String get creer => 'Create the obligation';
+	@override String get horsLigneCreation => 'The obligation cannot be created now. Create it as soon as sending is possible again.';
+	@override String get erreurObjet => 'Enter the obligation\'s purpose.';
+	@override String get erreurMontant => 'Enter an amount greater than zero, for example 350 or 350.50.';
+	@override String get erreurNomExterne => 'Enter the external beneficiary\'s name.';
+	@override String get erreurCreation => 'We do not know whether the obligation was created. Refresh the list before trying again.';
+	@override String get creationIndisponible => 'Your account cannot create an obligation.';
+	@override String get retourListe => 'Back to contractors';
+	@override String get titre => 'Contractors and obligations';
+	@override String get sousTitre => 'Amounts are set when the obligation is created, frozen after approval.';
+	@override String get nouvelle => 'New obligation';
+	@override String get detailTitre => 'Obligation';
+}
+
+// Path: comptable.validation
+class _Traductions$comptable$validation$en extends Traductions$comptable$validation$fr {
+	_Traductions$comptable$validation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sousTitre => 'Accountant requests awaiting the decision of another authorized person. Whoever asks never validates their own request.';
+	@override String get aDecider => 'To decide';
+	@override String get decidees => 'Recently decided';
+	@override String get videTitre => 'Nothing to validate';
+	@override String get videPhrase => 'The Accountant\'s next requests will appear here.';
+	@override late final _Traductions$comptable$validation$natures$en natures = _Traductions$comptable$validation$natures$en._(_root);
+	@override String demandePar({required Object demandeur, required Object date}) => 'Requested by ${demandeur} on ${date}';
+	@override String valideePar({required Object decideur, required Object date}) => 'Validated by ${decideur} on ${date}';
+	@override String refuseePar({required Object decideur, required Object date}) => 'Declined by ${decideur} on ${date}';
+	@override String motif({required Object motif}) => 'Reason: ${motif}';
+	@override String ouvrir({required Object objet}) => 'See the request: ${objet}';
+	@override String get votreDemandeTitre => 'Your own request';
+	@override String get votreDemandePhrase => 'Another authorized person will decide it: you never validate a request you made.';
+	@override late final _Traductions$comptable$validation$detail$en detail = _Traductions$comptable$validation$detail$en._(_root);
+	@override String get valider => 'Validate';
+	@override String get refuser => 'Decline';
+	@override String get annuler => 'Cancel';
+	@override String get fermer => 'Close';
+	@override String get confirmerRefus => 'Confirm the refusal';
+	@override String get motifTitre => 'Reason for refusal';
+	@override String get motifPhrase => 'The Accountant will read this reason with the decision. Choose one, or give your own.';
+	@override late final _Traductions$comptable$validation$motifs$en motifs = _Traductions$comptable$validation$motifs$en._(_root);
+	@override String get motifAutreChamp => 'Give the reason';
+	@override String get erreurMotif => 'Choose a reason to decline.';
+	@override String get erreurMotifAutre => 'Give the reason to decline.';
+	@override String get decisionValidee => 'Your decision is saved: the request is validated.';
+	@override String get decisionRefusee => 'Your decision is saved: the request is declined, with its reason.';
+	@override String get refusTitre => 'Decision not saved';
+	@override String get refusDemandeur => 'You made this request: another authorized person must decide it. Nothing has changed.';
+	@override String get refusMotif => 'A refusal needs a reason. Choose one, then confirm.';
+	@override String get refusDejaDecidee => 'This request has already been decided. Read the list again.';
+	@override String get inconnuTitre => 'Decision not confirmed';
+	@override String get inconnuPhrase => 'We do not know whether your decision was saved. Read the list again before deciding again.';
+	@override String get relireListe => 'Read the list again';
+	@override String get horsLigne => 'Decision impossible now: decide as soon as sending is possible again.';
+	@override String suiviEnAttente({required Object date}) => 'Requested on ${date}. Another authorized person will decide; nothing goes out before their decision.';
+	@override String suiviValidee({required Object decideur, required Object date}) => 'Validated by ${decideur} on ${date}.';
+	@override String suiviRefusee({required Object decideur, required Object date, required Object motif}) => 'Declined by ${decideur} on ${date}. Reason: ${motif}';
+	@override String get erreurSuivi => 'We could not read the status of the validation request. Try again in a moment.';
+	@override String get reessayer => 'Try again';
+	@override String reference({required Object reference}) => 'Payment reference: ${reference}';
+	@override late final _Traductions$comptable$validation$journal$en journal = _Traductions$comptable$validation$journal$en._(_root);
+}
+
+// Path: comptable.direction
+class _Traductions$comptable$direction$en extends Traductions$comptable$direction$fr {
+	_Traductions$comptable$direction$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String versionDepuis({required Object version, required Object date}) => 'Version ${version}, in force since ${date}';
+	@override String versionSansDate({required Object version}) => 'Version ${version}';
+	@override String auteur({required Object auteur}) => 'Saved by ${auteur}';
+	@override String get enregistrer => 'Save a new version';
+	@override String get aucuneModification => 'No change to save.';
+	@override String get corrigezChamps => 'Fix the flagged fields to save.';
+	@override String get enregistree => 'New version saved.';
+	@override String get erreurEnregistrement => 'We do not know whether this version was saved. Read the version in force again, then try again.';
+	@override String get enregistrementIndisponible => 'Saving is not available yet. Try again later.';
+	@override String get historique => 'Version history';
+	@override String get historiqueVide => 'No version before this one.';
+	@override String get etatActuel => 'Current state of the Reserve';
+	@override String get suffixeMois => 'months';
+	@override String get suffixeJours => 'days';
+	@override String get suffixePourcent => '%';
+	@override String get erreurNombre => 'Enter a whole number greater than zero.';
+	@override String get erreurPourcentage => 'Enter a percentage greater than zero and at most 100, with at most one decimal.';
+	@override String get erreurMontant => 'Enter an amount greater than zero.';
+	@override late final _Traductions$comptable$direction$reservePanneau$en reservePanneau = _Traductions$comptable$direction$reservePanneau$en._(_root);
+	@override late final _Traductions$comptable$direction$delegationPanneau$en delegationPanneau = _Traductions$comptable$direction$delegationPanneau$en._(_root);
+	@override String get titre => 'Reserve and delegation';
+	@override String get sousTitre => 'The Strategic reserve policy and what the Accountant can carry out alone.';
+	@override String get reserve => 'Strategic reserve policy';
+	@override String get delegation => 'Financial delegation';
+}
+
+// Path: comptable.demo
+class _Traductions$comptable$demo$en extends Traductions$comptable$demo$fr {
+	_Traductions$comptable$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Accountant demo';
+	@override String get mention => 'Fictional data, no payment, nothing is sent.';
+	@override String get intro => 'Choose an Accountant screen. Amounts are hidden by default; the "amounts shown" variant reveals them for the duration of the page.';
+	@override String get montantsMasques => 'Amounts hidden';
+	@override String get montantsAffiches => 'Amounts shown';
+	@override String get groupeComptable => 'Accountant shell';
+	@override String get groupeCompte => 'Account and beneficiary';
+	@override String get groupeDirection => 'Management';
+}
+
+// Path: comptable.paiementsFamilles
+class _Traductions$comptable$paiementsFamilles$en extends Traductions$comptable$paiementsFamilles$fr {
+	_Traductions$comptable$paiementsFamilles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Family payments';
+	@override String get entree => 'Family payments';
 }
 
 // Path: presentationTuteur.accueil
@@ -15271,6 +15449,233 @@ class _Traductions$comptable$beneficiaires$recevoir$en extends Traductions$compt
 	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$en wise = _Traductions$comptable$beneficiaires$recevoir$wise$en._(_root);
 }
 
+// Path: comptable.validation.natures
+class _Traductions$comptable$validation$natures$en extends Traductions$comptable$validation$natures$fr {
+	_Traductions$comptable$validation$natures$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get payoutSensible => 'Sensitive payment';
+	@override String get retraitReserve => 'Strategic reserve withdrawal';
+	@override String get obligationAApprouver => 'One-off obligation';
+	@override String get payoutDuComptable => 'Accountant\'s pay';
+	@override String get sortieCoffreProtege => 'Outflow from a protected vault';
+	@override String get paiementRecu => 'Payment received from a family';
+}
+
+// Path: comptable.validation.detail
+class _Traductions$comptable$validation$detail$en extends Traductions$comptable$validation$detail$fr {
+	_Traductions$comptable$validation$detail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Validation request';
+	@override String get nature => 'Nature';
+	@override String get objet => 'Purpose';
+	@override String get demandeur => 'Requested by';
+	@override String get date => 'Request date';
+	@override String get raison => 'Reason';
+	@override String get montant => 'Exact amount';
+	@override String get etat => 'Status';
+	@override String get historique => 'History';
+	@override String get historiqueVide => 'No entry yet.';
+	@override String get historiqueErreur => 'The history could not be read: it is not that it is empty. Try again in a moment.';
+	@override String get historiqueReessayer => 'Read the history again';
+}
+
+// Path: comptable.validation.motifs
+class _Traductions$comptable$validation$motifs$en extends Traductions$comptable$validation$motifs$fr {
+	_Traductions$comptable$validation$motifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get coordonnees => 'Beneficiary\'s details to verify';
+	@override String get montant => 'Amount to verify at the source';
+	@override String get justificatif => 'Supporting document missing or unreadable';
+	@override String get reserve => 'Outside the Reserve policy';
+	@override String get reporter => 'To postpone to the next cycle';
+	@override String get autre => 'Other';
+}
+
+// Path: comptable.validation.journal
+class _Traductions$comptable$validation$journal$en extends Traductions$comptable$validation$journal$fr {
+	_Traductions$comptable$validation$journal$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandee => 'Validation requested';
+	@override String get validee => 'Request validated';
+	@override String get refusee => 'Request declined';
+}
+
+// Path: comptable.direction.reservePanneau
+class _Traductions$comptable$direction$reservePanneau$en extends Traductions$comptable$direction$reservePanneau$fr {
+	_Traductions$comptable$direction$reservePanneau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'You set the policy; the Accountant reads and carries it out. Each save creates a new version, kept in the history.';
+	@override String get objectifTitre => 'Reserve target';
+	@override String get objectifDetail => 'What the Strategic reserve must reach.';
+	@override String get modeFixe => 'Fixed amount';
+	@override String get modeFixeDetail => 'A precise sum you choose.';
+	@override String get modeMois => 'Coverage in months';
+	@override String get modeMoisDetail => 'A number of months of essential expenses.';
+	@override String get montantCible => 'Target amount';
+	@override String get montantCibleDetail => 'The sum the Strategic reserve must reach.';
+	@override String get nombreMois => 'Number of months of coverage';
+	@override String get nombreMoisDetail => 'How many months of essential expenses the Reserve must cover.';
+	@override String get alimentationTitre => 'Automatic funding';
+	@override String get alimentationDetail => 'How the Reserve fills up without action from the Accountant.';
+	@override late final _Traductions$comptable$direction$reservePanneau$regle$en regle = _Traductions$comptable$direction$reservePanneau$regle$en._(_root);
+	@override String get montantAuto => 'Amount to allocate';
+	@override String get montantAutoDetail => 'The sum allocated to the Reserve at each due date.';
+	@override String get pourcentageAuto => 'Share of the consolidated collection';
+	@override String get pourcentageAutoDetail => 'The share allocated to the Reserve at each due date.';
+	@override String get cadenceTitre => 'Frequency';
+	@override String get cadenceDetail => 'When the funding takes place.';
+	@override late final _Traductions$comptable$direction$reservePanneau$cadence$en cadence = _Traductions$comptable$direction$reservePanneau$cadence$en._(_root);
+	@override String get seuilTitre => 'Alert';
+	@override String get seuil => 'Alert threshold';
+	@override String get seuilDetail => 'Below this share of the target, the Reserve is flagged "below target". Leave empty to set no threshold.';
+	@override String get seuilIndice => 'No threshold';
+	@override String get retraitTitre => 'Withdrawal';
+	@override String get retraitSwitch => 'A withdrawal requires additional validation';
+	@override String get retraitSwitchDetail => 'Taking money out of the Reserve is a sensitive operation: someone other than the requester validates it.';
+}
+
+// Path: comptable.direction.delegationPanneau
+class _Traductions$comptable$direction$delegationPanneau$en extends Traductions$comptable$direction$delegationPanneau$fr {
+	_Traductions$comptable$direction$delegationPanneau$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'You set once what the Accountant can carry out alone. Everything else is yours.';
+	@override String get pouvoirsTitre => 'What the Accountant can do alone';
+	@override String get paiementsStandards => 'Pay standard payments';
+	@override String get paiementsStandardsDetail => 'A payment at the calculated amount, to a verified method, goes out without daily validation.';
+	@override String get remboursement => 'Execute a standard refund';
+	@override String get remboursementDetail => 'A refund that complies with the rule goes out without validation.';
+	@override String get alimentationReserve => 'Fund the Strategic reserve';
+	@override String get alimentationReserveDetail => 'A movement to the Reserve, compliant with its policy.';
+	@override String get plafondsTitre => 'Ceilings';
+	@override String get plafondsDetail => 'Above a ceiling, the payment asks for your validation. Leave empty to set no ceiling.';
+	@override String get plafondTransaction => 'Ceiling per transaction';
+	@override String get plafondTransactionDetail => 'The maximum amount of a single payment.';
+	@override String get plafondLot => 'Ceiling per batch';
+	@override String get plafondLotDetail => 'The maximum amount of a batch of payments.';
+	@override String get plafondPeriode => 'Cumulative ceiling per period';
+	@override String get plafondPeriodeDetail => 'The maximum total over the period; it prevents getting around a ceiling by splitting.';
+	@override String get plafondIndice => 'No ceiling';
+	@override String get validationsTitre => 'When a second validation is required';
+	@override String get retraitReserve => 'Strategic reserve withdrawal';
+	@override String get retraitReserveDetail => 'Forbidden to the Accountant without validation.';
+	@override String get premierPaiement => 'First payment to a beneficiary';
+	@override String get premierPaiementDetail => 'The first payment to a beneficiary requires a second validation.';
+	@override String get coordonnees => 'Details recently changed';
+	@override String get coordonneesDetail => 'A payment to recently changed details requires a second validation.';
+	@override String get joursRecents => 'Length of a recent change';
+	@override String get joursRecentsDetail => 'For this number of days after a change, the details are considered recent.';
+	@override String get toujoursTitre => 'Always forbidden to the Accountant';
+	@override String get toujoursDetail => 'These three rules cannot be adjusted.';
+	@override String get autoPayout => 'Paying themselves';
+	@override String get autoPayoutDetail => 'Their own payment always goes through another person.';
+	@override String get montantManuel => 'Entering an amount by hand when paying';
+	@override String get montantManuelDetail => 'A payment\'s amount is always that of the obligation.';
+	@override String get politiqueTarifaire => 'Changing the prices';
+	@override String get politiqueTarifaireDetail => 'The pricing policy stays with the management.';
+	@override String get suspendreTitre => 'Suspend all delegations';
+	@override String get suspendreDetail => 'The Accountant can no longer carry out anything alone, immediately: each operation goes back through the management.';
+	@override String get suspendreAction => 'Suspend all delegations';
+	@override String get suspendreConfirmerTitre => 'Suspend all delegations?';
+	@override String get suspendreConfirmerPhrase => 'The effect is immediate: no Accountant operation will go out without your validation. The suspension is written in the log.';
+	@override String get suspendreConfirmer => 'Suspend';
+	@override String get suspendreGarder => 'Keep the delegations';
+	@override String get reactiverTitre => 'Reactivate the delegations';
+	@override String get reactiverDetail => 'The delegations are suspended. Lifting them is an act of the management, with a written reason.';
+	@override String get reactiverAction => 'Reactivate the delegations';
+	@override String get reactiverPhrase => 'The Accountant will be able to act again within the limits of the policy. An expired delegation is never restored: it will have to be renewed. Cancelled outflows stay cancelled. The reactivation is written in the log.';
+	@override String get reactiverRaison => 'Reason for reactivation';
+	@override String get reactiverRaisonAide => 'It is kept in the log with your name.';
+	@override String get reactiverRaisonVide => 'Write the reason to reactivate the delegations.';
+	@override String get reactiverConfirmer => 'Reactivate';
+	@override String get reactiverGarder => 'Keep suspended';
+	@override String get reactiveeActive => 'Delegations reactivated.';
+	@override String get reactiveeExpiree => 'Delegations reactivated, but the delegation has expired: renew it so that it restarts for its duration.';
+	@override String get reactiverEchec => 'The reactivation is not confirmed: the request may not have reached Rewayah, or your two-step verification needs redoing. Check the delegation\'s state before trying again.';
+	@override String get suspendueTitre => 'Delegations suspended';
+	@override String suspendueDepuis({required Object date}) => 'Suspended since ${date}. The Accountant can carry out nothing without your validation.';
+	@override String get suspendueSansDate => 'The Accountant can carry out nothing without your validation.';
+	@override String get suspendueEnCours => 'Suspension in progress';
+	@override String get suspendueEchec => 'The suspension is not confirmed: the request may not have reached Rewayah. Check the delegation\'s state before trying again.';
+	@override String get expirationTitre => 'Expiry';
+	@override String get expirationDetail => 'Each delegation expires and is renewed. Past the date, the Accountant can no longer carry out anything alone.';
+	@override String expireLe({required Object date}) => 'Expires on ${date}';
+	@override String get expirationInconnue => 'Expiry date not provided';
+	@override String get etatActive => 'Active';
+	@override String get etatSuspendue => 'Suspended';
+	@override String get etatExpiree => 'Expired';
+	@override String renouvelablePour({required Object jours}) => 'Renewable for ${jours} days';
+	@override String get renouveler => 'Renew the delegation';
+	@override String get renouvelee => 'Delegation renewed.';
+	@override String get renouvelerEchec => 'The renewal is not confirmed: the request may not have reached Rewayah. Check the expiry date before trying again.';
+	@override String get sortiesTitre => 'Pending outflows';
+	@override String get sortiesDetail => 'An outflow above the per-transaction ceiling waits for a security delay before going out. You can cancel it until then.';
+	@override String sortiesDelai({required Object heures}) => 'Security delay: ${heures} h';
+	@override String get sortiesVide => 'No pending outflow.';
+	@override String get sortiesErreur => 'The pending outflows could not be read: the read may not have reached Rewayah. Try again in a moment.';
+	@override String sortiePart({required Object objet, required Object date}) => '${objet} · goes out on ${date}';
+	@override String get sortieAnnuler => 'Cancel';
+	@override String sortieAnnulerNom({required Object beneficiaire}) => 'Cancel ${beneficiaire}\'s outflow';
+	@override String get sortieAnnulerTitre => 'Cancel this outflow?';
+	@override String sortieAnnulerPhrase({required Object beneficiaire}) => '${beneficiaire}\'s outflow will not go out. The cancellation is written in the log.';
+	@override String get sortieAnnulerConfirmer => 'Cancel the outflow';
+	@override String get sortieGarder => 'Keep the outflow';
+	@override String get sortieAnnulee => 'Outflow cancelled.';
+	@override String get sortieAnnulationEchec => 'The cancellation is not confirmed: the request may not have reached Rewayah. Read the list again before trying again.';
+	@override String get exceptionsTitre => 'Exceptions';
+	@override String get exceptionsDetail => 'Settings specific to one delegation. An exception ceiling is always lower than that of the general policy, never higher.';
+	@override String get exceptionsVide => 'No exception: the general policy applies to all delegations.';
+	@override String get exceptionAjouter => 'Add an exception';
+	@override String exceptionModifier({required Object libelle}) => 'Edit the exception for ${libelle}';
+	@override String get exceptionLibelleDefaut => 'Accountant\'s delegation';
+	@override String get exceptionCoffres => 'Authorized vaults';
+	@override String get exceptionCoffresAucun => 'No vault authorized';
+	@override String get exceptionExclus => 'Beneficiaries excluded';
+	@override String get exceptionExclusAucun => 'No beneficiary excluded';
+	@override String get exceptionPlafond => 'Ceiling per transaction';
+	@override String get exceptionPlafondGeneral => 'That of the general policy';
+	@override String get exceptionTitre => 'Delegation exception';
+	@override String get exceptionCoffresDetail => 'Only these vaults can be touched by the delegation. No vault ticked: no vault authorized.';
+	@override String get exceptionPlafondDetail => 'Lower than the general policy ceiling, never higher. Empty: that of the general policy.';
+	@override String get exceptionPlafondTropHaut => 'This ceiling must be lower than that of the general policy.';
+	@override String get exceptionPlafondSansGeneral => 'First set a per-transaction ceiling in the general policy: an exception can only be lower.';
+	@override String get exceptionExclure => 'Exclude a beneficiary';
+	@override String get exceptionExclureAucun => 'No other beneficiary to exclude.';
+	@override String exceptionRetirerExclu({required Object nom}) => 'Remove ${nom} from the excluded';
+	@override String get exceptionGarder => 'Keep the exception';
+	@override String get exceptionRetirer => 'Remove this exception';
+	@override String get exceptionRetirerPhrase => 'The delegation returns to the general policy. Nothing is saved before "Save".';
+	@override String get sensiblesTitre => 'Always sensitive';
+	@override String get sensiblesDetail => 'These five cases always require additional validation, whatever the settings above. The first payment and recent details are set higher up.';
+	@override String get sensibleHorsSeuil => 'Amount above threshold';
+	@override String get sensibleHorsSeuilDetail => 'A payment above the ceilings set above.';
+	@override String get sensibleHorsCycle => 'Off-cycle payment';
+	@override String get sensibleHorsCycleDetail => 'A payment that does not follow the usual pay period.';
+	@override String get sensibleLieOperateur => 'Beneficiary linked to the operator';
+	@override String get sensibleLieOperateurDetail => 'A payment to a person linked to the payment operator.';
+	@override String get sensibleFournisseur => 'Provider unavailable';
+	@override String get sensibleFournisseurDetail => 'A payment whose payment provider is unavailable.';
+	@override String get sensibleManuelle => 'Manual obligation not approved';
+	@override String get sensibleManuelleDetail => 'An obligation entered by hand and not yet approved.';
+}
+
 // Path: recherche.etats.vide
 class _Traductions$recherche$etats$vide$en extends Traductions$recherche$etats$vide$fr {
 	_Traductions$recherche$etats$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -18409,6 +18814,39 @@ class _Traductions$comptable$beneficiaires$recevoir$wise$en extends Traductions$
 	@override String versementDetail({required Object date, required Object moyen}) => 'Paid on ${date} · ${moyen}';
 	@override String get versementAnnule => 'Payment cancelled by the management';
 	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$moyen$en moyen = _Traductions$comptable$beneficiaires$recevoir$wise$moyen$en._(_root);
+}
+
+// Path: comptable.direction.reservePanneau.regle
+class _Traductions$comptable$direction$reservePanneau$regle$en extends Traductions$comptable$direction$reservePanneau$regle$fr {
+	_Traductions$comptable$direction$reservePanneau$regle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get desactivee => 'Off';
+	@override String get desactiveeDetail => 'No automatic funding.';
+	@override String get montantFixe => 'Fixed sum';
+	@override String get montantFixeDetail => 'The same sum at each due date.';
+	@override String get pourcentage => 'Percentage';
+	@override String get pourcentageDetail => 'A share of the consolidated collection.';
+	@override String get jusquAObjectif => 'Up to the target';
+	@override String get jusquAObjectifDetail => 'Make up what is missing to reach the target.';
+	@override String get proposee => 'Proposed';
+	@override String get proposeeDetail => 'A proposal that the Accountant confirms.';
+}
+
+// Path: comptable.direction.reservePanneau.cadence
+class _Traductions$comptable$direction$reservePanneau$cadence$en extends Traductions$comptable$direction$reservePanneau$cadence$fr {
+	_Traductions$comptable$direction$reservePanneau$cadence$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get clotureCycle => 'At each cycle closing';
+	@override String get hebdomadaire => 'Every week';
+	@override String get mensuelle => 'Every month';
+	@override String get apresEncaissementConsolide => 'After each consolidated collection';
+	@override String get manuelle => 'Manual';
 }
 
 // Path: avis.admin.liens.etat
@@ -27516,6 +27954,324 @@ extension on TraductionsEn {
 			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Due: ${date}',
 			'comptable.contractuels.payer' => 'Pay',
 			'comptable.contractuels.payerLecteur' => ({required Object objet}) => 'Pay the obligation ${objet}',
+			'comptable.contractuels.approuver' => 'Approve',
+			'comptable.contractuels.ouvrirLecteur' => ({required Object objet}) => 'Open the obligation ${objet}',
+			'comptable.contractuels.creationBloquee' => ({required Object raison}) => 'New obligation unavailable: ${raison}.',
+			'comptable.contractuels.videObligations' => 'No obligation in progress',
+			'comptable.contractuels.videObligationsDetail' => 'Obligations created appear here, with their due date and status.',
+			'comptable.contractuels.videAApprouver' => 'Nothing to approve',
+			'comptable.contractuels.videAApprouverDetail' => 'Obligations awaiting approval appear here.',
+			'comptable.contractuels.videAPayer' => 'Nothing to pay',
+			'comptable.contractuels.videAPayerDetail' => 'An approved obligation appears here, ready to be paid.',
+			'comptable.contractuels.videHistorique' => 'No obligation finished',
+			'comptable.contractuels.videHistoriqueDetail' => 'Obligations paid, declined or cancelled appear here.',
+			'comptable.contractuels.montantDefini' => 'Amount set at creation, frozen after approval.',
+			'comptable.contractuels.montantFige' => 'Amount frozen at approval: it can no longer be changed.',
+			'comptable.contractuels.montantTitre' => 'Amount',
+			'comptable.contractuels.sectionLignes' => 'Amount details',
+			'comptable.contractuels.sectionInfos' => 'Information',
+			'comptable.contractuels.sectionHistorique' => 'Obligation history',
+			'comptable.contractuels.historiqueVide' => 'No operation recorded for this obligation.',
+			'comptable.contractuels.champBeneficiaire' => 'Beneficiary',
+			'comptable.contractuels.champType' => 'Type',
+			'comptable.contractuels.champEcheance' => 'Due date',
+			'comptable.contractuels.champJustificatif' => 'Supporting document',
+			'comptable.contractuels.champCentreCout' => 'Cost centre',
+			'comptable.contractuels.champAuteur' => 'Author',
+			'comptable.contractuels.champApprobateur' => 'Approver',
+			'comptable.contractuels.champProfilPaiement' => 'Beneficiary\'s payment',
+			'comptable.contractuels.champMotifRefus' => 'Reason for refusal',
+			'comptable.contractuels.aucunJustificatif' => 'No supporting document attached',
+			'comptable.contractuels.nonRenseigne' => 'Not provided',
+			'comptable.contractuels.ligneSource' => ({required Object source}) => 'Source: ${source}',
+			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'Added by ${auteur}',
+			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'Validation: ${validation}',
+			'comptable.contractuels.payerAide' => 'Payment opens in the payment details, with the exact amount.',
+			'comptable.contractuels.approuverAide' => 'After approval, the amount is frozen and the obligation becomes payable.',
+			'comptable.contractuels.renvoyerInvitation' => 'Resend the invitation',
+			'comptable.contractuels.invitationAide' => 'This external beneficiary enters their own payment method, from their secure invitation.',
+			'comptable.contractuels.invitationRenvoyee' => 'Invitation resent',
+			'comptable.contractuels.erreurApprobation' => 'We do not know whether the approval was taken into account. Refresh the obligation before trying again.',
+			'comptable.contractuels.erreurInvitation' => 'We do not know whether the invitation went out again. Refresh the obligation before trying again.',
+			'comptable.contractuels.formIntro' => 'The beneficiary, due date and cost centre are suggested: change them if needed, then enter the purpose and the amount.',
+			'comptable.contractuels.beneficiaireExterne' => 'New external beneficiary',
+			'comptable.contractuels.beneficiaireExterneAide' => 'They receive a secure invitation to enter their own payment method.',
+			'comptable.contractuels.champNomExterne' => 'External beneficiary\'s name',
+			'comptable.contractuels.changerEcheance' => 'Change the due date',
+			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Currency: ${devise}',
+			'comptable.contractuels.champObjet' => 'Obligation purpose',
+			'comptable.contractuels.aideObjet' => 'For example: Invoice #024',
+			'comptable.contractuels.champRefJustificatif' => 'Supporting document reference (optional)',
+			'comptable.contractuels.champMontantSaisi' => 'Amount',
+			'comptable.contractuels.aideMontant' => 'Entered once: it can no longer be changed after approval.',
+			'comptable.contractuels.creer' => 'Create the obligation',
+			'comptable.contractuels.horsLigneCreation' => 'The obligation cannot be created now. Create it as soon as sending is possible again.',
+			'comptable.contractuels.erreurObjet' => 'Enter the obligation\'s purpose.',
+			'comptable.contractuels.erreurMontant' => 'Enter an amount greater than zero, for example 350 or 350.50.',
+			'comptable.contractuels.erreurNomExterne' => 'Enter the external beneficiary\'s name.',
+			'comptable.contractuels.erreurCreation' => 'We do not know whether the obligation was created. Refresh the list before trying again.',
+			'comptable.contractuels.creationIndisponible' => 'Your account cannot create an obligation.',
+			'comptable.contractuels.retourListe' => 'Back to contractors',
+			'comptable.contractuels.titre' => 'Contractors and obligations',
+			'comptable.contractuels.sousTitre' => 'Amounts are set when the obligation is created, frozen after approval.',
+			'comptable.contractuels.nouvelle' => 'New obligation',
+			'comptable.contractuels.detailTitre' => 'Obligation',
+			'comptable.validation.sousTitre' => 'Accountant requests awaiting the decision of another authorized person. Whoever asks never validates their own request.',
+			'comptable.validation.aDecider' => 'To decide',
+			'comptable.validation.decidees' => 'Recently decided',
+			'comptable.validation.videTitre' => 'Nothing to validate',
+			'comptable.validation.videPhrase' => 'The Accountant\'s next requests will appear here.',
+			'comptable.validation.natures.payoutSensible' => 'Sensitive payment',
+			'comptable.validation.natures.retraitReserve' => 'Strategic reserve withdrawal',
+			'comptable.validation.natures.obligationAApprouver' => 'One-off obligation',
+			'comptable.validation.natures.payoutDuComptable' => 'Accountant\'s pay',
+			'comptable.validation.natures.sortieCoffreProtege' => 'Outflow from a protected vault',
+			'comptable.validation.natures.paiementRecu' => 'Payment received from a family',
+			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Requested by ${demandeur} on ${date}',
+			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validated by ${decideur} on ${date}',
+			'comptable.validation.refuseePar' => ({required Object decideur, required Object date}) => 'Declined by ${decideur} on ${date}',
+			'comptable.validation.motif' => ({required Object motif}) => 'Reason: ${motif}',
+			'comptable.validation.ouvrir' => ({required Object objet}) => 'See the request: ${objet}',
+			'comptable.validation.votreDemandeTitre' => 'Your own request',
+			'comptable.validation.votreDemandePhrase' => 'Another authorized person will decide it: you never validate a request you made.',
+			'comptable.validation.detail.titre' => 'Validation request',
+			'comptable.validation.detail.nature' => 'Nature',
+			'comptable.validation.detail.objet' => 'Purpose',
+			'comptable.validation.detail.demandeur' => 'Requested by',
+			'comptable.validation.detail.date' => 'Request date',
+			'comptable.validation.detail.raison' => 'Reason',
+			'comptable.validation.detail.montant' => 'Exact amount',
+			'comptable.validation.detail.etat' => 'Status',
+			'comptable.validation.detail.historique' => 'History',
+			'comptable.validation.detail.historiqueVide' => 'No entry yet.',
+			'comptable.validation.detail.historiqueErreur' => 'The history could not be read: it is not that it is empty. Try again in a moment.',
+			'comptable.validation.detail.historiqueReessayer' => 'Read the history again',
+			'comptable.validation.valider' => 'Validate',
+			'comptable.validation.refuser' => 'Decline',
+			'comptable.validation.annuler' => 'Cancel',
+			'comptable.validation.fermer' => 'Close',
+			'comptable.validation.confirmerRefus' => 'Confirm the refusal',
+			'comptable.validation.motifTitre' => 'Reason for refusal',
+			'comptable.validation.motifPhrase' => 'The Accountant will read this reason with the decision. Choose one, or give your own.',
+			'comptable.validation.motifs.coordonnees' => 'Beneficiary\'s details to verify',
+			'comptable.validation.motifs.montant' => 'Amount to verify at the source',
+			'comptable.validation.motifs.justificatif' => 'Supporting document missing or unreadable',
+			'comptable.validation.motifs.reserve' => 'Outside the Reserve policy',
+			'comptable.validation.motifs.reporter' => 'To postpone to the next cycle',
+			'comptable.validation.motifs.autre' => 'Other',
+			'comptable.validation.motifAutreChamp' => 'Give the reason',
+			'comptable.validation.erreurMotif' => 'Choose a reason to decline.',
+			'comptable.validation.erreurMotifAutre' => 'Give the reason to decline.',
+			'comptable.validation.decisionValidee' => 'Your decision is saved: the request is validated.',
+			'comptable.validation.decisionRefusee' => 'Your decision is saved: the request is declined, with its reason.',
+			'comptable.validation.refusTitre' => 'Decision not saved',
+			'comptable.validation.refusDemandeur' => 'You made this request: another authorized person must decide it. Nothing has changed.',
+			'comptable.validation.refusMotif' => 'A refusal needs a reason. Choose one, then confirm.',
+			'comptable.validation.refusDejaDecidee' => 'This request has already been decided. Read the list again.',
+			'comptable.validation.inconnuTitre' => 'Decision not confirmed',
+			'comptable.validation.inconnuPhrase' => 'We do not know whether your decision was saved. Read the list again before deciding again.',
+			'comptable.validation.relireListe' => 'Read the list again',
+			'comptable.validation.horsLigne' => 'Decision impossible now: decide as soon as sending is possible again.',
+			'comptable.validation.suiviEnAttente' => ({required Object date}) => 'Requested on ${date}. Another authorized person will decide; nothing goes out before their decision.',
+			'comptable.validation.suiviValidee' => ({required Object decideur, required Object date}) => 'Validated by ${decideur} on ${date}.',
+			'comptable.validation.suiviRefusee' => ({required Object decideur, required Object date, required Object motif}) => 'Declined by ${decideur} on ${date}. Reason: ${motif}',
+			'comptable.validation.erreurSuivi' => 'We could not read the status of the validation request. Try again in a moment.',
+			'comptable.validation.reessayer' => 'Try again',
+			'comptable.validation.reference' => ({required Object reference}) => 'Payment reference: ${reference}',
+			'comptable.validation.journal.demandee' => 'Validation requested',
+			'comptable.validation.journal.validee' => 'Request validated',
+			'comptable.validation.journal.refusee' => 'Request declined',
+			'comptable.direction.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, in force since ${date}',
+			'comptable.direction.versionSansDate' => ({required Object version}) => 'Version ${version}',
+			'comptable.direction.auteur' => ({required Object auteur}) => 'Saved by ${auteur}',
+			'comptable.direction.enregistrer' => 'Save a new version',
+			'comptable.direction.aucuneModification' => 'No change to save.',
+			'comptable.direction.corrigezChamps' => 'Fix the flagged fields to save.',
+			'comptable.direction.enregistree' => 'New version saved.',
+			'comptable.direction.erreurEnregistrement' => 'We do not know whether this version was saved. Read the version in force again, then try again.',
+			'comptable.direction.enregistrementIndisponible' => 'Saving is not available yet. Try again later.',
+			'comptable.direction.historique' => 'Version history',
+			'comptable.direction.historiqueVide' => 'No version before this one.',
+			'comptable.direction.etatActuel' => 'Current state of the Reserve',
+			'comptable.direction.suffixeMois' => 'months',
+			'comptable.direction.suffixeJours' => 'days',
+			'comptable.direction.suffixePourcent' => '%',
+			'comptable.direction.erreurNombre' => 'Enter a whole number greater than zero.',
+			'comptable.direction.erreurPourcentage' => 'Enter a percentage greater than zero and at most 100, with at most one decimal.',
+			'comptable.direction.erreurMontant' => 'Enter an amount greater than zero.',
+			'comptable.direction.reservePanneau.intro' => 'You set the policy; the Accountant reads and carries it out. Each save creates a new version, kept in the history.',
+			'comptable.direction.reservePanneau.objectifTitre' => 'Reserve target',
+			'comptable.direction.reservePanneau.objectifDetail' => 'What the Strategic reserve must reach.',
+			'comptable.direction.reservePanneau.modeFixe' => 'Fixed amount',
+			'comptable.direction.reservePanneau.modeFixeDetail' => 'A precise sum you choose.',
+			'comptable.direction.reservePanneau.modeMois' => 'Coverage in months',
+			'comptable.direction.reservePanneau.modeMoisDetail' => 'A number of months of essential expenses.',
+			'comptable.direction.reservePanneau.montantCible' => 'Target amount',
+			'comptable.direction.reservePanneau.montantCibleDetail' => 'The sum the Strategic reserve must reach.',
+			'comptable.direction.reservePanneau.nombreMois' => 'Number of months of coverage',
+			'comptable.direction.reservePanneau.nombreMoisDetail' => 'How many months of essential expenses the Reserve must cover.',
+			'comptable.direction.reservePanneau.alimentationTitre' => 'Automatic funding',
+			'comptable.direction.reservePanneau.alimentationDetail' => 'How the Reserve fills up without action from the Accountant.',
+			'comptable.direction.reservePanneau.regle.desactivee' => 'Off',
+			'comptable.direction.reservePanneau.regle.desactiveeDetail' => 'No automatic funding.',
+			'comptable.direction.reservePanneau.regle.montantFixe' => 'Fixed sum',
+			'comptable.direction.reservePanneau.regle.montantFixeDetail' => 'The same sum at each due date.',
+			'comptable.direction.reservePanneau.regle.pourcentage' => 'Percentage',
+			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'A share of the consolidated collection.',
+			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'Up to the target',
+			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'Make up what is missing to reach the target.',
+			'comptable.direction.reservePanneau.regle.proposee' => 'Proposed',
+			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'A proposal that the Accountant confirms.',
+			'comptable.direction.reservePanneau.montantAuto' => 'Amount to allocate',
+			'comptable.direction.reservePanneau.montantAutoDetail' => 'The sum allocated to the Reserve at each due date.',
+			'comptable.direction.reservePanneau.pourcentageAuto' => 'Share of the consolidated collection',
+			'comptable.direction.reservePanneau.pourcentageAutoDetail' => 'The share allocated to the Reserve at each due date.',
+			'comptable.direction.reservePanneau.cadenceTitre' => 'Frequency',
+			'comptable.direction.reservePanneau.cadenceDetail' => 'When the funding takes place.',
+			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'At each cycle closing',
+			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'Every week',
+			'comptable.direction.reservePanneau.cadence.mensuelle' => 'Every month',
+			'comptable.direction.reservePanneau.cadence.apresEncaissementConsolide' => 'After each consolidated collection',
+			'comptable.direction.reservePanneau.cadence.manuelle' => 'Manual',
+			'comptable.direction.reservePanneau.seuilTitre' => 'Alert',
+			'comptable.direction.reservePanneau.seuil' => 'Alert threshold',
+			'comptable.direction.reservePanneau.seuilDetail' => 'Below this share of the target, the Reserve is flagged "below target". Leave empty to set no threshold.',
+			'comptable.direction.reservePanneau.seuilIndice' => 'No threshold',
+			'comptable.direction.reservePanneau.retraitTitre' => 'Withdrawal',
+			'comptable.direction.reservePanneau.retraitSwitch' => 'A withdrawal requires additional validation',
+			'comptable.direction.reservePanneau.retraitSwitchDetail' => 'Taking money out of the Reserve is a sensitive operation: someone other than the requester validates it.',
+			'comptable.direction.delegationPanneau.intro' => 'You set once what the Accountant can carry out alone. Everything else is yours.',
+			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'What the Accountant can do alone',
+			'comptable.direction.delegationPanneau.paiementsStandards' => 'Pay standard payments',
+			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'A payment at the calculated amount, to a verified method, goes out without daily validation.',
+			'comptable.direction.delegationPanneau.remboursement' => 'Execute a standard refund',
+			'comptable.direction.delegationPanneau.remboursementDetail' => 'A refund that complies with the rule goes out without validation.',
+			'comptable.direction.delegationPanneau.alimentationReserve' => 'Fund the Strategic reserve',
+			'comptable.direction.delegationPanneau.alimentationReserveDetail' => 'A movement to the Reserve, compliant with its policy.',
+			'comptable.direction.delegationPanneau.plafondsTitre' => 'Ceilings',
+			'comptable.direction.delegationPanneau.plafondsDetail' => 'Above a ceiling, the payment asks for your validation. Leave empty to set no ceiling.',
+			'comptable.direction.delegationPanneau.plafondTransaction' => 'Ceiling per transaction',
+			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'The maximum amount of a single payment.',
+			'comptable.direction.delegationPanneau.plafondLot' => 'Ceiling per batch',
+			'comptable.direction.delegationPanneau.plafondLotDetail' => 'The maximum amount of a batch of payments.',
+			'comptable.direction.delegationPanneau.plafondPeriode' => 'Cumulative ceiling per period',
+			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'The maximum total over the period; it prevents getting around a ceiling by splitting.',
+			'comptable.direction.delegationPanneau.plafondIndice' => 'No ceiling',
+			'comptable.direction.delegationPanneau.validationsTitre' => 'When a second validation is required',
+			'comptable.direction.delegationPanneau.retraitReserve' => 'Strategic reserve withdrawal',
+			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Forbidden to the Accountant without validation.',
+			'comptable.direction.delegationPanneau.premierPaiement' => 'First payment to a beneficiary',
+			'comptable.direction.delegationPanneau.premierPaiementDetail' => 'The first payment to a beneficiary requires a second validation.',
+			'comptable.direction.delegationPanneau.coordonnees' => 'Details recently changed',
+			'comptable.direction.delegationPanneau.coordonneesDetail' => 'A payment to recently changed details requires a second validation.',
+			'comptable.direction.delegationPanneau.joursRecents' => 'Length of a recent change',
+			'comptable.direction.delegationPanneau.joursRecentsDetail' => 'For this number of days after a change, the details are considered recent.',
+			'comptable.direction.delegationPanneau.toujoursTitre' => 'Always forbidden to the Accountant',
+			'comptable.direction.delegationPanneau.toujoursDetail' => 'These three rules cannot be adjusted.',
+			'comptable.direction.delegationPanneau.autoPayout' => 'Paying themselves',
+			'comptable.direction.delegationPanneau.autoPayoutDetail' => 'Their own payment always goes through another person.',
+			'comptable.direction.delegationPanneau.montantManuel' => 'Entering an amount by hand when paying',
+			'comptable.direction.delegationPanneau.montantManuelDetail' => 'A payment\'s amount is always that of the obligation.',
+			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'Changing the prices',
+			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'The pricing policy stays with the management.',
+			'comptable.direction.delegationPanneau.suspendreTitre' => 'Suspend all delegations',
+			'comptable.direction.delegationPanneau.suspendreDetail' => 'The Accountant can no longer carry out anything alone, immediately: each operation goes back through the management.',
+			'comptable.direction.delegationPanneau.suspendreAction' => 'Suspend all delegations',
+			'comptable.direction.delegationPanneau.suspendreConfirmerTitre' => 'Suspend all delegations?',
+			'comptable.direction.delegationPanneau.suspendreConfirmerPhrase' => 'The effect is immediate: no Accountant operation will go out without your validation. The suspension is written in the log.',
+			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'Suspend',
+			'comptable.direction.delegationPanneau.suspendreGarder' => 'Keep the delegations',
+			'comptable.direction.delegationPanneau.reactiverTitre' => 'Reactivate the delegations',
+			'comptable.direction.delegationPanneau.reactiverDetail' => 'The delegations are suspended. Lifting them is an act of the management, with a written reason.',
+			'comptable.direction.delegationPanneau.reactiverAction' => 'Reactivate the delegations',
+			'comptable.direction.delegationPanneau.reactiverPhrase' => 'The Accountant will be able to act again within the limits of the policy. An expired delegation is never restored: it will have to be renewed. Cancelled outflows stay cancelled. The reactivation is written in the log.',
+			'comptable.direction.delegationPanneau.reactiverRaison' => 'Reason for reactivation',
+			'comptable.direction.delegationPanneau.reactiverRaisonAide' => 'It is kept in the log with your name.',
+			'comptable.direction.delegationPanneau.reactiverRaisonVide' => 'Write the reason to reactivate the delegations.',
+			'comptable.direction.delegationPanneau.reactiverConfirmer' => 'Reactivate',
+			'comptable.direction.delegationPanneau.reactiverGarder' => 'Keep suspended',
+			'comptable.direction.delegationPanneau.reactiveeActive' => 'Delegations reactivated.',
+			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Delegations reactivated, but the delegation has expired: renew it so that it restarts for its duration.',
+			'comptable.direction.delegationPanneau.reactiverEchec' => 'The reactivation is not confirmed: the request may not have reached Rewayah, or your two-step verification needs redoing. Check the delegation\'s state before trying again.',
+			'comptable.direction.delegationPanneau.suspendueTitre' => 'Delegations suspended',
+			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspended since ${date}. The Accountant can carry out nothing without your validation.',
+			'comptable.direction.delegationPanneau.suspendueSansDate' => 'The Accountant can carry out nothing without your validation.',
+			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension in progress',
+			'comptable.direction.delegationPanneau.suspendueEchec' => 'The suspension is not confirmed: the request may not have reached Rewayah. Check the delegation\'s state before trying again.',
+			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiry',
+			'comptable.direction.delegationPanneau.expirationDetail' => 'Each delegation expires and is renewed. Past the date, the Accountant can no longer carry out anything alone.',
+			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expires on ${date}',
+			'comptable.direction.delegationPanneau.expirationInconnue' => 'Expiry date not provided',
+			'comptable.direction.delegationPanneau.etatActive' => 'Active',
+			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspended',
+			'comptable.direction.delegationPanneau.etatExpiree' => 'Expired',
+			'comptable.direction.delegationPanneau.renouvelablePour' => ({required Object jours}) => 'Renewable for ${jours} days',
+			'comptable.direction.delegationPanneau.renouveler' => 'Renew the delegation',
+			'comptable.direction.delegationPanneau.renouvelee' => 'Delegation renewed.',
+			'comptable.direction.delegationPanneau.renouvelerEchec' => 'The renewal is not confirmed: the request may not have reached Rewayah. Check the expiry date before trying again.',
+			'comptable.direction.delegationPanneau.sortiesTitre' => 'Pending outflows',
+			'comptable.direction.delegationPanneau.sortiesDetail' => 'An outflow above the per-transaction ceiling waits for a security delay before going out. You can cancel it until then.',
+			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Security delay: ${heures} h',
+			'comptable.direction.delegationPanneau.sortiesVide' => 'No pending outflow.',
+			'comptable.direction.delegationPanneau.sortiesErreur' => 'The pending outflows could not be read: the read may not have reached Rewayah. Try again in a moment.',
+			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · goes out on ${date}',
+			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Cancel',
+			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Cancel ${beneficiaire}\'s outflow',
+			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Cancel this outflow?',
+			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => '${beneficiaire}\'s outflow will not go out. The cancellation is written in the log.',
+			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Cancel the outflow',
+			'comptable.direction.delegationPanneau.sortieGarder' => 'Keep the outflow',
+			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Outflow cancelled.',
+			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'The cancellation is not confirmed: the request may not have reached Rewayah. Read the list again before trying again.',
+			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
+			'comptable.direction.delegationPanneau.exceptionsDetail' => 'Settings specific to one delegation. An exception ceiling is always lower than that of the general policy, never higher.',
+			'comptable.direction.delegationPanneau.exceptionsVide' => 'No exception: the general policy applies to all delegations.',
+			'comptable.direction.delegationPanneau.exceptionAjouter' => 'Add an exception',
+			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Edit the exception for ${libelle}',
+			'comptable.direction.delegationPanneau.exceptionLibelleDefaut' => 'Accountant\'s delegation',
+			'comptable.direction.delegationPanneau.exceptionCoffres' => 'Authorized vaults',
+			'comptable.direction.delegationPanneau.exceptionCoffresAucun' => 'No vault authorized',
+			'comptable.direction.delegationPanneau.exceptionExclus' => 'Beneficiaries excluded',
+			'comptable.direction.delegationPanneau.exceptionExclusAucun' => 'No beneficiary excluded',
+			'comptable.direction.delegationPanneau.exceptionPlafond' => 'Ceiling per transaction',
+			'comptable.direction.delegationPanneau.exceptionPlafondGeneral' => 'That of the general policy',
+			'comptable.direction.delegationPanneau.exceptionTitre' => 'Delegation exception',
+			'comptable.direction.delegationPanneau.exceptionCoffresDetail' => 'Only these vaults can be touched by the delegation. No vault ticked: no vault authorized.',
+			'comptable.direction.delegationPanneau.exceptionPlafondDetail' => 'Lower than the general policy ceiling, never higher. Empty: that of the general policy.',
+			'comptable.direction.delegationPanneau.exceptionPlafondTropHaut' => 'This ceiling must be lower than that of the general policy.',
+			'comptable.direction.delegationPanneau.exceptionPlafondSansGeneral' => 'First set a per-transaction ceiling in the general policy: an exception can only be lower.',
+			'comptable.direction.delegationPanneau.exceptionExclure' => 'Exclude a beneficiary',
+			'comptable.direction.delegationPanneau.exceptionExclureAucun' => 'No other beneficiary to exclude.',
+			'comptable.direction.delegationPanneau.exceptionRetirerExclu' => ({required Object nom}) => 'Remove ${nom} from the excluded',
+			'comptable.direction.delegationPanneau.exceptionGarder' => 'Keep the exception',
+			'comptable.direction.delegationPanneau.exceptionRetirer' => 'Remove this exception',
+			'comptable.direction.delegationPanneau.exceptionRetirerPhrase' => 'The delegation returns to the general policy. Nothing is saved before "Save".',
+			'comptable.direction.delegationPanneau.sensiblesTitre' => 'Always sensitive',
+			'comptable.direction.delegationPanneau.sensiblesDetail' => 'These five cases always require additional validation, whatever the settings above. The first payment and recent details are set higher up.',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Amount above threshold',
+			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'A payment above the ceilings set above.',
+			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Off-cycle payment',
+			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'A payment that does not follow the usual pay period.',
+			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Beneficiary linked to the operator',
+			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'A payment to a person linked to the payment operator.',
+			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Provider unavailable',
+			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'A payment whose payment provider is unavailable.',
+			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Manual obligation not approved',
+			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'An obligation entered by hand and not yet approved.',
+			'comptable.direction.titre' => 'Reserve and delegation',
+			'comptable.direction.sousTitre' => 'The Strategic reserve policy and what the Accountant can carry out alone.',
+			'comptable.direction.reserve' => 'Strategic reserve policy',
+			'comptable.direction.delegation' => 'Financial delegation',
+			'comptable.demo.titre' => 'Accountant demo',
+			'comptable.demo.mention' => 'Fictional data, no payment, nothing is sent.',
+			'comptable.demo.intro' => 'Choose an Accountant screen. Amounts are hidden by default; the "amounts shown" variant reveals them for the duration of the page.',
+			'comptable.demo.montantsMasques' => 'Amounts hidden',
+			'comptable.demo.montantsAffiches' => 'Amounts shown',
+			'comptable.demo.groupeComptable' => 'Accountant shell',
+			'comptable.demo.groupeCompte' => 'Account and beneficiary',
+			'comptable.demo.groupeDirection' => 'Management',
+			'comptable.paiementsFamilles.titre' => 'Family payments',
+			'comptable.paiementsFamilles.entree' => 'Family payments',
 			'presentationTuteur.titre' => 'Display requests',
 			'presentationTuteur.contexte' => 'A child in your household is asking for the standard display. You decide.',
 			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} is asking for the standard display.',
@@ -27687,6 +28443,8 @@ extension on TraductionsEn {
 			'avis.form.accord.erreur' => 'Accept publication by ticking the box, otherwise your feedback cannot be sent.',
 			'avis.form.lecture' => ({required Object courriel}) => 'Your feedback will be read by the management before being published. To have it removed later, write to ${courriel}.',
 			'avis.form.regles.titre' => 'What the management publishes',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.regles.intro' => 'A respectful review is published, even when it is critical. The management never edits your text. It only refuses a review that contains:',
 			'avis.form.regles.insulte' => 'an insult',
 			'avis.form.regles.tiers' => 'personal data of a third party, such as the name of a child or a teacher',
@@ -28005,8 +28763,6 @@ extension on TraductionsEn {
 			'n1.alertes.signalement' => ({required Object categorie, required Object matricule, required Object note}) => '${categorie}: report for student ${matricule}. Internal note: "${note}"',
 			'i1.invitations.aideEmail' => 'The code is created for this address and sent right away by email, with the sign-up link. You can also pass it on yourself.',
 			'i1.invitations.creee' => ({required Object code, required Object email}) => 'Invitation created. The email with code ${code} is on its way to ${email}.',
-			_ => null,
-		} ?? switch (path) {
 			'i1.invitations.dejaInvite' => 'An invitation is already active for this address. It is in the list below; its email is not sent a second time.',
 			'i1.familles.choixTitre' => 'A family already registered',
 			'i1.familles.choixExplication' => 'To choose for imported families: each receives an email to open their space, with nothing to re-enter.',
@@ -28201,6 +28957,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'the formatting is not that of a CSV export',
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'its content is not that of a CSV export',
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'Export the sheet as CSV again from Google Sheets, then choose the file.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'Currently read in column ${n}. Choosing it here removes it from that column.',
 			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'Column ${n}: ${titre}',
 			'candidatsFlux.importFormulaires.colonnes.question' => 'Does each column really contain what Rewayah thinks?',
@@ -28519,8 +29277,6 @@ extension on TraductionsEn {
 			'push1.evenements.paiementEchoueDirection' => 'A payment failed.',
 			'push1.evenements.coordonneesAValider' => 'Payout details need approval.',
 			'push1.evenements.coordonneesValidees' => 'Your payout details are approved.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.evenements.remboursementDemande' => 'A refund is requested.',
 			'push1.evenements.remboursementEchec' => 'A refund did not go through.',
 			'push1.evenements.cahierEnRetard' => 'A session\'s handover notebook is waiting for your information.',
@@ -28715,6 +29471,8 @@ extension on TraductionsEn {
 			'suiviAttente.presentation.effacerPays' => 'Do not provide',
 			'suiviAttente.mePresenter.lien' => 'Introduce myself to the families',
 			'suiviAttente.mePresenter.titre' => 'Introduce myself',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.mePresenter.contexte' => 'A message is already written. You can edit it before sending. It goes in Messages, to the families of the class and to adult students.',
 			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyid ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
 			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyida ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
