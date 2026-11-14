@@ -4282,6 +4282,14 @@
           "constatIncomplet": "Le compte rendu est incomplet (mémorisation, riwayas ou ijaza)",
           "entretienNonDisponible": "L'entretien n'est pas encore conclu",
           "reponsesIncompletes": "Des réponses du questionnaire manquent",
+          "contratNonSigne": "Le contrat d'enseignant n'est pas encore signé",
+          "avisNonAccepte": "« Ce que vous devez savoir » n'est pas encore accepté",
+          "conduiteNonAcceptee": "Le code de conduite n'est pas encore accepté",
+          "cadreNonAccepte": "Le cadre religieux et pédagogique n'est pas encore accepté",
+          "compteAbsent": "La personne n'a pas encore de compte",
+          "pieceAbsente": "Aucune pièce d'identité déposée",
+          "pieceAVerifier": "Pièce déposée, à vérifier",
+          "pieceARedeposer": "Pièce refusée, à déposer de nouveau",
           "inconnue": "Cause non précisée"
         }
       },

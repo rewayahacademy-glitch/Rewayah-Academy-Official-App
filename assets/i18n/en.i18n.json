@@ -4282,6 +4282,14 @@
           "constatIncomplet": "The report is incomplete (memorization, riwayas or ijaza)",
           "entretienNonDisponible": "The interview is not concluded yet",
           "reponsesIncompletes": "Questionnaire answers are missing",
+          "contratNonSigne": "The teacher contract is not signed yet",
+          "avisNonAccepte": "“What you need to know” is not accepted yet",
+          "conduiteNonAcceptee": "The code of conduct is not accepted yet",
+          "cadreNonAccepte": "The religious and teaching framework is not accepted yet",
+          "compteAbsent": "The person has no account yet",
+          "pieceAbsente": "No identity document uploaded",
+          "pieceAVerifier": "Document uploaded, to be checked",
+          "pieceARedeposer": "Document refused, to be uploaded again",
           "inconnue": "Cause not specified"
         }
       },

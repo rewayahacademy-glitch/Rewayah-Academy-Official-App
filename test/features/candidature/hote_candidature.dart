@@ -42,6 +42,8 @@ EtatDossier etatCandidat({
   // HARMONISATION-E : nul par defaut (serveur d'avant la migration de H).
   bool? photoPosee,
   bool? accordPublicationSigne,
+  // AUDIT-PORTAIL-CANDIDAT : l'etat de la piece deposee (nul par defaut).
+  StatutPiece? statutPiece,
 }) => EtatDossier(
   profilExiste: true,
   role: role,
@@ -51,6 +53,7 @@ EtatDossier etatCandidat({
   accuseSigne: accordsFaits,
   codeConduiteSigne: accordsFaits,
   pieceDeposee: pieceDeposee,
+  statutPiece: statutPiece,
   photoPosee: photoPosee,
   accordPublicationSigne: accordPublicationSigne,
 );

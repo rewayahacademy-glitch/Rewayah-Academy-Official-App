@@ -580,9 +580,18 @@ BEGIN
     AND r ->> 'nomComplet' = 'Élodie Maryam Exemple'
     AND r ->> 'etape' = 'prequalification' AND r ->> 'etat' = 'a_completer'
     AND (r ->> 'version')::int = 1 AND r ->> 'source' = 'lien_public'
-    AND r -> 'controles' = 'null'::jsonb AND r -> 'piece' = 'null'::jsonb
+    -- AUDIT-PORTAIL-CANDIDAT (14/11/2026) : le dossier rend ses controles
+    -- (cadre, accords, piece ; questionnaire et versement apres l'envoi
+    -- seulement) ; la piece garde sa lecture a part (null ici).
+    AND jsonb_typeof(r -> 'controles') = 'array'
+    AND (SELECT array_agg(x ->> 'nom' ORDER BY o) FROM jsonb_array_elements(r -> 'controles') WITH ORDINALITY AS e(x, o))
+        = ARRAY['cadre_religieux', 'accords_signes', 'piece_validee']
+    AND r -> 'controles' -> 1 ->> 'cause' = 'teacher_nda'
+    AND r -> 'controles' -> 2 ->> 'cause' = 'piece_absente'
+    AND NOT (r -> 'controles' -> 1 ->> 'valeur')::boolean
+    AND r -> 'piece' = 'null'::jsonb
     AND NOT r ? 'erreur',
-    'direction femme : dossier de sa candidate, controles et piece null dans ce lot');
+    'direction femme : dossier de sa candidate, controles nommes (cadre, accords, piece) et piece null');
   PERFORM pg_temp.vrai(jsonb_array_length(r -> 'reponses') = 2
     AND r -> 'reponses' -> 0 ->> 'questionnaireVersion' = 'v1-2026-10'
     AND r -> 'reponses' -> 0 ->> 'source' = 'candidat'

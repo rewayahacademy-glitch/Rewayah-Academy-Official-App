@@ -120,6 +120,16 @@ String libelleCauseControle(String nom, String? cause) {
     'avis_non_favorable' => c.avisNonFavorable,
     'constat_incomplet' => c.constatIncomplet,
     'reponses_incompletes' => c.reponsesIncompletes,
+    // AUDIT-PORTAIL-CANDIDAT (14/11/2026) : le premier accord manquant
+    // (`accords_signes`) et l'etat de la piece (`piece_validee`), dits en mots.
+    'teacher_nda' => c.contratNonSigne,
+    'recording_and_control_notice' => c.avisNonAccepte,
+    'teacher_conduct_code' => c.conduiteNonAcceptee,
+    'teacher_religious_framework' => c.cadreNonAccepte,
+    'compte_absent' => c.compteAbsent,
+    'piece_absente' => c.pieceAbsente,
+    'piece_a_verifier' => c.pieceAVerifier,
+    'piece_a_redeposer' => c.pieceARedeposer,
     _ => c.inconnue,
   };
 }
