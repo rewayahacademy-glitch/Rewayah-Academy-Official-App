@@ -122,10 +122,11 @@ void main() {
     setUpAll(() async {
       await chargerPolicesDuDepot();
       await LocaleSettings.setLocale(AppLocale.ar);
+      await LocaleSettings.setLocale(AppLocale.en);
       await LocaleSettings.setLocale(AppLocale.fr);
     });
 
-    for (final AppLocale langue in AppLocale.values) {
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
       if (_arabeSeul && langue != AppLocale.ar) continue;
       for (final _Variante v in _variantes) {
         final String suffixe = '${v.nom}_${langue.languageCode}';

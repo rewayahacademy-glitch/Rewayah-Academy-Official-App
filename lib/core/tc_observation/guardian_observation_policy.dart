@@ -111,10 +111,10 @@ class GuardianObservationPolicy {
           SourcePolitique.depuisSql(json['source'] as String?) ??
           SourcePolitique.desactivee,
       observationActivee: json['observation_activee'] as bool? ?? false,
-      maxVisitsPerSession: (json['max_visits_per_session'] as num?)?.toInt() ?? 0,
+      maxVisitsPerSession:
+          (json['max_visits_per_session'] as num?)?.toInt() ?? 0,
       maxTotalObservationTime: Duration(
-        seconds:
-            (json['max_total_observation_seconds'] as num?)?.toInt() ?? 0,
+        seconds: (json['max_total_observation_seconds'] as num?)?.toInt() ?? 0,
       ),
       maxParVisite: plafondVisite == null
           ? null

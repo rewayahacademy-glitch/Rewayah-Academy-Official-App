@@ -22,6 +22,7 @@ import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/profil/service_profil_enseignant.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_horloge/chrono_seance.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -30,9 +31,10 @@ import 'package:rewayah_academy/core/video/pre_vol.dart';
 import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
+import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/glisser_page.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
 import 'package:rewayah_academy/features/salle_seance/vignette_video.dart';
 import 'package:rewayah_academy/features/tc_mushaf/page_madina_15.dart'
@@ -132,6 +134,14 @@ List<Override> _surcharges(FauxMoteurSalle moteur) => <Override>[
           )
         : null,
   ),
+  // DYNAMIQUE-CHRONO-1 : le chrono servi, comme en production (la barre
+  // porte le temps ; sans bornes, elle n'a rien a dire).
+  bornesSalleProvider.overrideWith(
+    (Ref _, CleBornesSalle _) => BornesChrono(
+      debutUtc: DateTime.now().toUtc().subtract(const Duration(minutes: 20)),
+      finPrevueUtc: DateTime.now().toUtc().add(const Duration(minutes: 40)),
+    ),
+  ),
   pageCoranProvider.overrideWith(
     (Ref _, int n) async => PageCoran(
       numero: n,
@@ -190,8 +200,15 @@ Future<FauxMoteurSalle> _monterEleve(
 }
 
 /// Un toucher de l'ecran (hors d'un bouton) : les commandes reviennent.
+///
+/// DYNAMIQUE-CHRONO-1 : en portrait, le coin de l'ecran est la rangee
+/// reservee de la Dynamique chrono ; le toucher se fait juste dessous.
 Future<void> _toucher(WidgetTester tester) async {
-  await tester.tapAt(const Offset(AppSpacing.xs, AppSpacing.xs));
+  final Finder rangee = find.byKey(TelephonePleinEcran.cleRangeeChrono);
+  final double haut = rangee.evaluate().isEmpty
+      ? 0
+      : tester.getRect(rangee).bottom;
+  await tester.tapAt(Offset(AppSpacing.xs, haut + AppSpacing.xs));
   await tester.pumpAndSettle();
 }
 
@@ -218,6 +235,10 @@ void _verifierMasques(WidgetTester tester) {
 
 final Finder _page = find.byKey(TelephonePleinEcran.clePage);
 final Finder _ile = find.byKey(const ValueKey<String>('ligne-etat-telephone'));
+
+/// DYNAMIQUE-CHRONO-1 : la zone reservee (la barre, le mot d'etat, la
+/// mention permanente).
+final Finder _zone = find.byKey(ZoneChrono.cle);
 final Finder _dock = find.byType(DockSeance);
 final Finder _vignette = find.byType(VignetteVideo);
 final Finder _zoom = find.byKey(const ValueKey<String>('salle-zoom'));
@@ -229,6 +250,7 @@ void _verifierRienSurLaPage(WidgetTester tester, Size ecran) {
   final List<Finder> elements = <Finder>[
     _page,
     _ile,
+    _zone,
     _dock,
     if (_vignette.evaluate().isNotEmpty) _vignette,
     if (_zoom.evaluate().isNotEmpty) _zoom,
@@ -237,7 +259,11 @@ void _verifierRienSurLaPage(WidgetTester tester, Size ecran) {
   for (final Finder f in elements.skip(1)) {
     verifierSansChevauchement(tester, <Finder>[_page, f]);
   }
-  verifierSansChevauchement(tester, elements);
+  // La barre est dans sa zone : seule la zone compte entre elles deux.
+  verifierSansChevauchement(
+    tester,
+    elements.where((Finder f) => f != _ile).toList(),
+  );
   final Rect fenetre = Offset.zero & ecran;
   for (final Finder f in elements) {
     final Rect r = tester.getRect(f.first);
@@ -293,16 +319,30 @@ void main() {
                 // toucher, les commandes passent par-dessus la page sans
                 // se recouvrir entre elles...
                 verifierSansChevauchement(tester, <Finder>[
-                  _ile,
+                  _zone,
                   _dock,
                   if (_vignette.evaluate().isNotEmpty) _vignette,
                 ]);
-                // ... puis s'effacent seules : au repos, la page a sa
-                // pleine taille et seule l'ile repliee est posee dessus.
+                // ... puis s'effacent seules. DYNAMIQUE-CHRONO-1 (directeur,
+                // 12/11/2026 : « le chrono cache le document ») : au repos,
+                // la page a toute la largeur et la hauteur laissee sous la
+                // rangee reservee de la Dynamique chrono ; rien n'est pose
+                // dessus (avant ce lot : page plein ecran, ile posee dessus).
                 await _attendreLeRepos(tester);
                 _verifierMasques(tester);
-                expect(tester.getSize(_page), taille);
-                expect(find.byKey(PiluleEtatSalle.cleRepliee), findsOneWidget);
+                final Rect rangee = tester.getRect(
+                  find.byKey(TelephonePleinEcran.cleRangeeChrono),
+                );
+                final Rect page = tester.getRect(_page);
+                expect(page.width, moreOrLessEquals(taille.width));
+                expect(page.top, moreOrLessEquals(rangee.bottom));
+                expect(page.bottom, moreOrLessEquals(taille.height));
+                verifierSansChevauchement(tester, <Finder>[
+                  find.byKey(TelephonePleinEcran.cleRangeeChrono),
+                  _page,
+                ]);
+                verifierSansChevauchement(tester, <Finder>[_zone, _page]);
+                expect(_ile, findsOneWidget);
                 // Un simple toucher ne dit pas « la page suit celle de
                 // l'enseignant » (seul un glissement le dit).
                 await _toucher(tester);
@@ -314,17 +354,16 @@ void main() {
                 // L'ile reste au repos, touchable. Micro ferme : aucun
                 // signe de micro.
                 expect(
-                  find.byKey(PiluleEtatSalle.cleDeplier).hitTestable(),
+                  find.byKey(DynamiqueChrono.cleDeplier).hitTestable(),
                   findsOneWidget,
                 );
                 expect(
-                  find.byKey(PiluleEtatSalle.cleMicroOuvert),
+                  find.byKey(DynamiqueChrono.cleMicroOuvert),
                   findsNothing,
                 );
-                // L'ile repliee reste petite : moins de la moitie de la
-                // largeur, une ligne.
+                // La barre repliee reste petite : une ligne.
                 final Rect ile = tester.getRect(_ile);
-                expect(ile.width, lessThan(taille.width / 2));
+                expect(ile.width, lessThan(taille.width * 0.7));
                 expect(ile.height, lessThanOrEqualTo(48 + toleranceGarde));
                 expect(tester.takeException(), isNull);
               },
@@ -376,7 +415,7 @@ void main() {
     await tester.pumpAndSettle();
     await _attendreLeRepos(tester);
     _verifierMasques(tester);
-    final Finder signe = find.byKey(PiluleEtatSalle.cleMicroOuvert);
+    final Finder signe = find.byKey(DynamiqueChrono.cleMicroOuvert);
     expect(signe, findsOneWidget);
     final SemanticsHandle semantique = tester.ensureSemantics();
     expect(
@@ -404,7 +443,9 @@ void main() {
       await _attendreLeRepos(tester);
       expect(_dock.hitTestable(), findsOneWidget);
       verifierSansChevauchement(tester, <Finder>[_page, _dock]);
-      verifierSansChevauchement(tester, <Finder>[_page, _ile]);
+      // DYNAMIQUE-CHRONO-1 : en Interface guidee, pas de chrono (regle
+      // inchangee) ; la zone reservee garde le mot d'etat et la mention.
+      verifierSansChevauchement(tester, <Finder>[_page, _zone]);
       if (_vignette.evaluate().isNotEmpty) {
         verifierSansChevauchement(tester, <Finder>[_page, _vignette]);
       }
@@ -447,11 +488,22 @@ void main() {
   // a la tablette en portrait, la page garde l'ecran entier et les commandes
   // passent par-dessus au toucher, puis s'effacent. Seule l'Interface guidee
   // en portrait a une page plus petite (entre ses deux rangees).
+  // PAGES-FLUIDES (directeur, 12/11/2026 : « un cadre et des marges, pour
+  // lire sans que ca coince sur les cotes ») : la page se pose dans une
+  // marge (16 de chaque cote au telephone, davantage quand la boite le
+  // permet ; reserve de 12 ou 16 en haut et en bas). Ce que le texte y perd,
+  // mesure ici : 390 : 377 -> 346 (-8 %) ; 820 : 628 -> 611 (-3 %) ;
+  // 1280 : 426 -> 409 (-4 %) ; 1440 : 479 -> 462 (-4 %). La garde suit la
+  // nouvelle taille ; elle reste une garde contre tout autre retrecissement.
+  // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le chrono cache le
+  // document ») : la rangee reservee de la barre prend le haut de l'ecran
+  // (64 a 820 x 1180) ; la page, bornee par sa hauteur a 820, perd 611 ->
+  // 577 (-6 %). A 390, la page est bornee par sa largeur : rien ne change.
   final Map<double, double> lignes = <double, double>{
-    390: 377,
-    820: 628,
-    1280: 426,
-    1440: 479,
+    390: 346,
+    820: 577,
+    1280: 409,
+    1440: 462,
   };
   for (final Size taille in _tailles) {
     testWidgets('mesure, eleve ${taille.width.toInt()} : la ligne du texte '

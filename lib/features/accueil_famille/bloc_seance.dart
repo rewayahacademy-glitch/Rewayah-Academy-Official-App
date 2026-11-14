@@ -10,6 +10,7 @@ import '../../core/i18n/villes_fuseau.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/seance_famille/seance_famille.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart' show nomFuseauClasse;
 import '../../core/tc_horloge/heure_double.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/tc_horloge/session_clock_vm.dart';
@@ -142,8 +143,13 @@ class AffichageSeance {
           (maintenantServeurUtc ?? maintenantAppareilUtc ?? DateTime.now())
               .toUtc()
               .isBefore(seance.debutUtc.toUtc()),
+      // L'academie se dit « Heure de La Mecque », jamais « Riyadh » (13/11/2026) ;
+      // une classe restee dans un autre fuseau garde « Heure de la classe ».
       heureClasse: classe == null
           ? null
+          : nomFuseauClasse(classe.fuseauIana) == t.tc.groupe.horloges.laMecque
+          ? '${t.tc.groupe.horloges.heureMecque}\u00a0: '
+                '${classe.heureLocaleRendue}'
           : t.tuteur.accueil.heureClasse(
               heure: classe.heureLocaleRendue,
               ville: classe.libelleVille,

@@ -1015,7 +1015,6 @@ libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.modePasserStandard 
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.modeStandard : Affichage courant : {prenom} lit son écran.
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.photoAjouter : Ajouter une photo
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.photoAucune : {prenom} n'a pas encore de photo. Elle reste visible du seul foyer.
-libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.photoPresente : La photo de {prenom} reste visible du seul foyer, jamais de son enseignant ni des autres élèves.
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.reglages.photoTropLourde : Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.suivi.erreur : Le suivi n'a pas pu être lu. Réessayez dans un instant.
 libelle-sans-source|assets/i18n/fr.i18n.json|tuteur.suivi.fin : {nombre} cours au suivi.

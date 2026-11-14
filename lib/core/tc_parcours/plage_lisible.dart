@@ -14,22 +14,22 @@ import '../tc_bibliotheque/content_range.dart';
 /// [TypeAncrage.fraction] n'a **pas** de formulation propre : « 43 % du
 /// support » ne dit rien d'utile a personne, et la spec prefere l'ancrage
 /// semantique pour cette raison exacte. On nomme alors le support entier.
-String positionLisible(ContentPosition position) => switch (position
-    .typeAncrage) {
-  TypeAncrage.page => _plagePages(
-    premiere: position.page ?? 0,
-    derniere: position.page ?? 0,
-  ),
-  TypeAncrage.ayah => _plageVersets(
-    sourate: position.sourate ?? 0,
-    premier: position.ayah ?? 0,
-    dernier: position.ayah ?? 0,
-  ),
-  TypeAncrage.section => t.tc.parcours.plage.section(
-    section: position.sectionId ?? '',
-  ),
-  TypeAncrage.fraction => t.tc.parcours.plage.ressource,
-};
+String positionLisible(ContentPosition position) =>
+    switch (position.typeAncrage) {
+      TypeAncrage.page => _plagePages(
+        premiere: position.page ?? 0,
+        derniere: position.page ?? 0,
+      ),
+      TypeAncrage.ayah => _plageVersets(
+        sourate: position.sourate ?? 0,
+        premier: position.ayah ?? 0,
+        dernier: position.ayah ?? 0,
+      ),
+      TypeAncrage.section => t.tc.parcours.plage.section(
+        section: position.sectionId ?? '',
+      ),
+      TypeAncrage.fraction => t.tc.parcours.plage.ressource,
+    };
 
 /// Comment une plage de travail se dit a un humain.
 ///
@@ -57,9 +57,7 @@ String plageLisible(ContentRange plage) {
         dernier: plage.fin.ayah ?? 0,
       );
     case TypeAncrage.section:
-      return t.tc.parcours.plage.section(
-        section: plage.debut.sectionId ?? '',
-      );
+      return t.tc.parcours.plage.section(section: plage.debut.sectionId ?? '');
     case TypeAncrage.fraction:
       return t.tc.parcours.plage.ressource;
   }

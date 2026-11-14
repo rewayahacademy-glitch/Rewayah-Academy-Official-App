@@ -245,6 +245,13 @@ P-39.1.
   existe (un texte versionné, une case à part des autres, la date et la version gardées). La
   fonction d'écriture exigerait alors cet accord pour l'élève. **Rien de cela n'est construit** :
   tant que ce n'est pas fait, la garde reste fermée pour tous les mineurs.
+- **Note du 13/11/2026 (lot HORS-SALLE-2, journal D-043).** Le premier accord de parent par enfant
+  est construit, pour le **journal des sorties de l'application** (pas pour ce relevé) : table
+  `accords_journal_sorties` (par élève, version du texte, date, retrait par `retire_le`, jamais
+  effacé), donné par un tuteur du foyer de CET enfant, jamais par l'enfant lui-même ; page Compte,
+  « Sorties de l'application pendant le cours ». Il est **éteint** (`salle.sorties.journal_actif` =
+  faux) tant que le texte (`TEXTES-VALIDES/ACCORD-JOURNAL-SORTIES.md`) n'est pas validé par le
+  directeur. La garde de ce relevé-ci ne change pas : elle reste fermée pour tous les mineurs.
 
 ### Point 4. Ce qu'il faut dire aux personnes, et où
 

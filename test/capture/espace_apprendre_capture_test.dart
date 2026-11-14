@@ -87,6 +87,32 @@ void main() {
       }
     }
 
+    // Anglais (fusion du 14/11/2026 : l'anglais est complet sur `main`) :
+    // les trois onglets de l'adulte a 390, en clair, pour voir les textes en.
+    testWidgets('adulte en 390 clair : les trois onglets', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.en));
+      await monterApprendre(
+        tester,
+        taille: const Size(390, 2300),
+        documents: documentsComplets(),
+        suivi: SuiviLu(lectureDemo(dates: true)),
+      );
+      await tester.pump(const Duration(milliseconds: 600));
+      debugPrint(
+        'PNG ${await capturerVue(tester, 'adulte-bibliotheque-grille-en-390-clair')}',
+      );
+      await _onglet(tester, t.apprendre.sections.programme);
+      debugPrint(
+        'PNG ${await capturerVue(tester, 'adulte-programme-en-390-clair')}',
+      );
+      await _onglet(tester, t.apprendre.sections.livret);
+      debugPrint(
+        'PNG ${await capturerVue(tester, 'adulte-livret-en-390-clair')}',
+      );
+    });
+
     for (final ThemeMode theme in <ThemeMode>[
       ThemeMode.light,
       ThemeMode.dark,

@@ -1773,3 +1773,410 @@ de son propre parent.
 
 **Ce qui n'est pas fait.** La fiche demandait aussi que la ligne disparaisse dans les 10 secondes
 après la fin de la dernière visite : non vérifié. Prouvé par tests seulement.
+
+## D-037 (12/11/2026, soir). La tête du pointeur devient un anneau (lot POINTEUR, retour 1 du directeur)
+
+**Le défaut** (séance du directeur du 12/11). La tête du pointeur était un disque plein de 32
+points : elle cachait le mot qu'elle montrait.
+
+**Ce qui est fait.** La tête est un anneau creux (diamètre 32, trou de 20) : un trait de la couleur
+de la marque entre deux filets clairs, pour rester visible sur une page claire comme sur une page
+sombre. Le mot se lit à travers le trou. Le sillage est gardé tel quel. La tête n'est pas
+supprimée : le sillage s'efface en 350 ms, et sans tête un pointeur immobile disparaîtrait.
+
+**Ce qui n'est pas fait.** Prouvé par tests (pixels du centre laissés à la page) et captures de
+test (`docs/current/captures/E2E/pointeur-anneau/`) ; pas sur un vrai téléphone, pas en production.
+Le plan des treize retours est dans `PLAN-RETOURS-2026-11-12.md`.
+
+## D-038 (12/11/2026, nuit). La « Dynamique chrono » : une barre d'état, une place réservée (lot DYNAMIQUE-CHRONO-1, retours 2, 3, 5 et 15 du directeur)
+
+**Le défaut** (séance du directeur du 12/11). Au téléphone, le chrono, les pastilles « En retard »,
+« X récite » et « En salle · Visite de contrôle possible » flottaient sur la page ; sur tablette et
+ordinateur, la colonne des commandes cachait le texte de la pause et « Démarrer la pause » (tête de
+colonne de hauteur fixe). Les chiffres du chrono n'avaient pas de mot.
+
+**Ce qui est fait.**
+- Une seule barre, la « Dynamique chrono » (`DynamiqueChrono`, l'ancienne `PiluleEtatSalle`
+  renommée et refaite) : repliée, une ligne, l'anneau, « Reste 37:51 » (mot visible ; « Après la
+  fin +03:12 » pendant le dépassement), et des marques en points de couleur lus (`MarqueChrono`,
+  type fermé : présence, récitation, pause). Un toucher la déplie (chaque marque en point et mot,
+  « Démarrer / Terminer la pause » chez qui a `peutPiloter`), elle se replie seule après 5 s
+  (`AppMouvement.dynamiqueChronoDepliee`) ou au second toucher.
+- Une place réservée (`ZoneChrono`) : au téléphone et sur tablette sans colonne, une rangée de
+  toute la largeur au-dessus de la page, de la scène et de la capsule ; chez l'élève sur grand
+  écran, le haut de la bande de début ; sur ordinateur, la tête de la colonne, hauteur suivant son
+  contenu. Repliée, elle ne passe sur rien ; dépliée, elle passe un instant par-dessus au
+  téléphone ; sur ordinateur et tablette (840 et plus), jamais par-dessus : elle se déplie dans
+  la tête de la colonne (les tuiles perdent au besoin leurs noms le temps du dépliage).
+- Ordinateur (directeur, 12/11/2026, sur les captures : « le dynamique timing posé sur les
+  panneaux et la barre ») : la cause était réelle, pas l'hôte de test. L'île se dépliait d'elle-même
+  10 s à l'entrée (la mention) et 6 s à chaque mot d'état, dans un `OverflowBox` large de la
+  colonne plus le panneau voisin (`salle_ordinateur.dart`, base 908b59fc, l. 1373-1394) : elle
+  passait sur le panneau des Élèves ; la pause dépliée débordait sous la colonne (hauteur fixe).
+  Maintenant : la colonne s'élargit pour la barre repliée seulement si la page garde 384 points ;
+  le choix de la tête garde d'abord les noms des tuiles ; pour cela, le mot d'état et la mention
+  passent au besoin dans une rangée fine au-dessus du contenu (jamais sur un panneau). Prouvé
+  par la géométrie à 1024 x 768, 1180 x 820, 1280 x 800 et 1440 x 900, dans quatre
+  compositions (deux panneaux, Élèves seul, Bibliothèque seule, focus).
+- Le mot d'état du lien et la mention permanente (`PermanentNotice`, ADR-011, texte inchangé) ne se
+  replient plus : `LigneEtatSalle`, dans la même zone (même rangée si elle tient). Colonne trop
+  serrée (texte agrandi, petit écran) : une rangée réservée au-dessus du contenu.
+- La salle réduite (`BarreSeanceEnDirect`) pose la même ligne repliée ; son toucher ramène toujours
+  à la salle.
+- L'alerte passagère (`AlerteChrono` : titre, une ou deux actions, départ seul, trace en marque)
+  existe dans l'API ; aucune n'est émise (lot DYNAMIQUE-CHRONO-2).
+
+**Ce qui n'est pas fait.** La salle réduite n'a pas de marques (aucune source hors de la salle).
+L'Interface guidée reste sans chrono (règle inchangée) : sa barre ne montre que ses marques. La
+page perd la hauteur de la rangée (environ 80 points au téléphone, 64 sur tablette ; à 820 de
+large, la ligne du texte passe de 611 à 577). Prouvé par tests et captures de test
+(`docs/current/captures/E2E/dynamique-chrono-1/`) ; pas sur un vrai appareil, pas en production.
+
+## D-039 (13/11/2026). La Dynamique chrono parle : arrivées, couleurs, appel, récitation, pause proposée (lot DYNAMIQUE-CHRONO-2, retours 5, 6, 14 et 15 du directeur)
+
+**La demande** (directeur, 12/11/2026). Point 5 : les arrivées (+1, +2 animés), des couleurs
+(pause, minutes restantes, peu de temps), l'appel et la récitation dans la barre, une alerte qui
+disparaît en quelques secondes et laisse une marque. Point 6 : la sonnerie de l'appel trop courte.
+Point 14 : la pause proposée par la barre, Oui / Non, l'heure exacte de reprise à tous, le rappel
+après un Non. Point 15 : la salle réduite exploitée au maximum.
+
+**Ce qui est fait.**
+- Une seule logique, sans widget, horloge injectée : `PiloteDynamique` (file d'alertes, une à la
+  fois, repli seul compté en battements, marque laissée, une alerte de la même famille remplace
+  celle qui est montrée, toucher qui replie ou rouvre), `SuiviArrivees`, `PilotePause`
+  (`lib/features/salle_seance/pilote_dynamique.dart`). Partagée par la salle (`salle_page.dart`) et
+  la salle réduite (`BarreSeanceEnDirect`) : rien n'est recopié. Le relais de la pause et la lecture
+  du rappel sont sortis de `salle_page.dart` dans `relais_salle.dart` (lus aussi par `SynchroSalle`).
+- Passent par la barre : l'appel reçu (alerte, sonnerie, marque jusqu'au toucher de la barre),
+  l'appel envoyé (alerte brève, marque 20 s), la récitation chez tous, enseignant compris (alerte
+  « {Prénom} récite » avec « Votre micro est fermé... » chez les camarades, marque tant qu'elle dure,
+  « La récitation est terminée » à la fin, « Un élève récite » sans prénom), le début et la fin de la
+  pause, les arrivées chez qui conduit la séance (+1 avec le prénom, +2 qui roule, pas de son, rien
+  pour ceux déjà là ni pendant 5 s après sa propre entrée). Les échecs (récitation non ouverte,
+  appel non parti, micro bloqué, son bloqué, enseignant parti) restent dans l'annonce de tête :
+  ils disent quoi faire, avec un lien.
+- Couleurs de la barre repliée : temps normal (surface de la pilule), pause (`washAccent`, chez
+  tous, mot « Pause » à la place de « Reste »), peu de temps (`washWarning`, « Reste »),
+  dépassement (`washAlert`, « Après la fin »). Peu de temps et dépassement restent sans teinte chez
+  l'élève (règle CHRONO-ETAT `sobre`, inchangée). Contraste : paires du thème, mesurées par
+  `test/theme/contraste_test.dart`.
+- Sonnerie (point 6) : `SonnerieAppel`, le motif existant joué trois fois à 1,5 s, arrêté dès que
+  l'élève touche l'écran ou la barre ; un refus du navigateur ne casse rien.
+- Pause proposée (point 14) : à `proposerA`, chez qui a `peutPiloter`, « Pause de 10 min ? »,
+  « Oui » en bouton plein compact, « Non » en lien ; 30 s dépliée, puis marque « Pause proposée »
+  (un toucher la rouvre) et retour 5 min plus tard sans rien envoyer. Oui démarre, Non refuse (le
+  serveur rend la suivante ; nulle : plus rien). Un échec garde la proposition et la phrase
+  existante (`salle.seance.pause.echec`). À tous : « Pause de 10 min. Reprise à 20:45 » (heure de
+  la personne, `heureChezMoi`), marque « Pause, reprise dans 7 min » ; à l'heure de reprise, l'écran
+  de l'enseignant termine la pause (une fois, réessai au battement suivant si le serveur refuse),
+  « La pause est finie » chez tous ; chez l'élève, passé l'heure de reprise, la barre ne dit plus
+  « Pause » même sans message de fin. Libellé gardé pour finir plus tôt : « Terminer la pause ».
+  Pause de prière (champ `motif` du serveur) : marque « Pause de prière à 20:30 », 3 min avant
+  « Commencer maintenant » / « Décaler de 5 min » (refuser), départ seul à l'heure. Serveur ancien
+  (`proposerA` nul) : aucune proposition, le lien manuel reste. Le relais porte le motif et
+  `proposerA` ; un ancien message se lit comme une pause ordinaire.
+- Géométrie (décision 2) : au téléphone, quand la barre se déplie par-dessus, la ligne d'état
+  (« En salle », « Visite de contrôle possible. ») descend sous elle, dans le même portail ; sa
+  place reste réservée. La barre dépliée ne la coupe plus (test ajouté, fr et ar).
+- Salle réduite : l'appel reçu (alerte, sonnerie, marque) et la pause (début avec l'heure,
+  couleur, fin à l'heure ; chez l'enseignant, proposition et fin automatique) arrivent par les
+  paquets de la visio, sans la page de la salle. Son toucher garde son geste (retourner dans la
+  salle) et coupe la sonnerie.
+- Lecteur d'écran : chaque alerte est un nœud neuf en `liveRegion` (lue une fois). Mouvement
+  réduit : aucun roulement ni glissement, l'information reste.
+
+**Ce qui n'est pas fait, ou pas prouvé.** Rien n'est prouvé sur un vrai appareil ni en production :
+tests et captures de test seulement (`docs/current/captures/E2E/dynamique-chrono-2/`). Le son sur
+un vrai navigateur (répétition, autorisation) n'est pas essayé. La pause sur un vrai serveur
+(migration PAUSE-SERVEUR non installée à ma connaissance) n'est pas essayée. Le délai de rappel
+sans réponse (5 min) est une constante du client : le port ne rend pas le réglage de la direction.
+La salle réduite ne reçoit ni la récitation ni les arrivées (la synchronisation de la salle n'y
+tourne pas). Une pause démarrée pendant que l'enseignant est hors de la salle n'est pas relayée aux
+élèves (le relais vit dans la page) ; leur barre se fie alors à l'heure. Au téléphone, la ligne
+d'état descendue passe un instant sur la capsule vidéo de l'enseignant.
+
+**Relecture du 13/11/2026 (deux corrections).**
+- Téléphone : tant que la barre est dépliée par-dessus (alerte ou toucher), la capsule vidéo de
+  l'enseignant et la vignette ne sont pas rendues (`CacheSousDynamique`, `Offstage` : la vidéo garde
+  son état) ; elles reviennent quand la barre se replie. Une proposition reste 30 s : la capsule ne
+  pouvait pas rester posée en travers de la ligne d'état. Test : barre dépliée par une alerte,
+  commandes au toucher, ni capsule ni vignette, la barre et la ligne d'état ne se coupent pas
+  (enseignant 390 et élève 390), puis la capsule revient une fois la barre repliée.
+- Pendant une pause, les chiffres de la barre repliée et l'anneau comptent jusqu'à la reprise
+  (« Pause 09:41 »), dans la salle, chez l'enseignant et dans la salle réduite ; dépliée, la barre dit
+  « Reprise à 01:42 » (heure de la personne) et « Reste 37:41 » (la séance). Le lecteur d'écran dit
+  « Pause en cours, reprise à 01:42. » (texte existant). À la reprise, « Reste … » revient. Ceci
+  remplace la marque « Pause, reprise dans 7 min » écrite plus haut.
+
+## D-040 (12/11/2026, nuit). Les élèves d'une Classe se voient : prénom et photo pour tous, vidéo seulement de celui qui récite (lot CAMARADES)
+
+**La décision du directeur** (12/11/2026, dite par lui) : « Il faut que les autres élèves voient
+celui qui récite, au moins une partie du nom, la photo, car ils partagent une salle ;
+psychologiquement, s'ils ne se voient pas, ça risque de créer d'autres problèmes ; mais la vraie
+vidéo, c'est seulement celui qui récite ; sinon on ne voit que sa photo ; la vidéo reste coupée en
+ce moment. » Elle tranche la ligne 11 de la fiche 0 du 12/11 (Q7 contre D-028 et D-031, « décision
+de l'opérateur, non prise ») et amende la règle « un enfant ne lit pas le prénom d'un camarade »
+(PHOTOS-2b, pilote, 04/11/2026 ; `MESSAGES-DE-LA-SALLE.md`, message 20 et point 19 ;
+`CONSTAT.md` SEC-6).
+
+**Ce qui est fait.**
+- Serveur (migration additive `20261124300000_camarades_prenoms.sql`, zéro mot d'effacement, **à
+  installer par le directeur**) : `camarades_classe_eleve()` rend à tout élève (mineur, adulte,
+  enfant ouvert par un appareil jumelé) le prénom seul des membres actifs de sa Classe active :
+  `profile_id`, `prenom`, `est_moi`, rien d'autre. Porte positive (compte valide et profil d'élève),
+  refus 42501 pour le tuteur qui n'apprend pas, l'enseignant et la direction (ils ont leurs propres
+  lectures), aucun droit pour anon. `participants_classe_eleve_adulte()` ne change pas. Scénario
+  `supabase/tests/scenarios_camarades_prenoms.sql` (six contrôles), rejoué sur Postgres 16 local.
+- Écran : chaque cadre d'un camarade porte son prénom chez tout élève, Interface guidée comprise
+  (`camaradesSalleProvider` ; sans la migration, repli silencieux sur l'ancienne lecture de
+  l'adulte). Jamais de nom de famille ; deux prénoms égaux ne sont pas départagés.
+- Vidéo, une règle à un seul endroit (`videoMontree`, `media_salle.dart`, sur `videoRecue`,
+  `lib/core/video/video_camarades.dart`) : chez un élève, sa propre image, l'enseignant qui conduit
+  et le camarade qui récite sont en vidéo ; tout autre camarade est montré par sa photo, ou sa
+  couleur et son initiale. Grille, vignette, capsule et bande de côté suivent la même règle.
+  L'enseignant, le tuteur qui assiste, le contrôleur et la direction voient comme avant.
+- Moteur (`LiveKitSessionProvider`) : l'élève ne s'abonne pas à la caméra d'un camarade qui ne
+  récite pas. Le récitant est lu dans les métadonnées de la salle, écrites par le serveur seul
+  (`recitation.ts`) ; les abonnements se réalignent à chaque piste publiée ou reçue, à chaque
+  changement de métadonnées et après une reprise ; le retour d'un repli réseau ou de l'« audio
+  seul » ne rabonne jamais une caméra non voulue. Le son n'est jamais touché.
+- Le drapeau mort `optionQ7` est retiré. La légende de la photo dit qui la voit (son enseignant,
+  les élèves de sa classe, la direction : **à valider par le directeur**) ; la clé fausse et
+  inemployée `tuteur.reglages.photoPresente` est retirée.
+
+**Ce qui n'est pas fait, et ce qui reste tenu par le seul client.**
+- L'abonnement sélectif est un choix du client : le jeton de chaque élève garde `can_subscribe`,
+  un client modifié pourrait encore recevoir la caméra d'un camarade. Pour le fermer côté
+  serveur : que la fonction Edge de la récitation (ou de la salle) pose, à chaque début et fin de
+  récitation et à chaque entrée, les abonnements des élèves par l'API serveur de LiveKit
+  (`UpdateSubscriptions`), ou des jetons d'élève qui ne s'abonnent pas d'eux-mêmes. Les fonctions
+  Edge n'ont pas été touchées.
+- `LocalParticipant.setTrackSubscriptionPermissions` (livekit_client 2.12.0) n'est pas employée :
+  fermer sa caméra aux camarades demande `allParticipantsAllowed: false` et la liste nominative de
+  ceux qui gardent le droit ; le contrôleur invisible et la direction incognito n'apparaissent pas
+  dans la salle d'un élève et perdraient le son et l'image de l'élève.
+- Fuite connue, non corrigée ici : `session_peers_v` rend à tout participant le prénom ET le
+  matricule (`immutable_id`) des autres participants. À faire : remplacer la vue pour que
+  `immutable_id` ne soit rendu qu'à qui en a besoin (direction, contrôleur, enseignant de la
+  séance). Retirer la colonne demande de recréer la vue (installation par le directeur) ; garder
+  la colonne et la rendre nulle pour les autres se ferait par un simple `create or replace view`
+  de même forme, à vérifier contre les lecteurs de la vue.
+- Prouvé par tests (moteur à fausses pistes, vraie page à 390 et 1440, élève enfant et adulte,
+  enseignant) et captures de test (`docs/current/captures/E2E/camarades/`) ; ni rejoué en vraie
+  visio à plusieurs navigateurs, ni en production. Le SQL n'est pas encore installé.
+
+## D-041 (13/11/2026, 00:17 UTC). Les lots du soir du 12/11, intégrés sur la branche (retours du directeur)
+
+Le détail, lot par lot, est dans `PLAN-RETOURS-2026-11-12.md` (dernière section). Ce qui a été
+décidé en chemin, et qui engage la suite :
+
+- **Entrée en salle (ENTREE-ROBUSTE).** Trois essais à la première entrée, jamais après un refus
+  du serveur ni quand le même compte est déjà dans la salle ailleurs (deux appareils qui
+  réessaient seuls se chasseraient). Ce dernier cas a son message, et l'état « Votre présence »
+  n'y est plus affiché, parce qu'il le contredisait. La phrase technique du navigateur ne va plus
+  à l'écran : elle part à la supervision. La cause des entrées difficiles du 12/11 reste inconnue.
+- **Pages (PAGES-FLUIDES).** « La page est l'écran » (S0.2c, S0.2d, K4) est amendée par la demande
+  du directeur : la page a un cadre fin et des marges. Pas de boîte sombre autour d'elle : le fond
+  de la salle se voit dans la marge.
+- **Caméra après le jumelage (CAMERA-JUMELAGE).** Le paquet du lecteur de code ne ferme pas la
+  caméra dans un navigateur ; notre adaptateur la ferme lui-même. Prouvé dans Chromium, avant et
+  après ; pas sur un vrai téléphone.
+- **Pause (PAUSE-SERVEUR).** Active par défaut, au milieu de la durée prévue, comptée depuis le
+  début prévu ; durée et rappel réglés par la direction ; le réglage de la classe reste à
+  l'enseignant ; une pause prévue par le serveur (la prière, autre lot) prime et n'est pas soumise
+  au « reste minimum ». Ni la présence ni la paie ne changent.
+- **Hors de l'application (HORS-SALLE-1).** Qui modère n'est jamais coupé ; l'élève a 30 secondes,
+  puis sort de la salle et y rentre d'un geste. Rien n'est enregistré sur un élève : le journal de
+  ses sorties demandera l'accord du parent pour un mineur (règle du 11/11) et n'est pas construit.
+- **Bibliothèque (BIBLIOTHEQUE-SALLE).** Le bouton du milieu ouvre l'étagère existante ; il n'est
+  pas rendu quand elle est déjà ouverte à côté.
+- **Visages (VISAGES).** La lumière de l'orateur suit le seul « parle / ne parle pas » (correction
+  du directeur : pas de lien avec le volume de la voix).
+
+**Ce qui n'est pas fait.** Rien n'est essayé sur de vrais appareils ni à plusieurs. Aucune
+migration n'est installée. La suite complète des tests sur l'ensemble n'a pas encore fini une
+fois (un blocage sous la charge, puis un redémarrage du conteneur).
+
+
+## D-042 (13/11/2026). Le matricule des camarades fermé côté dépôt ; le délai de rappel de la pause lu sur le serveur (lot SERVEUR-PETITS)
+
+**Ce qui n'est pas fait.** Rien n'est installé : ni staging ni production. Les deux migrations ne
+sont que sur la branche ; la fuite du matricule reste ouverte en production tant que
+`20261124400000_session_peers_matricule.sql` n'y est pas posée. Rien n'est essayé dans
+l'application en ligne.
+
+- **Matricule (SEC-6, fin de D-040).** `public.session_peers_v` rendait à tout participant d'une
+  séance le prénom et le matricule des autres. Migration additive
+  `20261124400000_session_peers_matricule.sql` (aucun mot d'effacement) : même forme, mêmes
+  lignes, mêmes options, mêmes droits (comparés avant et après dans la migration) ; le matricule
+  vaut NULL sauf pour la direction, le contrôleur, l'enseignant de la séance (titulaire, ou
+  remplaçant effectif lu au dernier événement de `remplacements_seance`, comme
+  `private.c29_enseignant_effectif_session`) et la personne elle-même. Le prénom reste pour tous
+  (D-040). Aucun lecteur légitime n'avait besoin du matricule d'un pair : l'application ne lit pas
+  la vue ; aucune vue ni fonction des migrations ne la lit ; `scenarios_agt01` et
+  `scenarios_ctr01` la lisent par prénom et par nombre de lignes. Une session agent masquée garde
+  sa substitution du prénom par le matricule (0047, inchangée). Scénario
+  `scenarios_session_peers_matricule.sql`.
+- **Délai de rappel de la pause (D-039).** Une proposition restée sans réponse revenait après
+  une constante de l'application (5 min), sans lire le réglage de la direction. L'état de la
+  pause rend maintenant `rappel_minutes` (`seance.pause_rappel_minutes`, au moins 1, même lecture
+  que le Non) ; `PauseSeance.rappelMinutes` le porte (nul sur un serveur ancien) ; la barre du
+  chrono attend ce délai, 5 min sinon. Complété en place dans `20261124100000_pause_proposee.sql`,
+  jamais installée.
+- **Pause prévue ignorée (remarque du lot de la prière).** Une lecture illisible de
+  `seance_pause_prevue`, ou une ligne présente mais rejetée (heure absente, durée hors pas, heure
+  hors de la séance), garde le repli sur la règle ordinaire (une séance doit toujours pouvoir
+  commencer) et laisse un avertissement au journal du serveur : identifiant de la séance et
+  raison, ou le code d'erreur ; aucune donnée personnelle, aucune écriture.
+
+## D-043 (13/11/2026). Les sorties de l'application consignées au rapport, avec l'accord du parent (lot HORS-SALLE-2)
+
+**Demande du directeur (12/11/2026 au soir).** « Toutes ses sorties de l'app doivent être consignées
+sur le rapport : leur nombre total, fréquence, de quand jusqu'à quand. » Et le délai avant la
+sortie de la salle doit être réglable par la direction.
+
+**Cadre (règle du 11/11, `DROIT-RELEVE-QUALITE.md` §10 point 3).** Rien n'est gardé pour un élève
+mineur sans l'accord d'un tuteur de son foyer. La base ne connaît que `student_type` : un élève qui
+n'est pas `autonomous`, ou dont le type ne se lit pas, est traité comme mineur.
+
+**Décidé et construit (migration `20261124200000_journal_sorties.sql`, non installée).**
+- Trois réglages : `salle.sorties.journal_actif` (faux), `salle.sorties.delai_secondes` (30, de 5 à
+  600), `salle.sorties.accord_version` (`sorties-2026-11-v1`), vérifiés à l'écriture ; le délai et
+  l'état du journal sont rendus par `regles_academie()` (trois clés ajoutées, même signature).
+- L'accord, par élève (`accords_journal_sorties`, modèle `accords_publication`) : un tuteur du foyer
+  pour un élève non autonome ; l'élève autonome pour lui-même ; jamais l'enfant pour lui-même. Un
+  seul en cours ; retrait par `retire_le` ; accepter et retirer sont journalisés
+  (`log_sensitive_access`). Aucun accord n'est recueilli journal éteint.
+- **L'élève se reconnaît par sa fiche, jamais par son rôle** (correction du 13/11 après relecture
+  du pilote). L'élève adulte autonome a le rôle `guardian` et une fiche `student_profiles`
+  `autonomous` (0087) ; seul le mineur a le rôle `student`. « Pour soi » = `ma_capacite_eleve()`
+  et lui-même ; « pour un enfant » = tuteur du foyer, un autre élève, non autonome. Pour un élève
+  autonome, lui seul décide ; un autre tuteur du foyer ne décide pas, ne note pas et ne lit pas ses
+  lignes. Un adulte autonome qui est aussi parent voit sa carte et celles de ses enfants.
+- **Élève adulte : option la plus protectrice.** Son choix passe par le même mécanisme : sans
+  réponse de sa part, rien n'est noté (pas d'écriture par défaut avec simple information).
+- Le journal (`journal_sorties_app`) : séance, élève, sortie, retour, sortie de la salle ou non.
+  Écrit par `noter_sortie_app` seulement : journal allumé, accord valide à la version en cours,
+  élève participant de la séance en cours ; heures du serveur ; 200 lignes au plus par séance et
+  par élève, une par seconde. Sinon `{"note": false}`, jamais d'erreur visible. D6 : depuis
+  l'appareil de son tuteur, le tuteur du foyer note pour l'élève (paramètre `p_eleve`).
+- Lecture (`sorties_seance`) : direction, enseignant de la séance (titulaire ou remplaçant
+  effectif), tuteur pour ses enfants, élève pour lui ; **sans le contrôleur**, faute d'usage écrit.
+- Écrans : page de l'accord dans le Compte (tuteur : une carte par enfant ; élève adulte : pour
+  lui), proposée seulement journal allumé ; section « Sorties de l'application » du détail de
+  séance du parent ; une ligne par élève dans le cahier de l'enseignant ; le délai et l'interrupteur
+  du journal dans Configuration > Règles.
+
+**Ce qui attend le directeur.** Valider les textes (`TEXTES-VALIDES/ACCORD-JOURNAL-SORTIES.md`,
+PROPOSITION, français et arabe), décider la durée de conservation (aucune n'est écrite, aucune
+fonction d'effacement n'existe), puis seulement allumer le journal.
+
+**Limites.** Une sortie dont l'élève ne revient pas (page tuée) n'est pas notée. Aucun écran simple
+de présence d'une séance n'existe chez la direction : sa ligne n'a pas d'endroit, aucun écran n'a
+été créé. Le texte A3 promet « Compte, Mes accords », qui n'existe pas (signalé, non corrigé ici).
+
+## D-044 (13/11/2026). La salle relue comme une seule pièce (lot HARMONIE-SALLE, retour 13 du directeur)
+
+**Relevé** : `docs/current/salle/HARMONIE-2026-11-13.md` (40 lignes : 12 corrigées, 27 laissées
+avec leur raison, une sans objet).
+
+**Décidé en chemin.**
+- Sur ordinateur, l'état de repos prime (retour du pilote, 13/11) : la tête de la colonne suit son
+  contenu, sans place réservée pour la barre dépliée. Au repos, aucun vide sous la barre, et les
+  noms des tuiles sont là quand ils tiennent (aux trois tailles mesurées : 1024 x 768,
+  1280 x 800, 1440 x 900). Le temps d'un dépli sur un écran bas, la colonne se tasse (noms, puis
+  icônes), rien ne chevauche ; au repli, la forme de repos revient exactement. Une alerte haute
+  (récitation, prière à deux actions) suit la même règle. Une première version qui réservait la
+  place a été retirée : elle laissait un grand vide et des tuiles sans noms au repos.
+- Celui qui récite : les métadonnées de la salle (écrites par le serveur) font foi ; l'écran lit
+  encore le message de l'enseignant. Aucune fuite possible ; un cadre peut montrer la photo au lieu
+  de la vidéo le temps que les deux s'accordent. Plan écrit, pas fait.
+- La salle réduite relaie aux élèves la pause démarrée hors de la page.
+
+**Ce qui n'est pas fait.** La synchronisation de la salle vit encore dans la page (plan en six
+étapes dans le relevé). Prouvé par tests et captures de test
+(`docs/current/captures/E2E/harmonie-salle/`) ; pas sur un vrai appareil, pas en production.
+
+## D-045 (13/11/2026). La synchronisation de la salle vit avec l'appel, pas avec la page (lot SYNCHRO-SESSION, point 15 du directeur)
+
+**Demande.** Le directeur, 12/11 : la barre du chrono « marche bien aussi lorsque l'on réduit la
+salle, mais là aussi il faut qu'elle soit exploitée au max ». Plan : section 7 et lignes 3.1 à 3.3
+de `HARMONIE-2026-11-13.md`.
+
+**Décidé.**
+- La synchronisation de la salle et LA Dynamique chrono d'une séance sont un seul objet,
+  `SeanceVivante` (`lib/features/salle/seance_vivante.dart`), créé par le contrôleur de session
+  quand il adopte l'appel et libéré quand l'appel finit (« Quitter », fin subie, sortie de l'élève
+  hors de l'application) ou qu'une autre séance commence. La page et la salle réduite le lisent :
+  une alerte ou une marque née dans l'une se voit dans l'autre, une fois.
+- Le contrôleur reçoit une fabrique (`fabriqueCompagnon`) : sans elle (tests du contrôleur seul),
+  rien n'est créé. Sans contrôleur qui tienne l'appel (démonstration, moteur surchargé), la page
+  tient sa propre séance, libérée avec elle ; la salle réduite de même.
+- Celui qui récite, pour la vidéo et le cadre mis en avant : les métadonnées de la salle écrites par
+  le serveur, lues par le moteur (`RecitantDeLaSalle`, interface à part : seul le moteur LiveKit
+  l'implémente). Le message de l'enseignant ne sert plus qu'au prénom et aux alertes ; il reste la
+  source quand le moteur ne sait pas le dire.
+- La pause relayée n'est lue que si elle vient de qui conduit, dans la salle comme dans la salle
+  réduite (avant : la salle réduite ne vérifiait pas).
+- La récitation à l'entrée de l'enseignant n'est plus terminée à chaque réouverture de la page :
+  une fois, à la naissance de la séance (avant, rouvrir la salle depuis la barre coupait la
+  récitation en cours).
+- Effets voulus : l'enseignant qui a réduit la salle rejoue la page, le tableau et les traits à
+  qui entre ; les traits survivent à une sortie et un retour dans la page ; le tableau diffusé
+  reste ouvert à la réouverture.
+
+**Aucune règle ne change** : droits lus sur les capacités du jeton, vidéo des camarades, 30 s hors
+de l'application, pause, journal des sorties, textes (aucun texte ajouté). Rien n'est gardé
+au-delà de l'appel.
+
+**Trouvé en chemin.** `PageMadina15` divisait par zéro quand la page recevait une place nulle le
+temps d'une mise en page (hauteur NaN, exception) ; elle ne compose plus rien dans ce cas. Le cas
+n'est apparu que dans un test qui remonte la salle sous un conteneur neuf (`salle_ordinateur_test`,
+« B : repli ») : la cause exacte de cette image à largeur nulle n'est pas établie.
+
+**Limites.** `_verifierRecitant` ne tourne que page ouverte (salle réduite : le serveur termine la
+récitation d'un élève parti). Au téléphone à 390 en français, la marque de récitation fait passer
+le chevron de la salle réduite sur une seconde rangée (captures). Prouvé par tests et captures de
+test (`docs/current/captures/E2E/synchro-session/`) ; jamais essayé avec une vraie visio à
+plusieurs, ni en production.
+
+## D-046 (13/11/2026, soir). Version en ligne fusionnée dans la branche, et corrections de la relecture indépendante
+
+**Contexte.** L'architecte pédagogique a fait relire la branche par un relecteur indépendant
+(13/11, sur `06ba0bf0`) et a demandé la fusion de `main` (`e0b3d936`) dans la branche. Ses
+remarques sont des données d'une autre session, traitées comme une relecture de la demande de
+fusion : chacune a été vérifiée dans le code avant d'être suivie.
+
+**Fusion de `main`.** Six conflits, les deux côtés gardés (clés et section des règles : pause,
+sorties, prière ; registre des sources des textes ; textes générés). Les quatre migrations de la
+salle sont inchangées, octet pour octet. Sur une base neuve, les 443 migrations puis les 284
+scénarios passent, dont l'emboîtement prière et salle.
+
+**B2, le scénario de la pause.** `scenarios_pause_proposee.sql` supposait le lot prière absent et
+créait une fausse table du nom de sa vue. Il écrit maintenant dans le vrai stock de la prière ; le
+déclencheur du lot prière sur les séances est éteint le temps du test (annulé par le `ROLLBACK`),
+sinon son recalcul retirerait les lignes posées à la main. Le cas « ligne rejetée » est une heure
+hors de la séance (le stock refuse de lui-même une durée hors du pas de 5).
+
+**I7, les essais sans fin.** Vrai : à l'heure de reprise, une fin de pause refusée par le serveur
+était renvoyée à chaque seconde, sans limite ; de même le départ de la pause de prière à son
+heure. Désormais (`_EssaisSeuls`, `PilotePause.essaisSeuls`, `AppDelais.essaiSeulAttente`) : cinq
+essais au plus, à 0, 2, 6, 14 et 30 secondes ; ensuite la salle n'essaie plus seule, elle dit à
+qui pilote « La fin de la pause n'est pas confirmée » avec le bouton « Terminer la pause » (ou
+« Le début de la pause de prière n'est pas confirmé » avec « Commencer maintenant »). La marque
+reste tant que rien n'est confirmé, un toucher la rouvre, le geste relance une série ; elle s'en
+va seule quand l'état relu dit que la pause a fini ou commencé. Non retenu : garder la même clé
+d'idempotence d'un essai à l'autre (les commandes du serveur sont idempotentes sur l'état, et
+l'état est relu après chaque essai).
+
+**I8, les mots.** En arabe, « noter les sorties » ne se dit plus « تسجيل الخروج » (le mot de la
+déconnexion) mais « تدوين مرات الخروج » (réglage de la direction et les deux cases de l'accord ;
+le registre `TEXTES-VALIDES/ACCORD-JOURNAL-SORTIES.md` suit, toujours PROPOSITION). « Entrer »
+devient « rejoindre » (arrivées de la barre, message « compte déjà dans la salle »). « Parent »
+devient « tuteur » dans les réglages de la direction.
+
+**Deux replis prouvés sur l'adaptateur** (`test/features/salle/replis_serveur_ancien_test.dart`,
+faux serveur) : le Non de la pause et les prénoms des camarades sur un serveur d'avant le lot.
+
+**Limites.** Les deux nouveaux messages sont prouvés par tests, sans capture d'écran. Rien de
+tout cela n'est essayé sur staging, en production ni par le directeur.

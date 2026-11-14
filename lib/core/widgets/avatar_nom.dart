@@ -2,8 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
+import '../capacites/port_accents_profils.dart';
 import '../icons/app_icons.dart';
 import '../photos/photo_personne.dart';
+import '../theme/accent_profil.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_tile.dart';
@@ -359,11 +362,24 @@ class TuileSansImage extends StatelessWidget {
     this.coin,
     this.urlSignee,
     this.personneId,
+    this.couleurPersonne = false,
+    this.diametre = AppAvatar.moyen,
   });
+
+  /// Le diametre du cercle, pris dans [AppAvatar] : [AppAvatar.moyen] par
+  /// defaut ; un grand cadre de visage pose [AppAvatar.grand] (VISAGES).
+  final double diametre;
 
   /// L'id de la personne (PHOTOS-A) : l'image vient alors de la source
   /// unique, [urlSignee] est ignoree.
   final String? personneId;
+
+  /// VISAGES (directeur, 12/11/2026, point 7) : vrai pour que le cercle sans
+  /// photo prenne la couleur de la personne (son accent quand l'ecran le
+  /// connait deja, sinon une teinte stable tiree de son identifiant,
+  /// [AppPalette.teintePersonne]) au lieu de la teinte neutre. Le cadre de
+  /// visage de la salle le demande ; les autres ecrans gardent le neutre.
+  final bool couleurPersonne;
 
   /// La photo du profil (URL signee) ; `null` : les initiales dans le cercle
   /// (salle, directeur, 26/10/2026).
@@ -398,6 +414,11 @@ class TuileSansImage extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final TextStyle style = styleNom ?? textes.labelMedium ?? const TextStyle();
     final bool microCoupe = libelleMicroCoupe != null;
+    // VISAGES (point 7, capture du 12/11) : sans nom ni micro coupe (petite
+    // miniature), aucune rangee vide ne reste sous le cercle pour le pousser
+    // vers le haut : le cercle est seul, au centre exact de la tuile.
+    final bool avecNom = nom.trim().isNotEmpty;
+    final bool avecRangee = avecNom || microCoupe;
 
     final Widget bloc = LayoutBuilder(
       builder: (BuildContext _, BoxConstraints contraintes) => Padding(
@@ -424,37 +445,45 @@ class TuileSansImage extends StatelessWidget {
                       prenom: prenom,
                       personneId: personneId,
                       urlSignee: urlSignee,
-                      diametre: AppAvatar.moyen,
+                      diametre: diametre,
+                      couleurPersonne: couleurPersonne,
                     ),
                   ),
-                  Ecart.vXs,
-                  Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      if (microCoupe) ...<Widget>[
-                        Icon(
-                          AppIcons.microCoupe.repos,
-                          size: _icone,
-                          color: couleurIcone ?? style.color,
-                        ),
-                        Ecart.hXs,
+                  if (avecRangee) ...<Widget>[
+                    Ecart.vXs,
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        if (microCoupe)
+                          Icon(
+                            AppIcons.microCoupe.repos,
+                            key: const ValueKey<String>(
+                              'tuile-sans-image-micro',
+                            ),
+                            size: _icone,
+                            color: couleurIcone ?? style.color,
+                          ),
+                        if (microCoupe && avecNom) Ecart.hXs,
+                        if (avecNom)
+                          Flexible(
+                            child: TexteSansCoupure(
+                              nom,
+                              key: const ValueKey<String>(
+                                'tuile-sans-image-nom',
+                              ),
+                              textAlign: TextAlign.center,
+                              style: style,
+                            ),
+                          ),
+                        // L'emplacement qui fait face au micro : le nom reste
+                        // centre sur le cercle.
+                        if (microCoupe && avecNom) ...<Widget>[
+                          Ecart.hXs,
+                          const SizedBox(width: _icone),
+                        ],
                       ],
-                      Flexible(
-                        child: TexteSansCoupure(
-                          nom,
-                          key: const ValueKey<String>('tuile-sans-image-nom'),
-                          textAlign: TextAlign.center,
-                          style: style,
-                        ),
-                      ),
-                      // L'emplacement qui fait face au micro : le nom reste
-                      // centre sur le cercle.
-                      if (microCoupe) ...<Widget>[
-                        Ecart.hXs,
-                        const SizedBox(width: _icone),
-                      ],
-                    ],
-                  ),
+                    ),
+                  ],
                 ],
               ),
             ),
@@ -560,12 +589,25 @@ class _AvatarDePersonne extends StatelessWidget {
     required this.urlSignee,
     required this.diametre,
     super.key,
+    this.couleurPersonne = false,
   });
 
   final String prenom;
   final String? personneId;
   final String? urlSignee;
   final double diametre;
+
+  /// Voir [TuileSansImage.couleurPersonne].
+  final bool couleurPersonne;
+
+  /// La teinte stable de la personne, hors de toute lecture : par son id,
+  /// sinon par son prenom.
+  AppColorPair? _teinteStable(BuildContext context) {
+    if (!couleurPersonne) return null;
+    final String cle = (personneId ?? '').isNotEmpty ? personneId! : prenom;
+    if (cle.trim().isEmpty) return null;
+    return AppPalette.of(context).teintePersonne(cle);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -575,18 +617,36 @@ class _AvatarDePersonne extends StatelessWidget {
         prenom: prenom,
         urlSignee: urlSignee,
         diametre: diametre,
+        teinte: _teinteStable(context),
       );
     }
     if (context.findAncestorWidgetOfExactType<UncontrolledProviderScope>() ==
         null) {
-      return AvatarTile(prenom: prenom, diametre: diametre);
+      return AvatarTile(
+        prenom: prenom,
+        diametre: diametre,
+        teinte: _teinteStable(context),
+      );
     }
     return Consumer(
-      builder: (BuildContext context, WidgetRef ref, Widget? _) => AvatarTile(
-        prenom: prenom,
-        urlSignee: ref.watch(photoPersonneProvider(id)).value,
-        diametre: diametre,
-      ),
+      builder: (BuildContext context, WidgetRef ref, Widget? _) {
+        // VISAGES : l'accent choisi par le tuteur passe avant la teinte
+        // stable, mais seulement s'il est DEJA lu (un ecran du foyer l'a
+        // demande) : la salle ne lance aucune lecture nouvelle, et le serveur
+        // ne le rend de toute facon ni a l'enseignant ni aux camarades.
+        final AccentProfil? accent =
+            couleurPersonne && ref.exists(accentsProfilsProvider)
+            ? accentLu(ref.watch(accentsProfilsProvider), id)
+            : null;
+        return AvatarTile(
+          prenom: prenom,
+          urlSignee: ref.watch(photoPersonneProvider(id)).value,
+          diametre: diametre,
+          teinte: accent == null
+              ? _teinteStable(context)
+              : AppPalette.of(context).accentProfil(accent),
+        );
+      },
     );
   }
 }

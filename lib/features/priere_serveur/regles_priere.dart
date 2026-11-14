@@ -90,7 +90,7 @@ List<Widget> sectionReglesPriere({
     Ecart.vMd,
     CarteLignes(
       lignes: <Widget>[
-        // Le lieu de chaque enseignant : une page de la direction, ouverte d'ici.
+        // Le lieu de chaque enseignant : une liste a lire, ouverte d'ici.
         Builder(
           builder: (BuildContext context) => SettingRow(
             key: const ValueKey<String>('regles-priere-lieux'),
@@ -129,6 +129,33 @@ List<Widget> sectionReglesPriere({
           erreurEcriture: refus,
           onEcrit: onEcrit,
         ),
+        ConfigLigneBooleenne(
+          key: const ValueKey<String>('regles-priere-selon-pays'),
+          titre: r.methodeSelonPays,
+          description: r.methodeSelonPaysDetail,
+          cle: clePriereMethodeSelonPays,
+          valeur: v(clePriereMethodeSelonPays)!.versBooleen,
+          erreurEcriture: refus,
+          onEcrit: onEcrit,
+        ),
+        ConfigLigneBooleenne(
+          key: const ValueKey<String>('regles-priere-ramadan'),
+          titre: r.ramadan,
+          description: r.ramadanDetail,
+          cle: clePriereRamadan,
+          valeur: v(clePriereRamadan)!.versBooleen,
+          erreurEcriture: refus,
+          onEcrit: onEcrit,
+        ),
+      ],
+    ),
+    Ecart.vLg,
+    // Les valeurs chiffrees sont repliees : Rewayah les applique, la direction
+    // ne les change que pour une exception.
+    _ValeursChiffrees(
+      titre: r.valeurs,
+      detail: r.valeursDetail,
+      lignes: <Widget>[
         ligne(
           titre: r.pause,
           description: r.pauseDetail,
@@ -146,15 +173,6 @@ List<Widget> sectionReglesPriere({
           max: 20,
           proposees: <int>[5, 10, 15, 20],
           affichage: enMinutes,
-        ),
-        ConfigLigneBooleenne(
-          key: const ValueKey<String>('regles-priere-ramadan'),
-          titre: r.ramadan,
-          description: r.ramadanDetail,
-          cle: clePriereRamadan,
-          valeur: v(clePriereRamadan)!.versBooleen,
-          erreurEcriture: refus,
-          onEcrit: onEcrit,
         ),
         ligne(
           titre: r.margeDebut,
@@ -204,6 +222,47 @@ List<Widget> sectionReglesPriere({
       ],
     ),
   ];
+}
+
+/// Les valeurs chiffrees, repliees derriere une ligne : une phrase, un toucher.
+class _ValeursChiffrees extends StatefulWidget {
+  const _ValeursChiffrees({
+    required this.titre,
+    required this.detail,
+    required this.lignes,
+  });
+
+  final String titre;
+  final String detail;
+  final List<Widget> lignes;
+
+  @override
+  State<_ValeursChiffrees> createState() => _ValeursChiffreesEtat();
+}
+
+class _ValeursChiffreesEtat extends State<_ValeursChiffrees> {
+  bool _ouvert = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        CarteLignes(
+          lignes: <Widget>[
+            SettingRow(
+              key: const ValueKey<String>('regles-priere-valeurs'),
+              title: widget.titre,
+              description: widget.detail,
+              lien: true,
+              onPress: () => setState(() => _ouvert = !_ouvert),
+            ),
+          ],
+        ),
+        if (_ouvert) ...<Widget>[Ecart.vLg, CarteLignes(lignes: widget.lignes)],
+      ],
+    );
+  }
 }
 
 /// Une ligne qui edite un texte de `app_config` parmi un choix ferme : la

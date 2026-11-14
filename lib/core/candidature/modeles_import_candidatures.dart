@@ -566,12 +566,16 @@ class ApercuImport {
     }
     return ApercuImport(
       jeton: jeton,
-      colonnes: <ColonneLue>[for (final Object? e in entetes) ColonneLue.depuisJson(e)],
+      colonnes: <ColonneLue>[
+        for (final Object? e in entetes) ColonneLue.depuisJson(e),
+      ],
       compteurs: CompteursImport.depuisJson(brut['compteurs']),
       groupes: <GroupeDoublons>[
         for (final Object? g in groupes) GroupeDoublons.depuisJson(g),
       ],
-      lignes: <LigneApercu>[for (final Object? l in lignes) LigneApercu.depuisJson(l)],
+      lignes: <LigneApercu>[
+        for (final Object? l in lignes) LigneApercu.depuisJson(l),
+      ],
     );
   }
 
@@ -714,7 +718,9 @@ class RapportImport {
     return RapportImport(
       lot: lot,
       compteurs: CompteursImport.depuisJson(brut['compteurs']),
-      lignes: <LigneRapport>[for (final Object? l in lignes) LigneRapport.depuisJson(l)],
+      lignes: <LigneRapport>[
+        for (final Object? l in lignes) LigneRapport.depuisJson(l),
+      ],
       choix: <ChoixDoublon>[
         for (final Object? c in choix)
           if (c is Map && c['groupe'] is String && c['retenue'] is String)

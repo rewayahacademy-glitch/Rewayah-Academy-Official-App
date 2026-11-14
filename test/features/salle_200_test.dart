@@ -13,12 +13,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart' show Ref;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/coran/service_coran.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_coran/moteur_mushaf.dart';
+import 'package:rewayah_academy/core/tc_coran/port_corpus_coran.dart';
 import 'package:rewayah_academy/core/tc_observation/port_annonce_observation.dart';
 import 'package:rewayah_academy/core/theme/app_gabarit.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
@@ -34,6 +35,9 @@ import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_enseignant/panneau_enseignant.dart';
 import 'package:rewayah_academy/features/salle_seance/composition_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
+import 'package:rewayah_academy/features/salle_seance/media_salle.dart'
+    show ActionSousLaScene;
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/zone_support.dart';
 
@@ -478,11 +482,11 @@ void main() {
                 .byType(SalleOrdinateur)
                 .evaluate()
                 .isNotEmpty;
-            final Finder ligne = find.byKey(
-              ValueKey<String>(
-                ordinateur ? 'pilule-etat-salle' : 'ligne-etat-telephone',
-              ),
-            );
+            // DYNAMIQUE-CHRONO-1 : le mot d'etat (presence) quitte la barre
+            // du chrono pour la ligne d'etat, jamais repliee, la meme a toutes
+            // les tailles.
+            final Finder ligne = find.byKey(LigneEtatSalle.cle);
+            expect(ordinateur || ligne.evaluate().isNotEmpty, isTrue);
             if (ligne.evaluate().isNotEmpty) {
               _lisible(
                 tester,
@@ -671,9 +675,11 @@ void main() {
           texte,
           hauteur: hauteur,
           enPlus: <Override>[
-            pageCoranProvider.overrideWith(
+            // PAGES-FLUIDES : la salle lit la page dans le cache du rendu
+            // (`pageCorpusProvider`), plus par `pageCoranProvider`.
+            pageCorpusProvider.overrideWith(
               (Ref _, int numero) async =>
-                  PageCoran(numero: numero, versets: const <VersetCoran>[]),
+                  PageCorpus(numero: numero, versets: const <VersetCorpus>[]),
             ),
           ],
         );
@@ -693,7 +699,7 @@ void main() {
         expect(tester.takeException(), isNull);
       });
 
-      testWidgets('rien n est presente, $nom : Ouvrir le Coran a l ecran', (
+      testWidgets('rien n est presente, $nom : Bibliotheque a l ecran', (
         WidgetTester tester,
       ) async {
         await _monter(
@@ -705,22 +711,39 @@ void main() {
           presenter: false,
         );
         expect(tester.takeException(), isNull);
+        if (largeur >= 1200) {
+          // BIBLIOTHEQUE-SALLE : a 1200 et plus la Bibliotheque est deja
+          // ouverte a droite ; le bouton du milieu n'aurait rien a ouvrir,
+          // il n'est pas rendu, et l'etagere elle-meme est a l'ecran.
+          expect(
+            find.byKey(const ValueKey<String>('bibliotheque-fermer')),
+            findsOneWidget,
+          );
+          expect(find.byKey(ActionSousLaScene.cleBouton), findsNothing);
+          return;
+        }
         touchable(
           tester,
-          find.text(t.salle.ouvrirCoran),
+          find.descendant(
+            of: find.byKey(ActionSousLaScene.cleBouton),
+            matching: find.text(t.salle.seance.commandes.bibliotheque),
+          ),
           largeur,
           hauteur,
-          'Ouvrir le Coran',
+          'Bibliotheque',
         );
         // S0 : rien de presente, la scene video est au premier plan et
-        // « Ouvrir le Coran » y est le bouton de l'ecran (plus de panneau
+        // « Bibliotheque » y est le bouton de l'ecran (plus de panneau
         // vide a lire).
         touchable(
           tester,
-          find.text(t.salle.ouvrirCoran),
+          find.descendant(
+            of: find.byKey(ActionSousLaScene.cleBouton),
+            matching: find.text(t.salle.seance.commandes.bibliotheque),
+          ),
           largeur,
           hauteur,
-          'Ouvrir le Coran apres defilement',
+          'Bibliotheque apres defilement',
         );
       });
     }
@@ -788,7 +811,10 @@ void main() {
             expect(zone.bottom, lessThanOrEqualTo(plancher + 0.5));
             expect(zone.right, lessThanOrEqualTo(largeur + 0.5));
             // Le droit refuse ne se grise pas : aucune commande n'existe.
-            expect(find.text(t.salle.ouvrirCoran), findsNothing);
+            expect(
+              find.text(t.salle.seance.commandes.bibliotheque),
+              findsNothing,
+            );
             // Relire la page n'est pas presenter : l'action de l'erreur de
             // lecture reste, a l'ecran et touchable.
             if (presente) {
@@ -808,9 +834,10 @@ void main() {
   group('SALLE-ERR-320-1 : captures', skip: sautSansCapture, () {
     setUpAll(chargerPolicesDuDepot);
     final List<Override> corpusVide = <Override>[
-      pageCoranProvider.overrideWith(
+      // PAGES-FLUIDES : le cache du rendu (`pageCorpusProvider`).
+      pageCorpusProvider.overrideWith(
         (Ref _, int numero) async =>
-            PageCoran(numero: numero, versets: const <VersetCoran>[]),
+            PageCorpus(numero: numero, versets: const <VersetCorpus>[]),
       ),
     ];
     for (final (String etat, List<Override> enPlus, bool presenter)

@@ -1,8 +1,8 @@
 import 'dart:async';
-import 'dart:convert';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:go_router/go_router.dart';
@@ -10,8 +10,8 @@ import 'package:uuid/uuid.dart';
 
 import '../../core/accessibilite/age_eleve.dart';
 import '../../core/accessibilite/mode_accessibilite.dart';
-import '../../core/coran/service_coran.dart'
-    show pageCoranProvider, pagesMushafMedine;
+import '../../core/coran/service_coran.dart' show pagesMushafMedine;
+import '../../core/coran/vue_lecteur.dart' show EtatLecteur;
 import '../../core/domain/enums.dart';
 import '../../core/enseignant/modeles_enseignant.dart'
     show GroupeEnseignant, SeanceEnseignant;
@@ -34,6 +34,7 @@ import '../../core/session/session_controleur.dart';
 import '../../core/session/session_state.dart';
 import '../../core/tc_bibliotheque/couverture_ressource.dart';
 import '../../core/tc_classe/controleur_recitation.dart';
+import '../../core/tc_classe/garde_hors_application.dart';
 import '../../core/tc_classe/port_rappel_discret.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/rappel_discret.dart'
@@ -71,7 +72,6 @@ import '../../core/video/releve_qualite.dart';
 import '../../core/video/repli_audio.dart';
 import '../../core/video/service_video.dart';
 import '../../core/video/seuils_reseau.dart';
-import '../../core/video/signal_rappel.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -116,9 +116,11 @@ import '../salle_seance/ecriture_seance.dart'
         diffusionPointeurProvider,
         pointeurDistantProvider;
 import '../salle_seance/lecteur_support.dart';
+import '../salle_seance/marque_chrono.dart';
 import '../salle_seance/media_salle.dart';
 import '../salle_seance/notes_deposees.dart';
 import '../salle_seance/panneau_bibliotheque_salle.dart';
+import '../salle_seance/pilote_dynamique.dart';
 import '../salle_seance/presentation_observee.dart';
 import '../salle_seance/resultat_seance.dart';
 import '../salle_seance/salle_seance.dart';
@@ -130,6 +132,7 @@ import '../tc_flux_academique/carte_feedback_seance.dart';
 import '../tc_mes_groupes/chemins_tc_a.dart';
 import '../tc_observation_ui/indicateur_observation.dart';
 import 'annuaire_seance.dart';
+import 'camarades_salle.dart';
 import 'fiche_seance.dart';
 import 'memoire_page_classe.dart';
 import 'position_reprise.dart';
@@ -137,9 +140,13 @@ import 'preparation_eleve.dart';
 import 'preparation_enseignant.dart';
 import 'reprise_support.dart';
 import 'scene_classe.dart';
+import 'seance_vivante.dart';
 import 'suivi_fiche_seance.dart';
 import 'synchro_salle.dart';
 import 'vue_salle.dart';
+
+export '../salle_seance/relais_salle.dart'
+    show chargePause, pauseDepuisCharge, sujetPauseSalle;
 
 /// `ELV-03`, `ENS-03`, `CTR-02` : la salle.
 ///
@@ -210,6 +217,12 @@ class SallePage extends ConsumerStatefulWidget {
   /// La tuile « Coran » du choix des supports (lot salle 2).
   static const Key supportCoranKey = ValueKey<String>('salle-support-coran');
 
+  /// ENTREE-ROBUSTE : l'annonce du son recu bloque par le navigateur.
+  static const Key sonBloqueKey = ValueKey<String>('salle-son-bloque');
+
+  /// ENTREE-ROBUSTE : le lien « Activer le son » de cette annonce.
+  static const Key activerSonKey = ValueKey<String>('salle-activer-son');
+
   /// La seance visee, lue dans le billet d'entree (ADR-005). Elle ne transite
   /// jamais par l'URL : une adresse copiee arrive sans billet et repart.
   final String seanceId;
@@ -261,14 +274,160 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// serveur change pendant la seance (`DroitsPublicationVivants`).
   StreamSubscription<AccesSalle>? _sAcces;
 
-  /// SITUATIONS-GRAVES (defaut n° 6) : la pause relayee par l'enseignant.
-  StreamSubscription<PaquetDonnees>? _sPause;
+  /// ENTREE-ROBUSTE (12/11/2026) : le navigateur bloque le son recu
+  /// (`SonRecuBloque` du moteur).
+  StreamSubscription<bool>? _sSon;
+  bool _sonBloque = false;
 
-  /// SITUATIONS-GRAVES : la pause recue de l'enseignant (eleve, tuteur), ou
-  /// `null`. Chez l'enseignant : la derniere pause diffusee.
-  PauseSeance? _pauseRecue;
-  PauseSeance? _pauseDiffusee;
-  int _participantsVus = 0;
+  /// HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le controleur de session
+  /// dit que l'eleve est sorti de la salle apres une absence hors de
+  /// l'application ([EtatSessionPersistante.sortieHorsApplication]).
+  StreamSubscription<EtatSessionPersistante>? _sHorsApplication;
+
+  /// HORS-SALLE-1 : l'ecran du retour, si la sortie vise cette seance. Vrai
+  /// quand il est pose.
+  bool _lireSortieHorsApplication(EtatSessionPersistante etat) {
+    if (etat.sortieHorsApplication?.sessionId != widget.seanceId) {
+      return false;
+    }
+    _session.oublierSortieHorsApplication();
+    _veilleCamera?.cancel();
+    _veilleCamera = null;
+    // SYNCHRO-SESSION : le controleur a deja libere la seance de l'appel.
+    _libererSeanceLocale();
+    _enPreparation = false;
+    _sortieEleve = IssueSeance.horsApplication;
+    return true;
+  }
+
+  /// ENTREE-ROBUSTE : l'annonce « Le son est coupe par le navigateur », avec
+  /// « Activer le son », tant que le son recu est bloque dans une salle
+  /// ouverte ; `null` sinon. Elle reste a la place des annonces de geste
+  /// (en tete de la salle) : ne rien entendre passe avant tout.
+  AnnonceGeste? get _annonceSon => _sonBloque && _impasse == null
+      ? AnnonceGeste(
+          cle: SallePage.sonBloqueKey,
+          titre: t.salle.sonBloque,
+          message: '',
+          ton: TonEtat.avertissement,
+          action: LienFleche(
+            key: SallePage.activerSonKey,
+            libelle: t.salle.activerSon,
+            onPress: () => unawaited(_activerSon()),
+          ),
+        )
+      : null;
+
+  /// ENTREE-ROBUSTE : « Activer le son », sur le geste de la personne (le
+  /// navigateur ne relance la lecture que sur un geste).
+  Future<void> _activerSon() async {
+    if (_moteur case final SonRecuBloque son) {
+      await son.activerSon();
+      if (mounted) setState(() => _sonBloque = son.sonBloque);
+    }
+  }
+
+  /// SYNCHRO-SESSION (13/11/2026, `HARMONIE-2026-11-13.md` section 7) : la
+  /// synchronisation de la salle et LA Dynamique chrono de la seance
+  /// (alertes, marques, sonnerie de l'appel, pause proposee, arrivees,
+  /// recitation) ne vivent plus dans cette page : le controleur de session
+  /// les tient le temps de l'appel ([SeanceVivante]), et la salle reduite lit
+  /// les memes. La page s'y abonne a l'ouverture et s'en desabonne a la
+  /// fermeture ; elle ne cree rien.
+  ///
+  /// Sans controleur qui tienne l'appel (demonstration ou test qui surcharge
+  /// le moteur sous la racine, [_confiable] faux), la page cree la sienne,
+  /// liberee avec elle ([_seanceLocale]) : l'ancienne regle.
+  SeanceVivante? get _seance {
+    if (_confiable) {
+      final SeanceVivante? tenue = seanceTenue(_session, widget.seanceId);
+      // Un controleur sans fabrique (test du controleur seul) tient l'appel
+      // sans seance : la page garde la sienne.
+      if (tenue != null || !_tenu) return tenue;
+    }
+    final SeanceVivante? locale = _seanceLocale;
+    if (locale != null && !locale.libere) return locale;
+    final AccesSalle? acces = _acces;
+    if (acces == null || _sortieEleve != null) return null;
+    // La synchronisation a besoin du profil : tant que la session n'est pas
+    // lue, rien n'est cree (la composition suivante reessaie).
+    final String? profil = _lireProfil();
+    if (profil == null) return null;
+    return _seanceLocale = creerSeanceVivante(
+      cours: SessionEnCours(
+        sessionId: widget.seanceId,
+        groupeId: widget.groupeId ?? '',
+        libelleGroupe: '',
+        eleveId: widget.eleveId,
+        interfaceGuidee: widget.interfaceGuidee,
+      ),
+      acces: acces,
+      moteur: _moteur,
+      lire: ref.read,
+      profilLocalId: profil,
+      // Un appel deja tenu (controleur defait sous la page) : la recitation
+      // a deja ete relue a l'entree.
+      terminerRecitationALEntree: !_tenu,
+      relirePause: () {
+        if (mounted) ref.invalidate(pauseSeanceProvider(widget.seanceId));
+      },
+    );
+  }
+
+  /// Le profil de cet appareil ; nul tant que la session n'est pas lue.
+  String? _lireProfil() {
+    try {
+      return ref.read(sessionProvider).profileId;
+    } on Object {
+      return null;
+    }
+  }
+
+  /// La seance tenue par cette page seule ([_confiable] faux).
+  SeanceVivante? _seanceLocale;
+
+  /// La seance a laquelle la page est abonnee.
+  SeanceVivante? _seanceSuivie;
+
+  /// S'abonne a la seance courante (et se desabonne de la precedente) : la
+  /// page se redessine quand la parole, le tableau ou la pause recue
+  /// changent. Aucune logique ici : elle vit dans la seance.
+  ///
+  /// [redessiner] : appele hors de la construction (adoption de l'appel,
+  /// etat du controleur), la page se redessine si la seance a change.
+  void _raccorderSeance({bool redessiner = false}) {
+    final SeanceVivante? s = _seance;
+    if (identical(s, _seanceSuivie)) return;
+    _seanceSuivie?.removeListener(_seanceChange);
+    _seanceSuivie = s;
+    s?.addListener(_seanceChange);
+    if (redessiner && mounted) setState(() {});
+  }
+
+  void _seanceChange() {
+    if (!mounted) return;
+    // La seance peut finir pendant une construction (conteneur defait) : la
+    // page se redessine apres l'image.
+    if (SchedulerBinding.instance.schedulerPhase ==
+        SchedulerPhase.persistentCallbacks) {
+      SchedulerBinding.instance.addPostFrameCallback((Duration _) {
+        if (mounted) setState(() {});
+      });
+      return;
+    }
+    setState(() {});
+  }
+
+  /// Libere la seance tenue par la page seule ; celle du controleur vit et
+  /// meurt avec l'appel.
+  void _libererSeanceLocale() {
+    final SeanceVivante? locale = _seanceLocale;
+    _seanceLocale = null;
+    if (locale != null) unawaited(locale.liberer());
+  }
+
+  /// La synchronisation de la seance, ou `null`.
+  SynchroSalle? get _synchro => _seance?.synchro;
 
   bool _materielPret = false;
 
@@ -372,56 +531,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// N3, S2 : le dernier geste sur la pause n'est pas confirme (K-59).
   String? _echecPause;
 
-  /// S1 : la synchronisation de l'ecriture de cette seance, creee a la
-  /// premiere composition dans la salle, liberee a la sortie.
-  SynchroSalle? _synchro;
-
-  /// La synchronisation, raccordee au jeton courant, ou `null` (pas de jeton
-  /// ou profil inconnu).
-  SynchroSalle? _synchroPour(String? profil) {
-    final AccesSalle? acces = _acces;
-    if (acces == null || profil == null) return null;
-    final SynchroSalle? existante = _synchro;
-    if (existante != null && existante.sessionId == widget.seanceId) {
-      return existante;
-    }
-    unawaited(existante?.liberer());
-    final SynchroSalle neuve = SynchroSalle(
-      moteur: _moteur,
-      acces: acces,
-      sessionId: widget.seanceId,
-      profilLocalId: profil,
-    );
-    // L'eleve suit le tableau que l'enseignant ouvre ou ferme.
-    neuve.tableauOuvert.addListener(() {
-      if (mounted) setState(() {});
-    });
-    // Point 2 (30/10/2026) : l'eleve qui recite, mis en avant chez tous.
-    neuve.parole.addListener(() {
-      if (!mounted) return;
-      _paroleChangee(neuve);
-      setState(() {});
-    });
-    // GESTES-POINTEUR : celui qui conduit entre (ou revient, page
-    // rechargee) sans recitation connue de cet appareil. Si le serveur en
-    // tient encore une, il la termine : jamais une classe muette que
-    // l'enseignant ne voit pas.
-    if (acces.capacites.peutModerer) {
-      unawaited(
-        ref
-            .read(portGestesSalleProvider)
-            .terminerRecitation(widget.seanceId)
-            .catchError(
-              (Object e) => journalDev('recitation non relue a l entree : $e'),
-            ),
-      );
-    }
-    // Rappel discret (30/10/2026) : l'eleve appele le lit, et son appareil
-    // vibre ou sonne quand il le permet.
-    neuve.rappelsRecus.addListener(_rappelRecu);
-    return _synchro = neuve;
-  }
-
   /// GESTES-POINTEUR (directeur, 11/11/2026) : ce que le dernier geste dit a
   /// la personne (appel recu, recitation, retour a l'enseignant), ou `null`.
   /// Une seule place pour tous les roles et tous les ecrans
@@ -439,73 +548,6 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       if (mounted) setState(() => _annonce = null);
     });
     setState(() => _annonce = annonce);
-  }
-
-  /// « Appeler » : l'eleve appele l'entend (son court, vibration quand
-  /// l'appareil la permet) et le lit en tete de la salle, quel que soit
-  /// l'ecran.
-  void _rappelRecu() {
-    if (!mounted) return;
-    ref.read(signalRappelProvider)();
-    _annoncer(
-      AnnonceGeste(
-        cle: const ValueKey<String>('rappel-recu'),
-        titre: _tutoieSalle
-            ? t.salle.gestes.appelRecuTitreTutoie
-            : t.salle.gestes.appelRecuTitre,
-        message: _tutoieSalle
-            ? t.salle.gestes.appelRecuTutoie
-            : t.salle.gestes.appelRecu,
-      ),
-    );
-  }
-
-  /// La derniere recitation vue par cet appareil (eleve).
-  ParoleSalle? _paroleVue;
-
-  /// GESTES-POINTEUR : chez un eleve, la recitation se dit en une phrase.
-  /// Le recitant : « ouvrez votre micro » (son micro n'est jamais ouvert de
-  /// force). Ses camarades : leur micro est ferme, et pourquoi. A la fin :
-  /// ils peuvent le rouvrir.
-  void _paroleChangee(SynchroSalle synchro) {
-    if (_acces?.capacites.peutModerer ?? true) return;
-    final ParoleSalle? avant = _paroleVue;
-    final ParoleSalle? parole = synchro.parole.value;
-    _paroleVue = parole;
-    final bool tu = _tutoieSalle;
-    if (parole == null) {
-      if (avant == null) return;
-      _annoncer(
-        AnnonceGeste(
-          cle: const ValueKey<String>('recitation-finie'),
-          titre: t.salle.gestes.finRecitationTitre,
-          message: tu
-              ? t.salle.gestes.finRecitationTutoie
-              : t.salle.gestes.finRecitation,
-        ),
-      );
-    } else if (parole.profilId == synchro.profilLocalId) {
-      ref.read(signalRappelProvider)();
-      _annoncer(
-        AnnonceGeste(
-          cle: const ValueKey<String>('recitation-a-vous'),
-          titre: tu
-              ? t.salle.gestes.aVousTitreTutoie
-              : t.salle.gestes.aVousTitre,
-          message: tu ? t.salle.gestes.aVousTutoie : t.salle.gestes.aVous,
-        ),
-      );
-    } else {
-      _annoncer(
-        AnnonceGeste(
-          cle: const ValueKey<String>('recitation-autre'),
-          titre: t.salle.gestes.autreReciteTitre(prenom: parole.prenom),
-          message: tu
-              ? t.salle.gestes.autreReciteTutoie
-              : t.salle.gestes.autreRecite,
-        ),
-      );
-    }
   }
 
   /// Le transport du rappel discret pendant que cette salle vit
@@ -627,15 +669,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       });
       _verifierRecitant(liste);
       _veillerEnseignant(liste);
-      // SITUATIONS-GRAVES : un arrivant recoit la pause en cours.
-      if (liste.length > _participantsVus && _pauseDiffusee != null) {
-        unawaited(_diffuserPause(_pauseDiffusee!, forcer: true));
-      }
-      _participantsVus = liste.length;
+      // SYNCHRO-SESSION : les arrivees (+1, +2) et la pause donnee a un
+      // arrivant sont dites par la seance ([SeanceVivante]), salle ouverte
+      // ou reduite.
     });
-    _sPause = _moteur.donneesRecues
-        .where((PaquetDonnees p) => p.sujet == sujetPauseSalle)
-        .listen(_pauseRecueDe);
+    // ENTREE-ROBUSTE (12/11/2026) : le son recu bloque par le navigateur se
+    // dit en tete de la salle, avec son geste (« Activer le son »).
+    if (_moteur case final SonRecuBloque son) {
+      _sonBloque = son.sonBloque;
+      _sSon = son.sonBloqueChange.listen((bool bloque) {
+        if (mounted) setState(() => _sonBloque = bloque);
+      });
+    }
     _sQualite = _moteur.qualite.listen((QualiteLien lien) {
       if (mounted) {
         setState(() {
@@ -696,6 +741,20 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         initial: _session.etatCourant.cours != null,
       );
     }
+    // HORS-SALLE-1 : l'eleve sorti pendant son absence hors de
+    // l'application trouve l'ecran du retour, ici comme salle ouverte.
+    if (_confiable) {
+      _sHorsApplication = _session.etats.listen((EtatSessionPersistante e) {
+        if (!mounted) return;
+        if (_lireSortieHorsApplication(e)) setState(() {});
+        // SYNCHRO-SESSION : la seance de l'appel nait a l'adoption et meurt
+        // a la fin de l'appel ; la page suit celle qui vit.
+        _raccorderSeance(redessiner: true);
+      });
+      if (_lireSortieHorsApplication(_session.etatCourant)) {
+        return;
+      }
+    }
     // TRANSITIONS-SALLE : l'arche ne se joue ni au retour depuis l'ile, ni
     // apres un rechargement de cette meme seance.
     _depuisIle = _tenu;
@@ -725,6 +784,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (acces != null) {
       _armerVeilleCamera(acces);
     }
+    // SYNCHRO-SESSION : la seance de l'appel a continue hors de la page ; le
+    // tableau diffuse par l'enseignant pendant ce temps reste ouvert ici.
+    _tableau = _synchro?.tableauDiffuse ?? false;
   }
 
   /// Confie l'appel ouvert au proprietaire applicatif (31/10/2026) : des
@@ -747,6 +809,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       ),
       acces: acces,
     );
+    // SYNCHRO-SESSION : la seance de l'appel vient de naitre (ou reste la
+    // meme) ; la page s'y abonne tout de suite.
+    _raccorderSeance(redessiner: true);
   }
 
   /// La sortie de l'appel : par le controleur quand il le tient (annonce,
@@ -764,6 +829,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
 
   @override
   void dispose() {
+    // SYNCHRO-SESSION : la page se desabonne ; la seance de l'appel continue
+    // (salle reduite), seule celle de la page seule meurt avec elle.
+    _seanceSuivie?.removeListener(_seanceChange);
+    _seanceSuivie = null;
+    _seanceLocale?.arreterSonnerie();
+    _libererSeanceLocale();
     RelaisRappelSalle.retirer(_envoyerRappel);
     _suiviReseau.fermer();
     _envoiReleve.fermer();
@@ -772,9 +843,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     unawaited(_sParticipants?.cancel());
     unawaited(_sQualite?.cancel());
     unawaited(_sAcces?.cancel());
-    unawaited(_sPause?.cancel());
+    unawaited(_sSon?.cancel());
+    unawaited(_sHorsApplication?.cancel());
     _veilleCamera?.cancel();
-    unawaited(_synchro?.liberer());
     // Directeur, 31/10/2026 : un appel ouvert et confie continue hors de
     // l'ecran (retour arriere, autre ecran), comme un appel telephonique ; la
     // barre « Seance toujours en direct » le montre partout. Seule une salle
@@ -914,13 +985,24 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           interfaceGuidee: widget.interfaceGuidee,
         ),
       );
+    } on EntreeInterrompue {
+      // ENTREE-ROBUSTE : la salle a ete quittee pendant les essais du moteur
+      // (sortie, ecran ferme) : ce n'est pas une panne, rien a dire.
+      return;
     } catch (erreur) {
-      // Le moteur a deja pose son etat d'echec et tout libere ; il ne reste
+      // Le moteur a deja pose son etat d'echec et tout libere, apres ses
+      // essais (ENTREE-ROBUSTE : jusqu'a trois, sans geste) ; il ne reste
       // qu'a nommer la cause pour l'usager. Aucun detail technique ne remonte
       // a l'ecran : « ICE failed » ne se lit pas devant un enfant.
       journalDev('entree en salle impossible : $erreur');
       if (mounted) {
-        setState(() => _impasse = CauseImpasse.reseau);
+        // ENTREE-ROBUSTE (directeur, 12/11/2026 au soir) : le meme compte est
+        // dans la salle sur un autre appareil ; ce n'est pas le reseau.
+        setState(
+          () => _impasse = erreur is EntreeOuverteAilleurs || _ouverteAilleurs
+              ? CauseImpasse.ouverteAilleurs
+              : CauseImpasse.reseau,
+        );
       }
     }
   }
@@ -1181,8 +1263,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _veilleCamera?.cancel();
     _veilleCamera = null;
     await _quitterAppel();
-    unawaited(_synchro?.liberer());
-    _synchro = null;
+    // SYNCHRO-SESSION : le controleur a libere la seance de l'appel.
+    _libererSeanceLocale();
     if (!mounted) {
       return;
     }
@@ -1289,11 +1371,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       return;
     }
     _donnerLaParole(eleve);
-    _annoncer(
-      AnnonceGeste(
-        cle: const ValueKey<String>('recitation-ouverte'),
-        titre: t.salle.gestes.recitationOuverteTitre(prenom: eleve.prenom),
-        message: t.salle.gestes.recitationOuverte(prenom: eleve.prenom),
+    final PiloteDynamique? dynamique = _seance?.dynamique;
+    dynamique?.annoncer(
+      AlerteChrono(
+        id: 'recitation-${dynamique.numero}',
+        groupe: groupeRecitation,
+        titre: titreRecitation(eleve.prenom),
+        detail: t.salle.gestes.recitationOuverte(prenom: eleve.prenom),
       ),
     );
   }
@@ -1329,13 +1413,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     _finRecitationEnCours = false;
     if (!mounted) return;
     _donnerLaParole(null);
-    _annoncer(
-      AnnonceGeste(
-        cle: const ValueKey<String>('recitation-terminee'),
-        titre: t.salle.gestes.recitationTermineeTitre,
-        message: partie
+    final PiloteDynamique? dynamique = _seance?.dynamique;
+    dynamique?.annoncer(
+      AlerteChrono(
+        id: 'recitation-fin-${dynamique.numero}',
+        groupe: groupeRecitation,
+        titre: t.salle.gestes.finRecitationTitre,
+        detail: partie
             ? t.salle.gestes.recitationFinieSeule(prenom: parole.prenom)
             : t.salle.gestes.recitationTerminee,
+        duree: AppMouvement.alerteChronoBreve,
       ),
     );
   }
@@ -1556,40 +1643,10 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// SITUATIONS-GRAVES (11/11/2026, defaut n° 6) : la pause n'est lue au
   /// serveur que par l'enseignant (`pause_seance_etat`) ; son poste la
   /// relaie a la classe sur le canal fiable de la salle, a chaque changement
-  /// et a chaque arrivant. L'etat reste celui du serveur : rien n'est decide
-  /// ici, et aucun micro n'est touche.
-  Future<void> _diffuserPause(PauseSeance pause, {bool forcer = false}) async {
-    if (!forcer && pause == _pauseDiffusee) return;
-    _pauseDiffusee = pause;
-    if (!(_acces?.capacites.peutPublierDonnees ?? false)) return;
-    try {
-      await _moteur.publierDonnees(
-        sujet: sujetPauseSalle,
-        charge: utf8.encode(jsonEncode(chargePause(pause))),
-        fiable: true,
-      );
-    } on Object catch (erreur) {
-      journalDev('pause non relayee : $erreur');
-    }
-  }
-
-  /// SITUATIONS-GRAVES : la pause recue, seulement de qui conduit la seance
-  /// (l'identite du jeton signe) ; dite une fois en tete quand elle commence.
-  void _pauseRecueDe(PaquetDonnees paquet) {
-    if (!mounted || (_acces?.capacites.peutModerer ?? true)) return;
-    final bool deLEnseignant = _participants.any(
-      (ParticipantSalle p) =>
-          p.identite == paquet.emetteurIdentite && p.role == roleQuiConduit,
-    );
-    if (!deLEnseignant) return;
-    final PauseSeance? pause = pauseDepuisCharge(paquet.charge);
-    if (pause == null) return;
-    final bool commence =
-        pause.statut == StatutPause.enCours &&
-        _pauseRecue?.statut != StatutPause.enCours;
-    setState(() => _pauseRecue = pause);
-    if (commence) _annoncer(annoncePause());
-  }
+  /// et a chaque arrivant. SYNCHRO-SESSION : le relais, la reception (de qui
+  /// conduit seulement, ligne 3.3) et la pause donnee a un arrivant vivent
+  /// dans la seance ([SeanceVivante.diffuserPause]), salle ouverte ou
+  /// reduite.
 
   /// SITUATIONS-GRAVES (11/11/2026, defaut n° 2) : ce que l'eleve sait de
   /// son enseignant, qu'il soit seul ou avec d'autres eleves.
@@ -1852,9 +1909,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     required VuePresence mienne,
   }) {
     final bool enseignant = base.role == RoleSeance.enseignant;
-    final SynchroSalle? synchro = _synchroPour(
-      ref.read(sessionProvider).profileId,
-    );
+    // SYNCHRO-SESSION : la seance de l'appel (synchronisation, Dynamique
+    // chrono), lue et suivie ; la page ne cree rien.
+    _raccorderSeance();
+    final SeanceVivante? vivante = _seanceSuivie;
+    final SynchroSalle? synchro = vivante?.synchro;
     // S0.3 : le tableau blanc, ouvert par l'enseignant pour toute la classe,
     // prend la place de la page (le tableau libre existant).
     final bool tableau = enseignant
@@ -1883,12 +1942,20 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // Sans reponse, le chrono reste sans pause : jamais une pause inventee.
     final PauseSeance? pause = enseignant
         ? ref.watch(pauseSeanceProvider(widget.seanceId)).value
-        : _pauseRecue;
-    // SITUATIONS-GRAVES (defaut n° 6) : l'enseignant relaie la pause servie.
-    if (enseignant && pause != null && pause != _pauseDiffusee) {
-      unawaited(Future<void>.microtask(() => _diffuserPause(pause)));
+        : vivante?.pauseRecue;
+    // DYNAMIQUE-CHRONO-2 : la barre lit la pause (proposition, debut, fin) ;
+    // seule la capacite `peutPiloter` du serveur permet d'agir.
+    vivante?.observerPause(
+      pause,
+      pilote: enseignant && (pause?.peutPiloter ?? false),
+    );
+    // SITUATIONS-GRAVES (defaut n° 6) : l'enseignant relaie la pause servie
+    // (une fois par changement : la seance retient la derniere relayee).
+    if (enseignant && pause != null && vivante != null) {
+      unawaited(Future<void>.microtask(() => vivante.diffuserPause(pause)));
     }
     _tutoieSalle = base.tutoiement ?? base.role == RoleSeance.guidee;
+    vivante?.tutoie = _tutoieSalle;
     // GESTES-POINTEUR : chez un camarade du recitant, la phrase du micro dit
     // la vraie raison (le serveur garde son micro ferme le temps de la
     // recitation).
@@ -1905,14 +1972,15 @@ class _SallePageEtat extends ConsumerState<SallePage> {
               _suiviClasse(ref),
             ),
             pause: pause,
-            echecPause: _echecPause,
+            echecPause: _echecPause ?? vivante?.echecPause,
           )
         : camaradeRecite
         ? seanceSansFiches.copyWith(
             recitantPrenom: paroleRecue.prenom,
             pause: pause,
           )
-        // SITUATIONS-GRAVES : la pause relayee se lit dans l'ile.
+        // SITUATIONS-GRAVES : la pause relayee se lit dans la Dynamique
+        // chrono.
         : seanceSansFiches.copyWith(pause: pause);
     final VideoSessionProvider moteur = ref.watch(moteurSalleProvider);
     final double? plus = palierSuivant(_zoom);
@@ -2075,6 +2143,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final bool basculable = presentee != null || tableau;
     // Point 2 (30/10/2026) : l'eleve qui a la parole, chez tous.
     final ParoleSalle? parole = synchro?.parole.value;
+    // SYNCHRO-SESSION, ligne 3.1 : qui recite pour la video et le cadre mis
+    // en avant, lu a la meme source que le moteur (les metadonnees de la
+    // salle, ecrites par le serveur) ; `parole` ne garde que le prenom et
+    // les alertes.
+    final String? recitant = vivante?.recitant;
     return PorteeMediaSalle(
       // S0.2 : l'en-tete tient sur une ligne ; la presence de l'eleve y
       // passe en pastille (section 6.6, la sienne seulement) ; la liste de
@@ -2095,9 +2168,19 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       pageEnErreur: pageCoran != null && pagePresenteeEnErreur(ref, pageCoran),
       // Au telephone, l'enseignant n'a pas de colonne : « Eleves » ouvre la
       // presence (J3) et le roster (fiche, rappel) en feuille.
-      pastille: enseignant
-          ? null
-          : _PastillePresence(mienne: mienne, parole: parole),
+      // DYNAMIQUE-CHRONO-1 : la presence et l'eleve qui recite sont des
+      // marques de la Dynamique chrono, plus des pastilles posees a cote.
+      // DYNAMIQUE-CHRONO-2 : la recitation est une marque chez tous,
+      // l'enseignant compris (aucun droit ne change).
+      marques: enseignant
+          ? <MarqueChrono>[
+              if (parole != null)
+                MarqueChrono.recitation(
+                  libelle: titreRecitation(parole.prenom),
+                ),
+            ]
+          : marquesPresence(mienne: mienne, parole: parole),
+      pilote: vivante?.dynamique,
       // CHRONO-ETAT (11/11/2026) : presence confirmee, la pilule d'etat le
       // dit elle-meme (« En salle ») et la pastille ne le repete pas.
       presenceEnSalle: !enseignant && mienne.etat == EtatPresence.presente,
@@ -2162,12 +2245,16 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         vue: vue,
         attendu: enseignant ? null : seance.nomEnseignant,
         tutoie: _tutoieSalle,
-        recitant: parole?.profilId,
+        recitant: recitant,
         menuPour: _menuGestes,
         // Une personne, un cadre (defaut D-1, cahier §8) : l'image de
         // l'enseignant est deja sa vignette (en tete du panneau des eleves
         // sur ordinateur, capsule au telephone).
         moiDejaEnCadre: enseignant,
+        // VISAGES (point 8) : LA scene du mode Classe, avec son fond doux ;
+        // elle n'est montree que lorsque ni la page ni le tableau ne
+        // l'occupent (`modeSceneDe`).
+        fond: true,
       ),
       scenePremierPlan: scenePremierPlan,
       onBasculerScene: basculable
@@ -2177,11 +2264,18 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // choisie prend aussitot l'espace principal.
       actionScene: enseignant && presentee == null && vue.peutPresenter
           ? (
-              libelle: t.salle.ouvrirCoran,
+              libelle: t.salle.seance.commandes.bibliotheque,
               onPress: () => unawaited(_ouvrirCoran()),
             )
           : null,
-      video: moteur.renduVideo,
+      // CAMARADES (directeur, 12/11/2026) : la vignette, la capsule et la
+      // bande de cote suivent la meme regle que la grille ([videoMontree]) :
+      // chez un eleve, la camera d'un camarade seulement pendant qu'il
+      // recite.
+      video: (String identite) =>
+          videoMontree(vue, identite, recitant: recitant)
+          ? moteur.renduVideo(identite)
+          : null,
       // RUBAN-ORDINATEUR : la parole de chacun, pour l'anneau des cadres du
       // panneau des Eleves (seul le cadre l'ecoute, jamais la page).
       parle: (String identite) => moteur.participants
@@ -2197,7 +2291,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       // corrige ; le camarade qui recite s'entend, et sur un ecran large il
       // a son cadre dans la bande de cote). Remplace le Point 2 du 30/10.
       identiteVignette: (enseignant ? moi : vue.dominant)?.identite,
-      identiteRecitant: parole?.profilId,
+      identiteRecitant: recitant,
       // RUBAN-TELEPHONE : LE cadre de la grille, hors de la grille.
       cadre:
           (
@@ -2208,7 +2302,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
           }) => SceneClasse.cadreHorsGrille(
             vue,
             identite,
-            recitant: parole?.profilId,
+            recitant: recitant,
             libelleNom: libelleNom,
             coin: coin,
             detache: detache,
@@ -2239,17 +2333,23 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       onPageSuivante: actions.onPageSuivante,
       child: _AvecSynchro(
         synchro: synchro,
-        child: CoucheAnnonceGeste(
-          annonce: _annonce,
-          child: SalleSeance(
-            key: const ValueKey<String>('salle-de-seance'),
-            vue: seance,
-            actions: actions,
-            local: EtatLocalSeance(
-              microOuvert: moi?.micro ?? false,
-              cameraAllumee: moi?.camera ?? false,
-              zoom: _zoom,
-              agrandi: _agrandi,
+        // DYNAMIQUE-CHRONO-2, point 6 : toucher l'ecran arrete la sonnerie.
+        child: Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerDown: (PointerDownEvent _) => vivante?.arreterSonnerie(),
+          child: CoucheAnnonceGeste(
+            // ENTREE-ROBUSTE : le son bloque passe avant l'annonce d'un geste.
+            annonce: _annonceSon ?? _annonce,
+            child: SalleSeance(
+              key: const ValueKey<String>('salle-de-seance'),
+              vue: seance,
+              actions: actions,
+              local: EtatLocalSeance(
+                microOuvert: moi?.micro ?? false,
+                cameraAllumee: moi?.camera ?? false,
+                zoom: _zoom,
+                agrandi: _agrandi,
+              ),
             ),
           ),
         ),
@@ -2378,19 +2478,32 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// seance. Parti : l'eleve a recu un son et un message. Pas parti : la
   /// raison et quoi faire.
   void _retourAppel(String prenom, String? echec) {
+    if (echec == null) {
+      // DYNAMIQUE-CHRONO-2 : l'appel parti se dit dans la barre, en bref, et
+      // laisse une marque courte.
+      final String titre = t.salle.gestes.appelEnvoyeTitre(prenom: prenom);
+      final PiloteDynamique? dynamique = _seance?.dynamique;
+      dynamique?.annoncer(
+        AlerteChrono(
+          id: 'appel-envoye-${dynamique.numero}',
+          groupe: 'appel-envoye',
+          titre: titre,
+          detail: t.salle.gestes.appelEnvoye,
+          duree: AppMouvement.alerteChronoBreve,
+          trace: MarqueChrono.evenement(libelle: titre),
+          cleTrace: 'appel-envoye',
+          dureeTrace: AppMouvement.marqueAppelEnvoye,
+        ),
+      );
+      return;
+    }
     _annoncer(
-      echec == null
-          ? AnnonceGeste(
-              cle: const ValueKey<String>('appel-envoye'),
-              titre: t.salle.gestes.appelEnvoyeTitre(prenom: prenom),
-              message: t.salle.gestes.appelEnvoye,
-            )
-          : AnnonceGeste(
-              cle: const ValueKey<String>('appel-echec'),
-              titre: t.salle.gestes.appelEchecTitre(prenom: prenom),
-              message: echec,
-              ton: TonEtat.alerte,
-            ),
+      AnnonceGeste(
+        cle: const ValueKey<String>('appel-echec'),
+        titre: t.salle.gestes.appelEchecTitre(prenom: prenom),
+        message: echec,
+        ton: TonEtat.alerte,
+      ),
     );
   }
 
@@ -2451,8 +2564,9 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       lecteur: LecteurSupport(
         pages: pagesMushafMedine,
         pageDepart: retenue ?? pagePresentee ?? 1,
-        page: (BuildContext _, int numero) =>
-            PageCoranSalle(key: ValueKey<int>(numero), numero: numero),
+        // PAGES-FLUIDES : sans cle par numero, la page lue reste a l'ecran
+        // pendant que la suivante se lit, puis le fondu (`PageCoranSalle`).
+        page: (BuildContext _, int numero) => PageCoranSalle(numero: numero),
         partagerPage: (int numero) => unawaited(_presenterPage(numero)),
       ),
     );
@@ -2472,7 +2586,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   ) {
     for (final SupportDeSalle s in connus) {
       if (s.id == support.id && s.version == support.version) {
-        return s.page(context, support.page);
+        // PAGES-FLUIDES (directeur, 12/11/2026) : le meme fondu court que
+        // la page du Coran au changement de page ; rien sous « reduire les
+        // animations » (`FonduAuChangement`).
+        return FonduAuChangement(
+          cle: '${support.id}:${support.page}',
+          child: s.page(context, support.page),
+        );
       }
     }
     return const SupportIllisibleIci();
@@ -2773,7 +2893,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     if (sortie != null) {
       // MA-APRES-1 (decision A7 = a) : en Mode Accessibilite, UN SEUL ecran
       // de fin, celui de MA-6, monte ici par la vraie salle.
-      if (ref.watch(modeAccessibiliteActifProvider)) {
+      // HORS-SALLE-1 : l'ecran du retour apres une absence hors de
+      // l'application n'est pas une fin de seance ; il garde sa phrase et
+      // son « Retourner dans la salle » en Mode Accessibilite aussi.
+      if (sortie != IssueSeance.horsApplication &&
+          ref.watch(modeAccessibiliteActifProvider)) {
         final String? groupe = widget.groupeId;
         return ApresSeanceSalle(
           groupeId: groupe,
@@ -2808,7 +2932,12 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         onRetour: _retourClasse,
         // Lot salle 2 : apres « Quitter », revenir par le meme chemin que
         // l'entree (pre-vol, jeton, salle).
-        onRevenir: sortie == IssueSeance.quittee
+        secondesHorsApplication: ref
+            .read(delaiHorsApplicationProvider)
+            .inSeconds,
+        onRevenir:
+            sortie == IssueSeance.quittee ||
+                sortie == IssueSeance.horsApplication
             ? () {
                 setState(() => _sortieEleve = null);
                 unawaited(_entrer());
@@ -2833,22 +2962,25 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       ref,
       presence,
     );
-    // PHOTOS-2b (pilote, 04/11/2026) : l'eleve adulte nomme ses camarades
-    // par sa Classe (`participants_classe_eleve_adulte`) ; un enfant ne lit
-    // aucun prenom de camarade (protection des mineurs, decision du pilote
-    // du 04/11/2026) : la vignette garde la photo ou un cercle neutre,
-    // jamais « Participant ». Seuls l'enseignant et le controleur, qui lisent
-    // la liste, gardent ce repli.
+    // CAMARADES (directeur, 12/11/2026, journal D-040 ; amende PHOTOS-2b du
+    // 04/11) : TOUT eleve, enfant compris, nomme ses camarades par leur
+    // prenom, lu sur le serveur (`camarades_classe_eleve`), jamais leur nom
+    // de famille. L'eleve adulte garde aussi la lecture de sa Classe. Hors
+    // de cette liste, un inconnu reste sans nom chez l'eleve et le tuteur ;
+    // seuls l'enseignant et le controleur, qui lisent la liste, gardent
+    // « Participant ».
     final RoleSalle roleSalle = RoleSalle.depuis(_acces?.role);
-    final List<CamaradeSeance> camarades =
-        ref.watch(sessionProvider.select((SessionState s) => s.eleveAutonome))
-        ? <CamaradeSeance>[
-            for (final ParticipantClasseAdulte c
-                in ref.watch(maClasseAdulteProvider).value?.participants ??
-                    const <ParticipantClasseAdulte>[])
-              (id: c.id, prenom: c.prenom),
-          ]
-        : const <CamaradeSeance>[];
+    final List<CamaradeSeance> camarades = <CamaradeSeance>[
+      if (roleSalle == RoleSalle.eleve)
+        ...?ref.watch(camaradesSalleProvider).value,
+      if (ref.watch(
+        sessionProvider.select((SessionState s) => s.eleveAutonome),
+      ))
+        for (final ParticipantClasseAdulte c
+            in ref.watch(maClasseAdulteProvider).value?.participants ??
+                const <ParticipantClasseAdulte>[])
+          (id: c.id, prenom: c.prenom),
+    ];
     final AnnuaireSeance annuaire = AnnuaireSeance(
       presence: presence,
       enseignant: ficheEnseignant,
@@ -2946,17 +3078,13 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     final ContenuPresente? pagePresentee = _panneauEnseignant(vue) && !enImpasse
         ? ref.watch(contenuPresenteProvider).value
         : null;
-    // Le panneau de l'enseignant lit d'abord la page par le service du Coran
-    // (etats de lecture) : la page ne prend la place que si elle est lue.
+    // Le panneau de l'enseignant lit d'abord la page (etats de lecture) : la
+    // page ne prend la place que si elle est lue. PAGES-FLUIDES : dans le
+    // meme cache que le rendu (`etatPagePresentee`), plus de seconde lecture.
     final bool pageEnseignant =
         pagePresentee != null &&
         pagePresentee.estCoran &&
-        (ref
-                .watch(pageCoranProvider(pagePresentee.page))
-                .value
-                ?.versets
-                .isNotEmpty ??
-            false) &&
+        etatPagePresentee(ref, pagePresentee.page) == EtatLecteur.lecture &&
         pageCoranLisible(ref, pagePresentee.page);
     final bool pageEleveLisible =
         pageEleve != null &&
@@ -3042,7 +3170,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
         videoSuspendue: _repliAffiche.videoSuspendue,
         // RESEAU-ELEVES : le reseau de chacun, filtre (barres, alerte).
         reseaux: _suiviReseau.etats(),
-        // L'ile reste posee partout, sauf au telephone de l'enseignant (moins
+        // La Dynamique chrono dit le reseau partout, sauf au telephone de
+        // l'enseignant (moins
         // de 840 points), ou elle ne vit que dans le profil deplie : le
         // bandeau y garde la phrase de reseau (`salleTelephoneEnseignant`).
         reseauDansIle:
@@ -3081,15 +3210,133 @@ class _SallePageEtat extends ConsumerState<SallePage> {
     // support (CTRL-AGRANDIR-1). Aucune commande interdite n'est rendue, pas
     // meme grisee (UX_REVIEW_08 n° 4 f).
     if (vue.role == RoleSalle.controleur && !enImpasse) {
-      return PageImmersive(
-        registre: RegistreImmersif.salle,
-        entete: _EnteteControle(
-          vue: vue,
-          onQuitter: () => unawaited(_quitter(vue)),
+      return CoucheAnnonceGeste(
+        annonce: _annonceSon,
+        child: PageImmersive(
+          registre: RegistreImmersif.salle,
+          entete: _EnteteControle(
+            vue: vue,
+            onQuitter: () => unawaited(_quitter(vue)),
+          ),
+          bandeau: _Bandeaux(vue: vue),
+          child: arche
+              ? const _ArcheDeLAttente()
+              : presentation != null
+              ? _CorpsDocument(
+                  vue: vue,
+                  lignes: lignes,
+                  document: _PresentationLue(vue: presentation),
+                  presentationLue: true,
+                )
+              : _Corps(vue: vue, lignes: lignes),
         ),
-        bandeau: _Bandeaux(vue: vue),
-        child: arche
+      );
+    }
+
+    // ENTREE-ROBUSTE : la meme annonce du son bloque que dans la salle de
+    // seance (tuteur observateur, autres roles).
+    return CoucheAnnonceGeste(
+      annonce: _annonceSon,
+      child: PageImmersive(
+        registre: RegistreImmersif.salle,
+        lateraleEnPaysage: pageEleveLisible || pageEnseignant,
+        entete: _Entete(
+          vue: vue,
+          monTuteurObserve: monTuteurObserve,
+          annonces: annonces,
+          // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
+          // et la vue en base le lui impose de toute facon. L'observateur, lui,
+          // n'a aucun etat pedagogique a lire -- il assiste.
+          // ENTREE-ROBUSTE (relecture du 12/11) : quand ce compte est deja
+          // dans la salle sur un autre appareil, « Votre presence : a quitte
+          // le cours » contredirait le message de l'impasse (la personne EST
+          // dans la salle, ailleurs) : l'etat n'est pas affiche.
+          mienne:
+              vue.role == RoleSalle.eleve &&
+                  _impasse != CauseImpasse.ouverteAilleurs
+              ? mienne
+              : null,
+          // Le bouton n'existe que pour qui a droit a la liste ET n'a pas la
+          // place de la garder ouverte. Ailleurs il ferait doublon avec la
+          // colonne, et un doublon finit par diverger.
+          onVoirPresence:
+              vue.voitLesParticipants && !_colonneDePresence(context, vue)
+              ? () => unawaited(_voirPresence(lignes))
+              : null,
+          // La fiche de seance n'est qu'a l'enseignant, et seulement quand le
+          // roster pedagogique se lit (jamais un compteur invente).
+          eleves: vue.role == RoleSalle.enseignant && !enImpasse
+              ? _roster(ref)
+              : null,
+          onVoirEleves: () => unawaited(_voirEleves()),
+        ),
+        // Le bandeau disparait dans la seule situation ou il serait faux : une
+        // impasse n'est pas une salle, rien n'y est enregistre. Partout ailleurs
+        // il est present, y compris pendant l'attente : la regle se lit donc
+        // AVANT que le micro puisse s'ouvrir.
+        bandeau: enImpasse
+            ? null
+            : _Bandeaux(vue: vue, encreAccessible: encreAccessible),
+        commandes: enImpasse
+            ? null
+            : _Commandes(
+                vue: vue,
+                onMicro: _basculerMicro,
+                onCamera: _basculerCamera,
+                onQuitter: () => _quitter(vue),
+              ),
+        child: enImpasse
+            ? _Impasse(
+                cause: vue.cause,
+                detail: _detailRefus,
+                microRefuse: _microRefuseAvant,
+                onReessayer: _entrer,
+                onRentrer: _rentrer,
+              )
+            // TRANSITIONS-SALLE : le moment de l'arche, pendant l'attente
+            // reelle seulement.
+            : arche
             ? const _ArcheDeLAttente()
+            // `ENS-03` : la surface de presentation de l'enseignant, en UN SEUL
+            // point. Les deux conditions comptent. Le role vient du **jeton**
+            // (`vue.role`), jamais de `sessionProvider.role` : c'est le jeton qui
+            // decide ce qu'on peut faire dans une salle. Et `peutPresenter`
+            // conditionne l'affichage, plutot que de montrer des commandes que le
+            // moteur refuserait en silence -- `presenterContenu` refuse sans rien
+            // dire quand `can_publish_data` est absent.
+            : _panneauEnseignant(vue)
+            ? _CorpsDocument(
+                vue: vue,
+                lignes: lignes,
+                document: PanneauEnseignantSalle(seanceId: widget.seanceId),
+                pageCoran: pageEnseignant,
+              )
+            // D9 : l'eleve voit la page du Coran presentee.
+            : pageEleve != null
+            ? _CorpsDocument(
+                vue: vue,
+                lignes: lignes,
+                document: coranEleve
+                    ? PageCoranSalle(
+                        key: SallePage.pageEleveKey,
+                        numero: pageEleve.page,
+                      )
+                    : KeyedSubtree(
+                        key: SallePage.pageEleveKey,
+                        child: _pageDuSupport(
+                          context,
+                          ref.watch(supportsDeSalleProvider),
+                          supportPresenteDe(
+                            pageEleve,
+                            ref.watch(supportsDeSalleProvider),
+                          ),
+                        ),
+                      ),
+                presentationLue: true,
+                pageCoran: pageEleveLisible,
+              )
+            // TB-11a : le tuteur observateur lit la presentation, meme
+            // composition (le document d'abord, la scene ensuite).
             : presentation != null
             ? _CorpsDocument(
                 vue: vue,
@@ -3098,109 +3345,7 @@ class _SallePageEtat extends ConsumerState<SallePage> {
                 presentationLue: true,
               )
             : _Corps(vue: vue, lignes: lignes),
-      );
-    }
-
-    return PageImmersive(
-      registre: RegistreImmersif.salle,
-      lateraleEnPaysage: pageEleveLisible || pageEnseignant,
-      entete: _Entete(
-        vue: vue,
-        monTuteurObserve: monTuteurObserve,
-        annonces: annonces,
-        // L'eleve lit SON etat, et lui seul : la section 6.6 le dit deux fois,
-        // et la vue en base le lui impose de toute facon. L'observateur, lui,
-        // n'a aucun etat pedagogique a lire -- il assiste.
-        mienne: vue.role == RoleSalle.eleve ? mienne : null,
-        // Le bouton n'existe que pour qui a droit a la liste ET n'a pas la
-        // place de la garder ouverte. Ailleurs il ferait doublon avec la
-        // colonne, et un doublon finit par diverger.
-        onVoirPresence:
-            vue.voitLesParticipants && !_colonneDePresence(context, vue)
-            ? () => unawaited(_voirPresence(lignes))
-            : null,
-        // La fiche de seance n'est qu'a l'enseignant, et seulement quand le
-        // roster pedagogique se lit (jamais un compteur invente).
-        eleves: vue.role == RoleSalle.enseignant && !enImpasse
-            ? _roster(ref)
-            : null,
-        onVoirEleves: () => unawaited(_voirEleves()),
       ),
-      // Le bandeau disparait dans la seule situation ou il serait faux : une
-      // impasse n'est pas une salle, rien n'y est enregistre. Partout ailleurs
-      // il est present, y compris pendant l'attente : la regle se lit donc
-      // AVANT que le micro puisse s'ouvrir.
-      bandeau: enImpasse
-          ? null
-          : _Bandeaux(vue: vue, encreAccessible: encreAccessible),
-      commandes: enImpasse
-          ? null
-          : _Commandes(
-              vue: vue,
-              onMicro: _basculerMicro,
-              onCamera: _basculerCamera,
-              onQuitter: () => _quitter(vue),
-            ),
-      child: enImpasse
-          ? _Impasse(
-              cause: vue.cause,
-              detail: _detailRefus,
-              microRefuse: _microRefuseAvant,
-              onReessayer: _entrer,
-              onRentrer: _rentrer,
-            )
-          // TRANSITIONS-SALLE : le moment de l'arche, pendant l'attente
-          // reelle seulement.
-          : arche
-          ? const _ArcheDeLAttente()
-          // `ENS-03` : la surface de presentation de l'enseignant, en UN SEUL
-          // point. Les deux conditions comptent. Le role vient du **jeton**
-          // (`vue.role`), jamais de `sessionProvider.role` : c'est le jeton qui
-          // decide ce qu'on peut faire dans une salle. Et `peutPresenter`
-          // conditionne l'affichage, plutot que de montrer des commandes que le
-          // moteur refuserait en silence -- `presenterContenu` refuse sans rien
-          // dire quand `can_publish_data` est absent.
-          : _panneauEnseignant(vue)
-          ? _CorpsDocument(
-              vue: vue,
-              lignes: lignes,
-              document: PanneauEnseignantSalle(seanceId: widget.seanceId),
-              pageCoran: pageEnseignant,
-            )
-          // D9 : l'eleve voit la page du Coran presentee.
-          : pageEleve != null
-          ? _CorpsDocument(
-              vue: vue,
-              lignes: lignes,
-              document: coranEleve
-                  ? PageCoranSalle(
-                      key: SallePage.pageEleveKey,
-                      numero: pageEleve.page,
-                    )
-                  : KeyedSubtree(
-                      key: SallePage.pageEleveKey,
-                      child: _pageDuSupport(
-                        context,
-                        ref.watch(supportsDeSalleProvider),
-                        supportPresenteDe(
-                          pageEleve,
-                          ref.watch(supportsDeSalleProvider),
-                        ),
-                      ),
-                    ),
-              presentationLue: true,
-              pageCoran: pageEleveLisible,
-            )
-          // TB-11a : le tuteur observateur lit la presentation, meme
-          // composition (le document d'abord, la scene ensuite).
-          : presentation != null
-          ? _CorpsDocument(
-              vue: vue,
-              lignes: lignes,
-              document: _PresentationLue(vue: presentation),
-              presentationLue: true,
-            )
-          : _Corps(vue: vue, lignes: lignes),
     );
   }
 }
@@ -3223,49 +3368,6 @@ class _ArcheDeLAttente extends StatelessWidget {
     ),
     child: EntreeArche(),
   );
-}
-
-/// SITUATIONS-GRAVES (directeur, 11/11/2026, defaut n° 6) : le sujet du
-/// paquet qui relaie la pause de la seance a la classe (canal fiable).
-const String sujetPauseSalle = 'tc.salle.pause';
-
-/// La charge du relais de pause : l'etat servi, sans aucune identite.
-Map<String, Object?> chargePause(PauseSeance pause) => <String, Object?>{
-  'statut': pause.statut.name,
-  'duree': pause.dureePrevueMinutes,
-  'debut': pause.debutUtc?.toUtc().toIso8601String(),
-  'fin': pause.finUtc?.toUtc().toIso8601String(),
-  'debutPrevu': pause.debutPrevuUtc?.toUtc().toIso8601String(),
-};
-
-/// Lit un relais de pause, ou `null` s'il est illisible. Jamais de commande :
-/// `peutPiloter` reste faux chez qui le recoit.
-PauseSeance? pauseDepuisCharge(List<int> charge) {
-  try {
-    final Object? lu = jsonDecode(utf8.decode(charge));
-    if (lu is! Map) return null;
-    final StatutPause? statut = StatutPause.values
-        .where((StatutPause s) => s.name == lu['statut'])
-        .firstOrNull;
-    final Object? duree = lu['duree'];
-    if (statut == null ||
-        duree is! int ||
-        duree < BornesPause.dureeMin ||
-        duree > BornesPause.dureeMax) {
-      return null;
-    }
-    DateTime? instant(Object? v) =>
-        v is String ? DateTime.tryParse(v)?.toUtc() : null;
-    return PauseSeance(
-      statut: statut,
-      dureePrevueMinutes: duree,
-      debutUtc: instant(lu['debut']),
-      finUtc: instant(lu['fin']),
-      debutPrevuUtc: instant(lu['debutPrevu']),
-    );
-  } on Object {
-    return null;
-  }
 }
 
 /// L'annonce de tete d'une pause qui commence.
@@ -3582,59 +3684,46 @@ class _AvecSynchro extends StatelessWidget {
   }
 }
 
-/// S0.2 : l'etat de presence de l'eleve, en pastille dans l'en-tete de la
-/// salle de seance (section 6.6 : le sien, et aucun autre).
-class _PastillePresence extends StatelessWidget {
-  const _PastillePresence({required this.mienne, this.parole});
-
-  final VuePresence mienne;
-
-  /// Point 2 (30/10/2026) : l'eleve qui recite, dit a toute la classe.
-  final ParoleSalle? parole;
-
-  @override
-  Widget build(BuildContext context) {
-    // CHRONO-ETAT (directeur, 11/11/2026) : « En salle » est deja dit par la
-    // pilule d'etat ; la pastille ne reste que pour ce qui s'en ecarte (« Pas
-    // encore la », « En retard »...).
-    // RESEAU-ELEVES (defaut C6-4) : la reconnexion et la coupure de ma propre
-    // connexion sont dites par l'ile ; la pastille ne les redit pas.
-    final bool ditAilleurs =
-        mienne.etat == EtatPresence.presente ||
-        mienne.etat == EtatPresence.enReconnexion ||
-        mienne.etat == EtatPresence.deconnectee;
-    final Widget presence = MergeSemantics(
-      child: Semantics(
-        label: t.presence.mienne,
-        child: StatusPill(
-          libelle: LignePresence.libelle(mienne.etat),
-          ton: mienne.ton,
-        ),
+/// S0.2 : l'etat de presence de l'eleve dans la salle de seance (section
+/// 6.6 : le sien, et aucun autre), et l'eleve qui recite (point 2 du
+/// 30/10/2026).
+///
+/// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le chrono cache le
+/// document ») : ce ne sont plus des pastilles posees a cote de la barre,
+/// sur la page, mais des marques de la Dynamique chrono (point de couleur lu,
+/// en clair quand elle est depliee).
+@visibleForTesting
+List<MarqueChrono> marquesPresence({
+  required VuePresence mienne,
+  ParoleSalle? parole,
+}) {
+  // CHRONO-ETAT (directeur, 11/11/2026) : « En salle » est deja dit par la
+  // ligne d'etat ; la marque ne reste que pour ce qui s'en ecarte (« Pas
+  // encore la », « En retard »...). RESEAU-ELEVES (defaut C6-4) : la
+  // reconnexion et la coupure de ma propre connexion sont dites par la ligne
+  // d'etat ; la marque ne les redit pas.
+  final bool ditAilleurs =
+      mienne.etat == EtatPresence.presente ||
+      mienne.etat == EtatPresence.enReconnexion ||
+      mienne.etat == EtatPresence.deconnectee;
+  final ParoleSalle? p = parole;
+  return <MarqueChrono>[
+    if (!ditAilleurs)
+      MarqueChrono.presence(
+        libelle: LignePresence.libelle(mienne.etat),
+        ton: mienne.ton,
       ),
-    );
-    final ParoleSalle? p = parole;
-    if (p == null || p.prenom.isEmpty) {
-      return ditAilleurs ? const SizedBox.shrink() : presence;
-    }
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      spacing: AppSpacing.sm,
-      children: <Widget>[
-        if (!ditAilleurs) presence,
-        Flexible(
-          child: StatusPill(
-            key: const ValueKey<String>('salle-parole'),
-            libelle: t.tc.classe.recitation.actif(prenom: p.prenom),
-            ton: TonEtat.accent,
-          ),
-        ),
-      ],
-    );
-  }
+    // DYNAMIQUE-CHRONO-2 : prenom inconnu de qui regarde, « Un eleve
+    // recite ».
+    if (p != null) MarqueChrono.recitation(libelle: titreRecitation(p.prenom)),
+  ];
 }
 
-/// D14 : la camera n'a pas pu s'allumer ; la phrase exacte du navigateur, sa
-/// cause probable et quoi faire (K-59), sous l'en-tete.
+/// D14 : la camera n'a pas pu s'allumer ; sa cause probable et quoi faire
+/// (K-59), sous l'en-tete. La phrase exacte du navigateur ne s'affiche plus
+/// (directeur, 12/11/2026 au soir : un eleve ne lit jamais un message
+/// technique en anglais) ; le moteur l'envoie a la supervision
+/// (`signalerMediaImpossible`).
 ///
 /// Lot salle 3 (directeur, 25/10/2026) : le message se ferme (croix au bord
 /// de fin, cible de 48, « Fermer »).
@@ -3657,7 +3746,7 @@ class _ErreurCamera extends StatelessWidget {
     // K4 (directeur, 25/10/2026) : l'erreur de camera est une pilule
     // translucente sous la ligne d'etat, dans la couche qui se masque, jamais
     // un bloc qui pousse la page. Ce qui manque, la cause et quoi faire
-    // (K-59), puis le message exact du navigateur (D14).
+    // (K-59) ; le message du navigateur va a la supervision, pas a l'ecran.
     final TextStyle style = palette.piluleSalle.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
@@ -3697,11 +3786,6 @@ class _ErreurCamera extends StatelessWidget {
                             ),
                           ),
                           Text(cause, style: style),
-                          if (navigateur != null)
-                            Text(
-                              t.salle.cameraEchecMessage(erreur: navigateur),
-                              style: style,
-                            ),
                         ],
                       ),
                     ),
@@ -4553,14 +4637,16 @@ class _Corps extends StatelessWidget {
     final Gabarit gabarit = AppGabarit.de(context);
     final bool colonne = gabarit.estLarge && vue.voitLesParticipants;
 
+    // VISAGES (point 8) : rien n'est presente ici, la scene est en mode
+    // Classe : son fond doux.
     if (!colonne) {
-      return SceneClasse(vue: vue);
+      return SceneClasse(vue: vue, fond: true);
     }
 
     return Row(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        Expanded(child: SceneClasse(vue: vue)),
+        Expanded(child: SceneClasse(vue: vue, fond: true)),
         _ColonnePresence(vue: vue, lignes: lignes),
       ],
     );

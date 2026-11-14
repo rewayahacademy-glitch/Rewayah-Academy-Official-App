@@ -23,11 +23,12 @@ void main() {
   final a = t.admin.bibliotheque;
 
   group('navigation', () {
-    test('sixieme fonction de Pedagogie, entre Programmes et Qualite', () {
+    test('sixieme fonction de Pedagogie, entre Programmes et Qualite (le '
+        'domaine en compte sept depuis CALENDRIER-ET-PAUSES)', () {
       final List<String> chemins = <String>[
         for (final o in ongletsPedagogie()) o.chemin,
       ];
-      expect(chemins.length, 6);
+      expect(chemins.length, 7);
       expect(
         chemins.indexOf(Routes.adminPedagogieBibliotheque),
         chemins.indexOf(Routes.adminPedagogieProgrammes) + 1,

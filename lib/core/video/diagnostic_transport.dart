@@ -256,3 +256,104 @@ void signalerTransport(String evenement, Map<String, Object?> donnees) {
     donnees: donnees,
   );
 }
+
+/// HORS-SALLE-1 (directeur, 12/11/2026 au soir : « quand je sortais de la
+/// salle en tant qu'enseignant, le reseau se coupait ») : ce que le telephone
+/// a fait de l'appel de qui conduit la seance pendant que la page etait
+/// cachee. **Pour celui qui modere seulement, jamais pour un eleve.**
+///
+/// `page_cachee` (l'etat de la connexion a ce moment) part en miette ;
+/// `page_revenue` (duree cachee en secondes, etat de la connexion au retour,
+/// reprises pendant l'absence, son bloque) part tout de suite en
+/// avertissement, avec les miettes : c'est la preuve de la prochaine seance.
+/// [donnees] ne porte que le nom opaque de la salle, jamais une identite.
+void signalerAbsencePage(String evenement, Map<String, Object?> donnees) {
+  signalerTransport(evenement, donnees);
+  if (evenement == 'page_revenue') {
+    Supervision.signaler(
+      categorie: categorieTransport,
+      message: evenement,
+      donnees: donnees,
+    );
+  }
+}
+
+/// ENTREE-ROBUSTE (directeur, 12/11/2026, point 11 : « l'eleve suivant a du
+/// mal a rejoindre ») : un essai d'entree en salle qui echoue. Jusqu'ici, cet
+/// echec n'etait ecrit nulle part en production (`journalDev` n'ecrit qu'en
+/// debug) ; la raison reelle des echecs vus le 12/11 reste INCONNUE, c'est ce
+/// signal qui doit la donner.
+///
+/// Chaque essai manque laisse une miette ([signalerTransport], motif
+/// `entree_impossible`) ; l'echec [definitif] (essais epuises ou refus) est
+/// envoye tout de suite en avertissement ([Supervision.signaler]), avec les
+/// miettes des essais. [nature] dit le genre d'erreur (`refus`, `delai`,
+/// `transport`), [erreur] son type ; **jamais** de jeton, de message brut
+/// d'erreur (il peut porter l'adresse avec le jeton) ni d'identite : seul le
+/// nom opaque de la salle accompagne.
+void signalerEntreeImpossible({
+  required String? salleOpaque,
+  required int essai,
+  required String nature,
+  required String erreur,
+  required bool definitif,
+  int? statut,
+}) {
+  final Map<String, Object?> donnees = <String, Object?>{
+    'salle': salleOpaque,
+    'essai': essai,
+    'nature': nature,
+    'erreur': erreur,
+    'statut': ?statut,
+    'definitif': definitif,
+  };
+  signalerTransport('entree_impossible', donnees);
+  if (definitif) {
+    Supervision.signaler(
+      categorie: categorieTransport,
+      message: 'entree_impossible',
+      donnees: donnees,
+    );
+  }
+}
+
+/// ENTREE-ROBUSTE : la demande du jeton de la salle (`create-room-token`) n'a
+/// pas abouti pour une autre raison qu'un refus (delai depasse, panne qui
+/// repond, reseau). Envoye tout de suite : l'eleve voit alors « Reessayer ».
+/// [nature] : `delai`, `statut` (avec [statut]) ou le type de l'erreur ;
+/// jamais l'identifiant de la seance ni de l'eleve.
+void signalerJetonImpossible({required String nature, int? statut}) {
+  final Map<String, Object?> donnees = <String, Object?>{
+    'nature': nature,
+    'statut': ?statut,
+  };
+  signalerTransport('jeton_impossible', donnees);
+  Supervision.signaler(
+    categorie: categorieTransport,
+    message: 'jeton_impossible',
+    donnees: donnees,
+  );
+}
+
+/// ENTREE-ROBUSTE (directeur, 12/11/2026 au soir) : le micro ou la camera
+/// n'a pas pu s'ouvrir. La phrase du navigateur (`NotReadableError: Could not
+/// start video source`) ne s'affiche plus a l'eleve ; elle part ici, coupee a
+/// 200 caracteres, envoyee tout de suite. Elle ne nomme ni la personne ni
+/// l'appareil ; seul le nom opaque de la salle accompagne.
+void signalerMediaImpossible({
+  required String? salleOpaque,
+  required String source,
+  required String phrase,
+}) {
+  final Map<String, Object?> donnees = <String, Object?>{
+    'salle': salleOpaque,
+    'source': source,
+    'phrase': phrase.length > 200 ? phrase.substring(0, 200) : phrase,
+  };
+  signalerTransport('media_impossible', donnees);
+  Supervision.signaler(
+    categorie: categorieTransport,
+    message: 'media_impossible',
+    donnees: donnees,
+  );
+}

@@ -120,7 +120,11 @@ void main() {
     () {
       for (final String iana in _corpus) {
         final RegroupementDemandes g = _regroupement(iana);
-        final String avant = deDevant(_avantRegroupements(iana));
+        // Le fuseau de l'academie se dit « La Mecque », jamais « Riyad »
+        // (architecte, 13/11/2026, HORLOGE-ET-LIEU).
+        final String avant = deDevant(
+          iana == 'Asia/Riyadh' ? 'La Mecque' : _avantRegroupements(iana),
+        );
         expect(
           libelleFuseau(g),
           'Heure $avant',

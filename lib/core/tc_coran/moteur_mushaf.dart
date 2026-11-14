@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // exporte par l'entree principale de Riverpod 3, il vit dans `misc.dart`.
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../coran/service_coran.dart' show pagesMushafMedine;
 import 'corpus_service_coran.dart';
 import 'layout_lignes_indisponible.dart';
 import 'page_mushaf_vm.dart';
@@ -32,6 +33,16 @@ final FutureProviderFamily<PageCorpus?, int> pageCorpusProvider =
       (Ref ref, int numero) => ref.watch(portCorpusCoranProvider).page(numero),
     );
 
+/// PAGES-FLUIDES (directeur, 12/11/2026) : les pages a lire en avance quand
+/// la page [numero] s'affiche, pour que le tour suivant soit immediat : la
+/// precedente et la suivante, bornees a l'edition. **Pas plus loin** : la
+/// regle de [pageCorpusProvider] tient (on ne fait pas transiter le corpus).
+List<int> pagesVoisines(int numero, {int nombrePages = pagesMushafMedine}) =>
+    <int>[
+      if (numero > 1 && numero <= nombrePages) numero - 1,
+      if (numero >= 1 && numero < nombrePages) numero + 1,
+    ];
+
 /// La mise en page d'une page, quand une source la fournit.
 final FutureProviderFamily<LayoutPage?, int> layoutPageProvider =
     FutureProvider.family<LayoutPage?, int>(
@@ -45,30 +56,29 @@ final FutureProviderFamily<LayoutPage?, int> layoutPageProvider =
 /// n'assemble jamais ces trois sources lui-meme : il en resterait toujours un
 /// qui oublierait d'interroger la disponibilite du layout, et afficherait une
 /// page approximee sans le dire.
-final FutureProviderFamily<PageMushafVM, int> pageMushafProvider =
-    FutureProvider.family<PageMushafVM, int>((Ref ref, int numero) async {
-      final AsyncValue<PageCorpus?> page = ref.watch(pageCorpusProvider(numero));
-      final AsyncValue<List<SourateVM>> sourates = ref.watch(
-        souratesCoranProvider,
-      );
-      final AsyncValue<DisponibiliteLayout> disponibilite = ref.watch(
-        disponibiliteLayoutProvider,
-      );
-      final AsyncValue<LayoutPage?> layout = ref.watch(
-        layoutPageProvider(numero),
-      );
+final FutureProviderFamily<PageMushafVM, int>
+pageMushafProvider = FutureProvider.family<PageMushafVM, int>((
+  Ref ref,
+  int numero,
+) async {
+  final AsyncValue<PageCorpus?> page = ref.watch(pageCorpusProvider(numero));
+  final AsyncValue<List<SourateVM>> sourates = ref.watch(souratesCoranProvider);
+  final AsyncValue<DisponibiliteLayout> disponibilite = ref.watch(
+    disponibiliteLayoutProvider,
+  );
+  final AsyncValue<LayoutPage?> layout = ref.watch(layoutPageProvider(numero));
 
-      return PageMushafVM.depuis(
-        pageDemandee: numero,
-        // `hasValue` et non le type d'execution : Riverpod 3 relance un
-        // provider en echec tout seul, et l'etat repasse par `AsyncLoading` en
-        // conservant `hasError` (piege deja paye, `lib/CLAUDE.md`).
-        page: page.hasValue ? page.value : null,
-        chargementEnCours: page.isLoading && !page.hasError,
-        sourates: sourates.hasValue ? sourates.value : null,
-        fidelite: disponibilite.hasValue
-            ? disponibilite.value ?? DisponibiliteLayout.indisponible
-            : DisponibiliteLayout.indisponible,
-        layout: layout.hasValue ? layout.value : null,
-      );
-    });
+  return PageMushafVM.depuis(
+    pageDemandee: numero,
+    // `hasValue` et non le type d'execution : Riverpod 3 relance un
+    // provider en echec tout seul, et l'etat repasse par `AsyncLoading` en
+    // conservant `hasError` (piege deja paye, `lib/CLAUDE.md`).
+    page: page.hasValue ? page.value : null,
+    chargementEnCours: page.isLoading && !page.hasError,
+    sourates: sourates.hasValue ? sourates.value : null,
+    fidelite: disponibilite.hasValue
+        ? disponibilite.value ?? DisponibiliteLayout.indisponible
+        : DisponibiliteLayout.indisponible,
+    layout: layout.hasValue ? layout.value : null,
+  );
+});

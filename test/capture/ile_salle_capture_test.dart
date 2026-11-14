@@ -28,8 +28,8 @@ import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_seance_en_direct.dart';
 import 'package:rewayah_academy/features/salle_seance/bornes_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/chrono_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/media_salle.dart';
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
 
 import '../support/demo/seance_demo.dart';
@@ -102,7 +102,7 @@ Widget _salle(VueSeance vue) => Stack(
         child: PorteeMediaSalle(
           presenceEnSalle: true,
           child: Builder(
-            builder: (BuildContext c) => PiluleEtatSalle(
+            builder: (BuildContext c) => DynamiqueChrono(
               vue: vue,
               avecChrono: true,
               largeurMax: MediaQuery.sizeOf(c).width - 2 * AppSpacing.lg,

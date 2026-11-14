@@ -46,6 +46,8 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../acces_finance/acces_finance.dart';
+import '../attente_classe/carte_suivi_attente.dart';
+import '../attente_classe/suivi_attente_page.dart' show CheminsAttente;
 import '../tc_espace_groupe/carte_session.dart';
 import '../tc_espace_groupe/emplacements_groupe.dart';
 import '../tc_mes_groupes/photo_enseignant.dart';
@@ -162,13 +164,22 @@ class AccueilAccessibilite extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => PageShell(
-    child: LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        final double facteur = MediaQuery.textScalerOf(context).scale(1);
-        final bool deuxColonnes =
-            contraintes.maxWidth / facteur >= seuilDeuxColonnesAccueil;
-        return _composer(ref, deuxColonnes: deuxColonnes);
-      },
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        // SUIVI-ATTENTE (S6) : le suivi de l'attente de la classe en tete,
+        // silencieux sans demande.
+        const CarteSuiviAttente(chemins: CheminsAttente.enfant),
+        LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints contraintes) {
+            final double facteur = MediaQuery.textScalerOf(context).scale(1);
+            final bool deuxColonnes =
+                contraintes.maxWidth / facteur >= seuilDeuxColonnesAccueil;
+            return _composer(ref, deuxColonnes: deuxColonnes);
+          },
+        ),
+      ],
     ),
   );
 

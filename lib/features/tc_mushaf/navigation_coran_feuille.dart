@@ -179,6 +179,22 @@ class _LigneResultat extends StatelessWidget {
   final ResultatRechercheCoran resultat;
   final VoidCallback onPress;
 
+  /// LANGUES-1 : « Juz 18 » et « Page 18 » viennent du corpus en francais ;
+  /// l'ecran les ecrit dans la langue choisie (le nom d'une sourate, lui, est
+  /// celui de l'edition).
+  String get _libelle {
+    switch (resultat.type) {
+      case TypeResultatRecherche.juz:
+        final int? juz = resultat.juz;
+        if (juz != null) return t.eleve.coran.juz(juz: '$juz');
+      case TypeResultatRecherche.page:
+        return t.tc.coran.navigation.pageNumero(page: '${resultat.page}');
+      default:
+        break;
+    }
+    return resultat.libelle;
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -186,7 +202,7 @@ class _LigneResultat extends StatelessWidget {
 
     return AppCard(
       onPress: onPress,
-      libelleSemantique: resultat.libelle,
+      libelleSemantique: _libelle,
       child: Row(
         children: <Widget>[
           Expanded(
@@ -194,7 +210,7 @@ class _LigneResultat extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 Text(
-                  resultat.libelle,
+                  _libelle,
                   style: palette.inkStrong.applyTo(
                     textes.labelLarge ?? const TextStyle(),
                   ),

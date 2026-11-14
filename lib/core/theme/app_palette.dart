@@ -387,6 +387,41 @@ class AppPalette extends ThemeExtension<AppPalette> {
     onBackground: surfaceRaised.onBackground,
   );
 
+  /// VISAGES (directeur, 12/11/2026, point 7 : « les cadres des visages sont
+  /// trop clairs ») : le fond d'un cadre de visage (`CadreVisage`), un ecran
+  /// sombre comme les tuiles de Meet ou de Zoom. L'ancien fond
+  /// (`surfaceSunken`) ne se distinguait pas du fond de la page (1,0:1 en
+  /// clair). Mesures (test `test/core/widgets/visages_test.dart`) :
+  /// clair `#3B3546`, 10,3:1 contre le fond de la page et 11,8:1 contre une
+  /// carte blanche ; sombre `#4F4B63`, 2,2:1 contre le fond de la page et
+  /// 1,8:1 contre une carte (un cadre sombre plus clair que la nuit de la
+  /// page, sans devenir gris). Encre `#F5F2FA` : 10,6:1 (clair), 7,5:1
+  /// (sombre). Les accents de profil s'y lisent a 4,8:1 au moins.
+  AppColorPair get surfaceVisage => estSombre
+      ? const AppColorPair(
+          background: Color(0xFF4F4B63),
+          onBackground: Color(0xFFF5F2FA),
+        )
+      : const AppColorPair(
+          background: Color(0xFF3B3546),
+          onBackground: Color(0xFFF5F2FA),
+        );
+
+  /// VISAGES (point 7 : « donner une couleur aux miniatures sans photo ») :
+  /// la couleur d'une personne qui n'a pas d'accent connu, prise parmi les
+  /// accents de profil ([accentsProfil]) par un calcul **stable** sur
+  /// [cle] (son identifiant) : la meme personne a toujours la meme couleur,
+  /// sur tous les appareils (FNV-1a sur les unites de code, jamais
+  /// `String.hashCode`, qui change d'une plateforme a l'autre). L'accent
+  /// choisi par le tuteur, quand l'ecran le connait, passe avant.
+  AppColorPair teintePersonne(String cle) {
+    int h = 0x811c9dc5;
+    for (final int u in cle.codeUnits) {
+      h = ((h ^ u) * 0x01000193) & 0xFFFFFFFF;
+    }
+    return accentsProfil[h % accentsProfil.length];
+  }
+
   /// Fiche 1 de la salle au telephone (pilote, 26/10/2026, C1 et C2) : la
   /// couche sombre des commandes posees sur la page (capsule, profil, pilule
   /// de l'appel, « Commandes », zoom), la meme que la barre sombre de
@@ -1045,6 +1080,30 @@ abstract final class CouleursHalo {
       onBackground: Color(0xFF052E16),
     ),
     lueur: AppShadowColor(Color(0xFF22C55E)),
+  );
+
+  /// VISAGES (directeur, 12/11/2026, point 9) : la lumiere de celui qui
+  /// parle, dans son cadre. Les lilas de la marque deja dans la palette
+  /// (`#BA98FB` accent plein sombre, `#DCCAFD` action douce, `#C9AEFF`
+  /// encre d'accent sombre, `#8652E6` violet du logo) : **moins fonce** que
+  /// l'ancien anneau (`#6538E4`, demande du directeur), aucune valeur
+  /// nouvelle. Le creux transparent rend la rotation lisible, comme pour le
+  /// cercle Compte. Pas de pastille : la parole se dit aussi par le libelle
+  /// lu « parle » du cadre.
+  static const AppHaloColor parole = AppHaloColor(
+    <Color>[
+      Color(0xFFBA98FB),
+      Color(0xFFDCCAFD),
+      Color(0xFF8652E6),
+      Color(0x26C9AEFF),
+      Color(0xFFBA98FB),
+    ],
+    <double>[0, 80 / 360, 160 / 360, 250 / 360, 1],
+    pastille: AppColorPair(
+      background: Color(0xFFBA98FB),
+      onBackground: Color(0xFF25113F),
+    ),
+    lueur: AppShadowColor(Color(0xFFBA98FB)),
   );
 }
 

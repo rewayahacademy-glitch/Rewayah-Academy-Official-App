@@ -53,15 +53,18 @@ final FutureProvider<CanalSupport?> canalAideCompteProvider =
 /// La langue de l'interface en ce moment, francais ou arabe : celle qui
 /// s'affiche, meme quand la preference suit l'appareil (« Systeme »).
 PreferenceLangue langueEffective(BuildContext context) =>
-    TranslationProvider.of(context).locale == AppLocale.ar
-    ? PreferenceLangue.arabe
-    : PreferenceLangue.francais;
+    switch (TranslationProvider.of(context).locale) {
+      AppLocale.ar => PreferenceLangue.arabe,
+      AppLocale.en => PreferenceLangue.anglais,
+      AppLocale.fr => PreferenceLangue.francais,
+    };
 
 /// Le nom d'une langue du compte, ecrit dans cette langue.
-String nomLangueCompte(PreferenceLangue langue) =>
-    langue == PreferenceLangue.arabe
-    ? t.commun.langue.arabe
-    : t.commun.langue.francais;
+String nomLangueCompte(PreferenceLangue langue) => switch (langue) {
+  PreferenceLangue.arabe => t.commun.langue.arabe,
+  PreferenceLangue.anglais => t.commun.langue.anglais,
+  _ => t.commun.langue.francais,
+};
 
 /// « Langue » : la langue du compte, pour l'interface ET les e-mails
 /// (garde-cap, 11/11/2026). Ouvre le choix entre le francais et l'arabe.

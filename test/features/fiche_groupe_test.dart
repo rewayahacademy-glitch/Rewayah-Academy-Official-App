@@ -255,7 +255,9 @@ void main() {
         find.text(
           t.enseignant.ficheGroupe.creneauHebdo(
             jour: t.disponibilites.joursLongs[2],
-            heure: '17:00',
+            // HORLOGE-ET-LIEU (13/11/2026) : sans lecture du fuseau de la classe,
+            // son heure est dite avec la ville de son fuseau.
+            heure: '17:00 (heure de Paris)',
           ),
         ),
         findsOneWidget,

@@ -73,15 +73,19 @@ enum EtatPresenceProjete {
 
   /// Vrai quand la personne est effectivement dans la salle en ce moment.
   bool get enSalle =>
-      this == EtatPresenceProjete.present || this == EtatPresenceProjete.enRetard;
+      this == EtatPresenceProjete.present ||
+      this == EtatPresenceProjete.enRetard;
 }
 
 /// Ce que la seance precedente a laisse.
 @immutable
 class ResumeSeance {
   /// Cree un resume de seance.
-  ResumeSeance({required this.dateUtc, this.positionAtteinte, this.pointARevoir})
-    : assert(dateUtc.isUtc, 'tout instant de contrat est en UTC');
+  ResumeSeance({
+    required this.dateUtc,
+    this.positionAtteinte,
+    this.pointARevoir,
+  }) : assert(dateUtc.isUtc, 'tout instant de contrat est en UTC');
 
   /// La date de la seance concernee, en UTC.
   final DateTime dateUtc;

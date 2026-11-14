@@ -1084,10 +1084,12 @@ void main() {
       );
       expect(d.map((DocumentPlanche x) => x.id).toList(), <String>[
         idDocumentCoran,
-        'pdf',
-        'voix',
+        // A `ordre` egal (ici tous a 0) : titre puis identifiant (ordre total,
+        // commit 1a141b98) ; titres « Titre film » < « Titre pdf » < … .
         'film',
+        'pdf',
         'site',
+        'voix',
       ]);
       DocumentPlanche de(String id) =>
           d.firstWhere((DocumentPlanche x) => x.id == id);

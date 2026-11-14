@@ -184,6 +184,7 @@ void main() {
   setUpAll(() async {
     await chargerPolicesDuDepot();
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));

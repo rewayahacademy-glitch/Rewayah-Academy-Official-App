@@ -307,6 +307,7 @@ void main() {
     await chargerPolicesDuDepot();
     await chargerPoliceMadina15();
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));

@@ -154,6 +154,10 @@ abstract final class Routes {
   /// Suivi et historique de l'eleve.
   static const String eleveSuivi = '/eleve/suivi';
 
+  /// CALENDRIER-ET-PAUSES (12/11/2026) : l'eleve adulte demande une pause d'un
+  /// mois, pour lui-meme. Jamais l'enfant.
+  static const String elevePause = '/eleve/suivi/pause';
+
   /// Les notifications de l'eleve adulte (lot B2, 29/10/2026), la meme page
   /// que les autres roles. L'eleve mineur n'en a pas (reponse Q5 du
   /// directeur du 04/10, maintenue le 29/10) : son adresse le ramene a
@@ -404,6 +408,13 @@ abstract final class Routes {
   /// Le segment Observations de l'Historique.
   static const String tuteurSuiviObservations = '/tuteur/suivi/observations';
 
+  /// CALENDRIER-ET-PAUSES (12/11/2026) : le tuteur demande une pause d'un mois
+  /// pour l'enfant [eleveId].
+  static String tuteurPause(String eleveId) => Uri(
+    path: '$tuteurSuivi/pause',
+    queryParameters: <String, String>{'eleve': eleveId},
+  ).toString();
+
   /// Alias de l'Historique (arbre du mandat) : redirige vers [tuteurSuivi].
   static const String tuteurHistoriqueAlias = '/tuteur/historique';
 
@@ -452,7 +463,8 @@ abstract final class Routes {
 
   /// Une sous-page du compte : `informations`, `securite`, `acces`,
   /// `paiements`, `preferences`, `aide`, `informations-legales`,
-  /// `consentements`, `mes-donnees`.
+  /// `consentements`, `mes-donnees`, `sorties` (HORS-SALLE-2 : l'accord du
+  /// journal des sorties de l'application, par enfant).
   static String compteTuteurSousPage(String segment) =>
       '$tuteurCompte/$segment';
 
@@ -467,6 +479,7 @@ abstract final class Routes {
     'informations-legales',
     'consentements',
     'mes-donnees',
+    'sorties',
   ];
 
   /// Ancienne page des preferences du titulaire (PROFILS P2) : les
@@ -508,6 +521,38 @@ abstract final class Routes {
 
   /// La frise d'une demande (SUIVI-FAMILLE, R20).
   static String tuteurDemande(String demandeId) => '$tuteurDemandes/$demandeId';
+
+  /// SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe d'un
+  /// enfant (cinq etapes), sous le tuteur.
+  static const String tuteurAttente = '/tuteur/attente';
+
+  /// Le suivi de l'attente d'une demande, pour le tuteur.
+  static String tuteurAttenteDemande(String demandeId) =>
+      '$tuteurAttente/$demandeId';
+
+  /// SUIVI-ATTENTE : le suivi de l'attente, pour l'eleve adulte autonome.
+  static const String eleveAdulteAttente = '/eleve/adulte/attente';
+
+  /// Le suivi de l'attente d'une demande, pour l'eleve adulte.
+  static String eleveAdulteAttenteDemande(String demandeId) =>
+      '$eleveAdulteAttente/$demandeId';
+
+  /// SUIVI-ATTENTE : le suivi de l'attente, version simple, pour l'eleve de
+  /// moins de 10 ans dans son espace.
+  static const String eleveAttente = '/eleve/attente';
+
+  /// Le suivi de l'attente d'une demande, pour l'eleve (version simple).
+  static String eleveAttenteDemande(String demandeId) =>
+      '$eleveAttente/$demandeId';
+
+  /// SUIVI-ATTENTE : « Me presenter aux familles », pour l'enseignant, sur
+  /// une de ses classes.
+  static String enseignantPresentationClasse(String groupeId) =>
+      '/enseignant/classes/$groupeId/presentation';
+
+  /// SUIVI-ATTENTE : ce que les familles voient de l'enseignant (son profil).
+  static const String enseignantPresentationFamilles =
+      '/enseignant/profil/presentation';
 
   /// ECHELLE-FAM-ETATS-1 : le resultat d'une fusion ou d'un transfert pour une
   /// demande : la nouvelle classe, le titre de l'enseignant, l'horaire.
@@ -607,6 +652,12 @@ abstract final class Routes {
   /// controle est publiee (`resignatureContratEnseignantProvider`). Fermee
   /// le reste du temps (`deciderRedirection`).
   static const String enseignantContrat = '/enseignant/contrat';
+
+  /// La ville de la personne (HORLOGE-ET-LIEU, partie B, H5) : le tuteur et
+  /// l'enseignant y sont menes tant qu'ils n'ont pas choisi leur ville, avec
+  /// « Plus tard » tant qu'il reste un report. Hors de ce cas, elle reste ouverte
+  /// au tuteur et a l'enseignant qui veulent changer de ville.
+  static const String ville = '/ville';
 
   /// Racine des ecrans contextuels d'une seance.
   static const String enseignantSeance = '/enseignant/seance';
@@ -894,6 +945,10 @@ abstract final class Routes {
 
   /// Controle qualite pedagogique (`ADM-14`), sous Pedagogie.
   static const String adminPedagogieQualite = '/admin/pedagogie/qualite';
+
+  /// CALENDRIER-ET-PAUSES (12/11/2026) : le calendrier de l'ecole et les
+  /// pauses, sous Pedagogie (septieme et derniere fonction du domaine).
+  static const String adminPedagogieCalendrier = '/admin/pedagogie/calendrier';
 
   /// CAP29-0 : le catalogue de la bibliotheque, sous Pedagogie.
   static const String adminPedagogieBibliotheque =
@@ -1326,6 +1381,11 @@ abstract final class Routes {
   /// Mes donnees : la copie de ses donnees et la demande de suppression du
   /// compte (CPT-SUPPR-EXPORT). Le tuteur la rejoint sous `/tuteur/compte`.
   static const String compteMesDonnees = '/compte/mes-donnees';
+
+  /// HORS-SALLE-2 : l'accord de l'eleve adulte autonome au journal des
+  /// sorties de l'application, pour lui-meme. Le tuteur la rejoint sous
+  /// `/tuteur/compte/sorties`.
+  static const String compteSorties = '/compte/sorties';
 
   /// Profils d'enfants du foyer.
   static const String compteProfils = '/compte/profils';

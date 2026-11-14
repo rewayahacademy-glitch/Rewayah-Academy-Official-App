@@ -16,6 +16,7 @@ import 'package:rewayah_academy/features/salle_seance/actions_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/annonce_geste.dart';
 import 'package:rewayah_academy/features/salle_seance/ecriture_seance.dart'
     show pointeurDistantProvider;
+import 'package:rewayah_academy/features/salle_seance/pointeur_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_seance.dart';
 import 'package:rewayah_academy/features/salle_seance/surface_page_fixe.dart';
 import 'package:rewayah_academy/features/salle_seance/vue_seance.dart';
@@ -184,6 +185,45 @@ void main() {
           );
         });
       }
+    }
+
+    // POINTEUR (directeur, 12/11/2026) : l'anneau creux pose SUR un mot, au
+    // telephone, clair et sombre. Le mot doit rester lisible dans l'anneau.
+    for (final ThemeMode mode in _modes) {
+      testWidgets('gestes_pointeur_anneau_sur_texte_390_${mode.name}', (
+        WidgetTester tester,
+      ) async {
+        final ValueNotifier<Offset?> pointeur = ValueNotifier<Offset?>(
+          const Offset(0.5, 0.3),
+        );
+        addTearDown(pointeur.dispose);
+        await _prendre(
+          tester,
+          'gestes_pointeur_anneau_sur_texte_390_${mode.name}',
+          Builder(
+            builder: (BuildContext c) => ColoredBox(
+              color: Theme.of(c).colorScheme.surface,
+              child: Stack(
+                fit: StackFit.expand,
+                children: <Widget>[
+                  Align(
+                    alignment: const Alignment(0, -0.4),
+                    child: Text(
+                      'الْحَمْدُ لِلَّهِ رَبِّ الْعَالَمِينَ',
+                      textDirection: TextDirection.rtl,
+                      style: Theme.of(c).textTheme.displaySmall,
+                    ),
+                  ),
+                  PointeurSalle(source: pointeur),
+                ],
+              ),
+            ),
+          ),
+          cadre: const Size(390, 844),
+          densite: 3,
+          mode: mode,
+        );
+      });
     }
 
     testWidgets('gestes_recitation_camarade_390_light_ar', (

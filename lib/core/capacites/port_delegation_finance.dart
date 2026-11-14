@@ -413,5 +413,8 @@ final Provider<bool> reserveDelegationOuverteProvider = Provider<bool>(
           is! DelegationFinanceIndisponible &&
       ref.watch(portPolitiqueReserveProvider) is! PolitiqueReserveIndisponible,
   // Lue sous la portee de la demonstration, qui surcharge le port.
-  dependencies: <ProviderOrFamily>[portDelegationFinanceProvider, portPolitiqueReserveProvider],
+  dependencies: <ProviderOrFamily>[
+    portDelegationFinanceProvider,
+    portPolitiqueReserveProvider,
+  ],
 );
