@@ -24524,6 +24524,7 @@ class _Traductions$com$socle$composants$composer$en extends Traductions$com$socl
 	@override String get vocalAVenir => 'Voice message coming soon';
 	@override String get enCours => 'Sending';
 	@override String get envoye => 'Sent';
+	@override String get lu => 'Read';
 	@override String get nonConfirme => 'This message has not been confirmed yet.';
 	@override String get reessayer => 'Try again';
 	@override String get auteurSoi => 'You';
@@ -36258,6 +36259,7 @@ extension on TraductionsEn {
 			'com.socle.composants.composer.vocalAVenir' => 'Voice message coming soon',
 			'com.socle.composants.composer.enCours' => 'Sending',
 			'com.socle.composants.composer.envoye' => 'Sent',
+			'com.socle.composants.composer.lu' => 'Read',
 			'com.socle.composants.composer.nonConfirme' => 'This message has not been confirmed yet.',
 			'com.socle.composants.composer.reessayer' => 'Try again',
 			'com.socle.composants.composer.auteurSoi' => 'You',
@@ -36506,9 +36508,9 @@ extension on TraductionsEn {
 			'com.vocal.demo.situations' => 'Demo situations',
 			'com.vocal.demo.autorise' => 'Microphone allowed',
 			'com.vocal.demo.aDemander' => 'To ask',
-			'com.vocal.demo.refuse' => 'Microphone refused',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.demo.refuse' => 'Microphone refused',
 			'com.vocal.demo.nonConfirme' => 'Not confirmed',
 			'com.vocal.demo.indisponible' => 'Unavailable',
 			'com.vocal.demo.recu' => 'Voice message received',
@@ -37020,9 +37022,9 @@ extension on TraductionsEn {
 			'com.annonces.demoPublication.recitationTexte' => 'The An-Nour class will present its end-of-term recitation on Saturday at 10 am, by video.',
 			'com.annonces.demoPublication.rentreeTitre' => 'Classes resume after the holidays',
 			'com.annonces.demoPublication.rentreeTexte' => 'Sessions resume on Monday 6 January at the usual times.',
-			'com.annonces.demoPublication.signalementAffilie' => 'Post "Printable tajwid sheets"',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demoPublication.signalementAffilie' => 'Post "Printable tajwid sheets"',
 			'com.annonces.demoPublication.extraitAffilie' => 'Find my sheets with this partner link, 20% off with my code.',
 			'com.annonces.demoPublication.signalementVente' => 'Post "Private lessons available"',
 			'com.annonces.demoPublication.extraitVente' => 'I offer paid private lessons at the weekend, write to me.',
@@ -37534,9 +37536,9 @@ extension on TraductionsEn {
 			'comptable.encaissements.filtreEchoues' => 'Failed',
 			'comptable.encaissements.filtreRembourses' => 'Refunded',
 			'comptable.encaissements.filtreContestes' => 'Disputed',
-			'comptable.encaissements.filtreARapprocher' => 'To reconcile',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.filtreARapprocher' => 'To reconcile',
 			'comptable.encaissements.recherche' => 'Search for a family or a reference',
 			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Family',
@@ -38048,9 +38050,9 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.reactiverGarder' => 'Keep suspended',
 			'comptable.direction.delegationPanneau.reactiveeActive' => 'Delegations reactivated.',
 			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Delegations reactivated, but the delegation has expired: renew it so that it restarts for its duration.',
-			'comptable.direction.delegationPanneau.reactiverEchec' => 'The reactivation is not confirmed: the request may not have reached Rewayah, or your two-step verification needs redoing. Check the delegation\'s state before trying again.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.reactiverEchec' => 'The reactivation is not confirmed: the request may not have reached Rewayah, or your two-step verification needs redoing. Check the delegation\'s state before trying again.',
 			'comptable.direction.delegationPanneau.suspendueTitre' => 'Delegations suspended',
 			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspended since ${date}. The Accountant can carry out nothing without your validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'The Accountant can carry out nothing without your validation.',
@@ -38562,9 +38564,9 @@ extension on TraductionsEn {
 			'avis.admin.retour.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it is back.',
 			'avis.admin.liens.creerTitre' => 'Create a link',
 			'avis.admin.liens.creerIntro' => 'A link opens the feedback form, without an account or sign-in. Give it a name so you can recognise it.',
-			'avis.admin.liens.libelle' => 'Link name',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.liens.libelle' => 'Link name',
 			'avis.admin.liens.libelleAide' => 'For example: Families October 2026.',
 			'avis.admin.liens.libelleErreur' => 'Give the link a name.',
 			'avis.admin.liens.jours' => 'Duration in days',
@@ -39076,9 +39078,9 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.champ.nom' => 'Full name',
 			'candidatsFlux.importFormulaires.champ.nomAide' => 'Used to recognize the person. Never shown here.',
 			'candidatsFlux.importFormulaires.champ.telephone' => 'WhatsApp phone',
-			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'With the country code. Never completed or guessed.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'With the country code. Never completed or guessed.',
 			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Mother tongue',
 			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Optional.',
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Languages of explanation',
@@ -39590,9 +39592,9 @@ extension on TraductionsEn {
 			'journalSorties.accord.merci' => 'Your agreement is saved.',
 			'journalSorties.accord.retire' => 'Your agreement is withdrawn: nothing more is recorded.',
 			'journalSorties.rapport.titre' => 'Exits from the app',
-			'journalSorties.rapport.nombreCle' => 'Count',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.rapport.nombreCle' => 'Count',
 			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} exit', other: '${n} exits', ), 
 			'journalSorties.rapport.dureeTotale' => 'Total duration',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'From ${debut} to ${fin}',

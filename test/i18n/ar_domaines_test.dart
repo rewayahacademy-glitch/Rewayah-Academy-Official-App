@@ -214,6 +214,9 @@ const Set<String> _latins = <String>{
   'tc.bibliotheque.type.pdf',
   'nav.motSymbole',
   'commun.marque',
+  // #Ra_staff (directeur, 14/11/2026) : le nom de l'equipe, identique dans
+  // toutes les langues.
+  'commun.staff.designation',
   'eleve.coran.sourceLien',
   'connexion.courrielIndice',
   'compte.tuteur.securite.methodeGoogle',
@@ -293,6 +296,10 @@ List<String> defautsIsolation(String texte) {
 /// nom de produit ou un sigle que l'arabe garde tel quel.
 const Set<String> _motsLatinsAdmis = <String>{
   'Rewayah',
+  // #Ra_staff (directeur, 14/11/2026) : le nom de l'equipe, identique dans
+  // toutes les langues.
+  'Ra',
+  'staff',
   // FUSEAU-IDENTITE-PRO (12/11/2026) : l'exemple du nom international d'un
   // fuseau (« Asia/Riyadh »), qui se saisit tel quel, en latin.
   'Asia',
@@ -347,10 +354,19 @@ const Set<String> _motsLatinsAdmis = <String>{
 /// AR-SALLE-1).
 final RegExp _codeSituation = RegExp(r'\b[A-Z]{2,4}-\d{2,4}\b');
 
+/// Un lien slang vers une autre cle (`@:commun.staff.designation`) : un
+/// chemin, pas un texte a traduire.
+final RegExp _lienCle = RegExp(r'@:[A-Za-z0-9_.]*[A-Za-z0-9_]');
+
 /// Les mots latins de deux lettres ou plus restes dans [texte], hors
 /// parametres, codes de situation et mots admis.
 List<String> motsLatinsInattendus(String texte) => RegExp('[A-Za-zÀ-ÿ]{2,}')
-    .allMatches(texte.replaceAll(_parametre, '').replaceAll(_codeSituation, ''))
+    .allMatches(
+      texte
+          .replaceAll(_parametre, '')
+          .replaceAll(_codeSituation, '')
+          .replaceAll(_lienCle, ''),
+    )
     .map((Match m) => m[0]!)
     .where((String mot) => !_motsLatinsAdmis.contains(mot))
     .toList();

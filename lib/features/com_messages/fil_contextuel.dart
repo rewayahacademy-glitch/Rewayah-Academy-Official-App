@@ -229,6 +229,9 @@ class _FilContextuelState extends State<FilContextuel>
             equipe: m.auteur.equipe,
             texte: m.texte,
           ),
+          // MESSAGERIE-LU : envoye (une coche, pale) ou lu (deux coches).
+          suiviLecture: true,
+          luParAutresLe: fil.luParAutresLe,
         ),
     ];
     final TextesFilDiscussion textes = textesFilCommunication();

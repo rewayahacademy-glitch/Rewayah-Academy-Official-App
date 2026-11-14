@@ -1,4 +1,5 @@
 {
+  "com.socle.composants.composer.lu": "directeur 14/11/2026 : « les effets standards connus comme les signes de WhatsApp » : moins opaques quand on envoie, plus foncés une fois reçus, avec une date ; rédigé par l'agent",
   "com.messages.liens.ouvrirLu": "directeur 14/11/2026 (relayé par le pilote) : les liens sont permis dans les messages de la direction (#Ra_staff) seulement, cliquables, https uniquement, ouverture externe ; rédigé par l'agent",
   "com.messages.liens.ouvrir": "directeur 14/11/2026 (relayé par le pilote) : les liens sont permis dans les messages de la direction (#Ra_staff) seulement, cliquables, https uniquement, ouverture externe ; rédigé par l'agent",
   "controleur.compteRendu.ecrireAdmin": "directeur 14/11/2026 (relayé par le pilote) : « toutes les interactions » : l'équipe se nomme « #Ra_staff » aussi dans les phrases de notifications et le bouton d'écriture ; nom lié à commun.staff.designation",

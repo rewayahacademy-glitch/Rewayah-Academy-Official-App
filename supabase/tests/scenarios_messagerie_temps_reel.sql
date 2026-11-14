@@ -10,7 +10,10 @@
 --   4. une lecture signale la personne elle-meme (autres appareils) ;
 --   5. un fil de foyer signale les adultes du foyer, jamais un mineur ;
 --   6. la table ne grossit pas : une ligne par personne, le rang monte ;
---   7. aucun emetteur n'est executable par un client.
+--   7. aucun emetteur n'est executable par un client ;
+--   8. MESSAGERIE-LU (20261125860000) : « lu_par_autres_le » dit la lecture de
+--      l'AUTRE partie seulement (jamais la sienne ni celle d'un collegue), et
+--      la lecture signale l'autre partie.
 -- Rejeu : stub_auth.sql, toutes les migrations, puis ce fichier (ROLLBACK).
 BEGIN;
 SET CONSTRAINTS ALL IMMEDIATE;
@@ -161,6 +164,44 @@ SELECT pg_temp.vrai(
   (SELECT count(*) FROM public.com_signaux
     WHERE destinataire IN ('7c500000-0000-4000-8000-0000000000a1', '7c500000-0000-4000-8000-0000000000c1')) = 2,
   '6. une ligne par personne, jamais empilee');
+
+-- 8. Lu par l'autre partie.
+SET LOCAL ROLE authenticated;
+DO $c8$
+DECLARE
+  v_id uuid := current_setting('test.fil')::uuid;
+BEGIN
+  -- Le candidat ecrit de nouveau ; la direction ne l'a pas encore lu.
+  PERFORM pg_temp.en_tant_que('7c500000-0000-4000-8000-0000000000c1', 'teacher');
+  PERFORM public.com_envoyer_message(v_id, 'Une autre question.', '7c500000-0000-4000-8000-00000000a009');
+  PERFORM set_config('test.vu_c1_avant', coalesce(public.com_lire_fil(v_id) ->> 'lu_par_autres_le', ''), true);
+  -- Le super-admin (cote de la direction) lit.
+  PERFORM pg_temp.en_tant_que('7c500000-0000-4000-8000-0000000000b2', 'admin');
+  PERFORM public.com_marquer_lu(v_id);
+  PERFORM pg_temp.en_tant_que('7c500000-0000-4000-8000-0000000000a1', 'admin');
+  PERFORM set_config('test.vu_a1', coalesce(public.com_lire_fil(v_id) ->> 'lu_par_autres_le', ''), true);
+  PERFORM pg_temp.en_tant_que('7c500000-0000-4000-8000-0000000000c1', 'teacher');
+  PERFORM set_config('test.vu_c1_apres', coalesce(public.com_lire_fil(v_id) ->> 'lu_par_autres_le', ''), true);
+  PERFORM set_config('test.signal_c1', (SELECT nature FROM public.com_signaux), true);
+END
+$c8$;
+RESET ROLE;
+SELECT pg_temp.vrai(
+  nullif(current_setting('test.vu_c1_avant'), '')::timestamptz
+    < (SELECT max(m.envoye_le) FROM public.com_messages m WHERE m.fil_id = current_setting('test.fil')::uuid),
+  '8. le dernier message du candidat n''est pas encore lu par la direction');
+SELECT pg_temp.vrai(
+  nullif(current_setting('test.vu_a1'), '')::timestamptz
+    = (SELECT l.lu_jusqu_au FROM public.com_lectures l
+        WHERE l.fil_id = current_setting('test.fil')::uuid
+          AND l.profile_id = '7c500000-0000-4000-8000-0000000000c1'),
+  '8. la direction voit la lecture du candidat, jamais celle d''un collegue');
+SELECT pg_temp.vrai(
+  nullif(current_setting('test.vu_c1_apres'), '')::timestamptz
+    >= (SELECT max(m.envoye_le) FROM public.com_messages m WHERE m.fil_id = current_setting('test.fil')::uuid),
+  '8. le candidat voit son message lu par la direction');
+SELECT pg_temp.vrai(current_setting('test.signal_c1') = 'lecture',
+  '8. la lecture de la direction signale le candidat');
 
 -- 5. Un fil de foyer : adultes oui, mineur non.
 INSERT INTO public.com_fils (id, type_objet, objet_id, partie_a_nature, partie_a_id, partie_b_nature, partie_b_id)
