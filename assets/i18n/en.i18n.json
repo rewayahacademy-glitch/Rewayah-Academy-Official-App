@@ -11761,6 +11761,13 @@
       }
     },
     "messages": {
+      "direct": {
+        "nouveau": "You have received a new message.",
+        "horsDirect": "Messages are not live right now (connection). Updating every 30 seconds.",
+        "icone": "Messages",
+        "iconeUnNonLu": "Messages, 1 unread",
+        "iconeNonLus": "Messages, {nombre} unread"
+      },
       "entree": {
         "titreClasse": "Talk about this class",
         "titreDossier": "Talk about this file",

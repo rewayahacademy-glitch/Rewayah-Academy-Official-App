@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import 'core/accessibilite/mode_accessibilite.dart';
+import 'core/communications/veille_messages.dart';
 import 'core/domain/enums.dart';
 import 'core/fraicheur/avis_ephemere.dart';
 import 'core/fraicheur/relecture_page.dart';
@@ -69,6 +70,9 @@ class RewayahApp extends ConsumerWidget {
     // Fraicheur (27/10/2026) : une seule veille des classes et des seances,
     // ouverte avec la session, fermee avec elle.
     ref.watch(veilleFraicheurProvider);
+    // MESSAGERIE-TEMPS-REEL (14/11/2026) : la veille des messages, meme
+    // regle (ouverte avec la session, fermee avec elle).
+    ref.watch(veilleMessagesProvider);
     // FUSEAUX (04/11/2026) : l'heure de chacun vient du fuseau de son profil.
     // Lue ici une fois, pour que chaque ecran se redessine quand elle arrive.
     ref.watch(monHorlogeProvider);
