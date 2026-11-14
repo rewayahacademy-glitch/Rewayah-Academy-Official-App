@@ -131,7 +131,7 @@ void main() {
             final String nom =
                 'plan_classe_a_${ecran.code}_${langue.languageCode}_${f.$1}_${mode.name}';
             testWidgets(nom, (WidgetTester tester) async {
-              LocaleSettings.setLocaleSync(langue);
+              await tester.runAsync(() => LocaleSettings.setLocale(langue));
               addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
               fixerVueCapture(tester, f.$2, f.$3);
               await _monter(tester, mode, ecran);
