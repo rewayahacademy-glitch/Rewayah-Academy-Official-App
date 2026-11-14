@@ -2660,6 +2660,7 @@
     },
     "signature": {
       "titre": "Contract",
+      "traductionTitre": "Courtesy translation",
       "version": "Version {version}",
       "empreinte": "Text fingerprint: {empreinte}",
       "texteAltere": "The text received does not match its fingerprint: signing is not offered. Try again later or let the management know.",
