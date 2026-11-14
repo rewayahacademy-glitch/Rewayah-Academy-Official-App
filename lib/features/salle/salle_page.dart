@@ -190,7 +190,14 @@ class SallePage extends ConsumerStatefulWidget {
     this.eleveId,
     this.interfaceGuidee = false,
     this.cheminCompteRenduControle = Routes.controleurCompteRendu,
+    this.retour,
   });
+
+  /// VISION-RECRUTEMENT (14/11/2026) : l'ecran d'ou l'on vient (le dossier
+  /// du candidat pour un entretien), lu dans le billet. Quand il est la, la
+  /// sortie y ramene au lieu de la racine du role. Une adresse interne qui
+  /// commence par `/`, jamais une adresse externe.
+  final String? retour;
 
   /// La page du Coran que l'eleve lit en salle (D9).
   static const Key pageEleveKey = ValueKey<String>('salle-page-eleve');
@@ -1616,6 +1623,11 @@ class _SallePageEtat extends ConsumerState<SallePage> {
   /// connexion. Envoyer celui-la au cahier lui demanderait le compte rendu d'un
   /// cours qui n'a pas eu lieu.
   void _rentrer() {
+    final String? retour = widget.retour;
+    if (retour != null && retour.startsWith('/') && !retour.startsWith('//')) {
+      GoRouter.of(context).go(retour);
+      return;
+    }
     final AppRole? role = ref.read(sessionProvider).role;
     GoRouter.of(context)
         .go(role == null ? Routes.racine : Routes.racinePour(role));

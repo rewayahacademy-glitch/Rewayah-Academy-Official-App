@@ -4010,6 +4010,36 @@
         "candidature": "This application is from the other side: its reading is written in the log."
       },
       "aTraiter": "To handle",
+      "attentes": {
+        "titre": "Who is waiting for what",
+        "aide": "Applications in progress, sorted by who must act. Tap a row to filter the list.",
+        "deuxCotes": "Both sides are counted.",
+        "academie": "Waiting for the academy",
+        "personne": "Waiting for the person",
+        "versement": "Waiting for a payout method",
+        "pieceAValider": "ID document to validate",
+        "pieceAide": "Validate it in each person's file.",
+        "aucunCreneau": "No interview slot open.",
+        "creneauxOuverts": {
+          "one": "{n} interview slot open",
+          "other": "{n} interview slots open"
+        },
+        "versementAide": "No payout method confirmed in the declared country: a decision from the management is expected.",
+        "rien": "Nobody is waiting.",
+        "depuisMinutes": {
+          "one": "Oldest for {n} minute",
+          "other": "Oldest for {n} minutes"
+        },
+        "depuisHeures": {
+          "one": "Oldest for {n} hour",
+          "other": "Oldest for {n} hours"
+        },
+        "depuisJours": {
+          "one": "Oldest for {n} day",
+          "other": "Oldest for {n} days"
+        },
+        "filtrer": "Filter the list: {etat}, {n}"
+      },
       "alertes": {
         "bloquees": "Blocked",
         "entretiensEnRetard": "Interviews overdue",

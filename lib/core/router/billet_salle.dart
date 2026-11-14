@@ -35,7 +35,14 @@ class BilletSalle {
     this.groupeId,
     this.eleveId,
     this.interfaceGuidee = false,
+    this.retour,
   });
+
+  /// VISION-RECRUTEMENT (directeur, 14/11/2026) : l'adresse ou ramene la
+  /// sortie de la salle, quand on y est entre depuis un ecran precis (le
+  /// dossier d'un candidat pour un entretien). `null` : la racine du role.
+  /// Une adresse interne de l'application, jamais un droit.
+  final String? retour;
 
   /// L'eleve qui rejoint la salle depuis l'appareil de son tuteur (D6), ou
   /// `null` quand la personne connectee entre pour elle-meme. Le jeton est

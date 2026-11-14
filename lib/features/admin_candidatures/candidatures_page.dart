@@ -35,6 +35,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/admin/admin_domaine.dart';
+import '../../core/candidature/attentes_recrutement.dart';
 import '../../core/candidature/creneaux_direction.dart';
 import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_autres_competences.dart';
@@ -87,6 +88,7 @@ import '../admin_candidature/libelles_candidature.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
 import '../talents/libelles_talents.dart';
 import 'carte_alertes.dart';
+import 'carte_attentes.dart';
 import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
@@ -221,7 +223,23 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
 
   void _relire() => ref
     ..invalidate(pageCandidaturesProvider)
-    ..invalidate(capacitesCandidaturesProvider);
+    ..invalidate(capacitesCandidaturesProvider)
+    ..invalidate(attentesRecrutementProvider);
+
+  /// VISION-RECRUTEMENT : une ligne de « Qui attend quoi » pose le filtre qui
+  /// compte exactement ce qu'elle annonce (en cours, hors pause, cet etat), sur
+  /// une liste sans autre filtre.
+  void _filtrerAttente({EtatCandidature? etat, bool enPause = false}) {
+    _attenteSaisie?.cancel();
+    _recherche.clear();
+    _filtrer(
+      _filtre.efface.avec(
+        etat: () => etat,
+        issue: () => IssueCandidature.enCours,
+        enPause: () => enPause,
+      ),
+    );
+  }
 
   void _allerAPage(int numero) {
     setState(() => _page = numero);
@@ -863,6 +881,11 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         ref.watch(capacitesCandidaturesProvider).value ??
         CapacitesCandidatures.aucune;
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // VISION-RECRUTEMENT : sans la lecture serveur (migration non installee,
+    // erreur), la carte ne s'affiche pas ; la derniere lecture reste.
+    final AttentesRecrutement? attentes = ref
+        .watch(attentesRecrutementProvider)
+        .value;
     final r = t.admin.candidatures;
 
     // Rien du tout dans la portee du lecteur (aucun filtre, zero candidature) :
@@ -1066,6 +1089,15 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             Ecart.vSm,
           ],
           if (commandes) ...<Widget>[
+            if (attentes != null) ...<Widget>[
+              CarteAttentes(
+                attentes: attentes,
+                maintenant: DateTime.now(),
+                onFiltrer: (EtatCandidature e) => _filtrerAttente(etat: e),
+                onFiltrerPause: () => _filtrerAttente(enPause: true),
+              ),
+              Ecart.vXxl,
+            ],
             CarteAlertes(compteurs: reference.compteursAlertes),
             Ecart.vXxl,
             ChampRecherche(

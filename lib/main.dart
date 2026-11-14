@@ -46,6 +46,8 @@ import 'core/auth/anti_robot_supabase.dart';
 import 'core/calendrier/calendrier_supabase.dart';
 import 'core/calendrier/pauses_supabase.dart';
 import 'core/calendrier/port_calendrier.dart';
+import 'core/candidature/attentes_recrutement.dart';
+import 'core/candidature/attentes_recrutement_supabase.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/compte_rendu_entretien.dart';
@@ -618,6 +620,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // branchement serveur ».
   portCandidaturesDirectionProvider.overrideWithValue(
     CandidaturesDirectionSupabase(Supabase.instance.client),
+  ),
+  // VISION-RECRUTEMENT (14/11/2026, migration 20261126500000) : qui attend
+  // quoi, au-dessus de la file. Sans migration, la carte ne s'affiche pas.
+  portAttentesRecrutementProvider.overrideWithValue(
+    AttentesRecrutementSupabase(Supabase.instance.client),
   ),
   // PHOTO-CANDIDATURE-FIGEE (07/11/2026, migration 20261121300000) : la photo
   // envoyee avec la candidature, lue par la direction.

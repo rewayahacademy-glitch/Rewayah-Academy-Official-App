@@ -18,6 +18,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/candidature/entretiens_direction_supabase.dart';
 import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
@@ -26,6 +27,8 @@ import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.
 import 'package:rewayah_academy/core/candidature/modeles_entretien_direction.dart';
 import 'package:rewayah_academy/core/candidature/port_entretiens_direction.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/router/billet_salle.dart';
+import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/features/admin_candidature/bloc_entretien.dart';
@@ -560,6 +563,43 @@ void main() {
   });
 
   group('Entretien ouvert', () {
+    testWidgets(
+      'VISION-RECRUTEMENT : « Rejoindre » emporte le dossier comme retour',
+      (WidgetTester tester) async {
+        final DateTime maintenant = DateTime.now().toUtc();
+        final EntretienCandidature enCours = EntretienCandidature(
+          sessionId: 's1',
+          candidatureId: 'c1',
+          debut: maintenant.subtract(const Duration(minutes: 5)),
+          fin: maintenant.add(const Duration(minutes: 40)),
+          participants: 2,
+          fondateurs: 2,
+          jeParticipe: true,
+        );
+        await _monter(
+          tester,
+          _FauxEntretiens(
+            liste: <EntretienCandidature>[enCours],
+            detail: _detailOuvert,
+          ),
+          detail: detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienPlanifie,
+          ),
+        );
+        await _toucher(tester, _cle('entretien-rejoindre'));
+        final Finder salle = find.text('temoin:${Routes.salle}');
+        expect(salle, findsOneWidget);
+        final Object? extra = GoRouter.of(
+          tester.element(salle),
+        ).routerDelegate.currentConfiguration.extra;
+        expect(extra, isA<BilletSalle>());
+        final BilletSalle billet = extra! as BilletSalle;
+        expect(billet.sessionId, 's1');
+        expect(billet.retour, Routes.adminPersonnesCandidaturePour(referenceTest));
+      },
+    );
+
     testWidgets('date, fondateurs, participants, compte rendu, entrees', (
       WidgetTester tester,
     ) async {
