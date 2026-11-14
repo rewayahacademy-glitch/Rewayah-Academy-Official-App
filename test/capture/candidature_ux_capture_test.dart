@@ -11,6 +11,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -20,6 +21,7 @@ import 'package:rewayah_academy/features/candidature/recapitulatif_etape.dart';
 
 import '../features/candidature/hote_candidature.dart';
 import '../fixtures/candidature/faux_ma_candidature.dart';
+import '../support/harnais.dart';
 import 'outil_capture.dart';
 
 Future<void> _monter(
@@ -111,6 +113,52 @@ void main() {
           await _photo(tester, 'riwayat_${langue}_$nom');
           await toucherCle(tester, 'option-riwayat-toutes');
           await _photo(tester, 'riwayat-toutes_${langue}_$nom');
+        });
+      }
+    }
+
+    // Point 6 : « Votre dossier », etape 2 puis 3 (lues de l'etape serveur).
+    for (final (String langue, AppLocale locale) in <(String, AppLocale)>[
+      ('fr', AppLocale.fr),
+      ('en', AppLocale.en),
+      ('ar', AppLocale.ar),
+    ]) {
+      for (final (String nom, EtapeCandidature etape, EtatCandidature etat)
+          in <(String, EtapeCandidature, EtatCandidature)>[
+            (
+              'etape-2',
+              EtapeCandidature.verifications,
+              EtatCandidature.entretienAPlanifier,
+            ),
+            (
+              'etape-3',
+              EtapeCandidature.confirmee,
+              EtatCandidature.decisionEnAttente,
+            ),
+          ]) {
+        testWidgets('dossier $nom $langue', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(locale));
+          masquerRubanDebug();
+          await monterQuestionnaire(
+            tester,
+            port: FauxMaCandidature(),
+            depart: Routes.attente,
+            direction: locale == AppLocale.ar
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            dossier: FauxServiceDossier()
+              ..etatRendu = etatCandidat(
+                candidature: CandidatureDossier(
+                  existe: true,
+                  etape: etape,
+                  etat: etat,
+                  version: 5,
+                ),
+                accordsFaits: true,
+                pieceDeposee: true,
+              ),
+          );
+          await capturerVue(tester, 'dossier-${nom}_${langue}_390');
         });
       }
     }

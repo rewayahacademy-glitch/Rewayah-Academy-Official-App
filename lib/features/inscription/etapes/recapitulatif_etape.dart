@@ -289,12 +289,9 @@ class _RecapitulatifEtapeState extends ConsumerState<RecapitulatifEtape> {
         nom: brouillon.nom,
         genre: genre.valeurSql,
         telephone: telephone,
-        // La langue de l'ecran, jamais deduite d'ailleurs.
-        // L'anglais : la candidature n'accepte que 'fr' et 'ar' au serveur
-        // (`candidatures.langue`, migration 20261022000600) ; le candidat
-        // anglophone y est note 'fr', son compte garde l'anglais (langue
-        // de communication, a la naissance du compte). Dette annoncee.
-        langue: LocaleSettings.currentLocale == AppLocale.ar ? 'ar' : 'fr',
+        // La langue de l'ecran, jamais deduite d'ailleurs : fr, ar ou en
+        // (l'anglais depuis la migration 20261125750000, CANDIDATURE-UX).
+        langue: LocaleSettings.currentLocale.languageCode,
         // La version du texte que la case affiche et que la personne peut lire.
         versionConfidentialite: VersionsJuridiques.version,
       );

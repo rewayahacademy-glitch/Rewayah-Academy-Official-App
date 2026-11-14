@@ -2736,7 +2736,9 @@
     "sallesCandidat": {
       "candidature": "Votre candidature",
       "connaissance": "Faisons connaissance",
-      "equipe": "Bienvenue dans l'équipe"
+      "equipe": "Bienvenue dans l'équipe",
+      "retenue": "Bonne nouvelle\u00a0: l'académie a retenu votre candidature. Prochaine étape\u00a0: faisons connaissance.",
+      "arrivee": "Bienvenue\u00a0: vous entrez dans l'équipe de l'académie."
     },
     "paiement": {
       "inconnu": "Aucun moyen de versement déclaré",

@@ -401,10 +401,16 @@ SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
   AND pg_temp.ecritures() = pg_temp.lu('avant'),
   'L3-13 : sans genre, refus nomme ; 0 profil');
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
-  $$SELECT public.inscrire_candidat(NULL, '  ', '', 'male', '0612345678', 'en', '2026-11-v1')$$)
+  $$SELECT public.inscrire_candidat(NULL, '  ', '', 'male', '0612345678', 'es', '2026-11-v1')$$)
   = '{"resultat": "invalide", "champs": ["prenom", "nom", "langue", "telephone"]}'::jsonb
   AND pg_temp.ecritures() = pg_temp.lu('avant'),
-  'prenom, nom, langue (fr ou ar) et telephone avec indicatif exiges et nommes (un numero national est refuse)');
+  'prenom, nom, langue (fr, ar ou en) et telephone avec indicatif exiges et nommes (un numero national est refuse)');
+-- CANDIDATURE-UX (14/11/2026, migration 20261125750000) : l'anglais passe.
+SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
+  $$SELECT public.inscrire_candidat(NULL, '  ', '', 'male', '0612345678', 'en', '2026-11-v1')$$)
+  = '{"resultat": "invalide", "champs": ["prenom", "nom", "telephone"]}'::jsonb
+  AND pg_temp.ecritures() = pg_temp.lu('avant'),
+  'CANDIDATURE-UX : la langue en est acceptee (seuls prenom, nom et telephone sont nommes)');
 SELECT pg_temp.vrai(pg_temp.en(pg_temp.p('01'), NULL,
   $$SELECT public.inscrire_candidat(NULL, 'Essai', 'Un', 'male', '+999123456789', 'fr', '2026-11-v1')$$)
   = '{"resultat": "invalide", "champs": ["telephone"]}'::jsonb

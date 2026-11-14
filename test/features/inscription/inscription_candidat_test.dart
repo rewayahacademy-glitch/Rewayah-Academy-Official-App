@@ -1143,6 +1143,16 @@ void main() {
       await LocaleSettings.setLocale(AppLocale.fr);
     });
 
+    testWidgets('CANDIDATURE-UX : l anglais part comme « en »', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.en));
+      final _Hote hote = await _monter(tester);
+      await _versLeRecap(tester, hote);
+      await _cocherEtCreer(tester);
+      expect(hote.candidat.appels.single.langue, 'en');
+    });
+
     testWidgets('le francais par defaut part comme « fr »', (
       WidgetTester tester,
     ) async {

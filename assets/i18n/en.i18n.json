@@ -2736,7 +2736,9 @@
     "sallesCandidat": {
       "candidature": "Your application",
       "connaissance": "Let's get to know each other",
-      "equipe": "Welcome to the team"
+      "equipe": "Welcome to the team",
+      "retenue": "Good news: the academy has accepted your application. Next step: let's get to know each other.",
+      "arrivee": "Welcome: you are joining the academy's team."
     },
     "paiement": {
       "inconnu": "No payout method declared",
