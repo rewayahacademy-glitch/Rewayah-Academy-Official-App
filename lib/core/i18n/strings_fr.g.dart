@@ -24777,6 +24777,12 @@ class Traductions$apprendre$programme$fr {
 	/// fr: 'Votre programme ne s'affiche pas encore : aucune étape n'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.'
 	String get sansEtape => 'Votre programme ne s\'affiche pas encore : aucune étape n\'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.';
 
+	/// fr: 'Le programme de l'académie'
+	String get titreProgramme => 'Le programme de l\'académie';
+
+	/// fr: 'Votre place dans le programme sera indiquée par votre enseignant.'
+	String get votrePlace => 'Votre place dans le programme sera indiquée par votre enseignant.';
+
 	/// fr: 'Dates de l'académie'
 	String get datesEcole => 'Dates de l\'académie';
 
@@ -64498,6 +64504,8 @@ extension on Traductions {
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application',
 			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
 			'apprendre.programme.sansEtape' => 'Votre programme ne s\'affiche pas encore : aucune étape n\'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.',
+			'apprendre.programme.titreProgramme' => 'Le programme de l\'académie',
+			'apprendre.programme.votrePlace' => 'Votre place dans le programme sera indiquée par votre enseignant.',
 			'apprendre.programme.datesEcole' => 'Dates de l\'académie',
 			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
 			'apprendre.programme.genre.evaluation' => 'Évaluation',
@@ -64850,10 +64858,10 @@ extension on Traductions {
 			'pause.demandesVide' => 'Aucune pause pour le moment.',
 			'pause.statut.demandee' => 'En attente',
 			'pause.statut.acceptee' => 'Acceptée',
-			'pause.statut.refusee' => 'Refusée',
-			'pause.statut.annulee' => 'Annulée',
 			_ => null,
 		} ?? switch (path) {
+			'pause.statut.refusee' => 'Refusée',
+			'pause.statut.annulee' => 'Annulée',
 			'pause.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
 			'pause.reponseAvant' => ({required Object date}) => 'La direction répond avant le ${date}.',
 			'pause.reponseMotif' => ({required Object motif}) => 'Réponse de la direction : ${motif}',

@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/tc_bibliotheque/port_catalogue.dart'
     show EchecCatalogue, ReprisLecture;
 import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart'
     show ResourceVersion;
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/tc_telechargement/port_etat_offline.dart'
     show EtatOffline, PortEtatOffline;
 import 'package:rewayah_academy/core/theme/app_typography.dart'
@@ -2241,6 +2242,80 @@ void main() {
       expect(find.byKey(ClesProgramme.sansEtape), findsOneWidget);
       expect(find.text(t.apprendre.programme.sansEtape), findsOneWidget);
       expect(find.byKey(chemin), findsNothing);
+    });
+
+    const Object sourates = <String, Object?>{
+      'sourates': <String, Object?>{
+        'sourates_validees': 0,
+        'sourates_total': 17,
+      },
+    };
+
+    testWidgets('sans etape, le programme de l academie s affiche, avec la '
+        'phrase de la place', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        documents: documentsComplets(),
+        suivi: const SuiviLu(sourates),
+        programme: const ProgrammePublieDemo(),
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.byKey(ClesProgramme.programmePublie), findsOneWidget);
+      expect(find.byKey(ClesProgramme.votrePlace), findsOneWidget);
+      expect(find.text(t.apprendre.programme.votrePlace), findsOneWidget);
+      expect(find.text('Les bases'), findsOneWidget);
+      expect(find.text('Reconnaître les lettres'), findsOneWidget);
+      expect(find.text('Lire avec les voyelles'), findsOneWidget);
+      expect(find.byKey(ClesProgramme.sansEtape), findsNothing);
+      // Aucune duree quand le serveur n'en rend pas.
+      expect(find.textContaining('9'), findsNothing);
+    });
+
+    testWidgets('les durees rendues par le serveur s affichent telles '
+        'quelles', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        documents: documentsComplets(),
+        suivi: const SuiviLu(sourates),
+        programme: const ProgrammePublieDemo(avecDurees: true),
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(
+        find.textContaining(
+          LibellesGroupe.insecable(
+            t.suiviPedagogique.dureesEtape(prevue: '9', limite: '12'),
+          ),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('programme illisible : l echec le dit et Reessayer relit', (
+      WidgetTester tester,
+    ) async {
+      await monterApprendre(
+        tester,
+        documents: documentsComplets(),
+        suivi: const SuiviLu(sourates),
+        programme: const ProgrammePublieDemo(echec: true),
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.text(t.suiviPedagogique.erreur), findsWidgets);
+      expect(find.text(t.commun.reessayer), findsWidgets);
+      expect(find.byKey(ClesProgramme.programmePublie), findsNothing);
+    });
+
+    testWidgets('programme publie, mais une etape propre : le chemin de la '
+        'carte, pas de doublon', (WidgetTester tester) async {
+      await monterApprendre(
+        tester,
+        documents: documentsComplets(),
+        suivi: SuiviLu(lectureDemo(dates: true)),
+        programme: const ProgrammePublieDemo(),
+      );
+      await _ouvrirOnglet(tester, t.apprendre.sections.programme);
+      expect(find.byKey(ClesProgramme.programmePublie), findsNothing);
+      expect(find.byKey(ClesProgramme.votrePlace), findsNothing);
     });
 
     testWidgets('une etape publiee : aucun message « sans etape »', (

@@ -15644,6 +15644,8 @@
     "programme": {
       "vide": "The stage will appear as soon as you join a class",
       "sansEtape": "Your programme is not showing yet: no stage has been published for you. It will appear here, with its path and objectives, as soon as the management has placed your class. To find out more, contact the management.",
+      "titreProgramme": "The academy's programme",
+      "votrePlace": "Your place in the programme will be shown by your teacher.",
       "datesEcole": "Academy dates",
       "datesEcoleVide": "The academy's dates will be shown here",
       "genre": {

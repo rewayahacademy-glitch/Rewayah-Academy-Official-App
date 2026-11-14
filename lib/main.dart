@@ -37,6 +37,8 @@ import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/alertes/alertes_supabase.dart';
 import 'core/alertes/port_alertes.dart';
+import 'core/apprendre/programme_publie.dart';
+import 'core/apprendre/programme_publie_supabase.dart';
 import 'core/attente_classe/attente_supabase.dart';
 import 'core/attente_classe/modele_attente.dart';
 import 'core/auth/anti_robot.dart';
@@ -304,7 +306,10 @@ import 'racine_reelle.dart';
 final VersionsSupabase _versionsBibliotheque = VersionsSupabase(
   Supabase.instance.client,
 );
-final TelechargementSupabase _ouvertureBibliotheque = TelechargementSupabase(Supabase.instance.client, _versionsBibliotheque);
+final TelechargementSupabase _ouvertureBibliotheque = TelechargementSupabase(
+  Supabase.instance.client,
+  _versionsBibliotheque,
+);
 
 List<Override> _surchargesAppReelle() => <Override>[
   // Defaut 1.8 : le brouillon de l'inscription se garde sur l'appareil le
@@ -370,6 +375,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // 20261123905000, qui lit `etape_eleve_lecture` et `sourates_eleve`).
   portMaProgressionProvider.overrideWithValue(
     MaProgressionSupabase(Supabase.instance.client),
+  ),
+  // PROGRAMME-PUBLIE (14/11/2026) : le programme de l'academie, lisible meme
+  // sans etape propre (`programme_publie`, migration 20261125600000).
+  portProgrammePublieProvider.overrideWithValue(
+    ProgrammePublieSupabase(Supabase.instance.client),
   ),
   // SOCLE-PROGRAMME (12/11/2026) : la meme etape, lue par l'enseignant
   // (`etape_eleve_lecture`) ; l'eleve et sa famille passent par `ma_progression`.

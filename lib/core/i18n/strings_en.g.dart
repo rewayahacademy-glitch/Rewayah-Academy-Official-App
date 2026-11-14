@@ -11898,6 +11898,8 @@ class _Traductions$apprendre$programme$en extends Traductions$apprendre$programm
 	// Translations
 	@override String get vide => 'The stage will appear as soon as you join a class';
 	@override String get sansEtape => 'Your programme is not showing yet: no stage has been published for you. It will appear here, with its path and objectives, as soon as the management has placed your class. To find out more, contact the management.';
+	@override String get titreProgramme => 'The academy\'s programme';
+	@override String get votrePlace => 'Your place in the programme will be shown by your teacher.';
 	@override String get datesEcole => 'Academy dates';
 	@override String get datesEcoleVide => 'The academy\'s dates will be shown here';
 	@override late final _Traductions$apprendre$programme$genre$en genre = _Traductions$apprendre$programme$genre$en._(_root);
@@ -38871,6 +38873,8 @@ extension on TraductionsEn {
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, external link, opens outside the app',
 			'apprendre.programme.vide' => 'The stage will appear as soon as you join a class',
 			'apprendre.programme.sansEtape' => 'Your programme is not showing yet: no stage has been published for you. It will appear here, with its path and objectives, as soon as the management has placed your class. To find out more, contact the management.',
+			'apprendre.programme.titreProgramme' => 'The academy\'s programme',
+			'apprendre.programme.votrePlace' => 'Your place in the programme will be shown by your teacher.',
 			'apprendre.programme.datesEcole' => 'Academy dates',
 			'apprendre.programme.datesEcoleVide' => 'The academy\'s dates will be shown here',
 			'apprendre.programme.genre.evaluation' => 'Assessment',
@@ -39223,10 +39227,10 @@ extension on TraductionsEn {
 			'pause.demandesVide' => 'No break for now.',
 			'pause.statut.demandee' => 'Pending',
 			'pause.statut.acceptee' => 'Accepted',
-			'pause.statut.refusee' => 'Refused',
-			'pause.statut.annulee' => 'Cancelled',
 			_ => null,
 		} ?? switch (path) {
+			'pause.statut.refusee' => 'Refused',
+			'pause.statut.annulee' => 'Cancelled',
 			'pause.periode' => ({required Object du, required Object au}) => 'From ${du} to ${au}',
 			'pause.reponseAvant' => ({required Object date}) => 'The management replies before ${date}.',
 			'pause.reponseMotif' => ({required Object motif}) => 'Reply from the management: ${motif}',

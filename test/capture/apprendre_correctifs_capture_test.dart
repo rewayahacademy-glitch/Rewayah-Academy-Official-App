@@ -76,6 +76,32 @@ void main() {
           expect(find.text(t.apprendre.programme.sansEtape), findsOneWidget);
           debugPrint('PNG ${await capturerVue(tester, 'programme-$nom')}');
         });
+
+        testWidgets('programme publie sans etape $nom', (
+          WidgetTester tester,
+        ) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(loc));
+          await monterApprendre(
+            tester,
+            taille: Size(largeur, 1800),
+            theme: theme,
+            direction: loc == AppLocale.ar ? TextDirection.rtl : null,
+            documents: documentsComplets(),
+            suivi: const SuiviLu(<String, Object?>{
+              'sourates': <String, Object?>{
+                'sourates_validees': 0,
+                'sourates_total': 17,
+              },
+            }),
+            programme: const ProgrammePublieDemo(),
+          );
+          await tester.pump(const Duration(milliseconds: 600));
+          await _onglet(tester, t.apprendre.sections.programme);
+          expect(find.text(t.apprendre.programme.votrePlace), findsOneWidget);
+          debugPrint(
+            'PNG ${await capturerVue(tester, 'programme-publie-$nom')}',
+          );
+        });
       }
     }
   });
