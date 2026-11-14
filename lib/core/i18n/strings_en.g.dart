@@ -7553,7 +7553,7 @@ class _Traductions$notifications$types$en extends Traductions$notifications$type
 	@override String get remplacement => 'Replacement';
 	@override String get mentionCommunaute => 'Mention in the Community';
 	@override String get reponseCommunaute => 'Reply in the Community';
-	@override String get messageAdministration => 'Message from the Administration';
+	@override String get messageAdministration => 'Message from ⁦${_root.commun.staff.designation}⁩';
 	@override String get dossierATraiter => 'File to handle';
 	@override String get signalementCommunaute => 'Report in the Community';
 	@override String get reponseFil => 'Reply in a conversation';
@@ -7561,7 +7561,7 @@ class _Traductions$notifications$types$en extends Traductions$notifications$type
 	@override String get evenementOperationnel => 'Academy event';
 	@override String get mission => 'Mission';
 	@override String get changementMission => 'Mission change';
-	@override String get reponseAdministration => 'Reply from the Administration';
+	@override String get reponseAdministration => 'Reply from ⁦${_root.commun.staff.designation}⁩';
 	@override String get mentionStudio => 'Mention in The Studio';
 	@override String get reponseStudio => 'Reply in The Studio';
 	@override String get decisionDemandee => 'Decision requested';
@@ -8874,7 +8874,7 @@ class _Traductions$controleur$compteRendu$en extends Traductions$controleur$comp
 	@override String get echecRien => 'The sending is not confirmed: it may not have reached Rewayah. Your choice stays selected; try again in a moment. If the problem continues, write to the administration.';
 	@override String get envoyeTitre => 'Report sent';
 	@override String get envoyePhrase => 'It has been passed on to the administration. To come back to it, open it in History and choose "Add an addendum".';
-	@override String get ecrireAdmin => 'Write to the administration';
+	@override String get ecrireAdmin => 'Write to ⁦${_root.commun.staff.designation}⁩';
 	@override String get visiteEnCours => 'Passing the visit on to the administration.';
 	@override String get visiteTransmise => 'The visit and its automatic log have been passed on to the administration.';
 	@override String get visiteEchec => 'Passing on the visit is not confirmed: it may not have reached Rewayah. Try again; the visit\'s log stays saved on the server.';
@@ -10278,6 +10278,7 @@ class _Traductions$com$messages$en extends Traductions$com$messages$fr {
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$messages$liens$en liens = _Traductions$com$messages$liens$en._(_root);
 	@override late final _Traductions$com$messages$direct$en direct = _Traductions$com$messages$direct$en._(_root);
 	@override late final _Traductions$com$messages$entree$en entree = _Traductions$com$messages$entree$en._(_root);
 	@override String get videDetail => 'A conversation opens from a class, a student or a file.';
@@ -11550,9 +11551,9 @@ class _Traductions$d1ter$notifications$en extends Traductions$d1ter$notification
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
-	@override String get message => 'The management has passed on a message to you.';
-	@override String messageEnfant({required Object prenom}) => 'The management has passed on a message about ${prenom}.';
-	@override String get messageSoi => 'The management has passed on a message to you.';
+	@override String get message => '⁦${_root.commun.staff.designation}⁩ has written to you.';
+	@override String messageEnfant({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ has written to you about ${prenom}.';
+	@override String get messageSoi => '⁦${_root.commun.staff.designation}⁩ has written to you.';
 }
 
 // Path: snt.regles
@@ -18692,6 +18693,17 @@ class _Traductions$com$socle$navigation$en extends Traductions$com$socle$navigat
 	@override late final _Traductions$com$socle$navigation$demo$en demo = _Traductions$com$socle$navigation$demo$en._(_root);
 }
 
+// Path: com.messages.liens
+class _Traductions$com$messages$liens$en extends Traductions$com$messages$liens$fr {
+	_Traductions$com$messages$liens$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String ouvrir({required Object site}) => 'Open the link (${site})';
+	@override String ouvrirLu({required Object site}) => 'Open the link to ${site} in a new tab';
+}
+
 // Path: com.messages.direct
 class _Traductions$com$messages$direct$en extends Traductions$com$messages$direct$fr {
 	_Traductions$com$messages$direct$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -18718,7 +18730,7 @@ class _Traductions$com$messages$entree$en extends Traductions$com$messages$entre
 	@override String get titreCandidature => 'Talk about the application';
 	@override String get titreObjet => 'Talk about this';
 	@override String get ecrireFamille => 'Write to the family';
-	@override String get ecrireAdministration => 'Write to the Administration';
+	@override String get ecrireAdministration => 'Write to ⁦${_root.commun.staff.designation}⁩';
 	@override String ecrireA({required Object nom}) => 'Write to ${nom}';
 	@override String conversationAvec({required Object nom}) => 'Conversation with ${nom}';
 	@override String get voirTout => 'See all conversations';
@@ -33640,7 +33652,7 @@ extension on TraductionsEn {
 			'notifications.types.remplacement' => 'Replacement',
 			'notifications.types.mentionCommunaute' => 'Mention in the Community',
 			'notifications.types.reponseCommunaute' => 'Reply in the Community',
-			'notifications.types.messageAdministration' => 'Message from the Administration',
+			'notifications.types.messageAdministration' => 'Message from ⁦${_root.commun.staff.designation}⁩',
 			'notifications.types.dossierATraiter' => 'File to handle',
 			'notifications.types.signalementCommunaute' => 'Report in the Community',
 			'notifications.types.reponseFil' => 'Reply in a conversation',
@@ -33648,7 +33660,7 @@ extension on TraductionsEn {
 			'notifications.types.evenementOperationnel' => 'Academy event',
 			'notifications.types.mission' => 'Mission',
 			'notifications.types.changementMission' => 'Mission change',
-			'notifications.types.reponseAdministration' => 'Reply from the Administration',
+			'notifications.types.reponseAdministration' => 'Reply from ⁦${_root.commun.staff.designation}⁩',
 			'notifications.types.mentionStudio' => 'Mention in The Studio',
 			'notifications.types.reponseStudio' => 'Reply in The Studio',
 			'notifications.types.decisionDemandee' => 'Decision requested',
@@ -34773,7 +34785,7 @@ extension on TraductionsEn {
 			'controleur.compteRendu.echecRien' => 'The sending is not confirmed: it may not have reached Rewayah. Your choice stays selected; try again in a moment. If the problem continues, write to the administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Report sent',
 			'controleur.compteRendu.envoyePhrase' => 'It has been passed on to the administration. To come back to it, open it in History and choose "Add an addendum".',
-			'controleur.compteRendu.ecrireAdmin' => 'Write to the administration',
+			'controleur.compteRendu.ecrireAdmin' => 'Write to ⁦${_root.commun.staff.designation}⁩',
 			'controleur.compteRendu.visiteEnCours' => 'Passing the visit on to the administration.',
 			'controleur.compteRendu.visiteTransmise' => 'The visit and its automatic log have been passed on to the administration.',
 			'controleur.compteRendu.visiteEchec' => 'Passing on the visit is not confirmed: it may not have reached Rewayah. Try again; the visit\'s log stays saved on the server.',
@@ -36332,6 +36344,8 @@ extension on TraductionsEn {
 			'com.socle.navigation.demo.titre' => 'Communications demo',
 			'com.socle.navigation.demo.detail' => 'Fictional data, absent from production versions.',
 			'com.socle.navigation.demo.choisir' => 'Choose a space to try.',
+			'com.messages.liens.ouvrir' => ({required Object site}) => 'Open the link (${site})',
+			'com.messages.liens.ouvrirLu' => ({required Object site}) => 'Open the link to ${site} in a new tab',
 			'com.messages.direct.nouveau' => 'You have received a new message.',
 			'com.messages.direct.horsDirect' => 'Messages are not live right now (connection). Updating every 30 seconds.',
 			'com.messages.direct.icone' => 'Messages',
@@ -36342,7 +36356,7 @@ extension on TraductionsEn {
 			'com.messages.entree.titreCandidature' => 'Talk about the application',
 			'com.messages.entree.titreObjet' => 'Talk about this',
 			'com.messages.entree.ecrireFamille' => 'Write to the family',
-			'com.messages.entree.ecrireAdministration' => 'Write to the Administration',
+			'com.messages.entree.ecrireAdministration' => 'Write to ⁦${_root.commun.staff.designation}⁩',
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Write to ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation with ${nom}',
 			'com.messages.entree.voirTout' => 'See all conversations',
@@ -36493,10 +36507,10 @@ extension on TraductionsEn {
 			'com.vocal.demo.autorise' => 'Microphone allowed',
 			'com.vocal.demo.aDemander' => 'To ask',
 			'com.vocal.demo.refuse' => 'Microphone refused',
-			'com.vocal.demo.nonConfirme' => 'Not confirmed',
-			'com.vocal.demo.indisponible' => 'Unavailable',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.demo.nonConfirme' => 'Not confirmed',
+			'com.vocal.demo.indisponible' => 'Unavailable',
 			'com.vocal.demo.recu' => 'Voice message received',
 			'com.vocal.demo.repondre' => 'Reply in the conversation',
 			'com.vocal.demo.envoyes' => 'Voice messages sent',
@@ -37007,10 +37021,10 @@ extension on TraductionsEn {
 			'com.annonces.demoPublication.rentreeTitre' => 'Classes resume after the holidays',
 			'com.annonces.demoPublication.rentreeTexte' => 'Sessions resume on Monday 6 January at the usual times.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Post "Printable tajwid sheets"',
-			'com.annonces.demoPublication.extraitAffilie' => 'Find my sheets with this partner link, 20% off with my code.',
-			'com.annonces.demoPublication.signalementVente' => 'Post "Private lessons available"',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demoPublication.extraitAffilie' => 'Find my sheets with this partner link, 20% off with my code.',
+			'com.annonces.demoPublication.signalementVente' => 'Post "Private lessons available"',
 			'com.annonces.demoPublication.extraitVente' => 'I offer paid private lessons at the weekend, write to me.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Reply under "Organizing a group revision"',
 			'com.annonces.section' => 'Class announcements',
@@ -37521,10 +37535,10 @@ extension on TraductionsEn {
 			'comptable.encaissements.filtreRembourses' => 'Refunded',
 			'comptable.encaissements.filtreContestes' => 'Disputed',
 			'comptable.encaissements.filtreARapprocher' => 'To reconcile',
-			'comptable.encaissements.recherche' => 'Search for a family or a reference',
-			'comptable.encaissements.colDate' => 'Date',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.recherche' => 'Search for a family or a reference',
+			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Family',
 			'comptable.encaissements.colReference' => 'Reference',
 			'comptable.encaissements.colBrut' => 'Gross',
@@ -38035,10 +38049,10 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.reactiveeActive' => 'Delegations reactivated.',
 			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Delegations reactivated, but the delegation has expired: renew it so that it restarts for its duration.',
 			'comptable.direction.delegationPanneau.reactiverEchec' => 'The reactivation is not confirmed: the request may not have reached Rewayah, or your two-step verification needs redoing. Check the delegation\'s state before trying again.',
-			'comptable.direction.delegationPanneau.suspendueTitre' => 'Delegations suspended',
-			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspended since ${date}. The Accountant can carry out nothing without your validation.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.suspendueTitre' => 'Delegations suspended',
+			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspended since ${date}. The Accountant can carry out nothing without your validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'The Accountant can carry out nothing without your validation.',
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension in progress',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'The suspension is not confirmed: the request may not have reached Rewayah. Check the delegation\'s state before trying again.',
@@ -38549,10 +38563,10 @@ extension on TraductionsEn {
 			'avis.admin.liens.creerTitre' => 'Create a link',
 			'avis.admin.liens.creerIntro' => 'A link opens the feedback form, without an account or sign-in. Give it a name so you can recognise it.',
 			'avis.admin.liens.libelle' => 'Link name',
-			'avis.admin.liens.libelleAide' => 'For example: Families October 2026.',
-			'avis.admin.liens.libelleErreur' => 'Give the link a name.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.liens.libelleAide' => 'For example: Families October 2026.',
+			'avis.admin.liens.libelleErreur' => 'Give the link a name.',
 			'avis.admin.liens.jours' => 'Duration in days',
 			'avis.admin.liens.joursAide' => '90 by default, 365 at most.',
 			'avis.admin.liens.joursErreur' => 'Enter a number of days from 1 to 365.',
@@ -38829,9 +38843,9 @@ extension on TraductionsEn {
 			'd1ter.messages.introSoi' => 'The management has passed on these messages to you.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'Passed on on ${date}',
 			'd1ter.messages.erreur' => 'The academy messages could not be read: the request may not have reached Rewayah. Try again in a moment.',
-			'd1ter.notifications.message' => 'The management has passed on a message to you.',
-			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'The management has passed on a message about ${prenom}.',
-			'd1ter.notifications.messageSoi' => 'The management has passed on a message to you.',
+			'd1ter.notifications.message' => '⁦${_root.commun.staff.designation}⁩ has written to you.',
+			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ has written to you about ${prenom}.',
+			'd1ter.notifications.messageSoi' => '⁦${_root.commun.staff.designation}⁩ has written to you.',
 			'snt.regles.nonTenue' => 'Session not held',
 			'snt.regles.nonTenueDetail' => 'If no teacher has joined the room by this deadline, the session is postponed: the class is notified and the management sets the new date in the schedule.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.',
@@ -39063,10 +39077,10 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.champ.nomAide' => 'Used to recognize the person. Never shown here.',
 			'candidatsFlux.importFormulaires.champ.telephone' => 'WhatsApp phone',
 			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'With the country code. Never completed or guessed.',
-			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Mother tongue',
-			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Optional.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Mother tongue',
+			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Optional.',
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Languages of explanation',
 			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'The languages in which the person can explain and correct.',
 			'candidatsFlux.importFormulaires.champ.memorisation' => 'Quran memorization',
@@ -39577,10 +39591,10 @@ extension on TraductionsEn {
 			'journalSorties.accord.retire' => 'Your agreement is withdrawn: nothing more is recorded.',
 			'journalSorties.rapport.titre' => 'Exits from the app',
 			'journalSorties.rapport.nombreCle' => 'Count',
-			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} exit', other: '${n} exits', ), 
-			'journalSorties.rapport.dureeTotale' => 'Total duration',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} exit', other: '${n} exits', ), 
+			'journalSorties.rapport.dureeTotale' => 'Total duration',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'From ${debut} to ${fin}',
 			'journalSorties.rapport.sortieSalle' => 'Left the room after the delay',
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',

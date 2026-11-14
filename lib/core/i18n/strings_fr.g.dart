@@ -15683,8 +15683,8 @@ class Traductions$notifications$types$fr {
 	/// fr: 'Réponse dans la Communauté'
 	String get reponseCommunaute => 'Réponse dans la Communauté';
 
-	/// fr: 'Message de l'Administration'
-	String get messageAdministration => 'Message de l\'Administration';
+	/// fr: 'Message de ⁦#Ra_staff⁩'
+	String get messageAdministration => 'Message de ⁦${_root.commun.staff.designation}⁩';
 
 	/// fr: 'Dossier à traiter'
 	String get dossierATraiter => 'Dossier à traiter';
@@ -15707,8 +15707,8 @@ class Traductions$notifications$types$fr {
 	/// fr: 'Changement de mission'
 	String get changementMission => 'Changement de mission';
 
-	/// fr: 'Réponse de l'Administration'
-	String get reponseAdministration => 'Réponse de l\'Administration';
+	/// fr: 'Réponse de ⁦#Ra_staff⁩'
+	String get reponseAdministration => 'Réponse de ⁦${_root.commun.staff.designation}⁩';
 
 	/// fr: 'Mention dans Le Studio'
 	String get mentionStudio => 'Mention dans Le Studio';
@@ -18940,8 +18940,8 @@ class Traductions$controleur$compteRendu$fr {
 	/// fr: 'Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez « Ajouter un complément ».'
 	String get envoyePhrase => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».';
 
-	/// fr: 'Écrire à l'administration'
-	String get ecrireAdmin => 'Écrire à l\'administration';
+	/// fr: 'Écrire à ⁦#Ra_staff⁩'
+	String get ecrireAdmin => 'Écrire à ⁦${_root.commun.staff.designation}⁩';
 
 	/// fr: 'Transmission de la visite à l'administration en cours.'
 	String get visiteEnCours => 'Transmission de la visite à l\'administration en cours.';
@@ -21637,6 +21637,7 @@ class Traductions$com$messages$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$com$messages$liens$fr liens = Traductions$com$messages$liens$fr.internal(_root);
 	late final Traductions$com$messages$direct$fr direct = Traductions$com$messages$direct$fr.internal(_root);
 	late final Traductions$com$messages$entree$fr entree = Traductions$com$messages$entree$fr.internal(_root);
 
@@ -24176,14 +24177,14 @@ class Traductions$d1ter$notifications$fr {
 
 	// Translations
 
-	/// fr: 'La direction vous a transmis un message.'
-	String get message => 'La direction vous a transmis un message.';
+	/// fr: '⁦#Ra_staff⁩ vous a écrit.'
+	String get message => '⁦${_root.commun.staff.designation}⁩ vous a écrit.';
 
-	/// fr: 'La direction vous a transmis un message sur {prenom}.'
-	String messageEnfant({required Object prenom}) => 'La direction vous a transmis un message sur ${prenom}.';
+	/// fr: '⁦#Ra_staff⁩ vous a écrit au sujet de {prenom}.'
+	String messageEnfant({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ vous a écrit au sujet de ${prenom}.';
 
-	/// fr: 'La direction vous a transmis un message.'
-	String get messageSoi => 'La direction vous a transmis un message.';
+	/// fr: '⁦#Ra_staff⁩ vous a écrit.'
+	String get messageSoi => '⁦${_root.commun.staff.designation}⁩ vous a écrit.';
 }
 
 // Path: snt.regles
@@ -38302,6 +38303,21 @@ class Traductions$com$socle$navigation$fr {
 	late final Traductions$com$socle$navigation$demo$fr demo = Traductions$com$socle$navigation$demo$fr.internal(_root);
 }
 
+// Path: com.messages.liens
+class Traductions$com$messages$liens$fr {
+	Traductions$com$messages$liens$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ouvrir le lien ({site})'
+	String ouvrir({required Object site}) => 'Ouvrir le lien (${site})';
+
+	/// fr: 'Ouvrir le lien vers {site} dans un nouvel onglet'
+	String ouvrirLu({required Object site}) => 'Ouvrir le lien vers ${site} dans un nouvel onglet';
+}
+
 // Path: com.messages.direct
 class Traductions$com$messages$direct$fr {
 	Traductions$com$messages$direct$fr.internal(this._root);
@@ -38349,8 +38365,8 @@ class Traductions$com$messages$entree$fr {
 	/// fr: 'Écrire à la famille'
 	String get ecrireFamille => 'Écrire à la famille';
 
-	/// fr: 'Écrire à l'Administration'
-	String get ecrireAdministration => 'Écrire à l\'Administration';
+	/// fr: 'Écrire à ⁦#Ra_staff⁩'
+	String get ecrireAdministration => 'Écrire à ⁦${_root.commun.staff.designation}⁩';
 
 	/// fr: 'Écrire à {nom}'
 	String ecrireA({required Object nom}) => 'Écrire à ${nom}';
@@ -59653,7 +59669,7 @@ extension on Traductions {
 			'notifications.types.remplacement' => 'Remplacement',
 			'notifications.types.mentionCommunaute' => 'Mention dans la Communauté',
 			'notifications.types.reponseCommunaute' => 'Réponse dans la Communauté',
-			'notifications.types.messageAdministration' => 'Message de l\'Administration',
+			'notifications.types.messageAdministration' => 'Message de ⁦${_root.commun.staff.designation}⁩',
 			'notifications.types.dossierATraiter' => 'Dossier à traiter',
 			'notifications.types.signalementCommunaute' => 'Signalement dans la Communauté',
 			'notifications.types.reponseFil' => 'Réponse dans une conversation',
@@ -59661,7 +59677,7 @@ extension on Traductions {
 			'notifications.types.evenementOperationnel' => 'Événement de l\'académie',
 			'notifications.types.mission' => 'Mission',
 			'notifications.types.changementMission' => 'Changement de mission',
-			'notifications.types.reponseAdministration' => 'Réponse de l\'Administration',
+			'notifications.types.reponseAdministration' => 'Réponse de ⁦${_root.commun.staff.designation}⁩',
 			'notifications.types.mentionStudio' => 'Mention dans Le Studio',
 			'notifications.types.reponseStudio' => 'Réponse dans Le Studio',
 			'notifications.types.decisionDemandee' => 'Décision demandée',
@@ -60786,7 +60802,7 @@ extension on Traductions {
 			'controleur.compteRendu.echecRien' => 'L\'envoi n\'est pas confirmé : il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Votre choix reste sélectionné ; réessayez dans un instant. Si le problème continue, écrivez à l\'administration.',
 			'controleur.compteRendu.envoyeTitre' => 'Compte rendu envoyé',
 			'controleur.compteRendu.envoyePhrase' => 'Il est transmis à l\'administration. Pour y revenir, ouvrez-le dans l\'Historique et choisissez « Ajouter un complément ».',
-			'controleur.compteRendu.ecrireAdmin' => 'Écrire à l\'administration',
+			'controleur.compteRendu.ecrireAdmin' => 'Écrire à ⁦${_root.commun.staff.designation}⁩',
 			'controleur.compteRendu.visiteEnCours' => 'Transmission de la visite à l\'administration en cours.',
 			'controleur.compteRendu.visiteTransmise' => 'La visite et son relevé automatique sont transmis à l\'administration.',
 			'controleur.compteRendu.visiteEchec' => 'La transmission de la visite n\'est pas confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez ; le relevé de la visite reste enregistré sur le serveur.',
@@ -62345,6 +62361,8 @@ extension on Traductions {
 			'com.socle.navigation.demo.titre' => 'Démonstration des communications',
 			'com.socle.navigation.demo.detail' => 'Données fictives, absentes des versions de production.',
 			'com.socle.navigation.demo.choisir' => 'Choisissez un espace à essayer.',
+			'com.messages.liens.ouvrir' => ({required Object site}) => 'Ouvrir le lien (${site})',
+			'com.messages.liens.ouvrirLu' => ({required Object site}) => 'Ouvrir le lien vers ${site} dans un nouvel onglet',
 			'com.messages.direct.nouveau' => 'Vous avez reçu un nouveau message.',
 			'com.messages.direct.horsDirect' => 'Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.',
 			'com.messages.direct.icone' => 'Messages',
@@ -62355,7 +62373,7 @@ extension on Traductions {
 			'com.messages.entree.titreCandidature' => 'Échanger au sujet de la candidature',
 			'com.messages.entree.titreObjet' => 'Échanger à ce sujet',
 			'com.messages.entree.ecrireFamille' => 'Écrire à la famille',
-			'com.messages.entree.ecrireAdministration' => 'Écrire à l\'Administration',
+			'com.messages.entree.ecrireAdministration' => 'Écrire à ⁦${_root.commun.staff.designation}⁩',
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
@@ -62506,10 +62524,10 @@ extension on Traductions {
 			'com.vocal.demo.autorise' => 'Micro autorisé',
 			'com.vocal.demo.aDemander' => 'À demander',
 			'com.vocal.demo.refuse' => 'Micro refusé',
-			'com.vocal.demo.nonConfirme' => 'Non confirmé',
-			'com.vocal.demo.indisponible' => 'Indisponible',
 			_ => null,
 		} ?? switch (path) {
+			'com.vocal.demo.nonConfirme' => 'Non confirmé',
+			'com.vocal.demo.indisponible' => 'Indisponible',
 			'com.vocal.demo.recu' => 'Message vocal reçu',
 			'com.vocal.demo.repondre' => 'Répondre dans la conversation',
 			'com.vocal.demo.envoyes' => 'Messages vocaux envoyés',
@@ -63020,10 +63038,10 @@ extension on Traductions {
 			'com.annonces.demoPublication.rentreeTitre' => 'Reprise des cours après les vacances',
 			'com.annonces.demoPublication.rentreeTexte' => 'Les séances reprennent le lundi 6 janvier aux horaires habituels.',
 			'com.annonces.demoPublication.signalementAffilie' => 'Publication « Fiches de tajwid à imprimer »',
-			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
-			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demoPublication.extraitAffilie' => 'Retrouvez mes fiches avec ce lien partenaire, remise de 20 % avec mon code.',
+			'com.annonces.demoPublication.signalementVente' => 'Publication « Cours particuliers disponibles »',
 			'com.annonces.demoPublication.extraitVente' => 'Je propose des cours particuliers payants le week-end, écrivez-moi.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Réponse sous « Organiser une révision collective »',
 			'com.annonces.section' => 'Annonces de la classe',
@@ -63534,10 +63552,10 @@ extension on Traductions {
 			'comptable.encaissements.filtreRembourses' => 'Remboursés',
 			'comptable.encaissements.filtreContestes' => 'Contestés',
 			'comptable.encaissements.filtreARapprocher' => 'À rapprocher',
-			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
-			'comptable.encaissements.colDate' => 'Date',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.recherche' => 'Rechercher une famille ou une référence',
+			'comptable.encaissements.colDate' => 'Date',
 			'comptable.encaissements.colFamille' => 'Famille',
 			'comptable.encaissements.colReference' => 'Référence',
 			'comptable.encaissements.colBrut' => 'Brut',
@@ -64048,10 +64066,10 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.reactiveeActive' => 'Délégations réactivées.',
 			'comptable.direction.delegationPanneau.reactiveeExpiree' => 'Délégations réactivées, mais la délégation est expirée : renouvelez-la pour qu\'elle reparte sur sa durée.',
 			'comptable.direction.delegationPanneau.reactiverEchec' => 'La réactivation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah, ou votre vérification en deux étapes est à refaire. Vérifiez l\'état de la délégation avant de réessayer.',
-			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
-			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.suspendueTitre' => 'Délégations suspendues',
+			'comptable.direction.delegationPanneau.suspendueDepuis' => ({required Object date}) => 'Suspendues depuis le ${date}. Le Comptable ne peut rien exécuter sans votre validation.',
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'Le Comptable ne peut rien exécuter sans votre validation.',
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension en cours',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'La suspension n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Vérifiez l\'état de la délégation avant de réessayer.',
@@ -64562,10 +64580,10 @@ extension on Traductions {
 			'avis.admin.liens.creerTitre' => 'Créer un lien',
 			'avis.admin.liens.creerIntro' => 'Un lien ouvre le formulaire d\'avis, sans compte ni connexion. Donnez-lui un nom pour le reconnaître.',
 			'avis.admin.liens.libelle' => 'Nom du lien',
-			'avis.admin.liens.libelleAide' => 'Par exemple : Familles octobre 2026.',
-			'avis.admin.liens.libelleErreur' => 'Donnez un nom au lien.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.liens.libelleAide' => 'Par exemple : Familles octobre 2026.',
+			'avis.admin.liens.libelleErreur' => 'Donnez un nom au lien.',
 			'avis.admin.liens.jours' => 'Durée en jours',
 			'avis.admin.liens.joursAide' => '90 par défaut, 365 au plus.',
 			'avis.admin.liens.joursErreur' => 'Entrez un nombre de jours de 1 à 365.',
@@ -64842,9 +64860,9 @@ extension on Traductions {
 			'd1ter.messages.introSoi' => 'La direction vous a transmis ces messages.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'Transmis le ${date}',
 			'd1ter.messages.erreur' => 'Les messages de l\'académie n\'ont pas pu être lus : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'd1ter.notifications.message' => 'La direction vous a transmis un message.',
-			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'La direction vous a transmis un message sur ${prenom}.',
-			'd1ter.notifications.messageSoi' => 'La direction vous a transmis un message.',
+			'd1ter.notifications.message' => '⁦${_root.commun.staff.designation}⁩ vous a écrit.',
+			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => '⁦${_root.commun.staff.designation}⁩ vous a écrit au sujet de ${prenom}.',
+			'd1ter.notifications.messageSoi' => '⁦${_root.commun.staff.designation}⁩ vous a écrit.',
 			'snt.regles.nonTenue' => 'Séance non tenue',
 			'snt.regles.nonTenueDetail' => 'Si aucun enseignant n\'a rejoint la salle à ce délai, la séance est reportée : la classe est prévenue et la direction fixe la nouvelle date dans le planning.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
@@ -65076,10 +65094,10 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.nomAide' => 'Sert à reconnaître la personne. Jamais montré ici.',
 			'candidatsFlux.importFormulaires.champ.telephone' => 'Téléphone WhatsApp',
 			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'Avec l\'indicatif du pays. Jamais complété ni deviné.',
-			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Langue maternelle',
-			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Facultatif.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Langue maternelle',
+			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Facultatif.',
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Langues d\'explication',
 			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'Les langues dans lesquelles la personne peut expliquer et corriger.',
 			'candidatsFlux.importFormulaires.champ.memorisation' => 'Mémorisation du Coran',
@@ -65590,10 +65608,10 @@ extension on Traductions {
 			'journalSorties.accord.retire' => 'Votre accord est retiré : plus rien n\'est noté.',
 			'journalSorties.rapport.titre' => 'Sorties de l\'application',
 			'journalSorties.rapport.nombreCle' => 'Nombre',
-			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sortie', other: '${n} sorties', ), 
-			'journalSorties.rapport.dureeTotale' => 'Durée totale',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sortie', other: '${n} sorties', ), 
+			'journalSorties.rapport.dureeTotale' => 'Durée totale',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'De ${debut} à ${fin}',
 			'journalSorties.rapport.sortieSalle' => 'Sortie de la salle après le délai',
 			'journalSorties.rapport.secondes' => ({required Object n}) => '${n} s',

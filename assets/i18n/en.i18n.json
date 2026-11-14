@@ -8564,7 +8564,7 @@
       "remplacement": "Replacement",
       "mentionCommunaute": "Mention in the Community",
       "reponseCommunaute": "Reply in the Community",
-      "messageAdministration": "Message from the Administration",
+      "messageAdministration": "Message from \u2066@:commun.staff.designation\u2069",
       "dossierATraiter": "File to handle",
       "signalementCommunaute": "Report in the Community",
       "reponseFil": "Reply in a conversation",
@@ -8572,7 +8572,7 @@
       "evenementOperationnel": "Academy event",
       "mission": "Mission",
       "changementMission": "Mission change",
-      "reponseAdministration": "Reply from the Administration",
+      "reponseAdministration": "Reply from \u2066@:commun.staff.designation\u2069",
       "mentionStudio": "Mention in The Studio",
       "reponseStudio": "Reply in The Studio",
       "decisionDemandee": "Decision requested",
@@ -9857,7 +9857,7 @@
       "echecRien": "The sending is not confirmed: it may not have reached Rewayah. Your choice stays selected; try again in a moment. If the problem continues, write to the administration.",
       "envoyeTitre": "Report sent",
       "envoyePhrase": "It has been passed on to the administration. To come back to it, open it in History and choose \"Add an addendum\".",
-      "ecrireAdmin": "Write to the administration",
+      "ecrireAdmin": "Write to \u2066@:commun.staff.designation\u2069",
       "visiteEnCours": "Passing the visit on to the administration.",
       "visiteTransmise": "The visit and its automatic log have been passed on to the administration.",
       "visiteEchec": "Passing on the visit is not confirmed: it may not have reached Rewayah. Try again; the visit's log stays saved on the server.",
@@ -11860,6 +11860,10 @@
       }
     },
     "messages": {
+      "liens": {
+        "ouvrir": "Open the link ({site})",
+        "ouvrirLu": "Open the link to {site} in a new tab"
+      },
       "direct": {
         "nouveau": "You have received a new message.",
         "horsDirect": "Messages are not live right now (connection). Updating every 30 seconds.",
@@ -11873,7 +11877,7 @@
         "titreCandidature": "Talk about the application",
         "titreObjet": "Talk about this",
         "ecrireFamille": "Write to the family",
-        "ecrireAdministration": "Write to the Administration",
+        "ecrireAdministration": "Write to \u2066@:commun.staff.designation\u2069",
         "ecrireA": "Write to {nom}",
         "conversationAvec": "Conversation with {nom}",
         "voirTout": "See all conversations",
@@ -14992,9 +14996,9 @@
       "erreur": "The academy messages could not be read: the request may not have reached Rewayah. Try again in a moment."
     },
     "notifications": {
-      "message": "The management has passed on a message to you.",
-      "messageEnfant": "The management has passed on a message about {prenom}.",
-      "messageSoi": "The management has passed on a message to you."
+      "message": "\u2066@:commun.staff.designation\u2069 has written to you.",
+      "messageEnfant": "\u2066@:commun.staff.designation\u2069 has written to you about {prenom}.",
+      "messageSoi": "\u2066@:commun.staff.designation\u2069 has written to you."
     }
   },
   "snt": {

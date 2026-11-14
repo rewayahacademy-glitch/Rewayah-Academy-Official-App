@@ -242,9 +242,11 @@ export const TEXTES: Record<string, Ligne> = {
     fr: 'La contestation d\'un paiement est close : consultez l\'issue dans l\'application.',
     ar: 'أُغلق الاعتراض على دفعة: اطّلعوا على النتيجة في التطبيق.',
   },
+  // #Ra_staff (directeur, 14/11/2026) : l'equipe se nomme ainsi dans toute
+  // interaction, isolee de gauche a droite.
   message_academie_eleve: {
-    fr: 'La direction vous a écrit : lisez le message dans l\'application.',
-    ar: 'كتبت إليكم الإدارة: اقرؤوا الرسالة في التطبيق.',
+    fr: '\u2066#Ra_staff\u2069 vous a écrit : lisez le message dans l\'application.',
+    ar: 'كتب إليكم \u2066#Ra_staff\u2069: اقرؤوا الرسالة في التطبيق.',
   },
 
   // Nouveaux evenements PUSH-1.

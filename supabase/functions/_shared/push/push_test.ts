@@ -236,7 +236,8 @@ Deno.test('textes : aucun mot interdit, aucun tiret long, aucun emoji, aucun cod
       assert(!/groupe|admin|enseignante|mode enfant|échec/i.test(s), `${cle} : mot interdit dans « ${s} »`)
       assert(!/[—–]/.test(s), `${cle} : tiret long`)
       assert(!EMOJI.test(s), `${cle} : emoji`)
-      assert(!/_/.test(s), `${cle} : code interne`)
+      // « #Ra_staff » est le nom de l'equipe (directeur, 14/11/2026), pas un code.
+      assert(!/_/.test(s.replaceAll('#Ra_staff', '')), `${cle} : code interne`)
       assert(!/[$€]|\d+[.,]\d\d/.test(s), `${cle} : montant`)
     }
     assert(titre.length <= 40, `${cle} : titre trop long`)
