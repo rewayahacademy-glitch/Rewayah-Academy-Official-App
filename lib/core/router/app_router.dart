@@ -230,6 +230,8 @@ import '../../features/inscription/etapes/recapitulatif_etape.dart';
 import '../../features/inscription/etapes/telephone_etape.dart';
 import '../../features/inscription/etapes/usage_etape.dart';
 import '../../features/inscription/inscription_page.dart';
+import '../../features/inscription/invitation_en_cours.dart'
+    show retenirInvitationDepuisAdresse;
 import '../../features/inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import '../../features/inscription/questionnaire/questionnaire_page.dart';
@@ -452,6 +454,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
   final RoleEspaceGroupe sessionRole = _roleEspaceGroupePour(
     ref.read(sessionProvider).role,
   );
+
+  // INVITATION-ENSEIGNANT-REPARE (14/11/2026) : le code d'un lien d'invitation
+  // est retenu des l'ouverture de l'application, avant toute redirection (une
+  // session deja ouverte, un retour a la connexion simple) : la creation du
+  // compte le retrouve, la fonction `invitation-compte` est appelee avec lui.
+  retenirInvitationDepuisAdresse(Uri.base);
 
   return GoRouter(
     initialLocation: Routes.racine,
