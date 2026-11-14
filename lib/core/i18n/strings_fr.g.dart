@@ -47227,7 +47227,7 @@ class Traductions$admin$candidatures$controles$causes$fr {
 	String get contratNonSigne => 'Le contrat d\'enseignant n\'est pas encore signé';
 
 	/// fr: '« Ce que vous devez savoir » n'est pas encore accepté'
-	String get avisNonAccepte => '« Ce que vous devez savoir » n\'est pas encore accepté';
+	String get avisNonAccepte => '« Ce que vous devez savoir » n\'est pas encore accepté';
 
 	/// fr: 'Le code de conduite n'est pas encore accepté'
 	String get conduiteNonAcceptee => 'Le code de conduite n\'est pas encore accepté';
@@ -56493,7 +56493,7 @@ extension on Traductions {
 			'admin.candidatures.controles.causes.entretienNonDisponible' => 'L\'entretien n\'est pas encore conclu',
 			'admin.candidatures.controles.causes.reponsesIncompletes' => 'Des réponses du questionnaire manquent',
 			'admin.candidatures.controles.causes.contratNonSigne' => 'Le contrat d\'enseignant n\'est pas encore signé',
-			'admin.candidatures.controles.causes.avisNonAccepte' => '« Ce que vous devez savoir » n\'est pas encore accepté',
+			'admin.candidatures.controles.causes.avisNonAccepte' => '« Ce que vous devez savoir » n\'est pas encore accepté',
 			'admin.candidatures.controles.causes.conduiteNonAcceptee' => 'Le code de conduite n\'est pas encore accepté',
 			'admin.candidatures.controles.causes.cadreNonAccepte' => 'Le cadre religieux et pédagogique n\'est pas encore accepté',
 			'admin.candidatures.controles.causes.compteAbsent' => 'La personne n\'a pas encore de compte',
