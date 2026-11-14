@@ -1,0 +1,22 @@
+01_direction_1440 1440x900:
+  video-cand 474x355
+  video-dir2 474x355
+  video-moi 474x355
+02_candidat_1440 1440x900:
+  video-cand 480x360
+  video-moi 480x360
+03_cours_enseignant_1440 1440x900:
+  video-moi 276x150
+  video-e1 480x360
+  video-e2 480x360
+01_direction_390 390x844:
+  video-cand 205x205
+  video-dir2 205x205
+  video-moi 205x205
+02_candidat_390 390x844:
+  video-cand 328x328
+  video-moi 328x328
+03_cours_enseignant_390 390x844:
+  video-e1 248x248
+  video-e2 248x248
+  video-moi 96x87
