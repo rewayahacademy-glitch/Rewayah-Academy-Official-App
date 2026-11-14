@@ -73,6 +73,7 @@ void main() {
   // bascules synchrones.
   setUpAll(() async {
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   tearDown(() {

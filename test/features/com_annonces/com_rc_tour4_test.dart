@@ -61,6 +61,7 @@ void main() {
     await chargerPolicesDuDepot();
     // La bibliotheque arabe est differee : chargee hors du `FakeAsync`.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 

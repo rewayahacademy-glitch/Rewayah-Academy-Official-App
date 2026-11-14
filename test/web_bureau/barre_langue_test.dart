@@ -21,6 +21,7 @@ void main() {
   // simule du test, puis changee d'un coup pendant le test.
   setUpAll(() async {
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));

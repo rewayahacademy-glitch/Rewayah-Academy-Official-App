@@ -810,7 +810,14 @@ Future<void> oublierPreferencesDuCompte(StockagePreferences stockage) async {
   } on Object catch (erreur) {
     journalDev('Preferences du compte non oubliees : $erreur');
   }
-  await appliquerPreferenceLangue(PreferenceLangue.systeme);
+  // Ne leve jamais (promesse de la fonction) : la langue de l'appareil peut
+  // etre differee (arabe, anglais) et son chargement echouer ; la
+  // deconnexion, elle, doit aller jusqu'au bout.
+  try {
+    await appliquerPreferenceLangue(PreferenceLangue.systeme);
+  } on Object catch (erreur) {
+    journalDev('Langue de l appareil non appliquee : $erreur');
+  }
 }
 
 /// Le mode de theme a donner a `MaterialApp`, tire de la preference.

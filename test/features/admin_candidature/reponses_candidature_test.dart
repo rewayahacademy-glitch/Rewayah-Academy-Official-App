@@ -87,6 +87,7 @@ const List<String> _publics = <String>['6_9', '10_13', '14_17', 'adultes'];
 void main() {
   setUpAll(() async {
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));

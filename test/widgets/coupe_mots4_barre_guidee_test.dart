@@ -24,6 +24,7 @@ void main() {
     await chargerPolicesDuDepot();
     // La locale arabe est differee : chargee une fois, hors du test.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 
