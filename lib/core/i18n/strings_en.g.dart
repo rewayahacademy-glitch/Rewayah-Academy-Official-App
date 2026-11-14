@@ -969,6 +969,12 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	@override late final _Traductions$admin$progression$en progression = _Traductions$admin$progression$en._(_root);
 	@override late final _Traductions$admin$programmes$en programmes = _Traductions$admin$programmes$en._(_root);
 	@override late final _Traductions$admin$journal$en journal = _Traductions$admin$journal$en._(_root);
+	@override late final _Traductions$admin$observations$en observations = _Traductions$admin$observations$en._(_root);
+	@override late final _Traductions$admin$suppressions$en suppressions = _Traductions$admin$suppressions$en._(_root);
+	@override late final _Traductions$admin$comptes$en comptes = _Traductions$admin$comptes$en._(_root);
+	@override late final _Traductions$admin$agents$en agents = _Traductions$admin$agents$en._(_root);
+	@override late final _Traductions$admin$notifications$en notifications = _Traductions$admin$notifications$en._(_root);
+	@override late final _Traductions$admin$finance$en finance = _Traductions$admin$finance$en._(_root);
 }
 
 // Path: agent
@@ -6028,6 +6034,389 @@ class _Traductions$admin$journal$en extends Traductions$admin$journal$fr {
 	// Translations
 	@override String get titre => 'Log';
 	@override String get chaineIntacte => 'Log intact';
+	@override String get chaineRompue => 'Log tampered with';
+	@override String chaineRompueUne({required Object entree}) => 'An entry no longer matches its fingerprint, no. ${entree}. Something touched the database outside the app.';
+	@override String get chaineInconnue => 'Integrity unknown';
+	@override String get chaineInconnueDetail => 'The check did not go through. The entries below stay readable, but nothing guarantees for now that they are complete.';
+	@override String get chaineEnCours => 'Checking';
+	@override String get chaineEnCoursDetail => 'Re-reading each entry\'s fingerprint.';
+	@override String get periodeSemaine => 'Last 7 days';
+	@override String get periodeMois => 'Last 30 days';
+	@override String get periodeTout => 'Since the beginning';
+	@override String get tousTypes => 'All events';
+	@override String get tousActeurs => 'Everyone';
+	@override String get colonneQuand => 'When';
+	@override String get colonneQui => 'Who';
+	@override String get colonneRole => 'In what capacity';
+	@override String get colonneQuoi => 'What was done';
+	@override String get colonneCible => 'On what';
+	@override String get colonneDetail => 'Details';
+	@override String horodatage({required Object date, required Object heure}) => '${date} at ${heure}';
+	@override String get acteurSysteme => 'The system';
+	@override String get acteurInconnu => 'Account deleted';
+	@override String get roleAdmin => 'Administration';
+	@override String get roleEnseignant => 'Teacher';
+	@override String get roleTuteur => 'Guardian';
+	@override String get roleEleve => 'Student';
+	@override String get roleControleur => 'Reviewer';
+	@override String get roleComptable => 'Accountant';
+	@override String get roleAucun => 'Outside a session';
+	@override String get evtKycLu => 'Identity file viewed';
+	@override String get evtKycTranche => 'Identity file decided';
+	@override String get evtProfilCree => 'Profile created';
+	@override String get evtProfilEnfantCree => 'Child profile created';
+	@override String get evtCodeCree => 'Pairing code created';
+	@override String get evtAppareilAppaire => 'Device paired';
+	@override String get evtAppareilRevoque => 'Device revoked';
+	@override String get evtPedagogie => 'Teaching settings changed';
+	@override String get evtAffectationPrise => 'Student taken by a teacher';
+	@override String get evtAffectationAttribuee => 'Student assigned by the administration';
+	@override String get evtDemandeCreee => 'Request submitted';
+	@override String get evtDemandeTranchee => 'Request decided';
+	@override String get evtReglePosee => 'Rule set';
+	@override String get evtRegleClose => 'Rule closed';
+	@override String get filtreEvenement => 'Event';
+	@override String get filtreActeur => 'Actor';
+	@override String get evtAgentJetonEmis => 'AI agent access issued';
+	@override String get evtAgentJetonRevoque => 'AI agent access revoked';
+	@override String get evtAgentSessionOuverte => 'AI agent session opened';
+	@override String get evtObservationControleur => 'Review visit started';
+	@override String get evtJetonVideo => 'Room entry authorized';
+	@override String get vide => 'No event recorded';
+	@override String get videDetail => 'Each file reading, each decision and each assignment will be written here.';
+	@override String get videFiltre => 'No event matches';
+	@override String get videFiltreDetail => 'Widen the period, or relax a filter.';
+	@override String get effacerFiltres => 'Clear the filters';
+	@override String get erreur => 'The log could not be read. Try again in a moment.';
+	@override String get erreurSuite => 'The older entries could not be read.';
+	@override String get chargerSuite => 'Load older entries';
+	@override String get fin => 'You have gone back to the first entry of the log.';
+	@override late final _Traductions$admin$journal$evenements$en evenements = _Traductions$admin$journal$evenements$en._(_root);
+	@override String chaineIntacteDetail({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} entry re-read: it has been neither changed nor removed since it was written.',
+		other: '${nombre} entries re-read one by one: none has been changed or removed since it was written.',
+	);
+	@override String chaineRompueDetail({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} entry no longer matches its fingerprint, from no. ${entree}. Something touched the database outside the app.',
+		other: '${nombre} entries no longer match their fingerprint, from no. ${entree}. Something touched the database outside the app.',
+	);
+}
+
+// Path: admin.observations
+class _Traductions$admin$observations$en extends Traductions$admin$observations$fr {
+	_Traductions$admin$observations$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Observations';
+	@override String get titrePage => 'Observation history';
+	@override String get sousTitre => 'Administration';
+	@override String get recherche => 'Search for a guardian or a student';
+	@override String get rechercheCourte => 'Enter at least two letters.';
+	@override String get rechercheAucune => 'No guardian or student has this name.';
+	@override String get rechercheErreur => 'The search did not go through. Try again.';
+	@override String get roleTuteur => 'Guardian';
+	@override String get roleEleve => 'Student';
+	@override String filtreTuteur({required Object nom}) => 'Guardian: ${nom}';
+	@override String filtreEleve({required Object nom}) => 'Student: ${nom}';
+	@override String retirerFiltre({required Object filtre}) => 'Remove the filter ${filtre}';
+	@override String get classe => 'Class';
+	@override String get toutesClasses => 'All classes';
+	@override String get periode => 'Period';
+	@override String get statut => 'Status';
+	@override String get tousStatuts => 'All statuses';
+	@override String get colonneDate => 'Date';
+	@override String get colonneTuteur => 'Guardian';
+	@override String get colonneEleve => 'Student';
+	@override String get colonneClasse => 'Class';
+	@override String get colonneEntree => 'Entry';
+	@override String get colonneSortie => 'Exit';
+	@override String get colonneDuree => 'Length';
+	@override String get colonneStatut => 'Status';
+	@override String get terminee => 'Ended';
+	@override String get ouverte => 'Exit not recorded';
+	@override String get sortieAbsente => 'Not recorded';
+	@override String get dureeNonConfirmee => 'Not confirmed';
+	@override String get nomInconnu => 'Name not available';
+	@override String get classeInconnue => 'Class not available';
+	@override String plage({required Object entree, required Object sortie}) => '${entree} - ${sortie}';
+	@override String ligne({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visit ${rang} of ${date}, ${tuteur} for ${eleve}, ${classe}, entry ${entree}, exit ${sortie}, length ${duree}, ${statut}';
+	@override String fuseau({required Object decalage}) => 'Times shown in this device\'s time (UTC${decalage}).';
+	@override String get indisponibleTitre => 'Observation history unavailable';
+	@override String get indisponiblePhrase => 'Reading observation visits is not open yet in the app.';
+	@override String get videTitre => 'No visit recorded';
+	@override String get videPhrase => 'Guardians\' observation visits will be shown here.';
+	@override String get videFiltreTitre => 'No visit matches';
+	@override String get videFiltrePhrase => 'Widen the period or remove a filter.';
+	@override String get effacerFiltres => 'Clear the filters';
+	@override String get chargerSuite => 'Load older visits';
+	@override String get erreurSuite => 'The older visits could not be read.';
+	@override String get fin => 'All visits are shown.';
+}
+
+// Path: admin.suppressions
+class _Traductions$admin$suppressions$en extends Traductions$admin$suppressions$fr {
+	_Traductions$admin$suppressions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get onglet => 'Deletions';
+	@override String get titre => 'Account deletions';
+	@override String get sousTitre => 'Deletion requests. The management handles them once the reflection period has passed.';
+	@override String attente({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} request awaits a decision.',
+		other: '${n} requests await a decision.',
+	);
+	@override String get vide => 'No deletion request.';
+	@override String get erreur => 'The requests could not be loaded. Try again.';
+	@override String get sansDonnees => 'The deletion requests could not be loaded';
+	@override String get refuse => 'This action requires two-step verification. Turn it on in Account > Security.';
+	@override String get indisponibleTitre => 'Account deletions unavailable';
+	@override String get indisponiblePhrase => 'This feature will be available once the server is connected.';
+	@override late final _Traductions$admin$suppressions$etat$en etat = _Traductions$admin$suppressions$etat$en._(_root);
+	@override String get matricule => 'Matricule';
+	@override String get role => 'Role';
+	@override String get motif => 'Reason';
+	@override String get demandeeLe => 'Requested on';
+	@override String get annuleeLe => 'Cancelled on';
+	@override String get traiteeLe => 'Handled on';
+	@override String delaiEnCours({required Object date}) => 'The reflection period runs until ${date}. The request can be handled from that day.';
+	@override String get soldeTitre => 'A balance remains to be settled';
+	@override String soldeDetail({required Object montant}) => '${montant} remains to be paid. This balance stays due after the deletion.';
+	@override String get seancesTitre => 'Sessions are still planned';
+	@override String seancesDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} session is planned. Cancel it or hand it to another person. The request cannot be handled while it exists.',
+		other: '${n} sessions are planned. Cancel them or hand them to another person. The request cannot be handled while they exist.',
+	);
+	@override String get foyerTitre => 'Students in this household';
+	@override String foyerDetail({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} student is in this guardian\'s household. Check their situation before continuing.',
+		other: '${n} students are in this guardian\'s household. Check their situation before continuing.',
+	);
+	@override String get traiter => 'Handle the request';
+	@override String confirmerQuestion({required Object nom}) => 'Anonymize this account: ${nom}?';
+	@override String get confirmerConsequence => 'The name, contact details and photo are erased. The person can no longer sign in. This action cannot be undone. Invoices and payments are kept.';
+	@override String confirmerSolde({required Object montant}) => 'A balance of ${montant} remains due and will remain so.';
+	@override String get confirmerAction => 'Anonymize the account';
+	@override String get confirmerRester => 'Change nothing';
+	@override String get traitee => 'The account is anonymized. The request is handled.';
+	@override String get dejaTraitee => 'This request is no longer pending. The list is up to date.';
+	@override String get delaiNonEcoule => 'The reflection period is still running. Nothing was erased.';
+	@override String get seancesRefus => 'Sessions are still planned. Nothing was erased.';
+	@override String get introuvable => 'This request no longer exists. The list is up to date.';
+	@override String get echec => 'The decision could not be confirmed. Check the list before trying again.';
+	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it returns.';
+	@override late final _Traductions$admin$suppressions$retraits$en retraits = _Traductions$admin$suppressions$retraits$en._(_root);
+}
+
+// Path: admin.comptes
+class _Traductions$admin$comptes$en extends Traductions$admin$comptes$fr {
+	_Traductions$admin$comptes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Accounts';
+	@override String get intro => 'All the people registered, those awaiting a decision first. A teacher with no ID document submitted stays visible here: this is the only place that shows them.';
+	@override String get attenteUneAujourdhui => 'One person awaits a decision, registered today.';
+	@override String get attenteUneUnJour => 'One person has been awaiting a decision for 1 day.';
+	@override String get roleIllisibleUn => 'The role of a pending account could not be read: it is not counted anywhere and its nature is not confirmed. Reload the page to try again.';
+	@override String roleIllisiblePlusieurs({required Object nombre}) => 'The role of ${nombre} pending accounts could not be read: they are not counted anywhere and their nature is not confirmed. Reload the page to try again.';
+	@override String get filtreTousEtats => 'All';
+	@override String get filtreTousRoles => 'All roles';
+	@override String get filtreRole => 'Role';
+	@override String get aucunAvecCeFiltre => 'No account with this filter';
+	@override String get aucunAvecCeFiltreDetail => 'Remove a filter to widen the list.';
+	@override String get erreur => 'The accounts could not be read. Try again in a moment.';
+	@override String get colonnePersonne => 'Person';
+	@override String get colonneIdentifiant => 'Identifier';
+	@override String get colonneRole => 'Role';
+	@override String get colonneEtat => 'Status';
+	@override String get colonnePiece => 'ID document';
+	@override String get colonneAttente => 'Registered since';
+	@override String get colonneContrats => 'Contracts';
+	@override String get etatEnAttente => 'Pending';
+	@override String get etatActif => 'Active';
+	@override String get etatProvisoire => 'Provisional';
+	@override String get etatSuspendu => 'Suspended';
+	@override String get etatInconnu => 'Account status not known yet';
+	@override String get etatSansDecision => 'No decision';
+	@override String get roleAdmin => 'Administration';
+	@override String get roleComptable => 'Accountant';
+	@override String get roleControleur => 'Reviewer';
+	@override String get roleEnseignant => 'Teacher';
+	@override String get roleTuteur => 'Guardian';
+	@override String get roleEleve => 'Student';
+	@override String get roleInconnu => 'Unknown role';
+	@override String get pieceAucune => 'No document submitted';
+	@override String get pieceAVerifier => 'To verify';
+	@override String get pieceValidee => 'Validated';
+	@override String get pieceRefusee => 'Declined';
+	@override String get pieceNonVisible => 'Outside your scope';
+	@override String get pieceSansObjet => 'Not applicable';
+	@override String get attendAujourdhui => 'Today';
+	@override String get attendUnJour => '1 day';
+	@override String attenteUne({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: 'One person has been awaiting a decision for ${jours} day.',
+		other: 'One person has been awaiting a decision for ${jours} days.',
+	);
+	@override String attentePlusieurs({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} person awaits a decision.',
+		other: '${nombre} people await a decision.',
+	);
+	@override String attendJours({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours,
+		one: '${jours} day',
+		other: '${jours} days',
+	);
+	@override String get recherche => 'Search for an account';
+	@override String get filtreEtat => 'Status';
+	@override String get filtreTousLesEtats => 'All statuses';
+	@override String compteur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} account',
+		other: '${n} accounts',
+	);
+	@override String filtreActifEtat({required Object valeur}) => 'Status: ${valeur}';
+	@override String filtreActifRecherche({required Object texte}) => 'Search: ${texte}';
+	@override String get actionOuvrirDossier => 'Open the identity file';
+	@override String get actionMarquerFondateur => 'Mark as founder';
+	@override String get actionRetirerFondateur => 'Remove from founders';
+	@override String fondateurMarque({required Object nom}) => '${nom} now counts among the founders.';
+	@override String fondateurRetire({required Object nom}) => '${nom} no longer counts among the founders.';
+	@override String get fondateurRefuseDirection => 'Only the active management can mark a founder.';
+	@override String get fondateurRefuseInactif => 'Only a staff member with an active account can be a founder.';
+	@override String get fondateurRefuseInconnu => 'The change was not saved. Try again.';
+	@override String get actionVoirDemande => 'See the request';
+	@override late final _Traductions$admin$comptes$retrait$en retrait = _Traductions$admin$comptes$retrait$en._(_root);
+	@override String get plafondTitre => 'The list may be incomplete';
+	@override String plafondMessage({required Object nombre}) => 'The server returns at most ${nombre} accounts, and the list has as many: the most recent registrations may be missing.';
+	@override String get rechercheAideEleves => 'Name, identifier, class or guardian';
+	@override String get rechercheAide => 'Name or identifier';
+	@override String get vues => 'People shown';
+	@override String get vueEleves => 'Students';
+	@override String get vueFamilles => 'Families';
+	@override String get vueEnseignants => 'Teachers';
+	@override String get vueDirection => 'Management';
+	@override String vueNombre({required Object vue, required Object n}) => '${vue} (${n})';
+	@override String get colonneTranche => 'Age';
+	@override String get trancheEnfant => 'Child';
+	@override String get trancheAdulte => 'Adult';
+	@override String get trancheInconnue => 'Not provided';
+	@override String get colonneClasse => 'Class';
+	@override String get classeAucune => 'No class';
+	@override String classeEtAutres({required num n, required Object classe}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${classe} and ${n} other',
+		other: '${classe} and ${n} others',
+	);
+	@override String get colonneTuteur => 'Guardian';
+	@override String get tuteurAucun => 'No guardian';
+	@override String get colonneElevesRattaches => 'Linked students';
+	@override String get videEleves => 'No student registered yet';
+	@override String get videFamilles => 'No family registered yet';
+	@override String get videEnseignants => 'No teacher registered yet';
+	@override String get videDirection => 'No management account';
+	@override String get videDetail => 'New registrations will appear here.';
+	@override String get detailsAbsentsTitre => 'Students\' age, class and guardian not shown';
+	@override String get detailsAbsentsMessage => 'The server does not give this information yet: its update is not installed. Students stay properly separate from guardians. Reload the page once the update is installed.';
+}
+
+// Path: admin.agents
+class _Traductions$admin$agents$en extends Traductions$admin$agents$fr {
+	_Traductions$admin$agents$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'AI agents access';
+	@override String get intro => 'A token lets an AI agent open the app and read what a person reads in it. It can write nothing, cancel nothing, change nothing: the database refuses it, not the interface.';
+	@override String get emettre => 'Issue a token';
+	@override String get libelle => 'What this token is for';
+	@override String get libelleAide => 'Required. A token with no name is a token no one dares revoke.';
+	@override String get libelleExemple => 'Review of Maryam\'s follow-up';
+	@override String libelleAuto({required Object dePrenom, required Object date, required Object duree}) => 'Observation ${dePrenom}, on ${date}, ${duree} h';
+	@override String get manqueLibelle => 'The token\'s name is missing: write what it is for.';
+	@override String get manquePersonne => 'The person observed is missing: choose one from the list.';
+	@override String get qui => 'Who the agent observes';
+	@override String get quiAide => 'The agent will see exactly this person\'s screen, and their journey will be theirs.';
+	@override String get quiVide => 'Choose a person';
+	@override String get chercher => 'Search for a name or identifier';
+	@override String get duree => 'For how long';
+	@override String dureeHeure({required Object nombre}) => '${nombre} h';
+	@override String get dureePlafond => 'Twenty-four hours at most, and the database checks it itself.';
+	@override String get identite => 'First names';
+	@override String get identiteMasquee => 'Hidden';
+	@override String get identiteMasqueeDetail => 'The agent reads identifiers (ELV-0042) in place of first names. The substitution is done by the database: the first name does not leave it.';
+	@override String get identiteVisible => 'Visible';
+	@override String get identiteVisibleDetail => 'The agent reads first names, as the person observed sees them.';
+	@override String get pourra => 'Will be able to';
+	@override String get pourraDetail => 'Open the app, navigate, and read everything this person reads.';
+	@override String get nePourraPas => 'Will not be able to';
+	@override String get nePourraPasDetail => 'Write anything, see an ID document, a device, the audit log, or leave this person\'s scope.';
+	@override String get emissionEnCours => 'Issuing';
+	@override String get emis => 'Token issued';
+	@override String get emisDetail => 'Give this link to the agent. It will not appear again: neither this screen nor the database can retrieve it.';
+	@override String get copier => 'Copy the link';
+	@override String get copie => 'Link copied';
+	@override String get termine => 'I copied the link';
+	@override String get erreurEmission => 'The token could not be issued. Try again in a moment.';
+	@override String get colonneLibelle => 'Token';
+	@override String get colonneQui => 'Observes';
+	@override String get colonneParcours => 'Journey';
+	@override String get colonneIdentite => 'First names';
+	@override String get colonneExpire => 'Until';
+	@override String get colonneUsage => 'Openings';
+	@override String get colonneEtat => 'Status';
+	@override String get parcoursEleve => 'Student';
+	@override String get parcoursTuteur => 'Guardian';
+	@override String get parcoursEnseignant => 'Teacher';
+	@override String get parcoursControleur => 'Quality review';
+	@override String get parcoursAdmin => 'Administration';
+	@override String get parcoursComptable => 'Accountant';
+	@override String get parcoursInconnu => 'Unknown journey';
+	@override String get etatActif => 'Active';
+	@override String get etatRevoque => 'Revoked';
+	@override String get etatExpire => 'Expired';
+	@override String get jamaisServi => 'Never used';
+	@override String get revoquer => 'Revoke';
+	@override String get revoquerTitre => 'Revoke this token?';
+	@override String get revoquerDetail => 'The agent will lose access at its next request. This is final: a revoked token cannot be reactivated.';
+	@override String get revoquerConfirmer => 'Revoke';
+	@override String get annuler => 'Cancel';
+	@override String get revoque => 'Token revoked';
+	@override String get erreurRevocation => 'The revocation did not go through. Try again.';
+	@override String get vide => 'No observation token';
+	@override String get videDetail => 'No AI agent has access to the app for now.';
+	@override String get erreur => 'The list of tokens could not be read.';
+	@override String usage({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} time, the last ${quand}',
+		other: '${nombre} times, the last ${quand}',
+	);
+}
+
+// Path: admin.notifications
+class _Traductions$admin$notifications$en extends Traductions$admin$notifications$fr {
+	_Traductions$admin$notifications$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Notifications';
+	@override String get vide => 'No notification';
+	@override String get videDetail => 'Nothing to report for now.';
+}
+
+// Path: admin.finance
+class _Traductions$admin$finance$en extends Traductions$admin$finance$fr {
+	_Traductions$admin$finance$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get vueGlobale => 'Overview';
+	@override String get politiques => 'Commercial policies';
+	@override late final _Traductions$admin$finance$vue$en vue = _Traductions$admin$finance$vue$en._(_root);
+	@override late final _Traductions$admin$finance$pol$en pol = _Traductions$admin$finance$pol$en._(_root);
 }
 
 // Path: nav.eleve
@@ -14130,6 +14519,363 @@ class _Traductions$admin$programmes$contenu$en extends Traductions$admin$program
 	@override String publierIncomplet({required Object etape}) => 'The publication did not go through: the stage "${etape}" is not complete. Open its goals and lengths: 3 to 5 goals and a length for each age group are needed.';
 }
 
+// Path: admin.journal.evenements
+class _Traductions$admin$journal$evenements$en extends Traductions$admin$journal$evenements$fr {
+	_Traductions$admin$journal$evenements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get observationEntree => 'Observation visit started';
+	@override String get observationSortie => 'Observation visit ended';
+	@override String get observationPolitiqueGroupeModifiee => 'Class observation rules changed';
+}
+
+// Path: admin.suppressions.etat
+class _Traductions$admin$suppressions$etat$en extends Traductions$admin$suppressions$etat$fr {
+	_Traductions$admin$suppressions$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enAttente => 'Pending';
+	@override String get aTraiter => 'To handle';
+	@override String get annulee => 'Cancelled';
+	@override String get traitee => 'Handled';
+}
+
+// Path: admin.suppressions.retraits
+class _Traductions$admin$suppressions$retraits$en extends Traductions$admin$suppressions$retraits$fr {
+	_Traductions$admin$suppressions$retraits$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get sections => 'Show';
+	@override String get sectionDemandes => 'Requests';
+	@override String get sectionSupprimes => 'Deleted accounts';
+	@override String get contexte => 'Accounts deleted by the management or by a guardian. During the retention period, an account can be restored. Restoring reopens the account, without putting the student back in their classes.';
+	@override late final _Traductions$admin$suppressions$retraits$filtres$en filtres = _Traductions$admin$suppressions$retraits$filtres$en._(_root);
+	@override late final _Traductions$admin$suppressions$retraits$vide$en vide = _Traductions$admin$suppressions$retraits$vide$en._(_root);
+	@override String get erreur => 'The deleted accounts could not be loaded. Try again.';
+	@override String get sansDonnees => 'The deleted accounts could not be loaded';
+	@override String get nomEfface => 'Name erased';
+	@override late final _Traductions$admin$suppressions$retraits$etat$en etat = _Traductions$admin$suppressions$retraits$etat$en._(_root);
+	@override String get supprimeLe => 'Deleted on';
+	@override String get par => 'Deleted by';
+	@override String get parDirection => 'The management';
+	@override String get parTuteur => 'A guardian';
+	@override String get anonymisationPrevue => 'Anonymization planned on';
+	@override String get anonymiseLe => 'Anonymized on';
+	@override String get restaureLe => 'Restored on';
+	@override String get nonRestaurable => 'This account was deleted before the app kept its previous state. It cannot be restored here.';
+	@override String restaurer({required Object deNom}) => 'Restore ${deNom}\'s account';
+	@override String restaure({required Object deNom}) => '${deNom}\'s account is restored. The person can sign in again.';
+	@override String classesQuittees({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'They had left ${n} class: they are not put back in it. Add them to a class from Classes.',
+		other: 'They had left ${n} classes: they are not put back in them. Add them to a class from Classes.',
+	);
+	@override late final _Traductions$admin$suppressions$retraits$refus$en refus = _Traductions$admin$suppressions$retraits$refus$en._(_root);
+	@override String get voirPlus => 'Show more deleted accounts';
+}
+
+// Path: admin.comptes.retrait
+class _Traductions$admin$comptes$retrait$en extends Traductions$admin$comptes$retrait$fr {
+	_Traductions$admin$comptes$retrait$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String retenusPage({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} account chosen, of which ${p} on this page',
+		other: '${n} accounts chosen, of which ${p} on this page',
+	);
+	@override String tropGrand({required Object n}) => 'A deletion covers ${n} accounts at most. Remove some from the selection.';
+	@override String get selectionRetiree => 'The selection is cleared: the list shown has changed. Choose the accounts again.';
+	@override String get actionLigne => 'Delete this account';
+	@override String retenus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} account chosen',
+		other: '${n} accounts chosen',
+	);
+	@override String supprimerSelection({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Delete ${n} account',
+		other: 'Delete ${n} accounts',
+	);
+	@override String questionUn({required Object deNom}) => 'Delete ${deNom}\'s account?';
+	@override String questionPlusieurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Delete ${n} account?',
+		other: 'Delete these ${n} accounts?',
+	);
+	@override String get consequence => 'The person can no longer sign in, right away. A student leaves their classes. The account is anonymized at the end of the retention period. Until then, the management can restore it from People, Deletions. Invoices and payments are kept.';
+	@override String get confirmerUn => 'Delete the account';
+	@override String get rester => 'Change nothing';
+	@override String supprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} account is deleted. It is in People, Deletions.',
+		other: '${n} accounts are deleted. They are in People, Deletions.',
+	);
+	@override String nonSupprimes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} account is not deleted',
+		other: '${n} accounts are not deleted',
+	);
+	@override String raisonLigne({required Object nom, required Object raison}) => '${nom}: ${raison}';
+	@override late final _Traductions$admin$comptes$retrait$raison$en raison = _Traductions$admin$comptes$retrait$raison$en._(_root);
+	@override String get refuse => 'This action requires two-step verification. Turn it on in Account > Security.';
+	@override String get indisponible => 'Account deletion is not yet installed on the server. Nothing was deleted.';
+	@override String get echec => 'The deletion could not be confirmed. Check the list and People, Deletions before trying again.';
+	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it returns.';
+}
+
+// Path: admin.finance.vue
+class _Traductions$admin$finance$vue$en extends Traductions$admin$finance$vue$fr {
+	_Traductions$admin$finance$vue$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String moisAnnee({required Object mois, required Object annee}) => '${mois} ${annee}';
+	@override String contexte({required Object deMois}) => 'The figures for ${deMois}, each on its own: what is collected, what is recognized as revenue, what is owed to teachers and what stays on families\' profiles.';
+	@override String get indicateurs => 'Month\'s indicators';
+	@override String get encaisse => 'Amount collected';
+	@override String get encaisseDetail => 'Payments received this month. A collection is not yet revenue.';
+	@override String get revenu => 'Academy revenue';
+	@override String get revenuDetail => 'Revenue recognized this month, excluding taxes collected.';
+	@override String get paie => 'Teachers\' pay';
+	@override String get paieDetail => 'Estimated for the month: an upcoming cost, not a payment made.';
+	@override String get marge => 'Projected margin';
+	@override String margeValeur({required Object valeur}) => '${valeur}%';
+	@override String get margeDetail => 'Calculated on teachers\' pay alone, without other costs: it cannot be compared with a net margin.';
+	@override String get margeSansActivite => 'No activity';
+	@override String get margeNonCalculable => 'Not calculable';
+	@override String get impayes => 'Unpaid';
+	@override String get impayesDetail => 'Still to fund over the month\'s periods.';
+	@override String get essais => 'Trials in progress';
+	@override String get essaisDetail => 'Students on trial, never counted as paying.';
+	@override String get soldes => 'Credit balances';
+	@override String get soldesDetail => 'Money available on families\' profiles: neither revenue nor margin.';
+	@override String sansActivite({required Object mois}) => 'No financial activity in ${mois}: the indicators are at zero.';
+	@override String sansRevenu({required Object mois}) => 'No revenue recognized in ${mois}: the margin cannot be calculated.';
+	@override String get evolution => 'Trend';
+	@override String get evolutionDetail => 'Evolution';
+	@override String get graphiqueEncaisse => 'One chart per notion, each with its exact numbers: collection, cost and margin are never mixed.';
+	@override String get graphiquePaie => 'Amount collected per month';
+	@override String get graphiqueMarge => 'Teachers\' pay per month';
+	@override String get graphiqueRepartition => 'Projected margin per month';
+	@override String get repartitionAdultes => 'Child students';
+	@override String get sansHistorique => 'Adult students';
+	@override String get alertes => 'No month returned for now.';
+	@override String get aucuneAlerte => 'Alerts';
+	@override String get etatPaiements => 'No alert this month.';
+	@override String get etatPaiementsDetail => 'Payments status';
+	@override String get etatFinances => 'The month\'s profiles by the status of their period. A trial is never counted as paying.';
+	@override String get etatARegulariser => 'Funded';
+	@override String get etatEnEssai => 'To settle';
+	@override String get etatEnConfirmation => 'On trial';
+	@override String get topClasses => 'No payment status returned for this month.';
+	@override String get dernieresOperations => 'No class collected this month.';
+	@override String get dernieresOperationsDetail => 'Latest operations';
+	@override late final _Traductions$admin$finance$vue$alerte$en alerte = _Traductions$admin$finance$vue$alerte$en._(_root);
+}
+
+// Path: admin.finance.pol
+class _Traductions$admin$finance$pol$en extends Traductions$admin$finance$pol$fr {
+	_Traductions$admin$finance$pol$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get contexte => 'Open the classes';
+	@override String get statutBrouillon => 'The academy\'s commercial rules, versioned and dated. A draft is prepared here and applies only once published, from its effective date. What protects families\' money is not set here.';
+	@override String get statutPubliee => 'Draft';
+	@override String versionActive({required Object version}) => 'Draft version ${version}';
+	@override String dateEffet({required Object date}) => 'In force since ${date}';
+	@override String get dateEffetReglable => 'The draft will apply from this date, never to an invoice already paid.';
+	@override String get changerDate => 'Adjustable in the draft: it will be applied at publication, once the server is connected.';
+	@override String get nonEnregistre => 'No difference from the active version for now: change a field to prepare the next version.';
+	@override String get sansBrouillon => 'Your changes stay on this screen as long as you do not leave it: saving a draft is not yet available.';
+	@override String get erreurCapacite => 'This field is empty or badly entered: enter a whole number, with no comma or sign.';
+	@override String get erreurTarif => 'A class has at least one place: enter 1 or more.';
+	@override String suffixeRemise({required Object symbole}) => '${symbole} / h';
+	@override String eleves({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		other: '${n} student',
+	);
+	@override String seances({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} students',
+		other: '${n} session',
+	);
+	@override String classes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} sessions',
+		other: '${n} class',
+	);
+	@override String jours({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} classes',
+		other: '${n} day',
+	);
+	@override String get uniteSeances => 'students';
+	@override String get uniteClasses => 'sessions';
+	@override String get uniteJours => 'classes';
+	@override String minutes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		other: '${n} minute',
+	);
+	@override String mois({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} minutes',
+		other: '${n} month',
+	);
+	@override String get uniteMois => 'minutes';
+	@override String get uniteJourDuMois => 'months';
+	@override String get prepaiementTrimestrielDetail => 'Quarter paid in advance';
+	@override String get prepaiementAnnuel => 'The discount for three months paid at once; the family sees it when paying.';
+	@override String get prepaiementAnnuelDetail => 'Year paid in advance';
+	@override String get cumulMax => 'The discount for twelve months paid at once.';
+	@override String get cumulMaxDetail => 'Cap on combined discounts';
+	@override String get parrainage => 'The household discount and advance payment together never exceed this share of the price.';
+	@override String get parrainageDetail => 'Referral credit';
+	@override String get bourse => 'Paid to each of the two households after the referred family\'s first month is paid.';
+	@override String get bourseDetail => 'Scholarship';
+	@override String get boursePlaces => 'Granted by the management on written request; it adds to no other discount.';
+	@override String get boursePlacesDetail => 'Scholarship places';
+	@override String get bourseDuree => 'The share of students who can receive a scholarship at the same time.';
+	@override String get bourseDureeDetail => 'Scholarship length';
+	@override String get tauxEleveEnfant => 'After this length, the scholarship is reviewed with the family.';
+	@override String get tauxEleveEnfantDetail => 'Per student present, children\'s class';
+	@override String get tauxEleveAdulte => 'Paid to the teacher for each student present and per hour of class; an absent student is not paid.';
+	@override String get tauxEleveAdulteDetail => 'Per student present, adults\' class';
+	@override String get plafondEleveEnfant => 'Paid to the teacher for each adult present and per hour of class.';
+	@override String get plafondEleveAdulte => 'Ceiling per student, children\'s class';
+	@override String get plafondEleveDetail => 'Ceiling per student, adults\' class';
+	@override String get erreurMontantCentimes => 'The maximum paid per student present and per hour. Since 19/10/2026, it equals the rate: no bonus is added to it.';
+	@override String get dureeDueAdulte => 'Children\'s session due from';
+	@override String get dureeDueDetail => 'Adults\' session due from';
+	@override String get suspension => 'The minimum attendance for a session to count in pay.';
+	@override String get suspensionDetail => 'Access suspended on';
+	@override String get retractation => 'A month not paid on this date suspends access to class; the place is kept for the retention period.';
+	@override String get retractationDetail => 'Withdrawal period';
+	@override String get erreurRetractation => 'During this period, counted from payment, the family is refunded what they paid, minus the sessions attended. The Cancellation and refund text shows this value.';
+	@override String get erreurPourcentMax => 'Enter a period from 0 to 60 days.';
+	@override String get erreurDureeDue => 'Enter 100% at most.';
+	@override String get erreurBourseDuree => 'Enter a length from 1 to 240 minutes.';
+	@override String get erreurSuspension => 'Enter a length from 1 to 24 months.';
+	@override String get tarifs => 'Enter a day from the 1st to the 28th of the month.';
+	@override String get tarifsDetail => 'Prices';
+	@override String get tarifEnfant => 'The monthly price of access to a class, excluding taxes.';
+	@override String get tarifEnfantDetail => 'Child';
+	@override String get tarifAdulte => 'A child\'s monthly price for a class; it applies to periods that start after the effective date.';
+	@override String get tarifAdulteDetail => 'Adult';
+	@override String get essai => 'An adult\'s monthly price for a class; it applies to periods that start after the effective date.';
+	@override String get essaiDetail => 'Trial';
+	@override String get essais => 'A new profile\'s free sessions, before its first paying period.';
+	@override String get essaisDetail => 'Trial sessions per new profile';
+	@override String get essaiActivation => 'Free for the family; after the last one, access waits for the first period to be funded.';
+	@override String get essaiActivationDetail => 'Trial activation';
+	@override String get essaiActive => 'When off, a new profile starts directly with its first paying period.';
+	@override String get essaiDesactive => 'On';
+	@override String get remises => 'Off';
+	@override String get remisesDetail => 'Family discounts';
+	@override String get remiseAucuneDetail => 'Normal price';
+	@override String get enseignants => 'Each paying member from this rank gets this discount on their monthly price.';
+	@override String get enseignantsDetail => 'Teacher pay';
+	@override String get baseHoraire => 'Per session, per student present and per hour, at the class rate: children or adults. An absent student is never paid; no minimum.';
+	@override String get baseHoraireDetail => 'Hourly base (abandoned rule)';
+	@override String get plafondHoraire => 'Old minimum per hour, abandoned on 19/10/2026: the teacher is paid per student present.';
+	@override String get plafondHoraireDetail => 'Hourly ceiling (abandoned rule)';
+	@override String get occupation => 'Old maximum per hour, abandoned on 19/10/2026: only the per-student-present rate counts.';
+	@override String get occupationValeur => 'Old calculation by class (abandoned rule)';
+	@override String get occupationDetail => 'Abandoned rule';
+	@override String get classesObjectif => 'Rule abandoned on 19/10/2026: only a student present is paid, an absent one never.';
+	@override String get classesObjectifDetail => 'Classes target per teacher';
+	@override String get classesMax => 'The recommended number of active classes: a guide, not a limit.';
+	@override String get classesMaxDetail => 'Normal maximum of classes';
+	@override String get internet => 'The maximum load advised for a teacher.';
+	@override String get internetDetail => 'Internet allowance';
+	@override String get internetNonFixee => 'One allowance per eligible teacher, never multiplied by class or by student.';
+	@override String get sectionClasses => 'Not set yet';
+	@override String get sectionClassesDetail => 'Classes';
+	@override String get capaciteEnfant => 'The size of classes and the threshold for opening one.';
+	@override String get capaciteEnfantDetail => 'Children\'s class capacity';
+	@override String get capaciteAdulte => 'The number of seats planned; it is also used for the teacher\'s hourly rate.';
+	@override String get capaciteAdulteDetail => 'Adults\' class capacity';
+	@override String get capaciteDebutant => 'The number of seats planned in an adults\' class.';
+	@override String get capaciteDebutantDetail => 'Beginners\' class capacity';
+	@override String get minimum => 'Smaller, to follow each beginner closely.';
+	@override String get minimumDetail => 'Opening minimum';
+	@override String get paiement => 'Below it, a class does not open and the management is alerted.';
+	@override String get paiementDetail => 'Payment';
+	@override String get railWeb => 'The payment method and the length of time a place is kept.';
+	@override String get railActif => 'Web payment (Stripe)';
+	@override String get railInactif => 'On';
+	@override String get railWebDetail => 'Off';
+	@override String get railIos => 'The only payment method offered to families at launch.';
+	@override String get railAndroid => 'iOS in-app purchase';
+	@override String get railPrepare => 'Google Play billing';
+	@override String get railMobileDetail => 'Prepared (off)';
+	@override String get conservation => 'Planned for later: no mobile payment button is shown to families at launch.';
+	@override String get conservationDetail => 'Keeping the place';
+	@override String get relances => 'How long a student\'s place stays reserved when their new period is not funded.';
+	@override String get relancesDetail => 'Reminder rules';
+	@override String get relancesNonFixees => 'Reminders for an unfunded period, sent to the guardian or the independent adult in the app; never to the child.';
+	@override String get pilotageDetail => 'Steering';
+	@override String get marge => 'Guides for reading the figures, never rules that block.';
+	@override String get margeDetail => 'Reference margin';
+	@override String get margeObjectif => 'A guide for reading the overview, never a sanction, refusal or block.';
+	@override String get margeObjectifDetail => 'Target margin';
+	@override String get margeForte => 'The net margin aimed for, all costs included: a steering guide, never a sanction or a block.';
+	@override String get margeForteDetail => 'Strong performance';
+	@override String get margeStretch => 'The guide for a very good month; it does not go below the target.';
+	@override String get margeStretchDetail => 'Stretch scenario';
+	@override String get erreurMargeMax => '%';
+	@override String get budgetsDetail => 'Budgets';
+	@override String get budgetsNonFixes => 'Non-binding: spending guides, never a block or a sanction.';
+	@override String get budgetMarketing => 'Not set yet';
+	@override String get budgetOperationnel => 'Marketing budget';
+	@override String get invariants => ' ; ';
+	@override String get invariantsDetail => 'Fixed rules';
+	@override String get invariantConfirmation => 'They protect families\' money: they are not settings, no version changes them.';
+	@override String get invariantDoubleDebit => 'A payment is confirmed before any credit to a profile.';
+	@override String get invariantPeriode => 'The same payment is never debited twice.';
+	@override String get invariantSoldes => 'Access to class depends on the funded period, never on the balance.';
+	@override String get invariantIdempotence => 'Each profile has its own balance; the household total is only a reading.';
+	@override String get invariantHistorique => 'The same payment received twice is recorded only once.';
+	@override String get publier => 'The payment history is neither erased nor rewritten: it is only added to.';
+	@override String get publierConsequence => 'Publish the version';
+	@override String get publicationIndisponible => 'Publishing makes this draft applicable from its effective date; no invoice already paid is changed.';
+	@override String get publicationIndisponibleDetail => 'Publishing is not available yet';
+	@override String get publicationNonConfirmee => 'Nothing was published: the publishing service is not connected yet. The active version continues to apply. Keep this screen open to keep your changes, or come back when publishing is open.';
+	@override String get publicationNonConfirmeeDetail => 'Publication not confirmed';
+	@override String get publicationFaite => 'The answer did not arrive: the request may not have reached Rewayah. Check the active version before trying again.';
+	@override String get publicationFaiteDetail => 'Version published';
+	@override String get publicationRefusee => 'Rewayah saved the new version. It will apply from its effective date; until then, the active version continues to apply.';
+	@override String get publicationRefuseeDetail => 'Publication refused';
+	@override String get publicationInvalide => 'Nothing was published: publishing prices requires two-step verification. Turn it on in Account > Security, then try again.';
+	@override String get publicationInvalideDetail => 'A value does not fit';
+	@override String get champsACorriger => 'Rewayah refused this version: the effective date must be upcoming and after the last version, and each discount must stay below the rate. Nothing was published: correct, then try again.';
+	@override String get champsACorrigerDetail => 'First correct the flagged fields';
+	@override String get apercu => 'An empty, badly entered or inconsistent field prevents preparing the publication: correct each flagged field as its sentence says, then publish.';
+	@override String get apercuDetail => 'Preview before publication';
+	@override String get apercuFamille => 'What the draft would give on screen, recalculated at each valid change. These are examples: nothing is invoiced or paid.';
+	@override String get apercuFamilleDetail => 'Household example';
+	@override String get apercuEnfantsChoix => 'The monthly fee of each paying child, in rank order, then the household total.';
+	@override String apercuEnfants({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		other: '${n} child',
+	);
+	@override String get apercuEnseignant => 'Household total per month';
+	@override String get apercuEnseignantDetail => 'Teacher example';
+	@override String get apercuTypeClasse => 'What one session hour earns depending on the students present; an absent student does not count.';
+	@override String get apercuClasseEnfants => 'Class type';
+	@override String get apercuClasseAdultes => 'Children';
+	@override String get apercuClasseDebutants => 'Adults';
+	@override String get apercuAttente => 'Beginners';
+	@override String get apercuAttenteDetail => 'The preview awaits a valid entry';
+	@override String get apercuCapaciteAttente => 'A field in the draft is empty, badly entered or inconsistent: correct the flagged field, the preview recalculates right away.';
+	@override String get apercuIndisponible => 'This class has no place: enter a capacity of at least 1 student to see the example.';
+	@override String get apercuIndisponibleDetail => 'The preview is not available yet';
+	@override String get apercuErreur => 'The preview calculation is not connected yet: no amount is estimated here. The draft stays editable.';
+	@override String get apercuErreurDetail => 'Preview not calculated';
+	@override String get apercuHorsLigne => 'The calculation is not confirmed: the request may not have reached Rewayah. Your entries are kept: run the calculation again.';
+	@override String get apercuHorsLigneDetail => 'Preview waiting';
+	@override String get apercuRecalculer => 'The preview cannot be calculated now. Your entries are kept; run the calculation again as soon as sending is possible again.';
+	@override String get apercuRecalcul => 'Run the calculation again';
+	@override String get apercuRecalculDetail => 'Recalculating';
+}
+
 // Path: compte.page.sections
 class _Traductions$compte$page$sections$en extends Traductions$compte$page$sections$fr {
 	_Traductions$compte$page$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -20557,6 +21303,87 @@ class _Traductions$admin$candidatures$entretien$retours$en extends Traductions$a
 	@override String ajoute({required Object nom}) => '${nom} takes part in the interview.';
 	@override String retire({required Object nom}) => '${nom} no longer takes part in the interview.';
 	@override String get consigne => 'Outcome recorded.';
+}
+
+// Path: admin.suppressions.retraits.filtres
+class _Traductions$admin$suppressions$retraits$filtres$en extends Traductions$admin$suppressions$retraits$filtres$fr {
+	_Traductions$admin$suppressions$retraits$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enCours => 'In progress';
+	@override String get anonymises => 'Anonymized';
+	@override String get restaures => 'Restored';
+	@override String get tous => 'All';
+}
+
+// Path: admin.suppressions.retraits.vide
+class _Traductions$admin$suppressions$retraits$vide$en extends Traductions$admin$suppressions$retraits$vide$fr {
+	_Traductions$admin$suppressions$retraits$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enCours => 'No deleted account in progress.';
+	@override String get anonymises => 'No anonymized account.';
+	@override String get restaures => 'No restored account.';
+	@override String get tous => 'No deleted account.';
+}
+
+// Path: admin.suppressions.retraits.etat
+class _Traductions$admin$suppressions$retraits$etat$en extends Traductions$admin$suppressions$retraits$etat$fr {
+	_Traductions$admin$suppressions$retraits$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get supprime => 'Deleted';
+	@override String get anonymise => 'Anonymized';
+	@override String get restaure => 'Restored';
+}
+
+// Path: admin.suppressions.retraits.refus
+class _Traductions$admin$suppressions$retraits$refus$en extends Traductions$admin$suppressions$retraits$refus$fr {
+	_Traductions$admin$suppressions$retraits$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunRetrait => 'This account is no longer deleted. The list is up to date.';
+	@override String get dejaAnonymise => 'This account is already anonymized: it can no longer be restored.';
+	@override String get etatAvantInconnu => 'This account was deleted before the app kept its previous state. It cannot be restored here.';
+	@override String get erreur => 'The restoration could not be confirmed. Check the list before trying again.';
+}
+
+// Path: admin.comptes.retrait.raison
+class _Traductions$admin$comptes$retrait$raison$en extends Traductions$admin$comptes$retrait$raison$fr {
+	_Traductions$admin$comptes$retrait$raison$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get introuvable => 'this account no longer exists.';
+	@override String get dejaRetire => 'this account is already deleted.';
+	@override String get soiMeme => 'this is your own account.';
+	@override String get compteDirection => 'a management account cannot be deleted here.';
+	@override String seancesAVenir({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} session is still planned with this teacher. Hand it to another teacher, then try again.',
+		other: '${n} sessions are still planned with this teacher. Hand them to another teacher, then try again.',
+	);
+	@override String get erreur => 'the server could not delete it. Try again for this account.';
+}
+
+// Path: admin.finance.vue.alerte
+class _Traductions$admin$finance$vue$alerte$en extends Traductions$admin$finance$vue$alerte$fr {
+	_Traductions$admin$finance$vue$alerte$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aRegulariser => 'No movement for now.';
+	@override String get ouvrirComptes => 'A profile';
+	@override String get ouvrirClasses => 'Open the accounts';
 }
 
 // Path: classe.entree.demo.roles
@@ -27469,6 +28296,580 @@ extension on TraductionsEn {
 			'admin.programmes.contenu.publierIncomplet' => ({required Object etape}) => 'The publication did not go through: the stage "${etape}" is not complete. Open its goals and lengths: 3 to 5 goals and a length for each age group are needed.',
 			'admin.journal.titre' => 'Log',
 			'admin.journal.chaineIntacte' => 'Log intact',
+			'admin.journal.chaineRompue' => 'Log tampered with',
+			'admin.journal.chaineRompueUne' => ({required Object entree}) => 'An entry no longer matches its fingerprint, no. ${entree}. Something touched the database outside the app.',
+			'admin.journal.chaineInconnue' => 'Integrity unknown',
+			'admin.journal.chaineInconnueDetail' => 'The check did not go through. The entries below stay readable, but nothing guarantees for now that they are complete.',
+			'admin.journal.chaineEnCours' => 'Checking',
+			'admin.journal.chaineEnCoursDetail' => 'Re-reading each entry\'s fingerprint.',
+			'admin.journal.periodeSemaine' => 'Last 7 days',
+			'admin.journal.periodeMois' => 'Last 30 days',
+			'admin.journal.periodeTout' => 'Since the beginning',
+			'admin.journal.tousTypes' => 'All events',
+			'admin.journal.tousActeurs' => 'Everyone',
+			'admin.journal.colonneQuand' => 'When',
+			'admin.journal.colonneQui' => 'Who',
+			'admin.journal.colonneRole' => 'In what capacity',
+			'admin.journal.colonneQuoi' => 'What was done',
+			'admin.journal.colonneCible' => 'On what',
+			'admin.journal.colonneDetail' => 'Details',
+			'admin.journal.horodatage' => ({required Object date, required Object heure}) => '${date} at ${heure}',
+			'admin.journal.acteurSysteme' => 'The system',
+			'admin.journal.acteurInconnu' => 'Account deleted',
+			'admin.journal.roleAdmin' => 'Administration',
+			'admin.journal.roleEnseignant' => 'Teacher',
+			'admin.journal.roleTuteur' => 'Guardian',
+			'admin.journal.roleEleve' => 'Student',
+			'admin.journal.roleControleur' => 'Reviewer',
+			'admin.journal.roleComptable' => 'Accountant',
+			'admin.journal.roleAucun' => 'Outside a session',
+			'admin.journal.evtKycLu' => 'Identity file viewed',
+			'admin.journal.evtKycTranche' => 'Identity file decided',
+			'admin.journal.evtProfilCree' => 'Profile created',
+			'admin.journal.evtProfilEnfantCree' => 'Child profile created',
+			'admin.journal.evtCodeCree' => 'Pairing code created',
+			'admin.journal.evtAppareilAppaire' => 'Device paired',
+			'admin.journal.evtAppareilRevoque' => 'Device revoked',
+			'admin.journal.evtPedagogie' => 'Teaching settings changed',
+			'admin.journal.evtAffectationPrise' => 'Student taken by a teacher',
+			'admin.journal.evtAffectationAttribuee' => 'Student assigned by the administration',
+			'admin.journal.evtDemandeCreee' => 'Request submitted',
+			'admin.journal.evtDemandeTranchee' => 'Request decided',
+			'admin.journal.evtReglePosee' => 'Rule set',
+			'admin.journal.evtRegleClose' => 'Rule closed',
+			'admin.journal.filtreEvenement' => 'Event',
+			'admin.journal.filtreActeur' => 'Actor',
+			'admin.journal.evtAgentJetonEmis' => 'AI agent access issued',
+			'admin.journal.evtAgentJetonRevoque' => 'AI agent access revoked',
+			'admin.journal.evtAgentSessionOuverte' => 'AI agent session opened',
+			'admin.journal.evtObservationControleur' => 'Review visit started',
+			'admin.journal.evtJetonVideo' => 'Room entry authorized',
+			'admin.journal.vide' => 'No event recorded',
+			'admin.journal.videDetail' => 'Each file reading, each decision and each assignment will be written here.',
+			'admin.journal.videFiltre' => 'No event matches',
+			'admin.journal.videFiltreDetail' => 'Widen the period, or relax a filter.',
+			'admin.journal.effacerFiltres' => 'Clear the filters',
+			'admin.journal.erreur' => 'The log could not be read. Try again in a moment.',
+			'admin.journal.erreurSuite' => 'The older entries could not be read.',
+			'admin.journal.chargerSuite' => 'Load older entries',
+			'admin.journal.fin' => 'You have gone back to the first entry of the log.',
+			'admin.journal.evenements.observationEntree' => 'Observation visit started',
+			'admin.journal.evenements.observationSortie' => 'Observation visit ended',
+			'admin.journal.evenements.observationPolitiqueGroupeModifiee' => 'Class observation rules changed',
+			'admin.journal.chaineIntacteDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} entry re-read: it has been neither changed nor removed since it was written.', other: '${nombre} entries re-read one by one: none has been changed or removed since it was written.', ), 
+			'admin.journal.chaineRompueDetail' => ({required num nombre, required Object entree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} entry no longer matches its fingerprint, from no. ${entree}. Something touched the database outside the app.', other: '${nombre} entries no longer match their fingerprint, from no. ${entree}. Something touched the database outside the app.', ), 
+			'admin.observations.titre' => 'Observations',
+			'admin.observations.titrePage' => 'Observation history',
+			'admin.observations.sousTitre' => 'Administration',
+			'admin.observations.recherche' => 'Search for a guardian or a student',
+			'admin.observations.rechercheCourte' => 'Enter at least two letters.',
+			'admin.observations.rechercheAucune' => 'No guardian or student has this name.',
+			'admin.observations.rechercheErreur' => 'The search did not go through. Try again.',
+			'admin.observations.roleTuteur' => 'Guardian',
+			'admin.observations.roleEleve' => 'Student',
+			'admin.observations.filtreTuteur' => ({required Object nom}) => 'Guardian: ${nom}',
+			'admin.observations.filtreEleve' => ({required Object nom}) => 'Student: ${nom}',
+			'admin.observations.retirerFiltre' => ({required Object filtre}) => 'Remove the filter ${filtre}',
+			'admin.observations.classe' => 'Class',
+			'admin.observations.toutesClasses' => 'All classes',
+			'admin.observations.periode' => 'Period',
+			'admin.observations.statut' => 'Status',
+			'admin.observations.tousStatuts' => 'All statuses',
+			'admin.observations.colonneDate' => 'Date',
+			'admin.observations.colonneTuteur' => 'Guardian',
+			'admin.observations.colonneEleve' => 'Student',
+			'admin.observations.colonneClasse' => 'Class',
+			'admin.observations.colonneEntree' => 'Entry',
+			'admin.observations.colonneSortie' => 'Exit',
+			'admin.observations.colonneDuree' => 'Length',
+			'admin.observations.colonneStatut' => 'Status',
+			'admin.observations.terminee' => 'Ended',
+			'admin.observations.ouverte' => 'Exit not recorded',
+			'admin.observations.sortieAbsente' => 'Not recorded',
+			'admin.observations.dureeNonConfirmee' => 'Not confirmed',
+			'admin.observations.nomInconnu' => 'Name not available',
+			'admin.observations.classeInconnue' => 'Class not available',
+			'admin.observations.plage' => ({required Object entree, required Object sortie}) => '${entree} - ${sortie}',
+			'admin.observations.ligne' => ({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visit ${rang} of ${date}, ${tuteur} for ${eleve}, ${classe}, entry ${entree}, exit ${sortie}, length ${duree}, ${statut}',
+			'admin.observations.fuseau' => ({required Object decalage}) => 'Times shown in this device\'s time (UTC${decalage}).',
+			'admin.observations.indisponibleTitre' => 'Observation history unavailable',
+			'admin.observations.indisponiblePhrase' => 'Reading observation visits is not open yet in the app.',
+			'admin.observations.videTitre' => 'No visit recorded',
+			'admin.observations.videPhrase' => 'Guardians\' observation visits will be shown here.',
+			'admin.observations.videFiltreTitre' => 'No visit matches',
+			'admin.observations.videFiltrePhrase' => 'Widen the period or remove a filter.',
+			'admin.observations.effacerFiltres' => 'Clear the filters',
+			'admin.observations.chargerSuite' => 'Load older visits',
+			'admin.observations.erreurSuite' => 'The older visits could not be read.',
+			'admin.observations.fin' => 'All visits are shown.',
+			'admin.suppressions.onglet' => 'Deletions',
+			'admin.suppressions.titre' => 'Account deletions',
+			'admin.suppressions.sousTitre' => 'Deletion requests. The management handles them once the reflection period has passed.',
+			'admin.suppressions.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} request awaits a decision.', other: '${n} requests await a decision.', ), 
+			'admin.suppressions.vide' => 'No deletion request.',
+			'admin.suppressions.erreur' => 'The requests could not be loaded. Try again.',
+			'admin.suppressions.sansDonnees' => 'The deletion requests could not be loaded',
+			'admin.suppressions.refuse' => 'This action requires two-step verification. Turn it on in Account > Security.',
+			'admin.suppressions.indisponibleTitre' => 'Account deletions unavailable',
+			'admin.suppressions.indisponiblePhrase' => 'This feature will be available once the server is connected.',
+			'admin.suppressions.etat.enAttente' => 'Pending',
+			'admin.suppressions.etat.aTraiter' => 'To handle',
+			'admin.suppressions.etat.annulee' => 'Cancelled',
+			'admin.suppressions.etat.traitee' => 'Handled',
+			'admin.suppressions.matricule' => 'Matricule',
+			'admin.suppressions.role' => 'Role',
+			'admin.suppressions.motif' => 'Reason',
+			'admin.suppressions.demandeeLe' => 'Requested on',
+			'admin.suppressions.annuleeLe' => 'Cancelled on',
+			'admin.suppressions.traiteeLe' => 'Handled on',
+			'admin.suppressions.delaiEnCours' => ({required Object date}) => 'The reflection period runs until ${date}. The request can be handled from that day.',
+			'admin.suppressions.soldeTitre' => 'A balance remains to be settled',
+			'admin.suppressions.soldeDetail' => ({required Object montant}) => '${montant} remains to be paid. This balance stays due after the deletion.',
+			'admin.suppressions.seancesTitre' => 'Sessions are still planned',
+			'admin.suppressions.seancesDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session is planned. Cancel it or hand it to another person. The request cannot be handled while it exists.', other: '${n} sessions are planned. Cancel them or hand them to another person. The request cannot be handled while they exist.', ), 
+			'admin.suppressions.foyerTitre' => 'Students in this household',
+			'admin.suppressions.foyerDetail' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student is in this guardian\'s household. Check their situation before continuing.', other: '${n} students are in this guardian\'s household. Check their situation before continuing.', ), 
+			'admin.suppressions.traiter' => 'Handle the request',
+			'admin.suppressions.confirmerQuestion' => ({required Object nom}) => 'Anonymize this account: ${nom}?',
+			'admin.suppressions.confirmerConsequence' => 'The name, contact details and photo are erased. The person can no longer sign in. This action cannot be undone. Invoices and payments are kept.',
+			_ => null,
+		} ?? switch (path) {
+			'admin.suppressions.confirmerSolde' => ({required Object montant}) => 'A balance of ${montant} remains due and will remain so.',
+			'admin.suppressions.confirmerAction' => 'Anonymize the account',
+			'admin.suppressions.confirmerRester' => 'Change nothing',
+			'admin.suppressions.traitee' => 'The account is anonymized. The request is handled.',
+			'admin.suppressions.dejaTraitee' => 'This request is no longer pending. The list is up to date.',
+			'admin.suppressions.delaiNonEcoule' => 'The reflection period is still running. Nothing was erased.',
+			'admin.suppressions.seancesRefus' => 'Sessions are still planned. Nothing was erased.',
+			'admin.suppressions.introuvable' => 'This request no longer exists. The list is up to date.',
+			'admin.suppressions.echec' => 'The decision could not be confirmed. Check the list before trying again.',
+			'admin.suppressions.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it returns.',
+			'admin.suppressions.retraits.sections' => 'Show',
+			'admin.suppressions.retraits.sectionDemandes' => 'Requests',
+			'admin.suppressions.retraits.sectionSupprimes' => 'Deleted accounts',
+			'admin.suppressions.retraits.contexte' => 'Accounts deleted by the management or by a guardian. During the retention period, an account can be restored. Restoring reopens the account, without putting the student back in their classes.',
+			'admin.suppressions.retraits.filtres.enCours' => 'In progress',
+			'admin.suppressions.retraits.filtres.anonymises' => 'Anonymized',
+			'admin.suppressions.retraits.filtres.restaures' => 'Restored',
+			'admin.suppressions.retraits.filtres.tous' => 'All',
+			'admin.suppressions.retraits.vide.enCours' => 'No deleted account in progress.',
+			'admin.suppressions.retraits.vide.anonymises' => 'No anonymized account.',
+			'admin.suppressions.retraits.vide.restaures' => 'No restored account.',
+			'admin.suppressions.retraits.vide.tous' => 'No deleted account.',
+			'admin.suppressions.retraits.erreur' => 'The deleted accounts could not be loaded. Try again.',
+			'admin.suppressions.retraits.sansDonnees' => 'The deleted accounts could not be loaded',
+			'admin.suppressions.retraits.nomEfface' => 'Name erased',
+			'admin.suppressions.retraits.etat.supprime' => 'Deleted',
+			'admin.suppressions.retraits.etat.anonymise' => 'Anonymized',
+			'admin.suppressions.retraits.etat.restaure' => 'Restored',
+			'admin.suppressions.retraits.supprimeLe' => 'Deleted on',
+			'admin.suppressions.retraits.par' => 'Deleted by',
+			'admin.suppressions.retraits.parDirection' => 'The management',
+			'admin.suppressions.retraits.parTuteur' => 'A guardian',
+			'admin.suppressions.retraits.anonymisationPrevue' => 'Anonymization planned on',
+			'admin.suppressions.retraits.anonymiseLe' => 'Anonymized on',
+			'admin.suppressions.retraits.restaureLe' => 'Restored on',
+			'admin.suppressions.retraits.nonRestaurable' => 'This account was deleted before the app kept its previous state. It cannot be restored here.',
+			'admin.suppressions.retraits.restaurer' => ({required Object deNom}) => 'Restore ${deNom}\'s account',
+			'admin.suppressions.retraits.restaure' => ({required Object deNom}) => '${deNom}\'s account is restored. The person can sign in again.',
+			'admin.suppressions.retraits.classesQuittees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'They had left ${n} class: they are not put back in it. Add them to a class from Classes.', other: 'They had left ${n} classes: they are not put back in them. Add them to a class from Classes.', ), 
+			'admin.suppressions.retraits.refus.aucunRetrait' => 'This account is no longer deleted. The list is up to date.',
+			'admin.suppressions.retraits.refus.dejaAnonymise' => 'This account is already anonymized: it can no longer be restored.',
+			'admin.suppressions.retraits.refus.etatAvantInconnu' => 'This account was deleted before the app kept its previous state. It cannot be restored here.',
+			'admin.suppressions.retraits.refus.erreur' => 'The restoration could not be confirmed. Check the list before trying again.',
+			'admin.suppressions.retraits.voirPlus' => 'Show more deleted accounts',
+			'admin.comptes.titre' => 'Accounts',
+			'admin.comptes.intro' => 'All the people registered, those awaiting a decision first. A teacher with no ID document submitted stays visible here: this is the only place that shows them.',
+			'admin.comptes.attenteUneAujourdhui' => 'One person awaits a decision, registered today.',
+			'admin.comptes.attenteUneUnJour' => 'One person has been awaiting a decision for 1 day.',
+			'admin.comptes.roleIllisibleUn' => 'The role of a pending account could not be read: it is not counted anywhere and its nature is not confirmed. Reload the page to try again.',
+			'admin.comptes.roleIllisiblePlusieurs' => ({required Object nombre}) => 'The role of ${nombre} pending accounts could not be read: they are not counted anywhere and their nature is not confirmed. Reload the page to try again.',
+			'admin.comptes.filtreTousEtats' => 'All',
+			'admin.comptes.filtreTousRoles' => 'All roles',
+			'admin.comptes.filtreRole' => 'Role',
+			'admin.comptes.aucunAvecCeFiltre' => 'No account with this filter',
+			'admin.comptes.aucunAvecCeFiltreDetail' => 'Remove a filter to widen the list.',
+			'admin.comptes.erreur' => 'The accounts could not be read. Try again in a moment.',
+			'admin.comptes.colonnePersonne' => 'Person',
+			'admin.comptes.colonneIdentifiant' => 'Identifier',
+			'admin.comptes.colonneRole' => 'Role',
+			'admin.comptes.colonneEtat' => 'Status',
+			'admin.comptes.colonnePiece' => 'ID document',
+			'admin.comptes.colonneAttente' => 'Registered since',
+			'admin.comptes.colonneContrats' => 'Contracts',
+			'admin.comptes.etatEnAttente' => 'Pending',
+			'admin.comptes.etatActif' => 'Active',
+			'admin.comptes.etatProvisoire' => 'Provisional',
+			'admin.comptes.etatSuspendu' => 'Suspended',
+			'admin.comptes.etatInconnu' => 'Account status not known yet',
+			'admin.comptes.etatSansDecision' => 'No decision',
+			'admin.comptes.roleAdmin' => 'Administration',
+			'admin.comptes.roleComptable' => 'Accountant',
+			'admin.comptes.roleControleur' => 'Reviewer',
+			'admin.comptes.roleEnseignant' => 'Teacher',
+			'admin.comptes.roleTuteur' => 'Guardian',
+			'admin.comptes.roleEleve' => 'Student',
+			'admin.comptes.roleInconnu' => 'Unknown role',
+			'admin.comptes.pieceAucune' => 'No document submitted',
+			'admin.comptes.pieceAVerifier' => 'To verify',
+			'admin.comptes.pieceValidee' => 'Validated',
+			'admin.comptes.pieceRefusee' => 'Declined',
+			'admin.comptes.pieceNonVisible' => 'Outside your scope',
+			'admin.comptes.pieceSansObjet' => 'Not applicable',
+			'admin.comptes.attendAujourdhui' => 'Today',
+			'admin.comptes.attendUnJour' => '1 day',
+			'admin.comptes.attenteUne' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'One person has been awaiting a decision for ${jours} day.', other: 'One person has been awaiting a decision for ${jours} days.', ), 
+			'admin.comptes.attentePlusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} person awaits a decision.', other: '${nombre} people await a decision.', ), 
+			'admin.comptes.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: '${jours} day', other: '${jours} days', ), 
+			'admin.comptes.recherche' => 'Search for an account',
+			'admin.comptes.filtreEtat' => 'Status',
+			'admin.comptes.filtreTousLesEtats' => 'All statuses',
+			'admin.comptes.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} account', other: '${n} accounts', ), 
+			'admin.comptes.filtreActifEtat' => ({required Object valeur}) => 'Status: ${valeur}',
+			'admin.comptes.filtreActifRecherche' => ({required Object texte}) => 'Search: ${texte}',
+			'admin.comptes.actionOuvrirDossier' => 'Open the identity file',
+			'admin.comptes.actionMarquerFondateur' => 'Mark as founder',
+			'admin.comptes.actionRetirerFondateur' => 'Remove from founders',
+			'admin.comptes.fondateurMarque' => ({required Object nom}) => '${nom} now counts among the founders.',
+			'admin.comptes.fondateurRetire' => ({required Object nom}) => '${nom} no longer counts among the founders.',
+			'admin.comptes.fondateurRefuseDirection' => 'Only the active management can mark a founder.',
+			'admin.comptes.fondateurRefuseInactif' => 'Only a staff member with an active account can be a founder.',
+			'admin.comptes.fondateurRefuseInconnu' => 'The change was not saved. Try again.',
+			'admin.comptes.actionVoirDemande' => 'See the request',
+			'admin.comptes.retrait.retenusPage' => ({required num n, required Object p}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} account chosen, of which ${p} on this page', other: '${n} accounts chosen, of which ${p} on this page', ), 
+			'admin.comptes.retrait.tropGrand' => ({required Object n}) => 'A deletion covers ${n} accounts at most. Remove some from the selection.',
+			'admin.comptes.retrait.selectionRetiree' => 'The selection is cleared: the list shown has changed. Choose the accounts again.',
+			'admin.comptes.retrait.actionLigne' => 'Delete this account',
+			'admin.comptes.retrait.retenus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} account chosen', other: '${n} accounts chosen', ), 
+			'admin.comptes.retrait.supprimerSelection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Delete ${n} account', other: 'Delete ${n} accounts', ), 
+			'admin.comptes.retrait.questionUn' => ({required Object deNom}) => 'Delete ${deNom}\'s account?',
+			'admin.comptes.retrait.questionPlusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Delete ${n} account?', other: 'Delete these ${n} accounts?', ), 
+			'admin.comptes.retrait.consequence' => 'The person can no longer sign in, right away. A student leaves their classes. The account is anonymized at the end of the retention period. Until then, the management can restore it from People, Deletions. Invoices and payments are kept.',
+			'admin.comptes.retrait.confirmerUn' => 'Delete the account',
+			'admin.comptes.retrait.rester' => 'Change nothing',
+			'admin.comptes.retrait.supprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} account is deleted. It is in People, Deletions.', other: '${n} accounts are deleted. They are in People, Deletions.', ), 
+			'admin.comptes.retrait.nonSupprimes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} account is not deleted', other: '${n} accounts are not deleted', ), 
+			'admin.comptes.retrait.raisonLigne' => ({required Object nom, required Object raison}) => '${nom}: ${raison}',
+			'admin.comptes.retrait.raison.introuvable' => 'this account no longer exists.',
+			'admin.comptes.retrait.raison.dejaRetire' => 'this account is already deleted.',
+			'admin.comptes.retrait.raison.soiMeme' => 'this is your own account.',
+			'admin.comptes.retrait.raison.compteDirection' => 'a management account cannot be deleted here.',
+			'admin.comptes.retrait.raison.seancesAVenir' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session is still planned with this teacher. Hand it to another teacher, then try again.', other: '${n} sessions are still planned with this teacher. Hand them to another teacher, then try again.', ), 
+			'admin.comptes.retrait.raison.erreur' => 'the server could not delete it. Try again for this account.',
+			'admin.comptes.retrait.refuse' => 'This action requires two-step verification. Turn it on in Account > Security.',
+			'admin.comptes.retrait.indisponible' => 'Account deletion is not yet installed on the server. Nothing was deleted.',
+			'admin.comptes.retrait.echec' => 'The deletion could not be confirmed. Check the list and People, Deletions before trying again.',
+			'admin.comptes.retrait.horsLigne' => 'Nothing was sent: there is no network. Try again as soon as it returns.',
+			'admin.comptes.plafondTitre' => 'The list may be incomplete',
+			'admin.comptes.plafondMessage' => ({required Object nombre}) => 'The server returns at most ${nombre} accounts, and the list has as many: the most recent registrations may be missing.',
+			'admin.comptes.rechercheAideEleves' => 'Name, identifier, class or guardian',
+			'admin.comptes.rechercheAide' => 'Name or identifier',
+			'admin.comptes.vues' => 'People shown',
+			'admin.comptes.vueEleves' => 'Students',
+			'admin.comptes.vueFamilles' => 'Families',
+			'admin.comptes.vueEnseignants' => 'Teachers',
+			'admin.comptes.vueDirection' => 'Management',
+			'admin.comptes.vueNombre' => ({required Object vue, required Object n}) => '${vue} (${n})',
+			'admin.comptes.colonneTranche' => 'Age',
+			'admin.comptes.trancheEnfant' => 'Child',
+			'admin.comptes.trancheAdulte' => 'Adult',
+			'admin.comptes.trancheInconnue' => 'Not provided',
+			'admin.comptes.colonneClasse' => 'Class',
+			'admin.comptes.classeAucune' => 'No class',
+			'admin.comptes.classeEtAutres' => ({required num n, required Object classe}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${classe} and ${n} other', other: '${classe} and ${n} others', ), 
+			'admin.comptes.colonneTuteur' => 'Guardian',
+			'admin.comptes.tuteurAucun' => 'No guardian',
+			'admin.comptes.colonneElevesRattaches' => 'Linked students',
+			'admin.comptes.videEleves' => 'No student registered yet',
+			'admin.comptes.videFamilles' => 'No family registered yet',
+			'admin.comptes.videEnseignants' => 'No teacher registered yet',
+			'admin.comptes.videDirection' => 'No management account',
+			'admin.comptes.videDetail' => 'New registrations will appear here.',
+			'admin.comptes.detailsAbsentsTitre' => 'Students\' age, class and guardian not shown',
+			'admin.comptes.detailsAbsentsMessage' => 'The server does not give this information yet: its update is not installed. Students stay properly separate from guardians. Reload the page once the update is installed.',
+			'admin.agents.titre' => 'AI agents access',
+			'admin.agents.intro' => 'A token lets an AI agent open the app and read what a person reads in it. It can write nothing, cancel nothing, change nothing: the database refuses it, not the interface.',
+			'admin.agents.emettre' => 'Issue a token',
+			'admin.agents.libelle' => 'What this token is for',
+			'admin.agents.libelleAide' => 'Required. A token with no name is a token no one dares revoke.',
+			'admin.agents.libelleExemple' => 'Review of Maryam\'s follow-up',
+			'admin.agents.libelleAuto' => ({required Object dePrenom, required Object date, required Object duree}) => 'Observation ${dePrenom}, on ${date}, ${duree} h',
+			'admin.agents.manqueLibelle' => 'The token\'s name is missing: write what it is for.',
+			'admin.agents.manquePersonne' => 'The person observed is missing: choose one from the list.',
+			'admin.agents.qui' => 'Who the agent observes',
+			'admin.agents.quiAide' => 'The agent will see exactly this person\'s screen, and their journey will be theirs.',
+			'admin.agents.quiVide' => 'Choose a person',
+			'admin.agents.chercher' => 'Search for a name or identifier',
+			'admin.agents.duree' => 'For how long',
+			'admin.agents.dureeHeure' => ({required Object nombre}) => '${nombre} h',
+			'admin.agents.dureePlafond' => 'Twenty-four hours at most, and the database checks it itself.',
+			'admin.agents.identite' => 'First names',
+			'admin.agents.identiteMasquee' => 'Hidden',
+			'admin.agents.identiteMasqueeDetail' => 'The agent reads identifiers (ELV-0042) in place of first names. The substitution is done by the database: the first name does not leave it.',
+			'admin.agents.identiteVisible' => 'Visible',
+			'admin.agents.identiteVisibleDetail' => 'The agent reads first names, as the person observed sees them.',
+			'admin.agents.pourra' => 'Will be able to',
+			'admin.agents.pourraDetail' => 'Open the app, navigate, and read everything this person reads.',
+			'admin.agents.nePourraPas' => 'Will not be able to',
+			'admin.agents.nePourraPasDetail' => 'Write anything, see an ID document, a device, the audit log, or leave this person\'s scope.',
+			'admin.agents.emissionEnCours' => 'Issuing',
+			'admin.agents.emis' => 'Token issued',
+			'admin.agents.emisDetail' => 'Give this link to the agent. It will not appear again: neither this screen nor the database can retrieve it.',
+			'admin.agents.copier' => 'Copy the link',
+			'admin.agents.copie' => 'Link copied',
+			'admin.agents.termine' => 'I copied the link',
+			'admin.agents.erreurEmission' => 'The token could not be issued. Try again in a moment.',
+			'admin.agents.colonneLibelle' => 'Token',
+			'admin.agents.colonneQui' => 'Observes',
+			'admin.agents.colonneParcours' => 'Journey',
+			'admin.agents.colonneIdentite' => 'First names',
+			'admin.agents.colonneExpire' => 'Until',
+			'admin.agents.colonneUsage' => 'Openings',
+			'admin.agents.colonneEtat' => 'Status',
+			'admin.agents.parcoursEleve' => 'Student',
+			'admin.agents.parcoursTuteur' => 'Guardian',
+			'admin.agents.parcoursEnseignant' => 'Teacher',
+			'admin.agents.parcoursControleur' => 'Quality review',
+			'admin.agents.parcoursAdmin' => 'Administration',
+			'admin.agents.parcoursComptable' => 'Accountant',
+			'admin.agents.parcoursInconnu' => 'Unknown journey',
+			'admin.agents.etatActif' => 'Active',
+			'admin.agents.etatRevoque' => 'Revoked',
+			'admin.agents.etatExpire' => 'Expired',
+			'admin.agents.jamaisServi' => 'Never used',
+			'admin.agents.revoquer' => 'Revoke',
+			'admin.agents.revoquerTitre' => 'Revoke this token?',
+			'admin.agents.revoquerDetail' => 'The agent will lose access at its next request. This is final: a revoked token cannot be reactivated.',
+			'admin.agents.revoquerConfirmer' => 'Revoke',
+			'admin.agents.annuler' => 'Cancel',
+			'admin.agents.revoque' => 'Token revoked',
+			'admin.agents.erreurRevocation' => 'The revocation did not go through. Try again.',
+			'admin.agents.vide' => 'No observation token',
+			'admin.agents.videDetail' => 'No AI agent has access to the app for now.',
+			'admin.agents.erreur' => 'The list of tokens could not be read.',
+			'admin.agents.usage' => ({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} time, the last ${quand}', other: '${nombre} times, the last ${quand}', ), 
+			'admin.notifications.titre' => 'Notifications',
+			'admin.notifications.vide' => 'No notification',
+			'admin.notifications.videDetail' => 'Nothing to report for now.',
+			'admin.finance.vueGlobale' => 'Overview',
+			'admin.finance.politiques' => 'Commercial policies',
+			'admin.finance.vue.moisAnnee' => ({required Object mois, required Object annee}) => '${mois} ${annee}',
+			'admin.finance.vue.contexte' => ({required Object deMois}) => 'The figures for ${deMois}, each on its own: what is collected, what is recognized as revenue, what is owed to teachers and what stays on families\' profiles.',
+			'admin.finance.vue.indicateurs' => 'Month\'s indicators',
+			'admin.finance.vue.encaisse' => 'Amount collected',
+			'admin.finance.vue.encaisseDetail' => 'Payments received this month. A collection is not yet revenue.',
+			'admin.finance.vue.revenu' => 'Academy revenue',
+			'admin.finance.vue.revenuDetail' => 'Revenue recognized this month, excluding taxes collected.',
+			'admin.finance.vue.paie' => 'Teachers\' pay',
+			'admin.finance.vue.paieDetail' => 'Estimated for the month: an upcoming cost, not a payment made.',
+			'admin.finance.vue.marge' => 'Projected margin',
+			'admin.finance.vue.margeValeur' => ({required Object valeur}) => '${valeur}%',
+			'admin.finance.vue.margeDetail' => 'Calculated on teachers\' pay alone, without other costs: it cannot be compared with a net margin.',
+			'admin.finance.vue.margeSansActivite' => 'No activity',
+			'admin.finance.vue.margeNonCalculable' => 'Not calculable',
+			'admin.finance.vue.impayes' => 'Unpaid',
+			'admin.finance.vue.impayesDetail' => 'Still to fund over the month\'s periods.',
+			'admin.finance.vue.essais' => 'Trials in progress',
+			'admin.finance.vue.essaisDetail' => 'Students on trial, never counted as paying.',
+			'admin.finance.vue.soldes' => 'Credit balances',
+			'admin.finance.vue.soldesDetail' => 'Money available on families\' profiles: neither revenue nor margin.',
+			'admin.finance.vue.sansActivite' => ({required Object mois}) => 'No financial activity in ${mois}: the indicators are at zero.',
+			'admin.finance.vue.sansRevenu' => ({required Object mois}) => 'No revenue recognized in ${mois}: the margin cannot be calculated.',
+			'admin.finance.vue.evolution' => 'Trend',
+			'admin.finance.vue.evolutionDetail' => 'Evolution',
+			'admin.finance.vue.graphiqueEncaisse' => 'One chart per notion, each with its exact numbers: collection, cost and margin are never mixed.',
+			'admin.finance.vue.graphiquePaie' => 'Amount collected per month',
+			'admin.finance.vue.graphiqueMarge' => 'Teachers\' pay per month',
+			'admin.finance.vue.graphiqueRepartition' => 'Projected margin per month',
+			'admin.finance.vue.repartitionAdultes' => 'Child students',
+			'admin.finance.vue.sansHistorique' => 'Adult students',
+			'admin.finance.vue.alertes' => 'No month returned for now.',
+			'admin.finance.vue.aucuneAlerte' => 'Alerts',
+			'admin.finance.vue.etatPaiements' => 'No alert this month.',
+			'admin.finance.vue.etatPaiementsDetail' => 'Payments status',
+			'admin.finance.vue.etatFinances' => 'The month\'s profiles by the status of their period. A trial is never counted as paying.',
+			'admin.finance.vue.etatARegulariser' => 'Funded',
+			'admin.finance.vue.etatEnEssai' => 'To settle',
+			'admin.finance.vue.etatEnConfirmation' => 'On trial',
+			'admin.finance.vue.topClasses' => 'No payment status returned for this month.',
+			'admin.finance.vue.dernieresOperations' => 'No class collected this month.',
+			'admin.finance.vue.dernieresOperationsDetail' => 'Latest operations',
+			'admin.finance.vue.alerte.aRegulariser' => 'No movement for now.',
+			'admin.finance.vue.alerte.ouvrirComptes' => 'A profile',
+			'admin.finance.vue.alerte.ouvrirClasses' => 'Open the accounts',
+			'admin.finance.pol.contexte' => 'Open the classes',
+			'admin.finance.pol.statutBrouillon' => 'The academy\'s commercial rules, versioned and dated. A draft is prepared here and applies only once published, from its effective date. What protects families\' money is not set here.',
+			'admin.finance.pol.statutPubliee' => 'Draft',
+			'admin.finance.pol.versionActive' => ({required Object version}) => 'Draft version ${version}',
+			'admin.finance.pol.dateEffet' => ({required Object date}) => 'In force since ${date}',
+			'admin.finance.pol.dateEffetReglable' => 'The draft will apply from this date, never to an invoice already paid.',
+			'admin.finance.pol.changerDate' => 'Adjustable in the draft: it will be applied at publication, once the server is connected.',
+			'admin.finance.pol.nonEnregistre' => 'No difference from the active version for now: change a field to prepare the next version.',
+			'admin.finance.pol.sansBrouillon' => 'Your changes stay on this screen as long as you do not leave it: saving a draft is not yet available.',
+			'admin.finance.pol.erreurCapacite' => 'This field is empty or badly entered: enter a whole number, with no comma or sign.',
+			'admin.finance.pol.erreurTarif' => 'A class has at least one place: enter 1 or more.',
+			'admin.finance.pol.suffixeRemise' => ({required Object symbole}) => '${symbole} / h',
+			'admin.finance.pol.eleves' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, other: '${n} student', ), 
+			'admin.finance.pol.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} students', other: '${n} session', ), 
+			'admin.finance.pol.classes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} sessions', other: '${n} class', ), 
+			'admin.finance.pol.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} classes', other: '${n} day', ), 
+			'admin.finance.pol.uniteSeances' => 'students',
+			'admin.finance.pol.uniteClasses' => 'sessions',
+			'admin.finance.pol.uniteJours' => 'classes',
+			'admin.finance.pol.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, other: '${n} minute', ), 
+			'admin.finance.pol.mois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} minutes', other: '${n} month', ), 
+			'admin.finance.pol.uniteMois' => 'minutes',
+			'admin.finance.pol.uniteJourDuMois' => 'months',
+			'admin.finance.pol.prepaiementTrimestrielDetail' => 'Quarter paid in advance',
+			'admin.finance.pol.prepaiementAnnuel' => 'The discount for three months paid at once; the family sees it when paying.',
+			'admin.finance.pol.prepaiementAnnuelDetail' => 'Year paid in advance',
+			'admin.finance.pol.cumulMax' => 'The discount for twelve months paid at once.',
+			'admin.finance.pol.cumulMaxDetail' => 'Cap on combined discounts',
+			'admin.finance.pol.parrainage' => 'The household discount and advance payment together never exceed this share of the price.',
+			'admin.finance.pol.parrainageDetail' => 'Referral credit',
+			'admin.finance.pol.bourse' => 'Paid to each of the two households after the referred family\'s first month is paid.',
+			'admin.finance.pol.bourseDetail' => 'Scholarship',
+			'admin.finance.pol.boursePlaces' => 'Granted by the management on written request; it adds to no other discount.',
+			'admin.finance.pol.boursePlacesDetail' => 'Scholarship places',
+			'admin.finance.pol.bourseDuree' => 'The share of students who can receive a scholarship at the same time.',
+			'admin.finance.pol.bourseDureeDetail' => 'Scholarship length',
+			'admin.finance.pol.tauxEleveEnfant' => 'After this length, the scholarship is reviewed with the family.',
+			'admin.finance.pol.tauxEleveEnfantDetail' => 'Per student present, children\'s class',
+			'admin.finance.pol.tauxEleveAdulte' => 'Paid to the teacher for each student present and per hour of class; an absent student is not paid.',
+			'admin.finance.pol.tauxEleveAdulteDetail' => 'Per student present, adults\' class',
+			'admin.finance.pol.plafondEleveEnfant' => 'Paid to the teacher for each adult present and per hour of class.',
+			'admin.finance.pol.plafondEleveAdulte' => 'Ceiling per student, children\'s class',
+			'admin.finance.pol.plafondEleveDetail' => 'Ceiling per student, adults\' class',
+			'admin.finance.pol.erreurMontantCentimes' => 'The maximum paid per student present and per hour. Since 19/10/2026, it equals the rate: no bonus is added to it.',
+			'admin.finance.pol.dureeDueAdulte' => 'Children\'s session due from',
+			'admin.finance.pol.dureeDueDetail' => 'Adults\' session due from',
+			'admin.finance.pol.suspension' => 'The minimum attendance for a session to count in pay.',
+			'admin.finance.pol.suspensionDetail' => 'Access suspended on',
+			'admin.finance.pol.retractation' => 'A month not paid on this date suspends access to class; the place is kept for the retention period.',
+			'admin.finance.pol.retractationDetail' => 'Withdrawal period',
+			'admin.finance.pol.erreurRetractation' => 'During this period, counted from payment, the family is refunded what they paid, minus the sessions attended. The Cancellation and refund text shows this value.',
+			'admin.finance.pol.erreurPourcentMax' => 'Enter a period from 0 to 60 days.',
+			'admin.finance.pol.erreurDureeDue' => 'Enter 100% at most.',
+			'admin.finance.pol.erreurBourseDuree' => 'Enter a length from 1 to 240 minutes.',
+			'admin.finance.pol.erreurSuspension' => 'Enter a length from 1 to 24 months.',
+			'admin.finance.pol.tarifs' => 'Enter a day from the 1st to the 28th of the month.',
+			'admin.finance.pol.tarifsDetail' => 'Prices',
+			'admin.finance.pol.tarifEnfant' => 'The monthly price of access to a class, excluding taxes.',
+			'admin.finance.pol.tarifEnfantDetail' => 'Child',
+			'admin.finance.pol.tarifAdulte' => 'A child\'s monthly price for a class; it applies to periods that start after the effective date.',
+			'admin.finance.pol.tarifAdulteDetail' => 'Adult',
+			'admin.finance.pol.essai' => 'An adult\'s monthly price for a class; it applies to periods that start after the effective date.',
+			'admin.finance.pol.essaiDetail' => 'Trial',
+			'admin.finance.pol.essais' => 'A new profile\'s free sessions, before its first paying period.',
+			'admin.finance.pol.essaisDetail' => 'Trial sessions per new profile',
+			'admin.finance.pol.essaiActivation' => 'Free for the family; after the last one, access waits for the first period to be funded.',
+			'admin.finance.pol.essaiActivationDetail' => 'Trial activation',
+			'admin.finance.pol.essaiActive' => 'When off, a new profile starts directly with its first paying period.',
+			'admin.finance.pol.essaiDesactive' => 'On',
+			'admin.finance.pol.remises' => 'Off',
+			'admin.finance.pol.remisesDetail' => 'Family discounts',
+			'admin.finance.pol.remiseAucuneDetail' => 'Normal price',
+			'admin.finance.pol.enseignants' => 'Each paying member from this rank gets this discount on their monthly price.',
+			'admin.finance.pol.enseignantsDetail' => 'Teacher pay',
+			'admin.finance.pol.baseHoraire' => 'Per session, per student present and per hour, at the class rate: children or adults. An absent student is never paid; no minimum.',
+			'admin.finance.pol.baseHoraireDetail' => 'Hourly base (abandoned rule)',
+			'admin.finance.pol.plafondHoraire' => 'Old minimum per hour, abandoned on 19/10/2026: the teacher is paid per student present.',
+			'admin.finance.pol.plafondHoraireDetail' => 'Hourly ceiling (abandoned rule)',
+			'admin.finance.pol.occupation' => 'Old maximum per hour, abandoned on 19/10/2026: only the per-student-present rate counts.',
+			'admin.finance.pol.occupationValeur' => 'Old calculation by class (abandoned rule)',
+			'admin.finance.pol.occupationDetail' => 'Abandoned rule',
+			'admin.finance.pol.classesObjectif' => 'Rule abandoned on 19/10/2026: only a student present is paid, an absent one never.',
+			'admin.finance.pol.classesObjectifDetail' => 'Classes target per teacher',
+			'admin.finance.pol.classesMax' => 'The recommended number of active classes: a guide, not a limit.',
+			'admin.finance.pol.classesMaxDetail' => 'Normal maximum of classes',
+			'admin.finance.pol.internet' => 'The maximum load advised for a teacher.',
+			'admin.finance.pol.internetDetail' => 'Internet allowance',
+			'admin.finance.pol.internetNonFixee' => 'One allowance per eligible teacher, never multiplied by class or by student.',
+			'admin.finance.pol.sectionClasses' => 'Not set yet',
+			'admin.finance.pol.sectionClassesDetail' => 'Classes',
+			'admin.finance.pol.capaciteEnfant' => 'The size of classes and the threshold for opening one.',
+			'admin.finance.pol.capaciteEnfantDetail' => 'Children\'s class capacity',
+			'admin.finance.pol.capaciteAdulte' => 'The number of seats planned; it is also used for the teacher\'s hourly rate.',
+			'admin.finance.pol.capaciteAdulteDetail' => 'Adults\' class capacity',
+			'admin.finance.pol.capaciteDebutant' => 'The number of seats planned in an adults\' class.',
+			'admin.finance.pol.capaciteDebutantDetail' => 'Beginners\' class capacity',
+			'admin.finance.pol.minimum' => 'Smaller, to follow each beginner closely.',
+			'admin.finance.pol.minimumDetail' => 'Opening minimum',
+			'admin.finance.pol.paiement' => 'Below it, a class does not open and the management is alerted.',
+			'admin.finance.pol.paiementDetail' => 'Payment',
+			'admin.finance.pol.railWeb' => 'The payment method and the length of time a place is kept.',
+			'admin.finance.pol.railActif' => 'Web payment (Stripe)',
+			'admin.finance.pol.railInactif' => 'On',
+			'admin.finance.pol.railWebDetail' => 'Off',
+			'admin.finance.pol.railIos' => 'The only payment method offered to families at launch.',
+			'admin.finance.pol.railAndroid' => 'iOS in-app purchase',
+			'admin.finance.pol.railPrepare' => 'Google Play billing',
+			'admin.finance.pol.railMobileDetail' => 'Prepared (off)',
+			'admin.finance.pol.conservation' => 'Planned for later: no mobile payment button is shown to families at launch.',
+			'admin.finance.pol.conservationDetail' => 'Keeping the place',
+			'admin.finance.pol.relances' => 'How long a student\'s place stays reserved when their new period is not funded.',
+			'admin.finance.pol.relancesDetail' => 'Reminder rules',
+			'admin.finance.pol.relancesNonFixees' => 'Reminders for an unfunded period, sent to the guardian or the independent adult in the app; never to the child.',
+			'admin.finance.pol.pilotageDetail' => 'Steering',
+			'admin.finance.pol.marge' => 'Guides for reading the figures, never rules that block.',
+			'admin.finance.pol.margeDetail' => 'Reference margin',
+			'admin.finance.pol.margeObjectif' => 'A guide for reading the overview, never a sanction, refusal or block.',
+			'admin.finance.pol.margeObjectifDetail' => 'Target margin',
+			'admin.finance.pol.margeForte' => 'The net margin aimed for, all costs included: a steering guide, never a sanction or a block.',
+			'admin.finance.pol.margeForteDetail' => 'Strong performance',
+			'admin.finance.pol.margeStretch' => 'The guide for a very good month; it does not go below the target.',
+			'admin.finance.pol.margeStretchDetail' => 'Stretch scenario',
+			'admin.finance.pol.erreurMargeMax' => '%',
+			'admin.finance.pol.budgetsDetail' => 'Budgets',
+			'admin.finance.pol.budgetsNonFixes' => 'Non-binding: spending guides, never a block or a sanction.',
+			'admin.finance.pol.budgetMarketing' => 'Not set yet',
+			'admin.finance.pol.budgetOperationnel' => 'Marketing budget',
+			'admin.finance.pol.invariants' => ' ; ',
+			'admin.finance.pol.invariantsDetail' => 'Fixed rules',
+			'admin.finance.pol.invariantConfirmation' => 'They protect families\' money: they are not settings, no version changes them.',
+			'admin.finance.pol.invariantDoubleDebit' => 'A payment is confirmed before any credit to a profile.',
+			'admin.finance.pol.invariantPeriode' => 'The same payment is never debited twice.',
+			'admin.finance.pol.invariantSoldes' => 'Access to class depends on the funded period, never on the balance.',
+			'admin.finance.pol.invariantIdempotence' => 'Each profile has its own balance; the household total is only a reading.',
+			'admin.finance.pol.invariantHistorique' => 'The same payment received twice is recorded only once.',
+			'admin.finance.pol.publier' => 'The payment history is neither erased nor rewritten: it is only added to.',
+			'admin.finance.pol.publierConsequence' => 'Publish the version',
+			'admin.finance.pol.publicationIndisponible' => 'Publishing makes this draft applicable from its effective date; no invoice already paid is changed.',
+			'admin.finance.pol.publicationIndisponibleDetail' => 'Publishing is not available yet',
+			'admin.finance.pol.publicationNonConfirmee' => 'Nothing was published: the publishing service is not connected yet. The active version continues to apply. Keep this screen open to keep your changes, or come back when publishing is open.',
+			'admin.finance.pol.publicationNonConfirmeeDetail' => 'Publication not confirmed',
+			'admin.finance.pol.publicationFaite' => 'The answer did not arrive: the request may not have reached Rewayah. Check the active version before trying again.',
+			'admin.finance.pol.publicationFaiteDetail' => 'Version published',
+			'admin.finance.pol.publicationRefusee' => 'Rewayah saved the new version. It will apply from its effective date; until then, the active version continues to apply.',
+			'admin.finance.pol.publicationRefuseeDetail' => 'Publication refused',
+			'admin.finance.pol.publicationInvalide' => 'Nothing was published: publishing prices requires two-step verification. Turn it on in Account > Security, then try again.',
+			'admin.finance.pol.publicationInvalideDetail' => 'A value does not fit',
+			'admin.finance.pol.champsACorriger' => 'Rewayah refused this version: the effective date must be upcoming and after the last version, and each discount must stay below the rate. Nothing was published: correct, then try again.',
+			'admin.finance.pol.champsACorrigerDetail' => 'First correct the flagged fields',
+			'admin.finance.pol.apercu' => 'An empty, badly entered or inconsistent field prevents preparing the publication: correct each flagged field as its sentence says, then publish.',
+			'admin.finance.pol.apercuDetail' => 'Preview before publication',
+			'admin.finance.pol.apercuFamille' => 'What the draft would give on screen, recalculated at each valid change. These are examples: nothing is invoiced or paid.',
+			'admin.finance.pol.apercuFamilleDetail' => 'Household example',
+			'admin.finance.pol.apercuEnfantsChoix' => 'The monthly fee of each paying child, in rank order, then the household total.',
+			'admin.finance.pol.apercuEnfants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, other: '${n} child', ), 
+			'admin.finance.pol.apercuEnseignant' => 'Household total per month',
+			'admin.finance.pol.apercuEnseignantDetail' => 'Teacher example',
+			'admin.finance.pol.apercuTypeClasse' => 'What one session hour earns depending on the students present; an absent student does not count.',
+			'admin.finance.pol.apercuClasseEnfants' => 'Class type',
+			'admin.finance.pol.apercuClasseAdultes' => 'Children',
+			'admin.finance.pol.apercuClasseDebutants' => 'Adults',
+			'admin.finance.pol.apercuAttente' => 'Beginners',
+			'admin.finance.pol.apercuAttenteDetail' => 'The preview awaits a valid entry',
+			'admin.finance.pol.apercuCapaciteAttente' => 'A field in the draft is empty, badly entered or inconsistent: correct the flagged field, the preview recalculates right away.',
+			'admin.finance.pol.apercuIndisponible' => 'This class has no place: enter a capacity of at least 1 student to see the example.',
+			'admin.finance.pol.apercuIndisponibleDetail' => 'The preview is not available yet',
+			'admin.finance.pol.apercuErreur' => 'The preview calculation is not connected yet: no amount is estimated here. The draft stays editable.',
+			'admin.finance.pol.apercuErreurDetail' => 'Preview not calculated',
+			'admin.finance.pol.apercuHorsLigne' => 'The calculation is not confirmed: the request may not have reached Rewayah. Your entries are kept: run the calculation again.',
+			'admin.finance.pol.apercuHorsLigneDetail' => 'Preview waiting',
+			'admin.finance.pol.apercuRecalculer' => 'The preview cannot be calculated now. Your entries are kept; run the calculation again as soon as sending is possible again.',
+			'admin.finance.pol.apercuRecalcul' => 'Run the calculation again',
+			'admin.finance.pol.apercuRecalculDetail' => 'Recalculating',
 			'agent.titre' => 'Agent entry',
 			'agent.intro' => 'This page opens the app in read-only mode, with the token provided by the academy.',
 			'agent.jeton' => 'Observation token',
@@ -27545,6 +28946,8 @@ extension on TraductionsEn {
 			'parcours.modifier' => 'Edit my answers',
 			'parcours.recapNiveau' => ({required Object niveau}) => 'Stated level: ${niveau}',
 			'parcours.recapObjectif' => ({required Object objectif}) => 'Goal: ${objectif}',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.erreur' => 'This answer could not be saved. Try again.',
 			'parcours.chargement' => 'We are preparing your options.',
 			'parcours.pourPrenom' => ({required Object prenom}) => 'For ${prenom}',
@@ -27605,8 +29008,6 @@ extension on TraductionsEn {
 			'parcours.refusAucun' => 'None of these schedules suits me',
 			'parcours.refusPrevenir' => 'Let me know if new schedules open',
 			'parcours.refusEffet' => 'We record that the request exists. This does not create a class, does not look for a teacher and does not promise any future schedule.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.refusEnregistre' => 'Noted. We will let you know if a matching schedule opens.',
 			'parcours.etatAPersonnaliser' => 'Journey to personalise',
 			'parcours.etatAPersonnaliserDetail' => ({required Object prenom}) => 'A few questions, and we will only show what suits ${prenom}.',
@@ -28059,6 +29460,8 @@ extension on TraductionsEn {
 			'notifications.evenements.demandePresentation' => 'A standard display request has been received.',
 			'notifications.evenements.classeValidee' => 'The class is ready and waiting for its teacher.',
 			'notifications.evenements.enseignantAffecte' => 'A teacher has been assigned to the class.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.demandeClose' => 'A time slot request has been closed.',
 			'notifications.evenements.remplacementPropose' => 'A class replacement is being offered to you.',
 			'notifications.evenements.remplacementPris' => 'A class replacement has been assigned.',
@@ -28119,8 +29522,6 @@ extension on TraductionsEn {
 			'notifications.evenements.seanceDeplaceeQuand' => ({required Object quand}) => 'A session is moved to ${quand}.',
 			'notifications.evenements.enseignanteAbsente' => 'The teacher will be absent from a session. A replacement is being sought.',
 			'notifications.evenements.enseignanteAbsenteQuand' => ({required Object quand}) => 'The teacher will be absent from the session of ${quand}. A replacement is being sought.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.remplacementAvertissement' => 'You are not in the room yet. Join quickly: otherwise you lose access to today\'s session.',
 			'notifications.evenements.remplacementAvertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minutes, one: 'You are not in the room yet. Join within the minute: otherwise you lose access to today\'s session.', other: 'You are not in the room yet. Join within ${minutes} minutes: otherwise you lose access to today\'s session.', ), 
 			'notifications.evenements.remplacementPreAlerte' => 'A replacement is being prepared: a teacher is not yet in their room. Declare yourself ready in Replacements.',
@@ -28573,6 +29974,8 @@ extension on TraductionsEn {
 			'enseignant.classes.rappelCahier' => 'A handover notebook remains to be approved',
 			'enseignant.classes.cahierAValider' => 'Handover notebook to approve',
 			'enseignant.classes.eleves' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} student', other: '${nombre} students', ), 
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.titre' => ({required Object dePrenom}) => '${dePrenom}\'s file',
 			'enseignant.eleve.retour' => 'Students',
 			'enseignant.eleve.identifiant' => ({required Object id}) => 'Academy ID: ${id}',
@@ -28633,8 +30036,6 @@ extension on TraductionsEn {
 			'enseignant.bienvenue.titre' => 'First steps',
 			'enseignant.bienvenue.salutation' => ({required Object prenom}) => 'Welcome, ${prenom}.',
 			'enseignant.bienvenue.salutationSansNom' => 'Welcome.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.dossierValide' => 'Your file is approved.',
 			'enseignant.bienvenue.sousTitre' => 'Prepare your space before your first class.',
 			'enseignant.bienvenue.aCompleter' => 'To complete',
@@ -29087,6 +30488,8 @@ extension on TraductionsEn {
 			'enseignant.creneaux.engagementsNonConfirmes' => 'Your already committed classes are not confirmed: the request may not have reached Rewayah. A conflict with a slot cannot therefore be reported; tap "Try again".',
 			'enseignant.creneaux.retraitSansEngagements' => ({required Object heures}) => 'Your already committed classes are not confirmed. If a class takes place on ${heures}, removing this availability does not end the session: it continues until a reassignment.',
 			'enseignant.creneaux.horsLigneFeuille' => 'This slot cannot be saved now. Your choices stay displayed: come back to save it when sending is possible again.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.creneauHebdo' => ({required Object jour, required Object heure}) => '${jour} at ${heure}, every week',
 			'enseignant.ficheGroupe.aucunMembre' => 'No student in this class',
 			'enseignant.ficheGroupe.aucunMembreDetail' => 'The administration forms the classes: this one has no student yet.',
@@ -29147,8 +30550,6 @@ extension on TraductionsEn {
 			'enseignant.revenus.heuresAssureesDetail' => 'The month\'s sessions that earned, at their retained length.',
 			'enseignant.revenus.classesActives' => 'Classes',
 			'enseignant.revenus.heures' => ({required Object heures}) => '${heures} h',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.heuresMinutes' => ({required Object heures, required Object minutes}) => '${heures} h ${minutes}',
 			'enseignant.revenus.minutes' => ({required Object minutes}) => '${minutes} min',
 			'enseignant.revenus.versement' => 'Pay day',
@@ -29601,6 +31002,8 @@ extension on TraductionsEn {
 			'tc.coran.modes.mushaf' => 'Mushaf page',
 			'tc.coran.modes.verset' => 'Enlarged reading',
 			'tc.coran.modes.focus' => 'Focus',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.modes.choisir' => 'Reading mode',
 			'tc.coran.modes.versets' => ({required Object debut, required Object fin}) => 'v. ${debut} to ${fin}',
 			'tc.coran.modes.versetsEntre' => ({required Object debut, required Object fin}) => '${debut} to ${fin}',
@@ -29661,8 +31064,6 @@ extension on TraductionsEn {
 			'tc.outils.trait.surligneur' => 'Highlight',
 			'tc.outils.trait.gomme' => 'Eraser',
 			'tc.outils.trait.annuler' => 'Undo',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.trait.plus' => 'More',
 			'tc.outils.trait.ardoise' => 'Annotation slate, optional: the class stays readable without it',
 			'tc.outils.trait.effacerDernier' => 'Erase my last stroke',
@@ -30115,6 +31516,8 @@ extension on TraductionsEn {
 			'adulte.famille.profilNonCreePhraseSeul' => 'In the demo, nothing is sent. Your student space stays as it was.',
 			'adulte.famille.monProfilIndisponibleTitre' => 'Not available yet',
 			'adulte.famille.monProfilIndisponiblePhrase' => 'Creating a separate student profile is not yet available. Your classes and My family stay as they are.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.indisponibleTitre' => 'The family section is not available yet',
 			'adulte.famille.indisponiblePhrase' => 'Your family or your family plan will appear here as soon as it is available.',
 			'adulte.famille.place.ajouterConjointe' => 'Add a spouse',
@@ -30175,8 +31578,6 @@ extension on TraductionsEn {
 			'adulte.invitation.garder' => 'Keep the invitation',
 			'adulte.invitation.annulationEchecTitre' => 'The cancellation was not confirmed.',
 			'adulte.invitation.annulationEchecPhrase' => 'Check before trying again.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.valableJusquau' => ({required Object date}) => 'Valid until ${date}',
 			'adulte.invitation.renvoyer' => 'Resend the invitation',
 			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'The invitation was sent again to ${courriel}, with a new code: the one in the previous email no longer works.',
@@ -30629,6 +32030,8 @@ extension on TraductionsEn {
 			'alertes.traitement.motifRequisAide' => 'Required for this report. Read by the management only.',
 			'alertes.traitement.motifFacultatifAide' => 'Optional. Read by the management only.',
 			'alertes.traitement.motifManque' => 'Write the reason for closing.',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.examiner' => 'Review',
 			'alertes.traitement.transmettre' => 'Pass on',
 			'alertes.traitement.clore' => 'Close',
@@ -30689,8 +32092,6 @@ extension on TraductionsEn {
 			'argent.transparence.videTitre' => 'The price breakdown is not published yet',
 			'argent.transparence.videPhrase' => 'It will be published with the next version of the prices.',
 			'argent.etat.finance' => 'Funded',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.essai' => 'Trial',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Trial: ${n}/${max}',
 			'argent.etat.manque' => 'To fund',
@@ -31143,6 +32544,8 @@ extension on TraductionsEn {
 			'com.communaute.demo.nominal' => 'Six posts',
 			'com.communaute.demo.publication' => 'One post open',
 			'com.communaute.demo.vide' => 'No post',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.lectureEchouee' => 'Read failed',
 			'com.communaute.demo.indisponible' => 'Service not available yet',
 			'com.communaute.demo.horsLigne' => 'Offline',
@@ -31203,8 +32606,6 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.indicateurs.titre' => 'Attention indicators',
 			'com.studio.aujourdhui.indicateurs.aTraiter' => _root.com.socle.lexique.aTraiter,
 			'com.studio.aujourdhui.indicateurs.mentions' => 'Mentions and replies',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.indicateurs.decisions' => 'Decisions pending',
 			'com.studio.aujourdhui.indicateurs.nonLus' => 'Unread',
 			'com.studio.aujourdhui.blocs.aTraiter' => 'To handle today',
@@ -31657,6 +33058,8 @@ extension on TraductionsEn {
 			'comptable.commun.enTransit' => 'In transit',
 			'comptable.commun.tresorerieLibreDetail' => 'What is really still available after the protected funds, the obligations and the transit.',
 			'comptable.commun.objectifFixe' => 'Target: fixed amount',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Current target: 1 month of essential expenses', other: 'Current target: ${n} months of essential expenses', ), 
 			'comptable.commun.montantActuel' => 'Current amount',
 			'comptable.commun.manque' => 'Shortfall to make up',
@@ -31717,8 +33120,6 @@ extension on TraductionsEn {
 			'comptable.statuts.rapprochement.conflit' => 'Conflict',
 			'comptable.statuts.rapprochement.sansCorrespondance' => 'No match',
 			'comptable.statuts.rapprochement.doublonPotentiel' => 'Potential duplicate',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.profil.aucunMoyen' => 'No method',
 			'comptable.statuts.profil.incomplet' => 'Incomplete',
 			'comptable.statuts.profil.enVerification' => 'Being verified',
@@ -32171,6 +33572,8 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.profil.historiqueTitre' => 'Payment history',
 			'comptable.beneficiaires.profil.historiqueVide' => 'No payment made to this beneficiary yet.',
 			'comptable.beneficiaires.profil.journalTitre' => 'Profile log',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.journalVide' => 'No change recorded on this profile yet.',
 			'comptable.beneficiaires.profil.actionsTitre' => 'What to do for this profile',
 			'comptable.beneficiaires.profil.relancer' => ({required Object nom}) => 'Remind ${nom}',
@@ -32231,8 +33634,6 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.aucunType' => 'No method type is offered for now. Contact the academy to open one.',
 			'comptable.beneficiaires.recevoir.verificationAnnoncee' => 'Every change is verified before the next payment.',
 			'comptable.beneficiaires.recevoir.ajoutee' => 'Method added: it is being verified.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.remplacee' => 'New method saved: it is being verified.',
 			'comptable.beneficiaires.recevoir.supprimee' => 'Method deleted.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Preferred method updated.',
@@ -32685,6 +34086,8 @@ extension on TraductionsEn {
 			'reprisesAdmin.indisponibleTitre' => 'Household takeovers unavailable',
 			'reprisesAdmin.indisponiblePhrase' => 'This feature will be available once the server is connected.',
 			'recherche.titre' => 'Search',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.retour' => 'Back',
 			'recherche.champ.libelle' => 'Search',
 			'recherche.champ.aide' => 'One word',
@@ -32745,8 +34148,6 @@ extension on TraductionsEn {
 			'recherche.entree.supports' => 'Search in documents',
 			'recherche.contexte.remplacementOuvert' => 'Replacement to take',
 			'recherche.contexte.remplacementMien' => 'Your replacement',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.mission' => 'Review mission',
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Review mission · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Student of class ${classe}',
@@ -33199,6 +34600,8 @@ extension on TraductionsEn {
 			'snt.planning.erreurLecture' => 'The postponed sessions could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
 			'snt.planning.feuilleTitre' => 'Set the new date',
 			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'Class ${classe}, session planned for ${quand}',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'The new session is held with ${enseignant}, the class teacher, and lasts ${minutes} minutes, like the postponed session. The class is notified of the new date.',
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'The new session is held with the class teacher and lasts ${minutes} minutes, like the postponed session. The class is notified of the new date.',
 			'snt.planning.jour' => 'Day of the new session',
@@ -33259,8 +34662,6 @@ extension on TraductionsEn {
 			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Remove ${nom} from the validated surahs',
 			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'Remove ${nom} from the validated surahs?',
 			'cahierSourates.retirerConsequence' => 'It will no longer count as validated for this student.',
-			_ => null,
-		} ?? switch (path) {
 			'cahierSourates.retirerMotif' => 'Reason (optional)',
 			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} is no longer validated.',
 			'cahierSourates.retirerRefus' => 'The 24-hour delay has passed: only the management can still remove it.',
@@ -33713,6 +35114,8 @@ extension on TraductionsEn {
 			'suiviPedagogique.etapeEnCours' => 'In progress',
 			'suiviPedagogique.etapeAVenir' => 'Upcoming',
 			'suiviPedagogique.sourates' => 'Foundation surahs achieved',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.souratesDe' => ({required Object validees, required Object total}) => '${validees} of ${total}',
 			'suiviPedagogique.revision' => 'Revision per week',
 			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '${heures} h',
@@ -33773,8 +35176,6 @@ extension on TraductionsEn {
 			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'Your class "${classe}" is confirmed.',
 			'suiviAttente.dit.confirmeeAVenir' => 'The academy confirms the class when its students are brought together.',
 			'suiviAttente.dit.enseignantEnCours' => 'The academy is appointing the class teacher.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.dit.enseignantEnAttente' => 'Your class is waiting for its teacher. The academy appoints one and lets you know.',
 			'suiviAttente.dit.enseignantFait' => 'Your teacher is known.',
 			'suiviAttente.dit.enseignantFaitSimple' => 'Your teacher is known.',
