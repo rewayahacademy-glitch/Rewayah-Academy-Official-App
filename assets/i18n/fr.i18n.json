@@ -13854,6 +13854,7 @@
   "juridique": {
     "titre": "Informations légales",
     "intro": "Les textes qui encadrent le service. Ils se lisent sans compte.",
+    "traduction": "En cas de divergence, la version française fait foi.",
     "version": "Version {version}, texte du {date}",
     "contact": "Pour toute question, écrivez à {contact}.",
     "lire": "Lire",

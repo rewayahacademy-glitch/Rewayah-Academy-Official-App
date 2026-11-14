@@ -1860,6 +1860,7 @@ class _Traductions$juridique$ar extends Traductions$juridique$fr {
 	// Translations
 	@override String get titre => 'المعلومات القانونية';
 	@override String get intro => 'النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.';
+	@override String get traduction => 'في حال وجود اختلاف، تُعتمد النسخة الفرنسية.';
 	@override String version({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، نص ⁨${date}⁩';
 	@override String contact({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.';
 	@override String get lire => 'قراءة';
@@ -38150,6 +38151,7 @@ extension on TraductionsAr {
 			'argent.soldes.paiements' => 'مدفوعات الشهر',
 			'juridique.titre' => 'المعلومات القانونية',
 			'juridique.intro' => 'النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.',
+			'juridique.traduction' => 'في حال وجود اختلاف، تُعتمد النسخة الفرنسية.',
 			'juridique.version' => ({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، نص ⁨${date}⁩',
 			'juridique.contact' => ({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.',
 			'juridique.lire' => 'قراءة',
@@ -38333,9 +38335,9 @@ extension on TraductionsAr {
 			'avis.form.sousTitre' => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.',
 			'avis.form.nom.libelle' => 'الاسم الظاهر',
 			'avis.form.nom.aide' => 'يكفي اسمك الأول والحرف الأول من اسم عائلتك.',
-			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
 			'avis.form.qualite.libelle' => 'أنت',
 			'avis.form.qualite.parent' => 'ولي أمر أو وصي',
 			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
@@ -38847,9 +38849,9 @@ extension on TraductionsAr {
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
 			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
-			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			_ => null,
 		} ?? switch (path) {
+			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
@@ -39361,9 +39363,9 @@ extension on TraductionsAr {
 			'suiviAttente.tu.premierCoursPetit' => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.',
 			'suiviAttente.tu.premierCoursPassePetit' => 'انتهت أول حصة لك.',
 			'suiviAttente.tu.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
-			'suiviAttente.tu.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.tu.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.',
 			'suiviAttente.tu.titreRefusee' => 'لم يُقبل طلبك',
 			'suiviAttente.tu.retraitFamille' => 'سحب ولي أمرك هذا الطلب.',
 			'suiviAttente.tu.erreur' => 'تعذّرت قراءة طلبك. يحدث هذا غالبًا بسبب الاتصال. حاول مرة أخرى بعد قليل.',

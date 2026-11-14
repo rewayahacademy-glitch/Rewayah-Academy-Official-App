@@ -3664,6 +3664,9 @@ class Traductions$juridique$fr {
 	/// fr: 'Les textes qui encadrent le service. Ils se lisent sans compte.'
 	String get intro => 'Les textes qui encadrent le service. Ils se lisent sans compte.';
 
+	/// fr: 'En cas de divergence, la version française fait foi.'
+	String get traduction => 'En cas de divergence, la version française fait foi.';
+
 	/// fr: 'Version {version}, texte du {date}'
 	String version({required Object version, required Object date}) => 'Version ${version}, texte du ${date}';
 
@@ -63020,6 +63023,7 @@ extension on Traductions {
 			'sansDonnees.profilPaiement' => 'Ce profil de paiement n\'a pas pu être chargé',
 			'juridique.titre' => 'Informations légales',
 			'juridique.intro' => 'Les textes qui encadrent le service. Ils se lisent sans compte.',
+			'juridique.traduction' => 'En cas de divergence, la version française fait foi.',
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, texte du ${date}',
 			'juridique.contact' => ({required Object contact}) => 'Pour toute question, écrivez à ${contact}.',
 			'juridique.lire' => 'Lire',
@@ -63523,9 +63527,9 @@ extension on Traductions {
 			'accueilInscrits.phrase' => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.',
 			'accueilInscrits.motTitre' => 'Un mot de la direction',
 			'accueilInscrits.elevesTitre' => 'Vos enfants déjà inscrits',
-			'accueilInscrits.elevesPhrase' => 'Leur prénom est déjà rempli. Il reste à indiquer leur âge.',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.elevesPhrase' => 'Leur prénom est déjà rempli. Il reste à indiquer leur âge.',
 			'accueilInscrits.aJour' => 'À jour',
 			'accueilInscrits.aCompleter' => 'À compléter',
 			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'Ajouter le profil élève ${dePrenom}',
@@ -64037,9 +64041,9 @@ extension on Traductions {
 			'candidatsFlux.importDouble.suite' => 'Touchez « Saisir mon code » : vous saisissez le code de votre application de vérification, puis l\'import reprend ici. Rien n\'a été enregistré.',
 			'candidatsFlux.importDouble.action' => 'Saisir mon code',
 			'candidatsFlux.langues.man' => 'Malinké (mandinka)',
-			'candidatsFlux.publication.titre' => 'Publication sur le site',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.publication.titre' => 'Publication sur le site',
 			'candidatsFlux.publication.texte' => 'Votre nom, votre photo et votre pays peuvent apparaître sur le site public de Rewayah Academy. Ce choix est séparé de votre candidature : il ne change rien à son examen.',
 			'candidatsFlux.publication.kCase' => 'J\'accepte que mon nom, ma photo et mon pays soient sur le site public de Rewayah.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Votre nom vaut signature : ${nom}',
