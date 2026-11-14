@@ -21,6 +21,7 @@ import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_nom.dart';
 import 'halo_lumiere.dart';
+import 'marque_staff.dart';
 import 'status_pill.dart';
 
 /// Le cadre d'une personne : son image, recadree au centre (jamais etiree),
@@ -62,7 +63,14 @@ class CadreVisage extends StatelessWidget {
     this.coin,
     this.libelleNom,
     this.detache = false,
+    this.staff = false,
   });
+
+  /// RA-STAFF (directeur, 14/11/2026) : la personne est de la direction ;
+  /// camera eteinte, le cadre montre l'icone de l'academie
+  /// ([MarqueStaff.avatar]), jamais sa photo ni son initiale. Son nom est
+  /// deja « #Ra_staff » (la salle le donne).
+  final bool staff;
 
   /// RUBAN-TELEPHONE (11/11/2026) : un signe pose DANS le cadre, en haut a
   /// la fin (les barres du reseau de la capsule de l'enseignant), ou `null`.
@@ -202,9 +210,18 @@ class CadreVisage extends StatelessWidget {
                         child: TuileSansImage(
                           prenom: prenom,
                           nom: avecNom ? nom : '',
-                          personneId: personneId == null || personneId!.isEmpty
+                          personneId:
+                              staff || personneId == null || personneId!.isEmpty
                               ? null
                               : personneId,
+                          avatar: staff
+                              ? MarqueStaff.avatar(
+                                  key: const ValueKey<String>(
+                                    'cadre-visage-staff',
+                                  ),
+                                  diametre: diametre,
+                                )
+                              : null,
                           libelleMicroCoupe: microCoupe
                               ? t.salle.microCoupe
                               : null,

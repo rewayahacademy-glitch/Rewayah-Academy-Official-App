@@ -82,6 +82,7 @@ import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/entree_arche.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_presence.dart';
+import '../../core/widgets/marque_staff.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/offline_banner.dart' show ReserveCoinFin;
 import '../../core/widgets/page_immersive.dart';
@@ -2994,7 +2995,8 @@ class _SallePageEtat extends ConsumerState<SallePage> {
       acces: _acces,
       etatMoteur: _etatMoteur,
       participants: <ParticipantSalle>[
-        for (final ParticipantSalle p in _participants) annuaire.nommer(p),
+        for (final ParticipantSalle p in _participants)
+          annuaire.nommer(p, designationStaff: MarqueStaff.designation),
       ],
       qualite: _qualite,
       impasse: _impasse,
@@ -4819,7 +4821,7 @@ class _Presence {
         for (final ParticipantSalle personne in vue.participantsListes)
           _Presence(
             nom: personne.estLocal ? t.salle.vousMeme : personne.nom,
-            role: _libelleRole(personne.role),
+            role: estStaff(personne.role) ? '' : _libelleRole(personne.role),
             vue: VuePresence.depuis(ligne: null, maintenant: maintenant),
             micro: personne.micro,
           ),
@@ -4829,10 +4831,14 @@ class _Presence {
     return <_Presence>[
       for (final PresenceParticipant ligne in tableauDePresence(presence))
         _Presence(
+          // RA-STAFF (14/11/2026) : la direction est « #Ra_staff », jamais
+          // son prenom ni « Administration ».
           nom: ligne.profilId == monProfil
               ? t.salle.vousMeme
+              : estStaff(ligne.role)
+              ? MarqueStaff.designation
               : annuaire?.personne(ligne.profilId)?.nom ?? ligne.prenom,
-          role: _libelleRole(ligne.role),
+          role: estStaff(ligne.role) ? '' : _libelleRole(ligne.role),
           vue: VuePresence.depuis(ligne: ligne, maintenant: maintenant),
           // La base emet `identity = profile_id` : le rapprochement se fait
           // donc sans table de correspondance. `null` quand la personne n'est

@@ -75,6 +75,21 @@ enum RoleSalle {
   };
 }
 
+/// RA-STAFF (directeur, 14/11/2026) : « toutes les interactions avec l'admin
+/// doivent afficher l'icone de l'academie et la designation #Ra_staff dans
+/// les vignettes, et partout ou on voit l'admin a travers la salle ».
+///
+/// Vrai pour le role du jeton d'une personne de la direction qui se montre :
+/// l'administration visible (`admin_visible`) et qui mene un entretien
+/// (`intervieweur`). L'administration incognito et le controleur ne sont
+/// jamais vus des participants : ils ne portent rien. Une seule regle pour
+/// toute la salle : les vignettes, la grille, le ruban, les arrivees et la
+/// liste des participants passent par [AnnuaireSeance.nommer].
+bool estStaff(String? role) => switch (RoleSalle.depuis(role)) {
+  RoleSalle.administrateurVisible || RoleSalle.intervieweur => true,
+  _ => false,
+};
+
 /// Pourquoi la salle n'ouvre pas.
 ///
 /// **Quatre causes, et pas les motifs du backend tels quels.** `MotifRefusSalle`

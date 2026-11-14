@@ -78,12 +78,13 @@ void main() {
               expect(tester.takeException(), isNull, reason: 'debordement');
               final Rect boite = tester.getRect(find.byKey(_boite));
               // Tout ce qui s'ecrit reste dans le cadre.
-              for (final Element e in find
-                  .descendant(
-                    of: find.byKey(_boite),
-                    matching: find.byType(RichText),
-                  )
-                  .evaluate()) {
+              for (final Element e
+                  in find
+                      .descendant(
+                        of: find.byKey(_boite),
+                        matching: find.byType(RichText),
+                      )
+                      .evaluate()) {
                 final Rect r = tester.getRect(find.byWidget(e.widget));
                 expect(
                   boite.inflate(0.5).contains(r.topLeft) &&
@@ -205,8 +206,7 @@ void main() {
         (Widget w) =>
             w is DecoratedBox &&
             w.decoration is BoxDecoration &&
-            (w.decoration as BoxDecoration).borderRadius ==
-                AppRadius.arrondiXs,
+            (w.decoration as BoxDecoration).borderRadius == AppRadius.arrondiXs,
       ),
       findsNothing,
     );
@@ -225,5 +225,65 @@ void main() {
     final Rect nom = tester.getRect(find.byKey(CadreVisage.cleNom));
     expect(nom.right, greaterThan(boite.center.dx));
     expect(tester.takeException(), isNull);
+  });
+
+  group('RA-STAFF (directeur, 14/11/2026)', () {
+    testWidgets('camera eteinte : l icone de l academie, jamais l initiale', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        const CadreVisage(
+          nom: '#Ra_staff',
+          prenom: '#Ra_staff',
+          personneId: 'dir',
+          staff: true,
+        ),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('cadre-visage-staff')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('tuile-sans-image-cercle')),
+        findsNothing,
+      );
+      expect(find.text('#Ra_staff'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('camera allumee : l image, sans l icone', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        CadreVisage(
+          nom: '#Ra_staff',
+          prenom: '#Ra_staff',
+          image: _image(),
+          staff: true,
+        ),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('cadre-visage-staff')),
+        findsNothing,
+      );
+    });
+
+    testWidgets('une personne qui n est pas de la direction garde son '
+        'initiale', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        const CadreVisage(nom: 'Yasmine', prenom: 'Yasmine'),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('cadre-visage-staff')),
+        findsNothing,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('tuile-sans-image-cercle')),
+        findsOneWidget,
+      );
+    });
   });
 }
