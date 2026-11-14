@@ -30,6 +30,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/candidature/entretiens_temps_reel.dart';
 import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidature_detail.dart';
@@ -121,6 +122,11 @@ class SectionEntretien extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // SALLE2-ENTRETIEN : relu au signal temps reel ; le lien « Rejoindre »
+    // apparait a l'heure (tic de 30 s).
+    ref
+      ..watch(veilleEntretiensProvider)
+      ..watch(ticEntretiensProvider);
     final e = t.admin.candidatures.entretien;
     final AsyncValue<List<EntretienCandidature>> valeur = ref.watch(
       entretiensCandidatureProvider(_candidature),
@@ -250,6 +256,7 @@ class _EntretienOuvert extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(ticEntretiensProvider);
     // HEURES-PROFIL H4 (garde-cap, 12/11/2026) : l'heure du profil ; la
     // mention de l'appareil seulement en repli. Redessine a l'arrivee du fuseau.
     ref.watch(monHorlogeProvider);
@@ -290,12 +297,15 @@ class _EntretienOuvert extends ConsumerWidget {
       lu = <Widget>[
         if (rejoignable) ...<Widget>[
           Ecart.vLg,
+          // SALLE2-ENTRETIEN (directeur, 14/11/2026) : une porte visible,
+          // plus un lien discret.
           Align(
             alignment: AlignmentDirectional.centerStart,
-            child: LienFleche(
+            child: ActionPrincipale(
               key: const ValueKey<String>('entretien-rejoindre'),
               libelle: e.rejoindre,
-              alignerEnDebut: true,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
               onPress: () => GoRouter.of(context).go(
                 Routes.salle,
                 // Le billet passe par `extra`, jamais par l'URL (ADR-005).

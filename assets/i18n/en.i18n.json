@@ -2803,6 +2803,10 @@
       "termine": "The time of your interview has passed. The academy will write to you with what comes next.",
       "pasEncore": "The interview is not open yet for your application.",
       "portailChoisir": "Choose a time for our interview",
+      "commenceDans(param=n)": {"one": "Your interview starts in {n} minute.", "other": "Your interview starts in {n} minutes."},
+      "aCommence": "Your interview has started: we are waiting for you. Join it now.",
+      "prevu": "Your interview is set: {horaire}.",
+      "jour": {"titre": "Today's interviews", "intro": "The interviews you lead today. The join button appears 10 minutes before the start, in the same room as the candidate.", "candidat": "Candidate", "rejoindreAvec": "Join the interview with {nom}", "ouvreA": "You can join from {heure}.", "voirFiche": "See {nom}'s application"},
       "portailVoir": "See my interview",
       "notifications": {
         "reserve": "Your interview is set. The day and time are in \"Let's get to know each other\".",
@@ -3843,6 +3847,10 @@
       "erreur": "The file could not be approved.",
       "horsLigne": "The approval was not sent. Try again when the connection is back.",
       "inconnu": "The result of the approval is not confirmed yet.",
+      "candidatSalle2": "This person is a candidate, still at the interview step. Their account only opens when they are welcomed into the team. Validate their ID from their application file, with \"Welcome into the team\", once the interview is concluded.",
+      "candidatAffecte": "This person is a candidate and already has a class or a session in their name. Remove them from that class, then validate again.",
+      "candidatRole": "This person's account does not have the role of their application. Open their application file to correct the role, then validate again.",
+      "raisonServeur": "{erreur} Server response: \"{raison}\". Try again; if it happens again, pass this sentence on to the technical team.",
       "plusPret": "This file is no longer ready to be approved.",
       "interdit": "You can no longer approve this file.",
       "succes": "File approved."
@@ -4401,6 +4409,12 @@
         "refusReserve": "This slot is already booked: it can no longer be withdrawn.",
         "refusAbsent": "This slot no longer exists. Reload the list.",
         "refusLangues": "One of the chosen languages is not accepted for a slot. Remove it and try again.",
+        "finPlage": "End of the range",
+        "unSeulMoment": "A single interview",
+        "finPlageAide": "Choose an end time to publish several times at once, of the chosen length. Each candidate chooses their own time; a time taken disappears for the others.",
+        "plagePubliee": "The times are published. Candidates see them right away.",
+        "refusPlageCourte": "The range is shorter than one interview. Choose a later end time.",
+        "refusPlageLongue": "A range lasts 12 hours at most. Choose an earlier end time.",
         "refusHorsPortee": "This side is not yours: you cannot open a slot there."
       },
       "entretien": {

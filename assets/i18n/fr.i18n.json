@@ -2803,6 +2803,10 @@
       "termine": "L'heure de votre entretien est passée. L'académie vous écrit la suite.",
       "pasEncore": "L'entretien n'est pas encore ouvert pour votre candidature.",
       "portailChoisir": "Choisir le moment de notre entretien",
+      "commenceDans(param=n)": {"one": "Votre entretien commence dans {n}\u00a0minute.", "other": "Votre entretien commence dans {n}\u00a0minutes."},
+      "aCommence": "Votre entretien a commencé\u00a0: on vous attend. Rejoignez-le maintenant.",
+      "prevu": "Votre entretien est fixé\u00a0: {horaire}.",
+      "jour": {"titre": "Entretiens du jour", "intro": "Les entretiens que vous menez aujourd'hui. Le bouton pour rejoindre apparaît 10\u00a0minutes avant le début, dans la même salle que le candidat.", "candidat": "Candidat", "rejoindreAvec": "Rejoindre l'entretien avec {nom}", "ouvreA": "Vous pourrez rejoindre à partir de {heure}.", "voirFiche": "Voir la candidature de {nom}"},
       "portailVoir": "Voir mon entretien",
       "notifications": {
         "reserve": "Votre entretien est fixé. Le jour et l'heure sont dans «\u00a0Faisons connaissance\u00a0».",
@@ -3843,6 +3847,10 @@
       "erreur": "Le dossier n'a pas pu être validé.",
       "horsLigne": "La validation n’a pas été envoyée. Réessayez quand la connexion sera revenue.",
       "inconnu": "Le résultat de la validation n’est pas encore confirmé.",
+      "candidatSalle2": "Cette personne est candidate, encore à l'étape de l'entretien. Son compte ne s'ouvre qu'à son accueil dans l'équipe. Validez sa pièce depuis sa fiche de candidature, avec «\u00a0Accueillir dans l'équipe\u00a0», une fois l'entretien conclu.",
+      "candidatAffecte": "Cette personne est candidate et a déjà une classe ou une séance à son nom. Retirez-la de cette classe, puis validez de nouveau.",
+      "candidatRole": "Le compte de cette personne n'a pas le rôle de sa candidature. Ouvrez sa fiche de candidature pour corriger le rôle, puis validez de nouveau.",
+      "raisonServeur": "{erreur} Réponse du serveur\u00a0: «\u00a0{raison}\u00a0». Réessayez\u00a0; si cela se répète, transmettez cette phrase à l'équipe technique.",
       "plusPret": "Ce dossier n’est plus prêt à être validé.",
       "interdit": "Vous ne pouvez plus valider ce dossier.",
       "succes": "Dossier validé."
@@ -4401,6 +4409,12 @@
         "refusReserve": "Ce créneau est déjà réservé\u00a0: il ne se retire plus.",
         "refusAbsent": "Ce créneau n'existe plus. Rechargez la liste.",
         "refusLangues": "Une des langues choisies n'est pas acceptée pour un créneau. Retirez-la et réessayez.",
+        "finPlage": "Fin de la plage",
+        "unSeulMoment": "Un seul entretien",
+        "finPlageAide": "Choisissez une heure de fin pour publier plusieurs moments d'un coup, de la durée choisie. Chaque candidat choisit lui-même son moment\u00a0; un moment pris disparaît pour les autres.",
+        "plagePubliee": "Les moments sont publiés. Les candidats les voient tout de suite.",
+        "refusPlageCourte": "La plage est plus courte qu'un entretien. Choisissez une heure de fin plus tardive.",
+        "refusPlageLongue": "Une plage dure 12\u00a0heures au plus. Choisissez une heure de fin plus proche.",
         "refusHorsPortee": "Ce côté n'est pas le vôtre\u00a0: vous ne pouvez pas y ouvrir de créneau."
       },
       "entretien": {

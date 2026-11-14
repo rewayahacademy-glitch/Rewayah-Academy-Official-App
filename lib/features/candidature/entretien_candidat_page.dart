@@ -24,6 +24,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/candidature/entretien_candidat.dart';
+import '../../core/candidature/entretiens_temps_reel.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
@@ -134,7 +135,10 @@ class _ContenuEntretienEtat extends ConsumerState<ContenuEntretien> {
   @override
   Widget build(BuildContext context) {
     // HEURES-PROFIL H4 : se redessine quand le fuseau du profil arrive.
-    ref.watch(monHorlogeProvider);
+    ref
+      ..watch(monHorlogeProvider)
+      // SALLE2-ENTRETIEN : un moment pris par un autre disparait aussitot.
+      ..watch(veilleEntretiensProvider);
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final AsyncValue<MonEntretien?> lecture = lectureHorsLigne(
       ref.watch(monEntretienProvider),

@@ -80,6 +80,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../admin_candidature/entretiens_du_jour.dart';
 import '../admin_candidature/feuille_geste.dart';
 import '../admin_candidature/gestes_proposes.dart';
 import '../admin_candidature/libelles_candidature.dart';
@@ -934,6 +935,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // SALLE2-ENTRETIEN (directeur, 14/11/2026) : les entretiens du jour
+          // et leur porte, en tete de la file.
+          const EntretiensDuJour(ficheOuverte: true),
           // CAND-F01 : la page des invitations (l'invitation d'un enseignant
           // ou d'un comptable, la revocation) a perdu son onglet. Le lien est
           // en tete, rendu dans tous les etats (file vide, en erreur, serveur
