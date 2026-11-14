@@ -75,8 +75,9 @@ void main() {
       addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
       expect(t.connexion.titre, 'Sign in');
       expect(t.commun.langue.anglais, 'English');
-      // Une cle absente de l'anglais (salle) rend le francais, pas la cle.
-      expect(t.salle.fin.enseignant.connectes(n: 1), '1 élève connecté');
+      // Une cle absente de l'anglais (textes juridiques, volontairement
+      // laisses en francais) rend le francais, pas la cle.
+      expect(t.juridique.conditions.titre, 'Conditions d\'utilisation et de vente');
       expect(t.parcours.titre(dePrenom: 'Amina'), "Amina's journey");
     },
   );
