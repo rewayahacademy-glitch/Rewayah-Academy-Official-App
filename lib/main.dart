@@ -59,6 +59,7 @@ import 'core/candidature/invitations_personnelles_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/photo_dossier_candidat.dart';
+import 'core/candidature/piece_candidature.dart';
 import 'core/candidature/port_accord_publication.dart';
 import 'core/candidature/port_autres_competences.dart';
 import 'core/candidature/port_candidatures_direction.dart';
@@ -641,6 +642,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   lireEntretiensProvider.overrideWithValue(
     lireEntretiensSupabase(Supabase.instance.client),
+  ),
+  // SALLE2-FICHE (14/11/2026) : la piece d'une candidature, decidee sur la
+  // fiche (migration 20261125900000).
+  lirePieceCandidatureProvider.overrideWithValue(
+    lirePieceCandidatureSupabase(Supabase.instance.client),
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support

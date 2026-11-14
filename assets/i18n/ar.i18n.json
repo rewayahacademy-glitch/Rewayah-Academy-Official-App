@@ -5373,6 +5373,9 @@
         "entretien": "المقابلة",
         "affectation": "التعيين في الصفوف",
         "courriels": "الرسائل الإلكترونية",
+        "pieceEchec": "تعذّرت قراءة وثيقة الهوية. أعد المحاولة.",
+        "pieceSansCompte": "لا يوجد بعد حساب مرتبط بهذا الترشح: تُرفع الوثيقة بعد التسجيل.",
+        "pieceMotif": "⁨{etat}⁩: ⁨{motif}⁩",
         "ouvrirDossier": "الفتح في ملفات للاعتماد",
         "responsable": "المسؤول",
         "contact": {
@@ -5609,6 +5612,7 @@
         "responsable": "سُجّل المسؤول.",
         "rejoue": "سبق تنفيذ هذا الإجراء: لم يُكتب شيء مرة ثانية."
       },
+      "decision": {"accepter": "قبول", "refuser": "رفض", "preciser": "طلب توضيح", "nePasAccueillir": "عدم الاستقبال"},
       "creneaux": {
         "lien": "مواعيد المقابلات",
         "titre": "مواعيد المقابلات",
@@ -5667,6 +5671,8 @@
         "aucunePresence": "لم يدخل أحد القاعة بعد.",
         "entree": "دخول \u2068{nom}\u2069 على الساعة \u2068{heure}\u2069",
         "sortie": "خروج \u2068{nom}\u2069 على الساعة \u2068{heure}\u2069",
+        "autreIssue": "نتيجة أخرى (إلغاء، غياب)",
+        "resultat": {"titre": "نتيجة المقابلة", "concluant": "ناجحة", "nonConcluant": "غير ناجحة", "aRefaire": "تُعاد", "texteConcluant": "مقابلة ناجحة.", "texteNonConcluant": "مقابلة غير ناجحة.", "motifARefaire": "مقابلة تُعاد.", "retourConcluant": "مقابلة ناجحة. يمكنك استقباله في الفريق.", "retourNonConcluant": "مقابلة غير ناجحة. يمكنك عدم استقباله.", "retourARefaire": "مقابلة تُعاد. يختار الشخص موعدًا جديدًا.", "refusNonParticipant": "لا يعطي نتيجة المقابلة إلا من أجراها. اطلب منه ذلك من هذا الملف.", "refusPasCommence": "لم تبدأ المقابلة بعد. عد في موعد البداية.", "refusDejaConsigne": "النتيجة مسجّلة بالفعل. أعد تحميل الملف.", "refusAutre": "لم تُؤكَّد النتيجة بعد. أعد المحاولة بعد لحظة."},
         "consigner": "تسجيل نتيجة المقابلة",
         "dernier": "آخر مقابلة: \u2068{date}\u2069. \u2068{issue}\u2069.",
         "lectureEchec": "تعذّرت قراءة المقابلة.",

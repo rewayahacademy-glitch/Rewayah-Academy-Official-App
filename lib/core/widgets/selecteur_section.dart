@@ -121,7 +121,11 @@ class SelecteurSection<T> extends StatelessWidget {
           : ModeSelecteurSection.menu;
     }
     if (enUneLigne) return ModeSelecteurSection.segmenteNaturel;
-    if (nombre <= maxSegmentsTelephone &&
+    // Directeur, 14/11/2026 : « ces onglets ne sont pas pour le web ». A
+    // partir de 840, jusqu'a sept sections restent en ligne, libelles sur
+    // deux lignes s'il le faut, tant que chaque mot tient dans sa part : le
+    // menu deroulant est reserve au telephone et au texte tres agrandi.
+    if ((nombre <= maxSegmentsTelephone || largeur >= AppGabarit.seuilEtendu) &&
         nombre * (largeurMotMax + _margeSegment) <= largeur) {
       return ModeSelecteurSection.segmenteComplet;
     }

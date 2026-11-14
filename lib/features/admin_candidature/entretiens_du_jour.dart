@@ -158,18 +158,22 @@ class _Ligne extends StatelessWidget {
         ),
         if (ouvert) ...<Widget>[
           Ecart.vMd,
-          ActionPrincipale(
-            key: ValueKey<String>(
-              'entretien-du-jour-rejoindre-${entretien.sessionId}',
-            ),
-            libelle: j.rejoindreAvec(nom: nom),
-            niveau: NiveauAction.secondaire,
-            onPress: () => GoRouter.of(context).go(
-              Routes.salle,
-              // Le billet passe par `extra`, jamais par l'URL (ADR-005).
-              extra: BilletSalle(
-                sessionId: entretien.sessionId,
-                emisA: DateTime.now(),
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              pleineLargeur: false,
+              key: ValueKey<String>(
+                'entretien-du-jour-rejoindre-${entretien.sessionId}',
+              ),
+              libelle: j.rejoindreAvec(nom: nom),
+              niveau: NiveauAction.secondaire,
+              onPress: () => GoRouter.of(context).go(
+                Routes.salle,
+                // Le billet passe par `extra`, jamais par l'URL (ADR-005).
+                extra: BilletSalle(
+                  sessionId: entretien.sessionId,
+                  emisA: DateTime.now(),
+                ),
               ),
             ),
           ),

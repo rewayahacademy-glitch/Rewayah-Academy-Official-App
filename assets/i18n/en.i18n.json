@@ -4141,6 +4141,9 @@
         "entretien": "Interview",
         "affectation": "Assignment",
         "courriels": "Emails",
+        "pieceEchec": "The ID document could not be read. Try again.",
+        "pieceSansCompte": "No account is linked to this application yet: the ID is uploaded after sign-up.",
+        "pieceMotif": "{etat}: {motif}",
         "ouvrirDossier": "Open in Files to validate",
         "responsable": "Manager",
         "contact": {
@@ -4377,6 +4380,7 @@
         "responsable": "The manager is recorded.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
+      "decision": {"accepter": "Accept", "refuser": "Refuse", "preciser": "Ask for a clarification", "nePasAccueillir": "Do not welcome"},
       "creneaux": {
         "lien": "Interview slots",
         "titre": "Interview slots",
@@ -4435,6 +4439,8 @@
         "aucunePresence": "No one has entered the room yet.",
         "entree": "{nom} entered at {heure}",
         "sortie": "{nom} left at {heure}",
+        "autreIssue": "Other outcome (cancelled, absence)",
+        "resultat": {"titre": "Interview result", "concluant": "Conclusive", "nonConcluant": "Not conclusive", "aRefaire": "To redo", "texteConcluant": "Conclusive interview.", "texteNonConcluant": "Interview not conclusive.", "motifARefaire": "Interview to redo.", "retourConcluant": "Conclusive interview. You can welcome them into the team.", "retourNonConcluant": "Interview not conclusive. You can choose not to welcome them.", "retourARefaire": "Interview to redo. The person chooses a new time.", "refusNonParticipant": "Only a person who led the interview can give its result. Ask them to do it from this file.", "refusPasCommence": "The interview has not started yet. Come back at the start time.", "refusDejaConsigne": "The result is already recorded. Reload the file.", "refusAutre": "The result is not confirmed. Try again in a moment."},
         "consigner": "Record the outcome",
         "dernier": "Last interview: {date}. {issue}.",
         "lectureEchec": "The interview could not be read.",

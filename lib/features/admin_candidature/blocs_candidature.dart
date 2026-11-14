@@ -389,6 +389,33 @@ class BlocProchaineAction extends StatelessWidget {
   /// La cle du menu des autres gestes.
   static const Key cleMenu = ValueKey<String>('candidature-autres-gestes');
 
+  /// Les autres issues de la decision, visibles a cote du bouton plein.
+  List<GesteCandidature> _decisionsVisibles(GesteCandidature principal) =>
+      <GesteCandidature>[
+        if (principal == GesteCandidature.admettreVerifications &&
+            gestes.autres.contains(GesteCandidature.demanderComplement))
+          GesteCandidature.demanderComplement,
+        if ((principal == GesteCandidature.admettreVerifications ||
+                principal == GesteCandidature.validerPiece) &&
+            gestes.autres.contains(GesteCandidature.refuser))
+          GesteCandidature.refuser,
+      ];
+
+  /// Les mots du directeur (14/11/2026) pour les issues d'une decision ;
+  /// les autres gestes gardent leur libelle.
+  String _libelleDecision(GesteCandidature principal, GesteCandidature g) {
+    final d = t.admin.candidatures.decision;
+    return switch (g) {
+      GesteCandidature.admettreVerifications => d.accepter,
+      GesteCandidature.demanderComplement => d.preciser,
+      GesteCandidature.refuser
+          when principal == GesteCandidature.validerPiece =>
+        d.nePasAccueillir,
+      GesteCandidature.refuser => d.refuser,
+      _ => libelleGeste(g),
+    };
+  }
+
   /// La raison pour laquelle aucune action n'est proposee.
   String _raison() {
     final r = t.admin.candidatures.detail;
@@ -406,8 +433,13 @@ class BlocProchaineAction extends StatelessWidget {
   Widget build(BuildContext context) {
     final r = t.admin.candidatures;
     final GesteCandidature? principal = gestes.principal;
+    final List<GesteCandidature> visibles = principal == null
+        ? const <GesteCandidature>[]
+        : _decisionsVisibles(principal);
     final bool menu =
-        !horsLigne && (gestes.autres.isNotEmpty || autresActions.isNotEmpty);
+        !horsLigne &&
+        (gestes.autres.any((GesteCandidature g) => !visibles.contains(g)) ||
+            autresActions.isNotEmpty);
     return Column(
       key: cle,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -422,11 +454,13 @@ class BlocProchaineAction extends StatelessWidget {
                   libelle: r.detail.autresGestes,
                   actions: <EntreeAction>[
                     for (final GesteCandidature g in gestes.autres)
-                      EntreeAction(
-                        libelle: libelleGeste(g),
-                        destructif: g.destructif,
-                        onChoix: () => onGeste(g),
-                      ),
+                      if (principal == null ||
+                          !_decisionsVisibles(principal).contains(g))
+                        EntreeAction(
+                          libelle: libelleGeste(g),
+                          destructif: g.destructif,
+                          onChoix: () => onGeste(g),
+                        ),
                     ...autresActions,
                   ],
                 )
@@ -443,14 +477,33 @@ class BlocProchaineAction extends StatelessWidget {
               else if (principal != null) ...<Widget>[
                 _Muet(libelleConsequence(principal)),
                 Ecart.vLg,
-                Align(
-                  alignment: AlignmentDirectional.centerEnd,
-                  child: ActionPrincipale(
-                    key: cleBouton,
-                    libelle: libelleGeste(principal),
-                    pleineLargeur: false,
-                    onPress: () => onGeste(principal),
-                  ),
+                // SALLE2-FICHE (directeur, 14/11/2026) : la decision se prend
+                // d'un clic, ses issues visibles cote a cote (Accepter,
+                // Demander une precision, Refuser ; puis Accueillir ou Ne pas
+                // accueillir), jamais cachees dans un menu.
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  crossAxisAlignment: WrapCrossAlignment.center,
+                  spacing: AppSpacing.md,
+                  runSpacing: AppSpacing.sm,
+                  children: <Widget>[
+                    for (final GesteCandidature g in _decisionsVisibles(
+                      principal,
+                    ))
+                      ActionPrincipale(
+                        key: ValueKey<String>('candidature-decision-${g.name}'),
+                        libelle: _libelleDecision(principal, g),
+                        niveau: NiveauAction.secondaire,
+                        pleineLargeur: false,
+                        onPress: () => onGeste(g),
+                      ),
+                    ActionPrincipale(
+                      key: cleBouton,
+                      libelle: _libelleDecision(principal, principal),
+                      pleineLargeur: false,
+                      onPress: () => onGeste(principal),
+                    ),
+                  ],
                 ),
               ] else
                 _Muet(_raison()),
@@ -648,6 +701,7 @@ class BlocPieceEntretien extends StatelessWidget {
     required this.detail,
     this.onOuvrirDossier,
     this.entretien,
+    this.piece,
     super.key,
   });
 
@@ -656,6 +710,10 @@ class BlocPieceEntretien extends StatelessWidget {
 
   /// Mene a « Dossiers a valider » (`ADM-02`), ou `null`.
   final VoidCallback? onOuvrirDossier;
+
+  /// SALLE2-FICHE : la piece ouverte et decidee sur place (`PieceSurPlace`),
+  /// ou `null` (l'etat lu dans le dossier, s'il existe).
+  final Widget? piece;
 
   /// V2-a : la section Entretien branchee sur le serveur, ou `null` (le bloc
   /// dit alors qu'elle attend son branchement).
@@ -694,17 +752,22 @@ class BlocPieceEntretien extends StatelessWidget {
         corps,
       ],
     );
-    final String? piece = _etatPiece(detail.piece);
-    return CarteGroupee(
-      key: cle,
-      sections: <Widget>[
+    final String? etat = _etatPiece(detail.piece);
+    final Widget? surPlace = piece;
+    final Widget? entretienLu = entretien;
+    // SALLE2-FICHE (directeur, 14/11/2026) : rien de vide n'est affiche ;
+    // une section sans donnees n'est pas rendue.
+    final List<Widget> sections = <Widget>[
+      if (surPlace != null)
+        section(t.dossiers.revue.piece, surPlace)
+      else if (etat != null)
         section(
           t.dossiers.revue.piece,
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              if (piece != null) _Muet(piece) else const _Branchement(),
+              _Muet(etat),
               if (onOuvrirDossier != null)
                 LienFleche(
                   key: cleDossier,
@@ -715,9 +778,10 @@ class BlocPieceEntretien extends StatelessWidget {
             ],
           ),
         ),
-        section(r.entretien, entretien ?? const _Branchement()),
-      ],
-    );
+      if (entretienLu != null) section(r.entretien, entretienLu),
+    ];
+    if (sections.isEmpty) return const SizedBox.shrink(key: cle);
+    return CarteGroupee(key: cle, sections: sections);
   }
 }
 

@@ -30,6 +30,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/candidature/compte_rendu_entretien.dart' hide AvisEntretien;
+import '../../core/candidature/compte_rendu_entretien.dart'
+    as cr
+    show AvisEntretien;
 import '../../core/candidature/entretiens_temps_reel.dart';
 import '../../core/candidature/gestes_candidature.dart';
 import '../../core/candidature/modeles_candidature.dart';
@@ -494,14 +498,27 @@ class _EntretienOuvert extends ConsumerWidget {
         if (capacites.peutDecider)
           _Muet(exiges == null ? e.regleInactive : e.minimum(n: '$exiges')),
         ...lu,
+        // SALLE2-FICHE (directeur, 14/11/2026) : le resultat d'un clic, des
+        // le debut de l'entretien : Concluant, Non concluant, A refaire.
+        if (consigner &&
+            !DateTime.now().isBefore(entretien.debut) &&
+            valeur.hasValue) ...<Widget>[
+          Ecart.vLg,
+          ResultatEntretien(
+            entretien: entretien,
+            detail: detail,
+            comptesRendus: valeur.requireValue.comptesRendus,
+            onFait: (String m) => _relu(ref, m),
+          ),
+        ],
         if (consigner) ...<Widget>[
           Ecart.vLg,
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: ActionPrincipale(
               key: const ValueKey<String>('entretien-consigner'),
-              libelle: e.consigner,
-              niveau: NiveauAction.secondaire,
+              libelle: e.autreIssue,
+              niveau: NiveauAction.tertiaire,
               pleineLargeur: false,
               onPress: () async {
                 final String? m = await _ouvrir(
@@ -522,6 +539,172 @@ class _EntretienOuvert extends ConsumerWidget {
         ],
       ],
     );
+  }
+}
+
+/// SALLE2-FICHE (directeur, 14/11/2026) : le resultat de l'entretien en un
+/// clic, sans re-saisir ce que le candidat a declare.
+///
+/// - Concluant : mon compte rendu, avis favorable (texte court), puis l'issue
+///   « tenu » ; la fiche propose ensuite « Accueillir dans l'equipe ».
+/// - Non concluant : mon compte rendu, avis defavorable, puis « tenu » ; la
+///   fiche propose « Ne pas accueillir ».
+/// - A refaire : l'issue « annule » avec son motif ; un nouvel entretien se
+///   planifie.
+///
+/// Le compte rendu n'est ecrit que par une personne qui a mene l'entretien
+/// (serveur). Sans elle, Concluant ou Non concluant consignent seulement
+/// l'issue si un compte rendu existe deja ; sinon la phrase le dit.
+class ResultatEntretien extends ConsumerStatefulWidget {
+  /// Cree le bloc.
+  const ResultatEntretien({
+    required this.entretien,
+    required this.detail,
+    required this.comptesRendus,
+    required this.onFait,
+    super.key,
+  });
+
+  /// L'entretien ouvert.
+  final EntretienCandidature entretien;
+
+  /// La candidature lue.
+  final DetailCandidature detail;
+
+  /// Les comptes rendus deja ecrits.
+  final List<CompteRenduEntretien> comptesRendus;
+
+  /// Le retour local.
+  final ValueChanged<String> onFait;
+
+  @override
+  ConsumerState<ResultatEntretien> createState() => _EtatResultat();
+}
+
+class _EtatResultat extends ConsumerState<ResultatEntretien>
+    with _EnvoiEntretien<ResultatEntretien> {
+  Future<void> _tenu(cr.AvisEntretien avis, String retour) async {
+    final r = t.admin.candidatures.entretien.resultat;
+    await envoyer((PortEntretiensDirection port, String cle) async {
+      if (widget.entretien.jeParticipe) {
+        final PortCompteRenduEntretien? ecriture = ref.read(
+          portCompteRenduEntretienProvider,
+        );
+        if (ecriture == null) {
+          throw const CapaciteIndisponible(dependanceEntretiens);
+        }
+        final RefusCompteRendu? refus = await ecriture.ecrire(
+          widget.entretien.sessionId,
+          CompteRenduAEcrire(
+            texte: avis == cr.AvisEntretien.favorable
+                ? r.texteConcluant
+                : r.texteNonConcluant,
+            avis: avis,
+          ),
+        );
+        if (refus != null) throw RefusResultat(refus);
+      } else if (widget.comptesRendus.isEmpty) {
+        throw const RefusResultat(null);
+      }
+      await port.consigner(
+        sessionId: widget.entretien.sessionId,
+        issue: IssueEntretien.tenu,
+        motif: null,
+        versionAttendue: widget.detail.version,
+        cleIdempotence: cle,
+      );
+      return retour;
+    }, widget.onFait);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.admin.candidatures.entretien.resultat;
+    Widget bouton(String libelle, String nom, VoidCallback agir) =>
+        ActionPrincipale(
+          key: ValueKey<String>('entretien-resultat-$nom'),
+          libelle: libelle,
+          niveau: NiveauAction.secondaire,
+          pleineLargeur: false,
+          enCours: enCours,
+          onPress: agir,
+        );
+    final Object? echec = refus;
+    return Column(
+      key: const ValueKey<String>('entretien-resultat'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: TexteSansCoupure(
+            r.titre,
+            style: Theme.of(context).textTheme.titleSmall,
+          ),
+        ),
+        Ecart.vSm,
+        Wrap(
+          spacing: AppSpacing.md,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            bouton(
+              r.concluant,
+              'concluant',
+              () => _tenu(cr.AvisEntretien.favorable, r.retourConcluant),
+            ),
+            bouton(
+              r.nonConcluant,
+              'non-concluant',
+              () => _tenu(cr.AvisEntretien.defavorable, r.retourNonConcluant),
+            ),
+            bouton(
+              r.aRefaire,
+              'a-refaire',
+              () => envoyer((PortEntretiensDirection port, String cle) async {
+                await port.consigner(
+                  sessionId: widget.entretien.sessionId,
+                  issue: IssueEntretien.annule,
+                  motif: r.motifARefaire,
+                  versionAttendue: widget.detail.version,
+                  cleIdempotence: cle,
+                );
+                return r.retourARefaire;
+              }, widget.onFait),
+            ),
+          ],
+        ),
+        if (echec is RefusResultat) ...<Widget>[
+          Ecart.vMd,
+          TexteSansCoupure(
+            echec.message,
+            style: AppPalette.of(context).inkAlert.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ] else
+          ...bandeauRefus(),
+      ],
+    );
+  }
+}
+
+/// Le resultat n'a pas pu s'ecrire : la phrase dit pourquoi et quoi faire.
+class RefusResultat implements Exception {
+  /// Cree le refus ; [compteRendu] nul : personne n'a mene l'entretien ici.
+  const RefusResultat(this.compteRendu);
+
+  /// Le refus du compte rendu, ou `null`.
+  final RefusCompteRendu? compteRendu;
+
+  /// La phrase (K-59).
+  String get message {
+    final r = t.admin.candidatures.entretien.resultat;
+    return switch (compteRendu) {
+      null => r.refusNonParticipant,
+      RefusCompteRendu.pasCommence => r.refusPasCommence,
+      RefusCompteRendu.consigne => r.refusDejaConsigne,
+      _ => r.refusAutre,
+    };
   }
 }
 

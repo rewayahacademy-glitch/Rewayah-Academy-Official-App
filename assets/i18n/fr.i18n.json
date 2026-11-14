@@ -4141,6 +4141,9 @@
         "entretien": "Entretien",
         "affectation": "Affectation",
         "courriels": "Courriels",
+        "pieceEchec": "La pièce d'identité n'a pas pu être lue. Réessayez.",
+        "pieceSansCompte": "Aucun compte n'est encore rattaché à cette candidature\u00a0: la pièce se dépose après l'inscription.",
+        "pieceMotif": "{etat}\u00a0: {motif}",
         "ouvrirDossier": "Ouvrir dans Dossiers à valider",
         "responsable": "Responsable",
         "contact": {
@@ -4377,6 +4380,7 @@
         "responsable": "Le responsable est enregistré.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
+      "decision": {"accepter": "Accepter", "refuser": "Refuser", "preciser": "Demander une précision", "nePasAccueillir": "Ne pas accueillir"},
       "creneaux": {
         "lien": "Créneaux d'entretien",
         "titre": "Créneaux d'entretien",
@@ -4435,6 +4439,8 @@
         "aucunePresence": "Personne n'est encore entré dans la salle.",
         "entree": "Entrée de \u2068{nom}\u2069 à {heure}",
         "sortie": "Sortie de \u2068{nom}\u2069 à {heure}",
+        "autreIssue": "Autre issue (annulé, absence)",
+        "resultat": {"titre": "Résultat de l'entretien", "concluant": "Concluant", "nonConcluant": "Non concluant", "aRefaire": "À refaire", "texteConcluant": "Entretien concluant.", "texteNonConcluant": "Entretien non concluant.", "motifARefaire": "Entretien à refaire.", "retourConcluant": "Entretien concluant. Vous pouvez l'accueillir dans l'équipe.", "retourNonConcluant": "Entretien non concluant. Vous pouvez ne pas l’accueillir.", "retourARefaire": "Entretien à refaire. La personne choisit un nouveau moment.", "refusNonParticipant": "Seule une personne qui a mené l'entretien peut en donner le résultat. Demandez-lui de le faire depuis cette fiche.", "refusPasCommence": "L'entretien n'a pas encore commencé. Revenez à l'heure de début.", "refusDejaConsigne": "Le résultat est déjà enregistré. Rechargez la fiche.", "refusAutre": "Le résultat n'est pas confirmé. Réessayez dans un instant."},
         "consigner": "Consigner l'issue",
         "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
         "lectureEchec": "L'entretien n'a pas pu être lu.",
