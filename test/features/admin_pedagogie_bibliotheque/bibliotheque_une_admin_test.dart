@@ -25,7 +25,9 @@ import 'package:rewayah_academy/core/tc_bibliotheque/donnees_catalogue.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/etapes_programme.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart'
     show tranchesToutes;
+import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
 import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart' show TonEtat;
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/classement_document.dart';
 import 'package:rewayah_academy/features/admin_pedagogie_bibliotheque/import/selecteur_support.dart';
 
@@ -46,6 +48,15 @@ class _Selecteur implements SelecteurFichierSupport {
       mime: 'image/png',
     );
   }
+
+  @override
+  Future<FichierChoisi?> choisirDocument() async => FichierChoisi(
+    nom: 'cours.pdf',
+    // « %PDF- » : le type se lit dans le contenu.
+    octets: Uint8List(2048)
+      ..setRange(0, 5, <int>[0x25, 0x50, 0x44, 0x46, 0x2d]),
+    mime: 'application/octet-stream',
+  );
 }
 
 class _Etapes implements PortEtapesProgramme {
@@ -116,29 +127,38 @@ void main() {
 
   final i = t.admin.bibliotheque.import;
 
-  testWidgets('le formulaire porte description, rayon, ordre, etapes', (
+  // DEPOT-SIMPLE (13/11/2026) : le formulaire est reduit au strict necessaire.
+  // Les regles de BIBLIOTHEQUE-UNE restent vraies : elles se lisent ici sur le
+  // nouveau formulaire (lien a la place d'un fichier, « Plus de reglages »).
+  Future<void> ouvrirLien(WidgetTester tester) =>
+      _toucher(tester, _cle('import-lien-a-la-place'));
+  Future<void> ouvrirPlus(WidgetTester tester) =>
+      _toucher(tester, _cle('import-plus-bascule'));
+
+  testWidgets('le formulaire : description, rangement, etapes en reglage', (
     tester,
   ) async {
-    await _monter(tester);
+    await _monter(tester, taille: const Size(1440, 2600));
+    await ouvrirLien(tester);
     expect(_cle('import-description'), findsOneWidget);
-    expect(_cle('import-ordre'), findsOneWidget);
+    // L'ordre d'affichage ne se demande plus ici : il se regle sur la fiche.
+    expect(_cle('import-ordre'), findsNothing);
+    // Le rangement se choisit parmi les rayons du serveur, tous deux visibles
+    // (sans prix ni mot d'argent).
+    expect(find.text('Documents des cours'), findsOneWidget);
+    expect(find.text('Pour aller plus loin'), findsOneWidget);
+    await ouvrirPlus(tester);
     expect(_cle('classement-tranches'), findsOneWidget);
     expect(_cle('classement-etapes'), findsOneWidget);
     // Aucune etape a taper : plus de champ de codes.
     expect(_cle('import-etapes'), findsNothing);
-    // Le rayon se choisit parmi ceux du serveur : celui des cours d'abord, et
-    // le second s'offre au choix (sans prix ni mot d'argent).
-    expect(find.text('Documents des cours'), findsWidgets);
-    await _toucher(tester, find.text('Documents des cours').first);
-    await stabiliser(tester, fois: 3);
-    expect(find.text('Pour aller plus loin'), findsWidgets);
     // Aucun mot d'argent, aucun mot « support ».
     final List<String> textes = _textes(tester);
     expect(textes.where(_motSupport.hasMatch), isEmpty);
     expect(
       textes.where(
         (String s) => RegExp(
-          r'prix|tarif|acheter|panier',
+          r'prix|tarif|acheter|panier|payant|gratuit',
           caseSensitive: false,
         ).hasMatch(s),
       ),
@@ -150,17 +170,14 @@ void main() {
     tester,
   ) async {
     await _monter(tester, taille: const Size(1440, 2200));
-    await tester.enterText(_cle('import-titre'), 'Un site de reference');
-    await tester.enterText(_cle('import-categorie'), 'Lecture');
-    await _choisirDansMenu(tester, i.champs.type, 'Lien externe');
-    await _choisirDansMenu(tester, i.champs.langue, 'Français');
-    // Pas de bouton de fichier qui ne pourrait pas aboutir ; la phrase le dit.
+    await ouvrirLien(tester);
+    await tester.enterText(_cle('import-nom'), 'Un site de reference');
+    // Pas de bouton de fichier qui ne pourrait pas aboutir.
     expect(_cle('import-choisir-support'), findsNothing);
-    expect(find.text(i.formats.lien), findsOneWidget);
     expect(_cle('import-lien'), findsOneWidget);
-    // Sans adresse ni description : pas de « Poursuivre ».
+    // Sans adresse ni description : pas de bouton d'ajout, la phrase le dit.
     expect(_cle('import-poursuivre'), findsNothing);
-    expect(find.text(i.completerLien), findsWidgets);
+    expect(find.text(i.simple.aideLien), findsOneWidget);
     // Une adresse http est refusee a l'ecran.
     await tester.enterText(_cle('import-lien'), 'http://exemple.org/a');
     await stabiliser(tester, fois: 2);
@@ -171,7 +188,7 @@ void main() {
     await stabiliser(tester, fois: 2);
     expect(find.text(i.lienInvalide), findsNothing);
     expect(_cle('import-poursuivre'), findsNothing);
-    // Avec la description : on peut poursuivre.
+    // Avec la description : on peut ajouter.
     await tester.enterText(
       _cle('import-description'),
       'Un site pour aller plus loin.',
@@ -182,28 +199,85 @@ void main() {
 
   testWidgets('une adresse IP n\'est pas un lien accepte', (tester) async {
     await _monter(tester, taille: const Size(1440, 2200));
-    await _choisirDansMenu(tester, i.champs.type, 'Vidéo');
+    await ouvrirLien(tester);
     await tester.enterText(_cle('import-lien'), 'https://10.0.0.1/v');
     await stabiliser(tester, fois: 2);
     expect(find.text(i.lienInvalide), findsOneWidget);
   });
 
-  testWidgets('la vignette se depose par le meme circuit, en image', (
-    tester,
-  ) async {
+  testWidgets('la vignette, facultative, se depose, se remplace et se retire '
+      'depuis la fiche, en image', (tester) async {
     final _Selecteur selecteur = _Selecteur();
-    await _monter(tester, selecteur: selecteur, taille: const Size(1440, 2400));
-    await tester.enterText(_cle('import-titre'), 'Le livre');
-    await tester.enterText(_cle('import-categorie'), 'Lecture');
-    await _choisirDansMenu(tester, i.champs.type, 'PDF');
-    await _choisirDansMenu(tester, i.champs.langue, 'Français');
-    expect(find.text(i.vignetteAide), findsOneWidget);
-    await _toucher(tester, _cle('import-choisir-vignette'));
-    await stabiliser(tester, fois: 8);
+    final BibliothequeAdminDemo demo = BibliothequeAdminDemo();
+    await _monter(
+      tester,
+      demo: demo,
+      selecteur: selecteur,
+      route: Routes.adminPedagogieSupport('demo-support-001'),
+      taille: const Size(1440, 3600),
+    );
+    await stabiliser(tester, fois: 4);
+    expect((await demo.fiche('demo-support-001')).aVignette, isFalse);
+    expect(find.text(i.simple.vignette.aide), findsOneWidget);
+    await _toucher(tester, _cle('fiche-ajouter-vignette'));
+    await stabiliser(tester, fois: 12);
     // La vignette demande une image, jamais le type du document.
     expect(selecteur.demandes, <TypeRessource>[TypeRessource.image]);
-    expect(_cle('import-nom-vignette'), findsOneWidget);
-    expect(find.text(i.etats.pret), findsWidgets);
+    expect((await demo.fiche('demo-support-001')).aVignette, isTrue);
+    // Etat « reussi » : coche et ton de succes, « Vignette ajoutee », et la
+    // miniature de l'image deposee.
+    final BandeauAttention reussie = tester.widget<BandeauAttention>(
+      _cle('fiche-vignette-reussie'),
+    );
+    expect(reussie.ton, TonEtat.succes);
+    expect(reussie.titre, i.simple.vignette.ajoutee);
+    expect(_cle('fiche-vignette-miniature'), findsOneWidget);
+    // Elle se remplace, autant de fois qu'on veut, sans redeposer le fichier.
+    await _toucher(tester, _cle('fiche-ajouter-vignette'));
+    await stabiliser(tester, fois: 12);
+    expect(selecteur.demandes, hasLength(2));
+    expect((await demo.fiche('demo-support-001')).aVignette, isTrue);
+    // Elle se retire : la couverture selon le type revient.
+    await _toucher(tester, _cle('fiche-retirer-vignette'));
+    await stabiliser(tester, fois: 6);
+    expect((await demo.fiche('demo-support-001')).aVignette, isFalse);
+    expect(_cle('fiche-vignette-miniature'), findsNothing);
+    expect(_cle('fiche-retirer-vignette'), findsNothing);
+    // Un echec de la vignette : alerte, la phrase vraie, « Reessayer ».
+    demo.echecDemande = ErreurUpload.stockage;
+    await _toucher(tester, _cle('fiche-ajouter-vignette'));
+    await stabiliser(tester, fois: 12);
+    final BandeauAttention echec = tester.widget<BandeauAttention>(
+      _cle('fiche-vignette-echec'),
+    );
+    expect(echec.ton, TonEtat.alerte);
+    expect(echec.titre, i.simple.vignette.echec);
+    expect(echec.message, i.erreurs.stockage);
+    expect(_cle('fiche-vignette-reessayer'), findsOneWidget);
+    expect((await demo.fiche('demo-support-001')).aVignette, isFalse);
+  });
+
+  testWidgets('la vignette d\'un document PUBLIE se change sans redeposer le '
+      'fichier', (tester) async {
+    final _Selecteur selecteur = _Selecteur();
+    final BibliothequeAdminDemo demo = BibliothequeAdminDemo();
+    final String id = (await demo.lister(
+      filtre: const FiltreCatalogue(etat: EtatCatalogue.publies),
+    )).elements.first.id;
+    await _monter(
+      tester,
+      demo: demo,
+      selecteur: selecteur,
+      route: Routes.adminPedagogieSupport(id),
+      taille: const Size(1440, 3600),
+    );
+    await stabiliser(tester, fois: 4);
+    // Le contenu publie est fige, la vignette non.
+    expect(_cle('fiche-figee'), findsOneWidget);
+    await _toucher(tester, _cle('fiche-ajouter-vignette'));
+    await stabiliser(tester, fois: 12);
+    expect((await demo.fiche(id)).aVignette, isTrue);
+    expect(_cle('fiche-vignette-reussie'), findsOneWidget);
   });
 
   final cl = t.admin.bibliotheque.import.classement;
@@ -215,11 +289,8 @@ void main() {
     tester,
   ) async {
     await _monter(tester, taille: const Size(1440, 2600));
-    // Sans type choisi : les quatre tranches.
-    for (final String c in tranchesTout) {
-      expect(coche(tester, 'classement-tranche-$c'), isTrue);
-    }
-    await _choisirDansMenu(tester, i.champs.type, 'Lien externe');
+    await ouvrirLien(tester);
+    await ouvrirPlus(tester);
     expect(coche(tester, 'classement-tranche-enfant_6_9'), isFalse);
     expect(coche(tester, 'classement-tranche-enfant_10_13'), isTrue);
     expect(coche(tester, 'classement-tranche-adulte_18_plus'), isTrue);
@@ -227,8 +298,18 @@ void main() {
     // La direction peut l'inclure explicitement.
     await _toucher(tester, _cle('classement-tranche-enfant_6_9'));
     expect(coche(tester, 'classement-tranche-enfant_6_9'), isTrue);
-    // Et un type par fichier n'a pas cette phrase.
-    await _choisirDansMenu(tester, 'Lien externe', 'PDF');
+  });
+
+  testWidgets('D1 : un fichier s\'adresse par defaut aux quatre tranches', (
+    tester,
+  ) async {
+    await _monter(tester, taille: const Size(1440, 2600));
+    await _toucher(tester, _cle('import-choisir-support'));
+    await stabiliser(tester, fois: 12);
+    await ouvrirPlus(tester);
+    for (final String c in tranchesTout) {
+      expect(coche(tester, 'classement-tranche-$c'), isTrue);
+    }
     expect(find.text(cl.tranchesAideLien), findsNothing);
     expect(find.text(cl.tranchesAide), findsOneWidget);
   });
@@ -237,14 +318,13 @@ void main() {
     tester,
   ) async {
     await _monter(tester, taille: const Size(1440, 2600));
-    await tester.enterText(_cle('import-titre'), 'Sans tranche');
-    await tester.enterText(_cle('import-categorie'), 'Lecture');
-    await _choisirDansMenu(tester, i.champs.type, 'Lien externe');
-    await _choisirDansMenu(tester, i.champs.langue, 'Français');
+    await ouvrirLien(tester);
+    await tester.enterText(_cle('import-nom'), 'Sans tranche');
     await tester.enterText(_cle('import-lien'), 'https://exemple.org/a');
     await tester.enterText(_cle('import-description'), 'Un site.');
     await stabiliser(tester, fois: 2);
     expect(_cle('import-poursuivre'), findsOneWidget);
+    await ouvrirPlus(tester);
     for (final String c in tranchesLienParDefaut) {
       await _toucher(tester, _cle('classement-tranche-$c'));
     }
@@ -256,6 +336,8 @@ void main() {
     tester,
   ) async {
     await _monter(tester, taille: const Size(1440, 2600));
+    await ouvrirLien(tester);
+    await ouvrirPlus(tester);
     await stabiliser(tester, fois: 3);
     expect(find.text(cl.etapesVide), findsOneWidget);
     expect(_cle('classement-etapes-vide'), findsOneWidget);
@@ -270,6 +352,8 @@ void main() {
         EtapeProgramme(code: 'E-02', nom: 'Premiers mots', cycle: 'Debut'),
       ],
     );
+    await ouvrirLien(tester);
+    await ouvrirPlus(tester);
     await stabiliser(tester, fois: 3);
     expect(find.text(cl.etapesVide), findsNothing);
     expect(find.text('Lettres et sons'), findsOneWidget);
@@ -284,7 +368,7 @@ void main() {
   ) async {
     await _monter(tester, taille: const Size(1440, 2600));
     expect(_cle('import-video-lien'), findsNothing);
-    await _choisirDansMenu(tester, i.champs.type, 'Vidéo');
+    await ouvrirLien(tester);
     expect(find.text('Pour une vidéo, collez son lien.'), findsOneWidget);
     expect(_cle('import-lien'), findsOneWidget);
     expect(_cle('import-choisir-support'), findsNothing);
@@ -297,23 +381,24 @@ void main() {
       ..depotActifServeur = false;
     await _monter(demo: demo, tester, taille: const Size(1440, 2800));
     await stabiliser(tester, fois: 3);
-    await tester.enterText(_cle('import-titre'), 'Un site de reference');
-    await tester.enterText(_cle('import-categorie'), 'Lecture');
-    await _choisirDansMenu(tester, i.champs.type, 'PDF');
-    await _choisirDansMenu(tester, i.champs.langue, 'Français');
-    // Une phrase en mots simples, aucun bouton qui echouerait, aucun code.
-    expect(find.text(cl.depotInactif), findsOneWidget);
+    // Le reglage qui manque est nomme (DEPOT-SIMPLE), aucun bouton qui
+    // echouerait.
+    expect(
+      tester.widget<BandeauAttention>(_cle('import-reglages')).message,
+      contains('private.library_upload_confirmation_secrets'),
+    );
     expect(_cle('import-choisir-support'), findsNothing);
-    expect(_cle('import-choisir-vignette'), findsNothing);
-    expect(_cle('import-choisir-preuve'), findsNothing);
     expect(_cle('import-poursuivre'), findsNothing);
     // Le lien externe, lui, se depose et se poursuit.
-    await _choisirDansMenu(tester, 'PDF', 'Lien externe');
+    await ouvrirLien(tester);
+    await tester.enterText(_cle('import-nom'), 'Un site de reference');
     await tester.enterText(_cle('import-lien'), 'https://exemple.org/a');
     await tester.enterText(_cle('import-description'), 'Un site.');
     await stabiliser(tester, fois: 2);
-    expect(find.text(cl.depotInactif), findsOneWidget);
     expect(_cle('import-poursuivre'), findsOneWidget);
+    // Aucun depot de preuve non plus tant que le depot n'est pas active.
+    await ouvrirPlus(tester);
+    expect(_cle('import-choisir-preuve'), findsNothing);
   });
 
   testWidgets('I1 : sans reponse sur le depot, aucun bouton de fichier', (
@@ -323,28 +408,24 @@ void main() {
       ..panneDepot = true;
     await _monter(demo: demo, tester, taille: const Size(1440, 2800));
     await stabiliser(tester, fois: 3);
-    await _choisirDansMenu(tester, i.champs.type, 'PDF');
-    // L'erreur n'est pas avalee en « active » : ni fichier, ni vignette, ni
-    // preuve ; une phrase en mots simples, et le lien reste possible.
+    // L'erreur n'est pas avalee en « active » : ni fichier ni preuve ; une
+    // phrase en mots simples, et le lien reste possible.
     expect(find.text(cl.depotInconnu), findsOneWidget);
     expect(find.text(cl.depotInactif), findsNothing);
     expect(_cle('import-choisir-support'), findsNothing);
-    expect(_cle('import-choisir-vignette'), findsNothing);
-    expect(_cle('import-choisir-preuve'), findsNothing);
-    await tester.enterText(_cle('import-titre'), 'Un site');
-    await tester.enterText(_cle('import-categorie'), 'Lecture');
-    await _choisirDansMenu(tester, 'PDF', 'Lien externe');
-    await _choisirDansMenu(tester, i.champs.langue, 'Français');
+    await ouvrirLien(tester);
+    await tester.enterText(_cle('import-nom'), 'Un site');
     await tester.enterText(_cle('import-lien'), 'https://exemple.org/a');
     await tester.enterText(_cle('import-description'), 'Un site.');
     await stabiliser(tester, fois: 2);
     expect(_cle('import-poursuivre'), findsOneWidget);
+    await ouvrirPlus(tester);
+    expect(_cle('import-choisir-preuve'), findsNothing);
   });
 
   testWidgets('C2 : depot actif, aucune phrase d\'inactivite', (tester) async {
     await _monter(tester, taille: const Size(1440, 2600));
     await stabiliser(tester, fois: 3);
-    await _choisirDansMenu(tester, i.champs.type, 'PDF');
     expect(find.text(cl.depotInactif), findsNothing);
     expect(_cle('import-choisir-support'), findsOneWidget);
   });
@@ -362,12 +443,11 @@ void main() {
       ],
     );
     await stabiliser(tester, fois: 3);
-    await tester.enterText(_cle('import-titre'), 'Ablutions du Coran');
-    await tester.enterText(_cle('import-categorie'), 'Priere');
-    await _choisirDansMenu(tester, i.champs.type, 'Lien externe');
-    await _choisirDansMenu(tester, i.champs.langue, 'Français');
+    await ouvrirLien(tester);
+    await tester.enterText(_cle('import-nom'), 'Ablutions du Coran');
     await tester.enterText(_cle('import-lien'), 'https://exemple.org/a');
     await tester.enterText(_cle('import-description'), 'Un site.');
+    await ouvrirPlus(tester);
     await _toucher(tester, _cle('classement-tranche-ado_14_17'));
     await _toucher(tester, _cle('classement-etape-E-01'));
     await _choisirDansMenu(tester, cl.lectureTitre, 'Warsh');
@@ -412,6 +492,10 @@ void main() {
       ],
     );
     await stabiliser(tester, fois: 4);
+    // Les tranches, les etapes, la lecture et l'ecole vivent dans « Plus de
+    // reglages », replie par defaut (DEPOT-SIMPLE).
+    expect(_cle('classement-tranches'), findsNothing);
+    await _toucher(tester, _cle('fiche-plus-bascule'));
     expect(coche(tester, 'classement-tranche-enfant_6_9'), isTrue);
     await _toucher(tester, _cle('classement-tranche-enfant_6_9'));
     await _toucher(tester, _cle('classement-etape-E-01'));
@@ -437,6 +521,7 @@ void main() {
       taille: const Size(1440, 3600),
     );
     await stabiliser(tester, fois: 4);
+    await _toucher(tester, _cle('fiche-plus-bascule'));
     for (final String c in tranchesTout) {
       await _toucher(tester, _cle('classement-tranche-$c'));
     }
@@ -450,9 +535,16 @@ void main() {
     tester,
   ) async {
     await _monter(tester, taille: const Size(1440, 2600));
+    await ouvrirLien(tester);
+    await tester.enterText(_cle('import-nom'), 'Un site');
+    await tester.enterText(_cle('import-lien'), 'https://exemple.org/a');
+    await tester.enterText(_cle('import-description'), 'Un site.');
+    await ouvrirPlus(tester);
     await tester.enterText(_cle('classement-ecole'), 'x' * 81);
     await stabiliser(tester, fois: 2);
     expect(find.text(cl.ecoleTrop), findsOneWidget);
+    // Et rien ne part tant qu'elle ne tient pas en base.
+    expect(_cle('import-poursuivre'), findsNothing);
   });
 
   testWidgets('en arabe, a 320 px et texte x2 : aucun mot coupe', (
@@ -465,6 +557,8 @@ void main() {
       echelle: 2,
       direction: TextDirection.rtl,
     );
+    await ouvrirLien(tester);
+    await ouvrirPlus(tester);
     expect(_cle('import-description'), findsOneWidget);
     expect(_textes(tester).where(_motSupport.hasMatch), isEmpty);
     expect(motsCoupes(tester, find.byType(Scaffold).first), isEmpty);

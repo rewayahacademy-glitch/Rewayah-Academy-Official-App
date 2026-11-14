@@ -1,8 +1,9 @@
 // CAP29-B : la fiche d'un support.
 //
 // Ce que le test prouve : un brouillon s'edite, s'enregistre et mene a
-// « Verifier et publier » ; une version publiee est figee et ne propose que
-// « Creer une nouvelle version » (un nouveau brouillon) ; un support retire
+// « Verifier et publier » ; le fichier et les droits d'une version publiee sont
+// figes (« Creer une nouvelle version » pour les changer), son nom, sa
+// description, son rayon et son acces se corrigent sans redeposer ; un support retire
 // dit son motif ; une seule action principale ; les trois vocabulaires
 // (version, droits, retrait) restent distincts ; un conflit d'edition est dit
 // et la fiche se recharge ; sans capacite, aucune action n'est rendue ; les
@@ -172,8 +173,15 @@ void main() {
       await _monter(tester, _publie, port: port);
       expect(_cle('fiche-figee'), findsOneWidget);
       expect(find.text(f.figee), findsOneWidget);
-      expect(_cle('fiche-champ-titre'), findsNothing);
-      expect(_cle('fiche-enregistrer'), findsNothing);
+      // Adapte le 13/11/2026 (DEPOT-SIMPLE, arbitrage de l'architecte, point
+      // 4) : CAP-29 figeait TOUT sur une version publiee. Desormais seuls le
+      // fichier et les droits sont figes ; le nom, la description et le rayon
+      // se corrigent sans redeposer (le serveur l'a toujours permis et en
+      // garde la trace). Les champs propres au brouillon restent absents.
+      expect(_cle('fiche-champ-titre'), findsOneWidget);
+      expect(_cle('fiche-champ-description'), findsOneWidget);
+      expect(_cle('fiche-champ-titreCourt'), findsNothing);
+      expect(_cle('fiche-plus-bascule'), findsNothing);
       expect(find.text(f.actions.verifier), findsNothing);
       await _toucher(tester, 'fiche-action-principale');
       expect(find.text(f.nouvelleVersionOk), findsOneWidget);
@@ -182,6 +190,70 @@ void main() {
       expect(
         (await port.fiche(_publie)).derniereVersion!.statut,
         StatutVersionRessource.brouillon,
+      );
+    });
+
+    testWidgets('publie : le nom et la description se corrigent, le fichier '
+        'et les droits ne bougent pas', (tester) async {
+      final BibliothequeAdminDemo port = BibliothequeAdminDemo();
+      final FicheSupport avant = await port.fiche(_publie);
+      await _monter(tester, _publie, port: port);
+      await tester.enterText(_cle('fiche-champ-titre'), 'Nom corrigé');
+      await tester.enterText(_cle('fiche-champ-description'), 'Une phrase.');
+      await _toucher(tester, 'fiche-enregistrer');
+      expect(find.text(f.enregistre), findsOneWidget);
+      final FicheSupport apres = await port.fiche(_publie);
+      expect(apres.support.titre, 'Nom corrigé');
+      expect(apres.description, 'Une phrase.');
+      // Toujours publie, meme version, memes droits.
+      expect(apres.support.statutVersion, StatutVersionRessource.publiee);
+      expect(apres.versions.length, avant.versions.length);
+      expect(apres.droits.usages, avant.droits.usages);
+      expect(apres.droits.sourceTitre, avant.droits.sourceTitre);
+    });
+
+    testWidgets('publie : l\'acces au fichier change sans redeposer', (
+      tester,
+    ) async {
+      final BibliothequeAdminDemo port = BibliothequeAdminDemo();
+      final FicheSupport avant = await port.fiche(_publie);
+      final bool telechargeable = avant.droits.usages.contains(
+        UsageDroit.telechargement,
+      );
+      await _monter(tester, _publie, port: port);
+      await _toucher(
+        tester,
+        telechargeable ? 'fiche-acces-lecture' : 'fiche-acces-telechargement',
+      );
+      expect(find.text(f.accesChange), findsOneWidget);
+      final FicheSupport apres = await port.fiche(_publie);
+      expect(
+        apres.droits.usages.contains(UsageDroit.telechargement),
+        !telechargeable,
+      );
+      expect(apres.support.statutVersion, StatutVersionRessource.publiee);
+      expect(apres.versions.length, avant.versions.length);
+    });
+
+    testWidgets('publie : un changement d\'acces refuse est dit, le choix '
+        'revient a celui du serveur', (tester) async {
+      final BibliothequeAdminDemo port = BibliothequeAdminDemo();
+      final FicheSupport avant = await port.fiche(_publie);
+      final bool telechargeable = avant.droits.usages.contains(
+        UsageDroit.telechargement,
+      );
+      await _monter(tester, _publie, port: port);
+      port.panneEcriture = true;
+      await _toucher(
+        tester,
+        telechargeable ? 'fiche-acces-lecture' : 'fiche-acces-telechargement',
+      );
+      expect(find.text(f.accesChange), findsNothing);
+      expect(_cle('fiche-echec-enregistrer'), findsOneWidget);
+      expect(
+        (await port.fiche(_publie)).droits.usages
+            .contains(UsageDroit.telechargement),
+        telechargeable,
       );
     });
 

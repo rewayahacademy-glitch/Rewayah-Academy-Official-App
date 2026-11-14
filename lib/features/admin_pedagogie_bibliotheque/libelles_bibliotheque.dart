@@ -126,3 +126,21 @@ String libelleHorsLigne(PolitiqueOffline p) => switch (p) {
   PolitiqueOffline.automatique =>
     t.admin.bibliotheque.libelles.horsLigne.automatique,
 };
+
+/// Le libelle d'un critere du controle de publication.
+String libelleCritere(CleCritere c) {
+  final k = t.admin.bibliotheque.publication.criteres;
+  return switch (c) {
+    CleCritere.source => k.source,
+    CleCritere.titulaire => k.titulaire,
+    CleCritere.preuve => k.preuve,
+    CleCritere.usageApplication => k.usageApplication,
+    CleCritere.usageClasse => k.usageClasse,
+    CleCritere.usageTelechargement => k.usageTelechargement,
+    CleCritere.expirationAttribution => k.expirationAttribution,
+    CleCritere.fichierSain => k.fichierSain,
+    CleCritere.renduTeste => k.renduTeste,
+    CleCritere.langueNiveau => k.langueNiveau,
+    CleCritere.versionEmpreinte => k.versionEmpreinte,
+  };
+}

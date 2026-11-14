@@ -890,7 +890,16 @@ enum ErreurUpload {
 @immutable
 class ProgressionUpload {
   /// Cree la progression. [partie] est entre 0 et 1.
-  const ProgressionUpload({required this.phase, this.partie = 0, this.erreur});
+  const ProgressionUpload({
+    required this.phase,
+    this.partie = 0,
+    this.erreur,
+    this.reglage,
+  });
+
+  /// Le NOM du reglage du serveur en cause (jamais sa valeur), quand la
+  /// fonction le dit : la direction sait lequel poser.
+  final String? reglage;
 
   /// La phase.
   final PhaseUpload phase;
@@ -968,6 +977,25 @@ class PageClasses {
 
   /// La page suivante.
   final String? curseur;
+}
+
+/// L'acces au fichier d'un document (DEPOT-SIMPLE) : deux choix simples.
+enum AccesDocument {
+  /// Lire dans l'application seulement (par defaut).
+  lecture,
+
+  /// Telechargement permis.
+  telechargement,
+}
+
+/// Le public d'un document (DEPOT-SIMPLE) : deux choix simples. Le serveur en
+/// tire les tranches d'age, jamais le client.
+enum PublicDocument {
+  /// Tous les inscrits, enfants compris (par defaut).
+  tous,
+
+  /// Adultes seulement.
+  adultes,
 }
 
 /// Ce que le serveur repond a une publication.

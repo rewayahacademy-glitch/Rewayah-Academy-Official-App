@@ -18528,7 +18528,10 @@ class _Traductions$admin$bibliotheque$fiche$ar extends Traductions$admin$bibliot
 	@override String get echecEnregistrer => 'تعذّر تأكيد التعديلات. أعد المحاولة.';
 	@override String get titreVide => 'العنوان مطلوب.';
 	@override String get retirerVignette => 'إزالة الصورة المصغرة';
-	@override String get figee => 'إصدار منشور ومثبّت: لتعديله أنشئ إصدارًا جديدًا.';
+	@override String get ajouterVignette => 'إضافة صورة مصغرة';
+	@override String get remplacerVignette => 'استبدال الصورة المصغرة';
+	@override String get figee => 'الملف المنشور لا يتغيّر: لاستبداله أنشئ نسخة جديدة. الاسم والوصف والرف والوصول والصورة المصغرة تبقى قابلة للتعديل.';
+	@override String get accesChange => 'عُدِّل الوصول إلى الملف.';
 	@override String retireMotif({required Object motif}) => 'سُحبت من الفهرس. السبب: ⁨${motif}⁩';
 	@override String get retireSansMotif => 'سُحبت من الفهرس.';
 	@override String get retireRestaurer => 'لا يمكن إعادة نشرها إلا بعد مراجعة جديدة للحقوق.';
@@ -18571,8 +18574,7 @@ class _Traductions$admin$bibliotheque$import$ar extends Traductions$admin$biblio
 	@override late final _Traductions$admin$bibliotheque$import$etats$ar etats = _Traductions$admin$bibliotheque$import$etats$ar._(_root);
 	@override late final _Traductions$admin$bibliotheque$import$erreurs$ar erreurs = _Traductions$admin$bibliotheque$import$erreurs$ar._(_root);
 	@override late final _Traductions$admin$bibliotheque$import$droits$ar droits = _Traductions$admin$bibliotheque$import$droits$ar._(_root);
-	@override String get poursuivre => 'المتابعة إلى التحقق';
-	@override String get poursuivreAide => 'يجب أن يفحص الخادم الملف قبل المتابعة.';
+	@override late final _Traductions$admin$bibliotheque$import$simple$ar simple = _Traductions$admin$bibliotheque$import$simple$ar._(_root);
 	@override String get retour => 'العودة إلى الفهرس';
 }
 
@@ -24867,9 +24869,9 @@ class _Traductions$admin$bibliotheque$import$etats$ar extends Traductions$admin$
 	// Translations
 	@override String get attente => 'جارٍ تجهيز الإيداع…';
 	@override String envoi({required Object pourcent}) => 'الإرسال جارٍ: ⁨${pourcent}⁩٪';
-	@override String get confirmation => 'انتهى الإرسال، في انتظار تأكيد الخادم…';
+	@override String get confirmation => 'انتهى الإرسال. جارٍ الفحص الأخير…';
 	@override String get verification => 'جارٍ فحص الملف…';
-	@override String get pret => 'تم فحص الملف. انتقل إلى الحقوق.';
+	@override String get pret => 'أُضيف الملف';
 	@override String get annule => 'أُلغي الإيداع.';
 }
 
@@ -24917,6 +24919,68 @@ class _Traductions$admin$bibliotheque$import$droits$ar extends Traductions$admin
 	@override String get preuve => 'إثبات الإذن';
 	@override String get deposerPreuve => 'إيداع الإثبات';
 	@override String get preuveDeposee => 'أُودع الإثبات.';
+}
+
+// Path: admin.bibliotheque.import.simple
+class _Traductions$admin$bibliotheque$import$simple$ar extends Traductions$admin$bibliotheque$import$simple$fr {
+	_Traductions$admin$bibliotheque$import$simple$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'اختر ملفًا: يتعرّف التطبيق وحده على ملف PDF أو ملف صوتي أو صورة، ويبدأ الإرسال فورًا.';
+	@override String get lienALaPlace => 'إضافة رابط بدلًا من ذلك';
+	@override String get fichierALaPlace => 'إيداع ملف بدلًا من ذلك';
+	@override String get nom => 'الاسم';
+	@override String get nomVide => 'أعطِ الوثيقة اسمًا.';
+	@override String get description => 'الوصف (اختياري)';
+	@override String get descriptionLien => 'الرابط الخارجي يحتاج إلى وصف: اذكر في جملة واحدة إلى أين يقود.';
+	@override late final _Traductions$admin$bibliotheque$import$simple$acces$ar acces = _Traductions$admin$bibliotheque$import$simple$acces$ar._(_root);
+	@override late final _Traductions$admin$bibliotheque$import$simple$rangement$ar rangement = _Traductions$admin$bibliotheque$import$simple$rangement$ar._(_root);
+	@override String get plus => 'إعدادات أخرى';
+	@override String get moins => 'إخفاء الإعدادات';
+	@override String get plusAide => 'الأعمار ومراحل البرنامج ومصدر الوثيقة: لا شيء منها إلزامي، والقيم الافتراضية كافية.';
+	@override String get sourceTitre => 'مصدر الوثيقة';
+	@override String langue({required Object langue}) => 'اللغة: ⁨${langue}⁩، مستنتجة من الاسم.';
+	@override String get aideFichier => 'اختر ملفًا أولًا: يظهر زر «حفظ الوثيقة» بعد إضافة الملف.';
+	@override String get aideEnvoi => 'الملف قيد الإرسال: يظهر زر «حفظ الوثيقة» فور إضافته.';
+	@override String get aideLien => 'الصق عنوان الرابط (https) وأعطِ اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.';
+	@override String typeDifferent({required Object type}) => 'هذه الوثيقة تنتظر ملفًا من نوع آخر (⁨${type}⁩). اختر ملفًا من هذا النوع، أو أضف وثيقة جديدة.';
+	@override late final _Traductions$admin$bibliotheque$import$simple$refus$ar refus = _Traductions$admin$bibliotheque$import$simple$refus$ar._(_root);
+	@override String get fichierAjoute => 'أُضيف الملف';
+	@override String get fichierEchec => 'لم يُضَف الملف';
+	@override String detailFichier({required Object type, required Object taille}) => '⁨${type}⁩ · ⁨${taille}⁩';
+	@override String tailleO({required Object n}) => '⁨${n}⁩ بايت';
+	@override String tailleKo({required Object n}) => '⁨${n}⁩ كيلوبايت';
+	@override String tailleMo({required Object n}) => '⁨${n}⁩ ميغابايت';
+	@override late final _Traductions$admin$bibliotheque$import$simple$vignette$ar vignette = _Traductions$admin$bibliotheque$import$simple$vignette$ar._(_root);
+	@override String get enregistrer => 'حفظ الوثيقة';
+	@override String get aideNom => 'أعطِ الوثيقة اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.';
+	@override String get aideDroit => 'حدِّد خانة حق النشر: بدونها لا يمكن حفظ وثيقة ليست من الأكاديمية.';
+	@override String get aideReglages => 'هناك إعداد يجب تصحيحه في «إعدادات أخرى»: يعود زر «حفظ الوثيقة» بعد ذلك.';
+	@override String get droitTiers => 'للأكاديمية الحق في نشر هذه الوثيقة';
+	@override String get droitTiersAide => 'تُحدَّد لوثيقة ليست من الأكاديمية. يُحفظ اسمك والتاريخ مع هذا الإقرار.';
+	@override String get enregistreTitre => 'تم تسجيل الوثيقة';
+	@override String get nonEnregistre => 'لم تُحفظ الوثيقة بعد';
+	@override String get ouvrir => 'فتح الوثيقة';
+	@override String get autre => 'إضافة وثيقة أخرى';
+	@override String get voirVerification => 'فتح صفحة التحقق من الوثيقة';
+	@override String get enregistrementEchec => 'لم يتأكد حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.';
+	@override String get reglagesTitre => 'إيداع الملفات غير جاهز';
+	@override String get reglagesMessage => 'ينقص إعداد في الخادم. ما دام غير موضوع فلا يمكن إضافة أي ملف. يمكن الآن إضافة وثيقة عن طريق رابطها.';
+	@override String reglageNomme({required Object nom}) => 'الإعداد المطلوب: ⁨${nom}⁩';
+	@override late final _Traductions$admin$bibliotheque$import$simple$pourQui$ar pourQui = _Traductions$admin$bibliotheque$import$simple$pourQui$ar._(_root);
+	@override String get enregistreTous => 'هي ظاهرة لكل المسجَّلين، ومنهم الأطفال.';
+	@override String get enregistreAdultes => 'هي ظاهرة للبالغين فقط.';
+	@override String get enregistreTranches => 'هي ظاهرة للفئات العمرية المحدَّدة في «إعدادات أخرى».';
+	@override String bloque({required Object criteres}) => 'التسجيل متوقف، ولم يتغيّر شيء. ما يمنعه: ⁨${criteres}⁩. صحِّحه في «إعدادات أخرى» ثم أعد المحاولة.';
+	@override String get bloqueSansDetail => 'التسجيل متوقف، ولم يتغيّر شيء. افتح صفحة التحقق من الوثيقة لمعرفة ما يمنعه.';
+	@override String get inactifTitre => 'التسجيل غير مفعَّل بعد';
+	@override String get inactif => 'لم يحصل الخادم بعدُ على التحديث الذي يسمح بتسجيل وثيقة. لم يضِع شيء: الملف ما زال مضافًا. أخبر من يثبّت التحديثات.';
+	@override String get fichierPresent => 'لهذه الوثيقة ملف من قبل.';
+	@override String get detail => 'التفاصيل';
+	@override String get detailMasquer => 'إخفاء التفاصيل';
+	@override late final _Traductions$admin$bibliotheque$import$simple$court$ar court = _Traductions$admin$bibliotheque$import$simple$court$ar._(_root);
 }
 
 // Path: admin.bibliotheque.publication.criteres
@@ -26280,6 +26344,99 @@ class _Traductions$admin$candidatures$detail$talents$niveaux$ar extends Traducti
 	@override String get debutant => 'مبتدئ';
 	@override String get experience => 'صاحب خبرة';
 	@override String get metier => 'يمارسها مهنةً';
+}
+
+// Path: admin.bibliotheque.import.simple.acces
+class _Traductions$admin$bibliotheque$import$simple$acces$ar extends Traductions$admin$bibliotheque$import$simple$acces$fr {
+	_Traductions$admin$bibliotheque$import$simple$acces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الوصول إلى الملف';
+	@override String get lecture => 'القراءة داخل التطبيق فقط';
+	@override String get lectureAide => 'تُفتح الوثيقة داخل التطبيق ولا تُحفظ على الجهاز. هذا هو الخيار الافتراضي.';
+	@override String get telechargement => 'التنزيل مسموح';
+	@override String get telechargementAide => 'يستطيع الطالب حفظ الملف على جهازه. الملف الذي نُزِّل لا يمكن استرجاعه.';
+}
+
+// Path: admin.bibliotheque.import.simple.rangement
+class _Traductions$admin$bibliotheque$import$simple$rangement$ar extends Traductions$admin$bibliotheque$import$simple$rangement$fr {
+	_Traductions$admin$bibliotheque$import$simple$rangement$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الرف';
+	@override String get cours => 'وثيقة من الأكاديمية تفيد في الدروس. تُعرض أولًا في المكتبة.';
+	@override String get plusLoin => 'وثيقة أخرى. تُعرض في أسفل المكتبة.';
+}
+
+// Path: admin.bibliotheque.import.simple.refus
+class _Traductions$admin$bibliotheque$import$simple$refus$ar extends Traductions$admin$bibliotheque$import$simple$refus$fr {
+	_Traductions$admin$bibliotheque$import$simple$refus$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get vide => 'هذا الملف فارغ. اختر ملفًا آخر.';
+	@override String get video => 'هذا فيديو: حجمه أكبر من أن يُودَع هنا. أضِفه عن طريق رابطه.';
+	@override String get inconnu => 'هذا الملف ليس ملف PDF ولا ملفًا صوتيًا (MP3 أو M4A أو OGG) ولا صورة (PNG أو JPEG أو WebP). اختر ملفًا آخر.';
+	@override String tropLourd({required Object limite}) => 'هذا الملف كبير جدًا: الحد الأقصى لهذا النوع ⁨${limite}⁩ ميغابايت. اختر ملفًا أخف.';
+}
+
+// Path: admin.bibliotheque.import.simple.vignette
+class _Traductions$admin$bibliotheque$import$simple$vignette$ar extends Traductions$admin$bibliotheque$import$simple$vignette$fr {
+	_Traductions$admin$bibliotheque$import$simple$vignette$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الصورة المصغرة (اختيارية)';
+	@override String get aide => 'صورة للغلاف (PNG أو JPEG أو WebP، حتى 2 ميغابايت). وبدونها يُختار الغلاف بحسب النوع.';
+	@override String get ajoutee => 'أُضيفت الصورة المصغرة';
+	@override String get echec => 'لم تُضَف الصورة المصغرة';
+	@override String get echecSuite => 'يمكن حفظ الوثيقة بدونها.';
+	@override String get tropLourde => 'هذه الصورة تتجاوز 2 ميغابايت. اختر صورة أخف.';
+	@override String get pasUneImage => 'هذا الملف ليس صورة PNG أو JPEG أو WebP. اختر صورة أخرى.';
+	@override String get retiree => 'أُزيلت الصورة المصغرة. يُختار الغلاف من جديد بحسب النوع.';
+	@override String get apercu => 'معاينة الصورة المصغرة';
+	@override String get enCours => 'جارٍ إرسال الصورة المصغرة…';
+}
+
+// Path: admin.bibliotheque.import.simple.pourQui
+class _Traductions$admin$bibliotheque$import$simple$pourQui$ar extends Traductions$admin$bibliotheque$import$simple$pourQui$fr {
+	_Traductions$admin$bibliotheque$import$simple$pourQui$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'لمن';
+	@override String get tous => 'كل المسجَّلين، ومنهم الأطفال';
+	@override String get tousAide => 'سيراها الأطفال والمراهقون والبالغون المسجَّلون.';
+	@override String get adultes => 'البالغون فقط';
+	@override String get adultesAide => 'لن يراها إلا المسجَّلون من سن 18 فما فوق.';
+}
+
+// Path: admin.bibliotheque.import.simple.court
+class _Traductions$admin$bibliotheque$import$simple$court$ar extends Traductions$admin$bibliotheque$import$simple$court$fr {
+	_Traductions$admin$bibliotheque$import$simple$court$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get envoi => 'لم يُرسَل الملف. أعد المحاولة؛ وإذا تكرر ذلك وجب تصحيح إعداد في الخادم.';
+	@override String get stockage => 'رفضت خدمة تخزين الملفات الإرسال. أعد المحاولة مرة واحدة؛ وإذا تكرر ذلك وجب تصحيح إعداد في الخادم.';
+	@override String get service => 'لم يكتمل الإيداع. أعد المحاولة بعد دقائق.';
+	@override String get reglage => 'وصل الملف لكن تعذّر الاحتفاظ به. يجب تصحيح إعداد في الخادم قبل إعادة المحاولة.';
+	@override String get delai => 'استغرق الفحص وقتًا طويلًا. أعد المحاولة أو اختر ملفًا أخف.';
+	@override String get nonActive => 'لم يُفعَّل بعدُ إيداع الملفات. أضِف الوثيقة عن طريق رابطها في الأثناء.';
+	@override String get reseau => 'لم يصل أي رد. أعد المحاولة بعد قليل.';
+	@override String get nonModifiable => 'لم تعد هذه الوثيقة قابلة للتعديل. أعد تحميل الصفحة.';
+	@override String get dejaDepose => 'لهذه الوثيقة ملف من قبل. افتح بطاقتها لإنشاء نسخة جديدة.';
+	@override String get introuvable => 'لم يكتمل الإرسال. أعد المحاولة.';
+	@override String get contenu => 'هذا الملف ليس ملف PDF ولا ملفًا صوتيًا ولا صورة صالحة. اختر ملفًا آخر.';
+	@override String get refuse => 'حسابك لا يملك حق هذا الإيداع. اطلب من الإدارة التحقق من صلاحيتك.';
 }
 
 // Path: comptable.beneficiaires.recevoir.wise.lien
@@ -34068,7 +34225,10 @@ extension on TraductionsAr {
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'تعذّر تأكيد التعديلات. أعد المحاولة.',
 			'admin.bibliotheque.fiche.titreVide' => 'العنوان مطلوب.',
 			'admin.bibliotheque.fiche.retirerVignette' => 'إزالة الصورة المصغرة',
-			'admin.bibliotheque.fiche.figee' => 'إصدار منشور ومثبّت: لتعديله أنشئ إصدارًا جديدًا.',
+			'admin.bibliotheque.fiche.ajouterVignette' => 'إضافة صورة مصغرة',
+			'admin.bibliotheque.fiche.remplacerVignette' => 'استبدال الصورة المصغرة',
+			'admin.bibliotheque.fiche.figee' => 'الملف المنشور لا يتغيّر: لاستبداله أنشئ نسخة جديدة. الاسم والوصف والرف والوصول والصورة المصغرة تبقى قابلة للتعديل.',
+			'admin.bibliotheque.fiche.accesChange' => 'عُدِّل الوصول إلى الملف.',
 			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'سُحبت من الفهرس. السبب: ⁨${motif}⁩',
 			'admin.bibliotheque.fiche.retireSansMotif' => 'سُحبت من الفهرس.',
 			'admin.bibliotheque.fiche.retireRestaurer' => 'لا يمكن إعادة نشرها إلا بعد مراجعة جديدة للحقوق.',
@@ -34151,9 +34311,9 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.formats.aucun' => 'هذا النوع لا يقبل ملفًا.',
 			'admin.bibliotheque.import.etats.attente' => 'جارٍ تجهيز الإيداع…',
 			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'الإرسال جارٍ: ⁨${pourcent}⁩٪',
-			'admin.bibliotheque.import.etats.confirmation' => 'انتهى الإرسال، في انتظار تأكيد الخادم…',
+			'admin.bibliotheque.import.etats.confirmation' => 'انتهى الإرسال. جارٍ الفحص الأخير…',
 			'admin.bibliotheque.import.etats.verification' => 'جارٍ فحص الملف…',
-			'admin.bibliotheque.import.etats.pret' => 'تم فحص الملف. انتقل إلى الحقوق.',
+			'admin.bibliotheque.import.etats.pret' => 'أُضيف الملف',
 			'admin.bibliotheque.import.etats.annule' => 'أُلغي الإيداع.',
 			'admin.bibliotheque.import.erreurs.taille' => 'هذا الملف كبير جدًا. اختر ملفًا أخف.',
 			'admin.bibliotheque.import.erreurs.type' => 'نوع هذا الملف غير مدعوم لهذه الوثيقة. اختر ملفًا آخر.',
@@ -34183,8 +34343,92 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.droits.preuve' => 'إثبات الإذن',
 			'admin.bibliotheque.import.droits.deposerPreuve' => 'إيداع الإثبات',
 			'admin.bibliotheque.import.droits.preuveDeposee' => 'أُودع الإثبات.',
-			'admin.bibliotheque.import.poursuivre' => 'المتابعة إلى التحقق',
-			'admin.bibliotheque.import.poursuivreAide' => 'يجب أن يفحص الخادم الملف قبل المتابعة.',
+			'admin.bibliotheque.import.simple.intro' => 'اختر ملفًا: يتعرّف التطبيق وحده على ملف PDF أو ملف صوتي أو صورة، ويبدأ الإرسال فورًا.',
+			'admin.bibliotheque.import.simple.lienALaPlace' => 'إضافة رابط بدلًا من ذلك',
+			'admin.bibliotheque.import.simple.fichierALaPlace' => 'إيداع ملف بدلًا من ذلك',
+			'admin.bibliotheque.import.simple.nom' => 'الاسم',
+			'admin.bibliotheque.import.simple.nomVide' => 'أعطِ الوثيقة اسمًا.',
+			'admin.bibliotheque.import.simple.description' => 'الوصف (اختياري)',
+			'admin.bibliotheque.import.simple.descriptionLien' => 'الرابط الخارجي يحتاج إلى وصف: اذكر في جملة واحدة إلى أين يقود.',
+			'admin.bibliotheque.import.simple.acces.titre' => 'الوصول إلى الملف',
+			'admin.bibliotheque.import.simple.acces.lecture' => 'القراءة داخل التطبيق فقط',
+			'admin.bibliotheque.import.simple.acces.lectureAide' => 'تُفتح الوثيقة داخل التطبيق ولا تُحفظ على الجهاز. هذا هو الخيار الافتراضي.',
+			'admin.bibliotheque.import.simple.acces.telechargement' => 'التنزيل مسموح',
+			'admin.bibliotheque.import.simple.acces.telechargementAide' => 'يستطيع الطالب حفظ الملف على جهازه. الملف الذي نُزِّل لا يمكن استرجاعه.',
+			'admin.bibliotheque.import.simple.rangement.titre' => 'الرف',
+			'admin.bibliotheque.import.simple.rangement.cours' => 'وثيقة من الأكاديمية تفيد في الدروس. تُعرض أولًا في المكتبة.',
+			'admin.bibliotheque.import.simple.rangement.plusLoin' => 'وثيقة أخرى. تُعرض في أسفل المكتبة.',
+			'admin.bibliotheque.import.simple.plus' => 'إعدادات أخرى',
+			'admin.bibliotheque.import.simple.moins' => 'إخفاء الإعدادات',
+			'admin.bibliotheque.import.simple.plusAide' => 'الأعمار ومراحل البرنامج ومصدر الوثيقة: لا شيء منها إلزامي، والقيم الافتراضية كافية.',
+			'admin.bibliotheque.import.simple.sourceTitre' => 'مصدر الوثيقة',
+			'admin.bibliotheque.import.simple.langue' => ({required Object langue}) => 'اللغة: ⁨${langue}⁩، مستنتجة من الاسم.',
+			'admin.bibliotheque.import.simple.aideFichier' => 'اختر ملفًا أولًا: يظهر زر «حفظ الوثيقة» بعد إضافة الملف.',
+			'admin.bibliotheque.import.simple.aideEnvoi' => 'الملف قيد الإرسال: يظهر زر «حفظ الوثيقة» فور إضافته.',
+			'admin.bibliotheque.import.simple.aideLien' => 'الصق عنوان الرابط (https) وأعطِ اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.',
+			'admin.bibliotheque.import.simple.typeDifferent' => ({required Object type}) => 'هذه الوثيقة تنتظر ملفًا من نوع آخر (⁨${type}⁩). اختر ملفًا من هذا النوع، أو أضف وثيقة جديدة.',
+			'admin.bibliotheque.import.simple.refus.vide' => 'هذا الملف فارغ. اختر ملفًا آخر.',
+			'admin.bibliotheque.import.simple.refus.video' => 'هذا فيديو: حجمه أكبر من أن يُودَع هنا. أضِفه عن طريق رابطه.',
+			'admin.bibliotheque.import.simple.refus.inconnu' => 'هذا الملف ليس ملف PDF ولا ملفًا صوتيًا (MP3 أو M4A أو OGG) ولا صورة (PNG أو JPEG أو WebP). اختر ملفًا آخر.',
+			'admin.bibliotheque.import.simple.refus.tropLourd' => ({required Object limite}) => 'هذا الملف كبير جدًا: الحد الأقصى لهذا النوع ⁨${limite}⁩ ميغابايت. اختر ملفًا أخف.',
+			'admin.bibliotheque.import.simple.fichierAjoute' => 'أُضيف الملف',
+			'admin.bibliotheque.import.simple.fichierEchec' => 'لم يُضَف الملف',
+			'admin.bibliotheque.import.simple.detailFichier' => ({required Object type, required Object taille}) => '⁨${type}⁩ · ⁨${taille}⁩',
+			'admin.bibliotheque.import.simple.tailleO' => ({required Object n}) => '⁨${n}⁩ بايت',
+			'admin.bibliotheque.import.simple.tailleKo' => ({required Object n}) => '⁨${n}⁩ كيلوبايت',
+			'admin.bibliotheque.import.simple.tailleMo' => ({required Object n}) => '⁨${n}⁩ ميغابايت',
+			'admin.bibliotheque.import.simple.vignette.titre' => 'الصورة المصغرة (اختيارية)',
+			'admin.bibliotheque.import.simple.vignette.aide' => 'صورة للغلاف (PNG أو JPEG أو WebP، حتى 2 ميغابايت). وبدونها يُختار الغلاف بحسب النوع.',
+			'admin.bibliotheque.import.simple.vignette.ajoutee' => 'أُضيفت الصورة المصغرة',
+			'admin.bibliotheque.import.simple.vignette.echec' => 'لم تُضَف الصورة المصغرة',
+			'admin.bibliotheque.import.simple.vignette.echecSuite' => 'يمكن حفظ الوثيقة بدونها.',
+			'admin.bibliotheque.import.simple.vignette.tropLourde' => 'هذه الصورة تتجاوز 2 ميغابايت. اختر صورة أخف.',
+			'admin.bibliotheque.import.simple.vignette.pasUneImage' => 'هذا الملف ليس صورة PNG أو JPEG أو WebP. اختر صورة أخرى.',
+			'admin.bibliotheque.import.simple.vignette.retiree' => 'أُزيلت الصورة المصغرة. يُختار الغلاف من جديد بحسب النوع.',
+			'admin.bibliotheque.import.simple.vignette.apercu' => 'معاينة الصورة المصغرة',
+			'admin.bibliotheque.import.simple.vignette.enCours' => 'جارٍ إرسال الصورة المصغرة…',
+			'admin.bibliotheque.import.simple.enregistrer' => 'حفظ الوثيقة',
+			'admin.bibliotheque.import.simple.aideNom' => 'أعطِ الوثيقة اسمًا: يظهر زر «حفظ الوثيقة» بعد ذلك.',
+			'admin.bibliotheque.import.simple.aideDroit' => 'حدِّد خانة حق النشر: بدونها لا يمكن حفظ وثيقة ليست من الأكاديمية.',
+			'admin.bibliotheque.import.simple.aideReglages' => 'هناك إعداد يجب تصحيحه في «إعدادات أخرى»: يعود زر «حفظ الوثيقة» بعد ذلك.',
+			'admin.bibliotheque.import.simple.droitTiers' => 'للأكاديمية الحق في نشر هذه الوثيقة',
+			'admin.bibliotheque.import.simple.droitTiersAide' => 'تُحدَّد لوثيقة ليست من الأكاديمية. يُحفظ اسمك والتاريخ مع هذا الإقرار.',
+			'admin.bibliotheque.import.simple.enregistreTitre' => 'تم تسجيل الوثيقة',
+			'admin.bibliotheque.import.simple.nonEnregistre' => 'لم تُحفظ الوثيقة بعد',
+			'admin.bibliotheque.import.simple.ouvrir' => 'فتح الوثيقة',
+			'admin.bibliotheque.import.simple.autre' => 'إضافة وثيقة أخرى',
+			'admin.bibliotheque.import.simple.voirVerification' => 'فتح صفحة التحقق من الوثيقة',
+			'admin.bibliotheque.import.simple.enregistrementEchec' => 'لم يتأكد حفظ الوثيقة. لم يضِع شيء: الملف مضاف من قبل. أعد المحاولة.',
+			'admin.bibliotheque.import.simple.reglagesTitre' => 'إيداع الملفات غير جاهز',
+			'admin.bibliotheque.import.simple.reglagesMessage' => 'ينقص إعداد في الخادم. ما دام غير موضوع فلا يمكن إضافة أي ملف. يمكن الآن إضافة وثيقة عن طريق رابطها.',
+			'admin.bibliotheque.import.simple.reglageNomme' => ({required Object nom}) => 'الإعداد المطلوب: ⁨${nom}⁩',
+			'admin.bibliotheque.import.simple.pourQui.titre' => 'لمن',
+			'admin.bibliotheque.import.simple.pourQui.tous' => 'كل المسجَّلين، ومنهم الأطفال',
+			'admin.bibliotheque.import.simple.pourQui.tousAide' => 'سيراها الأطفال والمراهقون والبالغون المسجَّلون.',
+			'admin.bibliotheque.import.simple.pourQui.adultes' => 'البالغون فقط',
+			'admin.bibliotheque.import.simple.pourQui.adultesAide' => 'لن يراها إلا المسجَّلون من سن 18 فما فوق.',
+			'admin.bibliotheque.import.simple.enregistreTous' => 'هي ظاهرة لكل المسجَّلين، ومنهم الأطفال.',
+			'admin.bibliotheque.import.simple.enregistreAdultes' => 'هي ظاهرة للبالغين فقط.',
+			'admin.bibliotheque.import.simple.enregistreTranches' => 'هي ظاهرة للفئات العمرية المحدَّدة في «إعدادات أخرى».',
+			'admin.bibliotheque.import.simple.bloque' => ({required Object criteres}) => 'التسجيل متوقف، ولم يتغيّر شيء. ما يمنعه: ⁨${criteres}⁩. صحِّحه في «إعدادات أخرى» ثم أعد المحاولة.',
+			'admin.bibliotheque.import.simple.bloqueSansDetail' => 'التسجيل متوقف، ولم يتغيّر شيء. افتح صفحة التحقق من الوثيقة لمعرفة ما يمنعه.',
+			'admin.bibliotheque.import.simple.inactifTitre' => 'التسجيل غير مفعَّل بعد',
+			'admin.bibliotheque.import.simple.inactif' => 'لم يحصل الخادم بعدُ على التحديث الذي يسمح بتسجيل وثيقة. لم يضِع شيء: الملف ما زال مضافًا. أخبر من يثبّت التحديثات.',
+			'admin.bibliotheque.import.simple.fichierPresent' => 'لهذه الوثيقة ملف من قبل.',
+			'admin.bibliotheque.import.simple.detail' => 'التفاصيل',
+			'admin.bibliotheque.import.simple.detailMasquer' => 'إخفاء التفاصيل',
+			'admin.bibliotheque.import.simple.court.envoi' => 'لم يُرسَل الملف. أعد المحاولة؛ وإذا تكرر ذلك وجب تصحيح إعداد في الخادم.',
+			'admin.bibliotheque.import.simple.court.stockage' => 'رفضت خدمة تخزين الملفات الإرسال. أعد المحاولة مرة واحدة؛ وإذا تكرر ذلك وجب تصحيح إعداد في الخادم.',
+			'admin.bibliotheque.import.simple.court.service' => 'لم يكتمل الإيداع. أعد المحاولة بعد دقائق.',
+			'admin.bibliotheque.import.simple.court.reglage' => 'وصل الملف لكن تعذّر الاحتفاظ به. يجب تصحيح إعداد في الخادم قبل إعادة المحاولة.',
+			'admin.bibliotheque.import.simple.court.delai' => 'استغرق الفحص وقتًا طويلًا. أعد المحاولة أو اختر ملفًا أخف.',
+			'admin.bibliotheque.import.simple.court.nonActive' => 'لم يُفعَّل بعدُ إيداع الملفات. أضِف الوثيقة عن طريق رابطها في الأثناء.',
+			'admin.bibliotheque.import.simple.court.reseau' => 'لم يصل أي رد. أعد المحاولة بعد قليل.',
+			'admin.bibliotheque.import.simple.court.nonModifiable' => 'لم تعد هذه الوثيقة قابلة للتعديل. أعد تحميل الصفحة.',
+			'admin.bibliotheque.import.simple.court.dejaDepose' => 'لهذه الوثيقة ملف من قبل. افتح بطاقتها لإنشاء نسخة جديدة.',
+			'admin.bibliotheque.import.simple.court.introuvable' => 'لم يكتمل الإرسال. أعد المحاولة.',
+			'admin.bibliotheque.import.simple.court.contenu' => 'هذا الملف ليس ملف PDF ولا ملفًا صوتيًا ولا صورة صالحة. اختر ملفًا آخر.',
+			'admin.bibliotheque.import.simple.court.refuse' => 'حسابك لا يملك حق هذا الإيداع. اطلب من الإدارة التحقق من صلاحيتك.',
 			'admin.bibliotheque.import.retour' => 'العودة إلى الفهرس',
 			'admin.bibliotheque.publication.titre' => 'التحقق والنشر',
 			'admin.bibliotheque.publication.intro' => 'يتحقق الخادم من كل نقطة. النشر يثبّت الإصدار.',
@@ -34359,6 +34603,8 @@ extension on TraductionsAr {
 			'comptable.statuts.paiement.validationRequise' => 'تلزم مصادقة إضافية',
 			'comptable.statuts.paiement.soumis' => 'مُرسَل',
 			'comptable.statuts.paiement.enTransit' => 'قيد التحويل',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.paiement.reussi' => 'ناجح',
 			'comptable.statuts.paiement.echoue' => 'فاشل',
 			'comptable.statuts.paiement.aRelancer' => 'للتذكير',
@@ -34446,8 +34692,6 @@ extension on TraductionsAr {
 			'comptable.aujourdhui.elementCompteur' => ({required Object libelle, required Object n}) => '${libelle}: ${n}',
 			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'قيد الانتظار منذ ${date}',
 			'comptable.aujourdhui.aTraiterVide' => 'لا شيء للمعالجة اليوم.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.aTraiterVideDetail' => 'ستظهر هنا المدفوعات والتذكيرات والمطابقات المطلوبة.',
 			'comptable.aujourdhui.alertesVide' => 'لا توجد تنبيهات حاليًا.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'تنبيهات للمراقبة: ${n}',
@@ -34873,6 +35117,8 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.recevoir.phraseIncomplet' => 'وسيلة الدفع الخاصة بك غير مكتملة. أكملها لاستلام دفعتك القادمة.',
 			'comptable.beneficiaires.recevoir.phraseEnVerification' => 'وسيلتك الجديدة قيد التحقق. تُحدَّث حالتها هنا.',
 			'comptable.beneficiaires.recevoir.phraseVerifie' => 'تم التحقق من وسيلة الدفع الخاصة بك. ستُرسَل إليها دفعاتك القادمة.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.phraseSuspendu' => 'دفعاتك موقوفة. تواصل مع الأكاديمية لمعرفة السبب.',
 			'comptable.beneficiaires.recevoir.phraseActionRequise' => 'مطلوب تحديث وسيلة الدفع الخاصة بك. استبدلها لاستلام دفعتك القادمة.',
 			'comptable.beneficiaires.recevoir.phraseInvitationEnvoyee' => 'أُرسلت إليك دعوة آمنة. أضف وسيلة الدفع الخاصة بك لإكمالها.',
@@ -34960,8 +35206,6 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.recevoir.wise.aide.adressePays' => 'بلد عنوانك، تختاره من القائمة.',
 			'comptable.beneficiaires.recevoir.wise.aide.adresseVille' => 'مدينة عنوانك.',
 			'comptable.beneficiaires.recevoir.wise.aide.adresseLigne' => 'الشارع أو الحي.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.aide.codePostal' => 'اختياري: لا يوجد في غينيا مثلًا.',
 			'comptable.beneficiaires.recevoir.wise.aide.adresseEtat' => 'في الولايات المتحدة وكندا فقط، مثل TX.',
 			'comptable.beneficiaires.recevoir.wise.journalEnregistrees' => 'سُجّلت البيانات',
@@ -35387,6 +35631,8 @@ extension on TraductionsAr {
 			'ficheEleve.informations.apercuIllisible' => 'لا تظهر المعاينة على هذا الجهاز. يمكن مع ذلك إرسال الصورة.',
 			'ficheEleve.informations.envoyer' => 'إرسال هذه الصورة',
 			'ficheEleve.informations.autre' => 'اختيار صورة أخرى',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.informations.annuler' => 'إلغاء',
 			'ficheEleve.informations.etapeEnvoi' => 'إرسال الصورة، الخطوة 1 من 2',
 			'ficheEleve.informations.etapeEnregistrement' => 'الحفظ في الملف، الخطوة 2 من 2',
@@ -35474,8 +35720,6 @@ extension on TraductionsAr {
 			'ficheEleve.finances.moisNonFinance' => ({required Object deMois}) => 'فترة ⁨${deMois}⁩ غير ممولة بعد.',
 			'ficheEleve.finances.periodeAFinancer' => 'الفترة المطلوب تمويلها',
 			'ficheEleve.finances.periodeAFinancerValeur' => ({required Object mois, required Object annee, required Object montant}) => '⁨${mois}⁩ ⁨${annee}⁩ · ⁨${montant}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.finances.confirmationTitre' => 'الدفع قيد التأكيد',
 			'ficheEleve.finances.confirmationPhrase' => 'لا تدفع مرة ثانية: تُحدَّث الفترة فور التأكيد.',
 			'ficheEleve.finances.indisponibleTitre' => 'المالية غير متاحة بعد',
@@ -35901,6 +36145,8 @@ extension on TraductionsAr {
 			'priere.regles.lieuxDetail' => 'مكان كل معلم، وصلاة الجمعة، وأوقات اليوم.',
 			'priere.regles.unite' => ({required Object n}) => '⁨${n}⁩ د',
 			'priere.regles.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ يوم', one: 'يوم واحد', two: 'يومان', few: '⁨${n}⁩ أيام', many: '⁨${n}⁩ يومًا', other: '⁨${n}⁩ يوم', ), 
+			_ => null,
+		} ?? switch (path) {
 			'priere.regles.choisir' => 'حفظ',
 			'priere.regles.erreurEcriture' => ({required Object message}) => 'لم يُحفظ الإعداد (⁨${message}⁩). أعد المحاولة بعد قليل.',
 			'appareils.titre' => 'الأجهزة',
@@ -35988,8 +36234,6 @@ extension on TraductionsAr {
 			'appareils.revoquerConfirmation' => 'إزالة هذا الجهاز؟ لن يستطيع الاتصال ما لم يُعد وليّ الأمر ربطه برمز جديد.',
 			'connexion.titre' => 'تسجيل الدخول',
 			'connexion.intro' => 'نرسل لك رابطًا بالبريد الإلكتروني. لا كلمة مرور تحفظها، ولا كلمة مرور تضيع.',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.courriel' => 'بريدك الإلكتروني',
 			'connexion.courrielIndice' => 'name@example.com',
 			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
@@ -36415,6 +36659,8 @@ extension on TraductionsAr {
 			'adulte.accueil.aucuneClasseDetail' => 'ستظهر حصتك القادمة هنا بمجرد فتح فصلك.',
 			'adulte.accueil.retourFoyerTitre' => 'العودة إلى الصفحة الرئيسية لعائلتك',
 			'adulte.accueil.retourFoyerPhrase' => 'فصول وحصص من تتابعهم من أفراد عائلتك.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.accueil.financesPhrase' => 'رصيدك والفترة المموَّلة وقسطك الشهري.',
 			'adulte.accueil.echec' => 'تعذّر تحميل حصتك القادمة وآخر حصصك: لم يستجب الخادم. أعد المحاولة بعد لحظة.',
 			'adulte.accueil.sansDonnees' => 'تعذّر تحميل حصتك القادمة وحصصك الأخيرة',
@@ -36502,8 +36748,6 @@ extension on TraductionsAr {
 			'adulte.recharge.source.avantPaiement' => 'بانتظار الدفع',
 			'adulte.recharge.source.motifs.paiementRefuse' => 'رفض البنك أو البطاقة الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.recharge.source.motifs.montantIncoherent' => 'المبلغ المستلم لا يطابق الشحن. لم يُضف شيء إلى الرصيد: الإدارة تتحقق مع مزوّد الدفع.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.source.motifs.sessionExpiree' => 'انتهت صلاحية صفحة الدفع قبل الدفع. لم يُقتطع أي مبلغ.',
 			'adulte.recharge.sansDonnees' => 'تعذّر تحميل المستفيدين المطلوب شحن رصيدهم',
 			'adulte.recharge.phraseUnique' => 'ضع علامة على الملف، ثم اختر المبلغ.',
@@ -36929,6 +37173,8 @@ extension on TraductionsAr {
 			'kyc.explicationCarteIdentite' => 'بطاقة الهوية الوطنية لبلدك، سارية المفعول.',
 			'kyc.explicationPasseport' => 'جواز سفرك الساري المفعول.',
 			'kyc.explicationTitreSejour' => 'بطاقة البلد الذي تقيم فيه دون أن تحمل جنسيته، سارية المفعول.',
+			_ => null,
+		} ?? switch (path) {
 			'kyc.explicationAutre' => 'وثيقة رسمية أخرى تحمل صورتك واسمك.',
 			'kyc.exempleAutre' => 'رخصة قيادة أو بطاقة قنصلية',
 			'kyc.choisirFichier' => 'اختيار الصورة',
@@ -37016,8 +37262,6 @@ extension on TraductionsAr {
 			'contrat.politique.s2.blocs.2' => '- **لا تُبلَّغ بوقت** الزيارة. تُبلَّغ **مسبقًا بأنها قد تقع**: بهذا النص، وبعقدك، وبالشريط الدائم في القاعة «زيارة مراقبة محتملة».',
 			'contrat.politique.s2.blocs.3' => '- يرى المراقب المادة وفيديو المعلّم ومصغّرات الطلاب. ويستطيع سماع الصوت. ليس لديه **لا ميكروفون ولا كاميرا ولا دردشة**. لا يستطيع التحدث إليك ولا إلى الطلاب.',
 			'contrat.politique.s2.blocs.4' => '- هو **لا يسجّل شيئًا**. لقطة الشاشة محظورة على جهازه (B10).',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.politique.s2.blocs.5' => '- تستطيع الإدارة سحب وصوله **بنقرة واحدة** (B3).',
 			'contrat.politique.s3.titre' => '3. ما يُكتب',
 			'contrat.politique.s3.blocs.0' => '- **كشف تلقائي للحصة**: الوقت المقرر، والوقت الفعلي، والمدة، والطلاب الحاضرون، وحالات إعادة الاتصال. لا أحد يدخله يدويًا.',
@@ -37443,6 +37687,8 @@ extension on TraductionsAr {
 			'suiviDemandes.accueil.voir' => 'عرض متابعة الطلبات',
 			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: وصل طلبكم إلى الإدارة',
 			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: طلبكم في قائمة الانتظار',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصلكم جاهز وينتظر معلمه',
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: تم اعتماد الفصل وتعيين المعلم',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: الطالب مندمج في الفصل',
@@ -37530,8 +37776,6 @@ extension on TraductionsAr {
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'ملف من أسرتك · ⁨${classe}⁩',
 			'recherche.contexte.personneParIdentifiant' => 'وُجد بمعرّفه',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
 			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
@@ -37957,6 +38201,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.description' => 'تقرأ بطلاقة دون اتباع أحكام النطق.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.exemple' => 'تقرأ صفحة دون تردد، لكنك لا تطبّق أحكام التجويد.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.libelle' => 'أطبّق أحكام التجويد أثناء القراءة',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.description' => 'تلتزم بأحكام النطق حين تقرأ.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
@@ -38044,8 +38290,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.explication' => 'اختر كل الساعات التي تستطيع أن تبدأ فيها درسًا. تُحسب نهاية الدرس لك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁨${heures}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
@@ -38471,6 +38715,8 @@ extension on TraductionsAr {
 			'juridique.annulation.s1.delaiSansDuree' => 'تبدأ مهلة التراجع من يوم الدفع، وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار).',
 			'juridique.annulation.s1.blocs.0' => 'لا توجد تجربة مجانية. وبدلًا منها يمكنكم التوقف خلال مهلة التراجع إذا لم يناسبكم الدرس.',
 			'juridique.annulation.s1.blocs.1' => 'خلال هذه المهلة يُسترد لكم ما دفعتم، ما عدا الحصص التي حضرها الطالب.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s1.blocs.2' => 'بعد هذه المهلة يُستحق الشهر الذي بدأ.',
 			'juridique.annulation.s2.titre' => '٢. إيقاف الاشتراك',
 			'juridique.annulation.s2.blocs.0' => 'يتوقف الاشتراك الشهري في أي وقت دون تبرير. وينتهي بنهاية الشهر الجاري.',
@@ -38558,8 +38804,6 @@ extension on TraductionsAr {
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
 			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
 			'juridique.enfants.titre' => 'حماية الأطفال',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
@@ -38985,6 +39229,8 @@ extension on TraductionsAr {
 			'alertes.videPhrase' => 'سيظهر هنا تنبيه عاجل، في المقدمة، فور وصوله.',
 			'alertes.indisponibleTitre' => 'التنبيهات غير متاحة بعد',
 			'alertes.indisponiblePhrase' => 'ستظهر التنبيهات العاجلة هنا، في المقدمة، بمجرد فتح مصدرها.',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.erreurTitre' => 'تعذّرت قراءة التنبيهات',
 			'alertes.sansDonnees' => 'تعذّرت قراءة التنبيهات',
 			'alertes.cloche' => 'التنبيهات',
@@ -39072,8 +39318,6 @@ extension on TraductionsAr {
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.jour' => 'يوم الحصة الجديدة',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.heure' => 'الساعة',
 			'snt.planning.quand' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'snt.planning.choixManquant' => 'اختاروا يوم الحصة الجديدة وساعتها.',
@@ -39499,6 +39743,8 @@ extension on TraductionsAr {
 			'candidatsFlux.publication.retirerConsequence' => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.',
 			'candidatsFlux.publication.echec' => 'لم يتأكّد تسجيل اختيارك. أعد المحاولة.',
 			'candidatsFlux.publication.lectureEchec' => 'تعذّرت قراءة موافقتك على النشر.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.publication.nonPublie' => 'نص الموافقة على النشر لم يُنشر بعد.',
 			'candidatsFlux.publication.horsLigne' => 'يمكن تسجيل اختيارك عند عودة الاتصال.',
 			'candidatsFlux.photo.titre' => 'صورتك',
@@ -39586,8 +39832,6 @@ extension on TraductionsAr {
 			'suiviPedagogique.souratesDe' => ({required Object validees, required Object total}) => '⁨${validees}⁩ من ⁨${total}⁩',
 			'suiviPedagogique.revision' => 'المراجعة أسبوعيًا',
 			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '⁨${heures}⁩ س',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.repetitions' => 'التكرارات المقدّرة',
 			'suiviPedagogique.repetitionsNombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ تكرار', one: '⁨${n}⁩ تكرار', two: '⁨${n}⁩ تكرار', few: '⁨${n}⁩ تكرارات', many: '⁨${n}⁩ تكرارًا', other: '⁨${n}⁩ تكرار', ), 
 			'suiviPedagogique.dernierJalon' => 'آخر محطة',
@@ -40013,6 +40257,8 @@ extension on TraductionsAr {
 			'motifs.clotureClasse.transfert' => 'نقل الطلاب إلى فصول أخرى',
 			'motifs.clotureClasse.remplacement' => 'غياب المعلّم دون استبدال',
 			'motifs.clotureClasse.parErreur' => 'فصل أُنشئ بالخطأ',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.refusDemande.aucunEnseignant' => 'لا معلّم متاح في هذا الموعد',
 			'motifs.refusDemande.exceptionnel' => 'تغيير المعلّم يبقى استثنائيًا',
 			'motifs.refusDemande.reglePlateforme' => 'تسري قاعدة المنصة',
@@ -40103,8 +40349,6 @@ extension on TraductionsAr {
 			'presentationTuteur.accueil.voir' => 'الرد',
 			'presentationTuteur.notification' => ({required Object prenom}) => 'يطلب ⁨${prenom}⁩ العرض العادي',
 			'reprisesAdmin.onglet' => 'طلبات الاستلام',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.titre' => 'استلام الأسرة',
 			'reprisesAdmin.sousTitre' => 'طلبات بالغ ثانٍ ليصبح صاحب حساب الأسرة. تقرر الإدارة.',
 			'reprisesAdmin.demandeur' => 'مقدِّم الطلب',

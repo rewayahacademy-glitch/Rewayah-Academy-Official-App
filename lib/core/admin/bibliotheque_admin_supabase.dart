@@ -13,6 +13,7 @@
 // (RACCORDEMENT-1016, migration 20261016102100), sous controle de revision ;
 // le serveur rend `peutModifier` tant que le support n'est pas retire.
 
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -80,6 +81,9 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
       throw const BibliothequeHorsLigne();
     }
   }
+
+  @override
+  Future<List<String>> reglagesDepotManquants() => _depot.reglagesManquants();
 
   @override
   Future<FacettesCatalogue> facettes() async {
@@ -269,6 +273,87 @@ class BibliothequeAdminSupabase implements PortBibliothequeAdmin {
       ),
       'PublicationEnConflit' => const PublicationEnConflit(),
       _ => throw const FormatException('Resultat de publication inconnu.'),
+    };
+  }
+
+  @override
+  Future<ResultatPublication> deposerDirect({
+    required String supportId,
+    required int revisionAttendue,
+    required String cle,
+    required AccesDocument acces,
+    required bool droitTiers,
+    PublicDocument? public,
+  }) async {
+    final Map<String, dynamic> r;
+    try {
+      r = await _rpc('library_depot_direct', <String, dynamic>{
+        'p_resource_id': supportId,
+        'p_revision_attendue': revisionAttendue,
+        'p_cle': cle,
+        'p_acces': acces.name,
+        'p_droit_tiers': droitTiers,
+        'p_public': public?.name,
+      });
+    } on PostgrestException catch (e) {
+      // La fonction n'existe pas encore sur le serveur : la migration du lot
+      // n'est pas installee. Ce n'est pas un echec a retenter.
+      if (e.code == 'PGRST202' || e.code == '42883') {
+        throw const DepotDirectAbsent();
+      }
+      // Tout ou rien : la publication est bloquee, rien n'a ete ecrit. Le
+      // controle arrive dans le detail de l'exception.
+      if (e.code == '55000') {
+        return PublicationBloquee(controleDuDetail(e.details));
+      }
+      rethrow;
+    }
+    return switch (r['resultat']) {
+      'VersionPubliee' => VersionPubliee(
+        revision: (r['revision'] as num).toInt(),
+      ),
+      'PublicationEnConflit' => const PublicationEnConflit(),
+      _ => throw const FormatException('Resultat de publication inconnu.'),
+    };
+  }
+
+  /// Le controle porte par le detail d'un « depot bloque » ; vide si le
+  /// detail est illisible (l'ecran dit alors le blocage sans le detailler).
+  static ControleVersion controleDuDetail(Object? detail) {
+    try {
+      final Object? json = detail is String ? jsonDecode(detail) : detail;
+      if (json is Map && json['criteres'] is List) {
+        return controleJson(Map<String, dynamic>.from(json));
+      }
+    } on FormatException {
+      // Detail illisible : controle vide.
+    }
+    return const ControleVersion(
+      criteres: <CritereControle>[],
+      publiable: false,
+    );
+  }
+
+  @override
+  Future<ResultatEcriture> changerAcces({
+    required String supportId,
+    required AccesDocument acces,
+    required int revisionAttendue,
+  }) async {
+    final Map<String, dynamic> r = await _rpc(
+      'library_changer_acces',
+      <String, dynamic>{
+        'p_resource_id': supportId,
+        'p_acces': acces.name,
+        'p_revision_attendue': revisionAttendue,
+      },
+    );
+    return switch (r['resultat']) {
+      'EcritureFaite' => EcritureFaite(
+        revision: (r['revision'] as num).toInt(),
+      ),
+      'EcritureEnConflit' => const EcritureEnConflit(),
+      _ => throw const FormatException('Resultat d ecriture inconnu.'),
     };
   }
 

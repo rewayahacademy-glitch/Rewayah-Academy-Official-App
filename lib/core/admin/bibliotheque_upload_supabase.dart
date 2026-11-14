@@ -80,7 +80,10 @@ class BibliothequeUploadSupabase {
     } on FunctionException catch (erreur) {
       // Statut 0 : la fonction n'a pas ete jointe (aucune reponse).
       if (erreur.status == 0) throw const BibliothequeHorsLigne();
-      throw DepotImpossible(erreurPourStatut(erreur.status, erreur.details));
+      throw DepotImpossible(
+        erreurPourStatut(erreur.status, erreur.details),
+        reglage: reglageDe(erreur.details),
+      );
     } on ErreurBibliotheque {
       rethrow;
     } on TimeoutException {
@@ -171,6 +174,7 @@ class BibliothequeUploadSupabase {
       yield ProgressionUpload(
         phase: PhaseUpload.echec,
         erreur: erreurPourStatut(erreur.status, erreur.details),
+        reglage: reglageDe(erreur.details),
       );
     } on TimeoutException {
       _depots.remove(uploadId);
@@ -205,7 +209,10 @@ class BibliothequeUploadSupabase {
     } on FunctionException catch (erreur) {
       // Statut 0 : la fonction n'a pas ete jointe (aucune reponse).
       if (erreur.status == 0) throw const BibliothequeHorsLigne();
-      throw DepotImpossible(erreurPourStatut(erreur.status, erreur.details));
+      throw DepotImpossible(
+        erreurPourStatut(erreur.status, erreur.details),
+        reglage: reglageDe(erreur.details),
+      );
     } catch (_) {
       throw const BibliothequeHorsLigne();
     }
@@ -240,8 +247,11 @@ class BibliothequeUploadSupabase {
       // 0 : le client n'a recu aucune reponse (`FunctionsFetchException`).
       0 => ErreurUpload.reseau,
       401 => ErreurUpload.session,
-      // Un compte sans droit lit toujours un refus, jamais un reglage.
-      403 => ErreurUpload.refuse,
+      // Un compte sans droit lit toujours un refus, jamais un reglage. Les 403
+      // d'une ancienne fonction (« depot refuse », « intention refusee »,
+      // « confirmation refusee ») couvraient toutes les causes : ils ne disent
+      // pas « votre compte n'en a pas le droit », ils tombent sur `service`.
+      403 when motif.contains('non autorise') => ErreurUpload.refuse,
       409 when motif.contains('deja depose') => ErreurUpload.dejaDepose,
       409 => ErreurUpload.nonModifiable,
       410 => ErreurUpload.expire,
@@ -262,6 +272,29 @@ class BibliothequeUploadSupabase {
       // le service, jamais « le type du fichier ».
       _ => ErreurUpload.service,
     };
+  }
+
+  /// Le NOM du reglage en cause, quand la fonction le donne (`reglage`).
+  /// Borne a un nom de reglage plausible : jamais un texte libre a l'ecran.
+  static String? reglageDe(Object? details) {
+    final Object? nom = details is Map ? details['reglage'] : null;
+    if (nom is! String) return null;
+    return RegExp(r"^[A-Za-z0-9_. ()',-]{3,120}$").hasMatch(nom) ? nom : null;
+  }
+
+  /// Les reglages de production qui manquent au depot, par leur nom.
+  Future<List<String>> reglagesManquants() async {
+    final FunctionResponse reponse = await _supabase.functions.invoke(
+      'bibliotheque-upload',
+      body: const <String, Object?>{'action': 'reglages'},
+    );
+    final Object? corps = reponse.data;
+    final Object? liste = corps is Map ? corps['manquants'] : null;
+    if (liste is! List) throw const FormatException('Reglages illisibles.');
+    return <String>[
+      for (final Object? nom in liste)
+        if (reglageDe(<String, Object?>{'reglage': nom}) case final String n) n,
+    ];
   }
 
   /// Le nom neutre envoye a la place du nom du fichier : `document.<ext>`.

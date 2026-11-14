@@ -545,6 +545,24 @@ declare
     -- et une ligne d'audit (log_sensitive_access, action sourate_retiree).
     -- Relue par l'agent du lot le 12/11/2026.
     'retirer_sourate_validee(uuid,integer,text)',
+    -- DEPOT-SIMPLE (migration 20261124700000) : le depot direct de la
+    -- direction. Garde positive app_account_valid() ET app_role() = 'admin' ;
+    -- 42501 sinon. Ce qu'elle peut ecrire : les droits de la version brouillon
+    -- du document (valeurs par defaut la ou rien n'est saisi, approbation
+    -- tracee : acteur, date), la visibilite 'admin' -> 'inscrits', une ligne
+    -- d'audit (library_direct_deposit), les tranches d'age du public choisi,
+    -- puis la publication par library_publier_version (meme controle, meme
+    -- idempotence). Tout ou rien : une publication bloquee leve et n'ecrit
+    -- rien. Hors du rayon des cours, refuse sans la declaration du droit de
+    -- diffuser. Relue par l'agent du lot le 13/11/2026.
+    'library_depot_direct(uuid,integer,text,text,boolean,text)',
+    -- DEPOT-SIMPLE (meme migration) : changer l'acces d'un document sans
+    -- redeposer son fichier. Garde positive app_account_valid() ET app_role() =
+    -- 'admin' ; 42501 sinon. Ce qu'elle peut ecrire : l'usage « telechargement »
+    -- des droits de la version courante (ou du dernier brouillon), la revision
+    -- du document, une ligne d'audit (library_access_changed). Jamais le
+    -- fichier ni la version. Relue par l'agent du lot le 13/11/2026.
+    'library_changer_acces(uuid,text,integer)',
     -- HORS-SALLE-2 (migration 20261124200000) : l'accord du journal des
     -- sorties de l'application, par eleve. Garde positive
     -- private.sorties_peut_decider (app_account_valid() ET eleve reconnu par

@@ -89,7 +89,19 @@ class FormatsAcceptes {
 abstract interface class SelecteurFichierSupport {
   /// Demande un fichier de [type]. `null` quand la personne renonce.
   Future<FichierChoisi?> choisir(TypeRessource type);
+
+  /// Demande un fichier sans dire son type (DEPOT-SIMPLE) : l'application le
+  /// lit ensuite dans le contenu. `null` quand la personne renonce.
+  Future<FichierChoisi?> choisirDocument();
 }
+
+/// Les extensions proposees quand le type n'est pas demande : celles que le
+/// depot accepte, et celles d'une video pour pouvoir dire, en mots simples,
+/// qu'une video s'ajoute par son lien.
+const List<String> extensionsDocument = <String>[
+  'pdf', 'png', 'jpg', 'jpeg', 'webp', 'mp3', 'm4a', 'ogg', //
+  'mp4', 'mov', 'webm', 'mkv', 'avi',
+];
 
 /// Le selecteur reel, par la boite de dialogue du systeme.
 class SelecteurFichierSupportNatif implements SelecteurFichierSupport {
@@ -112,6 +124,21 @@ class SelecteurFichierSupportNatif implements SelecteurFichierSupport {
       nom: fichier.name,
       octets: await fichier.readAsBytes(),
       mime: formats.mimes[extension] ?? 'application/octet-stream',
+    );
+  }
+
+  @override
+  Future<FichierChoisi?> choisirDocument() async {
+    final PlatformFile? fichier = await FilePicker.pickFile(
+      type: FileType.custom,
+      allowedExtensions: extensionsDocument,
+    );
+    if (fichier == null) return null;
+    return FichierChoisi(
+      nom: fichier.name,
+      octets: await fichier.readAsBytes(),
+      // Le type reel se lit dans le contenu (`lireFichier`), pas ici.
+      mime: 'application/octet-stream',
     );
   }
 }

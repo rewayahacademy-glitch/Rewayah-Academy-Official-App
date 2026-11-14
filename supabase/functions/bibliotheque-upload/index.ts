@@ -15,6 +15,12 @@ import {
 } from "../_shared/r2/bibliotheque_upload.ts";
 import { stockageConfigure } from "../_shared/r2/domaines.ts";
 import {
+  corpsRefusReglage,
+  NOM_SECRET_CONFIRMATION,
+  reglageManquant,
+  reglagesDepot,
+} from "../_shared/r2/reglages_depot.ts";
+import {
   journaliser,
   signerDepot,
   signerLecture,
@@ -70,6 +76,15 @@ Deno.serve(async (requete: Request) => {
   }
 
   const action = corps.action;
+  if (action === "reglages") {
+    // Les reglages de production du depot : LEQUEL manque, par son nom, jamais
+    // sa valeur. Direction seulement : la base refuse tout autre compte.
+    const { data, error } = await compte.sql.rpc("bibliotheque_depot_actif");
+    if (error) return refus("depot non autorise", 403);
+    return json(
+      await reglagesDepot(requete.headers.get("Origin"), data === true),
+    );
+  }
   if (action === "demander") {
     return await demanderDepot(compte, corps);
   }
@@ -114,7 +129,11 @@ async function demanderDepot(
   corps: Record<string, unknown>,
 ): Promise<Response> {
   if (!stockageConfigure("priveApplicatif")) {
-    return refus("stockage indisponible", 503);
+    return await refusReglage(
+      compte,
+      "stockage indisponible",
+      reglageManquant(["priveApplicatif"]),
+    );
   }
   const supportId = typeof corps.support_id === "string"
     ? corps.support_id.trim()
@@ -211,7 +230,8 @@ async function confirmerDepot(
   if (!UUID.test(id)) return refus("intention invalide");
   let secretConfirmation: string;
   try {
-    secretConfirmation = Deno.env.get("LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY") ?? "";
+    secretConfirmation = Deno.env.get("LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY") ??
+      "";
   } catch {
     return refus("confirmation indisponible", 503);
   }
@@ -219,7 +239,11 @@ async function confirmerDepot(
     new TextEncoder().encode(secretConfirmation).byteLength < 32 ||
     secretConfirmation.trim() !== secretConfirmation
   ) {
-    return refus("confirmation indisponible", 503);
+    return await refusReglage(
+      compte,
+      "confirmation indisponible",
+      NOM_SECRET_CONFIRMATION,
+    );
   }
   const debut = Date.now();
   const { data, error } = await compte.sql.rpc("lire_upload_bibliotheque", {
@@ -233,7 +257,11 @@ async function confirmerDepot(
     ? "supports" as const
     : "priveApplicatif" as const;
   if (!stockageConfigure(domaineTemp) || !stockageConfigure(domaineFinal)) {
-    return refus("stockage indisponible", 503);
+    return await refusReglage(
+      compte,
+      "stockage indisponible",
+      reglageManquant([domaineTemp, domaineFinal]),
+    );
   }
   try {
     const cleTemp = verifierCle(domaineTemp, intention.cle_temporaire);
@@ -298,7 +326,7 @@ async function confirmerDepot(
       p_sha256_reel: empreinte,
       p_confirmation_signature: confirmationSignature,
     });
-    if (confirme.error) return refusConfirmation(confirme.error);
+    if (confirme.error) return await refusConfirmation(compte, confirme.error);
     journaliser({
       domaine: domaineFinal,
       operation: "depot",
@@ -327,11 +355,36 @@ async function confirmerDepot(
  * reconnait pas n'est pas la faute de la personne : le secret de confirmation
  * n'est pas le meme des deux cotes. C'est un reglage du serveur, et la reponse
  * le dit (503 « confirmation mal reglee ») au lieu d'un refus (DEPOT-SIMPLE). */
-function refusConfirmation(erreur: { message?: string }): Response {
+async function refusConfirmation(
+  compte: NonNullable<Awaited<ReturnType<typeof appelantR2>>>,
+  erreur: { message?: string },
+): Promise<Response> {
   if ((erreur.message ?? "").includes("ConfirmationNonAutorisee")) {
-    return refus("confirmation mal reglee", 503);
+    return await refusReglage(
+      compte,
+      "confirmation mal reglee",
+      NOM_SECRET_CONFIRMATION,
+    );
   }
   return refusBase(erreur);
+}
+
+/** Un 503 qui nomme le reglage en cause (son NOM, jamais sa valeur), pour que
+ * la direction sache lequel poser sans le decouvrir par des echecs. Le nom
+ * n'est rendu qu'APRES le controle de droit : la base dit si l'appelant est la
+ * direction (`bibliotheque_depot_actif` refuse tout autre compte). Un eleve ou
+ * un enseignant recoit le refus, jamais un nom de reglage. */
+async function refusReglage(
+  compte: NonNullable<Awaited<ReturnType<typeof appelantR2>>>,
+  message: string,
+  reglage: string | null,
+): Promise<Response> {
+  let estDirection = false;
+  if (reglage !== null) {
+    const { error } = await compte.sql.rpc("bibliotheque_depot_actif");
+    estDirection = !error;
+  }
+  return json(corpsRefusReglage(message, reglage, estDirection), 503);
 }
 
 /** Le refus d'un appel a la base : son motif vrai, pas un « 403 » pour tout
@@ -373,7 +426,11 @@ async function demanderVignette(
   corps: Record<string, unknown>,
 ): Promise<Response> {
   if (!stockageConfigure("priveApplicatif")) {
-    return refus("stockage indisponible", 503);
+    return await refusReglage(
+      compte,
+      "stockage indisponible",
+      reglageManquant(["priveApplicatif"]),
+    );
   }
   const documentId = typeof corps.support_id === "string"
     ? corps.support_id.trim()
@@ -462,7 +519,8 @@ async function confirmerVignette(
   if (!UUID.test(id)) return refus("intention invalide");
   let secretConfirmation: string;
   try {
-    secretConfirmation = Deno.env.get("LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY") ?? "";
+    secretConfirmation = Deno.env.get("LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY") ??
+      "";
   } catch {
     return refus("confirmation indisponible", 503);
   }
@@ -470,7 +528,11 @@ async function confirmerVignette(
     new TextEncoder().encode(secretConfirmation).byteLength < 32 ||
     secretConfirmation.trim() !== secretConfirmation
   ) {
-    return refus("confirmation indisponible", 503);
+    return await refusReglage(
+      compte,
+      "confirmation indisponible",
+      NOM_SECRET_CONFIRMATION,
+    );
   }
   const debut = Date.now();
   const { data, error } = await compte.sql.rpc("lire_vignette_bibliotheque", {
@@ -482,7 +544,11 @@ async function confirmerVignette(
   if (
     !stockageConfigure("priveApplicatif") || !stockageConfigure("supports")
   ) {
-    return refus("stockage indisponible", 503);
+    return await refusReglage(
+      compte,
+      "stockage indisponible",
+      reglageManquant(["priveApplicatif", "supports"]),
+    );
   }
   try {
     const cleTemp = verifierCle(
@@ -521,7 +587,10 @@ async function confirmerVignette(
       });
       return refus("contenu depose invalide", 422);
     }
-    const cleFinale = verifierCle("supports", String(intention.cle_finale ?? ""));
+    const cleFinale = verifierCle(
+      "supports",
+      String(intention.cle_finale ?? ""),
+    );
     const signee = await signerDepot("supports", cleFinale, {
       typeMime: mimeReel,
       tailleOctets: octets.byteLength,
@@ -548,7 +617,7 @@ async function confirmerVignette(
       p_sha256_reel: empreinte,
       p_confirmation_signature: confirmationSignature,
     });
-    if (confirme.error) return refusConfirmation(confirme.error);
+    if (confirme.error) return await refusConfirmation(compte, confirme.error);
     journaliser({
       domaine: "supports",
       operation: "depot",
