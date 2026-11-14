@@ -1174,8 +1174,8 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get lienAilleursPhrase => 'لا يُفتح رابط الدخول إلا في المتصفح الذي طلبته منه. افتحه على ذلك الجهاز: إن كنت قد بدأت تسجيلًا، فإجاباتك محفوظة هناك. وإلا فاطلب هنا رابطًا جديدًا.';
 	@override String get avoirCodeInvitation => 'لدي رمز دعوة';
 	@override String get codeInvitation => 'رمز الدعوة';
-	@override String get codeInvitationIndice => 'XXXX-XXXX-XXXX';
-	@override String codeInvitationReconnu({required Object code}) => 'تم التعرّف على رمز الدعوة ${code}';
+	@override String get codeInvitationIndice => 'الرمز كما ورد في الرسالة';
+	@override String codeInvitationReconnu({required Object code}) => 'تم التعرّف على رمز الدعوة ⁨${code}⁩';
 	@override String get erreurServeur => 'تعذّر إرسال الرابط. أعد المحاولة بعد قليل؛ وإن تكرر ذلك فاكتب إلى الأكاديمية.';
 	@override String get invitationCreationImpossible => 'تعذّر إنشاء حسابك بهذه الدعوة. قد يكون الرمز منتهي الصلاحية أو سبق استعماله، أو لا يطابق هذا العنوان. تحقق من العنوان الذي أدخلته؛ وإلا فاطلب من الأكاديمية دعوة جديدة.';
 	@override String get modeConnexion => 'لدي حساب';
@@ -36023,8 +36023,8 @@ extension on TraductionsAr {
 			'connexion.lienAilleursPhrase' => 'لا يُفتح رابط الدخول إلا في المتصفح الذي طلبته منه. افتحه على ذلك الجهاز: إن كنت قد بدأت تسجيلًا، فإجاباتك محفوظة هناك. وإلا فاطلب هنا رابطًا جديدًا.',
 			'connexion.avoirCodeInvitation' => 'لدي رمز دعوة',
 			'connexion.codeInvitation' => 'رمز الدعوة',
-			'connexion.codeInvitationIndice' => 'XXXX-XXXX-XXXX',
-			'connexion.codeInvitationReconnu' => ({required Object code}) => 'تم التعرّف على رمز الدعوة ${code}',
+			'connexion.codeInvitationIndice' => 'الرمز كما ورد في الرسالة',
+			'connexion.codeInvitationReconnu' => ({required Object code}) => 'تم التعرّف على رمز الدعوة ⁨${code}⁩',
 			'connexion.erreurServeur' => 'تعذّر إرسال الرابط. أعد المحاولة بعد قليل؛ وإن تكرر ذلك فاكتب إلى الأكاديمية.',
 			'connexion.invitationCreationImpossible' => 'تعذّر إنشاء حسابك بهذه الدعوة. قد يكون الرمز منتهي الصلاحية أو سبق استعماله، أو لا يطابق هذا العنوان. تحقق من العنوان الذي أدخلته؛ وإلا فاطلب من الأكاديمية دعوة جديدة.',
 			'connexion.modeConnexion' => 'لدي حساب',
