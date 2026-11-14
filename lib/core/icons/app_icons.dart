@@ -1125,6 +1125,68 @@ abstract final class AppIcons {
     IconData(0xe46a, fontFamily: _actif),
   );
 
+  // --- ESPACE-APPRENDRE (lot 5, 12/11/2026) : la planche de documents -----
+
+  /// La destination « Apprendre » de la barre de l'eleve : Phosphor
+  /// `graduation-cap` (0xe62c).
+  static const AppIcon apprendre = AppIcon._(
+    IconData(0xe62c, fontFamily: _repos),
+    IconData(0xe62c, fontFamily: _actif),
+  );
+
+  /// Affichage en grille : Phosphor `squares-four` (0xe464).
+  static const AppIcon grille = AppIcon._(
+    IconData(0xe464, fontFamily: _repos),
+    IconData(0xe464, fontFamily: _actif),
+  );
+
+  /// Affichage en liste : Phosphor `list-bullets` (0xe2f2).
+  static const AppIcon liste = AppIcon._(
+    IconData(0xe2f2, fontFamily: _repos),
+    IconData(0xe2f2, fontFamily: _actif),
+  );
+
+  // `audio` et `video` : ceux de la Bibliotheque une (BIBLIOTHEQUE-UNE, lot 3),
+  // une seule icone par type (ESPACE-APPRENDRE les reprend).
+
+  /// Un lien qui s'ouvre hors de l'application : Phosphor `arrow-square-out`
+  /// (0xe5de).
+  static const AppIcon lienExterne = AppIcon._(
+    IconData(0xe5de, fontFamily: _repos),
+    IconData(0xe5de, fontFamily: _actif),
+  );
+
+  /// Un document (texte, page) : Phosphor `file-text` (0xe23a).
+  static const AppIcon document = AppIcon._(
+    IconData(0xe23a, fontFamily: _repos),
+    IconData(0xe23a, fontFamily: _actif),
+  );
+
+  /// Mon livret (resultats, bilans, attestations) : Phosphor `medal`
+  /// (0xe320).
+  static const AppIcon livret = AppIcon._(
+    IconData(0xe320, fontFamily: _repos),
+    IconData(0xe320, fontFamily: _actif),
+  );
+
+  /// Une date de l'ecole : Phosphor `calendar-blank` (0xe10a).
+  static const AppIcon calendrier = AppIcon._(
+    IconData(0xe10a, fontFamily: _repos),
+    IconData(0xe10a, fontFamily: _actif),
+  );
+
+  /// Les objectifs d'une etape : Phosphor `target` (0xe47c).
+  static const AppIcon objectifs = AppIcon._(
+    IconData(0xe47c, fontFamily: _repos),
+    IconData(0xe47c, fontFamily: _actif),
+  );
+
+  /// Le chemin des etapes : Phosphor `path` (0xe39c).
+  static const AppIcon chemin = AppIcon._(
+    IconData(0xe39c, fontFamily: _repos),
+    IconData(0xe39c, fontFamily: _actif),
+  );
+
   /// Copier un lien dans le presse-papiers : Phosphor `copy` (0xe1ca).
   static const AppIcon copier = AppIcon._(
     IconData(0xe1ca, fontFamily: _repos),

@@ -41,7 +41,7 @@ Future<void> _poser(
 void main() {
   test('K-59 : les phrases dites a l appui d un Rejoindre en attente ne '
       'redisent jamais « hors ligne » (seul le bandeau le dit)', () async {
-    for (final AppLocale langue in AppLocale.values) {
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
       final Traductions tr = await langue.build();
       for (final String phrase in <String>[
         tr.eleve.accueil.horsLigneDetail,

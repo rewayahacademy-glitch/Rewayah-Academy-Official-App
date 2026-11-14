@@ -1058,7 +1058,11 @@ void main() {
           t.admin.groupes.c1.prisNommee(
             nom: 'Hamza Sow',
             classe: 'Al-Asr',
-            quand: quandConflit(const ConflitHoraire(jour: 3, heure: 18)),
+            // HORLOGE-ET-LIEU (13/11/2026) : l'heure saisie est dite avec le fuseau
+            // dans lequel elle est saisie (ici celui de l'enseignant choisi).
+            quand: quandConflit(
+              const ConflitHoraire(jour: 3, heure: 18, fuseau: 'Europe/Paris'),
+            ),
           ),
         ),
         findsOneWidget,

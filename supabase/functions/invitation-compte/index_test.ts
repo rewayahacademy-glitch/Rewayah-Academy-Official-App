@@ -40,7 +40,14 @@ Deno.test('l IP : un en-tete vide donne inconnue', () => {
 
 const demande: Demande = { type: 'foyer', code: 'ABCD-EFGH-JKMN', adresse: 'ami@example.com' }
 
-function porte(debit: boolean, autorise: boolean, creation: 'cree' | 'existe' | 'echec', consomme = true) {
+function porte(
+  debit: boolean,
+  autorise: boolean,
+  creation: 'cree' | 'existe' | 'echec',
+  consomme = true,
+  ancien: string | null = null,
+  liberation = true,
+) {
   const appels: string[] = []
   const p: PorteInvitation = {
     debit: (_a, ip) => {
@@ -50,6 +57,14 @@ function porte(debit: boolean, autorise: boolean, creation: 'cree' | 'existe' | 
     autoriser: (d) => {
       appels.push(`autoriser:${d.type}`)
       return Promise.resolve(autorise)
+    },
+    ancienCompteALiberer: (d) => {
+      appels.push(`ancien:${d.type}`)
+      return Promise.resolve(ancien)
+    },
+    libererAdresse: (id) => {
+      appels.push(`liberer:${id}`)
+      return Promise.resolve(liberation)
     },
     creerCompte: (a) => {
       appels.push(`creer:${a}`)
@@ -96,4 +111,56 @@ Deno.test('createUser echoue : le code n est pas consomme (il resservira)', asyn
 Deno.test('compte cree mais consommation refusee : le compte reste cree', async () => {
   const { p } = porte(true, true, 'cree', false)
   assertEquals(await traiter(demande, '203.0.113.7', p), 'cree')
+})
+
+const equipe: Demande = { type: 'equipe', code: 'ABCD-EFGH-JKMN', adresse: 'prof@example.com' }
+const candidat: Demande = { type: 'candidat', code: 'ABCD-EFGH-JKMN', adresse: 'cand@example.com' }
+
+const ANCIEN = '5e9b0000-0000-4000-8000-000000000001'
+
+Deno.test('equipe : adresse d un compte supprime : liberee par l API admin, puis compte neuf, puis code consomme (dans cet ordre)', async () => {
+  const { p, appels } = porte(true, true, 'cree', true, ANCIEN)
+  assertEquals(await traiter(equipe, '203.0.113.7', p), 'cree')
+  assertEquals(appels, [
+    'debit:203.0.113.7', 'ancien:equipe', `liberer:${ANCIEN}`,
+    'autoriser:equipe', 'creer:prof@example.com', 'consommer:equipe',
+  ])
+})
+
+Deno.test('candidat : meme liberation de l adresse', async () => {
+  const { p, appels } = porte(true, true, 'cree', true, ANCIEN)
+  assertEquals(await traiter(candidat, '203.0.113.7', p), 'cree')
+  assertEquals(appels.slice(0, 4), ['debit:203.0.113.7', 'ancien:candidat', `liberer:${ANCIEN}`, 'autoriser:candidat'])
+})
+
+Deno.test('liberation en echec : rien n est cree ni consomme', async () => {
+  const { p, appels } = porte(true, true, 'cree', true, ANCIEN, false)
+  assertEquals(await traiter(equipe, '203.0.113.7', p), 'rien')
+  assertEquals(appels, ['debit:203.0.113.7', 'ancien:equipe', `liberer:${ANCIEN}`])
+})
+
+Deno.test('equipe sans ancien compte : aucune liberation, parcours normal', async () => {
+  const { p, appels } = porte(true, true, 'cree')
+  assertEquals(await traiter(equipe, '203.0.113.7', p), 'cree')
+  assertEquals(appels, ['debit:203.0.113.7', 'ancien:equipe', 'autoriser:equipe', 'creer:prof@example.com', 'consommer:equipe'])
+})
+
+Deno.test('foyer : jamais de recherche ni de liberation', async () => {
+  const { p, appels } = porte(true, true, 'cree', true, ANCIEN)
+  assertEquals(await traiter(demande, '203.0.113.7', p), 'cree')
+  assertEquals(appels.some((a) => a.startsWith('ancien:') || a.startsWith('liberer:')), false)
+})
+
+Deno.test('enseignant et comptable (types directs) : jamais de liberation', async () => {
+  for (const type of ['enseignant', 'comptable'] as const) {
+    const { p, appels } = porte(true, false, 'cree', true, ANCIEN)
+    assertEquals(await traiter({ ...equipe, type }, '203.0.113.7', p), 'rien')
+    assertEquals(appels.some((a) => a.startsWith('ancien:') || a.startsWith('liberer:')), false)
+  }
+})
+
+Deno.test('debit atteint : ni recherche ni liberation', async () => {
+  const { p, appels } = porte(false, true, 'cree', true, ANCIEN)
+  assertEquals(await traiter(equipe, '203.0.113.7', p), 'rien')
+  assertEquals(appels, ['debit:203.0.113.7'])
 })

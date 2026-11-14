@@ -35,8 +35,14 @@ class ZoneSupport extends StatelessWidget {
     this.serre = false,
     this.contenu,
     this.sceneIci = true,
+    this.geste,
     super.key,
   });
+
+  /// BIBLIOTHEQUE-SALLE : le geste de la Bibliotheque de cet appareil (le
+  /// panneau sur ordinateur, le tiroir au telephone). Le bouton de la scene
+  /// le fait au lieu de son geste d'origine.
+  final VoidCallback? geste;
 
   final VueSeance vue;
 
@@ -85,7 +91,7 @@ class ZoneSupport extends StatelessWidget {
         return _ScenePremierPlan(
           scene: scene,
           onRevenir: media.onBasculerScene,
-          action: media.actionScene,
+          action: ActionSousLaScene.avecGeste(media.actionScene, geste),
         );
       }
     }
@@ -365,7 +371,7 @@ double reserveSousVignette({
 /// l'enseignant.
 bool vignetteEnseignantPosee(BuildContext context, VueSeance vue) =>
     vue.voitVignetteSurSupport &&
-    !(vue.role == RoleSeance.enseignant && CompositionSalle.courte(context));
+    !(vue.conduitLaSeance && CompositionSalle.courte(context));
 
 /// TRANSITIONS-SALLE : l'identite de ce que la zone montre (la scene, le
 /// tableau, un support et lequel, rien), pour le fondu d'un support a
@@ -491,7 +497,7 @@ extension on ZoneSupport {
                   // toujours celle de l'enseignant.
                   final bool vignette =
                       video &&
-                      !(vue.role == RoleSeance.enseignant &&
+                      !(vue.conduitLaSeance &&
                           dessus > 0 &&
                           ratio != null &&
                           rectanglePage(
@@ -642,7 +648,15 @@ class _ScenePremierPlan extends StatelessWidget {
 /// jusqu'a la fin de sa sortie. Rien sans scene.
 class SceneDeLaClasse extends StatelessWidget {
   /// Cree la scene.
-  const SceneDeLaClasse({super.key});
+  const SceneDeLaClasse({this.geste, this.sansAction = false, super.key});
+
+  /// Le geste de la Bibliotheque ([ZoneSupport.geste]).
+  final VoidCallback? geste;
+
+  /// Vrai quand la Bibliotheque est deja ouverte a cote de la scene : le
+  /// bouton du milieu n'aurait rien a ouvrir, il n'est donc pas rendu (un
+  /// bouton qui ne peut pas aboutir n'est pas affiche).
+  final bool sansAction;
 
   @override
   Widget build(BuildContext context) {
@@ -652,7 +666,9 @@ class SceneDeLaClasse extends StatelessWidget {
     return _ScenePremierPlan(
       scene: scene,
       onRevenir: media.onBasculerScene,
-      action: media.actionScene,
+      action: sansAction
+          ? null
+          : ActionSousLaScene.avecGeste(media.actionScene, geste),
     );
   }
 }

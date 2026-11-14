@@ -16,6 +16,8 @@ import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/offres/affectation_refusee.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
+import '../../core/tc_horloge/apercu_creneau.dart';
+import '../../core/tc_horloge/creneau_chez_moi.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -87,7 +89,12 @@ class _FeuilleCreneauEtat extends ConsumerState<FeuilleCreneau> {
       setState(() => _erreur = t.admin.groupes.formulaire.manqueCreneau);
       return;
     }
-    if (jour == widget.groupe.creneau.jour &&
+    // Saisie a l'heure de la personne (ou de La Mecque a defaut) : le serveur
+    // convertit vers le fuseau de la classe et refuse un doublon. Le doublon
+    // evident (meme fuseau, meme creneau d'ancrage) se dit tout de suite.
+    final String fuseau = fuseauDeSaisie(ref, widget.groupe.creneau.fuseau);
+    if (fuseau == widget.groupe.creneau.fuseau &&
+        jour == widget.groupe.creneau.jour &&
         heure == widget.groupe.creneau.heure) {
       setState(() => _erreur = c.dejaLa);
       return;
@@ -99,7 +106,13 @@ class _FeuilleCreneauEtat extends ConsumerState<FeuilleCreneau> {
     try {
       final int n = await ref
           .read(serviceCreneauxClasseProvider)
-          .ajouter(groupeId: widget.groupe.id, jour: jour, heure: heure);
+          .ajouter(
+            groupeId: widget.groupe.id,
+            jour: jour,
+            heure: heure,
+            fuseau: fuseau,
+            fuseauClasse: widget.groupe.creneau.fuseau,
+          );
       if (n == 0) {
         // Le serveur avait deja ce creneau (ou la Classe n'a pas encore son
         // enseignant) : rien n'a change, la phrase le dit.
@@ -118,6 +131,18 @@ class _FeuilleCreneauEtat extends ConsumerState<FeuilleCreneau> {
           ),
         );
       }
+    } on CreneauRefuse catch (refus) {
+      if (mounted) {
+        setState(
+          () => _erreur = switch (refus.motif) {
+            MotifRefusCreneau.conversionIndisponible =>
+              t.admin.groupes.reglagesClasse.refusConversion,
+            MotifRefusCreneau.rechargerApplication =>
+              t.admin.groupes.reglagesClasse.refusRecharger,
+            _ => c.erreur,
+          },
+        );
+      }
     } catch (_) {
       if (mounted) setState(() => _erreur = c.erreur);
     } finally {
@@ -130,6 +155,10 @@ class _FeuilleCreneauEtat extends ConsumerState<FeuilleCreneau> {
     final TextTheme textes = Theme.of(context).textTheme;
     final f = t.admin.groupes.formulaire;
     final c = t.admin.groupes.creneau;
+    final String fuseauSaisie = fuseauDeSaisie(
+      ref,
+      widget.groupe.creneau.fuseau,
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -173,7 +202,15 @@ class _FeuilleCreneauEtat extends ConsumerState<FeuilleCreneau> {
           ),
         ),
         Ecart.vSm,
-        TexteSansCoupure(c.fuseau, style: textes.bodySmall),
+        TexteSansCoupure(
+          legendeFuseauSaisie(fuseauSaisie),
+          style: textes.bodySmall,
+        ),
+        LigneEquivalentMecque(
+          fuseauSaisie: fuseauSaisie,
+          jour: _jour,
+          heure: _heure,
+        ),
         if (_erreur case final String erreur) ...<Widget>[
           Ecart.vMd,
           MessageAlerte(erreur),

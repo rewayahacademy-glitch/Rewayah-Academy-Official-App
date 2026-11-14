@@ -1,0 +1,272 @@
+/// ESPACE-APPRENDRE (lot 5) : l'onglet « Bibliotheque » de l'espace Apprendre.
+///
+/// Une coquille mince : tout le contenu est la planche commune
+/// ([PlancheDocuments], `lib/core/apprendre`), alimentee par l'adaptateur du
+/// catalogue existant ([documentsApprendreProvider]). Les cinq etats : le
+/// squelette pendant la lecture, la planche (contenu, vide des rayons, aucun
+/// resultat de filtre), l'echec avec « Reessayer », hors ligne.
+library;
+
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../core/apprendre/document_planche.dart';
+import '../../core/apprendre/documents_apprendre.dart';
+import '../../core/apprendre/planche_documents.dart';
+import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
+import '../../core/reseau/service_reseau.dart';
+import '../../core/router/etat_routeur_sur.dart';
+import '../../core/router/routes.dart';
+import '../../core/tc_bibliotheque/couverture_ressource.dart';
+import '../../core/tc_bibliotheque/library_resource.dart'
+    show LibraryResource, RayonBibliotheque, TypeRessource;
+import '../../core/tc_telechargement/port_etat_offline.dart' show EtatOffline;
+import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/empty_state.dart';
+import '../../core/widgets/section_header.dart';
+import '../../core/widgets/skeleton.dart';
+import '../tc_catalogue/carte_ressource.dart';
+import '../tc_catalogue/libelles_bibliotheque.dart' show libelleOffline;
+import '../tc_catalogue/vignette_ressource.dart';
+
+/// Les cles des tests.
+abstract final class ClesBibliotheque {
+  /// Le squelette.
+  static const Key chargement = ValueKey<String>('apprendre-bib-chargement');
+
+  /// L'echec de lecture.
+  static const Key erreur = ValueKey<String>('apprendre-bib-erreur');
+
+  /// La place reservee de « Pour cette classe » pendant sa lecture.
+  static const Key classeChargement = ValueKey<String>(
+    'apprendre-bib-classe-chargement',
+  );
+
+  /// « Continuer » : le dernier document ouvert.
+  static const Key continuer = ValueKey<String>('apprendre-bib-continuer');
+
+  /// L'echec de lecture de « Pour cette classe ».
+  static const Key classeErreur = ValueKey<String>(
+    'apprendre-bib-classe-erreur',
+  );
+}
+
+/// L'onglet.
+class OngletBibliotheque extends ConsumerWidget {
+  /// Cree l'onglet.
+  const OngletBibliotheque({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<DocumentPlanche>> documents = ref.watch(
+      documentsApprendreProvider,
+    );
+    if (documents.hasError && !documents.hasValue) {
+      final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+      void relire() => ref.invalidate(documentsApprendreProvider);
+      return horsLigne
+          // Le bandeau de la page dit l'absence de reseau ; le bloc dit ce qui
+          // manque.
+          ? EtatSansDonnees(
+              key: ClesBibliotheque.erreur,
+              quoi: t.tc.bibliotheque.indisponible.message,
+              onAction: relire,
+            )
+          : EmptyState(
+              key: ClesBibliotheque.erreur,
+              message: t.tc.bibliotheque.indisponible.message,
+              invitation: t.tc.bibliotheque.indisponible.invitation,
+              icone: AppIcons.avertissement,
+              libelleAction: t.tc.bibliotheque.indisponible.action,
+              onAction: relire,
+            );
+    }
+    if (!documents.hasValue) {
+      return const Skeleton.liste(key: ClesBibliotheque.chargement, lignes: 4);
+    }
+    // La carte « Coran » est reecrite ici, dans la langue courante : le
+    // fournisseur garde la langue de sa lecture.
+    // « Pour cette classe » : seulement quand l'eleve vient de sa classe
+    // (`?groupe=`) ; ces documents ne sont montres qu'une fois, dans cette
+    // rubrique, et plus dans « Documents des cours ». Pendant la lecture, sa
+    // place est reservee ; en echec, elle le dit, sans se confondre avec
+    // « aucun document » (qui, lui, la fait disparaitre). Le reste de la
+    // Bibliotheque ne depend jamais d'elle.
+    final String? groupe = parametreRouteurSur(
+      context,
+      parametreGroupeApprendre,
+    );
+    final AsyncValue<List<DocumentPlanche>>? classeLue =
+        groupe == null || groupe.isEmpty
+        ? null
+        : ref.watch(documentsDeLaClasseProvider(groupe));
+    final List<DocumentPlanche> classe =
+        classeLue?.value ?? const <DocumentPlanche>[];
+    Widget? rubrique;
+    if (classeLue != null && !classeLue.hasValue) {
+      if (classeLue.hasError) {
+        final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+        void relire() => ref.invalidate(documentsDeLaClasseProvider(groupe!));
+        rubrique = _RubriqueClasse(
+          cle: ClesBibliotheque.classeErreur,
+          corps: horsLigne
+              ? EtatSansDonnees(
+                  quoi: t.apprendre.bibliotheque.classeErreur.message,
+                  onAction: relire,
+                )
+              : EmptyState(
+                  message: t.apprendre.bibliotheque.classeErreur.message,
+                  invitation: t.apprendre.bibliotheque.classeErreur.invitation,
+                  icone: AppIcons.avertissement,
+                  libelleAction: t.commun.reessayer,
+                  onAction: relire,
+                ),
+        );
+      } else {
+        rubrique = const _RubriqueClasse(
+          cle: ClesBibliotheque.classeChargement,
+          corps: Skeleton.liste(lignes: 2),
+        );
+      }
+    }
+    final Map<String, EtatOffline> etats =
+        ref.watch(etatsHorsLigneApprendreProvider).value ??
+        const <String, EtatOffline>{};
+    final Set<String> dansLaClasse = <String>{
+      for (final DocumentPlanche d in classe) d.id,
+    };
+    final Widget planche = PlancheDocuments(
+      rubriqueClasse: rubrique,
+      rayons:
+          ref.watch(rayonsApprendreProvider).value ??
+          const <RayonBibliotheque>[],
+      documents: <DocumentPlanche>[
+        for (final DocumentPlanche d in <DocumentPlanche>[
+          ...classe,
+          for (final DocumentPlanche d in documents.requireValue)
+            if (!dansLaClasse.contains(d.id))
+              d.id == idDocumentCoran ? documentCoran() : d,
+        ])
+          _habiller(d, etats),
+      ],
+    );
+    final RepriseApprendre? reprise = ref.watch(repriseApprendreProvider).value;
+    if (reprise == null) return planche;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _Continuer(reprise: reprise),
+        planche,
+      ],
+    );
+  }
+}
+
+/// « Continuer » : le dernier document ouvert, avec la carte de la
+/// Bibliotheque une (`CarteRessource`, le port `derniereLecture` du lot 3), sans
+/// rien reecrire. Aucune date ni duree : la carte n'en porte pas, et le moment
+/// de la derniere vue (`vueLeUtc`) n'est jamais montre. Une carte qui ne peut
+/// pas s'ouvrir (hors ligne, rien de garde sur l'appareil) dit pourquoi.
+class _Continuer extends ConsumerWidget {
+  const _Continuer({required this.reprise});
+
+  final RepriseApprendre reprise;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final LibraryResource r = reprise.reprise.ressource;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final bool ouvrable =
+        r.publiee &&
+        (!horsLigne ||
+            reprise.etat == EtatOffline.telecharge ||
+            reprise.etat == EtatOffline.enCache);
+    return Column(
+      key: ClesBibliotheque.continuer,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        SectionHeader(titre: t.tc.bibliotheque.sections.continuer),
+        Ecart.vMd,
+        // Une carte qui ne peut pas s'ouvrir n'est pas un bouton : elle dit
+        // pourquoi (jamais grisee).
+        if (ouvrable)
+          CarteRessource(
+            ressource: r,
+            etatOffline: reprise.etat,
+            // Le Coran s'ouvre dans son lecteur, comme sa carte de la planche.
+            onPress: () => GoRouter.of(context).go(
+              r.resourceType == TypeRessource.quran
+                  ? Routes.eleveCoran
+                  : cheminFicheDocument(r.id),
+            ),
+          )
+        else
+          CarteRessource(
+            ressource: r,
+            etatOffline: reprise.etat,
+            raisonIndisponible: r.publiee
+                ? t.tc.bibliotheque.message.horsLigneNonTelecharge
+                : t.tc.bibliotheque.detail.sansVersion,
+          ),
+        Ecart.vSection,
+      ],
+    );
+  }
+}
+
+/// La vignette de la Bibliotheque une (lot 3) pour [d] : la meme couverture
+/// que les cartes de la liste d'origine (par defaut selon le type, ou la
+/// vignette deposee par-dessus). Une seule couverture pour un document.
+DocumentPlanche _habiller(DocumentPlanche d, Map<String, EtatOffline> etats) {
+  final CouvertureRessource? couverture = d.couverture;
+  // L'etat hors ligne d'un document gardé sur l'appareil, avec les mots et
+  // les tons de la Bibliotheque une ; « a telecharger » et « indisponible »
+  // ne disent rien ici (la planche n'est pas un gestionnaire de copies).
+  final EtatOffline? etat = etats[d.id];
+  final HorsLigneDocument? horsLigne =
+      etat == null ||
+          etat == EtatOffline.aTelecharger ||
+          etat == EtatOffline.indisponible
+      ? null
+      : HorsLigneDocument(
+          libelle: libelleOffline(etat),
+          ton: CarteRessource.tonDe(etat),
+        );
+  return d.avec(
+    horsLigne: horsLigne,
+    vignette: couverture == null
+        ? null
+        : VignetteRessource(
+            couverture: couverture,
+            image: d.aVignetteDeposee
+                ? ImageVignetteDeposee(resourceId: d.id)
+                : null,
+          ),
+  );
+}
+
+/// La rubrique « Pour cette classe » quand elle attend ou ne s'affiche pas :
+/// son titre, et dessous l'attente ou la phrase d'echec.
+class _RubriqueClasse extends StatelessWidget {
+  const _RubriqueClasse({required this.cle, required this.corps});
+
+  final Key cle;
+  final Widget corps;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    key: cle,
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      SectionHeader(titre: t.apprendre.bibliotheque.rayonClasse),
+      Ecart.vMd,
+      corps,
+    ],
+  );
+}

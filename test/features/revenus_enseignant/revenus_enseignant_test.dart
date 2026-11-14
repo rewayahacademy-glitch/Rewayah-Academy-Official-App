@@ -33,6 +33,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
@@ -1132,6 +1133,9 @@ void main() {
       String id,
       List<RevenusEleveSeance> eleves, {
       Montant? montant,
+      int minutes = 60,
+      int? minutesPayees,
+      int? minutesConnectees,
     }) {
       final RevenusClasse c = DonneesFinanceDemo.revenus().classes.first;
       return RevenusSeance(
@@ -1140,7 +1144,9 @@ void main() {
         classeId: c.classeId,
         classe: c.classe,
         type: c.type,
-        minutes: 60,
+        minutes: minutes,
+        minutesPayees: minutesPayees,
+        minutesConnectees: minutesConnectees,
         montant: montant,
         eleves: eleves,
       );
@@ -1193,6 +1199,165 @@ void main() {
         isNot(isA<LigneFinance>()),
       );
       expect(find.text(t.enseignant.revenus.aucunMontant), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('REVENUS-DUREE-PAYEE : la duree PAYEE du serveur est dite, '
+        'les minutes connectees dans la fenetre en second, et jamais la '
+        'mesure brute presentee comme payee', (WidgetTester tester) async {
+      const Montant part = Montant(199, 'USD');
+      const List<RevenusEleveSeance> eleves = <RevenusEleveSeance>[
+        RevenusEleveSeance(
+          eleveId: 'e1',
+          prenom: 'Lina',
+          present: true,
+          montant: part,
+          presence: PresenceRevenus.presente,
+        ),
+      ];
+      final RevenusEnseignant r = avec(<RevenusSeance>[
+        // Mesure brute 47 min ; payee 60 min ; connecte 55 min dans la fenetre.
+        seance(
+          's-payee',
+          eleves,
+          montant: part,
+          minutes: 47,
+          minutesPayees: 60,
+          minutesConnectees: 55,
+        ),
+      ]);
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      await _deplierClasse(tester, r.seances.single.classeId);
+      final Finder payee = find.byKey(
+        const ValueKey<String>('revenus-duree-payee-s-payee'),
+      );
+      expect(
+        find.descendant(
+          of: payee,
+          matching: find.text(t.enseignant.revenus.seanceDuree),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: payee,
+          matching: find.text(
+            LibellesGroupe.insecable(t.enseignant.revenus.heures(heures: 1)),
+          ),
+        ),
+        findsOneWidget,
+      );
+      final Finder connecte = find.byKey(
+        const ValueKey<String>('revenus-connecte-s-payee'),
+      );
+      expect(
+        find.descendant(
+          of: connecte,
+          matching: find.text(t.enseignant.revenus.seanceConnecte),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: connecte,
+          matching: find.text(
+            LibellesGroupe.insecable(t.enseignant.revenus.minutes(minutes: 55)),
+          ),
+        ),
+        findsOneWidget,
+      );
+      // La mesure brute (47 min) n'est montree nulle part.
+      expect(
+        find.text(
+          LibellesGroupe.insecable(t.enseignant.revenus.minutes(minutes: 47)),
+        ),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('REVENUS-DUREE-PAYEE : des seances comptees au temps de '
+        'connexion sont dites, et rien n est dit quand il n y en a pas', (
+      WidgetTester tester,
+    ) async {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      RevenusEnseignant avecN(int? n) => RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: b.classes,
+        total: b.total,
+        totalEstime: b.totalEstime,
+        seances: b.seances,
+        versement: b.versement,
+        seancesSansDureePayee: n,
+      );
+      await monterPage(
+        tester,
+        _PortFige(Future<RevenusEnseignant>.value(avecN(2))),
+      );
+      await _attendre(tester);
+      expect(
+        find.byKey(const ValueKey<String>('revenus-sans-duree-payee')),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.enseignant.revenus.sansDureePayee(n: 2)),
+        findsOneWidget,
+      );
+      await monterPage(
+        tester,
+        _PortFige(Future<RevenusEnseignant>.value(avecN(0))),
+      );
+      await _attendre(tester);
+      expect(
+        find.byKey(const ValueKey<String>('revenus-sans-duree-payee')),
+        findsNothing,
+      );
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('REVENUS-DUREE-PAYEE : sans duree payee du serveur, une '
+        'phrase renvoie au releve, sans minutes inventees', (
+      WidgetTester tester,
+    ) async {
+      const Montant part = Montant(199, 'USD');
+      final RevenusEnseignant r = avec(<RevenusSeance>[
+        seance(
+          's-sans',
+          const <RevenusEleveSeance>[
+            RevenusEleveSeance(
+              eleveId: 'e1',
+              prenom: 'Lina',
+              present: true,
+              montant: part,
+              presence: PresenceRevenus.presente,
+            ),
+          ],
+          montant: part,
+          minutes: 47,
+        ),
+      ]);
+      await monterPage(tester, _PortFige(Future<RevenusEnseignant>.value(r)));
+      await _attendre(tester);
+      await _deplierClasse(tester, r.seances.single.classeId);
+      expect(
+        find.descendant(
+          of: find.byKey(const ValueKey<String>('revenus-duree-payee-s-sans')),
+          matching: find.text(t.enseignant.revenus.seanceDureeNonPrecisee),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('revenus-connecte-s-sans')),
+        findsNothing,
+      );
+      expect(
+        find.text(
+          LibellesGroupe.insecable(t.enseignant.revenus.minutes(minutes: 47)),
+        ),
+        findsNothing,
+      );
       expect(tester.takeException(), isNull);
     });
 
@@ -1561,6 +1726,143 @@ void main() {
                 () => Scrollable.ensureVisible(classe, alignment: 0),
               );
               await _attendre(tester);
+            }
+            expect(tester.takeException(), isNull);
+            debugPrint('PNG ${await capturerVue(tester, nom)}');
+          });
+        }
+      }
+    }
+  });
+
+  // Captures R3 REVENUS-DUREE-PAYEE : la duree payee par seance, les minutes
+  // connectees dans la fenetre en second, et la phrase du releve quand le
+  // serveur n'affirme pas la duree. Francais, arabe et anglais, 390 et 1440.
+  group('Captures REVENUS-DUREE-PAYEE', skip: sautSansCapture, () {
+    setUp(masquerRubanDebug);
+
+    RevenusEnseignant contenu() {
+      final RevenusEnseignant b = DonneesFinanceDemo.revenus();
+      final RevenusClasse c = b.classes.first;
+      const Montant part = Montant(199, 'USD');
+      const List<RevenusEleveSeance> eleves = <RevenusEleveSeance>[
+        RevenusEleveSeance(
+          eleveId: 'e1',
+          prenom: 'Lina',
+          present: true,
+          montant: part,
+          presence: PresenceRevenus.presente,
+        ),
+      ];
+      RevenusSeance seance(
+        String id,
+        int jour, {
+        required int minutes,
+        int? payees,
+        int? connectees,
+      }) => RevenusSeance(
+        seanceId: id,
+        debut: DateTime(2026, 10, jour, 18),
+        classeId: c.classeId,
+        classe: c.classe,
+        type: c.type,
+        minutes: minutes,
+        minutesPayees: payees,
+        minutesConnectees: connectees,
+        montant: part,
+        eleves: eleves,
+      );
+      return RevenusEnseignant(
+        debut: b.debut,
+        fin: b.fin,
+        classes: <RevenusClasse>[
+          RevenusClasse(
+            classeId: c.classeId,
+            classe: c.classe,
+            type: c.type,
+            minutesAssurees: 150,
+            capacite: c.capacite,
+            tauxHoraireEffectif: const Montant(133, 'USD'),
+            montantEstime: const Montant(597, 'USD'),
+            montantARecevoir: const Montant(597, 'USD'),
+          ),
+        ],
+        total: TotalRevenus(
+          minutesAssurees: 150,
+          capacite: b.total.capacite,
+          tauxHoraireMoyen: const Montant(133, 'USD'),
+        ),
+        totalEstime: const Montant(597, 'USD'),
+        totalARecevoir: const Montant(597, 'USD'),
+        seances: <RevenusSeance>[
+          // Connecte 55 min dans la fenetre, duree due atteinte : 60 payees.
+          seance('d-1', 7, minutes: 75, payees: 60, connectees: 55),
+          // 30 min connecte, sous la duree due : 30 payees.
+          seance('d-2', 14, minutes: 30, payees: 30, connectees: 30),
+          // Le serveur n'affirme pas la duree : le releve fait foi.
+          seance('d-3', 21, minutes: 47, connectees: 47),
+        ],
+        versement: b.versement,
+        seancesSansDureePayee: 1,
+      );
+    }
+
+    for (final AppLocale langue in <AppLocale>[
+      AppLocale.fr,
+      AppLocale.ar,
+      AppLocale.en,
+    ]) {
+      for (final (Size taille, ThemeMode theme, String suffixe) cas
+          in <(Size, ThemeMode, String)>[
+            (const Size(390, 844), ThemeMode.light, 'clair'),
+            (const Size(1440, 900), ThemeMode.dark, 'sombre'),
+          ]) {
+        // « resume » : le haut de la page (la phrase des seances comptees au
+        // temps de connexion) ; « seances » : le detail de la Classe.
+        for (final bool resume in <bool>[true, false]) {
+          final String nom =
+              'revenus_duree_payee_${resume ? 'resume' : 'seances'}_'
+              '${langue.languageCode}_${cas.$1.width.toInt()}x'
+              '${cas.$1.height.toInt()}_${cas.$3}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+            final RevenusEnseignant r = contenu();
+            fixerVueCapture(tester, cas.$1, 1);
+            await tester.pumpWidget(
+              hoteCapture(
+                RevenusEnseignantPage(onRetour: () {}),
+                themeMode: cas.$2,
+                surcharges: <Override>[
+                  sansPersonneConnectee(),
+                  serviceReseauProvider.overrideWithValue(
+                    FauxServiceReseau(horsLigneRendu: false),
+                  ),
+                  portRevenusEnseignantProvider.overrideWithValue(
+                    _PortFige(Future<RevenusEnseignant>.value(r)),
+                  ),
+                ],
+              ),
+            );
+            await _attendre(tester);
+            if (!resume) {
+              await _deplierClasse(tester, r.classes.first.classeId);
+              final BuildContext classe = tester.element(
+                find.byKey(
+                  ValueKey<String>(
+                    'revenus-classe-${r.classes.first.classeId}',
+                  ),
+                ),
+              );
+              await tester.runAsync(
+                () => Scrollable.ensureVisible(classe, alignment: 0),
+              );
+              await _attendre(tester);
+            } else {
+              expect(
+                find.byKey(const ValueKey<String>('revenus-sans-duree-payee')),
+                findsOneWidget,
+              );
             }
             expect(tester.takeException(), isNull);
             debugPrint('PNG ${await capturerVue(tester, nom)}');

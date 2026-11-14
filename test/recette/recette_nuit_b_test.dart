@@ -141,6 +141,7 @@ void main() {
     // L'arabe est une bibliotheque differee : on la charge ici, hors du
     // temps simule des tests.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));

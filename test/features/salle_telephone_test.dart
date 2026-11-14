@@ -32,11 +32,11 @@ import 'package:rewayah_academy/core/widgets/menu_filtre.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/barre_outils_salle.dart';
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_bibliotheque_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_eleves.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart'
     show PanneauSeance;
-import 'package:rewayah_academy/features/salle_seance/pilule_etat_salle.dart';
 import 'package:rewayah_academy/features/salle_seance/salle_ordinateur.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart';
 import 'package:rewayah_academy/features/salle_seance/telephone_plein_ecran.dart';
@@ -220,9 +220,20 @@ Future<void> _attendreLeRepos(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
+/// La rangee reservee de la Dynamique chrono (DYNAMIQUE-CHRONO-1).
+final Finder _rangee = find.byKey(TelephonePleinEcran.cleRangeeChrono);
+
+/// Le bas de la rangee reservee : la page et la scene commencent dessous.
+double _basRangee(WidgetTester tester) =>
+    _rangee.evaluate().isEmpty ? 0 : tester.getRect(_rangee).bottom;
+
 /// Les commandes se masquent au delai : un toucher les ramene.
+///
+/// DYNAMIQUE-CHRONO-1 : le toucher se fait juste sous la rangee reservee de
+/// la Dynamique chrono (en haut de la page), plus dans le coin de l'ecran,
+/// qui est maintenant la rangee elle-meme.
 Future<void> _toucher(WidgetTester tester) async {
-  await tester.tapAt(const Offset(10, 10));
+  await tester.tapAt(Offset(10, _basRangee(tester) + 10));
   await tester.pumpAndSettle();
 }
 
@@ -409,13 +420,11 @@ void main() {
             // la barre entiere suit le toucher.
             expect(capsule.hitTestable(), findsNothing);
             expect(_dock.hitTestable(), findsNothing);
-            // Rien d'autre que l'ile (TELEPHONE-REDUIT, cahier §8 : le
-            // chrono se lit au repos) : ni Eleves, ni croix, ni texte.
-            final Finder ile = find.byKey(
-              const ValueKey<String>('ligne-etat-telephone'),
-            );
-            expect(_horsDe(tester, <Finder>[ile]), isEmpty);
-            expect(find.byType(PiluleEtatSalle), findsOneWidget);
+            // Rien d'autre que la Dynamique chrono et sa ligne d'etat, dans
+            // leur rangee reservee (DYNAMIQUE-CHRONO-1) : ni Eleves, ni croix,
+            // ni texte.
+            expect(_horsDe(tester, <Finder>[_rangee]), isEmpty);
+            expect(find.byType(DynamiqueChrono), findsOneWidget);
             expect(
               find.byKey(const ValueKey<String>('salle-eleves')),
               findsNothing,
@@ -424,13 +433,19 @@ void main() {
               find.byKey(const ValueKey<String>('salle-ranger-support')),
               findsNothing,
             );
-            // Pilote C10 (loi du 24/10) : aucune bande reservee, la page a
-            // la hauteur de l'ecran et touche son haut.
+            // DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « le chrono cache
+            // le document ») : la seule bande reservee est la rangee de la
+            // Dynamique chrono ; la page commence dessous et va jusqu'en bas
+            // (avant ce lot : page de toute la hauteur, l'ile posee dessus).
             final Rect p = tester.getRect(
               find.byKey(TelephonePleinEcran.clePage),
             );
-            expect(p.top, moreOrLessEquals(0, epsilon: 1));
-            expect(p.height, moreOrLessEquals(taille.height, epsilon: 1));
+            expect(p.top, moreOrLessEquals(_basRangee(tester), epsilon: 1));
+            expect(p.bottom, moreOrLessEquals(taille.height, epsilon: 1));
+            verifierSansChevauchement(tester, <Finder>[
+              _rangee,
+              find.byKey(TelephonePleinEcran.clePage),
+            ]);
             expect(tester.takeException(), isNull);
           });
 
@@ -498,8 +513,8 @@ void main() {
             expect(
               _horsDe(tester, <Finder>[
                 capsule,
-                // TELEPHONE-REDUIT : l'ile, au-dessus de la capsule.
-                find.byKey(const ValueKey<String>('ligne-etat-telephone')),
+                // DYNAMIQUE-CHRONO-1 : la rangee de la barre, au-dessus.
+                _rangee,
               ]).where((h) => h.cadre.top <= c.bottom),
               isEmpty,
               reason: 'en haut hors de la capsule',
@@ -582,17 +597,27 @@ void main() {
               find.byKey(const ValueKey<String>('revenir-page')),
               findsNothing,
             );
-            expect(find.byType(PiluleEtatSalle), findsNothing);
+            // DYNAMIQUE-CHRONO-1 : la Dynamique chrono reste, dans sa rangee,
+            // sur la scene aussi (avant ce lot, la scene n'avait pas de
+            // chrono au telephone).
+            expect(find.byType(DynamiqueChrono), findsOneWidget);
+            expect(
+              tester.getRect(capsule).top,
+              greaterThanOrEqualTo(_basRangee(tester) - 1),
+            );
             expect(
               find.byKey(const ValueKey<String>('salle-eleves')),
               findsNothing,
             );
-            // Au repos : la capsule et « Commandes », rien d'autre hors de la
-            // scene.
+            // Au repos : la barre, la capsule et « Commandes », rien d'autre
+            // hors de la scene.
             await _attendreLeRepos(tester);
             // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
             expect(capsule.hitTestable(), findsOneWidget);
-            expect(_horsDe(tester, <Finder>[capsule, scene]), isEmpty);
+            expect(
+              _horsDe(tester, <Finder>[capsule, scene, _rangee]),
+              isEmpty,
+            );
             // Au toucher : la pilule et « Commandes » au-dessus.
             await _toucher(tester);
             expect(_dock.hitTestable(), findsOneWidget);
@@ -624,7 +649,8 @@ void main() {
             expect(capsule, findsOneWidget);
             expect(find.byKey(CapsuleVideoTelephone.cleVoir), findsNothing);
             expect(find.byKey(CapsuleVideoTelephone.cleRevenir), findsNothing);
-            expect(find.byType(PiluleEtatSalle), findsNothing);
+            // DYNAMIQUE-CHRONO-1 : la barre a sa rangee, sur la scene aussi.
+            expect(find.byType(DynamiqueChrono), findsOneWidget);
             // « Ouvrir le Coran », seul bouton plein, au centre de la scene.
             final Finder ouvrir = find.byKey(
               const ValueKey<String>('action-scene'),
@@ -643,7 +669,7 @@ void main() {
             // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
             expect(capsule.hitTestable(), findsOneWidget);
             expect(
-              _horsDe(tester, <Finder>[capsule, scene, ouvrir]),
+              _horsDe(tester, <Finder>[capsule, scene, ouvrir, _rangee]),
               isEmpty,
             );
             await _toucher(tester);
@@ -697,12 +723,13 @@ void main() {
             expect(bandeau.hitTestable(), findsOneWidget);
             final Finder capsule = find.byKey(CapsuleVideoTelephone.cle);
             expect(capsule.hitTestable(), findsNothing);
-            // Aucune bande reservee : la page garde l'ecran entier.
+            // DYNAMIQUE-CHRONO-1 : la seule bande reservee est la rangee de
+            // la barre ; la page commence dessous et va jusqu'en bas.
             final Rect p = tester.getRect(
               find.byKey(TelephonePleinEcran.clePage),
             );
-            expect(p.top, moreOrLessEquals(0, epsilon: 1));
-            expect(p.height, moreOrLessEquals(taille.height, epsilon: 1));
+            expect(p.top, moreOrLessEquals(_basRangee(tester), epsilon: 1));
+            expect(p.bottom, moreOrLessEquals(taille.height, epsilon: 1));
             // Au toucher, la capsule se place sous le bandeau.
             await _toucher(tester);
             expect(bandeau.hitTestable(), findsOneWidget);
@@ -729,9 +756,9 @@ void main() {
           ) async {
             await _monter(tester, taille: taille, texte: texte);
             await _toucher(tester);
-            // La ligne d'etat n'est nulle part au toucher (TELEPHONE-REDUIT :
-            // l'ile la dit au repos, a la place de la capsule).
-            expect(find.byType(PiluleEtatSalle), findsNothing);
+            // DYNAMIQUE-CHRONO-1 : la barre reste dans sa rangee au toucher,
+            // la capsule se pose dessous.
+            expect(find.byType(DynamiqueChrono), findsOneWidget);
             await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
             await tester.pumpAndSettle();
             final Finder profil = find.byKey(ProfilTelephone.cle);
@@ -759,14 +786,13 @@ void main() {
               dans(find.byKey(ProfilTelephone.cleReduire)),
               findsOneWidget,
             );
-            // La ligne d'etat, dessous, une seule fois a l'ecran.
-            expect(find.byType(PiluleEtatSalle), findsOneWidget);
-            expect(dans(find.byType(PiluleEtatSalle)), findsOneWidget);
+            // DYNAMIQUE-CHRONO-1 : la ligne d'etat n'est plus redite dans le
+            // profil ; la barre, une seule fois a l'ecran, reste au-dessus.
+            expect(find.byType(DynamiqueChrono), findsOneWidget);
+            expect(dans(find.byType(DynamiqueChrono)), findsNothing);
             expect(
-              tester.getRect(dans(find.byType(PiluleEtatSalle))).top,
-              greaterThan(
-                tester.getRect(dans(find.textContaining('Amina'))).bottom,
-              ),
+              tester.getRect(profil).top,
+              greaterThanOrEqualTo(_basRangee(tester) - 1),
             );
             expect(tester.takeException(), isNull);
             verifierAucunMotCoupe(tester, profil);
@@ -1573,15 +1599,15 @@ void main() {
               _ltr() ? taille.width - z.right : z.left,
               moreOrLessEquals(16, epsilon: 1),
             );
+            // DYNAMIQUE-CHRONO-1 : a mi-hauteur de la place laissee sous la
+            // rangee reservee de la Dynamique chrono.
+            final double milieu = (_basRangee(tester) + taille.height) / 2;
             if (texte == 1) {
-              expect(
-                z.center.dy,
-                moreOrLessEquals(taille.height / 2, epsilon: 1),
-              );
+              expect(z.center.dy, moreOrLessEquals(milieu, epsilon: 1));
             } else {
               // Texte agrandi (cas limite) : remonte au besoin, jamais sur
               // « Commandes » ni sur la pilule.
-              expect(z.center.dy, lessThanOrEqualTo(taille.height / 2 + 1));
+              expect(z.center.dy, lessThanOrEqualTo(milieu + 1));
               expect(
                 z.bottom,
                 lessThanOrEqualTo(

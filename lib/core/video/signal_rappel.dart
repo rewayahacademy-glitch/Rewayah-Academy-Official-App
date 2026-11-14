@@ -1,4 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../observabilite/journal_dev.dart';
+import '../theme/app_mouvement.dart';
 
 import 'signal_rappel_natif.dart'
     if (dart.library.js_interop) 'signal_rappel_web.dart'
@@ -28,3 +33,55 @@ final Provider<SignalRappel> signalRappelProvider = Provider<SignalRappel>(
 final Provider<SignalRappel> signalChronoProvider = Provider<SignalRappel>(
   (Ref _) => plateforme.signalerChrono,
 );
+
+/// DYNAMIQUE-CHRONO-2, point 6 (directeur, 12/11/2026 : « la sonnerie de
+/// l'appel d'un eleve est trop courte : l'allonger, repetee, meme espacee ») :
+/// le meme motif ([SignalRappel]), joue [repetitions] fois, a
+/// [AppMouvement.sonnerieAppelEspace] d'intervalle, et arrete des que
+/// l'eleve touche l'ecran ou la barre ([arreter]).
+///
+/// Aucun son nouveau, aucune bibliotheque de plus : c'est le signal
+/// existant, rejoue. Dans un navigateur, un son ne part que si la page
+/// l'autorise ; un refus ne casse rien (le signal ne leve pas, et chaque
+/// repetition est gardee).
+class SonnerieAppel {
+  /// Cree la sonnerie sur [signal].
+  SonnerieAppel(this.signal);
+
+  /// Le motif joue a chaque repetition.
+  final SignalRappel signal;
+
+  /// Le nombre de fois que le motif est joue.
+  static const int repetitions = 3;
+
+  final List<Timer> _suite = <Timer>[];
+
+  /// Vrai tant qu'une repetition reste a jouer.
+  bool get sonne => _suite.any((Timer m) => m.isActive);
+
+  /// Joue le motif tout de suite, puis le rejoue. Un nouvel appel repart du
+  /// debut.
+  void lancer() {
+    arreter();
+    _jouer();
+    for (int i = 1; i < repetitions; i++) {
+      _suite.add(Timer(AppMouvement.sonnerieAppelEspace * i, _jouer));
+    }
+  }
+
+  /// Arrete les repetitions qui restent.
+  void arreter() {
+    for (final Timer m in _suite) {
+      m.cancel();
+    }
+    _suite.clear();
+  }
+
+  void _jouer() {
+    try {
+      signal();
+    } on Object catch (e) {
+      journalDev('sonnerie de l appel impossible : $e');
+    }
+  }
+}

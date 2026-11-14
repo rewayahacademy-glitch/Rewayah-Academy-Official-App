@@ -1,3 +1,4 @@
+import '../../core/apprendre/documents_apprendre.dart' show cheminFicheDocument;
 import '../../core/recherche/modeles_recherche.dart';
 import '../../core/router/routes.dart';
 import '../tc_catalogue/routes_tc_b.dart';
@@ -32,9 +33,13 @@ String? cheminPourCible(CibleRecherche cible, EspaceRecherche espace) {
       };
     case KindCible.support:
       return switch (espace) {
-        EspaceRecherche.famille ||
+        EspaceRecherche.famille => RoutesTcB.versRessource(ref),
+        // ESPACE-APPRENDRE (lot 5) : dans l'espace de l'eleve (y compris
+        // l'adulte eleve autonome, compte tuteur), la fiche porte
+        // `?retour=/eleve/apprendre` : son retour est Apprendre, jamais
+        // l'ancienne liste.
         EspaceRecherche.eleve ||
-        EspaceRecherche.eleveGuide => RoutesTcB.versRessource(ref),
+        EspaceRecherche.eleveGuide => cheminFicheDocument(cible.reference),
         // L'enseignant ouvre ses supports depuis le dock de la salle ; la
         // Bibliotheque `/tc/` ne lui est pas ouverte par le routeur.
         _ => null,

@@ -50,6 +50,20 @@ MotifRecuperation? motifDepuisUrlRetour(Uri url) {
       : MotifRecuperation.refuse;
 }
 
+/// Vrai quand l'URL de retour dit que le lien a ete ouvert dans un autre
+/// navigateur que celui qui l'a demande : le serveur ne retrouve pas l'etat du
+/// flux (`error_code=flow_state_not_found`, 404 sur `/token`).
+bool lienOuvertDansUnAutreNavigateurDepuisUrlRetour(Uri url) {
+  final Map<String, String> champs = <String, String>{
+    ...url.queryParameters,
+    ..._champsFragment(url.fragment),
+  };
+  final String texte = (champs['error_description'] ?? '').toLowerCase();
+  return champs['error_code'] == 'flow_state_not_found' ||
+      texte.contains('flow state') ||
+      texte.contains('code verifier');
+}
+
 /// Vrai quand l'URL de retour du fournisseur dit que les inscriptions sont
 /// fermees (`error_code=signup_disabled`).
 bool inscriptionFermeeDepuisUrlRetour(Uri url) {
@@ -99,6 +113,10 @@ enum IssueEnvoiLien {
   /// (`captcha_failed`), ou l'ecran n'en a pas obtenu (ANTI-ROBOT, 03/11).
   verificationNonAboutie,
 
+  /// Le serveur d'authentification a plante (500) : rien n'a ete envoye,
+  /// ce n'est ni le lien ni l'adresse. L'invitation n'est pas en cause.
+  serveur,
+
   /// Tout autre echec.
   erreur,
 }
@@ -128,6 +146,10 @@ IssueEnvoiLien issueEchecEnvoi(Object erreur) {
         erreur.message.toLowerCase().contains('captcha')) {
       return IssueEnvoiLien.verificationNonAboutie;
     }
+    if ((erreur.statusCode ?? '').startsWith('5') ||
+        code == 'unexpected_failure') {
+      return IssueEnvoiLien.serveur;
+    }
     return IssueEnvoiLien.erreur;
   }
   final String texte = erreur.toString();
@@ -145,6 +167,7 @@ String phraseEchecEnvoi(IssueEnvoiLien issue) => switch (issue) {
   IssueEnvoiLien.horsLigne => t.connexion.horsLigne,
   IssueEnvoiLien.inscriptionFermee => t.connexion.inscriptionFermee,
   IssueEnvoiLien.verificationNonAboutie => t.connexion.controle.erreur,
+  IssueEnvoiLien.serveur => t.connexion.erreurServeur,
   IssueEnvoiLien.erreur => t.connexion.erreurEnvoi,
 };
 

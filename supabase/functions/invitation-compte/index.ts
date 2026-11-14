@@ -13,6 +13,13 @@
 //    pour cette adresse, et une adresse sans compte. Elle ne consomme rien
 //    (INVITATION-ACCUEIL, 09/11/2026). Regle de `_shared/clients.ts` : la cle
 //    de service reverifie l'autorisation metier.
+//    Avant elle, pour `equipe` et `candidat` seulement : si l'adresse a un
+//    compte SUPPRIME (banni, profil retire) et que le code est valide pour
+//    elle, `invitation_compte_ancien_a_liberer` (service_role seul) rend son id
+//    et journalise (audit_logs) ; la fonction libere l'adresse par l'API admin
+//    (`updateUserById`, jamais de SQL sur `auth`) ; un compte neuf est ensuite
+//    cree. Echec de la liberation : rien n'est cree ni consomme. Jamais pour
+//    `foyer`.
 // 3. Creation du compte, adresse confirmee : le code n'a ete remis qu'a cette
 //    boite (e-mail du foyer ou du candidat) ou par la direction a cette
 //    personne (enseignant, comptable), et il est lie a l'adresse. Un compte
@@ -48,6 +55,13 @@ export interface Demande {
 export interface PorteInvitation {
   debit(adresse: string, ip: string): Promise<boolean>
   autoriser(demande: Demande): Promise<boolean>
+  /// Equipe et candidat seulement : l'id du compte SUPPRIME qui tient encore
+  /// l'adresse, si le code est valide pour elle (rien n'est consomme, auth
+  /// n'est pas touche) ; `null` sinon. Journalise.
+  ancienCompteALiberer(demande: Demande): Promise<string | null>
+  /// Libere l'adresse de l'ancien compte par l'API admin (GoTrue gere les
+  /// identites) : l'ancien compte passe sous une adresse `efface-...`.
+  libererAdresse(idAncien: string): Promise<boolean>
   creerCompte(adresse: string): Promise<'cree' | 'existe' | 'echec'>
   consommer(demande: Demande): Promise<boolean>
 }
@@ -86,8 +100,22 @@ export function ipDe(requete: Request): string {
 /// seulement si le compte a ete cree. Un code non consomme apres une creation
 /// reussie ne sert plus a rien : l'autorisation refuse une adresse qui a deja
 /// un compte.
-export async function traiter(demande: Demande, ip: string, porte: PorteInvitation): Promise<'cree' | 'rien'> {
+export async function traiter(
+  demande: Demande,
+  ip: string,
+  porte: PorteInvitation,
+): Promise<'cree' | 'rien'> {
   if (!(await porte.debit(demande.adresse, ip))) return 'rien'
+  // Reinvitation d'une adresse dont le compte a ete supprime (decision de
+  // l'architecte, 14/11/2026) : pour `equipe` et `candidat`, un code valide
+  // libere l'adresse du compte retire (son profil retire bloquerait
+  // l'inscription) ; l'autorisation et la creation d'un compte NEUF suivent
+  // alors comme pour toute adresse invitee. Jamais pour un foyer. Si la
+  // liberation echoue, rien n'est cree ni consomme.
+  if (demande.type === 'equipe' || demande.type === 'candidat') {
+    const ancien = await porte.ancienCompteALiberer(demande)
+    if (ancien !== null && !(await porte.libererAdresse(ancien))) return 'rien'
+  }
   if (!(await porte.autoriser(demande))) return 'rien'
   if ((await porte.creerCompte(demande.adresse)) !== 'cree') return 'rien'
   if (!(await porte.consommer(demande))) {
@@ -108,6 +136,20 @@ function porteReelle(): PorteInvitation {
         p_type: d.type, p_code: d.code, p_email: d.adresse,
       })
       return !error && data?.autorise === true
+    },
+    async ancienCompteALiberer(d) {
+      const { data, error } = await db.rpc('invitation_compte_ancien_a_liberer', {
+        p_type: d.type, p_code: d.code, p_email: d.adresse,
+      })
+      return !error && typeof data === 'string' ? data : null
+    },
+    async libererAdresse(idAncien) {
+      const { error } = await db.auth.admin.updateUserById(idAncien, {
+        email: `efface-${idAncien}@invalide.rewayahacademy.com`,
+        email_confirm: true,
+      })
+      if (error) console.error('invitation-compte : adresse non liberee', (error as { code?: string }).code ?? '')
+      return !error
     },
     async creerCompte(adresse) {
       const { error } = await db.auth.admin.createUser({ email: adresse, email_confirm: true })

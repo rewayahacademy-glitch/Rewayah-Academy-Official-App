@@ -121,6 +121,16 @@ enum StatutPause {
   nonPrise,
 }
 
+/// Pourquoi la pause a lieu (PAUSE-SERVEUR, 12/11/2026). Enumeration fermee :
+/// une valeur inconnue du serveur se lit [ordinaire].
+enum MotifPause {
+  /// La pause ordinaire (reglage de la classe ou pause par defaut).
+  ordinaire,
+
+  /// La pause de la priere, prevue par le serveur.
+  priere,
+}
+
 /// L'etat de la pause d'une seance, horodate cote serveur.
 @immutable
 class PauseSeance {
@@ -132,6 +142,10 @@ class PauseSeance {
     this.debutUtc,
     this.finUtc,
     this.peutPiloter = false,
+    this.proposerAUtc,
+    this.refusNombre = 0,
+    this.rappelMinutes,
+    this.motif = MotifPause.ordinaire,
   });
 
   /// Pas de pause pour cette seance.
@@ -141,7 +155,11 @@ class PauseSeance {
       debutPrevuUtc = null,
       debutUtc = null,
       finUtc = null,
-      peutPiloter = false;
+      peutPiloter = false,
+      proposerAUtc = null,
+      refusNombre = 0,
+      rappelMinutes = null,
+      motif = MotifPause.ordinaire;
 
   /// Le statut.
   final StatutPause statut;
@@ -160,6 +178,25 @@ class PauseSeance {
 
   /// La capacite de demarrer et de terminer la pause, lue du serveur.
   final bool peutPiloter;
+
+  /// L'instant ou la barre du chrono propose la pause a l'enseignant (Oui /
+  /// Non), decide par le serveur ; `null` quand il n'y a plus de proposition
+  /// (pause plus programmee, ou elle ne tiendrait plus avant la fin prevue).
+  /// Un serveur d'avant PAUSE-SERVEUR ne le rend pas : aucune proposition.
+  final DateTime? proposerAUtc;
+
+  /// Le nombre de Non deja dits a la pause de cette seance.
+  final int refusNombre;
+
+  /// Le delai, en minutes, apres lequel la barre du chrono repropose une pause
+  /// restee sans reponse : le reglage de la direction
+  /// (`seance.pause_rappel_minutes`, au moins 1), lu par le serveur
+  /// (SERVEUR-PETITS, D-042). `null` quand le serveur ne le rend pas (serveur
+  /// ancien) : l'application garde sa constante.
+  final int? rappelMinutes;
+
+  /// Pourquoi la pause a lieu.
+  final MotifPause motif;
 
   /// La reprise attendue d'une pause en cours : son debut plus sa duree.
   DateTime? get repriseUtc => statut == StatutPause.enCours && debutUtc != null
@@ -180,7 +217,11 @@ class PauseSeance {
       other.debutPrevuUtc == debutPrevuUtc &&
       other.debutUtc == debutUtc &&
       other.finUtc == finUtc &&
-      other.peutPiloter == peutPiloter;
+      other.peutPiloter == peutPiloter &&
+      other.proposerAUtc == proposerAUtc &&
+      other.refusNombre == refusNombre &&
+      other.rappelMinutes == rappelMinutes &&
+      other.motif == motif;
 
   @override
   int get hashCode => Object.hash(
@@ -190,6 +231,10 @@ class PauseSeance {
     debutUtc,
     finUtc,
     peutPiloter,
+    proposerAUtc,
+    refusNombre,
+    rappelMinutes,
+    motif,
   );
 }
 
@@ -235,6 +280,14 @@ abstract interface class PortPauseSeance {
     required String seanceId,
     required String cleIdempotence,
   });
+
+  /// Dit Non a la pause proposee : le serveur compte le refus et la repropose
+  /// apres le delai de rappel de la direction (`seance.pause_rappel_minutes`).
+  /// [cleIdempotence] rend l'envoi rejouable sans compter deux refus.
+  Future<PauseSeance> refuser({
+    required String seanceId,
+    required String cleIdempotence,
+  });
 }
 
 /// Le port de production tant que le serveur ne sert rien : chaque methode
@@ -273,6 +326,12 @@ class PauseSeanceIndisponible implements PortPauseSeance {
 
   @override
   Future<PauseSeance> terminer({
+    required String seanceId,
+    required String cleIdempotence,
+  }) => _indisponible();
+
+  @override
+  Future<PauseSeance> refuser({
     required String seanceId,
     required String cleIdempotence,
   }) => _indisponible();

@@ -20,6 +20,7 @@ import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../pause_famille/entree_pause.dart';
 import 'carte_messages_academie.dart';
 import 'carte_suivi_pedagogique.dart';
 import 'composants_historique.dart';
@@ -182,6 +183,8 @@ class _Corps extends ConsumerWidget {
       children: <Widget>[
         // SUIVI-ELEVE (07/11/2026) : « Où en est `prénom` », en tete.
         CarteSuiviPedagogique(eleveId: retenu.eleveId, prenom: retenu.prenom),
+        // CALENDRIER-ET-PAUSES (12/11/2026) : le tuteur demande la pause.
+        EntreePause(eleveId: retenu.eleveId),
         CarteMessagesAcademie(eleveId: retenu.eleveId, prenom: retenu.prenom),
         seances,
       ],

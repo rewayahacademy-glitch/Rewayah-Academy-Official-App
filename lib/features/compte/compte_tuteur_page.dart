@@ -11,6 +11,7 @@ import '../../core/capacites/port_paiements_foyer.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/identite/port_matricule.dart';
+import '../../core/journal_sorties/port_journal_sorties.dart';
 import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
@@ -54,6 +55,9 @@ class CompteTuteurPage extends ConsumerStatefulWidget {
 
   /// La ligne « Paiements » de la section Paiements (PAIEMENTS-TUTEUR).
   static const Key paiementsKey = ValueKey<String>('compte-paiements');
+
+  /// HORS-SALLE-2 : la ligne de l'accord du journal des sorties.
+  static const Key accordSortiesKey = ValueKey<String>('compte-accord-sorties');
 
   @override
   ConsumerState<CompteTuteurPage> createState() => _CompteTuteurPageState();
@@ -216,6 +220,18 @@ class _CompteTuteurPageState extends ConsumerState<CompteTuteurPage> {
               libelle: t.compte.tuteur.securite.consentements,
               onPress: () => aller(Routes.tuteurCompteConsentements),
             ),
+            // HORS-SALLE-2 : l'accord du journal des sorties de
+            // l'application, par enfant ; seulement quand la direction l'a
+            // allume et qu'un enfant mineur du foyer est concerne (capacite
+            // servie par `accords_sorties`, jamais un role).
+            if (ref.watch(accordSortiesProposeProvider))
+              LigneRubrique(
+                cle: CompteTuteurPage.accordSortiesKey,
+                icone: AppIcons.attente,
+                libelle: t.journalSorties.accord.ligne,
+                legende: t.journalSorties.accord.ligneDetail,
+                onPress: () => aller(Routes.compteTuteurSousPage('sorties')),
+              ),
             if (ref.watch(mesDonneesDisponiblesProvider))
               LigneRubrique(
                 cle: RubriqueMesDonnees.ligneKey,

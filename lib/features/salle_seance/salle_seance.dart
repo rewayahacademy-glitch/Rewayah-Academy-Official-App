@@ -158,7 +158,7 @@ class SalleSeance extends StatelessWidget {
       );
       // EN-KB en plein ecran (25/10/2026) : M, V, R, B restent a
       // l'enseignant sur ordinateur, comme avant la bascule K4.
-      if (vue.role != RoleSeance.enseignant || !large) return salle;
+      if (!vue.conduitLaSeance || !large) return salle;
       return _avecPreferenceRaccourcis(
         context,
         (bool raccourcis) => raccourcis
@@ -171,7 +171,7 @@ class SalleSeance extends StatelessWidget {
             : salle,
       );
     }
-    if (vue.role == RoleSeance.enseignant) {
+    if (vue.conduitLaSeance) {
       // TB-2 : la barre de l'appel est en bas de l'ecran, au-dessus de la
       // feuille ouverte (UX-07) ; c'est elle qui garde la marge du systeme.
       return Material(
@@ -1228,7 +1228,7 @@ class _FocusPanneauxState extends State<_FocusPanneaux> {
     final ActionsSeance actions = widget.actions;
     if (!widget.raccourcis ||
         widget.gabarit != Gabarit.desktop ||
-        vue.role != RoleSeance.enseignant ||
+        !vue.conduitLaSeance ||
         _saisieEnCours()) {
       return false;
     }

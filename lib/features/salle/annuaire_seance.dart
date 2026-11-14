@@ -11,13 +11,19 @@
 //   « Sayyida Prenom », le prenom seul sans titre connu ;
 // - les autres, par la presence de la seance (`PresenceParticipant` : profil,
 //   prenom, role) : « Prenom » ;
-// - les camarades de l'eleve adulte, par sa Classe
-//   (`participants_classe_eleve_adulte`, PHOTOS-2b) : « Prenom » ;
+// - les camarades de tout eleve, enfant compris, par sa Classe
+//   (`camarades_classe_eleve`, et `participants_classe_eleve_adulte` pour
+//   l'eleve adulte) : « Prenom », le prenom seul, jamais le nom de famille.
+//   La decision est prise : directeur, 12/11/2026 (CAMARADES, journal
+//   D-040) : « il faut que les autres eleves voient celui qui recite, au
+//   moins une partie du nom, la photo, car ils partagent une salle ». Elle
+//   remplace la regle du pilote du 04/11/2026 (PHOTOS-2b : un enfant ne
+//   lisait aucun prenom de camarade). Deux camarades du meme prenom ne sont
+//   pas departages ;
 // - personne de connu : « Participant » chez l'enseignant et le controleur,
-//   qui lisent la liste ; **aucun nom** chez l'eleve et le tuteur (PHOTOS-2b,
-//   pilote, 04/11/2026) : un enfant ne lit pas le prenom de ses camarades
-//   (protection des mineurs, decision du pilote du 04/11/2026), la vignette
-//   garde la photo ouverte par K-44 ou un cercle neutre ; jamais l'identite.
+//   qui lisent la liste ; **aucun nom** chez l'eleve et le tuteur : la
+//   vignette garde la photo ouverte par K-44 ou un cercle neutre ; jamais
+//   l'identite.
 //
 // Pur : il ne lit que ce que `SallePage` a deja lu, n'ouvre aucun appel.
 
@@ -50,7 +56,7 @@ class AnnuaireSeance {
   /// Compose l'annuaire depuis la presence lue et l'enseignant de la Classe.
   ///
   /// [camarades] : les prenoms de la Classe que l'appelant a le droit de lire
-  /// (l'eleve adulte) ; la presence passe devant. [nommerLesInconnus] : vrai
+  /// (tout eleve, CAMARADES du 12/11/2026) ; la presence passe devant. [nommerLesInconnus] : vrai
   /// chez qui lit la liste des participants (enseignant, controleur), qui
   /// garde « Participant » ; faux ailleurs, ou l'inconnu reste sans nom.
   factory AnnuaireSeance({

@@ -100,15 +100,20 @@ SELECT public.publier_version_programme((SELECT id FROM se_ids WHERE cle = 'v1')
 RESET ROLE;
 UPDATE public.groupes SET programme_niveau_id = (SELECT id FROM se_ids WHERE cle = 'n1')
  WHERE id = pg_temp.u('c1');
--- Decisions datees : 5, 16 et 20 semaines (etape 2 : 14 prevues, 18 limite).
+-- Decisions datees : 5, 16 et 20 semaines (etape 2 : 14 prevues, 19 limite : tableau 1 bis du
+-- SOCLE-PROGRAMME, a la place de l'ancien x 1,3).
 INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement, decide_par, motif, created_at)
 SELECT pg_temp.u(x.e), (SELECT id FROM se_ids WHERE cle = 'n2'), 'diagnostic_initial', pg_temp.u('a1'),
        'Diagnostic', pg_catalog.now() - x.semaines * interval '1 week' - interval '1 hour'
   FROM (VALUES ('e1', 5), ('e4', 16), ('e5', 20)) AS x(e, semaines);
 SELECT pg_temp.vrai(
-  (SELECT (n.durees -> 'enfant_6_9' ->> 'prevue')::int = 14 AND (n.durees -> 'enfant_6_9' ->> 'limite')::int = 18
+  (SELECT (n.durees -> 'enfant_6_9' ->> 'prevue')::int = 14 AND (n.durees -> 'enfant_6_9' ->> 'limite')::int = 19
      FROM public.programme_niveaux n WHERE n.id = (SELECT id FROM se_ids WHERE cle = 'n2')),
-  'fixture : etape 2, 14 semaines prevues, date limite a 18 (6-9 ans)');
+  'fixture : etape 2, 14 semaines prevues, date limite a 19 (6-9 ans, tableau 1 bis)');
+-- SOCLE-PROGRAMME : l'etape se lit dans le fait propre a chaque eleve, plus dans l'etape de la
+-- Classe. e1, e4, e5 ont le leur par la decision ci-dessus ; e2 et g1 (membres sans decision) le
+-- recoivent comme a l'installation : etape 1 des bases.
+SELECT private.rattacher_classes_et_eleves();
 
 -- e1 entre a l'etape 4 (la Classe passe aussi a l'etape 4), et la Classe presente une page de
 -- reprise (verifiee dans la lecture : elle vient de suivi_pedagogique_eleve).
@@ -141,19 +146,57 @@ INSERT INTO ma_sortie VALUES ('e1', public.ma_progression(pg_temp.u('e1')));
 RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT (j -> 'etape' ->> 'ordre')::int = 4 AND j -> 'etape' ->> 'cycle' = 'Les bases'
-          AND j -> 'etape' ->> 'nom' IS NOT NULL AND j -> 'etape' ->> 'rythme' IS NOT NULL
+          AND j -> 'etape' ->> 'nom' IS NOT NULL
           AND (j -> 'etape' ->> 'page_reprise')::int = (SELECT page FROM ma_page)
+          -- SOCLE-PROGRAMME : l'enfant de 6 a 9 ans qui lit pour lui-meme ne recoit ni rythme,
+          -- ni date, ni nombre de semaines.
+          AND j -> 'etape' -> 'rythme' = 'null'::jsonb
+          AND j -> 'etape' -> 'date_limite' = 'null'::jsonb
+          AND j -> 'etape' -> 'entree_le' = 'null'::jsonb
+          AND j -> 'etape' -> 'semaines_ecoulees' = 'null'::jsonb
+          AND j -> 'etape' -> 'duree_prevue_semaines' = 'null'::jsonb
+          AND j -> 'etape' -> 'date_limite_semaines' = 'null'::jsonb
+          AND j -> 'eleve_voit_dates' = 'false'::jsonb
      FROM ma_sortie WHERE cle = 'e1'),
-  'e1 : l''etape 4, son rythme et la page de reprise viennent de suivi_pedagogique_eleve');
+  'e1 : l''etape 4 et la page de reprise sont rendues ; aucun rythme, aucune date, aucune duree pour l''enfant de 6 a 9 ans');
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.jsonb_array_length(j -> 'etapes_du_cycle') = 4
           AND (SELECT pg_catalog.array_agg(x ->> 'statut' ORDER BY (x ->> 'ordre')::int)
                  FROM pg_catalog.jsonb_array_elements(j -> 'etapes_du_cycle') x)
               = ARRAY['franchie','franchie','franchie','en_cours']
+          -- SOCLE-PROGRAMME : aucune date d'entree dans une etape, ni duree, pour l'enfant de 6 a 9 ans.
+          AND NOT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(j -> 'etapes_du_cycle') x
+                           WHERE x -> 'atteinte_le' <> 'null'::jsonb
+                              OR x -> 'duree_prevue_semaines' <> 'null'::jsonb
+                              OR x -> 'date_limite_semaines' <> 'null'::jsonb)
+     FROM ma_sortie WHERE cle = 'e1'),
+  'e1 : les 4 etapes du cycle dans l''ordre, trois franchies, la sienne en cours, sans aucune date ni duree (enfant de 6 a 9 ans)');
+-- Ni la date de validation d'une sourate, ni la date de la reprise de la Classe, pour l'enfant de 6 a 9 ans.
+SELECT pg_temp.vrai(
+  (SELECT NOT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(j -> 'sourates' -> 'sourates') x WHERE x ? 'valide_le')
+          AND j -> 'etape' -> 'page_reprise_le' = 'null'::jsonb
+          AND (j -> 'etape' ->> 'page_reprise') IS NOT NULL
+     FROM ma_sortie WHERE cle = 'e1'),
+  'enfant de 6 a 9 ans : ni sourates[].valide_le ni etape.page_reprise_le (la page de reprise reste)');
+-- Son tuteur lit la meme progression AVEC ses dates (l'eleve de moins de 10 ans les retient, pas lui).
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO ma_sortie VALUES ('e1-tuteur', public.ma_progression(pg_temp.u('e1')));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT j -> 'etape' ->> 'rythme' IS NOT NULL AND j -> 'etape' ->> 'date_limite' IS NOT NULL
+          AND j -> 'etape' ->> 'entree_le' IS NOT NULL
           AND (SELECT (x ->> 'atteinte_le') IS NOT NULL
                  FROM pg_catalog.jsonb_array_elements(j -> 'etapes_du_cycle') x WHERE (x ->> 'ordre')::int = 4)
-     FROM ma_sortie WHERE cle = 'e1'),
-  'e1 : les 4 etapes du cycle dans l''ordre, trois franchies, la sienne en cours, avec sa date d''entree');
+          AND (SELECT (x ->> 'date_limite_semaines')::int = 9
+                 FROM pg_catalog.jsonb_array_elements(j -> 'etapes_du_cycle') x WHERE (x ->> 'ordre')::int = 4)
+     FROM ma_sortie WHERE cle = 'e1-tuteur'),
+  'le tuteur de e1 recoit rythme, date limite, date d''entree et date d''entree dans l''etape 4, et la date limite de chaque etape');
+SELECT pg_temp.vrai(
+  (SELECT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(j -> 'sourates' -> 'sourates') x WHERE x ->> 'valide_le' IS NOT NULL)
+          AND j -> 'etape' ->> 'page_reprise_le' IS NOT NULL
+     FROM ma_sortie WHERE cle = 'e1-tuteur'),
+  'le tuteur de e1 recoit sourates[].valide_le et etape.page_reprise_le');
 SELECT pg_temp.vrai(
   (SELECT (j -> 'sourates' ->> 'sourates_total')::int = 17
           AND (j -> 'sourates' ->> 'sourates_validees')::int = 3
@@ -188,9 +231,15 @@ SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
 SET LOCAL ROLE authenticated;
 INSERT INTO ma_sortie VALUES ('e1-source', public.sourates_eleve(pg_temp.u('e1')));
 RESET ROLE;
+-- Pour le tuteur : EXACTEMENT sourates_eleve. Pour l'enfant de 6 a 9 ans qui lit pour lui-meme :
+-- la meme chose moins `valide_le` (aucune date), rien d'autre.
 SELECT pg_temp.vrai(
-  (SELECT (SELECT j -> 'sourates' FROM ma_sortie WHERE cle = 'e1') = (SELECT j FROM ma_sortie WHERE cle = 'e1-source')),
-  'ma_progression place sourates_eleve telle quelle sous « sourates » : aucune copie');
+  (SELECT t.j -> 'sourates' = s.j
+     FROM ma_sortie t, ma_sortie s WHERE t.cle = 'e1-tuteur' AND s.cle = 'e1-source')
+  AND (SELECT m.j -> 'sourates' = pg_catalog.jsonb_set(s.j, '{sourates}',
+                (SELECT pg_catalog.jsonb_agg(x - 'valide_le') FROM pg_catalog.jsonb_array_elements(s.j -> 'sourates') x))
+         FROM ma_sortie m, ma_sortie s WHERE m.cle = 'e1' AND s.cle = 'e1-source'),
+  'ma_progression place sourates_eleve telle quelle sous « sourates » (tuteur), moins valide_le pour l''enfant de 6 a 9 ans : aucune copie');
 
 -- Un autre eleve de la meme Classe : AUCUNE sourate validee, la Classe n'y change rien.
 SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
@@ -198,11 +247,11 @@ SET LOCAL ROLE authenticated;
 INSERT INTO ma_sortie VALUES ('e2', public.ma_progression(pg_temp.u('e2')));
 RESET ROLE;
 SELECT pg_temp.vrai(
-  (SELECT (j -> 'etape' ->> 'ordre')::int = 4
+  (SELECT (j -> 'etape' ->> 'ordre')::int = 1
           AND (j -> 'sourates' ->> 'sourates_validees')::int = 0
           AND (j -> 'sourates' ->> 'sourates_total')::int = 17
      FROM ma_sortie WHERE cle = 'e2'),
-  'e2 est dans la meme Classe (etape 4) mais n''a aucune sourate cochee : 0 sur 17, jamais la position de la Classe');
+  'e2 est dans la meme Classe (etape 4) mais a sa propre etape (1, son fait) et aucune sourate cochee : 0 sur 17, jamais la position de la Classe');
 
 -- Sans Classe : autorise ; pas d'etape a montrer, mais les sourates VALIDEES de l'eleve sont
 -- rendues quand meme (ce qu'il a acquis lui appartient).
@@ -226,6 +275,10 @@ SELECT pg_temp.vrai(
                 WHERE (x ->> 'validee')::boolean) = ARRAY[1, 114]
      FROM ma_sortie WHERE cle = 'e3'),
   'e3 sans Classe active, 2 sourates validees : elles sont rendues (2 sur 17, les bonnes)');
+SELECT pg_temp.vrai(
+  (SELECT NOT EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(j -> 'sourates' -> 'sourates') x WHERE x ? 'valide_le')
+     FROM ma_sortie WHERE cle = 'e3'),
+  'e3 (enfant de 6 a 9 ans, sans Classe) : les sourates rendues n''ont aucune valide_le');
 
 -- 2. Le reglage par la direction.
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
@@ -250,6 +303,19 @@ RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT (j -> 'sourates' ->> 'sourates_validees')::int = 4 FROM ma_sortie WHERE cle = 'e1c'),
   'une sourate de plus cochee au cahier : 4 sur 17 a la lecture suivante');
+-- Une sourate retiree (CORRIGER-SOURATE) garde sa ligne mais ne compte plus, ni dans le hub, ni
+-- dans la lecture unique de l'etape (SOCLE-PROGRAMME) : memes 3 sourates sur 17.
+UPDATE public.sourates_validees SET retiree_le = pg_catalog.now(), retiree_par = pg_temp.u('b1')
+ WHERE student_id = pg_temp.u('e1') AND sourate_numero = 113;
+SELECT pg_temp.qui(pg_temp.u('e1'), 'student', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO ma_sortie VALUES ('e1d', public.ma_progression(pg_temp.u('e1')));
+INSERT INTO ma_sortie VALUES ('e1d-lecture', public.etape_eleve_lecture(pg_temp.u('e1')));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT (j -> 'sourates' ->> 'sourates_validees')::int = 3 FROM ma_sortie WHERE cle = 'e1d')
+  AND (SELECT (j -> 'sourates' ->> 'validees')::int = 3 FROM ma_sortie WHERE cle = 'e1d-lecture'),
+  'une sourate retiree ne compte plus : 3 sur 17 dans le hub ET dans la lecture unique de l''etape');
 -- Quelle que soit l'etape de la Classe, les 17 sourates comptent (decision du directeur 11/11).
 UPDATE public.groupes SET programme_niveau_id = (SELECT id FROM se_ids WHERE cle = 'n1') WHERE id = pg_temp.u('c1');
 SELECT pg_temp.qui(pg_temp.u('e2'), 'student', pg_temp.u('f1'));
@@ -380,4 +446,31 @@ SELECT pg_temp.vrai(
   AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_policies
                    WHERE schemaname = 'public' AND tablename = 'programme_etape_reglages'),
   'programme_etape_reglages : aucune ecriture sans politique (aucune politique, aucun droit d ecriture)');
+-- La page de reprise et sa date viennent de la MEME adhesion (classe non terminee). e3 reste
+-- membre d'une classe TERMINEE qui avait une reprise : ni la page, ni sa date ne sont rendues.
+-- (e3, sans classe jusqu'ici, recoit d'abord une etape par une decision de la direction.)
+INSERT INTO public.progression_historique (student_id, niveau_id, type_mouvement, decide_par, motif, created_at)
+VALUES (pg_temp.u('e3'), (SELECT id FROM se_ids WHERE cle = 'n2'), 'diagnostic_initial', pg_temp.u('a1'),
+        'Diagnostic', pg_catalog.now() - interval '2 weeks');
+INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana)
+VALUES (pg_temp.u('c9'), pg_temp.u('b1'), 'enfant', 6, 'Classe terminee SE', 3, 18, 'America/Toronto');
+INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES (pg_temp.u('c9'), pg_temp.u('e3'));
+INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id)
+VALUES (pg_temp.u('s9'), pg_temp.u('b1'), pg_catalog.now() - interval '3 hours', pg_catalog.now() - interval '2 hours',
+        'planned', pg_temp.u('c9'));
+INSERT INTO public.classe_position_reprise(groupe_id, page, session_id, presentee_par)
+SELECT pg_temp.u('c9'), page, pg_temp.u('s9'), pg_temp.u('b1') FROM ma_page;
+UPDATE public.groupes SET ended_at = pg_catalog.now(), ended_by = pg_temp.u('a1'), end_reason = 'Classe terminee'
+ WHERE id = pg_temp.u('c9');
+SELECT pg_temp.qui(pg_temp.u('t1'), 'guardian', pg_temp.u('f1'));
+SET LOCAL ROLE authenticated;
+INSERT INTO ma_sortie VALUES ('e3-tuteur', public.ma_progression(pg_temp.u('e3')));
+RESET ROLE;
+SELECT pg_temp.vrai(
+  (SELECT j -> 'etape' ->> 'ordre' IS NOT NULL
+          AND j -> 'etape' -> 'page_reprise' = 'null'::jsonb
+          AND j -> 'etape' -> 'page_reprise_le' = 'null'::jsonb
+     FROM ma_sortie WHERE cle = 'e3-tuteur'),
+  'eleve reste membre d''une classe terminee : ni la page de reprise, ni sa date (meme adhesion pour les deux)');
+
 ROLLBACK;

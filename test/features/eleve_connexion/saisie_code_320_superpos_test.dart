@@ -90,6 +90,7 @@ void main() {
     await chargerPolicesDuDepot();
     // La traduction arabe est differee : chargee hors du temps simule.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 

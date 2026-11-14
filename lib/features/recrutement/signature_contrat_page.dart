@@ -47,6 +47,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../consentements/texte_observation.dart' show CaseAccordTexte;
+import '../juridique/mention_traduction.dart';
 
 /// Le contrat courant et la signature existante, lus ensemble.
 typedef ContratEtSignature = ({ContratCourant contrat, Signature? signature});
@@ -65,6 +66,13 @@ final FutureProvider<ContratEtSignature> contratEtSignatureProvider =
 
 /// Vrai quand le texte hashe a l'empreinte annoncee (affichage seulement).
 bool empreinteConforme(ContratCourant c) =>
+    crypto.sha256.convert(utf8.encode(c.texte)).toString() ==
+    c.sha256.trim().toLowerCase();
+
+/// Vrai quand la traduction hashe a l'empreinte annoncee (affichage seulement) :
+/// une traduction alteree ne se montre pas. La signature, elle, ne dit jamais
+/// rien de la traduction.
+bool traductionConforme(TraductionContrat c) =>
     crypto.sha256.convert(utf8.encode(c.texte)).toString() ==
     c.sha256.trim().toLowerCase();
 
@@ -314,6 +322,7 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
             style: textes.bodyMedium,
           ),
         ),
+        _TraductionCourtoisie(contrat: contrat),
       ],
     );
 
@@ -442,6 +451,60 @@ class _SignatureContratPageState extends ConsumerState<SignatureContratPage> {
           enCours: _envoi,
           onPress: signable ? () => unawaited(_signer(contrat)) : null,
         ),
+      ],
+    );
+  }
+}
+
+/// LANGUES (directeur, 14/11/2026) : en arabe ou en anglais, la traduction de
+/// courtoisie du contrat se lit sous le texte francais, avec la mention « la
+/// version francaise fait foi ». Elle ne se signe pas : la signature, l'empreinte
+/// et la case restent celles du francais. Facultative : sans ligne serveur,
+/// sans port ou en cas d'erreur, rien ne s'affiche.
+class _TraductionCourtoisie extends ConsumerWidget {
+  const _TraductionCourtoisie({required this.contrat});
+
+  final ContratCourant contrat;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppLocale langue = LocaleSettings.currentLocale;
+    if (langue != AppLocale.ar && langue != AppLocale.en) {
+      return const SizedBox.shrink();
+    }
+    final TraductionContrat? traduction = ref
+        .watch(
+          traductionContratProvider((
+            locale: langue.languageCode,
+            version: contrat.version,
+          )),
+        )
+        .asData
+        ?.value;
+    if (traduction == null || !traductionConforme(traduction)) {
+      return const SizedBox.shrink();
+    }
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Ecart.vXl,
+        Semantics(
+          header: true,
+          child: Text(
+            t.recrutement.signature.traductionTitre,
+            style: textes.titleMedium,
+          ),
+        ),
+        Ecart.vSm,
+        AppCard(
+          child: TexteSansCoupure(
+            traduction.texte,
+            key: const ValueKey<String>('signature-traduction-texte'),
+            style: textes.bodyMedium,
+          ),
+        ),
+        const MentionTraduction(),
       ],
     );
   }

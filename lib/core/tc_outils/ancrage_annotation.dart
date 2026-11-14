@@ -161,7 +161,10 @@ class CarteDesBlocs {
   }
 
   /// Une carte sans aucun bloc connu.
-  static const CarteDesBlocs vide = CarteDesBlocs._(<String, BlocAncre>{}, null);
+  static const CarteDesBlocs vide = CarteDesBlocs._(
+    <String, BlocAncre>{},
+    null,
+  );
 
   final Map<String, BlocAncre> _blocs;
 
@@ -172,15 +175,15 @@ class CarteDesBlocs {
   ///
   /// La ressource entre dans la clef : deux supports ouverts cote a cote ne
   /// partagent pas leurs blocs.
-  static String clefDe(ContentPosition position) => switch (position
-      .typeAncrage) {
-    TypeAncrage.ayah =>
-      '${position.resourceId}|ayah:${position.sourate}:${position.ayah}',
-    TypeAncrage.section =>
-      '${position.resourceId}|section:${position.sectionId}',
-    TypeAncrage.page => '${position.resourceId}|page:${position.page}',
-    TypeAncrage.fraction => '${position.resourceId}|cadre',
-  };
+  static String clefDe(ContentPosition position) =>
+      switch (position.typeAncrage) {
+        TypeAncrage.ayah =>
+          '${position.resourceId}|ayah:${position.sourate}:${position.ayah}',
+        TypeAncrage.section =>
+          '${position.resourceId}|section:${position.sectionId}',
+        TypeAncrage.page => '${position.resourceId}|page:${position.page}',
+        TypeAncrage.fraction => '${position.resourceId}|cadre',
+      };
 
   /// Le rectangle courant d'une position, ou `null` si elle n'est pas rendue.
   ///
@@ -217,8 +220,7 @@ class CarteDesBlocs {
         continue;
       }
       final BlocAncre? courant = retenu;
-      if (courant == null ||
-          _surface(bloc.rect) < _surface(courant.rect)) {
+      if (courant == null || _surface(bloc.rect) < _surface(courant.rect)) {
         retenu = bloc;
       }
     }
@@ -304,9 +306,9 @@ double _distanceAuSegment(Offset point, Offset a, Offset b) {
   if (longueur == 0) {
     return (point - a).distance;
   }
-  final double t = (((point - a).dx * segment.dx + (point - a).dy * segment.dy) /
-          longueur)
-      .clamp(0, 1);
+  final double t =
+      (((point - a).dx * segment.dx + (point - a).dy * segment.dy) / longueur)
+          .clamp(0, 1);
   return (point - (a + segment * t)).distance;
 }
 

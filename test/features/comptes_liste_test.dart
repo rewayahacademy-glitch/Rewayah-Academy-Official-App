@@ -191,6 +191,7 @@ void main() {
   setUpAll(() async {
     // L'arabe est une bibliotheque differee : chargee une fois, hors d'un test.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 

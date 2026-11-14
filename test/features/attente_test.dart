@@ -345,7 +345,7 @@ void main() {
       for (final String interdit in <String>[
         t.nav.tuteur.foyer,
         t.nav.tuteur.disponibilites,
-        t.nav.eleve.coran,
+        t.nav.eleve.apprendre,
         t.nav.enseignant.journee,
       ]) {
         expect(find.text(interdit), findsNothing, reason: interdit);

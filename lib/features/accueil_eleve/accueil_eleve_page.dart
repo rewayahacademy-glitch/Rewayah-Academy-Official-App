@@ -42,6 +42,8 @@ import '../../core/widgets/raccourci_tactile.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../acces_finance/acces_finance.dart';
+import '../attente_classe/carte_suivi_attente.dart';
+import '../attente_classe/suivi_attente_page.dart' show CheminsAttente;
 
 /// Ce que le bloc principal de `ELV-02` annonce.
 ///
@@ -293,6 +295,9 @@ class _AccueilElevePageEtat extends ConsumerState<AccueilElevePage>
             : Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
+                  // SUIVI-ATTENTE (S6) : le suivi de l'attente de la classe en
+                  // tete, silencieux sans demande.
+                  const CarteSuiviAttente(chemins: CheminsAttente.enfant),
                   // DASH-ELV-ERR (DASH_STRATEGIE D10, D11) : une lecture en
                   // echec n'est jamais « pas de cours aujourd'hui ». Le bloc dit
                   // que les cours manquent et propose de relire ; le Coran, lu

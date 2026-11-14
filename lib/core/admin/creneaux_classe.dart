@@ -38,6 +38,14 @@ enum MotifRefusCreneau {
 
   /// La Classe est fermee.
   classeFermee,
+
+  /// Le serveur n'est pas encore a jour : une heure saisie dans un autre fuseau
+  /// que celui de la Classe ne peut pas etre convertie. Rien n'est envoye.
+  conversionIndisponible,
+
+  /// Une version de l'application sans fuseau explicite a voulu deplacer une
+  /// heure : le serveur la refuse (« Rechargez l'application »).
+  rechargerApplication,
 }
 
 /// Un refus du serveur sur un creneau, en motif ferme.
@@ -58,10 +66,17 @@ abstract interface class ServiceCreneauxClasse {
   /// la Classe) et rend le nombre de seances creees : 0 quand la Classe
   /// avait deja ce creneau. Un refus du predicat arrive en
   /// `AffectationRefusee`.
+  ///
+  /// [fuseau] est le fuseau de l'heure saisie (HORLOGE-ET-LIEU, correction B2) :
+  /// le serveur la convertit vers le fuseau de la Classe. [fuseauClasse] sert au
+  /// repli quand le serveur n'est pas encore a jour : l'ancienne fonction n'est
+  /// appelee que si l'heure est deja dans le fuseau de la Classe.
   Future<int> ajouter({
     required String groupeId,
     required int jour,
     required int heure,
+    String? fuseau,
+    String? fuseauClasse,
   });
 
   /// Les creneaux de la Classe, par jour puis par heure.
@@ -72,11 +87,16 @@ abstract interface class ServiceCreneauxClasse {
   /// Les seances a venir de l'ancien creneau deplace sont annulees avec
   /// [motif]. Un refus du
   /// predicat arrive en `AffectationRefusee`, un autre en [CreneauRefuse].
+  ///
+  /// [ancien] se lit dans le fuseau de la Classe (tel que la liste le rend) ;
+  /// [nouveau] dans [fuseau], le fuseau de l'heure saisie.
   Future<int> modifier({
     required String groupeId,
     required CreneauClasse ancien,
     required CreneauClasse nouveau,
     required String motif,
+    String? fuseau,
+    String? fuseauClasse,
   });
 
   /// Retire un creneau et rend le nombre de seances annulees (avec

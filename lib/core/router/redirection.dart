@@ -1,4 +1,5 @@
 import '../../features/demo/mode_demonstration.dart';
+import '../apprendre/documents_apprendre.dart';
 import '../config/env.dart';
 import '../domain/enums.dart';
 import '../session/session_state.dart';
@@ -46,6 +47,7 @@ String? deciderRedirection({
   bool resignatureContrat = false,
   bool atterrissageAdulte = false,
   bool accueilInscrits = false,
+  bool villeAFournir = false,
 }) {
   // La salle de demonstration passe sans session hors production : donnees
   // fictives, aucun appel serveur (K-28). En production, la route n'existe
@@ -223,6 +225,14 @@ String? deciderRedirection({
         return racine;
       }
 
+      // HORLOGE-ET-LIEU (partie B, H5) : une personne qui doit encore choisir
+      // sa ville y est menee, sauf pendant une seance (la salle ne se quitte
+      // jamais pour un formulaire). `/ville` ne s'ouvre que dans ce cas ; le
+      // report (« Plus tard ») ou le choix la referme.
+      if (villeAFournir && !_dansLeSousArbre(cheminDemande, Routes.salle)) {
+        return cheminDemande == Routes.ville ? null : Routes.ville;
+      }
+
       // L1-10 : la seconde etape de connexion du controleur passe avant toute
       // navigation. On lit la capacite `mfaRequise`, jamais le role. Meme une
       // adresse inconnue y renvoie : rien d'autre n'est ouvert. Une fois la
@@ -296,6 +306,35 @@ String? deciderRedirection({
         }
       }
 
+      // ESPACE-APPRENDRE (lot 5, 13/11/2026) : l'eleve (le mineur, et l'adulte
+      // dont la barre est celle de l'eleve : role `student`) n'a qu'une
+      // Bibliotheque, celle de l'espace Apprendre. L'ancienne liste
+      // `/tc/bibliotheque` (Ma classe, espace de la classe, recherche, retour
+      // par defaut d'une fiche) l'y mene ; la fiche d'un document
+      // (`/tc/bibliotheque/:id`) reste ouverte. **Jamais le tuteur** : un
+      // compte tuteur qui est aussi eleve autonome (`eleveAutonome`) garde sa
+      // Bibliotheque dans l'espace tuteur (la coquille de `/tc/*` est celle du
+      // role) ; ses entrees de l'espace eleve (Accueil adulte, Ma classe
+      // adulte) menent directement a Apprendre. L'adresse seule ne dit pas
+      // l'espace : la redirection se limite donc au role `student`.
+      // La classe d'ou il vient (`?groupe=`, posee par « Voir tout » de Ma
+      // classe et par l'espace de la classe) voyage avec lui : Apprendre en
+      // tire la rubrique « Pour cette classe ».
+      if (role == AppRole.student && cheminDemande == Routes.tcBibliotheque) {
+        final String? groupe = cheminComplet == null
+            ? null
+            : Uri.tryParse(cheminComplet)
+                  ?.queryParameters[parametreGroupeApprendre];
+        return groupe == null || groupe.isEmpty
+            ? Routes.eleveApprendre
+            : Uri(
+                path: Routes.eleveApprendre,
+                queryParameters: <String, String>{
+                  parametreGroupeApprendre: groupe,
+                },
+              ).toString();
+      }
+
       // Aucune route ne correspond : la page introuvable le dit, sans rien
       // montrer, et ramene a l'accueil du role.
       if (!routeConnue) {
@@ -329,6 +368,15 @@ String? deciderRedirection({
 
       if (cheminDemande == Routes.invitationFoyer) {
         return null;
+      }
+
+      // HORLOGE-ET-LIEU : la ville n'a de sens que pour les deux roles qui en
+      // donnent une (regle positive : tout autre role, role illisible compris,
+      // retourne a sa racine).
+      if (cheminDemande == Routes.ville) {
+        return role == AppRole.guardian || role == AppRole.teacher
+            ? null
+            : racine;
       }
 
       // WEB-BUREAU (b), arbitrage du garde-cap du 06/11/2026 : le lecteur

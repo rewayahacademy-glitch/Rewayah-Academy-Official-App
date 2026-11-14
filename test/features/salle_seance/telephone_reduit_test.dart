@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/features/salle/salle_page.dart';
 import 'package:rewayah_academy/features/salle_seance/dock_seance.dart'
     show DockSeance;
+import 'package:rewayah_academy/features/salle_seance/dynamique_chrono.dart';
 import 'package:rewayah_academy/features/salle_seance/panneau_seance.dart'
     show PanneauSeance;
 import 'package:rewayah_academy/features/salle_seance/telephone_enseignant.dart';
@@ -213,8 +214,15 @@ Future<void> _attendreLeRepos(WidgetTester tester) async {
 }
 
 /// Les commandes se masquent au delai : un toucher les ramene.
+///
+/// DYNAMIQUE-CHRONO-1 : le coin de l'ecran est la rangee reservee de la
+/// Dynamique chrono ; le toucher se fait juste dessous, sur la page.
 Future<void> _toucher(WidgetTester tester) async {
-  await tester.tapAt(const Offset(10, 10));
+  final Finder rangee = find.byKey(TelephonePleinEcran.cleRangeeChrono);
+  final double haut = rangee.evaluate().isEmpty
+      ? 0
+      : tester.getRect(rangee).bottom;
+  await tester.tapAt(Offset(10, haut + 10));
   await tester.pumpAndSettle();
 }
 
@@ -240,8 +248,12 @@ Future<void> _onglet(WidgetTester tester, String libelle) async {
 
 const String _phase = String.fromEnvironment('PHASE', defaultValue: 'apres');
 
-/// L'ile de la salle (chrono), posee en haut chez l'enseignant au telephone.
-final Finder _ile = find.byKey(const ValueKey<String>('ligne-etat-telephone'));
+/// L'etat de la salle, en haut chez l'enseignant au telephone.
+///
+/// DYNAMIQUE-CHRONO-1 : ce harnais ne sert pas de chrono, la Dynamique chrono
+/// n'y a rien a dire ; le mot d'etat de sa zone reservee, lui, est toujours
+/// la (avant ce lot : l'ile, qui portait aussi le mot d'etat).
+final Finder _ile = find.byKey(LigneEtatSalle.cleMot);
 
 /// GRILLE-COMMANDES : la barre de l'enseignant, la seule.
 final Finder _dock = find.byKey(BarreCommandesTelephone.cle);
@@ -318,8 +330,9 @@ void main() {
           await _monter(tester, theme: theme);
           await _attendreLeRepos(tester);
           expect(_ile.hitTestable(), findsOneWidget);
-          // Au toucher, la capsule prend sa place ; le profil deplie redit la
-          // ligne d'etat, une seule fois.
+          // DYNAMIQUE-CHRONO-1 : au toucher, la capsule se pose sous la
+          // rangee de la barre, qui reste ; le profil deplie ne redit plus la
+          // ligne d'etat (une seule barre a l'ecran).
           await _toucher(tester);
           await tester.tap(find.byKey(CapsuleVideoTelephone.cleDeplier));
           await tester.pumpAndSettle();

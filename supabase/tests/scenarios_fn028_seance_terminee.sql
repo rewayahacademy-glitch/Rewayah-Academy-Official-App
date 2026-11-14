@@ -143,10 +143,21 @@ BEGIN
     jsonb_build_object('groupe_id','f0280000-0000-0000-0000-000000000121','portee','foyer'),'/tuteur'),
    (c_ens,NULL,'eleve_inscrit',
     jsonb_build_object('groupe_id','f0280000-0000-0000-0000-000000000121','portee','classe'),'/enseignant/classes');
+  -- SUIVI-ATTENTE (13/11/2026, revue B1) : c_m est un eleve mineur : aucun
+  -- courriel, quel que soit le modele. Le controle positif est l'eleve adulte.
   SELECT count(*) INTO v_n FROM public.courriels_sortants c
    WHERE c.modele='seance_annulee' AND c.destinataire_profil=c_m;
+  IF v_n <> 0 THEN
+    RAISE EXCEPTION 'FN-028: un eleve mineur ne recoit aucun courriel, trouve %', v_n;
+  END IF;
+  INSERT INTO public.notifications(destinataire,foyer_id,evenement,params,destination) VALUES
+   ('f0280000-0000-0000-0000-000000000104',NULL,'seance_annulee',
+    jsonb_build_object('groupe_id','f0280000-0000-0000-0000-000000000121','portee','soi'),'/eleve');
+  SELECT count(*) INTO v_n FROM public.courriels_sortants c
+   WHERE c.modele='seance_annulee'
+     AND c.destinataire_profil='f0280000-0000-0000-0000-000000000104';
   IF v_n <> 1 THEN
-    RAISE EXCEPTION 'FN-028: seance_annulee devait ecrire un courriel, trouve %', v_n;
+    RAISE EXCEPTION 'FN-028: seance_annulee devait ecrire un courriel a l eleve adulte, trouve %', v_n;
   END IF;
   IF EXISTS (SELECT 1 FROM public.courriels_sortants c WHERE c.destinataire_profil=c_e) THEN
     RAISE EXCEPTION 'FN-028: un compte enfant a recu un courriel';

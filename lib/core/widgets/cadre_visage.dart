@@ -9,15 +9,18 @@
 
 import 'package:flutter/material.dart';
 
+import '../accessibilite/mode_accessibilite.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_metriques.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'avatar_nom.dart';
+import 'halo_lumiere.dart';
 import 'status_pill.dart';
 
 /// Le cadre d'une personne : son image, recadree au centre (jamais etiree),
@@ -28,8 +31,16 @@ import 'status_pill.dart';
 /// - **Nom** : en bas au debut, sur une petite pastille sombre translucide
 ///   (lisible sur n'importe quelle image), jamais coupe dans un mot.
 /// - **Micro ferme** : une icone, et le mot lu (jamais la couleur seule).
-/// - **Parole** : un anneau qui apparait en fondu, sans rien deplacer ; le
-///   lecteur d'ecran le dit aussi (« en train de parler »).
+/// - **Fond** : un ecran sombre ([AppPalette.surfaceVisage]), qui se
+///   detache du fond de la page dans les deux themes (VISAGES, 12/11/2026).
+/// - **Sans image** : la photo de la personne quand le serveur la rend,
+///   sinon un cercle de sa couleur et ses initiales, au centre exact du
+///   cadre a toutes les tailles.
+/// - **Parole** (VISAGES, point 9) : la lumiere du bouton Compte, DANS le
+///   cadre ([HaloLumiere.voix]), en vagues tant que la personne parle ; elle
+///   apparait et s'efface en fondu, sans rien deplacer ; rien quand elle se
+///   tait. Mouvement ou effets reduits : une bordure `borderStrong` fixe. Le
+///   lecteur d'ecran le dit aussi (« parle »).
 /// - **Recite** : la marque « Recite » et un contour franc.
 /// - **Gestes** : un emplacement au milieu du bord de fin ([menu]).
 /// - **Petites tailles** (de 64 a 480 de cote) : sous [seuilNom], le nom
@@ -113,8 +124,13 @@ class CadreVisage extends StatelessWidget {
   /// L'opacite de la pastille du nom (sombre, translucide).
   static const double opacitePastille = 0.72;
 
-  /// La cle de l'anneau de parole (tests).
+  /// La cle de la lumiere de parole (son fondu ; tests).
   static const Key cleAnneau = ValueKey<String>('cadre-visage-anneau');
+
+  /// La cle de la bordure fixe de parole, sous mouvement reduit (tests).
+  static const Key cleBordureParole = ValueKey<String>(
+    'cadre-visage-bordure-parole',
+  );
 
   /// La cle de l'etiquette du nom (tests).
   static const Key cleNom = ValueKey<String>('cadre-visage-nom');
@@ -137,7 +153,11 @@ class CadreVisage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final AppColorPair fond = palette.surfaceVisage;
     final TextTheme textes = Theme.of(context).textTheme;
+    final bool fixe =
+        AppMouvement.mouvementReduit(context) || EffetsReduits.de(context);
+    final bool lumiere = parle && !recite;
     final Widget? image = this.image;
     final Widget? gestes = menu;
     return LayoutBuilder(
@@ -147,6 +167,14 @@ class CadreVisage extends StatelessWidget {
             ? AppRadius.arrondiSm
             : AppMetriques.of(contexte).arrondi;
         final bool avecNom = largeur >= seuilNom;
+        // VISAGES : dans un grand cadre, le grand cercle (64), pour que la
+        // photo ou la couleur de la personne se voie.
+        final double cote = c.hasBoundedHeight
+            ? (largeur < c.maxHeight ? largeur : c.maxHeight)
+            : largeur;
+        final double diametre = cote >= seuilMarque
+            ? AppAvatar.grand
+            : AppAvatar.moyen;
         final Widget contenu = ClipRRect(
           borderRadius: coins,
           child: Stack(
@@ -180,12 +208,31 @@ class CadreVisage extends StatelessWidget {
                           libelleMicroCoupe: microCoupe
                               ? t.salle.microCoupe
                               : null,
-                          couleurIcone: palette.surfaceSunken.onBackground,
-                          styleNom: palette.surfaceSunken.applyTo(
+                          couleurPersonne: true,
+                          diametre: diametre,
+                          couleurIcone: fond.onBackground,
+                          styleNom: fond.applyTo(
                             textes.labelMedium ?? const TextStyle(),
                           ),
                         ),
                       ),
+              ),
+              // La parole : la lumiere DANS le cadre (rognee a ses coins),
+              // sous le nom et les marques ; elle apparait et s'efface en
+              // fondu, rien ne bouge. Mouvement reduit : la bordure fixe,
+              // posee plus bas.
+              IgnorePointer(
+                child: AnimatedOpacity(
+                  key: cleAnneau,
+                  opacity: lumiere ? 1 : 0,
+                  duration: lumiere
+                      ? AppMouvement.fonduEntree
+                      : AppMouvement.fonduSortie,
+                  curve: AppMouvement.courbeFondu,
+                  child: fixe
+                      ? const SizedBox.expand()
+                      : HaloLumiere.voix(parle: lumiere, arrondi: coins),
+                ),
               ),
               if (recite && largeur >= seuilMarque)
                 PositionedDirectional(
@@ -217,7 +264,7 @@ class CadreVisage extends StatelessWidget {
           ),
         );
         final Widget cadre = DecoratedBox(
-          decoration: palette.surfaceSunken.decoration(
+          decoration: fond.decoration(
             borderRadius: coins,
             side: detache ? palette.borderStrong.asBorderSide() : null,
           ),
@@ -239,23 +286,22 @@ class CadreVisage extends StatelessWidget {
                     ),
                   ),
                 ),
-              // La parole : l'anneau apparait en fondu, rien ne bouge.
-              IgnorePointer(
-                child: AnimatedOpacity(
-                  key: cleAnneau,
-                  opacity: parle && !recite ? 1 : 0,
-                  duration: AppMouvement.fonduEntree,
-                  curve: AppMouvement.courbeFondu,
+              // Mouvement ou effets reduits : la parole garde un signe, une
+              // bordure fixe (l'information reste, sans vague).
+              if (fixe && lumiere)
+                IgnorePointer(
                   child: DecoratedBox(
+                    key: cleBordureParole,
                     decoration: BoxDecoration(
                       borderRadius: coins,
                       border: Border.fromBorderSide(
-                        palette.inkAccent.asBorderSide(width: epaisseurAnneau),
+                        palette.borderStrong.asBorderSide(
+                          width: epaisseurAnneau,
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
               if (coin case final Widget signe)
                 PositionedDirectional(
                   top: AppSpacing.sm,

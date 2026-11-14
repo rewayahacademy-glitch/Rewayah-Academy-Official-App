@@ -77,7 +77,7 @@ import 'notes_deposees.dart';
 import 'pointeur_salle.dart';
 import 'rangement_support.dart';
 import 'repere_page.dart';
-import 'telephone_plein_ecran.dart' show pleinEcranSalle;
+import 'telephone_plein_ecran.dart' show arrondiPageSalle, pleinEcranSalle;
 import 'vue_seance.dart';
 
 /// Le rectangle de la page dans sa boite : `BoxFit.contain`, centre (plan
@@ -125,6 +125,9 @@ class SurfacePageFixe extends ConsumerStatefulWidget {
 
   /// La cle de la page du support (Support, Avec notes).
   static const Key clePage = ValueKey<String>('surface-page');
+
+  /// PAGES-FLUIDES : le cadre arrondi d'une page en plein cadre.
+  static const Key cleCadrePlein = ValueKey<String>('surface-page-cadre');
 
   /// La cle de la feuille claire (Tableau, tableau libre).
   static const Key cleFeuille = ValueKey<String>('surface-feuille');
@@ -831,12 +834,28 @@ class _Page extends StatelessWidget {
           page: page.page,
           pages: page.total,
         ),
-        // S0.2c, K4 : dans `/salle`, la page est l'ecran : ni carte, ni
-        // arrondi, ni ombre.
+        // S0.2c, K4 : dans `/salle`, la page est l'ecran : ni carte ni
+        // ombre. Amende par la demande du directeur du 12/11/2026
+        // (PAGES-FLUIDES, cadre et marges) : la page est une surface claire
+        // arrondie, bordee d'un filet fin, posee dans sa marge
+        // (`margesPageSalle`) sur le fond de la salle.
         child: pleinEcranSalle(context)
-            ? DecoratedBox(
-                decoration: AppPalette.of(context).surfaceRaised.decoration(),
-                child: rendu(page),
+            ? ClipRRect(
+                key: SurfacePageFixe.cleCadrePlein,
+                borderRadius: arrondiPageSalle,
+                child: DecoratedBox(
+                  decoration: palette.surfaceRaised.decoration(),
+                  child: DecoratedBox(
+                    position: DecorationPosition.foreground,
+                    decoration: BoxDecoration(
+                      borderRadius: arrondiPageSalle,
+                      border: Border.fromBorderSide(
+                        palette.borderHairline.asBorderSide(),
+                      ),
+                    ),
+                    child: rendu(page),
+                  ),
+                ),
               )
             : _Cadre(child: rendu(page)),
       );

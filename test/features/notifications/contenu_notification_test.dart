@@ -456,4 +456,235 @@ void main() {
       expect(evenementsNotificationConnus, contains(e));
     }
   });
+
+  group('HORLOGE-ET-LIEU : l annonce du changement d heure', () {
+    const Map<String, dynamic> un = <String, dynamic>{
+      'portee': 'soi',
+      'motif': 'changement_heure',
+      'palier': 'j14',
+      'date_changement': '2027-03-28',
+      'changements': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'jour_avant': 3,
+          'avant': '19:00',
+          'jour_apres': 3,
+          'apres': '20:00',
+        },
+      ],
+    };
+
+    test('un cours : l heure exacte avant et apres, le jour du changement', () {
+      expect(
+        contenuNotificationPour('creneau_change', un).titre,
+        'À partir du dimanche 28 mars 2027, votre cours du mercredi passe '
+        'de 19:00 à 20:00.',
+      );
+    });
+
+    test('un tuteur lit le cours de la classe, sans nom d eleve', () {
+      final String titre = contenuNotificationPour(
+        'creneau_change',
+        <String, dynamic>{...un, 'portee': 'foyer'},
+      ).titre;
+      expect(titre, contains('le cours de la classe du mercredi'));
+      expect(titre, isNot(contains('votre cours')));
+    });
+
+    test('plusieurs cours : chaque jour avec ses deux heures', () {
+      final String titre = contenuNotificationPour(
+        'creneau_change',
+        <String, dynamic>{
+          ...un,
+          'portee': 'classe',
+          'changements': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'jour_avant': 3,
+              'avant': '19:00',
+              'jour_apres': 3,
+              'apres': '20:00',
+            },
+            <String, dynamic>{
+              'jour_avant': 4,
+              'avant': '18:00',
+              'jour_apres': 4,
+              'apres': '19:00',
+            },
+          ],
+        },
+      ).titre;
+      expect(
+        titre,
+        'À partir du dimanche 28 mars 2027, l\'heure de vos cours change\u00a0: '
+        'le mercredi de 19:00 à 20:00 ; le jeudi de 18:00 à 19:00.',
+      );
+    });
+
+    test('en arabe, la meme annonce', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      final String titre = contenuNotificationPour('creneau_change', un).titre;
+      expect(titre, contains('19:00'));
+      expect(titre, contains('20:00'));
+      expect(titre, isNot(contains('{')));
+    });
+
+    test('un changement de creneau ordinaire garde la phrase generale', () {
+      expect(
+        contenuNotificationPour('creneau_change', const <String, dynamic>{
+          'portee': 'soi',
+        }).titre,
+        t.notifications.evenements.creneauChange,
+      );
+      // Une annonce illisible ne plante pas : la phrase generale.
+      expect(
+        contenuNotificationPour('creneau_change', const <String, dynamic>{
+          'portee': 'soi',
+          'motif': 'changement_heure',
+          'changements': 'x',
+        }).titre,
+        t.notifications.evenements.creneauChange,
+      );
+    });
+
+    // I2 (13/11/2026) : le jour d'arrivee est dit quand le jour change.
+    Map<String, dynamic> avecJours(
+      int avant,
+      String h1,
+      int apres,
+      String h2,
+    ) => <String, dynamic>{
+      ...un,
+      'changements': <Map<String, dynamic>>[
+        <String, dynamic>{
+          'jour_avant': avant,
+          'avant': h1,
+          'jour_apres': apres,
+          'apres': h2,
+        },
+      ],
+    };
+
+    test('le jour inchange : « du mercredi passe de 19:00 a 20:00 »', () {
+      expect(
+        contenuNotificationPour('creneau_change', un).titre,
+        contains('du mercredi passe de 19:00 à 20:00'),
+      );
+    });
+
+    test('le jour avance : « du dimanche 23:00 au lundi 00:00 »', () {
+      expect(
+        contenuNotificationPour(
+          'creneau_change',
+          avecJours(7, '23:00', 1, '00:00'),
+        ).titre,
+        contains('passe du dimanche 23:00 au lundi 00:00'),
+      );
+    });
+
+    test('le jour recule : « du lundi 00:00 au dimanche 23:00 »', () {
+      expect(
+        contenuNotificationPour(
+          'creneau_change',
+          avecJours(1, '00:00', 7, '23:00'),
+        ).titre,
+        contains('passe du lundi 00:00 au dimanche 23:00'),
+      );
+    });
+
+    test('plusieurs creneaux dont un change de jour', () {
+      final String titre = contenuNotificationPour(
+        'creneau_change',
+        <String, dynamic>{
+          ...un,
+          'changements': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'jour_avant': 3,
+              'avant': '19:00',
+              'jour_apres': 3,
+              'apres': '20:00',
+            },
+            <String, dynamic>{
+              'jour_avant': 7,
+              'avant': '23:00',
+              'jour_apres': 1,
+              'apres': '00:00',
+            },
+          ],
+        },
+      ).titre;
+      expect(titre, contains('le mercredi de 19:00 à 20:00'));
+      expect(titre, contains('du dimanche 23:00 au lundi 00:00'));
+    });
+
+    test('une ancienne annonce, sans jour d arrivee : le jour d avant', () {
+      expect(
+        contenuNotificationPour('creneau_change', <String, dynamic>{
+          ...un,
+          'changements': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'jour_avant': 3,
+              'avant': '19:00',
+              'apres': '20:00',
+            },
+          ],
+        }).titre,
+        contains('du mercredi passe de 19:00 à 20:00'),
+      );
+    });
+
+    // I3 : « le cours reste a la meme heure a La Mecque » seulement si la classe y est.
+    test('classe a La Mecque : la phrase sur La Mecque', () {
+      expect(
+        contenuNotificationPour('creneau_change', <String, dynamic>{
+          ...un,
+          'academie': true,
+        }).titre,
+        endsWith(t.notifications.evenements.changementHeureMecque),
+      );
+    });
+
+    test('classe pas a La Mecque : aucune phrase sur La Mecque', () {
+      for (final bool academie in <bool>[false]) {
+        expect(
+          contenuNotificationPour('creneau_change', <String, dynamic>{
+            ...un,
+            'academie': academie,
+          }).titre,
+          isNot(contains('La Mecque')),
+        );
+      }
+      expect(
+        contenuNotificationPour('creneau_change', un).titre,
+        isNot(contains('La Mecque')),
+      );
+    });
+
+    // I5 : une classe que la tache de nuit refuse de convertir previent la direction.
+    test('conversion refusee : la classe et la cause, en mots simples', () {
+      final String titre = contenuNotificationPour(
+        'creneau_change',
+        <String, dynamic>{
+          'motif': 'conversion_refusee',
+          'classe': 'Classe des lionceaux',
+          'cause': 'proche',
+        },
+      ).titre;
+      expect(titre, contains('Classe des lionceaux'));
+      expect(titre, contains('La Mecque'));
+      expect(titre, contains('moins de 28 jours'));
+      expect(titre, isNot(contains('HORLOGE')));
+      // Les deux autres causes, et une cause inconnue : jamais de texte brut.
+      for (final String cause in <String>['demi_heure', 'autre', 'x']) {
+        final String t2 = contenuNotificationPour(
+          'creneau_change',
+          <String, dynamic>{
+            'motif': 'conversion_refusee',
+            'classe': 'Classe des lionceaux',
+            'cause': cause,
+          },
+        ).titre;
+        expect(t2, contains('Classe des lionceaux'), reason: cause);
+        expect(t2, isNot(contains('HORLOGE')), reason: cause);
+      }
+    });
+  });
 }

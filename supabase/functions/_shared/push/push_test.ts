@@ -207,12 +207,12 @@ const EVENEMENTS = [
   'seance_annulee', 'seance_deplacee', 'enseignante_absente', 'remplacement_propose', 'remplacement_pris',
   'remplacement_designe_admin', 'remplacement_pre_alerte', 'remplacement_avertissement', 'remplacement_inutile',
   'creneau_change', 'titulaire_en_retard', 'seance_reportee', 'classe_validee', 'classe_creee', 'classe_changee',
-  'classe_supprimee', 'enseignant_affecte', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'demande_recue',
+  'classe_supprimee', 'enseignant_affecte', 'tout_est_pret', 'enseignant_change', 'eleve_inscrit', 'eleve_retire', 'demande_recue',
   'demande_close', 'demande_presentation', 'controle_mission_attribuee', 'controle_mission_non_controlee',
   'paiement_relance', 'acces_suspendu_paiement', 'acces_retabli_paiement', 'paiement_recu', 'remboursement_effectue',
   'litige_ouvert', 'litige_clos', 'message_academie_eleve', ...NOUVEAUX, ...RECRUTEMENT,
 ]
-const PORTEES = ['direction', 'comptable', 'soi', 'foyer', 'classe', null]
+const PORTEES = ['direction', 'comptable', 'soi', 'foyer', 'classe', 'heure_ete', 'heure_hiver', 'heure_classe', 'conversion_refusee', null]
 const EMOJI = /\p{Extended_Pictographic}/u
 
 function tousLesTextes(): { cle: string; titre: string; texte: string }[] {
@@ -524,4 +524,24 @@ Deno.test('textes du recrutement : le candidat et la direction ne lisent pas la 
     }
   }
   assert(lire('bienvenue_equipe', 'soi', 'fr').startsWith('Bienvenue dans l\'équipe'))
+})
+
+// HORLOGE-ET-LIEU (I1, 13/11/2026) : l'annonce d'un changement d'heure a son propre
+// texte de push, vrai (la classe ne change pas, son heure chez la personne si),
+// sans prenom ; la forme d'ete, la forme d'hiver, la forme « classe » ; tout autre
+// changement de creneau garde la phrase de l'horaire.
+Deno.test('creneau_change : le push de l annonce du changement d heure', () => {
+  assertEquals(texteDuPush('creneau_change', 'heure_ete', 'fr', 1).texte,
+    'L\'heure de votre cours change avec le passage à l\'heure d\'été. Ouvrez l\'application.')
+  assertEquals(texteDuPush('creneau_change', 'heure_hiver', 'fr', 1).texte,
+    'L\'heure de votre cours change avec le passage à l\'heure d\'hiver. Ouvrez l\'application.')
+  assertEquals(texteDuPush('creneau_change', 'heure_classe', 'fr', 1).texte,
+    'L\'heure de votre cours change avec un changement d\'heure. Ouvrez l\'application.')
+  for (const p of ['heure_ete', 'heure_hiver', 'heure_classe']) {
+    assert(!/horaire de la classe/i.test(texteDuPush('creneau_change', p, 'fr', 1).texte), p)
+    assert(texteDuPush('creneau_change', p, 'ar', 1).texte !== texteDuPush('creneau_change', 'soi', 'ar', 1).texte, p)
+  }
+  assertEquals(texteDuPush('creneau_change', 'foyer', 'fr', 1).texte,
+    'L\'horaire de la classe change : consultez le nouvel horaire dans l\'application.')
+  assert(texteDuPush('creneau_change', 'conversion_refusee', 'fr', 1).texte.includes('La Mecque'))
 })

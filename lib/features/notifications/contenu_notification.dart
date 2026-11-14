@@ -7,6 +7,9 @@
 // caches. Un evenement inconnu (version du serveur plus recente que celle de
 // l'application) a un titre de repli lisible : la page ne plante jamais.
 
+import '../../core/calendrier/libelles_calendrier.dart'
+    show jourEnMots, moisDepuisCle;
+import '../../core/calendrier/port_calendrier.dart' show jourDepuisSql;
 import '../../core/capacites/notifications_supabase.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -24,6 +27,123 @@ String? quandDepuis(Map<String, dynamic> params) {
   return t.notifications.quand(
     date: dateLongueHistorique(instant),
     heure: heureMinute(instant),
+  );
+}
+
+/// L'annonce d'un changement d'heure (notification `creneau_change` de motif
+/// `changement_heure`, posee par la tache quotidienne de la base) : « A partir
+/// du dimanche 28 mars 2027, votre cours du mercredi passe de 19:00 a 20:00. »
+/// `null` quand la notification n'est pas une annonce ou ne se lit pas : la
+/// phrase generale s'applique alors.
+String? changementHeureDepuis(Map<String, dynamic> params, String portee) {
+  if (params['motif'] != 'changement_heure') return null;
+  final dynamic brut = params['changements'];
+  final dynamic jourBrut = params['date_changement'];
+  if (brut is! List<dynamic> || brut.isEmpty || jourBrut is! String) {
+    return null;
+  }
+  final DateTime? jour = DateTime.tryParse(jourBrut);
+  if (jour == null) return null;
+  final evenements = t.notifications.evenements;
+  final bool foyer = portee == 'foyer';
+  // Le jour d'arrivee : celui d'avant quand l'annonce ne le donne pas (ancienne
+  // annonce). Quand le jour change aussi, on dit les deux (I2, 13/11/2026).
+  final List<({String jourAvant, String jourApres, String avant, String apres})>
+  lignes =
+      <({String jourAvant, String jourApres, String avant, String apres})>[];
+  for (final dynamic c in brut) {
+    if (c is! Map<String, dynamic>) return null;
+    final dynamic j = c['jour_avant'];
+    final dynamic ja = c['jour_apres'] ?? j;
+    final dynamic avant = c['avant'];
+    final dynamic apres = c['apres'];
+    if (j is! int ||
+        j < 1 ||
+        j > 7 ||
+        ja is! int ||
+        ja < 1 ||
+        ja > 7 ||
+        avant is! String ||
+        apres is! String) {
+      return null;
+    }
+    lignes.add((
+      jourAvant: t.commun.dates.jours[j - 1].toLowerCase(),
+      jourApres: t.commun.dates.jours[ja - 1].toLowerCase(),
+      avant: avant,
+      apres: apres,
+    ));
+  }
+  final String date = dateLongueHistorique(jour);
+  final String annonce;
+  if (lignes.length == 1) {
+    final l = lignes.single;
+    final String cours = foyer
+        ? evenements.changementHeureCoursUnFoyer
+        : evenements.changementHeureCoursUn;
+    annonce = l.jourAvant == l.jourApres
+        ? evenements.changementHeureUn(
+            date: date,
+            cours: cours,
+            jour: l.jourAvant,
+            avant: l.avant,
+            apres: l.apres,
+          )
+        : evenements.changementHeureUnJour(
+            date: date,
+            cours: cours,
+            jourAvant: l.jourAvant,
+            avant: l.avant,
+            jourApres: l.jourApres,
+            apres: l.apres,
+          );
+  } else {
+    annonce = evenements.changementHeurePlusieurs(
+      date: date,
+      cours: foyer
+          ? evenements.changementHeureCoursPlusieursFoyer
+          : evenements.changementHeureCoursPlusieurs,
+      liste: lignes
+          .map(
+            (l) => l.jourAvant == l.jourApres
+                ? evenements.changementHeureLigne(
+                    jour: l.jourAvant,
+                    avant: l.avant,
+                    apres: l.apres,
+                  )
+                : evenements.changementHeureLigneJour(
+                    jourAvant: l.jourAvant,
+                    avant: l.avant,
+                    jourApres: l.jourApres,
+                    apres: l.apres,
+                  ),
+          )
+          .join(' ; '),
+    );
+  }
+  // I3 : la phrase sur La Mecque n'est vraie que si la classe y est.
+  return params['academie'] == true
+      ? '$annonce ${evenements.changementHeureMecque}'
+      : annonce;
+}
+
+/// L'avis donne a la direction quand la tache de nuit refuse de convertir une
+/// classe a l'heure de La Mecque (I5, 13/11/2026) : la classe et la cause, en
+/// mots simples ; `null` quand la notification n'en est pas un.
+String? conversionRefuseeDepuis(Map<String, dynamic> params) {
+  if (params['motif'] != 'conversion_refusee') return null;
+  final dynamic classe = params['classe'];
+  // La cause est fermee (`proche`, `demi_heure`, `autre`) : le serveur n'envoie
+  // jamais le texte de l'erreur SQL.
+  final String cause = '${params['cause'] ?? ''}';
+  final evenements = t.notifications.evenements;
+  return evenements.conversionRefusee(
+    classe: classe is String && classe.isNotEmpty ? classe : '-',
+    raison: switch (cause) {
+      'proche' => evenements.conversionRefuseeProche,
+      'demi_heure' => evenements.conversionRefuseeDemiHeure,
+      _ => evenements.conversionRefuseeAutre,
+    },
   );
 }
 
@@ -61,6 +181,14 @@ NotificationContenu contenuNotificationPour(
     'bienvenue_equipe' => evenements.bienvenueEquipe,
     // NOTIF-RETENU : l'admission en salle 2, la suite est l'entretien.
     'retenu_entretien' => evenements.retenuEntretien,
+    // CALENDRIER-ET-PAUSES : la reponse de la direction a une demande de pause.
+    // Le prenom n'est donne que pour un enfant (le tuteur est destinataire) ;
+    // sans prenom, c'est l'adulte lui-meme.
+    'pause_repondue' => _pauseRepondue(params),
+    // CALENDRIER-ET-PAUSES (13/11) : la fermeture de l'academie, par classe.
+    'fermeture_annoncee' => _fermeture(params, levee: false),
+    'fermeture_levee' => _fermeture(params, levee: true),
+    'fermeture_conflit' => _fermetureConflit(params),
     // D1-ter (03/11/2026) : le prenom de l'eleve, jamais le message lui-meme.
     'message_academie_eleve' => switch ((
       portee,
@@ -78,6 +206,17 @@ NotificationContenu contenuNotificationPour(
       classe: evenements.enseignantAffecteClasse,
       sinon: evenements.enseignantAffecte,
     ),
+    // SUIVI-ATTENTE : tout est pret pour le premier cours. Le tuteur lit le
+    // prenom de l'enfant ; l'eleve adulte, sa propre phrase.
+    'tout_est_pret' => switch ((
+      portee,
+      '${params['eleve_prenom'] ?? ''}'.trim(),
+    )) {
+      ('soi', _) => evenements.toutEstPretSoi,
+      (_, final String prenom) when prenom.isNotEmpty =>
+        evenements.toutEstPretPour(prenom: prenom),
+      _ => evenements.toutEstPret,
+    },
     'demande_close' => evenements.demandeClose,
     'remplacement_propose' => evenements.remplacementPropose,
     'remplacement_pris' =>
@@ -134,7 +273,13 @@ NotificationContenu contenuNotificationPour(
       classe: evenements.eleveRetireClasse,
       sinon: evenements.eleveRetire,
     ),
-    'creneau_change' => evenements.creneauChange,
+    // HORLOGE-ET-LIEU (12/11/2026, H3) : l'annonce du changement d'heure du
+    // pays de la personne dit l'heure exacte avant et apres ; un autre
+    // changement de creneau garde la phrase generale.
+    'creneau_change' =>
+      conversionRefuseeDepuis(params) ??
+          changementHeureDepuis(params, portee) ??
+          evenements.creneauChange,
     'seance_annulee' =>
       quand == null
           ? evenements.seanceAnnulee
@@ -299,4 +444,106 @@ String texteEntretien(
     'entretien_tenu' => n.tenu,
     _ => n.aReplanifier,
   };
+}
+
+/// La phrase d'une reponse a une demande de pause : acceptee ou refusee, pour un
+/// enfant (son prenom) ou pour l'adulte. Un mois illisible se dit sans mois
+/// (jamais devine).
+String _pauseRepondue(Map<String, dynamic> params) {
+  final evenements = t.notifications.evenements;
+  final bool acceptee = params['decision'] == 'acceptee';
+  final String prenom = '${params['prenom'] ?? ''}'.trim();
+  final String mois = moisDepuisCle(params['mois']) ?? '';
+  if (prenom.isEmpty) {
+    return acceptee
+        ? evenements.pauseRepondueAccepteeAdulte(mois: mois)
+        : evenements.pauseRepondueRefuseeAdulte(mois: mois);
+  }
+  return acceptee
+      ? evenements.pauseRepondueAcceptee(
+          dePrenom: deDevant(
+            prenom,
+            cle: 'notifications.evenements.pauseRepondueAcceptee',
+          ),
+          mois: mois,
+        )
+      : evenements.pauseRepondueRefusee(
+          dePrenom: deDevant(
+            prenom,
+            cle: 'notifications.evenements.pauseRepondueRefusee',
+          ),
+          mois: mois,
+        );
+}
+
+/// La fermeture de l'academie, dite a la famille, a l'adulte et a l'enseignant
+/// (jamais a un mineur). La seance se dit a l'heure de la personne quand le
+/// serveur la donne (`debut_local`), toujours avec l'heure de La Mecque, le jour
+/// de reference de l'academie ; sans heure locale, a l'heure de La Mecque seule.
+String _fermeture(Map<String, dynamic> params, {required bool levee}) {
+  final n = t.calendrier.dates.notification;
+  final DateTime? du = jourDepuisSql(params['du']);
+  final DateTime? au = jourDepuisSql(params['au']);
+  final DateTime? jour = jourDepuisSql(params['premiere_jour']);
+  final String heure = '${params['premiere_heure'] ?? ''}'.trim();
+  final String? local = quandDepuis(params);
+  final String quand = jour == null || heure.isEmpty
+      ? (local ?? '')
+      : local != null
+      ? n.quandLocal(local: local, mecque: heure)
+      : n.quandMecque(jour: jourEnMots(jour), heure: heure);
+  final int total = (params['nombre'] as num?)?.toInt() ?? 1;
+  if (!levee) {
+    final String dateDu = du == null ? '' : jourEnMots(du);
+    final String dateAu = au == null ? '' : jourEnMots(au);
+    return total > 1
+        ? n.annoncee.plusieurs(du: dateDu, au: dateAu, n: total, quand: quand)
+        : n.annoncee.une(du: dateDu, au: dateAu, quand: quand);
+  }
+  final int retablies = (params['retablies'] as num?)?.toInt() ?? total;
+  final int abandonnees = (params['abandonnees'] as num?)?.toInt() ?? 0;
+  if (abandonnees == 0) {
+    return retablies > 1
+        ? n.levee.plusieurs(n: retablies, quand: quand)
+        : n.levee.une(quand: quand);
+  }
+  if (retablies == 0) {
+    return abandonnees > 1
+        ? n.levee.abandonPlusieurs(n: abandonnees, quand: quand)
+        : n.levee.abandonUne(quand: quand);
+  }
+  return n.levee.mixte(retablies: retablies, abandonnees: abandonnees);
+}
+
+/// La direction : une seance n'est plus sous une fermeture mais ne peut pas etre
+/// retablie (l'enseignant a pris un autre cours a la meme heure).
+String _fermetureConflit(Map<String, dynamic> params) {
+  final n = t.calendrier.dates.notification.conflit;
+  // La relance de la veille (motif « veille ») ne redit pas la detection : elle rappelle.
+  final bool rappel = params['motif'] == 'veille';
+  final String classe = '${params['classe'] ?? ''}'.trim();
+  final String enseignant = '${params['enseignant'] ?? ''}'.trim();
+  final DateTime? jour = jourDepuisSql(params['premiere_jour']);
+  final String heure = '${params['premiere_heure'] ?? ''}'.trim();
+  if (classe.isEmpty || jour == null || heure.isEmpty) {
+    return rappel ? n.rappelGenerale : n.generale;
+  }
+  if (enseignant.isEmpty) {
+    return rappel
+        ? n.rappelSansNom(classe: classe, jour: jourEnMots(jour), heure: heure)
+        : n.sansNom(classe: classe, jour: jourEnMots(jour), heure: heure);
+  }
+  return rappel
+      ? n.rappelAvecNom(
+          classe: classe,
+          jour: jourEnMots(jour),
+          heure: heure,
+          enseignant: enseignant,
+        )
+      : n.avecNom(
+          classe: classe,
+          jour: jourEnMots(jour),
+          heure: heure,
+          enseignant: enseignant,
+        );
 }

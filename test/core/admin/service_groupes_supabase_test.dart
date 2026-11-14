@@ -22,6 +22,8 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' show ClientException;
 import 'package:rewayah_academy/core/admin/creation_classe_refusee.dart';
+import 'package:rewayah_academy/core/admin/creneaux_classe.dart'
+    show CreneauRefuse, MotifRefusCreneau;
 import 'package:rewayah_academy/core/admin/service_groupes.dart';
 import 'package:rewayah_academy/core/capacites/port_creation_classe.dart';
 import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart'
@@ -29,6 +31,8 @@ import 'package:rewayah_academy/core/capacites/port_enseignants_classe.dart'
 import 'package:rewayah_academy/core/offres/affectation_refusee.dart';
 import 'package:rewayah_academy/core/planning/service_planning.dart'
     show Creneau;
+import 'package:rewayah_academy/features/admin_groupes/refus_serveur_libelles.dart'
+    show phraseEchecServeurClasse;
 import 'package:supabase_flutter/supabase_flutter.dart'
     show AuthClientOptions, PostgrestException, SupabaseClient;
 
@@ -40,6 +44,10 @@ class _FauxPostgrest {
   final List<_Requete> requetes = <_Requete>[];
   int statut = HttpStatus.ok;
   Object? corps;
+
+  /// Reponses a rendre d'abord, une par requete, avant [statut] et [corps].
+  final List<({int statut, Object? corps})> sequence =
+      <({int statut, Object? corps})>[];
   HttpServer? _http;
   late SupabaseClient client;
 
@@ -56,10 +64,13 @@ class _FauxPostgrest {
         chemin: r.uri.path.replaceFirst('/rest/v1/', ''),
         corps: brut.isEmpty ? null : jsonDecode(brut),
       ));
+      final ({int statut, Object? corps}) reponse = sequence.isEmpty
+          ? (statut: statut, corps: corps)
+          : sequence.removeAt(0);
       r.response
-        ..statusCode = statut
+        ..statusCode = reponse.statut
         ..headers.contentType = ContentType.json
-        ..write(jsonEncode(corps));
+        ..write(jsonEncode(reponse.corps));
       await r.response.close();
     });
     client = SupabaseClient(
@@ -249,25 +260,57 @@ void main() {
       );
 
   test(
-    'modification acceptee : la RPC part avec ses sept parametres',
+    'modification acceptee : la RPC part avec l\'heure et son fuseau',
     () async {
       serveur.corps = null;
 
       await modifier();
 
       final _Requete r = serveur.requetes.single;
-      expect(r.chemin, 'rpc/modifier_groupe');
+      expect(r.chemin, 'rpc/modifier_groupe_fuseau');
       expect(r.corps, <String, Object?>{
         'p_groupe_id': 'classe-1',
         'p_libelle': 'Tajwid du mardi',
         'p_seuil_max': 6,
         'p_weekday': 2,
         'p_hour_local': 17,
-        'p_timezone_iana': null,
+        'p_fuseau': 'Europe/Paris',
         'p_couleur_jeton': null,
       });
     },
   );
+
+  test('serveur pas encore a jour (PGRST202) : l\'ancienne RPC part avec ses '
+      'sept parametres, l\'heure lue dans le fuseau de la classe', () async {
+    serveur.sequence
+      ..add((
+        statut: HttpStatus.notFound,
+        corps: <String, Object?>{
+          'code': 'PGRST202',
+          'details': null,
+          'hint': null,
+          'message':
+              'Could not find the function public.modifier_groupe_fuseau',
+        },
+      ))
+      ..add((statut: HttpStatus.ok, corps: null));
+
+    await modifier();
+
+    expect(serveur.requetes.map((_Requete r) => r.chemin), <String>[
+      'rpc/modifier_groupe_fuseau',
+      'rpc/modifier_groupe',
+    ]);
+    expect(serveur.requetes.last.corps, <String, Object?>{
+      'p_groupe_id': 'classe-1',
+      'p_libelle': 'Tajwid du mardi',
+      'p_seuil_max': 6,
+      'p_weekday': 2,
+      'p_hour_local': 17,
+      'p_timezone_iana': null,
+      'p_couleur_jeton': null,
+    });
+  });
 
   for (final (String message, MotifRefusAffectation motif)
       in <(String, MotifRefusAffectation)>[
@@ -311,7 +354,7 @@ void main() {
       expect(leve, isA<AffectationRefusee>());
       expect((leve! as AffectationRefusee).motif, motif);
       expect(leve.toString(), isNot(contains(message)));
-      expect(serveur.requetes.single.chemin, 'rpc/modifier_groupe');
+      expect(serveur.requetes.single.chemin, 'rpc/modifier_groupe_fuseau');
     });
   }
 
@@ -375,6 +418,35 @@ void main() {
       expect(leve, isNot(isA<AffectationRefusee>()));
     });
   }
+
+  test(
+    '« RechargerPourModifierUnHoraire » (ancienne fonction, serveur migre) : '
+    'CreneauRefuse (rechargerApplication), dite en une phrase de la feuille',
+    () async {
+      serveur.refuser(
+        statut: HttpStatus.badRequest,
+        code: 'P0001',
+        message: 'RechargerPourModifierUnHoraire',
+      );
+
+      Object? leve;
+      try {
+        await modifier();
+      } on Object catch (e) {
+        leve = e;
+      }
+
+      expect(leve, isA<CreneauRefuse>());
+      expect(
+        (leve! as CreneauRefuse).motif,
+        MotifRefusCreneau.rechargerApplication,
+      );
+      expect(
+        phraseEchecServeurClasse(leve),
+        "rechargez l'application pour modifier un horaire.",
+      );
+    },
+  );
 
   test('une erreur qui n\'est pas une reponse de PostgREST (connexion '
       'refusee) passe telle quelle : ce n\'est pas un refus', () async {

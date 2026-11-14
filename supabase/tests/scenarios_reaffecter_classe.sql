@@ -187,10 +187,12 @@ BEGIN
   IF NOT EXISTS (SELECT 1 FROM public.notifications n
                   WHERE n.destinataire = 'c8000000-0000-4000-8000-0000000000b1' AND n.evenement = 'enseignant_change')
      OR NOT EXISTS (SELECT 1 FROM public.notifications n
+                  WHERE n.destinataire = 'c8000000-0000-4000-8000-0000000000b2' AND n.evenement = 'enseignant_affecte')
+     OR EXISTS (SELECT 1 FROM public.notifications n
                   WHERE n.destinataire = 'c8000000-0000-4000-8000-0000000000b2' AND n.evenement = 'enseignant_change') THEN
-    RAISE EXCEPTION 'RCL ROUGE : notification enseignant_change manquante';
+    RAISE EXCEPTION 'RCL ROUGE : t1 recoit enseignant_change, t2 UNE seule notification (enseignant_affecte)';
   END IF;
-  RAISE NOTICE 'RCL OK : t1 et t2 prevenues (enseignant_change)';
+  RAISE NOTICE 'RCL OK : t1 prevenue (enseignant_change), t2 une seule fois (enseignant_affecte)';
   -- Une Classe sans enseignant n'est pas reaffectable.
   UPDATE public.groupes SET teacher_id = NULL, etat = 'en_attente_enseignant'
    WHERE id = (SELECT id FROM rcl WHERE cle = 'b');

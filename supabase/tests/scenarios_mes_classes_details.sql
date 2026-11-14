@@ -80,17 +80,19 @@ SELECT pg_temp.vrai(
      FROM jsonb_array_elements(pg_temp.lues(pg_temp.p('01'), 'teacher')) x
     WHERE x ->> 'groupe_id' = 'cfa000aa-0000-4000-8000-000000000001'),
   'a3 la langue est le nom lisible de langues_cours, pas le code');
--- b. Jamais l'etape d'un brouillon ni d'une version archivee ; NULL, rien d'invente.
+-- b. Jamais l'etape d'un brouillon ; celle d'une version archivee est rendue (SOCLE-PROGRAMME).
 SELECT pg_temp.vrai(
   (SELECT (x -> 'etape_ordre') = 'null'::jsonb AND (x -> 'etape_nom') = 'null'::jsonb
      FROM jsonb_array_elements(pg_temp.lues(pg_temp.p('01'), 'teacher')) x
     WHERE x ->> 'groupe_id' = 'cfa000aa-0000-4000-8000-000000000002'),
   'b1 etape d''un BROUILLON : NULL');
+-- Adapte par SOCLE-PROGRAMME (12/11/2026, regle 4 du directeur : l'eleve et la classe
+-- finissent leur etape dans leur version) : l'etape d'une version archivee est rendue.
 SELECT pg_temp.vrai(
-  (SELECT (x -> 'etape_ordre') = 'null'::jsonb
+  (SELECT (x -> 'etape_ordre') <> 'null'::jsonb
      FROM jsonb_array_elements(pg_temp.lues(pg_temp.p('01'), 'teacher')) x
     WHERE x ->> 'groupe_id' = 'cfa000aa-0000-4000-8000-000000000005'),
-  'b2 etape d''une version ARCHIVEE : NULL');
+  'b2 etape d''une version ARCHIVEE : rendue (la classe finit son etape dans sa version)');
 SELECT pg_temp.vrai(
   (SELECT (x -> 'etape_ordre') = 'null'::jsonb AND (x -> 'langue') = 'null'::jsonb
      FROM jsonb_array_elements(pg_temp.lues(pg_temp.p('01'), 'teacher')) x

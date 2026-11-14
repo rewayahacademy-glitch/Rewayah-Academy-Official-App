@@ -37,8 +37,13 @@ import 'core/agent/amorce_agent.dart';
 import 'core/agent/session_agent.dart';
 import 'core/alertes/alertes_supabase.dart';
 import 'core/alertes/port_alertes.dart';
+import 'core/attente_classe/attente_supabase.dart';
+import 'core/attente_classe/modele_attente.dart';
 import 'core/auth/anti_robot.dart';
 import 'core/auth/anti_robot_supabase.dart';
+import 'core/calendrier/calendrier_supabase.dart';
+import 'core/calendrier/pauses_supabase.dart';
+import 'core/calendrier/port_calendrier.dart';
 import 'core/candidature/autres_competences_supabase.dart';
 import 'core/candidature/candidatures_direction_supabase.dart';
 import 'core/candidature/compte_rendu_entretien.dart';
@@ -199,6 +204,8 @@ import 'core/suivi/ma_progression.dart';
 import 'core/suivi/ma_progression_supabase.dart';
 import 'core/suivi/messages_academie_supabase.dart';
 import 'core/suivi/port_messages_academie.dart';
+import 'core/suivi/port_suivi_pedagogique.dart';
+import 'core/suivi/suivi_pedagogique_supabase.dart';
 import 'core/tc_bibliotheque/catalogue_supabase.dart';
 import 'core/tc_bibliotheque/donnees_catalogue.dart';
 import 'core/tc_bibliotheque/etapes_programme.dart';
@@ -277,6 +284,8 @@ import 'features/profil_enseignant/photo_publique.dart';
 import 'features/recherche/domaines/familles_eleves/port_resolution_ra.dart';
 import 'features/recherche/domaines/familles_eleves/resolution_ra_supabase.dart';
 import 'features/recherche/moteurs_production.dart';
+import 'features/salle/camarades_salle.dart';
+import 'features/salle/camarades_salle_supabase.dart';
 import 'features/salle/position_reprise.dart';
 import 'features/salle/position_reprise_supabase.dart';
 import 'features/salle/reprise_support.dart';
@@ -337,6 +346,15 @@ List<Override> _surchargesAppReelle() => <Override>[
   portSeancesReporteesProvider.overrideWithValue(
     SeancesReporteesSupabase(Supabase.instance.client),
   ),
+  // CALENDRIER-ET-PAUSES (12/11/2026) : le calendrier de l'ecole saisi par la
+  // direction, et la pause d'un mois (RPC calendrier_ecole_*, pause_*,
+  // pauses_*, migration 20261123910000).
+  portCalendrierDirectionProvider.overrideWithValue(
+    CalendrierDirectionSupabase(Supabase.instance.client),
+  ),
+  portPausesProvider.overrideWithValue(
+    PausesSupabase(Supabase.instance.client),
+  ),
   // V2-e (04/11/2026) : la coche fondateur du personnel, tenue par la
   // direction dans les Comptes (RPC fondateurs_personnel, poser_fondateur).
   portFondateursProvider.overrideWithValue(
@@ -348,10 +366,15 @@ List<Override> _surchargesAppReelle() => <Override>[
     MessagesAcademieSupabase(Supabase.instance.client),
   ),
   // MA-PROGRESSION-ECRAN (12/11/2026) : ou en est l'eleve sur le programme,
-  // d'un seul appel (`ma_progression`, migration 20261123830000, qui lit
-  // `suivi_pedagogique_eleve` et `sourates_eleve`).
+  // d'un seul appel (`ma_progression`, migrations 20261123830000 et
+  // 20261123905000, qui lit `etape_eleve_lecture` et `sourates_eleve`).
   portMaProgressionProvider.overrideWithValue(
     MaProgressionSupabase(Supabase.instance.client),
+  ),
+  // SOCLE-PROGRAMME (12/11/2026) : la meme etape, lue par l'enseignant
+  // (`etape_eleve_lecture`) ; l'eleve et sa famille passent par `ma_progression`.
+  portSuiviPedagogiqueProvider.overrideWithValue(
+    SuiviPedagogiqueSupabase(Supabase.instance.client),
   ),
   // Le reglage de la direction (heures de revision, repetitions estimees),
   // dans la feuille du contenu d'une etape.
@@ -525,6 +548,14 @@ List<Override> _surchargesAppReelle() => <Override>[
   ),
   portSuiviDemandesProvider.overrideWithValue(
     DemandesSuiviSupabase(Supabase.instance.client),
+  ),
+  // SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe, cinq
+  // etapes, et le reglage de l'enseignant (ce que les familles voient de lui).
+  portSuiviAttenteProvider.overrideWithValue(
+    AttenteSupabase(Supabase.instance.client),
+  ),
+  portPresentationEnseignantProvider.overrideWithValue(
+    PresentationEnseignantSupabase(Supabase.instance.client),
   ),
   // Travail a preparer d'une Classe (learning_assignment, RLS 0061) : ecriture
   // enseignante du dock et lecture de la famille.
@@ -813,6 +844,12 @@ List<Override> _surchargesAppReelle() => <Override>[
   // fonction n'existe pas : rien n'est retenu, une phrase le dit.
   portRepriseSupportProvider.overrideWithValue(
     RepriseSupportSupabase(Supabase.instance.client),
+  ),
+  // CAMARADES (directeur, 12/11/2026) : le prenom des camarades de la
+  // Classe, pour tout eleve en salle. Sans la migration 20261124300000,
+  // l'ancienne lecture de l'eleve adulte prend le relais, sans erreur.
+  portCamaradesSalleProvider.overrideWithValue(
+    CamaradesSalleSupabase(Supabase.instance.client),
   ),
   // CAHIER-C2 (06/11/2026) : l'etape du programme de chaque eleve d'une
   // Classe, choisie et datee par le serveur (version publiee seulement).

@@ -52,6 +52,10 @@ abstract final class AppMouvement {
   /// Decalage entre deux elements d'une liste echelonnee (A-13, 17/10/2026).
   static const Duration echelon = Duration(milliseconds: 35);
 
+  /// Attente entre la derniere frappe d'un champ de recherche et la requete
+  /// (HORLOGE-ET-LIEU, choix de la ville) : le temps de finir un mot.
+  static const Duration delaiFrappe = Duration(milliseconds: 300);
+
   /// Plafond absolu. Une animation plus longue que ca n'explique plus, elle
   /// fait attendre.
   static const Duration plafond = Duration(milliseconds: 400);
@@ -225,6 +229,14 @@ abstract final class AppMouvement {
   /// garde ses propres durees.
   static const Duration tourHaloCarte = Duration(milliseconds: 2400);
 
+  /// VISAGES (directeur, 12/11/2026, point 9) : une vague de la lumiere de
+  /// l'orateur, du bord du cadre vers son centre (`HaloLumiere.voix`).
+  /// **Hors du budget de transition** : elle dure tant que la personne parle
+  /// (le signal « parle » de la visio), jamais quand elle se tait ; lente,
+  /// sans clignotement (WCAG 2.3.1). Mouvement reduit : aucune vague, une
+  /// bordure `borderStrong` fixe.
+  static const Duration vagueParole = Duration(milliseconds: 1800);
+
   /// Nombre de tours de la lumiere d'une carte : moins que le cercle Compte
   /// ([toursHaloUrgent]) ; 4,8 s en tout, sous les cinq secondes de WCAG
   /// 2.2.2.
@@ -255,6 +267,51 @@ abstract final class AppMouvement {
   /// permanent (la phrase revient a l'appui et reste lue en entier par le
   /// lecteur d'ecran).
   static const Duration ileMention = Duration(seconds: 10);
+
+  /// DYNAMIQUE-CHRONO-1 (directeur, 12/11/2026 : « un toucher la deplie ;
+  /// rien ne cache durablement l'essentiel ») : la Dynamique chrono depliee
+  /// d'un toucher se replie seule apres ce temps (ou au second toucher).
+  static const Duration dynamiqueChronoDepliee = Duration(seconds: 5);
+
+  /// DYNAMIQUE-CHRONO-1 : le temps d'une alerte passagere de la Dynamique
+  /// chrono quand son emetteur n'en donne pas (appel recu, recitation, debut
+  /// de la pause). Elle part seule et laisse sa trace en marque.
+  static const Duration alerteChrono = Duration(seconds: 8);
+
+  /// DYNAMIQUE-CHRONO-2 (directeur, 12/11/2026 : « une alerte disparait en
+  /// quelques secondes ») : une alerte breve (fin de la pause, fin de la
+  /// recitation, appel envoye).
+  static const Duration alerteChronoBreve = Duration(seconds: 4);
+
+  /// DYNAMIQUE-CHRONO-2 : une arrivee (« +1 ») reste ce temps ; une autre
+  /// arrivee pendant ce temps fait rouler le nombre (« +2 ») et le temps
+  /// repart.
+  static const Duration alerteArrivees = Duration(seconds: 4);
+
+  /// DYNAMIQUE-CHRONO-2 : aucune arrivee n'est annoncee pendant ce temps
+  /// apres sa propre entree (ceux deja la, que la visio annonce un a un).
+  static const Duration calmeEntree = Duration(seconds: 5);
+
+  /// DYNAMIQUE-CHRONO-2 : la marque laissee par une arrivee s'efface apres ce
+  /// temps.
+  static const Duration marqueArrivee = Duration(seconds: 30);
+
+  /// DYNAMIQUE-CHRONO-2 : la marque « Appel envoye a Yasmine » de
+  /// l'enseignant s'efface apres ce temps.
+  static const Duration marqueAppelEnvoye = Duration(seconds: 20);
+
+  /// DYNAMIQUE-CHRONO-2, point 14 : la pause proposee (Oui / Non) reste
+  /// depliee ce temps, puis se replie en marque « Pause proposee ».
+  static const Duration propositionPause = Duration(seconds: 30);
+
+  /// DYNAMIQUE-CHRONO-2 : le battement de la Dynamique chrono (repli des
+  /// alertes, effacement des marques, heure de la pause relue).
+  static const Duration battementDynamique = Duration(seconds: 1);
+
+  /// DYNAMIQUE-CHRONO-2, point 6 (directeur, 12/11/2026 : « la sonnerie est
+  /// trop courte ») : l'appel recu rejoue son motif apres cet ecart, trois
+  /// fois en tout, tant que l'eleve ne touche pas l'ecran.
+  static const Duration sonnerieAppelEspace = Duration(milliseconds: 1500);
 
   /// Rappel discret recu : la vibration courte, quand l'appareil la permet.
   static const Duration vibrationRappel = Duration(milliseconds: 200);

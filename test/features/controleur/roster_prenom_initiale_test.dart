@@ -160,6 +160,7 @@ void main() {
     // La traduction arabe est differee : chargee ici, hors du temps simule
     // de `testWidgets`, pour que `setLocaleSync(ar)` la trouve.
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
 
@@ -222,7 +223,7 @@ void main() {
     },
   );
 
-  for (final AppLocale langue in AppLocale.values) {
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     final TextDirection sens = langue == AppLocale.ar
         ? TextDirection.rtl
         : TextDirection.ltr;
@@ -281,7 +282,7 @@ void main() {
   // CTRL-ROSTER-C7-1b : l'ordre bidi, mesure sur le rendu. Sans isolat, le
   // point de « Mariam S. » passait a gauche en interface arabe (« .Mariam
   // S ») et celui de « عائشة ن. » a droite en interface francaise.
-  for (final AppLocale langue in AppLocale.values) {
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
     for (final Size taille in <Size>[
       const Size(320, 900),
       const Size(1440, 900),

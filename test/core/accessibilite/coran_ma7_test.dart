@@ -118,7 +118,7 @@ void main() {
         await tester.tap(
           find.descendant(
             of: find.byKey(NavShell.barreBasseKey),
-            matching: find.text(t.nav.eleve.coran),
+            matching: find.text(t.nav.eleve.apprendre),
           ),
         );
         await stabiliser(tester);

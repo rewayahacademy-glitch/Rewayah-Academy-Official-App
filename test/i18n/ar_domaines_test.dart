@@ -23,6 +23,8 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 /// Les domaines entierement traduits, et leur nombre minimal de cles.
 const Map<String, int> _domaines = <String, int>{
   'salle': 300,
+  // HORLOGE-ET-LIEU, partie B (H5) : la ville de chacun.
+  'lieu': 30,
   'tc': 450,
   'enseignant': 400,
   // AR-TRANSVERSE-1.
@@ -80,6 +82,10 @@ const Map<String, int> _domaines = <String, int>{
   'admin': 590,
   // RECH-1, RECH-2 : la surface de recherche, arabe des l'origine.
   'recherche': 55,
+  // CALENDRIER-ET-PAUSES (12/11/2026) : le calendrier de l'ecole et la pause
+  // d'un mois, arabes des l'origine (texte propose, a valider).
+  'calendrier': 121,
+  'pause': 37,
   // AR-SUIVI-FAMILLE.
   'suiviFamille': 40,
   // EA-HL-DOUBLE-1 etendu (17/10) : ce qui manque, hors ligne, par ecran.
@@ -127,27 +133,37 @@ const Map<String, int> _domaines = <String, int>{
   'suiviPedagogique': 10,
   // SOURATES (11/11/2026) : les sourates des bases au cahier.
   'cahierSourates': 3,
+  // ESPACE-APPRENDRE (12/11/2026) : l'espace Apprendre (Bibliotheque,
+  // Programme, Mon livret), entierement traduit.
+  'apprendre': 33,
   // CORRIGER-SOURATE-DIRECTION (12/11/2026) : les sourates retirables d'une
   // Classe.
   'souratesRetirables': 7,
+  // SUIVI-ATTENTE (12/11/2026) : le suivi de l'attente de la classe.
+  'suiviAttente': 100,
+  // HORS-SALLE-2 (13/11/2026) : le journal des sorties de l'application
+  // (accord du parent, rapport, reglages).
+  'journalSorties': 40,
+  // LANGUES-1 (13/11/2026) : les domaines venus de ccr, traduits.
+  'presentationTuteur': 13,
+  'reprisesAdmin': 22,
+  'recrutement': 700,
+  'formulaire': 9,
+  'motifs': 72,
+  'suiviDemandes': 76,
+  'alertes': 58,
+  'argent': 71,
+  'identiteProfil': 5,
 };
 
-/// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) :
+/// Les domaines francais venus de ccr sans tranche arabe (reunion du 10/10) ;
+/// LANGUES-1 (13/11/2026) n'y laisse que `com` et `comptable` :
 /// entierement dans le socle, ou traduits par les voies Communications et
 /// Comptabilite selon leurs propres regles (`com`, `comptable`), pas encore
 /// relus par la ligne arabe. Un domaine en sort quand sa tranche arabe entre
 /// dans [_domaines].
 const Set<String> _enAttente = <String>{
   // RECRUT-ECRANS : arabe non prioritaire au lancement (REPRISE.md).
-  'presentationTuteur',
-  'reprisesAdmin',
-  'recrutement',
-  'formulaire',
-  'motifs',
-  'suiviDemandes',
-  'alertes',
-  'argent',
-  'identiteProfil',
   'com',
   'comptable',
 };
@@ -186,6 +202,9 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // HORLOGE-ET-LIEU : le credit de la liste des villes porte le nom propre de
+  // la source et son adresse, tels que la licence les demande.
+  'lieu.credit',
   // CAND-04 : le nom de chaque langue, ecrit dans cette langue, identique
   // dans les deux fichiers, sur les cartes de choix de la langue du candidat.
   'inscription.langue.francais',
@@ -206,6 +225,7 @@ const Set<String> _latins = <String>{
   // Francais / العربية », plan des lots 22 a), pour qu'on retrouve la sienne.
   'commun.langue.francais',
   'commun.langue.arabe',
+  'commun.langue.anglais',
   // SUPPORTS-ETAGERE (directeur, 11/11/2026) : la couverture du Coran est
   // toujours en arabe, quelle que soit la langue de l'interface.
   'salle.etagere.coranCouverture.titre',
@@ -226,6 +246,14 @@ const Set<String> _latins = <String>{
   // dans toutes les langues (« Version 0.2.0 (423) », lot FOYER-UX).
   'compte.version',
   'compte.versionSeule',
+  // LANGUES-1 (13/11/2026) : une puce typographique, le numero d'une sourate
+  // suivi d'un point, et le bloc de coordonnees de la societe : ponctuation
+  // et noms propres, rien a traduire.
+  'contrat.politique.puce',
+  'enseignant.cahier.repriseSourate',
+  'contrat.politique.s10.texte',
+  // L'heure d'un creneau, « {h}:00 » : un format, sans mot.
+  'recrutement.parcours.creneaux.heure',
   // DATE-ARABE-SOURCE (garde-cap, 12/11/2026) : l'heure arabe s'ecrit en
   // chiffres, « 5:00 », isolee de gauche a droite (U+2066) ; aucun mot.
   'admin.regroupements.heure',
@@ -301,6 +329,17 @@ const Set<String> _motsLatinsAdmis = <String>{
   // Decision du directeur du 03/11/2026 : la ligne de version reste en
   // anglais (compte.version, compte.versionSeule).
   'Version',
+  // LANGUES-1 (13/11/2026) : sigles juridiques cites par la politique de
+  // controle (DPA 2018, UK GDPR, ICO) et noms de produits de paiement.
+  'DPA',
+  'UK',
+  'GDPR',
+  'ICO',
+  'Stripe',
+  'iOS',
+  'Play',
+  'App',
+  'Store',
 };
 
 /// Les codes de situation de demonstration (SAL-00, PED-01...) et les

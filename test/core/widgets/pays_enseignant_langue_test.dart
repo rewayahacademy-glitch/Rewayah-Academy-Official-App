@@ -25,6 +25,7 @@ void main() {
   // L'arabe est un morceau differe : il se charge une fois, puis se choisit.
   setUpAll(() async {
     await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.en);
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
