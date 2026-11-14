@@ -1,8 +1,8 @@
 # Arbitrages du 13/11/2026 : académie
 
 **Statut** : consignés, documentation seule, aucun code modifié.
-**Auteur des arbitrages** : architecte pédagogique, sur délégation du directeur (« à toi de te débrouiller pour le bien des users »). La délégation est rapportée par la demande de consignation ; elle n'est pas vérifiée dans le dépôt.
-**Portée** : chaque arbitrage garde son statut. Aucun n'est encore une règle du produit tant que le directeur ne l'a pas confirmé par une décision datée, comme l'exige `CLAUDE.md` (« On ne change une règle ou un mot que sur décision datée du directeur »).
+**Auteur des arbitrages** : architecte pédagogique, sur délégation du directeur (« à toi de te débrouiller pour le bien des users »).
+**Portée** : décision datée du directeur, 13/11/2026 : « et les points qui attendent ma réponse, je ne vais RIEN répondre [...] alors à toi de te débrouiller pour le bien des users. » Par cette délégation, chaque arbitrage ci-dessous vaut décision datée du 13/11/2026 au sens de `CLAUDE.md`, jusqu'à ce que le directeur en décide autrement.
 
 **Vérité d'abord** : à la date de rédaction, aucun des réglages nommés ci-dessous n'a d'identifiant trouvé dans le code ou les migrations (recherche par mots-clés le 14/11/2026). Chaque réglage est donc à créer, ou à retrouver sous un autre nom, avant d'être tenu pour existant.
 
