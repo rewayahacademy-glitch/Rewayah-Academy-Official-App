@@ -33846,8 +33846,17 @@ class Traductions$admin$bibliotheque$fiche$fr {
 	/// fr: 'Retirer la vignette'
 	String get retirerVignette => 'Retirer la vignette';
 
-	/// fr: 'Version publiée et figée : pour la modifier, créez une nouvelle version.'
-	String get figee => 'Version publiée et figée : pour la modifier, créez une nouvelle version.';
+	/// fr: 'Ajouter une vignette'
+	String get ajouterVignette => 'Ajouter une vignette';
+
+	/// fr: 'Remplacer la vignette'
+	String get remplacerVignette => 'Remplacer la vignette';
+
+	/// fr: 'Le fichier publié ne change plus : pour le remplacer, créez une nouvelle version. Le nom, la description, le rayon, l'accès et la vignette restent modifiables.'
+	String get figee => 'Le fichier publié ne change plus : pour le remplacer, créez une nouvelle version. Le nom, la description, le rayon, l\'accès et la vignette restent modifiables.';
+
+	/// fr: 'Accès au fichier modifié.'
+	String get accesChange => 'Accès au fichier modifié.';
 
 	/// fr: 'Retiré du catalogue. Motif : {motif}'
 	String retireMotif({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}';
@@ -33939,12 +33948,7 @@ class Traductions$admin$bibliotheque$import$fr {
 	late final Traductions$admin$bibliotheque$import$etats$fr etats = Traductions$admin$bibliotheque$import$etats$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$import$erreurs$fr erreurs = Traductions$admin$bibliotheque$import$erreurs$fr.internal(_root);
 	late final Traductions$admin$bibliotheque$import$droits$fr droits = Traductions$admin$bibliotheque$import$droits$fr.internal(_root);
-
-	/// fr: 'Poursuivre vers la vérification'
-	String get poursuivre => 'Poursuivre vers la vérification';
-
-	/// fr: 'Le fichier doit être vérifié par le serveur avant de poursuivre.'
-	String get poursuivreAide => 'Le fichier doit être vérifié par le serveur avant de poursuivre.';
+	late final Traductions$admin$bibliotheque$import$simple$fr simple = Traductions$admin$bibliotheque$import$simple$fr.internal(_root);
 
 	/// fr: 'Retour au catalogue'
 	String get retour => 'Retour au catalogue';
@@ -47892,8 +47896,8 @@ class Traductions$admin$bibliotheque$import$sections$fr {
 
 	// Translations
 
-	/// fr: 'Ressource'
-	String get ressource => 'Ressource';
+	/// fr: 'Document'
+	String get ressource => 'Document';
 
 	/// fr: 'Fichier'
 	String get fichier => 'Fichier';
@@ -47979,14 +47983,14 @@ class Traductions$admin$bibliotheque$import$etats$fr {
 	/// fr: 'Envoi en cours : {pourcent} %'
 	String envoi({required Object pourcent}) => 'Envoi en cours : ${pourcent} %';
 
-	/// fr: 'Envoi terminé, en attente de la confirmation du serveur…'
-	String get confirmation => 'Envoi terminé, en attente de la confirmation du serveur…';
+	/// fr: 'Envoi terminé. Dernière vérification…'
+	String get confirmation => 'Envoi terminé. Dernière vérification…';
 
 	/// fr: 'Vérification du fichier…'
 	String get verification => 'Vérification du fichier…';
 
-	/// fr: 'Fichier vérifié. Passez aux droits.'
-	String get pret => 'Fichier vérifié. Passez aux droits.';
+	/// fr: 'Fichier ajouté'
+	String get pret => 'Fichier ajouté';
 
 	/// fr: 'Dépôt annulé.'
 	String get annule => 'Dépôt annulé.';
@@ -48092,6 +48096,167 @@ class Traductions$admin$bibliotheque$import$droits$fr {
 
 	/// fr: 'Preuve déposée.'
 	String get preuveDeposee => 'Preuve déposée.';
+}
+
+// Path: admin.bibliotheque.import.simple
+class Traductions$admin$bibliotheque$import$simple$fr {
+	Traductions$admin$bibliotheque$import$simple$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Choisissez un fichier : l'application reconnaît seule un PDF, un audio ou une image, et l'envoi commence aussitôt.'
+	String get intro => 'Choisissez un fichier : l\'application reconnaît seule un PDF, un audio ou une image, et l\'envoi commence aussitôt.';
+
+	/// fr: 'Ajouter un lien à la place'
+	String get lienALaPlace => 'Ajouter un lien à la place';
+
+	/// fr: 'Déposer un fichier à la place'
+	String get fichierALaPlace => 'Déposer un fichier à la place';
+
+	/// fr: 'Nom'
+	String get nom => 'Nom';
+
+	/// fr: 'Donnez un nom au document.'
+	String get nomVide => 'Donnez un nom au document.';
+
+	/// fr: 'Description (facultative)'
+	String get description => 'Description (facultative)';
+
+	/// fr: 'Un lien externe demande une description : dites en une phrase où il mène.'
+	String get descriptionLien => 'Un lien externe demande une description : dites en une phrase où il mène.';
+
+	late final Traductions$admin$bibliotheque$import$simple$acces$fr acces = Traductions$admin$bibliotheque$import$simple$acces$fr.internal(_root);
+	late final Traductions$admin$bibliotheque$import$simple$rangement$fr rangement = Traductions$admin$bibliotheque$import$simple$rangement$fr.internal(_root);
+
+	/// fr: 'Plus de réglages'
+	String get plus => 'Plus de réglages';
+
+	/// fr: 'Masquer les réglages'
+	String get moins => 'Masquer les réglages';
+
+	/// fr: 'Âges, étapes du programme, source du document : rien n'est obligatoire, les valeurs par défaut conviennent.'
+	String get plusAide => 'Âges, étapes du programme, source du document : rien n\'est obligatoire, les valeurs par défaut conviennent.';
+
+	/// fr: 'Source du document'
+	String get sourceTitre => 'Source du document';
+
+	/// fr: 'Langue : {langue}, déduite du nom.'
+	String langue({required Object langue}) => 'Langue : ${langue}, déduite du nom.';
+
+	/// fr: 'Choisissez d'abord un fichier : le bouton « Enregistrer le document » apparaît quand le fichier est ajouté.'
+	String get aideFichier => 'Choisissez d\'abord un fichier : le bouton « Enregistrer le document » apparaît quand le fichier est ajouté.';
+
+	/// fr: 'Le fichier est en cours d'envoi : le bouton « Enregistrer le document » apparaît dès qu'il est ajouté.'
+	String get aideEnvoi => 'Le fichier est en cours d\'envoi : le bouton « Enregistrer le document » apparaît dès qu\'il est ajouté.';
+
+	/// fr: 'Collez l'adresse du lien (https) et donnez un nom : le bouton « Enregistrer le document » apparaît ensuite.'
+	String get aideLien => 'Collez l\'adresse du lien (https) et donnez un nom : le bouton « Enregistrer le document » apparaît ensuite.';
+
+	/// fr: 'Ce document attend un fichier d'un autre type ({type}). Choisissez un fichier de ce type, ou ajoutez un nouveau document.'
+	String typeDifferent({required Object type}) => 'Ce document attend un fichier d\'un autre type (${type}). Choisissez un fichier de ce type, ou ajoutez un nouveau document.';
+
+	late final Traductions$admin$bibliotheque$import$simple$refus$fr refus = Traductions$admin$bibliotheque$import$simple$refus$fr.internal(_root);
+
+	/// fr: 'Fichier ajouté'
+	String get fichierAjoute => 'Fichier ajouté';
+
+	/// fr: 'Le fichier n'a pas été ajouté'
+	String get fichierEchec => 'Le fichier n\'a pas été ajouté';
+
+	/// fr: '{type} · {taille}'
+	String detailFichier({required Object type, required Object taille}) => '${type} · ${taille}';
+
+	/// fr: '{n} octets'
+	String tailleO({required Object n}) => '${n} octets';
+
+	/// fr: '{n} Ko'
+	String tailleKo({required Object n}) => '${n} Ko';
+
+	/// fr: '{n} Mo'
+	String tailleMo({required Object n}) => '${n} Mo';
+
+	late final Traductions$admin$bibliotheque$import$simple$vignette$fr vignette = Traductions$admin$bibliotheque$import$simple$vignette$fr.internal(_root);
+
+	/// fr: 'Enregistrer le document'
+	String get enregistrer => 'Enregistrer le document';
+
+	/// fr: 'Donnez un nom au document : le bouton « Enregistrer le document » apparaît ensuite.'
+	String get aideNom => 'Donnez un nom au document : le bouton « Enregistrer le document » apparaît ensuite.';
+
+	/// fr: 'Cochez la case du droit de diffusion : sans elle, un document qui ne vient pas de l'académie ne peut pas être enregistré.'
+	String get aideDroit => 'Cochez la case du droit de diffusion : sans elle, un document qui ne vient pas de l\'académie ne peut pas être enregistré.';
+
+	/// fr: 'Un réglage est à corriger dans « Plus de réglages » : le bouton « Enregistrer le document » revient ensuite.'
+	String get aideReglages => 'Un réglage est à corriger dans « Plus de réglages » : le bouton « Enregistrer le document » revient ensuite.';
+
+	/// fr: 'L'académie a le droit de diffuser ce document'
+	String get droitTiers => 'L\'académie a le droit de diffuser ce document';
+
+	/// fr: 'À cocher pour un document qui ne vient pas de l'académie. Votre nom et la date sont gardés avec cette déclaration.'
+	String get droitTiersAide => 'À cocher pour un document qui ne vient pas de l\'académie. Votre nom et la date sont gardés avec cette déclaration.';
+
+	/// fr: 'Document enregistré'
+	String get enregistreTitre => 'Document enregistré';
+
+	/// fr: 'Le document n'est pas encore enregistré'
+	String get nonEnregistre => 'Le document n\'est pas encore enregistré';
+
+	/// fr: 'Ouvrir le document'
+	String get ouvrir => 'Ouvrir le document';
+
+	/// fr: 'Ajouter un autre document'
+	String get autre => 'Ajouter un autre document';
+
+	/// fr: 'Ouvrir la vérification du document'
+	String get voirVerification => 'Ouvrir la vérification du document';
+
+	/// fr: 'L'enregistrement du document n'est pas confirmé. Rien n'est perdu : le fichier est déjà ajouté. Réessayez.'
+	String get enregistrementEchec => 'L\'enregistrement du document n\'est pas confirmé. Rien n\'est perdu : le fichier est déjà ajouté. Réessayez.';
+
+	/// fr: 'Le dépôt de fichiers n'est pas prêt'
+	String get reglagesTitre => 'Le dépôt de fichiers n\'est pas prêt';
+
+	/// fr: 'Il manque un réglage du serveur. Tant qu'il n'est pas posé, aucun fichier ne peut être ajouté. Un document peut déjà être ajouté par son lien.'
+	String get reglagesMessage => 'Il manque un réglage du serveur. Tant qu\'il n\'est pas posé, aucun fichier ne peut être ajouté. Un document peut déjà être ajouté par son lien.';
+
+	/// fr: 'Réglage à poser : {nom}'
+	String reglageNomme({required Object nom}) => 'Réglage à poser : ${nom}';
+
+	late final Traductions$admin$bibliotheque$import$simple$pourQui$fr pourQui = Traductions$admin$bibliotheque$import$simple$pourQui$fr.internal(_root);
+
+	/// fr: 'Il est visible de tous les inscrits, enfants compris.'
+	String get enregistreTous => 'Il est visible de tous les inscrits, enfants compris.';
+
+	/// fr: 'Il est visible des adultes seulement.'
+	String get enregistreAdultes => 'Il est visible des adultes seulement.';
+
+	/// fr: 'Il est visible des tranches d'âge choisies dans « Plus de réglages ».'
+	String get enregistreTranches => 'Il est visible des tranches d\'âge choisies dans « Plus de réglages ».';
+
+	/// fr: 'L'enregistrement est bloqué, et rien n'a changé. Ce qui bloque : {criteres}. Corrigez-le dans « Plus de réglages », puis réessayez.'
+	String bloque({required Object criteres}) => 'L\'enregistrement est bloqué, et rien n\'a changé. Ce qui bloque : ${criteres}. Corrigez-le dans « Plus de réglages », puis réessayez.';
+
+	/// fr: 'L'enregistrement est bloqué, et rien n'a changé. Ouvrez la vérification du document pour voir ce qui bloque.'
+	String get bloqueSansDetail => 'L\'enregistrement est bloqué, et rien n\'a changé. Ouvrez la vérification du document pour voir ce qui bloque.';
+
+	/// fr: 'L'enregistrement n'est pas encore activé'
+	String get inactifTitre => 'L\'enregistrement n\'est pas encore activé';
+
+	/// fr: 'Le serveur n'a pas encore la mise à jour qui permet d'enregistrer un document. Rien n'est perdu : le fichier reste ajouté. Prévenez la personne qui installe les mises à jour.'
+	String get inactif => 'Le serveur n\'a pas encore la mise à jour qui permet d\'enregistrer un document. Rien n\'est perdu : le fichier reste ajouté. Prévenez la personne qui installe les mises à jour.';
+
+	/// fr: 'Ce document a déjà son fichier.'
+	String get fichierPresent => 'Ce document a déjà son fichier.';
+
+	/// fr: 'Détail'
+	String get detail => 'Détail';
+
+	/// fr: 'Masquer le détail'
+	String get detailMasquer => 'Masquer le détail';
+
+	late final Traductions$admin$bibliotheque$import$simple$court$fr court = Traductions$admin$bibliotheque$import$simple$court$fr.internal(_root);
 }
 
 // Path: admin.bibliotheque.publication.criteres
@@ -51270,6 +51435,177 @@ class Traductions$admin$candidatures$detail$talents$niveaux$fr {
 
 	/// fr: 'En fait son métier'
 	String get metier => 'En fait son métier';
+}
+
+// Path: admin.bibliotheque.import.simple.acces
+class Traductions$admin$bibliotheque$import$simple$acces$fr {
+	Traductions$admin$bibliotheque$import$simple$acces$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Accès au fichier'
+	String get titre => 'Accès au fichier';
+
+	/// fr: 'Lire dans l'application seulement'
+	String get lecture => 'Lire dans l\'application seulement';
+
+	/// fr: 'Le document s'ouvre dans l'application et ne s'enregistre pas sur l'appareil. C'est le choix par défaut.'
+	String get lectureAide => 'Le document s\'ouvre dans l\'application et ne s\'enregistre pas sur l\'appareil. C\'est le choix par défaut.';
+
+	/// fr: 'Téléchargement permis'
+	String get telechargement => 'Téléchargement permis';
+
+	/// fr: 'L'élève peut enregistrer le fichier sur son appareil. Un fichier déjà téléchargé ne peut plus être repris.'
+	String get telechargementAide => 'L\'élève peut enregistrer le fichier sur son appareil. Un fichier déjà téléchargé ne peut plus être repris.';
+}
+
+// Path: admin.bibliotheque.import.simple.rangement
+class Traductions$admin$bibliotheque$import$simple$rangement$fr {
+	Traductions$admin$bibliotheque$import$simple$rangement$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Rayon'
+	String get titre => 'Rayon';
+
+	/// fr: 'Un document de l'académie, utile aux cours. Rangé en premier dans la Bibliothèque.'
+	String get cours => 'Un document de l\'académie, utile aux cours. Rangé en premier dans la Bibliothèque.';
+
+	/// fr: 'Un autre document. Rangé plus bas dans la Bibliothèque.'
+	String get plusLoin => 'Un autre document. Rangé plus bas dans la Bibliothèque.';
+}
+
+// Path: admin.bibliotheque.import.simple.refus
+class Traductions$admin$bibliotheque$import$simple$refus$fr {
+	Traductions$admin$bibliotheque$import$simple$refus$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce fichier est vide. Choisissez un autre fichier.'
+	String get vide => 'Ce fichier est vide. Choisissez un autre fichier.';
+
+	/// fr: 'C'est une vidéo : elle est trop lourde pour être déposée ici. Ajoutez-la par son lien.'
+	String get video => 'C\'est une vidéo : elle est trop lourde pour être déposée ici. Ajoutez-la par son lien.';
+
+	/// fr: 'Ce fichier n'est ni un PDF, ni un audio (MP3, M4A, OGG), ni une image (PNG, JPEG, WebP). Choisissez un autre fichier.'
+	String get inconnu => 'Ce fichier n\'est ni un PDF, ni un audio (MP3, M4A, OGG), ni une image (PNG, JPEG, WebP). Choisissez un autre fichier.';
+
+	/// fr: 'Ce fichier est trop lourd : {limite} Mo au plus pour ce type. Choisissez un fichier plus léger.'
+	String tropLourd({required Object limite}) => 'Ce fichier est trop lourd : ${limite} Mo au plus pour ce type. Choisissez un fichier plus léger.';
+}
+
+// Path: admin.bibliotheque.import.simple.vignette
+class Traductions$admin$bibliotheque$import$simple$vignette$fr {
+	Traductions$admin$bibliotheque$import$simple$vignette$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vignette (facultative)'
+	String get titre => 'Vignette (facultative)';
+
+	/// fr: 'Une image pour la couverture (PNG, JPEG ou WebP, 2 Mo au plus). Sans elle, la couverture est choisie selon le type.'
+	String get aide => 'Une image pour la couverture (PNG, JPEG ou WebP, 2 Mo au plus). Sans elle, la couverture est choisie selon le type.';
+
+	/// fr: 'Vignette ajoutée'
+	String get ajoutee => 'Vignette ajoutée';
+
+	/// fr: 'La vignette n'a pas été ajoutée'
+	String get echec => 'La vignette n\'a pas été ajoutée';
+
+	/// fr: 'Le document peut être enregistré sans elle.'
+	String get echecSuite => 'Le document peut être enregistré sans elle.';
+
+	/// fr: 'Cette image dépasse 2 Mo. Choisissez une image plus légère.'
+	String get tropLourde => 'Cette image dépasse 2 Mo. Choisissez une image plus légère.';
+
+	/// fr: 'Ce fichier n'est pas une image PNG, JPEG ou WebP. Choisissez une autre image.'
+	String get pasUneImage => 'Ce fichier n\'est pas une image PNG, JPEG ou WebP. Choisissez une autre image.';
+
+	/// fr: 'Vignette retirée. La couverture est de nouveau choisie selon le type.'
+	String get retiree => 'Vignette retirée. La couverture est de nouveau choisie selon le type.';
+
+	/// fr: 'Aperçu de la vignette'
+	String get apercu => 'Aperçu de la vignette';
+
+	/// fr: 'Envoi de la vignette…'
+	String get enCours => 'Envoi de la vignette…';
+}
+
+// Path: admin.bibliotheque.import.simple.pourQui
+class Traductions$admin$bibliotheque$import$simple$pourQui$fr {
+	Traductions$admin$bibliotheque$import$simple$pourQui$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour qui'
+	String get titre => 'Pour qui';
+
+	/// fr: 'Tous les inscrits, enfants compris'
+	String get tous => 'Tous les inscrits, enfants compris';
+
+	/// fr: 'Enfants, adolescents et adultes inscrits le verront.'
+	String get tousAide => 'Enfants, adolescents et adultes inscrits le verront.';
+
+	/// fr: 'Adultes seulement'
+	String get adultes => 'Adultes seulement';
+
+	/// fr: 'Seuls les inscrits de 18 ans et plus le verront.'
+	String get adultesAide => 'Seuls les inscrits de 18 ans et plus le verront.';
+}
+
+// Path: admin.bibliotheque.import.simple.court
+class Traductions$admin$bibliotheque$import$simple$court$fr {
+	Traductions$admin$bibliotheque$import$simple$court$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Le fichier n'est pas parti. Réessayez ; si cela recommence, un réglage du serveur est à corriger.'
+	String get envoi => 'Le fichier n\'est pas parti. Réessayez ; si cela recommence, un réglage du serveur est à corriger.';
+
+	/// fr: 'Le stockage des fichiers a refusé l'envoi. Réessayez une fois ; si cela recommence, un réglage du serveur est à corriger.'
+	String get stockage => 'Le stockage des fichiers a refusé l\'envoi. Réessayez une fois ; si cela recommence, un réglage du serveur est à corriger.';
+
+	/// fr: 'Le dépôt n'a pas abouti. Réessayez dans quelques minutes.'
+	String get service => 'Le dépôt n\'a pas abouti. Réessayez dans quelques minutes.';
+
+	/// fr: 'Le fichier est arrivé, mais il n'a pas pu être gardé. Un réglage du serveur est à corriger avant de réessayer.'
+	String get reglage => 'Le fichier est arrivé, mais il n\'a pas pu être gardé. Un réglage du serveur est à corriger avant de réessayer.';
+
+	/// fr: 'La vérification a pris trop de temps. Réessayez, ou choisissez un fichier plus léger.'
+	String get delai => 'La vérification a pris trop de temps. Réessayez, ou choisissez un fichier plus léger.';
+
+	/// fr: 'Le dépôt de fichiers n'est pas encore activé. Ajoutez le document par son lien en attendant.'
+	String get nonActive => 'Le dépôt de fichiers n\'est pas encore activé. Ajoutez le document par son lien en attendant.';
+
+	/// fr: 'Aucune réponse n'est arrivée. Réessayez dans un instant.'
+	String get reseau => 'Aucune réponse n\'est arrivée. Réessayez dans un instant.';
+
+	/// fr: 'Ce document n'est plus modifiable. Rechargez la page.'
+	String get nonModifiable => 'Ce document n\'est plus modifiable. Rechargez la page.';
+
+	/// fr: 'Ce document a déjà son fichier. Ouvrez sa fiche pour créer une nouvelle version.'
+	String get dejaDepose => 'Ce document a déjà son fichier. Ouvrez sa fiche pour créer une nouvelle version.';
+
+	/// fr: 'L'envoi n'a pas abouti. Réessayez.'
+	String get introuvable => 'L\'envoi n\'a pas abouti. Réessayez.';
+
+	/// fr: 'Ce fichier n'est pas un PDF, un audio ou une image valide. Choisissez un autre fichier.'
+	String get contenu => 'Ce fichier n\'est pas un PDF, un audio ou une image valide. Choisissez un autre fichier.';
+
+	/// fr: 'Votre compte n'a pas le droit de faire ce dépôt. Demandez à la direction de vérifier votre accès.'
+	String get refuse => 'Votre compte n\'a pas le droit de faire ce dépôt. Demandez à la direction de vérifier votre accès.';
 }
 
 // Path: com.annonces.administration.moderation.regleMotif
@@ -58283,7 +58619,10 @@ extension on Traductions {
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'Les modifications n\'ont pas pu être confirmées. Réessayez.',
 			'admin.bibliotheque.fiche.titreVide' => 'Le titre est obligatoire.',
 			'admin.bibliotheque.fiche.retirerVignette' => 'Retirer la vignette',
-			'admin.bibliotheque.fiche.figee' => 'Version publiée et figée : pour la modifier, créez une nouvelle version.',
+			'admin.bibliotheque.fiche.ajouterVignette' => 'Ajouter une vignette',
+			'admin.bibliotheque.fiche.remplacerVignette' => 'Remplacer la vignette',
+			'admin.bibliotheque.fiche.figee' => 'Le fichier publié ne change plus : pour le remplacer, créez une nouvelle version. Le nom, la description, le rayon, l\'accès et la vignette restent modifiables.',
+			'admin.bibliotheque.fiche.accesChange' => 'Accès au fichier modifié.',
 			'admin.bibliotheque.fiche.retireMotif' => ({required Object motif}) => 'Retiré du catalogue. Motif : ${motif}',
 			'admin.bibliotheque.fiche.retireSansMotif' => 'Retiré du catalogue.',
 			'admin.bibliotheque.fiche.retireRestaurer' => 'Il ne peut être republié qu\'après une nouvelle vérification des droits.',
@@ -58341,7 +58680,7 @@ extension on Traductions {
 			'admin.bibliotheque.import.lienInvalide' => 'Cette adresse n\'est pas acceptée : elle doit commencer par https et mener à un site.',
 			'admin.bibliotheque.import.sansFichierAide' => 'Rien à déposer pour ce type : renseignez l\'adresse du lien, puis poursuivez.',
 			'admin.bibliotheque.import.completer' => 'Compléter le document',
-			'admin.bibliotheque.import.sections.ressource' => 'Ressource',
+			'admin.bibliotheque.import.sections.ressource' => 'Document',
 			'admin.bibliotheque.import.sections.fichier' => 'Fichier',
 			'admin.bibliotheque.import.sections.droits' => 'Droits et accès',
 			'admin.bibliotheque.import.champs.titre' => 'Titre',
@@ -58366,9 +58705,9 @@ extension on Traductions {
 			'admin.bibliotheque.import.formats.aucun' => 'Ce type n\'accepte pas de fichier.',
 			'admin.bibliotheque.import.etats.attente' => 'Préparation du dépôt…',
 			'admin.bibliotheque.import.etats.envoi' => ({required Object pourcent}) => 'Envoi en cours : ${pourcent} %',
-			'admin.bibliotheque.import.etats.confirmation' => 'Envoi terminé, en attente de la confirmation du serveur…',
+			'admin.bibliotheque.import.etats.confirmation' => 'Envoi terminé. Dernière vérification…',
 			'admin.bibliotheque.import.etats.verification' => 'Vérification du fichier…',
-			'admin.bibliotheque.import.etats.pret' => 'Fichier vérifié. Passez aux droits.',
+			'admin.bibliotheque.import.etats.pret' => 'Fichier ajouté',
 			'admin.bibliotheque.import.etats.annule' => 'Dépôt annulé.',
 			'admin.bibliotheque.import.erreurs.taille' => 'Ce fichier est trop volumineux. Choisissez un fichier plus léger.',
 			'admin.bibliotheque.import.erreurs.type' => 'Ce type de fichier n\'est pas pris en charge pour ce document. Choisissez un autre fichier.',
@@ -58398,8 +58737,92 @@ extension on Traductions {
 			'admin.bibliotheque.import.droits.preuve' => 'Preuve d\'autorisation',
 			'admin.bibliotheque.import.droits.deposerPreuve' => 'Déposer la preuve',
 			'admin.bibliotheque.import.droits.preuveDeposee' => 'Preuve déposée.',
-			'admin.bibliotheque.import.poursuivre' => 'Poursuivre vers la vérification',
-			'admin.bibliotheque.import.poursuivreAide' => 'Le fichier doit être vérifié par le serveur avant de poursuivre.',
+			'admin.bibliotheque.import.simple.intro' => 'Choisissez un fichier : l\'application reconnaît seule un PDF, un audio ou une image, et l\'envoi commence aussitôt.',
+			'admin.bibliotheque.import.simple.lienALaPlace' => 'Ajouter un lien à la place',
+			'admin.bibliotheque.import.simple.fichierALaPlace' => 'Déposer un fichier à la place',
+			'admin.bibliotheque.import.simple.nom' => 'Nom',
+			'admin.bibliotheque.import.simple.nomVide' => 'Donnez un nom au document.',
+			'admin.bibliotheque.import.simple.description' => 'Description (facultative)',
+			'admin.bibliotheque.import.simple.descriptionLien' => 'Un lien externe demande une description : dites en une phrase où il mène.',
+			'admin.bibliotheque.import.simple.acces.titre' => 'Accès au fichier',
+			'admin.bibliotheque.import.simple.acces.lecture' => 'Lire dans l\'application seulement',
+			'admin.bibliotheque.import.simple.acces.lectureAide' => 'Le document s\'ouvre dans l\'application et ne s\'enregistre pas sur l\'appareil. C\'est le choix par défaut.',
+			'admin.bibliotheque.import.simple.acces.telechargement' => 'Téléchargement permis',
+			'admin.bibliotheque.import.simple.acces.telechargementAide' => 'L\'élève peut enregistrer le fichier sur son appareil. Un fichier déjà téléchargé ne peut plus être repris.',
+			'admin.bibliotheque.import.simple.rangement.titre' => 'Rayon',
+			'admin.bibliotheque.import.simple.rangement.cours' => 'Un document de l\'académie, utile aux cours. Rangé en premier dans la Bibliothèque.',
+			'admin.bibliotheque.import.simple.rangement.plusLoin' => 'Un autre document. Rangé plus bas dans la Bibliothèque.',
+			'admin.bibliotheque.import.simple.plus' => 'Plus de réglages',
+			'admin.bibliotheque.import.simple.moins' => 'Masquer les réglages',
+			'admin.bibliotheque.import.simple.plusAide' => 'Âges, étapes du programme, source du document : rien n\'est obligatoire, les valeurs par défaut conviennent.',
+			'admin.bibliotheque.import.simple.sourceTitre' => 'Source du document',
+			'admin.bibliotheque.import.simple.langue' => ({required Object langue}) => 'Langue : ${langue}, déduite du nom.',
+			'admin.bibliotheque.import.simple.aideFichier' => 'Choisissez d\'abord un fichier : le bouton « Enregistrer le document » apparaît quand le fichier est ajouté.',
+			'admin.bibliotheque.import.simple.aideEnvoi' => 'Le fichier est en cours d\'envoi : le bouton « Enregistrer le document » apparaît dès qu\'il est ajouté.',
+			'admin.bibliotheque.import.simple.aideLien' => 'Collez l\'adresse du lien (https) et donnez un nom : le bouton « Enregistrer le document » apparaît ensuite.',
+			'admin.bibliotheque.import.simple.typeDifferent' => ({required Object type}) => 'Ce document attend un fichier d\'un autre type (${type}). Choisissez un fichier de ce type, ou ajoutez un nouveau document.',
+			'admin.bibliotheque.import.simple.refus.vide' => 'Ce fichier est vide. Choisissez un autre fichier.',
+			'admin.bibliotheque.import.simple.refus.video' => 'C\'est une vidéo : elle est trop lourde pour être déposée ici. Ajoutez-la par son lien.',
+			'admin.bibliotheque.import.simple.refus.inconnu' => 'Ce fichier n\'est ni un PDF, ni un audio (MP3, M4A, OGG), ni une image (PNG, JPEG, WebP). Choisissez un autre fichier.',
+			'admin.bibliotheque.import.simple.refus.tropLourd' => ({required Object limite}) => 'Ce fichier est trop lourd : ${limite} Mo au plus pour ce type. Choisissez un fichier plus léger.',
+			'admin.bibliotheque.import.simple.fichierAjoute' => 'Fichier ajouté',
+			'admin.bibliotheque.import.simple.fichierEchec' => 'Le fichier n\'a pas été ajouté',
+			'admin.bibliotheque.import.simple.detailFichier' => ({required Object type, required Object taille}) => '${type} · ${taille}',
+			'admin.bibliotheque.import.simple.tailleO' => ({required Object n}) => '${n} octets',
+			'admin.bibliotheque.import.simple.tailleKo' => ({required Object n}) => '${n} Ko',
+			'admin.bibliotheque.import.simple.tailleMo' => ({required Object n}) => '${n} Mo',
+			'admin.bibliotheque.import.simple.vignette.titre' => 'Vignette (facultative)',
+			'admin.bibliotheque.import.simple.vignette.aide' => 'Une image pour la couverture (PNG, JPEG ou WebP, 2 Mo au plus). Sans elle, la couverture est choisie selon le type.',
+			'admin.bibliotheque.import.simple.vignette.ajoutee' => 'Vignette ajoutée',
+			'admin.bibliotheque.import.simple.vignette.echec' => 'La vignette n\'a pas été ajoutée',
+			'admin.bibliotheque.import.simple.vignette.echecSuite' => 'Le document peut être enregistré sans elle.',
+			'admin.bibliotheque.import.simple.vignette.tropLourde' => 'Cette image dépasse 2 Mo. Choisissez une image plus légère.',
+			'admin.bibliotheque.import.simple.vignette.pasUneImage' => 'Ce fichier n\'est pas une image PNG, JPEG ou WebP. Choisissez une autre image.',
+			'admin.bibliotheque.import.simple.vignette.retiree' => 'Vignette retirée. La couverture est de nouveau choisie selon le type.',
+			'admin.bibliotheque.import.simple.vignette.apercu' => 'Aperçu de la vignette',
+			'admin.bibliotheque.import.simple.vignette.enCours' => 'Envoi de la vignette…',
+			'admin.bibliotheque.import.simple.enregistrer' => 'Enregistrer le document',
+			'admin.bibliotheque.import.simple.aideNom' => 'Donnez un nom au document : le bouton « Enregistrer le document » apparaît ensuite.',
+			'admin.bibliotheque.import.simple.aideDroit' => 'Cochez la case du droit de diffusion : sans elle, un document qui ne vient pas de l\'académie ne peut pas être enregistré.',
+			'admin.bibliotheque.import.simple.aideReglages' => 'Un réglage est à corriger dans « Plus de réglages » : le bouton « Enregistrer le document » revient ensuite.',
+			'admin.bibliotheque.import.simple.droitTiers' => 'L\'académie a le droit de diffuser ce document',
+			'admin.bibliotheque.import.simple.droitTiersAide' => 'À cocher pour un document qui ne vient pas de l\'académie. Votre nom et la date sont gardés avec cette déclaration.',
+			'admin.bibliotheque.import.simple.enregistreTitre' => 'Document enregistré',
+			'admin.bibliotheque.import.simple.nonEnregistre' => 'Le document n\'est pas encore enregistré',
+			'admin.bibliotheque.import.simple.ouvrir' => 'Ouvrir le document',
+			'admin.bibliotheque.import.simple.autre' => 'Ajouter un autre document',
+			'admin.bibliotheque.import.simple.voirVerification' => 'Ouvrir la vérification du document',
+			'admin.bibliotheque.import.simple.enregistrementEchec' => 'L\'enregistrement du document n\'est pas confirmé. Rien n\'est perdu : le fichier est déjà ajouté. Réessayez.',
+			'admin.bibliotheque.import.simple.reglagesTitre' => 'Le dépôt de fichiers n\'est pas prêt',
+			'admin.bibliotheque.import.simple.reglagesMessage' => 'Il manque un réglage du serveur. Tant qu\'il n\'est pas posé, aucun fichier ne peut être ajouté. Un document peut déjà être ajouté par son lien.',
+			'admin.bibliotheque.import.simple.reglageNomme' => ({required Object nom}) => 'Réglage à poser : ${nom}',
+			'admin.bibliotheque.import.simple.pourQui.titre' => 'Pour qui',
+			'admin.bibliotheque.import.simple.pourQui.tous' => 'Tous les inscrits, enfants compris',
+			'admin.bibliotheque.import.simple.pourQui.tousAide' => 'Enfants, adolescents et adultes inscrits le verront.',
+			'admin.bibliotheque.import.simple.pourQui.adultes' => 'Adultes seulement',
+			'admin.bibliotheque.import.simple.pourQui.adultesAide' => 'Seuls les inscrits de 18 ans et plus le verront.',
+			'admin.bibliotheque.import.simple.enregistreTous' => 'Il est visible de tous les inscrits, enfants compris.',
+			'admin.bibliotheque.import.simple.enregistreAdultes' => 'Il est visible des adultes seulement.',
+			'admin.bibliotheque.import.simple.enregistreTranches' => 'Il est visible des tranches d\'âge choisies dans « Plus de réglages ».',
+			'admin.bibliotheque.import.simple.bloque' => ({required Object criteres}) => 'L\'enregistrement est bloqué, et rien n\'a changé. Ce qui bloque : ${criteres}. Corrigez-le dans « Plus de réglages », puis réessayez.',
+			'admin.bibliotheque.import.simple.bloqueSansDetail' => 'L\'enregistrement est bloqué, et rien n\'a changé. Ouvrez la vérification du document pour voir ce qui bloque.',
+			'admin.bibliotheque.import.simple.inactifTitre' => 'L\'enregistrement n\'est pas encore activé',
+			'admin.bibliotheque.import.simple.inactif' => 'Le serveur n\'a pas encore la mise à jour qui permet d\'enregistrer un document. Rien n\'est perdu : le fichier reste ajouté. Prévenez la personne qui installe les mises à jour.',
+			'admin.bibliotheque.import.simple.fichierPresent' => 'Ce document a déjà son fichier.',
+			'admin.bibliotheque.import.simple.detail' => 'Détail',
+			'admin.bibliotheque.import.simple.detailMasquer' => 'Masquer le détail',
+			'admin.bibliotheque.import.simple.court.envoi' => 'Le fichier n\'est pas parti. Réessayez ; si cela recommence, un réglage du serveur est à corriger.',
+			'admin.bibliotheque.import.simple.court.stockage' => 'Le stockage des fichiers a refusé l\'envoi. Réessayez une fois ; si cela recommence, un réglage du serveur est à corriger.',
+			'admin.bibliotheque.import.simple.court.service' => 'Le dépôt n\'a pas abouti. Réessayez dans quelques minutes.',
+			'admin.bibliotheque.import.simple.court.reglage' => 'Le fichier est arrivé, mais il n\'a pas pu être gardé. Un réglage du serveur est à corriger avant de réessayer.',
+			'admin.bibliotheque.import.simple.court.delai' => 'La vérification a pris trop de temps. Réessayez, ou choisissez un fichier plus léger.',
+			'admin.bibliotheque.import.simple.court.nonActive' => 'Le dépôt de fichiers n\'est pas encore activé. Ajoutez le document par son lien en attendant.',
+			'admin.bibliotheque.import.simple.court.reseau' => 'Aucune réponse n\'est arrivée. Réessayez dans un instant.',
+			'admin.bibliotheque.import.simple.court.nonModifiable' => 'Ce document n\'est plus modifiable. Rechargez la page.',
+			'admin.bibliotheque.import.simple.court.dejaDepose' => 'Ce document a déjà son fichier. Ouvrez sa fiche pour créer une nouvelle version.',
+			'admin.bibliotheque.import.simple.court.introuvable' => 'L\'envoi n\'a pas abouti. Réessayez.',
+			'admin.bibliotheque.import.simple.court.contenu' => 'Ce fichier n\'est pas un PDF, un audio ou une image valide. Choisissez un autre fichier.',
+			'admin.bibliotheque.import.simple.court.refuse' => 'Votre compte n\'a pas le droit de faire ce dépôt. Demandez à la direction de vérifier votre accès.',
 			'admin.bibliotheque.import.retour' => 'Retour au catalogue',
 			'admin.bibliotheque.publication.titre' => 'Vérifier et publier',
 			'admin.bibliotheque.publication.intro' => 'Chaque point est contrôlé par le serveur. La publication fige la version.',
@@ -58445,6 +58868,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.bloque' => 'Cette version ne peut pas être publiée tant que le serveur n\'a pas validé tous les points du contrôle.',
 			'admin.bibliotheque.publication.confirmerTitre' => ({required Object numero}) => 'Publier la version ${numero} ?',
 			'admin.bibliotheque.publication.confirmerEffet' => 'La version devient immuable et visible des classes auxquelles le document est attribué. Pour la modifier, vous créerez une nouvelle version.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.confirmerBouton' => 'Publier',
 			'admin.bibliotheque.publication.publiee' => 'Version publiée.',
 			'admin.bibliotheque.publication.dejaPubliee' => 'Cette version est déjà publiée.',
@@ -58532,8 +58957,6 @@ extension on Traductions {
 			'lieu.verifiee' => 'Ville vérifiée',
 			'lieu.nonVerifiee' => 'Ville à vérifier',
 			'lieu.verifier' => ({required Object deNom}) => 'Vérifier la ville ${deNom}',
-			_ => null,
-		} ?? switch (path) {
 			'lieu.villeVerifiee' => ({required Object deNom}) => 'La ville ${deNom} est vérifiée.',
 			'lieu.verifierEchec' => 'La vérification n\'est pas confirmée. Réessayez dans un instant.',
 			'lieu.incoherencesTitre' => 'Villes à vérifier',
@@ -58959,6 +59382,8 @@ extension on Traductions {
 			'historique.duree.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'historique.duree.heures' => ({required Object h}) => '${h} h',
 			'historique.duree.heuresMinutes' => ({required Object h, required Object m}) => '${h} h ${m}',
+			_ => null,
+		} ?? switch (path) {
 			'historique.fuseauListe' => 'Heures affichées à l\'heure de cet appareil.',
 			'historique.fuseauDetail' => ({required Object decalage}) => 'Heures affichées à l\'heure de cet appareil (UTC${decalage}).',
 			'historique.classeInconnue' => 'Classe non disponible',
@@ -59046,8 +59471,6 @@ extension on Traductions {
 			'historique.compteRendu.aPreparer' => 'À préparer pour la prochaine séance',
 			'historique.compteRendu.commentaire' => 'Commentaire partagé',
 			'historique.compteRendu.corrigeLe' => ({required Object date}) => 'Corrigé le ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'historique.compteRendu.nonDisponibleTitre' => 'Compte rendu pédagogique non disponible',
 			'historique.compteRendu.nonPartagePhrase' => 'Les observations de cette séance ne sont pas partagées avec votre famille pour le moment.',
 			'historique.compteRendu.enAttentePhrase' => 'Le compte rendu n\'est pas encore disponible.',
@@ -59473,6 +59896,8 @@ extension on Traductions {
 			'classe.observation.motif.horsFenetre' => 'La salle n\'est pas ouverte à cette heure.',
 			'classe.observation.motif.observationDesactivee' => 'L\'observation est fermée pour cette classe.',
 			'classe.observation.motif.lienAbsent' => 'Aucun élève de votre foyer n\'est rattaché à cette séance.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.motif.enfantAbsent' => ({required Object dePrenom}) => 'L\'observation attend l\'arrivée ${dePrenom}.',
 			'classe.observation.motif.presenceEnVerification' => ({required Object dePrenom}) => 'La présence ${dePrenom} est en cours de vérification.',
 			'classe.observation.motif.visiteDejaOuverte' => 'Une visite est déjà ouverte, sur cet appareil ou sur un autre.',
@@ -59560,8 +59985,6 @@ extension on Traductions {
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'Le texte dépasse ${max} caractères. Raccourcissez-le ou partagez un lien.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'Ce lien n\'est pas une adresse complète. Collez une adresse qui commence par https://.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Un devoir a besoin d\'une échéance. Choisissez la date d\'échéance.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Pays : ${pays}',
 			'enseignant.classes.titre' => 'Classes',
 			'enseignant.classes.vide' => 'Aucune classe attribuée',
@@ -59987,6 +60410,8 @@ extension on Traductions {
 			'enseignant.profil.fuseauAppareil' => 'Heure de cet appareil',
 			'enseignant.profil.fuseauValeur' => ({required Object ville, required Object decalage}) => '${ville} · UTC${decalage}',
 			'enseignant.profil.modifierFuseau' => 'Modifier le fuseau horaire',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.fuseauConsigne' => 'Choisissez le fuseau de la ville où vous vivez. Vos disponibilités et vos séances s\'affichent à cette heure.',
 			'enseignant.profil.fuseauDuPays' => 'Fuseau de votre pays',
 			'enseignant.profil.fuseauExpert' => 'Ou écrivez le nom du fuseau',
@@ -60074,8 +60499,6 @@ extension on Traductions {
 			'enseignant.creneaux.raccourcisDetail' => 'Soirée et Matinée règlent les heures. Week-end choisit samedi et dimanche.',
 			'enseignant.creneaux.jours' => 'Jours',
 			'enseignant.creneaux.heures' => 'Heures',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.menuDe' => 'Heure de début',
 			'enseignant.creneaux.menuA' => 'Heure de fin',
 			'enseignant.creneaux.manqueJour' => 'Aucun jour choisi. Touchez au moins un jour pour enregistrer la plage.',
@@ -60501,6 +60924,8 @@ extension on Traductions {
 			'tc.groupe.horloges.mecqueEnSecond' => ({required Object heure}) => 'Heure de La Mecque : ${heure}',
 			'tc.groupe.horloges.heureDeVille' => ({required Object heure, required Object deVille}) => '${heure} (heure ${deVille})',
 			'tc.groupe.horloges.laMecque' => 'La Mecque',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.horloges.chezVous' => 'Chez vous',
 			'tc.groupe.horloges.chezEnseignantAnonyme' => 'Chez votre enseignant',
 			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} famille', other: '${n} familles', ), 
@@ -60588,8 +61013,6 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.lienAutreSite' => 'Ce lien s\'ouvre sur un autre site.',
 			'tc.bibliotheque.rendu.lienSansNavigateur' => 'Ce lien s\'ouvre depuis la version web de l\'application.',
 			'tc.bibliotheque.rendu.lienAbsent' => 'Ce document n\'a pas encore de contenu à ouvrir.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.rendu.imageInaccessible' => 'L\'image n\'a pas pu être chargée pour le moment.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'Ce fichier image ne peut pas être affiché.',
 			'tc.bibliotheque.rendu.reessayer' => 'Réessayer',
@@ -61015,6 +61438,8 @@ extension on Traductions {
 			'adulte.coranDemo.phrase' => 'Ce n\'est pas une panne : la démonstration ne contient pas le texte du Coran. Après connexion à votre espace élève, il s\'ouvre ici.',
 			'adulte.recharge.titre' => 'Recharge',
 			'adulte.recharge.phrase' => 'Choisissez les profils et les montants.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.verifier' => 'Vérifier la recharge',
 			'adulte.recharge.raisonAucun' => 'Sélectionnez au moins un profil pour continuer.',
 			'adulte.recharge.sansDonnees' => 'Les bénéficiaires à recharger n\'ont pas pu être chargés',
@@ -61102,8 +61527,6 @@ extension on Traductions {
 			'adulte.recharge.source.motifs.montantIncoherent' => 'Le montant reçu ne correspond pas à la recharge. Rien n\'a été crédité : la direction vérifie avec le prestataire.',
 			'adulte.recharge.source.motifs.sessionExpiree' => 'La page de paiement a expiré avant le paiement. Rien n\'a été prélevé.',
 			'adulte.paiements.beneficiaires' => 'Bénéficiaires',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.paiements.recharger' => 'Recharger',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Récapitulatif du foyer : ${valeur}. Chaque solde reste celui de son bénéficiaire.',
 			'adulte.paiements.bientotEpuise' => 'Bientôt épuisé',
@@ -61529,6 +61952,8 @@ extension on Traductions {
 			'suiviDemandes.fuseauChoisi' => 'Fuseau horaire',
 			'suiviDemandes.fuseauValeur' => ({required Object deVille}) => 'Heure ${deVille}',
 			'suiviDemandes.etapes.envoyee' => 'Demande envoyée',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etapes.classeValidee' => 'Classe validée',
 			'suiviDemandes.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviDemandes.etapes.listeAttente' => 'En liste d\'attente',
@@ -61616,8 +62041,6 @@ extension on Traductions {
 			'alertes.indisponibleTitre' => 'Les alertes ne sont pas encore disponibles',
 			'alertes.indisponiblePhrase' => 'Les alertes urgentes s\'afficheront ici, en tête, dès que leur source sera ouverte.',
 			'alertes.erreurTitre' => 'Les alertes n\'ont pas pu être lues',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.sansDonnees' => 'Les alertes n\'ont pas pu être lues',
 			'alertes.cloche' => 'Alertes',
 			'alertes.clocheUneUrgente' => 'Alertes, une urgente',
@@ -62043,6 +62466,8 @@ extension on Traductions {
 			'com.vocal.demo.auteurEnseignante' => 'Sayyida Mariam, enseignante',
 			'com.vocal.demo.auteurParent' => 'Ahmed, parent d\'Adam',
 			'com.vocal.demo.messageRecu' => 'Bonjour, voici mes remarques sur la récitation de cette semaine.',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.demo.horodatage' => 'Aujourd\'hui, 10:28',
 			'com.vocal.titre' => 'Message vocal',
 			'com.communaute.garde.aide' => 'Aucune publicité. Aucun lien affilié. Aucune vente.',
@@ -62130,8 +62555,6 @@ extension on Traductions {
 			'com.communaute.composer.fermer' => 'Fermer la nouvelle publication',
 			'com.communaute.composer.confirmee' => 'Votre publication est en ligne.',
 			'com.communaute.composer.erreurEnvoi' => 'Votre publication n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.composer.indisponible' => 'La publication n\'est pas encore disponible ici.',
 			'com.communaute.regles.panneau' => 'Aide et règles',
 			'com.communaute.regles.aProposTitre' => 'À propos de cet espace',
@@ -62557,6 +62980,8 @@ extension on Traductions {
 			'com.annonces.annonce' => 'Annonce',
 			'com.annonces.publier' => 'Publier une annonce',
 			'com.annonces.videPublier' => 'Aucune annonce pour cette classe. Publiez la première pour toute la classe.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.auteurDate' => ({required Object auteur, required Object date, required Object heure}) => '${auteur}, le ${date} à ${heure}',
 			'com.annonces.date' => ({required Object date, required Object heure}) => 'Le ${date} à ${heure}',
 			'com.annonces.lire' => 'Lire l\'annonce en entier',
@@ -62644,8 +63069,6 @@ extension on Traductions {
 			'comptable.graphiques.sansDonnees' => 'Les graphiques n\'ont pas pu être chargés',
 			'comptable.graphiques.exporterRapport' => 'Exporter le rapport',
 			'comptable.graphiques.exporterSelection' => 'Exporter la sélection',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.exportIndisponible' => 'Les exports ne sont pas encore disponibles : ils s\'ouvriront dès le branchement serveur.',
 			'comptable.graphiques.exportEnCours' => 'Export en préparation',
 			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'Export prêt : ${reference} (${lignes} lignes).',
@@ -63071,6 +63494,8 @@ extension on Traductions {
 			'comptable.encaissements.colFrais' => 'Frais',
 			'comptable.encaissements.colNet' => 'Net',
 			'comptable.encaissements.colMoyen' => 'Moyen',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.colEtat' => 'État',
 			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'Pour ${prenoms}',
 			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
@@ -63158,8 +63583,6 @@ extension on Traductions {
 			'comptable.beneficiaires.filtreTous' => 'Tous',
 			'comptable.beneficiaires.filtreInfos' => 'Infos manquantes',
 			'comptable.beneficiaires.filtreVerification' => 'En vérification',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.filtreSuspendus' => 'Suspendus',
 			'comptable.beneficiaires.filtreInvitations' => 'Invitations envoyées',
 			'comptable.beneficiaires.colonneBeneficiaire' => 'Bénéficiaire',
@@ -63585,6 +64008,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiration',
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Chaque délégation expire et se renouvelle. Passé la date, le Comptable ne peut plus rien exécuter seul.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expire le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.expirationInconnue' => 'Date d\'expiration non communiquée',
 			'comptable.direction.delegationPanneau.etatActive' => 'Active',
 			'comptable.direction.delegationPanneau.etatSuspendue' => 'Suspendue',
@@ -63672,8 +64097,6 @@ extension on Traductions {
 			'presentationTuteur.accueil.voir' => 'Répondre',
 			'presentationTuteur.notification' => ({required Object prenom}) => '${prenom} demande la présentation standard',
 			'reprisesAdmin.onglet' => 'Reprises',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.titre' => 'Reprises de foyer',
 			'reprisesAdmin.sousTitre' => 'Demandes d\'un second adulte pour devenir titulaire du foyer. L\'administration décide.',
 			'reprisesAdmin.demandeur' => 'Demandeur',
@@ -64099,6 +64522,8 @@ extension on Traductions {
 			'avis.admin.liens.max' => 'Nombre maximal d\'avis',
 			'avis.admin.liens.maxAide' => '200 par défaut, 2000 au plus.',
 			'avis.admin.liens.maxErreur' => 'Entrez un nombre d\'avis de 1 à 2000.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.creer' => 'Créer le lien',
 			'avis.admin.liens.echecCreation' => 'La création du lien n\'est pas confirmée. Regardez la liste des liens avant de recommencer.',
 			'avis.admin.liens.creeTitre' => 'Lien créé',
@@ -64186,8 +64611,6 @@ extension on Traductions {
 			'courriels.admin.file.champs.motifEchec' => 'Dernière erreur',
 			'courriels.admin.file.champs.langue' => 'Langue',
 			'courriels.admin.file.actualiser' => 'Actualiser',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.reessayer' => 'Remettre en file',
 			'courriels.admin.file.vide' => 'Aucun e-mail dans cette liste.',
 			'courriels.admin.file.erreur' => 'Les envois n\'ont pas pu être chargés. Réessayez.',
@@ -64613,6 +65036,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.memorisationAide' => 'Une déclaration, pas un constat : le niveau se constate à l\'entretien.',
 			'candidatsFlux.importFormulaires.champ.ijaza' => 'Ijaza ou certificat à présenter',
 			'candidatsFlux.importFormulaires.champ.ijazaAide' => 'Ce que la personne peut montrer à l\'entretien.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.experience' => 'Expérience avec les débutants',
 			'candidatsFlux.importFormulaires.champ.experienceAide' => 'Facultatif.',
 			'candidatsFlux.importFormulaires.champ.creneaux' => 'Créneaux (heure de La Mecque)',
@@ -64700,8 +65125,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.confirmation.resume.doublons' => ({required Object choisis, required Object total}) => 'Doublons : ${choisis} cas tranchés par vous sur ${total}. Pour les autres, la ligne la plus récente est gardée.',
 			'candidatsFlux.importFormulaires.confirmation.resume.aucunDoublon' => 'Aucun doublon probable à régler.',
 			'candidatsFlux.importFormulaires.confirmation.garanties.titre' => 'Ce que l\'import ne fait pas',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.garanties.texte' => 'Il ne crée aucun compte, aucune invitation ni aucune candidature, et n\'envoie aucun message. Il enregistre des réponses qui servent à reconnaître les personnes quand elles s\'inscrivent. Rejouer le même fichier n\'ajoute rien.',
 			'candidatsFlux.importFormulaires.confirmation.importer' => 'Importer les réponses',
 			'candidatsFlux.importFormulaires.confirmation.envoi' => 'Envoi en cours. L\'import n\'est confirmé qu\'à la réponse de Rewayah.',
@@ -65127,6 +65550,8 @@ extension on Traductions {
 			'journalSorties.rapport.minutesSecondes' => ({required Object m, required Object s}) => '${m} min ${s} s',
 			'journalSorties.rapport.resume' => ({required Object nombre, required Object duree}) => '${nombre}, ${duree}',
 			'journalSorties.rapport.ligneEleve' => ({required Object resume}) => 'Sorties de l\'application : ${resume}',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.reglages.section' => 'Sorties de l\'application pendant une séance',
 			'journalSorties.reglages.intro' => 'Le délai vaut pour tous les élèves. Le relevé des sorties ne note rien sans l\'accord du tuteur, ou de l\'élève adulte.',
 			'journalSorties.reglages.journal' => 'Noter les sorties de l\'application',
@@ -65214,8 +65639,6 @@ extension on Traductions {
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Autre cours à la même heure, ${quand}',
 			'calendrier.dates.conflits.abandonner' => ({required Object n}) => 'Retirer la fermeture et abandonner ces séances (${n})',
 			'calendrier.dates.refus.fermetureTropLongue' => 'Cette fermeture est plus longue que le maximum permis (Ramadan : 20 jours, Aïd al-Adha : 10 jours). Raccourcissez-la.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.refus.fermetureCommencee' => 'Cette fermeture a déjà commencé ou est passée : elle ne peut plus être retirée, raccourcie ni déplacée. Vous pouvez seulement la prolonger.',
 			'calendrier.dates.refus.fermeturePassee' => 'Cette fermeture commence avant aujourd\'hui : elle ne peut pas être publiée. Choisissez une date à partir d\'aujourd\'hui.',
 			'calendrier.dates.refus.retraitConflits' => 'La fermeture n\'est pas retirée : des séances mises de côté ne peuvent pas être rétablies. Lisez la liste, puis libérez l\'enseignant ou confirmez l\'abandon de ces séances.',

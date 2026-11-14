@@ -120,3 +120,11 @@ Deno.test("upload bibliotheque: chaque refus de la base a son motif et son statu
   // Un compte sans droit lit toujours un refus (403), jamais un reglage (503).
   assertEquals(reponseRefus(motifRefus({ message: "BibliothequeUploadNonAutorise" }))[1], 403);
 });
+
+Deno.test("upload bibliotheque: un 42501 sans nom reconnu reste un refus de droit", () => {
+  assertEquals(motifRefus({ code: "42501", message: "permission denied for function x" }), "non_autorise");
+  // Le nom de l'exception prime sur le code : ces trois-la portent aussi 42501.
+  assertEquals(motifRefus({ code: "42501", message: "BibliothequeBrouillonIntrouvable" }), "non_modifiable");
+  assertEquals(motifRefus({ code: "42501", message: "BibliothequeUploadIntentionIndisponible" }), "expire");
+  assertEquals(motifRefus({ code: "XX000", message: "panne" }), "autre");
+});

@@ -6,8 +6,11 @@
 /// les actions. Telephone et tablette : une colonne en sections repliables, une
 /// **seule** action principale, en bas, sans doublon.
 ///
-/// - Une version publiee est **immuable** : pas de champ a editer, seulement
-///   « Creer une nouvelle version » (un nouveau brouillon).
+/// - Le FICHIER et les DROITS d'une version publiee sont **immuables** : pour
+///   les changer, « Creer une nouvelle version » (un nouveau brouillon). Le nom,
+///   la description, le rayon, le public, l'acces et la vignette, eux, se
+///   changent sans redeposer (DEPOT-SIMPLE, arbitrage du 13/11/2026) ; chaque
+///   ecriture laisse sa trace cote serveur.
 /// - Les trois vocabulaires restent distincts : version, revue des droits,
 ///   retrait.
 /// - Chaque action existe selon une capacite rendue par le serveur
@@ -21,6 +24,7 @@ library;
 
 import 'dart:async';
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -39,11 +43,15 @@ import '../../../core/tc_bibliotheque/donnees_catalogue.dart';
 import '../../../core/tc_bibliotheque/library_resource.dart';
 import '../../../core/theme/app_gabarit.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_card.dart';
+import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/chargement_avec_delais.dart';
+import '../../../core/widgets/choice_card_group.dart';
 import '../../../core/widgets/etat_systeme.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
 import '../../../core/widgets/menu_filtre.dart';
 import '../../../core/widgets/page_shell.dart';
@@ -54,6 +62,9 @@ import '../../../core/widgets/status_pill.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import '../catalogue/catalogue_page.dart' show rangBibliotheque;
 import '../classement_document.dart';
+import '../import/import_page.dart'
+    show causeDeLaDemande, phraseEchecDepot, reglageDeLaDemande, tailleLisible;
+import '../import/selecteur_support.dart';
 import '../libelles_bibliotheque.dart';
 import '../porte_bibliotheque.dart';
 
@@ -214,26 +225,38 @@ class _FicheEtat extends ConsumerState<_Fiche> {
     try {
       final ResultatEcriture r = await widget.port.mettreAJour(
         supportId: f.support.id,
-        modification: ModificationSupport(
-          titre: _titre.text.trim(),
-          titreCourt: _titreCourt.text.trim(),
-          edition: _edition.text.trim(),
-          organisme: _organisme.text.trim(),
-          description: _description.text.trim(),
-          conditionsAttribution: _conditions.text.trim(),
-          rayon: _rayon,
-          ordre: int.tryParse(_ordre.text.trim()) ?? f.ordre,
-          etapes: _etapesChoisies.toList(),
-          tranches: <String>[
-            for (final String c in tranchesProposees)
-              if (_tranches.contains(c)) c,
-          ],
-          // Une chaine vide retire la valeur (le serveur la remet a null).
-          lectureCoran: _lecture ?? '',
-          ecolePriere: _ecole.text.trim(),
-          // Le lien ne part que pour un document qui en porte un.
-          lienExterne: f.lienExterne == null ? null : _lien.text.trim(),
-        ),
+        modification: !(f.derniereVersion?.modifiable ?? false)
+            // Document publie : seuls le nom, la description, le rayon et le
+            // public partent. Le fichier et les droits ne bougent pas.
+            ? ModificationSupport(
+                titre: _titre.text.trim(),
+                description: _description.text.trim(),
+                rayon: _rayon,
+                tranches: <String>[
+                  for (final String c in tranchesProposees)
+                    if (_tranches.contains(c)) c,
+                ],
+              )
+            : ModificationSupport(
+                titre: _titre.text.trim(),
+                titreCourt: _titreCourt.text.trim(),
+                edition: _edition.text.trim(),
+                organisme: _organisme.text.trim(),
+                description: _description.text.trim(),
+                conditionsAttribution: _conditions.text.trim(),
+                rayon: _rayon,
+                ordre: int.tryParse(_ordre.text.trim()) ?? f.ordre,
+                etapes: _etapesChoisies.toList(),
+                tranches: <String>[
+                  for (final String c in tranchesProposees)
+                    if (_tranches.contains(c)) c,
+                ],
+                // Une chaine vide retire la valeur (le serveur la remet a null).
+                lectureCoran: _lecture ?? '',
+                ecolePriere: _ecole.text.trim(),
+                // Le lien ne part que pour un document qui en porte un.
+                lienExterne: f.lienExterne == null ? null : _lien.text.trim(),
+              ),
         revisionAttendue: f.revision,
       );
       if (!mounted) return;
@@ -253,7 +276,6 @@ class _FicheEtat extends ConsumerState<_Fiche> {
 
   /// Retire la vignette deposee : la couverture par defaut du type revient.
   Future<void> _retirerVignette(FicheSupport f) async {
-    final a = t.admin.bibliotheque.fiche;
     setState(() {
       _envoi = true;
       _message = null;
@@ -269,7 +291,13 @@ class _FicheEtat extends ConsumerState<_Fiche> {
       switch (r) {
         case EcritureFaite():
           await _charger();
-          if (mounted) setState(() => _message = a.enregistre);
+          if (mounted) {
+            setState(() {
+              _vignetteApercu = null;
+              _vignetteRetour = null;
+              _message = t.admin.bibliotheque.import.simple.vignette.retiree;
+            });
+          }
         case EcritureEnConflit():
           setState(() => _conflit = true);
       }
@@ -278,6 +306,125 @@ class _FicheEtat extends ConsumerState<_Fiche> {
     } finally {
       if (mounted) setState(() => _envoi = false);
     }
+  }
+
+  /// Change l'acces au fichier (lire seulement, ou telechargement permis)
+  /// sans redeposer : le serveur l'ecrit et en garde la trace.
+  Future<void> _changerAcces(FicheSupport f, AccesDocument acces) async {
+    setState(() {
+      _envoi = true;
+      _message = null;
+      _echec = false;
+    });
+    try {
+      final ResultatEcriture r = await widget.port.changerAcces(
+        supportId: f.support.id,
+        acces: acces,
+        revisionAttendue: f.revision,
+      );
+      if (!mounted) return;
+      switch (r) {
+        case EcritureFaite():
+          await _charger();
+          if (mounted) {
+            setState(() => _message = t.admin.bibliotheque.fiche.accesChange);
+          }
+        case EcritureEnConflit():
+          setState(() => _conflit = true);
+      }
+    } on Object {
+      // L'ecran revient au choix que le serveur connait.
+      if (mounted) {
+        setState(() {
+          _echec = true;
+          _accesRefus++;
+        });
+      }
+    } finally {
+      if (mounted) setState(() => _envoi = false);
+    }
+  }
+
+  /// Compte les changements d'acces refuses : les cartes se remontent sur la
+  /// valeur du serveur.
+  int _accesRefus = 0;
+
+  bool _vignetteEnCours = false;
+
+  /// « Plus de reglages » : replie par defaut (DEPOT-SIMPLE).
+  bool _plus = false;
+
+  /// Le retour du dernier geste sur la vignette : reussi (coche, ton de
+  /// succes) ou echoue (alerte, ton d'alerte, la phrase vraie).
+  ({bool reussi, String titre, String message})? _vignetteRetour;
+
+  /// L'image que l'on vient de deposer, pour en montrer la miniature.
+  Uint8List? _vignetteApercu;
+
+  /// Depose une vignette (image de 2 Mio au plus) : meme chemin que le fichier
+  /// d'un document, et chaque echec a sa phrase vraie.
+  Future<void> _deposerVignette(FicheSupport f) async {
+    final FichierChoisi? fichier = await ref
+        .read(selecteurFichierSupportProvider)
+        .choisir(TypeRessource.image);
+    if (fichier == null || !mounted) return;
+    setState(() {
+      _vignetteEnCours = true;
+      _vignetteRetour = null;
+      _message = null;
+      _echec = false;
+    });
+    ErreurUpload? cause;
+    String? reglage;
+    bool faite = false;
+    try {
+      if (fichier.octets.length > 2 * 1024 * 1024) {
+        cause = ErreurUpload.taille;
+      } else {
+        final IntentionUpload intention = await widget.port.demanderUpload(
+          supportId: f.support.id,
+          fichier: fichier.descriptif,
+          finalite: FinaliteUpload.vignette,
+        );
+        await for (final ProgressionUpload p in widget.port.deposer(
+          uploadId: intention.id,
+          octets: fichier.octets,
+        )) {
+          if (p.phase == PhaseUpload.pret) faite = true;
+          if (p.phase == PhaseUpload.echec) {
+            cause = p.erreur ?? ErreurUpload.service;
+            reglage = p.reglage;
+          }
+        }
+      }
+    } on Object catch (e) {
+      cause = causeDeLaDemande(e);
+      reglage = reglageDeLaDemande(e);
+    }
+    if (!mounted) return;
+    if (faite) await _charger();
+    if (!mounted) return;
+    final v = t.admin.bibliotheque.import.simple.vignette;
+    setState(() {
+      _vignetteEnCours = false;
+      _vignetteApercu = faite ? fichier.octets : null;
+      _vignetteRetour = faite
+          ? (
+              reussi: true,
+              titre: v.ajoutee,
+              message: t.admin.bibliotheque.import.simple.detailFichier(
+                type: libelleType(TypeRessource.image),
+                taille: tailleLisible(fichier.octets.length),
+              ),
+            )
+          : (
+              reussi: false,
+              titre: v.echec,
+              message: cause == ErreurUpload.taille
+                  ? v.tropLourde
+                  : phraseEchecDepot(cause, reglage),
+            );
+    });
   }
 
   Future<void> _nouvelleVersion(FicheSupport f) async {
@@ -404,6 +551,14 @@ class _FicheEtat extends ConsumerState<_Fiche> {
           lecture: _lecture,
           onLecture: (String? v) => setState(() => _lecture = v),
           onRetirerVignette: () => unawaited(_retirerVignette(f)),
+          onAjouterVignette: () => unawaited(_deposerVignette(f)),
+          onAcces: (AccesDocument v) => unawaited(_changerAcces(f, v)),
+          accesRefus: _accesRefus,
+          vignetteEnCours: _vignetteEnCours,
+          vignetteRetour: _vignetteRetour,
+          vignetteApercu: _vignetteApercu,
+          plus: _plus,
+          onPlus: () => setState(() => _plus = !_plus),
           erreurTitre: _erreurTitre,
           envoi: _envoi,
           conflit: _conflit,
@@ -648,6 +803,14 @@ class _Edition extends StatelessWidget {
     required this.rayons,
     required this.onRayon,
     required this.onRetirerVignette,
+    required this.onAjouterVignette,
+    required this.onAcces,
+    required this.accesRefus,
+    required this.vignetteEnCours,
+    required this.vignetteRetour,
+    required this.vignetteApercu,
+    required this.plus,
+    required this.onPlus,
     required this.tranches,
     required this.onTranches,
     required this.etapes,
@@ -667,6 +830,31 @@ class _Edition extends StatelessWidget {
   final List<RayonBibliotheque> rayons;
   final ValueChanged<String?> onRayon;
   final VoidCallback onRetirerVignette;
+
+  /// Choisit une image et la depose comme vignette (DEPOT-SIMPLE : la
+  /// vignette s'ajoute depuis la fiche, plus dans le formulaire d'ajout).
+  final VoidCallback onAjouterVignette;
+
+  /// Change l'acces au fichier, sans redeposer.
+  final ValueChanged<AccesDocument> onAcces;
+
+  /// Le nombre de changements d'acces refuses (remonte les cartes).
+  final int accesRefus;
+
+  /// Vrai pendant le depot de la vignette.
+  final bool vignetteEnCours;
+
+  /// Le retour du dernier geste sur la vignette.
+  final ({bool reussi, String titre, String message})? vignetteRetour;
+
+  /// L'image que l'on vient de deposer (sa miniature).
+  final Uint8List? vignetteApercu;
+
+  /// Vrai quand « Plus de reglages » est deplie.
+  final bool plus;
+
+  /// Deplie ou replie « Plus de reglages ».
+  final VoidCallback onPlus;
   final FicheSupport fiche;
   final Map<String, TextEditingController> champs;
   final String? erreurTitre;
@@ -676,6 +864,96 @@ class _Edition extends StatelessWidget {
   final VoidCallback onEnregistrer;
   final VoidCallback onRecharger;
 
+  /// La vignette : facultative, visible des qu'elle est deposee, remplacable
+  /// et retirable. Trois etats, jamais par la couleur seule : en cours (barre
+  /// et phrase), reussi (coche, ton de succes), echoue (alerte, phrase vraie).
+  Widget _vignette(BuildContext context) {
+    final a = t.admin.bibliotheque.fiche;
+    final v = t.admin.bibliotheque.import.simple.vignette;
+    final ({bool reussi, String titre, String message})? retour =
+        vignetteRetour;
+    final Uint8List? apercu = vignetteApercu;
+    return Column(
+      key: const ValueKey<String>('fiche-vignette'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(v.titre, style: Theme.of(context).textTheme.titleSmall),
+        Ecart.vXs,
+        Text(v.aide),
+        if (apercu != null) ...<Widget>[
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ClipRRect(
+              borderRadius: AppRadius.arrondiSm,
+              child: Image.memory(
+                apercu,
+                key: const ValueKey<String>('fiche-vignette-miniature'),
+                width: AppSpacing.respiration * 2,
+                height: AppSpacing.respiration * 2,
+                fit: BoxFit.cover,
+                semanticLabel: v.apercu,
+                errorBuilder: (_, _, _) => const SizedBox.shrink(),
+              ),
+            ),
+          ),
+        ],
+        if (vignetteEnCours) ...<Widget>[
+          Ecart.vSm,
+          const LinearProgressIndicator(
+            key: ValueKey<String>('fiche-vignette-progression'),
+          ),
+          Ecart.vSm,
+          Semantics(liveRegion: true, child: Text(v.enCours)),
+        ] else if (retour != null) ...<Widget>[
+          Ecart.vSm,
+          BandeauAttention(
+            key: ValueKey<String>(
+              retour.reussi ? 'fiche-vignette-reussie' : 'fiche-vignette-echec',
+            ),
+            ton: retour.reussi ? TonEtat.succes : TonEtat.alerte,
+            titre: retour.titre,
+            message: retour.message,
+            action: retour.reussi
+                ? null
+                : LienFleche(
+                    key: const ValueKey<String>('fiche-vignette-reessayer'),
+                    libelle: t.commun.reessayer,
+                    fleche: false,
+                    onPress: onAjouterVignette,
+                  ),
+          ),
+        ],
+        if (!vignetteEnCours) ...<Widget>[
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: const ValueKey<String>('fiche-ajouter-vignette'),
+              libelle: fiche.aVignette
+                  ? a.remplacerVignette
+                  : a.ajouterVignette,
+              alignerEnDebut: true,
+              onPress: onAjouterVignette,
+            ),
+          ),
+          if (fiche.aVignette)
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: const ValueKey<String>('fiche-retirer-vignette'),
+                libelle: a.retirerVignette,
+                fleche: false,
+                alignerEnDebut: true,
+                onPress: onRetirerVignette,
+              ),
+            ),
+        ],
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final a = t.admin.bibliotheque.fiche;
@@ -684,13 +962,6 @@ class _Edition extends StatelessWidget {
         (v?.modifiable ?? false) &&
         fiche.capacites.peutModifier &&
         !fiche.support.retire;
-    if (!editable) {
-      // Version publiee : immuable, rien a editer ; la phrase dit pourquoi.
-      return Text(
-        fiche.support.retire ? a.retireRestaurer : a.figee,
-        key: const ValueKey<String>('fiche-figee'),
-      );
-    }
     ZoneSaisie champ(
       String cle,
       String libelle, {
@@ -704,112 +975,207 @@ class _Edition extends StatelessWidget {
       minLignes: lignes,
       maxLignes: lignes == 1 ? 1 : 6,
       majuscules: TextCapitalization.sentences,
+      // Le nom et la description sont du contenu : en arabe, la police du
+      // contenu arabe.
+      contenu: cle == 'titre' || cle == 'description',
       actionClavier: lignes == 1
           ? TextInputAction.next
           : TextInputAction.newline,
     );
+    final Widget rayonChoix = MenuFiltre<String>(
+      libelle: a.champs.rayon,
+      valeur: rayon,
+      selecteurDeSection: true,
+      entrees: <EntreeFiltre<String>>[
+        for (final RayonBibliotheque r in rayons)
+          EntreeFiltre<String>(
+            valeur: r.code,
+            libelle: r.titrePour(LocaleSettings.currentLocale.languageCode),
+          ),
+      ],
+      onChoix: onRayon,
+    );
+    final List<Widget> pied = <Widget>[
+      if (conflit) ...<Widget>[
+        Text(a.conflit, key: const ValueKey<String>('fiche-conflit')),
+        Ecart.vSm,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ActionPrincipale(
+            key: const ValueKey<String>('fiche-recharger'),
+            libelle: a.recharger,
+            niveau: NiveauAction.tertiaire,
+            pleineLargeur: false,
+            onPress: onRecharger,
+          ),
+        ),
+      ] else ...<Widget>[
+        if (echec)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Text(
+              a.echecEnregistrer,
+              key: const ValueKey<String>('fiche-echec-enregistrer'),
+            ),
+          ),
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: ActionPrincipale(
+            key: const ValueKey<String>('fiche-enregistrer'),
+            libelle: a.enregistrer,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            enCours: envoi,
+            onPress: envoi ? null : onEnregistrer,
+          ),
+        ),
+      ],
+    ];
+    if (!editable) {
+      final bool modifiable =
+          fiche.capacites.peutModifier && !fiche.support.retire;
+      final s = t.admin.bibliotheque.import.simple;
+      final bool telechargement = fiche.droits.usages.contains(
+        UsageDroit.telechargement,
+      );
+      final bool lien = fiche.support.type == TypeRessource.lienExterne;
+      // Version publiee : son FICHIER et ses DROITS sont immuables, la phrase
+      // dit pourquoi. Le nom, la description, le rayon, le public, l'acces et
+      // la vignette se changent sans redeposer (DEPOT-SIMPLE).
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            fiche.support.retire ? a.retireRestaurer : a.figee,
+            key: const ValueKey<String>('fiche-figee'),
+          ),
+          if (modifiable) ...<Widget>[
+            Ecart.vLg,
+            champ('titre', a.champs.titre, erreur: erreurTitre),
+            Ecart.vMd,
+            champ('description', a.champs.description, lignes: 3),
+            if (rayons.isNotEmpty) ...<Widget>[Ecart.vMd, rayonChoix],
+            Ecart.vMd,
+            ChoixTranches(choisies: tranches, lien: lien, onChoix: onTranches),
+            Ecart.vLg,
+            ...pied,
+            // L'acces au fichier : un geste a part, ecrit tout de suite. Un
+            // lien ne se telecharge pas : le choix n'est pas rendu.
+            if (!lien) ...<Widget>[
+              Ecart.vLg,
+              Text(
+                s.acces.titre,
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              Ecart.vSm,
+              ChoiceCardGroup(
+                key: ValueKey<String>(
+                  'fiche-acces-$telechargement-${fiche.revision}-$accesRefus',
+                ),
+                autoriserSaisieLibre: false,
+                valeurInitiale: ReponseChoix(
+                  valeurs: <String>{
+                    (telechargement
+                            ? AccesDocument.telechargement
+                            : AccesDocument.lecture)
+                        .name,
+                  },
+                ),
+                options: <OptionChoix>[
+                  OptionChoix(
+                    cle: const ValueKey<String>('fiche-acces-lecture'),
+                    valeur: AccesDocument.lecture.name,
+                    libelle: s.acces.lecture,
+                    description: s.acces.lectureAide,
+                  ),
+                  OptionChoix(
+                    cle: const ValueKey<String>('fiche-acces-telechargement'),
+                    valeur: AccesDocument.telechargement.name,
+                    libelle: s.acces.telechargement,
+                    description: s.acces.telechargementAide,
+                  ),
+                ],
+                onChange: (ReponseChoix r) {
+                  final AccesDocument voulu =
+                      r.valeurs.contains(AccesDocument.telechargement.name)
+                      ? AccesDocument.telechargement
+                      : AccesDocument.lecture;
+                  final bool change =
+                      (voulu == AccesDocument.telechargement) != telechargement;
+                  if (change && !envoi) onAcces(voulu);
+                },
+              ),
+            ],
+            Ecart.vLg,
+            _vignette(context),
+          ],
+        ],
+      );
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // Le strict necessaire d'abord (DEPOT-SIMPLE) : le nom, la description,
+        // le rayon, la vignette. Tout le reste vit dans « Plus de reglages ».
         champ('titre', a.champs.titre, erreur: erreurTitre),
         Ecart.vMd,
-        champ('titreCourt', a.champs.titreCourt),
-        Ecart.vMd,
-        champ('edition', a.champs.edition),
-        Ecart.vMd,
-        champ('organisme', a.champs.organisme),
-        Ecart.vMd,
         champ('description', a.champs.description, lignes: 3),
-        Ecart.vMd,
-        champ('conditions', a.champs.conditions, lignes: 2),
-        // Le classement du document (BIBLIOTHEQUE-UNE) : rayon, ordre, etapes,
-        // et l'adresse d'un lien. Aucun prix : la vente n'est pas ouverte.
         if (fiche.lienExterne != null) ...<Widget>[
           Ecart.vMd,
           champ('lien', a.champs.lien),
         ],
         Ecart.vMd,
-        if (rayons.isNotEmpty)
-          MenuFiltre<String>(
-            libelle: a.champs.rayon,
-            valeur: rayon,
-            selecteurDeSection: true,
-            entrees: <EntreeFiltre<String>>[
-              for (final RayonBibliotheque r in rayons)
-                EntreeFiltre<String>(
-                  valeur: r.code,
-                  libelle: r.titrePour(
-                    LocaleSettings.currentLocale.languageCode,
-                  ),
-                ),
-            ],
-            onChoix: onRayon,
+        if (rayons.isNotEmpty) rayonChoix,
+        Ecart.vLg,
+        _vignette(context),
+        Ecart.vLg,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: const ValueKey<String>('fiche-plus-bascule'),
+            libelle: plus
+                ? t.admin.bibliotheque.import.simple.moins
+                : t.admin.bibliotheque.import.simple.plus,
+            fleche: false,
+            alignerEnDebut: true,
+            onPress: onPlus,
           ),
-        Ecart.vMd,
-        champ('ordre', a.champs.ordre),
-        Ecart.vMd,
-        ChoixTranches(
-          choisies: tranches,
-          lien: fiche.support.type == TypeRessource.lienExterne,
-          onChoix: onTranches,
         ),
-        Ecart.vMd,
-        ChoixEtapes(choisies: etapes, onChoix: onEtapes),
-        Ecart.vMd,
-        ChampsLectureEcole(
-          lecture: lecture,
-          onLecture: onLecture,
-          ecole: champs['ecole']!,
-        ),
-        if (fiche.aVignette) ...<Widget>[
+        if (!plus)
+          Text(
+            t.admin.bibliotheque.import.simple.plusAide,
+            key: const ValueKey<String>('fiche-plus-aide'),
+          )
+        else ...<Widget>[
           Ecart.vMd,
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: ActionPrincipale(
-              key: const ValueKey<String>('fiche-retirer-vignette'),
-              libelle: a.retirerVignette,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
-              onPress: envoi ? null : onRetirerVignette,
-            ),
+          champ('titreCourt', a.champs.titreCourt),
+          Ecart.vMd,
+          champ('edition', a.champs.edition),
+          Ecart.vMd,
+          champ('organisme', a.champs.organisme),
+          Ecart.vMd,
+          champ('conditions', a.champs.conditions, lignes: 2),
+          Ecart.vMd,
+          champ('ordre', a.champs.ordre),
+          Ecart.vMd,
+          ChoixTranches(
+            choisies: tranches,
+            lien: fiche.support.type == TypeRessource.lienExterne,
+            onChoix: onTranches,
+          ),
+          Ecart.vMd,
+          ChoixEtapes(choisies: etapes, onChoix: onEtapes),
+          Ecart.vMd,
+          ChampsLectureEcole(
+            lecture: lecture,
+            onLecture: onLecture,
+            ecole: champs['ecole']!,
           ),
         ],
         Ecart.vLg,
-        if (conflit) ...<Widget>[
-          Text(a.conflit, key: const ValueKey<String>('fiche-conflit')),
-          Ecart.vSm,
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: ActionPrincipale(
-              key: const ValueKey<String>('fiche-recharger'),
-              libelle: a.recharger,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
-              onPress: onRecharger,
-            ),
-          ),
-        ] else ...<Widget>[
-          if (echec)
-            Padding(
-              padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-              child: Text(
-                a.echecEnregistrer,
-                key: const ValueKey<String>('fiche-echec-enregistrer'),
-              ),
-            ),
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: ActionPrincipale(
-              key: const ValueKey<String>('fiche-enregistrer'),
-              libelle: a.enregistrer,
-              niveau: NiveauAction.secondaire,
-              pleineLargeur: false,
-              enCours: envoi,
-              onPress: envoi ? null : onEnregistrer,
-            ),
-          ),
-        ],
+        ...pied,
       ],
     );
   }

@@ -160,8 +160,10 @@ void main() {
       (400, 'fichier invalide ou format non autorise'): ErreurUpload.type,
       (401, 'authentification requise'): ErreurUpload.session,
       (403, 'depot non autorise'): ErreurUpload.refuse,
-      // L'ancienne fonction rendait 403 pour tout : toujours un refus.
-      (403, 'depot refuse'): ErreurUpload.refuse,
+      // L'ancienne fonction rendait 403 pour tout : ce n'est pas « votre
+      // compte n'en a pas le droit », c'est le service.
+      (403, 'depot refuse'): ErreurUpload.service,
+      (403, 'intention refusee'): ErreurUpload.service,
       (409, 'document non modifiable'): ErreurUpload.nonModifiable,
       (409, 'fichier deja depose'): ErreurUpload.dejaDepose,
       (413, 'fichier trop lourd'): ErreurUpload.taille,

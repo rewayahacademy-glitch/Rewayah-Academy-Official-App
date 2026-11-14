@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
+import '../tc_bibliotheque/contenu_arabe.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'bouton_icone.dart';
@@ -76,6 +77,7 @@ class ZoneSaisie extends StatelessWidget {
     this.actionClavier = TextInputAction.newline,
     this.onSubmitted,
     this.sens,
+    this.contenu = false,
   }) : assert(minLignes >= 1 && maxLignes >= minLignes);
 
   /// Le texte saisi.
@@ -144,6 +146,12 @@ class ZoneSaisie extends StatelessWidget {
   /// (CARTES-PERSO-1b, `sensDeLaSaisie`).
   final TextDirection? sens;
 
+  /// Vrai quand ce que l'on saisit est du CONTENU (le nom, la description d'un
+  /// document) : s'il est en arabe, il s'ecrit dans la police du contenu arabe
+  /// (`styleContenuArabe`), comme il sera lu. Faux (defaut) : police de
+  /// l'interface.
+  final bool contenu;
+
   /// La place reservee du bouton d'envoi tant que le champ est vide (tests).
   static const Key placeEnvoiKey = ValueKey<String>('zone-saisie-place-envoi');
 
@@ -200,6 +208,12 @@ class ZoneSaisie extends StatelessWidget {
       readOnly: lectureSeule,
       enableInteractiveSelection: !champDeCode,
       textDirection: sens,
+      style: contenu
+          ? styleContenuArabe(
+              controleur.text,
+              Theme.of(context).textTheme.bodyLarge,
+            )
+          : null,
       minLines: min,
       maxLines: max,
       keyboardType: actionClavier == TextInputAction.newline

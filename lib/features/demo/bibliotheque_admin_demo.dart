@@ -52,6 +52,8 @@ class _Etat {
   List<String> tranches = tranchesToutes;
   String? lectureCoran;
   String? ecolePriere;
+  String rayon = codeRayonCours;
+  String? lienExterne;
 }
 
 /// Le double de demonstration du port.
@@ -80,15 +82,18 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
   CapacitesBibliotheque droitsServeur;
 
   /// Le delai simule d'un pas de depot.
-  final Duration pas;
+  Duration pas;
 
   /// Si non nul, le prochain depot echoue avec cette cause (puis se remet a
   /// nul).
   ErreurUpload? echecDepot;
 
-  /// La prochaine DEMANDE de depot echoue ainsi : l'ecran doit dire cette
-  /// cause, jamais « la connexion a coupe » a sa place.
+  /// La prochaine DEMANDE de depot echoue ainsi (DEPOT-SIMPLE) : l'ecran doit
+  /// dire cette cause, jamais « la connexion a coupe » a sa place.
   ErreurUpload? echecDemande;
+
+  /// Le nom du reglage que le prochain echec nomme.
+  String? reglageEchec;
 
   /// « Maintenant », fixe pour des tests deterministes.
   final DateTime maintenant;
@@ -327,6 +332,23 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     return depotActifServeur;
   }
 
+  /// Les reglages du depot que le serveur dit manquants (par leur nom).
+  List<String> reglagesManquantsServeur = const <String>[];
+
+  /// Vrai : la fonction ne sait pas dire ses reglages (ancienne version).
+  bool reglagesInconnus = false;
+
+  @override
+  Future<List<String>> reglagesDepotManquants() async {
+    if (panne || panneDepot || reglagesInconnus) {
+      throw const BibliothequeHorsLigne();
+    }
+    return <String>[
+      if (!depotActifServeur) 'private.library_upload_confirmation_secrets',
+      ...reglagesManquantsServeur,
+    ];
+  }
+
   @override
   Future<FacettesCatalogue> facettes() async {
     _garde();
@@ -413,6 +435,9 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       tranches: List<String>.of(e.tranches),
       lectureCoran: e.lectureCoran,
       ecolePriere: e.ecolePriere,
+      rayon: e.rayon,
+      aVignette: e.vignette,
+      lienExterne: e.lienExterne,
     );
   }
 
@@ -462,6 +487,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
                   ? tranchesParDefautLien
                   : tranchesToutes)
           ..etapes = List<String>.of(saisie.etapes)
+          ..rayon = saisie.rayon
+          ..lienExterne = saisie.lienExterne
           ..lectureCoran = saisie.lectureCoran
           ..ecolePriere = saisie.ecolePriere;
     return id;
@@ -500,6 +527,8 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     e.description = m.description ?? e.description;
     e.conditions = m.conditionsAttribution ?? e.conditions;
     e.etapes = m.etapes ?? e.etapes;
+    e.rayon = m.rayon ?? e.rayon;
+    if (m.retirerVignette) e.vignette = false;
     e.tranches = m.tranches ?? e.tranches;
     if (m.lectureCoran != null) {
       e.lectureCoran = m.lectureCoran!.isEmpty ? null : m.lectureCoran;
@@ -546,13 +575,16 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     _garde();
     final _Etat e = _trouve(supportId);
     if (!droitsServeur.peutImporter) throw const BibliothequeNonAutorisee();
-    if (e.versions.first.statut != StatutVersionRessource.brouillon) {
+    // La vignette tient au document, pas a une version : elle se change
+    // meme une fois le document publie (comme sur le serveur).
+    if (finalite != FinaliteUpload.vignette &&
+        e.versions.first.statut != StatutVersionRessource.brouillon) {
       throw const BibliothequeNonAutorisee();
     }
     final ErreurUpload? refus = echecDemande;
     if (refus != null) {
       echecDemande = null;
-      throw DepotImpossible(refus);
+      throw DepotImpossible(refus, reglage: reglageEchec);
     }
     final String id = 'demo-upload-${++_compteur}';
     _uploads[id] = supportId;
@@ -614,6 +646,7 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
           phase: PhaseUpload.echec,
           partie: 0.5,
           erreur: echec,
+          reglage: reglageEchec,
         );
         return;
       }
@@ -806,6 +839,117 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
     if (e.revision != revisionAttendue) return const PublicationEnConflit();
     final ControleVersion c = _controle(e);
     if (!c.publiable) return PublicationBloquee(c);
+    return _publier(e, PolitiqueAcces.groupeAssigne);
+  }
+
+  /// Le depot direct de la direction (DEPOT-SIMPLE) : droits par defaut,
+  /// revue approuvee, document ouvert aux inscrits, publie.
+  @override
+  Future<ResultatPublication> deposerDirect({
+    required String supportId,
+    required int revisionAttendue,
+    required String cle,
+    required AccesDocument acces,
+    required bool droitTiers,
+    PublicDocument? public,
+  }) async {
+    _garde();
+    final _Etat e = _trouve(supportId);
+    if (!droitsServeur.peutPublier) throw const BibliothequeNonAutorisee();
+    if (panneEcriture) throw const BibliothequeHorsLigne();
+    // Le serveur n'a pas encore la fonction (migration non installee).
+    if (depotDirectAbsent) throw const DepotDirectAbsent();
+    if (e.revision != revisionAttendue) return const PublicationEnConflit();
+    // Tout ou rien : une publication bloquee ne change rien.
+    final List<CleCritere>? bloque = depotDirectBloque;
+    if (bloque != null) {
+      return PublicationBloquee(
+        ControleVersion(
+          criteres: <CritereControle>[
+            for (final CleCritere c in bloque)
+              CritereControle(cle: c, etat: EtatCritere.bloque),
+          ],
+          publiable: false,
+        ),
+      );
+    }
+    if (!e.fichierDepose && e.lienExterne == null) {
+      throw StateError('BibliothequeDepotSansFichier');
+    }
+    final bool tiers = e.rayon != codeRayonCours;
+    if (tiers && !droitTiers) throw StateError('BibliothequeDroitTiersRequis');
+    String defaut(String? saisi, String valeur) =>
+        (saisi ?? '').trim().isEmpty ? valeur : saisi!;
+    e.droits = DroitsSupport(
+      revue: RevueDroits.approuve,
+      sourceTitre: defaut(e.droits.sourceTitre, e.support.titre),
+      titulaire: defaut(e.droits.titulaire, 'Rewayah Academy'),
+      preuveFournie: true,
+      usages: <UsageDroit>{
+        UsageDroit.application,
+        UsageDroit.classe,
+        if (acces == AccesDocument.telechargement && e.lienExterne == null)
+          UsageDroit.telechargement,
+        if (e.droits.usages.contains(UsageDroit.horsLigne))
+          UsageDroit.horsLigne,
+      },
+      attribution: defaut(e.droits.attribution, 'Rewayah Academy'),
+      expireLeUtc: e.droits.expireLeUtc,
+    );
+    // Le public pose les tranches d'age, cote serveur.
+    if (public == PublicDocument.tous) e.tranches = tranchesToutes;
+    if (public == PublicDocument.adultes) {
+      e.tranches = const <String>['adulte_18_plus'];
+    }
+    publicsRecus.add(public);
+    depotsDirects.add((supportId, acces, droitTiers));
+    return _publier(e, PolitiqueAcces.inscrits);
+  }
+
+  /// Vrai : le serveur n'a pas la fonction du depot direct.
+  bool depotDirectAbsent = false;
+
+  /// Non nul : le depot direct est bloque par ces criteres, rien n'est ecrit.
+  List<CleCritere>? depotDirectBloque;
+
+  /// Le public recu a chaque depot direct.
+  final List<PublicDocument?> publicsRecus = <PublicDocument?>[];
+
+  /// Change l'acces d'un document sans toucher a son fichier.
+  @override
+  Future<ResultatEcriture> changerAcces({
+    required String supportId,
+    required AccesDocument acces,
+    required int revisionAttendue,
+  }) async {
+    _garde();
+    final _Etat e = _trouve(supportId);
+    if (!droitsServeur.peutImporter) throw const BibliothequeNonAutorisee();
+    if (panneEcriture) throw const BibliothequeHorsLigne();
+    if (e.revision != revisionAttendue) return const EcritureEnConflit();
+    e.droits = DroitsSupport(
+      revue: e.droits.revue,
+      sourceTitre: e.droits.sourceTitre,
+      titulaire: e.droits.titulaire,
+      preuveFournie: e.droits.preuveFournie,
+      usages: <UsageDroit>{
+        ...e.droits.usages.where(
+          (UsageDroit u) => u != UsageDroit.telechargement,
+        ),
+        if (acces == AccesDocument.telechargement) UsageDroit.telechargement,
+      },
+      attribution: e.droits.attribution,
+      expireLeUtc: e.droits.expireLeUtc,
+    );
+    e.revision++;
+    return EcritureFaite(revision: e.revision);
+  }
+
+  /// Les depots directs recus (support, acces, declaration du tiers).
+  final List<(String, AccesDocument, bool)> depotsDirects =
+      <(String, AccesDocument, bool)>[];
+
+  ResultatPublication _publier(_Etat e, PolitiqueAcces visibilite) {
     final VersionSupport v = e.versions.first;
     e.versions[0] = VersionSupport(
       id: v.id,
@@ -839,7 +983,9 @@ class BibliothequeAdminDemo implements PortBibliothequeAdmin {
       numeroVersion: v.numero,
       statutVersion: StatutVersionRessource.publiee,
       revueDroits: v.revueDroits,
-      visibilite: PolitiqueAcces.groupeAssigne,
+      visibilite: e.support.visibilite == PolitiqueAcces.admin
+          ? visibilite
+          : e.support.visibilite,
       modifieLeUtc: e.support.modifieLeUtc,
     );
     _toucher(e, action: ActionAudit.publication, version: v.numero);

@@ -67,7 +67,7 @@ class ChoixTranches extends StatelessWidget {
         Ecart.vXs,
         Text(lien ? c.tranchesAideLien : c.tranchesAide),
         for (final String code in tranchesProposees)
-          _LigneCase(
+          LigneCase(
             cle: ValueKey<String>('classement-tranche-$code'),
             libelle: libelleTranche(code),
             coche: choisies.contains(code),
@@ -169,7 +169,7 @@ class _ChoixEtapesEtat extends ConsumerState<ChoixEtapes> {
             key: const ValueKey<String>('classement-etapes-vide'),
           ),
         for (final EtapeProgramme e in etapes ?? const <EtapeProgramme>[])
-          _LigneCase(
+          LigneCase(
             cle: ValueKey<String>('classement-etape-${e.code}'),
             libelle: e.nom,
             precision: e.cycle.isEmpty ? null : e.cycle,
@@ -177,7 +177,7 @@ class _ChoixEtapesEtat extends ConsumerState<ChoixEtapes> {
             onChange: (bool v) => _basculer(e.code, v),
           ),
         for (final String code in orphelines)
-          _LigneCase(
+          LigneCase(
             cle: ValueKey<String>('classement-etape-$code'),
             libelle: code,
             coche: true,
@@ -245,19 +245,31 @@ class ChampsLectureEcole extends StatelessWidget {
 
 /// Une ligne de choix : la case du produit (`CaseACocher`, cible du mode,
 /// anneau de focus, coche visible) et son libellé, lu une seule fois.
-class _LigneCase extends StatelessWidget {
-  const _LigneCase({
+/// Une case a cocher et son libelle, sur une ligne.
+class LigneCase extends StatelessWidget {
+  /// Cree la ligne.
+  const LigneCase({
     required this.cle,
     required this.libelle,
     required this.coche,
     required this.onChange,
     this.precision,
+    super.key,
   });
 
+  /// La cle de la case.
   final Key cle;
+
+  /// Le libelle, lu avec la case.
   final String libelle;
+
+  /// Une precision sous le libelle.
   final String? precision;
+
+  /// Vrai quand la case est cochee.
   final bool coche;
+
+  /// Appele au changement.
   final ValueChanged<bool> onChange;
 
   @override
