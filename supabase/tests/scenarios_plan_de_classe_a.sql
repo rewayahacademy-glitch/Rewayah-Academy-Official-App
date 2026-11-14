@@ -1,4 +1,4 @@
--- PLAN-DE-CLASSE A (lot 5, 13/11/2026). Migration 20261124600000.
+-- PLAN-DE-CLASSE A (lot 5, 13/11/2026). Migration 20261125700000.
 -- Chaque enchainement de gestes a sa transaction (BEGIN ... ROLLBACK), avec sa
 -- propre fixture : trois classes ouvertes sans etape, des membres deja la, un
 -- programme publie (les bases, d'un geste). Parties : 1 etape d'une classe

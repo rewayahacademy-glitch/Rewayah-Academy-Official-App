@@ -344,7 +344,7 @@ REVOKE ALL ON public.seances_fermees FROM PUBLIC, anon, authenticated, service_r
 -- La Mecque (decision du directeur relayee le 13/11, coherent avec l'horloge). Plus de
 -- date UTC ni de fuseau du foyer pour decider « passe », « en cours », « 7 jours avant »,
 -- « mois civil ». Seul endroit ou ce fuseau est ecrit. CREATE OR REPLACE, meme corps et memes droits
--- (REVOKE plus bas) que dans le plan de classe (20261124600000) : l'installation est possible dans les
+-- (REVOKE plus bas) que dans le plan de classe (20261125700000) : l'installation est possible dans les
 -- deux ordres (arbitrage de l'architecte, 13/11).
 CREATE OR REPLACE FUNCTION private.jour_academie()
 RETURNS date
