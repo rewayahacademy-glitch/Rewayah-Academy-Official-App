@@ -43,6 +43,9 @@ abstract final class ClesProgramme {
   /// L'etat « pas encore de classe ».
   static const Key vide = ValueKey<String>('programme-vide');
 
+  /// Aucune etape publiee : la carte n'a que des sourates, ou un niveau.
+  static const Key sansEtape = ValueKey<String>('programme-sans-etape');
+
   /// La section des dates de l'academie.
   static const Key datesEcole = ValueKey<String>('programme-dates-ecole');
 
@@ -86,12 +89,27 @@ class OngletProgramme extends ConsumerWidget {
         !jalon &&
         !niveauDeclare;
     final bool dates = lecture.value?.suivi?.eleveVoitDates ?? false;
+    // Constat du directeur (14/11/2026) : la carte ne montrait
+    // que « sourates de fondation », sans etape ni parcours, et rien ne disait
+    // pourquoi. Une lecture sans etape ni cycle le dit, sans ecran vide.
+    final MaProgression? lue = lecture.value;
+    final bool sansEtape =
+        !rien && lue != null && lue.suivi == null && lue.cycle.isEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         if (rien) const _Vide(),
         const CarteSuiviPedagogique(),
+        if (sansEtape) ...<Widget>[
+          EmptyState(
+            key: ClesProgramme.sansEtape,
+            message: t.apprendre.programme.sansEtape,
+            icone: AppIcons.chemin,
+            registre: RegistreVide.subi,
+          ),
+          Ecart.vXl,
+        ],
         // Un enfant de 6 a 9 ans ne voit aucune date : pas de section.
         if (dates) _DatesEcole(eleveId: eleveId),
       ],

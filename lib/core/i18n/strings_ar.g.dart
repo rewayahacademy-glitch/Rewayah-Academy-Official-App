@@ -12108,6 +12108,7 @@ class _Traductions$apprendre$programme$ar extends Traductions$apprendre$programm
 
 	// Translations
 	@override String get vide => 'تظهر المرحلة عند الالتحاق بفصل';
+	@override String get sansEtape => 'لا يظهر برنامجك بعد: لم تُنشر أي مرحلة لك. ستظهر هنا مع مسارها وأهدافها فور أن تضع الإدارة صفّك. لمعرفة المزيد، تواصل مع الإدارة.';
 	@override String get datesEcole => 'مواعيد الأكاديمية';
 	@override String get datesEcoleVide => 'ستظهر مواعيد الأكاديمية هنا';
 	@override late final _Traductions$apprendre$programme$genre$ar genre = _Traductions$apprendre$programme$genre$ar._(_root);
@@ -39591,6 +39592,7 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '⁨${titre}⁩، ⁨${type}⁩',
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '⁨${titre}⁩، رابط خارجي، يُفتح خارج التطبيق',
 			'apprendre.programme.vide' => 'تظهر المرحلة عند الالتحاق بفصل',
+			'apprendre.programme.sansEtape' => 'لا يظهر برنامجك بعد: لم تُنشر أي مرحلة لك. ستظهر هنا مع مسارها وأهدافها فور أن تضع الإدارة صفّك. لمعرفة المزيد، تواصل مع الإدارة.',
 			'apprendre.programme.datesEcole' => 'مواعيد الأكاديمية',
 			'apprendre.programme.datesEcoleVide' => 'ستظهر مواعيد الأكاديمية هنا',
 			'apprendre.programme.genre.evaluation' => 'تقييم',
@@ -40072,9 +40074,9 @@ extension on TraductionsAr {
 			'reprisesAdmin.refuser' => 'رفض الاستلام',
 			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'اعتماد استلام ⁨${prenom}⁩ للأسرة؟',
 			'reprisesAdmin.validerConsequence' => 'سيصبح هذا الشخص صاحب حساب الأسرة. يُنقل بهذا القرار حق صاحب الحساب.',
-			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'رفض استلام ⁨${prenom}⁩ للأسرة؟',
 			_ => null,
 		} ?? switch (path) {
+			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'رفض استلام ⁨${prenom}⁩ للأسرة؟',
 			'reprisesAdmin.refuserConsequence' => 'لا تُنقل أي صلاحية. يمكن للشخص تقديم طلب جديد بعد المهلة المقررة.',
 			'reprisesAdmin.validee' => 'اعتُمد الاستلام.',
 			'reprisesAdmin.refusee' => 'رُفض الاستلام.',

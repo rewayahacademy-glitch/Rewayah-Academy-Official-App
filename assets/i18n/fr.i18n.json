@@ -15631,6 +15631,7 @@
     },
     "programme": {
       "vide": "L'étape apparaîtra dès l'entrée dans une classe",
+      "sansEtape": "Votre programme ne s'affiche pas encore : aucune étape n'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.",
       "datesEcole": "Dates de l'académie",
       "datesEcoleVide": "Les dates de l'académie seront affichées ici",
       "genre": {

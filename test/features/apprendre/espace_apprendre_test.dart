@@ -5,7 +5,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
-
 import 'package:rewayah_academy/core/apprendre/affichage_planche.dart';
 import 'package:rewayah_academy/core/apprendre/dates_ecole.dart';
 import 'package:rewayah_academy/core/apprendre/document_planche.dart';
@@ -76,6 +75,7 @@ import 'package:rewayah_academy/features/tc_catalogue/routes_tc_b.dart';
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../router/support_routeur.dart' show lieu, sessionActive, stabiliser;
 import '../../support/garde_interface.dart';
+import '../../support/harnais.dart' show hote;
 import '../../teaching_core/b/faux/faux_ports_b.dart' show version;
 import 'support_apprendre.dart';
 
@@ -515,6 +515,44 @@ void main() {
       );
       expect(find.text(t.apprendre.bibliotheque.rayonPlusLoin), findsOneWidget);
       expectSansArgent(tester);
+    });
+
+    testWidgets('interface anglaise : les rayons du serveur, francais et arabe '
+        'seulement, ne passent pas devant l anglais', (
+      WidgetTester tester,
+    ) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.en));
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          SingleChildScrollView(
+            child: PlancheDocuments(
+              documents: documentsComplets(),
+              rayons: const <RayonBibliotheque>[
+                RayonBibliotheque(
+                  code: codeRayonCours,
+                  titreFr: 'Documents des cours',
+                  titreAr: 'وثائق الدروس',
+                  ordre: 1,
+                ),
+                RayonBibliotheque(
+                  code: codeRayonPlusLoin,
+                  titreFr: 'Pour aller plus loin',
+                  titreAr: 'للتعمّق أكثر',
+                  ordre: 2,
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('Documents des cours'), findsNothing);
+      expect(find.text('Pour aller plus loin'), findsNothing);
+      expect(find.text(t.apprendre.bibliotheque.rayonCours), findsOneWidget);
+      expect(find.text(t.apprendre.bibliotheque.rayonPlusLoin), findsOneWidget);
     });
 
     testWidgets('un document du second rayon s y range, sans prix', (
@@ -2182,6 +2220,38 @@ void main() {
         }),
       );
       expect(find.text(t.suiviPedagogique.attenteEntretienTu), findsOneWidget);
+    });
+
+    testWidgets('que des sourates, aucune etape : la carte le dit au lieu de '
+        'rester seule', (WidgetTester tester) async {
+      await sur(
+        tester,
+        profil: ProfilApprendre.adulte,
+        suivi: const SuiviLu(<String, Object?>{
+          'sourates': <String, Object?>{
+            'sourates_validees': 0,
+            'sourates_total': 17,
+          },
+        }),
+      );
+      expect(
+        find.byKey(const ValueKey<String>('suivi-pedagogique-sourates')),
+        findsOneWidget,
+      );
+      expect(find.byKey(ClesProgramme.sansEtape), findsOneWidget);
+      expect(find.text(t.apprendre.programme.sansEtape), findsOneWidget);
+      expect(find.byKey(chemin), findsNothing);
+    });
+
+    testWidgets('une etape publiee : aucun message « sans etape »', (
+      WidgetTester tester,
+    ) async {
+      await sur(
+        tester,
+        profil: ProfilApprendre.adulte,
+        suivi: SuiviLu(lectureDemo(dates: true)),
+      );
+      expect(find.byKey(ClesProgramme.sansEtape), findsNothing);
     });
 
     testWidgets('pas encore de classe : l etape apparaitra a l entree en '

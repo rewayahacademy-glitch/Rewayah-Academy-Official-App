@@ -24774,6 +24774,9 @@ class Traductions$apprendre$programme$fr {
 	/// fr: 'L'étape apparaîtra dès l'entrée dans une classe'
 	String get vide => 'L\'étape apparaîtra dès l\'entrée dans une classe';
 
+	/// fr: 'Votre programme ne s'affiche pas encore : aucune étape n'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.'
+	String get sansEtape => 'Votre programme ne s\'affiche pas encore : aucune étape n\'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.';
+
 	/// fr: 'Dates de l'académie'
 	String get datesEcole => 'Dates de l\'académie';
 
@@ -64494,6 +64497,7 @@ extension on Traductions {
 			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '${titre}, ${type}',
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application',
 			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
+			'apprendre.programme.sansEtape' => 'Votre programme ne s\'affiche pas encore : aucune étape n\'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.',
 			'apprendre.programme.datesEcole' => 'Dates de l\'académie',
 			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
 			'apprendre.programme.genre.evaluation' => 'Évaluation',
@@ -64848,9 +64852,9 @@ extension on Traductions {
 			'pause.statut.acceptee' => 'Acceptée',
 			'pause.statut.refusee' => 'Refusée',
 			'pause.statut.annulee' => 'Annulée',
-			'pause.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
 			_ => null,
 		} ?? switch (path) {
+			'pause.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
 			'pause.reponseAvant' => ({required Object date}) => 'La direction répond avant le ${date}.',
 			'pause.reponseMotif' => ({required Object motif}) => 'Réponse de la direction : ${motif}',
 			'pause.exceptionAccordee' => 'Pause accordée par la direction.',
