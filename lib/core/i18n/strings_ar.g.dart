@@ -4328,20 +4328,20 @@ class _Traductions$enseignant$revenus$ar extends Traductions$enseignant$revenus$
 	@override String get tauxMoyen => 'متوسط الراتب للساعة';
 	@override String get total => 'المجموع';
 	@override String seanceDate({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩';
-	@override String get seanceDuree => 'المدة المحتسبة في الأجر';
+	@override String get seanceDuree => 'المدة المحتسبة في الراتب';
 	@override String get seanceDureeNonPrecisee => 'راجع كشف الأكاديمية';
-	@override String get seanceConnecte => 'متصل خلال نافذة الأجر';
+	@override String get seanceConnecte => 'متصل خلال نافذة الراتب';
 	@override String get present => 'حاضر';
 	@override String get absent => 'غائب';
 	@override String get presentPartiel => 'حاضر جزئيًا';
 	@override String get partielleNote => 'يُدفع الحضور الجزئي كالحضور.';
 	@override String sansDureePayee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'لا حصة محتسبة بوقت الاتصال.',
-		one: 'حصة واحدة محتسبة بوقت الاتصال: مدتها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.',
-		two: 'حصتان محتسبتان بوقت الاتصال: مدتاهما المحتسبتان في الأجر غير محددتين. كشف الأكاديمية هو المرجع.',
-		few: '⁨${n}⁩ حصص محتسبة بوقت الاتصال: مددها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.',
-		many: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.',
-		other: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.',
+		one: 'حصة واحدة محتسبة بوقت الاتصال: مدتها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.',
+		two: 'حصتان محتسبتان بوقت الاتصال: مدتاهما المحتسبتان في الراتب غير محددتين. كشف الأكاديمية هو المرجع.',
+		few: '⁨${n}⁩ حصص محتسبة بوقت الاتصال: مددها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.',
+		many: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.',
+		other: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.',
 	);
 	@override String get aucunMontant => 'لا مبلغ لهذه الحصة.';
 	@override String get partielle => '4. الحضور الجزئي يُحتسب';
@@ -28767,14 +28767,14 @@ extension on TraductionsAr {
 			'enseignant.revenus.tauxMoyen' => 'متوسط الراتب للساعة',
 			'enseignant.revenus.total' => 'المجموع',
 			'enseignant.revenus.seanceDate' => ({required Object date, required Object heure}) => '⁨${date}⁩ في ⁨${heure}⁩',
-			'enseignant.revenus.seanceDuree' => 'المدة المحتسبة في الأجر',
+			'enseignant.revenus.seanceDuree' => 'المدة المحتسبة في الراتب',
 			'enseignant.revenus.seanceDureeNonPrecisee' => 'راجع كشف الأكاديمية',
-			'enseignant.revenus.seanceConnecte' => 'متصل خلال نافذة الأجر',
+			'enseignant.revenus.seanceConnecte' => 'متصل خلال نافذة الراتب',
 			'enseignant.revenus.present' => 'حاضر',
 			'enseignant.revenus.absent' => 'غائب',
 			'enseignant.revenus.presentPartiel' => 'حاضر جزئيًا',
 			'enseignant.revenus.partielleNote' => 'يُدفع الحضور الجزئي كالحضور.',
-			'enseignant.revenus.sansDureePayee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حصة محتسبة بوقت الاتصال.', one: 'حصة واحدة محتسبة بوقت الاتصال: مدتها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.', two: 'حصتان محتسبتان بوقت الاتصال: مدتاهما المحتسبتان في الأجر غير محددتين. كشف الأكاديمية هو المرجع.', few: '⁨${n}⁩ حصص محتسبة بوقت الاتصال: مددها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.', many: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.', other: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الأجر غير محددة. كشف الأكاديمية هو المرجع.', ), 
+			'enseignant.revenus.sansDureePayee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حصة محتسبة بوقت الاتصال.', one: 'حصة واحدة محتسبة بوقت الاتصال: مدتها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.', two: 'حصتان محتسبتان بوقت الاتصال: مدتاهما المحتسبتان في الراتب غير محددتين. كشف الأكاديمية هو المرجع.', few: '⁨${n}⁩ حصص محتسبة بوقت الاتصال: مددها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.', many: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.', other: '⁨${n}⁩ حصة محتسبة بوقت الاتصال: مددها المحتسبة في الراتب غير محددة. كشف الأكاديمية هو المرجع.', ), 
 			'enseignant.revenus.aucunMontant' => 'لا مبلغ لهذه الحصة.',
 			'enseignant.revenus.partielle' => '4. الحضور الجزئي يُحتسب',
 			'enseignant.revenus.partielleDetail' => 'الطالب الذي حضر جزءًا من الحصة يُدفع عنه كالطالب الحاضر.',
