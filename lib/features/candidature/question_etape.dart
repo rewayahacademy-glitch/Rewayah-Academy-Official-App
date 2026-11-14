@@ -5,9 +5,8 @@
 // `assets/i18n`, par le code que le serveur rend ; un code sans texte ne
 // s'affiche pas.
 //
-// Les listes longues (langues, pays, riwayat) montrent d'abord leurs choix
-// courants en cartes ; « Autre ... » ouvre une recherche (`ChoixAvecRecherche`),
-// qui propose les langues en cartes. Les disponibilites ont leurs propres
+// Les listes longues (langues, pays, riwayat) ont la recherche en tete, puis
+// leurs choix courants en lignes compactes (`ChoixAvecRecherche`). Les disponibilites ont leurs propres
 // ecrans (`disponibilites_etape.dart`).
 library;
 
@@ -59,12 +58,16 @@ const List<String> paysCourants = <String>[
   'SA',
 ];
 
-/// Les riwayat proposees d'emblee ; les autres se trouvent par la recherche.
+/// Les riwayat proposees d'emblee, les plus connues d'abord (CANDIDATURE-UX,
+/// directeur, 14/11/2026 : Hafs, Warsh, Qaloun, Shu'ba, Duri, Susi) ; les
+/// autres se trouvent par « Une autre riwaya ».
 const List<String> riwayatCourantes = <String>[
   'hafs',
   'warsh',
   'qalun',
   'shuba',
+  'ad_duri_abi_amr',
+  'as_susi',
 ];
 
 /// Le corps de la question [etape].
@@ -269,7 +272,6 @@ class _Langues extends StatelessWidget {
     return ChoixAvecRecherche(
       cle: 'langues-${champ.code}',
       multiple: multiple,
-      resultatsEnCartes: true,
       courants: <ElementChoix>[
         for (final String c in courants)
           if (parCode[c] case final ElementChoix e) e,
@@ -277,7 +279,6 @@ class _Langues extends StatelessWidget {
       tous: tous,
       selection: controleur.valeurs(champ.code),
       textes: TextesRecherche(
-        autre: r.chercher,
         recherche: r.recherche,
         aide: r.rechercheAide,
         aucun: r.aucune,
@@ -457,7 +458,6 @@ class _Pays extends StatelessWidget {
       tous: tous,
       selection: controleur.valeurs(champ.code),
       textes: TextesRecherche(
-        autre: r.autre,
         recherche: r.recherche,
         aide: r.rechercheAide,
         aucun: r.aucun,
@@ -497,6 +497,15 @@ class _Riwayat extends StatelessWidget {
     return ChoixAvecRecherche(
       cle: 'riwayat',
       multiple: true,
+      rechercheEnTete: false,
+      // « J'ai maitrise toutes les riwayat », en tete, exclusive : elle
+      // retient les vingt codes, que le serveur accepte deja (max 20).
+      toutes: ElementChoix(
+        code: ChoixAvecRecherche.valeurToutes,
+        libelle: r.toutes,
+        description: r.toutesDescription,
+        cle: ValueKey<String>('option-${champ.code}-toutes'),
+      ),
       courants: <ElementChoix>[
         for (final String c in riwayatCourantes)
           if (parCode[c] case final ElementChoix e) e,
@@ -504,11 +513,11 @@ class _Riwayat extends StatelessWidget {
       tous: tous,
       selection: controleur.valeurs(champ.code),
       textes: TextesRecherche(
-        autre: r.autre,
         recherche: r.recherche,
         aide: r.rechercheAide,
         aucun: r.aucune,
         retour: r.retour,
+        autre: r.autre,
       ),
       onChange: (Set<String> s) => controleur.repondre(champ.code, <String>[
         for (final OptionQuestionnaire o in champ.options)

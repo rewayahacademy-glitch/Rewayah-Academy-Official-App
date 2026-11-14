@@ -209,6 +209,8 @@ const Set<String> _latins = <String>{
   // dans les deux fichiers, sur les cartes de choix de la langue du candidat.
   'inscription.langue.francais',
   'inscription.langue.arabe',
+  // CANDIDATURE-UX (14/11/2026) : l'anglais, meme regle.
+  'inscription.langue.anglais',
   'salle.seance.rail.marque',
   'salle.seance.rail.sousMarque',
   'tc.bibliotheque.type.pdf',

@@ -169,7 +169,13 @@ class RangeeEtape extends StatelessWidget {
     required this.total,
     super.key,
     this.onRetour,
+    this.libelleComplet = false,
   });
+
+  /// Vrai : le rang se lit en entier a l'ecran, « Etape n sur N », au-dessus
+  /// de la barre (le dossier du candidat, CANDIDATURE-UX, 14/11/2026, ou la
+  /// rangee n'est pas sous un titre de question). Sans disque retour.
+  final bool libelleComplet;
 
   /// Le rang de l'etape, a partir de 1.
   final int numero;
@@ -185,47 +191,63 @@ class RangeeEtape extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
 
+    final Widget barre = Semantics(
+      label: t.commun.etape.surLue(n: numero, total: total),
+      excludeSemantics: true,
+      child: ClipRRect(
+        borderRadius: AppRadius.arrondiFull,
+        child: SizedBox(
+          height: AppSpacing.sm,
+          child: Stack(
+            fit: StackFit.expand,
+            children: <Widget>[
+              // La piste est une surface enfoncee : sur le fond de page,
+              // une piste transparente a filet ne se voit pas.
+              ColoredBox(color: palette.surfaceSunken.background),
+              FractionallySizedBox(
+                // Directionnel : en arabe, la progression part de droite.
+                alignment: AlignmentDirectional.centerStart,
+                widthFactor: numero / total,
+                child: ColoredBox(color: palette.surfacePrimary.background),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    final TextStyle style = palette.inkStrong.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    if (libelleComplet) {
+      // « Etape n sur N » au-dessus de la barre, qui prend toute la largeur :
+      // le libelle long ne la pousse jamais hors de l'ecran (320, texte x2).
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          ExcludeSemantics(
+            child: Text(
+              t.commun.etape.surLue(n: numero, total: total),
+              style: style,
+            ),
+          ),
+          Ecart.vSm,
+          barre,
+        ],
+      );
+    }
     return Row(
       children: <Widget>[
         if (onRetour case final VoidCallback retour) ...<Widget>[
           DisqueRetour(onPress: retour),
           Ecart.hXl,
         ],
-        Expanded(
-          child: Semantics(
-            label: t.commun.etape.surLue(n: numero, total: total),
-            excludeSemantics: true,
-            child: ClipRRect(
-              borderRadius: AppRadius.arrondiFull,
-              child: SizedBox(
-                height: AppSpacing.sm,
-                child: Stack(
-                  fit: StackFit.expand,
-                  children: <Widget>[
-                    // La piste est une surface enfoncee : sur le fond de page,
-                    // une piste transparente a filet ne se voit pas.
-                    ColoredBox(color: palette.surfaceSunken.background),
-                    FractionallySizedBox(
-                      // Directionnel : en arabe, la progression part de droite.
-                      alignment: AlignmentDirectional.centerStart,
-                      widthFactor: numero / total,
-                      child: ColoredBox(
-                        color: palette.surfacePrimary.background,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
+        Expanded(child: barre),
         Ecart.hXl,
         ExcludeSemantics(
           child: Text(
             t.commun.etape.sur(n: numero, total: total),
-            style: palette.inkStrong.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
+            style: style,
           ),
         ),
       ],
