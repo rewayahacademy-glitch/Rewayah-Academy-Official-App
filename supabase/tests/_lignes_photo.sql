@@ -40,7 +40,10 @@ language sql stable as $$
   select c.oid
     from pg_catalog.pg_class c
    where c.relkind = 'r'
-     and c.relnamespace in ('public'::regnamespace, 'private'::regnamespace, 'auth'::regnamespace)
+     and (c.relnamespace in ('public'::regnamespace, 'private'::regnamespace, 'auth'::regnamespace)
+          -- PERF-AUDIT (14/11/2026) : la chaine d'audit vit hors de public ; sans
+          -- elle, les maillons des lignes de journal retirees resteraient.
+          or c.oid = pg_catalog.to_regclass('app_private.audit_chaine'))
 $$;
 
 -- Les colonnes qu'on peut ecrire (ni generees, ni identite ALWAYS), avec un prefixe.

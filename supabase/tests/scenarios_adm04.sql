@@ -313,6 +313,12 @@ begin
   raise notice 'J3 ok : acteur, type et periode bornent chacun, et dans les deux sens';
 end $$;
 
+-- PERF-AUDIT (20261126200000) : les lignes ecrites par log_sensitive_access
+-- sont chainees dans la minute par private.audit_chainer (pg_cron en
+-- production). Le scenario pose les maillons maintenant, comme le ferait le
+-- cron, avant de verifier la chaine.
+select private.audit_chainer();
+
 -- ============================================================
 -- J4 : la chaine entiere se verifie, fixtures des quatre autres fichiers
 --      comprises
@@ -354,9 +360,9 @@ end $$;
 --      intacte
 -- ============================================================
 --
--- C'est le scenario qui justifie que `log_sensitive_access` paie un
--- `lock table` a chaque ecriture depuis l'etape 1. Sans lui, `prev_hash` et
--- `hash` seraient deux colonnes que personne ne relit.
+-- C'est le scenario qui justifie la chaine de hachage (dans audit_logs avant
+-- le 14/11/2026, dans app_private.audit_chaine depuis PERF-AUDIT). Sans lui,
+-- `hash` serait une colonne que personne ne relit.
 
 do $$
 declare
@@ -414,8 +420,8 @@ end $$;
 -- ============================================================
 --
 -- Le point de ce scenario : une suppression laisse tous les condensats
--- valides. Elle ne se voit QUE par le maillon, sur l'entree SUIVANTE, dont le
--- `prev_hash` ne correspond plus a rien. Sans le second controle de
+-- valides. Elle ne se voit QUE par le maillon : depuis PERF-AUDIT, le maillon
+-- de la ligne effacee, reste dans app_private.audit_chaine, la nomme. Sans le second controle de
 -- `verifier_chaine_audit`, retirer une ligne genante serait indetectable.
 
 do $$
@@ -448,10 +454,11 @@ begin
   if v_rompues <> 1 then
     raise exception 'J6 ECHEC : une seule suppression, % entrees signalees', v_rompues;
   end if;
-  -- Et c'est bien la SUIVANTE qui parle, pas la disparue : une ligne absente
-  -- ne peut pas se denoncer elle-meme.
-  if v_premiere <> v_suivante then
-    raise exception 'J6 ECHEC : l''entree suivante (%) devait signaler, % signalee', v_suivante, v_premiere;
+  -- Depuis PERF-AUDIT (20261126200000), la chaine vit dans
+  -- app_private.audit_chaine : le maillon de la ligne effacee reste, et c'est
+  -- LUI qui la nomme. La suivante garde son maillon intact.
+  if v_premiere <> v_cible then
+    raise exception 'J6 ECHEC : la ligne effacee (%) devait etre nommee par son maillon, % signalee', v_cible, v_premiere;
   end if;
 
   reset role;
