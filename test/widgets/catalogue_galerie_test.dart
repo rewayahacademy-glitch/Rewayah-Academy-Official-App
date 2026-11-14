@@ -85,6 +85,8 @@ const List<String> composantsDuCatalogue = <String>[
   'MarquePage',
   // LOGO-APP (directeur, 10/10/2026) : le logo.
   'BrandLogo',
+  // #Ra_staff (directeur, 14/11/2026) : l'identite de l'equipe.
+  'MarqueStaff',
   // BRAND-ORN-1 (directeur, 11/10/2026) : l'ornement, signature discrete ; le
   // separateur vit dans le meme fichier et se montre dans la meme entree.
   'OrnementMarque',

@@ -242,9 +242,11 @@ export const TEXTES: Record<string, Ligne> = {
     fr: 'La contestation d\'un paiement est close : consultez l\'issue dans l\'application.',
     ar: 'أُغلق الاعتراض على دفعة: اطّلعوا على النتيجة في التطبيق.',
   },
+  // #Ra_staff (directeur, 14/11/2026) : l'equipe se nomme ainsi dans toute
+  // interaction, isolee de gauche a droite.
   message_academie_eleve: {
-    fr: 'La direction vous a écrit : lisez le message dans l\'application.',
-    ar: 'كتبت إليكم الإدارة: اقرؤوا الرسالة في التطبيق.',
+    fr: '\u2066#Ra_staff\u2069 vous a écrit : lisez le message dans l\'application.',
+    ar: 'كتب إليكم \u2066#Ra_staff\u2069: اقرؤوا الرسالة في التطبيق.',
   },
 
   // Nouveaux evenements PUSH-1.
@@ -287,6 +289,11 @@ export const TEXTES: Record<string, Ligne> = {
   versement_coordonnees_a_valider: {
     fr: 'Des coordonnées de versement sont à valider dans l\'application.',
     ar: 'بيانات تحويل بانتظار المصادقة في التطبيق.',
+  },
+  // MESSAGERIE-PUSH (14/11/2026) : a la direction, quand un candidat ecrit.
+  message_candidat_recu: {
+    fr: 'Un candidat vous a écrit : lisez son message dans l\'application.',
+    ar: 'كتب إليكم مرشّح: اقرؤوا رسالته في التطبيق.',
   },
   versement_coordonnees_validees: {
     fr: 'Vos coordonnées de versement sont validées : vérifiez-les dans l\'application.',
@@ -419,6 +426,16 @@ const PAIEMENTS_ECHOUES: Pluriel = {
   }),
 }
 
+const MESSAGES_CANDIDATS: Pluriel = {
+  fr: (n) => `${n} candidats vous ont écrit : lisez leurs messages dans l'application`,
+  ar: (n) => nombreAr(n, {
+    deux: 'كتب إليكم مرشّحان: اقرؤوا رسائلهما في التطبيق',
+    pluriel: (k) => `كتب إليكم ${k} مرشّحين: اقرؤوا رسائلهم في التطبيق`,
+    accusatif: (k) => `كتب إليكم ${k} مرشّحًا: اقرؤوا رسائلهم في التطبيق`,
+    genitif: (k) => `كتب إليكم ${k} مرشّح: اقرؤوا رسائلهم في التطبيق`,
+  }),
+}
+
 const GENERIQUE_PLURIEL: Pluriel = {
   fr: (n) => `${n} nouvelles notifications vous attendent dans l'application`,
   ar: (n) => nombreAr(n, {
@@ -437,6 +454,7 @@ export const PLURIELS: Record<string, Pluriel> = {
   demande_horaire_recue: CANDIDATURES,
   piece_identite_deposee: PIECES,
   signalement_eleve_recu: SIGNALEMENTS,
+  message_candidat_recu: MESSAGES_CANDIDATS,
 }
 
 function lireChoix(c: string | Choix, portee: string | null): string {

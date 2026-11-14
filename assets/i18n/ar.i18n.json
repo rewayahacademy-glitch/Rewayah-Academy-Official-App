@@ -156,7 +156,7 @@
       "remplacement": "استخلاف",
       "mentionCommunaute": "إشارة في مجتمع المعلمين",
       "reponseCommunaute": "رد في مجتمع المعلمين",
-      "messageAdministration": "رسالة من الإدارة",
+      "messageAdministration": "رسالة من \u2066@:commun.staff.designation\u2069",
       "dossierATraiter": "ملف للمعالجة",
       "signalementCommunaute": "بلاغ في مجتمع المعلمين",
       "reponseFil": "رد في محادثة",
@@ -164,7 +164,7 @@
       "evenementOperationnel": "حدث في الأكاديمية",
       "mission": "مهمة",
       "changementMission": "تغيير في المهمة",
-      "reponseAdministration": "رد من الإدارة",
+      "reponseAdministration": "رد من \u2066@:commun.staff.designation\u2069",
       "mentionStudio": "إشارة في الاستوديو",
       "reponseStudio": "رد في الاستوديو",
       "decisionDemandee": "قرار مطلوب",
@@ -497,6 +497,9 @@
       }
     },
     "marque": "Rewayah Academy",
+    "staff": {
+      "designation": "#Ra_staff"
+    },
     "continuer": "متابعة",
     "retour": "رجوع",
     "valider": "تأكيد",
@@ -4052,6 +4055,7 @@
           "vocalAVenir": "الرسالة الصوتية متاحة قريبًا",
           "enCours": "جارٍ الإرسال",
           "envoye": "أُرسلت",
+          "lu": "مقروءة",
           "nonConfirme": "لم يُؤكَّد إرسال هذه الرسالة بعد.",
           "reessayer": "إعادة المحاولة",
           "auteurSoi": "أنت",
@@ -4160,6 +4164,10 @@
       }
     },
     "messages": {
+      "liens": {
+        "ouvrir": "فتح الرابط (\u2066{site}\u2069)",
+        "ouvrirLu": "فتح الرابط إلى \u2066{site}\u2069 في علامة تبويب جديدة"
+      },
       "direct": {
         "nouveau": "وصلتك رسالة جديدة.",
         "horsDirect": "الرسائل لا تصل مباشرة الآن (الاتصال). تحديث كل 30 ثانية.",
@@ -4173,7 +4181,7 @@
         "titreCandidature": "التواصل بشأن طلب الترشح",
         "titreObjet": "التواصل بشأن هذا الموضوع",
         "ecrireFamille": "مراسلة الأسرة",
-        "ecrireAdministration": "مراسلة الإدارة",
+        "ecrireAdministration": "مراسلة \u2066@:commun.staff.designation\u2069",
         "ecrireA": "مراسلة {nom}",
         "conversationAvec": "محادثة مع {nom}",
         "voirTout": "عرض كل المحادثات",
@@ -12737,7 +12745,7 @@
       "echecRien": "لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. يبقى اختيارك محددًا؛ أعد المحاولة بعد لحظة. إن استمرت المشكلة، راسل الإدارة.",
       "envoyeTitre": "أُرسل التقرير",
       "envoyePhrase": "أُرسل إلى الإدارة. للعودة إليه، افتحه في «السجل» واختر «إضافة تكملة».",
-      "ecrireAdmin": "مراسلة الإدارة",
+      "ecrireAdmin": "مراسلة \u2066@:commun.staff.designation\u2069",
       "visiteEnCours": "جارٍ إرسال الزيارة إلى الإدارة.",
       "visiteTransmise": "أُرسلت الزيارة وسجلها التلقائي إلى الإدارة.",
       "visiteEchec": "لم يُؤكَّد إرسال الزيارة: لم يستجب الاتصال أو الخادم. أعد المحاولة؛ يبقى سجل الزيارة محفوظًا على الخادم.",
@@ -15488,9 +15496,9 @@
       "erreur": "تعذّرت قراءة رسائل الأكاديمية: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة."
     },
     "notifications": {
-      "message": "أرسلت إليكم الإدارة رسالة.",
-      "messageEnfant": "أرسلت إليكم الإدارة رسالة عن \u2068{prenom}\u2069.",
-      "messageSoi": "أرسلت إليكم الإدارة رسالة."
+      "message": "كتب إليكم \u2066@:commun.staff.designation\u2069.",
+      "messageEnfant": "كتب إليكم \u2066@:commun.staff.designation\u2069 عن \u2068{prenom}\u2069.",
+      "messageSoi": "كتب إليكم \u2066@:commun.staff.designation\u2069."
     }
   },
   "snt": {
@@ -16343,6 +16351,7 @@
       "demandeHoraireRecue": "طلب موعد جديد بانتظار الدراسة.",
       "creneauPersonnalise": "طُلب موعد خاص.",
       "pieceIdentite": "وثيقة هوية بانتظار التحقق.",
+      "messageCandidat": "كتب إليكم مرشّح: ردوا عليه في الرسائل.",
       "signalementEleve": "بلاغ بانتظار قراركم.",
       "suppressionCompte": "طُلب حذف حساب.",
       "personneEnSalle": "لا أحد في قاعة أحد الفصول: ابحثوا عن بديل.",

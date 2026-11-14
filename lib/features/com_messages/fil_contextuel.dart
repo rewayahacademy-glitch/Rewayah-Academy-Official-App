@@ -49,6 +49,7 @@ import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/lecteur_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
 import 'entete_fil_contexte.dart';
+import 'liens_message_staff.dart';
 import 'port_messages_metier.dart';
 
 /// La cle du brouillon du champ d'un fil metier.
@@ -219,7 +220,19 @@ class _FilContextuelState extends State<FilContextuel>
     final Widget? suite = EnteteFilContexte.badgeDuFil(fil);
     final List<MessageFil> connus = <MessageFil>[
       for (final MessageCommunication m in fil.messages)
-        messageFilDe(m, complement: piecesDuMessage(m.piecesJointes)),
+        messageFilDe(
+          m,
+          // #Ra_staff (directeur, 14/11/2026) : les liens https d'un message
+          // de l'equipe s'ouvrent ; ceux des autres restent du texte.
+          complement: complementAvecLiens(
+            pieces: piecesDuMessage(m.piecesJointes),
+            equipe: m.auteur.equipe,
+            texte: m.texte,
+          ),
+          // MESSAGERIE-LU : envoye (une coche, pale) ou lu (deux coches).
+          suiviLecture: true,
+          luParAutresLe: fil.luParAutresLe,
+        ),
     ];
     final TextesFilDiscussion textes = textesFilCommunication();
     if (!widget.ecritureOuverte || !fil.peut(CapaciteFil.ecrire)) {

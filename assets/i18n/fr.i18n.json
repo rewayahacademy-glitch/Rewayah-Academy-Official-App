@@ -25,6 +25,9 @@
       "enseignant": "{libelle} · avec {enseignant}"
     },
     "marque": "Rewayah Academy",
+    "staff": {
+      "designation": "#Ra_staff"
+    },
     "continuer": "Continuer",
     "retour": "Retour",
     "valider": "Valider",
@@ -8588,7 +8591,7 @@
       "remplacement": "Remplacement",
       "mentionCommunaute": "Mention dans la Communauté",
       "reponseCommunaute": "Réponse dans la Communauté",
-      "messageAdministration": "Message de l'Administration",
+      "messageAdministration": "Message de \u2066@:commun.staff.designation\u2069",
       "dossierATraiter": "Dossier à traiter",
       "signalementCommunaute": "Signalement dans la Communauté",
       "reponseFil": "Réponse dans une conversation",
@@ -8596,7 +8599,7 @@
       "evenementOperationnel": "Événement de l'académie",
       "mission": "Mission",
       "changementMission": "Changement de mission",
-      "reponseAdministration": "Réponse de l'Administration",
+      "reponseAdministration": "Réponse de \u2066@:commun.staff.designation\u2069",
       "mentionStudio": "Mention dans Le Studio",
       "reponseStudio": "Réponse dans Le Studio",
       "decisionDemandee": "Décision demandée",
@@ -9875,7 +9878,7 @@
       "echecRien": "L'envoi n'est pas confirmé\u00a0: il est possible qu'il ne soit pas parvenu jusqu'à Rewayah. Votre choix reste sélectionné\u00a0; réessayez dans un instant. Si le problème continue, écrivez à l'administration.",
       "envoyeTitre": "Compte rendu envoyé",
       "envoyePhrase": "Il est transmis à l'administration. Pour y revenir, ouvrez-le dans l'Historique et choisissez «\u00a0Ajouter un complément\u00a0».",
-      "ecrireAdmin": "Écrire à l'administration",
+      "ecrireAdmin": "Écrire à \u2066@:commun.staff.designation\u2069",
       "visiteEnCours": "Transmission de la visite à l'administration en cours.",
       "visiteTransmise": "La visite et son relevé automatique sont transmis à l'administration.",
       "visiteEchec": "La transmission de la visite n'est pas confirmée\u00a0: il est possible qu'elle ne soit pas parvenue jusqu'à Rewayah. Réessayez\u00a0; le relevé de la visite reste enregistré sur le serveur.",
@@ -11770,6 +11773,7 @@
           "vocalAVenir": "Message vocal bientôt disponible",
           "enCours": "Envoi en cours",
           "envoye": "Envoyé",
+          "lu": "Lu",
           "nonConfirme": "Ce message n'a pas encore été confirmé.",
           "reessayer": "Réessayer",
           "auteurSoi": "Vous",
@@ -11878,6 +11882,10 @@
       }
     },
     "messages": {
+      "liens": {
+        "ouvrir": "Ouvrir le lien ({site})",
+        "ouvrirLu": "Ouvrir le lien vers {site} dans un nouvel onglet"
+      },
       "direct": {
         "nouveau": "Vous avez reçu un nouveau message.",
         "horsDirect": "Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.",
@@ -11891,7 +11899,7 @@
         "titreCandidature": "Échanger au sujet de la candidature",
         "titreObjet": "Échanger à ce sujet",
         "ecrireFamille": "Écrire à la famille",
-        "ecrireAdministration": "Écrire à l'Administration",
+        "ecrireAdministration": "Écrire à \u2066@:commun.staff.designation\u2069",
         "ecrireA": "Écrire à {nom}",
         "conversationAvec": "Conversation avec {nom}",
         "voirTout": "Voir toutes les conversations",
@@ -15010,9 +15018,9 @@
       "erreur": "Les messages de l'académie n'ont pas pu être lus\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant."
     },
     "notifications": {
-      "message": "La direction vous a transmis un message.",
-      "messageEnfant": "La direction vous a transmis un message sur {prenom}.",
-      "messageSoi": "La direction vous a transmis un message."
+      "message": "\u2066@:commun.staff.designation\u2069 vous a écrit.",
+      "messageEnfant": "\u2066@:commun.staff.designation\u2069 vous a écrit sur {prenom}.",
+      "messageSoi": "\u2066@:commun.staff.designation\u2069 vous a écrit."
     }
   },
   "snt": {
@@ -15725,6 +15733,7 @@
       "demandeHoraireRecue": "Une nouvelle demande d'horaire est à examiner.",
       "creneauPersonnalise": "Un horaire personnalisé est demandé.",
       "pieceIdentite": "Une pièce d'identité est à vérifier.",
+      "messageCandidat": "Un candidat vous a écrit\u00a0: répondez-lui dans Messages.",
       "signalementEleve": "Un signalement attend votre décision.",
       "suppressionCompte": "Une suppression de compte est demandée.",
       "personneEnSalle": "Personne n'est dans la salle d'une classe\u00a0: trouvez un remplaçant.",

@@ -224,6 +224,7 @@ class Participant {
     this.fonction,
     this.estSoi = false,
     this.profilId,
+    this.equipe = false,
   });
 
   /// Identifiant stable.
@@ -243,6 +244,11 @@ class Participant {
 
   /// Vrai pour la personne qui lit.
   final bool estSoi;
+
+  /// Vrai quand le participant est l'equipe (nature `equipe` cote serveur) :
+  /// il s'affiche « #Ra_staff » avec l'icone de l'application (`MarqueStaff`,
+  /// decision du directeur du 14/11/2026), jamais avec le nom d'une personne.
+  final bool equipe;
 
   @override
   bool operator ==(Object other) => other is Participant && other.id == id;

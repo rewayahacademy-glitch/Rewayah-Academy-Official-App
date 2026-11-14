@@ -23,6 +23,7 @@ import '../../core/widgets/entete_page.dart' show EnteteCompact;
 import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
+import '../../core/widgets/marque_staff.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -160,7 +161,8 @@ class _EchangesControleurPageState
                   id: m.id,
                   auteur: switch (m.auteur) {
                     AuteurEchange.controleur => e.auteurVous,
-                    AuteurEchange.administration => e.auteurAdmin,
+                    // #Ra_staff (directeur, 14/11/2026).
+                    AuteurEchange.administration => MarqueStaff.designation,
                   },
                   texte: m.texte,
                   // Meme cle que l'Historique (revue CT-R m9).

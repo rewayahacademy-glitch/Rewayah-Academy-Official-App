@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/core/widgets/marque_staff.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
@@ -151,7 +152,9 @@ void main() {
     expect(find.text('Classe Al-Badr'), findsOneWidget);
     expect(find.text('17:00'), findsOneWidget);
     expect(find.textContaining('huit minutes de retard'), findsOneWidget);
-    expect(find.text(e.auteurAdmin), findsOneWidget);
+    // #Ra_staff (directeur, 14/11/2026) : jamais « Administration ».
+    expect(find.text(MarqueStaff.designation), findsOneWidget);
+    expect(find.text(e.auteurAdmin), findsNothing);
 
     await _ecrireEtEnvoyer(tester, 'Merci pour votre retour.');
 
