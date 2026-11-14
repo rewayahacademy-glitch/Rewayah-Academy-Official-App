@@ -40,6 +40,7 @@ import '../code_conduite/code_conduite.dart' show TexteCodeConduite;
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
 import '../consentements/texte_observation.dart';
+import '../juridique/mention_traduction.dart';
 import '../recrutement/signature_contrat_page.dart';
 import 'politique_controle.dart';
 import 'signature_page.dart' show ParagrapheTexte, paragraphesA3, paragraphesE1;
@@ -405,6 +406,7 @@ class _AccordsPageState extends ConsumerState<AccordsPage> {
           _Section(
             titre: t.accords.sectionContrat,
             children: <Widget>[
+              const MentionTraduction(),
               if (resignature) ...<Widget>[
                 Text(t.contrat.resignature, style: textes.bodyMedium),
                 Ecart.vXl,

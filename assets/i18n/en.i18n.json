@@ -1467,6 +1467,134 @@
     "erreurLecture": "We could not load your agreements. Try again.",
     "aAccepter": "To accept"
   },
+  "contrat": {
+    "titre": "What you are signing",
+    "intro": "Two points matter more than the others. They are written here plainly rather than in the middle of a long text.",
+    "pointEnregistrement": "A class may be recorded in audio. In that case, it is kept for thirty days, then erased. Each listening is entered in the log, with the name of the person listening.",
+    "pointControle": "A quality reviewer may attend a class without being seen. The room reminds of this permanently, whether the visit takes place or not.",
+    "pointCoordonnees": "You shall never see a family's contact details: neither full name, nor email, nor phone.",
+    "lireTexte": "Read the full text",
+    "accepter": "I have read and I accept",
+    "resignature": "The contract has been updated: the class review policy is now attached to it. Sign this new version to continue.",
+    "accepteLe": "Accepted on {date}",
+    "erreur": "The signature did not go through. Try again in a moment.",
+    "horsLigne": "Your agreement will be recorded as soon as the network returns, by pressing again.",
+    "caseRequise": "Tick the box to continue.",
+    "a3": {
+      "titre": "Classes may be recorded (sound only)",
+      "quoiTitre": "What we do.",
+      "quoi": "A class may be recorded in audio. The image is not recorded. A person from the Academy in charge of review may also follow a class live: they see and hear the class, without being seen or heard. They record nothing. The room reminds of this permanently.",
+      "pourquoiTitre": "Why.",
+      "pourquoi": "To protect children and Teachers. If someone reports a problem, we can check what happened.",
+      "quiTitre": "Who may listen to the recording.",
+      "qui": "Only the persons of the Academy in charge of quality and protection, and only for a specific reason, for example a report. Each listening is entered in a log. You may ask whether a recording has been listened to, and why.",
+      "dureeTitre": "How long.",
+      "duree": "{duree} days, then erased. If there is a report, the recording is kept until the end of the review.",
+      "desaccordTitre": "If you do not agree.",
+      "desaccord": "You may object: Account, My agreements, I object to recording. We shall reply within one month. We shall look for a solution with you. If none is possible, you may stop at no cost for the classes not yet attended.",
+      "jaiLu": "I have read"
+    },
+    "e1": {
+      "quoi": "A class may be recorded in audio. The image is not recorded. A person from the Academy in charge of review may also follow a class live: they see and hear the class, without being seen or heard. They record nothing. They then send a report to the Academy. The room reminds of this permanently.",
+      "pourquoi": "To protect children and Teachers. If someone reports a problem, we can check what happened. It is also evidence for you if a family complains wrongly.",
+      "refusTitre": "If you refuse.",
+      "refus": "We cannot entrust students to you, because this measure protects children. We tell you before your signature."
+    },
+    "clauseControle": {
+      "titre": "Review visits.",
+      "texte": "To protect students and guarantee the quality of classes, a person from the Academy may observe your classes live, without warning you of the time. They see and hear the class. They do not speak, record nothing and publish nothing. They write a report for the administration. You receive a summary each month. You may dispute it. Reports are kept for 12 months. The review policy, attached to this contract and available in your space, explains everything. By signing, you confirm having received it.",
+      "caseReligion": "I agree that the Academy processes the fact that I teach the Quran, which may reveal my religion, to manage my contract and my classes."
+    },
+    "politique": {
+      "titre": "Teacher review policy",
+      "lien": "Read the review policy",
+      "puce": "•",
+      "s1": {
+        "titre": "1. Why we review",
+        "blocs": [
+          "Our Teachers and our students live in many countries. We verify the identity and background of each Teacher, but no verification tells everything. We entrust children to adults, online, often alone. Parents must be able to trust us.",
+          "Review visits serve four purposes:",
+          "1. to protect the students;",
+          "2. to verify that the class respects our teaching objectives and our safety rules;",
+          "3. to enable the administration to act if there is a problem;",
+          "4. to help you improve.",
+          "They serve no other purpose. They are not used to calculate your pay. No decision is made by a machine: a person from the administration always decides."
+        ]
+      },
+      "s2": {
+        "titre": "2. How a visit goes",
+        "blocs": [
+          "- A person from the Academy, called a reviewer, is **approved by the administration** and signs in with **two-step verification** (B1, B2).",
+          "- The system chooses a Class **at random**. A Class may be visited several times in the month, or not at all. A reviewer never observes their own Class or a session in which they take part.",
+          "- You are **not told when** the visit takes place. You are told **in advance that it may take place**: by this text, by your contract and by the room's permanent banner \"review visit possible\".",
+          "- The reviewer sees the document, your video and the students' thumbnails. They may hear the sound. They have **no microphone, no camera and no chat**. They cannot speak to you or to the students.",
+          "- They **record nothing**. Screen capture is blocked on their device (B10).",
+          "- The administration may withdraw their access **in one click** (B3)."
+        ]
+      },
+      "s3": {
+        "titre": "3. What is written",
+        "blocs": [
+          "- **An automatic log of the session**: planned time, actual time, length, students present, reconnections. No one enters it by hand.",
+          "- **The reviewer's report**: \"Nothing to report\", or an observation on the class (nature, area, person concerned, text). They write only what they observed about the class.",
+          "- The report is **never rewritten**. An addendum may be added, dated.",
+          "- The reviewer's draft **never leaves the app** and is erased after sending (B11)."
+        ]
+      },
+      "s4": {
+        "titre": "4. Who reads",
+        "blocs": [
+          "- **The raw report**: the administration, and the reviewer who wrote it, for their own report only (B13).",
+          "- **The export**: the administration only, and each export is noted in the log (B14).",
+          "- **You**: a **monthly summary** with the positive points and the points to follow up.",
+          "- **The reviewer's name is never given to you**, even after the summary (B15). This protects them from pressure. You receive all the content that concerns you: this is what allows you to respond.",
+          "- **No one else.** Nothing is published, nor shown to families, nor to other Teachers."
+        ]
+      },
+      "s5": {
+        "titre": "5. How long",
+        "blocs": [
+          "- The raw report is kept **12 months** after it is sent, then erased. If there is a file or a measure in progress, it is kept until the end of that file (B4).",
+          "- The monthly summary, without any student's name, is kept longer to follow your progress. Length: that of your contract, plus 12 months."
+        ]
+      },
+      "s6": {
+        "titre": "6. Disputing a report (B7)",
+        "blocs": [
+          "- You may dispute **once per report**.",
+          "- You have **7 days** from the day you receive the monthly summary.",
+          "- You write **the reason**. Without a written reason, the request is not processed.",
+          "- The administration reviews and replies to you in writing. The report is not rewritten; your dispute and the administration's decision are added to it.",
+          "This dispute is an internal procedure. **It removes none of your legal rights** (part 8), which you may exercise at any time, even after 7 days."
+        ]
+      },
+      "s7": {
+        "titre": "7. What the Academy may decide",
+        "blocs": [
+          "On the basis of a report, the administration may: congratulate you, offer you training, ask you to change a practice, withdraw a Class from you, or end the contract in serious cases. Any measure is decided by a person, after reading, and is explained to you. In case of danger to a child, the Academy may act immediately and notify the authorities of the country."
+        ]
+      },
+      "s8": {
+        "titre": "8. Your rights",
+        "blocs": [
+          "- **Access**: you may ask for a copy of your data, including the reports that concern you. We reply within one month. The reviewer's name and the students' data are masked (DPA 2018, Schedule 2, Part 3, paragraph 16: third-party data).",
+          "- **Rectification**: if a fact is wrong (time, attendance), we correct it.",
+          "- **Objection**: you may object to the review. We examine your request. As the review protects children, we may maintain it. In that case, we cannot entrust you with a children's Class, and we tell you in writing.",
+          "- **Complaint**: you may refer the matter to the data protection authority (in the United Kingdom, the ICO; in the EU, the authority of your country)."
+        ]
+      },
+      "s9": {
+        "titre": "9. Legal basis",
+        "blocs": [
+          "Legitimate interest of the Academy and of the students: protecting children and guaranteeing the quality of classes (UK GDPR art. 6(1)(f)). The balancing test is written and signed. We do not ask for your \"consent\" to the review, because you could not freely refuse it."
+        ]
+      },
+      "s10": {
+        "titre": "10. Contact",
+        "texte": "Controller: Rewayah Academy Ltd, company no. 16624644 registered in England and Wales, 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom. Privacy contact: {contact}. Representative in the European Union: {nom}."
+      }
+    }
+  },
   "accessibilite": {
     "demo": {
       "titre": "Guided interface demo",
@@ -13738,6 +13866,7 @@
   "juridique": {
     "titre": "Legal information",
     "intro": "The texts that govern the service. They can be read without an account.",
+    "traduction": "This translation is provided for convenience. In case of discrepancy, the French version prevails.",
     "version": "Version {version}, text of {date}",
     "contact": "For any question, write to {contact}.",
     "lire": "Read",
@@ -13746,7 +13875,357 @@
       "numero": "Registration number: 16624644, England and Wales",
       "adresse": "Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom"
     },
-    "aCompleter": "[to be completed by the management: {quoi}]"
+    "aCompleter": "[to be completed by the management: {quoi}]",
+    "quoi": {
+      "hebergeur": "legal host and its contact details",
+      "lieuxHebergement": "countries where the information is hosted",
+      "dureesConservation": "retention period for each type of information",
+      "droitApplicable": "governing law and competent jurisdiction",
+      "confirmationConseil": "review by legal counsel, including the right of withdrawal",
+      "remboursementModalites": "method and time limit of the refund",
+      "responsableEnfants": "person responsible for child protection"
+    },
+    "valeurs": {
+      "hebergeur": "Database and account sign-in: Supabase Inc. (supabase.com). Application and web pages: Vercel Inc. (vercel.com). Domain name: Cloudflare, Inc. (cloudflare.com).",
+      "lieuxHebergement": "The database is hosted in Ireland, in the European Union. Other providers may process certain information outside the United Kingdom: these transfers comply with the protection rules provided by law.",
+      "dureesConservation": "Account and profile: for as long as the account exists. After a deletion request and a reflection period of 14 days, the name, email address and contact details are erased. Invoices and payments: 6 years, as required by United Kingdom accounting law. A Teacher's ID document: 90 days at most after verification. Messages: for as long as the account exists; after deletion, their author becomes anonymous.",
+      "droitApplicable": "The law of England and Wales, and the courts of England and Wales. If you are a consumer, you keep the protection of the mandatory rules of your country of residence.",
+      "confirmationConseil(param=jours)": {
+        "one": "Right of withdrawal: you may cancel within {jours} day from payment, without giving any reason. If classes began at your request during this period, the part already attended remains due.",
+        "other": "Right of withdrawal: you may cancel within {jours} days from payment, without giving any reason. If classes began at your request during this period, the part already attended remains due."
+      },
+      "confirmationConseilSansDuree": "Right of withdrawal: you may cancel during the withdrawal period, which runs from payment, without giving any reason. Its length is that of the pricing policy in force (Prices page). If classes began at your request during this period, the part already attended remains due.",
+      "remboursementModalites": "The refund is made to the payment method used, within 14 days of your request.",
+      "responsableEnfants": "{nom}, reachable at {contact}.",
+      "responsableDefaut": "Rewayah Academy",
+      "representantUeDefaut": "Rewayah Academy"
+    },
+    "mentions": {
+      "titre": "Legal notice",
+      "resume": "Who operates Rewayah Academy and how to contact it.",
+      "intro": "Here is who operates Rewayah Academy and how to contact it.",
+      "s1": {
+        "titre": "1. Who operates the service",
+        "blocs": [
+          "Rewayah Academy offers Quran classes by video, in stable Classes: the same students, a timetable that returns every week and an assigned Teacher."
+        ]
+      },
+      "s2": {
+        "titre": "2. Contacting us",
+        "blocs": [
+          "A single address for your questions about the service, about these texts and about your information."
+        ]
+      },
+      "s3": {
+        "titre": "3. Hosting and technical services",
+        "blocs": [
+          "The service relies on technical providers: hosting of the web pages, the database and account sign-in, video for the sessions, private file storage and a payment provider."
+        ]
+      },
+      "s4": {
+        "titre": "4. These texts",
+        "blocs": [
+          "Each legal text carries its version and its date, shown at the top of the page. When a text changes, the new version replaces the old one on the date indicated."
+        ]
+      }
+    },
+    "conditions": {
+      "titre": "Terms of use and sale",
+      "resume": "The rules for using the service and selling subscriptions.",
+      "intro": "These terms apply as soon as you create an account or register a student. Read them in full, they are short.",
+      "s1": {
+        "titre": "1. The service",
+        "blocs": [
+          "Rewayah Academy offers Quran classes by video. Each student is placed in a Class: a small number of students, a recurring timetable and an assigned Teacher.",
+          "There are two plans: the child plan, from 6 to 17 years, and the adult plan, from 18 years. No minor shall be placed in an adults' Class.",
+          "A Class opens when enough students are registered. Until then, you are on the waiting list and nothing is invoiced."
+        ]
+      },
+      "s2": {
+        "titre": "2. Account and access",
+        "blocs": [
+          "A child is registered and followed by an adult Guardian, who decides for them. See the Child protection text.",
+          "You shall give accurate information and keep your access to yourself. A session is entered through one's account, never through a public link."
+        ]
+      },
+      "s3": {
+        "titre": "3. Sessions",
+        "blocs": [
+          "Sessions take place at a fixed time, with the same Teacher. Being present and on time is part of the commitment.",
+          "A shortened session remains due if the student was present long enough. A session cancelled by the Academy or by the Teacher is replaced.",
+          "A quality reviewer may attend sessions without being seen, and a class may be recorded. If recording becomes real, we shall tell you beforehand.",
+          "The parent may silently observe their child's session."
+        ]
+      },
+      "s4": {
+        "titre": "4. Prices and payment",
+        "blocs": [
+          "Prices appear on the Prices page and in the app, when choosing a plan. They are in US dollars and exclude tax. The tax due according to your country is added to the payment.",
+          "The subscription renews every month. Discounts are calculated by the system on the household's invoice.",
+          "Payment goes through a payment provider.",
+          "There is no free trial. During the withdrawal period, which runs from payment, you are refunded what you paid, except for sessions already attended (see the Cancellation and refund text).",
+          "Without payment, the student no longer has access to sessions or resources. Their space stays open to see their profile, their history and to pay.",
+          "To stop, be refunded or pay late, see the Cancellation and refund text."
+        ]
+      },
+      "s5": {
+        "titre": "5. Respect during sessions",
+        "blocs": [
+          "Everyone shall behave respectfully towards the Teacher and the other students, in words as in gestures."
+        ]
+      },
+      "s6": {
+        "titre": "6. Your information",
+        "blocs": [
+          "How we use your information is explained in the Privacy text."
+        ]
+      },
+      "s7": {
+        "titre": "7. Governing law",
+        "blocs": [
+          "This part states the law that applies and the competent court."
+        ]
+      }
+    },
+    "annulation": {
+      "titre": "Cancellation and refund",
+      "resume": "Stopping, being refunded, and what happens if a payment does not arrive.",
+      "intro": "You may stop whenever you wish. Here is what is refunded, what is not, and what happens if a payment does not arrive.",
+      "s1": {
+        "titre": "1. Withdrawal period",
+        "delai(param=jours)": {
+          "one": "The withdrawal period is {jours} day from payment, according to the pricing policy in force (Prices page).",
+          "other": "The withdrawal period is {jours} days from payment, according to the pricing policy in force (Prices page)."
+        },
+        "delaiSansDuree": "The withdrawal period runs from payment. Its length is that of the pricing policy in force (Prices page).",
+        "blocs": [
+          "There is no free trial. Instead, you may stop during the withdrawal period if the class does not suit.",
+          "During this period, you are refunded what you paid, except for sessions already attended.",
+          "After this period, the month begun is due."
+        ]
+      },
+      "s2": {
+        "titre": "2. Stopping the subscription",
+        "blocs": [
+          "The monthly subscription may be stopped at any time, without justification. It ends at the end of the current month.",
+          "After the withdrawal period, stopping a plan paid in advance, by the quarter or by the year, remains a right. Months begun are counted at the normal monthly price, without the plan's discount, and the remainder is refunded.",
+          "A registration during the month pays only the remaining sessions of the month."
+        ]
+      },
+      "s3": {
+        "titre": "3. Absences and cancelled sessions",
+        "blocs": [
+          "A missed place is not refunded: it is reserved for the student in a fixed Class.",
+          "A session cancelled by the Academy or by the Teacher is replaced.",
+          "If the Class does not open for lack of registrations, nothing is invoiced."
+        ]
+      },
+      "s4": {
+        "titre": "4. Late payment",
+        "blocs": [
+          "Before renewal, you receive automatic reminders.",
+          "After the renewal date, a short grace period applies: the student attends their classes and the unpaid amount is shown to the Guardian.",
+          "If payment still does not arrive, access to sessions and resources is suspended. The space stays open to see the profile, the history and to pay. The place is kept for some time.",
+          "Then, the place is released to the waiting list. Returning remains possible at no cost, in a new Class.",
+          "The exact dates are those of the pricing policy in force (Prices page)."
+        ]
+      },
+      "s5": {
+        "titre": "5. Moving to the adult plan",
+        "blocs": [
+          "A student who reaches 18 moves to the adult plan at the next renewal. The parent is notified in advance."
+        ]
+      },
+      "litige": {
+        "titre": "6. Disputing a payment with one's bank",
+        "blocs": [
+          "If you dispute a payment with your bank, the payment provider takes the money back from the Academy as soon as the review begins. The access of the students concerned is then suspended during the review.",
+          "If the bank rules in favour of the Academy, access returns.",
+          "If the bank rules in your favour, the payment is treated as a full refund. The fees the payment provider charges the Academy for the dispute are added to your household's balance.",
+          "Before disputing, write to us: a refund request to the Academy costs nothing."
+        ]
+      },
+      "s6": {
+        "titre": "7. Making a request",
+        "blocs": [
+          "To stop or to ask for a refund, write to us giving the account name and the reason."
+        ]
+      }
+    },
+    "confidentialite": {
+      "titre": "Privacy",
+      "resume": "What information we keep, why, and your rights.",
+      "intro": "We keep only what is needed to run the classes. Here is what information, why, and how to control it.",
+      "s1": {
+        "titre": "1. Who is responsible",
+        "blocs": [
+          "Rewayah Academy Ltd decides why and how your information is used. Its contact details are in the Legal notice."
+        ],
+        "representant": "Representative in the European Union: {nom}."
+      },
+      "s2": {
+        "titre": "2. What we collect",
+        "blocs": [
+          "- To create an account: the name, the email address, the interface language, the country of residence and the time zone.",
+          "- For a student: the date of birth, which is used to choose the right plan and the rules specific to minors.",
+          "- Optional: photo, phone, address, level, timetable preferences.",
+          "- During classes: attendance, the handover notebook and the student's progress.",
+          "- To pay: the subscription and invoices. The payment itself goes through a payment provider.",
+          "- For a Teacher: an ID document, kept apart in a private space.",
+          "- Your agreements: the version of each text accepted and the date.",
+          "- Technical error reports, with no screenshot, no name and no identity."
+        ]
+      },
+      "s3": {
+        "titre": "3. Why we use it",
+        "blocs": [
+          "- To form the Classes and deliver the classes.",
+          "- To follow attendance and progress.",
+          "- To invoice the subscription.",
+          "- To protect the students and review the quality of sessions.",
+          "- To repair outages."
+        ]
+      },
+      "s4": {
+        "titre": "4. Who sees what",
+        "blocs": [
+          "A family sees only its own information. A child's information is never public and is never shown to other families.",
+          "The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.",
+          "A quality reviewer may attend sessions. Sensitive accesses are recorded in a log."
+        ]
+      },
+      "s5": {
+        "titre": "5. Live sessions and recording",
+        "blocs": [
+          "Video goes through a specialist service. Access to a session is given by the server, for that session only and for a short time.",
+          "Today, the app does not record classes. If recording returns, we shall tell you beforehand why, how long it is kept and who can access it, and we shall ask for your agreement.",
+          "A notice in the room reminds that a review visit is possible."
+        ]
+      },
+      "s6": {
+        "titre": "6. Where your information is",
+        "blocs": [
+          "We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.",
+          "To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service."
+        ]
+      },
+      "s7": {
+        "titre": "7. How long",
+        "blocs": [
+          "We keep each type of information for the time needed, no longer. A Teacher's ID document is deleted at the end of a fixed period. A deletion may be frozen in the event of a dispute."
+        ]
+      },
+      "s8": {
+        "titre": "8. Your rights",
+        "blocs": [
+          "- To see the information we hold about you.",
+          "- To correct it.",
+          "- To ask for its deletion or to limit its use.",
+          "Write to us. We first check that it is you, or the student's Guardian. You may also contact the data protection authority of your country."
+        ]
+      },
+      "s9": {
+        "titre": "9. Security",
+        "blocs": [
+          "Access rules are enforced by the server. ID documents are in a private space, separate from photos. No protection is absolute: if you see a problem, write to us."
+        ]
+      },
+      "s10": {
+        "titre": "10. Children",
+        "blocs": [
+          "A child's information is given and managed by their Guardian. See the Child protection text."
+        ]
+      }
+    },
+    "cookies": {
+      "titre": "Cookies",
+      "resume": "What the app and the website keep on your device.",
+      "intro": "The app and the website keep little on your device. Here is what.",
+      "s1": {
+        "titre": "1. What it is",
+        "blocs": [
+          "A cookie or a piece of local data is a small item kept by your browser or your device. It helps a service recognize you or remember a setting."
+        ]
+      },
+      "s2": {
+        "titre": "2. What the app keeps",
+        "blocs": [
+          "- Your sign-in session.",
+          "- Your display preferences, such as language and theme.",
+          "- A limited cache, which you can clear.",
+          "- On a student's device, their personal code, which never leaves the device.",
+          "These items are necessary for the app to work."
+        ]
+      },
+      "s3": {
+        "titre": "3. What we do not use",
+        "blocs": [
+          "At the date of this text, neither the app nor the website uses advertising cookies or audience measurement."
+        ]
+      },
+      "s4": {
+        "titre": "4. Error reports",
+        "blocs": [
+          "When the app crashes, a technical report may be sent to an error tracking service. It contains no screenshot, no name and no identity."
+        ]
+      },
+      "s5": {
+        "titre": "5. Controlling them",
+        "blocs": [
+          "You may clear the site's data in your browser settings, or sign out from the Account. You will then have to sign in again and redo your display settings."
+        ]
+      },
+      "s6": {
+        "titre": "6. Third-party services",
+        "blocs": [
+          "If you leave Rewayah Academy for another service, for example payment, that service applies its own rules."
+        ]
+      }
+    },
+    "enfants": {
+      "titre": "Child protection",
+      "resume": "How we protect minor students.",
+      "intro": "Minor students take their classes under an adult's responsibility. Here are the rules we apply and how to raise a concern with us.",
+      "s1": {
+        "titre": "1. A responsible adult",
+        "blocs": [
+          "A child shall not access classes without an authorized adult Guardian. Registration, agreements and payments are the Guardian's responsibility.",
+          "The child plan runs from 6 to 17 years. No minor shall be placed in an adults' Class.",
+          "From 6 to 9 years, the Guided interface is on by default: simpler screens, with large keys."
+        ]
+      },
+      "s2": {
+        "titre": "2. During sessions",
+        "blocs": [
+          "The child takes their classes with a small number of students and the same assigned Teacher.",
+          "There is no public link to a room. A room is entered through one's account, with access given by the server.",
+          "The parent may silently observe their child's class. The child concerned is informed.",
+          "A quality reviewer may attend sessions. A notice in the room reminds of this.",
+          "A class may be recorded. Today, this is not the case, and the Guardian would be informed beforehand."
+        ]
+      },
+      "s3": {
+        "titre": "3. Teachers",
+        "blocs": [
+          "Teachers sign a contract and a review policy. Their ID document is kept in a private space, separate from the photos visible in class."
+        ]
+      },
+      "s4": {
+        "titre": "4. The child's information",
+        "blocs": [
+          "A child's information is neither public nor visible to other families.",
+          "The student's personal code stays on their device.",
+          "See also the Privacy text."
+        ]
+      },
+      "s5": {
+        "titre": "5. Raising a concern",
+        "blocs": [
+          "If something worries you, write to us. Say what you saw, when, and in which Class.",
+          "In case of immediate danger, first contact the emergency services of your country."
+        ]
+      }
+    }
   },
   "avis": {
     "form": {

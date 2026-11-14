@@ -35,6 +35,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
+import '../juridique/mention_traduction.dart';
 import '../salle_seance/information_controle.dart';
 
 /// Une section de la politique : son titre et ses blocs, dans l'ordre.
@@ -119,6 +120,10 @@ class TextePolitiqueControle extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        if (MentionTraduction.affichee) ...<Widget>[
+          const MentionTraduction(),
+          Ecart.vLg,
+        ],
         for (int n = 0; n < sections.length; n++) ...<Widget>[
           if (n > 0) Ecart.vXl,
           Semantics(
