@@ -94,6 +94,7 @@ class TraductionsEn extends Traductions with BaseTranslations<AppLocale, Traduct
 	@override late final _Traductions$argent$en argent = _Traductions$argent$en._(_root);
 	@override late final _Traductions$identiteProfil$en identiteProfil = _Traductions$identiteProfil$en._(_root);
 	@override late final _Traductions$com$en com = _Traductions$com$en._(_root);
+	@override late final _Traductions$comptable$en comptable = _Traductions$comptable$en._(_root);
 	@override late final _Traductions$presentationTuteur$en presentationTuteur = _Traductions$presentationTuteur$en._(_root);
 	@override late final _Traductions$reprisesAdmin$en reprisesAdmin = _Traductions$reprisesAdmin$en._(_root);
 	@override late final _Traductions$recherche$en recherche = _Traductions$recherche$en._(_root);
@@ -1715,6 +1716,28 @@ class _Traductions$com$en extends Traductions$com$fr {
 	@override late final _Traductions$com$communaute$en communaute = _Traductions$com$communaute$en._(_root);
 	@override late final _Traductions$com$studio$en studio = _Traductions$com$studio$en._(_root);
 	@override late final _Traductions$com$annonces$en annonces = _Traductions$com$annonces$en._(_root);
+}
+
+// Path: comptable
+class _Traductions$comptable$en extends Traductions$comptable$fr {
+	_Traductions$comptable$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$comptable$nav$en nav = _Traductions$comptable$nav$en._(_root);
+	@override late final _Traductions$comptable$graphiques$en graphiques = _Traductions$comptable$graphiques$en._(_root);
+	@override late final _Traductions$comptable$onglets$en onglets = _Traductions$comptable$onglets$en._(_root);
+	@override late final _Traductions$comptable$commun$en commun = _Traductions$comptable$commun$en._(_root);
+	@override late final _Traductions$comptable$coffres$en coffres = _Traductions$comptable$coffres$en._(_root);
+	@override late final _Traductions$comptable$statuts$en statuts = _Traductions$comptable$statuts$en._(_root);
+	@override late final _Traductions$comptable$alertes$en alertes = _Traductions$comptable$alertes$en._(_root);
+	@override late final _Traductions$comptable$aujourdhui$en aujourdhui = _Traductions$comptable$aujourdhui$en._(_root);
+	@override late final _Traductions$comptable$paiements$en paiements = _Traductions$comptable$paiements$en._(_root);
+	@override late final _Traductions$comptable$tresorerie$en tresorerie = _Traductions$comptable$tresorerie$en._(_root);
+	@override late final _Traductions$comptable$encaissements$en encaissements = _Traductions$comptable$encaissements$en._(_root);
+	@override late final _Traductions$comptable$beneficiaires$en beneficiaires = _Traductions$comptable$beneficiaires$en._(_root);
+	@override late final _Traductions$comptable$contractuels$en contractuels = _Traductions$comptable$contractuels$en._(_root);
 }
 
 // Path: presentationTuteur
@@ -8484,6 +8507,425 @@ class _Traductions$com$annonces$en extends Traductions$com$annonces$fr {
 	@override String get titre => 'Announcements';
 }
 
+// Path: comptable.nav
+class _Traductions$comptable$nav$en extends Traductions$comptable$nav$fr {
+	_Traductions$comptable$nav$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aujourdhui => 'Today';
+	@override String get paiements => 'Payments';
+	@override String get tresorerie => 'Cash position';
+	@override String get compte => 'Account';
+}
+
+// Path: comptable.graphiques
+class _Traductions$comptable$graphiques$en extends Traductions$comptable$graphiques$fr {
+	_Traductions$comptable$graphiques$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get masque => 'Amounts are hidden: the chart is not drawn. Show the amounts to see it.';
+	@override String get voirValeurs => 'See the values';
+	@override String get masquerValeurs => 'Hide the values';
+	@override String get repartitionTitre => 'Breakdown by vault';
+	@override String repartitionResume({required Object n}) => 'Breakdown across ${n} vaults.';
+	@override String get mensuelTitre => 'Inflows and outflows over 6 months';
+	@override String mensuelResume({required Object debut, required Object fin}) => 'Inflows and outflows from ${debut} to ${fin}.';
+	@override String get fluxTitre => 'Cash flow over 30 days';
+	@override String fluxResume({required Object debut, required Object fin}) => 'Collections and disbursements from ${debut} to ${fin}.';
+	@override String get evolutionTitre => 'Trend over 6 months';
+	@override String evolutionResume({required Object debut, required Object fin}) => 'Cash held from ${debut} to ${fin}.';
+	@override String get legendeEntrees => 'Inflows';
+	@override String get legendeSorties => 'Outflows';
+	@override String get legendeEncaissements => 'Collections';
+	@override String get legendeDecaissements => 'Disbursements';
+	@override String get legendeDetenue => 'Cash held';
+	@override String get kpiTitre => 'Inflows and outflows';
+	@override String get kpiEntrees => 'Inflows';
+	@override String get kpiSorties => 'Outflows';
+	@override String get kpiPeriode => 'Last 30 days';
+	@override String variation({required Object pourcent}) => '${pourcent}% compared with the previous period';
+	@override String get rapportsTitre => 'Reports';
+	@override String get rapportsSousTitre => 'Inflows, outflows and cash position over time.';
+	@override String get vide => 'No data to draw';
+	@override String get videDetail => 'Charts will appear here as soon as collections or payments have been recorded.';
+	@override String get erreur => 'The charts could not be read: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get sansDonnees => 'The charts could not be loaded';
+	@override String get exporterRapport => 'Export the report';
+	@override String get exporterSelection => 'Export the selection';
+	@override String get exportIndisponible => 'Exports are not available yet: they will open once the server is connected.';
+	@override String get exportEnCours => 'Export being prepared';
+	@override String exportPret({required Object reference, required Object lignes}) => 'Export ready: ${reference} (${lignes} rows).';
+	@override String get exportEchec => 'The export could not be prepared: the request may not have reached Rewayah. Try again in a moment.';
+}
+
+// Path: comptable.onglets
+class _Traductions$comptable$onglets$en extends Traductions$comptable$onglets$fr {
+	_Traductions$comptable$onglets$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aEffectuer => 'To pay';
+	@override String get contractuels => 'Contractors';
+	@override String get beneficiaires => 'Beneficiaries';
+	@override String get coffres => 'Vaults';
+	@override String get encaissements => 'Collections';
+	@override String get rapprochement => 'Reconciliation';
+	@override String get rapports => 'Reports';
+}
+
+// Path: comptable.commun
+class _Traductions$comptable$commun$en extends Traductions$comptable$commun$fr {
+	_Traductions$comptable$commun$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get montantMasque => 'Amount hidden';
+	@override String get afficherMontants => 'Show the amounts';
+	@override String get masquerMontants => 'Hide the amounts';
+	@override String get montantsMasques => 'Amounts hidden';
+	@override String get montantsAffiches => 'Amounts shown';
+	@override String get enPreparationTitre => 'This screen is being prepared.';
+	@override String get enPreparationPhrase => 'No figure is shown here for now. No payment is possible from this screen.';
+	@override String get reserveStrategique => 'Strategic reserve';
+	@override String get tresorerieLibre => 'Free cash';
+	@override String get tresorerieDetenue => 'Cash held';
+	@override String get fondsProteges => 'Protected funds';
+	@override String get enTransit => 'In transit';
+	@override String get tresorerieLibreDetail => 'What is really still available after the protected funds, the obligations and the transit.';
+	@override String get objectifFixe => 'Target: fixed amount';
+	@override String objectifMois({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Current target: 1 month of essential expenses',
+		other: 'Current target: ${n} months of essential expenses',
+	);
+	@override String get montantActuel => 'Current amount';
+	@override String get manque => 'Shortfall to make up';
+	@override String atteint({required Object pourcent}) => '${pourcent}% reached';
+	@override String get modeCalcul => 'Calculation mode';
+	@override String get modeMontantFixe => 'Fixed target amount';
+	@override String get modeCouvertureMois => 'Coverage in months of essential expenses';
+	@override String derniereAllocation({required Object date}) => 'Last allocation: ${date}';
+	@override String prochaineAllocation({required Object date}) => 'Next allocation planned: ${date}';
+	@override String get aucuneAllocation => 'No allocation recorded';
+	@override String get destination => 'Destination';
+	@override String destinationMasquee({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}';
+	@override String destinationMasqueeLecteur({required Object type, required Object suffixe}) => '${type}, number hidden, ends in ${suffixe}';
+	@override String get destinationAucune => 'No payment method';
+	@override String paysDevise({required Object pays, required Object devise}) => '${pays} · ${devise}';
+	@override String get verification => 'Verification';
+	@override String activiteInitiateurDate({required Object initiateur, required Object date}) => '${initiateur} · ${date}';
+	@override String activiteTransition({required Object avant, required Object apres}) => '${avant} → ${apres}';
+	@override String activiteReference({required Object reference}) => 'Ref. ${reference}';
+	@override String get relancePreparee => 'Reminder prepared (demo)';
+	@override String prestataireDemonstration({required Object nom}) => '${nom} (demo)';
+	@override String date({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}';
+	@override String get aucuneValeur => 'Not provided';
+}
+
+// Path: comptable.coffres
+class _Traductions$comptable$coffres$en extends Traductions$comptable$coffres$fr {
+	_Traductions$comptable$coffres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fondsClientsEngages => 'Client funds committed';
+	@override String get paieADecaisser => 'Pay to disburse';
+	@override String get chargesEssentielles => 'Essential expenses';
+	@override String get taxesObligations => 'Taxes & obligations';
+	@override String get reserveStrategique => 'Strategic reserve';
+	@override String get enTransit => 'In transit';
+	@override String get tresorerieLibre => 'Free cash';
+}
+
+// Path: comptable.statuts
+class _Traductions$comptable$statuts$en extends Traductions$comptable$statuts$fr {
+	_Traductions$comptable$statuts$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$comptable$statuts$paiement$en paiement = _Traductions$comptable$statuts$paiement$en._(_root);
+	@override late final _Traductions$comptable$statuts$encaissement$en encaissement = _Traductions$comptable$statuts$encaissement$en._(_root);
+	@override late final _Traductions$comptable$statuts$rapprochement$en rapprochement = _Traductions$comptable$statuts$rapprochement$en._(_root);
+	@override late final _Traductions$comptable$statuts$profil$en profil = _Traductions$comptable$statuts$profil$en._(_root);
+	@override late final _Traductions$comptable$statuts$capacite$en capacite = _Traductions$comptable$statuts$capacite$en._(_root);
+	@override late final _Traductions$comptable$statuts$reserve$en reserve = _Traductions$comptable$statuts$reserve$en._(_root);
+	@override late final _Traductions$comptable$statuts$obligation$en obligation = _Traductions$comptable$statuts$obligation$en._(_root);
+	@override late final _Traductions$comptable$statuts$remboursement$en remboursement = _Traductions$comptable$statuts$remboursement$en._(_root);
+	@override late final _Traductions$comptable$statuts$validation$en validation = _Traductions$comptable$statuts$validation$en._(_root);
+	@override late final _Traductions$comptable$statuts$raison$en raison = _Traductions$comptable$statuts$raison$en._(_root);
+}
+
+// Path: comptable.alertes
+class _Traductions$comptable$alertes$en extends Traductions$comptable$alertes$fr {
+	_Traductions$comptable$alertes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enseignantsAPayer => 'Teachers to pay';
+	@override String get contractuelsAEcheance => 'Contractors due';
+	@override String get infosManquantes => 'Payment info missing';
+	@override String get payoutEchoue => 'Payout failed';
+	@override String get paiementFamilleEchoue => 'Family payment failed';
+	@override String get transactionNonRapprochee => 'Transaction not reconciled';
+	@override String get remboursementEnAttente => 'Refund pending';
+	@override String get reserveSousObjectif => 'Strategic reserve below target';
+	@override String get soldePrestataireInsuffisant => 'Provider balance insufficient';
+	@override String get methodeModifieeRecemment => 'Method recently changed';
+	@override String get doublonPotentiel => 'Potential duplicate';
+	@override String get validationRequise => 'Additional validation required';
+}
+
+// Path: comptable.aujourdhui
+class _Traductions$comptable$aujourdhui$en extends Traductions$comptable$aujourdhui$fr {
+	_Traductions$comptable$aujourdhui$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get attentionSousTitre => 'What awaits an action from you, then the risks to watch.';
+	@override String elementCompteur({required Object libelle, required Object n}) => '${libelle}: ${n}';
+	@override String elementDepuis({required Object date}) => 'Waiting since ${date}';
+	@override String get aTraiterVide => 'Nothing to handle today.';
+	@override String get aTraiterVideDetail => 'The payments, reminders and reconciliations to do will appear here.';
+	@override String get alertesVide => 'No alert right now.';
+	@override String alertesResume({required Object n}) => 'Alerts to watch: ${n}';
+	@override String get paiementsAEffectuer => 'Payments to make';
+	@override String get paiementsAEffectuerDetail => 'Each payment is checked in its list before being paid.';
+	@override String get paiementsVide => 'No payment to make.';
+	@override String get echeancesVide => 'No upcoming deadline.';
+	@override String get encaissementsVide => 'No recent collection.';
+	@override String get activiteVide => 'No recent activity.';
+	@override String get prestatairesVide => 'No provider activated.';
+	@override String get prestatairesVideDetail => 'Outgoing payments will go out when the management has activated a provider.';
+	@override String get accesPaiements => 'See the payments to make';
+	@override String get accesContractuels => 'Manage contractors\' obligations';
+	@override String get accesEncaissements => 'See the collections';
+	@override String get accesTresorerie => 'See the cash position and vaults';
+	@override String get accesAlimenter => 'Fund the Strategic reserve';
+	@override String get accesRapports => 'See the reports';
+	@override String get titre => 'Today';
+	@override String get sousTitre => 'What should I do now?';
+	@override String get attention => 'To handle and alerts';
+	@override String get aTraiter => 'To handle today';
+	@override String get aTraiterHorsPaiements => 'Other tasks';
+	@override String get alertes => 'Alerts';
+	@override String get echeances => 'Upcoming deadlines';
+	@override String get prestataires => 'Providers';
+	@override String get activiteRecente => 'Recent activity';
+	@override String get accesRapides => 'Quick access';
+	@override String get encaissementsRecents => 'Recent collections';
+	@override String get voirTout => 'See all';
+}
+
+// Path: comptable.paiements
+class _Traductions$comptable$paiements$en extends Traductions$comptable$paiements$fr {
+	_Traductions$comptable$paiements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$comptable$paiements$confirmation$en confirmation = _Traductions$comptable$paiements$confirmation$en._(_root);
+	@override late final _Traductions$comptable$paiements$filtres$en filtres = _Traductions$comptable$paiements$filtres$en._(_root);
+	@override late final _Traductions$comptable$paiements$colonnes$en colonnes = _Traductions$comptable$paiements$colonnes$en._(_root);
+	@override late final _Traductions$comptable$paiements$types$en types = _Traductions$comptable$paiements$types$en._(_root);
+	@override String compteur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'One payment',
+		other: '${n} payments',
+	);
+	@override late final _Traductions$comptable$paiements$actions$en actions = _Traductions$comptable$paiements$actions$en._(_root);
+	@override String selection({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'One payment selected',
+		other: '${n} payments selected',
+	);
+	@override String get selectionPhrase => 'The total and the exclusions come from the check, before anything is sent.';
+	@override String get horsLigneCourt => 'Payment impossible now';
+	@override late final _Traductions$comptable$paiements$vide$en vide = _Traductions$comptable$paiements$vide$en._(_root);
+	@override String get horsLigne => 'No payment goes out now. Pay as soon as sending is possible again.';
+	@override late final _Traductions$comptable$paiements$detail$en detail = _Traductions$comptable$paiements$detail$en._(_root);
+	@override late final _Traductions$comptable$paiements$ecart$en ecart = _Traductions$comptable$paiements$ecart$en._(_root);
+	@override String get titre => 'Payments to make';
+	@override String get sousTitre => 'Amounts calculated at the source: here you check and pay, you change nothing.';
+	@override String get detailTitre => 'Payment details';
+	@override String get detailSousTitre => 'Each line has its source. A discrepancy is reported, not corrected here.';
+}
+
+// Path: comptable.tresorerie
+class _Traductions$comptable$tresorerie$en extends Traductions$comptable$tresorerie$fr {
+	_Traductions$comptable$tresorerie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get coffresTitre => 'Vaults';
+	@override String get coffresPhrase => 'Where the money is allocated. A protected sum is never counted as free.';
+	@override String get coffreProtege => 'Protected';
+	@override String get coffreNonProtege => 'Not protected';
+	@override String partDetenue({required Object part}) => '${part}% of the cash held';
+	@override String regleUsage({required Object regle}) => 'Usage rule: ${regle}';
+	@override String get coffresVide => 'No vault is returned yet.';
+	@override String get coffresVidePhrase => 'The seven vaults will appear here as soon as the source returns them.';
+	@override late final _Traductions$comptable$tresorerie$descriptions$en descriptions = _Traductions$comptable$tresorerie$descriptions$en._(_root);
+	@override String get politiqueTitre => 'Strategic reserve policy';
+	@override String get politiquePhrase => 'Set by the management. You apply it, you do not change it.';
+	@override String get alimentationAuto => 'Automatic funding';
+	@override late final _Traductions$comptable$tresorerie$regle$en regle = _Traductions$comptable$tresorerie$regle$en._(_root);
+	@override String get cadence => 'Frequency';
+	@override late final _Traductions$comptable$tresorerie$cadences$en cadences = _Traductions$comptable$tresorerie$cadences$en._(_root);
+	@override String seuilAlerte({required Object pourcent}) => 'Alert below ${pourcent}% of the target amount';
+	@override String get retraitValidation => 'Any withdrawal requires additional validation.';
+	@override String get retraitSansValidation => 'The policy requires no validation for a withdrawal; it is still handled as a sensitive movement.';
+	@override String version({required Object version}) => 'Version ${version}';
+	@override String versionDepuis({required Object version, required Object date}) => 'Version ${version}, in force since ${date}';
+	@override String get mouvementsTitre => 'Movements between vaults';
+	@override String get mouvementsPhrase => 'Towards a protection: according to your delegation. Outflow from a protected vault: additional validation required.';
+	@override String get preparerMouvement => 'Prepare a movement';
+	@override String get retirer => 'Withdraw from the Strategic reserve';
+	@override String retraitBloque({required Object raison}) => 'Withdrawal from the Strategic reserve: ${raison}.';
+	@override String alimenterBloque({required Object raison}) => 'Funding of the Strategic reserve: ${raison}.';
+	@override String get aucunMouvement => 'No movement between vaults is allowed for your account by the policy.';
+	@override String get mouvementsHorsLigne => 'Movements between vaults will resume as soon as sending is possible again.';
+	@override String get interdits => 'Client funds committed and Taxes & obligations never fund an ordinary expense; a past allocation cannot be changed.';
+	@override String get previsionTitre => 'Forecast';
+	@override String get previsionPhrase => 'Expected inflows and outflows, by date.';
+	@override String get previsionVide => 'No inflow or outflow expected for now.';
+	@override String get entree => 'Inflow';
+	@override String get sortie => 'Outflow';
+	@override String get historiqueTitre => 'Allocation history';
+	@override String get historiquePhrase => 'Each movement is logged; nothing in it can be changed.';
+	@override String get historiqueVide => 'No movement between vaults recorded.';
+	@override late final _Traductions$comptable$tresorerie$transfert$en transfert = _Traductions$comptable$tresorerie$transfert$en._(_root);
+	@override String get titre => 'Cash position and vaults';
+	@override String get sousTitre => 'Free cash is the only spendable figure.';
+	@override String get alimenter => 'Fund the Strategic reserve';
+	@override String get erreurPartielle => 'Part of the page could not be read: the rest is up to date. Try again to complete it.';
+	@override String get erreurPartielleAction => 'Try again';
+}
+
+// Path: comptable.encaissements
+class _Traductions$comptable$encaissements$en extends Traductions$comptable$encaissements$fr {
+	_Traductions$comptable$encaissements$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get filtreTous => 'All';
+	@override String get filtreConfirmes => 'Confirmed';
+	@override String get filtreEnAttente => 'Pending';
+	@override String get filtreEchoues => 'Failed';
+	@override String get filtreRembourses => 'Refunded';
+	@override String get filtreContestes => 'Disputed';
+	@override String get filtreARapprocher => 'To reconcile';
+	@override String get recherche => 'Search for a family or a reference';
+	@override String get colDate => 'Date';
+	@override String get colFamille => 'Family';
+	@override String get colReference => 'Reference';
+	@override String get colBrut => 'Gross';
+	@override String get colFrais => 'Fees';
+	@override String get colNet => 'Net';
+	@override String get colMoyen => 'Method';
+	@override String get colEtat => 'Status';
+	@override String profilsPour({required Object prenoms}) => 'For ${prenoms}';
+	@override String moyenPrestataire({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}';
+	@override String get videTitre => 'No collection yet.';
+	@override String get videPhrase => 'Family payments will appear here as soon as the provider has passed them on.';
+	@override String get videFiltreTitre => 'No collection matches.';
+	@override String get videFiltrePhrase => 'Choose "All" or clear the search to see the whole list again.';
+	@override String get voirTous => 'See all collections';
+	@override String ouvrirDetailLecteur({required Object famille}) => 'Open the details of ${famille}\'s collection';
+	@override String get fermerDetail => 'Close the details';
+	@override String get brut => 'Gross amount';
+	@override String get frais => 'Provider fees';
+	@override String get net => 'Net received';
+	@override String get fraisSource => 'Fees and exchange supplied by the provider, never recalculated here.';
+	@override String get reference => 'Reference';
+	@override String get prestataire => 'Provider';
+	@override String get moyen => 'Payment method';
+	@override String get foyer => 'Household';
+	@override String get date => 'Date';
+	@override String get etat => 'Status';
+	@override String get devise => 'Currency';
+	@override String get affectation => 'Allocation by profile';
+	@override String get affectationAucune => 'The source returned no allocation for this collection.';
+	@override String get rapprochement => 'Reconciliation';
+	@override String get rapprochementAucun => 'Not reconciled yet';
+	@override String get ouvrirRapprochement => 'Open the reconciliation';
+	@override String get confirmeNote => '"Confirmed" appears only after the provider\'s confirmation.';
+	@override String get enAttenteNote => 'Waiting for the provider\'s confirmation: nothing is secured yet.';
+	@override String get journal => 'Collection log';
+	@override String get journalVide => 'No operation recorded for this collection.';
+	@override late final _Traductions$comptable$encaissements$rap$en rap = _Traductions$comptable$encaissements$rap$en._(_root);
+	@override String get titre => 'Collections';
+	@override String get sousTitre => 'A payment is confirmed only after the provider.';
+	@override String get detailTitre => 'Collection details';
+	@override String get rapprochementTitre => 'Reconciliation';
+	@override String get rapprochementSousTitre => 'Link each transaction to what was waiting for it.';
+}
+
+// Path: comptable.beneficiaires
+class _Traductions$comptable$beneficiaires$en extends Traductions$comptable$beneficiaires$fr {
+	_Traductions$comptable$beneficiaires$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'The payment profile of each teacher and each contractor. Only the beneficiary enters or changes their details: you can remind them, ask for an update or suspend their payments.';
+	@override String get filtreTous => 'All';
+	@override String get filtreInfos => 'Info missing';
+	@override String get filtreVerification => 'Being verified';
+	@override String get filtreSuspendus => 'Suspended';
+	@override String get filtreInvitations => 'Invitations sent';
+	@override String get colonneBeneficiaire => 'Beneficiary';
+	@override String get colonneType => 'Type';
+	@override String get colonneDestination => 'Destination';
+	@override String get colonneEtat => 'Profile status';
+	@override String get colonneEnAttente => 'Payments waiting';
+	@override String get typeEnseignant => 'Teacher';
+	@override String get typeContractuel => 'Contractor';
+	@override String enAttente({required Object n}) => '${n} waiting';
+	@override String get aucunEnAttente => 'None';
+	@override String get vide => 'No beneficiary yet.';
+	@override String get videDetail => 'Teachers and contractors appear here as soon as a payment concerns them.';
+	@override String get videFiltre => 'No beneficiary with this filter.';
+	@override String get videFiltreDetail => 'Choose "All" to see the whole list again.';
+	@override late final _Traductions$comptable$beneficiaires$profil$en profil = _Traductions$comptable$beneficiaires$profil$en._(_root);
+	@override String get titre => 'Beneficiaries';
+	@override String get sousTitre => 'Details masked: only the beneficiary changes their own.';
+	@override String get profilTitre => 'Payment profile';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$en recevoir = _Traductions$comptable$beneficiaires$recevoir$en._(_root);
+}
+
+// Path: comptable.contractuels
+class _Traductions$comptable$contractuels$en extends Traductions$comptable$contractuels$fr {
+	_Traductions$comptable$contractuels$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get ongletObligations => 'Obligations';
+	@override String get ongletAApprouver => 'To approve';
+	@override String get ongletAPayer => 'To pay';
+	@override String get ongletHistorique => 'History';
+	@override String get ongletsLecteur => 'Obligations view';
+	@override String get colonneBeneficiaire => 'Beneficiary';
+	@override String get colonneObjet => 'Purpose';
+	@override String get colonneMontant => 'Amount';
+	@override String get colonneEcheance => 'Due date';
+	@override String get colonneStatut => 'Status';
+	@override String get typeRecurrente => 'Recurring';
+	@override String get typePonctuelle => 'One-off';
+	@override String echeanceLe({required Object date}) => 'Due: ${date}';
+	@override String get payer => 'Pay';
+	@override String payerLecteur({required Object objet}) => 'Pay the obligation ${objet}';
+}
+
 // Path: presentationTuteur.accueil
 class _Traductions$presentationTuteur$accueil$en extends Traductions$presentationTuteur$accueil$fr {
 	_Traductions$presentationTuteur$accueil$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -14205,6 +14647,630 @@ class _Traductions$com$annonces$demo$en extends Traductions$com$annonces$demo$fr
 	@override late final _Traductions$com$annonces$demo$f$en f = _Traductions$com$annonces$demo$f$en._(_root);
 }
 
+// Path: comptable.statuts.paiement
+class _Traductions$comptable$statuts$paiement$en extends Traductions$comptable$statuts$paiement$fr {
+	_Traductions$comptable$statuts$paiement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aCalculer => 'To calculate';
+	@override String get calcule => 'Calculated';
+	@override String get aVerifier => 'To check';
+	@override String get infosManquantes => 'Payment info missing';
+	@override String get verificationRequise => 'Payment verification required';
+	@override String get pretAPayer => 'Ready to pay';
+	@override String get validationRequise => 'Additional validation required';
+	@override String get soumis => 'Submitted';
+	@override String get enTransit => 'In transit';
+	@override String get reussi => 'Succeeded';
+	@override String get echoue => 'Failed';
+	@override String get aRelancer => 'To follow up';
+	@override String get annule => 'Cancelled';
+	@override String get retourne => 'Refunded / returned';
+	@override String get indisponible => 'Unavailable';
+}
+
+// Path: comptable.statuts.encaissement
+class _Traductions$comptable$statuts$encaissement$en extends Traductions$comptable$statuts$encaissement$fr {
+	_Traductions$comptable$statuts$encaissement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enAttente => 'Pending';
+	@override String get confirme => 'Confirmed';
+	@override String get echoue => 'Failed';
+	@override String get rembourse => 'Refunded';
+	@override String get partiellementRembourse => 'Partially refunded';
+	@override String get conteste => 'Disputed';
+	@override String get chargeback => 'Chargeback';
+	@override String get aRapprocher => 'To reconcile';
+	@override String get rapproche => 'Reconciled';
+}
+
+// Path: comptable.statuts.rapprochement
+class _Traductions$comptable$statuts$rapprochement$en extends Traductions$comptable$statuts$rapprochement$fr {
+	_Traductions$comptable$statuts$rapprochement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get automatique => 'Automatic';
+	@override String get aVerifier => 'To check';
+	@override String get rapproche => 'Reconciled';
+	@override String get conflit => 'Conflict';
+	@override String get sansCorrespondance => 'No match';
+	@override String get doublonPotentiel => 'Potential duplicate';
+}
+
+// Path: comptable.statuts.profil
+class _Traductions$comptable$statuts$profil$en extends Traductions$comptable$statuts$profil$fr {
+	_Traductions$comptable$statuts$profil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucunMoyen => 'No method';
+	@override String get incomplet => 'Incomplete';
+	@override String get enVerification => 'Being verified';
+	@override String get verifie => 'Verified';
+	@override String get suspendu => 'Suspended';
+	@override String get actionRequise => 'Action required';
+	@override String get invitationEnvoyee => 'Invitation sent';
+}
+
+// Path: comptable.statuts.capacite
+class _Traductions$comptable$statuts$capacite$en extends Traductions$comptable$statuts$capacite$fr {
+	_Traductions$comptable$statuts$capacite$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get prisEnCharge => 'Supported';
+	@override String get nonPrisEnCharge => 'Not supported';
+	@override String get temporairementIndisponible => 'Temporarily unavailable';
+	@override String get verificationRequise => 'Verification required';
+	@override String get soldePrestataireInsuffisant => 'Provider balance insufficient';
+}
+
+// Path: comptable.statuts.reserve
+class _Traductions$comptable$statuts$reserve$en extends Traductions$comptable$statuts$reserve$fr {
+	_Traductions$comptable$statuts$reserve$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get atteint => 'Target reached';
+	@override String get sousObjectif => 'Below target';
+	@override String get depassement => 'Exceeded';
+	@override String get regleInactive => 'Rule inactive';
+	@override String get alimentationPrevue => 'Funding planned';
+	@override String get mouvementSensible => 'Sensitive movement';
+}
+
+// Path: comptable.statuts.obligation
+class _Traductions$comptable$statuts$obligation$en extends Traductions$comptable$statuts$obligation$fr {
+	_Traductions$comptable$statuts$obligation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get brouillon => 'Draft';
+	@override String get aApprouver => 'To approve';
+	@override String get approuvee => 'Approved';
+	@override String get refusee => 'Declined';
+	@override String get payable => 'Payable';
+	@override String get payee => 'Paid';
+	@override String get annulee => 'Cancelled';
+}
+
+// Path: comptable.statuts.remboursement
+class _Traductions$comptable$statuts$remboursement$en extends Traductions$comptable$statuts$remboursement$fr {
+	_Traductions$comptable$statuts$remboursement$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get demande => 'Requested';
+	@override String get approbationRequise => 'Approval required';
+	@override String get approuve => 'Approved';
+	@override String get execute => 'Executed';
+	@override String get refuse => 'Declined';
+}
+
+// Path: comptable.statuts.validation
+class _Traductions$comptable$statuts$validation$en extends Traductions$comptable$statuts$validation$fr {
+	_Traductions$comptable$statuts$validation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enAttente => 'Validation requested';
+	@override String get validee => 'Validated';
+	@override String get refusee => 'Declined';
+}
+
+// Path: comptable.statuts.raison
+class _Traductions$comptable$statuts$raison$en extends Traductions$comptable$statuts$raison$fr {
+	_Traductions$comptable$statuts$raison$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get autoPaiement => 'Handling by another officer required';
+	@override String get validationRequise => 'Additional validation required';
+	@override String get infosManquantes => 'Payment information missing';
+	@override String get verificationRequise => 'Payment verification required';
+	@override String get horsDelegation => 'Outside delegation';
+	@override String get fournisseurIndisponible => 'Provider unavailable';
+	@override String get fondsInsuffisants => 'Insufficient funds';
+	@override String get doublonPotentiel => 'Potential duplicate';
+	@override String get nonApprouvee => 'Obligation not approved';
+	@override String get capaciteAbsente => 'Capability missing';
+	@override String get delegationsSuspendues => 'Delegations suspended by the management';
+	@override String get delegationExpiree => 'Delegation expired';
+	@override String get sortieEnAttenteDelai => 'Outflow waiting for the security delay';
+	@override String get coffreNonAutorise => 'Vault outside the delegation';
+	@override String get beneficiaireExclu => 'Beneficiary excluded from the delegation';
+	@override String get plafondExceptionDepasse => 'Above the ceiling of this delegation';
+	@override String get paiementHorsApplication => 'Payment received outside the app: the management validates it before it is credited to the student';
+}
+
+// Path: comptable.paiements.confirmation
+class _Traductions$comptable$paiements$confirmation$en extends Traductions$comptable$paiements$confirmation$fr {
+	_Traductions$comptable$paiements$confirmation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titreUn => 'Confirm the payment';
+	@override String get titreLot => 'Confirm the batch';
+	@override String get titreValidation => 'Request a validation';
+	@override String get payerMaintenant => 'Pay now';
+	@override String get controleEchoueTitre => 'Check interrupted';
+	@override String get controleEchoue => 'The check of the selection did not go through. Nothing was sent. Run the check again.';
+	@override String get relancerControle => 'Run the check again';
+	@override String get montant => 'Exact amount';
+	@override String get beneficiaire => 'Beneficiary';
+	@override String get devise => 'Currency';
+	@override String get type => 'Type';
+	@override String get periode => 'Period / purpose';
+	@override String get prestataire => 'Planned provider';
+	@override String get prestataireAucun => 'Not returned by the source';
+	@override String get taux => 'Exchange rate';
+	@override String tauxDate({required Object taux, required Object date}) => '${taux}, on ${date}';
+	@override String get frais => 'Provider fees';
+	@override String get change => 'Exchange cost';
+	@override String get montantEnvoye => 'Total sent';
+	@override String get montantRecu => 'Expected amount received';
+	@override String get controlesTitre => 'Checks passed';
+	@override String get controlesPhrase => 'Amount calculated, method verified, delegation and duplicates checked by the source. Only ready payments will go out.';
+	@override String get sensiblePhrase => 'This payment is sensitive: another authorized person must validate it. Request validation, it does not go out before.';
+	@override String prets({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '1 ready',
+		other: '${n} ready',
+	);
+	@override String exclus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '1 excluded',
+		other: '${n} excluded',
+	);
+	@override String get total => 'Total of ready payments';
+	@override String get beneficiairesCle => 'Beneficiaries';
+	@override String beneficiaires({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'One beneficiary',
+		other: '${n} beneficiaries',
+	);
+	@override String get devises => 'Currencies';
+	@override String get prestataires => 'Providers';
+	@override String get plafond => 'Remaining delegation';
+	@override String get exclusTitre => 'Excluded from this batch: they will not go out';
+	@override String get aucunPretTitre => 'No payment ready';
+	@override String get aucunPret => 'Nothing will go out. Open each excluded payment to lift its reason, then run the check again.';
+	@override String get erreursTitre => 'Errors returned by the check';
+	@override String confirmerUn({required Object montant}) => 'Confirm the payment of ${montant}';
+	@override String confirmerLot({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Confirm the ready payment of ${montants}',
+		other: 'Confirm the ${n} ready payments: ${montants}',
+	);
+	@override String get demanderValidation => 'Request validation';
+	@override String get annuler => 'Cancel';
+	@override String get fermer => 'Close';
+	@override String get soumisTitre => 'Sent to the provider';
+	@override String get soumisPhrase => 'A payment sent is not yet received: its status comes from the provider\'s tracking. Refresh the tracking to see it advance.';
+	@override String get actualiser => 'Refresh the tracking';
+	@override String get suiviEchoue => 'The tracking could not be read. The payment stays sent: refresh again in a moment.';
+	@override String get referenceCle => 'Provider reference';
+	@override String get recalculeTitre => 'The amount was recalculated';
+	@override String get recalculePhrase => 'A calculation changed at the source since the check. Nothing was sent. Run the check again to confirm the new amount.';
+	@override String nouveauMontant({required Object nom}) => 'New amount for ${nom}';
+	@override String get refusTitre => 'Payment refused by the source';
+	@override String get refusDejaSoumis => 'This payment has already been submitted: nothing is sent again. Follow it from the in-progress payments tab.';
+	@override String get refusHorsDelegation => 'The total exceeds your delegation, per beneficiary or per period. Nothing was sent. Run the check again: the payments concerned will be excluded.';
+	@override String get refusPerime => 'The check has expired. Nothing was sent. Run the check again before confirming.';
+	@override String get refusFournisseur => 'The provider became unavailable. Nothing was sent. Run the check again in a moment.';
+	@override String get inconnuTitre => 'Unknown outcome';
+	@override String get inconnuPhrase => 'The answer did not reach us: the payment may have gone out. Try again: the same request is sent again and will go out only once.';
+	@override String get reessayer => 'Try again';
+	@override String get validationDemandeeTitre => 'Validation requested';
+	@override String get validationDemandeePhrase => 'Another authorized person will validate this payment. It does not go out before their decision.';
+	@override String get validationEchouee => 'The validation request did not go through. Try again: it will be recorded only once.';
+}
+
+// Path: comptable.paiements.filtres
+class _Traductions$comptable$paiements$filtres$en extends Traductions$comptable$paiements$filtres$fr {
+	_Traductions$comptable$paiements$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'All';
+	@override String get enseignants => 'Teachers';
+	@override String get contractuels => 'Contractors';
+	@override String get statut => 'Status';
+	@override String get tousStatuts => 'All statuses';
+	@override String get prets => 'Ready';
+	@override String get infos => 'Info missing';
+	@override String get verification => 'Verification';
+	@override String get validation => 'Validation';
+	@override String get retard => 'Overdue';
+	@override String get classe => 'Class';
+	@override String get toutesClasses => 'All classes';
+	@override String get periode => 'Period';
+	@override String get toutesPeriodes => 'All periods';
+	@override String get effacer => 'Clear the filters';
+}
+
+// Path: comptable.paiements.colonnes
+class _Traductions$comptable$paiements$colonnes$en extends Traductions$comptable$paiements$colonnes$fr {
+	_Traductions$comptable$paiements$colonnes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get beneficiaire => 'Beneficiary';
+	@override String get type => 'Type';
+	@override String get periode => 'Period / purpose';
+	@override String get montant => 'Amount';
+	@override String get destination => 'Destination';
+	@override String get echeance => 'Due date';
+	@override String get statut => 'Status';
+	@override String get action => 'Action';
+}
+
+// Path: comptable.paiements.types
+class _Traductions$comptable$paiements$types$en extends Traductions$comptable$paiements$types$fr {
+	_Traductions$comptable$paiements$types$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get enseignant => 'Teacher';
+	@override String get contractuel => 'Contractor';
+}
+
+// Path: comptable.paiements.actions
+class _Traductions$comptable$paiements$actions$en extends Traductions$comptable$paiements$actions$fr {
+	_Traductions$comptable$paiements$actions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get voir => 'See';
+	@override String get payer => 'Pay';
+	@override String get demanderValidation => 'Request validation';
+	@override String get relancer => 'Remind';
+	@override String get signalerEcart => 'Report a discrepancy';
+	@override String selectionner({required Object nom}) => 'Select ${nom}\'s payment';
+	@override String get selectionnerPrets => 'Select all ready payments';
+	@override String get payerSelection => 'Pay the selection';
+	@override String get viderSelection => 'Clear the selection';
+	@override String get voirProfil => 'See the payment profile';
+}
+
+// Path: comptable.paiements.vide
+class _Traductions$comptable$paiements$vide$en extends Traductions$comptable$paiements$vide$fr {
+	_Traductions$comptable$paiements$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get message => 'No payment to make.';
+	@override String get invitation => 'Obligations appear here as soon as they are calculated at the source.';
+	@override String get filtreMessage => 'No payment matches these filters.';
+	@override String get filtreInvitation => 'Clear the filters to see all payments again.';
+}
+
+// Path: comptable.paiements.detail
+class _Traductions$comptable$paiements$detail$en extends Traductions$comptable$paiements$detail$fr {
+	_Traductions$comptable$paiements$detail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get total => 'Total to pay';
+	@override String get lignes => 'Calculation details';
+	@override String get ligneTotal => 'Total';
+	@override String source({required Object source}) => 'Source: ${source}';
+	@override String auteur({required Object auteur}) => 'Added by ${auteur}';
+	@override String get voirSource => 'See the source';
+	@override String get methode => 'Payment method';
+	@override String get informations => 'Information';
+	@override String get type => 'Type';
+	@override String get periode => 'Period / purpose';
+	@override String get echeance => 'Due date';
+	@override String get prestataire => 'Planned provider';
+	@override String get preuve => 'Proof';
+	@override String get classes => 'Classes';
+	@override String get version => 'Calculation version';
+	@override String get historique => 'History';
+	@override String get historiqueVide => 'No operation recorded for this payment.';
+	@override String get encart => 'The Accountant can change neither the amount nor the beneficiary\'s payment details.';
+	@override String alerteMethodeRecente({required Object date}) => 'Payment method changed on ${date}: additional validation is required before any payment.';
+	@override String get alerteLieeOperateur => 'Beneficiary linked to the operator: additional validation is required before any payment.';
+	@override String get alerteEchec => 'The last sending failed at the provider. Check the payment method before trying again.';
+	@override String get alerteInfos => 'The beneficiary does not have a complete payment method yet. Remind them from their payment profile.';
+	@override String get alerteTitre => 'To know before paying';
+	@override String get autoPaiementPhrase => 'This payment concerns you: another authorized person will handle it. No one can carry out their own payment.';
+	@override String get introuvableTitre => 'This payment cannot be found.';
+	@override String get introuvablePhrase => 'Go back to the list of payments to make to choose another payment.';
+}
+
+// Path: comptable.paiements.ecart
+class _Traductions$comptable$paiements$ecart$en extends Traductions$comptable$paiements$ecart$fr {
+	_Traductions$comptable$paiements$ecart$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Report a discrepancy';
+	@override String get phrase => 'Choose the line and what is wrong. The correction is made at the source, then the amount is recalculated.';
+	@override String get ligne => 'Line concerned';
+	@override String get motif => 'What is wrong';
+	@override late final _Traductions$comptable$paiements$ecart$motifs$en motifs = _Traductions$comptable$paiements$ecart$motifs$en._(_root);
+	@override String get envoyer => 'Send the report';
+	@override String get annuler => 'Cancel';
+	@override String envoye({required Object date}) => 'Discrepancy reported on ${date}. The amount stays the source\'s until recalculation.';
+	@override String get erreurEnvoi => 'The report did not go through. Try again: it will be recorded only once.';
+}
+
+// Path: comptable.tresorerie.descriptions
+class _Traductions$comptable$tresorerie$descriptions$en extends Traductions$comptable$tresorerie$descriptions$fr {
+	_Traductions$comptable$tresorerie$descriptions$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get fondsClientsEngages => 'Money collected, tied to services not yet earned.';
+	@override String get paieADecaisser => 'Pay already calculated and due.';
+	@override String get chargesEssentielles => 'Infrastructure, indispensable subscriptions, fixed functions.';
+	@override String get taxesObligations => 'Provision for tax, social or regulatory obligations.';
+	@override String get reserveStrategique => 'Continuity and security vault.';
+	@override String get enTransit => 'Money committed to an operation not yet confirmed.';
+	@override String get tresorerieLibre => 'What is really still available after the protected allocations.';
+}
+
+// Path: comptable.tresorerie.regle
+class _Traductions$comptable$tresorerie$regle$en extends Traductions$comptable$tresorerie$regle$fr {
+	_Traductions$comptable$tresorerie$regle$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get desactivee => 'Off';
+	@override String get montantFixe => 'Fixed amount at each due date';
+	@override String pourcentage({required Object pourcent}) => '${pourcent}% of each consolidated collection';
+	@override String get jusquAObjectif => 'Top up to the target amount';
+	@override String get proposee => 'Proposal to be confirmed by you';
+}
+
+// Path: comptable.tresorerie.cadences
+class _Traductions$comptable$tresorerie$cadences$en extends Traductions$comptable$tresorerie$cadences$fr {
+	_Traductions$comptable$tresorerie$cadences$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get clotureCycle => 'At each cycle closing';
+	@override String get hebdomadaire => 'Every week';
+	@override String get mensuelle => 'Every month';
+	@override String get apresEncaissementConsolide => 'After each consolidated collection';
+	@override String get manuelle => 'Manual';
+}
+
+// Path: comptable.tresorerie.transfert
+class _Traductions$comptable$tresorerie$transfert$en extends Traductions$comptable$tresorerie$transfert$fr {
+	_Traductions$comptable$tresorerie$transfert$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Movement between vaults';
+	@override String get choix => 'Movement allowed by the policy';
+	@override String couple({required Object origine, required Object destination}) => '${origine} → ${destination}';
+	@override String get delegable => 'Towards a protection: executed according to your delegation.';
+	@override String get sensible => 'Additional validation required: another person decides, nothing leaves the vault before.';
+	@override String get montant => 'Amount';
+	@override String montantAide({required Object devise}) => 'In whole units, ${devise}.';
+	@override String get montantPropose => 'Amount proposed by the policy';
+	@override String get utiliserPropose => 'Use the proposed amount';
+	@override String get erreurMontant => 'Enter a whole amount greater than zero.';
+	@override String get verifier => 'Check the movement';
+	@override String get recapPhrase => 'Check the exact amount before sending.';
+	@override String get de => 'From';
+	@override String get vers => 'To';
+	@override String get confirmer => 'Confirm the movement';
+	@override String get demanderValidation => 'Request validation';
+	@override String get modifier => 'Edit the movement';
+	@override String get fermer => 'Close';
+	@override String get executeTitre => 'Movement executed by the source';
+	@override String get executePhrase => 'The log recorded it. The balances shown are read again.';
+	@override String reference({required Object reference}) => 'Reference: ${reference}';
+	@override String get validationTitre => 'Validation requested';
+	@override String get validationPhrase => 'Another person must decide. The origin vault stays unchanged until then.';
+	@override String get refusTitre => 'Movement refused by the source';
+	@override String refusPhrase({required Object raison}) => 'Reason: ${raison}. Nothing was moved.';
+	@override String get erreurEnvoiTitre => 'Answer not received';
+	@override String get erreurEnvoi => 'The answer did not arrive. Check the history before trying again: the same movement will never be counted twice.';
+	@override String get indisponible => 'Movements between vaults are not yet connected to the server. Nothing was moved.';
+	@override String get aucunCouple => 'No movement is allowed by the policy for your account.';
+}
+
+// Path: comptable.encaissements.rap
+class _Traductions$comptable$encaissements$rap$en extends Traductions$comptable$encaissements$rap$fr {
+	_Traductions$comptable$encaissements$rap$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get vueTransactions => 'To reconcile';
+	@override String get vueRemboursements => 'Refunds';
+	@override String get natPaiementAttendu => 'Expected payment';
+	@override String get natTransaction => 'Provider transaction';
+	@override String get natMensualite => 'Balance or instalment';
+	@override String get natFrais => 'Fees';
+	@override String get natRemboursement => 'Refund';
+	@override String get natPayout => 'Payout';
+	@override String get natPreuve => 'Proof';
+	@override String natureDate({required Object nature, required Object date}) => '${nature} · ${date}';
+	@override String get choisirTitre => 'Choose a transaction.';
+	@override String get choisirPhrase => 'Its proposed matches, its status and its log open here.';
+	@override String get videTitre => 'Nothing to reconcile.';
+	@override String get videPhrase => 'Every transaction received is already linked to what was waiting for it.';
+	@override String get videFiltreTitre => 'No transaction in this status.';
+	@override String get videFiltrePhrase => 'Choose "All" to see all the transactions again.';
+	@override String get voirToutes => 'See all transactions';
+	@override String ouvrirLecteur({required Object libelle}) => 'Open the reconciliation of ${libelle}';
+	@override String get candidats => 'Proposed matches';
+	@override String get candidatsAucun => 'The source proposes no match for this transaction.';
+	@override String relieA({required Object libelle}) => 'Linked to: ${libelle}';
+	@override String get rapprocher => 'Reconcile';
+	@override String rapprocherLecteur({required Object libelle}) => 'Reconcile with ${libelle}';
+	@override String get doublonTitre => 'Potential duplicate';
+	@override String get doublonPhrase => 'This transaction looks like another already received. Check before reconciling: a duplicate is never validated silently.';
+	@override String get marquerDoublon => 'Mark as duplicate';
+	@override String resultat({required Object etat}) => 'Status returned by the source: ${etat}';
+	@override String get erreurEnvoi => 'We do not know whether the operation was taken into account. Refresh the list before trying again.';
+	@override String get actualiser => 'Refresh';
+	@override String get journal => 'Transaction log';
+	@override String get journalVide => 'No operation recorded for this transaction.';
+	@override String get beneficiaire => 'Beneficiary';
+	@override String get motif => 'Reason';
+	@override String get montant => 'Amount';
+	@override String get source => 'Source';
+	@override String demandeLe({required Object date}) => 'Requested on ${date}';
+	@override String get approbationRequise => 'Approval required by the policy';
+	@override String get approbationNon => 'No approval required by the policy';
+	@override String get politiqueNote => 'Refund rules belong to the Finance policy. Here, they are applied; they are not rewritten.';
+	@override String get executer => 'Execute the refund';
+	@override String executerLecteur({required Object beneficiaire}) => 'Execute ${beneficiaire}\'s refund';
+	@override String get executerTitre => 'Execute this refund?';
+	@override String get executerPhrase => 'The amount and conditions come from the Finance policy. The provider will confirm the execution.';
+	@override String get remboursementsVideTitre => 'No refund or credit in progress.';
+	@override String get journalRemboursement => 'Refund log';
+	@override String get journalRemboursementVide => 'No operation recorded for this refund.';
+	@override String get erreurEnvoiTitre => 'Uncertain operation';
+	@override String get remboursementsVidePhrase => 'Refund requests will appear here with their reason and status.';
+}
+
+// Path: comptable.beneficiaires.profil
+class _Traductions$comptable$beneficiaires$profil$en extends Traductions$comptable$beneficiaires$profil$fr {
+	_Traductions$comptable$beneficiaires$profil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String carteTitre({required Object nom}) => '${nom}\'s payment profile';
+	@override String get etat => 'Profile status';
+	@override String get derniereModification => 'Last change';
+	@override String get capacite => 'Corridor payment capability';
+	@override String get capaciteNonEvaluee => 'Not evaluated yet';
+	@override String get enAttente => 'Payments waiting for this profile';
+	@override String proprietaire({required Object nom}) => 'Only ${nom} can enter or change their payment details. You see a masked version.';
+	@override String get historiqueTitre => 'Payment history';
+	@override String get historiqueVide => 'No payment made to this beneficiary yet.';
+	@override String get journalTitre => 'Profile log';
+	@override String get journalVide => 'No change recorded on this profile yet.';
+	@override String get actionsTitre => 'What to do for this profile';
+	@override String relancer({required Object nom}) => 'Remind ${nom}';
+	@override String get relancerDetail => 'Opens the "Payment profile" thread with a pre-filled message, in Messages.';
+	@override String demanderMiseAJour({required Object nom}) => 'Ask ${nom} for an update';
+	@override String suspendre({required Object nom}) => 'Suspend ${nom}\'s payments';
+	@override String reprendre({required Object nom}) => 'Resume ${nom}\'s payments';
+	@override String externe({required Object nom}) => '${nom} has no Rewayah account: a secure invitation lets them enter their method themselves. Send it again from their obligation, in Contractors.';
+	@override String get voirContractuels => 'See the contractors\' obligations';
+	@override String get aucuneAction => 'No action is open on this profile: it is up to date.';
+	@override String get filTitre => '"Payment profile" thread';
+	@override String relanceRefusee({required Object nom}) => 'No "Payment profile" thread can be opened with ${nom}: Rewayah does not allow it for this beneficiary. Ask for an update instead, or report it to the management.';
+	@override String get messageModele => 'Your payment information must be completed before your next payment. You can add it from your personal space.';
+	@override String miseAJourDemandee({required Object nom}) => 'Update request recorded for ${nom}.';
+	@override String suspendus({required Object nom}) => '${nom}\'s payments suspended: no payment goes out until they are resumed.';
+	@override String repris({required Object nom}) => '${nom}\'s payments resumed.';
+	@override String get erreurAction => 'The action is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get erreurIndisponible => 'This action is not yet connected to the service that handles it. Try again later.';
+	@override String suspensionTitre({required Object nom}) => 'Suspend ${nom}\'s payments?';
+	@override String get suspensionContexte => 'No payment will go to this beneficiary until you resume them. Their details do not change. Choose the reason: it will be written in the profile log.';
+	@override String get motifVerifier => 'Details to verify';
+	@override String get motifVerifierDetail => 'The method seems incorrect or could not be confirmed.';
+	@override String get motifAnomalie => 'Anomaly reported';
+	@override String get motifAnomalieDetail => 'A recent payment failed or a discrepancy was reported.';
+	@override String get motifDemande => 'Beneficiary\'s request';
+	@override String get motifDemandeDetail => 'The beneficiary asked not to receive any payment for now.';
+	@override String get motifRequis => 'Choose a reason to continue.';
+	@override String voirFil({required Object nom}) => 'See ${nom}\'s thread';
+	@override String voirFilRefuse({required Object nom}) => '${nom}\'s thread could not be opened: it does not exist yet or the read did not go through. Try again in a moment.';
+}
+
+// Path: comptable.beneficiaires.recevoir
+class _Traductions$comptable$beneficiaires$recevoir$en extends Traductions$comptable$beneficiaires$recevoir$fr {
+	_Traductions$comptable$beneficiaires$recevoir$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get rubrique => 'Payments';
+	@override String get ligneDetail => 'Your payment methods, managed by you alone.';
+	@override String get noticeDetail => 'Add a payment method so that the academy can pay you your next payment.';
+	@override String get phraseAucunMoyen => 'You have no payment method yet. Add one to receive your payments.';
+	@override String get phraseIncomplet => 'Your payment method is incomplete. Complete it to receive your next payment.';
+	@override String get phraseEnVerification => 'Your new method is being verified. Its status updates here.';
+	@override String get phraseVerifie => 'Your payment method is verified. Your next payments will be sent to it.';
+	@override String get phraseSuspendu => 'Your payments are suspended. Contact the academy to find out why.';
+	@override String get phraseActionRequise => 'An update to your payment method is requested. Replace it to receive your next payment.';
+	@override String get phraseInvitationEnvoyee => 'A secure invitation was sent to you. Add your payment method to complete it.';
+	@override String get suspenduTemporairement => 'Your payments are suspended while your new method is verified: this is a protection against fraud.';
+	@override String get mesMethodes => 'My payment methods';
+	@override String get preferee => 'Preferred method';
+	@override String get inactive => 'Old method, kept inactive';
+	@override String choisirPreferee({required Object methode}) => 'Make ${methode} my preferred method';
+	@override String remplacer({required Object methode}) => 'Replace ${methode}';
+	@override String supprimer({required Object methode}) => 'Delete ${methode}';
+	@override String supprimerQuestion({required Object methode}) => 'Delete ${methode}?';
+	@override String get supprimerConsequence => 'You will no longer receive payments on this method. If it is the only one, your next payment will wait for a new method.';
+	@override String get ajouter => 'Add a payment method';
+	@override String get ajoutTitre => 'Add a payment method';
+	@override String remplacementTitre({required Object methode}) => 'Replace ${methode}';
+	@override String get ajoutContexte => 'Choose the type of method. You will then enter your details in a secure space: the app does not see them and does not keep them.';
+	@override String get continuerSaisie => 'Continue to secure entry';
+	@override String get typeRequis => 'Choose a method type to continue.';
+	@override String get aucunType => 'No method type is offered for now. Contact the academy to open one.';
+	@override String get verificationAnnoncee => 'Every change is verified before the next payment.';
+	@override String get ajoutee => 'Method added: it is being verified.';
+	@override String get remplacee => 'New method saved: it is being verified.';
+	@override String get supprimee => 'Method deleted.';
+	@override String get prefereeChoisie => 'Preferred method updated.';
+	@override String get erreurAction => 'The change is not confirmed: the request may not have reached Rewayah. Try again in a moment.';
+	@override String get erreurIndisponible => 'This change is not yet connected to the payment service. Try again later.';
+	@override String get journalTitre => 'History of my changes';
+	@override String get journalVide => 'No change recorded yet.';
+	@override String get seulVous => 'Only you can change this information: neither accounting nor the management can do it for you.';
+	@override String get titre => 'Receive my payments';
+	@override String get sousTitre => 'Your payment details, changeable by you alone.';
+	@override String get notice => 'Payment information to complete';
+	@override String get configurer => 'Set up my payments';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$en wise = _Traductions$comptable$beneficiaires$recevoir$wise$en._(_root);
+}
+
 // Path: recherche.etats.vide
 class _Traductions$recherche$etats$vide$en extends Traductions$recherche$etats$vide$fr {
 	_Traductions$recherche$etats$vide$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -17278,6 +18344,73 @@ class _Traductions$com$annonces$demo$f$en extends Traductions$com$annonces$demo$
 	@override String get controleurReponse => 'Administration\'s reply to your report';
 }
 
+// Path: comptable.paiements.ecart.motifs
+class _Traductions$comptable$paiements$ecart$motifs$en extends Traductions$comptable$paiements$ecart$motifs$fr {
+	_Traductions$comptable$paiements$ecart$motifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get montantLigne => 'This line\'s amount does not match';
+	@override String get ligneManquante => 'A line is missing (session, replacement, bonus)';
+	@override String get ligneEnTrop => 'This line should not be there';
+	@override String get sourceErronee => 'The cited source is not the right one';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise
+class _Traductions$comptable$beneficiaires$recevoir$wise$en extends Traductions$comptable$beneficiaires$recevoir$wise$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String paysIndisponible({required Object pays}) => 'Wise does not pay out in this country: ${pays}. You can give the account of a relative in another country; otherwise the management will pay you another way.';
+	@override String get aMonNomQuestion => 'Is this account in your name?';
+	@override String get aMonNomOui => 'Yes, it is in my name';
+	@override String get aMonNomNon => 'No, it is in a relative\'s name';
+	@override String get aMonNomNonDetail => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.';
+	@override String get lienQuestion => 'Who holds the account?';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$lien$en lien = _Traductions$comptable$beneficiaires$recevoir$wise$lien$en._(_root);
+	@override String get lienLibelle => 'Relationship with the holder';
+	@override String autorisation({required Object titulaire}) => 'I authorize Rewayah Academy to pay my pay into this account, in the name of ${titulaire}.';
+	@override String get autorisationRequise => 'Tick the agreement: an account not in your name cannot be saved without it.';
+	@override String get lienRequis => 'Choose your relationship with the account holder.';
+	@override String get enAttenteValidation => 'Waiting for validation by the management: your pay will be paid to these details as soon as it has verified them.';
+	@override String get validees => 'Details validated by the management.';
+	@override String get journalValidees => 'Details validated by the management';
+	@override String get titreCoordonnees => 'My payment details';
+	@override String phraseAucune({required Object devise}) => 'Enter your bank details to receive your pay. It is paid to you by Wise transfer, in ${devise}.';
+	@override String phraseComplete({required Object devise}) => 'Your details are saved. Your next pay will be paid to them, in ${devise}.';
+	@override String get phraseIncomplete => 'Your details are incomplete. Complete them to receive your next pay.';
+	@override String get masquees => 'For your security, only the last 4 characters of the numbers are shown.';
+	@override String get lecteurs => 'Only the management and accounting read these details, when preparing the payment.';
+	@override String get renseigner => 'Enter my details';
+	@override String get modifier => 'Edit my details';
+	@override String get retirer => 'Remove my details';
+	@override String get retirerQuestion => 'Remove your payment details?';
+	@override String get retirerConsequence => 'Your next pay cannot be paid to you until you have saved new details.';
+	@override String get formTitre => 'My payment details';
+	@override String formIntro({required Object devise}) => 'Your pay is paid to you by Wise, in ${devise}. Copy this information as your bank writes it.';
+	@override String get formUsdAide => 'Ask your bank for its SWIFT code and your account number. An account in Guinean francs or CFA francs usually works: your bank converts the dollars on arrival.';
+	@override String get enregistrer => 'Save my details';
+	@override String get champRequis => 'Required.';
+	@override String get caracteresInterdits => 'No comma, semicolon or quotation mark.';
+	@override String get enregistrees => 'Details saved.';
+	@override String get retirees => 'Details removed.';
+	@override String get erreurTitre => 'Details not saved';
+	@override String get erreurEnregistrement => 'Your details are not confirmed: check each field, then try again. If this continues, write to the management.';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$champ$en champ = _Traductions$comptable$beneficiaires$recevoir$wise$champ$en._(_root);
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$aide$en aide = _Traductions$comptable$beneficiaires$recevoir$wise$aide$en._(_root);
+	@override String get journalEnregistrees => 'Details saved';
+	@override String get journalRetirees => 'Details removed';
+	@override String get versementsTitre => 'Payments received';
+	@override String get versementsVide => 'No payment noted yet. Each pay paid will appear here.';
+	@override String versementMois({required Object mois}) => 'Pay for ${mois}';
+	@override String versementDetail({required Object date, required Object moyen}) => 'Paid on ${date} · ${moyen}';
+	@override String get versementAnnule => 'Payment cancelled by the management';
+	@override late final _Traductions$comptable$beneficiaires$recevoir$wise$moyen$en moyen = _Traductions$comptable$beneficiaires$recevoir$wise$moyen$en._(_root);
+}
+
 // Path: avis.admin.liens.etat
 class _Traductions$avis$admin$liens$etat$en extends Traductions$avis$admin$liens$etat$fr {
 	_Traductions$avis$admin$liens$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -17960,6 +19093,67 @@ class _Traductions$com$annonces$administration$moderation$regles$en extends Trad
 	@override String get pasVente => 'No sale of products or services';
 	@override String get pasSollicitation => 'No commercial solicitation';
 	@override String get pasDonnees => 'No personal data of a student or a family';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.lien
+class _Traductions$comptable$beneficiaires$recevoir$wise$lien$en extends Traductions$comptable$beneficiaires$recevoir$wise$lien$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$lien$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get parent => 'My father or mother';
+	@override String get conjoint => 'My spouse';
+	@override String get frereSoeur => 'My brother or sister';
+	@override String get autre => 'Someone else';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.champ
+class _Traductions$comptable$beneficiaires$recevoir$wise$champ$en extends Traductions$comptable$beneficiaires$recevoir$wise$champ$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$champ$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaire => 'Account holder\'s name';
+	@override String get numeroCompte => 'Account number or IBAN';
+	@override String get iban => 'IBAN';
+	@override String get swift => 'The bank\'s SWIFT code (BIC)';
+	@override String get adressePays => 'Country of your address';
+	@override String get adresseVille => 'City';
+	@override String get adresseLigne => 'Address (street, neighbourhood)';
+	@override String get codePostal => 'Postcode';
+	@override String get adresseEtat => 'State or province';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.aide
+class _Traductions$comptable$beneficiaires$recevoir$wise$aide$en extends Traductions$comptable$beneficiaires$recevoir$wise$aide$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$aide$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titulaire => 'As written by your bank.';
+	@override String get numeroCompte => 'The digits and letters of your account, without spaces.';
+	@override String get iban => 'Starts with two letters, then digits.';
+	@override String get swift => '8 or 11 letters and digits, given by your bank.';
+	@override String get adressePays => 'The country of your address, chosen from the list.';
+	@override String get adresseVille => 'The city of your address.';
+	@override String get adresseLigne => 'The street or neighbourhood.';
+	@override String get codePostal => 'Optional: Guinea, for example, has none.';
+	@override String get adresseEtat => 'Only in the United States and Canada, for example TX.';
+}
+
+// Path: comptable.beneficiaires.recevoir.wise.moyen
+class _Traductions$comptable$beneficiaires$recevoir$wise$moyen$en extends Traductions$comptable$beneficiaires$recevoir$wise$moyen$fr {
+	_Traductions$comptable$beneficiaires$recevoir$wise$moyen$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get virementBancaire => 'Bank transfer';
+	@override String get mobileMoney => 'Mobile money';
+	@override String get autre => 'Other method';
 }
 
 // Path: candidatsFlux.importFormulaires.doublons.option.recente
@@ -25595,6 +26789,733 @@ extension on TraductionsEn {
 			'com.annonces.demo.f.controleurChangement' => 'Your Thursday mission is moved to 6 pm',
 			'com.annonces.demo.f.controleurReponse' => 'Administration\'s reply to your report',
 			'com.annonces.titre' => 'Announcements',
+			'comptable.nav.aujourdhui' => 'Today',
+			'comptable.nav.paiements' => 'Payments',
+			'comptable.nav.tresorerie' => 'Cash position',
+			'comptable.nav.compte' => 'Account',
+			'comptable.graphiques.masque' => 'Amounts are hidden: the chart is not drawn. Show the amounts to see it.',
+			'comptable.graphiques.voirValeurs' => 'See the values',
+			'comptable.graphiques.masquerValeurs' => 'Hide the values',
+			'comptable.graphiques.repartitionTitre' => 'Breakdown by vault',
+			'comptable.graphiques.repartitionResume' => ({required Object n}) => 'Breakdown across ${n} vaults.',
+			'comptable.graphiques.mensuelTitre' => 'Inflows and outflows over 6 months',
+			'comptable.graphiques.mensuelResume' => ({required Object debut, required Object fin}) => 'Inflows and outflows from ${debut} to ${fin}.',
+			'comptable.graphiques.fluxTitre' => 'Cash flow over 30 days',
+			'comptable.graphiques.fluxResume' => ({required Object debut, required Object fin}) => 'Collections and disbursements from ${debut} to ${fin}.',
+			'comptable.graphiques.evolutionTitre' => 'Trend over 6 months',
+			'comptable.graphiques.evolutionResume' => ({required Object debut, required Object fin}) => 'Cash held from ${debut} to ${fin}.',
+			'comptable.graphiques.legendeEntrees' => 'Inflows',
+			'comptable.graphiques.legendeSorties' => 'Outflows',
+			'comptable.graphiques.legendeEncaissements' => 'Collections',
+			'comptable.graphiques.legendeDecaissements' => 'Disbursements',
+			'comptable.graphiques.legendeDetenue' => 'Cash held',
+			'comptable.graphiques.kpiTitre' => 'Inflows and outflows',
+			'comptable.graphiques.kpiEntrees' => 'Inflows',
+			'comptable.graphiques.kpiSorties' => 'Outflows',
+			'comptable.graphiques.kpiPeriode' => 'Last 30 days',
+			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent}% compared with the previous period',
+			'comptable.graphiques.rapportsTitre' => 'Reports',
+			'comptable.graphiques.rapportsSousTitre' => 'Inflows, outflows and cash position over time.',
+			'comptable.graphiques.vide' => 'No data to draw',
+			'comptable.graphiques.videDetail' => 'Charts will appear here as soon as collections or payments have been recorded.',
+			'comptable.graphiques.erreur' => 'The charts could not be read: the request may not have reached Rewayah. Try again in a moment.',
+			'comptable.graphiques.sansDonnees' => 'The charts could not be loaded',
+			'comptable.graphiques.exporterRapport' => 'Export the report',
+			'comptable.graphiques.exporterSelection' => 'Export the selection',
+			'comptable.graphiques.exportIndisponible' => 'Exports are not available yet: they will open once the server is connected.',
+			'comptable.graphiques.exportEnCours' => 'Export being prepared',
+			'comptable.graphiques.exportPret' => ({required Object reference, required Object lignes}) => 'Export ready: ${reference} (${lignes} rows).',
+			'comptable.graphiques.exportEchec' => 'The export could not be prepared: the request may not have reached Rewayah. Try again in a moment.',
+			'comptable.onglets.aEffectuer' => 'To pay',
+			'comptable.onglets.contractuels' => 'Contractors',
+			'comptable.onglets.beneficiaires' => 'Beneficiaries',
+			'comptable.onglets.coffres' => 'Vaults',
+			'comptable.onglets.encaissements' => 'Collections',
+			'comptable.onglets.rapprochement' => 'Reconciliation',
+			'comptable.onglets.rapports' => 'Reports',
+			'comptable.commun.montantMasque' => 'Amount hidden',
+			'comptable.commun.afficherMontants' => 'Show the amounts',
+			'comptable.commun.masquerMontants' => 'Hide the amounts',
+			'comptable.commun.montantsMasques' => 'Amounts hidden',
+			'comptable.commun.montantsAffiches' => 'Amounts shown',
+			'comptable.commun.enPreparationTitre' => 'This screen is being prepared.',
+			'comptable.commun.enPreparationPhrase' => 'No figure is shown here for now. No payment is possible from this screen.',
+			'comptable.commun.reserveStrategique' => 'Strategic reserve',
+			'comptable.commun.tresorerieLibre' => 'Free cash',
+			'comptable.commun.tresorerieDetenue' => 'Cash held',
+			'comptable.commun.fondsProteges' => 'Protected funds',
+			'comptable.commun.enTransit' => 'In transit',
+			'comptable.commun.tresorerieLibreDetail' => 'What is really still available after the protected funds, the obligations and the transit.',
+			'comptable.commun.objectifFixe' => 'Target: fixed amount',
+			'comptable.commun.objectifMois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Current target: 1 month of essential expenses', other: 'Current target: ${n} months of essential expenses', ), 
+			'comptable.commun.montantActuel' => 'Current amount',
+			'comptable.commun.manque' => 'Shortfall to make up',
+			'comptable.commun.atteint' => ({required Object pourcent}) => '${pourcent}% reached',
+			'comptable.commun.modeCalcul' => 'Calculation mode',
+			'comptable.commun.modeMontantFixe' => 'Fixed target amount',
+			'comptable.commun.modeCouvertureMois' => 'Coverage in months of essential expenses',
+			'comptable.commun.derniereAllocation' => ({required Object date}) => 'Last allocation: ${date}',
+			'comptable.commun.prochaineAllocation' => ({required Object date}) => 'Next allocation planned: ${date}',
+			'comptable.commun.aucuneAllocation' => 'No allocation recorded',
+			'comptable.commun.destination' => 'Destination',
+			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
+			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, number hidden, ends in ${suffixe}',
+			'comptable.commun.destinationAucune' => 'No payment method',
+			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
+			'comptable.commun.verification' => 'Verification',
+			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
+			'comptable.commun.activiteTransition' => ({required Object avant, required Object apres}) => '${avant} → ${apres}',
+			'comptable.commun.activiteReference' => ({required Object reference}) => 'Ref. ${reference}',
+			'comptable.commun.relancePreparee' => 'Reminder prepared (demo)',
+			'comptable.commun.prestataireDemonstration' => ({required Object nom}) => '${nom} (demo)',
+			'comptable.commun.date' => ({required Object mois, required Object jour, required Object annee}) => '${mois} ${jour}, ${annee}',
+			'comptable.commun.aucuneValeur' => 'Not provided',
+			'comptable.coffres.fondsClientsEngages' => 'Client funds committed',
+			'comptable.coffres.paieADecaisser' => 'Pay to disburse',
+			'comptable.coffres.chargesEssentielles' => 'Essential expenses',
+			'comptable.coffres.taxesObligations' => 'Taxes & obligations',
+			'comptable.coffres.reserveStrategique' => 'Strategic reserve',
+			'comptable.coffres.enTransit' => 'In transit',
+			'comptable.coffres.tresorerieLibre' => 'Free cash',
+			'comptable.statuts.paiement.aCalculer' => 'To calculate',
+			'comptable.statuts.paiement.calcule' => 'Calculated',
+			'comptable.statuts.paiement.aVerifier' => 'To check',
+			'comptable.statuts.paiement.infosManquantes' => 'Payment info missing',
+			'comptable.statuts.paiement.verificationRequise' => 'Payment verification required',
+			'comptable.statuts.paiement.pretAPayer' => 'Ready to pay',
+			'comptable.statuts.paiement.validationRequise' => 'Additional validation required',
+			'comptable.statuts.paiement.soumis' => 'Submitted',
+			'comptable.statuts.paiement.enTransit' => 'In transit',
+			'comptable.statuts.paiement.reussi' => 'Succeeded',
+			'comptable.statuts.paiement.echoue' => 'Failed',
+			'comptable.statuts.paiement.aRelancer' => 'To follow up',
+			'comptable.statuts.paiement.annule' => 'Cancelled',
+			'comptable.statuts.paiement.retourne' => 'Refunded / returned',
+			'comptable.statuts.paiement.indisponible' => 'Unavailable',
+			'comptable.statuts.encaissement.enAttente' => 'Pending',
+			'comptable.statuts.encaissement.confirme' => 'Confirmed',
+			'comptable.statuts.encaissement.echoue' => 'Failed',
+			'comptable.statuts.encaissement.rembourse' => 'Refunded',
+			'comptable.statuts.encaissement.partiellementRembourse' => 'Partially refunded',
+			'comptable.statuts.encaissement.conteste' => 'Disputed',
+			'comptable.statuts.encaissement.chargeback' => 'Chargeback',
+			'comptable.statuts.encaissement.aRapprocher' => 'To reconcile',
+			'comptable.statuts.encaissement.rapproche' => 'Reconciled',
+			'comptable.statuts.rapprochement.automatique' => 'Automatic',
+			'comptable.statuts.rapprochement.aVerifier' => 'To check',
+			'comptable.statuts.rapprochement.rapproche' => 'Reconciled',
+			'comptable.statuts.rapprochement.conflit' => 'Conflict',
+			'comptable.statuts.rapprochement.sansCorrespondance' => 'No match',
+			'comptable.statuts.rapprochement.doublonPotentiel' => 'Potential duplicate',
+			'comptable.statuts.profil.aucunMoyen' => 'No method',
+			'comptable.statuts.profil.incomplet' => 'Incomplete',
+			'comptable.statuts.profil.enVerification' => 'Being verified',
+			'comptable.statuts.profil.verifie' => 'Verified',
+			'comptable.statuts.profil.suspendu' => 'Suspended',
+			'comptable.statuts.profil.actionRequise' => 'Action required',
+			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation sent',
+			'comptable.statuts.capacite.prisEnCharge' => 'Supported',
+			'comptable.statuts.capacite.nonPrisEnCharge' => 'Not supported',
+			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporarily unavailable',
+			'comptable.statuts.capacite.verificationRequise' => 'Verification required',
+			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Provider balance insufficient',
+			'comptable.statuts.reserve.atteint' => 'Target reached',
+			'comptable.statuts.reserve.sousObjectif' => 'Below target',
+			'comptable.statuts.reserve.depassement' => 'Exceeded',
+			'comptable.statuts.reserve.regleInactive' => 'Rule inactive',
+			'comptable.statuts.reserve.alimentationPrevue' => 'Funding planned',
+			'comptable.statuts.reserve.mouvementSensible' => 'Sensitive movement',
+			'comptable.statuts.obligation.brouillon' => 'Draft',
+			'comptable.statuts.obligation.aApprouver' => 'To approve',
+			'comptable.statuts.obligation.approuvee' => 'Approved',
+			'comptable.statuts.obligation.refusee' => 'Declined',
+			'comptable.statuts.obligation.payable' => 'Payable',
+			'comptable.statuts.obligation.payee' => 'Paid',
+			'comptable.statuts.obligation.annulee' => 'Cancelled',
+			'comptable.statuts.remboursement.demande' => 'Requested',
+			'comptable.statuts.remboursement.approbationRequise' => 'Approval required',
+			'comptable.statuts.remboursement.approuve' => 'Approved',
+			'comptable.statuts.remboursement.execute' => 'Executed',
+			'comptable.statuts.remboursement.refuse' => 'Declined',
+			'comptable.statuts.validation.enAttente' => 'Validation requested',
+			'comptable.statuts.validation.validee' => 'Validated',
+			'comptable.statuts.validation.refusee' => 'Declined',
+			'comptable.statuts.raison.autoPaiement' => 'Handling by another officer required',
+			'comptable.statuts.raison.validationRequise' => 'Additional validation required',
+			'comptable.statuts.raison.infosManquantes' => 'Payment information missing',
+			'comptable.statuts.raison.verificationRequise' => 'Payment verification required',
+			'comptable.statuts.raison.horsDelegation' => 'Outside delegation',
+			'comptable.statuts.raison.fournisseurIndisponible' => 'Provider unavailable',
+			'comptable.statuts.raison.fondsInsuffisants' => 'Insufficient funds',
+			'comptable.statuts.raison.doublonPotentiel' => 'Potential duplicate',
+			'comptable.statuts.raison.nonApprouvee' => 'Obligation not approved',
+			'comptable.statuts.raison.capaciteAbsente' => 'Capability missing',
+			'comptable.statuts.raison.delegationsSuspendues' => 'Delegations suspended by the management',
+			'comptable.statuts.raison.delegationExpiree' => 'Delegation expired',
+			'comptable.statuts.raison.sortieEnAttenteDelai' => 'Outflow waiting for the security delay',
+			'comptable.statuts.raison.coffreNonAutorise' => 'Vault outside the delegation',
+			'comptable.statuts.raison.beneficiaireExclu' => 'Beneficiary excluded from the delegation',
+			'comptable.statuts.raison.plafondExceptionDepasse' => 'Above the ceiling of this delegation',
+			'comptable.statuts.raison.paiementHorsApplication' => 'Payment received outside the app: the management validates it before it is credited to the student',
+			'comptable.alertes.enseignantsAPayer' => 'Teachers to pay',
+			'comptable.alertes.contractuelsAEcheance' => 'Contractors due',
+			'comptable.alertes.infosManquantes' => 'Payment info missing',
+			'comptable.alertes.payoutEchoue' => 'Payout failed',
+			'comptable.alertes.paiementFamilleEchoue' => 'Family payment failed',
+			'comptable.alertes.transactionNonRapprochee' => 'Transaction not reconciled',
+			'comptable.alertes.remboursementEnAttente' => 'Refund pending',
+			'comptable.alertes.reserveSousObjectif' => 'Strategic reserve below target',
+			'comptable.alertes.soldePrestataireInsuffisant' => 'Provider balance insufficient',
+			'comptable.alertes.methodeModifieeRecemment' => 'Method recently changed',
+			'comptable.alertes.doublonPotentiel' => 'Potential duplicate',
+			'comptable.alertes.validationRequise' => 'Additional validation required',
+			'comptable.aujourdhui.attentionSousTitre' => 'What awaits an action from you, then the risks to watch.',
+			'comptable.aujourdhui.elementCompteur' => ({required Object libelle, required Object n}) => '${libelle}: ${n}',
+			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'Waiting since ${date}',
+			'comptable.aujourdhui.aTraiterVide' => 'Nothing to handle today.',
+			'comptable.aujourdhui.aTraiterVideDetail' => 'The payments, reminders and reconciliations to do will appear here.',
+			'comptable.aujourdhui.alertesVide' => 'No alert right now.',
+			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alerts to watch: ${n}',
+			'comptable.aujourdhui.paiementsAEffectuer' => 'Payments to make',
+			_ => null,
+		} ?? switch (path) {
+			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Each payment is checked in its list before being paid.',
+			'comptable.aujourdhui.paiementsVide' => 'No payment to make.',
+			'comptable.aujourdhui.echeancesVide' => 'No upcoming deadline.',
+			'comptable.aujourdhui.encaissementsVide' => 'No recent collection.',
+			'comptable.aujourdhui.activiteVide' => 'No recent activity.',
+			'comptable.aujourdhui.prestatairesVide' => 'No provider activated.',
+			'comptable.aujourdhui.prestatairesVideDetail' => 'Outgoing payments will go out when the management has activated a provider.',
+			'comptable.aujourdhui.accesPaiements' => 'See the payments to make',
+			'comptable.aujourdhui.accesContractuels' => 'Manage contractors\' obligations',
+			'comptable.aujourdhui.accesEncaissements' => 'See the collections',
+			'comptable.aujourdhui.accesTresorerie' => 'See the cash position and vaults',
+			'comptable.aujourdhui.accesAlimenter' => 'Fund the Strategic reserve',
+			'comptable.aujourdhui.accesRapports' => 'See the reports',
+			'comptable.aujourdhui.titre' => 'Today',
+			'comptable.aujourdhui.sousTitre' => 'What should I do now?',
+			'comptable.aujourdhui.attention' => 'To handle and alerts',
+			'comptable.aujourdhui.aTraiter' => 'To handle today',
+			'comptable.aujourdhui.aTraiterHorsPaiements' => 'Other tasks',
+			'comptable.aujourdhui.alertes' => 'Alerts',
+			'comptable.aujourdhui.echeances' => 'Upcoming deadlines',
+			'comptable.aujourdhui.prestataires' => 'Providers',
+			'comptable.aujourdhui.activiteRecente' => 'Recent activity',
+			'comptable.aujourdhui.accesRapides' => 'Quick access',
+			'comptable.aujourdhui.encaissementsRecents' => 'Recent collections',
+			'comptable.aujourdhui.voirTout' => 'See all',
+			'comptable.paiements.confirmation.titreUn' => 'Confirm the payment',
+			'comptable.paiements.confirmation.titreLot' => 'Confirm the batch',
+			'comptable.paiements.confirmation.titreValidation' => 'Request a validation',
+			'comptable.paiements.confirmation.payerMaintenant' => 'Pay now',
+			'comptable.paiements.confirmation.controleEchoueTitre' => 'Check interrupted',
+			'comptable.paiements.confirmation.controleEchoue' => 'The check of the selection did not go through. Nothing was sent. Run the check again.',
+			'comptable.paiements.confirmation.relancerControle' => 'Run the check again',
+			'comptable.paiements.confirmation.montant' => 'Exact amount',
+			'comptable.paiements.confirmation.beneficiaire' => 'Beneficiary',
+			'comptable.paiements.confirmation.devise' => 'Currency',
+			'comptable.paiements.confirmation.type' => 'Type',
+			'comptable.paiements.confirmation.periode' => 'Period / purpose',
+			'comptable.paiements.confirmation.prestataire' => 'Planned provider',
+			'comptable.paiements.confirmation.prestataireAucun' => 'Not returned by the source',
+			'comptable.paiements.confirmation.taux' => 'Exchange rate',
+			'comptable.paiements.confirmation.tauxDate' => ({required Object taux, required Object date}) => '${taux}, on ${date}',
+			'comptable.paiements.confirmation.frais' => 'Provider fees',
+			'comptable.paiements.confirmation.change' => 'Exchange cost',
+			'comptable.paiements.confirmation.montantEnvoye' => 'Total sent',
+			'comptable.paiements.confirmation.montantRecu' => 'Expected amount received',
+			'comptable.paiements.confirmation.controlesTitre' => 'Checks passed',
+			'comptable.paiements.confirmation.controlesPhrase' => 'Amount calculated, method verified, delegation and duplicates checked by the source. Only ready payments will go out.',
+			'comptable.paiements.confirmation.sensiblePhrase' => 'This payment is sensitive: another authorized person must validate it. Request validation, it does not go out before.',
+			'comptable.paiements.confirmation.prets' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 ready', other: '${n} ready', ), 
+			'comptable.paiements.confirmation.exclus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '1 excluded', other: '${n} excluded', ), 
+			'comptable.paiements.confirmation.total' => 'Total of ready payments',
+			'comptable.paiements.confirmation.beneficiairesCle' => 'Beneficiaries',
+			'comptable.paiements.confirmation.beneficiaires' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'One beneficiary', other: '${n} beneficiaries', ), 
+			'comptable.paiements.confirmation.devises' => 'Currencies',
+			'comptable.paiements.confirmation.prestataires' => 'Providers',
+			'comptable.paiements.confirmation.plafond' => 'Remaining delegation',
+			'comptable.paiements.confirmation.exclusTitre' => 'Excluded from this batch: they will not go out',
+			'comptable.paiements.confirmation.aucunPretTitre' => 'No payment ready',
+			'comptable.paiements.confirmation.aucunPret' => 'Nothing will go out. Open each excluded payment to lift its reason, then run the check again.',
+			'comptable.paiements.confirmation.erreursTitre' => 'Errors returned by the check',
+			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirm the payment of ${montant}',
+			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Confirm the ready payment of ${montants}', other: 'Confirm the ${n} ready payments: ${montants}', ), 
+			'comptable.paiements.confirmation.demanderValidation' => 'Request validation',
+			'comptable.paiements.confirmation.annuler' => 'Cancel',
+			'comptable.paiements.confirmation.fermer' => 'Close',
+			'comptable.paiements.confirmation.soumisTitre' => 'Sent to the provider',
+			'comptable.paiements.confirmation.soumisPhrase' => 'A payment sent is not yet received: its status comes from the provider\'s tracking. Refresh the tracking to see it advance.',
+			'comptable.paiements.confirmation.actualiser' => 'Refresh the tracking',
+			'comptable.paiements.confirmation.suiviEchoue' => 'The tracking could not be read. The payment stays sent: refresh again in a moment.',
+			'comptable.paiements.confirmation.referenceCle' => 'Provider reference',
+			'comptable.paiements.confirmation.recalculeTitre' => 'The amount was recalculated',
+			'comptable.paiements.confirmation.recalculePhrase' => 'A calculation changed at the source since the check. Nothing was sent. Run the check again to confirm the new amount.',
+			'comptable.paiements.confirmation.nouveauMontant' => ({required Object nom}) => 'New amount for ${nom}',
+			'comptable.paiements.confirmation.refusTitre' => 'Payment refused by the source',
+			'comptable.paiements.confirmation.refusDejaSoumis' => 'This payment has already been submitted: nothing is sent again. Follow it from the in-progress payments tab.',
+			'comptable.paiements.confirmation.refusHorsDelegation' => 'The total exceeds your delegation, per beneficiary or per period. Nothing was sent. Run the check again: the payments concerned will be excluded.',
+			'comptable.paiements.confirmation.refusPerime' => 'The check has expired. Nothing was sent. Run the check again before confirming.',
+			'comptable.paiements.confirmation.refusFournisseur' => 'The provider became unavailable. Nothing was sent. Run the check again in a moment.',
+			'comptable.paiements.confirmation.inconnuTitre' => 'Unknown outcome',
+			'comptable.paiements.confirmation.inconnuPhrase' => 'The answer did not reach us: the payment may have gone out. Try again: the same request is sent again and will go out only once.',
+			'comptable.paiements.confirmation.reessayer' => 'Try again',
+			'comptable.paiements.confirmation.validationDemandeeTitre' => 'Validation requested',
+			'comptable.paiements.confirmation.validationDemandeePhrase' => 'Another authorized person will validate this payment. It does not go out before their decision.',
+			'comptable.paiements.confirmation.validationEchouee' => 'The validation request did not go through. Try again: it will be recorded only once.',
+			'comptable.paiements.filtres.tous' => 'All',
+			'comptable.paiements.filtres.enseignants' => 'Teachers',
+			'comptable.paiements.filtres.contractuels' => 'Contractors',
+			'comptable.paiements.filtres.statut' => 'Status',
+			'comptable.paiements.filtres.tousStatuts' => 'All statuses',
+			'comptable.paiements.filtres.prets' => 'Ready',
+			'comptable.paiements.filtres.infos' => 'Info missing',
+			'comptable.paiements.filtres.verification' => 'Verification',
+			'comptable.paiements.filtres.validation' => 'Validation',
+			'comptable.paiements.filtres.retard' => 'Overdue',
+			'comptable.paiements.filtres.classe' => 'Class',
+			'comptable.paiements.filtres.toutesClasses' => 'All classes',
+			'comptable.paiements.filtres.periode' => 'Period',
+			'comptable.paiements.filtres.toutesPeriodes' => 'All periods',
+			'comptable.paiements.filtres.effacer' => 'Clear the filters',
+			'comptable.paiements.colonnes.beneficiaire' => 'Beneficiary',
+			'comptable.paiements.colonnes.type' => 'Type',
+			'comptable.paiements.colonnes.periode' => 'Period / purpose',
+			'comptable.paiements.colonnes.montant' => 'Amount',
+			'comptable.paiements.colonnes.destination' => 'Destination',
+			'comptable.paiements.colonnes.echeance' => 'Due date',
+			'comptable.paiements.colonnes.statut' => 'Status',
+			'comptable.paiements.colonnes.action' => 'Action',
+			'comptable.paiements.types.enseignant' => 'Teacher',
+			'comptable.paiements.types.contractuel' => 'Contractor',
+			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'One payment', other: '${n} payments', ), 
+			'comptable.paiements.actions.voir' => 'See',
+			'comptable.paiements.actions.payer' => 'Pay',
+			'comptable.paiements.actions.demanderValidation' => 'Request validation',
+			'comptable.paiements.actions.relancer' => 'Remind',
+			'comptable.paiements.actions.signalerEcart' => 'Report a discrepancy',
+			'comptable.paiements.actions.selectionner' => ({required Object nom}) => 'Select ${nom}\'s payment',
+			'comptable.paiements.actions.selectionnerPrets' => 'Select all ready payments',
+			'comptable.paiements.actions.payerSelection' => 'Pay the selection',
+			'comptable.paiements.actions.viderSelection' => 'Clear the selection',
+			'comptable.paiements.actions.voirProfil' => 'See the payment profile',
+			'comptable.paiements.selection' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'One payment selected', other: '${n} payments selected', ), 
+			'comptable.paiements.selectionPhrase' => 'The total and the exclusions come from the check, before anything is sent.',
+			'comptable.paiements.horsLigneCourt' => 'Payment impossible now',
+			'comptable.paiements.vide.message' => 'No payment to make.',
+			'comptable.paiements.vide.invitation' => 'Obligations appear here as soon as they are calculated at the source.',
+			'comptable.paiements.vide.filtreMessage' => 'No payment matches these filters.',
+			'comptable.paiements.vide.filtreInvitation' => 'Clear the filters to see all payments again.',
+			'comptable.paiements.horsLigne' => 'No payment goes out now. Pay as soon as sending is possible again.',
+			'comptable.paiements.detail.total' => 'Total to pay',
+			'comptable.paiements.detail.lignes' => 'Calculation details',
+			'comptable.paiements.detail.ligneTotal' => 'Total',
+			'comptable.paiements.detail.source' => ({required Object source}) => 'Source: ${source}',
+			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'Added by ${auteur}',
+			'comptable.paiements.detail.voirSource' => 'See the source',
+			'comptable.paiements.detail.methode' => 'Payment method',
+			'comptable.paiements.detail.informations' => 'Information',
+			'comptable.paiements.detail.type' => 'Type',
+			'comptable.paiements.detail.periode' => 'Period / purpose',
+			'comptable.paiements.detail.echeance' => 'Due date',
+			'comptable.paiements.detail.prestataire' => 'Planned provider',
+			'comptable.paiements.detail.preuve' => 'Proof',
+			'comptable.paiements.detail.classes' => 'Classes',
+			'comptable.paiements.detail.version' => 'Calculation version',
+			'comptable.paiements.detail.historique' => 'History',
+			'comptable.paiements.detail.historiqueVide' => 'No operation recorded for this payment.',
+			'comptable.paiements.detail.encart' => 'The Accountant can change neither the amount nor the beneficiary\'s payment details.',
+			'comptable.paiements.detail.alerteMethodeRecente' => ({required Object date}) => 'Payment method changed on ${date}: additional validation is required before any payment.',
+			'comptable.paiements.detail.alerteLieeOperateur' => 'Beneficiary linked to the operator: additional validation is required before any payment.',
+			'comptable.paiements.detail.alerteEchec' => 'The last sending failed at the provider. Check the payment method before trying again.',
+			'comptable.paiements.detail.alerteInfos' => 'The beneficiary does not have a complete payment method yet. Remind them from their payment profile.',
+			'comptable.paiements.detail.alerteTitre' => 'To know before paying',
+			'comptable.paiements.detail.autoPaiementPhrase' => 'This payment concerns you: another authorized person will handle it. No one can carry out their own payment.',
+			'comptable.paiements.detail.introuvableTitre' => 'This payment cannot be found.',
+			'comptable.paiements.detail.introuvablePhrase' => 'Go back to the list of payments to make to choose another payment.',
+			'comptable.paiements.ecart.titre' => 'Report a discrepancy',
+			'comptable.paiements.ecart.phrase' => 'Choose the line and what is wrong. The correction is made at the source, then the amount is recalculated.',
+			'comptable.paiements.ecart.ligne' => 'Line concerned',
+			'comptable.paiements.ecart.motif' => 'What is wrong',
+			'comptable.paiements.ecart.motifs.montantLigne' => 'This line\'s amount does not match',
+			'comptable.paiements.ecart.motifs.ligneManquante' => 'A line is missing (session, replacement, bonus)',
+			'comptable.paiements.ecart.motifs.ligneEnTrop' => 'This line should not be there',
+			'comptable.paiements.ecart.motifs.sourceErronee' => 'The cited source is not the right one',
+			'comptable.paiements.ecart.envoyer' => 'Send the report',
+			'comptable.paiements.ecart.annuler' => 'Cancel',
+			'comptable.paiements.ecart.envoye' => ({required Object date}) => 'Discrepancy reported on ${date}. The amount stays the source\'s until recalculation.',
+			'comptable.paiements.ecart.erreurEnvoi' => 'The report did not go through. Try again: it will be recorded only once.',
+			'comptable.paiements.titre' => 'Payments to make',
+			'comptable.paiements.sousTitre' => 'Amounts calculated at the source: here you check and pay, you change nothing.',
+			'comptable.paiements.detailTitre' => 'Payment details',
+			'comptable.paiements.detailSousTitre' => 'Each line has its source. A discrepancy is reported, not corrected here.',
+			'comptable.tresorerie.coffresTitre' => 'Vaults',
+			'comptable.tresorerie.coffresPhrase' => 'Where the money is allocated. A protected sum is never counted as free.',
+			'comptable.tresorerie.coffreProtege' => 'Protected',
+			'comptable.tresorerie.coffreNonProtege' => 'Not protected',
+			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part}% of the cash held',
+			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Usage rule: ${regle}',
+			'comptable.tresorerie.coffresVide' => 'No vault is returned yet.',
+			'comptable.tresorerie.coffresVidePhrase' => 'The seven vaults will appear here as soon as the source returns them.',
+			'comptable.tresorerie.descriptions.fondsClientsEngages' => 'Money collected, tied to services not yet earned.',
+			'comptable.tresorerie.descriptions.paieADecaisser' => 'Pay already calculated and due.',
+			'comptable.tresorerie.descriptions.chargesEssentielles' => 'Infrastructure, indispensable subscriptions, fixed functions.',
+			'comptable.tresorerie.descriptions.taxesObligations' => 'Provision for tax, social or regulatory obligations.',
+			'comptable.tresorerie.descriptions.reserveStrategique' => 'Continuity and security vault.',
+			'comptable.tresorerie.descriptions.enTransit' => 'Money committed to an operation not yet confirmed.',
+			'comptable.tresorerie.descriptions.tresorerieLibre' => 'What is really still available after the protected allocations.',
+			'comptable.tresorerie.politiqueTitre' => 'Strategic reserve policy',
+			'comptable.tresorerie.politiquePhrase' => 'Set by the management. You apply it, you do not change it.',
+			'comptable.tresorerie.alimentationAuto' => 'Automatic funding',
+			'comptable.tresorerie.regle.desactivee' => 'Off',
+			'comptable.tresorerie.regle.montantFixe' => 'Fixed amount at each due date',
+			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent}% of each consolidated collection',
+			'comptable.tresorerie.regle.jusquAObjectif' => 'Top up to the target amount',
+			'comptable.tresorerie.regle.proposee' => 'Proposal to be confirmed by you',
+			'comptable.tresorerie.cadence' => 'Frequency',
+			'comptable.tresorerie.cadences.clotureCycle' => 'At each cycle closing',
+			'comptable.tresorerie.cadences.hebdomadaire' => 'Every week',
+			'comptable.tresorerie.cadences.mensuelle' => 'Every month',
+			'comptable.tresorerie.cadences.apresEncaissementConsolide' => 'After each consolidated collection',
+			'comptable.tresorerie.cadences.manuelle' => 'Manual',
+			'comptable.tresorerie.seuilAlerte' => ({required Object pourcent}) => 'Alert below ${pourcent}% of the target amount',
+			'comptable.tresorerie.retraitValidation' => 'Any withdrawal requires additional validation.',
+			'comptable.tresorerie.retraitSansValidation' => 'The policy requires no validation for a withdrawal; it is still handled as a sensitive movement.',
+			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
+			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, in force since ${date}',
+			'comptable.tresorerie.mouvementsTitre' => 'Movements between vaults',
+			'comptable.tresorerie.mouvementsPhrase' => 'Towards a protection: according to your delegation. Outflow from a protected vault: additional validation required.',
+			'comptable.tresorerie.preparerMouvement' => 'Prepare a movement',
+			'comptable.tresorerie.retirer' => 'Withdraw from the Strategic reserve',
+			'comptable.tresorerie.retraitBloque' => ({required Object raison}) => 'Withdrawal from the Strategic reserve: ${raison}.',
+			'comptable.tresorerie.alimenterBloque' => ({required Object raison}) => 'Funding of the Strategic reserve: ${raison}.',
+			'comptable.tresorerie.aucunMouvement' => 'No movement between vaults is allowed for your account by the policy.',
+			'comptable.tresorerie.mouvementsHorsLigne' => 'Movements between vaults will resume as soon as sending is possible again.',
+			'comptable.tresorerie.interdits' => 'Client funds committed and Taxes & obligations never fund an ordinary expense; a past allocation cannot be changed.',
+			'comptable.tresorerie.previsionTitre' => 'Forecast',
+			'comptable.tresorerie.previsionPhrase' => 'Expected inflows and outflows, by date.',
+			'comptable.tresorerie.previsionVide' => 'No inflow or outflow expected for now.',
+			'comptable.tresorerie.entree' => 'Inflow',
+			'comptable.tresorerie.sortie' => 'Outflow',
+			'comptable.tresorerie.historiqueTitre' => 'Allocation history',
+			'comptable.tresorerie.historiquePhrase' => 'Each movement is logged; nothing in it can be changed.',
+			'comptable.tresorerie.historiqueVide' => 'No movement between vaults recorded.',
+			'comptable.tresorerie.transfert.titre' => 'Movement between vaults',
+			'comptable.tresorerie.transfert.choix' => 'Movement allowed by the policy',
+			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
+			'comptable.tresorerie.transfert.delegable' => 'Towards a protection: executed according to your delegation.',
+			'comptable.tresorerie.transfert.sensible' => 'Additional validation required: another person decides, nothing leaves the vault before.',
+			'comptable.tresorerie.transfert.montant' => 'Amount',
+			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'In whole units, ${devise}.',
+			'comptable.tresorerie.transfert.montantPropose' => 'Amount proposed by the policy',
+			'comptable.tresorerie.transfert.utiliserPropose' => 'Use the proposed amount',
+			'comptable.tresorerie.transfert.erreurMontant' => 'Enter a whole amount greater than zero.',
+			'comptable.tresorerie.transfert.verifier' => 'Check the movement',
+			'comptable.tresorerie.transfert.recapPhrase' => 'Check the exact amount before sending.',
+			'comptable.tresorerie.transfert.de' => 'From',
+			'comptable.tresorerie.transfert.vers' => 'To',
+			'comptable.tresorerie.transfert.confirmer' => 'Confirm the movement',
+			'comptable.tresorerie.transfert.demanderValidation' => 'Request validation',
+			'comptable.tresorerie.transfert.modifier' => 'Edit the movement',
+			'comptable.tresorerie.transfert.fermer' => 'Close',
+			'comptable.tresorerie.transfert.executeTitre' => 'Movement executed by the source',
+			'comptable.tresorerie.transfert.executePhrase' => 'The log recorded it. The balances shown are read again.',
+			'comptable.tresorerie.transfert.reference' => ({required Object reference}) => 'Reference: ${reference}',
+			'comptable.tresorerie.transfert.validationTitre' => 'Validation requested',
+			'comptable.tresorerie.transfert.validationPhrase' => 'Another person must decide. The origin vault stays unchanged until then.',
+			'comptable.tresorerie.transfert.refusTitre' => 'Movement refused by the source',
+			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Reason: ${raison}. Nothing was moved.',
+			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Answer not received',
+			'comptable.tresorerie.transfert.erreurEnvoi' => 'The answer did not arrive. Check the history before trying again: the same movement will never be counted twice.',
+			'comptable.tresorerie.transfert.indisponible' => 'Movements between vaults are not yet connected to the server. Nothing was moved.',
+			'comptable.tresorerie.transfert.aucunCouple' => 'No movement is allowed by the policy for your account.',
+			'comptable.tresorerie.titre' => 'Cash position and vaults',
+			'comptable.tresorerie.sousTitre' => 'Free cash is the only spendable figure.',
+			'comptable.tresorerie.alimenter' => 'Fund the Strategic reserve',
+			'comptable.tresorerie.erreurPartielle' => 'Part of the page could not be read: the rest is up to date. Try again to complete it.',
+			'comptable.tresorerie.erreurPartielleAction' => 'Try again',
+			'comptable.encaissements.filtreTous' => 'All',
+			'comptable.encaissements.filtreConfirmes' => 'Confirmed',
+			'comptable.encaissements.filtreEnAttente' => 'Pending',
+			'comptable.encaissements.filtreEchoues' => 'Failed',
+			'comptable.encaissements.filtreRembourses' => 'Refunded',
+			'comptable.encaissements.filtreContestes' => 'Disputed',
+			'comptable.encaissements.filtreARapprocher' => 'To reconcile',
+			'comptable.encaissements.recherche' => 'Search for a family or a reference',
+			'comptable.encaissements.colDate' => 'Date',
+			'comptable.encaissements.colFamille' => 'Family',
+			'comptable.encaissements.colReference' => 'Reference',
+			'comptable.encaissements.colBrut' => 'Gross',
+			'comptable.encaissements.colFrais' => 'Fees',
+			'comptable.encaissements.colNet' => 'Net',
+			'comptable.encaissements.colMoyen' => 'Method',
+			'comptable.encaissements.colEtat' => 'Status',
+			'comptable.encaissements.profilsPour' => ({required Object prenoms}) => 'For ${prenoms}',
+			'comptable.encaissements.moyenPrestataire' => ({required Object moyen, required Object prestataire}) => '${moyen} · ${prestataire}',
+			'comptable.encaissements.videTitre' => 'No collection yet.',
+			'comptable.encaissements.videPhrase' => 'Family payments will appear here as soon as the provider has passed them on.',
+			'comptable.encaissements.videFiltreTitre' => 'No collection matches.',
+			'comptable.encaissements.videFiltrePhrase' => 'Choose "All" or clear the search to see the whole list again.',
+			'comptable.encaissements.voirTous' => 'See all collections',
+			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Open the details of ${famille}\'s collection',
+			'comptable.encaissements.fermerDetail' => 'Close the details',
+			'comptable.encaissements.brut' => 'Gross amount',
+			'comptable.encaissements.frais' => 'Provider fees',
+			'comptable.encaissements.net' => 'Net received',
+			'comptable.encaissements.fraisSource' => 'Fees and exchange supplied by the provider, never recalculated here.',
+			'comptable.encaissements.reference' => 'Reference',
+			'comptable.encaissements.prestataire' => 'Provider',
+			'comptable.encaissements.moyen' => 'Payment method',
+			'comptable.encaissements.foyer' => 'Household',
+			'comptable.encaissements.date' => 'Date',
+			'comptable.encaissements.etat' => 'Status',
+			'comptable.encaissements.devise' => 'Currency',
+			'comptable.encaissements.affectation' => 'Allocation by profile',
+			'comptable.encaissements.affectationAucune' => 'The source returned no allocation for this collection.',
+			'comptable.encaissements.rapprochement' => 'Reconciliation',
+			'comptable.encaissements.rapprochementAucun' => 'Not reconciled yet',
+			'comptable.encaissements.ouvrirRapprochement' => 'Open the reconciliation',
+			'comptable.encaissements.confirmeNote' => '"Confirmed" appears only after the provider\'s confirmation.',
+			'comptable.encaissements.enAttenteNote' => 'Waiting for the provider\'s confirmation: nothing is secured yet.',
+			'comptable.encaissements.journal' => 'Collection log',
+			'comptable.encaissements.journalVide' => 'No operation recorded for this collection.',
+			'comptable.encaissements.rap.vueTransactions' => 'To reconcile',
+			'comptable.encaissements.rap.vueRemboursements' => 'Refunds',
+			'comptable.encaissements.rap.natPaiementAttendu' => 'Expected payment',
+			'comptable.encaissements.rap.natTransaction' => 'Provider transaction',
+			'comptable.encaissements.rap.natMensualite' => 'Balance or instalment',
+			'comptable.encaissements.rap.natFrais' => 'Fees',
+			'comptable.encaissements.rap.natRemboursement' => 'Refund',
+			'comptable.encaissements.rap.natPayout' => 'Payout',
+			'comptable.encaissements.rap.natPreuve' => 'Proof',
+			'comptable.encaissements.rap.natureDate' => ({required Object nature, required Object date}) => '${nature} · ${date}',
+			'comptable.encaissements.rap.choisirTitre' => 'Choose a transaction.',
+			'comptable.encaissements.rap.choisirPhrase' => 'Its proposed matches, its status and its log open here.',
+			'comptable.encaissements.rap.videTitre' => 'Nothing to reconcile.',
+			'comptable.encaissements.rap.videPhrase' => 'Every transaction received is already linked to what was waiting for it.',
+			'comptable.encaissements.rap.videFiltreTitre' => 'No transaction in this status.',
+			'comptable.encaissements.rap.videFiltrePhrase' => 'Choose "All" to see all the transactions again.',
+			'comptable.encaissements.rap.voirToutes' => 'See all transactions',
+			'comptable.encaissements.rap.ouvrirLecteur' => ({required Object libelle}) => 'Open the reconciliation of ${libelle}',
+			'comptable.encaissements.rap.candidats' => 'Proposed matches',
+			'comptable.encaissements.rap.candidatsAucun' => 'The source proposes no match for this transaction.',
+			'comptable.encaissements.rap.relieA' => ({required Object libelle}) => 'Linked to: ${libelle}',
+			'comptable.encaissements.rap.rapprocher' => 'Reconcile',
+			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Reconcile with ${libelle}',
+			'comptable.encaissements.rap.doublonTitre' => 'Potential duplicate',
+			'comptable.encaissements.rap.doublonPhrase' => 'This transaction looks like another already received. Check before reconciling: a duplicate is never validated silently.',
+			'comptable.encaissements.rap.marquerDoublon' => 'Mark as duplicate',
+			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'Status returned by the source: ${etat}',
+			'comptable.encaissements.rap.erreurEnvoi' => 'We do not know whether the operation was taken into account. Refresh the list before trying again.',
+			'comptable.encaissements.rap.actualiser' => 'Refresh',
+			'comptable.encaissements.rap.journal' => 'Transaction log',
+			'comptable.encaissements.rap.journalVide' => 'No operation recorded for this transaction.',
+			'comptable.encaissements.rap.beneficiaire' => 'Beneficiary',
+			'comptable.encaissements.rap.motif' => 'Reason',
+			'comptable.encaissements.rap.montant' => 'Amount',
+			'comptable.encaissements.rap.source' => 'Source',
+			'comptable.encaissements.rap.demandeLe' => ({required Object date}) => 'Requested on ${date}',
+			'comptable.encaissements.rap.approbationRequise' => 'Approval required by the policy',
+			'comptable.encaissements.rap.approbationNon' => 'No approval required by the policy',
+			'comptable.encaissements.rap.politiqueNote' => 'Refund rules belong to the Finance policy. Here, they are applied; they are not rewritten.',
+			'comptable.encaissements.rap.executer' => 'Execute the refund',
+			'comptable.encaissements.rap.executerLecteur' => ({required Object beneficiaire}) => 'Execute ${beneficiaire}\'s refund',
+			'comptable.encaissements.rap.executerTitre' => 'Execute this refund?',
+			'comptable.encaissements.rap.executerPhrase' => 'The amount and conditions come from the Finance policy. The provider will confirm the execution.',
+			'comptable.encaissements.rap.remboursementsVideTitre' => 'No refund or credit in progress.',
+			'comptable.encaissements.rap.journalRemboursement' => 'Refund log',
+			'comptable.encaissements.rap.journalRemboursementVide' => 'No operation recorded for this refund.',
+			'comptable.encaissements.rap.erreurEnvoiTitre' => 'Uncertain operation',
+			'comptable.encaissements.rap.remboursementsVidePhrase' => 'Refund requests will appear here with their reason and status.',
+			'comptable.encaissements.titre' => 'Collections',
+			'comptable.encaissements.sousTitre' => 'A payment is confirmed only after the provider.',
+			'comptable.encaissements.detailTitre' => 'Collection details',
+			'comptable.encaissements.rapprochementTitre' => 'Reconciliation',
+			'comptable.encaissements.rapprochementSousTitre' => 'Link each transaction to what was waiting for it.',
+			'comptable.beneficiaires.intro' => 'The payment profile of each teacher and each contractor. Only the beneficiary enters or changes their details: you can remind them, ask for an update or suspend their payments.',
+			'comptable.beneficiaires.filtreTous' => 'All',
+			'comptable.beneficiaires.filtreInfos' => 'Info missing',
+			'comptable.beneficiaires.filtreVerification' => 'Being verified',
+			'comptable.beneficiaires.filtreSuspendus' => 'Suspended',
+			'comptable.beneficiaires.filtreInvitations' => 'Invitations sent',
+			'comptable.beneficiaires.colonneBeneficiaire' => 'Beneficiary',
+			'comptable.beneficiaires.colonneType' => 'Type',
+			'comptable.beneficiaires.colonneDestination' => 'Destination',
+			'comptable.beneficiaires.colonneEtat' => 'Profile status',
+			'comptable.beneficiaires.colonneEnAttente' => 'Payments waiting',
+			'comptable.beneficiaires.typeEnseignant' => 'Teacher',
+			'comptable.beneficiaires.typeContractuel' => 'Contractor',
+			'comptable.beneficiaires.enAttente' => ({required Object n}) => '${n} waiting',
+			'comptable.beneficiaires.aucunEnAttente' => 'None',
+			'comptable.beneficiaires.vide' => 'No beneficiary yet.',
+			'comptable.beneficiaires.videDetail' => 'Teachers and contractors appear here as soon as a payment concerns them.',
+			'comptable.beneficiaires.videFiltre' => 'No beneficiary with this filter.',
+			'comptable.beneficiaires.videFiltreDetail' => 'Choose "All" to see the whole list again.',
+			'comptable.beneficiaires.profil.carteTitre' => ({required Object nom}) => '${nom}\'s payment profile',
+			'comptable.beneficiaires.profil.etat' => 'Profile status',
+			'comptable.beneficiaires.profil.derniereModification' => 'Last change',
+			'comptable.beneficiaires.profil.capacite' => 'Corridor payment capability',
+			'comptable.beneficiaires.profil.capaciteNonEvaluee' => 'Not evaluated yet',
+			'comptable.beneficiaires.profil.enAttente' => 'Payments waiting for this profile',
+			'comptable.beneficiaires.profil.proprietaire' => ({required Object nom}) => 'Only ${nom} can enter or change their payment details. You see a masked version.',
+			'comptable.beneficiaires.profil.historiqueTitre' => 'Payment history',
+			'comptable.beneficiaires.profil.historiqueVide' => 'No payment made to this beneficiary yet.',
+			'comptable.beneficiaires.profil.journalTitre' => 'Profile log',
+			'comptable.beneficiaires.profil.journalVide' => 'No change recorded on this profile yet.',
+			'comptable.beneficiaires.profil.actionsTitre' => 'What to do for this profile',
+			'comptable.beneficiaires.profil.relancer' => ({required Object nom}) => 'Remind ${nom}',
+			'comptable.beneficiaires.profil.relancerDetail' => 'Opens the "Payment profile" thread with a pre-filled message, in Messages.',
+			'comptable.beneficiaires.profil.demanderMiseAJour' => ({required Object nom}) => 'Ask ${nom} for an update',
+			'comptable.beneficiaires.profil.suspendre' => ({required Object nom}) => 'Suspend ${nom}\'s payments',
+			'comptable.beneficiaires.profil.reprendre' => ({required Object nom}) => 'Resume ${nom}\'s payments',
+			'comptable.beneficiaires.profil.externe' => ({required Object nom}) => '${nom} has no Rewayah account: a secure invitation lets them enter their method themselves. Send it again from their obligation, in Contractors.',
+			'comptable.beneficiaires.profil.voirContractuels' => 'See the contractors\' obligations',
+			'comptable.beneficiaires.profil.aucuneAction' => 'No action is open on this profile: it is up to date.',
+			'comptable.beneficiaires.profil.filTitre' => '"Payment profile" thread',
+			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'No "Payment profile" thread can be opened with ${nom}: Rewayah does not allow it for this beneficiary. Ask for an update instead, or report it to the management.',
+			'comptable.beneficiaires.profil.messageModele' => 'Your payment information must be completed before your next payment. You can add it from your personal space.',
+			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Update request recorded for ${nom}.',
+			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => '${nom}\'s payments suspended: no payment goes out until they are resumed.',
+			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => '${nom}\'s payments resumed.',
+			'comptable.beneficiaires.profil.erreurAction' => 'The action is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'comptable.beneficiaires.profil.erreurIndisponible' => 'This action is not yet connected to the service that handles it. Try again later.',
+			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspend ${nom}\'s payments?',
+			'comptable.beneficiaires.profil.suspensionContexte' => 'No payment will go to this beneficiary until you resume them. Their details do not change. Choose the reason: it will be written in the profile log.',
+			'comptable.beneficiaires.profil.motifVerifier' => 'Details to verify',
+			'comptable.beneficiaires.profil.motifVerifierDetail' => 'The method seems incorrect or could not be confirmed.',
+			'comptable.beneficiaires.profil.motifAnomalie' => 'Anomaly reported',
+			'comptable.beneficiaires.profil.motifAnomalieDetail' => 'A recent payment failed or a discrepancy was reported.',
+			'comptable.beneficiaires.profil.motifDemande' => 'Beneficiary\'s request',
+			'comptable.beneficiaires.profil.motifDemandeDetail' => 'The beneficiary asked not to receive any payment for now.',
+			'comptable.beneficiaires.profil.motifRequis' => 'Choose a reason to continue.',
+			'comptable.beneficiaires.profil.voirFil' => ({required Object nom}) => 'See ${nom}\'s thread',
+			'comptable.beneficiaires.profil.voirFilRefuse' => ({required Object nom}) => '${nom}\'s thread could not be opened: it does not exist yet or the read did not go through. Try again in a moment.',
+			'comptable.beneficiaires.titre' => 'Beneficiaries',
+			'comptable.beneficiaires.sousTitre' => 'Details masked: only the beneficiary changes their own.',
+			'comptable.beneficiaires.profilTitre' => 'Payment profile',
+			'comptable.beneficiaires.recevoir.rubrique' => 'Payments',
+			'comptable.beneficiaires.recevoir.ligneDetail' => 'Your payment methods, managed by you alone.',
+			'comptable.beneficiaires.recevoir.noticeDetail' => 'Add a payment method so that the academy can pay you your next payment.',
+			'comptable.beneficiaires.recevoir.phraseAucunMoyen' => 'You have no payment method yet. Add one to receive your payments.',
+			'comptable.beneficiaires.recevoir.phraseIncomplet' => 'Your payment method is incomplete. Complete it to receive your next payment.',
+			'comptable.beneficiaires.recevoir.phraseEnVerification' => 'Your new method is being verified. Its status updates here.',
+			'comptable.beneficiaires.recevoir.phraseVerifie' => 'Your payment method is verified. Your next payments will be sent to it.',
+			'comptable.beneficiaires.recevoir.phraseSuspendu' => 'Your payments are suspended. Contact the academy to find out why.',
+			'comptable.beneficiaires.recevoir.phraseActionRequise' => 'An update to your payment method is requested. Replace it to receive your next payment.',
+			'comptable.beneficiaires.recevoir.phraseInvitationEnvoyee' => 'A secure invitation was sent to you. Add your payment method to complete it.',
+			'comptable.beneficiaires.recevoir.suspenduTemporairement' => 'Your payments are suspended while your new method is verified: this is a protection against fraud.',
+			'comptable.beneficiaires.recevoir.mesMethodes' => 'My payment methods',
+			'comptable.beneficiaires.recevoir.preferee' => 'Preferred method',
+			'comptable.beneficiaires.recevoir.inactive' => 'Old method, kept inactive',
+			'comptable.beneficiaires.recevoir.choisirPreferee' => ({required Object methode}) => 'Make ${methode} my preferred method',
+			'comptable.beneficiaires.recevoir.remplacer' => ({required Object methode}) => 'Replace ${methode}',
+			'comptable.beneficiaires.recevoir.supprimer' => ({required Object methode}) => 'Delete ${methode}',
+			'comptable.beneficiaires.recevoir.supprimerQuestion' => ({required Object methode}) => 'Delete ${methode}?',
+			'comptable.beneficiaires.recevoir.supprimerConsequence' => 'You will no longer receive payments on this method. If it is the only one, your next payment will wait for a new method.',
+			'comptable.beneficiaires.recevoir.ajouter' => 'Add a payment method',
+			'comptable.beneficiaires.recevoir.ajoutTitre' => 'Add a payment method',
+			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Replace ${methode}',
+			'comptable.beneficiaires.recevoir.ajoutContexte' => 'Choose the type of method. You will then enter your details in a secure space: the app does not see them and does not keep them.',
+			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continue to secure entry',
+			'comptable.beneficiaires.recevoir.typeRequis' => 'Choose a method type to continue.',
+			'comptable.beneficiaires.recevoir.aucunType' => 'No method type is offered for now. Contact the academy to open one.',
+			'comptable.beneficiaires.recevoir.verificationAnnoncee' => 'Every change is verified before the next payment.',
+			'comptable.beneficiaires.recevoir.ajoutee' => 'Method added: it is being verified.',
+			'comptable.beneficiaires.recevoir.remplacee' => 'New method saved: it is being verified.',
+			'comptable.beneficiaires.recevoir.supprimee' => 'Method deleted.',
+			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Preferred method updated.',
+			'comptable.beneficiaires.recevoir.erreurAction' => 'The change is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'This change is not yet connected to the payment service. Try again later.',
+			'comptable.beneficiaires.recevoir.journalTitre' => 'History of my changes',
+			'comptable.beneficiaires.recevoir.journalVide' => 'No change recorded yet.',
+			'comptable.beneficiaires.recevoir.seulVous' => 'Only you can change this information: neither accounting nor the management can do it for you.',
+			'comptable.beneficiaires.recevoir.titre' => 'Receive my payments',
+			'comptable.beneficiaires.recevoir.sousTitre' => 'Your payment details, changeable by you alone.',
+			'comptable.beneficiaires.recevoir.notice' => 'Payment information to complete',
+			'comptable.beneficiaires.recevoir.configurer' => 'Set up my payments',
+			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise does not pay out in this country: ${pays}. You can give the account of a relative in another country; otherwise the management will pay you another way.',
+			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Is this account in your name?',
+			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'No, it is in a relative\'s name',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.',
+			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Who holds the account?',
+			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'My father or mother',
+			'comptable.beneficiaires.recevoir.wise.lien.conjoint' => 'My spouse',
+			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'My brother or sister',
+			'comptable.beneficiaires.recevoir.wise.lien.autre' => 'Someone else',
+			'comptable.beneficiaires.recevoir.wise.lienLibelle' => 'Relationship with the holder',
+			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'I authorize Rewayah Academy to pay my pay into this account, in the name of ${titulaire}.',
+			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'Tick the agreement: an account not in your name cannot be saved without it.',
+			'comptable.beneficiaires.recevoir.wise.lienRequis' => 'Choose your relationship with the account holder.',
+			'comptable.beneficiaires.recevoir.wise.enAttenteValidation' => 'Waiting for validation by the management: your pay will be paid to these details as soon as it has verified them.',
+			'comptable.beneficiaires.recevoir.wise.validees' => 'Details validated by the management.',
+			'comptable.beneficiaires.recevoir.wise.journalValidees' => 'Details validated by the management',
+			'comptable.beneficiaires.recevoir.wise.titreCoordonnees' => 'My payment details',
+			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'Enter your bank details to receive your pay. It is paid to you by Wise transfer, in ${devise}.',
+			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'Your details are saved. Your next pay will be paid to them, in ${devise}.',
+			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Your details are incomplete. Complete them to receive your next pay.',
+			'comptable.beneficiaires.recevoir.wise.masquees' => 'For your security, only the last 4 characters of the numbers are shown.',
+			'comptable.beneficiaires.recevoir.wise.lecteurs' => 'Only the management and accounting read these details, when preparing the payment.',
+			'comptable.beneficiaires.recevoir.wise.renseigner' => 'Enter my details',
+			'comptable.beneficiaires.recevoir.wise.modifier' => 'Edit my details',
+			'comptable.beneficiaires.recevoir.wise.retirer' => 'Remove my details',
+			'comptable.beneficiaires.recevoir.wise.retirerQuestion' => 'Remove your payment details?',
+			'comptable.beneficiaires.recevoir.wise.retirerConsequence' => 'Your next pay cannot be paid to you until you have saved new details.',
+			'comptable.beneficiaires.recevoir.wise.formTitre' => 'My payment details',
+			'comptable.beneficiaires.recevoir.wise.formIntro' => ({required Object devise}) => 'Your pay is paid to you by Wise, in ${devise}. Copy this information as your bank writes it.',
+			'comptable.beneficiaires.recevoir.wise.formUsdAide' => 'Ask your bank for its SWIFT code and your account number. An account in Guinean francs or CFA francs usually works: your bank converts the dollars on arrival.',
+			'comptable.beneficiaires.recevoir.wise.enregistrer' => 'Save my details',
+			'comptable.beneficiaires.recevoir.wise.champRequis' => 'Required.',
+			'comptable.beneficiaires.recevoir.wise.caracteresInterdits' => 'No comma, semicolon or quotation mark.',
+			'comptable.beneficiaires.recevoir.wise.enregistrees' => 'Details saved.',
+			'comptable.beneficiaires.recevoir.wise.retirees' => 'Details removed.',
+			'comptable.beneficiaires.recevoir.wise.erreurTitre' => 'Details not saved',
+			'comptable.beneficiaires.recevoir.wise.erreurEnregistrement' => 'Your details are not confirmed: check each field, then try again. If this continues, write to the management.',
+			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'Account holder\'s name',
+			'comptable.beneficiaires.recevoir.wise.champ.numeroCompte' => 'Account number or IBAN',
+			'comptable.beneficiaires.recevoir.wise.champ.iban' => 'IBAN',
+			'comptable.beneficiaires.recevoir.wise.champ.swift' => 'The bank\'s SWIFT code (BIC)',
+			'comptable.beneficiaires.recevoir.wise.champ.adressePays' => 'Country of your address',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseVille' => 'City',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseLigne' => 'Address (street, neighbourhood)',
+			'comptable.beneficiaires.recevoir.wise.champ.codePostal' => 'Postcode',
+			'comptable.beneficiaires.recevoir.wise.champ.adresseEtat' => 'State or province',
+			'comptable.beneficiaires.recevoir.wise.aide.titulaire' => 'As written by your bank.',
+			'comptable.beneficiaires.recevoir.wise.aide.numeroCompte' => 'The digits and letters of your account, without spaces.',
+			'comptable.beneficiaires.recevoir.wise.aide.iban' => 'Starts with two letters, then digits.',
+			'comptable.beneficiaires.recevoir.wise.aide.swift' => '8 or 11 letters and digits, given by your bank.',
+			'comptable.beneficiaires.recevoir.wise.aide.adressePays' => 'The country of your address, chosen from the list.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseVille' => 'The city of your address.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseLigne' => 'The street or neighbourhood.',
+			'comptable.beneficiaires.recevoir.wise.aide.codePostal' => 'Optional: Guinea, for example, has none.',
+			'comptable.beneficiaires.recevoir.wise.aide.adresseEtat' => 'Only in the United States and Canada, for example TX.',
+			'comptable.beneficiaires.recevoir.wise.journalEnregistrees' => 'Details saved',
+			'comptable.beneficiaires.recevoir.wise.journalRetirees' => 'Details removed',
+			_ => null,
+		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.versementsTitre' => 'Payments received',
+			'comptable.beneficiaires.recevoir.wise.versementsVide' => 'No payment noted yet. Each pay paid will appear here.',
+			'comptable.beneficiaires.recevoir.wise.versementMois' => ({required Object mois}) => 'Pay for ${mois}',
+			'comptable.beneficiaires.recevoir.wise.versementDetail' => ({required Object date, required Object moyen}) => 'Paid on ${date} · ${moyen}',
+			'comptable.beneficiaires.recevoir.wise.versementAnnule' => 'Payment cancelled by the management',
+			'comptable.beneficiaires.recevoir.wise.moyen.virementBancaire' => 'Bank transfer',
+			'comptable.beneficiaires.recevoir.wise.moyen.mobileMoney' => 'Mobile money',
+			'comptable.beneficiaires.recevoir.wise.moyen.autre' => 'Other method',
+			'comptable.contractuels.ongletObligations' => 'Obligations',
+			'comptable.contractuels.ongletAApprouver' => 'To approve',
+			'comptable.contractuels.ongletAPayer' => 'To pay',
+			'comptable.contractuels.ongletHistorique' => 'History',
+			'comptable.contractuels.ongletsLecteur' => 'Obligations view',
+			'comptable.contractuels.colonneBeneficiaire' => 'Beneficiary',
+			'comptable.contractuels.colonneObjet' => 'Purpose',
+			'comptable.contractuels.colonneMontant' => 'Amount',
+			'comptable.contractuels.colonneEcheance' => 'Due date',
+			'comptable.contractuels.colonneStatut' => 'Status',
+			'comptable.contractuels.typeRecurrente' => 'Recurring',
+			'comptable.contractuels.typePonctuelle' => 'One-off',
+			'comptable.contractuels.echeanceLe' => ({required Object date}) => 'Due: ${date}',
+			'comptable.contractuels.payer' => 'Pay',
+			'comptable.contractuels.payerLecteur' => ({required Object objet}) => 'Pay the obligation ${objet}',
 			'presentationTuteur.titre' => 'Display requests',
 			'presentationTuteur.contexte' => 'A child in your household is asking for the standard display. You decide.',
 			'presentationTuteur.ligne' => ({required Object prenom}) => '${prenom} is asking for the standard display.',
@@ -25783,8 +27704,6 @@ extension on TraductionsEn {
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'It is closed, expired, or the planned number of reviews has been reached. To give your feedback, ask the management for a new link: ${courriel}.',
 			'avis.form.envoye.titre' => 'Thank you for your feedback',
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'The management will read it before publishing it on the website, with your display name, your country and the date. To have it removed, write to ${courriel}.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.erreurChargement' => 'The form could not be opened. Try again in a moment.',
 			'avis.form.sansDonnees' => 'The form could not be opened',
 			'avis.form.indisponibleTitre' => 'Feedback unavailable',
@@ -26086,6 +28005,8 @@ extension on TraductionsEn {
 			'n1.alertes.signalement' => ({required Object categorie, required Object matricule, required Object note}) => '${categorie}: report for student ${matricule}. Internal note: "${note}"',
 			'i1.invitations.aideEmail' => 'The code is created for this address and sent right away by email, with the sign-up link. You can also pass it on yourself.',
 			'i1.invitations.creee' => ({required Object code, required Object email}) => 'Invitation created. The email with code ${code} is on its way to ${email}.',
+			_ => null,
+		} ?? switch (path) {
 			'i1.invitations.dejaInvite' => 'An invitation is already active for this address. It is in the list below; its email is not sent a second time.',
 			'i1.familles.choixTitre' => 'A family already registered',
 			'i1.familles.choixExplication' => 'To choose for imported families: each receives an email to open their space, with nothing to re-enter.',
@@ -26297,8 +28218,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Several columns carry the title of: ${champs}. Tap the one to read, then choose what it contains.',
 			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'How answers are read',
 			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'Multiple-choice answers (gender, languages, memorization level, possible start) are read using Rewayah\'s table of labels. A label that is not in it is flagged row by row, at the "Errors" step.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.relecture' => 'Your corrections require the file to be read again before continuing.',
 			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '${nature}: case ${n} of ${total}',
 			'candidatsFlux.importFormulaires.doublons.question' => 'Do these rows come from the same person?',
@@ -26600,6 +28519,8 @@ extension on TraductionsEn {
 			'push1.evenements.paiementEchoueDirection' => 'A payment failed.',
 			'push1.evenements.coordonneesAValider' => 'Payout details need approval.',
 			'push1.evenements.coordonneesValidees' => 'Your payout details are approved.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.evenements.remboursementDemande' => 'A refund is requested.',
 			'push1.evenements.remboursementEchec' => 'A refund did not go through.',
 			'push1.evenements.cahierEnRetard' => 'A session\'s handover notebook is waiting for your information.',
@@ -26811,8 +28732,6 @@ extension on TraductionsEn {
 			'journalSorties.texte.parent.quoi' => 'What is recorded: each time your child leaves the app during a session, the time they leave, the time they return, and whether this absence made them leave the room. Nothing else: not what they do elsewhere, not their screen, not their image, not their voice.',
 			'journalSorties.texte.parent.pourquoi' => 'Why: to follow your child\'s attention during class, for you and for their teacher.',
 			'journalSorties.texte.parent.qui' => 'Who can read it: you, your child, the session\'s teacher and the management. Never the other students or their families.',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.texte.parent.retrait' => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.',
 			'journalSorties.texte.parent.sansAccord' => 'Without your agreement, nothing is recorded and nothing changes for the class. A student who stays out of the app too long leaves the room, with or without agreement: that keeps nothing.',
 			'journalSorties.texte.parent.caseAccord' => ({required Object dePrenom}) => 'I agree that ${dePrenom}\'s exits from the app during sessions be recorded.',
