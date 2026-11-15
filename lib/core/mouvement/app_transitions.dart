@@ -182,6 +182,29 @@ abstract final class AppTransitions {
     );
   }
 
+  /// Un panneau de cote (COMPLEMENT-ET-FORMATS, 14/11/2026), porte par une
+  /// route de dialogue qui fournit le fondu (`showDialog`) : il glisse depuis
+  /// le bord de fin (le debut en arabe), sur l'animation de la route.
+  /// Mouvement reduit ou hors d'une route animee : rien ne glisse.
+  static Widget glissementDeCote(BuildContext context, Widget enfant) {
+    final Animation<double>? animation = ModalRoute.of(context)?.animation;
+    if (animation == null || AppMouvement.mouvementReduit(context)) {
+      return enfant;
+    }
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    return SlideTransition(
+      position: Tween<Offset>(begin: Offset(rtl ? -1 : 1, 0), end: Offset.zero)
+          .animate(
+            CurvedAnimation(
+              parent: animation,
+              curve: AppMouvement.entree,
+              reverseCurve: AppMouvement.sortie,
+            ),
+          ),
+      child: enfant,
+    );
+  }
+
   /// Fondu court, sans deplacement : le retour venu du navigateur (bouton ou
   /// geste du navigateur, qui anime deja) ne joue pas une seconde animation.
   static Widget fonduCourt(Animation<double> animation, Widget enfant) =>

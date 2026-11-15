@@ -209,7 +209,14 @@ class DossierPourRevue {
     this.peutResoumettre,
     this.blocagesAcces = const <BlocageRevue>[],
     this.lectureRequise = false,
+    this.formatIllisible = false,
   });
+
+  /// COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : vrai quand la piece est
+  /// deposee dans un format que la visionneuse n'affiche pas sur ordinateur
+  /// (photo HEIC, PDF), deduit de la cle par l'adaptateur. L'ecran le dit
+  /// avant l'ouverture et propose de demander une nouvelle piece.
+  final bool formatIllisible;
 
   /// Vrai : les verifications et la validation restent fermees tant que la
   /// visionneuse n'a pas affiche la piece avec succes, et se referment sur un

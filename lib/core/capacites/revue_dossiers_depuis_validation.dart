@@ -240,6 +240,8 @@ class RevueDossiersDepuisValidation extends RevueDossiersIndisponible {
       // La cle finit par une extension d'image : c'est une promesse, pas une
       // lecture. La revue attend l'affichage reussi (AD-7, P-ADM-06 pt 5).
       lectureRequise: consultable,
+      formatIllisible:
+          disponible && d.cleObjet != null && typeImage(d.cleObjet) == null,
       peutRefuser: peutRefuser,
       // AD-M3-PROD : sans signature branchee, aucune URL n'est demandee.
       peutVoirPiece:

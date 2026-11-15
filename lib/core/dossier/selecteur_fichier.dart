@@ -5,6 +5,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../domain/enums.dart';
+import '../fichiers/conversion_heic.dart';
+import '../fichiers/formats_admis.dart';
 import 'service_dossier.dart';
 
 /// D'ou vient le fichier d'une piece d'identite.
@@ -18,21 +20,25 @@ abstract interface class SelecteurFichier {
 }
 
 /// Le selecteur reel, par la boite de dialogue du systeme.
+///
+/// COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : la piece choisie passe par
+/// la regle unique des formats (`preparerFichier`, `SorteFichier.piece`) :
+/// une photo HEIC est convertie en JPEG sur l'appareil, tout autre format que
+/// JPEG ou PNG est refuse tout de suite ([FichierRefuse]), avant tout envoi.
+/// Le PDF n'est plus propose : la direction ne sait pas l'afficher.
 class SelecteurFichierNatif implements SelecteurFichier {
   /// Cree le selecteur.
-  const SelecteurFichierNatif();
+  const SelecteurFichierNatif({this.convertir = convertirHeicNatif});
 
-  /// Ce qu'une piece d'identite peut etre. Volontairement court : une photo ou
-  /// un PDF. Elargir la liste elargirait la surface a analyser cote serveur.
-  /// FN-101 (garde-cap, 06/11/2026) : le WebP est retire ; le controle du
-  /// contenu du serveur (`kyc-confirme`) ne le connait pas.
-  static const List<String> extensionsAcceptees = <String>[
-    'jpg',
-    'jpeg',
-    'png',
-    'heic',
-    'pdf',
-  ];
+  /// La conversion d'une photo HEIC en JPEG sur l'appareil.
+  final ConvertisseurHeic convertir;
+
+  /// Ce que la boite de choix propose : les formats que la direction sait
+  /// afficher (JPEG, PNG). Le HEIC n'y est pas : sur iPhone, le systeme
+  /// convertit alors la photo en JPEG lui-meme.
+  static final List<String> extensionsAcceptees = extensionsProposees(
+    SorteFichier.piece,
+  );
 
   @override
   Future<PieceAEnvoyer?> choisirPiece(TypePiece type) async {
@@ -43,10 +49,27 @@ class SelecteurFichierNatif implements SelecteurFichier {
     if (fichier == null) {
       return null;
     }
-
-    final Uint8List octets = await fichier.readAsBytes();
-    return PieceAEnvoyer(octets: octets, nomFichier: fichier.name, type: type);
+    return preparerPiece(await fichier.readAsBytes(), type, convertir);
   }
+}
+
+/// Prepare une piece choisie : format lu dans les octets, HEIC converti,
+/// nom de fichier deduit du format. Leve [FichierRefuse].
+Future<PieceAEnvoyer> preparerPiece(
+  Uint8List octets,
+  TypePiece type,
+  ConvertisseurHeic convertir,
+) async {
+  final FichierPret pret = await preparerFichier(
+    octets,
+    sorte: SorteFichier.piece,
+    convertir: convertir,
+  );
+  return PieceAEnvoyer(
+    octets: pret.octets,
+    nomFichier: pret.nomFichier('piece'),
+    type: type,
+  );
 }
 
 /// Le selecteur employe par l'application.

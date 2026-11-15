@@ -10,6 +10,8 @@ import '../../core/dossier/contenu_piece.dart';
 import '../../core/dossier/echec_depot.dart';
 import '../../core/dossier/selecteur_fichier.dart';
 import '../../core/dossier/service_dossier.dart';
+import '../../core/fichiers/formats_admis.dart';
+import '../../core/fichiers/phrase_refus_fichier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
@@ -36,6 +38,9 @@ class DepotPiecePage extends ConsumerStatefulWidget {
   /// Cree l'ecran de depot.
   const DepotPiecePage({super.key});
 
+  /// La cle de la phrase des formats admis.
+  static const Key cleFormats = ValueKey<String>('piece-formats');
+
   @override
   ConsumerState<DepotPiecePage> createState() => _DepotPiecePageState();
 }
@@ -48,9 +53,21 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
 
   Future<void> _choisir(TypePiece type) async {
     setState(() => _erreur = null);
-    final PieceAEnvoyer? choisie = await ref
-        .read(selecteurFichierProvider)
-        .choisirPiece(type);
+    final PieceAEnvoyer? choisie;
+    try {
+      choisie = await ref.read(selecteurFichierProvider).choisirPiece(type);
+    } on FichierRefuse catch (refus) {
+      // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : prevenir au depot
+      // plutot que refuser des jours apres. Un format que la direction ne sait
+      // pas afficher est refuse ici, avec la phrase qui dit quoi faire.
+      if (mounted) {
+        setState(() {
+          _erreur = phraseRefusFichier(refus);
+          _piece = null;
+        });
+      }
+      return;
+    }
     if (!mounted || choisie == null) {
       return;
     }
@@ -211,7 +228,20 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                   : t.kyc.fichierChoisi,
               onPress: () => unawaited(_choisir(type)),
             ),
-            Ecart.vMd,
+            // COMPLEMENT-ET-FORMATS : les formats admis, dits avant le choix
+            // (ecarts serres : « Envoyer ma piece » reste au premier ecran a
+            // 390 x 844, SALLE-1-TOUT-ICI).
+            TexteSansCoupure(
+              t.fichiers.formatsPiece(
+                taille: '${SorteFichier.piece.tailleMaxMo}',
+              ),
+              key: DepotPiecePage.cleFormats,
+              textAlign: TextAlign.center,
+              style: palette.inkMuted.applyTo(
+                textes.bodySmall ?? const TextStyle(),
+              ),
+            ),
+            Ecart.vSm,
           ],
           // DECISION-ENTREE-2026-10-17 : inactif tant qu'aucune photo n'est
           // choisie, comme dans les autres apps.

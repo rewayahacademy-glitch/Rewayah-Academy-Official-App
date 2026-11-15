@@ -50,6 +50,7 @@ Future<FauxServiceDossier> _portail(
   bool? photoPosee,
   bool? accordPublicationSigne,
   StatutPiece? statutPiece,
+  DateTime? deposeLe,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
     ..etatRendu = etatCandidat(
@@ -57,6 +58,7 @@ Future<FauxServiceDossier> _portail(
       accordsFaits: accordsFaits,
       pieceDeposee: pieceDeposee,
       statutPiece: statutPiece,
+      deposeLe: deposeLe,
       photoPosee: photoPosee,
       accordPublicationSigne: accordPublicationSigne,
     );
@@ -914,6 +916,123 @@ void main() {
       }
     }
   }, skip: sautSansCapture);
+
+  // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : chaque element que la
+  // direction redemande a son chemin depuis le portail.
+  group('complement et formats', () {
+    final DateTime demande = DateTime.utc(2026, 11, 14, 10);
+    final CandidatureDossier pieceDemandee = candidatureAFaire(
+      complement: <String>['piece_identite', 'photo'],
+      complementLe: demande,
+    );
+
+    test('piece redemandee, deposee avant la demande : a deposer', () {
+      final d = etatCandidat(
+        candidature: pieceDemandee,
+        statutPiece: StatutPiece.enAttente,
+        deposeLe: demande.subtract(const Duration(days: 2)),
+      );
+      expect(pieceRedemandee(d), isTrue);
+      expect(pieceADeposer(d), isTrue);
+      final r = prochaineCandidature(pieceDemandee, dossier: d);
+      expect(r?.chemin, Routes.attentePiece);
+    });
+
+    test('piece redeposee apres la demande : plus rien a deposer', () {
+      final d = etatCandidat(
+        candidature: pieceDemandee,
+        statutPiece: StatutPiece.enAttente,
+        deposeLe: demande.add(const Duration(hours: 1)),
+      );
+      expect(pieceRedemandee(d), isFalse);
+      expect(pieceADeposer(d), isFalse);
+      expect(
+        prochaineCandidature(pieceDemandee, dossier: d)?.chemin,
+        Routes.attenteCandidature,
+      );
+    });
+
+    test('serveur d avant (sans date) : la regle d avant', () {
+      final CandidatureDossier sansDate = candidatureAFaire(
+        complement: <String>['piece_identite'],
+      );
+      final d = etatCandidat(
+        candidature: sansDate,
+        statutPiece: StatutPiece.enAttente,
+      );
+      expect(pieceRedemandee(d), isFalse);
+    });
+
+    testWidgets('le portail nomme chaque element et dit la piece demandee', (
+      WidgetTester tester,
+    ) async {
+      await _portail(
+        tester,
+        candidatureAFaire(
+          complement: <String>[
+            'code_conduite',
+            'piece_identite',
+            'photo',
+            'accord_publication',
+          ],
+          complementLe: demande,
+        ),
+        statutPiece: StatutPiece.enAttente,
+        deposeLe: demande.subtract(const Duration(days: 1)),
+        photoPosee: true,
+        accordPublicationSigne: true,
+      );
+      final p = t.recrutement.portail;
+      expect(
+        _texte(
+          p.complementListe(
+            elements: <String>[
+              p.elementCodeConduite,
+              p.elementPiece,
+              p.elementPhoto,
+              p.elementAccordPublication,
+            ].join(', '),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(_texte(p.pieceDemandee), findsOneWidget);
+      expect(_texte(p.photoDemandee), findsOneWidget);
+      expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    // Captures R3 (sautees sans CAPTURE_DIR).
+    group('captures', () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+        for (final Size taille in <Size>[
+          const Size(1440, 900),
+          const Size(390, 844),
+        ]) {
+          final String nom =
+              'portail-piece-demandee-${taille.width.toInt()}-'
+              '${langue.languageCode}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            await _portail(
+              tester,
+              pieceDemandee,
+              statutPiece: StatutPiece.enAttente,
+              deposeLe: demande.subtract(const Duration(days: 1)),
+              photoPosee: true,
+              accordPublicationSigne: true,
+              taille: taille,
+              direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+            );
+            await stabiliser(tester);
+            await capturerVue(tester, 'complement-et-formats/$nom');
+          });
+        }
+      }
+    }, skip: sautSansCapture);
+  });
 
   // AUDIT-PORTAIL-CANDIDAT (directeur, 14/11/2026) : chaque obligation que le
   // serveur accepte a un chemin depuis le portail, a toute etape.

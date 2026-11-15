@@ -32,8 +32,19 @@ class PieceSurPlace extends ConsumerWidget {
     required this.candidatureId,
     required this.onDecision,
     this.onOuvrirDossier,
+    this.onDemanderNouvellePiece,
     super.key,
   });
+
+  /// COMPLEMENT-ET-FORMATS : ouvre le complement « pièce d'identité » deja
+  /// coche, ou `null` quand le complement n'est pas permis maintenant.
+  final VoidCallback? onDemanderNouvellePiece;
+
+  /// La cle de la phrase « Format non lisible ».
+  static const Key cleIllisible = ValueKey<String>('piece-format-illisible');
+
+  /// La cle du lien « Demander une nouvelle pièce d'identité ».
+  static const Key cleRedemander = ValueKey<String>('piece-redemander');
 
   /// La candidature.
   final String candidatureId;
@@ -119,7 +130,7 @@ class PieceSurPlace extends ConsumerWidget {
     );
     if (dossier.hasValue) {
       final DossierPourRevue d = dossier.requireValue;
-      return RevueDossier(
+      final Widget revue = RevueDossier(
         key: ValueKey<String>('${cle.toString()}-${d.dossierId}-${d.revision}'),
         dossier: d,
         avecTitre: false,
@@ -129,6 +140,39 @@ class PieceSurPlace extends ConsumerWidget {
           onDecision(message);
         },
         onActualiser: () => ref.invalidate(dossierPourRevueProvider(profil)),
+      );
+      if (!d.formatIllisible) return revue;
+      // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : une piece deja deposee
+      // en HEIC ou en PDF ne s'affiche pas sur ordinateur. L'ecran le dit avant
+      // l'ouverture, et la nouvelle piece se demande en un geste.
+      final VoidCallback? redemander = onDemanderNouvellePiece;
+      return Column(
+        key: cle,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Text(
+            r.pieceIllisible,
+            key: cleIllisible,
+            style: AppPalette.of(context).inkAlert.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+          if (redemander != null) ...<Widget>[
+            Ecart.vXs,
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: LienFleche(
+                key: cleRedemander,
+                libelle: r.demanderNouvellePiece,
+                alignerEnDebut: true,
+                onPress: redemander,
+              ),
+            ),
+          ],
+          Ecart.vMd,
+          revue,
+        ],
       );
     }
     if (dossier.hasError) {
