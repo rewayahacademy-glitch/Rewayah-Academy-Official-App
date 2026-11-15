@@ -101,22 +101,90 @@ void main() {
     expect(c.read(etatVeilleMessagesProvider).rang, 0);
   });
 
-  test('la veille s\'ouvre pour la personne connectee, chaque signal monte '
-      'le rang', () async {
-    await connecter('p1');
-    expect(veille.profils, <String>['p1']);
-    veille.ecoutes.last.add(const CanalMessagesRejoint());
-    await pumpEventQueue();
-    final int apresJointure = c.read(etatVeilleMessagesProvider).rang;
-    expect(apresJointure, greaterThan(0));
-    veille.ecoutes.last.add(
-      const FilABouge(filId: 'f1', nature: NatureSignalMessages.lecture),
-    );
-    await pumpEventQueue();
-    expect(c.read(etatVeilleMessagesProvider).rang, apresJointure + 1);
-    expect(c.read(etatVeilleMessagesProvider).dernier?.filId, 'f1');
-    // Une lecture ne pose aucun avis.
-    expect(c.read(avisEphemereProvider), isNull);
+  test('la veille s\'ouvre pour la personne connectee, les signaux montent '
+      'le rang, regroupes (15/11/2026)', () {
+    fakeAsync((FakeAsync temps) {
+      final StreamController<SessionState> session =
+          StreamController<SessionState>.broadcast();
+      addTearDown(session.close);
+      final _VeillePilotee veille = _VeillePilotee();
+      final ProviderContainer c = ProviderContainer(
+        overrides: <Override>[
+          sourceSessionProvider.overrideWithValue(_SourcePilotee(session)),
+          portVeilleMessagesProvider.overrideWithValue(veille),
+          serviceReseauProvider.overrideWithValue(_ReseauPilote()),
+        ],
+      );
+      addTearDown(c.dispose);
+      c
+        ..listen(sessionProvider, (_, _) {})
+        ..listen(veilleMessagesProvider, (_, _) {})
+        ..listen(avisEphemereProvider, (_, _) {});
+      temps.flushMicrotasks();
+      session.add(const SessionState(resolue: true, profileId: 'p1'));
+      temps.elapse(const Duration(milliseconds: 10));
+      expect(veille.profils, <String>['p1']);
+      int rang() => c.read(etatVeilleMessagesProvider).rang;
+
+      // Le premier signal monte le rang tout de suite.
+      veille.ecoutes.last.add(const CanalMessagesRejoint());
+      temps.flushMicrotasks();
+      final int apresJointure = rang();
+      expect(apresJointure, 1);
+
+      // Une rafale dans la fenetre : le rang ne bouge pas, l'etat est a jour.
+      veille.ecoutes.last
+        ..add(
+          const FilABouge(filId: 'f1', nature: NatureSignalMessages.lecture),
+        )
+        ..add(
+          const FilABouge(filId: 'f2', nature: NatureSignalMessages.lecture),
+        );
+      temps.flushMicrotasks();
+      expect(rang(), apresJointure);
+      expect(c.read(etatVeilleMessagesProvider).dernier?.filId, 'f2');
+      // Une lecture ne pose aucun avis.
+      expect(c.read(avisEphemereProvider), isNull);
+
+      // A la fin de la fenetre : UNE seule montee pour toute la rafale.
+      temps.elapse(AppDelais.regroupementMessages);
+      expect(rang(), apresJointure + 1);
+
+      // Plus rien en attente : le rang reste.
+      temps.elapse(AppDelais.regroupementMessages * 3);
+      expect(rang(), apresJointure + 1);
+
+      // Un signal isole apres la fenetre monte aussitot le rang.
+      veille.ecoutes.last.add(
+        const FilABouge(filId: 'f3', nature: NatureSignalMessages.lecture),
+      );
+      temps.flushMicrotasks();
+      expect(rang(), apresJointure + 2);
+    });
+  });
+
+  test('aucun signal : aucune relecture (le rang ne bouge pas)', () {
+    fakeAsync((FakeAsync temps) {
+      final StreamController<SessionState> session =
+          StreamController<SessionState>.broadcast();
+      addTearDown(session.close);
+      final _VeillePilotee veille = _VeillePilotee();
+      final ProviderContainer c = ProviderContainer(
+        overrides: <Override>[
+          sourceSessionProvider.overrideWithValue(_SourcePilotee(session)),
+          portVeilleMessagesProvider.overrideWithValue(veille),
+          serviceReseauProvider.overrideWithValue(_ReseauPilote()),
+        ],
+      );
+      addTearDown(c.dispose);
+      c
+        ..listen(sessionProvider, (_, _) {})
+        ..listen(veilleMessagesProvider, (_, _) {});
+      temps.flushMicrotasks();
+      session.add(const SessionState(resolue: true, profileId: 'p1'));
+      temps.elapse(const Duration(minutes: 5));
+      expect(c.read(etatVeilleMessagesProvider).rang, 0);
+    });
   });
 
   test('un message recu hors du fil ouvert pose l\'avis, pas dans le fil '
@@ -166,6 +234,9 @@ void main() {
       veille.ecoutes.last.add(const CanalMessagesRejoint());
       temps.flushMicrotasks();
       expect(c.read(etatVeilleMessagesProvider).enDirect, isTrue);
+      // Le retour tombe dans la fenetre de la derniere relecture : son rang
+      // monte a la fin de la fenetre.
+      temps.elapse(AppDelais.regroupementMessages);
       final int rejoint = c.read(etatVeilleMessagesProvider).rang;
       temps.elapse(AppDelais.repliMessages * 3);
       // Le repli s'est arrete avec le retour du canal.

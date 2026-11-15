@@ -15,6 +15,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
 import 'port_messages_metier.dart';
 
@@ -36,7 +37,7 @@ const Set<TypeObjetLie> _typesServeur = <TypeObjetLie>{
 class MessagesMetierSupabase implements PortMessagesMetier {
   /// Cree l'adaptateur sur un appel RPC (le client de l'application, par
   /// [appelRpcSupabase], ou un faux dans les tests).
-  const MessagesMetierSupabase(this._appel, {required this.libelles});
+  MessagesMetierSupabase(this._appel, {required this.libelles});
 
   final AppelRpc _appel;
 
@@ -47,12 +48,45 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     'COM-BR-01',
   );
 
+  /// Monte a chaque ecriture (lu, envoi, ouverture) : une lecture de la liste
+  /// partie avant ne sert jamais un appel arrive apres.
+  int _generation = 0;
+  Future<Object?>? _listeEnCours;
+  int _listeGeneration = -1;
+  DateTime _listeDepart = DateTime.fromMillisecondsSinceEpoch(0);
+
+  /// `com_lister_fils` est le plus couteux des appels de la messagerie
+  /// (15/11/2026, 85 % du temps de base) : les appels simultanes d'un meme
+  /// signal rejoignent la lecture en cours, au lieu d'en lancer chacun une.
+  Future<Object?> _listerFils() {
+    final DateTime maintenant = DateTime.now();
+    final Future<Object?>? enCours = _listeEnCours;
+    if (enCours != null &&
+        _listeGeneration == _generation &&
+        maintenant.difference(_listeDepart) < AppDelais.jonctionListeFils) {
+      return enCours;
+    }
+    final int generation = _generation;
+    final Future<Object?> lecture = _appel(
+      'com_lister_fils',
+      const <String, dynamic>{},
+    );
+    _listeEnCours = lecture;
+    _listeGeneration = generation;
+    _listeDepart = maintenant;
+    return lecture;
+  }
+
   Future<Object?> _lire(String fonction, Map<String, dynamic> p) async {
+    final bool liste = fonction == 'com_lister_fils';
+    if (!liste) _generation += 1;
     try {
-      return await _appel(fonction, p);
+      return await (liste ? _listerFils() : _appel(fonction, p));
     } on Object catch (e) {
       if (estRefusOuAbsence(e)) throw _lecture;
       rethrow;
+    } finally {
+      if (!liste) _generation += 1;
     }
   }
 
@@ -166,6 +200,7 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     // Un refus d'envoi reste un echec (« non confirme ») : il n'est pas
     // converti en capacite indisponible.
     final Object? reponse;
+    _generation += 1;
     try {
       reponse = await _appel('com_envoyer_message', <String, dynamic>{
         'p_fil_id': filId,
@@ -179,6 +214,8 @@ class MessagesMetierSupabase implements PortMessagesMetier {
         throw EnvoiRefuse(t.com.messages.candidature.plafond);
       }
       rethrow;
+    } finally {
+      _generation += 1;
     }
     texteJson(objetJson(reponse), 'id');
   }
