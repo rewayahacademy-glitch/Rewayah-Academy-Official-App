@@ -228,8 +228,9 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                   : t.kyc.fichierChoisi,
               onPress: () => unawaited(_choisir(type)),
             ),
-            // COMPLEMENT-ET-FORMATS : les formats admis, dits avant le choix.
-            Ecart.vXs,
+            // COMPLEMENT-ET-FORMATS : les formats admis, dits avant le choix
+            // (ecarts serres : « Envoyer ma piece » reste au premier ecran a
+            // 390 x 844, SALLE-1-TOUT-ICI).
             TexteSansCoupure(
               t.fichiers.formatsPiece(
                 taille: '${SorteFichier.piece.tailleMaxMo}',
@@ -240,7 +241,7 @@ class _DepotPiecePageState extends ConsumerState<DepotPiecePage> {
                 textes.bodySmall ?? const TextStyle(),
               ),
             ),
-            Ecart.vMd,
+            Ecart.vSm,
           ],
           // DECISION-ENTREE-2026-10-17 : inactif tant qu'aucune photo n'est
           // choisie, comme dans les autres apps.
