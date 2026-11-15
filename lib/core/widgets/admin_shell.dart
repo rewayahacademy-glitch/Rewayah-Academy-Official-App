@@ -99,6 +99,7 @@ class AdminShell extends StatelessWidget {
     this.onDeconnexion,
     this.sousLiens = const <AdminDomaine, List<SousLien>>{},
     this.cheminCourant,
+    this.conversationOuverte = false,
   }) : assert(
          domaines.length <= maxDomaines,
          'La sidebar admin ne contient jamais plus de $maxDomaines domaines '
@@ -175,6 +176,11 @@ class AdminShell extends StatelessWidget {
   /// L'adresse de la page ouverte, pour allumer son sous-lien.
   final String? cheminCourant;
 
+  /// MESSAGERIE-PLEIN-ECRAN : une conversation est ouverte ; au telephone
+  /// (moins de 600), la coquille rend la page seule, la conversation porte sa
+  /// propre barre.
+  final bool conversationOuverte;
+
   /// Le nombre maximal de domaines. **Huit, pas quatre** : la regle du gel
   /// d'architecture, distincte de `NavShell.maxDestinations`.
   static const int maxDomaines = 8;
@@ -238,6 +244,9 @@ class AdminShell extends StatelessWidget {
     final int? actif = trouve == -1 ? null : trouve;
 
     final ChromeNavigation chrome = AppGabarit.de(context).chrome;
+    if (conversationOuverte && chrome == ChromeNavigation.barreBasse) {
+      return child;
+    }
 
     // LOGO-APP : le logo d'en-tete ramene a l'Accueil admin.
     void accueil() {

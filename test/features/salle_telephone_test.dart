@@ -614,10 +614,7 @@ void main() {
             await _attendreLeRepos(tester);
             // Pilote C10 : sur la scene, rien a proteger, la capsule reste.
             expect(capsule.hitTestable(), findsOneWidget);
-            expect(
-              _horsDe(tester, <Finder>[capsule, scene, _rangee]),
-              isEmpty,
-            );
+            expect(_horsDe(tester, <Finder>[capsule, scene, _rangee]), isEmpty);
             // Au toucher : la pilule et « Commandes » au-dessus.
             await _toucher(tester);
             expect(_dock.hitTestable(), findsOneWidget);

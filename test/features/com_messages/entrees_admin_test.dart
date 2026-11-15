@@ -31,7 +31,7 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
-import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
@@ -299,7 +299,7 @@ void main() {
       expect(find.byType(FilDiscussion), findsOneWidget);
       expect(find.byType(ListeFils), findsNothing);
 
-      await tester.tap(find.byType(DisqueRetour));
+      await tester.tap(find.byKey(EspaceTravailAdaptatif.cleRetourListe));
       await _stabiliser(tester);
       expect(_chemin(routeur), Routes.adminCommunicationsMessages);
       expect(find.byType(ListeFils), findsOneWidget);
@@ -404,7 +404,7 @@ void main() {
       expect(cheminCourant(routeur), Routes.adminFilPour('fil-dossier-omar'));
       expect(find.byType(FilDiscussion), findsOneWidget);
       expect(find.byType(ListeFils), findsNothing);
-      await tester.tap(find.byType(DisqueRetour));
+      await tester.tap(find.byKey(EspaceTravailAdaptatif.cleRetourListe));
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), Routes.adminCommunicationsMessages);
       expect(find.byType(ListeFils), findsOneWidget);

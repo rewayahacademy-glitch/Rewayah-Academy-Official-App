@@ -140,10 +140,7 @@ void main() {
   testWidgets('apres la fin prevue : « Temps prévu écoulé »', (
     WidgetTester tester,
   ) async {
-    await _poser(
-      tester,
-      maintenant: _t0.add(const Duration(minutes: 61)),
-    );
+    await _poser(tester, maintenant: _t0.add(const Duration(minutes: 61)));
     expect(_texte(tester), t.salle.seance.chrono.tempsPrevuEcoule);
   });
 

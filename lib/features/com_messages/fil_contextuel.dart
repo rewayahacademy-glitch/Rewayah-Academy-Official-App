@@ -48,6 +48,7 @@ import '../com_vocal/composer_vocal.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/lecteur_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
+import 'barre_conversation.dart';
 import 'entete_fil_contexte.dart';
 import 'liens_message_staff.dart';
 import 'port_messages_metier.dart';
@@ -66,6 +67,7 @@ class FilContextuel extends StatefulWidget {
     super.key,
     this.onEnvoyerVocal,
     this.onRetour,
+    this.pleinEcran = false,
   });
 
   /// Le fil ouvert.
@@ -91,6 +93,12 @@ class FilContextuel extends StatefulWidget {
   /// retour) defile avec les messages : ce retour se pose alors dans la
   /// ligne compacte, fixe (COM-R-3, constat 8).
   final VoidCallback? onRetour;
+
+  /// MESSAGERIE-PLEIN-ECRAN : le fil est une page a lui (telephone) : une
+  /// barre compacte (`BarreConversation`), les messages en ordre inverse, la
+  /// saisie fixe en bas. Faux : le fil a son en-tete dans une page a titre
+  /// (tablette et ordinateur, ou le fil vit a cote de la liste).
+  final bool pleinEcran;
 
   /// La cle du composer vocal du fil, pour les tests.
   static const ValueKey<String> cleComposerVocal = ValueKey<String>(
@@ -163,7 +171,8 @@ class _FilContextuelState extends State<FilContextuel>
   /// Quand il se ferme, elle revient.
   @override
   void didChangeMetrics() {
-    if (!mounted) return;
+    // Liste inversee : elle reste collee au dernier message d'elle-meme.
+    if (!mounted || widget.pleinEcran) return;
     final double nouveau = _hauteurClavier();
     final double ecart = nouveau - _clavier;
     _clavier = nouveau;
@@ -206,6 +215,54 @@ class _FilContextuelState extends State<FilContextuel>
     setState(() => _vocauxConfirmes.add((cle: cle, duree: vocal.duree)));
   }
 
+  /// Le fil plein ecran : la barre compacte, puis le fil (messages, saisie).
+  Widget _pleinEcran(List<MessageFil> connus, TextesFilDiscussion textes) {
+    final FilMetier fil = widget.fil;
+    final bool ecriture =
+        widget.ecritureOuverte && fil.peut(CapaciteFil.ecrire);
+    final String soi = t.com.socle.composants.composer.auteurSoi;
+    final Future<void> Function(EnregistrementVocal, String)? vocal =
+        widget.onEnvoyerVocal;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        BarreConversation(fil: fil, onRetour: widget.onRetour),
+        Expanded(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            child: FilDiscussion(
+              pleinEcran: true,
+              defilement: _defilement,
+              key: ValueKey<String>('fil-metier-plein-${fil.id}'),
+              messages: <MessageFil>[
+                ...connus,
+                if (ecriture)
+                  for (final VocalConfirme v in _vocauxConfirmes)
+                    bulleVocalConfirme(
+                      v,
+                      auteurSoi: soi,
+                      ligneVocal: ligneVocal,
+                      envoye: textes.envoye,
+                    ),
+              ],
+              textes: textes,
+              lectureSeule: ecriture ? null : t.com.messages.fil.lectureSeule,
+              onEnvoyerMessage: ecriture ? _envoyer : null,
+              cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
+              emplacementVocal: !ecriture || vocal == null
+                  ? null
+                  : ComposerVocal(
+                      key: FilContextuel.cleComposerVocal,
+                      onEnvoyer: (EnregistrementVocal v) =>
+                          _envoyerVocal(v, vocal),
+                    ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final FilMetier fil = widget.fil;
@@ -235,6 +292,7 @@ class _FilContextuelState extends State<FilContextuel>
         ),
     ];
     final TextesFilDiscussion textes = textesFilCommunication();
+    if (widget.pleinEcran) return _pleinEcran(connus, textes);
     if (!widget.ecritureOuverte || !fil.peut(CapaciteFil.ecrire)) {
       // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
       return FilDiscussion(

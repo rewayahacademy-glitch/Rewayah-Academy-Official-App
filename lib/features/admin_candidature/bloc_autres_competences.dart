@@ -155,7 +155,8 @@ class BlocAutresCompetences extends ConsumerWidget {
         for (final String code in codes)
           LigneCleValeur(
             key: ligneKey(code),
-            cle: code == EntreeCatalogue.codeAutre && reponses.autreTexte != null
+            cle:
+                code == EntreeCatalogue.codeAutre && reponses.autreTexte != null
                 ? r.autre(texte: reponses.autreTexte!)
                 : libelleCompetence(code, entree: catalogue?.entree(code)) ??
                       r.competenceInconnue,

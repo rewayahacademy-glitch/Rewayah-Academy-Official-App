@@ -12,8 +12,10 @@ void main() {
     test('un rappel qui part ne rend rien', () async {
       final List<(String, String)> partis = <(String, String)>[];
       final RappelDiscretCadence rappel = RappelDiscretCadence(
-        transport: ({required String sessionId, required String academyId}) async =>
-            partis.add((sessionId, academyId)),
+        transport: ({
+          required String sessionId,
+          required String academyId,
+        }) async => partis.add((sessionId, academyId)),
       );
 
       // `rappeler` rend `Future<void>` : il n'y a **rien** a lire, et c'est la
@@ -47,9 +49,7 @@ void main() {
       // l'enseignant lirait un probleme de reseau la ou son acces est en cause.
       final RappelDiscretCadence rappel = RappelDiscretCadence(
         transport: ({required String sessionId, required String academyId}) =>
-            Future<void>.error(
-              const EchecRappel(MotifEchecRappel.droitRefuse),
-            ),
+            Future<void>.error(const EchecRappel(MotifEchecRappel.droitRefuse)),
       );
       await expectLater(
         rappel.rappeler(sessionId: 's1', academyId: 'RA-AB0012'),
@@ -82,7 +82,10 @@ void main() {
     test('un second rappel immediat est refuse, sans reproche', () async {
       DateTime maintenant = DateTime.utc(2026, 9, 20, 10);
       final RappelDiscretCadence rappel = RappelDiscretCadence(
-        transport: ({required String sessionId, required String academyId}) async {},
+        transport: ({
+          required String sessionId,
+          required String academyId,
+        }) async {},
         maintenant: () => maintenant,
       );
 
@@ -116,7 +119,10 @@ void main() {
       // tard.
       final DateTime maintenant = DateTime.utc(2026, 9, 20, 10);
       final RappelDiscretCadence rappel = RappelDiscretCadence(
-        transport: ({required String sessionId, required String academyId}) async {},
+        transport: ({
+          required String sessionId,
+          required String academyId,
+        }) async {},
         maintenant: () => maintenant,
       );
       await rappel.rappeler(sessionId: 's1', academyId: 'RA-AB0012');
@@ -130,7 +136,10 @@ void main() {
     test('le cooldown est aussi par seance', () async {
       final DateTime maintenant = DateTime.utc(2026, 9, 20, 10);
       final RappelDiscretCadence rappel = RappelDiscretCadence(
-        transport: ({required String sessionId, required String academyId}) async {},
+        transport: ({
+          required String sessionId,
+          required String academyId,
+        }) async {},
         maintenant: () => maintenant,
       );
       await rappel.rappeler(sessionId: 's1', academyId: 'RA-AB0012');

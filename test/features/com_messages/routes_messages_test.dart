@@ -15,7 +15,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
@@ -96,7 +96,7 @@ void main() {
       reason: 'le fil vit sous la destination Messages (NAV-REFONTE)',
     );
 
-    await tester.tap(find.byType(DisqueRetour));
+    await tester.tap(find.byKey(EspaceTravailAdaptatif.cleRetourListe));
     await stabiliser(tester);
     expect(lieu(routeur), Routes.enseignantMessages);
     expect(tester.takeException(), isNull);
