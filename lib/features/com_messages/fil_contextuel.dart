@@ -141,6 +141,24 @@ class _FilContextuelState extends State<FilContextuel>
   /// a texte agrandi, la tete de la page (R-02) : c'est la meme position.
   final ScrollController _defilement = ScrollController();
 
+  /// La barre compacte est repliee : le fil remonte vers les anciens messages.
+  bool _barreRepliee = false;
+
+  bool _surDefilement(ScrollNotification n) {
+    if (n is! ScrollUpdateNotification || n.depth != 0) return false;
+    final double delta = n.scrollDelta ?? 0;
+    // Liste inversee : des pixels qui grandissent, ce sont les anciens messages.
+    final bool replie =
+        n.metrics.pixels > 0 && (delta > 0 || _barreRepliee && delta == 0);
+    if (delta != 0 && replie != _barreRepliee) {
+      setState(() => _barreRepliee = replie);
+    }
+    if (n.metrics.pixels <= 0 && _barreRepliee) {
+      setState(() => _barreRepliee = false);
+    }
+    return false;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -226,36 +244,43 @@ class _FilContextuelState extends State<FilContextuel>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        BarreConversation(fil: fil, onRetour: widget.onRetour),
+        BarreConversation(
+          fil: fil,
+          onRetour: widget.onRetour,
+          replie: _barreRepliee,
+        ),
         Expanded(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            child: FilDiscussion(
-              pleinEcran: true,
-              defilement: _defilement,
-              key: ValueKey<String>('fil-metier-plein-${fil.id}'),
-              messages: <MessageFil>[
-                ...connus,
-                if (ecriture)
-                  for (final VocalConfirme v in _vocauxConfirmes)
-                    bulleVocalConfirme(
-                      v,
-                      auteurSoi: soi,
-                      ligneVocal: ligneVocal,
-                      envoye: textes.envoye,
-                    ),
-              ],
-              textes: textes,
-              lectureSeule: ecriture ? null : t.com.messages.fil.lectureSeule,
-              onEnvoyerMessage: ecriture ? _envoyer : null,
-              cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
-              emplacementVocal: !ecriture || vocal == null
-                  ? null
-                  : ComposerVocal(
-                      key: FilContextuel.cleComposerVocal,
-                      onEnvoyer: (EnregistrementVocal v) =>
-                          _envoyerVocal(v, vocal),
-                    ),
+            child: NotificationListener<ScrollNotification>(
+              onNotification: _surDefilement,
+              child: FilDiscussion(
+                pleinEcran: true,
+                defilement: _defilement,
+                key: ValueKey<String>('fil-metier-plein-${fil.id}'),
+                messages: <MessageFil>[
+                  ...connus,
+                  if (ecriture)
+                    for (final VocalConfirme v in _vocauxConfirmes)
+                      bulleVocalConfirme(
+                        v,
+                        auteurSoi: soi,
+                        ligneVocal: ligneVocal,
+                        envoye: textes.envoye,
+                      ),
+                ],
+                textes: textes,
+                lectureSeule: ecriture ? null : t.com.messages.fil.lectureSeule,
+                onEnvoyerMessage: ecriture ? _envoyer : null,
+                cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
+                emplacementVocal: !ecriture || vocal == null
+                    ? null
+                    : ComposerVocal(
+                        key: FilContextuel.cleComposerVocal,
+                        onEnvoyer: (EnregistrementVocal v) =>
+                            _envoyerVocal(v, vocal),
+                      ),
+              ),
             ),
           ),
         ),

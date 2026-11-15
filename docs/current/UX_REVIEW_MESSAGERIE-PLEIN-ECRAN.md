@@ -53,6 +53,16 @@ lui-même au-delà de cinq lignes est la seconde exception, déjà admise dans t
   s'efface devant une conversation ouverte (`Routes.estConversationOuverte`).
 - Aucun texte nouveau : `retourListe` et `ouvrirPanneau` existent. Aucune migration.
 
+## Complément du directeur (15/11, relayé par le pilote)
+
+« Au moins que la page entière soit scrollable pour tout libérer » : la page entière ne défile pas
+(le champ partirait avec). À la place : la barre se replie quand on remonte vers les anciens
+messages et revient quand on redescend ; **clavier ouvert, il ne reste qu'une barre de 48 (retour et
+nom)**. Mesure, clavier de 300, 390 x 844 : le fil occupe **50 % de l'écran et 78 % de la zone
+au-dessus du clavier** (avant : 28 % et 44 %). Le reste est le champ, d'environ 90 points : « rien
+d'autre que le fil et le champ » est tenu, mais le fil ne peut pas dépasser ce plafond.
+**Le repli au défilement n'est pas testé** (code seul, non vu).
+
 ## Non traité
 
 - Tablette (600 à 839) : le fil garde l'en-tête de page actuel (une colonne de contenu, coquille

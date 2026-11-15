@@ -69,8 +69,21 @@ void main() {
               .getSize(find.byKey(FilDiscussion.cleMessages))
               .height;
           final double visible = _mobile.height - 300;
+          // Clavier ouvert : une barre minimale de 48 (retour et nom), sans (i).
+          expect(
+            tester.getSize(find.byKey(BarreConversation.cle)).height,
+            lessThanOrEqualTo(49),
+          );
+          expect(
+            find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte),
+            findsNothing,
+          );
+          // ignore: avoid_print
+          print(
+            'MESURE ${langue.languageCode} ${haut / _mobile.height} ${haut / visible}',
+          );
           // Le fil prend l'essentiel de l'ecran visible (barre 56 + champ).
-          expect(haut / visible, greaterThan(0.5));
+          expect(haut / visible, greaterThan(0.75));
           expect(
             find.text(t.com.socle.composants.composer.champVide),
             findsNothing,

@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/mouvement/mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
@@ -26,7 +27,12 @@ import 'port_messages_metier.dart';
 class BarreConversation extends StatelessWidget {
   /// Cree la barre du fil [fil]. [onRetour] : le retour vers la liste, ou
   /// `null` (ordinateur : la liste est deja a cote).
-  const BarreConversation({required this.fil, super.key, this.onRetour});
+  const BarreConversation({
+    required this.fil,
+    super.key,
+    this.onRetour,
+    this.replie = false,
+  });
 
   /// Le fil ouvert.
   final FilMetier fil;
@@ -34,8 +40,14 @@ class BarreConversation extends StatelessWidget {
   /// Le retour vers la liste des conversations.
   final VoidCallback? onRetour;
 
+  /// Vrai quand la barre se replie : on remonte vers les anciens messages.
+  final bool replie;
+
   /// La hauteur de la barre.
   static const double hauteur = 56;
+
+  /// La hauteur de la barre minimale, clavier ouvert : retour et nom.
+  static const double hauteurMinimale = 48;
 
   /// La cle de la barre, pour les tests.
   static const ValueKey<String> cle = ValueKey<String>('barre-conversation');
@@ -65,12 +77,19 @@ class BarreConversation extends StatelessWidget {
     final VoidCallback? ouvrirContexte =
         EspaceTravailAdaptatif.ouvrirContexteDe(context);
     final VoidCallback? retour = onRetour;
-    return DecoratedBox(
+    // Clavier ouvert : seule une barre minimale (retour et nom) reste, pour
+    // ne laisser que le fil et le champ.
+    // Lu sur la vue : le `Scaffold` retire le clavier de la `MediaQuery`.
+    final bool clavier = View.of(context).viewInsets.bottom > 0;
+    final bool minimale = clavier;
+    final Widget barre = DecoratedBox(
       decoration: BoxDecoration(
         border: Border(bottom: palette.borderHairline.asBorderSide()),
       ),
       child: ConstrainedBox(
-        constraints: const BoxConstraints(minHeight: hauteur),
+        constraints: BoxConstraints(
+          minHeight: minimale ? hauteurMinimale : hauteur,
+        ),
         child: Semantics(
           key: cle,
           container: true,
@@ -93,7 +112,10 @@ class BarreConversation extends StatelessWidget {
                   child: AvatarNom.enLigne(
                     prenom: prenom,
                     nom: nomCourt.replaceAll('-', '‑'),
-                    roleWidget: ligneRole.isEmpty || fil.interlocuteurs.isEmpty
+                    roleWidget:
+                        minimale ||
+                            ligneRole.isEmpty ||
+                            fil.interlocuteurs.isEmpty
                         ? null
                         : Text(
                             ligneRole,
@@ -117,7 +139,7 @@ class BarreConversation extends StatelessWidget {
                   ),
                 ),
               ),
-              if (ouvrirContexte != null)
+              if (ouvrirContexte != null && !minimale)
                 BoutonIcone(
                   key: EspaceTravailAdaptatif.cleOuvrirContexte,
                   icone: AppIcons.info,
@@ -130,6 +152,17 @@ class BarreConversation extends StatelessWidget {
             ],
           ),
         ),
+      ),
+    );
+    // Repliee (on lit les anciens messages) : la barre se range, et revient
+    // des qu'on redescend.
+    return ClipRect(
+      child: AnimatedAlign(
+        alignment: AlignmentDirectional.topStart,
+        heightFactor: replie ? 0 : 1,
+        duration: Mouvement.duree(context, Mouvement.moyen),
+        curve: Mouvement.entree,
+        child: barre,
       ),
     );
   }
