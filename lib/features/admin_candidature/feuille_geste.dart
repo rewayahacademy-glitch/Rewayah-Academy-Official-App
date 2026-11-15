@@ -38,6 +38,7 @@ import '../../core/candidature/port_ma_candidature.dart'
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -89,6 +90,10 @@ Future<SortieFeuille?> ouvrirFeuilleGeste(
 }) => AppBottomSheet.ouvrir<SortieFeuille>(
   context,
   titre: libelleGeste(geste),
+  // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026 : « tu dois le rendre en
+  // format web normal ») : a partir de 840, un panneau lateral ancre a cote
+  // du dossier, qui reste visible ; jamais une colonne de telephone etiree.
+  panneauLateral: true,
   constructeur: (BuildContext contexte) => FeuilleGeste(
     geste: geste,
     detail: detail,
@@ -451,6 +456,12 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
 
     final List<Widget> champs = _champs(context);
     final bool servi = _servi;
+    final bool bureau = _bureau(context);
+    Widget bouton({bool? pleineLargeur}) => _boutonGeste(
+      aRelire: aRelire,
+      refus: refus,
+      pleineLargeur: pleineLargeur,
+    );
 
     return Column(
       key: FeuilleGeste.cle,
@@ -469,33 +480,60 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           _bandeauRefus(),
         ],
         Ecart.vXxl,
-        if (aRelire || servi)
+        if (bureau)
+          // Sur ordinateur, les actions en ligne au bord de fin, a la largeur
+          // de leur contenu : « Annuler » discret, puis le geste (contrat B de
+          // DESIGN-GOV : pas de bouton pleine largeur sur bureau).
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.md,
+            children: <Widget>[
+              ActionPrincipale(
+                key: FeuilleGeste.cleAnnuler,
+                libelle: t.commun.annuler,
+                onPress: widget.onAnnuler,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
+              if (aRelire || servi) bouton(pleineLargeur: false),
+            ],
+          )
+        else ...<Widget>[
+          if (aRelire || servi) bouton(),
+          Ecart.vMd,
           ActionPrincipale(
-            key: aRelire ? FeuilleGeste.cleRelire : FeuilleGeste.cleValider,
-            libelle: aRelire
-                ? t.admin.candidatures.feuille.actualiser
-                : refus is GesteNonConfirme
-                ? t.commun.reessayer
-                : _libelleBouton,
-            onPress: aRelire
-                ? () =>
-                      widget.onFini(SortieFeuille(IssueFeuille.relire, _geste))
-                : _envoyer,
-            enCours: !aRelire && _enCours,
-            niveau: !aRelire && _geste.destructif
-                ? NiveauAction.destructive
-                : NiveauAction.principale,
+            key: FeuilleGeste.cleAnnuler,
+            libelle: t.commun.annuler,
+            onPress: widget.onAnnuler,
+            niveau: NiveauAction.secondaire,
           ),
-        Ecart.vMd,
-        ActionPrincipale(
-          key: FeuilleGeste.cleAnnuler,
-          libelle: t.commun.annuler,
-          onPress: widget.onAnnuler,
-          niveau: NiveauAction.secondaire,
-        ),
+        ],
       ],
     );
   }
+
+  /// Le bouton du geste (ou « Actualiser » quand la candidature a change).
+  Widget _boutonGeste({
+    required bool aRelire,
+    required RefusGeste? refus,
+    bool? pleineLargeur,
+  }) => ActionPrincipale(
+    key: aRelire ? FeuilleGeste.cleRelire : FeuilleGeste.cleValider,
+    libelle: aRelire
+        ? t.admin.candidatures.feuille.actualiser
+        : refus is GesteNonConfirme
+        ? t.commun.reessayer
+        : _libelleBouton,
+    onPress: aRelire
+        ? () => widget.onFini(SortieFeuille(IssueFeuille.relire, _geste))
+        : _envoyer,
+    enCours: !aRelire && _enCours,
+    niveau: !aRelire && _geste.destructif
+        ? NiveauAction.destructive
+        : NiveauAction.principale,
+    pleineLargeur: pleineLargeur,
+  );
 
   /// Vrai quand tout ce que le geste choisit est servi : sinon la feuille le
   /// dit et n'offre aucun bouton qui ne puisse pas aboutir.
@@ -556,6 +594,10 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
     ];
   }
 
+  /// Vrai sur ordinateur (840 et plus) : la feuille est un panneau lateral.
+  static bool _bureau(BuildContext context) =>
+      MediaQuery.sizeOf(context).width >= AppGabarit.seuilEtendu;
+
   Widget _titreChamp(String texte) => Semantics(
     header: true,
     child: TexteSansCoupure(
@@ -607,6 +649,10 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         ChoiceCardGroup(
           selectionMultiple: true,
           autoriserSaisieLibre: false,
+          // Sur ordinateur, des lignes compactes (48 a 56), pas de grandes
+          // cartes : ce sont de simples cases (directeur, 14/11/2026). Le
+          // telephone garde sa presentation.
+          compacte: _bureau(context),
           options: <OptionChoix>[
             for (final String code in codes)
               OptionChoix(
@@ -637,12 +683,43 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         Ecart.vSm,
         _indisponible(),
       ] else ...<Widget>[
-        ...groupe(FeuilleGeste.cleGroupeReponses, c.groupeReponses, reponses),
-        ...groupe(
-          FeuilleGeste.cleGroupeDocuments,
-          c.groupeDocuments,
-          documents,
-        ),
+        // Sur une largeur suffisante (panneau d'ordinateur), les deux groupes
+        // se placent cote a cote ; sinon l'un sous l'autre.
+        if (_bureau(context) && reponses.isNotEmpty && documents.isNotEmpty)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: groupe(
+                    FeuilleGeste.cleGroupeReponses,
+                    c.groupeReponses,
+                    reponses,
+                  ),
+                ),
+              ),
+              Ecart.hLg,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: groupe(
+                    FeuilleGeste.cleGroupeDocuments,
+                    c.groupeDocuments,
+                    documents,
+                  ),
+                ),
+              ),
+            ],
+          )
+        else ...<Widget>[
+          ...groupe(FeuilleGeste.cleGroupeReponses, c.groupeReponses, reponses),
+          ...groupe(
+            FeuilleGeste.cleGroupeDocuments,
+            c.groupeDocuments,
+            documents,
+          ),
+        ],
         Ecart.vSm,
         TexteSansCoupure(
           c.aide,
@@ -666,6 +743,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         _indisponible()
       else ...<Widget>[
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             for (final String code in permis)
@@ -749,6 +828,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         _indisponible()
       else ...<Widget>[
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             for (final CanalRetrait c in canaux)
@@ -830,6 +911,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         )
       else ...<Widget>[
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             for (final ({String valeur, String libelle}) x in moyens)
@@ -869,6 +952,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         ),
         Ecart.vSm,
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             OptionChoix(

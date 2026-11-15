@@ -35,6 +35,14 @@ enum FormeModale {
   /// Bureau : une boite de dialogue centree, meme contenu, meme largeur
   /// bornee, sans poignee de glissement (il n'y a pas de doigt).
   dialogue,
+
+  /// Bureau, a la demande de l'appelant : un panneau lateral ancre au bord de
+  /// fin, sur toute la hauteur, a cote du contenu qui reste visible (Material 3,
+  /// « at expanded, bottom sheets are swapped for a side sheet »). Le titre et
+  /// le corps defilent, la croix « Fermer » reste en haut, les actions au pied.
+  /// COMPLEMENT-ET-FORMATS (directeur, 14/11/2026 : « tu dois le rendre en
+  /// format web normal ») : les gestes de la direction sur un dossier.
+  panneau,
 }
 
 /// La feuille de bas d'ecran du produit.
@@ -101,6 +109,77 @@ class AppBottomSheet extends StatefulWidget {
     Gabarit.desktop => FormeModale.dialogue,
   };
 
+  /// La cle du panneau lateral (tests).
+  static const ValueKey<String> clePanneau = ValueKey<String>(
+    'feuille-panneau',
+  );
+
+  /// Le panneau lateral du bureau ([FormeModale.panneau]) : il glisse depuis
+  /// le bord de fin (le debut en arabe), sur toute la hauteur, borne a
+  /// [AppPage.largeurFormulaire]. Le voile, `Echap` et la croix le ferment.
+  static Future<T?> _ouvrirPanneau<T>(
+    BuildContext context, {
+    required AppPalette palette,
+    required String titre,
+    required Widget Function(BuildContext context) constructeur,
+    Widget Function(BuildContext context)? actions,
+    String? libelleFermer,
+  }) => showGeneralDialog<T>(
+    context: context,
+    barrierDismissible: true,
+    barrierLabel: libelleFermer ?? t.commun.fermer,
+    barrierColor: palette.voile,
+    transitionDuration: AppMouvement.feuilleOuverture,
+    pageBuilder:
+        (BuildContext contexte, Animation<double> _, Animation<double> _) =>
+            Align(
+              alignment: AlignmentDirectional.centerEnd,
+              child: SizedBox(
+                key: clePanneau,
+                width: AppPage.largeurFormulaire,
+                height: double.infinity,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Padding(
+                    padding: EdgeInsetsDirectional.only(
+                      bottom: MediaQuery.viewInsetsOf(contexte).bottom,
+                    ),
+                    child: AppBottomSheet(
+                      titre: titre,
+                      forme: FormeModale.panneau,
+                      actions: actions?.call(contexte),
+                      libelleFermer: libelleFermer ?? t.commun.fermer,
+                      child: constructeur(contexte),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+    transitionBuilder:
+        (
+          BuildContext contexte,
+          Animation<double> animation,
+          Animation<double> _,
+          Widget enfant,
+        ) {
+          final bool rtl = Directionality.of(contexte) == TextDirection.rtl;
+          return SlideTransition(
+            position:
+                Tween<Offset>(
+                  begin: Offset(rtl ? -1 : 1, 0),
+                  end: Offset.zero,
+                ).animate(
+                  CurvedAnimation(
+                    parent: animation,
+                    curve: AppMouvement.entree,
+                    reverseCurve: AppMouvement.sortie,
+                  ),
+                ),
+            child: enfant,
+          );
+        },
+  );
+
   /// Largeur de la poignee de glissement.
   static const double largeurPoignee = AppSpacing.section;
 
@@ -151,6 +230,7 @@ class AppBottomSheet extends StatefulWidget {
     required Widget Function(BuildContext context) constructeur,
     Widget Function(BuildContext context)? actions,
     String? libelleFermer,
+    bool panneauLateral = false,
   }) {
     final AppPalette palette = AppPalette.of(context);
     // WEB-BUREAU (B9, P2 ; M3 bottom sheets : « Use bottom sheets in compact
@@ -164,6 +244,17 @@ class AppBottomSheet extends StatefulWidget {
         classe == ClasseLargeur.etendue || classe == ClasseLargeur.large
         ? FormeModale.dialogue
         : formePour(AppGabarit.de(context));
+
+    if (forme == FormeModale.dialogue && panneauLateral) {
+      return _ouvrirPanneau<T>(
+        context,
+        palette: palette,
+        titre: titre,
+        constructeur: constructeur,
+        actions: actions,
+        libelleFermer: libelleFermer,
+      );
+    }
 
     if (forme == FormeModale.dialogue) {
       return showDialog<T>(
@@ -405,6 +496,17 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
     // DEFIL-FEUILLE-bis : la boite devenue la fenetre n'a plus de voile ou
     // cliquer pour fermer ; elle porte toujours la croix « Fermer ».
     final bool pleineFenetre = dialogue && _deborde && !basse;
+    // COMPLEMENT-ET-FORMATS : le panneau lateral a toujours la forme de la
+    // fenetre entiere, dans sa propre largeur.
+    if (widget.forme == FormeModale.panneau) {
+      return _pleineFenetre(
+        palette.surfaceOverlay,
+        _croix(context, palette, parDefaut: true),
+        _titre(palette.surfaceOverlay, textes),
+        KeyedSubtree(key: _cleCorps, child: widget.child),
+        panneau: true,
+      );
+    }
     final Widget? croix = _croix(context, palette, parDefaut: pleineFenetre);
     final bool croixEnBarre = croix != null && _deborde && !basse;
     final Widget titre = _titre(surface, textes);
@@ -494,16 +596,32 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
     AppColorPair surface,
     Widget? croix,
     Widget tete,
-    Widget corps,
-  ) {
-    Widget colonne(Widget enfant) => Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: AppPage.largeurDialogue),
-        child: enfant,
-      ),
-    );
-    return ColoredBox(
-      color: surface.background,
+    Widget corps, {
+    bool panneau = false,
+  }) {
+    Widget colonne(Widget enfant) => panneau
+        ? enfant
+        : Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppPage.largeurDialogue,
+              ),
+              child: enfant,
+            ),
+          );
+    final AppPalette palette = AppPalette.of(context);
+    return DecoratedBox(
+      // Le panneau porte l'ombre et le filet des surfaces qui recouvrent ; la
+      // fenetre entiere n'en a pas besoin.
+      decoration: panneau
+          ? AppElevation.avecFilet(
+              surface: surface,
+              filet: palette.borderHairline,
+              ombre: palette.ombre,
+              arrondi: BorderRadius.zero,
+              ombres: AppElevation.niveau3(palette.ombre),
+            )
+          : BoxDecoration(color: surface.background),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[

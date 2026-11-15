@@ -3,15 +3,19 @@
 // l'ouverture, et la nouvelle piece se demande en un geste (le complement
 // « pièce d'identité » deja coche).
 
+import 'dart:async';
+
 import 'package:flutter/widgets.dart'
-    show Offset, Size, TextDirection, ValueKey;
+    show Offset, Rect, Size, TextDirection, ValueKey;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/piece_candidature.dart';
 import 'package:rewayah_academy/core/capacites/port_revue_dossiers.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/widgets/app_bottom_sheet.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
 import 'package:rewayah_academy/features/admin_candidature/piece_sur_place.dart';
@@ -87,6 +91,49 @@ void main() {
     );
     expect(groupe.valeurInitiale?.valeurs, <String>{'piece_identite'});
   });
+
+  testWidgets(
+    'ordinateur : la feuille est un panneau lateral, groupes cote a cote, '
+    'actions en ligne au bord de fin',
+    (WidgetTester tester) async {
+      await monterCandidature(
+        tester,
+        port: _port(),
+        largeur: 1440,
+        hauteur: 900,
+        surcharges: _surcharges(illisible: true),
+      );
+      await tester.ensureVisible(find.byKey(PieceSurPlace.cleRedemander));
+      await tester.tap(find.byKey(PieceSurPlace.cleRedemander));
+      await tester.pumpAndSettle();
+      final Rect panneau = tester.getRect(
+        find.byKey(AppBottomSheet.clePanneau),
+      );
+      expect(panneau.right, 1440);
+      expect(panneau.top, 0);
+      expect(panneau.height, 900);
+      expect(panneau.width, lessThan(1440 / 2));
+      // Les deux groupes cote a cote.
+      final Rect reponses = tester.getRect(
+        find.byKey(FeuilleGeste.cleGroupeReponses),
+      );
+      final Rect documents = tester.getRect(
+        find.byKey(FeuilleGeste.cleGroupeDocuments),
+      );
+      expect(reponses.top, documents.top);
+      expect(reponses.left, lessThan(documents.left));
+      // Les actions : sur la meme ligne, le geste en dernier, a la largeur de
+      // son contenu.
+      await tester.ensureVisible(find.byKey(FeuilleGeste.cleValider));
+      await tester.pumpAndSettle();
+      final Rect annuler = tester.getRect(find.byKey(FeuilleGeste.cleAnnuler));
+      final Rect valider = tester.getRect(find.byKey(FeuilleGeste.cleValider));
+      expect(annuler.center.dy, closeTo(valider.center.dy, 1));
+      expect(valider.left, greaterThan(annuler.right));
+      // A la largeur de son contenu, jamais celle du panneau.
+      expect(valider.width + annuler.width, lessThan(panneau.width));
+    },
+  );
 
   testWidgets('piece lisible : aucune phrase de format', (
     WidgetTester tester,
@@ -164,6 +211,51 @@ void main() {
           );
         });
       }
+    }
+  }, skip: sautSansCapture);
+
+  // Captures R3 a 1440 de chaque geste de la direction : le panneau lateral.
+  group('captures des gestes au panneau lateral', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final GesteCandidature geste in <GesteCandidature>[
+      GesteCandidature.demanderComplement,
+      GesteCandidature.cloreComplement,
+      GesteCandidature.admettreVerifications,
+      GesteCandidature.confirmerMoyenPaiement,
+      GesteCandidature.infirmerMoyenPaiement,
+      GesteCandidature.mettreEnPause,
+      GesteCandidature.leverPause,
+      GesteCandidature.refuser,
+      GesteCandidature.consignerRetrait,
+      GesteCandidature.rouvrir,
+      GesteCandidature.definirResponsable,
+    ]) {
+      testWidgets('geste ${geste.name} 1440 fr', (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.fr));
+        await monterCandidature(
+          tester,
+          port: _port(),
+          largeur: 1440,
+          hauteur: 900,
+          surcharges: _surcharges(illisible: true),
+        );
+        unawaited(
+          ouvrirFeuilleGeste(
+            tester.element(find.byKey(PieceSurPlace.cleIllisible)),
+            geste: geste,
+            detail: detailTest(),
+            capacites: capacitesGestes,
+          ),
+        );
+        await tester.pumpAndSettle();
+        expect(find.byKey(AppBottomSheet.clePanneau), findsOneWidget);
+        await stabiliser(tester);
+        await capturerVue(
+          tester,
+          'complement-et-formats/geste-${geste.name}-1440-fr',
+        );
+      });
     }
   }, skip: sautSansCapture);
 }
