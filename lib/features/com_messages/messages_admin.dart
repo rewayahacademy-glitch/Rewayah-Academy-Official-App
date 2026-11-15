@@ -109,10 +109,8 @@ class MessagesAdminPage extends ConsumerWidget {
     // des conversations est une loupe sur la rangee Annonces / Messages,
     // plus une ligne pleine au-dessus de la liste.
     final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
-    final RechercheFilsControleur recherche = ref
-        .read(memoireMessagesProvider)
-        .recherche
-      ..loupeEnTete = telephone;
+    final RechercheFilsControleur recherche =
+        ref.read(memoireMessagesProvider).recherche..loupeEnTete = telephone;
     return PageShell(
       actionsEntete: <Widget>[
         if (telephone)
@@ -141,6 +139,10 @@ class MessagesAdminPage extends ConsumerWidget {
       // une page de domaine, sans retour (la coquille porte la navigation).
       onRetour: retour,
       defilante: false,
+      // ENTETE-COMMUNICATIONS (directeur, 16/11/2026 : « l'en-tete prend la
+      // moitie de l'ecran ») : au telephone, une seule rangee (retour,
+      // Annonces / Messages, cloche) qui defile avec la liste (LISTES-2).
+      teteAvecLaListe: AppGabarit.de(context) == Gabarit.mobile,
       child: EspaceMessagesMetier(
         filId: filId,
         // COM-R-3, constat 8 : le meme retour, dans la ligne compacte du fil.

@@ -170,6 +170,12 @@ class _AdministrationCommunicationsPageState
         ),
         // La file de moderation et ses colonnes defilent elles-memes.
         defilante: widget.onglet != OngletCommunications.moderation,
+        // ENTETE-COMMUNICATIONS (directeur, 16/11/2026) : au telephone, une
+        // seule rangee (retour, Annonces / Messages, cloche), sans grand
+        // titre ; elle defile avec la page.
+        teteAvecLaListe:
+            AppGabarit.de(contexte) == Gabarit.mobile &&
+            widget.onglet != OngletCommunications.moderation,
         child: _onglet(),
       ),
     );
