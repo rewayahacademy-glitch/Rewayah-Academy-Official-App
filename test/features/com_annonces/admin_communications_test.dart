@@ -227,10 +227,24 @@ void main() {
             );
             await tester.ensureVisible(find.byKey(MatriceAudience.cle));
             await tester.pumpAndSettle();
-            final ScrollPosition position = tester
-                .state<ScrollableState>(liste.first)
-                .position;
-            expect(position.maxScrollExtent, 0);
+            // ANNONCES-DEFILEMENT (directeur, 15/11/2026) : une liste qui
+            // ne defile pas mais garde un defileur vole le geste de la page
+            // au telephone. La matrice defile avec la page : aucun defileur
+            // interieur ne peut prendre le doigt.
+            for (final Element e in liste.evaluate()) {
+              final Scrollable defileur = e.widget as Scrollable;
+              expect(
+                defileur.physics,
+                isA<NeverScrollableScrollPhysics>(),
+                reason: 'la matrice ne doit pas defiler seule',
+              );
+            }
+            if (liste.evaluate().isNotEmpty) {
+              final ScrollPosition position = tester
+                  .state<ScrollableState>(liste.first)
+                  .position;
+              expect(position.maxScrollExtent, 0);
+            }
           },
         );
       }

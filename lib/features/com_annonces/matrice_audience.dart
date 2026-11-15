@@ -21,7 +21,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
-import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/data_collection.dart';
@@ -49,23 +48,6 @@ class MatriceAudience extends ConsumerWidget {
   /// La cle d'une ligne, pour les tests.
   static ValueKey<String> cleLigne(String id) =>
       ValueKey<String>('administration-regle-$id');
-
-  /// La hauteur estimee de la collection, avant sa premiere mise en page :
-  /// `DataCollection` defile elle-meme et demande une boite bornee. Tableau :
-  /// l'en-tete puis une ligne de reglage par regle ; cartes : une carte de
-  /// choix par regle ; le tout suit l'agrandissement du texte (`textScaler`).
-  /// L'estimation n'est qu'un depart : [_HauteurNaturelle] agrandit la boite
-  /// de ce qui deborde encore, pour que la matrice garde sa hauteur naturelle
-  /// et ne devienne jamais une zone a defilement imbrique dans la page qui
-  /// defile deja (texte x2, libelles longs, telephone).
-  static double hauteurPour(BuildContext context, int lignes) {
-    final double base = AppGabarit.de(context) == Gabarit.desktop
-        ? AppSpacing.titreEcran + lignes * AppPage.hauteurReglage
-        : lignes * (AppPage.hauteurChoix + AppSpacing.lg);
-    final double facteur =
-        MediaQuery.textScalerOf(context).scale(AppSpacing.lg) / AppSpacing.lg;
-    return base * (facteur < 1 ? 1 : facteur);
-  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -97,10 +79,15 @@ class MatriceAudience extends ConsumerWidget {
             titre: m.vide,
             phrase: '',
           ),
-          construire: (ReglesAudience v) => _HauteurNaturelle(
+          // ANNONCES-DEFILEMENT (directeur, 15/11/2026) : la matrice defile
+          // avec la page, sans defileur propre. L'ancienne boite a hauteur
+          // calculee gardait une liste qui defile dans la page qui defile :
+          // au telephone, le doigt pose sur les cartes ne faisait plus
+          // defiler la page (DECISION-DEFILEMENT-2026-11-01).
+          construire: (ReglesAudience v) => KeyedSubtree(
             key: cleCollection,
-            estimee: hauteurPour(context, v.regles.length),
             child: DataCollection<RegleAudience>(
+              defileAvecLaPage: true,
               lignes: v.regles,
               cle: (RegleAudience r) => cleLigne(r.id),
               colonnes: <ColonneDonnees<RegleAudience>>[
@@ -145,52 +132,4 @@ class MatriceAudience extends ConsumerWidget {
       ],
     );
   }
-}
-
-/// Une boite bornee qui prend la hauteur naturelle de la collection qu'elle
-/// porte : elle part de [estimee], puis s'agrandit de ce que la liste
-/// interieure peut encore defiler (`ScrollMetricsNotification`, emise apres
-/// chaque mise en page qui change les mesures), jusqu'a ce que plus rien ne
-/// defile.
-class _HauteurNaturelle extends StatefulWidget {
-  const _HauteurNaturelle({
-    required this.estimee,
-    required this.child,
-    super.key,
-  });
-
-  final double estimee;
-  final Widget child;
-
-  @override
-  State<_HauteurNaturelle> createState() => _HauteurNaturelleState();
-}
-
-class _HauteurNaturelleState extends State<_HauteurNaturelle> {
-  late double _hauteur = widget.estimee;
-
-  @override
-  void didUpdateWidget(_HauteurNaturelle ancien) {
-    super.didUpdateWidget(ancien);
-    // Une autre estimation (lignes, gabarit, taille du texte) : on repart
-    // d'elle, puis la boite s'ajuste de nouveau.
-    if (ancien.estimee != widget.estimee) _hauteur = widget.estimee;
-  }
-
-  bool _mesurer(ScrollMetricsNotification notification) {
-    final ScrollMetrics mesures = notification.metrics;
-    if (notification.depth == 0 &&
-        mesures.axis == Axis.vertical &&
-        mesures.maxScrollExtent > 0) {
-      setState(() => _hauteur += mesures.maxScrollExtent);
-    }
-    return false;
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      NotificationListener<ScrollMetricsNotification>(
-        onNotification: _mesurer,
-        child: SizedBox(height: _hauteur, child: widget.child),
-      );
 }
