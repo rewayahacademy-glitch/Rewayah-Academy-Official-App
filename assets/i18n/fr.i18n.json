@@ -8532,6 +8532,8 @@
   },
   "notifications": {
     "evenements": {
+      "annonceDirection": "Annonce de l'académie",
+      "annonceDirectionTitre": "Annonce : {titre}",
       "bienvenueEquipe": "Bienvenue dans l'équipe. Il vous reste à configurer votre espace.",
       "retenuEntretien": "Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l'application.",
       "pauseRepondueAcceptee": "La pause d'un mois {dePrenom} est acceptée pour {mois}. Sa date limite recule d'autant. Sa place est gardée.",
@@ -12644,6 +12646,77 @@
       "vide": "Aucune activité à traiter ici."
     },
     "annonces": {
+      "simple": {
+        "titre": "Nouvelle annonce",
+        "aQui": "À qui",
+        "aQuiContexte": "Choisissez un ou plusieurs publics. Sous chacun, le nombre de personnes qu'il atteint.",
+        "aQuiFiltres": "« Femmes » et « Hommes » restreignent les autres publics choisis.",
+        "publics": {
+          "tous": "Tout le monde",
+          "enseignants": "Tous les enseignants",
+          "candidats": "Candidats en cours",
+          "candidatsAdmis": "Candidats admis",
+          "familles": "Familles (parents et tuteurs)",
+          "eleves": "Élèves",
+          "elevesAdultes": "Élèves adultes",
+          "femmes": "Femmes",
+          "hommes": "Hommes"
+        },
+        "personnes(plural)": {
+          "one": "{n} personne",
+          "other": "{n} personnes"
+        },
+        "elevesDetail": "Un enfant ne reçoit jamais d'annonce : son parent la reçoit pour lui.",
+        "classeContexte": "Cette annonce part vers {cible}, et seulement vers elle.",
+        "message": "Le message",
+        "champTitre": "Titre (facultatif)",
+        "champTexte": "Message",
+        "options": "Options",
+        "programmer": "Programmer l'envoi",
+        "programmerDetail": "Choisissez un moment : l'annonce l'attend.",
+        "courriel": "Envoyer aussi par courriel",
+        "courrielDetail": "En plus de l'application. Chacun peut se désinscrire de ces courriels.",
+        "courrielUnJour": "Courriels à envoyer : {adresses}. Ils partent dans la journée.",
+        "courrielJours": "Courriels à envoyer : {adresses}. Au plus {parJour} partent par jour : avec ceux qui attendent déjà, l'envoi prendra environ {jours} jours.",
+        "courrielAucun": "Aucune adresse de courriel joignable dans ce public.",
+        "envoyerA(plural)": {
+          "one": "Envoyer à {n} personne",
+          "other": "Envoyer à {n} personnes"
+        },
+        "programmerPour(plural)": {
+          "one": "Programmer pour {n} personne",
+          "other": "Programmer pour {n} personnes"
+        },
+        "publierDans": "Publier dans {cible}",
+        "envoyer": "Envoyer l'annonce",
+        "manquePublic": "Choisissez au moins un public pour envoyer.",
+        "manqueTexte": "Écrivez le message pour envoyer.",
+        "calcul": "Calcul du nombre de personnes.",
+        "videPersonne": "Personne ne correspond à ce choix : rien ne peut partir. Choisissez un autre public.",
+        "videCote": "Votre profil ne dit pas si vous êtes une femme ou un homme : la séparation des côtés empêche l'envoi. Demandez au directeur de compléter votre profil.",
+        "audienceEchec": "Le nombre de personnes n'a pas pu être calculé. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez.",
+        "apercuTitre": "Ce que verront les destinataires",
+        "apercuVide": "Votre message apparaîtra ici.",
+        "apercuSansTitre": "Sans titre, la première ligne du message sert de titre.",
+        "confirmerTitre": "Envoyer cette annonce ?",
+        "confirmerTexte(plural)": {
+          "one": "Elle part vers {publics} : {n} personne. Elle ne pourra plus être modifiée.",
+          "other": "Elle part vers {publics} : {n} personnes. Elle ne pourra plus être modifiée."
+        },
+        "confirmerProgrammee": "Elle partira le {date} à {heure}.",
+        "confirmerCourriel": "Un courriel part aussi à chacun.",
+        "revenir": "Revenir au message",
+        "envoyee(plural)": {
+          "one": "Annonce envoyée à {n} personne.",
+          "other": "Annonce envoyée à {n} personnes."
+        }
+      },
+      "fil": {
+        "echec": "Les annonces de l'académie n'ont pas pu être chargées. Réessayez.",
+        "titre": "Annonces de l'académie",
+        "nouvelle": "Nouvelle",
+        "date": "Le {date} à {heure}"
+      },
       "toutesAcademie": "Toute l'académie",
       "publieur": {
         "titre": "Nouvelle annonce",
@@ -12714,6 +12787,8 @@
           "reserve": "{libelle}\u00a0: réservé aux personnes chargées de la modération"
         },
         "publiees": {
+          "mesure": "Vue par {vues} sur {n}",
+          "mesureSansTotal": "Vue par {vues}",
           "titre": "Annonces publiées",
           "vide": "Aucune annonce publiée sur la période.",
           "pastille": "Publiée",

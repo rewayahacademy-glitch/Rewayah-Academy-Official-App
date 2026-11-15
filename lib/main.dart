@@ -249,8 +249,10 @@ import 'features/accueil_adulte/port_espace_adulte.dart';
 import 'features/admin_invitations/familles_importees.dart';
 import 'features/admin_invitations/familles_importees_supabase.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
+import 'features/com_annonces/annonces_direction_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
+import 'features/com_annonces/port_annonces_direction.dart';
 import 'features/com_annonces/port_regles_audience.dart';
 import 'features/com_annonces/regles_audience_supabase.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
@@ -1046,7 +1048,15 @@ List<Override> _surchargesAppReelle() => <Override>[
       appelRpcSupabase(Supabase.instance.client),
       libelles: const LibellesCommunicationSlang(),
     ),
-  ), // N1 (02/11/2026) : capacites Communications (ecrire, publier,
+  ),
+  // ANNONCES-SIMPLES (14/11/2026) : les publics de la direction et le fil
+  // d'annonces de la personne. Relu quand la personne connectee change.
+  portAnnoncesDirectionProvider.overrideWith((Ref ref) {
+    ref.watch(sessionProvider.select((SessionState s) => s.profileId));
+    return AnnoncesDirectionSupabase(
+      appelRpcSupabase(Supabase.instance.client),
+    );
+  }), // N1 (02/11/2026) : capacites Communications (ecrire, publier,
   // programmer), regles de portee des annonces et alertes de la direction
   // sur les signalements des enseignants. Relues quand la personne connectee
   // change : une capacite appartient a un compte, pas a l'appareil.

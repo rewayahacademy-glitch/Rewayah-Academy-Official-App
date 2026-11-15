@@ -101,6 +101,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   // La cloche de nuit ne peut pas retablir une seance qui n'est plus sous une
   // fermeture : la direction est avertie, un humain tranche.
   'fermeture_conflit',
+  // ANNONCES-SIMPLES (14/11/2026, migration 20261126900000) : une annonce de
+  // la direction, aux adultes seulement (jamais un mineur).
+  'annonce_direction',
 };
 
 const Set<String> _destinationsAutorisees = <String>{
@@ -514,6 +517,10 @@ Map<String, dynamic> _parametresAffichables(Map<dynamic, dynamic> bruts) {
     // deux enfants dans la meme classe recoit deux avis). Un prenom, jamais un
     // identifiant ; jamais pose pour l'eleve adulte lui-meme.
     'eleve_prenom',
+    // ANNONCES-SIMPLES : le titre de l'annonce et son debut, ecrits par la
+    // direction pour ce public (jamais un identifiant).
+    'titre',
+    'extrait',
   };
   // FN-028 : des comptes et un drapeau, jamais un identifiant.
   const Set<String> clesNombres = <String>{'presents', 'inscrits'};
@@ -588,6 +595,7 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'piece_identite_deposee' ||
   'suppression_compte_demandee' => TypeNotification.decisionDossier,
   'message_candidat_recu' => TypeNotification.messageMetier,
+  'annonce_direction' => TypeNotification.annonceDirection,
   'remplacement_personne_en_salle' => TypeNotification.remplacement,
   'signalement_eleve_recu' => TypeNotification.evenementOperationnel,
   'cahier_en_retard' => TypeNotification.changementSeance,

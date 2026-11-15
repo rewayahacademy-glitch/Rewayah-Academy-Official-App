@@ -174,6 +174,18 @@ NotificationContenu contenuNotificationPour(
     _ => sinon,
   };
 
+  // ANNONCES-SIMPLES (14/11/2026) : l'annonce de la direction, son titre et
+  // son debut tels que la direction les a ecrits.
+  if (evenement == 'annonce_direction') {
+    final String titreAnnonce = '${params['titre'] ?? ''}'.trim();
+    final String extrait = '${params['extrait'] ?? ''}'.trim();
+    return NotificationContenu(
+      titre: titreAnnonce.isEmpty
+          ? evenements.annonceDirection
+          : evenements.annonceDirectionTitre(titre: titreAnnonce),
+      texte: extrait.isEmpty ? null : extrait,
+    );
+  }
   final String titre = switch (evenement) {
     'demande_recue' => evenements.demandeRecue,
     'demande_presentation' => evenements.demandePresentation,

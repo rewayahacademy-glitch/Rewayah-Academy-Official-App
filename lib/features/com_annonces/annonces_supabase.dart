@@ -19,6 +19,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
 import '../../core/communications/modeles_communication.dart';
 import 'port_annonces.dart';
+import 'port_annonces_direction.dart';
 
 /// Les annonces servies par Supabase.
 class AnnoncesSupabase implements PortAnnonces {
@@ -158,9 +159,19 @@ class AnnoncesSupabase implements PortAnnonces {
 
   @override
   Future<AnnoncesAdministration> annoncesAdministration() async {
-    final Map<String, dynamic> v = objetJson(
-      await _lire('com_annonces_administration', const <String, dynamic>{}),
-    );
+    // ANNONCES-SIMPLES (migration 20261126900000) : la liste avec sa mesure
+    // (destinataires, vues). Avant la migration, la lecture d'origine.
+    Map<String, dynamic> v;
+    try {
+      v = objetJson(
+        await _appel('com_annonces_direction', const <String, dynamic>{}),
+      );
+    } on Object catch (e) {
+      if (!estRefusOuAbsence(e)) rethrow;
+      v = objetJson(
+        await _lire('com_annonces_administration', const <String, dynamic>{}),
+      );
+    }
     List<AnnonceAdministration> liste(Object? brut) =>
         List<AnnonceAdministration>.unmodifiable(<AnnonceAdministration>[
           for (final Map<String, dynamic> a in listeJson(brut))
@@ -168,9 +179,22 @@ class AnnoncesSupabase implements PortAnnonces {
               id: texteJson(a, 'id'),
               titre: texteJson(a, 'titre'),
               texte: texteJson(a, 'texte'),
-              cible: cibleJson(objetJson(a['cible']), libelles),
+              cible: a['publics'] is List
+                  ? CibleAnnonce(
+                      id: 'publics',
+                      nature: NatureCible.public,
+                      libelle: libellesPublics(<String>[
+                        for (final Object? c in a['publics'] as List<Object?>)
+                          if (c is String) c,
+                      ], ordrePublics),
+                    )
+                  : cibleJson(objetJson(a['cible']), libelles),
               etat: _etat(a['etat']),
               le: instantJson(a, 'le'),
+              destinataires: a['destinataires'] is num
+                  ? (a['destinataires'] as num).toInt()
+                  : null,
+              vues: a['vues'] is num ? (a['vues'] as num).toInt() : null,
             ),
         ]);
     return AnnoncesAdministration(

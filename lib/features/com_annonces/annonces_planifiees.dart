@@ -7,9 +7,11 @@
 // « Planifiee ») : cet etat vient de la lecture serveur, jamais d'une
 // supposition de l'ecran (spec section 20).
 //
-// Ce que la maquette montre et qui n'est pas repris : la fleche de tendance,
-// les vues et les commentaires d'une annonce (une annonce n'est pas un fil,
-// spec section 13.3 ; UX_REVIEW L0, ecart 16).
+// Ce que la maquette montre et qui n'est pas repris : la fleche de tendance
+// et les commentaires d'une annonce (une annonce n'est pas un fil, spec
+// section 13.3 ; UX_REVIEW L0, ecart 16). ANNONCES-SIMPLES (directeur,
+// 14/11/2026) : chaque annonce publiee dit combien de personnes l'ont vue,
+// nombre lu par le serveur (`com_annonces_direction`).
 //
 // Donnees de demonstration : la section le dit en clair (« Démonstration »)
 // sous son titre (COM-BR-A08).
@@ -218,11 +220,21 @@ LigneRubrique ligneAnnonceAdministration(AnnonceAdministration annonce) {
     EtatAnnonce.publiee => LigneRubrique(
       libelle: annonce.titre,
       pastille: StatusPill(libelle: a.publiees.pastille, ton: TonEtat.succes),
-      legende: a.publiees.legende(
-        cible: annonce.cible.libelle,
-        date: date,
-        heure: heure,
-      ),
+      legende: <String>[
+        a.publiees.legende(
+          cible: annonce.cible.libelle,
+          date: date,
+          heure: heure,
+        ),
+        // ANNONCES-SIMPLES : combien de personnes l'ont vue (serveur).
+        if (annonce.vues != null)
+          annonce.destinataires == null
+              ? a.publiees.mesureSansTotal(vues: '${annonce.vues}')
+              : a.publiees.mesure(
+                  vues: '${annonce.vues}',
+                  n: '${annonce.destinataires}',
+                ),
+      ].join(' · '),
     ),
     EtatAnnonce.planifiee => LigneRubrique(
       libelle: annonce.titre,

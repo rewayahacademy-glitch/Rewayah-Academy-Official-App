@@ -57,6 +57,7 @@ import 'annonces_planifiees.dart';
 import 'file_moderation.dart';
 import 'matrice_audience.dart';
 import 'port_annonces.dart';
+import 'port_annonces_direction.dart';
 import 'port_regles_audience.dart';
 import 'publieur_annonce.dart';
 
@@ -503,8 +504,8 @@ class _Indicateur extends StatelessWidget {
   }
 }
 
-/// Le publieur de l'Administration : les audiences ouvertes par le serveur,
-/// puis le publieur unique.
+/// Le publieur de la direction (ANNONCES-SIMPLES) : les publics ouverts par
+/// le serveur, avec leurs nombres, puis le publieur sur un seul ecran.
 class _PublicationAdministration extends ConsumerWidget {
   const _PublicationAdministration({
     required this.onConfirmee,
@@ -518,18 +519,67 @@ class _PublicationAdministration extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return ChargementPublieur(
-      classeId: null,
-      titre: t.com.annonces.publieur.titre,
-      onQuitter: onQuitter,
-      construire: (List<CibleAnnonce> cibles, bool peutProgrammer) =>
-          PublieurAnnonce(
-            cibles: cibles,
-            peutProgrammer: peutProgrammer,
-            horloge: horloge,
-            onConfirmee: onConfirmee,
-            onQuitter: onQuitter,
-          ),
+    final p = t.com.annonces.publieur;
+    final AsyncValue<List<PublicAnnonce>> publics = ref.watch(
+      publicsAnnonceProvider,
+    );
+    final AsyncValue<CapacitesCommunication> capacites = ref.watch(
+      capacitesCommunicationProvider,
+    );
+    if (publics.hasValue &&
+        !publics.hasError &&
+        publics.requireValue.isNotEmpty &&
+        capacites.hasValue &&
+        !capacites.hasError) {
+      return PublieurAnnonce.direction(
+        publics: publics.requireValue,
+        peutProgrammer: capacites.requireValue.peut(
+          CapaciteCommunication.programmer,
+        ),
+        horloge: horloge,
+        onConfirmee: onConfirmee,
+        onQuitter: onQuitter,
+      );
+    }
+    void relire() => ref
+      ..invalidate(publicsAnnonceProvider)
+      ..invalidate(capacitesCommunicationProvider);
+    final Object? erreur = publics.error ?? capacites.error;
+    final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    final Widget corps;
+    if (erreur is CapaciteIndisponible) {
+      corps = EtatSysteme(
+        nature: NatureEtat.indisponible,
+        titre: t.com.socle.composants.etats.indisponibleTitre,
+        phrase: p.indisponible,
+        dependance: erreur.dependance,
+      );
+    } else if (erreur != null) {
+      corps =
+          etatErreurAdministration(horsLigne, erreur, relire) ??
+          VueEtatCommunication(
+            etat: EtatCommunication.erreur,
+            onReessayer: relire,
+          );
+    } else if (publics.hasValue && capacites.hasValue) {
+      corps = EtatSysteme(
+        nature: NatureEtat.accesRefuse,
+        titre: p.aucuneCibleTitre,
+        phrase: p.aucuneCible,
+      );
+    } else {
+      corps = Semantics(
+        label: t.com.socle.composants.etats.chargement,
+        child: const ExcludeSemantics(child: Skeleton.liste()),
+      );
+    }
+    return PageShell(
+      titre: t.com.annonces.simple.titre,
+      onRetour: onQuitter,
+      bandeauHorsLigne: BandeauHorsLigneCommunication(
+        message: t.com.annonces.administration.horsLigne,
+      ),
+      child: corps,
     );
   }
 }

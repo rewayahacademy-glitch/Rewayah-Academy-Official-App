@@ -8535,6 +8535,8 @@
   },
   "notifications": {
     "evenements": {
+      "annonceDirection": "Academy announcement",
+      "annonceDirectionTitre": "Announcement: {titre}",
       "bienvenueEquipe": "Welcome to the team. You still need to set up your space.",
       "retenuEntretien": "You have been selected for an interview. Let's get to know each other: choose your time in the app.",
       "pauseRepondueAcceptee": "{dePrenom}'s one-month pause is accepted for {mois}. Their deadline moves back by the same amount. Their place is kept.",
@@ -12656,6 +12658,77 @@
       "vide": "No activity to handle here."
     },
     "annonces": {
+      "simple": {
+        "titre": "New announcement",
+        "aQui": "To whom",
+        "aQuiContexte": "Choose one or more audiences. Under each one, the number of people it reaches.",
+        "aQuiFiltres": "“Women” and “Men” narrow the other audiences you choose.",
+        "publics": {
+          "tous": "Everyone",
+          "enseignants": "All teachers",
+          "candidats": "Current candidates",
+          "candidatsAdmis": "Admitted candidates",
+          "familles": "Families (parents and guardians)",
+          "eleves": "Students",
+          "elevesAdultes": "Adult students",
+          "femmes": "Women",
+          "hommes": "Men"
+        },
+        "personnes(plural)": {
+          "one": "{n} person",
+          "other": "{n} people"
+        },
+        "elevesDetail": "A child never receives an announcement: their parent receives it for them.",
+        "classeContexte": "This announcement goes to {cible}, and only to it.",
+        "message": "The message",
+        "champTitre": "Title (optional)",
+        "champTexte": "Message",
+        "options": "Options",
+        "programmer": "Schedule the sending",
+        "programmerDetail": "Choose a time: the announcement waits for it.",
+        "courriel": "Also send by email",
+        "courrielDetail": "In addition to the app. Anyone can unsubscribe from these emails.",
+        "courrielUnJour": "Emails to send: {adresses}. They go out within the day.",
+        "courrielJours": "Emails to send: {adresses}. At most {parJour} go out per day: with those already waiting, sending will take about {jours} days.",
+        "courrielAucun": "No reachable email address in this audience.",
+        "envoyerA(plural)": {
+          "one": "Send to {n} person",
+          "other": "Send to {n} people"
+        },
+        "programmerPour(plural)": {
+          "one": "Schedule for {n} person",
+          "other": "Schedule for {n} people"
+        },
+        "publierDans": "Publish in {cible}",
+        "envoyer": "Send the announcement",
+        "manquePublic": "Choose at least one audience to send.",
+        "manqueTexte": "Write the message to send.",
+        "calcul": "Counting the people.",
+        "videPersonne": "Nobody matches this choice: nothing can be sent. Choose another audience.",
+        "videCote": "Your profile does not say whether you are a woman or a man: the separation of sides prevents sending. Ask the director to complete your profile.",
+        "audienceEchec": "The number of people could not be counted. The request may not have reached Rewayah. Try again.",
+        "apercuTitre": "What recipients will see",
+        "apercuVide": "Your message will appear here.",
+        "apercuSansTitre": "Without a title, the first line of the message is used as the title.",
+        "confirmerTitre": "Send this announcement?",
+        "confirmerTexte(plural)": {
+          "one": "It goes to {publics}: {n} person. It can no longer be changed.",
+          "other": "It goes to {publics}: {n} people. It can no longer be changed."
+        },
+        "confirmerProgrammee": "It will go out on {date} at {heure}.",
+        "confirmerCourriel": "An email also goes to each person.",
+        "revenir": "Back to the message",
+        "envoyee(plural)": {
+          "one": "Announcement sent to {n} person.",
+          "other": "Announcement sent to {n} people."
+        }
+      },
+      "fil": {
+        "echec": "Academy announcements could not be loaded. Try again.",
+        "titre": "Academy announcements",
+        "nouvelle": "New",
+        "date": "On {date} at {heure}"
+      },
       "toutesAcademie": "The whole academy",
       "publieur": {
         "titre": "New announcement",
@@ -12726,6 +12799,8 @@
           "reserve": "{libelle}: reserved for the people in charge of moderation"
         },
         "publiees": {
+          "mesure": "Seen by {vues} of {n}",
+          "mesureSansTotal": "Seen by {vues}",
           "titre": "Announcements published",
           "vide": "No announcement published in the period.",
           "pastille": "Published",

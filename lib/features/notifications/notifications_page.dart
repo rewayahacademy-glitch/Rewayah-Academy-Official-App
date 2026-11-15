@@ -32,6 +32,7 @@ import '../../core/widgets/pressable.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/vue_etat_communication.dart';
+import '../com_annonces/annonces_recues.dart';
 import '../com_annonces/port_annonces.dart';
 import '../suivi_foyer/composants_historique.dart';
 import '../suivi_foyer/filtres_historique.dart';
@@ -500,6 +501,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               ),
             ),
             Ecart.vMd,
+            // ANNONCES-SIMPLES (14/11/2026) : les annonces de l'academie, en
+            // tete ; rien quand il n'y en a aucune.
+            const ColonneHistorique(child: AnnoncesRecues()),
             _corps(valeur, horsLigne),
           ],
         ),

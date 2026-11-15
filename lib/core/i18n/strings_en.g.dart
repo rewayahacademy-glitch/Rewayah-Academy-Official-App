@@ -7474,6 +7474,8 @@ class _Traductions$notifications$evenements$en extends Traductions$notifications
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String get annonceDirection => 'Academy announcement';
+	@override String annonceDirectionTitre({required Object titre}) => 'Announcement: ${titre}';
 	@override String get bienvenueEquipe => 'Welcome to the team. You still need to set up your space.';
 	@override String get retenuEntretien => 'You have been selected for an interview. Let\'s get to know each other: choose your time in the app.';
 	@override String pauseRepondueAcceptee({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause is accepted for ${mois}. Their deadline moves back by the same amount. Their place is kept.';
@@ -10439,6 +10441,8 @@ class _Traductions$com$annonces$en extends Traductions$com$annonces$fr {
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$com$annonces$simple$en simple = _Traductions$com$annonces$simple$en._(_root);
+	@override late final _Traductions$com$annonces$fil$en fil = _Traductions$com$annonces$fil$en._(_root);
 	@override String get toutesAcademie => 'The whole academy';
 	@override late final _Traductions$com$annonces$publieur$en publieur = _Traductions$com$annonces$publieur$en._(_root);
 	@override late final _Traductions$com$annonces$administration$en administration = _Traductions$com$annonces$administration$en._(_root);
@@ -19609,6 +19613,81 @@ class _Traductions$com$studio$demo$en extends Traductions$com$studio$demo$fr {
 	@override late final _Traductions$com$studio$demo$f$en f = _Traductions$com$studio$demo$f$en._(_root);
 }
 
+// Path: com.annonces.simple
+class _Traductions$com$annonces$simple$en extends Traductions$com$annonces$simple$fr {
+	_Traductions$com$annonces$simple$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'New announcement';
+	@override String get aQui => 'To whom';
+	@override String get aQuiContexte => 'Choose one or more audiences. Under each one, the number of people it reaches.';
+	@override String get aQuiFiltres => '“Women” and “Men” narrow the other audiences you choose.';
+	@override late final _Traductions$com$annonces$simple$publics$en publics = _Traductions$com$annonces$simple$publics$en._(_root);
+	@override String personnes({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} person',
+		other: '${n} people',
+	);
+	@override String get elevesDetail => 'A child never receives an announcement: their parent receives it for them.';
+	@override String classeContexte({required Object cible}) => 'This announcement goes to ${cible}, and only to it.';
+	@override String get message => 'The message';
+	@override String get champTitre => 'Title (optional)';
+	@override String get champTexte => 'Message';
+	@override String get options => 'Options';
+	@override String get programmer => 'Schedule the sending';
+	@override String get programmerDetail => 'Choose a time: the announcement waits for it.';
+	@override String get courriel => 'Also send by email';
+	@override String get courrielDetail => 'In addition to the app. Anyone can unsubscribe from these emails.';
+	@override String courrielUnJour({required Object adresses}) => 'Emails to send: ${adresses}. They go out within the day.';
+	@override String courrielJours({required Object adresses, required Object parJour, required Object jours}) => 'Emails to send: ${adresses}. At most ${parJour} go out per day: with those already waiting, sending will take about ${jours} days.';
+	@override String get courrielAucun => 'No reachable email address in this audience.';
+	@override String envoyerA({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Send to ${n} person',
+		other: 'Send to ${n} people',
+	);
+	@override String programmerPour({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Schedule for ${n} person',
+		other: 'Schedule for ${n} people',
+	);
+	@override String publierDans({required Object cible}) => 'Publish in ${cible}';
+	@override String get envoyer => 'Send the announcement';
+	@override String get manquePublic => 'Choose at least one audience to send.';
+	@override String get manqueTexte => 'Write the message to send.';
+	@override String get calcul => 'Counting the people.';
+	@override String get videPersonne => 'Nobody matches this choice: nothing can be sent. Choose another audience.';
+	@override String get videCote => 'Your profile does not say whether you are a woman or a man: the separation of sides prevents sending. Ask the director to complete your profile.';
+	@override String get audienceEchec => 'The number of people could not be counted. The request may not have reached Rewayah. Try again.';
+	@override String get apercuTitre => 'What recipients will see';
+	@override String get apercuVide => 'Your message will appear here.';
+	@override String get apercuSansTitre => 'Without a title, the first line of the message is used as the title.';
+	@override String get confirmerTitre => 'Send this announcement?';
+	@override String confirmerTexte({required num n, required Object publics}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'It goes to ${publics}: ${n} person. It can no longer be changed.',
+		other: 'It goes to ${publics}: ${n} people. It can no longer be changed.',
+	);
+	@override String confirmerProgrammee({required Object date, required Object heure}) => 'It will go out on ${date} at ${heure}.';
+	@override String get confirmerCourriel => 'An email also goes to each person.';
+	@override String get revenir => 'Back to the message';
+	@override String envoyee({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Announcement sent to ${n} person.',
+		other: 'Announcement sent to ${n} people.',
+	);
+}
+
+// Path: com.annonces.fil
+class _Traductions$com$annonces$fil$en extends Traductions$com$annonces$fil$fr {
+	_Traductions$com$annonces$fil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get echec => 'Academy announcements could not be loaded. Try again.';
+	@override String get titre => 'Academy announcements';
+	@override String get nouvelle => 'New';
+	@override String date({required Object date, required Object heure}) => 'On ${date} at ${heure}';
+}
+
 // Path: com.annonces.publieur
 class _Traductions$com$annonces$publieur$en extends Traductions$com$annonces$publieur$fr {
 	_Traductions$com$annonces$publieur$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -25143,6 +25222,24 @@ class _Traductions$com$studio$demo$f$en extends Traductions$com$studio$demo$f$fr
 	@override String get objetDossierBenali => 'Benali family file';
 }
 
+// Path: com.annonces.simple.publics
+class _Traductions$com$annonces$simple$publics$en extends Traductions$com$annonces$simple$publics$fr {
+	_Traductions$com$annonces$simple$publics$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'Everyone';
+	@override String get enseignants => 'All teachers';
+	@override String get candidats => 'Current candidates';
+	@override String get candidatsAdmis => 'Admitted candidates';
+	@override String get familles => 'Families (parents and guardians)';
+	@override String get eleves => 'Students';
+	@override String get elevesAdultes => 'Adult students';
+	@override String get femmes => 'Women';
+	@override String get hommes => 'Men';
+}
+
 // Path: com.annonces.publieur.etapes
 class _Traductions$com$annonces$publieur$etapes$en extends Traductions$com$annonces$publieur$etapes$fr {
 	_Traductions$com$annonces$publieur$etapes$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -25233,6 +25330,8 @@ class _Traductions$com$annonces$administration$publiees$en extends Traductions$c
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String mesure({required Object vues, required Object n}) => 'Seen by ${vues} of ${n}';
+	@override String mesureSansTotal({required Object vues}) => 'Seen by ${vues}';
 	@override String get titre => 'Announcements published';
 	@override String get vide => 'No announcement published in the period.';
 	@override String get pastille => 'Published';
@@ -33885,6 +33984,8 @@ extension on TraductionsEn {
 			'historique.compteRendu.etatARenforcer' => 'To reinforce',
 			'historique.compteRendu.etatAcquis' => 'Achieved',
 			'historique.dateCourteSansAnnee' => ({required Object mois, required Object jour}) => '${mois} ${jour}',
+			'notifications.evenements.annonceDirection' => 'Academy announcement',
+			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'Announcement: ${titre}',
 			'notifications.evenements.bienvenueEquipe' => 'Welcome to the team. You still need to set up your space.',
 			'notifications.evenements.retenuEntretien' => 'You have been selected for an interview. Let\'s get to know each other: choose your time in the app.',
 			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause is accepted for ${mois}. Their deadline moves back by the same amount. Their place is kept.',
@@ -34182,10 +34283,10 @@ extension on TraductionsEn {
 			'tuteur.accueil.annulee' => ({required Object heure}) => 'The ${heure} class will not take place',
 			'tuteur.accueil.motifAnnulee' => 'Session cancelled',
 			'tuteur.accueil.motifAnnuleeTard' => 'Session cancelled shortly before the start time',
-			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Next class ${jour} at ${heure}',
-			'tuteur.accueil.proposeAucun' => 'A new class will be offered to you.',
 			_ => null,
 		} ?? switch (path) {
+			'tuteur.accueil.proposeApres' => ({required Object jour, required Object heure}) => 'Next class ${jour} at ${heure}',
+			'tuteur.accueil.proposeAucun' => 'A new class will be offered to you.',
 			'tuteur.accueil.gererLeFoyer' => 'Manage the household',
 			'tuteur.accueil.blocAppareils' => 'Household devices',
 			'tuteur.accueil.blocAppareilsDetail' => 'Add a device, or remove one.',
@@ -34696,10 +34797,10 @@ extension on TraductionsEn {
 			'enseignant.cahier.travailMaisonSaisi' => 'You have already noted this homework. Edit it or leave it as it is.',
 			'enseignant.cahier.suite' => ({required Object eleve}) => 'What comes next for ${eleve}',
 			'enseignant.cahier.suiteContinuer' => 'Continue',
-			'enseignant.cahier.suiteRenforcer' => 'Reinforce',
-			'enseignant.cahier.suspendreNouveau' => 'Pause the new material',
 			_ => null,
 		} ?? switch (path) {
+			'enseignant.cahier.suiteRenforcer' => 'Reinforce',
+			'enseignant.cahier.suspendreNouveau' => 'Pause the new material',
 			'enseignant.cahier.devoirPrecedent' => ({required Object devoir}) => 'Previous homework: ${devoir}',
 			'enseignant.cahier.devoirPlage' => ({required Object sourate, required Object debut, required Object fin}) => 'Review surah ${sourate}, verses ${debut} to ${fin}.',
 			'enseignant.cahier.suspendreNouveauDetail' => 'Revision continues, nothing new is added for this student.',
@@ -35210,10 +35311,10 @@ extension on TraductionsEn {
 			'controleur.echanges.titreFil' => ({required Object classe, required Object date}) => '${classe} · ${date}',
 			'controleur.echanges.derniereActivite' => ({required Object date}) => 'Last activity: ${date}',
 			'controleur.echanges.reponseRecue' => 'Reply received',
-			'controleur.echanges.enAttente' => 'Waiting',
-			'controleur.echanges.vide' => 'No exchange with the administration yet.',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.echanges.enAttente' => 'Waiting',
+			'controleur.echanges.vide' => 'No exchange with the administration yet.',
 			'controleur.echanges.contexte' => 'Context of the visit, attached automatically',
 			'controleur.echanges.cleClasse' => 'Class',
 			'controleur.echanges.cleDate' => 'Date',
@@ -35724,10 +35825,10 @@ extension on TraductionsEn {
 			'tc.observation.reglages.invalideVisites' => 'At least one visit per session.',
 			'tc.observation.reglages.invalideTemps' => 'At least thirty seconds per session.',
 			'tc.observation.reglages.valeurHeritee' => ({required Object valeur}) => 'Academy: ${valeur}',
-			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visit',
-			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit', other: '${n} visits', ), 
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.reglages.uniteVisiteUne' => ({required Object n}) => '${n} visit',
+			'tc.observation.reglages.uniteVisites' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} visit', other: '${n} visits', ), 
 			'tc.observation.reglages.uniteSecondes' => ({required Object n}) => '${n} s',
 			'tc.observation.reglages.versionPolitique' => ({required Object version}) => 'Version ${version}',
 			'tc.parcours.avant.titre' => 'Before the next class',
@@ -36238,10 +36339,10 @@ extension on TraductionsEn {
 			'motifs.poserRegle.pedagogique' => 'Student\'s teaching need',
 			'motifs.poserRegle.age' => 'Length suited to age',
 			'motifs.poserRegle.charge' => 'Teacher\'s workload',
-			'motifs.poserRegle.parErreur' => 'Correction of a data entry error',
-			'motifs.cloreSurcharge.termine' => 'One-off need ended',
 			_ => null,
 		} ?? switch (path) {
+			'motifs.poserRegle.parErreur' => 'Correction of a data entry error',
+			'motifs.cloreSurcharge.termine' => 'One-off need ended',
 			'motifs.cloreSurcharge.famille' => 'Family request',
 			'motifs.cloreSurcharge.changement' => 'Change of class or teacher',
 			'motifs.cloreSurcharge.parErreur' => 'Rule set by mistake',
@@ -36752,10 +36853,10 @@ extension on TraductionsEn {
 			'com.messages.choisir' => 'Choose a conversation from the list to read it and reply.',
 			'com.messages.recherche.champ' => 'Search for a conversation',
 			'com.messages.recherche.aide' => 'Name, class or file',
-			'com.messages.recherche.aucunTitre' => 'No conversation found',
-			'com.messages.recherche.aucun' => ({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.recherche.aucunTitre' => 'No conversation found',
+			'com.messages.recherche.aucun' => ({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.',
 			'com.messages.recherche.resultatUn' => '1 conversation found',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations found',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
@@ -37266,10 +37367,60 @@ extension on TraductionsEn {
 			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} shared ${fichier}',
 			'com.studio.demo.f.activiteInscription' => 'New registration request received',
 			'com.studio.demo.f.objetDossierBenali' => 'Benali family file',
-			'com.studio.titre' => _root.com.socle.lexique.studio,
-			'com.studio.vide' => 'No activity to handle here.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.titre' => _root.com.socle.lexique.studio,
+			'com.studio.vide' => 'No activity to handle here.',
+			'com.annonces.simple.titre' => 'New announcement',
+			'com.annonces.simple.aQui' => 'To whom',
+			'com.annonces.simple.aQuiContexte' => 'Choose one or more audiences. Under each one, the number of people it reaches.',
+			'com.annonces.simple.aQuiFiltres' => '“Women” and “Men” narrow the other audiences you choose.',
+			'com.annonces.simple.publics.tous' => 'Everyone',
+			'com.annonces.simple.publics.enseignants' => 'All teachers',
+			'com.annonces.simple.publics.candidats' => 'Current candidates',
+			'com.annonces.simple.publics.candidatsAdmis' => 'Admitted candidates',
+			'com.annonces.simple.publics.familles' => 'Families (parents and guardians)',
+			'com.annonces.simple.publics.eleves' => 'Students',
+			'com.annonces.simple.publics.elevesAdultes' => 'Adult students',
+			'com.annonces.simple.publics.femmes' => 'Women',
+			'com.annonces.simple.publics.hommes' => 'Men',
+			'com.annonces.simple.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person', other: '${n} people', ), 
+			'com.annonces.simple.elevesDetail' => 'A child never receives an announcement: their parent receives it for them.',
+			'com.annonces.simple.classeContexte' => ({required Object cible}) => 'This announcement goes to ${cible}, and only to it.',
+			'com.annonces.simple.message' => 'The message',
+			'com.annonces.simple.champTitre' => 'Title (optional)',
+			'com.annonces.simple.champTexte' => 'Message',
+			'com.annonces.simple.options' => 'Options',
+			'com.annonces.simple.programmer' => 'Schedule the sending',
+			'com.annonces.simple.programmerDetail' => 'Choose a time: the announcement waits for it.',
+			'com.annonces.simple.courriel' => 'Also send by email',
+			'com.annonces.simple.courrielDetail' => 'In addition to the app. Anyone can unsubscribe from these emails.',
+			'com.annonces.simple.courrielUnJour' => ({required Object adresses}) => 'Emails to send: ${adresses}. They go out within the day.',
+			'com.annonces.simple.courrielJours' => ({required Object adresses, required Object parJour, required Object jours}) => 'Emails to send: ${adresses}. At most ${parJour} go out per day: with those already waiting, sending will take about ${jours} days.',
+			'com.annonces.simple.courrielAucun' => 'No reachable email address in this audience.',
+			'com.annonces.simple.envoyerA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send to ${n} person', other: 'Send to ${n} people', ), 
+			'com.annonces.simple.programmerPour' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Schedule for ${n} person', other: 'Schedule for ${n} people', ), 
+			'com.annonces.simple.publierDans' => ({required Object cible}) => 'Publish in ${cible}',
+			'com.annonces.simple.envoyer' => 'Send the announcement',
+			'com.annonces.simple.manquePublic' => 'Choose at least one audience to send.',
+			'com.annonces.simple.manqueTexte' => 'Write the message to send.',
+			'com.annonces.simple.calcul' => 'Counting the people.',
+			'com.annonces.simple.videPersonne' => 'Nobody matches this choice: nothing can be sent. Choose another audience.',
+			'com.annonces.simple.videCote' => 'Your profile does not say whether you are a woman or a man: the separation of sides prevents sending. Ask the director to complete your profile.',
+			'com.annonces.simple.audienceEchec' => 'The number of people could not be counted. The request may not have reached Rewayah. Try again.',
+			'com.annonces.simple.apercuTitre' => 'What recipients will see',
+			'com.annonces.simple.apercuVide' => 'Your message will appear here.',
+			'com.annonces.simple.apercuSansTitre' => 'Without a title, the first line of the message is used as the title.',
+			'com.annonces.simple.confirmerTitre' => 'Send this announcement?',
+			'com.annonces.simple.confirmerTexte' => ({required num n, required Object publics}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'It goes to ${publics}: ${n} person. It can no longer be changed.', other: 'It goes to ${publics}: ${n} people. It can no longer be changed.', ), 
+			'com.annonces.simple.confirmerProgrammee' => ({required Object date, required Object heure}) => 'It will go out on ${date} at ${heure}.',
+			'com.annonces.simple.confirmerCourriel' => 'An email also goes to each person.',
+			'com.annonces.simple.revenir' => 'Back to the message',
+			'com.annonces.simple.envoyee' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Announcement sent to ${n} person.', other: 'Announcement sent to ${n} people.', ), 
+			'com.annonces.fil.echec' => 'Academy announcements could not be loaded. Try again.',
+			'com.annonces.fil.titre' => 'Academy announcements',
+			'com.annonces.fil.nouvelle' => 'New',
+			'com.annonces.fil.date' => ({required Object date, required Object heure}) => 'On ${date} at ${heure}',
 			'com.annonces.toutesAcademie' => 'The whole academy',
 			'com.annonces.publieur.titre' => 'New announcement',
 			'com.annonces.publieur.etapes.contenu' => 'Announcement content',
@@ -37324,6 +37475,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.indicateurs.indisponible' => ({required Object libelle}) => '${libelle}: not available yet',
 			'com.annonces.administration.indicateurs.echec' => ({required Object libelle}) => '${libelle}: not loaded. The request may not have reached Rewayah: reload the page.',
 			'com.annonces.administration.indicateurs.reserve' => ({required Object libelle}) => '${libelle}: reserved for the people in charge of moderation',
+			'com.annonces.administration.publiees.mesure' => ({required Object vues, required Object n}) => 'Seen by ${vues} of ${n}',
+			'com.annonces.administration.publiees.mesureSansTotal' => ({required Object vues}) => 'Seen by ${vues}',
 			'com.annonces.administration.publiees.titre' => 'Announcements published',
 			'com.annonces.administration.publiees.vide' => 'No announcement published in the period.',
 			'com.annonces.administration.publiees.pastille' => 'Published',
@@ -37728,6 +37881,8 @@ extension on TraductionsEn {
 			'comptable.paiements.confirmation.refusTitre' => 'Payment refused by the source',
 			'comptable.paiements.confirmation.refusDejaSoumis' => 'This payment has already been submitted: nothing is sent again. Follow it from the in-progress payments tab.',
 			'comptable.paiements.confirmation.refusHorsDelegation' => 'The total exceeds your delegation, per beneficiary or per period. Nothing was sent. Run the check again: the payments concerned will be excluded.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.refusPerime' => 'The check has expired. Nothing was sent. Run the check again before confirming.',
 			'comptable.paiements.confirmation.refusFournisseur' => 'The provider became unavailable. Nothing was sent. Run the check again in a moment.',
 			'comptable.paiements.confirmation.inconnuTitre' => 'Unknown outcome',
@@ -37782,8 +37937,6 @@ extension on TraductionsEn {
 			'comptable.paiements.horsLigne' => 'No payment goes out now. Pay as soon as sending is possible again.',
 			'comptable.paiements.detail.total' => 'Total to pay',
 			'comptable.paiements.detail.lignes' => 'Calculation details',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.detail.ligneTotal' => 'Total',
 			'comptable.paiements.detail.source' => ({required Object source}) => 'Source: ${source}',
 			'comptable.paiements.detail.auteur' => ({required Object auteur}) => 'Added by ${auteur}',
@@ -38242,6 +38395,8 @@ extension on TraductionsEn {
 			'comptable.contractuels.creer' => 'Create the obligation',
 			'comptable.contractuels.horsLigneCreation' => 'The obligation cannot be created now. Create it as soon as sending is possible again.',
 			'comptable.contractuels.erreurObjet' => 'Enter the obligation\'s purpose.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.erreurMontant' => 'Enter an amount greater than zero, for example 350 or 350.50.',
 			'comptable.contractuels.erreurNomExterne' => 'Enter the external beneficiary\'s name.',
 			'comptable.contractuels.erreurCreation' => 'We do not know whether the obligation was created. Refresh the list before trying again.',
@@ -38296,8 +38451,6 @@ extension on TraductionsEn {
 			'comptable.validation.motifs.autre' => 'Other',
 			'comptable.validation.motifAutreChamp' => 'Give the reason',
 			'comptable.validation.erreurMotif' => 'Choose a reason to decline.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.erreurMotifAutre' => 'Give the reason to decline.',
 			'comptable.validation.decisionValidee' => 'Your decision is saved: the request is validated.',
 			'comptable.validation.decisionRefusee' => 'Your decision is saved: the request is declined, with its reason.',
@@ -38756,6 +38909,8 @@ extension on TraductionsEn {
 			'juridique.confidentialite.s4.titre' => '4. Who sees what',
 			'juridique.confidentialite.s4.blocs.0' => 'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
 			'juridique.confidentialite.s4.blocs.1' => 'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s4.blocs.2' => 'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
 			'juridique.confidentialite.s5.titre' => '5. Live sessions and recording',
 			'juridique.confidentialite.s5.blocs.0' => 'Video goes through a specialist service. Access to a session is given by the server, for that session only and for a short time.',
@@ -38810,8 +38965,6 @@ extension on TraductionsEn {
 			'juridique.enfants.s3.titre' => '3. Teachers',
 			'juridique.enfants.s3.blocs.0' => 'Teachers sign a contract and a review policy. Their ID document is kept in a private space, separate from the photos visible in class.',
 			'juridique.enfants.s4.titre' => '4. The child\'s information',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s4.blocs.0' => 'A child\'s information is neither public nor visible to other families.',
 			'juridique.enfants.s4.blocs.1' => 'The student\'s personal code stays on their device.',
 			'juridique.enfants.s4.blocs.2' => 'See also the Privacy text.',
@@ -39270,6 +39423,8 @@ extension on TraductionsEn {
 			'a3bis.regles.avertissementDetail' => 'The teacher is warned that they risk losing the session. Free teachers can offer to replace them.',
 			'a3bis.regles.seanceTardive' => 'Session created late',
 			'a3bis.regles.seanceTardiveDetail' => 'A session created less than this delay before its start is never taken from the teacher automatically. The management alert is still sent.',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.',
 			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'Between ${min} and ${max} before the start.',
 			'payUx.repriseTitre' => 'Did you leave the form without paying?',
@@ -39324,8 +39479,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.sansDonnees' => 'your form import rights',
 			'candidatsFlux.importFormulaires.acces.refuseTitre' => 'Import reserved',
 			'candidatsFlux.importFormulaires.acces.refusePhrase' => 'Only the super administrator can import the application forms. Ask them to do it.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.acces.doublePhrase' => 'This import requires your second factor.',
 			'candidatsFlux.importFormulaires.acces.doubleSuite' => 'Tap "Sign in again": your session closes and you return to sign-in to use your second factor. Nothing was saved.',
 			'candidatsFlux.importFormulaires.acces.doubleAction' => 'Sign in again',
@@ -39784,6 +39937,8 @@ extension on TraductionsEn {
 			'apprendre.bibliotheque.rayonClasse' => 'For this class',
 			'apprendre.bibliotheque.classeErreur.message' => 'This class\'s documents are not showing right now',
 			'apprendre.bibliotheque.classeErreur.invitation' => 'Tap Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.bibliotheque.rayonPlusLoin' => 'To go further',
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'Course documents will arrive here',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'They appear as soon as the academy publishes them.',
@@ -39838,8 +39993,6 @@ extension on TraductionsEn {
 			'suiviAttente.etapes.recue' => 'Request received',
 			'suiviAttente.etapes.formation' => 'Class being formed',
 			'suiviAttente.etapes.confirmee' => 'Class confirmed',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.etapes.enseignant' => 'Teacher assigned',
 			'suiviAttente.etapes.pret' => 'All set',
 			'suiviAttente.etats.fait' => 'Done',

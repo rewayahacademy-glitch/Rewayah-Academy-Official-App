@@ -16,6 +16,7 @@ import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_planifiees.dart';
 import 'package:rewayah_academy/features/com_annonces/file_moderation.dart';
+import 'package:rewayah_academy/features/com_annonces/port_annonces_direction.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
 
 import '../../router/support_routeur.dart';
@@ -135,19 +136,19 @@ void main() {
       tester,
       find.byKey(AdministrationCommunicationsPage.cleNouvelle),
     );
+    // ANNONCES-SIMPLES : un seul ecran, un public, le message, la
+    // confirmation.
+    await _toucher(
+      tester,
+      find.byKey(PublieurAnnonce.clePublic(CodesPublics.enseignants)),
+    );
     await tester.enterText(
       find.byKey(PublieurAnnonce.cleTitre),
       'Annonce de demonstration',
     );
     await tester.enterText(find.byKey(PublieurAnnonce.cleTexte), 'Texte.');
     await _toucher(tester, find.byKey(PublieurAnnonce.cleAction));
-    await _toucher(
-      tester,
-      find.byKey(PublieurAnnonce.cleCible('demo-enseignants')),
-    );
-    for (int i = 0; i < 4; i++) {
-      await _toucher(tester, find.byKey(PublieurAnnonce.cleAction));
-    }
+    await _toucher(tester, find.byKey(PublieurAnnonce.cleConfirmer));
     expect(find.text(t.com.annonces.publieur.publiee), findsOneWidget);
     await _toucher(tester, find.byKey(PublieurAnnonce.cleAction));
     expect(
@@ -161,18 +162,16 @@ void main() {
     WidgetTester tester,
   ) async {
     await _monter(tester, adressePublierDemo(), taille: const Size(390, 844));
-    expect(find.text(t.commun.etape.sur(n: 1, total: 4)), findsOneWidget);
-    await tester.enterText(find.byKey(PublieurAnnonce.cleTitre), 'Titre');
-    await tester.enterText(find.byKey(PublieurAnnonce.cleTexte), 'Texte');
-    await _toucher(tester, find.byKey(PublieurAnnonce.cleAction));
+    expect(find.text(t.commun.etape.sur(n: 1, total: 4)), findsNothing);
     expect(
       find.text(
-        t.com.annonces.publieur.contexte.audienceFixee(
+        t.com.annonces.simple.classeContexte(
           cible: t.com.annonces.demo.classeNour,
         ),
       ),
       findsOneWidget,
     );
+    expect(find.byKey(PublieurAnnonce.cleProgrammer), findsNothing);
     expect(tester.takeException(), isNull);
   });
 }
