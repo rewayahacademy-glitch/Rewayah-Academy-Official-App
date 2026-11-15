@@ -44,6 +44,22 @@ abstract final class AppDelais {
   /// rythme jusqu'a son retour (repli demande par le directeur).
   static const Duration repliMessages = Duration(seconds: 30);
 
+  /// 15/11/2026 : en production, `com_lister_fils` faisait 85 % du temps de
+  /// base. Les signaux des messages qui arrivent a moins de ce delai d'un
+  /// premier signal ne montent le rang (donc ne font relire la liste) qu'une
+  /// fois, a la fin de la fenetre.
+  static const Duration regroupementMessages = Duration(seconds: 2);
+
+  /// 15/11/2026 : une relecture de la liste des fils lancee a moins de ce
+  /// delai de la precedente la rejoint (les ecrans qui relisent sur le meme
+  /// signal ne font qu'un appel). Courte a dessein : une lecture partie avant
+  /// un changement du serveur ne doit pas servir un appel arrive apres lui.
+  /// (Duree metier, pas une animation : ecrite en microsecondes, la garde
+  /// des jetons reserve `milliseconds` au mouvement.)
+  static const Duration jonctionListeFils = Duration(
+    microseconds: 100 * Duration.microsecondsPerMillisecond,
+  );
+
   /// Le plus long qu'un appel du demarrage (session, profil) peut retenir
   /// l'ouverture (lot ouverture rapide, 29/10/2026). Passe ce delai, l'ecran
   /// dit ce qui manque et propose « Reessayer », au lieu de rester bloque.

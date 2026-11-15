@@ -156,22 +156,62 @@ etatVeilleMessagesProvider =
     );
 
 /// Porte l'etat de la veille.
+///
+/// Le rang est le seul signal que les ecrans relisent (chacun relit alors
+/// `com_lister_fils`, une lecture couteuse). Il est donc regroupe : le premier
+/// changement monte le rang tout de suite (un message recu se voit sans
+/// attendre), puis les suivants, dans [AppDelais.regroupementMessages], ne
+/// montent le rang qu'une seule fois a la fin de la fenetre. Une rafale
+/// (message puis lecture, ou deux messages) coute une relecture de plus, pas
+/// une par signal. L'etat (`enDirect`, `dernier`) reste, lui, immediat.
 class EtatVeilleMessagesControleur extends Notifier<EtatVeilleMessages> {
+  Timer? _fenetre;
+  bool _enAttente = false;
+
   @override
-  EtatVeilleMessages build() => const EtatVeilleMessages();
+  EtatVeilleMessages build() {
+    ref.onDispose(() {
+      _fenetre?.cancel();
+      _fenetre = null;
+      _enAttente = false;
+    });
+    return const EtatVeilleMessages();
+  }
+
+  void _changer({bool? enDirect, FilABouge? dernier}) {
+    if (_fenetre == null) {
+      state = state.suivant(enDirect: enDirect, dernier: dernier);
+      _fenetre = Timer(AppDelais.regroupementMessages, _fermerFenetre);
+      return;
+    }
+    // Dans la fenetre : l'etat se met a jour, le rang attend la fin.
+    _enAttente = true;
+    state = EtatVeilleMessages(
+      rang: state.rang,
+      enDirect: enDirect ?? state.enDirect,
+      dernier: dernier ?? state.dernier,
+    );
+  }
+
+  void _fermerFenetre() {
+    _fenetre = null;
+    if (!_enAttente) return;
+    _enAttente = false;
+    _changer();
+  }
 
   /// Un fil a bouge.
-  void signaler(FilABouge f) => state = state.suivant(dernier: f);
+  void signaler(FilABouge f) => _changer(dernier: f);
 
   /// Tout est a relire (jointure, retour du reseau, relecture de repli).
-  void relire() => state = state.suivant();
+  void relire() => _changer();
 
   /// Le canal est (re)joint : retour au direct.
-  void enDirect() => state = state.suivant(enDirect: true);
+  void enDirect() => _changer(enDirect: true);
 
   /// Le canal est tombe.
   void horsDirect() {
-    if (state.enDirect) state = state.suivant(enDirect: false);
+    if (state.enDirect) _changer(enDirect: false);
   }
 }
 

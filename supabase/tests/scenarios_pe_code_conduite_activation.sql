@@ -445,7 +445,9 @@ BEGIN
      AND policyname = 'contract_acceptances_code_conduite_enseignant';
   IF v_policy.permissive IS DISTINCT FROM 'RESTRICTIVE'
      OR v_policy.cmd IS DISTINCT FROM 'INSERT'
-     OR pg_catalog.strpos(v_policy.with_check, '(profile_id = auth.uid())') = 0
+     OR (pg_catalog.strpos(v_policy.with_check, '(profile_id = auth.uid())') = 0
+         -- RLS-ECONOME (15/11/2026) : auth.uid() enveloppe, calcule une fois par requete.
+         AND pg_catalog.strpos(v_policy.with_check, '(profile_id = ( SELECT auth.uid() AS uid))') = 0)
      OR pg_catalog.strpos(v_policy.with_check, 'app_account_valid') > 0 THEN
     RAISE EXCEPTION 'COND h ECHEC : policy du code : %', v_policy;
   END IF;

@@ -141,6 +141,72 @@ void main() {
       expect(fils.single.interlocuteurs.single.id, _ens);
     });
 
+    test('liste : les relectures du meme instant ne font qu\'un appel '
+        '(15/11/2026, com_lister_fils couteux)', () async {
+      final _Faux faux = _Faux()..reponse = <Object>[_filJson];
+      final MessagesMetierSupabase port = MessagesMetierSupabase(
+        faux.call,
+        libelles: libelles,
+      );
+      final List<List<ResumeFil>> lues = await Future.wait(
+        <Future<List<ResumeFil>>>[port.fils(), port.fils(), port.fils()],
+      );
+      expect(
+        faux.appels.where(((String, Map<String, dynamic>) a) {
+          return a.$1 == 'com_lister_fils';
+        }),
+        hasLength(1),
+      );
+      for (final List<ResumeFil> l in lues) {
+        expect(l.single.apercu, 'Salam');
+      }
+    });
+
+    test(
+      'liste : apres une ecriture, la liste est relue, jamais rejointe',
+      () async {
+        final _Faux faux = _Faux()..reponse = <Object>[_filJson];
+        final MessagesMetierSupabase port = MessagesMetierSupabase(
+          faux.call,
+          libelles: libelles,
+        );
+        await port.fils();
+        await port.marquerLu(_fil);
+        await port.fils();
+        faux.reponse = <String, dynamic>{'id': _fil};
+        await port.envoyer(
+          _fil,
+          'Salam',
+          '66666666-6666-4666-8666-666666666666',
+        );
+        faux.reponse = <Object>[_filJson];
+        await port.fils();
+        expect(
+          faux.appels.where(((String, Map<String, dynamic>) a) {
+            return a.$1 == 'com_lister_fils';
+          }),
+          hasLength(3),
+        );
+      },
+    );
+
+    test('liste : une lecture ancienne n\'est pas rejointe', () async {
+      final _Faux faux = _Faux()..reponse = <Object>[_filJson];
+      final MessagesMetierSupabase port = MessagesMetierSupabase(
+        faux.call,
+        libelles: libelles,
+      );
+      await port.fils();
+      await Future<void>.delayed(const Duration(milliseconds: 150));
+      await port.fils();
+      expect(
+        faux.appels.where(((String, Map<String, dynamic>) a) {
+          return a.$1 == 'com_lister_fils';
+        }),
+        hasLength(2),
+      );
+    });
+
     test('type sans contrat serveur : aucun appel', () async {
       final _Faux faux = _Faux();
       final MessagesMetierSupabase port = MessagesMetierSupabase(
