@@ -477,8 +477,14 @@ RESET ROLE;
 
 SELECT pg_temp.qui_foyer('d1600000-0000-4000-8000-0000000000e1','student','d1600000-0000-4000-8000-0000000000f1');
 SET LOCAL ROLE authenticated;
-SELECT pg_temp.vrai(jsonb_array_length(public.com_annonces_academie('d1600000-0000-4000-8000-0000000000c1') -> 'annonces') = 2,
-  'eleve mineur : lit « toute l''academie » et « familles »');
+-- ANNONCES-SIMPLES (directeur, 14/11/2026, protection des mineurs « a rendre
+-- plus strict seulement » ; migration 20261126900000) : un eleve mineur ne lit
+-- plus aucune annonce generale ; son tuteur la lit pour lui (controle plus
+-- haut). Avant ce lot, il lisait « toute l'academie » et « familles ».
+SELECT pg_temp.vrai(jsonb_array_length(public.com_annonces_academie('d1600000-0000-4000-8000-0000000000c1') -> 'annonces') = 0
+  AND public.com_annonce_lire(current_setting('test.toutes')::uuid) IS NULL
+  AND public.com_annonce_lire(current_setting('test.familles')::uuid) IS NULL,
+  'eleve mineur : aucune annonce generale, ni par la liste ni par son identifiant');
 RESET ROLE;
 
 SELECT pg_temp.qui('d1600000-0000-4000-8000-0000000000b1','teacher');
