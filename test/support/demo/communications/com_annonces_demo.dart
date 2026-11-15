@@ -43,6 +43,7 @@ import 'package:rewayah_academy/features/com_annonces/administration_communicati
 import 'package:rewayah_academy/features/com_annonces/annonces_de_classe.dart';
 import 'package:rewayah_academy/features/com_annonces/file_moderation.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
+import 'package:rewayah_academy/features/com_annonces/port_annonces_direction.dart';
 import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
@@ -939,6 +940,132 @@ class ModerationAdministrationDemo implements PortModeration {
   }
 }
 
+/// Les publics de la direction en demonstration (ANNONCES-SIMPLES) : des
+/// nombres fixes, comme si le serveur les avait calcules pour le
+/// super-admin (les deux cotes).
+const List<PublicAnnonce> publicsDemo = <PublicAnnonce>[
+  PublicAnnonce(code: CodesPublics.tous, destinataires: 412),
+  PublicAnnonce(code: CodesPublics.enseignants, destinataires: 38),
+  PublicAnnonce(code: CodesPublics.candidats, destinataires: 127),
+  PublicAnnonce(code: CodesPublics.candidatsAdmis, destinataires: 9),
+  PublicAnnonce(code: CodesPublics.familles, destinataires: 164),
+  PublicAnnonce(code: CodesPublics.eleves, destinataires: 191),
+  PublicAnnonce(code: CodesPublics.elevesAdultes, destinataires: 52),
+  PublicAnnonce(code: CodesPublics.femmes, destinataires: 236),
+  PublicAnnonce(code: CodesPublics.hommes, destinataires: 176),
+];
+
+/// Le double du serveur des annonces de la direction : publics fixes,
+/// audience lue dans une table de fixtures, envoi inscrit dans
+/// [AnnoncesDemonstration] (la liste de l'Administration le montre).
+class AnnoncesDirectionDemonstration implements PortAnnoncesDirection {
+  /// Cree le double sur [annonces].
+  AnnoncesDirectionDemonstration(
+    this.annonces, {
+    this.publicsOuverts = publicsDemo,
+    this.recues = const <AnnonceRecue>[],
+  });
+
+  /// Les annonces de l'Administration en demonstration.
+  final AnnoncesDemonstration annonces;
+
+  /// Les publics ouverts.
+  final List<PublicAnnonce> publicsOuverts;
+
+  /// Les annonces recues par la personne de demonstration.
+  final List<AnnonceRecue> recues;
+
+  /// Les envois confirmes, par cle d'idempotence.
+  final Map<String, AnnonceConfirmee> parCle = <String, AnnonceConfirmee>{};
+
+  /// Les dernieres options envoyees, pour les tests.
+  EnvoiAnnonce? dernierEnvoi;
+
+  @override
+  Future<List<PublicAnnonce>> publics() async => publicsOuverts;
+
+  /// Fixture : le plus grand public choisi, restreint de moitie par un
+  /// filtre de genre. Une demonstration, jamais la regle du serveur.
+  int _compte(Set<String> choisis) {
+    int n = 0;
+    for (final PublicAnnonce p in publicsOuverts) {
+      if (choisis.contains(p.code) && !CodesPublics.estFiltre(p.code)) {
+        n = n > p.destinataires ? n : p.destinataires;
+      }
+    }
+    final bool filtre = choisis.any(CodesPublics.estFiltre);
+    if (n == 0 && filtre) {
+      n = publicsOuverts
+          .firstWhere((PublicAnnonce p) => choisis.contains(p.code))
+          .destinataires;
+    } else if (filtre) {
+      n = n ~/ 2;
+    }
+    return n;
+  }
+
+  @override
+  Future<AudienceAnnonce> audience(Set<String> publics) async {
+    final int n = _compte(publics);
+    return AudienceAnnonce(
+      destinataires: n,
+      raison: n == 0 ? RaisonVide.personne : null,
+      courriel: EstimationCourriel(
+        adresses: n,
+        jours: (n + 899) ~/ 900,
+        parJour: 900,
+      ),
+    );
+  }
+
+  @override
+  Future<AnnonceConfirmee> envoyer({
+    required EnvoiAnnonce envoi,
+    required String cleIdempotence,
+  }) async {
+    final AnnonceConfirmee? deja = parCle[cleIdempotence];
+    if (deja != null) return deja;
+    if (annonces.echecPublication) {
+      throw StateError('accuse de publication non recu');
+    }
+    dernierEnvoi = envoi;
+    final DateTime maintenant = (annonces.maintenant ?? DateTime.now)().toUtc();
+    final DateTime? prevue = envoi.programmeeLe;
+    final AnnonceConfirmee confirmee = AnnonceConfirmee(
+      id: 'demo-envoi-${parCle.length + 1}',
+      etat: prevue == null ? EtatAnnonce.publiee : EtatAnnonce.planifiee,
+      le: prevue ?? maintenant,
+    );
+    parCle[cleIdempotence] = confirmee;
+    final AnnonceAdministration vue = AnnonceAdministration(
+      id: confirmee.id,
+      titre: envoi.titre.isEmpty ? envoi.texte.split('\n').first : envoi.titre,
+      texte: envoi.texte,
+      cible: CibleAnnonce(
+        id: 'publics',
+        nature: NatureCible.public,
+        libelle: libellesPublics(envoi.publics, ordrePublics),
+      ),
+      etat: confirmee.etat,
+      le: confirmee.le,
+      destinataires: _compte(envoi.publics),
+      vues: 0,
+    );
+    if (prevue == null) {
+      annonces.publiees.insert(0, vue);
+    } else {
+      annonces.planifiees.add(vue);
+    }
+    return confirmee;
+  }
+
+  @override
+  Future<List<AnnonceRecue>> mesAnnonces() async => recues;
+
+  @override
+  Future<void> marquerVue(String id) async {}
+}
+
 /// Les capacites Communications ouvertes en demonstration : publier,
 /// programmer (moderer est lu dans `CapacitesModeration`, R-21).
 const Set<CapaciteCommunication> capacitesDemoAdministration =
@@ -957,8 +1084,24 @@ List<Override> surchargesAdministrationDemo({
   required PortModeration moderation,
   PortReglesAudience regles = const ReglesAudienceDemo(),
   Set<CapaciteCommunication> capacites = capacitesDemoAdministration,
+  AnnoncesDirectionDemonstration? direction,
 }) => <Override>[
   portAnnoncesProvider.overrideWithValue(annonces),
+  // ANNONCES-SIMPLES : les publics de la direction, en demonstration.
+  ...() {
+    final AnnoncesDirectionDemonstration d =
+        direction ?? AnnoncesDirectionDemonstration(annonces);
+    return <Override>[
+      portAnnoncesDirectionProvider.overrideWithValue(d),
+      publicsAnnonceProvider.overrideWith((Ref _) => d.publics()),
+      audienceAnnonceProvider.overrideWith(
+        (Ref _, String cle) => d.audience(
+          cle.split(',').where((String c) => c.isNotEmpty).toSet(),
+        ),
+      ),
+      mesAnnoncesProvider.overrideWith((Ref _) => d.mesAnnonces()),
+    ];
+  }(),
   annoncesAdministrationProvider.overrideWith(
     (Ref _) => annonces.annoncesAdministration(),
   ),

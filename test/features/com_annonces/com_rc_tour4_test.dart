@@ -23,11 +23,14 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
+import 'package:rewayah_academy/features/com_annonces/port_annonces_direction.dart';
 import 'package:rewayah_academy/features/com_annonces/publieur_annonce.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/notifications/notifications_page.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
+import '../../support/demo/communications/com_annonces_demo.dart'
+    show AnnoncesDirectionDemonstration;
 import 'admin_banc.dart';
 
 Future<void> _monterNu(
@@ -74,6 +77,11 @@ void main() {
         tester,
         taille: const Size(390, 844),
         annonces: annoncesBanc(cibles: const <CibleAnnonce>[]),
+        // ANNONCES-SIMPLES : la direction vise des publics ; aucun ouvert.
+        direction: AnnoncesDirectionDemonstration(
+          annoncesBanc(),
+          publicsOuverts: const <PublicAnnonce>[],
+        ),
       );
       await taper(
         tester,

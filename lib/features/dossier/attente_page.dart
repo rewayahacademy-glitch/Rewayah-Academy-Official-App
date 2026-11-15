@@ -24,6 +24,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../candidature/carte_entretien_proche.dart';
 import '../candidature/portail_candidature.dart';
+import '../com_annonces/annonces_recues.dart';
 import '../com_messages/entree_messages_candidature.dart';
 import '../connexion/recuperation_page.dart'
     show IssueEnvoiLien, issueEchecEnvoi;
@@ -220,6 +221,9 @@ class _AttentePageState extends ConsumerState<AttentePage> {
               // SALLE2-ENTRETIEN (directeur, 14/11/2026) : l'entretien proche
               // ou ouvert, en tete, avec sa lumiere.
               if (candidature != null) const CarteEntretienProche(),
+              // ANNONCES-SIMPLES (14/11/2026) : les annonces de l'academie au
+              // candidat, dont le compte en attente ne lit pas la cloche.
+              if (candidature != null) const AnnoncesRecues(),
               // En-tete de la salle, pour les etats qui gardent leurs ecrans.
               if (candidature != null &&
                   !vueCand &&

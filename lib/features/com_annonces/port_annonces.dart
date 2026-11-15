@@ -195,7 +195,17 @@ class AnnonceAdministration {
     required this.cible,
     required this.etat,
     required this.le,
+    this.destinataires,
+    this.vues,
   });
+
+  /// Le nombre de destinataires (annonces de la direction vers des publics,
+  /// ANNONCES-SIMPLES) ; `null` quand le serveur ne le dit pas.
+  final int? destinataires;
+
+  /// Le nombre de personnes qui l'ont vue ; `null` quand le serveur ne le dit
+  /// pas.
+  final int? vues;
 
   /// Identifiant.
   final String id;
