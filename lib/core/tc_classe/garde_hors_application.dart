@@ -54,6 +54,11 @@ enum IssueRetour {
 /// (jamais sur un role) :
 ///
 /// - [peutModerer] : celui qui conduit la seance n'est jamais coupe ;
+/// - [entretien] (QUALITE-ENTRETIEN, directeur, 15/11/2026) : dans un
+///   entretien, personne n'est coupe, ni qui le mene ni le candidat : la
+///   regle du delai est faite pour les enfants d'un cours, et la personne
+///   qui mene l'entretien ne doit pas etre prisonniere de sa salle (meme
+///   correction que l'enseignant, HORS-SALLE-1) ;
 /// - sinon, qui suit le cours (il parle, ou sa voix attend son enseignant,
 ///   [publicationDifferee]) et n'est pas invisible sort apres le delai ;
 /// - un observateur (tuteur temoin, controleur invisible) n'est pas concerne
@@ -64,9 +69,11 @@ RegleHorsApplication regleHorsApplication({
   required bool peutPublier,
   required bool publicationDifferee,
   required bool invisible,
+  bool entretien = false,
 }) {
   if (!appelTenu) return RegleHorsApplication.horsRegle;
   if (peutModerer) return RegleHorsApplication.jamaisCoupe;
+  if (entretien && !invisible) return RegleHorsApplication.jamaisCoupe;
   if (invisible || !(peutPublier || publicationDifferee)) {
     return RegleHorsApplication.horsRegle;
   }

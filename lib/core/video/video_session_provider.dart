@@ -153,6 +153,19 @@ class AccesSalle {
   /// Le role dont le droit de publier attend l'enseignant.
   static const String roleEleve = 'student';
 
+  /// QUALITE-ENTRETIEN (directeur, 15/11/2026 : « les memes corrections que
+  /// la salle, sur les entretiens, surtout l'audio ») : les roles signes par
+  /// le serveur dans une seance d'entretien (`candidat`, `intervieweur`,
+  /// migration `20261108000001_v1a_entretiens.sql`).
+  static const Set<String> rolesEntretien = <String>{
+    'candidat',
+    'intervieweur',
+  };
+
+  /// Vrai dans une seance d'entretien : le serveur n'y signe que les roles
+  /// [rolesEntretien] (le type de seance n'est pas dans le jeton).
+  bool get estEntretien => rolesEntretien.contains(role);
+
   /// Vrai quand le droit de publier de cet eleve attend son enseignant
   /// (MICRO-AVANT-ENSEIGNANT) : le serveur LiveKit refuse son micro et sa
   /// camera tant que l'enseignant n'est pas dans la salle. Decide par le

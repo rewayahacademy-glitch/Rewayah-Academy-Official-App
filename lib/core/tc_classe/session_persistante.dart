@@ -331,6 +331,7 @@ class ControleurSessionPersistante
       peutPublier: acces?.capacites.peutPublier ?? false,
       publicationDifferee: acces?.publicationDifferee ?? false,
       invisible: acces?.capacites.invisible ?? false,
+      entretien: acces?.estEntretien ?? false,
     );
   }
 

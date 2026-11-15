@@ -299,6 +299,70 @@ void main() {
       expect(traces, isEmpty);
     });
   });
+  group('QUALITE-ENTRETIEN (directeur, 15/11/2026)', () {
+    test('dans un entretien, personne n est coupe : ni qui le mene ni le '
+        'candidat, qui publient sans moderer', () {
+      expect(
+        regleHorsApplication(
+          appelTenu: true,
+          peutModerer: false,
+          peutPublier: true,
+          publicationDifferee: false,
+          invisible: false,
+          entretien: true,
+        ),
+        RegleHorsApplication.jamaisCoupe,
+      );
+    });
+
+    test('contre-epreuve : hors entretien, l eleve sort toujours apres le '
+        'delai ; un invisible reste hors regle', () {
+      expect(
+        regleHorsApplication(
+          appelTenu: true,
+          peutModerer: false,
+          peutPublier: true,
+          publicationDifferee: false,
+          invisible: false,
+        ),
+        RegleHorsApplication.sortieApresDelai,
+      );
+      expect(
+        regleHorsApplication(
+          appelTenu: true,
+          peutModerer: false,
+          peutPublier: false,
+          publicationDifferee: false,
+          invisible: true,
+          entretien: true,
+        ),
+        RegleHorsApplication.horsRegle,
+      );
+    });
+
+    test('les roles d un entretien sont reconnus sur l acces signe', () {
+      AccesSalle acces(String role) => AccesSalle(
+        urlServeur: 'wss://x',
+        jeton: 'j',
+        nomSalle: 'r',
+        fournisseur: FournisseurVideo.cloud,
+        role: role,
+        capacites: const CapacitesSalle(
+          peutPublier: true,
+          peutPublierVideo: true,
+          peutPublierDonnees: false,
+          peutRecevoir: true,
+          invisible: false,
+        ),
+        expireLe: DateTime.utc(2026, 11, 15),
+      );
+      expect(acces('candidat').estEntretien, isTrue);
+      expect(acces('intervieweur').estEntretien, isTrue);
+      for (final String r in <String>['teacher', 'student', 'admin_visible']) {
+        expect(acces(r).estEntretien, isFalse, reason: r);
+      }
+    });
+  });
 }
 
 Future<void> _vider() => Future<void>.delayed(Duration.zero);
