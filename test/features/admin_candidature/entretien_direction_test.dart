@@ -590,17 +590,13 @@ void main() {
         await _toucher(tester, _cle('entretien-rejoindre'));
         final Finder salle = find.text('temoin:${Routes.salle}');
         expect(salle, findsOneWidget);
-        final Object? extra = GoRouter.of(tester.element(salle))
-            .routerDelegate
-            .currentConfiguration
-            .extra;
+        final Object? extra = GoRouter.of(
+          tester.element(salle),
+        ).routerDelegate.currentConfiguration.extra;
         expect(extra, isA<BilletSalle>());
         final BilletSalle billet = extra! as BilletSalle;
         expect(billet.sessionId, 's1');
-        expect(
-          billet.retour,
-          Routes.adminPersonnesCandidaturePour(referenceTest),
-        );
+        expect(billet.retour, Routes.adminPersonnesCandidaturePour(referenceTest));
       },
     );
 

@@ -25,7 +25,8 @@ import 'package:rewayah_academy/core/tc_horloge/emplacement_entree.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 
-import '../support/demo/classe_demo.dart' show EtatDemoClasse;
+import '../support/demo/classe_demo.dart'
+    show EtatDemoClasse;
 import '../support/demo/demo_adulte_page.dart';
 import '../support/demo/demo_classe_page.dart';
 import '../support/harnais.dart';

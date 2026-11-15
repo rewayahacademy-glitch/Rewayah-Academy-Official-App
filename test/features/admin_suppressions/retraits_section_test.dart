@@ -163,8 +163,9 @@ void main() {
       expect(port.lectures.length, 2);
       // D2 : les autres listes de personnes (Comptes d'abord) sont relues.
       expect(
-        ProviderScope.containerOf(tester.element(find.byType(RetraitsSection)))
-            .read(personnesModifieesProvider),
+        ProviderScope.containerOf(
+          tester.element(find.byType(RetraitsSection)),
+        ).read(personnesModifieesProvider),
         1,
       );
     });

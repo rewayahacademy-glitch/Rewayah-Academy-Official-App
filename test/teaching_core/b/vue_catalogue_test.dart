@@ -78,11 +78,14 @@ void main() {
         pourGroupe: <LibraryResource>[trois[0]],
       );
 
-      expect(v.sections.map((SectionCatalogue s) => s.id), <IdSectionCatalogue>[
-        IdSectionCatalogue.pourCeGroupe,
-        IdSectionCatalogue.recents,
-        IdSectionCatalogue.tousLesSupports,
-      ]);
+      expect(
+        v.sections.map((SectionCatalogue s) => s.id),
+        <IdSectionCatalogue>[
+          IdSectionCatalogue.pourCeGroupe,
+          IdSectionCatalogue.recents,
+          IdSectionCatalogue.tousLesSupports,
+        ],
+      );
     });
 
     test('en classe : recents d abord (spec section 6.2)', () {
@@ -93,11 +96,14 @@ void main() {
         pourGroupe: <LibraryResource>[trois[0]],
       );
 
-      expect(v.sections.map((SectionCatalogue s) => s.id), <IdSectionCatalogue>[
-        IdSectionCatalogue.recents,
-        IdSectionCatalogue.pourCeGroupe,
-        IdSectionCatalogue.tousLesSupports,
-      ]);
+      expect(
+        v.sections.map((SectionCatalogue s) => s.id),
+        <IdSectionCatalogue>[
+          IdSectionCatalogue.recents,
+          IdSectionCatalogue.pourCeGroupe,
+          IdSectionCatalogue.tousLesSupports,
+        ],
+      );
     });
 
     test('une section vide ne s affiche pas', () {
@@ -163,10 +169,8 @@ void main() {
         versionCourante: null,
       );
 
-      expect(
-        vue(tous: <LibraryResource>[brouillon]).ouvrable(brouillon),
-        isFalse,
-      );
+      expect(vue(tous: <LibraryResource>[brouillon]).ouvrable(brouillon),
+          isFalse);
     });
 
     test('hors ligne, seules les ressources locales s ouvrent', () {

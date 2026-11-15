@@ -46,7 +46,9 @@ const MarqueChrono _retard = MarqueChrono.presence(
   libelle: 'En retard',
   ton: TonEtat.avertissement,
 );
-const MarqueChrono _recite = MarqueChrono.recitation(libelle: 'Yasmine récite');
+const MarqueChrono _recite = MarqueChrono.recitation(
+  libelle: 'Yasmine récite',
+);
 
 VueSeance _vue({RoleSeance role = RoleSeance.eleve, PauseSeance? pause}) =>
     DonneesSeanceDemo.vue(

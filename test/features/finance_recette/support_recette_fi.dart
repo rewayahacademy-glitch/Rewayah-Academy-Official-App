@@ -55,7 +55,8 @@ import '../../parcours/faux_service_offres.dart';
 import '../../router/support_routeur.dart' show stabiliser;
 import '../../support/demo/demo_adulte_page.dart';
 import '../../support/demo/demo_enseignant_page.dart';
-import '../../support/demo/enseignant_demo.dart' show EcranDemoEnseignant;
+import '../../support/demo/enseignant_demo.dart'
+    show EcranDemoEnseignant;
 import '../../support/demo/finance_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';

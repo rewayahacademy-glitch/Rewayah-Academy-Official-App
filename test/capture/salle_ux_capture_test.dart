@@ -31,7 +31,11 @@ VueSeance _vueFin({required bool close}) {
     EtatDemoSalle.fin,
   );
   return base.copyWith(
-    fin: FinSeance(finA: base.fin!.finA, cahierACompleter: true, close: close),
+    fin: FinSeance(
+      finA: base.fin!.finA,
+      cahierACompleter: true,
+      close: close,
+    ),
   );
 }
 
