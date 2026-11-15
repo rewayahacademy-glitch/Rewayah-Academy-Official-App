@@ -163,13 +163,15 @@ class _EtatCandidatureDirectionPage
   Future<void> _geste(
     GesteCandidature geste,
     DetailCandidature detail,
-    CapacitesCandidatures capacites,
-  ) async {
+    CapacitesCandidatures capacites, {
+    Set<String> elementsInitiaux = const <String>{},
+  }) async {
     final SortieFeuille? sortie = await ouvrirFeuilleGeste(
       context,
       geste: geste,
       detail: detail,
       capacites: capacites,
+      elementsInitiaux: elementsInitiaux,
     );
     if (!mounted || sortie == null) return;
     _relire(identifiant: detail.ligne.id);
@@ -288,6 +290,15 @@ class _EtatCandidatureDirectionPage
           horsLigne: horsLigne,
           retour: _retour,
           onGeste: (GesteCandidature g) => _geste(g, d, capacites),
+          // COMPLEMENT-ET-FORMATS : « Demander une nouvelle piece » (ou
+          // photo) depuis un fichier illisible : la feuille du complement
+          // s'ouvre, l'element deja coche. Un geste.
+          onDemanderElement: (String code) => _geste(
+            GesteCandidature.demanderComplement,
+            d,
+            capacites,
+            elementsInitiaux: <String>{code},
+          ),
           // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ; son
           // retour ramene ici.
           onOuvrirDossier: () =>
@@ -346,10 +357,14 @@ class _Contenu extends ConsumerWidget {
     required this.onOuvrirDossier,
     required this.onEntretien,
     required this.onOuvrirConversation,
+    required this.onDemanderElement,
     this.rangMessages = 0,
     this.retour,
     this.retourEntretien,
   });
+
+  /// Ouvre le complement, l'element [code] deja coche (COMPLEMENT-ET-FORMATS).
+  final ValueChanged<String> onDemanderElement;
 
   final DetailCandidature detail;
   final CapacitesCandidatures capacites;
@@ -388,9 +403,26 @@ class _Contenu extends ConsumerWidget {
               o.code: o.nom,
           };
 
+    // COMPLEMENT-ET-FORMATS : un element se redemande en un geste quand le
+    // complement est permis maintenant et que la salle le propose.
+    final bool complementPermis =
+        gestes.principal == GesteCandidature.demanderComplement ||
+        gestes.autres.contains(GesteCandidature.demanderComplement);
+    final List<String> elementsSalle =
+        detail.ligne.etape == EtapeCandidature.verifications
+        ? capacites.listes.complementSalleVerification
+        : capacites.listes.complementSalleExamen;
+    VoidCallback? redemander(String code) =>
+        complementPermis && elementsSalle.contains(code)
+        ? () => onDemanderElement(code)
+        : null;
+
     final Widget situation = CarteSituation(detail: detail);
     // PHOTO-CANDIDATURE-FIGEE : la photo envoyee avec la candidature.
-    final Widget photo = BlocPhotoDossier(detail: detail);
+    final Widget photo = BlocPhotoDossier(
+      detail: detail,
+      onDemanderNouvellePhoto: redemander('photo'),
+    );
     final Widget blocages = BlocBlocages(detail: detail);
     // INVITATIONS-PERSONNELLES (07/11/2026), option (a) du garde-cap :
     // « Copier le lien d'inscription » pour une ligne gardee pour suivi sans
@@ -438,6 +470,7 @@ class _Contenu extends ConsumerWidget {
           : PieceSurPlace(
               candidatureId: detail.ligne.id,
               onOuvrirDossier: onOuvrirDossier,
+              onDemanderNouvellePiece: redemander('piece_identite'),
               onDecision: onEntretien,
             ),
       entretien: SectionEntretien(

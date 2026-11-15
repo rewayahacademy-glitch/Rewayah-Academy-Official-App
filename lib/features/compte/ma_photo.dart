@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/appairage/service_avatar.dart';
+import '../../core/fichiers/formats_admis.dart';
+import '../../core/fichiers/phrase_refus_fichier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -53,6 +55,11 @@ class EnvoiMaPhoto extends ValueNotifier<EtatMaPhoto> {
     final PhotoEnfant? photo;
     try {
       photo = await ref.read(selecteurPhotoProvider).choisirPhoto();
+    } on FichierRefuse catch (refus) {
+      // COMPLEMENT-ET-FORMATS : format ou taille refuses au choix, avant tout
+      // envoi, avec la phrase qui dit quoi faire.
+      value = EtatMaPhoto(refus: phraseRefusFichier(refus));
+      return;
     } on Object {
       value = EtatMaPhoto(refus: t.ficheEleve.informations.selectionEchec);
       return;

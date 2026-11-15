@@ -104,7 +104,20 @@ bool pieceRefusee(EtatDossier d) =>
 /// salle 1 comptait pour « deposee » ; la ligne disait « Fait » et le portail
 /// ne proposait plus aucun depot, alors que le serveur en accepte un nouveau.
 bool pieceADeposer(EtatDossier d) =>
-    (!d.pieceDeposee || pieceRefusee(d)) && !d.candidature.depotPieceSuspendu;
+    (!d.pieceDeposee || pieceRefusee(d) || pieceRedemandee(d)) &&
+    !d.candidature.depotPieceSuspendu;
+
+/// COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : la direction redemande la
+/// piece (complement `piece_identite`, par exemple une photo illisible) et
+/// aucune piece n'a ete deposee depuis la demande (`complementDemandeLe`, lu
+/// au serveur). Sans date (serveur d'avant), la regle d'avant reste.
+bool pieceRedemandee(EtatDossier d) {
+  final CandidatureDossier c = d.candidature;
+  final DateTime? demandeLe = c.complementDemandeLe;
+  if (!c.demande('piece_identite') || demandeLe == null) return false;
+  final DateTime? deposeLe = d.deposeLe;
+  return deposeLe == null || deposeLe.isBefore(demandeLe);
+}
 
 /// AUDIT-PORTAIL-CANDIDAT (directeur, 14/11/2026) : en Salle de verification
 /// et d'entretien, une nouvelle version du cadre religieux et pedagogique est
@@ -378,6 +391,8 @@ class StatutCandidature extends StatelessWidget {
                   // CANDIDAT : une piece refusee se dit a reprendre.
                   legende: pieceRefusee(d)
                       ? t.attente.refuseDetail(element: r.elementPiece)
+                      : pieceRedemandee(d)
+                      ? r.pieceDemandee
                       : d.pieceDeposee
                       ? r.pieceRecue
                       : null,
@@ -394,8 +409,16 @@ class StatutCandidature extends StatelessWidget {
                   // publication (coche a l'envoi des reponses) manquait : le
                   // candidat croyait l'envoi rate. La photo se lit seule ;
                   // l'accord qui reste se dit dessous.
-                  valeur: etat(d.photoPosee!, r.etatAAjouter),
-                  legende: !d.photoPosee!
+                  // COMPLEMENT-ET-FORMATS : redemandee, elle part avec les
+                  // reponses ; jamais « Fait » sous une demande.
+                  valeur: c.demande('photo')
+                      ? r.etatAEnvoyer
+                      : etat(d.photoPosee!, r.etatAAjouter),
+                  // COMPLEMENT-ET-FORMATS : une nouvelle photo demandee se
+                  // dit, avec l'endroit ou la changer.
+                  legende: c.demande('photo')
+                      ? r.photoDemandee
+                      : !d.photoPosee!
                       ? null
                       : (d.accordPublicationSigne ?? false)
                       ? r.photoRecue
@@ -466,6 +489,9 @@ class StatutCandidature extends StatelessWidget {
     'piece_identite' => t.recrutement.portail.elementPiece,
     'contrat' => t.recrutement.portail.elementContrat,
     'avis' => t.attente.carteAccuse,
+    'code_conduite' => t.recrutement.portail.elementCodeConduite,
+    'photo' => t.recrutement.portail.elementPhoto,
+    'accord_publication' => t.recrutement.portail.elementAccordPublication,
     _ => null,
   };
 

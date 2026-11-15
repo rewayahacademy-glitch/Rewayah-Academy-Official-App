@@ -85,6 +85,7 @@ Future<SortieFeuille?> ouvrirFeuilleGeste(
   required GesteCandidature geste,
   required DetailCandidature detail,
   required CapacitesCandidatures capacites,
+  Set<String> elementsInitiaux = const <String>{},
 }) => AppBottomSheet.ouvrir<SortieFeuille>(
   context,
   titre: libelleGeste(geste),
@@ -92,6 +93,7 @@ Future<SortieFeuille?> ouvrirFeuilleGeste(
     geste: geste,
     detail: detail,
     capacites: capacites,
+    elementsInitiaux: elementsInitiaux,
     onFini: (SortieFeuille sortie) => Navigator.of(contexte).pop(sortie),
     onAnnuler: () => Navigator.of(contexte).pop(),
   ),
@@ -106,8 +108,14 @@ class FeuilleGeste extends ConsumerStatefulWidget {
     required this.capacites,
     required this.onFini,
     required this.onAnnuler,
+    this.elementsInitiaux = const <String>{},
     super.key,
   });
+
+  /// COMPLEMENT-ET-FORMATS : les elements deja coches a l'ouverture (« Demander
+  /// une nouvelle piece d'identite » depuis une piece illisible : un geste).
+  /// Seuls ceux de la liste du serveur sont gardes.
+  final Set<String> elementsInitiaux;
 
   /// Le geste.
   final GesteCandidature geste;
@@ -142,6 +150,14 @@ class FeuilleGeste extends ConsumerStatefulWidget {
   /// La cle du champ du motif interne.
   static const Key cleMotif = ValueKey<String>('feuille-motif');
 
+  /// La cle du titre du groupe « Réponses » du complement.
+  static const Key cleGroupeReponses = ValueKey<String>('complement-reponses');
+
+  /// La cle du titre du groupe « Documents et accords » du complement.
+  static const Key cleGroupeDocuments = ValueKey<String>(
+    'complement-documents',
+  );
+
   @override
   ConsumerState<FeuilleGeste> createState() => _EtatFeuille();
 }
@@ -172,6 +188,7 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   void initState() {
     super.initState();
     _responsable = widget.detail.ligne.responsableId;
+    _elements.addAll(widget.elementsInitiaux.where(_elementsPermis.contains));
   }
 
   @override
@@ -565,30 +582,66 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   List<Widget> _champElements(BuildContext context) {
     final c = t.admin.candidatures.complement;
     final List<String> permis = _elementsPermis;
-    return <Widget>[
-      Ecart.vLg,
-      _titreChamp(c.elements),
-      Ecart.vSm,
-      if (permis.isEmpty)
-        _indisponible()
-      else ...<Widget>[
+    // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026 ; consigne 19) : une seule
+    // colonne, sans onglets ; l'ordre suit le parcours du candidat, en deux
+    // groupes : les reponses du questionnaire, puis les documents et accords.
+    final List<String> reponses = <String>[
+      for (final String code in permis)
+        if (!codesDocumentsEtAccords.contains(code)) code,
+    ];
+    final List<String> documents = <String>[
+      for (final String code in codesDocumentsEtAccords)
+        if (permis.contains(code)) code,
+    ];
+    final TextStyle sousTitre =
+        Theme.of(context).textTheme.titleSmall ?? const TextStyle();
+    List<Widget> groupe(Key cle, String titre, List<String> codes) {
+      if (codes.isEmpty) return const <Widget>[];
+      return <Widget>[
+        Ecart.vMd,
+        Semantics(
+          header: true,
+          child: TexteSansCoupure(titre, key: cle, style: sousTitre),
+        ),
+        Ecart.vSm,
         ChoiceCardGroup(
           selectionMultiple: true,
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
-            for (final String code in permis)
+            for (final String code in codes)
               OptionChoix(
                 cle: ValueKey<String>('element-$code'),
                 valeur: code,
                 libelle: libelleElementComplement(code)!,
               ),
           ],
-          valeurInitiale: ReponseChoix(valeurs: Set<String>.of(_elements)),
+          valeurInitiale: ReponseChoix(
+            valeurs: <String>{
+              for (final String code in codes)
+                if (_elements.contains(code)) code,
+            },
+          ),
           onChange: (ReponseChoix r) => _modifie(() {
             _elements
-              ..clear()
+              ..removeAll(codes)
               ..addAll(r.valeurs);
           }),
+        ),
+      ];
+    }
+
+    return <Widget>[
+      Ecart.vLg,
+      _titreChamp(c.elements),
+      if (permis.isEmpty) ...<Widget>[
+        Ecart.vSm,
+        _indisponible(),
+      ] else ...<Widget>[
+        ...groupe(FeuilleGeste.cleGroupeReponses, c.groupeReponses, reponses),
+        ...groupe(
+          FeuilleGeste.cleGroupeDocuments,
+          c.groupeDocuments,
+          documents,
         ),
         Ecart.vSm,
         TexteSansCoupure(

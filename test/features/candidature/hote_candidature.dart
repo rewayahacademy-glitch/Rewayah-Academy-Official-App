@@ -44,6 +44,8 @@ EtatDossier etatCandidat({
   bool? accordPublicationSigne,
   // AUDIT-PORTAIL-CANDIDAT : l'etat de la piece deposee (nul par defaut).
   StatutPiece? statutPiece,
+  // COMPLEMENT-ET-FORMATS : la date du dernier depot de la piece.
+  DateTime? deposeLe,
 }) => EtatDossier(
   profilExiste: true,
   role: role,
@@ -54,6 +56,7 @@ EtatDossier etatCandidat({
   codeConduiteSigne: accordsFaits,
   pieceDeposee: pieceDeposee,
   statutPiece: statutPiece,
+  deposeLe: deposeLe,
   photoPosee: photoPosee,
   accordPublicationSigne: accordPublicationSigne,
 );
@@ -63,6 +66,7 @@ CandidatureDossier candidatureAFaire({
   bool cadrePublie = true,
   bool cadreAccepte = true,
   List<String> complement = const <String>[],
+  DateTime? complementLe,
   bool enPause = false,
   bool peutEnvoyer = true,
 }) => CandidatureDossier(
@@ -82,6 +86,7 @@ CandidatureDossier candidatureAFaire({
     if (cadrePublie && !cadreAccepte) 'cadre_religieux',
   ],
   complementDemande: complement,
+  complementDemandeLe: complementLe,
   peutEnvoyer: peutEnvoyer,
 );
 

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/appairage/service_appairage.dart';
 import '../../core/appairage/service_avatar.dart';
+import '../../core/fichiers/formats_admis.dart';
+import '../../core/fichiers/phrase_refus_fichier.dart';
 import '../../core/foyer/selection_eleve.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -129,6 +131,11 @@ class _EditeurPhotoEleveState extends ConsumerState<EditeurPhotoEleve> {
     final PhotoEnfant? photo;
     try {
       photo = await ref.read(selecteurPhotoProvider).choisirPhoto();
+    } on FichierRefuse catch (refus) {
+      // COMPLEMENT-ET-FORMATS : format ou taille refuses au choix, avant tout
+      // envoi, avec la phrase qui dit quoi faire.
+      if (mounted) setState(() => _refus = phraseRefusFichier(refus));
+      return;
     } on Object {
       // Permission refusee, fichier illisible, erreur de la plateforme : le
       // selecteur n'a rien rendu, et l'ecran le dit au lieu de se taire.

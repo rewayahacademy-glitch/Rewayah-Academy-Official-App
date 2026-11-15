@@ -1764,6 +1764,13 @@
       "inviteAction": "Read"
     }
   },
+  "fichiers": {
+    "pieceFormat": "This file is not accepted: the ID document is submitted as a JPEG or PNG photo, so that the academy management can read it. Take a photo of your document, then choose that photo.",
+    "photoFormat": "This file is not accepted: a photo is submitted as JPEG, PNG or WebP. Choose another photo.",
+    "heicNonConverti": "This iPhone photo (HEIC) cannot be converted on this device. Open this page on your iPhone and choose the photo again, or save it as JPEG first.",
+    "tropLourd": "This file is larger than {taille} MB. Retake the photo at a lower quality, then choose it again.",
+    "formatsPiece": "A JPEG or PNG photo, {taille} MB at most. An iPhone photo is converted before it is sent."
+  },
   "kyc": {
     "titre": "Your ID document",
     "intro": "Photograph the side or page that shows your photo and your name. A readable photo is enough. It is kept for the time of the check, then deleted.",
@@ -1784,9 +1791,9 @@
     "envoiEnCours": "Sending",
     "deposee": "Document received",
     "erreur": "The upload did not complete. Try again in a moment.",
-    "erreurFormat": "This file was not accepted: only JPEG, PNG, HEIC or WebP photos and PDF files are. Choose another photo of your document.",
+    "erreurFormat": "This file was not accepted: only JPEG or PNG photos are. Take a photo of your document, then choose that photo.",
     "erreurReseau": "The upload did not complete: your request may not have reached Rewayah. Tap \"Send my document\" again in a moment.",
-    "contenuNonConforme": "This file does not open as a photo or as a PDF: it may be damaged, or of another type that was renamed. Choose the photo or PDF of your ID document.",
+    "contenuNonConforme": "This file does not open as a photo: it may be damaged, or of another type that was renamed. Choose a JPEG or PNG photo of your ID document.",
     "memeNom": "Send a document that bears exactly the name written in your account.",
     "tropVolumineux": "This photo is larger than {taille} MB. Retake it at a lower quality.",
     "manqueType": "First choose the document you are submitting."
@@ -2804,7 +2811,11 @@
       "etatAAjouter": "To add",
       "photoRecue": "Your photo has been received.",
       "accordAEnvoyer": "Your photo has been received. You still need to tick the publication agreement, just before sending your answers.",
-      "pieceRecue": "Your document has been received. The academy management is checking it."
+      "pieceRecue": "Your document has been received. The academy management is checking it.",
+      "elementCodeConduite": "The code of conduct",
+      "elementAccordPublication": "The publication agreement for your photo",
+      "pieceDemandee": "The academy management is asking you for a new photo of your document.",
+      "photoDemandee": "The academy management is asking you for a new photo. Change it in the summary of your answers, before sending them."
     },
     "entretien": {
       "titre": "Let's get to know each other",
@@ -3785,7 +3796,7 @@
       "erreur": "The document cannot be displayed.",
       "expire": "Access to this document has expired.",
       "recharger": "Reload the document",
-      "formatNonPrisEnCharge": "This document format cannot be displayed.",
+      "formatNonPrisEnCharge": "Unreadable format: this document (HEIC photo or PDF) does not display on a computer. Ask for a new document.",
       "accesRetire": "You no longer have access to this document.",
       "apercuRefuse": "This document is not visible with your account.",
       "horsLigne": "The document could not be loaded.",
@@ -4169,7 +4180,9 @@
           "aucune": "No photo was sent with this application.",
           "figeeLe": "Kept as sent, on {date}.",
           "echec": "The photo could not be read.",
-          "alt": "{deNom}'s photo, sent with the application"
+          "alt": "{deNom}'s photo, sent with the application",
+          "illisible": "Unreadable format: this photo (HEIC) does not display on a computer. Ask for a new photo, as JPEG or PNG.",
+          "demanderNouvelle": "Ask for a new photo"
         },
         "provenance": "Origin: {provenance}",
         "messagePause": "Message chosen for the pause: {nom}",
@@ -4249,7 +4262,9 @@
           "accordDonne": "Given on {date}",
           "accordAbsent": "Not given: offer no mission",
           "misesAJour": "Last updated on {date}."
-        }
+        },
+        "pieceIllisible": "Unreadable format: this document (HEIC photo or PDF) does not display on a computer. Ask for a new document, as a JPEG or PNG photo.",
+        "demanderNouvellePiece": "Ask for a new ID document"
       },
       "controles": {
         "noms": {
@@ -4364,7 +4379,13 @@
       "complement": {
         "elements": "What is missing",
         "aide": "The person will read this list.",
-        "manquant": "Choose at least one item."
+        "manquant": "Choose at least one item.",
+        "groupeReponses": "Answers",
+        "groupeDocuments": "Documents and agreements",
+        "codeConduite": "The code of conduct",
+        "piece": "The ID document",
+        "photo": "The photo",
+        "accordPublication": "The photo publication agreement"
       },
       "retrait": {
         "canal": "How the request arrived",

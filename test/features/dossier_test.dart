@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/versions_contrat.dart';
 import 'package:rewayah_academy/core/enseignant/depot_cahiers.dart';
+import 'package:rewayah_academy/core/fichiers/formats_admis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
@@ -27,6 +28,7 @@ import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
 
+import '../capture/outil_capture.dart';
 import '../support/annonces.dart';
 import '../support/harnais.dart';
 
@@ -504,6 +506,68 @@ void main() {
       expect(dossier.depots, hasLength(1));
     });
 
+    testWidgets(
+      'COMPLEMENT-ET-FORMATS : les formats se disent avant le choix, et un '
+      'format refuse se dit tout de suite, sans rien envoyer',
+      (WidgetTester tester) async {
+        final (FauxServiceDossier dossier, FauxSelecteurFichier selecteur) =
+            await monter(tester, _piece());
+        selecteur.refus = const FichierRefuse(
+          CauseRefusFichier.format,
+          SorteFichier.piece,
+          format: FormatFichier.pdf,
+        );
+        await _toucher(tester, find.text(t.kyc.carteIdentite));
+        await tester.pumpAndSettle();
+        expect(
+          find.text(
+            t.fichiers.formatsPiece(
+              taille: '${SorteFichier.piece.tailleMaxMo}',
+            ),
+          ),
+          findsOneWidget,
+        );
+        await _toucher(tester, find.text(t.kyc.choisirFichier));
+        await tester.pumpAndSettle();
+        expect(find.text(t.fichiers.pieceFormat), findsOneWidget);
+        expect(find.text(t.kyc.fichierChoisi), findsNothing);
+        expect(dossier.depots, isEmpty);
+      },
+    );
+
+    // Captures R3 (sautees sans CAPTURE_DIR) : le refus dit au depot.
+    group('captures complement et formats', () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+        testWidgets('depot format refuse 390 ${langue.languageCode}', (
+          WidgetTester tester,
+        ) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+          final (_, FauxSelecteurFichier selecteur) = await monter(
+            tester,
+            _piece(),
+          );
+          selecteur.refus = const FichierRefuse(
+            CauseRefusFichier.heicNonConverti,
+            SorteFichier.piece,
+          );
+          await _toucher(tester, find.text(t.kyc.carteIdentite));
+          await tester.pumpAndSettle();
+          await _toucher(tester, find.text(t.kyc.choisirFichier));
+          await tester.pumpAndSettle();
+          await tester.ensureVisible(find.text(t.fichiers.heicNonConverti));
+          await stabiliser(tester);
+          await capturerVue(
+            tester,
+            'complement-et-formats/depot-heic-non-converti-390-'
+            '${langue.languageCode}',
+          );
+        });
+      }
+    }, skip: sautSansCapture);
+
     testWidgets('changer de type efface la photo et rend l envoi inactif', (
       WidgetTester tester,
     ) async {
@@ -610,7 +674,18 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(dossier.depots, isEmpty);
-      expect(find.textContaining('Mo'), findsOneWidget);
+      // COMPLEMENT-ET-FORMATS : la phrase des formats dit aussi « Mo » ; le
+      // refus se cherche par son texte exact.
+      expect(
+        find.text(
+          t.kyc.tropVolumineux(
+            taille: (ServiceDossier.tailleMaximaleOctets / (1024 * 1024))
+                .round()
+                .toString(),
+          ),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('FN-101 : un texte nomme .pdf est refuse avant l envoi', (

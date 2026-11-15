@@ -237,6 +237,13 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
       'publics',
       'versement',
       'cadre_religieux',
+      // COMPLEMENT-ET-FORMATS (migration 20261126800000).
+      'contrat',
+      'avis',
+      'code_conduite',
+      'piece_identite',
+      'photo',
+      'accord_publication',
     ],
     complementSalleVerification: <String>[
       'piece_identite',

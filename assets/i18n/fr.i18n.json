@@ -1764,6 +1764,13 @@
       "inviteAction": "Lire"
     }
   },
+  "fichiers": {
+    "pieceFormat": "Ce fichier n'est pas accepté\u00a0: la pièce d'identité se dépose en photo JPEG ou PNG, pour que la direction puisse la lire. Prenez votre pièce en photo, puis choisissez cette photo.",
+    "photoFormat": "Ce fichier n'est pas accepté\u00a0: une photo se dépose en JPEG, PNG ou WebP. Choisissez une autre photo.",
+    "heicNonConverti": "Cette photo d'iPhone (HEIC) ne peut pas être convertie sur cet appareil. Ouvrez cette page sur votre iPhone et choisissez la photo de nouveau, ou enregistrez-la d'abord en JPEG.",
+    "tropLourd": "Ce fichier dépasse {taille}\u00a0Mo. Reprenez la photo en qualité plus basse, puis choisissez-la de nouveau.",
+    "formatsPiece": "Une photo JPEG ou PNG, {taille}\u00a0Mo au plus. Une photo d'iPhone est convertie avant l'envoi."
+  },
   "kyc": {
     "titre": "Votre pièce d'identité",
     "intro": "Photographiez le côté ou la page qui porte votre photo et votre nom. Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.",
@@ -1784,9 +1791,9 @@
     "envoiEnCours": "Envoi en cours",
     "deposee": "Pièce reçue",
     "erreur": "L'envoi n'a pas abouti. Réessayez dans un instant.",
-    "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG, PNG, HEIC ou WebP et les fichiers PDF le sont. Choisissez une autre photo de votre pièce.",
+    "erreurFormat": "Ce fichier n'a pas été accepté\u00a0: seules les photos JPEG ou PNG le sont. Prenez votre pièce en photo, puis choisissez cette photo.",
     "erreurReseau": "L'envoi n'a pas abouti\u00a0: il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez «\u00a0Envoyer ma pièce\u00a0» à nouveau dans un instant.",
-    "contenuNonConforme": "Ce fichier ne s'ouvre pas comme une photo ni comme un PDF\u00a0: il est peut-être abîmé, ou d'un autre type renommé. Choisissez la photo ou le PDF de votre pièce d'identité.",
+    "contenuNonConforme": "Ce fichier ne s'ouvre pas comme une photo\u00a0: il est peut-être abîmé, ou d'un autre type renommé. Choisissez une photo JPEG ou PNG de votre pièce d'identité.",
     "memeNom": "Envoyez une pièce qui porte exactement le nom écrit dans votre compte.",
     "tropVolumineux": "Cette photo dépasse {taille} Mo. Reprenez-la en qualité plus basse.",
     "manqueType": "Choisissez d'abord la pièce que vous déposez."
@@ -2804,7 +2811,11 @@
       "etatAAjouter": "À ajouter",
       "photoRecue": "Votre photo est bien reçue.",
       "accordAEnvoyer": "Votre photo est bien reçue. Il reste à cocher l'accord de publication, juste avant d'envoyer vos réponses.",
-      "pieceRecue": "Votre pièce est bien reçue. La direction la vérifie."
+      "pieceRecue": "Votre pièce est bien reçue. La direction la vérifie.",
+      "elementCodeConduite": "Le code de conduite",
+      "elementAccordPublication": "L'accord de publication de votre photo",
+      "pieceDemandee": "La direction vous demande une nouvelle photo de votre pièce.",
+      "photoDemandee": "La direction vous demande une nouvelle photo. Changez-la au récapitulatif de vos réponses, avant de les envoyer."
     },
     "entretien": {
       "titre": "Faisons connaissance",
@@ -3785,7 +3796,7 @@
       "erreur": "La pièce ne peut pas être affichée.",
       "expire": "L'accès à cette pièce a expiré.",
       "recharger": "Recharger la pièce",
-      "formatNonPrisEnCharge": "Ce format de pièce ne peut pas être affiché.",
+      "formatNonPrisEnCharge": "Format non lisible\u00a0: cette pièce (photo HEIC ou PDF) ne s'affiche pas sur ordinateur. Demandez une nouvelle pièce.",
       "accesRetire": "Vous n’avez plus accès à cette pièce.",
       "apercuRefuse": "Cette pièce n'est pas visible avec votre compte.",
       "horsLigne": "La pièce n'a pas pu être chargée.",
@@ -4169,7 +4180,9 @@
           "aucune": "Aucune photo n'a été envoyée avec cette candidature.",
           "figeeLe": "Gardée telle qu'envoyée, le {date}.",
           "echec": "La photo n'a pas pu être lue.",
-          "alt": "Photo {deNom}, envoyée avec la candidature"
+          "alt": "Photo {deNom}, envoyée avec la candidature",
+          "illisible": "Format non lisible\u00a0: cette photo (HEIC) ne s'affiche pas sur ordinateur. Demandez une nouvelle photo, en JPEG ou PNG.",
+          "demanderNouvelle": "Demander une nouvelle photo"
         },
         "provenance": "Provenance : {provenance}",
         "messagePause": "Message choisi pour la pause : {nom}",
@@ -4249,7 +4262,9 @@
           "accordDonne": "Donné le {date}",
           "accordAbsent": "Non donné\u00a0: ne proposer aucune mission",
           "misesAJour": "Dernière mise à jour le {date}."
-        }
+        },
+        "pieceIllisible": "Format non lisible\u00a0: cette pièce (photo HEIC ou PDF) ne s'affiche pas sur ordinateur. Demandez une nouvelle pièce, en photo JPEG ou PNG.",
+        "demanderNouvellePiece": "Demander une nouvelle pièce d'identité"
       },
       "controles": {
         "noms": {
@@ -4364,7 +4379,13 @@
       "complement": {
         "elements": "Ce qui manque",
         "aide": "La personne lira cette liste.",
-        "manquant": "Choisissez au moins un élément."
+        "manquant": "Choisissez au moins un élément.",
+        "groupeReponses": "Réponses",
+        "groupeDocuments": "Documents et accords",
+        "codeConduite": "Le code de conduite",
+        "piece": "La pièce d'identité",
+        "photo": "La photo",
+        "accordPublication": "L'accord de publication de la photo"
       },
       "retrait": {
         "canal": "Comment la demande est arrivée",
