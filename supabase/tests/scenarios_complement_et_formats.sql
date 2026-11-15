@@ -55,11 +55,11 @@ VALUES (pg_temp.id('c1'), 'enseignant', pg_temp.id('cand'), 'male', 'Candidat Es
 SELECT pg_temp.vrai(
   (SELECT x[array_position(x, 'cadre_religieux') : cardinality(x)]
      FROM (SELECT private.candidature_complement_codes('prequalification', 'enseignant') AS x) s)
-    = ARRAY['cadre_religieux', 'contrat', 'avis', 'code_conduite', 'piece_identite', 'photo', 'accord_publication'],
-  'salle 1 : le cadre puis les six documents et accords, dans l''ordre du parcours');
+    = ARRAY['cadre_religieux', 'contrat', 'avis', 'code_conduite', 'piece_identite', 'photo', 'accord_publication', 'pays_versement'],
+  'salle 1 : le cadre, les six documents et accords dans l''ordre du parcours, puis le pays de versement (PAYS-VERSEMENT)');
 SELECT pg_temp.vrai(private.candidature_complement_codes('verifications', 'enseignant')
-    = ARRAY['piece_identite', 'cadre_religieux', 'contrat', 'avis'],
-  'salle 2 : inchangee');
+    = ARRAY['piece_identite', 'cadre_religieux', 'contrat', 'avis', 'pays_versement'],
+  'salle 2 : inchangee, sauf le pays de versement (PAYS-VERSEMENT)');
 
 -- 2. Sans demande : pas de date.
 SELECT pg_temp.vrai(

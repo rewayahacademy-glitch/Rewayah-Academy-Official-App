@@ -2782,7 +2782,7 @@
       "completer": "Complete my application",
       "enExamenTitre": "Your application has been sent",
       "enExamen": "The academy is reading your answers and will notify you here.",
-      "versementImpossible": "Rewayah cannot yet pay you through the means declared in your country. Your application stays on hold. The academy will let you know as soon as a means becomes possible.",
+      "versementImpossible": "The academy cannot yet pay you in the country you chose. Your application is not refused: it stays on hold. If a trusted relative lives in a supported country, you can choose that relative's country. Otherwise, the academy will tell you as soon as a method becomes possible.",
       "libreDePartir": "You remain free to withdraw your application.",
       "enPauseTitre": "Your application is on hold",
       "repriseLe": "Resumes on {date}.",
@@ -2814,6 +2814,15 @@
       "pieceRecue": "Your document has been received. The academy management is checking it.",
       "elementCodeConduite": "The code of conduct",
       "elementAccordPublication": "The publication agreement for your photo",
+      "elementPaysVersement": "Payment country and account",
+      "paysVersementLien": "Change the payment country",
+      "paysVersementTitre": "Country of the payment account",
+      "paysVersementExplication": "The account can belong to a trusted relative, in a country the academy supports. Choose the country where that account is. The payment methods and details you already entered will have to be confirmed again.",
+      "paysVersementEnregistrer": "Save this country",
+      "paysVersementFait": "Payment country updated. The academy is reading your file again.",
+      "paysVersementEchec": "The country could not be changed. Nothing was modified: try again in a moment.",
+      "paysVersementInterdit": "The country can no longer be changed at this stage. Write to the academy from your file's conversation.",
+      "paysVersementHorsLigne": "You are offline. The country was not changed; try again once you are back online.",
       "pieceDemandee": "The academy management is asking you for a new photo of your document.",
       "photoDemandee": "The academy management is asking you for a new photo. Change it in the summary of your answers, before sending them."
     },
@@ -3123,7 +3132,8 @@
       },
       "versement": {
         "virementSeul": "In your country, the academy has confirmed bank transfer. No mobile payment method is offered for now.",
-        "aucunMoyen": "Rewayah does not yet pay teachers in this country. You can send your application: it will stay on hold until a method becomes possible.",
+        "aucunMoyen": "This country is not yet supported by the academy. If a trusted relative lives in a supported country and can receive your pay on their account, choose that relative's country. You can also send your application as it is: it will not be refused for this, it will stay on hold.",
+        "changerPays": "Change country",
         "operateurDescription": "Mobile payment",
         "chargement": "We are looking for the methods possible in your country.",
         "nonCharge": "The payment methods for your country could not be loaded.",
@@ -3446,7 +3456,7 @@
         },
         "paysVersement": {
           "titre": "In which country do you want to receive your pay?",
-          "explication": "The academy checks, country by country, which payment method is possible. We carried over your country of residence: change it if needed.",
+          "explication": "The account that receives your pay can belong to a trusted relative, in a country the academy supports: if so, choose that relative's country. The academy checks, country by country, which payment method is possible. We carried over your country of residence: change it if needed.",
           "court": "Payment country"
         },
         "compteBancaire": {

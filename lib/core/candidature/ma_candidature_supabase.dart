@@ -203,6 +203,17 @@ class MaCandidatureSupabase implements PortMaCandidature {
     _refus(brut);
     return _candidatureRelue(brut);
   }
+
+  @override
+  Future<CandidatureDossier> modifierPaysVersement(String pays) async {
+    final Map<String, dynamic> brut = _objet(
+      await _appel(_client, 'modifier_mon_pays_versement', <String, dynamic>{
+        'p_pays': pays,
+      }),
+    );
+    _refus(brut);
+    return _candidatureRelue(brut);
+  }
 }
 
 /// Le bloc `candidature` relu au serveur ; une reponse sans lui n'est pas un
@@ -267,6 +278,10 @@ void _refus(Map<String, dynamic> brut) {
         versionRequise: brut['versionRequise'] as String?,
         publie: brut['publie'] == true,
       );
+    case 'pays_invalide':
+      throw const ReponsesInvalides(<String>['paysVersement']);
+    case 'modification_impossible' || 'aucune_reponse_envoyee':
+      throw const TransitionInterdite();
     case 'absente':
       throw const CandidatureAbsente();
     case 'hors_portee':

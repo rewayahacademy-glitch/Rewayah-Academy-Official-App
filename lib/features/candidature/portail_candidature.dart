@@ -492,6 +492,7 @@ class StatutCandidature extends StatelessWidget {
     'code_conduite' => t.recrutement.portail.elementCodeConduite,
     'photo' => t.recrutement.portail.elementPhoto,
     'accord_publication' => t.recrutement.portail.elementAccordPublication,
+    'pays_versement' => t.recrutement.portail.elementPaysVersement,
     _ => null,
   };
 

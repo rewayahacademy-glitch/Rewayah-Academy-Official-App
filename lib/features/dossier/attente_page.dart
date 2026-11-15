@@ -23,6 +23,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../candidature/carte_entretien_proche.dart';
+import '../candidature/pays_versement_portail.dart';
 import '../candidature/portail_candidature.dart';
 import '../com_annonces/annonces_recues.dart';
 import '../com_messages/entree_messages_candidature.dart';
@@ -201,6 +202,13 @@ class _AttentePageState extends ConsumerState<AttentePage> {
       actions: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // PAYS-VERSEMENT : le pays du compte de versement se change apres
+          // l'envoi, tant que la candidature est en cours.
+          if (candidature != null &&
+              peutChangerPaysVersement(candidature)) ...<Widget>[
+            LienPaysVersement(candidature: candidature),
+            Ecart.vXs,
+          ],
           // CAND-03 : le retrait est un lien discret, tant qu'il est permis.
           if (candidature != null && candidature.peutRetirer) ...<Widget>[
             LienRetraitCandidature(candidature: candidature),
