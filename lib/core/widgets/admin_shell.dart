@@ -420,6 +420,7 @@ class AdminShell extends StatelessWidget {
                 cloche: cloche,
                 messages: messages,
                 studio: studio != null,
+                onRechercheMetier: onRechercheMetier,
               ),
               // La barre a deja pose la zone sure du haut (encoche, barre
               // d'etat) : la page en dessous ne la repose pas, sinon un vide
@@ -1674,11 +1675,16 @@ class _BarreMobile extends StatefulWidget {
     required this.studio,
     this.cloche,
     this.messages,
+    this.onRechercheMetier,
   });
 
   final void Function(String chemin) onRecherche;
   final VoidCallback onCompte;
   final Widget? cloche;
+
+  /// RECHERCHE-LOUPE : la recherche de tout l'espace (conversations
+  /// comprises), proposee aussi par la loupe du telephone.
+  final VoidCallback? onRechercheMetier;
 
   /// L'acces aux Messages quand un message attend (MESSAGERIE-TEMPS-REEL).
   final Widget? messages;
@@ -1751,6 +1757,7 @@ class _BarreMobileState extends State<_BarreMobile> {
           _BoutonRecherche(
             onRecherche: widget.onRecherche,
             studio: widget.studio,
+            onRechercheMetier: widget.onRechercheMetier,
           ),
           ecart,
           if (widget.messages case final Widget messages) ...<Widget>[
