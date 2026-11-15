@@ -28,7 +28,7 @@ import '../../core/communications/moderation.dart'
 import '../../core/communications/titre_administration.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
-import '../../core/widgets/page_conversation.dart';
+import '../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import 'messages_page.dart';

@@ -108,6 +108,7 @@ import '../../../core/widgets/note_etoiles.dart';
 import '../../../core/widgets/offline_banner.dart';
 import '../../../core/widgets/ornement_marque.dart';
 import '../../../core/widgets/page_compte.dart';
+import '../../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../../core/widgets/page_etape.dart';
 import '../../../core/widgets/page_immersive.dart';
 import '../../../core/widgets/page_parcours.dart';
@@ -1885,6 +1886,34 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
             onRetour: _rien,
             onAction: _rien,
             enfant: const Text('Le corps de la page.'),
+          ),
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'PageConversationPleinEcran',
+    famille: FamilleComposant.structure,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'conversation ouverte',
+        (BuildContext _) => const SizedBox(
+          height: _hauteurPage,
+          child: PageConversationPleinEcran(
+            child: Text('La barre, le fil et la saisie.'),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'clavier ouvert',
+        (BuildContext c) => SizedBox(
+          height: _hauteurPage,
+          child: MediaQuery(
+            data: MediaQuery.of(c)
+                .copyWith(viewInsets: const EdgeInsets.only(bottom: AppSpacing.respiration * 2)),
+            child: const PageConversationPleinEcran(
+              child: Text('Le fil reste au-dessus du clavier.'),
+            ),
           ),
         ),
       ),

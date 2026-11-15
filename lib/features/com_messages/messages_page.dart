@@ -41,7 +41,7 @@ import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
-import '../../core/widgets/page_conversation.dart';
+import '../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
