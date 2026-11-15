@@ -15461,7 +15461,7 @@ class Traductions$notifications$evenements$fr {
 	String get annonceDirection => 'Annonce de l\'académie';
 
 	/// fr: 'Annonce : {titre}'
-	String annonceDirectionTitre({required Object titre}) => 'Annonce : ${titre}';
+	String annonceDirectionTitre({required Object titre}) => 'Annonce : ${titre}';
 
 	/// fr: 'Bienvenue dans l'équipe. Il vous reste à configurer votre espace.'
 	String get bienvenueEquipe => 'Bienvenue dans l\'équipe. Il vous reste à configurer votre espace.';
@@ -40133,7 +40133,7 @@ class Traductions$com$annonces$simple$fr {
 	String get aQuiContexte => 'Choisissez un ou plusieurs publics. Sous chacun, le nombre de personnes qu\'il atteint.';
 
 	/// fr: '« Femmes » et « Hommes » restreignent les autres publics choisis.'
-	String get aQuiFiltres => '« Femmes » et « Hommes » restreignent les autres publics choisis.';
+	String get aQuiFiltres => '« Femmes » et « Hommes » restreignent les autres publics choisis.';
 
 	late final Traductions$com$annonces$simple$publics$fr publics = Traductions$com$annonces$simple$publics$fr.internal(_root);
 
@@ -40144,7 +40144,7 @@ class Traductions$com$annonces$simple$fr {
 	);
 
 	/// fr: 'Un enfant ne reçoit jamais d'annonce : son parent la reçoit pour lui.'
-	String get elevesDetail => 'Un enfant ne reçoit jamais d\'annonce : son parent la reçoit pour lui.';
+	String get elevesDetail => 'Un enfant ne reçoit jamais d\'annonce : son parent la reçoit pour lui.';
 
 	/// fr: 'Cette annonce part vers {cible}, et seulement vers elle.'
 	String classeContexte({required Object cible}) => 'Cette annonce part vers ${cible}, et seulement vers elle.';
@@ -40165,7 +40165,7 @@ class Traductions$com$annonces$simple$fr {
 	String get programmer => 'Programmer l\'envoi';
 
 	/// fr: 'Choisissez un moment : l'annonce l'attend.'
-	String get programmerDetail => 'Choisissez un moment : l\'annonce l\'attend.';
+	String get programmerDetail => 'Choisissez un moment : l\'annonce l\'attend.';
 
 	/// fr: 'Envoyer aussi par courriel'
 	String get courriel => 'Envoyer aussi par courriel';
@@ -40174,10 +40174,10 @@ class Traductions$com$annonces$simple$fr {
 	String get courrielDetail => 'En plus de l\'application. Chacun peut se désinscrire de ces courriels.';
 
 	/// fr: 'Courriels à envoyer : {adresses}. Ils partent dans la journée.'
-	String courrielUnJour({required Object adresses}) => 'Courriels à envoyer : ${adresses}. Ils partent dans la journée.';
+	String courrielUnJour({required Object adresses}) => 'Courriels à envoyer : ${adresses}. Ils partent dans la journée.';
 
 	/// fr: 'Courriels à envoyer : {adresses}. Au plus {parJour} partent par jour : avec ceux qui attendent déjà, l'envoi prendra environ {jours} jours.'
-	String courrielJours({required Object adresses, required Object parJour, required Object jours}) => 'Courriels à envoyer : ${adresses}. Au plus ${parJour} partent par jour : avec ceux qui attendent déjà, l\'envoi prendra environ ${jours} jours.';
+	String courrielJours({required Object adresses, required Object parJour, required Object jours}) => 'Courriels à envoyer : ${adresses}. Au plus ${parJour} partent par jour : avec ceux qui attendent déjà, l\'envoi prendra environ ${jours} jours.';
 
 	/// fr: 'Aucune adresse de courriel joignable dans ce public.'
 	String get courrielAucun => 'Aucune adresse de courriel joignable dans ce public.';
@@ -40210,10 +40210,10 @@ class Traductions$com$annonces$simple$fr {
 	String get calcul => 'Calcul du nombre de personnes.';
 
 	/// fr: 'Personne ne correspond à ce choix : rien ne peut partir. Choisissez un autre public.'
-	String get videPersonne => 'Personne ne correspond à ce choix : rien ne peut partir. Choisissez un autre public.';
+	String get videPersonne => 'Personne ne correspond à ce choix : rien ne peut partir. Choisissez un autre public.';
 
 	/// fr: 'Votre profil ne dit pas si vous êtes une femme ou un homme : la séparation des côtés empêche l'envoi. Demandez au directeur de compléter votre profil.'
-	String get videCote => 'Votre profil ne dit pas si vous êtes une femme ou un homme : la séparation des côtés empêche l\'envoi. Demandez au directeur de compléter votre profil.';
+	String get videCote => 'Votre profil ne dit pas si vous êtes une femme ou un homme : la séparation des côtés empêche l\'envoi. Demandez au directeur de compléter votre profil.';
 
 	/// fr: 'Le nombre de personnes n'a pas pu être calculé. Il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Réessayez.'
 	String get audienceEchec => 'Le nombre de personnes n\'a pas pu être calculé. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez.';
@@ -40228,12 +40228,12 @@ class Traductions$com$annonces$simple$fr {
 	String get apercuSansTitre => 'Sans titre, la première ligne du message sert de titre.';
 
 	/// fr: 'Envoyer cette annonce ?'
-	String get confirmerTitre => 'Envoyer cette annonce ?';
+	String get confirmerTitre => 'Envoyer cette annonce ?';
 
 	/// fr: '(one) {Elle part vers {publics} : {n} personne. Elle ne pourra plus être modifiée.} (other) {Elle part vers {publics} : {n} personnes. Elle ne pourra plus être modifiée.}'
 	String confirmerTexte({required num n, required Object publics}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
-		one: 'Elle part vers ${publics} : ${n} personne. Elle ne pourra plus être modifiée.',
-		other: 'Elle part vers ${publics} : ${n} personnes. Elle ne pourra plus être modifiée.',
+		one: 'Elle part vers ${publics} : ${n} personne. Elle ne pourra plus être modifiée.',
+		other: 'Elle part vers ${publics} : ${n} personnes. Elle ne pourra plus être modifiée.',
 	);
 
 	/// fr: 'Elle partira le {date} à {heure}.'
@@ -60379,7 +60379,7 @@ extension on Traductions {
 			'historique.compteRendu.etatAcquis' => 'Acquis',
 			'historique.dateCourteSansAnnee' => ({required Object jour, required Object mois}) => '${jour} ${mois}',
 			'notifications.evenements.annonceDirection' => 'Annonce de l\'académie',
-			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'Annonce : ${titre}',
+			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'Annonce : ${titre}',
 			'notifications.evenements.bienvenueEquipe' => 'Bienvenue dans l\'équipe. Il vous reste à configurer votre espace.',
 			'notifications.evenements.retenuEntretien' => 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.',
 			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} est acceptée pour ${mois}. Sa date limite recule d\'autant. Sa place est gardée.',
@@ -63768,7 +63768,7 @@ extension on Traductions {
 			'com.annonces.simple.titre' => 'Nouvelle annonce',
 			'com.annonces.simple.aQui' => 'À qui',
 			'com.annonces.simple.aQuiContexte' => 'Choisissez un ou plusieurs publics. Sous chacun, le nombre de personnes qu\'il atteint.',
-			'com.annonces.simple.aQuiFiltres' => '« Femmes » et « Hommes » restreignent les autres publics choisis.',
+			'com.annonces.simple.aQuiFiltres' => '« Femmes » et « Hommes » restreignent les autres publics choisis.',
 			'com.annonces.simple.publics.tous' => 'Tout le monde',
 			'com.annonces.simple.publics.enseignants' => 'Tous les enseignants',
 			'com.annonces.simple.publics.candidats' => 'Candidats en cours',
@@ -63779,18 +63779,18 @@ extension on Traductions {
 			'com.annonces.simple.publics.femmes' => 'Femmes',
 			'com.annonces.simple.publics.hommes' => 'Hommes',
 			'com.annonces.simple.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne', other: '${n} personnes', ), 
-			'com.annonces.simple.elevesDetail' => 'Un enfant ne reçoit jamais d\'annonce : son parent la reçoit pour lui.',
+			'com.annonces.simple.elevesDetail' => 'Un enfant ne reçoit jamais d\'annonce : son parent la reçoit pour lui.',
 			'com.annonces.simple.classeContexte' => ({required Object cible}) => 'Cette annonce part vers ${cible}, et seulement vers elle.',
 			'com.annonces.simple.message' => 'Le message',
 			'com.annonces.simple.champTitre' => 'Titre (facultatif)',
 			'com.annonces.simple.champTexte' => 'Message',
 			'com.annonces.simple.options' => 'Options',
 			'com.annonces.simple.programmer' => 'Programmer l\'envoi',
-			'com.annonces.simple.programmerDetail' => 'Choisissez un moment : l\'annonce l\'attend.',
+			'com.annonces.simple.programmerDetail' => 'Choisissez un moment : l\'annonce l\'attend.',
 			'com.annonces.simple.courriel' => 'Envoyer aussi par courriel',
 			'com.annonces.simple.courrielDetail' => 'En plus de l\'application. Chacun peut se désinscrire de ces courriels.',
-			'com.annonces.simple.courrielUnJour' => ({required Object adresses}) => 'Courriels à envoyer : ${adresses}. Ils partent dans la journée.',
-			'com.annonces.simple.courrielJours' => ({required Object adresses, required Object parJour, required Object jours}) => 'Courriels à envoyer : ${adresses}. Au plus ${parJour} partent par jour : avec ceux qui attendent déjà, l\'envoi prendra environ ${jours} jours.',
+			'com.annonces.simple.courrielUnJour' => ({required Object adresses}) => 'Courriels à envoyer : ${adresses}. Ils partent dans la journée.',
+			'com.annonces.simple.courrielJours' => ({required Object adresses, required Object parJour, required Object jours}) => 'Courriels à envoyer : ${adresses}. Au plus ${parJour} partent par jour : avec ceux qui attendent déjà, l\'envoi prendra environ ${jours} jours.',
 			'com.annonces.simple.courrielAucun' => 'Aucune adresse de courriel joignable dans ce public.',
 			'com.annonces.simple.envoyerA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer à ${n} personne', other: 'Envoyer à ${n} personnes', ), 
 			'com.annonces.simple.programmerPour' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Programmer pour ${n} personne', other: 'Programmer pour ${n} personnes', ), 
@@ -63799,14 +63799,14 @@ extension on Traductions {
 			'com.annonces.simple.manquePublic' => 'Choisissez au moins un public pour envoyer.',
 			'com.annonces.simple.manqueTexte' => 'Écrivez le message pour envoyer.',
 			'com.annonces.simple.calcul' => 'Calcul du nombre de personnes.',
-			'com.annonces.simple.videPersonne' => 'Personne ne correspond à ce choix : rien ne peut partir. Choisissez un autre public.',
-			'com.annonces.simple.videCote' => 'Votre profil ne dit pas si vous êtes une femme ou un homme : la séparation des côtés empêche l\'envoi. Demandez au directeur de compléter votre profil.',
+			'com.annonces.simple.videPersonne' => 'Personne ne correspond à ce choix : rien ne peut partir. Choisissez un autre public.',
+			'com.annonces.simple.videCote' => 'Votre profil ne dit pas si vous êtes une femme ou un homme : la séparation des côtés empêche l\'envoi. Demandez au directeur de compléter votre profil.',
 			'com.annonces.simple.audienceEchec' => 'Le nombre de personnes n\'a pas pu être calculé. Il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez.',
 			'com.annonces.simple.apercuTitre' => 'Ce que verront les destinataires',
 			'com.annonces.simple.apercuVide' => 'Votre message apparaîtra ici.',
 			'com.annonces.simple.apercuSansTitre' => 'Sans titre, la première ligne du message sert de titre.',
-			'com.annonces.simple.confirmerTitre' => 'Envoyer cette annonce ?',
-			'com.annonces.simple.confirmerTexte' => ({required num n, required Object publics}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Elle part vers ${publics} : ${n} personne. Elle ne pourra plus être modifiée.', other: 'Elle part vers ${publics} : ${n} personnes. Elle ne pourra plus être modifiée.', ), 
+			'com.annonces.simple.confirmerTitre' => 'Envoyer cette annonce ?',
+			'com.annonces.simple.confirmerTexte' => ({required num n, required Object publics}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Elle part vers ${publics} : ${n} personne. Elle ne pourra plus être modifiée.', other: 'Elle part vers ${publics} : ${n} personnes. Elle ne pourra plus être modifiée.', ), 
 			'com.annonces.simple.confirmerProgrammee' => ({required Object date, required Object heure}) => 'Elle partira le ${date} à ${heure}.',
 			'com.annonces.simple.confirmerCourriel' => 'Un courriel part aussi à chacun.',
 			'com.annonces.simple.revenir' => 'Revenir au message',
