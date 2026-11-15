@@ -381,6 +381,7 @@ class FilDiscussion extends StatefulWidget {
     this.lectureSeule,
     this.retourCompacte,
     this.saisieReduite = false,
+    this.pleinEcran = false,
   }) : assert(
          lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
@@ -466,6 +467,15 @@ class FilDiscussion extends StatefulWidget {
   /// forme entiere des qu'on y ecrit ou qu'il prend le focus. Une bulle au
   /// moins reste a l'ecran.
   final bool saisieReduite;
+
+  /// MESSAGERIE-PLEIN-ECRAN (15/11/2026) : le fil est une page a lui, comme
+  /// dans toute messagerie. Aucun en-tete ni tete de page : la barre de la
+  /// conversation est posee au-dessus par l'appelant. Les messages sont la
+  /// seule zone qui defile, en ordre inverse (le dernier message est le bas
+  /// de la liste, il y reste quand le clavier s'ouvre) ; la saisie est
+  /// fixe en bas, sans phrase d'aide, et grandit jusqu'a cinq lignes puis
+  /// defile en elle-meme. Source : `docs/current/UX_REVIEW_MESSAGERIE-PLEIN-ECRAN.md`.
+  final bool pleinEcran;
 
   /// La largeur sous laquelle [saisieReduite] s'applique (320 oui, 360 et
   /// 390 non).
@@ -668,6 +678,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// messagerie. Sans effet quand tout tient deja dans l'ecran, ni pour un
   /// fil qui porte son en-tete (sa saisie est dans la liste, deja au bas).
   void _montrerSaisie() {
+    if (widget.pleinEcran) return;
     if (widget.entete != null || widget.enteteCompacte != null) return;
     final BuildContext? saisie = _cleZoneSaisie.currentContext;
     if (!mounted || saisie == null) return;
@@ -683,7 +694,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // reduite), si la fin du fil etait a l'ecran, elle y reste.
     final bool enBas =
         _defilement.hasClients &&
-        _defilement.position.pixels >= _defilement.position.maxScrollExtent - 1;
+        (widget.pleinEcran
+            ? _defilement.position.pixels <= 1
+            : _defilement.position.pixels >=
+                  _defilement.position.maxScrollExtent - 1);
     setState(() {});
     if (enBas && _noeudChamp.hasFocus) {
       // Une seule fois, a l'image suivante (la disposition du focus) :
@@ -707,7 +721,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // [FilDiscussion.enteteCompacte]) prend la tete de la page. Le fil du
     // Controleur n'en a pas : la page garde sa tete, compacte et fixe
     // (SUPERPOS-1), au-dessus du fil et de sa saisie.
-    final bool preneur = widget.entete != null || widget.enteteCompacte != null;
+    final bool preneur =
+        !widget.pleinEcran &&
+        (widget.entete != null || widget.enteteCompacte != null);
     final TetePageConfiee? page = preneur ? TetePageConfiee.de(context) : null;
     final RelaisTetePage? relais = page?.relais;
     if (!identical(relais, _relaisTete)) {
@@ -760,8 +776,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
     if (widget.messages.length > ancien.messages.length &&
         _defilement.hasClients) {
       final ScrollPosition p = _defilement.position;
-      if (p.hasContentDimensions &&
-          p.maxScrollExtent - p.pixels <= AppSpacing.xxxl * 2) {
+      final double distanceDuBas = widget.pleinEcran
+          ? p.pixels
+          : p.maxScrollExtent - p.pixels;
+      if (p.hasContentDimensions && distanceDuBas <= AppSpacing.xxxl * 2) {
         WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(true));
       }
     }
@@ -841,7 +859,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
 
   void _allerEnBas(bool anime, [int reprises = 3]) {
     if (!mounted || !_defilement.hasClients) return;
-    final double fin = _defilement.position.maxScrollExtent;
+    // Liste inversee (plein ecran) : le bas est le point zero, sans estimation
+    // a rattraper.
+    final bool inverse = widget.pleinEcran;
+    final double fin = inverse ? 0 : _defilement.position.maxScrollExtent;
     final Duration duree = Mouvement.duree(context, Mouvement.moyen);
     if (anime && duree > Duration.zero) {
       _defilement.animateTo(fin, duration: duree, curve: Mouvement.entree);
@@ -850,7 +871,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
       // La liste est paresseuse : sa fin est estimee tant que les derniers
       // messages (cartes de pieces, lecteurs) ne sont pas mesures. On
       // rejoint la vraie fin une fois ceux-ci poses.
-      if (reprises > 0) {
+      if (reprises > 0 && !inverse) {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           if (!mounted || !_defilement.hasClients) return;
           final ScrollPosition p = _defilement.position;
@@ -1007,6 +1028,63 @@ class _FilDiscussionState extends State<FilDiscussion> {
     );
   }
 
+  /// Le fil plein ecran : les messages (seule zone qui defile, liste
+  /// inversee) au-dessus, la saisie fixe en bas. Le clavier raccourcit la
+  /// zone des messages par le bas (`resizeToAvoidBottomInset` de la page) ; le
+  /// dernier message reste collé au champ, la liste etant ancree en bas.
+  Widget _pleinEcran(
+    BuildContext context, {
+    required List<Widget> bulles,
+    required Widget Function({required bool reduite}) zoneSaisie,
+    required String? limite,
+    required TextTheme styles,
+  }) {
+    final Widget saisie = KeyedSubtree(
+      key: _cleZoneSaisie,
+      child: zoneSaisie(reduite: false),
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        Expanded(
+          key: FilDiscussion.cleMessages,
+          child: CustomScrollView(
+            controller: _defilement,
+            reverse: true,
+            slivers: <Widget>[
+              SliverPadding(
+                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                sliver: SliverList.separated(
+                  itemCount: bulles.length,
+                  separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
+                  itemBuilder: (BuildContext _, int i) =>
+                      bulles[bulles.length - 1 - i],
+                ),
+              ),
+            ],
+          ),
+        ),
+        // La saisie prend sa hauteur naturelle : le champ grandit jusqu'a cinq
+        // lignes puis defile en lui-meme (seule exception admise, comme dans
+        // toute messagerie) ; les messages gardent tout le reste.
+        KeyedSubtree(
+          key: FilDiscussion.cleSaisie,
+          child: limite == null
+              ? saisie
+              : Padding(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                  child: Text(
+                    limite,
+                    key: FilDiscussion.cleLectureSeule,
+                    style: AppPalette.of(context).inkMuted
+                        .applyTo(styles.bodyMedium ?? const TextStyle()),
+                  ),
+                ),
+        ),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final TextesFilDiscussion x = widget.textes;
@@ -1151,6 +1229,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
           textes: x,
           onEnvoyer: _envoyer,
           reduite: reduite,
+          sansExplication: widget.pleinEcran,
           onMicro: vocal != null && _microDisponible && !_vocalOuvert
               ? _demanderVocal
               : null,
@@ -1175,6 +1254,15 @@ class _FilDiscussionState extends State<FilDiscussion> {
       ],
     );
     final String? limite = widget.lectureSeule;
+    if (widget.pleinEcran) {
+      return _pleinEcran(
+        context,
+        bulles: bulles,
+        zoneSaisie: zoneSaisie,
+        limite: limite,
+        styles: styles,
+      );
+    }
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         final double hauteur = contraintes.maxHeight;
@@ -1514,6 +1602,7 @@ class _Saisie extends StatelessWidget {
     this.onMicro,
     this.vocal,
     this.vocalOuvert = false,
+    this.sansExplication = false,
   });
 
   final TextEditingController champ;
@@ -1538,6 +1627,9 @@ class _Saisie extends StatelessWidget {
   /// Vrai pendant l'enregistrement et la pre-ecoute : le panneau vocal
   /// remplace la rangee texte (R-04), qui revient ensuite avec son texte.
   final bool vocalOuvert;
+
+  /// Plein ecran : aucune phrase d'aide sous le champ.
+  final bool sansExplication;
 
   static const Key _cleVocal = ValueKey<String>('fil-discussion-vocal');
 
@@ -1644,7 +1736,7 @@ class _Saisie extends StatelessWidget {
     libelleVisible: false,
     aide: aidePeinte ? textes.aideChamp : null,
     // La raison de l'envoi absent ; la saisie reduite n'a pas d'envoi.
-    explication: vide && !reduite ? textes.champVide : null,
+    explication: vide && !reduite && !sansExplication ? textes.champVide : null,
     maxLignes: reduite ? 1 : 5,
     envoi: reduite
         ? null

@@ -1287,3 +1287,4 @@ date	branche	PR	statut	commits hors main
 2026-09-09	specs	-	sans PR	1
 2026-09-09	refactor-ui-lavender-3628477128789856989	1	PR non fusionnée	3
 ```
+| 15/11 | MESSAGERIE-PLEIN-ECRAN (directeur, 15/11, capture au téléphone ; complément relayé par le pilote) : une conversation ouverte est une page à elle au téléphone (barre compacte de 56, de 48 clavier ouvert et repliée en remontant le fil, fil inversé, saisie fixe sans phrase d'aide, coquille effacée), tous rôles par `FilDiscussion(pleinEcran:)`. Aucune migration. | **À LIVRER** : PR #501 en brouillon, preuve : `docs/current/UX_REVIEW_MESSAGERIE-PLEIN-ECRAN.md` et captures R3 ; non vu en production. |

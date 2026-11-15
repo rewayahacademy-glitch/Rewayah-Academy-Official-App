@@ -565,6 +565,14 @@ abstract final class Routes {
   ///
   /// Une tache focalisee se termine ou s'abandonne : ajout de profil,
   /// emetteur QR d'appairage, questionnaire du parcours, consentement.
+  /// MESSAGERIE-PLEIN-ECRAN (15/11/2026) : une conversation ouverte
+  /// (`.../messages/:filId`, tout role) est une page a elle ; au telephone,
+  /// la coquille n'ajoute aucune barre au-dessus.
+  static bool estConversationOuverte(String chemin) {
+    final List<String> segments = Uri.parse(chemin).pathSegments;
+    return segments.length >= 2 && segments[segments.length - 2] == 'messages';
+  }
+
   static bool estTacheFocalisee(String chemin) =>
       chemin == tuteurAjouterEnfant ||
       chemin.startsWith('$tuteurAppairer/') ||

@@ -3545,6 +3545,7 @@ class _CoquilleNavigation extends ConsumerWidget {
                     : null,
               ),
         masquerBarreBasse:
+            Routes.estConversationOuverte(chemin) ||
             Routes.estTacheFocalisee(chemin) ||
             Routes.estTacheFocaliseeComptable(chemin),
         // Le rail replie a icones seules est la maquette du tuteur ; l'eleve et
@@ -3854,6 +3855,11 @@ class _CoquilleAdmin extends ConsumerWidget {
           reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
         ),
         cheminCourant: adresseRouteurSur(context)?.path,
+        // MESSAGERIE-PLEIN-ECRAN : au telephone, une conversation ouverte
+        // porte sa propre barre ; la coquille s'efface.
+        conversationOuverte: Routes.estConversationOuverte(
+          adresseRouteurSur(context)?.path ?? '',
+        ),
         child: child,
       ),
     );

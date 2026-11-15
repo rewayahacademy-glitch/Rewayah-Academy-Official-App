@@ -15,9 +15,10 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/entete_page.dart';
+import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
@@ -88,7 +89,9 @@ void main() {
       tester.widget<MessagesPage>(find.byType(MessagesPage)).filId,
       'fil-adam',
     );
-    expect(find.byType(EnteteFilContexte), findsOneWidget);
+    // Nouvelle disposition (telephone) : une barre compacte, plus d'en-tete.
+    expect(find.byKey(BarreConversation.cle), findsOneWidget);
+    expect(find.byType(EnteteFilContexte), findsNothing);
     expect(find.byType(FilDiscussion), findsOneWidget);
     expect(
       tester.widget<NavShell>(find.byType(NavShell)).indexActif,
@@ -96,7 +99,7 @@ void main() {
       reason: 'le fil vit sous la destination Messages (NAV-REFONTE)',
     );
 
-    await tester.tap(find.byType(DisqueRetour));
+    await tester.tap(find.byKey(EspaceTravailAdaptatif.cleRetourListe));
     await stabiliser(tester);
     expect(lieu(routeur), Routes.enseignantMessages);
     expect(tester.takeException(), isNull);

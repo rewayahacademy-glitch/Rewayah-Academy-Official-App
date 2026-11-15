@@ -43,7 +43,7 @@ import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
-import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
 import 'package:rewayah_academy/features/com_studio/focus/bascule_focus.dart';
@@ -702,13 +702,15 @@ void main() {
           .first;
       final Rect r = tester.getRect(carte);
       final Rect liste = tester.getRect(find.byKey(FilDiscussion.cleMessages));
+      // MESSAGERIE-PLEIN-ECRAN : la saisie est fixe sous la liste ; le panneau
+      // se lit en entier a l'ecran, sous les messages (plus de liste qui
+      // descend jusqu'a son bas).
       expect(
-        r.bottom <= liste.bottom + 0.5,
+        r.top >= liste.bottom - 0.5 && r.bottom <= _petit.height + 0.5,
         isTrue,
-        reason: 'le bas de la carte ($r) est dans la liste ($liste)',
+        reason: 'la carte ($r) est entiere a l ecran, sous la liste ($liste)',
       );
-      // Le panneau defile lui-meme : son « Envoyer » se rejoint et se
-      // touche.
+      // Son « Envoyer » se rejoint et se touche.
       await tester.ensureVisible(find.byKey(ComposerVocal.cleEnvoyer));
       await tester.pump();
       _entierALEcran(
@@ -782,6 +784,26 @@ void main() {
           echelle: cas.$2,
         );
         expect(tester.takeException(), isNull);
+        if (cas.$1.width < 600) {
+          // MESSAGERIE-PLEIN-ECRAN : au telephone, la barre compacte remplace
+          // la ligne compacte : fixe, entiere, avec le nom et (i).
+          final Finder barre = find.byKey(BarreConversation.cle);
+          _entierALEcran(tester, barre, cas.$1, 'la barre');
+          expect(
+            find.descendant(of: barre, matching: find.textContaining('Ahmed')),
+            findsWidgets,
+          );
+          _entierALEcran(
+            tester,
+            find.descendant(
+              of: barre,
+              matching: find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte),
+            ),
+            cas.$1,
+            '(i)',
+          );
+          return;
+        }
         _ligneCompacteFixe(tester, cas.$1, textes: <String>['Ahmed', 'Adam']);
         _entierALEcran(
           tester,
@@ -848,9 +870,10 @@ void main() {
         echelle: 2,
       );
       expect(tester.takeException(), isNull);
-      final Finder compacte = find.byKey(FilDiscussion.cleEnteteCompacte);
+      // MESSAGERIE-PLEIN-ECRAN : la barre compacte porte le nom et le retour.
+      final Finder barre = find.byKey(BarreConversation.cle);
       final Finder nom = find.descendant(
-        of: compacte,
+        of: barre,
         matching: find.textContaining('Sayyida Mariam'),
       );
       expect(nom, findsOneWidget);
@@ -868,20 +891,13 @@ void main() {
       // Le lecteur d'ecran entend le contexte entier, fonction comprise.
       final SemanticsHandle semantique = tester.ensureSemantics();
       expect(
-        tester
-            .getSemantics(
-              find.descendant(
-                of: compacte,
-                matching: find.byKey(EnteteFilContexte.cle),
-              ),
-            )
-            .label,
+        tester.getSemantics(barre).label,
         contains('Sayyida Mariam, Enseignante'),
       );
       semantique.dispose();
       final Finder retour = find.descendant(
-        of: compacte,
-        matching: find.byKey(FilDiscussion.cleRetourCompacte),
+        of: barre,
+        matching: find.byKey(EspaceTravailAdaptatif.cleRetourListe),
       );
       _entierALEcran(tester, retour, _petit, 'le retour');
       expect(tester.getSize(retour).height, greaterThanOrEqualTo(48));

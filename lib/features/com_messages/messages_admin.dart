@@ -28,6 +28,7 @@ import '../../core/communications/moderation.dart'
 import '../../core/communications/titre_administration.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import 'messages_page.dart';
@@ -80,6 +81,20 @@ class MessagesAdminPage extends ConsumerWidget {
     final VoidCallback? retour = filId == null
         ? null
         : () => GoRouter.of(context).go(Routes.adminCommunicationsMessages);
+    if (filId != null && conversationPleinEcran(context)) {
+      // MESSAGERIE-PLEIN-ECRAN : la conversation est une page a elle ; le
+      // titre et les onglets restent a la liste (la coquille admin s'efface).
+      return PageConversationPleinEcran(
+        child: EspaceMessagesMetier(
+          filId: filId,
+          pleinEcran: true,
+          onRetourFil: retour,
+          onOuvrirFil: (String id) =>
+              GoRouter.of(context)
+                  .go(Routes.adminFilPour(Uri.encodeComponent(id))),
+        ),
+      );
+    }
     return PageShell(
       // D-FUS-3 : le corps pose le bandeau hors ligne des Communications ;
       // pas de bandeau generique en plus.

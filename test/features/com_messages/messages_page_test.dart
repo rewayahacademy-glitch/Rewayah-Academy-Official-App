@@ -12,7 +12,6 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
-import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/vue_etat_communication.dart';
@@ -162,7 +161,7 @@ void main() {
       expect(find.byType(ListeFils), findsNothing);
       expect(find.byType(FilDiscussion), findsOneWidget);
       // Le retour de la page ramene a la liste.
-      await tester.tap(find.byType(DisqueRetour));
+      await tester.tap(find.byKey(EspaceTravailAdaptatif.cleRetourListe));
       await tester.pumpAndSettle();
       expect(cheminCourant(routeur), cheminListeTest);
       expect(find.byType(ListeFils), findsOneWidget);

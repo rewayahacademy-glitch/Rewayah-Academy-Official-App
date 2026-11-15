@@ -42,7 +42,9 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
+import 'package:rewayah_academy/features/com_messages/panneau_contexte_fil.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
 import 'package:rewayah_academy/features/com_studio/port_activite_studio.dart';
@@ -227,6 +229,70 @@ void _entierALEcran(
 /// telephone (retour et titre cote a cote) rend de la hauteur a la page ;
 /// quand elle suffit, l'en-tete complet du fil reste fixe au lieu de la ligne
 /// compacte. Le contexte doit alors se lire, entier, au-dessus de la liste.
+/// MESSAGERIE-PLEIN-ECRAN (15/11/2026) : au telephone, plus d'en-tete ni de
+/// ligne compacte dans le fil : une barre compacte, fixe, au-dessus de la
+/// liste. Le nom de l'interlocuteur s'y lit entier, (i) et « Envoyer » sont
+/// entiers a l'ecran ; l'objet du fil se lit dans le panneau que (i) ouvre.
+Future<void> _barreVisible(
+  WidgetTester tester,
+  Size taille, {
+  required String nom,
+  required String objet,
+}) async {
+  expect(tester.takeException(), isNull);
+  expect(find.byKey(FilDiscussion.cleEnteteCompacte), findsNothing);
+  expect(find.byType(EnteteFilContexte), findsNothing);
+  final Finder barre = find.byKey(BarreConversation.cle);
+  _entierALEcran(
+    tester,
+    barre,
+    taille,
+    'la barre de la conversation',
+    toucher: false,
+  );
+  // Fixe : hors de la liste qui defile, au-dessus d'elle.
+  expect(
+    find.descendant(of: find.byKey(FilDiscussion.cleMessages), matching: barre),
+    findsNothing,
+  );
+  expect(
+    tester.getRect(barre).bottom,
+    lessThanOrEqualTo(
+      tester.getRect(find.byKey(FilDiscussion.cleMessages)).top + 0.5,
+    ),
+    reason: 'la barre est au-dessus de la liste',
+  );
+  expect(
+    find.descendant(of: barre, matching: find.textContaining(nom)),
+    findsWidgets,
+    reason: '« $nom » se lit dans la barre',
+  );
+  _entierALEcran(
+    tester,
+    find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte).first,
+    taille,
+    '(i)',
+  );
+  _entierALEcran(
+    tester,
+    envoiDuFil(),
+    taille,
+    '« Envoyer »',
+    toucher: find.byKey(FilDiscussion.envoyerKey).evaluate().isNotEmpty,
+  );
+  // L'objet du fil n'est plus dans la barre : il est dans le contexte (i).
+  await tester.tap(find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte).first);
+  await tester.pumpAndSettle();
+  expect(
+    find.descendant(
+      of: find.byType(PanneauContexteFil),
+      matching: find.textContaining(objet),
+    ),
+    findsWidgets,
+    reason: '« $objet » se lit dans le panneau de contexte',
+  );
+}
+
 void _contexteVisible(
   WidgetTester tester,
   Size taille, {
@@ -409,11 +475,11 @@ void main() {
         taille: _telephone,
         echelle: 1,
       );
-      _contexteVisible(
+      await _barreVisible(
         tester,
         _telephone,
-        textes: <String>['M. Rachid', 'Visite de contrôle'],
-        entetePleine: true,
+        nom: 'M. Rachid',
+        objet: 'Visite de contrôle',
       );
     });
 
@@ -430,11 +496,7 @@ void main() {
         taille: _petit,
         echelle: 1,
       );
-      _contexteVisible(
-        tester,
-        _petit,
-        textes: <String>['Sayyida Mariam', 'Adam'],
-      );
+      await _barreVisible(tester, _petit, nom: 'Sayyida Mariam', objet: 'Adam');
     });
 
     testWidgets('Messages du tuteur, 320, texte x2', (
@@ -450,16 +512,10 @@ void main() {
         taille: _petit,
         echelle: 2,
       );
-      _contexteVisible(
-        tester,
-        _petit,
-        textes: <String>['Sayyida Mariam', 'Adam'],
-      );
-      // La ligne ne prend pas le quart de l'ecran. Lot K, point 5 : ses
-      // objets passent a la ligne (deux lignes au plus) au lieu de se
-      // couper ; elle reste sous le sixieme de l'ecran.
+      await _barreVisible(tester, _petit, nom: 'Sayyida Mariam', objet: 'Adam');
+      // La barre ne prend pas le quart de l'ecran, meme a texte double.
       expect(
-        tester.getRect(find.byKey(FilDiscussion.cleEnteteCompacte)).height,
+        tester.getRect(find.byKey(BarreConversation.cle)).height,
         lessThanOrEqualTo(_petit.height / 6),
       );
     });
@@ -482,8 +538,8 @@ void main() {
       );
     });
 
-    testWidgets('390, texte x1, vue haute : l en-tete complet reste fixe, '
-        'sans ligne compacte', (WidgetTester tester) async {
+    testWidgets('390, texte x1, vue haute : la barre compacte reste fixe, '
+        'sans en-tete complet ni ligne compacte', (WidgetTester tester) async {
       // Garde-fou : hors texte agrandi et hors vue basse, rien ne change.
       await _monterDansLaCoquille(
         tester,
@@ -497,11 +553,14 @@ void main() {
       );
       expect(tester.takeException(), isNull);
       expect(find.byKey(FilDiscussion.cleEnteteCompacte), findsNothing);
+      // Nouvelle disposition : la barre compacte, jamais l'en-tete complet.
+      expect(find.byKey(EnteteFilContexte.cle), findsNothing);
       _entierALEcran(
         tester,
-        find.byKey(EnteteFilContexte.cle),
+        find.byKey(BarreConversation.cle),
         _telephone,
-        'l en-tete',
+        'la barre de la conversation',
+        toucher: false,
       );
     });
   });

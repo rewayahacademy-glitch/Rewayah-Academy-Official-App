@@ -38,13 +38,16 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/etat_routeur_sur.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
+import '../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
 import 'bandeau_messages_hors_direct.dart';
+import 'barre_conversation.dart';
 import 'fil_contextuel.dart';
 import 'liste_fils.dart';
 import 'panneau_contexte_fil.dart';
@@ -116,6 +119,25 @@ class MessagesPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final VoidCallback? retourFil = switch ((filId, cheminRetour)) {
+      (String _, final String chemin) => () => unawaited(
+        _retour(context, chemin),
+      ),
+      _ => null,
+    };
+    if (filId != null && conversationPleinEcran(context)) {
+      // MESSAGERIE-PLEIN-ECRAN : au telephone, la conversation est une page
+      // a elle (une barre compacte, le fil, le champ) ; ni titre ni barre
+      // globale au-dessus.
+      return PageConversationPleinEcran(
+        child: EspaceMessagesMetier(
+          filId: filId,
+          pleinEcran: true,
+          onOuvrirFil: (String id) => _ouvrirFil(context, id),
+          onRetourFil: retourFil,
+        ),
+      );
+    }
     return PageShell(
       // D-FUS-3 : le corps pose le bandeau hors ligne des Communications ;
       // pas de bandeau generique en plus.
@@ -146,6 +168,11 @@ class MessagesPage extends StatelessWidget {
   }
 }
 
+/// Vrai au telephone (gabarit mobile, la ou la coquille s'efface devant une
+/// conversation ouverte) : la conversation est alors une page a elle.
+bool conversationPleinEcran(BuildContext context) =>
+    AppGabarit.de(context) == Gabarit.mobile;
+
 /// L'espace des Messages metier : liste, fil, contexte, et leurs etats.
 ///
 /// Sans route : la page routee et la demonstration le posent, chacune avec
@@ -159,6 +186,7 @@ class EspaceMessagesMetier extends ConsumerStatefulWidget {
     this.onOuvrirObjet,
     this.onRetourFil,
     this.horloge = DateTime.now,
+    this.pleinEcran = false,
   });
 
   /// Le fil ouvert, ou `null` pour la liste seule.
@@ -177,6 +205,10 @@ class EspaceMessagesMetier extends ConsumerStatefulWidget {
 
   /// L'heure courante, pour la liste.
   final DateTime Function() horloge;
+
+  /// Telephone, fil ouvert : la conversation est une page a elle
+  /// (`FilContextuel.pleinEcran`).
+  final bool pleinEcran;
 
   /// La cle de la phrase « Choisissez une conversation », pour les tests.
   static const ValueKey<String> cleChoisir = ValueKey<String>(
@@ -514,14 +546,25 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
 
   /// La colonne du fil demande : chargement, erreur, inaccessible ou fil.
   Widget _vueFil(String filId, bool horsLigne) {
+    // Plein ecran : un etat sans fil garde le retour (jamais une page sans
+    // sortie).
+    Widget etat(Widget contenu) => widget.pleinEcran
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              BarreRetourConversation(onRetour: widget.onRetourFil),
+              Expanded(child: SingleChildScrollView(child: contenu)),
+            ],
+          )
+        : SingleChildScrollView(child: contenu);
     if (_fil.isLoading) {
-      return const SingleChildScrollView(
-        child: VueEtatCommunication(etat: EtatCommunication.chargement),
+      return etat(
+        const VueEtatCommunication(etat: EtatCommunication.chargement),
       );
     }
     if (_fil.hasError) {
-      return SingleChildScrollView(
-        child: VueEtatCommunication.depuisErreur(
+      return etat(
+        VueEtatCommunication.depuisErreur(
           _fil.error!,
           horsLigne: horsLigne,
           onReessayer: () => _chargerFil(filId),
@@ -532,8 +575,8 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     if (fil == null) {
       // Absent ou refuse (paire non autorisee, autre foyer) : rien du fil
       // n'est rendu, ni nom, ni objet, ni message (R-COM-02).
-      return const SingleChildScrollView(
-        child: VueEtatCommunication(
+      return etat(
+        const VueEtatCommunication(
           etat: EtatCommunication.permissionRefusee,
           dependance: 'COM-BR-01',
         ),
@@ -552,6 +595,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
           false,
       onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
       onRetour: widget.onRetourFil,
+      pleinEcran: widget.pleinEcran,
       // COM-FUS : le composer vocal seulement si la capacite `envoyerVocal`
       // est ouverte (COM-BR-16) ; fermee en production, rien n'est rendu.
       onEnvoyerVocal: vocalOuvert(ref)
