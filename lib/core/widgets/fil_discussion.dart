@@ -615,9 +615,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
   RelaisTetePage? _relaisTete;
   Widget? _teteDePage;
   final List<_MessageLocal> _locaux = <_MessageLocal>[];
-  late final Set<String> _presentsALOuverture = <String>{
-    for (final MessageFil m in widget.messages) m.id,
-  };
+  // DOUBLON-ENVOI (directeur, 16/11/2026) : lu a l'ouverture, dans
+  // [initState]. Un `late final` paresseux n'etait lu qu'au premier besoin :
+  // dans une conversation vide, ce besoin venait avec le retour du serveur du
+  // premier message envoye, qui passait alors pour « present a l'ouverture »
+  // et gardait sa bulle locale a cote (deux bulles).
+  late final Set<String> _presentsALOuverture;
 
   /// Le panneau vocal occupe-t-il la saisie (R-04) ?
   bool _vocalOuvert = false;
@@ -662,6 +665,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
   @override
   void initState() {
     super.initState();
+    _presentsALOuverture = <String>{
+      for (final MessageFil m in widget.messages) m.id,
+    };
     if (widget.controleur == null) _proprio = TextEditingController();
     _champ.addListener(_auChangement);
     _noeudChamp.addListener(_auFocusChamp);
@@ -1091,14 +1097,18 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // MESSAGERIE-TEMPS-REEL (14/11/2026) : le fil ouvert se relit en direct ;
     // un message envoye d'ici revient alors du serveur. Sa bulle locale
     // confirmee s'efface devant lui (meme texte, un pour un) : jamais deux
-    // bulles pour un message. Une bulle en cours ou non confirmee reste.
+    // bulles pour un message. Une bulle non confirmee (echec) reste.
+    // DOUBLON-ENVOI (directeur, 16/11/2026, capture : le message s'affichait
+    // deux fois) : le serveur renvoie souvent le message AVANT que l'envoi
+    // ait repondu ; la bulle encore « en cours » s'efface donc aussi devant
+    // lui, puisque son retour prouve qu'il est arrive.
     final List<String> revenusDuServeur = <String>[
       for (final MessageFil m in widget.messages)
         if (m.deSoi && !_presentsALOuverture.contains(m.id)) m.texte.trim(),
     ];
     final List<_MessageLocal> locauxMontres = <_MessageLocal>[
       for (final _MessageLocal m in _locaux)
-        if (m.etat != EtatEnvoiMessage.envoye ||
+        if (m.etat == EtatEnvoiMessage.echec ||
             !revenusDuServeur.remove(m.texte.trim()))
           m,
     ];

@@ -525,7 +525,10 @@ void main() {
       }
     });
 
-    testWidgets('390 : la cloche de l en-tete de page y mene', (
+    // CLOCHE-EN-HAUT (directeur, 16/11/2026) : sous 600, la cloche est dans
+    // la barre du haut (globale, joignable de partout), plus dans l'en-tete
+    // de la page.
+    testWidgets('390 : la cloche de la barre du haut y mene', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await _monterAdmin(
@@ -535,10 +538,13 @@ void main() {
       );
       final Finder cloche = find.byType(ClocheNotifications);
       expect(cloche, findsOneWidget);
-      // Sous 600 la cloche est dans l'en-tete de page, pas dans la barre.
       expect(
         find.descendant(of: find.byType(EntetePage), matching: cloche),
-        findsOneWidget,
+        findsNothing,
+      );
+      expect(
+        tester.getTopLeft(cloche).dy,
+        lessThan(tester.getTopLeft(find.byType(EntetePage)).dy),
       );
       await tester.tap(cloche);
       await stabiliser(tester);
@@ -706,17 +712,17 @@ void main() {
       expect(hautTitre - basChamp, lessThan(47));
     });
 
-    // Balayage pixel par pixel sous 600 : partout ou le champ est en ligne,
-    // son indication tient sur UNE ligne (revue COM-F-Q5 : une bande de 6 px
-    // la passait a la ligne quand la place reservee etait sous-estimee).
-    testWidgets('sous 600 : champ en ligne = indication sur une ligne', (
+    // RECHERCHE-LOUPE (directeur, 16/11/2026 : « un gros rectangle, moche,
+    // mal place ») : sous 600, plus jamais de champ en ligne dans la barre ;
+    // a toute largeur, la loupe, qui ouvre le meme champ en feuille. Le
+    // balayage garde la verification de COM-F-Q5 : aucune largeur ne fait
+    // reapparaitre le champ.
+    testWidgets('sous 600 : jamais de champ en ligne, toujours la loupe', (
       WidgetTester tester,
     ) async {
       tester.view.devicePixelRatio = 1;
       addTearDown(tester.view.reset);
-      double? uneLigne;
-      int champsVus = 0;
-      for (double largeur = 599; largeur >= 300; largeur -= 1) {
+      for (double largeur = 599; largeur >= 300; largeur -= 7) {
         tester.view.physicalSize = Size(largeur, 900);
         await tester.pumpWidget(
           ProviderScope(
@@ -734,17 +740,13 @@ void main() {
             ),
           ),
         );
-        final Finder indication = find.descendant(
-          of: find.byType(TextField),
-          matching: find.text(t.nav.admin.rechercheIndication),
+        expect(champ(), findsNothing, reason: 'champ en ligne a $largeur');
+        expect(
+          find.bySemanticsLabel(t.nav.admin.recherche),
+          findsOneWidget,
+          reason: 'loupe absente a $largeur',
         );
-        if (indication.evaluate().isEmpty) continue;
-        champsVus++;
-        final double hauteur = tester.getSize(indication).height;
-        uneLigne ??= hauteur;
-        expect(hauteur, uneLigne, reason: 'indication sur 2 lignes a $largeur');
       }
-      expect(champsVus, greaterThan(0), reason: 'le champ doit apparaitre');
     });
 
     testWidgets(
@@ -758,15 +760,12 @@ void main() {
       },
     );
 
-    // La bascule se decide sur la largeur MESUREE de l'indication : la
-    // police de test (un carre par glyphe) est plus large que la vraie, d'ou
-    // 599 ici ; avec les vraies polices le champ tient des 390
-    // (`test/capture/cloches_capture_test.dart`).
-    testWidgets('599 : le champ de recherche reste en ligne', (
+    testWidgets('599 : la recherche est une loupe, sans champ en ligne', (
       WidgetTester tester,
     ) async {
       await _monterAdmin(tester, Routes.admin, taille: const Size(599, 900));
-      expect(champ(), findsOneWidget);
+      expect(champ(), findsNothing);
+      expect(find.bySemanticsLabel(t.nav.admin.recherche), findsOneWidget);
     });
   });
 

@@ -168,14 +168,16 @@ class _ListeFilsState extends State<ListeFils> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          LienFleche(
-            key: ListeFils.cleOuvrirRecherche,
-            libelle: r.champ,
-            icone: AppIcons.recherche,
-            fleche: false,
-            onPress: _etat.ouvrirSurface,
-          ),
-          Ecart.vSm,
+          if (!_etat.loupeEnTete) ...<Widget>[
+            LienFleche(
+              key: ListeFils.cleOuvrirRecherche,
+              libelle: r.champ,
+              icone: AppIcons.recherche,
+              fleche: false,
+              onPress: _etat.ouvrirSurface,
+            ),
+            Ecart.vSm,
+          ],
           Expanded(child: _resultats()),
         ],
       );
