@@ -124,60 +124,45 @@ class AppBottomSheet extends StatefulWidget {
     required Widget Function(BuildContext context) constructeur,
     Widget Function(BuildContext context)? actions,
     String? libelleFermer,
-  }) => showGeneralDialog<T>(
+  }) => showDialog<T>(
     context: context,
-    barrierDismissible: true,
     barrierLabel: libelleFermer ?? t.commun.fermer,
     barrierColor: palette.voile,
-    transitionDuration: AppMouvement.feuilleOuverture,
-    pageBuilder:
-        (BuildContext contexte, Animation<double> _, Animation<double> _) =>
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: SizedBox(
-                key: clePanneau,
-                width: AppPage.largeurFormulaire,
-                height: double.infinity,
-                child: Material(
-                  type: MaterialType.transparency,
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.only(
-                      bottom: MediaQuery.viewInsetsOf(contexte).bottom,
-                    ),
-                    child: AppBottomSheet(
-                      titre: titre,
-                      forme: FormeModale.panneau,
-                      actions: actions?.call(contexte),
-                      libelleFermer: libelleFermer ?? t.commun.fermer,
-                      child: constructeur(contexte),
-                    ),
-                  ),
-                ),
+    // Le panneau prend toute la hauteur : pas de marge de zone sure autour.
+    useSafeArea: false,
+    animationStyle: const AnimationStyle(
+      curve: AppMouvement.entree,
+      duration: AppMouvement.feuilleOuverture,
+      reverseCurve: AppMouvement.sortie,
+      reverseDuration: AppMouvement.feuilleFermeture,
+    ),
+    // TRANSITIONS : le panneau glisse depuis le bord de fin (catalogue).
+    builder: (BuildContext contexte) => AppTransitions.glissementDeCote(
+      contexte,
+      Align(
+        alignment: AlignmentDirectional.centerEnd,
+        child: SizedBox(
+          key: clePanneau,
+          width: AppPage.largeurFormulaire,
+          height: double.infinity,
+          child: Material(
+            type: MaterialType.transparency,
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(
+                bottom: MediaQuery.viewInsetsOf(contexte).bottom,
+              ),
+              child: AppBottomSheet(
+                titre: titre,
+                forme: FormeModale.panneau,
+                actions: actions?.call(contexte),
+                libelleFermer: libelleFermer ?? t.commun.fermer,
+                child: constructeur(contexte),
               ),
             ),
-    transitionBuilder:
-        (
-          BuildContext contexte,
-          Animation<double> animation,
-          Animation<double> _,
-          Widget enfant,
-        ) {
-          final bool rtl = Directionality.of(contexte) == TextDirection.rtl;
-          return SlideTransition(
-            position:
-                Tween<Offset>(
-                  begin: Offset(rtl ? -1 : 1, 0),
-                  end: Offset.zero,
-                ).animate(
-                  CurvedAnimation(
-                    parent: animation,
-                    curve: AppMouvement.entree,
-                    reverseCurve: AppMouvement.sortie,
-                  ),
-                ),
-            child: enfant,
-          );
-        },
+          ),
+        ),
+      ),
+    ),
   );
 
   /// Largeur de la poignee de glissement.
