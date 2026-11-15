@@ -181,6 +181,81 @@ cohérence entre agents, fusionne, installe les migrations.
 6. **Aucun écran sans son serveur** : une vague ne montre rien tant que sa fonction serveur
    n'est pas en production (règle du 11/11, plus aucun « indisponible »).
 
+## 6 bis. Le dossier repensé (ajout du 16/11/2026, après la vidéo du directeur)
+
+Demande du directeur (16/11) : « la lourdeur, la longueur » de la page du dossier ; « des
+boutons d'actions qui manquent » ; « pourquoi ne pas mettre chaque bouton d'action à côté de
+sa rubrique ? » ; les heures « sous forme de tableau » qui s'adapte à l'arabe ; « marquer
+notre impression » ; dispenser d'entretien, d'abord ses associés fondateurs.
+
+### Vu dans la vidéo (98 s, téléphone, production)
+
+| Constat | Détail |
+| :--- | :--- |
+| Entrée | « Personnes » reste vide environ cinq secondes, puis ouvre « Dossiers à valider » (173), pas « Candidatures » (324) ; il faut un menu déroulant de huit lignes pour y aller |
+| Avant le premier nom | Texte d'introduction, bandeau « Lecture des deux côtés », cinq liens, les cartes, « À traiter », la recherche, les filtres : plusieurs écrans à faire défiler |
+| Ordre du dossier | Identité, photo, « Ce qui bloque », « Prochaine action », pièce et entretien, bandeau, « Échanger », réponses, autres compétences, « Contrôles », responsable, contact, historique : environ dix écrans |
+| Redite | « Contrôles » répète « Ce qui bloque » ; la pièce apparaît trois fois |
+| Un seul geste à la fois | Tant que le moyen de versement n'est pas confirmé, « Prochaine action » ne montre que ce bouton |
+| Complément | La feuille ne propose que des documents (contrat, code, pièce, photo, accord…). Après l'envoi : « En attente de la personne », plus aucun geste |
+| Photo | Petite, non ouvrable : un appui sélectionne le texte du titre |
+| Pièce déposée | « Ouvrir dans Dossiers à valider » fait quitter le dossier vers une liste de 173 noms |
+| Disponibilités | Une phrase : « Vendredi, samedi et dimanche : 21 h » |
+| Texte technique | « Version du questionnaire : salle-examen-2 » ; bandeau « Messages pas en direct » dans chaque dossier |
+| Dossier suivant | Retour à la liste, puis défilement |
+
+### Vérifié au serveur
+
+- `demander_complement` en salle d'examen n'est permis que dans l'état `en_examen` et fait
+  passer à `a_completer` : **une seconde demande est impossible** tant que la personne n'a
+  pas renvoyé (`20261022000000_cand_l2a1_moteur_salle_examen.sql`, table des règles).
+- Le serveur ne lie pas le complément au moyen de versement : c'est l'écran qui ne montre
+  qu'un geste. Non vérifié : le contenu du menu « ⋯ ».
+- **Aucune dispense d'entretien** : le seul chemin vers « confirmée » passe par planifier,
+  tenir l'entretien, puis valider la pièce. `personnel_fondateurs` n'est qu'une coche.
+
+### Règles du dossier
+
+- D1. **Trois étages.** En haut, fixe : nom, photo, situation en une phrase, « précédent /
+  suivant ». Au milieu : un résumé de cinq lignes pour juger en dix secondes (langues,
+  niveau, ijaza, disponibilités, pays et versement). En dessous : les rubriques, **repliées**,
+  chacune avec sa pastille (bon, à voir, manque).
+- D2. **Chaque rubrique porte ses gestes** : Photo (voir en grand, en demander une autre),
+  Pièce (voir, valider, en demander une autre, sur place), Versement (confirmer, écarter),
+  chaque groupe de réponses (demander une précision), Entretien, Messages. « Contrôles »
+  disparaît : la pastille de la rubrique le remplace.
+- D3. **Le panier de demandes.** Chaque « demander » s'ajoute à un panier ; un seul envoi.
+  On peut en ajouter tant que la personne n'a pas répondu, quel que soit l'état du versement.
+- D4. **Ce que la personne reçoit se voit avant l'envoi** : un message dans sa langue, la
+  liste exacte de ce qu'on attend, un bouton par point qui mène au bon endroit, et rien
+  d'autre de rouvert. (M14, M15.)
+- D5. **La décision reste sous le pouce** : barre fixe en bas (Accepter, Demander, Refuser,
+  ⋯). Un bouton grisé dit pourquoi.
+- D6. **Disponibilités en grille** jours × heures, dans le fuseau du candidat et dans celui
+  du lecteur ; en arabe la grille se retourne, les heures restent en chiffres latins de
+  gauche à droite.
+- D7. **L'impression** : trois niveaux et une note privée, jamais montrés au candidat ;
+  visibles et filtrables dans la liste. Elle sert à trier, pas à décider seule.
+- D8. **La voie directe** : « Dispenser d'entretien », avec un motif, réservée au directeur
+  ou à une mission qui la porte, écrite au journal. Pour un fondateur : « Accueillir comme
+  fondateur » saute l'examen et l'entretien. La pièce d'identité, les accords signés et le
+  moyen de versement restent exigés (droit et paie).
+- D9. Aucun mot technique à l'écran ; l'état de la connexion des messages ne s'affiche que
+  dans la conversation.
+
+### Lots (ils entrent dans la vague 1)
+
+| Lot | Contenu | Zone |
+| :--- | :--- | :--- |
+| BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo en grand, pièce sur place, barre de décision fixe, entrée de « Personnes » sur Candidatures, en-tête de liste réduit | `admin_candidature`, `admin_candidatures` |
+| BE-1e | Panier de demandes : serveur (demander à tout moment, plusieurs fois, sur une réponse précise) ; écran (panier, aperçu du message) ; côté candidat (liste claire, un bouton par point) | serveur + `admin_candidature` + `features/candidature` |
+| BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | `admin_candidature`, composant dans `lib/core/widgets` |
+| BE-1g | Impression (serveur, dossier, liste, filtre) ; dispense d'entretien et accueil d'un fondateur (serveur + geste) | serveur + `admin_candidature` |
+
+Phrases : « Je juge un dossier sans faire défiler plus d'un écran. » « Je demande une autre
+photo et une précision sur les créneaux en un seul envoi, et j'en ajoute une le lendemain. »
+« J'accueille mes associés fondateurs sans entretien. »
+
 ## 7. Ce qui écarte de la Boucle 1, dit avant d'obéir
 
 Les vagues 0 et 1 servent directement la validation des enseignants (K1) à grande échelle.
