@@ -61,9 +61,9 @@ class RechercheFilsControleur extends ChangeNotifier {
 
   bool _surfaceOuverte = false;
 
-  /// RECHERCHE-LOUPE (directeur, 16/11/2026) : vrai quand la page pose la
-  /// loupe qui ouvre la surface sur la rangee de son en-tete ; la liste ne
-  /// pose alors plus sa propre ligne « Rechercher une conversation ».
+  /// RECHERCHE-LOUPE (directeur, 16/11/2026 : une seule loupe) : vrai quand
+  /// la recherche de la barre du haut sert aussi aux conversations ; la liste
+  /// ne pose alors plus sa propre ligne « Rechercher une conversation ».
   bool loupeEnTete = false;
 
   /// Vrai quand la surface plein ecran du telephone est ouverte, ou qu'une

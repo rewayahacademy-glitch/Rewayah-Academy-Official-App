@@ -3,6 +3,8 @@
 // message envoye d'ici, revenu du serveur par la relecture, ne fait jamais
 // deux bulles ; quand le temps reel tombe, la page le dit (K-59).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,12 +33,12 @@ class _PortVivant implements PortMessagesMetier {
   Future<FilMetier?> fil(String filId) async {
     lecturesFil++;
     final FilMetier? f = await demo.fil(filId);
-    if (f == null || arrives.isEmpty) return f;
+    if (f == null || (arrives.isEmpty && !vide)) return f;
     return FilMetier(
       id: f.id,
       contexte: f.contexte,
       participants: f.participants,
-      messages: <MessageCommunication>[...f.messages, ...arrives],
+      messages: <MessageCommunication>[if (!vide) ...f.messages, ...arrives],
       attention: f.attention,
       capacites: f.capacites,
     );
@@ -65,9 +67,15 @@ class _PortVivant implements PortMessagesMetier {
   @override
   Future<void> marquerLu(String filId) => demo.marquerLu(filId);
 
+  /// Vrai : la conversation s'ouvre vide (premier message).
+  bool vide = false;
+
+  /// Quand il est pose, l'envoi ne repond qu'a sa completion.
+  Completer<void>? envoiSuspendu;
+
   @override
   Future<void> envoyer(String filId, String texte, String cle) =>
-      demo.envoyer(filId, texte, cle);
+      envoiSuspendu?.future ?? demo.envoyer(filId, texte, cle);
 }
 
 void main() {
@@ -104,6 +112,36 @@ void main() {
     expect(find.text('Message arrive en direct.'), findsOneWidget);
     // Le fil reste monte (aucun squelette, aucun etat de chargement).
     expect(find.byType(FilDiscussion), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  // DOUBLON-ENVOI (directeur, 16/11/2026, capture) : le serveur renvoie le
+  // message avant que l'envoi ait repondu ; une seule bulle quand meme.
+  testWidgets('premier message d une conversation vide, revenu du serveur : '
+      'une seule bulle', (WidgetTester tester) async {
+    final _PortVivant port = _PortVivant(
+      portDemo(RoleDemoCommunications.enseignant),
+    )..vide = true;
+    await monterMessages(tester, port: port, depart: cheminFilTest('fil-adam'));
+    final FilMetier fil = (await port.demo.fil('fil-adam'))!;
+    final Participant soi = fil.participants.firstWhere(
+      (Participant p) => p.estSoi,
+    );
+    await tester.enterText(find.byKey(FilDiscussion.champKey), 'Deja la.');
+    await tester.pump();
+    await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+    await tester.pumpAndSettle();
+    port.arrives.add(
+      MessageCommunication(
+        id: 'revenu-1',
+        auteur: soi,
+        texte: 'Deja la.',
+        envoyeLe: maintenantTest,
+      ),
+    );
+    veilleDe(tester).relire();
+    await tester.pumpAndSettle();
+    expect(find.text('Deja la.'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
