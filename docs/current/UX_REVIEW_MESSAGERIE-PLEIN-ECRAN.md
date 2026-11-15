@@ -7,13 +7,9 @@ près de 40 % de l'écran.
 
 ## Ce qui n'est pas prouvé (à lire d'abord)
 
-- **Aucune capture de la vraie application.** Le bac à sable n'a pas de navigateur Flutter ; le
-  dossier `docs/current/captures/E2E/MESSAGERIE-PLEIN-ECRAN/` n'existe pas. **R3 n'est pas
-  satisfaite** : le pilote ne doit pas fusionner avant ces captures (390 x 844 avec viewInsets de
-  300, fr et ar, plus 1440).
-- **14 tests existants échouent** : ils décrivent l'ancienne disposition du téléphone (disque retour
-  de la page, ligne compacte N-1, raccourci du nom, tête de page R-02). Aucun n'a été affaibli ni
-  supprimé ; ils sont à réécrire pour le nouveau contrat (liste en bas de ce fichier).
+- **Les captures sont des captures de test** (vrai `MessagesPage`, port de démonstration, vraies
+  polices), pas de la vraie application. Le clavier est simulé : la zone vide est sa place.
+- **Les 14 anciens tests sont réécrits** (table plus bas), aucun supprimé ni sauté.
 - Mesure (test de widget, vrai `MessagesPage`, port de démonstration, 390 x 844, clavier de 300) :
   hauteur du fil **avant 240 sur 844 (28 % de l'écran, 44 % de la zone au-dessus du clavier)**,
   **après 416 (49 % de l'écran, 76 % de la zone au-dessus du clavier)**. L'« avant » est mesuré
@@ -70,9 +66,27 @@ d'autre que le fil et le champ » est tenu, mais le fil ne peut pas dépasser ce
 - La page des candidats sous `/attente/messages/:filId` n'a pas de coquille ; elle prend la même
   page plein écran au téléphone.
 
-## Tests à réécrire (échouent, non modifiés)
+## Tests réécrits (décision du pilote, 15/11)
 
-`com_rc_lot_a_test` (R-02, (i) dans l'en-tête), `com_rc_tour4_lot_f_test` (N-1), `com_rc_tour5_lot_h_test`
-et `com_rc_tour7_m_test` (constats 7 et 8), `com_rc_tour3_test` (R-02 à 320, texte x2),
-`apercu_profil_candidat_test` (toucher le nom), `routes_messages_test` (famille d'Adam, retour),
-`com_rc_tour2_lot_d_test` (le disque retour de la tête de page).
+Aucun test supprimé ni sauté ; chacun garde son intention (envoi, lecture, droits, retour, contexte).
+Seule la structure attendue change : plus d'en-tête ni de ligne compacte au téléphone, une barre
+compacte (`BarreConversation`).
+
+| Test | Ancien comportement attendu | Nouveau |
+| :--- | :--- | :--- |
+| `com_rc_lot_a` R-02 tuteur, enseignant, administration (320, texte x2) | la tête de page (titre) défile avec le fil et se retrouve en remontant | la barre est fixe, entière à l'écran, avec son retour ; ni `EntetePage` ni titre. Le canal du Studio garde l'ancien contrat |
+| `com_rc_lot_a` « (i) dans la rangée de l'en-tête » | (i) sous `FilDiscussion`, dans la rangée de `EnteteFilContexte` | (i) dans la barre compacte, au niveau de la barre |
+| `com_rc_tour4_lot_f` N-1 admin 390, tuteur 320 x1 et x2 | la ligne compacte (noms, objets) au-dessus de la liste, avec (i) | la barre au-dessus de la liste, nom lu entier, (i) et « Envoyer » entiers ; l'objet se lit dans le panneau ouvert par (i) ; barre sous le sixième de l'écran à x2 |
+| `com_rc_tour4_lot_f` 390 x1 vue haute | l'en-tête complet fixe, sans ligne compacte | la barre compacte fixe, ni en-tête complet ni ligne compacte |
+| `com_rc_tour5_lot_h` constat 3 (N-9), 320 x2 | le fil descend jusqu'au bas du panneau de pré-écoute (carte dans la liste) | la carte du panneau est entière à l'écran, sous la liste ; « Envoyer » du vocal entier et touchable |
+| `com_rc_tour5_lot_h` constat 7, enseignant 320 x2 | ligne compacte fixe avec (i) | barre compacte fixe avec le nom et (i) (la vue basse 844 x 390, en tablette, garde l'ancien contrat) |
+| `com_rc_tour5_lot_h` constat 8 | nom entier dans la ligne compacte, retour de la ligne compacte | nom entier dans la barre, phrase lue en entier (fonction comprise), retour de la barre (48 au moins), il mène à la liste |
+| `entrees_admin` x2, `messages_page`, `routes_messages` (retour du fil) | le disque retour de la page | le retour de la barre (`cleRetourListe`) ; le retour de la liste est inchangé |
+| `routes_messages` enseignant 390 | l'en-tête du fil | la barre de la conversation, pas d'en-tête |
+| `entrees_enseignant` Espace Classe 390 | l'en-tête du fil | 390 : la barre ; 1440 : l'en-tête |
+| `apercu_profil_candidat` 390 | toucher le nom (en-tête) ouvre le contexte | inchangé : le nom de la barre est un raccourci vers le contexte |
+
+Captures R3 (tests `messagerie_plein_ecran_capture_test`, sautés sans `CAPTURE_DIR`, vraies polices) :
+`docs/current/captures/E2E/MESSAGERIE-PLEIN-ECRAN/` : `messagerie-390-{fr,ar}-clavier.png` (clavier
+simulé de 300), `messagerie-390-{fr,ar}.png`, `messagerie-1440-{fr,ar}.png`. Le clavier est simulé :
+la zone vide en bas est la place du clavier, qui n'est pas dessinée.

@@ -11,6 +11,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../../core/accessibilite/texte_agrandi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/mouvement/mouvement.dart';
@@ -19,6 +20,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
+import '../../core/widgets/raccourci_tactile.dart';
 import 'avatar_participant.dart';
 import 'entete_fil_contexte.dart';
 import 'port_messages_metier.dart';
@@ -109,32 +111,35 @@ class BarreConversation extends StatelessWidget {
                 Ecart.hSm,
               Expanded(
                 child: ExcludeSemantics(
-                  child: AvatarNom.enLigne(
-                    prenom: prenom,
-                    nom: nomCourt.replaceAll('-', '‑'),
-                    roleWidget:
-                        minimale ||
-                            ligneRole.isEmpty ||
-                            fil.interlocuteurs.isEmpty
-                        ? null
-                        : Text(
-                            ligneRole,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            style: palette.inkMuted.applyTo(
-                              textes.bodySmall ?? const TextStyle(),
-                            ),
-                          ),
-                    avatar: AvatarParticipant(
-                      participant: fil.interlocuteurs.isEmpty
+                  child: _raccourci(
+                    ouvrirContexte,
+                    AvatarNom.enLigne(
+                      prenom: prenom,
+                      nom: nomCourt.replaceAll('-', '‑'),
+                      roleWidget:
+                          minimale ||
+                              ligneRole.isEmpty ||
+                              fil.interlocuteurs.isEmpty
                           ? null
-                          : fil.interlocuteurs.first,
-                      repli: prenom,
+                          : Text(
+                              ligneRole,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              style: palette.inkMuted.applyTo(
+                                textes.bodySmall ?? const TextStyle(),
+                              ),
+                            ),
+                      avatar: AvatarParticipant(
+                        participant: fil.interlocuteurs.isEmpty
+                            ? null
+                            : fil.interlocuteurs.first,
+                        repli: prenom,
+                        diametre: AppAvatar.petit,
+                      ),
                       diametre: AppAvatar.petit,
-                    ),
-                    diametre: AppAvatar.petit,
-                    styleNom: palette.inkStrong.applyTo(
-                      textes.titleSmall ?? const TextStyle(),
+                      styleNom: palette.inkStrong.applyTo(
+                        textes.titleSmall ?? const TextStyle(),
+                      ),
                     ),
                   ),
                 ),
@@ -162,7 +167,12 @@ class BarreConversation extends StatelessWidget {
         heightFactor: replie ? 0 : 1,
         duration: Mouvement.duree(context, Mouvement.moyen),
         curve: Mouvement.entree,
-        child: barre,
+        // Une barre qui ne grandit pas au-dela de 150 % : a texte double, elle
+        // prenait le quart de l'ecran a 320. Le nom entier reste lu (semantique).
+        child: MediaQuery.withClampedTextScaling(
+          maxScaleFactor: SeuilsTexteAgrandi.echelle,
+          child: barre,
+        ),
       ),
     );
   }
@@ -199,3 +209,13 @@ class BarreRetourConversation extends StatelessWidget {
     );
   }
 }
+
+/// Apercu du profil : toucher la photo ou le nom ouvre le contexte, le meme
+/// geste que (i), qui reste le controle lu et atteint au clavier.
+Widget _raccourci(VoidCallback? ouvrir, Widget identite) => ouvrir == null
+    ? identite
+    : RaccourciTactile(
+        key: EnteteFilContexte.cleRaccourci,
+        onPress: ouvrir,
+        child: identite,
+      );

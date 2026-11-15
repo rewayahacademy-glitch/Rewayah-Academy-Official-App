@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
@@ -88,7 +89,9 @@ void main() {
       tester.widget<MessagesPage>(find.byType(MessagesPage)).filId,
       'fil-adam',
     );
-    expect(find.byType(EnteteFilContexte), findsOneWidget);
+    // Nouvelle disposition (telephone) : une barre compacte, plus d'en-tete.
+    expect(find.byKey(BarreConversation.cle), findsOneWidget);
+    expect(find.byType(EnteteFilContexte), findsNothing);
     expect(find.byType(FilDiscussion), findsOneWidget);
     expect(
       tester.widget<NavShell>(find.byType(NavShell)).indexActif,

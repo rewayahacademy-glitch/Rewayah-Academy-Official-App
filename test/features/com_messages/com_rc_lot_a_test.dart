@@ -38,7 +38,7 @@ import 'package:rewayah_academy/core/widgets/empty_state.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
-import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/com_studio/canal_page.dart';
@@ -92,7 +92,7 @@ bool _sous(RenderObject o, RenderObject ancetre) {
 Future<void> _filLisible(
   WidgetTester tester,
   Size taille, {
-  required Finder titrePage,
+  Finder? titrePage,
 }) async {
   expect(tester.takeException(), isNull);
   expect(find.byKey(FilDiscussion.champKey), findsOneWidget);
@@ -153,6 +153,18 @@ Future<void> _filLisible(
   });
   expect(uneVisible, isTrue, reason: 'au moins un message au premier ecran');
   expect(tester.takeException(), isNull);
+  if (titrePage == null) {
+    // MESSAGERIE-PLEIN-ECRAN : plus de tete de page qui defile avec le fil ;
+    // une barre compacte, fixe, toujours a l'ecran, avec son retour. Ni
+    // titre ni onglets dans la conversation.
+    final Rect barre = tester.getRect(find.byKey(BarreConversation.cle));
+    expect(barre.top, greaterThanOrEqualTo(0));
+    expect(barre.bottom, lessThanOrEqualTo(taille.height));
+    expect(find.byKey(EspaceTravailAdaptatif.cleRetourListe), findsOneWidget);
+    expect(find.byType(EntetePage), findsNothing);
+    expect(tester.takeException(), isNull);
+    return;
+  }
   // La tete de la page n'a pas disparu : elle defile avec le fil.
   await tester.scrollUntilVisible(
     titrePage,
@@ -262,11 +274,7 @@ void main() {
         taille: _petit,
         echelleTexte: 2,
       );
-      await _filLisible(
-        tester,
-        _petit,
-        titrePage: find.text(t.com.messages.titre),
-      );
+      await _filLisible(tester, _petit);
     });
 
     testWidgets('Messages de l enseignant', (WidgetTester tester) async {
@@ -277,11 +285,7 @@ void main() {
         taille: _petit,
         echelleTexte: 2,
       );
-      await _filLisible(
-        tester,
-        _petit,
-        titrePage: find.text(t.com.messages.titre),
-      );
+      await _filLisible(tester, _petit);
     });
 
     testWidgets('Messages de l administration', (WidgetTester tester) async {
@@ -292,13 +296,7 @@ void main() {
         taille: _petit,
         echelleTexte: 2,
       );
-      await _filLisible(
-        tester,
-        _petit,
-        // Le titre de la spec, ou son repli sur l'onglet (R-09) : l'en-tete
-        // de la page, avec son retour.
-        titrePage: find.byType(EntetePage),
-      );
+      await _filLisible(tester, _petit);
     });
 
     testWidgets('canal du Studio', (WidgetTester tester) async {
@@ -326,8 +324,12 @@ void main() {
       );
       final Finder info = find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte);
       expect(info, findsOneWidget);
-      expect(_dansFil(info), findsOneWidget);
-      final Rect entete = tester.getRect(find.byType(EnteteFilContexte));
+      // Nouvelle disposition : (i) est dans la barre compacte de la conversation.
+      expect(
+        find.descendant(of: find.byKey(BarreConversation.cle), matching: info),
+        findsOneWidget,
+      );
+      final Rect entete = tester.getRect(find.byKey(BarreConversation.cle));
       final Rect bouton = tester.getRect(info);
       expect(bouton.top, greaterThanOrEqualTo(entete.top));
       expect(bouton.top, lessThan(entete.bottom));

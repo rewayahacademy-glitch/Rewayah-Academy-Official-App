@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/etat_systeme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
@@ -327,7 +328,15 @@ void main() {
         await _toucher(tester, _dansEntree(find.text("Ahmed, Parent d'Adam")));
         expect(_chemin(routeur), Routes.enseignantFilPour('fil-adam'));
         expect(find.byType(FilDiscussion), findsOneWidget);
-        expect(find.byType(EnteteFilContexte), findsOneWidget);
+        // Telephone : une barre compacte ; ordinateur : l'en-tete du fil.
+        expect(
+          find.byKey(BarreConversation.cle),
+          taille.width < 600 ? findsOneWidget : findsNothing,
+        );
+        expect(
+          find.byType(EnteteFilContexte),
+          taille.width < 600 ? findsNothing : findsOneWidget,
+        );
         // Un fil vit sous Messages (NAV-REFONTE, 09/11/2026).
         expect(tester.widget<NavShell>(find.byType(NavShell)).indexActif, 2);
         expect(tester.takeException(), isNull);
