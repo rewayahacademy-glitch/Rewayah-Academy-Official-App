@@ -28,6 +28,7 @@ import '../../core/communications/moderation.dart'
 import '../../core/communications/titre_administration.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
@@ -114,6 +115,10 @@ class MessagesAdminPage extends ConsumerWidget {
       // une page de domaine, sans retour (la coquille porte la navigation).
       onRetour: retour,
       defilante: false,
+      // ENTETE-COMMUNICATIONS (directeur, 16/11/2026 : « l'en-tete prend la
+      // moitie de l'ecran ») : au telephone, une seule rangee (retour,
+      // Annonces / Messages, cloche) qui defile avec la liste (LISTES-2).
+      teteAvecLaListe: AppGabarit.de(context) == Gabarit.mobile,
       child: EspaceMessagesMetier(
         filId: filId,
         // COM-R-3, constat 8 : le meme retour, dans la ligne compacte du fil.
