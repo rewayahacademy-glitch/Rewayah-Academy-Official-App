@@ -10960,6 +10960,15 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	@override String get pieceRecue => 'وصلت وثيقتك. الإدارة تتحقق منها.';
 	@override String get elementCodeConduite => 'ميثاق السلوك';
 	@override String get elementAccordPublication => 'الموافقة على نشر صورتك';
+	@override String get elementPaysVersement => 'بلد الصرف والحساب';
+	@override String get paysVersementLien => 'تغيير بلد الصرف';
+	@override String get paysVersementTitre => 'بلد حساب الصرف';
+	@override String get paysVersementExplication => 'يمكن أن يكون الحساب حساب قريب موثوق في بلد تدعمه الأكاديمية. اختر البلد الذي يوجد فيه هذا الحساب. ستحتاج وسائل الصرف والبيانات المدخلة سابقًا إلى تأكيد جديد.';
+	@override String get paysVersementEnregistrer => 'حفظ هذا البلد';
+	@override String get paysVersementFait => 'تم تحديث بلد الصرف. تعيد الأكاديمية قراءة ملفك.';
+	@override String get paysVersementEchec => 'تعذّر تغيير البلد. لم يتغير شيء: حاول بعد قليل.';
+	@override String get paysVersementInterdit => 'لم يعد ممكنًا تغيير البلد في هذه المرحلة. اكتب إلى الأكاديمية من محادثة ملفك.';
+	@override String get paysVersementHorsLigne => 'أنت غير متصل. لم يتغير البلد؛ حاول عند عودة الاتصال.';
 	@override String get pieceDemandee => 'تطلب منك الإدارة صورة جديدة لوثيقتك.';
 	@override String get photoDemandee => 'تطلب منك الإدارة صورة جديدة. غيّرها في ملخص إجاباتك قبل إرسالها.';
 }
@@ -16803,7 +16812,7 @@ class _Traductions$admin$candidatures$etats$ar extends Traductions$admin$candida
 	@override String get invitee => 'مدعوّ';
 	@override String get aCompleter => 'يحتاج إلى استكمال';
 	@override String get enExamen => 'قيد الدراسة';
-	@override String get versementImpossible => 'صرف الراتب غير ممكن بعد';
+	@override String get versementImpossible => 'لا تستطيع الأكاديمية بعد صرف راتبك في البلد الذي اخترته. طلبك غير مرفوض: إنه قيد الانتظار. إن كان لك قريب موثوق يقيم في بلد مدعوم يمكنك اختيار بلده. وإلا فستخبرك الأكاديمية حال توفر وسيلة ممكنة.';
 	@override String get entretienAPlanifier => 'المقابلة تنتظر تحديد موعد';
 	@override String get entretienPlanifie => 'المقابلة محدَّدة الموعد';
 	@override String get decisionEnAttente => 'القرار قيد الانتظار';
@@ -21138,7 +21147,8 @@ class _Traductions$recrutement$parcours$versement$ar extends Traductions$recrute
 
 	// Translations
 	@override String get virementSeul => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.';
-	@override String get aucunMoyen => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى قيد الانتظار حتى تتوفر وسيلة ممكنة.';
+	@override String get aucunMoyen => 'هذا البلد لا تدعمه الأكاديمية بعد. إن كان لك قريب موثوق يقيم في بلد مدعوم ويمكنه استلام راتبك في حسابه، فاختر بلد هذا القريب. ويمكنك أيضًا إرسال طلب ترشحك كما هو: لن يُرفض بسبب ذلك، وسيبقى قيد الانتظار.';
+	@override String get changerPays => 'تغيير البلد';
 	@override String get operateurDescription => 'الدفع عبر الهاتف';
 	@override String get chargement => 'نبحث عن الوسائل الممكنة في بلدك.';
 	@override String get nonCharge => 'تعذّر تحميل وسائل صرف الراتب في بلدك.';
@@ -25975,7 +25985,7 @@ class _Traductions$recrutement$parcours$q$paysVersement$ar extends Traductions$r
 
 	// Translations
 	@override String get titre => 'في أي بلد تريد تلقي راتبك؟';
-	@override String get explication => 'تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.';
+	@override String get explication => 'يمكن أن يكون الحساب الذي يستلم راتبك حساب قريب موثوق في بلد تدعمه الأكاديمية: اختر عندئذٍ بلد هذا القريب. تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.';
 	@override String get court => 'بلد الصرف';
 }
 
@@ -32176,7 +32186,7 @@ extension on TraductionsAr {
 			'admin.candidatures.etats.invitee' => 'مدعوّ',
 			'admin.candidatures.etats.aCompleter' => 'يحتاج إلى استكمال',
 			'admin.candidatures.etats.enExamen' => 'قيد الدراسة',
-			'admin.candidatures.etats.versementImpossible' => 'صرف الراتب غير ممكن بعد',
+			'admin.candidatures.etats.versementImpossible' => 'لا تستطيع الأكاديمية بعد صرف راتبك في البلد الذي اخترته. طلبك غير مرفوض: إنه قيد الانتظار. إن كان لك قريب موثوق يقيم في بلد مدعوم يمكنك اختيار بلده. وإلا فستخبرك الأكاديمية حال توفر وسيلة ممكنة.',
 			'admin.candidatures.etats.entretienAPlanifier' => 'المقابلة تنتظر تحديد موعد',
 			'admin.candidatures.etats.entretienPlanifie' => 'المقابلة محدَّدة الموعد',
 			'admin.candidatures.etats.decisionEnAttente' => 'القرار قيد الانتظار',
@@ -38766,9 +38776,20 @@ extension on TraductionsAr {
 			'recrutement.portail.pieceRecue' => 'وصلت وثيقتك. الإدارة تتحقق منها.',
 			'recrutement.portail.elementCodeConduite' => 'ميثاق السلوك',
 			'recrutement.portail.elementAccordPublication' => 'الموافقة على نشر صورتك',
+			'recrutement.portail.elementPaysVersement' => 'بلد الصرف والحساب',
+			'recrutement.portail.paysVersementLien' => 'تغيير بلد الصرف',
+			'recrutement.portail.paysVersementTitre' => 'بلد حساب الصرف',
+			'recrutement.portail.paysVersementExplication' => 'يمكن أن يكون الحساب حساب قريب موثوق في بلد تدعمه الأكاديمية. اختر البلد الذي يوجد فيه هذا الحساب. ستحتاج وسائل الصرف والبيانات المدخلة سابقًا إلى تأكيد جديد.',
+			'recrutement.portail.paysVersementEnregistrer' => 'حفظ هذا البلد',
+			'recrutement.portail.paysVersementFait' => 'تم تحديث بلد الصرف. تعيد الأكاديمية قراءة ملفك.',
+			'recrutement.portail.paysVersementEchec' => 'تعذّر تغيير البلد. لم يتغير شيء: حاول بعد قليل.',
+			'recrutement.portail.paysVersementInterdit' => 'لم يعد ممكنًا تغيير البلد في هذه المرحلة. اكتب إلى الأكاديمية من محادثة ملفك.',
+			'recrutement.portail.paysVersementHorsLigne' => 'أنت غير متصل. لم يتغير البلد؛ حاول عند عودة الاتصال.',
 			'recrutement.portail.pieceDemandee' => 'تطلب منك الإدارة صورة جديدة لوثيقتك.',
 			'recrutement.portail.photoDemandee' => 'تطلب منك الإدارة صورة جديدة. غيّرها في ملخص إجاباتك قبل إرسالها.',
 			'recrutement.entretien.titre' => 'لنتعارف',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.entretien.intro' => 'اختر موعدًا لمقابلة مرئية مع الأكاديمية.',
 			'recrutement.entretien.heureAppareil' => 'توقيت هذا الجهاز',
 			'recrutement.entretien.horaire' => ({required Object date, required Object debut, required Object fin}) => '⁨${date}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩',
@@ -38778,8 +38799,6 @@ extension on TraductionsAr {
 			'recrutement.entretien.erreurLecture' => 'تعذّر تحميل المواعيد. أعد المحاولة.',
 			'recrutement.entretien.pris' => 'حُجز هذا الموعد للتو. اختر موعدًا آخر.',
 			'recrutement.entretien.dejaPlanifie' => 'موعد مقابلتك محدد بالفعل.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.entretien.perime' => 'تغيّر ترشّحك في هذه الأثناء. أعد تحميل الصفحة.',
 			'recrutement.entretien.erreurReservation' => 'لم يتم الحجز. أعد المحاولة.',
 			'recrutement.entretien.votreEntretien' => 'مقابلتك',
@@ -39011,7 +39030,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.creneaux.separateurListe' => '، ',
 			'recrutement.parcours.creneaux.etListe' => ({required Object debut, required Object dernier}) => '⁨${debut}⁩ و⁨${dernier}⁩',
 			'recrutement.parcours.versement.virementSeul' => 'في بلدك، أكّدت الأكاديمية التحويل المصرفي. لا توجد حاليًا وسيلة دفع عبر الهاتف.',
-			'recrutement.parcours.versement.aucunMoyen' => 'لا تصرف أكاديمية الرواية رواتب في هذا البلد بعد. يمكنك إرسال طلب ترشحك: سيبقى قيد الانتظار حتى تتوفر وسيلة ممكنة.',
+			'recrutement.parcours.versement.aucunMoyen' => 'هذا البلد لا تدعمه الأكاديمية بعد. إن كان لك قريب موثوق يقيم في بلد مدعوم ويمكنه استلام راتبك في حسابه، فاختر بلد هذا القريب. ويمكنك أيضًا إرسال طلب ترشحك كما هو: لن يُرفض بسبب ذلك، وسيبقى قيد الانتظار.',
+			'recrutement.parcours.versement.changerPays' => 'تغيير البلد',
 			'recrutement.parcours.versement.operateurDescription' => 'الدفع عبر الهاتف',
 			'recrutement.parcours.versement.chargement' => 'نبحث عن الوسائل الممكنة في بلدك.',
 			'recrutement.parcours.versement.nonCharge' => 'تعذّر تحميل وسائل صرف الراتب في بلدك.',
@@ -39194,7 +39214,7 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.paysResidence.explication' => 'اختر البلد الذي تقيم فيه اليوم.',
 			'recrutement.parcours.q.paysResidence.court' => 'بلد الإقامة',
 			'recrutement.parcours.q.paysVersement.titre' => 'في أي بلد تريد تلقي راتبك؟',
-			'recrutement.parcours.q.paysVersement.explication' => 'تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.',
+			'recrutement.parcours.q.paysVersement.explication' => 'يمكن أن يكون الحساب الذي يستلم راتبك حساب قريب موثوق في بلد تدعمه الأكاديمية: اختر عندئذٍ بلد هذا القريب. تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.',
 			'recrutement.parcours.q.paysVersement.court' => 'بلد الصرف',
 			'recrutement.parcours.q.compteBancaire.titre' => 'هل عندك حساب مصرفي تستلم فيه راتبك، باسمك أو باسم أحد أقاربك؟',
 			'recrutement.parcours.q.compteBancaire.explication' => 'يُصرف الراتب بتحويل مصرفي حيث أكّدت الأكاديمية ذلك. لا تُطلب بياناتك إلا قبل أول دفعة.',
@@ -39282,6 +39302,8 @@ extension on TraductionsAr {
 			'recrutement.talents.c.traduction.description' => 'نقل النصوص من لغة إلى أخرى.',
 			'recrutement.talents.c.traduction.exemple' => 'رسائل إلى الأسر، ترجمة نصية لمقاطع الفيديو، نص من الموقع',
 			'recrutement.talents.c.assistanat.libelle' => 'المساعدة الإدارية ومساعدة الإدارة',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.assistanat.description' => 'مساعدة الإدارة على تنظيم عملها اليومي.',
 			'recrutement.talents.c.assistanat.exemple' => 'مسك جدول المواعيد، كتابة المراسلات، متابعة الملفات',
 			'recrutement.talents.c.coordination_groupe.libelle' => 'تنسيق مجتمع من الأشخاص',
@@ -39292,8 +39314,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.accueil_familles.exemple' => 'الإجابة عن سؤال، مرافقة تسجيل، الاطمئنان على أسرة',
 			'recrutement.talents.c.gestion_projet.libelle' => 'التخطيط وإدارة المشاريع',
 			'recrutement.talents.c.gestion_projet.description' => 'تنظيم عمل جماعي من بدايته إلى نهايته.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.gestion_projet.exemple' => 'وضع جدول زمني، توزيع المهام، متابعة التقدم',
 			'recrutement.talents.c.ressources_humaines.libelle' => 'الموارد البشرية والتوظيف',
 			'recrutement.talents.c.ressources_humaines.description' => 'اختيار من ينضمون إلى الفريق واستقبالهم.',
@@ -39796,6 +39816,8 @@ extension on TraductionsAr {
 			'avis.admin.retour.motifManque' => 'السبب ناقص. اختر سببًا.',
 			'avis.admin.retour.refus' => 'الإدارة المتصلة وحدها تستطيع البت في رأي.',
 			'avis.admin.retour.echec' => 'تعذّر تأكيد القرار. أُعيدت قراءة القائمة: تحقق من حالة الرأي قبل أن تحاول من جديد.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
 			'avis.admin.liens.creerTitre' => 'إنشاء رابط',
 			'avis.admin.liens.creerIntro' => 'يفتح الرابط نموذج الرأي دون حساب ودون تسجيل دخول. أعطه اسمًا لتميّزه.',
@@ -39806,8 +39828,6 @@ extension on TraductionsAr {
 			'avis.admin.liens.joursAide' => '90 افتراضيًا و365 على الأكثر.',
 			'avis.admin.liens.joursErreur' => 'اكتب عدد أيام من 1 إلى 365.',
 			'avis.admin.liens.max' => 'الحد الأقصى للآراء',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.maxAide' => '200 افتراضيًا و2000 على الأكثر.',
 			'avis.admin.liens.maxErreur' => 'اكتب عددًا من الآراء من 1 إلى 2000.',
 			'avis.admin.liens.creer' => 'إنشاء الرابط',
@@ -40310,6 +40330,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.',
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'عدة أعمدة تحمل عنوان: ⁨${champs}⁩. المسوا العمود الذي يجب قراءته ثم اختاروا ما يحتويه.',
 			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'كيف تُقرأ الإجابات',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'تُقرأ الإجابات ذات الخيارات (الجنس واللغات ومستوى الحفظ وموعد البدء) بجدول عبارات رواية. وأي عبارة غير موجودة فيه تُبلَّغ سطرًا سطرًا في خطوة «الأخطاء».',
 			'candidatsFlux.importFormulaires.colonnes.relecture' => 'تحتاج تصحيحاتكم إلى قراءة جديدة للملف قبل المتابعة.',
 			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '⁨${nature}⁩: الحالة ⁨${n}⁩ من ⁨${total}⁩',
@@ -40320,8 +40342,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.total' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حالات للفحص', one: 'حالة واحدة للفحص', two: 'حالتان للفحص', few: '⁨${n}⁩ حالات للفحص', many: '⁨${n}⁩ حالة للفحص', other: '⁨${n}⁩ حالة للفحص', ), 
 			'candidatsFlux.importFormulaires.doublons.tranches' => ({required Object choisis, required Object total}) => 'اختياراتكم: ⁨${choisis}⁩ من ⁨${total}⁩. وفي الباقي يُحتفظ بالسطر الأحدث.',
 			'candidatsFlux.importFormulaires.doublons.nature.courriel' => 'البريد الإلكتروني نفسه',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'الهاتف نفسه',
 			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'البريد الإلكتروني والهاتف نفسهما',
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'الأسطر ⁨${liste}⁩',
@@ -40824,6 +40844,8 @@ extension on TraductionsAr {
 			'suiviAttente.sansDonnees' => 'تعذّر تحميل متابعة طلبك',
 			'suiviAttente.introuvable' => 'لم يعد هذا الطلب في متابعتك.',
 			'suiviAttente.retour' => 'رجوع',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.carte.titre' => 'طلبك لفصل',
 			'suiviAttente.carte.titreSimple' => 'طلبك لفصل',
 			'suiviAttente.carte.ligne' => ({required Object prenom, required Object n, required Object total, required Object etape}) => '⁨${prenom}⁩: المرحلة ⁨${n}⁩ من ⁨${total}⁩، ⁨${etape}⁩',
@@ -40834,8 +40856,6 @@ extension on TraductionsAr {
 			'suiviAttente.presentation.phrase' => 'ترى أسر فصولك بالفعل، كما في كل التطبيق، لقبك واسمك الأول ولغة الدرس وصورتك وبلدك إن كان مذكورًا. هذا الإعداد يخص بطاقة متابعة طلبهم فقط: تختار أنت أن تُظهر فيها بلديك وكلمة التعريف أيضًا، إن كنت قد كتبتها.',
 			'suiviAttente.presentation.montrer' => 'أُظهر بلديّ وكلمتي في بطاقة المتابعة',
 			'suiviAttente.presentation.paysOrigine' => 'بلد الأصل',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.presentation.paysResidence' => 'بلد الإقامة',
 			'suiviAttente.presentation.choisirPays' => 'اختيار بلد',
 			'suiviAttente.presentation.nonRenseigne' => 'غير محدد',

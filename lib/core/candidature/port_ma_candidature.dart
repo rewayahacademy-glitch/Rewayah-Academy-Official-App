@@ -188,6 +188,12 @@ abstract interface class PortMaCandidature {
     required int versionAttendue,
     required String cleIdempotence,
   });
+
+  /// PAYS-VERSEMENT (directeur, 15/11/2026) : change le pays de versement
+  /// d'une candidature deja envoyee. Le serveur vide les operateurs, remet les
+  /// coordonnees a valider et recalcule le paiement ; la candidature n'est
+  /// jamais refusee pour ce motif. Rend le bloc candidature relu.
+  Future<CandidatureDossier> modifierPaysVersement(String pays);
 }
 
 /// L'identifiant de la dependance serveur du questionnaire et de l'envoi

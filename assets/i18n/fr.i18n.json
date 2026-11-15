@@ -2782,7 +2782,7 @@
       "completer": "Compléter ma candidature",
       "enExamenTitre": "Votre candidature est envoyée",
       "enExamen": "L'académie lit vos réponses et vous préviendra ici.",
-      "versementImpossible": "Rewayah ne peut pas encore vous verser une rémunération par les moyens déclarés dans votre pays. Votre candidature reste en attente. L'académie vous préviendra dès qu'un moyen sera possible.",
+      "versementImpossible": "L'académie ne peut pas encore vous verser de rémunération dans le pays que vous avez choisi. Votre candidature n'est pas refusée\u00a0: elle reste en attente. Si un proche de confiance vit dans un pays pris en charge, vous pouvez choisir le pays de ce proche. Sinon, l'académie vous préviendra dès qu'un moyen sera possible.",
       "libreDePartir": "Vous restez libre de retirer votre candidature.",
       "enPauseTitre": "Votre candidature est en pause",
       "repriseLe": "Reprise prévue le {date}.",
@@ -2814,6 +2814,15 @@
       "pieceRecue": "Votre pièce est bien reçue. La direction la vérifie.",
       "elementCodeConduite": "Le code de conduite",
       "elementAccordPublication": "L'accord de publication de votre photo",
+      "elementPaysVersement": "Pays et compte de versement",
+      "paysVersementLien": "Changer le pays de versement",
+      "paysVersementTitre": "Pays du compte de versement",
+      "paysVersementExplication": "Le compte peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie. Choisissez le pays où se trouve ce compte. Les moyens de versement et les coordonnées déjà saisis devront être confirmés de nouveau.",
+      "paysVersementEnregistrer": "Enregistrer ce pays",
+      "paysVersementFait": "Pays de versement mis à jour. L'académie relit votre dossier.",
+      "paysVersementEchec": "Le pays n'a pas pu être changé. Rien n'a été modifié\u00a0: réessayez dans un instant.",
+      "paysVersementInterdit": "Le pays ne peut plus être changé à cette étape. Écrivez à l'académie depuis la conversation de votre dossier.",
+      "paysVersementHorsLigne": "Vous n'êtes pas connecté. Le pays n'a pas été changé\u00a0; réessayez une fois la connexion revenue.",
       "pieceDemandee": "La direction vous demande une nouvelle photo de votre pièce.",
       "photoDemandee": "La direction vous demande une nouvelle photo. Changez-la au récapitulatif de vos réponses, avant de les envoyer."
     },
@@ -3123,7 +3132,8 @@
       },
       "versement": {
         "virementSeul": "Dans votre pays, l'académie a confirmé le virement bancaire. Aucun moyen de paiement sur téléphone n'est proposé pour l'instant.",
-        "aucunMoyen": "Rewayah ne verse pas encore de rémunération dans ce pays. Vous pouvez envoyer votre candidature\u00a0: elle restera en attente jusqu'à ce qu'un moyen soit possible.",
+        "aucunMoyen": "Ce pays n'est pas encore pris en charge par l'académie. Si un proche de confiance vit dans un pays pris en charge et peut recevoir votre rémunération sur son compte, choisissez le pays de ce proche. Vous pouvez aussi envoyer votre candidature telle quelle\u00a0: elle ne sera pas refusée pour cela, elle restera en attente.",
+        "changerPays": "Changer de pays",
         "operateurDescription": "Paiement sur téléphone",
         "chargement": "Nous cherchons les moyens possibles dans votre pays.",
         "nonCharge": "Les moyens de versement de votre pays n'ont pas pu être chargés.",
@@ -3446,7 +3456,7 @@
         },
         "paysVersement": {
           "titre": "Dans quel pays voulez-vous recevoir votre rémunération\u00a0?",
-          "explication": "L'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "explication": "Le compte qui reçoit votre rémunération peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie\u00a0: choisissez alors le pays de ce proche. L'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
           "court": "Pays de versement"
         },
         "compteBancaire": {

@@ -575,6 +575,23 @@ class FauxMaCandidature implements PortMaCandidature {
     }
     return candidatureApresRetrait;
   }
+
+  /// Les pays de versement demandes, dans l'ordre.
+  final List<String> paysVersementModifies = <String>[];
+
+  /// L'erreur jetee par [modifierPaysVersement], si elle est posee.
+  Object? erreurPaysVersement;
+
+  @override
+  Future<CandidatureDossier> modifierPaysVersement(String pays) async {
+    paysVersementModifies.add(pays);
+    final Object? e = erreurPaysVersement;
+    if (e != null) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return candidatureApresRetrait;
+  }
 }
 
 /// Un double dont tout manque : le lot serveur n'est pas verse.

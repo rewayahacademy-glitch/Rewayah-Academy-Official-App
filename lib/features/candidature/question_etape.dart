@@ -25,6 +25,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/skeleton.dart';
 import 'choix_avec_recherche.dart';
 import 'controleur_parcours.dart';
@@ -555,8 +556,27 @@ class _Operateurs extends ConsumerWidget {
           : null,
       construire: (MoyensConfirmes moyens) {
         if (moyens.operateurs.isEmpty) {
-          return _Info(
-            texte: moyens.virementBancaire ? r.virementSeul : r.aucunMoyen,
+          if (moyens.virementBancaire) {
+            return _Info(texte: r.virementSeul);
+          }
+          // PAYS-VERSEMENT : pays pas encore pris en charge. La phrase dit
+          // quoi faire (le pays d'un proche) et le lien ramene au choix ; la
+          // candidature n'est jamais refusee pour ce seul motif.
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              _Info(
+                texte: r.aucunMoyen,
+                cle: const ValueKey<String>('versement-pays-non-pris'),
+              ),
+              Ecart.vSm,
+              LienFleche(
+                key: const ValueKey<String>('versement-changer-pays'),
+                libelle: r.changerPays,
+                alignerEnDebut: true,
+                onPress: () => controleur.allerAuChamp('paysVersement'),
+              ),
+            ],
           );
         }
         final Set<String> choisis = controleur.valeurs(champ.code);

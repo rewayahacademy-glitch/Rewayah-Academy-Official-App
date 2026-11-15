@@ -416,6 +416,8 @@ declare
     'reprendre_alimentation_tresorerie()',
     -- CAND-L2A1 (22/10) : retrait par le candidat (transition 17), titulaire de la candidature (moteur).
     'retrait_candidat(integer,text)',
+    -- PAYS-VERSEMENT (20261127000300, 15/11/2026) : le candidat change le pays de son compte de versement apres l'envoi. Garde positive : titulaire d'une candidature en cours (private.candidature_du_titulaire, compte non supprime, statut pending_kyc, provisional_active ou active, acces non expire), sinon 42501 ; etat de la candidature controle ; pays dans la liste ISO. Ecrit UN document de reponses du titulaire, remet ses coordonnees a valider, une ligne de journal ; jamais d'effacement ni de refus. Meme garde que retrait_candidat.
+    'modifier_mon_pays_versement(text)',
     -- CAND-L2A2 (22/10) : reouverture d'une candidature refusee ou retiree (transition 19), direction active de son cote (moteur, controles nommes).
     'rouvrir_candidat(uuid,text,integer,text)',
     -- CAND-AUTRES (22/10) : retrait des reponses et de l'accord, meme titulaire (a toute issue de la candidature ; version attendue, cle d'idempotence).

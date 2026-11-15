@@ -620,6 +620,19 @@ class ParcoursControleur extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Revient a la question du champ [code] sans quitter le parcours en cours
+  /// (PAYS-VERSEMENT : « Changer de pays » depuis la question des moyens).
+  void allerAuChamp(String code) {
+    for (int i = 0; i < etapes.length; i++) {
+      final EtapeParcours e = etapes[i];
+      if (e is EtapeChamp && e.champ.code == code) {
+        _index = i;
+        notifyListeners();
+        return;
+      }
+    }
+  }
+
   /// Va modifier la reponse du champ [code] depuis le recapitulatif.
   void modifier(String code) {
     for (int i = 0; i < etapes.length; i++) {

@@ -1469,6 +1469,46 @@ void main() {
     );
 
     testWidgets(
+      'PAYS-VERSEMENT : pays non pris en charge, le lien ramene au choix du pays',
+      (WidgetTester tester) async {
+        await monterQuestionnaire(tester, port: FauxMaCandidature());
+        await passerLaPresentation(tester);
+        for (final (String nom, List<String> touches) in parcoursComplet) {
+          if (nom == 'paysResidence') {
+            await toucherCle(tester, 'option-paysResidence-ML');
+          } else if (nom == 'operateurs') {
+            break;
+          } else {
+            for (final String cle in touches) {
+              await toucherCle(tester, cle);
+            }
+          }
+          await continuer(tester);
+        }
+        expect(
+          _texte(t.recrutement.parcours.versement.aucunMoyen),
+          findsOneWidget,
+        );
+        await tester.ensureVisible(
+          find.byKey(const ValueKey<String>('versement-changer-pays')),
+        );
+        await tester.tap(
+          find.byKey(const ValueKey<String>('versement-changer-pays')),
+        );
+        await tester.pumpAndSettle();
+        expect(
+          _texte(t.recrutement.parcours.q.paysVersement.titre),
+          findsOneWidget,
+        );
+        // La phrase du proche de confiance est lue avant le choix.
+        expect(
+          _texte(t.recrutement.parcours.q.paysVersement.explication),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
       'changer de pays de versement vide les operateurs deja choisis',
       (WidgetTester tester) async {
         final FauxMaCandidature port = FauxMaCandidature();
