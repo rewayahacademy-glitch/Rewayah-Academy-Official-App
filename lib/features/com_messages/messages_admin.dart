@@ -27,11 +27,15 @@ import '../../core/communications/moderation.dart'
     show moderationOuverteProvider;
 import '../../core/communications/titre_administration.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_gabarit.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import 'messages_page.dart';
+import 'recherche_fils.dart';
 
 /// L'onglet Messages de l'Administration des communications.
 class MessagesAdminPage extends ConsumerWidget {
@@ -41,6 +45,11 @@ class MessagesAdminPage extends ConsumerWidget {
   /// Le fil demande par l'adresse, s'il y en a un. Jamais une autorisation :
   /// le port decide (COM-BR-01).
   final String? filId;
+
+  /// La loupe de la recherche des conversations, au telephone.
+  static const ValueKey<String> cleLoupe = ValueKey<String>(
+    'messages-admin-loupe',
+  );
 
   /// L'index de l'onglet Messages, lu dans la liste du socle (jamais en dur).
   static int get indexOnglet => ongletsCommunications().indexWhere(
@@ -55,12 +64,13 @@ class MessagesAdminPage extends ConsumerWidget {
     final bool moderation = ref.watch(moderationOuverteProvider);
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) =>
-          _page(contexte, contraintes.maxWidth, moderation: moderation),
+          _page(contexte, ref, contraintes.maxWidth, moderation: moderation),
     );
   }
 
   Widget _page(
     BuildContext context,
+    WidgetRef ref,
     double largeur, {
     required bool moderation,
   }) {
@@ -95,7 +105,24 @@ class MessagesAdminPage extends ConsumerWidget {
         ),
       );
     }
+    // RECHERCHE-LOUPE (directeur, 16/11/2026) : au telephone, la recherche
+    // des conversations est une loupe sur la rangee Annonces / Messages,
+    // plus une ligne pleine au-dessus de la liste.
+    final bool telephone = AppGabarit.de(context) == Gabarit.mobile;
+    final RechercheFilsControleur recherche = ref
+        .read(memoireMessagesProvider)
+        .recherche
+      ..loupeEnTete = telephone;
     return PageShell(
+      actionsEntete: <Widget>[
+        if (telephone)
+          BoutonIcone(
+            key: MessagesAdminPage.cleLoupe,
+            icone: AppIcons.recherche,
+            libelle: t.com.messages.recherche.champ,
+            onPress: recherche.ouvrirSurface,
+          ),
+      ],
       // D-FUS-3 : le corps pose le bandeau hors ligne des Communications ;
       // pas de bandeau generique en plus.
       bandeauHorsLigne: const SizedBox.shrink(),

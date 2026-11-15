@@ -61,6 +61,11 @@ class RechercheFilsControleur extends ChangeNotifier {
 
   bool _surfaceOuverte = false;
 
+  /// RECHERCHE-LOUPE (directeur, 16/11/2026) : vrai quand la page pose la
+  /// loupe qui ouvre la surface sur la rangee de son en-tete ; la liste ne
+  /// pose alors plus sa propre ligne « Rechercher une conversation ».
+  bool loupeEnTete = false;
+
   /// Vrai quand la surface plein ecran du telephone est ouverte, ou qu'une
   /// recherche est en cours : un filtre n'est jamais applique sans que son
   /// champ soit visible.
