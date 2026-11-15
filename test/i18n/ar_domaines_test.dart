@@ -72,6 +72,8 @@ const Map<String, int> _domaines = <String, int>{
   'adulte': 300,
   'dossiers': 110,
   'kyc': 12,
+  // COMPLEMENT-ET-FORMATS (14/11/2026) : les refus de format au depot.
+  'fichiers': 4,
   'contrat': 10,
   'creneaux': 20,
   'disponibilites': 10,
@@ -322,6 +324,9 @@ const Set<String> _motsLatinsAdmis = <String>{
   'PNG',
   'JPEG',
   'WebP',
+  // COMPLEMENT-ET-FORMATS (14/11/2026) : le format des photos d'iPhone, nomme
+  // tel quel dans toutes les langues.
+  'HEIC',
   'QR',
   'UTC',
   'Google',

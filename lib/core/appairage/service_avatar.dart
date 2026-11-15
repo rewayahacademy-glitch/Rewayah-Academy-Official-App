@@ -4,6 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../fichiers/conversion_heic.dart';
+import '../fichiers/formats_admis.dart';
+
 /// Une photo choisie par le tuteur, prete a partir.
 ///
 /// Volontairement distincte de `PieceAEnvoyer` : une piece d'identite porte un
@@ -58,19 +61,25 @@ abstract interface class SelecteurPhoto {
 }
 
 /// Le selecteur reel, par la boite de dialogue du systeme.
+///
+/// COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : la photo choisie passe par
+/// la regle unique des formats (`preparerFichier`, `SorteFichier.photo`) :
+/// une photo HEIC est convertie en JPEG sur l'appareil, tout autre format que
+/// JPEG, PNG ou WebP est refuse tout de suite ([FichierRefuse]). Vaut pour
+/// toutes les photos de personne : profil, eleve, enseignant, candidature.
 class SelecteurPhotoNatif implements SelecteurPhoto {
   /// Cree le selecteur.
-  const SelecteurPhotoNatif();
+  const SelecteurPhotoNatif({this.convertir = convertirHeicNatif});
+
+  /// La conversion d'une photo HEIC en JPEG sur l'appareil.
+  final ConvertisseurHeic convertir;
 
   /// Ce qu'une photo de profil peut etre. Aucun PDF, contrairement au KYC :
-  /// c'est un visage, pas un document.
-  static const List<String> extensionsAcceptees = <String>[
-    'jpg',
-    'jpeg',
-    'png',
-    'webp',
-    'heic',
-  ];
+  /// c'est un visage, pas un document. Le HEIC n'y est pas : sur iPhone, le
+  /// systeme convertit alors la photo en JPEG lui-meme.
+  static final List<String> extensionsAcceptees = extensionsProposees(
+    SorteFichier.photo,
+  );
 
   @override
   Future<PhotoEnfant?> choisirPhoto() async {
@@ -81,11 +90,22 @@ class SelecteurPhotoNatif implements SelecteurPhoto {
     if (fichier == null) {
       return null;
     }
-    return PhotoEnfant(
-      octets: await fichier.readAsBytes(),
-      nomFichier: fichier.name,
-    );
+    return preparerPhoto(await fichier.readAsBytes(), convertir);
   }
+}
+
+/// Prepare une photo choisie : format lu dans les octets, HEIC converti,
+/// nom de fichier deduit du format. Leve [FichierRefuse].
+Future<PhotoEnfant> preparerPhoto(
+  Uint8List octets,
+  ConvertisseurHeic convertir,
+) async {
+  final FichierPret pret = await preparerFichier(
+    octets,
+    sorte: SorteFichier.photo,
+    convertir: convertir,
+  );
+  return PhotoEnfant(octets: pret.octets, nomFichier: pret.nomFichier('photo'));
 }
 
 /// La photo de profil d'un enfant, cote tuteur (ADR-012).

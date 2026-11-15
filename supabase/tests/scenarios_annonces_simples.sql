@@ -1,6 +1,6 @@
 -- ANNONCES-SIMPLES (14/11/2026) : les publics, la separation des cotes et la
 -- protection des mineurs, calcules par le serveur (migration
--- 20261126700000_annonces_simples.sql).
+-- 20261126900000_annonces_simples.sql).
 --
 -- Prouve :
 --   1. les publics et leurs nombres : un mineur n'est dans AUCUN public ; un

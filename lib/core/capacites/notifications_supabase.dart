@@ -101,7 +101,7 @@ const Set<String> evenementsNotificationConnus = <String>{
   // La cloche de nuit ne peut pas retablir une seance qui n'est plus sous une
   // fermeture : la direction est avertie, un humain tranche.
   'fermeture_conflit',
-  // ANNONCES-SIMPLES (14/11/2026, migration 20261126700000) : une annonce de
+  // ANNONCES-SIMPLES (14/11/2026, migration 20261126900000) : une annonce de
   // la direction, aux adultes seulement (jamais un mineur).
   'annonce_direction',
 };

@@ -159,7 +159,7 @@ class AnnoncesSupabase implements PortAnnonces {
 
   @override
   Future<AnnoncesAdministration> annoncesAdministration() async {
-    // ANNONCES-SIMPLES (migration 20261126700000) : la liste avec sa mesure
+    // ANNONCES-SIMPLES (migration 20261126900000) : la liste avec sa mesure
     // (destinataires, vues). Avant la migration, la lecture d'origine.
     Map<String, dynamic> v;
     try {

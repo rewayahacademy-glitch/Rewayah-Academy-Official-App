@@ -7,6 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
@@ -48,12 +49,16 @@ Future<FauxServiceDossier> _portail(
   bool pieceDeposee = true,
   bool? photoPosee,
   bool? accordPublicationSigne,
+  StatutPiece? statutPiece,
+  DateTime? deposeLe,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
     ..etatRendu = etatCandidat(
       candidature: candidature,
       accordsFaits: accordsFaits,
       pieceDeposee: pieceDeposee,
+      statutPiece: statutPiece,
+      deposeLe: deposeLe,
       photoPosee: photoPosee,
       accordPublicationSigne: accordPublicationSigne,
     );
@@ -69,6 +74,16 @@ Future<FauxServiceDossier> _portail(
   );
   return dossier;
 }
+
+/// AUDIT-PORTAIL-CANDIDAT : en salle 2, une version neuve du cadre a accepter.
+const CandidatureDossier _salle2CadreNeuf = CandidatureDossier(
+  existe: true,
+  etape: EtapeCandidature.verifications,
+  etat: EtatCandidature.entretienAPlanifier,
+  version: 6,
+  cadre: EtatCadre(versionRequise: '2026-12-01'),
+  aCompleter: <String>['cadre_religieux'],
+);
 
 const CandidatureDossier _enExamen = CandidatureDossier(
   existe: true,
@@ -897,6 +912,259 @@ void main() {
           expect(_texte(t.attente.lireEtAccepter), findsWidgets);
           await stabiliser(tester);
           await capturerVue(tester, 'signer-apres-envoi/$nom');
+        });
+      }
+    }
+  }, skip: sautSansCapture);
+
+  // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : chaque element que la
+  // direction redemande a son chemin depuis le portail.
+  group('complement et formats', () {
+    final DateTime demande = DateTime.utc(2026, 11, 14, 10);
+    final CandidatureDossier pieceDemandee = candidatureAFaire(
+      complement: <String>['piece_identite', 'photo'],
+      complementLe: demande,
+    );
+
+    test('piece redemandee, deposee avant la demande : a deposer', () {
+      final d = etatCandidat(
+        candidature: pieceDemandee,
+        statutPiece: StatutPiece.enAttente,
+        deposeLe: demande.subtract(const Duration(days: 2)),
+      );
+      expect(pieceRedemandee(d), isTrue);
+      expect(pieceADeposer(d), isTrue);
+      final r = prochaineCandidature(pieceDemandee, dossier: d);
+      expect(r?.chemin, Routes.attentePiece);
+    });
+
+    test('piece redeposee apres la demande : plus rien a deposer', () {
+      final d = etatCandidat(
+        candidature: pieceDemandee,
+        statutPiece: StatutPiece.enAttente,
+        deposeLe: demande.add(const Duration(hours: 1)),
+      );
+      expect(pieceRedemandee(d), isFalse);
+      expect(pieceADeposer(d), isFalse);
+      expect(
+        prochaineCandidature(pieceDemandee, dossier: d)?.chemin,
+        Routes.attenteCandidature,
+      );
+    });
+
+    test('serveur d avant (sans date) : la regle d avant', () {
+      final CandidatureDossier sansDate = candidatureAFaire(
+        complement: <String>['piece_identite'],
+      );
+      final d = etatCandidat(
+        candidature: sansDate,
+        statutPiece: StatutPiece.enAttente,
+      );
+      expect(pieceRedemandee(d), isFalse);
+    });
+
+    testWidgets('le portail nomme chaque element et dit la piece demandee', (
+      WidgetTester tester,
+    ) async {
+      await _portail(
+        tester,
+        candidatureAFaire(
+          complement: <String>[
+            'code_conduite',
+            'piece_identite',
+            'photo',
+            'accord_publication',
+          ],
+          complementLe: demande,
+        ),
+        statutPiece: StatutPiece.enAttente,
+        deposeLe: demande.subtract(const Duration(days: 1)),
+        photoPosee: true,
+        accordPublicationSigne: true,
+      );
+      final p = t.recrutement.portail;
+      expect(
+        _texte(
+          p.complementListe(
+            elements: <String>[
+              p.elementCodeConduite,
+              p.elementPiece,
+              p.elementPhoto,
+              p.elementAccordPublication,
+            ].join(', '),
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(_texte(p.pieceDemandee), findsOneWidget);
+      expect(_texte(p.photoDemandee), findsOneWidget);
+      expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    // Captures R3 (sautees sans CAPTURE_DIR).
+    group('captures', () {
+      setUpAll(chargerPolicesDuDepot);
+      setUp(masquerRubanDebug);
+      for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+        for (final Size taille in <Size>[
+          const Size(1440, 900),
+          const Size(390, 844),
+        ]) {
+          final String nom =
+              'portail-piece-demandee-${taille.width.toInt()}-'
+              '${langue.languageCode}';
+          testWidgets(nom, (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            await _portail(
+              tester,
+              pieceDemandee,
+              statutPiece: StatutPiece.enAttente,
+              deposeLe: demande.subtract(const Duration(days: 1)),
+              photoPosee: true,
+              accordPublicationSigne: true,
+              taille: taille,
+              direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+            );
+            await stabiliser(tester);
+            await capturerVue(tester, 'complement-et-formats/$nom');
+          });
+        }
+      }
+    }, skip: sautSansCapture);
+  });
+
+  // AUDIT-PORTAIL-CANDIDAT (directeur, 14/11/2026) : chaque obligation que le
+  // serveur accepte a un chemin depuis le portail, a toute etape.
+  group('audit portail candidat', () {
+    test('salle 1, en examen, piece refusee : « Deposer ma piece »', () {
+      final r = prochaineCandidature(
+        _enExamen,
+        dossier: etatCandidat(
+          candidature: _enExamen,
+          statutPiece: StatutPiece.refusee,
+        ),
+      );
+      expect(r?.chemin, Routes.attentePiece);
+      expect(r?.libelle, t.attente.deposerLaPiece);
+    });
+
+    test(
+      'salle 1, a completer, piece refusee : la piece avant les reponses',
+      () {
+        final CandidatureDossier c = candidatureAFaire();
+        final r = prochaineCandidature(
+          c,
+          dossier: etatCandidat(
+            candidature: c,
+            statutPiece: StatutPiece.refusee,
+          ),
+        );
+        expect(r?.chemin, Routes.attentePiece);
+      },
+    );
+
+    test('salle 1, piece en attente ou validee : rien a redeposer', () {
+      for (final StatutPiece s in <StatutPiece>[
+        StatutPiece.enAttente,
+        StatutPiece.validee,
+      ]) {
+        final d = etatCandidat(candidature: _enExamen, statutPiece: s);
+        expect(pieceADeposer(d), isFalse);
+        expect(prochaineCandidature(_enExamen, dossier: d), isNull);
+      }
+    });
+
+    test('salle 2, cadre neuf a accepter : le chemin du cadre', () {
+      expect(cadreAAccepterEnSalle2(_salle2CadreNeuf), isTrue);
+      const CandidatureDossier accepte = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.verifications,
+        etat: EtatCandidature.entretienAPlanifier,
+        cadre: EtatCadre(versionRequise: '2026-12-01', accepte: true),
+      );
+      expect(cadreAAccepterEnSalle2(accepte), isFalse);
+      const CandidatureDossier pause = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.verifications,
+        etat: EtatCandidature.entretienAPlanifier,
+        enPause: true,
+        cadre: EtatCadre(versionRequise: '2026-12-01'),
+      );
+      expect(cadreAAccepterEnSalle2(pause), isFalse);
+      // En salle 1, le cadre a deja son chemin (prochaineCandidature).
+      expect(cadreAAccepterEnSalle2(_enExamen), isFalse);
+    });
+
+    testWidgets('salle 1, piece refusee : la ligne dit « A deposer »', (
+      WidgetTester tester,
+    ) async {
+      await _portail(
+        tester,
+        candidatureAFaire(),
+        statutPiece: StatutPiece.refusee,
+      );
+      expect(
+        _texte(
+          t.attente.refuseDetail(element: t.recrutement.portail.elementPiece),
+        ),
+        findsOneWidget,
+      );
+      expect(_texte(t.recrutement.portail.pieceRecue), findsNothing);
+      expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets('salle 2, cadre neuf : « Lire et accepter » mene au cadre', (
+      WidgetTester tester,
+    ) async {
+      await _portail(tester, _salle2CadreNeuf);
+      expect(_texte(t.attente.lireEtAccepter), findsOneWidget);
+      verifierUnSeulBoutonPlein(tester);
+    });
+  });
+
+  // AUDIT-PORTAIL-CANDIDAT, captures R3 (sautees sans CAPTURE_DIR) :
+  // CAPTURE_DIR=docs/current/captures/E2E. 1440 et 390, fr et ar.
+  group('captures audit portail candidat', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Size taille in <Size>[
+        const Size(1440, 900),
+        const Size(390, 844),
+      ]) {
+        final String suffixe = '${taille.width.toInt()}-${langue.languageCode}';
+        testWidgets('piece-refusee-$suffixe', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _portail(
+            tester,
+            _enExamen,
+            statutPiece: StatutPiece.refusee,
+            taille: taille,
+            direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+          );
+          expect(_texte(t.attente.deposerLaPiece), findsWidgets);
+          await stabiliser(tester);
+          await capturerVue(
+            tester,
+            'audit-portail-candidat/portail-piece-refusee-$suffixe',
+          );
+        });
+        testWidgets('salle2-cadre-neuf-$suffixe', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _portail(
+            tester,
+            _salle2CadreNeuf,
+            taille: taille,
+            direction: langue == AppLocale.ar ? TextDirection.rtl : null,
+          );
+          expect(_texte(t.attente.lireEtAccepter), findsWidgets);
+          await stabiliser(tester);
+          await capturerVue(
+            tester,
+            'audit-portail-candidat/portail-salle2-cadre-neuf-$suffixe',
+          );
         });
       }
     }

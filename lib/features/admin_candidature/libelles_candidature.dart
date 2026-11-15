@@ -120,6 +120,16 @@ String libelleCauseControle(String nom, String? cause) {
     'avis_non_favorable' => c.avisNonFavorable,
     'constat_incomplet' => c.constatIncomplet,
     'reponses_incompletes' => c.reponsesIncompletes,
+    // AUDIT-PORTAIL-CANDIDAT (14/11/2026) : le premier accord manquant
+    // (`accords_signes`) et l'etat de la piece (`piece_validee`), dits en mots.
+    'teacher_nda' => c.contratNonSigne,
+    'recording_and_control_notice' => c.avisNonAccepte,
+    'teacher_conduct_code' => c.conduiteNonAcceptee,
+    'teacher_religious_framework' => c.cadreNonAccepte,
+    'compte_absent' => c.compteAbsent,
+    'piece_absente' => c.pieceAbsente,
+    'piece_a_verifier' => c.pieceAVerifier,
+    'piece_a_redeposer' => c.pieceARedeposer,
     _ => c.inconnue,
   };
 }
@@ -150,6 +160,10 @@ String libelleModele(String code) {
 
 /// Le nom d'un element de complement par son code, ou `null` pour un code que
 /// cette version ne connait pas : il n'est alors pas propose.
+///
+/// COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : en salle 1, la direction
+/// redemande tout ce que le candidat fournit ; les documents et accords se
+/// nomment du point de vue de la direction (« La pièce d'identité »).
 String? libelleElementComplement(String code) => switch (code) {
   'langues' => t.recrutement.questionnaire.langues,
   'recitation' => t.recrutement.questionnaire.recitation,
@@ -157,11 +171,26 @@ String? libelleElementComplement(String code) => switch (code) {
   'publics' => t.recrutement.questionnaire.publics,
   'versement' => t.recrutement.questionnaire.versement,
   'cadre_religieux' => t.recrutement.portail.elementCadre,
-  'piece_identite' => t.recrutement.portail.elementPiece,
   'contrat' => t.recrutement.portail.elementContrat,
   'avis' => t.attente.carteAccuse,
+  'code_conduite' => t.admin.candidatures.complement.codeConduite,
+  'piece_identite' => t.admin.candidatures.complement.piece,
+  'photo' => t.admin.candidatures.complement.photo,
+  'accord_publication' => t.admin.candidatures.complement.accordPublication,
   _ => null,
 };
+
+/// Les codes de complement qui sont des documents ou des accords (et non une
+/// carte du questionnaire), dans l'ordre du parcours du candidat.
+const List<String> codesDocumentsEtAccords = <String>[
+  'cadre_religieux',
+  'contrat',
+  'avis',
+  'code_conduite',
+  'piece_identite',
+  'photo',
+  'accord_publication',
+];
 
 /// L'etat d'une candidature tel que le serveur le nomme dans un refus, dit par
 /// son libelle : l'issue, la pause, puis l'etat dans l'etape, puis la salle.

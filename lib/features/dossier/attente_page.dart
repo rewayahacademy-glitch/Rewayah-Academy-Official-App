@@ -151,6 +151,10 @@ class _AttentePageState extends ConsumerState<AttentePage> {
         ? (actionCand == null
               ? null
               : _Prochaine.vers(actionCand.libelle, actionCand.chemin))
+        // AUDIT-PORTAIL-CANDIDAT (14/11/2026) : en salle 2, un cadre neuf a
+        // accepter passe avant les accords et la piece.
+        : candidature != null && cadreAAccepterEnSalle2(candidature)
+        ? _Prochaine.vers(t.attente.lireEtAccepter, Routes.attenteCadre)
         : lu != null
         ? _prochaine(
             lu,

@@ -1230,7 +1230,43 @@ void main() {
         findsOneWidget,
       );
       expect(find.text(t.recrutement.portail.elementCadre), findsOneWidget);
-      expect(find.text(t.recrutement.portail.elementPiece), findsNothing);
+      // COMPLEMENT-ET-FORMATS : en salle 1, tout ce que le candidat fournit,
+      // en deux groupes dans l'ordre de son parcours, sur une seule colonne.
+      expect(find.byKey(FeuilleGeste.cleGroupeReponses), findsOneWidget);
+      expect(find.byKey(FeuilleGeste.cleGroupeDocuments), findsOneWidget);
+      final List<String> documents = <String>[
+        'cadre_religieux',
+        'contrat',
+        'avis',
+        'code_conduite',
+        'piece_identite',
+        'photo',
+        'accord_publication',
+      ];
+      for (final String code in documents) {
+        expect(find.byKey(ValueKey<String>('element-$code')), findsOneWidget);
+      }
+      expect(find.text(t.admin.candidatures.complement.piece), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.complement.accordPublication),
+        findsOneWidget,
+      );
+      // Les reponses d'abord, puis les documents, dans l'ordre du parcours.
+      double haut(String code) =>
+          tester.getTopLeft(find.byKey(ValueKey<String>('element-$code'))).dy;
+      expect(
+        tester.getTopLeft(find.byKey(FeuilleGeste.cleGroupeReponses)).dy,
+        lessThan(haut('langues')),
+      );
+      expect(
+        haut('versement'),
+        lessThan(
+          tester.getTopLeft(find.byKey(FeuilleGeste.cleGroupeDocuments)).dy,
+        ),
+      );
+      for (int i = 1; i < documents.length; i++) {
+        expect(haut(documents[i - 1]), lessThan(haut(documents[i])));
+      }
       expect(find.text(t.admin.candidatures.complement.aide), findsOneWidget);
 
       // Aucun texte libre : la liste nommee des elements EST le motif.
@@ -1276,8 +1312,11 @@ void main() {
         ),
       );
       await _ouvrirMenu(tester, t.admin.candidatures.gestes.demanderComplement);
-      expect(find.text(t.recrutement.portail.elementPiece), findsOneWidget);
+      expect(find.text(t.admin.candidatures.complement.piece), findsOneWidget);
       expect(find.text(t.recrutement.portail.elementContrat), findsOneWidget);
+      // COMPLEMENT-ET-FORMATS : la salle 2 ne change pas.
+      expect(find.byKey(FeuilleGeste.cleGroupeReponses), findsNothing);
+      expect(find.byKey(const ValueKey<String>('element-photo')), findsNothing);
       expect(find.text(t.recrutement.questionnaire.langues), findsNothing);
     });
 

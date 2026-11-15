@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart';
+import 'package:rewayah_academy/core/fichiers/formats_admis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/journal/service_journal.dart';
 import 'package:rewayah_academy/core/matching/service_matching.dart';
@@ -997,8 +998,15 @@ class FauxSelecteurFichier implements SelecteurFichier {
   /// Ce que le selecteur rendra. `null` simule un abandon.
   PieceAEnvoyer? reponse;
 
+  /// COMPLEMENT-ET-FORMATS : un refus de format ou de taille au choix.
+  FichierRefuse? refus;
+
   @override
-  Future<PieceAEnvoyer?> choisirPiece(TypePiece type) async => reponse;
+  Future<PieceAEnvoyer?> choisirPiece(TypePiece type) async {
+    final FichierRefuse? r = refus;
+    if (r != null) throw r;
+    return reponse;
+  }
 }
 
 /// Les profils locaux d'un appareil, en memoire.

@@ -1,5 +1,5 @@
 // Les annonces de la direction vers des publics (ANNONCES-SIMPLES, directeur,
-// 14/11/2026 ; migration 20261126700000).
+// 14/11/2026 ; migration 20261126900000).
 //
 // Les publics et leurs nombres sont CALCULES PAR LE SERVEUR : l'ecran ne
 // compose aucun public et ne compte personne. Il envoie des codes, il recoit

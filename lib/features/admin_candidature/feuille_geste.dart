@@ -38,6 +38,7 @@ import '../../core/candidature/port_ma_candidature.dart'
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -85,13 +86,19 @@ Future<SortieFeuille?> ouvrirFeuilleGeste(
   required GesteCandidature geste,
   required DetailCandidature detail,
   required CapacitesCandidatures capacites,
+  Set<String> elementsInitiaux = const <String>{},
 }) => AppBottomSheet.ouvrir<SortieFeuille>(
   context,
   titre: libelleGeste(geste),
+  // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026 : « tu dois le rendre en
+  // format web normal ») : a partir de 840, un panneau lateral ancre a cote
+  // du dossier, qui reste visible ; jamais une colonne de telephone etiree.
+  panneauLateral: true,
   constructeur: (BuildContext contexte) => FeuilleGeste(
     geste: geste,
     detail: detail,
     capacites: capacites,
+    elementsInitiaux: elementsInitiaux,
     onFini: (SortieFeuille sortie) => Navigator.of(contexte).pop(sortie),
     onAnnuler: () => Navigator.of(contexte).pop(),
   ),
@@ -106,8 +113,14 @@ class FeuilleGeste extends ConsumerStatefulWidget {
     required this.capacites,
     required this.onFini,
     required this.onAnnuler,
+    this.elementsInitiaux = const <String>{},
     super.key,
   });
+
+  /// COMPLEMENT-ET-FORMATS : les elements deja coches a l'ouverture (« Demander
+  /// une nouvelle piece d'identite » depuis une piece illisible : un geste).
+  /// Seuls ceux de la liste du serveur sont gardes.
+  final Set<String> elementsInitiaux;
 
   /// Le geste.
   final GesteCandidature geste;
@@ -142,6 +155,14 @@ class FeuilleGeste extends ConsumerStatefulWidget {
   /// La cle du champ du motif interne.
   static const Key cleMotif = ValueKey<String>('feuille-motif');
 
+  /// La cle du titre du groupe « Réponses » du complement.
+  static const Key cleGroupeReponses = ValueKey<String>('complement-reponses');
+
+  /// La cle du titre du groupe « Documents et accords » du complement.
+  static const Key cleGroupeDocuments = ValueKey<String>(
+    'complement-documents',
+  );
+
   @override
   ConsumerState<FeuilleGeste> createState() => _EtatFeuille();
 }
@@ -172,6 +193,7 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   void initState() {
     super.initState();
     _responsable = widget.detail.ligne.responsableId;
+    _elements.addAll(widget.elementsInitiaux.where(_elementsPermis.contains));
   }
 
   @override
@@ -434,6 +456,12 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
 
     final List<Widget> champs = _champs(context);
     final bool servi = _servi;
+    final bool bureau = _bureau(context);
+    Widget bouton({bool? pleineLargeur}) => _boutonGeste(
+      aRelire: aRelire,
+      refus: refus,
+      pleineLargeur: pleineLargeur,
+    );
 
     return Column(
       key: FeuilleGeste.cle,
@@ -452,33 +480,60 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           _bandeauRefus(),
         ],
         Ecart.vXxl,
-        if (aRelire || servi)
+        if (bureau)
+          // Sur ordinateur, les actions en ligne au bord de fin, a la largeur
+          // de leur contenu : « Annuler » discret, puis le geste (contrat B de
+          // DESIGN-GOV : pas de bouton pleine largeur sur bureau).
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.md,
+            children: <Widget>[
+              ActionPrincipale(
+                key: FeuilleGeste.cleAnnuler,
+                libelle: t.commun.annuler,
+                onPress: widget.onAnnuler,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+              ),
+              if (aRelire || servi) bouton(pleineLargeur: false),
+            ],
+          )
+        else ...<Widget>[
+          if (aRelire || servi) bouton(),
+          Ecart.vMd,
           ActionPrincipale(
-            key: aRelire ? FeuilleGeste.cleRelire : FeuilleGeste.cleValider,
-            libelle: aRelire
-                ? t.admin.candidatures.feuille.actualiser
-                : refus is GesteNonConfirme
-                ? t.commun.reessayer
-                : _libelleBouton,
-            onPress: aRelire
-                ? () =>
-                      widget.onFini(SortieFeuille(IssueFeuille.relire, _geste))
-                : _envoyer,
-            enCours: !aRelire && _enCours,
-            niveau: !aRelire && _geste.destructif
-                ? NiveauAction.destructive
-                : NiveauAction.principale,
+            key: FeuilleGeste.cleAnnuler,
+            libelle: t.commun.annuler,
+            onPress: widget.onAnnuler,
+            niveau: NiveauAction.secondaire,
           ),
-        Ecart.vMd,
-        ActionPrincipale(
-          key: FeuilleGeste.cleAnnuler,
-          libelle: t.commun.annuler,
-          onPress: widget.onAnnuler,
-          niveau: NiveauAction.secondaire,
-        ),
+        ],
       ],
     );
   }
+
+  /// Le bouton du geste (ou « Actualiser » quand la candidature a change).
+  Widget _boutonGeste({
+    required bool aRelire,
+    required RefusGeste? refus,
+    bool? pleineLargeur,
+  }) => ActionPrincipale(
+    key: aRelire ? FeuilleGeste.cleRelire : FeuilleGeste.cleValider,
+    libelle: aRelire
+        ? t.admin.candidatures.feuille.actualiser
+        : refus is GesteNonConfirme
+        ? t.commun.reessayer
+        : _libelleBouton,
+    onPress: aRelire
+        ? () => widget.onFini(SortieFeuille(IssueFeuille.relire, _geste))
+        : _envoyer,
+    enCours: !aRelire && _enCours,
+    niveau: !aRelire && _geste.destructif
+        ? NiveauAction.destructive
+        : NiveauAction.principale,
+    pleineLargeur: pleineLargeur,
+  );
 
   /// Vrai quand tout ce que le geste choisit est servi : sinon la feuille le
   /// dit et n'offre aucun bouton qui ne puisse pas aboutir.
@@ -539,6 +594,10 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
     ];
   }
 
+  /// Vrai sur ordinateur (840 et plus) : la feuille est un panneau lateral.
+  static bool _bureau(BuildContext context) =>
+      MediaQuery.sizeOf(context).width >= AppGabarit.seuilEtendu;
+
   Widget _titreChamp(String texte) => Semantics(
     header: true,
     child: TexteSansCoupure(
@@ -565,31 +624,102 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   List<Widget> _champElements(BuildContext context) {
     final c = t.admin.candidatures.complement;
     final List<String> permis = _elementsPermis;
-    return <Widget>[
-      Ecart.vLg,
-      _titreChamp(c.elements),
-      Ecart.vSm,
-      if (permis.isEmpty)
-        _indisponible()
-      else ...<Widget>[
+    // COMPLEMENT-ET-FORMATS (directeur, 14/11/2026 ; consigne 19) : une seule
+    // colonne, sans onglets ; l'ordre suit le parcours du candidat, en deux
+    // groupes : les reponses du questionnaire, puis les documents et accords.
+    final List<String> reponses = <String>[
+      for (final String code in permis)
+        if (!codesDocumentsEtAccords.contains(code)) code,
+    ];
+    final List<String> documents = <String>[
+      for (final String code in codesDocumentsEtAccords)
+        if (permis.contains(code)) code,
+    ];
+    final TextStyle sousTitre =
+        Theme.of(context).textTheme.titleSmall ?? const TextStyle();
+    List<Widget> groupe(Key cle, String titre, List<String> codes) {
+      if (codes.isEmpty) return const <Widget>[];
+      return <Widget>[
+        Ecart.vMd,
+        Semantics(
+          header: true,
+          child: TexteSansCoupure(titre, key: cle, style: sousTitre),
+        ),
+        Ecart.vSm,
         ChoiceCardGroup(
           selectionMultiple: true,
           autoriserSaisieLibre: false,
+          // Sur ordinateur, des lignes compactes (48 a 56), pas de grandes
+          // cartes : ce sont de simples cases (directeur, 14/11/2026). Le
+          // telephone garde sa presentation.
+          compacte: _bureau(context),
           options: <OptionChoix>[
-            for (final String code in permis)
+            for (final String code in codes)
               OptionChoix(
                 cle: ValueKey<String>('element-$code'),
                 valeur: code,
                 libelle: libelleElementComplement(code)!,
               ),
           ],
-          valeurInitiale: ReponseChoix(valeurs: Set<String>.of(_elements)),
+          valeurInitiale: ReponseChoix(
+            valeurs: <String>{
+              for (final String code in codes)
+                if (_elements.contains(code)) code,
+            },
+          ),
           onChange: (ReponseChoix r) => _modifie(() {
             _elements
-              ..clear()
+              ..removeAll(codes)
               ..addAll(r.valeurs);
           }),
         ),
+      ];
+    }
+
+    return <Widget>[
+      Ecart.vLg,
+      _titreChamp(c.elements),
+      if (permis.isEmpty) ...<Widget>[
+        Ecart.vSm,
+        _indisponible(),
+      ] else ...<Widget>[
+        // Sur une largeur suffisante (panneau d'ordinateur), les deux groupes
+        // se placent cote a cote ; sinon l'un sous l'autre.
+        if (_bureau(context) && reponses.isNotEmpty && documents.isNotEmpty)
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: groupe(
+                    FeuilleGeste.cleGroupeReponses,
+                    c.groupeReponses,
+                    reponses,
+                  ),
+                ),
+              ),
+              Ecart.hLg,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: groupe(
+                    FeuilleGeste.cleGroupeDocuments,
+                    c.groupeDocuments,
+                    documents,
+                  ),
+                ),
+              ),
+            ],
+          )
+        else ...<Widget>[
+          ...groupe(FeuilleGeste.cleGroupeReponses, c.groupeReponses, reponses),
+          ...groupe(
+            FeuilleGeste.cleGroupeDocuments,
+            c.groupeDocuments,
+            documents,
+          ),
+        ],
         Ecart.vSm,
         TexteSansCoupure(
           c.aide,
@@ -613,6 +743,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         _indisponible()
       else ...<Widget>[
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             for (final String code in permis)
@@ -696,6 +828,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         _indisponible()
       else ...<Widget>[
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             for (final CanalRetrait c in canaux)
@@ -777,6 +911,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         )
       else ...<Widget>[
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             for (final ({String valeur, String libelle}) x in moyens)
@@ -816,6 +952,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         ),
         Ecart.vSm,
         ChoiceCardGroup(
+          // Sur ordinateur, des lignes compactes (panneau lateral).
+          compacte: _bureau(context),
           autoriserSaisieLibre: false,
           options: <OptionChoix>[
             OptionChoix(

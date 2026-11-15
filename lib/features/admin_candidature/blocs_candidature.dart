@@ -178,10 +178,29 @@ class CarteSituation extends StatelessWidget {
 /// `lire_candidature`.
 class BlocPhotoDossier extends ConsumerWidget {
   /// Cree le bloc.
-  const BlocPhotoDossier({required this.detail, super.key});
+  const BlocPhotoDossier({
+    required this.detail,
+    this.onDemanderNouvellePhoto,
+    super.key,
+  });
 
   /// Le dossier lu.
   final DetailCandidature detail;
+
+  /// COMPLEMENT-ET-FORMATS : ouvre le complement « La photo » deja coche, ou
+  /// `null` quand le complement n'est pas permis maintenant.
+  final VoidCallback? onDemanderNouvellePhoto;
+
+  /// La cle de la phrase « Format non lisible ».
+  static const Key cleIllisible = ValueKey<String>('photo-format-illisible');
+
+  /// La cle du lien « Demander une nouvelle photo ».
+  static const Key cleRedemander = ValueKey<String>('photo-redemander');
+
+  /// Vrai quand l'adresse de la photo designe un HEIC, que Chrome n'affiche
+  /// pas sur ordinateur (une photo deposee avant COMPLEMENT-ET-FORMATS).
+  static bool formatIllisible(String url) =>
+      (Uri.tryParse(url)?.path.toLowerCase() ?? '').endsWith('.heic');
 
   /// La cle du bloc.
   static const Key cle = ValueKey<String>('candidature-photo-dossier');
@@ -194,6 +213,28 @@ class BlocPhotoDossier extends ConsumerWidget {
       photoDossierProvider(id),
     );
     final Widget contenu = switch (lue) {
+      AsyncData<({String? url, DateTime? figeeLe})>(:final value)
+          when value.url != null && formatIllisible(value.url!) =>
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Text(
+              r.illisible,
+              key: cleIllisible,
+              style: AppPalette.of(context).inkAlert.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            if (onDemanderNouvellePhoto case final VoidCallback demander)
+              LienFleche(
+                key: cleRedemander,
+                libelle: r.demanderNouvelle,
+                alignerEnDebut: true,
+                onPress: demander,
+              ),
+          ],
+        ),
       AsyncData<({String? url, DateTime? figeeLe})>(:final value)
           when value.url != null =>
         Column(

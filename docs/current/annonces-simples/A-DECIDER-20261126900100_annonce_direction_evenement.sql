@@ -8,10 +8,10 @@
 -- d'annonces de chaque destinataire (et par courriel si la direction le
 -- demande), mais AUCUNE notification n'apparait sous la cloche des adultes :
 -- `com_annonce_envois.notifiees` reste a 0. Aucune notification n'est jamais
--- posee pour un mineur (la migration 20261126700000 l'exclut).
+-- posee pour un mineur (la migration 20261126900000 l'exclut).
 --
 -- Si le pilote l'accepte : le deplacer dans supabase/migrations/ sous ce nom,
--- le coller dans l'editeur SQL APRES 20261126700000 (un mot d'effacement : la
+-- le coller dans l'editeur SQL APRES 20261126900000 (un mot d'effacement : la
 -- seconde confirmation du serveur), puis les annonces suivantes notifient.
 -- Les annonces deja distribuees ne sont pas renotifiees.
 --

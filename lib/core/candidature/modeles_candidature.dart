@@ -262,6 +262,7 @@ class CandidatureDossier {
     this.paiement = EtatVersement.inconnu,
     this.aCompleter = const <String>[],
     this.complementDemande = const <String>[],
+    this.complementDemandeLe,
     this.peutEnvoyer = false,
     this.envoiBloque = const <String>[],
   });
@@ -298,6 +299,7 @@ class CandidatureDossier {
       paiement: EtatVersement.depuisSql(brut['paiement']),
       aCompleter: _codes(brut['aCompleter']),
       complementDemande: _codes(brut['complementDemande']),
+      complementDemandeLe: _instant(brut['complementDemandeLe']),
       peutEnvoyer: brut['peutEnvoyer'] == true,
       envoiBloque: _codes(brut['envoiBloque']),
     );
@@ -361,6 +363,14 @@ class CandidatureDossier {
   /// Les elements que la direction a demande de completer (liste choisie par
   /// elle, jamais un texte libre).
   final List<String> complementDemande;
+
+  /// La date de la demande de complement en cours, nulle sans demande ou
+  /// avec un serveur d'avant COMPLEMENT-ET-FORMATS (migration 20261126800000).
+  /// Sert a savoir si la piece redemandee a deja ete deposee de nouveau.
+  final DateTime? complementDemandeLe;
+
+  /// Vrai quand la direction demande cet element (`complementDemande`).
+  bool demande(String code) => complementDemande.contains(code);
 
   /// Vrai quand rien ne bloque l'envoi, selon le serveur.
   final bool peutEnvoyer;
@@ -430,6 +440,7 @@ class CandidatureDossier {
       other.paiement == paiement &&
       listEquals(other.aCompleter, aCompleter) &&
       listEquals(other.complementDemande, complementDemande) &&
+      other.complementDemandeLe == complementDemandeLe &&
       other.peutEnvoyer == peutEnvoyer &&
       listEquals(other.envoiBloque, envoiBloque);
 
@@ -452,6 +463,7 @@ class CandidatureDossier {
     paiement,
     Object.hashAll(aCompleter),
     Object.hashAll(complementDemande),
+    complementDemandeLe,
     peutEnvoyer,
     Object.hashAll(envoiBloque),
   ]);

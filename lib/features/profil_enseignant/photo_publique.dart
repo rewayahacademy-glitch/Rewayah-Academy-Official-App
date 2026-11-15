@@ -4,6 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/appairage/service_avatar.dart';
+import '../../core/fichiers/formats_admis.dart';
+import '../../core/fichiers/phrase_refus_fichier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/photos/photo_personne.dart';
 import '../../core/reseau/service_reseau.dart';
@@ -304,6 +306,11 @@ class _EditeurPhotoPubliqueState extends ConsumerState<EditeurPhotoPublique> {
     final PhotoChoisie? photo;
     try {
       photo = await ref.read(choixPhotoPubliqueProvider).choisir();
+    } on FichierRefuse catch (refus) {
+      // COMPLEMENT-ET-FORMATS : format ou taille refuses au choix, avant tout
+      // envoi, avec la phrase qui dit quoi faire.
+      if (mounted) setState(() => _refus = phraseRefusFichier(refus));
+      return;
     } on Object {
       if (mounted) setState(() => _refus = t.enseignant.photo.selectionEchec);
       return;

@@ -424,12 +424,13 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": t
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
     "modelesPause": ["pause_attente_besoin", "pause_attente_informations", "pause_demande_candidat", "pause_general"],
-    "complementSalleExamen": ["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux"],
+    "complementSalleExamen": ["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux",
+      "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication"],
     "complementSalleVerification": ["piece_identite", "cadre_religieux", "contrat", "avis"],
     "canauxRetrait": ["conversation", "courriel"],
     "codesClotureComplement": ["complement_clos"],
     "canauxPrevenu": ["whatsapp"], "modelesPrevenu": ["lien_inscription"]}'::jsonb,
-  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20) ; CAND-L3 (23/10) : canal et modele du geste « prevenu »');
+  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20) ; CAND-L3 (23/10) : canal et modele du geste « prevenu » ; COMPLEMENT-ET-FORMATS (14/11) : en salle 1, tout ce que le candidat fournit');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a3') @> '{"peutLire": false, "peutDecider": false, "peutEcrireReferentiel": false,
     "gestesGroupables": []}'::jsonb
   AND NOT EXISTS (SELECT 1 FROM jsonb_each(pg_temp.lu('cap_a3') -> 'gestes') g WHERE g.value <> 'false'::jsonb)
@@ -721,13 +722,14 @@ SELECT pg_temp.garde('dc02a', pg_temp.en(pg_temp.p('a1'), 'admin',
 SELECT pg_temp.garde('dc02b', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY[]::text[], 'Motif', 3, 'cle-complement-02-b')$$));
 SELECT pg_temp.garde('dc02c', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues', 'piece_identite', 'Commentaire libre'],
+  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues', 'entretien', 'Commentaire libre'],
     'Motif', 3, 'cle-complement-02-c')$$));
 SELECT pg_temp.vrai(pg_temp.lu('dc02a') = '{"erreur": "motif_requis", "geste": "demander_complement"}'::jsonb
   AND pg_temp.lu('dc02b') = '{"erreur": "elements_requis"}'::jsonb
   AND pg_temp.lu('dc02c') ->> 'erreur' = 'elements_invalides'
-  AND pg_temp.lu('dc02c') -> 'elements' = '["?", "piece_identite"]'::jsonb
-  AND pg_temp.lu('dc02c') -> 'permis' = '["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux"]'::jsonb
+  AND pg_temp.lu('dc02c') -> 'elements' = '["?", "entretien"]'::jsonb
+  AND pg_temp.lu('dc02c') -> 'permis' = '["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux",
+                                           "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication"]'::jsonb
   AND pg_temp.trace(pg_temp.c('02')) = pg_temp.lu('t02'),
   'transition 7 : sans motif, sans element, element hors de la liste de la salle (jamais un texte libre) : refus nommes, 0 ecriture');
 SELECT pg_temp.refus_en(pg_temp.p('a1'), 'admin', $$SELECT public.demander_complement_candidat(pg_temp.c('02'),

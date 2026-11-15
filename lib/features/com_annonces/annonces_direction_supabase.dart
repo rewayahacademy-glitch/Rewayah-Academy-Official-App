@@ -1,5 +1,5 @@
 // L'adaptateur Supabase des annonces de la direction (ANNONCES-SIMPLES,
-// migration 20261126700000) : `com_annonce_publics`, `com_annonce_audience`,
+// migration 20261126900000) : `com_annonce_publics`, `com_annonce_audience`,
 // `com_annonce_envoyer`, `com_mes_annonces`, `com_annonce_vue`.
 //
 // « Envoyee » ne vient que de l'accuse du serveur. Une RPC absente ou refusee

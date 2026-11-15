@@ -21,6 +21,7 @@ import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/port_ma_candidature.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/domain/enums.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/i18n/isolat_bidi.dart';
@@ -91,10 +92,41 @@ String? phrasePassage(CandidatureDossier c) {
 bool accordsFaits(EtatDossier d) =>
     d.contratSigne && d.accuseSigne && d.codeConduiteSigne;
 
-/// Vrai quand la piece est a deposer en salle 1 : pas encore deposee, et le
-/// serveur l'accepte maintenant (SALLE-1-TOUT-ICI).
+/// Vrai quand la piece refusee par la direction est a redeposer.
+bool pieceRefusee(EtatDossier d) =>
+    d.pieceDeposee && d.statutPiece == StatutPiece.refusee;
+
+/// Vrai quand la piece est a deposer en salle 1 : pas encore deposee, ou
+/// refusee par la direction, et le serveur l'accepte maintenant
+/// (SALLE-1-TOUT-ICI).
+///
+/// AUDIT-PORTAIL-CANDIDAT (directeur, 14/11/2026) : une piece refusee en
+/// salle 1 comptait pour « deposee » ; la ligne disait « Fait » et le portail
+/// ne proposait plus aucun depot, alors que le serveur en accepte un nouveau.
 bool pieceADeposer(EtatDossier d) =>
-    !d.pieceDeposee && !d.candidature.depotPieceSuspendu;
+    (!d.pieceDeposee || pieceRefusee(d) || pieceRedemandee(d)) &&
+    !d.candidature.depotPieceSuspendu;
+
+/// COMPLEMENT-ET-FORMATS (directeur, 14/11/2026) : la direction redemande la
+/// piece (complement `piece_identite`, par exemple une photo illisible) et
+/// aucune piece n'a ete deposee depuis la demande (`complementDemandeLe`, lu
+/// au serveur). Sans date (serveur d'avant), la regle d'avant reste.
+bool pieceRedemandee(EtatDossier d) {
+  final CandidatureDossier c = d.candidature;
+  final DateTime? demandeLe = c.complementDemandeLe;
+  if (!c.demande('piece_identite') || demandeLe == null) return false;
+  final DateTime? deposeLe = d.deposeLe;
+  return deposeLe == null || deposeLe.isBefore(demandeLe);
+}
+
+/// AUDIT-PORTAIL-CANDIDAT (directeur, 14/11/2026) : en Salle de verification
+/// et d'entretien, une nouvelle version du cadre religieux et pedagogique est
+/// a accepter (`etat_dossier().candidature.aCompleter` porte
+/// `cadre_religieux`, 4.3 : re-acceptee avant la salle 3). Le portail de la
+/// salle 2 ne montrait que les accords et la piece : aucun chemin vers le
+/// cadre. Pas pendant une pause.
+bool cadreAAccepterEnSalle2(CandidatureDossier c) =>
+    c.enSalleVerification && !c.enPause && c.cadre.publie && !c.cadre.accepte;
 
 /// La prochaine action du candidat sur le portail : un libelle et une route,
 /// ou `null` quand il n'a rien a faire (examen, pause, refus, retrait).
@@ -353,10 +385,17 @@ class StatutCandidature extends StatelessWidget {
                 LigneRubrique(
                   icone: AppIcons.profil,
                   libelle: r.elementPiece,
-                  valeur: etat(d.pieceDeposee, r.etatADeposer),
+                  valeur: etat(!pieceADeposer(d), r.etatADeposer),
                   // INCIDENT-CANDIDATS (14/11/2026) : la piece recue se dit
-                  // en mots, pas seulement par « Fait ».
-                  legende: d.pieceDeposee ? r.pieceRecue : null,
+                  // en mots, pas seulement par « Fait ». AUDIT-PORTAIL-
+                  // CANDIDAT : une piece refusee se dit a reprendre.
+                  legende: pieceRefusee(d)
+                      ? t.attente.refuseDetail(element: r.elementPiece)
+                      : pieceRedemandee(d)
+                      ? r.pieceDemandee
+                      : d.pieceDeposee
+                      ? r.pieceRecue
+                      : null,
                 ),
               // HARMONISATION-E : la photo et l'accord de publication, lus
               // dans etat_dossier() ; ils se posent au recapitulatif des
@@ -370,8 +409,16 @@ class StatutCandidature extends StatelessWidget {
                   // publication (coche a l'envoi des reponses) manquait : le
                   // candidat croyait l'envoi rate. La photo se lit seule ;
                   // l'accord qui reste se dit dessous.
-                  valeur: etat(d.photoPosee!, r.etatAAjouter),
-                  legende: !d.photoPosee!
+                  // COMPLEMENT-ET-FORMATS : redemandee, elle part avec les
+                  // reponses ; jamais « Fait » sous une demande.
+                  valeur: c.demande('photo')
+                      ? r.etatAEnvoyer
+                      : etat(d.photoPosee!, r.etatAAjouter),
+                  // COMPLEMENT-ET-FORMATS : une nouvelle photo demandee se
+                  // dit, avec l'endroit ou la changer.
+                  legende: c.demande('photo')
+                      ? r.photoDemandee
+                      : !d.photoPosee!
                       ? null
                       : (d.accordPublicationSigne ?? false)
                       ? r.photoRecue
@@ -408,7 +455,17 @@ class StatutCandidature extends StatelessWidget {
       ];
     } else {
       // En examen : la direction lit les reponses.
-      corps = <Widget>[titre(r.enExamenTitre), paragraphe(r.enExamen)];
+      corps = <Widget>[
+        titre(r.enExamenTitre),
+        paragraphe(r.enExamen),
+        // AUDIT-PORTAIL-CANDIDAT : la piece refusee se dit, avec son
+        // chemin (« Deposer ma piece », sous la carte).
+        if (dossier != null && pieceRefusee(dossier!))
+          paragraphe(
+            t.attente.refuseDetail(element: r.elementPiece),
+            cle: const ValueKey<String>('portail-piece-refusee'),
+          ),
+      ];
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -432,6 +489,9 @@ class StatutCandidature extends StatelessWidget {
     'piece_identite' => t.recrutement.portail.elementPiece,
     'contrat' => t.recrutement.portail.elementContrat,
     'avis' => t.attente.carteAccuse,
+    'code_conduite' => t.recrutement.portail.elementCodeConduite,
+    'photo' => t.recrutement.portail.elementPhoto,
+    'accord_publication' => t.recrutement.portail.elementAccordPublication,
     _ => null,
   };
 

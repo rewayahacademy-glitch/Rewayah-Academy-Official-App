@@ -8,7 +8,7 @@ pas l'UX).
 
 Cette note justifie la disposition (DESIGN-GOV §4). Elle ne change ni permission, ni état serveur
 (§4.3) : les publics, leurs nombres, la séparation femmes et hommes (CAND-Q07) et la protection des
-mineurs sont calculés par le serveur (migration `20261126700000_annonces_simples.sql`).
+mineurs sont calculés par le serveur (migration `20261126900000_annonces_simples.sql`).
 
 ## Avant et après (direction, une annonce « à tous les candidats »)
 
@@ -47,7 +47,7 @@ Classe X »), 2 gestes.
   publics font une liste longue à 1440. Le composant partagé n'est pas retouché dans ce lot.
 - La notification sous la cloche attend l'élargissement de la contrainte
   `notifications_evenement_check` (fichier à mot d'effacement, hors de la règle « aucun DROP » de ce
-  lot) : `docs/current/annonces-simples/A-DECIDER-20261126700100_annonce_direction_evenement.sql`.
+  lot) : `docs/current/annonces-simples/A-DECIDER-20261126900100_annonce_direction_evenement.sql`.
   Sans lui, l'annonce arrive dans le fil et, si demandé, par courriel.
 - La direction ne vise plus une Classe précise depuis ce publieur (les publics de la décision ne la
   nomment pas) ; l'enseignant garde sa Classe.

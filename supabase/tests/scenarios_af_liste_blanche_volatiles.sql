@@ -91,7 +91,7 @@ declare
     'clore_regle(uuid,text)',
     'cloturer_groupe(uuid,text)',
     'com_annonce_marquer_lue(uuid)',
-    -- ANNONCES-SIMPLES (20261126700000, 14/11/2026) : envoi par la direction active (com_appelant admin + app_account_valid) ; vue par un lecteur adulte ou candidat, jamais un mineur.
+    -- ANNONCES-SIMPLES (20261126900000, 14/11/2026) : envoi par la direction active (com_appelant admin + app_account_valid) ; vue par un lecteur adulte ou candidat, jamais un mineur.
     'com_annonce_envoyer(text[],text,text,timestamp with time zone,boolean,uuid)',
     'com_annonce_vue(uuid)',
     'com_annonce_publier(text,text,text,timestamp with time zone,uuid)',

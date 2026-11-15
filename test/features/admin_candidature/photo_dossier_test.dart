@@ -11,7 +11,9 @@ import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -105,6 +107,51 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'COMPLEMENT-ET-FORMATS : photo HEIC, illisible sur ordinateur : la phrase '
+    'le dit et la nouvelle photo se demande en un geste',
+    (WidgetTester tester) async {
+      await monterCandidature(
+        tester,
+        port: FauxCandidaturesDirection(
+          details: <DetailCandidature>[detailTest()],
+          capacitesRendues: capacitesGestes,
+        ),
+        surcharges: <Override>[
+          portPhotoDossierProvider.overrideWithValue(
+            _Dossier(
+              () async => PhotoDossier(
+                seau: 'photos_enseignants',
+                cle: 'p1/1.heic',
+                figeeLe: figee,
+              ),
+            ),
+          ),
+          portPhotosProvider.overrideWithValue(const _Photos()),
+        ],
+      );
+      expect(find.byKey(BlocPhotoDossier.cleIllisible), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(BlocPhotoDossier.cle),
+          matching: find.byType(AvatarTile),
+        ),
+        findsNothing,
+      );
+      await tester.ensureVisible(find.byKey(BlocPhotoDossier.cleRedemander));
+      await tester.tap(find.byKey(BlocPhotoDossier.cleRedemander));
+      await tester.pumpAndSettle();
+      expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
+      final ChoiceCardGroup groupe = tester.widget<ChoiceCardGroup>(
+        find.ancestor(
+          of: find.byKey(const ValueKey<String>('element-photo')),
+          matching: find.byType(ChoiceCardGroup),
+        ),
+      );
+      expect(groupe.valeurInitiale?.valeurs, <String>{'photo'});
+    },
+  );
 
   testWidgets('aucune photo envoyee : la phrase le dit', (
     WidgetTester tester,
