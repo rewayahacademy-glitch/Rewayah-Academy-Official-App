@@ -1,5 +1,7 @@
 # Lire d'abord : la charte pédagogique de Rewayah Academy
 
+> **État réel de la construction (15/11/2026) : `docs/current/REPRISE-PROGRAMME-PEDAGOGIQUE.md`.** Le lire avant tout lot : ce qui est livré, ce qui est sur une branche, ce qui n'existe pas.
+
 > **EN VIGUEUR par arbitrage de l'architecte pédagogique (12/11/2026), sur délégation du directeur. Le directeur peut corriger toute règle à tout moment ; une correction datée de sa part l'emporte.**
 
 C'est la référence unique de la pédagogie de Rewayah Academy. Aucune question n'est posée au directeur : il a demandé le 12/11/2026 que l'architecte arbitre, et tout ce qui restait ouvert est arbitré (`ARBITRAGES.md`). Un audit indépendant a trouvé des erreurs le même jour ; leurs corrections, et les arbitrages précédents qu'elles annulent, sont dans `ARBITRAGES.md`, partie 8.

@@ -1,5 +1,7 @@
 # Retours du terrain : les problèmes rencontrés pendant les inscriptions
 
+> Voisin de ce document, pour le programme pédagogique : `REPRISE-PROGRAMME-PEDAGOGIQUE.md` (ce qui est fait et ce qui reste, vérifié le 15/11/2026).
+
 Demande du directeur (14/11/2026) : « consigner tous les problèmes qu'on rencontre
 maintenant sur le recrutement dans un document accessible et visible pour tout le
 monde, pour s'en servir pour améliorer les inscriptions des élèves […] comme ça on
