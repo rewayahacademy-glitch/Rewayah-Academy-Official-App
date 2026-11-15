@@ -256,9 +256,13 @@ class _PiedPays extends StatelessWidget {
             libelle: t.recrutement.portail.paysVersementEnregistrer,
             enCours: saisie.enCours,
             pleineLargeur: false,
-            onPress: saisie.enCours
-                ? null
-                : () => unawaited(saisie.enregistrer(contexte)),
+            onPress: () {
+              // Un seul envoi a la fois : le bouton montre l'attente, il ne
+              // se grise pas.
+              if (!saisie.enCours) {
+                unawaited(saisie.enregistrer(contexte));
+              }
+            },
           ),
   );
 }
