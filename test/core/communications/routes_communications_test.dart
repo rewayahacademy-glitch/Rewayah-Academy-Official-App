@@ -525,7 +525,10 @@ void main() {
       }
     });
 
-    testWidgets('390 : la cloche de l en-tete de page y mene', (
+    // CLOCHE-EN-HAUT (directeur, 16/11/2026) : sous 600, la cloche est dans
+    // la barre du haut (globale, joignable de partout), plus dans l'en-tete
+    // de la page.
+    testWidgets('390 : la cloche de la barre du haut y mene', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await _monterAdmin(
@@ -535,10 +538,13 @@ void main() {
       );
       final Finder cloche = find.byType(ClocheNotifications);
       expect(cloche, findsOneWidget);
-      // Sous 600 la cloche est dans l'en-tete de page, pas dans la barre.
       expect(
         find.descendant(of: find.byType(EntetePage), matching: cloche),
-        findsOneWidget,
+        findsNothing,
+      );
+      expect(
+        tester.getTopLeft(cloche).dy,
+        lessThan(tester.getTopLeft(find.byType(EntetePage)).dy),
       );
       await tester.tap(cloche);
       await stabiliser(tester);

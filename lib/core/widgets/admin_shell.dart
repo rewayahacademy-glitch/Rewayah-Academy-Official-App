@@ -300,7 +300,11 @@ class AdminShell extends StatelessWidget {
           // NAV-REFONTE etape 4 : le compte vit au pied de la colonne
           // (photo, nom, menu), il quitte l'en-tete, comme pour les roles.
         ],
-        if (notifications != null)
+        // CLOCHE-EN-HAUT (directeur, 16/11/2026 : « pourquoi la cloche
+        // reste la au lieu d'etre en haut ? ») : la cloche est globale ; sous
+        // 600 elle vit dans la barre du haut ([_BarreMobile]), joignable de
+        // partout, jamais dans l'en-tete d'une page.
+        if (notifications != null && avecActions)
           ClocheNotifications(
             onPress: notifications,
             actif: notificationsActives,
@@ -419,6 +423,12 @@ class AdminShell extends StatelessWidget {
                 onCompte: onCompte,
                 cloche: cloche,
                 messages: messages,
+                notifications: notifications == null
+                    ? null
+                    : ClocheNotifications(
+                        onPress: notifications,
+                        actif: notificationsActives,
+                      ),
                 studio: studio != null,
                 onRechercheMetier: onRechercheMetier,
               ),
@@ -1675,8 +1685,12 @@ class _BarreMobile extends StatefulWidget {
     required this.studio,
     this.cloche,
     this.messages,
+    this.notifications,
     this.onRechercheMetier,
   });
+
+  /// CLOCHE-EN-HAUT : la cloche des notifications, globale, dans la barre.
+  final Widget? notifications;
 
   final void Function(String chemin) onRecherche;
   final VoidCallback onCompte;
@@ -1709,8 +1723,10 @@ class _BarreMobileState extends State<_BarreMobile> {
       child: SafeArea(
         bottom: false,
         child: Padding(
+          // CLOCHE-EN-HAUT : la cloche rejoint la barre ; une marge de 8
+          // laisse tenir cinq cibles de 72 a 390 (Interface guidee).
           padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: AppSpacing.lg,
+            horizontal: AppSpacing.sm,
             vertical: AppSpacing.sm,
           ),
           // PAGESHELL-200-1e (decide par delegation le 09/10) : en Interface
@@ -1723,12 +1739,21 @@ class _BarreMobileState extends State<_BarreMobile> {
               final int boutons =
                   3 +
                   (widget.cloche == null ? 0 : 1) +
-                  (widget.messages == null ? 0 : 1);
+                  (widget.messages == null ? 0 : 1) +
+                  (widget.notifications == null ? 0 : 1);
               final bool serre =
                   c.maxWidth <
                   boutons * AppMetriques.of(context).cibleTactile +
                       (boutons - 1) * AppSpacing.sm;
-              return _rangee(serre ? const SizedBox.shrink() : Ecart.hSm);
+              // CLOCHE-EN-HAUT : quand meme serrees les cibles ne tiennent
+              // pas (320, Interface guidee), « Mon compte » quitte la barre ;
+              // il reste dans le menu (tiroir), la cloche reste en haut.
+              final bool sansCompte =
+                  c.maxWidth < boutons * AppMetriques.of(context).cibleTactile;
+              return _rangee(
+                serre ? const SizedBox.shrink() : Ecart.hSm,
+                compte: !sansCompte,
+              );
             },
           ),
         ),
@@ -1737,7 +1762,7 @@ class _BarreMobileState extends State<_BarreMobile> {
   }
 
   /// Menu, recherche, cloche et compte, separes par [ecart].
-  Widget _rangee(Widget ecart) => Builder(
+  Widget _rangee(Widget ecart, {bool compte = true}) => Builder(
     builder: (BuildContext context) {
       return Row(
         children: <Widget>[
@@ -1768,7 +1793,11 @@ class _BarreMobileState extends State<_BarreMobile> {
             cloche,
             ecart,
           ],
-          _BoutonCompte(onCompte: widget.onCompte),
+          if (widget.notifications case final Widget notifications) ...<Widget>[
+            notifications,
+            ecart,
+          ],
+          if (compte) _BoutonCompte(onCompte: widget.onCompte),
         ],
       );
     },
