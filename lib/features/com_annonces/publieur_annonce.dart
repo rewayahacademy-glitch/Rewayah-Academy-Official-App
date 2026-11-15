@@ -32,6 +32,7 @@ import 'package:uuid/uuid.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
@@ -764,10 +765,13 @@ class _PublieurAnnonceState extends ConsumerState<PublieurAnnonce> {
                 ? s.courrielAucun
                 : estimation.jours <= 1
                 ? s.courrielUnJour(adresses: '${estimation.adresses}')
-                : s.courrielJours(
-                    adresses: '${estimation.adresses}',
-                    parJour: '${estimation.parJour}',
-                    jours: '${estimation.jours}',
+                // DUREE-INSECABLE : « 3 jours » ne se coupe pas.
+                : LibellesGroupe.insecable(
+                    s.courrielJours(
+                      adresses: '${estimation.adresses}',
+                      parJour: '${estimation.parJour}',
+                      jours: '${estimation.jours}',
+                    ),
                   ),
             encre: estimation.jours > 1 ? palette.inkAlert : null,
           ),

@@ -2,7 +2,7 @@
   "notifications": {
     "evenements": {
       "annonceDirection": "إعلان من الأكاديمية",
-      "annonceDirectionTitre": "إعلان: {titre}",
+      "annonceDirectionTitre": "إعلان: ⁨{titre}⁩",
       "bienvenueEquipe": "مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.",
       "retenuEntretien": "اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.",
       "pauseRepondueAcceptee": "قُبل توقف ⁨{dePrenom}⁩ لمدة شهر في ⁨{mois}⁩. يتأخر موعده الأقصى بالمدة نفسها ومقعده محفوظ.",
