@@ -42,7 +42,7 @@ Ce qui consomme ce débit dans l'application aujourd'hui (audit du dépôt, 15/1
 | 1 | Veille temps réel ouverte partout | `lib/core/fraicheur/veille_supabase.dart` : 5 tables écoutées **sans filtre** par chaque personne connectée (`lib/app.dart:73`) ; 2 `.stream()` sans filtre sur `demande_evenements` | Supabase vérifie la RLS **une fois par abonné** pour chaque changement, sur un seul fil ; puis chaque client relance ses lectures, tous en même temps |
 | 2 | RLS évaluée ligne par ligne | 41 policies avec `auth.uid()` nu ; `app_account_valid()` (lit `profiles`) appelée 985 fois, 22 enveloppées | La fonction est rejouée pour chaque ligne lue, à chaque lecture et à chaque événement temps réel |
 | 3 | Relectures à intervalle fixe | 9 minuteries sans décalage ni recul, dont 5 s (`port_politique_observation.dart:253`), 3 s (`appairage_page.dart:323`), 20 s (présence en salle) ; l'outil `SondageRegulier` existe mais n'est utilisé qu'à 4 endroits | 300 élèves à 18 h relisent à la même seconde, et redoublent quand le serveur sature |
-| 4 | Travail de chaque minute | `tache-minute` enchaîne 7 tâches toutes les minutes, même sans travail ; aucune purge de `net._http_response` écrite | Écritures continues sur un disque déjà au débit de base |
+| 4 | Travail de chaque minute | `tache-minute` enchaîne 7 tâches toutes les minutes. **Correction du 15/11 (lu en production)** : les trois appels réseau (`courriels-envoi`, `push-envoi`, `observation-coupure`) ne partent déjà que s'il y a du travail (`WHERE EXISTS`). Reste à mesurer : les quatre tâches SQL, et `courriels-envoi` appelé chaque minute alors que le plafond horaire (40 par heure) est atteint, tant que la file n'est pas vide | À mesurer sur quelques heures de `pg_stat_statements` (remis à zéro par le changement de machine du 15/11) |
 | 5 | Aucun mode dégradé | Aucun message « beaucoup de monde », aucune coupure du non-essentiel | Quand la base sature, tout l'écran échoue et les gens réessaient, ce qui l'enfonce |
 
 ## 2. Ce que font les grandes applications (standards relevés le 15/11/2026)
@@ -100,7 +100,7 @@ practices*, code.claude.com/docs/en/best-practices).
 | Étape | Lot | Ce qui change | Preuve de fin |
 | :-- | :-- | :-- | :-- |
 | 0 | MACHINE (directeur) | Pro, PROD en Small ; STAGING dans une organisation gratuite | Tableau de bord : « Small », erreurs de connexion à 0 |
-| 1 | CRON-ECONOME | `tache-minute` ne lance une tâche que si elle a du travail (un `EXISTS` avant chaque `net.http_post`) ; purge écrite de `net._http_response` ; lots bornés | Nombre d'écritures par heure avant/après, lu dans `pg_stat_statements` |
+| 1 | CRON-ECONOME | Après mesure : `courriels-envoi` ne réveille plus la fonction quand le plafond horaire est atteint ; les tâches SQL qui écrivent sans travail sont arrêtées ou espacées ; purge écrite de `net._http_response` | Nombre d'écritures par heure avant/après, lu dans `pg_stat_statements` |
 | 2 | RLS-ECONOME | Envelopper `auth.uid()`, `app_account_valid()`, `app_role()` dans `(select …)` dans toutes les policies ; index sur les colonnes des policies et les clés étrangères signalées par le Performance Advisor | Advisor « auth_rls_initplan » et « unindexed_foreign_keys » à 0 ; temps des 10 requêtes les plus chères avant/après |
 | 3 | VEILLE-BROADCAST | La veille globale et les deux `.stream()` passent à Broadcast privé ciblé (`realtime.broadcast_changes` dans un déclencheur, un sujet par personne, par classe ou par foyer) ; on relit seulement la ligne concernée ; veille suspendue quand l'application passe en arrière-plan | Plus aucun `onPostgresChanges` ni `.stream(` dans `lib/` ; publication `supabase_realtime` vidée |
 | 4 | SONDAGE-UNIQUE | Les 9 minuteries passent par `SondageRegulier` (décalage, recul, arrêt en arrière-plan) ; 3 s et 5 s remplacées par Broadcast ; les lectures « toutes les pages en boucle » des écrans de direction paginées à la demande | Plus aucun `Timer.periodic` qui appelle Supabase hors `SondageRegulier` |
@@ -110,6 +110,12 @@ practices*, code.claude.com/docs/en/best-practices).
 
 Les étapes 1 et 2 sont du serveur (migrations, installées par le pilote) ; 3 à 5 touchent `lib/core/`
 et les adaptateurs `*_supabase.dart` ; 6 et 7 sont de l'outillage.
+
+## 4 bis. Avancement
+
+- **15/11, 12 h UTC** : étape 0 faite par le directeur (Pro, PROD en Micro, STAGING en pause). Fin de la panne mesurée à 11 h 45 UTC (aucune erreur de connexion depuis).
+- **15/11** : étape 2 écrite, migration `20261127000000_rls_econome.sql` : 67 policies réécrites sur 188 (public et private), 0 appel nu restant, rejouable (0 au second passage). Testée localement sur Postgres nu : les 496 migrations, puis les 202 scénarios de la CI (tous verts après adaptation d'un test qui comparait le texte exact) et 111 scénarios hors CI (3 échecs, tous identiques sans la migration ou dus à l'ordre des scénarios). **Non installée.** Restent de l'étape 2 : les index des clés étrangères utiles (246 signalées, à trier : un index de trop coûte aussi en écriture) et les 100 tables à plusieurs policies permissives.
+- **Réglage trouvé par l'Advisor, à faire par le directeur** : le service de connexion (Auth) est bridé à 10 connexions fixes ; le passer en pourcentage (*Authentication*, *Settings*, connexions) pour qu'il profite de la nouvelle machine.
 
 ## 5. Comment on s'assure qu'elle est appliquée cette fois
 
