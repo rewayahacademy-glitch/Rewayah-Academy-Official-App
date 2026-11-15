@@ -23,6 +23,7 @@ import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_annonces/port_regles_audience.dart';
 import 'package:rewayah_academy/features/com_messages/messages_admin.dart';
 
+import '../../capture/outil_capture.dart';
 import '../../support/demo/communications/com_annonces_demo.dart';
 import '../../support/garde_interface.dart';
 import 'admin_banc.dart';
@@ -250,6 +251,72 @@ void main() {
       }
     }
   });
+
+  group('Annonces : geste au telephone (ANNONCES-DEFILEMENT)', () {
+    testWidgets('390 : un glissement commence sur une carte de la matrice '
+        'fait defiler la page', (WidgetTester tester) async {
+      await monterAdministration(tester, taille: const Size(390, 844));
+      final Finder carte = find
+          .descendant(
+            of: find.byKey(MatriceAudience.cleCollection),
+            matching: find.byWidgetPredicate(
+              (Widget w) =>
+                  w.key is ValueKey<String> &&
+                  (w.key! as ValueKey<String>).value.startsWith(
+                    'administration-regle-',
+                  ),
+            ),
+          )
+          .first;
+      await tester.ensureVisible(carte);
+      await tester.pumpAndSettle();
+      // Le defileur de la page : le plus proche ancetre qui defile vraiment.
+      final ScrollPosition page = Scrollable.of(
+        tester.element(find.byKey(MatriceAudience.cle)),
+      ).position;
+      expect(page.physics, isNot(isA<NeverScrollableScrollPhysics>()));
+      expect(page.maxScrollExtent, greaterThan(0));
+      final double avant = page.pixels;
+      // Le doigt pose au milieu de la carte : vers le haut s'il reste de la
+      // page en dessous, sinon vers le bas.
+      final double sens = avant < page.maxScrollExtent ? -1 : 1;
+      await tester.dragFrom(tester.getCenter(carte), Offset(0, 200 * sens));
+      await tester.pumpAndSettle();
+      expect(page.pixels, isNot(moreOrLessEquals(avant)));
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  // Captures R3 : CAPTURE_DIR=docs/current/captures/E2E. Le haut et le bas
+  // de la page, pour montrer qu'elle defile jusqu'en bas au telephone.
+  group('captures ANNONCES-DEFILEMENT', () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final (Size taille, AppLocale langue) in <(Size, AppLocale)>[
+      (const Size(390, 844), AppLocale.fr),
+      (const Size(390, 844), AppLocale.ar),
+      (const Size(1440, 900), AppLocale.fr),
+    ]) {
+      final String nom =
+          'annonces-${taille.width.toInt()}-${langue.languageCode}';
+      testWidgets(nom, (WidgetTester tester) async {
+        masquerRubanDebug();
+        await monterAdministration(
+          tester,
+          taille: taille,
+          arabe: langue == AppLocale.ar,
+        );
+        await stabiliser(tester);
+        await capturerVue(tester, 'annonces-defilement/$nom-haut');
+        final ScrollPosition page = Scrollable.of(
+          tester.element(find.byKey(MatriceAudience.cle)),
+        ).position;
+        page.jumpTo(page.maxScrollExtent);
+        await stabiliser(tester);
+        expect(page.pixels, page.maxScrollExtent);
+        await capturerVue(tester, 'annonces-defilement/$nom-bas');
+      });
+    }
+  }, skip: sautSansCapture);
 
   group('Annonces : production et etats', () {
     testWidgets('ports neutres : aucun chiffre, aucune action, aucune marque', (
