@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/communications/textes_fil_communication.dar
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 
+import '../../support/echec_bulle.dart';
 import '../../support/hote_theme.dart';
 
 class _Envois {
@@ -74,8 +75,7 @@ void main() {
       expect(envois.recus.first.$2, envois.recus.last.$2);
       expect(envois.recus.first.$1, isNot(envois.recus.last.$1));
 
-      await tester.tap(find.text(c.reessayer));
-      await tester.pump();
+      await choisirActionEchec(tester, c.reessayer);
       expect(envois.recus, hasLength(3));
       expect(envois.recus.last.$1, envois.recus.first.$1);
       for (final Completer<void> a in envois.attentes.skip(1)) {

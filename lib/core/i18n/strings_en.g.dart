@@ -19233,6 +19233,10 @@ class _Traductions$com$messages$images$en extends Traductions$com$messages$image
 	@override String get aimeParVous => 'Liked by you';
 	@override String aimes({required Object n}) => 'Likes: ${n}';
 	@override String get coeurEchec => 'Your like is not confirmed. Try again in a moment.';
+	@override String get photoApercu => 'Photo';
+	@override String get nonConfirmeToucher => 'Not confirmed · Tap to try again';
+	@override String get supprimerEchec => 'Delete';
+	@override String get actionsEchec => 'Actions for the unconfirmed message';
 	@override late final _Traductions$com$messages$images$refus$en refus = _Traductions$com$messages$images$refus$en._(_root);
 }
 
@@ -25211,7 +25215,7 @@ class _Traductions$com$messages$images$refus$en extends Traductions$com$messages
 	@override String get stockageIndisponible => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.';
 	@override String get confirmationIndisponible => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.';
 	@override String get depotImpossible => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.';
-	@override String get envoiStockage => 'Storage refused the image (expired address or interrupted upload). Try again.';
+	@override String get envoiStockage => 'The image could not be sent. Try again later.';
 	@override String get reseau => 'The image may not have reached Rewayah. Try again in a moment.';
 	@override String get imageTropGrosse => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.';
 	@override String get imageIllisible => 'This photo cannot be read. Choose another photo.';
@@ -37286,6 +37290,10 @@ extension on TraductionsEn {
 			'com.messages.images.aimeParVous' => 'Liked by you',
 			'com.messages.images.aimes' => ({required Object n}) => 'Likes: ${n}',
 			'com.messages.images.coeurEchec' => 'Your like is not confirmed. Try again in a moment.',
+			'com.messages.images.photoApercu' => 'Photo',
+			'com.messages.images.nonConfirmeToucher' => 'Not confirmed · Tap to try again',
+			'com.messages.images.supprimerEchec' => 'Delete',
+			'com.messages.images.actionsEchec' => 'Actions for the unconfirmed message',
 			'com.messages.images.refus.demandeInvalide' => 'This image is not confirmed: its size or format is not what was expected. Choose another photo.',
 			'com.messages.images.refus.typeRefuse' => 'This file type is not accepted. Choose a JPEG, PNG or WebP photo.',
 			'com.messages.images.refus.imageTropLourde' => 'This image is too heavy, even after shrinking. Choose a lighter photo.',
@@ -37299,7 +37307,7 @@ extension on TraductionsEn {
 			'com.messages.images.refus.stockageIndisponible' => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.',
 			'com.messages.images.refus.confirmationIndisponible' => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.',
 			'com.messages.images.refus.depotImpossible' => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.',
-			'com.messages.images.refus.envoiStockage' => 'Storage refused the image (expired address or interrupted upload). Try again.',
+			'com.messages.images.refus.envoiStockage' => 'The image could not be sent. Try again later.',
 			'com.messages.images.refus.reseau' => 'The image may not have reached Rewayah. Try again in a moment.',
 			'com.messages.images.refus.imageTropGrosse' => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.',
 			'com.messages.images.refus.imageIllisible' => 'This photo cannot be read. Choose another photo.',
@@ -37656,12 +37664,12 @@ extension on TraductionsEn {
 			'com.studio.visibilite.restreintDetail' => 'Open to part of the team, which you belong to.',
 			'com.studio.visibilite.priveDetail' => 'Private channel, open to its members only. You belong to it.',
 			'com.studio.canal.membresUn' => '1 member',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.canal.membres' => ({required Object nombre}) => '${nombre} members',
 			'com.studio.canal.aide' => ({required Object nom}) => 'Write in ${nom}',
 			'com.studio.canal.lectureSeule' => 'You can read this channel. Writing is not open to you here.',
 			'com.studio.canal.aucunMessageTitre' => 'No message yet',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.canal.aucunMessage' => 'Messages in this channel will appear here as soon as they are posted.',
 			'com.studio.canal.indisponibleTitre' => 'Channel unavailable',
 			'com.studio.canal.indisponible' => 'This channel is not available to you. Choose another channel from the list.',
@@ -38170,12 +38178,12 @@ extension on TraductionsEn {
 			'comptable.statuts.reserve.alimentationPrevue' => 'Funding planned',
 			'comptable.statuts.reserve.mouvementSensible' => 'Sensitive movement',
 			'comptable.statuts.obligation.brouillon' => 'Draft',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.obligation.aApprouver' => 'To approve',
 			'comptable.statuts.obligation.approuvee' => 'Approved',
 			'comptable.statuts.obligation.refusee' => 'Declined',
 			'comptable.statuts.obligation.payable' => 'Payable',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.obligation.payee' => 'Paid',
 			'comptable.statuts.obligation.annulee' => 'Cancelled',
 			'comptable.statuts.remboursement.demande' => 'Requested',
@@ -38684,12 +38692,12 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Who holds the account?',
 			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'My father or mother',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.lien.conjoint' => 'My spouse',
 			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'My brother or sister',
 			'comptable.beneficiaires.recevoir.wise.lien.autre' => 'Someone else',
 			'comptable.beneficiaires.recevoir.wise.lienLibelle' => 'Relationship with the holder',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'I authorize Rewayah Academy to pay my pay into this account, in the name of ${titulaire}.',
 			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'Tick the agreement: an account not in your name cannot be saved without it.',
 			'comptable.beneficiaires.recevoir.wise.lienRequis' => 'Choose your relationship with the account holder.',
@@ -39198,12 +39206,12 @@ extension on TraductionsEn {
 			'sansDonnees.encaissements' => 'The collections could not be loaded',
 			'sansDonnees.tresorerie' => 'The cash position could not be loaded',
 			'sansDonnees.obligation' => 'This obligation could not be loaded',
+			_ => null,
+		} ?? switch (path) {
 			'sansDonnees.contractuels' => 'The contractors could not be loaded',
 			'sansDonnees.reserve' => 'The reserve policy could not be loaded',
 			'sansDonnees.vueGlobale' => 'The overview of finances could not be loaded',
 			'sansDonnees.beneficiaires' => 'The beneficiaries could not be loaded',
-			_ => null,
-		} ?? switch (path) {
 			'sansDonnees.profilPaiement' => 'This payment profile could not be loaded',
 			'juridique.titre' => 'Legal information',
 			'juridique.intro' => 'The texts that govern the service. They can be read without an account.',
@@ -39712,12 +39720,12 @@ extension on TraductionsEn {
 			'accueilInscrits.motTitre' => 'A word from the management',
 			'accueilInscrits.elevesTitre' => 'Your children already registered',
 			'accueilInscrits.elevesPhrase' => 'Their first name is already filled in. Their age remains to be entered.',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInscrits.aJour' => 'Up to date',
 			'accueilInscrits.aCompleter' => 'To complete',
 			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'Add ${dePrenom}\'s student profile',
 			'accueilInscrits.plusTard' => 'You can also do it later, from the Household.',
-			_ => null,
-		} ?? switch (path) {
 			'accueilInscrits.sansEleve' => 'No student profile was carried over for your family. You can add one from the Household.',
 			'accueilInscrits.finirCompte' => 'A few questions remain to finish your account.',
 			'accueilInscrits.continuer' => 'Continue',
@@ -40226,12 +40234,12 @@ extension on TraductionsEn {
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Setting saved: ${n} message per day.', other: 'Setting saved: ${n} messages per day.', ), 
 			'candidatsFlux.file.reglage.invalide' => 'Enter a whole number from 1 to 2,000, without spaces.',
 			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importDouble.suite' => 'Tap "Enter my code": you enter the code from your verification app, then the import resumes here. Nothing was saved.',
 			'candidatsFlux.importDouble.action' => 'Enter my code',
 			'candidatsFlux.langues.man' => 'Malinke (Mandinka)',
 			'candidatsFlux.publication.titre' => 'Publication on the website',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.publication.texte' => 'Your name, photo and country may appear on the Rewayah Academy public website. This choice is separate from your application: it changes nothing about its review.',
 			'candidatsFlux.publication.kCase' => 'I agree that my name, photo and country be on the Rewayah public website.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Your name counts as a signature: ${nom}',
@@ -40740,6 +40748,8 @@ extension on TraductionsEn {
 			'pause.refus.dejaDemandee' => 'This month is already requested or accepted.',
 			'pause.refus.moisInvalide' => 'This month is not readable. Choose a month from the list.',
 			'pause.refus.nonAnnulable' => 'This break can no longer be cancelled: it has already started, or it is already refused or cancelled.',
+			_ => null,
+		} ?? switch (path) {
 			'pause.refus.nonAutorise' => 'You cannot request a break from this account.',
 			'pause.refus.inconnu' => 'The request is not confirmed: it may not have reached Rewayah. Try again in a moment.',
 			_ => null,

@@ -35,6 +35,7 @@ import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 import 'package:rewayah_academy/features/com_vocal/port_enregistreur_vocal.dart';
 
 import '../../support/demo/communications/com_vocal_demo.dart';
+import '../../support/echec_bulle.dart';
 import '../com_messages/support_messages.dart' as msg;
 import '../com_studio/support_focus.dart' as focus;
 import '../com_studio/support_studio.dart' as studio;
@@ -335,8 +336,7 @@ void main() {
         isNot(port.envois.first.$3),
         reason: 'une autre bulle, une autre cle, meme texte',
       );
-      await tester.tap(find.text(x.reessayer));
-      await tester.pump();
+      await choisirActionEchec(tester, x.reessayer);
       expect(port.envois, hasLength(3));
       expect(port.envois.last.$3, port.envois.first.$3);
       for (final Completer<void> a in port.attentes.skip(1)) {

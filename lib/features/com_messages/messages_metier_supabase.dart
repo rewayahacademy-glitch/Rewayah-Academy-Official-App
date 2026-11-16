@@ -18,7 +18,9 @@ import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
+import '../../core/communications/phrases_images.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
 import 'fonctions_images_messages.dart';
@@ -257,7 +259,22 @@ class MessagesMetierSupabase implements PortMessagesMetier {
   }) async {
     final AppelFonction? fonctions = _fonctions;
     if (fonctions == null) throw const CapaciteIndisponible('COM-BR-02');
+    final Stopwatch total = Stopwatch()..start();
+    final Stopwatch etape = Stopwatch()..start();
+    void temps(String nom) {
+      // Mesure du temps de l'envoi (IMAGES-CORRECTIF, B) : lue dans la console.
+      journalDev(
+        '[images-temps] $nom : ${etape.elapsedMilliseconds} ms '
+        '(cumul ${total.elapsedMilliseconds} ms)',
+      );
+      etape
+        ..reset()
+        ..start();
+    }
+
     final String messageId = await _poster(filId, texte, cleIdempotence);
+    temps('message cree');
+    progression?.messageCree(messageId);
     progression?.call(0.05);
     final Map<String, dynamic> depot = await fonctions(
       'message-image-depot',
@@ -278,18 +295,33 @@ class MessagesMetierSupabase implements PortMessagesMetier {
         },
       },
     );
+    temps('demande du depot');
     final String imageId = texteJson(depot, 'image_id');
+    progression?.depotCree(imageId);
     progression?.call(0.1);
     await _deposer(objetJson(depot['image']), image.octets);
+    temps('PUT image (${image.octets.length} o)');
     progression?.call(0.85);
     await _deposer(objetJson(depot['miniature']), image.miniature);
+    temps('PUT miniature (${image.miniature.length} o)');
     progression?.call(0.95);
     await fonctions('message-image-depot', <String, dynamic>{
       'action': 'confirmer',
       'image_id': imageId,
     });
+    temps('confirmation');
     progression?.call(1);
     unawaited(_miniatures.remove(filId));
+  }
+
+  @override
+  Future<void> annulerImage(String imageId) async {
+    final AppelFonction? fonctions = _fonctions;
+    if (fonctions == null || !estUuid(imageId)) return;
+    await fonctions('message-image-depot', <String, dynamic>{
+      'action': 'annuler',
+      'image_id': imageId,
+    });
   }
 
   /// Le `PUT` signe : exactement les en-tetes exiges par le serveur.
@@ -323,13 +355,19 @@ class MessagesMetierSupabase implements PortMessagesMetier {
   }
 
   @override
-  Future<Map<String, AdresseImage>> urlsMiniatures(String filId) {
+  Future<Map<String, AdresseImage>> urlsMiniatures(
+    String filId, {
+    bool frais = false,
+  }) {
     final AppelFonction? fonctions = _fonctions;
     if (fonctions == null || !estUuid(filId)) {
       return Future<Map<String, AdresseImage>>.value(
         const <String, AdresseImage>{},
       );
     }
+    // IMAGES-CORRECTIF : la liste gardee ne connait pas une image arrivee
+    // depuis sa lecture ; [frais] la jette.
+    if (frais) _miniatures.remove(filId);
     final Future<Map<String, AdresseImage>>? gardees = _miniatures[filId];
     if (gardees != null) {
       return gardees.then((Map<String, AdresseImage> m) {
@@ -371,9 +409,15 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     AppelFonction fonctions,
     Map<String, dynamic> corps,
   ) async {
+    final Stopwatch chrono = Stopwatch()..start();
     final Map<String, dynamic> reponse = await fonctions(
       'message-images-lecture',
       corps,
+    );
+    journalDev(
+      '[images-temps] lecture des adresses signees '
+      '(${corps.containsKey('image_id') ? 'image' : 'miniatures'}) : '
+      '${chrono.elapsedMilliseconds} ms',
     );
     final DateTime maintenant = DateTime.now();
     final Map<String, AdresseImage> rendues = <String, AdresseImage>{};
@@ -439,9 +483,16 @@ ResumeFil resumeFilJson(
   LibellesCommunication libelles,
 ) {
   final List<Map<String, dynamic>> messages = listeJson(fil['messages']);
-  final String? dernier = messages.isEmpty
+  final String? dernierTexte = messages.isEmpty
       ? null
       : texteOptionnel(messages.last, 'texte');
+  // IMAGES-CORRECTIF : une photo sans legende (texte de remplissage) s'apercoit
+  // « Photo » ; le serveur ne rend ni une image en attente ni un depot annule.
+  final bool photoSeule =
+      dernierTexte != null &&
+      ImageMessage.depuisJson(messages.last['image']) != null &&
+      estTexteImageSeule(dernierTexte);
+  final String? dernier = photoSeule ? null : dernierTexte;
   return ResumeFil(
     id: texteJson(fil, 'id'),
     objet: objetLieJson(objetJson(fil['objet']), libelles),
@@ -452,6 +503,7 @@ ResumeFil resumeFilJson(
     apercu: dernier == null || dernier.length <= longueurApercuFil
         ? dernier
         : dernier.substring(0, longueurApercuFil),
+    apercuPhoto: photoSeule,
     dernierMessageLe: instantOptionnel(fil, 'dernier_message_le'),
     attention: _attention(fil['non_lus']),
   );

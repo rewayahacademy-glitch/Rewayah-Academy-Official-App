@@ -54,7 +54,7 @@ class _Source implements SourceImagesFil {
   );
 
   @override
-  Future<Map<String, AdresseImage>> miniatures() async =>
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false}) async =>
       <String, AdresseImage>{for (final String id in octets.keys) id: _a(id)};
 
   @override
