@@ -134,7 +134,7 @@ final List<(String, AppRole, String, List<Override> Function())> _ecrans =
 /// fois plus longue (memes fils, identifiants distincts) : a 320, elle doit
 /// passer sous la barre flottante. Les donnees de demonstration de
 /// l'application ne changent pas.
-class _MessagesLongs implements PortMessagesMetier {
+class _MessagesLongs with SansImagesMessages implements PortMessagesMetier {
   _MessagesLongs(this._demo);
 
   final PortMessagesMetier _demo;

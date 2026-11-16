@@ -130,7 +130,7 @@ class _EnvoisRetenus extends FauxMessagesMetier {
 /// Le port de demonstration, dont toute relecture de la liste apres la
 /// premiere attend [relacher] : une page qui repartirait de zero resterait
 /// sur son squelette.
-class _ListeRetenue implements PortMessagesMetier {
+class _ListeRetenue with SansImagesMessages implements PortMessagesMetier {
   _ListeRetenue(this._source);
 
   final PortMessagesMetier _source;

@@ -12156,6 +12156,47 @@
       "fil": {
         "lectureSeule": "You can read this conversation. Replying is not open to you here."
       },
+      "images": {
+        "joindre": "Attach an image",
+        "prendrePhoto": "Take a photo",
+        "choisirGalerie": "Choose from the gallery",
+        "retiree": "Image removed after 90 days",
+        "fermer": "Close image",
+        "enregistrer": "Save image",
+        "enregistree": "Image saved",
+        "enregistrementEchec": "Saving the image is not confirmed. Your device or browser refused the file: try again in a moment.",
+        "imageJointe": "Image attached to the message",
+        "chargement": "Loading image",
+        "envoiEnCours": "Sending image: {pourcent}%",
+        "preparation": "Preparing image",
+        "jaime": "Like",
+        "nePlusAimer": "Unlike",
+        "copierTexte": "Copy text",
+        "texteCopie": "Text copied",
+        "actionsMessage": "Message actions",
+        "aimeParVous": "Liked by you",
+        "aimes": "Likes: {n}",
+        "coeurEchec": "Your like is not confirmed. Try again in a moment.",
+        "refus": {
+          "demandeInvalide": "This image is not confirmed: its size or format is not what was expected. Choose another photo.",
+          "typeRefuse": "This file type is not accepted. Choose a JPEG, PNG or WebP photo.",
+          "imageTropLourde": "This image is too heavy, even after shrinking. Choose a lighter photo.",
+          "nonAutorise": "You cannot attach an image to this message. Your text was sent: write without an image.",
+          "mineurRefuse": "Images are not open to student accounts under 18. Write your message without an image.",
+          "limiteHoraire": "You have sent 20 images in the last hour: that is the limit. Try again in an hour.",
+          "dejaUneImage": "This message already received its image, or its upload was abandoned. Write a new message to attach an image.",
+          "depotIndisponible": "This image upload is no longer valid (too old, or already finished). Write a new message to attach the image.",
+          "contenuDifferent": "This file is not an image of the announced type. Choose a real photo.",
+          "objetIntrouvable": "The image did not arrive whole on the server. Try again.",
+          "stockageIndisponible": "Image storage is not answering right now: it is not your device. Try again in a few minutes.",
+          "confirmationIndisponible": "Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.",
+          "depotImpossible": "The image is not confirmed: this is a server fault, not yours. Try again in a moment.",
+          "envoiStockage": "Storage refused the image (expired address or interrupted upload). Try again.",
+          "reseau": "The image may not have reached Rewayah. Try again in a moment.",
+          "imageTropGrosse": "This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.",
+          "imageIllisible": "This photo cannot be read. Choose another photo."
+        }
+      },
       "demo": {
         "choisirRole": "Choose the point of view for this demo.",
         "roles": {
