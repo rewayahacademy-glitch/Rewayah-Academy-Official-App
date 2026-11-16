@@ -1,6 +1,6 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : 16/11/2026, 19 h 50 UTC.**
+**Mise à jour : 16/11/2026, 20 h 10 UTC.**
 
 Pilote : session `session_0163KjrvqyXGcbF9eGGztS24` (nuit du 16 au 17/11, ordre de 19 h 50). Il succède à
 `session_0163Kjrx8uX1pRbk4RhE7Yuz` (19 h 40), qui succédait au pilote de la
@@ -42,7 +42,7 @@ _Rempli au matin._
 
 | Lot | Qui | Statut | Prochaine étape |
 | :--- | :--- | :--- | :--- |
-| MESSAGERIE-COULEURS #551 | agent neuf `session_0163KjrwKsohCvdhrjhrWP5N` (Sonnet, lancé 19 h 48) | PR brouillon, rien de vérifié sur `571f558a` | l'agent relance slang deux fois, build_runner, analyze, `flutter test` complet, les trois vérificateurs ; refait et **commite** les captures du volet (1440, fr et ar, clair et sombre, fil remonté, croix) et de la liste 1440 ; passe la PR en « prête », lit la CI ; le pilote relit les captures avant/après (téléphone et ordinateur, clair et sombre, ce qui change ailleurs), lit la CI, prévient le Pilote Équipe (`lib/core`, `assets/i18n`), fusionne |
+| MESSAGERIE-COULEURS #551 | agent neuf `session_0163KjrwKsohCvdhrjhrWP5N` (Sonnet, lancé 19 h 48) | PR brouillon ; `7e7fae52` poussé (19 h 54) : slang ×2 et build_runner sans changement, analyze à zéro, code des captures commité ; `flutter test` complet en cours, captures non générées, CI non lue | l'agent relance slang deux fois, build_runner, analyze, `flutter test` complet, les trois vérificateurs ; refait et **commite** les captures du volet (1440, fr et ar, clair et sombre, fil remonté, croix) et de la liste 1440 ; passe la PR en « prête », lit la CI ; le pilote relit les captures avant/après (téléphone et ordinateur, clair et sombre, ce qui change ailleurs), lit la CI, prévient le Pilote Équipe (`lib/core`, `assets/i18n`), fusionne |
 | Cette checklist #560 | pilote | PR | fusion quand la CI est verte |
 
 ## À lancer
@@ -87,3 +87,9 @@ _Rempli au matin._
   « poussé » (`571f558a`). Agent neuf `session_0163KjrwKsohCvdhrjhrWP5N` lancé sur #551 seul. Pilote
   Équipe (`session_0163KjrwwgbbL52RHBDSnDVm`) prévenu des fichiers partagés de #551, dont
   `admin_candidature/volet_conversation.dart`.
+- 16/11, 19 h 54 : agent de #551 : `7e7fae52` (slang ×2 et build_runner sans changement, analyze à zéro,
+  code des captures commité ; tests et captures en cours). Pilote Équipe : 3 agents de son côté, plafond
+  de 4 atteint ; il fusionnera #547 (i18n générés, router, main.dart) ; #551 devra ensuite fusionner
+  `main` et relancer slang deux fois. Ses migrations de ce soir : `20261129440000`, `480000`, `490000`.
+- 16/11, 20 h 10 : contrôle. `main` a reçu #553, #555, #557 ; #547 pas encore. Agent inactif depuis
+  19 h 54 (« en attente des tests ») : relancé par message.
