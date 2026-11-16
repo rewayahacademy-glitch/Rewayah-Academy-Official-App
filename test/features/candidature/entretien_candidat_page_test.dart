@@ -14,6 +14,7 @@ import 'package:rewayah_academy/features/candidature/entretien_candidat_page.dar
 import 'package:rewayah_academy/features/candidature/entretien_creneaux.dart';
 
 import '../../fixtures/candidature/faux_ma_candidature.dart';
+import '../../capture/outil_capture.dart';
 import '../../support/harnais.dart';
 import 'hote_candidature.dart';
 
@@ -189,11 +190,13 @@ void main() {
     expect(find.byKey(ContenuEntretien.carteKey), findsNothing);
   });
 
-  testWidgets('aucun moment ouvert : une phrase, Reessayer', (
+  testWidgets('aucun moment ouvert : une phrase, rien a faire, aucun bouton', (
     WidgetTester tester,
   ) async {
     await _monter(tester, _FauxEntretien());
     expect(find.byKey(ChoixCreneauEntretien.aucunKey), findsOneWidget);
+    expect(find.text(t.commun.reessayer), findsNothing);
+    expect(find.text(t.recrutement.entretien.aucunCreneau), findsOneWidget);
     expect(find.byKey(ChoixCreneauEntretien.reserverKey), findsNothing);
   });
 
@@ -264,5 +267,27 @@ void main() {
     );
     expect(find.text('لنتعارف'), findsWidgets);
     expect(find.text('حجز هذا الموعد'), findsOneWidget);
+  });
+
+  // ENTRETIEN-ATTENTE (directeur, 16/11/2026) : la page sans moment ouvert, a
+  // 360 de large, en francais et en arabe. Saute sans CAPTURE_DIR.
+  group('Capture ENTRETIEN-ATTENTE', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      testWidgets('${langue.languageCode} 360 : aucun moment ouvert', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await _monter(tester, _FauxEntretien());
+        tester.view.physicalSize = const Size(360, 800);
+        tester.view.devicePixelRatio = 1;
+        await tester.pumpAndSettle();
+        expect(find.byKey(ChoixCreneauEntretien.aucunKey), findsOneWidget);
+        expect(find.text(t.commun.reessayer), findsNothing);
+        debugPrint(
+          'PNG ${await capturerVue(tester, '${langue.languageCode}_360_aucun_moment')}',
+        );
+      });
+    }
   });
 }

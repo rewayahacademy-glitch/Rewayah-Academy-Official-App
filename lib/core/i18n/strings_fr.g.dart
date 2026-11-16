@@ -9955,8 +9955,8 @@ class Traductions$recrutement$entretien$fr {
 	/// fr: 'Réserver ce moment'
 	String get reserver => 'Réserver ce moment';
 
-	/// fr: 'Aucun moment n'est ouvert pour l'instant. Revenez plus tard.'
-	String get aucunCreneau => 'Aucun moment n\'est ouvert pour l\'instant. Revenez plus tard.';
+	/// fr: 'Votre candidature est retenue pour l'entretien. Vous n'avez rien à faire pour l'instant : l'académie vous informera dès qu'un moment sera ouvert, et vous le choisirez ici.'
+	String get aucunCreneau => 'Votre candidature est retenue pour l\'entretien. Vous n\'avez rien à faire pour l\'instant : l\'académie vous informera dès qu\'un moment sera ouvert, et vous le choisirez ici.';
 
 	/// fr: 'Les moments n'ont pas pu être chargés. Réessayez.'
 	String get erreurLecture => 'Les moments n\'ont pas pu être chargés. Réessayez.';
@@ -15546,8 +15546,8 @@ class Traductions$notifications$evenements$fr {
 	/// fr: 'Bienvenue dans l'équipe. Il vous reste à configurer votre espace.'
 	String get bienvenueEquipe => 'Bienvenue dans l\'équipe. Il vous reste à configurer votre espace.';
 
-	/// fr: 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l'application.'
-	String get retenuEntretien => 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.';
+	/// fr: 'Vous êtes retenu pour un entretien. Vous n'avez rien à faire pour l'instant : l'académie vous informera dès qu'un moment sera ouvert.'
+	String get retenuEntretien => 'Vous êtes retenu pour un entretien. Vous n\'avez rien à faire pour l\'instant : l\'académie vous informera dès qu\'un moment sera ouvert.';
 
 	/// fr: 'La pause d'un mois {dePrenom} est acceptée pour {mois}. Sa date limite recule d'autant. Sa place est gardée.'
 	String pauseRepondueAcceptee({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} est acceptée pour ${mois}. Sa date limite recule d\'autant. Sa place est gardée.';
@@ -56205,7 +56205,7 @@ extension on Traductions {
 			'recrutement.entretien.horaire' => ({required Object date, required Object debut, required Object fin}) => '${date}, de ${debut} à ${fin}',
 			'recrutement.entretien.choisir' => 'Choisissez un moment.',
 			'recrutement.entretien.reserver' => 'Réserver ce moment',
-			'recrutement.entretien.aucunCreneau' => 'Aucun moment n\'est ouvert pour l\'instant. Revenez plus tard.',
+			'recrutement.entretien.aucunCreneau' => 'Votre candidature est retenue pour l\'entretien. Vous n\'avez rien à faire pour l\'instant : l\'académie vous informera dès qu\'un moment sera ouvert, et vous le choisirez ici.',
 			'recrutement.entretien.erreurLecture' => 'Les moments n\'ont pas pu être chargés. Réessayez.',
 			'recrutement.entretien.pris' => 'Ce moment vient d\'être pris. Choisissez-en un autre.',
 			'recrutement.entretien.dejaPlanifie' => 'Votre entretien est déjà fixé.',
@@ -60819,7 +60819,7 @@ extension on Traductions {
 			'notifications.evenements.annonceDirection' => 'Annonce de l\'académie',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'Annonce : ${titre}',
 			'notifications.evenements.bienvenueEquipe' => 'Bienvenue dans l\'équipe. Il vous reste à configurer votre espace.',
-			'notifications.evenements.retenuEntretien' => 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.',
+			'notifications.evenements.retenuEntretien' => 'Vous êtes retenu pour un entretien. Vous n\'avez rien à faire pour l\'instant : l\'académie vous informera dès qu\'un moment sera ouvert.',
 			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} est acceptée pour ${mois}. Sa date limite recule d\'autant. Sa place est gardée.',
 			'notifications.evenements.pauseRepondueAccepteeAdulte' => ({required Object mois}) => 'Votre pause d\'un mois est acceptée pour ${mois}. Votre date limite recule d\'autant. Votre place est gardée.',
 			'notifications.evenements.pauseRepondueRefusee' => ({required Object dePrenom, required Object mois}) => 'La pause d\'un mois ${dePrenom} pour ${mois} n\'est pas acceptée. Le motif est dans l\'application.',
