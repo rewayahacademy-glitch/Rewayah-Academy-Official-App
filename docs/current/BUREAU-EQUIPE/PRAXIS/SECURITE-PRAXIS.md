@@ -101,3 +101,38 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
 - [ ] L'affichage « Assistant de l'académie · IA » existe dans les conversations (Pilote Messagerie).
 - [ ] Essai à blanc sur **un** fil de test, avec le compte du directeur seulement.
 - [ ] Le directeur allume lui-même.
+
+## 7. Arbitrages après le relevé de PX-1 (pilote, 16/11/2026, 22 h 50 UTC, d'après `RELEVE-PX1.md` de BE-PIECE)
+
+- **AR-1 (R3, R13), le compte.** `profiles` n'a pas d'indicateur officiel, et l'énumération des rôles n'a pas de
+  rôle non humain. Retenu :
+  - rôle `accountant`, le moins cité (24 fonctions) ;
+  - statut `disabled` : `app_account_valid()` est faux, même si une session existait ;
+  - l'indicateur dans une table `private.comptes_officiels`, pas dans `profiles` ;
+  - aucune ligne `auth.identities`, ni courriel ni téléphone, `banned_until` très loin.
+  - Conditions :
+    - la PR relit les 24 fonctions qui citent `accountant` et dit, pour chacune, pourquoi le compte Praxis n'y
+      gagne rien (compte `disabled`, aucune session) et n'y apparaît pas comme destinataire ;
+    - R13 est prouvé sur une liste nommée dans le scénario : comptes, enseignants, équipe, destinataires des
+      annonces, notifications par rôle, paie, présence, recherche ;
+    - la lecture des comptes de la direction exclut `private.comptes_officiels` ;
+    - ce qui ne peut pas être exclu dans ce lot est écrit dans la PR comme dette, avec le nom de la fonction.
+- **AR-2 (A-4), l'écriture des messages.** Pas de copie des trois écritures. Une fonction interne à auteur explicite
+  est extraite de `com_envoyer_message` par ancrage. La porte humaine garde son comportement : tous les scénarios de
+  la messagerie restent verts. La porte humaine et `praxis_ecrire` l'appellent toutes les deux. C'est une retouche
+  dans le domaine de la messagerie : le pilote prévient le Pilote Messagerie, qui dit s'il touche
+  `com_envoyer_message` dans ses lots ouverts. La retouche va dans **une migration à part**, installée seule.
+- **AR-3 (§3), les fils d'un foyer.** La règle précise remplace §3.2 et §3.3 :
+  - Praxis refuse (cause `mineur`) tout fil qu'**un compte mineur, ou d'âge inconnu, peut lire ou a écrit** (selon
+    l'appartenance au fil calculée par la messagerie, `com_fil_json` et `com_paires`) ;
+  - un fil de foyer (`classe`, `eleve`) que seuls les tuteurs adultes lisent et où seuls des adultes ont écrit est
+    ouvert à Praxis : il écrit à un parent, pas à un enfant ;
+  - le texte que Praxis reçoit d'un tel fil ne lui donne aucune donnée d'enfant de plus que ce que le parent a écrit
+    lui-même (§3.6 : aucune lecture de fiche d'enfant) ;
+  - scénarios : un fil de foyer lu par un compte élève mineur est refusé ; un fil de foyer lu par les seuls tuteurs
+    est accepté ; un mineur qui rejoint un fil plus tard le ferme à Praxis.
+- **AR-4 (A-9), les clés.** `private.praxis_cles` est séparée de `jetons_agent` (qui passe par `agent-session` et le
+  rôle `agent_ro`) : le même modèle, et aucun chemin commun. Retenu.
+- **AR-5 (A-11), la création du compte.** Avec un `immutable_id` explicite, la migration échoue si
+  `session_user <> 'postgres'` (échec fermé) : aucun matricule cherchable, aucun courriel, aucune notification.
+  Retenu.
