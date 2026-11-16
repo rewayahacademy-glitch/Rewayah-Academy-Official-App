@@ -10744,6 +10744,7 @@ class _Traductions$recrutement$file$ar extends Traductions$recrutement$file$fr {
 	@override String get outilsDe => 'أدوات قائمة طلبات الترشح';
 	@override String get afficher => 'عرض';
 	@override String get replier => 'طيّ';
+	@override String get trier => 'ترتيب';
 }
 
 // Path: recrutement.nomLatin
@@ -38634,6 +38635,7 @@ extension on TraductionsAr {
 			'recrutement.file.outilsDe' => 'أدوات قائمة طلبات الترشح',
 			'recrutement.file.afficher' => 'عرض',
 			'recrutement.file.replier' => 'طيّ',
+			'recrutement.file.trier' => 'ترتيب',
 			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
 			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
 			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
@@ -38801,9 +38803,9 @@ extension on TraductionsAr {
 			'recrutement.portail.paysVersementEnregistrer' => 'حفظ هذا البلد',
 			'recrutement.portail.paysVersementFait' => 'تم تحديث بلد الصرف. تعيد الأكاديمية قراءة ملفك.',
 			'recrutement.portail.paysVersementEchec' => 'تعذّر تغيير البلد. لم يتغير شيء: حاول بعد قليل.',
-			'recrutement.portail.paysVersementInterdit' => 'لم يعد ممكنًا تغيير البلد في هذه المرحلة. اكتب إلى الأكاديمية من محادثة ملفك.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.portail.paysVersementInterdit' => 'لم يعد ممكنًا تغيير البلد في هذه المرحلة. اكتب إلى الأكاديمية من محادثة ملفك.',
 			'recrutement.portail.paysVersementHorsLigne' => 'أنت غير متصل. لم يتغير البلد؛ حاول عند عودة الاتصال.',
 			'recrutement.portail.pieceDemandee' => 'تطلب منك الإدارة صورة جديدة لوثيقتك.',
 			'recrutement.portail.photoDemandee' => 'تطلب منك الإدارة صورة جديدة. غيّرها في ملخص إجاباتك قبل إرسالها.',
@@ -39315,9 +39317,9 @@ extension on TraductionsAr {
 			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
 			'recrutement.talents.c.publicite_en_ligne.libelle' => 'الإعلان عبر الإنترنت',
 			'recrutement.talents.c.publicite_en_ligne.description' => 'إعداد حملات إعلانية على الإنترنت ومتابعتها.',
-			'recrutement.talents.c.publicite_en_ligne.exemple' => 'تحديد الجمهور المستهدف، إطلاق حملة، متابعة النتائج',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.c.publicite_en_ligne.exemple' => 'تحديد الجمهور المستهدف، إطلاق حملة، متابعة النتائج',
 			'recrutement.talents.c.traduction.libelle' => 'الترجمة',
 			'recrutement.talents.c.traduction.description' => 'نقل النصوص من لغة إلى أخرى.',
 			'recrutement.talents.c.traduction.exemple' => 'رسائل إلى الأسر، ترجمة نصية لمقاطع الفيديو، نص من الموقع',
@@ -39829,9 +39831,9 @@ extension on TraductionsAr {
 			'avis.admin.retour.publie' => 'نُشر الرأي.',
 			'avis.admin.retour.refuse' => 'رُفض الرأي.',
 			'avis.admin.retour.retire' => 'سُحب الرأي.',
-			'avis.admin.retour.etatChange' => 'لم يعد هذا الرأي في الحالة المتوقعة. تم تحديث القائمة.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.retour.etatChange' => 'لم يعد هذا الرأي في الحالة المتوقعة. تم تحديث القائمة.',
 			'avis.admin.retour.introuvable' => 'هذا الرأي لم يعد موجودًا. تم تحديث القائمة.',
 			'avis.admin.retour.motifManque' => 'السبب ناقص. اختر سببًا.',
 			'avis.admin.retour.refus' => 'الإدارة المتصلة وحدها تستطيع البت في رأي.',
@@ -40343,9 +40345,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.colonnes.sansTitre' => 'عمود بلا عنوان',
 			'candidatsFlux.importFormulaires.colonnes.choixActuel' => 'الاختيار الحالي',
 			'candidatsFlux.importFormulaires.colonnes.nePasLire' => 'عدم قراءة هذا العمود',
-			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'يتجاهل الاستيراد محتواه.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'يتجاهل الاستيراد محتواه.',
 			'candidatsFlux.importFormulaires.colonnes.fermer' => 'إغلاق هذا الاختيار',
 			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'اربطوا هذه الأعمدة أولًا: ⁨${champs}⁩.',
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'عدة أعمدة تحمل عنوان: ⁨${champs}⁩. المسوا العمود الذي يجب قراءته ثم اختاروا ما يحتويه.',
@@ -40857,9 +40859,9 @@ extension on TraductionsAr {
 			'suiviAttente.vide.invitation' => 'اختر فصلًا: تتابعك الأكاديمية بعد ذلك مرحلة بمرحلة.',
 			'suiviAttente.vide.action' => 'اختيار فصل',
 			'suiviAttente.vide.messageSimple' => 'لا يوجد طلب فصل لك بعد.',
-			'suiviAttente.vide.invitationSimple' => 'يمكن لولي أمرك تقديم طلب.',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.vide.invitationSimple' => 'يمكن لولي أمرك تقديم طلب.',
 			'suiviAttente.erreur' => 'تعذّرت قراءة متابعة طلبك. يحدث هذا غالبًا بسبب الاتصال. حاول مرة أخرى بعد قليل.',
 			'suiviAttente.sansDonnees' => 'تعذّر تحميل متابعة طلبك',
 			'suiviAttente.introuvable' => 'لم يعد هذا الطلب في متابعتك.',

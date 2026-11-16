@@ -467,20 +467,15 @@ void main() {
         hauteur: 800,
         invitations: true,
       );
-      // Meme rangee (un `Wrap`, qui passe a la ligne si le texte grandit) :
-      // la position exacte depend de la police, la parente non.
-      final Finder rangee = find
-          .ancestor(
-            of: _cle('candidatures-outils'),
-            matching: find.byType(Wrap),
-          )
-          .first;
+      // Meme rangee (un `Row`, qui passe dessous si le texte grandit a plus
+      // de 130 %) : la position exacte depend de la police, la parente non.
+      final Finder rangees = find.ancestor(
+        of: find.byType(SousNavigationDomaine),
+        matching: find.byType(Row),
+      );
       expect(
-        find.descendant(
-          of: rangee,
-          matching: find.byType(SousNavigationDomaine),
-        ),
-        findsOneWidget,
+        find.descendant(of: rangees, matching: _cle('candidatures-outils')),
+        findsWidgets,
       );
     });
 
@@ -501,13 +496,13 @@ void main() {
           largeur: 360,
           hauteur: 800,
         );
-        // Une seule rangee (un `Wrap`) : le nombre, « Selectionner » et le tri.
+        // Une seule rangee (un `Row`) : le nombre, « Selectionner » et le tri.
         final Finder rangee = find
             .ancestor(
               of: _cle('candidatures-total'),
-              matching: find.byType(Wrap),
+              matching: find.byType(Row),
             )
-            .first;
+            .last;
         for (final String cle in <String>[
           'candidatures-selectionner',
           'candidatures-tri',

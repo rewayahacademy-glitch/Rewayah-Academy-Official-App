@@ -8,8 +8,8 @@ verifie que les cinq entrees apparaissent quand le serveur les accorde) ; 4_piec
 ligne « Piece d'identite a valider » ne se touche plus (voir plus bas) ; la capture montre la liste
 telle quelle.
 MESURE, haut de la premiere ligne de candidature, carte repliee :
-  fr 360x800 : 488 px (cible du coordinateur : sous 640)
-  ar 360x800 : 490 px
+  fr 360x800 : 464 px (cible du coordinateur : sous 640)
+  ar 360x800 : 434 px
   fr 1366x768 : 742 px (a l'ordinateur, hors cible du telephone : le haut de la premiere ligne du
   tableau touche le bas de l'ecran ; non traite, la regle du coordinateur vise le telephone)
 LIGNE « Piece d'identite a valider » : non touchable. La cle de filtre `pieceEnAttente` (PR 505)

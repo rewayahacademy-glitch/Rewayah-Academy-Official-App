@@ -786,60 +786,69 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
     if (telephone) {
-      // Une seule rangee tant qu'elle tient : le nombre, « Selectionner » et
-      // le tri (un menu : deux segments ne tiennent pas a cote). Elle passe a
-      // la ligne plutot que de couper un mot.
-      return Wrap(
+      // Une seule rangee quand elle tient : a gauche le nombre et
+      // « Selectionner » (ils passent a la ligne plutot que de couper un mot),
+      // a droite le tri, un menu : deux segments ne tiennent pas a cote.
+      return Row(
         key: _cleListe,
-        spacing: AppSpacing.lg,
-        runSpacing: AppSpacing.sm,
-        alignment: WrapAlignment.spaceBetween,
-        crossAxisAlignment: WrapCrossAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          Semantics(
-            header: true,
-            liveRegion: true,
-            child: TexteSansCoupure(
-              r.total(n: page.total),
-              key: const ValueKey<String>('candidatures-total'),
-              style: palette.inkStrong.applyTo(
-                textes.titleMedium ?? const TextStyle(),
-              ),
+          Expanded(
+            child: Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[
+                Semantics(
+                  header: true,
+                  liveRegion: true,
+                  child: TexteSansCoupure(
+                    r.total(n: page.total),
+                    key: const ValueKey<String>('candidatures-total'),
+                    style: palette.inkStrong.applyTo(
+                      textes.titleSmall ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+                if (selectionPossible)
+                  LienFleche(
+                    key: const ValueKey<String>('candidatures-selectionner'),
+                    libelle: _enSelection
+                        ? r.selection.quitter
+                        : r.selection.selectionner,
+                    fleche: false,
+                    legende: true,
+                    onPress: _basculerSelection,
+                  ),
+              ],
             ),
           ),
-          if (selectionPossible)
-            LienFleche(
-              key: const ValueKey<String>('candidatures-selectionner'),
-              libelle: _enSelection
-                  ? r.selection.quitter
-                  : r.selection.selectionner,
-              fleche: false,
-              legende: true,
-              onPress: _basculerSelection,
-            ),
+          Ecart.hSm,
           // Le tri par defaut n'est pas un filtre retenu : le bouton dit
           // « Trier » ; un autre tri se lit dans le bouton.
-          MenuFiltre<TriCandidatures>(
-            key: const ValueKey<String>('candidatures-tri'),
-            libelle: r.tri.titre,
-            valeur: _tri == TriCandidatures.activite ? null : _tri,
-            entrees: <EntreeFiltre<TriCandidatures>>[
-              EntreeFiltre<TriCandidatures>(
-                valeur: TriCandidatures.activite,
-                libelle: r.tri.activite,
-              ),
-              EntreeFiltre<TriCandidatures>(
-                valeur: TriCandidatures.recente,
-                libelle: r.tri.reception,
-              ),
-            ],
-            onChoix: (TriCandidatures? choisi) {
-              setState(() {
-                _tri = choisi ?? TriCandidatures.activite;
-                _page = 1;
-              });
-              _ecrireAdresse();
-            },
+          Flexible(
+            child: MenuFiltre<TriCandidatures>(
+              key: const ValueKey<String>('candidatures-tri'),
+              libelle: t.recrutement.file.trier,
+              valeur: _tri == TriCandidatures.activite ? null : _tri,
+              entrees: <EntreeFiltre<TriCandidatures>>[
+                EntreeFiltre<TriCandidatures>(
+                  valeur: TriCandidatures.activite,
+                  libelle: r.tri.activite,
+                ),
+                EntreeFiltre<TriCandidatures>(
+                  valeur: TriCandidatures.recente,
+                  libelle: r.tri.reception,
+                ),
+              ],
+              onChoix: (TriCandidatures? choisi) {
+                setState(() {
+                  _tri = choisi ?? TriCandidatures.activite;
+                  _page = 1;
+                });
+                _ecrireAdresse();
+              },
+            ),
           ),
         ],
       );
@@ -1166,7 +1175,6 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     final Widget navigation = SousNavigationDomaine(
       onglets: ongletsPersonnes(),
       indexActif: 2,
-      menuAuContenu: telephone && boutonOutils != null,
     );
 
     return PageShell(
@@ -1178,15 +1186,21 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (telephone && boutonOutils != null)
-            // Une rangee tant qu'elle tient ; a texte agrandi, « Outils » passe
-            // dessous plutot que de deborder.
-            Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.sm,
-              alignment: WrapAlignment.spaceBetween,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[navigation, boutonOutils],
-            )
+            // Une rangee ; a texte agrandi, « Outils » passe dessous plutot que
+            // de deborder.
+            if (MediaQuery.textScalerOf(context).scale(1) > 1.3)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[navigation, Ecart.vSm, boutonOutils],
+              )
+            else
+              Row(
+                children: <Widget>[
+                  Expanded(child: navigation),
+                  Ecart.hMd,
+                  boutonOutils,
+                ],
+              )
           else
             navigation,
           // L'exception de lecture du super-admin se dit en tete, quand le

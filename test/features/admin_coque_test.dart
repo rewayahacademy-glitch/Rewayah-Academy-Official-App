@@ -54,8 +54,10 @@ Future<GoRouter> _monter(
   return routeur;
 }
 
+// La page du dessus, y compris une page empilee (`push`, BE-LISTE : le retour
+// ramene d'ou l'on vient).
 String _chemin(GoRouter routeur) =>
-    routeur.routerDelegate.currentConfiguration.uri.path;
+    routeur.routerDelegate.currentConfiguration.last.matchedLocation;
 
 Finder _dans(Key cle, Finder cible) =>
     find.descendant(of: find.byKey(cle), matching: cible);
@@ -157,7 +159,8 @@ void main() {
     );
     await _stabiliser(tester);
     expect(find.byKey(AdminShell.tiroirKey), findsNothing);
-    expect(_chemin(routeur), Routes.adminPersonnesDossiers);
+    // BE-LISTE : « Personnes » ouvre Candidatures.
+    expect(_chemin(routeur), Routes.adminPersonnesCandidatures);
     expect(tester.takeException(), isNull);
   });
 
@@ -248,6 +251,10 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // BE-LISTE : « Personnes » ouvre Candidatures ; les dossiers se choisissent
+    // dans le selecteur de section.
+    expect(_chemin(routeur), Routes.adminPersonnesCandidatures);
+    await choisirSection(tester, t.dossiers.titre);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
     // L5 (LISTES-3) : la liste des dossiers est une liste de la coquille,
     // sans retour ; la barre laterale navigue.

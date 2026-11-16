@@ -2618,7 +2618,8 @@
       "outils": "Tools",
       "outilsDe": "Tools for the applications list",
       "afficher": "Show",
-      "replier": "Collapse"
+      "replier": "Collapse",
+      "trier": "Sort"
     },
     "nomLatin": {
       "titre": "Your name in Latin letters",
