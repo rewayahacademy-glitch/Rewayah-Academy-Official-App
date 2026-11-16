@@ -9,12 +9,14 @@
 import 'package:flutter/material.dart';
 
 import '../accessibilite/sens_du_contenu.dart';
+import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'badge_non_lu.dart';
+import 'badge_nouveau.dart';
 import 'carte_lignes.dart' show LigneDansCarte;
 import 'pressable.dart';
 
@@ -33,6 +35,7 @@ class LigneConversation extends StatelessWidget {
     this.marque,
     this.selectionnee,
     this.apercuPhoto = false,
+    this.nouveau = false,
   });
 
   /// La photo ou les initiales, deja a leur taille (48).
@@ -63,6 +66,12 @@ class LigneConversation extends StatelessWidget {
 
   /// La conversation ouverte a cote de la liste, ou `null`.
   final bool? selectionnee;
+
+  /// NOUVEAU-FILS (directeur, 16/11/2026) : le serveur dit que la conversation
+  /// est nouvelle (moins de 7 jours, jamais lue par l'equipe) ; la ligne pose
+  /// le badge « Nouveau » (`BadgeNouveau`) devant l'apercu. Le composant ne
+  /// decide rien.
+  final bool nouveau;
 
   /// L'ouverture de la conversation.
   final VoidCallback onPress;
@@ -97,7 +106,12 @@ class LigneConversation extends StatelessWidget {
       onPress: onPress,
       selectionne: selectionnee,
       arrondiFocus: AppRadius.arrondiSm,
-      libelleSemantique: <String>[titre, apercu, ?libelleNonLus].join(', '),
+      libelleSemantique: <String>[
+        titre,
+        if (nouveau) t.commun.nouveau,
+        apercu,
+        ?libelleNonLus,
+      ].join(', '),
       constructeur: (BuildContext context, EtatPression etat) => DecoratedBox(
         // MESSAGERIE-COULEURS (directeur, 16/11/2026) : la ligne est blanche
         // (la carte qui la porte), sans teinte lavande. La conversation
@@ -176,6 +190,10 @@ class LigneConversation extends StatelessWidget {
                         Ecart.vXs,
                         Row(
                           children: <Widget>[
+                            if (nouveau) ...<Widget>[
+                              const BadgeNouveau(),
+                              Ecart.hSm,
+                            ],
                             Expanded(
                               child: apercuPhoto
                                   ? Row(

@@ -12203,11 +12203,14 @@
       "filtres": {
         "tous": "All",
         "nonLus": "Unread",
-        "aucunNonLu": "No unread conversation."
+        "aucunNonLu": "No unread conversation.",
+        "nouveaux": "New",
+        "aucunNouveau": "No new conversation."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",
         "sansApercu": "No message yet",
+        "sansMessage": "No message",
         "dateCourte": "{mois} {numero}"
       },
       "noms": {

@@ -19231,6 +19231,8 @@ class _Traductions$com$messages$filtres$en extends Traductions$com$messages$filt
 	@override String get tous => 'All';
 	@override String get nonLus => 'Unread';
 	@override String get aucunNonLu => 'No unread conversation.';
+	@override String get nouveaux => 'New';
+	@override String get aucunNouveau => 'No new conversation.';
 }
 
 // Path: com.messages.ligne
@@ -19242,6 +19244,7 @@ class _Traductions$com$messages$ligne$en extends Traductions$com$messages$ligne$
 	// Translations
 	@override String legende({required Object objet, required Object apercu}) => '${objet} · ${apercu}';
 	@override String get sansApercu => 'No message yet';
+	@override String get sansMessage => 'No message';
 	@override String dateCourte({required Object mois, required Object numero}) => '${mois} ${numero}';
 }
 
@@ -37422,8 +37425,11 @@ extension on TraductionsEn {
 			'com.messages.filtres.tous' => 'All',
 			'com.messages.filtres.nonLus' => 'Unread',
 			'com.messages.filtres.aucunNonLu' => 'No unread conversation.',
+			'com.messages.filtres.nouveaux' => 'New',
+			'com.messages.filtres.aucunNouveau' => 'No new conversation.',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'No message yet',
+			'com.messages.ligne.sansMessage' => 'No message',
 			'com.messages.ligne.dateCourte' => ({required Object mois, required Object numero}) => '${mois} ${numero}',
 			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}, ${fonction}',
 			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} and ${second}',
@@ -37779,11 +37785,11 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.blocs.mentions' => 'Mentions and replies',
 			'com.studio.aujourdhui.blocs.decisions' => 'Decisions pending',
 			'com.studio.aujourdhui.blocs.echeances' => 'Upcoming deadlines',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aujourdhui.blocs.activite' => 'Recent activity',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Drafts',
 			'com.studio.aujourdhui.blocs.acces' => 'Quick access',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Nothing to handle today.',
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'No mention or reply pending.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'No decision pending.',
@@ -38293,11 +38299,11 @@ extension on TraductionsEn {
 			'comptable.commun.destinationMasquee' => ({required Object type, required Object suffixe}) => '${type} •••• ${suffixe}',
 			'comptable.commun.destinationMasqueeLecteur' => ({required Object type, required Object suffixe}) => '${type}, number hidden, ends in ${suffixe}',
 			'comptable.commun.destinationAucune' => 'No payment method',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
 			'comptable.commun.verification' => 'Verification',
 			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.commun.activiteTransition' => ({required Object avant, required Object apres}) => '${avant} → ${apres}',
 			'comptable.commun.activiteReference' => ({required Object reference}) => 'Ref. ${reference}',
 			'comptable.commun.relancePreparee' => 'Reminder prepared (demo)',
@@ -38807,11 +38813,11 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.profil.relanceRefusee' => ({required Object nom}) => 'No "Payment profile" thread can be opened with ${nom}: Rewayah does not allow it for this beneficiary. Ask for an update instead, or report it to the management.',
 			'comptable.beneficiaires.profil.messageModele' => 'Your payment information must be completed before your next payment. You can add it from your personal space.',
 			'comptable.beneficiaires.profil.miseAJourDemandee' => ({required Object nom}) => 'Update request recorded for ${nom}.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => '${nom}\'s payments suspended: no payment goes out until they are resumed.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => '${nom}\'s payments resumed.',
 			'comptable.beneficiaires.profil.erreurAction' => 'The action is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.profil.erreurIndisponible' => 'This action is not yet connected to the service that handles it. Try again later.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspend ${nom}\'s payments?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'No payment will go to this beneficiary until you resume them. Their details do not change. Choose the reason: it will be written in the profile log.',
@@ -39321,11 +39327,11 @@ extension on TraductionsEn {
 			'recherche.initial.phrase' => 'Enter a name, a class or a document. Nothing is searched before you write.',
 			'recherche.courte' => 'Enter at least 3 characters.',
 			'recherche.formeAttendue' => 'Search by exact student ID, for example RA-26-4817.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.chargement' => 'Searching…',
 			'recherche.lent' => 'The search is taking longer than expected. Results already received stay displayed.',
 			'recherche.resultatsPour' => ({required Object requete}) => 'Results for "${requete}"',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} category shown', other: '${nombre} categories shown', ), 
 			'recherche.domaines.classes' => 'Classes',
 			'recherche.domaines.supports' => 'Documents',
@@ -39835,11 +39841,11 @@ extension on TraductionsEn {
 			'admissions.ouvrir' => ({required Object deNom}) => 'Open ${deNom}\'s request',
 			'admissions.recueLe' => 'Received on',
 			'admissions.reference' => 'Reference',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.courriel' => 'Email address',
 			'admissions.etatLibelle' => 'Status',
 			'admissions.titulaire' => ({required Object prenom}) => '${prenom}, for themselves',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.enfant' => ({required Object prenom, required Object age}) => '${prenom}, ${age}',
 			'admissions.etat.aTraiter' => 'To handle',
 			'admissions.etat.aCompleter' => 'To complete',
@@ -40349,11 +40355,11 @@ extension on TraductionsEn {
 			'candidatsFlux.prevenir.fermee' => 'Online sign-up must be opened first: while it is closed, the link would lead to a closed page and no message goes out.',
 			'candidatsFlux.prevenir.videTitre' => 'Everyone is already notified',
 			'candidatsFlux.prevenir.vide' => 'Everyone who left an address is already notified or already signed up. There is nothing to send.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send the link to ${n} person', other: 'Send the link to ${n} people', ), 
 			'candidatsFlux.prevenir.envoyerSuivantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send to the next person', other: 'Send to the next ${n}', ), 
 			'candidatsFlux.prevenir.sansDonnees' => 'The number of people to notify could not be loaded.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.horsLigne' => 'Sending will be possible as soon as the network returns.',
 			'candidatsFlux.prevenir.resultat.titre' => 'Sending started',
 			'candidatsFlux.prevenir.resultat.mis' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message goes out in the next few minutes', other: '${n} messages go out in the next few minutes', ), 
@@ -40863,11 +40869,11 @@ extension on TraductionsEn {
 			'calendrier.pauses.exceptionAction' => 'Grant an exceptional break',
 			'calendrier.pauses.exceptionTitre' => 'Exceptional break',
 			'calendrier.pauses.exceptionPhrase' => 'For a sudden illness or a granted interruption. It starts today, without notice; the stage deadline moves back by its length; it does not count towards the family\'s limit.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.exceptionRecherche' => 'Search for the student by name',
 			'calendrier.pauses.exceptionRechercheAide' => 'At least two letters.',
 			'calendrier.pauses.exceptionAucun' => 'No student found.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'Student: ${nom}',
 			'calendrier.pauses.exceptionChanger' => 'Choose another student',
 			'calendrier.pauses.exceptionMotif' => 'Reason',

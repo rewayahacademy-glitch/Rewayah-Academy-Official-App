@@ -89,6 +89,11 @@ class ListeFils extends StatefulWidget {
     'liste-fils-ouvrir-recherche',
   );
 
+  /// La cle du filtre « Nouveaux », pour les tests.
+  static const ValueKey<String> cleFiltreNouveaux = ValueKey<String>(
+    'liste-fils-filtre-nouveaux',
+  );
+
   /// La cle de la ligne d'un fil, pour les tests.
   static ValueKey<String> cleLigne(String filId) =>
       ValueKey<String>('liste-fils-$filId');
@@ -101,8 +106,8 @@ class _ListeFilsState extends State<ListeFils> {
   RechercheFilsControleur? _propre;
   late RechercheFilsControleur _etat;
 
-  /// BULLES-MESSAGERIE : le filtre « Non lus ».
-  bool _nonLusSeulement = false;
+  /// BULLES-MESSAGERIE : le filtre « Non lus ». NOUVEAU-FILS : et « Nouveaux ».
+  _FiltreFils _filtre = _FiltreFils.tous;
 
   TextEditingController get _recherche => _etat.texte;
 
@@ -212,30 +217,41 @@ class _ListeFilsState extends State<ListeFils> {
     final r = t.com.messages.recherche;
     final String texte = _recherche.text.trim();
     final List<ResumeFil> cherches = filtrerFils(widget.fils, texte);
-    final List<ResumeFil> vus = _nonLusSeulement
-        ? <ResumeFil>[
-            for (final ResumeFil f in cherches)
-              if (f.attention.nonLus > 0) f,
-          ]
-        : cherches;
+    final List<ResumeFil> vus = switch (_filtre) {
+      _FiltreFils.tous => cherches,
+      _FiltreFils.nonLus => <ResumeFil>[
+        for (final ResumeFil f in cherches)
+          if (f.attention.nonLus > 0) f,
+      ],
+      _FiltreFils.nouveaux => <ResumeFil>[
+        for (final ResumeFil f in cherches)
+          if (f.nouveau) f,
+      ],
+    };
     final Widget filtres = Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: RangeeFiltres(
         filtres: <Widget>[
           FilterPill(
             libelle: t.com.messages.filtres.tous,
-            retenue: !_nonLusSeulement,
-            onPress: () => setState(() => _nonLusSeulement = false),
+            retenue: _filtre == _FiltreFils.tous,
+            onPress: () => setState(() => _filtre = _FiltreFils.tous),
           ),
           FilterPill(
             libelle: t.com.messages.filtres.nonLus,
-            retenue: _nonLusSeulement,
-            onPress: () => setState(() => _nonLusSeulement = true),
+            retenue: _filtre == _FiltreFils.nonLus,
+            onPress: () => setState(() => _filtre = _FiltreFils.nonLus),
+          ),
+          FilterPill(
+            key: ListeFils.cleFiltreNouveaux,
+            libelle: t.com.messages.filtres.nouveaux,
+            retenue: _filtre == _FiltreFils.nouveaux,
+            onPress: () => setState(() => _filtre = _FiltreFils.nouveaux),
           ),
         ],
       ),
     );
-    if (vus.isEmpty && (texte.isNotEmpty || _nonLusSeulement)) {
+    if (vus.isEmpty && (texte.isNotEmpty || _filtre != _FiltreFils.tous)) {
       return SingleChildScrollView(
         padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         child: Column(
@@ -246,7 +262,9 @@ class _ListeFilsState extends State<ListeFils> {
               nature: NatureEtat.aucunResultat,
               titre: r.aucunTitre,
               phrase: texte.isEmpty
-                  ? t.com.messages.filtres.aucunNonLu
+                  ? (_filtre == _FiltreFils.nouveaux
+                        ? t.com.messages.filtres.aucunNouveau
+                        : t.com.messages.filtres.aucunNonLu)
                   : r.aucun(texte: texte),
             ),
           ],
@@ -304,7 +322,10 @@ class _ListeFilsState extends State<ListeFils> {
     final String titre = titreFil(f.interlocuteurs, f.objet.libelle);
     final String apercu = f.apercuPhoto
         ? t.com.messages.images.photoApercu
-        : f.apercu ?? t.com.messages.ligne.sansApercu;
+        : f.apercu ??
+              (f.nouveau
+                  ? t.com.messages.ligne.sansMessage
+                  : t.com.messages.ligne.sansApercu);
     final String? selection = widget.filSelectionne;
     return LigneConversation(
       key: ValueKey<String>('ligne-${f.id}'),
@@ -321,6 +342,7 @@ class _ListeFilsState extends State<ListeFils> {
       apercu: apercu,
       apercuPhoto: f.apercuPhoto,
       heure: dernier == null ? null : momentCourt(dernier, maintenant),
+      nouveau: f.nouveau,
       nonLus: nonLus,
       libelleNonLus: nonLus > 0 ? BadgeNonLu.libelleNonLus(nonLus) : null,
       // Une attention sans nombre (mention, action requise) garde son badge.
@@ -332,3 +354,6 @@ class _ListeFilsState extends State<ListeFils> {
     );
   }
 }
+
+/// Le filtre de la liste : tout, les non lus, les nouveaux (NOUVEAU-FILS).
+enum _FiltreFils { tous, nonLus, nouveaux }

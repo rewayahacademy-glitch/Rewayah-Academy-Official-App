@@ -274,6 +274,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
           apercu: f.apercu,
           apercuPhoto: f.apercuPhoto,
           dernierMessageLe: f.dernierMessageLe,
+          // Ouvert : lu par l'equipe, donc plus nouveau (NOUVEAU-FILS).
         )
       else
         f,

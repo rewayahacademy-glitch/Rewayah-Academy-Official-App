@@ -70,6 +70,7 @@ entrée par entrée, à partir de ce tableau.
 ### Légende des preuves « non lus »
 
 - **V-NL-LISTE** : la pastille du nombre de non lus dans la liste et son retrait après lecture : `ligne_conversation`, `messages_page_test.dart`, `messages_lu_anticipe_test.dart`, `badge_non_lu_test.dart`.
+- **V-NOUVEAU** (NOUVEAU-FILS, 16/11/2026) : le badge « Nouveau » dans la ligne (`ligne_conversation`, composant `badge_nouveau`), « Nouveau · aucun message » pour une conversation vide, le filtre « Nouveaux » de `liste_fils` : `test/features/com_messages/nouveau_fils_test.dart` ; la règle (moins de 7 jours, aucune lecture de l'équipe) est au serveur, `supabase/tests/scenarios_nouveau_fils.sql`. Au téléphone (390), la rangée de filtres range « Non lus » et « Nouveaux » sous « Plus » (trois puces ne tiennent pas).
 - **V-NL-ENT** : le badge de la rangée « Écrire à … » (entrée contextuelle) : `entrees_admin_test.dart`, `entrees_enseignant_test.dart`, `entrees_tuteur_test.dart`, `entrees_etats_test.dart`.
 - **V-NL-CAND** : le candidat en salle d'attente, « Écrire à l'Administration », nombre et badge : `messages_candidat_test.dart` (et capture `messages_candidat_capture_test.dart`).
 - **V-NL-TETE** : le nombre dans l'en-tête de navigation (`nonLusMessagesProvider`) : `test/widgets/admin_shell_messages_test.dart` (320, 599, 1440), direction seulement.
