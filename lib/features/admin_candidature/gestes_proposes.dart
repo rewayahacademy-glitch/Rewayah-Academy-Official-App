@@ -77,7 +77,11 @@ bool gestePermisPourLigne(
     case GesteCandidature.demanderComplement:
       return sansPause && (enExamen || etape == EtapeCandidature.verifications);
     case GesteCandidature.cloreComplement:
-      return sansPause && etape == EtapeCandidature.verifications;
+      // Le serveur refuse « aucun_complement » sans demande en cours : le
+      // geste n'est rendu que si la ligne dit qu'une demande court.
+      return sansPause &&
+          etape == EtapeCandidature.verifications &&
+          l.complementEnCours;
     case GesteCandidature.admettreVerifications:
       return sansPause && enExamen;
     case GesteCandidature.confirmerMoyenPaiement:

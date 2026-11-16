@@ -108,6 +108,24 @@ void main() {
       ],
     ),
     (
+      nom: 'salle de verification, complement en cours : clore est propose',
+      detail: detailTest(
+        etape: EtapeCandidature.verifications,
+        etat: EtatCandidature.entretienAPlanifier,
+        paiement: EtatVersement.compatible,
+        complementEnCours: true,
+      ),
+      principal: null,
+      permis: <GesteCandidature>[
+        c,
+        GesteCandidature.cloreComplement,
+        GesteCandidature.mettreEnPause,
+        GesteCandidature.refuser,
+        GesteCandidature.consignerRetrait,
+        GesteCandidature.definirResponsable,
+      ],
+    ),
+    (
       nom: 'salle de verification',
       detail: detailTest(
         etape: EtapeCandidature.verifications,
@@ -117,7 +135,6 @@ void main() {
       principal: GesteCandidature.validerPiece,
       permis: <GesteCandidature>[
         c,
-        GesteCandidature.cloreComplement,
         GesteCandidature.validerPiece,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,

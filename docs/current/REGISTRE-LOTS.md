@@ -61,6 +61,7 @@ Consigne du directeur du 13/11 : « Attention à ne pas perdre notre travail dep
 | Pause en salle (session de la salle) | `claude/zealous-tesla-ewstzw` (bc38bf4d), PR #449 | 20261124100000 à 400000 | À LIVRER. À relire avec la prière |
 | Maquettes | `docs/current/pedagogie/maquettes/` | aucune | LIVRÉ (#450), mises à jour avec la charte |
 | PLAN-DE-CLASSE, POINT-DE-SEANCE, CHEMIN, lecteur, moteur de suivi, évaluations et livret, classes vitrines FC-1 à FC-4 | aucune | aucune | Spécifiés dans la charte, **non commencés** : détail lot par lot dans la section « Lots de la charte pédagogique » plus bas |
+| CLORE-COMPLEMENT-VRAI (16/11, capture de production CAND-00068) : « Clore le complément » proposé sans demande en cours ; le geste lit `complementEnCours` | `claude/clore-complement-vrai` | aucune (champ serveur à ajouter par BE-S1 : `complementEnCours` dans `lire_candidature` et `cand_ligne_json`) | en cours (16/11) ; PR brouillon ; ne pas fusionner avant l'installation du champ ; rien prouvé en production |
 
 Ordre de livraison prévu : la charte ; le lot 1 ; puis prière, bibliothèque, suivi de l'attente, calendrier, espace Apprendre, horloge, chacun après sa revue indépendante et l'installation de ses migrations par le directeur.
 
