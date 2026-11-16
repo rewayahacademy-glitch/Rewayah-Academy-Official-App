@@ -110,6 +110,13 @@ bool gestePermisPourLigne(
       return !enCours && !l.enPause && avantSalle3;
     case GesteCandidature.definirResponsable:
       return sansPause && etape != null;
+    case GesteCandidature.dispenserEntretien:
+      // BE-1g (regle 45 du moteur) : en Salle de verification et d'entretien,
+      // entretien a planifier ou deja planifie, en cours, hors pause.
+      return sansPause &&
+          etape == EtapeCandidature.verifications &&
+          (l.etat == EtatCandidature.entretienAPlanifier ||
+              l.etat == EtatCandidature.entretienPlanifie);
     case GesteCandidature.validerPiece:
       // Les sources permises de `valider_piece` (CAND-L2A1) : en Salle de
       // verification et d'entretien, la decision attendue, en cours, hors
@@ -238,6 +245,7 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.infirmerMoyenPaiement,
   GesteCandidature.admettreVerifications,
   GesteCandidature.validerPiece,
+  GesteCandidature.dispenserEntretien,
   GesteCandidature.mettreEnPause,
   GesteCandidature.leverPause,
   GesteCandidature.refuser,

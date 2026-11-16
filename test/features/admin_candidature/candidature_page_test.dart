@@ -1108,6 +1108,7 @@ void main() {
         // Capture de production CAND-00068 : « Clore le complement » etait
         // propose alors qu'aucune demande n'etait en cours.
         expect(autres, <String>[
+          t.admin.candidatures.gestes.dispenserEntretien,
           t.admin.candidatures.gestes.mettreEnPause,
           t.admin.candidatures.gestes.retrait,
         ]);
@@ -1131,6 +1132,7 @@ void main() {
         final List<String> autres = await menu(tester);
         expect(autres, <String>[
           t.admin.candidatures.gestes.cloreComplement,
+          t.admin.candidatures.gestes.dispenserEntretien,
           t.admin.candidatures.gestes.mettreEnPause,
           t.admin.candidatures.gestes.retrait,
         ]);

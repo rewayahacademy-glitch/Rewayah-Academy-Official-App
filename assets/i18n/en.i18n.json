@@ -4186,7 +4186,9 @@
           "effetPause": "The applications concerned do not move forward until the pause is lifted.",
           "effetLever": "The applications concerned resume where they had stopped.",
           "effetRefuser": "The applications concerned are closed. You can reopen them one by one.",
+          "effetDispenser": "The selected applications move on to the decision, as after a successful interview. Interviews already scheduled are cancelled. No message is sent.",
           "motifCommun": "The same reason and the same message apply to all the applications concerned.",
+          "motifCommunDispense": "The same reason and the same category apply to all the selected applications.",
           "nombre": "Number of applications concerned",
           "nombreAide": "Enter {n} to confirm.",
           "nombreFaux": "That is not the right number. Enter {n}.",
@@ -4578,7 +4580,8 @@
         "refuser": "Decline the application",
         "retrait": "Record a requested withdrawal",
         "rouvrir": "Reopen the application",
-        "responsable": "Choose the manager"
+        "responsable": "Choose the manager",
+        "dispenserEntretien": "Waive the interview"
       },
       "consequences": {
         "accueillir": "Their teacher account is activated and their space opens. The person teaches only once assigned to a class.",
@@ -4592,7 +4595,8 @@
         "refuser": "The application is closed. You can reopen it.",
         "retrait": "The application is closed at the person's request. You can reopen it.",
         "rouvrir": "The application returns to its original stage, if the server's checks allow it.",
-        "responsable": "The manager follows this application."
+        "responsable": "The manager follows this application.",
+        "dispenserEntretien": "The application moves on to the decision, as after a successful interview. An interview already scheduled is cancelled. No message is sent to the person."
       },
       "feuille": {
         "motif": "Internal reason",
@@ -4604,6 +4608,14 @@
         "modeleManquant": "Choose the message the person will read.",
         "enCours": "Sending to the server",
         "actualiser": "Refresh the application"
+      },
+      "dispense": {
+        "categorie": "Who are you waiving?",
+        "fondateur": "A founder",
+        "fondateurAide": "For a founder of the academy, whose interview is not needed.",
+        "autre": "Someone else",
+        "autreAide": "For anyone else: the written reason says why.",
+        "categorieManquante": "Choose who you are waiving."
       },
       "complement": {
         "elements": "What is missing",
@@ -4694,6 +4706,7 @@
         "retrait": "The withdrawal is recorded.",
         "rouvrir": "The application is reopened.",
         "responsable": "The manager is recorded.",
+        "dispenserEntretien": "Interview waived. The decision is waiting for you.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
       "genres": {"male": "Man", "female": "Woman"},

@@ -236,6 +236,14 @@ DemandeGeste _demande(GesteCandidature g) {
         cleIdempotence: cle,
         responsableId: 'r1',
       );
+    case GesteCandidature.dispenserEntretien:
+      return DemandeGeste.dispenserEntretien(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        categorie: CategorieDispense.fondateur,
+        motif: 'Fondateur de l\'academie.',
+      );
   }
 }
 
@@ -311,6 +319,13 @@ void main() {
           GesteCandidature.definirResponsable: (
             'definir_responsable_candidat',
             <String, Object?>{'p_responsable_id': 'r1'},
+          ),
+          GesteCandidature.dispenserEntretien: (
+            'dispenser_entretien',
+            <String, Object?>{
+              'p_categorie': 'fondateur',
+              'p_motif': 'Fondateur de l\'academie.',
+            },
           ),
         };
 
