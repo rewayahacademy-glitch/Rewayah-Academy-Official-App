@@ -1,6 +1,6 @@
 # Checklist du pilote « Bureau de l'équipe » (depuis la passation du 16/11/2026)
 
-**Mise à jour : 16/11/2026, 21 h 22 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
+**Mise à jour : 16/11/2026, 21 h 32 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
 remplace `session_0163KjrvqR38dL9HhgktqAdg`, archivée)
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (fusionné, installé, vérifié par le pilote ; « prouvé » seulement
@@ -18,8 +18,9 @@ BE-S1 et BE-LISTE : archivés (travail poussé). Plage de ce chantier : 20261129
 Une seule ligne, dans cet ordre ; rien ne s'intercale, sauf une vraie personne bloquée.
 1. Finir l'entamé, sans rien ajouter : #547, #550, PIECE-TYPE-ECRAN, DEBLOQUER-VERSEMENT-ECRAN.
 2. ACCUEIL-SEPARE (« Accueillir » ne valide plus la pièce en passant).
-3. Vague 2, la délégation : BE-2a, puis BE-2b, BE-2c, BE-2d.
-4. Le Studio, après.
+3. **Praxis, le secrétaire IA** (directeur, 16/11, 21 h 25 : « prioritaire quand tu finis les tâches déjà commencées »). SEC-1 serveur et connecteur (`CAHIER-SEC-1-PRAXIS-MESSAGES.md`, plage de migrations **202611296…** réservée pour Praxis), puis les cinq compétences, puis l'écran (interrupteur, clés), puis SEC-2 et SEC-3.
+4. Le reste de la vague 2 (BE-2a-2, BE-2b, BE-2c, BE-2d), cahiers écrits, en pause ; BE-2a-1 (#565) est fini puisqu'il est commencé.
+5. Le Studio, après.
 
 **Dette de sécurité (16/11, BE-PIECE)** : un compte `controller` sans capacité lit par l'API les séances, participants, enregistrements, affectations et disponibilités des familles. Aucun compte de ce rôle en production (vérifié 20 h 45) : à resserrer avant d'en créer un. Scénario `scenarios_cand_l2a2_gestes_direction.sql` rouge sur `main` selon BE-PIECE (non vérifié par le pilote). Les scénarios ACCUEIL-SEPARE et BE-2a ne sont pas dans `ci.yml` (garde-fou : `.github` interdit aux agents).
 
