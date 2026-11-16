@@ -318,6 +318,28 @@ void _capturesLangue() {
   );
 }
 
+void _capturesPostulerIci() {
+  group('POSTULER-ICI : captures du choix', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
+      ('fr', AppLocale.fr),
+      ('ar', AppLocale.ar),
+    ]) {
+      testWidgets('360 $nom', (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await _monter(tester, taille: const Size(360, 800));
+        await tester.pumpAndSettle();
+        // Debordement de 12 points dans les cartes de choix a 360 (present sur
+        // `main` avant ce lot, a corriger a part) : il ne doit pas empecher la
+        // capture de la ligne ajoutee.
+        tester.takeException();
+        await capturerVue(tester, 'POSTULER-ICI/postuler-ici_${nom}_360');
+      });
+    }
+  });
+}
+
 Future<void> _cocherEtCreer(WidgetTester tester) async {
   await _taper(tester, find.byKey(_caseConfidentialite));
   await _taper(tester, find.text(t.inscription.candidat.envoyer));
@@ -328,6 +350,7 @@ void main() {
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   _capturesLangue();
+  _capturesPostulerIci();
 
   group('l\'entree sans code, lue au serveur', () {
     testWidgets(
@@ -408,6 +431,45 @@ void main() {
       final BrouillonInscription b = _brouillon(tester);
       expect(b.usage, UsageInscription.enseignant);
       expect(b.sansCode, isTrue);
+    });
+
+    testWidgets('POSTULER-ICI : la ligne est tout en haut, avant le choix', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      final Finder ligne = find.byKey(const Key('inscription-postuler-ici'));
+      expect(ligne, findsOneWidget);
+      expect(find.text(t.inscription.usage.postulerIci), findsOneWidget);
+      // Avant les deux cartes de choix.
+      expect(
+        tester.getTopLeft(ligne).dy,
+        lessThan(
+          tester.getTopLeft(find.byKey(const Key('inscription-usage'))).dy,
+        ),
+      );
+      verifierUnSeulBoutonPlein(tester);
+    });
+
+    testWidgets('POSTULER-ICI, entree sans code ouverte : mene a l\'identite', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await _monter(tester);
+      await _taper(tester, find.byKey(const Key('inscription-postuler-ici')));
+      expect(hote.chemin, Routes.inscriptionIdentite);
+      expect(_brouillon(tester).usage, UsageInscription.enseignant);
+      expect(_brouillon(tester).sansCode, isTrue);
+    });
+
+    testWidgets('POSTULER-ICI, entree fermee : mene au champ du code', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await _monter(
+        tester,
+        candidat: FauxInscriptionCandidat(cleOuverte: false),
+      );
+      await _taper(tester, find.byKey(const Key('inscription-postuler-ici')));
+      expect(hote.chemin, Routes.inscriptionInvitation);
+      expect(_brouillon(tester).sansCode, isFalse);
     });
 
     testWidgets('« J\'ai un code d\'invitation » garde la porte du code', (

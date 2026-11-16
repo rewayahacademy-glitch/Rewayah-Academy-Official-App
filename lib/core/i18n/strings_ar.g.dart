@@ -9078,6 +9078,7 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get coursNonExemple => 'تسجّل ابنتك وتتابع حصصها من حسابك.';
 	@override String get enseignantPostuler => 'هل ترغب في التدريس في أكاديمية الرواية؟';
 	@override String get deposerCandidature => 'تقديم طلب ترشحي';
+	@override String get postulerIci => 'هل ترغب في التدريس معنا؟ قدّم طلبك هنا';
 }
 
 // Path: inscription.recap
@@ -37577,6 +37578,7 @@ extension on TraductionsAr {
 			'inscription.usage.coursNonExemple' => 'تسجّل ابنتك وتتابع حصصها من حسابك.',
 			'inscription.usage.enseignantPostuler' => 'هل ترغب في التدريس في أكاديمية الرواية؟',
 			'inscription.usage.deposerCandidature' => 'تقديم طلب ترشحي',
+			'inscription.usage.postulerIci' => 'هل ترغب في التدريس معنا؟ قدّم طلبك هنا',
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',
 			'inscription.recap.genre' => 'الجنس',
@@ -38013,9 +38015,9 @@ extension on TraductionsAr {
 			'adulte.acceptation.acceptationEchecTitre' => 'لم يُؤكَّد القبول.',
 			'adulte.acceptation.refusEchecTitre' => 'لم يُؤكَّد الرفض.',
 			'adulte.acceptation.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
-			'adulte.acceptation.accepteeTitre' => 'قُبلت الدعوة',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.acceptation.accepteeTitre' => 'قُبلت الدعوة',
 			'adulte.acceptation.rejoint' => ({required Object dePrenom}) => 'انضممت إلى باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.acceptation.refuseeTitre' => 'رُفضت الدعوة',
 			'adulte.acceptation.impossible' => 'لا يمكن لهذا الحساب الانضمام إلى هذه الباقة حاليًا.',
@@ -38527,9 +38529,9 @@ extension on TraductionsAr {
 			'controleur.complement.cleRapport' => 'التقرير الأصلي',
 			'controleur.complement.rapportInchange' => ({required Object classe, required Object date}) => '⁨${classe}⁩ · ⁨${date}⁩، دون تغيير',
 			'controleur.complement.cleMotif' => 'السبب',
-			'controleur.complement.sansMotif' => 'لا سبب',
 			_ => null,
 		} ?? switch (path) {
+			'controleur.complement.sansMotif' => 'لا سبب',
 			'controleur.complement.cleTexte' => 'التكملة',
 			'controleur.complement.envoyer' => 'إرسال التكملة',
 			'controleur.complement.echec' => 'لم يُؤكَّد الإرسال: لم يستجب الاتصال أو الخادم. نصك محفوظ هنا، أعد المحاولة بعد لحظة. يبقى التقرير الأصلي سليمًا.',
@@ -39041,9 +39043,9 @@ extension on TraductionsAr {
 			'recrutement.invitations.vide' => 'لا دعوات حاليًا',
 			'recrutement.invitations.videDetail' => 'ادعُ معلّمًا بعنوان بريده الإلكتروني: يظهر الرمز هنا.',
 			'recrutement.invitations.erreurListe' => 'تعذّرت قراءة الدعوات. أعد المحاولة بعد لحظات.',
-			'recrutement.invitations.sansDonnees' => 'لا يمكن قراءة الدعوات بلا اتصال.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.invitations.sansDonnees' => 'لا يمكن قراءة الدعوات بلا اتصال.',
 			'recrutement.invitations.indisponibleTitre' => 'دعوات المعلّمين',
 			'recrutement.invitations.indisponiblePhrase' => 'ستتوفر هذه الوظيفة عند ربط الخادم.',
 			'recrutement.invitations.etat.active' => 'سارية',
@@ -39555,9 +39557,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'أطفال من 6 إلى 9 سنوات',
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'يبدؤون بكتاب القراءة الخاص بأكاديمية الرواية، حرفًا حرفًا، إلى الشدّة. ثم تأتي السور القصيرة الأولى وكلمات الصلاة والوضوء.',
 			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة. يُعرض الوضوء والصلاة عمليًا ومعهما رسوم توضيحية.',
-			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'فصل لأطفال في الثامنة من العمر، أيام الاثنين والأربعاء والجمعة.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'فصل لأطفال في الثامنة من العمر، أيام الاثنين والأربعاء والجمعة.',
 			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'أطفال من 10 إلى 13 سنة',
 			'recrutement.parcours.q.publics.options.o_10_13.description' => 'البداية نفسها بكتاب القراءة، مع سورة الفاتحة منذ الأسبوع الأول، لأن الطفل في هذا العمر يجب أن يصلّي.',
 			'recrutement.parcours.q.publics.options.o_10_13.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة.',
@@ -40069,9 +40071,9 @@ extension on TraductionsAr {
 			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
 			'avis.form.depuis.libelle' => 'معنا منذ',
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
-			'avis.form.depuis.mois' => 'الشهر',
 			_ => null,
 		} ?? switch (path) {
+			'avis.form.depuis.mois' => 'الشهر',
 			'avis.form.depuis.annee' => 'السنة',
 			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من أبريل 2024 إلى هذا الشهر.',
 			'avis.form.note.libelle' => 'تقييمك',
@@ -40583,9 +40585,9 @@ extension on TraductionsAr {
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
 			'payUx.enCours' => 'جارٍ الدفع',
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',
-			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
 			'cahierC3.arretAide' => 'هذه آخر صفحة عُرضت في القاعة. إن كانت صحيحة فاعتمد، وإلا فصحّح.',
 			'cahierC3.corriger' => 'تصحيح الموضع الذي توقف عنده الفصل',
@@ -41097,9 +41099,9 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.type.audio' => 'صوت',
 			'apprendre.bibliotheque.type.video' => 'فيديو',
 			'apprendre.bibliotheque.type.lienExterne' => 'رابط خارجي',
-			'apprendre.bibliotheque.aucunResultat.message' => 'لا توجد وثيقة من هذا النوع حاليًا',
 			_ => null,
 		} ?? switch (path) {
+			'apprendre.bibliotheque.aucunResultat.message' => 'لا توجد وثيقة من هذا النوع حاليًا',
 			'apprendre.bibliotheque.aucunResultat.invitation' => 'أزل التصفية لتعرض كل الوثائق من جديد.',
 			'apprendre.bibliotheque.coran.titre' => 'القرآن الكريم',
 			'apprendre.bibliotheque.coran.edition' => 'طبعة المدينة المنورة',

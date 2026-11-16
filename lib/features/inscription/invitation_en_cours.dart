@@ -33,6 +33,7 @@ library;
 
 import 'dart:convert';
 
+import '../../core/auth/adresse_retour.dart' show parametreCodeInvitationRetour;
 import '../../core/router/routes.dart';
 import 'questionnaire/memoire_appareil.dart';
 
@@ -144,7 +145,11 @@ void retenirInvitationDepuisAdresse(Uri adresse) {
     // qu'a creer son compte (fonction Edge `invitation-compte`) ; ce n'est
     // pas un code d'enseignant, l'ecran du code ne le recoit pas.
     retenirInvitationEnCours(
-      code: candidature ? null : p['code'],
+      // Au retour du lien de connexion, le code voyage sous `code_invitation`
+      // (le `code` de l'adresse est celui du flux de connexion).
+      code: candidature
+          ? null
+          : (p[parametreCodeInvitationRetour] ?? p['code']),
       candidature: candidature,
     );
   }

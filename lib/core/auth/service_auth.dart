@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../observabilite/journal_dev.dart';
+import 'adresse_retour.dart';
 
 /// Ce que l'application sait faire de l'authentification.
 ///
@@ -67,7 +68,15 @@ class ServiceAuthSupabase implements ServiceAuth {
   /// tout le monde au meme endroit quel que soit le domaine d'ou l'on est
   /// parti -- une preproduction comprise. Sur mobile, il n'y a pas d'origine :
   /// le schema d'application reste celui que le paquet declare, donc `null`.
-  String? get _retour => kIsWeb ? Uri.base.origin : null;
+  ///
+  /// POSTULER-ICI (16/11/2026) : elle garde la marque du candidat
+  /// (`candidature=1`, ou l'invitation) de la page d'ou la demande part, pour
+  /// que le lien ouvert dans un autre navigateur reprenne le bon parcours
+  /// (`adresse_retour.dart`).
+  String? get _retour => adresseRetourConnexion(
+    courante: Uri.base,
+    origine: kIsWeb ? Uri.base.origin : null,
+  );
 
   @override
   Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) =>
