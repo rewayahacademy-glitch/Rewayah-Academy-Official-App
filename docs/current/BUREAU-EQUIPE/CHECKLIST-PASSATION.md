@@ -1,6 +1,6 @@
 # Checklist du pilote « Bureau de l'équipe » (depuis la passation du 16/11/2026)
 
-**Mise à jour : 16/11/2026, 20 h 37 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
+**Mise à jour : 16/11/2026, 20 h 45 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
 remplace `session_0163KjrvqR38dL9HhgktqAdg`, archivée)
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (fusionné, installé, vérifié par le pilote ; « prouvé » seulement
@@ -20,6 +20,8 @@ Une seule ligne, dans cet ordre ; rien ne s'intercale, sauf une vraie personne b
 2. ACCUEIL-SEPARE (« Accueillir » ne valide plus la pièce en passant).
 3. Vague 2, la délégation : BE-2a, puis BE-2b, BE-2c, BE-2d.
 4. Le Studio, après.
+
+**Dette de sécurité (16/11, BE-PIECE)** : un compte `controller` sans capacité lit par l'API les séances, participants, enregistrements, affectations et disponibilités des familles. Aucun compte de ce rôle en production (vérifié 20 h 45) : à resserrer avant d'en créer un. Scénario `scenarios_cand_l2a2_gestes_direction.sql` rouge sur `main` selon BE-PIECE (non vérifié par le pilote). Les scénarios ACCUEIL-SEPARE et BE-2a ne sont pas dans `ci.yml` (garde-fou : `.github` interdit aux agents).
 
 **Gelé, sans agent ni travail** : lots 2 à 8 de la carte des gestes, #525, l'étape E, LP-3 à LP-7, BE-COLONNES,
 BE-1e, BE-1f, l'étape D.
@@ -41,6 +43,7 @@ BE-1e, BE-1f, l'étape D.
 | 7 | #550 CLORE-COMPLEMENT-VRAI (écran) | ◐ | **en conflit avec `main`** ; confiée à BE-GESTES (fusion de `main`, slang deux fois) |
 | 8 | DISPENSE-ECRAN | ⏸ | travail **non perdu** : commit local `6aa823c66` chez BE-DOSSIER, branche `claude/dispense-ecran` jamais poussée. BE-DOSSIER refuse de pousser sans l'accord du directeur lui-même (il dit que le directeur a refusé sa dernière poussée). Non archivé exprès : l'archiver détruirait ce commit. Voir §4 |
 | 9 | DEBLOQUER-VERSEMENT-ECRAN | ◐ | BE-GESTES, après #550 et #547 ; même PR : phrases des deux nouveaux refus d'« Accueillir » |
+| 9 ter | BE-2a-1 MISSION serveur (migration 20261129420000, à installer APRÈS 410000) | ◐ | PR #565 (BE-PIECE) ; 13 portes ouvertes aux missions, listées dans la PR ; mesure locale de la liste : 8,9 ms avant, 11,0 ms après ; relecture par le pilote avant fusion (lot sensible) |
 | 9 bis | ACCUEIL-SEPARE serveur (migration 20261129410000) | ◐ | PR #564 (BE-PIECE), CI en cours ; 0 dossier en `decision_en_attente` ; installation par le pilote après fusion |
 | 10 | PIECE-TYPE-ECRAN (l'écran lit `genreFichier`) | ☑ | #563 fusionnée 20:36 UTC (dd61742) ; CI verte (13 contrôles) ; écran seul ; déploiement automatique ; non prouvé : réponse réelle lue seulement en simulation ; 2 pièces sur 338 sans type s'affichent « Fichier » |
 | 11 | Vérification de trois gestes du menu | ☑ | faite dans la carte (n° 13) pour tous les gestes du menu ; les trois gestes n'étaient nommés nulle part |

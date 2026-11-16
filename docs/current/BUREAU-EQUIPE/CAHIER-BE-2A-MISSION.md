@@ -111,6 +111,16 @@ Il n'existe pas de rôle « associé ». **Arbitrage : BE-2a ne crée pas de rô
   `controller` (en suivant le modèle `inviter_comptable`), et la mission fait le reste. Sinon, le pilote tranche
   par écrit.
 
+**Arbitrage du 16/11, 20 h 45 UTC (relevé de BE-PIECE).** Le rôle `controller` est écarté. Un compte `controller`
+sans capacité de contrôle lit par l'API toutes les `sessions`, `session_participants`, `session_events`,
+`session_recordings`, `teacher_student_assignments`, `matching_requests`, `intentions_horaire`, `offres_horaires`
+et `availability_slots` : un ami invité verrait les données des familles. En production le 16/11, il n'existe aucun
+compte `controller` ni `accountant` : personne n'est exposé aujourd'hui. Décision : **BE-2a-2 crée un rôle dédié
+`associe`**, qui ne voit rien par défaut. Le scénario doit prouver, table par table, qu'aucune politique RLS ne lui
+ouvre une ligne, et que seules ses missions lui donnent accès. Son cahier est écrit après l'installation de BE-2a-1.
+Dette de sécurité, notée dans la checklist : resserrer les politiques du rôle `controller` avant de créer le moindre
+compte de ce rôle.
+
 ## 3. Scénarios SQL obligatoires (`supabase/tests/scenarios_be2a_mission.sql`, ajouté au CI)
 
 Les refus, chacun avec le code d'erreur attendu, et rien n'est écrit dans `candidatures` :
