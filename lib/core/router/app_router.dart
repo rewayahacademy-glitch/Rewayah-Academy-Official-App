@@ -2274,7 +2274,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               requete: etat.uri.queryParameters,
               ouvrirCandidature: (LigneCandidature ligne) =>
                   GoRouter.of(contexte).push<void>(
-                    Routes.adminPersonnesCandidaturePour(ligne.reference),
+                    // BE-SUIVANT : le dossier recoit le filtre et le tri de la
+                    // liste, pour passer au suivant dans la meme file.
+                    Routes.adminPersonnesCandidaturePour(
+                      ligne.reference,
+                      fileDeLaListe: etat.uri.queryParameters,
+                    ),
                     extra: ligne.id,
                   ),
             ),
@@ -2311,6 +2316,8 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             construire: () => d_candidature_page.CandidatureDirectionPage(
               reference: etat.pathParameters['reference'] ?? '',
               identifiant: etat.extra is String ? etat.extra as String : null,
+              // BE-SUIVANT : la file d'ou l'on vient (filtre, tri).
+              requete: etat.uri.queryParameters,
             ),
           ),
         ),

@@ -229,6 +229,12 @@ class _EtatImageDeBulle extends State<ImageDeBulle> {
               frameBuilder: apparition,
               errorBuilder: absente,
               gaplessPlayback: true,
+              // Navigateur : l'image se lit d'abord par octets (decodee a sa
+              // taille), mais si le stockage n'envoie pas d'en-tete CORS sur le
+              // GET, la lecture par octets est refusee : l'image passe alors
+              // par une balise <img>, qui n'en exige pas. Sans cela, la bulle
+              // restait un aplat de la couleur moyenne (production, 16/11).
+              webHtmlElementStrategy: WebHtmlElementStrategy.fallback,
             );
     }
     // Le reflet tourne tant que les pixels n'arrivent pas, et s'arrete des la
