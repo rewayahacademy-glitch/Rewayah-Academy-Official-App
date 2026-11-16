@@ -119,7 +119,12 @@ class ZoneSaisie extends StatelessWidget {
   final EnvoiZoneSaisie? envoi;
 
   /// BULLES-MESSAGERIE : vrai, le champ est une pilule arrondie (le champ
-  /// d'ecriture d'une conversation) ; le rayon vient de `AppRadius.full`.
+  /// d'ecriture d'une conversation). MESSAGERIE-COULEURS (directeur,
+  /// 16/11/2026, capture : « le champ devient presque un cercle et le texte est
+  /// coupe ») : le rayon est FIXE, `AppRadius.lg` ; une ligne garde l'aspect
+  /// d'une pilule, puis le rayon ne grandit plus : un rectangle arrondi, comme
+  /// WhatsApp ou iMessage. Avec `AppRadius.full`, Flutter ramenait le rayon a
+  /// la moitie de la hauteur, donc un demi-cercle a quatre lignes.
   final bool pilule;
 
   /// Vrai : le texte se lit sans se modifier.
@@ -197,10 +202,10 @@ class ZoneSaisie extends StatelessWidget {
     return (math.min(minLignes, max), max);
   }
 
-  /// Le meme filet que le theme, au rayon d'une pilule.
+  /// Le meme filet que le theme, a rayon FIXE (voir [pilule]).
   static InputBorder? _enPilule(BuildContext context, InputBorder? base) =>
       base is OutlineInputBorder
-      ? base.copyWith(borderRadius: AppRadius.arrondiFull)
+      ? base.copyWith(borderRadius: AppRadius.arrondiLg)
       : base;
 
   @override

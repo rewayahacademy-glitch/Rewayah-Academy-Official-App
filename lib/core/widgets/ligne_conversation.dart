@@ -15,6 +15,7 @@ import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'badge_non_lu.dart';
+import 'carte_lignes.dart' show LigneDansCarte;
 import 'pressable.dart';
 
 /// Une conversation dans une liste.
@@ -66,6 +67,11 @@ class LigneConversation extends StatelessWidget {
   /// L'ouverture de la conversation.
   final VoidCallback onPress;
 
+  /// La cle du trait de la conversation ouverte, pour les tests.
+  static const Key cleRepereSelection = ValueKey<String>(
+    'ligne-conversation-repere',
+  );
+
   /// La cle de la pastille du nombre de non lus, pour les tests.
   static const Key cleNonLus = ValueKey<String>('ligne-conversation-non-lus');
 
@@ -93,94 +99,116 @@ class LigneConversation extends StatelessWidget {
       arrondiFocus: AppRadius.arrondiSm,
       libelleSemantique: <String>[titre, apercu, ?libelleNonLus].join(', '),
       constructeur: (BuildContext context, EtatPression etat) => DecoratedBox(
+        // MESSAGERIE-COULEURS (directeur, 16/11/2026) : la ligne est blanche
+        // (la carte qui la porte), sans teinte lavande. La conversation
+        // ouverte se repere par un trait de 4 au bord de debut, jamais par la
+        // couleur seule ; au survol ou a l'appui, un calque tres leger.
         decoration: BoxDecoration(
-          color: choisie
-              ? palette.washAccent.background
-              : etat.survole || etat.presse
+          color: etat.survole || etat.presse
               ? Color.alphaBlend(
                   palette.calqueInteraction(presse: etat.presse),
-                  palette.surfaceCanvas.background,
+                  palette.surfaceRaised.background,
                 )
               : null,
-          borderRadius: AppRadius.arrondiSm,
+          borderRadius: LigneDansCarte.de(context) ? null : AppRadius.arrondiSm,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.md,
-          ),
-          child: Row(
-            children: <Widget>[
-              meneur,
-              Ecart.hMd,
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: Text(
-                            titre,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            // Le nom suit sa langue : un nom latin coupe a sa
-                            // fin, jamais a son debut, dans une interface
-                            // arabe.
-                            textDirection: sensDuContenu(context, titre),
-                            // Gras (600) tant qu'il y a des non lus.
-                            style: palette.inkStrong.applyTo(
-                              (aLire ? textes.labelLarge : textes.bodyLarge) ??
-                                  const TextStyle(),
-                            ),
-                          ),
-                        ),
-                        if (heure != null) ...<Widget>[
-                          Ecart.hSm,
-                          Text(
-                            heure!,
-                            style: palette.inkMuted.applyTo(
-                              textes.bodySmall ?? const TextStyle(),
-                            ),
-                          ),
-                        ],
-                      ],
-                    ),
-                    Ecart.vXs,
-                    Row(
-                      children: <Widget>[
-                        Expanded(
-                          child: apercuPhoto
-                              ? Row(
-                                  children: <Widget>[
-                                    Icon(
-                                      AppIcons.image.repos,
-                                      size: AppSpacing.lg,
-                                      color: apercuEncre
-                                          .asIconTheme(size: AppSpacing.lg)
-                                          .color,
-                                    ),
-                                    Ecart.hXs,
-                                    Expanded(child: texteApercu),
-                                  ],
-                                )
-                              : texteApercu,
-                        ),
-                        if (aLire) ...<Widget>[
-                          Ecart.hSm,
-                          PastilleNombre(key: cleNonLus, nombre: nonLus),
-                        ] else if (marque != null) ...<Widget>[
-                          Ecart.hSm,
-                          marque!,
-                        ],
-                      ],
-                    ),
-                  ],
+        position: DecorationPosition.background,
+        child: Stack(
+          children: <Widget>[
+            if (choisie)
+              PositionedDirectional(
+                start: 0,
+                top: 0,
+                bottom: 0,
+                width: AppSpacing.xs,
+                child: DecoratedBox(
+                  key: cleRepereSelection,
+                  decoration: BoxDecoration(
+                    color: palette.inkAccent.asBorderSide().color,
+                  ),
                 ),
               ),
-            ],
-          ),
+            Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.md,
+              ),
+              child: Row(
+                children: <Widget>[
+                  meneur,
+                  Ecart.hMd,
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: Text(
+                                titre,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                // Le nom suit sa langue : un nom latin coupe a sa
+                                // fin, jamais a son debut, dans une interface
+                                // arabe.
+                                textDirection: sensDuContenu(context, titre),
+                                // Gras (600) tant qu'il y a des non lus.
+                                style: palette.inkStrong.applyTo(
+                                  (aLire
+                                          ? textes.labelLarge
+                                          : textes.bodyLarge) ??
+                                      const TextStyle(),
+                                ),
+                              ),
+                            ),
+                            if (heure != null) ...<Widget>[
+                              Ecart.hSm,
+                              Text(
+                                heure!,
+                                style: palette.inkMuted.applyTo(
+                                  textes.bodySmall ?? const TextStyle(),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        Ecart.vXs,
+                        Row(
+                          children: <Widget>[
+                            Expanded(
+                              child: apercuPhoto
+                                  ? Row(
+                                      children: <Widget>[
+                                        Icon(
+                                          AppIcons.image.repos,
+                                          size: AppSpacing.lg,
+                                          color: apercuEncre
+                                              .asIconTheme(size: AppSpacing.lg)
+                                              .color,
+                                        ),
+                                        Ecart.hXs,
+                                        Expanded(child: texteApercu),
+                                      ],
+                                    )
+                                  : texteApercu,
+                            ),
+                            if (aLire) ...<Widget>[
+                              Ecart.hSm,
+                              PastilleNombre(key: cleNonLus, nombre: nonLus),
+                            ] else if (marque != null) ...<Widget>[
+                              Ecart.hSm,
+                              marque!,
+                            ],
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );

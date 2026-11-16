@@ -24,7 +24,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/communications/capacites_communication.dart';
 import '../../core/communications/veille_messages.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
@@ -47,7 +46,7 @@ class FilEnPlace extends ConsumerStatefulWidget {
     super.key,
     this.onLu,
     this.onOuvrirMessages,
-    this.iconeReplier,
+    this.volet = false,
   });
 
   /// Le fil a ouvrir.
@@ -58,9 +57,11 @@ class FilEnPlace extends ConsumerStatefulWidget {
   /// page Messages : aucun titre, aucun lien d'en-tete de plus.
   final VoidCallback onReplier;
 
-  /// L'icone du bouton qui replie (la croix dans un volet de cote) ; `null` :
-  /// la fleche de retour.
-  final AppIcon? iconeReplier;
+  /// Vrai : la conversation vit dans un VOLET de cote (ordinateur). Une croix
+  /// « Fermer la conversation » au bord de fin de la barre, qui ne se replie
+  /// jamais (MESSAGERIE-COULEURS, pilote, 16/11/2026 : regression de #540).
+  /// Faux : une page, la fleche de retour du bord de debut.
+  final bool volet;
 
   /// « Ouvrir dans Messages » (bouton d'icone de la barre), ou `null`.
   final VoidCallback? onOuvrirMessages;
@@ -183,7 +184,8 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         BarreRetourConversation(
-          onRetour: widget.onReplier,
+          onRetour: widget.volet ? null : widget.onReplier,
+          onFermer: widget.volet ? widget.onReplier : null,
           libelle: t.com.messages.entree.replier,
         ),
         Expanded(child: SingleChildScrollView(child: contenu)),
@@ -220,9 +222,12 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
         // La mise en page de la messagerie refaite : une barre compacte
         // (avatar a cote du nom), le fil pleine page, ses marges.
         pleinEcran: true,
-        onRetour: widget.onReplier,
+        // Un volet : une croix au bord de fin, une barre qui ne se replie
+        // jamais. Une page : la fleche de retour du bord de debut.
+        onRetour: widget.volet ? null : widget.onReplier,
+        onFermer: widget.volet ? widget.onReplier : null,
+        barreFixe: widget.volet,
         libelleRetour: t.com.messages.entree.replier,
-        iconeRetour: widget.iconeReplier,
         onOuvrirMessages: widget.onOuvrirMessages,
         // COM-BR-16 : tant que la capacite n'est pas lue, l'ecriture reste
         // fermee.

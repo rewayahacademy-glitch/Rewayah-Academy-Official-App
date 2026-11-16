@@ -12233,6 +12233,7 @@
         "ecrireA": "Écrire à {nom}",
         "conversationAvec": "Conversation avec {nom}",
         "replier": "Replier la conversation",
+        "fermer": "Fermer la conversation",
         "ouvrirDansMessages": "Ouvrir dans Messages",
         "voirTout": "Voir toutes les conversations",
         "toutes": "Toutes vos conversations",

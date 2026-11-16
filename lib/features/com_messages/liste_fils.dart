@@ -20,6 +20,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/badge_non_lu.dart';
+import '../../core/widgets/carte_lignes.dart' show LigneDeCarte;
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -206,7 +207,7 @@ class _ListeFilsState extends State<ListeFils> {
   /// La liste, filtree par la recherche et par « Non lus ». Les resultats
   /// d'une recherche sont annonces (region polie) ; un filtre sans resultat
   /// dit quoi essayer. Les lignes se construisent au fur et a mesure du
-  /// defilement (`ListView.builder`), chacune sous la cle de son fil.
+  /// defilement, chacune sous la cle de son fil, en une carte blanche peinte ligne a ligne.
   Widget _resultats() {
     final r = t.com.messages.recherche;
     final String texte = _recherche.text.trim();
@@ -254,6 +255,8 @@ class _ListeFilsState extends State<ListeFils> {
     }
     final DateTime maintenant = widget.horloge();
     final int avant = 1 + (texte.isNotEmpty ? 1 : 0);
+    // Construite A LA DEMANDE (le directeur a des centaines de conversations) :
+    // chaque ligne peint son morceau de la carte blanche (`LigneDeCarte`).
     return ListView.builder(
       // La position de lecture survit a l'aller-retour de la recherche.
       key: const PageStorageKey<String>('liste-fils'),
@@ -280,8 +283,15 @@ class _ListeFilsState extends State<ListeFils> {
             ),
           );
         }
-        final ResumeFil f = vus[i - avant];
-        return _ligne(f, maintenant);
+        final int k = i - avant;
+        // MESSAGERIE-COULEURS (directeur, 16/11/2026) : l'aspect d'UNE carte
+        // blanche a lignes fines posee sur la page, comme avant BULLES-
+        // MESSAGERIE, sans perdre la construction ligne a ligne.
+        return LigneDeCarte(
+          premiere: k == 0,
+          derniere: k == vus.length - 1,
+          child: _ligne(vus[k], maintenant),
+        );
       },
     );
   }

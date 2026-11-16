@@ -19309,6 +19309,7 @@ class _Traductions$com$messages$entree$en extends Traductions$com$messages$entre
 	@override String ecrireA({required Object nom}) => 'Write to ${nom}';
 	@override String conversationAvec({required Object nom}) => 'Conversation with ${nom}';
 	@override String get replier => 'Fold the conversation';
+	@override String get fermer => 'Close the conversation';
 	@override String get ouvrirDansMessages => 'Open in Messages';
 	@override String get voirTout => 'See all conversations';
 	@override String get toutes => 'All your conversations';
@@ -37561,6 +37562,7 @@ extension on TraductionsEn {
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Write to ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation with ${nom}',
 			'com.messages.entree.replier' => 'Fold the conversation',
+			'com.messages.entree.fermer' => 'Close the conversation',
 			'com.messages.entree.ouvrirDansMessages' => 'Open in Messages',
 			'com.messages.entree.voirTout' => 'See all conversations',
 			'com.messages.entree.toutes' => 'All your conversations',
@@ -37896,9 +37898,9 @@ extension on TraductionsEn {
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
 			'com.communaute.demo.f.fonctionMariam' => 'Teacher, An-Nas class',
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
-			'com.communaute.demo.f.fonctionHamza' => 'Teacher, Al-Ikhlas class',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.demo.f.fonctionHamza' => 'Teacher, Al-Ikhlas class',
 			'com.communaute.demo.f.memorisationTitre' => 'Ideas for memorization?',
 			'com.communaute.demo.f.memorisationTexte' => 'What routines or activities work well to help students memorize surahs? I\'m looking for feedback from experience: games, visual aids, repetition in pairs. Thanks for your ideas!',
 			'com.communaute.demo.f.cartesTitre' => 'Feedback on repetition cards',
@@ -38410,9 +38412,9 @@ extension on TraductionsEn {
 			'comptable.graphiques.rapportsTitre' => 'Reports',
 			'comptable.graphiques.rapportsSousTitre' => 'Inflows, outflows and cash position over time.',
 			'comptable.graphiques.vide' => 'No data to draw',
-			'comptable.graphiques.videDetail' => 'Charts will appear here as soon as collections or payments have been recorded.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.graphiques.videDetail' => 'Charts will appear here as soon as collections or payments have been recorded.',
 			'comptable.graphiques.erreur' => 'The charts could not be read: the request may not have reached Rewayah. Try again in a moment.',
 			'comptable.graphiques.sansDonnees' => 'The charts could not be loaded',
 			'comptable.graphiques.exporterRapport' => 'Export the report',
@@ -38924,9 +38926,9 @@ extension on TraductionsEn {
 			'comptable.encaissements.sousTitre' => 'A payment is confirmed only after the provider.',
 			'comptable.encaissements.detailTitre' => 'Collection details',
 			'comptable.encaissements.rapprochementTitre' => 'Reconciliation',
-			'comptable.encaissements.rapprochementSousTitre' => 'Link each transaction to what was waiting for it.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.rapprochementSousTitre' => 'Link each transaction to what was waiting for it.',
 			'comptable.beneficiaires.intro' => 'The payment profile of each teacher and each contractor. Only the beneficiary enters or changes their details: you can remind them, ask for an update or suspend their payments.',
 			'comptable.beneficiaires.filtreTous' => 'All',
 			'comptable.beneficiaires.filtreInfos' => 'Info missing',
@@ -39438,9 +39440,9 @@ extension on TraductionsEn {
 			'presentationTuteur.echecReponse' => 'Your answer could not be confirmed. The request is still pending: try again.',
 			'presentationTuteur.vide' => 'No display request pending.',
 			'presentationTuteur.erreur' => 'The requests could not be loaded. Try again.',
-			'presentationTuteur.sansDonnees' => 'the display requests',
 			_ => null,
 		} ?? switch (path) {
+			'presentationTuteur.sansDonnees' => 'the display requests',
 			'presentationTuteur.accueil.titre' => 'Display request',
 			'presentationTuteur.accueil.voir' => 'Answer',
 			'presentationTuteur.notification' => ({required Object prenom}) => '${prenom} is asking for the standard display',
@@ -39952,9 +39954,9 @@ extension on TraductionsEn {
 			'courriels.admin.file.champs.categorie' => 'Category',
 			'courriels.admin.file.champs.origine' => 'Origin',
 			'courriels.admin.file.champs.creeLe' => 'Queued on',
-			'courriels.admin.file.champs.envoyeLe' => 'Sent on',
 			_ => null,
 		} ?? switch (path) {
+			'courriels.admin.file.champs.envoyeLe' => 'Sent on',
 			'courriels.admin.file.champs.tentatives' => 'Attempts',
 			'courriels.admin.file.champs.motifEchec' => 'Last error',
 			'courriels.admin.file.champs.langue' => 'Language',
@@ -40466,9 +40468,9 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.unite.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person', other: '${n} people', ), 
 			'candidatsFlux.importFormulaires.confirmation.question' => 'Import these answers now?',
 			'candidatsFlux.importFormulaires.confirmation.explication' => 'Review what the import will do. It cannot be undone from this screen.',
-			'candidatsFlux.importFormulaires.confirmation.resume.titre' => 'What will be saved',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.confirmation.resume.titre' => 'What will be saved',
 			'candidatsFlux.importFormulaires.confirmation.resume.fichier' => 'File',
 			'candidatsFlux.importFormulaires.confirmation.resume.doublons' => ({required Object choisis, required Object total}) => 'Duplicates: ${choisis} cases decided by you out of ${total}. For the others, the most recent row is kept.',
 			'candidatsFlux.importFormulaires.confirmation.resume.aucunDoublon' => 'No probable duplicate to resolve.',
@@ -40980,9 +40982,9 @@ extension on TraductionsEn {
 			'calendrier.dates.concernees.autres' => ({required Object n}) => 'And ${n} other sessions.',
 			'calendrier.dates.concernees.erreur' => 'The sessions concerned could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
 			'calendrier.dates.conflits.titre' => 'Sessions that cannot be restored',
-			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.dates.conflits.intro' => 'These sessions were set aside by the closure, but the teacher took another class at the same time. Free the teacher then try again, or confirm abandoning these sessions: they will never be restored. Times are Makkah time.',
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Other class: ${cours}, ${quand}',
 			'calendrier.dates.conflits.autreSansNom' => ({required Object quand}) => 'Other class at the same time, ${quand}',
