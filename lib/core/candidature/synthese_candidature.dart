@@ -1,4 +1,5 @@
-// La synthese du dossier (etage 2, BE-DOSSIER, coordinateur, 16/11/2026) : un
+// La synthese d'une candidature (etage 2 du dossier, BE-DOSSIER, coordinateur,
+// 16/11/2026 ; reprise telle quelle par les colonnes de la liste) : un
 // tableau a deux colonnes, un libelle court a gauche et une valeur courte a
 // droite, une ligne par critere, jamais la phrase du candidat.
 //
@@ -6,15 +7,16 @@
 // mots-cles separes par « · ». Les mots viennent d'une table de correspondance
 // (code de reponse vers mot court, `recrutement.dossier3.synthese`), jamais
 // d'un texte invente ; un code que la table ne connait pas n'est pas montre.
-// Aucune donnee nouvelle : tout vient des reponses du dossier.
+// Aucune donnee nouvelle : tout vient des reponses du dossier. Le dossier ne
+// fait que l'afficher.
 library;
 
-import '../../core/candidature/disponibilites_declarees.dart';
-import '../../core/candidature/modeles_candidature_detail.dart';
-import '../../core/i18n/isolat_bidi.dart';
-import '../../core/i18n/strings.g.dart';
-import '../candidature/libelles_parcours.dart';
-import '../candidature/modele_questions.dart';
+import '../../features/candidature/libelles_parcours.dart';
+import '../../features/candidature/modele_questions.dart';
+import '../i18n/isolat_bidi.dart';
+import '../i18n/strings.g.dart';
+import 'disponibilites_declarees.dart';
+import 'modeles_candidature_detail.dart';
 
 /// Une ligne de la synthese : son libelle court et sa valeur courte.
 typedef LigneSynthese = ({String cle, String valeur});

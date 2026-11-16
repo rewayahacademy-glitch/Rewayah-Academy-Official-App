@@ -29,6 +29,7 @@ import '../../core/candidature/piece_candidature.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/candidature/port_import_candidatures.dart';
 import '../../core/candidature/port_invitations_personnelles.dart';
+import '../../core/candidature/synthese_candidature.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
@@ -62,7 +63,6 @@ import 'piece_sur_place.dart';
 import 'plan_dossier.dart';
 import 'portrait_dossier_fige.dart';
 import 'reponses_candidature.dart';
-import 'synthese_dossier.dart';
 
 // ---------------------------------------------------------------------------
 // Etage 1
