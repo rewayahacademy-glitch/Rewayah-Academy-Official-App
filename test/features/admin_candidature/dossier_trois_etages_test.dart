@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/photo_dossier_candidat.dart';
+import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
@@ -22,9 +23,12 @@ import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/candidature/libelles_parcours.dart'
     show libelleHeure;
+import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart'
+    show ConversationEnPlace;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
-import '../../support/monter_recrutement.dart' show laisser;
+import '../../support/monter_recrutement.dart'
+    show laisser, monterRecrutement;
 import 'hote_candidature.dart';
 
 FauxCandidaturesDirection _port(
@@ -336,6 +340,63 @@ void main() {
         expect(tester.takeException(), isNull);
       },
     );
+  });
+
+  group('accords : emplacement de la majorite', () {
+    Future<void> monterCorps(WidgetTester tester, {String? majorite}) async {
+      final DetailCandidature detail = detailTest(
+        paiement: EtatVersement.compatible,
+        controles: _controles(),
+      );
+      await monterRecrutement(
+        tester,
+        chemin: '/corps',
+        ecran: (_) => Scaffold(
+          body: SingleChildScrollView(
+            child: CorpsDossier(
+              plan: PlanDossier(
+                detail: detail,
+                capacites: capacitesGestes,
+                horsLigne: false,
+              ),
+              deuxColonnes: false,
+              onGeste: (GesteCandidature _) {},
+              onDemanderElement: (String _) {},
+              onOuvrirDossier: () {},
+              onEntretien: (String _) {},
+              onOuvrirConversation: (ConversationEnPlace _) {},
+              ligneMajorite: majorite,
+            ),
+          ),
+        ),
+        surcharges: <Override>[
+          portCandidaturesDirectionProvider.overrideWithValue(
+            _port(detail),
+          ),
+        ],
+        hauteur: 3000,
+      );
+    }
+
+    testWidgets('sans phrase (champ pas encore servi) : rien', (
+      WidgetTester tester,
+    ) async {
+      await monterCorps(tester);
+      expect(find.byKey(CorpsDossier.cleMajorite), findsNothing);
+    });
+
+    testWidgets('avec une phrase : elle est dans la ligne Accords', (
+      WidgetTester tester,
+    ) async {
+      await monterCorps(tester, majorite: 'Phrase de majorite');
+      expect(
+        find.descendant(
+          of: find.byKey(RubriqueDossier.cleDe(RubriqueDossierCode.accords)),
+          matching: find.byKey(CorpsDossier.cleMajorite),
+        ),
+        findsOneWidget,
+      );
+    });
   });
 
   group('etage 3 : les rubriques', () {

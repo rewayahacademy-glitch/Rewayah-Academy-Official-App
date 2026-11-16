@@ -747,8 +747,17 @@ class CorpsDossier extends ConsumerStatefulWidget {
     this.retour,
     this.retourEntretien,
     this.autresActions = const <EntreeAction>[],
+    this.ligneMajorite,
     super.key,
   });
+
+  /// La phrase de majorite de la ligne Accords, ou `null` : rien n'est affiche.
+  /// `DetailCandidature.majorite` n'est pas encore dans `main` (PR 517) ; la
+  /// page passe `null` en attendant.
+  final String? ligneMajorite;
+
+  /// La cle de la phrase de majorite.
+  static const Key cleMajorite = ValueKey<String>('dossier-accords-majorite');
 
   /// Des entrees de plus dans le menu « ⋯ » de la barre de decision.
   final List<EntreeAction> autresActions;
@@ -952,6 +961,14 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
             children: <Widget>[
               for (final ControleCandidature c in accords)
                 LigneControleDossier(controle: c),
+              // Majorite (« 18 ans ou plus : atteste le ... ») : emplacement
+              // pret ; il n'affiche rien tant que la phrase est nulle.
+              if (widget.ligneMajorite case final String m)
+                TexteSansCoupure(
+                  m,
+                  key: CorpsDossier.cleMajorite,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
             ],
           ),
           gestes: <GesteRubrique?>[
