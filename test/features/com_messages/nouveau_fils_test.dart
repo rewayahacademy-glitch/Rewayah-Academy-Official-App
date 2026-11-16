@@ -172,21 +172,22 @@ void main() {
       expect(find.text(t.com.messages.filtres.aucunNouveau), findsOneWidget);
     });
 
-    testWidgets('au telephone (390), « Nouveaux » se choisit sous « Plus »', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, <ResumeFil>[
-        _fil('n1', apercu: 'Un', nouveau: true),
-        _fil('a1', apercu: 'Deux'),
-      ], taille: const Size(390, 844));
-      expect(find.byType(LigneConversation), findsNWidgets(2));
-      await tester.tap(find.text(t.commun.filtres.plus));
-      await tester.pumpAndSettle();
-      await tester.tap(find.text(t.com.messages.filtres.nouveaux).last);
-      await tester.pumpAndSettle();
-      expect(find.byKey(const ValueKey<String>('ligne-n1')), findsOneWidget);
-      expect(find.byKey(const ValueKey<String>('ligne-a1')), findsNothing);
-    });
+    testWidgets(
+      'quand les trois puces ne tiennent pas (polices de test a 390), « Nouveaux » se choisit sous « Plus »',
+      (WidgetTester tester) async {
+        await _monter(tester, <ResumeFil>[
+          _fil('n1', apercu: 'Un', nouveau: true),
+          _fil('a1', apercu: 'Deux'),
+        ], taille: const Size(390, 844));
+        expect(find.byType(LigneConversation), findsNWidgets(2));
+        await tester.tap(find.text(t.commun.filtres.plus));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(t.com.messages.filtres.nouveaux).last);
+        await tester.pumpAndSettle();
+        expect(find.byKey(const ValueKey<String>('ligne-n1')), findsOneWidget);
+        expect(find.byKey(const ValueKey<String>('ligne-a1')), findsNothing);
+      },
+    );
 
     testWidgets('les trois filtres sont la, dans l\'ordre « Tous », « Non '
         'lus », « Nouveaux »', (WidgetTester tester) async {
