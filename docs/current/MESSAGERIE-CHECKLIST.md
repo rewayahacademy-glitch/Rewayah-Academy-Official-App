@@ -1,8 +1,9 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : 16/11/2026, 19 h 45 UTC.**
+**Mise à jour : 16/11/2026, 19 h 50 UTC.**
 
-Pilote : session `session_0163Kjrx8uX1pRbk4RhE7Yuz` (nuit du 16 au 17/11). Il succède au pilote de la
+Pilote : session `session_0163KjrvqyXGcbF9eGGztS24` (nuit du 16 au 17/11, ordre de 19 h 50). Il succède à
+`session_0163Kjrx8uX1pRbk4RhE7Yuz` (19 h 40), qui succédait au pilote de la
 passation `MESSAGERIE-HANDOFF-2026-11-16.md`, puis à la session `session_0163KjrvfAPWhND7VanbMLHL`
 (ouverte à 19 h 18, archivée à 19 h 23), dont cette page reprend la checklist (#560).
 La carte du chantier reste `MESSAGERIE-ETAT-ET-PLAN-2026-11-16.md`.
@@ -18,8 +19,10 @@ _Rempli au matin._
 
 - La messagerie est grise depuis #512, la croix du volet a disparu (#540), le champ de saisie
   s'arrondit en cercle : corrections dans la PR #551, **pas fusionnée**, CI en cours sur `667a9543`.
-- L'agent de #551 est marqué « déconnecté », son contexte est à environ 734 000 sur 1 000 000 :
-  il ne prendra pas d'autre lot.
+- L'agent précédent de #551 (`session_0163KjrvV6fGAftwzWig2qU9`) a poussé `571f558a` (fusion de
+  `main` 1ae0202e, sans conflit, vérifié par le pilote) et a été **archivé à 19 h 47**. Sur ce commit,
+  **rien n'est vérifié** : ni slang, ni build_runner, ni analyze, ni tests, ni CI ; #551 est encore en
+  brouillon, donc sans CI.
 - Le conteneur de l'agent de #551 a été recréé : il a **perdu, non poussées**, les captures du volet
   (croix) et de la liste 1440. La tête poussée `667a9543` est intacte. **La croix du volet n'a aucune
   capture** ; elle n'est prouvée que par un test. L'agent attendait une réponse de l'utilisateur de sa
@@ -27,8 +30,7 @@ _Rempli au matin._
   poussée »).
 - Vérifié par le pilote : entre la base de #551 (`af1cfbb9`) et `main`, aucun changement dans `lib/`
   ni `assets/i18n` ; fusion sans conflit.
-- Le plafond de quatre agents est atteint (trois au Pilote Équipe, un ici) : **NOUVEAU-FILS ne peut
-  pas partir** avant qu'une place se libère.
+- Plafond de quatre agents : un seul agent messagerie à la fois ; NOUVEAU-FILS part après #551.
 - #538, #540, #546 sont en production mais **pas vus** par le directeur.
 - Le plantage à l'ouverture d'une conversation depuis un profil n'est **pas reproduit**.
 - Erreurs de l'ordre de prise de poste, constatées : le fichier `PASSATION-MESSAGERIE-2026-11-16.md`
@@ -40,7 +42,7 @@ _Rempli au matin._
 
 | Lot | Qui | Statut | Prochaine étape |
 | :--- | :--- | :--- | :--- |
-| MESSAGERIE-COULEURS #551 | agent `session_0163KjrvV6fGAftwzWig2qU9` | PR, CI en cours | l'agent fusionne `main`, relance `dart run slang` deux fois, pousse ; le pilote relit les captures avant/après (téléphone et ordinateur, clair et sombre, ce qui change ailleurs), lit la CI, prévient le Pilote Équipe (`lib/core`, `assets/i18n`), fusionne |
+| MESSAGERIE-COULEURS #551 | agent neuf `session_0163KjrwKsohCvdhrjhrWP5N` (Sonnet, lancé 19 h 48) | PR brouillon, rien de vérifié sur `571f558a` | l'agent relance slang deux fois, build_runner, analyze, `flutter test` complet, les trois vérificateurs ; refait et **commite** les captures du volet (1440, fr et ar, clair et sombre, fil remonté, croix) et de la liste 1440 ; passe la PR en « prête », lit la CI ; le pilote relit les captures avant/après (téléphone et ordinateur, clair et sombre, ce qui change ailleurs), lit la CI, prévient le Pilote Équipe (`lib/core`, `assets/i18n`), fusionne |
 | Cette checklist #560 | pilote | PR | fusion quand la CI est verte |
 
 ## À lancer
@@ -81,3 +83,7 @@ _Rempli au matin._
   messagerie ne les touche, il peut fusionner. Aucune migration messagerie annoncée cette nuit hors
   NOUVEAU-FILS.
 - 16/11, 19 h 40 : l'agent de #551 signale la perte des captures du volet ; consigne de reprise relayée.
+- 16/11, 19 h 47 : prise de poste de `session_0163KjrvqyXGcbF9eGGztS24`. Agent de #551 archivé après
+  « poussé » (`571f558a`). Agent neuf `session_0163KjrwKsohCvdhrjhrWP5N` lancé sur #551 seul. Pilote
+  Équipe (`session_0163KjrwwgbbL52RHBDSnDVm`) prévenu des fichiers partagés de #551, dont
+  `admin_candidature/volet_conversation.dart`.
