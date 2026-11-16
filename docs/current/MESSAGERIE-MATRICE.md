@@ -101,6 +101,11 @@ entrée par entrée, à partir de ce tableau.
 - Rôles de la colonne « Rôles » : direction, comptable, contrôleur, enseignant, candidat, tuteur, élève adulte. L'élève
   de moins de 18 ans n'est partie d'aucun fil (COM-BACK-1).
 - **Phrase d'aide sous le champ** (`champVide`) : **retirée partout** (directeur, 16/11/2026 : « supprimer la phrase d'aide sous le champ »). SUPERPOS-1 est modifiée par un commentaire daté dans `FilDiscussion` ; les limites et erreurs ne s'affichent que quand elles s'appliquent. Les tests qui attendaient la phrase ont été réécrits un par un (liste dans la PR).
+- **Lecteur vocal dans MA bulle : à revoir à l'ouverture des vocaux** (IMAGE-CANDIDAT, 16/11/2026, décision du pilote : les
+  vocaux ne sont pas ouverts, « gros chantier », ne pas le prendre). `LecteurVocalRecu` (`com_vocal/lecteur_vocal.dart`)
+  écrit en encre de surface claire (`surfaceRaised`) sans carte : dans la bulle « de soi » (violet de marque), ce serait de
+  l'encre sombre sur violet. Non mesuré, non corrigé. Le correctif des liens (`EncreLienSurFond`) ne le couvre pas : il ne
+  concerne que `LienFleche`.
 - **Le « plante »** décrit par le directeur depuis un profil candidat **n'a pas été reproduit** : 18 situations montées
   en test (390, 390 court, texte ×2, clavier, 320, 768, 1024, 1440, français et arabe) ne lèvent aucune exception, et la
   démonstration comme le playground n'atteignent pas le dossier d'un candidat (aucun compte de direction). Voir la PR.
