@@ -1,5 +1,6 @@
 {
   "commun": {
+    "nouveau": "New",
     "langue": {
       "systeme": "System",
       "francais": "Français",
@@ -2722,6 +2723,8 @@
       "files": "Queues",
       "pieceCourt": "ID to validate",
       "fileMenu": "Queue",
+      "nouveaux": "New",
+      "pasNouveaux": "Not new",
       "confirmeesIndisponibles": "Confirmed, unavailable",
       "piece": "ID document",
       "responsable": "Owner",

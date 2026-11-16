@@ -235,6 +235,7 @@ class FiltreCandidatures {
     this.heureMax,
     this.joursMin,
     this.majorite,
+    this.nouveau,
   });
 
   /// Le texte cherche : nom partiel, reference `CAND-` exacte, courriel exact.
@@ -319,6 +320,11 @@ class FiltreCandidatures {
   /// `non_attestee` (pas encore de declaration) ou `moins_18`.
   final String? majorite;
 
+  /// NOUVEAU-LISTE (16/11/2026) : vrai, seulement les candidatures « nouvelles »
+  /// (recues depuis moins de 7 jours, dossier jamais ouvert par l'equipe) ;
+  /// faux, les autres. Calcule au serveur.
+  final bool? nouveau;
+
   /// Le texte cherche, sans les blancs de bord.
   String get rechercheNette => recherche.trim();
 
@@ -366,7 +372,8 @@ class FiltreCandidatures {
       heureMin == null &&
       heureMax == null &&
       joursMin == null &&
-      majorite == null;
+      majorite == null &&
+      nouveau == null;
 
   /// Le nombre d'axes poses (la recherche compte pour un).
   int get nombreAxes =>
@@ -392,7 +399,8 @@ class FiltreCandidatures {
       (heureMin == null ? 0 : 1) +
       (heureMax == null ? 0 : 1) +
       (joursMin == null ? 0 : 1) +
-      (majorite == null ? 0 : 1);
+      (majorite == null ? 0 : 1) +
+      (nouveau == null ? 0 : 1);
 
   /// Le meme filtre, un axe change. Une fonction par axe rend `null` possible
   /// (« tous »).
@@ -420,6 +428,7 @@ class FiltreCandidatures {
     int? Function()? heureMax,
     int? Function()? joursMin,
     String? Function()? majorite,
+    bool? Function()? nouveau,
   }) => FiltreCandidatures(
     recherche: recherche ?? this.recherche,
     etape: etape == null ? this.etape : etape(),
@@ -456,6 +465,7 @@ class FiltreCandidatures {
     heureMax: heureMax == null ? this.heureMax : heureMax(),
     joursMin: joursMin == null ? this.joursMin : joursMin(),
     majorite: majorite == null ? this.majorite : majorite(),
+    nouveau: nouveau == null ? this.nouveau : nouveau(),
   );
 
   /// Le meme filtre sans aucun axe : « Effacer les filtres ».
@@ -486,7 +496,8 @@ class FiltreCandidatures {
       other.heureMin == heureMin &&
       other.heureMax == heureMax &&
       other.joursMin == joursMin &&
-      other.majorite == majorite;
+      other.majorite == majorite &&
+      other.nouveau == nouveau;
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
@@ -513,6 +524,7 @@ class FiltreCandidatures {
     heureMax,
     joursMin,
     majorite,
+    nouveau,
   ]);
 }
 
@@ -572,6 +584,7 @@ class LigneCandidature {
     this.genre,
     this.responsableId,
     this.recueLe,
+    this.nouveau = false,
   });
 
   /// Lit une ligne rendue par le serveur, ou `null` quand elle n'a pas
@@ -616,11 +629,17 @@ class LigneCandidature {
           DateTime.tryParse(texte('derniereActivite') ?? '') ??
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
       recueLe: DateTime.tryParse(texte('recueLe') ?? ''),
+      nouveau: json['nouveau'] == true,
     );
   }
 
   /// L'identifiant de la candidature.
   final String id;
+
+  /// NOUVEAU-LISTE : vrai quand la candidature est arrivee depuis moins de 7
+  /// jours et que personne de l'equipe n'a ouvert son dossier (regle du
+  /// serveur, cle `nouveau`). Un serveur d'avant ce lot ne la rend pas : faux.
+  final bool nouveau;
 
   /// La reference `CAND-…`, jamais reattribuee, distincte du matricule.
   final String reference;
@@ -754,6 +773,7 @@ class PageCandidatures {
     required this.taillePage,
     required this.compteursEtapes,
     required this.compteursAlertes,
+    this.compteurNouveaux = 0,
   });
 
   /// Lit la reponse de `lister_candidatures`. Une reponse sans total ni page
@@ -787,6 +807,10 @@ class PageCandidatures {
         },
       ),
       compteursAlertes: CompteursAlertes.depuisJson(brut['compteursAlertes']),
+      compteurNouveaux: switch (brut['compteurNouveaux']) {
+        final int n when n >= 0 => n,
+        _ => 0,
+      },
     );
   }
 
@@ -808,6 +832,10 @@ class PageCandidatures {
 
   /// Les compteurs des quatre alertes.
   final CompteursAlertes compteursAlertes;
+
+  /// NOUVEAU-LISTE : les candidatures en cours « nouvelles » de la portee du
+  /// lecteur, sans les autres filtres (cle `compteurNouveaux`, premier niveau).
+  final int compteurNouveaux;
 
   /// Le nombre de pages du filtre, une au moins.
   int get pages => math.max(1, (total + taillePage - 1) ~/ taillePage);

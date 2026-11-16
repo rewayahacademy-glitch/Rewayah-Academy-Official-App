@@ -284,9 +284,12 @@ void main() {
       expect(_bulleLocale(), findsOneWidget);
       expect(_bulle('srv-1'), findsNothing);
       expect(find.byType(ImageDeBulle), findsOneWidget);
+      // CONVERSATIONS-PARTOUT : la phrase d'echec redondante n'est plus ecrite
+      // sous la bulle ; seule la ligne « Non confirme · Toucher pour reessayer »
+      // reste.
       expect(
         find.text(phraseRefusImage(RefusImage.envoiStockage)),
-        findsOneWidget,
+        findsNothing,
       );
       expect(find.text(ligneEchec), findsOneWidget);
 

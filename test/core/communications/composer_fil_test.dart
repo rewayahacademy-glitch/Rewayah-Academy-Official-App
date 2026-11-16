@@ -84,7 +84,9 @@ void main() {
       find.bySemanticsLabel(RegExp(RegExp.escape(c.message))),
       findsWidgets,
     );
-    expect(find.text(c.champVide), findsOneWidget);
+    // SUPERPOS-1 modifiee (directeur, 16/11/2026) : plus de phrase d'aide
+    // sous le champ.
+    expect(find.text(c.champVide), findsNothing);
   });
 
   testWidgets('emplacement vocal : sous le champ, l envoi texte intact', (

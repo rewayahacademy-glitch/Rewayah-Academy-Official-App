@@ -54,6 +54,7 @@ LigneCandidature ligneTest({
   bool indicatifAConfirmer = false,
   DateTime? derniereActivite,
   DateTime? recueLe,
+  bool nouveau = false,
 }) => LigneCandidature(
   id: id,
   reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
@@ -74,6 +75,7 @@ LigneCandidature ligneTest({
   indicatifAConfirmer: indicatifAConfirmer,
   derniereActivite: derniereActivite ?? DateTime.utc(2026, 10, 20, 9),
   recueLe: recueLe ?? DateTime.utc(2026, 10, 1, 9),
+  nouveau: nouveau,
 );
 
 /// [n] lignes distinctes, reparties sur les cinq etapes, la derniere activite
@@ -511,6 +513,13 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
               .length,
       },
       compteursAlertes: alertes ?? _alertesDuServeur(),
+      // NOUVEAU-LISTE : les nouvelles en cours, sans les autres filtres.
+      compteurNouveaux: portee
+          .where(
+            (LigneCandidature l) =>
+                l.nouveau && l.issue == IssueCandidature.enCours,
+          )
+          .length,
     );
   }
 
@@ -931,6 +940,7 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     if (f.etat != null && l.etat != f.etat) return false;
     if (f.issue != null && l.issue != f.issue) return false;
     if (f.enPause != null && l.enPause != f.enPause) return false;
+    if (f.nouveau != null && l.nouveau != f.nouveau) return false;
     if (f.paiement != null && l.paiement != f.paiement) return false;
     if (f.paysResidence != null && l.paysResidence != f.paysResidence) {
       return false;

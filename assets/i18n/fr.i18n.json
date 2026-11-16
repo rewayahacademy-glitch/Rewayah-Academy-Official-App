@@ -1,5 +1,6 @@
 {
   "commun": {
+    "nouveau": "Nouveau",
     "langue": {
       "systeme": "Système",
       "francais": "Français",
@@ -2722,6 +2723,8 @@
       "files": "Files",
       "pieceCourt": "Pièce à valider",
       "fileMenu": "File",
+      "nouveaux": "Nouveaux",
+      "pasNouveaux": "Pas nouveaux",
       "confirmeesIndisponibles": "Confirmées indisponibles",
       "piece": "Pièce d'identité",
       "responsable": "Responsable",
