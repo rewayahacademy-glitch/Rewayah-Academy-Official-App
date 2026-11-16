@@ -13440,6 +13440,16 @@
     }
   },
   "recrutement": {
+    "suivant": {
+      "position": "\u2068{rang}\u2069 من \u2068{total}\u2069",
+      "precedent": "الملف السابق",
+      "suivant": "الملف التالي",
+      "decisionEnregistree": "تم تسجيل القرار. سيُفتح الملف التالي بعد لحظات.",
+      "rester": "البقاء على هذا الملف",
+      "fin": "كان هذا آخر ملف في هذه القائمة.",
+      "versListe": "العودة إلى القائمة",
+      "reglage": "الانتقال إلى الملف التالي بعد القرار"
+    },
     "dossier3": {
       "pastille": {"bon": "جيد", "aVoir": "للمراجعة", "manque": "ناقص"},
       "situation": {

@@ -2614,6 +2614,16 @@
     }
   },
   "recrutement": {
+    "suivant": {
+      "position": "{rang} sur {total}",
+      "precedent": "Dossier précédent",
+      "suivant": "Dossier suivant",
+      "decisionEnregistree": "Décision enregistrée. Le dossier suivant s'ouvre dans un instant.",
+      "rester": "Rester sur ce dossier",
+      "fin": "C'était le dernier dossier de cette file.",
+      "versListe": "Retour à la liste",
+      "reglage": "Passer au suivant après une décision"
+    },
     "dossier3": {
       "pastille": {"bon": "Bon", "aVoir": "À voir", "manque": "Manque"},
       "situation": {
