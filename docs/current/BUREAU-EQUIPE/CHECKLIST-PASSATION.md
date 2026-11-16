@@ -1,6 +1,6 @@
 # Checklist du pilote « Bureau de l'équipe » (depuis la passation du 16/11/2026)
 
-**Mise à jour : 16/11/2026, 20 h 25 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
+**Mise à jour : 16/11/2026, 20 h 30 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
 remplace `session_0163KjrvqR38dL9HhgktqAdg`, archivée)
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (fusionné, installé, vérifié par le pilote ; « prouvé » seulement
@@ -12,6 +12,17 @@ BE-DOSSIER `session_0163KjrwjpTfzQhFiSkkKCFu` (**bloqué**, voir §4) · BE-GEST
 type de la pièce) · agent de la messagerie (sous le Pilote Messagerie `session_0163KjrvqyXGcbF9eGGztS24`).
 BE-S1 et BE-LISTE : archivés (travail poussé). Plage de ce chantier : 202611294… (440000, 450000, 470000, 480000,
 490000 pris ; 410000-430000 et 460000 libres).
+
+## LA LIGNE (directeur, 16/11 au soir : « c'est toi qui dois empêcher les dispersions »)
+
+Une seule ligne, dans cet ordre ; rien ne s'intercale, sauf une vraie personne bloquée.
+1. Finir l'entamé, sans rien ajouter : #547, #550, PIECE-TYPE-ECRAN, DEBLOQUER-VERSEMENT-ECRAN.
+2. ACCUEIL-SEPARE (« Accueillir » ne valide plus la pièce en passant).
+3. Vague 2, la délégation : BE-2a, puis BE-2b, BE-2c, BE-2d.
+4. Le Studio, après.
+
+**Gelé, sans agent ni travail** : lots 2 à 8 de la carte des gestes, #525, l'étape E, LP-3 à LP-7, BE-COLONNES,
+BE-1e, BE-1f, l'étape D.
 
 ## 0. Pour le directeur au réveil
 
