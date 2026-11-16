@@ -69,6 +69,7 @@ const List<String> composantsDuCatalogue = <String>[
   'LigneAllocation',
   // FI-3b : statuts, bandeau, moyen de paiement, synthese.
   'PastilleFinanciere',
+  'BadgeNouveau',
   'BadgePeriodeFinancee',
   'BandeauAttention',
   'LigneMoyenPaiement',

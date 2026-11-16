@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/candidature/port_prevenir_candidats.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/vus/vus_compte.dart';
 import 'package:rewayah_academy/core/widgets/badge_nouveau.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
@@ -35,9 +36,7 @@ import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_candidatures/adresse_candidatures.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
-import 'package:rewayah_academy/features/admin_candidatures/etat_entete_liste.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart';
-import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../fixtures/candidature/faux_import_candidatures.dart';
@@ -76,10 +75,37 @@ class _FauxAttentes implements PortAttentesRecrutement {
   );
 }
 
+/// Ce que le serveur sait des bandeaux vus par le compte (`lire_vus`,
+/// `marquer_vu`), en memoire.
+class _FauxVus implements PortVus {
+  _FauxVus({this.panne = false});
+
+  /// Vrai : le serveur ne repond pas.
+  final bool panne;
+
+  /// Les cles vues par le compte.
+  final Set<String> vues = <String>{};
+
+  /// Les cles marquees, dans l'ordre.
+  final List<String> marques = <String>[];
+
+  @override
+  Future<Set<String>> lire() async {
+    if (panne) throw StateError('hors ligne');
+    return <String>{...vues};
+  }
+
+  @override
+  Future<void> marquer(String cle) async {
+    if (panne) throw StateError('hors ligne');
+    marques.add(cle);
+    vues.add(cle);
+  }
+}
+
 void main() {
   setUp(() {
     LocaleSettings.setLocaleSync(AppLocale.fr);
-    effacerMemoireAppareil(cleMemoireLectureComprise);
   });
 
   group('l\'adresse de la liste (fonctions pures)', () {
@@ -381,7 +407,7 @@ void main() {
     });
 
     testWidgets(
-      '« J\'ai compris » ferme le bandeau pour de bon : aucune icone ne le rappelle',
+      '« J\'ai compris » ferme le bandeau pour de bon, cote compte : aucune icone, aucune memoire d\'appareil',
       (tester) async {
         final FauxCandidaturesDirection port = FauxCandidaturesDirection(
           lignes: _lignes(),
@@ -390,20 +416,53 @@ void main() {
             peutLireHorsGenre: true,
           ),
         );
-        await monterCandidatures(tester, port: port);
+        final _FauxVus vus = _FauxVus();
+        await monterCandidatures(
+          tester,
+          port: port,
+          surcharges: [portVusProvider.overrideWithValue(vus)],
+        );
         final String message = t.admin.candidatures.exception.message;
         expect(find.text(message), findsOneWidget);
         await tester.tap(_cle('candidatures-jai-compris'));
         await laisser(tester);
         expect(find.text(message), findsNothing);
-        expect(lireMemoireAppareil(cleMemoireLectureComprise), '1');
+        // Marque au serveur, avec la cle du bandeau.
+        expect(vus.marques, <String>['bandeau.deux_cotes']);
 
-        // Une autre session de la page : le bandeau ne revient pas, et aucune
-        // icone de rappel n'occupe la rangee.
+        // Un autre appareil, le meme compte : le serveur dit « deja vu », le
+        // bandeau ne revient pas, et aucune icone de rappel n'occupe la rangee.
         await tester.pumpWidget(const SizedBox());
-        await monterCandidatures(tester, port: port);
+        await monterCandidatures(
+          tester,
+          port: port,
+          surcharges: [portVusProvider.overrideWithValue(vus)],
+        );
         expect(find.text(message), findsNothing);
         expect(_cle('candidatures-rappel-lecture'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'si le serveur ne repond pas, le bandeau se montre : il ne disparait jamais par erreur',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(
+            lignes: _lignes(),
+            capacitesRendues: const CapacitesCandidatures(
+              peutLire: true,
+              peutLireHorsGenre: true,
+            ),
+          ),
+          surcharges: [
+            portVusProvider.overrideWithValue(_FauxVus(panne: true)),
+          ],
+        );
+        expect(
+          find.text(t.admin.candidatures.exception.message),
+          findsOneWidget,
+        );
       },
     );
 
