@@ -33,31 +33,34 @@ import 'libelles_parcours.dart';
 import 'modele_questions.dart';
 import 'ville_etape.dart';
 
-/// Les pays proposes d'emblee : les pays des enseignants de l'academie
-/// (FORM-L8, `codesIsoDesPays`) et l'Arabie saoudite, nommee par la decision
-/// du directeur sur le versement (CAND-Q05).
+/// Les pays proposes d'emblee : ceux des vraies candidatures, dans l'ordre de
+/// leur nombre (relevé du 16/11/2026 : Arabie saoudite, Nigeria, Yémen, Égypte,
+/// Algérie, Bénin, Ghana, Tchad), puis les pays que les enseignants de
+/// l'academie habitent deja (FORM-L8) en Afrique de l'Ouest, au Maroc et en
+/// Europe.
 const List<String> paysCourants = <String>[
-  'FR',
-  'BE',
-  'ES',
-  'GB',
-  'IE',
-  'GN',
+  'SA',
+  'NG',
+  'YE',
+  'EG',
+  'DZ',
+  'BJ',
+  'GH',
+  'TD',
   'SN',
   'ML',
-  'MR',
+  'GN',
   'MA',
-  'CI',
-  'BF',
-  'TG',
-  'NE',
-  'NG',
-  'TD',
-  'CM',
-  'CA',
-  'US',
-  'SA',
+  'FR',
+  'BE',
+  'GB',
 ];
+
+/// Ce que la recherche lit d'un pays en plus de son nom affiche : ses noms
+/// francais, arabe et anglais, et son code. Un candidat dont l'application est en
+/// arabe retrouve « Ghana » en lettres latines, et l'inverse (PAYS-RECHERCHE,
+/// 16/11/2026). Jamais affiche.
+String motsClesDuPays(PaysIso p) => '${p.fr} ${p.ar} ${p.en} ${p.code}';
 
 /// Les riwayat proposees d'emblee, les plus connues d'abord (CANDIDATURE-UX,
 /// directeur, 14/11/2026 : Hafs, Warsh, Qaloun, Shu'ba, Duri, Susi) ; les
@@ -440,6 +443,7 @@ class _Pays extends StatelessWidget {
               ElementChoix(
                 code: p.code,
                 libelle: p.nom,
+                motsCles: motsClesDuPays(p),
                 cle: ValueKey<String>('option-${champ.code}-${p.code}'),
               ),
         ]..sort(

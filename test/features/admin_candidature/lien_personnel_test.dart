@@ -20,7 +20,7 @@ import 'package:rewayah_academy/core/candidature/port_import_candidatures.dart';
 import 'package:rewayah_academy/core/candidature/port_invitations_personnelles.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
-import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_lien_personnel.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -92,7 +92,7 @@ Future<void> _monter(
 );
 
 Future<bool> _entreePresente(WidgetTester tester) async {
-  final Finder menu = find.byKey(BlocProchaineAction.cleMenu);
+  final Finder menu = find.byKey(BarreDecisionDossier.cleMenu);
   if (menu.evaluate().isEmpty) return false;
   await tester.ensureVisible(menu);
   await laisser(tester, fois: 2);

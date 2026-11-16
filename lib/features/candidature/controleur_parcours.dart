@@ -104,6 +104,7 @@ List<EtapeParcours> planifierParcours(
   bool avecPresentation = true,
   int nombreJours = 0,
   bool? memesHeures,
+  bool? compteBancaire,
 }) {
   final ChampQuestionnaire? fuseau = questionnaire.champ('fuseauIana');
   final ChampQuestionnaire? publics = questionnaire.champ('publics');
@@ -111,6 +112,15 @@ List<EtapeParcours> planifierParcours(
     'disponibilitesDeclarees',
   );
   final bool groupe = dispo != null;
+  // VERSEMENT-QUESTIONS (directeur, 16/11/2026) : le compte bancaire d'abord ;
+  // « oui », le pays de ce compte ; « non », le pays du mobile money puis ses
+  // services. Le serveur garde l'ordre de sa definition (une version nouvelle
+  // rendrait perimees les reponses deja envoyees) : l'ordre se regle ici.
+  final ChampQuestionnaire? compte = questionnaire.champ('compteBancaire');
+  final ChampQuestionnaire? paysVersement = questionnaire.champ(
+    'paysVersement',
+  );
+  final bool compteDabord = compte != null && paysVersement != null;
   return <EtapeParcours>[
     if (avecPresentation)
       for (int rang = 1; rang <= nombrePresentations; rang++)
@@ -121,11 +131,19 @@ List<EtapeParcours> planifierParcours(
         ?(fuseau == null ? null : EtapeChamp(fuseau)),
         EtapeDisponibilites(c, SousEtapeDisponibilites.jours),
         EtapeDisponibilites(c, SousEtapeDisponibilites.heures),
-        if (nombreJours >= 2) EtapeDisponibilites(c, SousEtapeDisponibilites.memes),
+        if (nombreJours >= 2)
+          EtapeDisponibilites(c, SousEtapeDisponibilites.memes),
         if (nombreJours >= 2 && memesHeures == false)
           EtapeDisponibilites(c, SousEtapeDisponibilites.parJour),
         EtapeDisponibilites(c, SousEtapeDisponibilites.semaine),
       ] else if (groupe && (c.code == 'fuseauIana' || c.code == 'publics'))
+        ...const <EtapeParcours>[]
+      else if (compteDabord && c.code == 'paysVersement')
+        ...const <EtapeParcours>[]
+      else if (compteDabord && c.code == 'compteBancaire') ...<EtapeParcours>[
+        EtapeChamp(c),
+        EtapeChamp(paysVersement),
+      ] else if (c.code == 'operateurs' && compteBancaire == true)
         ...const <EtapeParcours>[]
       else if (c.code == 'moyensAccessibles' && c.options.isEmpty)
         ...const <EtapeParcours>[]
@@ -322,12 +340,11 @@ class ParcoursControleur extends ChangeNotifier {
 
   /// Les disponibilites telles que le serveur les recevra (les jours qui ont
   /// au moins une heure).
-  DisponibilitesDeclarees get disponibilites => DisponibilitesDeclarees(
-    <int, Set<int>>{
-      for (final int j in _jours)
-        if ((_debuts[j] ?? const <int>{}).isNotEmpty) j: _debuts[j]!,
-    },
-  );
+  DisponibilitesDeclarees get disponibilites =>
+      DisponibilitesDeclarees(<int, Set<int>>{
+        for (final int j in _jours)
+          if ((_debuts[j] ?? const <int>{}).isNotEmpty) j: _debuts[j]!,
+      });
 
   /// Le premier jour choisi qui n'a aucune heure de debut, ou `null`.
   int? get jourSansHeure {
@@ -350,6 +367,14 @@ class ParcoursControleur extends ChangeNotifier {
     }
     if (code == 'paysVersement') {
       _reponses.remove('operateurs');
+    }
+    if (code == 'compteBancaire') {
+      // Avec un compte, aucun service de mobile money n'est retenu ; le
+      // parcours saute alors leur ecran.
+      if (valeur == true) {
+        _reponses.remove('operateurs');
+      }
+      _replanifier();
     }
     if (code == 'publics') {
       _ecrireDisponibilites();
@@ -466,7 +491,9 @@ class ParcoursControleur extends ChangeNotifier {
     if (_jours.length >= 2) {
       final Set<int> premier = _debuts[premierJour]!;
       _memesHeures = _jours.every(
-        (int j) => _debuts[j]!.length == premier.length && _debuts[j]!.containsAll(premier),
+        (int j) =>
+            _debuts[j]!.length == premier.length &&
+            _debuts[j]!.containsAll(premier),
       );
     }
     if (dispo.estVide) {
@@ -482,6 +509,9 @@ class ParcoursControleur extends ChangeNotifier {
       avecPresentation: _avecPresentation,
       nombreJours: _jours.length,
       memesHeures: _memesHeures,
+      compteBancaire: _reponses['compteBancaire'] is bool
+          ? _reponses['compteBancaire'] as bool
+          : null,
     );
   }
 
@@ -572,7 +602,9 @@ class ParcoursControleur extends ChangeNotifier {
   };
 
   bool _dansLesDisponibilites(int index) =>
-      index >= 0 && index < etapes.length && etapes[index] is EtapeDisponibilites;
+      index >= 0 &&
+      index < etapes.length &&
+      etapes[index] is EtapeDisponibilites;
 
   /// Passe a l'etape suivante, ou revient au recapitulatif apres une
   /// modification. Rend `false` quand la reponse manque (rien ne bouge).
@@ -611,7 +643,9 @@ class ParcoursControleur extends ChangeNotifier {
     if (_index == 0) {
       return;
     }
-    if (_depuisRecap && !(courante is EtapeDisponibilites && _dansLesDisponibilites(_index - 1))) {
+    if (_depuisRecap &&
+        !(courante is EtapeDisponibilites &&
+            _dansLesDisponibilites(_index - 1))) {
       _index = indexRecapitulatif;
       _depuisRecap = false;
     } else {

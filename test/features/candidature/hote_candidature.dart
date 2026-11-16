@@ -261,8 +261,9 @@ const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
   ('classesSouhaitees', <String>['option-classesSouhaitees-1']),
   ('debutPossible', <String>['option-debutPossible-mois_prochain']),
   ('paysResidence', <String>['option-paysResidence-GN']),
-  ('paysVersement', <String>[]),
+  // VERSEMENT-QUESTIONS (16/11/2026) : le compte bancaire d'abord, puis le pays.
   ('compteBancaire', <String>['option-compteBancaire-non']),
+  ('paysVersement', <String>[]),
   ('operateurs', <String>['option-operateurs-orange_money']),
   ('moyensAccessibles', <String>['option-moyensAccessibles-wave']),
 ];

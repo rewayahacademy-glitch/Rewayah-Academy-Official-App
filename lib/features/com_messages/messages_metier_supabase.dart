@@ -10,6 +10,10 @@
 // les migrations ne sont pas appliquees et que les libelles ne sont pas
 // fournis (voir le rapport COM-BACK-1).
 
+import 'dart:async';
+import 'dart:typed_data';
+
+import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
@@ -17,6 +21,7 @@ import '../../core/communications/communications_supabase.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
+import 'fonctions_images_messages.dart';
 import 'port_messages_metier.dart';
 
 /// La longueur de l'apercu d'un fil dans la liste.
@@ -37,9 +42,26 @@ const Set<TypeObjetLie> _typesServeur = <TypeObjetLie>{
 class MessagesMetierSupabase implements PortMessagesMetier {
   /// Cree l'adaptateur sur un appel RPC (le client de l'application, par
   /// [appelRpcSupabase], ou un faux dans les tests).
-  MessagesMetierSupabase(this._appel, {required this.libelles});
+  MessagesMetierSupabase(
+    this._appel, {
+    required this.libelles,
+    AppelFonction? fonctions,
+    http.Client? transport,
+    // ignore: prefer_initializing_formals
+  }) : _fonctions = fonctions,
+       _transport = transport ?? http.Client();
 
   final AppelRpc _appel;
+
+  /// IMAGES-MESSAGERIE : les fonctions Edge ; `null` : aucune image.
+  final AppelFonction? _fonctions;
+  final http.Client _transport;
+
+  /// Les miniatures lues, par fil (au plus [_filsGardes]) : UNE demande par
+  /// fil ouvert, renouvelee seulement a l'expiration (1 h).
+  final Map<String, Future<Map<String, AdresseImage>>> _miniatures =
+      <String, Future<Map<String, AdresseImage>>>{};
+  static const int _filsGardes = 6;
 
   /// Les mots composes a partir des donnees du serveur.
   final LibellesCommunication libelles;
@@ -194,6 +216,11 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     String texte,
     String cleIdempotence,
   ) async {
+    await _poster(filId, texte, cleIdempotence);
+  }
+
+  /// Poste le message ; rend son identifiant.
+  Future<String> _poster(String filId, String texte, String cle) async {
     final String message = texte.trim();
     if (message.isEmpty) throw ArgumentError.value(texte, 'texte');
     if (!estUuid(filId)) throw ArgumentError.value(filId, 'filId');
@@ -205,7 +232,7 @@ class MessagesMetierSupabase implements PortMessagesMetier {
       reponse = await _appel('com_envoyer_message', <String, dynamic>{
         'p_fil_id': filId,
         'p_texte': message,
-        'p_cle_idempotence': cleServeur(cleIdempotence),
+        'p_cle_idempotence': cleServeur(cle),
       });
     } on PostgrestException catch (e) {
       // MESSAGES-CANDIDAT : la limite de 30 messages par jour d'un candidat
@@ -217,7 +244,172 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     } finally {
       _generation += 1;
     }
-    texteJson(objetJson(reponse), 'id');
+    return texteJson(objetJson(reponse), 'id');
+  }
+
+  @override
+  Future<void> envoyerImage(
+    String filId,
+    String texte,
+    String cleIdempotence,
+    ImagePrete image, {
+    ProgressionImage? progression,
+  }) async {
+    final AppelFonction? fonctions = _fonctions;
+    if (fonctions == null) throw const CapaciteIndisponible('COM-BR-02');
+    final String messageId = await _poster(filId, texte, cleIdempotence);
+    progression?.call(0.05);
+    final Map<String, dynamic> depot = await fonctions(
+      'message-image-depot',
+      <String, dynamic>{
+        'action': 'demander',
+        'message_id': messageId,
+        'image': <String, dynamic>{
+          'mime': image.mime,
+          'octets': image.octets.length,
+          'largeur': image.largeur,
+          'hauteur': image.hauteur,
+          if (image.couleurMoyenne != null)
+            'couleur_moyenne': image.couleurMoyenne,
+        },
+        'miniature': <String, dynamic>{
+          'mime': image.mimeMiniature,
+          'octets': image.miniature.length,
+        },
+      },
+    );
+    final String imageId = texteJson(depot, 'image_id');
+    progression?.call(0.1);
+    await _deposer(objetJson(depot['image']), image.octets);
+    progression?.call(0.85);
+    await _deposer(objetJson(depot['miniature']), image.miniature);
+    progression?.call(0.95);
+    await fonctions('message-image-depot', <String, dynamic>{
+      'action': 'confirmer',
+      'image_id': imageId,
+    });
+    progression?.call(1);
+    unawaited(_miniatures.remove(filId));
+  }
+
+  /// Le `PUT` signe : exactement les en-tetes exiges par le serveur.
+  Future<void> _deposer(Map<String, dynamic> cible, Uint8List octets) async {
+    final Uri url = Uri.parse(texteJson(cible, 'url'));
+    final Object? exiges = cible['en_tetes_exiges'];
+    if (url.scheme != 'https' || exiges is! Map) {
+      throw const EchecImage(RefusImage.depotImpossible);
+    }
+    final http.StreamedResponse reponse;
+    try {
+      final http.Request demande = http.Request('PUT', url)
+        ..headers.addAll(<String, String>{
+          for (final MapEntry<Object?, Object?> e in exiges.entries)
+            if (e.key is String &&
+                e.value is String &&
+                e.key != 'content-length')
+              e.key! as String: e.value! as String,
+        })
+        ..bodyBytes = octets;
+      reponse = await _transport.send(demande);
+      await reponse.stream.drain<void>();
+    } on Object {
+      // Aucune reponse du stockage : l'envoi a coupe, ou l'origine du seau
+      // refuse cette adresse.
+      throw const EchecImage(RefusImage.envoiStockage);
+    }
+    if (reponse.statusCode < 200 || reponse.statusCode >= 300) {
+      throw const EchecImage(RefusImage.envoiStockage);
+    }
+  }
+
+  @override
+  Future<Map<String, AdresseImage>> urlsMiniatures(String filId) {
+    final AppelFonction? fonctions = _fonctions;
+    if (fonctions == null || !estUuid(filId)) {
+      return Future<Map<String, AdresseImage>>.value(
+        const <String, AdresseImage>{},
+      );
+    }
+    final Future<Map<String, AdresseImage>>? gardees = _miniatures[filId];
+    if (gardees != null) {
+      return gardees.then((Map<String, AdresseImage> m) {
+        final bool perimees = m.values.any(
+          (AdresseImage a) => !a.expireLe.isAfter(DateTime.now()),
+        );
+        if (!perimees) return m;
+        _miniatures.remove(filId);
+        return urlsMiniatures(filId);
+      });
+    }
+    while (_miniatures.length >= _filsGardes) {
+      _miniatures.remove(_miniatures.keys.first);
+    }
+    final Future<Map<String, AdresseImage>> demande = _lireAdresses(
+      fonctions,
+      <String, dynamic>{'fil_id': filId},
+    );
+    _miniatures[filId] = demande;
+    // Un echec ne reste pas en memoire : la prochaine ouverture redemande.
+    unawaited(
+      demande.then<void>((_) {}, onError: (_) => _miniatures.remove(filId)),
+    );
+    return demande;
+  }
+
+  @override
+  Future<AdresseImage?> urlImage(String filId, String imageId) async {
+    final AppelFonction? fonctions = _fonctions;
+    if (fonctions == null || !estUuid(filId) || !estUuid(imageId)) return null;
+    final Map<String, AdresseImage> lues = await _lireAdresses(
+      fonctions,
+      <String, dynamic>{'fil_id': filId, 'image_id': imageId},
+    );
+    return lues[imageId];
+  }
+
+  Future<Map<String, AdresseImage>> _lireAdresses(
+    AppelFonction fonctions,
+    Map<String, dynamic> corps,
+  ) async {
+    final Map<String, dynamic> reponse = await fonctions(
+      'message-images-lecture',
+      corps,
+    );
+    final DateTime maintenant = DateTime.now();
+    final Map<String, AdresseImage> rendues = <String, AdresseImage>{};
+    for (final Map<String, dynamic> l in listeJson(reponse['images'])) {
+      final Object? url = l['url'];
+      final Object? id = l['id'];
+      if (id is! String || url is! String) continue;
+      final Object? duree = l['expire_dans_secondes'];
+      // Une minute de marge : on renouvelle avant l'expiration reelle.
+      final int secondes = (duree is int ? duree : 3600) - 60;
+      rendues[id] = AdresseImage(
+        url: url,
+        expireLe: maintenant.add(Duration(seconds: secondes)),
+      );
+    }
+    return rendues;
+  }
+
+  @override
+  Future<EtatCoeur> aimer(String messageId) =>
+      _coeur('aimer_message', messageId);
+
+  @override
+  Future<EtatCoeur> nePlusAimer(String messageId) =>
+      _coeur('ne_plus_aimer_message', messageId);
+
+  Future<EtatCoeur> _coeur(String fonction, String messageId) async {
+    if (!estUuid(messageId)) throw ArgumentError.value(messageId, 'messageId');
+    final Map<String, dynamic> r = objetJson(
+      await _appel(fonction, <String, dynamic>{'p_message': messageId}),
+    );
+    final Object? n = r['coeurs'];
+    return EtatCoeur(
+      coeurs: n is int && n > 0 ? n : 0,
+      aimeParMoi: r['aime_par_moi'] == true,
+    );
   }
 }
 
@@ -288,6 +480,11 @@ FilMetier filMetierJson(
           ),
           texte: texteJson(m, 'texte'),
           envoyeLe: instantJson(m, 'envoye_le'),
+          image: ImageMessage.depuisJson(m['image']),
+          coeurs: m['coeurs'] is int && (m['coeurs'] as int) > 0
+              ? m['coeurs'] as int
+              : 0,
+          aimeParMoi: m['aime_par_moi'] == true,
         ),
     ],
     attention: _attention(fil['non_lus']),

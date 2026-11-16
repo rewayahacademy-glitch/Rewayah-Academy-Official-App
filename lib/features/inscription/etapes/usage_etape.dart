@@ -10,8 +10,10 @@ import '../../../core/recrutement/port_invitations_enseignant.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/choice_card_group.dart';
+import '../../../core/widgets/lien_fleche.dart';
 import '../brouillon_inscription.dart';
 import '../code_comptable_retenu.dart';
 import '../inscription_page.dart';
@@ -63,6 +65,28 @@ class UsageEtape extends ConsumerWidget {
       }
     });
 
+    // Les deux chemins de l'enseignant, ceux d'en bas de page et la ligne du
+    // haut (POSTULER-ICI) : un seul code, aucune route nouvelle.
+    void deposerSansCode() {
+      controleur.deposerSansCode();
+      // Sans code : tout code deja verifie est mis de cote, pour que la porte
+      // de l'inscription ne soit jamais ambigue.
+      ref.read(codeInvitationRetenuProvider.notifier).oublier();
+      context.go(Routes.inscriptionIdentite);
+    }
+
+    void versLeCodeEnseignant() {
+      controleur.choisirUsage(UsageInscription.enseignant);
+      // Le serveur refuse tout profil enseignant sans code valide : sans code
+      // retenu, on ouvre toujours le champ du code (si la verification n'est
+      // pas branchee, l'ecran le dit).
+      if (ref.read(codeInvitationRetenuProvider) == null) {
+        context.go(Routes.inscriptionInvitation);
+      } else {
+        avancerDepuis(context, ref.read(brouillonInscriptionProvider), _route);
+      }
+    }
+
     return CoquilleEtape(
       route: _route,
       choix: true,
@@ -104,13 +128,7 @@ class UsageEtape extends ConsumerWidget {
                 libelle: t.inscription.usage.deposerCandidature,
                 niveau: NiveauAction.tertiaire,
                 pleineLargeur: false,
-                onPress: () {
-                  controleur.deposerSansCode();
-                  // Sans code : tout code deja verifie est mis de cote, pour
-                  // que la porte de l'inscription ne soit jamais ambigue.
-                  ref.read(codeInvitationRetenuProvider.notifier).oublier();
-                  context.go(Routes.inscriptionIdentite);
-                },
+                onPress: deposerSansCode,
               ),
             ),
           Center(
@@ -119,21 +137,7 @@ class UsageEtape extends ConsumerWidget {
               libelle: t.inscription.usage.enseignant,
               niveau: NiveauAction.tertiaire,
               pleineLargeur: false,
-              onPress: () {
-                controleur.choisirUsage(UsageInscription.enseignant);
-                // Le serveur refuse tout profil enseignant sans code valide :
-                // sans code retenu, on ouvre toujours le champ du code (si la
-                // verification n'est pas branchee, l'ecran le dit).
-                if (ref.read(codeInvitationRetenuProvider) == null) {
-                  context.go(Routes.inscriptionInvitation);
-                } else {
-                  avancerDepuis(
-                    context,
-                    ref.read(brouillonInscriptionProvider),
-                    _route,
-                  );
-                }
-              },
+              onPress: versLeCodeEnseignant,
             ),
           ),
           if (comptableInvitable) ...<Widget>[
@@ -175,6 +179,19 @@ class UsageEtape extends ConsumerWidget {
       enfant: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          // POSTULER-ICI (directeur, 16/11/2026) : des enseignants se sont
+          // inscrits par erreur comme eleves. Une ligne visible tout en haut,
+          // avant le choix, mene au parcours de candidature qui existe deja.
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: const Key('inscription-postuler-ici'),
+              libelle: t.inscription.usage.postulerIci,
+              alignerEnDebut: true,
+              onPress: sansCodeOuvert ? deposerSansCode : versLeCodeEnseignant,
+            ),
+          ),
+          Ecart.vLg,
           // Admission, lot B (directeur, 29/10/2026, apres une eleve adulte
           // perdue le 28/10) : deux grands choix egaux, cote a cote, en haut,
           // « Je m'inscris pour moi » et « J'inscris mon enfant ».

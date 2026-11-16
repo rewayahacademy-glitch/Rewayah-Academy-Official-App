@@ -35,8 +35,10 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
 import 'package:rewayah_academy/features/admin_candidature/libelles_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/garde_interface.dart';
@@ -186,6 +188,7 @@ Future<void> _monter(
   horsLigne: horsLigne,
   largeur: largeur,
   identifiant: identifiant,
+  ouvrirRubriques: false,
 );
 
 Future<void> _tapper(WidgetTester tester, Finder f) async {
@@ -195,10 +198,69 @@ Future<void> _tapper(WidgetTester tester, Finder f) async {
   await laisser(tester);
 }
 
-Future<void> _ouvrirMenu(WidgetTester tester, String libelle) async {
-  await _tapper(tester, find.byKey(BlocProchaineAction.cleMenu));
-  await tester.tap(find.text(libelle));
+/// La prochaine action du serveur, ou qu'elle soit dans le dossier en trois
+/// etages (BE-DOSSIER) : la decision de la barre, ou le lien de la rubrique.
+const List<String> _clesPrincipal = <String>[
+  'candidature-decision-leverPause',
+  'candidature-decision-validerPiece',
+  'rubrique-geste-confirmerMoyenPaiement',
+  'candidature-decision-admettreVerifications',
+];
+
+/// La prochaine action : la premiere de la table du serveur qui est vraiment
+/// proposee (un bouton grise de la barre n'en est pas une).
+Finder _principal() {
+  Finder? dernier;
+  for (final String cle in _clesPrincipal) {
+    dernier = find.byWidgetPredicate(
+      (Widget w) =>
+          w.key == ValueKey<String>(cle) &&
+          (w is! ActionPrincipale || w.onPress != null),
+    );
+    if (dernier.evaluate().isNotEmpty) return dernier;
+  }
+  return dernier!;
+}
+
+Future<void> _agirPrincipal(WidgetTester tester) =>
+    _tapper(tester, _principal().first);
+
+/// Un geste, ou qu'il soit : la decision de la barre, le lien de sa rubrique,
+/// sinon le menu « ⋯ ».
+Future<void> _geste(WidgetTester tester, GesteCandidature g) async {
+  for (final Key k in <Key>[
+    ValueKey<String>('candidature-decision-${g.name}'),
+    ValueKey<String>('rubrique-geste-${g.name}'),
+  ]) {
+    if (find.byKey(k).evaluate().isNotEmpty) {
+      await _tapper(tester, find.byKey(k));
+      return;
+    }
+  }
+  await _tapper(tester, find.byKey(BarreDecisionDossier.cleMenu));
+  await tester.tap(find.text(libelleGeste(g)));
   await laisser(tester);
+}
+
+/// Ouvre une rubrique du dossier.
+Future<void> _ouvrir(WidgetTester tester, RubriqueDossierCode c) async {
+  // Une rubrique deja ouverte (c'est elle qui bloque) reste ouverte.
+  if (find.byKey(RubriqueDossier.cleContenu(c)).evaluate().isNotEmpty) return;
+  final Finder entete = find.byKey(RubriqueDossier.cleEntete(c));
+  await tester.ensureVisible(entete);
+  await laisser(tester, fois: 2);
+  await tester.tap(entete, warnIfMissed: false);
+  await laisser(tester);
+}
+
+/// Ouvre toutes les rubriques (le test lit leur contenu).
+Future<void> _toutOuvrir(WidgetTester tester) async {
+  for (final RubriqueDossierCode c in RubriqueDossierCode.values) {
+    final Finder entete = find.byKey(RubriqueDossier.cleEntete(c));
+    if (entete.evaluate().isNotEmpty) {
+      await _ouvrir(tester, c);
+    }
+  }
 }
 
 Future<void> _saisirMotif(WidgetTester tester, String texte) async {
@@ -239,6 +301,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
+      await _toutOuvrir(tester);
       expect(find.text('Amina Diallo'), findsWidgets);
       // La reference s'affiche aux traits d'union insecables (U+2011).
       expect(find.text('CAND‑0000C1'), findsOneWidget);
@@ -251,21 +314,20 @@ void main() {
       verifierUnSeulBoutonPlein(tester);
     });
 
-    testWidgets('l\'ordre des sections est celui de la fiche', (
+    testWidgets('l\'ordre : etage 1, resume, puis les rubriques', (
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
       final List<Key> ordre = <Key>[
-        // SALLE2-FICHE (14/11/2026) : la decision, puis la piece et
-        // l'entretien, avant les reponses ; aucun bloc vide (blocages et
-        // controles non servis, affectation, courriels) n'est rendu.
-        const ValueKey<String>('candidature-situation'),
-        const ValueKey<String>('candidature-action'),
-        const ValueKey<String>('candidature-piece-entretien'),
-        const ValueKey<String>('candidature-reponses'),
-        const ValueKey<String>('candidature-responsable'),
-        const ValueKey<String>('candidature-contact'),
-        const ValueKey<String>('candidature-historique'),
+        // BE-DOSSIER (16/11/2026) : trois etages, rubriques repliees.
+        EtageUnDossier.cle,
+        ResumeDossier.cle,
+        RubriqueDossier.cleDe(RubriqueDossierCode.piece),
+        RubriqueDossier.cleDe(RubriqueDossierCode.versement),
+        RubriqueDossier.cleDe(RubriqueDossierCode.langues),
+        RubriqueDossier.cleDe(RubriqueDossierCode.responsable),
+        RubriqueDossier.cleDe(RubriqueDossierCode.contact),
+        RubriqueDossier.cleDe(RubriqueDossierCode.historique),
       ];
       double precedent = -1;
       for (final Key k in ordre) {
@@ -277,26 +339,21 @@ void main() {
       }
     });
 
-    testWidgets('sur grand ecran : deux colonnes, debut puis fin', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, _port(), largeur: 1440);
-      final Offset situation = tester.getTopLeft(
-        find.byKey(const ValueKey<String>('candidature-situation')),
-      );
-      final Offset reponses = tester.getTopLeft(
-        find.byKey(const ValueKey<String>('candidature-reponses')),
-      );
-      final Offset action = tester.getTopLeft(
-        find.byKey(const ValueKey<String>('candidature-action')),
-      );
-      // SALLE2-FICHE : a gauche ce que le candidat a declare, a droite la
-      // decision, en haut, au niveau de la situation.
-      expect((reponses.dx - situation.dx).abs(), lessThan(1));
-      expect(action.dx, greaterThan(situation.dx + 300));
-      expect((action.dy - situation.dy).abs(), lessThan(40));
-      verifierUnSeulBoutonPlein(tester);
-    });
+    testWidgets(
+      'sur grand ecran : etages 1 et 2 a gauche, rubriques a droite',
+      (WidgetTester tester) async {
+        await _monter(tester, _port(), largeur: 1440);
+        final Offset etage1 = tester.getTopLeft(find.byKey(EtageUnDossier.cle));
+        final Offset resume = tester.getTopLeft(find.byKey(ResumeDossier.cle));
+        final Offset rubriques = tester.getTopLeft(
+          find.byKey(CorpsDossier.cle),
+        );
+        expect((resume.dx - etage1.dx).abs(), lessThan(1));
+        expect(rubriques.dx, greaterThan(etage1.dx + 300));
+        expect((rubriques.dy - etage1.dy).abs(), lessThan(40));
+        verifierUnSeulBoutonPlein(tester);
+      },
+    );
 
     testWidgets('rien de vide : un bloc non servi n\'est pas rendu', (
       WidgetTester tester,
@@ -304,8 +361,13 @@ void main() {
       await _monter(tester, _port());
       // SALLE2-FICHE (directeur, 14/11/2026, « rien de vide affiché ») :
       // blocages, controles, piece, affectation et courriels non servis ne
-      // sont plus rendus. Reste l'entretien, dont le port manque a ce test.
-      expect(find.text(_branchement), findsOneWidget);
+      // sont plus rendus. L'entretien, dont le port manque a ce test, n'a pas
+      // de ligne : jamais « Disponible au branchement serveur » (16/11).
+      expect(find.text(_branchement), findsNothing);
+      expect(
+        find.byKey(RubriqueDossier.cleDe(RubriqueDossierCode.entretien)),
+        findsNothing,
+      );
       expect(
         find.byKey(const ValueKey<String>('candidature-affectation')),
         findsNothing,
@@ -341,23 +403,23 @@ void main() {
         ),
       );
       final String texte = _toutLeTexte(tester);
+      // « Ce qui bloque » (etage 1) nomme chaque controle faux avec sa cause :
+      // aucune cause ne se perd avec le bloc « Controles ».
       expect(
         texte,
         contains(t.admin.candidatures.controles.noms.cadreReligieux),
       );
       expect(texte, contains(t.admin.candidatures.controles.causes.nonAccepte));
       expect(texte, contains(t.admin.candidatures.controles.causes.perime));
-      expect(
-        find.text(t.admin.candidatures.detail.controlesVrai),
-        findsOneWidget,
-      );
+      // Les accords bloquent : leur rubrique s'ouvre, le controle y est dit.
       expect(
         find.text(t.admin.candidatures.detail.controlesFaux),
         findsWidgets,
       );
-      // Plus de « branchement » pour les deux blocs de controles ; reste
-      // l'entretien, dont le port manque a ce test (SALLE2-FICHE).
-      expect(find.text(_branchement), findsOneWidget);
+      // Plus de bloc « Controles » ; l'entretien, dont le port manque a ce
+      // test, n'a pas de ligne (SALLE2-FICHE, 16/11).
+      expect(find.byKey(BlocControles.cle), findsNothing);
+      expect(find.text(_branchement), findsNothing);
       for (final String code in _codesBruts) {
         expect(texte, isNot(contains(code)));
       }
@@ -368,7 +430,8 @@ void main() {
     ) async {
       await _monter(tester, _port(detail: detailTest(genre: 'female')));
       final String texte = _toutLeTexte(tester);
-      expect(texte, contains(t.admin.candidatures.colonnes.genre));
+      // En tete de la fiche (etage 1), en mots.
+      expect(find.byKey(EtageUnDossier.cleReperes), findsOneWidget);
       expect(texte, contains(t.admin.candidatures.genres.female));
       expect(texte, isNot(contains('female')));
     });
@@ -380,6 +443,7 @@ void main() {
           tester,
           _port(detail: detailTest(courrielAObtenir: true)),
         );
+        await _toutOuvrir(tester);
         final String texte = _toutLeTexte(tester);
         for (final String code in _codesBruts) {
           expect(texte, isNot(contains(code)), reason: code);
@@ -406,6 +470,7 @@ void main() {
           ),
         ),
       );
+      await _toutOuvrir(tester);
       final String texte = _toutLeTexte(tester);
       expect(texte, contains(t.admin.candidatures.etats.enPause));
       expect(texte, contains(t.admin.candidatures.modeles.pauseAttenteBesoin));
@@ -457,18 +522,21 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
+      await _toutOuvrir(tester);
       final String texte = _toutLeTexte(tester);
       for (final String titre in <String>[
         t.admin.candidatures.detail.cartes.langues,
         t.admin.candidatures.detail.cartes.recitation,
         t.admin.candidatures.detail.cartes.disponibilites,
         t.admin.candidatures.detail.cartes.publics,
-        t.admin.candidatures.detail.cartes.versement,
+        // Le groupe « versement » est la rubrique « Versement ».
+        t.recrutement.dossier3.rubrique.versement,
       ]) {
         expect(texte, contains(titre));
       }
       expect(texte, contains('Hafs, Warsh'));
-      expect(texte, contains('salle-examen-1'));
+      // BE-DOSSIER : plus de texte technique (« Version du questionnaire »).
+      expect(texte, isNot(contains('salle-examen-1')));
       expect(texte, contains(t.recrutement.parcours.oui));
       // Les operateurs sont nommes quand le referentiel les sert.
       expect(texte, contains('Orange Money'));
@@ -481,6 +549,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port(moyens: const <String, MoyensConfirmes>{}));
+      await _toutOuvrir(tester);
       final String texte = _toutLeTexte(tester);
       expect(texte, contains(t.admin.candidatures.detail.moyensIndiques(n: 1)));
       expect(texte, isNot(contains('orange_money')));
@@ -508,6 +577,7 @@ void main() {
           ),
         ),
       );
+      await _toutOuvrir(tester);
       expect(find.text(t.admin.candidatures.detail.preRempli), findsOneWidget);
       expect(
         _toutLeTexte(tester),
@@ -534,6 +604,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
+      await _ouvrir(tester, RubriqueDossierCode.historique);
       await _tapper(tester, find.byKey(BlocHistorique.clePlus));
       final String texte = _toutLeTexte(tester);
       expect(texte, contains(t.admin.candidatures.historique.auteur.personne));
@@ -563,6 +634,7 @@ void main() {
       (WidgetTester tester) async {
         final FauxCandidaturesDirection port = _port();
         await _monter(tester, port);
+        await _ouvrir(tester, RubriqueDossierCode.historique);
         expect(port.appelsHistorique, <int?>[null]);
         expect(
           find.text(t.admin.candidatures.historique.types.creee),
@@ -590,12 +662,13 @@ void main() {
           ),
         );
         await _monter(tester, port);
+        await _ouvrir(tester, RubriqueDossierCode.historique);
         await _tapper(tester, find.byKey(BlocHistorique.clePlus));
         expect(
           find.text(t.admin.candidatures.historique.types.creee),
           findsOneWidget,
         );
-        await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+        await _agirPrincipal(tester);
         await _valider(tester);
         // L'ancien curseur ne vaut plus : la page plus ancienne se referme, et
         // le lien repart de la nouvelle premiere page.
@@ -612,6 +685,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port(historique: const <EvenementCandidature>[]));
+      await _ouvrir(tester, RubriqueDossierCode.historique);
       expect(
         find.text(t.admin.candidatures.detail.historiqueVide),
         findsOneWidget,
@@ -624,6 +698,7 @@ void main() {
       final FauxCandidaturesDirection port = _port()
         ..erreurHistorique = StateError('panne');
       await _monter(tester, port);
+      await _ouvrir(tester, RubriqueDossierCode.historique);
       expect(
         find.text(t.admin.candidatures.detail.historiqueEchec),
         findsOneWidget,
@@ -638,6 +713,7 @@ void main() {
     ) async {
       final FauxCandidaturesDirection port = _port();
       await _monter(tester, port);
+      await _ouvrir(tester, RubriqueDossierCode.contact);
       expect(
         find.text(t.admin.candidatures.detail.contact.masque),
         findsOneWidget,
@@ -685,6 +761,7 @@ void main() {
           ),
         ),
       );
+      await _ouvrir(tester, RubriqueDossierCode.contact);
       expect(find.byKey(BlocContact.cleVoir), findsNothing);
       expect(
         find.text(t.admin.candidatures.detail.contact.journal),
@@ -761,8 +838,8 @@ void main() {
     ) async {
       await _monter(tester, _port(), horsLigne: true);
       expect(find.text('Amina Diallo'), findsWidgets);
-      expect(find.byKey(BlocProchaineAction.cleBouton), findsNothing);
-      expect(find.byKey(BlocProchaineAction.cleMenu), findsNothing);
+      expect(_principal(), findsNothing);
+      expect(find.byKey(BarreDecisionDossier.cleMenu), findsNothing);
       expect(find.byKey(BlocContact.cleVoir), findsNothing);
       expect(find.text(t.admin.candidatures.erreurs.horsLigne), findsOneWidget);
       expect(_pleins(), 0);
@@ -854,6 +931,7 @@ void main() {
       final FauxCandidaturesDirection port = _port();
       await monterCandidature(
         tester,
+        ouvrirRubriques: false,
         port: port,
         reference: 'CAND-99999',
         identifiant: null,
@@ -869,7 +947,7 @@ void main() {
   group('la prochaine action et le menu', () {
     /// Les entrees du menu ouvert, dans l'ordre ou elles s'affichent.
     Future<List<String>> menu(WidgetTester tester) async {
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleMenu));
+      await _tapper(tester, find.byKey(BarreDecisionDossier.cleMenu));
       return <String>[
         for (final Element e
             in find
@@ -886,7 +964,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
-      final Finder bouton = find.byKey(BlocProchaineAction.cleBouton);
+      // BE-DOSSIER : « Confirmer le moyen » est a cote du versement, replie ;
+      // « Ecarter » aussi ; la barre garde les trois decisions.
+      final Finder bouton = _principal();
       expect(bouton, findsOneWidget);
       expect(
         find.descendant(
@@ -895,16 +975,17 @@ void main() {
         ),
         findsOneWidget,
       );
+      expect(
+        find.byKey(
+          const ValueKey<String>('rubrique-geste-infirmerMoyenPaiement'),
+        ),
+        findsOneWidget,
+      );
       verifierUnSeulBoutonPlein(tester);
       final List<String> autres = await menu(tester);
       expect(autres, <String>[
-        t.admin.candidatures.gestes.demanderComplement,
-        t.admin.candidatures.gestes.ecarterMoyen,
-        t.admin.candidatures.gestes.admettre,
         t.admin.candidatures.gestes.mettreEnPause,
-        t.admin.candidatures.gestes.refuser,
         t.admin.candidatures.gestes.retrait,
-        t.admin.candidatures.gestes.responsable,
       ]);
     });
 
@@ -914,14 +995,20 @@ void main() {
       await _monter(tester, _port(detail: _compatible()));
       expect(
         find.descendant(
-          of: find.byKey(BlocProchaineAction.cleBouton),
+          of: _principal(),
           // SALLE2-FICHE : « Accepter », avec « Demander une precision » et
           // « Refuser » visibles a cote, hors du menu.
           matching: find.text(t.admin.candidatures.decision.accepter),
         ),
         findsOneWidget,
       );
-      expect(find.text(t.admin.candidatures.decision.preciser), findsOneWidget);
+      // Demander une precision : dans la barre et a cote de chaque groupe.
+      expect(
+        find.byKey(
+          BarreDecisionDossier.cleBouton(GesteCandidature.demanderComplement),
+        ),
+        findsOneWidget,
+      );
       expect(find.text(t.admin.candidatures.decision.refuser), findsOneWidget);
       final List<String> autres = await menu(tester);
       expect(
@@ -929,7 +1016,14 @@ void main() {
         isNot(contains(t.admin.candidatures.gestes.confirmerMoyen)),
       );
       expect(autres, isNot(contains(t.admin.candidatures.gestes.refuser)));
-      expect(autres, contains(t.admin.candidatures.gestes.ecarterMoyen));
+      // Ecarter le moyen est a cote du versement, plus dans le menu.
+      expect(autres, isNot(contains(t.admin.candidatures.gestes.ecarterMoyen)));
+      expect(
+        find.byKey(
+          const ValueKey<String>('rubrique-geste-infirmerMoyenPaiement'),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('en pause : lever la pause, et aucune autre mise en pause', (
@@ -938,7 +1032,7 @@ void main() {
       await _monter(tester, _port(detail: detailTest(enPause: true)));
       expect(
         find.descendant(
-          of: find.byKey(BlocProchaineAction.cleBouton),
+          of: _principal(),
           matching: find.text(t.admin.candidatures.gestes.leverPause),
         ),
         findsOneWidget,
@@ -948,7 +1042,11 @@ void main() {
         autres,
         isNot(contains(t.admin.candidatures.gestes.mettreEnPause)),
       );
-      expect(autres, contains(t.admin.candidatures.gestes.refuser));
+      // Refuser reste dans la barre, a cote de lever la pause.
+      expect(
+        find.byKey(BarreDecisionDossier.cleBouton(GesteCandidature.refuser)),
+        findsOneWidget,
+      );
     });
 
     testWidgets('a completer : en attente de la personne, aucun bouton plein', (
@@ -958,12 +1056,21 @@ void main() {
         tester,
         _port(detail: detailTest(etat: EtatCandidature.aCompleter)),
       );
-      expect(find.byKey(BlocProchaineAction.cleBouton), findsNothing);
+      expect(_principal(), findsNothing);
       expect(
         find.text(t.admin.candidatures.detail.enAttentePersonne),
         findsOneWidget,
       );
+      // Accepter est grise, avec sa raison ; aucun bouton plein.
       expect(_pleins(), 0);
+      expect(
+        find.byKey(
+          BarreDecisionDossier.cleRaison(
+            GesteCandidature.admettreVerifications,
+          ),
+        ),
+        findsOneWidget,
+      );
     });
 
     testWidgets('refusee : fermee, rouvrir est dans le menu', (
@@ -979,13 +1086,14 @@ void main() {
         ),
       );
       expect(find.text(t.admin.candidatures.detail.fermee), findsOneWidget);
-      expect(find.byKey(BlocProchaineAction.cleBouton), findsNothing);
-      final List<String> autres = await menu(tester);
-      expect(autres, <String>[t.admin.candidatures.gestes.rouvrir]);
+      expect(_principal(), findsNothing);
+      await _ouvrir(tester, RubriqueDossierCode.historique);
       expect(
         _toutLeTexte(tester),
         contains(t.admin.candidatures.modeles.refusNiveau),
       );
+      final List<String> autres = await menu(tester);
+      expect(autres, <String>[t.admin.candidatures.gestes.rouvrir]);
     });
 
     testWidgets('en Salle de verification : complement, clore, retrait...', (
@@ -1002,15 +1110,12 @@ void main() {
         ),
       );
       // Aucune prochaine action ouverte par le serveur (l'entretien est L4).
-      expect(find.byKey(BlocProchaineAction.cleBouton), findsNothing);
+      expect(_principal(), findsNothing);
       final List<String> autres = await menu(tester);
       expect(autres, <String>[
-        t.admin.candidatures.gestes.demanderComplement,
         t.admin.candidatures.gestes.cloreComplement,
         t.admin.candidatures.gestes.mettreEnPause,
-        t.admin.candidatures.gestes.refuser,
         t.admin.candidatures.gestes.retrait,
-        t.admin.candidatures.gestes.responsable,
       ]);
     });
 
@@ -1018,8 +1123,8 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port(capacites: capacitesQuiLit));
-      expect(find.byKey(BlocProchaineAction.cleBouton), findsNothing);
-      expect(find.byKey(BlocProchaineAction.cleMenu), findsNothing);
+      expect(_principal(), findsNothing);
+      expect(find.byKey(BarreDecisionDossier.cleMenu), findsNothing);
       expect(_pleins(), 0);
     });
 
@@ -1043,13 +1148,18 @@ void main() {
           ),
         ),
       );
-      expect(find.byKey(BlocProchaineAction.cleBouton), findsNothing);
-      final List<String> autres = await menu(tester);
-      expect(autres, isNot(contains(t.admin.candidatures.gestes.refuser)));
+      // Refuser n'est pas propose : le bouton n'est pas rendu (K-56).
       expect(
-        autres,
-        isNot(contains(t.admin.candidatures.gestes.confirmerMoyen)),
+        find.byKey(BarreDecisionDossier.cleBouton(GesteCandidature.refuser)),
+        findsNothing,
       );
+      expect(
+        find.byKey(
+          const ValueKey<String>('rubrique-geste-confirmerMoyenPaiement'),
+        ),
+        findsNothing,
+      );
+      final List<String> autres = await menu(tester);
       expect(autres, contains(t.admin.candidatures.gestes.mettreEnPause));
     });
   });
@@ -1063,7 +1173,7 @@ void main() {
               _apres(a, paiement: EtatVersement.compatible),
         );
         await _monter(tester, port);
-        await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+        await _agirPrincipal(tester);
         expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
         // La consequence se lit avant le choix.
         expect(
@@ -1106,7 +1216,7 @@ void main() {
         // Le versement relu est confirme : la prochaine action change.
         expect(
           find.descendant(
-            of: find.byKey(BlocProchaineAction.cleBouton),
+            of: _principal(),
             matching: find.text(t.admin.candidatures.decision.accepter),
           ),
           findsOneWidget,
@@ -1135,7 +1245,7 @@ void main() {
           ),
         ),
       );
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       expect(
         find.text(t.admin.candidatures.moyens.aucunDeclare),
         findsOneWidget,
@@ -1149,7 +1259,7 @@ void main() {
     ) async {
       final FauxCandidaturesDirection port = _port();
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.ecarterMoyen);
+      await _geste(tester, GesteCandidature.infirmerMoyenPaiement);
       await _valider(tester);
       expect(port.appelsGeste, isEmpty);
       expect(find.text(t.admin.candidatures.moyens.manquant), findsOneWidget);
@@ -1175,7 +1285,7 @@ void main() {
             _apres(a, issue: IssueCandidature.refusee),
       );
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.refuser);
+      await _geste(tester, GesteCandidature.refuser);
       // Les quatre messages du serveur, nommes ; le motif interne n'est pas
       // ce que la personne lit.
       for (final String nom in <String>[
@@ -1223,7 +1333,7 @@ void main() {
     ) async {
       final FauxCandidaturesDirection port = _port();
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.demanderComplement);
+      await _geste(tester, GesteCandidature.demanderComplement);
       // La liste fermee de la Salle d'examen, par ses libelles.
       expect(
         find.text(t.recrutement.questionnaire.disponibilites),
@@ -1311,7 +1421,7 @@ void main() {
           ),
         ),
       );
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.demanderComplement);
+      await _geste(tester, GesteCandidature.demanderComplement);
       expect(find.text(t.admin.candidatures.complement.piece), findsOneWidget);
       expect(find.text(t.recrutement.portail.elementContrat), findsOneWidget);
       // COMPLEMENT-ET-FORMATS : la salle 2 ne change pas.
@@ -1330,7 +1440,7 @@ void main() {
         ),
       );
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.cloreComplement);
+      await _geste(tester, GesteCandidature.cloreComplement);
       await _valider(tester);
       expect(port.appelsGeste, isEmpty);
       expect(
@@ -1357,7 +1467,7 @@ void main() {
               _apres(a, enPause: true),
         );
         await _monter(tester, port);
-        await _ouvrirMenu(tester, t.admin.candidatures.gestes.mettreEnPause);
+        await _geste(tester, GesteCandidature.mettreEnPause);
         expect(find.text(t.admin.candidatures.pause.reprise), findsOneWidget);
         await _valider(tester);
         expect(port.appelsGeste, isEmpty);
@@ -1378,7 +1488,7 @@ void main() {
         // Relue : en pause, la prochaine action est de la lever.
         expect(
           find.descendant(
-            of: find.byKey(BlocProchaineAction.cleBouton),
+            of: _principal(),
             matching: find.text(t.admin.candidatures.gestes.leverPause),
           ),
           findsOneWidget,
@@ -1391,7 +1501,7 @@ void main() {
       (WidgetTester tester) async {
         final FauxCandidaturesDirection port = _port();
         await _monter(tester, port);
-        await _ouvrirMenu(tester, t.admin.candidatures.gestes.mettreEnPause);
+        await _geste(tester, GesteCandidature.mettreEnPause);
         await tester.tap(find.byKey(const ValueKey<String>('champ-date')));
         await laisser(tester);
         // Le premier jour permis est demain : aujourd'hui (22) est grise.
@@ -1423,7 +1533,7 @@ void main() {
             _apres(a, enPause: false),
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       expect(find.byKey(FeuilleGeste.cleMotif), findsNothing);
       await _valider(tester);
       final DemandeGeste d = port.appelsGeste.single.demande;
@@ -1447,7 +1557,7 @@ void main() {
         ),
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       expect(
         find.text(t.admin.candidatures.consequences.admettre),
         findsWidgets,
@@ -1467,7 +1577,7 @@ void main() {
     ) async {
       final FauxCandidaturesDirection port = _port();
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.retrait);
+      await _geste(tester, GesteCandidature.consignerRetrait);
       expect(
         find.text(t.admin.candidatures.retrait.canaux.conversation),
         findsOneWidget,
@@ -1514,12 +1624,13 @@ void main() {
       // par jour). Recue le 1er a 23 h 30 UTC : le jour de reception est le 1er.
       await monterCandidature(
         tester,
+        ouvrirRubriques: false,
         port: _port(
           detail: detailTest(recueLe: DateTime.utc(2026, 10, 1, 23, 30)),
         ),
         maintenant: DateTime.utc(2026, 10, 22, 23, 30),
       );
-      await _ouvrirMenu(tester, libelleGeste(geste));
+      await _geste(tester, geste);
     }
 
     testWidgets('la reprise d\'une pause se compte en jour UTC, comme le '
@@ -1549,7 +1660,7 @@ void main() {
             _apres(a, issue: IssueCandidature.enCours),
       );
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.rouvrir);
+      await _geste(tester, GesteCandidature.rouvrir);
       await _valider(tester);
       expect(port.appelsGeste, isEmpty);
       await _saisirMotif(tester, 'Erreur de saisie.');
@@ -1569,7 +1680,7 @@ void main() {
         ],
       );
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.responsable);
+      await _geste(tester, GesteCandidature.definirResponsable);
       expect(find.text('Salma Idrissi'), findsOneWidget);
       expect(
         find.descendant(
@@ -1592,7 +1703,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port(responsablesIndisponibles: true));
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.responsable);
+      await _geste(tester, GesteCandidature.definirResponsable);
       expect(find.text(_branchement), findsWidgets);
       expect(find.byKey(FeuilleGeste.cleValider), findsNothing);
       expect(find.byKey(FeuilleGeste.cleAnnuler), findsOneWidget);
@@ -1612,7 +1723,7 @@ void main() {
             ),
           ),
         );
-        await _ouvrirMenu(tester, t.admin.candidatures.gestes.refuser);
+        await _geste(tester, GesteCandidature.refuser);
         expect(find.text(_branchement), findsWidgets);
         expect(find.byKey(FeuilleGeste.cleValider), findsNothing);
       },
@@ -1623,7 +1734,7 @@ void main() {
     ) async {
       final FauxCandidaturesDirection port = _port();
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.refuser);
+      await _geste(tester, GesteCandidature.refuser);
       await _saisirMotif(tester, 'Un motif.');
       await _tapper(tester, find.byKey(FeuilleGeste.cleAnnuler));
       expect(find.byKey(FeuilleGeste.cle), findsNothing);
@@ -1635,7 +1746,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.demanderComplement);
+      await _geste(tester, GesteCandidature.demanderComplement);
       // Le geste motive : un bouton principal, « Annuler » secondaire.
       final Finder valider = find.byKey(FeuilleGeste.cleValider);
       expect(valider, findsOneWidget);
@@ -1655,7 +1766,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.refuser);
+      await _geste(tester, GesteCandidature.refuser);
       expect(
         tester
             .widget<ActionPrincipale>(find.byKey(FeuilleGeste.cleValider))
@@ -1676,7 +1787,7 @@ void main() {
         erreurGeste: (DemandeGeste _, int _) => refus,
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       await _valider(tester);
     }
 
@@ -1774,7 +1885,7 @@ void main() {
         erreurGeste: (DemandeGeste _, int _) => const ConflitGeste(7),
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       await _valider(tester);
       expect(find.text(t.admin.candidatures.erreurs.conflit), findsOneWidget);
       expect(find.byKey(FeuilleGeste.cleValider), findsNothing);
@@ -1794,7 +1905,7 @@ void main() {
         erreurGeste: (DemandeGeste _, int _) => const AucunComplement(),
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       await _valider(tester);
       expect(
         find.text(t.admin.candidatures.erreurs.aucunComplement),
@@ -1821,7 +1932,7 @@ void main() {
           paiement: EtatVersement.compatible,
           version: 9,
         );
-        await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+        await _agirPrincipal(tester);
         await _valider(tester);
         expect(find.text(t.admin.candidatures.erreurs.conflit), findsOneWidget);
         expect(port.details['c1']!.version, 9);
@@ -1886,7 +1997,7 @@ void main() {
         ),
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       await _valider(tester);
       // Non confirme : on le dit comme tel, jamais « non envoye ».
       expect(
@@ -1918,7 +2029,7 @@ void main() {
             essai == 1 ? const GesteNonConfirme() : null,
       );
       await _monter(tester, port);
-      await _ouvrirMenu(tester, t.admin.candidatures.gestes.rouvrir);
+      await _geste(tester, GesteCandidature.rouvrir);
       await _saisirMotif(tester, 'Premier motif.');
       await _valider(tester);
       expect(
@@ -1949,10 +2060,10 @@ void main() {
           },
         );
         await _monter(tester, port);
-        await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+        await _agirPrincipal(tester);
         await _valider(tester);
         await _tapper(tester, find.byKey(FeuilleGeste.cleRelire));
-        await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+        await _agirPrincipal(tester);
         await _valider(tester);
         expect(cles, hasLength(2));
         expect(cles[0], isNot(cles[1]));
@@ -1973,7 +2084,7 @@ void main() {
           ),
         )..perteApresEcriture = true;
         await _monter(tester, port);
-        await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+        await _agirPrincipal(tester);
         await _valider(tester);
         expect(
           find.text(t.admin.candidatures.erreurs.nonConfirme),
@@ -1996,7 +2107,7 @@ void main() {
         erreurGeste: (DemandeGeste _, int _) => StateError('panne'),
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       await _valider(tester);
       expect(find.text(t.admin.candidatures.erreurs.generique), findsOneWidget);
       expect(find.text(t.admin.candidatures.retours.admettre), findsNothing);
@@ -2013,7 +2124,7 @@ void main() {
             essai == 1 ? StateError('panne') : null,
       );
       await _monter(tester, port);
-      await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+      await _agirPrincipal(tester);
       await _valider(tester);
       await _valider(tester);
       expect(port.appelsGeste, hasLength(2));
@@ -2032,7 +2143,7 @@ void main() {
               const PermissionInsuffisante('geste'),
         );
         await _monter(tester, port);
-        await _tapper(tester, find.byKey(BlocProchaineAction.cleBouton));
+        await _agirPrincipal(tester);
         await _valider(tester);
         expect(
           find.text(t.admin.candidatures.erreurs.permission),

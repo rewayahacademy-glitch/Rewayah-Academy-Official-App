@@ -28,6 +28,7 @@ import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
 import 'fil_contextuel.dart';
+import 'images_du_fil.dart';
 import 'port_messages_metier.dart';
 
 /// Le fil [filId], lu, ecrit et suivi en direct dans la page qui le pose.
@@ -191,6 +192,9 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
                 ?.peut(CapaciteCommunication.ecrireDansFil) ??
             false,
         onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
+        images: imagesDuFil(ref, fil.id).source,
+        onAimer: imagesDuFil(ref, fil.id).aimer,
+        onEnvoyerImage: imagesDuFil(ref, fil.id).envoyer,
         onEnvoyerVocal: vocalOuvert(ref)
             ? (EnregistrementVocal v, String cle) =>
                   _envoyerVocal(fil.id, v, cle)

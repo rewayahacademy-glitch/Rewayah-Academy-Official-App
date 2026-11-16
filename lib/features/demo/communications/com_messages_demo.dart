@@ -11,6 +11,8 @@
 // Le role mis en scene est un choix d'affichage de la demonstration, jamais
 // un role de session : il ne sert qu'a choisir les fixtures.
 
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` n'est pas exporte par l'entree principale de Riverpod 3.
@@ -421,6 +423,124 @@ class MessagesMetierDemo implements PortMessagesMetier {
     final FilMetier? f = _fils[filId];
     if (f == null) return;
     _fils[filId] = _copie(f, attention: IndicateurAttention.aucun);
+  }
+
+  /// IMAGES-MESSAGERIE : les octets des images de la demonstration, par
+  /// identifiant d'image (les captures et les tests y posent les leurs).
+  final Map<String, Uint8List> imagesEnMemoire = <String, Uint8List>{};
+
+  /// L'image rendue par l'envoi, par identifiant de message, pour les tests.
+  final List<ImagePrete> imagesRecues = <ImagePrete>[];
+
+  /// Un appel de `aimer` ou `nePlusAimer` echoue tant que ce drapeau est
+  /// vrai (retour arriere du coeur, tests).
+  bool coeurEnEchec = false;
+
+  @override
+  Future<void> envoyerImage(
+    String filId,
+    String texte,
+    String cle,
+    ImagePrete image, {
+    ProgressionImage? progression,
+  }) async {
+    clesRecues.add(cle);
+    final FilMetier? f = _fils[filId];
+    if (f == null || !f.peut(CapaciteFil.ecrire)) {
+      throw StateError('Fil non autorise');
+    }
+    if (situation == SituationDemoMessages.horsLigne ||
+        situation == SituationDemoMessages.echecEnvoi &&
+            _clesEnEchec.add(cle)) {
+      throw const EchecImage(RefusImage.reseau);
+    }
+    progression?.call(0.5);
+    final Participant soi = f.participants.firstWhere(
+      (Participant p) => p.estSoi,
+    );
+    final String imageId = 'image-$cle';
+    imagesEnMemoire[imageId] = image.octets;
+    imagesRecues.add(image);
+    _fils[filId] = _copie(
+      f,
+      messages: <MessageCommunication>[
+        ...f.messages,
+        MessageCommunication(
+          id: 'envoye-$cle',
+          auteur: soi,
+          texte: texte,
+          envoyeLe: DateTime.now().toUtc(),
+          image: ImageMessage(
+            id: imageId,
+            largeur: image.largeur,
+            hauteur: image.hauteur,
+            couleurMoyenne: image.couleurMoyenne,
+          ),
+        ),
+      ],
+    );
+    progression?.call(1);
+  }
+
+  @override
+  Future<Map<String, AdresseImage>> urlsMiniatures(String filId) async {
+    final DateTime fin = DateTime.now().add(const Duration(hours: 1));
+    return <String, AdresseImage>{
+      for (final MessageCommunication m
+          in _fils[filId]?.messages ?? const <MessageCommunication>[])
+        if (m.image case final ImageMessage i
+            when i.etat != EtatImageMessage.supprimee &&
+                imagesEnMemoire.containsKey(i.id))
+          i.id: AdresseImage(
+            url: 'demo:${i.id}',
+            expireLe: fin,
+            octets: imagesEnMemoire[i.id],
+          ),
+    };
+  }
+
+  @override
+  Future<AdresseImage?> urlImage(String filId, String imageId) async =>
+      (await urlsMiniatures(filId))[imageId];
+
+  @override
+  Future<EtatCoeur> aimer(String messageId) => _coeur(messageId, aime: true);
+
+  @override
+  Future<EtatCoeur> nePlusAimer(String messageId) =>
+      _coeur(messageId, aime: false);
+
+  Future<EtatCoeur> _coeur(String messageId, {required bool aime}) async {
+    if (coeurEnEchec) throw StateError('Coeur non confirme');
+    for (final MapEntry<String, FilMetier> e in _fils.entries) {
+      final int i = e.value.messages.indexWhere(
+        (MessageCommunication m) => m.id == messageId,
+      );
+      if (i < 0) continue;
+      final MessageCommunication m = e.value.messages[i];
+      if (m.aimeParMoi == aime) {
+        return EtatCoeur(coeurs: m.coeurs, aimeParMoi: aime);
+      }
+      final int coeurs = aime ? m.coeurs + 1 : (m.coeurs - 1).clamp(0, 1 << 30);
+      final List<MessageCommunication> messages = List<MessageCommunication>.of(
+        e.value.messages,
+      );
+      messages[i] = MessageCommunication(
+        id: m.id,
+        auteur: m.auteur,
+        texte: m.texte,
+        envoyeLe: m.envoyeLe,
+        etat: m.etat,
+        piecesJointes: m.piecesJointes,
+        mentionneSoi: m.mentionneSoi,
+        image: m.image,
+        coeurs: coeurs,
+        aimeParMoi: aime,
+      );
+      _fils[e.key] = _copie(e.value, messages: messages);
+      return EtatCoeur(coeurs: coeurs, aimeParMoi: aime);
+    }
+    throw StateError('Message inconnu');
   }
 
   @override

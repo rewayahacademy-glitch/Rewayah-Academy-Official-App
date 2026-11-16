@@ -362,6 +362,36 @@ export async function objetExiste(
   throw new ErreurStockageR2('signature', domaine, 'verification impossible')
 }
 
+/// Retire un objet. Un objet deja absent (404) n'est pas une erreur : la
+/// suppression est idempotente, et la purge peut etre rejouee. Sert a une seule
+/// chose : l'expiration des images de la messagerie (IMAGES-MESSAGERIE). Aucune
+/// URL pre-signee de suppression n'existe : l'appel est fait par le serveur.
+export async function supprimerObjet(
+  domaine: DomaineStockage,
+  cle: string,
+  env?: LecteurEnvironnement,
+): Promise<void> {
+  const { config, aws } = clientDe(domaine, env)
+  const url = urlObjet(config, cle)
+
+  let reponse: Response
+  try {
+    reponse = await aws.fetch(url.toString(), { method: 'DELETE' })
+  } catch (e) {
+    console.error('retrait d objet impossible', {
+      domaine,
+      classe: (e as Error)?.name ?? 'inconnue',
+    })
+    throw new ErreurStockageR2('signature', domaine, 'retrait impossible')
+  }
+  await reponse.body?.cancel()
+  if (reponse.status === 200 || reponse.status === 204 || reponse.status === 404) {
+    return
+  }
+  console.error('retrait d objet : reponse inattendue', { domaine, statut: reponse.status })
+  throw new ErreurStockageR2('signature', domaine, 'retrait impossible')
+}
+
 /// La tete d'un objet : au plus `longueur` octets, et le type de contenu signe.
 export interface EnteteObjet {
   readonly octets: Uint8Array
@@ -459,7 +489,7 @@ export async function lireEnteteObjet(
 /// l'exploitation n'a pas besoin.
 export interface TraceStockage {
   readonly domaine: DomaineStockage
-  readonly operation: 'lecture' | 'depot'
+  readonly operation: 'lecture' | 'depot' | 'suppression'
   readonly statut: 'accorde' | 'refuse' | 'echec'
   readonly ressource?: string
   readonly correlation?: string

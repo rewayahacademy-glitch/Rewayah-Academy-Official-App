@@ -252,11 +252,16 @@ class _ParcoursState extends ConsumerState<_Parcours> {
           );
         case EtapeChamp():
           final String code = etape.champ.code;
+          final Object? compte = _c.reponse('compteBancaire');
+          final bool? compteBancaire = compte is bool ? compte : null;
           return CoquilleParcours(
             numero: numero,
             total: total,
-            titre: titreQuestion(code) ?? '',
-            explication: explicationQuestion(code),
+            titre: titreQuestion(code, compteBancaire: compteBancaire) ?? '',
+            explication: explicationQuestion(
+              code,
+              compteBancaire: compteBancaire,
+            ),
             entete: _entete(etape),
             enfant: QuestionEtape(etape: etape, controleur: _c),
             libelleAction: t.commun.continuer,

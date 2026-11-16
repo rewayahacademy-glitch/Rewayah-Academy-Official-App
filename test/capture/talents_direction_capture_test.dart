@@ -30,6 +30,8 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/features/admin_candidature/bloc_autres_competences.dart';
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
+import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 
 import '../fixtures/candidature/faux_autres_competences.dart';
 import '../fixtures/candidature/faux_candidatures_direction.dart';
@@ -134,6 +136,16 @@ Future<void> _monter(
   await stabiliser(tester);
 }
 
+/// Ouvre la rubrique « Autres competences » du dossier (BE-DOSSIER).
+Future<void> _ouvrirTalents(WidgetTester tester) async {
+  const RubriqueDossierCode c = RubriqueDossierCode.talents;
+  if (find.byKey(RubriqueDossier.cleContenu(c)).evaluate().isNotEmpty) return;
+  final Finder entete = find.byKey(RubriqueDossier.cleEntete(c));
+  await tester.ensureVisible(entete);
+  await tester.tap(entete);
+  await stabiliser(tester);
+}
+
 Future<void> _photoSur(WidgetTester tester, Key cle, String nom) async {
   final Finder f = find.byKey(cle);
   await Scrollable.ensureVisible(tester.element(f), alignment: 0.02);
@@ -165,6 +177,7 @@ void main() {
           route: fiche,
           extra: 'c1',
         );
+        await _ouvrirTalents(tester);
         await _photoSur(
           tester,
           BlocAutresCompetences.cle,
@@ -175,6 +188,7 @@ void main() {
       testWidgets('fiche sans reponse $nom clair', (WidgetTester tester) async {
         fixerVueCapture(tester, taille, 1, zoneSure: zone);
         await _monter(tester, _port(), route: fiche, extra: 'c1');
+        await _ouvrirTalents(tester);
         await _photoSur(
           tester,
           BlocAutresCompetences.cle,
@@ -223,6 +237,7 @@ void main() {
         extra: 'c1',
         mode: ThemeMode.dark,
       );
+      await _ouvrirTalents(tester);
       await _photoSur(
         tester,
         BlocAutresCompetences.cle,
@@ -239,6 +254,7 @@ void main() {
         route: fiche,
         extra: 'c1',
       );
+      await _ouvrirTalents(tester);
       await _photoSur(
         tester,
         BlocAutresCompetences.cle,

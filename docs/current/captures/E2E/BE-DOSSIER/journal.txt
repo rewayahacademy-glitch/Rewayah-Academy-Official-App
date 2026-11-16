@@ -1,0 +1,34 @@
+BE-DOSSIER, 16/11/2026. Journal des captures (refaites apres le retour du directeur :
+synthese en tableau, rubriques qui s'animent sans faire sauter la page, quatre largeurs).
+
+Commande : CAPTURE_DIR=<ce dossier> flutter test --no-pub test/capture/be_dossier_capture_test.dart
+Resultat : 10 tests, tous passes. 16 images.
+
+Largeurs : 360 (plie), 673 et 884 (deplie), 1366. A 360 et 673 : une colonne ; a 884 et 1366 :
+etages 1 et 2 a gauche, rubriques a droite (seuil 840).
+
+Position du premier geste de decision (« Accepter »), haut du bouton, depuis le haut de la
+fenetre, mesuree par le test :
+- 360 x 800  : y = 673 sur 800 points (barre du haut de l'application comprise).
+- 673 x 840  : y = 498 sur 840 points.
+- 884 x 900  : y = 458 sur 900 points (colonne de gauche, sous la synthese).
+- 1366 x 768 : y = 494 sur 768 points.
+
+Images :
+- dossier_<largeur> : le dossier tel qu'il s'ouvre (rubriques repliees, sauf la piece, qui
+  bloque), etage 1, synthese en tableau, barre de decision.
+- dossier_historique_<largeur> : la rubrique Historique ouverte, amenee en vue.
+- photo_en_grand_<largeur> : la photo touchee, en grand (image fictive de test).
+- dossier_arabe_360 et dossier_arabe_1366 : interface en arabe, de droite a gauche ; le
+  tableau se retourne, les heures et nombres restent en chiffres latins isoles.
+
+Ce que prouvent les tests (dossier_trois_etages_test.dart) : aux quatre largeurs, aucun
+debordement, rubriques ouvertes comprises ; changer de largeur a la volee (360, 673, 884,
+1366, puis retour) sans erreur et sans fermer les rubriques ouvertes ; a la fermeture comme a
+l'ouverture d'une rubrique, le titre touche ne bouge pas (moins de 1 point, image par image) ;
+la hauteur s'anime (une image du milieu est entre replie et deplie).
+
+Ce que ces captures ne prouvent pas :
+- Aucune donnee reelle, aucune photo ni piece reelle.
+- Aucun robot E2E sur pile locale, rien sur staging ni en production.
+- L'animation n'est pas filmee : seules des images fixes sont jointes.

@@ -5,6 +5,7 @@ où ils ne se perdront pas » ; plusieurs agents à petits modèles, sous des r�
 
 | Quoi | Où |
 | :--- | :--- |
+| **L'état réel du parcours, les goulots et le plan pour finir, dans l'ordre (directeur, 16/11 : « sinon ça va se perdre »)** | `ETAT-ET-PLAN-2026-11-16.md` |
 | La stratégie complète (constats prouvés, idée, règles, vagues 0 à 5) | `../STRATEGIE-BUREAU-EQUIPE-2026-11-15.md` |
 | **Le suivi lot par lot (à tenir à jour à chaque PR)** | `SUIVI.md` |
 | **Le secrétaire IA (vision du directeur, liste complète, niveaux d'autonomie, connecteur)** | `SECRETAIRE-IA.md` |
@@ -13,7 +14,7 @@ où ils ne se perdront pas » ; plusieurs agents à petits modèles, sous des r�
 | Un cahier d'une page par lot | `CAHIER-*.md` |
 | La ligne du registre | `../REGISTRE-LOTS.md`, « BUREAU-EQUIPE » |
 
-Un agent qui reprend ce chantier lit ce fichier, puis `SUIVI.md`, puis le cahier de son lot.
+Un agent qui reprend ce chantier lit ce fichier, puis `ETAT-ET-PLAN-2026-11-16.md`, puis `SUIVI.md`, puis le cahier de son lot.
 Rien d'autre n'est nécessaire.
 
 Décisions du directeur sur ce chantier :

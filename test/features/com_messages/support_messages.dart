@@ -162,7 +162,7 @@ String cheminCourant(GoRouter routeur) =>
     routeur.routerDelegate.currentConfiguration.uri.path;
 
 /// Un port double, reglable : contenu, echecs, attente, refus.
-class FauxMessagesMetier implements PortMessagesMetier {
+class FauxMessagesMetier with SansImagesMessages implements PortMessagesMetier {
   /// Cree le port.
   FauxMessagesMetier({
     List<FilMetier> fils = const <FilMetier>[],

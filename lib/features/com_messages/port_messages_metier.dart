@@ -239,11 +239,69 @@ abstract interface class PortMessagesMetier {
   /// serveur et echoue sinon ; [cleIdempotence] est generee par l'ecran et
   /// rejouee telle quelle a chaque nouvel essai du meme message.
   Future<void> envoyer(String filId, String texte, String cleIdempotence);
+
+  /// IMAGES-MESSAGERIE : envoie le message [texte] (non vide : le serveur
+  /// n'en accepte pas sans) puis rattache [image] a ce message (demande,
+  /// deux `PUT`, confirmation). [progression] va de 0 a 1. Le futur echoue
+  /// par [EchecImage] (une phrase par cause) ; [cleIdempotence] est rejouee
+  /// telle quelle a chaque nouvel essai.
+  Future<void> envoyerImage(
+    String filId,
+    String texte,
+    String cleIdempotence,
+    ImagePrete image, {
+    ProgressionImage? progression,
+  });
+
+  /// Les adresses des miniatures du fil, par identifiant d'image : UNE
+  /// demande par fil ouvert, gardee en memoire jusqu'a son expiration (1 h).
+  Future<Map<String, AdresseImage>> urlsMiniatures(String filId);
+
+  /// L'adresse de l'image complete, demandee a l'ouverture seulement ;
+  /// `null` si l'image est retiree.
+  Future<AdresseImage?> urlImage(String filId, String imageId);
+
+  /// Pose mon coeur sur [messageId] (sans effet s'il y est deja).
+  Future<EtatCoeur> aimer(String messageId);
+
+  /// Retire mon coeur de [messageId] (sans effet s'il n'y est pas).
+  Future<EtatCoeur> nePlusAimer(String messageId);
+}
+
+/// Les cinq gestes d'images et de coeurs, tous refuses : pour les faux et les
+/// ports qui ne portent pas encore le lot.
+mixin SansImagesMessages {
+  /// Aucun envoi d'image.
+  Future<void> envoyerImage(
+    String filId,
+    String texte,
+    String cleIdempotence,
+    ImagePrete image, {
+    ProgressionImage? progression,
+  }) => Future<void>.error(const CapaciteIndisponible('COM-BR-02'));
+
+  /// Aucune miniature.
+  Future<Map<String, AdresseImage>> urlsMiniatures(String filId) =>
+      Future<Map<String, AdresseImage>>.value(const <String, AdresseImage>{});
+
+  /// Aucune image.
+  Future<AdresseImage?> urlImage(String filId, String imageId) =>
+      Future<AdresseImage?>.value();
+
+  /// Aucun coeur.
+  Future<EtatCoeur> aimer(String messageId) =>
+      Future<EtatCoeur>.error(const CapaciteIndisponible('COM-BR-02'));
+
+  /// Aucun coeur.
+  Future<EtatCoeur> nePlusAimer(String messageId) =>
+      Future<EtatCoeur>.error(const CapaciteIndisponible('COM-BR-02'));
 }
 
 /// Les Messages metier tant qu'aucun contrat n'existe : tout rend
 /// [CapaciteIndisponible], jamais une liste vide ni un faux succes.
-class MessagesMetierIndisponibles implements PortMessagesMetier {
+class MessagesMetierIndisponibles
+    with SansImagesMessages
+    implements PortMessagesMetier {
   /// Cree l'implementation.
   const MessagesMetierIndisponibles();
 

@@ -85,8 +85,13 @@ class MenuActions extends StatelessWidget {
     this.fermetureNette = false,
     this.icone,
     this.declencheur,
+    this.controleur,
     super.key,
   });
+
+  /// IMAGES-MESSAGERIE : ouvre le menu depuis un appui long, sans passer par
+  /// le declencheur.
+  final MenuAncreControleur? controleur;
 
   /// NAV-REFONTE etape 3 (11/11/2026) : un declencheur dessine par
   /// l'appelant (le pied Compte du panneau : photo, prenom, chevron), a la
@@ -137,6 +142,7 @@ class MenuActions extends StatelessWidget {
         Theme.of(context).textTheme.labelLarge ?? const TextStyle();
 
     return MenuAncre<int>(
+      controleur: controleur,
       libelle: _libelleSemantique,
       contraintes: contraintesMenu,
       animation: fermetureNette ? AnimationStyle.noAnimation : animationMenu,

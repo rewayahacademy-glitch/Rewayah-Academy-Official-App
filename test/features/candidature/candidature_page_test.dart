@@ -771,9 +771,12 @@ void main() {
           findsOneWidget,
         );
         await continuer(tester);
-        // Le pays de versement repart de la residence, modifiable.
+        // VERSEMENT-QUESTIONS : le compte bancaire d'abord ; « oui », le pays de
+        // ce compte repart de la residence, modifiable.
+        await toucherCle(tester, 'option-compteBancaire-oui');
+        await continuer(tester);
         expect(
-          _texte(t.recrutement.parcours.q.paysVersement.titre),
+          _texte(t.recrutement.parcours.q.paysVersementCompte.titre),
           findsOneWidget,
         );
         expect(
@@ -1407,7 +1410,7 @@ void main() {
     });
 
     testWidgets(
-      'Arabie saoudite : le virement seul, une phrase, jamais une liste vide',
+      'Arabie saoudite, sans compte bancaire : le virement seul, une phrase, jamais une liste vide',
       (WidgetTester tester) async {
         final FauxMaCandidature port = FauxMaCandidature();
         await monterQuestionnaire(tester, port: port);
@@ -1415,9 +1418,10 @@ void main() {
         for (final (String nom, List<String> touches) in parcoursComplet) {
           if (nom == 'paysResidence') {
             await toucherCle(tester, 'option-paysResidence-SA');
-          } else if (nom == 'compteBancaire') {
-            await toucherCle(tester, 'option-compteBancaire-oui');
           } else if (nom == 'operateurs') {
+            // VERSEMENT-QUESTIONS (16/11/2026) : sans compte (« non », le cas
+            // de parcoursComplet), le pays du mobile money puis ses services :
+            // en Arabie saoudite, seul le virement est confirme.
             break;
           } else {
             for (final String cle in touches) {
@@ -1434,6 +1438,36 @@ void main() {
           find.byKey(const ValueKey<String>('option-operateurs-wave')),
           findsNothing,
         );
+      },
+    );
+
+    testWidgets(
+      'VERSEMENT-QUESTIONS : avec un compte bancaire, le parcours saute les '
+      'services de mobile money et passe aux moyens du pays',
+      (WidgetTester tester) async {
+        await monterQuestionnaire(tester, port: FauxMaCandidature());
+        await passerLaPresentation(tester);
+        for (final (String nom, List<String> touches) in parcoursComplet) {
+          if (nom == 'compteBancaire') {
+            await toucherCle(tester, 'option-compteBancaire-oui');
+          } else if (nom == 'operateurs') {
+            // Jamais pose : le parcours est deja a l'ecran suivant.
+            expect(
+              find.byKey(const ValueKey<String>('option-operateurs-wave')),
+              findsNothing,
+            );
+            expect(
+              _texte(t.recrutement.parcours.q.operateurs.titre),
+              findsNothing,
+            );
+            break;
+          } else {
+            for (final String cle in touches) {
+              await toucherCle(tester, cle);
+            }
+          }
+          await continuer(tester);
+        }
       },
     );
 
@@ -1496,13 +1530,14 @@ void main() {
           find.byKey(const ValueKey<String>('versement-changer-pays')),
         );
         await tester.pumpAndSettle();
+        // Le parcours complet a repondu « non » au compte : le pays du mobile money.
         expect(
-          _texte(t.recrutement.parcours.q.paysVersement.titre),
+          _texte(t.recrutement.parcours.q.paysVersementMobile.titre),
           findsOneWidget,
         );
         // La phrase du proche de confiance est lue avant le choix.
         expect(
-          _texte(t.recrutement.parcours.q.paysVersement.explication),
+          _texte(t.recrutement.parcours.q.paysVersementMobile.explication),
           findsOneWidget,
         );
       },
