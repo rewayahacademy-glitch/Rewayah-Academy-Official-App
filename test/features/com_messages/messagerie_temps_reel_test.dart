@@ -21,7 +21,7 @@ import 'support_messages.dart';
 
 /// Le port de demonstration, avec des messages arrives « d'ailleurs » apres
 /// l'ouverture du fil : ils s'ajoutent a chaque lecture du fil.
-class _PortVivant implements PortMessagesMetier {
+class _PortVivant with SansImagesMessages implements PortMessagesMetier {
   _PortVivant(this.demo);
 
   final MessagesMetierDemo demo;

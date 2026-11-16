@@ -39,7 +39,7 @@ Future<void> _langue(WidgetTester tester, AppLocale langue) async {
 }
 
 /// Un port de demonstration qui recoit un message « d'ailleurs ».
-class _PortVivant implements PortMessagesMetier {
+class _PortVivant with SansImagesMessages implements PortMessagesMetier {
   _PortVivant(this.demo);
 
   final PortMessagesMetier demo;

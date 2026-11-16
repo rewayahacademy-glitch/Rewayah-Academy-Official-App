@@ -10402,6 +10402,7 @@ class _Traductions$com$messages$en extends Traductions$com$messages$fr {
 	@override late final _Traductions$com$messages$types$en types = _Traductions$com$messages$types$en._(_root);
 	@override late final _Traductions$com$messages$panneau$en panneau = _Traductions$com$messages$panneau$en._(_root);
 	@override late final _Traductions$com$messages$fil$en fil = _Traductions$com$messages$fil$en._(_root);
+	@override late final _Traductions$com$messages$images$en images = _Traductions$com$messages$images$en._(_root);
 	@override late final _Traductions$com$messages$demo$en demo = _Traductions$com$messages$demo$en._(_root);
 	@override String get titre => _root.com.socle.lexique.messagesMetier;
 	@override String get vide => 'No conversation yet.';
@@ -19200,6 +19201,36 @@ class _Traductions$com$messages$fil$en extends Traductions$com$messages$fil$fr {
 	@override String get lectureSeule => 'You can read this conversation. Replying is not open to you here.';
 }
 
+// Path: com.messages.images
+class _Traductions$com$messages$images$en extends Traductions$com$messages$images$fr {
+	_Traductions$com$messages$images$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get joindre => 'Attach an image';
+	@override String get prendrePhoto => 'Take a photo';
+	@override String get choisirGalerie => 'Choose from the gallery';
+	@override String get retiree => 'Image removed after 90 days';
+	@override String get fermer => 'Close image';
+	@override String get enregistrer => 'Save image';
+	@override String get enregistree => 'Image saved';
+	@override String get enregistrementEchec => 'Saving the image is not confirmed. Your device or browser refused the file: try again in a moment.';
+	@override String get imageJointe => 'Image attached to the message';
+	@override String get chargement => 'Loading image';
+	@override String envoiEnCours({required Object pourcent}) => 'Sending image: ${pourcent}%';
+	@override String get preparation => 'Preparing image';
+	@override String get jaime => 'Like';
+	@override String get nePlusAimer => 'Unlike';
+	@override String get copierTexte => 'Copy text';
+	@override String get texteCopie => 'Text copied';
+	@override String get actionsMessage => 'Message actions';
+	@override String get aimeParVous => 'Liked by you';
+	@override String aimes({required Object n}) => 'Likes: ${n}';
+	@override String get coeurEchec => 'Your like is not confirmed. Try again in a moment.';
+	@override late final _Traductions$com$messages$images$refus$en refus = _Traductions$com$messages$images$refus$en._(_root);
+}
+
 // Path: com.messages.demo
 class _Traductions$com$messages$demo$en extends Traductions$com$messages$demo$fr {
 	_Traductions$com$messages$demo$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -25129,6 +25160,32 @@ class _Traductions$com$socle$navigation$demo$en extends Traductions$com$socle$na
 	@override String get titre => 'Communications demo';
 	@override String get detail => 'Fictional data, absent from production versions.';
 	@override String get choisir => 'Choose a space to try.';
+}
+
+// Path: com.messages.images.refus
+class _Traductions$com$messages$images$refus$en extends Traductions$com$messages$images$refus$fr {
+	_Traductions$com$messages$images$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get demandeInvalide => 'This image is not confirmed: its size or format is not what was expected. Choose another photo.';
+	@override String get typeRefuse => 'This file type is not accepted. Choose a JPEG, PNG or WebP photo.';
+	@override String get imageTropLourde => 'This image is too heavy, even after shrinking. Choose a lighter photo.';
+	@override String get nonAutorise => 'You cannot attach an image to this message. Your text was sent: write without an image.';
+	@override String get mineurRefuse => 'Images are not open to student accounts under 18. Write your message without an image.';
+	@override String get limiteHoraire => 'You have sent 20 images in the last hour: that is the limit. Try again in an hour.';
+	@override String get dejaUneImage => 'This message already received its image, or its upload was abandoned. Write a new message to attach an image.';
+	@override String get depotIndisponible => 'This image upload is no longer valid (too old, or already finished). Write a new message to attach the image.';
+	@override String get contenuDifferent => 'This file is not an image of the announced type. Choose a real photo.';
+	@override String get objetIntrouvable => 'The image did not arrive whole on the server. Try again.';
+	@override String get stockageIndisponible => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.';
+	@override String get confirmationIndisponible => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.';
+	@override String get depotImpossible => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.';
+	@override String get envoiStockage => 'Storage refused the image (expired address or interrupted upload). Try again.';
+	@override String get reseau => 'The image may not have reached Rewayah. Try again in a moment.';
+	@override String get imageTropGrosse => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.';
+	@override String get imageIllisible => 'This photo cannot be read. Choose another photo.';
 }
 
 // Path: com.messages.demo.roles
@@ -37171,6 +37228,43 @@ extension on TraductionsEn {
 			'com.messages.panneau.inaccessible' => 'This subject is no longer open to you. The conversation stays readable.',
 			'com.messages.panneau.vous' => 'You',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
+			'com.messages.images.joindre' => 'Attach an image',
+			'com.messages.images.prendrePhoto' => 'Take a photo',
+			'com.messages.images.choisirGalerie' => 'Choose from the gallery',
+			'com.messages.images.retiree' => 'Image removed after 90 days',
+			'com.messages.images.fermer' => 'Close image',
+			'com.messages.images.enregistrer' => 'Save image',
+			'com.messages.images.enregistree' => 'Image saved',
+			'com.messages.images.enregistrementEchec' => 'Saving the image is not confirmed. Your device or browser refused the file: try again in a moment.',
+			'com.messages.images.imageJointe' => 'Image attached to the message',
+			'com.messages.images.chargement' => 'Loading image',
+			'com.messages.images.envoiEnCours' => ({required Object pourcent}) => 'Sending image: ${pourcent}%',
+			'com.messages.images.preparation' => 'Preparing image',
+			'com.messages.images.jaime' => 'Like',
+			'com.messages.images.nePlusAimer' => 'Unlike',
+			'com.messages.images.copierTexte' => 'Copy text',
+			'com.messages.images.texteCopie' => 'Text copied',
+			'com.messages.images.actionsMessage' => 'Message actions',
+			'com.messages.images.aimeParVous' => 'Liked by you',
+			'com.messages.images.aimes' => ({required Object n}) => 'Likes: ${n}',
+			'com.messages.images.coeurEchec' => 'Your like is not confirmed. Try again in a moment.',
+			'com.messages.images.refus.demandeInvalide' => 'This image is not confirmed: its size or format is not what was expected. Choose another photo.',
+			'com.messages.images.refus.typeRefuse' => 'This file type is not accepted. Choose a JPEG, PNG or WebP photo.',
+			'com.messages.images.refus.imageTropLourde' => 'This image is too heavy, even after shrinking. Choose a lighter photo.',
+			'com.messages.images.refus.nonAutorise' => 'You cannot attach an image to this message. Your text was sent: write without an image.',
+			'com.messages.images.refus.mineurRefuse' => 'Images are not open to student accounts under 18. Write your message without an image.',
+			'com.messages.images.refus.limiteHoraire' => 'You have sent 20 images in the last hour: that is the limit. Try again in an hour.',
+			'com.messages.images.refus.dejaUneImage' => 'This message already received its image, or its upload was abandoned. Write a new message to attach an image.',
+			'com.messages.images.refus.depotIndisponible' => 'This image upload is no longer valid (too old, or already finished). Write a new message to attach the image.',
+			'com.messages.images.refus.contenuDifferent' => 'This file is not an image of the announced type. Choose a real photo.',
+			'com.messages.images.refus.objetIntrouvable' => 'The image did not arrive whole on the server. Try again.',
+			'com.messages.images.refus.stockageIndisponible' => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.',
+			'com.messages.images.refus.confirmationIndisponible' => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.',
+			'com.messages.images.refus.depotImpossible' => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.',
+			'com.messages.images.refus.envoiStockage' => 'Storage refused the image (expired address or interrupted upload). Try again.',
+			'com.messages.images.refus.reseau' => 'The image may not have reached Rewayah. Try again in a moment.',
+			'com.messages.images.refus.imageTropGrosse' => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.',
+			'com.messages.images.refus.imageIllisible' => 'This photo cannot be read. Choose another photo.',
 			'com.messages.demo.choisirRole' => 'Choose the point of view for this demo.',
 			'com.messages.demo.roles.tuteur' => 'Family',
 			'com.messages.demo.roles.enseignant' => 'Teacher',
@@ -37537,6 +37631,8 @@ extension on TraductionsEn {
 			'com.studio.panneau.visibilite' => 'Visibility',
 			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
 			'com.studio.panneau.fichiers' => 'Recent files',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.liens' => 'Useful links',
 			'com.studio.panneau.vous' => 'You',
 			'com.studio.panneau.parametres' => 'Channel settings',
@@ -37574,8 +37670,6 @@ extension on TraductionsEn {
 			'com.studio.recherche.messages' => 'Messages',
 			'com.studio.recherche.fichiers' => 'Files',
 			'com.studio.recherche.dansCanal' => ({required Object canal}) => 'In ${canal}',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.recherche.messageDe' => ({required Object auteur, required Object canal}) => '${auteur}, in ${canal}',
 			'com.studio.demo.focus' => 'A channel in focus mode',
 			'com.studio.demo.aujourdhuiVide' => 'Today with no activity',
@@ -38051,6 +38145,8 @@ extension on TraductionsEn {
 			'comptable.statuts.remboursement.refuse' => 'Declined',
 			'comptable.statuts.validation.enAttente' => 'Validation requested',
 			'comptable.statuts.validation.validee' => 'Validated',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.validation.refusee' => 'Declined',
 			'comptable.statuts.raison.autoPaiement' => 'Handling by another officer required',
 			'comptable.statuts.raison.validationRequise' => 'Additional validation required',
@@ -38088,8 +38184,6 @@ extension on TraductionsEn {
 			'comptable.aujourdhui.aTraiterVideDetail' => 'The payments, reminders and reconciliations to do will appear here.',
 			'comptable.aujourdhui.alertesVide' => 'No alert right now.',
 			'comptable.aujourdhui.alertesResume' => ({required Object n}) => 'Alerts to watch: ${n}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.paiementsAEffectuer' => 'Payments to make',
 			'comptable.aujourdhui.paiementsAEffectuerDetail' => 'Each payment is checked in its list before being paid.',
 			'comptable.aujourdhui.paiementsVide' => 'No payment to make.',
@@ -38565,6 +38659,8 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.titreCoordonnees' => 'My payment details',
 			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'Enter your bank details to receive your pay. It is paid to you by Wise transfer, in ${devise}.',
 			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'Your details are saved. Your next pay will be paid to them, in ${devise}.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Your details are incomplete. Complete them to receive your next pay.',
 			'comptable.beneficiaires.recevoir.wise.masquees' => 'For your security, only the last 4 characters of the numbers are shown.',
 			'comptable.beneficiaires.recevoir.wise.lecteurs' => 'Only the management and accounting read these details, when preparing the payment.',
@@ -38602,8 +38698,6 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.aide.codePostal' => 'Optional: Guinea, for example, has none.',
 			'comptable.beneficiaires.recevoir.wise.aide.adresseEtat' => 'Only in the United States and Canada, for example TX.',
 			'comptable.beneficiaires.recevoir.wise.journalEnregistrees' => 'Details saved',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.journalRetirees' => 'Details removed',
 			'comptable.beneficiaires.recevoir.wise.versementsTitre' => 'Payments received',
 			'comptable.beneficiaires.recevoir.wise.versementsVide' => 'No payment noted yet. Each pay paid will appear here.',
@@ -39079,6 +39173,8 @@ extension on TraductionsEn {
 			'juridique.lire' => 'Read',
 			'juridique.coord.societe' => 'Company: Rewayah Academy Ltd',
 			'juridique.coord.numero' => 'Registration number: 16624644, England and Wales',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.coord.adresse' => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom',
 			'juridique.aCompleter' => ({required Object quoi}) => '[to be completed by the management: ${quoi}]',
 			'juridique.quoi.hebergeur' => 'legal host and its contact details',
@@ -39116,8 +39212,6 @@ extension on TraductionsEn {
 			'juridique.conditions.s1.blocs.0' => 'Rewayah Academy offers Quran classes by video. Each student is placed in a Class: a small number of students, a recurring timetable and an assigned Teacher.',
 			'juridique.conditions.s1.blocs.1' => 'There are two plans: the child plan, from 6 to 17 years, and the adult plan, from 18 years. No minor shall be placed in an adults\' Class.',
 			'juridique.conditions.s1.blocs.2' => 'A Class opens when enough students are registered. Until then, you are on the waiting list and nothing is invoiced.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.s2.titre' => '2. Account and access',
 			'juridique.conditions.s2.blocs.0' => 'A child is registered and followed by an adult Guardian, who decides for them. See the Child protection text.',
 			'juridique.conditions.s2.blocs.1' => 'You shall give accurate information and keep your access to yourself. A session is entered through one\'s account, never through a public link.',
@@ -39593,6 +39687,8 @@ extension on TraductionsEn {
 			'accueilInvite.titre' => 'Your invitation',
 			'accueilInvite.roles.foyer' => 'Rewayah Academy invites you as a guardian.',
 			'accueilInvite.roles.enseignant' => 'Rewayah Academy invites you as a teacher.',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInvite.roles.comptable' => 'Rewayah Academy invites you as an accountant.',
 			'accueilInvite.roles.candidat' => 'Rewayah Academy invites you as a teaching applicant.',
 			'accueilInvite.invitant' => ({required Object prenom}) => 'Person inviting you to their household: ${prenom}.',
@@ -39630,8 +39726,6 @@ extension on TraductionsEn {
 			'i1.familles.toutesQuestion' => ({required Object n}) => 'Send the invitation to all the families to invite? Number of families: ${n}.',
 			'i1.familles.toutesConsequence' => 'Each family receives an email right away. An email that has gone out cannot be taken back.',
 			'i1.familles.toutesConfirmer' => ({required Object n}) => 'Yes, send to all families (${n})',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.enFile' => ({required Object email}) => 'The invitation is on its way to ${email}.',
 			'i1.familles.dejaEnFile' => ({required Object email}) => 'An invitation has already gone out or is being sent to ${email}: nothing more is sent.',
 			'i1.familles.compteCree' => 'This family has already opened their space: nothing is sent.',
@@ -40107,6 +40201,8 @@ extension on TraductionsEn {
 			'candidatsFlux.publication.retirerQuestion' => 'Withdraw your publication agreement?',
 			'candidatsFlux.publication.retirerConsequence' => 'Your name, photo and country will no longer appear on the public website. You can give your agreement again later.',
 			'candidatsFlux.publication.echec' => 'Your choice is not confirmed. Try again.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.publication.lectureEchec' => 'Your publication agreement could not be read.',
 			'candidatsFlux.publication.nonPublie' => 'The text of the publication agreement is not published yet.',
 			'candidatsFlux.publication.horsLigne' => 'Your choice can be saved when the connection returns.',
@@ -40144,8 +40240,6 @@ extension on TraductionsEn {
 			'push1.gestes.rejoindreSalle' => 'Join the room',
 			'push1.reglages.lien' => 'Notifications on this device',
 			'push1.reglages.titre' => 'Notifications on this device',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.contexte' => 'Receive an alert on this phone or computer, even when the app is closed. The alert gives no name: the detail is read in the app.',
 			'push1.reglages.categoriesTitre' => 'What you receive',
 			'push1.reglages.categoriesContexte' => 'Turn off a category to stop receiving it on your devices. It stays in the Notifications page.',
