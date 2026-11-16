@@ -28,3 +28,4 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 22 | Réponses de candidats du Bénin et du Liberia (« quelle banque ouvrir ? ») | ☑ | répondu 17:05 UTC : n’ouvrez pas de compte, nous vérifions |
 | 23 | GESTES-RAISON : pourquoi un bouton manque + flèches aux deux bords de la carte | ◐ | lancé chez BE-DOSSIER 17:00 UTC |
 | 24 | Contradiction franc CFA : Bénin « indisponible » (XOF non envoyé par Wise) mais Côte d’Ivoire et Sénégal « confirmés » (même monnaie) | ⏸ | le directeur vérifie dans Wise si le XOF part vers le Bénin (et Burkina, Mali, Niger, Togo) |
+| 25 | LP-1 serveur : lister_enseignants (phase, manque, qui attend, classes, gestes), PR #544 | ◐ | CI puis fusion et installation (lecture seule). Manques faute de donnée en base, à décider : formation, période d’essai, fin de collaboration (« parti » = compte supprimé), contrat, présence sur 30 jours, avancement des classes |
