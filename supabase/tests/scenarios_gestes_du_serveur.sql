@@ -1,4 +1,4 @@
--- GESTES-DU-SERVEUR (16/11/2026, migration 20261129630000) : chaque ligne de candidature rend `gestes`, la liste des
+-- GESTES-DU-SERVEUR (16/11/2026, migration 20261129740000) : chaque ligne de candidature rend `gestes`, la liste des
 -- gestes que la regle (private.candidature_gestes_regles) ET le droit (private.mission_droit) permettent a la session.
 -- La liste, le dossier et les voisins la lisent ; l'ecran n'a plus sa propre copie des regles. Scenarios :
 --  1 la direction, par etat (en_examen, paiement_non_disponible, entretien_a_planifier, decision_en_attente) ;

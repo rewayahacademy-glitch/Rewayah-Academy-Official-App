@@ -26,7 +26,7 @@
 -- FICHIER SANS EFFACEMENT : aucun des trois mots d'effacement. Additif : une aide neuve et une cle de plus, retouchee
 -- par ancrage (une ancre trouvee une seule fois, sinon la migration echoue). Sans BEGIN/COMMIT de premier niveau.
 -- L'aide ne porte pas le prefixe cand_ (neuf aides cand_ exactement sont attendues par les scenarios de CAND-L1).
--- Doit suivre 20261129420000 (private.mission_droit) et 20261129450000 (complementEnCours dans cand_ligne_json) : numero 20261129630000 et non 20261129430000, que le pilote avait reserve, parce que la retouche ancre sur la cle de 20261129450000 et que la CI rejoue les fichiers dans l ordre de leur nom.
+-- Doit suivre 20261129420000 (private.mission_droit) et 20261129450000 (complementEnCours dans cand_ligne_json) : numero 20261129740000 (ni 20261129430000, que le pilote avait reserve : la retouche ancre sur la cle de 20261129450000 et la CI rejoue les fichiers dans l ordre de leur nom ; ni 20261129740000, pris par PRAXIS, plage 202611296 reservee).
 
 CREATE FUNCTION pg_temp.remplacer(p_def text, p_avant text, p_apres text, p_nom text)
 RETURNS text
