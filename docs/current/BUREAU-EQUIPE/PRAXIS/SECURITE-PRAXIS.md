@@ -236,3 +236,13 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
     - le rejeu idempotent passe avant le refus du fil : accepté, car il n'écrit rien ;
     - les deux côtés de la super-administration se lisent dans `kyc_exception_super_admin` : accepté, c'est la même
       règle que l'existant.
+- **AR-10 (17/11, 00 h 00), troisième relecture indépendante de #567 (`92342aaf`).**
+  - Ce qui est prouvé :
+    - les scénarios sont verts ;
+    - `ar7` est rouge sur l'ancien code (17 contrôles), à l'exception de 4 témoins nommés ;
+    - les tests R4 et R1 détectent une écriture directe ajoutée et un paramètre de SQL libre.
+  - **Dette nommée** : le test R4 ne voit pas une écriture faite *par l'appel* d'une autre fonction de `public` ou de
+    `private` (seuls les appels `private.com_*` sont fermés). Aucune n'existe dans le code actuel.
+  - **Premier commit de PX-2, avant toute autre ligne** : étendre la liste fermée à tous les appels de fonctions de
+    ces deux schémas.
+  - **#567 est fusionnable à la CI verte.**

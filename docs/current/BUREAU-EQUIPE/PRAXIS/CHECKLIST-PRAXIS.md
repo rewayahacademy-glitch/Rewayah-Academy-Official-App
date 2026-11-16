@@ -29,7 +29,7 @@ Règles que le pilote s'impose ici :
 | 4 | Aligner le cahier PX-1 sur les étapes 2 et 3 | pilote | `../CAHIER-SEC-1-PRAXIS-MESSAGES.md` | ☑ 16/11 22 h 40 (renvoi en tête vers SECURITE et ACCES §4) |
 | 5 | PX-1 serveur et connecteur MCP : messages, annonces, clés « chat » et « routine », interrupteur, mode autonome, plafond, journal | BE-PIECE | cahier PX-1 **et `SECURITE-PRAXIS.md`, qui prévaut** | ◐ lancé le 16/11 à 22 h 20 (ordre du directeur : « tu peux d'ores et déjà lancer le travail sur l'agent ») |
 | 6 | PX-0, les cinq compétences (`agir-rewayah` d'abord), avec les règles de sécurité de l'étape 2 dedans | BE-GESTES (en parallèle de 5) | `SECRETAIRE-IA.md` §6 | ☐ démarre après 0.2 |
-| 7 | Relecture de sécurité de PX-1 par le pilote : chaque menace de l'étape 2 a son scénario de refus, vert | pilote | `SECURITE-PRAXIS.md` | ◐ #567 relue : 4 violations prouvées (réglages, fils de paie, candidatures, reprise par un comptable), corrections demandées (AR-7) |
+| 7 | Relecture de sécurité de PX-1 par le pilote : chaque menace de l'étape 2 a son scénario de refus, vert | pilote | `SECURITE-PRAXIS.md` | ☑ 17/11 00 h 00 : 3 relectures indépendantes ; 4 violations corrigées et prouvées rouge→vert (AR-7 à AR-10) ; dette R4 indirecte au 1er commit de PX-2 |
 | 8 | Fusion et installation de PX-1, Praxis **éteint** ; vérification en production (droits, `anon`, clés) | pilote | — | ☐ |
 | 9 | Écran : section Praxis de « Accès des agents IA » (émettre et révoquer une clé, interrupteur, mode autonome, plafond, ce que Praxis a envoyé) | agent écran | cahier à écrire | ☐ |
 | 10 | Affichage *#RA_PRAXIS* et *#RA_STAFF*, « Assistant de l'académie · IA », « Parler à l'équipe » | Pilote Messagerie | `SECRETAIRE-IA.md` §9 et §11 | ☐ demandé le 16/11 |
