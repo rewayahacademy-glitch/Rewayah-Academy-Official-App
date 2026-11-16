@@ -1,6 +1,6 @@
 # Checklist du pilote « Bureau de l'équipe » (depuis la passation du 16/11/2026)
 
-**Mise à jour : 16/11/2026, 21 h 15 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
+**Mise à jour : 16/11/2026, 21 h 22 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
 remplace `session_0163KjrvqR38dL9HhgktqAdg`, archivée)
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (fusionné, installé, vérifié par le pilote ; « prouvé » seulement
@@ -43,7 +43,7 @@ BE-1e, BE-1f, l'étape D.
 | 7 | #550 CLORE-COMPLEMENT-VRAI (écran) | ◐ | **en conflit avec `main`** ; confiée à BE-GESTES (fusion de `main`, slang deux fois) |
 | 8 | DISPENSE-ECRAN | ⏸ | travail **non perdu** : commit local `6aa823c66` chez BE-DOSSIER, branche `claude/dispense-ecran` jamais poussée. BE-DOSSIER refuse de pousser sans l'accord du directeur lui-même (il dit que le directeur a refusé sa dernière poussée). Non archivé exprès : l'archiver détruirait ce commit. Voir §4 |
 | 9 | DEBLOQUER-VERSEMENT-ECRAN | ◐ | BE-GESTES, après #550 et #547 ; même PR : phrases des deux nouveaux refus d'« Accueillir » |
-| 9 ter | BE-2a-1 MISSION serveur (migration 20261129420000, à installer APRÈS 410000) | ◐ | PR #565 (BE-PIECE). **Relue par le pilote, avis favorable** : tables RLS sans droit API ; fonctions privées fermées ; portes de mission réservées à la direction en double authentification (aal2) ; dans les 13 portes ouvertes, la vérification par dossier (`candidature_geste_ouvrir`) précède toute écriture (mesuré en production) ; pièce d'identité hors mission ; lectures bornées par `lire` et `voir_contact`. Attend : fusion de `main` par BE-PIECE, CI verte, puis fusion et installation (après 410000, faite) |
+| 9 ter | BE-2a-1 MISSION serveur (migration 20261129420000, à installer APRÈS 410000) | ◐ | **CI rouge 21:11** (garde AF-LB : fonctions nouvelles hors liste blanche ; correctif chez BE-PIECE). PR #565 (BE-PIECE). **Relue par le pilote, avis favorable** : tables RLS sans droit API ; fonctions privées fermées ; portes de mission réservées à la direction en double authentification (aal2) ; dans les 13 portes ouvertes, la vérification par dossier (`candidature_geste_ouvrir`) précède toute écriture (mesuré en production) ; pièce d'identité hors mission ; lectures bornées par `lire` et `voir_contact`. Attend : fusion de `main` par BE-PIECE, CI verte, puis fusion et installation (après 410000, faite) |
 | 9 bis | ACCUEIL-SEPARE serveur (migration 20261129410000) | ☑ | #564 fusionnée 21:05 (b0f913b), après fusion de `main` par le pilote (conflit REGISTRE-LOTS) et CI verte ; **installée 21:06 UTC** (20261116210608) ; fichier de `main` identique à la copie relue, 0 mot d'effacement ; vérifié : contrôles `piece_validee` et `complement_clos` présents, plus d'approbation de la pièce dans « Accueillir », `anon` sans droit ; 0 dossier en `decision_en_attente`. Phrases écran : chez BE-GESTES |
 | 10 | PIECE-TYPE-ECRAN (l'écran lit `genreFichier`) | ☑ | #563 fusionnée 20:36 UTC (dd61742) ; CI verte (13 contrôles) ; écran seul ; déploiement automatique ; non prouvé : réponse réelle lue seulement en simulation ; 2 pièces sur 338 sans type s'affichent « Fichier » |
 | 11 | Vérification de trois gestes du menu | ☑ | faite dans la carte (n° 13) pour tous les gestes du menu ; les trois gestes n'étaient nommés nulle part |
@@ -56,7 +56,7 @@ BE-1e, BE-1f, l'étape D.
 | :-: | :--- | :-: | :--- |
 | G0 | Lots issus de la carte des gestes | ◐ | arbitrés par le pilote (carte §4.3, consigne 22) ; lot 1 ACCUEIL-SEPARE (serveur) confié à BE-PIECE, son écran ira à BE-GESTES |
 | G1 | Vague 2 « La mission » : BE-2a serveur (sensible) | ◐ | **cahier écrit** (`CAHIER-BE-2A-MISSION.md`) ; code confié à BE-PIECE après son écran et ACCUEIL-SEPARE (le lancement d'un agent serveur dédié a été refusé par le contrôle des permissions) |
-| G2 | BE-2b écran « Équipe », BE-2c confier / « Mes dossiers », BE-2d suspendre / rétablir | ☐ | cahiers après BE-2a |
+| G2 | BE-2b écran « Équipe », BE-2c confier / « Mes dossiers », BE-2d suspendre / rétablir | ◐ | cahiers écrits : `CAHIER-BE-2A-2-ASSOCIE.md` (serveur, chez BE-PIECE après #565) et `CAHIER-BE-2B-EQUIPE.md` (écran, chez BE-GESTES après sa file) ; BE-2c et BE-2d ensuite |
 | G3 | Étape E : parcourir « confirmée → première classe » avec un compte de test | ☐ | chaque trou devient un lot |
 | G4 | Listes LP-3 à LP-7 | ☐ | avec `RAPPORT-EXPERIENCE` |
 | G5 | Vague 4 Studio | ☐ | après G1 et la messagerie |
