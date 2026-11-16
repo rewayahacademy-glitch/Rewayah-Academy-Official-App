@@ -5281,7 +5281,7 @@
         "photoAbsente": "الصورة",
         "disponibilitesAbsentes": "أوقات التفرّغ"
       },
-      "heures": "⁨{h}⁩ ساعة في الأسبوع",
+      "heures": "⁨{h}⁩ س في الأسبوع",
       "prochaineSeance": "الحصة القادمة: ⁨{date}⁩",
       "remplacements": "٣٠ يومًا: قدّم ⁨{donnes}⁩، وتلقّى ⁨{recus}⁩",
       "colonnes": {
@@ -5301,7 +5301,6 @@
       "genreInconnu": "لا تُقرأ القائمة إلا بعد تسجيل جنسك. اطلب من أحد المؤسسين تسجيله.",
       "sansDonnees": "قائمة المعلّمين",
       "resume": "⁨{debut}⁩ إلى ⁨{fin}⁩ من ⁨{total}⁩",
-      "retour": "⁨{nom}⁩: تم.",
       "classes": {
         "zero": "⁨{n}⁩ فصل",
         "one": "⁨{n}⁩ فصل",

@@ -36,6 +36,7 @@ import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -211,7 +212,7 @@ List<String> resumeDeLigne(LigneEnseignant ligne, {bool tableau = false}) {
       if (!tableau) {
         morceaux.add(
           '${l.classes(n: ligne.classes.nombre)} · '
-          '${l.heures(h: _heures(ligne.classes.heuresSemaine))}',
+          '${LibellesGroupe.insecable(l.heures(h: _heures(ligne.classes.heuresSemaine)))}',
         );
         if (ligne.prochaineSeance case final DateTime s) {
           morceaux.add(

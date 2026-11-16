@@ -185,7 +185,7 @@ void main() {
       expect(tonDePhase(PhaseEnseignant.absent).name, 'alerte');
       expect(libelleManque('photo_absente'), 'photo');
       expect(libelleManque('inconnu'), isNull);
-      expect(phraseManque(_lignes()[1]), 'Il manque : photo, langues');
+      expect(phraseManque(_lignes()[1]), 'Il manque\u00a0: photo, langues');
       expect(phraseManque(_lignes()[0]), isNull);
     });
 
@@ -217,11 +217,11 @@ void main() {
       expect(find.text('Accueil'), findsWidgets);
       expect(find.text('En poste'), findsWidgets);
       // Ce qui manque a la personne en accueil ; les classes de celle en poste.
-      expect(find.text('Il manque : photo, langues'), findsOneWidget);
+      expect(find.text('Il manque\u00a0: photo, langues'), findsOneWidget);
       expect(find.textContaining('2 classes'), findsOneWidget);
       // Qui attend quoi.
-      expect(find.text('Attend : la direction'), findsOneWidget);
-      expect(find.text('Attend : l\'enseignant'), findsOneWidget);
+      expect(find.text('Attend\u00a0: la direction'), findsOneWidget);
+      expect(find.text('Attend\u00a0: l\'enseignant'), findsOneWidget);
       // Le badge, sur la seule ligne nouvelle.
       expect(find.byType(BadgeNouveau), findsOneWidget);
       expect(_cle('enseignants-total'), findsOneWidget);
