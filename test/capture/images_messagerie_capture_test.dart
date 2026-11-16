@@ -10,9 +10,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/communications/image_message.dart';
 import 'package:rewayah_academy/core/communications/textes_fil_communication.dart';
+import 'package:rewayah_academy/core/fichiers/selecteur_image.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 
+import '../support/plugin_compression.dart';
 import 'outil_capture.dart';
 
 /// Une « photo » : un degrade et quelques formes, pour qu'on voie le rendu.
@@ -86,7 +88,7 @@ Widget _ecran({
   SourceImagesFil? images,
   bool groupe = true,
   bool pleinEcran = false,
-  Future<Uint8List?> Function()? choisir,
+  Future<Uint8List?> Function(SourceImage)? choisir,
   EnvoiImageFil? envoi,
 }) => Scaffold(
   body: SafeArea(
@@ -107,7 +109,8 @@ Widget _ecran({
             ? null
             : (String _, String t, ImagePrete i, ProgressionImage p) =>
                   envoi(t, 'cle', i, p),
-        choisirImage: choisir ?? () async => null,
+        choisirImage: choisir ?? (SourceImage _) async => null,
+        deuxChoixPhoto: false,
         horloge: () => DateTime.utc(2026, 11, 16, 11),
       ),
     ),
@@ -245,6 +248,7 @@ void main() {
       });
 
       testWidgets('envoi en cours $nom', (WidgetTester tester) async {
+        simulerPluginCompression();
         await tester.runAsync(() => LocaleSettings.setLocale(langue));
         addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
         fixerVueCapture(tester, taille, densite);
@@ -254,7 +258,7 @@ void main() {
             _ecran(
               pleinEcran: taille.width < 840,
               messages: const <MessageFil>[],
-              choisir: () async => paysage,
+              choisir: (SourceImage _) async => paysage,
               envoi:
                   (
                     String texte,

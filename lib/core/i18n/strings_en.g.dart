@@ -19209,6 +19209,8 @@ class _Traductions$com$messages$images$en extends Traductions$com$messages$image
 
 	// Translations
 	@override String get joindre => 'Attach an image';
+	@override String get prendrePhoto => 'Take a photo';
+	@override String get choisirGalerie => 'Choose from the gallery';
 	@override String get retiree => 'Image removed after 90 days';
 	@override String get fermer => 'Close image';
 	@override String get enregistrer => 'Save image';
@@ -37227,6 +37229,8 @@ extension on TraductionsEn {
 			'com.messages.panneau.vous' => 'You',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
 			'com.messages.images.joindre' => 'Attach an image',
+			'com.messages.images.prendrePhoto' => 'Take a photo',
+			'com.messages.images.choisirGalerie' => 'Choose from the gallery',
 			'com.messages.images.retiree' => 'Image removed after 90 days',
 			'com.messages.images.fermer' => 'Close image',
 			'com.messages.images.enregistrer' => 'Save image',
@@ -37627,10 +37631,10 @@ extension on TraductionsEn {
 			'com.studio.panneau.visibilite' => 'Visibility',
 			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
 			'com.studio.panneau.fichiers' => 'Recent files',
-			'com.studio.panneau.liens' => 'Useful links',
-			'com.studio.panneau.vous' => 'You',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.panneau.liens' => 'Useful links',
+			'com.studio.panneau.vous' => 'You',
 			'com.studio.panneau.parametres' => 'Channel settings',
 			'com.studio.panneau.parametresDetail' => 'Changing the settings will arrive with the Studio service.',
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Open ${titre}',
@@ -38141,10 +38145,10 @@ extension on TraductionsEn {
 			'comptable.statuts.remboursement.refuse' => 'Declined',
 			'comptable.statuts.validation.enAttente' => 'Validation requested',
 			'comptable.statuts.validation.validee' => 'Validated',
-			'comptable.statuts.validation.refusee' => 'Declined',
-			'comptable.statuts.raison.autoPaiement' => 'Handling by another officer required',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.validation.refusee' => 'Declined',
+			'comptable.statuts.raison.autoPaiement' => 'Handling by another officer required',
 			'comptable.statuts.raison.validationRequise' => 'Additional validation required',
 			'comptable.statuts.raison.infosManquantes' => 'Payment information missing',
 			'comptable.statuts.raison.verificationRequise' => 'Payment verification required',
@@ -38655,10 +38659,10 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.titreCoordonnees' => 'My payment details',
 			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'Enter your bank details to receive your pay. It is paid to you by Wise transfer, in ${devise}.',
 			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'Your details are saved. Your next pay will be paid to them, in ${devise}.',
-			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Your details are incomplete. Complete them to receive your next pay.',
-			'comptable.beneficiaires.recevoir.wise.masquees' => 'For your security, only the last 4 characters of the numbers are shown.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Your details are incomplete. Complete them to receive your next pay.',
+			'comptable.beneficiaires.recevoir.wise.masquees' => 'For your security, only the last 4 characters of the numbers are shown.',
 			'comptable.beneficiaires.recevoir.wise.lecteurs' => 'Only the management and accounting read these details, when preparing the payment.',
 			'comptable.beneficiaires.recevoir.wise.renseigner' => 'Enter my details',
 			'comptable.beneficiaires.recevoir.wise.modifier' => 'Edit my details',
@@ -39169,10 +39173,10 @@ extension on TraductionsEn {
 			'juridique.lire' => 'Read',
 			'juridique.coord.societe' => 'Company: Rewayah Academy Ltd',
 			'juridique.coord.numero' => 'Registration number: 16624644, England and Wales',
-			'juridique.coord.adresse' => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom',
-			'juridique.aCompleter' => ({required Object quoi}) => '[to be completed by the management: ${quoi}]',
 			_ => null,
 		} ?? switch (path) {
+			'juridique.coord.adresse' => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom',
+			'juridique.aCompleter' => ({required Object quoi}) => '[to be completed by the management: ${quoi}]',
 			'juridique.quoi.hebergeur' => 'legal host and its contact details',
 			'juridique.quoi.lieuxHebergement' => 'countries where the information is hosted',
 			'juridique.quoi.dureesConservation' => 'retention period for each type of information',
@@ -39683,10 +39687,10 @@ extension on TraductionsEn {
 			'accueilInvite.titre' => 'Your invitation',
 			'accueilInvite.roles.foyer' => 'Rewayah Academy invites you as a guardian.',
 			'accueilInvite.roles.enseignant' => 'Rewayah Academy invites you as a teacher.',
-			'accueilInvite.roles.comptable' => 'Rewayah Academy invites you as an accountant.',
-			'accueilInvite.roles.candidat' => 'Rewayah Academy invites you as a teaching applicant.',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInvite.roles.comptable' => 'Rewayah Academy invites you as an accountant.',
+			'accueilInvite.roles.candidat' => 'Rewayah Academy invites you as a teaching applicant.',
 			'accueilInvite.invitant' => ({required Object prenom}) => 'Person inviting you to their household: ${prenom}.',
 			'accueilInvite.foyerIdentite' => 'Tell us who you are, then answer the invitation. Your account is only created if you accept it.',
 			'accueilInvite.suite' => 'Continue to create your account.',
@@ -40197,10 +40201,10 @@ extension on TraductionsEn {
 			'candidatsFlux.publication.retirerQuestion' => 'Withdraw your publication agreement?',
 			'candidatsFlux.publication.retirerConsequence' => 'Your name, photo and country will no longer appear on the public website. You can give your agreement again later.',
 			'candidatsFlux.publication.echec' => 'Your choice is not confirmed. Try again.',
-			'candidatsFlux.publication.lectureEchec' => 'Your publication agreement could not be read.',
-			'candidatsFlux.publication.nonPublie' => 'The text of the publication agreement is not published yet.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.publication.lectureEchec' => 'Your publication agreement could not be read.',
+			'candidatsFlux.publication.nonPublie' => 'The text of the publication agreement is not published yet.',
 			'candidatsFlux.publication.horsLigne' => 'Your choice can be saved when the connection returns.',
 			'candidatsFlux.photo.titre' => 'Your photo',
 			'candidatsFlux.photo.requise' => 'Add your photo before sending your application.',

@@ -433,6 +433,7 @@ class FilDiscussion extends StatefulWidget {
     this.onAimer,
     this.onEnvoyerImage,
     this.choisirImage = choisirImageSysteme,
+    this.deuxChoixPhoto,
   }) : assert(
          lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
@@ -464,6 +465,10 @@ class FilDiscussion extends StatefulWidget {
 
   /// Le choix d'une photo (le selecteur du systeme ; les tests le remplacent).
   final ChoixImage choisirImage;
+
+  /// Vrai : l'icone image ouvre deux choix (« Prendre une photo », « Choisir
+  /// dans la galerie »). `null` : vrai sur Android et iOS hors navigateur.
+  final bool? deuxChoixPhoto;
 
   /// Les textes du fil.
   final TextesFilDiscussion textes;
@@ -1106,9 +1111,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// IMAGES-MESSAGERIE : choisit une photo ; sa bulle apparait tout de suite
   /// (cercle de preparation puis d'envoi), la photo est reduite sur l'appareil
   /// avant l'envoi. Le texte du champ part dans le meme message.
-  Future<void> _joindreImage() async {
+  Future<void> _joindreImage([SourceImage source = SourceImage.galerie]) async {
     if (_vocalOuvert || widget.onEnvoyerImage == null) return;
-    final Uint8List? octets = await widget.choisirImage();
+    final Uint8List? octets = await widget.choisirImage(source);
     if (octets == null || !mounted) return;
     final String id = 'local-${_compteurSession++}';
     final String saisi = _champ.text.trim();
@@ -1715,6 +1720,8 @@ class _FilDiscussionState extends State<FilDiscussion> {
           onImage: widget.onEnvoyerImage != null && !_vocalOuvert
               ? _joindreImage
               : null,
+          deuxChoixPhoto:
+              widget.deuxChoixPhoto ?? appareilPhotoProposeParDefaut,
           onMicro: vocal != null && _microDisponible && !_vocalOuvert
               ? _demanderVocal
               : null,
@@ -2453,6 +2460,7 @@ class _Saisie extends StatelessWidget {
     this.reduite = false,
     this.onMicro,
     this.onImage,
+    this.deuxChoixPhoto = false,
     this.vocal,
     this.vocalOuvert = false,
     this.sansExplication = false,
@@ -2478,7 +2486,10 @@ class _Saisie extends StatelessWidget {
 
   /// IMAGES-MESSAGERIE : le choix d'une photo, ou `null` : aucune icone (fil
   /// en lecture seule, ou compte eleve de moins de 18 ans).
-  final VoidCallback? onImage;
+  final void Function([SourceImage source])? onImage;
+
+  /// Deux choix au toucher de l'icone : appareil photo ou galerie.
+  final bool deuxChoixPhoto;
   final Widget? vocal;
 
   /// Vrai pendant l'enregistrement et la pre-ecoute : le panneau vocal
@@ -2609,7 +2620,7 @@ class _Saisie extends StatelessWidget {
   /// champ ; il ouvre l'enregistrement du composer vocal.
   Widget _avecMicro(Widget saisie) {
     final VoidCallback? onMicro = this.onMicro;
-    final VoidCallback? onImage = this.onImage;
+    final void Function([SourceImage source])? onImage = this.onImage;
     if (onMicro == null && onImage == null) return saisie;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -2617,13 +2628,32 @@ class _Saisie extends StatelessWidget {
         Expanded(child: saisie),
         if (onImage != null) ...<Widget>[
           Ecart.hSm,
-          BoutonIcone(
-            key: FilDiscussion.cleImage,
-            icone: AppIcons.image,
-            libelle: t.com.messages.images.joindre,
-            onPress: onImage,
-            suitTexte: true,
-          ),
+          if (deuxChoixPhoto)
+            MenuActions(
+              key: FilDiscussion.cleImage,
+              icone: AppIcons.image,
+              libelle: t.com.messages.images.joindre,
+              actions: <EntreeAction>[
+                EntreeAction(
+                  libelle: t.com.messages.images.prendrePhoto,
+                  icone: AppIcons.camera,
+                  onChoix: () => onImage(SourceImage.camera),
+                ),
+                EntreeAction(
+                  libelle: t.com.messages.images.choisirGalerie,
+                  icone: AppIcons.image,
+                  onChoix: () => onImage(SourceImage.galerie),
+                ),
+              ],
+            )
+          else
+            BoutonIcone(
+              key: FilDiscussion.cleImage,
+              icone: AppIcons.image,
+              libelle: t.com.messages.images.joindre,
+              onPress: onImage,
+              suitTexte: true,
+            ),
         ],
         if (onMicro != null) ...<Widget>[
           Ecart.hSm,

@@ -4285,6 +4285,8 @@
       },
       "images": {
         "joindre": "إرفاق صورة",
+        "prendrePhoto": "التقاط صورة",
+        "choisirGalerie": "اختيار من المعرض",
         "retiree": "تم حذف الصورة بعد 90 يومًا",
         "fermer": "إغلاق الصورة",
         "enregistrer": "حفظ الصورة",

@@ -12146,6 +12146,8 @@
       },
       "images": {
         "joindre": "Joindre une image",
+        "prendrePhoto": "Prendre une photo",
+        "choisirGalerie": "Choisir dans la galerie",
         "retiree": "Image retirée après 90 jours",
         "fermer": "Fermer l'image",
         "enregistrer": "Enregistrer l'image",

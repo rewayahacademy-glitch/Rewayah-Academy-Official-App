@@ -12158,6 +12158,8 @@
       },
       "images": {
         "joindre": "Attach an image",
+        "prendrePhoto": "Take a photo",
+        "choisirGalerie": "Choose from the gallery",
         "retiree": "Image removed after 90 days",
         "fermer": "Close image",
         "enregistrer": "Save image",

@@ -1,10 +1,9 @@
 // IMAGES-MESSAGERIE (plan du directeur du 16/11/2026) : la photo choisie est
 // reduite SUR L'APPAREIL avant tout envoi, jamais sur le serveur.
 //
-// - le plus grand cote tient en 1600 points ; JPEG qualite 0,8 dans un
-//   navigateur (le canevas ne recopie ni l'EXIF ni le GPS : ils disparaissent
-//   d'eux-memes) ; ailleurs, PNG par `dart:ui` (aucune metadonnee non plus),
-//   puis 1280 et 1024 si la limite n'est pas tenue ;
+// - le plus grand cote tient en 1600 points ; JPEG qualite 0,8 (puis 0,6 une
+//   seule fois si l'image depasse 2 Mo). Navigateur : le canevas ne recopie
+//   ni l'EXIF ni le GPS. Ailleurs : `flutter_image_compress`, `keepExif: false` ;
 // - une miniature de 320 de cote, et la couleur moyenne lue sur elle ;
 // - limites du serveur : image 2 Mo, miniature 100 Ko, source 15 Mo.
 //
@@ -71,30 +70,24 @@ typedef Reducteur = Future<ReductionImage?> Function(
   required bool couleur,
 });
 
-/// Vrai quand l'encodeur regle la qualite (navigateur) : le second essai
-/// baisse la qualite. Sinon il baisse la taille.
-bool get qualiteReglable => natif.qualiteReglable;
-
 /// Prepare [source] : image, miniature, dimensions, couleur moyenne.
 ///
 /// Leve [EchecImage] : [RefusImage.imageTropGrosse] (source de plus de 15 Mo,
 /// ou impossible a ramener sous les limites), [RefusImage.imageIllisible].
-/// [reducteur] et [reglable] se remplacent dans les tests.
+/// [reducteur] se remplace dans les tests.
 Future<ImagePrete> preparerImage(
   Uint8List source, {
   Reducteur reducteur = natif.reduire,
-  bool? reglable,
 }) async {
   if (source.length > sourceImageMaxOctets) {
     throw const EchecImage(RefusImage.imageTropGrosse);
   }
   if (source.isEmpty) throw const EchecImage(RefusImage.imageIllisible);
-  final bool qualite = reglable ?? qualiteReglable;
-  // Navigateur : qualite 0,8 puis 0,6 (une seule baisse). Ailleurs : PNG, la
-  // taille baisse a la place (1600, 1280, 1024).
-  final List<(int, double)> essais = qualite
-      ? const <(int, double)>[(coteImage, 0.8), (coteImage, 0.6)]
-      : const <(int, double)>[(coteImage, 0.8), (1280, 0.8), (1024, 0.8)];
+  // Qualite 0,8, puis 0,6 une seule fois, puis refus.
+  const List<(int, double)> essais = <(int, double)>[
+    (coteImage, 0.8),
+    (coteImage, 0.6),
+  ];
   ReductionImage? image;
   for (final (int cote, double q) in essais) {
     final ReductionImage? r = await reducteur(

@@ -48,9 +48,6 @@ extension type _DonneesImage._(JSObject _) implements JSObject {
 
 const String _prefixeJpeg = 'data:image/jpeg;base64,';
 
-/// Dans un navigateur : JPEG, la qualite se regle.
-bool get qualiteReglable => true;
-
 /// Le navigateur decode la photo (l'orientation EXIF est appliquee par lui),
 /// la dessine dans un canevas reduit a [coteMax], et la rend en JPEG a
 /// [qualite]. Un canevas ne porte ni EXIF ni GPS. La couleur moyenne se lit

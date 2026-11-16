@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/communications/image_message.dart';
 import 'package:rewayah_academy/core/communications/pastille_coeur.dart';
 import 'package:rewayah_academy/core/communications/phrases_images.dart';
 import 'package:rewayah_academy/core/communications/textes_fil_communication.dart';
+import 'package:rewayah_academy/core/fichiers/selecteur_image.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
@@ -24,6 +25,7 @@ import 'package:rewayah_academy/features/com_messages/images_du_fil.dart';
 
 import '../../support/hote_theme.dart';
 import '../../support/image_png.dart';
+import '../../support/plugin_compression.dart';
 import 'support_messages.dart';
 
 class _Source implements SourceImagesFil {
@@ -94,7 +96,7 @@ Future<void> _monter(
   SourceImagesFil? images,
   Future<EtatCoeur> Function(String, bool)? onAimer,
   EnvoiImageForTest? onEnvoyerImage,
-  Future<Uint8List?> Function()? choisir,
+  Future<Uint8List?> Function(SourceImage)? choisir,
   Size vue = const Size(390, 844),
 }) async {
   fixerVue(tester, vue);
@@ -107,7 +109,8 @@ Future<void> _monter(
         images: images,
         onAimer: onAimer,
         onEnvoyerImage: onEnvoyerImage,
-        choisirImage: choisir ?? () async => null,
+        choisirImage: choisir ?? (SourceImage _) async => null,
+        deuxChoixPhoto: false,
         afficherAuteur: true,
       ),
       defilant: false,
@@ -443,6 +446,42 @@ void main() {
       expect(find.byKey(FilDiscussion.cleImage), findsNothing);
     });
 
+    testWidgets('au telephone : deux choix, l\'appareil photo et la galerie', (
+      WidgetTester tester,
+    ) async {
+      final List<SourceImage> demandes = <SourceImage>[];
+      fixerVue(tester, const Size(390, 844));
+      await tester.pumpWidget(
+        hoteTheme(
+          FilDiscussion(
+            messages: const <MessageFil>[],
+            textes: textesFilCommunication(),
+            onEnvoyer: (String _) async {},
+            deuxChoixPhoto: true,
+            onEnvoyerImage: (
+              String _,
+              String _,
+              ImagePrete _,
+              ProgressionImage _,
+            ) async {},
+            choisirImage: (SourceImage s) async {
+              demandes.add(s);
+              return null;
+            },
+          ),
+          defilant: false,
+        ),
+      );
+      await tester.pump();
+      await tester.tap(find.byKey(FilDiscussion.cleImage));
+      await tester.pumpAndSettle();
+      expect(find.text(t.com.messages.images.prendrePhoto), findsOneWidget);
+      expect(find.text(t.com.messages.images.choisirGalerie), findsOneWidget);
+      await tester.tap(find.text(t.com.messages.images.prendrePhoto));
+      await tester.pumpAndSettle();
+      expect(demandes, <SourceImage>[SourceImage.camera]);
+    });
+
     test('un compte eleve mineur n\'a pas d\'envoi d\'image', () {
       final ImagesDuFil mineur = ImagesDuFil(
         FauxMessagesMetier(),
@@ -463,12 +502,13 @@ void main() {
     testWidgets('la bulle apparait tout de suite, puis le refus a sa phrase', (
       WidgetTester tester,
     ) async {
+      simulerPluginCompression();
       final Completer<void> attente = Completer<void>();
       final List<String> textes = <String>[];
       await _monter(
         tester,
         messages: const <MessageFil>[],
-        choisir: () async => png,
+        choisir: (SourceImage _) async => png,
         onEnvoyerImage:
             (
               String id,
@@ -505,11 +545,12 @@ void main() {
     testWidgets('une panne passagere propose « Reessayer »', (
       WidgetTester tester,
     ) async {
+      simulerPluginCompression();
       int essais = 0;
       await _monter(
         tester,
         messages: const <MessageFil>[],
-        choisir: () async => png,
+        choisir: (SourceImage _) async => png,
         onEnvoyerImage:
             (String _, String _, ImagePrete _, ProgressionImage _) async {
               essais++;
