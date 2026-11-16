@@ -1,4 +1,4 @@
-# Le secrétaire IA de l'académie — vision du directeur du 16/11/2026
+# Praxis, le secrétaire IA de l'académie — vision du directeur du 16/11/2026
 
 **Statut : vision du directeur, écrite pour tous les agents. Rien n'est codé. Ordre de
 construction au §8. Ce fichier amende la règle R3 de la stratégie (« l'agent propose,
@@ -280,3 +280,46 @@ exemples réécrits.
 5. SEC-4 (matching), puis SEC-5.
 
 Suivi : `SUIVI.md`.
+
+## 9. Son identité : Praxis (décision du directeur, 16/11/2026)
+
+- **Nom** : Praxis, du grec ancien πρᾶξις : l'action, le passage de l'idée à la réalité.
+  « Praxis ne se contente pas de répondre ; il structure, synthétise et accomplit. »
+  Clarté et rigueur, sans bruit inutile ; discret, fiable, dans le respect strict des
+  principes et des priorités de l'académie.
+- **Appellation affichée partout dans l'application** : `#RA_PRAXIS`, en italique.
+- **Le compte de l'administration suit la même règle** : son nom de profil passe en italique
+  et prend le « # » (aujourd'hui « RA_STAFF » dans les annonces : `#RA_STAFF`).
+- **Photo de profil** : fond violet de la marque, au milieu quelques outils en noir (un
+  marteau et un ou deux autres) pour dire le travail, sans surcharge. Le directeur fournit
+  l'image ; à défaut, une proposition lui est soumise (compétence `marque-rewayah`).
+- **Signatures proposées par le directeur, aucune choisie** : « La pensée en mouvement »,
+  « De l'idée à l'exécution », « L'intelligence appliquée au quotidien ».
+
+Règles de construction qui en découlent :
+- L'italique et le « # » sont une **marque des comptes officiels**, rendue par
+  l'application à partir d'un indicateur du compte (compte officiel), jamais des caractères
+  ou une mise en forme rangés dans le nom. Une seule règle, dans `lib/core/`, employée par
+  toute bulle, toute liste, toute annonce, tout courriel.
+- L'italique n'existe pas en écriture arabe : en arabe, la marque est le « # » et le nom
+  en lettres latines, isolé pour le sens de lecture ; à vérifier sur l'écran, pas supposé.
+- L'image doit rester lisible à 24 points, en clair et en sombre, et ne jamais pouvoir être
+  prise pour la photo d'une personne.
+
+## 10. Ce qui reste à décider pour Praxis (questions ouvertes, posées au directeur le 16/11)
+
+1. **Dire que c'est une IA.** Chaque personne qui lui parle doit le savoir (mention sur son
+   profil et au premier message). C'est aussi une obligation en Europe.
+2. **Les données.** Praxis fait lire des messages de familles, d'enfants et de candidats à
+   un fournisseur d'IA : la politique de confidentialité et les consentements doivent le
+   dire avant la mise en service (niveau C, §4.16).
+3. **Joindre une personne.** Un geste « parler à la direction » dans toute conversation avec
+   Praxis ; un membre de l'équipe peut reprendre le fil, et Praxis se tait alors.
+4. **L'arrêt d'urgence.** Un interrupteur de la direction qui coupe Praxis d'un coup, et un
+   plafond d'envois par heure (jamais d'erreur en masse, S3).
+5. **« Je » ou « nous ».** Praxis parle-t-il en son nom ou au nom de l'académie ?
+6. **Les deux côtés.** Praxis n'est ni homme ni femme : écrit-il aux deux côtés, ou
+   seulement par l'intermédiaire d'un membre de l'équipe du même côté ?
+7. **La signature** en bas de ses messages et de ses annonces, et celle retenue parmi les trois.
+8. **Les courriels** : envoyés au nom de Praxis ou de l'académie.
+9. **Le texte de son profil**, court, dans les trois langues.
