@@ -408,7 +408,9 @@ void main() {
       await _monter(tester, _Faux(), direction: TextDirection.rtl);
       await _ouvrir(tester);
       expect(tester.takeException(), isNull);
-      expect(find.text('إرسال الرموز الشخصية'), findsWidgets);
+      // BE-LISTE : le lien est dans le menu « Outils » ; la feuille ouverte
+      // par lui est la, en arabe.
+      expect(find.byKey(FeuilleInvitationsPersonnelles.cleEnvoyer), findsOne);
     });
   });
 }
