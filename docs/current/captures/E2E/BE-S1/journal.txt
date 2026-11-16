@@ -1,0 +1,72 @@
+NOTICE:  OK a1 : seul authenticated execute voisins_candidature
+NOTICE:  OK a2 : les cinq aides internes ne sont executables par aucun compte
+NOTICE:  OK a3 : empreinte F86 a jour, DEFINER, search_path vide (voisins, historique, liste)
+NOTICE:  OK b1 : l'evenement responsable rend le nom avant et le nom apres
+NOTICE:  OK b2 : details rend le geste et le pays avant et apres
+NOTICE:  OK b3 : un controle rend son nom, la valeur avant et apres, la cause et les pays
+NOTICE:  OK b4 : ni contact, ni piece, ni cle de rattachement, ni identifiant de personne dans l'historique
+NOTICE:  OK b5 : le nom du responsable ne sort que pour un evenement responsable
+NOTICE:  OK c1 : le dossier rend le nom du responsable, nul sans responsable
+NOTICE:  OK d0 : sans filtre, la portee des hommes, par activite
+NOTICE:  OK d1 : ijaza oui (la reponse la plus recente seule compte : 02 non)
+NOTICE:  OK d2 : ijaza non (pret_test et sans reponse exclus)
+NOTICE:  OK d2b : ijaza pret_test, pas d'ijaza mais prete pour un test
+NOTICE:  OK d3 : langue d'explication
+NOTICE:  OK d4 : riwaya
+NOTICE:  OK d5 : public
+NOTICE:  OK d6 : un jour disponible
+NOTICE:  OK d7 : un ou plusieurs jours (l'un d'eux suffit)
+NOTICE:  OK d8 : au moins quatre jours disponibles
+NOTICE:  OK d9 : heureMin, le soir
+NOTICE:  OK d10 : heures du soir (24:00 est une borne valide)
+NOTICE:  OK d11 : heureMax, le matin
+NOTICE:  OK d12 : une plage qui recouvre la fenetre compte, une qui finit a la borne non
+NOTICE:  OK d13 : libres le soir quatre jours (03 n'a que trois soirs)
+NOTICE:  OK d14 : la phrase du lot : ijaza, le soir, quatre jours
+NOTICE:  OK d15 : jours et heures se combinent
+NOTICE:  OK d15b : un creneau a la demie est lu (HH:MM)
+NOTICE:  OK d15c : 13:30-14:30 recouvre 14h-15h (comparaison en minutes)
+NOTICE:  OK d15d : 13:30-14:30 ne recouvre ni apres 15h, ni avant 13h
+NOTICE:  OK d16 : piece en attente (la derniere piece non effacee compte)
+NOTICE:  OK d17 : sans piece en attente
+NOTICE:  OK d18 : mes dossiers
+NOTICE:  OK d19 : sans responsable
+NOTICE:  OK d20 : un responsable par identifiant
+NOTICE:  OK d21 : une cle nulle ne filtre pas
+NOTICE:  OK d22 : la portee de genre tient avec les nouveaux filtres (la direction femme ne voit que 07)
+NOTICE:  OK d23 : cle inconnue refusee
+NOTICE:  OK d24 : jour hors 1 a 7
+NOTICE:  OK d25 : jours doit etre une liste
+NOTICE:  OK d26 : heureMin apres heureMax
+NOTICE:  OK d27 : heure hors 0 a 24
+NOTICE:  OK d28 : joursMin hors 1 a 7
+NOTICE:  OK d29 : ijaza hors des trois valeurs stockees : refusee
+NOTICE:  OK d29b : ijaza booleen refuse (texte attendu)
+NOTICE:  OK d30 : public hors liste
+NOTICE:  OK d31 : responsable ni moi, ni aucun, ni identifiant
+NOTICE:  OK e1 : au debut, pas de precedent
+NOTICE:  OK e2 : au milieu, les deux voisins
+NOTICE:  OK e3 : a la fin, pas de suivant
+NOTICE:  OK e4 : dans un filtre, les voisins sont ceux de la liste filtree
+NOTICE:  OK e5 : un dossier lisible mais hors du filtre : hors_liste
+NOTICE:  OK e7 : une reference inconnue : absente
+NOTICE:  OK e8 : l'autre cote : hors_portee, sans reference ni total
+NOTICE:  OK e9 : la direction femme n'a que son cote dans le total
+NOTICE:  OK e10 : la direction homme ne voit pas le cote femme
+NOTICE:  OK e11 : un tuteur est refuse
+NOTICE:  OK e12 : sans session, refuse
+NOTICE:  OK e13 : filtre inconnu refuse comme la liste
+NOTICE:  OK e14 : tri inconnu refuse comme la liste
+NOTICE:  OK e15 : reference vide refusee
+NOTICE:  OK f1 : sans filtre, tri activite (6 lignes)
+NOTICE:  OK f2 : sans filtre, tri recente (6 lignes)
+NOTICE:  OK f3 : sans filtre, tri nom (6 lignes)
+NOTICE:  OK f4 : ijaza, tri nom (3 lignes)
+NOTICE:  OK f5 : le soir trois jours (2 lignes)
+NOTICE:  OK f6 : piece en attente (2 lignes)
+NOTICE:  OK f7 : sans responsable, adultes (2 lignes)
+NOTICE:  OK f8 : recherche par nom (1 lignes)
+NOTICE:  OK f9 : filtre vide de resultat (0 lignes)
+ERROR:  BE-S1 ROUGE : z : au moins 70 controles passes
+CONTEXT:  PL/pgSQL function pg_temp_3.vrai(boolean,text) line 4 at RAISE
+ERROR:  current transaction is aborted, commands ignored until end of transaction block
