@@ -45,6 +45,7 @@ import '../../capture/outil_capture.dart';
 import '../../support/demo/dossiers_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
+import '../../support/selecteur_section.dart';
 
 Future<void> _stab(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -174,6 +175,11 @@ Future<void> _barre(WidgetTester tester, AdminDomaine d) async {
     ),
   );
   await _stab(tester);
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider » se
+  // choisit dans le selecteur de section.
+  if (d == AdminDomaine.personnes) {
+    await choisirSection(tester, t.dossiers.titre);
+  }
 }
 
 /// La grande tuile « Dossiers a valider » du Centre de commande (BENTO-1),
@@ -432,6 +438,8 @@ void main() {
         ),
       );
       await _stab(tester);
+      // BE-LISTE : « Personnes » ouvre Candidatures.
+      await choisirSection(tester, t.dossiers.titre);
       expect(find.text(t.dossiers.file.indisponible), findsOneWidget);
       // Aucune ligne de dossier n'est montree.
       expect(_ligne('Omar'), findsNothing);
@@ -496,6 +504,20 @@ Future<void> _corps22_7(
       );
       await souris.moveTo(domaine);
       await souris.down(domaine);
+      await souris.up();
+      await _stab(tester);
+      // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider » se
+      // choisit, a la souris aussi, dans le sous-lien du panneau.
+      final Offset dossiers = tester.getCenter(
+        find
+            .descendant(
+              of: find.byKey(AdminShell.barreLateraleKey),
+              matching: find.text(t.dossiers.titre),
+            )
+            .first,
+      );
+      await souris.moveTo(dossiers);
+      await souris.down(dossiers);
       await souris.up();
       await _stab(tester);
       final Finder ligne = _ligne('Amina');

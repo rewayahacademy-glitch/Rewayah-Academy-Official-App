@@ -32,7 +32,8 @@ import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
 import 'hote_candidatures.dart';
 
-const Key _lien = ValueKey<String>('candidatures-codes-personnels');
+// BE-LISTE : le lien est une entree du menu « Outils ».
+String get _libelleLien => t.candidatsFlux.invitationsPersonnelles.lien;
 
 ApercuInvitationsPersonnelles _apercu({
   int aInviter = 3,
@@ -134,10 +135,7 @@ Future<void> _monter(
 );
 
 Future<void> _ouvrir(WidgetTester tester) async {
-  await tester.ensureVisible(find.byKey(_lien));
-  await tester.pump();
-  await tester.tap(find.byKey(_lien));
-  await laisser(tester);
+  await toucherOutil(tester, _libelleLien);
 }
 
 Future<void> _envoyer(WidgetTester tester) async {
@@ -160,20 +158,19 @@ void main() {
   group('le lien', () {
     testWidgets('present pour qui peut importer, port servi', (tester) async {
       await _monter(tester, _Faux());
-      expect(find.byKey(_lien), findsOneWidget);
-      expect(find.text('Envoyer les codes personnels'), findsOneWidget);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isTrue);
     });
 
     testWidgets('absent sans le port', (tester) async {
       await _monter(tester, null);
-      expect(find.byKey(_lien), findsNothing);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isFalse);
     });
 
     testWidgets('absent pour une direction qui ne peut pas importer', (
       tester,
     ) async {
       await _monter(tester, _Faux(), peutImporter: false);
-      expect(find.byKey(_lien), findsNothing);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isFalse);
     });
   });
 
@@ -411,7 +408,9 @@ void main() {
       await _monter(tester, _Faux(), direction: TextDirection.rtl);
       await _ouvrir(tester);
       expect(tester.takeException(), isNull);
-      expect(find.text('إرسال الرموز الشخصية'), findsWidgets);
+      // BE-LISTE : le lien est dans le menu « Outils » ; la feuille ouverte
+      // par lui est la, en arabe.
+      expect(find.byKey(FeuilleInvitationsPersonnelles.cleEnvoyer), findsOne);
     });
   });
 }

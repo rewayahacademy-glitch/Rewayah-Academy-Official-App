@@ -32,6 +32,7 @@ import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/services_admin_demo.dart';
 import '../../support/dossiers_production.dart';
 import '../../support/harnais.dart';
+import '../../support/selecteur_section.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -237,6 +238,9 @@ Future<FauxServiceValidation> _monterCoque(
       matching: find.text(AdminDomaine.personnes.libelle),
     ),
   );
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider » se
+  // choisit dans le selecteur de section.
+  await choisirSection(tester, t.dossiers.titre);
   await _toucher(
     tester,
     find.bySemanticsLabel(RegExp('^Ouvrir le dossier de Moussa')),

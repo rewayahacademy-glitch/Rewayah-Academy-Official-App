@@ -2614,6 +2614,14 @@
     }
   },
   "recrutement": {
+    "file": {
+      "outils": "Tools",
+      "outilsDe": "Tools for the applications list",
+      "afficher": "Show",
+      "replier": "Collapse",
+      "trier": "Sort",
+      "pieceSansAttente": "No ID document to validate"
+    },
     "nomLatin": {
       "titre": "Your name in Latin letters",
       "explication": "Your name is written in another script. For lists, certificates and exchanges with the academy, we need it written in Latin letters.",

@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
+import '../../support/selecteur_section.dart';
 
 class _Port implements PortAccesPiecesKyc {
   _Port(this.verdict, {this.exception = false, this.echec = false});
@@ -92,6 +93,9 @@ Future<void> _monter(
     ),
   );
   await _stabiliser(tester);
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+  // se choisit dans le selecteur de section.
+  await choisirSection(tester, t.dossiers.titre);
   // L5 des listes : la liste est la page, aucun dossier ouvert d'office ;
   // la premiere ligne ouvre le dossier d'Omar, en page.
   await tester.tap(find.bySemanticsLabel(RegExp("^Ouvrir le dossier d'Omar")));

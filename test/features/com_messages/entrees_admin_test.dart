@@ -46,6 +46,7 @@ import '../../support/demo/dossiers_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
 import '../../support/harnais.dart';
+import '../../support/selecteur_section.dart';
 import 'support_messages.dart';
 
 const Participant _rachid = Participant(
@@ -217,6 +218,9 @@ Future<void> _ouvrirDossierOmar(WidgetTester tester) async {
     ),
   );
   await _stabiliser(tester);
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider » se
+  // choisit dans le selecteur de section.
+  await choisirSection(tester, t.dossiers.titre);
   final Finder ligne = find.bySemanticsLabel(
     RegExp("^Ouvrir le dossier d(e |')Omar"),
   );

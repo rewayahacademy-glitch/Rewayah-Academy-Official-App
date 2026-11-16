@@ -19,6 +19,7 @@ import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import '../../support/demo/dossiers_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
+import '../../support/selecteur_section.dart';
 import '../../support/titre_de_page.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
@@ -80,6 +81,9 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+    // se choisit dans le selecteur de section.
+    await choisirSection(tester, t.dossiers.titre);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 
     // L5 des listes : plus de maitre-detail. Aucun dossier ouvert d'office,
@@ -127,6 +131,9 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+    // se choisit dans le selecteur de section.
+    await choisirSection(tester, t.dossiers.titre);
     // L5 : le dossier est une page ; on en change par la liste.
     await tester.tap(_ligne('Omar'));
     await _stabiliser(tester);
@@ -156,6 +163,9 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+    // se choisit dans le selecteur de section.
+    await choisirSection(tester, t.dossiers.titre);
     await tester.tap(_ligne('Omar'));
     await _stabiliser(tester);
     for (final String point in <String>[
@@ -200,6 +210,9 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+    // se choisit dans le selecteur de section.
+    await choisirSection(tester, t.dossiers.titre);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
 
     // Liste seule : aucune revue, aucune ligne annoncee selectionnee.
@@ -242,6 +255,9 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+    // se choisit dans le selecteur de section.
+    await choisirSection(tester, t.dossiers.titre);
     await tester.tap(_ligne('Omar'));
     await _stabiliser(tester);
     for (final String point in <String>[
@@ -302,6 +318,9 @@ void main() {
       ),
     );
     await _stabiliser(tester);
+    // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+    // se choisit dans le selecteur de section.
+    await choisirSection(tester, t.dossiers.titre);
     expect(tester.takeException(), isNull);
     expect(_chemin(routeur), Routes.adminPersonnesDossiers);
     expect(_ligne('Omar'), findsOneWidget);
@@ -459,6 +478,9 @@ Future<void> _ouvrirDossiers(WidgetTester tester) async {
     ),
   );
   await _stabiliser(tester);
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+  // se choisit dans le selecteur de section.
+  await choisirSection(tester, t.dossiers.titre);
 }
 
 GoRouter routeurDe(WidgetTester tester) =>

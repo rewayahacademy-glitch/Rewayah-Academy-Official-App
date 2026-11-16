@@ -1550,7 +1550,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             icone: AppIcons.dossiers,
             // La demande de cette personne : son nom, en `extra`, jamais dans
             // l'adresse (§5.9).
-            onChoix: () => GoRouter.of(context).go(
+            onChoix: () => GoRouter.of(context).push<void>(
               Routes.adminPersonnesAdmissions,
               extra: (population: _populationDe(c), recherche: c.libelle),
             ),
@@ -1559,9 +1559,10 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           EntreeAction(
             libelle: t.admin.comptes.actionOuvrirDossier,
             icone: AppIcons.dossiers,
-            onChoix: () =>
-                GoRouter.of(context)
-                    .go(Routes.adminPersonnesDossiers, extra: c.profilId),
+            onChoix: () => GoRouter.of(context).push<void>(
+              Routes.adminPersonnesDossiers,
+              extra: c.profilId,
+            ),
           ),
         if (_villeAVerifier(c))
           EntreeAction(

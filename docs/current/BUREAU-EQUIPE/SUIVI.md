@@ -11,8 +11,12 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | BE-0b serveur | L'historique renvoie le détail et le nom du responsable | `CAHIER-BE-S1.md` | dans main (#505) ; migration installée en production le 16/11 par le coordinateur, sur ordre du directeur ; à prouver par le directeur |
 | BE-1a | Ordre des dossiers (précédent, suivant), filtres sur les réponses, « pièce en attente », « mes dossiers » | `CAHIER-BE-S1.md` | dans main (#505) ; migration installée en production le 16/11 par le coordinateur, sur ordre du directeur ; à prouver par le directeur |
 | BE-0b écran + BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo qui s'ouvre au toucher, pièce sur place, barre de décision fixe | `CAHIER-BE-DOSSIER.md` | en cours (agent BE-DOSSIER, `claude/be-dossier-trois-etages`) |
+<<<<<<< HEAD
 | BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | en cours (agent BE-LISTE, `claude/be-liste-retours`) |
 | BE-VERSEMENT | Le moyen de versement se valide seul quand le pays est pris en charge ; la direction décide une fois par pays, pas par candidat (directeur, 16/11) | `CAHIER-BE-VERSEMENT.md` | en cours (agent BE-S1, `claude/be-versement`) |
+=======
+| BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | PR ouverte (#506, agent BE-LISTE, `claude/be-liste-retours`) |
+>>>>>>> origin/main
 | BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | à écrire quand BE-1a et BE-1d sont dans main | pas commencé |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |
@@ -49,3 +53,4 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 - 16/11 : sur ordre du directeur (« installe la migration 505 »), `20261128100000_be_s1_lectures.sql` installée en production par `apply_migration` (version sans BEGIN ni COMMIT). Avant : les six ancres trouvées une fois chacune. Après, lu en production : `voisins_candidature` présente, cinq aides `private.be_*`, les trois fonctions retouchées, `anon` sans droit d'exécution. Non prouvé : l'écran (aucun n'appelle encore ces lectures).
 - 16/11 : identité du secrétaire : Praxis, `#RA_PRAXIS` en italique ; le compte de l'administration prend la même marque (`SECRETAIRE-IA.md` §9 et §10).
 - 16/11 : le directeur conteste la confirmation du versement candidat par candidat ; lu en production : 125 candidatures `a_verifier` avec un pays déjà `confirme`. Arbitrage : automatique si le pays est pris en charge, décision une fois par pays sinon (`CAHIER-BE-VERSEMENT.md`).
+- 16/11 : directeur, sur les captures du dossier : le résumé doit être un tableau de synthèse (mots-clés, pas les phrases du candidat), « imagine lire ce paragraphe pour plus de 1 000 personnes » ; écrans pliables : penser aux deux états, ni chevauchement, ni débordement, ni page qui saute quand une rubrique s'ouvre. Transmis à BE-DOSSIER (PR 508). Les deux barres du haut de sa capture étaient deux captures mises côte à côte par le coordinateur, pas un doublon de l'application.

@@ -6,20 +6,20 @@
 // ou `doubleVerificationRequise` : le meme, a qui l'ecran demandera le code ;
 // erreur du robot du 06/11 : sans ce second cas, le lien n'apparaissait
 // jamais) ET que le port est servi, jamais grise ; le toucher ouvre l'import.
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/modeles_import_candidatures.dart';
 import 'package:rewayah_academy/core/candidature/port_import_candidatures.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/admin_import_formulaires/routes_candidats_flux.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../fixtures/candidature/faux_import_candidatures.dart';
-import '../../support/monter_recrutement.dart';
 import 'hote_candidatures.dart';
 
-const Key _lien = ValueKey<String>('candidatures-importer');
+// BE-LISTE : le lien est une entree du menu « Outils ».
+String get _libelle => t.candidatsFlux.importFormulaires.lienEntree;
 
 Future<void> _monter(
   WidgetTester tester, {
@@ -55,12 +55,8 @@ void main() {
     tester,
   ) async {
     await _monter(tester, peutImporter: true, portServi: true);
-    expect(find.byKey(_lien), findsOneWidget);
-    expect(find.text('Importer les formulaires'), findsOneWidget);
-    await tester.ensureVisible(find.byKey(_lien));
-    await tester.pump();
-    await tester.tap(find.byKey(_lien));
-    await laisser(tester);
+    expect(await entreeOutilsPresente(tester, _libelle), isTrue);
+    await toucherOutil(tester, _libelle);
     // Une vraie route (plus une page empilee) : la destination du routeur.
     expect(
       find.text('temoin:${RoutesCandidatsFlux.importFormulaires}'),
@@ -75,16 +71,16 @@ void main() {
       portServi: true,
       doubleRequise: true,
     );
-    expect(find.byKey(_lien), findsOneWidget);
+    expect(await entreeOutilsPresente(tester, _libelle), isTrue);
   });
 
   testWidgets('absent sans la capacite du serveur', (tester) async {
     await _monter(tester, peutImporter: false, portServi: true);
-    expect(find.byKey(_lien), findsNothing);
+    expect(await entreeOutilsPresente(tester, _libelle), isFalse);
   });
 
   testWidgets('absent quand le port n\'est pas servi', (tester) async {
     await _monter(tester, peutImporter: true, portServi: false);
-    expect(find.byKey(_lien), findsNothing);
+    expect(await entreeOutilsPresente(tester, _libelle), isFalse);
   });
 }

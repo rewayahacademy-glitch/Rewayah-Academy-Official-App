@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -85,9 +87,15 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
     final GoRouter routeur = GoRouter.of(context);
     final DossierAValider? dossier = e.dossier;
     if (dossier != null) {
-      routeur.go(Routes.adminPersonnesDossiers, extra: dossier.profilId);
+      // BE-LISTE : `push`, le retour ramene ici, pas a l'Accueil.
+      unawaited(
+        routeur.push<void>(
+          Routes.adminPersonnesDossiers,
+          extra: dossier.profilId,
+        ),
+      );
     } else {
-      routeur.go(Routes.adminOperationsDemandes);
+      unawaited(routeur.push<void>(Routes.adminOperationsDemandes));
     }
   }
 

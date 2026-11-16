@@ -2614,6 +2614,14 @@
     }
   },
   "recrutement": {
+    "file": {
+      "outils": "Outils",
+      "outilsDe": "Outils de la liste des candidatures",
+      "afficher": "Afficher",
+      "replier": "Replier",
+      "trier": "Trier",
+      "pieceSansAttente": "Sans pièce à valider"
+    },
     "nomLatin": {
       "titre": "Votre nom en lettres latines",
       "explication": "Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l'académie, nous avons besoin de son écriture en lettres latines.",

@@ -197,6 +197,11 @@ String? rappelFiltres(FiltreCandidatures filtre) {
     if (filtre.enPause != null)
       filtre.enPause! ? r.etats.enPause : r.filtres.sansPause,
     if (filtre.paiement != null) libelleVersement(filtre.paiement!),
+    // BE-LISTE : l'axe « piece d'identite a valider », en mots.
+    if (filtre.pieceEnAttente != null)
+      filtre.pieceEnAttente!
+          ? r.attentes.pieceAValider
+          : t.recrutement.file.pieceSansAttente,
     if (filtre.paysResidence != null) libellePays(filtre.paysResidence)!,
     // Autres competences (CAND-07) : chaque axe pose, en mots.
     if (filtre.competenceDomaine != null)

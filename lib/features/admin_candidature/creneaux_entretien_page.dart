@@ -108,8 +108,16 @@ class _EtatPage extends ConsumerState<CreneauxEntretienPage> {
     return PageShell(
       key: CreneauxEntretienPage.clePage,
       titre: c.titre,
-      onRetour: () =>
-          GoRouter.of(context).go(Routes.adminPersonnesCandidatures),
+      // BE-LISTE : le retour ramene d'ou l'on vient (la liste, filtres
+      // gardes) ; sans pile (lien ouvert directement), la liste.
+      onRetour: () {
+        final GoRouter routeur = GoRouter.of(context);
+        if (routeur.canPop()) {
+          routeur.pop();
+        } else {
+          routeur.go(Routes.adminPersonnesCandidatures);
+        }
+      },
       // Une colonne de lecture (garde bureau B4) : les cartes et les
       // phrases ne s'etirent pas sur toute la largeur d'un ordinateur.
       child: Align(
