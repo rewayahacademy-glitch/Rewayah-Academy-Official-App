@@ -36,6 +36,7 @@ import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_etape.dart' show RangeeEtape;
+import 'majorite_etape.dart';
 
 /// Vrai quand le portail montre l'etat de la candidature plutot que les cinq
 /// etats du dossier : en Salle d'examen, ou apres un refus ou un retrait. En
@@ -126,7 +127,11 @@ bool pieceRedemandee(EtatDossier d) {
 /// salle 2 ne montrait que les accords et la piece : aucun chemin vers le
 /// cadre. Pas pendant une pause.
 bool cadreAAccepterEnSalle2(CandidatureDossier c) =>
-    c.enSalleVerification && !c.enPause && c.cadre.publie && !c.cadre.accepte;
+    c.enSalleVerification &&
+    !c.enPause &&
+    !c.majorite.aAttester &&
+    c.cadre.publie &&
+    !c.cadre.accepte;
 
 /// La prochaine action du candidat sur le portail : un libelle et une route,
 /// ou `null` quand il n'a rien a faire (examen, pause, refus, retrait).
@@ -139,6 +144,10 @@ bool cadreAAccepterEnSalle2(CandidatureDossier c) =>
   CandidatureDossier c, {
   EtatDossier? dossier,
 }) {
+  // MAJEUR (directeur, 16/11/2026) : tant que « 18 ans ou plus » n'est pas
+  // declare, aucune autre action n'est proposee ; la carte de l'en-tete de la
+  // salle demande la declaration.
+  if (c.majorite.aAttester) return null;
   if (!c.questionnaireOuvert) {
     // RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026) : la candidature est
     // envoyee (en examen, versement pas encore possible), mais la piece
@@ -185,6 +194,7 @@ bool cadreAAccepterEnSalle2(CandidatureDossier c) =>
 /// serveur (`etat_dossier().candidature.etat`), jamais deduit ici.
 String? libelleEntretienPortail(CandidatureDossier c) {
   if (c.issue != IssueCandidature.enCours || c.enPause) return null;
+  if (c.majorite.aAttester) return null;
   return switch (c.etat) {
     EtatCandidature.entretienAPlanifier =>
       t.recrutement.entretien.portailChoisir,
@@ -227,6 +237,9 @@ class EnteteSalle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // MAJEUR (directeur, 16/11/2026) : l'age a atteste, en tete de la page,
+        // la ou le candidat est (rien n'est rendu une fois fait).
+        CarteMajorite(candidature: candidature),
         if (passage != null) ...<Widget>[
           Text(passage, key: passageKey, style: textes.bodyLarge),
           Ecart.vMd,

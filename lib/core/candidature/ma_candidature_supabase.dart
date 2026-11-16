@@ -216,6 +216,24 @@ class MaCandidatureSupabase implements PortMaCandidature {
   }
 
   @override
+  Future<MajoriteCandidature> attesterMajorite({required bool majeur}) async {
+    final Map<String, dynamic> brut = _objet(
+      await _appel(_client, 'attester_majorite', <String, dynamic>{
+        'p_majeur': majeur,
+      }),
+    );
+    _refus(brut);
+    final MajoriteCandidature lue = MajoriteCandidature.depuisJson(
+      brut['majorite'],
+    );
+    // Jamais de faux succes : sans la declaration relue, rien n'est dit fait.
+    if (!lue.servie || lue.declaree != majeur) {
+      throw const FormatException('Declaration relue absente.');
+    }
+    return lue;
+  }
+
+  @override
   Future<CandidatureDossier> modifierVersement({
     required bool compteBancaire,
     required String pays,
@@ -282,6 +300,10 @@ void _refus(Map<String, dynamic> brut) {
       throw ReponsesIncompletes(champs());
     case 'accord_remuneration_requis':
       throw const AccordRemunerationRequis();
+    case 'majorite_requise':
+      throw const MajoriteRequise();
+    case 'declaration_deja_faite':
+      throw const DeclarationDejaFaite();
     case 'photo_requise':
       throw const PhotoRequise();
     case 'accord_publication_requis':
