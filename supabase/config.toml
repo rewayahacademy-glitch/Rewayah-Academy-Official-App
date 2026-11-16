@@ -464,6 +464,14 @@ verify_jwt = false
 [functions.invitation-compte]
 verify_jwt = false
 
+# PX-1 / SEC-1 (16/11/2026) : le connecteur MCP de Praxis. Le client MCP (le chat de la direction, ou une tache planifiee)
+# ne porte aucun jeton Supabase : la porte est la cle Praxis (`Authorization: Bearer prx_...`), refusee avant la base si elle est
+# mal formee, puis relue EN BASE a chaque appel (active, non revoquee, non expiree, interrupteur praxis.actif, usage chat ou
+# routine). La fonction n'a aucune logique metier : elle appelle une fonction `praxis_*` (executable par le seul service_role).
+# Voir docs/current/BUREAU-EQUIPE/PRAXIS/SECURITE-PRAXIS.md.
+[functions.praxis-mcp]
+verify_jwt = false
+
 # FI-BR-06 : seul le titulaire connecte ouvre la page de paiement.
 [functions.recharge-payer]
 verify_jwt = true
