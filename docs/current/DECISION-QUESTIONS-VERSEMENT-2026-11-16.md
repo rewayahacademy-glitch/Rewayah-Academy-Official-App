@@ -29,6 +29,12 @@ dossier restait « aucun moyen possible » sans issue des deux côtés.
 7. **Côté direction** : un geste « Débloquer le versement » permet de confirmer à la main un cas
    particulier même quand aucun moyen n'est déclaré ; il exige un motif écrit et laisse une trace.
 
+Arbitrages du pilote, 16/11/2026 (lot VERSEMENT-QUESTIONS, PR #528) :
+
+- une modification du bloc par le candidat lève le déblocage de la direction (le calcul repart des nouvelles réponses) ;
+- pas de nouvelle version du questionnaire : elle rendrait périmées toutes les réponses déjà envoyées ; l'ordre « compte d'abord » se règle à l'écran ;
+- le geste « Débloquer le versement » existe côté serveur ; son écran viendra dans un lot des écrans de candidature, après #515.
+
 Inchangé : validation automatique si le pays et le moyen sont confirmés dans le référentiel ; la
 direction décide une fois par pays non encore pris en charge ; pays sous embargo refusés
 automatiquement avec une solution (règle du 15/11/2026, `BUREAU-EQUIPE`).
