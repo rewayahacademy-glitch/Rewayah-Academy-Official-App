@@ -11,7 +11,7 @@
 --      en attente il reste lisible de son auteur seulement ; un texte « Image » ecrit par
 --      une personne reste lisible ;
 --   5. un compte eleve mineur n'obtient toujours rien (rien d'ouvert en passant).
--- Doit ECHOUER avant 20261129400000 (le point 1).
+-- Doit ECHOUER avant 20261129500000 (le point 1).
 -- Rejeu : stub_auth.sql, toutes les migrations, puis ce fichier (ROLLBACK).
 BEGIN;
 SET CONSTRAINTS ALL IMMEDIATE;

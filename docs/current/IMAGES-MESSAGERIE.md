@@ -36,7 +36,7 @@ la bibliothèque (`LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY` côté Edge, table
 
 **Le candidat enseignant (compte `pending_kyc`) est partie de son fil « candidature » et dépose des
 images comme n'importe quelle partie** (IMAGE-CANDIDAT, 16/11/2026, migration
-`20261129400000_image_candidat.sql`). Il avait été oublié : les fonctions de dépôt lisaient
+`20261129500000_image_candidat.sql`). Il avait été oublié : les fonctions de dépôt lisaient
 `app_account_valid()` et `private.com_appelant()`, deux portes fermées à un compte `pending_kyc`, d'où le
 refus 403 vu en production. Elles lisent maintenant la porte de la messagerie
 (`private.com_appelant_msg()`, valide d'abord, à défaut le candidat). **Un message dont le texte n'est que

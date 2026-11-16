@@ -35,7 +35,7 @@
 --
 -- Retouche par ancre : proprietaire, droits, volatilite et search_path gardes ; rejouable ;
 -- une ancre trouvee un autre nombre de fois qu'attendu arrete la migration. FICHIER SANS
--- MOT D'EFFACEMENT, sans BEGIN ni COMMIT. S'installe apres 20261129300000.
+-- MOT D'EFFACEMENT, sans BEGIN ni COMMIT. S'installe apres 20261129400000 (lp1_liste_enseignants, sans lien avec celle-ci).
 
 CREATE FUNCTION pg_temp.retoucher(
   p_f regprocedure, p_ancre text, p_nouveau text, p_fois integer, p_deja text)
