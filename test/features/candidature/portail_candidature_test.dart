@@ -177,6 +177,71 @@ void main() {
       );
     });
 
+    test('MAJEUR : declaration attendue, aucune prochaine action ; faite, '
+        'elle revient', () {
+      const MajoriteCandidature attendue = MajoriteCandidature(servie: true);
+      const MajoriteCandidature faite = MajoriteCandidature(
+        servie: true,
+        declaree: true,
+      );
+      final dossier = etatCandidat(accordsFaits: false);
+      // Salle 1, questionnaire ouvert.
+      expect(
+        prochaineCandidature(
+          candidatureAFaire(majorite: attendue),
+          dossier: dossier,
+        ),
+        isNull,
+      );
+      expect(
+        prochaineCandidature(
+          candidatureAFaire(majorite: faite),
+          dossier: dossier,
+        )?.chemin,
+        Routes.attenteAccords,
+      );
+      // Envoyee, piece ou accords a faire : meme porte.
+      const CandidatureDossier examenAttendue = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.enExamen,
+        version: 4,
+        majorite: attendue,
+      );
+      expect(
+        prochaineCandidature(
+          examenAttendue,
+          dossier: etatCandidat(
+            candidature: examenAttendue,
+            pieceDeposee: false,
+          ),
+        ),
+        isNull,
+      );
+      // Entretien a choisir : pas de lien tant que la declaration manque.
+      const CandidatureDossier entretien = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.entretienAPlanifier,
+        version: 5,
+        majorite: attendue,
+      );
+      expect(libelleEntretienPortail(entretien), isNull);
+      const CandidatureDossier entretienFait = CandidatureDossier(
+        existe: true,
+        etape: EtapeCandidature.prequalification,
+        etat: EtatCandidature.entretienAPlanifier,
+        version: 5,
+        majorite: faite,
+      );
+      expect(libelleEntretienPortail(entretienFait), isNotNull);
+      // Un serveur qui ne sert pas la cle ne bloque personne.
+      expect(
+        prochaineCandidature(candidatureAFaire(), dossier: dossier)?.chemin,
+        Routes.attenteAccords,
+      );
+    });
+
     testWidgets('HARMONISATION-E : sans etat de la photo, pas de ligne photo', (
       WidgetTester tester,
     ) async {
