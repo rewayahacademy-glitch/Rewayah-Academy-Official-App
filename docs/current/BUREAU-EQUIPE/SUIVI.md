@@ -30,7 +30,7 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 
 | Lot | Contenu | Statut |
 | :--- | :--- | :--- |
-| SEC-0 | Les cinq compétences du secrétaire (`voix-directeur`, `repondre-rewayah`, `annoncer-rewayah`, `savoir-rewayah`, `agir-rewayah`) ; attend les annonces WhatsApp du directeur | pas commencé |
+| SEC-0 | Les cinq compétences du secrétaire (`voix-directeur`, `repondre-rewayah`, `annoncer-rewayah`, `savoir-rewayah`, `agir-rewayah`) ; annonces WhatsApp reçues le 16/11 et analysées dans `SOURCE-ANNONCES-2026.md` | pas commencé |
 | SEC-1 | Connecteur : messages et annonces en envoi direct (boîte, fil, écrire, annoncer, calendrier, alerter) | pas commencé |
 | SEC-2 | Connecteur : dossiers (file, impression, listes, propositions) | pas commencé |
 | SEC-3 | Connecteur : objectifs, check-listes, assignation, alertes, point du jour | pas commencé |

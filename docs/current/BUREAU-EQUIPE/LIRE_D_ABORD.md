@@ -8,6 +8,7 @@ où ils ne se perdront pas » ; plusieurs agents à petits modèles, sous des r�
 | La stratégie complète (constats prouvés, idée, règles, vagues 0 à 5) | `../STRATEGIE-BUREAU-EQUIPE-2026-11-15.md` |
 | **Le suivi lot par lot (à tenir à jour à chaque PR)** | `SUIVI.md` |
 | **Le secrétaire IA (vision du directeur, liste complète, niveaux d'autonomie, connecteur)** | `SECRETAIRE-IA.md` |
+| Le style et le calendrier des annonces du directeur (source pour le secrétaire) | `SOURCE-ANNONCES-2026.md` |
 | Les règles imposées à chaque agent | `REGLES-AGENTS.md` |
 | Un cahier d'une page par lot | `CAHIER-*.md` |
 | La ligne du registre | `../REGISTRE-LOTS.md`, « BUREAU-EQUIPE » |
