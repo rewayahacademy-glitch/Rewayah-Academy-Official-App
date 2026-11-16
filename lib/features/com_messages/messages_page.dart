@@ -78,6 +78,14 @@ class MemoireMessages {
   List<ResumeFil>? liste;
 }
 
+/// BULLES-MESSAGERIE (directeur, 16/11/2026) : la largeur fixe de la liste des
+/// conversations ; la conversation prend le reste.
+const double largeurListeConversations = 360;
+
+/// BULLES-MESSAGERIE : le panneau « Contexte » est ferme par defaut sous cette
+/// largeur d'ecran ; l'icone « info » de la barre de la conversation l'ouvre.
+const double largeurContexteOuvertParDefaut = 1600;
+
 /// La memoire de l'espace des Messages (voir [MemoireMessages]).
 final Provider<MemoireMessages> memoireMessagesProvider =
     Provider.autoDispose<MemoireMessages>((Ref ref) {
@@ -481,6 +489,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     if (filId == null) {
       return EspaceTravailAdaptatif(
         liste: colonnes == 1 ? (listeFils ?? etatListe) : listeFils,
+        largeurListeFixe: largeurListeConversations,
         surfaceMobile: SurfaceMobile.liste,
         principal: contenu ? _choisir() : etatListe,
       );
@@ -489,6 +498,9 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     return EspaceTravailAdaptatif(
       liste: listeFils ?? etatListe,
       principal: _vueFil(filId, horsLigne),
+      largeurListeFixe: largeurListeConversations,
+      contexteOuvertInitial:
+          MediaQuery.sizeOf(context).width >= largeurContexteOuvertParDefaut,
       // R-02 : un fil rendu pose (i) dans la rangee de son en-tete, au lieu
       // d'une rangee a part qui lui prend de la hauteur.
       barreDansEntete: fil != null,

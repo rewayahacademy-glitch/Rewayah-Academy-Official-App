@@ -42,6 +42,7 @@ import '../../core/communications/lecture_fil_communication.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/communications/textes_fil_communication.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/fil_discussion.dart';
 import '../com_vocal/composer_vocal.dart';
@@ -233,6 +234,16 @@ class _FilContextuelState extends State<FilContextuel>
     setState(() => _vocauxConfirmes.add((cle: cle, duree: vocal.duree)));
   }
 
+  /// BULLES-MESSAGERIE : le nom de l'auteur ne se lit que dans une
+  /// conversation de groupe (plus de deux participants) ; a deux, l'autre est
+  /// deja nomme dans la barre.
+  bool get _estGroupe => widget.fil.participants.length > 2;
+
+  /// BULLES-MESSAGERIE : sur tablette et ordinateur, la liste est a cote du
+  /// fil ; la tete de la page reste au-dessus des deux colonnes. Au telephone
+  /// (texte agrandi), le fil la prend avec ses messages.
+  bool get _prendTete => AppGabarit.de(context) == Gabarit.mobile;
+
   /// Le fil plein ecran : la barre compacte, puis le fil (messages, saisie).
   Widget _pleinEcran(List<MessageFil> connus, TextesFilDiscussion textes) {
     final FilMetier fil = widget.fil;
@@ -250,37 +261,35 @@ class _FilContextuelState extends State<FilContextuel>
           replie: _barreRepliee,
         ),
         Expanded(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            child: NotificationListener<ScrollNotification>(
-              onNotification: _surDefilement,
-              child: FilDiscussion(
-                pleinEcran: true,
-                defilement: _defilement,
-                key: ValueKey<String>('fil-metier-plein-${fil.id}'),
-                messages: <MessageFil>[
-                  ...connus,
-                  if (ecriture)
-                    for (final VocalConfirme v in _vocauxConfirmes)
-                      bulleVocalConfirme(
-                        v,
-                        auteurSoi: soi,
-                        ligneVocal: ligneVocal,
-                        envoye: textes.envoye,
-                      ),
-                ],
-                textes: textes,
-                lectureSeule: ecriture ? null : t.com.messages.fil.lectureSeule,
-                onEnvoyerMessage: ecriture ? _envoyer : null,
-                cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
-                emplacementVocal: !ecriture || vocal == null
-                    ? null
-                    : ComposerVocal(
-                        key: FilContextuel.cleComposerVocal,
-                        onEnvoyer: (EnregistrementVocal v) =>
-                            _envoyerVocal(v, vocal),
-                      ),
-              ),
+          child: NotificationListener<ScrollNotification>(
+            onNotification: _surDefilement,
+            child: FilDiscussion(
+              pleinEcran: true,
+              afficherAuteur: _estGroupe,
+              defilement: _defilement,
+              key: ValueKey<String>('fil-metier-plein-${fil.id}'),
+              messages: <MessageFil>[
+                ...connus,
+                if (ecriture)
+                  for (final VocalConfirme v in _vocauxConfirmes)
+                    bulleVocalConfirme(
+                      v,
+                      auteurSoi: soi,
+                      ligneVocal: ligneVocal,
+                      envoye: textes.envoye,
+                    ),
+              ],
+              textes: textes,
+              lectureSeule: ecriture ? null : t.com.messages.fil.lectureSeule,
+              onEnvoyerMessage: ecriture ? _envoyer : null,
+              cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
+              emplacementVocal: !ecriture || vocal == null
+                  ? null
+                  : ComposerVocal(
+                      key: FilContextuel.cleComposerVocal,
+                      onEnvoyer: (EnregistrementVocal v) =>
+                          _envoyerVocal(v, vocal),
+                    ),
             ),
           ),
         ),
@@ -321,6 +330,8 @@ class _FilContextuelState extends State<FilContextuel>
     if (!widget.ecritureOuverte || !fil.peut(CapaciteFil.ecrire)) {
       // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
       return FilDiscussion(
+        afficherAuteur: _estGroupe,
+        prendTeteDePage: _prendTete,
         defilement: _defilement,
         key: ValueKey<String>('fil-metier-lecture-${fil.id}'),
         entete: entete,
@@ -336,6 +347,8 @@ class _FilContextuelState extends State<FilContextuel>
     final Future<void> Function(EnregistrementVocal, String)? vocal =
         widget.onEnvoyerVocal;
     return FilDiscussion(
+      afficherAuteur: _estGroupe,
+      prendTeteDePage: _prendTete,
       defilement: _defilement,
       key: ValueKey<String>('fil-metier-${fil.id}'),
       entete: entete,

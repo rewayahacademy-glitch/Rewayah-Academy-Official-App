@@ -4103,6 +4103,7 @@
         "communaute": "مجتمع المعلّمين",
         "studio": "الاستوديو",
         "aujourdhui": "اليوم",
+        "hier": "أمس",
         "notifications": "الإشعارات",
         "annonce": "إعلان",
         "publication": "منشور",
@@ -4234,6 +4235,11 @@
         "aucun": "لا توجد محادثة تطابق «⁨{texte}⁩». جرّب اسمًا آخر أو فصلًا آخر.",
         "resultatUn": "تم العثور على محادثة واحدة",
         "resultats": "تم العثور على {nombre} محادثات"
+      },
+      "filtres": {
+        "tous": "الكل",
+        "nonLus": "غير المقروءة",
+        "aucunNonLu": "لا توجد محادثة غير مقروءة."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",

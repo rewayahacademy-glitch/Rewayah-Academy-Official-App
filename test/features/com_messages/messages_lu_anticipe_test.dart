@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
+import 'package:rewayah_academy/core/widgets/ligne_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
 
 import '../../capture/outil_capture.dart'
@@ -42,17 +43,22 @@ class _LectureTenue extends MessagesMetierDemo {
   }
 }
 
+/// Ce qui dit qu'une conversation attend : la pastille du nombre de non lus de
+/// sa ligne (BULLES-MESSAGERIE), ou le badge d'une attention sans nombre.
+bool _estMarque(Widget w) =>
+    w is BadgeNonLu || w.key == LigneConversation.cleNonLus;
+
 Finder _badgeDe(String id) => find.descendant(
   of: find.ancestor(
     of: find.byKey(ListeFils.cleLigne(id)),
-    matching: find.byType(MergeSemantics),
+    matching: find.byType(LigneConversation),
   ),
-  matching: find.byType(BadgeNonLu),
+  matching: find.byWidgetPredicate(_estMarque),
 );
 
 Finder _badgesListe() => find.descendant(
   of: find.byKey(EspaceTravailAdaptatif.cleListe),
-  matching: find.byType(BadgeNonLu),
+  matching: find.byWidgetPredicate(_estMarque),
 );
 
 void main() {

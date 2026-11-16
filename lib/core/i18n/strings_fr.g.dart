@@ -21847,6 +21847,7 @@ class Traductions$com$messages$fr {
 	String get choisir => 'Choisissez une conversation dans la liste pour la lire et y répondre.';
 
 	late final Traductions$com$messages$recherche$fr recherche = Traductions$com$messages$recherche$fr.internal(_root);
+	late final Traductions$com$messages$filtres$fr filtres = Traductions$com$messages$filtres$fr.internal(_root);
 	late final Traductions$com$messages$ligne$fr ligne = Traductions$com$messages$ligne$fr.internal(_root);
 	late final Traductions$com$messages$noms$fr noms = Traductions$com$messages$noms$fr.internal(_root);
 	late final Traductions$com$messages$entete$fr entete = Traductions$com$messages$entete$fr.internal(_root);
@@ -38568,6 +38569,9 @@ class Traductions$com$socle$lexique$fr {
 	/// fr: 'Aujourd'hui'
 	String get aujourdhui => 'Aujourd\'hui';
 
+	/// fr: 'Hier'
+	String get hier => 'Hier';
+
 	/// fr: 'Notifications'
 	String get notifications => 'Notifications';
 
@@ -38924,6 +38928,24 @@ class Traductions$com$messages$recherche$fr {
 
 	/// fr: '{nombre} conversations trouvées'
 	String resultats({required Object nombre}) => '${nombre} conversations trouvées';
+}
+
+// Path: com.messages.filtres
+class Traductions$com$messages$filtres$fr {
+	Traductions$com$messages$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'Non lus'
+	String get nonLus => 'Non lus';
+
+	/// fr: 'Aucune conversation non lue.'
+	String get aucunNonLu => 'Aucune conversation non lue.';
 }
 
 // Path: com.messages.ligne
@@ -63218,6 +63240,7 @@ extension on Traductions {
 			'com.socle.lexique.communaute' => 'Communauté enseignants',
 			'com.socle.lexique.studio' => 'Le Studio',
 			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
+			'com.socle.lexique.hier' => 'Hier',
 			'com.socle.lexique.notifications' => 'Notifications',
 			'com.socle.lexique.annonce' => 'Annonce',
 			'com.socle.lexique.publication' => 'Publication',
@@ -63304,9 +63327,9 @@ extension on Traductions {
 			'com.messages.entree.ecrireFamille' => 'Écrire à la famille',
 			'com.messages.entree.ecrireAdministration' => 'Écrire à ⁦${_root.commun.staff.designation}⁩',
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
-			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
 			'com.messages.entree.replier' => 'Replier la conversation',
 			'com.messages.entree.ouvrirDansMessages' => 'Ouvrir dans Messages',
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
@@ -63327,6 +63350,9 @@ extension on Traductions {
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
+			'com.messages.filtres.tous' => 'Tous',
+			'com.messages.filtres.nonLus' => 'Non lus',
+			'com.messages.filtres.aucunNonLu' => 'Aucune conversation non lue.',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'Aucun message pour le moment',
 			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
@@ -63815,12 +63841,12 @@ extension on Traductions {
 			'com.studio.demo.f.lienRemplacements' => 'Remplacements de la semaine',
 			'com.studio.demo.f.lienCharte' => 'Charte de l\'équipe',
 			'com.studio.demo.f.brouillon' => 'Samira, je regarde le dossier de la famille Karim ce soir et je te dis demain matin',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.activitePaiement' => 'Paiement de septembre non confirmé pour la famille Haddad',
 			'com.studio.demo.f.objetEcheancier' => 'Échéancier de la famille Haddad',
 			'com.studio.demo.f.activiteDossierKarim' => 'Dossier de la famille Karim prêt pour une décision',
 			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activiteMention' => 'Samira vous a mentionnée',
 			'com.studio.demo.f.activiteReponse' => 'Amina a répondu à votre message',
 			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la classe An-Nour',
@@ -64329,12 +64355,12 @@ extension on Traductions {
 			'comptable.paiements.confirmation.devises' => 'Devises',
 			'comptable.paiements.confirmation.prestataires' => 'Prestataires',
 			'comptable.paiements.confirmation.plafond' => 'Délégation restante',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.exclusTitre' => 'Exclus de ce lot : ils ne partiront pas',
 			'comptable.paiements.confirmation.aucunPretTitre' => 'Aucun paiement prêt',
 			'comptable.paiements.confirmation.aucunPret' => 'Rien ne partira. Ouvrez chaque paiement exclu pour lever sa raison, puis relancez le contrôle.',
 			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
@@ -64843,12 +64869,12 @@ extension on Traductions {
 			'comptable.contractuels.ligneAuteur' => ({required Object auteur}) => 'Ajouté par ${auteur}',
 			'comptable.contractuels.ligneValidation' => ({required Object validation}) => 'Validation : ${validation}',
 			'comptable.contractuels.payerAide' => 'Le paiement s\'ouvre dans le détail du paiement, avec le montant exact.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.approuverAide' => 'Après l\'approbation, le montant est figé et l\'obligation devient payable.',
 			'comptable.contractuels.renvoyerInvitation' => 'Renvoyer l\'invitation',
 			'comptable.contractuels.invitationAide' => 'Ce bénéficiaire externe saisit lui-même sa méthode de paiement, depuis son invitation sécurisée.',
 			'comptable.contractuels.invitationRenvoyee' => 'Invitation renvoyée',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.erreurApprobation' => 'Nous ne savons pas si l\'approbation a été prise en compte. Actualisez l\'obligation avant de réessayer.',
 			'comptable.contractuels.erreurInvitation' => 'Nous ne savons pas si l\'invitation est repartie. Actualisez l\'obligation avant de réessayer.',
 			'comptable.contractuels.formIntro' => 'Le bénéficiaire, l\'échéance et le centre de coût sont proposés : changez-les si besoin, puis saisissez l\'objet et le montant.',
@@ -65357,12 +65383,12 @@ extension on Traductions {
 			'juridique.confidentialite.resume' => 'Quelles informations nous gardons, pourquoi, et vos droits.',
 			'juridique.confidentialite.intro' => 'Nous gardons seulement ce qui sert à faire les cours. Voici quelles informations, pourquoi, et comment les contrôler.',
 			'juridique.confidentialite.s1.titre' => '1. Qui est responsable',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s1.blocs.0' => 'Rewayah Academy Ltd décide pourquoi et comment vos informations sont utilisées. Ses coordonnées sont dans les Mentions légales.',
 			'juridique.confidentialite.s1.representant' => ({required Object nom}) => 'Représentant dans l\'Union européenne : ${nom}.',
 			'juridique.confidentialite.s2.titre' => '2. Ce que nous recueillons',
 			'juridique.confidentialite.s2.blocs.0' => '- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.1' => '- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',
 			'juridique.confidentialite.s2.blocs.2' => '- Facultatif : photo, téléphone, adresse, niveau, préférences d\'horaires.',
 			'juridique.confidentialite.s2.blocs.3' => '- Pendant les cours : la présence, le cahier de transmission et la progression de l\'élève.',
@@ -65871,12 +65897,12 @@ extension on Traductions {
 			'snt.planning.confirmer' => 'Fixer cette date',
 			'snt.planning.horsLigne' => 'Connexion absente : la date sera fixée une fois l\'appareil reconnecté.',
 			'snt.planning.fixee' => ({required Object quand}) => 'Nouvelle date fixée : ${quand}. La classe est prévenue.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.refusChevauchement' => 'La date n\'est pas fixée : l\'enseignant a déjà une séance à ce moment. Choisissez une autre heure ou un autre jour.',
 			'snt.planning.refusChevauchementNomme' => ({required Object classe, required Object quand}) => 'La date n\'est pas fixée : l\'enseignant a déjà une séance de la classe ${classe} le ${quand}. Choisissez une autre heure ou un autre jour.',
 			'snt.planning.refusChevauchementDate' => ({required Object quand}) => 'La date n\'est pas fixée : l\'enseignant a déjà une séance le ${quand}. Choisissez une autre heure ou un autre jour.',
 			'snt.planning.refusDatePassee' => 'La date n\'est pas fixée : ce moment est déjà passé. Choisissez un jour et une heure à venir.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.refusDejaFixee' => 'La nouvelle date de cette séance est déjà fixée, peut-être depuis un autre appareil. Fermez cette fenêtre : la séance est dans le planning.',
 			'snt.planning.refusClasseClose' => 'La date n\'est pas fixée : la classe est close. Aucune séance ne peut plus y être prévue.',
 			'snt.planning.refusNonAutorisee' => 'La date n\'est pas fixée : ce compte ne peut pas fixer de date. Connectez-vous avec un compte de la direction.',
@@ -66385,12 +66411,12 @@ extension on Traductions {
 			'suiviPedagogique.dernierJalon' => 'Dernier jalon',
 			'suiviPedagogique.niveauDeclare' => 'Niveau déclaré',
 			'suiviPedagogique.dateLimiteDepassee' => 'Date limite dépassée',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.erreur' => 'L\'étape du programme n\'a pas pu être lue. Réessayez dans un instant.',
 			'suiviPedagogique.matierePrincipale' => 'Matière principale',
 			'suiviPedagogique.matiereSecondaire' => 'Matière secondaire',
 			'suiviPedagogique.depuis' => 'Dans cette étape depuis le',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.dateJour' => ({required Object numero, required Object mois, required Object annee}) => '${numero} ${mois} ${annee}',
 			'suiviPedagogique.dureePrevue' => 'Durée de l\'étape',
 			'suiviPedagogique.chemin' => ({required Object niveau}) => '${niveau}, étape par étape',

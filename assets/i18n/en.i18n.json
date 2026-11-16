@@ -11923,6 +11923,7 @@
         "communaute": "Teachers community",
         "studio": "The Studio",
         "aujourdhui": "Today",
+        "hier": "Yesterday",
         "notifications": "Notifications",
         "annonce": "Announcement",
         "publication": "Post",
@@ -12054,6 +12055,11 @@
         "aucun": "No conversation matches \"{texte}\". Try another name or another class.",
         "resultatUn": "1 conversation found",
         "resultats": "{nombre} conversations found"
+      },
+      "filtres": {
+        "tous": "All",
+        "nonLus": "Unread",
+        "aucunNonLu": "No unread conversation."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",

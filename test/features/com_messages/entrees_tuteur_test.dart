@@ -227,6 +227,8 @@ void main() {
           find.text(t.com.messages.entree.ecrireA(nom: 'Sayyida Mariam')),
         ),
       );
+      // BULLES-MESSAGERIE : le contexte est ferme sous 1 600 points.
+      await ouvrirContexte(tester);
       expect(find.byType(PanneauContexteFil), findsOneWidget);
       final Finder carte = find.descendant(
         of: find.byKey(PanneauContexteFil.cleFichiers),

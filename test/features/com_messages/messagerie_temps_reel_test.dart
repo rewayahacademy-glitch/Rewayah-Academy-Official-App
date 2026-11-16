@@ -141,7 +141,15 @@ void main() {
     );
     veilleDe(tester).relire();
     await tester.pumpAndSettle();
-    expect(find.text('Deja la.'), findsOneWidget);
+    // BULLES-MESSAGERIE : la liste montre aussi l'apercu du dernier message ;
+    // on compte les bulles du fil.
+    expect(
+      find.descendant(
+        of: find.byType(FilDiscussion),
+        matching: find.text('Deja la.'),
+      ),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
   });
 
@@ -156,12 +164,18 @@ void main() {
     await tester.pump();
     await tester.tap(find.byKey(FilDiscussion.envoyerKey));
     await tester.pumpAndSettle();
-    expect(find.text('Bien recu.'), findsOneWidget);
+    // BULLES-MESSAGERIE : la liste montre aussi l'apercu du dernier message ;
+    // on compte les bulles du fil.
+    final Finder bulles = find.descendant(
+      of: find.byType(FilDiscussion),
+      matching: find.text('Bien recu.'),
+    );
+    expect(bulles, findsOneWidget);
     // Le serveur signale la lecture de l'auteur : la page relit le fil, qui
     // porte desormais le message envoye.
     veilleDe(tester).relire();
     await tester.pumpAndSettle();
-    expect(find.text('Bien recu.'), findsOneWidget);
+    expect(bulles, findsOneWidget);
     expect(tester.takeException(), isNull);
   });
 
