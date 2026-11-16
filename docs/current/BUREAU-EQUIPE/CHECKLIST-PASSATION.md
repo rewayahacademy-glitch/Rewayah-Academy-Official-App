@@ -1,6 +1,6 @@
 # Checklist du pilote « Bureau de l'équipe » (depuis la passation du 16/11/2026)
 
-**Mise à jour : 16/11/2026, 19 h 55 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
+**Mise à jour : 16/11/2026, 20 h 05 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
 remplace `session_0163KjrvqR38dL9HhgktqAdg`, archivée)
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (fusionné, installé, vérifié par le pilote ; « prouvé » seulement
@@ -31,9 +31,9 @@ BE-S1 et BE-LISTE : archivés (travail poussé). Plage de ce chantier : 20261129
 | 8 | DISPENSE-ECRAN | ⏸ | travail **non perdu** : commit local `6aa823c66` chez BE-DOSSIER, branche `claude/dispense-ecran` jamais poussée. BE-DOSSIER refuse de pousser sans l'accord du directeur lui-même (il dit que le directeur a refusé sa dernière poussée). Non archivé exprès : l'archiver détruirait ce commit. Voir §4 |
 | 9 | DEBLOQUER-VERSEMENT-ECRAN | ◐ | BE-GESTES, après #550 |
 | 10 | PIECE-TYPE-ECRAN (l'écran lit `genreFichier`) | ◐ | BE-PIECE |
-| 11 | Vérification de trois gestes du menu | ☐ | intégrée à la carte des gestes (n° 13) : les trois gestes ne sont nommés nulle part dans les documents |
-| 12 | #525 CAPTCHA-PLACE | ☐ | vérifier dans un navigateur, puis fusionner ou fermer avec la raison |
-| 13 | **PREMIER TRAVAIL (§0 bis)** : `CARTE-GESTES-DIRECTION.md` | ◐ | lecture du code et de la base en cours ; présentée au directeur au réveil avant tout code qui en dépend |
+| 11 | Vérification de trois gestes du menu | ☑ | faite dans la carte (n° 13) pour tous les gestes du menu ; les trois gestes n'étaient nommés nulle part |
+| 12 | #525 CAPTCHA-PLACE | ☐ | aucun aperçu Vercel dans la PR, base du matin ; à vérifier dans un navigateur après mise à jour, ou fermer |
+| 13 | **PREMIER TRAVAIL (§0 bis)** : `CARTE-GESTES-DIRECTION.md` | ⏸ | écrite (14 trous, 8 lots, questions Q1 à Q5) ; deux faits clés revérifiés en base par le pilote ; attend la décision du directeur avant tout code |
 
 ## 2. Gros lots (dans l'ordre ; une étape ne commence que quand la précédente est livrée)
 
