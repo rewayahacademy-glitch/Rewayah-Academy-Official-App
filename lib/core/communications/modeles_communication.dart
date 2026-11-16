@@ -15,9 +15,11 @@ import 'package:flutter/foundation.dart';
 
 import '../router/chemin_retour.dart';
 import '../widgets/fil_discussion.dart' show EtatEnvoiMessage;
+import 'image_message.dart';
 import 'port_pieces_jointes.dart';
 
 export '../widgets/fil_discussion.dart' show EtatEnvoiMessage;
+export 'image_message.dart';
 
 /// Le niveau d'attention d'un element (fil, notification, activite).
 ///
@@ -277,7 +279,20 @@ class MessageCommunication {
     this.etat = EtatEnvoiMessage.envoye,
     this.piecesJointes = const <PieceJointe>[],
     this.mentionneSoi = false,
+    this.image,
+    this.coeurs = 0,
+    this.aimeParMoi = false,
   });
+
+  /// IMAGES-MESSAGERIE : l'image du message (place reservee, couleur
+  /// moyenne, etat), ou `null`. Lue avec le fil, sans requete de plus.
+  final ImageMessage? image;
+
+  /// IMAGES-MESSAGERIE : le nombre de coeurs actuellement donnes.
+  final int coeurs;
+
+  /// IMAGES-MESSAGERIE : la personne qui lit a donne le sien.
+  final bool aimeParMoi;
 
   /// Identifiant stable, pour qu'un message ne soit jamais annonce deux fois.
   final String id;

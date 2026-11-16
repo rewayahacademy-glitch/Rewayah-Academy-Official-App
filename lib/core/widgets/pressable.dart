@@ -112,6 +112,8 @@ class Pressable extends StatefulWidget {
     this.coche,
     this.focusNode,
     this.lien = false,
+    this.onDoubleTap,
+    this.onLongPress,
   }) : constructeur = null;
 
   /// Cree une zone pressable dont le contenu suit l'etat d'interaction.
@@ -133,6 +135,8 @@ class Pressable extends StatefulWidget {
     this.coche,
     this.focusNode,
     this.lien = false,
+    this.onDoubleTap,
+    this.onLongPress,
   }) : child = null;
 
   /// Le contenu rendu, quand il ne depend pas de l'etat.
@@ -143,6 +147,14 @@ class Pressable extends StatefulWidget {
 
   /// L'action declenchee. `null` desactive la pression.
   final VoidCallback? onPress;
+
+  /// IMAGES-MESSAGERIE : le double toucher (un coeur sur une bulle). Quand il
+  /// est donne avec [onPress], le toucher simple attend la fin du delai de
+  /// double toucher (celui de Flutter) avant de partir.
+  final VoidCallback? onDoubleTap;
+
+  /// IMAGES-MESSAGERIE : l'appui long (le menu d'une bulle).
+  final VoidCallback? onLongPress;
 
   /// Libelle lu par les technologies d'assistance.
   final String? libelleSemantique;
@@ -207,7 +219,11 @@ class _PressableState extends State<Pressable>
   bool _presse = false;
   bool _focus = false;
 
-  bool get _pressable => widget.actif && widget.onPress != null;
+  bool get _pressable =>
+      widget.actif &&
+      (widget.onPress != null ||
+          widget.onDoubleTap != null ||
+          widget.onLongPress != null);
 
   @override
   void dispose() {
@@ -216,7 +232,9 @@ class _PressableState extends State<Pressable>
   }
 
   void _enfoncer(TapDownDetails _) {
-    if (!_pressable) {
+    // Un double toucher ou un appui long seuls ne font pas reculer la zone :
+    // elle ne bouge pas quand le doigt la traverse pour defiler.
+    if (!_pressable || widget.onPress == null) {
       return;
     }
     setState(() => _presse = true);
@@ -239,7 +257,7 @@ class _PressableState extends State<Pressable>
       return;
     }
     unawaited(HapticFeedback.mediumImpact());
-    widget.onPress!.call();
+    widget.onPress?.call();
   }
 
   /// Le declenchement au clavier.
@@ -378,7 +396,9 @@ class _PressableState extends State<Pressable>
           onTapDown: _enfoncer,
           onTapUp: (TapUpDetails _) => _relacher(),
           onTapCancel: _relacher,
-          onTap: _pressable ? _declencher : null,
+          onTap: _pressable && widget.onPress != null ? _declencher : null,
+          onDoubleTap: widget.actif ? widget.onDoubleTap : null,
+          onLongPress: widget.actif ? widget.onLongPress : null,
           // CURSEUR-CLIC (directeur, 08/11/2026 : « sur chaque lien, quand
           // tu viens pour cliquer, c'est le curseur de copier qui
           // s'affiche ») : un `Text` pose sous le `SelectionArea` racine

@@ -69,7 +69,21 @@ class FilContextuel extends StatefulWidget {
     this.onEnvoyerVocal,
     this.onRetour,
     this.pleinEcran = false,
+    this.images,
+    this.onAimer,
+    this.onEnvoyerImage,
   });
+
+  /// IMAGES-MESSAGERIE : les adresses des images du fil, ou `null`.
+  final SourceImagesFil? images;
+
+  /// IMAGES-MESSAGERIE : poser ou retirer son coeur (le fil lu en garde le
+  /// droit, meme en lecture seule), ou `null`.
+  final Future<EtatCoeur> Function(String messageId, bool aime)? onAimer;
+
+  /// IMAGES-MESSAGERIE : envoyer un message avec son image, ou `null` : pas
+  /// d'icone (compte eleve de moins de 18 ans).
+  final EnvoiImageFil? onEnvoyerImage;
 
   /// Le fil ouvert.
   final FilMetier fil;
@@ -220,6 +234,24 @@ class _FilContextuelState extends State<FilContextuel>
     _cles.remove(idLocal);
   }
 
+  /// IMAGES-MESSAGERIE : envoie le message [texte] avec [image], sous la cle
+  /// de sa bulle (rejouee au « Reessayer »).
+  Future<void> _envoyerImage(
+    String idLocal,
+    String texte,
+    ImagePrete image,
+    ProgressionImage progression,
+  ) async {
+    final String cle = _cles.putIfAbsent(
+      idLocal,
+      () =>
+          '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
+          '${_compteur++}',
+    );
+    await widget.onEnvoyerImage!(texte, cle, image, progression);
+    _cles.remove(idLocal);
+  }
+
   /// Envoie [vocal] par [envoi] sous sa cle ; a l'accuse, sa bulle entre
   /// dans le fil. Un echec remonte au composer (« Reessayer »), sans bulle.
   Future<void> _envoyerVocal(
@@ -282,6 +314,11 @@ class _FilContextuelState extends State<FilContextuel>
               textes: textes,
               lectureSeule: ecriture ? null : t.com.messages.fil.lectureSeule,
               onEnvoyerMessage: ecriture ? _envoyer : null,
+              images: widget.images,
+              onAimer: widget.onAimer,
+              onEnvoyerImage: ecriture && widget.onEnvoyerImage != null
+                  ? _envoyerImage
+                  : null,
               cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
               emplacementVocal: !ecriture || vocal == null
                   ? null
@@ -340,6 +377,8 @@ class _FilContextuelState extends State<FilContextuel>
         retourCompacte: widget.onRetour,
         messages: connus,
         textes: textes,
+        images: widget.images,
+        onAimer: widget.onAimer,
         lectureSeule: t.com.messages.fil.lectureSeule,
       );
     }
@@ -367,6 +406,9 @@ class _FilContextuelState extends State<FilContextuel>
       ],
       textes: textes,
       onEnvoyerMessage: _envoyer,
+      images: widget.images,
+      onAimer: widget.onAimer,
+      onEnvoyerImage: widget.onEnvoyerImage == null ? null : _envoyerImage,
       cleBrouillon: cleBrouillonFil(fil.id),
       emplacementVocal: vocal == null
           ? null
