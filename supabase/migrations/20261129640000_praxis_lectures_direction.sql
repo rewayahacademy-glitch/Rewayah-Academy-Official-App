@@ -9,7 +9,9 @@
 --                                          contient jamais le texte d'un tiers (R11) : aucune autre colonne n'est rendue.
 -- Garde (exigence positive) : administrateur au compte valide. La double verification (aal2) n'est PAS exigee pour LIRE (decision du pilote) ;
 -- elle reste exigee par les portes d'ecriture. Executables par `authenticated` seul ; ni anon, ni service_role, ni agent_ro.
--- Aucune ecriture, aucun journal d'acces (lecture de ce que Praxis a lui-meme ecrit : aucune donnee de tiers).
+-- Aucune ecriture dans les tables de Praxis. Trace de qui lit (arbitrage du pilote, 16/11/2026) : chaque lecture de
+-- direction_praxis_journal laisse UNE ligne d'audit (public.log_sensitive_access, action `praxis_journal_lu`, la limite et le
+-- curseur demandes, jamais le texte) ; cette fonction est donc VOLATILE. direction_praxis_etat ne laisse aucune trace (STABLE).
 -- FICHIER SANS EFFACEMENT. Additif. Sans BEGIN/COMMIT de premier niveau.
 
 CREATE FUNCTION public.direction_praxis_etat()
@@ -45,7 +47,6 @@ $f$;
 CREATE FUNCTION public.direction_praxis_journal(p_limite integer DEFAULT 50, p_avant bigint DEFAULT NULL)
 RETURNS jsonb
 LANGUAGE plpgsql
-STABLE
 SECURITY DEFINER
 SET search_path = ''
 AS $f$
@@ -59,6 +60,8 @@ BEGIN
   IF p_limite IS NULL OR p_limite NOT BETWEEN 1 AND 100 THEN
     RAISE EXCEPTION 'limite invalide : 1 a 100' USING ERRCODE = '22023';
   END IF;
+  PERFORM public.log_sensitive_access('praxis_journal_lu', 'private.praxis_journal', 'praxis',
+    pg_catalog.jsonb_build_object('limite', p_limite, 'avant', p_avant));
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
            'id', j.id, 'outil', j.outil, 'issue', j.issue, 'heure', j.cree_le, 'fil', j.fil_id,
            'extrait', pg_catalog.left(j.texte_envoye, 300)) ORDER BY j.id DESC), '[]'::jsonb),

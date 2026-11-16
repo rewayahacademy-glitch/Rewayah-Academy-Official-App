@@ -4,7 +4,8 @@
 --  3 l'etat rend interrupteur, mode, plafond, cles (prefixe, usage, dates, revoquee), JAMAIS l'empreinte ni le secret ;
 --  4 le journal rend seulement les lignes ecrire et annoncer, avec un extrait de 300 signes au plus ; pas d'autre outil ;
 --  5 curseur : p_limite et p_avant, ordre decroissant, `suite` nul a la fin ; limite hors bornes refusee (22023) ;
---  6 aucune ecriture : les deux fonctions sont STABLE ; les portes d'ecriture exigent toujours aal2 (inchange).
+--  6 trace de qui lit : chaque lecture du journal laisse UNE ligne d'audit (action praxis_journal_lu, sans texte), la lecture de
+--    l'etat aucune ; l'etat est STABLE, le journal VOLATILE (il ecrit l'audit) ; les portes d'ecriture exigent toujours aal2.
 -- A rejouer sur une base NEUVE. Annule tout a la fin.
 BEGIN;
 
@@ -143,13 +144,44 @@ SELECT pg_temp.refus('b3000000-0000-4000-8000-000000000001', 'admin', 'SELECT pu
 SELECT pg_temp.refus('b3000000-0000-4000-8000-000000000001', 'admin', 'SELECT public.direction_praxis_journal(101, NULL)', '22023', '5 : limite 101 refusee');
 SELECT pg_temp.refus('b3000000-0000-4000-8000-000000000001', 'admin', 'SELECT public.direction_praxis_journal(NULL, NULL)', '22023', '5 : limite nulle refusee');
 
--- 6 : lectures pures ; les portes d'ecriture exigent toujours aal2
-SELECT pg_temp.vrai((SELECT bool_and(p.provolatile = 's' AND p.prosecdef AND p.proconfig @> ARRAY['search_path=""'])
-                       FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace
-                        AND p.proname IN ('direction_praxis_etat', 'direction_praxis_journal'))
+-- 6 : trace de qui lit. Les lectures de l'etat n'en laissent pas ; chaque lecture du journal en laisse une, sans texte.
+CREATE TEMP TABLE aud (avant_journal bigint, apres_journal bigint, apres_etat bigint);
+GRANT ALL ON aud TO authenticated;
+DO $$
+DECLARE n0 bigint; n1 bigint; n2 bigint;
+BEGIN
+  SELECT count(*) INTO n0 FROM public.audit_logs WHERE action = 'praxis_journal_lu';
+  PERFORM pg_temp.appel('b3000000-0000-4000-8000-000000000001', 'admin', 'aal1', 'SELECT public.direction_praxis_etat()');
+  SELECT count(*) INTO n1 FROM public.audit_logs WHERE action = 'praxis_journal_lu';
+  PERFORM pg_temp.appel('b3000000-0000-4000-8000-000000000001', 'admin', 'aal1', 'SELECT public.direction_praxis_journal(5, NULL)');
+  SELECT count(*) INTO n2 FROM public.audit_logs WHERE action = 'praxis_journal_lu';
+  INSERT INTO aud VALUES (n0, n2, n1);
+END $$;
+SELECT pg_temp.vrai((SELECT apres_etat = avant_journal AND apres_journal = avant_journal + 1 FROM aud),
+  '6 : lire l''etat ne laisse aucune ligne d''audit ; lire le journal en laisse exactement une');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.audit_logs WHERE action = 'praxis_journal_lu'
+                        AND actor = 'b3000000-0000-4000-8000-000000000001'
+                        AND table_name = 'private.praxis_journal' AND payload ? 'limite'
+                        AND NOT (payload::text ~* '(Bonjour|Annonce courte|xxxx)')) >= 1,
+  '6 : la ligne d''audit dit qui a lu (l''administrateur), la limite et le curseur, jamais un texte');
+-- Un refus de limite ou d'autorisation ne laisse aucune trace de lecture.
+DO $$
+DECLARE n0 bigint; n1 bigint;
+BEGIN
+  SELECT count(*) INTO n0 FROM public.audit_logs WHERE action = 'praxis_journal_lu';
+  BEGIN PERFORM pg_temp.appel('b3000000-0000-4000-8000-000000000002', 'guardian', 'aal1', 'SELECT public.direction_praxis_journal(5, NULL)'); EXCEPTION WHEN OTHERS THEN NULL; END;
+  BEGIN PERFORM pg_temp.appel('b3000000-0000-4000-8000-000000000001', 'admin', 'aal1', 'SELECT public.direction_praxis_journal(0, NULL)'); EXCEPTION WHEN OTHERS THEN NULL; END;
+  SELECT count(*) INTO n1 FROM public.audit_logs WHERE action = 'praxis_journal_lu';
+  IF n1 <> n0 THEN RAISE EXCEPTION 'PX3 ROUGE : un refus a laisse une ligne d''audit de lecture'; END IF;
+  RAISE NOTICE 'OK 6 : un refus (tuteur, limite hors bornes) ne laisse aucune ligne d''audit de lecture';
+END $$;
+SELECT pg_temp.vrai((SELECT p.provolatile = 's' FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace AND p.proname = 'direction_praxis_etat')
+  AND (SELECT p.provolatile = 'v' FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace AND p.proname = 'direction_praxis_journal')
+  AND (SELECT bool_and(p.prosecdef AND p.proconfig @> ARRAY['search_path=""'])
+         FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace AND p.proname IN ('direction_praxis_etat', 'direction_praxis_journal'))
   AND NOT has_function_privilege('service_role', 'public.direction_praxis_etat()', 'EXECUTE')
   AND NOT has_function_privilege('agent_ro', 'public.direction_praxis_journal(integer,bigint)', 'EXECUTE'),
-  '6 : les deux lectures sont STABLE, SECURITY DEFINER, search_path vide ; ni service_role ni agent_ro ne les executent');
+  '6 : l''etat est STABLE, le journal VOLATILE (il ecrit l''audit) ; SECURITY DEFINER, search_path vide ; ni service_role ni agent_ro ne les executent');
 SELECT pg_temp.refus('b3000000-0000-4000-8000-000000000001', 'admin', 'SELECT public.direction_praxis_regler(true, false, 30)', '42501',
   '6 : regler exige toujours la double verification (aal1 refuse)', 'authenticated', 'aal1');
 ROLLBACK;
