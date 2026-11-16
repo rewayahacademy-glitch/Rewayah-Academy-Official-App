@@ -272,6 +272,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
           objet: f.objet,
           interlocuteurs: f.interlocuteurs,
           apercu: f.apercu,
+          apercuPhoto: f.apercuPhoto,
           dernierMessageLe: f.dernierMessageLe,
         )
       else
@@ -612,6 +613,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
       images: imagesDuFil(ref, fil.id).source,
       onAimer: imagesDuFil(ref, fil.id).aimer,
       onEnvoyerImage: imagesDuFil(ref, fil.id).envoyer,
+      onAnnulerImage: imagesDuFil(ref, fil.id).annuler,
 
       // COM-FUS : le composer vocal seulement si la capacite `envoyerVocal`
       // est ouverte (COM-BR-16) ; fermee en production, rien n'est rendu.

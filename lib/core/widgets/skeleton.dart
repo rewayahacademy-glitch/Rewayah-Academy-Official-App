@@ -338,3 +338,84 @@ class _Reflet extends StatelessWidget {
     );
   }
 }
+
+/// Le reflet lent du [Skeleton], pose sur n'importe quelle surface : la
+/// couleur moyenne d'une image qui charge (IMAGES-CORRECTIF, directeur,
+/// 16/11/2026 : « au moins un effet de chargement agreable pour permettre
+/// d'attendre »). Meme effet, meme duree ([AppMouvement.refletSquelette]),
+/// translation seule. **Sous mouvement reduit, aucun reflet** : [child] seul,
+/// fixe. L'appelant retire le widget des que le contenu arrive ; rien ne
+/// tourne apres.
+class ReflecAttente extends StatefulWidget {
+  /// Pose le reflet sur [child].
+  const ReflecAttente({
+    required this.child,
+    required this.lumiere,
+    super.key,
+    this.intensite = 0.4,
+  });
+
+  /// La surface qui attend (la couleur moyenne).
+  final Widget child;
+
+  /// La couleur de la bande de lumiere.
+  final Color lumiere;
+
+  /// L'opacite du coeur de la bande.
+  final double intensite;
+
+  @override
+  State<ReflecAttente> createState() => _EtatReflecAttente();
+}
+
+class _EtatReflecAttente extends State<ReflecAttente>
+    with SingleTickerProviderStateMixin {
+  AnimationController? _boucle;
+
+  void _accorder() {
+    if (AppMouvement.mouvementReduit(context)) {
+      _boucle?.stop();
+      return;
+    }
+    final AnimationController boucle = _boucle ??= AnimationController(
+      vsync: this,
+      duration: AppMouvement.refletSquelette,
+    );
+    if (!boucle.isAnimating) boucle.repeat();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _accorder();
+  }
+
+  @override
+  void dispose() {
+    _boucle?.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AnimationController? boucle = _boucle;
+    return Stack(
+      fit: StackFit.expand,
+      children: <Widget>[
+        widget.child,
+        if (boucle != null && !AppMouvement.mouvementReduit(context))
+          ExcludeSemantics(
+            child: ClipRect(
+              child: RepaintBoundary(
+                child: _Reflet(
+                  boucle: boucle,
+                  lumiere: widget.lumiere,
+                  intensite: widget.intensite,
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}

@@ -36,6 +36,7 @@ import 'package:rewayah_academy/features/com_studio/visibilite_canal.dart';
 import 'package:rewayah_academy/features/com_vocal/lecteur_vocal.dart';
 
 import '../../support/demo/communications/com_studio_demo.dart';
+import '../../support/echec_bulle.dart';
 import '../../support/envoi_fil.dart';
 import '../../support/garde_interface.dart';
 import 'support_studio.dart';
@@ -538,12 +539,11 @@ void main() {
       await tester.pump();
       await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
-      expect(_dansFil(find.text(x.nonConfirme)), findsOneWidget);
+      expect(_dansFil(find.text(ligneEchec)), findsOneWidget);
       expect(_envoyesDuMessage(x.envoye), 0);
-      await tester.tap(find.text(x.reessayer));
-      await tester.pumpAndSettle();
+      await choisirActionEchec(tester, x.reessayer);
       expect(_envoyesDuMessage(x.envoye), 1);
-      expect(_dansFil(find.text(x.nonConfirme)), findsNothing);
+      expect(_dansFil(find.text(ligneEchec)), findsNothing);
       expect(port.clesRecues, hasLength(2));
       expect(port.clesRecues.first, port.clesRecues.last);
       expect(port.clesRecues.first, startsWith('organisation-'));
@@ -677,10 +677,7 @@ void main() {
       await tester.pump();
       await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
-      expect(
-        _dansFil(find.text(t.com.socle.composants.composer.nonConfirme)),
-        findsOneWidget,
-      );
+      expect(_dansFil(find.text(ligneEchec)), findsOneWidget);
       expect(
         _dansFil(find.text(t.com.socle.composants.composer.envoye)),
         findsNothing,

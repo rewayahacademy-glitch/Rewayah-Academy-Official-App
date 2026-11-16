@@ -12207,6 +12207,10 @@
         "aimeParVous": "Aimé par vous",
         "aimes": "J'aime\u00a0: {n}",
         "coeurEchec": "Votre «\u00a0J'aime\u00a0» n'est pas confirmé. Réessayez dans un instant.",
+        "photoApercu": "Photo",
+        "nonConfirmeToucher": "Non confirmé · Toucher pour réessayer",
+        "supprimerEchec": "Supprimer",
+        "actionsEchec": "Actions du message non confirmé",
         "refus": {
           "demandeInvalide": "Cette image n'est pas confirmée\u00a0: ses dimensions ou son format ne sont pas ceux attendus. Choisissez une autre photo.",
           "typeRefuse": "Ce type de fichier n'est pas accepté. Choisissez une photo JPEG, PNG ou WebP.",
@@ -12221,7 +12225,7 @@
           "stockageIndisponible": "Le stockage des images n'a pas pris l'envoi pour le moment\u00a0: ce n'est pas votre appareil. Réessayez dans quelques minutes.",
           "confirmationIndisponible": "L'envoi d'images n'est pas encore bien réglé sur le serveur\u00a0: l'équipe doit le corriger. Votre texte est bien parti.",
           "depotImpossible": "L'image n'est pas confirmée\u00a0: c'est une panne du serveur, pas de votre faute. Réessayez dans un instant.",
-          "envoiStockage": "Le stockage a refusé l'image (adresse expirée ou envoi coupé). Réessayez.",
+          "envoiStockage": "L'envoi de l'image n'a pas abouti. Réessayez plus tard.",
           "reseau": "Il est possible que l'image ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
           "imageTropGrosse": "Cette photo pèse plus de 15 Mo, ou reste trop lourde après réduction. Choisissez-en une plus légère.",
           "imageIllisible": "Cette photo ne peut pas être lue. Choisissez une autre photo."

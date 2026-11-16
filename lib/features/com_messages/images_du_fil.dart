@@ -19,7 +19,8 @@ class SourceImagesPort implements SourceImagesFil {
   final String filId;
 
   @override
-  Future<Map<String, AdresseImage>> miniatures() => _port.urlsMiniatures(filId);
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false}) =>
+      _port.urlsMiniatures(filId, frais: frais);
 
   @override
   Future<AdresseImage?> image(String imageId) => _port.urlImage(filId, imageId);
@@ -47,6 +48,11 @@ class ImagesDuFil {
   /// Pose ou retire mon coeur.
   Future<EtatCoeur> aimer(String messageId, bool aime) =>
       aime ? _port.aimer(messageId) : _port.nePlusAimer(messageId);
+
+  /// Abandonne un depot d'image qui n'ira pas au bout (« Supprimer »), ou
+  /// `null` si le compte ne peut pas joindre d'image.
+  Future<void> Function(String imageId)? get annuler =>
+      !peutJoindre ? null : _port.annulerImage;
 
   /// L'envoi d'un message avec image, ou `null` si le compte ne peut pas.
   EnvoiImageFil? get envoyer => !peutJoindre

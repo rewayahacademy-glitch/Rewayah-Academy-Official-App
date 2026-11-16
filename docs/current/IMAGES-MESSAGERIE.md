@@ -139,8 +139,12 @@ phrase (en français, technique, non destinée à l'affichage).
 ```
 
 - `image` vaut `null` si le message n'a pas d'image. Pas de clé R2, pas d'URL.
-- `etat` : `en_attente` (**visible de son auteur seulement**, l'autre partie lit `null`),
-  `confirmee`, `supprimee`.
+- `etat` : `en_attente` (**visible de son auteur seulement**), `confirmee`, `supprimee`.
+  **Correctif du 16/11 (20261129200000) : un message dont l'image est `en_attente` n'est rendu
+  qu'à son auteur, et un message dont l'image est `supprimee` sans `confirmee_le` (dépôt annulé ou
+  refusé) n'est rendu à personne.** La règle vaut pour `com_lire_fil` et `com_lister_fils` (dernier
+  message et compte des non lus). L'autre partie ne voit donc plus un message vide avant la
+  confirmation.
 - Une image `confirmee` dont les 90 jours sont passés est rendue **`supprimee` dès l'échéance**,
   sans attendre la tâche de nuit. L'écran affiche alors « Image retirée après 90 jours » ; la
   largeur, la hauteur et la couleur moyenne restent rendues pour garder la place dans la bulle.
@@ -240,3 +244,59 @@ ces tables : tout passe par la lecture du fil et par `message-images-lecture`.
   `_shared/r2/message_image.ts`. `cles.ts` porte une convention `messages/<conversation>/<pièce>`
   que personne n'emploie ; les images suivent la convention du plan (`fils/<fil>/<uuid>`) avec leur
   propre vérificateur.
+
+## 10. Correctif du 16/11/2026 (lot IMAGES-CORRECTIF)
+
+Constat du directeur en production : 6 envois, aucun appel à `confirmer`, le `PUT` vers R2 échoue
+(`RefusImage.envoiStockage`) ; le destinataire voyait le mot « Image » sans photo ; l'expéditeur
+voyait deux bulles. **Cause probable du `PUT` : la règle d'origine (CORS) manque sur le seau
+R2_MESSAGING. Elle se règle dans Cloudflare, par le directeur : ce correctif n'y change rien et ne
+le prouve pas.** Tant qu'elle manque, aucun envoi d'image n'aboutit.
+
+- **Texte de remplissage** : `texteImageSeule = '[image]'` (`phrases_images.dart`, un seul endroit) ;
+  `'Image'` (les deux messages d'essai en base) est lu de même quand le message porte une image.
+  Ni la bulle ni l'aperçu de la liste ne l'écrivent ; la liste dit « Photo » (fr, en, ar) avec une
+  petite icône image.
+- **Migration `20261129200000_images_messagerie_non_confirmee.sql`** (installée par le pilote après
+  fusion) : colonne `com_message_images.confirmee_le`, posée par `message_image_confirmer` ; règle de
+  rendu ci-dessus dans `private.com_fil_json`. Les images confirmées avant la migration n'ont pas de
+  date : la règle ne regarde que les images `supprimee`, et aucune image confirmée n'a encore été
+  purgée (90 jours).
+- **Une seule bulle** : la bulle locale garde l'identifiant du message serveur (`ProgressionImage`
+  rapporte `messageCree` puis `depotCree`) ; la copie serveur n'est pas affichée tant que la bulle
+  locale est en cours ou en échec, et la bulle locale s'efface une fois l'image confirmée relue.
+- **Échec** : l'icône d'alerte ronde et la ligne « Non confirmé · Toucher pour réessayer » ouvrent un
+  menu « Réessayer » (le même message : la RPC accepte de redemander le même dépôt) et « Supprimer »
+  (`message-image-depot` action `annuler`, puis la bulle disparaît). Une cause qui ne change pas en
+  réessayant (limite horaire, compte mineur) se dit par sa phrase et ne propose que « Supprimer ».
+- **Phrase du stockage** : « L'envoi de l'image n'a pas abouti. Réessayez plus tard. » (la tournure
+  « n'a pas pu être envoyée » est interdite par le contrôle `affirmation-reseau`).
+- **Limite connue** : si `demander` échoue après la création du message (limite horaire, panne), le
+  message `[image]` existe sans image côté serveur (les messages sont en ajout seul) ; « Supprimer »
+  n'a alors aucun dépôt à annuler. Le destinataire le voit comme une bulle sans texte ni photo.
+
+### 10 bis. Miniature qui reste un aplat de la couleur moyenne (constat du pilote, après l'ajout du CORS)
+
+- **Prouvé** : le défaut n'est ni `ImageDeBulle` ni la compression. Sur un build web release servi en
+  Chromium (Playwright, 1440 de large), une image violette 1080 x 1350 réduite par le canevas du
+  navigateur, servie d'une autre origine (CORS), se peint dans la bulle. La préparation sur
+  l'appareil (décodage, image 1600, miniature 320, couleur moyenne) prend 290 à 310 ms pour une
+  photo de 4,4 Mo (4032 x 3024), avec Chromium sans carte graphique.
+- **Défaut prouvé par un test** (qui échoue sans le correctif) : le port garde la liste des
+  miniatures d'un fil une heure (`urlsMiniatures`). Une image arrivée après cette lecture n'y
+  figure pas ; le fil l'avait déjà marquée « demandée » et ne redemandait jamais : la bulle restait
+  l'aplat de la couleur moyenne. La visionneuse, elle, demande l'image complète à chaque ouverture
+  (appel frais) : elle affichait la vraie image. Cela explique le destinataire. **Pour
+  l'expéditeur, une course est possible (une lecture du fil entre la confirmation côté serveur et le
+  retrait de la liste gardée) mais n'est pas prouvée** : aucun accès à R2 ni à la fonction de
+  lecture en production.
+- **Correctif** : si une image visible n'est pas dans la liste rendue, le fil relit une fois le
+  serveur sans le cache (`miniatures(frais: true)`) ; si la miniature est en échec ou sans adresse,
+  la bulle va chercher l'image complète (`repli`) au lieu d'un aplat muet.
+- **Chargement** : tant que les pixels n'arrivent pas, la couleur moyenne porte le reflet lent du
+  `Skeleton` (`ReflecAttente`, `AppMouvement.refletSquelette`) ; il s'arrête à la première image et
+  reste fixe sous « réduire les animations ». Le cercle de progression de l'expéditeur est gardé.
+- **Où passe le temps** : seule la préparation est mesurée (ci-dessus). Les autres temps ne sont
+  pas connus : chaque envoi écrit désormais dans la console du navigateur des lignes
+  `[images-temps]` (message créé, demande du dépôt, `PUT` image, `PUT` miniature, confirmation,
+  préparation, lecture des adresses signées), à relever au prochain essai en production.

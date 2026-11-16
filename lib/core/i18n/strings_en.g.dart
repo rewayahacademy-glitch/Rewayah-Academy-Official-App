@@ -19262,6 +19262,10 @@ class _Traductions$com$messages$images$en extends Traductions$com$messages$image
 	@override String get aimeParVous => 'Liked by you';
 	@override String aimes({required Object n}) => 'Likes: ${n}';
 	@override String get coeurEchec => 'Your like is not confirmed. Try again in a moment.';
+	@override String get photoApercu => 'Photo';
+	@override String get nonConfirmeToucher => 'Not confirmed · Tap to try again';
+	@override String get supprimerEchec => 'Delete';
+	@override String get actionsEchec => 'Actions for the unconfirmed message';
 	@override late final _Traductions$com$messages$images$refus$en refus = _Traductions$com$messages$images$refus$en._(_root);
 }
 
@@ -25240,7 +25244,7 @@ class _Traductions$com$messages$images$refus$en extends Traductions$com$messages
 	@override String get stockageIndisponible => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.';
 	@override String get confirmationIndisponible => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.';
 	@override String get depotImpossible => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.';
-	@override String get envoiStockage => 'Storage refused the image (expired address or interrupted upload). Try again.';
+	@override String get envoiStockage => 'The image could not be sent. Try again later.';
 	@override String get reseau => 'The image may not have reached Rewayah. Try again in a moment.';
 	@override String get imageTropGrosse => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.';
 	@override String get imageIllisible => 'This photo cannot be read. Choose another photo.';
@@ -37338,6 +37342,10 @@ extension on TraductionsEn {
 			'com.messages.images.aimeParVous' => 'Liked by you',
 			'com.messages.images.aimes' => ({required Object n}) => 'Likes: ${n}',
 			'com.messages.images.coeurEchec' => 'Your like is not confirmed. Try again in a moment.',
+			'com.messages.images.photoApercu' => 'Photo',
+			'com.messages.images.nonConfirmeToucher' => 'Not confirmed · Tap to try again',
+			'com.messages.images.supprimerEchec' => 'Delete',
+			'com.messages.images.actionsEchec' => 'Actions for the unconfirmed message',
 			'com.messages.images.refus.demandeInvalide' => 'This image is not confirmed: its size or format is not what was expected. Choose another photo.',
 			'com.messages.images.refus.typeRefuse' => 'This file type is not accepted. Choose a JPEG, PNG or WebP photo.',
 			'com.messages.images.refus.imageTropLourde' => 'This image is too heavy, even after shrinking. Choose a lighter photo.',
@@ -37351,7 +37359,7 @@ extension on TraductionsEn {
 			'com.messages.images.refus.stockageIndisponible' => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.',
 			'com.messages.images.refus.confirmationIndisponible' => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.',
 			'com.messages.images.refus.depotImpossible' => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.',
-			'com.messages.images.refus.envoiStockage' => 'Storage refused the image (expired address or interrupted upload). Try again.',
+			'com.messages.images.refus.envoiStockage' => 'The image could not be sent. Try again later.',
 			'com.messages.images.refus.reseau' => 'The image may not have reached Rewayah. Try again in a moment.',
 			'com.messages.images.refus.imageTropGrosse' => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.',
 			'com.messages.images.refus.imageIllisible' => 'This photo cannot be read. Choose another photo.',
@@ -37685,12 +37693,12 @@ extension on TraductionsEn {
 			'com.studio.brouillons.vide' => 'A message started in a channel and not yet sent will appear here.',
 			'com.studio.brouillons.tous' => ({required Object nombre}) => 'See all drafts (${nombre})',
 			'com.studio.brouillons.restaure' => 'Draft restored. You can pick up your message.',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.sousTitre' => 'The team\'s workspace',
 			'com.studio.navigation.aujourdhui' => _root.com.socle.lexique.aujourdhui,
 			'com.studio.navigation.brouillons' => 'Drafts',
 			'com.studio.navigation.canaux' => 'Channels',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.navigation.enregistres' => 'Saved items',
 			'com.studio.choisirTitre' => 'Choose a channel',
 			'com.studio.choisir' => 'Choose a channel from the list to read the discussion and write in it.',
@@ -38199,12 +38207,12 @@ extension on TraductionsEn {
 			'comptable.statuts.encaissement.rapproche' => 'Reconciled',
 			'comptable.statuts.rapprochement.automatique' => 'Automatic',
 			'comptable.statuts.rapprochement.aVerifier' => 'To check',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.rapprochement.rapproche' => 'Reconciled',
 			'comptable.statuts.rapprochement.conflit' => 'Conflict',
 			'comptable.statuts.rapprochement.sansCorrespondance' => 'No match',
 			'comptable.statuts.rapprochement.doublonPotentiel' => 'Potential duplicate',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.profil.aucunMoyen' => 'No method',
 			'comptable.statuts.profil.incomplet' => 'Incomplete',
 			'comptable.statuts.profil.enVerification' => 'Being verified',
@@ -38713,12 +38721,12 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.remplacementTitre' => ({required Object methode}) => 'Replace ${methode}',
 			'comptable.beneficiaires.recevoir.ajoutContexte' => 'Choose the type of method. You will then enter your details in a secure space: the app does not see them and does not keep them.',
 			'comptable.beneficiaires.recevoir.continuerSaisie' => 'Continue to secure entry',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.typeRequis' => 'Choose a method type to continue.',
 			'comptable.beneficiaires.recevoir.aucunType' => 'No method type is offered for now. Contact the academy to open one.',
 			'comptable.beneficiaires.recevoir.verificationAnnoncee' => 'Every change is verified before the next payment.',
 			'comptable.beneficiaires.recevoir.ajoutee' => 'Method added: it is being verified.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.remplacee' => 'New method saved: it is being verified.',
 			'comptable.beneficiaires.recevoir.supprimee' => 'Method deleted.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Preferred method updated.',
@@ -39227,12 +39235,12 @@ extension on TraductionsEn {
 			'recherche.guide.titre' => 'Find a document',
 			'recherche.guide.initial.titre' => 'Find a document',
 			'recherche.guide.initial.phrase' => 'Write a word to find one of your documents.',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.guide.limite' => 'Only your documents and your lessons.',
 			'recherche.entree.supports' => 'Search in documents',
 			'recherche.contexte.remplacementOuvert' => 'Replacement to take',
 			'recherche.contexte.remplacementMien' => 'Your replacement',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.mission' => 'Review mission',
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Review mission · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Student of class ${classe}',
@@ -39741,12 +39749,12 @@ extension on TraductionsEn {
 			'admissions.horsLigne' => 'Nothing was sent. Try again in a moment.',
 			'admissions.erreur' => 'The action did not go through. Nothing is confirmed. Try again in a moment.',
 			'admissions.faitAcceptee' => ({required Object deNom}) => '${deNom}\'s request is accepted; the email is on its way.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.faitRefusee' => ({required Object deNom}) => '${deNom}\'s request is refused; the email is on its way.',
 			'admissions.faitPrecisions' => ({required Object nom}) => 'Clarification is requested from ${nom}; the email is on its way.',
 			'admissions.faitContact' => ({required Object nom}) => 'The message to ${nom} is on its way.',
 			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'The refusal of ${deNom}\'s request is undone.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.refus.dejaTraitee' => 'This request has just been handled by another member of the management. The list is reloaded.',
 			'admissions.refus.transitionInterdite' => 'This action no longer applies to this request (its status changed, or the seven-day period has passed).',
 			'admissions.refus.motifRequis' => 'A reason is needed for this action.',
@@ -40255,12 +40263,12 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.comptes.dejaInscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person already signed up: an account exists at their address, no invitation goes out', other: '${n} people already signed up: an account exists at their address, no invitation goes out', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.revoquees' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} code withdrawn by the management: no group sending for this person', other: '${n} codes withdrawn by the management: no group sending for these people', ), 
 			'candidatsFlux.invitationsPersonnelles.comptes.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person no longer wants to receive recruitment messages', other: '${n} people no longer want to receive recruitment messages', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.comptes.sansAdresse' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} answer without an email address', other: '${n} answers without an email address', ), 
 			'candidatsFlux.invitationsPersonnelles.rythme' => ({required Object plafond, required Object limite, required Object reste}) => 'At most ${plafond} messages a day for this sending, and ${limite} per sending. Still possible today: ${reste}.',
 			'candidatsFlux.invitationsPersonnelles.videTitre' => 'No one to invite',
 			'candidatsFlux.invitationsPersonnelles.vide' => 'Everyone who left an address already has a valid code or an account. There is nothing to send.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.plafond' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The daily limit is reached. ${n} person is still to invite: continue tomorrow.', other: 'The daily limit is reached. ${n} people are still to invite: continue tomorrow.', ), 
 			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'The number of people changed since it was displayed. Nothing was sent: check the number again, then send.',
 			'candidatsFlux.invitationsPersonnelles.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send their code to ${n} person', other: 'Send their code to ${n} people', ), 
@@ -40769,12 +40777,12 @@ extension on TraductionsEn {
 			'pause.moisDansRegle' => 'Accepted straight away',
 			'pause.moisALaDirection' => ({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai, one: 'The management replies within ${delai} day', other: 'The management replies within ${delai} days', ), 
 			'pause.moisDejaDemande' => 'Already requested',
+			_ => null,
+		} ?? switch (path) {
 			'pause.moisDejaAccepte' => 'Already accepted',
 			'pause.aucunMois' => 'No month is offered for now.',
 			'pause.fermeeTitre' => 'Break requests are not open for now',
 			'pause.fermeeDetail' => 'To interrupt classes, contact the academy\'s management.',
-			_ => null,
-		} ?? switch (path) {
 			'pause.choisirPourDemander' => 'Choose a month to request the break.',
 			'pause.demander' => 'Request the break',
 			'pause.reponse.acceptee' => ({required Object mois}) => 'The break of ${mois} is accepted. The place is kept and the stage deadline moves back by the same amount.',

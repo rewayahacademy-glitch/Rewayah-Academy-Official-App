@@ -6,8 +6,19 @@ import '../i18n/strings.g.dart';
 import 'image_message.dart';
 
 /// Le texte d'un message qui ne porte qu'une image : le serveur n'accepte
-/// aucun message sans texte (contrat §1). La bulle ne l'ecrit pas.
-const String texteImageSeule = 'Image';
+/// aucun message sans texte (contrat §1). Ni la bulle ni l'apercu de la liste
+/// ne l'ecrivent. Un seul endroit : IMAGES-CORRECTIF (16/11/2026).
+const String texteImageSeule = '[image]';
+
+/// Le texte que les premiers essais ont laisse en base (« Image ») : lu comme
+/// [texteImageSeule] quand le message porte une image.
+const String texteImageSeuleAncien = 'Image';
+
+/// Vrai quand [texte] n'est que le texte de remplissage d'un message d'image.
+bool estTexteImageSeule(String texte) {
+  final String net = texte.trim();
+  return net == texteImageSeule || net == texteImageSeuleAncien;
+}
 
 /// La phrase d'un refus de depot d'image.
 String phraseRefusImage(RefusImage refus) {
