@@ -76,6 +76,7 @@ SELECT set_config('test.v5', pg_temp.version('5')::text, true);
 SELECT set_config('test.v2', pg_temp.version('2')::text, true);
 
 SELECT set_config('test.journal0', (SELECT coalesce(max(id), 0)::text FROM public.referentiel_paiement_journal), true);
+SELECT set_config('test.mobile0', (SELECT count(*)::text FROM public.referentiel_paiement WHERE methode = 'mobile_money' AND pays IN ('GH','KE')), true);
 \i supabase/migrations/20261128600100_pays_decisions_wise.sql
 
 SELECT pg_temp.vrai(
@@ -85,8 +86,10 @@ SELECT pg_temp.vrai(
   'a1 : EG, MA, GH, KE confirmes ; BJ, BF, ML, NE, SD, TD indisponibles ; DZ, GN, LR en verification');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement l
     WHERE l.source_ref LIKE 'Wise (wise.com%16/11/2026%' AND l.verifie_le = DATE '2026-11-16') = 10
-  AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement l WHERE l.methode = 'mobile_money' AND l.pays IN ('GH','KE')),
-  'a2 : dix lignes portent la decision du 16/11 avec sa source ; aucune ligne mobile_money n''a ete ecrite');
+  -- MOBILE-MONEY-GH-KE (20261129480000) a ecrit ses quatre lignes avant ce scenario : ce fichier n'en ajoute aucune.
+  AND (SELECT count(*) FROM public.referentiel_paiement l WHERE l.methode = 'mobile_money' AND l.pays IN ('GH','KE'))
+      = current_setting('test.mobile0')::int,
+  'a2 : dix lignes portent la decision du 16/11 avec sa source ; ce fichier n''ecrit aucune ligne mobile_money');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_journal j
    WHERE j.id > current_setting('test.journal0')::bigint AND j.auteur_id IS NULL
      AND j.apres ->> 'source_ref' LIKE 'Wise (wise.com%16/11/2026%') = 10
