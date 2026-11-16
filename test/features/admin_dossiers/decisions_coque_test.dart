@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import '../../support/demo/dossiers_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
+import '../../support/selecteur_section.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -145,6 +146,9 @@ Future<void> _ouvrir(WidgetTester tester, String prenom) async {
     ),
   );
   await _stabiliser(tester);
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+  // se choisit dans le selecteur de section.
+  await choisirSection(tester, t.dossiers.titre);
   await tester.ensureVisible(_ligne(prenom));
   await _stabiliser(tester);
   await tester.tap(_ligne(prenom));
