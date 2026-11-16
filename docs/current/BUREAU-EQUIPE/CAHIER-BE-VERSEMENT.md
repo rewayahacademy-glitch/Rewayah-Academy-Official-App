@@ -22,19 +22,11 @@ et n'est pas sous embargo, alors je confirme ou non. »
 | Ligne du pays de versement | Résultat | Qui agit |
 | :--- | :--- | :--- |
 | `confirme` | **compatible, sans geste** | personne ; la direction peut encore écarter un cas précis (transition 25, motif obligatoire) |
-<<<<<<< HEAD
-| `en_verification` (pas pris en charge, pas d'embargo) | `a_verifier` | **la direction, une fois par pays** : elle confirme ou rend indisponible la ligne du pays, et tous les candidats de ce pays suivent (déclencheur existant) |
-| `indisponible` (embargo ou impossible) | `incompatible` | personne : le candidat le lit, avec la solution (choisir le pays du compte d'un proche, PR #500) |
-
-Le geste par candidat « Confirmer le moyen de versement » (transition 24) disparaît des
-écrans ; il reste au serveur pour les données passées.
-=======
 | `en_verification` (pas pris en charge, pas d'embargo) | `incompatible`, et la candidature attend en `paiement_non_disponible` (correction du 16/11 : le cahier disait `a_verifier`, le code ne l'a jamais fait) | **la direction, une fois par pays** : elle confirme ou rend indisponible la ligne du pays, et tous les candidats de ce pays suivent (déclencheur existant, transition 9) |
 | `indisponible` (embargo ou impossible) | `incompatible` | personne : le candidat le lit, avec la solution (choisir le pays du compte d'un proche, PR #500) |
 
 Le geste par candidat « Confirmer le moyen de versement » (transition 24) disparaît des
 écrans ; il reste au serveur pour les données passées. Le calcul ne rend plus jamais `a_verifier`.
->>>>>>> origin/main
 
 ## À faire (zone : `supabase/**` seulement, plage `20261128200000` à `20261128200900`)
 
