@@ -532,6 +532,9 @@ declare
     -- NOUVEAUTES (07/11) : la personne a ouvert une fonctionnalite signalee
     -- (garde positive app_account_valid() et role de la ligne ; idempotent).
     'marquer_nouveaute_vue(text)',
+    -- VU-UNE-FOIS (16/11) : la personne a vu une aide ou une explication, une fois pour toute la vie
+    -- du compte (garde positive app_account_valid(), cle au format borne, 200 cles au plus ; idempotent).
+    'marquer_vu(text)',
     -- PHOTO-FIGEE (07/11) : la direction lit la photo figee d'un dossier de
     -- candidature (garde positive app_role() = 'admin' et app_account_valid(),
     -- genre du lecteur ; journalise l'exception super admin, d'ou VOLATILE).
