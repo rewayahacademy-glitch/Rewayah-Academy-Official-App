@@ -5064,7 +5064,7 @@ class _Traductions$recrutement$entretien$en extends Traductions$recrutement$entr
 	@override String horaire({required Object date, required Object debut, required Object fin}) => '${date}, from ${debut} to ${fin}';
 	@override String get choisir => 'Choose a time.';
 	@override String get reserver => 'Book this time';
-	@override String get aucunCreneau => 'No time is open for now. Come back later.';
+	@override String get aucunCreneau => 'Your application has been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open, and you will choose it here.';
 	@override String get erreurLecture => 'The times could not be loaded. Try again.';
 	@override String get pris => 'This time has just been taken. Choose another.';
 	@override String get dejaPlanifie => 'Your interview is already set.';
@@ -7523,7 +7523,7 @@ class _Traductions$notifications$evenements$en extends Traductions$notifications
 	@override String get annonceDirection => 'Academy announcement';
 	@override String annonceDirectionTitre({required Object titre}) => 'Announcement: ${titre}';
 	@override String get bienvenueEquipe => 'Welcome to the team. You still need to set up your space.';
-	@override String get retenuEntretien => 'You have been selected for an interview. Let\'s get to know each other: choose your time in the app.';
+	@override String get retenuEntretien => 'You have been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open.';
 	@override String pauseRepondueAcceptee({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause is accepted for ${mois}. Their deadline moves back by the same amount. Their place is kept.';
 	@override String pauseRepondueAccepteeAdulte({required Object mois}) => 'Your one-month pause is accepted for ${mois}. Your deadline moves back by the same amount. Your place is kept.';
 	@override String pauseRepondueRefusee({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause for ${mois} is not accepted. The reason is in the app.';
@@ -29742,7 +29742,7 @@ extension on TraductionsEn {
 			'recrutement.entretien.horaire' => ({required Object date, required Object debut, required Object fin}) => '${date}, from ${debut} to ${fin}',
 			'recrutement.entretien.choisir' => 'Choose a time.',
 			'recrutement.entretien.reserver' => 'Book this time',
-			'recrutement.entretien.aucunCreneau' => 'No time is open for now. Come back later.',
+			'recrutement.entretien.aucunCreneau' => 'Your application has been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open, and you will choose it here.',
 			'recrutement.entretien.erreurLecture' => 'The times could not be loaded. Try again.',
 			'recrutement.entretien.pris' => 'This time has just been taken. Choose another.',
 			'recrutement.entretien.dejaPlanifie' => 'Your interview is already set.',
@@ -34362,7 +34362,7 @@ extension on TraductionsEn {
 			'notifications.evenements.annonceDirection' => 'Academy announcement',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'Announcement: ${titre}',
 			'notifications.evenements.bienvenueEquipe' => 'Welcome to the team. You still need to set up your space.',
-			'notifications.evenements.retenuEntretien' => 'You have been selected for an interview. Let\'s get to know each other: choose your time in the app.',
+			'notifications.evenements.retenuEntretien' => 'You have been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open.',
 			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause is accepted for ${mois}. Their deadline moves back by the same amount. Their place is kept.',
 			'notifications.evenements.pauseRepondueAccepteeAdulte' => ({required Object mois}) => 'Your one-month pause is accepted for ${mois}. Your deadline moves back by the same amount. Your place is kept.',
 			'notifications.evenements.pauseRepondueRefusee' => ({required Object dePrenom, required Object mois}) => '${dePrenom}\'s one-month pause for ${mois} is not accepted. The reason is in the app.',

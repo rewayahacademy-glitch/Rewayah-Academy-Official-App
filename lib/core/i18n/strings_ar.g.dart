@@ -2569,7 +2569,7 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 	@override String get annonceDirection => 'إعلان من الأكاديمية';
 	@override String annonceDirectionTitre({required Object titre}) => 'إعلان: ⁨${titre}⁩';
 	@override String get bienvenueEquipe => 'مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.';
-	@override String get retenuEntretien => 'اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.';
+	@override String get retenuEntretien => 'اختير طلبك لمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد.';
 	@override String pauseRepondueAcceptee({required Object dePrenom, required Object mois}) => 'قُبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. يتأخر موعده الأقصى بالمدة نفسها ومقعده محفوظ.';
 	@override String pauseRepondueAccepteeAdulte({required Object mois}) => 'قُبل توقفك لمدة شهر في ⁨${mois}⁩. يتأخر موعدك الأقصى بالمدة نفسها ومقعدك محفوظ.';
 	@override String pauseRepondueRefusee({required Object dePrenom, required Object mois}) => 'لم يُقبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. السبب في التطبيق.';
@@ -11025,7 +11025,7 @@ class _Traductions$recrutement$entretien$ar extends Traductions$recrutement$entr
 	@override String horaire({required Object date, required Object debut, required Object fin}) => '⁨${date}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩';
 	@override String get choisir => 'اختر موعدًا.';
 	@override String get reserver => 'حجز هذا الموعد';
-	@override String get aucunCreneau => 'لا يوجد موعد متاح حاليًا. عد لاحقًا.';
+	@override String get aucunCreneau => 'اختير طلبك للمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد، وتختاره هنا.';
 	@override String get erreurLecture => 'تعذّر تحميل المواعيد. أعد المحاولة.';
 	@override String get pris => 'حُجز هذا الموعد للتو. اختر موعدًا آخر.';
 	@override String get dejaPlanifie => 'موعد مقابلتك محدد بالفعل.';
@@ -28282,7 +28282,7 @@ extension on TraductionsAr {
 			'notifications.evenements.annonceDirection' => 'إعلان من الأكاديمية',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'إعلان: ⁨${titre}⁩',
 			'notifications.evenements.bienvenueEquipe' => 'مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.',
-			'notifications.evenements.retenuEntretien' => 'اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.',
+			'notifications.evenements.retenuEntretien' => 'اختير طلبك لمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد.',
 			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => 'قُبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. يتأخر موعده الأقصى بالمدة نفسها ومقعده محفوظ.',
 			'notifications.evenements.pauseRepondueAccepteeAdulte' => ({required Object mois}) => 'قُبل توقفك لمدة شهر في ⁨${mois}⁩. يتأخر موعدك الأقصى بالمدة نفسها ومقعدك محفوظ.',
 			'notifications.evenements.pauseRepondueRefusee' => ({required Object dePrenom, required Object mois}) => 'لم يُقبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. السبب في التطبيق.',
@@ -39185,7 +39185,7 @@ extension on TraductionsAr {
 			'recrutement.entretien.horaire' => ({required Object date, required Object debut, required Object fin}) => '⁨${date}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'recrutement.entretien.choisir' => 'اختر موعدًا.',
 			'recrutement.entretien.reserver' => 'حجز هذا الموعد',
-			'recrutement.entretien.aucunCreneau' => 'لا يوجد موعد متاح حاليًا. عد لاحقًا.',
+			'recrutement.entretien.aucunCreneau' => 'اختير طلبك للمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد، وتختاره هنا.',
 			'recrutement.entretien.erreurLecture' => 'تعذّر تحميل المواعيد. أعد المحاولة.',
 			'recrutement.entretien.pris' => 'حُجز هذا الموعد للتو. اختر موعدًا آخر.',
 			'recrutement.entretien.dejaPlanifie' => 'موعد مقابلتك محدد بالفعل.',
