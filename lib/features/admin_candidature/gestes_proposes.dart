@@ -79,7 +79,10 @@ bool gestePermisPourLigne(
     case GesteCandidature.cloreComplement:
       return sansPause && etape == EtapeCandidature.verifications;
     case GesteCandidature.admettreVerifications:
-      return sansPause && enExamen;
+      // GESTES-RAISON (pilote, 16/11/2026) : la regle du serveur est « en
+      // examen ET versement compatible ». Un bouton qui ne peut pas aboutir
+      // n'est pas rendu (K-56) ; la phrase sous la rangee dit pourquoi.
+      return sansPause && enExamen && l.paiement == EtatVersement.compatible;
     case GesteCandidature.confirmerMoyenPaiement:
       return sansPause &&
           l.paiement == EtatVersement.aVerifier &&
