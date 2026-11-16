@@ -81,6 +81,7 @@ _Rempli au matin._
 | 4 | Bouton « i » emporté par la barre repliée (Messages, ordinateur) | lot à part | relevé par l'agent de #551, hors de #551 |
 | 5 | `scenarios_fac_f_relances_suspension.sql` indépendant de l'heure | sans urgence | échoue le lundi 7-8 h UTC |
 | 7 | Comptes officiels dans les conversations (Praxis) : *#RA_PRAXIS*, *#RA_STAFF*, « Assistant de l'académie · IA », « Parler à l'équipe » (`BUREAU-EQUIPE/SECRETAIRE-IA.md` §9, §11) | après NOUVEAU-FILS, pas cette nuit | signalé par le Pilote Équipe le 16/11 à 21 h 15 ; plage `202611296…` réservée à Praxis, pas à la messagerie |
+| 8 | Écart dépôt / production : `notifications_evenement_check` accepte `annonce_direction` en production, mais aucune migration du dépôt ne l'ajoute (`20261126900000` l'annonce seulement). Une base rejouée depuis le dépôt (CI) ne notifie aucune annonce | petit lot de rattrapage, après NOUVEAU-FILS | relevé par BE-PIECE (PX-1), vérifié en production par le pilote le 16/11 à 22 h 12 ; aucune personne touchée en production ; PX-1 prévenu de garder les 61 valeurs de la production s'il réécrit ce CHECK |
 | 6 | Recette du directeur en production : #538, #540, #546, puis #551 | après fusion de #551 | liste d'essais, une par une, page humaine |
 
 ## Corrections non bloquantes demandées par le directeur
@@ -137,3 +138,4 @@ _Rempli au matin._
   un identifiant de commit recopié de mémoire, refusé par GitHub, sans effet ; refait avec l'identifiant lu.
 - 16/11, 21 h 25 : NOUVEAU-FILS confié au même agent ; migration `20261129510000` vérifiée libre sur main.
 - 16/11, 21 h 28 : déploiement de production de `906ba099` vert (« Flutter Web → Vercel », run 1302).
+- 16/11, 22 h 12 : signalement « annonces non notifiées » : faux en production (vérifié) ; vrai écart dépôt / production, mis en liste (n° 8).
