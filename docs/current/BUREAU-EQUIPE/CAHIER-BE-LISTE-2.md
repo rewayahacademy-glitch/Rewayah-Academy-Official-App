@@ -58,3 +58,13 @@ plus de 1 500 quand « Qui attend quoi » est déplié). Mesures dans `journal.t
 
 Phrase à rendre vraie : « J'ouvre Candidatures, je vois mes files avec leurs nombres et les
 premiers noms tout de suite ; un seul bouton pour filtrer, un seul pour trier. »
+
+## Révision du 16/11 (directeur, sur la capture de la PR 515)
+
+« Regarde les dimensions de la recherche ! Cinq lignes pour ces filtres ? Pourquoi pas un menu
+déroulant ? » Les files ne sont plus des puces : **un seul menu déroulant « File »**, qui
+affiche la file choisie et son nombre (« En examen · 176 ▾ ») et s'ouvre sur la liste des
+files avec leurs nombres et leur phrase courte. Au téléphone, deux rangées au plus avant la
+liste : (1) titre-sélecteur et Outils ; (2) recherche compacte (48), menu File, Filtres,
+Trier. Le nombre de candidatures et « Sélectionner » restent sur une ligne au-dessus du
+premier nom. Cible : premier nom sous 300 points à 360 × 800.
