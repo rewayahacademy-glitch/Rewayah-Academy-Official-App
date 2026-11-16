@@ -16967,7 +16967,7 @@ class _Traductions$admin$candidatures$detail$ar extends Traductions$admin$candid
 	@override String get demanderNouvellePiece => 'طلب وثيقة هوية جديدة';
 	@override String get pieceAgrandir => 'فتح وثيقة الهوية بالحجم الكامل';
 	@override String get pieceImage => 'صورة';
-	@override String get piecePdf => 'PDF';
+	@override String get piecePdf => 'ملف PDF';
 	@override String get pieceOuvrirPdf => 'فتح ملف PDF لوثيقة الهوية';
 	@override String pieceTitre({required Object nom}) => 'وثيقة هوية ⁨${nom}⁩';
 	@override String get pieceDecisionPlusTard => 'تُحسم الوثيقة في قاعة التحقق والمقابلة بعد القبول.';
@@ -32617,7 +32617,7 @@ extension on TraductionsAr {
 			'admin.candidatures.detail.demanderNouvellePiece' => 'طلب وثيقة هوية جديدة',
 			'admin.candidatures.detail.pieceAgrandir' => 'فتح وثيقة الهوية بالحجم الكامل',
 			'admin.candidatures.detail.pieceImage' => 'صورة',
-			'admin.candidatures.detail.piecePdf' => 'PDF',
+			'admin.candidatures.detail.piecePdf' => 'ملف PDF',
 			'admin.candidatures.detail.pieceOuvrirPdf' => 'فتح ملف PDF لوثيقة الهوية',
 			'admin.candidatures.detail.pieceTitre' => ({required Object nom}) => 'وثيقة هوية ⁨${nom}⁩',
 			'admin.candidatures.detail.pieceDecisionPlusTard' => 'تُحسم الوثيقة في قاعة التحقق والمقابلة بعد القبول.',
