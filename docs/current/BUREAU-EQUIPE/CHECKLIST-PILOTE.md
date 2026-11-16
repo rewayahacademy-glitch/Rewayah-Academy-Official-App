@@ -7,7 +7,7 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 1 | Déploiement débloqué (avis en arabe, #533) ; #521 « rien à faire » et #528 versement en ligne | ☑ | vérifié dans l'application servie |
 | 2 | Pièce d'identité dans le dossier, icône image ou PDF (#532) | ◐ | 11 tests corrigés en local ; CI verte puis fusion |
 | 3 | « 18 ans ou plus » (#517) : fusion, déploiement, migrations 400000 et 400100 | ☑ | installé 16:02-16:03 UTC, vérifié en base ; à prouver par le directeur |
-| 4 | Liste des candidatures, menu « File », 260 pt (#515) | ◐ | CI verte ; conflit avec main en cours de résolution |
+| 4 | Liste des candidatures (#515) : loupe, Filtres et Trier en icônes, plus de carte « qui attend quoi », premier nom à 252 pt | ◐ | CI en cours puis fusion ; écarts acceptés : 3 rangées à 360 pt (une seule dès qu’il y a la place), bandeau mémorisé par appareil en attendant le n° 20 |
 | 5 | Précédent / suivant (#516) | ☑ | fusionnée ; à prouver par le directeur |
 | 6 | Liste des personnes pour toute leur vie (spécification en vigueur, #534) | ◐ | fusion du document ; LP-1 serveur après #517 |
 | 7 | 13 pays : EG, MA, GH, KE confirmés ; 6 pays indisponibles (#537) | ☑ | installé, 10 dossiers repartis, courriels envoyés |
@@ -23,3 +23,4 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 17 | Mobile money Ghana (MTN, AirtelTigo, Telecel) et Kenya (M-Pesa) | ☐ | lot à part |
 | 18 | Algérie, Guinée, Liberia : 7 candidats | ⏸ | vérifier dans le compte Wise du directeur |
 | 19 | Badge « Nouveau » : liste (serveur confié) + conversations (pilote messagerie) | ◐ | champ serveur après #517 ; composant après #515 |
+| 20 | VU-UNE-FOIS : « déjà vu » mémorisé par compte, pas par appareil (bandeaux à voir une seule fois) | ◐ | serveur confié à BE-S1 ; puis bandeau de #515 branché dessus |
