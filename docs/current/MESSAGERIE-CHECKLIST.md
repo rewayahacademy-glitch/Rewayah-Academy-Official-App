@@ -1,15 +1,38 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : 16/11/2026, 20 h 10 UTC.**
+**Mise à jour : lundi 16/11/2026, 20 h 15 UTC.** Cette page est mise à jour à chaque étape.
 
-Pilote : session `session_0163KjrvqyXGcbF9eGGztS24` (nuit du 16 au 17/11, ordre de 19 h 50). Il succède à
-`session_0163Kjrx8uX1pRbk4RhE7Yuz` (19 h 40), qui succédait au pilote de la
-passation `MESSAGERIE-HANDOFF-2026-11-16.md`, puis à la session `session_0163KjrvfAPWhND7VanbMLHL`
-(ouverte à 19 h 18, archivée à 19 h 23), dont cette page reprend la checklist (#560).
-La carte du chantier reste `MESSAGERIE-ETAT-ET-PLAN-2026-11-16.md`.
+## Où on en est, en clair
 
-Statuts : `à faire` ; `en cours` ; `PR` (ouverte, pas fusionnée) ; `en prod` (fusionné, déployé, pas vu
-par le directeur) ; `en prod (vu)` (vu par le directeur en production : le seul « fait »).
+**Ce qui est vrai ce soir : rien n'est encore fusionné ni mis en ligne.** Le gris de la messagerie,
+la croix disparue du volet et le champ de saisie qui devient un cercle sont toujours en production.
+
+**Ce que je fais (le pilote)** : je ne code pas. Je donne le travail à un seul agent, je le contrôle
+toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'installe en base.
+
+**Ce que j'ai demandé à l'agent (un lot à la fois)** :
+
+1. **Finir la correction des couleurs, #551** (en cours depuis 19 h 48)
+   - [x] reprendre la branche de l'agent précédent (archivé, il avait fini son contexte)
+   - [x] régénérer les textes et le code : aucun changement
+   - [x] contrôle du code (`analyze`) : zéro erreur
+   - [x] écrire, et cette fois enregistrer, le code qui fait les captures (il avait été perdu)
+   - [ ] tous les tests de l'application : en cours, 4 172 passés à 20 h 10, aucun échec signalé, pas fini
+   - [ ] faire les captures : volet de conversation sur ordinateur avec la croix, liste des
+         conversations, en français et en arabe, clair et sombre ; l'agent les regarde lui-même
+   - [ ] reprendre les dernières fusions de l'équipe (#547), puis repasser les contrôles
+   - [ ] ouvrir la PR à la vérification automatique (CI) et la lire
+   - [ ] **moi** : relire les captures avant et après, chercher ce qui a changé ailleurs, fusionner
+   - [ ] **vous** : voir en production (fermer puis rouvrir l'application)
+2. **NOUVEAU-FILS** (à lancer après #551)
+   - [ ] badge « Nouveau » sur une conversation de moins de 7 jours que personne de l'équipe n'a lue
+   - [ ] une conversation vide affiche « Nouveau · aucun message »
+   - [ ] filtre « Nouveaux » dans la liste
+   - [ ] une petite migration en base, que j'installerai moi-même
+3. **NOUVELLE-VERSION** (ensuite) : bandeau « Nouvelle version disponible », jamais de rechargement
+   pendant que vous écrivez.
+
+**Ce qui attend votre décision** : voir « Pour le directeur au réveil », en bas.
 
 ## Point du matin (dix lignes au plus)
 
@@ -18,7 +41,7 @@ _Rempli au matin._
 ## Faux, bloqué ou non prouvé (à lire d'abord)
 
 - La messagerie est grise depuis #512, la croix du volet a disparu (#540), le champ de saisie
-  s'arrondit en cercle : corrections dans la PR #551, **pas fusionnée**, CI en cours sur `667a9543`.
+  s'arrondit en cercle : corrections dans la PR #551, **pas fusionnée**, CI pas encore lancée.
 - L'agent précédent de #551 (`session_0163KjrvV6fGAftwzWig2qU9`) a poussé `571f558a` (fusion de
   `main` 1ae0202e, sans conflit, vérifié par le pilote) et a été **archivé à 19 h 47**. Sur ce commit,
   **rien n'est vérifié** : ni slang, ni build_runner, ni analyze, ni tests, ni CI ; #551 est encore en
@@ -93,3 +116,6 @@ _Rempli au matin._
   `main` et relancer slang deux fois. Ses migrations de ce soir : `20261129440000`, `480000`, `490000`.
 - 16/11, 20 h 10 : contrôle. `main` a reçu #553, #555, #557 ; #547 pas encore. Agent inactif depuis
   19 h 54 (« en attente des tests ») : relancé par message.
+- 16/11, 20 h 10 : agent : `flutter test` complet en cours, 4 172 passés, 1 663 sautés, pas fini.
+- 16/11, 20 h 15 : le directeur ne voyait pas la checklist (elle était sur une branche) ; réécrite
+  en clair en tête de page et envoyée directement.
