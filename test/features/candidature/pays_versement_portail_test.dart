@@ -37,6 +37,7 @@ Future<void> _monter(
   CandidatureDossier candidature,
   FauxMaCandidature port, {
   Size taille = const Size(1440, 900),
+  TextDirection? direction,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
     ..etatRendu = etatCandidat(candidature: candidature);
@@ -46,6 +47,7 @@ Future<void> _monter(
     depart: Routes.attente,
     taille: taille,
     dossier: dossier,
+    direction: direction,
   );
 }
 
@@ -365,6 +367,71 @@ void main() {
           await capturerVue(tester, 'PAYS-RECHERCHE/$nom');
         });
       }
+    }
+  }, skip: sautSansCapture);
+
+  // VERSEMENT-QUESTIONS (directeur, 16/11/2026) : captures R3 a 360 de large, en
+  // francais et en arabe (de droite a gauche). Sautees sans CAPTURE_DIR.
+  group('VERSEMENT-QUESTIONS captures', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      final String l = langue.languageCode;
+      final TextDirection? direction = langue == AppLocale.ar
+          ? TextDirection.rtl
+          : null;
+      testWidgets('$l : le panneau, sans compte, pays et services', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await _monter(
+          tester,
+          _envoyee(),
+          FauxMaCandidature(),
+          taille: const Size(360, 800),
+          direction: direction,
+        );
+        await tester.ensureVisible(_cle('pays-versement-lien'));
+        await tester.tap(_cle('pays-versement-lien'));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(_cle('versement-compte-non'));
+        await tester.tap(_cle('versement-compte-non'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'GN');
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(_cle('pays-versement-GN'));
+        await tester.tap(_cle('pays-versement-GN'));
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          _cle('versement-service-wave'),
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.pumpAndSettle();
+        await capturerVue(tester, 'VERSEMENT-QUESTIONS/panneau-360-$l');
+      });
+      testWidgets('$l : dossier valide, le bloc est ferme', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await _monter(
+          tester,
+          CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.enExamen,
+            version: 6,
+            questionnaire: EtatQuestionnaire(envoyeLe: DateTime(2026, 11, 10)),
+          ),
+          FauxMaCandidature(),
+          taille: const Size(360, 800),
+          direction: direction,
+        );
+        await tester.ensureVisible(_cle('versement-ferme'));
+        await stabiliser(tester);
+        await capturerVue(tester, 'VERSEMENT-QUESTIONS/ferme-360-$l');
+      });
     }
   }, skip: sautSansCapture);
 }
