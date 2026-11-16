@@ -72,8 +72,8 @@ class PieceSurPlace extends ConsumerWidget {
     // PIECE-DANS-DOSSIER (16/11/2026) : plus de lien vers « Fichiers a
     // valider » depuis la rubrique (la liste de tous les fichiers ne retrouve
     // pas le candidat). Une piece deposee hors de la file s'apercoit ici.
-    Widget vignette(String documentId) =>
-        PieceVignette(key: cle, documentId: documentId, nom: nom);
+    Widget vignette(String documentId, GenreFichierPiece? genre) =>
+        PieceVignette(key: cle, documentId: documentId, nom: nom, genre: genre);
 
     if (!lecture.hasValue) {
       return lecture.hasError
@@ -116,7 +116,7 @@ class PieceSurPlace extends ConsumerWidget {
         if (profil == null) {
           return document == null
               ? phrase(r.etatsPiece.deposee)
-              : vignette(document);
+              : vignette(document, piece.genre);
         }
     }
     final AsyncValue<DossierPourRevue> dossier = ref.watch(
@@ -176,7 +176,7 @@ class PieceSurPlace extends ConsumerWidget {
       final String? document = piece.documentId;
       return document == null
           ? phrase(r.etatsPiece.deposee)
-          : vignette(document);
+          : vignette(document, piece.genre);
     }
     return const Skeleton.liste(key: cle, lignes: 3);
   }

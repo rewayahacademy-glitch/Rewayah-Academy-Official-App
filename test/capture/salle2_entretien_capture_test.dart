@@ -215,6 +215,7 @@ final Override _pieceEnAttente = lirePieceCandidatureProvider.overrideWithValue(
     statut: StatutPieceCandidature.enAttente,
     profilId: 'demo-dossier-01',
     documentId: 'demo-piece-01',
+    genre: GenreFichierPiece.image,
   ),
 );
 

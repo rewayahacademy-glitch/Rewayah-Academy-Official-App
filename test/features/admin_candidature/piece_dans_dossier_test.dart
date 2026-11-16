@@ -115,6 +115,7 @@ void main() {
     statut: StatutPieceCandidature.enAttente,
     profilId: 'p1',
     documentId: 'doc1',
+    genre: GenreFichierPiece.image,
   );
 
   group('la piece deposee, hors de la file', () {
@@ -163,7 +164,17 @@ void main() {
       WidgetTester tester,
     ) async {
       final List<Uri> ouverts = <Uri>[];
-      await _monter(tester, deposee, extension: 'pdf', ouverts: ouverts);
+      await _monter(
+        tester,
+        const PieceCandidature(
+          statut: StatutPieceCandidature.enAttente,
+          profilId: 'p1',
+          documentId: 'doc1',
+          genre: GenreFichierPiece.pdf,
+        ),
+        extension: 'sansext',
+        ouverts: ouverts,
+      );
       expect(find.byKey(PieceVignette.cleImage), findsNothing);
       expect(find.byKey(PieceVignette.cleIcone), findsOneWidget);
       expect(find.text(t.admin.candidatures.detail.piecePdf), findsOneWidget);
@@ -173,7 +184,7 @@ void main() {
       await tester.tap(find.byKey(PieceVignette.cleIcone), warnIfMissed: false);
       await laisser(tester);
       expect(ouverts, hasLength(1));
-      expect(ouverts.single.path, endsWith('.pdf'));
+      expect(ouverts.single.path, endsWith('doc1.sansext'));
     });
 
     testWidgets(
@@ -196,10 +207,52 @@ void main() {
       },
     );
 
-    test('estPdf : l\'extension du chemin, pas celle de la requete', () {
-      expect(PieceVignette.estPdf('https://x.test/a/b.PDF?s=1'), isTrue);
-      expect(PieceVignette.estPdf('https://x.test/a/b.jpg?f=x.pdf'), isFalse);
-      expect(PieceVignette.estPdf('https://x.test/a/b'), isFalse);
+    test('le genre vient du serveur, jamais de l\'adresse', () {
+      GenreFichierPiece? genre(Object? v) => PieceCandidature.depuisJson(
+        <String, Object?>{'statut': 'pending', 'genreFichier': v},
+      )!.genre;
+      expect(genre('pdf'), GenreFichierPiece.pdf);
+      expect(genre('image'), GenreFichierPiece.image);
+      expect(genre(null), isNull);
+      expect(genre('video'), isNull);
+      expect(
+        PieceCandidature.depuisJson(<String, Object?>{
+          'statut': 'pending',
+          'typeContenu': 'image/heic',
+        })!.typeContenu,
+        'image/heic',
+      );
+    });
+
+    testWidgets('type inconnu : tuile « Fichier », ouverte telle quelle', (
+      WidgetTester tester,
+    ) async {
+      final List<Uri> ouverts = <Uri>[];
+      await _monter(
+        tester,
+        const PieceCandidature(
+          statut: StatutPieceCandidature.enAttente,
+          profilId: 'p1',
+          documentId: 'doc1',
+        ),
+        ouverts: ouverts,
+      );
+      expect(find.byKey(PieceVignette.cleImage), findsNothing);
+      expect(find.byKey(PieceVignette.cleFichier), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.detail.pieceFichier),
+        findsOneWidget,
+      );
+      expect(find.text(t.admin.candidatures.detail.pieceImage), findsNothing);
+      expect(find.text(t.admin.candidatures.detail.piecePdf), findsNothing);
+      await tester.ensureVisible(find.byKey(PieceVignette.cleFichier));
+      await laisser(tester, fois: 2);
+      await tester.tap(
+        find.byKey(PieceVignette.cleFichier),
+        warnIfMissed: false,
+      );
+      await laisser(tester);
+      expect(ouverts, hasLength(1));
     });
 
     testWidgets('aucun lien vers la liste de tous les fichiers', (
