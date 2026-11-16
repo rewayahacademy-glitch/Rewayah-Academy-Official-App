@@ -39278,6 +39278,9 @@ class Traductions$com$messages$entree$fr {
 	/// fr: 'Replier la conversation'
 	String get replier => 'Replier la conversation';
 
+	/// fr: 'Fermer la conversation'
+	String get fermer => 'Fermer la conversation';
+
 	/// fr: 'Ouvrir dans Messages'
 	String get ouvrirDansMessages => 'Ouvrir dans Messages';
 
@@ -64175,6 +64178,7 @@ extension on Traductions {
 			'com.messages.entree.ecrireA' => ({required Object nom}) => 'Écrire à ${nom}',
 			'com.messages.entree.conversationAvec' => ({required Object nom}) => 'Conversation avec ${nom}',
 			'com.messages.entree.replier' => 'Replier la conversation',
+			'com.messages.entree.fermer' => 'Fermer la conversation',
 			'com.messages.entree.ouvrirDansMessages' => 'Ouvrir dans Messages',
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
@@ -64557,9 +64561,9 @@ extension on Traductions {
 			'com.studio.aujourdhui.blocs.activite' => 'Activité récente',
 			'com.studio.aujourdhui.blocs.brouillons' => 'Brouillons',
 			'com.studio.aujourdhui.blocs.acces' => 'Accès rapides',
-			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Rien à traiter aujourd\'hui.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.aujourdhui.videsBlocs.aTraiter' => 'Rien à traiter aujourd\'hui.',
 			'com.studio.aujourdhui.videsBlocs.mentions' => 'Aucune mention ni réponse en attente.',
 			'com.studio.aujourdhui.videsBlocs.decisions' => 'Aucune décision en attente.',
 			'com.studio.aujourdhui.videsBlocs.echeances' => 'Aucune échéance proche.',
@@ -65071,9 +65075,9 @@ extension on Traductions {
 			'comptable.commun.paysDevise' => ({required Object pays, required Object devise}) => '${pays} · ${devise}',
 			'comptable.commun.verification' => 'Vérification',
 			'comptable.commun.activiteInitiateurDate' => ({required Object initiateur, required Object date}) => '${initiateur} · ${date}',
-			'comptable.commun.activiteTransition' => ({required Object avant, required Object apres}) => '${avant} → ${apres}',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.commun.activiteTransition' => ({required Object avant, required Object apres}) => '${avant} → ${apres}',
 			'comptable.commun.activiteReference' => ({required Object reference}) => 'Réf. ${reference}',
 			'comptable.commun.relancePreparee' => 'Relance préparée (démonstration)',
 			'comptable.commun.prestataireDemonstration' => ({required Object nom}) => '${nom} (démonstration)',
@@ -65585,9 +65589,9 @@ extension on Traductions {
 			'comptable.beneficiaires.profil.suspendus' => ({required Object nom}) => 'Paiements de ${nom} suspendus : aucun versement ne part tant qu\'ils ne sont pas repris.',
 			'comptable.beneficiaires.profil.repris' => ({required Object nom}) => 'Paiements de ${nom} repris.',
 			'comptable.beneficiaires.profil.erreurAction' => 'L\'action n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.profil.erreurIndisponible' => 'Cette action n\'est pas encore branchée sur le service qui la traite. Réessayez plus tard.',
 			'comptable.beneficiaires.profil.suspensionTitre' => ({required Object nom}) => 'Suspendre les paiements de ${nom} ?',
 			'comptable.beneficiaires.profil.suspensionContexte' => 'Aucun versement ne partira vers ce bénéficiaire tant que vous ne les reprenez pas. Ses coordonnées ne changent pas. Choisissez le motif : il sera inscrit au journal du profil.',
 			'comptable.beneficiaires.profil.motifVerifier' => 'Coordonnées à vérifier',
@@ -66099,9 +66103,9 @@ extension on Traductions {
 			'recherche.chargement' => 'Recherche en cours…',
 			'recherche.lent' => 'La recherche prend plus de temps que prévu. Les résultats déjà reçus restent affichés.',
 			'recherche.resultatsPour' => ({required Object requete}) => 'Résultats pour « ${requete} »',
-			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} catégorie affichée', other: '${nombre} catégories affichées', ), 
 			_ => null,
 		} ?? switch (path) {
+			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} catégorie affichée', other: '${nombre} catégories affichées', ), 
 			'recherche.domaines.classes' => 'Classes',
 			'recherche.domaines.supports' => 'Supports',
 			'recherche.domaines.personnes' => 'Personnes',
@@ -66613,9 +66617,9 @@ extension on Traductions {
 			'admissions.courriel' => 'Adresse e‑mail',
 			'admissions.etatLibelle' => 'État',
 			'admissions.titulaire' => ({required Object prenom}) => '${prenom}, pour lui-même ou elle-même',
-			'admissions.enfant' => ({required Object prenom, required Object age}) => '${prenom}, ${age} ans',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.enfant' => ({required Object prenom, required Object age}) => '${prenom}, ${age} ans',
 			'admissions.etat.aTraiter' => 'À traiter',
 			'admissions.etat.aCompleter' => 'À compléter',
 			'admissions.etat.acceptee' => 'Acceptée',
@@ -67127,9 +67131,9 @@ extension on Traductions {
 			'candidatsFlux.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer le lien à ${n} personne', other: 'Envoyer le lien à ${n} personnes', ), 
 			'candidatsFlux.prevenir.envoyerSuivantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer à la personne suivante', other: 'Envoyer aux ${n} suivantes', ), 
 			'candidatsFlux.prevenir.sansDonnees' => 'Le nombre de personnes à prévenir n\'a pas pu être chargé.',
-			'candidatsFlux.prevenir.horsLigne' => 'L\'envoi sera possible dès le retour du réseau.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.prevenir.horsLigne' => 'L\'envoi sera possible dès le retour du réseau.',
 			'candidatsFlux.prevenir.resultat.titre' => 'Envoi lancé',
 			'candidatsFlux.prevenir.resultat.mis' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} message part dans les prochaines minutes', other: '${n} messages partent dans les prochaines minutes', ), 
 			'candidatsFlux.prevenir.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste ${n} personne à prévenir.', other: 'Il reste ${n} personnes à prévenir.', ), 
@@ -67641,9 +67645,9 @@ extension on Traductions {
 			'calendrier.pauses.exceptionRecherche' => 'Chercher l\'élève par son nom',
 			'calendrier.pauses.exceptionRechercheAide' => 'Deux lettres au moins.',
 			'calendrier.pauses.exceptionAucun' => 'Aucun élève trouvé.',
-			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'Élève : ${nom}',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'Élève : ${nom}',
 			'calendrier.pauses.exceptionChanger' => 'Choisir un autre élève',
 			'calendrier.pauses.exceptionMotif' => 'Motif',
 			'calendrier.pauses.exceptionDuree' => ({required Object mois}) => 'Elle dure ${mois} mois au plus ; au-delà, vous accordez une nouvelle pause.',

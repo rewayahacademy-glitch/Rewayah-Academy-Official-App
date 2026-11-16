@@ -77,6 +77,8 @@ class FilContextuel extends StatefulWidget {
     this.libelleRetour,
     this.iconeRetour,
     this.onOuvrirMessages,
+    this.onFermer,
+    this.barreFixe = false,
   });
 
   /// IMAGES-MESSAGERIE : les adresses des images du fil, ou `null`.
@@ -129,6 +131,14 @@ class FilContextuel extends StatefulWidget {
   final String? libelleRetour;
   final AppIcon? iconeRetour;
   final VoidCallback? onOuvrirMessages;
+
+  /// MESSAGERIE-COULEURS : la croix « Fermer la conversation » d'un volet, au
+  /// bord de fin de la barre (voir `BarreConversation.onFermer`).
+  final VoidCallback? onFermer;
+
+  /// Vrai : la barre ne se replie jamais quand on remonte vers les anciens
+  /// messages (un volet n'a pas d'autre moyen d'etre ferme que sa barre).
+  final bool barreFixe;
 
   /// La cle du composer vocal du fil, pour les tests.
   static const ValueKey<String> cleComposerVocal = ValueKey<String>(
@@ -305,10 +315,11 @@ class _FilContextuelState extends State<FilContextuel>
         BarreConversation(
           fil: fil,
           onRetour: widget.onRetour,
-          replie: _barreRepliee,
+          replie: !widget.barreFixe && _barreRepliee,
           libelleRetour: widget.libelleRetour,
           iconeRetour: widget.iconeRetour,
           onOuvrirMessages: widget.onOuvrirMessages,
+          onFermer: widget.onFermer,
         ),
         Expanded(
           child: NotificationListener<ScrollNotification>(

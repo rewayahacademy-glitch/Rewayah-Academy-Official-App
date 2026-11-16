@@ -37,6 +37,7 @@ class BarreConversation extends StatelessWidget {
     this.libelleRetour,
     this.iconeRetour,
     this.onOuvrirMessages,
+    this.onFermer,
   }) : titre = null,
        ligne = null;
 
@@ -53,7 +54,8 @@ class BarreConversation extends StatelessWidget {
     this.libelleRetour,
     this.iconeRetour,
   }) : fil = null,
-       onOuvrirMessages = null;
+       onOuvrirMessages = null,
+       onFermer = null;
 
   /// Le fil ouvert, ou `null` pour la barre libre.
   final FilMetier? fil;
@@ -77,6 +79,14 @@ class BarreConversation extends StatelessWidget {
   /// conversation vit dans une autre page (le dossier d'un candidat) ; `null` :
   /// aucun.
   final VoidCallback? onOuvrirMessages;
+
+  /// MESSAGERIE-COULEURS (pilote, 16/11/2026, regression de #540 : « la croix a
+  /// disparu ») : la conversation vit dans un VOLET de cote (ordinateur) ; sa
+  /// croix « Fermer la conversation » se pose au bord de FIN de la barre, apres
+  /// les autres boutons d'icone, en LTR comme en RTL. Elle remplace le retour
+  /// du bord de debut (qui reste la fleche de la page plein ecran). `null` :
+  /// aucune croix.
+  final VoidCallback? onFermer;
 
   /// Vrai quand la barre se replie : on remonte vers les anciens messages.
   final bool replie;
@@ -214,6 +224,20 @@ class BarreConversation extends StatelessWidget {
                 )
               else
                 Ecart.hSm,
+              // La croix du volet : dernier controle de la barre, au bord de
+              // fin, toujours atteignable (la barre d'un volet ne se replie
+              // jamais). Meme cle que le retour de la page Messages.
+              if (onFermer != null) ...<Widget>[
+                BoutonIcone(
+                  key: EspaceTravailAdaptatif.cleRetourListe,
+                  icone: AppIcons.fermer,
+                  libelle: t.com.messages.entree.fermer,
+                  infobulle: t.com.messages.entree.fermer,
+                  onPress: onFermer!,
+                  forme: FormeBoutonIcone.nue,
+                ),
+                Ecart.hSm,
+              ],
             ],
           ),
         ),
@@ -243,7 +267,16 @@ class BarreConversation extends StatelessWidget {
 /// personne sur une page sans sortie.
 class BarreRetourConversation extends StatelessWidget {
   /// Cree la barre.
-  const BarreRetourConversation({super.key, this.onRetour, this.libelle});
+  const BarreRetourConversation({
+    super.key,
+    this.onRetour,
+    this.libelle,
+    this.onFermer,
+  });
+
+  /// La conversation vit dans un volet : une croix « Fermer la conversation »
+  /// au bord de fin, au lieu de la fleche de retour du bord de debut.
+  final VoidCallback? onFermer;
 
   /// Le retour vers la liste.
   final VoidCallback? onRetour;
@@ -255,6 +288,23 @@ class BarreRetourConversation extends StatelessWidget {
   Widget build(BuildContext context) {
     final x = t.com.socle.composants.espace;
     final VoidCallback? retour = onRetour;
+    final VoidCallback? fermer = onFermer;
+    if (fermer != null) {
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: BarreConversation.hauteur),
+        child: Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: BoutonIcone(
+            key: EspaceTravailAdaptatif.cleRetourListe,
+            icone: AppIcons.fermer,
+            libelle: t.com.messages.entree.fermer,
+            infobulle: t.com.messages.entree.fermer,
+            onPress: fermer,
+            forme: FormeBoutonIcone.nue,
+          ),
+        ),
+      );
+    }
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: BarreConversation.hauteur),
       child: Align(
