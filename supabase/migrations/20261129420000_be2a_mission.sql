@@ -7,7 +7,7 @@
 -- porteur de mission non administrateur serait refuse a la porte, avant d'atteindre le moteur. Et
 -- `private.cand_lecteur()` (administrateur seulement) est lu par 19 migrations et par des fonctions qui n'ont que lui
 -- pour garde (mes_entretiens, lire_entretien...) : il n'est PAS touche. A la place :
---   * `private.cand_acteur()` : la direction (cand_lecteur) OU un porteur de mission active ; meme forme de retour ;
+--   * `private.mission_acteur()` : la direction (cand_lecteur) OU un porteur de mission active ; meme forme de retour ;
 --   * la garde de 13 portes de gestes et de 5 lectures est retouchee par ancrage (une ancre trouvee une seule fois par
 --     fonction, sinon la migration echoue) : `(admin OU porteur de mission) ET compte valide` ;
 --   * le moteur (`candidature_geste_ouvrir`) exige le droit de mission pour le geste ET le dossier.
@@ -40,6 +40,24 @@ BEGIN v_n := (pg_catalog.length(p_def) - pg_catalog.length(pg_catalog.replace(p_
     RAISE EXCEPTION 'BE-2a : ancre % trouvee % fois (% attendue)', p_nom, v_n, p_n;
   END IF;
   RETURN pg_catalog.replace(p_def, p_avant, p_apres);
+END;
+$f$;
+
+-- Les fonctions retouchees portent leur empreinte dans leur commentaire (md5_functiondef, controle F86) : elle est
+-- recalculee apres chaque retouche. Les aides de ce lot portent le prefixe mission_, non cand_ : neuf aides cand_
+-- exactement sont attendues par les scenarios de CAND-L1 (aucune de plus).
+CREATE FUNCTION pg_temp.empreinte(p_f regprocedure)
+RETURNS void
+LANGUAGE plpgsql
+AS $f$
+DECLARE
+  v_com text := coalesce(pg_catalog.obj_description(p_f, 'pg_proc'), '');
+BEGIN
+  IF v_com LIKE '%md5_functiondef=%' THEN
+    v_com := pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9A-Za-z_]+',
+      'md5_functiondef=' || pg_catalog.md5(pg_catalog.pg_get_functiondef(p_f)));
+    EXECUTE pg_catalog.format('COMMENT ON FUNCTION %s IS %L', p_f, v_com);
+  END IF;
 END;
 $f$;
 
@@ -121,7 +139,7 @@ AS $function$
 $function$;
 
 -- Vrai : la session est la direction active (administrateur valide, non supprime).
-CREATE FUNCTION private.cand_est_direction()
+CREATE FUNCTION private.mission_est_direction()
 RETURNS boolean
 LANGUAGE sql
 STABLE
@@ -155,7 +173,7 @@ $function$;
 -- Le droit d'une mission seule : le geste est dans une mission active de la session et le dossier est dans le
 -- perimetre (meme cote que la personne, langue commune si `langues`, etape si `etapes`, dossier liste si `dossiers`).
 -- Exigence positive : NULL vaut faux.
-CREATE FUNCTION private.cand_droit_mission(p_candidature uuid, p_geste text)
+CREATE FUNCTION private.mission_droit_dossier(p_candidature uuid, p_geste text)
 RETURNS boolean
 LANGUAGE sql
 STABLE
@@ -186,7 +204,7 @@ $function$;
 -- Le droit unique du cahier (§2.3). La direction court-circuite les missions : son cote, ou l'exception
 -- super-admin, ou les types sans genre (famille, eleve_adulte), comme le moteur de gestes ; aucune lecture de
 -- mission_attributions. Sinon, la mission.
-CREATE FUNCTION private.cand_droit(p_candidature uuid, p_geste text)
+CREATE FUNCTION private.mission_droit(p_candidature uuid, p_geste text)
 RETURNS boolean
 LANGUAGE sql
 STABLE
@@ -194,28 +212,28 @@ SECURITY DEFINER
 SET search_path = ''
 AS $function$
   SELECT coalesce(
-    CASE WHEN private.cand_est_direction()
+    CASE WHEN private.mission_est_direction()
          THEN EXISTS (SELECT 1 FROM private.cand_lecteur() l
                         JOIN public.candidatures c ON c.id = p_candidature
                        WHERE l.genre IS NOT NULL
                          AND (l.super_admin OR c.genre = l.genre OR c.type_code IN ('famille', 'eleve_adulte')))
-         ELSE private.cand_droit_mission(p_candidature, p_geste) END, false);
+         ELSE private.mission_droit_dossier(p_candidature, p_geste) END, false);
 $function$;
 
 -- Pour les lectures ligne a ligne : la direction garde sa regle de lecture (le cote, deja dans la fonction appelante) ;
 -- seule une mission est bornee ici par son perimetre.
-CREATE FUNCTION private.cand_permis(p_candidature uuid, p_geste text)
+CREATE FUNCTION private.mission_permis(p_candidature uuid, p_geste text)
 RETURNS boolean
 LANGUAGE sql
 STABLE
 SET search_path = ''
 AS $function$
-  SELECT private.cand_est_direction() OR private.cand_droit_mission(p_candidature, p_geste);
+  SELECT private.mission_est_direction() OR private.mission_droit_dossier(p_candidature, p_geste);
 $function$;
 
 -- Qui agit : la direction (cand_lecteur) ou, a defaut, un porteur de mission. Meme forme que cand_lecteur ; le contact
 -- n'est jamais donne par ici a une mission (il se juge par dossier : voir_contact).
-CREATE FUNCTION private.cand_acteur()
+CREATE FUNCTION private.mission_acteur()
 RETURNS TABLE (profile_id uuid, genre public.gender, super_admin boolean, contact boolean)
 LANGUAGE sql
 STABLE
@@ -227,7 +245,7 @@ AS $function$
   SELECT p.id, p.gender, false, false
     FROM public.profiles p
    WHERE p.id = auth.uid() AND p.deleted_at IS NULL
-     AND NOT private.cand_est_direction() AND private.mission_porteuse();
+     AND NOT private.mission_est_direction() AND private.mission_porteuse();
 $function$;
 
 -- Le perimetre : cles connues seulement, `cote` ecrit par le serveur (jamais choisi), `liste` reservee.
@@ -361,9 +379,9 @@ AS $function$
 $function$;
 
 REVOKE ALL ON FUNCTION
-  private.mission_gestes_ouverts(), private.cand_est_direction(), private.mission_porteuse(),
-  private.cand_droit_mission(uuid, text), private.cand_droit(uuid, text), private.cand_permis(uuid, text),
-  private.cand_acteur(), private.mission_perimetre_valide(jsonb, public.gender), private.mission_capacites()
+  private.mission_gestes_ouverts(), private.mission_est_direction(), private.mission_porteuse(),
+  private.mission_droit_dossier(uuid, text), private.mission_droit(uuid, text), private.mission_permis(uuid, text),
+  private.mission_acteur(), private.mission_perimetre_valide(jsonb, public.gender), private.mission_capacites()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 -- 3. Les portes publiques, reservees a la direction active en double verification (comme les capacites de controle)
@@ -621,14 +639,14 @@ DECLARE
   v_f regprocedure := 'private.candidature_geste_ouvrir(uuid,text,text,uuid,integer,text,text,text)'::regprocedure;
   v_def text := pg_catalog.pg_get_functiondef(v_f);
 BEGIN
-  IF pg_catalog.strpos(v_def, 'private.cand_acteur()') = 0 THEN
-    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.cand_acteur() l;', 1,
+  IF pg_catalog.strpos(v_def, 'private.mission_acteur()') = 0 THEN
+    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.mission_acteur() l;', 1,
       'geste.acteur');
     v_def := pg_temp.remplacer(v_def,
       '  v_idem := private.candidature_idempotence_lue(p_cle, v_c.id, p_geste, p_auteur);',
       '  -- BE-2a : hors de la direction, le geste ne vaut que dans une mission active, pour ce dossier.
-  IF p_categorie = ''direction'' AND NOT private.cand_est_direction()
-     AND NOT private.cand_droit_mission(v_c.id, p_geste) THEN
+  IF p_categorie = ''direction'' AND NOT private.mission_est_direction()
+     AND NOT private.mission_droit_dossier(v_c.id, p_geste) THEN
     INSERT INTO private.mission_journal (evenement, acteur_id, payload)
     VALUES (''geste_refuse'', p_auteur,
             pg_catalog.jsonb_build_object(''candidature'', v_c.id, ''geste'', p_geste));
@@ -637,7 +655,7 @@ BEGIN
   v_idem := private.candidature_idempotence_lue(p_cle, v_c.id, p_geste, p_auteur);', 1, 'geste.droit');
     v_def := pg_temp.remplacer(v_def,
       '  RETURN pg_catalog.jsonb_build_object(''ok'', true, ''transition'', v_r.transition, ''variante'', v_r.variante);',
-      '  IF p_categorie = ''direction'' AND NOT private.cand_est_direction() THEN
+      '  IF p_categorie = ''direction'' AND NOT private.mission_est_direction() THEN
     INSERT INTO private.mission_journal (mission_id, attribution_id, evenement, acteur_id, payload)
     SELECT a.mission_id, a.id, ''geste_ouvert'', p_auteur,
            pg_catalog.jsonb_build_object(''candidature'', v_c.id, ''geste'', p_geste)
@@ -650,6 +668,7 @@ BEGIN
   RETURN pg_catalog.jsonb_build_object(''ok'', true, ''transition'', v_r.transition, ''variante'', v_r.variante);',
       1, 'geste.journal');
     EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
   END IF;
 END;
 $retouche$;
@@ -682,6 +701,7 @@ BEGIN
     IF pg_catalog.strpos(v_def, 'private.mission_porteuse()') = 0 THEN
       v_def := pg_temp.remplacer(v_def, v_avant, v_apres, 1, 'porte.garde ' || v_sig);
       EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
     END IF;
   END LOOP;
 END;
@@ -695,10 +715,10 @@ DECLARE
   v_avant text := 'public.app_role() = ''admin'' AND public.app_account_valid()';
   v_apres text := '(public.app_role() = ''admin'' OR private.mission_porteuse()) AND public.app_account_valid()';
   v_portee text := '(v_super OR c.genre = v_genre)';
-  v_portee_apres text := '(v_super OR c.genre = v_genre) AND ((SELECT private.cand_est_direction())
-                                                              OR private.cand_droit_mission(c.id, ''lire''))';
+  v_portee_apres text := '(v_super OR c.genre = v_genre) AND ((SELECT private.mission_est_direction())
+                                                              OR private.mission_droit_dossier(c.id, ''lire''))';
   v_courriel text := 'OR EXISTS (SELECT 1 FROM public.candidature_contacts k';
-  v_courriel_apres text := 'OR (((SELECT private.cand_est_direction()) OR private.cand_droit_mission(c.id, ''voir_contact''))
+  v_courriel_apres text := 'OR (((SELECT private.mission_est_direction()) OR private.mission_droit_dossier(c.id, ''voir_contact''))
                 AND EXISTS (SELECT 1 FROM public.candidature_contacts k';
 BEGIN
   -- lire_candidature
@@ -706,49 +726,53 @@ BEGIN
   v_def := pg_catalog.pg_get_functiondef(v_f);
   IF pg_catalog.strpos(v_def, 'private.mission_porteuse()') = 0 THEN
     v_def := pg_temp.remplacer(v_def, v_avant, v_apres, 1, 'lire.garde');
-    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.cand_acteur() l;', 1, 'lire.acteur');
+    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.mission_acteur() l;', 1, 'lire.acteur');
     v_def := pg_temp.remplacer(v_def, 'IF NOT (v_super OR v_c.genre = v_genre) THEN',
-      'IF NOT (v_super OR v_c.genre = v_genre) OR NOT private.cand_permis(v_c.id, ''lire'') THEN', 1, 'lire.portee');
+      'IF NOT (v_super OR v_c.genre = v_genre) OR NOT private.mission_permis(v_c.id, ''lire'') THEN', 1, 'lire.portee');
     EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
   END IF;
   -- lister_candidatures : la garde, l'acteur, trois portees, la recherche par courriel
   v_f := 'public.lister_candidatures(jsonb,text,integer)'::regprocedure;
   v_def := pg_catalog.pg_get_functiondef(v_f);
   IF pg_catalog.strpos(v_def, 'private.mission_porteuse()') = 0 THEN
     v_def := pg_temp.remplacer(v_def, v_avant, v_apres, 1, 'liste.garde');
-    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.cand_acteur() l;', 1, 'liste.acteur');
+    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.mission_acteur() l;', 1, 'liste.acteur');
     v_def := pg_temp.remplacer(v_def, v_portee, v_portee_apres, 3, 'liste.portee');
     v_def := pg_temp.remplacer(v_def, v_courriel, v_courriel_apres, 1, 'liste.courriel');
     v_def := pg_temp.remplacer(v_def, 'AND k.courriel = pg_catalog.lower(v_recherche))',
                                       'AND k.courriel = pg_catalog.lower(v_recherche)))', 1, 'liste.courriel.fin');
     EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
   END IF;
   -- voisins_candidature
   v_f := 'public.voisins_candidature(text,jsonb,text)'::regprocedure;
   v_def := pg_catalog.pg_get_functiondef(v_f);
   IF pg_catalog.strpos(v_def, 'private.mission_porteuse()') = 0 THEN
     v_def := pg_temp.remplacer(v_def, v_avant, v_apres, 1, 'voisins.garde');
-    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.cand_acteur() l;', 1, 'voisins.acteur');
+    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.mission_acteur() l;', 1, 'voisins.acteur');
     v_def := pg_temp.remplacer(v_def, v_portee, v_portee_apres, 1, 'voisins.portee');
     v_def := pg_temp.remplacer(v_def, 'IF NOT (v_super OR v_cible.genre = v_genre) THEN',
-      'IF NOT (v_super OR v_cible.genre = v_genre) OR NOT private.cand_permis(v_cible.id, ''lire'') THEN', 1,
+      'IF NOT (v_super OR v_cible.genre = v_genre) OR NOT private.mission_permis(v_cible.id, ''lire'') THEN', 1,
       'voisins.cible');
     v_def := pg_temp.remplacer(v_def, v_courriel, v_courriel_apres, 1, 'voisins.courriel');
     v_def := pg_temp.remplacer(v_def, 'AND k.courriel = pg_catalog.lower(v_recherche))',
                                       'AND k.courriel = pg_catalog.lower(v_recherche)))', 1, 'voisins.courriel.fin');
     EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
   END IF;
   -- lire_contact_candidature : le contact se juge par dossier (voir_contact), en plus du dossier lisible.
   v_f := 'public.lire_contact_candidature(uuid)'::regprocedure;
   v_def := pg_catalog.pg_get_functiondef(v_f);
   IF pg_catalog.strpos(v_def, 'private.mission_porteuse()') = 0 THEN
     v_def := pg_temp.remplacer(v_def, v_avant, v_apres, 1, 'contact.garde');
-    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.cand_acteur() l;', 1, 'contact.acteur');
+    v_def := pg_temp.remplacer(v_def, 'FROM private.cand_lecteur() l;', 'FROM private.mission_acteur() l;', 1, 'contact.acteur');
     v_def := pg_temp.remplacer(v_def, 'IF NOT coalesce(v_nomme, false) THEN',
       'IF NOT (coalesce(v_nomme, false)
-          OR (NOT private.cand_est_direction() AND private.cand_droit_mission(p_id, ''voir_contact''))) THEN', 1,
+          OR (NOT private.mission_est_direction() AND private.mission_droit_dossier(p_id, ''voir_contact''))) THEN', 1,
       'contact.nomme');
     EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
   END IF;
   -- capacites_candidatures : un porteur de mission recoit ses gestes, rien d'autre.
   v_f := 'public.capacites_candidatures()'::regprocedure;
@@ -762,6 +786,7 @@ BEGIN
   RETURN pg_catalog.jsonb_build_object(
     ''peutLire'', v_lire,', 1, 'capacites.mission');
     EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
   END IF;
 END;
 $retouche$;
@@ -772,11 +797,12 @@ DECLARE
   v_f regprocedure := 'private.lp_gestes(public.candidatures,boolean)'::regprocedure;
   v_def text := pg_catalog.pg_get_functiondef(v_f);
 BEGIN
-  IF pg_catalog.strpos(v_def, 'cand_droit_mission') = 0 THEN
+  IF pg_catalog.strpos(v_def, 'mission_droit_dossier') = 0 THEN
     v_def := pg_temp.remplacer(v_def, '       AND ''direction'' = ANY (r.auteurs)',
       '       AND ''direction'' = ANY (r.auteurs)
-       AND ((SELECT private.cand_est_direction()) OR private.cand_droit_mission(c.id, r.geste))', 1, 'lp.gestes');
+       AND ((SELECT private.mission_est_direction()) OR private.mission_droit_dossier(c.id, r.geste))', 1, 'lp.gestes');
     EXECUTE v_def;
+  PERFORM pg_temp.empreinte(v_f);
   END IF;
 END;
 $retouche$;
@@ -794,8 +820,8 @@ BEGIN
     END IF;
   END LOOP;
   IF pg_catalog.has_function_privilege('anon', 'public.accorder_mission(uuid,uuid,jsonb,timestamptz,timestamptz,uuid)', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('authenticated', 'private.cand_droit(uuid,text)', 'EXECUTE')
-     OR pg_catalog.has_function_privilege('authenticated', 'private.cand_acteur()', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('authenticated', 'private.mission_droit(uuid,text)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('authenticated', 'private.mission_acteur()', 'EXECUTE')
      OR NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'private.missions'::regclass)
      OR NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'private.mission_attributions'::regclass)
      OR NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'private.mission_journal'::regclass) THEN

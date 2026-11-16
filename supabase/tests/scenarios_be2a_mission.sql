@@ -287,8 +287,8 @@ SELECT pg_temp.vrai(NOT has_function_privilege('anon', 'public.accorder_mission(
   AND NOT has_function_privilege('anon', 'public.archiver_mission(uuid,text,uuid)', 'EXECUTE')
   AND NOT has_function_privilege('anon', 'public.lister_missions()', 'EXECUTE')
   AND NOT has_function_privilege('service_role', 'public.accorder_mission(uuid,uuid,jsonb,timestamptz,timestamptz,uuid)', 'EXECUTE')
-  AND NOT has_function_privilege('authenticated', 'private.cand_droit(uuid,text)', 'EXECUTE')
-  AND NOT has_function_privilege('authenticated', 'private.cand_acteur()', 'EXECUTE'),
+  AND NOT has_function_privilege('authenticated', 'private.mission_droit(uuid,text)', 'EXECUTE')
+  AND NOT has_function_privilege('authenticated', 'private.mission_acteur()', 'EXECUTE'),
   '9 : anon sans aucune porte, service_role sans accord, helpers prives fermes');
 SELECT pg_temp.refus_en(pg_temp.u('h3'), 'controller', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
   '42501', '9 : authenticated sans mission : la liste est refusee (42501)');
