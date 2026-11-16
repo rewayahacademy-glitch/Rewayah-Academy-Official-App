@@ -1,6 +1,6 @@
 # Checklist du pilote « Bureau de l'équipe » (depuis la passation du 16/11/2026)
 
-**Mise à jour : 16/11/2026, 20 h 05 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
+**Mise à jour : 16/11/2026, 20 h 25 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
 remplace `session_0163KjrvqR38dL9HhgktqAdg`, archivée)
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (fusionné, installé, vérifié par le pilote ; « prouvé » seulement
@@ -33,14 +33,14 @@ BE-S1 et BE-LISTE : archivés (travail poussé). Plage de ce chantier : 20261129
 | 10 | PIECE-TYPE-ECRAN (l'écran lit `genreFichier`) | ◐ | BE-PIECE |
 | 11 | Vérification de trois gestes du menu | ☑ | faite dans la carte (n° 13) pour tous les gestes du menu ; les trois gestes n'étaient nommés nulle part |
 | 12 | #525 CAPTCHA-PLACE | ☐ | aucun aperçu Vercel dans la PR, base du matin ; à vérifier dans un navigateur après mise à jour, ou fermer |
-| 13 | **PREMIER TRAVAIL (§0 bis)** : `CARTE-GESTES-DIRECTION.md` | ⏸ | écrite (14 trous, 8 lots, questions Q1 à Q5) ; deux faits clés revérifiés en base par le pilote ; attend la décision du directeur avant tout code |
+| 13 | **PREMIER TRAVAIL (§0 bis)** : `CARTE-GESTES-DIRECTION.md` | ☑ | écrite (14 trous, 8 lots, questions Q1 à Q5) ; deux faits clés revérifiés en base par le pilote ; arbitrée par le pilote le 16/11 à 20 h 10 (le directeur : « ne me demande plus rien ») |
 
 ## 2. Gros lots (dans l'ordre ; une étape ne commence que quand la précédente est livrée)
 
 | # | Lot | État | Prochaine action |
 | :-: | :--- | :-: | :--- |
-| G0 | Lots issus de la carte des gestes | ⏸ | après décision du directeur sur la carte |
-| G1 | Vague 2 « La mission » : BE-2a serveur (sensible) | ☐ | cahier écrit par le pilote avant tout code, scénarios de refus obligatoires |
+| G0 | Lots issus de la carte des gestes | ◐ | arbitrés par le pilote (carte §4.3, consigne 22) ; lot 1 ACCUEIL-SEPARE (serveur) confié à BE-PIECE, son écran ira à BE-GESTES |
+| G1 | Vague 2 « La mission » : BE-2a serveur (sensible) | ◐ | **cahier écrit** (`CAHIER-BE-2A-MISSION.md`) ; code confié à BE-PIECE après son écran et ACCUEIL-SEPARE (le lancement d'un agent serveur dédié a été refusé par le contrôle des permissions) |
 | G2 | BE-2b écran « Équipe », BE-2c confier / « Mes dossiers », BE-2d suspendre / rétablir | ☐ | cahiers après BE-2a |
 | G3 | Étape E : parcourir « confirmée → première classe » avec un compte de test | ☐ | chaque trou devient un lot |
 | G4 | Listes LP-3 à LP-7 | ☐ | avec `RAPPORT-EXPERIENCE` |
@@ -53,7 +53,7 @@ BE-S1 et BE-LISTE : archivés (travail poussé). Plage de ce chantier : 20261129
 | :-: | :--- | :-: | :--- |
 | — | (aucune depuis la passation) | | |
 
-## 4. Pour le directeur au réveil (décisions et faits)
+## 4. Décisions (arbitrées par le pilote depuis le 16/11 à 20 h 10, consigne 22 ; le directeur peut les reprendre)
 
 | N° | Question | Recommandation |
 | :-: | :--- | :--- |
