@@ -30,3 +30,5 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 24 | Contradiction franc CFA : Bénin « indisponible » (XOF non envoyé par Wise) mais Côte d’Ivoire et Sénégal « confirmés » (même monnaie) | ⏸ | le directeur vérifie dans Wise si le XOF part vers le Bénin (et Burkina, Mali, Niger, Togo) |
 | 25 | LP-1 serveur : lister_enseignants (#544) | ☑ | installé 17:50 UTC (5 fonctions vérifiées) ; LP-2 écran lancé chez BE-LISTE. Manques à décider : formation, période d’essai, fin de collaboration, contrat, présence 30 j, avancement des classes |
 | 26 | Collision de numéro : #546 (image candidat, messagerie) reprend 20261129400000, déjà pris par LP-1 installé | ◐ | pilote messagerie prévenu 18:15 UTC : renuméroter avant fusion |
+| 27 | DISPENSE-ENTRETIEN (BE-1g) : faire passer un fondateur sans entretien (CAND-00068, capture du directeur 16/11) | ◐ | serveur confié à BE-S1 18:20 UTC ; écran ensuite chez BE-DOSSIER |
+| 28 | Menu « … » du dossier : « clore le complément » proposé sans complément ouvert (refus serveur) | ◐ | confié à BE-DOSSIER (#545 ou petite PR), revue de tous les gestes du menu |
