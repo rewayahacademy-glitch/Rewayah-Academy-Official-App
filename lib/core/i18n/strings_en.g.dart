@@ -14591,7 +14591,7 @@ class _Traductions$admin$candidatures$detail$en extends Traductions$admin$candid
 	@override String get piecePdf => 'PDF';
 	@override String get pieceOuvrirPdf => 'Open the PDF of the ID document';
 	@override String pieceTitre({required Object nom}) => 'ID document of ${nom}';
-	@override String get pieceDecisionPlusTard => 'The document is decided in the Verification and interview room, after admission.';
+	@override String get pieceDecisionPlusTard => 'The document is decided in the Verification and interview room.';
 }
 
 // Path: admin.candidatures.controles
@@ -30745,7 +30745,7 @@ extension on TraductionsEn {
 			'admin.candidatures.detail.piecePdf' => 'PDF',
 			'admin.candidatures.detail.pieceOuvrirPdf' => 'Open the PDF of the ID document',
 			'admin.candidatures.detail.pieceTitre' => ({required Object nom}) => 'ID document of ${nom}',
-			'admin.candidatures.detail.pieceDecisionPlusTard' => 'The document is decided in the Verification and interview room, after admission.',
+			'admin.candidatures.detail.pieceDecisionPlusTard' => 'The document is decided in the Verification and interview room.',
 			'admin.candidatures.controles.noms.compteConforme' => 'Account compliant',
 			'admin.candidatures.controles.noms.cadreReligieux' => 'Religious and teaching framework accepted',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'Questionnaire complete at the current version',

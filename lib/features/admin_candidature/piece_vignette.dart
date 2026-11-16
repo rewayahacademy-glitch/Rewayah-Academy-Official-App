@@ -77,6 +77,11 @@ class PieceVignette extends ConsumerWidget {
   /// La clé de l'icône cliquable qui dit « Image » ou « PDF ».
   static const Key cleIcone = ValueKey<String>('piece-vignette-icone');
 
+  /// La cle de l'icone « Image » d'une image que l'ecran n'affiche pas.
+  static const Key cleIconeIllisible = ValueKey<String>(
+    'piece-vignette-icone-illisible',
+  );
+
   /// La hauteur de la vignette.
   static const double hauteur = 120;
 
@@ -142,15 +147,37 @@ class PieceVignette extends ConsumerWidget {
                         fit: BoxFit.contain,
                         // Un format que l'écran n'affiche pas (HEIC) : la
                         // phrase le dit, et la pièce se redemande en un geste.
+                        // Jamais un rectangle vide ni un simple « non lisible » :
+                        // l'icone « Image » reste cliquable et ouvre le
+                        // fichier dans un onglet (il se telecharge de la).
                         errorBuilder:
                             (BuildContext c, Object e, StackTrace? st) =>
-                                TexteSansCoupure(
-                                  r.pieceIllisible,
-                                  key: cleEchec,
-                                  style: palette.inkAlert.applyTo(
-                                    Theme.of(c).textTheme.bodyMedium ??
-                                        const TextStyle(),
-                                  ),
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: <Widget>[
+                                    BoutonOutil(
+                                      key: cleIconeIllisible,
+                                      icone: AppIcons.image,
+                                      libelle: r.pieceImage,
+                                      avecLibelle: true,
+                                      forme: FormeBoutonOutil.tuile,
+                                      onPress: () => unawaited(
+                                        ref.read(ouvreurOngletProvider)(
+                                          Uri.parse(url),
+                                        ),
+                                      ),
+                                    ),
+                                    Ecart.vXs,
+                                    TexteSansCoupure(
+                                      r.pieceIllisible,
+                                      key: cleEchec,
+                                      style: palette.inkAlert.applyTo(
+                                        Theme.of(c).textTheme.bodyMedium ??
+                                            const TextStyle(),
+                                      ),
+                                    ),
+                                  ],
                                 ),
                       ),
                     ),

@@ -4354,7 +4354,7 @@
         "piecePdf": "PDF",
         "pieceOuvrirPdf": "Open the PDF of the ID document",
         "pieceTitre": "ID document of {nom}",
-        "pieceDecisionPlusTard": "The document is decided in the Verification and interview room, after admission."
+        "pieceDecisionPlusTard": "The document is decided in the Verification and interview room."
       },
       "controles": {
         "noms": {

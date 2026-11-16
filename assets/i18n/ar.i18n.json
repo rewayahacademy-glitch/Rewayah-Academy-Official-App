@@ -5660,7 +5660,7 @@
         "piecePdf": "ملف PDF",
         "pieceOuvrirPdf": "فتح ملف PDF لوثيقة الهوية",
         "pieceTitre": "وثيقة هوية \u2068{nom}\u2069",
-        "pieceDecisionPlusTard": "تُحسم الوثيقة في قاعة التحقق والمقابلة بعد القبول."
+        "pieceDecisionPlusTard": "تُحسم الوثيقة في قاعة التحقق والمقابلة."
       },
       "controles": {
         "noms": {

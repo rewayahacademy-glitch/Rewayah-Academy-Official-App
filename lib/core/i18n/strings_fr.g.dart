@@ -29737,8 +29737,8 @@ class Traductions$admin$candidatures$detail$fr {
 	/// fr: 'Pièce d'identité : {nom}'
 	String pieceTitre({required Object nom}) => 'Pièce d\'identité : ${nom}';
 
-	/// fr: 'La pièce se décide en Salle de vérification et d'entretien, après l'admission.'
-	String get pieceDecisionPlusTard => 'La pièce se décide en Salle de vérification et d\'entretien, après l\'admission.';
+	/// fr: 'La pièce se décide en Salle de vérification et d'entretien.'
+	String get pieceDecisionPlusTard => 'La pièce se décide en Salle de vérification et d\'entretien.';
 }
 
 // Path: admin.candidatures.controles
@@ -57402,7 +57402,7 @@ extension on Traductions {
 			'admin.candidatures.detail.piecePdf' => 'PDF',
 			'admin.candidatures.detail.pieceOuvrirPdf' => 'Ouvrir le PDF de la pièce d\'identité',
 			'admin.candidatures.detail.pieceTitre' => ({required Object nom}) => 'Pièce d\'identité : ${nom}',
-			'admin.candidatures.detail.pieceDecisionPlusTard' => 'La pièce se décide en Salle de vérification et d\'entretien, après l\'admission.',
+			'admin.candidatures.detail.pieceDecisionPlusTard' => 'La pièce se décide en Salle de vérification et d\'entretien.',
 			'admin.candidatures.controles.noms.compteConforme' => 'Compte conforme',
 			'admin.candidatures.controles.noms.cadreReligieux' => 'Cadre religieux et pédagogique accepté',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'Questionnaire complet à la version courante',

@@ -60,6 +60,7 @@ Future<_Signature> _monter(
   PieceCandidature? piece, {
   String extension = 'jpg',
   List<Uri>? ouverts,
+  bool imageIllisible = false,
   EtatPiece? etatDuDossier,
   List<ControleCandidature>? controles,
 }) async {
@@ -83,7 +84,12 @@ Future<_Signature> _monter(
           return true;
         }),
       imagePieceProvider.overrideWithValue(
-        (Uri _) => MemoryImage(Uint8List.fromList(_pixel)),
+        (Uri _) => MemoryImage(
+          // Des octets qui ne sont pas une image : l'ecran ne l'affiche pas.
+          imageIllisible
+              ? Uint8List.fromList(<int>[1, 2, 3])
+              : Uint8List.fromList(_pixel),
+        ),
       ),
     ],
     ouvrirRubriques: false,
@@ -169,6 +175,26 @@ void main() {
       expect(ouverts, hasLength(1));
       expect(ouverts.single.path, endsWith('.pdf'));
     });
+
+    testWidgets(
+      'une image que l\'ecran n\'affiche pas : icone cliquable, jamais '
+      'un simple « non lisible »',
+      (WidgetTester tester) async {
+        final List<Uri> ouverts = <Uri>[];
+        await _monter(tester, deposee, ouverts: ouverts, imageIllisible: true);
+        await laisser(tester);
+        expect(find.byKey(PieceVignette.cleIconeIllisible), findsOneWidget);
+        expect(find.byKey(PieceVignette.cleEchec), findsOneWidget);
+        await tester.ensureVisible(find.byKey(PieceVignette.cleIconeIllisible));
+        await laisser(tester, fois: 2);
+        await tester.tap(
+          find.byKey(PieceVignette.cleIconeIllisible),
+          warnIfMissed: false,
+        );
+        await laisser(tester);
+        expect(ouverts, hasLength(1));
+      },
+    );
 
     test('estPdf : l\'extension du chemin, pas celle de la requete', () {
       expect(PieceVignette.estPdf('https://x.test/a/b.PDF?s=1'), isTrue);
