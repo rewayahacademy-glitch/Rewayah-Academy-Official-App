@@ -6,6 +6,7 @@ où ils ne se perdront pas » ; plusieurs agents à petits modèles, sous des r�
 | Quoi | Où |
 | :--- | :--- |
 | **L'état réel du parcours, les goulots et le plan pour finir, dans l'ordre (directeur, 16/11 : « sinon ça va se perdre »)** | `ETAT-ET-PLAN-2026-11-16.md` |
+| **La liste des personnes pour toute leur vie (enseignants, élèves, familles, équipe), gestes, imprimables, lots LP** | `SPEC-LISTE-PERSONNES-2026-11-16.md` |
 | La stratégie complète (constats prouvés, idée, règles, vagues 0 à 5) | `../STRATEGIE-BUREAU-EQUIPE-2026-11-15.md` |
 | **Le suivi lot par lot (à tenir à jour à chaque PR)** | `SUIVI.md` |
 | **Le secrétaire IA (vision du directeur, liste complète, niveaux d'autonomie, connecteur)** | `SECRETAIRE-IA.md` |

@@ -300,3 +300,21 @@ le prouve pas.** Tant qu'elle manque, aucun envoi d'image n'aboutit.
   pas connus : chaque envoi écrit désormais dans la console du navigateur des lignes
   `[images-temps]` (message créé, demande du dépôt, `PUT` image, `PUT` miniature, confirmation,
   préparation, lecture des adresses signées), à relever au prochain essai en production.
+
+### 10 ter. Photo jamais peinte, ni chez l'expéditeur ni chez le destinataire (urgence du 16/11, IMAGE-EXPEDITEUR)
+
+- **Constat en production** : serveur sain (image confirmée, `com_fil_json` et `message-images-lecture`
+  répondent) ; la bulle reste un aplat de la couleur moyenne avec le reflet, sans fin.
+- **Reproduit dans Chromium** (build web release, Playwright, 1440) avec le vrai `FilDiscussion` et la vraie
+  compression du navigateur : si le `GET` de l'adresse signée est servi **sans `Access-Control-Allow-Origin`**,
+  `Image.network` (lecture par octets, `fetch`) est refusé par le navigateur ; la miniature échoue, le repli vers
+  l'image complète échoue de la même façon, la bulle reste l'aplat. Avec l'en-tête, tout se peint. Captures :
+  `docs/current/captures/E2E/IMAGE-EXPEDITEUR/`.
+- **Non prouvé** : que la règle CORS du seau n'autorise pas le `GET` depuis l'origine de l'application (aucun accès
+  à Cloudflare). Cela reste à vérifier par le directeur. Le correctif ne remplace pas cette règle : il rend
+  l'affichage robuste quelle qu'elle soit.
+- **Correctif** : `Image.network(..., webHtmlElementStrategy: WebHtmlElementStrategy.fallback)` dans
+  `ImageDeBulle` (miniature, repli et visionneuse). L'image se lit d'abord par octets ; si le navigateur refuse,
+  elle passe par une balise `<img>`, qui n'exige aucun en-tête CORS. Limites : la copie « Enregistrer l'image »
+  lit toujours les octets (`http.readBytes`) et exige donc le CORS ; le rendu par balise `<img>` ne passe pas par
+  le décodage à la taille d'affichage.

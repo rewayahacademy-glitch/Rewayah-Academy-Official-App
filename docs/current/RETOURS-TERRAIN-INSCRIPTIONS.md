@@ -36,6 +36,10 @@ n'écrit jamais de nom, d'adresse ni de donnée personnelle : seulement des nomb
   planifiées, disque : une vague d'inscriptions sature d'abord ce qu'on n'a pas
   mesuré (R4, R5).
 
+## Pour les élèves : la liste de la direction (directeur, 16/11/2026)
+
+Les élèves sont la population qui aura le plus besoin de listes. La liste des élèves suit la même grammaire que celle des enseignants (`BUREAU-EQUIPE/SPEC-LISTE-PERSONNES-2026-11-16.md` §5) : une seule liste, la ligne suit la phase (demande, placement, en attente de classe, inscrit, actif, arrêt, parti), l'étape du programme et la vitesse en colonne (priorité n° 1), présence et paiement en résumé, gestes par ligne et groupés, vues « À placer », « En retard sur le programme », « Paiement en retard », imprimables (certificat, relevé de progression, facture). Chaque état bloquant a deux sorties écrites avant le code : ce que la famille peut faire elle-même, et le geste de la direction qui débloque (leçon des questions de versement des candidats, 15-16/11).
+
 ## Registre
 
 | # | Date | Ce qui a été vu | Cause prouvée | Personnes touchées | Correctif | Pour les élèves |
