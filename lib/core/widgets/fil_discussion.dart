@@ -895,6 +895,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
     }
     _teteDePage = tete;
+    _preparerBrouillon();
+  }
+
+  /// Branche la memoire des brouillons des que le fil peut s'ecrire. Appelee
+  /// aussi quand la page ouvre l'ecriture apres coup (la capacite arrive
+  /// apres le premier rendu : le fil se lisait d'abord seulement), pour que
+  /// le brouillon deja garde, ou le message modele d'une relance, soit remis.
+  void _preparerBrouillon() {
     final CleBrouillon? cle = widget.lectureSeule == null
         ? widget.cleBrouillon
         : null;
@@ -919,6 +927,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _champ.addListener(_auChangement);
       _persistance?.caler(_champ.text);
     }
+    _preparerBrouillon();
     if (widget.emplacementVocal == null) {
       _vocalOuvert = false;
       _microDisponible = false;
@@ -2085,10 +2094,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
 }
 
 /// Le fond du fil derriere la saisie (CONVERSATIONS-PARTOUT) : le meme fond que
-/// la liste des messages, sans bord ni ombre, avec la meme marge laterale qu'au
-/// telephone. C'est le SEUL paint admis entre le champ et le fil : le test de
-/// rendu (`fil_saisie_sans_rectangle_test.dart`) refuse tout autre fond, bord
-/// ou ombre.
+/// la liste des messages, sans bord ni ombre. Les bords du champ ne bougent pas
+/// (ils restent alignes sur ceux des bulles) : seul le fond se prolonge. C'est
+/// le SEUL paint admis entre le champ et le fil : le test de rendu
+/// (`fil_saisie_sans_rectangle_test.dart`) refuse tout autre fond, bord ou
+/// ombre.
 class _SurFondDuFil extends StatelessWidget {
   const _SurFondDuFil({required this.child});
 
@@ -2097,10 +2107,7 @@ class _SurFondDuFil extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ColoredBox(
     color: AppPalette.of(context).fondFil.background,
-    child: Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      child: child,
-    ),
+    child: child,
   );
 }
 
@@ -2864,7 +2871,13 @@ class _Saisie extends StatelessWidget {
     libelleVisible: false,
     aide: aidePeinte ? textes.aideChamp : null,
     // La raison de l'envoi absent ; la saisie reduite n'a pas d'envoi.
-    explication: vide && !reduite && !sansExplication ? textes.champVide : null,
+    // SUPERPOS-1 modifiee (directeur, 16/11/2026 : supprimer la phrase d'aide
+    // sous le champ) : la demande explicite la plus recente du directeur
+    // prevaut. Plus aucune phrase d'aide permanente sous le champ, dans aucune
+    // conversation. Le texte indicatif du champ (`aideChamp`) reste ; une
+    // erreur ou une limite ne s'ecrit qu'au moment ou elle sert, jamais en
+    // permanence. `textes.champVide` n'est plus ecrit nulle part.
+    explication: null,
     maxLignes: reduite ? 1 : 5,
     envoi: reduite
         ? null

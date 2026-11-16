@@ -81,7 +81,8 @@ void main() {
     final e = t.controleur.echanges;
     expect(fil.textes.envoyer, e.envoyer);
     expect(fil.textes.echec, e.echec);
-    expect(find.text(e.champVide), findsOneWidget);
+    // SUPERPOS-1 modifiee (directeur, 16/11/2026) : plus de phrase d'aide.
+    expect(find.text(e.champVide), findsNothing);
     expect(find.text(t.com.socle.composants.composer.vocal), findsNothing);
   });
 }
