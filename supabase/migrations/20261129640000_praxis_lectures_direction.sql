@@ -1,7 +1,7 @@
 -- PX-3 (pilote, 16/11/2026, etape 9 de la checklist) : les deux LECTURES de la direction pour l'ecran « Praxis » de « Acces des
 -- agents IA ». Les portes d'ECRITURE existent (20261129600000 : emettre / revoquer une cle, regler) ; l'ecran avait besoin de lire.
 --   * public.direction_praxis_etat()     : l'interrupteur, le mode, le plafond par heure, et la liste des cles (100 au plus, les plus
---                                          recentes) : id, libelle, prefixe, usage, emise le, expire le, derniere utilisation, revoquee.
+--                                          recentes) : id, libelle, prefixe, usage, emise le, expire le, derniere utilisation, revoquee, et son ETAT (active, revoquee, expiree) calcule par la base.
 --                                          Jamais l'empreinte ni le secret (montre une seule fois a l'emission).
 --   * public.direction_praxis_journal(p_limite, p_avant) : « ce que Praxis a envoye » : les lignes de l'outil ecrire et annoncer du journal
 --                                          (outil, issue, heure, fil, extrait de 300 signes au plus du texte QUE PRAXIS A ENVOYE), les plus
@@ -32,7 +32,10 @@ BEGIN
       SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
                'id', c.id, 'libelle', c.libelle, 'prefixe', c.prefixe, 'usage', c.usage,
                'emiseLe', c.emise_le, 'expireLe', c.expire_le, 'derniereUtilisationLe', c.derniere_utilisation_le,
-               'revoqueeLe', c.revoquee_le, 'motifRevocation', c.motif_revocation)
+               'revoqueeLe', c.revoquee_le, 'motifRevocation', c.motif_revocation,
+               -- L'etat vient de la base (son horloge), jamais d'une comparaison faite sur le poste (meme regle que jetons_agent_actifs).
+               'etat', CASE WHEN c.revoquee_le IS NOT NULL THEN 'revoquee'
+                            WHEN c.expire_le <= pg_catalog.clock_timestamp() THEN 'expiree' ELSE 'active' END)
              ORDER BY c.emise_le DESC, c.id)
         FROM (SELECT * FROM private.praxis_cles x ORDER BY x.emise_le DESC, x.id LIMIT 100) c), '[]'::jsonb))
     FROM private.praxis_reglages r);

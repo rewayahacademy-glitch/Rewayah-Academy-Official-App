@@ -94,7 +94,8 @@ SELECT pg_temp.vrai(jsonb_array_length((SELECT v FROM r WHERE nom = 'etat') -> '
   AND NOT ((SELECT v FROM r WHERE nom = 'etat') -> 'cles' -> 0 ? 'empreinte')
   AND NOT ((SELECT v FROM r WHERE nom = 'etat') -> 'cles' -> 0 ? 'secret')
   AND (SELECT v FROM r WHERE nom = 'etat') ->> 'cles' !~ 'prx_[0-9a-f]{20}'
-  AND (SELECT v FROM r WHERE nom = 'etat') -> 'cles' -> 0 ->> 'revoqueeLe' IS NULL,
+  AND (SELECT v FROM r WHERE nom = 'etat') -> 'cles' -> 0 ->> 'revoqueeLe' IS NULL
+  AND (SELECT v FROM r WHERE nom = 'etat') -> 'cles' -> 0 ->> 'etat' = 'active',
   '3 : l''etat rend la cle par son prefixe, son usage et ses dates, jamais l''empreinte ni le secret');
 
 -- 4, 5 : le journal
@@ -117,6 +118,19 @@ SELECT pg_temp.vrai((SELECT count(*) FROM jsonb_array_elements((SELECT v FROM r 
                     (SELECT count(*) FROM jsonb_array_elements((SELECT v FROM r WHERE nom = 'j2') -> 'lignes')) = 8
   AND (SELECT count(*) FROM private.praxis_journal WHERE outil IN ('ecrire', 'annoncer')) = 9,
   '5 : huit lignes lues sur neuf (la derniere page n''est pas encore lue) ; les lignes d''autres outils ne sont jamais comptees');
+
+-- 3 bis : l'etat vient de la base (revoquee, expiree)
+SELECT pg_temp.appel('b3000000-0000-4000-8000-000000000001', 'admin', 'aal2', $$SELECT public.direction_praxis_emettre_cle(
+  'Chat a revoquer', 'chat', pg_catalog.now() + interval '10 days', 'b3222222-0000-4000-8000-000000000002'::uuid)$$);
+SELECT pg_temp.appel('b3000000-0000-4000-8000-000000000001', 'admin', 'aal2', pg_catalog.format(
+  $q$SELECT public.direction_praxis_revoquer_cle(%L::uuid, 'Test de revocation', 'b3222222-0000-4000-8000-000000000003'::uuid)::text::jsonb$q$,
+  (SELECT id FROM private.praxis_cles WHERE libelle = 'Chat a revoquer')));
+UPDATE private.praxis_cles SET emise_le = pg_catalog.clock_timestamp() - interval '40 days', expire_le = pg_catalog.clock_timestamp() - interval '10 days'
+ WHERE libelle = 'Chat de test';
+INSERT INTO r SELECT 'etat2', pg_temp.appel('b3000000-0000-4000-8000-000000000001', 'admin', 'aal1', 'SELECT public.direction_praxis_etat()');
+SELECT pg_temp.vrai((SELECT count(*) FROM jsonb_array_elements((SELECT v FROM r WHERE nom = 'etat2') -> 'cles') c WHERE c ->> 'libelle' = 'Chat a revoquer' AND c ->> 'etat' = 'revoquee' AND c ->> 'motifRevocation' = 'Test de revocation') = 1
+  AND (SELECT count(*) FROM jsonb_array_elements((SELECT v FROM r WHERE nom = 'etat2') -> 'cles') c WHERE c ->> 'libelle' = 'Chat de test' AND c ->> 'etat' = 'expiree') = 1,
+  '3 bis : l''etat d''une cle (revoquee, expiree) est calcule par la base');
 
 -- 2 : refus
 SELECT pg_temp.refus('b3000000-0000-4000-8000-000000000002', 'guardian', 'SELECT public.direction_praxis_etat()', '42501', '2 : un tuteur ne lit pas l''etat');
