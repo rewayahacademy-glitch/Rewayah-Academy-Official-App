@@ -506,6 +506,8 @@ ResumeFil resumeFilJson(
     apercuPhoto: photoSeule,
     dernierMessageLe: instantOptionnel(fil, 'dernier_message_le'),
     attention: _attention(fil['non_lus']),
+    // NOUVEAU-FILS : un serveur plus ancien ne rend pas la cle (faux).
+    nouveau: fil['nouveau'] == true,
   );
 }
 

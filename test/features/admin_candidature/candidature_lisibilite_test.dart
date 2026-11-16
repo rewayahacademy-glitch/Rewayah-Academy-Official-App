@@ -296,6 +296,7 @@ DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
   GesteCandidature.cloreComplement => detailTest(
     etape: EtapeCandidature.verifications,
     etat: EtatCandidature.entretienAPlanifier,
+    complementEnCours: true,
   ),
   _ => detailTest(),
 };
