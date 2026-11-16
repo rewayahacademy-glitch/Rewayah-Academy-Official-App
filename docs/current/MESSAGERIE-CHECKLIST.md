@@ -1,6 +1,6 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : lundi 16/11/2026, 22 h 55 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : lundi 16/11/2026, 23 h 25 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
@@ -48,7 +48,10 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
    savoir si l'équipe a lu).
 5. **À décider par vous** : ajouter `scenarios_image_candidat.sql` et `scenarios_nouveau_fils.sql` à
    `ci.yml` (zone interdite aux agents) ; bulles reçues pâles (sans contour, décision du pilote).
-6. **Aucun agent messagerie actif.** Suite en liste : NOUVELLE-VERSION, comptes Praxis, CHECK des
+6. **Praxis (Pilote Équipe, #567) a retouché l'envoi des messages et des annonces à 23 h 14-16 UTC**,
+   relu par le pilote avant ; lecture, liste et annonces répondent sans erreur depuis ; **aucun envoi réel
+   depuis : l'envoi modifié n'est pas encore prouvé en production.** Au premier message envoyé, le vérifier.
+7. **Aucun agent messagerie actif.** Suite en liste : NOUVELLE-VERSION, comptes Praxis, CHECK des
    notifications (écart dépôt / production, aucune personne touchée).
 
 ## Faux, bloqué ou non prouvé (à lire d'abord)
@@ -157,3 +160,4 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
   à 22 h 51, aucune erreur Postgres.
 - 16/11, 22 h 35 : agent `session_0163KjrwKsohCvdhrjhrWP5N` archivé (place libérée).
 - 16/11, 22 h 39 : déploiement de `8f320a9b` vert (run 1309).
+- 16/11, 23 h 14-16 : PX-1 (#567, Pilote Équipe) installé : extraction des internes de `com_envoyer_message` et `com_annonce_envoyer`, contrôle md5 passé, `com_fil_json` non touchée, CHECK des notifications non réécrit (relu par le pilote avant). Journaux depuis 23 h 13 : 42 appels de messagerie, 39 en 200, 3 en 204, 0 erreur ; aucun envoi réel, donc envoi non prouvé.
