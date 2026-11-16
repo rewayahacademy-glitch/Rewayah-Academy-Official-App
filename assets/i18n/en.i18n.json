@@ -2664,7 +2664,8 @@
           "profil_renseigne": "fill in the profile",
           "profil_unique": "check the profile is unique",
           "aucune_restriction": "lift the restriction",
-          "piece_validee": "validate the ID document"
+          "piece_validee": "validate the ID document",
+          "complement_clos": "close the request for additional information"
         },
         "vous": "Your turn: {geste}",
         "pause": "The file is paused.",
@@ -4509,6 +4510,7 @@
           "profilUnique": "Unique profile",
           "aucuneRestriction": "No restriction or pause",
           "pieceValidee": "ID document validated",
+          "complementClos": "Additional information closed",
           "inconnu": "Server check"
         },
         "causes": {
@@ -4536,6 +4538,7 @@
           "pieceAbsente": "No identity document uploaded",
           "pieceAVerifier": "Document uploaded, to be checked",
           "pieceARedeposer": "Document refused, to be uploaded again",
+          "complementEnCours": "A requested additional information is still pending",
           "inconnue": "Cause not specified"
         }
       },
@@ -4573,6 +4576,7 @@
         "admettre": "Admit to the Verification and interview room",
         "confirmerMoyen": "Confirm the payout method",
         "ecarterMoyen": "Set this payout method aside",
+        "debloquerVersement": "Unlock the payout",
         "demanderComplement": "Ask for additional information",
         "cloreComplement": "Close the request for additional information",
         "mettreEnPause": "Pause",
@@ -4588,6 +4592,7 @@
         "admettre": "The application moves to the Verification and interview room.",
         "confirmerMoyen": "This method lets Rewayah pay the remuneration in the person's country.",
         "ecarterMoyen": "This method is no longer kept. With no other possible method, the application waits for a method to become possible.",
+        "debloquerVersement": "The payout is confirmed by hand, even with no declared method. Your reason stays in the history. If the person changes their answers, the unlock is lifted.",
         "demanderComplement": "The application goes back to \"to complete\". The person will read the list of chosen items.",
         "cloreComplement": "The requested additional information is closed. The application stays in its room.",
         "mettreEnPause": "The application does not move forward until the pause is lifted.",
@@ -4698,6 +4703,7 @@
         "admettre": "The application is in the Verification and interview room.",
         "confirmerMoyen": "The payout method is confirmed.",
         "ecarterMoyen": "The payout method is set aside.",
+        "debloquerVersement": "The payout is unlocked.",
         "demanderComplement": "Additional information is requested.",
         "cloreComplement": "The additional information request is closed.",
         "mettreEnPause": "The application is paused.",

@@ -1312,6 +1312,79 @@ void main() {
       expect(d.motif, 'Compte clos.');
     });
 
+    testWidgets('debloquer le versement : un motif, puis le geste serveur', (
+      WidgetTester tester,
+    ) async {
+      final FauxCandidaturesDirection port = _port(
+        capacites: capacitesAvecDeblocage,
+        detail: detailTest(paiement: EtatVersement.inconnu),
+      );
+      await _monter(tester, port);
+      await _geste(tester, GesteCandidature.debloquerVersement);
+      expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
+      // La consequence se dit avant le choix (K-58), un seul bouton plein.
+      expect(
+        find.text(t.admin.candidatures.consequences.debloquerVersement),
+        findsOneWidget,
+      );
+      expect(_pleins(find.byKey(FeuilleGeste.cle)), 1);
+      // Sans motif : rien n'est envoye, le manque est nomme.
+      await _valider(tester);
+      expect(port.appelsGeste, isEmpty);
+      expect(
+        find.text(t.admin.candidatures.feuille.motifManquant),
+        findsOneWidget,
+      );
+      await _saisirMotif(tester, '  Cas particulier, verifie.  ');
+      await _valider(tester);
+      final DemandeGeste d = port.appelsGeste.single.demande;
+      expect(d.geste, GesteCandidature.debloquerVersement);
+      expect(d.motif, 'Cas particulier, verifie.');
+      expect(d.versionAttendue, 3);
+    });
+
+    testWidgets(
+      'debloquer le versement : absent quand le serveur ne l\'ouvre pas',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _port(detail: detailTest(paiement: EtatVersement.inconnu)),
+        );
+        expect(
+          find.byKey(
+            const ValueKey<String>('rubrique-geste-debloquerVersement'),
+          ),
+          findsNothing,
+        );
+        await _tapper(tester, find.byKey(BarreDecisionDossier.cleMenu));
+        expect(
+          find.text(t.admin.candidatures.gestes.debloquerVersement),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'debloquer le versement : le refus du serveur est dit, la feuille reste',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          capacites: capacitesAvecDeblocage,
+          detail: detailTest(paiement: EtatVersement.inconnu),
+          erreurGeste: (DemandeGeste _, int _) => const ConflitGeste(7),
+        );
+        await _monter(tester, port);
+        await _geste(tester, GesteCandidature.debloquerVersement);
+        await _saisirMotif(tester, 'Cas particulier.');
+        await _valider(tester);
+        expect(find.text(t.admin.candidatures.erreurs.conflit), findsOneWidget);
+        expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
+        expect(
+          find.text(t.admin.candidatures.retours.debloquerVersement),
+          findsNothing,
+        );
+      },
+    );
+
     testWidgets('refuser : motif et message, nommes quand ils manquent', (
       WidgetTester tester,
     ) async {
@@ -1978,6 +2051,48 @@ void main() {
         expect(texte, isNot(contains('non_accepte')));
         expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
         expect(find.byKey(FeuilleGeste.cleValider), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'accueil refuse : la piece non validee et le complement en cours sont dits en mots',
+      (WidgetTester tester) async {
+        await faireRefuser(
+          tester,
+          const ControlesNonSatisfaits(<({String nom, String? cause})>[
+            (nom: 'piece_validee', cause: 'piece_a_verifier'),
+            (nom: 'complement_clos', cause: 'complement_en_cours'),
+          ]),
+        );
+        final String texte = _toutLeTexte(tester);
+        expect(
+          texte,
+          contains(
+            t.admin.candidatures.detail.controleLigne(
+              nom: t.admin.candidatures.controles.noms.complementClos,
+              cause: t.admin.candidatures.controles.causes.complementEnCours,
+            ),
+          ),
+        );
+        expect(
+          texte,
+          contains(
+            t.admin.candidatures.detail.controleLigne(
+              nom: t.admin.candidatures.controles.noms.pieceValidee,
+              cause: t.admin.candidatures.controles.causes.pieceAVerifier,
+            ),
+          ),
+        );
+        // Ni le code, ni la phrase de repli.
+        expect(texte, isNot(contains('complement_en_cours')));
+        expect(
+          texte,
+          isNot(contains(t.admin.candidatures.controles.causes.inconnue)),
+        );
+        expect(
+          texte,
+          isNot(contains(t.admin.candidatures.controles.noms.inconnu)),
+        );
       },
     );
 
