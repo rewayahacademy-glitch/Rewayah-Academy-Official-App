@@ -35,6 +35,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_communaute/flux_publications.dart';
@@ -126,16 +127,13 @@ Future<void> _monterFil(
   }
 }
 
-/// Le cadre peint d'une bulle visible (le premier `Container` sous sa
-/// fraction de largeur).
+/// Le cadre peint d'une bulle visible (BULLES-MESSAGERIE : la premiere
+/// `DecoratedBox` sous sa cle, qui prend la taille de son contenu).
 Rect _bulle(WidgetTester tester, String id) => tester.getRect(
   find
       .descendant(
-        of: find.descendant(
-          of: find.byKey(ValueKey<String>('message-$id')),
-          matching: find.byType(FractionallySizedBox),
-        ),
-        matching: find.byType(Container),
+        of: find.byKey(ValueKey<String>('message-$id')),
+        matching: find.byType(DecoratedBox),
       )
       .first,
 );
@@ -179,29 +177,36 @@ void main() {
         final String id = (visibles.last.widget.key! as ValueKey<String>).value
             .substring('message-'.length);
         final Rect bulle = _bulle(tester, id);
+        // BULLES-MESSAGERIE : une bulle prend la taille de son contenu, trois
+        // quarts de la colonne au plus ; « Envoyer » reste dans le champ, a
+        // son bord de fin, et aucune bulle ne le depasse.
         expect(
           envoyer.right,
-          lessThanOrEqualTo(bulle.right + 1),
-          reason: '« Envoyer » ne depasse pas la colonne des bulles',
+          lessThanOrEqualTo(champ.right + 0.5),
+          reason: '« Envoyer » ne depasse pas la colonne du fil',
         );
-        // SUPERPOS-1 (JONCTION-LIGNES-1) : l'envoi est dans le champ, a son
-        // bord de fin ; les bulles partagent ce bord avec le champ.
         expect(
           bulle.right,
-          moreOrLessEquals(champ.right, epsilon: 1),
-          reason: 'les bulles et le champ de l envoi partagent le bord de fin',
+          lessThanOrEqualTo(champ.right - AppSpacing.md + 1),
+          reason: 'les bulles restent dans la colonne du champ',
         );
         expect(
           bulle.left,
-          moreOrLessEquals(champ.left, epsilon: 1),
-          reason: 'et le bord de debut, avec le champ',
+          moreOrLessEquals(champ.left + AppSpacing.md, epsilon: 1),
+          reason: 'le message recu se pose au bord de debut de la colonne',
+        );
+        expect(
+          bulle.width,
+          lessThanOrEqualTo(champ.width * FilDiscussion.partBulle + 1),
         );
         expect(tester.takeException(), isNull);
       });
     }
 
-    testWidgets('telephone (390) : la bulle garde son retrait de '
-        'conversation (86 %)', (WidgetTester tester) async {
+    testWidgets('telephone (390) : la bulle ne depasse pas les trois quarts '
+        'de la colonne et laisse 64 libres a la fin', (
+      WidgetTester tester,
+    ) async {
       await _monterFil(
         tester,
         FilDiscussion(
@@ -211,18 +216,19 @@ void main() {
         ),
       );
       final Rect bulle = _bulle(tester, 'k1');
-      final double fil = tester.getSize(find.byType(FilDiscussion)).width;
+      final Rect fil = tester.getRect(find.byType(FilDiscussion));
       expect(
         bulle.width,
-        moreOrLessEquals(fil * FilDiscussion.partBulleTelephone, epsilon: 1),
+        lessThanOrEqualTo(fil.width * FilDiscussion.partBulle + 1),
       );
+      expect(fil.right - bulle.right, greaterThanOrEqualTo(64));
     });
   });
 
   group('lot K, point 1 : ses propres messages gardent leur place', () {
     for (final Size taille in const <Size>[Size(1440, 900), Size(768, 1024)]) {
-      testWidgets('${taille.width.toInt()} : recu sur toute la colonne, '
-          'message de soi a 92 % pose au bord d « Envoyer »', (
+      testWidgets('${taille.width.toInt()} : le recu au bord de debut, le '
+          'message de soi au bord de fin, 64 libres du cote oppose', (
         WidgetTester tester,
       ) async {
         await _monterFil(
@@ -242,25 +248,29 @@ void main() {
         // champ, l'envoi n'en depasse pas.
         expect(envoyer.right, lessThanOrEqualTo(champ.right + 0.5));
         final double colonne = champ.right - champ.left;
-        expect(recu.left, moreOrLessEquals(champ.left, epsilon: 1));
-        expect(recu.right, moreOrLessEquals(champ.right, epsilon: 1));
+        expect(
+          recu.left,
+          moreOrLessEquals(champ.left + AppSpacing.md, epsilon: 1),
+        );
+        expect(
+          soi.right,
+          moreOrLessEquals(champ.right - AppSpacing.md, epsilon: 1),
+        );
         expect(
           soi.width,
-          moreOrLessEquals(
-            colonne * FilDiscussion.partBulleSoiColonne,
-            epsilon: 1,
-          ),
-          reason: 'un leger retrait au debut distingue le message de soi',
+          lessThanOrEqualTo(colonne * FilDiscussion.partBulle + 1),
         );
-        expect(soi.right, moreOrLessEquals(champ.right, epsilon: 1));
-        expect(soi.left, greaterThan(recu.left + 8));
+        expect(
+          soi.left - champ.left,
+          greaterThanOrEqualTo(FilDiscussion.margeOpposee),
+          reason: 'une marge d au moins 64 reste libre du cote oppose',
+        );
         expect(tester.takeException(), isNull);
       });
     }
 
-    testWidgets('390 : le message de soi a 86 %, a la fin', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('390 : le message de soi, trois quarts de la colonne au plus, '
+        'a la fin', (WidgetTester tester) async {
       await _monterFil(
         tester,
         FilDiscussion(
@@ -273,12 +283,13 @@ void main() {
       final Rect soi = _bulle(tester, 'k2');
       expect(
         soi.width,
-        moreOrLessEquals(
-          fil.width * FilDiscussion.partBulleTelephone,
-          epsilon: 1,
-        ),
+        lessThanOrEqualTo(fil.width * FilDiscussion.partBulle + 1),
       );
-      expect(soi.right, moreOrLessEquals(fil.right, epsilon: 1));
+      expect(
+        soi.right,
+        // Sous 600 points, la bulle n'a aucun retrait au bord du fil.
+        moreOrLessEquals(fil.right, epsilon: 1),
+      );
     });
   });
 

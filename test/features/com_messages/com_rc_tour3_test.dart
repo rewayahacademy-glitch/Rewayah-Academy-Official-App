@@ -536,8 +536,12 @@ void main() {
     expect(paragraphe(francais).textDirection, TextDirection.ltr);
     expect(paragraphe(arabe).textDirection, TextDirection.rtl);
     // L'interface, elle, reste de droite a gauche.
+    // BULLES-MESSAGERIE : le texte porte son sens, la bulle (donc l'interface)
+    // garde le sien.
     expect(
-      Directionality.of(tester.element(find.text(francais))),
+      Directionality.of(
+        tester.element(find.byKey(const ValueKey<String>('message-fr'))),
+      ),
       TextDirection.rtl,
     );
   });

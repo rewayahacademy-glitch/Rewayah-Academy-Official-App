@@ -123,9 +123,11 @@ class MessagesAdminPage extends ConsumerWidget {
       onRetour: retour,
       defilante: false,
       // ENTETE-COMMUNICATIONS (directeur, 16/11/2026 : « l'en-tete prend la
-      // moitie de l'ecran ») : au telephone, une seule rangee (retour,
-      // Annonces / Messages, cloche) qui defile avec la liste (LISTES-2).
-      teteAvecLaListe: AppGabarit.de(context) == Gabarit.mobile,
+      // moitie de l'ecran ») puis BULLES-MESSAGERIE : sur ordinateur comme au
+      // telephone, une seule rangee (retour, Annonces / Messages, icones) qui
+      // defile avec la liste (LISTES-2) ; le grand titre disparait, il reste
+      // le fil d'Ariane en petit.
+      teteAvecLaListe: true,
       child: EspaceMessagesMetier(
         filId: filId,
         // COM-R-3, constat 8 : le meme retour, dans la ligne compacte du fil.

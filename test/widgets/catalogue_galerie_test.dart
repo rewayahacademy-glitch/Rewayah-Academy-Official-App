@@ -238,6 +238,8 @@ const List<String> composantsDuCatalogue = <String>[
   // socle, ramenes a la racine de lib/core/widgets par COM-F-b (02_DEC-13) ;
   // dans un sous-dossier, le test du disque ne les voyait pas.
   'BadgeNonLu',
+  // BULLES-MESSAGERIE (directeur, 16/11/2026) : la ligne d'une conversation.
+  'LigneConversation',
   // Avis des familles (19/10/2026) : la note de 1 a 5, lue ou choisie.
   'NoteEtoiles',
   'CartePieceJointe',

@@ -10360,6 +10360,7 @@ class _Traductions$com$messages$en extends Traductions$com$messages$fr {
 	@override String get choisirTitre => 'Choose a conversation';
 	@override String get choisir => 'Choose a conversation from the list to read it and reply.';
 	@override late final _Traductions$com$messages$recherche$en recherche = _Traductions$com$messages$recherche$en._(_root);
+	@override late final _Traductions$com$messages$filtres$en filtres = _Traductions$com$messages$filtres$en._(_root);
 	@override late final _Traductions$com$messages$ligne$en ligne = _Traductions$com$messages$ligne$en._(_root);
 	@override late final _Traductions$com$messages$noms$en noms = _Traductions$com$messages$noms$en._(_root);
 	@override late final _Traductions$com$messages$entete$en entete = _Traductions$com$messages$entete$en._(_root);
@@ -18810,6 +18811,7 @@ class _Traductions$com$socle$lexique$en extends Traductions$com$socle$lexique$fr
 	@override String get communaute => 'Teachers community';
 	@override String get studio => 'The Studio';
 	@override String get aujourdhui => 'Today';
+	@override String get hier => 'Yesterday';
 	@override String get notifications => 'Notifications';
 	@override String get annonce => 'Announcement';
 	@override String get publication => 'Post';
@@ -18984,6 +18986,18 @@ class _Traductions$com$messages$recherche$en extends Traductions$com$messages$re
 	@override String aucun({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.';
 	@override String get resultatUn => '1 conversation found';
 	@override String resultats({required Object nombre}) => '${nombre} conversations found';
+}
+
+// Path: com.messages.filtres
+class _Traductions$com$messages$filtres$en extends Traductions$com$messages$filtres$fr {
+	_Traductions$com$messages$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'All';
+	@override String get nonLus => 'Unread';
+	@override String get aucunNonLu => 'No unread conversation.';
 }
 
 // Path: com.messages.ligne
@@ -36770,6 +36784,7 @@ extension on TraductionsEn {
 			'com.socle.lexique.communaute' => 'Teachers community',
 			'com.socle.lexique.studio' => 'The Studio',
 			'com.socle.lexique.aujourdhui' => 'Today',
+			'com.socle.lexique.hier' => 'Yesterday',
 			'com.socle.lexique.notifications' => 'Notifications',
 			'com.socle.lexique.annonce' => 'Announcement',
 			'com.socle.lexique.publication' => 'Post',
@@ -36862,9 +36877,9 @@ extension on TraductionsEn {
 			'com.messages.entree.voirTout' => 'See all conversations',
 			'com.messages.entree.toutes' => 'All your conversations',
 			'com.messages.entree.aLireUne' => '1 conversation to read',
-			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations to read',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations to read',
 			'com.messages.entree.ouverture' => 'Opening the conversation',
 			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
 			'com.messages.entree.inaccessible' => 'This conversation is no longer open to you. Choose another person from the list.',
@@ -36879,6 +36894,9 @@ extension on TraductionsEn {
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.',
 			'com.messages.recherche.resultatUn' => '1 conversation found',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations found',
+			'com.messages.filtres.tous' => 'All',
+			'com.messages.filtres.nonLus' => 'Unread',
+			'com.messages.filtres.aucunNonLu' => 'No unread conversation.',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'No message yet',
 			'com.messages.ligne.dateCourte' => ({required Object mois, required Object numero}) => '${mois} ${numero}',
@@ -37373,12 +37391,12 @@ extension on TraductionsEn {
 			'com.studio.demo.f.objetDossierKarim' => 'Karim family file',
 			'com.studio.demo.f.activiteMention' => 'Samira mentioned you',
 			'com.studio.demo.f.activiteReponse' => 'Amina replied to your message',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.activiteRemplacant' => 'Choose Tuesday\'s replacement for the An-Nour class',
 			'com.studio.demo.f.objetRemplacement' => 'Tuesday\'s replacement',
 			'com.studio.demo.f.activiteOuverture' => 'Approve the opening of a Saturday morning class',
 			'com.studio.demo.f.objetClasseSamedi' => 'Saturday morning class',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activiteCloture' => 'September month-end closing',
 			'com.studio.demo.f.objetCloture' => 'September closing',
 			'com.studio.demo.f.activiteBilans' => 'Mid-term assessments to review',
@@ -37887,12 +37905,12 @@ extension on TraductionsEn {
 			'comptable.paiements.confirmation.erreursTitre' => 'Errors returned by the check',
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirm the payment of ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Confirm the ready payment of ${montants}', other: 'Confirm the ${n} ready payments: ${montants}', ), 
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.demanderValidation' => 'Request validation',
 			'comptable.paiements.confirmation.annuler' => 'Cancel',
 			'comptable.paiements.confirmation.fermer' => 'Close',
 			'comptable.paiements.confirmation.soumisTitre' => 'Sent to the provider',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.soumisPhrase' => 'A payment sent is not yet received: its status comes from the provider\'s tracking. Refresh the tracking to see it advance.',
 			'comptable.paiements.confirmation.actualiser' => 'Refresh the tracking',
 			'comptable.paiements.confirmation.suiviEchoue' => 'The tracking could not be read. The payment stays sent: refresh again in a moment.',
@@ -38401,12 +38419,12 @@ extension on TraductionsEn {
 			'comptable.contractuels.invitationRenvoyee' => 'Invitation resent',
 			'comptable.contractuels.erreurApprobation' => 'We do not know whether the approval was taken into account. Refresh the obligation before trying again.',
 			'comptable.contractuels.erreurInvitation' => 'We do not know whether the invitation went out again. Refresh the obligation before trying again.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.formIntro' => 'The beneficiary, due date and cost centre are suggested: change them if needed, then enter the purpose and the amount.',
 			'comptable.contractuels.beneficiaireExterne' => 'New external beneficiary',
 			'comptable.contractuels.beneficiaireExterneAide' => 'They receive a secure invitation to enter their own payment method.',
 			'comptable.contractuels.champNomExterne' => 'External beneficiary\'s name',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.changerEcheance' => 'Change the due date',
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Currency: ${devise}',
 			'comptable.contractuels.champObjet' => 'Obligation purpose',
@@ -38915,12 +38933,12 @@ extension on TraductionsEn {
 			'juridique.confidentialite.s2.blocs.0' => '- To create an account: the name, the email address, the interface language, the country of residence and the time zone.',
 			'juridique.confidentialite.s2.blocs.1' => '- For a student: the date of birth, which is used to choose the right plan and the rules specific to minors.',
 			'juridique.confidentialite.s2.blocs.2' => '- Optional: photo, phone, address, level, timetable preferences.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.3' => '- During classes: attendance, the handover notebook and the student\'s progress.',
 			'juridique.confidentialite.s2.blocs.4' => '- To pay: the subscription and invoices. The payment itself goes through a payment provider.',
 			'juridique.confidentialite.s2.blocs.5' => '- For a Teacher: an ID document, kept apart in a private space.',
 			'juridique.confidentialite.s2.blocs.6' => '- Your agreements: the version of each text accepted and the date.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.7' => '- Technical error reports, with no screenshot, no name and no identity.',
 			'juridique.confidentialite.s3.titre' => '3. Why we use it',
 			'juridique.confidentialite.s3.blocs.0' => '- To form the Classes and deliver the classes.',
@@ -39429,12 +39447,12 @@ extension on TraductionsEn {
 			'snt.planning.refusDatePassee' => 'The date is not set: that time has already passed. Choose an upcoming day and time.',
 			'snt.planning.refusDejaFixee' => 'The new date for this session is already set, perhaps from another device. Close this window: the session is in the schedule.',
 			'snt.planning.refusClasseClose' => 'The date is not set: the class is closed. No session can be planned in it any more.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.refusNonAutorisee' => 'The date is not set: this account cannot set a date. Sign in with a management account.',
 			'snt.planning.erreur' => 'The date is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
 			'a3bis.salle.titulaireEntreTitre' => 'The class teacher has arrived',
 			'a3bis.salle.titulaireEntre' => 'The class teacher joined the room first: the replacement is no longer needed. Thank you for being ready.',
-			_ => null,
-		} ?? switch (path) {
 			'a3bis.salle.remplacantEntreTitre' => 'A replacement has taken the class',
 			'a3bis.salle.remplacantEntre' => 'The replacement who took the class joined the room first: today\'s session is taken from you. You remain the class teacher.',
 			'a3bis.notifications.avertissement' => 'You are not in the room yet. Come in quickly: if a teacher has offered to replace you, you lose access to today\'s session.',
@@ -39943,12 +39961,12 @@ extension on TraductionsEn {
 			'suiviPedagogique.depuis' => 'In this stage since',
 			'suiviPedagogique.dateJour' => ({required Object mois, required Object numero, required Object annee}) => '${mois} ${numero}, ${annee}',
 			'suiviPedagogique.dureePrevue' => 'Stage length',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.chemin' => ({required Object niveau}) => '${niveau}, step by step',
 			'suiviPedagogique.dureesEtape' => ({required Object prevue, required Object limite}) => '${prevue} weeks planned, ${limite} at most',
 			'suiviPedagogique.horizonNiveau' => ({required Object niveau}) => '${niveau}: ends at the latest on',
 			'suiviPedagogique.attenteEntretien' => 'Your stage will be set after the reading interview with the management.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.attenteEntretienTu' => 'Your stage will be set after the reading interview with the management.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'For ${prenom}, the stage will be set after the reading interview with the management.',
 			'apprendre.sections.libelle' => 'Sections of the Learn space',

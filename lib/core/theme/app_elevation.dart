@@ -86,6 +86,13 @@ abstract final class AppElevation {
     );
   }
 
+  /// BULLES-MESSAGERIE (directeur, 16/11/2026) : UNE ombre legere, une seule
+  /// couche, sous la bulle d'un message recu (une bulle par message : la liste
+  /// peint beaucoup de bulles, jamais deux couches chacune).
+  static List<BoxShadow> bulle(AppShadowColor ombre) => <BoxShadow>[
+    ombre.asBoxShadow(y: 1, flou: 4, opacite: 0.10),
+  ];
+
   /// NAV-REFONTE (09/11/2026) : la lueur fixe du halo du cercle Compte, apres
   /// la rotation ou sous mouvement reduit. Bornee : flou de 8, etalement de 2
   /// (portee sous 16, elle ne deborde pas sur l'onglet voisin). Le theme
