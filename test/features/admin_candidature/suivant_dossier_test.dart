@@ -151,6 +151,58 @@ void main() {
       expect(find.byKey(const ValueKey<String>('nav-suivant')), findsOneWidget);
     });
 
+    // GESTES-RAISON (directeur, 16/11/2026, capture de production en arabe) :
+    // chaque fleche sur son bord de la carte de profil, le compteur au centre.
+    for (final (String nom, AppLocale langue, TextDirection? sens)
+        in <(String, AppLocale, TextDirection?)>[
+          ('fr', AppLocale.fr, null),
+          ('ar', AppLocale.ar, TextDirection.rtl),
+        ]) {
+      testWidgets('360 $nom : fleches aux deux bords, compteur au centre', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await monterFileTest(
+          tester,
+          portFileTest(),
+          ouvert: 'c2',
+          largeur: 360,
+          direction: sens,
+        );
+        final Rect nav = tester.getRect(find.byKey(NavigationFileDossier.cle));
+        final Rect avant = tester.getRect(
+          find.byKey(const ValueKey<String>('nav-precedent')),
+        );
+        final Rect apres = tester.getRect(
+          find.byKey(const ValueKey<String>('nav-suivant')),
+        );
+        final Rect position = tester.getRect(
+          find.byKey(const ValueKey<String>('nav-position')),
+        );
+        // Les deux fleches touchent les bords de la barre, une de chaque cote.
+        final bool arabe = sens == TextDirection.rtl;
+        final Rect debut = arabe ? apres : avant;
+        final Rect fin = arabe ? avant : apres;
+        expect(
+          <double>[avant.left, apres.left].reduce((a, b) => a < b ? a : b),
+          closeTo(nav.left, 1),
+        );
+        expect(
+          <double>[avant.right, apres.right].reduce((a, b) => a > b ? a : b),
+          closeTo(nav.right, 1),
+        );
+        expect(debut.left, lessThan(position.left));
+        expect(fin.right, greaterThan(position.right));
+        // Le compteur est au milieu de la barre.
+        expect(position.center.dx, closeTo(nav.center.dx, 1));
+        // La cible reste de 48 au moins.
+        expect(avant.width, greaterThanOrEqualTo(48));
+        expect(apres.width, greaterThanOrEqualTo(48));
+        // Et elles ne sont plus rapprochees : plus de 150 points entre elles.
+        expect((apres.center.dx - avant.center.dx).abs(), greaterThan(150));
+      });
+    }
+
     testWidgets('au milieu : les deux fleches', (WidgetTester tester) async {
       await monterFileTest(tester, portFileTest(), ouvert: 'c2');
       expect(

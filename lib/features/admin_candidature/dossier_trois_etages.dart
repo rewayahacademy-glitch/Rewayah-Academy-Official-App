@@ -1315,9 +1315,8 @@ class BarreDecisionDossier extends StatelessWidget {
   /// La cle du menu « ⋯ ».
   static const Key cleMenu = ValueKey<String>('dossier-barre-menu');
 
-  /// La cle de la phrase qui dit pourquoi un geste n'est pas rendu.
-  static Key cleRaison(GesteCandidature g) =>
-      ValueKey<String>('dossier-barre-raison-${g.name}');
+  /// La cle de la phrase qui dit pourquoi la rangee est ce qu'elle est.
+  static const Key cleRaison = ValueKey<String>('dossier-barre-raison');
 
   /// La cle du bouton d'une decision.
   static Key cleBouton(GesteCandidature g) =>
@@ -1354,14 +1353,6 @@ class BarreDecisionDossier extends StatelessWidget {
     // (la premiere fente). Jamais un refus.
     final bool accepterRendu = fentes.first.actif;
     final List<GesteCandidature> menu = plan.gestesDuMenu();
-    // Les gestes non rendus qui ont la meme raison la partagent : une phrase.
-    final Map<String, List<FenteDecision>> raisons =
-        <String, List<FenteDecision>>{};
-    for (final FenteDecision f in fentes) {
-      if (!f.actif && f.raison != null) {
-        (raisons[f.raison!] ??= <FenteDecision>[]).add(f);
-      }
-    }
     final bool vide =
         visible == null &&
         rendues.isEmpty &&
@@ -1409,20 +1400,10 @@ class BarreDecisionDossier extends StatelessWidget {
                 ),
             ],
           ),
-        for (final MapEntry<String, List<FenteDecision>> e
-            in raisons.entries) ...<Widget>[
-          if (!vide || e.key != raisons.keys.first) Ecart.vSm,
-          TexteSansCoupure(
-            t.recrutement.dossier3.legendeRaison(
-              geste: e.value
-                  .map((FenteDecision f) => f.libelle)
-                  .join(t.admin.candidatures.detail.separateurControles),
-              raison: e.key,
-            ),
-            key: cleRaison(e.value.first.geste),
-            style: muet,
-          ),
-        ],
+        // GESTES-RAISON (directeur, 16/11/2026) : toujours au meme endroit,
+        // une phrase qui dit l'etat et ce qui manque, meme sans aucun geste.
+        if (!vide) Ecart.vSm,
+        TexteSansCoupure(plan.phraseGestes(), key: cleRaison, style: muet),
       ],
     );
   }

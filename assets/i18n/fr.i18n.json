@@ -2693,12 +2693,17 @@
       "raison": {
         "droit": "Vous ne pouvez pas décider de ce dossier.",
         "fermee": "Le dossier est fermé.",
-        "pause": "Le dossier est en pause.",
-        "attente": "On attend la réponse de la personne.",
-        "manque": "Il manque : {liste}.",
-        "etape": "Pas possible à cette étape."
+        "pause": "En pause : reprenez le dossier pour agir.",
+        "attente": "En attente du candidat : il complète son dossier.",
+        "manque": "Accepter sera possible quand ces points seront réglés : {liste}.",
+        "etape": "Aucune décision à prendre à cette étape.",
+        "versement": "Accepter sera possible quand le versement sera possible.",
+        "versementAConfirmer": "Accepter sera possible quand le moyen de versement sera confirmé.",
+        "pret": "Le dossier est prêt : vous pouvez décider.",
+        "entretienAPlanifier": "Retenu pour l'entretien : il reste à le planifier.",
+        "entretienPlanifie": "Entretien planifié : la décision vient après l'entretien.",
+        "decisionAttendue": "Entretien tenu : la décision vous attend."
       },
-      "legendeRaison": "{geste} : {raison}",
       "photoAgrandir": "Voir la photo {deNom} en grand"
     },
     "file": {

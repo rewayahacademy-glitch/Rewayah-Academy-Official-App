@@ -10788,7 +10788,6 @@ class _Traductions$recrutement$dossier3$ar extends Traductions$recrutement$dossi
 	@override late final _Traductions$recrutement$dossier3$synthese$ar synthese = _Traductions$recrutement$dossier3$synthese$ar._(_root);
 	@override String get demanderAccord => 'طلب اتفاق';
 	@override late final _Traductions$recrutement$dossier3$raison$ar raison = _Traductions$recrutement$dossier3$raison$ar._(_root);
-	@override String legendeRaison({required Object geste, required Object raison}) => '⁨${geste}⁩: ⁨${raison}⁩';
 	@override String photoAgrandir({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير';
 }
 
@@ -21148,10 +21147,16 @@ class _Traductions$recrutement$dossier3$raison$ar extends Traductions$recrutemen
 	// Translations
 	@override String get droit => 'لا يمكنكم البتّ في هذا الملف.';
 	@override String get fermee => 'الملف مغلق.';
-	@override String get pause => 'الملف متوقف مؤقتًا.';
-	@override String get attente => 'في انتظار رد الشخص.';
-	@override String manque({required Object liste}) => 'ينقص: ⁨${liste}⁩.';
-	@override String get etape => 'غير ممكن في هذه المرحلة.';
+	@override String get pause => 'الملف متوقف مؤقتًا: استأنفوه لتتمكنوا من العمل عليه.';
+	@override String get attente => 'في انتظار المرشح: يستكمل ملفه.';
+	@override String manque({required Object liste}) => 'سيصبح القبول ممكنًا عند تسوية هذه النقاط: ⁨${liste}⁩.';
+	@override String get etape => 'لا يوجد قرار يُتخذ في هذه المرحلة.';
+	@override String get versement => 'سيصبح القبول ممكنًا عندما يصبح الدفع ممكنًا.';
+	@override String get versementAConfirmer => 'سيصبح القبول ممكنًا عند تأكيد وسيلة الدفع.';
+	@override String get pret => 'الملف جاهز: يمكنكم اتخاذ القرار.';
+	@override String get entretienAPlanifier => 'تم اختياره للمقابلة: بقي تحديد موعدها.';
+	@override String get entretienPlanifie => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.';
+	@override String get decisionAttendue => 'تمت المقابلة: القرار في انتظاركم.';
 }
 
 // Path: recrutement.invitations.comptable
@@ -39147,11 +39152,16 @@ extension on TraductionsAr {
 			'recrutement.dossier3.demanderAccord' => 'طلب اتفاق',
 			'recrutement.dossier3.raison.droit' => 'لا يمكنكم البتّ في هذا الملف.',
 			'recrutement.dossier3.raison.fermee' => 'الملف مغلق.',
-			'recrutement.dossier3.raison.pause' => 'الملف متوقف مؤقتًا.',
-			'recrutement.dossier3.raison.attente' => 'في انتظار رد الشخص.',
-			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'ينقص: ⁨${liste}⁩.',
-			'recrutement.dossier3.raison.etape' => 'غير ممكن في هذه المرحلة.',
-			'recrutement.dossier3.legendeRaison' => ({required Object geste, required Object raison}) => '⁨${geste}⁩: ⁨${raison}⁩',
+			'recrutement.dossier3.raison.pause' => 'الملف متوقف مؤقتًا: استأنفوه لتتمكنوا من العمل عليه.',
+			'recrutement.dossier3.raison.attente' => 'في انتظار المرشح: يستكمل ملفه.',
+			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'سيصبح القبول ممكنًا عند تسوية هذه النقاط: ⁨${liste}⁩.',
+			'recrutement.dossier3.raison.etape' => 'لا يوجد قرار يُتخذ في هذه المرحلة.',
+			'recrutement.dossier3.raison.versement' => 'سيصبح القبول ممكنًا عندما يصبح الدفع ممكنًا.',
+			'recrutement.dossier3.raison.versementAConfirmer' => 'سيصبح القبول ممكنًا عند تأكيد وسيلة الدفع.',
+			'recrutement.dossier3.raison.pret' => 'الملف جاهز: يمكنكم اتخاذ القرار.',
+			'recrutement.dossier3.raison.entretienAPlanifier' => 'تم اختياره للمقابلة: بقي تحديد موعدها.',
+			'recrutement.dossier3.raison.entretienPlanifie' => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.',
+			'recrutement.dossier3.raison.decisionAttendue' => 'تمت المقابلة: القرار في انتظاركم.',
 			'recrutement.dossier3.photoAgrandir' => ({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير',
 			'recrutement.file.outils' => 'أدوات',
 			'recrutement.file.outilsDe' => 'أدوات قائمة طلبات الترشح',
@@ -39187,13 +39197,13 @@ extension on TraductionsAr {
 			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
 			'recrutement.nomLatin.aide' => 'هذا اقتراحنا. صحّحه إذا كان اسمك يُكتب بطريقة أخرى، ثم أكّد.',
 			'recrutement.nomLatin.origine' => ({required Object nom}) => 'اسمك كما كتبته: ⁨${nom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.nomLatin.confirmer' => 'تأكيد اسمي',
 			'recrutement.nomLatin.plusTard' => 'لاحقًا',
 			'recrutement.nomLatin.erreur' => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.',
 			'recrutement.nomLatin.echec' => 'لم يتم تأكيد اسمك. أعيدوا المحاولة بعد قليل.',
 			'recrutement.signature.champNom' => 'اسم الموقِّع',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.signature.aideNom' => 'اسم حسابك. إن اختلف عن وثيقة هويتك، فأخبر الإدارة.',
 			'recrutement.signature.nomCompteVide' => 'ليس لحسابك اسم بعد: التوقيع غير ممكن. أخبر الإدارة.',
 			'recrutement.signature.nomCompteLecture' => 'لا يظهر اسم حسابك: التوقيع ينتظر. أعد المحاولة بعد لحظات.',
@@ -39701,13 +39711,13 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.libelle' => 'ليس عندي إجازة، لكن أستطيع اجتياز اختبار',
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.description' => 'ليس عندك إجازة تعرضها، لكنك توافق على اجتياز اختبار.',
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.explication' => 'ستتحدث الأكاديمية معك في الأمر أثناء المقابلة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.ijazaPresentable.options.pret_test.exemple' => 'تعلّمت عند شيخ دون وثيقة مكتوبة، وتقبل أن تُختبر.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.libelle' => 'لا، ليس عندي إجازة',
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، ولا تنوي اجتياز اختبار الآن.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
 			'recrutement.parcours.q.experienceDebutants.explication' => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'الخبرة مع المبتدئين',
@@ -40215,13 +40225,13 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s5.blocs.2' => 'تذكّر عبارة داخل القاعة بأن زيارة مراقبة ممكنة.',
 			'juridique.confidentialite.s6.titre' => '٦. أين توجد معلوماتكم',
 			'juridique.confidentialite.s6.blocs.0' => 'نستخدم مستضيفًا لصفحات الويب، وقاعدة بيانات مع تسجيل دخول الحسابات، وخدمة فيديو، وتخزينًا خاصًا للملفات، ومزوّدًا للدفع، وخدمة لتقارير الأخطاء. وهي تعالج معلوماتكم لحسابنا ولهذه الأسباب فقط.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s6.blocs.1' => 'لحماية تسجيل الدخول من البرامج الآلية، نستخدم خدمة Cloudflare Turnstile (شركة Cloudflare). عند التحقق، تعالج Cloudflare عنوان IP الخاص بكم ومعلومات تقنية عن متصفحكم، لهذا التحقق فقط ودون ملفات تعريف ارتباط إعلانية. الأساس القانوني: مصلحتنا المشروعة في تأمين الخدمة.',
 			'juridique.confidentialite.s7.titre' => '٧. كم من الوقت',
 			'juridique.confidentialite.s7.blocs.0' => 'نحتفظ بكل نوع من المعلومات للمدة اللازمة فقط. وتُحذف وثيقة هوية المعلم عند انتهاء مهلة محددة. وقد يُجمَّد الحذف عند وجود نزاع.',
 			'juridique.confidentialite.s8.titre' => '٨. حقوقكم',
 			'juridique.confidentialite.s8.blocs.0' => '- الاطلاع على المعلومات التي لدينا عنكم.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s8.blocs.1' => '- تصحيحها.',
 			'juridique.confidentialite.s8.blocs.2' => '- طلب حذفها أو تقييد استخدامها.',
 			'juridique.confidentialite.s8.blocs.3' => 'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
@@ -40729,13 +40739,13 @@ extension on TraductionsAr {
 			'i1.lien.dejaServiTitre' => 'استُعمل هذا الرابط من قبل أو انتهت صلاحيته',
 			'i1.lien.dejaServiDetail' => 'لا يصلح رابط تسجيل الدخول إلا مرة واحدة ولمدة قصيرة. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.',
 			'i1.lien.nouveauLien' => 'الحصول على رابط جديد',
+			_ => null,
+		} ?? switch (path) {
 			'i1.lien.autreNavigateurDetail' => 'لا يُفتح هذا الرابط إلا في المتصفح الذي أدخلت فيه عنوانك. افتحه في المتصفح نفسه، أو اطلب رابطًا جديدًا هنا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول.',
 			'i1.lien.autreNavigateurTitre' => 'افتح هذا الرابط في المتصفح نفسه',
 			'i1.lien.refuseTitre' => 'لم ينجح الدخول',
 			'i1.lien.refuseDetail' => 'تعذّر على هذا الرابط فتح جلستك. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول. وإن تكرر ذلك فاكتب إلى الأكاديمية.',
 			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
 			'd1ter.messages.introSoi' => 'أرسلت إليكم الإدارة هذه الرسائل.',
@@ -41243,13 +41253,13 @@ extension on TraductionsAr {
 			'push1.reglages.desactiver' => 'إيقافها على هذا الجهاز',
 			'push1.reglages.active' => 'تم: سيستقبل هذا الجهاز إشعاراتكم.',
 			'push1.reglages.desactive' => 'لن يستقبل هذا الجهاز إشعاراتكم بعد الآن. تبقى في صفحة الإشعارات.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.nonPrisEnCharge' => 'هذا المتصفح لا يستقبل الإشعارات. افتحوا رواية في متصفح حديث لاستقبالها.',
 			'push1.reglages.iosEcranAccueil' => 'على iPhone وiPad، أضيفوا رواية أولًا إلى الشاشة الرئيسية (مشاركة، ثم إضافة إلى الشاشة الرئيسية)، وافتحوا التطبيق من تلك الأيقونة، ثم عودوا إلى هنا.',
 			'push1.reglages.refuse' => 'متصفحكم يحجب إشعارات رواية. اسمحوا بها في إعدادات المتصفح لهذا الموقع، ثم عودوا إلى هنا.',
 			'push1.reglages.ignore' => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.',
 			'push1.reglages.echecActivation' => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.reglages.compteNonAutoriseTitre' => 'لا إشعارات على الجهاز لهذا الحساب',
 			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
 			'push1.reglages.erreurTitre' => 'تعذّرت قراءة الإعدادات',
@@ -41757,13 +41767,13 @@ extension on TraductionsAr {
 			'motifs.presenceExcusee.prevenue' => 'غياب أُبلغ عنه مسبقًا',
 			'motifs.presenceExcusee.reseau' => 'انقطاع شبكة تم الإبلاغ عنه',
 			'motifs.presenceExcusee.conge' => 'يوم عطلة أو إجازة',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.presenceExcusee.familiale' => 'سبب عائلي',
 			'motifs.signalement.pedagogique.renforcement' => 'يُنصح بتعزيز الدرس الجاري.',
 			'motifs.signalement.pedagogique.revision' => 'قليل من المراجعة في البيت سيفيد قبل الدرس القادم.',
 			'motifs.signalement.pedagogique.regularite' => 'سيصنع انتظام العمل في البيت الفارق.',
 			'motifs.signalement.pedagogique.echange' => 'يُقترح تواصل مع الأكاديمية.',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.presence.absences' => 'عدة غيابات حديثة: الانتظام يساعد على التقدم.',
 			'motifs.signalement.presence.retards' => 'تأخر في الحضور في الحصص الأخيرة.',
 			'motifs.signalement.presence.prevenir' => 'نرجو إبلاغ الأكاديمية عند الغياب.',
