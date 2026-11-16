@@ -20,6 +20,8 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | BE-DOSSIER-2 | Corrections du dossier en production : page vide au bout, moins de rubriques repliées, carte de profil avec la messagerie, heures en plages sans mélange arabe et latin (directeur, 16/11) | `CAHIER-BE-DOSSIER-2.md` | dans main (#518) |
 | BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | `CAHIER-BE-SUIVANT.md` | PR ouverte (#516), après #518 |
 | VERSEMENT-QUESTIONS | Compte bancaire oui/non d'abord, puis le pays ; bloc entier modifiable par le candidat jusqu'à la validation du dossier ; geste « Débloquer le versement » de la direction ; correction tracée de CAND-00013 (directeur, 16/11) | `../DECISION-QUESTIONS-VERSEMENT-2026-11-16.md` | lancé le 16/11 (agent BE-S1) |
+| PIECE-DANS-DOSSIER | La pièce visible dans le dossier (vignette, icône image ou PDF), pastille vraie, lien vers « Fichiers à valider » retiré, bandeau jaune fermable (directeur, 16/11) | message au BE-DOSSIER | PR ouverte (#532) |
+| LP-0 à LP-7 | La liste des personnes pour toute leur vie : phases, colonnes par vue, gestes par ligne et groupés, imprimables, élèves (directeur, 16/11) | `SPEC-LISTE-PERSONNES-2026-11-16.md` | LP-0 : à valider par le directeur ; autres : pas commencé |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |
 | BE-1g | Impression ; dispense d'entretien ; accueil d'un fondateur | à écrire ; touche la machine à états | pas commencé |

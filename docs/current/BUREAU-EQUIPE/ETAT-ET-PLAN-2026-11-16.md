@@ -90,6 +90,8 @@ installer) ; écran « Débloquer le versement » ; BE-1g (dispense d'entretien 
 corriger ou relancer les adresses mal écrites ; relever le plafond d'envoi des invitations ou les
 étaler, sur décision du directeur.
 
+**Étape C bis : la liste des personnes pour toute leur vie (directeur, 16/11).** Une seule liste par population (enseignants, élèves, familles, équipe), la ligne suit la phase de la personne (candidat, accueil, disponible, en poste, absent, pause, parti), gestes par ligne et groupés servis par le serveur, vues enregistrées au lieu de pages, imprimables. Spécification : `SPEC-LISTE-PERSONNES-2026-11-16.md` (lots LP-0 à LP-7). Remplace « UNE-LISTE ». LP-0 = validation du directeur (§9 de la spécification).
+
 **Étape E : parcourir l'après-confirmation (goulot 5).** De « confirmée » à « première classe », avec
 un compte de test, avant le premier vrai enseignant. Chaque trou devient un lot de ce plan.
 
