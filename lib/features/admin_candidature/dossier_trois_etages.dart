@@ -27,6 +27,7 @@ import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/photo_dossier_candidat.dart';
 import '../../core/candidature/piece_candidature.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
+import '../../core/candidature/port_entretiens_direction.dart';
 import '../../core/candidature/port_import_candidatures.dart';
 import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/synthese_candidature.dart';
@@ -47,6 +48,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -147,12 +149,14 @@ class EtageUnDossier extends ConsumerWidget {
     final List<String> morceaux = <String>[
       ?libelleSalle(l.etape),
       ?libelleGenre(l.genre),
-      ?libellePays(l.paysResidence),
     ];
     return morceaux.isEmpty
         ? null
         : morceaux.join(t.admin.candidatures.historique.separateur);
   }
+
+  /// La cle du pays (drapeau et nom).
+  static const Key clePays = ValueKey<String>('dossier-pays');
 
   /// La cle de la phrase « qui doit agir ».
   static const Key cleQui = ValueKey<String>('dossier-situation-qui');
@@ -215,6 +219,15 @@ class EtageUnDossier extends ConsumerWidget {
                     textes.bodyMedium ?? const TextStyle(),
                   ),
                 ),
+              // Le pays, avec son drapeau (image embarquee) et son nom dans la
+              // langue de l'interface : un seul composant du depot.
+              PaysEnseignant.parCode(
+                key: clePays,
+                codeIso: detail.ligne.paysResidence,
+                style: palette.inkMuted.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
               if (reste != null)
                 TexteSansCoupure(
                   reste,
@@ -913,6 +926,9 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           in detail.controles ?? <ControleCandidature>[])
         if (c.nom == 'accords_signes' || c.nom == 'cadre_religieux') c,
     ];
+    final bool entretienNonServi =
+        ref.watch(entretiensCandidatureProvider(detail.ligne.id)).error
+            is CapaciteIndisponible;
     final List<RubriqueDossier?> rubriques = <RubriqueDossier?>[
       rubrique(
         RubriqueDossierCode.piece,
@@ -991,18 +1007,21 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         (BuildContext _) =>
             BlocAutresCompetences(detail: detail, avecTitre: false),
       ),
-      rubrique(
-        RubriqueDossierCode.entretien,
-        r.entretien,
-        (BuildContext _) => SectionEntretien(
-          detail: detail,
-          capacites: capacites,
-          horsLigne: horsLigne,
-          onFait: onEntretien,
-          retour: retourEntretien,
+      // Un entretien que le serveur ne sert pas n'a pas de ligne : jamais un
+      // texte technique a l'ecran (coordinateur, 16/11/2026).
+      if (!entretienNonServi)
+        rubrique(
+          RubriqueDossierCode.entretien,
+          r.entretien,
+          (BuildContext _) => SectionEntretien(
+            detail: detail,
+            capacites: capacites,
+            horsLigne: horsLigne,
+            onFait: onEntretien,
+            retour: retourEntretien,
+          ),
+          affichee: true,
         ),
-        affichee: true,
-      ),
       rubrique(
         RubriqueDossierCode.responsable,
         r.responsable,

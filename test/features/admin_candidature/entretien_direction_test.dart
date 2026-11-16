@@ -365,17 +365,12 @@ void main() {
   });
 
   group('Planifier', () {
-    testWidgets('sans port : la section attend son branchement', (
+    testWidgets('sans port : aucune ligne, jamais un texte technique', (
       WidgetTester tester,
     ) async {
       await _monter(tester, null);
-      expect(
-        find.descendant(
-          of: find.byKey(SectionEntretien.cle),
-          matching: find.text(t.commun.etats.branchementServeur),
-        ),
-        findsOneWidget,
-      );
+      expect(find.byKey(SectionEntretien.cle), findsNothing);
+      expect(find.text(t.commun.etats.branchementServeur), findsNothing);
     });
 
     testWidgets('propose seulement quand la candidature attend un entretien', (

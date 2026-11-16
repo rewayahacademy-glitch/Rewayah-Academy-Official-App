@@ -11,8 +11,10 @@ import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
+import 'package:rewayah_academy/core/candidature/modeles_entretien_direction.dart';
 import 'package:rewayah_academy/core/candidature/photo_dossier_candidat.dart';
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
+import 'package:rewayah_academy/core/candidature/port_entretiens_direction.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
@@ -61,6 +63,17 @@ List<ControleCandidature> _controles({
   ControleCandidature(nom: 'piece_validee', valeur: piece),
 ];
 
+/// Le port des entretiens, sans aucun entretien : la ligne « Entretien »
+/// existe seulement quand le serveur le sert (jamais de texte technique).
+class _EntretiensVide implements PortEntretiensDirection {
+  @override
+  Future<List<EntretienCandidature>> entretiens(String candidatureId) async =>
+      const <EntretienCandidature>[];
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
 Future<void> _monter(
   WidgetTester tester, {
   required FauxCandidaturesDirection port,
@@ -76,7 +89,10 @@ Future<void> _monter(
   largeur: largeur,
   hauteur: hauteur,
   direction: direction,
-  surcharges: surcharges,
+  surcharges: <Override>[
+    portEntretiensDirectionProvider.overrideWithValue(_EntretiensVide()),
+    ...surcharges,
+  ],
   // Ces tests regardent le dossier tel qu'il s'ouvre : replie.
   ouvrirRubriques: false,
 );

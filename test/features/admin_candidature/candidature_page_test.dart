@@ -325,7 +325,6 @@ void main() {
         RubriqueDossier.cleDe(RubriqueDossierCode.piece),
         RubriqueDossier.cleDe(RubriqueDossierCode.versement),
         RubriqueDossier.cleDe(RubriqueDossierCode.langues),
-        RubriqueDossier.cleDe(RubriqueDossierCode.entretien),
         RubriqueDossier.cleDe(RubriqueDossierCode.responsable),
         RubriqueDossier.cleDe(RubriqueDossierCode.contact),
         RubriqueDossier.cleDe(RubriqueDossierCode.historique),
@@ -360,11 +359,15 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester, _port());
-      await _ouvrir(tester, RubriqueDossierCode.entretien);
       // SALLE2-FICHE (directeur, 14/11/2026, « rien de vide affiché ») :
       // blocages, controles, piece, affectation et courriels non servis ne
-      // sont plus rendus. Reste l'entretien, dont le port manque a ce test.
-      expect(find.text(_branchement), findsOneWidget);
+      // sont plus rendus. L'entretien, dont le port manque a ce test, n'a pas
+      // de ligne : jamais « Disponible au branchement serveur » (16/11).
+      expect(find.text(_branchement), findsNothing);
+      expect(
+        find.byKey(RubriqueDossier.cleDe(RubriqueDossierCode.entretien)),
+        findsNothing,
+      );
       expect(
         find.byKey(const ValueKey<String>('candidature-affectation')),
         findsNothing,
@@ -399,7 +402,6 @@ void main() {
           ),
         ),
       );
-      await _ouvrir(tester, RubriqueDossierCode.entretien);
       final String texte = _toutLeTexte(tester);
       // « Ce qui bloque » (etage 1) nomme chaque controle faux avec sa cause :
       // aucune cause ne se perd avec le bloc « Controles ».
@@ -414,10 +416,10 @@ void main() {
         find.text(t.admin.candidatures.detail.controlesFaux),
         findsWidgets,
       );
-      // Plus de bloc « Controles » ; reste l'entretien, dont le port manque a
-      // ce test (SALLE2-FICHE).
+      // Plus de bloc « Controles » ; l'entretien, dont le port manque a ce
+      // test, n'a pas de ligne (SALLE2-FICHE, 16/11).
       expect(find.byKey(BlocControles.cle), findsNothing);
-      expect(find.text(_branchement), findsOneWidget);
+      expect(find.text(_branchement), findsNothing);
       for (final String code in _codesBruts) {
         expect(texte, isNot(contains(code)));
       }
