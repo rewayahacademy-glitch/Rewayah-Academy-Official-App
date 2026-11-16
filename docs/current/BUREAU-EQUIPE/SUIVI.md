@@ -17,7 +17,7 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | PAYS-RECHERCHE | Le Ghana introuvable : la recherche de pays ne lisait que la langue de l'interface ; liste courte des vrais pays (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | PR ouverte (#513) |
 | MAJEUR | Attestation « 18 ans ou plus » avant de continuer ; les candidats déjà avancés cochent à leur prochaine visite (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | PR ouverte (#517) ; migration `20261128400000` à installer juste après la fusion |
 | BE-COLONNES | Les critères de la synthèse en colonnes dans la liste, sur ordinateur, triables (directeur, 16/11) | `CAHIER-BE-COLONNES.md` | pas commencé (après BE-LISTE-2, même zone ; la PR 508 est dans main) |
-| BE-DOSSIER-2 | Corrections du dossier en production : page vide au bout, moins de rubriques repliées, carte de profil avec la messagerie, heures en plages sans mélange arabe et latin (directeur, 16/11) | `CAHIER-BE-DOSSIER-2.md` | PR ouverte (#518) |
+| BE-DOSSIER-2 | Corrections du dossier en production : page vide au bout, moins de rubriques repliées, carte de profil avec la messagerie, heures en plages sans mélange arabe et latin (directeur, 16/11) | `CAHIER-BE-DOSSIER-2.md` | dans main (#518) |
 | BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | `CAHIER-BE-SUIVANT.md` | PR ouverte (#516), après #518 |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |
