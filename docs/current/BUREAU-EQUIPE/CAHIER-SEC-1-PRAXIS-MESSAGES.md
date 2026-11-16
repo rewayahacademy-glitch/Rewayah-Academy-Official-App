@@ -52,6 +52,35 @@ Je coupe l'interrupteur : il ne peut plus rien envoyer. »
   politique de confidentialité dise qu'un assistant numérique lit les messages (§11). La phrase est préparée au
   niveau C. **L'allumer est un geste du directeur** dans l'application, pas un geste d'agent.
 
+- **A-9. Réutiliser l'existant** (directeur, 16/11, 21 h 35 : « il y avait déjà une entrée IA presque prête dans la
+  console »). L'écran « Accès des agents IA » existe (`lib/features/admin_acces_agents/acces_agents_page.dart`,
+  route `/admin/securite-audit/acces-agents`, ADR-025, `0014_acces_agent.sql`, fonction `agent-session`). Il émet
+  des jetons `rag_…`, montrés une fois, dont seule l'empreinte est gardée, avec expiration, révocation et signal
+  « jamais utilisé ». Aujourd'hui, ces jetons ne servent qu'à **observer en lecture seule** l'application dans un
+  navigateur, à la place d'une personne.
+  - La clé Praxis reprend ce modèle : même écran (une section « Praxis »), même règle « montré une fois », même
+    « Pourra / Ne pourra pas ».
+  - L'agent lit d'abord la table des jetons d'agent et ses fonctions :
+    - s'il peut les étendre (une colonne `usage` : `observation` ou `praxis`) sans affaiblir les règles 1 à 5 de
+      `0014`, il les étend ;
+    - sinon, il crée `praxis_cles` à côté et dit pourquoi dans la PR.
+  - Aucun jeton `rag_…` d'observation ne doit pouvoir appeler un outil Praxis, et l'inverse non plus (scénario).
+- **A-10. Dirigé ou autonome, au choix du directeur.**
+  - Il y a deux sortes de clés Praxis :
+    - **« chat »** : le directeur dirige Praxis depuis son chat (Claude, Codex) ;
+    - **« routine »** : une tâche planifiée fait travailler Praxis seul.
+  - Un réglage `praxis.autonome` (faux à l'installation), basculé par le directeur sur l'écran, en double
+    authentification (`aal2`) :
+    - **faux** : toute clé « routine » est refusée par le serveur, et Praxis n'agit que quand le directeur le dirige ;
+    - **vrai** : les clés « routine » travaillent.
+  - `praxis.actif` reste l'arrêt général : faux coupe les deux sortes de clés.
+  - Un outil `etat` rend à Praxis son mode (dirigé ou autonome), son plafond restant et ce qu'il n'a pas le droit de
+    faire. Il le lit au début de chaque séance.
+  - Scénarios : une clé « routine » est refusée avec `autonome` à faux et acceptée à vrai ; une clé « chat » est
+    acceptée dans les deux cas ; `actif` à faux refuse les deux.
+  - La tâche planifiée elle-même (la routine qui appelle le connecteur) se crée après l'installation, quand le
+    directeur allume le mode autonome. Ce n'est pas du code du dépôt.
+
 ## 2. Les outils de SEC-1 (réponses courtes, déjà triées)
 
 | Outil | Entrée | Rend | Écrit |
@@ -62,6 +91,7 @@ Je coupe l'interrupteur : il ne peut plus rien envoyer. »
 | `annoncer` | public (selon `com_annonce_publics`), titre, texte, langue, clé | ok, nombre de destinataires | une annonce et sa trace |
 | `calendrier_annonces` | période | les sujets connus d'avance (table nouvelle, remplie par la direction et par Praxis) | `ajouter` : une ligne |
 | `alerter_responsable` | personne de l'équipe, sujet, texte, urgence | ok | une notification (circuit push et notification existant) |
+| `etat` | rien | mode (dirigé ou autonome), actif, plafond restant, interdits | rien |
 | `rendre_compte` | période | ce que Praxis a envoyé (fil, extrait, heure) et ce qu'il a laissé | rien |
 
 ## 3. Tables (schéma `private`, RLS activée, aucun droit pour les rôles de l'API)
