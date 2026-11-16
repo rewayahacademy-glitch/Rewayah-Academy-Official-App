@@ -296,6 +296,13 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         libelle: t.admin.suppressions.onglet,
         chemin: Routes.adminPersonnesSuppressions,
       ),
+      // LP-2 (16/11/2026) : la liste des enseignants, pour toute leur vie. Placee
+      // avant Invitations pour ne decaler aucun index code en dur (Suppressions
+      // = 5, Admissions = derniere).
+      (
+        libelle: t.admin.listeEnseignants.titre,
+        chemin: Routes.adminPersonnesEnseignants,
+      ),
       // I1 (02/11/2026, UX-015) : la page des invitations revient dans les
       // sections, juste avant les admissions (qui restent la derniere : leur
       // index se lit `length - 1`), sans decaler les index des autres pages.

@@ -938,6 +938,11 @@ abstract final class Routes {
   static const String adminPersonnes = '/admin/personnes';
 
   /// Validation des dossiers d'identite (`ADM-02`), sous Personnes.
+  /// LP-2 : la liste des enseignants, pour toute leur vie (phase, classes,
+  /// gestes), sous Personnes.
+  static const String adminPersonnesEnseignants =
+      '/admin/personnes/enseignants';
+
   static const String adminPersonnesDossiers = '/admin/personnes/dossiers';
 
   /// Les comptes du produit (`ADM-08`), sous Personnes.

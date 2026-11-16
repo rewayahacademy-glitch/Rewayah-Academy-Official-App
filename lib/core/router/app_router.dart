@@ -45,6 +45,8 @@ import '../../features/admin_demandes/demandes_page.dart'
     deferred as d_demandes_page;
 import '../../features/admin_dossiers/dossiers_page.dart'
     deferred as d_dossiers_page;
+import '../../features/admin_enseignants/enseignants_page.dart'
+    deferred as d_enseignants_page;
 import '../../features/admin_finance/finance_page.dart'
     deferred as d_finance_page;
 import '../../features/admin_groupes/groupes_page.dart'
@@ -342,6 +344,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_creneaux_entretien_page', d_creneaux_entretien_page.loadLibrary),
   ('d_calendrier_page', d_calendrier_page.loadLibrary),
   ('d_candidatures_page', d_candidatures_page.loadLibrary),
+  ('d_enseignants_page', d_enseignants_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
   ('d_comptes_page', d_comptes_page.loadLibrary),
@@ -2280,6 +2283,26 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
                       ligne.reference,
                       fileDeLaListe: etat.uri.queryParameters,
                     ),
+                    extra: ligne.id,
+                  ),
+            ),
+          ),
+        ),
+      ),
+      // LP-2 : la liste des enseignants, pour toute leur vie. Meme dossier que
+      // Candidatures (le dossier de candidature de la personne) ; chemin
+      // statique, AVANT ADM-21 (R5).
+      GoRouteSure(
+        path: Routes.adminPersonnesEnseignants,
+        builder: (BuildContext contexte, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_enseignants_page',
+            charger: d_enseignants_page.loadLibrary,
+            construire: () => d_enseignants_page.EnseignantsPage(
+              ouvrirCandidature: (LigneCandidature ligne) =>
+                  GoRouter.of(contexte).push<void>(
+                    Routes.adminPersonnesCandidaturePour(ligne.reference),
                     extra: ligne.id,
                   ),
             ),

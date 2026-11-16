@@ -62,8 +62,9 @@ class ClassesEnseignant {
 
   /// Lit les classes ; une valeur absente vaut zero.
   factory ClassesEnseignant.depuisJson(Object? brut) {
-    if (brut is! Map)
+    if (brut is! Map) {
       return const ClassesEnseignant(nombre: 0, heuresSemaine: 0);
+    }
     final Object? n = brut['nombre'];
     final Object? h = brut['heuresSemaine'];
     return ClassesEnseignant(

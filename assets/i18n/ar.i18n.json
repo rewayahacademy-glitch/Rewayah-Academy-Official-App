@@ -5251,6 +5251,87 @@
     "augmenter": "زيادة بواحد"
   },
   "admin": {
+    "listeEnseignants": {
+      "titre": "المعلّمون",
+      "phase": "المرحلة",
+      "toutesPhases": "كل المراحل",
+      "nouveaux": "الجدد",
+      "phases": {
+        "candidat": "مرشّح",
+        "accueil": "الاستقبال",
+        "disponible": "متاح",
+        "enPoste": "في الخدمة",
+        "absent": "غائب",
+        "pause": "متوقف مؤقتًا",
+        "suspendu": "موقوف",
+        "parti": "غادر"
+      },
+      "attend": {
+        "candidat": "في انتظار: المرشّح",
+        "direction": "في انتظار: الإدارة",
+        "enseignant": "في انتظار: المعلّم"
+      },
+      "manque": {
+        "intro": "ينقص: ⁨{liste}⁩",
+        "compteInactif": "حساب غير نشط",
+        "pieceNonValidee": "وثيقة للتحقق",
+        "languesAbsentes": "اللغات",
+        "genreInconnu": "الجنس",
+        "indisponible": "غير متاح",
+        "photoAbsente": "الصورة",
+        "disponibilitesAbsentes": "أوقات التفرّغ"
+      },
+      "heures": "⁨{h}⁩ ساعة في الأسبوع",
+      "prochaineSeance": "الحصة القادمة: ⁨{date}⁩",
+      "remplacements": "٣٠ يومًا: قدّم ⁨{donnes}⁩، وتلقّى ⁨{recus}⁩",
+      "colonnes": {
+        "nom": "الاسم",
+        "phase": "المرحلة",
+        "attend": "في انتظار",
+        "classes": "الفصول",
+        "seance": "الحصة القادمة",
+        "activite": "آخر نشاط"
+      },
+      "vide": "لا يوجد معلّمون حتى الآن.",
+      "videDetail": "يظهر المعلّمون هنا فور وصول طلب ترشّح معلّم.",
+      "aucunResultat": "لا يوجد معلّم مطابق.",
+      "lectureEchec": "تعذّرت قراءة قائمة المعلّمين",
+      "accesRefuse": "هذه القائمة مخصّصة للإدارة",
+      "genreInconnuTitre": "جنسك غير مسجّل",
+      "genreInconnu": "لا تُقرأ القائمة إلا بعد تسجيل جنسك. اطلب من أحد المؤسسين تسجيله.",
+      "sansDonnees": "قائمة المعلّمين",
+      "resume": "⁨{debut}⁩ إلى ⁨{fin}⁩ من ⁨{total}⁩",
+      "retour": "⁨{nom}⁩: تم.",
+      "classes": {
+        "zero": "⁨{n}⁩ فصل",
+        "one": "⁨{n}⁩ فصل",
+        "two": "⁨{n}⁩ فصل",
+        "few": "⁨{n}⁩ فصل",
+        "many": "⁨{n}⁩ فصل",
+        "other": "⁨{n}⁩ فصل"
+      },
+      "total": {
+        "zero": "⁨{n}⁩ معلّم",
+        "one": "⁨{n}⁩ معلّم",
+        "two": "⁨{n}⁩ معلّم",
+        "few": "⁨{n}⁩ معلّم",
+        "many": "⁨{n}⁩ معلّم",
+        "other": "⁨{n}⁩ معلّم"
+      },
+      "sansDossier": {
+        "zero": "⁨{n}⁩ حساب معلّم بلا ملف ترشّح: ليس في هذه القائمة.",
+        "one": "⁨{n}⁩ حساب معلّم بلا ملف ترشّح: ليس في هذه القائمة.",
+        "two": "⁨{n}⁩ حساب معلّم بلا ملف ترشّح: ليس في هذه القائمة.",
+        "few": "⁨{n}⁩ حساب معلّم بلا ملف ترشّح: ليس في هذه القائمة.",
+        "many": "⁨{n}⁩ حساب معلّم بلا ملف ترشّح: ليس في هذه القائمة.",
+        "other": "⁨{n}⁩ حساب معلّم بلا ملف ترشّح: ليس في هذه القائمة."
+      },
+      "attendCourt": {
+        "candidat": "المرشّح",
+        "direction": "الإدارة",
+        "enseignant": "المعلّم"
+      }
+    },
     "candidatures": {
       "liste": {
         "titreGesteNonFait": "لم يُنفَّذ الإجراء",
