@@ -12,3 +12,16 @@ côté administration : lignes nues sur fond gris, seule la ligne choisie en lav
   champ sans rectangle ; la bulle reçue garde son ombre légère. Bord de la bulle reçue sur le fond : 1,14:1 en clair, 1,22:1 en
   sombre (le dessin, pas la couleur, la détache).
 - Garde de rendu : `test/features/com_messages/messagerie_couleurs_test.dart`.
+
+## Captures ajoutées le 16/11 (ordinateur, 1440 x 900)
+
+- `apres/volet-1440-{fr,ar}-{clair,sombre}.png` : volet de conversation du dossier d'un candidat, fil remonté, croix « Fermer »
+  au bord de fin de la barre (visible dans les quatre). Code : groupe « captures volet » de
+  `test/features/admin_candidature/conversation_mise_en_page_test.dart`.
+- `apres/bulles-liste-1440-{fr,ar}-{clair,sombre}.png` : liste des conversations (carte blanche à lignes fines sur le fond de
+  page). Code : `test/features/com_messages/messagerie_couleurs_capture_test.dart`.
+- Pas de capture « avant » à 1440 pour ces deux écrans (non refaite, pour économiser).
+- Mesuré : bulle reçue `#FEFEFE` sur le fond du fil `#F1EFF4` = 1,13:1 en clair (elle ne se détache que par l'ombre légère) ;
+  `#262633` sur `#16161E` = 1,21:1 en sombre.
+- Défaut de capture, hors lot : le drapeau du Sénégal manque sur la capture `volet-1440-fr-clair` (présent sur les trois autres) ;
+  cause non vérifiée (probablement le chargement de la police d'emoji dans le rendu de test).
