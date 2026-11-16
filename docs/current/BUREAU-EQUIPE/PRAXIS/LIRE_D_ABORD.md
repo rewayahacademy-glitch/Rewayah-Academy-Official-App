@@ -35,9 +35,9 @@ Praxis s'écrivent désormais **PX-0 à PX-5**, avec l'ancien nom entre parenth�
 | M4 | **Pas de plan pour « autonome quand je le décide »** au-delà du réglage serveur : quelle routine, à quelle fréquence, avec quel budget, et qui la crée | Sans routine, Praxis n'agit que quand le directeur ouvre son chat | Cahier PX-1 A-10, puis une étape de mise en service dans la checklist |
 | M5 | **La politique de confidentialité ne mentionne pas l'assistant** (§11) | Mise en service interdite tant que ce n'est pas fait | Une étape de la checklist ; texte préparé (niveau C), validé par le directeur |
 | M6 | **L'affichage *#RA_PRAXIS* et *#RA_STAFF*** (italique et #, « Assistant de l'académie · IA », « Parler à l'équipe ») n'est pas commencé | Personne ne saurait que c'est une IA, ce qu'impose la décision du §11 | Domaine du Pilote Messagerie, demandé le 16/11 |
-| M7 | **Pas d'image de profil** (§9 : le directeur la fournit, ou une proposition lui est soumise) | Affichage incomplet | Proposition avec `marque-rewayah`, dans la checklist |
+| M7 | **L'image de profil est décrite par le directeur** (`SECRETAIRE-IA.md` §9 : fond violet de la marque, quelques outils noirs au milieu, dont un marteau, sans surcharge, lisible à 24 points en clair et en sombre, jamais prise pour une personne). Il ne manque que le fichier de l'image, à produire d'après cette description, sans nouvelle question au directeur | Affichage incomplet tant que le fichier n'existe pas | Étape 11 de la checklist |
 | M8 | **Le calendrier des annonces** n'a pas de table ni de contenu | Praxis ne sait pas quand écrire les sujets connus d'avance | PX-1 (table), puis remplissage depuis `SOURCE-ANNONCES-2026.md` |
-| M9 | **Le compte « officiel » n'existe pas** (aucun indicateur de compte officiel ; `RA_STAFF` est aujourd'hui un nom, pas un indicateur) | Pas de profil Praxis | PX-1 serveur |
+| M9 | **Le compte officiel Praxis n'existe pas.** Directeur, 16/11 : « passer par Supabase directement, pour qu'il évite les parcours » : il est créé directement en base (utilisateur d'authentification sans mot de passe ni identité de connexion, et son profil marqué officiel), jamais par l'inscription ni par une invitation de l'application | Pas de profil Praxis | PX-1 serveur (arbitrage A-11 du cahier) |
 
 ## 3. La décision d'architecture, à étudier avant de coder au-delà de PX-1
 

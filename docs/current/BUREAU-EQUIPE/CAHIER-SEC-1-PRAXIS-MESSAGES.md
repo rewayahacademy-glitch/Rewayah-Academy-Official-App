@@ -81,6 +81,17 @@ Je coupe l'interrupteur : il ne peut plus rien envoyer. »
   - La tâche planifiée elle-même (la routine qui appelle le connecteur) se crée après l'installation, quand le
     directeur allume le mode autonome. Ce n'est pas du code du dépôt.
 
+- **A-11. Le compte Praxis est créé directement en base** (directeur, 16/11 : « passer par Supabase directement, pour
+  qu'il évite les parcours »). La migration crée l'utilisateur d'authentification sans mot de passe ni identité de
+  connexion, son profil et l'indicateur de compte officiel. Elle ne passe par aucun parcours : ni inscription, ni
+  invitation, ni candidature, ni accueil. Le compte n'apparaît dans aucune liste de personnes, et aucun courriel ne
+  lui est envoyé.
+  - L'agent vérifie d'abord, en lecture seule, comment `auth.users`, `auth.identities` et `public.profiles` sont liés
+    en production (contraintes, déclencheurs qui réagissent à une création de profil : courriels, notifications,
+    matricule), pour qu'aucun effet de bord ne parte.
+  - Scénario : aucune identité de connexion, aucun mot de passe, aucune ligne dans les files d'envoi après la
+    création.
+
 ## 2. Les outils de SEC-1 (réponses courtes, déjà triées)
 
 | Outil | Entrée | Rend | Écrit |

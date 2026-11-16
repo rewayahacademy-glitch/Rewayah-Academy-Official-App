@@ -33,7 +33,7 @@ Règles que le pilote s'impose ici :
 | 8 | Fusion et installation de PX-1, Praxis **éteint** ; vérification en production (droits, `anon`, clés) | pilote | — | ☐ |
 | 9 | Écran : section Praxis de « Accès des agents IA » (émettre et révoquer une clé, interrupteur, mode autonome, plafond, ce que Praxis a envoyé) | agent écran | cahier à écrire | ☐ |
 | 10 | Affichage *#RA_PRAXIS* et *#RA_STAFF*, « Assistant de l'académie · IA », « Parler à l'équipe » | Pilote Messagerie | `SECRETAIRE-IA.md` §9 et §11 | ☐ demandé le 16/11 |
-| 11 | Image de profil : proposition (`marque-rewayah`) | pilote | — | ☐ |
+| 11 | Image de profil : le fichier, produit d'après la description du directeur (`SECRETAIRE-IA.md` §9), sans nouvelle question | pilote | — | ☐ |
 | 12 | Politique de confidentialité : la phrase sur l'assistant (niveau C) | pilote prépare | — | ⏸ le directeur valide |
 | 13 | Essai à blanc : le directeur connecte le lien MCP dans son chat avec une clé « chat » ; Praxis lit la boîte et répond à **un** fil de test | directeur et pilote | — | ⏸ |
 | 14 | Mise en service : le directeur allume Praxis (dirigé) | directeur | — | ⏸ |
