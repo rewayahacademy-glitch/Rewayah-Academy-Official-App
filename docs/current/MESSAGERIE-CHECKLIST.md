@@ -1,11 +1,11 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : lundi 16/11/2026, 21 h 25 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : lundi 16/11/2026, 21 h 40 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
-**#551 (couleurs, croix, champ) est fusionnée à 21 h 22 UTC (`906ba099`)**, donc mise en ligne par le
-déploiement automatique ; **pas encore vue par vous**.
+**#551 (couleurs, croix, champ) est fusionnée à 21 h 22 UTC (`906ba099`)**, **déployée en production à 21 h 28 UTC**
+(déploiement 1302 vert) ; **pas encore vue par vous** : fermer puis rouvrir l'application.
 
 **Ce que je fais (le pilote)** : je ne code pas. Je donne le travail à un seul agent, je le contrôle
 toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'installe en base.
@@ -136,3 +136,4 @@ _Rempli au matin._
 - 16/11, 21 h 22 : **#551 fusionnée** (`906ba099`). Erreur du pilote : un premier essai de fusion avec
   un identifiant de commit recopié de mémoire, refusé par GitHub, sans effet ; refait avec l'identifiant lu.
 - 16/11, 21 h 25 : NOUVEAU-FILS confié au même agent ; migration `20261129510000` vérifiée libre sur main.
+- 16/11, 21 h 28 : déploiement de production de `906ba099` vert (« Flutter Web → Vercel », run 1302).
