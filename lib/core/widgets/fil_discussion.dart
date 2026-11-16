@@ -1104,6 +1104,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
     );
   }
 
+  /// IMAGE-CANDIDAT : un message dont le texte n'est que le remplissage d'une
+  /// image (« [image] ») et qui ne porte aucune image n'est montre a personne :
+  /// le texte brut n'a aucun sens a lire. Le serveur le masque deja
+  /// (`com_fil_json`) ; ceci couvre un serveur pas encore a jour et la bulle
+  /// arrivee avant son image. L'auteur voit l'echec dans sa bulle locale.
+  static bool _imageFantome(MessageFil m) =>
+      m.image == null && m.texte.trim() == texteImageSeule;
+
   /// Le texte d'un message qui ne porte qu'une image n'est pas ecrit.
   static String _texteAffiche(MessageFil m) =>
       m.image != null && estTexteImageSeule(m.texte) ? '' : m.texte;
@@ -1664,7 +1672,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // bulle locale est encore la est ecartee (jamais deux bulles).
     final List<Object> entrees = <Object>[
       for (final MessageFil m in widget.messages)
-        if (!masques.contains(m.id)) m,
+        if (!masques.contains(m.id) && !_imageFantome(m)) m,
     ];
     for (final _MessageLocal local in locaux) {
       int place = entrees.length;

@@ -34,6 +34,15 @@ la bibliothèque (`LIBRARY_UPLOAD_CONFIRMATION_HMAC_KEY` côté Edge, table
 | Déposer une image | être l'auteur du message, avoir le droit d'écrire dans le fil (`peut_ecrire`), **ne pas être un compte élève de moins de 18 ans** |
 | Poser ou retirer son cœur | avoir le droit de lire le fil (la lecture seule garde le cœur) |
 
+**Le candidat enseignant (compte `pending_kyc`) est partie de son fil « candidature » et dépose des
+images comme n'importe quelle partie** (IMAGE-CANDIDAT, 16/11/2026, migration
+`20261129400000_image_candidat.sql`). Il avait été oublié : les fonctions de dépôt lisaient
+`app_account_valid()` et `private.com_appelant()`, deux portes fermées à un compte `pending_kyc`, d'où le
+refus 403 vu en production. Elles lisent maintenant la porte de la messagerie
+(`private.com_appelant_msg()`, valide d'abord, à défaut le candidat). **Un message dont le texte n'est que
+« [image] » et qui ne porte aucune image vivante n'est rendu à personne**, auteur compris (`com_fil_json`).
+Le mot « Image » des premiers essais n'est pas masqué : une personne peut l'écrire.
+
 **Vérité d'abord : un élève mineur n'est partie d'aucun fil aujourd'hui.** `private.com_appelant()`
 refuse tout compte mineur et un déclencheur interdit qu'un mineur soit partie d'un fil
 (COM-BACK-1). La règle « un compte élève de moins de 18 ans ne dépose pas d'image » est donc posée
