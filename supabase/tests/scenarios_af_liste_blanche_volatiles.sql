@@ -51,6 +51,15 @@ declare
     'affectation_candidat(uuid)',
     -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
     'admettre_salle_verification(uuid,integer,text)',
+    -- BE-2a-1 (16/11) : les missions. Qui peut appeler : la direction seulement, garde positive public.app_role() = 'admin',
+    -- public.app_account_valid() et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit : une ligne de private.missions,
+    -- de private.mission_attributions ou de private.mission_journal, plus une ligne d'audit (log_sensitive_access).
+    -- Ce qu'elle n'ecrit jamais : le compte de la personne (role, statut, genre), les candidatures, les gestes.
+    -- lister_missions et lister_attributions n'ecrivent rien : elles sont STABLE, donc hors de cette liste.
+    'accorder_mission(uuid,uuid,jsonb,timestamp with time zone,timestamp with time zone,uuid)',
+    'archiver_mission(uuid,text,uuid)',
+    'creer_mission(text,text[],uuid)',
+    'retirer_mission(uuid,text,uuid)',
     'agent_pre_request()',
     'ajouter_eleve_groupe(uuid,uuid,text)',
     'ajouter_niveau_programme(uuid,text,text,text,integer,text)',
