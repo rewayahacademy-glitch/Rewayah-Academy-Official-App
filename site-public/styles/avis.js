@@ -136,6 +136,26 @@
     return conteneur;
   }
 
+  /* Comme bloc_avis.esc_avis : chaque suite arabe d'un texte ecrit par une personne entre dans <bdi lang="ar" dir="rtl">,
+   * en textContent (directeur, 16/11/2026). Le texte n'est jamais retouche. */
+  var SUITE_ARABE = /[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF](?:[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\s]*[\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF])?/g;
+
+  function texteAvis(c, parent, texte) {
+    if (c.langue === 'ar') { parent.appendChild(document.createTextNode(texte)); return parent; }
+    var fin = 0, m;
+    SUITE_ARABE.lastIndex = 0;
+    while ((m = SUITE_ARABE.exec(texte)) !== null) {
+      if (m.index > fin) parent.appendChild(document.createTextNode(texte.slice(fin, m.index)));
+      var b = el('bdi', '', m[0]);
+      b.setAttribute('lang', 'ar');
+      b.setAttribute('dir', 'rtl');
+      parent.appendChild(b);
+      fin = m.index + m[0].length;
+    }
+    if (fin < texte.length) parent.appendChild(document.createTextNode(texte.slice(fin)));
+    return parent;
+  }
+
   /* Une carte, comme bloc_avis._un_avis : tout le texte de l'avis passe par textContent. */
   function carte(c, a) {
     var t = c.textes;
@@ -147,21 +167,21 @@
     note.setAttribute('role', 'img');
     note.setAttribute('aria-label', remplir(t.note, { n: a.note }));
     art.appendChild(etoiles(note, a.note));
-    if (a.titre) art.appendChild(el('h3', '', a.titre));
+    if (a.titre) art.appendChild(texteAvis(c, el('h3'), a.titre));
     var bq = el('blockquote', 'avis-texte');
     var p = el('p');
     a.texte.replace(/\r\n?/g, '\n').split('\n').forEach(function (ligne, i) {
       if (i) p.appendChild(document.createElement('br'));
-      p.appendChild(document.createTextNode(ligne));
+      texteAvis(c, p, ligne);
     });
     bq.appendChild(p);
     art.appendChild(bq);
     var pied = el('footer', 'avis-auteur');
-    var ini = el('span', 'avis-initiale', initiale(a.nom));
+    var ini = texteAvis(c, el('span', 'avis-initiale'), initiale(a.nom));
     ini.setAttribute('aria-hidden', 'true');
     pied.appendChild(ini);
     var qui = el('div');
-    qui.appendChild(el('strong', '', a.nom));
+    qui.appendChild(texteAvis(c, el('strong'), a.nom));
     qui.appendChild(el('span', '', nomPays(c, a.pays) + ' · ' + t[a.qualite] + (c.langue === 'ar' ? '، ' : ', ') + remplir(t.depuis, { mois: fmtMois(c, a.depuis) })));
     qui.appendChild(el('span', 'avis-date', remplir(t.publie, { date: fmtDate(c, a.publie_le) })));
     pied.appendChild(qui);
