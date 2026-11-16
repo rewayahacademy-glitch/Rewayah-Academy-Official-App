@@ -82,7 +82,7 @@ Une étape ne commence que quand la précédente est livrée ou explicitement mi
 **Étape B, aujourd'hui : les 13 pays (goulot 4).** Le pilote présente la liste des 13 pays avec, pour
 chacun, ce que Wise permet ; le directeur tranche en une fois ; 31 candidats repartent.
 
-**Étape C, cette semaine : finir les outils d'examen (goulot 2).** Dans l'ordre : #516 (précédent /
+**Étape C, cette semaine : finir les outils d'examen (goulot 2).** En tête, urgent (directeur, 16/11, captures) : **PIECE-DANS-DOSSIER**, la pièce d'identité se voit et se valide dans le dossier même (pastille « manquante » fausse, lien vers « Fichiers à valider » qui mène à une impasse, régression de la refonte), et le bandeau jaune de « Fichiers à valider » devient fermable. Puis, dans l'ordre : #516 (précédent /
 suivant) ; #515 refaite selon la révision du 16/11 ; BE-COLONNES ; #517 MAJEUR (à recouper ou
 installer) ; écran « Débloquer le versement » ; BE-1g (dispense d'entretien et fondateurs).
 
