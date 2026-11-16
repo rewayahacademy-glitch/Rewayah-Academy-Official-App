@@ -72,6 +72,8 @@ void main() {
           ('ar', AppLocale.ar, 'jpg'),
           ('fr_pdf', AppLocale.fr, 'pdf'),
           ('ar_pdf', AppLocale.ar, 'pdf'),
+          ('fr_inconnu', AppLocale.fr, 'inconnu'),
+          ('ar_inconnu', AppLocale.ar, 'inconnu'),
         ]) {
       testWidgets('360 $nom', (WidgetTester tester) async {
         await tester.runAsync(() => LocaleSettings.setLocale(langue));
@@ -91,13 +93,20 @@ void main() {
           ),
           surcharges: <Override>[
             lirePieceCandidatureProvider.overrideWithValue(
-              (String _) async => const PieceCandidature(
+              (String _) async => PieceCandidature(
                 statut: StatutPieceCandidature.enAttente,
                 profilId: 'p1',
                 documentId: 'doc1',
+                genre: switch (extension) {
+                  'pdf' => GenreFichierPiece.pdf,
+                  'inconnu' => null,
+                  _ => GenreFichierPiece.image,
+                },
               ),
             ),
-            serviceValidationProvider.overrideWithValue(_Signature(extension)),
+            serviceValidationProvider.overrideWithValue(
+              _Signature(extension == 'inconnu' ? '' : extension),
+            ),
             imagePieceProvider.overrideWithValue((Uri _) => piece),
           ],
           largeur: 360,
@@ -113,7 +122,7 @@ void main() {
           () => Future<void>.delayed(const Duration(milliseconds: 400)),
         );
         await laisser(tester);
-        await capturerVue(tester, 'PIECE-DANS-DOSSIER/piece_${nom}_360');
+        await capturerVue(tester, 'PIECE-TYPE-ECRAN/piece_${nom}_360');
       });
     }
   });
