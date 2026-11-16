@@ -107,10 +107,15 @@ class EtageUnDossier extends ConsumerWidget {
     this.profil = const <LigneSynthese>[],
     this.messagerie,
     this.demanderPhoto,
+    this.navigation,
   });
 
   /// Le plan du dossier.
   final PlanDossier plan;
+
+  /// « 3 sur 176 » et les deux fleches (BE-SUIVANT), ou `null` : le dossier
+  /// n'a pas de file.
+  final Widget? navigation;
 
   /// Les lignes du profil (langues, memorisation, ijaza), sur la carte.
   final List<LigneSynthese> profil;
@@ -249,6 +254,7 @@ class EtageUnDossier extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          if (navigation != null) ...<Widget>[navigation!, Ecart.vMd],
           identite,
           if (profil.isNotEmpty) ...<Widget>[
             Ecart.vMd,
@@ -753,16 +759,32 @@ class CorpsDossier extends ConsumerStatefulWidget {
     required this.deuxColonnes,
     required this.onGeste,
     required this.onDemanderElement,
-    required this.onOuvrirDossier,
     required this.onEntretien,
     required this.onOuvrirConversation,
     this.rangMessages = 0,
     this.retour,
     this.retourEntretien,
     this.autresActions = const <EntreeAction>[],
+    this.navigation,
+    this.passage,
+    this.reglage,
+    this.onDecisionPiece,
     this.ligneMajorite,
     super.key,
   });
+
+  /// « 3 sur 176 » et les fleches (BE-SUIVANT), ou `null`.
+  final Widget? navigation;
+
+  /// Ce qui suit une decision : le passage au suivant, ou la fin de file.
+  final Widget? passage;
+
+  /// Le reglage « Passer au suivant apres une decision », ou `null`.
+  final Widget? reglage;
+
+  /// Une decision sur la piece est prise (BE-SUIVANT : elle peut ouvrir le
+  /// dossier suivant) ; `null` : elle ne compte que comme un retour local.
+  final ValueChanged<String>? onDecisionPiece;
 
   /// La phrase de majorite de la ligne Accords, ou `null` : rien n'est affiche.
   /// `DetailCandidature.majorite` n'est pas encore dans `main` (PR 517) ; la
@@ -786,9 +808,6 @@ class CorpsDossier extends ConsumerStatefulWidget {
 
   /// Ouvre le complement, l'element deja coche.
   final ValueChanged<String> onDemanderElement;
-
-  /// Mene a « Dossiers a valider ».
-  final VoidCallback onOuvrirDossier;
 
   /// Un geste d'entretien est fait, avec son retour local.
   final ValueChanged<String> onEntretien;
@@ -823,7 +842,6 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
     final bool deuxColonnes = widget.deuxColonnes;
     final ValueChanged<GesteCandidature> onGeste = widget.onGeste;
     final ValueChanged<String> onDemanderElement = widget.onDemanderElement;
-    final VoidCallback onOuvrirDossier = widget.onOuvrirDossier;
     final ValueChanged<String> onEntretien = widget.onEntretien;
     final ValueChanged<ConversationEnPlace> onOuvrirConversation =
         widget.onOuvrirConversation;
@@ -926,6 +944,20 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           in detail.controles ?? <ControleCandidature>[])
         if (c.nom == 'accords_signes' || c.nom == 'cadre_religieux') c,
     ];
+    // PIECE-DANS-DOSSIER (16/11/2026) : la pastille de la piece dit la verite
+    // de la piece lue au serveur (la meme lecture que la ligne dessous), pas un
+    // controle qui confond « deposee, pas encore validee » et « manquante ».
+    final StatutPieceCandidature? statutPiece = ref
+        .watch(pieceCandidatureProvider(detail.ligne.id))
+        .value
+        ?.statut;
+    final PastilleRubrique? pastillePiece = switch (statutPiece) {
+      StatutPieceCandidature.enAttente => PastilleRubrique.aVoir,
+      StatutPieceCandidature.validee => PastilleRubrique.bon,
+      StatutPieceCandidature.aDeposer ||
+      StatutPieceCandidature.refusee => PastilleRubrique.manque,
+      _ => plan.pastille(RubriqueDossierCode.piece),
+    };
     final bool entretienNonServi =
         ref.watch(entretiensCandidatureProvider(detail.ligne.id)).error
             is CapaciteIndisponible;
@@ -935,15 +967,15 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         d3.rubrique.piece,
         (BuildContext c) => _ContenuPiece(
           detail: detail,
-          onOuvrirDossier: onOuvrirDossier,
           onDemanderNouvellePiece: redemandable('piece_identite')
               ? () => onDemanderElement('piece_identite')
               : null,
-          onDecision: onEntretien,
+          onDecision: widget.onDecisionPiece ?? onEntretien,
         ),
         gestes: <GesteRubrique?>[
           demander('piece_identite', r.demanderNouvellePiece),
         ],
+        pastille: pastillePiece,
         affichee: true,
       ),
       rubrique(
@@ -1100,6 +1132,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
     };
     final Widget carteProfil = EtageUnDossier(
       plan: plan,
+      navigation: widget.navigation,
       profil: <LigneSynthese>[
         for (final LigneSynthese l in synthese)
           if (cleProfil.contains(l.cle)) l,
@@ -1135,6 +1168,16 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: LocalFeedback(message: retour),
           );
+    // BE-SUIVANT : l'annonce du passage au suivant (ou de la fin de file), puis
+    // le reglage, juste sous la barre de decision.
+    final Widget suite = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (widget.passage != null) ...<Widget>[Ecart.vMd, widget.passage!],
+        if (widget.reglage != null) ...<Widget>[Ecart.vMd, widget.reglage!],
+      ],
+    );
     final Widget liste = KeyedSubtree(
       key: _cleListe,
       child: Column(
@@ -1161,6 +1204,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           resume,
           Ecart.vLg,
           barre,
+          suite,
           Ecart.vLg,
           liste,
         ],
@@ -1180,6 +1224,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
               resume,
               Ecart.vLg,
               barre,
+              suite,
             ],
           ),
         ),
@@ -1196,13 +1241,11 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
 class _ContenuPiece extends ConsumerWidget {
   const _ContenuPiece({
     required this.detail,
-    required this.onOuvrirDossier,
     required this.onDemanderNouvellePiece,
     required this.onDecision,
   });
 
   final DetailCandidature detail;
-  final VoidCallback onOuvrirDossier;
   final VoidCallback? onDemanderNouvellePiece;
   final ValueChanged<String> onDecision;
 
@@ -1212,7 +1255,7 @@ class _ContenuPiece extends ConsumerWidget {
     if (ref.watch(lirePieceCandidatureProvider) != null) {
       return PieceSurPlace(
         candidatureId: detail.ligne.id,
-        onOuvrirDossier: onOuvrirDossier,
+        nom: nomAffiche(detail.ligne),
         onDemanderNouvellePiece: onDemanderNouvellePiece,
         onDecision: onDecision,
       );
@@ -1235,12 +1278,6 @@ class _ContenuPiece extends ConsumerWidget {
               Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             ),
           ),
-        LienFleche(
-          key: BlocPieceEntretien.cleDossier,
-          libelle: r.ouvrirDossier,
-          alignerEnDebut: true,
-          onPress: onOuvrirDossier,
-        ),
       ],
     );
   }
@@ -1278,9 +1315,8 @@ class BarreDecisionDossier extends StatelessWidget {
   /// La cle du menu « ⋯ ».
   static const Key cleMenu = ValueKey<String>('dossier-barre-menu');
 
-  /// La cle de la phrase qui dit pourquoi un geste n'est pas rendu.
-  static Key cleRaison(GesteCandidature g) =>
-      ValueKey<String>('dossier-barre-raison-${g.name}');
+  /// La cle de la phrase qui dit pourquoi la rangee est ce qu'elle est.
+  static const Key cleRaison = ValueKey<String>('dossier-barre-raison');
 
   /// La cle du bouton d'une decision.
   static Key cleBouton(GesteCandidature g) =>
@@ -1317,14 +1353,6 @@ class BarreDecisionDossier extends StatelessWidget {
     // (la premiere fente). Jamais un refus.
     final bool accepterRendu = fentes.first.actif;
     final List<GesteCandidature> menu = plan.gestesDuMenu();
-    // Les gestes non rendus qui ont la meme raison la partagent : une phrase.
-    final Map<String, List<FenteDecision>> raisons =
-        <String, List<FenteDecision>>{};
-    for (final FenteDecision f in fentes) {
-      if (!f.actif && f.raison != null) {
-        (raisons[f.raison!] ??= <FenteDecision>[]).add(f);
-      }
-    }
     final bool vide =
         visible == null &&
         rendues.isEmpty &&
@@ -1372,20 +1400,10 @@ class BarreDecisionDossier extends StatelessWidget {
                 ),
             ],
           ),
-        for (final MapEntry<String, List<FenteDecision>> e
-            in raisons.entries) ...<Widget>[
-          if (!vide || e.key != raisons.keys.first) Ecart.vSm,
-          TexteSansCoupure(
-            t.recrutement.dossier3.legendeRaison(
-              geste: e.value
-                  .map((FenteDecision f) => f.libelle)
-                  .join(t.admin.candidatures.detail.separateurControles),
-              raison: e.key,
-            ),
-            key: cleRaison(e.value.first.geste),
-            style: muet,
-          ),
-        ],
+        // GESTES-RAISON (directeur, 16/11/2026) : toujours au meme endroit,
+        // une phrase qui dit l'etat et ce qui manque, meme sans aucun geste.
+        if (!vide) Ecart.vSm,
+        TexteSansCoupure(plan.phraseGestes(), key: cleRaison, style: muet),
       ],
     );
   }

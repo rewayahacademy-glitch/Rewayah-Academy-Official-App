@@ -101,13 +101,14 @@ import '../tc_horloge/mon_horloge.dart';
 import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
+import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
-import 'action_principale.dart';
 import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
+import 'lien_fleche.dart' show EncreLienSurFond;
 import 'menu_actions.dart';
 import 'menu_commun.dart' show MenuAncreControleur;
 import 'page_shell.dart';
@@ -346,7 +347,24 @@ enum EtatEnvoiMessage {
 }
 
 class _MessageLocal {
-  _MessageLocal(this.id, this.texte, this.brut, this.action, {this.source});
+  _MessageLocal(
+    this.id,
+    this.texte,
+    this.brut,
+    this.action, {
+    required this.cree,
+    this.source,
+  });
+
+  /// L'heure de l'envoi : la bulle garde sa place dans l'ordre du fil, meme en
+  /// echec (IMAGES-CORRECTIF).
+  final DateTime cree;
+
+  /// IMAGES-CORRECTIF : l'identifiant du message serveur des qu'il est cree, et
+  /// celui du depot de l'image. La bulle locale le garde : la copie serveur du
+  /// meme message ne s'affiche pas a cote d'elle.
+  String? idMessage;
+  String? idImage;
 
   /// IMAGES-MESSAGERIE : la photo choisie, pour une bulle d'image.
   final Uint8List? source;
@@ -370,7 +388,8 @@ class _MessageLocal {
   /// FLUIDITE-1 : l'envoi passe par l'outil commun d'affichage anticipe
   /// (`lib/core/fluidite/action_anticipee.dart`), sous la cle fixe [id] :
   /// « Reessayer » rejoue la meme. Un message est un CONTENU : en echec, sa
-  /// bulle reste, « non confirme », avec « Reessayer » (aucun `annuler`).
+  /// bulle reste a sa place, « non confirme », avec « Reessayer » et
+  /// « Supprimer » (menu de la bulle).
   final ActionAnticipee action;
 
   EtatEnvoiMessage get etat => switch (action.etat) {
@@ -432,6 +451,7 @@ class FilDiscussion extends StatefulWidget {
     this.images,
     this.onAimer,
     this.onEnvoyerImage,
+    this.onAnnulerImage,
     this.choisirImage = choisirImageSysteme,
     this.deuxChoixPhoto,
   }) : assert(
@@ -462,6 +482,11 @@ class FilDiscussion extends StatefulWidget {
     ProgressionImage progression,
   )?
   onEnvoyerImage;
+
+  /// IMAGES-CORRECTIF : abandonne le depot d'une bulle d'image supprimee
+  /// apres un echec (`message_image_annuler`). `null` : la bulle disparait
+  /// seule.
+  final Future<void> Function(String imageId)? onAnnulerImage;
 
   /// Le choix d'une photo (le selecteur du systeme ; les tests le remplacent).
   final ChoixImage choisirImage;
@@ -670,6 +695,15 @@ class FilDiscussion extends StatefulWidget {
   }
 
   /// Le micro a cote d'« Envoyer » (decision R-28), pour les tests.
+  /// IMAGES-CORRECTIF : l'icone d'alerte et la ligne « Non confirme » d'une
+  /// bulle en echec, qui ouvrent toutes deux le menu (tests).
+  static const Key cleIconeEchec = ValueKey<String>(
+    'fil-discussion-echec-icone',
+  );
+  static const Key cleLigneEchec = ValueKey<String>(
+    'fil-discussion-echec-ligne',
+  );
+
   /// La cle de l'icone « Joindre une image », pour les tests.
   static const Key cleImage = ValueKey<String>('fil-discussion-image');
 
@@ -716,6 +750,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
   Map<String, AdresseImage> _miniatures = const <String, AdresseImage>{};
   final Set<String> _idsDemandes = <String>{};
   bool _miniaturesEnCours = false;
+
+  /// Une lecture des miniatures a abouti : une image sans adresse n'en aura
+  /// pas, l'image complete prend le relais (IMAGES-CORRECTIF).
+  bool _miniaturesLues = false;
   DateTime _derniereLectureMiniatures = DateTime.fromMillisecondsSinceEpoch(0);
 
   /// IMAGES-MESSAGERIE : les coeurs affiches tout de suite, avant la reponse
@@ -858,6 +896,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
       WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
     }
     _teteDePage = tete;
+    _preparerBrouillon();
+  }
+
+  /// Branche la memoire des brouillons des que le fil peut s'ecrire. Appelee
+  /// aussi quand la page ouvre l'ecriture apres coup (la capacite arrive
+  /// apres le premier rendu : le fil se lisait d'abord seulement), pour que
+  /// le brouillon deja garde, ou le message modele d'une relance, soit remis.
+  void _preparerBrouillon() {
     final CleBrouillon? cle = widget.lectureSeule == null
         ? widget.cleBrouillon
         : null;
@@ -882,6 +928,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _champ.addListener(_auChangement);
       _persistance?.caler(_champ.text);
     }
+    _preparerBrouillon();
     if (widget.emplacementVocal == null) {
       _vocalOuvert = false;
       _microDisponible = false;
@@ -1031,11 +1078,21 @@ class _FilDiscussionState extends State<FilDiscussion> {
     _miniaturesEnCours = true;
     _derniereLectureMiniatures = maintenant;
     _idsDemandes.addAll(visibles);
-    source.miniatures().then<void>(
+    // IMAGES-CORRECTIF : la liste gardee par le port ne connait pas une image
+    // arrivee depuis sa lecture (cache d'une heure). Si une image visible n'y
+    // figure pas, on relit une fois le serveur sans le cache.
+    Future<Map<String, AdresseImage>> lecture() async {
+      final Map<String, AdresseImage> lues = await source.miniatures();
+      if (visibles.every(lues.containsKey)) return lues;
+      return source.miniatures(frais: true);
+    }
+
+    lecture().then<void>(
       (Map<String, AdresseImage> lues) {
         if (!mounted) return;
         setState(() {
           _miniatures = lues;
+          _miniaturesLues = true;
           _miniaturesEnCours = false;
         });
       },
@@ -1048,9 +1105,17 @@ class _FilDiscussionState extends State<FilDiscussion> {
     );
   }
 
+  /// IMAGE-CANDIDAT : un message dont le texte n'est que le remplissage d'une
+  /// image (« [image] ») et qui ne porte aucune image n'est montre a personne :
+  /// le texte brut n'a aucun sens a lire. Le serveur le masque deja
+  /// (`com_fil_json`) ; ceci couvre un serveur pas encore a jour et la bulle
+  /// arrivee avant son image. L'auteur voit l'echec dans sa bulle locale.
+  static bool _imageFantome(MessageFil m) =>
+      m.image == null && m.texte.trim() == texteImageSeule;
+
   /// Le texte d'un message qui ne porte qu'une image n'est pas ecrit.
   static String _texteAffiche(MessageFil m) =>
-      m.image != null && m.texte.trim() == texteImageSeule ? '' : m.texte;
+      m.image != null && estTexteImageSeule(m.texte) ? '' : m.texte;
 
   /// IMAGES-MESSAGERIE : pose ou retire mon coeur. L'affichage est immediat
   /// (action courante, DECISION-FLUIDITE) ; il revient en arriere si l'appel
@@ -1136,7 +1201,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
               cle,
               texte,
               prete,
-              (double f) => m.progression.value = f,
+              ProgressionImage(
+                (double f) => m.progression.value = f,
+                surMessage: (String id) {
+                  m.idMessage = id;
+                  if (mounted) setState(() {});
+                },
+                surDepot: (String id) => m.idImage = id,
+              ),
             );
           } on EchecImage catch (e) {
             final String phrase = phraseRefusImage(e.refus);
@@ -1152,6 +1224,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
           }
         },
       ),
+      cree: widget.horloge(),
       source: octets,
     );
     m.action.addListener(() {
@@ -1196,6 +1269,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
           }
         },
       ),
+      cree: widget.horloge(),
     );
     m.action.addListener(() {
       if (mounted) setState(() {});
@@ -1208,6 +1282,26 @@ class _FilDiscussionState extends State<FilDiscussion> {
     _champ.clear();
     _tenter(m);
     WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(true));
+  }
+
+  /// IMAGES-CORRECTIF : « Supprimer » sur une bulle en echec. Le depot de
+  /// l'image est abandonne cote serveur (sans attendre), puis la bulle
+  /// disparait ; le texte n'est pas remis dans le champ.
+  void _supprimerLocal(_MessageLocal m) {
+    final String? imageId = m.idImage;
+    final Future<void> Function(String)? annuler = widget.onAnnulerImage;
+    if (imageId != null && annuler != null) {
+      unawaited(annuler(imageId).catchError((Object _) {}));
+    }
+    final CleBrouillon? cle = widget.cleBrouillon;
+    if (cle != null && m.source == null) {
+      unawaited(_persistance?.effacerSi(cle, m.brut) ?? Future<void>.value());
+    }
+    setState(() => _locaux.remove(m));
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      m.action.dispose();
+      m.progression.dispose();
+    });
   }
 
   Future<void> _tenter(_MessageLocal m) async {
@@ -1438,6 +1532,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
         texte: _texteAffiche(m),
         image: m.image,
         adresse: m.image == null ? null : _miniatures[m.image!.id],
+        repli: widget.images == null || m.image == null
+            ? null
+            : () => widget.images!.image(m.image!.id),
+        adresseIntrouvable:
+            _miniaturesLues &&
+            m.image != null &&
+            m.image!.etat == EtatImageMessage.confirmee &&
+            _miniatures[m.image!.id] == null,
         coeurs: _coeursLocaux[m.id]?.coeurs ?? m.coeurs,
         aime: _coeursLocaux[m.id]?.aimeParMoi ?? m.aimeParMoi,
         groupe: widget.afficherAuteur,
@@ -1468,11 +1570,16 @@ class _FilDiscussionState extends State<FilDiscussion> {
     }
     final _MessageLocal local = l.local!;
     final bool echec = local.etat == EtatEnvoiMessage.echec;
+    final String mots = t.com.messages.images.nonConfirmeToucher;
+    // Une cause que « Reessayer » ne change pas se dit par sa phrase et ne
+    // propose que « Supprimer » (K-56, K-59) ; sinon la ligne courte invite a
+    // toucher, et la cause connue (stockage, connexion) se lit au-dessus.
+    final bool reessayable = echec && local.refus == null;
     return _Bulle(
       key: ValueKey<String>('message-${local.id}'),
       auteur: x.auteurSoi,
       afficherNom: false,
-      texte: local.source != null && local.texte == texteImageSeule
+      texte: local.source != null && estTexteImageSeule(local.texte)
           ? ''
           : local.texte,
       // IMAGES-MESSAGERIE : la bulle porte l'image locale des que sa place est
@@ -1500,10 +1607,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
           local.source != null &&
           local.prete == null &&
           local.etat == EtatEnvoiMessage.enCours,
+      // En cours ou envoye : le mot et l'horloge ou la coche, comme avant ; en
+      // echec, la ligne d'echec prend leur place.
       mot: switch (local.etat) {
         EtatEnvoiMessage.enCours => x.enCours,
         EtatEnvoiMessage.envoye => x.envoye,
-        EtatEnvoiMessage.echec => local.refus ?? local.precision ?? x.echec,
+        EtatEnvoiMessage.echec => null,
       },
       remise: switch (local.etat) {
         EtatEnvoiMessage.enCours => RemiseMessage.enCours,
@@ -1514,10 +1623,24 @@ class _FilDiscussionState extends State<FilDiscussion> {
       coinPetit: true,
       // L'etat change sous les yeux : il est annonce a chaque etape.
       etatVivant: true,
+      attendImage: !echec,
       echec: echec,
-      // Un refus dont la cause ne change pas n'offre pas « Reessayer » (K-56).
-      libelleReessayer: echec && local.refus == null ? x.reessayer : null,
-      onReessayer: () => _tenter(local),
+      ligneEchec: !echec ? null : (reessayable ? mots : local.refus),
+      causeEchec: reessayable ? local.precision : null,
+      actionsEchec: !echec
+          ? null
+          : <EntreeAction>[
+              if (reessayable)
+                EntreeAction(
+                  libelle: x.reessayer,
+                  onChoix: () => unawaited(_tenter(local)),
+                ),
+              EntreeAction(
+                libelle: t.com.messages.images.supprimerEchec,
+                destructif: true,
+                onChoix: () => _supprimerLocal(local),
+              ),
+            ],
     );
   }
 
@@ -1525,7 +1648,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// fois quand la liste des messages ou l'etat d'un envoi change : un nouvel
   /// appel avec les memes messages (frappe dans le champ) rend la liste
   /// gardee. Jamais calculees dans la construction d'une bulle.
-  List<_Ligne> _lignesDuFil(List<_MessageLocal> locaux) {
+  List<_Ligne> _lignesDuFil(List<_MessageLocal> locaux, Set<String> masques) {
     final int empreinteLocaux = Object.hashAll(<Object?>[
       for (final _MessageLocal m in locaux) ...<Object?>[
         m.id,
@@ -1534,6 +1657,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
         m.precision,
         m.prete != null,
       ],
+      for (final String id in masques) id,
     ]);
     final List<_Ligne>? gardees = _lignesGardees;
     if (gardees != null &&
@@ -1543,22 +1667,54 @@ class _FilDiscussionState extends State<FilDiscussion> {
         _jourGarde == _aujourdhui()) {
       return gardees;
     }
-    final List<MessageFil> messages = widget.messages;
+    // IMAGES-CORRECTIF : UNE seule liste, triee par date. Une bulle locale (en
+    // cours ou en echec) garde sa place a l'heure de son envoi ; les messages
+    // arrives ensuite passent en dessous. La copie serveur d'un message dont la
+    // bulle locale est encore la est ecartee (jamais deux bulles).
+    final List<Object> entrees = <Object>[
+      for (final MessageFil m in widget.messages)
+        if (!masques.contains(m.id) && !_imageFantome(m)) m,
+    ];
+    for (final _MessageLocal local in locaux) {
+      int place = entrees.length;
+      while (place > 0) {
+        final Object avant = entrees[place - 1];
+        final DateTime? instant = avant is MessageFil
+            ? avant.instant
+            : (avant as _MessageLocal).cree;
+        if (instant == null || !instant.isAfter(local.cree)) break;
+        place -= 1;
+      }
+      entrees.insert(place, local);
+    }
     final DateTime aujourdhui = _aujourdhui();
     final List<_Ligne> lignes = <_Ligne>[];
     DateTime? jourPrecedent;
-    for (int i = 0; i < messages.length; i++) {
-      final MessageFil m = messages[i];
-      final DateTime? jour = _jourDe(m);
+    for (int i = 0; i < entrees.length; i++) {
+      final Object e = entrees[i];
+      final DateTime? instant = e is MessageFil
+          ? e.instant
+          : (e as _MessageLocal).cree;
+      DateTime? jour;
+      if (instant != null) {
+        final DateTime ici = chezMoi(instant);
+        jour = DateTime(ici.year, ici.month, ici.day);
+      }
       final bool nouveauJour = jour != null && jour != jourPrecedent;
       if (nouveauJour) {
         lignes.add(_Ligne.pastilleJour(_libelleJour(jour, aujourdhui)));
       }
       jourPrecedent = jour ?? jourPrecedent;
+      if (e is _MessageLocal) {
+        lignes.add(_Ligne.local(e, ecartAvant: AppSpacing.md));
+        continue;
+      }
+      final MessageFil m = e as MessageFil;
+      final Object? avant = i > 0 ? entrees[i - 1] : null;
+      final Object? apres = i + 1 < entrees.length ? entrees[i + 1] : null;
       final bool suitLeGroupe =
-          !nouveauJour && i > 0 && _rapproches(messages[i - 1], m);
-      final bool precedeLeGroupe =
-          i + 1 < messages.length && _rapproches(m, messages[i + 1]);
+          !nouveauJour && avant is MessageFil && _rapproches(avant, m);
+      final bool precedeLeGroupe = apres is MessageFil && _rapproches(m, apres);
       lignes.add(
         _Ligne.message(
           m,
@@ -1567,9 +1723,6 @@ class _FilDiscussionState extends State<FilDiscussion> {
           avecNom: widget.afficherAuteur && !m.deSoi,
         ),
       );
-    }
-    for (final _MessageLocal m in locaux) {
-      lignes.add(_Ligne.local(m, ecartAvant: AppSpacing.md));
     }
     if (lignes.isEmpty) lignes.add(const _Ligne.videLigne());
     _lignesGardees = lignes;
@@ -1630,15 +1783,31 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // lui, puisque son retour prouve qu'il est arrive.
     final List<String> revenusDuServeur = <String>[
       for (final MessageFil m in widget.messages)
-        if (m.deSoi && !_presentsALOuverture.contains(m.id)) m.texte.trim(),
+        if (m.deSoi && m.image == null && !_presentsALOuverture.contains(m.id))
+          m.texte.trim(),
     ];
+    // IMAGES-CORRECTIF : une bulle d'image garde l'identifiant du message
+    // serveur ; elle s'efface devant lui seulement une fois l'image confirmee
+    // et relue. Jusque-la (en cours, en echec) la copie serveur est ecartee :
+    // une seule bulle a tout moment.
+    final Map<String, MessageFil> serveur = <String, MessageFil>{
+      for (final MessageFil m in widget.messages) m.id: m,
+    };
     final List<_MessageLocal> locauxMontres = <_MessageLocal>[
       for (final _MessageLocal m in _locaux)
-        if (m.etat == EtatEnvoiMessage.echec ||
-            !revenusDuServeur.remove(m.texte.trim()))
+        if (m.source != null
+            ? !(m.etat == EtatEnvoiMessage.envoye &&
+                  serveur[m.idMessage]?.image?.etat ==
+                      EtatImageMessage.confirmee)
+            : m.etat == EtatEnvoiMessage.echec ||
+                  !revenusDuServeur.remove(m.texte.trim()))
           m,
     ];
-    final List<_Ligne> lignes = _lignesDuFil(locauxMontres);
+    final Set<String> masques = <String>{
+      for (final _MessageLocal m in locauxMontres)
+        if (m.idMessage != null) m.idMessage!,
+    };
+    final List<_Ligne> lignes = _lignesDuFil(locauxMontres, masques);
     final Widget? enteteDonne = widget.entete;
     final Widget? entete = enteteDonne == null
         ? null
@@ -1873,53 +2042,82 @@ class _FilDiscussionState extends State<FilDiscussion> {
             // et ne prend jamais plus de 40 % de la hauteur de l'ecran
             // (60 % du fil, clavier ouvert) : au-dela, elle defile
             // elle-meme.
+            // CONVERSATIONS-PARTOUT (directeur, 16/11/2026, « supprime le
+            // rectangle ») : le champ et le bouton image flottent sur le fond
+            // du fil, jamais sur une bande a part : le meme fond que la liste
+            // des messages, aucun bord, aucune ombre (`FilDiscussion` pose ici
+            // le fond du fil derriere la saisie, comme au telephone).
             if (!saisieDansListe)
-              ConstrainedBox(
-                key: FilDiscussion.cleSaisie,
-                // N-9 : le panneau vocal releve la borne ; la saisie va a son
-                // bas a l'ouverture du panneau.
-                constraints: BoxConstraints(
-                  maxHeight: math.min(
-                    MediaQuery.sizeOf(context).height *
-                        (vocalBorne
-                            ? FilDiscussion.partSaisieVocalMax
-                            : FilDiscussion.partSaisieMax),
-                    hauteur.isFinite
-                        ? hauteur *
-                              (vocalBorne
-                                  ? FilDiscussion.partSaisieFilVocalMax
-                                  : FilDiscussion.partSaisieFilMax)
-                        : double.infinity,
+              _SurFondDuFil(
+                child: ConstrainedBox(
+                  key: FilDiscussion.cleSaisie,
+                  // N-9 : le panneau vocal releve la borne ; la saisie va a son
+                  // bas a l'ouverture du panneau.
+                  constraints: BoxConstraints(
+                    maxHeight: math.min(
+                      MediaQuery.sizeOf(context).height *
+                          (vocalBorne
+                              ? FilDiscussion.partSaisieVocalMax
+                              : FilDiscussion.partSaisieMax),
+                      hauteur.isFinite
+                          ? hauteur *
+                                (vocalBorne
+                                    ? FilDiscussion.partSaisieFilVocalMax
+                                    : FilDiscussion.partSaisieFilMax)
+                          : double.infinity,
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  controller: _defilementSaisie,
-                  child: limite == null
-                      ? saisie
-                      : Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                          child: Text(
-                            limite,
-                            key: FilDiscussion.cleLectureSeule,
-                            style: AppPalette.of(context).inkMuted.applyTo(
-                              styles.bodyMedium ?? const TextStyle(),
+                  child: SingleChildScrollView(
+                    controller: _defilementSaisie,
+                    child: limite == null
+                        ? saisie
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.lg,
+                            ),
+                            child: Text(
+                              limite,
+                              key: FilDiscussion.cleLectureSeule,
+                              style: AppPalette.of(context).inkMuted.applyTo(
+                                styles.bodyMedium ?? const TextStyle(),
+                              ),
                             ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             // N-9 : sous la saisie bornee qu'occupe le panneau vocal, une
             // marge : il ne touche ni la barre de navigation ni le bord.
             if (!saisieDansListe && vocalBorne)
-              const SizedBox(
-                key: FilDiscussion.cleMargeVocal,
-                height: AppSpacing.lg,
+              const _SurFondDuFil(
+                child: SizedBox(
+                  key: FilDiscussion.cleMargeVocal,
+                  height: AppSpacing.lg,
+                ),
               ),
           ],
         );
       },
     );
   }
+}
+
+/// Le fond du fil derriere la saisie (CONVERSATIONS-PARTOUT) : le meme fond que
+/// la liste des messages, sans bord ni ombre. Les bords du champ ne bougent pas
+/// (ils restent alignes sur ceux des bulles) : seul le fond se prolonge. C'est
+/// le SEUL paint admis entre le champ et le fil : le test de rendu
+/// (`fil_saisie_sans_rectangle_test.dart`) refuse tout autre fond, bord ou
+/// ombre.
+class _SurFondDuFil extends StatelessWidget {
+  const _SurFondDuFil({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: AppPalette.of(context).fondFil.background,
+    child: child,
+  );
 }
 
 /// Une ligne du fil, calculee une fois (voir `_lignesDuFil`) : un message, un
@@ -2024,13 +2222,17 @@ class _Bulle extends StatelessWidget {
     this.annonce,
     this.etatVivant = false,
     this.echec = false,
-    this.libelleReessayer,
-    this.onReessayer,
+    this.ligneEchec,
+    this.causeEchec,
+    this.actionsEchec,
     this.remise,
     this.image,
     this.adresse,
     this.progression,
     this.enPreparation = false,
+    this.repli,
+    this.adresseIntrouvable = false,
+    this.attendImage = true,
     this.coeurs = 0,
     this.aime = false,
     this.groupe = false,
@@ -2044,6 +2246,9 @@ class _Bulle extends StatelessWidget {
   final AdresseImage? adresse;
   final ValueListenable<double>? progression;
   final bool enPreparation;
+  final Future<AdresseImage?> Function()? repli;
+  final bool adresseIntrouvable;
+  final bool attendImage;
 
   /// Le coeur : son compte, le mien, et si le fil a plus de deux personnes.
   final int coeurs;
@@ -2075,8 +2280,14 @@ class _Bulle extends StatelessWidget {
   final String? annonce;
   final bool etatVivant;
   final bool echec;
-  final String? libelleReessayer;
-  final VoidCallback? onReessayer;
+
+  /// IMAGES-CORRECTIF : en echec, la ligne courte sous la bulle, a la place de
+  /// l'heure (« Non confirme · Toucher pour reessayer »), la cause connue
+  /// au-dessus d'elle, et le menu que la ligne et l'icone d'alerte ouvrent
+  /// (« Reessayer », « Supprimer »).
+  final String? ligneEchec;
+  final String? causeEchec;
+  final List<EntreeAction>? actionsEchec;
 
   @override
   Widget build(BuildContext context) {
@@ -2172,7 +2383,14 @@ class _Bulle extends StatelessWidget {
                     if (complement case final Widget complement) ...<Widget>[
                       if (afficherNom || texte.isNotEmpty || imageRetiree)
                         Ecart.vSm,
-                      complement,
+                      // IMAGE-CANDIDAT : dans MA bulle (fond violet), les liens
+                      // prennent l'encre de la bulle, la meme que le texte.
+                      deSoi
+                          ? EncreLienSurFond(
+                              encre: fond.applyTo,
+                              child: complement,
+                            )
+                          : complement,
                     ],
                   ],
                 ),
@@ -2202,6 +2420,9 @@ class _Bulle extends StatelessWidget {
                         adresse: adresse,
                         progression: progression,
                         enPreparation: enPreparation,
+                        repli: repli,
+                        adresseIntrouvable: adresseIntrouvable,
+                        attend: attendImage,
                       ),
                       ?contenu,
                     ],
@@ -2307,19 +2528,59 @@ class _Bulle extends StatelessWidget {
               style: textes.bodySmall ?? const TextStyle(),
             ),
           );
-    final Widget? reessayer = libelleReessayer == null
+    final List<EntreeAction>? menuEchec = actionsEchec;
+    final String? ligne = ligneEchec;
+    final double cibleEchec = AppMetriques.of(context).cibleTactile;
+    final Widget? piedEchec = !echec || menuEchec == null || ligne == null
         ? null
-        : Align(
-            alignment: deSoi
-                ? AlignmentDirectional.centerEnd
-                : AlignmentDirectional.centerStart,
-            child: ActionPrincipale(
-              libelle: libelleReessayer!,
-              onPress: onReessayer,
-              niveau: NiveauAction.tertiaire,
-              pleineLargeur: false,
-              compacte: true,
-              affleurant: true,
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: deSoi
+                ? CrossAxisAlignment.end
+                : CrossAxisAlignment.start,
+            children: <Widget>[
+              MenuActions(
+                key: FilDiscussion.cleLigneEchec,
+                // La cause connue n'est plus ecrite sous la bulle (redondante
+                // avec la ligne, directeur 16/11/2026) : elle reste dite au
+                // lecteur d'ecran.
+                libelle: <String>[ligne, ?causeEchec].join('. '),
+                actions: menuEchec,
+                declencheur: (BuildContext _, EtatPression _) => ConstrainedBox(
+                  constraints: BoxConstraints(minHeight: cibleEchec),
+                  child: Align(
+                    alignment: deSoi
+                        ? AlignmentDirectional.centerEnd
+                        : AlignmentDirectional.centerStart,
+                    widthFactor: 1,
+                    child: Text(
+                      ligne,
+                      style: palette.inkAlert.applyTo(
+                        textes.bodySmall ?? const TextStyle(),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          );
+    // L'icone d'alerte ronde, dans la marge libre du cote de l'autre
+    // partie : une cible de 48 qui ouvre le meme menu que la ligne.
+    final Widget? iconeEchec = !echec || menuEchec == null
+        ? null
+        : MenuActions(
+            key: FilDiscussion.cleIconeEchec,
+            libelle: t.com.messages.images.actionsEchec,
+            actions: menuEchec,
+            declencheur: (BuildContext _, EtatPression _) => SizedBox.square(
+              dimension: cibleEchec,
+              child: Center(
+                child: Icon(
+                  AppIcons.avertissement.repos,
+                  size: AppSpacing.xxl,
+                  color: palette.inkAlert.asIconTheme().color,
+                ),
+              ),
             ),
           );
     return ApparitionDouce(
@@ -2346,13 +2607,34 @@ class _Bulle extends StatelessWidget {
                 ? AlignmentDirectional.centerEnd
                 : AlignmentDirectional.centerStart,
             child: ConstrainedBox(
-              constraints: BoxConstraints(maxWidth: maxi),
+              // Avec l'icone d'alerte, la colonne prend sa place en plus : elle
+              // tient dans la marge libre de 64 du cote oppose.
+              constraints: BoxConstraints(
+                maxWidth: iconeEchec == null
+                    ? maxi
+                    : math.min(l, maxi + cibleEchec + AppSpacing.xs),
+              ),
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: deSoi
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
-                children: <Widget>[construireBulle(maxi), ?pied, ?reessayer],
+                children: <Widget>[
+                  if (iconeEchec == null)
+                    construireBulle(maxi)
+                  else
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: <Widget>[
+                        iconeEchec,
+                        Ecart.hXs,
+                        Flexible(child: construireBulle(maxi)),
+                      ],
+                    ),
+                  ?pied,
+                  ?piedEchec,
+                ],
               ),
             ),
           );
@@ -2605,7 +2887,13 @@ class _Saisie extends StatelessWidget {
     libelleVisible: false,
     aide: aidePeinte ? textes.aideChamp : null,
     // La raison de l'envoi absent ; la saisie reduite n'a pas d'envoi.
-    explication: vide && !reduite && !sansExplication ? textes.champVide : null,
+    // SUPERPOS-1 modifiee (directeur, 16/11/2026 : supprimer la phrase d'aide
+    // sous le champ) : la demande explicite la plus recente du directeur
+    // prevaut. Plus aucune phrase d'aide permanente sous le champ, dans aucune
+    // conversation. Le texte indicatif du champ (`aideChamp`) reste ; une
+    // erreur ou une limite ne s'ecrit qu'au moment ou elle sert, jamais en
+    // permanence. `textes.champVide` n'est plus ecrit nulle part.
+    explication: null,
     maxLignes: reduite ? 1 : 5,
     envoi: reduite
         ? null

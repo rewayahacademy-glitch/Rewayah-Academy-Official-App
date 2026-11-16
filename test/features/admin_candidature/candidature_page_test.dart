@@ -1063,14 +1063,7 @@ void main() {
       );
       // Accepter est grise, avec sa raison ; aucun bouton plein.
       expect(_pleins(), 0);
-      expect(
-        find.byKey(
-          BarreDecisionDossier.cleRaison(
-            GesteCandidature.admettreVerifications,
-          ),
-        ),
-        findsOneWidget,
-      );
+      expect(find.byKey(BarreDecisionDossier.cleRaison), findsOneWidget);
     });
 
     testWidgets('refusee : fermee, rouvrir est dans le menu', (

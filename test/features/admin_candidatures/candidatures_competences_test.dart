@@ -1,7 +1,7 @@
 // ADM-20 x CAND-07 : chercher une personne par ses autres competences. Ce que le
 // test prouve :
 // - quatre menus de plus (domaine, niveau, disponibilite, accord), sous « Plus »
-//   avec les autres menus : chacun filtre AU SERVEUR (le filtre part avec le
+//   avec les autres menus de la feuille « Filtres » : chacun filtre AU SERVEUR (le filtre part avec le
 //   bon axe, la page revient a 1), et se relache par « Tous » ;
 // - le domaine se choisit par famille (liste fermee que l'application nomme) ou
 //   par competence quand le catalogue de la direction est lu ; sans catalogue, les
@@ -14,6 +14,7 @@
 //   arabe aussi.
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_autres_competences.dart';
@@ -29,15 +30,14 @@ import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/garde_coupe_mots_rendu.dart';
 import '../../support/garde_interface.dart';
 import '../../support/monter_recrutement.dart';
-import '../../support/rangee_plus.dart';
 import 'hote_candidatures.dart';
 
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
 
-const String _domaine = 'candidatures-filtre-competence';
-const String _niveau = 'candidatures-filtre-competence-niveau';
-const String _disponibilite = 'candidatures-filtre-competence-disponibilite';
-const String _accord = 'candidatures-filtre-competence-accord';
+const String _domaine = 'feuille-filtre-competence';
+const String _niveau = 'feuille-filtre-competence-niveau';
+const String _disponibilite = 'feuille-filtre-competence-disponibilite';
+const String _accord = 'feuille-filtre-competence-accord';
 
 FauxCandidaturesDirection _port() => FauxCandidaturesDirection(
   lignes: <LigneCandidature>[
@@ -67,13 +67,30 @@ List<Override> _catalogue() => <Override>[
   ),
 ];
 
-/// Choisit [libelle] dans le menu de cle [cle].
+/// BE-LISTE-2 : ouvre la feuille « Filtres » (si elle ne l'est pas) puis le
+/// menu de cle [cle].
+Future<void> _ouvrirMenu(WidgetTester tester, String cle) async {
+  if (find.byKey(ValueKey<String>(cle)).evaluate().isEmpty) {
+    await ouvrirFeuilleFiltresDeTest(tester);
+  }
+  await tester.ensureVisible(_cle(cle).last);
+  await tester.pumpAndSettle();
+  await tester.tap(_cle(cle).last);
+  await tester.pumpAndSettle();
+}
+
+/// Ferme la feuille « Filtres ».
+Future<void> _fermerFeuille(WidgetTester tester) async {
+  await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+  await laisser(tester);
+}
+
+/// Choisit [libelle] dans le menu de cle [cle], puis ferme la feuille.
 Future<void> _choisir(WidgetTester tester, String cle, String libelle) async {
-  await ouvrirMenuFiltre(tester, _cle(cle));
+  await _ouvrirMenu(tester, cle);
   await tester.tap(find.text(libelle).last);
   await tester.pumpAndSettle();
-  await fermerPlus(tester);
-  await laisser(tester);
+  await _fermerFeuille(tester);
 }
 
 void main() {
@@ -87,7 +104,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterCandidatures(tester, port: _port());
-      await ouvrirPlus(tester);
+      await ouvrirFeuilleFiltresDeTest(tester);
       for (final String cle in <String>[
         _domaine,
         _niveau,
@@ -120,7 +137,7 @@ void main() {
         '« debute »', (WidgetTester tester) async {
       final FauxCandidaturesDirection port = _port();
       await monterCandidatures(tester, port: port);
-      await ouvrirMenuFiltre(tester, _cle(_niveau));
+      await _ouvrirMenu(tester, _niveau);
       expect(find.text(f.niveauExperience), findsWidgets);
       expect(find.text(f.niveauMetier), findsWidgets);
       expect(
@@ -129,8 +146,7 @@ void main() {
       );
       await tester.tap(find.text(f.niveauMetier).last);
       await tester.pumpAndSettle();
-      await fermerPlus(tester);
-      await laisser(tester);
+      await _fermerFeuille(tester);
       expect(
         port.appels.last.filtre.competenceNiveauMin,
         NiveauCompetence.metier,
@@ -209,7 +225,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await monterCandidatures(tester, port: _port());
-      await ouvrirMenuFiltre(tester, _cle(_domaine));
+      await _ouvrirMenu(tester, _domaine);
       for (final FamilleCompetence fam in FamilleCompetence.values) {
         if (fam == FamilleCompetence.autre) {
           continue;
@@ -229,7 +245,7 @@ void main() {
         'direction a ajoutees', (WidgetTester tester) async {
       final FauxCandidaturesDirection port = _port();
       await monterCandidatures(tester, port: port, surcharges: _catalogue());
-      await ouvrirMenuFiltre(tester, _cle(_domaine));
+      await _ouvrirMenu(tester, _domaine);
       expect(
         find.text(t.recrutement.talents.c.comptabilite.libelle),
         findsWidgets,
@@ -238,15 +254,14 @@ void main() {
       expect(find.textContaining('traduction_ourdou'), findsNothing);
       await tester.tap(find.text('Traduction vers l\'ourdou').last);
       await tester.pumpAndSettle();
-      await fermerPlus(tester);
-      await laisser(tester);
+      await _fermerFeuille(tester);
       expect(port.appels.last.filtre.competenceDomaine, 'traduction_ourdou');
     });
 
     testWidgets('« Autre domaine » est une competence, pas une famille a '
         'part', (WidgetTester tester) async {
       await monterCandidatures(tester, port: _port(), surcharges: _catalogue());
-      await ouvrirMenuFiltre(tester, _cle(_domaine));
+      await _ouvrirMenu(tester, _domaine);
       expect(
         find.text(
           f.familleToutes(famille: titreFamille(FamilleCompetence.autre)),
@@ -319,7 +334,7 @@ void main() {
           ('390 x1', 390, 1),
           ('1440 x1', 1440, 1),
         ]) {
-      testWidgets('francais, la feuille « Plus » a $nom', (
+      testWidgets('francais, la feuille « Filtres » a $nom', (
         WidgetTester tester,
       ) async {
         await monterCandidatures(
@@ -330,7 +345,7 @@ void main() {
           hauteur: 900,
           echelle: echelle,
         );
-        await ouvrirPlus(tester);
+        await ouvrirFeuilleFiltresDeTest(tester);
         expect(
           await defautsEcranDefile(tester),
           isEmpty,
@@ -352,7 +367,7 @@ void main() {
         );
         // La feuille « Plus » defile : le menu du domaine est amene dans la
         // vue avant d'etre touche.
-        await ouvrirPlus(tester);
+        await ouvrirFeuilleFiltresDeTest(tester);
         await tester.ensureVisible(_cle(_domaine).last);
         await tester.pumpAndSettle();
         await tester.tap(_cle(_domaine).last);
@@ -366,7 +381,7 @@ void main() {
       });
     }
 
-    testWidgets('arabe de droite a gauche, la feuille « Plus » a 320 x2', (
+    testWidgets('arabe de droite a gauche, la feuille « Filtres » a 320 x2', (
       WidgetTester tester,
     ) async {
       await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
@@ -379,7 +394,7 @@ void main() {
         echelle: 2,
         direction: TextDirection.rtl,
       );
-      await ouvrirPlus(tester);
+      await ouvrirFeuilleFiltresDeTest(tester);
       expect(_cle(_domaine), findsWidgets);
       expect(
         await defautsEcranDefile(tester),

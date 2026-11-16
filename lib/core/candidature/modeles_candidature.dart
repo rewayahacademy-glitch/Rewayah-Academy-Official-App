@@ -240,6 +240,69 @@ class EtatCadre {
   int get hashCode => Object.hash(versionRequise, accepte);
 }
 
+/// MAJEUR (directeur, 16/11/2026) : l'attestation « J'ai 18 ans ou plus », telle
+/// que `etat_dossier().candidature.majorite` la rend. Une seule chose est
+/// ecrite par la personne elle-meme : vrai (18 ans ou plus) ou faux (moins de
+/// 18 ans, la candidature est alors en pause).
+///
+/// Un serveur d'avant ce lot ne rend pas la cle : [servie] est faux, rien ne se
+/// demande, jamais un candidat bloque par une question que le serveur ne pose pas.
+@immutable
+class MajoriteCandidature {
+  /// Cree l'attestation.
+  const MajoriteCandidature({
+    this.servie = false,
+    this.declaree,
+    this.attesteeLe,
+  });
+
+  /// Le serveur ne rend pas la cle.
+  static const MajoriteCandidature nonServie = MajoriteCandidature();
+
+  /// Lit la cle `majorite` ; une cle absente ou mal formee vaut « non servie ».
+  factory MajoriteCandidature.depuisJson(Object? brut) {
+    if (brut is! Map) {
+      return MajoriteCandidature.nonServie;
+    }
+    return MajoriteCandidature(
+      servie: true,
+      declaree: brut['declaree'] is bool ? brut['declaree'] as bool : null,
+      attesteeLe: _instant(brut['attesteeLe']),
+    );
+  }
+
+  /// Vrai quand le serveur rend la cle.
+  final bool servie;
+
+  /// Vrai : 18 ans ou plus. Faux : moins de 18 ans. Nul : pas encore declare.
+  final bool? declaree;
+
+  /// L'instant de la declaration, ou `null`.
+  final DateTime? attesteeLe;
+
+  /// Vrai quand la personne doit encore cocher « J'ai 18 ans ou plus ».
+  bool get aAttester => servie && declaree == null;
+
+  /// Vrai quand elle a atteste avoir 18 ans ou plus.
+  bool get attestee => declaree == true;
+
+  /// Vrai quand elle a declare avoir moins de 18 ans.
+  bool get moinsDe18 => declaree == false;
+
+  /// Vrai quand le parcours peut avancer : attestee, ou non servie.
+  bool get permetDAvancer => !servie || attestee;
+
+  @override
+  bool operator ==(Object other) =>
+      other is MajoriteCandidature &&
+      other.servie == servie &&
+      other.declaree == declaree &&
+      other.attesteeLe == attesteeLe;
+
+  @override
+  int get hashCode => Object.hash(servie, declaree, attesteeLe);
+}
+
 /// La candidature d'un compte, telle que `etat_dossier()` la rend.
 @immutable
 class CandidatureDossier {
@@ -265,6 +328,7 @@ class CandidatureDossier {
     this.complementDemandeLe,
     this.peutEnvoyer = false,
     this.envoiBloque = const <String>[],
+    this.majorite = MajoriteCandidature.nonServie,
   });
 
   /// Un compte sans candidature (`{"candidature": false}`), ou un serveur
@@ -302,8 +366,12 @@ class CandidatureDossier {
       complementDemandeLe: _instant(brut['complementDemandeLe']),
       peutEnvoyer: brut['peutEnvoyer'] == true,
       envoiBloque: _codes(brut['envoiBloque']),
+      majorite: MajoriteCandidature.depuisJson(brut['majorite']),
     );
   }
+
+  /// MAJEUR : l'attestation « 18 ans ou plus » ; non servie par un serveur d'avant.
+  final MajoriteCandidature majorite;
 
   /// Vrai quand le compte porte une candidature.
   final bool existe;
@@ -442,7 +510,8 @@ class CandidatureDossier {
       listEquals(other.complementDemande, complementDemande) &&
       other.complementDemandeLe == complementDemandeLe &&
       other.peutEnvoyer == peutEnvoyer &&
-      listEquals(other.envoiBloque, envoiBloque);
+      listEquals(other.envoiBloque, envoiBloque) &&
+      other.majorite == majorite;
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
@@ -466,6 +535,7 @@ class CandidatureDossier {
     complementDemandeLe,
     peutEnvoyer,
     Object.hashAll(envoiBloque),
+    majorite,
   ]);
 }
 

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart' show Override;
 
 import '../../../core/admin/admin_domaine.dart';
 import '../../../core/admin/service_programme.dart';
@@ -17,6 +18,7 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/planning/journee.dart';
 import '../../../core/planning/service_planning.dart';
+import '../../../core/preferences/preferences_locales.dart';
 import '../../../core/presence/service_presence.dart';
 import '../../../core/presence/vue_presence.dart';
 import '../../../core/priere/horaires_priere.dart';
@@ -39,8 +41,10 @@ import '../../../core/widgets/avatar_compte.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/badge_non_lu.dart';
+import '../../../core/widgets/badge_nouveau.dart';
 import '../../../core/widgets/badge_periode_financee.dart';
 import '../../../core/widgets/bandeau_attention.dart';
+import '../../../core/widgets/bandeau_fermable.dart';
 import '../../../core/widgets/bandeau_observation.dart';
 import '../../../core/widgets/barre_precedent_suivant.dart';
 import '../../../core/widgets/barre_selection.dart';
@@ -1431,6 +1435,27 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
     ],
   ),
   EntreeGalerie(
+    nom: 'BadgeNouveau',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'nouveau : arrivee depuis moins de 7 jours, dossier jamais ouvert',
+        (BuildContext _) => const BadgeNouveau(),
+      ),
+      EtatGalerie(
+        'sur une ligne : a cote de l\'etat de la candidature',
+        (BuildContext _) => const Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            BadgeNouveau(),
+            StatusPill(libelle: 'En examen', ton: TonEtat.accent),
+          ],
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
     nom: 'BadgePeriodeFinancee',
     famille: FamilleComposant.composantEtat,
     etats: <EtatGalerie>[
@@ -1476,6 +1501,48 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           titre: "Le paiement n'a pas abouti",
           message: 'Votre sélection est gardée. Réessayez ou changez de moyen.',
           ton: TonEtat.alerte,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BandeauFermable',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      // La memoire de l'appareil est remplacee par une memoire de test : la
+      // galerie n'ouvre aucune base locale.
+      EtatGalerie(
+        'ouvert',
+        (BuildContext _) => ProviderScope(
+          overrides: <Override>[
+            stockagePreferencesProvider.overrideWithValue(
+              StockagePreferencesMemoire(),
+            ),
+          ],
+          child: const BandeauFermable(
+            clef: 'galerie.bandeau-fermable',
+            titre: 'Accès exceptionnel',
+            message: 'Cette ouverture est tracée par la direction.',
+            ton: TonEtat.alerte,
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'deja ferme',
+        (BuildContext _) => ProviderScope(
+          overrides: <Override>[
+            stockagePreferencesProvider.overrideWithValue(
+              StockagePreferencesMemoire(<String, String>{
+                'galerie.bandeau-fermable': 'vu',
+              }),
+            ),
+          ],
+          child: const BandeauFermable(
+            clef: 'galerie.bandeau-fermable',
+            titre: 'Accès exceptionnel',
+            message: 'Cette ouverture est tracée par la direction.',
+            ton: TonEtat.alerte,
+          ),
         ),
       ),
     ],
@@ -1910,8 +1977,11 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext c) => SizedBox(
           height: _hauteurPage,
           child: MediaQuery(
-            data: MediaQuery.of(c)
-                .copyWith(viewInsets: const EdgeInsets.only(bottom: AppSpacing.respiration * 2)),
+            data: MediaQuery.of(c).copyWith(
+              viewInsets: const EdgeInsets.only(
+                bottom: AppSpacing.respiration * 2,
+              ),
+            ),
             child: const PageConversationPleinEcran(
               child: Text('Le fil reste au-dessus du clavier.'),
             ),

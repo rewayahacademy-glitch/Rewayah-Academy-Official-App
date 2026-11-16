@@ -436,6 +436,14 @@ class MessagesMetierDemo implements PortMessagesMetier {
   /// vrai (retour arriere du coeur, tests).
   bool coeurEnEchec = false;
 
+  /// Les depots annules (« Supprimer » sur une bulle en echec), pour les tests.
+  final List<String> depotsAnnules = <String>[];
+
+  @override
+  Future<void> annulerImage(String imageId) async {
+    depotsAnnules.add(imageId);
+  }
+
   @override
   Future<void> envoyerImage(
     String filId,
@@ -483,7 +491,10 @@ class MessagesMetierDemo implements PortMessagesMetier {
   }
 
   @override
-  Future<Map<String, AdresseImage>> urlsMiniatures(String filId) async {
+  Future<Map<String, AdresseImage>> urlsMiniatures(
+    String filId, {
+    bool frais = false,
+  }) async {
     final DateTime fin = DateTime.now().add(const Duration(hours: 1));
     return <String, AdresseImage>{
       for (final MessageCommunication m

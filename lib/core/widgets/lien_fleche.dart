@@ -7,6 +7,38 @@ import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'pressable.dart';
 
+/// L'encre des liens posés sur une surface qui n'est pas celle de la page
+/// (IMAGE-CANDIDAT, directeur, 16/11/2026) : dans la bulle « de soi » de la
+/// messagerie, fond violet de marque, un lien en `inkAccent` était violet sur
+/// violet. Une surface qui change le fond de ses enfants pose cette portée une
+/// fois, avec la fonction `applyTo` de SA paire (la même que son texte) ; tout
+/// `LienFleche` dessous prend cette encre, souligné, l'icône de la même encre.
+/// Un `encre` donné explicitement au lien l'emporte.
+class EncreLienSurFond extends InheritedWidget {
+  /// Pose la portée.
+  const EncreLienSurFond({
+    required TextStyle Function(TextStyle base) this.encre,
+    required super.child,
+    super.key,
+  });
+
+  /// Une surface qui a son propre fond clair (`AppCard`) remet l'encre de lien
+  /// de la page : un lien dans une carte posee dans une bulle « de soi » ne
+  /// prend pas l'encre de la bulle.
+  const EncreLienSurFond.page({required super.child, super.key}) : encre = null;
+
+  /// La fonction `applyTo` de la paire de la surface, ou `null` : encre de la
+  /// page.
+  final TextStyle Function(TextStyle base)? encre;
+
+  /// La portée la plus proche, ou `null` : encre de lien de la page.
+  static EncreLienSurFond? maybeOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<EncreLienSurFond>();
+
+  @override
+  bool updateShouldNotify(EncreLienSurFond ancien) => encre != ancien.encre;
+}
+
 /// Un lien de texte suivi d'une fleche : « Voir tout -> », « Voir
 /// l'historique -> » (manifeste visuel Tuteur V1, section 3.4).
 ///
@@ -90,8 +122,12 @@ class LienFleche extends StatelessWidget {
     final TextStyle base =
         (legende ? textes.labelSmall : textes.labelLarge) ?? const TextStyle();
     final double tailleIcone = legende ? AppSpacing.md : AppSpacing.lg;
+    final EncreLienSurFond? surFond = EncreLienSurFond.maybeOf(context);
     final TextStyle Function(TextStyle) encreLien =
-        encre ?? palette.inkAccent.applyTo;
+        encre ?? surFond?.encre ?? palette.inkAccent.applyTo;
+    // Sur un fond qui n'est pas celui de la page, le lien ne se distingue plus
+    // par sa couleur : il est souligne en permanence.
+    final bool souligneToujours = encre == null && surFond?.encre != null;
     final Color? couleurIcone = encreLien(const TextStyle()).color;
 
     return Pressable.selon(
@@ -128,7 +164,7 @@ class LienFleche extends StatelessWidget {
                   libelle,
                   textAlign: alignerEnFin ? TextAlign.end : null,
                   style: encreLien(base).copyWith(
-                    decoration: etat.survole || etat.focus
+                    decoration: souligneToujours || etat.survole || etat.focus
                         ? TextDecoration.underline
                         : TextDecoration.none,
                   ),

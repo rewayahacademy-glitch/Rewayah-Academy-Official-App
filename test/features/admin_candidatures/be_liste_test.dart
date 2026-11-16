@@ -28,22 +28,20 @@ import 'package:rewayah_academy/core/candidature/port_prevenir_candidats.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/vus/vus_compte.dart';
+import 'package:rewayah_academy/core/widgets/badge_nouveau.dart';
+import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
+import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_candidatures/adresse_candidatures.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
-import 'package:rewayah_academy/features/admin_candidatures/carte_alertes.dart';
-import 'package:rewayah_academy/features/admin_candidatures/carte_attentes.dart';
-import 'package:rewayah_academy/features/admin_candidatures/etat_entete_liste.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart';
-import 'package:rewayah_academy/features/admin_candidatures/ligne_candidature.dart';
-import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../fixtures/candidature/faux_import_candidatures.dart';
 import '../../support/harnais.dart';
 import '../../support/monter_recrutement.dart';
-import '../../support/rangee_plus.dart';
 import 'hote_candidatures.dart';
 
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
@@ -69,16 +67,45 @@ class _FauxAttentes implements PortAttentesRecrutement {
   Future<AttentesRecrutement> lire() async => const AttentesRecrutement(
     parEtat: <EtatCandidature, Attente>{
       EtatCandidature.enExamen: Attente(nombre: 4),
+      EtatCandidature.entretienAPlanifier: Attente(nombre: 2),
+      EtatCandidature.aCompleter: Attente(nombre: 3),
     },
     pieceAValider: Attente(nombre: 2),
+    enPause: 1,
   );
+}
+
+/// Ce que le serveur sait des bandeaux vus par le compte (`lire_vus`,
+/// `marquer_vu`), en memoire.
+class _FauxVus implements PortVus {
+  _FauxVus({this.panne = false});
+
+  /// Vrai : le serveur ne repond pas.
+  final bool panne;
+
+  /// Les cles vues par le compte.
+  final Set<String> vues = <String>{};
+
+  /// Les cles marquees, dans l'ordre.
+  final List<String> marques = <String>[];
+
+  @override
+  Future<Set<String>> lire() async {
+    if (panne) throw StateError('hors ligne');
+    return <String>{...vues};
+  }
+
+  @override
+  Future<void> marquer(String cle) async {
+    if (panne) throw StateError('hors ligne');
+    marques.add(cle);
+    vues.add(cle);
+  }
 }
 
 void main() {
   setUp(() {
     LocaleSettings.setLocaleSync(AppLocale.fr);
-    effacerMemoireAppareil(cleMemoireAttentesRepliees);
-    effacerMemoireAppareil(cleMemoireLectureDepliee);
   });
 
   group('l\'adresse de la liste (fonctions pures)', () {
@@ -170,15 +197,23 @@ void main() {
         lignes: _lignes(),
       );
       await monterCandidatures(tester, port: port);
-      await toucherFiltre(tester, _cle('candidatures-filtre-verification'));
-      await laisser(tester);
+      await ouvrirFeuilleFiltresDeTest(tester);
+      await choisirDansFeuille(
+        tester,
+        'salle',
+        t.recrutement.salles.verification,
+      );
       expect(_adresse(tester).queryParameters, <String, String>{
         'etape': 'verifications',
       });
       expect(port.appels.last.filtre.etape, EtapeCandidature.verifications);
-      // « Toutes » retire le parametre.
-      await toucherFiltre(tester, _cle('candidatures-filtre-toutes'));
-      await laisser(tester);
+      // « Tous » retire le parametre.
+      await ouvrirFeuilleFiltresDeTest(tester);
+      await choisirDansFeuille(
+        tester,
+        'salle',
+        t.admin.candidatures.filtres.tous,
+      );
       expect(_adresse(tester).queryParameters, isEmpty);
     });
 
@@ -189,6 +224,7 @@ void main() {
           lignes: _lignes(),
         );
         await monterCandidatures(tester, port: port);
+        await ouvrirRecherche(tester);
         await tester.enterText(_cle('candidatures-recherche'), 'Numero1');
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await laisser(tester);
@@ -196,8 +232,12 @@ void main() {
         expect(_adresse(tester).queryParameters.containsKey('q'), isFalse);
         expect(_adresse(tester).toString(), isNot(contains('Numero1')));
         // Un autre filtre ecrit l'adresse : la recherche reste celle de la page.
-        await toucherFiltre(tester, _cle('candidatures-filtre-verification'));
-        await laisser(tester);
+        await ouvrirFeuilleFiltresDeTest(tester);
+        await choisirDansFeuille(
+          tester,
+          'salle',
+          t.recrutement.salles.verification,
+        );
         expect(port.appels.last.filtre.recherche, 'Numero1');
         expect(port.appels.last.filtre.etape, EtapeCandidature.verifications);
       },
@@ -270,6 +310,7 @@ void main() {
         ),
       );
       await laisser(tester);
+      await ouvrirRecherche(tester);
       await tester.enterText(_cle('candidatures-recherche'), 'Numero1');
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await laisser(tester);
@@ -343,7 +384,6 @@ void main() {
         invitations: true,
       );
       expect(find.byType(MenuActions), findsOneWidget);
-      expect(find.text(t.recrutement.file.outils), findsOneWidget);
       for (final String cle in <String>[
         'candidatures-invitations',
         'candidatures-prevenir',
@@ -367,7 +407,44 @@ void main() {
     });
 
     testWidgets(
-      'le bandeau « Lecture des deux cotes » : une ligne, depliable',
+      '« J\'ai compris » ferme le bandeau pour de bon, cote compte : aucune icone, aucune memoire d\'appareil',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: _lignes(),
+          capacitesRendues: const CapacitesCandidatures(
+            peutLire: true,
+            peutLireHorsGenre: true,
+          ),
+        );
+        final _FauxVus vus = _FauxVus();
+        await monterCandidatures(
+          tester,
+          port: port,
+          surcharges: [portVusProvider.overrideWithValue(vus)],
+        );
+        final String message = t.admin.candidatures.exception.message;
+        expect(find.text(message), findsOneWidget);
+        await tester.tap(_cle('candidatures-jai-compris'));
+        await laisser(tester);
+        expect(find.text(message), findsNothing);
+        // Marque au serveur, avec la cle du bandeau.
+        expect(vus.marques, <String>['bandeau.deux_cotes']);
+
+        // Un autre appareil, le meme compte : le serveur dit « deja vu », le
+        // bandeau ne revient pas, et aucune icone de rappel n'occupe la rangee.
+        await tester.pumpWidget(const SizedBox());
+        await monterCandidatures(
+          tester,
+          port: port,
+          surcharges: [portVusProvider.overrideWithValue(vus)],
+        );
+        expect(find.text(message), findsNothing);
+        expect(_cle('candidatures-rappel-lecture'), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'si le serveur ne repond pas, le bandeau se montre : il ne disparait jamais par erreur',
       (tester) async {
         await monterCandidatures(
           tester,
@@ -378,94 +455,84 @@ void main() {
               peutLireHorsGenre: true,
             ),
           ),
+          surcharges: [
+            portVusProvider.overrideWithValue(_FauxVus(panne: true)),
+          ],
         );
-        final String titre = t.admin.candidatures.exception.titre;
-        final String message = t.admin.candidatures.exception.message;
-        expect(find.text(titre), findsOneWidget);
-        expect(find.text(message), findsNothing);
-        await tester.tap(_cle('candidatures-exception-bascule'));
-        await laisser(tester);
-        expect(find.text(message), findsOneWidget);
-        await tester.tap(_cle('candidatures-exception-bascule'));
-        await laisser(tester);
-        expect(find.text(message), findsNothing);
+        expect(
+          find.text(t.admin.candidatures.exception.message),
+          findsOneWidget,
+        );
       },
     );
 
-    testWidgets('« Qui attend quoi » se replie et se souvient', (tester) async {
+    testWidgets('le titre est le selecteur : le mot n\'apparait qu\'une fois', (
+      tester,
+    ) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
-        surcharges: [
-          portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
-        ],
+        largeur: 360,
+        hauteur: 800,
       );
-      expect(
-        find.byKey(CarteAttentes.cleLigne(EtatCandidature.enExamen)),
-        findsOneWidget,
-      );
-      await tester.tap(find.text(t.recrutement.file.replier));
-      await laisser(tester);
-      expect(
-        find.byKey(CarteAttentes.cleLigne(EtatCandidature.enExamen)),
-        findsNothing,
-      );
-      // Repliee : une ligne, le titre et ce qui attend l'academie (ici 4).
-      expect(
-        find.textContaining('${t.admin.candidatures.attentes.titre} · 4'),
-        findsOneWidget,
-      );
-      expect(lireMemoireAppareil(cleMemoireAttentesRepliees), '1');
-
-      // Un nouvel ecran (autre session de la page) la retrouve repliee.
-      await tester.pumpWidget(const SizedBox());
-      await monterCandidatures(
-        tester,
-        port: FauxCandidaturesDirection(lignes: _lignes()),
-        surcharges: [
-          portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
-        ],
-      );
-      expect(
-        find.byKey(CarteAttentes.cleLigne(EtatCandidature.enExamen)),
-        findsNothing,
-      );
-      await tester.tap(find.text(t.recrutement.file.afficher));
-      await laisser(tester);
-      expect(
-        find.byKey(CarteAttentes.cleLigne(EtatCandidature.enExamen)),
-        findsOneWidget,
-      );
+      expect(find.text(t.admin.candidatures.titre), findsOneWidget);
     });
 
     testWidgets(
-      'telephone 360 x 800 : carte repliee, la premiere ligne monte (mesure reelle : captures)',
+      'titre, loupe, « Filtres », « Trier » et « Outils » sont sur UNE rangee',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(
+            lignes: _lignes(),
+            capacitesRendues: const CapacitesCandidatures(
+              peutLire: true,
+              peutImporter: true,
+            ),
+          ),
+          largeur: 480,
+          hauteur: 800,
+        );
+        // Le champ est ferme : la loupe est la seule trace de la recherche.
+        expect(_cle('candidatures-recherche'), findsNothing);
+        final double y = tester.getCenter(_cle('candidatures-loupe')).dy;
+        for (final String cle in <String>[
+          'candidatures-filtres',
+          'candidatures-tri',
+        ]) {
+          expect(
+            tester.getCenter(_cle(cle).first).dy,
+            closeTo(y, 2),
+            reason: cle,
+          );
+        }
+        await ouvrirRecherche(tester);
+        expect(_cle('candidatures-recherche'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'a 360, le titre garde sa rangee, la loupe, « Filtres » et « Trier » passent dessous',
       (tester) async {
         await monterCandidatures(
           tester,
           port: FauxCandidaturesDirection(lignes: _lignes()),
+          invitations: true,
           largeur: 360,
           hauteur: 800,
-          invitations: true,
-          surcharges: [
-            portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
-          ],
         );
-        final Finder ligne = find.byKey(cleCandidature('c0'));
-        final double depliee = tester.getTopLeft(ligne).dy;
-        await tester.tap(_cle('candidatures-attentes-bascule'));
-        await laisser(tester);
-        final double repliee = tester.getTopLeft(ligne).dy;
-        debugPrint(
-          'MESURE 360x800 : premiere ligne a $repliee (repliee), $depliee (depliee)',
+        final double y = tester.getCenter(_cle('candidatures-loupe')).dy;
+        expect(
+          tester.getCenter(_cle('candidatures-filtres')).dy,
+          closeTo(y, 2),
         );
-        // Les tests rendent en police de substitution (plus large) : le seuil
-        // de 640 se mesure dans la capture, avec les vraies polices.
-        expect(repliee, lessThan(depliee));
-        // Plus de phrase d'introduction, plus de « A traiter » a zero.
-        expect(find.text(t.admin.candidatures.sousTitre), findsNothing);
-        expect(find.byType(CarteAlertes), findsOneWidget);
-        expect(_cle('candidatures-alertes'), findsNothing);
+        expect(tester.getCenter(_cle('candidatures-tri')).dy, closeTo(y, 2));
+        // Le titre est entier, sur sa propre rangee, au-dessus des icones.
+        expect(find.text(t.admin.candidatures.titre), findsWidgets);
+        expect(
+          tester.getBottomLeft(find.byType(SousNavigationDomaine)).dy,
+          lessThan(y),
+        );
       },
     );
 
@@ -491,92 +558,39 @@ void main() {
       );
     });
 
-    testWidgets(
-      'telephone : le nombre, « Selectionner » et le tri sur une rangee',
-      (tester) async {
-        await monterCandidatures(
-          tester,
-          port: FauxCandidaturesDirection(
-            lignes: _lignes(),
-            capacitesRendues: const CapacitesCandidatures(
-              peutLire: true,
-              genreLecteurConnu: true,
-              peutDecider: true,
-              gestes: <String, bool>{'agirEnLot': true},
-            ),
+    testWidgets('le nombre et « Selectionner » sont sur la meme ligne', (
+      tester,
+    ) async {
+      await monterCandidatures(
+        tester,
+        port: FauxCandidaturesDirection(
+          lignes: _lignes(),
+          capacitesRendues: const CapacitesCandidatures(
+            peutLire: true,
+            genreLecteurConnu: true,
+            peutDecider: true,
+            gestes: <String, bool>{'agirEnLot': true},
           ),
-          largeur: 360,
-          hauteur: 800,
-        );
-        // Une seule rangee (un `Row`) : le nombre, « Selectionner » et le tri.
-        final Finder rangee = find
-            .ancestor(
-              of: _cle('candidatures-total'),
-              matching: find.byType(Row),
-            )
-            .last;
-        for (final String cle in <String>[
-          'candidatures-selectionner',
-          'candidatures-tri',
-        ]) {
-          expect(
-            find.descendant(of: rangee, matching: _cle(cle)),
-            findsOneWidget,
-            reason: cle,
-          );
-        }
-      },
-    );
-
-    testWidgets(
-      'la carte « A traiter » compacte montre ses puces quand un compteur est a servir',
-      (tester) async {
-        await monterCandidatures(
-          tester,
-          port: FauxCandidaturesDirection(
-            lignes: _lignes(),
-            alertes: const CompteursAlertes(
-              informationsManquantes: 3,
-              confirmeesIndisponibles: 0,
-            ),
-          ),
-          largeur: 360,
-          hauteur: 800,
-        );
-        expect(_cle('candidatures-alertes'), findsOneWidget);
-        expect(find.text(t.admin.candidatures.aTraiter), findsNothing);
-      },
-    );
-
-    testWidgets(
-      'telephone : le tri est un menu, il part au serveur et revient a la page 1',
-      (tester) async {
-        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
-          lignes: _lignes(6),
-          taillePage: 2,
-        );
-        await monterCandidatures(
-          tester,
-          port: port,
-          largeur: 360,
-          hauteur: 800,
-        );
-        await tester.ensureVisible(_cle('candidatures-pagination'));
-        await tester.tap(
-          find.bySemanticsLabel(t.admin.candidatures.pagination.suivante),
-        );
-        await laisser(tester);
-        expect(port.appels.last.page, 2);
-        await tester.ensureVisible(_cle('candidatures-tri'));
-        await tester.tap(_cle('candidatures-tri'));
-        await laisser(tester);
-        await tester.tap(find.text(t.admin.candidatures.tri.reception));
-        await laisser(tester);
-        expect(port.appels.last.tri, TriCandidatures.recente);
-        expect(port.appels.last.page, 1);
-        expect(_adresse(tester).queryParameters['tri'], 'recente');
-      },
-    );
+        ),
+        largeur: 360,
+        hauteur: 800,
+      );
+      final Finder rangee = find
+          .ancestor(of: _cle('candidatures-total'), matching: find.byType(Wrap))
+          .first;
+      expect(
+        find.descendant(
+          of: rangee,
+          matching: _cle('candidatures-selectionner'),
+        ),
+        findsOneWidget,
+      );
+      // Plus de bouton « Trier » dans cette ligne.
+      expect(
+        find.descendant(of: rangee, matching: _cle('candidatures-tri')),
+        findsNothing,
+      );
+    });
 
     testWidgets('les cinq outils apparaissent quand le serveur les accorde', (
       tester,
@@ -623,12 +637,112 @@ void main() {
     });
   });
 
-  group('6. une seule file', () {
+  group('6. les files : un seul systeme', () {
+    Future<FauxCandidaturesDirection> monter(
+      WidgetTester tester, {
+      CompteursAlertes? alertes,
+      double largeur = 390,
+    }) async {
+      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+        lignes: _lignes(),
+        alertes: alertes,
+      );
+      await monterCandidatures(
+        tester,
+        port: port,
+        largeur: largeur,
+        surcharges: [
+          portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
+        ],
+      );
+      return port;
+    }
+
+    final Finder menuFile = _cle('candidatures-file-menu');
+
+    /// Le texte du declencheur : la file choisie et son nombre.
+    String texteMenu(WidgetTester tester) => tester
+        .widgetList<Text>(
+          find.descendant(of: menuFile, matching: find.byType(Text)),
+        )
+        .map((Text x) => x.data ?? '')
+        .join('|');
+
+    Future<void> ouvrirMenuFile(WidgetTester tester) async {
+      await tester.tap(menuFile);
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> choisirFile(WidgetTester tester, String libelle) async {
+      await ouvrirMenuFile(tester);
+      await tester.tap(find.textContaining('$libelle · ').last);
+      await laisser(tester);
+    }
+
+    final e = t.admin.candidatures.etats;
+
+    testWidgets('un seul menu « File » : la file choisie et son nombre', (
+      tester,
+    ) async {
+      await monter(tester);
+      // Une seule commande pour les files, pas une rangee de puces.
+      expect(menuFile, findsOneWidget);
+      expect(find.byType(FilterPill), findsNothing);
+      expect(
+        texteMenu(tester),
+        contains('${t.admin.candidatures.filtres.toutes} · 3'),
+      );
+      // Les files avec leur nombre ; un nombre a zero : pas d'entree.
+      await ouvrirMenuFile(tester);
+      for (final String l in <String>[
+        e.enExamen,
+        t.recrutement.file.pieceCourt,
+        e.entretienAPlanifier,
+        e.aCompleter,
+        e.enPause,
+        t.admin.candidatures.filtres.toutes,
+      ]) {
+        expect(find.textContaining(l), findsWidgets, reason: l);
+      }
+      expect(find.textContaining(e.decisionEnAttente), findsNothing);
+      // Les deux anciennes cartes ont disparu.
+      expect(find.text(t.admin.candidatures.attentes.titre), findsNothing);
+      expect(find.text(t.admin.candidatures.aTraiter), findsNothing);
+    });
+
+    testWidgets('une file choisie est la seule ; « Toutes » la relache', (
+      tester,
+    ) async {
+      final FauxCandidaturesDirection port = await monter(tester);
+      await choisirFile(tester, e.aCompleter);
+      final FiltreCandidatures f = port.appels.last.filtre;
+      expect(f.etat, EtatCandidature.aCompleter);
+      expect(f.issue, IssueCandidature.enCours);
+      expect(f.enPause, isFalse);
+      expect(texteMenu(tester), contains('${e.aCompleter} · 3'));
+      // Une autre file remplace la premiere.
+      await choisirFile(tester, e.enExamen);
+      expect(port.appels.last.filtre.etat, EtatCandidature.enExamen);
+      expect(texteMenu(tester), contains('${e.enExamen} · 4'));
+      // « Toutes » : plus de file ; son nombre reste celui de la portee.
+      await choisirFile(tester, t.admin.candidatures.filtres.toutes);
+      expect(port.appels.last.filtre.etat, isNull);
+      expect(port.appels.last.filtre.issue, isNull);
+      expect(
+        texteMenu(tester),
+        contains('${t.admin.candidatures.filtres.toutes} · 3'),
+      );
+    });
+
     testWidgets(
-      '« Piece d\'identite a valider » filtre la meme liste sur pieceEnAttente',
+      '« Nouveaux » : le badge sur la ligne, la file avec son nombre',
       (tester) async {
         final FauxCandidaturesDirection port = FauxCandidaturesDirection(
-          lignes: _lignes(),
+          lignes: <LigneCandidature>[
+            ligneTest(id: 'c0', nom: 'Personne Numero0', nouveau: true),
+            ligneTest(id: 'c1', nom: 'Personne Numero1', nouveau: true),
+            ligneTest(id: 'c2', nom: 'Personne Numero2'),
+          ],
         );
         await monterCandidatures(
           tester,
@@ -637,24 +751,198 @@ void main() {
             portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
           ],
         );
-        await tester.ensureVisible(find.byKey(CarteAttentes.clePiece));
+        // Le badge est sur les deux lignes nouvelles, pas sur la troisieme.
+        expect(find.byType(BadgeNouveau), findsNWidgets(2));
+        expect(find.text(t.commun.nouveau), findsNWidgets(2));
+        // La file « Nouveaux · 2 » est dans le menu File.
+        await ouvrirMenuFile(tester);
+        expect(
+          find.textContaining('${t.recrutement.file.nouveaux} · 2'),
+          findsOneWidget,
+        );
+        await tester.tap(
+          find.textContaining('${t.recrutement.file.nouveaux} · 2'),
+        );
         await laisser(tester);
-        await tester.tap(find.byKey(CarteAttentes.clePiece));
-        await laisser(tester);
-        // On est toujours sur la liste, filtree ; aucune autre page.
-        expect(find.byType(CandidaturesPage), findsOneWidget);
         final FiltreCandidatures f = port.appels.last.filtre;
-        expect(f.pieceEnAttente, isTrue);
+        expect(f.nouveau, isTrue);
         expect(f.issue, IssueCandidature.enCours);
-        expect(f.enPause, isFalse);
-        expect(f.etape, isNull);
-        expect(_adresse(tester).queryParameters, <String, String>{
-          'issue': 'enCours',
-          'pause': 'non',
-          'piece': 'oui',
-        });
+        expect(f.etat, isNull);
+        expect(_adresse(tester).queryParameters['nouveau'], 'oui');
+        expect(
+          texteMenu(tester),
+          contains('${t.recrutement.file.nouveaux} · 2'),
+        );
+        // Seules les deux lignes nouvelles restent.
+        expect(find.byType(BadgeNouveau), findsNWidgets(2));
+        expect(find.text('Personne Numero2'), findsNothing);
       },
     );
+
+    testWidgets('sans nouvelle candidature : ni file « Nouveaux » ni badge', (
+      tester,
+    ) async {
+      await monter(tester);
+      expect(find.byType(BadgeNouveau), findsNothing);
+      await ouvrirMenuFile(tester);
+      expect(find.textContaining(t.recrutement.file.nouveaux), findsNothing);
+    });
+
+    testWidgets('« Piece a valider » filtre la meme liste sur pieceEnAttente', (
+      tester,
+    ) async {
+      final FauxCandidaturesDirection port = await monter(tester);
+      await choisirFile(tester, t.recrutement.file.pieceCourt);
+      expect(find.byType(CandidaturesPage), findsOneWidget);
+      final FiltreCandidatures f = port.appels.last.filtre;
+      expect(f.pieceEnAttente, isTrue);
+      expect(f.issue, IssueCandidature.enCours);
+      expect(f.enPause, isFalse);
+      expect(f.etat, isNull);
+      expect(_adresse(tester).queryParameters, <String, String>{
+        'issue': 'enCours',
+        'pause': 'non',
+        'piece': 'oui',
+      });
+      expect(
+        texteMenu(tester),
+        contains('${t.recrutement.file.pieceCourt} · 2'),
+      );
+    });
+
+    testWidgets(
+      'les alertes que le serveur ne sait pas filtrer : puces a plus de zero, jamais touchables',
+      (tester) async {
+        await monter(
+          tester,
+          alertes: const CompteursAlertes(
+            confirmeesIndisponibles: 5,
+            entretiensEnRetard: 0,
+            bloquees: 2,
+            informationsManquantes: 9,
+          ),
+        );
+        // Des pastilles d'etat : ni puce, ni bouton, rien ne se touche.
+        expect(
+          tester
+              .widget<StatusPill>(_cle('candidatures-file-alerte-confirmees'))
+              .libelle,
+          '${t.recrutement.file.confirmeesIndisponibles} 5',
+        );
+        expect(
+          tester
+              .widget<StatusPill>(_cle('candidatures-file-alerte-bloquees'))
+              .libelle,
+          '${t.admin.candidatures.alertes.bloquees} 2',
+        );
+        // Zero : pas de puce. « Informations manquantes » n'est pas une file
+        // (elle repetait « A completer »).
+        expect(_cle('candidatures-file-alerte-retard'), findsNothing);
+        expect(
+          find.text(t.admin.candidatures.alertes.informationsManquantes),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'l\'icone « Filtres » dit et montre le nombre de filtres poses',
+      (tester) async {
+        await monter(tester);
+        expect(_cle('candidatures-filtres-nombre'), findsNothing);
+        await ouvrirFeuilleFiltresDeTest(tester);
+        await choisirDansFeuille(
+          tester,
+          'genre',
+          t.admin.candidatures.genres.male,
+        );
+        expect(_cle('candidatures-filtres-nombre'), findsOneWidget);
+        expect(
+          find.bySemanticsLabel(t.recrutement.file.filtresPoses(n: 1)),
+          findsOneWidget,
+        );
+        // Une file choisie n'est pas un filtre de plus.
+        await choisirFile(tester, e.enExamen);
+        expect(
+          find.bySemanticsLabel(t.recrutement.file.filtresPoses(n: 1)),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('la feuille « Filtres » dit les phrases des files, en petit', (
+      tester,
+    ) async {
+      await monter(tester);
+      await ouvrirFeuilleFiltresDeTest(tester);
+      expect(
+        find.descendant(
+          of: _cle('feuille-filtres-file-piece'),
+          matching: find.text(t.admin.candidatures.attentes.pieceAide),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: _cle('feuille-filtres-file-etat-entretien_a_planifier'),
+          matching: find.text(t.admin.candidatures.attentes.aucunCreneau),
+        ),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets(
+      'la feuille « Filtres » porte tous les filtres, « Effacer » les rend',
+      (tester) async {
+        final FauxCandidaturesDirection port = await monter(tester);
+        await ouvrirFeuilleFiltresDeTest(tester);
+        for (final String cle in <String>[
+          'salle',
+          'etat',
+          'issue',
+          'pause',
+          'versement',
+          'piece',
+          'responsable',
+          'genre',
+          'pays',
+          'ijaza',
+          'langue',
+          'riwaya',
+          'public',
+          'heure-de',
+          'heure-a',
+          'jours-min',
+          'competence',
+          'competence-niveau',
+          'competence-disponibilite',
+          'competence-accord',
+        ]) {
+          expect(_cle('feuille-filtre-$cle'), findsOneWidget, reason: cle);
+        }
+        // Les jours : un ou plusieurs.
+        await tester.ensureVisible(_cle('feuille-jour-3'));
+        await tester.tap(_cle('feuille-jour-3'));
+        await laisser(tester);
+        await tester.tap(_cle('feuille-jour-5'));
+        await laisser(tester);
+        expect(port.appels.last.filtre.jours, <int>[3, 5]);
+        await tester.ensureVisible(_cle('feuille-filtres-effacer'));
+        await tester.tap(_cle('feuille-filtres-effacer'));
+        await laisser(tester);
+        expect(port.appels.last.filtre.jours, isNull);
+        expect(port.appels.last.filtre.estVide, isTrue);
+      },
+    );
+
+    testWidgets('les reponses se filtrent par la feuille : l\'ijaza', (
+      tester,
+    ) async {
+      final FauxCandidaturesDirection port = await monter(tester);
+      await ouvrirFeuilleFiltresDeTest(tester);
+      await choisirDansFeuille(tester, 'ijaza', 'oui');
+      expect(port.appels.last.filtre.ijaza, 'oui');
+    });
   });
 }
 

@@ -243,6 +243,7 @@ import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
 import 'core/video/releve_qualite.dart';
 import 'core/video/releve_qualite_supabase.dart';
+import 'core/vus/vus_compte.dart' show VusSupabase, portVusProvider;
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
@@ -711,6 +712,9 @@ List<Override> _surchargesAppReelle() => <Override>[
   portThemeCompteProvider.overrideWithValue(
     ThemeCompteSupabase(Supabase.instance.client),
   ),
+  // Ce que le compte a deja vu, cote serveur (VU-UNE-FOIS, #541) : un bandeau
+  // ferme ne revient jamais, sur aucun appareil.
+  portVusProvider.overrideWithValue(VusSupabase(Supabase.instance.client)),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),

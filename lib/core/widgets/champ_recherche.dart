@@ -30,6 +30,7 @@ class ChampRecherche extends StatelessWidget {
     this.focusNode,
     this.onChange,
     this.onValider,
+    this.compact = false,
   });
 
   /// Le texte cherche ; l'appelant l'ecoute, ou passe [onChange].
@@ -41,6 +42,11 @@ class ChampRecherche extends StatelessWidget {
 
   /// L'aide dans le champ vide (« Nom, Classe ou dossier »).
   final String aide;
+
+  /// Vrai : un champ d'une ligne de 48, le mot dans le champ, sans etiquette
+  /// flottante ni aide visible (l'etiquette reste dite au lecteur d'ecran),
+  /// pour tenir sur la meme ligne que deux boutons d'icone.
+  final bool compact;
 
   /// La cle du champ de saisie, pour les tests de l'ecran.
   final Key? cleChamp;
@@ -117,7 +123,8 @@ class ChampRecherche extends StatelessWidget {
     final r = t.commun.recherche;
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
-        final bool dehors = _etiquetteDehors(context, contraintes.maxWidth);
+        final bool dehors =
+            !compact && _etiquetteDehors(context, contraintes.maxWidth);
         final Widget champ = ValueListenableBuilder<TextEditingValue>(
           valueListenable: controleur,
           builder: (BuildContext context, TextEditingValue valeur, Widget? _) =>
@@ -130,8 +137,19 @@ class ChampRecherche extends StatelessWidget {
                 onChanged: onChange,
                 onSubmitted: onValider,
                 decoration: InputDecoration(
-                  labelText: dehors ? null : libelle,
-                  hintText: aide,
+                  labelText: dehors || compact ? null : libelle,
+                  hintText: compact ? libelle : aide,
+                  isDense: compact,
+                  constraints: compact
+                      ? const BoxConstraints.tightFor(
+                          height: AppTouchTarget.standard,
+                        )
+                      : null,
+                  contentPadding: compact
+                      ? const EdgeInsetsDirectional.symmetric(
+                          horizontal: AppSpacing.lg,
+                        )
+                      : null,
                   // L'aide passe a la ligne dans le champ au lieu d'etre tronquee.
                   hintMaxLines: _lignesAide,
                   prefixIcon: ExcludeSemantics(

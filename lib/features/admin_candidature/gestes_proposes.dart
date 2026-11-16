@@ -79,7 +79,10 @@ bool gestePermisPourLigne(
     case GesteCandidature.cloreComplement:
       return sansPause && etape == EtapeCandidature.verifications;
     case GesteCandidature.admettreVerifications:
-      return sansPause && enExamen;
+      // GESTES-RAISON (pilote, 16/11/2026) : la regle du serveur est « en
+      // examen ET versement compatible ». Un bouton qui ne peut pas aboutir
+      // n'est pas rendu (K-56) ; la phrase sous la rangee dit pourquoi.
+      return sansPause && enExamen && l.paiement == EtatVersement.compatible;
     case GesteCandidature.confirmerMoyenPaiement:
       return sansPause &&
           l.paiement == EtatVersement.aVerifier &&
@@ -138,6 +141,89 @@ GesteCandidature? _prochaine(
     return GesteCandidature.admettreVerifications;
   }
   return null;
+}
+
+/// Pourquoi la rangee des gestes montre ce qu'elle montre (GESTES-RAISON,
+/// directeur, 16/11/2026 : « je n'arrive pas a comprendre le pattern de ces
+/// 3 boutons, parfois je les vois parfois non »). **Une seule fonction**,
+/// calculee sur le meme etat que la table des gestes : l'ecran n'a pas sa
+/// propre copie de la regle.
+enum RaisonGestes {
+  /// Le compte ne peut pas decider de ce dossier.
+  droit,
+
+  /// Le dossier est ferme (refuse, retire, termine).
+  fermee,
+
+  /// Le dossier est en pause.
+  pause,
+
+  /// La personne doit encore completer son dossier.
+  attenteCandidat,
+
+  /// Aucun moyen de versement possible pour l'instant.
+  versementImpossible,
+
+  /// Un moyen de versement reste a confirmer.
+  versementAConfirmer,
+
+  /// Des points du dossier manquent avant d'accepter.
+  controlesManquants,
+
+  /// En Salle d'examen, tout est en ordre pour decider.
+  pretADecider,
+
+  /// Retenu pour l'entretien, a planifier.
+  entretienAPlanifier,
+
+  /// Entretien planifie, pas encore tenu.
+  entretienPlanifie,
+
+  /// Entretien tenu, la decision attend la direction.
+  decisionAttendue,
+
+  /// Aucune decision a prendre a cette etape.
+  aucuneDecision,
+}
+
+/// La raison de la rangee des gestes pour [l]. [accepterPropose] : le geste
+/// d'accepter est propose ; [controlesBloquants] : des controles faux le
+/// retiennent (les noms viennent du dossier, jamais devines ici).
+RaisonGestes raisonDesGestes(
+  LigneCandidature l, {
+  required bool peutDecider,
+  required bool accepterPropose,
+  required bool controlesBloquants,
+}) {
+  if (!peutDecider) return RaisonGestes.droit;
+  if (l.issue != IssueCandidature.enCours) return RaisonGestes.fermee;
+  if (l.enPause) return RaisonGestes.pause;
+  switch (l.etat) {
+    case EtatCandidature.aCompleter:
+      return RaisonGestes.attenteCandidat;
+    case EtatCandidature.paiementNonDisponible:
+      return RaisonGestes.versementImpossible;
+    case EtatCandidature.enExamen:
+      if (l.paiement == EtatVersement.aVerifier) {
+        return RaisonGestes.versementAConfirmer;
+      }
+      if (l.paiement != EtatVersement.compatible) {
+        return RaisonGestes.versementImpossible;
+      }
+      return controlesBloquants && !accepterPropose
+          ? RaisonGestes.controlesManquants
+          : RaisonGestes.pretADecider;
+    case EtatCandidature.entretienAPlanifier:
+      return RaisonGestes.entretienAPlanifier;
+    case EtatCandidature.entretienPlanifie:
+      return RaisonGestes.entretienPlanifie;
+    case EtatCandidature.decisionEnAttente:
+      return controlesBloquants && !accepterPropose
+          ? RaisonGestes.controlesManquants
+          : RaisonGestes.decisionAttendue;
+    case null:
+      return RaisonGestes.aucuneDecision;
+  }
 }
 
 /// L'ordre du menu des autres gestes.

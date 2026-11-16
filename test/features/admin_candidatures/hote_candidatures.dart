@@ -93,3 +93,44 @@ Future<void> toucherOutil(WidgetTester tester, String libelle) async {
   await tester.tap(find.text(libelle));
   await laisser(tester);
 }
+
+/// BE-LISTE-2 : ouvre le champ de recherche par la loupe (il ne s'ouvre qu'au
+/// toucher).
+Future<void> ouvrirRecherche(WidgetTester tester) async {
+  await tester.tap(find.byKey(CandidaturesPage.cleLoupe));
+  await laisser(tester);
+}
+
+/// BE-LISTE-2 : ouvre la feuille « Filtres » par son icone.
+Future<void> ouvrirFeuilleFiltresDeTest(WidgetTester tester) async {
+  await tester.ensureVisible(find.byKey(CandidaturesPage.cleFiltres));
+  await tester.tap(find.byKey(CandidaturesPage.cleFiltres));
+  await laisser(tester);
+}
+
+/// BE-LISTE-2 : dans la feuille « Filtres » ouverte, choisit [libelle] dans le
+/// menu [cle] (par exemple `etat`), puis ferme la feuille.
+Future<void> choisirDansFeuille(
+  WidgetTester tester,
+  String cle,
+  String libelle,
+) async {
+  final Finder menu = find.byKey(ValueKey<String>('feuille-filtre-$cle'));
+  await tester.ensureVisible(menu);
+  await laisser(tester);
+  await tester.tap(menu);
+  await laisser(tester);
+  await tester.tap(find.text(libelle).last);
+  await laisser(tester);
+  await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+  await laisser(tester);
+}
+
+/// BE-LISTE-2 : le tri se choisit dans la feuille « Trier ».
+Future<void> choisirTri(WidgetTester tester, String libelle) async {
+  await tester.ensureVisible(find.byKey(CandidaturesPage.cleTri));
+  await tester.tap(find.byKey(CandidaturesPage.cleTri));
+  await laisser(tester);
+  await tester.tap(find.text(libelle).last);
+  await laisser(tester);
+}

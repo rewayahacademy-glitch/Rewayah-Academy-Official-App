@@ -310,8 +310,14 @@ declare
     'lister_a_prevenir_candidats(boolean,integer)',
     'lister_formulaires_importes(jsonb,integer)',
     'lister_candidatures(jsonb,text,integer)',
+    -- LP-1 (16/11) : la liste des enseignants, meme garde et meme audit que lister_candidatures.
+    'lister_enseignants(jsonb,text,integer)',
     -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
     'voisins_candidature(text,jsonb,text)',
+    -- MAJEUR (16/11) : le candidat atteste avoir 18 ans ou plus ; il n'ecrit que sa propre candidature (une declaration, une pause si moins de 18 ans) ; garde positive : titulaire d'une candidature d'enseignant en cours, compte valide.
+    'attester_majorite(boolean)',
+    -- MAJEUR (16/11) : la direction remet a zero la declaration « 18 ans ou plus » d'une candidature (motif obligatoire, version attendue, pause de l'age levee) ; garde positive : direction active seule ; tracee (engagement, reprise, journal).
+    'rouvrir_declaration_majorite_candidat(uuid,integer,text)',
     'lister_rapprochements_candidats(integer)',
     'indicateurs_admin()',
     -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).
@@ -528,6 +534,9 @@ declare
     -- NOUVEAUTES (07/11) : la personne a ouvert une fonctionnalite signalee
     -- (garde positive app_account_valid() et role de la ligne ; idempotent).
     'marquer_nouveaute_vue(text)',
+    -- VU-UNE-FOIS (16/11) : la personne a vu une aide ou une explication, une fois pour toute la vie
+    -- du compte (garde positive app_account_valid(), cle au format borne, 200 cles au plus ; idempotent).
+    'marquer_vu(text)',
     -- PHOTO-FIGEE (07/11) : la direction lit la photo figee d'un dossier de
     -- candidature (garde positive app_role() = 'admin' et app_account_valid(),
     -- genre du lecteur ; journalise l'exception super admin, d'ou VOLATILE).

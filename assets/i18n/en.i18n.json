@@ -1,5 +1,6 @@
 {
   "commun": {
+    "nouveau": "New",
     "langue": {
       "systeme": "System",
       "francais": "Français",
@@ -2615,6 +2616,39 @@
     }
   },
   "recrutement": {
+    "majeur": {
+      "titre": "Before you start",
+      "explication": "Recruitment of teachers is reserved for people aged 18 and over.",
+      "coche": "I am 18 or older.",
+      "lienMoins18": "I am under 18",
+      "pourquoiBloque": "Tick the box to continue.",
+      "echec": "Your answer is not confirmed. Nothing was saved: try again in a moment.",
+      "dejaFaite": "Your answer is already saved. If it is wrong, write to the administration.",
+      "portail": {
+        "titre": "One thing to confirm",
+        "explication": "To continue your application, confirm that you are 18 or older."
+      },
+      "confirmer": {
+        "titre": "Are you under 18?",
+        "explication": "Recruitment is reserved for people aged 18 and over. Your application will be paused. Nothing is deleted.",
+        "action": "Yes, I am under 18",
+        "retour": "No, go back"
+      },
+      "moins18": {
+        "titre": "Thank you for being honest",
+        "texte": "Recruitment of teachers is reserved for people aged 18 and over. Your application is paused. Nothing is deleted."
+      }
+    },
+    "suivant": {
+      "position": "{rang} of {total}",
+      "precedent": "Previous file",
+      "suivant": "Next file",
+      "decisionEnregistree": "Decision saved. The next file opens in a moment.",
+      "rester": "Stay on this file",
+      "fin": "That was the last file in this queue.",
+      "versListe": "Back to the list",
+      "reglage": "Move to the next file after a decision"
+    },
     "dossier3": {
       "pastille": {"bon": "Good", "aVoir": "To check", "manque": "Missing"},
       "situation": {
@@ -2660,12 +2694,17 @@
       "raison": {
         "droit": "You cannot decide on this file.",
         "fermee": "The file is closed.",
-        "pause": "The file is paused.",
-        "attente": "Waiting for the person's reply.",
-        "manque": "Missing: {liste}.",
-        "etape": "Not possible at this stage."
+        "pause": "Paused: resume the file to act.",
+        "attente": "Waiting for the candidate: they are completing their file.",
+        "manque": "Accept: still to settle: {liste}.",
+        "etape": "No decision to make at this stage.",
+        "versement": "Accept: payout is not yet possible.",
+        "versementAConfirmer": "Accept: the payout method is still to be confirmed.",
+        "pret": "The file is ready: you can decide.",
+        "entretienAPlanifier": "Kept for the interview: it still has to be scheduled.",
+        "entretienPlanifie": "Interview scheduled: the decision comes after the interview.",
+        "decisionAttendue": "Interview held: the decision is waiting for you."
       },
-      "legendeRaison": "{geste}: {raison}",
       "photoAgrandir": "View {deNom} photo full size"
     },
     "file": {
@@ -2674,7 +2713,38 @@
       "afficher": "Show",
       "replier": "Collapse",
       "trier": "Sort",
-      "pieceSansAttente": "No ID document to validate"
+      "pieceSansAttente": "No ID document to validate",
+      "filtres": "Filters",
+      "filtresPoses": {
+        "one": "Filters, {n} applied",
+        "other": "Filters, {n} applied"
+      },
+      "jaiCompris": "Got it",
+      "files": "Queues",
+      "pieceCourt": "ID to validate",
+      "fileMenu": "Queue",
+      "nouveaux": "New",
+      "pasNouveaux": "Not new",
+      "confirmeesIndisponibles": "Confirmed, unavailable",
+      "piece": "ID document",
+      "responsable": "Owner",
+      "responsableMoi": "Me",
+      "responsableAucun": "Nobody",
+      "ijaza": "Ijaza",
+      "langue": "Language of explanation",
+      "riwaya": "Riwaya",
+      "public": "Target audience",
+      "jours": "Available days",
+      "heureDe": "From",
+      "heureA": "Until",
+      "joursMin": "At least days",
+      "joursMinN": {
+        "one": "At least {n} day",
+        "other": "At least {n} days"
+      },
+      "salle": "Room",
+      "toutesLesFiles": "All",
+      "rechercher": "Search"
     },
     "nomLatin": {
       "titre": "Your name in Latin letters",
@@ -4348,7 +4418,14 @@
           "misesAJour": "Last updated on {date}."
         },
         "pieceIllisible": "Unreadable format: this document (HEIC photo or PDF) does not display on a computer. Ask for a new document, as a JPEG or PNG photo.",
-        "demanderNouvellePiece": "Ask for a new ID document"
+        "demanderNouvellePiece": "Ask for a new ID document",
+        "pieceAgrandir": "Open the ID document full size",
+        "pieceImage": "Image",
+        "pieceFichier": "File",
+        "piecePdf": "PDF file",
+        "pieceOuvrirPdf": "Open the PDF of the ID document",
+        "pieceTitre": "ID document of {nom}",
+        "pieceDecisionPlusTard": "The document is decided in the Verification and interview room."
       },
       "controles": {
         "noms": {
@@ -12190,6 +12267,10 @@
         "aimeParVous": "Liked by you",
         "aimes": "Likes: {n}",
         "coeurEchec": "Your like is not confirmed. Try again in a moment.",
+        "photoApercu": "Photo",
+        "nonConfirmeToucher": "Not confirmed · Tap to try again",
+        "supprimerEchec": "Delete",
+        "actionsEchec": "Actions for the unconfirmed message",
         "refus": {
           "demandeInvalide": "This image is not confirmed: its size or format is not what was expected. Choose another photo.",
           "typeRefuse": "This file type is not accepted. Choose a JPEG, PNG or WebP photo.",
@@ -12204,7 +12285,7 @@
           "stockageIndisponible": "Image storage is not answering right now: it is not your device. Try again in a few minutes.",
           "confirmationIndisponible": "Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.",
           "depotImpossible": "The image is not confirmed: this is a server fault, not yours. Try again in a moment.",
-          "envoiStockage": "Storage refused the image (expired address or interrupted upload). Try again.",
+          "envoiStockage": "The image could not be sent. Try again later.",
           "reseau": "The image may not have reached Rewayah. Try again in a moment.",
           "imageTropGrosse": "This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.",
           "imageIllisible": "This photo cannot be read. Choose another photo."

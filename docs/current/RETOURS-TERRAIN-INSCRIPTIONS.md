@@ -70,3 +70,19 @@ Les élèves sont la population qui aura le plus besoin de listes. La liste des 
 | R24 | 16/11 | Le dossier d'un élève adulte ou d'une famille ne montre à la direction que le nom et la date. | Les réponses de la demande ne sont pas affichées côté direction. | 9 demandes en attente | À faire après les enseignants (directeur, 16/11) | Afficher les réponses de la demande, comme le dossier d'un candidat |
 | R25 | 16/11 | Des invitations de candidats ne sont jamais arrivées. | Adresses saisies avec une faute dans le formulaire papier (gmail.coma, gamil.com, gmail.co, geml.com, mail.com au lieu de gmail.com) : dizaines d'avis de non-distribution. | Candidats concernés, nombre en cours de relevé | Aucun encore : corriger les adresses à la main ou par l'agent IA ; contrôler le domaine à la saisie | Contrôler le domaine de l'adresse à l'inscription (« Vouliez-vous dire gmail.com ? ») |
 | R26 | 16/11 | Un candidat a corrigé son pays de versement (Royaume-Uni, virement) ; le dossier dit « paiement confirmé » mais le bandeau « versement impossible » reste, et la direction n'a que « Refuser ». | Le recalcul du paiement passait la colonne à « compatible » sans faire repartir le dossier ; le correctif (transition 9 quand la cause est la réponse du candidat) n'a été installé qu'à 13:11 UTC ; les quatre avaient corrigé entre 06:55 et 10:47. | CAND-00019, CAND-00126, CAND-00137, CAND-00419 | Migration de rattrapage demandée à BE-S1 (20261128750000), calquée sur `be_versement_recalcul`. Leçon : quand un correctif change une règle, rattraper le jour même ceux que l'ancienne règle a laissés coincés. | Une correction faite par un parent doit faire repartir son dossier tout de suite ; toute règle nouvelle s'accompagne d'un rattrapage des dossiers déjà coincés. |
+
+## Pour les élèves : leçons de la messagerie (pilote de la messagerie, 16/11/2026)
+
+Ajout seulement : les lignes ci-dessous ne remplacent rien d'autre dans ce document.
+Détail : `MESSAGERIE-ETAT-ET-PLAN-2026-11-16.md`.
+
+- **M1. Une conversation s'ouvre de partout.** Une famille écrira depuis la classe, la fiche de
+  l'élève, la cloche ou la page Messages. Ces entrées doivent toutes avoir la même mise en page et le
+  même comportement, et toutes figurer dans `MESSAGERIE-MATRICE.md`.
+- **M2. Un message non envoyé reste à sa place.** Il garde un « ! » et propose « Réessayer » et
+  « Supprimer ». Il ne passe jamais en bas de la conversation, où il cacherait les nouveaux messages.
+- **M3. Une photo envoyée depuis un navigateur exige une règle d'origine (CORS) sur le compartiment
+  de stockage.** Sans elle, l'envoi échoue sans bruit, et la base garde des images « en attente »
+  jamais confirmées. À vérifier avant d'ouvrir les photos aux familles.
+- **M4. Un texte écrit par une personne peut mêler l'arabe et le français.** Avis, message, nom :
+  l'affichage doit poser l'arabe dans sa langue, de droite à gauche, sans jamais retoucher le texte.
