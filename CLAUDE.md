@@ -124,15 +124,16 @@ scénarios `supabase/tests/scenarios_*.sql` (30 sur 154 au 31/10/2026, nommés u
 (voir `deploy.yml`) ; la base distante enregistre des versions horodatées, pas la
 numérotation `00xx` du dépôt.
 
-**Migration sur staging annulée (`cancelled` ou délai de 60 s) alors que le directeur a
-accepté** : le serveur Supabase demande une seconde confirmation pour tout `DELETE`, `DROP`
-ou `TRUNCATE`, et l'app ne l'affiche pas. Compter ces mots avant d'appeler `apply_migration` ;
-au-dessus de 0, le directeur colle le fichier dans l'éditeur SQL de staging, puis Claude
-vérifie. **Règle du directeur (23/10/2026)** : ce qu'il doit coller lui est toujours donné par une
-page privée (outil Artifact) fabriquée par `tool/page_migrations/generer.py` (ordre, un bouton
-Copier par fichier enveloppé contre les fins de ligne de Windows, coches, consignes en mots
-simples), avec l'ordre et les consignes rappelés dans la conversation. Détail :
-`docs/orchestration/LECONS-MIGRATIONS-STAGING.md`.
+**Installer une migration en production (directeur, 16/11/2026, consigne 21) : c'est l'agent qui
+l'installe, plus le directeur.** Le directeur n'a jamais demandé à coller lui-même les migrations ; cette
+pratique venait des agents. Le pilote, ou l'agent chargé du lot, installe la migration avec
+`apply_migration` quand elle est nécessaire, en suivant à la lettre la checklist « Installer une
+migration en production » de `supabase/CLAUDE.md`, puis vérifie en production et en rend compte.
+Aucune erreur n'est admise en base (« Make no mistakes in the data base »). Le serveur Supabase demande
+une seconde confirmation pour tout `DELETE`, `DROP` ou `TRUNCATE` : compter ces mots avant d'appeler
+`apply_migration` ; au-dessus de 0 (seule exception admise : la réécriture d'un CHECK), s'arrêter et en
+parler au directeur. La page à coller (`tool/page_migrations/generer.py`, règle du 23/10) ne sert plus
+que si le directeur la demande. Détail historique : `docs/orchestration/LECONS-MIGRATIONS-STAGING.md`.
 
 ## État du code à connaître
 

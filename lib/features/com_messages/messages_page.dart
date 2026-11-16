@@ -49,6 +49,7 @@ import '../com_vocal/port_enregistreur_vocal.dart';
 import 'bandeau_messages_hors_direct.dart';
 import 'barre_conversation.dart';
 import 'fil_contextuel.dart';
+import 'images_du_fil.dart';
 import 'liste_fils.dart';
 import 'panneau_contexte_fil.dart';
 import 'port_messages_metier.dart';
@@ -608,6 +609,10 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
       onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
       onRetour: widget.onRetourFil,
       pleinEcran: widget.pleinEcran,
+      images: imagesDuFil(ref, fil.id).source,
+      onAimer: imagesDuFil(ref, fil.id).aimer,
+      onEnvoyerImage: imagesDuFil(ref, fil.id).envoyer,
+
       // COM-FUS : le composer vocal seulement si la capacite `envoyerVocal`
       // est ouverte (COM-BR-16) ; fermee en production, rien n'est rendu.
       onEnvoyerVocal: vocalOuvert(ref)

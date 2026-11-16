@@ -139,39 +139,54 @@ class _ChoixEtat extends ConsumerState<ChoixCreneauEntretien> {
     final TextStyle corps =
         Theme.of(context).textTheme.bodyLarge ?? const TextStyle();
     void relire() => ref.invalidate(creneauxOuvertsProvider);
+    // Directeur, 16/11/2026 : « Choisissez un moment » ne s'ecrit que s'il y a
+    // des moments a choisir ; sans moment ouvert, la phrase d'attente suffit.
+    Widget avecIntro(Widget contenu) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(t.recrutement.entretien.intro, style: corps),
+        Ecart.vLg,
+        contenu,
+      ],
+    );
 
     if (!lecture.hasValue) {
       if (lecture.hasError) {
-        return sansDonneesHorsLigne(lecture, horsLigne: horsLigne)
-            ? EtatSansDonnees(
-                key: ChoixCreneauEntretien.erreurKey,
-                quoi: t.recrutement.entretien.erreurLecture,
-                onAction: relire,
-              )
-            : EtatSysteme(
-                key: ChoixCreneauEntretien.erreurKey,
-                nature: NatureEtat.echecServeur,
-                phrase: t.recrutement.entretien.erreurLecture,
-                libelleAction: t.commun.reessayer,
-                onAction: relire,
-              );
+        return avecIntro(
+          sansDonneesHorsLigne(lecture, horsLigne: horsLigne)
+              ? EtatSansDonnees(
+                  key: ChoixCreneauEntretien.erreurKey,
+                  quoi: t.recrutement.entretien.erreurLecture,
+                  onAction: relire,
+                )
+              : EtatSysteme(
+                  key: ChoixCreneauEntretien.erreurKey,
+                  nature: NatureEtat.echecServeur,
+                  phrase: t.recrutement.entretien.erreurLecture,
+                  libelleAction: t.commun.reessayer,
+                  onAction: relire,
+                ),
+        );
       }
-      return const Skeleton.liste(lignes: 4);
+      return avecIntro(const Skeleton.liste(lignes: 4));
     }
     final List<CreneauOuvert> creneaux = lecture.requireValue;
     if (creneaux.isEmpty) {
+      // Directeur, 16/11/2026 : les candidats retenus ne doivent pas croire
+      // qu'ils ont un geste a faire ; aucun « Reessayer », une phrase claire.
       return EtatSysteme(
         key: ChoixCreneauEntretien.aucunKey,
-        nature: NatureEtat.aucunResultat,
+        nature: NatureEtat.dossierEnAttente,
         phrase: t.recrutement.entretien.aucunCreneau,
-        libelleAction: t.commun.reessayer,
-        onAction: relire,
       );
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        Text(t.recrutement.entretien.intro, style: corps),
+        Ecart.vLg,
         GroupeReglages(
           key: ChoixCreneauEntretien.listeKey,
           // La mention seulement quand l'appareil sert (aucun fuseau servi).

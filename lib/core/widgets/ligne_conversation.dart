@@ -12,6 +12,7 @@ import '../accessibilite/sens_du_contenu.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'badge_non_lu.dart';
 import 'pressable.dart';
 
 /// Une conversation dans une liste.
@@ -87,7 +88,7 @@ class LigneConversation extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(
             horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
+            vertical: AppSpacing.md,
           ),
           child: Row(
             children: <Widget>[
@@ -147,7 +148,7 @@ class LigneConversation extends StatelessWidget {
                         ),
                         if (aLire) ...<Widget>[
                           Ecart.hSm,
-                          _PastilleNonLus(nombre: nonLus),
+                          PastilleNombre(key: cleNonLus, nombre: nonLus),
                         ] else if (marque != null) ...<Widget>[
                           Ecart.hSm,
                           marque!,
@@ -158,44 +159,6 @@ class LigneConversation extends StatelessWidget {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// La pastille violette du nombre de non lus (muette au lecteur d'ecran : la
-/// ligne dit le nombre dans sa phrase).
-class _PastilleNonLus extends StatelessWidget {
-  const _PastilleNonLus({required this.nombre});
-
-  final int nombre;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return ExcludeSemantics(
-      key: LigneConversation.cleNonLus,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(minWidth: AppSpacing.xl),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: palette.surfacePrimary.background,
-            borderRadius: AppRadius.arrondiFull,
-          ),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(
-              horizontal: AppSpacing.sm,
-              vertical: AppSpacing.xs,
-            ),
-            child: Text(
-              '$nombre',
-              textAlign: TextAlign.center,
-              style: palette.surfacePrimary.applyTo(
-                Theme.of(context).textTheme.labelSmall ?? const TextStyle(),
-              ),
-            ),
           ),
         ),
       ),

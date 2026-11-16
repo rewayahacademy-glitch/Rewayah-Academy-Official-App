@@ -82,8 +82,15 @@ import 'package:flutter/services.dart';
 
 import '../accessibilite/sens_du_contenu.dart';
 import '../accessibilite/texte_agrandi.dart';
+import '../communications/apercu_image.dart';
+import '../communications/image_bulle.dart';
+import '../communications/image_message.dart';
+import '../communications/pastille_coeur.dart';
 import '../communications/persistance_brouillon.dart';
+import '../communications/phrases_images.dart';
 import '../communications/port_brouillons.dart';
+import '../fichiers/compression_image.dart';
+import '../fichiers/selecteur_image.dart';
 import '../fluidite/action_anticipee.dart';
 import '../i18n/dates_appareil.dart';
 import '../i18n/strings.g.dart';
@@ -101,7 +108,10 @@ import 'action_principale.dart';
 import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
+import 'menu_actions.dart';
+import 'menu_commun.dart' show MenuAncreControleur;
 import 'page_shell.dart';
+import 'pressable.dart';
 import 'zone_saisie.dart';
 
 /// Le raccourci d'envoi au clavier (R-25) : Ctrl+Entree, ou Cmd+Entree sur
@@ -182,7 +192,19 @@ class MessageFil {
     this.annonceTexte,
     this.remise,
     this.instant,
+    this.image,
+    this.coeurs = 0,
+    this.aimeParMoi = false,
   });
+
+  /// IMAGES-MESSAGERIE : l'image du message, ou `null`.
+  final ImageMessage? image;
+
+  /// IMAGES-MESSAGERIE : le nombre de coeurs donnes.
+  final int coeurs;
+
+  /// IMAGES-MESSAGERIE : la personne qui lit a donne le sien.
+  final bool aimeParMoi;
 
   /// Identifiant stable, pour qu'un message ne soit jamais annonce deux fois.
   final String id;
@@ -324,7 +346,19 @@ enum EtatEnvoiMessage {
 }
 
 class _MessageLocal {
-  _MessageLocal(this.id, this.texte, this.brut, this.action);
+  _MessageLocal(this.id, this.texte, this.brut, this.action, {this.source});
+
+  /// IMAGES-MESSAGERIE : la photo choisie, pour une bulle d'image.
+  final Uint8List? source;
+
+  /// Prete (reduite, miniature faite) : la place de l'image est connue.
+  ImagePrete? prete;
+
+  /// L'envoi de l'image, de 0 a 1.
+  final ValueNotifier<double> progression = ValueNotifier<double>(0);
+
+  /// La phrase d'un echec que « Reessayer » peut changer (panne passagere).
+  String? precision;
 
   final String id;
   final String texte;
@@ -395,6 +429,11 @@ class FilDiscussion extends StatefulWidget {
     this.afficherAuteur = true,
     this.horloge = DateTime.now,
     this.prendTeteDePage = true,
+    this.images,
+    this.onAimer,
+    this.onEnvoyerImage,
+    this.choisirImage = choisirImageSysteme,
+    this.deuxChoixPhoto,
   }) : assert(
          lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
@@ -402,6 +441,34 @@ class FilDiscussion extends StatefulWidget {
 
   /// Les messages connus, du plus ancien au plus recent.
   final List<MessageFil> messages;
+
+  /// IMAGES-MESSAGERIE : les adresses des images du fil (miniatures en UNE
+  /// demande par fil, image complete a l'ouverture) ; `null` : aucune image.
+  final SourceImagesFil? images;
+
+  /// IMAGES-MESSAGERIE : pose (`true`) ou retire (`false`) son coeur sur le
+  /// message ; l'affichage est immediat, retour arriere si l'appel echoue.
+  /// `null` : pas de coeur.
+  final Future<EtatCoeur> Function(String messageId, bool aime)? onAimer;
+
+  /// IMAGES-MESSAGERIE : envoie un message avec son image (texte, image prete,
+  /// progression). `null` : l'icone image n'est pas rendue (fil en lecture
+  /// seule, ou compte eleve de moins de 18 ans : le serveur refuse de toute
+  /// facon, l'ecran ne montre pas un bouton voue a l'echec).
+  final Future<void> Function(
+    String idLocal,
+    String texte,
+    ImagePrete image,
+    ProgressionImage progression,
+  )?
+  onEnvoyerImage;
+
+  /// Le choix d'une photo (le selecteur du systeme ; les tests le remplacent).
+  final ChoixImage choisirImage;
+
+  /// Vrai : l'icone image ouvre deux choix (« Prendre une photo », « Choisir
+  /// dans la galerie »). `null` : vrai sur Android et iOS hors navigateur.
+  final bool? deuxChoixPhoto;
 
   /// Les textes du fil.
   final TextesFilDiscussion textes;
@@ -603,6 +670,9 @@ class FilDiscussion extends StatefulWidget {
   }
 
   /// Le micro a cote d'« Envoyer » (decision R-28), pour les tests.
+  /// La cle de l'icone « Joindre une image », pour les tests.
+  static const Key cleImage = ValueKey<String>('fil-discussion-image');
+
   static const Key cleMicro = ValueKey<String>('fil-discussion-micro');
 
   /// Le retour de la ligne compacte (constat 8), pour les tests.
@@ -639,6 +709,20 @@ class _FilDiscussionState extends State<FilDiscussion> {
   RelaisTetePage? _relaisTete;
   Widget? _teteDePage;
   final List<_MessageLocal> _locaux = <_MessageLocal>[];
+
+  /// IMAGES-MESSAGERIE : les miniatures du fil, lues UNE fois (renouvelees a
+  /// l'expiration, ou quand un message a une image que la lecture ne connait
+  /// pas encore), et les images deja demandees.
+  Map<String, AdresseImage> _miniatures = const <String, AdresseImage>{};
+  final Set<String> _idsDemandes = <String>{};
+  bool _miniaturesEnCours = false;
+  DateTime _derniereLectureMiniatures = DateTime.fromMillisecondsSinceEpoch(0);
+
+  /// IMAGES-MESSAGERIE : les coeurs affiches tout de suite, avant la reponse
+  /// du serveur, et les appels en vol.
+  final Map<String, EtatCoeur> _coeursLocaux = <String, EtatCoeur>{};
+  final Set<String> _coeursEnVol = <String>{};
+  bool _coeurEchec = false;
   // DOUBLON-ENVOI (directeur, 16/11/2026) : lu a l'ouverture, dans
   // [initState]. Un `late final` paresseux n'etait lu qu'au premier besoin :
   // dans une conversation vide, ce besoin venait avec le retour du serveur du
@@ -693,6 +777,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
       for (final MessageFil m in widget.messages) m.id,
     };
     if (widget.controleur == null) _proprio = TextEditingController();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _lireMiniatures());
     _champ.addListener(_auChangement);
     _noeudChamp.addListener(_auFocusChamp);
     WidgetsBinding.instance.addPostFrameCallback((_) {
@@ -801,6 +886,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _vocalOuvert = false;
       _microDisponible = false;
     }
+    if (!identical(ancien.messages, widget.messages)) {
+      // Un coeur dont l'appel est fini est desormais dans la liste lue.
+      _coeursLocaux.removeWhere(
+        (String id, EtatCoeur _) => !_coeursEnVol.contains(id),
+      );
+      _lireMiniatures();
+    }
     // MESSAGERIE-TEMPS-REEL (14/11/2026) : un message arrive en direct
     // descend la lecture jusqu'a lui, si elle etait deja en bas (un lecteur
     // remonte dans l'historique n'est pas deplace).
@@ -829,6 +921,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // n'ecoute sa bulle.
     for (final _MessageLocal m in _locaux) {
       m.action.dispose();
+      m.progression.dispose();
     }
     // Retirer une ecoute d'un controleur exterieur deja libere est permis.
     _champ.removeListener(_auChangement);
@@ -910,6 +1003,165 @@ class _FilDiscussionState extends State<FilDiscussion> {
         });
       }
     }
+  }
+
+  /// IMAGES-MESSAGERIE : lit les miniatures du fil (UNE demande), seulement si
+  /// un message a une image dont l'adresse manque ou est perimee. Une relecture
+  /// n'a pas lieu deux fois en moins de trente secondes.
+  void _lireMiniatures() {
+    final SourceImagesFil? source = widget.images;
+    if (source == null || !mounted || _miniaturesEnCours) return;
+    final DateTime maintenant = DateTime.now();
+    final Set<String> visibles = <String>{
+      for (final MessageFil m in widget.messages)
+        if (m.image case final ImageMessage i
+            when i.etat == EtatImageMessage.confirmee)
+          i.id,
+    };
+    final bool neuves = visibles.any((String id) => !_idsDemandes.contains(id));
+    final bool perimees = _miniatures.values.any(
+      (AdresseImage a) => !a.expireLe.isAfter(maintenant),
+    );
+    if (!neuves && !perimees) return;
+    if (!neuves &&
+        maintenant.difference(_derniereLectureMiniatures) <
+            const Duration(seconds: 30)) {
+      return;
+    }
+    _miniaturesEnCours = true;
+    _derniereLectureMiniatures = maintenant;
+    _idsDemandes.addAll(visibles);
+    source.miniatures().then<void>(
+      (Map<String, AdresseImage> lues) {
+        if (!mounted) return;
+        setState(() {
+          _miniatures = lues;
+          _miniaturesEnCours = false;
+        });
+      },
+      onError: (Object _) {
+        // Rien n'est affirme : la couleur moyenne reste, la prochaine
+        // ouverture redemande.
+        _miniaturesEnCours = false;
+        _idsDemandes.removeAll(visibles);
+      },
+    );
+  }
+
+  /// Le texte d'un message qui ne porte qu'une image n'est pas ecrit.
+  static String _texteAffiche(MessageFil m) =>
+      m.image != null && m.texte.trim() == texteImageSeule ? '' : m.texte;
+
+  /// IMAGES-MESSAGERIE : pose ou retire mon coeur. L'affichage est immediat
+  /// (action courante, DECISION-FLUIDITE) ; il revient en arriere si l'appel
+  /// echoue.
+  Future<void> _basculerCoeur(MessageFil m) async {
+    final Future<EtatCoeur> Function(String, bool)? aimer = widget.onAimer;
+    if (aimer == null || _coeursEnVol.contains(m.id)) return;
+    final EtatCoeur? avant = _coeursLocaux[m.id];
+    final EtatCoeur actuel =
+        avant ?? EtatCoeur(coeurs: m.coeurs, aimeParMoi: m.aimeParMoi);
+    final bool veut = !actuel.aimeParMoi;
+    setState(() {
+      _coeurEchec = false;
+      _coeursLocaux[m.id] = EtatCoeur(
+        coeurs: math.max(0, actuel.coeurs + (veut ? 1 : -1)),
+        aimeParMoi: veut,
+      );
+    });
+    _coeursEnVol.add(m.id);
+    try {
+      final EtatCoeur rendu = await aimer(m.id, veut);
+      if (mounted) setState(() => _coeursLocaux[m.id] = rendu);
+    } on Object {
+      if (mounted) {
+        setState(() {
+          if (avant == null) {
+            _coeursLocaux.remove(m.id);
+          } else {
+            _coeursLocaux[m.id] = avant;
+          }
+          _coeurEchec = true;
+        });
+      }
+    } finally {
+      _coeursEnVol.remove(m.id);
+    }
+  }
+
+  void _ouvrirImage(MessageFil m) {
+    final SourceImagesFil? source = widget.images;
+    final ImageMessage? image = m.image;
+    if (source == null ||
+        image == null ||
+        image.etat != EtatImageMessage.confirmee) {
+      return;
+    }
+    unawaited(
+      ouvrirApercuImage(
+        context,
+        image: image,
+        adresseComplete: () => source.image(image.id),
+        miniature: _miniatures[image.id],
+        texte: _texteAffiche(m),
+      ),
+    );
+  }
+
+  /// IMAGES-MESSAGERIE : choisit une photo ; sa bulle apparait tout de suite
+  /// (cercle de preparation puis d'envoi), la photo est reduite sur l'appareil
+  /// avant l'envoi. Le texte du champ part dans le meme message.
+  Future<void> _joindreImage([SourceImage source = SourceImage.galerie]) async {
+    if (_vocalOuvert || widget.onEnvoyerImage == null) return;
+    final Uint8List? octets = await widget.choisirImage(source);
+    if (octets == null || !mounted) return;
+    final String id = 'local-${_compteurSession++}';
+    final String saisi = _champ.text.trim();
+    final String texte = saisi.isEmpty ? texteImageSeule : saisi;
+    late final _MessageLocal m;
+    m = _MessageLocal(
+      id,
+      texte,
+      _champ.text,
+      ActionAnticipee(
+        nature: NatureAction.instantanee,
+        cle: id,
+        envoi: (String cle) async {
+          m.refus = null;
+          m.precision = null;
+          try {
+            final ImagePrete prete = m.prete ??= await preparerImage(octets);
+            if (mounted) setState(() {});
+            await widget.onEnvoyerImage!(
+              cle,
+              texte,
+              prete,
+              (double f) => m.progression.value = f,
+            );
+          } on EchecImage catch (e) {
+            final String phrase = phraseRefusImage(e.refus);
+            if (e.refus.reessayable) {
+              m.precision = phrase;
+            } else {
+              m.refus = phrase;
+            }
+            rethrow;
+          } on EnvoiRefuse catch (e) {
+            m.refus = e.phrase;
+            rethrow;
+          }
+        },
+      ),
+      source: octets,
+    );
+    m.action.addListener(() {
+      if (mounted) setState(() {});
+    });
+    setState(() => _locaux.add(m));
+    _persistance?.caler('');
+    _champ.clear();
+    unawaited(_tenter(m));
+    WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(true));
   }
 
   void _envoyer() {
@@ -1104,21 +1356,26 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // La saisie prend sa hauteur naturelle : le champ grandit jusqu'a cinq
         // lignes puis defile en lui-meme (seule exception admise, comme dans
         // toute messagerie) ; les messages gardent tout le reste.
+        // FINITIONS-MESSAGERIE : aucun bandeau derriere la saisie, le champ
+        // repose sur le fond du fil.
         KeyedSubtree(
           key: FilDiscussion.cleSaisie,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            child: limite == null
-                ? saisie
-                : Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                    child: Text(
-                      limite,
-                      key: FilDiscussion.cleLectureSeule,
-                      style: AppPalette.of(context).inkMuted
-                          .applyTo(styles.bodyMedium ?? const TextStyle()),
+          child: ColoredBox(
+            color: AppPalette.of(context).fondFil.background,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: limite == null
+                  ? saisie
+                  : Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                      child: Text(
+                        limite,
+                        key: FilDiscussion.cleLectureSeule,
+                        style: AppPalette.of(context).inkMuted
+                            .applyTo(styles.bodyMedium ?? const TextStyle()),
+                      ),
                     ),
-                  ),
+            ),
           ),
         ),
       ],
@@ -1178,7 +1435,24 @@ class _FilDiscussionState extends State<FilDiscussion> {
         key: ValueKey<String>('message-${m.id}'),
         auteur: m.auteur,
         afficherNom: l.avecNom,
-        texte: m.texte,
+        texte: _texteAffiche(m),
+        image: m.image,
+        adresse: m.image == null ? null : _miniatures[m.image!.id],
+        coeurs: _coeursLocaux[m.id]?.coeurs ?? m.coeurs,
+        aime: _coeursLocaux[m.id]?.aimeParMoi ?? m.aimeParMoi,
+        groupe: widget.afficherAuteur,
+        onOuvrirImage:
+            m.image != null &&
+                m.image!.etat == EtatImageMessage.confirmee &&
+                widget.images != null
+            ? () => _ouvrirImage(m)
+            : null,
+        onAimer: widget.onAimer == null ? null : () => _basculerCoeur(m),
+        onCopier: _texteAffiche(m).isEmpty
+            ? null
+            : () => unawaited(
+                Clipboard.setData(ClipboardData(text: _texteAffiche(m))),
+              ),
         heure: l.dernier ? heure : null,
         mot: l.dernier ? mot : null,
         remise: l.dernier ? m.remise : null,
@@ -1198,11 +1472,38 @@ class _FilDiscussionState extends State<FilDiscussion> {
       key: ValueKey<String>('message-${local.id}'),
       auteur: x.auteurSoi,
       afficherNom: false,
-      texte: local.texte,
+      texte: local.source != null && local.texte == texteImageSeule
+          ? ''
+          : local.texte,
+      // IMAGES-MESSAGERIE : la bulle porte l'image locale des que sa place est
+      // connue ; avant, un cercle de preparation sur un cadre 4 / 3.
+      image: local.source == null
+          ? null
+          : ImageMessage(
+              id: local.id,
+              largeur: local.prete?.largeur ?? 4,
+              hauteur: local.prete?.hauteur ?? 3,
+              couleurMoyenne: local.prete?.couleurMoyenne,
+            ),
+      adresse: local.prete == null
+          ? null
+          : AdresseImage(
+              url: local.id,
+              expireLe: DateTime.fromMillisecondsSinceEpoch(0),
+              octets: local.prete!.miniature,
+            ),
+      progression:
+          local.source == null || local.etat != EtatEnvoiMessage.enCours
+          ? null
+          : local.progression,
+      enPreparation:
+          local.source != null &&
+          local.prete == null &&
+          local.etat == EtatEnvoiMessage.enCours,
       mot: switch (local.etat) {
         EtatEnvoiMessage.enCours => x.enCours,
         EtatEnvoiMessage.envoye => x.envoye,
-        EtatEnvoiMessage.echec => local.refus ?? x.echec,
+        EtatEnvoiMessage.echec => local.refus ?? local.precision ?? x.echec,
       },
       remise: switch (local.etat) {
         EtatEnvoiMessage.enCours => RemiseMessage.enCours,
@@ -1226,7 +1527,13 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// gardee. Jamais calculees dans la construction d'une bulle.
   List<_Ligne> _lignesDuFil(List<_MessageLocal> locaux) {
     final int empreinteLocaux = Object.hashAll(<Object?>[
-      for (final _MessageLocal m in locaux) ...<Object?>[m.id, m.etat, m.refus],
+      for (final _MessageLocal m in locaux) ...<Object?>[
+        m.id,
+        m.etat,
+        m.refus,
+        m.precision,
+        m.prete != null,
+      ],
     ]);
     final List<_Ligne>? gardees = _lignesGardees;
     if (gardees != null &&
@@ -1370,6 +1677,18 @@ class _FilDiscussionState extends State<FilDiscussion> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        if (_coeurEchec)
+          Padding(
+            padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+            child: Semantics(
+              liveRegion: true,
+              child: Text(
+                t.com.messages.images.coeurEchec,
+                style: AppPalette.of(context).inkAlert
+                    .applyTo(styles.bodySmall ?? const TextStyle()),
+              ),
+            ),
+          ),
         if (_restaure)
           Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -1398,6 +1717,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
           onEnvoyer: _envoyer,
           reduite: reduite,
           sansExplication: widget.pleinEcran,
+          onImage: widget.onEnvoyerImage != null && !_vocalOuvert
+              ? _joindreImage
+              : null,
+          deuxChoixPhoto:
+              widget.deuxChoixPhoto ?? appareilPhotoProposeParDefaut,
           onMicro: vocal != null && _microDisponible && !_vocalOuvert
               ? _demanderVocal
               : null,
@@ -1703,7 +2027,33 @@ class _Bulle extends StatelessWidget {
     this.libelleReessayer,
     this.onReessayer,
     this.remise,
+    this.image,
+    this.adresse,
+    this.progression,
+    this.enPreparation = false,
+    this.coeurs = 0,
+    this.aime = false,
+    this.groupe = false,
+    this.onOuvrirImage,
+    this.onAimer,
+    this.onCopier,
   });
+
+  /// IMAGES-MESSAGERIE : l'image, son adresse, l'envoi en cours.
+  final ImageMessage? image;
+  final AdresseImage? adresse;
+  final ValueListenable<double>? progression;
+  final bool enPreparation;
+
+  /// Le coeur : son compte, le mien, et si le fil a plus de deux personnes.
+  final int coeurs;
+  final bool aime;
+  final bool groupe;
+
+  /// Toucher l'image, double toucher, menu « Copier le texte ».
+  final VoidCallback? onOuvrirImage;
+  final VoidCallback? onAimer;
+  final VoidCallback? onCopier;
 
   final String auteur;
   final bool afficherNom;
@@ -1750,69 +2100,200 @@ class _Bulle extends StatelessWidget {
     final TextStyle styleTexte = deSoi
         ? fond.applyTo(base)
         : palette.inkStrong.applyTo(base);
-    Widget bulle = DecoratedBox(
-      decoration: BoxDecoration(
-        color: fond.background,
-        borderRadius: forme,
-        boxShadow: deSoi
-            ? AppElevation.niveau0
-            : AppElevation.bulle(palette.ombre),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
-        ),
-        // Le sens du texte suit la langue du message (premiere lettre
-        // forte) : un texte arabe dans l'interface francaise s'aligne a
-        // droite, et l'inverse.
-        // Le nom n'est pas ecrit quand [afficherNom] est faux, il reste dit :
-        // le lecteur d'ecran annonce toujours l'auteur.
-        child: Semantics(
-          container: !afficherNom,
-          label: afficherNom ? null : auteur,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
+    Widget construireBulle(double largeurImageMax) {
+      final ImageMessage? image = this.image;
+      final bool imageRetiree =
+          image != null && image.etat == EtatImageMessage.supprimee;
+      final bool imageVisible = image != null && !imageRetiree;
+      final TailleImageBulle? tailleImage = !imageVisible
+          ? null
+          : tailleImageBulle(
+              image,
+              largeurMax: largeurImageMax,
+              hauteurMax: hauteurMaxImageBulle(
+                MediaQuery.sizeOf(context).width,
+              ),
+            );
+      final bool aDuContenu =
+          afficherNom || texte.isNotEmpty || complement != null || imageRetiree;
+      final Widget? contenu = !aDuContenu
+          ? null
+          : Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm,
+              ),
               // Le sens du texte suit la langue du message (premiere lettre
               // forte) : un texte arabe dans l'interface francaise s'aligne a
-              // droite, et l'inverse. Seuls le nom et le texte le suivent : la
-              // piece jointe garde le sens de l'interface.
-              if (afficherNom || texte.isNotEmpty)
-                Directionality(
-                  textDirection: sens,
+              // droite, et l'inverse.
+              // Le nom n'est pas ecrit quand [afficherNom] est faux, il reste
+              // dit : le lecteur d'ecran annonce toujours l'auteur.
+              child: Semantics(
+                container: !afficherNom,
+                label: afficherNom ? null : auteur,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    // IMAGES-MESSAGERIE : une image retiree n'est pas un cadre
+                    // vide, une fine ligne discrete la dit ; le texte reste
+                    // lisible dessous.
+                    if (imageRetiree) ...<Widget>[
+                      const LigneImageRetiree(),
+                      if (afficherNom || texte.isNotEmpty) Ecart.vSm,
+                    ],
+                    // Seuls le nom et le texte suivent le sens du message : la
+                    // piece jointe garde le sens de l'interface.
+                    if (afficherNom || texte.isNotEmpty)
+                      Directionality(
+                        textDirection: sens,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            if (afficherNom)
+                              Text(
+                                auteur,
+                                style: palette.inkMuted.applyTo(
+                                  textes.labelMedium ?? const TextStyle(),
+                                ),
+                              ),
+                            if (texte.isNotEmpty) ...<Widget>[
+                              if (afficherNom) Ecart.vXs,
+                              Text(
+                                texte,
+                                textDirection: sens,
+                                style: styleTexte,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    if (complement case final Widget complement) ...<Widget>[
+                      if (afficherNom || texte.isNotEmpty || imageRetiree)
+                        Ecart.vSm,
+                      complement,
+                    ],
+                  ],
+                ),
+              ),
+            );
+      final DecoratedBox fondBulle = DecoratedBox(
+        decoration: BoxDecoration(
+          color: fond.background,
+          borderRadius: forme,
+          boxShadow: deSoi
+              ? AppElevation.niveau0
+              : AppElevation.bulle(palette.ombre),
+        ),
+        child: tailleImage == null
+            ? contenu
+            : ClipRRect(
+                borderRadius: forme,
+                child: SizedBox(
+                  width: tailleImage.largeur,
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      if (afficherNom)
-                        Text(
-                          auteur,
-                          style: palette.inkMuted.applyTo(
-                            textes.labelMedium ?? const TextStyle(),
-                          ),
-                        ),
-                      if (texte.isNotEmpty) ...<Widget>[
-                        if (afficherNom) Ecart.vXs,
-                        Text(texte, textDirection: sens, style: styleTexte),
-                      ],
+                      ImageDeBulle(
+                        image: image!,
+                        taille: tailleImage,
+                        adresse: adresse,
+                        progression: progression,
+                        enPreparation: enPreparation,
+                      ),
+                      ?contenu,
                     ],
                   ),
                 ),
-              if (complement case final Widget complement) ...<Widget>[
-                if (afficherNom || texte.isNotEmpty) Ecart.vSm,
-                complement,
-              ],
-            ],
-          ),
-        ),
-      ),
-    );
-    if (annonce != null) {
-      // Arrive pendant la lecture : une annonce polie, sans voler le focus.
-      bulle = Semantics(liveRegion: true, label: annonce, child: bulle);
+              ),
+      );
+      final bool interactive =
+          onAimer != null || onOuvrirImage != null || onCopier != null;
+      Widget bulle = !interactive
+          ? fondBulle
+          : _PorteMenu(
+              construire: (BuildContext _, MenuAncreControleur menu) => Stack(
+                clipBehavior: Clip.none,
+                children: <Widget>[
+                  // IMAGES-MESSAGERIE : toucher l'image l'ouvre ; double toucher =
+                  // coeur ; appui long = menu (J'aime, Copier le texte).
+                  Pressable(
+                    onPress: onOuvrirImage,
+                    onDoubleTap: onAimer,
+                    onLongPress: menu.ouvrir,
+                    respecterCibleTactile: false,
+                    arrondiFocus: forme.resolve(Directionality.of(context)),
+                    libelleSemantique: onOuvrirImage != null
+                        ? t.com.messages.images.imageJointe
+                        : null,
+                    child: fondBulle,
+                  ),
+                  // Le menu : un declencheur vide, ouvert par l'appui long.
+                  PositionedDirectional(
+                    bottom: 0,
+                    start: 0,
+                    child: ExcludeSemantics(
+                      child: IgnorePointer(
+                        child: MenuActions(
+                          controleur: menu,
+                          libelle: t.com.messages.images.actionsMessage,
+                          declencheur: (BuildContext _, EtatPression _) =>
+                              const SizedBox.shrink(),
+                          actions: <EntreeAction>[
+                            if (onAimer != null)
+                              EntreeAction(
+                                libelle: aime
+                                    ? t.com.messages.images.nePlusAimer
+                                    : t.com.messages.images.jaime,
+                                icone: AppIcons.coeur,
+                                onChoix: onAimer!,
+                              ),
+                            if (onCopier != null)
+                              EntreeAction(
+                                libelle: t.com.messages.images.copierTexte,
+                                icone: AppIcons.copier,
+                                onChoix: onCopier!,
+                              ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            );
+      if (coeurs > 0) {
+        // La pastille de coeur pend au coin bas, cote exterieur ; la place
+        // qu'elle prend sous la bulle est reservee.
+        bulle = Stack(
+          clipBehavior: Clip.none,
+          children: <Widget>[
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+              child: bulle,
+            ),
+            PositionedDirectional(
+              bottom: 0,
+              end: deSoi ? AppSpacing.sm : null,
+              start: deSoi ? null : AppSpacing.sm,
+              child: PastilleCoeur(
+                coeurs: coeurs,
+                aimeParMoi: aime,
+                avecCompte: groupe,
+              ),
+            ),
+          ],
+        );
+      }
+      if (annonce != null) {
+        // Arrive pendant la lecture : une annonce polie, sans voler le focus.
+        bulle = Semantics(liveRegion: true, label: annonce, child: bulle);
+      }
+      return bulle;
     }
+
     final Widget? pied = heure == null && mot == null
         ? null
         : Padding(
@@ -1871,7 +2352,7 @@ class _Bulle extends StatelessWidget {
                 crossAxisAlignment: deSoi
                     ? CrossAxisAlignment.end
                     : CrossAxisAlignment.start,
-                children: <Widget>[bulle, ?pied, ?reessayer],
+                children: <Widget>[construireBulle(maxi), ?pied, ?reessayer],
               ),
             ),
           );
@@ -1879,6 +2360,24 @@ class _Bulle extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Porte le controleur du menu d'une bulle (ouvert par l'appui long).
+class _PorteMenu extends StatefulWidget {
+  const _PorteMenu({required this.construire});
+
+  final Widget Function(BuildContext context, MenuAncreControleur menu)
+  construire;
+
+  @override
+  State<_PorteMenu> createState() => _PorteMenuEtat();
+}
+
+class _PorteMenuEtat extends State<_PorteMenu> {
+  final MenuAncreControleur _menu = MenuAncreControleur();
+
+  @override
+  Widget build(BuildContext context) => widget.construire(context, _menu);
 }
 
 /// Le pied d'un message : l'heure en petit, et pour un message de soi les
@@ -1960,6 +2459,8 @@ class _Saisie extends StatelessWidget {
     required this.onEnvoyer,
     this.reduite = false,
     this.onMicro,
+    this.onImage,
+    this.deuxChoixPhoto = false,
     this.vocal,
     this.vocalOuvert = false,
     this.sansExplication = false,
@@ -1982,6 +2483,13 @@ class _Saisie extends StatelessWidget {
   /// Le toucher du micro (R-28), ou `null` : aucun micro (pas de composer
   /// vocal, capacite `envoyerVocal` fermee, enregistreur absent).
   final VoidCallback? onMicro;
+
+  /// IMAGES-MESSAGERIE : le choix d'une photo, ou `null` : aucune icone (fil
+  /// en lecture seule, ou compte eleve de moins de 18 ans).
+  final void Function([SourceImage source])? onImage;
+
+  /// Deux choix au toucher de l'icone : appareil photo ou galerie.
+  final bool deuxChoixPhoto;
   final Widget? vocal;
 
   /// Vrai pendant l'enregistrement et la pre-ecoute : le panneau vocal
@@ -2112,20 +2620,52 @@ class _Saisie extends StatelessWidget {
   /// champ ; il ouvre l'enregistrement du composer vocal.
   Widget _avecMicro(Widget saisie) {
     final VoidCallback? onMicro = this.onMicro;
-    if (onMicro == null) return saisie;
+    final void Function([SourceImage source])? onImage = this.onImage;
+    if (onMicro == null && onImage == null) return saisie;
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Expanded(child: saisie),
-        Ecart.hSm,
-        BoutonIcone(
-          key: FilDiscussion.cleMicro,
-          icone: AppIcons.micro,
-          libelle: t.com.socle.composants.composer.enregistrerVocal,
-          onPress: onMicro,
-          // Lot K, point 2 : a texte agrandi, le micro grandit avec le texte.
-          suitTexte: true,
-        ),
+        if (onImage != null) ...<Widget>[
+          Ecart.hSm,
+          if (deuxChoixPhoto)
+            MenuActions(
+              key: FilDiscussion.cleImage,
+              icone: AppIcons.image,
+              libelle: t.com.messages.images.joindre,
+              actions: <EntreeAction>[
+                EntreeAction(
+                  libelle: t.com.messages.images.prendrePhoto,
+                  icone: AppIcons.camera,
+                  onChoix: () => onImage(SourceImage.camera),
+                ),
+                EntreeAction(
+                  libelle: t.com.messages.images.choisirGalerie,
+                  icone: AppIcons.image,
+                  onChoix: () => onImage(SourceImage.galerie),
+                ),
+              ],
+            )
+          else
+            BoutonIcone(
+              key: FilDiscussion.cleImage,
+              icone: AppIcons.image,
+              libelle: t.com.messages.images.joindre,
+              onPress: onImage,
+              suitTexte: true,
+            ),
+        ],
+        if (onMicro != null) ...<Widget>[
+          Ecart.hSm,
+          BoutonIcone(
+            key: FilDiscussion.cleMicro,
+            icone: AppIcons.micro,
+            libelle: t.com.socle.composants.composer.enregistrerVocal,
+            onPress: onMicro,
+            // Lot K, point 2 : a texte agrandi, le micro grandit avec le texte.
+            suitTexte: true,
+          ),
+        ],
       ],
     );
   }

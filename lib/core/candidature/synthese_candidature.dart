@@ -100,25 +100,62 @@ List<String> _mots(Object? reponse, _Mot mot) {
   return mots;
 }
 
-/// « Lun · Mer : 18 h, 19 h » : un groupe de jours qui ont les memes heures,
-/// une ligne par groupe. Les heures sont celles que la personne a declarees,
-/// telles quelles.
+/// Les heures de debut [debuts] reunies en plages : des heures qui se suivent
+/// n'en font qu'une, « 0 h – 4 h » (de la premiere a la derniere heure de
+/// debut), une heure seule se dit seule.
+List<({int de, int a})> plagesDHeures(Iterable<int> debuts) {
+  final List<int> triees = debuts.toSet().toList()..sort();
+  final List<({int de, int a})> plages = <({int de, int a})>[];
+  for (final int h in triees) {
+    if (plages.isNotEmpty && plages.last.a == h - 1) {
+      plages[plages.length - 1] = (de: plages.last.de, a: h);
+    } else {
+      plages.add((de: h, a: h));
+    }
+  }
+  return plages;
+}
+
+/// Une plage : « 7 h – 11 h », ou « 18 h » quand elle n'a qu'une heure. En
+/// arabe, chaque plage est isolee dans son sens de lecture : les chiffres
+/// latins ne se melangent pas a la phrase.
+String _textePlage(({int de, int a}) plage) {
+  final String texte = plage.de == plage.a
+      ? libelleHeure(plage.de)
+      : '${libelleHeure(plage.de)} \u2013 ${libelleHeure(plage.a)}';
+  return _iso(texte);
+}
+
+/// Les plages de [debuts] sur une ligne : separees par un espace large en
+/// arabe (jamais par la virgule arabe), par un point median ailleurs.
+String textePlages(Iterable<int> debuts) {
+  final bool arabe = LocaleSettings.currentLocale == AppLocale.ar;
+  return plagesDHeures(debuts)
+      .map(_textePlage)
+      .join(arabe ? '  ' : t.admin.candidatures.historique.separateur);
+}
+
+/// Les jours sur une ligne, les heures en plages sur la suivante : un bloc par
+/// groupe de jours qui ont les memes heures. Les heures sont celles que la
+/// personne a declarees.
 List<String> _disponibilites(Object? reponse, Object? publics) {
   final DisponibilitesDeclarees dispo = DisponibilitesDeclarees.depuisPlages(
     reponse,
     dureeMinutes: dureeDeclareeDe(publics),
   );
   final Map<String, List<int>> parHeures = <String, List<int>>{};
+  final Map<String, Iterable<int>> debutsDe = <String, Iterable<int>>{};
   for (final int jour in dispo.jours) {
-    (parHeures[libelleHeures(dispo.debuts(jour))] ??= <int>[]).add(jour);
+    final Iterable<int> debuts = dispo.debuts(jour);
+    final String cle = debuts.join(',');
+    (parHeures[cle] ??= <int>[]).add(jour);
+    debutsDe[cle] = debuts;
   }
   final String separateur = t.admin.candidatures.historique.separateur;
   return <String>[
     for (final MapEntry<String, List<int>> e in parHeures.entries)
-      t.recrutement.dossier3.synthese.heuresDe(
-        jours: e.value.map(_jourCourt).join(separateur),
-        heures: e.key,
-      ),
+      '${e.value.map(_jourCourt).join(separateur)}\n'
+          '${textePlages(debutsDe[e.key]!)}',
   ];
 }
 
@@ -178,7 +215,7 @@ List<LigneSynthese> syntheseDuDossier(
         (cle: s.ijaza, valeur: isole(_mots(r['ijazaPresentable'], _motIjaza))),
         (
           cle: s.disponibilites,
-          valeur: dispos.isEmpty ? null : dispos.map(_iso).join('\n'),
+          valeur: dispos.isEmpty ? null : dispos.join('\n\n'),
         ),
         (cle: s.versement, valeur: isole(versement)),
         (

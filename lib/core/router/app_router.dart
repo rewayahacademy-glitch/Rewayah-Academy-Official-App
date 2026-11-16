@@ -3778,6 +3778,12 @@ class _CoquilleAdmin extends ConsumerWidget {
     // toute conversation de la direction) : l'acces aux Messages se pose dans
     // l'en-tete avec son nombre, mis a jour en direct ; rien sinon.
     final int messagesNonLus = ref.watch(nonLusMessagesProvider).value ?? 0;
+    // FINITIONS-MESSAGERIE : la page affichee allume l'icone qui y mene.
+    final String chemin = adresseRouteurSur(context)?.path ?? '';
+    final bool surMessages = chemin.startsWith(
+      Routes.adminCommunicationsMessages,
+    );
+    final bool surAlertes = chemin.startsWith(Routes.adminAlertes);
 
     // RECH-D5 : la loupe d'en-tete ouvre aussi la recherche metier, quand un
     // domaine est servi a l'espace administration.
@@ -3811,6 +3817,7 @@ class _CoquilleAdmin extends ConsumerWidget {
                 // les alertes ont leur propre icone (garde-cap, 06/11/2026).
                 icone: AppIcons.avertissement,
                 onPress: () => aller(Routes.adminAlertes),
+                actif: surAlertes,
                 nonLues: urgentes,
                 libelleSemantique: switch (urgentes) {
                   0 => t.alertes.cloche,
@@ -3818,14 +3825,17 @@ class _CoquilleAdmin extends ConsumerWidget {
                   _ => t.alertes.clocheUrgentes(nombre: urgentes),
                 },
               ),
-        messages: messagesNonLus == 0
+        messages: messagesNonLus == 0 && !surMessages
             ? null
             : ClocheNotifications(
                 key: const ValueKey<String>('admin-messages-non-lus'),
                 icone: AppIcons.discussion,
                 onPress: () => aller(Routes.adminCommunicationsMessages),
+                actif: surMessages,
                 nonLues: messagesNonLus,
-                libelleSemantique: messagesNonLus == 1
+                libelleSemantique: messagesNonLus == 0
+                    ? t.com.messages.direct.icone
+                    : messagesNonLus == 1
                     ? t.com.messages.direct.iconeUnNonLu
                     : t.com.messages.direct.iconeNonLus(nombre: messagesNonLus),
               ),

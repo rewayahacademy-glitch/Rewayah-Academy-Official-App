@@ -7,7 +7,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart
 import 'package:rewayah_academy/core/candidature/synthese_candidature.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/candidature/libelles_parcours.dart'
-    show libelleHeures;
+    show libelleHeure;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 
@@ -52,12 +52,11 @@ void main() {
     expect(m[s.langues], <String>['Poular', 'Français', 'Wolof'].join(sep));
     expect(m[s.memorisation], s.memorisationValeurs.de_10_a_29_juz);
     expect(m[s.ijaza], s.ijazaValeurs.pret_test);
+    // Les jours sur une ligne, les heures en plages sur la suivante.
     expect(
       m[s.disponibilites],
-      s.heuresDe(
-        jours: <String>[s.jours.j1, s.jours.j3].join(sep),
-        heures: libelleHeures(<int>[18, 19]),
-      ),
+      '${<String>[s.jours.j1, s.jours.j3].join(sep)}\n'
+      '${libelleHeure(18)} \u2013 ${libelleHeure(19)}',
     );
     expect(
       m[s.versement],
@@ -156,6 +155,51 @@ void main() {
     expect(m[a], contains('\u2068'));
     expect(m[a], contains('10'));
     expect(m[a], isNot(contains('١')));
-    expect(m[t.recrutement.dossier3.synthese.disponibilites], contains('\u2068'));
+    expect(
+      m[t.recrutement.dossier3.synthese.disponibilites],
+      contains('\u2068'),
+    );
+  });
+
+  group('plages d\'heures', () {
+    test('des heures qui se suivent n\'en font qu\'une', () {
+      expect(
+        plagesDHeures(<int>[7, 0, 1, 2, 3, 4, 8, 9, 10, 11]),
+        <({int de, int a})>[(de: 0, a: 4), (de: 7, a: 11)],
+      );
+      expect(plagesDHeures(<int>[18]), <({int de, int a})>[(de: 18, a: 18)]);
+      expect(plagesDHeures(<int>[]), isEmpty);
+      expect(plagesDHeures(<int>[9, 11, 12]), <({int de, int a})>[
+        (de: 9, a: 9),
+        (de: 11, a: 12),
+      ]);
+    });
+
+    test('francais : plages separees par un point median, sans virgule', () {
+      final String texte = textePlages(<int>[0, 1, 2, 7, 8]);
+      expect(
+        texte,
+        '${libelleHeure(0)} \u2013 ${libelleHeure(2)}$sep'
+        '${libelleHeure(7)} \u2013 ${libelleHeure(8)}',
+      );
+      expect(texte, isNot(contains(',')));
+    });
+
+    test(
+      'arabe : chaque plage isolee, separees par des espaces, sans ، ',
+      () async {
+        await LocaleSettings.setLocale(AppLocale.ar);
+        final String texte = textePlages(<int>[0, 1, 2, 7, 8]);
+        expect(texte, isNot(contains('\u060c')));
+        expect(texte, isNot(contains(',')));
+        // Deux plages, separees par des espaces, chacune isolee.
+        final List<String> plages = texte.split('  ');
+        expect(plages, hasLength(2));
+        for (final String plage in plages) {
+          expect(plage, startsWith('\u2068'));
+          expect(plage, endsWith('\u2069'));
+        }
+      },
+    );
   });
 }

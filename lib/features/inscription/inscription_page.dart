@@ -80,6 +80,10 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
       return;
     }
     _parcoursOuvert = true;
+    // POSTULER-ICI (16/11/2026) : le lien de connexion ouvert dans un autre
+    // navigateur n'a pas la memoire de l'appareil ; la marque du candidat
+    // (`candidature=1`, l'invitation) revient dans l'adresse de retour.
+    retenirInvitationDepuisAdresse(Uri.base);
     // I1 (UX-013) : au retour du lien de connexion, une invitation
     // d'enseignant en cours reprend sur son code, pas sur « Pour qui ».
     final String? invitation = routeInvitationEnCours(

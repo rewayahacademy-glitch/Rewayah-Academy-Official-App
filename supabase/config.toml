@@ -558,3 +558,19 @@ verify_jwt = false
 # l'appelant est connecte (jeton Supabase verifie).
 [functions.push-cle]
 verify_jwt = true
+
+# IMAGES-MESSAGERIE (16/11/2026) : depot d'une image dans un message (demande,
+# lien PUT signe, confirmation HMAC). L'appelant est lu dans son jeton ; la base
+# juge participation, mineur et limite horaire.
+[functions.message-image-depot]
+verify_jwt = true
+
+# IMAGES-MESSAGERIE : liens de lecture signes (1 h) des images d'un fil.
+[functions.message-images-lecture]
+verify_jwt = true
+
+# IMAGES-MESSAGERIE : expiration a 90 jours. Appelee une fois par nuit par
+# pg_cron, sans jeton Supabase ; la porte est le secret COURRIELS_ENVOI_SECRET
+# (en-tete x-courriels-secret), verifie dans la fonction en temps constant.
+[functions.message-images-purge]
+verify_jwt = false

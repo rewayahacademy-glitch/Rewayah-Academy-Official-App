@@ -255,6 +255,7 @@ import 'features/com_annonces/port_annonces.dart';
 import 'features/com_annonces/port_annonces_direction.dart';
 import 'features/com_annonces/port_regles_audience.dart';
 import 'features/com_annonces/regles_audience_supabase.dart';
+import 'features/com_messages/fonctions_images_messages.dart';
 import 'features/com_messages/messages_metier_supabase.dart';
 import 'features/com_messages/port_messages_metier.dart';
 import 'features/connexion/accueil_invite.dart' show portAccueilInviteProvider;
@@ -1036,6 +1037,7 @@ List<Override> _surchargesAppReelle() => <Override>[
     MessagesMetierSupabase(
       appelRpcSupabase(Supabase.instance.client),
       libelles: const LibellesCommunicationSlang(),
+      fonctions: appelFonctionSupabase(Supabase.instance.client),
     ),
   ),
   // MESSAGES-CANDIDAT (CAND-Q06) : l'identifiant de ma candidature, pour

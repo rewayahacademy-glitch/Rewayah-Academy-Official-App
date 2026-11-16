@@ -96,6 +96,12 @@ declare
     'com_annonce_vue(uuid)',
     'com_annonce_publier(text,text,text,timestamp with time zone,uuid)',
     'com_envoyer_message(uuid,text,uuid)',
+    -- IMAGES-MESSAGERIE (20261129100100 et 20261129100300, 16/11/2026) : depot, confirmation signee (HMAC) et annulation d'une image, coeur pose ou retire. Garde positive app_account_valid() ET droits du fil (private.com_image_droits : participant, ecriture pour le depot) ; le depot refuse en plus tout eleve mineur ; 42501 sinon. Ce qu'elles peuvent ecrire : UNE ligne com_message_images (20 par heure et par personne) ou le coeur de l'appelant, jamais celui d'un autre.
+    'message_image_demander(uuid,text,bigint,text,bigint,integer,integer,text)',
+    'message_image_confirmer(uuid,text,text,text,text)',
+    'message_image_annuler(uuid)',
+    'aimer_message(uuid)',
+    'ne_plus_aimer_message(uuid)',
     'com_fil_pour_objet(text,uuid)',
     'com_marquer_lu(uuid)',
     'com_ouvrir_conversation(text,uuid,text)',
@@ -420,6 +426,10 @@ declare
     'retrait_candidat(integer,text)',
     -- PAYS-VERSEMENT (20261127000300, 15/11/2026) : le candidat change le pays de son compte de versement apres l'envoi. Garde positive : titulaire d'une candidature en cours (private.candidature_du_titulaire, compte non supprime, statut pending_kyc, provisional_active ou active, acces non expire), sinon 42501 ; etat de la candidature controle ; pays dans la liste ISO. Ecrit UN document de reponses du titulaire, remet ses coordonnees a valider, une ligne de journal ; jamais d'effacement ni de refus. Meme garde que retrait_candidat.
     'modifier_mon_pays_versement(text)',
+    -- VERSEMENT-QUESTIONS (16/11) : le candidat modifie tout le bloc de versement (compte, pays, services) tant que le dossier n'est pas valide ; titulaire d'une candidature en cours seul.
+    'modifier_mon_versement(boolean,text,text[])',
+    -- VERSEMENT-QUESTIONS (16/11) : la direction debloque le versement (motif obligatoire, moteur des gestes) ; direction active et de genre connu.
+    'debloquer_versement_candidat(uuid,integer,text,text)',
     -- CAND-L2A2 (22/10) : reouverture d'une candidature refusee ou retiree (transition 19), direction active de son cote (moteur, controles nommes).
     'rouvrir_candidat(uuid,text,integer,text)',
     -- CAND-AUTRES (22/10) : retrait des reponses et de l'accord, meme titulaire (a toute issue de la candidature ; version attendue, cle d'idempotence).
