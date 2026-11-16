@@ -2619,7 +2619,8 @@
       "outilsDe": "Outils de la liste des candidatures",
       "afficher": "Afficher",
       "replier": "Replier",
-      "trier": "Trier"
+      "trier": "Trier",
+      "pieceSansAttente": "Sans pièce à valider"
     },
     "nomLatin": {
       "titre": "Votre nom en lettres latines",

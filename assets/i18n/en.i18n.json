@@ -2619,7 +2619,8 @@
       "outilsDe": "Tools for the applications list",
       "afficher": "Show",
       "replier": "Collapse",
-      "trier": "Sort"
+      "trier": "Sort",
+      "pieceSansAttente": "No ID document to validate"
     },
     "nomLatin": {
       "titre": "Your name in Latin letters",

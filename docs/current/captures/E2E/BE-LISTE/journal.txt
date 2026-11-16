@@ -12,7 +12,11 @@ MESURE, haut de la premiere ligne de candidature, carte repliee :
   ar 360x800 : 434 px
   fr 1366x768 : 742 px (a l'ordinateur, hors cible du telephone : le haut de la premiere ligne du
   tableau touche le bas de l'ecran ; non traite, la regle du coordinateur vise le telephone)
-LIGNE « Piece d'identite a valider » : non touchable. La cle de filtre `pieceEnAttente` (PR 505)
-manque au modele Dart du filtre (lib/core/candidature/modeles_candidatures_direction.dart) et a son
-adaptateur (candidatures_direction_supabase.dart), hors de la zone de BE-LISTE et gardes.
+LIGNE « Piece d'identite a valider » (apres la PR 505, main ab5adf6f) : elle ouvre la meme liste,
+filtree sur la cle serveur pieceEnAttente (+ en cours, hors pause). Adresse apres le geste, sur les
+trois gabarits : /admin/personnes/candidatures?issue=enCours&pause=non&piece=oui . La capture
+4_piece_filtree montre la liste apres le geste ; le double de test du port NE filtre PAS sur cette
+cle, donc ses 3 lignes restent : le filtre envoye et l'adresse sont prouves par be_liste_test.dart,
+pas par la capture. A installer avant la fusion : migration 20261128100000 (sans elle le serveur
+ignore la cle et la liste est plus longue que la ligne).
 NON FAIT : pas de robot E2E sur la pile locale, pas de capture du retour depuis un vrai dossier.

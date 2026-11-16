@@ -29,13 +29,13 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
-import 'package:rewayah_academy/core/widgets/setting_row.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
 import 'package:rewayah_academy/features/admin_candidatures/adresse_candidatures.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
 import 'package:rewayah_academy/features/admin_candidatures/carte_alertes.dart';
 import 'package:rewayah_academy/features/admin_candidatures/carte_attentes.dart';
 import 'package:rewayah_academy/features/admin_candidatures/etat_entete_liste.dart';
+import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart';
 import 'package:rewayah_academy/features/admin_candidatures/ligne_candidature.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
@@ -85,6 +85,7 @@ void main() {
     test('aller et retour : chaque axe est rendu tel quel', () {
       const RequeteCandidatures r = RequeteCandidatures(
         filtre: FiltreCandidatures(
+          pieceEnAttente: true,
           etape: EtapeCandidature.verifications,
           etat: EtatCandidature.aCompleter,
           issue: IssueCandidature.enCours,
@@ -112,6 +113,17 @@ void main() {
       expect(
         requeteDepuisAdresse(<String, String>{'q': 'amina'}).filtre.recherche,
         isEmpty,
+      );
+    });
+
+    test('le rappel des filtres dit l\'axe de la piece', () {
+      expect(
+        rappelFiltres(const FiltreCandidatures(pieceEnAttente: true)),
+        contains(t.admin.candidatures.attentes.pieceAValider),
+      );
+      expect(
+        rappelFiltres(const FiltreCandidatures(pieceEnAttente: false)),
+        contains(t.recrutement.file.pieceSansAttente),
       );
     });
 
@@ -613,7 +625,7 @@ void main() {
 
   group('6. une seule file', () {
     testWidgets(
-      '« Piece d\'identite a valider » ne se touche pas tant que le filtre serveur manque',
+      '« Piece d\'identite a valider » filtre la meme liste sur pieceEnAttente',
       (tester) async {
         final FauxCandidaturesDirection port = FauxCandidaturesDirection(
           lignes: _lignes(),
@@ -625,12 +637,22 @@ void main() {
             portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
           ],
         );
-        // La ligne annonce 2 : une liste plus longue tromperait.
-        expect(find.byKey(CarteAttentes.clePiece), findsOneWidget);
-        expect(
-          tester.widget<SettingRow>(find.byKey(CarteAttentes.clePiece)).onPress,
-          isNull,
-        );
+        await tester.ensureVisible(find.byKey(CarteAttentes.clePiece));
+        await laisser(tester);
+        await tester.tap(find.byKey(CarteAttentes.clePiece));
+        await laisser(tester);
+        // On est toujours sur la liste, filtree ; aucune autre page.
+        expect(find.byType(CandidaturesPage), findsOneWidget);
+        final FiltreCandidatures f = port.appels.last.filtre;
+        expect(f.pieceEnAttente, isTrue);
+        expect(f.issue, IssueCandidature.enCours);
+        expect(f.enPause, isFalse);
+        expect(f.etape, isNull);
+        expect(_adresse(tester).queryParameters, <String, String>{
+          'issue': 'enCours',
+          'pause': 'non',
+          'piece': 'oui',
+        });
       },
     );
   });

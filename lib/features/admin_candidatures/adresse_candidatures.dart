@@ -29,6 +29,7 @@ const Set<String> clesAdresseCandidatures = <String>{
   'niveau',
   'dispo',
   'accord',
+  'piece',
   'tri',
   'page',
 };
@@ -70,6 +71,7 @@ RequeteCandidatures requeteDepuisAdresse(Map<String, String> q) {
       competenceNiveauMin: choix(NiveauCompetence.values, 'niveau'),
       competenceDisponibilite: choix(DisponibiliteMission.values, 'dispo'),
       competenceAccord: booleen('accord'),
+      pieceEnAttente: booleen('piece'),
     ),
     tri: choix(TriCandidatures.values, 'tri') ?? TriCandidatures.activite,
     page: page == null || page < 1 ? 1 : page,
@@ -94,6 +96,7 @@ Map<String, String> requeteEnAdresse(RequeteCandidatures r) {
     if (f.competenceDisponibilite != null)
       'dispo': f.competenceDisponibilite!.name,
     if (f.competenceAccord != null) 'accord': oui(f.competenceAccord!),
+    if (f.pieceEnAttente != null) 'piece': oui(f.pieceEnAttente!),
     if (r.tri != TriCandidatures.activite) 'tri': r.tri.name,
     if (r.page > 1) 'page': '${r.page}',
   };

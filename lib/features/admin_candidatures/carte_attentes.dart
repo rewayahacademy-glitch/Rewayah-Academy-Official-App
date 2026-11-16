@@ -84,9 +84,8 @@ class CarteAttentes extends StatelessWidget {
   final VoidCallback? onFiltrerPause;
 
   /// BE-LISTE : ouvre la liste filtree sur « piece en attente » (cle serveur
-  /// `pieceEnAttente`, PR 505), ou `null` : la ligne ne se touche pas. Elle
-  /// reste `null` tant que le modele Dart du filtre n'a pas cette cle : un
-  /// filtre approchant ouvrirait une liste plus longue que le nombre annonce.
+  /// `pieceEnAttente`, PR 505), ou `null` : la ligne ne se touche pas (un
+  /// filtre approchant ouvrirait une liste plus longue que le nombre annonce).
   final VoidCallback? onFiltrerPiece;
 
   /// BE-LISTE : la carte est repliee (son titre seul reste).

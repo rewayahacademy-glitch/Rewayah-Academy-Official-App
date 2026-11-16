@@ -331,6 +331,23 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     );
   }
 
+  /// BE-LISTE : « Piece d'identite a valider » pose le filtre que le serveur
+  /// compte pour cette ligne : une piece deposee attend la direction, dans les
+  /// candidatures en cours et hors pause. Avant l'installation de la migration
+  /// 20261128100000, le serveur ignore la cle `pieceEnAttente` et la liste est
+  /// plus longue que la ligne.
+  void _filtrerPiece() {
+    _attenteSaisie?.cancel();
+    _recherche.clear();
+    _filtrer(
+      _filtre.efface.avec(
+        pieceEnAttente: () => true,
+        issue: () => IssueCandidature.enCours,
+        enPause: () => false,
+      ),
+    );
+  }
+
   void _allerAPage(int numero) {
     setState(() => _page = numero);
     _ecrireAdresse();
@@ -1283,11 +1300,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 maintenant: DateTime.now(),
                 onFiltrer: (EtatCandidature e) => _filtrerAttente(etat: e),
                 onFiltrerPause: () => _filtrerAttente(enPause: true),
-                // La ligne de la piece ne se touche pas : un filtre qui
-                // ouvrirait une liste plus longue que son nombre tromperait
-                // (coordinateur, 16/11/2026). Elle s'ouvrira avec la cle de
-                // filtre `pieceEnAttente` (PR 505), qui manque encore au
-                // modele Dart du filtre, hors de la zone de BE-LISTE.
+                // La piece a valider ouvre la meme liste, filtree sur la cle
+                // serveur `pieceEnAttente` (PR 505, migration 20261128100000).
+                onFiltrerPiece: _filtrerPiece,
                 repliee: ref.watch(attentesRepliesProvider),
                 onBasculer: () => ref
                     .read(attentesRepliesProvider.notifier)
