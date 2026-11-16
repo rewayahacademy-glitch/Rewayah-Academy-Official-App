@@ -404,7 +404,9 @@ void main() {
       );
     });
 
-    test('confirmer un moyen d\'une confirmee sous restriction : seulement avec la cause lue dans le dossier', () {
+    test('confirmer un moyen d\'une confirmee sous restriction : le serveur le sert, la ligne le dit', () {
+      // La cause de la restriction n'est plus lue par l'ecran : le serveur la lit
+      // et sert (ou non) le geste dans la cle `gestes` de la ligne.
       final DetailCandidature d = detailTest(
         etape: EtapeCandidature.confirmee,
         etat: null,
@@ -412,24 +414,168 @@ void main() {
         restrictionCause: 'paiement',
         paiement: EtatVersement.aVerifier,
       );
-      // Le dossier la lit : le geste est permis.
       expect(gestePermis(GesteCandidature.confirmerMoyenPaiement, d), isTrue);
-      // La ligne ne la porte pas : le menu de la ligne ne le propose pas, et le
-      // dossier, lu avant la feuille, reste l'autorite.
       expect(
         gestePermisPourLigne(GesteCandidature.confirmerMoyenPaiement, d.ligne),
-        isFalse,
+        isTrue,
+      );
+      final DetailCandidature autreCause = detailTest(
+        etape: EtapeCandidature.confirmee,
+        etat: null,
+        restreinte: true,
+        restrictionCause: 'conduite',
+        paiement: EtatVersement.aVerifier,
       );
       expect(
         gestePermisPourLigne(
           GesteCandidature.confirmerMoyenPaiement,
-          d.ligne,
-          restrictionCause: 'paiement',
+          autreCause.ligne,
         ),
-        isTrue,
+        isFalse,
       );
     });
   });
+
+  group(
+    'GESTES-DU-SERVEUR : l\'ecran ne montre que ce que le serveur sert',
+    () {
+      test('une ligne sans la cle gestes (serveur d\'avant) : aucun geste', () {
+        final DetailCandidature d = detailTest(gestes: const <String>[]);
+        final GestesProposes p = _pour(d);
+        expect(p.vide, isTrue);
+        expect(gestePermis(GesteCandidature.refuser, d), isFalse);
+      });
+
+      test(
+        'la cle gestes lue du serveur : noms, ordre libre, inconnus ignores',
+        () {
+          final LigneCandidature l = LigneCandidature.depuisJson(
+            <String, Object?>{
+              'id': 'c1',
+              'reference': 'CAND-000001',
+              'gestes': <Object?>[
+                'refuser',
+                'dispenser_entretien',
+                'restreindre',
+                'mettre_en_pause',
+                42,
+                '',
+              ],
+            },
+          )!;
+          expect(l.gestes, <String>[
+            'refuser',
+            'dispenser_entretien',
+            'restreindre',
+            'mettre_en_pause',
+          ]);
+          expect(l.gestesInconnusDeLEcran, <String>[
+            'dispenser_entretien',
+            'restreindre',
+          ]);
+        },
+      );
+
+      test(
+        'un nom du serveur que l\'ecran ne sait pas faire n\'est pas montre',
+        () {
+          final DetailCandidature d = detailTest(
+            gestes: const <String>[
+              'dispenser_entretien',
+              'refuser',
+              'inconnu_x',
+            ],
+          );
+          final GestesProposes p = _pour(d);
+          final Set<GesteCandidature> montres = <GesteCandidature>{
+            ?p.principal,
+            ...p.autres,
+          };
+          expect(montres, <GesteCandidature>{GesteCandidature.refuser});
+          expect(d.ligne.gestesInconnusDeLEcran, <String>[
+            'dispenser_entretien',
+            'inconnu_x',
+          ]);
+        },
+      );
+
+      test(
+        'chaque nom du serveur que l\'ecran sait faire se retrouve par son nom',
+        () {
+          for (final GesteCandidature g in GesteCandidature.values) {
+            expect(GesteCandidature.depuisNomServeur(g.nomServeur), g);
+          }
+          expect(GesteCandidature.depuisNomServeur('restreindre'), isNull);
+          // Aucun nom en double : un nom du serveur designe un seul geste.
+          expect(
+            GesteCandidature.values
+                .map((GesteCandidature g) => g.nomServeur)
+                .toSet(),
+            hasLength(GesteCandidature.values.length),
+          );
+        },
+      );
+
+      test(
+        'le faux serveur des tests ne sert que des noms que l\'ecran connait',
+        () {
+          for (final EtapeCandidature e in EtapeCandidature.values) {
+            for (final EtatCandidature? s in <EtatCandidature?>[
+              null,
+              ...EtatCandidature.values,
+            ]) {
+              for (final IssueCandidature i in IssueCandidature.values) {
+                final LigneCandidature l = ligneTest(
+                  etape: e,
+                  etat: s,
+                  issue: i,
+                );
+                expect(l.gestesInconnusDeLEcran, isEmpty, reason: '$e $s $i');
+              }
+            }
+          }
+        },
+      );
+
+      test('un porteur de mission : le serveur ne sert que ses gestes, l\'ecran n\'en ajoute aucun', () {
+        // Le serveur rend ici les seuls gestes COCHES de la mission (definir le
+        // responsable, demander un complement) ; l'ecran n'a ni refuser ni la
+        // pause, meme si l'etat les permettrait pour la direction.
+        final DetailCandidature d = detailTest(
+          gestes: const <String>['definir_responsable', 'demander_complement'],
+        );
+        final GestesProposes p = _pour(d);
+        final Set<GesteCandidature> montres = <GesteCandidature>{
+          ?p.principal,
+          ...p.autres,
+        };
+        expect(montres, <GesteCandidature>{
+          GesteCandidature.definirResponsable,
+          GesteCandidature.demanderComplement,
+        });
+      });
+
+      test('Admettre garde la garde « versement compatible » (GESTES-RAISON) tant que le serveur ne sert pas les controles', () {
+        // Le serveur sert admettre_verifications des qu'on est en examen.
+        final DetailCandidature incompatible = detailTest(
+          paiement: EtatVersement.inconnu,
+          gestes: const <String>['admettre_verifications'],
+        );
+        expect(
+          gestePermis(GesteCandidature.admettreVerifications, incompatible),
+          isFalse,
+        );
+        final DetailCandidature compatible = detailTest(
+          paiement: EtatVersement.compatible,
+          gestes: const <String>['admettre_verifications'],
+        );
+        expect(
+          gestePermis(GesteCandidature.admettreVerifications, compatible),
+          isTrue,
+        );
+      });
+    },
+  );
 
   group('Debloquer le versement : la regle debloquer_versement du serveur', () {
     const GesteCandidature g = GesteCandidature.debloquerVersement;

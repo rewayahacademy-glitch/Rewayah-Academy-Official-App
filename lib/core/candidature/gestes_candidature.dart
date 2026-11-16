@@ -72,6 +72,37 @@ enum GesteCandidature {
   /// La cle de `capacites_candidatures().gestes`.
   final String capacite;
 
+  /// Le nom que le moteur du serveur donne a ce geste dans la cle `gestes` de
+  /// chaque ligne de candidature (GESTES-DU-SERVEUR : `private.gestes_de_la_ligne`,
+  /// noms de `candidature_gestes_regles`, plus `clore_complement`).
+  String get nomServeur => switch (this) {
+    demanderComplement => 'demander_complement',
+    cloreComplement => 'clore_complement',
+    admettreVerifications => 'admettre_verifications',
+    confirmerMoyenPaiement => 'confirmer_moyen_paiement',
+    infirmerMoyenPaiement => 'infirmer_moyen_paiement',
+    debloquerVersement => 'debloquer_versement',
+    mettreEnPause => 'mettre_en_pause',
+    leverPause => 'lever_pause',
+    refuser => 'refuser',
+    consignerRetrait => 'retirer',
+    rouvrir => 'rouvrir',
+    definirResponsable => 'definir_responsable',
+    validerPiece => 'valider_piece',
+  };
+
+  /// Le geste que l'ecran connait pour ce nom du serveur, ou `null` : un nom
+  /// que l'ecran ne sait pas faire (la dispense d'entretien, restreindre...)
+  /// n'est pas montre.
+  static GesteCandidature? depuisNomServeur(String nom) {
+    for (final GesteCandidature g in values) {
+      if (g.nomServeur == nom) {
+        return g;
+      }
+    }
+    return null;
+  }
+
   /// Le geste exige un motif interne, saisi par la direction.
   bool get exigeMotif => switch (this) {
     demanderComplement ||
