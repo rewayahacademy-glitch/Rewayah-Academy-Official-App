@@ -357,6 +357,40 @@ void main() {
     }
   }
 
+  // MESSAGERIE-COULEURS (pilote, 16/11/2026) : a l'ouverture, au bout du fil,
+  // le dernier message et son heure restent entierement au-dessus du champ.
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+    testWidgets('volet, ${langue.languageCode} : le dernier message et son '
+        'heure ne passent pas sous le champ', (WidgetTester tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(langue));
+      await _monter(
+        tester,
+        _messagesLongs(),
+        largeur: 1440,
+        hauteur: 900,
+        direction: langue == AppLocale.ar
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+      );
+      await _toucher(tester, _ecrire);
+      await laisser(tester, fois: 5);
+      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
+      final Finder dernier = find.textContaining('Message numero 39');
+      expect(dernier, findsOneWidget);
+      expect(tester.getRect(dernier).bottom, lessThanOrEqualTo(champ.top));
+      // L'heure du dernier message (a sa suite) est visible, hors du champ.
+      final Finder heures = find.descendant(
+        of: find.byKey(FilDiscussion.cleMessages),
+        matching: find.textContaining(RegExp(r'^\d{2}:\d{2}$')),
+      );
+      final double basHeure = heures
+          .evaluate()
+          .map((e) => tester.getRect(find.byWidget(e.widget)).bottom)
+          .reduce((double a, double b) => a > b ? a : b);
+      expect(basHeure, lessThanOrEqualTo(champ.top));
+    });
+  }
+
   // MESSAGERIE-COULEURS : captures R3 du volet de conversation sur ordinateur
   // (1440 x 900), fil remonte vers les anciens messages, croix visible.
   // Sautees sans CAPTURE_DIR.
