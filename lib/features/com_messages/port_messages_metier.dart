@@ -260,7 +260,13 @@ abstract interface class PortMessagesMetier {
 
   /// Les adresses des miniatures du fil, par identifiant d'image : UNE
   /// demande par fil ouvert, gardee en memoire jusqu'a son expiration (1 h).
-  Future<Map<String, AdresseImage>> urlsMiniatures(String filId);
+  ///
+  /// [frais] : relit le serveur sans tenir compte de la liste gardee (une image
+  /// arrivee depuis la derniere lecture n'y figure pas).
+  Future<Map<String, AdresseImage>> urlsMiniatures(
+    String filId, {
+    bool frais = false,
+  });
 
   /// L'adresse de l'image complete, demandee a l'ouverture seulement ;
   /// `null` si l'image est retiree.
@@ -289,8 +295,10 @@ mixin SansImagesMessages {
   Future<void> annulerImage(String imageId) => Future<void>.value();
 
   /// Aucune miniature.
-  Future<Map<String, AdresseImage>> urlsMiniatures(String filId) =>
-      Future<Map<String, AdresseImage>>.value(const <String, AdresseImage>{});
+  Future<Map<String, AdresseImage>> urlsMiniatures(
+    String filId, {
+    bool frais = false,
+  }) => Future<Map<String, AdresseImage>>.value(const <String, AdresseImage>{});
 
   /// Aucune image.
   Future<AdresseImage?> urlImage(String filId, String imageId) =>

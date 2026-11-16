@@ -270,7 +270,11 @@ abstract interface class SourceImagesFil {
   /// Les adresses des miniatures du fil, par identifiant d'image : une seule
   /// demande, gardee jusqu'a l'expiration (1 h). Une image retiree n'a pas
   /// d'entree.
-  Future<Map<String, AdresseImage>> miniatures();
+  ///
+  /// [frais] : ignore ce qui a ete garde et relit le serveur (IMAGES-CORRECTIF :
+  /// une image arrivee depuis la derniere lecture n'est pas dans la liste
+  /// gardee).
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false});
 
   /// L'adresse de l'image complete [imageId] ; `null` si elle est retiree.
   Future<AdresseImage?> image(String imageId);

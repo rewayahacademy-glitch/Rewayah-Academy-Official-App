@@ -274,3 +274,29 @@ le prouve pas.** Tant qu'elle manque, aucun envoi d'image n'aboutit.
 - **Limite connue** : si `demander` échoue après la création du message (limite horaire, panne), le
   message `[image]` existe sans image côté serveur (les messages sont en ajout seul) ; « Supprimer »
   n'a alors aucun dépôt à annuler. Le destinataire le voit comme une bulle sans texte ni photo.
+
+### 10 bis. Miniature qui reste un aplat de la couleur moyenne (constat du pilote, après l'ajout du CORS)
+
+- **Prouvé** : le défaut n'est ni `ImageDeBulle` ni la compression. Sur un build web release servi en
+  Chromium (Playwright, 1440 de large), une image violette 1080 x 1350 réduite par le canevas du
+  navigateur, servie d'une autre origine (CORS), se peint dans la bulle. La préparation sur
+  l'appareil (décodage, image 1600, miniature 320, couleur moyenne) prend 290 à 310 ms pour une
+  photo de 4,4 Mo (4032 x 3024), avec Chromium sans carte graphique.
+- **Défaut prouvé par un test** (qui échoue sans le correctif) : le port garde la liste des
+  miniatures d'un fil une heure (`urlsMiniatures`). Une image arrivée après cette lecture n'y
+  figure pas ; le fil l'avait déjà marquée « demandée » et ne redemandait jamais : la bulle restait
+  l'aplat de la couleur moyenne. La visionneuse, elle, demande l'image complète à chaque ouverture
+  (appel frais) : elle affichait la vraie image. Cela explique le destinataire. **Pour
+  l'expéditeur, une course est possible (une lecture du fil entre la confirmation côté serveur et le
+  retrait de la liste gardée) mais n'est pas prouvée** : aucun accès à R2 ni à la fonction de
+  lecture en production.
+- **Correctif** : si une image visible n'est pas dans la liste rendue, le fil relit une fois le
+  serveur sans le cache (`miniatures(frais: true)`) ; si la miniature est en échec ou sans adresse,
+  la bulle va chercher l'image complète (`repli`) au lieu d'un aplat muet.
+- **Chargement** : tant que les pixels n'arrivent pas, la couleur moyenne porte le reflet lent du
+  `Skeleton` (`ReflecAttente`, `AppMouvement.refletSquelette`) ; il s'arrête à la première image et
+  reste fixe sous « réduire les animations ». Le cercle de progression de l'expéditeur est gardé.
+- **Où passe le temps** : seule la préparation est mesurée (ci-dessus). Les autres temps ne sont
+  pas connus : chaque envoi écrit désormais dans la console du navigateur des lignes
+  `[images-temps]` (message créé, demande du dépôt, `PUT` image, `PUT` miniature, confirmation,
+  préparation, lecture des adresses signées), à relever au prochain essai en production.

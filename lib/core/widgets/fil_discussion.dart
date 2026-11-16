@@ -749,6 +749,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
   Map<String, AdresseImage> _miniatures = const <String, AdresseImage>{};
   final Set<String> _idsDemandes = <String>{};
   bool _miniaturesEnCours = false;
+
+  /// Une lecture des miniatures a abouti : une image sans adresse n'en aura
+  /// pas, l'image complete prend le relais (IMAGES-CORRECTIF).
+  bool _miniaturesLues = false;
   DateTime _derniereLectureMiniatures = DateTime.fromMillisecondsSinceEpoch(0);
 
   /// IMAGES-MESSAGERIE : les coeurs affiches tout de suite, avant la reponse
@@ -1064,11 +1068,21 @@ class _FilDiscussionState extends State<FilDiscussion> {
     _miniaturesEnCours = true;
     _derniereLectureMiniatures = maintenant;
     _idsDemandes.addAll(visibles);
-    source.miniatures().then<void>(
+    // IMAGES-CORRECTIF : la liste gardee par le port ne connait pas une image
+    // arrivee depuis sa lecture (cache d'une heure). Si une image visible n'y
+    // figure pas, on relit une fois le serveur sans le cache.
+    Future<Map<String, AdresseImage>> lecture() async {
+      final Map<String, AdresseImage> lues = await source.miniatures();
+      if (visibles.every(lues.containsKey)) return lues;
+      return source.miniatures(frais: true);
+    }
+
+    lecture().then<void>(
       (Map<String, AdresseImage> lues) {
         if (!mounted) return;
         setState(() {
           _miniatures = lues;
+          _miniaturesLues = true;
           _miniaturesEnCours = false;
         });
       },
@@ -1500,6 +1514,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
         texte: _texteAffiche(m),
         image: m.image,
         adresse: m.image == null ? null : _miniatures[m.image!.id],
+        repli: widget.images == null || m.image == null
+            ? null
+            : () => widget.images!.image(m.image!.id),
+        adresseIntrouvable:
+            _miniaturesLues &&
+            m.image != null &&
+            m.image!.etat == EtatImageMessage.confirmee &&
+            _miniatures[m.image!.id] == null,
         coeurs: _coeursLocaux[m.id]?.coeurs ?? m.coeurs,
         aime: _coeursLocaux[m.id]?.aimeParMoi ?? m.aimeParMoi,
         groupe: widget.afficherAuteur,
@@ -1583,6 +1605,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
       coinPetit: true,
       // L'etat change sous les yeux : il est annonce a chaque etape.
       etatVivant: true,
+      attendImage: !echec,
       echec: echec,
       ligneEchec: !echec ? null : (reessayable ? mots : local.refus),
       causeEchec: reessayable ? local.precision : null,
@@ -2160,6 +2183,9 @@ class _Bulle extends StatelessWidget {
     this.adresse,
     this.progression,
     this.enPreparation = false,
+    this.repli,
+    this.adresseIntrouvable = false,
+    this.attendImage = true,
     this.coeurs = 0,
     this.aime = false,
     this.groupe = false,
@@ -2173,6 +2199,9 @@ class _Bulle extends StatelessWidget {
   final AdresseImage? adresse;
   final ValueListenable<double>? progression;
   final bool enPreparation;
+  final Future<AdresseImage?> Function()? repli;
+  final bool adresseIntrouvable;
+  final bool attendImage;
 
   /// Le coeur : son compte, le mien, et si le fil a plus de deux personnes.
   final int coeurs;
@@ -2337,6 +2366,9 @@ class _Bulle extends StatelessWidget {
                         adresse: adresse,
                         progression: progression,
                         enPreparation: enPreparation,
+                        repli: repli,
+                        adresseIntrouvable: adresseIntrouvable,
+                        attend: attendImage,
                       ),
                       ?contenu,
                     ],

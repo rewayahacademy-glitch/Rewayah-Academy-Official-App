@@ -19,6 +19,7 @@ import '../mouvement/mouvement.dart';
 import '../tc_groupe/libelles_tc_groupe.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import '../widgets/skeleton.dart' show ReflecAttente;
 import 'image_message.dart';
 
 /// La hauteur la plus grande d'une image dans une bulle : 320 au telephone,
@@ -72,7 +73,18 @@ Color? couleurDepuisHex(String? hex) {
 
 /// L'image d'une bulle : sa place reservee, la couleur moyenne, puis l'image
 /// en fondu. [progression] (0 a 1) peint un petit cercle d'envoi par-dessus.
-class ImageDeBulle extends StatelessWidget {
+///
+/// IMAGES-CORRECTIF (directeur, 16/11/2026) :
+/// - tant que les pixels n'arrivent pas, la couleur moyenne porte le reflet lent
+///   du squelette ([ReflecAttente]) ; il s'arrete des la premiere image, et
+///   reste fixe sous mouvement reduit ;
+/// - si la miniature est en echec (adresse refusee, objet illisible) ou si le
+///   serveur n'en a pas rendu, [repli] va chercher l'image complete : jamais un
+///   aplat muet.
+class ImageDeBulle extends StatefulWidget {
+  /// La cle du reflet d'attente, pour les tests.
+  static const Key cleReflet = ValueKey<String>('image-bulle-reflet');
+
   /// Cree l'image de bulle.
   const ImageDeBulle({
     required this.image,
@@ -81,6 +93,9 @@ class ImageDeBulle extends StatelessWidget {
     this.adresse,
     this.progression,
     this.enPreparation = false,
+    this.repli,
+    this.adresseIntrouvable = false,
+    this.attend = true,
   });
 
   /// L'image rendue par le serveur (dimensions, couleur moyenne).
@@ -98,15 +113,74 @@ class ImageDeBulle extends StatelessWidget {
   /// L'image se prepare sur l'appareil : le cercle tourne sans valeur.
   final bool enPreparation;
 
+  /// Va chercher l'image complete quand la miniature manque ; `null` : pas de
+  /// repli.
+  final Future<AdresseImage?> Function()? repli;
+
+  /// Vrai quand la lecture des miniatures est finie et n'a rien rendu pour
+  /// cette image : le repli part sans attendre une erreur.
+  final bool adresseIntrouvable;
+
+  /// Faux quand rien n'arrivera (envoi en echec) : le reflet ne tourne pas.
+  final bool attend;
+
+  @override
+  State<ImageDeBulle> createState() => _EtatImageDeBulle();
+}
+
+class _EtatImageDeBulle extends State<ImageDeBulle> {
+  /// La premiere image est arrivee : le reflet s'arrete.
+  bool _cadre = false;
+
+  /// La miniature a echoue au chargement.
+  bool _echecMiniature = false;
+
+  AdresseImage? _repli;
+  bool _repliDemande = false;
+  bool _repliEchoue = false;
+
+  void _signaler(VoidCallback fait) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(fait);
+    });
+  }
+
+  void _chercherRepli() {
+    final Future<AdresseImage?> Function()? repli = widget.repli;
+    if (repli == null || _repliDemande) return;
+    _repliDemande = true;
+    repli().then<void>(
+      (AdresseImage? a) {
+        if (!mounted) return;
+        setState(() {
+          _repli = a;
+          _repliEchoue = a == null;
+        });
+      },
+      onError: (Object _) {
+        if (mounted) setState(() => _repliEchoue = true);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
+    final ImageDeBulle w = widget;
     final Color fond =
-        couleurDepuisHex(image.couleurMoyenne) ??
+        couleurDepuisHex(w.image.couleurMoyenne) ??
         palette.surfaceSunken.background;
     final double pixels = MediaQuery.devicePixelRatioOf(context);
-    final int cache = (taille.largeur * pixels).round();
-    final AdresseImage? a = adresse;
+    final int cache = (w.taille.largeur * pixels).round();
+    final bool sansMiniature =
+        w.adresse == null && w.adresseIntrouvable || _echecMiniature;
+    if (sansMiniature && !_repliDemande) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted) _chercherRepli();
+      });
+    }
+    // Les pixels affiches : le repli s'il est arrive, sinon la miniature.
+    final AdresseImage? a = _repli ?? (_echecMiniature ? null : w.adresse);
     final Duration fondu = Mouvement.duree(context, Mouvement.moyen);
     Widget? pixelsImage;
     if (a != null) {
@@ -116,6 +190,7 @@ class ImageDeBulle extends StatelessWidget {
         int? cadre,
         bool synchrone,
       ) {
+        if (cadre != null && !_cadre) _signaler(() => _cadre = true);
         if (synchrone) return enfant;
         return AnimatedOpacity(
           opacity: cadre == null ? 0 : 1,
@@ -125,11 +200,21 @@ class ImageDeBulle extends StatelessWidget {
         );
       }
 
-      Widget absente(BuildContext _, Object _, StackTrace? _) =>
-          const SizedBox.shrink();
+      Widget absente(BuildContext _, Object _, StackTrace? _) {
+        // La miniature echoue : le repli prend le relais. Le repli lui-meme
+        // en echec laisse la couleur moyenne, sans reflet.
+        if (_repli == null && !_echecMiniature) {
+          _signaler(() => _echecMiniature = true);
+        } else if (_repli != null && !_repliEchoue) {
+          _signaler(() => _repliEchoue = true);
+        }
+        return const SizedBox.shrink();
+      }
+
       pixelsImage = a.octets != null
           ? Image.memory(
               a.octets!,
+              key: ValueKey<String>(a.url),
               fit: BoxFit.cover,
               cacheWidth: cache,
               frameBuilder: apparition,
@@ -138,6 +223,7 @@ class ImageDeBulle extends StatelessWidget {
             )
           : Image.network(
               a.url,
+              key: ValueKey<String>(a.url),
               fit: BoxFit.cover,
               cacheWidth: cache,
               frameBuilder: apparition,
@@ -145,19 +231,34 @@ class ImageDeBulle extends StatelessWidget {
               gaplessPlayback: true,
             );
     }
+    // Le reflet tourne tant que les pixels n'arrivent pas, et s'arrete des la
+    // premiere image, ou quand tout a echoue.
+    final bool abandonne = _repliEchoue || (sansMiniature && w.repli == null);
+    final bool reflet = w.attend && !_cadre && !abandonne;
+    final bool sombre = Theme.of(context).brightness == Brightness.dark;
+    final Widget surface = ColoredBox(color: fond);
     return Semantics(
       image: true,
       label: t.com.messages.images.imageJointe,
       child: SizedBox(
-        width: taille.largeur,
-        height: taille.hauteur,
+        width: w.taille.largeur,
+        height: w.taille.hauteur,
         child: Stack(
           fit: StackFit.expand,
           children: <Widget>[
-            ColoredBox(color: fond),
+            if (reflet)
+              ReflecAttente(
+                key: ImageDeBulle.cleReflet,
+                lumiere: sombre
+                    ? palette.surfaceSunken.onBackground
+                    : palette.surfaceRaised.background,
+                child: surface,
+              )
+            else
+              surface,
             ?pixelsImage,
-            if (progression != null || enPreparation)
-              Center(child: _CercleEnvoi(progression: progression)),
+            if (w.progression != null || w.enPreparation)
+              Center(child: _CercleEnvoi(progression: w.progression)),
           ],
         ),
       ),

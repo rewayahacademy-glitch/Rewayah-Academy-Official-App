@@ -13,6 +13,7 @@
 import 'dart:async';
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
@@ -258,7 +259,21 @@ class MessagesMetierSupabase implements PortMessagesMetier {
   }) async {
     final AppelFonction? fonctions = _fonctions;
     if (fonctions == null) throw const CapaciteIndisponible('COM-BR-02');
+    final Stopwatch total = Stopwatch()..start();
+    final Stopwatch etape = Stopwatch()..start();
+    void temps(String nom) {
+      // Mesure du temps de l'envoi (IMAGES-CORRECTIF, B) : lue dans la console.
+      debugPrint(
+        '[images-temps] $nom : ${etape.elapsedMilliseconds} ms '
+        '(cumul ${total.elapsedMilliseconds} ms)',
+      );
+      etape
+        ..reset()
+        ..start();
+    }
+
     final String messageId = await _poster(filId, texte, cleIdempotence);
+    temps('message cree');
     progression?.messageCree(messageId);
     progression?.call(0.05);
     final Map<String, dynamic> depot = await fonctions(
@@ -280,17 +295,21 @@ class MessagesMetierSupabase implements PortMessagesMetier {
         },
       },
     );
+    temps('demande du depot');
     final String imageId = texteJson(depot, 'image_id');
     progression?.depotCree(imageId);
     progression?.call(0.1);
     await _deposer(objetJson(depot['image']), image.octets);
+    temps('PUT image (${image.octets.length} o)');
     progression?.call(0.85);
     await _deposer(objetJson(depot['miniature']), image.miniature);
+    temps('PUT miniature (${image.miniature.length} o)');
     progression?.call(0.95);
     await fonctions('message-image-depot', <String, dynamic>{
       'action': 'confirmer',
       'image_id': imageId,
     });
+    temps('confirmation');
     progression?.call(1);
     unawaited(_miniatures.remove(filId));
   }
@@ -336,13 +355,19 @@ class MessagesMetierSupabase implements PortMessagesMetier {
   }
 
   @override
-  Future<Map<String, AdresseImage>> urlsMiniatures(String filId) {
+  Future<Map<String, AdresseImage>> urlsMiniatures(
+    String filId, {
+    bool frais = false,
+  }) {
     final AppelFonction? fonctions = _fonctions;
     if (fonctions == null || !estUuid(filId)) {
       return Future<Map<String, AdresseImage>>.value(
         const <String, AdresseImage>{},
       );
     }
+    // IMAGES-CORRECTIF : la liste gardee ne connait pas une image arrivee
+    // depuis sa lecture ; [frais] la jette.
+    if (frais) _miniatures.remove(filId);
     final Future<Map<String, AdresseImage>>? gardees = _miniatures[filId];
     if (gardees != null) {
       return gardees.then((Map<String, AdresseImage> m) {
@@ -384,9 +409,15 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     AppelFonction fonctions,
     Map<String, dynamic> corps,
   ) async {
+    final Stopwatch chrono = Stopwatch()..start();
     final Map<String, dynamic> reponse = await fonctions(
       'message-images-lecture',
       corps,
+    );
+    debugPrint(
+      '[images-temps] lecture des adresses signees '
+      '(${corps.containsKey('image_id') ? 'image' : 'miniatures'}) : '
+      '${chrono.elapsedMilliseconds} ms',
     );
     final DateTime maintenant = DateTime.now();
     final Map<String, AdresseImage> rendues = <String, AdresseImage>{};

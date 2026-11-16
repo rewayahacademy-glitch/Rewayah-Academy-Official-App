@@ -37,7 +37,7 @@ class _Source implements SourceImagesFil {
   int lecturesImage = 0;
 
   @override
-  Future<Map<String, AdresseImage>> miniatures() async {
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false}) async {
     lecturesMiniatures++;
     return <String, AdresseImage>{
       'img-1': AdresseImage(
@@ -118,6 +118,15 @@ Future<void> _monter(
     ),
   );
   await tester.pump();
+}
+
+/// Fait avancer le temps par pas fixes : le reflet d'attente de la bulle
+/// (IMAGES-CORRECTIF) tourne tant que l'image n'est pas decodee, donc
+/// `pumpAndSettle` ne se termine pas.
+Future<void> _pas(WidgetTester tester) async {
+  for (int i = 0; i < 12; i++) {
+    await tester.pump(const Duration(milliseconds: 50));
+  }
 }
 
 /// Laisse le moteur d'images terminer (decodage reel hors du temps simule).
@@ -268,14 +277,14 @@ void main() {
       await tester.pump();
       expect(source.lecturesImage, 0);
       await tester.tap(find.byType(ImageDeBulle));
-      await tester.pumpAndSettle(const Duration(milliseconds: 400));
+      await _pas(tester);
       expect(find.byType(ApercuImage), findsOneWidget);
       expect(find.byType(InteractiveViewer), findsOneWidget);
       expect(find.text('Regardez'), findsWidgets, reason: 'texte en bas');
       expect(find.byKey(ApercuImage.cleEnregistrer), findsOneWidget);
       expect(source.lecturesImage, 1, reason: 'demandee a l\'ouverture');
       await tester.tap(find.byKey(ApercuImage.cleFermer));
-      await tester.pumpAndSettle(const Duration(milliseconds: 400));
+      await _pas(tester);
       expect(find.byType(ApercuImage), findsNothing);
     });
 
@@ -584,7 +593,8 @@ class _SourceLente implements SourceImagesFil {
   final Future<Map<String, AdresseImage>> _miniatures;
 
   @override
-  Future<Map<String, AdresseImage>> miniatures() => _miniatures;
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false}) =>
+      _miniatures;
 
   @override
   Future<AdresseImage?> image(String imageId) async => null;

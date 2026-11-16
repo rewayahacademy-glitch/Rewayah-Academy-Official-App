@@ -19,7 +19,8 @@ class SourceImagesPort implements SourceImagesFil {
   final String filId;
 
   @override
-  Future<Map<String, AdresseImage>> miniatures() => _port.urlsMiniatures(filId);
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false}) =>
+      _port.urlsMiniatures(filId, frais: frais);
 
   @override
   Future<AdresseImage?> image(String imageId) => _port.urlImage(filId, imageId);

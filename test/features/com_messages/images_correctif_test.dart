@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/communications/textes_fil_communication.dar
 import 'package:rewayah_academy/core/fichiers/selecteur_image.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
+import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/ligne_conversation.dart';
@@ -592,4 +593,244 @@ void main() {
       },
     );
   });
+  group('5. la miniature qui ne se peint pas (bug du 16/11 en production)', () {
+    const String fil = '7c400000-0000-4000-8000-0000000000f9';
+
+    test(
+      'la liste gardee ne connait pas une image arrivee apres elle',
+      () async {
+        int lectures = 0;
+        final MessagesMetierSupabase port = MessagesMetierSupabase(
+          (String f, Map<String, dynamic> p) async => <String, dynamic>{},
+          libelles: const LibellesCommunicationSlang(),
+          fonctions: (String f, Map<String, dynamic> corps) async {
+            lectures++;
+            return <String, dynamic>{
+              'images': <Map<String, dynamic>>[
+                <String, dynamic>{
+                  'id': 'a',
+                  'url': 'https://r2.test/a',
+                  'expire_dans_secondes': 3600,
+                },
+                if (lectures > 1)
+                  <String, dynamic>{
+                    'id': 'b',
+                    'url': 'https://r2.test/b',
+                    'expire_dans_secondes': 3600,
+                  },
+              ],
+            };
+          },
+        );
+        expect((await port.urlsMiniatures(fil)).keys, <String>['a']);
+        // Sans [frais], la liste gardee est rendue : « b » en est absente.
+        expect((await port.urlsMiniatures(fil)).keys, <String>['a']);
+        expect(lectures, 1);
+        // Avec [frais], le serveur est relu et « b » apparait.
+        expect((await port.urlsMiniatures(fil, frais: true)).keys, <String>[
+          'a',
+          'b',
+        ]);
+        expect(lectures, 2);
+      },
+    );
+
+    testWidgets('une image arrivee pendant que le fil est ouvert se peint', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(1440, 900));
+      final List<bool> demandes = <bool>[];
+      final _SourceGardee source = _SourceGardee(png, demandes);
+      MessageFil confirmee(String id, int minute) => _serveur(
+        id: 'm-$id',
+        instant: DateTime.utc(2026, 11, 16, 10, minute),
+        texte: '[image]',
+        image: ImageMessage(id: id, largeur: 160, hauteur: 100),
+      );
+      Widget monter(List<MessageFil> messages) => hoteTheme(
+        FilDiscussion(
+          messages: messages,
+          textes: textesFilCommunication(),
+          onEnvoyer: (String _) async {},
+          images: source,
+          deuxChoixPhoto: false,
+        ),
+        defilant: false,
+      );
+      await tester.pumpWidget(monter(<MessageFil>[confirmee('a', 1)]));
+      await tester.pump();
+      await tester.pump();
+      expect(find.byType(Image), findsOneWidget);
+      // Le destinataire recoit une seconde image alors que le fil est ouvert.
+      await tester.pumpWidget(
+        monter(<MessageFil>[confirmee('a', 1), confirmee('b', 2)]),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.byType(Image), findsNWidgets(2));
+      expect(demandes, <bool>[false, false, true]);
+    });
+
+    testWidgets('miniature en echec : l\'image complete la remplace', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      int replis = 0;
+      await tester.pumpWidget(
+        hoteTheme(
+          Center(
+            child: ImageDeBulle(
+              image: _image,
+              taille: const TailleImageBulle(200, 150),
+              // Des octets illisibles : la miniature echoue au decodage.
+              adresse: AdresseImage(
+                url: 'miniature-cassee',
+                expireLe: DateTime.utc(2099),
+                octets: Uint8List.fromList(<int>[1, 2, 3, 4]),
+              ),
+              repli: () async {
+                replis++;
+                return AdresseImage(
+                  url: 'image-complete',
+                  expireLe: DateTime.utc(2099),
+                  octets: png,
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      for (int i = 0; i < 6; i++) {
+        await tester.runAsync(
+          () => Future<void>.delayed(const Duration(milliseconds: 40)),
+        );
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      expect(replis, 1);
+      final Image affichee = tester.widget<Image>(find.byType(Image));
+      expect(
+        (affichee.image as ResizeImage).imageProvider,
+        isA<MemoryImage>().having(
+          (MemoryImage m) => m.bytes.length,
+          'octets de l\'image complete',
+          png.length,
+        ),
+      );
+    });
+
+    testWidgets('aucune adresse rendue : le repli part sans attendre', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      int replis = 0;
+      await tester.pumpWidget(
+        hoteTheme(
+          Center(
+            child: ImageDeBulle(
+              image: _image,
+              taille: const TailleImageBulle(200, 150),
+              adresseIntrouvable: true,
+              repli: () async {
+                replis++;
+                return AdresseImage(
+                  url: 'image-complete',
+                  expireLe: DateTime.utc(2099),
+                  octets: png,
+                );
+              },
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(replis, 1);
+      expect(find.byType(Image), findsOneWidget);
+    });
+  });
+
+  group('6. un effet de chargement agreable', () {
+    Widget bulle({AdresseImage? adresse, bool reduit = false}) => hoteTheme(
+      MediaQuery(
+        data: MediaQueryData(disableAnimations: reduit),
+        child: Center(
+          child: ImageDeBulle(
+            image: _image,
+            taille: const TailleImageBulle(200, 150),
+            adresse: adresse,
+          ),
+        ),
+      ),
+    );
+
+    testWidgets('un reflet tourne tant que les pixels n\'arrivent pas', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      await tester.pumpWidget(bulle());
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byKey(ImageDeBulle.cleReflet), findsOneWidget);
+      expect(tester.hasRunningAnimations, isTrue);
+    });
+
+    testWidgets('il s\'arrete des la premiere image', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      await tester.pumpWidget(bulle());
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(find.byKey(ImageDeBulle.cleReflet), findsOneWidget);
+      await tester.pumpWidget(
+        bulle(
+          adresse: AdresseImage(
+            url: 'x',
+            expireLe: DateTime.utc(2099),
+            octets: png,
+          ),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.byKey(ImageDeBulle.cleReflet), findsNothing);
+      await tester.pumpAndSettle();
+    });
+
+    testWidgets('sous « reduire les animations » : fixe, rien ne tourne', (
+      WidgetTester tester,
+    ) async {
+      fixerVue(tester, const Size(390, 844));
+      await tester.pumpWidget(bulle(reduit: true));
+      await tester.pump(const Duration(milliseconds: 300));
+      expect(tester.hasRunningAnimations, isFalse);
+      await tester.pumpAndSettle();
+    });
+
+    test('le reflet prend sa duree dans app_mouvement', () {
+      expect(AppMouvement.refletSquelette, const Duration(milliseconds: 1800));
+    });
+  });
+}
+
+/// Une source qui garde sa premiere liste : sans [frais], une image arrivee
+/// depuis n'y figure pas (comme le port, qui garde la liste une heure).
+class _SourceGardee implements SourceImagesFil {
+  _SourceGardee(this.octets, this.demandes);
+
+  final Uint8List octets;
+  final List<bool> demandes;
+
+  AdresseImage _a() => AdresseImage(
+    url: 'demo',
+    expireLe: DateTime.now().add(const Duration(hours: 1)),
+    octets: octets,
+  );
+
+  @override
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false}) async {
+    demandes.add(frais);
+    return <String, AdresseImage>{'a': _a(), if (frais) 'b': _a()};
+  }
+
+  @override
+  Future<AdresseImage?> image(String imageId) async => _a();
 }

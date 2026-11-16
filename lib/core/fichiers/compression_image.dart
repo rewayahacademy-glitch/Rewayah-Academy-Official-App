@@ -15,6 +15,8 @@ library;
 
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show debugPrint;
+
 import '../communications/image_message.dart';
 import 'compression_image_autre.dart'
     if (dart.library.js_interop) 'compression_image_web.dart'
@@ -83,6 +85,7 @@ Future<ImagePrete> preparerImage(
     throw const EchecImage(RefusImage.imageTropGrosse);
   }
   if (source.isEmpty) throw const EchecImage(RefusImage.imageIllisible);
+  final Stopwatch chrono = Stopwatch()..start();
   // Qualite 0,8, puis 0,6 une seule fois, puis refus.
   const List<(int, double)> essais = <(int, double)>[
     (coteImage, 0.8),
@@ -123,6 +126,12 @@ Future<ImagePrete> preparerImage(
     }
   }
   if (mini == null) throw const EchecImage(RefusImage.imageTropGrosse);
+  // Mesure du temps de preparation sur l'appareil (IMAGES-CORRECTIF, B).
+  debugPrint(
+    '[images-temps] preparation sur l\'appareil : ${chrono.elapsedMilliseconds} ms '
+    '(source ${source.length} o, image ${image.octets.length} o, '
+    'miniature ${mini.octets.length} o)',
+  );
   return ImagePrete(
     octets: image.octets,
     mime: image.mime,
