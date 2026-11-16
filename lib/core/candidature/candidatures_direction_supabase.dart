@@ -118,6 +118,25 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
   }
 
   @override
+  Future<VoisinsCandidature> voisins(
+    String reference, {
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  }) async {
+    final Map<String, dynamic> brut = _objet(
+      await _appel('voisins_candidature', <String, dynamic>{
+        'p_reference': reference,
+        'p_filtre': filtreEnJson(filtre),
+        'p_tri': tri.valeurSql,
+      }, dependanceFileCandidatures),
+    );
+    if (brut['erreur'] != 'hors_liste') {
+      _refusDeLecture(brut);
+    }
+    return VoisinsCandidature.depuisJson(brut);
+  }
+
+  @override
   Future<List<ResponsablePossible>> responsablesPossibles(
     String candidatureId,
   ) =>
