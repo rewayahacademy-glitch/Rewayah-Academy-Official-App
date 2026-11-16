@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/widgets/entete_page.dart'
     show DisqueRetour;
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/controleur/complement_rapport_page.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
@@ -298,7 +299,9 @@ void main() {
       routeur.state.uri.queryParameters['fil'],
       'demo-mission-an-nour-0921',
     );
-    expect(find.text(t.controleur.echanges.contexte), findsOneWidget);
+    // CONVERSATIONS-PARTOUT : a 390, le fil de la mission s'ouvre dans la
+    // barre compacte de la conversation, plus sous une phrase de contexte.
+    expect(find.byKey(BarreConversation.cle), findsOneWidget);
   });
 
   testWidgets('« A terminer » reprend le compte rendu', (

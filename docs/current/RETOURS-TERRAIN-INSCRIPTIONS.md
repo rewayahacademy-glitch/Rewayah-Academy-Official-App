@@ -69,3 +69,19 @@ Les élèves sont la population qui aura le plus besoin de listes. La liste des 
 | R23 | 16/11 | Des enseignants ont créé un compte élève ou famille au lieu de poursuivre leur candidature. | Trois au moins prouvés (formulaire candidat rempli, invitation reçue, même nom qu'une candidature) ; une candidate écrit que le lien de son invitation ne lui proposait que « élève » ou « pour mon enfant » (cause **lue dans le code, non prouvée en production** : la marque « je viens postuler » ne vit que dans la mémoire de l'appareil, `invitation_en_cours.dart`, et le lien de connexion ne ramène qu'à l'origine du site, `service_auth.dart` `emailRedirectTo`, sans cette marque ; ouvert dans un autre navigateur, une autre application ou un autre appareil, il tombe sur « Pour qui créez-vous ce compte ? », dont le chemin enseignant n'était qu'un petit lien en bas de page). | 3 prouvés sur 9 demandes élève récentes | Lien « Vous voulez enseigner chez nous ? Postulez ici » en tête de l'inscription élève (lot POSTULER-ICI, PR #523) ; la marque dans l'adresse de retour du lien de connexion est dans la PR séparée #524, à ne fusionner qu'après vérification de la liste d'adresses de retour autorisées de Supabase | L'inscription élève demande d'abord : apprendre ou enseigner |
 | R24 | 16/11 | Le dossier d'un élève adulte ou d'une famille ne montre à la direction que le nom et la date. | Les réponses de la demande ne sont pas affichées côté direction. | 9 demandes en attente | À faire après les enseignants (directeur, 16/11) | Afficher les réponses de la demande, comme le dossier d'un candidat |
 | R25 | 16/11 | Des invitations de candidats ne sont jamais arrivées. | Adresses saisies avec une faute dans le formulaire papier (gmail.coma, gamil.com, gmail.co, geml.com, mail.com au lieu de gmail.com) : dizaines d'avis de non-distribution. | Candidats concernés, nombre en cours de relevé | Aucun encore : corriger les adresses à la main ou par l'agent IA ; contrôler le domaine à la saisie | Contrôler le domaine de l'adresse à l'inscription (« Vouliez-vous dire gmail.com ? ») |
+
+## Pour les élèves : leçons de la messagerie (pilote de la messagerie, 16/11/2026)
+
+Ajout seulement : les lignes ci-dessous ne remplacent rien d'autre dans ce document.
+Détail : `MESSAGERIE-ETAT-ET-PLAN-2026-11-16.md`.
+
+- **M1. Une conversation s'ouvre de partout.** Une famille écrira depuis la classe, la fiche de
+  l'élève, la cloche ou la page Messages. Ces entrées doivent toutes avoir la même mise en page et le
+  même comportement, et toutes figurer dans `MESSAGERIE-MATRICE.md`.
+- **M2. Un message non envoyé reste à sa place.** Il garde un « ! » et propose « Réessayer » et
+  « Supprimer ». Il ne passe jamais en bas de la conversation, où il cacherait les nouveaux messages.
+- **M3. Une photo envoyée depuis un navigateur exige une règle d'origine (CORS) sur le compartiment
+  de stockage.** Sans elle, l'envoi échoue sans bruit, et la base garde des images « en attente »
+  jamais confirmées. À vérifier avant d'ouvrir les photos aux familles.
+- **M4. Un texte écrit par une personne peut mêler l'arabe et le français.** Avis, message, nom :
+  l'affichage doit poser l'arabe dans sa langue, de droite à gauche, sans jamais retoucher le texte.

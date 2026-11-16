@@ -72,6 +72,7 @@ const List<String> composantsDuCatalogue = <String>[
   'BadgeNouveau',
   'BadgePeriodeFinancee',
   'BandeauAttention',
+  'BandeauFermable',
   'LigneMoyenPaiement',
   'ResumeSoldes',
   'AudioLabel',

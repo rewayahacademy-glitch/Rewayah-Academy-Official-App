@@ -187,7 +187,10 @@ class PlanDossier {
           EtatPiece.validee => PastilleRubrique.bon,
           EtatPiece.deposee => PastilleRubrique.aVoir,
           EtatPiece.aDeposer || EtatPiece.aCorriger => PastilleRubrique.manque,
-          null => deControles(<String>['piece_validee']),
+          // Etat de la piece inconnu : le controle faux dit seulement « pas
+          // encore validee », jamais « manquante » (PIECE-DANS-DOSSIER,
+          // 16/11/2026) ; vrai, la piece est bonne ; sinon, pas de pastille.
+          null => c?['piece_validee'] == true ? PastilleRubrique.bon : null,
         };
       case RubriqueDossierCode.versement:
         return switch (detail.ligne.paiement) {

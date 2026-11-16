@@ -4413,7 +4413,14 @@
           "misesAJour": "Dernière mise à jour le {date}."
         },
         "pieceIllisible": "Format non lisible\u00a0: cette pièce (photo HEIC ou PDF) ne s'affiche pas sur ordinateur. Demandez une nouvelle pièce, en photo JPEG ou PNG.",
-        "demanderNouvellePiece": "Demander une nouvelle pièce d'identité"
+        "demanderNouvellePiece": "Demander une nouvelle pièce d'identité",
+        "pieceAgrandir": "Ouvrir la pièce d'identité en grand",
+        "pieceImage": "Image",
+        "pieceFichier": "Fichier",
+        "piecePdf": "Fichier PDF",
+        "pieceOuvrirPdf": "Ouvrir le PDF de la pièce d'identité",
+        "pieceTitre": "Pièce d'identité\u00a0: {nom}",
+        "pieceDecisionPlusTard": "La pièce se décide en Salle de vérification et d'entretien."
       },
       "controles": {
         "noms": {
