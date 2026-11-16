@@ -24,6 +24,7 @@ import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/port_autres_competences.dart';
 import '../../core/i18n/pays_iso.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
@@ -311,7 +312,7 @@ class _FeuilleFiltresEtat extends ConsumerState<FeuilleFiltres> {
         for (int n = 1; n <= 7; n++)
           EntreeFiltre<int>(
             valeur: n,
-            libelle: r.joursMinN(n: n),
+            libelle: LibellesGroupe.insecable(r.joursMinN(n: n)),
           ),
       ], (int? v) => _f.avec(joursMin: () => v)),
       _menu<String>(
