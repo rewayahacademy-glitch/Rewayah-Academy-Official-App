@@ -4772,7 +4772,7 @@ class _Traductions$recrutement$majeur$en extends Traductions$recrutement$majeur$
 	@override String get coche => 'I am 18 or older.';
 	@override String get lienMoins18 => 'I am under 18';
 	@override String get pourquoiBloque => 'Tick the box to continue.';
-	@override String get echec => 'Your answer is not confirmed. Check your connection, then try again.';
+	@override String get echec => 'Your answer is not confirmed. Nothing was saved: try again in a moment.';
 	@override String get dejaFaite => 'Your answer is already saved. If it is wrong, write to the administration.';
 	@override late final _Traductions$recrutement$majeur$portail$en portail = _Traductions$recrutement$majeur$portail$en._(_root);
 	@override late final _Traductions$recrutement$majeur$confirmer$en confirmer = _Traductions$recrutement$majeur$confirmer$en._(_root);
@@ -29548,7 +29548,7 @@ extension on TraductionsEn {
 			'recrutement.majeur.coche' => 'I am 18 or older.',
 			'recrutement.majeur.lienMoins18' => 'I am under 18',
 			'recrutement.majeur.pourquoiBloque' => 'Tick the box to continue.',
-			'recrutement.majeur.echec' => 'Your answer is not confirmed. Check your connection, then try again.',
+			'recrutement.majeur.echec' => 'Your answer is not confirmed. Nothing was saved: try again in a moment.',
 			'recrutement.majeur.dejaFaite' => 'Your answer is already saved. If it is wrong, write to the administration.',
 			'recrutement.majeur.portail.titre' => 'One thing to confirm',
 			'recrutement.majeur.portail.explication' => 'To continue your application, confirm that you are 18 or older.',

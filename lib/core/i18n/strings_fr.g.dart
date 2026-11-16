@@ -9320,8 +9320,8 @@ class Traductions$recrutement$majeur$fr {
 	/// fr: 'Cochez la case pour continuer.'
 	String get pourquoiBloque => 'Cochez la case pour continuer.';
 
-	/// fr: 'Votre réponse n'est pas confirmée. Vérifiez votre connexion, puis réessayez.'
-	String get echec => 'Votre réponse n\'est pas confirmée. Vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Votre réponse n'est pas confirmée. Rien n'est enregistré : réessayez dans un instant.'
+	String get echec => 'Votre réponse n\'est pas confirmée. Rien n\'est enregistré : réessayez dans un instant.';
 
 	/// fr: 'Votre réponse est déjà enregistrée. Si elle est inexacte, écrivez à l'administration.'
 	String get dejaFaite => 'Votre réponse est déjà enregistrée. Si elle est inexacte, écrivez à l\'administration.';
@@ -56224,7 +56224,7 @@ extension on Traductions {
 			'recrutement.majeur.coche' => 'J\'ai 18 ans ou plus.',
 			'recrutement.majeur.lienMoins18' => 'J\'ai moins de 18 ans',
 			'recrutement.majeur.pourquoiBloque' => 'Cochez la case pour continuer.',
-			'recrutement.majeur.echec' => 'Votre réponse n\'est pas confirmée. Vérifiez votre connexion, puis réessayez.',
+			'recrutement.majeur.echec' => 'Votre réponse n\'est pas confirmée. Rien n\'est enregistré : réessayez dans un instant.',
 			'recrutement.majeur.dejaFaite' => 'Votre réponse est déjà enregistrée. Si elle est inexacte, écrivez à l\'administration.',
 			'recrutement.majeur.portail.titre' => 'Une confirmation à faire',
 			'recrutement.majeur.portail.explication' => 'Pour continuer votre candidature, confirmez que vous avez 18 ans ou plus.',

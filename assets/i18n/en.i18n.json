@@ -2621,7 +2621,7 @@
       "coche": "I am 18 or older.",
       "lienMoins18": "I am under 18",
       "pourquoiBloque": "Tick the box to continue.",
-      "echec": "Your answer is not confirmed. Check your connection, then try again.",
+      "echec": "Your answer is not confirmed. Nothing was saved: try again in a moment.",
       "dejaFaite": "Your answer is already saved. If it is wrong, write to the administration.",
       "portail": {
         "titre": "One thing to confirm",

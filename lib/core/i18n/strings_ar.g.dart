@@ -10750,7 +10750,7 @@ class _Traductions$recrutement$majeur$ar extends Traductions$recrutement$majeur$
 	@override String get coche => 'عمري 18 سنة أو أكثر.';
 	@override String get lienMoins18 => 'عمري أقل من 18 سنة';
 	@override String get pourquoiBloque => 'ضع علامة في المربع للمتابعة.';
-	@override String get echec => 'لم يتم تأكيد إجابتك. تحقق من اتصالك ثم أعد المحاولة.';
+	@override String get echec => 'لم يتم تأكيد إجابتك. لم يُحفظ شيء: حاول مرة أخرى بعد قليل.';
 	@override String get dejaFaite => 'إجابتك مسجلة بالفعل. إن كانت غير صحيحة، راسل الإدارة.';
 	@override late final _Traductions$recrutement$majeur$portail$ar portail = _Traductions$recrutement$majeur$portail$ar._(_root);
 	@override late final _Traductions$recrutement$majeur$confirmer$ar confirmer = _Traductions$recrutement$majeur$confirmer$ar._(_root);
@@ -39001,7 +39001,7 @@ extension on TraductionsAr {
 			'recrutement.majeur.coche' => 'عمري 18 سنة أو أكثر.',
 			'recrutement.majeur.lienMoins18' => 'عمري أقل من 18 سنة',
 			'recrutement.majeur.pourquoiBloque' => 'ضع علامة في المربع للمتابعة.',
-			'recrutement.majeur.echec' => 'لم يتم تأكيد إجابتك. تحقق من اتصالك ثم أعد المحاولة.',
+			'recrutement.majeur.echec' => 'لم يتم تأكيد إجابتك. لم يُحفظ شيء: حاول مرة أخرى بعد قليل.',
 			'recrutement.majeur.dejaFaite' => 'إجابتك مسجلة بالفعل. إن كانت غير صحيحة، راسل الإدارة.',
 			'recrutement.majeur.portail.titre' => 'تأكيد مطلوب',
 			'recrutement.majeur.portail.explication' => 'لمتابعة طلب ترشحك، أكّد أن عمرك 18 سنة أو أكثر.',

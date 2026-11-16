@@ -2621,7 +2621,7 @@
       "coche": "J'ai 18 ans ou plus.",
       "lienMoins18": "J'ai moins de 18 ans",
       "pourquoiBloque": "Cochez la case pour continuer.",
-      "echec": "Votre réponse n'est pas confirmée. Vérifiez votre connexion, puis réessayez.",
+      "echec": "Votre réponse n'est pas confirmée. Rien n'est enregistré\u00a0: réessayez dans un instant.",
       "dejaFaite": "Votre réponse est déjà enregistrée. Si elle est inexacte, écrivez à l'administration.",
       "portail": {
         "titre": "Une confirmation à faire",
