@@ -11,12 +11,9 @@
 // identifiant de document (`piece_dossier_candidat`) et s'aperçoit par la même
 // porte de signature que « Fichiers à valider » (`ServiceValidation.apercu`).
 //
-// Valider et Refuser n'y sont PAS : `decider_dossier` passe un compte
-// `pending_kyc` à `active` (approbation) et désactive le compte d'un enseignant
-// sans autre pièce approuvée (refus). Ce n'est pas un geste de Salle d'examen ;
-// la pièce se décide en Salle de vérification et d'entretien, par la revue sur
-// place habituelle. La phrase le dit (K-56 : un geste qui ne peut pas aboutir
-// n'est pas rendu).
+// Valider et Refuser s'ajoutent sous la vignette (`DecisionPiece`, PIECE-SUR-LA-FICHE,
+// 16/11/2026) : `decider_dossier` laisse depuis le 14/11 un candidat d'avant la
+// salle 3 en `pending_kyc` (20261125820000).
 library;
 
 import 'dart:async';
@@ -78,9 +75,6 @@ class PieceVignette extends ConsumerWidget {
   /// La clé de l'image qu'on touche.
   static const Key cleImage = ValueKey<String>('piece-vignette-toucher');
 
-  /// La clé de la phrase qui dit où se décide la pièce.
-  static const Key cleDecision = ValueKey<String>('piece-vignette-decision');
-
   /// La clé de la phrase d'échec de l'aperçu.
   static const Key cleEchec = ValueKey<String>('piece-vignette-echec');
 
@@ -102,9 +96,6 @@ class PieceVignette extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final r = t.admin.candidatures.detail;
     final AppPalette palette = AppPalette.of(context);
-    final TextStyle muet = palette.inkMuted.applyTo(
-      Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-    );
     final AsyncValue<String> adresse = ref.watch(
       adressePieceProvider(documentId),
     );
@@ -231,15 +222,7 @@ class PieceVignette extends ConsumerWidget {
       key: cle,
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        apercu,
-        Ecart.vSm,
-        TexteSansCoupure(
-          r.pieceDecisionPlusTard,
-          key: cleDecision,
-          style: muet,
-        ),
-      ],
+      children: <Widget>[apercu],
     );
   }
 }

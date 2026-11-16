@@ -20,10 +20,12 @@ import 'package:rewayah_academy/core/fichiers/ouvrir_onglet.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
+import 'package:rewayah_academy/features/admin_candidature/piece_decision.dart';
 import 'package:rewayah_academy/features/admin_candidature/piece_vignette.dart';
 import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart'
     show imagePieceProvider;
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/monter_recrutement.dart' show laisser;
@@ -63,6 +65,12 @@ Future<_Signature> _monter(
   bool imageIllisible = false,
   EtatPiece? etatDuDossier,
   List<ControleCandidature>? controles,
+  Future<void> Function({
+    required String documentId,
+    required bool approuve,
+    String? motif,
+  })?
+  decider,
 }) async {
   final _Signature signature = _Signature(extension: extension);
   final DetailCandidature detail = detailTest(
@@ -78,6 +86,7 @@ Future<_Signature> _monter(
     surcharges: <Override>[
       lirePieceCandidatureProvider.overrideWithValue((String _) async => piece),
       serviceValidationProvider.overrideWithValue(signature),
+      if (decider != null) deciderPieceProvider.overrideWithValue(decider),
       if (ouverts != null)
         ouvreurOngletProvider.overrideWithValue((Uri u) async {
           ouverts.add(u);
@@ -265,15 +274,12 @@ void main() {
       );
     });
 
-    testWidgets('Valider et Refuser ne sont pas rendus : une phrase dit où', (
+    testWidgets('sans la porte branchee, ni Valider ni Refuser', (
       WidgetTester tester,
     ) async {
       await _monter(tester, deposee);
-      expect(find.byKey(PieceVignette.cleDecision), findsOneWidget);
-      expect(
-        find.text(t.admin.candidatures.detail.pieceDecisionPlusTard),
-        findsOneWidget,
-      );
+      expect(find.byKey(DecisionPiece.cleValider), findsNothing);
+      expect(find.byKey(DecisionPiece.cleRefuser), findsNothing);
     });
 
     testWidgets('« Demander une nouvelle pièce » reste en lien secondaire', (
@@ -349,5 +355,104 @@ void main() {
         );
       },
     );
+  });
+
+  group('PIECE-SUR-LA-FICHE : decider la piece sur la fiche', () {
+    final r = t.admin.candidatures.detail;
+
+    testWidgets('Valider appelle la porte avec le document', (
+      WidgetTester tester,
+    ) async {
+      final List<(String, bool, String?)> appels = <(String, bool, String?)>[];
+      await _monter(
+        tester,
+        deposee,
+        decider: ({
+          required String documentId,
+          required bool approuve,
+          String? motif,
+        }) async => appels.add((documentId, approuve, motif)),
+      );
+      expect(find.byKey(DecisionPiece.cleValider), findsOneWidget);
+      await tester.ensureVisible(find.byKey(DecisionPiece.cleValider));
+      await tester.tap(find.byKey(DecisionPiece.cleValider));
+      await laisser(tester);
+      expect(appels, <(String, bool, String?)>[('doc1', true, null)]);
+    });
+
+    testWidgets('Refuser exige un motif, puis l\'envoie', (
+      WidgetTester tester,
+    ) async {
+      final List<(String, bool, String?)> appels = <(String, bool, String?)>[];
+      await _monter(
+        tester,
+        deposee,
+        decider: ({
+          required String documentId,
+          required bool approuve,
+          String? motif,
+        }) async => appels.add((documentId, approuve, motif)),
+      );
+      await tester.ensureVisible(find.byKey(DecisionPiece.cleRefuser));
+      await tester.tap(find.byKey(DecisionPiece.cleRefuser));
+      await laisser(tester);
+      await tester.ensureVisible(find.byKey(DecisionPiece.cleConfirmerRefus));
+      await tester.tap(find.byKey(DecisionPiece.cleConfirmerRefus));
+      await laisser(tester);
+      expect(appels, isEmpty);
+      expect(find.text(t.dossiers.refus.erreurVide), findsOneWidget);
+      await tester.enterText(
+        find.descendant(
+          of: find.byKey(DecisionPiece.cleMotif),
+          matching: find.byType(EditableText),
+        ),
+        'Photo floue',
+      );
+      await tester.ensureVisible(find.byKey(DecisionPiece.cleConfirmerRefus));
+      await tester.tap(find.byKey(DecisionPiece.cleConfirmerRefus));
+      await laisser(tester);
+      expect(appels, <(String, bool, String?)>[('doc1', false, 'Photo floue')]);
+    });
+
+    testWidgets('un refus du serveur dit sa raison, jamais « connexion »', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        deposee,
+        decider:
+            ({
+              required String documentId,
+              required bool approuve,
+              String? motif,
+            }) async =>
+                throw const PostgrestException(message: 'dossier déjà décidé'),
+      );
+      await tester.ensureVisible(find.byKey(DecisionPiece.cleValider));
+      await tester.tap(find.byKey(DecisionPiece.cleValider));
+      await laisser(tester);
+      expect(find.text(r.pieceDejaDecidee), findsOneWidget);
+      expect(find.textContaining('connexion'), findsNothing);
+    });
+
+    testWidgets('une raison inconnue du serveur est citee', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        deposee,
+        decider:
+            ({
+              required String documentId,
+              required bool approuve,
+              String? motif,
+            }) async =>
+                throw const PostgrestException(message: 'raison inattendue'),
+      );
+      await tester.ensureVisible(find.byKey(DecisionPiece.cleValider));
+      await tester.tap(find.byKey(DecisionPiece.cleValider));
+      await laisser(tester);
+      expect(find.textContaining('raison inattendue'), findsOneWidget);
+    });
   });
 }

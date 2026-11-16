@@ -24,6 +24,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_dossiers/etat_file_dossiers.dart';
 import '../admin_dossiers/revue_dossier.dart';
+import 'piece_decision.dart';
 import 'piece_vignette.dart';
 
 /// La piece d'une candidature, sur la fiche.
@@ -72,8 +73,26 @@ class PieceSurPlace extends ConsumerWidget {
     // PIECE-DANS-DOSSIER (16/11/2026) : plus de lien vers « Fichiers a
     // valider » depuis la rubrique (la liste de tous les fichiers ne retrouve
     // pas le candidat). Une piece deposee hors de la file s'apercoit ici.
-    Widget vignette(String documentId, GenreFichierPiece? genre) =>
-        PieceVignette(key: cle, documentId: documentId, nom: nom, genre: genre);
+    // PIECE-SUR-LA-FICHE (16/11/2026) : sous la vignette, Valider et Refuser
+    // (`decider_dossier`), rendus seulement si la porte est branchee.
+    Widget vignette(String documentId, GenreFichierPiece? genre) => Column(
+      key: cle,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        PieceVignette(documentId: documentId, nom: nom, genre: genre),
+        if (ref.watch(deciderPieceProvider) != null) ...<Widget>[
+          Ecart.vMd,
+          DecisionPiece(
+            documentId: documentId,
+            onDecision: (String message) {
+              relire();
+              onDecision(message);
+            },
+          ),
+        ],
+      ],
+    );
 
     if (!lecture.hasValue) {
       return lecture.hasError

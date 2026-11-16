@@ -5750,7 +5750,14 @@
         "piecePdf": "ملف PDF",
         "pieceOuvrirPdf": "فتح ملف PDF لوثيقة الهوية",
         "pieceTitre": "وثيقة هوية \u2068{nom}\u2069",
-        "pieceDecisionPlusTard": "تُحسم الوثيقة في قاعة التحقق والمقابلة."
+        "pieceValider": "قبول الوثيقة",
+        "pieceRefuser": "رفض الوثيقة",
+        "pieceRefusAnnuler": "إبقاء الوثيقة قيد الانتظار",
+        "pieceValidee": "تم قبول الوثيقة.",
+        "pieceRefusee": "تم رفض الوثيقة.",
+        "pieceDejaDecidee": "صدر قرار بشأن هذه الوثيقة من قبل. أعد تحميل الملف.",
+        "pieceNonConfirmee": "لم تتأكد النتيجة بعد. أعد تحميل الملف قبل المحاولة من جديد.",
+        "pieceHorsLigne": "لم يُرسل شيء: أنت غير متصل. أعد المحاولة عند عودة الاتصال."
       },
       "controles": {
         "noms": {

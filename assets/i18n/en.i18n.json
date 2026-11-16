@@ -4493,7 +4493,14 @@
         "piecePdf": "PDF file",
         "pieceOuvrirPdf": "Open the PDF of the ID document",
         "pieceTitre": "ID document of {nom}",
-        "pieceDecisionPlusTard": "The document is decided in the Verification and interview room."
+        "pieceValider": "Approve the document",
+        "pieceRefuser": "Reject the document",
+        "pieceRefusAnnuler": "Keep the document pending",
+        "pieceValidee": "Document approved.",
+        "pieceRefusee": "Document rejected.",
+        "pieceDejaDecidee": "This document has already been decided. Reload the file.",
+        "pieceNonConfirmee": "The result is not confirmed yet. Reload the file before trying again.",
+        "pieceHorsLigne": "Nothing was sent: you are offline. Try again when the connection is back."
       },
       "controles": {
         "noms": {
