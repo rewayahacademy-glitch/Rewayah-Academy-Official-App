@@ -319,19 +319,21 @@ RESET ROLE;
 -- ------------------------------------------------------------
 DO $initial$
 BEGIN
-  PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement) = 249
-    AND (SELECT count(DISTINCT pays) FROM public.referentiel_paiement) = 249
+  -- MOBILE-MONEY-GH-KE (16/11/2026) : 249 lignes de virement (une par pays) plus quatre lignes de monnaie mobile.
+  PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement) = 253
+    AND (SELECT count(*) FROM public.referentiel_paiement WHERE methode = 'virement_bancaire') = 249
+    AND (SELECT count(DISTINCT pays) FROM public.referentiel_paiement WHERE methode = 'virement_bancaire') = 249
     AND (SELECT bool_and(methode = 'virement_bancaire' AND operateur IS NULL AND source = 'decision_directeur'
                          AND source_ref = 'DEC:28 (CAND-Q05, 21/10/2026)' AND verifie_par IS NULL AND notes LIKE '%DEC:28%')
          FROM public.referentiel_paiement
          WHERE pays NOT IN ('YE', 'NG', 'CI', 'SN', 'EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD'))
     AND (SELECT bool_and(source = 'decision_directeur' AND source_ref LIKE 'Wise %, directeur 06/11/2026'
                          AND verifie_le = DATE '2026-11-06' AND version = 2)
-         FROM public.referentiel_paiement WHERE pays IN ('YE', 'NG', 'CI', 'SN'))
+         FROM public.referentiel_paiement WHERE methode = 'virement_bancaire' AND pays IN ('YE', 'NG', 'CI', 'SN'))
     -- PAYS-DECISIONS (16/11/2026) : dix lignes de plus portent la decision du directeur du 16/11 (Wise).
     AND (SELECT bool_and(source = 'decision_directeur' AND source_ref LIKE 'Wise (wise.com%), directeur 16/11/2026'
                          AND verifie_le = DATE '2026-11-16' AND version = 2)
-         FROM public.referentiel_paiement WHERE pays IN ('EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD')),
+         FROM public.referentiel_paiement WHERE methode = 'virement_bancaire' AND pays IN ('EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD')),
     'etat initial : une ligne de virement par pays de pays_iso.dart (249), DEC:28, sauf YE, NG, CI, SN (CAND-BANQUE, 06/11) et dix pays de la decision du 16/11');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_afrique) = 60
     AND (SELECT array_agg(region_m49 || ':' || n ORDER BY region_m49) FROM
@@ -356,12 +358,16 @@ BEGIN
     AND (pg_temp.ligne('RE', 'virement_bancaire')).etat = 'en_verification'
     AND (pg_temp.ligne('FR', 'virement_bancaire')).etat = 'confirme',
     'DEC:28 puis 06/11 : Arabie saoudite confirme, Yemen indisponible ; Nigeria, Senegal confirme ; Algerie, Reunion en verification ; Egypte confirme (16/11)');
-  PERFORM pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.referentiel_paiement WHERE methode = 'mobile_money')
+  -- MOBILE-MONEY-GH-KE (20261129480000, 16/11/2026) : quatre lignes confirmees (GH : MTN MoMo, AirtelTigo,
+  -- Telecel ; KE : M-Pesa) et leurs quatre operateurs ; aucune autre ligne de mobile money.
+  PERFORM pg_temp.vrai((SELECT array_agg(pays || ':' || operateur ORDER BY pays, operateur)
+                          FROM public.referentiel_paiement WHERE methode = 'mobile_money')
+        = ARRAY['GH:airteltigo', 'GH:mtn_momo', 'GH:telecel', 'KE:m_pesa']
     AND (SELECT array_agg(code ORDER BY code) FROM public.referentiel_paiement_operateurs WHERE code <> 'op_fictif')
-        = ARRAY['moov_money', 'orange_money', 'wave'],
-    'aucune ligne de mobile money supposee ; trois operateurs nommes par la spec au catalogue');
+        = ARRAY['airteltigo', 'm_pesa', 'moov_money', 'mtn_momo', 'orange_money', 'telecel', 'wave'],
+    'aucune ligne de mobile money supposee hors des quatre du Ghana et du Kenya (16/11) ; sept operateurs au catalogue');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_journal
-                        WHERE auteur_id IS NULL AND cle_idempotence IS NULL AND avant IS NULL) = 249
+                        WHERE auteur_id IS NULL AND cle_idempotence IS NULL AND avant IS NULL) = 253
     AND (SELECT count(*) FROM public.referentiel_paiement_journal
          WHERE auteur_id IS NULL AND avant IS NOT NULL AND apres ->> 'source_ref' LIKE 'Wise %') = 14,
     'etat initial journalise : une ligne par ligne, sans auteur ni cle, plus les 4 changements du 06/11 et les 10 du 16/11');
@@ -380,6 +386,9 @@ END $initial$;
 UPDATE public.referentiel_paiement SET etat = 'en_verification', verifie_le = NULL
 WHERE pays IN ('NG', 'CI', 'SN', 'EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD')
   AND methode = 'virement_bancaire' AND operateur IS NULL;
+-- MOBILE-MONEY-GH-KE (16/11/2026) : les quatre lignes de monnaie mobile du Ghana et du Kenya aussi.
+UPDATE public.referentiel_paiement SET etat = 'en_verification', verifie_le = NULL
+WHERE pays IN ('GH', 'KE') AND methode = 'mobile_money';
 UPDATE public.referentiel_paiement SET etat = 'confirme', verifie_le = DATE '2026-10-21'
 WHERE pays = 'YE' AND methode = 'virement_bancaire' AND operateur IS NULL;
 INSERT INTO public.referentiel_paiement_afrique_decisions (ouverte, decision_ref, decide_le)
@@ -463,14 +472,15 @@ BEGIN
   r2 := public.lire_referentiel_paiement();
   PERFORM pg_temp.qui('ca6d0000-0000-4000-8000-0000000000b1', 'accountant');
   rk := public.lire_referentiel_paiement();
-  PERFORM pg_temp.vrai(r1 = r2 AND r2 = rk AND jsonb_array_length(r1 -> 'lignes') = 249,
-    'lignes non cloisonnees : directeur, directrice et comptabilite lisent les memes 249 lignes (aucune alerte encore)');
+  PERFORM pg_temp.vrai(r1 = r2 AND r2 = rk AND jsonb_array_length(r1 -> 'lignes') = 253,
+    'lignes non cloisonnees : directeur, directrice et comptabilite lisent les memes 253 lignes (aucune alerte encore)');
   PERFORM pg_temp.vrai((r1 ->> 'afriqueEnVerification')::boolean
     AND jsonb_array_length(r1 -> 'afrique' -> 'pays') = 60
     AND r1 -> 'afrique' ->> 'source' LIKE '%M49%unstats.un.org%'
     AND r1 -> 'options' -> 'methodes' = '["virement_bancaire", "mobile_money"]'::jsonb
     AND r1 -> 'options' -> 'etats' = '["confirme", "en_verification", "indisponible"]'::jsonb
-    AND jsonb_array_length(r1 -> 'options' -> 'operateurs') = 4
+    -- MOBILE-MONEY-GH-KE (16/11/2026) : sept operateurs au catalogue (trois d'origine, quatre du Ghana et du Kenya) et l'operateur fictif.
+    AND jsonb_array_length(r1 -> 'options' -> 'operateurs') = 8
     AND r1 -> 'afrique' -> 'decision' ->> 'ouverte' = 'false'
     -- La derniere decision est celle de la remise en scene (CAND-BANQUE).
     AND r1 -> 'afrique' -> 'decision' ->> 'reference' LIKE 'Scenario CAND-L6%'
