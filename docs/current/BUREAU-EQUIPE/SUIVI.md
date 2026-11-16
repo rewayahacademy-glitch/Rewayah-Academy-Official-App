@@ -17,7 +17,7 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | PAYS-RECHERCHE | Le Ghana introuvable : la recherche de pays ne lisait que la langue de l'interface ; liste courte des vrais pays (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | en cours (agent BE-S1) |
 | MAJEUR | Attestation « 18 ans ou plus » avant de continuer ; les candidats déjà avancés cochent à leur prochaine visite (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | en cours (agent BE-S1, après PAYS-RECHERCHE) |
 | BE-COLONNES | Les critères de la synthèse en colonnes dans la liste, sur ordinateur, triables (directeur, 16/11) | `CAHIER-BE-COLONNES.md` | pas commencé (après BE-LISTE-2, même zone ; la PR 508 est dans main) |
-| BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | à écrire quand BE-1a et BE-1d sont dans main | pas commencé |
+| BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | `CAHIER-BE-SUIVANT.md` | en cours (agent BE-DOSSIER, `claude/be-suivant`) |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |
 | BE-1g | Impression ; dispense d'entretien ; accueil d'un fondateur | à écrire ; touche la machine à états | pas commencé |
