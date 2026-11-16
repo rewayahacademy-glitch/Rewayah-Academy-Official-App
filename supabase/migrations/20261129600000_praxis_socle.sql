@@ -692,10 +692,11 @@ BEGIN
 END;
 $f$;
 
--- NON LIVRE EN PX-1 : `alerter_responsable` (passer la main a la direction par une notification). Le circuit de notification
--- n'a aucun evenement generique : `notifications_evenement_check` n'accepte meme pas `annonce_direction` (les notifications
--- d'annonces sont deja perdues en silence, cf. private.com_annonce_distribuer). Un nouvel evenement suppose de reecrire cette
--- contrainte et d'ajouter ses textes : decision du pilote, domaine des notifications. Voir la PR.
+-- NON LIVRE EN PX-1 : `alerter_responsable` (passer la main a la direction par une notification), DIFFERE par le pilote
+-- (16/11/2026). Aucun evenement de notification n'est fait pour cet usage ; sa migration etendra
+-- `notifications_evenement_check` en reprenant la liste ENTIERE de la production. Ecart depot / production releve ici : la
+-- contrainte rejouee depuis `supabase/migrations` n'accepte pas `annonce_direction`, la production l'accepte (le seul
+-- evenement qui differe) ; la migration qui l'ajoute n'est pas dans le depot.
 
 REVOKE ALL ON FUNCTION
   public.praxis_etat(text), public.praxis_boite(text, text, integer), public.praxis_fil(text, uuid, integer),
