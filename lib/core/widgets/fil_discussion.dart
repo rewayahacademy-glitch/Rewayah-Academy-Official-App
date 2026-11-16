@@ -108,6 +108,7 @@ import '../theme/app_spacing.dart';
 import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
+import 'lien_fleche.dart' show EncreLienSurFond;
 import 'menu_actions.dart';
 import 'menu_commun.dart' show MenuAncreControleur;
 import 'page_shell.dart';
@@ -2382,7 +2383,14 @@ class _Bulle extends StatelessWidget {
                     if (complement case final Widget complement) ...<Widget>[
                       if (afficherNom || texte.isNotEmpty || imageRetiree)
                         Ecart.vSm,
-                      complement,
+                      // IMAGE-CANDIDAT : dans MA bulle (fond violet), les liens
+                      // prennent l'encre de la bulle, la meme que le texte.
+                      deSoi
+                          ? EncreLienSurFond(
+                              encre: fond.applyTo,
+                              child: complement,
+                            )
+                          : complement,
                     ],
                   ],
                 ),
