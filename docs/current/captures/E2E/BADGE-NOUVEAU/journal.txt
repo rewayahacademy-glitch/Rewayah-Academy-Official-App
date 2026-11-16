@@ -1,0 +1,17 @@
+BADGE-NOUVEAU (ordre du pilote, 16/11/2026) : captures de test, donnees de test uniquement.
+
+Fait : composant lib/core/widgets/badge_nouveau.dart (« Nouveau » / « New » / « جديد », mot + etoile,
+registre doux de l'accent, pose sur StatusPill) ; lit la cle serveur `nouveau` des lignes de
+lister_candidatures ; file « Nouveaux · N » dans le menu File (filtre `nouveau: true`, nombre =
+compteurNouveaux) ; l'adresse porte `nouveau=oui`.
+
+Non fait / non prouve :
+- Le badge n'est branche que sur la LISTE des candidatures. Les autres listes de personnes et le panneau
+  des conversations (« Nouveau · aucun message ») n'ont pas ete touches (hors de l'ordre recu).
+- Verifie avec un faux serveur, pas contre la production : la cle `nouveau` et `compteurNouveaux` sont
+  lues comme la migration 20261128700000 les decrit.
+- Correction au passage (a valider) : en arabe, l'etiquette d'etat « versement pas encore possible » de la
+  direction etait le paragraphe destine au candidat (il remplissait le menu File) ; remplacee par
+  « صرف الراتب غير ممكن بعد » (proposition, a faire relire).
+- Menu File : la phrase courte de chaque file reste dans la feuille Filtres (le menu ne porte que le mot
+  et le nombre).
