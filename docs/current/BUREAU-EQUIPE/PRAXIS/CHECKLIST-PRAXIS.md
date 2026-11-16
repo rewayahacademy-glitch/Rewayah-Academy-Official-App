@@ -1,6 +1,6 @@
 # Checklist Praxis (tenue par le pilote, et par toute session qui reprend Praxis)
 
-**Mise à jour : 16/11/2026, 22 h 20 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm`
+**Mise à jour : 16/11/2026, 22 h 40 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm`
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (vérifié par le pilote) · ⏸ attend un geste que seul le directeur peut
 faire. « Prouvé » = vu par le directeur en production.
@@ -25,8 +25,8 @@ Règles que le pilote s'impose ici :
 | :-: | :--- | :--- | :--- | :-: |
 | 1 | Inventaire de tout ce qui est consigné, et liste des manques | pilote | `LIRE_D_ABORD.md` | ☑ 16/11 21 h 45 |
 | 2 | **Stratégie de sécurité** (voir le détail ci-dessous) | pilote | `SECURITE-PRAXIS.md` | ☑ 16/11 22 h 15 (R1 à R15, enfants §3) |
-| 3 | **Table des accès** : chaque tâche du §4 de `SECRETAIRE-IA.md` (21 domaines), la fonction du serveur qui la fait déjà, son niveau (A, B, C, D), ce qui manque ; décision d'architecture (missions et outils génériques, ou outils dédiés) | pilote | `ACCES-PRAXIS.md` | ☐ |
-| 4 | Aligner le cahier PX-1 sur les étapes 2 et 3 | pilote | `../CAHIER-SEC-1-PRAXIS-MESSAGES.md` | ☐ |
+| 3 | **Table des accès** : chaque tâche du §4 de `SECRETAIRE-IA.md` (21 domaines), la fonction du serveur qui la fait déjà, son niveau (A, B, C, D), ce qui manque ; décision d'architecture (missions et outils génériques, ou outils dédiés) | pilote | `ACCES-PRAXIS.md` | ☑ 16/11 22 h 40 (missions + outils `lire`/`agir`/`preparer` ; logique interne à auteur explicite, jamais de jeton de personne) |
+| 4 | Aligner le cahier PX-1 sur les étapes 2 et 3 | pilote | `../CAHIER-SEC-1-PRAXIS-MESSAGES.md` | ☑ 16/11 22 h 40 (renvoi en tête vers SECURITE et ACCES §4) |
 | 5 | PX-1 serveur et connecteur MCP : messages, annonces, clés « chat » et « routine », interrupteur, mode autonome, plafond, journal | BE-PIECE | cahier PX-1 **et `SECURITE-PRAXIS.md`, qui prévaut** | ◐ lancé le 16/11 à 22 h 20 (ordre du directeur : « tu peux d'ores et déjà lancer le travail sur l'agent ») |
 | 6 | PX-0, les cinq compétences (`agir-rewayah` d'abord), avec les règles de sécurité de l'étape 2 dedans | BE-GESTES (en parallèle de 5) | `SECRETAIRE-IA.md` §6 | ☐ démarre après 0.2 |
 | 7 | Relecture de sécurité de PX-1 par le pilote : chaque menace de l'étape 2 a son scénario de refus, vert | pilote | `SECURITE-PRAXIS.md` | ☐ |

@@ -14,6 +14,8 @@ aujourd'hui toute écriture à un agent (`0014_acces_agent.sql`). Chaque refus d
 > plus), **aucun fil ni public avec un mineur (§3)**, Praxis absent de toute liste de personnes (R13), textes tiers
 > rendus dans un champ `contenu_tiers`, liste blanche exacte des fonctions (R2). Chaque règle R1 à R15 a son
 > scénario, nommé dans la PR.
+> **16/11, 22 h 40 : `PRAXIS/ACCES-PRAXIS.md` §4** précise A-4 et A-5 : écrire et annoncer par une fonction interne à
+> auteur explicite, partagée avec les portes humaines (aucune copie) ; mineurs par `private.com_est_mineur(uuid)`.
 ## 0. La phrase de recette
 
 « Dans mon chat Claude, je dis à Praxis : réponds aux messages qui attendent. Il lit la boîte de l'académie, répond
