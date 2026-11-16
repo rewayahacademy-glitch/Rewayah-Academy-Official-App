@@ -8,6 +8,7 @@ import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'badge_non_lu.dart';
 import 'pressable.dart';
 
 /// L'en-tete d'une page du tuteur : disque retour eventuel, titre, sous-titre,
@@ -664,9 +665,6 @@ class ClocheNotifications extends StatelessWidget {
   /// La page des notifications est celle qui est ouverte.
   final bool actif;
 
-  /// Diametre du point de non-lus.
-  static const double diametrePoint = AppSpacing.sm;
-
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -696,6 +694,17 @@ class ClocheNotifications extends StatelessWidget {
           dimension: AppTouchTarget.standard,
           child: Stack(
             children: <Widget>[
+              // Trois signaux sur la page ouverte : fond doux, icone pleine
+              // a l'encre d'accent, etat selectionne (MA-NAV-1).
+              if (actif)
+                Positioned.fill(
+                  child: DecoratedBox(
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: palette.washAccent.background,
+                    ),
+                  ),
+                ),
               Center(
                 child: IconTheme(
                   data: encre.asIconTheme(size: AppSpacing.xxl),
@@ -704,22 +713,11 @@ class ClocheNotifications extends StatelessWidget {
               ),
               if (nombre > 0)
                 PositionedDirectional(
-                  top: AppSpacing.md,
-                  end: AppSpacing.md,
-                  child: SizedBox.square(
-                    dimension: diametrePoint,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: palette.surfacePrimary.background,
-                        border: Border.fromBorderSide(
-                          BorderSide(
-                            color: palette.surfaceCanvas.background,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                    ),
+                  top: AppSpacing.xs,
+                  end: AppSpacing.xs,
+                  child: PastilleNombre(
+                    nombre: nombre,
+                    bordure: palette.surfaceCanvas.background,
                   ),
                 ),
             ],
