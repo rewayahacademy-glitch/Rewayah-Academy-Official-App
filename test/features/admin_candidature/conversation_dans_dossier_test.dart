@@ -103,6 +103,8 @@ Future<GoRouter> _monter(
     hauteur: hauteur,
     direction: direction,
   );
+  // BE-DOSSIER : les messages vivent sous leur rubrique, ouverte ici.
+  await ouvrirToutesLesRubriques(tester);
   return GoRouter.of(
     tester.element(find.byKey(CandidatureDirectionPage.clePage)),
   );
