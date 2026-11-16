@@ -50,16 +50,19 @@ class NavigationFileDossier extends StatelessWidget {
     final r = t.recrutement.suivant;
     final String? precedent = voisins.precedent;
     final String? suivant = voisins.suivant;
-    return Align(
+    // GESTES-RAISON (directeur, 16/11/2026, capture de production en arabe) :
+    // « les fleches precedent et suivant sont trop rapprochees » : chacune sur
+    // son bord de la carte de profil, le compteur au centre. La barre prend
+    // toute la largeur de la carte (`etendue`) ; le miroir en arabe et la cible
+    // de 48 sont ceux du composant partage.
+    return KeyedSubtree(
       key: cle,
-      alignment: AlignmentDirectional.centerStart,
       child: BarrePrecedentSuivant(
         position: r.position(rang: rang, total: total),
         libellePrecedent: r.precedent,
         libelleSuivant: r.suivant,
         onPrecedent: precedent == null ? null : () => onAller(precedent),
         onSuivant: suivant == null ? null : () => onAller(suivant),
-        etendue: false,
       ),
     );
   }

@@ -2694,12 +2694,17 @@
       "raison": {
         "droit": "You cannot decide on this file.",
         "fermee": "The file is closed.",
-        "pause": "The file is paused.",
-        "attente": "Waiting for the person's reply.",
-        "manque": "Missing: {liste}.",
-        "etape": "Not possible at this stage."
+        "pause": "Paused: resume the file to act.",
+        "attente": "Waiting for the candidate: they are completing their file.",
+        "manque": "Accept: still to settle: {liste}.",
+        "etape": "No decision to make at this stage.",
+        "versement": "Accept: payout is not yet possible.",
+        "versementAConfirmer": "Accept: the payout method is still to be confirmed.",
+        "pret": "The file is ready: you can decide.",
+        "entretienAPlanifier": "Kept for the interview: it still has to be scheduled.",
+        "entretienPlanifie": "Interview scheduled: the decision comes after the interview.",
+        "decisionAttendue": "Interview held: the decision is waiting for you."
       },
-      "legendeRaison": "{geste}: {raison}",
       "photoAgrandir": "View {deNom} photo full size"
     },
     "file": {
