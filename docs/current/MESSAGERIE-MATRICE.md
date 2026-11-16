@@ -93,6 +93,22 @@ entrée par entrée, à partir de ce tableau.
 | **Pas de rectangle derrière le champ** (consigne du directeur, 16/11 : « supprime le rectangle ») : le champ et le bouton image flottent sur le fond de la conversation, sans bande, bord ni ombre à part | `lib/core/widgets/fil_discussion.dart` (ligne 1), donc toutes les entrées qui posent un fil : lignes 6, 7, 15, 22, 23, 24 | garde de rendu captures `rectangle/{avant,apres}/` ; `test/core/widgets/fil_saisie_sans_rectangle_test.dart` (téléphone plein écran, ordinateur, tablette, page à titre, texte ×2 ; contre-épreuve) ; captures `rectangle/avant_*` et `rectangle/apres_*` (1440 et 390, fr et ar, clair) | production ; rôles non montables (voir la légende) |
 | **Colonne « non lus »** | voir la dernière colonne du tableau | tests nommés dans la légende des preuves « non lus » | **justesse du nombre en production** : N-NL-PROD |
 
+### Fermeture d'un volet de conversation (MESSAGERIE-COULEURS, pilote, 16/11/2026)
+
+Régression de #540 : « sur ordinateur, la croix a disparu, le volet ne peut plus être fermé ». **Cause mesurée** : la barre
+compacte de la conversation se repliait (hauteur 0) quand on remontait un long fil, et emportait avec elle le seul bouton
+qui fermait le volet (sur le code d'avant, après avoir remonté un fil de quarante messages, le bouton n'était plus atteignable ;
+la croix était de plus au bord de début, pas de fin). **Corrigé** : dans un volet (`FilEnPlace(volet: true)`), la croix
+« Fermer la conversation » est le dernier contrôle de la barre, au bord de **fin** (LTR et RTL), la barre ne se replie jamais, et
+Échap ferme le volet (le volet prend le focus à l'ouverture). Test : `conversation_mise_en_page_test.dart`, groupe « volet »
+(1024 et 1440, fr et ar : croix au bord de fin, atteignable après avoir remonté, fermée par la croix puis par Échap).
+
+Entrées en volet : **une seule** dans le code, `volet_conversation.dart` (dossier candidat, direction ; ligne 15). Aucune autre
+entrée n'ouvre un volet : le comptable (ligne 22) et le contrôleur (ligne 23) sont des pages avec leur flèche de retour ; la page
+Messages (lignes 6 et 7) met la liste à côté du fil. **Non touché, à savoir** : la barre de la page plein écran (téléphone, et
+fil de la page Messages sur ordinateur) se replie toujours quand on remonte un long fil (choix de MESSAGERIE-PLEIN-ECRAN) ; sur
+ordinateur dans Messages, elle emporte alors le bouton « i » du panneau de contexte jusqu'à ce qu'on redescende.
+
 ### Hors garde, à connaître
 
 - `lib/features/com_communaute/reponses.dart` ne cite `FilDiscussion` qu'en commentaire : la réponse à une publication de
