@@ -19288,6 +19288,10 @@ class _Traductions$com$messages$images$en extends Traductions$com$messages$image
 	@override String get aimeParVous => 'Liked by you';
 	@override String aimes({required Object n}) => 'Likes: ${n}';
 	@override String get coeurEchec => 'Your like is not confirmed. Try again in a moment.';
+	@override String get photoApercu => 'Photo';
+	@override String get nonConfirmeToucher => 'Not confirmed · Tap to try again';
+	@override String get supprimerEchec => 'Delete';
+	@override String get actionsEchec => 'Actions for the unconfirmed message';
 	@override late final _Traductions$com$messages$images$refus$en refus = _Traductions$com$messages$images$refus$en._(_root);
 }
 
@@ -25266,7 +25270,7 @@ class _Traductions$com$messages$images$refus$en extends Traductions$com$messages
 	@override String get stockageIndisponible => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.';
 	@override String get confirmationIndisponible => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.';
 	@override String get depotImpossible => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.';
-	@override String get envoiStockage => 'Storage refused the image (expired address or interrupted upload). Try again.';
+	@override String get envoiStockage => 'The image could not be sent. Try again later.';
 	@override String get reseau => 'The image may not have reached Rewayah. Try again in a moment.';
 	@override String get imageTropGrosse => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.';
 	@override String get imageIllisible => 'This photo cannot be read. Choose another photo.';
@@ -37356,6 +37360,10 @@ extension on TraductionsEn {
 			'com.messages.images.aimeParVous' => 'Liked by you',
 			'com.messages.images.aimes' => ({required Object n}) => 'Likes: ${n}',
 			'com.messages.images.coeurEchec' => 'Your like is not confirmed. Try again in a moment.',
+			'com.messages.images.photoApercu' => 'Photo',
+			'com.messages.images.nonConfirmeToucher' => 'Not confirmed · Tap to try again',
+			'com.messages.images.supprimerEchec' => 'Delete',
+			'com.messages.images.actionsEchec' => 'Actions for the unconfirmed message',
 			'com.messages.images.refus.demandeInvalide' => 'This image is not confirmed: its size or format is not what was expected. Choose another photo.',
 			'com.messages.images.refus.typeRefuse' => 'This file type is not accepted. Choose a JPEG, PNG or WebP photo.',
 			'com.messages.images.refus.imageTropLourde' => 'This image is too heavy, even after shrinking. Choose a lighter photo.',
@@ -37369,7 +37377,7 @@ extension on TraductionsEn {
 			'com.messages.images.refus.stockageIndisponible' => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.',
 			'com.messages.images.refus.confirmationIndisponible' => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.',
 			'com.messages.images.refus.depotImpossible' => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.',
-			'com.messages.images.refus.envoiStockage' => 'Storage refused the image (expired address or interrupted upload). Try again.',
+			'com.messages.images.refus.envoiStockage' => 'The image could not be sent. Try again later.',
 			'com.messages.images.refus.reseau' => 'The image may not have reached Rewayah. Try again in a moment.',
 			'com.messages.images.refus.imageTropGrosse' => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.',
 			'com.messages.images.refus.imageIllisible' => 'This photo cannot be read. Choose another photo.',
@@ -37711,12 +37719,12 @@ extension on TraductionsEn {
 			'com.studio.choisirTitre' => 'Choose a channel',
 			'com.studio.choisir' => 'Choose a channel from the list to read the discussion and write in it.',
 			'com.studio.aucunCanalTitre' => 'No channel yet',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aucunCanal' => 'The channels open to you will appear here.',
 			'com.studio.sections.organisation' => 'Organization',
 			'com.studio.sections.admissionsFamilles' => 'Admissions & families',
 			'com.studio.sections.pedagogieQualite' => 'Teaching & quality',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.sections.planningRemplacements' => 'Planning & replacements',
 			'com.studio.sections.finance' => 'Finance',
 			'com.studio.sections.support' => 'Support',
@@ -38225,12 +38233,12 @@ extension on TraductionsEn {
 			'comptable.statuts.profil.incomplet' => 'Incomplete',
 			'comptable.statuts.profil.enVerification' => 'Being verified',
 			'comptable.statuts.profil.verifie' => 'Verified',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.suspendu' => 'Suspended',
 			'comptable.statuts.profil.actionRequise' => 'Action required',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation sent',
 			'comptable.statuts.capacite.prisEnCharge' => 'Supported',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Not supported',
 			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporarily unavailable',
 			'comptable.statuts.capacite.verificationRequise' => 'Verification required',
@@ -38739,12 +38747,12 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.supprimee' => 'Method deleted.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Preferred method updated.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'The change is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'This change is not yet connected to the payment service. Try again later.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'History of my changes',
 			'comptable.beneficiaires.recevoir.journalVide' => 'No change recorded yet.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Only you can change this information: neither accounting nor the management can do it for you.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.titre' => 'Receive my payments',
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Your payment details, changeable by you alone.',
 			'comptable.beneficiaires.recevoir.notice' => 'Payment information to complete',
@@ -39253,12 +39261,12 @@ extension on TraductionsEn {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Review mission · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Student of class ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Teacher of class ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.personneFoyer' => 'Profile in your household',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profile in your household · ${classe}',
 			'recherche.contexte.personneParIdentifiant' => 'Found by its identifier',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Found by its identifier · ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.canalStudio' => 'Studio channel',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'Payment received · ${famille}',
 			'sansDonnees.mesDonnees' => 'Your deletion information could not be loaded',
@@ -39767,12 +39775,12 @@ extension on TraductionsEn {
 			'admissions.refus.transitionInterdite' => 'This action no longer applies to this request (its status changed, or the seven-day period has passed).',
 			'admissions.refus.motifRequis' => 'A reason is needed for this action.',
 			'admissions.refus.adresseInconnue' => 'This person\'s email address is not known: no message can be sent.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.refus.enfantEnClasse' => 'A child in this request is already in a class: the acceptance can no longer be undone.',
 			'admissions.refus.autre' => 'The server refused this action. Reopen the request to see its status.',
 			'admissions.modeles.general' => 'No details',
 			'admissions.modeles.generalPhrase' => '"We cannot proceed with your request for now."',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.modeles.besoins' => 'Our classes do not meet the request',
 			'admissions.modeles.besoinsPhrase' => '"Our classes do not yet match what you are looking for."',
 			'admissions.modeles.niveau' => 'Level not offered yet',
@@ -40281,12 +40289,12 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'The number of people changed since it was displayed. Nothing was sent: check the number again, then send.',
 			'candidatsFlux.invitationsPersonnelles.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Send their code to ${n} person', other: 'Send their code to ${n} people', ), 
 			'candidatsFlux.invitationsPersonnelles.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person still to invite.', other: '${n} people still to invite.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.resultat.tout' => 'No one is waiting for their code any more.',
 			'candidatsFlux.invitationsPersonnelles.resultat.pasDeuxFois' => 'The same person never receives two valid codes at the same time, even if you send again.',
 			'candidatsFlux.invitationsPersonnelles.sansDonnees' => 'The number of people to invite could not be loaded.',
 			'candidatsFlux.file.rythme' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'To avoid ending up in spam folders, at most ${n} message of this type goes out each day. The others wait their turn and go out by themselves on the following days.', other: 'To avoid ending up in spam folders, at most ${n} messages of this type go out each day. The others wait their turn and go out by themselves on the following days.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.file.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message is waiting its turn.', other: '${n} messages are waiting their turn.', ), 
 			'candidatsFlux.file.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Everything should be sent within about a day.', other: 'Everything should be sent within about ${n} days.', ), 
 			'candidatsFlux.file.rienEnAttente' => 'No message is waiting its turn.',
@@ -40795,12 +40803,12 @@ extension on TraductionsEn {
 			'pause.demander' => 'Request the break',
 			'pause.reponse.acceptee' => ({required Object mois}) => 'The break of ${mois} is accepted. The place is kept and the stage deadline moves back by the same amount.',
 			'pause.reponse.demandee' => ({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai, one: 'Your request has been passed to the management, who reply within ${delai} day.', other: 'Your request has been passed to the management, who reply within ${delai} days.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'pause.demandesTitre' => 'The breaks',
 			'pause.demandesVide' => 'No break for now.',
 			'pause.statut.demandee' => 'Pending',
 			'pause.statut.acceptee' => 'Accepted',
-			_ => null,
-		} ?? switch (path) {
 			'pause.statut.refusee' => 'Refused',
 			'pause.statut.annulee' => 'Cancelled',
 			'pause.periode' => ({required Object du, required Object au}) => 'From ${du} to ${au}',

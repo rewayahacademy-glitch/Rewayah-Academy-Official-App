@@ -9,6 +9,8 @@
 import 'package:flutter/material.dart';
 
 import '../accessibilite/sens_du_contenu.dart';
+import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
@@ -29,6 +31,7 @@ class LigneConversation extends StatelessWidget {
     this.libelleNonLus,
     this.marque,
     this.selectionnee,
+    this.apercuPhoto = false,
   });
 
   /// La photo ou les initiales, deja a leur taille (48).
@@ -39,6 +42,10 @@ class LigneConversation extends StatelessWidget {
 
   /// Le debut du dernier message, coupe a une ligne.
   final String apercu;
+
+  /// Le dernier message est une photo : [apercu] dit « Photo », precede d'une
+  /// petite icone image.
+  final bool apercuPhoto;
 
   /// L'heure du dernier message, ou `null`.
   final String? heure;
@@ -68,6 +75,18 @@ class LigneConversation extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final bool aLire = nonLus > 0;
     final bool choisie = selectionnee ?? false;
+    // Plus fonce tant que la conversation n'est pas lue (encre forte), discret
+    // une fois lue.
+    final AppInkColor apercuEncre = aLire
+        ? palette.inkStrong
+        : palette.inkMuted;
+    final Widget texteApercu = Text(
+      apercu,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      textDirection: sensDuContenu(context, apercu),
+      style: apercuEncre.applyTo(textes.bodyMedium ?? const TextStyle()),
+    );
     return Pressable.selon(
       onPress: onPress,
       selectionne: selectionnee,
@@ -132,19 +151,21 @@ class LigneConversation extends StatelessWidget {
                     Row(
                       children: <Widget>[
                         Expanded(
-                          child: Text(
-                            apercu,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                            textDirection: sensDuContenu(context, apercu),
-                            // Plus fonce tant que la conversation n'est pas
-                            // lue (encre forte), discret une fois lue.
-                            style:
-                                (aLire ? palette.inkStrong : palette.inkMuted)
-                                    .applyTo(
-                                      textes.bodyMedium ?? const TextStyle(),
+                          child: apercuPhoto
+                              ? Row(
+                                  children: <Widget>[
+                                    Icon(
+                                      AppIcons.image.repos,
+                                      size: AppSpacing.lg,
+                                      color: apercuEncre
+                                          .asIconTheme(size: AppSpacing.lg)
+                                          .color,
                                     ),
-                          ),
+                                    Ecart.hXs,
+                                    Expanded(child: texteApercu),
+                                  ],
+                                )
+                              : texteApercu,
                         ),
                         if (aLire) ...<Widget>[
                           Ecart.hSm,

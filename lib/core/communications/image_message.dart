@@ -229,8 +229,31 @@ class ImagePrete {
   final String? couleurMoyenne;
 }
 
-/// La progression d'un envoi d'image, de 0 a 1.
-typedef ProgressionImage = void Function(double fraction);
+/// Ce qu'un envoi d'image rapporte en route : sa progression (de 0 a 1,
+/// appelable comme une fonction), l'identifiant du message des qu'il est cree
+/// et celui du depot des qu'il est demande (IMAGES-CORRECTIF : la bulle locale
+/// garde l'identifiant du message serveur, et « Supprimer » annule le depot).
+class ProgressionImage {
+  /// Cree le suivi.
+  const ProgressionImage(this._fraction, {this.surMessage, this.surDepot});
+
+  final void Function(double fraction) _fraction;
+
+  /// Appele avec l'identifiant du message serveur, des qu'il existe.
+  final void Function(String messageId)? surMessage;
+
+  /// Appele avec l'identifiant du depot, des qu'il est demande.
+  final void Function(String imageId)? surDepot;
+
+  /// La fraction envoyee, de 0 a 1.
+  void call(double fraction) => _fraction(fraction);
+
+  /// Le message serveur est cree.
+  void messageCree(String messageId) => surMessage?.call(messageId);
+
+  /// Le depot de l'image est demande.
+  void depotCree(String imageId) => surDepot?.call(imageId);
+}
 
 /// L'envoi d'un message avec son image : texte, cle d'idempotence, image prete,
 /// progression. Echoue par [EchecImage].
@@ -247,7 +270,11 @@ abstract interface class SourceImagesFil {
   /// Les adresses des miniatures du fil, par identifiant d'image : une seule
   /// demande, gardee jusqu'a l'expiration (1 h). Une image retiree n'a pas
   /// d'entree.
-  Future<Map<String, AdresseImage>> miniatures();
+  ///
+  /// [frais] : ignore ce qui a ete garde et relit le serveur (IMAGES-CORRECTIF :
+  /// une image arrivee depuis la derniere lecture n'est pas dans la liste
+  /// gardee).
+  Future<Map<String, AdresseImage>> miniatures({bool frais = false});
 
   /// L'adresse de l'image complete [imageId] ; `null` si elle est retiree.
   Future<AdresseImage?> image(String imageId);

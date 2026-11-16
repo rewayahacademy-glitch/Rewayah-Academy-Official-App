@@ -39414,6 +39414,18 @@ class Traductions$com$messages$images$fr {
 	/// fr: 'Votre « J'aime » n'est pas confirmé. Réessayez dans un instant.'
 	String get coeurEchec => 'Votre « J\'aime » n\'est pas confirmé. Réessayez dans un instant.';
 
+	/// fr: 'Photo'
+	String get photoApercu => 'Photo';
+
+	/// fr: 'Non confirmé · Toucher pour réessayer'
+	String get nonConfirmeToucher => 'Non confirmé · Toucher pour réessayer';
+
+	/// fr: 'Supprimer'
+	String get supprimerEchec => 'Supprimer';
+
+	/// fr: 'Actions du message non confirmé'
+	String get actionsEchec => 'Actions du message non confirmé';
+
 	late final Traductions$com$messages$images$refus$fr refus = Traductions$com$messages$images$refus$fr.internal(_root);
 }
 
@@ -50395,8 +50407,8 @@ class Traductions$com$messages$images$refus$fr {
 	/// fr: 'L'image n'est pas confirmée : c'est une panne du serveur, pas de votre faute. Réessayez dans un instant.'
 	String get depotImpossible => 'L\'image n\'est pas confirmée : c\'est une panne du serveur, pas de votre faute. Réessayez dans un instant.';
 
-	/// fr: 'Le stockage a refusé l'image (adresse expirée ou envoi coupé). Réessayez.'
-	String get envoiStockage => 'Le stockage a refusé l\'image (adresse expirée ou envoi coupé). Réessayez.';
+	/// fr: 'L'envoi de l'image n'a pas abouti. Réessayez plus tard.'
+	String get envoiStockage => 'L\'envoi de l\'image n\'a pas abouti. Réessayez plus tard.';
 
 	/// fr: 'Il est possible que l'image ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get reseau => 'Il est possible que l\'image ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
@@ -64032,6 +64044,10 @@ extension on Traductions {
 			'com.messages.images.aimeParVous' => 'Aimé par vous',
 			'com.messages.images.aimes' => ({required Object n}) => 'J\'aime : ${n}',
 			'com.messages.images.coeurEchec' => 'Votre « J\'aime » n\'est pas confirmé. Réessayez dans un instant.',
+			'com.messages.images.photoApercu' => 'Photo',
+			'com.messages.images.nonConfirmeToucher' => 'Non confirmé · Toucher pour réessayer',
+			'com.messages.images.supprimerEchec' => 'Supprimer',
+			'com.messages.images.actionsEchec' => 'Actions du message non confirmé',
 			'com.messages.images.refus.demandeInvalide' => 'Cette image n\'est pas confirmée : ses dimensions ou son format ne sont pas ceux attendus. Choisissez une autre photo.',
 			'com.messages.images.refus.typeRefuse' => 'Ce type de fichier n\'est pas accepté. Choisissez une photo JPEG, PNG ou WebP.',
 			'com.messages.images.refus.imageTropLourde' => 'Cette image est trop lourde, même après réduction. Choisissez une photo plus légère.',
@@ -64045,7 +64061,7 @@ extension on Traductions {
 			'com.messages.images.refus.stockageIndisponible' => 'Le stockage des images n\'a pas pris l\'envoi pour le moment : ce n\'est pas votre appareil. Réessayez dans quelques minutes.',
 			'com.messages.images.refus.confirmationIndisponible' => 'L\'envoi d\'images n\'est pas encore bien réglé sur le serveur : l\'équipe doit le corriger. Votre texte est bien parti.',
 			'com.messages.images.refus.depotImpossible' => 'L\'image n\'est pas confirmée : c\'est une panne du serveur, pas de votre faute. Réessayez dans un instant.',
-			'com.messages.images.refus.envoiStockage' => 'Le stockage a refusé l\'image (adresse expirée ou envoi coupé). Réessayez.',
+			'com.messages.images.refus.envoiStockage' => 'L\'envoi de l\'image n\'a pas abouti. Réessayez plus tard.',
 			'com.messages.images.refus.reseau' => 'Il est possible que l\'image ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'com.messages.images.refus.imageTropGrosse' => 'Cette photo pèse plus de 15 Mo, ou reste trop lourde après réduction. Choisissez-en une plus légère.',
 			'com.messages.images.refus.imageIllisible' => 'Cette photo ne peut pas être lue. Choisissez une autre photo.',
@@ -64387,12 +64403,12 @@ extension on Traductions {
 			'com.studio.choisirTitre' => 'Choisissez un canal',
 			'com.studio.choisir' => 'Choisissez un canal dans la liste pour lire la discussion et y écrire.',
 			'com.studio.aucunCanalTitre' => 'Aucun canal pour le moment',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.aucunCanal' => 'Les canaux qui vous sont ouverts apparaîtront ici.',
 			'com.studio.sections.organisation' => 'Organisation',
 			'com.studio.sections.admissionsFamilles' => 'Admissions & familles',
 			'com.studio.sections.pedagogieQualite' => 'Pédagogie & qualité',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.sections.planningRemplacements' => 'Planning & remplacements',
 			'com.studio.sections.finance' => 'Finance',
 			'com.studio.sections.support' => 'Support',
@@ -64901,12 +64917,12 @@ extension on Traductions {
 			'comptable.statuts.profil.incomplet' => 'Incomplet',
 			'comptable.statuts.profil.enVerification' => 'En vérification',
 			'comptable.statuts.profil.verifie' => 'Vérifié',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.profil.suspendu' => 'Suspendu',
 			'comptable.statuts.profil.actionRequise' => 'Action requise',
 			'comptable.statuts.profil.invitationEnvoyee' => 'Invitation envoyée',
 			'comptable.statuts.capacite.prisEnCharge' => 'Pris en charge',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Non pris en charge',
 			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporairement indisponible',
 			'comptable.statuts.capacite.verificationRequise' => 'Vérification requise',
@@ -65415,12 +65431,12 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.supprimee' => 'Méthode supprimée.',
 			'comptable.beneficiaires.recevoir.prefereeChoisie' => 'Méthode préférée mise à jour.',
 			'comptable.beneficiaires.recevoir.erreurAction' => 'Le changement n\'est pas confirmé : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.erreurIndisponible' => 'Ce changement n\'est pas encore branché sur le service de paiement. Réessayez plus tard.',
 			'comptable.beneficiaires.recevoir.journalTitre' => 'Historique de mes changements',
 			'comptable.beneficiaires.recevoir.journalVide' => 'Aucun changement enregistré pour l\'instant.',
 			'comptable.beneficiaires.recevoir.seulVous' => 'Vous seul pouvez modifier ces informations : ni la comptabilité ni la direction ne peuvent le faire à votre place.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
@@ -65929,12 +65945,12 @@ extension on Traductions {
 			'recherche.contexte.missionEnseignant' => ({required Object enseignant}) => 'Mission de contrôle · ${enseignant}',
 			'recherche.contexte.eleveDeClasse' => ({required Object classe}) => 'Élève de la classe ${classe}',
 			'recherche.contexte.enseignantDeClasse' => ({required Object classe}) => 'Enseignant de la classe ${classe}',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.contexte.personneFoyer' => 'Profil de votre foyer',
 			'recherche.contexte.personneFoyerClasse' => ({required Object classe}) => 'Profil de votre foyer · ${classe}',
 			'recherche.contexte.personneParIdentifiant' => 'Trouvé par son identifiant',
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'Trouvé par son identifiant · ${classe}',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.contexte.canalStudio' => 'Canal du Studio',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'Encaissement · ${famille}',
 			'sansDonnees.mesDonnees' => 'Vos informations de suppression n\'ont pas pu être chargées',
@@ -66443,12 +66459,12 @@ extension on Traductions {
 			'admissions.refus.transitionInterdite' => 'Ce geste ne vaut plus pour cette demande (son état a changé, ou le délai de sept jours est passé).',
 			'admissions.refus.motifRequis' => 'Un motif est nécessaire pour ce geste.',
 			'admissions.refus.adresseInconnue' => 'L\'adresse e‑mail de cette personne n\'est pas connue : aucun message ne peut partir.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.refus.enfantEnClasse' => 'Un enfant de cette demande est déjà dans une classe : l\'acceptation ne s\'annule plus.',
 			'admissions.refus.autre' => 'Le serveur a refusé ce geste. Rouvrez la demande pour voir son état.',
 			'admissions.modeles.general' => 'Sans précision',
 			'admissions.modeles.generalPhrase' => '« Nous ne pouvons pas donner suite à votre demande pour le moment. »',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.modeles.besoins' => 'Nos classes ne répondent pas à la demande',
 			'admissions.modeles.besoinsPhrase' => '« Nos classes ne répondent pas encore à ce que vous cherchez. »',
 			'admissions.modeles.niveau' => 'Niveau pas encore proposé',
@@ -66957,12 +66973,12 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.nombreChange' => 'Le nombre de personnes a changé depuis l\'affichage. Rien n\'est parti : relisez le nombre, puis envoyez.',
 			'candidatsFlux.invitationsPersonnelles.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer son code à ${n} personne', other: 'Envoyer leur code à ${n} personnes', ), 
 			'candidatsFlux.invitationsPersonnelles.resultat.restants' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il reste ${n} personne à inviter.', other: 'Il reste ${n} personnes à inviter.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.resultat.tout' => 'Plus personne n\'attend son code.',
 			'candidatsFlux.invitationsPersonnelles.resultat.pasDeuxFois' => 'Une même personne ne reçoit jamais deux codes valides en même temps, même si vous envoyez à nouveau.',
 			'candidatsFlux.invitationsPersonnelles.sansDonnees' => 'Le nombre de personnes à inviter n\'a pas pu être chargé.',
 			'candidatsFlux.file.rythme' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Pour ne pas finir dans les courriers indésirables, au plus ${n} message de ce type part chaque jour. Les autres attendent leur tour et partent d\'eux-mêmes les jours suivants.', other: 'Pour ne pas finir dans les courriers indésirables, au plus ${n} messages de ce type partent chaque jour. Les autres attendent leur tour et partent d\'eux-mêmes les jours suivants.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.file.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} message attend son tour.', other: '${n} messages attendent leur tour.', ), 
 			'candidatsFlux.file.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Tout devrait être parti d\'ici un jour environ.', other: 'Tout devrait être parti d\'ici ${n} jours environ.', ), 
 			'candidatsFlux.file.rienEnAttente' => 'Aucun message n\'attend son tour.',
@@ -67471,12 +67487,12 @@ extension on Traductions {
 			'pause.demander' => 'Demander la pause',
 			'pause.reponse.acceptee' => ({required Object mois}) => 'La pause de ${mois} est acceptée. La place est gardée et la date limite de l\'étape recule d\'autant.',
 			'pause.reponse.demandee' => ({required num delai}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai, one: 'Votre demande est transmise à la direction, qui répond sous ${delai} jour.', other: 'Votre demande est transmise à la direction, qui répond sous ${delai} jours.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'pause.demandesTitre' => 'Les pauses',
 			'pause.demandesVide' => 'Aucune pause pour le moment.',
 			'pause.statut.demandee' => 'En attente',
 			'pause.statut.acceptee' => 'Acceptée',
-			_ => null,
-		} ?? switch (path) {
 			'pause.statut.refusee' => 'Refusée',
 			'pause.statut.annulee' => 'Annulée',
 			'pause.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
