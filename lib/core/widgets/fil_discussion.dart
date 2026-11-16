@@ -2257,7 +2257,7 @@ class _Bulle extends StatelessWidget {
                 ],
               ),
             );
-      if (coeurs > 0 || aime) {
+      if (coeurs > 0) {
         // La pastille de coeur pend au coin bas, cote exterieur ; la place
         // qu'elle prend sous la bulle est reservee.
         bulle = Stack(

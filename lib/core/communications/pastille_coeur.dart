@@ -108,7 +108,7 @@ class _PastilleCoeurState extends State<PastilleCoeur>
               ScaleTransition(
                 scale: echelle,
                 child: Icon(
-                  AppIcons.coeur.resoudre(selectionne: plein),
+                  AppIcons.coeur.resoudre(selectionne: true),
                   size: AppSpacing.lg,
                   color: encre,
                 ),

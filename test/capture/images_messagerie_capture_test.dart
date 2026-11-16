@@ -85,6 +85,7 @@ Widget _ecran({
   required List<MessageFil> messages,
   SourceImagesFil? images,
   bool groupe = true,
+  bool pleinEcran = false,
   Future<Uint8List?> Function()? choisir,
   EnvoiImageFil? envoi,
 }) => Scaffold(
@@ -95,6 +96,9 @@ Widget _ecran({
         messages: messages,
         textes: textesFilCommunication(),
         afficherAuteur: groupe,
+        // Le telephone (390) est la page plein ecran, sans phrase d'aide sous le
+        // champ (FINITIONS-MESSAGERIE) ; le bureau garde le fil en colonne.
+        pleinEcran: pleinEcran,
         onEnvoyer: (String _) async {},
         images: images,
         onAimer: (String id, bool aime) async =>
@@ -155,6 +159,7 @@ void main() {
         await tester.pumpWidget(
           hoteCapture(
             _ecran(
+              pleinEcran: taille.width < 840,
               images: _Source(<String, Uint8List>{'p': portrait, 'l': paysage}),
               messages: <MessageFil>[
                 _m(
@@ -220,6 +225,7 @@ void main() {
         await tester.pumpWidget(
           hoteCapture(
             _ecran(
+              pleinEcran: taille.width < 840,
               groupe: false,
               messages: <MessageFil>[
                 _m(
@@ -246,6 +252,7 @@ void main() {
         await tester.pumpWidget(
           hoteCapture(
             _ecran(
+              pleinEcran: taille.width < 840,
               messages: const <MessageFil>[],
               choisir: () async => paysage,
               envoi:
@@ -275,6 +282,7 @@ void main() {
         await tester.pumpWidget(
           hoteCapture(
             _ecran(
+              pleinEcran: taille.width < 840,
               images: _Source(<String, Uint8List>{'p': portrait}),
               messages: <MessageFil>[
                 _m(

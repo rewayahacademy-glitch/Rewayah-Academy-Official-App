@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/communications/pastille_coeur.dart';
 import 'package:rewayah_academy/core/communications/phrases_images.dart';
 import 'package:rewayah_academy/core/communications/textes_fil_communication.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_messages/images_du_fil.dart';
 
@@ -360,6 +361,48 @@ void main() {
       await tester.tap(find.text('Regardez'));
       await tester.pumpAndSettle();
       expect(appels, <bool>[false]);
+      expect(find.byType(PastilleCoeur), findsNothing);
+    });
+
+    testWidgets(
+      'un coeur de l\'autre : plein, sans nombre, dans un fil a deux',
+      (WidgetTester tester) async {
+        fixerVue(tester, const Size(390, 844));
+        await tester.pumpWidget(
+          hoteTheme(
+            FilDiscussion(
+              messages: <MessageFil>[_message(coeurs: 1)],
+              afficherAuteur: false,
+              textes: textesFilCommunication(),
+              onEnvoyer: (String _) async {},
+              onAimer: (String id, bool aime) async =>
+                  const EtatCoeur(coeurs: 1, aimeParMoi: false),
+            ),
+            defilant: false,
+          ),
+        );
+        await tester.pump();
+        expect(find.byType(PastilleCoeur), findsOneWidget);
+        final Icon icone = tester.widget<Icon>(
+          find.descendant(
+            of: find.byType(PastilleCoeur),
+            matching: find.byType(Icon),
+          ),
+        );
+        expect(icone.icon, AppIcons.coeur.actif, reason: 'jamais un contour');
+        expect(
+          find.descendant(
+            of: find.byType(PastilleCoeur),
+            matching: find.byType(Text),
+          ),
+          findsNothing,
+          reason: 'pas de nombre dans un fil a deux',
+        );
+      },
+    );
+
+    testWidgets('aucun coeur : aucune pastille', (WidgetTester tester) async {
+      await _monter(tester, messages: <MessageFil>[_message()]);
       expect(find.byType(PastilleCoeur), findsNothing);
     });
 
