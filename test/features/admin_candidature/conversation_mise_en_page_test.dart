@@ -9,6 +9,7 @@
 // - aucune exception, a toutes les tailles, en francais et en arabe, a texte
 //   agrandi, clavier ouvert.
 
+import 'package:flutter/material.dart' show Brightness, ThemeMode;
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -27,6 +28,7 @@ import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
+import '../../capture/outil_capture.dart';
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/monter_recrutement.dart';
 import '../com_messages/support_messages.dart';
@@ -119,6 +121,7 @@ Future<GoRouter> _monter(
   double hauteur = 3000,
   TextDirection? direction,
   double echelle = 1,
+  ThemeMode themeMode = ThemeMode.light,
 }) async {
   final PortCandidaturesDirection port = FauxCandidaturesDirection(
     capacitesRendues: capacitesGestes,
@@ -145,6 +148,7 @@ Future<GoRouter> _monter(
     hauteur: hauteur,
     direction: direction,
     echelle: echelle,
+    themeMode: themeMode,
   );
   // BE-DOSSIER : les messages vivent sous leur rubrique, ouverte ici.
   await ouvrirToutesLesRubriques(tester);
@@ -352,4 +356,55 @@ void main() {
       });
     }
   }
+
+  // MESSAGERIE-COULEURS : captures R3 du volet de conversation sur ordinateur
+  // (1440 x 900), fil remonte vers les anciens messages, croix visible.
+  // Sautees sans CAPTURE_DIR.
+  group('captures volet', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Brightness lum in <Brightness>[
+        Brightness.light,
+        Brightness.dark,
+      ]) {
+        final String nom =
+            'volet-1440-${langue.languageCode}-'
+            '${lum == Brightness.dark ? 'sombre' : 'clair'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _monter(
+            tester,
+            _messagesLongs(),
+            largeur: 1440,
+            hauteur: 900,
+            direction: langue == AppLocale.ar
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            themeMode: lum == Brightness.dark
+                ? ThemeMode.dark
+                : ThemeMode.light,
+          );
+          await _toucher(tester, _ecrire);
+          await laisser(tester, fois: 3);
+          await tester.drag(
+            find.byKey(FilDiscussion.cleMessages),
+            const Offset(0, 600),
+            warnIfMissed: false,
+          );
+          await laisser(tester, fois: 3);
+          expect(
+            find
+                .descendant(
+                  of: find.byKey(BarreConversation.cle),
+                  matching: find.byKey(VoletConversation.cleReplier),
+                )
+                .hitTestable(),
+            findsOneWidget,
+          );
+          await capturerVue(tester, 'MESSAGERIE-COULEURS/$nom');
+        });
+      }
+    }
+  }, skip: sautSansCapture);
 }

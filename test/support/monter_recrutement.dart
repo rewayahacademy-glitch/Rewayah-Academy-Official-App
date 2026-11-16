@@ -29,6 +29,7 @@ Future<void> monterRecrutement(
   double echelle = 1,
   TextDirection? direction,
   String? depart,
+  ThemeMode themeMode = ThemeMode.light,
 }) async {
   tester.view.physicalSize = Size(largeur, hauteur);
   tester.view.devicePixelRatio = 1;
@@ -38,6 +39,7 @@ Future<void> monterRecrutement(
       depart: depart ?? chemin,
       echelle: echelle,
       direction: direction,
+      themeMode: themeMode,
       routes: <RouteBase>[
         GoRoute(
           path: chemin,
