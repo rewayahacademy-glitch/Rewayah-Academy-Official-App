@@ -13443,8 +13443,21 @@
     "dossier3": {
       "pastille": {"bon": "جيد", "aVoir": "للمراجعة", "manque": "ناقص"},
       "situation": {
+        "reste": "المتبقي: \u2068{liste}\u2069.",
+        "aFaire": {
+          "compte_conforme": "التحقق من الحساب",
+          "paiement_compatible": "تأكيد وسيلة الدفع",
+          "cadre_religieux": "الحصول على الموافقة على الإطار",
+          "questionnaire_complet": "الحصول على الاستبيان كاملًا",
+          "entretien_conclu": "إجراء المقابلة",
+          "evaluation_validee": "اعتماد التقييم",
+          "accords_signes": "الحصول على الاتفاقات الموقعة",
+          "profil_renseigne": "استكمال الملف الشخصي",
+          "profil_unique": "التحقق من أن الملف الشخصي فريد",
+          "aucune_restriction": "رفع القيد",
+          "piece_validee": "اعتماد وثيقة الهوية"
+        },
         "vous": "عليكم: \u2068{geste}\u2069",
-        "bloque": "ما يعطّل الملف: \u2068{liste}\u2069",
         "pause": "الملف متوقف مؤقتًا.",
         "rien": "لا شيء مطلوب الآن."
       },
@@ -13459,7 +13472,7 @@
         "langues": "اللغات",
         "niveau": "المستوى والإجازة",
         "disponibilites": "الأوقات المتاحة",
-        "versement": "البلد والدفعات",
+        "versement": "الدفعات",
         "public": "الفئة"
       },
       "demanderAccord": "طلب اتفاق",

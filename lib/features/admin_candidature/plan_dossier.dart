@@ -199,12 +199,15 @@ class PlanDossier {
       case RubriqueDossierCode.accords:
         return deControles(<String>['accords_signes', 'cadre_religieux']);
       case RubriqueDossierCode.entretien:
-        return deControles(<String>['entretien_conclu']);
-      case RubriqueDossierCode.responsable:
-        return detail.ligne.responsableId == null
-            ? PastilleRubrique.manque
-            : PastilleRubrique.bon;
-      case RubriqueDossierCode.photo ||
+        // « Manque » seulement quand l'entretien est du : en Salle de
+        // verification et d'entretien. Avant, il n'est pas encore du.
+        final PastilleRubrique? p = deControles(<String>['entretien_conclu']);
+        return p == PastilleRubrique.manque &&
+                detail.ligne.etape != EtapeCandidature.verifications
+            ? null
+            : p;
+      case RubriqueDossierCode.responsable ||
+          RubriqueDossierCode.photo ||
           RubriqueDossierCode.langues ||
           RubriqueDossierCode.recitation ||
           RubriqueDossierCode.disponibilites ||
@@ -222,17 +225,36 @@ class PlanDossier {
     for (final ControleCandidature c in detail.blocages) libelleControle(c.nom),
   ];
 
-  /// Les controles faux, tels que la phrase « Ce qui bloque » de l'etage 1 les
-  /// dit. Un controle qui a sa rubrique n'est nomme que par son nom : sa cause
-  /// se lit dans la rubrique, qui s'ouvre. Un controle sans rubrique garde sa
-  /// cause dans la phrase, pour qu'aucune cause ne se perde avec le bloc
-  /// « Controles ».
-  List<String> get blocagesAvecCause => <String>[
-    for (final ControleCandidature c in detail.blocages)
-      c.cause == null || rubriqueDuControle(c.nom) != null
-          ? libelleControle(c.nom)
-          : controleEtCause(c.nom, c.cause),
-  ];
+  /// Ce qui reste a faire, en verbes, pour chaque controle faux (« confirmer
+  /// le moyen de versement »). Un controle sans rubrique garde sa cause entre
+  /// parentheses, pour qu'aucune cause ne se perde avec le bloc
+  /// « Controles ». Un controle inconnu se dit par son nom.
+  List<String> get resteAFaire {
+    final aFaire = t.recrutement.dossier3.situation.aFaire;
+    String verbe(String nom) => switch (nom) {
+      'compte_conforme' => aFaire.compte_conforme,
+      'paiement_compatible' => aFaire.paiement_compatible,
+      'cadre_religieux' => aFaire.cadre_religieux,
+      'questionnaire_complet' => aFaire.questionnaire_complet,
+      'entretien_conclu' => aFaire.entretien_conclu,
+      'evaluation_validee' => aFaire.evaluation_validee,
+      'accords_signes' => aFaire.accords_signes,
+      'profil_renseigne' => aFaire.profil_renseigne,
+      'profil_unique' => aFaire.profil_unique,
+      'aucune_restriction' => aFaire.aucune_restriction,
+      'piece_validee' => aFaire.piece_validee,
+      _ => libelleControle(nom),
+    };
+    return <String>[
+      for (final ControleCandidature c in detail.blocages)
+        c.cause == null || rubriqueDuControle(c.nom) != null
+            ? verbe(c.nom)
+            : t.admin.candidatures.detail.controleLigne(
+                nom: verbe(c.nom),
+                cause: libelleCauseControle(c.nom, c.cause),
+              ),
+    ];
+  }
 
   /// Qui doit agir, sur quoi, en une phrase.
   String quiAgit() {
@@ -250,13 +272,14 @@ class PlanDossier {
     return t.recrutement.dossier3.situation.rien;
   }
 
-  /// « Ce qui bloque : ... », ou `null` quand rien ne bloque (ou que le serveur
-  /// ne rend pas encore les controles).
-  String? phraseBloque() {
-    final List<String> noms = blocagesAvecCause;
-    if (noms.isEmpty) return null;
-    return t.recrutement.dossier3.situation.bloque(
-      liste: noms.join(t.admin.candidatures.detail.separateurControles),
+  /// « Il reste : confirmer le moyen de versement, tenir l'entretien... », ou
+  /// `null` quand rien ne reste (ou que le serveur ne rend pas encore les
+  /// controles). Ce n'est pas une erreur : c'est la suite.
+  String? phraseReste() {
+    final List<String> verbes = resteAFaire;
+    if (verbes.isEmpty) return null;
+    return t.recrutement.dossier3.situation.reste(
+      liste: verbes.join(t.admin.candidatures.detail.separateurControles),
     );
   }
 

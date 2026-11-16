@@ -111,8 +111,8 @@ class EtageUnDossier extends ConsumerWidget {
   /// La cle de l'image en grand.
   static const Key clePhotoEnGrand = ValueKey<String>('dossier-photo-grand');
 
-  /// La cle de la phrase « Ce qui bloque ».
-  static const Key cleBloque = ValueKey<String>('dossier-situation-bloque');
+  /// La cle de la phrase « Il reste : ... ».
+  static const Key cleReste = ValueKey<String>('dossier-situation-reste');
 
   /// La cle de la ligne de reperes (salle, genre, pays).
   static const Key cleReperes = ValueKey<String>('dossier-reperes');
@@ -140,7 +140,7 @@ class EtageUnDossier extends ConsumerWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final EtatAffiche? etat = etatDuDossier(detail);
-    final String? bloque = plan.phraseBloque();
+    final String? reste = plan.phraseReste();
     final String nom = nomAffiche(detail.ligne);
     final AsyncValue<({String? url, DateTime? figeeLe})> photo = ref.watch(
       photoDossierProvider(detail.ligne.id),
@@ -193,11 +193,13 @@ class EtageUnDossier extends ConsumerWidget {
                     textes.bodyMedium ?? const TextStyle(),
                   ),
                 ),
-              if (bloque != null)
+              if (reste != null)
                 TexteSansCoupure(
-                  bloque,
-                  key: cleBloque,
-                  style: palette.inkAlert.applyTo(
+                  reste,
+                  key: cleReste,
+                  // Gris fonce, pas rouge : ce n'est pas une erreur, c'est la
+                  // suite (coordinateur, 16/11/2026).
+                  style: palette.inkStrong.applyTo(
                     textes.bodyMedium ?? const TextStyle(),
                   ),
                 ),
@@ -249,7 +251,16 @@ List<LigneResume> lignesResume(
   }
 
   final r = t.recrutement.dossier3.resume;
-  final String? moyens = valeurs(<String>['operateurs', 'moyensAccessibles']);
+  // Versement : le pays, puis les moyens nommes, sans compteur. Un moyen dont
+  // le nom n'est pas connu ne se dit pas (jamais un code, jamais un nombre).
+  final Object? brutOperateurs = doc.reponses['operateurs'];
+  final List<String> moyens = <String>[
+    if (doc.reponses['compteBancaire'] == true)
+      t.admin.candidatures.moyens.virement,
+    if (brutOperateurs is List)
+      for (final Object? code in brutOperateurs)
+        if (code is String) ?nomsOperateurs[code],
+  ];
   final String? pays =
       valeurs(<String>['paysVersement']) ?? valeurs(<String>['paysResidence']);
   return <LigneResume>[
@@ -272,12 +283,12 @@ List<LigneResume> lignesResume(
           ),
           (
             cle: r.versement,
-            valeur: <String>[?pays, ?moyens].isEmpty
+            valeur: <String>[?pays, ...moyens].isEmpty
                 ? null
                 : <String>[
                     ?pays,
-                    ?moyens,
-                  ].join(t.recrutement.parcours.creneaux.separateurListe),
+                    ...moyens,
+                  ].join(t.admin.candidatures.historique.separateur),
           ),
           (cle: r.public, valeur: valeurs(<String>['publics'])),
         ])

@@ -529,7 +529,8 @@ void main() {
         t.admin.candidatures.detail.cartes.recitation,
         t.admin.candidatures.detail.cartes.disponibilites,
         t.admin.candidatures.detail.cartes.publics,
-        t.admin.candidatures.detail.cartes.versement,
+        // Le groupe « versement » est la rubrique « Versement ».
+        t.recrutement.dossier3.rubrique.versement,
       ]) {
         expect(texte, contains(titre));
       }

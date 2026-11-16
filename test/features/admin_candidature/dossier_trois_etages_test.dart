@@ -27,9 +27,18 @@ import 'hote_candidature.dart';
 FauxCandidaturesDirection _port(
   DetailCandidature detail, {
   CapacitesCandidatures capacites = capacitesGestes,
+  Map<String, MoyensConfirmes> moyens = const <String, MoyensConfirmes>{
+    'SN': MoyensConfirmes(
+      virementBancaire: true,
+      operateurs: <OperateurPaiement>[
+        OperateurPaiement(code: 'orange_money', nom: 'Orange Money'),
+      ],
+    ),
+  },
 }) => FauxCandidaturesDirection(
   capacitesRendues: capacites,
   details: <DetailCandidature>[detail],
+  moyens: moyens,
 );
 
 List<ControleCandidature> _controles({
@@ -109,7 +118,7 @@ void main() {
       );
     });
 
-    testWidgets('« Ce qui bloque » est la phrase de l\'etage 1', (
+    testWidgets('« Il reste : ... » dit ce qui reste a faire, en verbes', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -121,12 +130,20 @@ void main() {
           ),
         ),
       );
-      final Finder bloque = find.byKey(EtageUnDossier.cleBloque);
-      expect(bloque, findsOneWidget);
+      final Finder reste = find.byKey(EtageUnDossier.cleReste);
+      expect(reste, findsOneWidget);
+      final String phrase = (tester.widget(reste) as dynamic).texte as String;
+      // Des verbes, pas des etats qui se liraient comme faits.
       expect(
-        (tester.widget(bloque) as dynamic).texte as String,
-        contains(t.admin.candidatures.controles.noms.entretienConclu),
+        phrase,
+        contains(t.recrutement.dossier3.situation.aFaire.entretien_conclu),
       );
+      expect(phrase, startsWith('Il reste'));
+      expect(
+        phrase,
+        isNot(contains(t.admin.candidatures.controles.noms.entretienConclu)),
+      );
+      expect(find.textContaining('Ce qui bloque'), findsNothing);
       // Plus de bloc « Ce qui bloque » : un titre de section de moins.
       expect(find.byKey(BlocBlocages.cle), findsNothing);
     });
@@ -180,6 +197,14 @@ void main() {
       ]) {
         expect(texte, contains(cle));
       }
+      // Versement : le pays et les moyens nommes, sans compteur.
+      expect(texte, contains('${r.versement}\u00a0: '));
+      expect(
+        texte,
+        isNot(contains(t.admin.candidatures.detail.moyensIndiques(n: 1))),
+      );
+      expect(texte, contains('Orange Money'));
+      expect(texte, isNot(contains('Moyens indiqu')));
       expect(texte, isNot(contains('salle-examen')));
       expect(_texte(tester), isNot(contains('salle-examen')));
       expect(
@@ -192,6 +217,30 @@ void main() {
           ),
         ),
       );
+    });
+  });
+
+  group('etage 2 : le versement sans nom de moyen', () {
+    testWidgets('le pays seulement, jamais un compteur ni un code', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _port(detailTest(), moyens: const <String, MoyensConfirmes>{}),
+      );
+      final String texte = <String>[
+        for (final Element e
+            in find
+                .descendant(
+                  of: find.byKey(ResumeDossier.cle),
+                  matching: find.byType(RichText),
+                )
+                .evaluate())
+          (e.widget as RichText).text.toPlainText(),
+      ].join('\n');
+      expect(texte, contains('Sénégal'));
+      expect(texte, isNot(contains('Moyens indiqu')));
+      expect(texte, isNot(contains('orange_money')));
     });
   });
 
@@ -235,7 +284,47 @@ void main() {
       final p = t.recrutement.dossier3.pastille;
       expect(pastille(RubriqueDossierCode.versement), p.bon);
       expect(pastille(RubriqueDossierCode.piece), p.aVoir);
-      expect(pastille(RubriqueDossierCode.responsable), p.manque);
+      // Le responsable ne « manque » jamais : pas de pastille.
+      expect(
+        find.byKey(
+          RubriqueDossier.clePastille(RubriqueDossierCode.responsable),
+        ),
+        findsNothing,
+      );
+      expect(
+        find.byKey(RubriqueDossier.clePastille(RubriqueDossierCode.contact)),
+        findsNothing,
+      );
+    });
+
+    testWidgets('l\'entretien ne « manque » que quand il est du', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _port(
+          detailTest(controles: _controles(entretien: false, piece: true)),
+        ),
+      );
+      // Avant la Salle de verification et d'entretien : pas encore du.
+      expect(
+        find.byKey(RubriqueDossier.clePastille(RubriqueDossierCode.entretien)),
+        findsNothing,
+      );
+      await _monter(
+        tester,
+        port: _port(
+          detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienAPlanifier,
+            controles: _controles(entretien: false),
+          ),
+        ),
+      );
+      expect(
+        find.byKey(RubriqueDossier.clePastille(RubriqueDossierCode.entretien)),
+        findsOneWidget,
+      );
     });
 
     testWidgets('« Contrôles » disparait comme bloc', (

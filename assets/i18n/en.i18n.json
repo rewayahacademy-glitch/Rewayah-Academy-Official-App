@@ -2617,8 +2617,21 @@
     "dossier3": {
       "pastille": {"bon": "Good", "aVoir": "To check", "manque": "Missing"},
       "situation": {
+        "reste": "Left to do: {liste}.",
+        "aFaire": {
+          "compte_conforme": "check the account",
+          "paiement_compatible": "confirm the payment method",
+          "cadre_religieux": "get agreement on the framework",
+          "questionnaire_complet": "get the complete questionnaire",
+          "entretien_conclu": "hold the interview",
+          "evaluation_validee": "validate the evaluation",
+          "accords_signes": "get the signed agreements",
+          "profil_renseigne": "fill in the profile",
+          "profil_unique": "check the profile is unique",
+          "aucune_restriction": "lift the restriction",
+          "piece_validee": "validate the ID document"
+        },
         "vous": "Your turn: {geste}",
-        "bloque": "Blocking: {liste}",
         "pause": "The file is paused.",
         "rien": "Nothing to do for now."
       },
@@ -2633,7 +2646,7 @@
         "langues": "Languages",
         "niveau": "Level and ijaza",
         "disponibilites": "Availability",
-        "versement": "Country and payment",
+        "versement": "Payment",
         "public": "Audience"
       },
       "demanderAccord": "Ask for an agreement",

@@ -2617,8 +2617,21 @@
     "dossier3": {
       "pastille": {"bon": "Bon", "aVoir": "À voir", "manque": "Manque"},
       "situation": {
+        "reste": "Il reste\u00a0: {liste}.",
+        "aFaire": {
+          "compte_conforme": "vérifier le compte",
+          "paiement_compatible": "confirmer le moyen de versement",
+          "cadre_religieux": "obtenir l'accord sur le cadre",
+          "questionnaire_complet": "obtenir le questionnaire complet",
+          "entretien_conclu": "tenir l'entretien",
+          "evaluation_validee": "valider l'évaluation",
+          "accords_signes": "obtenir les accords signés",
+          "profil_renseigne": "renseigner le profil",
+          "profil_unique": "vérifier que le profil est unique",
+          "aucune_restriction": "lever la restriction",
+          "piece_validee": "valider la pièce d'identité"
+        },
         "vous": "À vous : {geste}",
-        "bloque": "Ce qui bloque : {liste}",
         "pause": "Le dossier est en pause.",
         "rien": "Rien à faire pour le moment."
       },
@@ -2633,7 +2646,7 @@
         "langues": "Langues",
         "niveau": "Niveau et ijaza",
         "disponibilites": "Disponibilités",
-        "versement": "Pays et versement",
+        "versement": "Versement",
         "public": "Public"
       },
       "demanderAccord": "Demander un accord",
