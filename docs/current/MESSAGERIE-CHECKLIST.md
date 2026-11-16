@@ -1,33 +1,33 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : lundi 16/11/2026, 20 h 45 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : lundi 16/11/2026, 21 h 25 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
-**Ce qui est vrai ce soir : rien n'est encore fusionné ni mis en ligne.** Le gris de la messagerie,
-la croix disparue du volet et le champ de saisie qui devient un cercle sont toujours en production.
+**#551 (couleurs, croix, champ) est fusionnée à 21 h 22 UTC (`906ba099`)**, donc mise en ligne par le
+déploiement automatique ; **pas encore vue par vous**.
 
 **Ce que je fais (le pilote)** : je ne code pas. Je donne le travail à un seul agent, je le contrôle
 toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'installe en base.
 
 **Ce que j'ai demandé à l'agent (un lot à la fois)** :
 
-1. **Finir la correction des couleurs, #551** (en cours depuis 19 h 48)
+1. **Finir la correction des couleurs, #551** : **fusionnée à 21 h 22 UTC**
    - [x] reprendre la branche de l'agent précédent (archivé, il avait fini son contexte)
    - [x] régénérer les textes et le code : aucun changement
    - [x] contrôle du code (`analyze`) : zéro erreur
    - [x] écrire, et cette fois enregistrer, le code qui fait les captures (il avait été perdu)
-   - [ ] tous les tests de l'application : en cours, 4 172 passés à 20 h 10, aucun échec signalé, pas fini
+   - [x] tous les tests de l'application : 22 375 passés, 0 échoué ; vérificateurs verts
    - [x] faire les captures (`07fa7688`) : volet avec la croix, liste, fr et ar, clair et sombre
    - [x] **moi** : relu 3 captures. Croix visible ; fil sur le fond de page ; bulles reçues lisibles
          (aucun contour à ajouter, décision du pilote) ; liste en carte blanche
-   - [ ] **défaut vu par le pilote** : l'heure du dernier message est coupée sous le champ de saisie ;
-         l'agent vérifie si c'est la capture ou le vrai écran, et corrige si besoin
+   - [x] heure du dernier message coupée sous le champ : défaut de la capture seulement, prouvé par
+         deux tests (fr, ar)
    - [x] reprendre les dernières fusions de l'équipe (`73651b66`) ; #563 fusionnée depuis, sans conflit
-   - [ ] ouvrir la PR à la vérification automatique (CI) et la lire
-   - [ ] **moi** : relire les captures avant et après, chercher ce qui a changé ailleurs, fusionner
+   - [x] CI lue par le pilote : 11 contrôles verts, 2 ignorés (aperçus)
+   - [x] **moi** : captures relues, fusion
    - [ ] **vous** : voir en production (fermer puis rouvrir l'application)
-2. **NOUVEAU-FILS** (à lancer après #551)
+2. **NOUVEAU-FILS** : **en cours depuis 21 h 25**, même agent, migration `20261129510000`
    - [ ] badge « Nouveau » sur une conversation de moins de 7 jours que personne de l'équipe n'a lue
    - [ ] une conversation vide affiche « Nouveau · aucun message »
    - [ ] filtre « Nouveaux » dans la liste
@@ -93,6 +93,12 @@ _Rempli au matin._
 
 ## Pour le directeur au réveil
 
+- **Bulles reçues en clair** : l'agent mesure 1,13:1 entre la bulle et le fond ; seule l'ombre la
+  détache. Le pilote a jugé sur capture qu'elles restent lisibles et n'a pas ajouté de contour. Si vous
+  les trouvez trop pâles en production, un contour fin est une petite correction.
+- **Drapeau du Sénégal absent** sur une capture du dossier (volet, fr clair), cause non vérifiée, hors
+  messagerie : signalé, non traité.
+
 1. Un fin contour sur les bulles reçues si, après #551, elles se fondent dans le fond clair
    (contraste 1,14:1) ?
 2. Le canal du Studio dans la nouvelle présentation, au risque du mode focus ?
@@ -125,3 +131,8 @@ _Rempli au matin._
   en clair en tête de page et envoyée directement.
 - 16/11, 20 h 45 : `07fa7688` (main fusionnée, captures). Pilote : 3 captures relues ; décision :
   pas de contour sur les bulles reçues ; défaut signalé (heure du dernier message sous le champ).
+- 16/11, 21 h 20 : #551 prête, CI verte relue par le pilote (11 succès, 2 ignorés), aucun changement
+  d'i18n ni de widgets partagés dans main depuis sa dernière fusion ; Pilote Équipe prévenu.
+- 16/11, 21 h 22 : **#551 fusionnée** (`906ba099`). Erreur du pilote : un premier essai de fusion avec
+  un identifiant de commit recopié de mémoire, refusé par GitHub, sans effet ; refait avec l'identifiant lu.
+- 16/11, 21 h 25 : NOUVEAU-FILS confié au même agent ; migration `20261129510000` vérifiée libre sur main.
