@@ -137,6 +137,9 @@ BEGIN
   IF p_filtre ->> 'joursMin' IS NOT NULL AND p_filtre ->> 'joursMin' !~ '^[1-7]$' THEN
     RAISE EXCEPTION 'filtre de candidatures mal type : joursMin' USING ERRCODE = '22023';
   END IF;
+  IF p_filtre ->> 'ijaza' IS NOT NULL AND p_filtre ->> 'ijaza' NOT IN ('oui', 'pret_test', 'non') THEN
+    RAISE EXCEPTION 'filtre de candidatures mal type : ijaza' USING ERRCODE = '22023';
+  END IF;
   IF (p_filtre ->> 'langueExplication' IS NOT NULL AND p_filtre ->> 'langueExplication' !~ '^[a-z0-9_]{1,40}$')
      OR (p_filtre ->> 'riwaya' IS NOT NULL AND p_filtre ->> 'riwaya' !~ '^[a-z0-9_]{1,40}$')
      OR (p_filtre ->> 'public' IS NOT NULL
@@ -152,8 +155,9 @@ $function$;
 
 -- Les nouveaux filtres, pour une candidature. Une cle absente ou nulle ne filtre
 -- pas. Les reponses lues sont les plus recentes ; les heures sont celles du
--- fuseau du candidat, jamais converties ; un jour compte s'il a au moins une
--- plage qui recouvre [heureMin, heureMax[.
+-- fuseau du candidat, jamais converties ; les plages sont lues en HH:MM et
+-- comparees en minutes ; un jour compte s'il a au moins une plage qui recouvre
+-- [heureMin, heureMax[.
 CREATE FUNCTION private.be_predicat(c public.candidatures, p_filtre jsonb, p_lecteur uuid)
 RETURNS boolean
 LANGUAGE plpgsql
@@ -163,7 +167,7 @@ SET search_path = ''
 AS $function$
 DECLARE
   v_rep jsonb;
-  v_ijaza boolean := (p_filtre ->> 'ijaza')::boolean;
+  v_ijaza text := p_filtre ->> 'ijaza';
   v_piece boolean := (p_filtre ->> 'pieceEnAttente')::boolean;
   v_resp text := p_filtre ->> 'responsable';
   v_a_dispo boolean := coalesce(p_filtre ->> 'jours', p_filtre ->> 'heureMin',
@@ -211,7 +215,7 @@ BEGIN
   END IF;
 
   IF v_ijaza IS NOT NULL
-     AND (v_rep ->> 'ijazaPresentable') IS DISTINCT FROM (CASE WHEN v_ijaza THEN 'oui' ELSE 'non' END) THEN
+     AND (v_rep ->> 'ijazaPresentable') IS DISTINCT FROM v_ijaza THEN
     RETURN false;
   END IF;
   IF p_filtre ->> 'langueExplication' IS NOT NULL
@@ -242,11 +246,13 @@ BEGIN
       FROM pg_catalog.jsonb_array_elements(v_rep -> 'disponibilitesDeclarees') x
      WHERE CASE WHEN pg_catalog.jsonb_typeof(x) = 'object'
                      AND x ->> 'jour' ~ '^[1-7]$'
-                     AND x ->> 'debut' ~ '^[0-9]{1,2}:00$'
-                     AND x ->> 'fin' ~ '^[0-9]{1,2}:00$'
+                     AND x ->> 'debut' ~ '^([01]?[0-9]|2[0-3]):[0-5][0-9]$'
+                     AND x ->> 'fin' ~ '^(([01]?[0-9]|2[0-3]):[0-5][0-9]|24:00)$'
                 THEN (v_jours IS NULL OR (x ->> 'jour')::integer = ANY (v_jours))
-                     AND pg_catalog.split_part(x ->> 'debut', ':', 1)::integer < v_hmax
-                     AND pg_catalog.split_part(x ->> 'fin', ':', 1)::integer > v_hmin
+                     AND pg_catalog.split_part(x ->> 'debut', ':', 1)::integer * 60
+                         + pg_catalog.split_part(x ->> 'debut', ':', 2)::integer < v_hmax * 60
+                     AND pg_catalog.split_part(x ->> 'fin', ':', 1)::integer * 60
+                         + pg_catalog.split_part(x ->> 'fin', ':', 2)::integer > v_hmin * 60
                 ELSE false END;
     IF v_n < v_requis THEN
       RETURN false;
@@ -302,7 +308,7 @@ BEGIN
     'liste.cles');
   v_def := pg_temp.remplacer(v_def,
     '<> CASE WHEN e.key IN (''enPause'', ''competenceAccord'') THEN ''boolean'' ELSE ''string'' END;',
-    '<> CASE WHEN e.key IN (''enPause'', ''competenceAccord'', ''ijaza'', ''pieceEnAttente'') THEN ''boolean''' || E'\n'
+    '<> CASE WHEN e.key IN (''enPause'', ''competenceAccord'', ''pieceEnAttente'') THEN ''boolean''' || E'\n'
     || '                WHEN e.key IN (''heureMin'', ''heureMax'', ''joursMin'') THEN ''number''' || E'\n'
     || '                WHEN e.key = ''jours'' THEN ''array'' ELSE ''string'' END;',
     'liste.types');
@@ -407,7 +413,7 @@ BEGIN
   FROM pg_catalog.jsonb_each(v_filtre) e
   WHERE pg_catalog.jsonb_typeof(e.value) <> 'null'
     AND pg_catalog.jsonb_typeof(e.value)
-        <> CASE WHEN e.key IN ('enPause', 'competenceAccord', 'ijaza', 'pieceEnAttente') THEN 'boolean'
+        <> CASE WHEN e.key IN ('enPause', 'competenceAccord', 'pieceEnAttente') THEN 'boolean'
                 WHEN e.key IN ('heureMin', 'heureMax', 'joursMin') THEN 'number'
                 WHEN e.key = 'jours' THEN 'array' ELSE 'string' END;
   IF v_fautives IS NOT NULL THEN
