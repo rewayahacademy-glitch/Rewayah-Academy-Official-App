@@ -22,7 +22,7 @@ void main() {
     AppLocale langue = AppLocale.fr,
   }) async {
     masquerRubanDebug();
-    await LocaleSettings.setLocale(langue);
+    await tester.runAsync(() => LocaleSettings.setLocale(langue));
     await monterFileTest(
       tester,
       portFileTest(),
