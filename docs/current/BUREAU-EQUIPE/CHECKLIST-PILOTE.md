@@ -32,3 +32,5 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 26 | Collision de numéro : #546 (image candidat, messagerie) reprend 20261129400000, déjà pris par LP-1 installé | ◐ | pilote messagerie prévenu 18:15 UTC : renuméroter avant fusion |
 | 27 | DISPENSE-ENTRETIEN (BE-1g) : faire passer un fondateur sans entretien (CAND-00068, capture du directeur 16/11) | ◐ | serveur confié à BE-S1 18:20 UTC ; écran ensuite chez BE-DOSSIER |
 | 28 | Menu « … » du dossier : « clore le complément » proposé sans complément ouvert (refus serveur) | ◐ | confié à BE-DOSSIER (#545 ou petite PR), revue de tous les gestes du menu |
+| 29 | LP-2 écran : liste des enseignants (section « Enseignants », PR #547) | ◐ | CI puis fusion ; « affecter une classe » renvoyé à l'étape E (aucun écran d'affectation) ; tri par nom en attente d'un libellé validé |
+| 30 | complementEnCours côté serveur, puis « Clore le complément » rendu seulement s'il est vrai | ◐ | serveur chez BE-S1 (avant la dispense) ; écran chez BE-DOSSIER, fusionné après l'installation |
