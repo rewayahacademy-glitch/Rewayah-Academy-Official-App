@@ -2615,6 +2615,16 @@
     }
   },
   "recrutement": {
+    "suivant": {
+      "position": "{rang} of {total}",
+      "precedent": "Previous file",
+      "suivant": "Next file",
+      "decisionEnregistree": "Decision saved. The next file opens in a moment.",
+      "rester": "Stay on this file",
+      "fin": "That was the last file in this queue.",
+      "versListe": "Back to the list",
+      "reglage": "Move to the next file after a decision"
+    },
     "dossier3": {
       "pastille": {"bon": "Good", "aVoir": "To check", "manque": "Missing"},
       "situation": {

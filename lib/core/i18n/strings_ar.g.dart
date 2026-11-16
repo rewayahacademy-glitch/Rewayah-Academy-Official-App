@@ -1826,6 +1826,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$recrutement$suivant$ar suivant = _Traductions$recrutement$suivant$ar._(_root);
 	@override late final _Traductions$recrutement$dossier3$ar dossier3 = _Traductions$recrutement$dossier3$ar._(_root);
 	@override late final _Traductions$recrutement$file$ar file = _Traductions$recrutement$file$ar._(_root);
 	@override late final _Traductions$recrutement$nomLatin$ar nomLatin = _Traductions$recrutement$nomLatin$ar._(_root);
@@ -10735,6 +10736,23 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
 	@override String get canalStudio => 'قناة الاستوديو';
 	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
+}
+
+// Path: recrutement.suivant
+class _Traductions$recrutement$suivant$ar extends Traductions$recrutement$suivant$fr {
+	_Traductions$recrutement$suivant$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String position({required Object rang, required Object total}) => '⁨${rang}⁩ من ⁨${total}⁩';
+	@override String get precedent => 'الملف السابق';
+	@override String get suivant => 'الملف التالي';
+	@override String get decisionEnregistree => 'تم تسجيل القرار. سيُفتح الملف التالي بعد لحظات.';
+	@override String get rester => 'البقاء على هذا الملف';
+	@override String get fin => 'كان هذا آخر ملف في هذه القائمة.';
+	@override String get versListe => 'العودة إلى القائمة';
+	@override String get reglage => 'الانتقال إلى الملف التالي بعد القرار';
 }
 
 // Path: recrutement.dossier3
@@ -38986,6 +39004,14 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
+			'recrutement.suivant.position' => ({required Object rang, required Object total}) => '⁨${rang}⁩ من ⁨${total}⁩',
+			'recrutement.suivant.precedent' => 'الملف السابق',
+			'recrutement.suivant.suivant' => 'الملف التالي',
+			'recrutement.suivant.decisionEnregistree' => 'تم تسجيل القرار. سيُفتح الملف التالي بعد لحظات.',
+			'recrutement.suivant.rester' => 'البقاء على هذا الملف',
+			'recrutement.suivant.fin' => 'كان هذا آخر ملف في هذه القائمة.',
+			'recrutement.suivant.versListe' => 'العودة إلى القائمة',
+			'recrutement.suivant.reglage' => 'الانتقال إلى الملف التالي بعد القرار',
 			'recrutement.dossier3.pastille.bon' => 'جيد',
 			'recrutement.dossier3.pastille.aVoir' => 'للمراجعة',
 			'recrutement.dossier3.pastille.manque' => 'ناقص',
@@ -39104,6 +39130,8 @@ extension on TraductionsAr {
 			'recrutement.signature.horsLigne' => 'لم يُوقَّع العقد. أعد المحاولة بعد لحظات.',
 			'recrutement.signature.erreur' => 'لم يتأكد التوقيع. تحقّق هل يظهر العقد موقّعًا قبل أن تعيد.',
 			'recrutement.signature.nonConnecte' => 'انتهت جلستك. سجّل الدخول من جديد لتوقّع.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.signature.introuvable' => 'لا يوجد عقد منشور حاليًا. أبلغ الإدارة.',
 			'recrutement.signature.erreurLecture' => 'تعذّرت قراءة العقد. أعد المحاولة بعد لحظات.',
 			'recrutement.signature.sansDonnees' => 'لا يمكن قراءة العقد بلا اتصال.',
@@ -39112,8 +39140,6 @@ extension on TraductionsAr {
 			'recrutement.invitations.onglet' => 'الدعوات',
 			'recrutement.invitations.comptable.titrePage' => 'دعوة شخص',
 			'recrutement.invitations.comptable.sousTitrePage' => 'اختر دور الشخص، ثم أدخل عنوانه. كل رمز يُستعمل مرة واحدة وتنتهي صلاحيته.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.invitations.comptable.choixQuestion' => 'ما دور هذا الشخص؟',
 			'recrutement.invitations.comptable.enseignantTitre' => 'معلم',
 			'recrutement.invitations.comptable.enseignantExplication' => 'يدرّس الصفوف. بعد تسجيله، يوقّع عقده قبل أول حصة له.',
@@ -39618,6 +39644,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.heures.suite' => 'ستقول بعد ذلك إن كان الأمر نفسه في الأيام الأخرى.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁨${heures}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.explication' => 'يمكنك تغيير يوم قبل إرسال طلب ترشحك.',
@@ -39626,8 +39654,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.description' => 'تضبط ساعات كل يوم على حدة، واحدًا بعد الآخر.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.explication' => 'تبقى الساعات التي اخترتها: تعدّلها فقط.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.exemple' => 'تبدأ في الساعة 18:00 يوم الاثنين، وفي الساعة 20:00 يوم الأربعاء.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.parJour.titre' => 'اضبط الساعات يومًا بيوم',
 			'recrutement.parcours.q.disponibilitesDeclarees.parJour.explication' => 'يأخذ كل يوم الساعات التي اخترتها. أضف ساعات أو احذفها حيث يختلف الأمر.',
 			'recrutement.parcours.q.disponibilitesDeclarees.semaine.titre' => 'أسبوعك',
@@ -40132,6 +40158,8 @@ extension on TraductionsAr {
 			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
 			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
 			'juridique.cookies.s4.blocs.0' => 'عندما يتعطل التطبيق قد يُرسَل تقرير تقني إلى خدمة تتبّع الأخطاء. وهو لا يحتوي على لقطة شاشة ولا اسم ولا هوية.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
@@ -40140,8 +40168,6 @@ extension on TraductionsAr {
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
 			'juridique.enfants.s1.blocs.1' => 'صيغة الأطفال من ٦ إلى ١٧ سنة. ولا يوضَع أي قاصر في فصل للكبار.',
 			'juridique.enfants.s1.blocs.2' => 'من ٦ إلى ٩ سنوات تكون الواجهة الموجَّهة مفعّلة افتراضيًا: شاشات أبسط بأزرار كبيرة.',
@@ -40646,6 +40672,8 @@ extension on TraductionsAr {
 			'snt.planning.ligneQuand' => ({required Object quand}) => 'كانت مقرّرة ⁨${quand}⁩',
 			'snt.planning.fixer' => 'تحديد الموعد الجديد',
 			'snt.planning.erreurLecture' => 'تعذّرت قراءة الحصص المؤجلة: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.feuilleTitre' => 'تحديد الموعد الجديد',
 			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'الفصل ⁨${classe}⁩، حصة كانت مقرّرة ⁨${quand}⁩',
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
@@ -40654,8 +40682,6 @@ extension on TraductionsAr {
 			'snt.planning.heure' => 'الساعة',
 			'snt.planning.quand' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'snt.planning.choixManquant' => 'اختاروا يوم الحصة الجديدة وساعتها.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.confirmer' => 'تحديد هذا الموعد',
 			'snt.planning.horsLigne' => 'لا يوجد اتصال: يُحدَّد الموعد حين يعود الاتصال بالجهاز.',
 			'snt.planning.fixee' => ({required Object quand}) => 'حُدّد الموعد الجديد: ⁨${quand}⁩. أُبلغ الفصل.',
@@ -41160,6 +41186,8 @@ extension on TraductionsAr {
 			'suiviPedagogique.etapesTitre' => 'المراحل',
 			'suiviPedagogique.etapeFranchie' => 'المرحلة السابقة',
 			'suiviPedagogique.etapeFranchieLe' => ({required Object numero, required Object mois, required Object annee}) => 'المرحلة السابقة، الدخول في ⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.etapeEnCours' => 'جارية',
 			'suiviPedagogique.etapeAVenir' => 'قادمة',
 			'suiviPedagogique.sourates' => 'سور الأساسيات المعتمدة',
@@ -41168,8 +41196,6 @@ extension on TraductionsAr {
 			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '⁨${heures}⁩ س',
 			'suiviPedagogique.repetitions' => 'التكرارات المقدّرة',
 			'suiviPedagogique.repetitionsNombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ تكرار', one: '⁨${n}⁩ تكرار', two: '⁨${n}⁩ تكرار', few: '⁨${n}⁩ تكرارات', many: '⁨${n}⁩ تكرارًا', other: '⁨${n}⁩ تكرار', ), 
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.dernierJalon' => 'آخر محطة',
 			'suiviPedagogique.niveauDeclare' => 'المستوى المصرّح به',
 			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
@@ -41674,6 +41700,8 @@ extension on TraductionsAr {
 			'presentationTuteur.accepter' => 'قبول',
 			'presentationTuteur.refuser' => 'رفض',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'فُعِّل العرض العادي لـ⁨${prenom}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'رُفض طلب ⁨${dePrenom}⁩.',
 			'presentationTuteur.echecReponse' => 'تعذّر تأكيد ردك. يبقى الطلب معلّقًا: أعد المحاولة.',
 			'presentationTuteur.vide' => 'لا طلب عرض عادٍ معلّق.',
@@ -41682,8 +41710,6 @@ extension on TraductionsAr {
 			'presentationTuteur.accueil.titre' => 'طلب العرض العادي',
 			'presentationTuteur.accueil.voir' => 'الرد',
 			'presentationTuteur.notification' => ({required Object prenom}) => 'يطلب ⁨${prenom}⁩ العرض العادي',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.onglet' => 'طلبات الاستلام',
 			'reprisesAdmin.titre' => 'استلام الأسرة',
 			'reprisesAdmin.sousTitre' => 'طلبات بالغ ثانٍ ليصبح صاحب حساب الأسرة. تقرر الإدارة.',
