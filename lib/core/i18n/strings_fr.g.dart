@@ -39568,6 +39568,12 @@ class Traductions$com$messages$filtres$fr {
 
 	/// fr: 'Aucune conversation non lue.'
 	String get aucunNonLu => 'Aucune conversation non lue.';
+
+	/// fr: 'Nouveaux'
+	String get nouveaux => 'Nouveaux';
+
+	/// fr: 'Aucune conversation nouvelle.'
+	String get aucunNouveau => 'Aucune conversation nouvelle.';
 }
 
 // Path: com.messages.ligne
@@ -39583,6 +39589,9 @@ class Traductions$com$messages$ligne$fr {
 
 	/// fr: 'Aucun message pour le moment'
 	String get sansApercu => 'Aucun message pour le moment';
+
+	/// fr: 'Aucun message'
+	String get sansMessage => 'Aucun message';
 
 	/// fr: '{numero} {mois}'
 	String dateCourte({required Object numero, required Object mois}) => '${numero} ${mois}';
@@ -64461,8 +64470,11 @@ extension on Traductions {
 			'com.messages.filtres.tous' => 'Tous',
 			'com.messages.filtres.nonLus' => 'Non lus',
 			'com.messages.filtres.aucunNonLu' => 'Aucune conversation non lue.',
+			'com.messages.filtres.nouveaux' => 'Nouveaux',
+			'com.messages.filtres.aucunNouveau' => 'Aucune conversation nouvelle.',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'Aucun message pour le moment',
+			'com.messages.ligne.sansMessage' => 'Aucun message',
 			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
 			'com.messages.noms.avecFonction' => ({required Object nom, required Object fonction}) => '${nom}, ${fonction}',
 			'com.messages.noms.deux' => ({required Object premier, required Object second}) => '${premier} et ${second}',
@@ -64771,11 +64783,11 @@ extension on Traductions {
 			'com.communaute.demo.f.fonctionYasmine' => 'Enseignante, classe Al-Badr',
 			'com.communaute.demo.f.youssef' => 'Youssef Amrani',
 			'com.communaute.demo.f.fonctionYoussef' => 'Enseignant, classe Al-Kawthar',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.f.mariam' => 'Mariam Benali',
 			'com.communaute.demo.f.fonctionMariam' => 'Enseignante, classe An-Nas',
 			'com.communaute.demo.f.hamza' => 'Hamza Ouali',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.f.fonctionHamza' => 'Enseignant, classe Al-Ikhlas',
 			'com.communaute.demo.f.memorisationTitre' => 'Idées pour la mémorisation ?',
 			'com.communaute.demo.f.memorisationTexte' => 'Quels rituels ou activités fonctionnent bien pour aider les élèves à mémoriser les sourates ? Je cherche des retours d\'expérience : jeux, supports visuels, répétition en binôme. Merci pour vos idées !',
@@ -65285,11 +65297,11 @@ extension on Traductions {
 			'comptable.graphiques.kpiSorties' => 'Sorties',
 			'comptable.graphiques.kpiPeriode' => '30 derniers jours',
 			'comptable.graphiques.variation' => ({required Object pourcent}) => '${pourcent} % par rapport à la période précédente',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.rapportsTitre' => 'Rapports',
 			'comptable.graphiques.rapportsSousTitre' => 'Les entrées, les sorties et la trésorerie dans la durée.',
 			'comptable.graphiques.vide' => 'Aucune donnée à dessiner',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.videDetail' => 'Les graphiques apparaîtront ici dès que des encaissements ou des paiements auront été enregistrés.',
 			'comptable.graphiques.erreur' => 'Les graphiques n\'ont pas pu être lus : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.graphiques.sansDonnees' => 'Les graphiques n\'ont pas pu être chargés',
@@ -65799,11 +65811,11 @@ extension on Traductions {
 			'comptable.encaissements.rap.erreurEnvoiTitre' => 'Opération incertaine',
 			'comptable.encaissements.rap.remboursementsVidePhrase' => 'Les demandes de remboursement apparaîtront ici avec leur motif et leur état.',
 			'comptable.encaissements.titre' => 'Encaissements',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.sousTitre' => 'Un paiement n\'est confirmé qu\'après le prestataire.',
 			'comptable.encaissements.detailTitre' => 'Détail de l\'encaissement',
 			'comptable.encaissements.rapprochementTitre' => 'Rapprochement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rapprochementSousTitre' => 'Relier chaque transaction à ce qui l\'attendait.',
 			'comptable.beneficiaires.intro' => 'Le profil de paiement de chaque enseignant et de chaque contractuel. Seul le bénéficiaire saisit ou modifie ses coordonnées : vous pouvez le relancer, lui demander une mise à jour ou suspendre ses paiements.',
 			'comptable.beneficiaires.filtreTous' => 'Tous',
@@ -66313,11 +66325,11 @@ extension on Traductions {
 			'presentationTuteur.refuser' => 'Refuser',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'Présentation standard activée pour ${prenom}.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'Demande ${dePrenom} refusée.',
+			_ => null,
+		} ?? switch (path) {
 			'presentationTuteur.echecReponse' => 'Votre réponse n\'a pas pu être confirmée. La demande reste en attente : réessayez.',
 			'presentationTuteur.vide' => 'Aucune demande de présentation en attente.',
 			'presentationTuteur.erreur' => 'Les demandes n\'ont pas pu être chargées. Réessayez.',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.sansDonnees' => 'les demandes de présentation',
 			'presentationTuteur.accueil.titre' => 'Demande de présentation',
 			'presentationTuteur.accueil.voir' => 'Répondre',
@@ -66827,11 +66839,11 @@ extension on Traductions {
 			'courriels.admin.file.origine.manuel' => 'Manuel',
 			'courriels.admin.file.messageAuto' => 'Message automatique',
 			'courriels.admin.file.champs.destinataire' => 'À',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.champs.categorie' => 'Catégorie',
 			'courriels.admin.file.champs.origine' => 'Origine',
 			'courriels.admin.file.champs.creeLe' => 'Mis en file le',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.champs.envoyeLe' => 'Envoyé le',
 			'courriels.admin.file.champs.tentatives' => 'Essais',
 			'courriels.admin.file.champs.motifEchec' => 'Dernière erreur',
@@ -67341,11 +67353,11 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'Écart avec les comptes attendus : attendu ${attendu}, lu ${lu}. Vérifiez avant de confirmer : vous pouvez importer quand même.',
 			'candidatsFlux.importFormulaires.comptes.accord' => 'Les nombres correspondent à ce que vous attendiez.',
 			'candidatsFlux.importFormulaires.unite.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} ligne', other: '${n} lignes', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.unite.personnes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne', other: '${n} personnes', ), 
 			'candidatsFlux.importFormulaires.confirmation.question' => 'Importer ces réponses maintenant ?',
 			'candidatsFlux.importFormulaires.confirmation.explication' => 'Relisez ce que l\'import va faire. Il n\'est pas annulable depuis cet écran.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.confirmation.resume.titre' => 'Ce qui sera enregistré',
 			'candidatsFlux.importFormulaires.confirmation.resume.fichier' => 'Fichier',
 			'candidatsFlux.importFormulaires.confirmation.resume.doublons' => ({required Object choisis, required Object total}) => 'Doublons : ${choisis} cas tranchés par vous sur ${total}. Pour les autres, la ligne la plus récente est gardée.',
@@ -67855,11 +67867,11 @@ extension on Traductions {
 			'calendrier.dates.concernees.heureMecque' => 'Les jours et les heures sont ceux de La Mecque.',
 			'calendrier.dates.concernees.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.concernees.deCote' => 'mise de côté',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.concernees.autres' => ({required Object n}) => 'Et ${n} autres séances.',
 			'calendrier.dates.concernees.erreur' => 'Les séances concernées n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.conflits.titre' => 'Séances qui ne peuvent pas être rétablies',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.conflits.intro' => 'Ces séances ont été mises de côté par la fermeture, mais l\'enseignant a pris un autre cours à la même heure. Libérez l\'enseignant puis réessayez, ou confirmez l\'abandon de ces séances : elles ne seront jamais rétablies. Les heures sont celles de La Mecque.',
 			'calendrier.dates.conflits.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '${classe}, ${quand}, ${enseignant}',
 			'calendrier.dates.conflits.autre' => ({required Object cours, required Object quand}) => 'Autre cours : ${cours}, ${quand}',

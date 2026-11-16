@@ -336,6 +336,7 @@ class ResumeFil {
     this.apercuPhoto = false,
     this.dernierMessageLe,
     this.attention = IndicateurAttention.aucun,
+    this.nouveau = false,
   });
 
   /// Identifiant du fil.
@@ -359,4 +360,9 @@ class ResumeFil {
 
   /// Ce que le badge doit dire de ce fil.
   final IndicateurAttention attention;
+
+  /// NOUVEAU-FILS (migration 20261129510000) : le serveur dit que la
+  /// conversation a moins de 7 jours et qu'aucun membre de l'equipe ne l'a lue.
+  /// Vrai seulement pour l'equipe ; l'ecran ne decide rien.
+  final bool nouveau;
 }
