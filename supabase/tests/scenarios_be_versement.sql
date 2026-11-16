@@ -11,7 +11,9 @@
 -- tous les candidats du pays suivent (compatible, a_completer) ; (d) une ligne indisponible :
 -- incompatible ; (e) le recalcul unique : une valeur `a_verifier` de la colonne (donnee passee)
 -- devient compatible, un evenement `controle` tracé, aucune version de plus qu'une, ni
--- etape, ni etat, ni issue changes, aucun `aNotifier` ; rejouer ne change rien ; (f) le geste
+-- etape, ni etat, ni issue changes, aucun `aNotifier` ; un dossier en paiement_non_disponible
+-- devenu compatible revient a a_completer (transition 9, avis paiement_possible), un dossier qui
+-- reste incompatible n'est jamais ramene ; rejouer ne change rien ; (f) le geste
 -- 24 n'est plus propose : aucun calcul ne rend `a_verifier` ; le geste 25 reste ouvert pour un
 -- moyen compatible ; (g) droits : private.paiement_etat n'est executable par aucun compte.
 -- Chaque controle leve 'BE-VERSEMENT ROUGE : ...' s'il echoue. A rejouer sur une base NEUVE
@@ -222,8 +224,19 @@ SELECT pg_temp.vrai(pg_temp.vue('07') = 'compatible/compatible/en_examen/libre',
   'e1 : une donnee passee a_verifier devient compatible (07), etat et etape inchanges');
 SELECT pg_temp.vrai(pg_temp.vue('08') = 'incompatible/incompatible/paiement_non_disponible/libre',
   'e2 : un moyen deja infirme par la direction devient incompatible (08), jamais compatible');
-SELECT pg_temp.vrai(pg_temp.vue('09') = 'compatible/compatible/paiement_non_disponible/libre',
-  'e3 : un dossier deja en paiement_non_disponible devient compatible mais n''est pas ramene a a_completer par ce recalcul (la transition 9 previent la personne : hors de ce recalcul)');
+SELECT pg_temp.vrai(pg_temp.vue('09') = 'compatible/compatible/a_completer/libre'
+  AND (SELECT count(*) FROM public.candidature_evenements e
+        WHERE e.candidature_id = pg_temp.c('09') AND e.type = 'transition'
+          AND e.etat_avant = 'paiement_non_disponible' AND e.etat_apres = 'a_completer'
+          AND e.details @> '{"transition": 9, "cause": "referentiel", "aCompleter": ["versement"],
+                             "aNotifier": "paiement_possible"}'::jsonb) = 1,
+  'e3 : un dossier en paiement_non_disponible devenu compatible revient a a_completer par la transition 9, avec l''avis paiement_possible (bonne nouvelle pour la personne)');
+SELECT pg_temp.vrai(pg_temp.vue('05') = 'incompatible/incompatible/paiement_non_disponible/libre'
+  AND pg_temp.vue('08') = 'incompatible/incompatible/paiement_non_disponible/libre'
+  AND NOT EXISTS (SELECT 1 FROM public.candidature_evenements e
+                   WHERE e.candidature_id IN (pg_temp.c('05'), pg_temp.c('08')) AND e.type = 'transition'
+                     AND e.etat_apres = 'a_completer'),
+  'e3b : un dossier en paiement_non_disponible qui reste incompatible (ligne indisponible, moyen infirme) n''est PAS ramene a a_completer : le drapeau de la transition 9 n''est passe que pour un calcul compatible');
 SELECT pg_temp.vrai(pg_temp.vue('10') = 'compatible/incompatible/en_examen/libre'
   AND pg_temp.evenements('10') = (current_setting('test.avant')::jsonb -> '10' ->> 'ev')::int,
   'e4 : une candidature refusee n''est pas recalculee (colonne et journal intacts)');
@@ -237,12 +250,14 @@ SELECT pg_temp.vrai(
                              "paiementApres": "compatible", "valeurApres": true}'::jsonb) = 2,
   'e5 : une version de plus et un evenement controle journalise (cause referentiel, avant a_verifier, apres compatible) par dossier change');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.candidature_evenements e
-                                 WHERE e.candidature_id IN (pg_temp.c('07'), pg_temp.c('08'), pg_temp.c('09'))
+                                 WHERE e.candidature_id IN (pg_temp.c('07'), pg_temp.c('08'))
                                    AND e.details ? 'aNotifier')
   AND NOT EXISTS (SELECT 1 FROM public.candidature_evenements e
-                   WHERE e.candidature_id IN (pg_temp.c('07'), pg_temp.c('09')) AND e.type <> 'controle'
-                     AND e.cree_le > now() - interval '1 minute'),
-  'e6 : aucun evenement a notifier : le recalcul ne previent personne (aucune transition, aucun aNotifier)');
+                   WHERE e.candidature_id = pg_temp.c('07') AND e.type <> 'controle'
+                     AND e.cree_le > now() - interval '1 minute')
+  AND (SELECT count(*) FROM public.candidature_evenements e
+        WHERE e.candidature_id = pg_temp.c('09') AND e.details ? 'aNotifier') = 1,
+  'e6 : un simple changement de valeur ne previent personne (aucune transition, aucun aNotifier) ; seul le dossier ramene a a_completer porte un avis');
 SELECT set_config('test.apres1', (
   SELECT jsonb_object_agg(right(c.id::text, 2), jsonb_build_object('v', c.version, 'ev', pg_temp.evenements(right(c.id::text, 2))))::text
     FROM public.candidatures c WHERE c.id::text LIKE 'be7ecccc%'), true);
