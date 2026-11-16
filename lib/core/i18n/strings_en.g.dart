@@ -14588,7 +14588,7 @@ class _Traductions$admin$candidatures$detail$en extends Traductions$admin$candid
 	@override String get demanderNouvellePiece => 'Ask for a new ID document';
 	@override String get pieceAgrandir => 'Open the ID document full size';
 	@override String get pieceImage => 'Image';
-	@override String get piecePdf => 'PDF';
+	@override String get piecePdf => 'PDF file';
 	@override String get pieceOuvrirPdf => 'Open the PDF of the ID document';
 	@override String pieceTitre({required Object nom}) => 'ID document of ${nom}';
 	@override String get pieceDecisionPlusTard => 'The document is decided in the Verification and interview room.';
@@ -30742,7 +30742,7 @@ extension on TraductionsEn {
 			'admin.candidatures.detail.demanderNouvellePiece' => 'Ask for a new ID document',
 			'admin.candidatures.detail.pieceAgrandir' => 'Open the ID document full size',
 			'admin.candidatures.detail.pieceImage' => 'Image',
-			'admin.candidatures.detail.piecePdf' => 'PDF',
+			'admin.candidatures.detail.piecePdf' => 'PDF file',
 			'admin.candidatures.detail.pieceOuvrirPdf' => 'Open the PDF of the ID document',
 			'admin.candidatures.detail.pieceTitre' => ({required Object nom}) => 'ID document of ${nom}',
 			'admin.candidatures.detail.pieceDecisionPlusTard' => 'The document is decided in the Verification and interview room.',

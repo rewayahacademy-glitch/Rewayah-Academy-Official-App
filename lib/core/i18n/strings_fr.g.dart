@@ -29728,8 +29728,8 @@ class Traductions$admin$candidatures$detail$fr {
 	/// fr: 'Image'
 	String get pieceImage => 'Image';
 
-	/// fr: 'PDF'
-	String get piecePdf => 'PDF';
+	/// fr: 'Fichier PDF'
+	String get piecePdf => 'Fichier PDF';
 
 	/// fr: 'Ouvrir le PDF de la pièce d'identité'
 	String get pieceOuvrirPdf => 'Ouvrir le PDF de la pièce d\'identité';
@@ -57399,7 +57399,7 @@ extension on Traductions {
 			'admin.candidatures.detail.demanderNouvellePiece' => 'Demander une nouvelle pièce d\'identité',
 			'admin.candidatures.detail.pieceAgrandir' => 'Ouvrir la pièce d\'identité en grand',
 			'admin.candidatures.detail.pieceImage' => 'Image',
-			'admin.candidatures.detail.piecePdf' => 'PDF',
+			'admin.candidatures.detail.piecePdf' => 'Fichier PDF',
 			'admin.candidatures.detail.pieceOuvrirPdf' => 'Ouvrir le PDF de la pièce d\'identité',
 			'admin.candidatures.detail.pieceTitre' => ({required Object nom}) => 'Pièce d\'identité : ${nom}',
 			'admin.candidatures.detail.pieceDecisionPlusTard' => 'La pièce se décide en Salle de vérification et d\'entretien.',
