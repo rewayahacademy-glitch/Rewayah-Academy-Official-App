@@ -1,0 +1,10 @@
+# Ecarts connus au composant de conversation partage, toleres pour un temps
+# (CONVERSATIONS-PARTOUT, 16/11/2026). Une ligne : chemin | regle | raison.
+#
+# Verifie par : dart run tool/verifier_conversations.dart
+#
+# La liste ne fait que retrecir : une ligne qui ne correspond plus a aucune
+# violation doit etre retiree dans la meme PR. Chaque ligne est a traiter sur
+# decision du directeur (la reprise de ces ecrans n'est pas dans le lot).
+lib/features/com_studio/canal_page.dart | fil-pose-a-la-main | canal d'equipe du Studio : son en-tete est celui d'un canal (EnteteCanal : statut, membres, mode focus), pas celui d'une personne ; pose FilDiscussion avec PageShell
+lib/features/controleur/echanges_controleur_page.dart | fil-pose-a-la-main | echanges du controleur avec l'administration sur une mission : en-tete epingle du contexte de la mission (_ContexteEpingle) dans PageShell ; pose FilDiscussion

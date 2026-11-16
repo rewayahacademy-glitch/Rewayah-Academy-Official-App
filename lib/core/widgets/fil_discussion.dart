@@ -2485,19 +2485,12 @@ class _Bulle extends StatelessWidget {
                 ? CrossAxisAlignment.end
                 : CrossAxisAlignment.start,
             children: <Widget>[
-              if (causeEchec != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.xs),
-                  child: Text(
-                    causeEchec!,
-                    style: palette.inkMuted.applyTo(
-                      textes.bodySmall ?? const TextStyle(),
-                    ),
-                  ),
-                ),
               MenuActions(
                 key: FilDiscussion.cleLigneEchec,
-                libelle: ligne,
+                // La cause connue n'est plus ecrite sous la bulle (redondante
+                // avec la ligne, directeur 16/11/2026) : elle reste dite au
+                // lecteur d'ecran.
+                libelle: <String>[ligne, ?causeEchec].join('. '),
                 actions: menuEchec,
                 declencheur: (BuildContext _, EtatPression _) => ConstrainedBox(
                   constraints: BoxConstraints(minHeight: cibleEchec),

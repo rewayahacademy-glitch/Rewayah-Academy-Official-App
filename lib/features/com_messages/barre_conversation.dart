@@ -34,6 +34,9 @@ class BarreConversation extends StatelessWidget {
     super.key,
     this.onRetour,
     this.replie = false,
+    this.libelleRetour,
+    this.iconeRetour,
+    this.onOuvrirMessages,
   });
 
   /// Le fil ouvert.
@@ -41,6 +44,19 @@ class BarreConversation extends StatelessWidget {
 
   /// Le retour vers la liste des conversations.
   final VoidCallback? onRetour;
+
+  /// CONVERSATIONS-PARTOUT : le mot du retour quand ce n'est pas « Retour a la
+  /// liste » (« Replier la conversation » dans un dossier) ; `null` : celui de
+  /// la liste.
+  final String? libelleRetour;
+
+  /// L'icone du retour ; `null` : la fleche de retour.
+  final AppIcon? iconeRetour;
+
+  /// « Ouvrir dans Messages », en bouton d'icone au bout de la barre, quand la
+  /// conversation vit dans une autre page (le dossier d'un candidat) ; `null` :
+  /// aucun.
+  final VoidCallback? onOuvrirMessages;
 
   /// Vrai quand la barre se replie : on remonte vers les anciens messages.
   final bool replie;
@@ -50,6 +66,11 @@ class BarreConversation extends StatelessWidget {
 
   /// La hauteur de la barre minimale, clavier ouvert : retour et nom.
   static const double hauteurMinimale = 48;
+
+  /// La cle du bouton « Ouvrir dans Messages », pour les tests.
+  static const ValueKey<String> cleOuvrirMessages = ValueKey<String>(
+    'barre-conversation-messages',
+  );
 
   /// La cle de la barre, pour les tests.
   static const ValueKey<String> cle = ValueKey<String>('barre-conversation');
@@ -102,9 +123,9 @@ class BarreConversation extends StatelessWidget {
               if (retour != null)
                 BoutonIcone(
                   key: EspaceTravailAdaptatif.cleRetourListe,
-                  icone: AppIcons.retour,
-                  libelle: x.retourListe,
-                  infobulle: x.retourListe,
+                  icone: iconeRetour ?? AppIcons.retour,
+                  libelle: libelleRetour ?? x.retourListe,
+                  infobulle: libelleRetour ?? x.retourListe,
                   onPress: retour,
                   forme: FormeBoutonIcone.nue,
                 )
@@ -145,6 +166,15 @@ class BarreConversation extends StatelessWidget {
                   ),
                 ),
               ),
+              if (onOuvrirMessages != null && !minimale)
+                BoutonIcone(
+                  key: cleOuvrirMessages,
+                  icone: AppIcons.lienExterne,
+                  libelle: t.com.messages.entree.ouvrirDansMessages,
+                  infobulle: t.com.messages.entree.ouvrirDansMessages,
+                  onPress: onOuvrirMessages!,
+                  forme: FormeBoutonIcone.nue,
+                ),
               if (ouvrirContexte != null && !minimale)
                 BoutonIcone(
                   key: EspaceTravailAdaptatif.cleOuvrirContexte,
@@ -185,10 +215,13 @@ class BarreConversation extends StatelessWidget {
 /// personne sur une page sans sortie.
 class BarreRetourConversation extends StatelessWidget {
   /// Cree la barre.
-  const BarreRetourConversation({super.key, this.onRetour});
+  const BarreRetourConversation({super.key, this.onRetour, this.libelle});
 
   /// Le retour vers la liste.
   final VoidCallback? onRetour;
+
+  /// Le mot du retour quand ce n'est pas « Retour a la liste ».
+  final String? libelle;
 
   @override
   Widget build(BuildContext context) {
@@ -203,8 +236,8 @@ class BarreRetourConversation extends StatelessWidget {
             : BoutonIcone(
                 key: EspaceTravailAdaptatif.cleRetourListe,
                 icone: AppIcons.retour,
-                libelle: x.retourListe,
-                infobulle: x.retourListe,
+                libelle: libelle ?? x.retourListe,
+                infobulle: libelle ?? x.retourListe,
                 onPress: retour,
                 forme: FormeBoutonIcone.nue,
               ),
