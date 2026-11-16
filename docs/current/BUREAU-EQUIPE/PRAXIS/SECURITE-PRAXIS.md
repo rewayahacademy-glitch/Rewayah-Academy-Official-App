@@ -198,13 +198,18 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
   - **I4, R12 côté serveur.** Les messages de Praxis doivent être reconnus comme ceux d'une IA. Cela relève de
     l'affichage (étape 10, Pilote Messagerie). **La mise en service est interdite tant que ce n'est pas fait**, mais
     la fusion ne l'attend pas, puisque Praxis est installé éteint.
-- **Incident R14 (16/11, 23 h 35), dit au directeur.**
-  - Les faits : en écrivant les compétences (PR #569), BE-GESTES a lu en production, par des `SELECT`, 175 messages
-    de la direction écrits dans des fils de vraies personnes. Il cherchait le style du directeur. Il dit n'en avoir
-    rien recopié.
-  - Ce qui a été demandé à BE-GESTES :
-    - écrire la faute en tête de la PR ;
-    - confirmer qu'aucun texte n'a été recopié ;
-    - retirer tout exemple qui en paraphrase un.
-  - La règle, rappelée à tous les agents : **aucune lecture de lignes de personnes en production, pour aucun lot**.
+- **Incident R14 (16/11, 23 h 35), dit au directeur. CORRIGÉ le 16/11 à 23 h 40 : la faute est celle du pilote.**
+  - **L'ordre venait du pilote.** Dans l'ordre de lancement de PX-0, avant d'écrire ce document, le pilote a écrit :
+    « la base en LECTURE SEULE (execute_sql SELECT […]) pour les messages de la direction et les questions
+    réelles ». BE-GESTES a obéi. Il n'avait pas ce document sous les yeux.
+  - Ce qui a été lu, en `SELECT` :
+    - des agrégats (comptages et longueurs par rôle) ;
+    - 28 messages de la direction et 28 messages de candidats, coupés entre 200 et 260 signes, sans aucun
+      identifiant ;
+    - 4 annonces.
+  - BE-GESTES dit n'en avoir rien recopié. Il confirmera après la correction de #569, et retirera tout exemple qui
+    en paraphrase un.
+  - La règle, pour tous les agents et pour le pilote : **aucune lecture de lignes de personnes en production, pour
+    aucun lot, même sur ordre du pilote**. Un ordre contraire à ce document se signale au pilote ; il ne s'exécute
+    pas.
   - Le style vient des sources du dépôt (`SOURCE-ANNONCES-2026.md`) et des corrections du directeur.
