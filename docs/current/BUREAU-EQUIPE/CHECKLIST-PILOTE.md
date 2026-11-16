@@ -1,4 +1,4 @@
-# Checklist du pilote (Bureau de l'équipe) — mise à jour 16/11/2026, 15 h 10 UTC
+# Checklist du pilote (Bureau de l'équipe) — mise à jour 16/11/2026, 16 h 05 UTC
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 
@@ -6,7 +6,7 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | :-: | :--- | :-: | :--- |
 | 1 | Déploiement débloqué (avis en arabe, #533) ; #521 « rien à faire » et #528 versement en ligne | ☑ | vérifié dans l'application servie |
 | 2 | Pièce d'identité dans le dossier, icône image ou PDF (#532) | ◐ | 11 tests corrigés en local ; CI verte puis fusion |
-| 3 | « 18 ans ou plus » (#517) : fusion, déploiement, migrations 400000 et 400100 | ◐ | CI en cours sur la version à jour ; puis fusion et installation |
+| 3 | « 18 ans ou plus » (#517) : fusion, déploiement, migrations 400000 et 400100 | ☑ | installé 16:02-16:03 UTC, vérifié en base ; à prouver par le directeur |
 | 4 | Liste des candidatures, menu « File », 260 pt (#515) | ◐ | CI verte ; conflit avec main en cours de résolution |
 | 5 | Précédent / suivant (#516) | ☑ | fusionnée ; à prouver par le directeur |
 | 6 | Liste des personnes pour toute leur vie (spécification en vigueur, #534) | ◐ | fusion du document ; LP-1 serveur après #517 |
