@@ -75,6 +75,18 @@ Elle est écrite en exigence positive : NULL vaut faux.
 4. **`private.lp_gestes`** (gestes calculés pour chaque ligne) : il passe par `cand_droit`, pour que la liste
    montre au porteur ses seuls gestes.
 
+
+**Correction du 16/11, à 20 h 25 UTC (relevé de BE-PIECE, accepté par le pilote).** Le §2.4 était faux sur un
+point. Chacune des quelque 14 portes publiques de gestes, et les 14 fonctions de lecture, commencent par
+`app_role() = 'admin' AND app_account_valid()`. Un porteur de mission est donc refusé dès la porte, avant
+d'atteindre `candidature_geste_ouvrir`. `private.cand_lecteur()` ne change pas : 19 migrations le lisent, et
+plusieurs fonctions n'ont que lui pour garde. À la place :
+- une nouvelle fonction `private.cand_acteur()` (la direction ou le porteur d'une attribution active) ;
+- seules les portes listées dans la PR sont retouchées par ancrage : ces portes laissent entrer la direction ou
+  le porteur, et le droit précis reste vérifié par `cand_droit` dans `candidature_geste_ouvrir` ;
+- `creer_mission` refuse tout geste dont la porte n'est pas ouverte aux missions (liste fermée) ;
+- le reste (import, entretiens, paiement, lots, enseignants, pièce d'identité) reste réservé à la direction.
+
 ### 2.5 Portes publiques (réservées à la direction, `SECURITY DEFINER`, `search_path = ''`, `anon` sans droit)
 
 - `creer_mission(nom, gestes[], cle)` et `archiver_mission(id, motif, cle)`.
