@@ -26,6 +26,14 @@ Chiffres lus en production le 16/11/2026 vers 13 h (lecture seule, comptes agré
 Lecture : le flux est bloqué **avant** l'entretien et **à** l'entretien. Le temps passé hier et
 aujourd'hui sur des retouches d'écran n'a fait avancer aucun candidat au-delà de l'étape 5.
 
+**Relevé du soir, 16/11/2026 vers 18 h 40 UTC** (candidatures d'enseignant en cours) : 239 en examen
+(+27 depuis 13 h), 150 à compléter (+33 ; dont les 14 dossiers repartis après les décisions de pays et
+le rattrapage du versement), 39 versement impossible (−18), 49 entretien à planifier (+6 ; aucun moment
+ouvert, entretiens suspendus par le directeur), 1 confirmée. Avancé aujourd'hui : étapes B (pays) et C
+(liste, dossier, pièce, badge, 18 ans, liste des enseignants côté serveur). Bloque toujours : étape A
+(entretiens, sur décision du directeur ; dispense des fondateurs en cours) et le goulot 2 (une seule
+personne examine 239 dossiers ; la délégation, étape F, n'est pas commencée).
+
 ## 2. Les goulots, du plus grave au moins grave
 
 1. **Entretiens : aucun moment ouvert.** L'écran pour en ouvrir existe déjà

@@ -18,7 +18,7 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 12 | Document de la spécification (#534) | ◐ | CI en cours puis fusion |
 | 13 | Compter qui des 35 a déposé | ☐ | demain |
 | 14 | 14 adresses mal écrites corrigées (#536) | ◐ | CI verte puis fusion, installation, invitations |
-| 15 | Ce soir : chiffres du parcours, point au directeur, lien vers la carte de la messagerie | ☐ | ce soir |
+| 15 | Ce soir : chiffres du parcours, point au directeur | ☑ | relevé de 18 h 40 UTC écrit dans ETAT-ET-PLAN §1 |
 | 16 | Dire « fini » au pilote messagerie (gel de main) | ☑ | dit à 17:00 UTC |
 | 17 | Mobile money Ghana (MTN, AirtelTigo, Telecel) et Kenya (M-Pesa) | ☐ | lot à part |
 | 18 | Algérie, Guinée, Liberia : 7 candidats | ⏸ | vérifier dans le compte Wise du directeur |
@@ -34,3 +34,4 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 28 | Menu « … » du dossier : « clore le complément » proposé sans complément ouvert (refus serveur) | ◐ | confié à BE-DOSSIER (#545 ou petite PR), revue de tous les gestes du menu |
 | 29 | LP-2 écran : liste des enseignants (section « Enseignants », PR #547) | ◐ | CI puis fusion ; « affecter une classe » renvoyé à l'étape E (aucun écran d'affectation) ; tri par nom en attente d'un libellé validé |
 | 30 | complementEnCours côté serveur, puis « Clore le complément » rendu seulement s'il est vrai | ◐ | serveur chez BE-S1 (avant la dispense) ; écran chez BE-DOSSIER, fusionné après l'installation |
+| 31 | GESTES-RAISON (#545) : phrase sous les boutons, Accepter masqué sans versement possible, flèches aux bords | ☑ | fusionnée 18:35 UTC ; déploiement à vérifier |
