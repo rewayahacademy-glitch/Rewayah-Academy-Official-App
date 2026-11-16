@@ -438,6 +438,7 @@ void main() {
       );
       await monterCandidatures(tester, port: port);
       final int avant = port.appels.length;
+      await ouvrirRecherche(tester);
       await tester.enterText(_cle('candidatures-recherche'), 'bil');
       await tester.pump(const Duration(milliseconds: 100));
       expect(port.appels, hasLength(avant));
@@ -456,6 +457,7 @@ void main() {
         lignes: _lignes(),
       );
       await monterCandidatures(tester, port: port);
+      await ouvrirRecherche(tester);
       await tester.enterText(_cle('candidatures-recherche'), 'zzz');
       await laisser(tester);
       expect(_cle('candidatures-aucun-resultat'), findsOneWidget);
@@ -881,8 +883,10 @@ void main() {
         port: FauxCandidaturesDirection(lignes: _lignes()),
         invitations: true,
       );
-      // BE-LISTE-2 : « Outils » est sur la premiere rangee, au-dessus de la
-      // recherche.
+      // BE-LISTE-2 : « Outils » est sur la premiere rangee, avec la loupe ; le
+      // champ ne s'ouvre qu'au toucher de la loupe.
+      expect(_cle('candidatures-recherche'), findsNothing);
+      await ouvrirRecherche(tester);
       expect(
         tester.getTopLeft(_cle('candidatures-outils')).dy,
         lessThan(tester.getTopLeft(_cle('candidatures-recherche')).dy),

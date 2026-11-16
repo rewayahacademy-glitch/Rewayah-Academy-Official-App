@@ -94,6 +94,13 @@ Future<void> toucherOutil(WidgetTester tester, String libelle) async {
   await laisser(tester);
 }
 
+/// BE-LISTE-2 : ouvre le champ de recherche par la loupe (il ne s'ouvre qu'au
+/// toucher).
+Future<void> ouvrirRecherche(WidgetTester tester) async {
+  await tester.tap(find.byKey(CandidaturesPage.cleLoupe));
+  await laisser(tester);
+}
+
 /// BE-LISTE-2 : ouvre la feuille « Filtres » par son icone.
 Future<void> ouvrirFeuilleFiltresDeTest(WidgetTester tester) async {
   await tester.ensureVisible(find.byKey(CandidaturesPage.cleFiltres));

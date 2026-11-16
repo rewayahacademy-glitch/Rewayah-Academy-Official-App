@@ -151,10 +151,8 @@ class CandidaturesPage extends ConsumerStatefulWidget {
   /// BE-LISTE-2 : l'icone « Trier ».
   static const Key cleTri = ValueKey<String>('candidatures-tri');
 
-  /// BE-LISTE-2 : l'icone qui rappelle « Lecture des deux cotes ».
-  static const Key cleRappelLecture = ValueKey<String>(
-    'candidatures-rappel-lecture',
-  );
+  /// BE-LISTE-2 : la loupe, qui ouvre le champ de recherche.
+  static const Key cleLoupe = ValueKey<String>('candidatures-loupe');
 
   /// BE-LISTE-2 : « J'ai compris », qui ferme le bandeau.
   static const Key cleJaiCompris = ValueKey<String>('candidatures-jai-compris');
@@ -185,7 +183,17 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   /// qu'on filtre (sinon la puce n'a pas de nombre).
   int? _totalToutes;
 
+  /// La place que veut le titre-selecteur pour se lire entier (« Candidatures »
+  /// avec son menu).
+  static const double _largeurTitre = 176;
+
   late final TextEditingController _recherche;
+
+  /// Vrai : le champ de recherche est ouvert (la loupe a ete touchee).
+  bool _rechercheOuverte = false;
+
+  /// Le champ se voit ouvert par la loupe, ou tant qu'un texte est cherche.
+  bool get _rechercheVisible => _rechercheOuverte || _recherche.text.isNotEmpty;
   final GlobalKey _cleListe = GlobalKey(debugLabel: 'candidatures-liste');
 
   /// L'attente qui suit la derniere frappe : une page n'est demandee qu'une
@@ -695,6 +703,18 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     );
   }
 
+  /// La loupe : le champ de recherche ne s'ouvre qu'au toucher.
+  Widget _boutonRecherche() => BoutonIcone(
+    key: CandidaturesPage.cleLoupe,
+    icone: AppIcons.recherche,
+    libelle: t.recrutement.file.rechercher,
+    selectionne: _rechercheVisible,
+    onPress: () => setState(() {
+      // Ouverte et vide : on la referme ; avec un texte, le champ reste.
+      _rechercheOuverte = _recherche.text.isNotEmpty || !_rechercheOuverte;
+    }),
+  );
+
   /// L'icone « Trier ».
   Widget _boutonTri() => BoutonIcone(
     key: CandidaturesPage.cleTri,
@@ -991,35 +1011,93 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          // Rangee 1 : le titre-selecteur, le rappel du bandeau, « Outils ».
-          Row(
-            children: <Widget>[
-              Expanded(
-                child: Semantics(
-                  header: true,
-                  label: r.titre,
-                  child: SousNavigationDomaine(
-                    onglets: ongletsPersonnes(),
-                    indexActif: 2,
+          // Rangee 1 (revision du 16/11, directeur : « libere cette place ») :
+          // le titre-selecteur, la loupe, « Filtres », « Trier » et « Outils »
+          // sur une seule rangee. Le champ de recherche ne s'ouvre qu'au toucher
+          // de la loupe. A texte agrandi (au-dela de 130 %), les icones passent
+          // sous le titre pour que rien ne soit coupe.
+          LayoutBuilder(
+            builder: (BuildContext contexte, BoxConstraints contraintes) {
+              final Widget titre = Semantics(
+                header: true,
+                label: r.titre,
+                child: SousNavigationDomaine(
+                  onglets: ongletsPersonnes(),
+                  indexActif: 2,
+                ),
+              );
+              final List<Widget> icones = <Widget>[
+                if (commandes) _boutonRecherche(),
+                if (commandes) _boutonFiltres(() => files, caps),
+                if (commandes) _boutonTri(),
+              ];
+              // Les icones de 48 et le titre entier ne tiennent sur une rangee
+              // que si la place suffit (le mot « Candidatures » veut environ
+              // 176 : en dessous, il serait coupe au milieu d'un mot). Plus
+              // etroit, ou a texte agrandi (au-dela de 130 %), le titre garde
+              // sa rangee avec « Outils », et les trois icones passent juste
+              // dessous.
+              final double besoin =
+                  _largeurTitre +
+                  AppTouchTarget.standard *
+                      (icones.length + (menuOutils == null ? 0 : 1));
+              final bool uneRangee =
+                  contraintes.maxWidth >= besoin &&
+                  MediaQuery.textScalerOf(contexte).scale(1) <= 1.3;
+              if (uneRangee) {
+                return Row(
+                  children: <Widget>[
+                    Expanded(child: titre),
+                    ...icones,
+                    ?menuOutils,
+                  ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: titre),
+                      ?menuOutils,
+                    ],
                   ),
-                ),
-              ),
-              if (caps.peutLireHorsGenre && lectureComprise)
-                BoutonIcone(
-                  key: CandidaturesPage.cleRappelLecture,
-                  icone: AppIcons.info,
-                  libelle: r.exception.titre,
-                  onPress: () => ref
-                      .read(lectureCompriseProvider.notifier)
-                      .choisir(valeur: false),
-                ),
-              ?menuOutils,
-            ],
+                  if (icones.isNotEmpty) ...<Widget>[
+                    Ecart.vXs,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: icones,
+                    ),
+                  ],
+                ],
+              );
+            },
           ),
           Ecart.vSm,
+          if (commandes && _rechercheVisible) ...<Widget>[
+            Semantics(
+              label: r.recherche,
+              child: ChampRecherche(
+                cleChamp: const ValueKey<String>('candidatures-recherche'),
+                cleEffacer: const ValueKey<String>(
+                  'candidatures-recherche-effacer',
+                ),
+                controleur: _recherche,
+                autofocus: true,
+                // Un mot court dans le champ : le libelle complet reste dit aux
+                // lecteurs d'ecran (`Semantics` ci-dessus).
+                libelle: t.recrutement.file.rechercher,
+                compact: true,
+                aide: r.rechercheAide,
+                onChange: _chercher,
+                onValider: _chercherTout,
+              ),
+            ),
+            Ecart.vSm,
+          ],
           // L'exception de lecture du super-admin se dit en tete, quand le
           // serveur la rend active (jamais deduite du role) ; « J'ai compris »
-          // la fait disparaitre, l'icone ci-dessus la rappelle.
+          // la fait disparaitre pour de bon (aucune icone de rappel).
           if (caps.peutLireHorsGenre && !lectureComprise) ...<Widget>[
             BandeauAttention(
               key: const ValueKey<String>('candidatures-exception'),
@@ -1078,57 +1156,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             Ecart.vSm,
           ],
           if (commandes) ...<Widget>[
-            // Rangee 2 : la recherche, « Filtres », « Trier ». A texte agrandi
-            // (au-dela de 130 %), le champ garde toute la largeur pour que son
-            // aide se lise en entier, et les deux icones passent dessous.
-            Builder(
-              builder: (BuildContext contexte) {
-                final Widget champ = Semantics(
-                  label: r.recherche,
-                  child: ChampRecherche(
-                    cleChamp: const ValueKey<String>('candidatures-recherche'),
-                    cleEffacer: const ValueKey<String>(
-                      'candidatures-recherche-effacer',
-                    ),
-                    controleur: _recherche,
-                    // Un mot court dans le champ : le libelle complet reste
-                    // dit aux lecteurs d'ecran (`Semantics` ci-dessus), le
-                    // texte d'aide dit quoi chercher.
-                    libelle: t.recrutement.file.rechercher,
-                    compact: true,
-                    aide: r.rechercheAide,
-                    onChange: _chercher,
-                    onValider: _chercherTout,
-                  ),
-                );
-                final List<Widget> icones = <Widget>[
-                  _boutonFiltres(() => files, caps),
-                  _boutonTri(),
-                ];
-                if (MediaQuery.textScalerOf(contexte).scale(1) > 1.3) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: <Widget>[
-                      champ,
-                      Ecart.vXs,
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: icones,
-                      ),
-                    ],
-                  );
-                }
-                return Row(
-                  children: <Widget>[
-                    Expanded(child: champ),
-                    Ecart.hXs,
-                    ...icones,
-                  ],
-                );
-              },
-            ),
-            Ecart.vMd,
-            // Rangee 3 : le menu « File ».
+            // Rangee 2 : le menu « File ».
             _zoneFiles(files),
             Ecart.vMd,
             _ligneNombre(reference, selectionPossible: selectionPossible),

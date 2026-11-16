@@ -197,6 +197,7 @@ void main() {
           lignes: _lignes(),
         );
         await monterCandidatures(tester, port: port);
+        await ouvrirRecherche(tester);
         await tester.enterText(_cle('candidatures-recherche'), 'Numero1');
         await tester.testTextInput.receiveAction(TextInputAction.done);
         await laisser(tester);
@@ -282,6 +283,7 @@ void main() {
         ),
       );
       await laisser(tester);
+      await ouvrirRecherche(tester);
       await tester.enterText(_cle('candidatures-recherche'), 'Numero1');
       await tester.testTextInput.receiveAction(TextInputAction.done);
       await laisser(tester);
@@ -378,7 +380,7 @@ void main() {
     });
 
     testWidgets(
-      '« J\'ai compris » ferme le bandeau, une icone le rappelle, la memoire le garde',
+      '« J\'ai compris » ferme le bandeau pour de bon : aucune icone ne le rappelle',
       (tester) async {
         final FauxCandidaturesDirection port = FauxCandidaturesDirection(
           lignes: _lignes(),
@@ -390,21 +392,16 @@ void main() {
         await monterCandidatures(tester, port: port);
         final String message = t.admin.candidatures.exception.message;
         expect(find.text(message), findsOneWidget);
-        expect(_cle('candidatures-rappel-lecture'), findsNothing);
         await tester.tap(_cle('candidatures-jai-compris'));
         await laisser(tester);
         expect(find.text(message), findsNothing);
-        expect(_cle('candidatures-rappel-lecture'), findsOneWidget);
         expect(lireMemoireAppareil(cleMemoireLectureComprise), '1');
 
-        // Une autre session de la page : le bandeau ne revient pas.
+        // Une autre session de la page : le bandeau ne revient pas, et aucune
+        // icone de rappel n'occupe la rangee.
         await tester.pumpWidget(const SizedBox());
         await monterCandidatures(tester, port: port);
         expect(find.text(message), findsNothing);
-        // L'icone le rappelle au toucher.
-        await tester.tap(_cle('candidatures-rappel-lecture'));
-        await laisser(tester);
-        expect(find.text(message), findsOneWidget);
         expect(_cle('candidatures-rappel-lecture'), findsNothing);
       },
     );
@@ -421,28 +418,63 @@ void main() {
       expect(find.text(t.admin.candidatures.titre), findsOneWidget);
     });
 
-    testWidgets('la recherche, « Filtres » et « Trier » sont sur une rangee', (
-      tester,
-    ) async {
-      await monterCandidatures(
-        tester,
-        port: FauxCandidaturesDirection(lignes: _lignes()),
-        largeur: 360,
-        hauteur: 800,
-      );
-      final Finder rangees = find.ancestor(
-        of: _cle('candidatures-recherche'),
-        matching: find.byType(Row),
-      );
-      expect(
-        find.descendant(of: rangees, matching: _cle('candidatures-filtres')),
-        findsWidgets,
-      );
-      expect(
-        find.descendant(of: rangees, matching: _cle('candidatures-tri')),
-        findsWidgets,
-      );
-    });
+    testWidgets(
+      'titre, loupe, « Filtres », « Trier » et « Outils » sont sur UNE rangee',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(
+            lignes: _lignes(),
+            capacitesRendues: const CapacitesCandidatures(
+              peutLire: true,
+              peutImporter: true,
+            ),
+          ),
+          largeur: 480,
+          hauteur: 800,
+        );
+        // Le champ est ferme : la loupe est la seule trace de la recherche.
+        expect(_cle('candidatures-recherche'), findsNothing);
+        final double y = tester.getCenter(_cle('candidatures-loupe')).dy;
+        for (final String cle in <String>[
+          'candidatures-filtres',
+          'candidatures-tri',
+        ]) {
+          expect(
+            tester.getCenter(_cle(cle).first).dy,
+            closeTo(y, 2),
+            reason: cle,
+          );
+        }
+        await ouvrirRecherche(tester);
+        expect(_cle('candidatures-recherche'), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'a 360, le titre garde sa rangee, la loupe, « Filtres » et « Trier » passent dessous',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(lignes: _lignes()),
+          invitations: true,
+          largeur: 360,
+          hauteur: 800,
+        );
+        final double y = tester.getCenter(_cle('candidatures-loupe')).dy;
+        expect(
+          tester.getCenter(_cle('candidatures-filtres')).dy,
+          closeTo(y, 2),
+        );
+        expect(tester.getCenter(_cle('candidatures-tri')).dy, closeTo(y, 2));
+        // Le titre est entier, sur sa propre rangee, au-dessus des icones.
+        expect(find.text(t.admin.candidatures.titre), findsWidgets);
+        expect(
+          tester.getBottomLeft(find.byType(SousNavigationDomaine)).dy,
+          lessThan(y),
+        );
+      },
+    );
 
     testWidgets('telephone : « Outils » est sur la rangee du selecteur', (
       tester,
