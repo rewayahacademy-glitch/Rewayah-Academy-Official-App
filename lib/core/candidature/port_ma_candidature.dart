@@ -194,6 +194,18 @@ abstract interface class PortMaCandidature {
   /// coordonnees a valider et recalcule le paiement ; la candidature n'est
   /// jamais refusee pour ce motif. Rend le bloc candidature relu.
   Future<CandidatureDossier> modifierPaysVersement(String pays);
+
+  /// VERSEMENT-QUESTIONS (directeur, 16/11/2026) : modifie tout le bloc de
+  /// versement d'une candidature deja envoyee (compte bancaire oui ou non,
+  /// pays, services de paiement sur telephone), tant que le dossier n'est pas
+  /// valide ; apres, le serveur refuse (`TransitionInterdite`). Le serveur
+  /// recalcule le paiement et remet les coordonnees a valider si le pays
+  /// change. Rend le bloc candidature relu.
+  Future<CandidatureDossier> modifierVersement({
+    required bool compteBancaire,
+    required String pays,
+    List<String> operateurs = const <String>[],
+  });
 }
 
 /// L'identifiant de la dependance serveur du questionnaire et de l'envoi

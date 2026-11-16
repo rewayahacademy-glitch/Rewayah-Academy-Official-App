@@ -2877,14 +2877,16 @@
       "elementCodeConduite": "Le code de conduite",
       "elementAccordPublication": "L'accord de publication de votre photo",
       "elementPaysVersement": "Pays et compte de versement",
-      "paysVersementLien": "Changer le pays de versement",
-      "paysVersementTitre": "Pays du compte de versement",
-      "paysVersementExplication": "Le compte peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie. Choisissez le pays où se trouve ce compte. Les moyens de versement et les coordonnées déjà saisis devront être confirmés de nouveau.",
-      "paysVersementEnregistrer": "Enregistrer ce pays",
-      "paysVersementFait": "Pays de versement mis à jour. L'académie relit votre dossier.",
-      "paysVersementEchec": "Le pays n'a pas pu être changé. Rien n'a été modifié\u00a0: réessayez dans un instant.",
-      "paysVersementInterdit": "Le pays ne peut plus être changé à cette étape. Écrivez à l'académie depuis la conversation de votre dossier.",
-      "paysVersementHorsLigne": "Vous n'êtes pas connecté. Le pays n'a pas été changé\u00a0; réessayez une fois la connexion revenue.",
+      "paysVersementLien": "Modifier mon versement",
+      "paysVersementTitre": "Mon versement",
+      "paysVersementExplication": "Vous pouvez tout modifier tant que l'académie n'a pas validé votre dossier\u00a0: le compte bancaire, le pays et les services de paiement sur téléphone. Les coordonnées déjà saisies devront être confirmées de nouveau si le pays change.",
+      "paysVersementEnregistrer": "Enregistrer mon versement",
+      "paysVersementFait": "Versement mis à jour. L'académie relit votre dossier.",
+      "paysVersementEchec": "Le versement n'a pas pu être modifié. Rien n'a été changé\u00a0: réessayez dans un instant.",
+      "paysVersementInterdit": "Le versement ne peut plus être modifié\u00a0: votre dossier est validé. Écrivez à l'académie depuis la conversation de votre dossier.",
+      "paysVersementHorsLigne": "Vous n'êtes pas connecté. Le versement n'a pas été modifié\u00a0; réessayez une fois la connexion revenue.",
+      "versementFerme": "Votre dossier est validé\u00a0: le versement ne peut plus se modifier ici. Pour un changement, écrivez à l'académie.",
+      "versementFermeLien": "Écrire à l'académie",
       "pieceDemandee": "La direction vous demande une nouvelle photo de votre pièce.",
       "photoDemandee": "La direction vous demande une nouvelle photo. Changez-la au récapitulatif de vos réponses, avant de les envoyer."
     },
@@ -3520,6 +3522,16 @@
           "titre": "Dans quel pays voulez-vous recevoir votre rémunération\u00a0?",
           "explication": "Le compte qui reçoit votre rémunération peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie\u00a0: choisissez alors le pays de ce proche. L'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
           "court": "Pays de versement"
+        },
+        "paysVersementCompte": {
+          "titre": "Dans quel pays est ce compte\u00a0?",
+          "explication": "Le compte peut être celui d'un proche de confiance. Choisissez le pays où se trouve la banque\u00a0: l'académie vérifie, pays par pays, que le virement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "court": "Pays du compte"
+        },
+        "paysVersementMobile": {
+          "titre": "Dans quel pays pouvez-vous recevoir de l'argent sur votre téléphone\u00a0?",
+          "explication": "Choisissez le pays du service de paiement sur téléphone que vous utilisez, ou de celui d'un proche de confiance. Vous choisirez ensuite les services de ce pays. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "court": "Pays du paiement sur téléphone"
         },
         "compteBancaire": {
           "titre": "Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d'un proche\u00a0?",
