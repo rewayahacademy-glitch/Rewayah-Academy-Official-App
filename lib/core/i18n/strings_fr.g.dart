@@ -28326,13 +28326,13 @@ class Traductions$recrutement$dossier3$raison$fr {
 	String get fermee => 'Le dossier est fermé.';
 
 	/// fr: 'En pause : reprenez le dossier pour agir.'
-	String get pause => 'En pause : reprenez le dossier pour agir.';
+	String get pause => 'En pause : reprenez le dossier pour agir.';
 
 	/// fr: 'En attente du candidat : il complète son dossier.'
-	String get attente => 'En attente du candidat : il complète son dossier.';
+	String get attente => 'En attente du candidat : il complète son dossier.';
 
 	/// fr: 'Accepter sera possible quand ces points seront réglés : {liste}.'
-	String manque({required Object liste}) => 'Accepter sera possible quand ces points seront réglés : ${liste}.';
+	String manque({required Object liste}) => 'Accepter sera possible quand ces points seront réglés : ${liste}.';
 
 	/// fr: 'Aucune décision à prendre à cette étape.'
 	String get etape => 'Aucune décision à prendre à cette étape.';
@@ -28344,16 +28344,16 @@ class Traductions$recrutement$dossier3$raison$fr {
 	String get versementAConfirmer => 'Accepter sera possible quand le moyen de versement sera confirmé.';
 
 	/// fr: 'Le dossier est prêt : vous pouvez décider.'
-	String get pret => 'Le dossier est prêt : vous pouvez décider.';
+	String get pret => 'Le dossier est prêt : vous pouvez décider.';
 
 	/// fr: 'Retenu pour l'entretien : il reste à le planifier.'
-	String get entretienAPlanifier => 'Retenu pour l\'entretien : il reste à le planifier.';
+	String get entretienAPlanifier => 'Retenu pour l\'entretien : il reste à le planifier.';
 
 	/// fr: 'Entretien planifié : la décision vient après l'entretien.'
-	String get entretienPlanifie => 'Entretien planifié : la décision vient après l\'entretien.';
+	String get entretienPlanifie => 'Entretien planifié : la décision vient après l\'entretien.';
 
 	/// fr: 'Entretien tenu : la décision vous attend.'
-	String get decisionAttendue => 'Entretien tenu : la décision vous attend.';
+	String get decisionAttendue => 'Entretien tenu : la décision vous attend.';
 }
 
 // Path: recrutement.invitations.etat
@@ -56450,16 +56450,16 @@ extension on Traductions {
 			'recrutement.dossier3.demanderAccord' => 'Demander un accord',
 			'recrutement.dossier3.raison.droit' => 'Vous ne pouvez pas décider de ce dossier.',
 			'recrutement.dossier3.raison.fermee' => 'Le dossier est fermé.',
-			'recrutement.dossier3.raison.pause' => 'En pause : reprenez le dossier pour agir.',
-			'recrutement.dossier3.raison.attente' => 'En attente du candidat : il complète son dossier.',
-			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'Accepter sera possible quand ces points seront réglés : ${liste}.',
+			'recrutement.dossier3.raison.pause' => 'En pause : reprenez le dossier pour agir.',
+			'recrutement.dossier3.raison.attente' => 'En attente du candidat : il complète son dossier.',
+			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'Accepter sera possible quand ces points seront réglés : ${liste}.',
 			'recrutement.dossier3.raison.etape' => 'Aucune décision à prendre à cette étape.',
 			'recrutement.dossier3.raison.versement' => 'Accepter sera possible quand le versement sera possible.',
 			'recrutement.dossier3.raison.versementAConfirmer' => 'Accepter sera possible quand le moyen de versement sera confirmé.',
-			'recrutement.dossier3.raison.pret' => 'Le dossier est prêt : vous pouvez décider.',
-			'recrutement.dossier3.raison.entretienAPlanifier' => 'Retenu pour l\'entretien : il reste à le planifier.',
-			'recrutement.dossier3.raison.entretienPlanifie' => 'Entretien planifié : la décision vient après l\'entretien.',
-			'recrutement.dossier3.raison.decisionAttendue' => 'Entretien tenu : la décision vous attend.',
+			'recrutement.dossier3.raison.pret' => 'Le dossier est prêt : vous pouvez décider.',
+			'recrutement.dossier3.raison.entretienAPlanifier' => 'Retenu pour l\'entretien : il reste à le planifier.',
+			'recrutement.dossier3.raison.entretienPlanifie' => 'Entretien planifié : la décision vient après l\'entretien.',
+			'recrutement.dossier3.raison.decisionAttendue' => 'Entretien tenu : la décision vous attend.',
 			'recrutement.dossier3.photoAgrandir' => ({required Object deNom}) => 'Voir la photo ${deNom} en grand',
 			'recrutement.file.outils' => 'Outils',
 			'recrutement.file.outilsDe' => 'Outils de la liste des candidatures',

@@ -2693,16 +2693,16 @@
       "raison": {
         "droit": "Vous ne pouvez pas décider de ce dossier.",
         "fermee": "Le dossier est fermé.",
-        "pause": "En pause : reprenez le dossier pour agir.",
-        "attente": "En attente du candidat : il complète son dossier.",
-        "manque": "Accepter sera possible quand ces points seront réglés : {liste}.",
+        "pause": "En pause\u00a0: reprenez le dossier pour agir.",
+        "attente": "En attente du candidat\u00a0: il complète son dossier.",
+        "manque": "Accepter sera possible quand ces points seront réglés\u00a0: {liste}.",
         "etape": "Aucune décision à prendre à cette étape.",
         "versement": "Accepter sera possible quand le versement sera possible.",
         "versementAConfirmer": "Accepter sera possible quand le moyen de versement sera confirmé.",
-        "pret": "Le dossier est prêt : vous pouvez décider.",
-        "entretienAPlanifier": "Retenu pour l'entretien : il reste à le planifier.",
-        "entretienPlanifie": "Entretien planifié : la décision vient après l'entretien.",
-        "decisionAttendue": "Entretien tenu : la décision vous attend."
+        "pret": "Le dossier est prêt\u00a0: vous pouvez décider.",
+        "entretienAPlanifier": "Retenu pour l'entretien\u00a0: il reste à le planifier.",
+        "entretienPlanifie": "Entretien planifié\u00a0: la décision vient après l'entretien.",
+        "decisionAttendue": "Entretien tenu\u00a0: la décision vous attend."
       },
       "photoAgrandir": "Voir la photo {deNom} en grand"
     },
