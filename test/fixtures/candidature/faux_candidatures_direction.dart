@@ -155,6 +155,7 @@ DetailCandidature detailTest({
   ReponsesAutresCompetences? autresCompetences,
   DateTime? derniereActivite,
   DateTime? recueLe,
+  bool complementEnCours = false,
 }) => DetailCandidature(
   ligne: LigneCandidature(
     id: id,
@@ -176,6 +177,7 @@ DetailCandidature detailTest({
     indicatifAConfirmer: indicatifAConfirmer,
     derniereActivite: derniereActivite ?? DateTime.utc(2026, 10, 20, 9),
     recueLe: recueLe ?? DateTime.utc(2026, 10, 1, 9),
+    complementEnCours: complementEnCours,
   ),
   version: version,
   provenance: provenance,

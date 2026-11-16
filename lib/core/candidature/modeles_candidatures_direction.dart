@@ -585,6 +585,7 @@ class LigneCandidature {
     this.responsableId,
     this.recueLe,
     this.nouveau = false,
+    this.complementEnCours = false,
   });
 
   /// Lit une ligne rendue par le serveur, ou `null` quand elle n'a pas
@@ -630,6 +631,7 @@ class LigneCandidature {
           DateTime.fromMillisecondsSinceEpoch(0, isUtc: true),
       recueLe: DateTime.tryParse(texte('recueLe') ?? ''),
       nouveau: json['nouveau'] == true,
+      complementEnCours: json['complementEnCours'] == true,
     );
   }
 
@@ -640,6 +642,12 @@ class LigneCandidature {
   /// jours et que personne de l'equipe n'a ouvert son dossier (regle du
   /// serveur, cle `nouveau`). Un serveur d'avant ce lot ne la rend pas : faux.
   final bool nouveau;
+
+  /// Un complement demande est en cours (cle `complementEnCours`, la regle du
+  /// serveur `candidature_complement_en_cours`). Absent : faux, et « Clore le
+  /// complement » n'est pas rendu (un geste n'est rendu que s'il peut aboutir,
+  /// K-56 ; capture de production CAND-00068 : « aucun complement en cours »).
+  final bool complementEnCours;
 
   /// La reference `CAND-…`, jamais reattribuee, distincte du matricule.
   final String reference;
