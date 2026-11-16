@@ -1,6 +1,6 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : lundi 16/11/2026, 20 h 15 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : lundi 16/11/2026, 20 h 45 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
@@ -18,9 +18,12 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
    - [x] contrôle du code (`analyze`) : zéro erreur
    - [x] écrire, et cette fois enregistrer, le code qui fait les captures (il avait été perdu)
    - [ ] tous les tests de l'application : en cours, 4 172 passés à 20 h 10, aucun échec signalé, pas fini
-   - [ ] faire les captures : volet de conversation sur ordinateur avec la croix, liste des
-         conversations, en français et en arabe, clair et sombre ; l'agent les regarde lui-même
-   - [ ] reprendre les dernières fusions de l'équipe (#547), puis repasser les contrôles
+   - [x] faire les captures (`07fa7688`) : volet avec la croix, liste, fr et ar, clair et sombre
+   - [x] **moi** : relu 3 captures. Croix visible ; fil sur le fond de page ; bulles reçues lisibles
+         (aucun contour à ajouter, décision du pilote) ; liste en carte blanche
+   - [ ] **défaut vu par le pilote** : l'heure du dernier message est coupée sous le champ de saisie ;
+         l'agent vérifie si c'est la capture ou le vrai écran, et corrige si besoin
+   - [x] reprendre les dernières fusions de l'équipe (`73651b66`) ; #563 fusionnée depuis, sans conflit
    - [ ] ouvrir la PR à la vérification automatique (CI) et la lire
    - [ ] **moi** : relire les captures avant et après, chercher ce qui a changé ailleurs, fusionner
    - [ ] **vous** : voir en production (fermer puis rouvrir l'application)
@@ -119,3 +122,5 @@ _Rempli au matin._
 - 16/11, 20 h 10 : agent : `flutter test` complet en cours, 4 172 passés, 1 663 sautés, pas fini.
 - 16/11, 20 h 15 : le directeur ne voyait pas la checklist (elle était sur une branche) ; réécrite
   en clair en tête de page et envoyée directement.
+- 16/11, 20 h 45 : `07fa7688` (main fusionnée, captures). Pilote : 3 captures relues ; décision :
+  pas de contour sur les bulles reçues ; défaut signalé (heure du dernier message sous le champ).
