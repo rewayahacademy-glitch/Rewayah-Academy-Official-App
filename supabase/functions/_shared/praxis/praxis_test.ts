@@ -188,3 +188,32 @@ Deno.test('une erreur de la base ne fuit aucun detail ; un appel trop long est c
   }
   assert(DELAI_MS <= 10000)
 })
+
+Deno.test('la cle ne peut etre remplacee par aucun parametre prepare', async () => {
+  // (a) Aucun parametre de la liste fermee ne s'appelle p_cle.
+  for (const o of OUTILS) for (const d of o.parametres) assert(d.param !== 'p_cle', `${o.nom} : ${d.param}`)
+  // (b) Un appelant ne peut pas poser `p_cle` : propriete inconnue, refusee avant la base.
+  {
+    const { porte, appels } = faux()
+    const r = await (await traiter(requete(appelOutil('etat', { p_cle: 'prx_' + 'b'.repeat(64) })), porte)).json()
+    assertEquals(r.error?.code, -32602)
+    assertEquals(appels.length, 0)
+  }
+  // (c) Meme si un parametre futur s'appelait p_cle, la cle de l'en-tete l'emporte (ordre : parametres, puis cle).
+  const piege = {
+    nom: 'piege', description: 'test', fonction: 'praxis_piege',
+    parametres: [{ arg: 'x', param: 'p_cle', requis: true }],
+    proprietes: { x: { type: 'string' as const, description: 'x', minLength: 1, maxLength: 80 } },
+  }
+  // La liste est en lecture seule dans le code ; le test la force pour simuler un futur parametre piege.
+  const liste = OUTILS as unknown as unknown[]
+  liste.push(piege)
+  try {
+    const { porte, appels } = faux()
+    await traiter(requete(appelOutil('piege', { x: 'prx_' + 'c'.repeat(64) })), porte)
+    assertEquals(appels.length, 1)
+    assertEquals(appels[0].params.p_cle, CLE)
+  } finally {
+    liste.pop()
+  }
+})

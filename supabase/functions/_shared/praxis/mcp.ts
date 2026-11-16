@@ -93,10 +93,11 @@ export async function traiter(req: Request, porte: PortePraxis): Promise<Respons
         if (e instanceof ErreurSchema) return rpcErreur(id, -32602, e.message)
         throw e
       }
+      // La cle vient APRES les parametres prepares : aucun parametre ne peut la remplacer (ni aujourd'hui, ni plus tard).
       const ctrl = new AbortController()
       const minuteur = setTimeout(() => ctrl.abort(), DELAI_MS)
       try {
-        const resultat = await porte.appeler(prepare.fonction, { p_cle: cle, ...prepare.params }, ctrl.signal)
+        const resultat = await porte.appeler(prepare.fonction, { ...prepare.params, p_cle: cle }, ctrl.signal)
         const refuse = typeof resultat === 'object' && resultat !== null && 'erreur' in (resultat as object)
         return rpc(id, {
           content: [{ type: 'text', text: JSON.stringify(resultat) }],
