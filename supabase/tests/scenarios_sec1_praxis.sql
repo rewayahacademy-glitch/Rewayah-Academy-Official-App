@@ -128,6 +128,8 @@ INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, l
  (pg_temp.u('8'), 'PX-TUT-0006', 'guardian', pg_temp.h('6'), 'Tuteur', 'Six', 'active', 'male'),
  (pg_temp.u('9'), 'PX-ELV-0001', 'student', pg_temp.h('1'), 'Eleve', 'Mineur', 'active', 'male'),
  (pg_temp.u('10'), 'PX-ENS-0001', 'teacher', NULL, 'Enseignant', 'Un', 'pending_kyc', 'male');
+-- a1 est la super-administration (les deux cotes, AR-7 I2) ; a2 (femme) n'a que le sien.
+INSERT INTO private.super_admin_kyc (profile_id) VALUES (pg_temp.u('1'));
 INSERT INTO public.student_profiles (profile_id, student_type) VALUES (pg_temp.u('9'), 'minor');
 INSERT INTO public.teacher_profiles (profile_id, country, languages, kyc_status) VALUES (pg_temp.u('10'), 'SA', ARRAY[]::text[], 'pending');
 
@@ -168,7 +170,7 @@ CREATE FUNCTION pg_temp.sensible(p_j jsonb) RETURNS boolean LANGUAGE sql IMMUTAB
   SELECT p_j::text ~* '(@|courriel|e-mail|email|phone|telephone|montant|birth|naissance|adresse|iban|token|jeton|password|mot_de_passe|secret|empreinte)' $$;
 
 -- Les cles : emises par la direction (a1) en aal2. Le secret n'est montre qu'a l'emission.
-SELECT pg_temp.vrai(NOT coalesce((SELECT (value #>> '{}')::boolean FROM public.app_config WHERE key = 'praxis.actif'), true)
+SELECT pg_temp.vrai(NOT (SELECT actif FROM private.praxis_reglages)
   AND NOT EXISTS (SELECT 1 FROM private.praxis_cles),
   'R9 / R14 : praxis.actif est faux apres installation, et aucune cle n''existe');
 SELECT pg_temp.garde('chat', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT public.direction_praxis_emettre_cle(
@@ -205,7 +207,7 @@ SELECT pg_temp.vrai((SELECT email FROM auth.users WHERE id = private.praxis_prof
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.notifications n WHERE n.destinataire = private.praxis_profil())
   AND NOT EXISTS (SELECT 1 FROM public.courriels_sortants c WHERE c.destinataire_profil = private.praxis_profil()),
   'A-11 : aucune notification et aucun courriel pour le compte officiel apres sa creation');
-SELECT pg_temp.vrai(NOT coalesce((SELECT (value #>> '{}')::boolean FROM public.app_config WHERE key = 'praxis.autonome'), true),
+SELECT pg_temp.vrai(NOT (SELECT autonome FROM private.praxis_reglages),
   'A-10 : praxis.autonome est faux apres installation');
 
 -- ============ R10 : les cles ============
@@ -318,8 +320,8 @@ SELECT pg_temp.vrai((SELECT array_agg(p.oid::regprocedure::text ORDER BY p.prona
   = ARRAY['praxis_annoncer(text,text[],text,text,uuid)',
           'praxis_boite(text,text,integer)', 'praxis_calendrier_ajouter(text,text,text,date,text,uuid)',
           'praxis_calendrier_lire(text,date,date)', 'praxis_ecrire(text,uuid,text,uuid)', 'praxis_etat(text)',
-          'praxis_fil(text,uuid,integer)', 'praxis_rendre_compte(text,integer)'],
-  'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (huit outils)');
+          'praxis_fil(text,uuid,integer)', 'praxis_noter_refus(text,text)', 'praxis_rendre_compte(text,integer)'],
+  'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (huit outils + praxis_noter_refus, M4)');
 SELECT pg_temp.vrai((SELECT bool_and(has_function_privilege('service_role', p.oid, 'EXECUTE')
                        AND NOT has_function_privilege('anon', p.oid, 'EXECUTE')
                        AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE')
@@ -363,21 +365,22 @@ SELECT pg_temp.garde('rc_ok', pg_temp.outil(pg_catalog.format('SELECT public.pra
 SELECT pg_temp.vrai(NOT pg_temp.sensible(pg_temp.lu('b_tout')) AND NOT pg_temp.sensible(pg_temp.lu('f_un'))
   AND NOT pg_temp.sensible(pg_temp.lu('etat_ok') - 'interdits') AND NOT pg_temp.sensible(pg_temp.lu('rc_ok')),
   'R5 : aucune reponse (boite, fil, etat, rendre_compte) ne contient courriel, telephone, adresse, montant, naissance, jeton, mot de passe ni secret');
-SELECT pg_temp.vrai(pg_temp.lu('f_un') -> 'messages' -> 0 ->> 'contenu_tiers' = 'Bonjour, ou en est mon dossier ?'
+SELECT pg_temp.vrai(pg_temp.lu('f_un') -> 'messages' -> 0 -> 'contenu_tiers' ->> 'texte' = 'Bonjour, ou en est mon dossier ?'
+  AND pg_temp.lu('f_un') -> 'messages' -> 0 -> 'contenu_tiers' ->> 'prenom' = 'Tuteur'
   AND NOT (pg_temp.lu('f_un') -> 'messages' -> 0 ? 'texte')
   AND pg_temp.lu('f_un') -> 'messages' -> 0 -> 'auteur' ->> 'role' = 'famille'
-  AND pg_temp.lu('f_un') -> 'messages' -> 0 -> 'auteur' ->> 'prenom' = 'Tuteur'
+  AND NOT (pg_temp.lu('f_un') -> 'messages' -> 0 -> 'auteur' ? 'prenom')
   AND NOT (pg_temp.lu('f_un') -> 'messages' -> 0 -> 'auteur' ? 'nom'),
-  'R5 : le texte d''un tiers sort dans contenu_tiers (donnee, jamais consigne) ; l''interlocuteur est rendu par prenom, role et cote seulement');
+  'R5 / AR-7 I6 : tout texte et tout prenom d''un tiers sortent dans contenu_tiers (donnee, jamais consigne) ; l''auteur est rendu par role et cote seulement');
 
 -- ============ R6, §3, AR-3 : les enfants ============
 SELECT pg_temp.vrai(
   (SELECT count(*) FROM jsonb_array_elements(pg_temp.lu('b_tout') -> 'fils') f
     WHERE f ->> 'id' IN (pg_temp.f('1')::text, pg_temp.f('2')::text, pg_temp.f('3')::text, pg_temp.f('5')::text,
-                         pg_temp.f('6')::text, pg_temp.f('9')::text)) = 6
+                         pg_temp.f('6')::text)) = 5
   AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('b_tout') -> 'fils') f
-                   WHERE f ->> 'id' IN (pg_temp.f('4')::text, pg_temp.f('8')::text)),
-  '§3.2 / AR-3 : la boite montre les fils de foyer lus et ecrits par des adultes ; elle ne montre ni le fil ou un mineur a ecrit (4) ni le fil hors academie (8)');
+                   WHERE f ->> 'id' IN (pg_temp.f('4')::text, pg_temp.f('8')::text, pg_temp.f('9')::text)),
+  '§3.2 / AR-3 / AR-7 B2 : la boite montre les fils de foyer lus et ecrits par des adultes ; elle ne montre ni le fil ou un mineur a ecrit (4), ni le fil hors academie (8), ni le fil de candidature (9, type ferme)');
 SELECT pg_temp.garde('m_fil4', pg_temp.outil(pg_catalog.format('SELECT public.praxis_fil(%L, %L::uuid, 10)', pg_temp.k('chat'), pg_temp.f('4'))));
 SELECT pg_temp.garde('m_ecr4', pg_temp.ecrire(pg_temp.k('chat'), '4', 'Bonjour', '10'));
 SELECT pg_temp.vrai(pg_temp.lu('m_fil4') = '{"erreur": "mineur"}'::jsonb AND pg_temp.lu('m_ecr4') = '{"erreur": "mineur"}'::jsonb
@@ -412,8 +415,8 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM pg_proc p WHERE p.pronamespace = '
     AND p.proargnames::text ~ '(destinataire|personne|profil|participant)'),
   'R7 : aucun outil ne prend une personne comme destinataire ; aucun outil ne cree un fil ni n''ajoute un participant');
 SELECT pg_temp.garde('cand', pg_temp.ecrire(pg_temp.k('chat'), '9', 'Bonjour', '16'));
-SELECT pg_temp.vrai(pg_temp.lu('cand') = '{"erreur": "candidature"}'::jsonb,
-  'AR-6 : les fils de candidature sont fermes a Praxis en PX-1 (refus ferme)');
+SELECT pg_temp.vrai(pg_temp.lu('cand') = '{"erreur": "type_ferme"}'::jsonb,
+  'AR-6 / AR-7 B2 : les fils de candidature (type hors liste positive) sont fermes a Praxis : type_ferme');
 
 -- ============ Un envoi nominal : auteur Praxis, memes effets que pour une personne, R12 ============
 SELECT pg_temp.garde('n1', pg_temp.ecrire(pg_temp.k('chat'), '1', 'Bonjour, votre demande est bien recue. La direction repondra.', '17'));
@@ -464,7 +467,7 @@ SELECT pg_temp.garde('regle_3', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT pub
 SELECT pg_temp.garde('ph', pg_temp.ecrire(pg_temp.k('chat'), '5', 'Reponse du foyer cinq.', '28'));
 SELECT pg_temp.vrai(pg_temp.lu('regle_3') ->> 'envoisParHeure' = '3' AND pg_temp.lu('ph') = '{"erreur": "plafond"}'::jsonb
   AND (SELECT count(*) FROM public.com_messages WHERE fil_id = pg_temp.f('5') AND auteur_id = private.praxis_profil()) = 0,
-  'R9 : plafond par heure atteint : plafond (praxis.envois_par_heure), rien d''ecrit');
+  'R9 : plafond par heure atteint : plafond (private.praxis_reglages.envois_par_heure), rien d''ecrit');
 SELECT pg_temp.garde('regle_30', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT public.direction_praxis_regler(NULL, NULL, 30)$$));
 SELECT pg_temp.refus_en(pg_temp.u('1'), 'admin', $$SELECT public.direction_praxis_regler(NULL, NULL, 500)$$, '22023',
   'R9 : un plafond hors de 1 a 120 est refuse');

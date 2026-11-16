@@ -21,7 +21,7 @@
 --
 -- FICHIER SANS EFFACEMENT. Sans BEGIN/COMMIT de premier niveau. Une ancre trouvee une seule fois, sinon la migration echoue.
 
-CREATE FUNCTION pg_temp.remplacer_bloc(p_def text, p_debut text, p_fin text, p_apres text, p_nom text)
+CREATE FUNCTION pg_temp.remplacer_bloc(p_def text, p_debut text, p_fin text, p_apres text, p_nom text, p_md5 text)
 RETURNS text
 LANGUAGE plpgsql
 AS $f$
@@ -42,6 +42,12 @@ BEGIN
   v_j := pg_catalog.strpos(p_def, p_fin) + pg_catalog.length(p_fin);
   IF v_j <= v_i THEN
     RAISE EXCEPTION 'PRAXIS-COM : ancres de % dans le mauvais ordre', p_nom;
+  END IF;
+  -- AR-7 I3 : le bloc COUPE est celui que la migration a lu et deplace mot pour mot dans l'interne. Si la porte humaine a change
+  -- entre-temps (ou differe en production), l'empreinte differe : la migration echoue, rien n'est retouche.
+  IF pg_catalog.md5(pg_catalog.substr(p_def, v_i, v_j - v_i)) IS DISTINCT FROM p_md5 THEN
+    RAISE EXCEPTION 'PRAXIS-COM : le bloc de % a change (empreinte % attendue %)', p_nom,
+      pg_catalog.md5(pg_catalog.substr(p_def, v_i, v_j - v_i)), p_md5;
   END IF;
   RETURN pg_catalog.substr(p_def, 1, v_i - 1) || p_apres || pg_catalog.substr(p_def, v_j);
 END;
@@ -193,7 +199,7 @@ BEGIN
       $a$  PERFORM 1 FROM public.com_fils f WHERE f.id = p_fil_id FOR UPDATE;$a$,
       $a$  RETURN pg_catalog.jsonb_build_object('id', v_id, 'envoye_le', v_le);$a$,
       '  RETURN private.com_envoyer_message_interne(moi.id, moi.role, moi.foyer, p_fil_id, p_texte, p_cle_idempotence, true);',
-      'com_envoyer_message');
+      'com_envoyer_message', '49c4f8e57f737838021a4bf72392616e');
     EXECUTE v_def;
     v_com := coalesce(pg_catalog.obj_description(v_f, 'pg_proc'), '');
     IF v_com LIKE '%md5_functiondef=%' THEN
@@ -211,7 +217,7 @@ BEGIN
     RAISE EXCEPTION 'ANNONCES-SIMPLES cle absente' USING ERRCODE = '22023';$a$,
       $a$    'destinataires', v_nb);$a$,
       '  RETURN private.com_annonce_envoyer_interne(v_moi, private.com_annonce_cotes(), p_publics, p_titre, p_texte, p_programmee_le, p_courriel, p_cle_idempotence);',
-      'com_annonce_envoyer');
+      'com_annonce_envoyer', '059a6dbda958d38386a1ae4c0875a3a4');
     EXECUTE v_def;
     v_com := coalesce(pg_catalog.obj_description(v_f, 'pg_proc'), '');
     IF v_com LIKE '%md5_functiondef=%' THEN

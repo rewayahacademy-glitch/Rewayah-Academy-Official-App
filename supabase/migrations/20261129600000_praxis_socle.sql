@@ -4,7 +4,7 @@
 -- (20261129610000, installee seule). Documents : docs/current/BUREAU-EQUIPE/PRAXIS/SECURITE-PRAXIS.md (R1 a R15, §3,
 -- §7), CAHIER-SEC-1-PRAXIS-MESSAGES.md (A-1 a A-11), RELEVE-PX1.md.
 --
--- L'INTERRUPTEUR EST FAUX APRES INSTALLATION (praxis.actif, praxis.autonome). Aucune cle n'est creee. Le directeur seul
+-- L'INTERRUPTEUR EST FAUX APRES INSTALLATION (private.praxis_reglages : actif, autonome ; AR-7 B1 : plus dans app_config). Aucune cle n'est creee. Le directeur seul
 -- allume (R14).
 --
 -- Le compte (A-11, AR-1, AR-5) : cree DIRECTEMENT ICI, sans parcours. `auth.users` : une ligne, sans courriel, sans
@@ -143,10 +143,20 @@ ALTER TABLE private.praxis_calendrier ENABLE ROW LEVEL SECURITY;
 REVOKE ALL ON TABLE private.comptes_officiels, private.praxis_cles, private.praxis_journal, private.praxis_calendrier
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
--- 3. Les reglages (faux a l'installation ; le directeur seul les change)
-INSERT INTO public.app_config (key, value)
-VALUES ('praxis.actif', 'false'::jsonb), ('praxis.autonome', 'false'::jsonb), ('praxis.envois_par_heure', '30'::jsonb)
-ON CONFLICT (key) DO NOTHING;
+-- 3. Les reglages (AR-7 B1) : UNE ligne, dans une table PRIVEE (RLS, aucun droit pour les roles de l'API, contraintes de type et
+-- de bornes). Ils ne sont PLUS dans app_config, ou tout administrateur sans double verification peut ecrire directement. Seule
+-- direction_praxis_regler (aal2) les ecrit. Faux a l'installation ; le directeur seul les change.
+CREATE TABLE private.praxis_reglages (
+  id boolean PRIMARY KEY DEFAULT true CHECK (id),
+  actif boolean NOT NULL DEFAULT false,
+  autonome boolean NOT NULL DEFAULT false,
+  envois_par_heure integer NOT NULL DEFAULT 30 CHECK (envois_par_heure BETWEEN 1 AND 120),
+  modifie_par uuid REFERENCES public.profiles (id),
+  modifie_le timestamptz
+);
+ALTER TABLE private.praxis_reglages ENABLE ROW LEVEL SECURITY;
+INSERT INTO private.praxis_reglages (id) VALUES (true);
+REVOKE ALL ON TABLE private.praxis_reglages FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 -- 4. Les aides privees
 CREATE FUNCTION private.praxis_empreinte(p_secret text)
@@ -167,45 +177,74 @@ AS $f$
   SELECT o.profile_id FROM private.comptes_officiels o WHERE o.code = 'praxis';
 $f$;
 
--- Une cle presentee : vivante, active, du bon usage. Rend la cle ou la cause. Les causes de la cle elle-meme ne se
--- distinguent pas pour l'appelant (cle_refusee) : le journal garde la vraie.
+-- AR-7 I2 : les cotes de Praxis sont ceux de la PERSONNE QUI A EMIS LA CLE (SECRETAIRE-IA.md §3 : « dans le perimetre de la personne qui
+-- l'a connecte ; celui du directeur voit les deux »). La super-administration (private.super_admin_kyc et l'exception active) a les deux.
+CREATE FUNCTION private.praxis_cotes(p_emetteur uuid)
+RETURNS public.gender[]
+LANGUAGE sql
+STABLE
+SET search_path = ''
+AS $f$
+  SELECT CASE
+    WHEN EXISTS (SELECT 1 FROM private.super_admin_kyc s WHERE s.profile_id = p_emetteur)
+         AND EXISTS (SELECT 1 FROM public.app_config c WHERE c.key = 'kyc_exception_super_admin' AND c.value = 'true'::jsonb)
+      THEN ARRAY['female', 'male']::public.gender[]
+    ELSE coalesce((SELECT ARRAY[p.gender] FROM public.profiles p WHERE p.id = p_emetteur AND p.gender IS NOT NULL),
+                  ARRAY[]::public.gender[])
+  END;
+$f$;
+
+-- Une cle presentee : vivante, active, du bon usage, ET dont l'emetteur est TOUJOURS une direction active (AR-7 I5). Rend la cle, ses
+-- cotes, ou la cause. Les causes de la cle elle-meme ne se distinguent pas pour l'appelant (cle_refusee) : le journal garde la vraie.
 CREATE FUNCTION private.praxis_porte(p_secret text, p_ecrit boolean DEFAULT false)
-RETURNS TABLE (cle_id uuid, emise_par uuid, usage text, cause text, cause_interne text)
+RETURNS TABLE (cle_id uuid, emise_par uuid, usage text, cause text, cause_interne text, cotes public.gender[])
 LANGUAGE plpgsql
 SECURITY DEFINER
 SET search_path = ''
 AS $f$
 DECLARE
   v_c private.praxis_cles%ROWTYPE;
+  v_r private.praxis_reglages%ROWTYPE;
+  v_cotes public.gender[];
 BEGIN
   IF p_secret IS NULL OR p_secret !~ '^prx_[0-9a-f]{64}$' THEN
-    RETURN QUERY SELECT NULL::uuid, NULL::uuid, NULL::text, 'cle_refusee'::text, 'cle_invalide'::text;
+    RETURN QUERY SELECT NULL::uuid, NULL::uuid, NULL::text, 'cle_refusee'::text, 'cle_invalide'::text, NULL::public.gender[];
     RETURN;
   END IF;
   SELECT c.* INTO v_c FROM private.praxis_cles c WHERE c.empreinte = private.praxis_empreinte(p_secret);
   IF NOT FOUND THEN
-    RETURN QUERY SELECT NULL::uuid, NULL::uuid, NULL::text, 'cle_refusee'::text, 'cle_inconnue'::text;
+    RETURN QUERY SELECT NULL::uuid, NULL::uuid, NULL::text, 'cle_refusee'::text, 'cle_inconnue'::text, NULL::public.gender[];
     RETURN;
   END IF;
   IF v_c.revoquee_le IS NOT NULL THEN
-    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'cle_refusee'::text, 'cle_revoquee'::text;
+    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'cle_refusee'::text, 'cle_revoquee'::text, NULL::public.gender[];
     RETURN;
   END IF;
   IF v_c.expire_le <= pg_catalog.clock_timestamp() THEN
-    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'cle_refusee'::text, 'cle_expiree'::text;
+    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'cle_refusee'::text, 'cle_expiree'::text, NULL::public.gender[];
     RETURN;
   END IF;
-  IF NOT coalesce((SELECT (a.value #>> '{}')::boolean FROM public.app_config a WHERE a.key = 'praxis.actif'), false) THEN
-    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'eteint'::text, 'eteint'::text;
+  -- AR-7 I5 : la personne qui a emis la cle est toujours une direction active, de compte valide (non supprime, actif, acces non expire).
+  IF NOT private.com_profil_valide(v_c.emise_par, 'admin') THEN
+    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'cle_refusee'::text, 'emetteur_invalide'::text, NULL::public.gender[];
     RETURN;
   END IF;
-  IF v_c.usage = 'routine'
-     AND NOT coalesce((SELECT (a.value #>> '{}')::boolean FROM public.app_config a WHERE a.key = 'praxis.autonome'), false) THEN
-    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'autonome_requis'::text, 'autonome_requis'::text;
+  v_cotes := private.praxis_cotes(v_c.emise_par);
+  IF pg_catalog.cardinality(v_cotes) = 0 THEN
+    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'cle_refusee'::text, 'emetteur_sans_cote'::text, NULL::public.gender[];
+    RETURN;
+  END IF;
+  SELECT r.* INTO v_r FROM private.praxis_reglages r;
+  IF NOT coalesce(v_r.actif, false) THEN
+    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'eteint'::text, 'eteint'::text, v_cotes;
+    RETURN;
+  END IF;
+  IF v_c.usage = 'routine' AND NOT coalesce(v_r.autonome, false) THEN
+    RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, 'autonome_requis'::text, 'autonome_requis'::text, v_cotes;
     RETURN;
   END IF;
   UPDATE private.praxis_cles SET derniere_utilisation_le = pg_catalog.clock_timestamp() WHERE id = v_c.id;
-  RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, NULL::text, NULL::text;
+  RETURN QUERY SELECT v_c.id, v_c.emise_par, v_c.usage, NULL::text, NULL::text, v_cotes;
 END;
 $f$;
 
@@ -221,23 +260,77 @@ AS $f$
           (EXTRACT(epoch FROM (pg_catalog.clock_timestamp() - p_debut)) * 1000)::integer);
 $f$;
 
--- Une personne de l'academie : l'administration (role admin) ou le compte officiel.
-CREATE FUNCTION private.praxis_est_academie(p_profil uuid)
+-- Le compte officiel (Praxis).
+CREATE FUNCTION private.praxis_est_officiel(p_profil uuid)
 RETURNS boolean
 LANGUAGE sql
 STABLE
 SET search_path = ''
 AS $f$
-  SELECT coalesce(
-    EXISTS (SELECT 1 FROM private.comptes_officiels o WHERE o.profile_id = p_profil)
-    OR EXISTS (SELECT 1 FROM public.profiles p WHERE p.id = p_profil AND p.role = 'admin'::public.app_role), false);
+  SELECT coalesce(EXISTS (SELECT 1 FROM private.comptes_officiels o WHERE o.profile_id = p_profil), false);
 $f$;
 
--- AR-3 : la cause du refus d'un fil, ou NULL s'il est ouvert. Mineur : un compte mineur ou d'age inconnu (com_est_mineur,
--- tel quel) est partie du fil ou y a ecrit. Un foyer n'a pour parties que ses tuteurs adultes (com_est_partie : le role
--- guardian) ; un eleve mineur ne lit aucun fil (com_appelant l'exclut) : le foyer est donc ouvert tant que seuls des
--- adultes ont ecrit.
-CREATE FUNCTION private.praxis_fil_refus(p_fil uuid)
+-- AR-7 B2 : « l'equipe » d'un fil est tout compte que la MESSAGERIE tient pour partie de l'academie dans ce fil
+-- (private.com_est_partie, cote « equipe »), jamais le seul role admin. Le compte Praxis n'en fait pas partie.
+CREATE FUNCTION private.praxis_est_equipe(p_profil uuid, p_fil uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SET search_path = ''
+AS $f$
+  SELECT coalesce(EXISTS (
+    SELECT 1 FROM public.com_fils f JOIN public.profiles p ON p.id = p_profil
+     WHERE f.id = p_fil AND NOT private.praxis_est_officiel(p.id)
+       AND private.com_est_partie(p.id, p.role::text, p.household_id, f.type_objet, 'equipe', NULL)), false);
+$f$;
+
+-- La personne (partie A du fil : le profil lui-meme, ou un tuteur de son foyer), selon la messagerie.
+CREATE FUNCTION private.praxis_est_partie_a(p_profil uuid, p_fil uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SET search_path = ''
+AS $f$
+  SELECT coalesce(EXISTS (
+    SELECT 1 FROM public.com_fils f JOIN public.profiles p ON p.id = p_profil
+     WHERE f.id = p_fil AND NOT private.praxis_est_officiel(p.id)
+       AND private.com_est_partie(p.id, p.role::text, p.household_id, f.type_objet, f.partie_a_nature, f.partie_a_id)), false);
+$f$;
+
+-- AR-7 B2 : LISTE POSITIVE des types de fil que Praxis peut lire et ecrire. Tout type absent est ferme, y compris un type cree plus
+-- tard. Fermes : profilPaiement (IBAN, montants), candidature (fils de recrutement : com_paires y lit auth.uid()). `dossier` n'est
+-- ouvert que pour un fil de FOYER (le tuteur, AR-3) : un dossier d'enseignant reste a l'equipe.
+CREATE FUNCTION private.praxis_types_fil()
+RETURNS text[]
+LANGUAGE sql
+IMMUTABLE
+SET search_path = ''
+AS $f$
+  SELECT ARRAY['classe', 'eleve', 'dossier', 'remplacement']::text[];
+$f$;
+
+-- AR-7 I2 : le fil est du cote de la personne qui a emis la cle. Un profil : son genre ; un foyer : TOUS ses tuteurs (un foyer
+-- sans tuteur, ou dont un tuteur a un genre inconnu ou de l'autre cote, est ferme).
+CREATE FUNCTION private.praxis_fil_dans_cotes(p_fil uuid, p_cotes public.gender[])
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SET search_path = ''
+AS $f$
+  SELECT coalesce((
+    SELECT CASE f.partie_a_nature
+      WHEN 'profil' THEN coalesce((SELECT p.gender = ANY (p_cotes) FROM public.profiles p WHERE p.id = f.partie_a_id), false)
+      ELSE EXISTS (SELECT 1 FROM public.profiles g WHERE g.household_id = f.partie_a_id AND g.role = 'guardian'::public.app_role
+                    AND g.deleted_at IS NULL)
+           AND NOT EXISTS (SELECT 1 FROM public.profiles g WHERE g.household_id = f.partie_a_id
+                            AND g.role = 'guardian'::public.app_role AND g.deleted_at IS NULL
+                            AND (g.gender IS NULL OR NOT (g.gender = ANY (p_cotes))))
+    END FROM public.com_fils f WHERE f.id = p_fil), false);
+$f$;
+
+-- La cause du refus d'un fil, ou NULL s'il est ouvert. Ordre : fil inconnu, hors academie, type ferme (liste positive), mineur
+-- (AR-3 : un compte mineur ou d'age inconnu est partie du fil ou y a ecrit), cote.
+CREATE FUNCTION private.praxis_fil_refus(p_fil uuid, p_cotes public.gender[])
 RETURNS text
 LANGUAGE plpgsql
 STABLE
@@ -249,6 +342,10 @@ BEGIN
   SELECT x.* INTO f FROM public.com_fils x WHERE x.id = p_fil;
   IF NOT FOUND THEN RETURN 'fil_inconnu'; END IF;
   IF f.partie_b_nature IS DISTINCT FROM 'equipe' THEN RETURN 'hors_academie'; END IF;
+  IF NOT (f.type_objet = ANY (private.praxis_types_fil()))
+     OR (f.type_objet = 'dossier' AND f.partie_a_nature IS DISTINCT FROM 'foyer') THEN
+    RETURN 'type_ferme';
+  END IF;
   IF f.partie_a_nature = 'profil' AND private.com_est_mineur(f.partie_a_id) THEN RETURN 'mineur'; END IF;
   IF f.partie_a_nature = 'foyer' AND EXISTS (
        SELECT 1 FROM public.profiles g
@@ -259,31 +356,35 @@ BEGIN
   IF EXISTS (SELECT 1 FROM public.com_messages m WHERE m.fil_id = f.id AND private.com_est_mineur(m.auteur_id)) THEN
     RETURN 'mineur';
   END IF;
+  IF NOT private.praxis_fil_dans_cotes(f.id, p_cotes) THEN RETURN 'cote'; END IF;
   RETURN NULL;
 END;
 $f$;
 
--- Le role d'un auteur, rendu sans identite : academie, famille, enseignant, eleve (adulte), personne.
-CREATE FUNCTION private.praxis_auteur_json(p_profil uuid)
+-- Le role d'un auteur dans un fil, SANS identite : praxis, equipe, famille, enseignant, eleve (adulte), personne. Le prenom est un
+-- texte de tiers : il sort dans contenu_tiers (AR-7 I6), jamais ici.
+CREATE FUNCTION private.praxis_auteur_json(p_profil uuid, p_fil uuid)
 RETURNS jsonb
 LANGUAGE sql
 STABLE
 SET search_path = ''
 AS $f$
-  SELECT CASE WHEN private.praxis_est_academie(p_profil)
-              THEN pg_catalog.jsonb_build_object('role', 'academie')
-         ELSE (SELECT pg_catalog.jsonb_build_object(
-                 'role', CASE p.role WHEN 'guardian' THEN 'famille' WHEN 'teacher' THEN 'enseignant'
-                                     WHEN 'student' THEN 'eleve' ELSE 'personne' END,
-                 'prenom', p.first_name,
-                 'cote', p.gender::text)
-                FROM public.profiles p WHERE p.id = p_profil) END;
+  SELECT CASE
+    WHEN private.praxis_est_officiel(p_profil) THEN pg_catalog.jsonb_build_object('role', 'praxis')
+    WHEN private.praxis_est_equipe(p_profil, p_fil) THEN pg_catalog.jsonb_build_object('role', 'equipe')
+    ELSE (SELECT pg_catalog.jsonb_build_object(
+            'role', CASE p.role WHEN 'guardian' THEN 'famille' WHEN 'teacher' THEN 'enseignant'
+                                WHEN 'student' THEN 'eleve' ELSE 'personne' END,
+            'cote', p.gender::text)
+           FROM public.profiles p WHERE p.id = p_profil) END;
 $f$;
 
 REVOKE ALL ON FUNCTION
   private.praxis_empreinte(text), private.praxis_profil(), private.praxis_porte(text, boolean),
-  private.praxis_noter(uuid, uuid, text, text, uuid, uuid[], text, timestamptz), private.praxis_est_academie(uuid),
-  private.praxis_fil_refus(uuid), private.praxis_auteur_json(uuid), private.praxis_journal_ajout_seul()
+  private.praxis_noter(uuid, uuid, text, text, uuid, uuid[], text, timestamptz), private.praxis_cotes(uuid),
+  private.praxis_est_officiel(uuid), private.praxis_est_equipe(uuid, uuid), private.praxis_est_partie_a(uuid, uuid),
+  private.praxis_types_fil(), private.praxis_fil_dans_cotes(uuid, public.gender[]),
+  private.praxis_fil_refus(uuid, public.gender[]), private.praxis_auteur_json(uuid, uuid), private.praxis_journal_ajout_seul()
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
 -- 5. Les portes de la direction (administrateur valide, double verification)
@@ -372,24 +473,15 @@ BEGIN
   IF p_envois_par_heure IS NOT NULL AND p_envois_par_heure NOT BETWEEN 1 AND 120 THEN
     RAISE EXCEPTION 'plafond par heure invalide : 1 a 120' USING ERRCODE = '22023';
   END IF;
-  IF p_actif IS NOT NULL THEN
-    UPDATE public.app_config SET value = pg_catalog.to_jsonb(p_actif), updated_by = auth.uid(),
-           updated_at = pg_catalog.now() WHERE key = 'praxis.actif';
-  END IF;
-  IF p_autonome IS NOT NULL THEN
-    UPDATE public.app_config SET value = pg_catalog.to_jsonb(p_autonome), updated_by = auth.uid(),
-           updated_at = pg_catalog.now() WHERE key = 'praxis.autonome';
-  END IF;
-  IF p_envois_par_heure IS NOT NULL THEN
-    UPDATE public.app_config SET value = pg_catalog.to_jsonb(p_envois_par_heure), updated_by = auth.uid(),
-           updated_at = pg_catalog.now() WHERE key = 'praxis.envois_par_heure';
-  END IF;
-  PERFORM public.log_sensitive_access('praxis_regle', 'public.app_config', 'praxis',
+  UPDATE private.praxis_reglages
+     SET actif = coalesce(p_actif, actif), autonome = coalesce(p_autonome, autonome),
+         envois_par_heure = coalesce(p_envois_par_heure, envois_par_heure),
+         modifie_par = auth.uid(), modifie_le = pg_catalog.clock_timestamp()
+   WHERE id;
+  PERFORM public.log_sensitive_access('praxis_regle', 'private.praxis_reglages', 'praxis',
     pg_catalog.jsonb_build_object('actif', p_actif, 'autonome', p_autonome, 'envoisParHeure', p_envois_par_heure));
-  RETURN pg_catalog.jsonb_build_object(
-    'actif', (SELECT (a.value #>> '{}')::boolean FROM public.app_config a WHERE a.key = 'praxis.actif'),
-    'autonome', (SELECT (a.value #>> '{}')::boolean FROM public.app_config a WHERE a.key = 'praxis.autonome'),
-    'envoisParHeure', (SELECT (a.value #>> '{}')::integer FROM public.app_config a WHERE a.key = 'praxis.envois_par_heure'));
+  RETURN (SELECT pg_catalog.jsonb_build_object('actif', r.actif, 'autonome', r.autonome, 'envoisParHeure', r.envois_par_heure)
+            FROM private.praxis_reglages r);
 END;
 $f$;
 
@@ -426,8 +518,7 @@ BEGIN
     END IF;
     RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
   END IF;
-  v_plafond := coalesce((SELECT (a.value #>> '{}')::integer FROM public.app_config a
-                          WHERE a.key = 'praxis.envois_par_heure'), 30);
+  SELECT r.envois_par_heure INTO v_plafond FROM private.praxis_reglages r;
   SELECT pg_catalog.count(*)::integer INTO v_envoyes FROM private.praxis_journal j
    WHERE j.outil = 'ecrire' AND j.issue = 'ok' AND j.cree_le > pg_catalog.clock_timestamp() - interval '1 hour';
   SELECT pg_catalog.count(*)::integer INTO v_annonces FROM private.praxis_journal j
@@ -437,6 +528,7 @@ BEGIN
   RETURN pg_catalog.jsonb_build_object(
     'actif', v_p.cause IS NULL,
     'mode', CASE v_p.usage WHEN 'routine' THEN 'autonome' ELSE 'dirige' END,
+    'cotes', pg_catalog.to_jsonb(v_p.cotes),
     'plafondRestantHeure', greatest(v_plafond - v_envoyes, 0),
     'annoncesRestantesJour', greatest(2 - v_annonces, 0),
     'interdits', pg_catalog.jsonb_build_array(
@@ -446,6 +538,33 @@ BEGIN
 END;
 $f$;
 
+-- AR-7 M4 : un refus de PARAMETRE decide par la fonction Edge (avant la base) est journalise, a condition que la cle soit valide
+-- (une cle inconnue ne laisse aucune ligne : anti-inondation). Aucun texte, aucun parametre n'est copie.
+CREATE FUNCTION public.praxis_noter_refus(p_cle text, p_outil text)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $f$
+DECLARE
+  v_debut timestamptz := pg_catalog.clock_timestamp();
+  v_p record;
+BEGIN
+  SELECT * INTO v_p FROM private.praxis_porte(p_cle);
+  IF v_p.cle_id IS NULL OR v_p.cause_interne IN ('cle_revoquee', 'cle_expiree', 'emetteur_invalide', 'emetteur_sans_cote') THEN
+    RETURN pg_catalog.jsonb_build_object('ok', false);
+  END IF;
+  IF p_outil IS NULL OR p_outil NOT IN ('etat', 'boite', 'fil', 'ecrire', 'annoncer', 'calendrier_lire',
+                                        'calendrier_ajouter', 'rendre_compte') THEN
+    RETURN pg_catalog.jsonb_build_object('ok', false);
+  END IF;
+  PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, p_outil, 'parametre', NULL, NULL, NULL, v_debut);
+  RETURN pg_catalog.jsonb_build_object('ok', true);
+END;
+$f$;
+
+-- AR-7 I7 : le parcours des fils est borne AVANT le filtre : au plus 200 fils, les plus recents (tri sur le dernier message). Un
+-- fil plus ancien que les 200 plus recents n'est pas liste ; c'est un choix de charge, documente.
 CREATE FUNCTION public.praxis_boite(p_cle text, p_filtre text DEFAULT 'attend', p_limite integer DEFAULT 20)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -468,41 +587,48 @@ BEGIN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'boite', 'parametre', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
   END IF;
-  WITH base AS (
+  WITH recents AS (
+    SELECT f.* FROM public.com_fils f
+     WHERE f.partie_b_nature = 'equipe' AND f.type_objet = ANY (private.praxis_types_fil())
+     ORDER BY coalesce(f.dernier_message_le, f.cree_le) DESC, f.id
+     LIMIT 200
+  ), base AS (
     SELECT f.id, f.type_objet, f.partie_a_nature, f.partie_a_id,
            d.auteur_id AS dernier_auteur, d.texte AS dernier_texte, d.envoye_le AS dernier_le,
            (SELECT pg_catalog.max(m.envoye_le) FROM public.com_messages m
-             WHERE m.fil_id = f.id AND private.praxis_est_academie(m.auteur_id)) AS derniere_academie
-      FROM public.com_fils f
+             WHERE m.fil_id = f.id AND (m.auteur_id = private.praxis_profil() OR private.praxis_est_equipe(m.auteur_id, f.id))) AS derniere_academie
+      FROM recents f
       JOIN LATERAL (SELECT m.auteur_id, m.texte, m.envoye_le FROM public.com_messages m
                      WHERE m.fil_id = f.id ORDER BY m.envoye_le DESC, m.id DESC LIMIT 1) d ON true
-     WHERE f.partie_b_nature = 'equipe' AND private.praxis_fil_refus(f.id) IS NULL
+     WHERE private.praxis_fil_refus(f.id, v_p.cotes) IS NULL
   ), calc AS (
     SELECT b.*,
-           NOT private.praxis_est_academie(b.dernier_auteur) AS attend,
+           private.praxis_est_partie_a(b.dernier_auteur, b.id) AS attend,
            (SELECT pg_catalog.count(*) FROM public.com_messages m
-             WHERE m.fil_id = b.id AND NOT private.praxis_est_academie(m.auteur_id)
+             WHERE m.fil_id = b.id AND private.praxis_est_partie_a(m.auteur_id, b.id)
                AND m.envoye_le > coalesce(b.derniere_academie, '-infinity'::timestamptz))::integer AS sans_reponse
       FROM base b
   )
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
            'id', c.id, 'type', c.type_objet,
            'interlocuteur', CASE c.partie_a_nature
-              WHEN 'profil' THEN private.praxis_auteur_json(c.partie_a_id)
-              ELSE pg_catalog.jsonb_build_object('role', 'famille', 'prenoms', coalesce((
-                     SELECT pg_catalog.jsonb_agg(g.first_name ORDER BY g.first_name, g.id) FROM public.profiles g
-                      WHERE g.household_id = c.partie_a_id AND g.role = 'guardian'::public.app_role
-                        AND g.deleted_at IS NULL), '[]'::jsonb)) END,
-           'dernier_auteur', private.praxis_auteur_json(c.dernier_auteur),
-           'contenu_tiers', CASE WHEN private.praxis_est_academie(c.dernier_auteur) THEN NULL
-                                 ELSE pg_catalog.left(c.dernier_texte, 300) END,
+              WHEN 'profil' THEN private.praxis_auteur_json(c.partie_a_id, c.id)
+              ELSE pg_catalog.jsonb_build_object('role', 'famille') END,
+           'dernier_auteur', private.praxis_auteur_json(c.dernier_auteur, c.id),
+           -- Tout texte qui n'est pas de Praxis (prenoms compris, messages de l'equipe compris) est une DONNEE de tiers.
+           'contenu_tiers', CASE WHEN c.dernier_auteur = private.praxis_profil() THEN NULL
+              ELSE pg_catalog.jsonb_build_object(
+                'prenoms', CASE c.partie_a_nature
+                  WHEN 'profil' THEN (SELECT pg_catalog.jsonb_build_array(p.first_name) FROM public.profiles p WHERE p.id = c.partie_a_id)
+                  ELSE coalesce((SELECT pg_catalog.jsonb_agg(g.first_name ORDER BY g.first_name, g.id) FROM public.profiles g
+                                  WHERE g.household_id = c.partie_a_id AND g.role = 'guardian'::public.app_role
+                                    AND g.deleted_at IS NULL), '[]'::jsonb) END,
+                'dernier_message', pg_catalog.left(c.dernier_texte, 300)) END,
            'attente_heures', CASE WHEN c.attend
               THEN (EXTRACT(epoch FROM pg_catalog.clock_timestamp() - c.dernier_le) / 3600)::integer END,
            'sans_reponse', c.sans_reponse,
            'repris_par_equipe', EXISTS (SELECT 1 FROM public.com_messages m
-              JOIN public.profiles pr ON pr.id = m.auteur_id
-             WHERE m.fil_id = c.id AND pr.role = 'admin'::public.app_role
-               AND NOT EXISTS (SELECT 1 FROM private.comptes_officiels o WHERE o.profile_id = m.auteur_id)
+             WHERE m.fil_id = c.id AND private.praxis_est_equipe(m.auteur_id, c.id)
                AND m.envoye_le > coalesce((SELECT pg_catalog.max(x.envoye_le) FROM public.com_messages x
                                             WHERE x.fil_id = c.id AND x.auteur_id = private.praxis_profil()),
                                           'infinity'::timestamptz))
@@ -541,7 +667,7 @@ BEGIN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'fil', 'parametre', p_fil, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
   END IF;
-  v_refus := private.praxis_fil_refus(p_fil);
+  v_refus := private.praxis_fil_refus(p_fil, v_p.cotes);
   IF v_refus IS NOT NULL THEN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'fil', v_refus, p_fil, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', v_refus);
@@ -552,27 +678,28 @@ BEGIN
    ORDER BY m.envoye_le DESC, m.id DESC LIMIT 1;
   SELECT coalesce(pg_catalog.jsonb_agg(x.j ORDER BY x.le), '[]'::jsonb) INTO v_msgs
     FROM (SELECT m.envoye_le AS le, pg_catalog.jsonb_build_object(
-                   'auteur', private.praxis_auteur_json(m.auteur_id),
+                   'auteur', private.praxis_auteur_json(m.auteur_id, p_fil),
                    'est_praxis', m.auteur_id = private.praxis_profil(),
                    'envoye_le', m.envoye_le)
                  || CASE
                       WHEN EXISTS (SELECT 1 FROM public.com_message_images i WHERE i.message_id = m.id)
                         THEN pg_catalog.jsonb_build_object('image', true)
-                      WHEN private.praxis_est_academie(m.auteur_id)
+                      WHEN m.auteur_id = private.praxis_profil()
                         THEN pg_catalog.jsonb_build_object('texte', pg_catalog.left(m.texte, 1500))
-                      ELSE pg_catalog.jsonb_build_object('contenu_tiers', pg_catalog.left(m.texte, 1500)) END AS j
+                      -- AR-7 I6 : tout texte qui n'est pas de Praxis (message de la personne OU de l'equipe, prenom) est une donnee.
+                      ELSE pg_catalog.jsonb_build_object('contenu_tiers', pg_catalog.jsonb_build_object(
+                             'prenom', (SELECT p.first_name FROM public.profiles p WHERE p.id = m.auteur_id),
+                             'texte', pg_catalog.left(m.texte, 1500))) END AS j
             FROM public.com_messages m WHERE m.fil_id = p_fil
            ORDER BY m.envoye_le DESC, m.id DESC LIMIT p_limite) x;
   PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'fil', 'ok', p_fil, NULL, NULL, v_debut);
   RETURN pg_catalog.jsonb_build_object(
     'fil', p_fil,
     'messages', v_msgs,
-    'dernier_auteur', private.praxis_auteur_json(v_dernier),
+    'dernier_auteur', private.praxis_auteur_json(v_dernier, p_fil),
     'repris_par_equipe', v_derniere_praxis IS NOT NULL AND EXISTS (
-       SELECT 1 FROM public.com_messages m JOIN public.profiles pr ON pr.id = m.auteur_id
-        WHERE m.fil_id = p_fil AND pr.role = 'admin'::public.app_role
-          AND NOT EXISTS (SELECT 1 FROM private.comptes_officiels o WHERE o.profile_id = m.auteur_id)
-          AND m.envoye_le > v_derniere_praxis));
+       SELECT 1 FROM public.com_messages m
+        WHERE m.fil_id = p_fil AND private.praxis_est_equipe(m.auteur_id, p_fil) AND m.envoye_le > v_derniere_praxis));
 END;
 $f$;
 
@@ -596,6 +723,7 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
   END IF;
   IF p_heures IS NULL OR p_heures NOT BETWEEN 1 AND 168 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'rendre_compte', 'parametre', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
   END IF;
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
@@ -606,15 +734,17 @@ BEGIN
              AND x.cree_le > pg_catalog.clock_timestamp() - pg_catalog.make_interval(hours => p_heures)
            ORDER BY x.cree_le DESC LIMIT 50) j;
   SELECT pg_catalog.count(*)::integer INTO v_refus FROM private.praxis_journal x
-   WHERE x.outil IN ('ecrire', 'annoncer') AND x.issue <> 'ok'
+   WHERE x.outil IN ('ecrire', 'annoncer') AND x.issue <> 'ok' AND x.issue <> 'rejoue'
      AND x.cree_le > pg_catalog.clock_timestamp() - pg_catalog.make_interval(hours => p_heures);
   PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'rendre_compte', 'ok', NULL, NULL, NULL, v_debut);
   RETURN pg_catalog.jsonb_build_object('envoye', v_envois, 'refuses', v_refus,
-    'laisse_en_attente', (SELECT pg_catalog.count(*)::integer FROM public.com_fils f
-        WHERE f.partie_b_nature = 'equipe' AND private.praxis_fil_refus(f.id) IS NULL
-          AND EXISTS (SELECT 1 FROM public.com_messages m WHERE m.fil_id = f.id)
-          AND NOT private.praxis_est_academie((SELECT m.auteur_id FROM public.com_messages m
-                WHERE m.fil_id = f.id ORDER BY m.envoye_le DESC, m.id DESC LIMIT 1))));
+    'laisse_en_attente', (SELECT pg_catalog.count(*)::integer FROM (
+        SELECT f.id FROM public.com_fils f
+         WHERE f.partie_b_nature = 'equipe' AND f.type_objet = ANY (private.praxis_types_fil())
+         ORDER BY coalesce(f.dernier_message_le, f.cree_le) DESC, f.id LIMIT 200) r
+        WHERE private.praxis_fil_refus(r.id, v_p.cotes) IS NULL
+          AND private.praxis_est_partie_a((SELECT m.auteur_id FROM public.com_messages m
+                WHERE m.fil_id = r.id ORDER BY m.envoye_le DESC, m.id DESC LIMIT 1), r.id)));
 END;
 $f$;
 
@@ -701,12 +831,12 @@ $f$;
 REVOKE ALL ON FUNCTION
   public.praxis_etat(text), public.praxis_boite(text, text, integer), public.praxis_fil(text, uuid, integer),
   public.praxis_rendre_compte(text, integer), public.praxis_calendrier_lire(text, date, date),
-  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid)
+  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid), public.praxis_noter_refus(text, text)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION
   public.praxis_etat(text), public.praxis_boite(text, text, integer), public.praxis_fil(text, uuid, integer),
   public.praxis_rendre_compte(text, integer), public.praxis_calendrier_lire(text, date, date),
-  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid)
+  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid), public.praxis_noter_refus(text, text)
   TO service_role;
 
 -- 7. R13 : les listes de comptes de la direction n'affichent pas les comptes officiels (retouche par ancrage).
@@ -741,8 +871,9 @@ DO $postflight$
 DECLARE
   v_identites bigint;
 BEGIN
-  IF (SELECT (a.value #>> '{}')::boolean FROM public.app_config a WHERE a.key = 'praxis.actif') IS NOT FALSE
-     OR (SELECT (a.value #>> '{}')::boolean FROM public.app_config a WHERE a.key = 'praxis.autonome') IS NOT FALSE
+  IF (SELECT r.actif FROM private.praxis_reglages r) IS NOT FALSE
+     OR (SELECT r.autonome FROM private.praxis_reglages r) IS NOT FALSE
+     OR (SELECT pg_catalog.count(*) FROM private.praxis_reglages) <> 1
      OR pg_catalog.has_function_privilege('anon', 'public.praxis_etat(text)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('authenticated', 'public.praxis_etat(text)', 'EXECUTE')
      OR pg_catalog.has_function_privilege('agent_ro', 'public.praxis_etat(text)', 'EXECUTE')

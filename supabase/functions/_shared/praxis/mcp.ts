@@ -39,6 +39,44 @@ function rpcErreur(id: unknown, code: number, message: string): Response {
   return http({ jsonrpc: '2.0', id, error: { code, message } }, 200)
 }
 
+/// Lit le corps en octets, au plus `max` ; rend null si la limite est franchie (le flux est alors annule).
+async function lireBorne(req: Request, max: number): Promise<string | null> {
+  if (!req.body) return ''
+  const lecteur = req.body.getReader()
+  const morceaux: Uint8Array[] = []
+  let total = 0
+  for (;;) {
+    const { done, value } = await lecteur.read()
+    if (done) break
+    total += value.byteLength
+    if (total > max) {
+      await lecteur.cancel().catch(() => {})
+      return null
+    }
+    morceaux.push(value)
+  }
+  const tout = new Uint8Array(total)
+  let pos = 0
+  for (const m of morceaux) {
+    tout.set(m, pos)
+    pos += m.byteLength
+  }
+  return new TextDecoder().decode(tout)
+}
+
+/// AR-7 M4 : un refus de PARAMETRE decide ici est journalise par la base (cle valide seulement ; aucun parametre n'est transmis).
+async function noterRefus(porte: PortePraxis, cle: string, outil: string): Promise<void> {
+  const ctrl = new AbortController()
+  const minuteur = setTimeout(() => ctrl.abort(), DELAI_MS)
+  try {
+    await porte.appeler('praxis_noter_refus', { p_outil: outil, p_cle: cle }, ctrl.signal)
+  } catch {
+    // Le journal est une aide : son echec ne change pas la reponse.
+  } finally {
+    clearTimeout(minuteur)
+  }
+}
+
 export async function traiter(req: Request, porte: PortePraxis): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: entetes })
   if (req.method !== 'POST') return http({ error: 'methode' }, 405)
@@ -51,8 +89,9 @@ export async function traiter(req: Request, porte: PortePraxis): Promise<Respons
 
   const taille = Number(req.headers.get('content-length') ?? '0')
   if (taille > TAILLE_MAX) return http({ error: 'trop_grand' }, 413)
-  const texte = await req.text()
-  if (texte.length > TAILLE_MAX) return http({ error: 'trop_grand' }, 413)
+  // AR-7 M2 : lecture BORNEE en octets, flux coupe des que la limite est franchie (un content-length absent ou faux ne suffit pas).
+  const texte = await lireBorne(req, TAILLE_MAX)
+  if (texte === null) return http({ error: 'trop_grand' }, 413)
 
   let msg: { jsonrpc?: unknown; id?: unknown; method?: unknown; params?: unknown }
   try {
@@ -90,7 +129,10 @@ export async function traiter(req: Request, porte: PortePraxis): Promise<Respons
       try {
         prepare = preparer(outil, p.arguments)
       } catch (e) {
-        if (e instanceof ErreurSchema) return rpcErreur(id, -32602, e.message)
+        if (e instanceof ErreurSchema) {
+          await noterRefus(porte, cle, outil.nom)
+          return rpcErreur(id, -32602, e.message)
+        }
         throw e
       }
       // La cle vient APRES les parametres prepares : aucun parametre ne peut la remplacer (ni aujourd'hui, ni plus tard).

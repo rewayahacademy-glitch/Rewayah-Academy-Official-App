@@ -120,7 +120,10 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     const { porte, appels } = faux()
     const r = await (await traiter(requete(appelOutil(nom, args)), porte)).json()
     assertEquals(r.error?.code, -32602, `${nom} ${JSON.stringify(args)} aurait du etre refuse`)
-    assertEquals(appels.length, 0, `${nom} : la base ne doit pas etre appelee`)
+    // Le seul appel admis est la note de refus (M4) : jamais une fonction d'outil, jamais un parametre de l'appelant.
+    assert(appels.every((a) => a.fonction === 'praxis_noter_refus' && Object.keys(a.params).sort().join() === 'p_cle,p_outil'),
+      `${nom} : la base ne doit recevoir que la note de refus`)
+    assert(appels.length <= 1)
   }
 })
 
@@ -197,7 +200,8 @@ Deno.test('la cle ne peut etre remplacee par aucun parametre prepare', async () 
     const { porte, appels } = faux()
     const r = await (await traiter(requete(appelOutil('etat', { p_cle: 'prx_' + 'b'.repeat(64) })), porte)).json()
     assertEquals(r.error?.code, -32602)
-    assertEquals(appels.length, 0)
+    // Seule la note de refus part, avec la cle de l'en-tete (jamais celle de l'appelant).
+    assertEquals(appels, [{ fonction: 'praxis_noter_refus', params: { p_outil: 'etat', p_cle: CLE } }])
   }
   // (c) Meme si un parametre futur s'appelait p_cle, la cle de l'en-tete l'emporte (ordre : parametres, puis cle).
   const piege = {
@@ -216,4 +220,44 @@ Deno.test('la cle ne peut etre remplacee par aucun parametre prepare', async () 
   } finally {
     liste.pop()
   }
+})
+
+Deno.test('AR-7 M1 : une propriete heritee (constructor, __proto__, toString) est refusee, pas acceptee', async () => {
+  for (const cle of ['constructor', 'toString', 'hasOwnProperty', '__proto__']) {
+    const { porte } = faux()
+    const corps = '{"jsonrpc":"2.0","id":1,"method":"tools/call","params":{"name":"etat","arguments":{"' + cle + '":1}}}'
+    const r = await (await traiter(requete(corps), porte)).json()
+    assertEquals(r.error?.code, -32602, `${cle} doit etre refusee`)
+  }
+})
+
+Deno.test('AR-7 M2 : un corps trop grand sans content-length ni taille annoncee est coupe, la base non appelee', async () => {
+  const { porte, appels } = faux()
+  const flux = new ReadableStream<Uint8Array>({
+    start(c) {
+      const bloc = new TextEncoder().encode('x'.repeat(4096))
+      for (let i = 0; i < 6; i++) c.enqueue(bloc)
+      c.close()
+    },
+  })
+  const req = new Request('https://exemple.test/praxis-mcp', {
+    method: 'POST', body: flux, headers: { Authorization: `Bearer ${CLE}` },
+    // deno-lint-ignore no-explicit-any
+    ...({ duplex: 'half' } as any),
+  })
+  const r = await traiter(req, porte)
+  assertEquals(r.status, 413)
+  assertEquals(appels.length, 0)
+})
+
+Deno.test('AR-7 M4 : un refus de parametre appelle praxis_noter_refus avec la cle et le nom de l\'outil, rien d\'autre', async () => {
+  const { porte, appels } = faux()
+  await traiter(requete(appelOutil('ecrire', { fil: 'pas-un-uuid', texte: 'secret', cle_idempotence: UUID2 })), porte)
+  assertEquals(appels, [{ fonction: 'praxis_noter_refus', params: { p_outil: 'ecrire', p_cle: CLE } }])
+})
+
+Deno.test('AR-7 M4 : une base en panne pendant la note de refus ne change pas la reponse', async () => {
+  const porte: PortePraxis = { appeler: () => Promise.reject(new Error('base')) }
+  const r = await (await traiter(requete(appelOutil('boite', { limite: 99 })), porte)).json()
+  assertEquals(r.error?.code, -32602)
 })

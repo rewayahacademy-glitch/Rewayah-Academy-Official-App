@@ -6,9 +6,9 @@
 --
 -- Les refus de praxis_ecrire, dans cet ordre (chacun est un scenario) : cle (cle_refusee, eteint, autonome_requis),
 -- parametre, longueur (1 500 signes), rejeu (meme cle d'idempotence : le meme message, rien d'ecrit), fil (fil_inconnu,
--- hors_academie, mineur), candidature (fils de candidature fermes a Praxis en PX-1 : com_paires y lit auth.uid()),
+-- hors_academie, mineur), type_ferme (liste positive des types, AR-7 B2 : candidature et tout autre type absent), cote (AR-7 I2),
 -- fil_ferme (la paire n'est pas autorisee), repris_par_equipe (R8), plafond_fil (3 messages de suite sans reponse de la
--- personne, R9), plafond (par heure, reglage praxis.envois_par_heure, R9). Praxis n'a AUCUN outil pour creer un fil, ajouter
+-- personne, partie A du fil, R9), plafond (par heure, private.praxis_reglages.envois_par_heure, R9). Praxis n'a AUCUN outil pour creer un fil, ajouter
 -- un participant ou choisir un destinataire (R7) : le seul parametre est l'identifiant d'un fil existant de l'academie.
 --
 -- Praxis ecrit sous le role `accountant` de son profil : private.com_envoyer_message_interne ne lit le role que pour le
@@ -65,10 +65,7 @@ BEGIN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'ecrire', 'rejoue', p_fil, ARRAY[v_existant.id], NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('ok', true, 'id', v_existant.id, 'envoye_le', v_existant.envoye_le, 'rejoue', true);
   END IF;
-  v_refus := private.praxis_fil_refus(p_fil);
-  IF v_refus IS NULL AND v_f.type_objet = 'candidature' THEN
-    v_refus := 'candidature';
-  END IF;
+  v_refus := private.praxis_fil_refus(p_fil, v_p.cotes);
   IF v_refus IS NULL AND NOT EXISTS (
        SELECT 1 FROM private.com_paires(v_f.type_objet, v_f.objet_id) q
         WHERE q.a_nature = v_f.partie_a_nature AND q.a_id = v_f.partie_a_id
@@ -79,16 +76,15 @@ BEGIN
     SELECT pg_catalog.max(m.envoye_le) INTO v_derniere_praxis FROM public.com_messages m
      WHERE m.fil_id = p_fil AND m.auteur_id = v_praxis;
     IF v_derniere_praxis IS NOT NULL AND EXISTS (
-         SELECT 1 FROM public.com_messages m JOIN public.profiles pr ON pr.id = m.auteur_id
-          WHERE m.fil_id = p_fil AND pr.role = 'admin'::public.app_role
-            AND NOT EXISTS (SELECT 1 FROM private.comptes_officiels o WHERE o.profile_id = m.auteur_id)
+         SELECT 1 FROM public.com_messages m
+          WHERE m.fil_id = p_fil AND private.praxis_est_equipe(m.auteur_id, p_fil)
             AND m.envoye_le > v_derniere_praxis) THEN
       v_refus := 'repris_par_equipe';
     END IF;
   END IF;
   IF v_refus IS NULL THEN
     SELECT pg_catalog.max(m.envoye_le) INTO v_derniere_autre FROM public.com_messages m
-     WHERE m.fil_id = p_fil AND NOT private.praxis_est_academie(m.auteur_id);
+     WHERE m.fil_id = p_fil AND private.praxis_est_partie_a(m.auteur_id, p_fil);
     IF (SELECT pg_catalog.count(*) FROM public.com_messages m
          WHERE m.fil_id = p_fil AND m.auteur_id = v_praxis
            AND m.envoye_le > coalesce(v_derniere_autre, '-infinity'::timestamptz)) >= 3 THEN
@@ -96,8 +92,7 @@ BEGIN
     END IF;
   END IF;
   IF v_refus IS NULL THEN
-    v_plafond := coalesce((SELECT (a.value #>> '{}')::integer FROM public.app_config a
-                            WHERE a.key = 'praxis.envois_par_heure'), 30);
+    SELECT r.envois_par_heure INTO v_plafond FROM private.praxis_reglages r;
     IF (SELECT pg_catalog.count(*) FROM private.praxis_journal j
          WHERE j.outil = 'ecrire' AND j.issue = 'ok'
            AND j.cree_le > pg_catalog.clock_timestamp() - interval '1 hour') >= v_plafond THEN
@@ -128,7 +123,7 @@ DECLARE
   v_titre text := pg_catalog.btrim(coalesce(p_titre, ''));
   v_texte text := pg_catalog.btrim(coalesce(p_texte, ''));
   v_publics text[];
-  v_cotes public.gender[] := ARRAY['male', 'female']::public.gender[];
+  v_cotes public.gender[];
   v_praxis uuid := private.praxis_profil();
   v_existante record;
   v_r jsonb;
@@ -149,6 +144,7 @@ BEGIN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'annoncer', 'longueur', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'longueur');
   END IF;
+  v_cotes := v_p.cotes;
   PERFORM pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('praxis-envois', 0));
   SELECT a.id INTO v_existante FROM public.com_annonces a
    WHERE a.auteur_id = v_praxis AND a.cle_idempotence = p_cle_idempotence;

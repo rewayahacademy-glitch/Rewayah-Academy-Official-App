@@ -204,7 +204,7 @@ export function preparer(
   if (typeof args !== 'object' || Array.isArray(args)) throw new ErreurSchema(`${outil.nom} : objet attendu`)
   const a = args as Record<string, unknown>
   for (const cle of Object.keys(a)) {
-    if (!(cle in outil.proprietes)) throw new ErreurSchema(`${outil.nom} : propriete inconnue ${cle.slice(0, 40)}`)
+    if (!Object.hasOwn(outil.proprietes, cle)) throw new ErreurSchema(`${outil.nom} : propriete inconnue ${cle.slice(0, 40)}`)
   }
   const params: Record<string, Json> = {}
   for (const d of outil.parametres) {
