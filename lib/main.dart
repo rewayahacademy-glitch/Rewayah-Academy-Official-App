@@ -152,6 +152,8 @@ import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
 import 'core/enseignant/absence_remplacement.dart';
 import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
+import 'core/enseignants/enseignants_supabase.dart' show EnseignantsSupabase;
+import 'core/enseignants/port_enseignants.dart' show portEnseignantsProvider;
 import 'core/finance/page_paiement.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
@@ -715,6 +717,10 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Ce que le compte a deja vu, cote serveur (VU-UNE-FOIS, #541) : un bandeau
   // ferme ne revient jamais, sur aucun appareil.
   portVusProvider.overrideWithValue(VusSupabase(Supabase.instance.client)),
+  // LP-2 : la liste des enseignants (lister_enseignants, LP-1).
+  portEnseignantsProvider.overrideWithValue(
+    EnseignantsSupabase(Supabase.instance.client),
+  ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),
   ),

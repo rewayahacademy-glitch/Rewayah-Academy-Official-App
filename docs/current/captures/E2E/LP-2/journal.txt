@@ -1,0 +1,23 @@
+LP-2 (ordre du pilote, 16/11/2026) : la liste des enseignants, captures de test, donnees de test uniquement.
+
+Fait : section « Enseignants » de Personnes (position 6, avant Invitations, route
+/admin/personnes/enseignants) ; ecran lib/features/admin_enseignants ; port, modeles et adaptateur de
+lister_enseignants dans lib/core/enseignants. Meme grammaire que Candidatures : titre-selecteur, loupe,
+tri, menu « Phase » (avec les nombres et « Nouveaux »), pastille de phase, badge « Nouveau », resume propre
+a la phase (ce qui manque, classes, prochaine seance, remplacements), « qui attend », menu « ... » par ligne
+servi par `gestes`, selection avec `gestesGroupables` (intersection des lignes retenues) sur
+apercu_lot_candidats / executer_lot_candidats. Toucher = le dossier de candidature existant.
+
+MESURE (haut de la premiere ligne) : fr_360 : 240 ; fr_1440 : 256 ; ar_360 : 225 ; ar_1440 : 258.
+
+Non fait / non prouve :
+- `actionsPhase` (affecter_classe, reaffecter_classe) n'est PAS affiche : aucun ecran d'affectation n'existe
+  dans main (seul « remplacements » existe) ; un geste qui ne peut pas aboutir n'est pas offert.
+- Pas de vues enregistrees ni de colonnes par vue (le serveur n'en rend pas) ; une seule vue : toutes les
+  phases, filtrable par phase ; les enseignants « partis » sont une phase du menu (masques par defaut).
+- Les gestes du menu « ... » sont ceux que le moteur des candidatures sait faire (pause, lever la pause,
+  refuser, retirer, rouvrir, demander une precision, admettre, valider la piece, moyens de paiement) ;
+  les autres noms du serveur ne sont pas devines. Le tri n'a que « derniere activite » et « date de
+  reception » (le serveur sait aussi trier par nom : non expose, aucun libelle valide).
+- Teste avec un faux serveur (migration 20261129400000 lue, pas appelee) ; rien n'a ete lu en production.
+- Les comptes enseignants sans dossier de candidature sont comptes a part (note sous le nombre), pas dans la liste.

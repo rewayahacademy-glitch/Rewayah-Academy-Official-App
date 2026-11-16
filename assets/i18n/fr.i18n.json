@@ -4070,6 +4070,74 @@
     }
   },
   "admin": {
+    "listeEnseignants": {
+      "titre": "Enseignants",
+      "phase": "Phase",
+      "toutesPhases": "Toutes les phases",
+      "nouveaux": "Nouveaux",
+      "phases": {
+        "candidat": "Candidat",
+        "accueil": "Accueil",
+        "disponible": "Disponible",
+        "enPoste": "En poste",
+        "absent": "Absent",
+        "pause": "En pause",
+        "suspendu": "Suspendu",
+        "parti": "Parti"
+      },
+      "attend": {
+        "candidat": "Attend : le candidat",
+        "direction": "Attend : la direction",
+        "enseignant": "Attend : l'enseignant"
+      },
+      "manque": {
+        "intro": "Il manque : {liste}",
+        "compteInactif": "compte inactif",
+        "pieceNonValidee": "pièce à valider",
+        "languesAbsentes": "langues",
+        "genreInconnu": "genre",
+        "indisponible": "indisponible",
+        "photoAbsente": "photo",
+        "disponibilitesAbsentes": "disponibilités"
+      },
+      "classes": {
+        "one": "{n} classe",
+        "other": "{n} classes"
+      },
+      "heures": "{h} h par semaine",
+      "prochaineSeance": "Prochaine séance : {date}",
+      "remplacements": "Remplacements sur 30 jours : donnés {donnes}, reçus {recus}",
+      "colonnes": {
+        "nom": "Nom",
+        "phase": "Phase",
+        "attend": "Attend",
+        "classes": "Classes",
+        "seance": "Prochaine séance",
+        "activite": "Dernière activité"
+      },
+      "total": {
+        "one": "{n} enseignant",
+        "other": "{n} enseignants"
+      },
+      "sansDossier": {
+        "one": "{n} compte enseignant n'a pas de dossier de candidature : il n'est pas dans cette liste.",
+        "other": "{n} comptes enseignants n'ont pas de dossier de candidature : ils ne sont pas dans cette liste."
+      },
+      "vide": "Aucun enseignant pour l'instant.",
+      "videDetail": "Les enseignants apparaissent ici dès qu'une candidature d'enseignant arrive.",
+      "aucunResultat": "Aucun enseignant ne correspond.",
+      "lectureEchec": "La liste des enseignants n'a pas pu être lue",
+      "accesRefuse": "Cette liste est réservée à la direction",
+      "genreInconnuTitre": "Votre genre n'est pas renseigné",
+      "genreInconnu": "La liste n'est lisible qu'une fois votre genre renseigné. Demandez à un fondateur de le renseigner.",
+      "sansDonnees": "la liste des enseignants",
+      "resume": "{debut} à {fin} sur {total}",
+      "attendCourt": {
+        "candidat": "Le candidat",
+        "direction": "La direction",
+        "enseignant": "L'enseignant"
+      }
+    },
     "candidatures": {
       "liste": {
         "titreGesteNonFait": "Geste non fait",
