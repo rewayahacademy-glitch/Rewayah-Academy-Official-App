@@ -22,6 +22,7 @@ String libelleGeste(GesteCandidature geste) {
     GesteCandidature.validerPiece => g.accueillir,
     GesteCandidature.confirmerMoyenPaiement => g.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => g.ecarterMoyen,
+    GesteCandidature.debloquerVersement => g.debloquerVersement,
     GesteCandidature.demanderComplement => g.demanderComplement,
     GesteCandidature.cloreComplement => g.cloreComplement,
     GesteCandidature.mettreEnPause => g.mettreEnPause,
@@ -42,6 +43,7 @@ String libelleConsequence(GesteCandidature geste) {
     GesteCandidature.validerPiece => c.accueillir,
     GesteCandidature.confirmerMoyenPaiement => c.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => c.ecarterMoyen,
+    GesteCandidature.debloquerVersement => c.debloquerVersement,
     GesteCandidature.demanderComplement => c.demanderComplement,
     GesteCandidature.cloreComplement => c.cloreComplement,
     GesteCandidature.mettreEnPause => c.mettreEnPause,
@@ -62,6 +64,7 @@ String libelleRetour(GesteCandidature geste) {
     GesteCandidature.validerPiece => r.accueillir,
     GesteCandidature.confirmerMoyenPaiement => r.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => r.ecarterMoyen,
+    GesteCandidature.debloquerVersement => r.debloquerVersement,
     GesteCandidature.demanderComplement => r.demanderComplement,
     GesteCandidature.cloreComplement => r.cloreComplement,
     GesteCandidature.mettreEnPause => r.mettreEnPause,
@@ -88,6 +91,7 @@ String libelleControle(String nom) {
     'profil_unique' => c.profilUnique,
     'aucune_restriction' => c.aucuneRestriction,
     'piece_validee' => c.pieceValidee,
+    'complement_clos' => c.complementClos,
     _ => c.inconnu,
   };
 }
@@ -130,6 +134,8 @@ String libelleCauseControle(String nom, String? cause) {
     'piece_absente' => c.pieceAbsente,
     'piece_a_verifier' => c.pieceAVerifier,
     'piece_a_redeposer' => c.pieceARedeposer,
+    // ACCUEIL-SEPARE : un complement demande bloque l'accueil.
+    'complement_en_cours' => c.complementEnCours,
     _ => c.inconnue,
   };
 }

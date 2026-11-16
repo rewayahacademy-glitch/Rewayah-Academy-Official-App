@@ -190,6 +190,13 @@ DemandeGeste _demande(GesteCandidature g) {
         moyen: const MoyenVersement.virement(),
         motif: 'Compte clos.',
       );
+    case GesteCandidature.debloquerVersement:
+      return DemandeGeste.debloquerVersement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Cas particulier.',
+      );
     case GesteCandidature.mettreEnPause:
       return DemandeGeste.mettreEnPause(
         candidatureId: id,
@@ -279,6 +286,10 @@ void main() {
               'p_operateur': null,
               'p_motif': 'Compte clos.',
             },
+          ),
+          GesteCandidature.debloquerVersement: (
+            'debloquer_versement_candidat',
+            <String, Object?>{'p_motif': 'Cas particulier.'},
           ),
           GesteCandidature.mettreEnPause: (
             'mettre_en_pause_candidat',
