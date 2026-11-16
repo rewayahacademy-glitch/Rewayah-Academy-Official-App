@@ -69,7 +69,7 @@ commun, et le fil de l'équipe.
   (Vision du 05/11 : une donnée saisie doit servir, pas de corvée.)
 - R2. **Les objectifs se comptent seuls** : une file, un nombre visé, une date (« les 41
   dossiers en examen à 0 avant vendredi »). Le compteur vient du serveur.
-- R3. **L'agent IA propose, l'humain décide.** L'agent peut : lire les dossiers de son
+- R3. **Amendée le 16/11/2026 par `BUREAU-EQUIPE/SECRETAIRE-IA.md` §3 (quatre niveaux d'autonomie) ; le texte qui suit ne vaut plus que pour le niveau B.** L'agent IA propose, l'humain décide. L'agent peut : lire les dossiers de son
   périmètre, ranger dans une liste, écrire une proposition motivée. Il ne peut pas :
   accepter, refuser, valider une pièce, écrire à un candidat, voir une pièce d'identité ni
   un contact. La personne confirme les propositions en lot. Le journal écrit « agent ».

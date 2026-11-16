@@ -9,6 +9,7 @@ import 'package:rewayah_academy/core/communications/lecture_fil_communication.da
 import 'package:rewayah_academy/core/communications/modeles_communication.dart';
 import 'package:rewayah_academy/core/communications/textes_fil_communication.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/tc_horloge/mon_horloge.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 
 import '../../support/harnais.dart';
@@ -65,9 +66,11 @@ void main() {
     expect(messageFilDe(_message('a', _moi, h9)).remise, isNull);
   });
 
-  testWidgets('le signe et le mot sous le message, avec la date', (
-    WidgetTester tester,
-  ) async {
+  testWidgets('le signe sous le message, avec l\'heure ; le mot est dit au '
+      'lecteur d\'ecran', (WidgetTester tester) async {
+    // BULLES-MESSAGERIE : l'heure se pose en petit sous la bulle avec les
+    // coches ; le mot (« Envoye », « Lu ») reste dit au lecteur d'ecran.
+    final SemanticsHandle handle = tester.ensureSemantics();
     await tester.pumpWidget(
       hote(
         Scaffold(
@@ -90,15 +93,21 @@ void main() {
         ),
       ),
     );
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(find.byKey(const ValueKey<String>('remise-lu')), findsOneWidget);
     expect(find.byKey(const ValueKey<String>('remise-envoye')), findsOneWidget);
     final String lu = t.com.socle.composants.composer.lu;
     final String envoye = t.com.socle.composants.composer.envoye;
-    expect(find.textContaining('· $lu'), findsOneWidget);
-    expect(find.textContaining('· $envoye'), findsOneWidget);
-    // La date reste ecrite : « 14 novembre... » ou equivalent, jamais le mot seul.
+    // L'heure reste ecrite, jamais le mot seul.
+    expect(find.text(heureChezMoi(h9)), findsOneWidget);
+    expect(
+      find.text(heureChezMoi(DateTime.utc(2026, 11, 14, 11))),
+      findsOneWidget,
+    );
     expect(find.text(lu), findsNothing);
+    expect(find.bySemanticsLabel(RegExp(', $lu')), findsOneWidget);
+    expect(find.bySemanticsLabel(RegExp(', $envoye')), findsOneWidget);
     expect(tester.takeException(), isNull);
+    handle.dispose();
   });
 }

@@ -274,10 +274,12 @@ class MessagesMetierDemo implements PortMessagesMetier {
     required RoleDemoCommunications role,
     this.situation = SituationDemoMessages.normale,
     DateTime? maintenant,
+    bool avecBulles = false,
   }) : _fils = <String, FilMetier>{
          for (final FilMetier f in fixturesMessagesDemo(
            role,
            maintenant ?? DateTime.now(),
+           avecBulles: avecBulles,
          ))
            f.id: f,
        },
@@ -556,8 +558,9 @@ Map<String, List<ConversationPossible>> conversationsAOuvrirDemo(
 /// rapport a [maintenant].
 List<FilMetier> fixturesMessagesDemo(
   RoleDemoCommunications role,
-  DateTime maintenant,
-) {
+  DateTime maintenant, {
+  bool avecBulles = false,
+}) {
   final DateTime ici = maintenant.toUtc();
   DateTime il(Duration d) => ici.subtract(d);
   // Les noms, fonctions, objets et textes suivent la langue de l'interface
@@ -776,6 +779,74 @@ List<FilMetier> fixturesMessagesDemo(
     ],
     RoleDemoCommunications.enseignant => <FilMetier>[
       filAdam(vuParEnseignant: true),
+      // BULLES-MESSAGERIE (16/11/2026) : messages courts et longs, un message
+      // arabe dans l'interface francaise, deux jours, un groupe de messages
+      // rapproches. Opt-in (`avecBulles`) : les autres tests gardent leur
+      // liste.
+      if (avecBulles)
+        FilMetier(
+          id: 'fil-bulles',
+          contexte: <ElementContexteFil>[ElementContexteFil(objet: anNour)],
+          participants: <Participant>[ahmed(), mariam(soi: true)],
+          messages: <MessageCommunication>[
+            MessageCommunication(
+              id: 'bulles-1',
+              auteur: ahmed(),
+              texte: 'Assalamu alaykum.',
+              envoyeLe: il(const Duration(days: 1, hours: 3)),
+            ),
+            MessageCommunication(
+              id: 'bulles-2',
+              auteur: ahmed(),
+              texte:
+                  'Adam a revu la sourate hier soir avec son grand frere, mais '
+                  'il hesite encore sur les deux derniers versets et sur la '
+                  'liaison entre eux. Pourriez-vous nous dire comment le '
+                  'faire reviser cette semaine ?',
+              envoyeLe: il(
+                const Duration(days: 1, hours: 3) - const Duration(minutes: 1),
+              ),
+            ),
+            MessageCommunication(
+              id: 'bulles-3',
+              auteur: mariam(soi: true),
+              texte: 'Wa alaykum assalam.',
+              envoyeLe: il(const Duration(hours: 3)),
+            ),
+            MessageCommunication(
+              id: 'bulles-4',
+              auteur: mariam(soi: true),
+              texte: 'Oui, bien sur.',
+              envoyeLe: il(
+                const Duration(hours: 3) - const Duration(minutes: 1),
+              ),
+            ),
+            MessageCommunication(
+              id: 'bulles-5',
+              auteur: mariam(soi: true),
+              texte:
+                  'Chaque soir, dix minutes : relire lentement les deux versets, '
+                  'puis les reciter sans regarder.',
+              envoyeLe: il(
+                const Duration(hours: 3) - const Duration(minutes: 2),
+              ),
+            ),
+            MessageCommunication(
+              id: 'bulles-6',
+              auteur: ahmed(),
+              texte: 'شكرا جزيلا على المتابعة، جزاكم الله خيرا',
+              envoyeLe: il(const Duration(hours: 1)),
+            ),
+            MessageCommunication(
+              id: 'bulles-7',
+              auteur: ahmed(),
+              texte: 'Merci !',
+              envoyeLe: il(const Duration(minutes: 58)),
+            ),
+          ],
+          attention: const IndicateurAttention(nonLus: 2),
+          capacites: const <CapaciteFil>{CapaciteFil.ecrire},
+        ),
       FilMetier(
         id: 'fil-yasmine',
         contexte: <ElementContexteFil>[

@@ -21844,6 +21844,7 @@ class Traductions$com$messages$fr {
 	String get choisir => 'Choisissez une conversation dans la liste pour la lire et y répondre.';
 
 	late final Traductions$com$messages$recherche$fr recherche = Traductions$com$messages$recherche$fr.internal(_root);
+	late final Traductions$com$messages$filtres$fr filtres = Traductions$com$messages$filtres$fr.internal(_root);
 	late final Traductions$com$messages$ligne$fr ligne = Traductions$com$messages$ligne$fr.internal(_root);
 	late final Traductions$com$messages$noms$fr noms = Traductions$com$messages$noms$fr.internal(_root);
 	late final Traductions$com$messages$entete$fr entete = Traductions$com$messages$entete$fr.internal(_root);
@@ -38679,6 +38680,9 @@ class Traductions$com$socle$lexique$fr {
 	/// fr: 'Aujourd'hui'
 	String get aujourdhui => 'Aujourd\'hui';
 
+	/// fr: 'Hier'
+	String get hier => 'Hier';
+
 	/// fr: 'Notifications'
 	String get notifications => 'Notifications';
 
@@ -39035,6 +39039,24 @@ class Traductions$com$messages$recherche$fr {
 
 	/// fr: '{nombre} conversations trouvées'
 	String resultats({required Object nombre}) => '${nombre} conversations trouvées';
+}
+
+// Path: com.messages.filtres
+class Traductions$com$messages$filtres$fr {
+	Traductions$com$messages$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'Non lus'
+	String get nonLus => 'Non lus';
+
+	/// fr: 'Aucune conversation non lue.'
+	String get aucunNonLu => 'Aucune conversation non lue.';
 }
 
 // Path: com.messages.ligne
@@ -63349,6 +63371,7 @@ extension on Traductions {
 			'com.socle.lexique.communaute' => 'Communauté enseignants',
 			'com.socle.lexique.studio' => 'Le Studio',
 			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
+			'com.socle.lexique.hier' => 'Hier',
 			'com.socle.lexique.notifications' => 'Notifications',
 			'com.socle.lexique.annonce' => 'Annonce',
 			'com.socle.lexique.publication' => 'Publication',
@@ -63415,9 +63438,9 @@ extension on Traductions {
 			'com.messages.apercu.pays' => 'Pays',
 			'com.messages.apercu.situation' => 'Où en est la candidature',
 			'com.messages.apercu.piece' => 'Pièce d\'identité',
-			'com.messages.apercu.entretien' => 'Entretien',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.apercu.entretien' => 'Entretien',
 			'com.messages.apercu.aucunEntretien' => 'Pas encore d\'entretien',
 			'com.messages.apercu.entretienPrevu' => ({required Object quand}) => 'Prévu le ${quand}',
 			'com.messages.apercu.decisions' => 'Dernières décisions',
@@ -63458,6 +63481,9 @@ extension on Traductions {
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
+			'com.messages.filtres.tous' => 'Tous',
+			'com.messages.filtres.nonLus' => 'Non lus',
+			'com.messages.filtres.aucunNonLu' => 'Aucune conversation non lue.',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'Aucun message pour le moment',
 			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
@@ -63926,12 +63952,12 @@ extension on Traductions {
 			'com.studio.demo.f.canalQualiteDetail' => 'Retours des visites de contrôle',
 			'com.studio.demo.f.canalRemplacements' => 'Remplacements',
 			'com.studio.demo.f.canalRemplacementsDetail' => 'Absences et remplacements de la semaine',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.canalCloture' => 'Clôture du mois',
 			'com.studio.demo.f.canalClotureDetail' => 'Préparation de la clôture mensuelle',
 			'com.studio.demo.f.canalDirection' => 'Direction stratégique',
 			'com.studio.demo.f.canalDirectionDetail' => 'Orientations de la direction',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.messagePlanning' => 'Bonjour à toute l\'équipe. Voici le planning du prochain trimestre, dites-moi si quelque chose ne va pas.',
 			'com.studio.demo.f.messageSupports' => 'Je mets à jour les supports du niveau 2 et on fait le point demain.',
 			'com.studio.demo.f.messageMerci' => 'Merci à tous pour la semaine.',
@@ -64440,12 +64466,12 @@ extension on Traductions {
 			'comptable.paiements.confirmation.beneficiaire' => 'Bénéficiaire',
 			'comptable.paiements.confirmation.devise' => 'Devise',
 			'comptable.paiements.confirmation.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.periode' => 'Période / objet',
 			'comptable.paiements.confirmation.prestataire' => 'Prestataire prévu',
 			'comptable.paiements.confirmation.prestataireAucun' => 'Non rendu par la source',
 			'comptable.paiements.confirmation.taux' => 'Taux de change',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.tauxDate' => ({required Object taux, required Object date}) => '${taux}, au ${date}',
 			'comptable.paiements.confirmation.frais' => 'Frais du prestataire',
 			'comptable.paiements.confirmation.change' => 'Coût du change',
@@ -64954,12 +64980,12 @@ extension on Traductions {
 			'comptable.contractuels.videHistoriqueDetail' => 'Les obligations payées, refusées ou annulées apparaissent ici.',
 			'comptable.contractuels.montantDefini' => 'Montant défini à la création, figé après approbation.',
 			'comptable.contractuels.montantFige' => 'Montant figé à l\'approbation : il ne se modifie plus.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.montantTitre' => 'Montant',
 			'comptable.contractuels.sectionLignes' => 'Détail du montant',
 			'comptable.contractuels.sectionInfos' => 'Informations',
 			'comptable.contractuels.sectionHistorique' => 'Historique de l\'obligation',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.historiqueVide' => 'Aucune opération enregistrée pour cette obligation.',
 			'comptable.contractuels.champBeneficiaire' => 'Bénéficiaire',
 			'comptable.contractuels.champType' => 'Type',
@@ -65468,12 +65494,12 @@ extension on Traductions {
 			'juridique.annulation.s3.titre' => '3. Absences et séances annulées',
 			'juridique.annulation.s3.blocs.0' => 'Une place manquée n\'est pas remboursée : elle est réservée pour l\'élève dans une Classe fixe.',
 			'juridique.annulation.s3.blocs.1' => 'Une séance annulée par l\'académie ou par l\'enseignant est remplacée.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s3.blocs.2' => 'Si la Classe n\'ouvre pas faute d\'inscrits, rien n\'est facturé.',
 			'juridique.annulation.s4.titre' => '4. Paiement en retard',
 			'juridique.annulation.s4.blocs.0' => 'Avant le renouvellement, vous recevez des rappels automatiques.',
 			'juridique.annulation.s4.blocs.1' => 'Après la date de renouvellement, un court délai de grâce s\'applique : l\'élève suit ses cours et l\'impayé s\'affiche chez le tuteur.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s4.blocs.2' => 'Si le paiement n\'arrive toujours pas, l\'accès aux séances et aux ressources est suspendu. L\'espace reste ouvert pour voir le profil, l\'historique et payer. La place est gardée quelque temps.',
 			'juridique.annulation.s4.blocs.3' => 'Ensuite, la place est libérée pour la liste d\'attente. Le retour reste possible sans frais, dans une nouvelle Classe.',
 			'juridique.annulation.s4.blocs.4' => 'Les dates exactes sont celles de la politique tarifaire en vigueur (page Tarifs).',
@@ -65982,12 +66008,12 @@ extension on Traductions {
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
 			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, allongez d\'abord la séance non tenue.',
 			'snt.notifications.seanceReportee' => 'Une séance n\'a pas eu lieu : elle est reportée. Nouvelle date à venir.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'La séance du ${quand} n\'a pas eu lieu : elle est reportée. Nouvelle date à venir.',
 			'snt.salle.reporteeTitre' => 'Séance reportée',
 			'snt.salle.reportee' => 'Aucun enseignant n\'a rejoint la salle à temps : la séance est reportée. Nouvelle date à venir, la classe en sera prévenue.',
 			'snt.planning.section' => 'Séances reportées',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.intro' => 'Aucun enseignant n\'a rejoint la salle à temps. Fixez la nouvelle date de chaque séance : elle se tiendra avec l\'enseignant de la classe.',
 			'snt.planning.ligne' => ({required Object classe}) => 'Séance reportée de la classe ${classe}',
 			'snt.planning.ligneQuand' => ({required Object quand}) => 'Prévue le ${quand}',
@@ -66496,12 +66522,12 @@ extension on Traductions {
 			'suiviPedagogique.etape' => 'Étape du programme',
 			'suiviPedagogique.objectifs' => 'Objectifs de l\'étape',
 			'suiviPedagogique.reprise' => 'Où la classe s\'est arrêtée',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.reprisePage' => ({required Object page}) => 'Page ${page} du Mushaf',
 			'suiviPedagogique.aFinirAvant' => 'À finir avant le',
 			'suiviPedagogique.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '${numero} ${mois} ${annee}, pour ${prevue} semaines prévues',
 			'suiviPedagogique.rythme' => 'Rythme',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Dans la durée prévue : ${ecoulees} semaine sur ${prevue}', other: 'Dans la durée prévue : ${ecoulees} semaines sur ${prevue}', ), 
 			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(ecoulees, one: 'Au-delà de la durée prévue : ${ecoulees} semaine sur ${prevue}, avant la date limite', other: 'Au-delà de la durée prévue : ${ecoulees} semaines sur ${prevue}, avant la date limite', ), 
 			'suiviPedagogique.etapesTitre' => 'Les étapes',

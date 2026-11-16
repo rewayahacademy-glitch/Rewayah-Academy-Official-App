@@ -10378,6 +10378,7 @@ class _Traductions$com$messages$en extends Traductions$com$messages$fr {
 	@override String get choisirTitre => 'Choose a conversation';
 	@override String get choisir => 'Choose a conversation from the list to read it and reply.';
 	@override late final _Traductions$com$messages$recherche$en recherche = _Traductions$com$messages$recherche$en._(_root);
+	@override late final _Traductions$com$messages$filtres$en filtres = _Traductions$com$messages$filtres$en._(_root);
 	@override late final _Traductions$com$messages$ligne$en ligne = _Traductions$com$messages$ligne$en._(_root);
 	@override late final _Traductions$com$messages$noms$en noms = _Traductions$com$messages$noms$en._(_root);
 	@override late final _Traductions$com$messages$entete$en entete = _Traductions$com$messages$entete$en._(_root);
@@ -18896,6 +18897,7 @@ class _Traductions$com$socle$lexique$en extends Traductions$com$socle$lexique$fr
 	@override String get communaute => 'Teachers community';
 	@override String get studio => 'The Studio';
 	@override String get aujourdhui => 'Today';
+	@override String get hier => 'Yesterday';
 	@override String get notifications => 'Notifications';
 	@override String get annonce => 'Announcement';
 	@override String get publication => 'Post';
@@ -19070,6 +19072,18 @@ class _Traductions$com$messages$recherche$en extends Traductions$com$messages$re
 	@override String aucun({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.';
 	@override String get resultatUn => '1 conversation found';
 	@override String resultats({required Object nombre}) => '${nombre} conversations found';
+}
+
+// Path: com.messages.filtres
+class _Traductions$com$messages$filtres$en extends Traductions$com$messages$filtres$fr {
+	_Traductions$com$messages$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'All';
+	@override String get nonLus => 'Unread';
+	@override String get aucunNonLu => 'No unread conversation.';
 }
 
 // Path: com.messages.ligne
@@ -36882,6 +36896,7 @@ extension on TraductionsEn {
 			'com.socle.lexique.communaute' => 'Teachers community',
 			'com.socle.lexique.studio' => 'The Studio',
 			'com.socle.lexique.aujourdhui' => 'Today',
+			'com.socle.lexique.hier' => 'Yesterday',
 			'com.socle.lexique.notifications' => 'Notifications',
 			'com.socle.lexique.annonce' => 'Announcement',
 			'com.socle.lexique.publication' => 'Post',
@@ -36948,9 +36963,9 @@ extension on TraductionsEn {
 			'com.messages.apercu.pays' => 'Country',
 			'com.messages.apercu.situation' => 'Where the application stands',
 			'com.messages.apercu.piece' => 'ID document',
-			'com.messages.apercu.entretien' => 'Interview',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.apercu.entretien' => 'Interview',
 			'com.messages.apercu.aucunEntretien' => 'No interview yet',
 			'com.messages.apercu.entretienPrevu' => ({required Object quand}) => 'Planned for ${quand}',
 			'com.messages.apercu.decisions' => 'Latest decisions',
@@ -36991,6 +37006,9 @@ extension on TraductionsEn {
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'No conversation matches "${texte}". Try another name or another class.',
 			'com.messages.recherche.resultatUn' => '1 conversation found',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations found',
+			'com.messages.filtres.tous' => 'All',
+			'com.messages.filtres.nonLus' => 'Unread',
+			'com.messages.filtres.aucunNonLu' => 'No unread conversation.',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'No message yet',
 			'com.messages.ligne.dateCourte' => ({required Object mois, required Object numero}) => '${mois} ${numero}',
@@ -37459,12 +37477,12 @@ extension on TraductionsEn {
 			'com.studio.demo.f.canalQualiteDetail' => 'Feedback from review visits',
 			'com.studio.demo.f.canalRemplacements' => 'Replacements',
 			'com.studio.demo.f.canalRemplacementsDetail' => 'Absences and replacements of the week',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.canalCloture' => 'Month-end closing',
 			'com.studio.demo.f.canalClotureDetail' => 'Preparation of the monthly closing',
 			'com.studio.demo.f.canalDirection' => 'Strategic management',
 			'com.studio.demo.f.canalDirectionDetail' => 'Management directions',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.messagePlanning' => 'Hello to the whole team. Here is next quarter\'s planning, tell me if anything is wrong.',
 			'com.studio.demo.f.messageSupports' => 'I\'m updating the level 2 materials and we\'ll review them tomorrow.',
 			'com.studio.demo.f.messageMerci' => 'Thank you all for the week.',
@@ -37973,12 +37991,12 @@ extension on TraductionsEn {
 			'comptable.paiements.confirmation.beneficiaire' => 'Beneficiary',
 			'comptable.paiements.confirmation.devise' => 'Currency',
 			'comptable.paiements.confirmation.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.periode' => 'Period / purpose',
 			'comptable.paiements.confirmation.prestataire' => 'Planned provider',
 			'comptable.paiements.confirmation.prestataireAucun' => 'Not returned by the source',
 			'comptable.paiements.confirmation.taux' => 'Exchange rate',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.tauxDate' => ({required Object taux, required Object date}) => '${taux}, on ${date}',
 			'comptable.paiements.confirmation.frais' => 'Provider fees',
 			'comptable.paiements.confirmation.change' => 'Exchange cost',
@@ -38487,12 +38505,12 @@ extension on TraductionsEn {
 			'comptable.contractuels.videHistoriqueDetail' => 'Obligations paid, declined or cancelled appear here.',
 			'comptable.contractuels.montantDefini' => 'Amount set at creation, frozen after approval.',
 			'comptable.contractuels.montantFige' => 'Amount frozen at approval: it can no longer be changed.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.montantTitre' => 'Amount',
 			'comptable.contractuels.sectionLignes' => 'Amount details',
 			'comptable.contractuels.sectionInfos' => 'Information',
 			'comptable.contractuels.sectionHistorique' => 'Obligation history',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.historiqueVide' => 'No operation recorded for this obligation.',
 			'comptable.contractuels.champBeneficiaire' => 'Beneficiary',
 			'comptable.contractuels.champType' => 'Type',
@@ -39001,12 +39019,12 @@ extension on TraductionsEn {
 			'juridique.annulation.s3.titre' => '3. Absences and cancelled sessions',
 			'juridique.annulation.s3.blocs.0' => 'A missed place is not refunded: it is reserved for the student in a fixed Class.',
 			'juridique.annulation.s3.blocs.1' => 'A session cancelled by the Academy or by the Teacher is replaced.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s3.blocs.2' => 'If the Class does not open for lack of registrations, nothing is invoiced.',
 			'juridique.annulation.s4.titre' => '4. Late payment',
 			'juridique.annulation.s4.blocs.0' => 'Before renewal, you receive automatic reminders.',
 			'juridique.annulation.s4.blocs.1' => 'After the renewal date, a short grace period applies: the student attends their classes and the unpaid amount is shown to the Guardian.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s4.blocs.2' => 'If payment still does not arrive, access to sessions and resources is suspended. The space stays open to see the profile, the history and to pay. The place is kept for some time.',
 			'juridique.annulation.s4.blocs.3' => 'Then, the place is released to the waiting list. Returning remains possible at no cost, in a new Class.',
 			'juridique.annulation.s4.blocs.4' => 'The exact dates are those of the pricing policy in force (Prices page).',
@@ -39515,12 +39533,12 @@ extension on TraductionsEn {
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start.',
 			'snt.regles.bornesObjectif' => ({required Object min, required Object max}) => 'Between ${min} and ${max} after the start. To go beyond ${max}, first lengthen the session not held.',
 			'snt.notifications.seanceReportee' => 'A session did not take place: it is postponed. New date to come.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'The session of ${quand} did not take place: it is postponed. New date to come.',
 			'snt.salle.reporteeTitre' => 'Session postponed',
 			'snt.salle.reportee' => 'No teacher joined the room in time: the session is postponed. New date to come, the class will be notified.',
 			'snt.planning.section' => 'Postponed sessions',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.intro' => 'No teacher joined the room in time. Set the new date of each session: it will be held with the class teacher.',
 			'snt.planning.ligne' => ({required Object classe}) => 'Postponed session of class ${classe}',
 			'snt.planning.ligneQuand' => ({required Object quand}) => 'Planned for ${quand}',
@@ -40029,12 +40047,12 @@ extension on TraductionsEn {
 			'suiviPedagogique.etape' => 'Program stage',
 			'suiviPedagogique.objectifs' => 'Stage goals',
 			'suiviPedagogique.reprise' => 'Where the class stopped',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.reprisePage' => ({required Object page}) => 'Page ${page} of the Mushaf',
 			'suiviPedagogique.aFinirAvant' => 'To finish before',
 			'suiviPedagogique.aFinirAvantDate' => ({required Object mois, required Object numero, required Object annee, required Object prevue}) => '${mois} ${numero}, ${annee}, for ${prevue} planned weeks',
 			'suiviPedagogique.rythme' => 'Pace',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(ecoulees, one: 'Within the planned time: ${ecoulees} week out of ${prevue}', other: 'Within the planned time: ${ecoulees} weeks out of ${prevue}', ), 
 			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(ecoulees, one: 'Beyond the planned time: ${ecoulees} week out of ${prevue}, before the deadline', other: 'Beyond the planned time: ${ecoulees} weeks out of ${prevue}, before the deadline', ), 
 			'suiviPedagogique.etapesTitre' => 'The stages',

@@ -85,11 +85,14 @@ import '../accessibilite/texte_agrandi.dart';
 import '../communications/persistance_brouillon.dart';
 import '../communications/port_brouillons.dart';
 import '../fluidite/action_anticipee.dart';
+import '../i18n/dates_appareil.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../mouvement/apparition_douce.dart';
 import '../mouvement/mouvement.dart';
+import '../tc_horloge/mon_horloge.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_elevation.dart';
 import '../theme/app_gabarit.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
@@ -178,6 +181,7 @@ class MessageFil {
     this.complement,
     this.annonceTexte,
     this.remise,
+    this.instant,
   });
 
   /// Identifiant stable, pour qu'un message ne soit jamais annonce deux fois.
@@ -206,6 +210,12 @@ class MessageFil {
   /// MESSAGERIE-LU : pour un message de soi, envoye ou lu par l'autre partie ;
   /// `null` : aucun signe (le fil ne connait pas la lecture de l'autre).
   final RemiseMessage? remise;
+
+  /// BULLES-MESSAGERIE : l'instant du message (UTC), d'ou viennent l'heure
+  /// sous la bulle, les groupes de messages rapproches et les separateurs de
+  /// jour ; `null` : le fil ne les calcule pas et garde [horodatage] sous la
+  /// bulle.
+  final DateTime? instant;
 }
 
 /// MESSAGERIE-LU (directeur, 14/11/2026, « comme WhatsApp ») : ou en est un
@@ -382,6 +392,9 @@ class FilDiscussion extends StatefulWidget {
     this.retourCompacte,
     this.saisieReduite = false,
     this.pleinEcran = false,
+    this.afficherAuteur = true,
+    this.horloge = DateTime.now,
+    this.prendTeteDePage = true,
   }) : assert(
          lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
@@ -477,30 +490,41 @@ class FilDiscussion extends StatefulWidget {
   /// defile en elle-meme. Source : `docs/current/UX_REVIEW_MESSAGERIE-PLEIN-ECRAN.md`.
   final bool pleinEcran;
 
+  /// BULLES-MESSAGERIE : vrai (par defaut), le nom de l'auteur se lit sur les
+  /// messages recus (conversation de groupe, canal) ; faux dans une
+  /// conversation a deux, ou le nom de l'autre est deja dans la barre. Les
+  /// messages de soi ne portent jamais de nom ; le lecteur d'ecran annonce
+  /// toujours l'auteur.
+  final bool afficherAuteur;
+
+  /// BULLES-MESSAGERIE : vrai (par defaut), un fil qui porte son en-tete prend
+  /// la tete de la page qui la lui confie (`PageShell(teteAvecLaListe:)`) ;
+  /// faux, il la laisse a la page : sur ordinateur et tablette, la liste des
+  /// conversations est a cote du fil, la tete reste au-dessus des deux
+  /// colonnes, une seule fois.
+  final bool prendTeteDePage;
+
+  /// L'heure courante, pour dire « Aujourd'hui » et « Hier » sur les
+  /// separateurs de jour.
+  final DateTime Function() horloge;
+
   /// La largeur sous laquelle [saisieReduite] s'applique (320 oui, 360 et
   /// 390 non).
   static const double largeurReduite = 360;
 
-  /// La largeur d'ecran a partir de laquelle les bulles s'elargissent a la
-  /// colonne du fil (COM-RC lot K, point 1) : sur tablette et bureau (canal
-  /// du Studio a 768 et 1440, Focus, Messages metier, echanges du
-  /// controleur), une bulle a 86 % s'arretait avant la rangee d'ecriture et
-  /// « Envoyer » semblait deborder du fil. Un message recu prend alors la
-  /// colonne entiere, aux bords du champ et d'« Envoyer » ; un message de
-  /// soi garde un leger retrait au debut ([partBulleSoiColonne]), pose a la
-  /// fin, au bord d'« Envoyer » : envoyes et recus se distinguent par leur
-  /// place, pas seulement par leur teinte et « Vous ». Sur telephone, la
-  /// bulle garde son retrait de conversation (86 %, a la fin pour soi).
-  /// C'est l'ecran qui decide, pas la colonne : a 768, le fil (344) est plus
-  /// etroit qu'a 390 (358).
-  static const double largeurColonne = AppGabarit.seuilTablette;
+  /// BULLES-MESSAGERIE : la part de la colonne qu'une bulle prend au plus.
+  static const double partBulle = 0.75;
 
-  /// La part de la largeur du fil qu'une bulle prend sur telephone.
-  static const double partBulleTelephone = 0.86;
+  /// BULLES-MESSAGERIE : la largeur qu'une bulle ne depasse jamais sur
+  /// ordinateur.
+  static const double largeurBulleMax = 560;
 
-  /// La part de la colonne qu'un message de soi prend sur tablette et
-  /// bureau (lot K, point 1) ; un message recu en prend toute la largeur.
-  static const double partBulleSoiColonne = 0.92;
+  /// BULLES-MESSAGERIE : la marge toujours libre du cote oppose a la bulle.
+  static const double margeOpposee = AppSpacing.respiration;
+
+  /// BULLES-MESSAGERIE : l'ecart au plus entre deux messages d'un meme auteur
+  /// pour qu'ils forment un groupe.
+  static const Duration ecartGroupe = Duration(minutes: 5);
 
   /// La part de la hauteur de l'ecran que la saisie occupe au plus (R-02).
   static const double partSaisieMax = 0.4;
@@ -615,9 +639,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
   RelaisTetePage? _relaisTete;
   Widget? _teteDePage;
   final List<_MessageLocal> _locaux = <_MessageLocal>[];
-  late final Set<String> _presentsALOuverture = <String>{
-    for (final MessageFil m in widget.messages) m.id,
-  };
+  // DOUBLON-ENVOI (directeur, 16/11/2026) : lu a l'ouverture, dans
+  // [initState]. Un `late final` paresseux n'etait lu qu'au premier besoin :
+  // dans une conversation vide, ce besoin venait avec le retour du serveur du
+  // premier message envoye, qui passait alors pour « present a l'ouverture »
+  // et gardait sa bulle locale a cote (deux bulles).
+  late final Set<String> _presentsALOuverture;
 
   /// Le panneau vocal occupe-t-il la saisie (R-04) ?
   bool _vocalOuvert = false;
@@ -662,6 +689,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
   @override
   void initState() {
     super.initState();
+    _presentsALOuverture = <String>{
+      for (final MessageFil m in widget.messages) m.id,
+    };
     if (widget.controleur == null) _proprio = TextEditingController();
     _champ.addListener(_auChangement);
     _noeudChamp.addListener(_auFocusChamp);
@@ -723,6 +753,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // (SUPERPOS-1), au-dessus du fil et de sa saisie.
     final bool preneur =
         !widget.pleinEcran &&
+        widget.prendTeteDePage &&
         (widget.entete != null || widget.enteteCompacte != null);
     final TetePageConfiee? page = preneur ? TetePageConfiee.de(context) : null;
     final RelaisTetePage? relais = page?.relais;
@@ -1034,7 +1065,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
   /// dernier message reste collé au champ, la liste etant ancree en bas.
   Widget _pleinEcran(
     BuildContext context, {
-    required List<Widget> bulles,
+    required List<_Ligne> lignes,
     required Widget Function({required bool reduite}) zoneSaisie,
     required String? limite,
     required TextTheme styles,
@@ -1048,20 +1079,26 @@ class _FilDiscussionState extends State<FilDiscussion> {
       children: <Widget>[
         Expanded(
           key: FilDiscussion.cleMessages,
-          child: CustomScrollView(
-            controller: _defilement,
-            reverse: true,
-            slivers: <Widget>[
-              SliverPadding(
-                padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                sliver: SliverList.separated(
-                  itemCount: bulles.length,
-                  separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
-                  itemBuilder: (BuildContext _, int i) =>
-                      bulles[bulles.length - 1 - i],
+          // BULLES-MESSAGERIE : le fond du fil, un peu plus sombre que les
+          // bulles recues, de bord a bord.
+          child: ColoredBox(
+            color: AppPalette.of(context).fondFil.background,
+            child: CustomScrollView(
+              controller: _defilement,
+              reverse: true,
+              slivers: <Widget>[
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
+                  // Construites au fur et a mesure du defilement ; la liste
+                  // etant inversee, l'element 0 est le dernier message.
+                  sliver: SliverList.builder(
+                    itemCount: lignes.length,
+                    itemBuilder: (BuildContext _, int i) =>
+                        _item(lignes, lignes.length - 1 - i),
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
         // La saisie prend sa hauteur naturelle : le champ grandit jusqu'a cinq
@@ -1069,20 +1106,208 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // toute messagerie) ; les messages gardent tout le reste.
         KeyedSubtree(
           key: FilDiscussion.cleSaisie,
-          child: limite == null
-              ? saisie
-              : Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                  child: Text(
-                    limite,
-                    key: FilDiscussion.cleLectureSeule,
-                    style: AppPalette.of(context).inkMuted
-                        .applyTo(styles.bodyMedium ?? const TextStyle()),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+            child: limite == null
+                ? saisie
+                : Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                    child: Text(
+                      limite,
+                      key: FilDiscussion.cleLectureSeule,
+                      style: AppPalette.of(context).inkMuted
+                          .applyTo(styles.bodyMedium ?? const TextStyle()),
+                    ),
                   ),
-                ),
+          ),
         ),
       ],
     );
+  }
+
+  /// Une ligne du fil, avec son ecart au-dessus : quatre points dans un
+  /// groupe de messages rapproches, douze ailleurs. [apresEntete] : une
+  /// ligne precede la premiere (l'en-tete qui defile).
+  Widget _item(List<_Ligne> lignes, int i, {bool apresEntete = false}) {
+    final _Ligne l = lignes[i];
+    return Padding(
+      padding: EdgeInsetsDirectional.only(
+        top: i == 0 && !apresEntete ? 0 : l.ecartAvant,
+        start: _retrait(),
+        end: _retrait(),
+      ),
+      child: _contenuLigne(l),
+    );
+  }
+
+  /// Le retrait des bulles au bord du fil : 16 en plein ecran (la page du
+  /// telephone), 12 sur tablette et ordinateur ; aucun sous 600 hors plein
+  /// ecran, ou la place se compte (nom d'une piece jointe a 320 en texte x2).
+  double _retrait() => widget.pleinEcran
+      ? AppSpacing.lg
+      : MediaQuery.sizeOf(context).width < AppGabarit.seuilTablette
+      ? 0
+      : AppSpacing.md;
+
+  Widget _contenuLigne(_Ligne l) {
+    final TextesFilDiscussion x = widget.textes;
+    if (l.vide) {
+      // R-24 : un fil sans message le dit, jamais une zone blanche.
+      return EmptyState(
+        key: FilDiscussion.cleAucunMessage,
+        message:
+            x.aucunMessageTitre ??
+            t.com.socle.composants.composer.aucunMessageTitre,
+        invitation:
+            x.aucunMessage ?? t.com.socle.composants.composer.aucunMessage,
+        registre: RegistreVide.subi,
+      );
+    }
+    if (l.jour != null) return _PastilleJour(libelle: l.jour!);
+    final MessageFil? m = l.message;
+    if (m != null) {
+      final String heure = m.instant == null
+          ? m.horodatage
+          : heureChezMoi(m.instant!);
+      final String? mot = switch (m.remise) {
+        null => null,
+        RemiseMessage.lu => x.lu ?? t.com.socle.composants.composer.lu,
+        RemiseMessage.envoye || RemiseMessage.enCours => x.envoye,
+      };
+      return _Bulle(
+        key: ValueKey<String>('message-${m.id}'),
+        auteur: m.auteur,
+        afficherNom: l.avecNom,
+        texte: m.texte,
+        heure: l.dernier ? heure : null,
+        mot: l.dernier ? mot : null,
+        remise: l.dernier ? m.remise : null,
+        deSoi: m.deSoi,
+        coinPetit: l.dernier,
+        complement: m.complement,
+        // Son propre message, revenu du serveur, a deja ete annonce par sa
+        // bulle locale : il ne l'est pas une seconde fois.
+        annonce: _presentsALOuverture.contains(m.id) || m.deSoi
+            ? null
+            : x.annonce(m.auteur, m.annonceTexte ?? m.texte),
+      );
+    }
+    final _MessageLocal local = l.local!;
+    final bool echec = local.etat == EtatEnvoiMessage.echec;
+    return _Bulle(
+      key: ValueKey<String>('message-${local.id}'),
+      auteur: x.auteurSoi,
+      afficherNom: false,
+      texte: local.texte,
+      mot: switch (local.etat) {
+        EtatEnvoiMessage.enCours => x.enCours,
+        EtatEnvoiMessage.envoye => x.envoye,
+        EtatEnvoiMessage.echec => local.refus ?? x.echec,
+      },
+      remise: switch (local.etat) {
+        EtatEnvoiMessage.enCours => RemiseMessage.enCours,
+        EtatEnvoiMessage.envoye => RemiseMessage.envoye,
+        EtatEnvoiMessage.echec => null,
+      },
+      deSoi: true,
+      coinPetit: true,
+      // L'etat change sous les yeux : il est annonce a chaque etape.
+      etatVivant: true,
+      echec: echec,
+      // Un refus dont la cause ne change pas n'offre pas « Reessayer » (K-56).
+      libelleReessayer: echec && local.refus == null ? x.reessayer : null,
+      onReessayer: () => _tenter(local),
+    );
+  }
+
+  /// Les lignes du fil (messages, separateurs de jour, groupes), calculees UNE
+  /// fois quand la liste des messages ou l'etat d'un envoi change : un nouvel
+  /// appel avec les memes messages (frappe dans le champ) rend la liste
+  /// gardee. Jamais calculees dans la construction d'une bulle.
+  List<_Ligne> _lignesDuFil(List<_MessageLocal> locaux) {
+    final int empreinteLocaux = Object.hashAll(<Object?>[
+      for (final _MessageLocal m in locaux) ...<Object?>[m.id, m.etat, m.refus],
+    ]);
+    final List<_Ligne>? gardees = _lignesGardees;
+    if (gardees != null &&
+        identical(_messagesGardes, widget.messages) &&
+        _empreinteGardee == empreinteLocaux &&
+        _auteurGarde == widget.afficherAuteur &&
+        _jourGarde == _aujourdhui()) {
+      return gardees;
+    }
+    final List<MessageFil> messages = widget.messages;
+    final DateTime aujourdhui = _aujourdhui();
+    final List<_Ligne> lignes = <_Ligne>[];
+    DateTime? jourPrecedent;
+    for (int i = 0; i < messages.length; i++) {
+      final MessageFil m = messages[i];
+      final DateTime? jour = _jourDe(m);
+      final bool nouveauJour = jour != null && jour != jourPrecedent;
+      if (nouveauJour) {
+        lignes.add(_Ligne.pastilleJour(_libelleJour(jour, aujourdhui)));
+      }
+      jourPrecedent = jour ?? jourPrecedent;
+      final bool suitLeGroupe =
+          !nouveauJour && i > 0 && _rapproches(messages[i - 1], m);
+      final bool precedeLeGroupe =
+          i + 1 < messages.length && _rapproches(m, messages[i + 1]);
+      lignes.add(
+        _Ligne.message(
+          m,
+          ecartAvant: suitLeGroupe ? AppSpacing.xs : AppSpacing.md,
+          dernier: !precedeLeGroupe,
+          avecNom: widget.afficherAuteur && !m.deSoi,
+        ),
+      );
+    }
+    for (final _MessageLocal m in locaux) {
+      lignes.add(_Ligne.local(m, ecartAvant: AppSpacing.md));
+    }
+    if (lignes.isEmpty) lignes.add(const _Ligne.videLigne());
+    _lignesGardees = lignes;
+    _messagesGardes = widget.messages;
+    _empreinteGardee = empreinteLocaux;
+    _auteurGarde = widget.afficherAuteur;
+    _jourGarde = aujourdhui;
+    return lignes;
+  }
+
+  List<_Ligne>? _lignesGardees;
+  List<MessageFil>? _messagesGardes;
+  int? _empreinteGardee;
+  bool? _auteurGarde;
+  DateTime? _jourGarde;
+
+  DateTime _aujourdhui() {
+    final DateTime ici = chezMoi(widget.horloge());
+    return DateTime(ici.year, ici.month, ici.day);
+  }
+
+  DateTime? _jourDe(MessageFil m) {
+    final DateTime? instant = m.instant;
+    if (instant == null) return null;
+    final DateTime ici = chezMoi(instant);
+    return DateTime(ici.year, ici.month, ici.day);
+  }
+
+  /// Deux messages consecutifs du meme auteur, a cinq minutes au plus l'un de
+  /// l'autre et du meme jour, forment un groupe.
+  bool _rapproches(MessageFil a, MessageFil b) {
+    final DateTime? ia = a.instant;
+    final DateTime? ib = b.instant;
+    if (ia == null || ib == null) return false;
+    return a.deSoi == b.deSoi &&
+        a.auteur == b.auteur &&
+        ib.difference(ia).abs() <= FilDiscussion.ecartGroupe &&
+        _jourDe(a) == _jourDe(b);
+  }
+
+  String _libelleJour(DateTime jour, DateTime aujourdhui) {
+    final int ecart = aujourdhui.difference(jour).inDays;
+    if (ecart == 0) return t.com.socle.lexique.aujourdhui;
+    if (ecart == 1) return t.com.socle.lexique.hier;
+    return dateDeLAppareil(jour);
   }
 
   @override
@@ -1091,79 +1316,22 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // MESSAGERIE-TEMPS-REEL (14/11/2026) : le fil ouvert se relit en direct ;
     // un message envoye d'ici revient alors du serveur. Sa bulle locale
     // confirmee s'efface devant lui (meme texte, un pour un) : jamais deux
-    // bulles pour un message. Une bulle en cours ou non confirmee reste.
+    // bulles pour un message. Une bulle non confirmee (echec) reste.
+    // DOUBLON-ENVOI (directeur, 16/11/2026, capture : le message s'affichait
+    // deux fois) : le serveur renvoie souvent le message AVANT que l'envoi
+    // ait repondu ; la bulle encore « en cours » s'efface donc aussi devant
+    // lui, puisque son retour prouve qu'il est arrive.
     final List<String> revenusDuServeur = <String>[
       for (final MessageFil m in widget.messages)
         if (m.deSoi && !_presentsALOuverture.contains(m.id)) m.texte.trim(),
     ];
     final List<_MessageLocal> locauxMontres = <_MessageLocal>[
       for (final _MessageLocal m in _locaux)
-        if (m.etat != EtatEnvoiMessage.envoye ||
+        if (m.etat == EtatEnvoiMessage.echec ||
             !revenusDuServeur.remove(m.texte.trim()))
           m,
     ];
-    final List<Widget> bulles = <Widget>[
-      for (final MessageFil m in widget.messages)
-        _Bulle(
-          key: ValueKey<String>('message-${m.id}'),
-          auteur: m.auteur,
-          texte: m.texte,
-          pied: switch (m.remise) {
-            null => m.horodatage,
-            RemiseMessage.lu =>
-              '${m.horodatage} · ${x.lu ?? t.com.socle.composants.composer.lu}',
-            RemiseMessage.envoye ||
-            RemiseMessage.enCours => '${m.horodatage} · ${x.envoye}',
-          },
-          remise: m.remise,
-          deSoi: m.deSoi,
-          complement: m.complement,
-          // Son propre message, revenu du serveur, a deja ete annonce par sa
-          // bulle locale : il ne l'est pas une seconde fois.
-          annonce: _presentsALOuverture.contains(m.id) || m.deSoi
-              ? null
-              : x.annonce(m.auteur, m.annonceTexte ?? m.texte),
-        ),
-      for (final _MessageLocal m in locauxMontres)
-        _Bulle(
-          key: ValueKey<String>('message-${m.id}'),
-          auteur: x.auteurSoi,
-          texte: m.texte,
-          pied: switch (m.etat) {
-            EtatEnvoiMessage.enCours => x.enCours,
-            EtatEnvoiMessage.envoye => x.envoye,
-            EtatEnvoiMessage.echec => m.refus ?? x.echec,
-          },
-          remise: switch (m.etat) {
-            EtatEnvoiMessage.enCours => RemiseMessage.enCours,
-            EtatEnvoiMessage.envoye => RemiseMessage.envoye,
-            EtatEnvoiMessage.echec => null,
-          },
-          deSoi: true,
-          // L'etat change sous les yeux : il est annonce a chaque etape.
-          etatVivant: true,
-          echec: m.etat == EtatEnvoiMessage.echec,
-          // Un refus dont la cause ne change pas n'offre pas « Reessayer » (K-56).
-          libelleReessayer: m.etat == EtatEnvoiMessage.echec && m.refus == null
-              ? x.reessayer
-              : null,
-          onReessayer: () => _tenter(m),
-        ),
-    ];
-    if (bulles.isEmpty) {
-      // R-24 : un fil sans message le dit, jamais une zone blanche.
-      bulles.add(
-        EmptyState(
-          key: FilDiscussion.cleAucunMessage,
-          message:
-              x.aucunMessageTitre ??
-              t.com.socle.composants.composer.aucunMessageTitre,
-          invitation:
-              x.aucunMessage ?? t.com.socle.composants.composer.aucunMessage,
-          registre: RegistreVide.subi,
-        ),
-      );
-    }
+    final List<_Ligne> lignes = _lignesDuFil(locauxMontres);
     final Widget? enteteDonne = widget.entete;
     final Widget? entete = enteteDonne == null
         ? null
@@ -1257,7 +1425,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     if (widget.pleinEcran) {
       return _pleinEcran(
         context,
-        bulles: bulles,
+        lignes: lignes,
         zoneSaisie: zoneSaisie,
         limite: limite,
         styles: styles,
@@ -1286,13 +1454,12 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // reste de l'en-tete defile, apres la tete de la page.
         final bool compacteFixe = compacte != null && enteteDefilante;
         final Widget? teteDePage = _teteDePage;
-        final List<Widget> elements = <Widget>[
+        final List<Widget> debut = <Widget>[
           ?teteDePage,
           if (compacteFixe)
             ?suite
           else if (entete != null && enteteDefilante)
             entete,
-          ...bulles,
         ];
         // COM-RC tour 3 (R-02) : quand l'en-tete defile (texte agrandi, vue
         // basse), la saisie defile aussi, apres le dernier message. Bornee
@@ -1339,26 +1506,43 @@ class _FilDiscussionState extends State<FilDiscussion> {
               entete,
             Expanded(
               key: FilDiscussion.cleMessages,
-              child: CustomScrollView(
-                controller: _defilement,
-                slivers: <Widget>[
-                  SliverList.separated(
-                    itemCount: elements.length,
-                    separatorBuilder: (BuildContext _, int _) => Ecart.vMd,
-                    itemBuilder: (BuildContext _, int i) => elements[i],
-                  ),
-                  SliverToBoxAdapter(
-                    child: saisieDansListe
-                        ? Padding(
-                            padding: const EdgeInsets.only(top: AppSpacing.lg),
-                            child: KeyedSubtree(
-                              key: FilDiscussion.cleSaisie,
-                              child: saisie,
+              child: ColoredBox(
+                color: AppPalette.of(context).fondFil.background,
+                child: CustomScrollView(
+                  controller: _defilement,
+                  slivers: <Widget>[
+                    // BULLES-MESSAGERIE : les bulles se construisent au fil du
+                    // defilement ; l'en-tete qui defile les precede.
+                    SliverList.builder(
+                      itemCount: debut.length + lignes.length,
+                      itemBuilder: (BuildContext _, int i) => i < debut.length
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                bottom: AppSpacing.md,
+                              ),
+                              child: debut[i],
+                            )
+                          : _item(
+                              lignes,
+                              i - debut.length,
+                              apresEntete: debut.isNotEmpty,
                             ),
-                          )
-                        : Ecart.vLg,
-                  ),
-                ],
+                    ),
+                    SliverToBoxAdapter(
+                      child: saisieDansListe
+                          ? Padding(
+                              padding: const EdgeInsets.only(
+                                top: AppSpacing.lg,
+                              ),
+                              child: KeyedSubtree(
+                                key: FilDiscussion.cleSaisie,
+                                child: saisie,
+                              ),
+                            )
+                          : Ecart.vLg,
+                    ),
+                  ],
+                ),
               ),
             ),
             // Hors de ce cas, la saisie, vocal compris, reste sous la liste
@@ -1414,13 +1598,104 @@ class _FilDiscussionState extends State<FilDiscussion> {
   }
 }
 
+/// Une ligne du fil, calculee une fois (voir `_lignesDuFil`) : un message, un
+/// message local, un separateur de jour, ou l'etat vide.
+@immutable
+class _Ligne {
+  const _Ligne.message(
+    MessageFil this.message, {
+    required this.ecartAvant,
+    required this.dernier,
+    required this.avecNom,
+  }) : local = null,
+       jour = null,
+       vide = false;
+
+  const _Ligne.local(_MessageLocal this.local, {required this.ecartAvant})
+    : message = null,
+      jour = null,
+      dernier = true,
+      avecNom = false,
+      vide = false;
+
+  const _Ligne.pastilleJour(String this.jour)
+    : message = null,
+      local = null,
+      ecartAvant = AppSpacing.md,
+      dernier = true,
+      avecNom = false,
+      vide = false;
+
+  const _Ligne.videLigne()
+    : message = null,
+      local = null,
+      jour = null,
+      ecartAvant = 0,
+      dernier = true,
+      avecNom = false,
+      vide = true;
+
+  final MessageFil? message;
+  final _MessageLocal? local;
+  final String? jour;
+  final bool vide;
+
+  /// L'espace au-dessus de la ligne.
+  final double ecartAvant;
+
+  /// Le dernier message de son groupe : il porte l'heure et le coin a 4.
+  final bool dernier;
+
+  /// Le nom de l'auteur se lit sur cette bulle.
+  final bool avecNom;
+}
+
+/// Le separateur de jour : une pastille centree (« Aujourd'hui », « Hier »,
+/// ou la date).
+class _PastilleJour extends StatelessWidget {
+  const _PastilleJour({required this.libelle});
+
+  final String libelle;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return Center(
+      child: Container(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xs,
+        ),
+        decoration: BoxDecoration(
+          color: palette.surfaceRaised.background,
+          borderRadius: AppRadius.arrondiFull,
+        ),
+        child: Text(
+          libelle,
+          style: palette.inkMuted.applyTo(
+            Theme.of(context).textTheme.labelMedium ?? const TextStyle(),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// La bulle d'un message (BULLES-MESSAGERIE, directeur, 16/11/2026) : la
+/// taille de son contenu sans depasser les trois quarts de la colonne, une
+/// marge toujours libre du cote oppose, le recu cote debut sur une carte claire
+/// a une ombre legere, le sien cote fin sur un violet profond a texte casse.
+/// Aucune bordure ; l'heure se pose sous la bulle, de son cote.
 class _Bulle extends StatelessWidget {
   const _Bulle({
     required this.auteur,
+    required this.afficherNom,
     required this.texte,
-    required this.pied,
     required this.deSoi,
+    required this.coinPetit,
     super.key,
+    this.heure,
+    this.mot,
     this.complement,
     this.annonce,
     this.etatVivant = false,
@@ -1431,9 +1706,20 @@ class _Bulle extends StatelessWidget {
   });
 
   final String auteur;
+  final bool afficherNom;
   final String texte;
-  final String pied;
+
+  /// L'heure sous la bulle, ou `null` : aucune (message au milieu d'un groupe).
+  final String? heure;
+
+  /// Le mot de l'etat (« Envoye », « Lu », « Envoi en cours »), dit au lecteur
+  /// d'ecran ; sous la bulle, quand il n'y a pas d'heure, il s'ecrit.
+  final String? mot;
   final bool deSoi;
+
+  /// Le dernier message de son groupe : le coin du cote de celui qui parle
+  /// passe au plus petit rayon.
+  final bool coinPetit;
   final RemiseMessage? remise;
   final Widget? complement;
   final String? annonce;
@@ -1447,116 +1733,176 @@ class _Bulle extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppColorPair fond = deSoi
-        ? palette.washAccent
+        ? palette.surfaceBulleSoi
         : palette.surfaceRaised;
-    Widget bulle = Container(
-      padding: const EdgeInsets.all(AppSpacing.lg),
+    final TextDirection sens = sensDuContenu(context, texte);
+    const Radius grand = Radius.circular(AppRadius.md);
+    const Radius petit = Radius.circular(AppRadius.xs);
+    final BorderRadiusDirectional forme = BorderRadiusDirectional.only(
+      topStart: grand,
+      topEnd: grand,
+      bottomStart: !deSoi && coinPetit ? petit : grand,
+      bottomEnd: deSoi && coinPetit ? petit : grand,
+    );
+    // Le texte du message : l'encre forte du corps (recu), ou le blanc casse
+    // de la paire (le sien), en graisse normale (`bodyLarge`, 400), jamais en gras.
+    final TextStyle base = textes.bodyLarge ?? const TextStyle();
+    final TextStyle styleTexte = deSoi
+        ? fond.applyTo(base)
+        : palette.inkStrong.applyTo(base);
+    Widget bulle = DecoratedBox(
       decoration: BoxDecoration(
         color: fond.background,
-        borderRadius: BorderRadius.circular(AppRadius.md),
-        border: Border.fromBorderSide(
-          (echec ? palette.inkAlert : palette.borderHairline).asBorderSide(),
-        ),
+        borderRadius: forme,
+        boxShadow: deSoi
+            ? AppElevation.niveau0
+            : AppElevation.bulle(palette.ombre),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            auteur,
-            style: palette.inkMuted.applyTo(
-              textes.labelMedium ?? const TextStyle(),
-            ),
-          ),
-          if (texte.isNotEmpty) ...<Widget>[
-            Ecart.vXs,
-            Text(
-              texte,
-              // Le message garde le sens de sa langue (COM-RC tour 3).
-              textDirection: sensDuContenu(context, texte),
-              style: fond.applyTo(textes.bodyLarge ?? const TextStyle()),
-            ),
-          ],
-          if (complement case final Widget complement) ...<Widget>[
-            Ecart.vSm,
-            complement,
-          ],
-          Ecart.vSm,
-          Semantics(
-            liveRegion: etatVivant,
-            child: switch (remise) {
-              null => Text(
-                pied,
-                style: (echec ? palette.inkAlert : palette.inkMuted).applyTo(
-                  textes.bodySmall ?? const TextStyle(),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
+        ),
+        // Le sens du texte suit la langue du message (premiere lettre
+        // forte) : un texte arabe dans l'interface francaise s'aligne a
+        // droite, et l'inverse.
+        // Le nom n'est pas ecrit quand [afficherNom] est faux, il reste dit :
+        // le lecteur d'ecran annonce toujours l'auteur.
+        child: Semantics(
+          container: !afficherNom,
+          label: afficherNom ? null : auteur,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              // Le sens du texte suit la langue du message (premiere lettre
+              // forte) : un texte arabe dans l'interface francaise s'aligne a
+              // droite, et l'inverse. Seuls le nom et le texte le suivent : la
+              // piece jointe garde le sens de l'interface.
+              if (afficherNom || texte.isNotEmpty)
+                Directionality(
+                  textDirection: sens,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      if (afficherNom)
+                        Text(
+                          auteur,
+                          style: palette.inkMuted.applyTo(
+                            textes.labelMedium ?? const TextStyle(),
+                          ),
+                        ),
+                      if (texte.isNotEmpty) ...<Widget>[
+                        if (afficherNom) Ecart.vXs,
+                        Text(texte, textDirection: sens, style: styleTexte),
+                      ],
+                    ],
+                  ),
                 ),
-              ),
-              final RemiseMessage r => _PiedRemise(
-                pied: pied,
-                remise: r,
-                style: textes.bodySmall ?? const TextStyle(),
-              ),
-            },
+              if (complement case final Widget complement) ...<Widget>[
+                if (afficherNom || texte.isNotEmpty) Ecart.vSm,
+                complement,
+              ],
+            ],
           ),
-          if (libelleReessayer != null) ...<Widget>[
-            Ecart.vXs,
-            Align(
-              alignment: AlignmentDirectional.centerStart,
-              child: ActionPrincipale(
-                libelle: libelleReessayer!,
-                onPress: onReessayer,
-                niveau: NiveauAction.tertiaire,
-                pleineLargeur: false,
-                // Lot K : « Reessayer » s'aligne sur le texte de la bulle.
-                compacte: true,
-                affleurant: true,
-              ),
-            ),
-          ],
-        ],
+        ),
       ),
     );
     if (annonce != null) {
       // Arrive pendant la lecture : une annonce polie, sans voler le focus.
       bulle = Semantics(liveRegion: true, label: annonce, child: bulle);
     }
+    final Widget? pied = heure == null && mot == null
+        ? null
+        : Padding(
+            padding: const EdgeInsets.only(top: AppSpacing.xs),
+            child: _PiedMessage(
+              heure: heure,
+              mot: mot,
+              remise: remise,
+              echec: echec,
+              etatVivant: etatVivant,
+              style: textes.bodySmall ?? const TextStyle(),
+            ),
+          );
+    final Widget? reessayer = libelleReessayer == null
+        ? null
+        : Align(
+            alignment: deSoi
+                ? AlignmentDirectional.centerEnd
+                : AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              libelle: libelleReessayer!,
+              onPress: onReessayer,
+              niveau: NiveauAction.tertiaire,
+              pleineLargeur: false,
+              compacte: true,
+              affleurant: true,
+            ),
+          );
     return ApparitionDouce(
-      child: Align(
-        alignment: deSoi
-            ? AlignmentDirectional.centerEnd
-            : AlignmentDirectional.centerStart,
-        child: FractionallySizedBox(
-          // Lot K, point 1 : sur tablette et bureau, un message recu prend
-          // la colonne entiere (bords du champ et d'« Envoyer ») ; un message
-          // de soi garde un leger retrait au debut, pose au bord de fin.
-          widthFactor:
-              MediaQuery.sizeOf(context).width < FilDiscussion.largeurColonne
-              ? FilDiscussion.partBulleTelephone
-              : deSoi
-              ? FilDiscussion.partBulleSoiColonne
-              : 1,
-          alignment: deSoi
-              ? AlignmentDirectional.centerEnd
-              : AlignmentDirectional.centerStart,
-          child: bulle,
-        ),
+      child: LayoutBuilder(
+        builder: (BuildContext _, BoxConstraints colonne) {
+          final double l = colonne.maxWidth;
+          // Au plus 75 % de la colonne (560 sur ordinateur), et toujours 64
+          // de libres du cote oppose.
+          final double maxi = math.max(
+            0,
+            math.min(
+              math.min(
+                FilDiscussion.largeurBulleMax,
+                // Une bulle qui porte une piece (carte, lecteur vocal) prend
+                // la colonne moins la marge : le nom d'un fichier garde son
+                // debut (R-11).
+                l * (complement == null ? FilDiscussion.partBulle : 1),
+              ),
+              l - FilDiscussion.margeOpposee,
+            ),
+          );
+          return Align(
+            alignment: deSoi
+                ? AlignmentDirectional.centerEnd
+                : AlignmentDirectional.centerStart,
+            child: ConstrainedBox(
+              constraints: BoxConstraints(maxWidth: maxi),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: deSoi
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                children: <Widget>[bulle, ?pied, ?reessayer],
+              ),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-/// MESSAGERIE-LU : le pied d'un message de soi, avec son signe. Pale (encre
-/// discrete, une coche) tant qu'il n'est pas lu ; fonce (encre d'accent, deux
-/// coches) une fois lu. Le mot est toujours ecrit. L'icone reste au trait : la
-/// graisse pleine de `checks` dessine un carre plein, illisible a 16.
-class _PiedRemise extends StatelessWidget {
-  const _PiedRemise({
-    required this.pied,
+/// Le pied d'un message : l'heure en petit, et pour un message de soi les
+/// coches « envoye / lu » (MESSAGERIE-LU, directeur, 14/11/2026). Trois
+/// signaux, jamais la couleur seule : l'icone (horloge, une coche, deux
+/// coches), le mot (dit au lecteur d'ecran, ecrit quand il n'y a pas d'heure)
+/// et l'encre (discrete tant que le message n'est pas lu, d'accent une fois
+/// lu). L'icone reste au trait : la graisse pleine de `checks` dessine un
+/// carre plein, illisible a 16.
+class _PiedMessage extends StatelessWidget {
+  const _PiedMessage({
+    required this.heure,
+    required this.mot,
     required this.remise,
+    required this.echec,
+    required this.etatVivant,
     required this.style,
   });
 
-  final String pied;
-  final RemiseMessage remise;
+  final String? heure;
+  final String? mot;
+  final RemiseMessage? remise;
+  final bool echec;
+  final bool etatVivant;
   final TextStyle style;
 
   /// La cle du signe, pour les tests.
@@ -1566,26 +1912,40 @@ class _PiedRemise extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final bool lu = remise == RemiseMessage.lu;
-    final AppInkColor encre = lu ? palette.inkAccent : palette.inkMuted;
-    final AppIcon icone = switch (remise) {
+    final AppInkColor encre = echec
+        ? palette.inkAlert
+        : lu
+        ? palette.inkAccent
+        : palette.inkMuted;
+    final AppIcon? icone = switch (remise) {
+      null => null,
       RemiseMessage.enCours => AppIcons.horloge,
       RemiseMessage.envoye => AppIcons.messageEnvoye,
       RemiseMessage.lu => AppIcons.messageLu,
     };
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        ExcludeSemantics(
-          child: Icon(
-            icone.repos,
-            key: cle(remise),
-            size: AppSpacing.lg,
-            color: encre.asBorderSide().color,
-          ),
+    // Le texte ecrit : l'heure ; sans heure (message local), le mot.
+    final String ecrit = heure ?? mot ?? '';
+    final String dit = <String>[?heure, ?mot].join(', ');
+    return Semantics(
+      liveRegion: etatVivant,
+      label: dit,
+      child: ExcludeSemantics(
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            Flexible(child: Text(ecrit, style: encre.applyTo(style))),
+            if (icone != null) ...<Widget>[
+              Ecart.hXs,
+              Icon(
+                icone.repos,
+                key: cle(remise!),
+                size: AppSpacing.lg,
+                color: encre.asBorderSide().color,
+              ),
+            ],
+          ],
         ),
-        Ecart.hXs,
-        Flexible(child: Text(pied, style: encre.applyTo(style))),
-      ],
+      ),
     );
   }
 }
@@ -1728,6 +2088,7 @@ class _Saisie extends StatelessWidget {
 
   Widget _zone({required bool aidePeinte}) => ZoneSaisie(
     cleChamp: FilDiscussion.champKey,
+    pilule: true,
     controleur: champ,
     noeud: noeudChamp,
     libelle: textes.libelleChamp,

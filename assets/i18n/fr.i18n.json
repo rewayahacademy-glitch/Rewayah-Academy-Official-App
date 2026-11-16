@@ -11937,6 +11937,7 @@
         "communaute": "Communauté enseignants",
         "studio": "Le Studio",
         "aujourdhui": "Aujourd'hui",
+        "hier": "Hier",
         "notifications": "Notifications",
         "annonce": "Annonce",
         "publication": "Publication",
@@ -12068,6 +12069,11 @@
         "aucun": "Aucune conversation ne correspond à «\u00a0{texte}\u00a0». Essayez un autre nom ou une autre classe.",
         "resultatUn": "1 conversation trouvée",
         "resultats": "{nombre} conversations trouvées"
+      },
+      "filtres": {
+        "tous": "Tous",
+        "nonLus": "Non lus",
+        "aucunNonLu": "Aucune conversation non lue."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",
