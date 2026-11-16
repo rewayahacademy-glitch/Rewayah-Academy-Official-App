@@ -1,6 +1,6 @@
 # Checklist du pilote « Bureau de l'équipe » (depuis la passation du 16/11/2026)
 
-**Mise à jour : 16/11/2026, 20 h 35 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
+**Mise à jour : 16/11/2026, 20 h 37 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm` (nuit du 16 au 17/11 ;
 remplace `session_0163KjrvqR38dL9HhgktqAdg`, archivée)
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (fusionné, installé, vérifié par le pilote ; « prouvé » seulement
@@ -40,8 +40,9 @@ BE-1e, BE-1f, l'étape D.
 | 6 | #547 LP-2 liste des enseignants (écran) | ◐ | **bloquée** : le lot 0 des tests ne finit jamais (`garde_ancres` boucle sur `EntreeFiltre(libelle)` depuis 19:49) ; confiée à BE-GESTES après #550 |
 | 7 | #550 CLORE-COMPLEMENT-VRAI (écran) | ◐ | **en conflit avec `main`** ; confiée à BE-GESTES (fusion de `main`, slang deux fois) |
 | 8 | DISPENSE-ECRAN | ⏸ | travail **non perdu** : commit local `6aa823c66` chez BE-DOSSIER, branche `claude/dispense-ecran` jamais poussée. BE-DOSSIER refuse de pousser sans l'accord du directeur lui-même (il dit que le directeur a refusé sa dernière poussée). Non archivé exprès : l'archiver détruirait ce commit. Voir §4 |
-| 9 | DEBLOQUER-VERSEMENT-ECRAN | ◐ | BE-GESTES, après #550 |
-| 10 | PIECE-TYPE-ECRAN (l'écran lit `genreFichier`) | ◐ | PR #563 (BE-PIECE), CI en cours |
+| 9 | DEBLOQUER-VERSEMENT-ECRAN | ◐ | BE-GESTES, après #550 et #547 ; même PR : phrases des deux nouveaux refus d'« Accueillir » |
+| 9 bis | ACCUEIL-SEPARE serveur (migration 20261129410000) | ◐ | PR #564 (BE-PIECE), CI en cours ; 0 dossier en `decision_en_attente` ; installation par le pilote après fusion |
+| 10 | PIECE-TYPE-ECRAN (l'écran lit `genreFichier`) | ☑ | #563 fusionnée 20:36 UTC (dd61742) ; CI verte (13 contrôles) ; écran seul ; déploiement automatique ; non prouvé : réponse réelle lue seulement en simulation ; 2 pièces sur 338 sans type s'affichent « Fichier » |
 | 11 | Vérification de trois gestes du menu | ☑ | faite dans la carte (n° 13) pour tous les gestes du menu ; les trois gestes n'étaient nommés nulle part |
 | 12 | #525 CAPTCHA-PLACE | ☐ | aucun aperçu Vercel dans la PR, base du matin ; à vérifier dans un navigateur après mise à jour, ou fermer |
 | 13 | **PREMIER TRAVAIL (§0 bis)** : `CARTE-GESTES-DIRECTION.md` | ☑ | écrite (14 trous, 8 lots, questions Q1 à Q5) ; deux faits clés revérifiés en base par le pilote ; arbitrée par le pilote le 16/11 à 20 h 10 (le directeur : « ne me demande plus rien ») |
