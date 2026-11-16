@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
 import 'package:rewayah_academy/core/widgets/choice_card_group.dart';
 import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart';
 
@@ -85,12 +86,13 @@ void main() {
         portPhotosProvider.overrideWithValue(const _Photos()),
       ],
     );
-    expect(find.byKey(BlocPhotoDossier.cle), findsOneWidget);
+    // BE-DOSSIER : la photo est en haut (etage 1), on la touche ; sa rubrique
+    // dit quand elle a ete gardee.
+    expect(find.byKey(EtageUnDossier.clePhoto), findsOneWidget);
     expect(dossier.lus, <String>['c1']);
-    expect(find.text(t.admin.candidatures.detail.photo.titre), findsOneWidget);
     final AvatarTile avatar = tester.widget<AvatarTile>(
       find.descendant(
-        of: find.byKey(BlocPhotoDossier.cle),
+        of: find.byKey(EtageUnDossier.clePhoto),
         matching: find.byType(AvatarTile),
       ),
     );
@@ -132,15 +134,11 @@ void main() {
         ],
       );
       expect(find.byKey(BlocPhotoDossier.cleIllisible), findsOneWidget);
-      expect(
-        find.descendant(
-          of: find.byKey(BlocPhotoDossier.cle),
-          matching: find.byType(AvatarTile),
-        ),
-        findsNothing,
-      );
-      await tester.ensureVisible(find.byKey(BlocPhotoDossier.cleRedemander));
-      await tester.tap(find.byKey(BlocPhotoDossier.cleRedemander));
+      // Illisible : rien ne se touche, l'etage 1 garde les initiales.
+      expect(find.byKey(EtageUnDossier.clePhoto), findsNothing);
+      const Key redemander = ValueKey<String>('rubrique-demander-photo');
+      await tester.ensureVisible(find.byKey(redemander));
+      await tester.tap(find.byKey(redemander));
       await tester.pumpAndSettle();
       expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
       final ChoiceCardGroup groupe = tester.widget<ChoiceCardGroup>(
@@ -206,10 +204,11 @@ void main() {
     expect(find.text(t.admin.candidatures.detail.photo.echec), findsNothing);
   });
 
-  // Ordre voulu par le pilote (08/11) : on voit d'abord qui est la personne, avant
-  // de decider : situation, photo, blocages, action.
+  // BE-DOSSIER (16/11) : on voit d'abord qui est la personne (etage 1, la
+  // photo se touche), puis le resume, puis les rubriques ; la decision est en
+  // bas, dans la barre.
   for (final double largeur in <double>[390, 1440]) {
-    testWidgets('la photo vient avant l\'action ($largeur)', (
+    testWidgets('la photo vient avant les rubriques ($largeur)', (
       WidgetTester tester,
     ) async {
       final _Dossier dossier = _Dossier(
@@ -223,37 +222,22 @@ void main() {
         tester,
         port: _port(),
         largeur: largeur,
+        ouvrirRubriques: false,
         surcharges: <Override>[
           portPhotoDossierProvider.overrideWithValue(dossier),
           portPhotosProvider.overrideWithValue(const _Photos()),
         ],
       );
-      double y(Key k) {
-        expect(find.byKey(k), findsOneWidget, reason: '$k');
-        return tester.getTopLeft(find.byKey(k)).dy;
-      }
-
-      final double situation = y(
-        const ValueKey<String>('candidature-situation'),
+      expect(find.byKey(EtageUnDossier.clePhoto), findsOneWidget);
+      final Offset photo = tester.getTopLeft(
+        find.byKey(EtageUnDossier.clePhoto),
       );
-      final double photo = y(BlocPhotoDossier.cle);
-      final double action = y(const ValueKey<String>('candidature-action'));
-      expect(photo, greaterThan(situation));
-      // SALLE2-FICHE (14/11/2026) : les blocages non servis ne sont plus
-      // rendus. Sur ordinateur, la decision est en tete de la colonne de
-      // droite ; en une colonne, elle suit la photo.
+      final Offset rubriques = tester.getTopLeft(find.byKey(CorpsDossier.cle));
       if (largeur < 840) {
-        expect(action, greaterThan(photo), reason: 'la photo avant l\'action');
+        expect(rubriques.dy, greaterThan(photo.dy));
       } else {
-        expect(
-          tester
-              .getTopLeft(
-                find.byKey(const ValueKey<String>('candidature-action')),
-              )
-              .dx,
-          greaterThan(tester.getTopLeft(find.byKey(BlocPhotoDossier.cle)).dx),
-          reason: 'la decision dans la colonne de droite',
-        );
+        // Sur ordinateur : etages 1 et 2 a gauche, rubriques a droite.
+        expect(rubriques.dx, greaterThan(photo.dx));
       }
     });
   }

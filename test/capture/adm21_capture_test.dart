@@ -31,8 +31,10 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
-import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart' show BlocContact;
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
+import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 
 import '../fixtures/candidature/faux_candidatures_direction.dart';
 import '../support/demo/mode_demonstration.dart';
@@ -180,6 +182,23 @@ Future<void> _photo(WidgetTester tester, String nom) async {
   debugPrint('PNG ${await capturer(tester, 'ADM-21/$nom')}');
 }
 
+/// Ouvre une rubrique du dossier (BE-DOSSIER), si elle est repliee.
+Future<void> _ouvrirRubrique(WidgetTester tester, RubriqueDossierCode c) async {
+  if (find.byKey(RubriqueDossier.cleContenu(c)).evaluate().isNotEmpty) return;
+  final Finder entete = find.byKey(RubriqueDossier.cleEntete(c));
+  await tester.ensureVisible(entete);
+  await tester.tap(entete);
+  await stabiliser(tester);
+}
+
+/// Touche un bouton de la page, apres l'avoir amene a l'ecran.
+Future<void> _toucherBouton(WidgetTester tester, Key cle) async {
+  await tester.ensureVisible(find.byKey(cle));
+  await stabiliser(tester);
+  await tester.tap(find.byKey(cle));
+  await stabiliser(tester);
+}
+
 /// Defile jusqu'au widget de cle [cle], en haut de la fenetre, puis capture.
 Future<void> _photoSur(WidgetTester tester, Key cle, String nom) async {
   final Finder f = find.byKey(cle);
@@ -217,24 +236,28 @@ void main() {
           fixerVueCapture(tester, taille, 1, zoneSure: zone);
           await _monter(tester, _port(), mode: mode);
           await _photo(tester, 'contenu_${nom}_${mode.name}');
+          // BE-DOSSIER : la barre de decision, puis les rubriques ouvertes.
           await _photoSur(
             tester,
-            BlocProchaineAction.cle,
+            BarreDecisionDossier.cle,
             'action_${nom}_${mode.name}',
           );
+          await _ouvrirRubrique(tester, RubriqueDossierCode.langues);
           await _photoSur(
             tester,
-            BlocReponses.cle,
+            RubriqueDossier.cleDe(RubriqueDossierCode.langues),
             'reponses_${nom}_${mode.name}',
           );
+          await _ouvrirRubrique(tester, RubriqueDossierCode.entretien);
           await _photoSur(
             tester,
-            BlocPieceEntretien.cle,
+            RubriqueDossier.cleDe(RubriqueDossierCode.entretien),
             'fin_${nom}_${mode.name}',
           );
+          await _ouvrirRubrique(tester, RubriqueDossierCode.historique);
           await _photoSur(
             tester,
-            BlocHistorique.cle,
+            RubriqueDossier.cleDe(RubriqueDossierCode.historique),
             'historique_${nom}_${mode.name}',
           );
         });
@@ -243,9 +266,10 @@ void main() {
       testWidgets('feuille du refus $nom clair', (WidgetTester tester) async {
         fixerVueCapture(tester, taille, 1, zoneSure: zone);
         await _monter(tester, _port());
-        await tester.tap(find.byKey(BlocProchaineAction.cleMenu));
-        await stabiliser(tester);
-        await tester.tap(find.text(t.admin.candidatures.gestes.refuser));
+        await _toucherBouton(
+          tester,
+          BarreDecisionDossier.cleBouton(GesteCandidature.refuser),
+        );
         await stabiliser(tester);
         await tester.enterText(
           find.descendant(
@@ -268,10 +292,9 @@ void main() {
       ) async {
         fixerVueCapture(tester, taille, 1, zoneSure: zone);
         await _monter(tester, _port());
-        await tester.tap(find.byKey(BlocProchaineAction.cleMenu));
-        await stabiliser(tester);
-        await tester.tap(
-          find.text(t.admin.candidatures.gestes.demanderComplement),
+        await _toucherBouton(
+          tester,
+          BarreDecisionDossier.cleBouton(GesteCandidature.demanderComplement),
         );
         await stabiliser(tester);
         await tester.tap(
@@ -307,9 +330,12 @@ void main() {
                 ]),
           ),
         );
-        await tester.ensureVisible(find.byKey(BlocProchaineAction.cleBouton));
-        await stabiliser(tester);
-        await tester.tap(find.byKey(BlocProchaineAction.cleBouton));
+        await _toucherBouton(
+          tester,
+          BarreDecisionDossier.cleBouton(
+            GesteCandidature.admettreVerifications,
+          ),
+        );
         await stabiliser(tester);
         await tester.ensureVisible(find.byKey(FeuilleGeste.cleValider));
         await stabiliser(tester);
@@ -376,9 +402,10 @@ void main() {
         fixerVueCapture(tester, taille, 1, zoneSure: zone);
         await _monter(tester, _port());
         await _photo(tester, 'arabe_${nom}_clair');
+        await _ouvrirRubrique(tester, RubriqueDossierCode.langues);
         await _photoSur(
           tester,
-          BlocReponses.cle,
+          RubriqueDossier.cleDe(RubriqueDossierCode.langues),
           'arabe-reponses_${nom}_clair',
         );
       });

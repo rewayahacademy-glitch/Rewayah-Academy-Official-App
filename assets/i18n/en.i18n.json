@@ -2614,6 +2614,59 @@
     }
   },
   "recrutement": {
+    "dossier3": {
+      "pastille": {"bon": "Good", "aVoir": "To check", "manque": "Missing"},
+      "situation": {
+        "reste": "Left to do: {liste}.",
+        "aFaire": {
+          "compte_conforme": "check the account",
+          "paiement_compatible": "confirm the payment method",
+          "cadre_religieux": "get agreement on the framework",
+          "questionnaire_complet": "get the complete questionnaire",
+          "entretien_conclu": "hold the interview",
+          "evaluation_validee": "validate the evaluation",
+          "accords_signes": "get the signed agreements",
+          "profil_renseigne": "fill in the profile",
+          "profil_unique": "check the profile is unique",
+          "aucune_restriction": "lift the restriction",
+          "piece_validee": "validate the ID document"
+        },
+        "vous": "Your turn: {geste}",
+        "pause": "The file is paused.",
+        "rien": "Nothing to do for now."
+      },
+      "rubrique": {
+        "photo": "Photo",
+        "piece": "ID document",
+        "versement": "Payment",
+        "accords": "Agreements",
+        "messages": "Messages"
+      },
+      "synthese": {
+        "langues": "Languages",
+        "memorisation": "Memorization",
+        "ijaza": "Ijaza",
+        "disponibilites": "Availability",
+        "versement": "Payment",
+        "public": "Audience",
+        "jours": {"j1": "Mon", "j2": "Tue", "j3": "Wed", "j4": "Thu", "j5": "Fri", "j6": "Sat", "j7": "Sun"},
+        "heuresDe": "{jours}: {heures}",
+        "memorisationValeurs": {"aucune": "None", "moins_10_juz": "Under 10 juz", "de_10_a_29_juz": "10 to 29 juz", "coran_entier": "Whole Quran"},
+        "ijazaValeurs": {"oui": "Yes", "pret_test": "No, ready for a test", "non": "No"},
+        "publicValeurs": {"6_9": "6-9 years", "10_13": "10-13 years", "14_17": "14-17 years", "adultes": "Adults"}
+      },
+      "demanderAccord": "Ask for an agreement",
+      "raison": {
+        "droit": "You cannot decide on this file.",
+        "fermee": "The file is closed.",
+        "pause": "The file is paused.",
+        "attente": "Waiting for the person's reply.",
+        "manque": "Missing: {liste}.",
+        "etape": "Not possible at this stage."
+      },
+      "legendeRaison": "{geste}: {raison}",
+      "photoAgrandir": "View {deNom} photo full size"
+    },
     "file": {
       "outils": "Tools",
       "outilsDe": "Tools for the applications list",

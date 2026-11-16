@@ -2614,6 +2614,59 @@
     }
   },
   "recrutement": {
+    "dossier3": {
+      "pastille": {"bon": "Bon", "aVoir": "À voir", "manque": "Manque"},
+      "situation": {
+        "reste": "Il reste\u00a0: {liste}.",
+        "aFaire": {
+          "compte_conforme": "vérifier le compte",
+          "paiement_compatible": "confirmer le moyen de versement",
+          "cadre_religieux": "obtenir l'accord sur le cadre",
+          "questionnaire_complet": "obtenir le questionnaire complet",
+          "entretien_conclu": "tenir l'entretien",
+          "evaluation_validee": "valider l'évaluation",
+          "accords_signes": "obtenir les accords signés",
+          "profil_renseigne": "renseigner le profil",
+          "profil_unique": "vérifier que le profil est unique",
+          "aucune_restriction": "lever la restriction",
+          "piece_validee": "valider la pièce d'identité"
+        },
+        "vous": "À vous : {geste}",
+        "pause": "Le dossier est en pause.",
+        "rien": "Rien à faire pour le moment."
+      },
+      "rubrique": {
+        "photo": "Photo",
+        "piece": "Pièce d'identité",
+        "versement": "Versement",
+        "accords": "Accords",
+        "messages": "Messages"
+      },
+      "synthese": {
+        "langues": "Langues",
+        "memorisation": "Mémorisation",
+        "ijaza": "Ijaza",
+        "disponibilites": "Disponibilités",
+        "versement": "Versement",
+        "public": "Public",
+        "jours": {"j1": "Lun", "j2": "Mar", "j3": "Mer", "j4": "Jeu", "j5": "Ven", "j6": "Sam", "j7": "Dim"},
+        "heuresDe": "{jours}\u00a0: {heures}",
+        "memorisationValeurs": {"aucune": "Aucune", "moins_10_juz": "Moins de 10 juz", "de_10_a_29_juz": "10 à 29 juz", "coran_entier": "Coran entier"},
+        "ijazaValeurs": {"oui": "Oui", "pret_test": "Non, prêt pour un test", "non": "Non"},
+        "publicValeurs": {"6_9": "6-9 ans", "10_13": "10-13 ans", "14_17": "14-17 ans", "adultes": "Adultes"}
+      },
+      "demanderAccord": "Demander un accord",
+      "raison": {
+        "droit": "Vous ne pouvez pas décider de ce dossier.",
+        "fermee": "Le dossier est fermé.",
+        "pause": "Le dossier est en pause.",
+        "attente": "On attend la réponse de la personne.",
+        "manque": "Il manque : {liste}.",
+        "etape": "Pas possible à cette étape."
+      },
+      "legendeRaison": "{geste} : {raison}",
+      "photoAgrandir": "Voir la photo {deNom} en grand"
+    },
     "file": {
       "outils": "Outils",
       "outilsDe": "Outils de la liste des candidatures",

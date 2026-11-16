@@ -13440,6 +13440,59 @@
     }
   },
   "recrutement": {
+    "dossier3": {
+      "pastille": {"bon": "جيد", "aVoir": "للمراجعة", "manque": "ناقص"},
+      "situation": {
+        "reste": "المتبقي: \u2068{liste}\u2069.",
+        "aFaire": {
+          "compte_conforme": "التحقق من الحساب",
+          "paiement_compatible": "تأكيد وسيلة الدفع",
+          "cadre_religieux": "الحصول على الموافقة على الإطار",
+          "questionnaire_complet": "الحصول على الاستبيان كاملًا",
+          "entretien_conclu": "إجراء المقابلة",
+          "evaluation_validee": "اعتماد التقييم",
+          "accords_signes": "الحصول على الاتفاقات الموقعة",
+          "profil_renseigne": "استكمال الملف الشخصي",
+          "profil_unique": "التحقق من أن الملف الشخصي فريد",
+          "aucune_restriction": "رفع القيد",
+          "piece_validee": "اعتماد وثيقة الهوية"
+        },
+        "vous": "عليكم: \u2068{geste}\u2069",
+        "pause": "الملف متوقف مؤقتًا.",
+        "rien": "لا شيء مطلوب الآن."
+      },
+      "rubrique": {
+        "photo": "الصورة",
+        "piece": "وثيقة الهوية",
+        "versement": "الدفعات",
+        "accords": "الاتفاقات",
+        "messages": "الرسائل"
+      },
+      "synthese": {
+        "langues": "اللغات",
+        "memorisation": "الحفظ",
+        "ijaza": "الإجازة",
+        "disponibilites": "الأوقات المتاحة",
+        "versement": "الدفعات",
+        "public": "الفئة",
+        "jours": {"j1": "الاثنين", "j2": "الثلاثاء", "j3": "الأربعاء", "j4": "الخميس", "j5": "الجمعة", "j6": "السبت", "j7": "الأحد"},
+        "heuresDe": "\u2068{jours}\u2069: \u2068{heures}\u2069",
+        "memorisationValeurs": {"aucune": "لا شيء", "moins_10_juz": "أقل من 10 أجزاء", "de_10_a_29_juz": "من 10 إلى 29 جزءًا", "coran_entier": "القرآن كاملًا"},
+        "ijazaValeurs": {"oui": "نعم", "pret_test": "لا، جاهز لاختبار", "non": "لا"},
+        "publicValeurs": {"6_9": "6-9 سنوات", "10_13": "10-13 سنة", "14_17": "14-17 سنة", "adultes": "البالغون"}
+      },
+      "demanderAccord": "طلب اتفاق",
+      "raison": {
+        "droit": "لا يمكنكم البتّ في هذا الملف.",
+        "fermee": "الملف مغلق.",
+        "pause": "الملف متوقف مؤقتًا.",
+        "attente": "في انتظار رد الشخص.",
+        "manque": "ينقص: \u2068{liste}\u2069.",
+        "etape": "غير ممكن في هذه المرحلة."
+      },
+      "legendeRaison": "\u2068{geste}\u2069: \u2068{raison}\u2069",
+      "photoAgrandir": "عرض صورة \u2068{deNom}\u2069 بحجم كبير"
+    },
     "file": {
       "outils": "أدوات",
       "outilsDe": "أدوات قائمة طلبات الترشح",

@@ -18,6 +18,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/pressable.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import 'acces_piece_kyc.dart';
@@ -638,11 +639,23 @@ class _CartePiece extends ConsumerWidget {
       ),
     };
     // Tout ce qui s'affiche de la piece : hors de la selection.
+    // BE-DOSSIER (coordinateur, 16/11/2026) : toucher la piece l'ouvre en
+    // grand, comme la photo. Le toucher double le bouton « Voir la piece »,
+    // qui reste le controle nomme : meme geste, meme visionneuse.
+    final Widget carte = GroupeReglages(
+      titre: t.dossiers.revue.piece,
+      lignes: <LigneRubrique>[ligne],
+    );
+    // Pas de toucher quand la piece ne s'ouvre pas : rien n'est rendu qui ne
+    // puisse aboutir.
     return TexteProtege(
-      child: GroupeReglages(
-        titre: t.dossiers.revue.piece,
-        lignes: <LigneRubrique>[ligne],
-      ),
+      child: ouvrable
+          ? Pressable(
+              onPress: onVoirPiece,
+              respecterCibleTactile: false,
+              child: carte,
+            )
+          : carte,
     );
   }
 }

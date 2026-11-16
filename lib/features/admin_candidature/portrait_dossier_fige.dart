@@ -18,7 +18,11 @@ class PortraitDossierFige extends StatelessWidget {
     required this.nomComplet,
     required this.urlPhotoFigee,
     super.key,
+    this.diametre,
   });
+
+  /// Le diametre du cercle, ou `null` : le grand avatar.
+  final double? diametre;
 
   /// Le nom, pour le repli sur les initiales.
   final String nomComplet;
@@ -30,6 +34,6 @@ class PortraitDossierFige extends StatelessWidget {
   Widget build(BuildContext context) => AvatarTile(
     prenom: nomComplet,
     urlSignee: urlPhotoFigee,
-    diametre: AppAvatar.grand,
+    diametre: diametre ?? AppAvatar.grand,
   );
 }

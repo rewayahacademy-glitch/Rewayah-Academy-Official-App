@@ -35,7 +35,14 @@ import '../talents/libelles_talents.dart';
 /// Le bloc « Autres competences ».
 class BlocAutresCompetences extends ConsumerWidget {
   /// Cree le bloc.
-  const BlocAutresCompetences({required this.detail, super.key});
+  const BlocAutresCompetences({
+    required this.detail,
+    super.key,
+    this.avecTitre = true,
+  });
+
+  /// Faux sous une rubrique qui porte deja le titre (BE-DOSSIER).
+  final bool avecTitre;
 
   /// Le dossier lu.
   final DetailCandidature detail;
@@ -74,8 +81,10 @@ class BlocAutresCompetences extends ConsumerWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Semantics(header: true, child: SectionHeader(titre: r.titre)),
-        Ecart.vMd,
+        if (avecTitre) ...<Widget>[
+          Semantics(header: true, child: SectionHeader(titre: r.titre)),
+          Ecart.vMd,
+        ],
         if (reponses == null)
           AppCard(
             child: TexteSansCoupure(
@@ -155,7 +164,8 @@ class BlocAutresCompetences extends ConsumerWidget {
         for (final String code in codes)
           LigneCleValeur(
             key: ligneKey(code),
-            cle: code == EntreeCatalogue.codeAutre && reponses.autreTexte != null
+            cle:
+                code == EntreeCatalogue.codeAutre && reponses.autreTexte != null
                 ? r.autre(texte: reponses.autreTexte!)
                 : libelleCompetence(code, entree: catalogue?.entree(code)) ??
                       r.competenceInconnue,
