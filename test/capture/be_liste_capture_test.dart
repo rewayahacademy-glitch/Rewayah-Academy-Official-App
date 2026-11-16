@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
 import 'package:rewayah_academy/features/admin_candidatures/carte_attentes.dart';
+import 'package:rewayah_academy/features/admin_candidatures/ligne_candidature.dart';
 import 'package:rewayah_academy/features/admin_import_formulaires/routes_candidats_flux.dart';
 
 import '../fixtures/candidature/faux_candidatures_direction.dart';
@@ -135,6 +136,10 @@ void main() {
         debugPrint('PNG ${await capturer(tester, '1_arrivee_${g.$1}')}');
         await tester.tap(find.text(t.recrutement.file.replier));
         await stabiliser(tester);
+        final double haut = tester
+            .getTopLeft(find.byKey(cleCandidature('a1')))
+            .dy;
+        debugPrint('MESURE ${g.$1} : haut de la premiere ligne a $haut');
         debugPrint('PNG ${await capturer(tester, '2_repliee_${g.$1}')}');
         await tester.tap(find.byKey(CandidaturesPage.cleOutils));
         await stabiliser(tester);

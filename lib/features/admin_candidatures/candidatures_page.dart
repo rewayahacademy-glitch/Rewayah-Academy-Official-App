@@ -102,9 +102,6 @@ import 'lot_candidatures.dart';
 import 'menu_ligne_candidature.dart';
 import 'prevenir_candidats.dart';
 
-// BE-LISTE : l'entree « Personnes » vit dans le meme morceau differe.
-export 'entree_personnes.dart' show EntreePersonnes;
-
 /// L'ecran « Candidatures ».
 class CandidaturesPage extends ConsumerStatefulWidget {
   /// Cree l'ecran.
@@ -208,7 +205,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     _filtre = r.filtre;
     _tri = r.tri;
     _page = r.page;
-    _recherche = TextEditingController(text: r.filtre.recherche);
+    _recherche = TextEditingController();
   }
 
   /// L'adresse porte le filtre, le tri et la page, et go_router garde ce
@@ -219,23 +216,29 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   void didUpdateWidget(CandidaturesPage ancien) {
     super.didUpdateWidget(ancien);
     if (mapEquals(ancien.requete, widget.requete)) return;
+    // Le texte cherche n'est pas dans l'adresse : il reste celui de la page.
     final RequeteCandidatures lue = requeteDepuisAdresse(widget.requete);
+    final FiltreCandidatures filtreLu = lue.filtre.avec(
+      recherche: _filtre.recherche,
+    );
     final RequeteCandidatures ici = RequeteCandidatures(
       filtre: _filtre,
       tri: _tri,
       page: _page,
     );
-    if (lue == ici) return;
+    if (RequeteCandidatures(filtre: filtreLu, tri: lue.tri, page: lue.page) ==
+        ici) {
+      return;
+    }
     _attenteSaisie?.cancel();
     setState(() {
-      if (lue.filtre != _filtre && _retenues.isNotEmpty) {
+      if (filtreLu != _filtre && _retenues.isNotEmpty) {
         _retenues.clear();
         _retour = t.admin.candidatures.lot.selectionRetiree;
       }
-      _filtre = lue.filtre;
+      _filtre = filtreLu;
       _tri = lue.tri;
       _page = lue.page;
-      _recherche.text = lue.filtre.recherche;
     });
   }
 
@@ -247,7 +250,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   }
 
   /// Reporte filtre, tri et page dans l'adresse (lien partage, retour,
-  /// rechargement). `replace` : la pile ne change pas, le retour ramene
+  /// rechargement) ; jamais le texte cherche. `replace` : la pile ne change pas, le retour ramene
   /// d'ou l'on vient, pas a l'etat precedent du filtre. Hors routeur (tests
   /// montes sans GoRouter), rien a faire.
   void _ecrireAdresse() {
@@ -324,22 +327,6 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         etat: () => etat,
         issue: () => IssueCandidature.enCours,
         enPause: () => enPause,
-      ),
-    );
-  }
-
-  /// BE-LISTE : « Piece d'identite a valider » pose le filtre de l'etape de
-  /// verification (en cours, hors pause), la ou la piece se valide. Le serveur
-  /// n'a pas de filtre « piece deposee » : la liste peut compter plus de
-  /// personnes que la ligne (dit dans le bilan du lot).
-  void _filtrerPiece() {
-    _attenteSaisie?.cancel();
-    _recherche.clear();
-    _filtrer(
-      _filtre.efface.avec(
-        etape: () => EtapeCandidature.verifications,
-        issue: () => IssueCandidature.enCours,
-        enPause: () => false,
       ),
     );
   }
@@ -781,10 +768,82 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
 
   // --- Liste --------------------------------------------------------------
 
-  Widget _barreListe(PageCandidatures page, {required bool selectionPossible}) {
+  /// Vrai quand la carte « A traiter » a quelque chose a montrer au telephone
+  /// (au moins un compteur servi non nul).
+  bool _alerteVisible(CompteursAlertes c) => <int?>[
+    c.bloquees,
+    c.entretiensEnRetard,
+    c.informationsManquantes,
+    c.confirmeesIndisponibles,
+  ].any((int? n) => n != null && n > 0);
+
+  Widget _barreListe(
+    PageCandidatures page, {
+    required bool selectionPossible,
+    required bool telephone,
+  }) {
     final r = t.admin.candidatures;
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    if (telephone) {
+      // Une seule rangee tant qu'elle tient : le nombre, « Selectionner » et
+      // le tri (un menu : deux segments ne tiennent pas a cote). Elle passe a
+      // la ligne plutot que de couper un mot.
+      return Wrap(
+        key: _cleListe,
+        spacing: AppSpacing.lg,
+        runSpacing: AppSpacing.sm,
+        alignment: WrapAlignment.spaceBetween,
+        crossAxisAlignment: WrapCrossAlignment.center,
+        children: <Widget>[
+          Semantics(
+            header: true,
+            liveRegion: true,
+            child: TexteSansCoupure(
+              r.total(n: page.total),
+              key: const ValueKey<String>('candidatures-total'),
+              style: palette.inkStrong.applyTo(
+                textes.titleMedium ?? const TextStyle(),
+              ),
+            ),
+          ),
+          if (selectionPossible)
+            LienFleche(
+              key: const ValueKey<String>('candidatures-selectionner'),
+              libelle: _enSelection
+                  ? r.selection.quitter
+                  : r.selection.selectionner,
+              fleche: false,
+              legende: true,
+              onPress: _basculerSelection,
+            ),
+          // Le tri par defaut n'est pas un filtre retenu : le bouton dit
+          // « Trier » ; un autre tri se lit dans le bouton.
+          MenuFiltre<TriCandidatures>(
+            key: const ValueKey<String>('candidatures-tri'),
+            libelle: r.tri.titre,
+            valeur: _tri == TriCandidatures.activite ? null : _tri,
+            entrees: <EntreeFiltre<TriCandidatures>>[
+              EntreeFiltre<TriCandidatures>(
+                valeur: TriCandidatures.activite,
+                libelle: r.tri.activite,
+              ),
+              EntreeFiltre<TriCandidatures>(
+                valeur: TriCandidatures.recente,
+                libelle: r.tri.reception,
+              ),
+            ],
+            onChoix: (TriCandidatures? choisi) {
+              setState(() {
+                _tri = choisi ?? TriCandidatures.activite;
+                _page = 1;
+              });
+              _ecrireAdresse();
+            },
+          ),
+        ],
+      );
+    }
     return Column(
       key: _cleListe,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1086,15 +1145,48 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         ),
     ];
 
+    // BE-LISTE (telephone, sous 600) : le directeur traite des centaines de
+    // dossiers, le premier nom doit etre haut. Pas de phrase d'introduction,
+    // le selecteur de section et « Outils » sur une rangee, « A traiter » sans
+    // titre (et absent a zero), le nombre, « Selectionner » et le tri sur une
+    // rangee.
+    final bool telephone = MediaQuery.sizeOf(context).width < 600;
+    final Widget? boutonOutils = outils.isEmpty
+        ? null
+        : Align(
+            alignment: AlignmentDirectional.centerEnd,
+            child: MenuActions(
+              key: CandidaturesPage.cleOutils,
+              libelle: t.recrutement.file.outilsDe,
+              actions: outils,
+              declencheur: (BuildContext contexte, EtatPression etat) =>
+                  _DeclencheurOutils(etat: etat),
+            ),
+          );
+    final Widget navigation = SousNavigationDomaine(
+      onglets: ongletsPersonnes(),
+      indexActif: 2,
+      menuAuContenu: telephone && boutonOutils != null,
+    );
+
     return PageShell(
       key: CandidaturesPage.clePage,
       titre: r.titre,
-      sousTitre: r.sousTitre,
+      sousTitre: telephone ? null : r.sousTitre,
       entete: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 2),
+          if (telephone && boutonOutils != null)
+            Row(
+              children: <Widget>[
+                Expanded(child: navigation),
+                Ecart.hMd,
+                boutonOutils,
+              ],
+            )
+          else
+            navigation,
           // L'exception de lecture du super-admin se dit en tete, quand le
           // serveur la rend active (jamais deduite du role).
           if (caps.peutLireHorsGenre)
@@ -1127,17 +1219,8 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           // les etats (CAND-F01 : c'est le seul chemin vers les invitations).
           // Chaque entree n'existe que si le serveur ouvre le geste et que le
           // port est servi, jamais grisee.
-          if (outils.isNotEmpty) ...<Widget>[
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: MenuActions(
-                key: CandidaturesPage.cleOutils,
-                libelle: t.recrutement.file.outilsDe,
-                actions: outils,
-                declencheur: (BuildContext contexte, EtatPression etat) =>
-                    _DeclencheurOutils(etat: etat),
-              ),
-            ),
+          if (!telephone && boutonOutils != null) ...<Widget>[
+            boutonOutils,
             Ecart.vSm,
           ],
           if (_ouverture != null) ...<Widget>[
@@ -1184,33 +1267,49 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 maintenant: DateTime.now(),
                 onFiltrer: (EtatCandidature e) => _filtrerAttente(etat: e),
                 onFiltrerPause: () => _filtrerAttente(enPause: true),
-                // BE-LISTE : la piece a valider ouvre la meme liste, filtree
-                // sur l'etape ou elle se valide, pas une autre page.
-                onFiltrerPiece: _filtrerPiece,
+                // La ligne de la piece ne se touche pas : un filtre qui
+                // ouvrirait une liste plus longue que son nombre tromperait
+                // (coordinateur, 16/11/2026). Elle s'ouvrira avec la cle de
+                // filtre `pieceEnAttente` (PR 505), qui manque encore au
+                // modele Dart du filtre, hors de la zone de BE-LISTE.
                 repliee: ref.watch(attentesRepliesProvider),
                 onBasculer: () => ref
                     .read(attentesRepliesProvider.notifier)
                     .choisir(valeur: !ref.read(attentesRepliesProvider)),
               ),
-              Ecart.vXxl,
+              telephone ? Ecart.vMd : Ecart.vXxl,
             ],
-            CarteAlertes(compteurs: reference.compteursAlertes),
-            Ecart.vXxl,
-            ChampRecherche(
-              cleChamp: const ValueKey<String>('candidatures-recherche'),
-              cleEffacer: const ValueKey<String>(
-                'candidatures-recherche-effacer',
+            CarteAlertes(
+              compteurs: reference.compteursAlertes,
+              compacte: telephone,
+            ),
+            // Rien a dire quand la carte compacte disparait : pas d'espace.
+            if (!telephone || _alerteVisible(reference.compteursAlertes))
+              telephone ? Ecart.vMd : Ecart.vXxl,
+            Semantics(
+              label: telephone ? r.recherche : null,
+              child: ChampRecherche(
+                cleChamp: const ValueKey<String>('candidatures-recherche'),
+                cleEffacer: const ValueKey<String>(
+                  'candidatures-recherche-effacer',
+                ),
+                controleur: _recherche,
+                // Telephone : l'aide du champ suffit a l'oeil ; le libelle, lui,
+                // reste dit aux lecteurs d'ecran (`Semantics` ci-dessous).
+                libelle: telephone ? r.rechercheAide : r.recherche,
+                aide: r.rechercheAide,
+                onChange: _chercher,
+                onValider: _chercherTout,
               ),
-              controleur: _recherche,
-              libelle: r.recherche,
-              aide: r.rechercheAide,
-              onChange: _chercher,
-              onValider: _chercherTout,
             ),
             Ecart.vMd,
             _filtres(reference, caps),
-            Ecart.vLg,
-            _barreListe(reference, selectionPossible: selectionPossible),
+            telephone ? Ecart.vMd : Ecart.vLg,
+            _barreListe(
+              reference,
+              selectionPossible: selectionPossible,
+              telephone: telephone,
+            ),
             Ecart.vMd,
           ],
           BlocAsynchrone<PageCandidatures>(

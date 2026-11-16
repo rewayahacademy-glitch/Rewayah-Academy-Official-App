@@ -2326,19 +2326,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
-      // BE-LISTE : « Personnes » ouvre Candidatures tant qu'il y a des
-      // candidatures en cours, sinon Dossiers a valider (decision lue au
-      // serveur par l'entree).
+      // BE-LISTE : « Personnes » ouvre Candidatures (la file de la direction) ;
+      // « Dossiers a valider » reste atteignable par le selecteur de section.
       GoRouteSure(
         path: Routes.adminPersonnes,
-        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
-          domaine: AdminDomaine.personnes,
-          child: PageDifferee(
-            cle: 'd_candidatures_page',
-            charger: d_candidatures_page.loadLibrary,
-            construire: () => d_candidatures_page.EntreePersonnes(),
-          ),
-        ),
+        redirect: (BuildContext _, GoRouterState _) =>
+            Routes.adminPersonnesCandidatures,
       ),
       GoRouteSure(
         path: Routes.adminPersonnesDossiers,

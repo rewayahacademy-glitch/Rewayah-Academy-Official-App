@@ -1,9 +1,12 @@
 /// BE-LISTE : ce que la liste des candidatures dit dans son adresse.
 ///
-/// Le filtre, le tri, la page et la recherche vivent dans l'adresse (comme
-/// Comptes) : un retour, un rechargement ou un lien partage retrouvent la meme
-/// liste. Lecture et ecriture sont des fonctions pures. Une valeur inconnue est
-/// ignoree : une adresse partagee et perimee ne doit jamais casser la page.
+/// Le filtre, le tri et la page vivent dans l'adresse (comme Comptes) : un
+/// retour, un rechargement ou un lien partage retrouvent la meme liste.
+/// **Le texte cherche n'y est pas** : c'est un nom de personne, il n'a rien a
+/// faire dans une adresse ni dans l'historique du navigateur (relecture du
+/// coordinateur, 16/11/2026) ; la page le garde en memoire pour le retour d'un
+/// dossier. Lecture et ecriture sont des fonctions pures. Une valeur inconnue
+/// est ignoree : une adresse partagee et perimee ne doit jamais casser la page.
 library;
 
 import '../../core/candidature/modeles_autres_competences.dart';
@@ -11,7 +14,8 @@ import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 
 /// Les parametres d'adresse que la liste possede : tout autre parametre est
-/// laisse tel quel.
+/// laisse tel quel. `q` (l'ancien lien avec recherche) y reste pour etre
+/// retire de l'adresse a la premiere ecriture, jamais lu.
 const Set<String> clesAdresseCandidatures = <String>{
   'q',
   'etape',
@@ -52,7 +56,6 @@ RequeteCandidatures requeteDepuisAdresse(Map<String, String> q) {
   final int? page = int.tryParse(q['page'] ?? '');
   return RequeteCandidatures(
     filtre: FiltreCandidatures(
-      recherche: q['q'] ?? '',
       etape: choix(EtapeCandidature.values, 'etape'),
       etat: choix(EtatCandidature.values, 'etat'),
       issue: choix(IssueCandidature.values, 'issue'),
@@ -79,7 +82,6 @@ Map<String, String> requeteEnAdresse(RequeteCandidatures r) {
   final FiltreCandidatures f = r.filtre;
   String oui(bool b) => b ? 'oui' : 'non';
   return <String, String>{
-    if (f.rechercheNette.isNotEmpty) 'q': f.rechercheNette,
     if (f.etape != null) 'etape': f.etape!.name,
     if (f.etat != null) 'etat': f.etat!.name,
     if (f.issue != null) 'issue': f.issue!.name,

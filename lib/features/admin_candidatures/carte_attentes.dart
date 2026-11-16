@@ -30,6 +30,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/carte_lignes.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
@@ -82,9 +83,10 @@ class CarteAttentes extends StatelessWidget {
   /// Pose le filtre « en pause », ou `null` pour ne pas l'offrir.
   final VoidCallback? onFiltrerPause;
 
-  /// BE-LISTE : pose le filtre de la liste qui montre ou la piece se valide
-  /// (l'etape de verification, en cours), ou `null` : la ligne ne se touche
-  /// pas.
+  /// BE-LISTE : ouvre la liste filtree sur « piece en attente » (cle serveur
+  /// `pieceEnAttente`, PR 505), ou `null` : la ligne ne se touche pas. Elle
+  /// reste `null` tant que le modele Dart du filtre n'a pas cette cle : un
+  /// filtre approchant ouvrirait une liste plus longue que le nombre annonce.
   final VoidCallback? onFiltrerPiece;
 
   /// BE-LISTE : la carte est repliee (son titre seul reste).
@@ -95,6 +97,11 @@ class CarteAttentes extends StatelessWidget {
 
   /// L'instant de reference des durees (injecte pour les tests).
   final DateTime maintenant;
+
+  /// BE-LISTE : le lien qui replie ou deplie la carte.
+  static const Key cleBascule = ValueKey<String>(
+    'candidatures-attentes-bascule',
+  );
 
   /// La cle de la section.
   static const Key cleSection = ValueKey<String>('candidatures-attentes');
@@ -111,6 +118,14 @@ class CarteAttentes extends StatelessWidget {
 
   /// La cle de la phrase « Personne n'attend. ».
   static const Key cleRien = ValueKey<String>('candidatures-attentes-rien');
+
+  /// Ce qui attend l'academie : examen, entretien a planifier, entretien
+  /// planifie, decision.
+  int get _totalAcademie =>
+      attentes.etat(EtatCandidature.enExamen).nombre +
+      attentes.etat(EtatCandidature.entretienAPlanifier).nombre +
+      attentes.etat(EtatCandidature.entretienPlanifie).nombre +
+      attentes.etat(EtatCandidature.decisionEnAttente).nombre;
 
   @override
   Widget build(BuildContext context) {
@@ -187,18 +202,39 @@ class CarteAttentes extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Semantics(
-          header: true,
-          child: SectionHeader(
-            titre: a.titre,
-            libelleAction: onBasculer == null
-                ? null
-                : (repliee
-                      ? t.recrutement.file.afficher
-                      : t.recrutement.file.replier),
-            onAction: onBasculer,
+        // BE-LISTE : une seule ligne a toute largeur, repliee ou non : le
+        // titre, (repliee) ce qui attend l'academie, et le lien. `SectionHeader`
+        // range son action sous le titre au telephone ; ici elle reste sur la
+        // ligne.
+        if (onBasculer == null)
+          Semantics(header: true, child: SectionHeader(titre: a.titre))
+        else
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: TexteSansCoupure(
+                    repliee ? '${a.titre} · $_totalAcademie' : a.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleLarge ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+              ),
+              Ecart.hMd,
+              LienFleche(
+                key: cleBascule,
+                libelle: repliee
+                    ? t.recrutement.file.afficher
+                    : t.recrutement.file.replier,
+                fleche: false,
+                legende: true,
+                alignerEnFin: true,
+                onPress: onBasculer!,
+              ),
+            ],
           ),
-        ),
         if (!repliee) ...<Widget>[
           Ecart.vXs,
           TexteSansCoupure(
