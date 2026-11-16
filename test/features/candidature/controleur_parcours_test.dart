@@ -93,8 +93,9 @@ void main() {
         'classesSouhaitees',
         'debutPossible',
         'paysResidence',
-        'paysVersement',
+        // VERSEMENT-QUESTIONS (16/11/2026) : le compte bancaire d'abord.
         'compteBancaire',
+        'paysVersement',
         'operateurs',
         'moyensAccessibles',
       ]);

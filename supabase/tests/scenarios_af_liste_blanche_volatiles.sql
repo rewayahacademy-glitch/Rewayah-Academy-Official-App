@@ -426,6 +426,10 @@ declare
     'retrait_candidat(integer,text)',
     -- PAYS-VERSEMENT (20261127000300, 15/11/2026) : le candidat change le pays de son compte de versement apres l'envoi. Garde positive : titulaire d'une candidature en cours (private.candidature_du_titulaire, compte non supprime, statut pending_kyc, provisional_active ou active, acces non expire), sinon 42501 ; etat de la candidature controle ; pays dans la liste ISO. Ecrit UN document de reponses du titulaire, remet ses coordonnees a valider, une ligne de journal ; jamais d'effacement ni de refus. Meme garde que retrait_candidat.
     'modifier_mon_pays_versement(text)',
+    -- VERSEMENT-QUESTIONS (16/11) : le candidat modifie tout le bloc de versement (compte, pays, services) tant que le dossier n'est pas valide ; titulaire d'une candidature en cours seul.
+    'modifier_mon_versement(boolean,text,text[])',
+    -- VERSEMENT-QUESTIONS (16/11) : la direction debloque le versement (motif obligatoire, moteur des gestes) ; direction active et de genre connu.
+    'debloquer_versement_candidat(uuid,integer,text,text)',
     -- CAND-L2A2 (22/10) : reouverture d'une candidature refusee ou retiree (transition 19), direction active de son cote (moteur, controles nommes).
     'rouvrir_candidat(uuid,text,integer,text)',
     -- CAND-AUTRES (22/10) : retrait des reponses et de l'accord, meme titulaire (a toute issue de la candidature ; version attendue, cle d'idempotence).
