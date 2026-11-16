@@ -136,3 +136,22 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
 - **AR-5 (A-11), la création du compte.** Avec un `immutable_id` explicite, la migration échoue si
   `session_user <> 'postgres'` (échec fermé) : aucun matricule cherchable, aucun courriel, aucune notification.
   Retenu.
+- **AR-6 (16/11, 23 h 00), le plan de retouche de la messagerie (BE-PIECE).**
+  - Approuvé par le pilote, sous réserve de la réponse du Pilote Messagerie. Le plan :
+    - extraire `private.com_envoyer_message_interne` et `private.com_annonce_envoyer_interne`, corps déplacés mot
+      pour mot, par ancrage unique ;
+    - aucune autre fonction `com_*` ni aucun déclencheur touchés ;
+    - les portes humaines gardent leur appelant, leur validation et leurs refus.
+  - Conditions :
+    - les deux fonctions internes n'ont aucun `EXECUTE` pour `PUBLIC`, `anon`, `authenticated` ou `agent_ro` (un
+      scénario le prouve) ;
+    - le paramètre qui saute le contrôle humain n'est passé à faux que par `praxis_ecrire`, après ses propres
+      contrôles ;
+    - les empreintes F86 sont recalculées ;
+    - les scénarios de messagerie et d'annonces sont joués avant et après, et leur liste est dans la PR.
+  - Accepté :
+    - l'audit `log_sensitive_access` a un acteur vide pour Praxis ; c'est `praxis_journal` qui porte l'auteur, la
+      clé et la personne qui l'a émise ;
+    - **les fils de candidature restent fermés à Praxis en PX-1** (`com_paires` y lit `auth.uid()`). C'est un refus
+      fermé, et la prudence le veut ainsi ;
+    - les annonces de Praxis n'envoient jamais de courriel (R12) et sont refusées si un destinataire est mineur (§3.4).
