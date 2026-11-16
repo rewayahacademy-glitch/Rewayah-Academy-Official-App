@@ -9,7 +9,8 @@
 -- immediate, deux evenements (engagement, pause sans auteur, motif Age), l'envoi ferme, la
 -- declaration inverse refusee, rien de supprime ; (e) personne d'autre que le candidat ne peut
 -- attester pour lui ; (f) la direction lit `majorite` et filtre par attestee, non_attestee,
--- moins_18 (liste et voisins) ; (g) droits et empreinte.
+-- moins_18 (liste et voisins) ; (h) la direction remet la declaration a zero (motif, version, pause
+-- de l'age levee, trace) ; (g) droits et empreinte.
 -- Chaque controle leve 'MAJEUR ROUGE : ...' s'il echoue. A rejouer sur une base NEUVE (stub_auth
 -- puis toutes les migrations) ; le scenario annule tout a la fin.
 BEGIN;
@@ -281,6 +282,74 @@ SELECT pg_temp.vrai(
   'f7 : les voisins suivent le meme filtre (2 candidatures attestees)');
 
 -- ------------------------------------------------------------
+-- (h) La direction remet la declaration a zero (migration 20261128400100)
+-- ------------------------------------------------------------
+-- 05 : « moins de 18 ans », en pause pour l'age, version 2. 06 : attestee, pas en pause.
+SELECT pg_temp.refus_en(pg_temp.p('05'), 'teacher',
+  pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 2, 'erreur de case')$q$, pg_temp.c('05')),
+  '42501', 'h1 : le candidat ne rouvre pas sa propre declaration');
+SELECT pg_temp.refus_en(pg_temp.p('e1'), 'guardian',
+  pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 2, 'erreur de case')$q$, pg_temp.c('05')),
+  '42501', 'h2 : un tuteur non plus');
+SELECT pg_temp.refus_en(NULL, NULL,
+  pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 2, 'erreur de case')$q$, pg_temp.c('05')),
+  '42501', 'h3 : ni personne sans session');
+SELECT pg_temp.refus_en(pg_temp.p('a1'), 'admin',
+  pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 2, '   ')$q$, pg_temp.c('05')),
+  '22023', 'h4 : le motif est obligatoire (blanc refuse)');
+SELECT pg_temp.vrai(pg_temp.vue('05') = 'false/true/2' AND pg_temp.evenements('05', 'reprise') = 0,
+  'h5 : les refus n''ont rien ecrit');
+SELECT pg_temp.vrai(
+  pg_temp.en(pg_temp.p('a1'), 'admin',
+    pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 1, 'erreur de case')$q$, pg_temp.c('05')))
+    = '{"erreur": "version_perimee"}'::jsonb
+  AND pg_temp.vue('05') = 'false/true/2',
+  'h6 : une version perimee est refusee sans ecriture');
+SELECT pg_temp.vrai(
+  pg_temp.en(pg_temp.p('a1'), 'admin',
+    pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 1, 'x')$q$, pg_temp.c('02')))
+    = '{"erreur": "rien_a_rouvrir"}'::jsonb
+  AND pg_temp.vue('02') = 'nulle/false/1',
+  'h7 : rien a rouvrir quand aucune declaration n''existe');
+SELECT pg_temp.vrai(
+  pg_temp.en(pg_temp.p('a1'), 'admin',
+    pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 1, 'x')$q$, pg_temp.c('04')))
+    = '{"erreur": "candidature_close"}'::jsonb,
+  'h8 : une candidature close n''est pas rouverte');
+SELECT pg_temp.vrai(
+  pg_temp.en(pg_temp.p('a1'), 'admin',
+    pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 2, 'Le candidat s''est trompe de case, confirme par message')$q$, pg_temp.c('05')))
+    = '{"rouverte": true, "pauseLevee": true, "version": 3}'::jsonb
+  AND pg_temp.vue('05') = 'nulle/false/3',
+  'h9 : declaration remise a zero, pause de l''age levee, une version de plus');
+SELECT pg_temp.vrai(
+  (SELECT e.auteur_id = pg_temp.p('a1') AND e.motif_interne LIKE 'Le candidat s''est trompe%'
+          AND e.details @> '{"engagement": "majorite", "action": "rouverte", "avant": false}'::jsonb
+     FROM public.candidature_evenements e
+    WHERE e.candidature_id = pg_temp.c('05') AND e.type = 'engagement' AND e.details ->> 'action' = 'rouverte')
+  AND (SELECT e.auteur_id = pg_temp.p('a1') AND e.details @> '{"cause": "age"}'::jsonb
+         FROM public.candidature_evenements e
+        WHERE e.candidature_id = pg_temp.c('05') AND e.type = 'reprise')
+  AND pg_temp.evenements('05', 'pause') = 1 AND pg_temp.evenements('05', 'engagement') = 2,
+  'h10 : tracee (engagement rouvert avec son motif et son auteur, reprise), l''ancienne trace est gardee');
+SELECT pg_temp.vrai(
+  (SELECT count(*) FROM public.audit_logs l
+    WHERE l.row_id = pg_temp.c('05')::text AND l.action = 'candidature_geste'
+      AND l.payload ->> 'geste' = 'rouvrir_declaration_majorite') = 1,
+  'h11 : le journal des acces sensibles garde le geste');
+SELECT pg_temp.vrai(
+  pg_temp.en(pg_temp.p('05'), 'teacher', $q$SELECT public.attester_majorite(true)$q$) #>> '{majorite,declaree}' = 'true'
+  AND pg_temp.vue('05') = 'true/false/3',
+  'h12 : le candidat peut refaire sa declaration apres la reouverture');
+-- 06 attestee, pas en pause : la declaration est remise a zero, aucune pause n'est touchee.
+SELECT pg_temp.vrai(
+  pg_temp.en(pg_temp.p('a1'), 'admin',
+    pg_catalog.format($q$SELECT public.rouvrir_declaration_majorite_candidat(%L, 1, 'verification du motif')$q$, pg_temp.c('06')))
+    = '{"rouverte": true, "pauseLevee": false, "version": 2}'::jsonb
+  AND pg_temp.vue('06') = 'nulle/false/2' AND pg_temp.evenements('06', 'reprise') = 0,
+  'h13 : declaration vraie remise a zero : aucune pause levee, aucune reprise');
+
+-- ------------------------------------------------------------
 -- (g) Droits et empreinte
 -- ------------------------------------------------------------
 SELECT pg_temp.vrai(
@@ -294,11 +363,11 @@ SELECT pg_temp.vrai(
   (SELECT bool_and(obj_description(f, 'pg_proc') LIKE '%md5_functiondef=' || md5(pg_get_functiondef(f)) || '%'
                    AND obj_description(f, 'pg_proc') LIKE '%MAJEUR%'
                    AND prosecdef AND proconfig @> ARRAY['search_path=""'])
-     FROM unnest(ARRAY['public.attester_majorite(boolean)']::regprocedure[]) AS f
+     FROM unnest(ARRAY['public.attester_majorite(boolean)', 'public.rouvrir_declaration_majorite_candidat(uuid,integer,text)']::regprocedure[]) AS f
      JOIN pg_proc p ON p.oid = f),
   'g2 : empreinte F86 a jour, DEFINER, search_path vide');
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 31,
-  'z : au moins 31 controles passes');
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 44,
+  'z : au moins 44 controles passes');
 DO $$ BEGIN RAISE NOTICE 'MAJEUR : % controles OK', current_setting('test.n'); END $$;
 ROLLBACK;
