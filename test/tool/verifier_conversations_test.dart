@@ -170,17 +170,17 @@ void main() {
     expect(verifier(racine: d.path).single, contains('retirer la ligne'));
   });
 
-  test('la matrice du depot est complete : 12 verifications par entree', () {
+  test('la matrice du depot est complete : 12 verifications et les non lus par entree', () {
     final List<String> lignes = File(fichierMatrice).readAsLinesSync();
     final Iterable<String> rangs = lignes.where(
       (String l) => RegExp(r'^\|\s*`lib/').hasMatch(l),
     );
     expect(rangs, isNotEmpty);
     for (final String l in rangs) {
-      // Fichier, roles, quoi, 12 verifications, ecart : 16 cellules.
+      // Fichier, roles, quoi, 12 verifications, non lus, ecart : 17 cellules.
       final int cellules = l.split('|').length - 2;
-      expect(cellules, 16, reason: l.split('|')[1]);
-      for (final String c in l.split('|').skip(4).take(12)) {
+      expect(cellules, 17, reason: l.split('|')[1]);
+      for (final String c in l.split('|').skip(4).take(13)) {
         expect(c.trim(), isNotEmpty, reason: 'case vide : ${l.split('|')[1]}');
       }
     }

@@ -2024,53 +2024,84 @@ class _FilDiscussionState extends State<FilDiscussion> {
             // et ne prend jamais plus de 40 % de la hauteur de l'ecran
             // (60 % du fil, clavier ouvert) : au-dela, elle defile
             // elle-meme.
+            // CONVERSATIONS-PARTOUT (directeur, 16/11/2026, « supprime le
+            // rectangle ») : le champ et le bouton image flottent sur le fond
+            // du fil, jamais sur une bande a part : le meme fond que la liste
+            // des messages, aucun bord, aucune ombre (`FilDiscussion` pose ici
+            // le fond du fil derriere la saisie, comme au telephone).
             if (!saisieDansListe)
-              ConstrainedBox(
-                key: FilDiscussion.cleSaisie,
-                // N-9 : le panneau vocal releve la borne ; la saisie va a son
-                // bas a l'ouverture du panneau.
-                constraints: BoxConstraints(
-                  maxHeight: math.min(
-                    MediaQuery.sizeOf(context).height *
-                        (vocalBorne
-                            ? FilDiscussion.partSaisieVocalMax
-                            : FilDiscussion.partSaisieMax),
-                    hauteur.isFinite
-                        ? hauteur *
-                              (vocalBorne
-                                  ? FilDiscussion.partSaisieFilVocalMax
-                                  : FilDiscussion.partSaisieFilMax)
-                        : double.infinity,
+              _SurFondDuFil(
+                child: ConstrainedBox(
+                  key: FilDiscussion.cleSaisie,
+                  // N-9 : le panneau vocal releve la borne ; la saisie va a son
+                  // bas a l'ouverture du panneau.
+                  constraints: BoxConstraints(
+                    maxHeight: math.min(
+                      MediaQuery.sizeOf(context).height *
+                          (vocalBorne
+                              ? FilDiscussion.partSaisieVocalMax
+                              : FilDiscussion.partSaisieMax),
+                      hauteur.isFinite
+                          ? hauteur *
+                                (vocalBorne
+                                    ? FilDiscussion.partSaisieFilVocalMax
+                                    : FilDiscussion.partSaisieFilMax)
+                          : double.infinity,
+                    ),
                   ),
-                ),
-                child: SingleChildScrollView(
-                  controller: _defilementSaisie,
-                  child: limite == null
-                      ? saisie
-                      : Padding(
-                          padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                          child: Text(
-                            limite,
-                            key: FilDiscussion.cleLectureSeule,
-                            style: AppPalette.of(context).inkMuted.applyTo(
-                              styles.bodyMedium ?? const TextStyle(),
+                  child: SingleChildScrollView(
+                    controller: _defilementSaisie,
+                    child: limite == null
+                        ? saisie
+                        : Padding(
+                            padding: const EdgeInsets.only(
+                              bottom: AppSpacing.lg,
+                            ),
+                            child: Text(
+                              limite,
+                              key: FilDiscussion.cleLectureSeule,
+                              style: AppPalette.of(context).inkMuted.applyTo(
+                                styles.bodyMedium ?? const TextStyle(),
+                              ),
                             ),
                           ),
-                        ),
+                  ),
                 ),
               ),
             // N-9 : sous la saisie bornee qu'occupe le panneau vocal, une
             // marge : il ne touche ni la barre de navigation ni le bord.
             if (!saisieDansListe && vocalBorne)
-              const SizedBox(
-                key: FilDiscussion.cleMargeVocal,
-                height: AppSpacing.lg,
+              const _SurFondDuFil(
+                child: SizedBox(
+                  key: FilDiscussion.cleMargeVocal,
+                  height: AppSpacing.lg,
+                ),
               ),
           ],
         );
       },
     );
   }
+}
+
+/// Le fond du fil derriere la saisie (CONVERSATIONS-PARTOUT) : le meme fond que
+/// la liste des messages, sans bord ni ombre, avec la meme marge laterale qu'au
+/// telephone. C'est le SEUL paint admis entre le champ et le fil : le test de
+/// rendu (`fil_saisie_sans_rectangle_test.dart`) refuse tout autre fond, bord
+/// ou ombre.
+class _SurFondDuFil extends StatelessWidget {
+  const _SurFondDuFil({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: AppPalette.of(context).fondFil.background,
+    child: Padding(
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+      child: child,
+    ),
+  );
 }
 
 /// Une ligne du fil, calculee une fois (voir `_lignesDuFil`) : un message, un
