@@ -30,8 +30,8 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 
 | Lot | Contenu | Statut |
 | :--- | :--- | :--- |
-| SEC-0 | Sans code : une session joue le secrétaire (point du matin, tri, brouillons, guide de voix) | pas commencé |
-| SEC-1 | Connecteur : messages (boîte, fil, répondre, brouillons, canal) | pas commencé |
+| SEC-0 | Les cinq compétences du secrétaire (`voix-directeur`, `repondre-rewayah`, `annoncer-rewayah`, `savoir-rewayah`, `agir-rewayah`) ; attend les annonces WhatsApp du directeur | pas commencé |
+| SEC-1 | Connecteur : messages et annonces en envoi direct (boîte, fil, écrire, annoncer, calendrier, alerter) | pas commencé |
 | SEC-2 | Connecteur : dossiers (file, impression, listes, propositions) | pas commencé |
 | SEC-3 | Connecteur : objectifs, check-listes, assignation, alertes, point du jour | pas commencé |
 | SEC-4 | Connecteur : matching (besoins et ressources, classes proposées) | pas commencé |
@@ -43,3 +43,4 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
   travaille déjà sur la messagerie (BULLES-MESSAGERIE) : le plafond de quatre est atteint.
 - 16/11 : le directeur donne au coordinateur de ce chantier le droit de fusionner les PR de ses agents, « tant que ça ne met pas en conflit avec l'autre ».
 - 16/11 : vision du secrétaire IA écrite (`SECRETAIRE-IA.md`) ; elle amende R3 de la stratégie.
+- 16/11 : le directeur tranche : messages et annonces en envoi direct, sans aperçus ; le secrétaire propose aussi les fonctions et corrections à venir ; calendrier des annonces ; jouer le secrétaire sans code : pas maintenant.

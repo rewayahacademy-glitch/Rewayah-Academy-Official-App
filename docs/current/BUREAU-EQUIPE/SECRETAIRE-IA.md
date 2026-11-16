@@ -34,6 +34,24 @@ l'humain décide ») : voir §3.**
   nouveaux élèves ; avec plus de 1 500 candidats et pas de budget, c'est l'IA qui doit être là. »
 - « Tout se regroupe sur l'app, ne pas se disperser sur WhatsApp. »
 
+Compléments du directeur, le même jour, qui prévalent sur tout ce qui les contredit ici :
+- « C'est lui qui va proposer les prochaines fonctionnalités en fonction des activités et
+  des besoins des users, et les corrections, car je ne suis pas développeur. »
+- « Pour les messages, je refuse d'abandonner l'écriture directe à des tonnes d'aperçus qui
+  feront planter l'app. » « Il écrit des messages, POINT, il répond aussi. » On lui enseigne
+  « à travers des skills » à faire les bons choix quand il écrit ou interagit.
+- « Pour le fait qu'il soit connecté ou non, je vais activer les routines, ou lui demander
+  moi-même de faire des actions. »
+- Ses compétences se nourrissent de « tout ce que Rewayah est, veut, peut » : le code, le
+  dépôt, le site public, la base, les messages et courriels déjà écrits.
+- Les messages WhatsApp (à fournir par le directeur) ne sont pas en arabe : ce sont les
+  annonces du paiement du mois, faites à la main, et d'autres annonces.
+- « Il doit pouvoir écrire des annonces ; on doit avoir un calendrier qui va l'aider à
+  savoir quand écrire pour les sujets connus d'avance, sinon il agit à la demande ; et
+  lui-même doit pouvoir dire : une annonce est nécessaire pour tel groupe ou pour tout le
+  monde, pour informer de ceci à telle date. »
+- Jouer le secrétaire sans code (SEC-0) : « pas maintenant », trop de chantiers, peu de jetons.
+
 ## 2. Ce que c'est, en une phrase
 
 Un membre de l'équipe qui ne dort pas : il lit tout, fait lui-même ce qu'il a le droit de
@@ -44,14 +62,21 @@ d'emploi, et prévient avant que ça casse.
 
 | Niveau | Règle | Exemples |
 | :--- | :--- | :--- |
-| **A. Il fait seul** | Réversible, sans argent, sans droit, sans décision sur une personne. Tracé « secrétaire ». | Répondre à une question courante ; relancer ; ranger dans une liste ; créer un objectif, une check-liste ; assigner ; noter une impression proposée ; rappeler un rendez-vous ; ouvrir un lot de code |
-| **B. Il prépare, un humain valide d'un geste** | Engage l'académie envers une personne. Validation à l'unité ou en lot. | Accepter, demander un complément, proposer un créneau d'entretien, créer une classe, y placer des élèves, annonce à un public, message délicat |
+| **A. Il fait seul** | Sans argent, sans droit, sans décision sur une personne. Tracé « secrétaire ». | **Écrire et répondre à tout message, écrire et publier une annonce (décision du directeur : envoi direct, aucune file d'aperçus)** ; relancer ; ranger dans une liste ; créer un objectif, une check-liste ; assigner ; noter une impression proposée ; rappeler un rendez-vous ; ouvrir un lot de code |
+| **B. Il prépare, un humain valide d'un geste** | Engage l'académie envers une personne. Validation à l'unité ou en lot. | Accepter, demander un complément, proposer un créneau d'entretien, créer une classe, y placer des élèves, |
 | **C. Il conseille et rapporte** | Lecture seule. | Sécurité, droits, comptes, stratégie, embauche, finances, paie, prix |
 | **D. Jamais** | Ni fait, ni préparé en un geste. | Refuser une personne sans humain ; supprimer ; mouvement d'argent ; changer un droit ; lire une pièce d'identité ; modifier le garde-fou |
 
-Une catégorie passe de B à A sur décision datée du directeur, après un essai (exemple :
-« réponses aux questions sur les horaires : envoi seul »). Ce réglage vit dans
-l'application (réglage de la direction, A5), jamais en dur.
+**Messages et annonces : envoi direct.** Pas de brouillon à valider, pas d'écran d'aperçus.
+Ce qui le garde juste, ce sont ses compétences (§6) et trois réflexes écrits dedans :
+1. il ne promet rien qui relève des niveaux B, C ou D (une place, une acceptation, un
+   remboursement, un prix, une exception) : il dit que la direction répondra et il l'alerte ;
+2. s'il lui manque un fait, il le cherche ; s'il ne le trouve pas, il pose la question au
+   responsable au lieu d'inventer ;
+3. tout envoi est tracé « secrétaire », et il rend compte de ce qu'il a envoyé (rapport, §4.11).
+
+Une catégorie change de niveau sur décision datée du directeur ; le réglage vit dans
+l'application (A5), jamais en dur.
 
 Les deux côtés (hommes, femmes) restent : le secrétaire agit dans le périmètre de la
 personne qui l'a connecté ; celui du directeur voit les deux (A15).
@@ -61,9 +86,8 @@ personne qui l'a connecté ; celui du directeur voit les deux (A15).
 ### 4.1 Messages (priorité n° 1)
 - Trier la boîte : urgent, attend une réponse, pour information, déjà traité ; regrouper les
   mêmes questions ; résumer un long fil en trois lignes.
-- Répondre lui-même aux questions courantes (niveau A), dans la langue de la personne et
-  dans le style du directeur (§6).
-- Préparer les réponses délicates (B) ; envoi d'un geste, ou en lot après relecture.
+- Répondre lui-même, directement, dans la langue de la personne et dans le style du
+  directeur (§6) ; écrire le premier message quand il le faut.
 - Choisir le canal : dans l'application par défaut ; courriel seulement si urgent ou s'il
   faut une trace (X3) ; jamais deux fois le même envoi (S3) ; respecter le plafond des courriels.
 - Écrire les messages sortants : relances, convocations, annonces, bienvenue, consignes.
@@ -126,7 +150,67 @@ personne qui l'a connecté ; celui du directeur voit les deux (A15).
 - Proposer et rédiger : annonces, posts, courriels, pages, selon `marque-rewayah` et
   `mots-rewayah` ; proposer quand changer de stratégie, avec le fait qui le prouve.
 
-### 4.11 Rapports
+### 4.11 Annonces et calendrier
+- Tenir le **calendrier des annonces** : sujets connus d'avance (paiement du mois et ses
+  rappels, rentrée, vacances, Ramadan et fêtes, évaluations, changements d'horaire, heure
+  d'été, nouvelles classes, entretiens, mises à jour de l'application).
+- Écrire et publier l'annonce à la date prévue, au bon public (tout le monde, un rôle, une
+  classe, une liste), dans chaque langue, par le circuit des annonces existant.
+- À la demande quand un fait tombe ; et de lui-même : « une annonce est nécessaire pour tel
+  public, à telle date, pour dire ceci », puis il l'écrit.
+- Le paiement du mois, fait à la main sur WhatsApp aujourd'hui, passe dans l'application :
+  annonce, rappels aux seuls concernés, point des impayés à la direction (niveau C pour l'argent).
+
+### 4.12 Produit : il propose la suite, le directeur n'est pas développeur
+- Lire l'usage réel : où les gens s'arrêtent, ce qu'ils demandent dans les messages, les
+  erreurs, les lenteurs, les gestes répétés à la main.
+- Proposer les prochaines fonctions et les corrections, classées par gain pour les
+  personnes, avec le fait qui le prouve ; écrire le cahier du lot ; l'inscrire au registre.
+- Lancer le lot de code quand c'est une correction (circuit normal : agent, PR, contrôles,
+  fusion), le suivre jusqu'à la preuve en production, et le dire au directeur en mots simples.
+- Tenir `RETOURS-TERRAIN-INSCRIPTIONS.md` et la liste des questions qui reviennent.
+
+### 4.13 Accueil des nouveaux (l'ouverture, dans une semaine)
+- Pour chaque nouvel élève, famille ou enseignant : le message de bienvenue, les étapes
+  simples, ce qui manque, la première séance ; relance de ceux qui s'arrêtent en chemin.
+- Liste d'attente : qui attend quelle classe, qui prévenir quand une place s'ouvre.
+
+### 4.14 Aide aux personnes
+- Répondre aux « comment faire » (connexion, salle, micro, paiement, changement d'horaire),
+  avec le guide pas à pas ; repérer la personne bloquée avant qu'elle écrive.
+- Écrire et tenir les guides simples pour enseignants, familles et membres de l'équipe.
+
+### 4.15 Qualité des données
+- Repérer et signaler : comptes sans profil, doublons, pays ou fuseau manquant, mauvais rôle,
+  dossier incohérent ; corriger ce qui est de niveau A, préparer le reste.
+
+### 4.16 Droit et conformité (niveau C)
+- Suivre les obligations : consentements, délai de rétractation de 14 jours, demandes
+  d'accès ou d'effacement, conservation des données, représentant dans l'Union européenne,
+  protection des enfants ; alerter avant une échéance ; préparer les réponses.
+
+### 4.17 Équipe et formation
+- Accueillir un nouveau membre : sa mission, ses guides, ses premiers objectifs.
+- Préparer les réunions et les entretiens (ordre du jour, dossier), en écrire le compte
+  rendu et les suites ; suivre la charge de chacun et prévenir la surcharge.
+- Qualité de l'enseignement : préparer les observations de cours et leurs retours.
+
+### 4.18 Avis, image, partenaires
+- Collecter les avis au bon moment (`DECISION-AVIS`), préparer leur lecture par la direction.
+- Veille : ce que font les autres écoles, ce que disent les familles ; idées de partenariats.
+
+### 4.19 Coûts et limites
+- Suivre les limites gratuites (base, courriels, hébergement, visio) et prévenir avant le
+  plafond ; dire ce qu'un achat changerait, sans rien acheter (R10).
+
+### 4.20 Mémoire et pilotage
+- Écrire chaque décision du directeur là où les agents la liront (V8) ; tenir le registre
+  des lots, le suivi, les consignes ; ne jamais lui reposer une question tranchée.
+- Piloter les agents de code : cahiers, zones, relecture, fusion, migrations à installer.
+- Apprendre de ses erreurs : chaque correction du directeur devient une règle dans ses
+  compétences, le jour même.
+
+### 4.21 Rapports
 - Le point du matin (cinq lignes : ce qui s'est passé, ce qui attend, ce qui bloque).
 - Le rapport de la semaine et du mois ; le compte rendu de tout ce qu'il a fait seul.
 
@@ -138,7 +222,7 @@ personne qui l'a connecté ; celui du directeur voit les deux (A15).
   rend une réponse courte et déjà triée (peu de jetons, peu de charge sur la base).
 - Aucun budget d'API : l'intelligence tourne dans l'abonnement du directeur. Conséquence :
   il travaille quand une conversation est ouverte, ou à heure fixe par une tâche planifiée
-  (le point du matin). Ce n'est pas un robot qui tourne jour et nuit.
+  (les routines que le directeur activera), ou quand il le lui demande.
 - Identité propre : chaque geste est tracé « secrétaire de <personne> », jamais confondu
   avec un humain. Accès donné, limité et retiré depuis l'écran « Équipe » (mission).
 
@@ -146,21 +230,28 @@ Outils du connecteur, par ordre de construction :
 
 | Lot | Outils | Sert à |
 | :--- | :--- | :--- |
-| SEC-1 | `boite` (fils qui attendent, résumés), `fil`, `repondre` (envoi ou brouillon selon le réglage), `brouillons`, `canal_conseille` | 4.1 |
+| SEC-1 | `boite` (fils qui attendent, résumés), `fil`, `ecrire` (envoi direct), `annoncer`, `calendrier_annonces`, `alerter_responsable` | 4.1, 4.11 |
 | SEC-2 | `file_dossiers`, `dossier` (sans pièce ni contact), `noter_impression`, `ranger_liste`, `proposer_decision`, `ce_qui_manque` | 4.2 |
 | SEC-3 | `objectif`, `checklist`, `assigner`, `alerter`, `point_du_jour` | 4.6, 4.7 |
 | SEC-4 | `besoins_ressources`, `proposer_classes`, `proposer_placement` | 4.3 |
-| SEC-5 | `etat_application`, `chiffres` (inscriptions, abandon, charge), `rapport` | 4.8 à 4.11 |
+| SEC-5 | `etat_application`, `chiffres` (inscriptions, abandon, charge), `usage` (où les gens s'arrêtent), `rapport` | 4.8 à 4.21 |
 
 ## 6. Sa voix
 
-- Une compétence `.claude/skills/voix-directeur` : le style du directeur tiré de ses vrais
-  messages (arabe d'abord, puis français et anglais) : salutations, formules, longueur, ton,
-  ce qu'il ne dit jamais ; plus les réponses types validées.
-- Source : ses messages envoyés dans l'application, et ce qu'il fournit d'ailleurs (export
-  WhatsApp). Aucun message privé d'un tiers n'est recopié dans le dépôt : seulement des
-  règles de style et des exemples réécrits.
-- Tout texte respecte `mots-rewayah` et `programme-rewayah`.
+Le secrétaire est juste parce qu'il est instruit, pas parce qu'on le relit. Ses compétences
+(dossier `.claude/skills/`), à écrire avant SEC-1 :
+
+| Compétence | Contenu | Sources |
+| :--- | :--- | :--- |
+| `voix-directeur` | Son style par langue (arabe, français, anglais) : salutations, formules, longueur, ton, ce qu'il ne dit jamais | Ses messages dans l'application, les courriels déjà écrits pour lui (candidatures, invitations, attente), les annonces WhatsApp qu'il fournira |
+| `repondre-rewayah` | Quoi répondre à quoi : réponses types, quand répondre, quand alerter, ce qu'il ne promet jamais, quel canal (application ou courriel) | Base (questions réelles), `RETOURS-TERRAIN-INSCRIPTIONS.md`, décisions |
+| `annoncer-rewayah` | Écrire une annonce : public, moment, longueur, calendrier des sujets connus, paiement du mois | Annonces WhatsApp, circuit des annonces, `DECISION-TARIFS` |
+| `savoir-rewayah` | Ce que l'académie est, veut, peut : programme, prix, règles, parcours, horaires, cadre religieux | Dépôt, site public, `TEXTES-VALIDES`, `programme-rewayah`, `marque-rewayah` |
+| `agir-rewayah` | Les quatre niveaux d'autonomie, les deux côtés, à qui confier quoi, comment écrire un objectif et une check-liste | Ce fichier |
+
+Déjà en place et obligatoires : `mots-rewayah`, `programme-rewayah`, `marque-rewayah`.
+Aucun message privé d'un tiers n'est recopié dans le dépôt : seulement des règles et des
+exemples réécrits.
 
 ## 7. Ce qu'il ne faut pas se cacher
 
@@ -169,9 +260,9 @@ Outils du connecteur, par ordre de construction :
   geste dans l'application).
 - « Sans passer par la base » ne peut pas être vrai à la lettre : les messages y vivent. Ce
   qui est vrai : il ne passe ni par les écrans lents ni par des lectures lourdes.
-- Un message envoyé seul au nom de l'académie, en arabe, à un candidat, peut être faux. D'où
-  le démarrage en « brouillon, envoi d'un geste ou en lot », puis l'ouverture catégorie par
-  catégorie.
+- Un message envoyé seul au nom de l'académie peut être faux. Le directeur a tranché :
+  envoi direct, sans aperçus. Le risque se traite par les compétences (§6), les trois
+  réflexes du §3 et le rapport de ce qui a été envoyé, pas par un écran de plus.
 - Le serveur d'aujourd'hui interdit toute écriture à un agent (`0014_acces_agent.sql`,
   invariants I1 à I5). Le secrétaire qui écrit est une construction neuve et sensible : son
   cahier est écrit par le grand modèle, ses refus sont testés un par un.
@@ -180,9 +271,8 @@ Outils du connecteur, par ordre de construction :
 
 ## 8. Ordre de construction
 
-1. **Tout de suite, sans code** : une session Claude joue le secrétaire avec ce qui existe
-   (lecture de la production permise aux agents, S5) : point du matin, tri des candidats,
-   brouillons de réponses, guide de voix.
+1. Les compétences du §6 (sans elles, il n'écrit pas). Jouer le secrétaire sans code est
+   reporté par le directeur (16/11 : « pas maintenant »).
 2. SEC-1 (messages) : première priorité de code.
 3. Fin de la vague 1 (dossier suivant, panier de demandes, impression, dispense) et SEC-2.
 4. Vague 2 courte (inviter un associé, lui confier des dossiers) et SEC-3 avec la page
