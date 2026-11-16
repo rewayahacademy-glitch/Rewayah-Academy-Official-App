@@ -1089,28 +1089,53 @@ void main() {
       expect(autres, <String>[t.admin.candidatures.gestes.rouvrir]);
     });
 
-    testWidgets('en Salle de verification : complement, clore, retrait...', (
-      WidgetTester tester,
-    ) async {
-      await _monter(
-        tester,
-        _port(
-          detail: detailTest(
-            etape: EtapeCandidature.verifications,
-            etat: EtatCandidature.entretienAPlanifier,
-            paiement: EtatVersement.compatible,
+    testWidgets(
+      'en Salle de verification : sans complement en cours, pas de « clore »',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _port(
+            detail: detailTest(
+              etape: EtapeCandidature.verifications,
+              etat: EtatCandidature.entretienAPlanifier,
+              paiement: EtatVersement.compatible,
+            ),
           ),
-        ),
-      );
-      // Aucune prochaine action ouverte par le serveur (l'entretien est L4).
-      expect(_principal(), findsNothing);
-      final List<String> autres = await menu(tester);
-      expect(autres, <String>[
-        t.admin.candidatures.gestes.cloreComplement,
-        t.admin.candidatures.gestes.mettreEnPause,
-        t.admin.candidatures.gestes.retrait,
-      ]);
-    });
+        );
+        // Aucune prochaine action ouverte par le serveur (l'entretien est L4).
+        expect(_principal(), findsNothing);
+        final List<String> autres = await menu(tester);
+        // Capture de production CAND-00068 : « Clore le complement » etait
+        // propose alors qu'aucune demande n'etait en cours.
+        expect(autres, <String>[
+          t.admin.candidatures.gestes.mettreEnPause,
+          t.admin.candidatures.gestes.retrait,
+        ]);
+      },
+    );
+
+    testWidgets(
+      'en Salle de verification : complement en cours, « clore » est propose',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _port(
+            detail: detailTest(
+              etape: EtapeCandidature.verifications,
+              etat: EtatCandidature.entretienAPlanifier,
+              paiement: EtatVersement.compatible,
+              complementEnCours: true,
+            ),
+          ),
+        );
+        final List<String> autres = await menu(tester);
+        expect(autres, <String>[
+          t.admin.candidatures.gestes.cloreComplement,
+          t.admin.candidatures.gestes.mettreEnPause,
+          t.admin.candidatures.gestes.retrait,
+        ]);
+      },
+    );
 
     testWidgets('sans le droit de decider : aucun geste n\'est propose', (
       WidgetTester tester,
@@ -1430,6 +1455,7 @@ void main() {
         detail: detailTest(
           etape: EtapeCandidature.verifications,
           etat: EtatCandidature.entretienAPlanifier,
+          complementEnCours: true,
         ),
       );
       await _monter(tester, port);
