@@ -323,11 +323,16 @@ BEGIN
     AND (SELECT count(DISTINCT pays) FROM public.referentiel_paiement) = 249
     AND (SELECT bool_and(methode = 'virement_bancaire' AND operateur IS NULL AND source = 'decision_directeur'
                          AND source_ref = 'DEC:28 (CAND-Q05, 21/10/2026)' AND verifie_par IS NULL AND notes LIKE '%DEC:28%')
-         FROM public.referentiel_paiement WHERE pays NOT IN ('YE', 'NG', 'CI', 'SN'))
+         FROM public.referentiel_paiement
+         WHERE pays NOT IN ('YE', 'NG', 'CI', 'SN', 'EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD'))
     AND (SELECT bool_and(source = 'decision_directeur' AND source_ref LIKE 'Wise %, directeur 06/11/2026'
                          AND verifie_le = DATE '2026-11-06' AND version = 2)
-         FROM public.referentiel_paiement WHERE pays IN ('YE', 'NG', 'CI', 'SN')),
-    'etat initial : une ligne de virement par pays de pays_iso.dart (249), DEC:28, sauf YE, NG, CI, SN (CAND-BANQUE, 06/11)');
+         FROM public.referentiel_paiement WHERE pays IN ('YE', 'NG', 'CI', 'SN'))
+    -- PAYS-DECISIONS (16/11/2026) : dix lignes de plus portent la decision du directeur du 16/11 (Wise).
+    AND (SELECT bool_and(source = 'decision_directeur' AND source_ref LIKE 'Wise (wise.com%), directeur 16/11/2026'
+                         AND verifie_le = DATE '2026-11-16' AND version = 2)
+         FROM public.referentiel_paiement WHERE pays IN ('EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD')),
+    'etat initial : une ligne de virement par pays de pays_iso.dart (249), DEC:28, sauf YE, NG, CI, SN (CAND-BANQUE, 06/11) et dix pays de la decision du 16/11');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_afrique) = 60
     AND (SELECT array_agg(region_m49 || ':' || n ORDER BY region_m49) FROM
           (SELECT region_m49, count(*) n FROM public.referentiel_paiement_afrique GROUP BY 1) x)
@@ -335,20 +340,22 @@ BEGIN
     'Afrique (ONU M49, region 002) : 60 pays ou territoires, 7 au nord, 22 a l''est, 9 au centre, 5 au sud, 17 a l''ouest');
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement l
                         JOIN public.referentiel_paiement_afrique a ON a.pays = l.pays
-                        WHERE l.etat = 'en_verification' AND l.verifie_le IS NULL) = 57
+                        WHERE l.etat = 'en_verification' AND l.verifie_le IS NULL) = 47
     AND (SELECT count(*) FROM public.referentiel_paiement l
          WHERE l.etat = 'confirme' AND l.verifie_le = DATE '2026-10-21'
            AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement_afrique a WHERE a.pays = l.pays)) = 188
-    AND (SELECT array_agg(pays ORDER BY pays) FROM public.referentiel_paiement WHERE etat = 'indisponible') = ARRAY['YE'],
-    'Afrique : 57 lignes en verification, NG, CI, SN confirme (06/11) ; hors d''Afrique : 188 lignes confirme du 21/10, YE indisponible');
+    AND (SELECT array_agg(pays ORDER BY pays) FROM public.referentiel_paiement WHERE etat = 'indisponible') = ARRAY['BF', 'BJ', 'ML', 'NE', 'SD', 'TD', 'YE'],
+    -- PAYS-DECISIONS (16/11/2026) : dix pays d'Afrique de plus decides (4 confirme, 6 indisponible).
+    'Afrique : 47 lignes en verification, NG, CI, SN confirme (06/11), EG, MA, GH, KE confirme et BF, BJ, ML, NE, SD, TD indisponible (16/11) ; hors d''Afrique : 188 lignes confirme du 21/10, YE indisponible');
   PERFORM pg_temp.vrai((pg_temp.ligne('SA', 'virement_bancaire')).etat = 'confirme'
     AND (pg_temp.ligne('YE', 'virement_bancaire')).etat = 'indisponible'
-    AND (pg_temp.ligne('EG', 'virement_bancaire')).etat = 'en_verification'
+    AND (pg_temp.ligne('DZ', 'virement_bancaire')).etat = 'en_verification'
+    AND (pg_temp.ligne('EG', 'virement_bancaire')).etat = 'confirme'
     AND (pg_temp.ligne('NG', 'virement_bancaire')).etat = 'confirme'
     AND (pg_temp.ligne('SN', 'virement_bancaire')).etat = 'confirme'
     AND (pg_temp.ligne('RE', 'virement_bancaire')).etat = 'en_verification'
     AND (pg_temp.ligne('FR', 'virement_bancaire')).etat = 'confirme',
-    'DEC:28 puis 06/11 : Arabie saoudite confirme, Yemen indisponible ; Nigeria, Senegal confirme ; Egypte, Reunion en verification');
+    'DEC:28 puis 06/11 : Arabie saoudite confirme, Yemen indisponible ; Nigeria, Senegal confirme ; Algerie, Reunion en verification ; Egypte confirme (16/11)');
   PERFORM pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.referentiel_paiement WHERE methode = 'mobile_money')
     AND (SELECT array_agg(code ORDER BY code) FROM public.referentiel_paiement_operateurs WHERE code <> 'op_fictif')
         = ARRAY['moov_money', 'orange_money', 'wave'],
@@ -356,8 +363,8 @@ BEGIN
   PERFORM pg_temp.vrai((SELECT count(*) FROM public.referentiel_paiement_journal
                         WHERE auteur_id IS NULL AND cle_idempotence IS NULL AND avant IS NULL) = 249
     AND (SELECT count(*) FROM public.referentiel_paiement_journal
-         WHERE auteur_id IS NULL AND avant IS NOT NULL AND apres ->> 'source_ref' LIKE 'Wise %') = 4,
-    'etat initial journalise : une ligne par ligne, sans auteur ni cle, plus les 4 changements du 06/11');
+         WHERE auteur_id IS NULL AND avant IS NOT NULL AND apres ->> 'source_ref' LIKE 'Wise %') = 14,
+    'etat initial journalise : une ligne par ligne, sans auteur ni cle, plus les 4 changements du 06/11 et les 10 du 16/11');
   PERFORM pg_temp.vrai((SELECT value FROM public.app_config WHERE key = 'paiement.afrique_ouverte') = 'true'::jsonb
     AND private.paiement_afrique_ouverte()
     AND (SELECT array_agg(ouverte::text || ':' || decide_le::text ORDER BY id) FROM public.referentiel_paiement_afrique_decisions)
@@ -369,8 +376,10 @@ END $initial$;
 -- eprouve la garde de l'Afrique fermee. Dans la transaction du scenario,
 -- annulee a la fin, le proprietaire remet NG, CI, SN en verification et YE a
 -- confirme, puis enregistre une decision fermee : la garde joue a nouveau.
+-- PAYS-DECISIONS (16/11/2026) : les dix pays de la decision du 16/11 sont remis en verification aussi.
 UPDATE public.referentiel_paiement SET etat = 'en_verification', verifie_le = NULL
-WHERE pays IN ('NG', 'CI', 'SN') AND methode = 'virement_bancaire' AND operateur IS NULL;
+WHERE pays IN ('NG', 'CI', 'SN', 'EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD')
+  AND methode = 'virement_bancaire' AND operateur IS NULL;
 UPDATE public.referentiel_paiement SET etat = 'confirme', verifie_le = DATE '2026-10-21'
 WHERE pays = 'YE' AND methode = 'virement_bancaire' AND operateur IS NULL;
 INSERT INTO public.referentiel_paiement_afrique_decisions (ouverte, decision_ref, decide_le)
