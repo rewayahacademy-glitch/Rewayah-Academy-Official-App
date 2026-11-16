@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import 'package:rewayah_academy/features/connexion/recuperation_page.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthApiException;
 
+import '../../capture/outil_capture.dart';
 import '../../support/harnais.dart';
 
 const ValueKey<String> _cleCourriel = ValueKey<String>('connexion-courriel');
@@ -386,6 +387,140 @@ void main() {
         await tester.pumpAndSettle();
         expect(tester.takeException(), isNull);
         expect(find.text(t.connexion.controle.horsLigne), findsOneWidget);
+      });
+    }
+  });
+
+  // CAPTCHA-PLACE (directeur, 16/11/2026) : la case se pose juste sous le
+  // bouton principal, jamais entre le champ et lui ; elle apparait et disparait
+  // sans saut.
+  group('CAPTCHA-PLACE : la place et le mouvement', () {
+    testWidgets('connexion : le controle est sous le bouton principal, pas '
+        'entre le champ et lui', (WidgetTester tester) async {
+      late _ControleurJetons controleur;
+      await _monter(
+        tester,
+        auth: FauxServiceAuth(),
+        page: const ConnexionPage(),
+        cle: _Cle('0xCleDuSite'),
+        fabrique: () => controleur = _ControleurJetons(rendre: false),
+      );
+      // Une phrase force le controle a se montrer (a defaut du widget web).
+      controleur.signalerErreur(horsLigne: true);
+      await tester.pumpAndSettle();
+      final Finder bouton = find.widgetWithText(
+        ActionPrincipale,
+        t.connexion.envoyerLien,
+      );
+      final double champ = tester.getBottomLeft(find.byKey(_cleCourriel)).dy;
+      final double haut = tester.getTopLeft(bouton).dy;
+      final double bas = tester.getBottomLeft(bouton).dy;
+      final double controle = tester
+          .getTopLeft(find.byKey(ControleAntiRobot.cleControle))
+          .dy;
+      expect(champ, lessThan(haut), reason: 'le champ precede le bouton');
+      expect(
+        controle,
+        greaterThanOrEqualTo(bas),
+        reason: 'le controle est sous le bouton principal',
+      );
+    });
+
+    testWidgets('recuperation : le controle est sous le bouton principal', (
+      WidgetTester tester,
+    ) async {
+      late _ControleurJetons controleur;
+      await _monter(
+        tester,
+        auth: FauxServiceAuth(),
+        page: const RecuperationPage(),
+        cle: _Cle('0xCleDuSite'),
+        fabrique: () => controleur = _ControleurJetons(rendre: false),
+      );
+      controleur.signalerErreur(horsLigne: true);
+      await tester.pumpAndSettle();
+      final double bas = tester
+          .getBottomLeft(
+            find.widgetWithText(
+              ActionPrincipale,
+              t.connexion.recuperation.envoyer,
+            ),
+          )
+          .dy;
+      expect(
+        tester.getTopLeft(find.byKey(ControleAntiRobot.cleControle)).dy,
+        greaterThanOrEqualTo(bas),
+      );
+    });
+
+    testWidgets('la hauteur s\'anime, le controle ne saute pas', (
+      WidgetTester tester,
+    ) async {
+      late _ControleurJetons controleur;
+      await _monter(
+        tester,
+        auth: FauxServiceAuth(),
+        page: const ConnexionPage(),
+        cle: _Cle('0xCleDuSite'),
+        fabrique: () => controleur = _ControleurJetons(rendre: false),
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(ControleAntiRobot.cleControle),
+          matching: find.byType(AnimatedSize),
+        ),
+        findsOneWidget,
+      );
+      final double avant = tester
+          .getSize(find.byKey(ControleAntiRobot.cleControle))
+          .height;
+      controleur.signalerErreur(horsLigne: true);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 60));
+      final double milieu = tester
+          .getSize(find.byKey(ControleAntiRobot.cleControle))
+          .height;
+      await tester.pumpAndSettle();
+      final double apres = tester
+          .getSize(find.byKey(ControleAntiRobot.cleControle))
+          .height;
+      expect(apres, greaterThan(avant));
+      // Une image du milieu : ni la hauteur d'avant, ni celle d'apres.
+      expect(milieu, greaterThan(avant));
+      expect(milieu, lessThan(apres));
+    });
+  });
+
+  // CAPTCHA-PLACE : captures 360, francais et arabe, case cachee puis phrase
+  // visible sous le bouton, puis apres. La vraie case de Cloudflare est un
+  // element web : elle ne se monte pas dans un test, elle n'est donc pas forcee
+  // ici ; la phrase du controle occupe la meme place sous le bouton.
+  group('CAPTCHA-PLACE : captures', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+    for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
+      ('fr', AppLocale.fr),
+      ('ar', AppLocale.ar),
+    ]) {
+      testWidgets('360 $nom', (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        late _ControleurJetons controleur;
+        await _monter(
+          tester,
+          auth: FauxServiceAuth(),
+          page: const ConnexionPage(),
+          cle: _Cle('0xCleDuSite'),
+          fabrique: () => controleur = _ControleurJetons(rendre: false),
+          taille: const Size(360, 800),
+        );
+        await capturerVue(tester, 'CAPTCHA-PLACE/captcha_${nom}_360_1cache');
+        controleur.signalerErreur();
+        await tester.pumpAndSettle();
+        await capturerVue(tester, 'CAPTCHA-PLACE/captcha_${nom}_360_2visible');
+        controleur.relancer();
+        await tester.pumpAndSettle();
+        await capturerVue(tester, 'CAPTCHA-PLACE/captcha_${nom}_360_3apres');
       });
     }
   });

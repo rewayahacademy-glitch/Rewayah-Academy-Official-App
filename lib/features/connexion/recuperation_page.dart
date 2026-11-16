@@ -471,7 +471,6 @@ class _Saisie extends StatelessWidget {
           Ecart.vMd,
           _PhraseErreur(erreurEnvoi!),
         ],
-        ?controle,
         Ecart.vLg,
         BoutonEntree(
           bureau: bureau,
@@ -483,6 +482,8 @@ class _Saisie extends StatelessWidget {
             pleineLargeur: !bureau,
           ),
         ),
+        // CAPTCHA-PLACE : la case se pose juste sous le bouton principal.
+        ?controle,
         Ecart.vXxl,
         LienEntree(
           libelle: t.connexion.recuperation.revenirConnexion,
@@ -547,7 +548,6 @@ class _Envoye extends StatelessWidget {
         Ecart.vMd,
         Text(t.connexion.recuperation.envoyeEncart, style: discret),
         if (erreur != null) ...<Widget>[Ecart.vMd, _PhraseErreur(erreur!)],
-        ?controle,
         Ecart.vXxl,
         BoutonEntree(
           bureau: bureau,
@@ -559,6 +559,8 @@ class _Envoye extends StatelessWidget {
             pleineLargeur: !bureau,
           ),
         ),
+        // CAPTCHA-PLACE : la case se pose juste sous le bouton.
+        ?controle,
         Ecart.vLg,
         LienEntree(
           libelle: t.connexion.recuperation.autreAdresse,
