@@ -34,6 +34,7 @@ import 'package:rewayah_academy/features/com_messages/recherche_fils.dart';
 
 import '../../router/support_routeur.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
+import '../../support/echec_bulle.dart';
 import '../../support/harnais.dart';
 import 'support_messages.dart';
 
@@ -358,10 +359,9 @@ void main() {
       await _envoyer(tester, 'Merci');
       port.attentes.single.completeError(Exception('reseau'));
       await tester.pumpAndSettle();
-      expect(find.text(x.reessayer), findsOneWidget);
+      expect(find.text(ligneEchec), findsOneWidget);
 
-      await tester.tap(find.text(x.reessayer));
-      await tester.pump();
+      await choisirActionEchec(tester, x.reessayer);
       expect(port.envois, hasLength(2));
       expect(port.envois.last.$3, port.envois.first.$3);
       port.attentes.last.complete();

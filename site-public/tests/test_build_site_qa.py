@@ -301,6 +301,10 @@ class GeneratedSiteQA(unittest.TestCase):
                             self.page_file(route).read_text(encoding="utf-8"), flags=re.S)
             if route.startswith("/fr/articles/"):
                 source = re.sub(bloc_citation, "", source, flags=re.S)
+            # Exception datee (directeur, 16/11/2026) : un avis n'est jamais retouche ; une formule arabe qu'il cite est
+            # posee dans sa langue (<bdi lang="ar" dir="rtl">, bloc_avis.esc_avis), dans une carte d'avis et nulle part ailleurs.
+            source = re.sub(r'<article class="avis-carte">.*?</article>',
+                            lambda m: re.sub(r'<bdi lang="ar" dir="rtl">[^<]*</bdi>', "", m.group(0)), source, flags=re.S)
             with self.subTest(route=route):
                 self.assertIsNone(arabe.search(source))
 

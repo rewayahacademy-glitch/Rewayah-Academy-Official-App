@@ -72,6 +72,7 @@ class FilContextuel extends StatefulWidget {
     this.images,
     this.onAimer,
     this.onEnvoyerImage,
+    this.onAnnulerImage,
   });
 
   /// IMAGES-MESSAGERIE : les adresses des images du fil, ou `null`.
@@ -84,6 +85,9 @@ class FilContextuel extends StatefulWidget {
   /// IMAGES-MESSAGERIE : envoyer un message avec son image, ou `null` : pas
   /// d'icone (compte eleve de moins de 18 ans).
   final EnvoiImageFil? onEnvoyerImage;
+
+  /// IMAGES-CORRECTIF : abandonne le depot d'une bulle supprimee, ou `null`.
+  final Future<void> Function(String imageId)? onAnnulerImage;
 
   /// Le fil ouvert.
   final FilMetier fil;
@@ -319,6 +323,7 @@ class _FilContextuelState extends State<FilContextuel>
               onEnvoyerImage: ecriture && widget.onEnvoyerImage != null
                   ? _envoyerImage
                   : null,
+              onAnnulerImage: widget.onAnnulerImage,
               cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
               emplacementVocal: !ecriture || vocal == null
                   ? null
@@ -409,6 +414,7 @@ class _FilContextuelState extends State<FilContextuel>
       images: widget.images,
       onAimer: widget.onAimer,
       onEnvoyerImage: widget.onEnvoyerImage == null ? null : _envoyerImage,
+      onAnnulerImage: widget.onAnnulerImage,
       cleBrouillon: cleBrouillonFil(fil.id),
       emplacementVocal: vocal == null
           ? null

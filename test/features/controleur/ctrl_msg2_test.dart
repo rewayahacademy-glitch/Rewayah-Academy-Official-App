@@ -31,6 +31,8 @@ import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle.dart';
 import 'package:rewayah_academy/features/controleur/observation_controle_page.dart';
 
+import '../../support/echec_bulle.dart';
+
 const String _controle = 'ecran-controle';
 const String _echanges = 'ecran-echanges';
 
@@ -497,7 +499,9 @@ void main() {
 
       expect(find.text(e.enCours), findsNothing);
       expect(find.text(e.envoye), findsNothing);
-      expect(find.text(e.echec), findsOneWidget);
+      expect(find.text(ligneEchec), findsOneWidget);
+      await tester.tap(find.byKey(FilDiscussion.cleLigneEchec));
+      await tester.pumpAndSettle();
       expect(find.text(e.reessayer), findsOneWidget);
       expect(find.text('Bonjour.'), findsOneWidget);
     });

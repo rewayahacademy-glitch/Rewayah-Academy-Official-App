@@ -292,7 +292,9 @@ class _ListeFilsState extends State<ListeFils> {
     final int nonLus = f.attention.nonLus;
     final DateTime? dernier = f.dernierMessageLe;
     final String titre = titreFil(f.interlocuteurs, f.objet.libelle);
-    final String apercu = f.apercu ?? t.com.messages.ligne.sansApercu;
+    final String apercu = f.apercuPhoto
+        ? t.com.messages.images.photoApercu
+        : f.apercu ?? t.com.messages.ligne.sansApercu;
     final String? selection = widget.filSelectionne;
     return LigneConversation(
       key: ValueKey<String>('ligne-${f.id}'),
@@ -307,6 +309,7 @@ class _ListeFilsState extends State<ListeFils> {
       ),
       titre: titre,
       apercu: apercu,
+      apercuPhoto: f.apercuPhoto,
       heure: dernier == null ? null : momentCourt(dernier, maintenant),
       nonLus: nonLus,
       libelleNonLus: nonLus > 0 ? BadgeNonLu.libelleNonLus(nonLus) : null,

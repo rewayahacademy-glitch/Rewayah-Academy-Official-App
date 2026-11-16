@@ -195,6 +195,7 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
         images: imagesDuFil(ref, fil.id).source,
         onAimer: imagesDuFil(ref, fil.id).aimer,
         onEnvoyerImage: imagesDuFil(ref, fil.id).envoyer,
+        onAnnulerImage: imagesDuFil(ref, fil.id).annuler,
         onEnvoyerVocal: vocalOuvert(ref)
             ? (EnregistrementVocal v, String cle) =>
                   _envoyerVocal(fil.id, v, cle)

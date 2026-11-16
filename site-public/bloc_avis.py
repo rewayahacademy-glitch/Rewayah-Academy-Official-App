@@ -101,6 +101,27 @@ def esc(value: object) -> str:
     return html.escape(str(value), quote=True)
 
 
+# Un avis francais peut citer une formule arabe (« الحمد لله ») : le texte n'est jamais retouche (decision du 19/10/2026),
+# mais chaque suite de lettres arabes est posee dans sa langue, de droite a gauche (directeur, 16/11/2026). Une suite
+# garde les espaces et la ponctuation arabe qui lient ses mots ; elle commence et finit par une lettre arabe.
+_ARABE = "\u0600-\u06FF\u0750-\u077F\u0870-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF"
+_SUITE_ARABE = re.compile(f"[{_ARABE}](?:[{_ARABE}\\s]*[{_ARABE}])?")
+
+
+def esc_avis(value: object) -> str:
+    """Comme esc, et chaque suite arabe d'un texte ecrit par une personne entre dans <bdi lang="ar" dir="rtl">."""
+    texte = str(value)
+    if LANGUE == "ar":
+        return esc(texte)
+    morceaux, fin = [], 0
+    for m in _SUITE_ARABE.finditer(texte):
+        morceaux.append(esc(texte[fin:m.start()]))
+        morceaux.append(f'<bdi lang="ar" dir="rtl">{esc(m.group(0))}</bdi>')
+        fin = m.end()
+    morceaux.append(esc(texte[fin:]))
+    return "".join(morceaux)
+
+
 def _unique_object(pairs: list[tuple[str, object]]) -> dict[str, object]:
     result = {}
     for key, value in pairs:
@@ -346,12 +367,12 @@ def _initiale(nom: str) -> str:
 def _un_avis(a: dict) -> str:
     """Une carte d'avis : les etoiles, le titre, la citation (jamais retouchee), puis qui parle."""
     pays = nom_pays(a["pays"])
-    titre = f"<h3>{esc(a['titre'])}</h3>" if a["titre"] else ""
-    texte = esc(a["texte"].replace("\r\n", "\n").replace("\r", "\n")).replace("\n", "<br>")
+    titre = f"<h3>{esc_avis(a['titre'])}</h3>" if a["titre"] else ""
+    texte = esc_avis(a["texte"].replace("\r\n", "\n").replace("\r", "\n")).replace("\n", "<br>")
     return (f'<article class="avis-carte"><span class="avis-guillemet" aria-hidden="true">“</span>{etoiles(a["note"])}{titre}'
             f'<blockquote class="avis-texte"><p>{texte}</p></blockquote>'
-            f'<footer class="avis-auteur"><span class="avis-initiale" aria-hidden="true">{esc(_initiale(a["nom"]))}</span>'
-            f'<div><strong>{esc(a["nom"])}</strong>'
+            f'<footer class="avis-auteur"><span class="avis-initiale" aria-hidden="true">{esc_avis(_initiale(a["nom"]))}</span>'
+            f'<div><strong>{esc_avis(a["nom"])}</strong>'
             f'<span>{esc(pays)} · {esc(_tx(a["qualite"]))}{"، " if LANGUE == "ar" else ", "}{esc(_tx("depuis", mois=fmt_mois(a["depuis"])))}</span>'
             f'<span class="avis-date">{esc(_tx("publie", date=fmt_date(a["publie_le"])))}</span></div></footer></article>')
 

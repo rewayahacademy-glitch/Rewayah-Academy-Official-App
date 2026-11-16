@@ -39362,6 +39362,18 @@ class Traductions$com$messages$images$fr {
 	/// fr: 'Votre « J'aime » n'est pas confirmé. Réessayez dans un instant.'
 	String get coeurEchec => 'Votre « J\'aime » n\'est pas confirmé. Réessayez dans un instant.';
 
+	/// fr: 'Photo'
+	String get photoApercu => 'Photo';
+
+	/// fr: 'Non confirmé · Toucher pour réessayer'
+	String get nonConfirmeToucher => 'Non confirmé · Toucher pour réessayer';
+
+	/// fr: 'Supprimer'
+	String get supprimerEchec => 'Supprimer';
+
+	/// fr: 'Actions du message non confirmé'
+	String get actionsEchec => 'Actions du message non confirmé';
+
 	late final Traductions$com$messages$images$refus$fr refus = Traductions$com$messages$images$refus$fr.internal(_root);
 }
 
@@ -50343,8 +50355,8 @@ class Traductions$com$messages$images$refus$fr {
 	/// fr: 'L'image n'est pas confirmée : c'est une panne du serveur, pas de votre faute. Réessayez dans un instant.'
 	String get depotImpossible => 'L\'image n\'est pas confirmée : c\'est une panne du serveur, pas de votre faute. Réessayez dans un instant.';
 
-	/// fr: 'Le stockage a refusé l'image (adresse expirée ou envoi coupé). Réessayez.'
-	String get envoiStockage => 'Le stockage a refusé l\'image (adresse expirée ou envoi coupé). Réessayez.';
+	/// fr: 'L'envoi de l'image n'a pas abouti. Réessayez plus tard.'
+	String get envoiStockage => 'L\'envoi de l\'image n\'a pas abouti. Réessayez plus tard.';
 
 	/// fr: 'Il est possible que l'image ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.'
 	String get reseau => 'Il est possible que l\'image ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.';
@@ -63973,6 +63985,10 @@ extension on Traductions {
 			'com.messages.images.aimeParVous' => 'Aimé par vous',
 			'com.messages.images.aimes' => ({required Object n}) => 'J\'aime : ${n}',
 			'com.messages.images.coeurEchec' => 'Votre « J\'aime » n\'est pas confirmé. Réessayez dans un instant.',
+			'com.messages.images.photoApercu' => 'Photo',
+			'com.messages.images.nonConfirmeToucher' => 'Non confirmé · Toucher pour réessayer',
+			'com.messages.images.supprimerEchec' => 'Supprimer',
+			'com.messages.images.actionsEchec' => 'Actions du message non confirmé',
 			'com.messages.images.refus.demandeInvalide' => 'Cette image n\'est pas confirmée : ses dimensions ou son format ne sont pas ceux attendus. Choisissez une autre photo.',
 			'com.messages.images.refus.typeRefuse' => 'Ce type de fichier n\'est pas accepté. Choisissez une photo JPEG, PNG ou WebP.',
 			'com.messages.images.refus.imageTropLourde' => 'Cette image est trop lourde, même après réduction. Choisissez une photo plus légère.',
@@ -63986,7 +64002,7 @@ extension on Traductions {
 			'com.messages.images.refus.stockageIndisponible' => 'Le stockage des images n\'a pas pris l\'envoi pour le moment : ce n\'est pas votre appareil. Réessayez dans quelques minutes.',
 			'com.messages.images.refus.confirmationIndisponible' => 'L\'envoi d\'images n\'est pas encore bien réglé sur le serveur : l\'équipe doit le corriger. Votre texte est bien parti.',
 			'com.messages.images.refus.depotImpossible' => 'L\'image n\'est pas confirmée : c\'est une panne du serveur, pas de votre faute. Réessayez dans un instant.',
-			'com.messages.images.refus.envoiStockage' => 'Le stockage a refusé l\'image (adresse expirée ou envoi coupé). Réessayez.',
+			'com.messages.images.refus.envoiStockage' => 'L\'envoi de l\'image n\'a pas abouti. Réessayez plus tard.',
 			'com.messages.images.refus.reseau' => 'Il est possible que l\'image ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'com.messages.images.refus.imageTropGrosse' => 'Cette photo pèse plus de 15 Mo, ou reste trop lourde après réduction. Choisissez-en une plus légère.',
 			'com.messages.images.refus.imageIllisible' => 'Cette photo ne peut pas être lue. Choisissez une autre photo.',
@@ -64335,12 +64351,12 @@ extension on Traductions {
 			'com.studio.sections.planningRemplacements' => 'Planning & remplacements',
 			'com.studio.sections.finance' => 'Finance',
 			'com.studio.sections.support' => 'Support',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.sections.produitTechnique' => 'Produit & technique',
 			'com.studio.sections.direction' => 'Direction',
 			'com.studio.visibilite.restreint' => 'Restreint',
 			'com.studio.visibilite.prive' => 'Privé',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.visibilite.visibleDetail' => 'Ouvert à toute l\'équipe.',
 			'com.studio.visibilite.restreintDetail' => 'Ouvert à une partie de l\'équipe, dont vous faites partie.',
 			'com.studio.visibilite.priveDetail' => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.',
@@ -64849,12 +64865,12 @@ extension on Traductions {
 			'comptable.statuts.capacite.nonPrisEnCharge' => 'Non pris en charge',
 			'comptable.statuts.capacite.temporairementIndisponible' => 'Temporairement indisponible',
 			'comptable.statuts.capacite.verificationRequise' => 'Vérification requise',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
 			'comptable.statuts.reserve.atteint' => 'Objectif atteint',
 			'comptable.statuts.reserve.sousObjectif' => 'Sous objectif',
 			'comptable.statuts.reserve.depassement' => 'Dépassement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.reserve.regleInactive' => 'Règle inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Alimentation prévue',
 			'comptable.statuts.reserve.mouvementSensible' => 'Mouvement sensible',
@@ -65363,12 +65379,12 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.titre' => 'Recevoir mes paiements',
 			'comptable.beneficiaires.recevoir.sousTitre' => 'Vos coordonnées de paiement, modifiables par vous seul.',
 			'comptable.beneficiaires.recevoir.notice' => 'Informations de paiement à compléter',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise ne verse pas dans ce pays : ${pays}. Vous pouvez donner le compte d\'un proche dans un autre pays ; sinon la direction vous paiera autrement.',
 			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Ce compte est-il à votre nom ?',
 			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Oui, il est à mon nom',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'Non, il est au nom d\'un proche',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Votre paie ira sur le compte d\'un proche, avec votre accord. La direction le vérifie avant le premier versement.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Qui est le titulaire du compte ?',
@@ -65877,12 +65893,12 @@ extension on Traductions {
 			'recherche.contexte.canalStudio' => 'Canal du Studio',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'Encaissement · ${famille}',
 			'sansDonnees.mesDonnees' => 'Vos informations de suppression n\'ont pas pu être chargées',
+			_ => null,
+		} ?? switch (path) {
 			'sansDonnees.paiementsRecus' => 'Vos paiements reçus n\'ont pas pu être chargés',
 			'sansDonnees.revenus' => 'Vos revenus n\'ont pas pu être chargés',
 			'sansDonnees.aujourdhui' => 'Le tableau du jour n\'a pas pu être chargé',
 			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
-			_ => null,
-		} ?? switch (path) {
 			'sansDonnees.paiementsAEffectuer' => 'Les paiements à effectuer n\'ont pas pu être chargés',
 			'sansDonnees.encaissements' => 'Les encaissements n\'ont pas pu être chargés',
 			'sansDonnees.tresorerie' => 'La trésorerie n\'a pas pu être chargée',
@@ -66391,12 +66407,12 @@ extension on Traductions {
 			'admissions.modeles.besoins' => 'Nos classes ne répondent pas à la demande',
 			'admissions.modeles.besoinsPhrase' => '« Nos classes ne répondent pas encore à ce que vous cherchez. »',
 			'admissions.modeles.niveau' => 'Niveau pas encore proposé',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
 			'admissions.modeles.sansReponse' => 'Pas de réponse',
 			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
 			'accueilInscrits.titre' => 'Nous vous connaissons déjà',
-			_ => null,
-		} ?? switch (path) {
 			'accueilInscrits.phrase' => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.',
 			'accueilInscrits.motTitre' => 'Un mot de la direction',
 			'accueilInscrits.elevesTitre' => 'Vos enfants déjà inscrits',
@@ -66905,12 +66921,12 @@ extension on Traductions {
 			'candidatsFlux.file.attente' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} message attend son tour.', other: '${n} messages attendent leur tour.', ), 
 			'candidatsFlux.file.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Tout devrait être parti d\'ici un jour environ.', other: 'Tout devrait être parti d\'ici ${n} jours environ.', ), 
 			'candidatsFlux.file.rienEnAttente' => 'Aucun message n\'attend son tour.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.file.misEnFile' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} message mis en file', other: '${n} messages mis en file', ), 
 			'candidatsFlux.file.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne a demandé à ne plus recevoir de messages du recrutement : elle ne recevra pas le lien.', other: '${n} personnes ont demandé à ne plus recevoir de messages du recrutement : elles ne recevront pas le lien.', ), 
 			'candidatsFlux.file.reglage.libelle' => 'Messages de ce type par jour',
 			'candidatsFlux.file.reglage.aide' => 'De 1 à 2 000. Les messages liés à un compte, une classe, une inscription ou un paiement partent toujours sans attendre.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.file.reglage.enregistrer' => 'Enregistrer le réglage',
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Réglage enregistré : ${n} message par jour.', other: 'Réglage enregistré : ${n} messages par jour.', ), 
 			'candidatsFlux.file.reglage.invalide' => 'Écrivez un nombre entier de 1 à 2 000, sans espace.',
@@ -67419,12 +67435,12 @@ extension on Traductions {
 			'pause.statut.refusee' => 'Refusée',
 			'pause.statut.annulee' => 'Annulée',
 			'pause.periode' => ({required Object du, required Object au}) => 'Du ${du} au ${au}',
+			_ => null,
+		} ?? switch (path) {
 			'pause.reponseAvant' => ({required Object date}) => 'La direction répond avant le ${date}.',
 			'pause.reponseMotif' => ({required Object motif}) => 'Réponse de la direction : ${motif}',
 			'pause.exceptionAccordee' => 'Pause accordée par la direction.',
 			'pause.annuler' => ({required Object mois}) => 'Annuler la pause de ${mois}',
-			_ => null,
-		} ?? switch (path) {
 			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jour avant son début. Choisissez un mois plus lointain.', other: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jours avant son début. Choisissez un mois plus lointain.', ), 
 			'pause.refus.dejaDemandee' => 'Ce mois est déjà demandé ou accepté.',
 			'pause.refus.moisInvalide' => 'Ce mois n\'est pas lisible. Choisissez un mois dans la liste.',
