@@ -26,9 +26,12 @@
 --      ouvert : le droit de lire et d'ecrire vient toujours de com_fil_json ;
 --   3. private.com_fil_json (lue par com_lire_fil ET com_lister_fils, comptes des non lus
 --      compris) ne rend jamais un message dont le texte n'est que « [image] » (le texte de
---      remplissage du client) quand aucune image vivante ne s'y rattache, a personne, auteur
---      compris (sa bulle locale porte l'echec). Le mot « Image » des premiers essais n'est
---      PAS masque : une personne peut l'ecrire.
+--      remplissage du client) quand AUCUNE ligne d'image ne s'y rattache, a personne, auteur
+--      compris (sa bulle locale porte l'echec). Quel que soit l'etat de la ligne : une image
+--      confirmee puis purgee (« supprimee » avec confirmee_le, apres 90 jours) garde son
+--      message et sa ligne « image retiree » (#519) ; le depot annule ou refuse
+--      (« supprimee » sans confirmee_le) est deja ecarte par 20261129200000. Le mot « Image »
+--      des premiers essais n'est PAS masque : une personne peut l'ecrire.
 --
 -- Retouche par ancre : proprietaire, droits, volatilite et search_path gardes ; rejouable ;
 -- une ancre trouvee un autre nombre de fois qu'attendu arrete la migration. FICHIER SANS
@@ -108,7 +111,7 @@ SELECT pg_temp.retoucher(
   'OR (ix.etat = ''supprimee'' AND ix.confirmee_le IS NULL)))'
     || ' AND NOT (pg_catalog.btrim(m.texte) = ''[image]'''
     || ' AND NOT EXISTS (SELECT 1 FROM public.com_message_images iy'
-    || ' WHERE iy.message_id = m.id AND iy.etat <> ''supprimee''))',
+    || ' WHERE iy.message_id = m.id))',
   2, 'iy.message_id');
 
 DO $postflight$

@@ -194,6 +194,44 @@ BEGIN
 END
 $masque$;
 
+-- 4 bis. Une image CONFIRMEE puis purgee (« supprimee » avec confirmee_le) : le message
+-- reste lisible, avec son image a l'etat « supprimee » (ligne « image retiree », #519).
+-- Seul un message « [image] » SANS AUCUNE ligne d'image est masque.
+DO $purgee$
+DECLARE
+  v_fil uuid := current_setting('test.fil')::uuid;
+  v_msg uuid;
+  v_img uuid;
+BEGIN
+  PERFORM pg_temp.en_tant_que('7c500000-0000-4000-8000-0000000000c1', 'teacher');
+  v_msg := (public.com_envoyer_message(v_fil, '[image]', '7c500000-0000-4000-8000-00000000b005') ->> 'id')::uuid;
+  v_img := (public.message_image_demander(v_msg, 'image/jpeg', 150000, 'image/webp', 8000, 800, 600) ->> 'image_id')::uuid;
+  RESET ROLE;
+  -- La confirmation (HMAC) est jouee par la fonction Edge : ici, l'etat est pose a la main,
+  -- puis la purge des 90 jours.
+  UPDATE public.com_message_images
+     SET etat = 'confirmee', confirmee_le = pg_catalog.clock_timestamp()
+   WHERE id = v_img;
+  UPDATE public.com_message_images
+     SET etat = 'supprimee', supprimee_le = pg_catalog.clock_timestamp()
+   WHERE id = v_img;
+  SET LOCAL ROLE authenticated;
+
+  PERFORM pg_temp.en_tant_que('7c500000-0000-4000-8000-0000000000c1', 'teacher');
+  PERFORM pg_temp.vrai(pg_temp.textes(v_fil) = ARRAY['Image', 'Bonjour', '[image]']
+    AND (SELECT m #>> '{image,etat}'
+           FROM jsonb_array_elements(public.com_lire_fil(v_fil) -> 'messages') m
+          WHERE m ->> 'id' = v_msg::text) = 'supprimee',
+    '4bis. image confirmee puis purgee : l''auteur lit son message, image a l''etat supprimee');
+  PERFORM pg_temp.en_tant_que('7c500000-0000-4000-8000-0000000000a1', 'admin');
+  PERFORM pg_temp.vrai(pg_temp.textes(v_fil) = ARRAY['Image', 'Bonjour', '[image]']
+    AND (SELECT m #>> '{image,etat}'
+           FROM jsonb_array_elements(public.com_lire_fil(v_fil) -> 'messages') m
+          WHERE m ->> 'id' = v_msg::text) = 'supprimee',
+    '4bis. la direction le lit aussi, image a l''etat supprimee (ligne « image retiree »)');
+END
+$purgee$;
+
 -- 5. Un eleve mineur n'obtient rien en passant.
 DO $mineur$
 BEGIN
