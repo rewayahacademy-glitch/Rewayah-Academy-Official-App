@@ -544,29 +544,29 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
       for (final PhaseEnseignant p in PhaseEnseignant.values)
         if (p != PhaseEnseignant.parti) p,
     ].fold<int>(0, (int s, PhaseEnseignant p) => s + c.de(p));
-    final List<({String cle, String libelle})> choix =
-        <({String cle, String libelle})>[
-          (cle: 'toutes', libelle: '${l.toutesPhases} · $total'),
+    final List<({String cle, String texteChoix})> choix =
+        <({String cle, String texteChoix})>[
+          (cle: 'toutes', texteChoix: '${l.toutesPhases} · $total'),
           if (c.nouveaux > 0)
-            (cle: 'nouveaux', libelle: '${l.nouveaux} · ${c.nouveaux}'),
+            (cle: 'nouveaux', texteChoix: '${l.nouveaux} · ${c.nouveaux}'),
           for (final PhaseEnseignant p in PhaseEnseignant.values)
             if (c.de(p) > 0)
-              (cle: p.valeurSql, libelle: '${libellePhase(p)} · ${c.de(p)}'),
+              (cle: p.valeurSql, texteChoix: '${libellePhase(p)} · ${c.de(p)}'),
         ];
     final String cle = _cleChoisie;
     final String texte = choix
         .firstWhere(
-          (({String cle, String libelle}) x) => x.cle == cle,
-          orElse: () => (cle: cle, libelle: l.phase),
+          (({String cle, String texteChoix}) x) => x.cle == cle,
+          orElse: () => (cle: cle, texteChoix: l.phase),
         )
-        .libelle;
+        .texteChoix;
     return MenuFiltre<String>(
       key: EnseignantsPage.clePhase,
       libelle: texte,
       valeur: cle,
       entrees: <EntreeFiltre<String>>[
-        for (final ({String cle, String libelle}) x in choix)
-          EntreeFiltre<String>(valeur: x.cle, libelle: x.libelle),
+        for (final ({String cle, String texteChoix}) x in choix)
+          EntreeFiltre<String>(valeur: x.cle, libelle: x.texteChoix),
       ],
       onChoix: (String? v) {
         if (v == null) return;
