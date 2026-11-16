@@ -1,0 +1,8 @@
+{
+  "lot": "BE-LISTE",
+  "date": "2026-11-16",
+  "source": "test de capture sur donnees de test (widget test), pas la pile locale",
+  "texte_attendu_verifie": ["Outils", "Qui attend quoi", "Afficher", "Replier", "adresse ?etape=verifications&issue=enCours&pause=non"],
+  "prouve_par_le_directeur": false,
+  "non_fait": ["robot E2E sur la pile locale", "retour depuis un vrai dossier"]
+}

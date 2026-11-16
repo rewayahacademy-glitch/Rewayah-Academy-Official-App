@@ -258,8 +258,12 @@ Future<void> _domaine(WidgetTester tester, AdminDomaine domaine) async {
 Finder _ligne(String prenom) =>
     find.bySemanticsLabel(RegExp("^Ouvrir le dossier d(e |')$prenom"));
 
-Future<void> _file(WidgetTester tester) =>
-    _domaine(tester, AdminDomaine.personnes);
+Future<void> _file(WidgetTester tester) async {
+  await _domaine(tester, AdminDomaine.personnes);
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider » se
+  // choisit dans le selecteur de section.
+  await choisirSection(tester, t.dossiers.titre);
+}
 
 Future<void> _revue(WidgetTester tester) async {
   await _file(tester);

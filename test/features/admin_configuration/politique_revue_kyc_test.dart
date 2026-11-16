@@ -214,6 +214,8 @@ void main() {
 
     // G3 : activee, la piece est hors de portee.
     await _domaine(tester, AdminDomaine.personnes);
+    // BE-LISTE : « Personnes » ouvre Candidatures.
+    await choisirSection(tester, t.dossiers.titre);
     await _visible(tester, _ligne('Adam'));
     expect(find.text('Pièce hors de votre portée'), findsWidgets);
 
@@ -222,6 +224,8 @@ void main() {
     await tester.tap(find.byType(Switch));
     await _stabiliser(tester);
     await _domaine(tester, AdminDomaine.personnes);
+    // BE-LISTE : « Personnes » ouvre Candidatures.
+    await choisirSection(tester, t.dossiers.titre);
     await _visible(tester, _ligne('Adam'));
     expect(find.text('Pièce hors de votre portée'), findsNothing);
     await tester.tap(_ligne('Adam'));
@@ -262,6 +266,8 @@ void main() {
   ) async {
     await _monter(tester, etat: _etat(genreRelecteurRenseigne: false));
     await _domaine(tester, AdminDomaine.personnes);
+    // BE-LISTE : « Personnes » ouvre Candidatures.
+    await choisirSection(tester, t.dossiers.titre);
     expect(find.text(t.dossiers.profilACompleter.titre), findsWidgets);
     expect(find.text(t.dossiers.profilACompleter.texte), findsWidgets);
     expect(find.text('Compléter mon profil'), findsNothing);
@@ -273,12 +279,16 @@ void main() {
   ) async {
     await _monter(tester, etat: _etat(genreRelecteurRenseigne: false));
     await _domaine(tester, AdminDomaine.personnes);
+    // BE-LISTE : « Personnes » ouvre Candidatures.
+    await choisirSection(tester, t.dossiers.titre);
     expect(find.text(t.dossiers.profilACompleter.titre), findsWidgets);
 
     await _ouvrirReglage(tester);
     await tester.tap(find.byType(Switch));
     await _stabiliser(tester);
     await _domaine(tester, AdminDomaine.personnes);
+    // BE-LISTE : « Personnes » ouvre Candidatures.
+    await choisirSection(tester, t.dossiers.titre);
     expect(find.text(t.dossiers.profilACompleter.titre), findsNothing);
     await _visible(tester, _ligne('Adam'));
     expect(_ligne('Adam'), findsOneWidget);

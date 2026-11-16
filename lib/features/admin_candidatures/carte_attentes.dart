@@ -30,6 +30,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/carte_lignes.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pile_cartes.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/setting_row.dart';
@@ -67,6 +68,9 @@ class CarteAttentes extends StatelessWidget {
     required this.onFiltrer,
     required this.maintenant,
     this.onFiltrerPause,
+    this.onFiltrerPiece,
+    this.repliee = false,
+    this.onBasculer,
     super.key,
   });
 
@@ -79,8 +83,24 @@ class CarteAttentes extends StatelessWidget {
   /// Pose le filtre « en pause », ou `null` pour ne pas l'offrir.
   final VoidCallback? onFiltrerPause;
 
+  /// BE-LISTE : ouvre la liste filtree sur « piece en attente » (cle serveur
+  /// `pieceEnAttente`, PR 505), ou `null` : la ligne ne se touche pas (un
+  /// filtre approchant ouvrirait une liste plus longue que le nombre annonce).
+  final VoidCallback? onFiltrerPiece;
+
+  /// BE-LISTE : la carte est repliee (son titre seul reste).
+  final bool repliee;
+
+  /// BE-LISTE : replie ou deplie la carte, ou `null` : elle ne se replie pas.
+  final VoidCallback? onBasculer;
+
   /// L'instant de reference des durees (injecte pour les tests).
   final DateTime maintenant;
+
+  /// BE-LISTE : le lien qui replie ou deplie la carte.
+  static const Key cleBascule = ValueKey<String>(
+    'candidatures-attentes-bascule',
+  );
 
   /// La cle de la section.
   static const Key cleSection = ValueKey<String>('candidatures-attentes');
@@ -97,6 +117,14 @@ class CarteAttentes extends StatelessWidget {
 
   /// La cle de la phrase « Personne n'attend. ».
   static const Key cleRien = ValueKey<String>('candidatures-attentes-rien');
+
+  /// Ce qui attend l'academie : examen, entretien a planifier, entretien
+  /// planifie, decision.
+  int get _totalAcademie =>
+      attentes.etat(EtatCandidature.enExamen).nombre +
+      attentes.etat(EtatCandidature.entretienAPlanifier).nombre +
+      attentes.etat(EtatCandidature.entretienPlanifie).nombre +
+      attentes.etat(EtatCandidature.decisionEnAttente).nombre;
 
   @override
   Widget build(BuildContext context) {
@@ -134,6 +162,7 @@ class CarteAttentes extends StatelessWidget {
             depuisQuand(attentes.pieceAValider.plusAncien, maintenant),
             a.pieceAide,
           ]),
+          onPress: onFiltrerPiece,
         ),
       ?ligneEtat(
         EtatCandidature.entretienAPlanifier,
@@ -172,32 +201,66 @@ class CarteAttentes extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Semantics(header: true, child: SectionHeader(titre: a.titre)),
-        Ecart.vXs,
-        TexteSansCoupure(
-          attentes.deuxCotes ? '${a.aide} ${a.deuxCotes}' : a.aide,
-          style: attenue,
-        ),
-        Ecart.vMd,
-        if (cartes.isEmpty)
-          AppCard(
-            child: TexteSansCoupure(a.rien, key: cleRien, style: attenue),
-          )
+        // BE-LISTE : une seule ligne a toute largeur, repliee ou non : le
+        // titre, (repliee) ce qui attend l'academie, et le lien. `SectionHeader`
+        // range son action sous le titre au telephone ; ici elle reste sur la
+        // ligne.
+        if (onBasculer == null)
+          Semantics(header: true, child: SectionHeader(titre: a.titre))
         else
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints c) {
-              if (c.maxWidth < 840) {
-                return PileCartes(children: cartes);
-              }
-              return PileCartes(
-                axe: Axis.horizontal,
-                alignement: CrossAxisAlignment.start,
-                children: <Widget>[
-                  for (final Widget carte in cartes) Expanded(child: carte),
-                ],
-              );
-            },
+          Row(
+            children: <Widget>[
+              Expanded(
+                child: Semantics(
+                  header: true,
+                  child: TexteSansCoupure(
+                    repliee ? '${a.titre} · $_totalAcademie' : a.titre,
+                    style: palette.inkStrong.applyTo(
+                      textes.titleLarge ?? const TextStyle(),
+                    ),
+                  ),
+                ),
+              ),
+              Ecart.hMd,
+              LienFleche(
+                key: cleBascule,
+                libelle: repliee
+                    ? t.recrutement.file.afficher
+                    : t.recrutement.file.replier,
+                fleche: false,
+                legende: true,
+                alignerEnFin: true,
+                onPress: onBasculer!,
+              ),
+            ],
           ),
+        if (!repliee) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(
+            attentes.deuxCotes ? '${a.aide} ${a.deuxCotes}' : a.aide,
+            style: attenue,
+          ),
+          Ecart.vMd,
+          if (cartes.isEmpty)
+            AppCard(
+              child: TexteSansCoupure(a.rien, key: cleRien, style: attenue),
+            )
+          else
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints c) {
+                if (c.maxWidth < 840) {
+                  return PileCartes(children: cartes);
+                }
+                return PileCartes(
+                  axe: Axis.horizontal,
+                  alignement: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    for (final Widget carte in cartes) Expanded(child: carte),
+                  ],
+                );
+              },
+            ),
+        ],
       ],
     );
   }
