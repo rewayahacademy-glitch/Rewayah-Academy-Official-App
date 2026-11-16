@@ -20,7 +20,7 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/badge_non_lu.dart';
-import '../../core/widgets/carte_lignes.dart';
+import '../../core/widgets/carte_lignes.dart' show LigneDeCarte;
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
@@ -207,7 +207,7 @@ class _ListeFilsState extends State<ListeFils> {
   /// La liste, filtree par la recherche et par « Non lus ». Les resultats
   /// d'une recherche sont annonces (region polie) ; un filtre sans resultat
   /// dit quoi essayer. Les lignes se construisent au fur et a mesure du
-  /// defilement, chacune sous la cle de son fil, dans une seule carte blanche.
+  /// defilement, chacune sous la cle de son fil, en une carte blanche peinte ligne a ligne.
   Widget _resultats() {
     final r = t.com.messages.recherche;
     final String texte = _recherche.text.trim();
@@ -254,17 +254,21 @@ class _ListeFilsState extends State<ListeFils> {
       );
     }
     final DateTime maintenant = widget.horloge();
-    return ListView(
+    final int avant = 1 + (texte.isNotEmpty ? 1 : 0);
+    // Construite A LA DEMANDE (le directeur a des centaines de conversations) :
+    // chaque ligne peint son morceau de la carte blanche (`LigneDeCarte`).
+    return ListView.builder(
       // La position de lecture survit a l'aller-retour de la recherche.
       key: const PageStorageKey<String>('liste-fils'),
       // BANDE-SUITE : la fin s'arrete au-dessus de la barre flottante.
       padding: EdgeInsets.only(
         bottom: AppSpacing.lg + MediaQuery.paddingOf(context).bottom,
       ),
-      children: <Widget>[
-        filtres,
-        if (texte.isNotEmpty)
-          Semantics(
+      itemCount: avant + vus.length,
+      itemBuilder: (BuildContext context, int i) {
+        if (i == 0) return filtres;
+        if (texte.isNotEmpty && i == 1) {
+          return Semantics(
             liveRegion: true,
             child: Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -277,17 +281,18 @@ class _ListeFilsState extends State<ListeFils> {
                 ),
               ),
             ),
-          ),
-        // MESSAGERIE-COULEURS (directeur, 16/11/2026 : « je prefere la couleur
-        // d'avant ») : comme avant BULLES-MESSAGERIE, les conversations sont
-        // les lignes fines d'UNE carte blanche posee sur le fond de la page,
-        // jamais des lignes nues sur un fond teinte.
-        CarteLignes(
-          lignes: <Widget>[
-            for (final ResumeFil f in vus) _ligne(f, maintenant),
-          ],
-        ),
-      ],
+          );
+        }
+        final int k = i - avant;
+        // MESSAGERIE-COULEURS (directeur, 16/11/2026) : l'aspect d'UNE carte
+        // blanche a lignes fines posee sur la page, comme avant BULLES-
+        // MESSAGERIE, sans perdre la construction ligne a ligne.
+        return LigneDeCarte(
+          premiere: k == 0,
+          derniere: k == vus.length - 1,
+          child: _ligne(vus[k], maintenant),
+        );
+      },
     );
   }
 

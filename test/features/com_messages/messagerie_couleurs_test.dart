@@ -12,7 +12,12 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/communications/modeles_communication.dart';
+import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/theme/app_palette.dart';
+import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/carte_lignes.dart'
+    show FeuilleDeCarte, LigneDeCarte;
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/ligne_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
@@ -103,16 +108,15 @@ void main() {
       // Les lignes sont portees par UNE carte a la surface « raised ».
       final Finder lignes = find.byType(LigneConversation);
       expect(lignes, findsWidgets);
-      final Iterable<Element> cartes = find
-          .ancestor(of: lignes.first, matching: find.byType(DecoratedBox))
+      final Iterable<Color> fondsDeCarte = find
+          .ancestor(of: lignes.first, matching: find.byType(CustomPaint))
           .evaluate()
-          .where((Element e) {
-            final Decoration d = (e.widget as DecoratedBox).decoration;
-            return d is BoxDecoration && d.color == p.surfaceRaised.background;
-          });
+          .map((Element e) => (e.widget as CustomPaint).painter)
+          .whereType<FeuilleDeCarte>()
+          .map((FeuilleDeCarte f) => f.fond);
       expect(
-        cartes,
-        isNotEmpty,
+        fondsDeCarte,
+        contains(p.surfaceRaised.background),
         reason: 'les lignes doivent reposer sur une carte surfaceRaised',
       );
       // Aucune ligne ne porte la teinte lavande de selection.
@@ -200,5 +204,57 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(find.byKey(LigneConversation.cleRepereSelection), findsOneWidget);
+  });
+
+  testWidgets('500 conversations : la liste reste construite a la demande '
+      '(moins de 30 lignes au premier rendu)', (WidgetTester tester) async {
+    tester.view.physicalSize = const Size(390, 844);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final DateTime maintenant = DateTime.utc(2026, 11, 16, 12);
+    final List<ResumeFil> fils = <ResumeFil>[
+      for (int i = 0; i < 500; i++)
+        ResumeFil(
+          id: 'fil-$i',
+          objet: ObjetLie(
+            type: TypeObjetLie.candidature,
+            id: 'cand-$i',
+            libelle: 'Candidature $i',
+          ),
+          interlocuteurs: <Participant>[
+            Participant(id: 'p-$i', nomAffiche: 'Candidat $i'),
+          ],
+          apercu: 'Bonjour $i',
+          dernierMessageLe: maintenant.subtract(Duration(minutes: i)),
+        ),
+    ];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+        home: Material(
+          child: ListeFils(
+            fils: fils,
+            onOuvrir: (String _) {},
+            horloge: () => maintenant,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    final int construites = find.byType(LigneConversation).evaluate().length;
+    expect(construites, greaterThan(0));
+    expect(
+      construites,
+      lessThan(30),
+      reason: '$construites lignes construites pour 500 conversations',
+    );
+    // Et elles se peignent comme UNE carte : la premiere arrondie en haut, un
+    // morceau de carte par ligne.
+    expect(find.byType(LigneDeCarte), findsAtLeastNWidgets(construites));
+    final LigneDeCarte premiere = tester.widget<LigneDeCarte>(
+      find.byType(LigneDeCarte).first,
+    );
+    expect(premiere.premiere, isTrue);
+    expect(premiere.derniere, isFalse);
   });
 }
