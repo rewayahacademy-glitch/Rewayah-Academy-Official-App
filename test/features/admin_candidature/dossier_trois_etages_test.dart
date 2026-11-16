@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.
 import 'package:rewayah_academy/core/candidature/photo_dossier_candidat.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
+import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
 import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
@@ -158,10 +159,18 @@ void main() {
       final String texte = <String>[
         for (final Element e
             in find
-                .descendant(of: resume, matching: find.byType(Text))
+                .descendant(of: resume, matching: find.byType(RichText))
                 .evaluate())
-          (e.widget as Text).data ?? '',
+          (e.widget as RichText).text.toPlainText(),
       ].join('\n');
+      // Cinq lignes au plus : une ligne de texte par reponse.
+      expect(
+        find
+            .descendant(of: resume, matching: find.byType(MergeSemantics))
+            .evaluate()
+            .length,
+        lessThanOrEqualTo(5),
+      );
       for (final String cle in <String>[
         r.langues,
         r.niveau,
@@ -352,22 +361,46 @@ void main() {
       expect(find.byKey(BarreDecisionDossier.cleMenu), findsNothing);
     });
 
-    testWidgets(
-      'responsable : le serveur ne donne pas son nom, on le dit sans l\'inventer',
-      (WidgetTester tester) async {
-        await _monter(tester, port: _port(detailTest(responsableId: 'r1')));
-        await _tapper(
-          tester,
-          find.byKey(
-            RubriqueDossier.cleEntete(RubriqueDossierCode.responsable),
+    testWidgets('responsable : le nom quand le serveur le rend', (
+      WidgetTester tester,
+    ) async {
+      final DetailCandidature d = detailTest(responsableId: 'r1');
+      await _monter(
+        tester,
+        port: _port(
+          DetailCandidature(
+            ligne: d.ligne,
+            version: d.version,
+            documents: d.documents,
+            provenance: d.provenance,
+            responsableNom: 'Sayyida Mariam',
           ),
-        );
-        expect(
-          find.text(t.admin.candidatures.detail.responsableDesigne),
-          findsOneWidget,
-        );
-      },
-    );
+        ),
+      );
+      await _tapper(
+        tester,
+        find.byKey(RubriqueDossier.cleEntete(RubriqueDossierCode.responsable)),
+      );
+      expect(find.text('Sayyida Mariam'), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.detail.responsableDesigne),
+        findsNothing,
+      );
+    });
+
+    testWidgets('responsable sans nom rendu : « designe », sans inventer', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, port: _port(detailTest(responsableId: 'r1')));
+      await _tapper(
+        tester,
+        find.byKey(RubriqueDossier.cleEntete(RubriqueDossierCode.responsable)),
+      );
+      expect(
+        find.text(t.admin.candidatures.detail.responsableDesigne),
+        findsOneWidget,
+      );
+    });
 
     testWidgets(
       'historique : les dates et la provenance vivent ici, sans texte technique',
@@ -413,7 +446,7 @@ void main() {
     });
   });
 
-  group('barre de decision : fixe en bas, tous les gestes visibles', () {
+  group('barre de decision : sous le resume, rien de fixe', () {
     testWidgets('accepter, demander, refuser : les trois, a la fois', (
       WidgetTester tester,
     ) async {
@@ -432,13 +465,19 @@ void main() {
     });
 
     testWidgets(
-      'un geste indisponible est grise, avec sa raison en mots simples',
+      'un geste qui ne peut pas aboutir n\'est pas rendu : une phrase dit pourquoi',
       (WidgetTester tester) async {
         await _monter(
           tester,
           port: _port(detailTest(etat: EtatCandidature.aCompleter)),
         );
-        // La personne doit repondre : demander et accepter sont grises.
+        // La personne doit repondre : accepter et demander ne sont pas rendus.
+        for (final GesteCandidature g in <GesteCandidature>[
+          GesteCandidature.admettreVerifications,
+          GesteCandidature.demanderComplement,
+        ]) {
+          expect(find.byKey(BarreDecisionDossier.cleBouton(g)), findsNothing);
+        }
         expect(
           find.byKey(
             BarreDecisionDossier.cleRaison(
@@ -447,15 +486,36 @@ void main() {
           ),
           findsOneWidget,
         );
-        final Finder accepter = find.byKey(
-          BarreDecisionDossier.cleBouton(
-            GesteCandidature.admettreVerifications,
-          ),
-        );
-        expect((tester.widget(accepter) as dynamic).onPress, isNull);
         expect(_texte(tester), contains(t.recrutement.dossier3.raison.attente));
+        // Refuser reste permis : il est rendu.
+        expect(
+          find.byKey(BarreDecisionDossier.cleBouton(GesteCandidature.refuser)),
+          findsOneWidget,
+        );
       },
     );
+
+    testWidgets('juste sous le resume, et rien de colle en bas', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _port(detailTest(paiement: EtatVersement.compatible)),
+      );
+      final double resume = tester
+          .getBottomLeft(find.byKey(ResumeDossier.cle))
+          .dy;
+      final double barre = tester
+          .getTopLeft(find.byKey(BarreDecisionDossier.cle))
+          .dy;
+      final double rubriques = tester
+          .getTopLeft(find.byKey(CorpsDossier.cle))
+          .dy;
+      expect(barre, greaterThanOrEqualTo(resume));
+      expect(rubriques, greaterThan(barre));
+      // Aucune zone d'action collee : la page defile en entier.
+      expect(find.byKey(PageShell.zoneActionKey), findsNothing);
+    });
 
     testWidgets('Accepter nomme ce qui manque quand un controle bloque', (
       WidgetTester tester,
@@ -495,7 +555,7 @@ void main() {
       );
     });
 
-    testWidgets('sans le droit de decider : pas de barre', (
+    testWidgets('sans le droit de decider : aucun bouton, la phrase le dit', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -508,7 +568,14 @@ void main() {
           ),
         ),
       );
-      expect(find.byKey(BarreDecisionDossier.cle), findsNothing);
+      for (final GesteCandidature g in <GesteCandidature>[
+        GesteCandidature.admettreVerifications,
+        GesteCandidature.demanderComplement,
+        GesteCandidature.refuser,
+      ]) {
+        expect(find.byKey(BarreDecisionDossier.cleBouton(g)), findsNothing);
+      }
+      expect(_texte(tester), contains(t.recrutement.dossier3.raison.droit));
     });
 
     testWidgets('hors ligne : une note, aucun geste', (

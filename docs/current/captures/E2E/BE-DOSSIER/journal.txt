@@ -1,18 +1,29 @@
-BE-DOSSIER, 16/11/2026. Journal des captures.
+BE-DOSSIER, 16/11/2026. Journal des captures (refaites apres l'arbitrage du coordinateur :
+rien de fixe, barre de decision sous le resume, geste grise remplace par une phrase).
 
 Commande : CAPTURE_DIR=<ce dossier> flutter test --no-pub test/capture/be_dossier_capture_test.dart
 Resultat : 6 tests, tous passes. 8 images.
 
+Position du premier geste de decision (« Accepter »), haut du bouton, depuis le haut de la
+fenetre, mesuree par le test :
+- telephone 360 x 800 : y = 677 sur 800 points. Il est visible a l'ouverture, sous le resume.
+  Cette position comprend la barre du haut de l'application (environ 110 points) et l'etage 1.
+- ordinateur 1366 x 768 : y = 458 sur 768 points, colonne de gauche, sous le resume.
+
 Ce que chaque capture montre :
 - dossier_telephone / dossier_ordinateur : le dossier tel qu'il s'ouvre (rubriques
-  repliees), etage 1, resume, barre de decision.
-- dossier_historique_* : la rubrique Historique ouverte, defilee en vue.
+  repliees, sauf la piece, qui bloque), etage 1, resume, barre de decision.
+- dossier_historique_* : la rubrique Historique ouverte, amenee en vue.
 - photo_en_grand_* : la photo touchee, en grand (image fictive de test).
 - dossier_arabe_* : meme dossier, interface en arabe, de droite a gauche.
 
+Autres captures mises a jour vers la nouvelle page (memes noms de fichiers de sortie) :
+adm21_capture_test, talents_direction_capture_test (rubriques ouvertes avant la capture),
+salle2_entretien_capture_test (deux captures ajoutees : fiche_piece_* et
+fiche_accueillir_piece_*, la piece ouverte sur place). Les trois autres (invitations,
+reprise CAND-4, photo du dossier) passent sans changement.
+
 Ce que ces captures ne prouvent pas :
-- Aucune donnee reelle, aucune photo reelle, aucune piece reelle (la piece sur place n'est
-  pas capturee : son port n'est pas branche dans cette demonstration).
-- Le dossier ne tient pas sur un seul ecran au telephone : la barre du haut de l'application,
-  l'etage 1 fixe et la barre de decision fixe laissent peu de place au defilement.
+- Aucune donnee reelle, aucune photo ni piece reelle.
 - Aucun robot E2E sur pile locale.
+- Rien sur staging ni en production.

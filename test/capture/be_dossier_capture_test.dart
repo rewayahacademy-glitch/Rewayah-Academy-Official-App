@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
@@ -473,13 +474,26 @@ void main() {
   group('BE-DOSSIER : captures', skip: sautSansCapture, () {
     for (final (String nom, Size taille, EdgeInsets zone)
         in <(String, Size, EdgeInsets)>[
-          ('telephone', const Size(360, 780), _zoneSure),
+          ('telephone', const Size(360, 800), _zoneSure),
           ('ordinateur', const Size(1366, 768), EdgeInsets.zero),
         ]) {
       testWidgets('contenu $nom', (WidgetTester tester) async {
         fixerVueCapture(tester, taille, 1, zoneSure: zone);
         await _monter(tester, _port());
         await _photo(tester, 'dossier_$nom');
+        // Ou est le premier geste de decision, en points, dans la fenetre.
+        final Finder premier = find
+            .descendant(
+              of: find.byKey(BarreDecisionDossier.cle),
+              matching: find.byType(ActionPrincipale),
+            )
+            .first;
+        final Offset p = tester.getTopLeft(premier);
+        debugPrint(
+          'POSITION premier geste de decision, $nom : '
+          'y=${p.dy.round()} sur ${taille.height.round()} points '
+          '(haut du bouton, depuis le haut de la fenetre)',
+        );
         await _ouvrir(tester, RubriqueDossierCode.historique);
         // La capture montre l'historique ouvert, pas le haut de la page.
         await tester.ensureVisible(
@@ -510,7 +524,7 @@ void main() {
     testWidgets('arabe, de droite a gauche, telephone', (
       WidgetTester tester,
     ) async {
-      fixerVueCapture(tester, const Size(360, 780), 1, zoneSure: _zoneSure);
+      fixerVueCapture(tester, const Size(360, 800), 1, zoneSure: _zoneSure);
       await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
       await _monter(tester, _port());
       await _photo(tester, 'dossier_arabe_telephone');

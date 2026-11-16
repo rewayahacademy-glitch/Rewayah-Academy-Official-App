@@ -22,6 +22,7 @@ import 'package:rewayah_academy/core/widgets/selecteur_motif.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
 import 'package:rewayah_academy/features/admin_dossiers/dossiers_page.dart';
 import 'package:rewayah_academy/features/admin_dossiers/etat_file_dossiers.dart';
+import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 
 import '../../support/demo/dossiers_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
@@ -185,6 +186,20 @@ void main() {
       findsNothing,
     );
     expect(find.textContaining("journal d'audit"), findsNothing);
+  });
+
+  testWidgets('toucher la ligne de la piece l\'ouvre, comme « Voir la piece »', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    await _ouvrir(tester, 'Omar');
+    expect(find.byType(VisionneusePiece), findsNothing);
+    // La ligne de la piece, pas le bouton : meme visionneuse.
+    final Finder ligne = find.text("Carte d'identité");
+    await tester.ensureVisible(ligne);
+    await tester.tap(ligne);
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.byType(VisionneusePiece), findsOneWidget);
   });
 
   testWidgets('1440 : cases jamais precochees, lien vers la premiere', (

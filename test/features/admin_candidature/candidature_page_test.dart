@@ -1147,12 +1147,10 @@ void main() {
           ),
         ),
       );
-      // Refuser n'est pas propose : le bouton est grise, avec sa raison.
+      // Refuser n'est pas propose : le bouton n'est pas rendu (K-56).
       expect(
-        (tester.widget(
-          find.byKey(BarreDecisionDossier.cleBouton(GesteCandidature.refuser)),
-        ) as dynamic).onPress,
-        isNull,
+        find.byKey(BarreDecisionDossier.cleBouton(GesteCandidature.refuser)),
+        findsNothing,
       );
       expect(
         find.byKey(

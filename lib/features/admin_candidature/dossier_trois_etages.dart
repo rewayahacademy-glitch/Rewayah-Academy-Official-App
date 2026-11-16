@@ -319,8 +319,33 @@ class ResumeDossier extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          for (final LigneResume l in lignes)
-            LigneCleValeur(cle: l.cle, valeur: l.valeur),
+          // Une ligne, le nom puis la reponse : le resume se lit en dix
+          // secondes et ne pousse pas la decision hors de l'ecran.
+          for (int i = 0; i < lignes.length; i++) ...<Widget>[
+            if (i > 0) Ecart.vSm,
+            MergeSemantics(
+              child: Text.rich(
+                TextSpan(
+                  children: <InlineSpan>[
+                    TextSpan(
+                      text: '${lignes[i].cle}\u00a0: ',
+                      style: AppPalette.of(context).inkMuted.applyTo(
+                        Theme.of(context).textTheme.bodyMedium ??
+                            const TextStyle(),
+                      ),
+                    ),
+                    TextSpan(
+                      text: lignes[i].valeur,
+                      style: AppPalette.of(context).inkStrong.applyTo(
+                        Theme.of(context).textTheme.bodyMedium ??
+                            const TextStyle(),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
           if (importe) ...<Widget>[
             Ecart.vSm,
             Align(
@@ -608,8 +633,12 @@ class CorpsDossier extends ConsumerWidget {
     this.rangMessages = 0,
     this.retour,
     this.retourEntretien,
+    this.autresActions = const <EntreeAction>[],
     super.key,
   });
+
+  /// Des entrees de plus dans le menu « ⋯ » de la barre de decision.
+  final List<EntreeAction> autresActions;
 
   /// Le plan du dossier.
   final PlanDossier plan;
@@ -840,9 +869,11 @@ class CorpsDossier extends ConsumerWidget {
         RubriqueDossierCode.responsable,
         r.responsable,
         (BuildContext _) => TexteSansCoupure(
-          detail.ligne.responsableId == null
-              ? r.aucunResponsable
-              : r.responsableDesigne,
+          // Le nom quand le serveur le rend ; « designe » seulement sans nom.
+          detail.responsableNom ??
+              (detail.ligne.responsableId == null
+                  ? r.aucunResponsable
+                  : r.responsableDesigne),
           style: AppPalette.of(context).inkMuted.applyTo(
             Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
           ),
@@ -900,6 +931,13 @@ class CorpsDossier extends ConsumerWidget {
       lignes: lignesResume(detail, nomsOperateurs: noms),
       importe: detail.dernieresReponses?.importe ?? false,
     );
+    // Rien de fixe (coordinateur, 16/11 : SANS-BARRE-FIXE et DEFILEMENT
+    // l'emportent) : la barre de decision suit le resume, dans la page.
+    final Widget barre = BarreDecisionDossier(
+      plan: plan,
+      onGeste: onGeste,
+      autresActions: autresActions,
+    );
     final Widget retourLocal = retour == null
         ? const SizedBox.shrink()
         : Padding(
@@ -914,7 +952,16 @@ class CorpsDossier extends ConsumerWidget {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[retourLocal, resume, Ecart.vLg, liste],
+        children: <Widget>[
+          EtageUnDossier(plan: plan),
+          Ecart.vLg,
+          retourLocal,
+          resume,
+          Ecart.vLg,
+          barre,
+          Ecart.vLg,
+          liste,
+        ],
       );
     }
     return Row(
@@ -929,6 +976,8 @@ class CorpsDossier extends ConsumerWidget {
               Ecart.vLg,
               retourLocal,
               resume,
+              Ecart.vLg,
+              barre,
             ],
           ),
         ),
@@ -999,9 +1048,10 @@ class _ContenuPiece extends ConsumerWidget {
 // La barre de decision
 // ---------------------------------------------------------------------------
 
-/// La barre de decision, fixe en bas : les gestes du serveur, tous visibles. Un
-/// geste que le serveur ne propose pas est grise, avec sa raison en mots
-/// simples. Hors ligne, aucun geste : une note le dit.
+/// La barre de decision, dans la page, juste sous le resume : les gestes que le
+/// serveur propose, tous visibles. Un geste qui ne peut pas aboutir n'est pas
+/// rendu (K-56) : une phrase courte dit ce qui manque. Rien n'est fixe
+/// (SANS-BARRE-FIXE, DEFILEMENT). Hors ligne, aucun geste : une note le dit.
 class BarreDecisionDossier extends StatelessWidget {
   /// Cree la barre.
   const BarreDecisionDossier({
@@ -1026,7 +1076,7 @@ class BarreDecisionDossier extends StatelessWidget {
   /// La cle du menu « ⋯ ».
   static const Key cleMenu = ValueKey<String>('dossier-barre-menu');
 
-  /// La cle de la raison d'un geste grise.
+  /// La cle de la phrase qui dit pourquoi un geste n'est pas rendu.
   static Key cleRaison(GesteCandidature g) =>
       ValueKey<String>('dossier-barre-raison-${g.name}');
 
@@ -1034,49 +1084,38 @@ class BarreDecisionDossier extends StatelessWidget {
   static Key cleBouton(GesteCandidature g) =>
       ValueKey<String>('candidature-decision-${g.name}');
 
-  Widget _bouton(FenteDecision fente, {required bool plein}) {
-    // BE-DOSSIER (directeur, 16/11/2026) : « un geste indisponible est grise
-    // avec sa raison en mots simples ». L'appui est vide quand le serveur ne
-    // propose pas le geste.
-    final VoidCallback? appui = fente.actif ? () => onGeste(fente.geste) : null;
-    return ActionPrincipale(
-      key: cleBouton(fente.geste),
-      libelle: fente.libelle,
-      libelleSemantique: fente.raison == null
-          ? null
-          : t.recrutement.dossier3.legendeRaison(
-              geste: fente.libelle,
-              raison: fente.raison!,
-            ),
-      niveau: plein ? NiveauAction.principale : NiveauAction.secondaire,
-      pleineLargeur: false,
-      compacte: true,
-      onPress: appui,
-    );
-  }
+  Widget _bouton(FenteDecision fente, {required bool plein}) =>
+      ActionPrincipale(
+        key: cleBouton(fente.geste),
+        libelle: fente.libelle,
+        niveau: plein ? NiveauAction.principale : NiveauAction.secondaire,
+        pleineLargeur: false,
+        compacte: true,
+        onPress: () => onGeste(fente.geste),
+      );
 
   @override
   Widget build(BuildContext context) {
     final TextStyle muet = AppPalette.of(context).inkMuted
-        .applyTo(Theme.of(context).textTheme.bodySmall ?? const TextStyle());
+        .applyTo(Theme.of(context).textTheme.bodyMedium ?? const TextStyle());
     if (plan.horsLigne) {
-      return Padding(
+      return TexteSansCoupure(
+        t.admin.candidatures.erreurs.horsLigne,
         key: cle,
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-        child: TexteSansCoupure(
-          t.admin.candidatures.erreurs.horsLigne,
-          style: muet,
-        ),
+        style: muet,
       );
     }
     final List<FenteDecision> fentes = plan.fentesDecision();
+    final List<FenteDecision> rendues = <FenteDecision>[
+      for (final FenteDecision f in fentes)
+        if (f.actif) f,
+    ];
     final GesteCandidature? visible = plan.principalHorsFentes;
-    final bool pleinAuPrincipal = visible != null;
-    // Le seul bouton plein : la prochaine action hors fentes, sinon Accepter.
-    // Jamais un refus.
-    final int premierActif = pleinAuPrincipal || !fentes.first.actif ? -1 : 0;
+    // Le seul bouton plein : la prochaine action hors fentes, sinon Accepter
+    // (la premiere fente). Jamais un refus.
+    final bool accepterRendu = fentes.first.actif;
     final List<GesteCandidature> menu = plan.gestesDuMenu();
-    // Les gestes grises qui ont la meme raison la partagent : une seule phrase.
+    // Les gestes non rendus qui ont la meme raison la partagent : une phrase.
     final Map<String, List<FenteDecision>> raisons =
         <String, List<FenteDecision>>{};
     for (final FenteDecision f in fentes) {
@@ -1084,29 +1123,18 @@ class BarreDecisionDossier extends StatelessWidget {
         (raisons[f.raison!] ??= <FenteDecision>[]).add(f);
       }
     }
-    return Padding(
+    final bool vide =
+        visible == null &&
+        rendues.isEmpty &&
+        menu.isEmpty &&
+        autresActions.isEmpty;
+    return Column(
       key: cle,
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          for (final MapEntry<String, List<FenteDecision>> e
-              in raisons.entries) ...<Widget>[
-            TexteSansCoupure(
-              t.recrutement.dossier3.legendeRaison(
-                geste: e.value
-                    .map((FenteDecision f) => f.libelle)
-                    .join(t.admin.candidatures.detail.separateurControles),
-                raison: e.key,
-              ),
-              key: cleRaison(e.value.first.geste),
-              style: muet,
-            ),
-            Ecart.vXs,
-          ],
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (!vide)
           Wrap(
-            alignment: WrapAlignment.end,
             crossAxisAlignment: WrapCrossAlignment.center,
             spacing: AppSpacing.md,
             runSpacing: AppSpacing.sm,
@@ -1120,8 +1148,11 @@ class BarreDecisionDossier extends StatelessWidget {
                   ),
                   plein: true,
                 ),
-              for (int i = 0; i < fentes.length; i++)
-                _bouton(fentes[i], plein: i == premierActif),
+              for (final FenteDecision f in rendues)
+                _bouton(
+                  f,
+                  plein: visible == null && accepterRendu && f == fentes.first,
+                ),
               if (menu.isNotEmpty || autresActions.isNotEmpty)
                 MenuActions(
                   key: cleMenu,
@@ -1139,8 +1170,21 @@ class BarreDecisionDossier extends StatelessWidget {
                 ),
             ],
           ),
+        for (final MapEntry<String, List<FenteDecision>> e
+            in raisons.entries) ...<Widget>[
+          if (!vide || e.key != raisons.keys.first) Ecart.vSm,
+          TexteSansCoupure(
+            t.recrutement.dossier3.legendeRaison(
+              geste: e.value
+                  .map((FenteDecision f) => f.libelle)
+                  .join(t.admin.candidatures.detail.separateurControles),
+              raison: e.key,
+            ),
+            key: cleRaison(e.value.first.geste),
+            style: muet,
+          ),
         ],
-      ),
+      ],
     );
   }
 }

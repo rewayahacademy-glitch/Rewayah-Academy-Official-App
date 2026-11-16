@@ -249,16 +249,9 @@ class _EtatCandidatureDirectionPage
     final DetailCandidature? detail = valeur.value;
     final r = t.admin.candidatures;
 
-    final PlanDossier? plan = detail == null
-        ? null
-        : PlanDossier(
-            detail: detail,
-            capacites: capacites,
-            horsLigne: horsLigne,
-          );
-    // Sur ordinateur, les etages 1 et 2 sont a gauche, dans la page ; sinon
-    // l'etage 1 reste fixe sous le titre. Meme regle que l'ancienne page : la
-    // largeur de la page, et le texte pas trop agrandi.
+    // Sur ordinateur, les etages 1 et 2 sont a gauche, les rubriques a droite.
+    // Meme regle que l'ancienne page : la largeur de la page, et le texte pas
+    // trop agrandi.
     final Widget page = LayoutBuilder(
       builder: (BuildContext context, BoxConstraints contraintes) {
         final bool deuxColonnes =
@@ -285,78 +278,49 @@ class _EtatCandidatureDirectionPage
               ? null
               : referenceDuDossier(widget.reference),
           onRetour: _retourALaFile,
-          // BE-DOSSIER : la page porte son propre defilement (une seule barre,
-          // celle de la page) pour que l'etage 1 reste en haut et la barre de
-          // decision en bas. Voir le cahier : ecart a SANS-BARRE-FIXE, dit au
-          // coordinateur.
-          defilante: false,
-          entete: plan == null
-              ? null
-              : Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: <Widget>[
-                    ?exception,
-                    if (!deuxColonnes) ...<Widget>[
-                      Ecart.vSm,
-                      EtageUnDossier(plan: plan),
-                    ],
-                  ],
-                ),
-          actions: plan == null || !capacites.peutDecider
-              ? null
-              : BarreDecisionDossier(
-                  plan: plan,
-                  onGeste: (GesteCandidature g) =>
-                      _geste(g, plan.detail, capacites),
-                  autresActions: actionsSupplementaires(
-                    context,
-                    ref,
-                    plan.detail,
-                  ),
-                ),
-          child: SingleChildScrollView(
-            child: BlocAsynchrone<DetailCandidature>(
-              key: const ValueKey<String>('candidature-bloc'),
-              valeur: valeur,
-              squelette: const Skeleton.texte(lignes: 6),
-              onReessayer: _relire,
-              erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
-                  _etatErreur(erreur, reessayer, horsLigne),
-              construire: (DetailCandidature d) => CorpsDossier(
-                plan: PlanDossier(
-                  detail: d,
-                  capacites: capacites,
-                  horsLigne: horsLigne,
-                ),
-                deuxColonnes: deuxColonnes,
-                retour: _retour,
-                onGeste: (GesteCandidature g) => _geste(g, d, capacites),
-                // COMPLEMENT-ET-FORMATS : « Demander une nouvelle piece » (ou
-                // photo) depuis un fichier illisible : la feuille du
-                // complement s'ouvre, l'element deja coche. Un geste.
-                onDemanderElement: (String code) => _geste(
-                  GesteCandidature.demanderComplement,
-                  d,
-                  capacites,
-                  elementsInitiaux: <String>{code},
-                ),
-                // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ;
-                // son retour ramene ici.
-                onOuvrirDossier: () => unawaited(
-                  context.push<void>(Routes.adminPersonnesDossiers),
-                ),
-                onOuvrirConversation: _ouvrirConversation,
-                rangMessages: _rangMessages,
-                retourEntretien: _retourEntretien,
-                onEntretien: (String message) {
-                  _relire(identifiant: d.ligne.id);
-                  setState(() {
-                    _retour = null;
-                    _retourEntretien = message;
-                  });
-                },
+          // Rien de fixe (coordinateur, 16/11 : SANS-BARRE-FIXE et DEFILEMENT) :
+          // la page defile en entier, une seule barre de defilement.
+          entete: exception,
+          child: BlocAsynchrone<DetailCandidature>(
+            key: const ValueKey<String>('candidature-bloc'),
+            valeur: valeur,
+            squelette: const Skeleton.texte(lignes: 6),
+            onReessayer: _relire,
+            erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
+                _etatErreur(erreur, reessayer, horsLigne),
+            construire: (DetailCandidature d) => CorpsDossier(
+              plan: PlanDossier(
+                detail: d,
+                capacites: capacites,
+                horsLigne: horsLigne,
               ),
+              deuxColonnes: deuxColonnes,
+              retour: _retour,
+              onGeste: (GesteCandidature g) => _geste(g, d, capacites),
+              // COMPLEMENT-ET-FORMATS : « Demander une nouvelle piece » (ou
+              // photo) depuis un fichier illisible : la feuille du
+              // complement s'ouvre, l'element deja coche. Un geste.
+              onDemanderElement: (String code) => _geste(
+                GesteCandidature.demanderComplement,
+                d,
+                capacites,
+                elementsInitiaux: <String>{code},
+              ),
+              // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ;
+              // son retour ramene ici.
+              onOuvrirDossier: () =>
+                  unawaited(context.push<void>(Routes.adminPersonnesDossiers)),
+              onOuvrirConversation: _ouvrirConversation,
+              autresActions: actionsSupplementaires(context, ref, d),
+              rangMessages: _rangMessages,
+              retourEntretien: _retourEntretien,
+              onEntretien: (String message) {
+                _relire(identifiant: d.ligne.id);
+                setState(() {
+                  _retour = null;
+                  _retourEntretien = message;
+                });
+              },
             ),
           ),
         );
