@@ -4351,6 +4351,7 @@
         "demanderNouvellePiece": "Demander une nouvelle pièce d'identité",
         "pieceAgrandir": "Ouvrir la pièce d'identité en grand",
         "pieceImage": "Image",
+        "pieceFichier": "Fichier",
         "piecePdf": "Fichier PDF",
         "pieceOuvrirPdf": "Ouvrir le PDF de la pièce d'identité",
         "pieceTitre": "Pièce d'identité\u00a0: {nom}",

@@ -5657,6 +5657,7 @@
         "demanderNouvellePiece": "طلب وثيقة هوية جديدة",
         "pieceAgrandir": "فتح وثيقة الهوية بالحجم الكامل",
         "pieceImage": "صورة",
+        "pieceFichier": "ملف",
         "piecePdf": "ملف PDF",
         "pieceOuvrirPdf": "فتح ملف PDF لوثيقة الهوية",
         "pieceTitre": "وثيقة هوية \u2068{nom}\u2069",

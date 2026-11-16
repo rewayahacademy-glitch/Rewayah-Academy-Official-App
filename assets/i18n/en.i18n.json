@@ -4351,6 +4351,7 @@
         "demanderNouvellePiece": "Ask for a new ID document",
         "pieceAgrandir": "Open the ID document full size",
         "pieceImage": "Image",
+        "pieceFichier": "File",
         "piecePdf": "PDF file",
         "pieceOuvrirPdf": "Open the PDF of the ID document",
         "pieceTitre": "ID document of {nom}",

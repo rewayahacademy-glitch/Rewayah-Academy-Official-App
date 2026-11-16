@@ -85,8 +85,11 @@ class PieceVignette extends ConsumerWidget {
   /// La hauteur de la vignette.
   static const double hauteur = 120;
 
-  /// Vrai quand l'adresse signée est celle d'un PDF (l'extension de la clé de
-  /// l'objet figure dans son chemin). Un autre format est tenu pour une image :
+  /// Vrai quand l'adresse signée est celle d'un PDF. ATTENTION : les clés R2
+  /// n'ont PAS d'extension (`cles.ts`, « Pas d'extension »), seules les
+  /// anciennes pièces du seau `kyc` en ont une. Un PDF déposé sur R2 n'est donc
+  /// pas reconnu ici : il tombe dans le chemin « image non affichable », dont
+  /// l'icône dit « Fichier » (jamais « Image » à tort) et ouvre l'onglet. Un autre format est tenu pour une image :
   /// s'il ne s'affiche pas, la phrase « Format non lisible » le dit.
   static bool estPdf(String adresse) =>
       Uri.tryParse(adresse)?.path.toLowerCase().endsWith('.pdf') ?? false;
@@ -158,8 +161,8 @@ class PieceVignette extends ConsumerWidget {
                                   children: <Widget>[
                                     BoutonOutil(
                                       key: cleIconeIllisible,
-                                      icone: AppIcons.image,
-                                      libelle: r.pieceImage,
+                                      icone: AppIcons.document,
+                                      libelle: r.pieceFichier,
                                       avecLibelle: true,
                                       forme: FormeBoutonOutil.tuile,
                                       onPress: () => unawaited(
