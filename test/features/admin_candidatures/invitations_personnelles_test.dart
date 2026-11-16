@@ -33,7 +33,7 @@ import '../../support/monter_recrutement.dart';
 import 'hote_candidatures.dart';
 
 // BE-LISTE : le lien est une entree du menu « Outils ».
-const String _libelleLien = 'Envoyer les codes personnels';
+String get _libelleLien => t.candidatsFlux.invitationsPersonnelles.lien;
 
 ApercuInvitationsPersonnelles _apercu({
   int aInviter = 3,

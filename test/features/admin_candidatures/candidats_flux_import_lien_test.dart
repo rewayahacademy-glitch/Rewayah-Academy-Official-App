@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/modeles_import_candidatures.dart';
 import 'package:rewayah_academy/core/candidature/port_import_candidatures.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/admin_import_formulaires/routes_candidats_flux.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -18,7 +19,7 @@ import '../../fixtures/candidature/faux_import_candidatures.dart';
 import 'hote_candidatures.dart';
 
 // BE-LISTE : le lien est une entree du menu « Outils ».
-const String _libelle = 'Importer les formulaires';
+String get _libelle => t.candidatsFlux.importFormulaires.lienEntree;
 
 Future<void> _monter(
   WidgetTester tester, {

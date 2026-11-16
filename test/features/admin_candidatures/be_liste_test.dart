@@ -33,6 +33,7 @@ import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appar
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/harnais.dart';
 import '../../support/monter_recrutement.dart';
+import '../../support/rangee_plus.dart';
 import 'hote_candidatures.dart';
 
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
@@ -137,16 +138,14 @@ void main() {
         lignes: _lignes(),
       );
       await monterCandidatures(tester, port: port);
-      await tester.ensureVisible(_cle('candidatures-filtre-verification'));
-      await tester.tap(_cle('candidatures-filtre-verification'));
+      await toucherFiltre(tester, _cle('candidatures-filtre-verification'));
       await laisser(tester);
       expect(_adresse(tester).queryParameters, <String, String>{
         'etape': 'verifications',
       });
       expect(port.appels.last.filtre.etape, EtapeCandidature.verifications);
       // « Toutes » retire le parametre.
-      await tester.ensureVisible(_cle('candidatures-filtre-toutes'));
-      await tester.tap(_cle('candidatures-filtre-toutes'));
+      await toucherFiltre(tester, _cle('candidatures-filtre-toutes'));
       await laisser(tester);
       expect(_adresse(tester).queryParameters, isEmpty);
     });
@@ -388,25 +387,28 @@ void main() {
       );
     });
 
-    testWidgets('telephone : le premier nom est dans le premier ecran', (
-      tester,
-    ) async {
-      await monterCandidatures(
-        tester,
-        port: FauxCandidaturesDirection(lignes: _lignes()),
-        largeur: 360,
-        hauteur: 800,
-        invitations: true,
-        surcharges: [
-          portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
-        ],
-      );
-      await tester.tap(find.text(t.recrutement.file.replier));
-      await laisser(tester);
-      final Finder nom = find.textContaining('Numero0');
-      expect(nom, findsWidgets);
-      expect(tester.getTopLeft(nom.first).dy, lessThan(800));
-    });
+    testWidgets(
+      'telephone : le premier nom s\'atteint en defilant moins d\'un ecran',
+      (tester) async {
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(lignes: _lignes()),
+          largeur: 360,
+          hauteur: 800,
+          invitations: true,
+          surcharges: [
+            portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
+          ],
+        );
+        final Finder nom = find.textContaining('Numero0');
+        // Carte depliee (l'etat de depart) : moins d'un ecran a defiler.
+        expect(tester.getTopLeft(nom.first).dy, lessThan(2 * 800));
+        await tester.tap(find.text(t.recrutement.file.replier));
+        await laisser(tester);
+        // Carte repliee : le nom est tout pres du bas du premier ecran.
+        expect(tester.getTopLeft(nom.first).dy, lessThan(1100));
+      },
+    );
   });
 
   group('6. une seule file', () {

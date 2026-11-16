@@ -48,7 +48,7 @@ const CapacitesCandidatures _capsPrevenir = CapacitesCandidatures(
 Finder _cle(Key cle) => find.byKey(cle);
 
 // BE-LISTE : le lien est une entree du menu « Outils ».
-const String _libelleLien = 'Prévenir par e-mail';
+String get _libelleLien => t.candidatsFlux.prevenir.lien;
 
 /// Monte la file avec le port [faux] (nul : port non servi) et les capacites
 /// [caps].
