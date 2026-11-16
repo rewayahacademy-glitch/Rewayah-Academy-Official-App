@@ -900,8 +900,23 @@ abstract final class Routes {
       '/admin/personnes/candidatures/creneaux';
 
   /// Le chemin de la candidature de reference [reference].
-  static String adminPersonnesCandidaturePour(String reference) =>
-      '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';
+  ///
+  /// BE-SUIVANT : [fileDeLaListe] est l'adresse de la liste d'ou l'on ouvre le
+  /// dossier (son filtre et son tri) : le dossier sait alors dans quelle file
+  /// il se trouve et peut passer au suivant. Sans elle (un dossier ouvert
+  /// depuis un message), l'adresse reste celle d'avant.
+  static String adminPersonnesCandidaturePour(
+    String reference, {
+    Map<String, String>? fileDeLaListe,
+  }) {
+    final String chemin =
+        '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';
+    if (fileDeLaListe == null) return chemin;
+    return Uri(
+      path: chemin,
+      queryParameters: <String, String>{...fileDeLaListe, 'depuis': 'liste'},
+    ).toString();
+  }
 
   /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
   static const String adminPersonnesReprises = '/admin/personnes/reprises';
