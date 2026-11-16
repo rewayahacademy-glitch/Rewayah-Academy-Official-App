@@ -1,0 +1,26 @@
+BE-LISTE-2 : mesures apres la consigne du 16/11 (18 h 30) : « libere cette place »
+
+Change : la recherche n'est plus un champ, c'est une loupe qui ouvre le champ au toucher ;
+Filtres, Trier et la loupe sont des icones de la rangee du titre ; plus aucune icone de
+rappel du bandeau « deux cotes » ; les files sont le menu « File ».
+
+MESURE fr_360 : haut de la premiere ligne a 252
+MESURE fr_673 : haut de la premiere ligne a 200
+MESURE fr_884 : haut de la premiere ligne a 200
+MESURE fr_1366 : haut de la premiere ligne a 248
+MESURE ar_360 : haut de la premiere ligne a 252
+MESURE ar_1366 : haut de la premiere ligne a 233
+
+Cible : haut de la premiere candidature sous 300 pt a 360 x 800 : ATTEINTE (252 pt, FR et AR).
+Historique : 572 (puces), 336 (puces compactes), 260 (menu File + champ de recherche).
+
+Ce qui n'est PAS fait comme demande :
+- « Titre + loupe + filtres + trier + outils sur UNE seule rangee » : tient a partir d'environ
+  442 de large de telephone (avec Outils) ; a 360, quatre icones de 48 et le titre entier
+  (176 pour « Candidatures ») demandent 368 pour 328 disponibles : sur une rangee, le mot serait
+  coupe au milieu (vu en capture : « Candidatur / es »). A 360, rangee 1 = titre + Outils,
+  rangee 2 = loupe + Filtres + Trier, rangee 3 = menu File : trois rangees.
+- Le bandeau « deux cotes » se voit une seule fois par APPAREIL (memoire de l'appareil), pas une
+  seule fois par COMPTE : il n'existe aucune preference serveur generique (seulement le theme et
+  la langue, par RPC dediees) ; en garder une exigerait une migration, hors de ma zone.
+  Aucune icone de rappel ne le ramene.

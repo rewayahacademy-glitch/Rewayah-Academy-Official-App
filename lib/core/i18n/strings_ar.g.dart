@@ -10805,6 +10805,43 @@ class _Traductions$recrutement$file$ar extends Traductions$recrutement$file$fr {
 	@override String get replier => 'طيّ';
 	@override String get trier => 'ترتيب';
 	@override String get pieceSansAttente => 'بلا وثيقة هوية للتحقق منها';
+	@override String get filtres => 'تصفية';
+	@override String filtresPoses({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'تصفية، ⁨${n}⁩ مطبّقة',
+		one: 'تصفية، ⁨${n}⁩ مطبّقة',
+		two: 'تصفية، ⁨${n}⁩ مطبّقان',
+		few: 'تصفية، ⁨${n}⁩ مطبّقة',
+		many: 'تصفية، ⁨${n}⁩ مطبّقة',
+		other: 'تصفية، ⁨${n}⁩ مطبّقة',
+	);
+	@override String get jaiCompris => 'فهمت';
+	@override String get files => 'القوائم';
+	@override String get pieceCourt => 'وثيقة للتحقق';
+	@override String get fileMenu => 'القائمة';
+	@override String get confirmeesIndisponibles => 'مؤكَّدة وغير متاحة';
+	@override String get piece => 'وثيقة الهوية';
+	@override String get responsable => 'المسؤول';
+	@override String get responsableMoi => 'أنا';
+	@override String get responsableAucun => 'لا أحد';
+	@override String get ijaza => 'الإجازة';
+	@override String get langue => 'لغة الشرح';
+	@override String get riwaya => 'الرواية';
+	@override String get public => 'الفئة المستهدفة';
+	@override String get jours => 'الأيام المتاحة';
+	@override String get heureDe => 'ابتداءً من';
+	@override String get heureA => 'حتى';
+	@override String get joursMin => 'عدد الأيام على الأقل';
+	@override String joursMinN({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ أيام على الأقل',
+		one: 'يوم واحد على الأقل',
+		two: 'يومان على الأقل',
+		few: '⁨${n}⁩ أيام على الأقل',
+		many: '⁨${n}⁩ يومًا على الأقل',
+		other: '⁨${n}⁩ يوم على الأقل',
+	);
+	@override String get salle => 'القاعة';
+	@override String get toutesLesFiles => 'الكل';
+	@override String get rechercher => 'بحث';
 }
 
 // Path: recrutement.nomLatin
@@ -39122,6 +39159,29 @@ extension on TraductionsAr {
 			'recrutement.file.replier' => 'طيّ',
 			'recrutement.file.trier' => 'ترتيب',
 			'recrutement.file.pieceSansAttente' => 'بلا وثيقة هوية للتحقق منها',
+			'recrutement.file.filtres' => 'تصفية',
+			'recrutement.file.filtresPoses' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تصفية، ⁨${n}⁩ مطبّقة', one: 'تصفية، ⁨${n}⁩ مطبّقة', two: 'تصفية، ⁨${n}⁩ مطبّقان', few: 'تصفية، ⁨${n}⁩ مطبّقة', many: 'تصفية، ⁨${n}⁩ مطبّقة', other: 'تصفية، ⁨${n}⁩ مطبّقة', ), 
+			'recrutement.file.jaiCompris' => 'فهمت',
+			'recrutement.file.files' => 'القوائم',
+			'recrutement.file.pieceCourt' => 'وثيقة للتحقق',
+			'recrutement.file.fileMenu' => 'القائمة',
+			'recrutement.file.confirmeesIndisponibles' => 'مؤكَّدة وغير متاحة',
+			'recrutement.file.piece' => 'وثيقة الهوية',
+			'recrutement.file.responsable' => 'المسؤول',
+			'recrutement.file.responsableMoi' => 'أنا',
+			'recrutement.file.responsableAucun' => 'لا أحد',
+			'recrutement.file.ijaza' => 'الإجازة',
+			'recrutement.file.langue' => 'لغة الشرح',
+			'recrutement.file.riwaya' => 'الرواية',
+			'recrutement.file.public' => 'الفئة المستهدفة',
+			'recrutement.file.jours' => 'الأيام المتاحة',
+			'recrutement.file.heureDe' => 'ابتداءً من',
+			'recrutement.file.heureA' => 'حتى',
+			'recrutement.file.joursMin' => 'عدد الأيام على الأقل',
+			'recrutement.file.joursMinN' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ أيام على الأقل', one: 'يوم واحد على الأقل', two: 'يومان على الأقل', few: '⁨${n}⁩ أيام على الأقل', many: '⁨${n}⁩ يومًا على الأقل', other: '⁨${n}⁩ يوم على الأقل', ), 
+			'recrutement.file.salle' => 'القاعة',
+			'recrutement.file.toutesLesFiles' => 'الكل',
+			'recrutement.file.rechercher' => 'بحث',
 			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
 			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
 			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
@@ -39132,6 +39192,8 @@ extension on TraductionsAr {
 			'recrutement.nomLatin.erreur' => 'اكتب اسمك بحروف الأبجدية اللاتينية (a, b, c) للمتابعة.',
 			'recrutement.nomLatin.echec' => 'لم يتم تأكيد اسمك. أعيدوا المحاولة بعد قليل.',
 			'recrutement.signature.champNom' => 'اسم الموقِّع',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.signature.aideNom' => 'اسم حسابك. إن اختلف عن وثيقة هويتك، فأخبر الإدارة.',
 			'recrutement.signature.nomCompteVide' => 'ليس لحسابك اسم بعد: التوقيع غير ممكن. أخبر الإدارة.',
 			'recrutement.signature.nomCompteLecture' => 'لا يظهر اسم حسابك: التوقيع ينتظر. أعد المحاولة بعد لحظات.',
@@ -39155,8 +39217,6 @@ extension on TraductionsAr {
 			'recrutement.signature.erreur' => 'لم يتأكد التوقيع. تحقّق هل يظهر العقد موقّعًا قبل أن تعيد.',
 			'recrutement.signature.nonConnecte' => 'انتهت جلستك. سجّل الدخول من جديد لتوقّع.',
 			'recrutement.signature.introuvable' => 'لا يوجد عقد منشور حاليًا. أبلغ الإدارة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.signature.erreurLecture' => 'تعذّرت قراءة العقد. أعد المحاولة بعد لحظات.',
 			'recrutement.signature.sansDonnees' => 'لا يمكن قراءة العقد بلا اتصال.',
 			'recrutement.signature.indisponible' => 'سيتوفر توقيع العقد عند ربط الخادم.',
@@ -39646,6 +39706,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.non.description' => 'ليس عندك إجازة، ولا تنوي اجتياز اختبار الآن.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
 			'recrutement.parcours.q.experienceDebutants.explication' => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'الخبرة مع المبتدئين',
@@ -39669,8 +39731,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.titre' => 'هل الساعات نفسها في كل هذه الأيام؟',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁨${heures}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.explication' => 'يمكنك تغيير يوم قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.exemple' => 'تبدأ في الساعة 18:00 أيام الاثنين والأربعاء والجمعة.',
@@ -40160,6 +40220,8 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s7.blocs.0' => 'نحتفظ بكل نوع من المعلومات للمدة اللازمة فقط. وتُحذف وثيقة هوية المعلم عند انتهاء مهلة محددة. وقد يُجمَّد الحذف عند وجود نزاع.',
 			'juridique.confidentialite.s8.titre' => '٨. حقوقكم',
 			'juridique.confidentialite.s8.blocs.0' => '- الاطلاع على المعلومات التي لدينا عنكم.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s8.blocs.1' => '- تصحيحها.',
 			'juridique.confidentialite.s8.blocs.2' => '- طلب حذفها أو تقييد استخدامها.',
 			'juridique.confidentialite.s8.blocs.3' => 'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
@@ -40183,8 +40245,6 @@ extension on TraductionsAr {
 			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
 			'juridique.cookies.s4.blocs.0' => 'عندما يتعطل التطبيق قد يُرسَل تقرير تقني إلى خدمة تتبّع الأخطاء. وهو لا يحتوي على لقطة شاشة ولا اسم ولا هوية.',
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
 			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
@@ -40674,6 +40734,8 @@ extension on TraductionsAr {
 			'i1.lien.refuseTitre' => 'لم ينجح الدخول',
 			'i1.lien.refuseDetail' => 'تعذّر على هذا الرابط فتح جلستك. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول. وإن تكرر ذلك فاكتب إلى الأكاديمية.',
 			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
 			'd1ter.messages.introSoi' => 'أرسلت إليكم الإدارة هذه الرسائل.',
@@ -40697,8 +40759,6 @@ extension on TraductionsAr {
 			'snt.planning.fixer' => 'تحديد الموعد الجديد',
 			'snt.planning.erreurLecture' => 'تعذّرت قراءة الحصص المؤجلة: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'snt.planning.feuilleTitre' => 'تحديد الموعد الجديد',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'الفصل ⁨${classe}⁩، حصة كانت مقرّرة ⁨${quand}⁩',
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
@@ -41188,6 +41248,8 @@ extension on TraductionsAr {
 			'push1.reglages.refuse' => 'متصفحكم يحجب إشعارات رواية. اسمحوا بها في إعدادات المتصفح لهذا الموقع، ثم عودوا إلى هنا.',
 			'push1.reglages.ignore' => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.',
 			'push1.reglages.echecActivation' => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.compteNonAutoriseTitre' => 'لا إشعارات على الجهاز لهذا الحساب',
 			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
 			'push1.reglages.erreurTitre' => 'تعذّرت قراءة الإعدادات',
@@ -41211,8 +41273,6 @@ extension on TraductionsAr {
 			'suiviPedagogique.etapeFranchie' => 'المرحلة السابقة',
 			'suiviPedagogique.etapeFranchieLe' => ({required Object numero, required Object mois, required Object annee}) => 'المرحلة السابقة، الدخول في ⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'suiviPedagogique.etapeEnCours' => 'جارية',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.etapeAVenir' => 'قادمة',
 			'suiviPedagogique.sourates' => 'سور الأساسيات المعتمدة',
 			'suiviPedagogique.souratesDe' => ({required Object validees, required Object total}) => '⁨${validees}⁩ من ⁨${total}⁩',
@@ -41702,6 +41762,8 @@ extension on TraductionsAr {
 			'motifs.signalement.pedagogique.revision' => 'قليل من المراجعة في البيت سيفيد قبل الدرس القادم.',
 			'motifs.signalement.pedagogique.regularite' => 'سيصنع انتظام العمل في البيت الفارق.',
 			'motifs.signalement.pedagogique.echange' => 'يُقترح تواصل مع الأكاديمية.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.presence.absences' => 'عدة غيابات حديثة: الانتظام يساعد على التقدم.',
 			'motifs.signalement.presence.retards' => 'تأخر في الحضور في الحصص الأخيرة.',
 			'motifs.signalement.presence.prevenir' => 'نرجو إبلاغ الأكاديمية عند الغياب.',
@@ -41725,8 +41787,6 @@ extension on TraductionsAr {
 			'presentationTuteur.refuser' => 'رفض',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'فُعِّل العرض العادي لـ⁨${prenom}⁩.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'رُفض طلب ⁨${dePrenom}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.echecReponse' => 'تعذّر تأكيد ردك. يبقى الطلب معلّقًا: أعد المحاولة.',
 			'presentationTuteur.vide' => 'لا طلب عرض عادٍ معلّق.',
 			'presentationTuteur.erreur' => 'تعذّر تحميل الطلبات. أعد المحاولة.',

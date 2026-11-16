@@ -399,9 +399,9 @@ SELECT pg_temp.vrai(
                WHERE (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l) k) IS DISTINCT FROM
                      ARRAY['courrielAObtenir', 'derniereActivite', 'enPause', 'etape', 'etat', 'genre', 'id',
                            'indicatifAConfirmer', 'indisponible', 'indisponibleJusquAu', 'issue', 'nomComplet',
-                           'nomLatin', 'nomLatinAConfirmer', 'paiement', 'paysResidence', 'recueLe',
+                           'nomLatin', 'nomLatinAConfirmer', 'nouveau', 'paiement', 'paysResidence', 'recueLe',
                            'reference', 'repriseLe', 'responsableId', 'restreinte', 'type']),
-  'f7 : la ligne de liste a 22 cles : les 19 d''avant, nomLatin, nomLatinAConfirmer et genre (SALLE2-GENRE, 14/11/2026 ; ni courriel ni telephone)');
+  'f7 : la ligne de liste a 23 cles : les 19 d''avant, nomLatin, nomLatinAConfirmer, genre (SALLE2-GENRE, 14/11/2026) et nouveau (NOUVEAU-LISTE, 16/11/2026) ; ni courriel ni telephone');
 SELECT pg_temp.garde('dossier', pg_temp.en(pg_temp.p('a1'), 'admin',
   format($$SELECT public.lire_candidature(%L)$$, pg_temp.c('01'))));
 SELECT pg_temp.vrai(pg_temp.lu('dossier') ->> 'nomLatin' = 'Ahmed Bin Ali'

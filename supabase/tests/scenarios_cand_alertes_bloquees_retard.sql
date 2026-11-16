@@ -230,12 +230,12 @@ BEGIN
   RESET ROLE;
   PERFORM pg_temp.vrai(
     (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(r) k)
-      = ARRAY['compteursAlertes', 'compteursEtapes', 'lignes', 'page', 'taillePage', 'total']
+      = ARRAY['compteurNouveaux', 'compteursAlertes', 'compteursEtapes', 'lignes', 'page', 'taillePage', 'total']
     AND (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(r -> 'compteursAlertes') k)
       = ARRAY['bloquees', 'confirmeesIndisponibles', 'entretiensEnRetard', 'informationsManquantes']
     AND jsonb_typeof(r -> 'compteursAlertes' -> 'bloquees') = 'number'
     AND jsonb_typeof(r -> 'compteursAlertes' -> 'entretiensEnRetard') = 'number',
-    'f1 : memes cles, les deux compteurs sont des nombres');
+    'f1 : memes cles (plus compteurNouveaux, NOUVEAU-LISTE 16/11), les deux compteurs sont des nombres');
 END $f$;
 
 ROLLBACK;
