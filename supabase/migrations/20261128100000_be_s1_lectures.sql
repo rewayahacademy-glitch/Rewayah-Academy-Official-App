@@ -27,7 +27,6 @@
 -- sont lues que par lib/core/candidature/*_supabase.dart (ajout de champs
 -- facultatifs) et par les scenarios supabase/tests/scenarios_cand_*.sql.
 
-BEGIN;
 
 CREATE FUNCTION pg_temp.remplacer(p_def text, p_avant text, p_apres text, p_nom text)
 RETURNS text
@@ -570,4 +569,3 @@ BEGIN
 END;
 $postflight$;
 
-COMMIT;
