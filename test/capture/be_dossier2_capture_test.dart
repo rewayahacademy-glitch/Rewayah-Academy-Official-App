@@ -39,7 +39,7 @@ void main() {
     required AppLocale langue,
   }) async {
     masquerRubanDebug();
-    await LocaleSettings.setLocale(langue);
+    await tester.runAsync(() => LocaleSettings.setLocale(langue));
     await monterCandidature(
       tester,
       port: _port(),
