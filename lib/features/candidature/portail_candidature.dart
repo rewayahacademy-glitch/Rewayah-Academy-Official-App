@@ -36,6 +36,7 @@ import '../../core/widgets/confirm_destructive.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_etape.dart' show RangeeEtape;
+import 'majorite_etape.dart';
 
 /// Vrai quand le portail montre l'etat de la candidature plutot que les cinq
 /// etats du dossier : en Salle d'examen, ou apres un refus ou un retrait. En
@@ -227,6 +228,9 @@ class EnteteSalle extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        // MAJEUR (directeur, 16/11/2026) : l'age a atteste, en tete de la page,
+        // la ou le candidat est (rien n'est rendu une fois fait).
+        CarteMajorite(candidature: candidature),
         if (passage != null) ...<Widget>[
           Text(passage, key: passageKey, style: textes.bodyLarge),
           Ecart.vMd,

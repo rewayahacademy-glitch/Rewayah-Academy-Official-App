@@ -2614,6 +2614,29 @@
     }
   },
   "recrutement": {
+    "majeur": {
+      "titre": "Before you start",
+      "explication": "Recruitment of teachers is reserved for people aged 18 and over.",
+      "coche": "I am 18 or older.",
+      "lienMoins18": "I am under 18",
+      "pourquoiBloque": "Tick the box to continue.",
+      "echec": "Your answer is not confirmed. Check your connection, then try again.",
+      "dejaFaite": "Your answer is already saved. If it is wrong, write to the administration.",
+      "portail": {
+        "titre": "One thing to confirm",
+        "explication": "To continue your application, confirm that you are 18 or older."
+      },
+      "confirmer": {
+        "titre": "Are you under 18?",
+        "explication": "Recruitment is reserved for people aged 18 and over. Your application will be paused. Nothing is deleted.",
+        "action": "Yes, I am under 18",
+        "retour": "No, go back"
+      },
+      "moins18": {
+        "titre": "Thank you for being honest",
+        "texte": "Recruitment of teachers is reserved for people aged 18 and over. Your application is paused. Nothing is deleted."
+      }
+    },
     "file": {
       "outils": "Tools",
       "outilsDe": "Tools for the applications list",

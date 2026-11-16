@@ -2614,6 +2614,29 @@
     }
   },
   "recrutement": {
+    "majeur": {
+      "titre": "Avant de commencer",
+      "explication": "Le recrutement des enseignants est réservé aux personnes de 18 ans et plus.",
+      "coche": "J'ai 18 ans ou plus.",
+      "lienMoins18": "J'ai moins de 18 ans",
+      "pourquoiBloque": "Cochez la case pour continuer.",
+      "echec": "Votre réponse n'est pas confirmée. Vérifiez votre connexion, puis réessayez.",
+      "dejaFaite": "Votre réponse est déjà enregistrée. Si elle est inexacte, écrivez à l'administration.",
+      "portail": {
+        "titre": "Une confirmation à faire",
+        "explication": "Pour continuer votre candidature, confirmez que vous avez 18 ans ou plus."
+      },
+      "confirmer": {
+        "titre": "Vous avez moins de 18 ans ?",
+        "explication": "Le recrutement est réservé aux personnes de 18 ans et plus. Votre candidature sera mise en pause. Rien n'est supprimé.",
+        "action": "Oui, j'ai moins de 18 ans",
+        "retour": "Non, revenir"
+      },
+      "moins18": {
+        "titre": "Merci de votre franchise",
+        "texte": "Le recrutement des enseignants est réservé aux personnes de 18 ans et plus. Votre candidature est en pause. Rien n'est supprimé."
+      }
+    },
     "file": {
       "outils": "Outils",
       "outilsDe": "Outils de la liste des candidatures",

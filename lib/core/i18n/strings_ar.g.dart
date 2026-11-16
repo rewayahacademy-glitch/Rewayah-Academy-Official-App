@@ -1826,6 +1826,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$recrutement$majeur$ar majeur = _Traductions$recrutement$majeur$ar._(_root);
 	@override late final _Traductions$recrutement$file$ar file = _Traductions$recrutement$file$ar._(_root);
 	@override late final _Traductions$recrutement$nomLatin$ar nomLatin = _Traductions$recrutement$nomLatin$ar._(_root);
 	@override late final _Traductions$recrutement$signature$ar signature = _Traductions$recrutement$signature$ar._(_root);
@@ -10732,6 +10733,25 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
 	@override String get canalStudio => 'قناة الاستوديو';
 	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
+}
+
+// Path: recrutement.majeur
+class _Traductions$recrutement$majeur$ar extends Traductions$recrutement$majeur$fr {
+	_Traductions$recrutement$majeur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قبل أن نبدأ';
+	@override String get explication => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر.';
+	@override String get coche => 'عمري 18 سنة أو أكثر.';
+	@override String get lienMoins18 => 'عمري أقل من 18 سنة';
+	@override String get pourquoiBloque => 'ضع علامة في المربع للمتابعة.';
+	@override String get echec => 'لم يتم تأكيد إجابتك. تحقق من اتصالك ثم أعد المحاولة.';
+	@override String get dejaFaite => 'إجابتك مسجلة بالفعل. إن كانت غير صحيحة، راسل الإدارة.';
+	@override late final _Traductions$recrutement$majeur$portail$ar portail = _Traductions$recrutement$majeur$portail$ar._(_root);
+	@override late final _Traductions$recrutement$majeur$confirmer$ar confirmer = _Traductions$recrutement$majeur$confirmer$ar._(_root);
+	@override late final _Traductions$recrutement$majeur$moins18$ar moins18 = _Traductions$recrutement$majeur$moins18$ar._(_root);
 }
 
 // Path: recrutement.file
@@ -20904,6 +20924,41 @@ class _Traductions$recherche$guide$initial$ar extends Traductions$recherche$guid
 	// Translations
 	@override String get titre => 'البحث عن مادة';
 	@override String get phrase => 'اكتب كلمة لتجد إحدى موادك.';
+}
+
+// Path: recrutement.majeur.portail
+class _Traductions$recrutement$majeur$portail$ar extends Traductions$recrutement$majeur$portail$fr {
+	_Traductions$recrutement$majeur$portail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تأكيد مطلوب';
+	@override String get explication => 'لمتابعة طلب ترشحك، أكّد أن عمرك 18 سنة أو أكثر.';
+}
+
+// Path: recrutement.majeur.confirmer
+class _Traductions$recrutement$majeur$confirmer$ar extends Traductions$recrutement$majeur$confirmer$fr {
+	_Traductions$recrutement$majeur$confirmer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هل عمرك أقل من 18 سنة؟';
+	@override String get explication => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. سيتوقف طلب ترشحك مؤقتًا، ولن يُحذف أي شيء.';
+	@override String get action => 'نعم، عمري أقل من 18 سنة';
+	@override String get retour => 'لا، رجوع';
+}
+
+// Path: recrutement.majeur.moins18
+class _Traductions$recrutement$majeur$moins18$ar extends Traductions$recrutement$majeur$moins18$fr {
+	_Traductions$recrutement$majeur$moins18$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'شكرًا على صراحتك';
+	@override String get texte => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. طلب ترشحك متوقف مؤقتًا، ولم يُحذف أي شيء.';
 }
 
 // Path: recrutement.invitations.comptable
@@ -38650,6 +38705,21 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
+			'recrutement.majeur.titre' => 'قبل أن نبدأ',
+			'recrutement.majeur.explication' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر.',
+			'recrutement.majeur.coche' => 'عمري 18 سنة أو أكثر.',
+			'recrutement.majeur.lienMoins18' => 'عمري أقل من 18 سنة',
+			'recrutement.majeur.pourquoiBloque' => 'ضع علامة في المربع للمتابعة.',
+			'recrutement.majeur.echec' => 'لم يتم تأكيد إجابتك. تحقق من اتصالك ثم أعد المحاولة.',
+			'recrutement.majeur.dejaFaite' => 'إجابتك مسجلة بالفعل. إن كانت غير صحيحة، راسل الإدارة.',
+			'recrutement.majeur.portail.titre' => 'تأكيد مطلوب',
+			'recrutement.majeur.portail.explication' => 'لمتابعة طلب ترشحك، أكّد أن عمرك 18 سنة أو أكثر.',
+			'recrutement.majeur.confirmer.titre' => 'هل عمرك أقل من 18 سنة؟',
+			'recrutement.majeur.confirmer.explication' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. سيتوقف طلب ترشحك مؤقتًا، ولن يُحذف أي شيء.',
+			'recrutement.majeur.confirmer.action' => 'نعم، عمري أقل من 18 سنة',
+			'recrutement.majeur.confirmer.retour' => 'لا، رجوع',
+			'recrutement.majeur.moins18.titre' => 'شكرًا على صراحتك',
+			'recrutement.majeur.moins18.texte' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. طلب ترشحك متوقف مؤقتًا، ولم يُحذف أي شيء.',
 			'recrutement.file.outils' => 'أدوات',
 			'recrutement.file.outilsDe' => 'أدوات قائمة طلبات الترشح',
 			'recrutement.file.afficher' => 'عرض',
@@ -38803,6 +38873,8 @@ extension on TraductionsAr {
 			'recrutement.portail.relire' => 'إعادة قراءة طلب ترشحي',
 			'recrutement.portail.toutIci' => 'كل شيء يتم هنا. ما أنجزته موسوم بـ «تم».',
 			'recrutement.portail.listeTitre' => 'ما يلزم للإرسال',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.portail.etatFait' => 'تم',
 			'recrutement.portail.etatADeposer' => 'للإيداع',
 			'recrutement.portail.elementAccords' => 'العقد واتفاقاتنا',
@@ -38818,8 +38890,6 @@ extension on TraductionsAr {
 			'recrutement.portail.elementAccordPublication' => 'الموافقة على نشر صورتك',
 			'recrutement.portail.elementPaysVersement' => 'بلد الصرف والحساب',
 			'recrutement.portail.paysVersementLien' => 'تغيير بلد الصرف',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.portail.paysVersementTitre' => 'بلد حساب الصرف',
 			'recrutement.portail.paysVersementExplication' => 'يمكن أن يكون الحساب حساب قريب موثوق في بلد تدعمه الأكاديمية. اختر البلد الذي يوجد فيه هذا الحساب. ستحتاج وسائل الصرف والبيانات المدخلة سابقًا إلى تأكيد جديد.',
 			'recrutement.portail.paysVersementEnregistrer' => 'حفظ هذا البلد',
@@ -39317,6 +39387,8 @@ extension on TraductionsAr {
 			'recrutement.talents.competences.manque' => 'اختر مهارة واحدة على الأقل للمتابعة.',
 			'recrutement.talents.competences.autreVide' => 'اكتب في بضع كلمات ما هو المجال، أو ألغِ اختيار «مجال آخر».',
 			'recrutement.talents.competences.autreTropLong' => ({required Object max}) => 'نصّك طويل جدًا: ⁨${max}⁩ حرفًا على الأكثر. اختصره.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.reseaux_sociaux.libelle' => 'إدارة وسائل التواصل الاجتماعي',
 			'recrutement.talents.c.reseaux_sociaux.description' => 'إدارة حسابات الأكاديمية على وسائل التواصل الاجتماعي.',
 			'recrutement.talents.c.reseaux_sociaux.exemple' => 'النشر كل أسبوع والرد على الرسائل والتعليقات',
@@ -39332,8 +39404,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.photographie.libelle' => 'التصوير',
 			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
 			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.redaction_contenus.libelle' => 'كتابة المحتوى وصناعته',
 			'recrutement.talents.c.redaction_contenus.description' => 'كتابة نصوص سليمة وممتعة للقراءة.',
 			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
@@ -39831,6 +39901,8 @@ extension on TraductionsAr {
 			'avis.admin.publier.question' => ({required Object deNom}) => 'هل تنشر رأي ⁨${deNom}⁩؟',
 			'avis.admin.publier.consequence' => 'سيظهر الرأي والاسم الظاهر والبلد والتاريخ على موقع Rewayah Academy عند التحديث التالي للموقع. لا يتغير النص.',
 			'avis.admin.publier.action' => 'نشر الرأي',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.publier.rester' => 'عدم تغيير شيء',
 			'avis.admin.refuser.titre' => ({required Object deNom}) => 'رفض رأي ⁨${deNom}⁩',
 			'avis.admin.refuser.intro' => 'اختر سبب الرفض. الرأي الناقد المحترم يُنشر.',
@@ -39846,8 +39918,6 @@ extension on TraductionsAr {
 			'avis.admin.motifs.tiers' => 'بيانات شخصية لطرف ثالث',
 			'avis.admin.motifs.publicite' => 'إعلان',
 			'avis.admin.motifs.horsSujet' => 'خارج الموضوع',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.motifs.doublon' => 'تكرار',
 			'avis.admin.motifs.demande' => 'طلب من صاحب الرأي',
 			'avis.admin.retour.publie' => 'نُشر الرأي.',
@@ -40345,6 +40415,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.depot.analyseEnCours' => 'تقرأ رواية ملفكم. لم يُسجَّل شيء بعد.',
 			'candidatsFlux.importFormulaires.depot.horsLigne' => 'سيمكن إجراء التحليل عند عودة الاتصال.',
 			'candidatsFlux.importFormulaires.depot.vide' => 'لا يحتوي هذا الملف على أي سطر للاستيراد.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.videAide' => 'تحققوا من أنكم صدّرتم الورقة الصحيحة.',
 			'candidatsFlux.importFormulaires.fichier.titre' => 'ملف غير مقروء',
 			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'تعذّرت قراءة هذا الملف، السطر ⁨${ligne}⁩: ⁨${cause}⁩.',
@@ -40360,8 +40432,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.colonnes.explication' => 'تتعرّف رواية على كل عمود من عنوانه. المسوا عمودًا لتغيير ما يحتويه.',
 			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'العمود ⁨${n}⁩، بلا عنوان',
 			'candidatsFlux.importFormulaires.colonnes.nonLue' => 'غير مقروء',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.nonLueAide' => 'لا يستعمل الاستيراد هذا العمود.',
 			'candidatsFlux.importFormulaires.colonnes.choisir' => ({required Object n}) => 'ماذا يحتوي العمود ⁨${n}⁩؟',
 			'candidatsFlux.importFormulaires.colonnes.sansTitre' => 'عمود بلا عنوان',
@@ -40859,6 +40929,8 @@ extension on TraductionsAr {
 			'suiviAttente.cloture.motif.refusDirection' => 'لم تقبل الإدارة هذا الطلب.',
 			'suiviAttente.cloture.motif.dejaEnClasse' => 'لهذا الطالب مقعد في فصل بالفعل: لم يعد الطلب لازمًا.',
 			'suiviAttente.cloture.motif.inconnu' => 'أُغلق هذا الطلب.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.suite' => 'يمكنك اختيار موعد آخر.',
 			'suiviAttente.cloture.autreCreneau' => 'اختيار موعد آخر',
 			'suiviAttente.cloture.simple.refusee' => 'لم يُقبل طلبك. يمكن لولي أمرك اختيار موعد آخر.',
@@ -40874,8 +40946,6 @@ extension on TraductionsAr {
 			'suiviAttente.enseignant.origine' => 'بلد الأصل',
 			'suiviAttente.enseignant.residence' => 'بلد الإقامة',
 			'suiviAttente.enseignant.mot' => 'كلمته للتعريف بنفسه',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.enseignant.peutSePresenter' => 'يمكن لمعلمك أن يعرّف بنفسه لأسر الفصل برسالة في الرسائل.',
 			'suiviAttente.vide.message' => 'لم تختر فصلًا بعد.',
 			'suiviAttente.vide.invitation' => 'اختر فصلًا: تتابعك الأكاديمية بعد ذلك مرحلة بمرحلة.',

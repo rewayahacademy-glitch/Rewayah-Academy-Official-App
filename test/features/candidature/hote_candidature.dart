@@ -69,6 +69,7 @@ CandidatureDossier candidatureAFaire({
   DateTime? complementLe,
   bool enPause = false,
   bool peutEnvoyer = true,
+  MajoriteCandidature majorite = MajoriteCandidature.nonServie,
 }) => CandidatureDossier(
   existe: true,
   etape: EtapeCandidature.prequalification,
@@ -88,6 +89,7 @@ CandidatureDossier candidatureAFaire({
   complementDemande: complement,
   complementDemandeLe: complementLe,
   peutEnvoyer: peutEnvoyer,
+  majorite: majorite,
 );
 
 /// Les routes de test : le portail, la page des accords (une pastille) et le

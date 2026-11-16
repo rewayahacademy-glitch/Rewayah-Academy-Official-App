@@ -306,6 +306,8 @@ declare
     'lister_candidatures(jsonb,text,integer)',
     -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
     'voisins_candidature(text,jsonb,text)',
+    -- MAJEUR (16/11) : le candidat atteste avoir 18 ans ou plus ; il n'ecrit que sa propre candidature (une declaration, une pause si moins de 18 ans) ; garde positive : titulaire d'une candidature d'enseignant en cours, compte valide.
+    'attester_majorite(boolean)',
     'lister_rapprochements_candidats(integer)',
     'indicateurs_admin()',
     -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).

@@ -796,6 +796,11 @@ INSERT INTO public.accords_publication (profile_id, version, nom_signe)
 SELECT DISTINCT c.profile_id, 'publication-2026-11-v1', 'Fixture'
   FROM public.candidatures c
  WHERE NOT EXISTS (SELECT 1 FROM public.accords_publication a WHERE a.profile_id = c.profile_id AND a.retire_le IS NULL);
+-- MAJEUR (16/11/2026) : l'envoi exige l'attestation « 18 ans ou plus » (erreur majorite_requise
+-- sans elle). Les candidats de ce scenario l'ont faite (fixture), avant leur premier envoi ; le
+-- refus a son propre scenario (scenarios_majeur.sql).
+UPDATE public.candidatures SET majorite_declaree = true, majorite_attestee_le = now()
+ WHERE majorite_declaree IS NULL;
 
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
