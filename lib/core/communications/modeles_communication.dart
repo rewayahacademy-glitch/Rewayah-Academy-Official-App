@@ -333,6 +333,7 @@ class ResumeFil {
     required this.objet,
     required this.interlocuteurs,
     this.apercu,
+    this.apercuPhoto = false,
     this.dernierMessageLe,
     this.attention = IndicateurAttention.aucun,
   });
@@ -348,6 +349,10 @@ class ResumeFil {
 
   /// Le debut du dernier message, deja tronque par le port ; `null` si aucun.
   final String? apercu;
+
+  /// IMAGES-CORRECTIF : le dernier message est une photo sans legende ; la
+  /// liste dit « Photo » avec une petite icone, jamais le texte de remplissage.
+  final bool apercuPhoto;
 
   /// L'instant du dernier message (UTC) ; `null` si le fil est encore vide.
   final DateTime? dernierMessageLe;

@@ -5,6 +5,7 @@ from __future__ import annotations
 import copy
 import http.server
 import importlib.util
+import html
 import json
 import re
 import shutil
@@ -215,6 +216,19 @@ class Rendu(unittest.TestCase):
         self.assertEqual((corps.count("etoile--pleine"), corps.count("etoile--vide")), (2, 3))
         self.assertNotIn("<h3>", corps)
         self.assertIn("ZZ", corps)
+
+    def test_un_avis_francais_qui_cite_de_l_arabe(self) -> None:
+        # Directeur, 16/11/2026 : un avis cite « عز وجل » et « الحمد لله » dans un texte francais. Le texte reste tel
+        # qu'il a ete ecrit ; chaque suite arabe entre dans sa langue, de droite a gauche, et rien d'autre n'en est touche.
+        texte = "Je remercie Allah عز وجل pour ces cours, الحمد لله ! <b>Merci</b>"
+        corps = AVIS.rendre_avis_section("liste", reponse(texte=texte, titre="Baraka الله فيكم", nom="Bah"))
+        self.assertIn('Allah <bdi lang="ar" dir="rtl">عز وجل</bdi> pour ces cours, '
+                      '<bdi lang="ar" dir="rtl">الحمد لله</bdi> ! &lt;b&gt;Merci&lt;/b&gt;', corps)
+        self.assertIn('<h3>Baraka <bdi lang="ar" dir="rtl">الله فيكم</bdi></h3>', corps)
+        hors_bdi = re.sub(r'<bdi lang="ar" dir="rtl">[^<]*</bdi>', "", corps)
+        self.assertIsNone(re.search(r"[\u0600-\u06FF]", hors_bdi))
+        self.assertEqual(re.sub(r"<[^>]+>", "", corps.split('class="avis-texte"><p>', 1)[1].split("</p>", 1)[0]),
+                         html.escape(texte, quote=True))
 
     def test_echappement(self) -> None:
         piege = '<script>alert(1)</script> "x" & <img src=x onerror=y>'

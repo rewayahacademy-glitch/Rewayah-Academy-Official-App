@@ -60,6 +60,7 @@ import '../../support/demo/communications/com_studio_demo.dart';
 import '../../support/demo/communications/com_vocal_demo.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/demo/mode_demonstration.dart';
+import '../../support/echec_bulle.dart';
 import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 import '../com_vocal/support_vocal.dart';
@@ -379,7 +380,7 @@ void main() {
       await tester.pump();
       await tester.tap(envoiDuFil());
       await _attendre(tester);
-      expect(find.text('Non confirme'), findsOneWidget);
+      expect(find.text(ligneEchec), findsOneWidget);
       // L'echec garde son texte en brouillon (N-3).
       expect((await brouillons.lire(_cle))?.texte, 'Premier');
       await tester.enterText(find.byKey(FilDiscussion.champKey), 'Second');

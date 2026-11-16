@@ -107,10 +107,15 @@ class EtageUnDossier extends ConsumerWidget {
     this.profil = const <LigneSynthese>[],
     this.messagerie,
     this.demanderPhoto,
+    this.navigation,
   });
 
   /// Le plan du dossier.
   final PlanDossier plan;
+
+  /// « 3 sur 176 » et les deux fleches (BE-SUIVANT), ou `null` : le dossier
+  /// n'a pas de file.
+  final Widget? navigation;
 
   /// Les lignes du profil (langues, memorisation, ijaza), sur la carte.
   final List<LigneSynthese> profil;
@@ -249,6 +254,7 @@ class EtageUnDossier extends ConsumerWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          if (navigation != null) ...<Widget>[navigation!, Ecart.vMd],
           identite,
           if (profil.isNotEmpty) ...<Widget>[
             Ecart.vMd,
@@ -759,9 +765,26 @@ class CorpsDossier extends ConsumerStatefulWidget {
     this.retour,
     this.retourEntretien,
     this.autresActions = const <EntreeAction>[],
+    this.navigation,
+    this.passage,
+    this.reglage,
+    this.onDecisionPiece,
     this.ligneMajorite,
     super.key,
   });
+
+  /// « 3 sur 176 » et les fleches (BE-SUIVANT), ou `null`.
+  final Widget? navigation;
+
+  /// Ce qui suit une decision : le passage au suivant, ou la fin de file.
+  final Widget? passage;
+
+  /// Le reglage « Passer au suivant apres une decision », ou `null`.
+  final Widget? reglage;
+
+  /// Une decision sur la piece est prise (BE-SUIVANT : elle peut ouvrir le
+  /// dossier suivant) ; `null` : elle ne compte que comme un retour local.
+  final ValueChanged<String>? onDecisionPiece;
 
   /// La phrase de majorite de la ligne Accords, ou `null` : rien n'est affiche.
   /// `DetailCandidature.majorite` n'est pas encore dans `main` (PR 517) ; la
@@ -947,7 +970,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           onDemanderNouvellePiece: redemandable('piece_identite')
               ? () => onDemanderElement('piece_identite')
               : null,
-          onDecision: onEntretien,
+          onDecision: widget.onDecisionPiece ?? onEntretien,
         ),
         gestes: <GesteRubrique?>[
           demander('piece_identite', r.demanderNouvellePiece),
@@ -1109,6 +1132,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
     };
     final Widget carteProfil = EtageUnDossier(
       plan: plan,
+      navigation: widget.navigation,
       profil: <LigneSynthese>[
         for (final LigneSynthese l in synthese)
           if (cleProfil.contains(l.cle)) l,
@@ -1144,6 +1168,16 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: LocalFeedback(message: retour),
           );
+    // BE-SUIVANT : l'annonce du passage au suivant (ou de la fin de file), puis
+    // le reglage, juste sous la barre de decision.
+    final Widget suite = Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (widget.passage != null) ...<Widget>[Ecart.vMd, widget.passage!],
+        if (widget.reglage != null) ...<Widget>[Ecart.vMd, widget.reglage!],
+      ],
+    );
     final Widget liste = KeyedSubtree(
       key: _cleListe,
       child: Column(
@@ -1170,6 +1204,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           resume,
           Ecart.vLg,
           barre,
+          suite,
           Ecart.vLg,
           liste,
         ],
@@ -1189,6 +1224,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
               resume,
               Ecart.vLg,
               barre,
+              suite,
             ],
           ),
         ),
