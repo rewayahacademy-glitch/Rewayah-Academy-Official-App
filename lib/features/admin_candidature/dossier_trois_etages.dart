@@ -27,6 +27,7 @@ import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/photo_dossier_candidat.dart';
 import '../../core/candidature/piece_candidature.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
+import '../../core/candidature/port_entretiens_direction.dart';
 import '../../core/candidature/port_import_candidatures.dart';
 import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/synthese_candidature.dart';
@@ -47,6 +48,7 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
+import '../../core/widgets/pays_enseignant.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
@@ -99,7 +101,14 @@ Future<void> ouvrirPhotoEnGrand(
 /// L'etage 1 : la photo, l'etat en un mot, la phrase de situation.
 class EtageUnDossier extends ConsumerWidget {
   /// Cree l'etage.
-  const EtageUnDossier({required this.plan, super.key, this.navigation});
+  const EtageUnDossier({
+    required this.plan,
+    super.key,
+    this.profil = const <LigneSynthese>[],
+    this.messagerie,
+    this.demanderPhoto,
+    this.navigation,
+  });
 
   /// Le plan du dossier.
   final PlanDossier plan;
@@ -107,6 +116,21 @@ class EtageUnDossier extends ConsumerWidget {
   /// « 3 sur 176 » et les deux fleches (BE-SUIVANT), ou `null` : le dossier
   /// n'a pas de file.
   final Widget? navigation;
+
+  /// Les lignes du profil (langues, memorisation, ijaza), sur la carte.
+  final List<LigneSynthese> profil;
+
+  /// La messagerie sur la carte (les conversations du dossier), ou `null`.
+  final Widget? messagerie;
+
+  /// « Demander une nouvelle photo », ou `null` quand le serveur ne l'offre pas.
+  final GesteRubrique? demanderPhoto;
+
+  /// La cle du profil (langues, memorisation, ijaza).
+  static const Key cleProfil = ValueKey<String>('dossier-profil');
+
+  /// La cle de la messagerie sur la carte.
+  static const Key cleMessagerie = ValueKey<String>('dossier-messagerie');
 
   /// La cle de l'etage.
   static const Key cle = ValueKey<String>('dossier-etage-1');
@@ -130,12 +154,14 @@ class EtageUnDossier extends ConsumerWidget {
     final List<String> morceaux = <String>[
       ?libelleSalle(l.etape),
       ?libelleGenre(l.genre),
-      ?libellePays(l.paysResidence),
     ];
     return morceaux.isEmpty
         ? null
         : morceaux.join(t.admin.candidatures.historique.separateur);
   }
+
+  /// La cle du pays (drapeau et nom).
+  static const Key clePays = ValueKey<String>('dossier-pays');
 
   /// La cle de la phrase « qui doit agir ».
   static const Key cleQui = ValueKey<String>('dossier-situation-qui');
@@ -164,15 +190,14 @@ class EtageUnDossier extends ConsumerWidget {
             child: PortraitDossierFige(
               nomComplet: detail.ligne.nomComplet,
               urlPhotoFigee: url,
-              diametre: AppAvatar.moyen,
+              diametre: AppAvatar.grand,
             ),
           )
         : AvatarTile(
             prenom: detail.ligne.nomComplet,
-            diametre: AppAvatar.moyen,
+            diametre: AppAvatar.grand,
           );
-    final Widget ligne = Row(
-      key: cle,
+    final Widget identite = Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         visage,
@@ -199,6 +224,15 @@ class EtageUnDossier extends ConsumerWidget {
                     textes.bodyMedium ?? const TextStyle(),
                   ),
                 ),
+              // Le pays, avec son drapeau (image embarquee) et son nom dans la
+              // langue de l'interface : un seul composant du depot.
+              PaysEnseignant.parCode(
+                key: clePays,
+                codeIso: detail.ligne.paysResidence,
+                style: palette.inkMuted.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
               if (reste != null)
                 TexteSansCoupure(
                   reste,
@@ -214,12 +248,45 @@ class EtageUnDossier extends ConsumerWidget {
         ),
       ],
     );
-    final Widget? nav = navigation;
-    if (nav == null) return ligne;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[nav, Ecart.vSm, ligne],
+    return AppCard(
+      key: cle,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          if (navigation != null) ...<Widget>[navigation!, Ecart.vMd],
+          identite,
+          if (profil.isNotEmpty) ...<Widget>[
+            Ecart.vMd,
+            Column(
+              key: cleProfil,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                for (final LigneSynthese l in profil)
+                  LigneCleValeur(cle: l.cle, valeur: l.valeur),
+              ],
+            ),
+          ],
+          // L'etat de la photo : la date a laquelle elle a ete figee, ou la
+          // raison pour laquelle elle ne s'affiche pas.
+          Ecart.vSm,
+          ContenuPhotoRubrique(detail: detail),
+          if (demanderPhoto case final GesteRubrique g) ...<Widget>[
+            Ecart.vSm,
+            LienFleche(
+              key: g.cle,
+              libelle: g.libelle,
+              alignerEnDebut: true,
+              onPress: g.onPress,
+            ),
+          ],
+          if (messagerie != null) ...<Widget>[
+            Ecart.vMd,
+            KeyedSubtree(key: cleMessagerie, child: messagerie!),
+          ],
+        ],
+      ),
     );
   }
 }
@@ -349,29 +416,6 @@ class ResumeDossier extends StatelessWidget {
 // Etage 3
 // ---------------------------------------------------------------------------
 
-/// La place que la page garde sous les rubriques pendant qu'une rubrique
-/// s'ouvre ou se replie (voir `RubriqueDossier`). Hors du dossier (un test qui
-/// monte une rubrique seule), il n'y en a pas : la rubrique s'anime sans.
-class ReserveDefilement extends InheritedWidget {
-  /// Cree la reserve.
-  const ReserveDefilement({
-    required this.reserve,
-    required super.child,
-    super.key,
-  });
-
-  /// La hauteur gardee, en points.
-  final ValueNotifier<double> reserve;
-
-  /// La reserve de la page, ou `null`.
-  static ValueNotifier<double>? de(BuildContext context) =>
-      context.getInheritedWidgetOfExactType<ReserveDefilement>()?.reserve;
-
-  @override
-  bool updateShouldNotify(ReserveDefilement ancien) =>
-      ancien.reserve != reserve;
-}
-
 /// Un geste a cote de sa rubrique : un lien, jamais un gros bouton.
 class GesteRubrique {
   /// Cree le geste.
@@ -399,7 +443,13 @@ class RubriqueDossier extends StatefulWidget {
     this.pastille,
     this.gestes = const <GesteRubrique>[],
     this.ouverteAuDepart = false,
+    this.affichee = false,
   });
+
+  /// Vrai : la rubrique est affichee d'emblee, sans repli ni fleche (une ligne
+  /// ou deux et ses gestes). Seules les rubriques de beaucoup d'informations
+  /// se replient (directeur, 16/11/2026, BE-DOSSIER-2).
+  final bool affichee;
 
   /// La rubrique.
   final RubriqueDossierCode code;
@@ -459,24 +509,12 @@ class _EtatRubriqueDossier extends State<RubriqueDossier>
     reverseCurve: AppMouvement.sortie,
   );
 
-  /// Le bloc de contenu : sa hauteur du moment se mesure sur lui.
-  final GlobalKey _cleBloc = GlobalKey(debugLabel: 'rubrique-dossier-bloc');
-
-  // Ce qui est note quand on touche le titre, pour garder la page en place :
-  // la hauteur du bloc, sa part de hauteur, et la reserve de la page.
-  double _hauteurDepart = 0;
-  double _partDepart = 0;
-  double _reserveDepart = 0;
-  ValueNotifier<double>? _reserve;
-
   @override
   void initState() {
     super.initState();
-    _hauteur
-      ..addStatusListener((AnimationStatus _) {
-        if (mounted) setState(() {});
-      })
-      ..addListener(_garderLaPlace);
+    _hauteur.addStatusListener((AnimationStatus _) {
+      if (mounted) setState(() {});
+    });
   }
 
   @override
@@ -497,20 +535,11 @@ class _EtatRubriqueDossier extends State<RubriqueDossier>
     }
   }
 
-  double _hauteurDuBloc() {
-    final RenderObject? o = _cleBloc.currentContext?.findRenderObject();
-    return o is RenderBox && o.attached && o.hasSize ? o.size.height : 0;
-  }
-
-  /// Ouvre ou ferme : le titre touche reste a la meme place a l'ecran, a
-  /// chaque image, sans saut. Quand une rubrique se replie, la page garde sous
-  /// les rubriques la place qui s'en va, pour ne pas raccourcir sous le
-  /// doigt ; quand elle s'ouvre, cette place est rendue au fur et a mesure.
+  /// Ouvre ou ferme. Le contenu s'ouvre sous le titre touche, qui ne bouge
+  /// pas. A la fermeture, la page se raccourcit : un leger mouvement vaut
+  /// mieux qu'un grand vide au bout (directeur, 16/11/2026, BE-DOSSIER-2 : « la
+  /// page s'arrete au dernier contenu, toujours »).
   void _basculer() {
-    _reserve = ReserveDefilement.de(context);
-    _hauteurDepart = _hauteurDuBloc();
-    _partDepart = _courbe.value;
-    _reserveDepart = _reserve?.value ?? 0;
     _hauteur.duration = AppMouvement.duree(context, AppMouvement.apparition);
     setState(() => _ouverte = !_ouverte);
     if (_ouverte) {
@@ -518,87 +547,68 @@ class _EtatRubriqueDossier extends State<RubriqueDossier>
     } else {
       unawaited(_hauteur.reverse());
     }
-    _garderLaPlace();
   }
 
-  /// Appelee a chaque image de l'animation, avant la mise en page : la reserve
-  /// de la page change dans la meme image que la hauteur du bloc.
-  void _garderLaPlace() {
-    final ValueNotifier<double>? reserve = _reserve;
-    if (reserve == null) return;
-    if (_ouverte) {
-      // Ouverture : la place gardee est rendue de ce que le bloc a gagne
-      // (mesure a l'image precedente : jamais moins que ce qu'il faut).
-      final double gagne = _hauteurDuBloc() - _hauteurDepart;
-      reserve.value = (_reserveDepart - (gagne > 0 ? gagne : 0)).clamp(
-        0,
-        double.infinity,
-      );
-    } else if (_partDepart > 0.001) {
-      // Fermeture : ce que le bloc perd s'ajoute a la reserve, dans la meme
-      // image (calcule sur la courbe, pas mesure).
-      final double pleine = _hauteurDepart / _partDepart;
-      final double perdu = pleine * (_partDepart - _courbe.value);
-      reserve.value = _reserveDepart + (perdu > 0 ? perdu : 0);
-    }
+  Widget _titre(TextTheme textes, PastilleRubrique? pastille) {
+    final r = t.recrutement.dossier3.pastille;
+    return Wrap(
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.sm,
+      runSpacing: AppSpacing.xs,
+      children: <Widget>[
+        Semantics(
+          header: true,
+          child: TexteSansCoupure(widget.titre, style: textes.titleMedium),
+        ),
+        if (pastille != null)
+          StatusPill(
+            key: RubriqueDossier.clePastille(widget.code),
+            libelle: switch (pastille) {
+              PastilleRubrique.bon => r.bon,
+              PastilleRubrique.aVoir => r.aVoir,
+              PastilleRubrique.manque => r.manque,
+            },
+            ton: switch (pastille) {
+              PastilleRubrique.bon => TonEtat.succes,
+              PastilleRubrique.aVoir => TonEtat.avertissement,
+              PastilleRubrique.manque => TonEtat.alerte,
+            },
+          ),
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     final TextTheme textes = Theme.of(context).textTheme;
     final PastilleRubrique? pastille = widget.pastille;
-    final r = t.recrutement.dossier3.pastille;
-    final Widget entete = Semantics(
-      expanded: _ouverte,
-      child: Pressable(
-        key: RubriqueDossier.cleEntete(widget.code),
-        libelleSemantique: widget.titre,
-        onPress: _basculer,
-        child: Row(
-          children: <Widget>[
-            Expanded(
-              // Le titre, puis la pastille : a cote quand la place le permet,
-              // dessous sinon (texte agrandi), sans jamais couper un mot.
-              child: Wrap(
-                crossAxisAlignment: WrapCrossAlignment.center,
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.xs,
+    final bool fixe = widget.affichee;
+    final Widget entete = fixe
+        ? _titre(textes, pastille)
+        : Semantics(
+            expanded: _ouverte,
+            child: Pressable(
+              key: RubriqueDossier.cleEntete(widget.code),
+              libelleSemantique: widget.titre,
+              onPress: _basculer,
+              child: Row(
                 children: <Widget>[
-                  Semantics(
-                    header: true,
-                    child: TexteSansCoupure(
-                      widget.titre,
-                      style: textes.titleMedium,
+                  Expanded(
+                    // Le titre, puis la pastille : a cote quand la place le permet,
+                    // dessous sinon (texte agrandi), sans jamais couper un mot.
+                    child: _titre(textes, pastille),
+                  ),
+                  Ecart.hSm,
+                  ExcludeSemantics(
+                    child: RotatedBox(
+                      quarterTurns: _ouverte ? 2 : 0,
+                      child: Icon(AppIcons.menuDeroulant.repos),
                     ),
                   ),
-                  if (pastille != null)
-                    StatusPill(
-                      key: RubriqueDossier.clePastille(widget.code),
-                      libelle: switch (pastille) {
-                        PastilleRubrique.bon => r.bon,
-                        PastilleRubrique.aVoir => r.aVoir,
-                        PastilleRubrique.manque => r.manque,
-                      },
-                      ton: switch (pastille) {
-                        PastilleRubrique.bon => TonEtat.succes,
-                        PastilleRubrique.aVoir => TonEtat.avertissement,
-                        PastilleRubrique.manque => TonEtat.alerte,
-                      },
-                    ),
                 ],
               ),
             ),
-            Ecart.hSm,
-            ExcludeSemantics(
-              child: RotatedBox(
-                quarterTurns: _ouverte ? 2 : 0,
-                child: Icon(AppIcons.menuDeroulant.repos),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
+          );
     return Column(
       key: RubriqueDossier.cleDe(widget.code),
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -621,7 +631,13 @@ class _EtatRubriqueDossier extends State<RubriqueDossier>
           ),
         // Le contenu reste construit tant que la hauteur s'anime (la
         // fermeture se voit), puis disparait.
-        if (_ouverte || _hauteur.status != AnimationStatus.dismissed)
+        if (fixe) ...<Widget>[
+          Ecart.vSm,
+          KeyedSubtree(
+            key: RubriqueDossier.cleContenu(widget.code),
+            child: widget.contenu(context),
+          ),
+        ] else if (_ouverte || _hauteur.status != AnimationStatus.dismissed)
           AnimatedBuilder(
             animation: _courbe,
             // Le contenu garde son etat ; seule la hauteur change. Au repos
@@ -629,7 +645,6 @@ class _EtatRubriqueDossier extends State<RubriqueDossier>
             builder: (BuildContext _, Widget? contenu) => ClipRect(
               clipBehavior: _courbe.value >= 1 ? Clip.none : Clip.hardEdge,
               child: Align(
-                key: _cleBloc,
                 alignment: AlignmentDirectional.topStart,
                 heightFactor: _courbe.value,
                 child: contenu,
@@ -755,6 +770,7 @@ class CorpsDossier extends ConsumerStatefulWidget {
     this.passage,
     this.reglage,
     this.onDecisionPiece,
+    this.ligneMajorite,
     super.key,
   });
 
@@ -770,6 +786,14 @@ class CorpsDossier extends ConsumerStatefulWidget {
   /// Une decision sur la piece est prise (BE-SUIVANT : elle peut ouvrir le
   /// dossier suivant) ; `null` : elle ne compte que comme un retour local.
   final ValueChanged<String>? onDecisionPiece;
+
+  /// La phrase de majorite de la ligne Accords, ou `null` : rien n'est affiche.
+  /// `DetailCandidature.majorite` n'est pas encore dans `main` (PR 517) ; la
+  /// page passe `null` en attendant.
+  final String? ligneMajorite;
+
+  /// La cle de la phrase de majorite.
+  static const Key cleMajorite = ValueKey<String>('dossier-accords-majorite');
 
   /// Des entrees de plus dans le menu « ⋯ » de la barre de decision.
   final List<EntreeAction> autresActions;
@@ -807,9 +831,6 @@ class CorpsDossier extends ConsumerStatefulWidget {
   /// La cle du corps.
   static const Key cle = ValueKey<String>('dossier-corps');
 
-  /// La cle de la place gardee sous les rubriques.
-  static const Key cleReserve = ValueKey<String>('dossier-reserve');
-
   @override
   ConsumerState<CorpsDossier> createState() => _EtatCorpsDossier();
 }
@@ -819,21 +840,8 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
   /// passe d'une colonne a deux, ou l'inverse : une cle globale la suit.
   final GlobalKey _cleListe = GlobalKey(debugLabel: 'dossier-liste-rubriques');
 
-  /// La place gardee sous les rubriques pendant qu'une rubrique se replie :
-  /// la page ne raccourcit pas sous le doigt, le titre touche garde sa place.
-  final ValueNotifier<double> _reserve = ValueNotifier<double>(0);
-
   @override
-  void dispose() {
-    _reserve.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) =>
-      ReserveDefilement(reserve: _reserve, child: _corps(context));
-
-  Widget _corps(BuildContext context) {
+  Widget build(BuildContext context) {
     final PlanDossier plan = widget.plan;
     final bool deuxColonnes = widget.deuxColonnes;
     final ValueChanged<GesteCandidature> onGeste = widget.onGeste;
@@ -910,12 +918,14 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
       WidgetBuilder contenu, {
       List<GesteRubrique?> gestes = const <GesteRubrique?>[],
       PastilleRubrique? pastille,
+      bool affichee = false,
     }) => RubriqueDossier(
       code: code,
       titre: titre,
       pastille: pastille ?? plan.pastille(code),
       gestes: <GesteRubrique>[for (final GesteRubrique? g in gestes) ?g],
       ouverteAuDepart: bloque == code,
+      affichee: affichee,
       contenu: contenu,
     );
 
@@ -939,13 +949,10 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           in detail.controles ?? <ControleCandidature>[])
         if (c.nom == 'accords_signes' || c.nom == 'cadre_religieux') c,
     ];
+    final bool entretienNonServi =
+        ref.watch(entretiensCandidatureProvider(detail.ligne.id)).error
+            is CapaciteIndisponible;
     final List<RubriqueDossier?> rubriques = <RubriqueDossier?>[
-      rubrique(
-        RubriqueDossierCode.photo,
-        d3.rubrique.photo,
-        (BuildContext _) => ContenuPhotoRubrique(detail: detail),
-        gestes: <GesteRubrique?>[demander('photo', r.photo.demanderNouvelle)],
-      ),
       rubrique(
         RubriqueDossierCode.piece,
         d3.rubrique.piece,
@@ -960,6 +967,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         gestes: <GesteRubrique?>[
           demander('piece_identite', r.demanderNouvellePiece),
         ],
+        affichee: true,
       ),
       rubrique(
         RubriqueDossierCode.versement,
@@ -980,6 +988,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           geste(GesteCandidature.infirmerMoyenPaiement),
           demander('versement', t.admin.candidatures.decision.preciser),
         ],
+        affichee: true,
       ),
       if (accords.isNotEmpty)
         rubrique(
@@ -991,6 +1000,14 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
             children: <Widget>[
               for (final ControleCandidature c in accords)
                 LigneControleDossier(controle: c),
+              // Majorite (« 18 ans ou plus : atteste le ... ») : emplacement
+              // pret ; il n'affiche rien tant que la phrase est nulle.
+              if (widget.ligneMajorite case final String m)
+                TexteSansCoupure(
+                  m,
+                  key: CorpsDossier.cleMajorite,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
             ],
           ),
           gestes: <GesteRubrique?>[
@@ -1001,6 +1018,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
                 onPress: () => onGeste(GesteCandidature.demanderComplement),
               ),
           ],
+          affichee: true,
         ),
       reponses(RubriqueDossierCode.langues, 'langues'),
       reponses(RubriqueDossierCode.recitation, 'recitation'),
@@ -1012,30 +1030,21 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         (BuildContext _) =>
             BlocAutresCompetences(detail: detail, avecTitre: false),
       ),
-      rubrique(
-        RubriqueDossierCode.entretien,
-        r.entretien,
-        (BuildContext _) => SectionEntretien(
-          detail: detail,
-          capacites: capacites,
-          horsLigne: horsLigne,
-          onFait: onEntretien,
-          retour: retourEntretien,
+      // Un entretien que le serveur ne sert pas n'a pas de ligne : jamais un
+      // texte technique a l'ecran (coordinateur, 16/11/2026).
+      if (!entretienNonServi)
+        rubrique(
+          RubriqueDossierCode.entretien,
+          r.entretien,
+          (BuildContext _) => SectionEntretien(
+            detail: detail,
+            capacites: capacites,
+            horsLigne: horsLigne,
+            onFait: onEntretien,
+            retour: retourEntretien,
+          ),
+          affichee: true,
         ),
-      ),
-      rubrique(
-        RubriqueDossierCode.messages,
-        d3.rubrique.messages,
-        // Le bandeau « Messages pas en direct » est celui de cette entree :
-        // il ne se construit qu'avec la rubrique ouverte, donc seulement dans
-        // la conversation.
-        (BuildContext _) => EntreeMessagesContexte(
-          key: ValueKey<String>('entree-messages-$rangMessages'),
-          type: TypeObjetLie.candidature,
-          objetId: detail.ligne.id,
-          onOuvrirEnPlace: onOuvrirConversation,
-        ),
-      ),
       rubrique(
         RubriqueDossierCode.responsable,
         r.responsable,
@@ -1050,6 +1059,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           ),
         ),
         gestes: <GesteRubrique?>[geste(GesteCandidature.definirResponsable)],
+        affichee: true,
       ),
       rubrique(
         RubriqueDossierCode.contact,
@@ -1083,6 +1093,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
               ),
             ),
         ],
+        affichee: true,
       ),
       rubrique(
         RubriqueDossierCode.historique,
@@ -1098,8 +1109,41 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         ),
       ),
     ];
+    // Langues, memorisation et ijaza sont sur la carte de profil ; le tableau
+    // garde le reste (disponibilites, versement, public).
+    final sy = t.recrutement.dossier3.synthese;
+    final List<LigneSynthese> synthese = syntheseDuDossier(
+      detail,
+      nomsOperateurs: noms,
+    );
+    final Set<String> cleProfil = <String>{
+      sy.langues,
+      sy.memorisation,
+      sy.ijaza,
+    };
+    final Widget carteProfil = EtageUnDossier(
+      plan: plan,
+      navigation: widget.navigation,
+      profil: <LigneSynthese>[
+        for (final LigneSynthese l in synthese)
+          if (cleProfil.contains(l.cle)) l,
+      ],
+      demanderPhoto: demander('photo', r.photo.demanderNouvelle),
+      // La messagerie est sur la carte : ses conversations, leurs non-lus, la
+      // conversation s'ouvre dans le volet. Le bandeau « Messages pas en
+      // direct » est celui de cette entree.
+      messagerie: EntreeMessagesContexte(
+        key: ValueKey<String>('entree-messages-$rangMessages'),
+        type: TypeObjetLie.candidature,
+        objetId: detail.ligne.id,
+        onOuvrirEnPlace: onOuvrirConversation,
+      ),
+    );
     final Widget resume = ResumeDossier(
-      lignes: syntheseDuDossier(detail, nomsOperateurs: noms),
+      lignes: <LigneSynthese>[
+        for (final LigneSynthese l in synthese)
+          if (!cleProfil.contains(l.cle)) l,
+      ],
       importe: detail.dernieresReponses?.importe ?? false,
     );
     // Rien de fixe (coordinateur, 16/11 : SANS-BARRE-FIXE et DEFILEMENT
@@ -1137,11 +1181,6 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
               for (final RubriqueDossier? ru in rubriques) ?ru,
             ],
           ),
-          ValueListenableBuilder<double>(
-            valueListenable: _reserve,
-            builder: (BuildContext _, double h, Widget? _) =>
-                SizedBox(key: CorpsDossier.cleReserve, height: h),
-          ),
         ],
       ),
     );
@@ -1150,7 +1189,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          EtageUnDossier(plan: plan, navigation: widget.navigation),
+          carteProfil,
           Ecart.vLg,
           retourLocal,
           resume,
@@ -1170,7 +1209,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              EtageUnDossier(plan: plan, navigation: widget.navigation),
+              carteProfil,
               Ecart.vLg,
               retourLocal,
               resume,
