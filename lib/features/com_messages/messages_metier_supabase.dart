@@ -13,7 +13,6 @@
 import 'dart:async';
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show debugPrint;
 import 'package:http/http.dart' as http;
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
@@ -21,6 +20,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
 import '../../core/communications/phrases_images.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
 import 'fonctions_images_messages.dart';
@@ -263,7 +263,7 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     final Stopwatch etape = Stopwatch()..start();
     void temps(String nom) {
       // Mesure du temps de l'envoi (IMAGES-CORRECTIF, B) : lue dans la console.
-      debugPrint(
+      journalDev(
         '[images-temps] $nom : ${etape.elapsedMilliseconds} ms '
         '(cumul ${total.elapsedMilliseconds} ms)',
       );
@@ -414,7 +414,7 @@ class MessagesMetierSupabase implements PortMessagesMetier {
       'message-images-lecture',
       corps,
     );
-    debugPrint(
+    journalDev(
       '[images-temps] lecture des adresses signees '
       '(${corps.containsKey('image_id') ? 'image' : 'miniatures'}) : '
       '${chrono.elapsedMilliseconds} ms',

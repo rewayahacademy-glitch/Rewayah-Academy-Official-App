@@ -15,9 +15,8 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter/foundation.dart' show debugPrint;
-
 import '../communications/image_message.dart';
+import '../observabilite/journal_dev.dart';
 import 'compression_image_autre.dart'
     if (dart.library.js_interop) 'compression_image_web.dart'
     as natif;
@@ -127,7 +126,7 @@ Future<ImagePrete> preparerImage(
   }
   if (mini == null) throw const EchecImage(RefusImage.imageTropGrosse);
   // Mesure du temps de preparation sur l'appareil (IMAGES-CORRECTIF, B).
-  debugPrint(
+  journalDev(
     '[images-temps] preparation sur l\'appareil : ${chrono.elapsedMilliseconds} ms '
     '(source ${source.length} o, image ${image.octets.length} o, '
     'miniature ${mini.octets.length} o)',
