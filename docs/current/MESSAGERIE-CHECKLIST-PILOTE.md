@@ -27,6 +27,7 @@ par le directeur) ; `en prod (vu)` (vu par le directeur en production : le seul 
 | 3 | NOUVEAU-FILS : badge « Nouveau » (`lib/core/widgets/badge_nouveau.dart`), « Nouveau · aucun message », filtre « Nouveaux » ; règle serveur : moins de 7 jours et aucune ligne `com_lectures` d'un membre de l'équipe | à faire | migration dans la plage `202611295xxxxx`+ (`20261129500000` déjà pris : vérifier `origin/main`) |
 | 4 | NOUVELLE-VERSION : bandeau « Nouvelle version disponible » qui lit `version.json`, jamais de rechargement pendant un brouillon ou un envoi | à faire | |
 | 5 | Recette du directeur en production : #538, #540, #546, puis #551 | à faire | liste d'essais à lui donner après la fusion de #551 |
+| 5 bis | Défaut connu : dans Messages sur ordinateur, la barre du fil plein écran se replie au défilement et emporte le bouton « i » du panneau de contexte | à faire, lot à part | relevé par l'agent de #551 ; volontairement hors de #551 |
 | 6 | `scenarios_fac_f_relances_suspension.sql` indépendant de l'heure (échoue le lundi 7-8 h UTC) | à faire, sans urgence | |
 
 ## Décisions qui attendent le directeur
