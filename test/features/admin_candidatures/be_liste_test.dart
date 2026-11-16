@@ -398,9 +398,9 @@ void main() {
         find.byKey(CarteAttentes.cleLigne(EtatCandidature.enExamen)),
         findsNothing,
       );
-      // Repliee : une ligne, le titre et ce qui attend l'academie (41 + 7).
+      // Repliee : une ligne, le titre et ce qui attend l'academie (ici 4).
       expect(
-        find.textContaining('${t.admin.candidatures.attentes.titre} · 48'),
+        find.textContaining('${t.admin.candidatures.attentes.titre} · 4'),
         findsOneWidget,
       );
       expect(lireMemoireAppareil(cleMemoireAttentesRepliees), '1');
@@ -467,9 +467,20 @@ void main() {
         hauteur: 800,
         invitations: true,
       );
+      // Meme rangee (un `Wrap`, qui passe a la ligne si le texte grandit) :
+      // la position exacte depend de la police, la parente non.
+      final Finder rangee = find
+          .ancestor(
+            of: _cle('candidatures-outils'),
+            matching: find.byType(Wrap),
+          )
+          .first;
       expect(
-        tester.getTopLeft(_cle('candidatures-outils')).dy,
-        closeTo(tester.getTopLeft(find.byType(SousNavigationDomaine)).dy, 24),
+        find.descendant(
+          of: rangee,
+          matching: find.byType(SousNavigationDomaine),
+        ),
+        findsOneWidget,
       );
     });
 
@@ -490,12 +501,23 @@ void main() {
           largeur: 360,
           hauteur: 800,
         );
-        final double y = tester.getCenter(_cle('candidatures-total')).dy;
-        expect(
-          tester.getCenter(_cle('candidatures-selectionner')).dy,
-          closeTo(y, 12),
-        );
-        expect(tester.getCenter(_cle('candidatures-tri')).dy, closeTo(y, 12));
+        // Une seule rangee (un `Wrap`) : le nombre, « Selectionner » et le tri.
+        final Finder rangee = find
+            .ancestor(
+              of: _cle('candidatures-total'),
+              matching: find.byType(Wrap),
+            )
+            .first;
+        for (final String cle in <String>[
+          'candidatures-selectionner',
+          'candidatures-tri',
+        ]) {
+          expect(
+            find.descendant(of: rangee, matching: _cle(cle)),
+            findsOneWidget,
+            reason: cle,
+          );
+        }
       },
     );
 
@@ -516,6 +538,36 @@ void main() {
         );
         expect(_cle('candidatures-alertes'), findsOneWidget);
         expect(find.text(t.admin.candidatures.aTraiter), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'telephone : le tri est un menu, il part au serveur et revient a la page 1',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: _lignes(6),
+          taillePage: 2,
+        );
+        await monterCandidatures(
+          tester,
+          port: port,
+          largeur: 360,
+          hauteur: 800,
+        );
+        await tester.ensureVisible(_cle('candidatures-pagination'));
+        await tester.tap(
+          find.bySemanticsLabel(t.admin.candidatures.pagination.suivante),
+        );
+        await laisser(tester);
+        expect(port.appels.last.page, 2);
+        await tester.ensureVisible(_cle('candidatures-tri'));
+        await tester.tap(_cle('candidatures-tri'));
+        await laisser(tester);
+        await tester.tap(find.text(t.admin.candidatures.tri.reception));
+        await laisser(tester);
+        expect(port.appels.last.tri, TriCandidatures.recente);
+        expect(port.appels.last.page, 1);
+        expect(_adresse(tester).queryParameters['tri'], 'recente');
       },
     );
 

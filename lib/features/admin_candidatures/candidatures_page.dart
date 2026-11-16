@@ -1178,12 +1178,14 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
           if (telephone && boutonOutils != null)
-            Row(
-              children: <Widget>[
-                Expanded(child: navigation),
-                Ecart.hMd,
-                boutonOutils,
-              ],
+            // Une rangee tant qu'elle tient ; a texte agrandi, « Outils » passe
+            // dessous plutot que de deborder.
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.sm,
+              alignment: WrapAlignment.spaceBetween,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              children: <Widget>[navigation, boutonOutils],
             )
           else
             navigation,
