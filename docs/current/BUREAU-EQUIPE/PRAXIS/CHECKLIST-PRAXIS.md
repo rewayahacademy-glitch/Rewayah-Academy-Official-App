@@ -1,6 +1,6 @@
 # Checklist Praxis (tenue par le pilote, et par toute session qui reprend Praxis)
 
-**Mise à jour : 16/11/2026, 23 h 35 UTC** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm`
+**Mise à jour : 17/11/2026, 02 h 20 heure de Paris (23 h 20 UTC le 16/11)** · pilote : `session_0163KjrwwgbbL52RHBDSnDVm`
 
 Légende : ☐ à faire · ◐ en cours · ☑ fait (vérifié par le pilote) · ⏸ attend un geste que seul le directeur peut
 faire. « Prouvé » = vu par le directeur en production.
@@ -17,7 +17,7 @@ Règles que le pilote s'impose ici :
 | # | Étape | État |
 | :-: | :--- | :-: |
 | 0.1 | #565 BE-2a-1 (missions, serveur) : fusion, installation, vérification | ☑ 16/11 22 h 10 : fusionnée (7ae349fa), `20261129420000` installée, 15 fonctions identiques au fichier (md5), 17 gardes retouchées, RLS sur 3 tables, `anon` sans droit |
-| 0.2 | #550, #547, « Débloquer le versement » (BE-GESTES) | ◐ |
+| 0.2 | #550, #547, « Débloquer le versement » (BE-GESTES) | ◐ #550 et #547 fusionnées ; #568 attend sa CI |
 
 ## Construire Praxis
 
@@ -28,9 +28,9 @@ Règles que le pilote s'impose ici :
 | 3 | **Table des accès** : chaque tâche du §4 de `SECRETAIRE-IA.md` (21 domaines), la fonction du serveur qui la fait déjà, son niveau (A, B, C, D), ce qui manque ; décision d'architecture (missions et outils génériques, ou outils dédiés) | pilote | `ACCES-PRAXIS.md` | ☑ 16/11 22 h 40 (missions + outils `lire`/`agir`/`preparer` ; logique interne à auteur explicite, jamais de jeton de personne) |
 | 4 | Aligner le cahier PX-1 sur les étapes 2 et 3 | pilote | `../CAHIER-SEC-1-PRAXIS-MESSAGES.md` | ☑ 16/11 22 h 40 (renvoi en tête vers SECURITE et ACCES §4) |
 | 5 | PX-1 serveur et connecteur MCP : messages, annonces, clés « chat » et « routine », interrupteur, mode autonome, plafond, journal | BE-PIECE | cahier PX-1 **et `SECURITE-PRAXIS.md`, qui prévaut** | ◐ lancé le 16/11 à 22 h 20 (ordre du directeur : « tu peux d'ores et déjà lancer le travail sur l'agent ») |
-| 6 | PX-0, les cinq compétences (`agir-rewayah` d'abord), avec les règles de sécurité de l'étape 2 dedans | BE-GESTES (en parallèle de 5) | `SECRETAIRE-IA.md` §6 | ☐ démarre après 0.2 |
+| 6 | PX-0, les cinq compétences (`agir-rewayah` d'abord), avec les règles de sécurité de l'étape 2 dedans | BE-GESTES (en parallèle de 5) | `SECRETAIRE-IA.md` §6 | ☑ #569 fusionnée (b6447fb5) ; style arabe à relire par le directeur |
 | 7 | Relecture de sécurité de PX-1 par le pilote : chaque menace de l'étape 2 a son scénario de refus, vert | pilote | `SECURITE-PRAXIS.md` | ☑ 17/11 00 h 00 : 3 relectures indépendantes ; 4 violations corrigées et prouvées rouge→vert (AR-7 à AR-10) ; dette R4 indirecte au 1er commit de PX-2 |
-| 8 | Fusion et installation de PX-1, Praxis **éteint** ; vérification en production (droits, `anon`, clés) | pilote | — | ☐ |
+| 8 | Fusion et installation de PX-1, Praxis **éteint** ; vérification en production (droits, `anon`, clés) | pilote | — | ☑ 16/11 23 h 16 UTC : #567 fusionnée (997912d4) ; 600000, 610000 (seule), 620000 installées (versions 20261116231415, …231527, …231619) ; 27 fonctions identiques au fichier (md5) ; le bloc de la messagerie coupé était bien celui du dépôt (contrôle md5 passé) ; empreintes d'avant des portes humaines : com_envoyer_message 6e3deaf8…, com_annonce_envoyer 842b45c2… ; interrupteur faux, autonome faux, 0 clé, 0 ligne de journal, 0 message de Praxis ; compte sans identité, sans courriel, banni, sans matricule ni notification ; `anon` et `authenticated` sans droit sur les outils |
 | 9 | Écran : section Praxis de « Accès des agents IA » (émettre et révoquer une clé, interrupteur, mode autonome, plafond, ce que Praxis a envoyé) | agent écran | cahier à écrire | ☐ |
 | 10 | Affichage *#RA_PRAXIS* et *#RA_STAFF*, « Assistant de l'académie · IA », « Parler à l'équipe » | Pilote Messagerie | `SECRETAIRE-IA.md` §9 et §11 | ☐ demandé le 16/11 |
 | 11 | Image de profil : le fichier, produit d'après la description du directeur (`SECRETAIRE-IA.md` §9), sans nouvelle question | pilote | — | ☐ |
