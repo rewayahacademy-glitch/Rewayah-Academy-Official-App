@@ -9,7 +9,8 @@
 // - aucune exception, a toutes les tailles, en francais et en arabe, a texte
 //   agrandi, clavier ouvert.
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart' show Brightness, ThemeMode;
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
@@ -27,6 +28,7 @@ import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
+import '../../capture/outil_capture.dart';
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/monter_recrutement.dart';
 import '../com_messages/support_messages.dart';
@@ -48,6 +50,47 @@ ConversationPossible get _conversation => ConversationPossible(
   ),
   filId: 'fil-cand',
 );
+
+/// Un fil de quarante messages : assez long pour remonter vers les anciens.
+FauxMessagesMetier _messagesLongs() {
+  const Participant soi = Participant(
+    id: 'soi',
+    nomAffiche: 'Vous',
+    estSoi: true,
+  );
+  final ObjetLie objet = ObjetLie(
+    type: TypeObjetLie.candidature,
+    id: 'c1',
+    libelle: 'Candidature',
+  );
+  return FauxMessagesMetier(
+    fils: <FilMetier>[
+      FilMetier(
+        id: 'fil-cand',
+        contexte: <ElementContexteFil>[
+          ElementContexteFil(objet: objet, accessible: true),
+        ],
+        participants: const <Participant>[soi, _candidat],
+        messages: <MessageCommunication>[
+          for (int i = 0; i < 40; i++)
+            MessageCommunication(
+              id: 'fil-cand-m$i',
+              auteur: i.isEven ? _candidat : soi,
+              texte: 'Message numero $i de la conversation du dossier.',
+              envoyeLe: maintenantTest.subtract(Duration(hours: 100 - i)),
+            ),
+        ],
+        attention: IndicateurAttention.aucun,
+        capacites: const <CapaciteFil>{CapaciteFil.ecrire},
+      ),
+    ],
+    conversations: <String, List<ConversationPossible>>{
+      cleObjet(TypeObjetLie.candidature, 'c1'): <ConversationPossible>[
+        _conversation,
+      ],
+    },
+  );
+}
 
 FauxMessagesMetier _messages() => FauxMessagesMetier(
   fils: <FilMetier>[
@@ -78,6 +121,7 @@ Future<GoRouter> _monter(
   double hauteur = 3000,
   TextDirection? direction,
   double echelle = 1,
+  ThemeMode themeMode = ThemeMode.light,
 }) async {
   final PortCandidaturesDirection port = FauxCandidaturesDirection(
     capacitesRendues: capacitesGestes,
@@ -104,6 +148,7 @@ Future<GoRouter> _monter(
     hauteur: hauteur,
     direction: direction,
     echelle: echelle,
+    themeMode: themeMode,
   );
   // BE-DOSSIER : les messages vivent sous leur rubrique, ouverte ici.
   await ouvrirToutesLesRubriques(tester);
@@ -242,4 +287,158 @@ void main() {
       findsOneWidget,
     );
   });
+
+  // MESSAGERIE-COULEURS (pilote, 16/11/2026, regression de #540 : « sur
+  // ordinateur, la croix a disparu, le volet ne peut plus etre ferme »). La
+  // croix « Fermer la conversation » est au bord de FIN de la barre, la barre
+  // d'un volet ne se replie jamais quand on remonte un long fil, et Echap
+  // ferme le volet. Echoue sur main : pas de croix au bord de fin, barre
+  // repliee au defilement, Echap sans effet.
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+    for (final double largeur in <double>[1024, 1440]) {
+      final String cas = '${langue.languageCode} ${largeur.toInt()}';
+      testWidgets('volet, $cas : croix au bord de fin, toujours atteignable, '
+          'ferme par la croix et par Echap', (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        final bool rtl = langue == AppLocale.ar;
+        await _monter(
+          tester,
+          _messagesLongs(),
+          largeur: largeur,
+          hauteur: 900,
+          direction: rtl ? TextDirection.rtl : TextDirection.ltr,
+        );
+        final Finder croix = find.descendant(
+          of: find.byKey(BarreConversation.cle),
+          matching: find.byKey(VoletConversation.cleReplier),
+        );
+
+        // 1. La croix est le controle du bord de FIN de la barre.
+        await _toucher(tester, _ecrire);
+        await laisser(tester, fois: 3);
+        expect(find.byKey(VoletConversation.cle), findsOneWidget);
+        expect(croix, findsOneWidget);
+        final Rect barre = tester.getRect(find.byKey(BarreConversation.cle));
+        final Rect c = tester.getRect(croix);
+        if (rtl) {
+          expect(c.center.dx, lessThan(barre.center.dx));
+          expect(c.left - barre.left, lessThan(24));
+        } else {
+          expect(c.center.dx, greaterThan(barre.center.dx));
+          expect(barre.right - c.right, lessThan(24));
+        }
+
+        // 2. Elle reste atteignable quand on remonte vers les anciens messages.
+        await tester.drag(
+          find.byKey(FilDiscussion.cleMessages),
+          const Offset(0, 600),
+          warnIfMissed: false,
+        );
+        await laisser(tester, fois: 3);
+        expect(croix.hitTestable(), findsOneWidget);
+        expect(
+          tester.getSize(find.byKey(BarreConversation.cle)).height,
+          greaterThan(0),
+        );
+
+        // 3. La croix ferme le volet.
+        await tester.tap(croix);
+        await laisser(tester, fois: 3);
+        expect(find.byKey(VoletConversation.cle), findsNothing);
+
+        // 4. Echap ferme le volet, focus dans le champ comme ailleurs.
+        await _toucher(tester, _ecrire);
+        await laisser(tester, fois: 3);
+        expect(find.byKey(VoletConversation.cle), findsOneWidget);
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+        await laisser(tester, fois: 3);
+        expect(find.byKey(VoletConversation.cle), findsNothing);
+      });
+    }
+  }
+
+  // MESSAGERIE-COULEURS (pilote, 16/11/2026) : a l'ouverture, au bout du fil,
+  // le dernier message et son heure restent entierement au-dessus du champ.
+  for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+    testWidgets('volet, ${langue.languageCode} : le dernier message et son '
+        'heure ne passent pas sous le champ', (WidgetTester tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(langue));
+      await _monter(
+        tester,
+        _messagesLongs(),
+        largeur: 1440,
+        hauteur: 900,
+        direction: langue == AppLocale.ar
+            ? TextDirection.rtl
+            : TextDirection.ltr,
+      );
+      await _toucher(tester, _ecrire);
+      await laisser(tester, fois: 5);
+      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
+      final Finder dernier = find.textContaining('Message numero 39');
+      expect(dernier, findsOneWidget);
+      expect(tester.getRect(dernier).bottom, lessThanOrEqualTo(champ.top));
+      // L'heure du dernier message (a sa suite) est visible, hors du champ.
+      final Finder heures = find.descendant(
+        of: find.byKey(FilDiscussion.cleMessages),
+        matching: find.textContaining(RegExp(r'^\d{2}:\d{2}$')),
+      );
+      final double basHeure = heures
+          .evaluate()
+          .map((e) => tester.getRect(find.byWidget(e.widget)).bottom)
+          .reduce((double a, double b) => a > b ? a : b);
+      expect(basHeure, lessThanOrEqualTo(champ.top));
+    });
+  }
+
+  // MESSAGERIE-COULEURS : captures R3 du volet de conversation sur ordinateur
+  // (1440 x 900), fil remonte vers les anciens messages, croix visible.
+  // Sautees sans CAPTURE_DIR.
+  group('captures volet', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      for (final Brightness lum in <Brightness>[
+        Brightness.light,
+        Brightness.dark,
+      ]) {
+        final String nom =
+            'volet-1440-${langue.languageCode}-'
+            '${lum == Brightness.dark ? 'sombre' : 'clair'}';
+        testWidgets(nom, (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _monter(
+            tester,
+            _messagesLongs(),
+            largeur: 1440,
+            hauteur: 900,
+            direction: langue == AppLocale.ar
+                ? TextDirection.rtl
+                : TextDirection.ltr,
+            themeMode: lum == Brightness.dark
+                ? ThemeMode.dark
+                : ThemeMode.light,
+          );
+          await _toucher(tester, _ecrire);
+          await laisser(tester, fois: 3);
+          await tester.drag(
+            find.byKey(FilDiscussion.cleMessages),
+            const Offset(0, 600),
+            warnIfMissed: false,
+          );
+          await laisser(tester, fois: 3);
+          expect(
+            find
+                .descendant(
+                  of: find.byKey(BarreConversation.cle),
+                  matching: find.byKey(VoletConversation.cleReplier),
+                )
+                .hitTestable(),
+            findsOneWidget,
+          );
+          await capturerVue(tester, 'MESSAGERIE-COULEURS/$nom');
+        });
+      }
+    }
+  }, skip: sautSansCapture);
 }

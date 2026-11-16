@@ -20,10 +20,10 @@ library;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/widgets/espace_travail_adaptatif.dart';
 import '../../core/widgets/page_conversation_plein_ecran.dart';
@@ -71,23 +71,35 @@ class VoletConversation extends StatelessWidget {
       label: e.conversationAvec(nom: conversation.nom),
       // Le volet vit a cote de la page (hors de son Scaffold) : le champ du
       // fil demande une surface Material au-dessus de lui.
-      child: Material(
-        type: MaterialType.transparency,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: palette.surfaceRaised.background,
-            border: BorderDirectional(
-              start: palette.borderHairline.asBorderSide(),
-            ),
-          ),
-          child: FilEnPlace(
-            key: ValueKey<String>('volet-${conversation.filId}'),
-            filId: conversation.filId,
-            onLu: onLu,
-            onReplier: onReplier,
-            iconeReplier: AppIcons.fermer,
-            onOuvrirMessages: () => unawaited(
-              GoRouter.of(context).push<void>(conversation.cheminMessages),
+      // MESSAGERIE-COULEURS : Echap ferme le volet, depuis le champ comme depuis
+      // la barre. Le volet prend le focus a son ouverture : sans cela, la
+      // touche resterait dans le dossier.
+      child: CallbackShortcuts(
+        bindings: <ShortcutActivator, VoidCallback>{
+          const SingleActivator(LogicalKeyboardKey.escape): onReplier,
+        },
+        child: Focus(
+          autofocus: true,
+          skipTraversal: true,
+          child: Material(
+            type: MaterialType.transparency,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: palette.surfaceRaised.background,
+                border: BorderDirectional(
+                  start: palette.borderHairline.asBorderSide(),
+                ),
+              ),
+              child: FilEnPlace(
+                key: ValueKey<String>('volet-${conversation.filId}'),
+                filId: conversation.filId,
+                onLu: onLu,
+                onReplier: onReplier,
+                volet: true,
+                onOuvrirMessages: () => unawaited(
+                  GoRouter.of(context).push<void>(conversation.cheminMessages),
+                ),
+              ),
             ),
           ),
         ),
