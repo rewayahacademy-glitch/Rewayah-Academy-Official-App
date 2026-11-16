@@ -22,5 +22,5 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 16 | Dire « fini » au pilote messagerie (gel de main) | ☐ | après #517, #515, #532 |
 | 17 | Mobile money Ghana (MTN, AirtelTigo, Telecel) et Kenya (M-Pesa) | ☐ | lot à part |
 | 18 | Algérie, Guinée, Liberia : 7 candidats | ⏸ | vérifier dans le compte Wise du directeur |
-| 19 | Badge « Nouveau » : liste (serveur confié) + conversations (pilote messagerie) | ◐ | champ serveur après #517 ; composant après #515 |
-| 20 | VU-UNE-FOIS : « déjà vu » mémorisé par compte, pas par appareil (bandeaux à voir une seule fois) | ◐ | serveur confié à BE-S1 ; puis bandeau de #515 branché dessus |
+| 19 | Badge « Nouveau » : serveur #539 fusionné et installé 16:12 UTC (458 « nouvelles » au départ, faute de trace des ouvertures passées) ; composant après #515 ; conversations au pilote messagerie | ◐ | composant BadgeNouveau par BE-LISTE après #515 |
+| 20 | VU-UNE-FOIS : « déjà vu » mémorisé par compte (PR serveur #541) | ◐ | CI de #541 puis fusion et installation ; bandeau de #515 branché ensuite |
