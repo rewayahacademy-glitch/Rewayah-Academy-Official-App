@@ -13831,10 +13831,10 @@ class _Traductions$recrutement$dossier3$raison$en extends Traductions$recrutemen
 	@override String get fermee => 'The file is closed.';
 	@override String get pause => 'Paused: resume the file to act.';
 	@override String get attente => 'Waiting for the candidate: they are completing their file.';
-	@override String manque({required Object liste}) => 'Accepting will be possible once these points are settled: ${liste}.';
+	@override String manque({required Object liste}) => 'Accept: still to settle: ${liste}.';
 	@override String get etape => 'No decision to make at this stage.';
-	@override String get versement => 'Accepting will be possible once payout is possible.';
-	@override String get versementAConfirmer => 'Accepting will be possible once the payout method is confirmed.';
+	@override String get versement => 'Accept: payout is not yet possible.';
+	@override String get versementAConfirmer => 'Accept: the payout method is still to be confirmed.';
 	@override String get pret => 'The file is ready: you can decide.';
 	@override String get entretienAPlanifier => 'Kept for the interview: it still has to be scheduled.';
 	@override String get entretienPlanifie => 'Interview scheduled: the decision comes after the interview.';
@@ -29682,10 +29682,10 @@ extension on TraductionsEn {
 			'recrutement.dossier3.raison.fermee' => 'The file is closed.',
 			'recrutement.dossier3.raison.pause' => 'Paused: resume the file to act.',
 			'recrutement.dossier3.raison.attente' => 'Waiting for the candidate: they are completing their file.',
-			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'Accepting will be possible once these points are settled: ${liste}.',
+			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'Accept: still to settle: ${liste}.',
 			'recrutement.dossier3.raison.etape' => 'No decision to make at this stage.',
-			'recrutement.dossier3.raison.versement' => 'Accepting will be possible once payout is possible.',
-			'recrutement.dossier3.raison.versementAConfirmer' => 'Accepting will be possible once the payout method is confirmed.',
+			'recrutement.dossier3.raison.versement' => 'Accept: payout is not yet possible.',
+			'recrutement.dossier3.raison.versementAConfirmer' => 'Accept: the payout method is still to be confirmed.',
 			'recrutement.dossier3.raison.pret' => 'The file is ready: you can decide.',
 			'recrutement.dossier3.raison.entretienAPlanifier' => 'Kept for the interview: it still has to be scheduled.',
 			'recrutement.dossier3.raison.entretienPlanifie' => 'Interview scheduled: the decision comes after the interview.',

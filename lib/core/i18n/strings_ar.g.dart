@@ -21149,10 +21149,10 @@ class _Traductions$recrutement$dossier3$raison$ar extends Traductions$recrutemen
 	@override String get fermee => 'الملف مغلق.';
 	@override String get pause => 'الملف متوقف مؤقتًا: استأنفوه لتتمكنوا من العمل عليه.';
 	@override String get attente => 'في انتظار المرشح: يستكمل ملفه.';
-	@override String manque({required Object liste}) => 'سيصبح القبول ممكنًا عند تسوية هذه النقاط: ⁨${liste}⁩.';
+	@override String manque({required Object liste}) => 'القبول: بقي تسوية ⁨${liste}⁩.';
 	@override String get etape => 'لا يوجد قرار يُتخذ في هذه المرحلة.';
-	@override String get versement => 'سيصبح القبول ممكنًا عندما يصبح الدفع ممكنًا.';
-	@override String get versementAConfirmer => 'سيصبح القبول ممكنًا عند تأكيد وسيلة الدفع.';
+	@override String get versement => 'القبول: الدفع غير ممكن بعد.';
+	@override String get versementAConfirmer => 'القبول: وسيلة الدفع لم تُؤكَّد بعد.';
 	@override String get pret => 'الملف جاهز: يمكنكم اتخاذ القرار.';
 	@override String get entretienAPlanifier => 'تم اختياره للمقابلة: بقي تحديد موعدها.';
 	@override String get entretienPlanifie => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.';
@@ -39154,10 +39154,10 @@ extension on TraductionsAr {
 			'recrutement.dossier3.raison.fermee' => 'الملف مغلق.',
 			'recrutement.dossier3.raison.pause' => 'الملف متوقف مؤقتًا: استأنفوه لتتمكنوا من العمل عليه.',
 			'recrutement.dossier3.raison.attente' => 'في انتظار المرشح: يستكمل ملفه.',
-			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'سيصبح القبول ممكنًا عند تسوية هذه النقاط: ⁨${liste}⁩.',
+			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'القبول: بقي تسوية ⁨${liste}⁩.',
 			'recrutement.dossier3.raison.etape' => 'لا يوجد قرار يُتخذ في هذه المرحلة.',
-			'recrutement.dossier3.raison.versement' => 'سيصبح القبول ممكنًا عندما يصبح الدفع ممكنًا.',
-			'recrutement.dossier3.raison.versementAConfirmer' => 'سيصبح القبول ممكنًا عند تأكيد وسيلة الدفع.',
+			'recrutement.dossier3.raison.versement' => 'القبول: الدفع غير ممكن بعد.',
+			'recrutement.dossier3.raison.versementAConfirmer' => 'القبول: وسيلة الدفع لم تُؤكَّد بعد.',
 			'recrutement.dossier3.raison.pret' => 'الملف جاهز: يمكنكم اتخاذ القرار.',
 			'recrutement.dossier3.raison.entretienAPlanifier' => 'تم اختياره للمقابلة: بقي تحديد موعدها.',
 			'recrutement.dossier3.raison.entretienPlanifie' => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.',

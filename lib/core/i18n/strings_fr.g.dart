@@ -28331,17 +28331,17 @@ class Traductions$recrutement$dossier3$raison$fr {
 	/// fr: 'En attente du candidat : il complète son dossier.'
 	String get attente => 'En attente du candidat : il complète son dossier.';
 
-	/// fr: 'Accepter sera possible quand ces points seront réglés : {liste}.'
-	String manque({required Object liste}) => 'Accepter sera possible quand ces points seront réglés : ${liste}.';
+	/// fr: 'Accepter : il reste à régler {liste}.'
+	String manque({required Object liste}) => 'Accepter : il reste à régler ${liste}.';
 
 	/// fr: 'Aucune décision à prendre à cette étape.'
 	String get etape => 'Aucune décision à prendre à cette étape.';
 
-	/// fr: 'Accepter sera possible quand le versement sera possible.'
-	String get versement => 'Accepter sera possible quand le versement sera possible.';
+	/// fr: 'Accepter : le versement n'est pas encore possible.'
+	String get versement => 'Accepter : le versement n\'est pas encore possible.';
 
-	/// fr: 'Accepter sera possible quand le moyen de versement sera confirmé.'
-	String get versementAConfirmer => 'Accepter sera possible quand le moyen de versement sera confirmé.';
+	/// fr: 'Accepter : le moyen de versement reste à confirmer.'
+	String get versementAConfirmer => 'Accepter : le moyen de versement reste à confirmer.';
 
 	/// fr: 'Le dossier est prêt : vous pouvez décider.'
 	String get pret => 'Le dossier est prêt : vous pouvez décider.';
@@ -56452,10 +56452,10 @@ extension on Traductions {
 			'recrutement.dossier3.raison.fermee' => 'Le dossier est fermé.',
 			'recrutement.dossier3.raison.pause' => 'En pause : reprenez le dossier pour agir.',
 			'recrutement.dossier3.raison.attente' => 'En attente du candidat : il complète son dossier.',
-			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'Accepter sera possible quand ces points seront réglés : ${liste}.',
+			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'Accepter : il reste à régler ${liste}.',
 			'recrutement.dossier3.raison.etape' => 'Aucune décision à prendre à cette étape.',
-			'recrutement.dossier3.raison.versement' => 'Accepter sera possible quand le versement sera possible.',
-			'recrutement.dossier3.raison.versementAConfirmer' => 'Accepter sera possible quand le moyen de versement sera confirmé.',
+			'recrutement.dossier3.raison.versement' => 'Accepter : le versement n\'est pas encore possible.',
+			'recrutement.dossier3.raison.versementAConfirmer' => 'Accepter : le moyen de versement reste à confirmer.',
 			'recrutement.dossier3.raison.pret' => 'Le dossier est prêt : vous pouvez décider.',
 			'recrutement.dossier3.raison.entretienAPlanifier' => 'Retenu pour l\'entretien : il reste à le planifier.',
 			'recrutement.dossier3.raison.entretienPlanifie' => 'Entretien planifié : la décision vient après l\'entretien.',
