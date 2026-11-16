@@ -26,7 +26,20 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | 4. Le Studio (après la messagerie refaite et après la vague 2) | pas commencé |
 | 5. L'agent IA qui propose (après les vagues 2 et 3) | pas commencé |
 
+## Le secrétaire IA (vision du directeur du 16/11, `SECRETAIRE-IA.md`)
+
+| Lot | Contenu | Statut |
+| :--- | :--- | :--- |
+| SEC-0 | Sans code : une session joue le secrétaire (point du matin, tri, brouillons, guide de voix) | pas commencé |
+| SEC-1 | Connecteur : messages (boîte, fil, répondre, brouillons, canal) | pas commencé |
+| SEC-2 | Connecteur : dossiers (file, impression, listes, propositions) | pas commencé |
+| SEC-3 | Connecteur : objectifs, check-listes, assignation, alertes, point du jour | pas commencé |
+| SEC-4 | Connecteur : matching (besoins et ressources, classes proposées) | pas commencé |
+| SEC-5 | Connecteur : état de l'application, chiffres, rapports | pas commencé |
+
 ## Journal
 
 - 16/11 : trois agents lancés (BE-S1, BE-DOSSIER, BE-LISTE). Un quatrième agent du projet
   travaille déjà sur la messagerie (BULLES-MESSAGERIE) : le plafond de quatre est atteint.
+- 16/11 : le directeur donne au coordinateur de ce chantier le droit de fusionner les PR de ses agents, « tant que ça ne met pas en conflit avec l'autre ».
+- 16/11 : vision du secrétaire IA écrite (`SECRETAIRE-IA.md`) ; elle amende R3 de la stratégie.
