@@ -2664,7 +2664,8 @@
           "profil_renseigne": "renseigner le profil",
           "profil_unique": "vérifier que le profil est unique",
           "aucune_restriction": "lever la restriction",
-          "piece_validee": "valider la pièce d'identité"
+          "piece_validee": "valider la pièce d'identité",
+          "complement_clos": "clore le complément"
         },
         "vous": "À vous : {geste}",
         "pause": "Le dossier est en pause.",
@@ -4507,6 +4508,7 @@
           "profilUnique": "Profil unique",
           "aucuneRestriction": "Aucune restriction ni pause",
           "pieceValidee": "Pièce d'identité validée",
+          "complementClos": "Complément clos",
           "inconnu": "Contrôle du serveur"
         },
         "causes": {
@@ -4534,6 +4536,7 @@
           "pieceAbsente": "Aucune pièce d'identité déposée",
           "pieceAVerifier": "Pièce déposée, à vérifier",
           "pieceARedeposer": "Pièce refusée, à déposer de nouveau",
+          "complementEnCours": "Un complément demandé est encore en cours",
           "inconnue": "Cause non précisée"
         }
       },
@@ -4571,6 +4574,7 @@
         "admettre": "Admettre en Salle de vérification et d'entretien",
         "confirmerMoyen": "Confirmer le moyen de versement",
         "ecarterMoyen": "Écarter ce moyen de versement",
+        "debloquerVersement": "Débloquer le versement",
         "demanderComplement": "Demander un complément",
         "cloreComplement": "Clore le complément",
         "mettreEnPause": "Mettre en pause",
@@ -4585,6 +4589,7 @@
         "admettre": "La candidature passe en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.",
         "ecarterMoyen": "Ce moyen n'est plus retenu. Sans autre moyen possible, la candidature attend qu'un moyen devienne possible.",
+        "debloquerVersement": "Le versement est confirmé à la main, même sans moyen déclaré. Votre motif reste dans l'historique. Si la personne modifie ses réponses, le déblocage tombe.",
         "demanderComplement": "La candidature repasse à compléter. La personne lira la liste des éléments choisis.",
         "cloreComplement": "Le complément demandé est clos. La candidature reste dans sa salle.",
         "mettreEnPause": "La candidature n'avance plus tant que la pause n'est pas levée.",
@@ -4686,6 +4691,7 @@
         "admettre": "La candidature est en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Le moyen de versement est confirmé.",
         "ecarterMoyen": "Le moyen de versement est écarté.",
+        "debloquerVersement": "Le versement est débloqué.",
         "demanderComplement": "Le complément est demandé.",
         "cloreComplement": "Le complément est clos.",
         "mettreEnPause": "La candidature est en pause.",

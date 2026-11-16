@@ -123,6 +123,7 @@ class PlanDossier {
   static const Set<GesteCandidature> gestesDeRubrique = <GesteCandidature>{
     GesteCandidature.confirmerMoyenPaiement,
     GesteCandidature.infirmerMoyenPaiement,
+    GesteCandidature.debloquerVersement,
     GesteCandidature.definirResponsable,
   };
 
@@ -243,6 +244,7 @@ class PlanDossier {
       'profil_unique' => aFaire.profil_unique,
       'aucune_restriction' => aFaire.aucune_restriction,
       'piece_validee' => aFaire.piece_validee,
+      'complement_clos' => aFaire.complement_clos,
       _ => libelleControle(nom),
     };
     return <String>[
