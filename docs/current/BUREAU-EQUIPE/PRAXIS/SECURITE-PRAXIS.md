@@ -198,3 +198,13 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
   - **I4, R12 côté serveur.** Les messages de Praxis doivent être reconnus comme ceux d'une IA. Cela relève de
     l'affichage (étape 10, Pilote Messagerie). **La mise en service est interdite tant que ce n'est pas fait**, mais
     la fusion ne l'attend pas, puisque Praxis est installé éteint.
+- **Incident R14 (16/11, 23 h 35), dit au directeur.**
+  - Les faits : en écrivant les compétences (PR #569), BE-GESTES a lu en production, par des `SELECT`, 175 messages
+    de la direction écrits dans des fils de vraies personnes. Il cherchait le style du directeur. Il dit n'en avoir
+    rien recopié.
+  - Ce qui a été demandé à BE-GESTES :
+    - écrire la faute en tête de la PR ;
+    - confirmer qu'aucun texte n'a été recopié ;
+    - retirer tout exemple qui en paraphrase un.
+  - La règle, rappelée à tous les agents : **aucune lecture de lignes de personnes en production, pour aucun lot**.
+  - Le style vient des sources du dépôt (`SOURCE-ANNONCES-2026.md`) et des corrections du directeur.
