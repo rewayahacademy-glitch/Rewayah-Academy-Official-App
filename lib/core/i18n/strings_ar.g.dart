@@ -10777,6 +10777,10 @@ class _Traductions$recrutement$file$ar extends Traductions$recrutement$file$fr {
 	@override String get jaiCompris => 'فهمت';
 	@override String get files => 'القوائم';
 	@override String get pieceCourt => 'وثيقة للتحقق';
+	@override String get courtExamen => 'الفحص';
+	@override String get courtPiece => 'وثيقة';
+	@override String get courtEntretien => 'مقابلة';
+	@override String get courtVersement => 'الدفع';
 	@override String get confirmeesIndisponibles => 'مؤكَّدة وغير متاحة';
 	@override String get piece => 'وثيقة الهوية';
 	@override String get responsable => 'المسؤول';
@@ -38921,6 +38925,10 @@ extension on TraductionsAr {
 			'recrutement.file.jaiCompris' => 'فهمت',
 			'recrutement.file.files' => 'القوائم',
 			'recrutement.file.pieceCourt' => 'وثيقة للتحقق',
+			'recrutement.file.courtExamen' => 'الفحص',
+			'recrutement.file.courtPiece' => 'وثيقة',
+			'recrutement.file.courtEntretien' => 'مقابلة',
+			'recrutement.file.courtVersement' => 'الدفع',
 			'recrutement.file.confirmeesIndisponibles' => 'مؤكَّدة وغير متاحة',
 			'recrutement.file.piece' => 'وثيقة الهوية',
 			'recrutement.file.responsable' => 'المسؤول',
@@ -39017,12 +39025,12 @@ extension on TraductionsAr {
 			'recrutement.invitations.revoquer' => 'إلغاء',
 			'recrutement.invitations.revoquerPour' => ({required Object email}) => 'إلغاء دعوة ⁨${email}⁩',
 			'recrutement.invitations.revoquerQuestion' => ({required Object email}) => 'إلغاء دعوة ⁨${email}⁩؟',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.invitations.revoquerConsequence' => 'لن يمكن استعمال الرمز بعد ذلك. يمكنك دعوة العنوان نفسه من جديد.',
 			'recrutement.invitations.revoquerEchec' => 'لم يتأكد الإلغاء. أعد تحميل القائمة قبل أن تعيد.',
 			'recrutement.candidat.comptable.titre' => 'رمز المحاسب الخاص بك',
 			'recrutement.candidat.comptable.intro' => 'للتسجيل كمحاسب، أدخل رمز الدعوة الذي تلقيته من الإدارة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.comptable.valideDetail' => 'يمكنك إنشاء ملفك كمحاسب.',
 			'recrutement.candidat.comptable.indisponible' => 'سيتوفر التحقق من رموز المحاسبين عند ربط الخادم.',
 			'recrutement.candidat.titre' => 'رمزك',
@@ -39531,12 +39539,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.publics.options.adultes.libelle' => 'كبار (18 سنة فأكثر)',
 			'recrutement.parcours.q.publics.options.adultes.description' => 'يتعلّم الكبار القراءة أولًا بكتاب أكاديمية الرواية. وبعد الأساسيات يختار الطالب بين قراءة القرآن كله وحفظه، بنصيحة المعلّم.',
 			'recrutement.parcours.q.publics.options.adultes.explication' => 'فصول من 6 كبار على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة ونصف. فصول الكبار منفصلة: نساء مع نساء، ورجال مع رجال.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.publics.options.adultes.exemple' => 'فصل للنساء، أو فصل للرجال، ثلاث مرات في الأسبوع.',
 			'recrutement.parcours.q.paysResidence.titre' => 'في أي بلد تقيم؟',
 			'recrutement.parcours.q.paysResidence.explication' => 'اختر البلد الذي تقيم فيه اليوم.',
 			'recrutement.parcours.q.paysResidence.court' => 'بلد الإقامة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.paysVersement.titre' => 'في أي بلد تريد تلقي راتبك؟',
 			'recrutement.parcours.q.paysVersement.explication' => 'يمكن أن يكون الحساب الذي يستلم راتبك حساب قريب موثوق في بلد تدعمه الأكاديمية: اختر عندئذٍ بلد هذا القريب. تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.',
 			'recrutement.parcours.q.paysVersement.court' => 'بلد الصرف',
@@ -40045,12 +40053,12 @@ extension on TraductionsAr {
 			'avis.form.titreAvis.libelle' => 'العنوان (اختياري)',
 			'avis.form.titreAvis.aide' => 'جملة قصيرة تلخّص رأيك. 80 حرفًا على الأكثر.',
 			'avis.form.titreAvis.erreur' => 'صحّح العنوان: 80 حرفًا على الأكثر.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.texte.libelle' => 'رأيك',
 			'avis.form.texte.aide' => 'ما أعجبك، وما تعلمته، وما يمكن أن يكون أفضل. 20 حرفًا على الأقل.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'عدد الأحرف: ⁨${n}⁩ من ⁨${max}⁩',
 			'avis.form.texte.erreur' => 'اكتب بين 20 و1500 حرف.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.accord.libelle' => 'أوافق على نشر هذا الرأي واسمي الظاهر وبلدي والتاريخ على موقع Rewayah Academy.',
 			'avis.form.accord.erreur' => 'اقبل النشر بوضع علامة في الخانة، وإلا تعذّر إرسال رأيك.',
 			'avis.form.lecture' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره. لطلب سحبه لاحقًا، اكتب إلى ⁨${courriel}⁩.',
@@ -40559,12 +40567,12 @@ extension on TraductionsAr {
 			'cahierSourates.titre' => 'السور المسمَّعة',
 			'cahierSourates.aide' => 'اختر السورة فقط إذا سمَّعها هذا الطالب حفظًا دون خطأ في كلمة. السورة المختارة تُعتمد.',
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'سور الأساسيات المعتمدة: ⁨${n}⁩ من ⁨${total}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'cahierSourates.toutes' => 'اعتُمدت كل سور الأساسيات.',
 			'cahierSourates.retirerTitre' => 'اخترتها خطأً؟',
 			'cahierSourates.retirerAide' => 'السورة التي اعتمدتَها يمكن سحبها خلال 24 ساعة.',
 			'cahierSourates.retirer' => 'سحب',
-			_ => null,
-		} ?? switch (path) {
 			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة',
 			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'سحب ⁨${nom}⁩ من السور المعتمدة؟',
 			'cahierSourates.retirerConsequence' => 'لن تُحسب بعد الآن معتمدة لهذا الطالب.',
@@ -41073,12 +41081,12 @@ extension on TraductionsAr {
 			'apprendre.programme.votrePlace' => 'سيحدّد معلّمك موضعك في البرنامج.',
 			'apprendre.programme.datesEcole' => 'مواعيد الأكاديمية',
 			'apprendre.programme.datesEcoleVide' => 'ستظهر مواعيد الأكاديمية هنا',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.programme.genre.evaluation' => 'تقييم',
 			'apprendre.programme.genre.fermeture' => 'إغلاق الأكاديمية',
 			'apprendre.programme.genre.rencontre' => 'لقاء التلاوة',
 			'apprendre.livret.vide' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
-			_ => null,
-		} ?? switch (path) {
 			'apprendre.livret.videTu' => 'ستظهر هنا نتائجك وتقاريرك وشهاداتك',
 			'suiviAttente.titre' => 'أين وصل طلبك',
 			'suiviAttente.titreSimple' => 'أين وصل طلبك',

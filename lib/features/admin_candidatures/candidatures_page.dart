@@ -577,45 +577,71 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     );
   }
 
-  /// Les files, en puces : une seule rangee qui passe a la ligne, jamais de
-  /// defilement de cote (`RangeeFiltres(enPanneau: true)`).
-  Widget _rangeeFiles(List<FileCandidatures> files) => RangeeFiltres(
-    enPanneau: true,
-    filtres: <Widget>[
+  /// Les files : **un seul menu deroulant « File »** (revision du 16/11,
+  /// directeur : « cinq lignes pour ces filtres ? pourquoi pas un menu
+  /// deroulant ? »). Il dit la file choisie et son nombre (« En examen · 176 »)
+  /// et s'ouvre sur toutes les files avec leurs nombres. Les alertes que le
+  /// serveur compte sans savoir les filtrer restent des pastilles d'etat, sous
+  /// le menu, seulement quand leur nombre n'est pas zero.
+  Widget _zoneFiles(List<FileCandidatures> files) {
+    final List<FileCandidatures> choix = <FileCandidatures>[
       for (final FileCandidatures x in files)
-        if (x.appliquer == null)
-          // Une alerte que le serveur compte sans savoir la filtrer : une
-          // pastille d'etat, jamais une puce grisee (rien ne se touche).
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-            child: StatusPill(
-              key: ValueKey<String>('candidatures-file-${x.cle}'),
-              libelle: '${x.libelle} ${x.nombre ?? ''}'.trim(),
-              ton: TonEtat.avertissement,
-            ),
-          )
-        else
-          FilterPill(
-            key: ValueKey<String>('candidatures-file-${x.cle}'),
-            libelle: x.libelle,
-            compteur: x.nombre,
-            retenue: x.estChoisie(_filtre),
-            apercu: x.alerteCreneau
-                ? Icon(
-                    AppIcons.avertissement.repos,
-                    size: AppSpacing.lg,
-                    color: AppPalette.of(context).inkWarning
-                        .asIconTheme()
-                        .color,
-                  )
-                : null,
-            onPress: () {
-              _attenteSaisie?.cancel();
-              _filtrer(x.appliquer!(_filtre));
-            },
+        if (x.appliquer != null) x,
+    ];
+    final List<FileCandidatures> alertes = <FileCandidatures>[
+      for (final FileCandidatures x in files)
+        if (x.appliquer == null) x,
+    ];
+    final FileCandidatures? courante = choix
+        .where((FileCandidatures x) => x.estChoisie(_filtre))
+        .firstOrNull;
+    final String texte = courante == null
+        ? t.recrutement.file.fileMenu
+        : '${courante.libelle} · ${courante.nombre ?? ''}'.trim();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        MenuFiltre<String>(
+          key: const ValueKey<String>('candidatures-file-menu'),
+          libelle: texte,
+          valeur: courante == null || courante.cle == 'toutes'
+              ? null
+              : courante.cle,
+          entrees: <EntreeFiltre<String>>[
+            for (final FileCandidatures x in choix)
+              EntreeFiltre<String>(
+                valeur: x.cle,
+                libelle: x.libelle,
+                compteur: x.nombre,
+              ),
+          ],
+          onChoix: (String? cle) {
+            if (cle == null) return;
+            final FileCandidatures x = choix.firstWhere(
+              (FileCandidatures f) => f.cle == cle,
+            );
+            _attenteSaisie?.cancel();
+            _filtrer(x.appliquer!(_filtre));
+          },
+        ),
+        if (alertes.isNotEmpty) ...<Widget>[
+          Ecart.vSm,
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (final FileCandidatures x in alertes)
+                StatusPill(
+                  key: ValueKey<String>('candidatures-file-${x.cle}'),
+                  libelle: '${x.libelle} ${x.nombre ?? ''}'.trim(),
+                  ton: TonEtat.avertissement,
+                ),
+            ],
           ),
-    ],
-  );
+        ],
+      ],
+    );
+  }
 
   /// L'icone « Filtres » : le nombre de filtres poses se lit dessus et se dit.
   Widget _boutonFiltres(
@@ -1073,6 +1099,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                     // dit aux lecteurs d'ecran (`Semantics` ci-dessus), le
                     // texte d'aide dit quoi chercher.
                     libelle: t.recrutement.file.rechercher,
+                    compact: true,
                     aide: r.rechercheAide,
                     onChange: _chercher,
                     onValider: _chercherTout,
@@ -1105,8 +1132,8 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
               },
             ),
             Ecart.vMd,
-            // Rangee 3 : les files.
-            _rangeeFiles(files),
+            // Rangee 3 : le menu « File ».
+            _zoneFiles(files),
             Ecart.vMd,
             _ligneNombre(reference, selectionPossible: selectionPossible),
             Ecart.vMd,

@@ -1,10 +1,20 @@
 BE-LISTE-2 : mesures (capture de test, polices du depot, 6 files)
-MESURE fr_360 : haut de la premiere ligne a 572.0
-MESURE fr_673 : haut de la premiere ligne a 380.0
-MESURE fr_884 : haut de la premiere ligne a 324.0
-MESURE fr_1366 : haut de la premiere ligne a 372.0
-MESURE ar_360 : haut de la premiere ligne a 666.0
-MESURE ar_1366 : haut de la premiere ligne a 444.0
-Cible du cahier : haut de la premiere candidature sous 300 pt a 360 x 800. NON ATTEINTE : 572 pt (FR), 666 pt (AR).
-Cause : une puce par ligne a 360 (libelles longs), file par file 52 pt de haut.
-Rangee nombre / Selectionner : une seule ligne a 360 (voir 1_arrivee_fr_360.png).
+
+Apres decision du coordinateur (16/11) : libelles courts sur les puces, puces compactes
+(retrait 12, hauteur visible 36, zone de toucher 48 qui deborde de 6 sans rien peindre,
+coche reservee seulement sur la puce choisie), champ de recherche compact de 48.
+
+MESURE fr_360 : haut de la premiere ligne a 336
+MESURE fr_673 : haut de la premiere ligne a 292
+MESURE fr_884 : haut de la premiere ligne a 248
+MESURE fr_1366 : haut de la premiere ligne a 296
+MESURE ar_360 : haut de la premiere ligne a 337
+MESURE ar_1366 : haut de la premiere ligne a 282
+
+Cible du cahier : haut de la premiere candidature sous 300 pt a 360 x 800.
+NON ATTEINTE a 360 : 336 pt (FR), 337 pt (AR). Atteinte a 673, 884 et 1366 (AR).
+Historique : 572 pt avant la decision (une puce par ligne), 344 pt avec libelles courts seuls.
+
+Limite de la zone de toucher : elle est coupee au bord de la rangee (premiere ligne : 6 pt
+perdus en haut) et deux lignes voisines se partagent 4 pt (ecart 8 < 2 x 6).
+La rangee nombre / Selectionner reste sur une seule ligne a 360.
