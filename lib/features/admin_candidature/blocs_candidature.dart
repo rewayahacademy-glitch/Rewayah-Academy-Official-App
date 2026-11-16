@@ -94,6 +94,15 @@ class _Branchement extends StatelessWidget {
 // Situation
 // ---------------------------------------------------------------------------
 
+/// L'etat en un mot du dossier : la restriction quand il en porte une, sinon
+/// l'etat de la ligne.
+EtatAffiche? etatDuDossier(DetailCandidature detail) => detail.ligne.restreinte
+    ? (
+        libelle: libelleRestriction(detail.restrictionCause),
+        ton: TonEtat.alerte,
+      )
+    : etatAffiche(detail.ligne);
+
 /// La situation de la candidature : l'etat en un mot et une icone, la salle,
 /// le versement, le pays, les dates, la provenance, la pause, la restriction.
 class CarteSituation extends StatelessWidget {
@@ -110,14 +119,8 @@ class CarteSituation extends StatelessWidget {
   Widget build(BuildContext context) {
     final LigneCandidature l = detail.ligne;
     final r = t.admin.candidatures;
-    final EtatAffiche? etat = l.restreinte
-        ? (
-            libelle: libelleRestriction(detail.restrictionCause),
-            ton: TonEtat.alerte,
-          )
-        : etatAffiche(l);
+    final EtatAffiche? etat = etatDuDossier(detail);
     final String? salle = libelleSalle(l.etape);
-    final List<String> marques = marquesDeLigne(l);
     return AppCard(
       key: cle,
       child: Column(
@@ -143,27 +146,49 @@ class CarteSituation extends StatelessWidget {
           if (libellePays(l.paysResidence) case final String pays)
             LigneCleValeur(cle: r.colonnes.pays, valeur: pays),
           Ecart.vSm,
-          if (l.recueLe != null)
-            _Muet(r.detail.recue(date: dateCourteCandidature(l.recueLe!))),
-          _Muet(r.ligne.activite(date: activiteAffichee(l))),
-          if (detail.provenance != null)
-            _Muet(
-              r.detail.provenance(
-                provenance: libelleProvenance(detail.provenance!),
-              ),
-            ),
-          if (detailDate(l) case final String date) _Muet(date),
-          if (l.enPause && detail.pauseModele != null)
-            _Muet(
-              r.detail.messagePause(nom: libelleModele(detail.pauseModele!)),
-            ),
-          if (l.issue == IssueCandidature.refusee && detail.refusModele != null)
-            _Muet(
-              r.detail.messageRefus(nom: libelleModele(detail.refusModele!)),
-            ),
-          for (final String marque in marques) _Muet(marque),
+          LignesDatesDossier(detail: detail),
         ],
       ),
+    );
+  }
+}
+
+/// Les lignes discretes de la situation : reception, activite, provenance,
+/// dates, message de pause ou de refus, marques. Au dossier en trois etages
+/// (BE-DOSSIER), elles vivent sous « Historique » ; l'ancienne carte les
+/// reprend telles quelles.
+class LignesDatesDossier extends StatelessWidget {
+  /// Cree les lignes.
+  const LignesDatesDossier({required this.detail, super.key});
+
+  /// Le dossier lu.
+  final DetailCandidature detail;
+
+  @override
+  Widget build(BuildContext context) {
+    final LigneCandidature l = detail.ligne;
+    final r = t.admin.candidatures;
+    final List<String> marques = marquesDeLigne(l);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        if (l.recueLe != null)
+          _Muet(r.detail.recue(date: dateCourteCandidature(l.recueLe!))),
+        _Muet(r.ligne.activite(date: activiteAffichee(l))),
+        if (detail.provenance != null)
+          _Muet(
+            r.detail.provenance(
+              provenance: libelleProvenance(detail.provenance!),
+            ),
+          ),
+        if (detailDate(l) case final String date) _Muet(date),
+        if (l.enPause && detail.pauseModele != null)
+          _Muet(r.detail.messagePause(nom: libelleModele(detail.pauseModele!))),
+        if (l.issue == IssueCandidature.refusee && detail.refusModele != null)
+          _Muet(r.detail.messageRefus(nom: libelleModele(detail.refusModele!))),
+        for (final String marque in marques) _Muet(marque),
+      ],
     );
   }
 }
@@ -315,7 +340,7 @@ class BlocBlocages extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     for (final ControleCandidature c in faux)
-                      _LigneControle(controle: c),
+                      LigneControleDossier(controle: c),
                   ],
                 ),
         ),
@@ -326,8 +351,9 @@ class BlocBlocages extends StatelessWidget {
 
 /// Un controle : une icone, son nom, son etat en mot, sa cause quand il est
 /// faux. Jamais la couleur seule.
-class _LigneControle extends StatelessWidget {
-  const _LigneControle({required this.controle});
+class LigneControleDossier extends StatelessWidget {
+  /// Cree la ligne.
+  const LigneControleDossier({required this.controle, super.key});
 
   final ControleCandidature controle;
 
@@ -688,6 +714,25 @@ class _LigneReponse extends StatelessWidget {
   }
 }
 
+/// Les lignes d'un groupe de reponses (BE-DOSSIER) : le meme rendu que le bloc
+/// « Reponses », sans son titre ni sa version de questionnaire.
+class LignesReponses extends StatelessWidget {
+  /// Cree les lignes.
+  const LignesReponses({required this.lignes, super.key});
+
+  /// Les reponses du groupe.
+  final List<LigneReponse> lignes;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      for (final LigneReponse ligne in lignes) _LigneReponse(ligne: ligne),
+    ],
+  );
+}
+
 // ---------------------------------------------------------------------------
 // Controles
 // ---------------------------------------------------------------------------
@@ -722,7 +767,7 @@ class BlocControles extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   children: <Widget>[
                     for (final ControleCandidature c in tous)
-                      _LigneControle(controle: c),
+                      LigneControleDossier(controle: c),
                   ],
                 ),
         ),
@@ -1167,7 +1212,15 @@ class _Coordonnee extends StatelessWidget {
 /// pages. L'auteur se dit par sa qualite, jamais par son nom.
 class BlocHistorique extends ConsumerStatefulWidget {
   /// Cree le bloc.
-  const BlocHistorique({required this.candidatureId, super.key});
+  const BlocHistorique({
+    required this.candidatureId,
+    super.key,
+    this.integre = false,
+  });
+
+  /// Vrai sous la rubrique « Historique » du dossier en trois etages : ni
+  /// titre ni carte, la rubrique les porte.
+  final bool integre;
 
   /// La candidature.
   final String candidatureId;
@@ -1286,6 +1339,9 @@ class _EtatHistorique extends ConsumerState<BlocHistorique> {
             );
     } else {
       corps = const Skeleton.ligneTimeline(lignes: 3);
+    }
+    if (widget.integre) {
+      return KeyedSubtree(key: BlocHistorique.cle, child: corps);
     }
     return Column(
       key: BlocHistorique.cle,

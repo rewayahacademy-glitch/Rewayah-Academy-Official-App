@@ -2614,6 +2614,40 @@
     }
   },
   "recrutement": {
+    "dossier3": {
+      "pastille": {"bon": "Good", "aVoir": "To check", "manque": "Missing"},
+      "situation": {
+        "vous": "Your turn: {geste}",
+        "bloque": "Blocking: {liste}",
+        "pause": "The file is paused.",
+        "rien": "Nothing to do for now."
+      },
+      "rubrique": {
+        "photo": "Photo",
+        "piece": "ID document",
+        "versement": "Payment",
+        "accords": "Agreements",
+        "messages": "Messages"
+      },
+      "resume": {
+        "langues": "Languages",
+        "niveau": "Level and ijaza",
+        "disponibilites": "Availability",
+        "versement": "Country and payment",
+        "public": "Audience"
+      },
+      "demanderAccord": "Ask for an agreement",
+      "raison": {
+        "droit": "You cannot decide on this file.",
+        "fermee": "The file is closed.",
+        "pause": "The file is paused.",
+        "attente": "Waiting for the person's reply.",
+        "manque": "Missing: {liste}.",
+        "etape": "Not possible at this stage."
+      },
+      "legendeRaison": "{geste}: {raison}",
+      "photoAgrandir": "View {deNom} photo full size"
+    },
     "nomLatin": {
       "titre": "Your name in Latin letters",
       "explication": "Your name is written in another script. For lists, certificates and exchanges with the academy, we need it written in Latin letters.",

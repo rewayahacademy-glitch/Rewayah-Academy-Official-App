@@ -1,0 +1,18 @@
+{
+  "lot": "BE-DOSSIER",
+  "date": "2026-11-16",
+  "nature": "captures de test de widget sur le vrai routeur en demonstration d'administration, donnees fictives (test/capture/be_dossier_capture_test.dart)",
+  "robot_e2e_sur_pile_locale": "non fait : aucune pile locale dans cette session",
+  "tailles": ["360x780 (telephone)", "1366x768 (ordinateur)", "arabe de droite a gauche, 360 et 1366"],
+  "captures": [
+    "dossier_telephone.png",
+    "dossier_historique_telephone.png",
+    "photo_en_grand_telephone.png",
+    "dossier_ordinateur.png",
+    "dossier_historique_ordinateur.png",
+    "photo_en_grand_ordinateur.png",
+    "dossier_arabe_telephone.png",
+    "dossier_arabe_ordinateur.png"
+  ],
+  "prouve_par_le_directeur": false
+}

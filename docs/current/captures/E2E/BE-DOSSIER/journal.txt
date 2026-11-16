@@ -1,0 +1,18 @@
+BE-DOSSIER, 16/11/2026. Journal des captures.
+
+Commande : CAPTURE_DIR=<ce dossier> flutter test --no-pub test/capture/be_dossier_capture_test.dart
+Resultat : 6 tests, tous passes. 8 images.
+
+Ce que chaque capture montre :
+- dossier_telephone / dossier_ordinateur : le dossier tel qu'il s'ouvre (rubriques
+  repliees), etage 1, resume, barre de decision.
+- dossier_historique_* : la rubrique Historique ouverte, defilee en vue.
+- photo_en_grand_* : la photo touchee, en grand (image fictive de test).
+- dossier_arabe_* : meme dossier, interface en arabe, de droite a gauche.
+
+Ce que ces captures ne prouvent pas :
+- Aucune donnee reelle, aucune photo reelle, aucune piece reelle (la piece sur place n'est
+  pas capturee : son port n'est pas branche dans cette demonstration).
+- Le dossier ne tient pas sur un seul ecran au telephone : la barre du haut de l'application,
+  l'etage 1 fixe et la barre de decision fixe laissent peu de place au defilement.
+- Aucun robot E2E sur pile locale.

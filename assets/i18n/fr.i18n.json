@@ -2614,6 +2614,40 @@
     }
   },
   "recrutement": {
+    "dossier3": {
+      "pastille": {"bon": "Bon", "aVoir": "À voir", "manque": "Manque"},
+      "situation": {
+        "vous": "À vous : {geste}",
+        "bloque": "Ce qui bloque : {liste}",
+        "pause": "Le dossier est en pause.",
+        "rien": "Rien à faire pour le moment."
+      },
+      "rubrique": {
+        "photo": "Photo",
+        "piece": "Pièce d'identité",
+        "versement": "Versement",
+        "accords": "Accords",
+        "messages": "Messages"
+      },
+      "resume": {
+        "langues": "Langues",
+        "niveau": "Niveau et ijaza",
+        "disponibilites": "Disponibilités",
+        "versement": "Pays et versement",
+        "public": "Public"
+      },
+      "demanderAccord": "Demander un accord",
+      "raison": {
+        "droit": "Vous ne pouvez pas décider de ce dossier.",
+        "fermee": "Le dossier est fermé.",
+        "pause": "Le dossier est en pause.",
+        "attente": "On attend la réponse de la personne.",
+        "manque": "Il manque : {liste}.",
+        "etape": "Pas possible à cette étape."
+      },
+      "legendeRaison": "{geste} : {raison}",
+      "photoAgrandir": "Voir la photo {deNom} en grand"
+    },
     "nomLatin": {
       "titre": "Votre nom en lettres latines",
       "explication": "Votre nom est écrit dans une autre écriture. Pour les listes, les attestations et les échanges avec l'académie, nous avons besoin de son écriture en lettres latines.",

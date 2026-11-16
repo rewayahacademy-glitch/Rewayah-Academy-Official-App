@@ -21,7 +21,9 @@ import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
+import 'package:rewayah_academy/features/admin_candidature/libelles_candidature.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -257,39 +259,20 @@ Future<void> _tapper(WidgetTester tester, Finder f) async {
   await laisser(tester);
 }
 
-/// Ouvre la feuille de [geste] : par la prochaine action quand c'est elle, sinon
-/// par le menu.
+/// Ouvre la feuille de [geste] : par la barre de decision ou le lien de sa
+/// rubrique quand il y en a un (BE-DOSSIER), sinon par le menu « ⋯ ».
 Future<void> _ouvrir(WidgetTester tester, GesteCandidature geste) async {
-  final Finder bouton = find.byKey(BlocProchaineAction.cleBouton);
-  final String libelle = switch (geste) {
-    GesteCandidature.admettreVerifications =>
-      t.admin.candidatures.decision.accepter,
-    GesteCandidature.confirmerMoyenPaiement =>
-      t.admin.candidatures.gestes.confirmerMoyen,
-    GesteCandidature.leverPause => t.admin.candidatures.gestes.leverPause,
-    GesteCandidature.infirmerMoyenPaiement =>
-      t.admin.candidatures.gestes.ecarterMoyen,
-    GesteCandidature.demanderComplement =>
-      t.admin.candidatures.gestes.demanderComplement,
-    GesteCandidature.cloreComplement =>
-      t.admin.candidatures.gestes.cloreComplement,
-    GesteCandidature.mettreEnPause => t.admin.candidatures.gestes.mettreEnPause,
-    GesteCandidature.refuser => t.admin.candidatures.gestes.refuser,
-    GesteCandidature.consignerRetrait => t.admin.candidatures.gestes.retrait,
-    GesteCandidature.rouvrir => t.admin.candidatures.gestes.rouvrir,
-    GesteCandidature.definirResponsable =>
-      t.admin.candidatures.gestes.responsable,
-    GesteCandidature.validerPiece => t.admin.candidatures.gestes.accueillir,
-  };
-  final Finder surBouton = find.descendant(
-    of: bouton,
-    matching: find.text(libelle),
-  );
-  if (surBouton.evaluate().isNotEmpty) {
-    await _tapper(tester, bouton);
-    return;
+  for (final Key k in <Key>[
+    ValueKey<String>('candidature-decision-${geste.name}'),
+    ValueKey<String>('rubrique-geste-${geste.name}'),
+  ]) {
+    if (find.byKey(k).evaluate().isNotEmpty) {
+      await _tapper(tester, find.byKey(k));
+      return;
+    }
   }
-  await _tapper(tester, find.byKey(BlocProchaineAction.cleMenu));
+  final String libelle = libelleGeste(geste);
+  await _tapper(tester, find.byKey(BarreDecisionDossier.cleMenu));
   // Le menu defile : a 320 en texte double, toutes ses entrees ne tiennent pas.
   await tester.ensureVisible(find.text(libelle).last);
   await laisser(tester, fois: 2);

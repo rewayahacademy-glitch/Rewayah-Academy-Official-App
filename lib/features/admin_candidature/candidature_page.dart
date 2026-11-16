@@ -33,14 +33,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/candidature/gestes_candidature.dart';
-import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
-import '../../core/candidature/modeles_import_candidatures.dart';
-import '../../core/candidature/piece_candidature.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
-import '../../core/candidature/port_import_candidatures.dart';
-import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
@@ -52,21 +47,15 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import '../com_messages/entree_messages_contexte.dart';
-import '../com_messages/port_messages_metier.dart' show TypeObjetLie;
-import 'bloc_autres_competences.dart';
-import 'bloc_entretien.dart';
 import 'blocs_candidature.dart';
+import 'dossier_trois_etages.dart';
 import 'feuille_geste.dart';
-import 'feuille_lien_personnel.dart';
-import 'gestes_proposes.dart';
 import 'libelles_candidature.dart';
-import 'piece_sur_place.dart';
-import 'reponses_candidature.dart';
+import 'plan_dossier.dart';
 import 'volet_conversation.dart';
 
 /// L'ecran « Candidature ».
@@ -260,61 +249,118 @@ class _EtatCandidatureDirectionPage
     final DetailCandidature? detail = valeur.value;
     final r = t.admin.candidatures;
 
-    final Widget page = PageShell(
-      key: CandidatureDirectionPage.clePage,
-      titre: detail == null
-          ? referenceDuDossier(widget.reference)
-          : nomAffiche(detail.ligne),
-      sousTitre: detail == null ? null : referenceDuDossier(widget.reference),
-      onRetour: _retourALaFile,
-      entete: detail != null && capacites.peutLireHorsGenre && detail.autreCote
-          ? Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: BandeauAttention(
-                key: const ValueKey<String>('candidature-exception'),
-                titre: r.exception.titre,
-                message: r.exception.candidature,
+    final PlanDossier? plan = detail == null
+        ? null
+        : PlanDossier(
+            detail: detail,
+            capacites: capacites,
+            horsLigne: horsLigne,
+          );
+    // Sur ordinateur, les etages 1 et 2 sont a gauche, dans la page ; sinon
+    // l'etage 1 reste fixe sous le titre. Meme regle que l'ancienne page : la
+    // largeur de la page, et le texte pas trop agrandi.
+    final Widget page = LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints contraintes) {
+        final bool deuxColonnes =
+            contraintes.maxWidth >= AppGabarit.seuilEtendu &&
+            MediaQuery.textScalerOf(context).scale(16) / 16 <
+                AppGabarit.seuilTexteColonne;
+        final Widget? exception =
+            detail != null && capacites.peutLireHorsGenre && detail.autreCote
+            ? Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: BandeauAttention(
+                  key: const ValueKey<String>('candidature-exception'),
+                  titre: r.exception.titre,
+                  message: r.exception.candidature,
+                ),
+              )
+            : null;
+        return PageShell(
+          key: CandidatureDirectionPage.clePage,
+          titre: detail == null
+              ? referenceDuDossier(widget.reference)
+              : nomAffiche(detail.ligne),
+          sousTitre: detail == null
+              ? null
+              : referenceDuDossier(widget.reference),
+          onRetour: _retourALaFile,
+          // BE-DOSSIER : la page porte son propre defilement (une seule barre,
+          // celle de la page) pour que l'etage 1 reste en haut et la barre de
+          // decision en bas. Voir le cahier : ecart a SANS-BARRE-FIXE, dit au
+          // coordinateur.
+          defilante: false,
+          entete: plan == null
+              ? null
+              : Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    ?exception,
+                    if (!deuxColonnes) ...<Widget>[
+                      Ecart.vSm,
+                      EtageUnDossier(plan: plan),
+                    ],
+                  ],
+                ),
+          actions: plan == null || !capacites.peutDecider
+              ? null
+              : BarreDecisionDossier(
+                  plan: plan,
+                  onGeste: (GesteCandidature g) =>
+                      _geste(g, plan.detail, capacites),
+                  autresActions: actionsSupplementaires(
+                    context,
+                    ref,
+                    plan.detail,
+                  ),
+                ),
+          child: SingleChildScrollView(
+            child: BlocAsynchrone<DetailCandidature>(
+              key: const ValueKey<String>('candidature-bloc'),
+              valeur: valeur,
+              squelette: const Skeleton.texte(lignes: 6),
+              onReessayer: _relire,
+              erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
+                  _etatErreur(erreur, reessayer, horsLigne),
+              construire: (DetailCandidature d) => CorpsDossier(
+                plan: PlanDossier(
+                  detail: d,
+                  capacites: capacites,
+                  horsLigne: horsLigne,
+                ),
+                deuxColonnes: deuxColonnes,
+                retour: _retour,
+                onGeste: (GesteCandidature g) => _geste(g, d, capacites),
+                // COMPLEMENT-ET-FORMATS : « Demander une nouvelle piece » (ou
+                // photo) depuis un fichier illisible : la feuille du
+                // complement s'ouvre, l'element deja coche. Un geste.
+                onDemanderElement: (String code) => _geste(
+                  GesteCandidature.demanderComplement,
+                  d,
+                  capacites,
+                  elementsInitiaux: <String>{code},
+                ),
+                // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ;
+                // son retour ramene ici.
+                onOuvrirDossier: () => unawaited(
+                  context.push<void>(Routes.adminPersonnesDossiers),
+                ),
+                onOuvrirConversation: _ouvrirConversation,
+                rangMessages: _rangMessages,
+                retourEntretien: _retourEntretien,
+                onEntretien: (String message) {
+                  _relire(identifiant: d.ligne.id);
+                  setState(() {
+                    _retour = null;
+                    _retourEntretien = message;
+                  });
+                },
               ),
-            )
-          : null,
-      child: BlocAsynchrone<DetailCandidature>(
-        key: const ValueKey<String>('candidature-bloc'),
-        valeur: valeur,
-        squelette: const Skeleton.texte(lignes: 6),
-        onReessayer: _relire,
-        erreurVersEtat: (Object erreur, VoidCallback? reessayer) =>
-            _etatErreur(erreur, reessayer, horsLigne),
-        construire: (DetailCandidature d) => _Contenu(
-          detail: d,
-          capacites: capacites,
-          horsLigne: horsLigne,
-          retour: _retour,
-          onGeste: (GesteCandidature g) => _geste(g, d, capacites),
-          // COMPLEMENT-ET-FORMATS : « Demander une nouvelle piece » (ou
-          // photo) depuis un fichier illisible : la feuille du complement
-          // s'ouvre, l'element deja coche. Un geste.
-          onDemanderElement: (String code) => _geste(
-            GesteCandidature.demanderComplement,
-            d,
-            capacites,
-            elementsInitiaux: <String>{code},
+            ),
           ),
-          // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ; son
-          // retour ramene ici.
-          onOuvrirDossier: () =>
-              unawaited(context.push<void>(Routes.adminPersonnesDossiers)),
-          onOuvrirConversation: _ouvrirConversation,
-          rangMessages: _rangMessages,
-          retourEntretien: _retourEntretien,
-          onEntretien: (String message) {
-            _relire(identifiant: d.ligne.id);
-            setState(() {
-              _retour = null;
-              _retourEntretien = message;
-            });
-          },
-        ),
-      ),
+        );
+      },
     );
     final ConversationEnPlace? conversation = _conversation;
     if (conversation == null ||
@@ -339,235 +385,6 @@ class _EtatCandidatureDirectionPage
           ),
         ),
       ],
-    );
-  }
-}
-
-/// Le contenu d'une candidature lue : une colonne sur mobile et tablette, deux
-/// colonnes ouvert seul sur grand ecran (au debut : situation, blocages,
-/// prochaine action, controles ; a la fin, dans l'ordre de `CONS` §10 :
-/// reponses, piece, entretien, responsable, affectation, contact, courriels,
-/// historique).
-class _Contenu extends ConsumerWidget {
-  const _Contenu({
-    required this.detail,
-    required this.capacites,
-    required this.horsLigne,
-    required this.onGeste,
-    required this.onOuvrirDossier,
-    required this.onEntretien,
-    required this.onOuvrirConversation,
-    required this.onDemanderElement,
-    this.rangMessages = 0,
-    this.retour,
-    this.retourEntretien,
-  });
-
-  /// Ouvre le complement, l'element [code] deja coche (COMPLEMENT-ET-FORMATS).
-  final ValueChanged<String> onDemanderElement;
-
-  final DetailCandidature detail;
-  final CapacitesCandidatures capacites;
-  final bool horsLigne;
-  final String? retour;
-  final ValueChanged<GesteCandidature> onGeste;
-  final VoidCallback onOuvrirDossier;
-
-  /// Ouvre une conversation dans le dossier (RECRUTEMENT-SANS-SORTIE).
-  final ValueChanged<ConversationEnPlace> onOuvrirConversation;
-
-  /// Change quand l'entree des messages doit relire ses badges.
-  final int rangMessages;
-
-  /// V2-a : un geste d'entretien est fait, avec son retour local.
-  final ValueChanged<String> onEntretien;
-
-  /// V2-a : le retour local du dernier geste d'entretien.
-  final String? retourEntretien;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final GestesProposes gestes = gestesProposes(detail, capacites);
-    final String? pays = declarationVersement(detail).pays;
-    // Le nom des operateurs vient du referentiel des moyens confirmes ; sans
-    // lui (liste non servie, panne), les moyens se disent par leur nombre.
-    final Map<String, String> noms = pays == null || !capacites.peutDecider
-        ? const <String, String>{}
-        : <String, String>{
-            for (final OperateurPaiement o
-                in ref
-                        .watch(moyensConfirmesDirectionProvider(pays))
-                        .value
-                        ?.operateurs ??
-                    const <OperateurPaiement>[])
-              o.code: o.nom,
-          };
-
-    // COMPLEMENT-ET-FORMATS : un element se redemande en un geste quand le
-    // complement est permis maintenant et que la salle le propose.
-    final bool complementPermis =
-        gestes.principal == GesteCandidature.demanderComplement ||
-        gestes.autres.contains(GesteCandidature.demanderComplement);
-    final List<String> elementsSalle =
-        detail.ligne.etape == EtapeCandidature.verifications
-        ? capacites.listes.complementSalleVerification
-        : capacites.listes.complementSalleExamen;
-    VoidCallback? redemander(String code) =>
-        complementPermis && elementsSalle.contains(code)
-        ? () => onDemanderElement(code)
-        : null;
-
-    final Widget situation = CarteSituation(detail: detail);
-    // PHOTO-CANDIDATURE-FIGEE : la photo envoyee avec la candidature.
-    final Widget photo = BlocPhotoDossier(
-      detail: detail,
-      onDemanderNouvellePhoto: redemander('photo'),
-    );
-    final Widget blocages = BlocBlocages(detail: detail);
-    // INVITATIONS-PERSONNELLES (07/11/2026), option (a) du garde-cap :
-    // « Copier le lien d'inscription » pour une ligne gardee pour suivi sans
-    // adresse, au super administrateur (le meme lecteur que l'import).
-    final CapacitesImportCandidatures? capsImport = ref
-        .watch(capacitesImportCandidaturesProvider)
-        .value;
-    final LigneCandidature ligne = detail.ligne;
-    final bool lienCopie =
-        ref.watch(portInvitationsPersonnellesProvider) != null &&
-        capsImport != null &&
-        (capsImport.peutImporter || capsImport.doubleVerificationRequise) &&
-        ligneSansAdresse(
-          recue: ligne.etape == EtapeCandidature.recue,
-          enCours: ligne.issue == IssueCandidature.enCours,
-          courrielAObtenir: ligne.courrielAObtenir,
-        );
-    final Widget action = BlocProchaineAction(
-      detail: detail,
-      gestes: gestes,
-      horsLigne: horsLigne,
-      onGeste: onGeste,
-      retour: retour,
-      autresActions: <EntreeAction>[
-        if (lienCopie)
-          EntreeAction(
-            libelle: t.candidatsFlux.invitationsPersonnelles.lienCopie.action,
-            onChoix: () => unawaited(
-              ouvrirFeuilleLienPersonnel(context, candidatureId: ligne.id),
-            ),
-          ),
-      ],
-    );
-    final Widget controles = BlocControles(detail: detail);
-    final Widget reponses = BlocReponses(detail: detail, nomsOperateurs: noms);
-    // CAND-07 : ce que la personne a repondu a « Vos autres talents », lu pour
-    // poser une question de vive voix a l'entretien ; jamais pour decider.
-    final Widget autresCompetences = BlocAutresCompetences(detail: detail);
-    final Widget pieceEntretien = BlocPieceEntretien(
-      detail: detail,
-      onOuvrirDossier: onOuvrirDossier,
-      // SALLE2-FICHE : la piece ouverte et decidee sur place.
-      piece: ref.watch(lirePieceCandidatureProvider) == null
-          ? null
-          : PieceSurPlace(
-              candidatureId: detail.ligne.id,
-              onOuvrirDossier: onOuvrirDossier,
-              onDemanderNouvellePiece: redemander('piece_identite'),
-              onDecision: onEntretien,
-            ),
-      entretien: SectionEntretien(
-        detail: detail,
-        capacites: capacites,
-        horsLigne: horsLigne,
-        onFait: onEntretien,
-        retour: retourEntretien,
-      ),
-    );
-    final Widget responsable = BlocResponsable(detail: detail);
-    // SALLE2-FICHE (directeur, 14/11/2026) : « rien de vide affiché ».
-    // Affectation et courriels ne sont pas encore servis : leurs blocs ne sont
-    // plus rendus ; les controles seulement quand le serveur les rend.
-    final bool avecControles = detail.controles != null;
-    final Widget contact = BlocContact(
-      onVoir: capacites.peutVoirContact && !horsLigne
-          ? () => ouvrirFeuilleContact(context, candidatureId: detail.ligne.id)
-          : null,
-    );
-    final Widget historique = BlocHistorique(candidatureId: detail.ligne.id);
-    // MESSAGES-CANDIDAT (CAND-Q06) : ecrire a la personne, et ses messages non
-    // lus. Rien n'est rendu sans fil possible (pas de compte, autre cote).
-    // RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026) : la conversation
-    // s'ouvre dans le dossier, jamais en le quittant.
-    final Widget messages = EntreeMessagesContexte(
-      key: ValueKey<String>('entree-messages-$rangMessages'),
-      type: TypeObjetLie.candidature,
-      objetId: detail.ligne.id,
-      onOuvrirEnPlace: onOuvrirConversation,
-    );
-
-    Widget colonne(List<Widget> blocs) => Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        for (int i = 0; i < blocs.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vXxl,
-          blocs[i],
-        ],
-      ],
-    );
-
-    return LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints contraintes) {
-        final bool deuxColonnes =
-            contraintes.maxWidth >= AppGabarit.seuilEtendu &&
-            MediaQuery.textScalerOf(context).scale(16) / 16 <
-                AppGabarit.seuilTexteColonne;
-        if (!deuxColonnes) {
-          return colonne(<Widget>[
-            situation,
-            photo,
-            if (avecControles) blocages,
-            action,
-            pieceEntretien,
-            messages,
-            reponses,
-            autresCompetences,
-            if (avecControles) controles,
-            responsable,
-            contact,
-            historique,
-          ]);
-        }
-        // SALLE2-FICHE (UX_REVIEW_salle2-entretien.md) : sur ordinateur, a
-        // gauche ce que le candidat a declare (lecture seule) ; a droite ce que la direction decide, dans l'ordre du
-        // parcours : la decision, puis la piece et l'entretien, juste dessous.
-        return Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Expanded(
-              flex: 1,
-              child: colonne(<Widget>[
-                situation,
-                photo,
-                reponses,
-                autresCompetences,
-                responsable,
-                contact,
-                historique,
-              ]),
-            ),
-            Ecart.hXxl,
-            Expanded(
-              flex: 1,
-              child: colonne(<Widget>[
-                if (avecControles) blocages,
-                action,
-                pieceEntretien,
-                if (avecControles) controles,
-                messages,
-              ]),
-            ),
-          ],
-        );
-      },
     );
   }
 }
