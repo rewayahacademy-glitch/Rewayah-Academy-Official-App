@@ -23,69 +23,80 @@ void main() {
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   group('GESTES-RAISON : captures', skip: sautSansCapture, () {
-    for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
-      ('fr', AppLocale.fr),
-      ('ar', AppLocale.ar),
+    for (final (int largeur, double hauteur) in <(int, double)>[
+      (360, 800),
+      (1440, 900),
     ]) {
-      final TextDirection? sens = langue == AppLocale.ar
-          ? TextDirection.rtl
-          : null;
-      for (final (String etat, DetailCandidature Function() detail)
-          in <(String, DetailCandidature Function())>[
-            (
-              'examen_compatible',
-              () => detailTest(
-                paiement: EtatVersement.compatible,
-                controles: const <ControleCandidature>[],
+      for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
+        ('fr', AppLocale.fr),
+        ('ar', AppLocale.ar),
+      ]) {
+        final TextDirection? sens = langue == AppLocale.ar
+            ? TextDirection.rtl
+            : null;
+        for (final (String etat, DetailCandidature Function() detail)
+            in <(String, DetailCandidature Function())>[
+              (
+                'examen_compatible',
+                () => detailTest(
+                  paiement: EtatVersement.compatible,
+                  controles: const <ControleCandidature>[],
+                ),
               ),
-            ),
-            ('a_completer', () => detailTest(etat: EtatCandidature.aCompleter)),
-            (
-              'versement_impossible',
-              () => detailTest(paiement: EtatVersement.incompatible),
-            ),
-            (
-              'entretien_a_planifier',
-              () => detailTest(
-                etape: EtapeCandidature.verifications,
-                etat: EtatCandidature.entretienAPlanifier,
+              (
+                'a_completer',
+                () => detailTest(etat: EtatCandidature.aCompleter),
               ),
-            ),
-          ]) {
-        testWidgets('360 $nom $etat', (WidgetTester tester) async {
+              (
+                'versement_impossible',
+                () => detailTest(paiement: EtatVersement.incompatible),
+              ),
+              (
+                'entretien_a_planifier',
+                () => detailTest(
+                  etape: EtapeCandidature.verifications,
+                  etat: EtatCandidature.entretienAPlanifier,
+                ),
+              ),
+            ]) {
+          testWidgets('$largeur $nom $etat', (WidgetTester tester) async {
+            await tester.runAsync(() => LocaleSettings.setLocale(langue));
+            await monterCandidature(
+              tester,
+              port: FauxCandidaturesDirection(
+                capacitesRendues: capacitesGestes,
+                details: <DetailCandidature>[detail()],
+              ),
+              largeur: largeur.toDouble(),
+              hauteur: hauteur,
+              direction: sens,
+              ouvrirRubriques: false,
+            );
+            await laisser(tester);
+            await tester.ensureVisible(find.byKey(BarreDecisionDossier.cle));
+            await laisser(tester);
+            await capturerVue(
+              tester,
+              'GESTES-RAISON/gestes_${etat}_${nom}_$largeur',
+            );
+          });
+        }
+
+        testWidgets('$largeur $nom fleches aux deux bords', (
+          WidgetTester tester,
+        ) async {
           await tester.runAsync(() => LocaleSettings.setLocale(langue));
-          await monterCandidature(
+          await monterFileTest(
             tester,
-            port: FauxCandidaturesDirection(
-              capacitesRendues: capacitesGestes,
-              details: <DetailCandidature>[detail()],
-            ),
-            largeur: 360,
-            hauteur: 800,
+            portFileTest(),
+            ouvert: 'c2',
+            largeur: largeur.toDouble(),
             direction: sens,
-            ouvrirRubriques: false,
           );
           await laisser(tester);
-          await tester.ensureVisible(find.byKey(BarreDecisionDossier.cle));
-          await laisser(tester);
-          await capturerVue(tester, 'GESTES-RAISON/gestes_${etat}_${nom}_360');
+          await capturerVue(tester, 'GESTES-RAISON/fleches_${nom}_$largeur');
         });
       }
-
-      testWidgets('360 $nom fleches aux deux bords', (
-        WidgetTester tester,
-      ) async {
-        await tester.runAsync(() => LocaleSettings.setLocale(langue));
-        await monterFileTest(
-          tester,
-          portFileTest(),
-          ouvert: 'c2',
-          largeur: 360,
-          direction: sens,
-        );
-        await laisser(tester);
-        await capturerVue(tester, 'GESTES-RAISON/fleches_${nom}_360');
-      });
     }
   });
 }
