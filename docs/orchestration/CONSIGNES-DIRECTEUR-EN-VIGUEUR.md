@@ -710,6 +710,9 @@ Règle :
   par lot, quatre agents au plus, de petits modèles pour les petits lots.
 - Les garde-fous de sécurité restent entiers : checklist d'installation, aucune lecture de lignes de personnes, aucun
   effacement sans l'avis du directeur, relecture du pilote avant toute fusion.
+- **Aucun travail ne reste local** : tout agent pousse chaque commit sur sa branche aussitôt fait (un conteneur peut
+  être remplacé à tout moment). Fait du 17/11, nuit : l'écran DISPENSE-ECRAN, fini mais resté local en attendant un
+  « pousse », a été perdu avec le conteneur de BE-DOSSIER ; il est refait. Faute du pilote, qui l'avait fait attendre.
 
 ### Consigne 24 (17/11/2026, nuit) : toujours parler au directeur en français
 
