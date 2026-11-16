@@ -325,6 +325,53 @@ void main() {
       expect(appels.single.corps['p_page'], 2);
     });
 
+    test('NOUVEAU-LISTE : le filtre « nouveau » part, vrai comme faux', () {
+      expect(
+        filtreEnJson(const FiltreCandidatures(nouveau: true)),
+        <String, Object>{'nouveau': true},
+      );
+      expect(
+        filtreEnJson(const FiltreCandidatures(nouveau: false)),
+        <String, Object>{'nouveau': false},
+      );
+      expect(filtreEnJson(const FiltreCandidatures()), isEmpty);
+    });
+
+    test(
+      'NOUVEAU-LISTE : la cle `nouveau` des lignes et `compteurNouveaux`',
+      () async {
+        final CandidaturesDirectionSupabase port = _port(
+          (_Appel a) => _ok(<String, Object?>{
+            ..._page(
+              lignes: <Map<String, Object?>>[
+                <String, Object?>{..._ligne('c1'), 'nouveau': true},
+                _ligne('c2'),
+              ],
+            ),
+            'compteurNouveaux': 7,
+          }),
+          <_Appel>[],
+        );
+        final PageCandidatures p = await port.lister(
+          filtre: const FiltreCandidatures(),
+          tri: TriCandidatures.activite,
+          page: 1,
+        );
+        expect(p.compteurNouveaux, 7);
+        expect(p.lignes[0].nouveau, isTrue);
+        // Un serveur d'avant ce lot ne rend rien : faux et zero, jamais un
+        // nombre invente.
+        expect(p.lignes[1].nouveau, isFalse);
+        final PageCandidatures ancienne =
+            await _port((_Appel a) => _ok(_page()), <_Appel>[]).lister(
+              filtre: const FiltreCandidatures(),
+              tri: TriCandidatures.activite,
+              page: 1,
+            );
+        expect(ancienne.compteurNouveaux, 0);
+      },
+    );
+
     group('la recherche part comme le serveur la compare', () {
       test('une reference copiee a l\'ecran (traits d\'union insecables) retrouve la donnee', () {
         // L'ecran affiche CAND-0000A1 avec des traits d'union insecables

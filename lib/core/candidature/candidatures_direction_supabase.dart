@@ -430,6 +430,7 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
   // BE-S1 : la file (piece en attente, responsable) et les reponses (ijaza,
   // langue, riwaya, public, jours et heures dans le fuseau du candidat).
   if (filtre.pieceEnAttente != null) 'pieceEnAttente': filtre.pieceEnAttente!,
+  if (filtre.nouveau != null) 'nouveau': filtre.nouveau!,
   if (filtre.responsable != null) 'responsable': filtre.responsable!,
   if (filtre.ijaza != null) 'ijaza': filtre.ijaza!,
   if (filtre.langueExplication != null)

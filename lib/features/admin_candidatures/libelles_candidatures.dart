@@ -202,6 +202,11 @@ String? rappelFiltres(FiltreCandidatures filtre) {
       filtre.pieceEnAttente!
           ? r.attentes.pieceAValider
           : t.recrutement.file.pieceSansAttente,
+    // NOUVEAU-LISTE : l'axe « nouveaux », en mots.
+    if (filtre.nouveau != null)
+      filtre.nouveau!
+          ? t.recrutement.file.nouveaux
+          : t.recrutement.file.pasNouveaux,
     if (filtre.paysResidence != null) libellePays(filtre.paysResidence)!,
     // Autres competences (CAND-07) : chaque axe pose, en mots.
     if (filtre.competenceDomaine != null)

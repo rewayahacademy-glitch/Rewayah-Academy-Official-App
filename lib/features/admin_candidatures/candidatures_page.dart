@@ -59,6 +59,7 @@ import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/vus/vus_compte.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
@@ -84,7 +85,6 @@ import '../admin_candidature/gestes_proposes.dart';
 import '../admin_candidature/libelles_candidature.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
 import 'adresse_candidatures.dart';
-import 'etat_entete_liste.dart';
 import 'feuille_filtres.dart';
 import 'files_candidatures.dart';
 import 'invitations_personnelles.dart';
@@ -986,8 +986,17 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
       alertes: reference?.compteursAlertes ?? const CompteursAlertes(),
       totalToutes: _totalToutes,
       maintenant: DateTime.now(),
+      compteurNouveaux: reference?.compteurNouveaux ?? 0,
     );
-    final bool lectureComprise = ref.watch(lectureCompriseProvider);
+    // VU-UNE-FOIS : le bandeau se voit une seule fois dans la vie du compte
+    // (serveur, aucune memoire d'appareil). Cache tant que le serveur n'a pas
+    // repondu : il ne clignote jamais pour un compte qui l'a deja ferme.
+    final bool lectureComprise = ref
+        .watch(vusProvider)
+        .maybeWhen(
+          data: (Set<String> vus) => vus.contains(ClesVu.deuxCotes),
+          orElse: () => true,
+        );
     final Widget? menuOutils = outils.isEmpty
         ? null
         : MenuActions(
@@ -1108,9 +1117,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 libelle: t.recrutement.file.jaiCompris,
                 fleche: false,
                 legende: true,
-                onPress: () => ref
-                    .read(lectureCompriseProvider.notifier)
-                    .choisir(valeur: true),
+                onPress: () => unawaited(
+                  ref.read(vusProvider.notifier).marquer(ClesVu.deuxCotes),
+                ),
               ),
             ),
             Ecart.vSm,

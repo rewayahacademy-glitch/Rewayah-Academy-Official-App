@@ -41,6 +41,7 @@ import '../../../core/widgets/avatar_compte.dart';
 import '../../../core/widgets/avatar_nom.dart';
 import '../../../core/widgets/avatar_tile.dart';
 import '../../../core/widgets/badge_non_lu.dart';
+import '../../../core/widgets/badge_nouveau.dart';
 import '../../../core/widgets/badge_periode_financee.dart';
 import '../../../core/widgets/bandeau_attention.dart';
 import '../../../core/widgets/bandeau_fermable.dart';
@@ -1429,6 +1430,27 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           etat: EtatFinancier.essai,
           essaisUtilises: 1,
           essaisMax: 2,
+        ),
+      ),
+    ],
+  ),
+  EntreeGalerie(
+    nom: 'BadgeNouveau',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'nouveau : arrivee depuis moins de 7 jours, dossier jamais ouvert',
+        (BuildContext _) => const BadgeNouveau(),
+      ),
+      EtatGalerie(
+        'sur une ligne : a cote de l\'etat de la candidature',
+        (BuildContext _) => const Wrap(
+          spacing: AppSpacing.sm,
+          runSpacing: AppSpacing.sm,
+          children: <Widget>[
+            BadgeNouveau(),
+            StatusPill(libelle: 'En examen', ton: TonEtat.accent),
+          ],
         ),
       ),
     ],
