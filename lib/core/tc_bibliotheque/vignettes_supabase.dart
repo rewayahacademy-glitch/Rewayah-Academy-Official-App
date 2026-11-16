@@ -17,7 +17,8 @@ import 'vignettes_ressource.dart';
 class VignettesSupabase implements PortVignettes {
   /// Cree l'adaptateur. [maintenant] se remplace dans les tests.
   VignettesSupabase(this._client, {int Function()? maintenant})
-    : _maintenant = maintenant ?? (() => DateTime.now().millisecondsSinceEpoch);
+    : _maintenant =
+          maintenant ?? (() => DateTime.now().millisecondsSinceEpoch);
 
   final SupabaseClient _client;
   final int Function() _maintenant;

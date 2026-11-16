@@ -60,18 +60,9 @@ void main() {
         find.text(t.tc.parcours.feedback.comprehension.intitule),
         findsOneWidget,
       );
-      expect(
-        find.text(t.tc.parcours.feedback.comprehension.difficile),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.tc.parcours.feedback.comprehension.bien),
-        findsOneWidget,
-      );
-      expect(
-        find.text(t.tc.parcours.feedback.comprehension.tresBien),
-        findsOneWidget,
-      );
+      expect(find.text(t.tc.parcours.feedback.comprehension.difficile), findsOneWidget);
+      expect(find.text(t.tc.parcours.feedback.comprehension.bien), findsOneWidget);
+      expect(find.text(t.tc.parcours.feedback.comprehension.tresBien), findsOneWidget);
       // Aucun champ de commentaire : « pas de commentaire obligatoire » se
       // tient mieux en n'offrant pas de champ du tout.
       expect(find.byType(TextField), findsNothing);
@@ -91,9 +82,7 @@ void main() {
       );
       await tester.pumpAndSettle();
 
-      await tester.tap(
-        find.text(t.tc.parcours.feedback.comprehension.tresBien),
-      );
+      await tester.tap(find.text(t.tc.parcours.feedback.comprehension.tresBien));
       await tester.pumpAndSettle();
 
       expect(find.text(t.tc.parcours.feedback.merci), findsOneWidget);
@@ -102,7 +91,9 @@ void main() {
         findsNothing,
       );
 
-      final TendanceFeedback tendance = await depot.tendance(groupeId: 'g1');
+      final TendanceFeedback tendance = await depot.tendance(
+        groupeId: 'g1',
+      );
       expect(tendance.nombreEchantillons, 1);
     });
   });

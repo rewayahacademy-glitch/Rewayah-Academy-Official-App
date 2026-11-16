@@ -23,7 +23,8 @@ import '../../capture/outil_capture.dart' show cadreCapture;
 import '../../router/support_routeur.dart';
 import '../../support/demo/adulte_demo.dart';
 import '../../support/demo/classe_demo.dart';
-import '../../support/demo/demo_classe_page.dart' show surchargesEleveDemo;
+import '../../support/demo/demo_classe_page.dart'
+    show surchargesEleveDemo;
 import '../../support/harnais.dart';
 
 /// Ce que lit une source : une valeur, un echec, ou rien (chargement sans

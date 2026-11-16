@@ -1559,8 +1559,10 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           EntreeAction(
             libelle: t.admin.comptes.actionOuvrirDossier,
             icone: AppIcons.dossiers,
-            onChoix: () => GoRouter.of(context)
-                .push<void>(Routes.adminPersonnesDossiers, extra: c.profilId),
+            onChoix: () => GoRouter.of(context).push<void>(
+              Routes.adminPersonnesDossiers,
+              extra: c.profilId,
+            ),
           ),
         if (_villeAVerifier(c))
           EntreeAction(

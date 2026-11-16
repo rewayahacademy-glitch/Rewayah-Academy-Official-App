@@ -83,7 +83,8 @@ class FauxMoteurClasse implements VideoSessionProvider {
   /// [journal] est partage avec [FauxServiceVideoClasse] quand un test mesure
   /// l'**ordre** des gestes : l'annonce de sortie doit preceder la deconnexion,
   /// et c'est le seul moyen de le constater.
-  FauxMoteurClasse({List<String>? journal}) : journal = journal ?? <String>[];
+  FauxMoteurClasse({List<String>? journal})
+    : journal = journal ?? <String>[];
 
   /// Les gestes, dans l'ordre ou ils ont eu lieu.
   final List<String> journal;
@@ -409,9 +410,8 @@ class FauxRosterEnseignant implements PortRosterEnseignant {
   }
 
   @override
-  Future<List<TeacherStudentProjection>> rosterDeGroupe(
-    String groupeId,
-  ) async => throw const EchecRoster(MotifEchecRoster.projectionAbsente);
+  Future<List<TeacherStudentProjection>> rosterDeGroupe(String groupeId) async =>
+      throw const EchecRoster(MotifEchecRoster.projectionAbsente);
 
   @override
   Future<List<TeacherStudentProjection>> rosterDeSeance(

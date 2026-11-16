@@ -205,14 +205,15 @@ class ServicePriereSupabase implements ServicePriere {
   }
 
   @override
-  Future<void> partagerPosition(PositionAppareil position) => _client.rpc<void>(
-    'priere_ma_position',
-    params: <String, dynamic>{
-      'p_latitude': position.latitude,
-      'p_longitude': position.longitude,
-      'p_fuseau': position.fuseau,
-    },
-  );
+  Future<void> partagerPosition(PositionAppareil position) =>
+      _client.rpc<void>(
+        'priere_ma_position',
+        params: <String, dynamic>{
+          'p_latitude': position.latitude,
+          'p_longitude': position.longitude,
+          'p_fuseau': position.fuseau,
+        },
+      );
 
   @override
   Future<List<LectureCreneauPriere>> lectureClasse(String groupeId) async {

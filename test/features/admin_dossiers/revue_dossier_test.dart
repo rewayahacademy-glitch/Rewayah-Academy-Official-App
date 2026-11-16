@@ -192,20 +192,19 @@ void main() {
     expect(find.textContaining("journal d'audit"), findsNothing);
   });
 
-  testWidgets(
-    'toucher la ligne de la piece l\'ouvre, comme « Voir la piece »',
-    (WidgetTester tester) async {
-      await _monter(tester, const Size(1440, 900));
-      await _ouvrir(tester, 'Omar');
-      expect(find.byType(VisionneusePiece), findsNothing);
-      // La ligne de la piece, pas le bouton : meme visionneuse.
-      final Finder ligne = find.text("Carte d'identité");
-      await tester.ensureVisible(ligne);
-      await tester.tap(ligne);
-      await tester.pump(const Duration(milliseconds: 600));
-      expect(find.byType(VisionneusePiece), findsOneWidget);
-    },
-  );
+  testWidgets('toucher la ligne de la piece l\'ouvre, comme « Voir la piece »', (
+    WidgetTester tester,
+  ) async {
+    await _monter(tester, const Size(1440, 900));
+    await _ouvrir(tester, 'Omar');
+    expect(find.byType(VisionneusePiece), findsNothing);
+    // La ligne de la piece, pas le bouton : meme visionneuse.
+    final Finder ligne = find.text("Carte d'identité");
+    await tester.ensureVisible(ligne);
+    await tester.tap(ligne);
+    await tester.pump(const Duration(milliseconds: 600));
+    expect(find.byType(VisionneusePiece), findsOneWidget);
+  });
 
   testWidgets('1440 : cases jamais precochees, lien vers la premiere', (
     WidgetTester tester,

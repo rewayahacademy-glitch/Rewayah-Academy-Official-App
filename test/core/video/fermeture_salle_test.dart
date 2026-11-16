@@ -17,24 +17,25 @@ import 'package:rewayah_academy/core/video/service_video.dart';
 import 'package:rewayah_academy/core/video/video_session_provider.dart';
 import 'package:rewayah_academy/features/salle/vue_salle.dart';
 
-AccesSalle _acces(String role, {bool publier = true}) =>
-    AccesSalle.depuisJson(<String, dynamic>{
-      'ws_url': 'wss://exemple',
-      'token': 'jeton',
-      'room_name': 'salle',
-      'provider': 'cloud',
-      'role': role,
-      'expire_le': '2026-11-11T18:05:00Z',
-      'capabilities': <String, dynamic>{
-        'can_publish': true,
-        'can_publish_video': false,
-        'can_publish_data': role == 'teacher',
-        'can_subscribe': true,
-        'can_moderate': role == 'teacher',
-        'hidden': false,
-      },
-      'publication_differee': !publier,
-    }).pourLaDemande(seanceId: 'seance-1');
+AccesSalle _acces(String role, {bool publier = true}) => AccesSalle.depuisJson(
+  <String, dynamic>{
+    'ws_url': 'wss://exemple',
+    'token': 'jeton',
+    'room_name': 'salle',
+    'provider': 'cloud',
+    'role': role,
+    'expire_le': '2026-11-11T18:05:00Z',
+    'capabilities': <String, dynamic>{
+      'can_publish': true,
+      'can_publish_video': false,
+      'can_publish_data': role == 'teacher',
+      'can_subscribe': true,
+      'can_moderate': role == 'teacher',
+      'hidden': false,
+    },
+    'publication_differee': !publier,
+  },
+).pourLaDemande(seanceId: 'seance-1');
 
 void main() {
   group('le micro ferme parce que l\'enseignant n\'est plus la', () {
@@ -116,9 +117,7 @@ void main() {
     test('la salle supprimee reste un echec pour les ecrans, sans reprise '
         'automatique, et le moteur ne la dit fermee qu\'apres coup', () {
       expect(
-        LiveKitSessionProvider.issueDeconnexion(
-          lk.DisconnectReason.roomDeleted,
-        ),
+        LiveKitSessionProvider.issueDeconnexion(lk.DisconnectReason.roomDeleted),
         (etat: EtatSalle.echec, ailleurs: false),
       );
       // Rentrer seul dans une salle que le serveur vient de fermer, ce serait

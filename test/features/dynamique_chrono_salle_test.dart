@@ -120,7 +120,8 @@ void main() {
           expect(find.byKey(ChronoSalle.clePause), findsOneWidget);
           expect(find.byKey(ChronoSalle.cleCommandePause), findsOneWidget);
         }
-        final bool ordinateur = role == 'teacher' && taille.width >= 840;
+        final bool ordinateur =
+            role == 'teacher' && taille.width >= 840;
         if (ordinateur) {
           // (c) Depliee dans la tete de la colonne : entiere, rien dessous.
           final Rect tete = tester.getRect(find.byKey(SalleOrdinateur.cleTete));
