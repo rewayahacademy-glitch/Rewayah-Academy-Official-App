@@ -120,20 +120,22 @@ des règles dans l'écran).
 | 7 | APRES-CONFIRMEE (serveur puis écran) | demander une vérification, restreindre, noter une indisponibilité | T3 | moyen ; à décider |
 | 8 | REFAIRE-ENTRETIEN | retour de `decision_en_attente` vers `entretien_a_planifier` | T9 | petit ; à décider |
 
-### 4.3 Questions pour vous
+### 4.3 Arbitrages du pilote (16/11/2026, 20 h 10 UTC)
 
-- **Q1 (T1).** « Accueillir » doit-il refuser une pièce non validée (la pièce devient une étape à part), ou la
-  valider en passant comme aujourd'hui, mais avec un écran qui le dit clairement ?
-  Recommandation : la refuser, pour que la pièce soit une étape à part.
-- **Q2 (T8).** Le candidat doit-il pouvoir demander lui-même un changement de créneau, ou seulement la direction ?
-  Recommandation : la direction d'abord ; le candidat dans un second temps.
-- **Q3 (T3).** Après l'accueil, quels gestes voulez-vous ?
-  Recommandation : demander une vérification de la pièce ou du versement, et restreindre.
-- **Q4 (T12).** Faut-il une admission « sans courriel », ou une admission en vérification sans entretien
-  (en plus de la dispense) ?
-  Recommandation : non. La dispense suffit, et le courriel dit déjà la vérité depuis ce soir.
-- **Q5.** Ces lots passent-ils avant la vague 2, comme le prévoit la passation ?
-  Recommandation : oui pour les lots 1 à 3, les autres ensuite.
+Le directeur, 16/11, au soir : « tu es là pour gérer, et arbitrer. ne me demande plus rien ». Les questions sont
+donc tranchées par le pilote. Le directeur peut revenir sur chacune ; sans nouvel ordre de sa part, elles valent.
+
+- **A1 (T1).** « Accueillir » refuse une pièce non validée et un complément en cours. « Valider la pièce » devient
+  un geste à part, en Salle de vérification (lot 1, ACCUEIL-SEPARE).
+- **A2 (T8).** « Déplacer le créneau » d'abord pour la direction, la personne étant prévenue. La demande de
+  changement par le candidat vient plus tard (lot 3).
+- **A3 (T3).** Après l'accueil : demander une vérification de la pièce ou du versement, restreindre et lever (lot 7).
+  L'indisponibilité vient avec l'étape E.
+- **A4 (T12).** Pas d'admission sans courriel ni de vérification sans entretien : la dispense suffit, et le courriel
+  dit la vérité depuis le 16/11.
+- **A5.** Ordre retenu : le lot 1 tout de suite (petit, il protège les 50 dossiers en vérification). En parallèle, la
+  vague 2 (délégation) commence par son cahier BE-2a. Les lots 2 à 8 se glissent ensuite, un par agent libre, sans
+  bloquer la vague 2.
 
 ## 5. Non vérifié
 
