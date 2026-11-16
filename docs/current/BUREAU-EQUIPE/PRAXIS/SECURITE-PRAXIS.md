@@ -155,3 +155,46 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
     - **les fils de candidature restent fermés à Praxis en PX-1** (`com_paires` y lit `auth.uid()`). C'est un refus
       fermé, et la prudence le veut ainsi ;
     - les annonces de Praxis n'envoient jamais de courriel (R12) et sont refusées si un destinataire est mineur (§3.4).
+- **AR-7 (16/11, 23 h 30), après la relecture indépendante de #567 (R15).** Quatre violations ont été prouvées en
+  local alors que les scénarios restaient verts. **#567 n'est pas fusionnée** tant que chaque point ci-dessous n'a
+  pas son correctif et son scénario, ce scénario étant rouge avant le correctif et vert après.
+  - **B1, les réglages.** `praxis.actif`, `praxis.autonome` et `praxis.envois_par_heure` quittent `app_config`, où
+    tout administrateur sans `aal2` peut écrire directement. Ils vont dans une table privée (RLS active, aucun droit
+    pour les rôles de l'API, contraintes de type et de bornes). Seule `direction_praxis_regler` (en `aal2`) les écrit.
+    Scénario : un administrateur `aal1` qui écrit directement est refusé ; une valeur hors bornes est refusée.
+  - **B2, les fils autorisés.** La lecture et l'écriture de Praxis suivent une **liste positive** de types de fil,
+    écrite dans la migration (fils de foyer selon AR-3, et les autres types sans données financières). Tout type
+    absent de la liste est fermé, y compris un type créé plus tard. `profilPaiement` et `candidature` sont fermés en
+    lecture et en écriture.
+    - « L'équipe » (`repris_par_equipe`, remise à zéro du plafond par fil) est tout compte que la messagerie tient pour
+      partie de l'académie dans ce fil (`com_est_partie` ou équivalent), jamais le seul rôle `admin`. Le compte Praxis
+      n'en fait pas partie.
+    - Scénarios : fil de paie fermé ; un comptable fait taire Praxis ; un message d'un comptable ne remet pas le
+      plafond à zéro.
+  - **I1, les candidatures.** Elles sont fermées aussi dans `boite` et `fil`. Le scénario f9 est inversé.
+  - **I2, les côtés.** Praxis agit dans le périmètre de la personne qui a émis la clé (`SECRETAIRE-IA.md` §3 : « dans
+    le périmètre de la personne qui l'a connecté ; celui du directeur voit les deux »). Ses côtés sont ceux
+    de cette personne (la super-administration a les deux), en lecture comme pour les annonces. Scénario : une clé
+    émise par une direction d'un seul côté ne touche pas l'autre.
+  - **I3, la retouche de la messagerie.** Avant de couper, la migration compare l'empreinte md5 du bloc coupé à
+    l'empreinte attendue (celle du corps du dépôt). Si elles diffèrent, elle échoue. L'empreinte F86 n'est recalculée
+    qu'après ce contrôle.
+  - **I5, la personne qui a émis la clé.** `praxis_porte` revérifie à chaque appel que cette personne est toujours une
+    direction active, avec un compte valide. Sinon la clé est refusée. Scénario.
+  - **I6, les textes tiers.** Tout texte qui n'est pas de Praxis, y compris les prénoms et les messages de l'équipe,
+    est rendu dans `contenu_tiers`.
+  - **I7, la charge.** Le parcours des fils est borné avant le filtre : au plus 200 fils, les plus récents. C'est
+    documenté.
+  - **Mineurs** :
+    - M1 : seules les propriétés propres sont acceptées (`Object.hasOwn`) ;
+    - M2 : lecture du corps bornée en octets, même sans `Content-Length` ;
+    - M4 : les refus de paramètre sont journalisés.
+  - **Scénarios renforcés (M6)** : R4, avec les aides privées ; R1, avec un contrôle qui a un sens ; R13, avec la
+    liste « équipe » et la recherche générale ; l'inverse de A-9 (une clé `prx_` refusée par `agent-session`).
+  - **Dettes acceptées, écrites dans la PR** :
+    - M3 : `initialize` et `tools/list` ne disent rien de secret ;
+    - M5 : le signal « nouvel endroit » est reporté au lot de l'écran ;
+    - M7 : `suppr_retirer`.
+  - **I4, R12 côté serveur.** Les messages de Praxis doivent être reconnus comme ceux d'une IA. Cela relève de
+    l'affichage (étape 10, Pilote Messagerie). **La mise en service est interdite tant que ce n'est pas fait**, mais
+    la fusion ne l'attend pas, puisque Praxis est installé éteint.
