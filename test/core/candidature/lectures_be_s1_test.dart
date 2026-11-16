@@ -105,6 +105,125 @@ Map<String, Object?> _dossier({String? responsableNom}) => <String, Object?>{
 };
 
 void main() {
+  group('filtre : les cles BE-S1', () {
+    const Map<String, FiltreCandidatures> cas = <String, FiltreCandidatures>{
+      'pieceEnAttente': FiltreCandidatures(pieceEnAttente: true),
+      'responsable': FiltreCandidatures(responsable: 'moi'),
+      'ijaza': FiltreCandidatures(ijaza: 'pret_test'),
+      'langueExplication': FiltreCandidatures(langueExplication: 'fr'),
+      'riwaya': FiltreCandidatures(riwaya: 'hafs'),
+      'public': FiltreCandidatures(publicVise: 'adultes'),
+      'jours': FiltreCandidatures(jours: <int>[1, 2]),
+      'heureMin': FiltreCandidatures(heureMin: 18),
+      'heureMax': FiltreCandidatures(heureMax: 24),
+      'joursMin': FiltreCandidatures(joursMin: 4),
+    };
+    const Map<String, Object> attendu = <String, Object>{
+      'pieceEnAttente': true,
+      'responsable': 'moi',
+      'ijaza': 'pret_test',
+      'langueExplication': 'fr',
+      'riwaya': 'hafs',
+      'public': 'adultes',
+      'jours': <int>[1, 2],
+      'heureMin': 18,
+      'heureMax': 24,
+      'joursMin': 4,
+    };
+    for (final MapEntry<String, FiltreCandidatures> e in cas.entries) {
+      test('${e.key} : envoyee seule, avec la valeur posee', () {
+        expect(filtreEnJson(e.value), <String, Object>{e.key: attendu[e.key]!});
+        expect(e.value.estVide, isFalse);
+        expect(e.value.nombreAxes, 1);
+      });
+    }
+
+    test('absentes par defaut : aucune cle envoyee, filtre vide', () {
+      expect(filtreEnJson(const FiltreCandidatures()), isEmpty);
+      expect(const FiltreCandidatures().estVide, isTrue);
+    });
+
+    test('la phrase du lot : ijaza, le soir, quatre jours', () {
+      expect(
+        filtreEnJson(
+          const FiltreCandidatures(
+            ijaza: 'oui',
+            heureMin: 18,
+            heureMax: 24,
+            joursMin: 4,
+          ),
+        ),
+        <String, Object>{
+          'ijaza': 'oui',
+          'heureMin': 18,
+          'heureMax': 24,
+          'joursMin': 4,
+        },
+      );
+    });
+
+    test('avec : change un axe, garde les autres, rend null possible', () {
+      const FiltreCandidatures base = FiltreCandidatures(
+        responsable: 'aucun',
+        jours: <int>[3],
+        joursMin: 2,
+      );
+      final FiltreCandidatures change = base.avec(
+        responsable: () => 'moi',
+        joursMin: () => null,
+      );
+      expect(change.responsable, 'moi');
+      expect(change.jours, <int>[3]);
+      expect(change.joursMin, isNull);
+      expect(base.avec(pieceEnAttente: () => false).pieceEnAttente, isFalse);
+    });
+
+    test(
+      'egalite et hachage : deux filtres egaux, listes de jours comprises',
+      () {
+        const FiltreCandidatures a = FiltreCandidatures(jours: <int>[1, 2]);
+        const FiltreCandidatures b = FiltreCandidatures(jours: <int>[1, 2]);
+        const FiltreCandidatures c = FiltreCandidatures(jours: <int>[2, 1]);
+        expect(a, b);
+        expect(a.hashCode, b.hashCode);
+        expect(a == c, isFalse);
+        expect(
+          const FiltreCandidatures(ijaza: 'oui') ==
+              const FiltreCandidatures(ijaza: 'non'),
+          isFalse,
+        );
+        expect(a.efface.estVide, isTrue);
+      },
+    );
+
+    test('envoyee a lister : le filtre part tel quel dans p_filtre', () async {
+      final List<_Appel> appels = <_Appel>[];
+      final CandidaturesDirectionSupabase port = _port(
+        (_Appel _) => _ok(<String, Object?>{
+          'lignes': <Object?>[],
+          'total': 0,
+          'page': 1,
+          'taillePage': 50,
+          'compteursEtapes': <String, int>{},
+          'compteursAlertes': <String, Object?>{},
+        }),
+        appels,
+      );
+      await port.lister(
+        filtre: const FiltreCandidatures(
+          pieceEnAttente: true,
+          responsable: 'moi',
+        ),
+        tri: TriCandidatures.activite,
+        page: 1,
+      );
+      expect(appels.single.corps['p_filtre'], <String, dynamic>{
+        'pieceEnAttente': true,
+        'responsable': 'moi',
+      });
+    });
+  });
+
   group('dossier', () {
     test('lit le nom du responsable, nul sans responsable', () async {
       final CandidaturesDirectionSupabase avec = _port(

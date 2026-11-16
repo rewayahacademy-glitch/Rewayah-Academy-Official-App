@@ -36,7 +36,9 @@
 // Les filtres envoyes sont exactement les cles que le serveur connait
 // (`type`, `etape`, `etat`, `issue`, `enPause`, `paiement`, `paysResidence`,
 // `recherche`, et depuis CAND-AUTRES `competenceDomaine`, `competenceNiveauMin`,
-// `competenceDisponibilite`, `competenceAccord`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
+// `competenceDisponibilite`, `competenceAccord`, et depuis BE-S1 `pieceEnAttente`,
+// `responsable`, `ijaza`, `langueExplication`, `riwaya`, `public`, `jours`,
+// `heureMin`, `heureMax`, `joursMin`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
 // n'est pas envoyee.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -425,6 +427,19 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
     'competenceDisponibilite': filtre.competenceDisponibilite!.valeurSql,
   if (filtre.competenceAccord != null)
     'competenceAccord': filtre.competenceAccord!,
+  // BE-S1 : la file (piece en attente, responsable) et les reponses (ijaza,
+  // langue, riwaya, public, jours et heures dans le fuseau du candidat).
+  if (filtre.pieceEnAttente != null) 'pieceEnAttente': filtre.pieceEnAttente!,
+  if (filtre.responsable != null) 'responsable': filtre.responsable!,
+  if (filtre.ijaza != null) 'ijaza': filtre.ijaza!,
+  if (filtre.langueExplication != null)
+    'langueExplication': filtre.langueExplication!,
+  if (filtre.riwaya != null) 'riwaya': filtre.riwaya!,
+  if (filtre.publicVise != null) 'public': filtre.publicVise!,
+  if (filtre.jours != null) 'jours': filtre.jours!,
+  if (filtre.heureMin != null) 'heureMin': filtre.heureMin!,
+  if (filtre.heureMax != null) 'heureMax': filtre.heureMax!,
+  if (filtre.joursMin != null) 'joursMin': filtre.joursMin!,
 };
 
 /// Les deux refus d'une lecture de dossier, rendus dans la reponse.
