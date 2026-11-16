@@ -106,6 +106,7 @@ class BarreConversation extends StatelessWidget {
                   libelle: x.retourListe,
                   infobulle: x.retourListe,
                   onPress: retour,
+                  forme: FormeBoutonIcone.nue,
                 )
               else
                 Ecart.hSm,
@@ -134,9 +135,9 @@ class BarreConversation extends StatelessWidget {
                             ? null
                             : fil.interlocuteurs.first,
                         repli: prenom,
-                        diametre: AppAvatar.petit,
+                        diametre: AppAvatar.moyen,
                       ),
-                      diametre: AppAvatar.petit,
+                      diametre: AppAvatar.moyen,
                       styleNom: palette.inkStrong.applyTo(
                         textes.titleSmall ?? const TextStyle(),
                       ),
@@ -151,6 +152,7 @@ class BarreConversation extends StatelessWidget {
                   libelle: x.ouvrirPanneau,
                   infobulle: x.ouvrirPanneau,
                   onPress: ouvrirContexte,
+                  forme: FormeBoutonIcone.nue,
                 )
               else
                 Ecart.hSm,
@@ -204,6 +206,7 @@ class BarreRetourConversation extends StatelessWidget {
                 libelle: x.retourListe,
                 infobulle: x.retourListe,
                 onPress: retour,
+                forme: FormeBoutonIcone.nue,
               ),
       ),
     );
