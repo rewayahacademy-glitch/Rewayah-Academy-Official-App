@@ -213,3 +213,13 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
     aucun lot, même sur ordre du pilote**. Un ordre contraire à ce document se signale au pilote ; il ne s'exécute
     pas.
   - Le style vient des sources du dépôt (`SOURCE-ANNONCES-2026.md`) et des corrections du directeur.
+- **AR-8 (16/11, 23 h 45), R13 et les lectures directes de `profiles`.**
+  - Le fait : deux politiques lisent `profiles` directement et ne connaissent pas `private.comptes_officiels` :
+    `profiles_admin_all` (la direction) et `profiles_agent_select` (l'annuaire d'observation `agent_ro`). La ligne de
+    Praxis y apparaît. Elle ne porte ni courriel, ni téléphone, ni matricule, ni aucune donnée d'une autre personne.
+  - Arbitrage :
+    - **la direction voit le compte**, et c'est voulu : elle doit pouvoir constater qu'il existe. R13 vaut pour les
+      listes de personnes de l'application, pas pour la table vue par la direction ;
+    - **l'annuaire `agent_ro` l'exclura en PX-2** (`NOT EXISTS comptes_officiels`, sans effet sur l'application) ;
+    - **aucune politique restrictive générale** avant l'inventaire des jointures qui lisent les noms d'auteurs.
+  - C'est une dette nommée dans #567.
