@@ -24,7 +24,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/lien_fleche.dart';
 import 'choix_avec_recherche.dart';
-import 'question_etape.dart' show paysCourants;
+import 'question_etape.dart' show motsClesDuPays, paysCourants;
 
 /// Vrai quand le candidat peut changer son pays de versement : candidature en
 /// cours, hors refus et retrait, avec des reponses deja envoyees.
@@ -185,6 +185,7 @@ class _ContenuPays extends StatelessWidget {
             ElementChoix(
               code: x.code,
               libelle: x.nom,
+              motsCles: motsClesDuPays(x),
               cle: ValueKey<String>('pays-versement-${x.code}'),
             ),
         ]..sort(

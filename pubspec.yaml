@@ -73,6 +73,8 @@ dependencies:
   # A rouvrir le jour ou Sentry relache ce pin (c'est leur pubspec, pas le
   # notre) : `flutter pub add "sentry_flutter:^9"` et verifier `pub get`.
   sentry_flutter: ^8.14.2
+  image_picker: ^1.2.4
+  flutter_image_compress: ^2.5.1
 
 dev_dependencies:
   flutter_test:
