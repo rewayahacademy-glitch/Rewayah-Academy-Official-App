@@ -322,12 +322,10 @@ void main() {
         // BE-DOSSIER (16/11/2026) : trois etages, rubriques repliees.
         EtageUnDossier.cle,
         ResumeDossier.cle,
-        RubriqueDossier.cleDe(RubriqueDossierCode.photo),
         RubriqueDossier.cleDe(RubriqueDossierCode.piece),
         RubriqueDossier.cleDe(RubriqueDossierCode.versement),
         RubriqueDossier.cleDe(RubriqueDossierCode.langues),
         RubriqueDossier.cleDe(RubriqueDossierCode.entretien),
-        RubriqueDossier.cleDe(RubriqueDossierCode.messages),
         RubriqueDossier.cleDe(RubriqueDossierCode.responsable),
         RubriqueDossier.cleDe(RubriqueDossierCode.contact),
         RubriqueDossier.cleDe(RubriqueDossierCode.historique),
