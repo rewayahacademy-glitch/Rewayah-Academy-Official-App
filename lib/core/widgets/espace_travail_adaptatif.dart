@@ -90,6 +90,7 @@ class EspaceTravailAdaptatif extends StatefulWidget {
     this.contexteOuvertInitial = true,
     this.onContexteBascule,
     this.barreDansEntete = false,
+    this.largeurListeFixe,
   });
 
   /// Le contenu : toujours present.
@@ -110,6 +111,11 @@ class EspaceTravailAdaptatif extends StatefulWidget {
   /// Le retour explicite du contenu vers la liste, en une colonne. Sans lui,
   /// aucun bouton de retour n'est rendu (le retour de la page suffit).
   final VoidCallback? onRetourListe;
+
+  /// BULLES-MESSAGERIE (directeur, 16/11/2026) : une largeur fixe pour la
+  /// colonne de liste (360 pour les conversations), la conversation prenant
+  /// le reste ; `null` : la largeur proportionnelle de [largeurListePour].
+  final double? largeurListeFixe;
 
   /// Le contexte est-il ouvert a l'arrivee (bureau) ?
   final bool contexteOuvertInitial;
@@ -262,9 +268,9 @@ class _EspaceTravailAdaptatifState extends State<EspaceTravailAdaptatif> {
     // ouvert ; sinon il passe en feuille.
     final bool uneColonne = colonnes == 1;
     final bool avecListe = !uneColonne && liste != null;
-    final double largeurListe = EspaceTravailAdaptatif.largeurListePour(
-      largeur,
-    );
+    final double largeurListe =
+        widget.largeurListeFixe ??
+        EspaceTravailAdaptatif.largeurListePour(largeur);
     const double ecart = EspaceTravailAdaptatif.ecartColonnes;
     // Le contexte n'a une colonne que s'il en reste une ET que le contenu
     // garde sa largeur minimale a cote (R-10) ; sinon il passe en feuille.

@@ -21819,6 +21819,7 @@ class Traductions$com$messages$fr {
 	String get choisir => 'Choisissez une conversation dans la liste pour la lire et y répondre.';
 
 	late final Traductions$com$messages$recherche$fr recherche = Traductions$com$messages$recherche$fr.internal(_root);
+	late final Traductions$com$messages$filtres$fr filtres = Traductions$com$messages$filtres$fr.internal(_root);
 	late final Traductions$com$messages$ligne$fr ligne = Traductions$com$messages$ligne$fr.internal(_root);
 	late final Traductions$com$messages$noms$fr noms = Traductions$com$messages$noms$fr.internal(_root);
 	late final Traductions$com$messages$entete$fr entete = Traductions$com$messages$entete$fr.internal(_root);
@@ -38540,6 +38541,9 @@ class Traductions$com$socle$lexique$fr {
 	/// fr: 'Aujourd'hui'
 	String get aujourdhui => 'Aujourd\'hui';
 
+	/// fr: 'Hier'
+	String get hier => 'Hier';
+
 	/// fr: 'Notifications'
 	String get notifications => 'Notifications';
 
@@ -38896,6 +38900,24 @@ class Traductions$com$messages$recherche$fr {
 
 	/// fr: '{nombre} conversations trouvées'
 	String resultats({required Object nombre}) => '${nombre} conversations trouvées';
+}
+
+// Path: com.messages.filtres
+class Traductions$com$messages$filtres$fr {
+	Traductions$com$messages$filtres$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tous'
+	String get tous => 'Tous';
+
+	/// fr: 'Non lus'
+	String get nonLus => 'Non lus';
+
+	/// fr: 'Aucune conversation non lue.'
+	String get aucunNonLu => 'Aucune conversation non lue.';
 }
 
 // Path: com.messages.ligne
@@ -63184,6 +63206,7 @@ extension on Traductions {
 			'com.socle.lexique.communaute' => 'Communauté enseignants',
 			'com.socle.lexique.studio' => 'Le Studio',
 			'com.socle.lexique.aujourdhui' => 'Aujourd\'hui',
+			'com.socle.lexique.hier' => 'Hier',
 			'com.socle.lexique.notifications' => 'Notifications',
 			'com.socle.lexique.annonce' => 'Annonce',
 			'com.socle.lexique.publication' => 'Publication',
@@ -63276,9 +63299,9 @@ extension on Traductions {
 			'com.messages.entree.voirTout' => 'Voir toutes les conversations',
 			'com.messages.entree.toutes' => 'Toutes vos conversations',
 			'com.messages.entree.aLireUne' => '1 conversation à lire',
-			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
 			_ => null,
 		} ?? switch (path) {
+			'com.messages.entree.aLire' => ({required Object nombre}) => '${nombre} conversations à lire',
 			'com.messages.entree.ouverture' => 'Ouverture de la conversation',
 			'com.messages.entree.inaccessibleTitre' => 'Conversation inaccessible',
 			'com.messages.entree.inaccessible' => 'Cette conversation n\'est plus ouverte pour vous. Choisissez une autre personne dans la liste.',
@@ -63293,6 +63316,9 @@ extension on Traductions {
 			'com.messages.recherche.aucun' => ({required Object texte}) => 'Aucune conversation ne correspond à « ${texte} ». Essayez un autre nom ou une autre classe.',
 			'com.messages.recherche.resultatUn' => '1 conversation trouvée',
 			'com.messages.recherche.resultats' => ({required Object nombre}) => '${nombre} conversations trouvées',
+			'com.messages.filtres.tous' => 'Tous',
+			'com.messages.filtres.nonLus' => 'Non lus',
+			'com.messages.filtres.aucunNonLu' => 'Aucune conversation non lue.',
 			'com.messages.ligne.legende' => ({required Object objet, required Object apercu}) => '${objet} · ${apercu}',
 			'com.messages.ligne.sansApercu' => 'Aucun message pour le moment',
 			'com.messages.ligne.dateCourte' => ({required Object numero, required Object mois}) => '${numero} ${mois}',
@@ -63787,12 +63813,12 @@ extension on Traductions {
 			'com.studio.demo.f.objetDossierKarim' => 'Dossier de la famille Karim',
 			'com.studio.demo.f.activiteMention' => 'Samira vous a mentionnée',
 			'com.studio.demo.f.activiteReponse' => 'Amina a répondu à votre message',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.activiteRemplacant' => 'Choisir le remplaçant de mardi pour la classe An-Nour',
 			'com.studio.demo.f.objetRemplacement' => 'Remplacement de mardi',
 			'com.studio.demo.f.activiteOuverture' => 'Valider l\'ouverture d\'une classe le samedi matin',
 			'com.studio.demo.f.objetClasseSamedi' => 'Classe du samedi matin',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.demo.f.activiteCloture' => 'Clôture du mois de septembre',
 			'com.studio.demo.f.objetCloture' => 'Clôture de septembre',
 			'com.studio.demo.f.activiteBilans' => 'Bilans de mi-parcours à relire',
@@ -64301,12 +64327,12 @@ extension on Traductions {
 			'comptable.paiements.confirmation.erreursTitre' => 'Erreurs rendues par le contrôle',
 			'comptable.paiements.confirmation.confirmerUn' => ({required Object montant}) => 'Confirmer le paiement de ${montant}',
 			'comptable.paiements.confirmation.confirmerLot' => ({required num n, required Object montants}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Confirmer le paiement prêt de ${montants}', other: 'Confirmer les ${n} paiements prêts : ${montants}', ), 
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.demanderValidation' => 'Demander validation',
 			'comptable.paiements.confirmation.annuler' => 'Annuler',
 			'comptable.paiements.confirmation.fermer' => 'Fermer',
 			'comptable.paiements.confirmation.soumisTitre' => 'Envoyé au prestataire',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.confirmation.soumisPhrase' => 'Un paiement envoyé n\'est pas encore reçu : son état vient du suivi du prestataire. Actualisez le suivi pour le voir avancer.',
 			'comptable.paiements.confirmation.actualiser' => 'Actualiser le suivi',
 			'comptable.paiements.confirmation.suiviEchoue' => 'Le suivi n\'a pas pu être lu. Le paiement reste envoyé : actualisez de nouveau dans un moment.',
@@ -64815,12 +64841,12 @@ extension on Traductions {
 			'comptable.contractuels.invitationRenvoyee' => 'Invitation renvoyée',
 			'comptable.contractuels.erreurApprobation' => 'Nous ne savons pas si l\'approbation a été prise en compte. Actualisez l\'obligation avant de réessayer.',
 			'comptable.contractuels.erreurInvitation' => 'Nous ne savons pas si l\'invitation est repartie. Actualisez l\'obligation avant de réessayer.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.formIntro' => 'Le bénéficiaire, l\'échéance et le centre de coût sont proposés : changez-les si besoin, puis saisissez l\'objet et le montant.',
 			'comptable.contractuels.beneficiaireExterne' => 'Nouveau bénéficiaire externe',
 			'comptable.contractuels.beneficiaireExterneAide' => 'Il reçoit une invitation sécurisée pour saisir lui-même sa méthode de paiement.',
 			'comptable.contractuels.champNomExterne' => 'Nom du bénéficiaire externe',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.contractuels.changerEcheance' => 'Changer l\'échéance',
 			'comptable.contractuels.deviseDe' => ({required Object devise}) => 'Devise : ${devise}',
 			'comptable.contractuels.champObjet' => 'Objet de l\'obligation',
@@ -65329,12 +65355,12 @@ extension on Traductions {
 			'juridique.confidentialite.s2.blocs.0' => '- Pour créer un compte : le nom, l\'adresse de courriel, la langue de l\'interface, le pays de résidence et le fuseau horaire.',
 			'juridique.confidentialite.s2.blocs.1' => '- Pour un élève : la date de naissance, qui sert à choisir la bonne formule et les règles propres aux mineurs.',
 			'juridique.confidentialite.s2.blocs.2' => '- Facultatif : photo, téléphone, adresse, niveau, préférences d\'horaires.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.3' => '- Pendant les cours : la présence, le cahier de transmission et la progression de l\'élève.',
 			'juridique.confidentialite.s2.blocs.4' => '- Pour payer : l\'abonnement et les factures. Le paiement lui-même passe par un prestataire de paiement.',
 			'juridique.confidentialite.s2.blocs.5' => '- Pour un enseignant : une pièce d\'identité, gardée à part dans un espace privé.',
 			'juridique.confidentialite.s2.blocs.6' => '- Vos accords : la version de chaque texte accepté et la date.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.confidentialite.s2.blocs.7' => '- Des rapports d\'erreurs techniques, sans capture d\'écran, sans nom et sans identité.',
 			'juridique.confidentialite.s3.titre' => '3. Pourquoi nous les utilisons',
 			'juridique.confidentialite.s3.blocs.0' => '- Former les Classes et assurer les cours.',
@@ -65843,12 +65869,12 @@ extension on Traductions {
 			'snt.planning.refusDatePassee' => 'La date n\'est pas fixée : ce moment est déjà passé. Choisissez un jour et une heure à venir.',
 			'snt.planning.refusDejaFixee' => 'La nouvelle date de cette séance est déjà fixée, peut-être depuis un autre appareil. Fermez cette fenêtre : la séance est dans le planning.',
 			'snt.planning.refusClasseClose' => 'La date n\'est pas fixée : la classe est close. Aucune séance ne peut plus y être prévue.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.refusNonAutorisee' => 'La date n\'est pas fixée : ce compte ne peut pas fixer de date. Connectez-vous avec un compte de la direction.',
 			'snt.planning.erreur' => 'La date n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'a3bis.salle.titulaireEntreTitre' => 'L\'enseignant de la classe est arrivé',
 			'a3bis.salle.titulaireEntre' => 'L\'enseignant de la classe a rejoint la salle le premier : le remplacement n\'est plus nécessaire. Merci d\'avoir été prêt.',
-			_ => null,
-		} ?? switch (path) {
 			'a3bis.salle.remplacantEntreTitre' => 'Un remplaçant a pris la classe',
 			'a3bis.salle.remplacantEntre' => 'Le remplaçant qui a pris la classe a rejoint la salle le premier : la séance de ce jour vous est retirée. Vous restez l\'enseignant de la classe.',
 			'a3bis.notifications.avertissement' => 'Vous n\'êtes pas encore dans la salle. Entrez vite : si un enseignant s\'est proposé pour vous remplacer, vous perdez l\'accès à la séance de ce jour.',
@@ -66357,12 +66383,12 @@ extension on Traductions {
 			'suiviPedagogique.depuis' => 'Dans cette étape depuis le',
 			'suiviPedagogique.dateJour' => ({required Object numero, required Object mois, required Object annee}) => '${numero} ${mois} ${annee}',
 			'suiviPedagogique.dureePrevue' => 'Durée de l\'étape',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.chemin' => ({required Object niveau}) => '${niveau}, étape par étape',
 			'suiviPedagogique.dureesEtape' => ({required Object prevue, required Object limite}) => '${prevue} semaines prévues, ${limite} au plus',
 			'suiviPedagogique.horizonNiveau' => ({required Object niveau}) => '${niveau} : fin au plus tard le',
 			'suiviPedagogique.attenteEntretien' => 'Votre étape sera fixée après l\'entretien de lecture avec la direction.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.attenteEntretienTu' => 'Ton étape sera fixée après l\'entretien de lecture avec la direction.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'Pour ${prenom}, l\'étape sera fixée après l\'entretien de lecture avec la direction.',
 			'apprendre.sections.libelle' => 'Sections de l\'espace Apprendre',

@@ -400,6 +400,8 @@ void main() {
         tester,
         _dansEntree(find.text('Fatima, Parent de Yasmine')),
       );
+      // BULLES-MESSAGERIE : le contexte est ferme sous 1 600 points.
+      await ouvrirContexte(tester);
       expect(find.byType(PanneauContexteFil), findsOneWidget);
       expect(
         find.descendant(

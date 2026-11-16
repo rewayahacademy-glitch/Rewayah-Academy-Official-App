@@ -371,6 +371,39 @@ class AppPalette extends ThemeExtension<AppPalette> {
     ),
   );
 
+  /// BULLES-MESSAGERIE (directeur, 16/11/2026) : la bulle d'un message de
+  /// soi, un violet de marque assez profond pour que le texte clair n'y
+  /// « reflete » pas (effet de halo d'un blanc pur sur un violet vif), le
+  /// texte etant un blanc legerement casse, jamais `#FFFFFF`. Mesures
+  /// (`test/core/widgets/fil_discussion_bulles_test.dart`) : clair
+  /// `#5A35B0` / `#F1ECFA`, 7,05:1 ; sombre, desature, `#6A5AA6` /
+  /// `#F4F0FA`, 5,15:1. Le meme fond ne remplace pas [surfacePrimary], reserve
+  /// aux actions.
+  AppColorPair get surfaceBulleSoi => estSombre
+      ? const AppColorPair(
+          background: Color(0xFF6A5AA6),
+          onBackground: Color(0xFFF4F0FA),
+        )
+      : const AppColorPair(
+          background: Color(0xFF5A35B0),
+          onBackground: Color(0xFFF1ECFA),
+        );
+
+  /// BULLES-MESSAGERIE : le fond d'un fil de conversation, un peu plus sombre
+  /// que la carte d'un message recu (clair `#E9E5F0`, 1,24:1 sous la carte
+  /// blanche ; sombre `#1B1B24`, sous la carte `#272734`) pour que les bulles
+  /// s'y detachent. L'encre secondaire (`inkMuted`) s'y lit a 5,0:1 (clair) et
+  /// 8,1:1 (sombre).
+  AppColorPair get fondFil => estSombre
+      ? const AppColorPair(
+          background: Color(0xFF1B1B24),
+          onBackground: Color(0xFFF5F2FA),
+        )
+      : const AppColorPair(
+          background: Color(0xFFE9E5F0),
+          onBackground: Color(0xFF110E20),
+        );
+
   /// Le contenu d'un QR : fond blanc, modules quasi noirs, **identique en
   /// clair et en sombre** (manifeste visuel section 3.5 : « le QR reste noir
   /// sur blanc pour le scan »). Ajout du 25/09/2026 (demande D-1) : aucun

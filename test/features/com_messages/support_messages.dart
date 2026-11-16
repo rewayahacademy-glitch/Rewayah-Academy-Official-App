@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/features/com_messages/messages_page.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
@@ -54,6 +55,17 @@ MessagesMetierDemo portDemo(
   situation: situation,
   maintenant: maintenantTest,
 );
+
+/// BULLES-MESSAGERIE (directeur, 16/11/2026) : le panneau « Contexte » est
+/// ferme par defaut sous 1 600 points ; l'icone « info » de la barre de la
+/// conversation l'ouvre. Sans effet quand le panneau est deja ouvert ou
+/// qu'aucune icone ne l'offre.
+Future<void> ouvrirContexte(WidgetTester tester) async {
+  final Finder info = find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte);
+  if (info.evaluate().isEmpty) return;
+  await tester.tap(info);
+  await tester.pumpAndSettle();
+}
 
 /// Monte la vraie `MessagesPage` sur [depart], et rend son routeur. Sans
 /// [ecritureOuverte], le port des capacites reste celui de production

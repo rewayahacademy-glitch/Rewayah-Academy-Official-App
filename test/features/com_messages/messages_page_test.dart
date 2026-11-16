@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/widgets/badge_non_lu.dart';
 import 'package:rewayah_academy/core/widgets/carte_piece_jointe.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
+import 'package:rewayah_academy/core/widgets/ligne_conversation.dart';
 import 'package:rewayah_academy/core/widgets/vue_etat_communication.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/fil_contextuel.dart';
@@ -81,6 +82,15 @@ void main() {
         port: portDemo(RoleDemoCommunications.enseignant),
         depart: cheminFilTest('fil-adam'),
       );
+      // BULLES-MESSAGERIE : sous 1 600 points, le panneau « Contexte » est
+      // ferme ; l'icone « info » de la barre de la conversation l'ouvre.
+      expect(_panneaux(), 2);
+      expect(find.byKey(EspaceTravailAdaptatif.cleContexte), findsNothing);
+      expect(
+        find.byKey(EspaceTravailAdaptatif.cleOuvrirContexte),
+        findsOneWidget,
+      );
+      await ouvrirContexte(tester);
       expect(_panneaux(), 3);
       // R-10 : la liste des fils a au moins 320 a 1440.
       expect(
@@ -234,6 +244,7 @@ void main() {
         contains("Conversation avec Ahmed, Parent d'Adam"),
       );
       // Le panneau : objets lies et participants.
+      await ouvrirContexte(tester);
       final Finder panneau = find.byType(PanneauContexteFil);
       expect(
         find.descendant(of: panneau, matching: find.text('Classe An-Nour')),
@@ -282,6 +293,7 @@ void main() {
           ),
           findsOneWidget,
         );
+        await ouvrirContexte(tester);
         final Finder fichiers = find.byKey(PanneauContexteFil.cleFichiers);
         expect(
           find.descendant(
@@ -306,18 +318,22 @@ void main() {
         tester,
         port: portDemo(RoleDemoCommunications.tuteur),
       );
+      // BULLES-MESSAGERIE : une conversation qui attend porte la pastille de
+      // son nombre de non lus (ou le badge d'une attention sans nombre).
+      bool estMarque(Widget w) =>
+          w is BadgeNonLu || w.key == LigneConversation.cleNonLus;
       Finder badgeDe(String id) => find.descendant(
         of: find.ancestor(
           of: find.byKey(ListeFils.cleLigne(id)),
-          matching: find.byType(MergeSemantics),
+          matching: find.byType(LigneConversation),
         ),
-        matching: find.byType(BadgeNonLu),
+        matching: find.byWidgetPredicate(estMarque),
       );
-      expect(find.byType(BadgeNonLu), findsNWidgets(2));
+      expect(find.byWidgetPredicate(estMarque), findsNWidgets(2));
       await tester.tap(find.byKey(ListeFils.cleLigne('fil-adam')));
       await tester.pumpAndSettle();
       expect(
-        _dansListe(find.byType(BadgeNonLu)),
+        _dansListe(find.byWidgetPredicate(estMarque)),
         findsOneWidget,
         reason: 'seul le dossier attend encore',
       );
@@ -336,6 +352,7 @@ void main() {
         ),
         depart: cheminFilTest('fil-1'),
       );
+      await ouvrirContexte(tester);
       await tester.tap(
         find.descendant(
           of: find.byType(PanneauContexteFil),
@@ -347,6 +364,7 @@ void main() {
 
       routeur.go(cheminFilTest('fil-2'));
       await tester.pumpAndSettle();
+      await ouvrirContexte(tester);
       expect(find.text(t.com.messages.panneau.inaccessible), findsOneWidget);
       // Une ligne sans destination ne porte pas de geste.
       await tester.tap(
@@ -702,6 +720,7 @@ void main() {
         depart: cheminFilTest('fil-adam'),
         langue: AppLocale.ar,
       );
+      await ouvrirContexte(tester);
       final Finder page = find.byType(MessagesPage);
       expect(Directionality.of(tester.element(page)), TextDirection.rtl);
       final double xListe = tester

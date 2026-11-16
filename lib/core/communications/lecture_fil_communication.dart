@@ -78,6 +78,7 @@ MessageFil messageFilDe(
   annonceTexte: texteDuMessage(m),
   complement: complement,
   horodatage: horodatageMessage(m.envoyeLe),
+  instant: m.envoyeLe,
   deSoi: m.deSoi,
   // MESSAGERIE-LU : avec [suiviLecture], un message de soi dit s'il est lu
   // par l'autre partie (lu au plus tard a [luParAutresLe]).

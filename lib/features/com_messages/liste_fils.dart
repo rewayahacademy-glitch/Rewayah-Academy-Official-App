@@ -22,8 +22,10 @@ import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/ligne_conversation.dart';
+import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/surface_recherche.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
 import 'avatar_participant.dart';
@@ -98,6 +100,9 @@ class _ListeFilsState extends State<ListeFils> {
   RechercheFilsControleur? _propre;
   late RechercheFilsControleur _etat;
 
+  /// BULLES-MESSAGERIE : le filtre « Non lus ».
+  bool _nonLusSeulement = false;
+
   TextEditingController get _recherche => _etat.texte;
 
   @override
@@ -168,14 +173,16 @@ class _ListeFilsState extends State<ListeFils> {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          LienFleche(
-            key: ListeFils.cleOuvrirRecherche,
-            libelle: r.champ,
-            icone: AppIcons.recherche,
-            fleche: false,
-            onPress: _etat.ouvrirSurface,
-          ),
-          Ecart.vSm,
+          if (!_etat.loupeEnTete) ...<Widget>[
+            LienFleche(
+              key: ListeFils.cleOuvrirRecherche,
+              libelle: r.champ,
+              icone: AppIcons.recherche,
+              fleche: false,
+              onPress: _etat.ouvrirSurface,
+            ),
+            Ecart.vSm,
+          ],
           Expanded(child: _resultats()),
         ],
       );
@@ -196,33 +203,69 @@ class _ListeFilsState extends State<ListeFils> {
     );
   }
 
-  /// La liste, filtree par la recherche. Les resultats d'une recherche sont
-  /// annonces (region polie) ; un filtre sans resultat dit quoi essayer.
+  /// La liste, filtree par la recherche et par « Non lus ». Les resultats
+  /// d'une recherche sont annonces (region polie) ; un filtre sans resultat
+  /// dit quoi essayer. Les lignes se construisent au fur et a mesure du
+  /// defilement (`ListView.builder`), chacune sous la cle de son fil.
   Widget _resultats() {
     final r = t.com.messages.recherche;
     final String texte = _recherche.text.trim();
-    final List<ResumeFil> vus = filtrerFils(widget.fils, texte);
-    if (texte.isNotEmpty && vus.isEmpty) {
+    final List<ResumeFil> cherches = filtrerFils(widget.fils, texte);
+    final List<ResumeFil> vus = _nonLusSeulement
+        ? <ResumeFil>[
+            for (final ResumeFil f in cherches)
+              if (f.attention.nonLus > 0) f,
+          ]
+        : cherches;
+    final Widget filtres = Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+      child: RangeeFiltres(
+        filtres: <Widget>[
+          FilterPill(
+            libelle: t.com.messages.filtres.tous,
+            retenue: !_nonLusSeulement,
+            onPress: () => setState(() => _nonLusSeulement = false),
+          ),
+          FilterPill(
+            libelle: t.com.messages.filtres.nonLus,
+            retenue: _nonLusSeulement,
+            onPress: () => setState(() => _nonLusSeulement = true),
+          ),
+        ],
+      ),
+    );
+    if (vus.isEmpty && (texte.isNotEmpty || _nonLusSeulement)) {
       return SingleChildScrollView(
         padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
-        child: EtatSysteme(
-          nature: NatureEtat.aucunResultat,
-          titre: r.aucunTitre,
-          phrase: r.aucun(texte: texte),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            filtres,
+            EtatSysteme(
+              nature: NatureEtat.aucunResultat,
+              titre: r.aucunTitre,
+              phrase: texte.isEmpty
+                  ? t.com.messages.filtres.aucunNonLu
+                  : r.aucun(texte: texte),
+            ),
+          ],
         ),
       );
     }
     final DateTime maintenant = widget.horloge();
-    return ListView(
+    final int avant = 1 + (texte.isNotEmpty ? 1 : 0);
+    return ListView.builder(
       // La position de lecture survit a l'aller-retour de la recherche.
       key: const PageStorageKey<String>('liste-fils'),
       // BANDE-SUITE : la fin s'arrete au-dessus de la barre flottante.
       padding: EdgeInsets.only(
         bottom: AppSpacing.lg + MediaQuery.paddingOf(context).bottom,
       ),
-      children: <Widget>[
-        if (texte.isNotEmpty)
-          Semantics(
+      itemCount: avant + vus.length,
+      itemBuilder: (BuildContext context, int i) {
+        if (i == 0) return filtres;
+        if (texte.isNotEmpty && i == 1) {
+          return Semantics(
             liveRegion: true,
             child: Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.sm),
@@ -235,41 +278,40 @@ class _ListeFilsState extends State<ListeFils> {
                 ),
               ),
             ),
-          ),
-        GroupeReglages(
-          lignes: <LigneRubrique>[
-            for (final ResumeFil f in vus) _ligne(f, maintenant),
-          ],
-        ),
-      ],
+          );
+        }
+        final ResumeFil f = vus[i - avant];
+        return _ligne(f, maintenant);
+      },
     );
   }
 
-  LigneRubrique _ligne(ResumeFil f, DateTime maintenant) {
-    final l = t.com.messages.ligne;
+  /// Une conversation : photo de 48 (ou initiales), nom, apercu, heure et
+  /// nombre de non lus (BULLES-MESSAGERIE, `LigneConversation`).
+  Widget _ligne(ResumeFil f, DateTime maintenant) {
+    final int nonLus = f.attention.nonLus;
     final DateTime? dernier = f.dernierMessageLe;
+    final String titre = titreFil(f.interlocuteurs, f.objet.libelle);
+    final String apercu = f.apercu ?? t.com.messages.ligne.sansApercu;
     final String? selection = widget.filSelectionne;
-    return LigneRubrique(
+    return LigneConversation(
+      key: ValueKey<String>('ligne-${f.id}'),
+      // PHOTOS-2b et #Ra_staff : l'avatar du premier interlocuteur.
       meneur: KeyedSubtree(
         key: ListeFils.cleLigne(f.id),
-        // PHOTOS-2b et #Ra_staff : l'avatar du premier interlocuteur.
         child: AvatarParticipant(
           participant: f.interlocuteurs.isEmpty ? null : f.interlocuteurs.first,
           repli: f.objet.libelle,
-          diametre: AppAvatar.petit,
+          diametre: AppAvatar.moyen,
         ),
       ),
-      libelle: titreFil(f.interlocuteurs, f.objet.libelle),
-      legende: l.legende(
-        // COM-RC tour 7 (capture com_admin_messages_1440) : le trait d'union
-        // insecable (U+2011, comme l'en-tete du fil, lot K) garde le nom
-        // de l'objet entier ; la ligne se coupait en « Classe An- » puis
-        // « Nour ».
-        objet: f.objet.libelle.replaceAll('-', '\u2011'),
-        apercu: f.apercu ?? l.sansApercu,
-      ),
-      valeur: dernier == null ? null : momentCourt(dernier, maintenant),
-      marque: f.attention.estVisible
+      titre: titre,
+      apercu: apercu,
+      heure: dernier == null ? null : momentCourt(dernier, maintenant),
+      nonLus: nonLus,
+      libelleNonLus: nonLus > 0 ? BadgeNonLu.libelleNonLus(nonLus) : null,
+      // Une attention sans nombre (mention, action requise) garde son badge.
+      marque: nonLus == 0 && f.attention.estVisible
           ? BadgeNonLu(indicateur: f.attention, compact: true)
           : null,
       selectionnee: selection == null ? null : f.id == selection,

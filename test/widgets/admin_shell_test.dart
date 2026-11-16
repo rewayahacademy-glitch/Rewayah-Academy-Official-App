@@ -143,7 +143,10 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('sous 600, le champ de recherche est dans la barre mobile', (
+  // RECHERCHE-LOUPE (directeur, 16/11/2026 : « un gros rectangle ») : sous
+  // 600, la barre porte une loupe, plus un champ en ligne ; la loupe ouvre le
+  // meme champ en feuille.
+  testWidgets('sous 600, la barre mobile porte une loupe qui ouvre le champ', (
     WidgetTester tester,
   ) async {
     addTearDown(tester.view.resetPhysicalSize);
@@ -154,6 +157,9 @@ void main() {
     await tester.pumpWidget(hote(_shell(onAller: (_) {})));
     await tester.pump();
 
+    expect(find.byType(TextField), findsNothing);
+    await tester.tap(find.bySemanticsLabel(t.nav.admin.recherche));
+    await tester.pumpAndSettle();
     expect(find.byType(TextField), findsOneWidget);
     expect(find.byIcon(AppIcons.notifications.repos), findsNothing);
     expect(tester.takeException(), isNull);
