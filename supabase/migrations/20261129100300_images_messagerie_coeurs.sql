@@ -11,7 +11,7 @@
 -- reel (com_signaux) : leur ecran relit le fil et voit le nouveau compte.
 --
 -- FICHIER SANS MOT D'EFFACEMENT, sans BEGIN ni COMMIT de premier niveau.
--- S'installe apres 20261128200000.
+-- S'installe apres 20261129100000.
 
 CREATE OR REPLACE FUNCTION private.com_coeur_poser(p_message_id uuid, p_donne boolean)
 RETURNS jsonb

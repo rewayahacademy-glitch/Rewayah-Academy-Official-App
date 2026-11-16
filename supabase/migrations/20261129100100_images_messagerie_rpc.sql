@@ -19,7 +19,7 @@
 -- depot n'a : une signature de bibliotheque ne confirme pas une image.
 --
 -- FICHIER SANS MOT D'EFFACEMENT, sans BEGIN ni COMMIT de premier niveau.
--- S'installe apres 20261128200000.
+-- S'installe apres 20261129100000.
 
 -- 1. Demander un depot -----------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.message_image_demander(

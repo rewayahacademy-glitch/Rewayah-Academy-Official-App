@@ -18,7 +18,7 @@
 -- planifie, aucune erreur.
 --
 -- FICHIER SANS MOT D'EFFACEMENT, sans BEGIN ni COMMIT de premier niveau.
--- S'installe apres 20261128200100.
+-- S'installe apres 20261129100100.
 
 CREATE OR REPLACE FUNCTION public.message_images_purge_lire(p_lot integer DEFAULT 200)
 RETURNS jsonb

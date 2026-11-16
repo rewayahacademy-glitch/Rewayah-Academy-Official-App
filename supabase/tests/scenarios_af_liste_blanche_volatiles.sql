@@ -96,7 +96,7 @@ declare
     'com_annonce_vue(uuid)',
     'com_annonce_publier(text,text,text,timestamp with time zone,uuid)',
     'com_envoyer_message(uuid,text,uuid)',
-    -- IMAGES-MESSAGERIE (20261128200100 et 20261128200300, 16/11/2026) : depot, confirmation signee (HMAC) et annulation d'une image, coeur pose ou retire. Garde positive app_account_valid() ET droits du fil (private.com_image_droits : participant, ecriture pour le depot) ; le depot refuse en plus tout eleve mineur ; 42501 sinon. Ce qu'elles peuvent ecrire : UNE ligne com_message_images (20 par heure et par personne) ou le coeur de l'appelant, jamais celui d'un autre.
+    -- IMAGES-MESSAGERIE (20261129100100 et 20261129100300, 16/11/2026) : depot, confirmation signee (HMAC) et annulation d'une image, coeur pose ou retire. Garde positive app_account_valid() ET droits du fil (private.com_image_droits : participant, ecriture pour le depot) ; le depot refuse en plus tout eleve mineur ; 42501 sinon. Ce qu'elles peuvent ecrire : UNE ligne com_message_images (20 par heure et par personne) ou le coeur de l'appelant, jamais celui d'un autre.
     'message_image_demander(uuid,text,bigint,text,bigint,integer,integer,text)',
     'message_image_confirmer(uuid,text,text,text,text)',
     'message_image_annuler(uuid)',

@@ -1,6 +1,6 @@
 // IMAGES-MESSAGERIE (16/11/2026) : l'expiration a 90 jours des images de la
 // messagerie. Appelee UNE FOIS PAR JOUR, la nuit, par pg_cron (tache
-// `message-images-purge`, migration 20261128200200), sans jeton Supabase : la porte
+// `message-images-purge`, migration 20261129100200), sans jeton Supabase : la porte
 // est le secret partage COURRIELS_ENVOI_SECRET (le meme que push-envoi et
 // courriels-envoi, aucun secret nouveau), en-tete `x-courriels-secret`, compare en
 // temps constant. Sans ce secret cote fonction, tout est refuse.

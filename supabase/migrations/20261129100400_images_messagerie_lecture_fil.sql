@@ -15,7 +15,7 @@
 -- rendue : les URL signees viennent de la fonction Edge message-images-lecture.
 --
 -- FICHIER SANS MOT D'EFFACEMENT, sans BEGIN ni COMMIT de premier niveau.
--- S'installe apres 20261128200000 et 20261125860000.
+-- S'installe apres 20261129100000 et 20261125860000.
 
 DO $fil$
 DECLARE
