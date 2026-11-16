@@ -326,8 +326,9 @@ export const TEXTES: Record<string, Ligne> = {
   },
   // NOTIF-RETENU (08/11/2026) : le candidat admis en salle 2. Ni nom ni date.
   retenu_entretien: {
-    fr: 'Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l\'application.',
-    ar: 'اختير طلبكم لمقابلة. لنتعارف: اختاروا في التطبيق الموعد الذي يناسبكم.',
+    // COURRIEL-ENTRETIEN (16/11/2026) : aucun moment n'est promis a l'envoi ; meme sens que l'application.
+    fr: 'Vous êtes retenu pour un entretien. Rien à faire pour l\'instant : nous vous écrirons dès qu\'un moment sera ouvert.',
+    ar: 'اختير طلبكم لمقابلة. لا شيء مطلوب منكم الآن: ستخبركم الأكاديمية حين يُفتح موعد.',
   },
   entretien_reserve: {
     fr: (p) => estStaff(p)
