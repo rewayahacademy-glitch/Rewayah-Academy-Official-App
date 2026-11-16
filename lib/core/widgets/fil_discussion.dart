@@ -1104,21 +1104,26 @@ class _FilDiscussionState extends State<FilDiscussion> {
         // La saisie prend sa hauteur naturelle : le champ grandit jusqu'a cinq
         // lignes puis defile en lui-meme (seule exception admise, comme dans
         // toute messagerie) ; les messages gardent tout le reste.
+        // FINITIONS-MESSAGERIE : aucun bandeau derriere la saisie, le champ
+        // repose sur le fond du fil.
         KeyedSubtree(
           key: FilDiscussion.cleSaisie,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-            child: limite == null
-                ? saisie
-                : Padding(
-                    padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-                    child: Text(
-                      limite,
-                      key: FilDiscussion.cleLectureSeule,
-                      style: AppPalette.of(context).inkMuted
-                          .applyTo(styles.bodyMedium ?? const TextStyle()),
+          child: ColoredBox(
+            color: AppPalette.of(context).fondFil.background,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: limite == null
+                  ? saisie
+                  : Padding(
+                      padding: const EdgeInsets.only(bottom: AppSpacing.lg),
+                      child: Text(
+                        limite,
+                        key: FilDiscussion.cleLectureSeule,
+                        style: AppPalette.of(context).inkMuted
+                            .applyTo(styles.bodyMedium ?? const TextStyle()),
+                      ),
                     ),
-                  ),
+            ),
           ),
         ),
       ],

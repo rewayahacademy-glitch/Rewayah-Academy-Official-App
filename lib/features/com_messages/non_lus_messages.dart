@@ -15,7 +15,7 @@ import '../../core/communications/veille_messages.dart';
 import '../../core/observabilite/journal_dev.dart';
 import 'port_messages_metier.dart';
 
-/// Les messages non lus de tous les fils metier de la personne connectee.
+/// Les conversations non lues de tous les fils metier de la personne connectee.
 final FutureProvider<int> nonLusMessagesProvider =
     FutureProvider.autoDispose<int>((Ref ref) async {
       ref.watch(
@@ -25,7 +25,9 @@ final FutureProvider<int> nonLusMessagesProvider =
         int total = 0;
         for (final ResumeFil f
             in await ref.watch(portMessagesMetierProvider).fils()) {
-          if (estFilMetier(f)) total += f.attention.nonLus;
+          // FINITIONS-MESSAGERIE : le compteur de l'icone compte les
+          // conversations non ouvertes, pas les messages.
+          if (estFilMetier(f) && f.attention.nonLus > 0) total += 1;
         }
         return total;
       } on CapaciteIndisponible {
