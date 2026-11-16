@@ -15,9 +15,12 @@ import 'package:rewayah_academy/app.dart';
 import 'package:rewayah_academy/core/admin/admin_domaine.dart';
 import 'package:rewayah_academy/core/dossier/port_acces_pieces_kyc.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/preferences/preferences_locales.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
+import 'package:rewayah_academy/core/widgets/bandeau_attention.dart';
+import 'package:rewayah_academy/core/widgets/bandeau_fermable.dart';
 
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
@@ -56,6 +59,7 @@ Future<void> _monter(
   WidgetTester tester,
   PortAccesPiecesKyc? port, {
   Size taille = const Size(1440, 900),
+  StockagePreferences? memoire,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -66,6 +70,11 @@ Future<void> _monter(
       overrides: <Override>[
         ...surchargesDemoAdmin(environnement: 'staging'),
         if (port != null) portAccesPiecesKycProvider.overrideWithValue(port),
+        // La memoire de l'appareil (bandeau fermable) : en memoire, lue tout de
+        // suite.
+        stockagePreferencesProvider.overrideWithValue(
+          memoire ?? StockagePreferencesMemoire(),
+        ),
       ],
       child: TranslationProvider(
         child: RewayahApp(
@@ -127,6 +136,28 @@ void main() {
     expect(find.text(a.exceptionTitre), findsOneWidget);
     expect(find.text(a.exceptionPiece), findsOneWidget);
     expect(find.text(voir), findsOneWidget);
+  });
+
+  // PIECE-DANS-DOSSIER (16/11/2026) : le bandeau se ferme (« J'ai compris »),
+  // et la fermeture reste sur l'appareil.
+  testWidgets('le bandeau de l\'exception se ferme et le reste', (
+    tester,
+  ) async {
+    final StockagePreferencesMemoire memoire = StockagePreferencesMemoire();
+    await _monter(
+      tester,
+      _Port(const AccesExceptionSuperAdmin(), exception: true),
+      memoire: memoire,
+    );
+    final Finder bandeau = find.byType(BandeauAttention);
+    expect(bandeau, findsOneWidget);
+    await tester.tap(find.byKey(BandeauFermable.cleFermer));
+    await _stabiliser(tester);
+    expect(bandeau, findsNothing);
+    expect(find.text(a.exceptionTitre), findsNothing);
+    expect(await memoire.lire('bandeau.exceptionKyc'), 'vu');
+    // La legende par piece, elle, reste : elle parle d'une ouverture precise.
+    expect(find.text(a.exceptionPiece), findsOneWidget);
   });
 
   for (final (RefusPieceKyc raison, String phrase) in <(RefusPieceKyc, String)>[
