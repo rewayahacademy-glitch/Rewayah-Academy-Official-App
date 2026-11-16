@@ -1,6 +1,6 @@
 # Stratégie « Bureau de l'équipe » — 15/11/2026
 
-**Statut : proposé, non validé par le directeur. Aucun code écrit. Aucun lot lancé.**
+**Statut : vagues 0 et 1 ordonnées par le directeur le 16/11/2026 ; vagues 2 à 5 proposées, sans ordre. Suivi : `BUREAU-EQUIPE/SUIVI.md`.**
 
 Demande du directeur (15/11) : la gestion du personnel « fait tourner en rond », « ne permet
 pas de gérer beaucoup de personnes rapidement » ; il veut inviter des associés par e-mail et
@@ -220,7 +220,7 @@ notre impression » ; dispenser d'entretien, d'abord ses associés fondateurs.
   suivant ». Au milieu : un résumé de cinq lignes pour juger en dix secondes (langues,
   niveau, ijaza, disponibilités, pays et versement). En dessous : les rubriques, **repliées**,
   chacune avec sa pastille (bon, à voir, manque).
-- D2. **Chaque rubrique porte ses gestes** : Photo (voir en grand, en demander une autre),
+- D2. **Chaque rubrique porte ses gestes** : Photo (elle s'affiche quand on la touche, sans bouton « voir en grand », décision du 16/11 ; en demander une autre),
   Pièce (voir, valider, en demander une autre, sur place), Versement (confirmer, écarter),
   chaque groupe de réponses (demander une précision), Entretien, Messages. « Contrôles »
   disparaît : la pastille de la rubrique le remplace.
@@ -247,7 +247,7 @@ notre impression » ; dispenser d'entretien, d'abord ses associés fondateurs.
 
 | Lot | Contenu | Zone |
 | :--- | :--- | :--- |
-| BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo en grand, pièce sur place, barre de décision fixe, entrée de « Personnes » sur Candidatures, en-tête de liste réduit | `admin_candidature`, `admin_candidatures` |
+| BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo qui s'affiche au toucher, pièce sur place, barre de décision fixe, entrée de « Personnes » sur Candidatures, en-tête de liste réduit | `admin_candidature`, `admin_candidatures` |
 | BE-1e | Panier de demandes : serveur (demander à tout moment, plusieurs fois, sur une réponse précise) ; écran (panier, aperçu du message) ; côté candidat (liste claire, un bouton par point) | serveur + `admin_candidature` + `features/candidature` |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | `admin_candidature`, composant dans `lib/core/widgets` |
 | BE-1g | Impression (serveur, dossier, liste, filtre) ; dispense d'entretien et accueil d'un fondateur (serveur + geste) | serveur + `admin_candidature` |
