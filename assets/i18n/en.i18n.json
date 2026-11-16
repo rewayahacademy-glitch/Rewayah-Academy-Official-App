@@ -4071,6 +4071,74 @@
     }
   },
   "admin": {
+    "listeEnseignants": {
+      "titre": "Teachers",
+      "phase": "Phase",
+      "toutesPhases": "All phases",
+      "nouveaux": "New",
+      "phases": {
+        "candidat": "Candidate",
+        "accueil": "Onboarding",
+        "disponible": "Available",
+        "enPoste": "Teaching",
+        "absent": "Absent",
+        "pause": "Paused",
+        "suspendu": "Suspended",
+        "parti": "Left"
+      },
+      "attend": {
+        "candidat": "Waiting for: the candidate",
+        "direction": "Waiting for: management",
+        "enseignant": "Waiting for: the teacher"
+      },
+      "manque": {
+        "intro": "Missing: {liste}",
+        "compteInactif": "inactive account",
+        "pieceNonValidee": "ID to validate",
+        "languesAbsentes": "languages",
+        "genreInconnu": "gender",
+        "indisponible": "unavailable",
+        "photoAbsente": "photo",
+        "disponibilitesAbsentes": "availability"
+      },
+      "classes": {
+        "one": "{n} class",
+        "other": "{n} classes"
+      },
+      "heures": "{h} h per week",
+      "prochaineSeance": "Next session: {date}",
+      "remplacements": "Covers over 30 days: given {donnes}, received {recus}",
+      "colonnes": {
+        "nom": "Name",
+        "phase": "Phase",
+        "attend": "Waiting for",
+        "classes": "Classes",
+        "seance": "Next session",
+        "activite": "Last activity"
+      },
+      "total": {
+        "one": "{n} teacher",
+        "other": "{n} teachers"
+      },
+      "sansDossier": {
+        "one": "{n} teacher account has no application file: it is not in this list.",
+        "other": "{n} teacher accounts have no application file: they are not in this list."
+      },
+      "vide": "No teachers yet.",
+      "videDetail": "Teachers appear here as soon as a teacher application arrives.",
+      "aucunResultat": "No teacher matches.",
+      "lectureEchec": "The list of teachers could not be read",
+      "accesRefuse": "This list is reserved for management",
+      "genreInconnuTitre": "Your gender is not set",
+      "genreInconnu": "The list can only be read once your gender is set. Ask a founder to set it.",
+      "sansDonnees": "the list of teachers",
+      "resume": "{debut} to {fin} of {total}",
+      "attendCourt": {
+        "candidat": "The candidate",
+        "direction": "Management",
+        "enseignant": "The teacher"
+      }
+    },
     "candidatures": {
       "liste": {
         "titreGesteNonFait": "Action not done",
