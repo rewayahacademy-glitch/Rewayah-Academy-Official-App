@@ -2642,12 +2642,18 @@
         "accords": "Agreements",
         "messages": "Messages"
       },
-      "resume": {
+      "synthese": {
         "langues": "Languages",
-        "niveau": "Level and ijaza",
+        "memorisation": "Memorization",
+        "ijaza": "Ijaza",
         "disponibilites": "Availability",
         "versement": "Payment",
-        "public": "Audience"
+        "public": "Audience",
+        "jours": {"j1": "Mon", "j2": "Tue", "j3": "Wed", "j4": "Thu", "j5": "Fri", "j6": "Sat", "j7": "Sun"},
+        "heuresDe": "{jours}: {heures}",
+        "memorisationValeurs": {"aucune": "None", "moins_10_juz": "Under 10 juz", "de_10_a_29_juz": "10 to 29 juz", "coran_entier": "Whole Quran"},
+        "ijazaValeurs": {"oui": "Yes", "pret_test": "No, ready for a test", "non": "No"},
+        "publicValeurs": {"6_9": "6-9 years", "10_13": "10-13 years", "14_17": "14-17 years", "adultes": "Adults"}
       },
       "demanderAccord": "Ask for an agreement",
       "raison": {

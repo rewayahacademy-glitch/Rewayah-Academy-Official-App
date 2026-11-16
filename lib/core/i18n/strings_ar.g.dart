@@ -10745,7 +10745,7 @@ class _Traductions$recrutement$dossier3$ar extends Traductions$recrutement$dossi
 	@override late final _Traductions$recrutement$dossier3$pastille$ar pastille = _Traductions$recrutement$dossier3$pastille$ar._(_root);
 	@override late final _Traductions$recrutement$dossier3$situation$ar situation = _Traductions$recrutement$dossier3$situation$ar._(_root);
 	@override late final _Traductions$recrutement$dossier3$rubrique$ar rubrique = _Traductions$recrutement$dossier3$rubrique$ar._(_root);
-	@override late final _Traductions$recrutement$dossier3$resume$ar resume = _Traductions$recrutement$dossier3$resume$ar._(_root);
+	@override late final _Traductions$recrutement$dossier3$synthese$ar synthese = _Traductions$recrutement$dossier3$synthese$ar._(_root);
 	@override String get demanderAccord => 'طلب اتفاق';
 	@override late final _Traductions$recrutement$dossier3$raison$ar raison = _Traductions$recrutement$dossier3$raison$ar._(_root);
 	@override String legendeRaison({required Object geste, required Object raison}) => '⁨${geste}⁩: ⁨${raison}⁩';
@@ -20964,18 +20964,24 @@ class _Traductions$recrutement$dossier3$rubrique$ar extends Traductions$recrutem
 	@override String get messages => 'الرسائل';
 }
 
-// Path: recrutement.dossier3.resume
-class _Traductions$recrutement$dossier3$resume$ar extends Traductions$recrutement$dossier3$resume$fr {
-	_Traductions$recrutement$dossier3$resume$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+// Path: recrutement.dossier3.synthese
+class _Traductions$recrutement$dossier3$synthese$ar extends Traductions$recrutement$dossier3$synthese$fr {
+	_Traductions$recrutement$dossier3$synthese$ar._(TraductionsAr root) : this._root = root, super.internal(root);
 
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
 	@override String get langues => 'اللغات';
-	@override String get niveau => 'المستوى والإجازة';
+	@override String get memorisation => 'الحفظ';
+	@override String get ijaza => 'الإجازة';
 	@override String get disponibilites => 'الأوقات المتاحة';
 	@override String get versement => 'الدفعات';
 	@override String get public => 'الفئة';
+	@override late final _Traductions$recrutement$dossier3$synthese$jours$ar jours = _Traductions$recrutement$dossier3$synthese$jours$ar._(_root);
+	@override String heuresDe({required Object jours, required Object heures}) => '⁨${jours}⁩: ⁨${heures}⁩';
+	@override late final _Traductions$recrutement$dossier3$synthese$memorisationValeurs$ar memorisationValeurs = _Traductions$recrutement$dossier3$synthese$memorisationValeurs$ar._(_root);
+	@override late final _Traductions$recrutement$dossier3$synthese$ijazaValeurs$ar ijazaValeurs = _Traductions$recrutement$dossier3$synthese$ijazaValeurs$ar._(_root);
+	@override late final _Traductions$recrutement$dossier3$synthese$publicValeurs$ar publicValeurs = _Traductions$recrutement$dossier3$synthese$publicValeurs$ar._(_root);
 }
 
 // Path: recrutement.dossier3.raison
@@ -25869,6 +25875,60 @@ class _Traductions$recrutement$dossier3$situation$aFaire$ar extends Traductions$
 	@override String get profil_unique => 'التحقق من أن الملف الشخصي فريد';
 	@override String get aucune_restriction => 'رفع القيد';
 	@override String get piece_validee => 'اعتماد وثيقة الهوية';
+}
+
+// Path: recrutement.dossier3.synthese.jours
+class _Traductions$recrutement$dossier3$synthese$jours$ar extends Traductions$recrutement$dossier3$synthese$jours$fr {
+	_Traductions$recrutement$dossier3$synthese$jours$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get j1 => 'الاثنين';
+	@override String get j2 => 'الثلاثاء';
+	@override String get j3 => 'الأربعاء';
+	@override String get j4 => 'الخميس';
+	@override String get j5 => 'الجمعة';
+	@override String get j6 => 'السبت';
+	@override String get j7 => 'الأحد';
+}
+
+// Path: recrutement.dossier3.synthese.memorisationValeurs
+class _Traductions$recrutement$dossier3$synthese$memorisationValeurs$ar extends Traductions$recrutement$dossier3$synthese$memorisationValeurs$fr {
+	_Traductions$recrutement$dossier3$synthese$memorisationValeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get aucune => 'لا شيء';
+	@override String get moins_10_juz => 'أقل من 10 أجزاء';
+	@override String get de_10_a_29_juz => 'من 10 إلى 29 جزءًا';
+	@override String get coran_entier => 'القرآن كاملًا';
+}
+
+// Path: recrutement.dossier3.synthese.ijazaValeurs
+class _Traductions$recrutement$dossier3$synthese$ijazaValeurs$ar extends Traductions$recrutement$dossier3$synthese$ijazaValeurs$fr {
+	_Traductions$recrutement$dossier3$synthese$ijazaValeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get oui => 'نعم';
+	@override String get pret_test => 'لا، جاهز لاختبار';
+	@override String get non => 'لا';
+}
+
+// Path: recrutement.dossier3.synthese.publicValeurs
+class _Traductions$recrutement$dossier3$synthese$publicValeurs$ar extends Traductions$recrutement$dossier3$synthese$publicValeurs$fr {
+	_Traductions$recrutement$dossier3$synthese$publicValeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get k69 => '6-9 سنوات';
+	@override String get k1013 => '10-13 سنة';
+	@override String get k1417 => '14-17 سنة';
+	@override String get adultes => 'البالغون';
 }
 
 // Path: recrutement.parcours.presentation.p1
@@ -38780,11 +38840,31 @@ extension on TraductionsAr {
 			'recrutement.dossier3.rubrique.versement' => 'الدفعات',
 			'recrutement.dossier3.rubrique.accords' => 'الاتفاقات',
 			'recrutement.dossier3.rubrique.messages' => 'الرسائل',
-			'recrutement.dossier3.resume.langues' => 'اللغات',
-			'recrutement.dossier3.resume.niveau' => 'المستوى والإجازة',
-			'recrutement.dossier3.resume.disponibilites' => 'الأوقات المتاحة',
-			'recrutement.dossier3.resume.versement' => 'الدفعات',
-			'recrutement.dossier3.resume.public' => 'الفئة',
+			'recrutement.dossier3.synthese.langues' => 'اللغات',
+			'recrutement.dossier3.synthese.memorisation' => 'الحفظ',
+			'recrutement.dossier3.synthese.ijaza' => 'الإجازة',
+			'recrutement.dossier3.synthese.disponibilites' => 'الأوقات المتاحة',
+			'recrutement.dossier3.synthese.versement' => 'الدفعات',
+			'recrutement.dossier3.synthese.public' => 'الفئة',
+			'recrutement.dossier3.synthese.jours.j1' => 'الاثنين',
+			'recrutement.dossier3.synthese.jours.j2' => 'الثلاثاء',
+			'recrutement.dossier3.synthese.jours.j3' => 'الأربعاء',
+			'recrutement.dossier3.synthese.jours.j4' => 'الخميس',
+			'recrutement.dossier3.synthese.jours.j5' => 'الجمعة',
+			'recrutement.dossier3.synthese.jours.j6' => 'السبت',
+			'recrutement.dossier3.synthese.jours.j7' => 'الأحد',
+			'recrutement.dossier3.synthese.heuresDe' => ({required Object jours, required Object heures}) => '⁨${jours}⁩: ⁨${heures}⁩',
+			'recrutement.dossier3.synthese.memorisationValeurs.aucune' => 'لا شيء',
+			'recrutement.dossier3.synthese.memorisationValeurs.moins_10_juz' => 'أقل من 10 أجزاء',
+			'recrutement.dossier3.synthese.memorisationValeurs.de_10_a_29_juz' => 'من 10 إلى 29 جزءًا',
+			'recrutement.dossier3.synthese.memorisationValeurs.coran_entier' => 'القرآن كاملًا',
+			'recrutement.dossier3.synthese.ijazaValeurs.oui' => 'نعم',
+			'recrutement.dossier3.synthese.ijazaValeurs.pret_test' => 'لا، جاهز لاختبار',
+			'recrutement.dossier3.synthese.ijazaValeurs.non' => 'لا',
+			'recrutement.dossier3.synthese.publicValeurs.k69' => '6-9 سنوات',
+			'recrutement.dossier3.synthese.publicValeurs.k1013' => '10-13 سنة',
+			'recrutement.dossier3.synthese.publicValeurs.k1417' => '14-17 سنة',
+			'recrutement.dossier3.synthese.publicValeurs.adultes' => 'البالغون',
 			'recrutement.dossier3.demanderAccord' => 'طلب اتفاق',
 			'recrutement.dossier3.raison.droit' => 'لا يمكنكم البتّ في هذا الملف.',
 			'recrutement.dossier3.raison.fermee' => 'الملف مغلق.',
@@ -38905,6 +38985,8 @@ extension on TraductionsAr {
 			'recrutement.candidat.ressaisir' => 'إدخال رمز آخر',
 			'recrutement.candidat.horsLigne' => 'لم يُتحقَّق من الرمز. أعد المحاولة بعد لحظات.',
 			'recrutement.candidat.erreur' => 'تعذّر التحقق من الرمز. أعد المحاولة بعد لحظات.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.candidat.indisponible' => 'سيتوفر التحقق من الدعوات عند ربط الخادم.',
 			'recrutement.salles.examen' => 'قاعة الامتحان',
 			'recrutement.salles.verification' => 'قاعة التحقق والمقابلة',
@@ -38925,8 +39007,6 @@ extension on TraductionsAr {
 			'recrutement.cadre.erreurAccord' => 'لم تُسجَّل موافقتك. أعد المحاولة.',
 			'recrutement.cadre.refuse' => 'لا يمكن قبول هذا الإطار الآن: لم يعد ترشّحك في هذه المرحلة.',
 			'recrutement.portail.aCompleterTitre' => 'طلب ترشحك يحتاج إلى استكمال',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.portail.aCompleter' => 'المطلوب استكماله',
 			'recrutement.portail.elementCadre' => 'الإطار الديني والتربوي',
 			'recrutement.portail.etatAEnvoyer' => 'للإرسال',
@@ -39419,6 +39499,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.moyensAccessibles.court' => 'وسائل الدفع في بلدك',
 			'recrutement.parcours.classes.libelle' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا فصل', one: 'فصل واحد', two: 'فصلان', few: '⁨${n}⁩ فصول', many: '⁨${n}⁩ فصلًا', other: '⁨${n}⁩ فصل', ), 
 			'recrutement.parcours.classes.seances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا حصص في الأسبوع.', one: 'حصة واحدة في الأسبوع.', two: 'حصتان في الأسبوع.', few: '⁨${n}⁩ حصص في الأسبوع.', many: '⁨${n}⁩ حصة في الأسبوع.', other: '⁨${n}⁩ حصة في الأسبوع.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.classes.heuresEnfants' => ({required Object heures}) => 'أي ⁨${heures}⁩ في الأسبوع مع الأطفال.',
 			'recrutement.parcours.classes.heuresAdultes' => ({required Object heures}) => 'أي ⁨${heures}⁩ في الأسبوع مع الكبار.',
 			'recrutement.parcours.classes.heuresLesDeux' => ({required Object enfants, required Object adultes}) => 'أي ⁨${enfants}⁩ في الأسبوع مع الأطفال، أو ⁨${adultes}⁩ مع الكبار.',
@@ -39439,8 +39521,6 @@ extension on TraductionsAr {
 			'recrutement.talents.tuile.enregistreClose' => 'إجاباتك محفوظة. يمكنك سحبها.',
 			'recrutement.talents.intro.texte' => 'تنمو الأكاديمية، وستحتاج إلى من يساعدها في التنظيم ومرافقة الأسر ومسك الحسابات والتعريف بها. إن كان لديك ما تُتقنه غير التدريس فأخبرنا به: سنتواصل معك أولًا قبل نشر أي إعلان.',
 			'recrutement.talents.intro.facultatif.titre' => 'اختياري',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.intro.facultatif.texte' => 'لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.',
 			'recrutement.talents.intro.usage.titre' => 'ماذا نفعل بإجاباتك',
 			'recrutement.talents.intro.usage.texte' => 'تُستعمل إجاباتك فقط لاقتراح مهمة عليك في الأكاديمية. تقرؤها الإدارة وحدها.',
@@ -39933,6 +40013,8 @@ extension on TraductionsAr {
 			'avis.form.envoye.titre' => 'شكرًا على رأيك',
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'ستقرأ الإدارة رأيك قبل نشره على الموقع مع اسمك الظاهر وبلدك والتاريخ. لطلب سحبه، اكتب إلى ⁨${courriel}⁩.',
 			'avis.form.erreurChargement' => 'تعذّر فتح النموذج. أعد المحاولة بعد قليل.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.sansDonnees' => 'تعذّر فتح النموذج',
 			'avis.form.indisponibleTitre' => 'الآراء غير متاحة',
 			'avis.form.indisponiblePhrase' => 'ستتوفر هذه الخاصية عند ربط الخادم.',
@@ -39953,8 +40035,6 @@ extension on TraductionsAr {
 			'avis.admin.filtre.publie' => 'المنشورة',
 			'avis.admin.filtre.refuse' => 'المرفوضة',
 			'avis.admin.filtre.retire' => 'المسحوبة',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.attente' => ({required Object n}) => 'آراء قيد الانتظار: ⁨${n}⁩',
 			'avis.admin.vide' => 'لا توجد آراء في هذه القائمة.',
 			'avis.admin.erreur' => 'تعذّر تحميل الآراء. أعد المحاولة.',
@@ -40447,6 +40527,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.intro' => 'يُستعمل الاستيراد للتعرّف على الأشخاص وتعبئة طلباتهم مسبقًا. لا يُنشئ أي حساب.',
 			'candidatsFlux.importFormulaires.lienEntree' => 'استيراد النماذج',
 			'candidatsFlux.importFormulaires.retourCandidatures' => 'العودة إلى طلبات الترشح',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.lectureDroits' => 'تعذّرت قراءة صلاحيات الاستيراد لديكم. أعيدوا المحاولة بعد قليل.',
 			'candidatsFlux.importFormulaires.sansDonnees' => 'صلاحيات استيراد النماذج لديكم',
 			'candidatsFlux.importFormulaires.acces.refuseTitre' => 'الاستيراد محجوز',
@@ -40467,8 +40549,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${nom}⁩',
 			'candidatsFlux.importFormulaires.pas.fait' => 'مكتمل',
 			'candidatsFlux.importFormulaires.pas.enCours' => 'الحالية',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.pas.aVenir' => 'لاحقًا',
 			'candidatsFlux.importFormulaires.depot.question' => 'أي ملف تريدون استيراده؟',
 			'candidatsFlux.importFormulaires.depot.explication' => 'اختاروا ملف CSV المُصدَّر من جدول النماذج (في جداول بيانات Google: ملف ثم تنزيل ثم قيم مفصولة بفواصل). لا يُرسَل شيء قبل الضغط على «تحليل الملف».',
@@ -40961,6 +41041,8 @@ extension on TraductionsAr {
 			'suiviAttente.contexte' => 'تؤكد الأكاديمية كل مرحلة، وتصلك رسالة عند كل انتقال.',
 			'suiviAttente.contexteSimple' => 'هنا ترى أين وصل طلبك. تُخبرك الأكاديمية عند كل مرحلة.',
 			'suiviAttente.pour' => ({required Object prenom}) => 'من أجل ⁨${prenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'المرحلة ⁨${n}⁩ من ⁨${total}⁩: ⁨${etape}⁩',
 			'suiviAttente.etapes.recue' => 'تم استلام الطلب',
 			'suiviAttente.etapes.formation' => 'الفصل قيد التكوين',
@@ -40981,8 +41063,6 @@ extension on TraductionsAr {
 			'suiviAttente.dit.confirmeeAVenir' => 'تؤكد الأكاديمية الفصل عندما يجتمع طلابه.',
 			'suiviAttente.dit.enseignantEnCours' => 'تعيّن الأكاديمية معلم الفصل.',
 			'suiviAttente.dit.enseignantEnAttente' => 'فصلك ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.dit.enseignantFait' => 'صار معلمك معروفًا.',
 			'suiviAttente.dit.enseignantFaitSimple' => 'صار معلمك معروفًا.',
 			'suiviAttente.dit.enseignantAVenir' => 'تعيّن الأكاديمية المعلم بعد تأكيد الفصل.',

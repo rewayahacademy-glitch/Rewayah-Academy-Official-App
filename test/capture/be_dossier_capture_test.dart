@@ -1,6 +1,6 @@
 // BE-DOSSIER (directeur, 16/11/2026) : captures du dossier en trois etages sur
 // la VRAIE application et le vrai routeur en demonstration d'administration :
-// telephone (360), ordinateur (1366), arabe de droite a gauche. Donnees
+// 360 (plie), 673 et 884 (deplie), 1366, arabe de droite a gauche. Donnees
 // fictives. Saute sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`).
 
 import 'dart:async';
@@ -474,8 +474,10 @@ void main() {
   group('BE-DOSSIER : captures', skip: sautSansCapture, () {
     for (final (String nom, Size taille, EdgeInsets zone)
         in <(String, Size, EdgeInsets)>[
-          ('telephone', const Size(360, 800), _zoneSure),
-          ('ordinateur', const Size(1366, 768), EdgeInsets.zero),
+          ('360', const Size(360, 800), _zoneSure),
+          ('673', const Size(673, 840), EdgeInsets.zero),
+          ('884', const Size(884, 900), EdgeInsets.zero),
+          ('1366', const Size(1366, 768), EdgeInsets.zero),
         ]) {
       testWidgets('contenu $nom', (WidgetTester tester) async {
         fixerVueCapture(tester, taille, 1, zoneSure: zone);
@@ -527,7 +529,7 @@ void main() {
       fixerVueCapture(tester, const Size(360, 800), 1, zoneSure: _zoneSure);
       await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
       await _monter(tester, _port());
-      await _photo(tester, 'dossier_arabe_telephone');
+      await _photo(tester, 'dossier_arabe_360');
     });
 
     testWidgets('arabe, de droite a gauche, ordinateur', (
@@ -536,7 +538,7 @@ void main() {
       fixerVueCapture(tester, const Size(1366, 768), 1);
       await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
       await _monter(tester, _port());
-      await _photo(tester, 'dossier_arabe_ordinateur');
+      await _photo(tester, 'dossier_arabe_1366');
     });
   });
 }

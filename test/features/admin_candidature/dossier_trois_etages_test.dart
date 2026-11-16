@@ -6,6 +6,7 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/accessibilite/texte_sans_coupure.dart';
 import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
@@ -19,6 +20,8 @@ import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
 import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
+import 'package:rewayah_academy/features/candidature/libelles_parcours.dart'
+    show libelleHeures;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/monter_recrutement.dart' show laisser;
@@ -165,83 +168,155 @@ void main() {
     });
   });
 
-  group('etage 2 : le resume', () {
-    testWidgets('cinq lignes au plus, et rien de technique', (
-      WidgetTester tester,
-    ) async {
-      await _monter(tester, port: _port(detailTest()));
-      final Finder resume = find.byKey(ResumeDossier.cle);
-      expect(resume, findsOneWidget);
-      final r = t.recrutement.dossier3.resume;
-      final String texte = <String>[
-        for (final Element e
-            in find
-                .descendant(of: resume, matching: find.byType(RichText))
-                .evaluate())
-          (e.widget as RichText).text.toPlainText(),
-      ].join('\n');
-      // Cinq lignes au plus : une ligne de texte par reponse.
-      expect(
-        find
-            .descendant(of: resume, matching: find.byType(MergeSemantics))
-            .evaluate()
-            .length,
-        lessThanOrEqualTo(5),
-      );
-      for (final String cle in <String>[
-        r.langues,
-        r.niveau,
-        r.disponibilites,
-        r.versement,
-        r.public,
-      ]) {
-        expect(texte, contains(cle));
-      }
-      // Versement : le pays et les moyens nommes, sans compteur.
-      expect(texte, contains('${r.versement}\u00a0: '));
-      expect(
-        texte,
-        isNot(contains(t.admin.candidatures.detail.moyensIndiques(n: 1))),
-      );
-      expect(texte, contains('Orange Money'));
-      expect(texte, isNot(contains('Moyens indiqu')));
-      expect(texte, isNot(contains('salle-examen')));
-      expect(_texte(tester), isNot(contains('salle-examen')));
-      expect(
-        _texte(tester),
-        isNot(
-          contains(
-            t.admin.candidatures.detail.reponsesVersion(
-              version: 'salle-examen-1',
+  /// Les lignes du tableau de synthese, dans l'ordre : libelle puis valeur.
+  List<(String, String)> lignesDeSynthese(WidgetTester tester) {
+    final List<String> textes = <String>[
+      for (final Element e
+          in find
+              .descendant(
+                of: find.byKey(ResumeDossier.cleTableau),
+                matching: find.byType(TexteSansCoupure),
+              )
+              .evaluate())
+        (e.widget as TexteSansCoupure).texte,
+    ];
+    return <(String, String)>[
+      for (int i = 0; i + 1 < textes.length; i += 2) (textes[i], textes[i + 1]),
+    ];
+  }
+
+  group('etage 2 : la synthese en tableau', () {
+    final s = t.recrutement.dossier3.synthese;
+    final String sep = t.admin.candidatures.historique.separateur;
+
+    testWidgets(
+      'un libelle court, une valeur en mots-cles, une ligne par critere',
+      (WidgetTester tester) async {
+        await _monter(tester, port: _port(detailTest()));
+        expect(find.byKey(ResumeDossier.cleTableau), findsOneWidget);
+        expect(find.byType(Table), findsWidgets);
+        expect(lignesDeSynthese(tester), <(String, String)>[
+          (s.langues, <String>['Poular', 'Français', 'Wolof'].join(sep)),
+          (s.memorisation, s.memorisationValeurs.de_10_a_29_juz),
+          (s.ijaza, s.ijazaValeurs.pret_test),
+          (
+            s.disponibilites,
+            s.heuresDe(
+              jours: <String>[s.jours.j1, s.jours.j3].join(sep),
+              heures: libelleHeures(<int>[18, 19]),
             ),
           ),
-        ),
-      );
-    });
-  });
+          (
+            s.versement,
+            <String>[
+              'Sénégal',
+              t.admin.candidatures.moyens.virement,
+              'Orange Money',
+            ].join(sep),
+          ),
+          (
+            s.public,
+            <String>[s.publicValeurs.k1013, s.publicValeurs.adultes].join(sep),
+          ),
+        ]);
+      },
+    );
 
-  group('etage 2 : le versement sans nom de moyen', () {
-    testWidgets('le pays seulement, jamais un compteur ni un code', (
+    testWidgets(
+      'jamais la phrase du candidat, ni texte technique, ni compteur',
+      (WidgetTester tester) async {
+        await _monter(tester, port: _port(detailTest()));
+        final String texte = lignesDeSynthese(tester)
+            .map(((String, String) l) => '${l.$1} ${l.$2}')
+            .join('\n');
+        // La phrase du questionnaire (« J'ai memorise de 10 a 29 juz... »)
+        // n'est pas dans la synthese.
+        expect(texte, isNot(contains("J'ai mémorisé")));
+        expect(texte, isNot(contains('mais je peux passer')));
+        expect(texte, isNot(contains('Moyens indiqu')));
+        expect(texte, isNot(contains('salle-examen')));
+        expect(_texte(tester), isNot(contains('salle-examen')));
+        expect(
+          _texte(tester),
+          isNot(
+            contains(
+              t.admin.candidatures.detail.reponsesVersion(
+                version: 'salle-examen-1',
+              ),
+            ),
+          ),
+        );
+      },
+    );
+
+    testWidgets('sans nom de moyen : le pays et le virement, jamais un code', (
       WidgetTester tester,
     ) async {
       await _monter(
         tester,
         port: _port(detailTest(), moyens: const <String, MoyensConfirmes>{}),
       );
-      final String texte = <String>[
+      final Map<String, String> m = <String, String>{
+        for (final (String, String) l in lignesDeSynthese(tester)) l.$1: l.$2,
+      };
+      expect(
+        m[s.versement],
+        <String>['Sénégal', t.admin.candidatures.moyens.virement].join(sep),
+      );
+      expect(_texte(tester), isNot(contains('orange_money')));
+    });
+
+    testWidgets(
+      'une valeur longue passe a la ligne, jamais tronquee en silence',
+      (WidgetTester tester) async {
+        await _monter(tester, port: _port(detailTest()), largeur: 320);
         for (final Element e
             in find
                 .descendant(
-                  of: find.byKey(ResumeDossier.cle),
-                  matching: find.byType(RichText),
+                  of: find.byKey(ResumeDossier.cleTableau),
+                  matching: find.byType(TexteSansCoupure),
                 )
-                .evaluate())
-          (e.widget as RichText).text.toPlainText(),
-      ].join('\n');
-      expect(texte, contains('Sénégal'));
-      expect(texte, isNot(contains('Moyens indiqu')));
-      expect(texte, isNot(contains('orange_money')));
-    });
+                .evaluate()) {
+          final TexteSansCoupure w = e.widget as TexteSansCoupure;
+          expect(w.maxLignes, isNull, reason: w.texte);
+        }
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'en arabe, le tableau se retourne et les chiffres restent latins',
+      (WidgetTester tester) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+        await _monter(
+          tester,
+          port: _port(detailTest()),
+          direction: TextDirection.rtl,
+        );
+        final Rect tableau = tester.getRect(
+          find.byKey(ResumeDossier.cleTableau),
+        );
+        final Finder libelle = find.descendant(
+          of: find.byKey(ResumeDossier.cleTableau),
+          matching: find.text(t.recrutement.dossier3.synthese.langues),
+        );
+        expect(libelle, findsWidgets);
+        // Le libelle est au bord de debut : a droite en arabe.
+        expect(
+          tester.getRect(libelle.first).right,
+          greaterThan(tableau.center.dx),
+        );
+        final String valeurs = lignesDeSynthese(tester)
+            .map(((String, String) l) => l.$2)
+            .join('\n');
+        expect(valeurs, contains('10'));
+        expect(valeurs, contains('18'));
+        expect(valeurs, isNot(contains('١')));
+        // Les valeurs a chiffres sont isolees dans leur sens de lecture.
+        expect(valeurs, contains('\u2068'));
+        expect(tester.takeException(), isNull);
+      },
+    );
   });
 
   group('etage 3 : les rubriques', () {
@@ -501,6 +576,162 @@ void main() {
         );
         expect(find.byType(LignesDatesDossier), findsOneWidget);
         expect(_texte(tester), isNot(contains('salle-examen')));
+      },
+    );
+  });
+
+  group('ouvrir ou fermer une rubrique : la page ne saute pas', () {
+    double hautDuTitre(WidgetTester tester, RubriqueDossierCode c) =>
+        tester.getTopLeft(find.byKey(RubriqueDossier.cleEntete(c))).dy;
+
+    ScrollPosition position(WidgetTester tester) =>
+        tester.state<ScrollableState>(find.byType(Scrollable).first).position;
+
+    testWidgets(
+      'le titre touche reste a la meme place, a l\'ouverture et a la fermeture',
+      (WidgetTester tester) async {
+        await _monter(tester, port: _port(detailTest()), hauteur: 800);
+        // La page defile : on ouvre de quoi la rallonger, puis on va tout en bas.
+        for (final RubriqueDossierCode c in <RubriqueDossierCode>[
+          RubriqueDossierCode.versement,
+          RubriqueDossierCode.langues,
+          RubriqueDossierCode.historique,
+        ]) {
+          await _tapper(tester, find.byKey(RubriqueDossier.cleEntete(c)));
+        }
+        final ScrollPosition p = position(tester);
+        expect(p.maxScrollExtent, greaterThan(0));
+        p.jumpTo(p.maxScrollExtent);
+        await laisser(tester);
+
+        const RubriqueDossierCode cible = RubriqueDossierCode.historique;
+        final Finder entete = find.byKey(RubriqueDossier.cleEntete(cible));
+        final double avant = hautDuTitre(tester, cible);
+
+        // Fermeture : image par image, le titre ne bouge pas.
+        await tester.tap(entete, warnIfMissed: false);
+        for (int i = 0; i < 8; i++) {
+          await tester.pump(const Duration(milliseconds: 30));
+          expect(
+            (hautDuTitre(tester, cible) - avant).abs(),
+            lessThan(1),
+            reason: 'fermeture, image $i',
+          );
+        }
+        await laisser(tester);
+        expect((hautDuTitre(tester, cible) - avant).abs(), lessThan(1));
+        expect(find.byKey(RubriqueDossier.cleContenu(cible)), findsNothing);
+
+        // Ouverture : meme chose.
+        await tester.tap(entete, warnIfMissed: false);
+        for (int i = 0; i < 8; i++) {
+          await tester.pump(const Duration(milliseconds: 30));
+          expect(
+            (hautDuTitre(tester, cible) - avant).abs(),
+            lessThan(1),
+            reason: 'ouverture, image $i',
+          );
+        }
+        await laisser(tester);
+        expect((hautDuTitre(tester, cible) - avant).abs(), lessThan(1));
+        expect(find.byKey(RubriqueDossier.cleContenu(cible)), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      },
+    );
+
+    testWidgets(
+      'la hauteur s\'anime : une image du milieu est entre replie et deplie',
+      (WidgetTester tester) async {
+        await _monter(tester, port: _port(detailTest()));
+        const RubriqueDossierCode c = RubriqueDossierCode.historique;
+        final Finder rubrique = find.byKey(RubriqueDossier.cleDe(c));
+        final double replie = tester.getSize(rubrique).height;
+        await _tapper(tester, find.byKey(RubriqueDossier.cleEntete(c)));
+        final double deplie = tester.getSize(rubrique).height;
+        expect(deplie, greaterThan(replie));
+
+        await tester.tap(
+          find.byKey(RubriqueDossier.cleEntete(c)),
+          warnIfMissed: false,
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 60));
+        final double milieu = tester.getSize(rubrique).height;
+        expect(milieu, lessThan(deplie));
+        expect(milieu, greaterThan(replie));
+        await laisser(tester);
+        expect(tester.getSize(rubrique).height, replie);
+      },
+    );
+  });
+
+  group('largeurs des pliables : 360, 673, 884, 1366', () {
+    for (final double largeur in <double>[360, 673, 884, 1366]) {
+      testWidgets(
+        '$largeur : aucun debordement, rubriques ouvertes comprises',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            port: _port(detailTest(paiement: EtatVersement.compatible)),
+            largeur: largeur,
+            hauteur: 900,
+          );
+          expect(tester.takeException(), isNull);
+          await ouvrirToutesLesRubriques(tester);
+          expect(tester.takeException(), isNull);
+          final bool deux = largeur >= 840;
+          final double xEtage = tester
+              .getTopLeft(find.byKey(EtageUnDossier.cle))
+              .dx;
+          final double xRubriques = tester
+              .getTopLeft(find.byKey(CorpsDossier.cle))
+              .dx;
+          if (deux) {
+            expect(xRubriques, greaterThan(xEtage + 200), reason: '$largeur');
+          } else {
+            expect(
+              (xRubriques - xEtage).abs(),
+              lessThan(40),
+              reason: '$largeur',
+            );
+          }
+        },
+      );
+    }
+
+    testWidgets(
+      'changer de largeur a la volee, plie vers deplie et retour, sans erreur',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          port: _port(detailTest(paiement: EtatVersement.compatible)),
+          largeur: 360,
+          hauteur: 900,
+        );
+        await ouvrirToutesLesRubriques(tester);
+        for (final double largeur in <double>[
+          360,
+          673,
+          884,
+          1366,
+          884,
+          673,
+          360,
+        ]) {
+          tester.view.physicalSize = Size(largeur, 900);
+          await laisser(tester, fois: 3);
+          expect(tester.takeException(), isNull, reason: 'a $largeur');
+          // Le dossier est toujours la, ses rubriques ouvertes le restent.
+          expect(find.byKey(EtageUnDossier.cle), findsOneWidget);
+          expect(find.byKey(ResumeDossier.cle), findsOneWidget);
+          expect(
+            find.byKey(
+              RubriqueDossier.cleContenu(RubriqueDossierCode.historique),
+            ),
+            findsOneWidget,
+            reason: 'a $largeur',
+          );
+        }
       },
     );
   });

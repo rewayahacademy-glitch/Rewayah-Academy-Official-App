@@ -33,6 +33,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -61,6 +62,7 @@ import 'piece_sur_place.dart';
 import 'plan_dossier.dart';
 import 'portrait_dossier_fige.dart';
 import 'reponses_candidature.dart';
+import 'synthese_dossier.dart';
 
 // ---------------------------------------------------------------------------
 // Etage 1
@@ -215,94 +217,16 @@ class EtageUnDossier extends ConsumerWidget {
 // Etage 2
 // ---------------------------------------------------------------------------
 
-/// Une ligne du resume : son nom et ce qui a ete repondu.
-typedef LigneResume = ({String cle, String valeur});
-
-/// Les cinq lignes du resume, tirees des reponses du dossier : langues, niveau
-/// et ijaza, disponibilites, pays et versement, public. Une ligne sans reponse
-/// n'est pas rendue. Aucune donnee nouvelle.
-List<LigneResume> lignesResume(
-  DetailCandidature detail, {
-  Map<String, String> nomsOperateurs = const <String, String>{},
-}) {
-  final DocumentReponses? doc = detail.dernieresReponses;
-  if (doc == null) return const <LigneResume>[];
-  final List<CarteReponses> cartes = cartesDeReponses(
-    doc,
-    nomsOperateurs: nomsOperateurs,
-  );
-  final Map<String, LigneReponse> parCode = <String, LigneReponse>{
-    for (final CarteReponses c in cartes)
-      for (final LigneReponse l in c.lignes) l.code: l,
-  };
-  String? valeurs(List<String> codes, {String separateur = ''}) {
-    final String sep = separateur.isEmpty
-        ? t.recrutement.parcours.creneaux.separateurListe
-        : separateur;
-    final List<String> morceaux = <String>[
-      for (final String code in codes)
-        if (parCode[code] case final LigneReponse l)
-          if (l.groupes.isNotEmpty)
-            l.groupes.join('\n')
-          else if ((l.valeur ?? '').isNotEmpty)
-            l.valeur!,
-    ];
-    return morceaux.isEmpty ? null : morceaux.join(sep);
-  }
-
-  final r = t.recrutement.dossier3.resume;
-  // Versement : le pays, puis les moyens nommes, sans compteur. Un moyen dont
-  // le nom n'est pas connu ne se dit pas (jamais un code, jamais un nombre).
-  final Object? brutOperateurs = doc.reponses['operateurs'];
-  final List<String> moyens = <String>[
-    if (doc.reponses['compteBancaire'] == true)
-      t.admin.candidatures.moyens.virement,
-    if (brutOperateurs is List)
-      for (final Object? code in brutOperateurs)
-        if (code is String) ?nomsOperateurs[code],
-  ];
-  final String? pays =
-      valeurs(<String>['paysVersement']) ?? valeurs(<String>['paysResidence']);
-  return <LigneResume>[
-    for (final ({String cle, String? valeur}) e
-        in <({String cle, String? valeur})>[
-          (
-            cle: r.langues,
-            valeur: valeurs(<String>['langueMaternelle', 'languesExplication']),
-          ),
-          (
-            cle: r.niveau,
-            valeur: valeurs(<String>[
-              'niveauMemorisationDeclare',
-              'ijazaPresentable',
-            ]),
-          ),
-          (
-            cle: r.disponibilites,
-            valeur: valeurs(<String>['disponibilitesDeclarees']),
-          ),
-          (
-            cle: r.versement,
-            valeur: <String>[?pays, ...moyens].isEmpty
-                ? null
-                : <String>[
-                    ?pays,
-                    ...moyens,
-                  ].join(t.admin.candidatures.historique.separateur),
-          ),
-          (cle: r.public, valeur: valeurs(<String>['publics'])),
-        ])
-      if (e.valeur != null) (cle: e.cle, valeur: e.valeur!),
-  ];
-}
-
-/// L'etage 2 : le resume, pour juger en dix secondes.
+/// L'etage 2 : la synthese, un tableau a deux colonnes (libelle court a
+/// gauche, valeur courte a droite), une ligne par critere. Une valeur trop
+/// longue passe a la ligne entre les mots, jamais tronquee. En arabe, le
+/// tableau se retourne (les colonnes suivent le sens de lecture).
 class ResumeDossier extends StatelessWidget {
-  /// Cree le resume.
+  /// Cree la synthese.
   const ResumeDossier({required this.lignes, super.key, this.importe = false});
 
-  /// Les lignes du resume.
-  final List<LigneResume> lignes;
+  /// Les lignes de la synthese.
+  final List<LigneSynthese> lignes;
 
   /// Vrai quand les reponses viennent de l'ancien formulaire : la marque
   /// « Venu de l'ancien formulaire » le dit.
@@ -311,16 +235,20 @@ class ResumeDossier extends StatelessWidget {
   /// La cle de l'etage.
   static const Key cle = ValueKey<String>('dossier-etage-2');
 
+  /// La cle du tableau.
+  static const Key cleTableau = ValueKey<String>('dossier-synthese-tableau');
+
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle base =
+        Theme.of(context).textTheme.bodyMedium ?? const TextStyle();
     if (lignes.isEmpty) {
       return AppCard(
         key: cle,
         child: TexteSansCoupure(
           t.admin.candidatures.detail.aucuneReponse,
-          style: AppPalette.of(context).inkMuted.applyTo(
-            Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-          ),
+          style: palette.inkMuted.applyTo(base),
         ),
       );
     }
@@ -330,33 +258,66 @@ class ResumeDossier extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          // Une ligne, le nom puis la reponse : le resume se lit en dix
-          // secondes et ne pousse pas la decision hors de l'ecran.
-          for (int i = 0; i < lignes.length; i++) ...<Widget>[
-            if (i > 0) Ecart.vSm,
-            MergeSemantics(
-              child: Text.rich(
-                TextSpan(
-                  children: <InlineSpan>[
-                    TextSpan(
-                      text: '${lignes[i].cle}\u00a0: ',
-                      style: AppPalette.of(context).inkMuted.applyTo(
-                        Theme.of(context).textTheme.bodyMedium ??
-                            const TextStyle(),
-                      ),
-                    ),
-                    TextSpan(
-                      text: lignes[i].valeur,
-                      style: AppPalette.of(context).inkStrong.applyTo(
-                        Theme.of(context).textTheme.bodyMedium ??
-                            const TextStyle(),
-                      ),
-                    ),
+          LayoutBuilder(
+            builder: (BuildContext context, BoxConstraints contraintes) {
+              // Texte tres agrandi ou colonne tres etroite : le libelle passe
+              // au-dessus de sa valeur, pour qu'aucun mot ne se coupe. Sinon,
+              // deux colonnes.
+              final bool empile =
+                  MediaQuery.textScalerOf(context).scale(16) / 16 > 1.3 ||
+                  contraintes.maxWidth < 240;
+              final TextStyle styleCle = palette.inkMuted.applyTo(base);
+              final TextStyle styleValeur = palette.inkStrong.applyTo(base);
+              if (empile) {
+                return Column(
+                  key: cleTableau,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    for (int i = 0; i < lignes.length; i++) ...<Widget>[
+                      if (i > 0) Ecart.vSm,
+                      TexteSansCoupure(lignes[i].cle, style: styleCle),
+                      TexteSansCoupure(lignes[i].valeur, style: styleValeur),
+                    ],
                   ],
-                ),
-              ),
-            ),
-          ],
+                );
+              }
+              return Table(
+                key: cleTableau,
+                // Le libelle prend sa largeur, au plus un peu moins de la
+                // moitie : la valeur garde la place de se dire.
+                columnWidths: const <int, TableColumnWidth>{
+                  0: MaxColumnWidth(
+                    IntrinsicColumnWidth(),
+                    FractionColumnWidth(0.42),
+                  ),
+                  1: FlexColumnWidth(),
+                },
+                defaultVerticalAlignment: TableCellVerticalAlignment.top,
+                children: <TableRow>[
+                  for (final LigneSynthese l in lignes)
+                    TableRow(
+                      children: <Widget>[
+                        Padding(
+                          padding: const EdgeInsetsDirectional.only(
+                            end: AppSpacing.lg,
+                            top: AppSpacing.xs,
+                            bottom: AppSpacing.xs,
+                          ),
+                          child: TexteSansCoupure(l.cle, style: styleCle),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: AppSpacing.xs,
+                          ),
+                          child: TexteSansCoupure(l.valeur, style: styleValeur),
+                        ),
+                      ],
+                    ),
+                ],
+              );
+            },
+          ),
           if (importe) ...<Widget>[
             Ecart.vSm,
             Align(
@@ -376,6 +337,29 @@ class ResumeDossier extends StatelessWidget {
 // ---------------------------------------------------------------------------
 // Etage 3
 // ---------------------------------------------------------------------------
+
+/// La place que la page garde sous les rubriques pendant qu'une rubrique
+/// s'ouvre ou se replie (voir `RubriqueDossier`). Hors du dossier (un test qui
+/// monte une rubrique seule), il n'y en a pas : la rubrique s'anime sans.
+class ReserveDefilement extends InheritedWidget {
+  /// Cree la reserve.
+  const ReserveDefilement({
+    required this.reserve,
+    required super.child,
+    super.key,
+  });
+
+  /// La hauteur gardee, en points.
+  final ValueNotifier<double> reserve;
+
+  /// La reserve de la page, ou `null`.
+  static ValueNotifier<double>? de(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<ReserveDefilement>()?.reserve;
+
+  @override
+  bool updateShouldNotify(ReserveDefilement ancien) =>
+      ancien.reserve != reserve;
+}
 
 /// Un geste a cote de sa rubrique : un lien, jamais un gros bouton.
 class GesteRubrique {
@@ -445,8 +429,51 @@ class RubriqueDossier extends StatefulWidget {
   State<RubriqueDossier> createState() => _EtatRubriqueDossier();
 }
 
-class _EtatRubriqueDossier extends State<RubriqueDossier> {
+class _EtatRubriqueDossier extends State<RubriqueDossier>
+    with SingleTickerProviderStateMixin {
   late bool _ouverte = widget.ouverteAuDepart;
+
+  /// La hauteur du contenu : 0 replie, 1 deplie. Elle s'anime sur une duree
+  /// courte du theme (`AppMouvement.apparition`), nulle sous « reduire les
+  /// animations ».
+  late final AnimationController _hauteur = AnimationController(
+    vsync: this,
+    duration: AppMouvement.apparition,
+    value: _ouverte ? 1 : 0,
+  );
+
+  late final CurvedAnimation _courbe = CurvedAnimation(
+    parent: _hauteur,
+    curve: AppMouvement.entree,
+    reverseCurve: AppMouvement.sortie,
+  );
+
+  /// Le bloc de contenu : sa hauteur du moment se mesure sur lui.
+  final GlobalKey _cleBloc = GlobalKey(debugLabel: 'rubrique-dossier-bloc');
+
+  // Ce qui est note quand on touche le titre, pour garder la page en place :
+  // la hauteur du bloc, sa part de hauteur, et la reserve de la page.
+  double _hauteurDepart = 0;
+  double _partDepart = 0;
+  double _reserveDepart = 0;
+  ValueNotifier<double>? _reserve;
+
+  @override
+  void initState() {
+    super.initState();
+    _hauteur
+      ..addStatusListener((AnimationStatus _) {
+        if (mounted) setState(() {});
+      })
+      ..addListener(_garderLaPlace);
+  }
+
+  @override
+  void dispose() {
+    _courbe.dispose();
+    _hauteur.dispose();
+    super.dispose();
+  }
 
   @override
   void didUpdateWidget(RubriqueDossier ancienne) {
@@ -455,6 +482,53 @@ class _EtatRubriqueDossier extends State<RubriqueDossier> {
     // l'inverse : ce que la personne a ouvert reste ouvert.
     if (widget.ouverteAuDepart && !ancienne.ouverteAuDepart) {
       _ouverte = true;
+      _hauteur.value = 1;
+    }
+  }
+
+  double _hauteurDuBloc() {
+    final RenderObject? o = _cleBloc.currentContext?.findRenderObject();
+    return o is RenderBox && o.attached && o.hasSize ? o.size.height : 0;
+  }
+
+  /// Ouvre ou ferme : le titre touche reste a la meme place a l'ecran, a
+  /// chaque image, sans saut. Quand une rubrique se replie, la page garde sous
+  /// les rubriques la place qui s'en va, pour ne pas raccourcir sous le
+  /// doigt ; quand elle s'ouvre, cette place est rendue au fur et a mesure.
+  void _basculer() {
+    _reserve = ReserveDefilement.de(context);
+    _hauteurDepart = _hauteurDuBloc();
+    _partDepart = _courbe.value;
+    _reserveDepart = _reserve?.value ?? 0;
+    _hauteur.duration = AppMouvement.duree(context, AppMouvement.apparition);
+    setState(() => _ouverte = !_ouverte);
+    if (_ouverte) {
+      unawaited(_hauteur.forward());
+    } else {
+      unawaited(_hauteur.reverse());
+    }
+    _garderLaPlace();
+  }
+
+  /// Appelee a chaque image de l'animation, avant la mise en page : la reserve
+  /// de la page change dans la meme image que la hauteur du bloc.
+  void _garderLaPlace() {
+    final ValueNotifier<double>? reserve = _reserve;
+    if (reserve == null) return;
+    if (_ouverte) {
+      // Ouverture : la place gardee est rendue de ce que le bloc a gagne
+      // (mesure a l'image precedente : jamais moins que ce qu'il faut).
+      final double gagne = _hauteurDuBloc() - _hauteurDepart;
+      reserve.value = (_reserveDepart - (gagne > 0 ? gagne : 0)).clamp(
+        0,
+        double.infinity,
+      );
+    } else if (_partDepart > 0.001) {
+      // Fermeture : ce que le bloc perd s'ajoute a la reserve, dans la meme
+      // image (calcule sur la courbe, pas mesure).
+      final double pleine = _hauteurDepart / _partDepart;
+      final double perdu = pleine * (_partDepart - _courbe.value);
+      reserve.value = _reserveDepart + (perdu > 0 ? perdu : 0);
     }
   }
 
@@ -468,7 +542,7 @@ class _EtatRubriqueDossier extends State<RubriqueDossier> {
       child: Pressable(
         key: RubriqueDossier.cleEntete(widget.code),
         libelleSemantique: widget.titre,
-        onPress: () => setState(() => _ouverte = !_ouverte),
+        onPress: _basculer,
         child: Row(
           children: <Widget>[
             Expanded(
@@ -534,13 +608,34 @@ class _EtatRubriqueDossier extends State<RubriqueDossier> {
                 ),
             ],
           ),
-        if (_ouverte) ...<Widget>[
-          Ecart.vSm,
-          KeyedSubtree(
-            key: RubriqueDossier.cleContenu(widget.code),
-            child: widget.contenu(context),
+        // Le contenu reste construit tant que la hauteur s'anime (la
+        // fermeture se voit), puis disparait.
+        if (_ouverte || _hauteur.status != AnimationStatus.dismissed)
+          AnimatedBuilder(
+            animation: _courbe,
+            // Le contenu garde son etat ; seule la hauteur change. Au repos
+            // (deplie), rien ne decoupe le contenu.
+            builder: (BuildContext _, Widget? contenu) => ClipRect(
+              clipBehavior: _courbe.value >= 1 ? Clip.none : Clip.hardEdge,
+              child: Align(
+                key: _cleBloc,
+                alignment: AlignmentDirectional.topStart,
+                heightFactor: _courbe.value,
+                child: contenu,
+              ),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Ecart.vSm,
+                KeyedSubtree(
+                  key: RubriqueDossier.cleContenu(widget.code),
+                  child: widget.contenu(context),
+                ),
+              ],
+            ),
           ),
-        ],
       ],
     );
   }
@@ -631,7 +726,7 @@ List<EntreeAction> actionsSupplementaires(
 
 /// Le corps du dossier : le resume, puis les rubriques. Sur ordinateur, les
 /// etages 1 et 2 a gauche et les rubriques a droite, dans la meme page.
-class CorpsDossier extends ConsumerWidget {
+class CorpsDossier extends ConsumerStatefulWidget {
   /// Cree le corps.
   const CorpsDossier({
     required this.plan,
@@ -684,8 +779,45 @@ class CorpsDossier extends ConsumerWidget {
   /// La cle du corps.
   static const Key cle = ValueKey<String>('dossier-corps');
 
+  /// La cle de la place gardee sous les rubriques.
+  static const Key cleReserve = ValueKey<String>('dossier-reserve');
+
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<CorpsDossier> createState() => _EtatCorpsDossier();
+}
+
+class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
+  /// La liste des rubriques garde son etat (rubriques ouvertes) quand la page
+  /// passe d'une colonne a deux, ou l'inverse : une cle globale la suit.
+  final GlobalKey _cleListe = GlobalKey(debugLabel: 'dossier-liste-rubriques');
+
+  /// La place gardee sous les rubriques pendant qu'une rubrique se replie :
+  /// la page ne raccourcit pas sous le doigt, le titre touche garde sa place.
+  final ValueNotifier<double> _reserve = ValueNotifier<double>(0);
+
+  @override
+  void dispose() {
+    _reserve.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      ReserveDefilement(reserve: _reserve, child: _corps(context));
+
+  Widget _corps(BuildContext context) {
+    final PlanDossier plan = widget.plan;
+    final bool deuxColonnes = widget.deuxColonnes;
+    final ValueChanged<GesteCandidature> onGeste = widget.onGeste;
+    final ValueChanged<String> onDemanderElement = widget.onDemanderElement;
+    final VoidCallback onOuvrirDossier = widget.onOuvrirDossier;
+    final ValueChanged<String> onEntretien = widget.onEntretien;
+    final ValueChanged<ConversationEnPlace> onOuvrirConversation =
+        widget.onOuvrirConversation;
+    final int rangMessages = widget.rangMessages;
+    final String? retour = widget.retour;
+    final String? retourEntretien = widget.retourEntretien;
+    final List<EntreeAction> autresActions = widget.autresActions;
     final DetailCandidature detail = plan.detail;
     final CapacitesCandidatures capacites = plan.capacites;
     final bool horsLigne = plan.horsLigne;
@@ -939,7 +1071,7 @@ class CorpsDossier extends ConsumerWidget {
       ),
     ];
     final Widget resume = ResumeDossier(
-      lignes: lignesResume(detail, nomsOperateurs: noms),
+      lignes: syntheseDuDossier(detail, nomsOperateurs: noms),
       importe: detail.dernieresReponses?.importe ?? false,
     );
     // Rien de fixe (coordinateur, 16/11 : SANS-BARRE-FIXE et DEFILEMENT
@@ -955,9 +1087,25 @@ class CorpsDossier extends ConsumerWidget {
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
             child: LocalFeedback(message: retour),
           );
-    final Widget liste = CarteGroupee(
-      key: cle,
-      sections: <Widget>[for (final RubriqueDossier? ru in rubriques) ?ru],
+    final Widget liste = KeyedSubtree(
+      key: _cleListe,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          CarteGroupee(
+            key: CorpsDossier.cle,
+            sections: <Widget>[
+              for (final RubriqueDossier? ru in rubriques) ?ru,
+            ],
+          ),
+          ValueListenableBuilder<double>(
+            valueListenable: _reserve,
+            builder: (BuildContext _, double h, Widget? _) =>
+                SizedBox(key: CorpsDossier.cleReserve, height: h),
+          ),
+        ],
+      ),
     );
     if (!deuxColonnes) {
       return Column(
