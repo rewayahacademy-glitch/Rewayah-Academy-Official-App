@@ -223,3 +223,16 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
     - **l'annuaire `agent_ro` l'exclura en PX-2** (`NOT EXISTS comptes_officiels`, sans effet sur l'application) ;
     - **aucune politique restrictive générale** avant l'inventaire des jointures qui lisent les noms d'auteurs.
   - C'est une dette nommée dans #567.
+- **AR-9 (16/11, 23 h 55), deuxième relecture indépendante de #567 (`e20589ba`).**
+  - **Le code** : les correctifs tiennent en rejeu ; B1, B2, I1, I2, I3, I5, I6 et I7 sont refusés.
+  - **Les preuves ne sont pas au niveau demandé**, et #567 n'est pas fusionnée tant qu'elles ne le sont pas :
+    - M6 n'est pas livré (R4 avec les aides privées, R1, R13 « équipe » et recherche, inverse de A-9) ;
+    - deux tests d'AR-7 étaient déjà verts sur l'ancien code (comptable, écriture `profilPaiement`) ;
+    - deux assertions sont trop larges.
+  - **Arbitrages** :
+    - le fil `dossier` d'un foyer reste ouvert : le texte du parent est à lui, et Praxis n'en tire aucune promesse
+      d'argent (niveau C) ;
+    - `praxis_noter_refus` sans plafond : dette nommée ;
+    - le rejeu idempotent passe avant le refus du fil : accepté, car il n'écrit rien ;
+    - les deux côtés de la super-administration se lisent dans `kyc_exception_super_admin` : accepté, c'est la même
+      règle que l'existant.
