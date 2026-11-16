@@ -51,6 +51,16 @@ declare
     'affectation_candidat(uuid)',
     -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
     'admettre_salle_verification(uuid,integer,text)',
+    -- PX-1 (16/11) : les trois portes de la direction pour Praxis. Qui peut appeler : la direction seulement, garde positive
+    -- public.app_account_valid(), public.app_role() = 'admin' et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit :
+    -- emettre_cle une ligne de private.praxis_cles (l'empreinte sha256, jamais le secret) plus une ligne d'audit ;
+    -- revoquer_cle la revocation d'une cle (date, auteur, motif) plus une ligne d'audit ; regler les trois reglages
+    -- praxis.actif, praxis.autonome, praxis.envois_par_heure de app_config plus une ligne d'audit. Ce qu'elles n'ecrivent
+    -- jamais : un compte, un role, un message, une annonce. Les outils de Praxis (praxis_*) ne sont executables que par
+    -- service_role : hors de cette liste.
+    'direction_praxis_emettre_cle(text,text,timestamp with time zone,uuid)',
+    'direction_praxis_regler(boolean,boolean,integer)',
+    'direction_praxis_revoquer_cle(uuid,text,uuid)',
     -- BE-2a-1 (16/11) : les missions. Qui peut appeler : la direction seulement, garde positive public.app_role() = 'admin',
     -- public.app_account_valid() et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit : une ligne de private.missions,
     -- de private.mission_attributions ou de private.mission_journal, plus une ligne d'audit (log_sensitive_access).

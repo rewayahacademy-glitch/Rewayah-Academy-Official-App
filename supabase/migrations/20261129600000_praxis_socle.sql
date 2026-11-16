@@ -1,5 +1,5 @@
 -- PX-1 (ancien SEC-1) : Praxis, l'assistant IA de l'academie. SOCLE : le compte, les cles, les reglages, le journal,
--- les outils de LECTURE (etat, boite, fil, rendre_compte, calendrier, alerter_responsable). Les outils qui ECRIVENT des
+-- les outils de LECTURE (etat, boite, fil, rendre_compte, calendrier). Les outils qui ECRIVENT des
 -- messages et des annonces (ecrire, annoncer) viennent dans 20261129620000, apres la retouche de la messagerie
 -- (20261129610000, installee seule). Documents : docs/current/BUREAU-EQUIPE/PRAXIS/SECURITE-PRAXIS.md (R1 a R15, §3,
 -- §7), CAHIER-SEC-1-PRAXIS-MESSAGES.md (A-1 a A-11), RELEVE-PX1.md.
@@ -602,7 +602,7 @@ BEGIN
            'outil', j.outil, 'fil', j.fil_id, 'extrait', pg_catalog.left(j.texte_envoye, 300), 'heure', j.cree_le)
            ORDER BY j.cree_le DESC), '[]'::jsonb) INTO v_envois
     FROM (SELECT * FROM private.praxis_journal x
-           WHERE x.outil IN ('ecrire', 'annoncer', 'alerter_responsable') AND x.issue = 'ok'
+           WHERE x.outil IN ('ecrire', 'annoncer') AND x.issue = 'ok'
              AND x.cree_le > pg_catalog.clock_timestamp() - pg_catalog.make_interval(hours => p_heures)
            ORDER BY x.cree_le DESC LIMIT 50) j;
   SELECT pg_catalog.count(*)::integer INTO v_refus FROM private.praxis_journal x
@@ -692,58 +692,20 @@ BEGIN
 END;
 $f$;
 
--- Passer la main a la direction : une notification, par le circuit existant (annonce_direction, /admin/alertes). Praxis ne
--- choisit aucune personne : toute la direction active la recoit.
-CREATE FUNCTION public.praxis_alerter_responsable(p_cle text, p_sujet text, p_texte text, p_urgence text)
-RETURNS jsonb
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = ''
-AS $f$
-DECLARE
-  v_debut timestamptz := pg_catalog.clock_timestamp();
-  v_p record;
-  v_sujet text := pg_catalog.btrim(coalesce(p_sujet, ''));
-  v_texte text := pg_catalog.btrim(coalesce(p_texte, ''));
-  v_n integer;
-BEGIN
-  SELECT * INTO v_p FROM private.praxis_porte(p_cle);
-  IF v_p.cause IS NOT NULL THEN
-    IF v_p.cle_id IS NOT NULL THEN
-      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'alerter_responsable', v_p.cause_interne, NULL, NULL, NULL, v_debut);
-    END IF;
-    RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
-  END IF;
-  IF pg_catalog.length(v_sujet) NOT BETWEEN 1 AND 80 OR pg_catalog.length(v_texte) NOT BETWEEN 1 AND 400
-     OR coalesce(p_urgence, '') NOT IN ('normale', 'urgente') THEN
-    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'alerter_responsable', 'parametre', NULL, NULL, NULL, v_debut);
-    RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
-  END IF;
-  IF (SELECT pg_catalog.count(*) FROM private.praxis_journal j
-       WHERE j.outil = 'alerter_responsable' AND j.issue = 'ok'
-         AND j.cree_le > pg_catalog.clock_timestamp() - interval '1 hour') >= 10 THEN
-    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'alerter_responsable', 'plafond', NULL, NULL, NULL, v_debut);
-    RETURN pg_catalog.jsonb_build_object('erreur', 'plafond');
-  END IF;
-  v_n := private.notifier_direction('annonce_direction',
-    pg_catalog.jsonb_build_object(
-      'titre', CASE WHEN p_urgence = 'urgente' THEN 'Urgent : ' ELSE '' END || v_sujet,
-      'extrait', v_texte),
-    '/admin/alertes');
-  PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'alerter_responsable', 'ok', NULL, NULL, v_sujet || ' : ' || v_texte, v_debut);
-  RETURN pg_catalog.jsonb_build_object('ok', true, 'prevenus', v_n);
-END;
-$f$;
+-- NON LIVRE EN PX-1 : `alerter_responsable` (passer la main a la direction par une notification). Le circuit de notification
+-- n'a aucun evenement generique : `notifications_evenement_check` n'accepte meme pas `annonce_direction` (les notifications
+-- d'annonces sont deja perdues en silence, cf. private.com_annonce_distribuer). Un nouvel evenement suppose de reecrire cette
+-- contrainte et d'ajouter ses textes : decision du pilote, domaine des notifications. Voir la PR.
 
 REVOKE ALL ON FUNCTION
   public.praxis_etat(text), public.praxis_boite(text, text, integer), public.praxis_fil(text, uuid, integer),
   public.praxis_rendre_compte(text, integer), public.praxis_calendrier_lire(text, date, date),
-  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid), public.praxis_alerter_responsable(text, text, text, text)
+  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION
   public.praxis_etat(text), public.praxis_boite(text, text, integer), public.praxis_fil(text, uuid, integer),
   public.praxis_rendre_compte(text, integer), public.praxis_calendrier_lire(text, date, date),
-  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid), public.praxis_alerter_responsable(text, text, text, text)
+  public.praxis_calendrier_ajouter(text, text, text, date, text, uuid)
   TO service_role;
 
 -- 7. R13 : les listes de comptes de la direction n'affichent pas les comptes officiels (retouche par ancrage).
