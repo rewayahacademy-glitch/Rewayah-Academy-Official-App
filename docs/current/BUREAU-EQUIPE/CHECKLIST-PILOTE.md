@@ -22,10 +22,11 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 16 | Dire « fini » au pilote messagerie (gel de main) | ☑ | dit à 17:00 UTC |
 | 17 | Mobile money Ghana (MTN, AirtelTigo, Telecel) et Kenya (M-Pesa) | ☐ | lot à part |
 | 18 | Algérie, Guinée, Liberia : 7 candidats | ⏸ | vérifier dans le compte Wise du directeur |
-| 19 | Badge « Nouveau » : serveur installé ; écran de la liste fusionné (#543) ; panneau des conversations confié au pilote messagerie (NOUVEAU-FILS) | ◐ | déploiement de #543 à vérifier ; NOUVEAU-FILS |
+| 19 | Badge « Nouveau » : serveur installé ; écran de la liste en ligne (#543, déploiement 1282 vert) ; panneau des conversations chez le pilote messagerie (NOUVEAU-FILS) | ◐ | NOUVEAU-FILS ; à prouver par le directeur |
 | 20 | VU-UNE-FOIS : « déjà vu » mémorisé par compte | ☑ | serveur (#541) et bandeau de la liste (#543) fusionnés ; à prouver par le directeur |
 | 21 | 4 dossiers restés « versement impossible » après correction (CAND-00019, 00126, 00137, 00419) | ☑ | #542 installée 16:47 UTC, les 4 repartis (vérifié en base), courriels envoyés |
 | 22 | Réponses de candidats du Bénin et du Liberia (« quelle banque ouvrir ? ») | ☑ | répondu 17:05 UTC : n’ouvrez pas de compte, nous vérifions |
 | 23 | GESTES-RAISON : pourquoi un bouton manque, « Accepter » masqué sans versement possible, flèches aux bords (#545) | ◐ | CI en cours puis fusion |
 | 24 | Contradiction franc CFA : Bénin « indisponible » (XOF non envoyé par Wise) mais Côte d’Ivoire et Sénégal « confirmés » (même monnaie) | ⏸ | le directeur vérifie dans Wise si le XOF part vers le Bénin (et Burkina, Mali, Niger, Togo) |
 | 25 | LP-1 serveur : lister_enseignants (#544) | ☑ | installé 17:50 UTC (5 fonctions vérifiées) ; LP-2 écran lancé chez BE-LISTE. Manques à décider : formation, période d’essai, fin de collaboration, contrat, présence 30 j, avancement des classes |
+| 26 | Collision de numéro : #546 (image candidat, messagerie) reprend 20261129400000, déjà pris par LP-1 installé | ◐ | pilote messagerie prévenu 18:15 UTC : renuméroter avant fusion |
