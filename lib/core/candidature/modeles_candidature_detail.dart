@@ -175,6 +175,7 @@ class DetailCandidature {
     this.piece,
     this.autresCompetences,
     this.responsableNom,
+    this.majorite = MajoriteCandidature.nonServie,
     this.autreCote = false,
   });
 
@@ -218,6 +219,7 @@ class DetailCandidature {
         brut['autresCompetences'],
       ),
       responsableNom: texte('responsableNom'),
+      majorite: MajoriteCandidature.depuisJson(brut['majorite']),
       autreCote: brut['autreCote'] == true,
     );
   }
@@ -258,6 +260,10 @@ class DetailCandidature {
   /// Le nom affichable du responsable du dossier, ou `null` sans responsable
   /// (BE-S1). Le serveur ne le rend qu'a la direction, dans la portee du dossier.
   final String? responsableNom;
+
+  /// MAJEUR (16/11/2026) : l'attestation « 18 ans ou plus » du candidat (non servie
+  /// par un serveur d'avant). Dans la meme portee que le dossier.
+  final MajoriteCandidature majorite;
 
   /// Vrai quand la candidature est de l'autre cote (femmes ou hommes) que le
   /// lecteur, lue par l'exception du super-admin. **Le serveur ne rend pas
