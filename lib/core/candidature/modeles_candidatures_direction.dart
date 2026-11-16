@@ -234,6 +234,7 @@ class FiltreCandidatures {
     this.heureMin,
     this.heureMax,
     this.joursMin,
+    this.majorite,
   });
 
   /// Le texte cherche : nom partiel, reference `CAND-` exacte, courriel exact.
@@ -314,6 +315,10 @@ class FiltreCandidatures {
   /// BE-S1 : au moins ce nombre de jours disponibles (de 1 a 7), dans la fenetre.
   final int? joursMin;
 
+  /// MAJEUR (16/11/2026) : l'attestation « 18 ans ou plus » : `attestee`,
+  /// `non_attestee` (pas encore de declaration) ou `moins_18`.
+  final String? majorite;
+
   /// Le texte cherche, sans les blancs de bord.
   String get rechercheNette => recherche.trim();
 
@@ -360,7 +365,8 @@ class FiltreCandidatures {
       jours == null &&
       heureMin == null &&
       heureMax == null &&
-      joursMin == null;
+      joursMin == null &&
+      majorite == null;
 
   /// Le nombre d'axes poses (la recherche compte pour un).
   int get nombreAxes =>
@@ -385,7 +391,8 @@ class FiltreCandidatures {
       (jours == null ? 0 : 1) +
       (heureMin == null ? 0 : 1) +
       (heureMax == null ? 0 : 1) +
-      (joursMin == null ? 0 : 1);
+      (joursMin == null ? 0 : 1) +
+      (majorite == null ? 0 : 1);
 
   /// Le meme filtre, un axe change. Une fonction par axe rend `null` possible
   /// (« tous »).
@@ -412,6 +419,7 @@ class FiltreCandidatures {
     int? Function()? heureMin,
     int? Function()? heureMax,
     int? Function()? joursMin,
+    String? Function()? majorite,
   }) => FiltreCandidatures(
     recherche: recherche ?? this.recherche,
     etape: etape == null ? this.etape : etape(),
@@ -447,6 +455,7 @@ class FiltreCandidatures {
     heureMin: heureMin == null ? this.heureMin : heureMin(),
     heureMax: heureMax == null ? this.heureMax : heureMax(),
     joursMin: joursMin == null ? this.joursMin : joursMin(),
+    majorite: majorite == null ? this.majorite : majorite(),
   );
 
   /// Le meme filtre sans aucun axe : « Effacer les filtres ».
@@ -476,7 +485,8 @@ class FiltreCandidatures {
       listEquals(other.jours, jours) &&
       other.heureMin == heureMin &&
       other.heureMax == heureMax &&
-      other.joursMin == joursMin;
+      other.joursMin == joursMin &&
+      other.majorite == majorite;
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
@@ -502,6 +512,7 @@ class FiltreCandidatures {
     heureMin,
     heureMax,
     joursMin,
+    majorite,
   ]);
 }
 
