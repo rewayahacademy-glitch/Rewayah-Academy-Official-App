@@ -36,7 +36,15 @@ import '../../core/widgets/section_header.dart';
 /// La carte des alertes servies.
 class CarteAlertes extends StatelessWidget {
   /// Cree la carte.
-  const CarteAlertes({required this.compteurs, super.key});
+  const CarteAlertes({
+    required this.compteurs,
+    this.compacte = false,
+    super.key,
+  });
+
+  /// BE-LISTE (telephone) : pas de titre, rien du tout quand tous les
+  /// compteurs servis sont a zero, sinon une seule carte de puces.
+  final bool compacte;
 
   /// Les compteurs rendus par le serveur.
   final CompteursAlertes compteurs;
@@ -69,15 +77,28 @@ class CarteAlertes extends StatelessWidget {
     final int? indisponibles = compteurs.confirmeesIndisponibles;
     final bool rien = compteurs.rienATraiter;
 
+    // Tous les compteurs servis a zero (un compteur non servi ne compte pas) :
+    // rien a montrer.
+    final bool toutAZero = <int?>[
+      bloquees,
+      retard,
+      manquantes,
+      indisponibles,
+    ].every((int? n) => n == null || n == 0);
+    if (compacte && toutAZero) {
+      return const SizedBox.shrink();
+    }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Semantics(
-          header: true,
-          child: SectionHeader(titre: t.admin.candidatures.aTraiter),
-        ),
-        Ecart.vMd,
+        if (!compacte) ...<Widget>[
+          Semantics(
+            header: true,
+            child: SectionHeader(titre: t.admin.candidatures.aTraiter),
+          ),
+          Ecart.vMd,
+        ],
         AppCard(
           key: cleCarte,
           child: rien

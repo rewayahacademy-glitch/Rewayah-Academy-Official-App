@@ -28,6 +28,7 @@ import '../../support/demo/dossiers_demo.dart';
 import '../../support/demo/mode_demonstration.dart';
 import '../../support/demo/repere_demonstration.dart';
 import '../../support/hors_ligne_une_fois.dart';
+import '../../support/selecteur_section.dart';
 
 Future<void> _stabiliser(WidgetTester tester) async {
   for (int i = 0; i < 8; i++) {
@@ -81,6 +82,9 @@ Future<void> _ouvrirDossiers(WidgetTester tester) async {
     ),
   );
   await _stabiliser(tester);
+  // BE-LISTE : « Personnes » ouvre Candidatures ; « Dossiers a valider »
+  // se choisit dans le selecteur de section.
+  await choisirSection(tester, t.dossiers.titre);
 }
 
 Finder _ligne(String debutNom) =>

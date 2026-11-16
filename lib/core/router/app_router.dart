@@ -2264,12 +2264,14 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       // vit dans la page depuis REPRISE-CAND-1 (08/11/2026).
       GoRouteSure(
         path: Routes.adminPersonnesCandidatures,
-        builder: (BuildContext contexte, GoRouterState _) => _CoquilleAdmin(
+        builder: (BuildContext contexte, GoRouterState etat) => _CoquilleAdmin(
           domaine: AdminDomaine.personnes,
           child: PageDifferee(
             cle: 'd_candidatures_page',
             charger: d_candidatures_page.loadLibrary,
             construire: () => d_candidatures_page.CandidaturesPage(
+              // BE-LISTE : filtre, tri, page et recherche dans l'adresse.
+              requete: etat.uri.queryParameters,
               ouvrirCandidature: (LigneCandidature ligne) =>
                   GoRouter.of(contexte).push<void>(
                     Routes.adminPersonnesCandidaturePour(ligne.reference),
@@ -2324,10 +2326,12 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           ),
         ),
       ),
+      // BE-LISTE : « Personnes » ouvre Candidatures (la file de la direction) ;
+      // « Dossiers a valider » reste atteignable par le selecteur de section.
       GoRouteSure(
         path: Routes.adminPersonnes,
         redirect: (BuildContext _, GoRouterState _) =>
-            Routes.adminPersonnesDossiers,
+            Routes.adminPersonnesCandidatures,
       ),
       GoRouteSure(
         path: Routes.adminPersonnesDossiers,

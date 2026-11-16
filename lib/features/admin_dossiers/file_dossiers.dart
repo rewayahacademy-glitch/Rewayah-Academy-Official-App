@@ -53,7 +53,14 @@ Widget? etatErreurDossiers(
       phrase: '',
       dependance: erreur.dependance,
       libelleAction: t.commun.etats.actions.retourAccueil,
-      onAction: () => context.go('/admin'),
+      // BE-LISTE : revient a l'ecran precedent s'il y en a un.
+      onAction: () {
+        if (context.canPop()) {
+          context.pop();
+        } else {
+          context.go('/admin');
+        }
+      },
     );
   }
   if (ref.read(horsLigneProvider).value ?? false) {

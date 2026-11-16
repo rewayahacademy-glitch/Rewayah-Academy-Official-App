@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -90,8 +92,12 @@ class TableauDeBordPage extends ConsumerWidget {
         LigneApercu(
           '${d.libelleCourt} · ${_anciennete(maintenant, d.deposeLe)}',
           onPress: () =>
-              GoRouter.of(context)
-                  .go(Routes.adminPersonnesDossiers, extra: d.profilId),
+              // BE-LISTE : `push`, le retour ramene a l'Accueil.
+              unawaited(
+                GoRouter.of(
+                  context,
+                ).push<void>(Routes.adminPersonnesDossiers, extra: d.profilId),
+              ),
         ),
     ];
 
