@@ -80,6 +80,7 @@ _Rempli au matin._
 | 3 | Canal du Studio dans la nouvelle présentation | décision du directeur | d'abord un emplacement d'en-tête au fil plein écran ; risque sur le mode focus |
 | 4 | Bouton « i » emporté par la barre repliée (Messages, ordinateur) | lot à part | relevé par l'agent de #551, hors de #551 |
 | 5 | `scenarios_fac_f_relances_suspension.sql` indépendant de l'heure | sans urgence | échoue le lundi 7-8 h UTC |
+| 7 | Comptes officiels dans les conversations (Praxis) : *#RA_PRAXIS*, *#RA_STAFF*, « Assistant de l'académie · IA », « Parler à l'équipe » (`BUREAU-EQUIPE/SECRETAIRE-IA.md` §9, §11) | après NOUVEAU-FILS, pas cette nuit | signalé par le Pilote Équipe le 16/11 à 21 h 15 ; plage `202611296…` réservée à Praxis, pas à la messagerie |
 | 6 | Recette du directeur en production : #538, #540, #546, puis #551 | après fusion de #551 | liste d'essais, une par une, page humaine |
 
 ## Corrections non bloquantes demandées par le directeur
