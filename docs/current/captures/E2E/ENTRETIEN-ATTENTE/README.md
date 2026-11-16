@@ -5,8 +5,6 @@ une phrase dit qu'il n'a rien à faire et que l'académie l'informera ; aucun bo
 La notification « retenu pour un entretien » ne dit plus « choisissez votre horaire ».
 
 - `fr_360_aucun_moment.png`, `ar_360_aucun_moment.png` : le vrai écran `EntretienCandidatPage`,
-  360 de large, données de test (`entretien_candidat_page_test.dart`, groupe de capture,
+  360 de large (l'arabe de droite à gauche), données de test (`entretien_candidat_page_test.dart`, groupe de capture,
   `CAPTURE_DIR=docs/current/captures/E2E/ENTRETIEN-ATTENTE`).
-- Limite connue : la phrase d'introduction au-dessus de la carte (« Choisissez un moment... »)
-  n'a pas été changée dans ce lot ; elle dit encore de choisir.
-- Limite connue : la capture arabe vient du harnais de test, dont la mise en page reste de gauche à droite.
+- L'introduction « Choisissez un moment... » ne s'affiche plus quand aucun moment n'est ouvert.

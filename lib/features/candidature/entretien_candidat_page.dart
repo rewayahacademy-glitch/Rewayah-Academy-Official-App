@@ -233,8 +233,6 @@ class _ContenuEntretienEtat extends ConsumerState<ContenuEntretien> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          Text(t.recrutement.entretien.intro, style: corps),
-          Ecart.vLg,
           ChoixCreneauEntretien(candidature: widget.candidature),
         ],
       );
