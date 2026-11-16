@@ -3779,12 +3779,7 @@ class _CoquilleAdmin extends ConsumerWidget {
     // l'en-tete avec son nombre, mis a jour en direct ; rien sinon.
     final int messagesNonLus = ref.watch(nonLusMessagesProvider).value ?? 0;
     // FINITIONS-MESSAGERIE : la page affichee allume l'icone qui y mene.
-    String chemin = '';
-    try {
-      chemin = GoRouterState.of(context).uri.path;
-    } on Object {
-      chemin = '';
-    }
+    final String chemin = adresseRouteurSur(context)?.path ?? '';
     final bool surMessages = chemin.startsWith(
       Routes.adminCommunicationsMessages,
     );
