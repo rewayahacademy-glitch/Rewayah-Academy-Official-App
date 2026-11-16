@@ -1,6 +1,6 @@
 // MESSAGERIE-COULEURS : captures R3 (sautees sans CAPTURE_DIR). Le champ
 // d'ecriture a 1 et 4 lignes, ordinateur sombre 1440 x 900 et telephone clair
-// 390 x 844, francais et arabe.
+// 390 x 844, clair et sombre dans les deux tailles, francais et arabe.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
@@ -20,7 +20,9 @@ void main() {
     setUp(masquerRubanDebug);
     for (final (Size taille, Brightness lum) in <(Size, Brightness)>[
       (const Size(1440, 900), Brightness.dark),
+      (const Size(1440, 900), Brightness.light),
       (const Size(390, 844), Brightness.light),
+      (const Size(390, 844), Brightness.dark),
     ]) {
       for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
         for (final int lignes in <int>[1, 4]) {
