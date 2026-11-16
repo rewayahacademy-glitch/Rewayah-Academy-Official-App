@@ -693,6 +693,24 @@ Abréviations des fichiers :
 
 ---
 
+### Consigne 23 (17/11/2026, nuit) : agir sans attendre le directeur, et ne pas geler ce qui est commencé
+
+Citation : « Je t'ai donné toutes les autorisations. J'ai levé tous les blocages côté Supabase, GitHub, Drive […] et
+aussi dans Claude […] pour que tu agisses, pour que je puisse dormir. Et là, tu viens de me créer un faux problème
+pour demander mon autorisation. […] J'ai pas dit d'arrêter ce qui restait des autres lots déjà commencés. […] tu peux
+les travailler tout en déléguant, tout en commençant Praxis. […] tu peux confier ces petits lots à des sessions
+Sonnet. »
+
+Règle :
+- Le pilote ne fait jamais attendre un travail sur un geste du directeur qui ne relève que de son propre rôle :
+  pousser une branche, ouvrir une PR, fusionner un lot prouvé, installer une migration relue selon la checklist,
+  lancer un agent. Ce qui reste au directeur : la preuve en production, et les gestes que seul son compte peut
+  faire dans l'application (allumer Praxis, valider un texte de niveau C).
+- Une priorité nouvelle (comme Praxis) ne gèle pas les lots commencés ou décidés : ils avancent en parallèle, un agent
+  par lot, quatre agents au plus, de petits modèles pour les petits lots.
+- Les garde-fous de sécurité restent entiers : checklist d'installation, aucune lecture de lignes de personnes, aucun
+  effacement sans l'avis du directeur, relecture du pilote avant toute fusion.
+
 ## 9. Autres
 
 **X1. Lire son dernier message en entier avant de répondre.**

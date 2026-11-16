@@ -13,19 +13,29 @@ type de la pièce) · agent de la messagerie (sous le Pilote Messagerie `session
 BE-S1 et BE-LISTE : archivés (travail poussé). Plage de ce chantier : 202611294… (440000, 450000, 470000, 480000,
 490000 pris ; 410000-430000 et 460000 libres).
 
-## LA LIGNE (directeur, 16/11 au soir : « c'est toi qui dois empêcher les dispersions »)
+## LA LIGNE (directeur, 16/11 au soir : « c'est toi qui dois empêcher les dispersions » ; amendée le 17/11, nuit)
 
-Une seule ligne, dans cet ordre ; rien ne s'intercale, sauf une vraie personne bloquée.
-1. Finir l'entamé, sans rien ajouter : #547, #550, PIECE-TYPE-ECRAN, DEBLOQUER-VERSEMENT-ECRAN.
-2. ACCUEIL-SEPARE (« Accueillir » ne valide plus la pièce en passant).
-3. **Praxis, le secrétaire IA** — dossier et checklist propres : `PRAXIS/LIRE_D_ABORD.md` et `PRAXIS/CHECKLIST-PRAXIS.md` (à lire avant tout travail sur Praxis). (directeur, 16/11, 21 h 25 : « prioritaire quand tu finis les tâches déjà commencées »). SEC-1 serveur et connecteur (`CAHIER-SEC-1-PRAXIS-MESSAGES.md`, plage de migrations **202611296…** réservée pour Praxis), puis les cinq compétences, puis l'écran (interrupteur, clés), puis SEC-2 et SEC-3.
-4. Le reste de la vague 2 (BE-2a-2, BE-2b, BE-2c, BE-2d), cahiers écrits, en pause ; BE-2a-1 (#565) est fini puisqu'il est commencé.
-5. Le Studio, après.
+Directeur, 17/11, nuit : « J'ai levé tous les blocages […] pour que tu agisses, pour que je puisse dormir. […] J'ai pas
+dit d'arrêter ce qui restait des autres lots déjà commencés […] tu peux les travailler tout en déléguant, tout en
+commençant Praxis […] tu peux confier ces petits lots à des sessions Sonnet. » **Le pilote ne demande plus rien au
+directeur, pas même un « pousse » : D-7 est levé.** Praxis reste prioritaire ; les lots de la carte avancent en
+parallèle, un agent par lot, quatre agents au plus.
 
-**Dette de sécurité (16/11, BE-PIECE)** : un compte `controller` sans capacité lit par l'API les séances, participants, enregistrements, affectations et disponibilités des familles. Aucun compte de ce rôle en production (vérifié 20 h 45) : à resserrer avant d'en créer un. Scénario `scenarios_cand_l2a2_gestes_direction.sql` rouge sur `main` selon BE-PIECE (non vérifié par le pilote). Les scénarios ACCUEIL-SEPARE et BE-2a ne sont pas dans `ci.yml` (garde-fou : `.github` interdit aux agents).
+| Chantier | Agent | Lots, dans l'ordre | Migrations |
+| :--- | :--- | :--- | :--- |
+| Praxis | BE-PIECE | PX-1 installé (☑) ; dette R4 indirecte, annuaire agent_ro, puis PX-2 | 202611296… |
+| Carte, lot 2 | BE-GESTES | #568 Débloquer le versement, puis GESTES-DU-SERVEUR (serveur puis écran) | 20261129430000 |
+| Carte, lots 5 et 8 | BE-DOSSIER | DISPENSE-ECRAN poussé maintenant (D-7 levé), ENTRETIEN-SUIT-LE-DOSSIER, REFAIRE-ENTRETIEN (arbitrage : autorisé, motif obligatoire) | 20261129460000, 20261129700000 |
+| Carte, lots 6 et 4 | BE-SALLE (Sonnet, créé le 17/11 à 23 h 18 UTC, `session_0163KjrugbgqtWp3ag4RYXr3`) | PIECE-SUR-LA-FICHE, COMPLEMENT-SALLE-EXAMEN | 20261129710000 |
+| Carte, lots 3 et 7 | le premier agent libre | DEPLACER-ENTRETIEN, APRES-CONFIRMEE | 20261129720000, 20261129730000 |
+| Vague 2 | après la carte | BE-2a-2 (associé), BE-2b (écran Équipe), BE-2c, BE-2d | à réserver |
+| Studio | après | — | — |
 
-**Gelé, sans agent ni travail** : lots 2 à 8 de la carte des gestes, #525, l'étape E, LP-3 à LP-7, BE-COLONNES,
-BE-1e, BE-1f, l'étape D.
+Plage **2026112970… à 2026112973…** réservée au Pilote Équipe pour la carte (en plus de 202611294…).
+
+**Dette de sécurité (16/11, BE-PIECE)** : un compte `controller` sans capacité lit par l'API les séances, participants, enregistrements, affectations et disponibilités des familles. Aucun compte de ce rôle en production (vérifié 20 h 45) : à resserrer avant d'en créer un. Scénario `scenarios_cand_l2a2_gestes_direction.sql` rouge sur `main` (confirmé par BE-PIECE sur une copie de `main`). Les scénarios ACCUEIL-SEPARE, BE-2a et Praxis ne sont pas dans `ci.yml` (garde-fou : `.github` interdit aux agents).
+
+**Gelé, sans agent ni travail** : #525, l'étape E, LP-3 à LP-7, BE-COLONNES, BE-1e, BE-1f, l'étape D.
 
 ## 0. Pour le directeur au réveil
 
@@ -79,5 +89,5 @@ BE-1e, BE-1f, l'étape D.
 | D-4 | « Demander une précision » pendant qu'un dossier est « à compléter » | à présenter avec BE-1e |
 | D-5 | Un candidat dispensé d'entretien reçoit-il un message ? Une dispense s'annule-t-elle ? | message : oui, court ; annulation : non |
 | D-6 | Le courriel d'admission dit maintenant « nous vous écrirons dès que les moments seront ouverts », mais rien n'écrit aux candidats quand un créneau s'ouvre. Faut-il un lot « prévenir à l'ouverture » ? | oui, avant de rouvrir les entretiens (D-3) |
-| D-7 | BE-DOSSIER attend votre mot pour pousser DISPENSE-ECRAN (commit local `6aa823c66`). Dites-lui « pousse » dans sa session (« BE-DOSSIER : le dossier en trois étages ») | le dire : la poussée ne touche qu'une branche, ni `main` ni la production |
+| D-7 | ~~BE-DOSSIER attend votre mot pour pousser DISPENSE-ECRAN~~ **Levé le 17/11 (nuit) : le directeur ne doit jamais être attendu pour une poussée de branche ; le pilote a donné l'ordre de pousser.** Faute du pilote : ce n'était pas un blocage du directeur | fait |
 | C | La carte des gestes (`CARTE-GESTES-DIRECTION.md`) | à lire en premier |
