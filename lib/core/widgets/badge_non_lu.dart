@@ -8,6 +8,8 @@
 // `IndicateurAttention` deja calcule par le port, jamais le role de la
 // personne connectee.
 
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../communications/modeles_communication.dart';
@@ -208,4 +210,72 @@ class _IconeBadge extends StatelessWidget {
     size: _taille,
     color: AppPalette.of(context).paireDe(ton).onBackground,
   );
+}
+
+/// La pastille d'un nombre (non lus) : **un cercle parfait** partout
+/// (FINITIONS-MESSAGERIE, directeur, 16/11/2026). Largeur = hauteur, 20 au
+/// moins ; au-dessus de [max] (9), « 9+ ». Le diametre est la plus grande des
+/// deux mesures du texte (il grandit avec le texte agrandi) ; chiffres
+/// tabulaires, texte centre. Muette au lecteur d'ecran : l'appelant dit le
+/// nombre dans sa propre phrase.
+class PastilleNombre extends StatelessWidget {
+  /// Cree la pastille de [nombre].
+  const PastilleNombre({required this.nombre, super.key, this.bordure});
+
+  /// Le nombre de non lus.
+  final int nombre;
+
+  /// Un liseré de la couleur du fond (pastille posee sur une icone).
+  final Color? bordure;
+
+  /// Au-dessus : « 9+ ».
+  static const int max = 9;
+
+  /// Le diametre minimal.
+  static const double diametreMin = 20;
+
+  /// Le texte affiche pour [nombre].
+  static String texte(int nombre) => nombre > max ? '$max+' : '$nombre';
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle style = palette.surfacePrimary.applyTo(
+      (Theme.of(context).textTheme.labelSmall ?? const TextStyle()).copyWith(
+        fontFeatures: const <FontFeature>[FontFeature.tabularFigures()],
+      ),
+    );
+    final TextPainter mesure = TextPainter(
+      text: TextSpan(text: texte(nombre), style: style),
+      textDirection: TextDirection.ltr,
+      textScaler: MediaQuery.textScalerOf(context),
+    )..layout();
+    final double diametre = math.max(
+      diametreMin,
+      math.max(mesure.width, mesure.height) + AppSpacing.xs,
+    );
+    mesure.dispose();
+    return ExcludeSemantics(
+      child: SizedBox.square(
+        dimension: diametre,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            shape: BoxShape.circle,
+            color: palette.surfacePrimary.background,
+            border: bordure == null
+                ? null
+                : Border.fromBorderSide(BorderSide(color: bordure!, width: 2)),
+          ),
+          child: Center(
+            child: Text(
+              texte(nombre),
+              textAlign: TextAlign.center,
+              textDirection: TextDirection.ltr,
+              style: style,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
 }
