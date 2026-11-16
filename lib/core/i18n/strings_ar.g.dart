@@ -10747,6 +10747,42 @@ class _Traductions$recrutement$file$ar extends Traductions$recrutement$file$fr {
 	@override String get replier => 'طيّ';
 	@override String get trier => 'ترتيب';
 	@override String get pieceSansAttente => 'بلا وثيقة هوية للتحقق منها';
+	@override String get filtres => 'تصفية';
+	@override String filtresPoses({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'تصفية، ⁨${n}⁩ مطبّقة',
+		one: 'تصفية، ⁨${n}⁩ مطبّقة',
+		two: 'تصفية، ⁨${n}⁩ مطبّقان',
+		few: 'تصفية، ⁨${n}⁩ مطبّقة',
+		many: 'تصفية، ⁨${n}⁩ مطبّقة',
+		other: 'تصفية، ⁨${n}⁩ مطبّقة',
+	);
+	@override String get jaiCompris => 'فهمت';
+	@override String get files => 'القوائم';
+	@override String get pieceCourt => 'وثيقة للتحقق';
+	@override String get confirmeesIndisponibles => 'مؤكَّدة وغير متاحة';
+	@override String get piece => 'وثيقة الهوية';
+	@override String get responsable => 'المسؤول';
+	@override String get responsableMoi => 'أنا';
+	@override String get responsableAucun => 'لا أحد';
+	@override String get ijaza => 'الإجازة';
+	@override String get langue => 'لغة الشرح';
+	@override String get riwaya => 'الرواية';
+	@override String get public => 'الفئة المستهدفة';
+	@override String get jours => 'الأيام المتاحة';
+	@override String get heureDe => 'ابتداءً من';
+	@override String get heureA => 'حتى';
+	@override String get joursMin => 'عدد الأيام على الأقل';
+	@override String joursMinN({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: '⁨${n}⁩ أيام على الأقل',
+		one: 'يوم واحد على الأقل',
+		two: 'يومان على الأقل',
+		few: '⁨${n}⁩ أيام على الأقل',
+		many: '⁨${n}⁩ يومًا على الأقل',
+		other: '⁨${n}⁩ يوم على الأقل',
+	);
+	@override String get salle => 'القاعة';
+	@override String get toutesLesFiles => 'الكل';
+	@override String get rechercher => 'بحث';
 }
 
 // Path: recrutement.nomLatin
@@ -38656,6 +38692,28 @@ extension on TraductionsAr {
 			'recrutement.file.replier' => 'طيّ',
 			'recrutement.file.trier' => 'ترتيب',
 			'recrutement.file.pieceSansAttente' => 'بلا وثيقة هوية للتحقق منها',
+			'recrutement.file.filtres' => 'تصفية',
+			'recrutement.file.filtresPoses' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تصفية، ⁨${n}⁩ مطبّقة', one: 'تصفية، ⁨${n}⁩ مطبّقة', two: 'تصفية، ⁨${n}⁩ مطبّقان', few: 'تصفية، ⁨${n}⁩ مطبّقة', many: 'تصفية، ⁨${n}⁩ مطبّقة', other: 'تصفية، ⁨${n}⁩ مطبّقة', ), 
+			'recrutement.file.jaiCompris' => 'فهمت',
+			'recrutement.file.files' => 'القوائم',
+			'recrutement.file.pieceCourt' => 'وثيقة للتحقق',
+			'recrutement.file.confirmeesIndisponibles' => 'مؤكَّدة وغير متاحة',
+			'recrutement.file.piece' => 'وثيقة الهوية',
+			'recrutement.file.responsable' => 'المسؤول',
+			'recrutement.file.responsableMoi' => 'أنا',
+			'recrutement.file.responsableAucun' => 'لا أحد',
+			'recrutement.file.ijaza' => 'الإجازة',
+			'recrutement.file.langue' => 'لغة الشرح',
+			'recrutement.file.riwaya' => 'الرواية',
+			'recrutement.file.public' => 'الفئة المستهدفة',
+			'recrutement.file.jours' => 'الأيام المتاحة',
+			'recrutement.file.heureDe' => 'ابتداءً من',
+			'recrutement.file.heureA' => 'حتى',
+			'recrutement.file.joursMin' => 'عدد الأيام على الأقل',
+			'recrutement.file.joursMinN' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ أيام على الأقل', one: 'يوم واحد على الأقل', two: 'يومان على الأقل', few: '⁨${n}⁩ أيام على الأقل', many: '⁨${n}⁩ يومًا على الأقل', other: '⁨${n}⁩ يوم على الأقل', ), 
+			'recrutement.file.salle' => 'القاعة',
+			'recrutement.file.toutesLesFiles' => 'الكل',
+			'recrutement.file.rechercher' => 'بحث',
 			'recrutement.nomLatin.titre' => 'اسمك بالأحرف اللاتينية',
 			'recrutement.nomLatin.explication' => 'اسمك مكتوب بكتابة أخرى. من أجل القوائم والشهادات والمراسلات مع الأكاديمية، نحتاج إلى كتابته بالأحرف اللاتينية.',
 			'recrutement.nomLatin.libelle' => 'اسمك بالأحرف اللاتينية',
@@ -38796,6 +38854,8 @@ extension on TraductionsAr {
 			'recrutement.portail.retiree' => 'لقد سحبت طلب ترشحك. وحدها الأكاديمية تستطيع إعادة فتحه.',
 			'recrutement.portail.complementDemande' => 'تطلب منك الأكاديمية استكمالًا.',
 			'recrutement.portail.complementListe' => ({required Object elements}) => 'المطلوب استكماله: ⁨${elements}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.portail.nonCharge' => 'تعذّر تحميل حالة طلب ترشحك.',
 			'recrutement.portail.elementPiece' => 'وثيقة هويتك',
 			'recrutement.portail.elementContrat' => 'عقد المعلم',
@@ -38818,8 +38878,6 @@ extension on TraductionsAr {
 			'recrutement.portail.elementAccordPublication' => 'الموافقة على نشر صورتك',
 			'recrutement.portail.elementPaysVersement' => 'بلد الصرف والحساب',
 			'recrutement.portail.paysVersementLien' => 'تغيير بلد الصرف',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.portail.paysVersementTitre' => 'بلد حساب الصرف',
 			'recrutement.portail.paysVersementExplication' => 'يمكن أن يكون الحساب حساب قريب موثوق في بلد تدعمه الأكاديمية. اختر البلد الذي يوجد فيه هذا الحساب. ستحتاج وسائل الصرف والبيانات المدخلة سابقًا إلى تأكيد جديد.',
 			'recrutement.portail.paysVersementEnregistrer' => 'حفظ هذا البلد',
@@ -39310,6 +39368,8 @@ extension on TraductionsAr {
 			'recrutement.talents.competences.familles.pedagogie' => 'التربية والتعليم',
 			'recrutement.talents.competences.familles.technique' => 'التقنية',
 			'recrutement.talents.competences.familles.autre' => 'مجال آخر',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.competences.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تختر أي مهارة', one: 'مهارة واحدة مختارة', two: 'مهارتان مختارتان', few: '⁨${n}⁩ مهارات مختارة', many: '⁨${n}⁩ مهارة مختارة', other: '⁨${n}⁩ مهارة مختارة', ), 
 			'recrutement.talents.competences.nonProposee' => 'لم تعد هذه المهارة مقترحة. يمكنك الإبقاء عليها أو إلغاء اختيارها.',
 			'recrutement.talents.competences.autreChamp' => 'مجالك، في بضع كلمات',
@@ -39332,8 +39392,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.photographie.libelle' => 'التصوير',
 			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
 			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.redaction_contenus.libelle' => 'كتابة المحتوى وصناعته',
 			'recrutement.talents.c.redaction_contenus.description' => 'كتابة نصوص سليمة وممتعة للقراءة.',
 			'recrutement.talents.c.redaction_contenus.exemple' => 'مقال، نص لوسائل التواصل، رسالة إخبارية',
@@ -39824,6 +39882,8 @@ extension on TraductionsAr {
 			'avis.admin.champs.accord' => 'الموافقة على النشر',
 			'avis.admin.champs.motif' => 'السبب',
 			'avis.admin.champs.modere' => 'تاريخ القرار',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.champs.publie' => 'تاريخ النشر',
 			'avis.admin.actions.publier' => 'نشر',
 			'avis.admin.actions.refuser' => 'رفض',
@@ -39846,8 +39906,6 @@ extension on TraductionsAr {
 			'avis.admin.motifs.tiers' => 'بيانات شخصية لطرف ثالث',
 			'avis.admin.motifs.publicite' => 'إعلان',
 			'avis.admin.motifs.horsSujet' => 'خارج الموضوع',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.motifs.doublon' => 'تكرار',
 			'avis.admin.motifs.demande' => 'طلب من صاحب الرأي',
 			'avis.admin.retour.publie' => 'نُشر الرأي.',
@@ -40338,6 +40396,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'إبقاء الاسمين',
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'اسم المصنّف',
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'اسم الورقة',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'اسم الملف لا يذكر الورقة. اذكروها للمتابعة.',
 			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'لا يجوز أن يكون الاسم فارغًا أو أطول من 200 حرف أو أن يحتوي الخط العمودي. صحّحوه للمتابعة.',
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'اختاروا ملفًا أولًا لتتمكنوا من تحليله.',
@@ -40360,8 +40420,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.colonnes.explication' => 'تتعرّف رواية على كل عمود من عنوانه. المسوا عمودًا لتغيير ما يحتويه.',
 			'candidatsFlux.importFormulaires.colonnes.sansTitreNumero' => ({required Object n}) => 'العمود ⁨${n}⁩، بلا عنوان',
 			'candidatsFlux.importFormulaires.colonnes.nonLue' => 'غير مقروء',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.nonLueAide' => 'لا يستعمل الاستيراد هذا العمود.',
 			'candidatsFlux.importFormulaires.colonnes.choisir' => ({required Object n}) => 'ماذا يحتوي العمود ⁨${n}⁩؟',
 			'candidatsFlux.importFormulaires.colonnes.sansTitre' => 'عمود بلا عنوان',
@@ -40852,6 +40910,8 @@ extension on TraductionsAr {
 			'suiviAttente.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصلك إشعار بذلك.',
 			'suiviAttente.cloture.titreRefusee' => 'لم يُقبل طلبك',
 			'suiviAttente.cloture.titreRetiree' => 'تم سحب هذا الطلب',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.titreClose' => 'أُغلق هذا الطلب',
 			'suiviAttente.cloture.motif.retraitFamille' => 'تم سحب هذا الطلب من طرفك.',
 			'suiviAttente.cloture.motif.offreRetiree' => 'سحبت الأكاديمية هذا الموعد من عروضها.',
@@ -40874,8 +40934,6 @@ extension on TraductionsAr {
 			'suiviAttente.enseignant.origine' => 'بلد الأصل',
 			'suiviAttente.enseignant.residence' => 'بلد الإقامة',
 			'suiviAttente.enseignant.mot' => 'كلمته للتعريف بنفسه',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.enseignant.peutSePresenter' => 'يمكن لمعلمك أن يعرّف بنفسه لأسر الفصل برسالة في الرسائل.',
 			'suiviAttente.vide.message' => 'لم تختر فصلًا بعد.',
 			'suiviAttente.vide.invitation' => 'اختر فصلًا: تتابعك الأكاديمية بعد ذلك مرحلة بمرحلة.',

@@ -30,6 +30,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
 import 'package:rewayah_academy/features/admin_candidature/bloc_autres_competences.dart';
+import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
 
 import '../fixtures/candidature/faux_autres_competences.dart';
 import '../fixtures/candidature/faux_candidatures_direction.dart';
@@ -191,20 +192,21 @@ void main() {
           _port(),
           route: Routes.adminPersonnesCandidatures,
         );
-        await ouvrirPlus(tester);
+        // BE-LISTE-2 : les filtres sont dans la feuille « Filtres ».
+        await tester.tap(find.byKey(CandidaturesPage.cleFiltres));
         await stabiliser(tester);
         debugPrint(
           'PNG ${await capturer(tester, 'direction-filtres_${nom}_clair')}',
         );
         await tester.ensureVisible(
           find
-              .byKey(const ValueKey<String>('candidatures-filtre-competence'))
+              .byKey(const ValueKey<String>('feuille-filtre-competence'))
               .last,
         );
         await tester.pumpAndSettle();
         await tester.tap(
           find
-              .byKey(const ValueKey<String>('candidatures-filtre-competence'))
+              .byKey(const ValueKey<String>('feuille-filtre-competence'))
               .last,
         );
         await stabiliser(tester);

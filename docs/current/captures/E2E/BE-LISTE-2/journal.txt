@@ -1,0 +1,10 @@
+BE-LISTE-2 : mesures (capture de test, polices du depot, 6 files)
+MESURE fr_360 : haut de la premiere ligne a 572.0
+MESURE fr_673 : haut de la premiere ligne a 380.0
+MESURE fr_884 : haut de la premiere ligne a 324.0
+MESURE fr_1366 : haut de la premiere ligne a 372.0
+MESURE ar_360 : haut de la premiere ligne a 666.0
+MESURE ar_1366 : haut de la premiere ligne a 444.0
+Cible du cahier : haut de la premiere candidature sous 300 pt a 360 x 800. NON ATTEINTE : 572 pt (FR), 666 pt (AR).
+Cause : une puce par ligne a 360 (libelles longs), file par file 52 pt de haut.
+Rangee nombre / Selectionner : une seule ligne a 360 (voir 1_arrivee_fr_360.png).

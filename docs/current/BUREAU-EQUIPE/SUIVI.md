@@ -12,6 +12,7 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | BE-1a | Ordre des dossiers (précédent, suivant), filtres sur les réponses, « pièce en attente », « mes dossiers » | `CAHIER-BE-S1.md` | dans main (#505) ; migration installée en production le 16/11 par le coordinateur, sur ordre du directeur ; à prouver par le directeur |
 | BE-0b écran + BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo qui s'ouvre au toucher, pièce sur place, barre de décision fixe | `CAHIER-BE-DOSSIER.md` | en cours (agent BE-DOSSIER, `claude/be-dossier-trois-etages`) |
 | BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | PR ouverte (#506, agent BE-LISTE, `claude/be-liste-retours`) |
+| BE-LISTE-2 | Files en puces avec nombres, un seul bouton Filtres, un seul Trier, rappel « Lecture des deux côtés » fermable | `CAHIER-BE-LISTE-2.md` | PR brouillon (agent BE-LISTE, `claude/be-liste-2`). Cible « premier nom sous 300 pt à 360 × 800 » NON atteinte : 572 pt |
 | BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | à écrire quand BE-1a et BE-1d sont dans main | pas commencé |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |

@@ -1,12 +1,12 @@
-// Captures R3 de BE-LISTE (16/11/2026) : la liste des candidatures avec son
-// en-tete reduit. Donnees de test uniquement, aucune personne reelle.
+// Captures R3 de BE-LISTE-2 (16/11/2026) : un seul systeme de filtres, la liste
+// remonte. Donnees de test uniquement, aucune personne reelle.
 //
-// Scenes, a 360 (telephone), 1366 (ordinateur) et en arabe (droite a gauche) :
-// 1. la liste a l'arrivee : « Outils », « Qui attend quoi » ;
-// 2. « Qui attend quoi » repliee, le premier nom plus haut ;
-// 3. le menu « Outils » ouvert ;
-// 4. « Piece d'identite a valider » touchee : la meme liste, filtree, et
-//    l'adresse qui le dit (ecrite dans le journal).
+// Scenes, a 360, 673, 884 et 1366, en francais, et a 360 et 1366 en arabe :
+// 1. la liste a l'arrivee (titre-selecteur, recherche, « Filtres » et « Trier »,
+//    les files avec leurs nombres, la ligne du nombre) ;
+// 2. la feuille « Filtres » ;
+// 3. la feuille « Trier » ;
+// 4. une file touchee : la meme liste, filtree.
 //
 // Saute sans CAPTURE_DIR (voir `test/capture/LISEZ-MOI.md`).
 
@@ -30,7 +30,6 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.dart';
-import 'package:rewayah_academy/features/admin_candidatures/carte_attentes.dart';
 import 'package:rewayah_academy/features/admin_candidatures/ligne_candidature.dart';
 import 'package:rewayah_academy/features/admin_import_formulaires/routes_candidats_flux.dart';
 
@@ -109,13 +108,15 @@ class _Attentes implements PortAttentesRecrutement {
     parEtat: <EtatCandidature, Attente>{
       EtatCandidature.enExamen: Attente(nombre: 41),
       EtatCandidature.entretienAPlanifier: Attente(nombre: 7),
+      EtatCandidature.aCompleter: Attente(nombre: 107),
+      EtatCandidature.paiementNonDisponible: Attente(nombre: 51),
     },
     pieceAValider: Attente(nombre: 12),
   );
 }
 
 void main() {
-  group('Capture BE-LISTE', skip: sautSansCapture, () {
+  group('Capture BE-LISTE-2', skip: sautSansCapture, () {
     setUpAll(() async {
       await chargerPolicesDuDepot();
       await LocaleSettings.setLocale(AppLocale.ar);
@@ -126,44 +127,41 @@ void main() {
     for (final (String, Size, double, AppLocale) g
         in <(String, Size, double, AppLocale)>[
           ('fr_360', const Size(360, 800), 2, AppLocale.fr),
+          ('fr_673', const Size(673, 900), 1, AppLocale.fr),
+          ('fr_884', const Size(884, 900), 1, AppLocale.fr),
           ('fr_1366', const Size(1366, 768), 1, AppLocale.fr),
           ('ar_360', const Size(360, 800), 2, AppLocale.ar),
+          ('ar_1366', const Size(1366, 768), 1, AppLocale.ar),
         ]) {
-      testWidgets('BE-LISTE ${g.$1}', (WidgetTester tester) async {
+      testWidgets('BE-LISTE-2 ${g.$1}', (WidgetTester tester) async {
         LocaleSettings.setLocaleSync(g.$4);
         addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
         await _monter(tester, g.$2, g.$3);
-        debugPrint('PNG ${await capturer(tester, '1_arrivee_${g.$1}')}');
-        await tester.tap(find.text(t.recrutement.file.replier));
-        await stabiliser(tester);
         final double haut = tester
             .getTopLeft(find.byKey(cleCandidature('a1')))
             .dy;
         debugPrint('MESURE ${g.$1} : haut de la premiere ligne a $haut');
-        debugPrint('PNG ${await capturer(tester, '2_repliee_${g.$1}')}');
-        await tester.tap(find.byKey(CandidaturesPage.cleOutils));
+        debugPrint('PNG ${await capturer(tester, '1_arrivee_${g.$1}')}');
+        await tester.tap(find.byKey(CandidaturesPage.cleFiltres));
         await stabiliser(tester);
-        debugPrint('PNG ${await capturer(tester, '3_outils_${g.$1}')}');
+        debugPrint('PNG ${await capturer(tester, '2_filtres_${g.$1}')}');
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
         await stabiliser(tester);
-        await tester.tap(find.text(t.recrutement.file.afficher));
+        await tester.tap(find.byKey(CandidaturesPage.cleTri));
         await stabiliser(tester);
-        final Finder piece = find.byKey(CarteAttentes.clePiece);
-        await tester.ensureVisible(piece);
+        debugPrint('PNG ${await capturer(tester, '3_tri_${g.$1}')}');
+        await tester.sendKeyEvent(LogicalKeyboardKey.escape);
         await stabiliser(tester);
-        await tester.tap(piece);
+        await tester.tap(
+          find.byKey(const ValueKey<String>('candidatures-file-piece')),
+        );
         await stabiliser(tester);
         final Uri u = GoRouter.of(tester.element(find.byType(CandidaturesPage)))
             .routerDelegate
             .currentConfiguration
             .uri;
         debugPrint('ADRESSE ${g.$1} $u');
-        // La puce retenue et le total : ce que la capture doit montrer.
-        await tester.ensureVisible(
-          find.byKey(const ValueKey<String>('candidatures-total')),
-        );
-        await stabiliser(tester);
-        debugPrint('PNG ${await capturer(tester, '4_piece_filtree_${g.$1}')}');
+        debugPrint('PNG ${await capturer(tester, '4_file_${g.$1}')}');
       });
     }
   });
