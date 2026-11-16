@@ -306,10 +306,6 @@ class _EtatCandidatureDirectionPage
                 capacites,
                 elementsInitiaux: <String>{code},
               ),
-              // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ;
-              // son retour ramene ici.
-              onOuvrirDossier: () =>
-                  unawaited(context.push<void>(Routes.adminPersonnesDossiers)),
               onOuvrirConversation: _ouvrirConversation,
               autresActions: actionsSupplementaires(context, ref, d),
               rangMessages: _rangMessages,

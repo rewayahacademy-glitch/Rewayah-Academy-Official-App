@@ -4348,7 +4348,10 @@
           "misesAJour": "Last updated on {date}."
         },
         "pieceIllisible": "Unreadable format: this document (HEIC photo or PDF) does not display on a computer. Ask for a new document, as a JPEG or PNG photo.",
-        "demanderNouvellePiece": "Ask for a new ID document"
+        "demanderNouvellePiece": "Ask for a new ID document",
+        "pieceAgrandir": "Open the ID document full size",
+        "pieceTitre": "ID document of {nom}",
+        "pieceDecisionPlusTard": "The document is decided in the Verification and interview room, after admission."
       },
       "controles": {
         "noms": {

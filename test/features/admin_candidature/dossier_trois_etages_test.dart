@@ -378,7 +378,6 @@ void main() {
               deuxColonnes: false,
               onGeste: (GesteCandidature _) {},
               onDemanderElement: (String _) {},
-              onOuvrirDossier: () {},
               onEntretien: (String _) {},
               onOuvrirConversation: (ConversationEnPlace _) {},
               ligneMajorite: majorite,

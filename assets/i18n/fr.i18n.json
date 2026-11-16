@@ -4348,7 +4348,10 @@
           "misesAJour": "Dernière mise à jour le {date}."
         },
         "pieceIllisible": "Format non lisible\u00a0: cette pièce (photo HEIC ou PDF) ne s'affiche pas sur ordinateur. Demandez une nouvelle pièce, en photo JPEG ou PNG.",
-        "demanderNouvellePiece": "Demander une nouvelle pièce d'identité"
+        "demanderNouvellePiece": "Demander une nouvelle pièce d'identité",
+        "pieceAgrandir": "Ouvrir la pièce d'identité en grand",
+        "pieceTitre": "Pièce d'identité de {nom}",
+        "pieceDecisionPlusTard": "La pièce se décide en Salle de vérification et d'entretien, après l'admission."
       },
       "controles": {
         "noms": {

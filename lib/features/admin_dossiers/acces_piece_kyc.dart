@@ -16,7 +16,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/dossier/port_acces_pieces_kyc.dart';
 import '../../core/i18n/strings.g.dart';
-import '../../core/widgets/bandeau_attention.dart';
+import '../../core/widgets/bandeau_fermable.dart';
 
 /// Le bandeau « Exception super admin active » ; silencieux sans port, hors
 /// exception, en chargement et en echec (le verdict par dossier parle alors).
@@ -31,8 +31,11 @@ class BandeauExceptionKyc extends ConsumerWidget {
     }
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
-      child: BandeauAttention(
+      // PIECE-DANS-DOSSIER (16/11/2026) : fermable (« J'ai compris »), le
+      // choix reste sur l'appareil.
+      child: BandeauFermable(
         key: const ValueKey<String>('bandeau-exception-kyc'),
+        clef: 'bandeau.exceptionKyc',
         titre: t.dossiers.accesKyc.exceptionTitre,
         message: t.dossiers.accesKyc.exceptionMessage,
       ),

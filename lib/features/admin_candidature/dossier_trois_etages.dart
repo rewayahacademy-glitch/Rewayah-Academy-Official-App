@@ -753,7 +753,6 @@ class CorpsDossier extends ConsumerStatefulWidget {
     required this.deuxColonnes,
     required this.onGeste,
     required this.onDemanderElement,
-    required this.onOuvrirDossier,
     required this.onEntretien,
     required this.onOuvrirConversation,
     this.rangMessages = 0,
@@ -786,9 +785,6 @@ class CorpsDossier extends ConsumerStatefulWidget {
 
   /// Ouvre le complement, l'element deja coche.
   final ValueChanged<String> onDemanderElement;
-
-  /// Mene a « Dossiers a valider ».
-  final VoidCallback onOuvrirDossier;
 
   /// Un geste d'entretien est fait, avec son retour local.
   final ValueChanged<String> onEntretien;
@@ -823,7 +819,6 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
     final bool deuxColonnes = widget.deuxColonnes;
     final ValueChanged<GesteCandidature> onGeste = widget.onGeste;
     final ValueChanged<String> onDemanderElement = widget.onDemanderElement;
-    final VoidCallback onOuvrirDossier = widget.onOuvrirDossier;
     final ValueChanged<String> onEntretien = widget.onEntretien;
     final ValueChanged<ConversationEnPlace> onOuvrirConversation =
         widget.onOuvrirConversation;
@@ -926,6 +921,20 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           in detail.controles ?? <ControleCandidature>[])
         if (c.nom == 'accords_signes' || c.nom == 'cadre_religieux') c,
     ];
+    // PIECE-DANS-DOSSIER (16/11/2026) : la pastille de la piece dit la verite
+    // de la piece lue au serveur (la meme lecture que la ligne dessous), pas un
+    // controle qui confond « deposee, pas encore validee » et « manquante ».
+    final StatutPieceCandidature? statutPiece = ref
+        .watch(pieceCandidatureProvider(detail.ligne.id))
+        .value
+        ?.statut;
+    final PastilleRubrique? pastillePiece = switch (statutPiece) {
+      StatutPieceCandidature.enAttente => PastilleRubrique.aVoir,
+      StatutPieceCandidature.validee => PastilleRubrique.bon,
+      StatutPieceCandidature.aDeposer ||
+      StatutPieceCandidature.refusee => PastilleRubrique.manque,
+      _ => plan.pastille(RubriqueDossierCode.piece),
+    };
     final bool entretienNonServi =
         ref.watch(entretiensCandidatureProvider(detail.ligne.id)).error
             is CapaciteIndisponible;
@@ -935,7 +944,6 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         d3.rubrique.piece,
         (BuildContext c) => _ContenuPiece(
           detail: detail,
-          onOuvrirDossier: onOuvrirDossier,
           onDemanderNouvellePiece: redemandable('piece_identite')
               ? () => onDemanderElement('piece_identite')
               : null,
@@ -944,6 +952,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         gestes: <GesteRubrique?>[
           demander('piece_identite', r.demanderNouvellePiece),
         ],
+        pastille: pastillePiece,
         affichee: true,
       ),
       rubrique(
@@ -1196,13 +1205,11 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
 class _ContenuPiece extends ConsumerWidget {
   const _ContenuPiece({
     required this.detail,
-    required this.onOuvrirDossier,
     required this.onDemanderNouvellePiece,
     required this.onDecision,
   });
 
   final DetailCandidature detail;
-  final VoidCallback onOuvrirDossier;
   final VoidCallback? onDemanderNouvellePiece;
   final ValueChanged<String> onDecision;
 
@@ -1212,7 +1219,7 @@ class _ContenuPiece extends ConsumerWidget {
     if (ref.watch(lirePieceCandidatureProvider) != null) {
       return PieceSurPlace(
         candidatureId: detail.ligne.id,
-        onOuvrirDossier: onOuvrirDossier,
+        nom: nomAffiche(detail.ligne),
         onDemanderNouvellePiece: onDemanderNouvellePiece,
         onDecision: onDecision,
       );
@@ -1235,12 +1242,6 @@ class _ContenuPiece extends ConsumerWidget {
               Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
             ),
           ),
-        LienFleche(
-          key: BlocPieceEntretien.cleDossier,
-          libelle: r.ouvrirDossier,
-          alignerEnDebut: true,
-          onPress: onOuvrirDossier,
-        ),
       ],
     );
   }
