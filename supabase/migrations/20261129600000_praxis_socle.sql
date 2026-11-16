@@ -766,6 +766,7 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
   END IF;
   IF p_du IS NULL OR p_au IS NULL OR p_au < p_du OR p_au - p_du > 366 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'calendrier_lire', 'parametre', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
   END IF;
   PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'calendrier_lire', 'ok', NULL, NULL, NULL, v_debut);

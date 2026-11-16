@@ -266,6 +266,26 @@ SELECT pg_temp.vrai(pg_temp.lu('e_boite') = '{"erreur": "eteint"}'::jsonb AND pg
   'R9 / A-10 : interrupteur coupe : boite, fil, ecrire et annoncer refuses (eteint), etat dit actif faux, rien d''ecrit');
 SELECT pg_temp.garde('regle_on', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT public.direction_praxis_regler(true, false, NULL)$$));
 
+-- ============ A-9 inverse : une cle Praxis (prx_) n'ouvre AUCUNE session d'agent ============
+-- La seule porte qui fabrique une session d'agent (fonction Edge agent-session) appelle remettre_session_agent : la base la refuse.
+CREATE FUNCTION pg_temp.agent_refuse(p_secret text) RETURNS boolean LANGUAGE plpgsql AS $$
+DECLARE v_n integer;
+BEGIN
+  EXECUTE 'SET LOCAL ROLE service_role';
+  BEGIN
+    SELECT count(*) INTO v_n FROM public.remettre_session_agent(p_secret);
+    EXECUTE 'RESET ROLE';
+    RETURN v_n = 0;
+  EXCEPTION WHEN OTHERS THEN
+    EXECUTE 'RESET ROLE';
+    RETURN SQLERRM = 'jeton refuse';
+  END;
+END $$;
+GRANT EXECUTE ON FUNCTION pg_temp.agent_refuse(text) TO authenticated, anon, service_role;
+SELECT pg_temp.vrai((SELECT count(*) FROM pg_proc WHERE proname = 'remettre_session_agent') = 1
+  AND pg_temp.agent_refuse(pg_temp.k('chat')) AND pg_temp.agent_refuse(pg_temp.k('routine')),
+  'A-9 inverse : remettre_session_agent (appelee par agent-session) refuse une cle prx_ (chat et routine) avec « jeton refuse » ; aucune session d''agent');
+
 -- ============ R1, R10 : cle absente, fausse, d'observation, revoquee, expiree ============
 SELECT pg_temp.garde('c_vide', pg_temp.ecrire('', '1', 'Bonjour', '2'));
 SELECT pg_temp.garde('c_fausse', pg_temp.ecrire('prx_' || repeat('0', 64), '1', 'Bonjour', '3'));
@@ -342,20 +362,41 @@ SELECT pg_temp.vrai(NOT has_function_privilege('anon', 'private.com_envoyer_mess
   AND NOT has_function_privilege('agent_ro', 'private.com_annonce_envoyer_interne(uuid,gender[],text[],text,text,timestamptz,boolean,uuid)', 'EXECUTE')
   AND NOT has_function_privilege('service_role', 'private.com_envoyer_message_interne(uuid,text,uuid,uuid,text,uuid,boolean)', 'EXECUTE'),
   'AR-6 : les deux fonctions internes de la messagerie n''ont aucun EXECUTE pour anon, authenticated, agent_ro ni service_role');
--- R4 (exigence positive) : les tables ecrites par le corps des outils public.praxis_* sont dans une liste fermee.
+-- R4 (exigence positive, AR-9) : TOUTES les fonctions praxis_* (outils publics, aides privees) et direction_praxis_* sont couvertes.
+-- Les couples (fonction, table ecrite) sont une liste fermee ecrite ici ; toute autre ecriture, tout nouveau couple, est rouge.
+SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.proname || '>' || lower(m[1]) ORDER BY n.nspname || '.' || p.proname || '>' || lower(m[1])), ARRAY[]::text[])
+    FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
+         LATERAL regexp_matches(p.prosrc, '(?:INSERT\s+INTO|UPDATE|MERGE\s+INTO)\s+([a-z_]+\.[a-z_]+|[a-z_]+)\s', 'gi') m
+   WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
+  = ARRAY['private.praxis_noter>private.praxis_journal', 'private.praxis_porte>private.praxis_cles',
+          'public.direction_praxis_emettre_cle>private.praxis_cles', 'public.direction_praxis_regler>private.praxis_reglages',
+          'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier'],
+  'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
+-- R4 (suite) : les ecritures INDIRECTES. Les fonctions praxis_* n'appellent, parmi les fonctions private.com_*, que cette liste fermee.
 SELECT pg_temp.vrai(NOT EXISTS (
-    SELECT 1 FROM pg_proc p, LATERAL regexp_matches(p.prosrc, '(?:INSERT INTO|UPDATE|MERGE INTO)\s+([a-z_]+\.[a-z_]+)', 'gi') m
-     WHERE p.pronamespace = 'public'::regnamespace AND p.proname LIKE 'praxis\_%'
-       AND lower(m[1]) NOT IN ('private.praxis_calendrier')),
-  'R4 : les outils praxis_* n''ecrivent directement que dans private.praxis_calendrier (liste positive) ; le reste passe par praxis_noter (journal) et les fonctions internes de la messagerie');
-SELECT pg_temp.vrai(NOT EXISTS (
-    SELECT 1 FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace AND p.proname LIKE 'praxis\_%'
-      AND (p.prosrc ~* '(account_status|app_config|kyc_documents|private\.praxis_cles|contract_|wallet|paiement|audit_logs|role\s*=\s*''admin''\s*,|SET\s+role)'
-           AND p.prosrc ~* '(UPDATE|INSERT INTO)\s+(public\.)?(profiles|app_config|kyc_documents|wallet|paiements)')),
-  'R4 : aucun outil ne touche les tables de comptes, de roles, de paiements, de pieces, de reglages ou de cles');
-SELECT pg_temp.vrai((SELECT count(*) FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace AND p.proname LIKE 'praxis\_%'
-                      AND (p.prosrc ~* 'EXECUTE\s' OR p.proargtypes::text ~ '25.*114')) = 0,
-  'R1 : aucun SQL libre : aucun EXECUTE dynamique dans les outils, aucun parametre de type requete');
+    SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
+         LATERAL regexp_matches(p.prosrc, '(private\.com_[a-z_]+)\s*\(', 'gi') m
+     WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%')
+       AND lower(m[1]) NOT IN ('private.com_envoyer_message_interne', 'private.com_annonce_envoyer_interne', 'private.com_paires',
+                               'private.com_annonce_publics_valides', 'private.com_annonce_personnes', 'private.com_est_mineur',
+                               'private.com_est_partie', 'private.com_profil_valide')),
+  'R4 : les fonctions praxis_* n''appellent que les deux internes d''ecriture de la messagerie et six aides de lecture ou de controle (liste fermee)');
+-- R1 (AR-9) : un controle qui a un sens. Chaque outil public a EXACTEMENT les arguments attendus (nom : type) ; aucun argument n'est un texte libre
+-- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
+SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname)
+                       FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace AND p.proname LIKE 'praxis\_%')
+  = ARRAY['praxis_annoncer(p_cle text, p_publics text[], p_titre text, p_texte text, p_cle_idempotence uuid)',
+          'praxis_boite(p_cle text, p_filtre text, p_limite integer)',
+          'praxis_calendrier_ajouter(p_cle text, p_sujet text, p_public text, p_date date, p_recurrence text, p_cle_idempotence uuid)',
+          'praxis_calendrier_lire(p_cle text, p_du date, p_au date)',
+          'praxis_ecrire(p_cle text, p_fil uuid, p_texte text, p_cle_idempotence uuid)',
+          'praxis_etat(p_cle text)', 'praxis_fil(p_cle text, p_fil uuid, p_limite integer)',
+          'praxis_noter_refus(p_cle text, p_outil text)', 'praxis_rendre_compte(p_cle text, p_heures integer)'],
+  'R1 : les arguments de chaque outil public sont exactement ceux ecrits ici (aucun argument « requete », jsonb ni regclass ; les seuls textes sont les champs bornes listes)');
+SELECT pg_temp.vrai((SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+                      WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%')
+                        AND p.prosrc ~* 'EXECUTE\s') = 0,
+  'R1 : aucun EXECUTE dynamique dans les fonctions praxis_* (outils et aides) ni dans les portes de la direction');
 
 -- R5 : toutes les reponses de lecture, sur des fils vivants.
 SELECT pg_temp.garde('b_tout', pg_temp.outil(pg_catalog.format('SELECT public.praxis_boite(%L, ''tout'', 50)', pg_temp.k('chat'))));
@@ -558,6 +599,13 @@ SELECT pg_temp.vrai(NOT (pg_temp.lu('l_comptes') @> to_jsonb(private.praxis_prof
   AND NOT (pg_temp.lu('l_ens')::text LIKE '%' || private.praxis_profil()::text || '%')
   AND NOT (pg_temp.lu('l_matricule')::text LIKE '%' || private.praxis_profil()::text || '%'),
   'R13 : Praxis est absent des comptes de la direction (deux lectures), de la liste des enseignants et de la recherche par matricule');
+-- R13 (AR-9) : les autres lectures de personnes de la direction (missions, recherche d'eleves) n'exposent pas Praxis. La liste « equipe » et une
+-- recherche generale de personnes n'existent pas sous ces noms dans le depot (aucune fonction publique correspondante, releve) : a designer.
+SELECT pg_temp.garde('l_missions', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT coalesce(jsonb_agg(to_jsonb(m)), '[]'::jsonb) FROM public.lister_missions() m$$));
+SELECT pg_temp.garde('l_pauses', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT coalesce(jsonb_agg(to_jsonb(m)), '[]'::jsonb) FROM public.pauses_eleves_recherche('Praxis') m$$));
+SELECT pg_temp.vrai(NOT (pg_temp.lu('l_missions')::text LIKE '%' || private.praxis_profil()::text || '%')
+  AND NOT (pg_temp.lu('l_pauses')::text LIKE '%' || private.praxis_profil()::text || '%'),
+  'R13 : ni la liste des missions ni la recherche d''eleves (pauses) ne montrent Praxis');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM private.com_annonce_personnes(private.com_annonce_codes(),
         ARRAY['male', 'female']::public.gender[]) x WHERE x.profile_id = private.praxis_profil()),
   'R13 : Praxis n''est destinataire d''aucun public d''annonce (tous les codes, les deux cotes)');
