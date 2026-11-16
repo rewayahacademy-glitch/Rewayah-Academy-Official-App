@@ -570,10 +570,12 @@ void main() {
       await tester.tap(find.byKey(FilDiscussion.cleImage));
       await _attendreMoteur(tester);
       await tester.pumpAndSettle();
+      // La phrase redondante n'est plus ecrite : seule la ligne d'echec reste.
       expect(
         find.text(phraseRefusImage(RefusImage.envoiStockage)),
-        findsOneWidget,
+        findsNothing,
       );
+      expect(find.text(ligneEchec), findsOneWidget);
       await choisirActionEchec(
         tester,
         t.com.socle.composants.composer.reessayer,

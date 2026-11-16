@@ -31,6 +31,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/vue_etat_communication.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/fil_contextuel.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
@@ -46,7 +47,6 @@ import '../../../support/demo/comptable/socle_comptable_demo.dart';
 import '../../../support/demo/demo_comptable_page.dart';
 import '../../../support/garde_interface.dart';
 import '../../../support/harnais.dart';
-import '../../../support/titre_de_page.dart';
 
 const String _ens01 = ProfilsBeneficiairesDemo.modifieRecemment;
 
@@ -214,10 +214,10 @@ void main() {
       ]);
       expect(find.byType(FilProfilPaiementPage), findsOneWidget);
       expect(find.byType(FilContextuel), findsOneWidget);
-      expect(
-        titreDePage(t.comptable.beneficiaires.profil.filTitre),
-        findsWidgets,
-      );
+      // CONVERSATIONS-PARTOUT (directeur, 16/11/2026) : au telephone, la
+      // conversation est une page a elle, la barre compacte de Messages
+      // (nom de la personne) tient lieu de titre de page.
+      expect(find.byKey(BarreConversation.cle), findsOneWidget);
       // L'objet du fil, rendu par le port : « Profil de paiement », sans
       // repeter le nom de l'interlocuteur, deja en tete du fil.
       expect(

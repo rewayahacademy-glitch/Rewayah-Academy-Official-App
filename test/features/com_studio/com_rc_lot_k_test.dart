@@ -405,15 +405,11 @@ void main() {
   });
 
   group('lot K, point 4 : le champ tient sur une ligne au repos', () {
-    // La hauteur du cadre du champ : du haut du champ au haut de son aide
-    // ecrite dessous (« Ecrivez un message... »).
-    double cadre(WidgetTester tester) {
-      final Rect champ = tester.getRect(find.byKey(FilDiscussion.champKey));
-      final Rect aide = tester.getRect(
-        find.text('Ecrivez un message pour l envoyer.'),
-      );
-      return aide.top - champ.top;
-    }
+    // La hauteur du cadre du champ. SUPERPOS-1 modifiee (directeur,
+    // 16/11/2026 : plus de phrase d'aide sous le champ) : on mesure le champ
+    // lui-meme, et non plus la distance a l'aide ecrite dessous.
+    double cadre(WidgetTester tester) =>
+        tester.getRect(find.byKey(FilDiscussion.champKey)).height;
 
     const String longue =
         'Ecrire dans Organisation generale, puis envoyer a l equipe';
@@ -524,11 +520,9 @@ void main() {
             ),
           )
           .height;
-      final double aide = tester
-          .getSize(find.text(t.com.socle.composants.composer.champVide))
-          .height;
-      // Le decorateur porte le champ et son aide ecrite dessous.
-      expect(canal - aide, moreOrLessEquals(_hauteurUneLigne, epsilon: 8));
+      // Plus d'aide ecrite sous le champ (directeur, 16/11/2026) : le
+      // decorateur ne porte que le champ, une ligne.
+      expect(canal, moreOrLessEquals(_hauteurUneLigne, epsilon: 8));
       // Au toucher, avant toute frappe, toujours une ligne.
       await tester.tap(find.byKey(FilDiscussion.champKey));
       await tester.pumpAndSettle();

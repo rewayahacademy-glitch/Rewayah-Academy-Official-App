@@ -15,6 +15,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_delais.dart';
+import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -24,10 +25,12 @@ import '../../core/widgets/fil_discussion.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/ligne_cle_valeur.dart';
 import '../../core/widgets/marque_staff.dart';
+import '../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../accueil_famille/bloc_seance.dart' show dateDeLAppareil;
+import '../com_messages/fil_libre.dart';
 import 'echanges_controleur.dart';
 
 /// Le titre humain d'un fil : la Classe et la date de la mission.
@@ -143,56 +146,66 @@ class _EchangesControleurPageState
   Widget _vueFil(String mission) {
     final e = t.controleur.echanges;
     final FilEchange? fil = _fil.value;
+    // CONVERSATIONS-PARTOUT : au telephone, la conversation est une page a elle
+    // (la barre compacte et le fil du composant partage, comme Messages).
+    final bool pleinEcran =
+        fil != null && AppGabarit.de(context) == Gabarit.mobile;
+    final Widget corps = _borne(
+      BlocAsynchrone<FilEchange>(
+        valeur: _fil,
+        squelette: const Skeleton.texte(),
+        onReessayer: () => _ouvrir(mission),
+        construire: (FilEchange f) => FilLibre(
+          cleFil: ValueKey<String>('fil-${f.id}'),
+          avecBarre: pleinEcran,
+          titre: titreFilEchange(f),
+          ligne: e.contexteCompact(heure: heureChezMoi(f.debutMission)),
+          onRetour: _fermer,
+          messages: <MessageFil>[
+            for (final MessageEchange m in f.messages)
+              MessageFil(
+                id: m.id,
+                auteur: switch (m.auteur) {
+                  AuteurEchange.controleur => e.auteurVous,
+                  // #Ra_staff (directeur, 14/11/2026).
+                  AuteurEchange.administration => MarqueStaff.designation,
+                },
+                texte: m.texte,
+                // Meme cle que l'Historique (revue CT-R m9).
+                horodatage: t.controleur.historique.dateHeure(
+                  date: dateDeLAppareil(chezMoi(m.date)),
+                  heure: heureChezMoi(m.date),
+                ),
+                deSoi: m.auteur == AuteurEchange.controleur,
+              ),
+          ],
+          textes: TextesFilDiscussion(
+            aideChamp: e.champ,
+            libelleChamp: e.champLibelle,
+            envoyer: e.envoyer,
+            champVide: e.champVide,
+            enCours: e.enCours,
+            envoye: e.envoye,
+            echec: e.echec,
+            reessayer: e.reessayer,
+            auteurSoi: e.auteurVous,
+            annonce: (String auteur, String texte) =>
+                e.nouveauMessage(deAuteur: deDevant(auteur), texte: texte),
+          ),
+          // Serveur muet : le message passe « non envoye », avec un
+          // nouvel essai, au lieu de rester « en cours » (CTRL-DELAI-1).
+          onEnvoyer: (String texte) =>
+              _port.envoyer(f.id, texte).timeout(AppDelais.requeteMax),
+        ),
+      ),
+    );
+    if (pleinEcran) return PageConversationPleinEcran(child: corps);
     return PageShell(
       titre: fil == null ? e.titre : titreFilEchange(fil),
       onRetour: _fermer,
       defilante: false,
       entete: fil == null ? null : _borne(_ContexteEpingle(fil: fil)),
-      child: _borne(
-        BlocAsynchrone<FilEchange>(
-          valeur: _fil,
-          squelette: const Skeleton.texte(),
-          onReessayer: () => _ouvrir(mission),
-          construire: (FilEchange f) => FilDiscussion(
-            key: ValueKey<String>('fil-${f.id}'),
-            messages: <MessageFil>[
-              for (final MessageEchange m in f.messages)
-                MessageFil(
-                  id: m.id,
-                  auteur: switch (m.auteur) {
-                    AuteurEchange.controleur => e.auteurVous,
-                    // #Ra_staff (directeur, 14/11/2026).
-                    AuteurEchange.administration => MarqueStaff.designation,
-                  },
-                  texte: m.texte,
-                  // Meme cle que l'Historique (revue CT-R m9).
-                  horodatage: t.controleur.historique.dateHeure(
-                    date: dateDeLAppareil(chezMoi(m.date)),
-                    heure: heureChezMoi(m.date),
-                  ),
-                  deSoi: m.auteur == AuteurEchange.controleur,
-                ),
-            ],
-            textes: TextesFilDiscussion(
-              aideChamp: e.champ,
-              libelleChamp: e.champLibelle,
-              envoyer: e.envoyer,
-              champVide: e.champVide,
-              enCours: e.enCours,
-              envoye: e.envoye,
-              echec: e.echec,
-              reessayer: e.reessayer,
-              auteurSoi: e.auteurVous,
-              annonce: (String auteur, String texte) =>
-                  e.nouveauMessage(deAuteur: deDevant(auteur), texte: texte),
-            ),
-            // Serveur muet : le message passe « non envoye », avec un
-            // nouvel essai, au lieu de rester « en cours » (CTRL-DELAI-1).
-            onEnvoyer: (String texte) =>
-                _port.envoyer(f.id, texte).timeout(AppDelais.requeteMax),
-          ),
-        ),
-      ),
+      child: corps,
     );
   }
 

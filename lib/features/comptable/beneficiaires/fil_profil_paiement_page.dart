@@ -27,9 +27,12 @@ import '../../../core/i18n/strings.g.dart';
 import '../../../core/reseau/service_reseau.dart';
 import '../../../core/router/routes.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/widgets/page_conversation_plein_ecran.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
+import '../../com_messages/barre_conversation.dart';
 import '../../com_messages/fil_contextuel.dart';
+import '../../com_messages/messages_page.dart' show conversationPleinEcran;
 import '../../com_messages/port_messages_metier.dart';
 
 /// Le chemin du fil « Profil de paiement » d'un beneficiaire. La
@@ -112,6 +115,21 @@ class _FilProfilPaiementPageEtat extends ConsumerState<FilProfilPaiementPage> {
   @override
   Widget build(BuildContext context) {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // CONVERSATIONS-PARTOUT : au telephone, la conversation est une page a
+    // elle (la barre compacte et le fil du composant partage), comme celle de
+    // Messages ; le message modele reste le brouillon du fil.
+    if (conversationPleinEcran(context)) {
+      return PageConversationPleinEcran(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: <Widget>[
+            if (_fil.value == null) BarreRetourConversation(onRetour: _retour),
+            if (horsLigne) const BandeauHorsLigneCommunication(encadre: true),
+            Expanded(child: _corps(horsLigne, pleinEcran: true)),
+          ],
+        ),
+      );
+    }
     return PageShell(
       // D-FUS-3 : le corps pose le bandeau des Communications.
       bandeauHorsLigne: const SizedBox.shrink(),
@@ -131,7 +149,7 @@ class _FilProfilPaiementPageEtat extends ConsumerState<FilProfilPaiementPage> {
     );
   }
 
-  Widget _corps(bool horsLigne) {
+  Widget _corps(bool horsLigne, {bool pleinEcran = false}) {
     if (_fil.isLoading) {
       return const SingleChildScrollView(
         child: VueEtatCommunication(etat: EtatCommunication.chargement),
@@ -169,6 +187,7 @@ class _FilProfilPaiementPageEtat extends ConsumerState<FilProfilPaiementPage> {
       onEnvoyer: (String texte, String cle) =>
           _port.envoyer(fil.id, texte, cle),
       onRetour: _retour,
+      pleinEcran: pleinEcran,
     );
   }
 }

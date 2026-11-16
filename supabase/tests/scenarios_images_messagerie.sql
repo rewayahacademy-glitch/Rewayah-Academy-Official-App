@@ -515,6 +515,25 @@ SELECT pg_temp.vrai(public.message_image_annuler((SELECT i.id FROM public.com_me
 RESET ROLE;
 
 -- ------------------------------------------------------------
+-- 7 bis. CONVERSATIONS-PARTOUT : rattrapage de confirmee_le (migration 20261129300000)
+-- ------------------------------------------------------------
+UPDATE public.com_message_images SET confirmee_le = NULL
+ WHERE id = current_setting('test.i1')::uuid;
+SELECT pg_temp.vrai((SELECT confirmee_le IS NULL FROM public.com_message_images
+                      WHERE id = current_setting('test.i1')::uuid),
+  'fixture : une image confirmee avant la migration n''a pas de date');
+-- L'instruction de la migration, mot pour mot.
+UPDATE public.com_message_images
+   SET confirmee_le = cree_le
+ WHERE etat = 'confirmee'
+   AND confirmee_le IS NULL;
+SELECT pg_temp.vrai((SELECT confirmee_le = cree_le FROM public.com_message_images
+                      WHERE id = current_setting('test.i1')::uuid)
+  AND NOT EXISTS (SELECT 1 FROM public.com_message_images
+                   WHERE etat = 'confirmee' AND confirmee_le IS NULL),
+  'rattrapage : toute image confirmee a une date (celle du depot), rejouable');
+
+-- ------------------------------------------------------------
 -- 8. Expiration a 90 jours : lue comme supprimee, puis purgee
 -- ------------------------------------------------------------
 SELECT pg_temp.vrai((SELECT expire_le BETWEEN clock_timestamp() + interval '89 days 23 hours' AND clock_timestamp() + interval '90 days 1 hour'
@@ -573,8 +592,8 @@ RESET ROLE;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.com_n')::int <> 68 THEN
-    RAISE EXCEPTION 'ROUGE : % controles executes, 68 attendus', current_setting('test.com_n');
+  IF current_setting('test.com_n')::int <> 70 THEN
+    RAISE EXCEPTION 'ROUGE : % controles executes, 70 attendus', current_setting('test.com_n');
   END IF;
   RAISE NOTICE 'IMAGES-MESSAGERIE : % controles verts', current_setting('test.com_n');
 END $fin$;
