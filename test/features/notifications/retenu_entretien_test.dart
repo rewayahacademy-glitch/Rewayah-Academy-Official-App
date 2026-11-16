@@ -19,7 +19,8 @@ void main() {
     ).titre;
     expect(titre, t.notifications.evenements.retenuEntretien);
     expect(titre, contains('retenu pour un entretien'));
-    expect(titre, contains('Faisons connaissance'));
+    expect(titre, contains('rien à faire'));
+    expect(titre, isNot(contains('choisissez')));
     expect(titre, isNot(contains('Salle')));
     expect(titre, isNot(t.notifications.evenements.inconnu));
   });

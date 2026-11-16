@@ -1407,7 +1407,8 @@
       "coursNonExplication": "Vous inscrivez vos proches et suivez leurs progrès, sans cours pour vous. Vous pourrez changer d'avis plus tard.",
       "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte.",
       "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
-      "deposerCandidature": "Déposer ma candidature"
+      "deposerCandidature": "Déposer ma candidature",
+      "postulerIci": "Vous voulez enseigner chez nous\u00a0? Postulez ici"
     },
     "recap": {
       "usage": "Type de compte",
@@ -2886,14 +2887,16 @@
       "elementCodeConduite": "Le code de conduite",
       "elementAccordPublication": "L'accord de publication de votre photo",
       "elementPaysVersement": "Pays et compte de versement",
-      "paysVersementLien": "Changer le pays de versement",
-      "paysVersementTitre": "Pays du compte de versement",
-      "paysVersementExplication": "Le compte peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie. Choisissez le pays où se trouve ce compte. Les moyens de versement et les coordonnées déjà saisis devront être confirmés de nouveau.",
-      "paysVersementEnregistrer": "Enregistrer ce pays",
-      "paysVersementFait": "Pays de versement mis à jour. L'académie relit votre dossier.",
-      "paysVersementEchec": "Le pays n'a pas pu être changé. Rien n'a été modifié\u00a0: réessayez dans un instant.",
-      "paysVersementInterdit": "Le pays ne peut plus être changé à cette étape. Écrivez à l'académie depuis la conversation de votre dossier.",
-      "paysVersementHorsLigne": "Vous n'êtes pas connecté. Le pays n'a pas été changé\u00a0; réessayez une fois la connexion revenue.",
+      "paysVersementLien": "Modifier mon versement",
+      "paysVersementTitre": "Mon versement",
+      "paysVersementExplication": "Vous pouvez tout modifier tant que l'académie n'a pas validé votre dossier\u00a0: le compte bancaire, le pays et les services de paiement sur téléphone. Les coordonnées déjà saisies devront être confirmées de nouveau si le pays change.",
+      "paysVersementEnregistrer": "Enregistrer mon versement",
+      "paysVersementFait": "Versement mis à jour. L'académie relit votre dossier.",
+      "paysVersementEchec": "Le versement n'a pas pu être modifié. Rien n'a été changé\u00a0: réessayez dans un instant.",
+      "paysVersementInterdit": "Le versement ne peut plus être modifié\u00a0: votre dossier est validé. Écrivez à l'académie depuis la conversation de votre dossier.",
+      "paysVersementHorsLigne": "Vous n'êtes pas connecté. Le versement n'a pas été modifié\u00a0; réessayez une fois la connexion revenue.",
+      "versementFerme": "Votre dossier est validé\u00a0: le versement ne peut plus se modifier ici. Pour un changement, écrivez à l'académie.",
+      "versementFermeLien": "Écrire à l'académie",
       "pieceDemandee": "La direction vous demande une nouvelle photo de votre pièce.",
       "photoDemandee": "La direction vous demande une nouvelle photo. Changez-la au récapitulatif de vos réponses, avant de les envoyer."
     },
@@ -2904,7 +2907,7 @@
       "horaire": "{date}, de {debut} à {fin}",
       "choisir": "Choisissez un moment.",
       "reserver": "Réserver ce moment",
-      "aucunCreneau": "Aucun moment n'est ouvert pour l'instant. Revenez plus tard.",
+      "aucunCreneau": "Votre candidature est retenue pour l'entretien. Vous n'avez rien à faire pour l'instant : l'académie vous informera dès qu'un moment sera ouvert, et vous le choisirez ici.",
       "erreurLecture": "Les moments n'ont pas pu être chargés. Réessayez.",
       "pris": "Ce moment vient d'être pris. Choisissez-en un autre.",
       "dejaPlanifie": "Votre entretien est déjà fixé.",
@@ -3529,6 +3532,16 @@
           "titre": "Dans quel pays voulez-vous recevoir votre rémunération\u00a0?",
           "explication": "Le compte qui reçoit votre rémunération peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie\u00a0: choisissez alors le pays de ce proche. L'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
           "court": "Pays de versement"
+        },
+        "paysVersementCompte": {
+          "titre": "Dans quel pays est ce compte\u00a0?",
+          "explication": "Le compte peut être celui d'un proche de confiance. Choisissez le pays où se trouve la banque\u00a0: l'académie vérifie, pays par pays, que le virement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "court": "Pays du compte"
+        },
+        "paysVersementMobile": {
+          "titre": "Dans quel pays pouvez-vous recevoir de l'argent sur votre téléphone\u00a0?",
+          "explication": "Choisissez le pays du service de paiement sur téléphone que vous utilisez, ou de celui d'un proche de confiance. Vous choisirez ensuite les services de ce pays. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "court": "Pays du paiement sur téléphone"
         },
         "compteBancaire": {
           "titre": "Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d'un proche\u00a0?",
@@ -8616,7 +8629,7 @@
       "annonceDirection": "Annonce de l'académie",
       "annonceDirectionTitre": "Annonce : {titre}",
       "bienvenueEquipe": "Bienvenue dans l'équipe. Il vous reste à configurer votre espace.",
-      "retenuEntretien": "Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l'application.",
+      "retenuEntretien": "Vous êtes retenu pour un entretien. Vous n'avez rien à faire pour l'instant : l'académie vous informera dès qu'un moment sera ouvert.",
       "pauseRepondueAcceptee": "La pause d'un mois {dePrenom} est acceptée pour {mois}. Sa date limite recule d'autant. Sa place est gardée.",
       "pauseRepondueAccepteeAdulte": "Votre pause d'un mois est acceptée pour {mois}. Votre date limite recule d'autant. Votre place est gardée.",
       "pauseRepondueRefusee": "La pause d'un mois {dePrenom} pour {mois} n'est pas acceptée. Le motif est dans l'application.",
@@ -12153,6 +12166,47 @@
       },
       "fil": {
         "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."
+      },
+      "images": {
+        "joindre": "Joindre une image",
+        "prendrePhoto": "Prendre une photo",
+        "choisirGalerie": "Choisir dans la galerie",
+        "retiree": "Image retirée après 90 jours",
+        "fermer": "Fermer l'image",
+        "enregistrer": "Enregistrer l'image",
+        "enregistree": "Image enregistrée",
+        "enregistrementEchec": "L'enregistrement de l'image n'est pas confirmé. Votre appareil ou votre navigateur a refusé le fichier\u00a0: réessayez dans un instant.",
+        "imageJointe": "Image jointe au message",
+        "chargement": "Chargement de l'image",
+        "envoiEnCours": "Envoi de l'image\u00a0: {pourcent} %",
+        "preparation": "Préparation de l'image",
+        "jaime": "J'aime",
+        "nePlusAimer": "Je n'aime plus",
+        "copierTexte": "Copier le texte",
+        "texteCopie": "Texte copié",
+        "actionsMessage": "Actions du message",
+        "aimeParVous": "Aimé par vous",
+        "aimes": "J'aime\u00a0: {n}",
+        "coeurEchec": "Votre «\u00a0J'aime\u00a0» n'est pas confirmé. Réessayez dans un instant.",
+        "refus": {
+          "demandeInvalide": "Cette image n'est pas confirmée\u00a0: ses dimensions ou son format ne sont pas ceux attendus. Choisissez une autre photo.",
+          "typeRefuse": "Ce type de fichier n'est pas accepté. Choisissez une photo JPEG, PNG ou WebP.",
+          "imageTropLourde": "Cette image est trop lourde, même après réduction. Choisissez une photo plus légère.",
+          "nonAutorise": "Vous ne pouvez pas joindre d'image à ce message. Votre texte est bien parti\u00a0: écrivez sans image.",
+          "mineurRefuse": "Les images ne sont pas ouvertes aux comptes élèves de moins de 18 ans. Écrivez votre message sans image.",
+          "limiteHoraire": "Vous avez envoyé 20 images dans l'heure\u00a0: c'est la limite. Réessayez dans une heure.",
+          "dejaUneImage": "Ce message a déjà reçu son image, ou son dépôt a été abandonné. Écrivez un nouveau message pour joindre une image.",
+          "depotIndisponible": "Le dépôt de cette image n'est plus valable (trop ancien, ou déjà terminé). Écrivez un nouveau message pour joindre l'image.",
+          "contenuDifferent": "Ce fichier n'est pas une image du type annoncé. Choisissez une vraie photo.",
+          "objetIntrouvable": "L'image n'est pas arrivée entière sur le serveur. Réessayez.",
+          "stockageIndisponible": "Le stockage des images n'a pas pris l'envoi pour le moment\u00a0: ce n'est pas votre appareil. Réessayez dans quelques minutes.",
+          "confirmationIndisponible": "L'envoi d'images n'est pas encore bien réglé sur le serveur\u00a0: l'équipe doit le corriger. Votre texte est bien parti.",
+          "depotImpossible": "L'image n'est pas confirmée\u00a0: c'est une panne du serveur, pas de votre faute. Réessayez dans un instant.",
+          "envoiStockage": "Le stockage a refusé l'image (adresse expirée ou envoi coupé). Réessayez.",
+          "reseau": "Il est possible que l'image ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+          "imageTropGrosse": "Cette photo pèse plus de 15 Mo, ou reste trop lourde après réduction. Choisissez-en une plus légère.",
+          "imageIllisible": "Cette photo ne peut pas être lue. Choisissez une autre photo."
+        }
       },
       "demo": {
         "choisirRole": "Choisissez le point de vue de cette démonstration.",

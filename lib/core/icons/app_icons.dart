@@ -596,6 +596,18 @@ abstract final class AppIcons {
     IconData(0xe0a8, fontFamily: _actif),
   );
 
+  /// IMAGES-MESSAGERIE : le coeur d'un « J'aime » (plein quand il est donne).
+  static const AppIcon coeur = AppIcon._(
+    IconData(0xe2a8, fontFamily: _repos),
+    IconData(0xe2a8, fontFamily: _actif),
+  );
+
+  /// IMAGES-MESSAGERIE : une image retiree (apres 90 jours).
+  static const AppIcon imageRetiree = AppIcon._(
+    IconData(0xe7a8, fontFamily: _repos),
+    IconData(0xe7a8, fontFamily: _actif),
+  );
+
   /// Bibliotheque (B) : vignette d'une image. Remplace [qr].
   static const AppIcon image = AppIcon._(
     IconData(0xe2ca, fontFamily: _repos),

@@ -214,6 +214,23 @@ class MaCandidatureSupabase implements PortMaCandidature {
     _refus(brut);
     return _candidatureRelue(brut);
   }
+
+  @override
+  Future<CandidatureDossier> modifierVersement({
+    required bool compteBancaire,
+    required String pays,
+    List<String> operateurs = const <String>[],
+  }) async {
+    final Map<String, dynamic> brut = _objet(
+      await _appel(_client, 'modifier_mon_versement', <String, dynamic>{
+        'p_compte': compteBancaire,
+        'p_pays': pays,
+        'p_operateurs': operateurs,
+      }),
+    );
+    _refus(brut);
+    return _candidatureRelue(brut);
+  }
 }
 
 /// Le bloc `candidature` relu au serveur ; une reponse sans lui n'est pas un
@@ -280,6 +297,8 @@ void _refus(Map<String, dynamic> brut) {
       );
     case 'pays_invalide':
       throw const ReponsesInvalides(<String>['paysVersement']);
+    case 'operateur_invalide':
+      throw const ReponsesInvalides(<String>['operateurs']);
     case 'modification_impossible' || 'aucune_reponse_envoyee':
       throw const TransitionInterdite();
     case 'absente':

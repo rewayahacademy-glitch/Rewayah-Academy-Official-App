@@ -63,6 +63,15 @@ const BoxConstraints contraintesMenu = BoxConstraints(
 ///
 /// [declencheur] est ce que la personne voit et touche ; [libelle] ce que dit
 /// le lecteur d'ecran. La liste est celle de [itemBuilder].
+/// IMAGES-MESSAGERIE : ouvre un [MenuAncre] depuis un geste qui n'est pas son
+/// declencheur (l'appui long sur une bulle de message).
+class MenuAncreControleur {
+  VoidCallback? _ouvrir;
+
+  /// Ouvre le menu, s'il est a l'ecran.
+  void ouvrir() => _ouvrir?.call();
+}
+
 class MenuAncre<T> extends StatefulWidget {
   /// Cree l'ancre d'un menu.
   const MenuAncre({
@@ -73,8 +82,12 @@ class MenuAncre<T> extends StatefulWidget {
     this.contraintes,
     this.animation = animationMenu,
     this.arrondiFocus,
+    this.controleur,
     super.key,
   });
+
+  /// Ouvre le menu a la demande (appui long) ; `null` : le toucher seul.
+  final MenuAncreControleur? controleur;
 
   /// Ce qui ouvre le menu, selon l'etat d'interaction (survol, pression,
   /// focus) du [Pressable] qui le porte.
@@ -105,6 +118,27 @@ class MenuAncre<T> extends StatefulWidget {
 class _EtatMenuAncre<T> extends State<MenuAncre<T>> {
   final GlobalKey<PopupMenuButtonState<T>> _cle =
       GlobalKey<PopupMenuButtonState<T>>();
+
+  @override
+  void initState() {
+    super.initState();
+    widget.controleur?._ouvrir = () => _cle.currentState?.showButtonMenu();
+  }
+
+  @override
+  void didUpdateWidget(MenuAncre<T> ancien) {
+    super.didUpdateWidget(ancien);
+    if (ancien.controleur != widget.controleur) {
+      ancien.controleur?._ouvrir = null;
+      widget.controleur?._ouvrir = () => _cle.currentState?.showButtonMenu();
+    }
+  }
+
+  @override
+  void dispose() {
+    widget.controleur?._ouvrir = null;
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

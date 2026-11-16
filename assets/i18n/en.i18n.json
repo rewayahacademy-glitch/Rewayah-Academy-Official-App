@@ -1407,7 +1407,8 @@
       "coursNonExplication": "You register your family and follow their progress, with no classes for yourself. You can change your mind later.",
       "coursNonExemple": "you register your daughter and follow her sessions from your account.",
       "enseignantPostuler": "Do you want to teach at Rewayah?",
-      "deposerCandidature": "Submit my application"
+      "deposerCandidature": "Submit my application",
+      "postulerIci": "Want to teach with us? Apply here"
     },
     "recap": {
       "usage": "Account type",
@@ -2886,14 +2887,16 @@
       "elementCodeConduite": "The code of conduct",
       "elementAccordPublication": "The publication agreement for your photo",
       "elementPaysVersement": "Payment country and account",
-      "paysVersementLien": "Change the payment country",
-      "paysVersementTitre": "Country of the payment account",
-      "paysVersementExplication": "The account can belong to a trusted relative, in a country the academy supports. Choose the country where that account is. The payment methods and details you already entered will have to be confirmed again.",
-      "paysVersementEnregistrer": "Save this country",
-      "paysVersementFait": "Payment country updated. The academy is reading your file again.",
-      "paysVersementEchec": "The country could not be changed. Nothing was modified: try again in a moment.",
-      "paysVersementInterdit": "The country can no longer be changed at this stage. Write to the academy from your file's conversation.",
-      "paysVersementHorsLigne": "You are offline. The country was not changed; try again once you are back online.",
+      "paysVersementLien": "Change my payment details",
+      "paysVersementTitre": "My payment details",
+      "paysVersementExplication": "You can change everything until the academy has validated your file: the bank account, the country and the phone payment services. Details you already entered will have to be confirmed again if the country changes.",
+      "paysVersementEnregistrer": "Save my payment details",
+      "paysVersementFait": "Payment details updated. The academy is reading your file again.",
+      "paysVersementEchec": "The payment details could not be changed. Nothing was modified: try again in a moment.",
+      "paysVersementInterdit": "The payment details can no longer be changed: your file is validated. Write to the academy from your file's conversation.",
+      "paysVersementHorsLigne": "You are offline. The payment details were not changed; try again once you are back online.",
+      "versementFerme": "Your file is validated: the payment details can no longer be changed here. To change them, write to the academy.",
+      "versementFermeLien": "Write to the academy",
       "pieceDemandee": "The academy management is asking you for a new photo of your document.",
       "photoDemandee": "The academy management is asking you for a new photo. Change it in the summary of your answers, before sending them."
     },
@@ -2904,7 +2907,7 @@
       "horaire": "{date}, from {debut} to {fin}",
       "choisir": "Choose a time.",
       "reserver": "Book this time",
-      "aucunCreneau": "No time is open for now. Come back later.",
+      "aucunCreneau": "Your application has been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open, and you will choose it here.",
       "erreurLecture": "The times could not be loaded. Try again.",
       "pris": "This time has just been taken. Choose another.",
       "dejaPlanifie": "Your interview is already set.",
@@ -3529,6 +3532,16 @@
           "titre": "In which country do you want to receive your pay?",
           "explication": "The account that receives your pay can belong to a trusted relative, in a country the academy supports: if so, choose that relative's country. The academy checks, country by country, which payment method is possible. We carried over your country of residence: change it if needed.",
           "court": "Payment country"
+        },
+        "paysVersementCompte": {
+          "titre": "In which country is this account?",
+          "explication": "The account can belong to a trusted relative. Choose the country where the bank is: the academy checks, country by country, that a bank transfer is possible. We used your country of residence: change it if needed.",
+          "court": "Account country"
+        },
+        "paysVersementMobile": {
+          "titre": "In which country can you receive money on your phone?",
+          "explication": "Choose the country of the phone payment service you use, or that a trusted relative uses. You will then choose the services of that country. We used your country of residence: change it if needed.",
+          "court": "Phone payment country"
         },
         "compteBancaire": {
           "titre": "Do you have a bank account to receive your payment, in your name or a relative's?",
@@ -8619,7 +8632,7 @@
       "annonceDirection": "Academy announcement",
       "annonceDirectionTitre": "Announcement: {titre}",
       "bienvenueEquipe": "Welcome to the team. You still need to set up your space.",
-      "retenuEntretien": "You have been selected for an interview. Let's get to know each other: choose your time in the app.",
+      "retenuEntretien": "You have been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open.",
       "pauseRepondueAcceptee": "{dePrenom}'s one-month pause is accepted for {mois}. Their deadline moves back by the same amount. Their place is kept.",
       "pauseRepondueAccepteeAdulte": "Your one-month pause is accepted for {mois}. Your deadline moves back by the same amount. Your place is kept.",
       "pauseRepondueRefusee": "{dePrenom}'s one-month pause for {mois} is not accepted. The reason is in the app.",
@@ -12165,6 +12178,47 @@
       },
       "fil": {
         "lectureSeule": "You can read this conversation. Replying is not open to you here."
+      },
+      "images": {
+        "joindre": "Attach an image",
+        "prendrePhoto": "Take a photo",
+        "choisirGalerie": "Choose from the gallery",
+        "retiree": "Image removed after 90 days",
+        "fermer": "Close image",
+        "enregistrer": "Save image",
+        "enregistree": "Image saved",
+        "enregistrementEchec": "Saving the image is not confirmed. Your device or browser refused the file: try again in a moment.",
+        "imageJointe": "Image attached to the message",
+        "chargement": "Loading image",
+        "envoiEnCours": "Sending image: {pourcent}%",
+        "preparation": "Preparing image",
+        "jaime": "Like",
+        "nePlusAimer": "Unlike",
+        "copierTexte": "Copy text",
+        "texteCopie": "Text copied",
+        "actionsMessage": "Message actions",
+        "aimeParVous": "Liked by you",
+        "aimes": "Likes: {n}",
+        "coeurEchec": "Your like is not confirmed. Try again in a moment.",
+        "refus": {
+          "demandeInvalide": "This image is not confirmed: its size or format is not what was expected. Choose another photo.",
+          "typeRefuse": "This file type is not accepted. Choose a JPEG, PNG or WebP photo.",
+          "imageTropLourde": "This image is too heavy, even after shrinking. Choose a lighter photo.",
+          "nonAutorise": "You cannot attach an image to this message. Your text was sent: write without an image.",
+          "mineurRefuse": "Images are not open to student accounts under 18. Write your message without an image.",
+          "limiteHoraire": "You have sent 20 images in the last hour: that is the limit. Try again in an hour.",
+          "dejaUneImage": "This message already received its image, or its upload was abandoned. Write a new message to attach an image.",
+          "depotIndisponible": "This image upload is no longer valid (too old, or already finished). Write a new message to attach the image.",
+          "contenuDifferent": "This file is not an image of the announced type. Choose a real photo.",
+          "objetIntrouvable": "The image did not arrive whole on the server. Try again.",
+          "stockageIndisponible": "Image storage is not answering right now: it is not your device. Try again in a few minutes.",
+          "confirmationIndisponible": "Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.",
+          "depotImpossible": "The image is not confirmed: this is a server fault, not yours. Try again in a moment.",
+          "envoiStockage": "Storage refused the image (expired address or interrupted upload). Try again.",
+          "reseau": "The image may not have reached Rewayah. Try again in a moment.",
+          "imageTropGrosse": "This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.",
+          "imageIllisible": "This photo cannot be read. Choose another photo."
+        }
       },
       "demo": {
         "choisirRole": "Choose the point of view for this demo.",

@@ -66,12 +66,22 @@ TextesOption? textesOption(String champ, String option) {
   );
 }
 
+/// Le champ dont les textes valent, pour [champ] : le pays de versement se
+/// demande autrement selon le compte bancaire (VERSEMENT-QUESTIONS, directeur,
+/// 16/11/2026) : « oui », le pays de ce compte ; « non », le pays du mobile
+/// money. Sans reponse au compte, la question neutre.
+String _champDesTextes(String champ, bool? compteBancaire) =>
+    champ == 'paysVersement' && compteBancaire != null
+    ? (compteBancaire ? 'paysVersementCompte' : 'paysVersementMobile')
+    : champ;
+
 /// La question posee par le champ [champ].
-String? titreQuestion(String champ) => texteParcours('q.$champ.titre');
+String? titreQuestion(String champ, {bool? compteBancaire}) =>
+    texteParcours('q.${_champDesTextes(champ, compteBancaire)}.titre');
 
 /// L'explication de la question posee par le champ [champ].
-String? explicationQuestion(String champ) =>
-    texteParcours('q.$champ.explication');
+String? explicationQuestion(String champ, {bool? compteBancaire}) =>
+    texteParcours('q.${_champDesTextes(champ, compteBancaire)}.explication');
 
 /// Le nom court d'un champ, pour le recapitulatif.
 String? nomCourtQuestion(String champ) => texteParcours('q.$champ.court');
