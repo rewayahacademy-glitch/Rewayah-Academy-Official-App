@@ -41,6 +41,10 @@ enum GesteCandidature {
   /// Ecarter un moyen de versement declare (transition 25).
   infirmerMoyenPaiement('infirmerMoyenPaiement'),
 
+  /// Confirmer a la main le versement d'un cas particulier, meme quand aucun
+  /// moyen n'est declare (transition 44, `debloquer_versement_candidat`).
+  debloquerVersement('debloquerVersement'),
+
   /// Mettre en pause (transition 18).
   mettreEnPause('mettreEnPause'),
 
@@ -73,6 +77,7 @@ enum GesteCandidature {
     demanderComplement ||
     cloreComplement ||
     infirmerMoyenPaiement ||
+    debloquerVersement ||
     mettreEnPause ||
     refuser ||
     consignerRetrait ||
@@ -238,6 +243,21 @@ class DemandeGeste {
     versionAttendue: versionAttendue,
     cleIdempotence: cleIdempotence,
     moyen: moyen,
+    motif: motif,
+  );
+
+  /// Debloquer le versement : confirmer a la main un cas particulier, avec un
+  /// [motif] ecrit (il laisse une trace, DECISION-QUESTIONS-VERSEMENT §7).
+  factory DemandeGeste.debloquerVersement({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.debloquerVersement,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
     motif: motif,
   );
 

@@ -36,6 +36,7 @@ AppIcon iconeDuGeste(GesteCandidature geste) => switch (geste) {
   GesteCandidature.admettreVerifications => AppIcons.suivant,
   GesteCandidature.confirmerMoyenPaiement => AppIcons.paiements,
   GesteCandidature.infirmerMoyenPaiement => AppIcons.interdit,
+  GesteCandidature.debloquerVersement => AppIcons.paiements,
   GesteCandidature.mettreEnPause => AppIcons.pause,
   GesteCandidature.leverPause => AppIcons.reconnexion,
   GesteCandidature.refuser => AppIcons.fermer,

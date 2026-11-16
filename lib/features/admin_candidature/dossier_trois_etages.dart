@@ -995,6 +995,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         gestes: <GesteRubrique?>[
           geste(GesteCandidature.confirmerMoyenPaiement),
           geste(GesteCandidature.infirmerMoyenPaiement),
+          geste(GesteCandidature.debloquerVersement),
           demander('versement', t.admin.candidatures.decision.preciser),
         ],
         affichee: true,

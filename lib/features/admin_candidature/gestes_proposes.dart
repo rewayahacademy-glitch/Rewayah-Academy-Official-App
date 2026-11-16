@@ -99,6 +99,14 @@ bool gestePermisPourLigne(
           enExamen &&
           (l.paiement == EtatVersement.aVerifier ||
               l.paiement == EtatVersement.compatible);
+    case GesteCandidature.debloquerVersement:
+      // La regle `debloquer_versement` du serveur (20261128500100) : en Salle
+      // d'examen, en examen ou versement impossible, en cours, hors pause.
+      // Aucune condition sur le moyen : le serveur recalcule le versement.
+      return sansPause &&
+          etape == EtapeCandidature.prequalification &&
+          (l.etat == EtatCandidature.enExamen ||
+              l.etat == EtatCandidature.paiementNonDisponible);
     case GesteCandidature.mettreEnPause:
       return sansPause && etape != null;
     case GesteCandidature.leverPause:
@@ -236,6 +244,7 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.cloreComplement,
   GesteCandidature.confirmerMoyenPaiement,
   GesteCandidature.infirmerMoyenPaiement,
+  GesteCandidature.debloquerVersement,
   GesteCandidature.admettreVerifications,
   GesteCandidature.validerPiece,
   GesteCandidature.mettreEnPause,
