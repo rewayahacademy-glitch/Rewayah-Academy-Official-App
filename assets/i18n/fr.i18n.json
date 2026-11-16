@@ -12145,6 +12145,47 @@
       "fil": {
         "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."
       },
+      "images": {
+        "joindre": "Joindre une image",
+        "prendrePhoto": "Prendre une photo",
+        "choisirGalerie": "Choisir dans la galerie",
+        "retiree": "Image retirée après 90 jours",
+        "fermer": "Fermer l'image",
+        "enregistrer": "Enregistrer l'image",
+        "enregistree": "Image enregistrée",
+        "enregistrementEchec": "L'enregistrement de l'image n'est pas confirmé. Votre appareil ou votre navigateur a refusé le fichier\u00a0: réessayez dans un instant.",
+        "imageJointe": "Image jointe au message",
+        "chargement": "Chargement de l'image",
+        "envoiEnCours": "Envoi de l'image\u00a0: {pourcent} %",
+        "preparation": "Préparation de l'image",
+        "jaime": "J'aime",
+        "nePlusAimer": "Je n'aime plus",
+        "copierTexte": "Copier le texte",
+        "texteCopie": "Texte copié",
+        "actionsMessage": "Actions du message",
+        "aimeParVous": "Aimé par vous",
+        "aimes": "J'aime\u00a0: {n}",
+        "coeurEchec": "Votre «\u00a0J'aime\u00a0» n'est pas confirmé. Réessayez dans un instant.",
+        "refus": {
+          "demandeInvalide": "Cette image n'est pas confirmée\u00a0: ses dimensions ou son format ne sont pas ceux attendus. Choisissez une autre photo.",
+          "typeRefuse": "Ce type de fichier n'est pas accepté. Choisissez une photo JPEG, PNG ou WebP.",
+          "imageTropLourde": "Cette image est trop lourde, même après réduction. Choisissez une photo plus légère.",
+          "nonAutorise": "Vous ne pouvez pas joindre d'image à ce message. Votre texte est bien parti\u00a0: écrivez sans image.",
+          "mineurRefuse": "Les images ne sont pas ouvertes aux comptes élèves de moins de 18 ans. Écrivez votre message sans image.",
+          "limiteHoraire": "Vous avez envoyé 20 images dans l'heure\u00a0: c'est la limite. Réessayez dans une heure.",
+          "dejaUneImage": "Ce message a déjà reçu son image, ou son dépôt a été abandonné. Écrivez un nouveau message pour joindre une image.",
+          "depotIndisponible": "Le dépôt de cette image n'est plus valable (trop ancien, ou déjà terminé). Écrivez un nouveau message pour joindre l'image.",
+          "contenuDifferent": "Ce fichier n'est pas une image du type annoncé. Choisissez une vraie photo.",
+          "objetIntrouvable": "L'image n'est pas arrivée entière sur le serveur. Réessayez.",
+          "stockageIndisponible": "Le stockage des images n'a pas pris l'envoi pour le moment\u00a0: ce n'est pas votre appareil. Réessayez dans quelques minutes.",
+          "confirmationIndisponible": "L'envoi d'images n'est pas encore bien réglé sur le serveur\u00a0: l'équipe doit le corriger. Votre texte est bien parti.",
+          "depotImpossible": "L'image n'est pas confirmée\u00a0: c'est une panne du serveur, pas de votre faute. Réessayez dans un instant.",
+          "envoiStockage": "Le stockage a refusé l'image (adresse expirée ou envoi coupé). Réessayez.",
+          "reseau": "Il est possible que l'image ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
+          "imageTropGrosse": "Cette photo pèse plus de 15 Mo, ou reste trop lourde après réduction. Choisissez-en une plus légère.",
+          "imageIllisible": "Cette photo ne peut pas être lue. Choisissez une autre photo."
+        }
+      },
       "demo": {
         "choisirRole": "Choisissez le point de vue de cette démonstration.",
         "roles": {
