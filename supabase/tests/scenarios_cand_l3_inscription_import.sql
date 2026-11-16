@@ -303,8 +303,10 @@ BEGIN
          -- MESSAGES-CANDIDAT (20261119400100, PR 304 CONFORME) : exception nommee
          -- par sa signature exacte, jamais par un motif ; elle ne rend que
          -- l'identifiant de la candidature de l'appelant (assertion ci-dessous).
-         AND oid <> 'public.com_ma_candidature()'::regprocedure),
-    'aucune RPC du lot ne double etat_dossier() : aucun nom ne contient candidature, hors com_ma_candidature()');
+         AND oid <> 'public.com_ma_candidature()'::regprocedure
+         -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; des references seulement.
+         AND oid <> 'public.voisins_candidature(text,jsonb,text)'::regprocedure),
+    'aucune RPC du lot ne double etat_dossier() : aucun nom ne contient candidature, hors com_ma_candidature() et voisins_candidature()');
   -- MESSAGES-CANDIDAT (20261119400100) : com_ma_candidature() ne rend que
   -- l'identifiant (uuid) de la candidature de l'appelant, jamais son etat :
   -- etat_dossier() reste la seule lecture de l'etat du candidat.

@@ -495,9 +495,10 @@ BEGIN
     AND private.paiement_declaration('ca6dcccc-0000-4000-8000-000000000019') IS NULL,
     'inconnu : pays de versement mal forme ; une reponse importee plus recente ne compte pas (paiement jamais pre-rempli)');
   -- L6-1 : Arabie saoudite, compte bancaire oui, moyen confirme.
-  PERFORM pg_temp.vrai(private.paiement_etat('ca6dcccc-0000-4000-8000-000000000001') = 'a_verifier'
-    AND NOT private.paiement_compatible('ca6dcccc-0000-4000-8000-000000000001'),
-    'L6-1 avant decision : la declaration croise la ligne confirme de SA, a_verifier, pas encore compatible');
+  -- BE-VERSEMENT (16/11/2026) : une ligne confirme rend le moyen compatible sans geste.
+  PERFORM pg_temp.vrai(private.paiement_etat('ca6dcccc-0000-4000-8000-000000000001') = 'compatible'
+    AND private.paiement_compatible('ca6dcccc-0000-4000-8000-000000000001'),
+    'L6-1 avant decision : la declaration croise la ligne confirme de SA, compatible sans geste (BE-VERSEMENT)');
   INSERT INTO public.candidature_paiement_decisions (candidature_id, pays, methode, decision, auteur_id)
   VALUES ('ca6dcccc-0000-4000-8000-000000000001', 'SA', 'virement_bancaire', 'confirme',
           'ca6d0000-0000-4000-8000-0000000000a1');
@@ -711,6 +712,14 @@ BEGIN
           'ca6d0000-0000-4000-8000-0000000000a2'),
          ('ca6dcccc-0000-4000-8000-000000000004', 'PK', 'virement_bancaire', 'confirme',
           'ca6d0000-0000-4000-8000-0000000000a2');
+  -- BE-VERSEMENT (16/11/2026) : un moyen qui croise une ligne confirme est compatible sans
+  -- geste. Pour garder le cas de c22 (le seul virement a ete confirme par la direction ; quand
+  -- la ligne du virement quitte confirme, la salle 3 se restreint), la direction a infirme son
+  -- operateur : une decision infirmee garde ce moyen hors du compte.
+  INSERT INTO public.candidature_paiement_decisions
+    (candidature_id, pays, methode, operateur, decision, motif_interne, auteur_id)
+  VALUES ('ca6dcccc-0000-4000-8000-000000000022', 'TR', 'mobile_money', 'op_fictif', 'infirme',
+          'Operateur non retenu pour ce cas (fixture BE-VERSEMENT).', 'ca6d0000-0000-4000-8000-0000000000a2');
   FOREACH s IN ARRAY ARRAY['04', '05', '06', '07', '08', '09', '22'] LOOP
     PERFORM private.paiement_recalculer(('ca6dcccc-0000-4000-8000-0000000000' || s)::uuid, 'moyen_confirme',
       'ca6d0000-0000-4000-8000-0000000000a1');
@@ -742,7 +751,7 @@ DO $l6_8$
 BEGIN
   PERFORM private.paiement_recalculer('ca6dcccc-0000-4000-8000-000000000018', 'reponses');
   PERFORM pg_temp.vrai((SELECT paiement FROM public.candidatures WHERE id = 'ca6dcccc-0000-4000-8000-000000000018')
-    = 'a_verifier', 'L6-8 avant decision : sans compte bancaire, l''operateur declare croise la ligne confirme : a_verifier');
+    = 'compatible', 'L6-8 avant decision : sans compte bancaire, l''operateur declare croise la ligne confirme : compatible sans geste (BE-VERSEMENT)');
   INSERT INTO public.candidature_paiement_decisions (candidature_id, pays, methode, operateur, decision, auteur_id)
   VALUES ('ca6dcccc-0000-4000-8000-000000000018', 'PH', 'mobile_money', 'op_fictif', 'confirme',
           'ca6d0000-0000-4000-8000-0000000000a2');
@@ -791,11 +800,11 @@ BEGIN
                           AND right(id::text, 2) IN ('04', '05', '06', '07', '08', '09', '10', '11', '13', '14', '15',
                                                      '16', '17', '20', '21', '22'))
     = ARRAY['04:compatible:entretien_a_planifier', '05:compatible:-', '06:compatible:-', '07:compatible:-',
-            '08:compatible:-', '09:compatible:entretien_a_planifier', '10:a_verifier:en_examen',
-            '11:a_verifier:a_completer', '13:a_verifier:en_examen', '14:a_verifier:en_examen',
-            '15:incompatible:paiement_non_disponible', '16:a_verifier:en_examen', '17:a_verifier:en_examen',
-            '20:a_verifier:en_examen', '21:inconnu:-', '22:compatible:-'],
-    'fixtures : paiement calcule pour chaque candidature ; c15 (operateur sans ligne au Pakistan) deja en paiement_non_disponible ; c21 a colonne perimee');
+            '08:compatible:-', '09:compatible:entretien_a_planifier', '10:compatible:en_examen',
+            '11:compatible:a_completer', '13:compatible:en_examen', '14:compatible:en_examen',
+            '15:incompatible:paiement_non_disponible', '16:compatible:en_examen', '17:compatible:en_examen',
+            '20:compatible:en_examen', '21:inconnu:-', '22:compatible:-'],
+    'fixtures : paiement calcule pour chaque candidature (BE-VERSEMENT : les moyens qui croisent une ligne confirme sont compatibles sans geste) ; c15 (operateur sans ligne au Pakistan) deja en paiement_non_disponible ; c21 a colonne perimee');
   PERFORM pg_temp.vrai(private.paiement_etat('ca6dcccc-0000-4000-8000-000000000021') = 'compatible'
     AND private.paiement_etat('ca6dcccc-0000-4000-8000-000000000022') = 'compatible',
     'c21 et c22 compatibles en direct avant le changement');
@@ -835,10 +844,10 @@ BEGIN
     AND pg_temp.ev('ca6dcccc-0000-4000-8000-000000000021', 'restriction',
                    jsonb_build_object('transition', 20, 'ligne', v_ligne, 'paiementAvant', 'inconnu')) = 1,
     'salle 3 a colonne perimee (c21, paiement jamais recalcule) : restreinte quand meme, le calcul en direct decide');
-  PERFORM pg_temp.vrai((SELECT restreinte AND restriction_cause = 'paiement' AND paiement = 'a_verifier'
+  PERFORM pg_temp.vrai((SELECT restreinte AND restriction_cause = 'paiement' AND paiement = 'incompatible'
                         FROM public.candidatures WHERE id = 'ca6dcccc-0000-4000-8000-000000000022')
     AND (pg_temp.ligne('TR', 'mobile_money', 'op_fictif')).etat = 'confirme',
-    'salle 3, deux moyens declares, seul le virement confirme par la direction (c22) : restreinte, paiement a_verifier, bien que la ligne mobile money reste confirme (lecture stricte, R13)');
+    'salle 3, deux moyens declares, seul le virement confirme par la direction (c22) : restreinte, paiement incompatible (BE-VERSEMENT : l''operateur a ete infirme par la direction), bien que la ligne mobile money reste confirme (lecture stricte, R13)');
   PERFORM pg_temp.vrai((SELECT NOT restreinte AND restriction_cause IS NULL AND paiement = 'compatible'
                                AND version::text = current_setting('test.version06')
                         FROM public.candidatures WHERE id = 'ca6dcccc-0000-4000-8000-000000000006')
@@ -993,8 +1002,8 @@ BEGIN
   END LOOP;
   PERFORM pg_temp.vrai((SELECT array_agg(paiement ORDER BY id) FROM public.candidatures
                         WHERE id IN ('ca6dcccc-0000-4000-8000-000000000013', 'ca6dcccc-0000-4000-8000-000000000015'))
-                       = ARRAY['a_verifier', 'incompatible'],
-    'apres la transition 9 : le virement declare croise (a_verifier) ; l''operateur seul ne croise rien (incompatible), le moyen est a declarer');
+                       = ARRAY['compatible', 'incompatible'],
+    'apres la transition 9 : le virement declare croise (compatible sans geste, BE-VERSEMENT) ; l''operateur seul ne croise rien (incompatible), le moyen est a declarer');
   PERFORM pg_temp.vrai((SELECT paiement = 'compatible' AND etat = 'entretien_a_planifier'
                         FROM public.candidatures WHERE id = 'ca6dcccc-0000-4000-8000-000000000004'),
     'salle 2 : la ligne revenue, la decision de confirmation compte de nouveau (aucune levee automatique n''est en jeu)');

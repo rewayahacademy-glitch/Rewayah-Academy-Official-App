@@ -1388,8 +1388,8 @@ SELECT pg_temp.vrai(pg_temp.lu('e8') ->> 'rejoue' = 'false'
   AND pg_temp.lu('e8') #> '{candidature,envoiBloque}' = '["etat"]'::jsonb
   AND pg_temp.lu('e8') #> '{candidature,conditionsRemuneration,acceptees}' = 'true'::jsonb
   AND pg_temp.lu('e8') #>> '{candidature,questionnaire,envoyeLe}' IS NOT NULL
-  AND pg_temp.lu('e8') #>> '{candidature,paiement}' = 'a_verifier',
-  'transition 6 : en examen, etat relu par etat_dossier(), accord de remuneration enregistre, envoi date, paiement a verifier rendu');
+  AND pg_temp.lu('e8') #>> '{candidature,paiement}' = 'compatible',
+  'transition 6 : en examen, etat relu par etat_dossier(), accord de remuneration enregistre, envoi date, paiement compatible rendu (BE-VERSEMENT : la ligne de SA est confirmee, aucun geste)');
 -- PHOTO-FIGEE (07/11/2026) : la photo envoyee avec la candidature est figee
 -- dans le dossier, et y reste quand la photo d'affichage change.
 SELECT pg_temp.vrai((SELECT c.photo_cle_figee = 'ca2a0000-0000-4000-8000-000000000001/photo.jpg'
@@ -1403,7 +1403,7 @@ SELECT pg_temp.vrai((SELECT c.photo_cle_figee = 'ca2a0000-0000-4000-8000-0000000
   'PHOTO-FIGEE : la photo d''affichage change, celle du dossier non');
 UPDATE public.teacher_profiles SET photo_storage_key = 'ca2a0000-0000-4000-8000-000000000001/photo.jpg'
  WHERE profile_id = 'ca2a0000-0000-4000-8000-000000000001';
-SELECT pg_temp.vrai((SELECT etat = 'en_examen' AND paiement = 'a_verifier' AND version = 3
+SELECT pg_temp.vrai((SELECT etat = 'en_examen' AND paiement = 'compatible' AND version = 3
                        AND pays_residence = 'SA' AND fuseau_iana = 'Asia/Riyadh'
                      FROM public.candidatures WHERE id = 'ca2acccc-0000-4000-8000-000000000001')
   AND (SELECT count(*) FROM public.candidature_reponses
@@ -1416,7 +1416,7 @@ SELECT pg_temp.vrai((SELECT etat = 'en_examen' AND paiement = 'a_verifier' AND v
   AND (SELECT count(*) FROM public.contract_acceptances
         WHERE profile_id = 'ca2a0000-0000-4000-8000-000000000001' AND contract_kind = 'teacher_pay_conditions'
           AND version = 'v2.0.0') = 1,
-  'transition 6 : etat en examen, paiement recalcule (L6 : a_verifier), document envoye, accord de remuneration v2.0.0');
+  'transition 6 : etat en examen, paiement recalcule (L6, BE-VERSEMENT : compatible), document envoye, accord de remuneration v2.0.0');
 SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_evenements e
                       WHERE e.candidature_id = 'ca2acccc-0000-4000-8000-000000000001' AND e.type = 'transition'
                         AND e.etape_avant = 'prequalification' AND e.etape_apres = 'prequalification'
@@ -1430,7 +1430,7 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.candidature_evenements e
                                                            "fuseau_iana": {"avant": null, "apres": "Asia/Riyadh"}}}'::jsonb) = 1
   AND (SELECT count(*) FROM public.candidature_evenements e
         WHERE e.candidature_id = 'ca2acccc-0000-4000-8000-000000000001' AND e.type = 'controle'
-          AND e.auteur_id IS NULL AND e.details @> '{"cause": "reponses", "paiementApres": "a_verifier"}'::jsonb) = 1
+          AND e.auteur_id IS NULL AND e.details @> '{"cause": "reponses", "paiementApres": "compatible"}'::jsonb) = 1
   AND (SELECT count(*) FROM public.audit_logs a
         WHERE a.row_id = 'ca2acccc-0000-4000-8000-000000000001' AND a.action = 'candidature_geste'
           AND a.actor = 'ca2a0000-0000-4000-8000-000000000001'
@@ -1538,7 +1538,7 @@ SELECT pg_temp.garde('pm_ng2', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-00
 SELECT pg_temp.garde('pm_ng3', pg_temp.paiement_avec('ca2acccc-0000-4000-8000-000000000002',
   pg_temp.lu('complet_ng') || '{"compteBancaire": false}'));
 SELECT pg_temp.vrai(pg_temp.lu('pm_sa0') = pg_temp.lu('pm_sa1')
-  AND pg_temp.lu('pm_sa0') -> 'etat' = '"a_verifier"'::jsonb
+  AND pg_temp.lu('pm_sa0') -> 'etat' = '"compatible"'::jsonb
   AND pg_temp.lu('pm_sa0') #> '{declaration}' = '{"paysVersement": "SA", "compteBancaire": true, "operateurs": []}'::jsonb
   AND pg_temp.lu('pm_ng0') = pg_temp.lu('pm_ng1')
   AND pg_temp.lu('pm_ng0') -> 'etat' = '"incompatible"'::jsonb
@@ -1577,11 +1577,11 @@ BEGIN
     END IF;
   END;
   PERFORM pg_temp.vrai(v_sans -> 'etat' = '"incompatible"'::jsonb
-    AND v_operateur -> 'etat' = '"a_verifier"'::jsonb
+    AND v_operateur -> 'etat' = '"compatible"'::jsonb
     AND v_accessible -> 'etat' = '"incompatible"'::jsonb
     AND v_accessible = v_sans
     AND NOT EXISTS (SELECT 1 FROM public.referentiel_paiement WHERE pays = 'TR' AND methode = 'mobile_money'),
-    'contre-epreuve decisive : avec une ligne confirmee, wave dans operateurs rend le paiement a verifier, wave dans moyensAccessibles le laisse incompatible, comme sans rien (ligne annulee ensuite)');
+    'contre-epreuve decisive : avec une ligne confirmee, wave dans operateurs rend le paiement compatible sans geste (BE-VERSEMENT), wave dans moyensAccessibles le laisse incompatible, comme sans rien (ligne annulee ensuite)');
 END $ligne_confirmee$;
 SELECT pg_temp.vrai(pg_temp.trace('ca2acccc-0000-4000-8000-000000000001') = pg_temp.lu('t01')
   AND NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
@@ -1847,6 +1847,19 @@ BEGIN
            ORDER BY geste, variante LOOP
     v_n := v_n + 1;
     v_id := pg_temp.fixture(r.geste, r.variante, true);
+    -- BE-VERSEMENT (16/11/2026) : le versement ne reste jamais a_verifier (un moyen qui croise une
+    -- ligne confirme est compatible sans geste) ; les deux variantes du geste 24 n'ont plus d'objet
+    -- et se refusent depuis leur source, en pause comme hors pause, sans ecriture.
+    IF r.condition IN ('paiement_a_verifier', 'restreinte_paiement_a_verifier') THEN
+      PERFORM pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a1', 'admin');
+      v_avant := pg_temp.trace(v_id);
+      v_res := private.candidature_geste_ouvrir(v_id, r.geste, 'direction', 'ca2a0000-0000-4000-8000-0000000000a1',
+                                                1, 'cle-l2-9-' || v_n, 'Motif interne', 'modele_test');
+      PERFORM pg_temp.vrai(v_res ->> 'erreur' IS NOT NULL AND v_res ->> 'ok' IS DISTINCT FROM 'true'
+        AND pg_temp.trace(v_id) = v_avant,
+        'L2-9 : ' || r.geste || ' v' || r.variante || ' en pause : refus nomme, 0 ecriture (regle sans objet depuis BE-VERSEMENT)');
+      CONTINUE;
+    END IF;
     IF 'direction' = ANY (r.auteurs) THEN
       v_auteur := 'ca2a0000-0000-4000-8000-0000000000a1';
       PERFORM pg_temp.qui(v_auteur, 'admin');
