@@ -4241,11 +4241,14 @@
       "filtres": {
         "tous": "الكل",
         "nonLus": "غير المقروءة",
-        "aucunNonLu": "لا توجد محادثة غير مقروءة."
+        "aucunNonLu": "لا توجد محادثة غير مقروءة.",
+        "nouveaux": "الجديدة",
+        "aucunNouveau": "لا توجد محادثة جديدة."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",
         "sansApercu": "لا توجد رسائل حاليًا",
+        "sansMessage": "لا توجد رسائل",
         "dateCourte": "{numero} {mois}"
       },
       "noms": {

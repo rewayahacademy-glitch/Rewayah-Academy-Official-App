@@ -12191,11 +12191,14 @@
       "filtres": {
         "tous": "Tous",
         "nonLus": "Non lus",
-        "aucunNonLu": "Aucune conversation non lue."
+        "aucunNonLu": "Aucune conversation non lue.",
+        "nouveaux": "Nouveaux",
+        "aucunNouveau": "Aucune conversation nouvelle."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",
         "sansApercu": "Aucun message pour le moment",
+        "sansMessage": "Aucun message",
         "dateCourte": "{numero} {mois}"
       },
       "noms": {
