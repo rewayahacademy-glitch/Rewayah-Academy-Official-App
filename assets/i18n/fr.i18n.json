@@ -4353,7 +4353,7 @@
         "pieceImage": "Image",
         "piecePdf": "PDF",
         "pieceOuvrirPdf": "Ouvrir le PDF de la pièce d'identité",
-        "pieceTitre": "Pièce d'identité de {nom}",
+        "pieceTitre": "Pièce d'identité\u00a0: {nom}",
         "pieceDecisionPlusTard": "La pièce se décide en Salle de vérification et d'entretien, après l'admission."
       },
       "controles": {
