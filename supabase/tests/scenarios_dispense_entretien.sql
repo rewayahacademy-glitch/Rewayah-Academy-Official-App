@@ -1,4 +1,4 @@
--- BE-1g DISPENSE-ENTRETIEN (directeur, 16/11/2026) : migration 20261129500000_dispense_entretien.sql.
+-- BE-1g DISPENSE-ENTRETIEN (directeur, 16/11/2026) : migration 20261129470000_dispense_entretien.sql.
 --
 -- Cas couverts : (a) la direction dispense une candidature en entretien_a_planifier : etat d'arrivee
 -- decision_en_attente (celui d'un entretien tenu), version et evenement (type entretien, categorie), ligne
