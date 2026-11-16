@@ -20,6 +20,13 @@ _Rempli au matin._
   s'arrondit en cercle : corrections dans la PR #551, **pas fusionnée**, CI en cours sur `667a9543`.
 - L'agent de #551 est marqué « déconnecté », son contexte est à environ 734 000 sur 1 000 000 :
   il ne prendra pas d'autre lot.
+- Le conteneur de l'agent de #551 a été recréé : il a **perdu, non poussées**, les captures du volet
+  (croix) et de la liste 1440. La tête poussée `667a9543` est intacte. **La croix du volet n'a aucune
+  capture** ; elle n'est prouvée que par un test. L'agent attendait une réponse de l'utilisateur de sa
+  session ; le pilote lui a relayé la consigne de reprise du directeur (« il repart de sa branche
+  poussée »).
+- Vérifié par le pilote : entre la base de #551 (`af1cfbb9`) et `main`, aucun changement dans `lib/`
+  ni `assets/i18n` ; fusion sans conflit.
 - Le plafond de quatre agents est atteint (trois au Pilote Équipe, un ici) : **NOUVEAU-FILS ne peut
   pas partir** avant qu'une place se libère.
 - #538, #540, #546 sont en production mais **pas vus** par le directeur.
@@ -70,3 +77,7 @@ _Rempli au matin._
 - 16/11, 19 h 40 : prise de poste de `session_0163Kjrx8uX1pRbk4RhE7Yuz` ; lectures faites ; agent de
   #551 contacté ; Pilote Équipe contacté (plafond d'agents, fichiers partagés) ; checklist renommée
   `MESSAGERIE-CHECKLIST.md`.
+- 16/11, 19 h 40 : le Pilote Équipe (#557 redéploie courriels-envoi et push-envoi) : rien de la
+  messagerie ne les touche, il peut fusionner. Aucune migration messagerie annoncée cette nuit hors
+  NOUVEAU-FILS.
+- 16/11, 19 h 40 : l'agent de #551 signale la perte des captures du volet ; consigne de reprise relayée.
