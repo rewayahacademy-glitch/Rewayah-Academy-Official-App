@@ -12,7 +12,6 @@ import 'package:rewayah_academy/features/admin_candidatures/candidatures_page.da
 import '../../capture/outil_capture.dart';
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/monter_recrutement.dart';
-import '../../support/rangee_plus.dart';
 import 'hote_candidatures.dart';
 
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
@@ -48,8 +47,8 @@ void main() {
         await tester.tap(_cle('candidature-b2'));
         await laisser(tester);
         expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
-        await toucherFiltre(tester, _cle('candidatures-filtre-examen'));
-        await laisser(tester);
+        await ouvrirFeuilleFiltresDeTest(tester);
+        await choisirDansFeuille(tester, 'salle', t.recrutement.salles.examen);
         expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
         final Finder message = find.text(
           t.admin.candidatures.lot.selectionRetiree,

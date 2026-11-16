@@ -29,10 +29,7 @@ import 'package:rewayah_academy/features/admin_candidatures/menu_ligne_candidatu
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/monter_recrutement.dart';
-import '../../support/rangee_plus.dart';
 import 'hote_candidatures.dart';
-
-Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
 
 final gestes = t.admin.candidatures.gestes;
 
@@ -408,11 +405,13 @@ void main() {
           ],
         );
         await monterCandidatures(tester, port: port, ouvrir: (_) {});
-        await ouvrirMenuFiltre(tester, _cle('candidatures-filtre-etat'));
-        await tester.tap(find.text(t.admin.candidatures.etats.enExamen).last);
-        await tester.pumpAndSettle();
-        await fermerPlus(tester);
-        await laisser(tester);
+        // BE-LISTE-2 : les filtres sont dans la feuille « Filtres ».
+        await ouvrirFeuilleFiltresDeTest(tester);
+        await choisirDansFeuille(
+          tester,
+          'etat',
+          t.admin.candidatures.etats.enExamen,
+        );
         final Finder suivante = find.byKey(
           const ValueKey<String>('nav-suivant'),
         );

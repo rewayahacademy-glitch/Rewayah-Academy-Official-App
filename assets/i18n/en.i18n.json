@@ -2707,7 +2707,36 @@
       "afficher": "Show",
       "replier": "Collapse",
       "trier": "Sort",
-      "pieceSansAttente": "No ID document to validate"
+      "pieceSansAttente": "No ID document to validate",
+      "filtres": "Filters",
+      "filtresPoses": {
+        "one": "Filters, {n} applied",
+        "other": "Filters, {n} applied"
+      },
+      "jaiCompris": "Got it",
+      "files": "Queues",
+      "pieceCourt": "ID to validate",
+      "fileMenu": "Queue",
+      "confirmeesIndisponibles": "Confirmed, unavailable",
+      "piece": "ID document",
+      "responsable": "Owner",
+      "responsableMoi": "Me",
+      "responsableAucun": "Nobody",
+      "ijaza": "Ijaza",
+      "langue": "Language of explanation",
+      "riwaya": "Riwaya",
+      "public": "Target audience",
+      "jours": "Available days",
+      "heureDe": "From",
+      "heureA": "Until",
+      "joursMin": "At least days",
+      "joursMinN": {
+        "one": "At least {n} day",
+        "other": "At least {n} days"
+      },
+      "salle": "Room",
+      "toutesLesFiles": "All",
+      "rechercher": "Search"
     },
     "nomLatin": {
       "titre": "Your name in Latin letters",

@@ -1,20 +1,16 @@
-/// BE-LISTE : ce que l'en-tete de la liste des candidatures se rappelle.
+/// BE-LISTE-2 : ce que l'en-tete de la liste des candidatures se rappelle.
 ///
-/// Deux petits choix de lecture, gardes par appareil (le navigateur sur le
-/// web ; hors web, la session) : « Qui attend quoi » repliee ou non, et le
-/// bandeau « Lecture des deux cotes » deplie ou non. Rien de sensible, rien
-/// pour le serveur.
+/// Un seul choix de lecture, garde par appareil (le navigateur sur le web ;
+/// hors web, la session) : le bandeau « Lecture des deux cotes » est compris,
+/// donc ferme (« J'ai compris »). Rien de sensible, rien pour le serveur.
 library;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../inscription/questionnaire/memoire_appareil.dart';
 
-/// La clef de « Qui attend quoi » repliee.
-const String cleMemoireAttentesRepliees = 'rewayah.be_liste.attentes_repliee';
-
-/// La clef du bandeau « Lecture des deux cotes » deplie.
-const String cleMemoireLectureDepliee = 'rewayah.be_liste.lecture_depliee';
+/// La clef du bandeau « Lecture des deux cotes » compris.
+const String cleMemoireLectureComprise = 'rewayah.be_liste.lecture_comprise';
 
 /// Un choix vrai / faux garde sur l'appareil.
 class ChoixAppareil extends Notifier<bool> {
@@ -34,14 +30,8 @@ class ChoixAppareil extends Notifier<bool> {
   }
 }
 
-/// « Qui attend quoi » est repliee.
-final NotifierProvider<ChoixAppareil, bool> attentesRepliesProvider =
+/// Le bandeau « Lecture des deux cotes » est compris (ferme).
+final NotifierProvider<ChoixAppareil, bool> lectureCompriseProvider =
     NotifierProvider<ChoixAppareil, bool>(
-      () => ChoixAppareil(cleMemoireAttentesRepliees),
-    );
-
-/// Le bandeau « Lecture des deux cotes » est deplie.
-final NotifierProvider<ChoixAppareil, bool> lectureDeplieeProvider =
-    NotifierProvider<ChoixAppareil, bool>(
-      () => ChoixAppareil(cleMemoireLectureDepliee),
+      () => ChoixAppareil(cleMemoireLectureComprise),
     );

@@ -2707,7 +2707,36 @@
       "afficher": "Afficher",
       "replier": "Replier",
       "trier": "Trier",
-      "pieceSansAttente": "Sans pièce à valider"
+      "pieceSansAttente": "Sans pièce à valider",
+      "filtres": "Filtres",
+      "filtresPoses": {
+        "one": "Filtres, {n} posé",
+        "other": "Filtres, {n} posés"
+      },
+      "jaiCompris": "J'ai compris",
+      "files": "Files",
+      "pieceCourt": "Pièce à valider",
+      "fileMenu": "File",
+      "confirmeesIndisponibles": "Confirmées indisponibles",
+      "piece": "Pièce d'identité",
+      "responsable": "Responsable",
+      "responsableMoi": "Moi",
+      "responsableAucun": "Personne",
+      "ijaza": "Ijaza",
+      "langue": "Langue d'explication",
+      "riwaya": "Riwaya",
+      "public": "Public visé",
+      "jours": "Jours disponibles",
+      "heureDe": "À partir de",
+      "heureA": "Jusqu'à",
+      "joursMin": "Jours au moins",
+      "joursMinN": {
+        "one": "{n} jour au moins",
+        "other": "{n} jours au moins"
+      },
+      "salle": "Salle",
+      "toutesLesFiles": "Toutes",
+      "rechercher": "Rechercher"
     },
     "nomLatin": {
       "titre": "Votre nom en lettres latines",
