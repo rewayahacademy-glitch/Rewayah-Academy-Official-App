@@ -8,6 +8,12 @@ Vision : `SECRETAIRE-IA.md` (§3 niveaux d'autonomie, §5 connecteur, §9 et §1
 tranche ce qu'elle laisse ouvert ; chaque arbitrage est marqué **A-n**. Lot sensible : le serveur interdit
 aujourd'hui toute écriture à un agent (`0014_acces_agent.sql`). Chaque refus doit être testé un par un.
 
+
+> **16/11, 22 h 15 : `PRAXIS/SECURITE-PRAXIS.md` prévaut sur ce cahier.** Il ajoute notamment : plafond par fil
+> (3 messages de suite sans réponse), annonces 2 par jour, longueurs maximales, expiration des clés (90 jours au
+> plus), **aucun fil ni public avec un mineur (§3)**, Praxis absent de toute liste de personnes (R13), textes tiers
+> rendus dans un champ `contenu_tiers`, liste blanche exacte des fonctions (R2). Chaque règle R1 à R15 a son
+> scénario, nommé dans la PR.
 ## 0. La phrase de recette
 
 « Dans mon chat Claude, je dis à Praxis : réponds aux messages qui attendent. Il lit la boîte de l'académie, répond
