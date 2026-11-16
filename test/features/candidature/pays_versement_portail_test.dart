@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/i18n/pays_iso.dart';
@@ -36,6 +37,7 @@ Future<void> _monter(
   CandidatureDossier candidature,
   FauxMaCandidature port, {
   Size taille = const Size(1440, 900),
+  TextDirection? direction,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
     ..etatRendu = etatCandidat(candidature: candidature);
@@ -45,6 +47,7 @@ Future<void> _monter(
     depart: Routes.attente,
     taille: taille,
     dossier: dossier,
+    direction: direction,
   );
 }
 
@@ -142,14 +145,21 @@ void main() {
           find.text(t.recrutement.portail.paysVersementExplication),
           findsOneWidget,
         );
-        // Pas de bouton tant qu'aucun pays n'est choisi.
+        // Pas de bouton tant que le compte et le pays ne sont pas choisis.
         expect(_cle('pays-versement-enregistrer'), findsNothing);
         await tester.ensureVisible(_cle('pays-versement-FR'));
         await tester.tap(_cle('pays-versement-FR'));
         await tester.pumpAndSettle();
+        expect(_cle('pays-versement-enregistrer'), findsNothing);
+        await tester.ensureVisible(_cle('versement-compte-oui'));
+        await tester.tap(_cle('versement-compte-oui'));
+        await tester.pumpAndSettle();
         await tester.tap(_cle('pays-versement-enregistrer'));
         await tester.pumpAndSettle();
-        expect(port.paysVersementModifies, <String>['FR']);
+        expect(port.versementsModifies, hasLength(1));
+        expect(port.versementsModifies.single.$1, isTrue);
+        expect(port.versementsModifies.single.$2, 'FR');
+        expect(port.versementsModifies.single.$3, isEmpty);
         expect(_cle('pays-versement-message'), findsOneWidget);
       },
     );
@@ -159,13 +169,16 @@ void main() {
     WidgetTester tester,
   ) async {
     final FauxMaCandidature port = FauxMaCandidature()
-      ..erreurPaysVersement = const TransitionInterdite();
+      ..erreurVersement = const TransitionInterdite();
     await _monter(tester, _envoyee(), port);
     await tester.ensureVisible(_cle('pays-versement-lien'));
     await tester.tap(_cle('pays-versement-lien'));
     await tester.pumpAndSettle();
     await tester.ensureVisible(_cle('pays-versement-FR'));
     await tester.tap(_cle('pays-versement-FR'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(_cle('versement-compte-oui'));
+    await tester.tap(_cle('versement-compte-oui'));
     await tester.pumpAndSettle();
     await tester.tap(_cle('pays-versement-enregistrer'));
     await tester.pumpAndSettle();
@@ -174,6 +187,93 @@ void main() {
       findsOneWidget,
     );
   });
+
+  testWidgets(
+    'sans compte : le pays du mobile money puis ses services, envoyes avec le reste',
+    (WidgetTester tester) async {
+      final FauxMaCandidature port = FauxMaCandidature();
+      await _monter(tester, _envoyee(), port);
+      await tester.ensureVisible(_cle('pays-versement-lien'));
+      await tester.tap(_cle('pays-versement-lien'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(_cle('versement-compte-non'));
+      await tester.tap(_cle('versement-compte-non'));
+      await tester.pumpAndSettle();
+      // Le titre du pays dit « sur votre telephone » sans compte.
+      expect(
+        find.text(t.recrutement.parcours.q.paysVersementMobile.titre),
+        findsOneWidget,
+      );
+      await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'GN');
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(_cle('pays-versement-GN'));
+      await tester.tap(_cle('pays-versement-GN'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(_cle('versement-service-wave'));
+      await tester.tap(_cle('versement-service-wave'));
+      await tester.pumpAndSettle();
+      await tester.tap(_cle('pays-versement-enregistrer'));
+      await tester.pumpAndSettle();
+      expect(port.versementsModifies, hasLength(1));
+      expect(port.versementsModifies.single.$1, isFalse);
+      expect(port.versementsModifies.single.$2, 'GN');
+      expect(port.versementsModifies.single.$3, <String>['wave']);
+    },
+  );
+
+  testWidgets('avec un compte : aucun service n\'est propose ni envoye', (
+    WidgetTester tester,
+  ) async {
+    final FauxMaCandidature port = FauxMaCandidature();
+    await _monter(tester, _envoyee(), port);
+    await tester.ensureVisible(_cle('pays-versement-lien'));
+    await tester.tap(_cle('pays-versement-lien'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(_cle('versement-compte-oui'));
+    await tester.tap(_cle('versement-compte-oui'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'GN');
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(_cle('pays-versement-GN'));
+    await tester.tap(_cle('pays-versement-GN'));
+    await tester.pumpAndSettle();
+    expect(_cle('versement-service-wave'), findsNothing);
+    await tester.tap(_cle('pays-versement-enregistrer'));
+    await tester.pumpAndSettle();
+    expect(port.versementsModifies.single.$1, isTrue);
+    expect(port.versementsModifies.single.$2, 'GN');
+    expect(port.versementsModifies.single.$3, isEmpty);
+  });
+
+  testWidgets(
+    'dossier valide : plus de lien, une phrase et le renvoi vers la messagerie',
+    (WidgetTester tester) async {
+      await _monter(
+        tester,
+        CandidatureDossier(
+          existe: true,
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.enExamen,
+          version: 6,
+          questionnaire: EtatQuestionnaire(envoyeLe: DateTime(2026, 11, 10)),
+        ),
+        FauxMaCandidature(),
+      );
+      expect(_cle('pays-versement-lien'), findsNothing);
+      expect(_cle('versement-ferme'), findsOneWidget);
+      expect(find.text(t.recrutement.portail.versementFerme), findsOneWidget);
+      final GoRouter routeur = GoRouter.of(
+        tester.element(_cle('versement-ferme-lien')),
+      );
+      await tester.ensureVisible(_cle('versement-ferme-lien'));
+      await tester.tap(_cle('versement-ferme-lien'));
+      await tester.pump();
+      expect(
+        routeur.routeInformationProvider.value.uri.path,
+        Routes.attenteMessages,
+      );
+    },
+  );
 
   testWidgets('candidature refusee : aucun lien', (WidgetTester tester) async {
     await _monter(
@@ -224,6 +324,9 @@ void main() {
           await tester.ensureVisible(_cle('pays-versement-lien'));
           await tester.tap(_cle('pays-versement-lien'));
           await tester.pumpAndSettle();
+          await tester.ensureVisible(_cle('versement-compte-oui'));
+          await tester.tap(_cle('versement-compte-oui'));
+          await tester.pumpAndSettle();
           await tester.ensureVisible(_cle('pays-versement-FR'));
           await tester.tap(_cle('pays-versement-FR'));
           await tester.pumpAndSettle();
@@ -264,6 +367,71 @@ void main() {
           await capturerVue(tester, 'PAYS-RECHERCHE/$nom');
         });
       }
+    }
+  }, skip: sautSansCapture);
+
+  // VERSEMENT-QUESTIONS (directeur, 16/11/2026) : captures R3 a 360 de large, en
+  // francais et en arabe (de droite a gauche). Sautees sans CAPTURE_DIR.
+  group('VERSEMENT-QUESTIONS captures', () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
+    for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+      final String l = langue.languageCode;
+      final TextDirection? direction = langue == AppLocale.ar
+          ? TextDirection.rtl
+          : null;
+      testWidgets('$l : le panneau, sans compte, pays et services', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await _monter(
+          tester,
+          _envoyee(),
+          FauxMaCandidature(),
+          taille: const Size(360, 800),
+          direction: direction,
+        );
+        await tester.ensureVisible(_cle('pays-versement-lien'));
+        await tester.tap(_cle('pays-versement-lien'));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(_cle('versement-compte-non'));
+        await tester.tap(_cle('versement-compte-non'));
+        await tester.pumpAndSettle();
+        await tester.enterText(find.byKey(ChoixAvecRecherche.champKey), 'GN');
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(_cle('pays-versement-GN'));
+        await tester.tap(_cle('pays-versement-GN'));
+        await tester.pumpAndSettle();
+        await tester.scrollUntilVisible(
+          _cle('versement-service-wave'),
+          200,
+          scrollable: find.byType(Scrollable).last,
+        );
+        await tester.pumpAndSettle();
+        await capturerVue(tester, 'VERSEMENT-QUESTIONS/panneau-360-$l');
+      });
+      testWidgets('$l : dossier valide, le bloc est ferme', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        await _monter(
+          tester,
+          CandidatureDossier(
+            existe: true,
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.enExamen,
+            version: 6,
+            questionnaire: EtatQuestionnaire(envoyeLe: DateTime(2026, 11, 10)),
+          ),
+          FauxMaCandidature(),
+          taille: const Size(360, 800),
+          direction: direction,
+        );
+        await tester.ensureVisible(_cle('versement-ferme'));
+        await stabiliser(tester);
+        await capturerVue(tester, 'VERSEMENT-QUESTIONS/ferme-360-$l');
+      });
     }
   }, skip: sautSansCapture);
 }

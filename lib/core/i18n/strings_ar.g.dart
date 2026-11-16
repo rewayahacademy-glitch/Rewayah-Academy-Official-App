@@ -2569,7 +2569,7 @@ class _Traductions$notifications$evenements$ar extends Traductions$notifications
 	@override String get annonceDirection => 'إعلان من الأكاديمية';
 	@override String annonceDirectionTitre({required Object titre}) => 'إعلان: ⁨${titre}⁩';
 	@override String get bienvenueEquipe => 'مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.';
-	@override String get retenuEntretien => 'اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.';
+	@override String get retenuEntretien => 'اختير طلبك لمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد.';
 	@override String pauseRepondueAcceptee({required Object dePrenom, required Object mois}) => 'قُبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. يتأخر موعده الأقصى بالمدة نفسها ومقعده محفوظ.';
 	@override String pauseRepondueAccepteeAdulte({required Object mois}) => 'قُبل توقفك لمدة شهر في ⁨${mois}⁩. يتأخر موعدك الأقصى بالمدة نفسها ومقعدك محفوظ.';
 	@override String pauseRepondueRefusee({required Object dePrenom, required Object mois}) => 'لم يُقبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. السبب في التطبيق.';
@@ -10998,14 +10998,16 @@ class _Traductions$recrutement$portail$ar extends Traductions$recrutement$portai
 	@override String get elementCodeConduite => 'ميثاق السلوك';
 	@override String get elementAccordPublication => 'الموافقة على نشر صورتك';
 	@override String get elementPaysVersement => 'بلد الصرف والحساب';
-	@override String get paysVersementLien => 'تغيير بلد الصرف';
-	@override String get paysVersementTitre => 'بلد حساب الصرف';
-	@override String get paysVersementExplication => 'يمكن أن يكون الحساب حساب قريب موثوق في بلد تدعمه الأكاديمية. اختر البلد الذي يوجد فيه هذا الحساب. ستحتاج وسائل الصرف والبيانات المدخلة سابقًا إلى تأكيد جديد.';
-	@override String get paysVersementEnregistrer => 'حفظ هذا البلد';
-	@override String get paysVersementFait => 'تم تحديث بلد الصرف. تعيد الأكاديمية قراءة ملفك.';
-	@override String get paysVersementEchec => 'تعذّر تغيير البلد. لم يتغير شيء: حاول بعد قليل.';
-	@override String get paysVersementInterdit => 'لم يعد ممكنًا تغيير البلد في هذه المرحلة. اكتب إلى الأكاديمية من محادثة ملفك.';
-	@override String get paysVersementHorsLigne => 'أنت غير متصل. لم يتغير البلد؛ حاول عند عودة الاتصال.';
+	@override String get paysVersementLien => 'تعديل بيانات الصرف';
+	@override String get paysVersementTitre => 'بيانات الصرف الخاصة بي';
+	@override String get paysVersementExplication => 'يمكنك تعديل كل شيء ما دامت الأكاديمية لم تصادق على ملفك: الحساب المصرفي والبلد وخدمات الدفع عبر الهاتف. إذا تغيّر البلد فستحتاج البيانات التي أدخلتها إلى تأكيد جديد.';
+	@override String get paysVersementEnregistrer => 'حفظ بيانات الصرف';
+	@override String get paysVersementFait => 'تم تحديث بيانات الصرف. تعيد الأكاديمية قراءة ملفك.';
+	@override String get paysVersementEchec => 'تعذّر تعديل بيانات الصرف. لم يتغير شيء: حاول بعد قليل.';
+	@override String get paysVersementInterdit => 'لم يعد ممكنًا تعديل بيانات الصرف: تمت المصادقة على ملفك. اكتب إلى الأكاديمية من محادثة ملفك.';
+	@override String get paysVersementHorsLigne => 'أنت غير متصل. لم تتغير بيانات الصرف؛ حاول عند عودة الاتصال.';
+	@override String get versementFerme => 'تمت المصادقة على ملفك: لم يعد ممكنًا تعديل بيانات الصرف هنا. لأي تغيير، اكتب إلى الأكاديمية.';
+	@override String get versementFermeLien => 'اكتب إلى الأكاديمية';
 	@override String get pieceDemandee => 'تطلب منك الإدارة صورة جديدة لوثيقتك.';
 	@override String get photoDemandee => 'تطلب منك الإدارة صورة جديدة. غيّرها في ملخص إجاباتك قبل إرسالها.';
 }
@@ -11023,7 +11025,7 @@ class _Traductions$recrutement$entretien$ar extends Traductions$recrutement$entr
 	@override String horaire({required Object date, required Object debut, required Object fin}) => '⁨${date}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩';
 	@override String get choisir => 'اختر موعدًا.';
 	@override String get reserver => 'حجز هذا الموعد';
-	@override String get aucunCreneau => 'لا يوجد موعد متاح حاليًا. عد لاحقًا.';
+	@override String get aucunCreneau => 'اختير طلبك للمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد، وتختاره هنا.';
 	@override String get erreurLecture => 'تعذّر تحميل المواعيد. أعد المحاولة.';
 	@override String get pris => 'حُجز هذا الموعد للتو. اختر موعدًا آخر.';
 	@override String get dejaPlanifie => 'موعد مقابلتك محدد بالفعل.';
@@ -21351,6 +21353,8 @@ class _Traductions$recrutement$parcours$q$ar extends Traductions$recrutement$par
 	@override late final _Traductions$recrutement$parcours$q$publics$ar publics = _Traductions$recrutement$parcours$q$publics$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$q$paysResidence$ar paysResidence = _Traductions$recrutement$parcours$q$paysResidence$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$q$paysVersement$ar paysVersement = _Traductions$recrutement$parcours$q$paysVersement$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$paysVersementCompte$ar paysVersementCompte = _Traductions$recrutement$parcours$q$paysVersementCompte$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$q$paysVersementMobile$ar paysVersementMobile = _Traductions$recrutement$parcours$q$paysVersementMobile$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$q$compteBancaire$ar compteBancaire = _Traductions$recrutement$parcours$q$compteBancaire$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$q$operateurs$ar operateurs = _Traductions$recrutement$parcours$q$operateurs$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$q$moyensAccessibles$ar moyensAccessibles = _Traductions$recrutement$parcours$q$moyensAccessibles$ar._(_root);
@@ -26244,6 +26248,30 @@ class _Traductions$recrutement$parcours$q$paysVersement$ar extends Traductions$r
 	@override String get court => 'بلد الصرف';
 }
 
+// Path: recrutement.parcours.q.paysVersementCompte
+class _Traductions$recrutement$parcours$q$paysVersementCompte$ar extends Traductions$recrutement$parcours$q$paysVersementCompte$fr {
+	_Traductions$recrutement$parcours$q$paysVersementCompte$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'في أي بلد يوجد هذا الحساب؟';
+	@override String get explication => 'يمكن أن يكون الحساب لقريب موثوق. اختر البلد الذي يوجد فيه المصرف: تتحقق الأكاديمية، بلدًا بلدًا، من إمكانية التحويل المصرفي. اعتمدنا بلد إقامتك: غيّره إن لزم.';
+	@override String get court => 'بلد الحساب';
+}
+
+// Path: recrutement.parcours.q.paysVersementMobile
+class _Traductions$recrutement$parcours$q$paysVersementMobile$ar extends Traductions$recrutement$parcours$q$paysVersementMobile$fr {
+	_Traductions$recrutement$parcours$q$paysVersementMobile$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'في أي بلد يمكنك استلام المال على هاتفك؟';
+	@override String get explication => 'اختر بلد خدمة الدفع عبر الهاتف التي تستخدمها، أو التي يستخدمها قريب موثوق. ستختار بعد ذلك خدمات هذا البلد. اعتمدنا بلد إقامتك: غيّره إن لزم.';
+	@override String get court => 'بلد الدفع عبر الهاتف';
+}
+
 // Path: recrutement.parcours.q.compteBancaire
 class _Traductions$recrutement$parcours$q$compteBancaire$ar extends Traductions$recrutement$parcours$q$compteBancaire$fr {
 	_Traductions$recrutement$parcours$q$compteBancaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -28254,7 +28282,7 @@ extension on TraductionsAr {
 			'notifications.evenements.annonceDirection' => 'إعلان من الأكاديمية',
 			'notifications.evenements.annonceDirectionTitre' => ({required Object titre}) => 'إعلان: ⁨${titre}⁩',
 			'notifications.evenements.bienvenueEquipe' => 'مرحبًا بك في الفريق. بقي أن تهيّئ مساحتك.',
-			'notifications.evenements.retenuEntretien' => 'اختير طلبك لمقابلة. لنتعارف: اختر في التطبيق الموعد الذي يناسبك.',
+			'notifications.evenements.retenuEntretien' => 'اختير طلبك لمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد.',
 			'notifications.evenements.pauseRepondueAcceptee' => ({required Object dePrenom, required Object mois}) => 'قُبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. يتأخر موعده الأقصى بالمدة نفسها ومقعده محفوظ.',
 			'notifications.evenements.pauseRepondueAccepteeAdulte' => ({required Object mois}) => 'قُبل توقفك لمدة شهر في ⁨${mois}⁩. يتأخر موعدك الأقصى بالمدة نفسها ومقعدك محفوظ.',
 			'notifications.evenements.pauseRepondueRefusee' => ({required Object dePrenom, required Object mois}) => 'لم يُقبل توقف ⁨${dePrenom}⁩ لمدة شهر في ⁨${mois}⁩. السبب في التطبيق.',
@@ -39139,14 +39167,16 @@ extension on TraductionsAr {
 			'recrutement.portail.elementCodeConduite' => 'ميثاق السلوك',
 			'recrutement.portail.elementAccordPublication' => 'الموافقة على نشر صورتك',
 			'recrutement.portail.elementPaysVersement' => 'بلد الصرف والحساب',
-			'recrutement.portail.paysVersementLien' => 'تغيير بلد الصرف',
-			'recrutement.portail.paysVersementTitre' => 'بلد حساب الصرف',
-			'recrutement.portail.paysVersementExplication' => 'يمكن أن يكون الحساب حساب قريب موثوق في بلد تدعمه الأكاديمية. اختر البلد الذي يوجد فيه هذا الحساب. ستحتاج وسائل الصرف والبيانات المدخلة سابقًا إلى تأكيد جديد.',
-			'recrutement.portail.paysVersementEnregistrer' => 'حفظ هذا البلد',
-			'recrutement.portail.paysVersementFait' => 'تم تحديث بلد الصرف. تعيد الأكاديمية قراءة ملفك.',
-			'recrutement.portail.paysVersementEchec' => 'تعذّر تغيير البلد. لم يتغير شيء: حاول بعد قليل.',
-			'recrutement.portail.paysVersementInterdit' => 'لم يعد ممكنًا تغيير البلد في هذه المرحلة. اكتب إلى الأكاديمية من محادثة ملفك.',
-			'recrutement.portail.paysVersementHorsLigne' => 'أنت غير متصل. لم يتغير البلد؛ حاول عند عودة الاتصال.',
+			'recrutement.portail.paysVersementLien' => 'تعديل بيانات الصرف',
+			'recrutement.portail.paysVersementTitre' => 'بيانات الصرف الخاصة بي',
+			'recrutement.portail.paysVersementExplication' => 'يمكنك تعديل كل شيء ما دامت الأكاديمية لم تصادق على ملفك: الحساب المصرفي والبلد وخدمات الدفع عبر الهاتف. إذا تغيّر البلد فستحتاج البيانات التي أدخلتها إلى تأكيد جديد.',
+			'recrutement.portail.paysVersementEnregistrer' => 'حفظ بيانات الصرف',
+			'recrutement.portail.paysVersementFait' => 'تم تحديث بيانات الصرف. تعيد الأكاديمية قراءة ملفك.',
+			'recrutement.portail.paysVersementEchec' => 'تعذّر تعديل بيانات الصرف. لم يتغير شيء: حاول بعد قليل.',
+			'recrutement.portail.paysVersementInterdit' => 'لم يعد ممكنًا تعديل بيانات الصرف: تمت المصادقة على ملفك. اكتب إلى الأكاديمية من محادثة ملفك.',
+			'recrutement.portail.paysVersementHorsLigne' => 'أنت غير متصل. لم تتغير بيانات الصرف؛ حاول عند عودة الاتصال.',
+			'recrutement.portail.versementFerme' => 'تمت المصادقة على ملفك: لم يعد ممكنًا تعديل بيانات الصرف هنا. لأي تغيير، اكتب إلى الأكاديمية.',
+			'recrutement.portail.versementFermeLien' => 'اكتب إلى الأكاديمية',
 			'recrutement.portail.pieceDemandee' => 'تطلب منك الإدارة صورة جديدة لوثيقتك.',
 			'recrutement.portail.photoDemandee' => 'تطلب منك الإدارة صورة جديدة. غيّرها في ملخص إجاباتك قبل إرسالها.',
 			'recrutement.entretien.titre' => 'لنتعارف',
@@ -39155,7 +39185,7 @@ extension on TraductionsAr {
 			'recrutement.entretien.horaire' => ({required Object date, required Object debut, required Object fin}) => '⁨${date}⁩، من ⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'recrutement.entretien.choisir' => 'اختر موعدًا.',
 			'recrutement.entretien.reserver' => 'حجز هذا الموعد',
-			'recrutement.entretien.aucunCreneau' => 'لا يوجد موعد متاح حاليًا. عد لاحقًا.',
+			'recrutement.entretien.aucunCreneau' => 'اختير طلبك للمقابلة. لا شيء مطلوب منك الآن: ستخبرك الأكاديمية حين يُفتح موعد، وتختاره هنا.',
 			'recrutement.entretien.erreurLecture' => 'تعذّر تحميل المواعيد. أعد المحاولة.',
 			'recrutement.entretien.pris' => 'حُجز هذا الموعد للتو. اختر موعدًا آخر.',
 			'recrutement.entretien.dejaPlanifie' => 'موعد مقابلتك محدد بالفعل.',
@@ -39555,10 +39585,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.publics.explication' => 'اختر الفئات العمرية التي ترتاح في تعليمها. لا توجد إجابة خاطئة: يمكنك اختيار فئة واحدة أو عدة فئات.',
 			'recrutement.parcours.q.publics.court' => 'الفئات',
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'أطفال من 6 إلى 9 سنوات',
-			'recrutement.parcours.q.publics.options.o_6_9.description' => 'يبدؤون بكتاب القراءة الخاص بأكاديمية الرواية، حرفًا حرفًا، إلى الشدّة. ثم تأتي السور القصيرة الأولى وكلمات الصلاة والوضوء.',
-			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة. يُعرض الوضوء والصلاة عمليًا ومعهما رسوم توضيحية.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.q.publics.options.o_6_9.description' => 'يبدؤون بكتاب القراءة الخاص بأكاديمية الرواية، حرفًا حرفًا، إلى الشدّة. ثم تأتي السور القصيرة الأولى وكلمات الصلاة والوضوء.',
+			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة. يُعرض الوضوء والصلاة عمليًا ومعهما رسوم توضيحية.',
 			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'فصل لأطفال في الثامنة من العمر، أيام الاثنين والأربعاء والجمعة.',
 			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'أطفال من 10 إلى 13 سنة',
 			'recrutement.parcours.q.publics.options.o_10_13.description' => 'البداية نفسها بكتاب القراءة، مع سورة الفاتحة منذ الأسبوع الأول، لأن الطفل في هذا العمر يجب أن يصلّي.',
@@ -39578,6 +39608,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.paysVersement.titre' => 'في أي بلد تريد تلقي راتبك؟',
 			'recrutement.parcours.q.paysVersement.explication' => 'يمكن أن يكون الحساب الذي يستلم راتبك حساب قريب موثوق في بلد تدعمه الأكاديمية: اختر عندئذٍ بلد هذا القريب. تتحقق الأكاديمية، بلدًا بلدًا، من وسيلة الصرف الممكنة. اخترنا بلد إقامتك: غيّره إن لزم.',
 			'recrutement.parcours.q.paysVersement.court' => 'بلد الصرف',
+			'recrutement.parcours.q.paysVersementCompte.titre' => 'في أي بلد يوجد هذا الحساب؟',
+			'recrutement.parcours.q.paysVersementCompte.explication' => 'يمكن أن يكون الحساب لقريب موثوق. اختر البلد الذي يوجد فيه المصرف: تتحقق الأكاديمية، بلدًا بلدًا، من إمكانية التحويل المصرفي. اعتمدنا بلد إقامتك: غيّره إن لزم.',
+			'recrutement.parcours.q.paysVersementCompte.court' => 'بلد الحساب',
+			'recrutement.parcours.q.paysVersementMobile.titre' => 'في أي بلد يمكنك استلام المال على هاتفك؟',
+			'recrutement.parcours.q.paysVersementMobile.explication' => 'اختر بلد خدمة الدفع عبر الهاتف التي تستخدمها، أو التي يستخدمها قريب موثوق. ستختار بعد ذلك خدمات هذا البلد. اعتمدنا بلد إقامتك: غيّره إن لزم.',
+			'recrutement.parcours.q.paysVersementMobile.court' => 'بلد الدفع عبر الهاتف',
 			'recrutement.parcours.q.compteBancaire.titre' => 'هل عندك حساب مصرفي تستلم فيه راتبك، باسمك أو باسم أحد أقاربك؟',
 			'recrutement.parcours.q.compteBancaire.explication' => 'يُصرف الراتب بتحويل مصرفي حيث أكّدت الأكاديمية ذلك. لا تُطلب بياناتك إلا قبل أول دفعة.',
 			'recrutement.parcours.q.compteBancaire.court' => 'الحساب المصرفي',
@@ -40063,6 +40099,8 @@ extension on TraductionsAr {
 			'avis.form.qualite.parent' => 'ولي أمر أو وصي',
 			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
 			'avis.form.qualite.erreur' => 'اختر صفتك.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.pays.libelle' => 'بلد الإقامة',
 			'avis.form.pays.choisir' => 'اختيار بلد',
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
@@ -40071,8 +40109,6 @@ extension on TraductionsAr {
 			'avis.form.pays.erreur' => 'اختر بلد إقامتك.',
 			'avis.form.depuis.libelle' => 'معنا منذ',
 			'avis.form.depuis.aide' => 'الشهر والسنة اللذان التحقت فيهما بالأكاديمية.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.depuis.mois' => 'الشهر',
 			'avis.form.depuis.annee' => 'السنة',
 			'avis.form.depuis.erreur' => 'اختر شهرًا وسنة، من أبريل 2024 إلى هذا الشهر.',
@@ -40577,6 +40613,8 @@ extension on TraductionsAr {
 			'a3bis.regles.bornesTardive' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ قبل البداية.',
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
+			_ => null,
+		} ?? switch (path) {
 			'payUx.reprendre' => 'متابعة الدفع',
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
@@ -40585,8 +40623,6 @@ extension on TraductionsAr {
 			'payUx.ouCarte' => 'أو ادفع بالبطاقة',
 			'payUx.enCours' => 'جارٍ الدفع',
 			'payUx.refus' => 'لم يتمّ الدفع: لعلّ إحدى بيانات البطاقة ناقصة أو مرفوضة. تحقّق منها، ثم اضغط «ادفع» من جديد. لم يُدفع شيء.',
-			_ => null,
-		} ?? switch (path) {
 			'cahierC1.onReprendPage' => ({required Object page}) => 'نستأنف من الصفحة ⁨${page}⁩',
 			'cahierC3.arretPage' => ({required Object page}) => 'توقف الفصل عند الصفحة ⁨${page}⁩ من المصحف.',
 			'cahierC3.arretAide' => 'هذه آخر صفحة عُرضت في القاعة. إن كانت صحيحة فاعتمد، وإلا فصحّح.',
@@ -41091,6 +41127,8 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.rayonCoursVide.message' => 'ستظهر وثائق الدروس هنا',
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',
 			'apprendre.bibliotheque.rayonPlusLoinVide' => 'ستظهر وثائق أخرى هنا',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.bibliotheque.affichage.libelle' => 'طريقة عرض الوثائق',
 			'apprendre.bibliotheque.affichage.grille' => 'شبكة',
 			'apprendre.bibliotheque.affichage.liste' => 'قائمة',
@@ -41099,8 +41137,6 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.type.audio' => 'صوت',
 			'apprendre.bibliotheque.type.video' => 'فيديو',
 			'apprendre.bibliotheque.type.lienExterne' => 'رابط خارجي',
-			_ => null,
-		} ?? switch (path) {
 			'apprendre.bibliotheque.aucunResultat.message' => 'لا توجد وثيقة من هذا النوع حاليًا',
 			'apprendre.bibliotheque.aucunResultat.invitation' => 'أزل التصفية لتعرض كل الوثائق من جديد.',
 			'apprendre.bibliotheque.coran.titre' => 'القرآن الكريم',
