@@ -2,8 +2,10 @@
 // test, avec le double du port de la direction (ou aucun port).
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/recrutement/port_invitations_comptable.dart';
@@ -33,11 +35,19 @@ Future<void> monterCandidatures(
   bool invitations = false,
   bool comptable = false,
   List<Override> surcharges = const <Override>[],
+  String? depart,
+  List<String> autres = const <String>[],
 }) => monterRecrutement(
   tester,
   chemin: Routes.adminPersonnesCandidatures,
-  ecran: (_) => CandidaturesPage(ouvrirCandidature: ouvrir),
-  autres: const <String>[
+  depart: depart,
+  // BE-LISTE : l'adresse porte le filtre, le tri et la page.
+  ecran: (GoRouterState etat) => CandidaturesPage(
+    ouvrirCandidature: ouvrir,
+    requete: etat.uri.queryParameters,
+  ),
+  autres: <String>[
+    ...autres,
     Routes.adminPersonnesInvitations,
     // CANDIDATS-FLUX : la route de l'import des formulaires.
     RoutesCandidatsFlux.importFormulaires,
@@ -58,3 +68,28 @@ Future<void> monterCandidatures(
   echelle: echelle,
   direction: direction,
 );
+
+/// BE-LISTE : les liens de la liste (Invitations, Prevenir, Creneaux, Codes,
+/// Importer) sont des entrees du menu « Outils ». Vrai si l'entree
+/// [libelle] y est ; le menu est referme apres la lecture.
+Future<bool> entreeOutilsPresente(WidgetTester tester, String libelle) async {
+  final Finder menu = find.byKey(CandidaturesPage.cleOutils);
+  if (menu.evaluate().isEmpty) return false;
+  await tester.ensureVisible(menu);
+  await tester.tap(menu);
+  await laisser(tester);
+  final bool present = find.text(libelle).evaluate().isNotEmpty;
+  await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+  await laisser(tester);
+  return present;
+}
+
+/// BE-LISTE : ouvre le menu « Outils » et touche l'entree [libelle].
+Future<void> toucherOutil(WidgetTester tester, String libelle) async {
+  final Finder menu = find.byKey(CandidaturesPage.cleOutils);
+  await tester.ensureVisible(menu);
+  await tester.tap(menu);
+  await laisser(tester);
+  await tester.tap(find.text(libelle));
+  await laisser(tester);
+}

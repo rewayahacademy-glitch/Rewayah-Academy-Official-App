@@ -47,7 +47,8 @@ const CapacitesCandidatures _capsPrevenir = CapacitesCandidatures(
 
 Finder _cle(Key cle) => find.byKey(cle);
 
-const Key _lien = ValueKey<String>('candidatures-prevenir');
+// BE-LISTE : le lien est une entree du menu « Outils ».
+const String _libelleLien = 'Prévenir par e-mail';
 
 /// Monte la file avec le port [faux] (nul : port non servi) et les capacites
 /// [caps].
@@ -76,10 +77,7 @@ Future<void> _monter(
 
 /// Ouvre la feuille par le lien.
 Future<void> _ouvrir(WidgetTester tester) async {
-  await tester.ensureVisible(_cle(_lien));
-  await tester.pump();
-  await tester.tap(_cle(_lien));
-  await laisser(tester);
+  await toucherOutil(tester, _libelleLien);
 }
 
 Future<void> _envoyer(WidgetTester tester) async {
@@ -100,18 +98,17 @@ void main() {
       tester,
     ) async {
       await _monter(tester, FauxPrevenirCandidats());
-      expect(_cle(_lien), findsOneWidget);
-      expect(find.text('Prévenir par e-mail'), findsWidgets);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isTrue);
     });
 
     testWidgets('absent sans la capacite du serveur', (tester) async {
       await _monter(tester, FauxPrevenirCandidats(), caps: capacitesQuiLit);
-      expect(_cle(_lien), findsNothing);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isFalse);
     });
 
     testWidgets('absent quand le port n\'est pas servi', (tester) async {
       await _monter(tester, null);
-      expect(_cle(_lien), findsNothing);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isFalse);
     });
 
     testWidgets('absent quand le geste est refuse explicitement', (
@@ -126,7 +123,7 @@ void main() {
           gestes: <String, bool>{'consignerPrevenu': false},
         ),
       );
-      expect(_cle(_lien), findsNothing);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isFalse);
     });
 
     testWidgets('present au bureau, a 1440 px', (tester) async {
@@ -136,7 +133,7 @@ void main() {
         largeur: 1440,
         hauteur: 1000,
       );
-      expect(_cle(_lien), findsOneWidget);
+      expect(await entreeOutilsPresente(tester, _libelleLien), isTrue);
       expect(tester.takeException(), isNull);
     });
   });

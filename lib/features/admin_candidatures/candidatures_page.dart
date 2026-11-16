@@ -29,6 +29,7 @@ library;
 
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -59,6 +60,7 @@ import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -74,9 +76,11 @@ import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
+import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pile_cartes.dart';
+import '../../core/widgets/pressable.dart' show EtatPression;
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
@@ -87,14 +91,19 @@ import '../admin_candidature/gestes_proposes.dart';
 import '../admin_candidature/libelles_candidature.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
 import '../talents/libelles_talents.dart';
+import 'adresse_candidatures.dart';
 import 'carte_alertes.dart';
 import 'carte_attentes.dart';
+import 'etat_entete_liste.dart';
 import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
 import 'lot_candidatures.dart';
 import 'menu_ligne_candidature.dart';
 import 'prevenir_candidats.dart';
+
+// BE-LISTE : l'entree « Personnes » vit dans le meme morceau differe.
+export 'entree_personnes.dart' show EntreePersonnes;
 
 /// L'ecran « Candidatures ».
 class CandidaturesPage extends ConsumerStatefulWidget {
@@ -108,7 +117,17 @@ class CandidaturesPage extends ConsumerStatefulWidget {
   /// serveur ouvre l'action en lot (`peutAgirEnLot`), et la barre propose les
   /// gestes du lot que les capacites ouvrent (mettre en pause, lever la pause,
   /// refuser), chacun dans la feuille `ouvrirFeuilleLot`.
-  const CandidaturesPage({super.key, this.ouvrirCandidature});
+  ///
+  /// [requete] est la requete d'adresse (BE-LISTE) : filtre, tri, page et
+  /// recherche y sont lus et reportes, comme Comptes.
+  const CandidaturesPage({
+    super.key,
+    this.ouvrirCandidature,
+    this.requete = const <String, String>{},
+  });
+
+  /// Les parametres de l'adresse de la liste.
+  final Map<String, String> requete;
 
   /// Ouvre une candidature, ou `null` : la ligne ne s'ouvre pas.
   final void Function(LigneCandidature ligne)? ouvrirCandidature;
@@ -129,6 +148,9 @@ class CandidaturesPage extends ConsumerStatefulWidget {
   static Key cleOperationLot(GesteLot geste) =>
       ValueKey<String>('candidatures-lot-${geste.name}');
 
+  /// BE-LISTE : le menu « Outils » de la liste.
+  static const Key cleOutils = ValueKey<String>('candidatures-outils');
+
   /// La cle de la page.
   static const Key clePage = ValueKey<String>('candidatures-page');
 
@@ -138,20 +160,20 @@ class CandidaturesPage extends ConsumerStatefulWidget {
 
 class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   /// Le filtre courant : recherche, etape, etat, issue, pause, versement, pays.
-  FiltreCandidatures _filtre = const FiltreCandidatures();
+  late FiltreCandidatures _filtre;
 
   /// Le tri, fait au serveur.
-  TriCandidatures _tri = TriCandidatures.activite;
+  late TriCandidatures _tri;
 
   /// La page courante, a partir de 1. Revient a 1 a chaque changement de
   /// filtre ou de tri.
-  int _page = 1;
+  late int _page;
 
   /// La derniere page lue : ses compteurs (toute la portee, sans les autres
   /// filtres) restent affiches pendant qu'une autre page se charge.
   PageCandidatures? _derniere;
 
-  final TextEditingController _recherche = TextEditingController();
+  late final TextEditingController _recherche;
   final GlobalKey _cleListe = GlobalKey(debugLabel: 'candidatures-liste');
 
   /// L'attente qui suit la derniere frappe : une page n'est demandee qu'une
@@ -180,10 +202,74 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   final Set<String> _retenues = <String>{};
 
   @override
+  void initState() {
+    super.initState();
+    final RequeteCandidatures r = requeteDepuisAdresse(widget.requete);
+    _filtre = r.filtre;
+    _tri = r.tri;
+    _page = r.page;
+    _recherche = TextEditingController(text: r.filtre.recherche);
+  }
+
+  /// L'adresse porte le filtre, le tri et la page, et go_router garde ce
+  /// `State` d'une requete a l'autre : un lien ou un retour qui change
+  /// l'adresse remet la liste dans l'etat qu'elle dit (entree « Candidatures »
+  /// nue comprise). Une adresse deja celle de la liste ne fait rien.
+  @override
+  void didUpdateWidget(CandidaturesPage ancien) {
+    super.didUpdateWidget(ancien);
+    if (mapEquals(ancien.requete, widget.requete)) return;
+    final RequeteCandidatures lue = requeteDepuisAdresse(widget.requete);
+    final RequeteCandidatures ici = RequeteCandidatures(
+      filtre: _filtre,
+      tri: _tri,
+      page: _page,
+    );
+    if (lue == ici) return;
+    _attenteSaisie?.cancel();
+    setState(() {
+      if (lue.filtre != _filtre && _retenues.isNotEmpty) {
+        _retenues.clear();
+        _retour = t.admin.candidatures.lot.selectionRetiree;
+      }
+      _filtre = lue.filtre;
+      _tri = lue.tri;
+      _page = lue.page;
+      _recherche.text = lue.filtre.recherche;
+    });
+  }
+
+  @override
   void dispose() {
     _attenteSaisie?.cancel();
     _recherche.dispose();
     super.dispose();
+  }
+
+  /// Reporte filtre, tri et page dans l'adresse (lien partage, retour,
+  /// rechargement). `replace` : la pile ne change pas, le retour ramene
+  /// d'ou l'on vient, pas a l'etat precedent du filtre. Hors routeur (tests
+  /// montes sans GoRouter), rien a faire.
+  void _ecrireAdresse() {
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (routeur == null) return;
+    final Uri actuelle = routeur.routerDelegate.currentConfiguration.uri;
+    final Map<String, String> requete = <String, String>{
+      for (final MapEntry<String, String> e in actuelle.queryParameters.entries)
+        if (!clesAdresseCandidatures.contains(e.key)) e.key: e.value,
+      ...requeteEnAdresse(
+        RequeteCandidatures(filtre: _filtre, tri: _tri, page: _page),
+      ),
+    };
+    if (mapEquals(requete, actuelle.queryParameters)) return;
+    unawaited(
+      routeur.replace<void>(
+        Uri(
+          path: actuelle.path,
+          queryParameters: requete.isEmpty ? null : requete,
+        ).toString(),
+      ),
+    );
   }
 
   void _chercher(String texte) {
@@ -213,6 +299,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
       _filtre = filtre;
       _page = 1;
     });
+    _ecrireAdresse();
   }
 
   void _effacer() {
@@ -241,8 +328,25 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     );
   }
 
+  /// BE-LISTE : « Piece d'identite a valider » pose le filtre de l'etape de
+  /// verification (en cours, hors pause), la ou la piece se valide. Le serveur
+  /// n'a pas de filtre « piece deposee » : la liste peut compter plus de
+  /// personnes que la ligne (dit dans le bilan du lot).
+  void _filtrerPiece() {
+    _attenteSaisie?.cancel();
+    _recherche.clear();
+    _filtrer(
+      _filtre.efface.avec(
+        etape: () => EtapeCandidature.verifications,
+        issue: () => IssueCandidature.enCours,
+        enPause: () => false,
+      ),
+    );
+  }
+
   void _allerAPage(int numero) {
     setState(() => _page = numero);
+    _ecrireAdresse();
     // Une nouvelle page commence en haut de la liste, pas au pied de la
     // precedente.
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -732,10 +836,13 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
               libelle: r.tri.reception,
             ),
           ],
-          onChange: (TriCandidatures choisi) => setState(() {
-            _tri = choisi;
-            _page = 1;
-          }),
+          onChange: (TriCandidatures choisi) {
+            setState(() {
+              _tri = choisi;
+              _page = 1;
+            });
+            _ecrireAdresse();
+          },
         ),
       ],
     );
@@ -944,6 +1051,41 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     final bool creneaux =
         caps.peutDecider && ref.watch(portCreneauxDirectionProvider) != null;
 
+    final List<EntreeAction> outils = <EntreeAction>[
+      if (invitations)
+        EntreeAction(
+          libelle: t.recrutement.invitations.onglet,
+          onChoix: () =>
+              unawaited(context.push<void>(Routes.adminPersonnesInvitations)),
+        ),
+      if (prevenir)
+        EntreeAction(
+          libelle: t.candidatsFlux.prevenir.lien,
+          onChoix: () => ouvrirFeuillePrevenir(context),
+        ),
+      if (creneaux)
+        EntreeAction(
+          libelle: t.admin.candidatures.creneaux.lien,
+          onChoix: () => unawaited(
+            context.push<void>(Routes.adminPersonnesCreneauxEntretien),
+          ),
+        ),
+      // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : les codes personnels
+      // des candidats importes, pour le meme lecteur que l'import.
+      if (importer && ref.watch(portInvitationsPersonnellesProvider) != null)
+        EntreeAction(
+          libelle: t.candidatsFlux.invitationsPersonnelles.lien,
+          onChoix: () => ouvrirFeuilleInvitationsPersonnelles(context),
+        ),
+      if (importer)
+        EntreeAction(
+          libelle: t.candidatsFlux.importFormulaires.lienEntree,
+          onChoix: () => unawaited(
+            context.push<void>(RoutesCandidatsFlux.importFormulaires),
+          ),
+        ),
+    ];
+
     return PageShell(
       key: CandidaturesPage.clePage,
       titre: r.titre,
@@ -958,10 +1100,11 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           if (caps.peutLireHorsGenre)
             Padding(
               padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: BandeauAttention(
-                key: const ValueKey<String>('candidatures-exception'),
-                titre: r.exception.titre,
-                message: r.exception.message,
+              child: _LectureDeuxCotes(
+                depliee: ref.watch(lectureDeplieeProvider),
+                onBasculer: () => ref
+                    .read(lectureDeplieeProvider.notifier)
+                    .choisir(valeur: !ref.read(lectureDeplieeProvider)),
               ),
             ),
         ],
@@ -979,74 +1122,20 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           // SALLE2-ENTRETIEN (directeur, 14/11/2026) : les entretiens du jour
           // et leur porte, en tete de la file.
           const EntretiensDuJour(ficheOuverte: true),
-          // CAND-F01 : la page des invitations (l'invitation d'un enseignant
-          // ou d'un comptable, la revocation) a perdu son onglet. Le lien est
-          // en tete, rendu dans tous les etats (file vide, en erreur, serveur
-          // pas encore branche) : c'est le seul chemin vers elle. Il n'existe
-          // que si l'un de ses deux ports est servi.
-          if (invitations) ...<Widget>[
+          // BE-LISTE : les cinq liens (Invitations, Prevenir, Creneaux, Codes,
+          // Importer) tiennent dans un seul menu « Outils », rendu dans tous
+          // les etats (CAND-F01 : c'est le seul chemin vers les invitations).
+          // Chaque entree n'existe que si le serveur ouvre le geste et que le
+          // port est servi, jamais grisee.
+          if (outils.isNotEmpty) ...<Widget>[
             Align(
               alignment: AlignmentDirectional.centerEnd,
-              child: LienFleche(
-                key: const ValueKey<String>('candidatures-invitations'),
-                libelle: t.recrutement.invitations.onglet,
-                alignerEnFin: true,
-                onPress: () => context.go(Routes.adminPersonnesInvitations),
-              ),
-            ),
-            Ecart.vSm,
-          ],
-          if (prevenir) ...<Widget>[
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: LienFleche(
-                key: const ValueKey<String>('candidatures-prevenir'),
-                libelle: t.candidatsFlux.prevenir.lien,
-                alignerEnFin: true,
-                onPress: () => ouvrirFeuillePrevenir(context),
-              ),
-            ),
-            Ecart.vSm,
-          ],
-          if (creneaux) ...<Widget>[
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: LienFleche(
-                key: const ValueKey<String>('candidatures-creneaux'),
-                libelle: t.admin.candidatures.creneaux.lien,
-                alignerEnFin: true,
-                onPress: () =>
-                    context.go(Routes.adminPersonnesCreneauxEntretien),
-              ),
-            ),
-            Ecart.vSm,
-          ],
-          // INVITATIONS-PERSONNELLES (lot 7, 07/11/2026) : les codes
-          // personnels des candidats importes, pour le meme lecteur que
-          // l'import (super administrateur, double verification au geste).
-          if (importer &&
-              ref.watch(portInvitationsPersonnellesProvider) !=
-                  null) ...<Widget>[
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: LienFleche(
-                key: const ValueKey<String>('candidatures-codes-personnels'),
-                libelle: t.candidatsFlux.invitationsPersonnelles.lien,
-                alignerEnFin: true,
-                onPress: () => ouvrirFeuilleInvitationsPersonnelles(context),
-              ),
-            ),
-            Ecart.vSm,
-          ],
-          if (importer) ...<Widget>[
-            Align(
-              alignment: AlignmentDirectional.centerEnd,
-              child: LienFleche(
-                key: const ValueKey<String>('candidatures-importer'),
-                libelle: t.candidatsFlux.importFormulaires.lienEntree,
-                alignerEnFin: true,
-                onPress: () =>
-                    context.push<void>(RoutesCandidatsFlux.importFormulaires),
+              child: MenuActions(
+                key: CandidaturesPage.cleOutils,
+                libelle: t.recrutement.file.outilsDe,
+                actions: outils,
+                declencheur: (BuildContext contexte, EtatPression etat) =>
+                    _DeclencheurOutils(etat: etat),
               ),
             ),
             Ecart.vSm,
@@ -1095,6 +1184,13 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
                 maintenant: DateTime.now(),
                 onFiltrer: (EtatCandidature e) => _filtrerAttente(etat: e),
                 onFiltrerPause: () => _filtrerAttente(enPause: true),
+                // BE-LISTE : la piece a valider ouvre la meme liste, filtree
+                // sur l'etape ou elle se valide, pas une autre page.
+                onFiltrerPiece: _filtrerPiece,
+                repliee: ref.watch(attentesRepliesProvider),
+                onBasculer: () => ref
+                    .read(attentesRepliesProvider.notifier)
+                    .choisir(valeur: !ref.read(attentesRepliesProvider)),
               ),
               Ecart.vXxl,
             ],
@@ -1137,6 +1233,69 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             construire: (PageCandidatures page) => _contenu(page, gestes),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// BE-LISTE : le declencheur du menu « Outils » : une icone et le mot, sur
+/// une cible de 48.
+class _DeclencheurOutils extends StatelessWidget {
+  const _DeclencheurOutils({required this.etat});
+
+  final EtatPression etat;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return ConstrainedBox(
+      constraints: BoxConstraints(
+        minHeight: AppMetriques.of(context).cibleTactile,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          Icon(
+            AppIcons.reglages.repos,
+            color: palette.inkStrong.asIconTheme(size: AppSpacing.xl).color,
+          ),
+          Ecart.hSm,
+          Flexible(
+            child: TexteSansCoupure(
+              t.recrutement.file.outils,
+              style: palette.inkStrong.applyTo(
+                Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// BE-LISTE : « Lecture des deux cotes » sur une ligne ; la phrase se deplie.
+class _LectureDeuxCotes extends StatelessWidget {
+  const _LectureDeuxCotes({required this.depliee, required this.onBasculer});
+
+  final bool depliee;
+  final VoidCallback onBasculer;
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.admin.candidatures.exception;
+    return BandeauAttention(
+      key: const ValueKey<String>('candidatures-exception'),
+      titre: r.titre,
+      message: depliee ? r.message : '',
+      action: LienFleche(
+        key: const ValueKey<String>('candidatures-exception-bascule'),
+        libelle: depliee
+            ? t.recrutement.file.replier
+            : t.recrutement.file.afficher,
+        fleche: false,
+        legende: true,
+        onPress: onBasculer,
       ),
     );
   }

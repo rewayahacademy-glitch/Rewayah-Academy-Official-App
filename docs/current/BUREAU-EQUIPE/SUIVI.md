@@ -11,7 +11,7 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | BE-0b serveur | L'historique renvoie le détail et le nom du responsable | `CAHIER-BE-S1.md` | en cours (agent BE-S1, `claude/be-s1-lectures`) |
 | BE-1a | Ordre des dossiers (précédent, suivant), filtres sur les réponses, « pièce en attente », « mes dossiers » | `CAHIER-BE-S1.md` | en cours (agent BE-S1, `claude/be-s1-lectures`) |
 | BE-0b écran + BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo qui s'ouvre au toucher, pièce sur place, barre de décision fixe | `CAHIER-BE-DOSSIER.md` | en cours (agent BE-DOSSIER, `claude/be-dossier-trois-etages`) |
-| BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | en cours (agent BE-LISTE, `claude/be-liste-retours`) |
+| BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | PR ouverte (agent BE-LISTE, `claude/be-liste-retours`, numéro à la fin du bilan) |
 | BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | à écrire quand BE-1a et BE-1d sont dans main | pas commencé |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |

@@ -67,6 +67,9 @@ class CarteAttentes extends StatelessWidget {
     required this.onFiltrer,
     required this.maintenant,
     this.onFiltrerPause,
+    this.onFiltrerPiece,
+    this.repliee = false,
+    this.onBasculer,
     super.key,
   });
 
@@ -78,6 +81,17 @@ class CarteAttentes extends StatelessWidget {
 
   /// Pose le filtre « en pause », ou `null` pour ne pas l'offrir.
   final VoidCallback? onFiltrerPause;
+
+  /// BE-LISTE : pose le filtre de la liste qui montre ou la piece se valide
+  /// (l'etape de verification, en cours), ou `null` : la ligne ne se touche
+  /// pas.
+  final VoidCallback? onFiltrerPiece;
+
+  /// BE-LISTE : la carte est repliee (son titre seul reste).
+  final bool repliee;
+
+  /// BE-LISTE : replie ou deplie la carte, ou `null` : elle ne se replie pas.
+  final VoidCallback? onBasculer;
 
   /// L'instant de reference des durees (injecte pour les tests).
   final DateTime maintenant;
@@ -134,6 +148,7 @@ class CarteAttentes extends StatelessWidget {
             depuisQuand(attentes.pieceAValider.plusAncien, maintenant),
             a.pieceAide,
           ]),
+          onPress: onFiltrerPiece,
         ),
       ?ligneEtat(
         EtatCandidature.entretienAPlanifier,
@@ -172,32 +187,45 @@ class CarteAttentes extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Semantics(header: true, child: SectionHeader(titre: a.titre)),
-        Ecart.vXs,
-        TexteSansCoupure(
-          attentes.deuxCotes ? '${a.aide} ${a.deuxCotes}' : a.aide,
-          style: attenue,
-        ),
-        Ecart.vMd,
-        if (cartes.isEmpty)
-          AppCard(
-            child: TexteSansCoupure(a.rien, key: cleRien, style: attenue),
-          )
-        else
-          LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints c) {
-              if (c.maxWidth < 840) {
-                return PileCartes(children: cartes);
-              }
-              return PileCartes(
-                axe: Axis.horizontal,
-                alignement: CrossAxisAlignment.start,
-                children: <Widget>[
-                  for (final Widget carte in cartes) Expanded(child: carte),
-                ],
-              );
-            },
+        Semantics(
+          header: true,
+          child: SectionHeader(
+            titre: a.titre,
+            libelleAction: onBasculer == null
+                ? null
+                : (repliee
+                      ? t.recrutement.file.afficher
+                      : t.recrutement.file.replier),
+            onAction: onBasculer,
           ),
+        ),
+        if (!repliee) ...<Widget>[
+          Ecart.vXs,
+          TexteSansCoupure(
+            attentes.deuxCotes ? '${a.aide} ${a.deuxCotes}' : a.aide,
+            style: attenue,
+          ),
+          Ecart.vMd,
+          if (cartes.isEmpty)
+            AppCard(
+              child: TexteSansCoupure(a.rien, key: cleRien, style: attenue),
+            )
+          else
+            LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints c) {
+                if (c.maxWidth < 840) {
+                  return PileCartes(children: cartes);
+                }
+                return PileCartes(
+                  axe: Axis.horizontal,
+                  alignement: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    for (final Widget carte in cartes) Expanded(child: carte),
+                  ],
+                );
+              },
+            ),
+        ],
       ],
     );
   }

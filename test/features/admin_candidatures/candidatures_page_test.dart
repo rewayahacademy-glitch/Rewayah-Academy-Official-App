@@ -358,6 +358,10 @@ void main() {
       );
       expect(_cle('candidatures-exception'), findsOneWidget);
       expect(find.text(t.admin.candidatures.exception.titre), findsOneWidget);
+      // BE-LISTE : une ligne ; la phrase se deplie.
+      expect(find.text(t.admin.candidatures.exception.message), findsNothing);
+      await tester.tap(_cle('candidatures-exception-bascule'));
+      await laisser(tester);
       expect(find.text(t.admin.candidatures.exception.message), findsOneWidget);
     });
 
@@ -993,7 +997,10 @@ void main() {
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
       );
-      expect(_cle('candidatures-invitations'), findsNothing);
+      expect(
+        await entreeOutilsPresente(tester, t.recrutement.invitations.onglet),
+        isFalse,
+      );
     });
 
     testWidgets('avec un port : le lien mene a la page des invitations', (
@@ -1004,9 +1011,7 @@ void main() {
         port: FauxCandidaturesDirection(lignes: _lignes()),
         invitations: true,
       );
-      await tester.ensureVisible(_cle('candidatures-invitations'));
-      await tester.tap(_cle('candidatures-invitations'));
-      await laisser(tester);
+      await toucherOutil(tester, t.recrutement.invitations.onglet);
       expect(find.text('temoin:/admin/personnes/invitations'), findsOneWidget);
     });
 
@@ -1016,17 +1021,20 @@ void main() {
         port: FauxCandidaturesDirection(lignes: _lignes()),
         comptable: true,
       );
-      expect(_cle('candidatures-invitations'), findsOneWidget);
+      expect(
+        await entreeOutilsPresente(tester, t.recrutement.invitations.onglet),
+        isTrue,
+      );
     });
 
-    testWidgets('le lien est en tete, avant les alertes', (tester) async {
+    testWidgets('le menu est en tete, avant les alertes', (tester) async {
       await monterCandidatures(
         tester,
         port: FauxCandidaturesDirection(lignes: _lignes()),
         invitations: true,
       );
       expect(
-        tester.getTopLeft(_cle('candidatures-invitations')).dy,
+        tester.getTopLeft(_cle('candidatures-outils')).dy,
         lessThan(tester.getTopLeft(find.byType(CarteAlertes)).dy),
       );
     });
@@ -1041,13 +1049,19 @@ void main() {
           invitations: true,
         );
         expect(_cle('candidatures-vide'), findsOneWidget);
-        expect(_cle('candidatures-invitations'), findsOneWidget);
+        expect(
+          await entreeOutilsPresente(tester, t.recrutement.invitations.onglet),
+          isTrue,
+        );
       });
 
       testWidgets('serveur pas encore branche (port absent)', (tester) async {
         await monterCandidatures(tester, invitations: true);
         expect(_cle('candidatures-indisponible'), findsOneWidget);
-        expect(_cle('candidatures-invitations'), findsOneWidget);
+        expect(
+          await entreeOutilsPresente(tester, t.recrutement.invitations.onglet),
+          isTrue,
+        );
       });
 
       testWidgets('capacite indisponible', (tester) async {
@@ -1056,7 +1070,10 @@ void main() {
           port: const CandidaturesDirectionIndisponible(),
           invitations: true,
         );
-        expect(_cle('candidatures-invitations'), findsOneWidget);
+        expect(
+          await entreeOutilsPresente(tester, t.recrutement.invitations.onglet),
+          isTrue,
+        );
       });
 
       testWidgets('lecture en erreur', (tester) async {
@@ -1069,7 +1086,10 @@ void main() {
           invitations: true,
         );
         expect(_cle('candidatures-erreur'), findsOneWidget);
-        expect(_cle('candidatures-invitations'), findsOneWidget);
+        expect(
+          await entreeOutilsPresente(tester, t.recrutement.invitations.onglet),
+          isTrue,
+        );
       });
 
       testWidgets('acces refuse', (tester) async {
@@ -1082,7 +1102,10 @@ void main() {
           invitations: true,
         );
         expect(_cle('candidatures-acces-refuse'), findsOneWidget);
-        expect(_cle('candidatures-invitations'), findsOneWidget);
+        expect(
+          await entreeOutilsPresente(tester, t.recrutement.invitations.onglet),
+          isTrue,
+        );
       });
     });
   });
