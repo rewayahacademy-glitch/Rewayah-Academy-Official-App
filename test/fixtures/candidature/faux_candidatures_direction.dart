@@ -197,6 +197,18 @@ DetailCandidature detailTest({
   autresCompetences: autresCompetences,
 );
 
+/// [capacitesGestes] avec en plus le geste « Debloquer le versement » que le
+/// serveur ouvre (DEBLOQUER-VERSEMENT-ECRAN) : le fixture commun ne l'ouvre pas,
+/// pour que les ecrans deja testes gardent leur menu.
+final CapacitesCandidatures capacitesAvecDeblocage = CapacitesCandidatures(
+  peutLire: capacitesGestes.peutLire,
+  peutVoirContact: capacitesGestes.peutVoirContact,
+  genreLecteurConnu: capacitesGestes.genreLecteurConnu,
+  peutDecider: capacitesGestes.peutDecider,
+  gestes: <String, bool>{...capacitesGestes.gestes, 'debloquerVersement': true},
+  listes: capacitesGestes.listes,
+);
+
 /// Les capacites d'une direction qui decide et dont le serveur ouvre les
 /// gestes de CAND-L2A2, avec leurs listes fermees.
 const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
