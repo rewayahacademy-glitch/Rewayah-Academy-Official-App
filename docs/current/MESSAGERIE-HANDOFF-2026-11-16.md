@@ -1,4 +1,4 @@
-# Passation du pilote de la messagerie (16/11/2026, 19 h UTC)
+# Messagerie : passation du pilote (16/11/2026, 19 h UTC)
 
 Demande du directeur : « prépare un handoff, pour te retirer ». Ce document dit au pilote suivant
 ce qui est en cours, ce qui reste et comment travailler sans refaire mes erreurs. La carte du
@@ -24,6 +24,53 @@ chantier est `docs/current/MESSAGERIE-ETAT-ET-PLAN-2026-11-16.md`. Le tableau de
   directeur.
 - **`supabase/tests/scenarios_image_candidat.sql` n'est pas dans `.github/workflows/ci.yml`.**
   Le dossier `.github/` est interdit aux agents. Il faut le demander au directeur.
+
+## 1 bis. En production, et ce que le directeur a vu
+
+| Livré (dans main, déployé) | Vu par le directeur en production ? |
+| :--- | :--- |
+| #500 pays du versement modifiable | oui |
+| #501 à #512 refonte de la messagerie (plein écran, loupe unique, cloche, bulles, finitions) | oui, en partie ; il conteste le gris venu de #512 |
+| #519, #520 images dans les bulles, bibliothèques natives | partiellement |
+| Règle CORS du stockage des images (posée par le directeur dans Cloudflare) | oui : envoi confirmé en base |
+| #530 une seule bulle, place de l'échec, « Photo » dans la liste | oui (envoi confirmé, nouvelle version) |
+| #533 avis contenant de l'arabe, déploiement débloqué | oui (déploiement vert) |
+| #538 photo affichée même sans CORS sur la lecture | **non** |
+| #540 conversation du dossier compacte, phrase d'aide et rectangle retirés partout | **non** ; il a vu deux régressions : le gris et la croix disparue |
+| #546 photo depuis un compte candidat, lien lisible dans sa bulle | **non** |
+
+## 1 ter. Ce qui manque (défauts connus non corrigés)
+
+- **Le gris de la messagerie** (depuis #512) : correction dans #551, non fusionnée.
+- **La croix du volet de conversation sur ordinateur** (régression de #540) : dans #551.
+- **Le champ de saisie qui devient un cercle** : dans #551.
+- **Le plantage à l'ouverture d'une conversation depuis un profil** : non reproduit.
+- **Le canal du Studio** : il garde l'ancienne présentation.
+- **Le scénario `scenarios_image_candidat.sql` hors de `ci.yml`**.
+- **Le lecteur vocal dans sa propre bulle** : contraste non mesuré, à revoir à l'ouverture des
+  vocaux.
+- **« Enregistrer l'image »** : elle exige encore la règle CORS sur le `GET`. La vérifier dans
+  Cloudflare.
+- **Un test local qui échoue** (`images_messagerie_test`, aperçu en grand, glisser vers le bas) :
+  il échoue chez l'agent, en local, et passe en CI. Cause inconnue.
+
+## 1 quater. Ce qui n'est pas encore lancé
+
+- **NOUVEAU-FILS** : badge « Nouveau » sur les conversations, composant déjà dans main
+  (`lib/core/widgets/badge_nouveau.dart`), « Nouveau · aucun message », filtre « Nouveaux ».
+  Règle côté serveur : moins de 7 jours, et aucune ligne `com_lectures` d'un membre de l'équipe.
+- **NOUVELLE-VERSION** : bandeau « Nouvelle version disponible ».
+- **Le canal du Studio dans la nouvelle présentation** : il faut d'abord ajouter un emplacement
+  d'en-tête au fil plein écran.
+- **`scenarios_fac_f_relances_suspension.sql`**, à rendre indépendant de l'heure.
+
+## 1 quinquies. Décisions qui attendent le directeur
+
+1. Faut-il un fin contour sur les bulles reçues si, après #551, elles se fondent dans le fond
+   clair ? Contraste mesuré : 1,14:1.
+2. Le canal du Studio : faut-il le refaire, au risque de toucher au mode focus ?
+3. L'ajout du scénario d'images au fichier `ci.yml`, qui se trouve dans `.github/`, interdit aux
+   agents.
 
 ## 2. Agent en cours
 
@@ -53,8 +100,8 @@ Session `session_0163KjrvV6fGAftwzWig2qU9` (Sonnet), qui a fait #530, #538, #540
 - **Plus tard, sans urgence :** `scenarios_fac_f_relances_suspension.sql` dépend de l'heure. Il
   échoue le lundi entre 7 et 8 h UTC.
 
-Le contrôle programmé « Contrôler COULEURS-MESSAGERIE » (`trig_01BGKXio9FNSJwwxm8tsor84`) se
-déclenche dans la session du pilote sortant. **Le pilote suivant le désactive et crée le sien.**
+Le contrôle programmé « Contrôler COULEURS-MESSAGERIE » (`trig_01BGKXio9FNSJwwxm8tsor84`) est
+désactivé. **Le pilote suivant crée ses propres contrôles.**
 
 ## 3. Base de données : ce qui est installé aujourd'hui
 
@@ -74,6 +121,14 @@ Toutes ces migrations sont installées par le pilote, puis vérifiées en produc
 
 Le Bureau a changé de pilote. Pour se coordonner, il faut écrire à
 `session_0163KjrudJVgfH6zMjadp2bb`.
+
+## 3 bis. Règles de travail
+
+- La plage de migrations de la messagerie est `202611295xxxxx` et au-delà. Toujours la vérifier
+  sur `origin/main`.
+- Après chaque fusion de main dans une branche : lancer `dart run slang` deux fois.
+- La matrice `docs/current/MESSAGERIE-MATRICE.md` et la garde `tool/verifier_conversations.dart` :
+  toute entrée de conversation y a sa ligne.
 
 ## 4. Règles apprises aujourd'hui (le détail est dans la carte, §4)
 

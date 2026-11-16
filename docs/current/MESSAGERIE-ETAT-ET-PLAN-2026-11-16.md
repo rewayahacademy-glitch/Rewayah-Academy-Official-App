@@ -5,6 +5,8 @@ Demande du directeur, 16/11/2026, transmise par la session du recrutement :
 qu'il consigne lui aussi ses erreurs, ses oublis, ses solutions qui ont marché, et ce qui peut
 servir aux lots élèves après ; engager la checklist pour que je suive avec lui ».
 
+**Passation du 16/11 au soir : lire d'abord `MESSAGERIE-HANDOFF-2026-11-16.md`, qui prévaut sur les statuts ci-dessous.**
+
 Ce document est **la carte unique** du chantier du pilote de la messagerie. Toute nouvelle demande
 du directeur sur ce chantier y prend sa ligne **le jour même** (§5). La checklist vivante est la
 liste de tâches de la session du pilote : chaque ligne y passe de « à faire » à « en cours » puis
