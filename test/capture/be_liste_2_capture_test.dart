@@ -153,7 +153,12 @@ void main() {
         await tester.sendKeyEvent(LogicalKeyboardKey.escape);
         await stabiliser(tester);
         await tester.tap(
-          find.byKey(const ValueKey<String>('candidatures-file-piece')),
+          find.byKey(const ValueKey<String>('candidatures-file-menu')),
+        );
+        await stabiliser(tester);
+        debugPrint('PNG ${await capturer(tester, '5_menu_file_${g.$1}')}');
+        await tester.tap(
+          find.textContaining('${t.recrutement.file.pieceCourt} · ').last,
         );
         await stabiliser(tester);
         final Uri u = GoRouter.of(tester.element(find.byType(CandidaturesPage)))

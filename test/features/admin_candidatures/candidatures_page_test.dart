@@ -1066,8 +1066,9 @@ void main() {
       final r = t.admin.candidatures;
       expect(r.titre, isNot('Candidatures'));
       expect(find.text(r.titre), findsWidgets);
-      // BE-LISTE-2 : « Toutes » et la ligne du nombre se disent en arabe.
-      expect(find.text(r.filtres.toutes), findsWidgets);
+      // BE-LISTE-2 : le menu « File » (« Toutes · n ») et la ligne du nombre
+      // se disent en arabe.
+      expect(find.textContaining(r.filtres.toutes), findsWidgets);
       expect(_cle('candidatures-total'), findsOneWidget);
       expect(find.textContaining('Candidatures'), findsNothing);
       expect(find.textContaining('Rechercher'), findsNothing);

@@ -1,20 +1,13 @@
-BE-LISTE-2 : mesures (capture de test, polices du depot, 6 files)
-
-Apres decision du coordinateur (16/11) : libelles courts sur les puces, puces compactes
-(retrait 12, hauteur visible 36, zone de toucher 48 qui deborde de 6 sans rien peindre,
-coche reservee seulement sur la puce choisie), champ de recherche compact de 48.
-
-MESURE fr_360 : haut de la premiere ligne a 336
-MESURE fr_673 : haut de la premiere ligne a 292
-MESURE fr_884 : haut de la premiere ligne a 248
-MESURE fr_1366 : haut de la premiere ligne a 296
-MESURE ar_360 : haut de la premiere ligne a 337
-MESURE ar_1366 : haut de la premiere ligne a 282
-
+BE-LISTE-2 : mesures apres la revision du 16/11 (les files = un menu deroulant « File »)
+MESURE fr_360 : haut de la premiere ligne a 260.0
+MESURE fr_673 : haut de la premiere ligne a 260.0
+MESURE fr_884 : haut de la premiere ligne a 260.0
+MESURE fr_1366 : haut de la premiere ligne a 308.0
+MESURE ar_360 : haut de la premiere ligne a 260.0
+MESURE ar_1366 : haut de la premiere ligne a 293.0
 Cible du cahier : haut de la premiere candidature sous 300 pt a 360 x 800.
-NON ATTEINTE a 360 : 336 pt (FR), 337 pt (AR). Atteinte a 673, 884 et 1366 (AR).
-Historique : 572 pt avant la decision (une puce par ligne), 344 pt avec libelles courts seuls.
-
-Limite de la zone de toucher : elle est coupee au bord de la rangee (premiere ligne : 6 pt
-perdus en haut) et deux lignes voisines se partagent 4 pt (ecart 8 < 2 x 6).
-La rangee nombre / Selectionner reste sur une seule ligne a 360.
+ATTEINTE a 360 : 260 pt (FR et AR). 673 : 260, 884 : 260, 1366 : 308 (FR) / 293 (AR) : au-dessus de 300 sur grand ecran, hors cible (la cible est a 360).
+Historique : 572 pt (puces, une par ligne), 344 puis 336 pt (puces compactes).
+Au telephone : rangee 1 titre-selecteur + Outils ; rangee 2 recherche (48) + Filtres + Trier ; rangee 3 menu File (pleine largeur). La phrase « deux rangees au plus » n'est pas tenue a la lettre : le menu File occupe sa propre rangee car recherche + menu + deux icones ne tiennent pas sur 328 pt.
+Alertes non filtrables (retard, bloquees, confirmees) : pastilles sous le menu, seulement si non nulles (absentes de ces captures).
+Phrases courtes des files : dans la feuille Filtres, pas dans le menu.

@@ -566,62 +566,87 @@ void main() {
       return port;
     }
 
-    FilterPill puce(WidgetTester tester, String cle) =>
-        tester.widget<FilterPill>(_cle('candidatures-file-$cle'));
+    final Finder menuFile = _cle('candidatures-file-menu');
 
-    testWidgets('les files viennent des attentes, chacune avec son nombre', (
+    /// Le texte du declencheur : la file choisie et son nombre.
+    String texteMenu(WidgetTester tester) => tester
+        .widgetList<Text>(
+          find.descendant(of: menuFile, matching: find.byType(Text)),
+        )
+        .map((Text x) => x.data ?? '')
+        .join('|');
+
+    Future<void> ouvrirMenuFile(WidgetTester tester) async {
+      await tester.tap(menuFile);
+      await tester.pumpAndSettle();
+    }
+
+    Future<void> choisirFile(WidgetTester tester, String libelle) async {
+      await ouvrirMenuFile(tester);
+      await tester.tap(find.textContaining('$libelle · ').last);
+      await laisser(tester);
+    }
+
+    final e = t.admin.candidatures.etats;
+
+    testWidgets('un seul menu « File » : la file choisie et son nombre', (
       tester,
     ) async {
       await monter(tester);
-      expect(puce(tester, 'etat-en_examen').compteur, 4);
-      expect(puce(tester, 'piece').compteur, 2);
-      expect(puce(tester, 'etat-entretien_a_planifier').compteur, 2);
-      expect(puce(tester, 'etat-a_completer').compteur, 3);
-      expect(puce(tester, 'pause').compteur, 1);
-      // Un nombre a zero : pas de puce ; « Toutes » reste, avec le total lu
-      // sur la liste sans filtre.
-      expect(_cle('candidatures-file-etat-decision_en_attente'), findsNothing);
-      expect(puce(tester, 'toutes').compteur, 3);
-      expect(puce(tester, 'toutes').retenue, isTrue);
+      // Une seule commande pour les files, pas une rangee de puces.
+      expect(menuFile, findsOneWidget);
+      expect(find.byType(FilterPill), findsNothing);
+      expect(
+        texteMenu(tester),
+        contains('${t.admin.candidatures.filtres.toutes} · 3'),
+      );
+      // Les files avec leur nombre ; un nombre a zero : pas d'entree.
+      await ouvrirMenuFile(tester);
+      for (final String l in <String>[
+        e.enExamen,
+        t.recrutement.file.pieceCourt,
+        e.entretienAPlanifier,
+        e.aCompleter,
+        e.enPause,
+        t.admin.candidatures.filtres.toutes,
+      ]) {
+        expect(find.textContaining(l), findsWidgets, reason: l);
+      }
+      expect(find.textContaining(e.decisionEnAttente), findsNothing);
       // Les deux anciennes cartes ont disparu.
       expect(find.text(t.admin.candidatures.attentes.titre), findsNothing);
       expect(find.text(t.admin.candidatures.aTraiter), findsNothing);
     });
 
-    testWidgets(
-      'une file touchee est la seule choisie ; « Toutes » la relache',
-      (tester) async {
-        final FauxCandidaturesDirection port = await monter(tester);
-        await tester.tap(_cle('candidatures-file-etat-a_completer'));
-        await laisser(tester);
-        final FiltreCandidatures f = port.appels.last.filtre;
-        expect(f.etat, EtatCandidature.aCompleter);
-        expect(f.issue, IssueCandidature.enCours);
-        expect(f.enPause, isFalse);
-        expect(puce(tester, 'etat-a_completer').retenue, isTrue);
-        expect(puce(tester, 'etat-en_examen').retenue, isFalse);
-        expect(puce(tester, 'toutes').retenue, isFalse);
-        // Une autre file remplace la premiere.
-        await tester.tap(_cle('candidatures-file-etat-en_examen'));
-        await laisser(tester);
-        expect(puce(tester, 'etat-en_examen').retenue, isTrue);
-        expect(puce(tester, 'etat-a_completer').retenue, isFalse);
-        // « Toutes » : plus de file ; son nombre reste celui de la portee.
-        await tester.tap(_cle('candidatures-file-toutes'));
-        await laisser(tester);
-        expect(port.appels.last.filtre.etat, isNull);
-        expect(port.appels.last.filtre.issue, isNull);
-        expect(puce(tester, 'toutes').retenue, isTrue);
-        expect(puce(tester, 'toutes').compteur, 3);
-      },
-    );
+    testWidgets('une file choisie est la seule ; « Toutes » la relache', (
+      tester,
+    ) async {
+      final FauxCandidaturesDirection port = await monter(tester);
+      await choisirFile(tester, e.aCompleter);
+      final FiltreCandidatures f = port.appels.last.filtre;
+      expect(f.etat, EtatCandidature.aCompleter);
+      expect(f.issue, IssueCandidature.enCours);
+      expect(f.enPause, isFalse);
+      expect(texteMenu(tester), contains('${e.aCompleter} · 3'));
+      // Une autre file remplace la premiere.
+      await choisirFile(tester, e.enExamen);
+      expect(port.appels.last.filtre.etat, EtatCandidature.enExamen);
+      expect(texteMenu(tester), contains('${e.enExamen} · 4'));
+      // « Toutes » : plus de file ; son nombre reste celui de la portee.
+      await choisirFile(tester, t.admin.candidatures.filtres.toutes);
+      expect(port.appels.last.filtre.etat, isNull);
+      expect(port.appels.last.filtre.issue, isNull);
+      expect(
+        texteMenu(tester),
+        contains('${t.admin.candidatures.filtres.toutes} · 3'),
+      );
+    });
 
     testWidgets('« Piece a valider » filtre la meme liste sur pieceEnAttente', (
       tester,
     ) async {
       final FauxCandidaturesDirection port = await monter(tester);
-      await tester.tap(_cle('candidatures-file-piece'));
-      await laisser(tester);
+      await choisirFile(tester, t.recrutement.file.pieceCourt);
       expect(find.byType(CandidaturesPage), findsOneWidget);
       final FiltreCandidatures f = port.appels.last.filtre;
       expect(f.pieceEnAttente, isTrue);
@@ -633,17 +658,11 @@ void main() {
         'pause': 'non',
         'piece': 'oui',
       });
-      expect(puce(tester, 'piece').retenue, isTrue);
+      expect(
+        texteMenu(tester),
+        contains('${t.recrutement.file.pieceCourt} · 2'),
+      );
     });
-
-    testWidgets(
-      '« Entretien a planifier » dit par une icone qu\'aucun creneau n\'est ouvert',
-      (tester) async {
-        await monter(tester);
-        expect(puce(tester, 'etat-entretien_a_planifier').apercu, isNotNull);
-        expect(puce(tester, 'etat-en_examen').apercu, isNull);
-      },
-    );
 
     testWidgets(
       'les alertes que le serveur ne sait pas filtrer : puces a plus de zero, jamais touchables',
@@ -697,8 +716,7 @@ void main() {
           findsOneWidget,
         );
         // Une file choisie n'est pas un filtre de plus.
-        await tester.tap(_cle('candidatures-file-etat-en_examen'));
-        await laisser(tester);
+        await choisirFile(tester, e.enExamen);
         expect(
           find.bySemanticsLabel(t.recrutement.file.filtresPoses(n: 1)),
           findsOneWidget,

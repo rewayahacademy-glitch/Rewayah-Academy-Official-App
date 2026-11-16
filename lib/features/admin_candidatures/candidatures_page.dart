@@ -69,13 +69,12 @@ import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
+import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pile_cartes.dart';
-import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
@@ -604,15 +603,12 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         MenuFiltre<String>(
           key: const ValueKey<String>('candidatures-file-menu'),
           libelle: texte,
-          valeur: courante == null || courante.cle == 'toutes'
-              ? null
-              : courante.cle,
+          valeur: courante?.cle,
           entrees: <EntreeFiltre<String>>[
             for (final FileCandidatures x in choix)
               EntreeFiltre<String>(
                 valeur: x.cle,
-                libelle: x.libelle,
-                compteur: x.nombre,
+                libelle: '${x.libelle} · ${x.nombre ?? ''}'.trim(),
               ),
           ],
           onChoix: (String? cle) {
