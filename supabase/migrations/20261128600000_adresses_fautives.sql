@@ -50,8 +50,7 @@ DECLARE
   v_neuf text;
   v_corrigees integer := 0;
   v_ignorees integer := 0;
-BEGIN
-  v_hash := CASE WHEN v_reglage IS NULL THEN v_defaut
+BEGIN v_hash := CASE WHEN v_reglage IS NULL THEN v_defaut
                  ELSE pg_catalog.string_to_array(pg_catalog.regexp_replace(v_reglage, '\s', '', 'g'), ',') END;
   FOR r IN
     SELECT f.id, f.courriel, f.courriel_brut, f.genre
