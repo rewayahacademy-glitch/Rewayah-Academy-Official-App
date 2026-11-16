@@ -10,13 +10,9 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | BE-0a | Message en double | aucun : corrigé par le pilote hors de ce chantier. Cause prouvée par lui : la liste des messages présents à l'ouverture était lue trop tard dans une conversation vide (pas le rapprochement par texte, que la stratégie supposait) | dans main (#503) |
 | BE-0b serveur | L'historique renvoie le détail et le nom du responsable | `CAHIER-BE-S1.md` | dans main (#505) ; migration installée en production le 16/11 par le coordinateur, sur ordre du directeur ; à prouver par le directeur |
 | BE-1a | Ordre des dossiers (précédent, suivant), filtres sur les réponses, « pièce en attente », « mes dossiers » | `CAHIER-BE-S1.md` | dans main (#505) ; migration installée en production le 16/11 par le coordinateur, sur ordre du directeur ; à prouver par le directeur |
-| BE-0b écran + BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo qui s'ouvre au toucher, pièce sur place, barre de décision fixe | `CAHIER-BE-DOSSIER.md` | en cours (agent BE-DOSSIER, `claude/be-dossier-trois-etages`) |
-<<<<<<< HEAD
-| BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | en cours (agent BE-LISTE, `claude/be-liste-retours`) |
+| BE-0b écran + BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo et pièce qui s'ouvrent au toucher, rien de fixe (arbitrage du 16/11), résumé en tableau | `CAHIER-BE-DOSSIER.md` | en cours (agent BE-DOSSIER, `claude/be-dossier-trois-etages`) |
+| BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | dans main (#506) |
 | BE-VERSEMENT | Le moyen de versement se valide seul quand le pays est pris en charge ; la direction décide une fois par pays, pas par candidat (directeur, 16/11) | `CAHIER-BE-VERSEMENT.md` | en cours (agent BE-S1, `claude/be-versement`) |
-=======
-| BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | PR ouverte (#506, agent BE-LISTE, `claude/be-liste-retours`) |
->>>>>>> origin/main
 | BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | à écrire quand BE-1a et BE-1d sont dans main | pas commencé |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |
