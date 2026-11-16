@@ -22,7 +22,8 @@ import 'package:rewayah_academy/core/candidature/port_autres_competences.dart';
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/features/admin_candidature/bloc_autres_competences.dart';
-import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart';
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
+import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/candidature/faux_autres_competences.dart';
@@ -336,7 +337,13 @@ void main() {
       await _monter(tester, _port(reponses: _reponses()));
       expect(
         tester.getTopLeft(_cle('candidature-autres-competences')).dy,
-        greaterThan(tester.getTopLeft(find.byKey(BlocReponses.cle)).dy),
+        greaterThan(
+          tester
+              .getTopLeft(
+                find.byKey(RubriqueDossier.cleDe(RubriqueDossierCode.publics)),
+              )
+              .dy,
+        ),
       );
       // Lecture seule : ni bouton ni champ dans le bloc.
       expect(

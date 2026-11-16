@@ -34,7 +34,9 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
+import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/entretiens_du_jour.dart';
+import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 import 'package:rewayah_academy/features/candidature/carte_entretien_proche.dart';
 
 import '../fixtures/candidature/faux_candidatures_direction.dart';
@@ -182,6 +184,25 @@ Future<void> _enHaut(WidgetTester tester) async {
 
 const String _lot = 'salle2-entretien';
 
+/// Ouvre la rubrique « Piece d'identite » du dossier en trois etages
+/// (BE-DOSSIER), la met en haut de la fenetre, puis capture : la piece
+/// ouverte et decidee sur place.
+Future<void> _photoPiece(WidgetTester tester, String nom) async {
+  const RubriqueDossierCode c = RubriqueDossierCode.piece;
+  if (find.byKey(RubriqueDossier.cleContenu(c)).evaluate().isEmpty) {
+    final Finder entete = find.byKey(RubriqueDossier.cleEntete(c));
+    await tester.ensureVisible(entete);
+    await tester.tap(entete);
+    await stabiliser(tester);
+  }
+  await Scrollable.ensureVisible(
+    tester.element(find.byKey(RubriqueDossier.cleDe(c))),
+    alignment: 0.02,
+  );
+  await stabiliser(tester);
+  debugPrint('PNG ${await capturer(tester, '$_lot/$nom')}');
+}
+
 Future<void> _photo(WidgetTester tester, String nom) async {
   await _enHaut(tester);
   debugPrint('PNG ${await capturer(tester, '$_lot/$nom')}');
@@ -275,6 +296,7 @@ void main() {
             findsOneWidget,
           );
           await _photo(tester, 'fiche_decision_${vue.$2}');
+          await _photoPiece(tester, 'fiche_piece_${vue.$2}');
         },
       );
 
@@ -302,6 +324,7 @@ void main() {
           findsOneWidget,
         );
         await _photo(tester, 'fiche_accueillir_${vue.$2}');
+        await _photoPiece(tester, 'fiche_accueillir_piece_${vue.$2}');
       });
     }
 
