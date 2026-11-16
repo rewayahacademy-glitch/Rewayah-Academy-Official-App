@@ -27,11 +27,15 @@ import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/dossier/service_validation.dart';
+import '../../core/fichiers/ouvrir_onglet.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/bouton_outil.dart';
 import '../../core/widgets/etat_systeme.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pressable.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_dossiers/visionneuse_piece.dart' show imagePieceProvider;
@@ -70,8 +74,17 @@ class PieceVignette extends ConsumerWidget {
   /// La clé de la phrase d'échec de l'aperçu.
   static const Key cleEchec = ValueKey<String>('piece-vignette-echec');
 
+  /// La clé de l'icône cliquable qui dit « Image » ou « PDF ».
+  static const Key cleIcone = ValueKey<String>('piece-vignette-icone');
+
   /// La hauteur de la vignette.
   static const double hauteur = 120;
+
+  /// Vrai quand l'adresse signée est celle d'un PDF (l'extension de la clé de
+  /// l'objet figure dans son chemin). Un autre format est tenu pour une image :
+  /// s'il ne s'affiche pas, la phrase « Format non lisible » le dit.
+  static bool estPdf(String adresse) =>
+      Uri.tryParse(adresse)?.path.toLowerCase().endsWith('.pdf') ?? false;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -86,39 +99,75 @@ class PieceVignette extends ConsumerWidget {
     final Widget apercu;
     if (adresse.hasValue) {
       final String url = adresse.requireValue;
-      apercu = Align(
-        alignment: AlignmentDirectional.centerStart,
-        child: Pressable(
-          key: cleImage,
-          libelleSemantique: r.pieceAgrandir,
-          onPress: () => unawaited(
-            ouvrirPhotoEnGrand(
-              context,
-              ref,
-              url: url,
-              nom: r.pieceTitre(nom: nom),
-            ),
-          ),
-          child: ClipRRect(
-            borderRadius: AppRadius.arrondiSm,
-            child: Image(
-              image: ref.read(imagePieceProvider)(Uri.parse(url)),
-              height: hauteur,
-              fit: BoxFit.contain,
-              // Un format que l'écran n'affiche pas (HEIC, PDF) : la phrase le
-              // dit, et la pièce se redemande en un geste.
-              errorBuilder: (BuildContext c, Object e, StackTrace? s) =>
-                  TexteSansCoupure(
-                    r.pieceIllisible,
-                    key: cleEchec,
-                    style: palette.inkAlert.applyTo(
-                      Theme.of(c).textTheme.bodyMedium ?? const TextStyle(),
+      final bool pdf = estPdf(url);
+      // Une icône qui dit ce que c'est (« Image », « PDF »), cliquable ; le
+      // toucher de l'icône ou de la vignette ouvre la même chose.
+      void ouvrir() => unawaited(
+        pdf
+            ? ref.read(ouvreurOngletProvider)(Uri.parse(url))
+            : ouvrirPhotoEnGrand(
+                context,
+                ref,
+                url: url,
+                nom: r.pieceTitre(nom: nom),
+              ),
+      );
+      apercu = pdf
+          ? Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: BoutonOutil(
+                key: cleIcone,
+                icone: AppIcons.fichierPdf,
+                libelle: r.piecePdf,
+                avecLibelle: true,
+                forme: FormeBoutonOutil.tuile,
+                onPress: ouvrir,
+              ),
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Align(
+                  alignment: AlignmentDirectional.centerStart,
+                  child: Pressable(
+                    key: cleImage,
+                    libelleSemantique: r.pieceAgrandir,
+                    onPress: ouvrir,
+                    child: ClipRRect(
+                      borderRadius: AppRadius.arrondiSm,
+                      child: Image(
+                        image: ref.read(imagePieceProvider)(Uri.parse(url)),
+                        height: hauteur,
+                        fit: BoxFit.contain,
+                        // Un format que l'écran n'affiche pas (HEIC) : la
+                        // phrase le dit, et la pièce se redemande en un geste.
+                        errorBuilder:
+                            (BuildContext c, Object e, StackTrace? st) =>
+                                TexteSansCoupure(
+                                  r.pieceIllisible,
+                                  key: cleEchec,
+                                  style: palette.inkAlert.applyTo(
+                                    Theme.of(c).textTheme.bodyMedium ??
+                                        const TextStyle(),
+                                  ),
+                                ),
+                      ),
                     ),
                   ),
-            ),
-          ),
-        ),
-      );
+                ),
+                Ecart.vXs,
+                LienFleche(
+                  key: cleIcone,
+                  icone: AppIcons.image,
+                  libelle: r.pieceImage,
+                  libelleSemantique: r.pieceAgrandir,
+                  fleche: false,
+                  alignerEnDebut: true,
+                  onPress: ouvrir,
+                ),
+              ],
+            );
     } else if (adresse.hasError) {
       apercu = EtatSysteme(
         key: cleEchec,

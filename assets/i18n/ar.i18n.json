@@ -5656,6 +5656,9 @@
         "pieceIllisible": "صيغة غير مقروءة: هذه الوثيقة (صورة HEIC أو PDF) لا تظهر على الحاسوب. اطلبوا وثيقة جديدة، صورةً بصيغة JPEG أو PNG.",
         "demanderNouvellePiece": "طلب وثيقة هوية جديدة",
         "pieceAgrandir": "فتح وثيقة الهوية بالحجم الكامل",
+        "pieceImage": "صورة",
+        "piecePdf": "PDF",
+        "pieceOuvrirPdf": "فتح ملف PDF لوثيقة الهوية",
         "pieceTitre": "وثيقة هوية \u2068{nom}\u2069",
         "pieceDecisionPlusTard": "تُحسم الوثيقة في قاعة التحقق والمقابلة بعد القبول."
       },

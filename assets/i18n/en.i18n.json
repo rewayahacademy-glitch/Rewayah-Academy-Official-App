@@ -4350,6 +4350,9 @@
         "pieceIllisible": "Unreadable format: this document (HEIC photo or PDF) does not display on a computer. Ask for a new document, as a JPEG or PNG photo.",
         "demanderNouvellePiece": "Ask for a new ID document",
         "pieceAgrandir": "Open the ID document full size",
+        "pieceImage": "Image",
+        "piecePdf": "PDF",
+        "pieceOuvrirPdf": "Open the PDF of the ID document",
         "pieceTitre": "ID document of {nom}",
         "pieceDecisionPlusTard": "The document is decided in the Verification and interview room, after admission."
       },

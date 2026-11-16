@@ -24,9 +24,13 @@ import '../support/monter_recrutement.dart' show laisser;
 import 'outil_capture.dart';
 
 class _Signature implements ServiceValidation {
+  _Signature(this.extension);
+
+  final String extension;
+
   @override
   Future<String> apercu(String documentId) async =>
-      'https://pieces.exemple/$documentId.jpg';
+      'https://pieces.exemple/$documentId.$extension?signature=abc';
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -62,10 +66,13 @@ void main() {
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
   group('PIECE-DANS-DOSSIER : captures', skip: sautSansCapture, () {
-    for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
-      ('fr', AppLocale.fr),
-      ('ar', AppLocale.ar),
-    ]) {
+    for (final (String nom, AppLocale langue, String extension)
+        in <(String, AppLocale, String)>[
+          ('fr', AppLocale.fr, 'jpg'),
+          ('ar', AppLocale.ar, 'jpg'),
+          ('fr_pdf', AppLocale.fr, 'pdf'),
+          ('ar_pdf', AppLocale.ar, 'pdf'),
+        ]) {
       testWidgets('360 $nom', (WidgetTester tester) async {
         await tester.runAsync(() => LocaleSettings.setLocale(langue));
         late ImageProvider<Object> piece;
@@ -90,7 +97,7 @@ void main() {
                 documentId: 'doc1',
               ),
             ),
-            serviceValidationProvider.overrideWithValue(_Signature()),
+            serviceValidationProvider.overrideWithValue(_Signature(extension)),
             imagePieceProvider.overrideWithValue((Uri _) => piece),
           ],
           largeur: 360,

@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/piece_candidature.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
+import 'package:rewayah_academy/core/fichiers/ouvrir_onglet.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
@@ -29,12 +30,15 @@ import '../../support/monter_recrutement.dart' show laisser;
 import 'hote_candidature.dart';
 
 class _Signature implements ServiceValidation {
+  _Signature({this.extension = 'jpg'});
+
+  final String extension;
   final List<String> demandes = <String>[];
 
   @override
   Future<String> apercu(String documentId) async {
     demandes.add(documentId);
-    return 'https://pieces.exemple/$documentId.jpg';
+    return 'https://pieces.exemple/$documentId.$extension?signature=abc';
   }
 
   @override
@@ -54,10 +58,12 @@ final List<int> _pixel = <int>[
 Future<_Signature> _monter(
   WidgetTester tester,
   PieceCandidature? piece, {
+  String extension = 'jpg',
+  List<Uri>? ouverts,
   EtatPiece? etatDuDossier,
   List<ControleCandidature>? controles,
 }) async {
-  final _Signature signature = _Signature();
+  final _Signature signature = _Signature(extension: extension);
   final DetailCandidature detail = detailTest(
     piece: etatDuDossier,
     controles: controles,
@@ -71,6 +77,11 @@ Future<_Signature> _monter(
     surcharges: <Override>[
       lirePieceCandidatureProvider.overrideWithValue((String _) async => piece),
       serviceValidationProvider.overrideWithValue(signature),
+      if (ouverts != null)
+        ouvreurOngletProvider.overrideWithValue((Uri u) async {
+          ouverts.add(u);
+          return true;
+        }),
       imagePieceProvider.overrideWithValue(
         (Uri _) => MemoryImage(Uint8List.fromList(_pixel)),
       ),
@@ -120,6 +131,49 @@ void main() {
       await tester.tap(find.byKey(PieceVignette.cleImage), warnIfMissed: false);
       await laisser(tester);
       expect(find.byKey(EtageUnDossier.clePhotoEnGrand), findsOneWidget);
+    });
+
+    testWidgets(
+      'une image : l\'icone « Image » est cliquable et ouvre en grand',
+      (WidgetTester tester) async {
+        await _monter(tester, deposee);
+        expect(find.byKey(PieceVignette.cleIcone), findsOneWidget);
+        expect(
+          find.text(t.admin.candidatures.detail.pieceImage),
+          findsOneWidget,
+        );
+        await tester.ensureVisible(find.byKey(PieceVignette.cleIcone));
+        await laisser(tester, fois: 2);
+        await tester.tap(
+          find.byKey(PieceVignette.cleIcone),
+          warnIfMissed: false,
+        );
+        await laisser(tester);
+        expect(find.byKey(EtageUnDossier.clePhotoEnGrand), findsOneWidget);
+      },
+    );
+
+    testWidgets('un PDF : l\'icone « PDF » s\'affiche et un toucher l\'ouvre', (
+      WidgetTester tester,
+    ) async {
+      final List<Uri> ouverts = <Uri>[];
+      await _monter(tester, deposee, extension: 'pdf', ouverts: ouverts);
+      expect(find.byKey(PieceVignette.cleImage), findsNothing);
+      expect(find.byKey(PieceVignette.cleIcone), findsOneWidget);
+      expect(find.text(t.admin.candidatures.detail.piecePdf), findsOneWidget);
+      expect(find.text(t.admin.candidatures.detail.pieceImage), findsNothing);
+      await tester.ensureVisible(find.byKey(PieceVignette.cleIcone));
+      await laisser(tester, fois: 2);
+      await tester.tap(find.byKey(PieceVignette.cleIcone), warnIfMissed: false);
+      await laisser(tester);
+      expect(ouverts, hasLength(1));
+      expect(ouverts.single.path, endsWith('.pdf'));
+    });
+
+    test('estPdf : l\'extension du chemin, pas celle de la requete', () {
+      expect(PieceVignette.estPdf('https://x.test/a/b.PDF?s=1'), isTrue);
+      expect(PieceVignette.estPdf('https://x.test/a/b.jpg?f=x.pdf'), isFalse);
+      expect(PieceVignette.estPdf('https://x.test/a/b'), isFalse);
     });
 
     testWidgets('aucun lien vers la liste de tous les fichiers', (
