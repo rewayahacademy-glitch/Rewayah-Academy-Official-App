@@ -26,6 +26,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/avatar_tile.dart';
+import 'package:rewayah_academy/core/widgets/ligne_conversation.dart';
 import 'package:rewayah_academy/features/com_communaute/port_communaute.dart';
 import 'package:rewayah_academy/features/com_messages/entete_fil_contexte.dart';
 import 'package:rewayah_academy/features/com_messages/liste_fils.dart';
@@ -536,23 +537,28 @@ void main() {
         ),
       ),
     );
-    final Finder legende = find.byWidgetPredicate(
-      (Widget w) =>
-          w is RichText &&
-          w.text.toPlainText().startsWith('Visite de contrôle, classe An'),
-    );
-    expect(legende, findsOneWidget);
-    final RenderParagraph p = tester.renderObject(legende);
-    final String texte = p.text.toPlainText();
-    final int nour = texte.indexOf('Nour');
-    double ligneDe(int offset) =>
-        p.getOffsetForCaret(TextPosition(offset: offset), Rect.zero).dy;
-    expect(
-      ligneDe(nour - 3),
-      ligneDe(nour + 1),
-      reason: '« An- » et « Nour » sur la meme ligne',
-    );
-    expect(texte, contains('An\u2011Nour'));
+    // BULLES-MESSAGERIE : la ligne d'une conversation tient sur deux lignes
+    // (le nom, l'apercu), chacune d'une seule ligne de texte : a 326, aucun
+    // nom, ni celui d'une classe, ne passe a la ligne au trait d'union.
+    final Finder ligne = find.byType(LigneConversation);
+    expect(ligne, findsWidgets);
+    for (final Element e in ligne.evaluate()) {
+      final Finder textes = find.descendant(
+        of: find.byWidget(e.widget),
+        matching: find.byType(RichText),
+      );
+      for (final Element t in textes.evaluate()) {
+        final RenderParagraph p = t.renderObject! as RenderParagraph;
+        final double hauteurLigne = p.getFullHeightForCaret(
+          const TextPosition(offset: 0),
+        );
+        expect(
+          p.size.height,
+          lessThanOrEqualTo(hauteurLigne + 1),
+          reason: '« ${p.text.toPlainText()} » tient sur une seule ligne',
+        );
+      }
+    }
   });
 }
 

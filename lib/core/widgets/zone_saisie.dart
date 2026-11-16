@@ -6,6 +6,7 @@ import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../tc_bibliotheque/contenu_arabe.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import 'bouton_icone.dart';
 
@@ -78,6 +79,7 @@ class ZoneSaisie extends StatelessWidget {
     this.onSubmitted,
     this.sens,
     this.contenu = false,
+    this.pilule = false,
   }) : assert(minLignes >= 1 && maxLignes >= minLignes);
 
   /// Le texte saisi.
@@ -115,6 +117,10 @@ class ZoneSaisie extends StatelessWidget {
 
   /// L'envoi integre, ou `null` : un champ de formulaire.
   final EnvoiZoneSaisie? envoi;
+
+  /// BULLES-MESSAGERIE : vrai, le champ est une pilule arrondie (le champ
+  /// d'ecriture d'une conversation) ; le rayon vient de `AppRadius.full`.
+  final bool pilule;
 
   /// Vrai : le texte se lit sans se modifier.
   final bool lectureSeule;
@@ -191,6 +197,12 @@ class ZoneSaisie extends StatelessWidget {
     return (math.min(minLignes, max), max);
   }
 
+  /// Le meme filet que le theme, au rayon d'une pilule.
+  static InputBorder? _enPilule(BuildContext context, InputBorder? base) =>
+      base is OutlineInputBorder
+      ? base.copyWith(borderRadius: AppRadius.arrondiFull)
+      : base;
+
   @override
   Widget build(BuildContext context) {
     final (int min, int max) = lignesPour(
@@ -200,6 +212,8 @@ class ZoneSaisie extends StatelessWidget {
     );
     final EnvoiZoneSaisie? envoi = this.envoi;
     final String? libelle = this.libelle;
+    final InputDecorationThemeData theme = Theme.of(context)
+        .inputDecorationTheme;
     final Widget champ = TextField(
       key: cleChamp,
       controller: controleur,
@@ -224,6 +238,9 @@ class ZoneSaisie extends StatelessWidget {
       textCapitalization: majuscules,
       onChanged: onChanged,
       decoration: InputDecoration(
+        border: pilule ? _enPilule(context, theme.border) : null,
+        enabledBorder: pilule ? _enPilule(context, theme.enabledBorder) : null,
+        focusedBorder: pilule ? _enPilule(context, theme.focusedBorder) : null,
         // L'aide du champ vide passe a la ligne entre ses mots, jamais dans
         // un mot (« administratio / n… » a 320 en texte double, SUPERPOS-1) :
         // le style d'aide du theme, rendu par `TexteSansCoupure`.

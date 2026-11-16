@@ -77,6 +77,25 @@ const List<String> _canauxAutorises = <String>[
   'Clôture du mois',
 ];
 
+/// Combien de fois [mot] (« Envoye ») se lit sous les messages du fil, hors de
+/// la pastille d'etat d'une carte de piece jointe (BULLES-MESSAGERIE : les
+/// bulles plus compactes laissent voir une piece plus ancienne a l'ecran).
+int _envoyesDuMessage(String mot) => find
+    .descendant(of: find.byType(FilDiscussion), matching: find.text(mot))
+    .evaluate()
+    .where((Element e) {
+      bool dansCarte = false;
+      e.visitAncestorElements((Element a) {
+        if (a.widget is CartePieceJointe) {
+          dansCarte = true;
+          return false;
+        }
+        return true;
+      });
+      return !dansCarte;
+    })
+    .length;
+
 void main() {
   group('Disposition (spec section 23)', () {
     testWidgets('1440, canal ouvert : Navigation | Canaux | Fil | Contexte', (
@@ -520,10 +539,10 @@ void main() {
       await tester.tap(envoiDuFil());
       await tester.pumpAndSettle();
       expect(_dansFil(find.text(x.nonConfirme)), findsOneWidget);
-      expect(_dansFil(find.text(x.envoye)), findsNothing);
+      expect(_envoyesDuMessage(x.envoye), 0);
       await tester.tap(find.text(x.reessayer));
       await tester.pumpAndSettle();
-      expect(_dansFil(find.text(x.envoye)), findsOneWidget);
+      expect(_envoyesDuMessage(x.envoye), 1);
       expect(_dansFil(find.text(x.nonConfirme)), findsNothing);
       expect(port.clesRecues, hasLength(2));
       expect(port.clesRecues.first, port.clesRecues.last);

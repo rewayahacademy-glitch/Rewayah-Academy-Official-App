@@ -90,6 +90,7 @@ import '../../../core/widgets/languette_bord.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/ligne_allocation.dart';
 import '../../../core/widgets/ligne_cle_valeur.dart';
+import '../../../core/widgets/ligne_conversation.dart';
 import '../../../core/widgets/ligne_finance.dart';
 import '../../../core/widgets/ligne_moyen_paiement.dart';
 import '../../../core/widgets/ligne_presence.dart';
@@ -2235,6 +2236,45 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'choix : aucune etoile encore',
         (BuildContext _) => NoteEtoiles(valeur: 0, onChange: (int _) {}),
+      ),
+    ],
+  ),
+  // BULLES-MESSAGERIE (directeur, 16/11/2026) : la ligne d'une conversation.
+  EntreeGalerie(
+    nom: 'LigneConversation',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'non lue : nom en gras, apercu plus fonce, pastille du nombre',
+        (BuildContext _) => LigneConversation(
+          meneur: const AvatarTile(prenom: 'Amina Bah'),
+          titre: 'Amina Bah',
+          apercu: 'Merci pour le rappel, nous serons presents jeudi.',
+          heure: '10:24',
+          nonLus: 3,
+          libelleNonLus: '3 non lus',
+          onPress: () {},
+        ),
+      ),
+      EtatGalerie(
+        'lue et ouverte a cote de la liste : ligne teintee, aucune pastille',
+        (BuildContext _) => LigneConversation(
+          meneur: const AvatarTile(prenom: 'Ibrahim'),
+          titre: 'Ibrahim',
+          apercu: 'D\'accord.',
+          heure: '12 novembre',
+          selectionnee: true,
+          onPress: () {},
+        ),
+      ),
+      EtatGalerie(
+        'apercu arabe : il suit le sens de sa langue',
+        (BuildContext _) => LigneConversation(
+          meneur: const AvatarTile(prenom: 'Nour'),
+          titre: 'Nour',
+          apercu: 'شكرا جزيلا على المتابعة',
+          onPress: () {},
+        ),
       ),
     ],
   ),

@@ -99,6 +99,8 @@ void main() {
       depart: cheminFilTest(_fil),
       surcharges: _serveur(),
     );
+    // BULLES-MESSAGERIE : le contexte est ferme sous 1 600 points.
+    await ouvrirContexte(tester);
     final m = t.com.messages.apercu;
     expect(find.byKey(ApercuProfilCandidat.cle), findsOneWidget);
     expect(find.text(m.typeEnseignant), findsOneWidget);
