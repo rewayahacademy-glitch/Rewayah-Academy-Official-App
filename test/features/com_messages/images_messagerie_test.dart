@@ -23,6 +23,7 @@ import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_messages/images_du_fil.dart';
 
+import '../../support/echec_bulle.dart';
 import '../../support/hote_theme.dart';
 import '../../support/image_png.dart';
 import '../../support/plugin_compression.dart';
@@ -542,7 +543,7 @@ void main() {
       );
     });
 
-    testWidgets('une panne passagere propose « Reessayer »', (
+    testWidgets('une panne passagere : la ligne ouvre « Reessayer »', (
       WidgetTester tester,
     ) async {
       simulerPluginCompression();
@@ -564,8 +565,10 @@ void main() {
         find.text(phraseRefusImage(RefusImage.envoiStockage)),
         findsOneWidget,
       );
-      await tester.tap(find.text(t.com.socle.composants.composer.reessayer));
-      await tester.pumpAndSettle();
+      await choisirActionEchec(
+        tester,
+        t.com.socle.composants.composer.reessayer,
+      );
       expect(essais, 2);
       expect(
         find.text(phraseRefusImage(RefusImage.envoiStockage)),

@@ -151,8 +151,7 @@ final ResourceVersion versionPdfPubliee = ResourceVersion(
   publieeLeUtc: publicationReference,
   publieePar: 'admin-001',
   downloadAssetId: 'asset-pdf-2',
-  empreinte:
-      'a3f1c0d4b9e27856a3f1c0d4b9e27856a3f1c0d4b9e27856a3f1c0d4b9e27856',
+  empreinte: 'a3f1c0d4b9e27856a3f1c0d4b9e27856a3f1c0d4b9e27856a3f1c0d4b9e27856',
 );
 
 /// Un brouillon : il n'a ni artefact, ni empreinte, et c'est normal.
@@ -171,8 +170,7 @@ final ResourceVersion versionCoranPubliee = ResourceVersion(
   statut: StatutVersionRessource.publiee,
   publieeLeUtc: publicationReference,
   publieePar: 'admin-001',
-  empreinte:
-      '77881aaa0000bbbb77881aaa0000bbbb77881aaa0000bbbb77881aaa0000bbbb',
+  empreinte: '77881aaa0000bbbb77881aaa0000bbbb77881aaa0000bbbb77881aaa0000bbbb',
 );
 
 /// L'artefact PDF **genere une seule fois a la publication**.
@@ -183,8 +181,7 @@ final DownloadAsset artefactPdfGenere = DownloadAsset(
   // Une CLE de Storage : aucun schema, aucune signature, aucune expiration.
   cleStockage: 'supports/res-pdf/ver-pdf-2.pdf',
   tailleOctets: 1_482_112,
-  empreinte:
-      'd41d8cd98f00b204e9800998ecf8427ed41d8cd98f00b204e9800998ecf8427e',
+  empreinte: 'd41d8cd98f00b204e9800998ecf8427ed41d8cd98f00b204e9800998ecf8427e',
   origine: OrigineArtefact.genereALaPublication,
   creeLeUtc: publicationReference,
 );

@@ -253,6 +253,11 @@ abstract interface class PortMessagesMetier {
     ProgressionImage? progression,
   });
 
+  /// IMAGES-CORRECTIF : abandonne le depot [imageId] qui n'ira pas au bout
+  /// (« Supprimer » sur une bulle en echec). Sans effet s'il est deja
+  /// confirme ou abandonne.
+  Future<void> annulerImage(String imageId);
+
   /// Les adresses des miniatures du fil, par identifiant d'image : UNE
   /// demande par fil ouvert, gardee en memoire jusqu'a son expiration (1 h).
   Future<Map<String, AdresseImage>> urlsMiniatures(String filId);
@@ -279,6 +284,9 @@ mixin SansImagesMessages {
     ImagePrete image, {
     ProgressionImage? progression,
   }) => Future<void>.error(const CapaciteIndisponible('COM-BR-02'));
+
+  /// Aucun depot a annuler.
+  Future<void> annulerImage(String imageId) => Future<void>.value();
 
   /// Aucune miniature.
   Future<Map<String, AdresseImage>> urlsMiniatures(String filId) =>

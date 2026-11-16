@@ -440,6 +440,14 @@ class MessagesMetierDemo implements PortMessagesMetier {
   /// vrai (retour arriere du coeur, tests).
   bool coeurEnEchec = false;
 
+  /// Les depots annules (« Supprimer » sur une bulle en echec), pour les tests.
+  final List<String> depotsAnnules = <String>[];
+
+  @override
+  Future<void> annulerImage(String imageId) async {
+    depotsAnnules.add(imageId);
+  }
+
   @override
   Future<void> envoyerImage(
     String filId,

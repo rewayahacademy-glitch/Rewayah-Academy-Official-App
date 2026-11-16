@@ -1910,8 +1910,11 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
         (BuildContext c) => SizedBox(
           height: _hauteurPage,
           child: MediaQuery(
-            data: MediaQuery.of(c)
-                .copyWith(viewInsets: const EdgeInsets.only(bottom: AppSpacing.respiration * 2)),
+            data: MediaQuery.of(c).copyWith(
+              viewInsets: const EdgeInsets.only(
+                bottom: AppSpacing.respiration * 2,
+              ),
+            ),
             child: const PageConversationPleinEcran(
               child: Text('Le fil reste au-dessus du clavier.'),
             ),

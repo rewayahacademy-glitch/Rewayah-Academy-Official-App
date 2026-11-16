@@ -19229,6 +19229,10 @@ class _Traductions$com$messages$images$en extends Traductions$com$messages$image
 	@override String get aimeParVous => 'Liked by you';
 	@override String aimes({required Object n}) => 'Likes: ${n}';
 	@override String get coeurEchec => 'Your like is not confirmed. Try again in a moment.';
+	@override String get photoApercu => 'Photo';
+	@override String get nonConfirmeToucher => 'Not confirmed · Tap to try again';
+	@override String get supprimerEchec => 'Delete';
+	@override String get actionsEchec => 'Actions for the unconfirmed message';
 	@override late final _Traductions$com$messages$images$refus$en refus = _Traductions$com$messages$images$refus$en._(_root);
 }
 
@@ -25183,7 +25187,7 @@ class _Traductions$com$messages$images$refus$en extends Traductions$com$messages
 	@override String get stockageIndisponible => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.';
 	@override String get confirmationIndisponible => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.';
 	@override String get depotImpossible => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.';
-	@override String get envoiStockage => 'Storage refused the image (expired address or interrupted upload). Try again.';
+	@override String get envoiStockage => 'The image could not be sent. Try again later.';
 	@override String get reseau => 'The image may not have reached Rewayah. Try again in a moment.';
 	@override String get imageTropGrosse => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.';
 	@override String get imageIllisible => 'This photo cannot be read. Choose another photo.';
@@ -37250,6 +37254,10 @@ extension on TraductionsEn {
 			'com.messages.images.aimeParVous' => 'Liked by you',
 			'com.messages.images.aimes' => ({required Object n}) => 'Likes: ${n}',
 			'com.messages.images.coeurEchec' => 'Your like is not confirmed. Try again in a moment.',
+			'com.messages.images.photoApercu' => 'Photo',
+			'com.messages.images.nonConfirmeToucher' => 'Not confirmed · Tap to try again',
+			'com.messages.images.supprimerEchec' => 'Delete',
+			'com.messages.images.actionsEchec' => 'Actions for the unconfirmed message',
 			'com.messages.images.refus.demandeInvalide' => 'This image is not confirmed: its size or format is not what was expected. Choose another photo.',
 			'com.messages.images.refus.typeRefuse' => 'This file type is not accepted. Choose a JPEG, PNG or WebP photo.',
 			'com.messages.images.refus.imageTropLourde' => 'This image is too heavy, even after shrinking. Choose a lighter photo.',
@@ -37263,7 +37271,7 @@ extension on TraductionsEn {
 			'com.messages.images.refus.stockageIndisponible' => 'Image storage is not answering right now: it is not your device. Try again in a few minutes.',
 			'com.messages.images.refus.confirmationIndisponible' => 'Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.',
 			'com.messages.images.refus.depotImpossible' => 'The image is not confirmed: this is a server fault, not yours. Try again in a moment.',
-			'com.messages.images.refus.envoiStockage' => 'Storage refused the image (expired address or interrupted upload). Try again.',
+			'com.messages.images.refus.envoiStockage' => 'The image could not be sent. Try again later.',
 			'com.messages.images.refus.reseau' => 'The image may not have reached Rewayah. Try again in a moment.',
 			'com.messages.images.refus.imageTropGrosse' => 'This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.',
 			'com.messages.images.refus.imageIllisible' => 'This photo cannot be read. Choose another photo.',
@@ -37628,12 +37636,12 @@ extension on TraductionsEn {
 			'com.studio.canal.indisponibleTitre' => 'Channel unavailable',
 			'com.studio.canal.indisponible' => 'This channel is not available to you. Choose another channel from the list.',
 			'com.studio.panneau.titre' => 'About the channel',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.aPropos' => 'About',
 			'com.studio.panneau.section' => 'Section',
 			'com.studio.panneau.visibilite' => 'Visibility',
 			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.panneau.fichiers' => 'Recent files',
 			'com.studio.panneau.liens' => 'Useful links',
 			'com.studio.panneau.vous' => 'You',
@@ -38142,12 +38150,12 @@ extension on TraductionsEn {
 			'comptable.statuts.obligation.annulee' => 'Cancelled',
 			'comptable.statuts.remboursement.demande' => 'Requested',
 			'comptable.statuts.remboursement.approbationRequise' => 'Approval required',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.remboursement.approuve' => 'Approved',
 			'comptable.statuts.remboursement.execute' => 'Executed',
 			'comptable.statuts.remboursement.refuse' => 'Declined',
 			'comptable.statuts.validation.enAttente' => 'Validation requested',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.validation.validee' => 'Validated',
 			'comptable.statuts.validation.refusee' => 'Declined',
 			'comptable.statuts.raison.autoPaiement' => 'Handling by another officer required',
@@ -38656,12 +38664,12 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'Tick the agreement: an account not in your name cannot be saved without it.',
 			'comptable.beneficiaires.recevoir.wise.lienRequis' => 'Choose your relationship with the account holder.',
 			'comptable.beneficiaires.recevoir.wise.enAttenteValidation' => 'Waiting for validation by the management: your pay will be paid to these details as soon as it has verified them.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.validees' => 'Details validated by the management.',
 			'comptable.beneficiaires.recevoir.wise.journalValidees' => 'Details validated by the management',
 			'comptable.beneficiaires.recevoir.wise.titreCoordonnees' => 'My payment details',
 			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'Enter your bank details to receive your pay. It is paid to you by Wise transfer, in ${devise}.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'Your details are saved. Your next pay will be paid to them, in ${devise}.',
 			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Your details are incomplete. Complete them to receive your next pay.',
 			'comptable.beneficiaires.recevoir.wise.masquees' => 'For your security, only the last 4 characters of the numbers are shown.',
@@ -39170,12 +39178,12 @@ extension on TraductionsEn {
 			'juridique.titre' => 'Legal information',
 			'juridique.intro' => 'The texts that govern the service. They can be read without an account.',
 			'juridique.traduction' => 'This translation is provided for convenience. In case of discrepancy, the French version prevails.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.version' => ({required Object version, required Object date}) => 'Version ${version}, text of ${date}',
 			'juridique.contact' => ({required Object contact}) => 'For any question, write to ${contact}.',
 			'juridique.lire' => 'Read',
 			'juridique.coord.societe' => 'Company: Rewayah Academy Ltd',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.coord.numero' => 'Registration number: 16624644, England and Wales',
 			'juridique.coord.adresse' => 'Registered office: 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom',
 			'juridique.aCompleter' => ({required Object quoi}) => '[to be completed by the management: ${quoi}]',
@@ -39684,12 +39692,12 @@ extension on TraductionsEn {
 			'accueilInscrits.finirCompte' => 'A few questions remain to finish your account.',
 			'accueilInscrits.continuer' => 'Continue',
 			'accueilInscrits.echecTitre' => 'Your registration could not be verified',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInscrits.echecPhrase' => 'Probable cause: the connection to the server was interrupted (not confirmed). Try again in a moment: nothing is created twice.',
 			'accueilInscrits.sansDonnees' => 'The check of your registration',
 			'accueilInvite.titre' => 'Your invitation',
 			'accueilInvite.roles.foyer' => 'Rewayah Academy invites you as a guardian.',
-			_ => null,
-		} ?? switch (path) {
 			'accueilInvite.roles.enseignant' => 'Rewayah Academy invites you as a teacher.',
 			'accueilInvite.roles.comptable' => 'Rewayah Academy invites you as an accountant.',
 			'accueilInvite.roles.candidat' => 'Rewayah Academy invites you as a teaching applicant.',
@@ -40198,12 +40206,12 @@ extension on TraductionsEn {
 			'candidatsFlux.publication.kCase' => 'I agree that my name, photo and country be on the Rewayah public website.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'Your name counts as a signature: ${nom}',
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'Agreement given on ${date}, signed ${nom}.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.publication.donner' => 'Give my agreement',
 			'candidatsFlux.publication.retirer' => 'Withdraw my agreement',
 			'candidatsFlux.publication.retirerQuestion' => 'Withdraw your publication agreement?',
 			'candidatsFlux.publication.retirerConsequence' => 'Your name, photo and country will no longer appear on the public website. You can give your agreement again later.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.publication.echec' => 'Your choice is not confirmed. Try again.',
 			'candidatsFlux.publication.lectureEchec' => 'Your publication agreement could not be read.',
 			'candidatsFlux.publication.nonPublie' => 'The text of the publication agreement is not published yet.',

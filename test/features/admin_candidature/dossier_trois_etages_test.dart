@@ -29,8 +29,7 @@ import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.d
     show ConversationEnPlace;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
-import '../../support/monter_recrutement.dart'
-    show laisser, monterRecrutement;
+import '../../support/monter_recrutement.dart' show laisser, monterRecrutement;
 import 'hote_candidature.dart';
 
 FauxCandidaturesDirection _port(
@@ -386,9 +385,7 @@ void main() {
           ),
         ),
         surcharges: <Override>[
-          portCandidaturesDirectionProvider.overrideWithValue(
-            _port(detail),
-          ),
+          portCandidaturesDirectionProvider.overrideWithValue(_port(detail)),
         ],
         hauteur: 3000,
       );

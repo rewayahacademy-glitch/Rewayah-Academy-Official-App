@@ -34,6 +34,7 @@ import 'package:rewayah_academy/features/com_messages/messages_metier_supabase.d
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../../support/echec_bulle.dart';
 import '../../support/harnais.dart';
 import '../../support/hote_theme.dart';
 import 'support_messages.dart';
@@ -323,10 +324,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await monter(tester, (String _) async => throw StateError('panne'));
-      expect(
-        find.text(t.com.socle.composants.composer.nonConfirme),
-        findsOneWidget,
-      );
+      expect(find.text(ligneEchec), findsOneWidget);
+      await tester.tap(find.byKey(FilDiscussion.cleLigneEchec));
+      await tester.pumpAndSettle();
       expect(
         find.text(t.com.socle.composants.composer.reessayer),
         findsOneWidget,

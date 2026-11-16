@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 
 import '../../support/demo/controleur_demo.dart';
 import '../../support/demo/demo_controleur_page.dart';
+import '../../support/echec_bulle.dart';
 
 Future<GoRouter> _monter(
   WidgetTester tester,
@@ -229,14 +230,13 @@ void main() {
     await tester.pump();
     await tester.tap(find.byKey(FilDiscussion.envoyerKey));
     await tester.pumpAndSettle();
-    expect(find.text(e.echec), findsOneWidget);
+    expect(find.text(ligneEchec), findsOneWidget);
     expect(find.text(e.envoye), findsNothing);
     // La saisie est gardee dans le message.
     expect(find.text('Bonjour.'), findsOneWidget);
-    await tester.tap(find.text(e.reessayer));
-    await tester.pumpAndSettle();
+    await choisirActionEchec(tester, e.reessayer);
     expect(find.text(e.envoye), findsOneWidget);
-    expect(find.text(e.echec), findsNothing);
+    expect(find.text(ligneEchec), findsNothing);
     expect(port.essais, 2);
   });
 

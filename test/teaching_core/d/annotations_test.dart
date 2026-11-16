@@ -87,23 +87,26 @@ void main() {
       expect(identifiants.length, 3);
     });
 
-    test('la fin de seance emporte le temporaire et la seance, pas le reste', () async {
-      for (final PorteeAnnotation portee in PorteeAnnotation.values) {
-        final AnnotationLayer couche = (await depot.couche(
-          resourceId: ressourceTest,
-          sessionId: 'seance-1',
-          portee: portee,
-        ))!;
-        await depot.ajouterTrait(couche.id, trait('t-${portee.valeurSql}'));
-      }
-      expect(depot.couches.length, 3);
+    test(
+      'la fin de seance emporte le temporaire et la seance, pas le reste',
+      () async {
+        for (final PorteeAnnotation portee in PorteeAnnotation.values) {
+          final AnnotationLayer couche = (await depot.couche(
+            resourceId: ressourceTest,
+            sessionId: 'seance-1',
+            portee: portee,
+          ))!;
+          await depot.ajouterTrait(couche.id, trait('t-${portee.valeurSql}'));
+        }
+        expect(depot.couches.length, 3);
 
-      depot.fermerSeance('seance-1');
+        depot.fermerSeance('seance-1');
 
-      expect(depot.couches.length, 1);
-      expect(depot.couches.single.portee, PorteeAnnotation.enregistree);
-      expect(depot.couches.single.traits.single.id, 't-enregistree');
-    });
+        expect(depot.couches.length, 1);
+        expect(depot.couches.single.portee, PorteeAnnotation.enregistree);
+        expect(depot.couches.single.traits.single.id, 't-enregistree');
+      },
+    );
 
     test('une couche hors classe n a pas de seance', () async {
       final AnnotationLayer couche = (await depot.couche(

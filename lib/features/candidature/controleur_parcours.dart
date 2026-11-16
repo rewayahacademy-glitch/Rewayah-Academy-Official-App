@@ -121,7 +121,8 @@ List<EtapeParcours> planifierParcours(
         ?(fuseau == null ? null : EtapeChamp(fuseau)),
         EtapeDisponibilites(c, SousEtapeDisponibilites.jours),
         EtapeDisponibilites(c, SousEtapeDisponibilites.heures),
-        if (nombreJours >= 2) EtapeDisponibilites(c, SousEtapeDisponibilites.memes),
+        if (nombreJours >= 2)
+          EtapeDisponibilites(c, SousEtapeDisponibilites.memes),
         if (nombreJours >= 2 && memesHeures == false)
           EtapeDisponibilites(c, SousEtapeDisponibilites.parJour),
         EtapeDisponibilites(c, SousEtapeDisponibilites.semaine),
@@ -322,12 +323,11 @@ class ParcoursControleur extends ChangeNotifier {
 
   /// Les disponibilites telles que le serveur les recevra (les jours qui ont
   /// au moins une heure).
-  DisponibilitesDeclarees get disponibilites => DisponibilitesDeclarees(
-    <int, Set<int>>{
-      for (final int j in _jours)
-        if ((_debuts[j] ?? const <int>{}).isNotEmpty) j: _debuts[j]!,
-    },
-  );
+  DisponibilitesDeclarees get disponibilites =>
+      DisponibilitesDeclarees(<int, Set<int>>{
+        for (final int j in _jours)
+          if ((_debuts[j] ?? const <int>{}).isNotEmpty) j: _debuts[j]!,
+      });
 
   /// Le premier jour choisi qui n'a aucune heure de debut, ou `null`.
   int? get jourSansHeure {
@@ -466,7 +466,9 @@ class ParcoursControleur extends ChangeNotifier {
     if (_jours.length >= 2) {
       final Set<int> premier = _debuts[premierJour]!;
       _memesHeures = _jours.every(
-        (int j) => _debuts[j]!.length == premier.length && _debuts[j]!.containsAll(premier),
+        (int j) =>
+            _debuts[j]!.length == premier.length &&
+            _debuts[j]!.containsAll(premier),
       );
     }
     if (dispo.estVide) {
@@ -572,7 +574,9 @@ class ParcoursControleur extends ChangeNotifier {
   };
 
   bool _dansLesDisponibilites(int index) =>
-      index >= 0 && index < etapes.length && etapes[index] is EtapeDisponibilites;
+      index >= 0 &&
+      index < etapes.length &&
+      etapes[index] is EtapeDisponibilites;
 
   /// Passe a l'etape suivante, ou revient au recapitulatif apres une
   /// modification. Rend `false` quand la reponse manque (rien ne bouge).
@@ -611,7 +615,9 @@ class ParcoursControleur extends ChangeNotifier {
     if (_index == 0) {
       return;
     }
-    if (_depuisRecap && !(courante is EtapeDisponibilites && _dansLesDisponibilites(_index - 1))) {
+    if (_depuisRecap &&
+        !(courante is EtapeDisponibilites &&
+            _dansLesDisponibilites(_index - 1))) {
       _index = indexRecapitulatif;
       _depuisRecap = false;
     } else {

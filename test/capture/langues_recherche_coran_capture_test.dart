@@ -70,9 +70,7 @@ void main() {
         addTearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
         fixerVueCapture(tester, vue, 1);
         final List<Override> surcharges = <Override>[
-          souratesProvider.overrideWith(
-            (Ref _) async => souratesDuCorpus(),
-          ),
+          souratesProvider.overrideWith((Ref _) async => souratesDuCorpus()),
           portNavigationCoranProvider.overrideWithValue(
             _NavigationAvecResultats(),
           ),
@@ -84,10 +82,8 @@ void main() {
                 builder: (BuildContext c) => Center(
                   child: TextButton(
                     key: _ouvrir,
-                    onPressed: () => FeuilleNavigationCoran.ouvrir(
-                      c,
-                      onAller: (int _) {},
-                    ),
+                    onPressed: () =>
+                        FeuilleNavigationCoran.ouvrir(c, onAller: (int _) {}),
                     child: const Text('Ouvrir'),
                   ),
                 ),
@@ -104,9 +100,7 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(
           find.text(
-            langue == AppLocale.ar
-                ? t.eleve.coran.juz(juz: '18')
-                : 'Juz 18',
+            langue == AppLocale.ar ? t.eleve.coran.juz(juz: '18') : 'Juz 18',
           ),
           findsWidgets,
         );

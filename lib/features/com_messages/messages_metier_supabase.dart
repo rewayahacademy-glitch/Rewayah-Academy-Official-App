@@ -18,6 +18,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
+import '../../core/communications/phrases_images.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/theme/app_delais.dart';
 import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
@@ -258,6 +259,7 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     final AppelFonction? fonctions = _fonctions;
     if (fonctions == null) throw const CapaciteIndisponible('COM-BR-02');
     final String messageId = await _poster(filId, texte, cleIdempotence);
+    progression?.messageCree(messageId);
     progression?.call(0.05);
     final Map<String, dynamic> depot = await fonctions(
       'message-image-depot',
@@ -279,6 +281,7 @@ class MessagesMetierSupabase implements PortMessagesMetier {
       },
     );
     final String imageId = texteJson(depot, 'image_id');
+    progression?.depotCree(imageId);
     progression?.call(0.1);
     await _deposer(objetJson(depot['image']), image.octets);
     progression?.call(0.85);
@@ -290,6 +293,16 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     });
     progression?.call(1);
     unawaited(_miniatures.remove(filId));
+  }
+
+  @override
+  Future<void> annulerImage(String imageId) async {
+    final AppelFonction? fonctions = _fonctions;
+    if (fonctions == null || !estUuid(imageId)) return;
+    await fonctions('message-image-depot', <String, dynamic>{
+      'action': 'annuler',
+      'image_id': imageId,
+    });
   }
 
   /// Le `PUT` signe : exactement les en-tetes exiges par le serveur.
@@ -439,9 +452,16 @@ ResumeFil resumeFilJson(
   LibellesCommunication libelles,
 ) {
   final List<Map<String, dynamic>> messages = listeJson(fil['messages']);
-  final String? dernier = messages.isEmpty
+  final String? dernierTexte = messages.isEmpty
       ? null
       : texteOptionnel(messages.last, 'texte');
+  // IMAGES-CORRECTIF : une photo sans legende (texte de remplissage) s'apercoit
+  // « Photo » ; le serveur ne rend ni une image en attente ni un depot annule.
+  final bool photoSeule =
+      dernierTexte != null &&
+      ImageMessage.depuisJson(messages.last['image']) != null &&
+      estTexteImageSeule(dernierTexte);
+  final String? dernier = photoSeule ? null : dernierTexte;
   return ResumeFil(
     id: texteJson(fil, 'id'),
     objet: objetLieJson(objetJson(fil['objet']), libelles),
@@ -452,6 +472,7 @@ ResumeFil resumeFilJson(
     apercu: dernier == null || dernier.length <= longueurApercuFil
         ? dernier
         : dernier.substring(0, longueurApercuFil),
+    apercuPhoto: photoSeule,
     dernierMessageLe: instantOptionnel(fil, 'dernier_message_le'),
     attention: _attention(fil['non_lus']),
   );

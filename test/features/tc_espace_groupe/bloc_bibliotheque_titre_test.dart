@@ -28,8 +28,7 @@ import 'package:rewayah_academy/features/tc_espace_groupe/emplacements_groupe.da
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/aucun_mot_coupe.dart';
-import '../../support/demo/classe_demo.dart'
-    show EtatDemoClasse;
+import '../../support/demo/classe_demo.dart' show EtatDemoClasse;
 import '../../support/demo/demo_adulte_page.dart';
 import '../../support/demo/demo_classe_page.dart';
 

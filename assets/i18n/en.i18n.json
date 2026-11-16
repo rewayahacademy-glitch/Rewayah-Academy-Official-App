@@ -12178,6 +12178,10 @@
         "aimeParVous": "Liked by you",
         "aimes": "Likes: {n}",
         "coeurEchec": "Your like is not confirmed. Try again in a moment.",
+        "photoApercu": "Photo",
+        "nonConfirmeToucher": "Not confirmed · Tap to try again",
+        "supprimerEchec": "Delete",
+        "actionsEchec": "Actions for the unconfirmed message",
         "refus": {
           "demandeInvalide": "This image is not confirmed: its size or format is not what was expected. Choose another photo.",
           "typeRefuse": "This file type is not accepted. Choose a JPEG, PNG or WebP photo.",
@@ -12192,7 +12196,7 @@
           "stockageIndisponible": "Image storage is not answering right now: it is not your device. Try again in a few minutes.",
           "confirmationIndisponible": "Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.",
           "depotImpossible": "The image is not confirmed: this is a server fault, not yours. Try again in a moment.",
-          "envoiStockage": "Storage refused the image (expired address or interrupted upload). Try again.",
+          "envoiStockage": "The image could not be sent. Try again later.",
           "reseau": "The image may not have reached Rewayah. Try again in a moment.",
           "imageTropGrosse": "This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.",
           "imageIllisible": "This photo cannot be read. Choose another photo."
