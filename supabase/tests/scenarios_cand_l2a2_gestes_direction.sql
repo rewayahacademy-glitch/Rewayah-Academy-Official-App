@@ -340,7 +340,9 @@ BEGIN
                              'lire_contact_candidature', 'historique_candidature',
                              -- MESSAGES-CANDIDAT (PR 304, 07/11) : l'identifiant de MA
                              -- candidature pour ouvrir son fil ; ne rend aucun etat.
-                             'com_ma_candidature')),
+                             'com_ma_candidature',
+                             -- BE-S1 (16/11) : les voisins d'un dossier ; des references seulement.
+                             'voisins_candidature')),
     'aucune RPC du lot ne double etat_dossier() : aucun nom ne contient candidature');
   FOREACH r IN ARRAY ARRAY['anon', 'authenticated', 'service_role', 'agent_ro'] LOOP
     IF has_table_privilege(r, 'public.candidature_lots', 'SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES,TRIGGER')

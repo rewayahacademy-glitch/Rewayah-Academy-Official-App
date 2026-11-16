@@ -12,9 +12,10 @@
 // valent `null` aujourd'hui (lots L2B et L4). Un `null` n'est jamais un zero ni
 // une liste vide : c'est « Disponible au branchement serveur ».
 //
-// **Aucun nom de personne dans l'historique** : le serveur rend l'auteur par sa
+// **Aucun nom d'auteur dans l'historique** : le serveur rend l'auteur par sa
 // categorie (systeme, candidat, direction), sans nom ni identifiant
-// (`CAND-BR-07`, L1-6).
+// (`CAND-BR-07`, L1-6). Seul un evenement `responsable` porte le nom du
+// responsable d'avant et d'apres (BE-S1).
 library;
 
 import 'package:flutter/foundation.dart';
@@ -173,6 +174,7 @@ class DetailCandidature {
     this.controles,
     this.piece,
     this.autresCompetences,
+    this.responsableNom,
     this.autreCote = false,
   });
 
@@ -215,6 +217,7 @@ class DetailCandidature {
       autresCompetences: ReponsesAutresCompetences.depuisJson(
         brut['autresCompetences'],
       ),
+      responsableNom: texte('responsableNom'),
       autreCote: brut['autreCote'] == true,
     );
   }
@@ -251,6 +254,10 @@ class DetailCandidature {
   /// Jamais lues pour decider : un controle de passage, le paiement et l'etat de
   /// la candidature ne les connaissent pas.
   final ReponsesAutresCompetences? autresCompetences;
+
+  /// Le nom affichable du responsable du dossier, ou `null` sans responsable
+  /// (BE-S1). Le serveur ne le rend qu'a la direction, dans la portee du dossier.
+  final String? responsableNom;
 
   /// Vrai quand la candidature est de l'autre cote (femmes ou hommes) que le
   /// lecteur, lue par l'exception du super-admin. **Le serveur ne rend pas
@@ -365,6 +372,9 @@ class EvenementCandidature {
     this.issueAvant,
     this.issueApres,
     this.motif,
+    this.details = const <String, Object?>{},
+    this.responsableNom,
+    this.responsableAvantNom,
   });
 
   /// Lit un evenement, ou `null` sans identifiant ni type.
@@ -393,6 +403,13 @@ class EvenementCandidature {
           ? null
           : IssueCandidature.depuisSql(brut['issueApres']),
       motif: texte('motif'),
+      details: brut['details'] is Map
+          ? Map<String, Object?>.unmodifiable(
+              Map<String, Object?>.from(brut['details'] as Map),
+            )
+          : const <String, Object?>{},
+      responsableNom: texte('responsableNom'),
+      responsableAvantNom: texte('responsableAvantNom'),
     );
   }
 
@@ -428,6 +445,72 @@ class EvenementCandidature {
 
   /// Le motif interne, lu par la direction seule.
   final String? motif;
+
+  /// Le contenu utile de l'evenement (BE-S1) : le geste, le controle et ses
+  /// valeurs avant et apres, la cause, les pays avant et apres. Le serveur ne
+  /// rend jamais de contact ni de piece ; vide si le serveur ne le sert pas.
+  final Map<String, Object?> details;
+
+  /// Pour un evenement `responsable` : le nom du nouveau responsable (BE-S1).
+  final String? responsableNom;
+
+  /// Pour un evenement `responsable` : le nom du responsable d'avant, ou `null`.
+  final String? responsableAvantNom;
+}
+
+/// Les voisins d'un dossier dans la file filtree et triee de la direction
+/// (`voisins_candidature`, BE-S1). Des references seulement.
+@immutable
+class VoisinsCandidature {
+  /// Cree les voisins.
+  const VoisinsCandidature({
+    this.precedent,
+    this.suivant,
+    this.rang,
+    this.total,
+  });
+
+  /// Lit la reponse de `voisins_candidature`. `hors_liste` : le dossier est
+  /// lisible mais le filtre ne le contient pas (rang et total nuls).
+  factory VoisinsCandidature.depuisJson(Object? brut) {
+    if (brut is! Map) {
+      throw const FormatException('Voisins attendus.');
+    }
+    if (brut['erreur'] == 'hors_liste') {
+      return const VoisinsCandidature();
+    }
+    final Object? rang = brut['rang'];
+    final Object? total = brut['total'];
+    if (rang is! int || total is! int || rang < 1 || total < rang) {
+      throw const FormatException('Rang et total attendus.');
+    }
+    String? reference(String cle) {
+      final Object? v = brut[cle];
+      return v is String && v.isNotEmpty ? v : null;
+    }
+
+    return VoisinsCandidature(
+      precedent: reference('precedent'),
+      suivant: reference('suivant'),
+      rang: rang,
+      total: total,
+    );
+  }
+
+  /// La reference du dossier d'avant dans la file, ou `null` au debut.
+  final String? precedent;
+
+  /// La reference du dossier d'apres dans la file, ou `null` a la fin.
+  final String? suivant;
+
+  /// Le rang du dossier dans la file, a partir de 1 ; `null` hors de la liste.
+  final int? rang;
+
+  /// Le nombre de dossiers de la file ; `null` hors de la liste.
+  final int? total;
+
+  /// Vrai quand le filtre ne contient pas le dossier.
+  bool get horsListe => rang == null;
 }
 
 /// Une page de l'historique, du plus recent au plus ancien.

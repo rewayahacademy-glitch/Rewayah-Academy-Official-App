@@ -56,12 +56,13 @@ class MessagesAdminPage extends ConsumerWidget {
     final bool moderation = ref.watch(moderationOuverteProvider);
     return LayoutBuilder(
       builder: (BuildContext contexte, BoxConstraints contraintes) =>
-          _page(contexte, contraintes.maxWidth, moderation: moderation),
+          _page(contexte, ref, contraintes.maxWidth, moderation: moderation),
     );
   }
 
   Widget _page(
     BuildContext context,
+    WidgetRef ref,
     double largeur, {
     required bool moderation,
   }) {
@@ -96,6 +97,12 @@ class MessagesAdminPage extends ConsumerWidget {
         ),
       );
     }
+    // RECHERCHE-LOUPE (directeur, 16/11/2026 : « je ne veux pas deux
+    // loupes ») : au telephone, la seule loupe est celle de la barre du haut,
+    // la recherche de toute l'application, qui trouve aussi les conversations
+    // (moteur des fils). La liste ne pose plus sa ligne de recherche.
+    ref.read(memoireMessagesProvider).recherche.loupeEnTete =
+        AppGabarit.de(context) == Gabarit.mobile;
     return PageShell(
       // D-FUS-3 : le corps pose le bandeau hors ligne des Communications ;
       // pas de bandeau generique en plus.

@@ -300,7 +300,11 @@ class AdminShell extends StatelessWidget {
           // NAV-REFONTE etape 4 : le compte vit au pied de la colonne
           // (photo, nom, menu), il quitte l'en-tete, comme pour les roles.
         ],
-        if (notifications != null)
+        // CLOCHE-EN-HAUT (directeur, 16/11/2026 : « pourquoi la cloche
+        // reste la au lieu d'etre en haut ? ») : la cloche est globale ; sous
+        // 600 elle vit dans la barre du haut ([_BarreMobile]), joignable de
+        // partout, jamais dans l'en-tete d'une page.
+        if (notifications != null && avecActions)
           ClocheNotifications(
             onPress: notifications,
             actif: notificationsActives,
@@ -419,7 +423,14 @@ class AdminShell extends StatelessWidget {
                 onCompte: onCompte,
                 cloche: cloche,
                 messages: messages,
+                notifications: notifications == null
+                    ? null
+                    : ClocheNotifications(
+                        onPress: notifications,
+                        actif: notificationsActives,
+                      ),
                 studio: studio != null,
+                onRechercheMetier: onRechercheMetier,
               ),
               // La barre a deja pose la zone sure du haut (encoche, barre
               // d'etat) : la page en dessous ne la repose pas, sinon un vide
@@ -1674,11 +1685,20 @@ class _BarreMobile extends StatefulWidget {
     required this.studio,
     this.cloche,
     this.messages,
+    this.notifications,
+    this.onRechercheMetier,
   });
+
+  /// CLOCHE-EN-HAUT : la cloche des notifications, globale, dans la barre.
+  final Widget? notifications;
 
   final void Function(String chemin) onRecherche;
   final VoidCallback onCompte;
   final Widget? cloche;
+
+  /// RECHERCHE-LOUPE : la recherche de tout l'espace (conversations
+  /// comprises), proposee aussi par la loupe du telephone.
+  final VoidCallback? onRechercheMetier;
 
   /// L'acces aux Messages quand un message attend (MESSAGERIE-TEMPS-REEL).
   final Widget? messages;
@@ -1691,49 +1711,6 @@ class _BarreMobile extends StatefulWidget {
 }
 
 class _BarreMobileState extends State<_BarreMobile> {
-  final TextEditingController _recherche = TextEditingController();
-
-  @override
-  void dispose() {
-    _recherche.dispose();
-    super.dispose();
-  }
-
-  void _lancer(String saisie) {
-    final String? chemin = _cheminRecherche(saisie, studio: widget.studio);
-    if (chemin != null) {
-      widget.onRecherche(chemin);
-      _recherche.clear();
-    }
-  }
-
-  /// La largeur sous laquelle le champ de recherche ne montre plus son
-  /// indication entiere sur UNE ligne. ALERTE-1b (lecon 8) mesurait le mot
-  /// le plus long (« Rec / her… ») ; COM-F-Q5 exige la ligne entiere (une
-  /// bande de 6 px la passait a la ligne et doublait la barre). JONCTION-
-  /// LIGNES-1 garde la regle la plus stricte, qui contient l'autre : ce que
-  /// l'`InputDecorator` Material 3 reserve autour de l'indication (icone de
-  /// tete, son ecart au texte, la marge de fin et l'ecart du contour).
-  double _largeurChampUtile(BuildContext context) {
-    final TextPainter indication = TextPainter(
-      text: TextSpan(
-        text: t.nav.admin.rechercheIndication,
-        style: Theme.of(context).inputDecorationTheme.hintStyle,
-      ),
-      textDirection: Directionality.of(context),
-      textScaler: MediaQuery.textScalerOf(context),
-      maxLines: 1,
-    )..layout();
-    final double largeur =
-        indication.width +
-        AppTouchTarget.standard +
-        AppSpacing.xs +
-        AppSpacing.lg +
-        AppSpacing.xs;
-    indication.dispose();
-    return largeur;
-  }
-
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
@@ -1746,8 +1723,10 @@ class _BarreMobileState extends State<_BarreMobile> {
       child: SafeArea(
         bottom: false,
         child: Padding(
+          // CLOCHE-EN-HAUT : la cloche rejoint la barre ; une marge de 8
+          // laisse tenir cinq cibles de 72 a 390 (Interface guidee).
           padding: const EdgeInsetsDirectional.symmetric(
-            horizontal: AppSpacing.lg,
+            horizontal: AppSpacing.sm,
             vertical: AppSpacing.sm,
           ),
           // PAGESHELL-200-1e (decide par delegation le 09/10) : en Interface
@@ -1760,12 +1739,21 @@ class _BarreMobileState extends State<_BarreMobile> {
               final int boutons =
                   3 +
                   (widget.cloche == null ? 0 : 1) +
-                  (widget.messages == null ? 0 : 1);
+                  (widget.messages == null ? 0 : 1) +
+                  (widget.notifications == null ? 0 : 1);
               final bool serre =
                   c.maxWidth <
                   boutons * AppMetriques.of(context).cibleTactile +
                       (boutons - 1) * AppSpacing.sm;
-              return _rangee(serre ? const SizedBox.shrink() : Ecart.hSm);
+              // CLOCHE-EN-HAUT : quand meme serrees les cibles ne tiennent
+              // pas (320, Interface guidee), « Mon compte » quitte la barre ;
+              // il reste dans le menu (tiroir), la cloche reste en haut.
+              final bool sansCompte =
+                  c.maxWidth < boutons * AppMetriques.of(context).cibleTactile;
+              return _rangee(
+                serre ? const SizedBox.shrink() : Ecart.hSm,
+                compte: !sansCompte,
+              );
             },
           ),
         ),
@@ -1774,13 +1762,8 @@ class _BarreMobileState extends State<_BarreMobile> {
   }
 
   /// Menu, recherche, cloche et compte, separes par [ecart].
-  Widget _rangee(Widget ecart) => Builder(
+  Widget _rangee(Widget ecart, {bool compte = true}) => Builder(
     builder: (BuildContext context) {
-      // AD-11 (1.4.4) : au-dela de 150 % de texte, le champ en ligne n'a
-      // plus la place de montrer son indication entiere entre menu et
-      // compte ; la barre prend alors le bouton qui ouvre le meme champ en
-      // feuille (motif deja servi a partir de 600). Rendu inchange a 100 %.
-      final bool texteAgrandi = MediaQuery.textScalerOf(context).scale(1) > 1.5;
       return Row(
         children: <Widget>[
           Builder(
@@ -1791,50 +1774,16 @@ class _BarreMobileState extends State<_BarreMobile> {
             ),
           ),
           ecart,
-          if (texteAgrandi) ...<Widget>[
-            const Spacer(),
-            _BoutonRecherche(
-              onRecherche: widget.onRecherche,
-              studio: widget.studio,
-            ),
-          ] else
-            Expanded(
-              // ALERTE-1b (lecon 8) : avec la cloche, le champ peut ne
-              // plus avoir la place du mot le plus long de son
-              // indication (« Rec / her… » en Interface guidee a 390,
-              // a 320 en taille normale). Il cede alors la place au
-              // bouton qui ouvre le meme champ en feuille.
-              child: LayoutBuilder(
-                builder: (BuildContext contexte, BoxConstraints c) =>
-                    c.maxWidth < _largeurChampUtile(contexte)
-                    ? Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: _BoutonRecherche(
-                          onRecherche: widget.onRecherche,
-                          studio: widget.studio,
-                        ),
-                      )
-                    : ConstrainedBox(
-                        constraints: const BoxConstraints(
-                          maxWidth: AppPage.largeurFormulaire,
-                        ),
-                        child: TextField(
-                          controller: _recherche,
-                          onSubmitted: _lancer,
-                          decoration: InputDecoration(
-                            isDense: true,
-                            hintText: t.nav.admin.rechercheIndication,
-                            // AD-11 (1.4.4) : a 200 %, l'indication passe
-                            // a la ligne au lieu d'etre coupee.
-                            hintMaxLines: lignesTexteAide(
-                              t.nav.admin.rechercheIndication,
-                            ),
-                            prefixIcon: Icon(AppIcons.recherche.repos),
-                          ),
-                        ),
-                      ),
-              ),
-            ),
+          // RECHERCHE-LOUPE (directeur, 16/11/2026 : « un gros rectangle,
+          // moche, mal place ») : au telephone, la recherche est toujours une
+          // loupe qui ouvre le meme champ en feuille, jamais un champ en
+          // ligne dans la barre.
+          const Spacer(),
+          _BoutonRecherche(
+            onRecherche: widget.onRecherche,
+            studio: widget.studio,
+            onRechercheMetier: widget.onRechercheMetier,
+          ),
           ecart,
           if (widget.messages case final Widget messages) ...<Widget>[
             messages,
@@ -1844,7 +1793,11 @@ class _BarreMobileState extends State<_BarreMobile> {
             cloche,
             ecart,
           ],
-          _BoutonCompte(onCompte: widget.onCompte),
+          if (widget.notifications case final Widget notifications) ...<Widget>[
+            notifications,
+            ecart,
+          ],
+          if (compte) _BoutonCompte(onCompte: widget.onCompte),
         ],
       );
     },

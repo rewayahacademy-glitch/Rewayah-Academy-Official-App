@@ -579,6 +579,25 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
   Future<MoyensConfirmes> moyensConfirmes(String paysVersement) async =>
       moyens[paysVersement] ?? const MoyensConfirmes();
 
+  /// Les voisins que `voisins()` rend (BE-S1).
+  VoisinsCandidature voisinsRendus = const VoisinsCandidature(
+    rang: 1,
+    total: 1,
+  );
+
+  /// Les references demandees a `voisins()`, dans l'ordre.
+  final List<String> appelsVoisins = <String>[];
+
+  @override
+  Future<VoisinsCandidature> voisins(
+    String reference, {
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  }) async {
+    appelsVoisins.add(reference);
+    return voisinsRendus;
+  }
+
   @override
   Future<ResultatGeste> geste(DemandeGeste demande) async {
     appelsGeste.add(AppelGeste(demande));
@@ -976,6 +995,15 @@ class CandidaturesDirectionIndisponible implements PortCandidaturesDirection {
       Future<PageHistorique>.error(
         const CapaciteIndisponible(dependanceHistoriqueCandidature),
       );
+
+  @override
+  Future<VoisinsCandidature> voisins(
+    String reference, {
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  }) => Future<VoisinsCandidature>.error(
+    const CapaciteIndisponible(dependanceFileCandidatures),
+  );
 
   @override
   Future<ResultatGeste> geste(DemandeGeste demande) =>

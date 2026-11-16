@@ -76,6 +76,16 @@ abstract interface class PortCandidaturesDirection {
   /// `curseurSuivant` de la page precedente.
   Future<PageHistorique> historique(String candidatureId, {int? curseur});
 
+  /// Le dossier d'avant et le dossier d'apres [reference] dans la file filtree
+  /// par [filtre] et triee par [tri], dans la meme portee que [lister]
+  /// (BE-S1). [CandidatureHorsPortee], [CandidatureIntrouvable] ; un dossier
+  /// lisible que le filtre ne contient pas rend `horsListe`.
+  Future<VoisinsCandidature> voisins(
+    String reference, {
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  });
+
   /// Fait un geste. Rend la candidature relue au serveur apres l'ecriture :
   /// jamais un succes sans elle. Un refus nomme du serveur est un [RefusGeste] ;
   /// aucune ecriture n'a eu lieu. [GesteNonConfirme] quand le serveur n'a pas

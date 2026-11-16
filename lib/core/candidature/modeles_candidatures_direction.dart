@@ -224,6 +224,16 @@ class FiltreCandidatures {
     this.competenceNiveauMin,
     this.competenceDisponibilite,
     this.competenceAccord,
+    this.pieceEnAttente,
+    this.responsable,
+    this.ijaza,
+    this.langueExplication,
+    this.riwaya,
+    this.publicVise,
+    this.jours,
+    this.heureMin,
+    this.heureMax,
+    this.joursMin,
   });
 
   /// Le texte cherche : nom partiel, reference `CAND-` exacte, courriel exact.
@@ -270,6 +280,40 @@ class FiltreCandidatures {
   /// personne pour une mission envoie toujours vrai.
   final bool? competenceAccord;
 
+  /// BE-S1 : vrai, seulement les dossiers dont la derniere piece deposee attend la
+  /// direction ; faux, les autres.
+  final bool? pieceEnAttente;
+
+  /// BE-S1 : `moi` (mes dossiers), `aucun` (sans responsable) ou l'identifiant d'un
+  /// membre de la direction.
+  final String? responsable;
+
+  /// BE-S1 : l'ijaza declaree, exactement une valeur stockee : `oui`, `pret_test`
+  /// (pas d'ijaza mais prete pour un test) ou `non`.
+  final String? ijaza;
+
+  /// BE-S1 : un code de langue d'explication declaree.
+  final String? langueExplication;
+
+  /// BE-S1 : un code de riwaya declaree.
+  final String? riwaya;
+
+  /// BE-S1 : un public vise : `6_9`, `10_13`, `14_17` ou `adultes` (cle `public`).
+  final String? publicVise;
+
+  /// BE-S1 : un ou plusieurs jours disponibles, de 1 (lundi) a 7 (dimanche) ; un
+  /// seul suffit.
+  final List<int>? jours;
+
+  /// BE-S1 : heure de debut de la fenetre, de 0 a 23, dans le fuseau du candidat.
+  final int? heureMin;
+
+  /// BE-S1 : heure de fin de la fenetre, de 1 a 24, dans le fuseau du candidat.
+  final int? heureMax;
+
+  /// BE-S1 : au moins ce nombre de jours disponibles (de 1 a 7), dans la fenetre.
+  final int? joursMin;
+
   /// Le texte cherche, sans les blancs de bord.
   String get rechercheNette => recherche.trim();
 
@@ -306,7 +350,17 @@ class FiltreCandidatures {
       competenceDomaine == null &&
       competenceNiveauMin == null &&
       competenceDisponibilite == null &&
-      competenceAccord == null;
+      competenceAccord == null &&
+      pieceEnAttente == null &&
+      responsable == null &&
+      ijaza == null &&
+      langueExplication == null &&
+      riwaya == null &&
+      publicVise == null &&
+      jours == null &&
+      heureMin == null &&
+      heureMax == null &&
+      joursMin == null;
 
   /// Le nombre d'axes poses (la recherche compte pour un).
   int get nombreAxes =>
@@ -321,7 +375,17 @@ class FiltreCandidatures {
       (competenceDomaine == null ? 0 : 1) +
       (competenceNiveauMin == null ? 0 : 1) +
       (competenceDisponibilite == null ? 0 : 1) +
-      (competenceAccord == null ? 0 : 1);
+      (competenceAccord == null ? 0 : 1) +
+      (pieceEnAttente == null ? 0 : 1) +
+      (responsable == null ? 0 : 1) +
+      (ijaza == null ? 0 : 1) +
+      (langueExplication == null ? 0 : 1) +
+      (riwaya == null ? 0 : 1) +
+      (publicVise == null ? 0 : 1) +
+      (jours == null ? 0 : 1) +
+      (heureMin == null ? 0 : 1) +
+      (heureMax == null ? 0 : 1) +
+      (joursMin == null ? 0 : 1);
 
   /// Le meme filtre, un axe change. Une fonction par axe rend `null` possible
   /// (« tous »).
@@ -338,6 +402,16 @@ class FiltreCandidatures {
     NiveauCompetence? Function()? competenceNiveauMin,
     DisponibiliteMission? Function()? competenceDisponibilite,
     bool? Function()? competenceAccord,
+    bool? Function()? pieceEnAttente,
+    String? Function()? responsable,
+    String? Function()? ijaza,
+    String? Function()? langueExplication,
+    String? Function()? riwaya,
+    String? Function()? publicVise,
+    List<int>? Function()? jours,
+    int? Function()? heureMin,
+    int? Function()? heureMax,
+    int? Function()? joursMin,
   }) => FiltreCandidatures(
     recherche: recherche ?? this.recherche,
     etape: etape == null ? this.etape : etape(),
@@ -359,6 +433,20 @@ class FiltreCandidatures {
     competenceAccord: competenceAccord == null
         ? this.competenceAccord
         : competenceAccord(),
+    pieceEnAttente: pieceEnAttente == null
+        ? this.pieceEnAttente
+        : pieceEnAttente(),
+    responsable: responsable == null ? this.responsable : responsable(),
+    ijaza: ijaza == null ? this.ijaza : ijaza(),
+    langueExplication: langueExplication == null
+        ? this.langueExplication
+        : langueExplication(),
+    riwaya: riwaya == null ? this.riwaya : riwaya(),
+    publicVise: publicVise == null ? this.publicVise : publicVise(),
+    jours: jours == null ? this.jours : jours(),
+    heureMin: heureMin == null ? this.heureMin : heureMin(),
+    heureMax: heureMax == null ? this.heureMax : heureMax(),
+    joursMin: joursMin == null ? this.joursMin : joursMin(),
   );
 
   /// Le meme filtre sans aucun axe : « Effacer les filtres ».
@@ -378,10 +466,20 @@ class FiltreCandidatures {
       other.competenceDomaine == competenceDomaine &&
       other.competenceNiveauMin == competenceNiveauMin &&
       other.competenceDisponibilite == competenceDisponibilite &&
-      other.competenceAccord == competenceAccord;
+      other.competenceAccord == competenceAccord &&
+      other.pieceEnAttente == pieceEnAttente &&
+      other.responsable == responsable &&
+      other.ijaza == ijaza &&
+      other.langueExplication == langueExplication &&
+      other.riwaya == riwaya &&
+      other.publicVise == publicVise &&
+      listEquals(other.jours, jours) &&
+      other.heureMin == heureMin &&
+      other.heureMax == heureMax &&
+      other.joursMin == joursMin;
 
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll(<Object?>[
     rechercheNette,
     etape,
     etat,
@@ -394,7 +492,17 @@ class FiltreCandidatures {
     competenceNiveauMin,
     competenceDisponibilite,
     competenceAccord,
-  );
+    pieceEnAttente,
+    responsable,
+    ijaza,
+    langueExplication,
+    riwaya,
+    publicVise,
+    jours == null ? null : Object.hashAll(jours!),
+    heureMin,
+    heureMax,
+    joursMin,
+  ]);
 }
 
 /// La requete d'une page de la file : le filtre, le tri et la page (a partir de

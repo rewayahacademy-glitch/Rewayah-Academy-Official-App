@@ -261,7 +261,9 @@ BEGIN
                 -- MESSAGES-CANDIDAT (20261119400100, PR 304 CONFORME) : exception nommee
                 -- par sa signature exacte, jamais par un motif ; elle ne rend que
                 -- l'identifiant de la candidature de l'appelant (assertion ci-dessous).
-                AND oid <> 'public.com_ma_candidature()'::regprocedure) THEN
+                AND oid <> 'public.com_ma_candidature()'::regprocedure
+         -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; ne rend que des references.
+         AND oid <> 'public.voisins_candidature(text,jsonb,text)'::regprocedure) THEN
     RAISE EXCEPTION 'CAND-L1 ROUGE : une lecture publique de l''etat du candidat double etat_dossier()';
   END IF;
   -- MESSAGES-CANDIDAT (20261119400100) : com_ma_candidature() ne rend que
@@ -744,8 +746,8 @@ BEGIN
   PERFORM pg_temp.vrai(jsonb_array_length(t -> 'evenements') = 6 AND t -> 'curseurSuivant' = 'null'::jsonb
     AND (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(t -> 'evenements' -> 0) k) =
         (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY['id', 'type', 'quand', 'etapeAvant', 'etapeApres',
-          'etatAvant', 'etatApres', 'issueAvant', 'issueApres', 'auteur', 'motif']) x),
-    'historique complet en une page, onze cles par evenement');
+          'etatAvant', 'etatApres', 'issueAvant', 'issueApres', 'auteur', 'motif', 'details']) x),
+    'historique complet en une page, douze cles par evenement (BE-S1 : details)');
   PERFORM pg_temp.vrai((SELECT bool_and(e ->> 'quand' ~ '^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{6}Z$')
                         FROM jsonb_array_elements(t -> 'evenements') e),
     'historique : instants en UTC, suffixe Z');

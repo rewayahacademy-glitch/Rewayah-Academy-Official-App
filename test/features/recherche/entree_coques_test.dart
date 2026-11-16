@@ -400,8 +400,11 @@ void main() {
       expect(find.text('Rechercher dans votre espace'), findsNothing);
     });
 
-    testWidgets('barre mobile (< 600) : le champ de navigation reste en '
-        'ligne, la recherche metier s\'ouvre depuis le menu', (
+    // RECHERCHE-LOUPE (directeur, 16/11/2026) : sous 600, plus de champ en
+    // ligne ; la loupe ouvre le champ et la recherche metier ; le menu garde
+    // aussi son lien.
+    testWidgets('barre mobile (< 600) : la loupe ouvre le champ et la '
+        'recherche metier, le menu garde son lien', (
       WidgetTester tester,
     ) async {
       final GoRouter routeur = await _monter(
@@ -411,7 +414,12 @@ void main() {
         moteurs: moteursDemoRecherche(),
         taille: const Size(560, 900),
       );
+      expect(find.byType(TextField), findsNothing);
+      await ouvrirLoupe(tester);
       expect(find.byType(TextField), findsWidgets);
+      expect(find.text('Rechercher dans votre espace'), findsOneWidget);
+      await tester.tapAt(const Offset(4, 4));
+      await tester.pumpAndSettle();
       await tester.tap(find.byIcon(AppIcons.menu.repos).first);
       await tester.pump(const Duration(milliseconds: 300));
       await tester.pump(const Duration(milliseconds: 300));

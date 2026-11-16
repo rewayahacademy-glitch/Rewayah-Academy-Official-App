@@ -436,7 +436,9 @@ BEGIN
          -- MESSAGES-CANDIDAT (20261119400100, PR 304 CONFORME) : exception nommee
          -- par sa signature exacte, jamais par un motif ; elle ne rend que
          -- l'identifiant de la candidature de l'appelant (assertion ci-dessous).
-         AND oid <> 'public.com_ma_candidature()'::regprocedure),
+         AND oid <> 'public.com_ma_candidature()'::regprocedure
+         -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; ne rend que des references.
+         AND oid <> 'public.voisins_candidature(text,jsonb,text)'::regprocedure),
     'aucune RPC du lot ne contient « candidature » : etat_dossier() reste la seule lecture de l''etat du candidat');
   -- MESSAGES-CANDIDAT (20261119400100) : com_ma_candidature() ne rend que
   -- l'identifiant (uuid) de la candidature de l'appelant, jamais son etat :
@@ -502,7 +504,9 @@ SELECT pg_temp.vrai(pg_temp.citeurs() = ARRAY[
     'public.lire_candidature',
     'public.lire_catalogue_competences',
     'public.lister_candidatures',
-    'public.retirer_autres_competences'],
+    'public.retirer_autres_competences',
+    -- BE-S1 (16/11) : voisins_candidature rejoue le filtre de competences de la liste.
+    'public.voisins_candidature'],
   'seules les trois RPC du candidat, la lecture du catalogue (sa propre reponse) et les deux lectures de la direction citent la table des reponses : ni controle, ni paiement, ni transition, ni etat_dossier()');
 -- Le catalogue : cite par le lot seulement (aides competences_, quatre RPC), jamais par un controle,
 -- le paiement, une transition ni etat_dossier(). Meme balayage, meme contre-epreuve.
@@ -517,7 +521,9 @@ $$;
 SELECT pg_temp.vrai(pg_temp.citeurs_catalogue() = ARRAY[
     'public.enregistrer_competence_catalogue',
     'public.lire_catalogue_competences',
-    'public.lister_candidatures'],
+    'public.lister_candidatures',
+    -- BE-S1 (16/11) : voisins_candidature rejoue le filtre de competences de la liste.
+    'public.voisins_candidature'],
   'seuls la lecture et l''ecriture du catalogue, et le filtre de la liste de la direction, citent le catalogue (les aides competences_ mises a part) : ni controle, ni paiement, ni transition, ni etat_dossier(), ni les RPC du candidat directement');
 CREATE FUNCTION private.zz_essai_citeur_catalogue() RETURNS integer LANGUAGE sql AS
   $$ SELECT count(*)::integer FROM public.competences_catalogue $$;

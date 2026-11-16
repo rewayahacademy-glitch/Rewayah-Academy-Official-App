@@ -304,6 +304,8 @@ declare
     'lister_a_prevenir_candidats(boolean,integer)',
     'lister_formulaires_importes(jsonb,integer)',
     'lister_candidatures(jsonb,text,integer)',
+    -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
+    'voisins_candidature(text,jsonb,text)',
     'lister_rapprochements_candidats(integer)',
     'indicateurs_admin()',
     -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).
