@@ -160,12 +160,12 @@ class _ChoixEtat extends ConsumerState<ChoixCreneauEntretien> {
     }
     final List<CreneauOuvert> creneaux = lecture.requireValue;
     if (creneaux.isEmpty) {
+      // Directeur, 16/11/2026 : les candidats retenus ne doivent pas croire
+      // qu'ils ont un geste a faire ; aucun « Reessayer », une phrase claire.
       return EtatSysteme(
         key: ChoixCreneauEntretien.aucunKey,
-        nature: NatureEtat.aucunResultat,
+        nature: NatureEtat.dossierEnAttente,
         phrase: t.recrutement.entretien.aucunCreneau,
-        libelleAction: t.commun.reessayer,
-        onAction: relire,
       );
     }
     return Column(
