@@ -1,0 +1,11 @@
+BE-LISTE, captures du 16/11/2026, faites par test/capture/be_liste_capture_test.dart
+(CAPTURE_DIR), sur des donnees de test, pas sur la pile locale de tool/e2e ni sur la production.
+Gabarits : 360x800 (telephone), 1366x768 (ordinateur), 360x800 en arabe (droite a gauche).
+1_arrivee : la liste a l'arrivee, « Outils » et « Qui attend quoi » depliee.
+2_repliee : « Qui attend quoi » repliee.
+3_outils : le menu « Outils » ouvert (une entree : Invitations, port de test).
+4_piece_filtree : « Piece d'identite a valider » touchee ; la liste filtree sur l'etape de
+verification, en cours, hors pause ; resultat vide car les donnees de test n'ont personne a cette etape.
+ADRESSE apres le geste (les trois gabarits) :
+/admin/personnes/candidatures?etape=verifications&issue=enCours&pause=non
+NON FAIT : pas de robot E2E sur la pile locale, pas de capture du retour depuis un vrai dossier.
