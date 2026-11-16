@@ -38,7 +38,7 @@
 // `recherche`, et depuis CAND-AUTRES `competenceDomaine`, `competenceNiveauMin`,
 // `competenceDisponibilite`, `competenceAccord`, et depuis BE-S1 `pieceEnAttente`,
 // `responsable`, `ijaza`, `langueExplication`, `riwaya`, `public`, `jours`,
-// `heureMin`, `heureMax`, `joursMin`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
+// `heureMin`, `heureMax`, `joursMin`, `majorite`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
 // n'est pas envoyee.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -440,6 +440,8 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
   if (filtre.heureMin != null) 'heureMin': filtre.heureMin!,
   if (filtre.heureMax != null) 'heureMax': filtre.heureMax!,
   if (filtre.joursMin != null) 'joursMin': filtre.joursMin!,
+  // MAJEUR : l'attestation « 18 ans ou plus ».
+  if (filtre.majorite != null) 'majorite': filtre.majorite!,
 };
 
 /// Les deux refus d'une lecture de dossier, rendus dans la reponse.

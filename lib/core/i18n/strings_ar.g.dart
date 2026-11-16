@@ -1826,6 +1826,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$recrutement$majeur$ar majeur = _Traductions$recrutement$majeur$ar._(_root);
 	@override late final _Traductions$recrutement$suivant$ar suivant = _Traductions$recrutement$suivant$ar._(_root);
 	@override late final _Traductions$recrutement$dossier3$ar dossier3 = _Traductions$recrutement$dossier3$ar._(_root);
 	@override late final _Traductions$recrutement$file$ar file = _Traductions$recrutement$file$ar._(_root);
@@ -10736,6 +10737,25 @@ class _Traductions$recherche$contexte$ar extends Traductions$recherche$contexte$
 	@override String personneParIdentifiantClasse({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩';
 	@override String get canalStudio => 'قناة الاستوديو';
 	@override String encaissement({required Object famille}) => 'تحصيل · ⁨${famille}⁩';
+}
+
+// Path: recrutement.majeur
+class _Traductions$recrutement$majeur$ar extends Traductions$recrutement$majeur$fr {
+	_Traductions$recrutement$majeur$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'قبل أن نبدأ';
+	@override String get explication => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر.';
+	@override String get coche => 'عمري 18 سنة أو أكثر.';
+	@override String get lienMoins18 => 'عمري أقل من 18 سنة';
+	@override String get pourquoiBloque => 'ضع علامة في المربع للمتابعة.';
+	@override String get echec => 'لم يتم تأكيد إجابتك. لم يُحفظ شيء: حاول مرة أخرى بعد قليل.';
+	@override String get dejaFaite => 'إجابتك مسجلة بالفعل. إن كانت غير صحيحة، راسل الإدارة.';
+	@override late final _Traductions$recrutement$majeur$portail$ar portail = _Traductions$recrutement$majeur$portail$ar._(_root);
+	@override late final _Traductions$recrutement$majeur$confirmer$ar confirmer = _Traductions$recrutement$majeur$confirmer$ar._(_root);
+	@override late final _Traductions$recrutement$majeur$moins18$ar moins18 = _Traductions$recrutement$majeur$moins18$ar._(_root);
 }
 
 // Path: recrutement.suivant
@@ -20978,6 +20998,41 @@ class _Traductions$recherche$guide$initial$ar extends Traductions$recherche$guid
 	// Translations
 	@override String get titre => 'البحث عن مادة';
 	@override String get phrase => 'اكتب كلمة لتجد إحدى موادك.';
+}
+
+// Path: recrutement.majeur.portail
+class _Traductions$recrutement$majeur$portail$ar extends Traductions$recrutement$majeur$portail$fr {
+	_Traductions$recrutement$majeur$portail$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'تأكيد مطلوب';
+	@override String get explication => 'لمتابعة طلب ترشحك، أكّد أن عمرك 18 سنة أو أكثر.';
+}
+
+// Path: recrutement.majeur.confirmer
+class _Traductions$recrutement$majeur$confirmer$ar extends Traductions$recrutement$majeur$confirmer$fr {
+	_Traductions$recrutement$majeur$confirmer$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'هل عمرك أقل من 18 سنة؟';
+	@override String get explication => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. سيتوقف طلب ترشحك مؤقتًا، ولن يُحذف أي شيء.';
+	@override String get action => 'نعم، عمري أقل من 18 سنة';
+	@override String get retour => 'لا، رجوع';
+}
+
+// Path: recrutement.majeur.moins18
+class _Traductions$recrutement$majeur$moins18$ar extends Traductions$recrutement$majeur$moins18$fr {
+	_Traductions$recrutement$majeur$moins18$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'شكرًا على صراحتك';
+	@override String get texte => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. طلب ترشحك متوقف مؤقتًا، ولم يُحذف أي شيء.';
 }
 
 // Path: recrutement.dossier3.pastille
@@ -38967,6 +39022,21 @@ extension on TraductionsAr {
 			'recherche.contexte.personneParIdentifiantClasse' => ({required Object classe}) => 'وُجد بمعرّفه · ⁨${classe}⁩',
 			'recherche.contexte.canalStudio' => 'قناة الاستوديو',
 			'recherche.contexte.encaissement' => ({required Object famille}) => 'تحصيل · ⁨${famille}⁩',
+			'recrutement.majeur.titre' => 'قبل أن نبدأ',
+			'recrutement.majeur.explication' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر.',
+			'recrutement.majeur.coche' => 'عمري 18 سنة أو أكثر.',
+			'recrutement.majeur.lienMoins18' => 'عمري أقل من 18 سنة',
+			'recrutement.majeur.pourquoiBloque' => 'ضع علامة في المربع للمتابعة.',
+			'recrutement.majeur.echec' => 'لم يتم تأكيد إجابتك. لم يُحفظ شيء: حاول مرة أخرى بعد قليل.',
+			'recrutement.majeur.dejaFaite' => 'إجابتك مسجلة بالفعل. إن كانت غير صحيحة، راسل الإدارة.',
+			'recrutement.majeur.portail.titre' => 'تأكيد مطلوب',
+			'recrutement.majeur.portail.explication' => 'لمتابعة طلب ترشحك، أكّد أن عمرك 18 سنة أو أكثر.',
+			'recrutement.majeur.confirmer.titre' => 'هل عمرك أقل من 18 سنة؟',
+			'recrutement.majeur.confirmer.explication' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. سيتوقف طلب ترشحك مؤقتًا، ولن يُحذف أي شيء.',
+			'recrutement.majeur.confirmer.action' => 'نعم، عمري أقل من 18 سنة',
+			'recrutement.majeur.confirmer.retour' => 'لا، رجوع',
+			'recrutement.majeur.moins18.titre' => 'شكرًا على صراحتك',
+			'recrutement.majeur.moins18.texte' => 'التوظيف مخصص للأشخاص الذين بلغوا 18 سنة فأكثر. طلب ترشحك متوقف مؤقتًا، ولم يُحذف أي شيء.',
 			'recrutement.suivant.position' => ({required Object rang, required Object total}) => '⁨${rang}⁩ من ⁨${total}⁩',
 			'recrutement.suivant.precedent' => 'الملف السابق',
 			'recrutement.suivant.suivant' => 'الملف التالي',
@@ -39078,6 +39148,8 @@ extension on TraductionsAr {
 			'recrutement.invitations.onglet' => 'الدعوات',
 			'recrutement.invitations.comptable.titrePage' => 'دعوة شخص',
 			'recrutement.invitations.comptable.sousTitrePage' => 'اختر دور الشخص، ثم أدخل عنوانه. كل رمز يُستعمل مرة واحدة وتنتهي صلاحيته.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.invitations.comptable.choixQuestion' => 'ما دور هذا الشخص؟',
 			'recrutement.invitations.comptable.enseignantTitre' => 'معلم',
 			'recrutement.invitations.comptable.enseignantExplication' => 'يدرّس الصفوف. بعد تسجيله، يوقّع عقده قبل أول حصة له.',
@@ -39093,8 +39165,6 @@ extension on TraductionsAr {
 			'recrutement.invitations.sousTitre' => 'لا يمكن للمعلّم أن يسجّل إلا برمز دعوة. يُستعمل الرمز مرة واحدة وتنتهي صلاحيته.',
 			'recrutement.invitations.champEmail' => 'عنوان البريد الإلكتروني للمعلّم',
 			'recrutement.invitations.aideEmail' => 'يُنشأ الرمز لهذا العنوان. سلّمه للشخص: لا يُرسل تلقائيًا.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.invitations.inviter' => 'إنشاء الدعوة',
 			'recrutement.invitations.emailInvalide' => 'هذا العنوان ليس على شكل عنوان بريد إلكتروني. تحقّق منه ثم أعد المحاولة.',
 			'recrutement.invitations.compteExistant' => 'يوجد حساب بالفعل لهذا العنوان: لا حاجة إلى دعوة.',
@@ -39592,6 +39662,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.description' => 'تضبط ساعات كل يوم على حدة، واحدًا بعد الآخر.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.explication' => 'تبقى الساعات التي اخترتها: تعدّلها فقط.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.exemple' => 'تبدأ في الساعة 18:00 يوم الاثنين، وفي الساعة 20:00 يوم الأربعاء.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.parJour.titre' => 'اضبط الساعات يومًا بيوم',
 			'recrutement.parcours.q.disponibilitesDeclarees.parJour.explication' => 'يأخذ كل يوم الساعات التي اخترتها. أضف ساعات أو احذفها حيث يختلف الأمر.',
 			'recrutement.parcours.q.disponibilitesDeclarees.semaine.titre' => 'أسبوعك',
@@ -39607,8 +39679,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.options.immediat.exemple' => 'لا التزام يشغلك هذا الشهر.',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.libelle' => 'الشهر القادم',
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.description' => 'ستكون متفرغًا ابتداءً من الشهر القادم.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.debutPossible.options.mois_prochain.exemple' => 'تنهي عملًا آخر في نهاية هذا الشهر.',
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.libelle' => 'خلال أقل من ثلاثة أشهر',
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.description' => 'ستكون متفرغًا خلال الأشهر الثلاثة القادمة.',
@@ -40106,6 +40176,8 @@ extension on TraductionsAr {
 			'juridique.enfants.resume' => 'كيف نحمي الطلاب القاصرين.',
 			'juridique.enfants.intro' => 'يتابع الطلاب القاصرون دروسهم تحت مسؤولية شخص بالغ. هذه هي القواعد التي نطبّقها، وهذه طريقة إخبارنا بأي قلق.',
 			'juridique.enfants.s1.titre' => '١. شخص بالغ مسؤول',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.enfants.s1.blocs.0' => 'لا يدخل الطفل إلى الدروس دون وليّ أمر بالغ مأذون. والتسجيل والموافقات والمدفوعات من شأن وليّ الأمر.',
 			'juridique.enfants.s1.blocs.1' => 'صيغة الأطفال من ٦ إلى ١٧ سنة. ولا يوضَع أي قاصر في فصل للكبار.',
 			'juridique.enfants.s1.blocs.2' => 'من ٦ إلى ٩ سنوات تكون الواجهة الموجَّهة مفعّلة افتراضيًا: شاشات أبسط بأزرار كبيرة.',
@@ -40121,8 +40193,6 @@ extension on TraductionsAr {
 			'juridique.enfants.s4.blocs.0' => 'معلومات الطفل ليست عامة ولا تظهر للأسر الأخرى.',
 			'juridique.enfants.s4.blocs.1' => 'الرمز الشخصي للطالب يبقى على جهازه.',
 			'juridique.enfants.s4.blocs.2' => 'انظروا أيضًا نص الخصوصية.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.enfants.s5.titre' => '٥. إخبارنا بقلق',
 			'juridique.enfants.s5.blocs.0' => 'إذا أقلقكم أمر فاكتبوا لنا. قولوا ما رأيتم ومتى وفي أي فصل.',
 			'juridique.enfants.s5.blocs.1' => 'في حال خطر داهم، اتصلوا أولًا بخدمات الطوارئ في بلدكم.',
@@ -40620,6 +40690,8 @@ extension on TraductionsAr {
 			'snt.planning.heure' => 'الساعة',
 			'snt.planning.quand' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩',
 			'snt.planning.choixManquant' => 'اختاروا يوم الحصة الجديدة وساعتها.',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.confirmer' => 'تحديد هذا الموعد',
 			'snt.planning.horsLigne' => 'لا يوجد اتصال: يُحدَّد الموعد حين يعود الاتصال بالجهاز.',
 			'snt.planning.fixee' => ({required Object quand}) => 'حُدّد الموعد الجديد: ⁨${quand}⁩. أُبلغ الفصل.',
@@ -40635,8 +40707,6 @@ extension on TraductionsAr {
 			'a3bis.salle.titulaireEntre' => 'دخل معلم الفصل القاعة أولًا: لم يعد الاستبدال ضروريًا. شكرًا لاستعدادكم.',
 			'a3bis.salle.remplacantEntreTitre' => 'أخذ بديل الفصل',
 			'a3bis.salle.remplacantEntre' => 'دخل البديل الذي أخذ الفصل القاعة أولًا: سُحبت منكم حصة هذا اليوم. وتبقون معلم الفصل.',
-			_ => null,
-		} ?? switch (path) {
 			'a3bis.notifications.avertissement' => 'لستم في القاعة بعد. ادخلوا بسرعة: إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.',
 			'a3bis.notifications.avertissementMinutes' => ({required num minutes}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minutes, zero: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', one: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', two: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', few: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', many: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', other: 'لستم في القاعة بعد. ادخلوا خلال ⁨${minutes}⁩ دقائق: بعد هذه المدة، إذا تقدّم معلم لاستبدالكم، فستفقدون الوصول إلى حصة اليوم.', ), 
 			'a3bis.regles.perteDetail' => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.',
@@ -41134,6 +41204,8 @@ extension on TraductionsAr {
 			'suiviPedagogique.revisionHeures' => ({required Object heures}) => '⁨${heures}⁩ س',
 			'suiviPedagogique.repetitions' => 'التكرارات المقدّرة',
 			'suiviPedagogique.repetitionsNombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: '⁨${n}⁩ تكرار', one: '⁨${n}⁩ تكرار', two: '⁨${n}⁩ تكرار', few: '⁨${n}⁩ تكرارات', many: '⁨${n}⁩ تكرارًا', other: '⁨${n}⁩ تكرار', ), 
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.dernierJalon' => 'آخر محطة',
 			'suiviPedagogique.niveauDeclare' => 'المستوى المصرّح به',
 			'suiviPedagogique.dateLimiteDepassee' => 'تجاوز الموعد النهائي',
@@ -41149,8 +41221,6 @@ extension on TraductionsAr {
 			'suiviPedagogique.attenteEntretien' => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.',
 			'suiviPedagogique.attenteEntretienTu' => 'ستُحدَّد مرحلتك بعد مقابلة القراءة مع الإدارة.',
 			'suiviPedagogique.attenteEntretienPour' => ({required Object prenom}) => 'ستُحدَّد مرحلة ⁨${prenom}⁩ بعد مقابلة القراءة مع الإدارة.',
-			_ => null,
-		} ?? switch (path) {
 			'apprendre.sections.libelle' => 'أقسام مساحة التعلّم',
 			'apprendre.sections.bibliotheque' => 'المكتبة',
 			'apprendre.sections.programme' => 'البرنامج',
@@ -41648,6 +41718,8 @@ extension on TraductionsAr {
 			'presentationTuteur.accueil.titre' => 'طلب العرض العادي',
 			'presentationTuteur.accueil.voir' => 'الرد',
 			'presentationTuteur.notification' => ({required Object prenom}) => 'يطلب ⁨${prenom}⁩ العرض العادي',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.onglet' => 'طلبات الاستلام',
 			'reprisesAdmin.titre' => 'استلام الأسرة',
 			'reprisesAdmin.sousTitre' => 'طلبات بالغ ثانٍ ليصبح صاحب حساب الأسرة. تقرر الإدارة.',
@@ -41663,8 +41735,6 @@ extension on TraductionsAr {
 			'reprisesAdmin.validerQuestion' => ({required Object prenom}) => 'اعتماد استلام ⁨${prenom}⁩ للأسرة؟',
 			'reprisesAdmin.validerConsequence' => 'سيصبح هذا الشخص صاحب حساب الأسرة. يُنقل بهذا القرار حق صاحب الحساب.',
 			'reprisesAdmin.refuserQuestion' => ({required Object prenom}) => 'رفض استلام ⁨${prenom}⁩ للأسرة؟',
-			_ => null,
-		} ?? switch (path) {
 			'reprisesAdmin.refuserConsequence' => 'لا تُنقل أي صلاحية. يمكن للشخص تقديم طلب جديد بعد المهلة المقررة.',
 			'reprisesAdmin.validee' => 'اعتُمد الاستلام.',
 			'reprisesAdmin.refusee' => 'رُفض الاستلام.',
