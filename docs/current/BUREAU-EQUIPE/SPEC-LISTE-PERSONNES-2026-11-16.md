@@ -24,6 +24,7 @@ le lot « UNE-LISTE » de `ETAT-ET-PLAN-2026-11-16.md`.
 | Cinq pages montrent les mêmes noms ; la fiche charge toute la file des pièces | **Une population, une liste.** Une fiche ne charge que sa personne. Aucune liste entière en mémoire. |
 | Un avis en arabe a bloqué tous les déploiements (16/11) | Un déploiement qui échoue est vu **dans l'heure** : le pilote lit chaque déploiement après fusion. |
 | L'après-confirmation jamais parcouru | Chaque phase de la vie d'une personne est **parcourue de bout en bout avec un compte de test avant** qu'une vraie personne y arrive. |
+| Le pilote a fusionné main dans #532 sans Flutter, en ne recalculant que l’en-tête de slang : construction rouge (16/11) | Après toute fusion de main dans une branche : `dart run slang` **deux fois**, puis commit des trois `strings_*.g.dart`. Sans Flutter sur la machine, on ne fusionne pas soi-même : on le demande à l’agent du lot. |
 
 ## 1. Le principe
 
