@@ -1,7 +1,7 @@
 # Suivi du Bureau de l'équipe
 
 Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (numéro),
-`dans main` (numéro), `prouvé par le directeur` (date). Aucun autre mot. Mis à jour le 16/11/2026.
+`dans main` (numéro), `prouvé par le directeur` (date). Aucun autre mot. Mis à jour le 16/11/2026, 19 h UTC.
 
 ## Vague 0 et vague 1 (ordre du directeur du 16/11)
 
@@ -13,20 +13,32 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 | BE-0b écran + BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo et pièce qui s'ouvrent au toucher, rien de fixe (arbitrage du 16/11), résumé en tableau | `CAHIER-BE-DOSSIER.md` | dans main (#508) |
 | BE-0c + BE-1c | Retours qui ramènent d'où l'on vient, filtres dans l'adresse, entrée de « Personnes » sur Candidatures, en-tête de liste réduit, une seule file | `CAHIER-BE-LISTE.md` | dans main (#506) |
 | BE-VERSEMENT | Le moyen de versement se valide seul quand le pays est pris en charge ; la direction décide une fois par pays, pas par candidat (directeur, 16/11) | `CAHIER-BE-VERSEMENT.md` | dans main (#509) ; installé en production le 16/11 |
-| BE-LISTE-2 | Un seul système de filtres (titre-sélecteur, recherche avec Filtres et Trier, une rangée de files avec leurs nombres), bandeau des deux côtés fermable (directeur, 16/11, captures de production) | `CAHIER-BE-LISTE-2.md` | en cours (agent BE-LISTE, `claude/be-liste-2`) ; révision du 16/11 : les files deviennent un menu « File » (PR #515, cible 300 pt non prouvée) |
-| BADGE-NOUVEAU | Badge « Nouveau » commun (`lib/core/widgets/badge_nouveau.dart`), sur la ligne de la liste des candidatures, et file « Nouveaux · N » dans le menu File (filtre serveur `nouveau`, `compteurNouveaux`) (directeur, 16/11 ; SPEC-LISTE-PERSONNES §2.1 bis) | ordre du pilote, 16/11 | PR ouverte (agent BE-LISTE, `claude/badge-nouveau`) ; bandeau « deux côtés » branché sur `lire_vus` / `marquer_vu` (#541, clé `bandeau.deux_cotes`, plus aucune mémoire d'appareil) par un adaptateur commun `lib/core/vus` ; reste : le panneau des conversations et les autres listes de personnes (même composant) |
-| PAYS-RECHERCHE | Le Ghana introuvable : la recherche de pays ne lisait que la langue de l'interface ; liste courte des vrais pays (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | PR ouverte (#513) |
-| MAJEUR | Attestation « 18 ans ou plus » avant de continuer ; les candidats déjà avancés cochent à leur prochaine visite (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | PR ouverte (#517) ; migration `20261128400000` à installer juste après la fusion |
+| BE-LISTE-2 | Un seul système de filtres (titre-sélecteur, recherche avec Filtres et Trier, une rangée de files avec leurs nombres), bandeau des deux côtés fermable (directeur, 16/11, captures de production) | `CAHIER-BE-LISTE-2.md` | dans main (#515) ; bandeau mémorisé par compte avec #541 et #543 |
+| PAYS-RECHERCHE | Le Ghana introuvable : la recherche de pays ne lisait que la langue de l'interface ; liste courte des vrais pays (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | dans main (#513) |
+| MAJEUR | Attestation « 18 ans ou plus » avant de continuer ; les candidats déjà avancés cochent à leur prochaine visite (directeur, 16/11) | `CAHIER-BE-PAYS-MAJEUR.md` | dans main (#517) ; migrations 400000 et 400100 installées le 16/11 |
 | BE-COLONNES | Les critères de la synthèse en colonnes dans la liste, sur ordinateur, triables (directeur, 16/11) | `CAHIER-BE-COLONNES.md` | pas commencé (après BE-LISTE-2, même zone ; la PR 508 est dans main) |
 | BE-DOSSIER-2 | Corrections du dossier en production : page vide au bout, moins de rubriques repliées, carte de profil avec la messagerie, heures en plages sans mélange arabe et latin (directeur, 16/11) | `CAHIER-BE-DOSSIER-2.md` | dans main (#518) |
-| BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | `CAHIER-BE-SUIVANT.md` | PR brouillon #516 : main fusionné, captures refaites ; testé localement, pas prouvé en production |
-| VERSEMENT-QUESTIONS | Compte bancaire oui/non d'abord, puis le pays ; bloc entier modifiable par le candidat jusqu'à la validation du dossier ; geste « Débloquer le versement » de la direction ; correction tracée de CAND-00013 (directeur, 16/11) | `../DECISION-QUESTIONS-VERSEMENT-2026-11-16.md` | lancé le 16/11 (agent BE-S1) |
-| PIECE-DANS-DOSSIER | La pièce visible dans le dossier (vignette, icône image ou PDF), pastille vraie, lien vers « Fichiers à valider » retiré, bandeau jaune fermable (directeur, 16/11) | message au BE-DOSSIER | PR ouverte (#532) |
-| GESTES-RAISON | Une phrase sous la rangée des gestes du dossier, toujours au même endroit, qui dit l'état et ce qui manque (une seule fonction, `raisonDesGestes`, à côté de la table des gestes) ; flèches précédent / suivant chacune sur son bord de la carte de profil, compteur au centre (directeur, 16/11) | aucun cahier : ordre du coordinateur | en cours (agent BE-DOSSIER, `claude/gestes-raison`) |
-| LP-0 à LP-7 | La liste des personnes pour toute leur vie : phases, colonnes par vue, gestes par ligne et groupés, imprimables, élèves (directeur, 16/11) | `SPEC-LISTE-PERSONNES-2026-11-16.md` | LP-0 : à valider par le directeur ; autres : pas commencé |
+| BE-1b | « Précédent / Suivant », compteur, passage au suivant après une décision | `CAHIER-BE-SUIVANT.md` | dans main (#516) |
+| VERSEMENT-QUESTIONS | Compte bancaire oui/non d'abord, puis le pays ; bloc entier modifiable par le candidat jusqu'à la validation du dossier ; geste « Débloquer le versement » de la direction ; correction tracée de CAND-00013 (directeur, 16/11) | `../DECISION-QUESTIONS-VERSEMENT-2026-11-16.md` | dans main (#528) ; installé ; rattrapage des 4 bloqués #542 installé |
+| PIECE-DANS-DOSSIER | La pièce visible dans le dossier (vignette, icône image ou PDF), pastille vraie, lien vers « Fichiers à valider » retiré, bandeau jaune fermable (directeur, 16/11) | message au BE-DOSSIER | dans main (#532) |
+| LP-0 à LP-7 | La liste des personnes pour toute leur vie : phases, colonnes par vue, gestes par ligne et groupés, imprimables, élèves (directeur, 16/11) | `SPEC-LISTE-PERSONNES-2026-11-16.md` | LP-0 réponses retenues par le pilote (spéc. §9) ; LP-1 dans main (#544), installé ; LP-2 PR ouverte (#547) ; LP-3 à LP-7 pas commencé |
 | BE-1e | Panier de demandes (serveur, écran, côté candidat) | à écrire ; touche la machine à états : cahier par le grand modèle | pas commencé |
 | BE-1f | Grille des disponibilités, deux fuseaux, sens arabe | à écrire après BE-1d | pas commencé |
-| BE-1g | Impression ; dispense d'entretien ; accueil d'un fondateur | à écrire ; touche la machine à états | pas commencé |
+| BE-1g | Impression ; dispense d'entretien ; accueil d'un fondateur | à écrire ; touche la machine à états | dispense d’entretien : PR ouverte (#548) ; écran confié à BE-DOSSIER ; impression et accueil d’un fondateur : pas commencé |
+## Lots ajoutés le 16/11 (après-midi et soir)
+
+| Lot | Contenu | Statut |
+| :--- | :--- | :--- |
+| NOUVEAU-LISTE | Badge « Nouveau » côté serveur | dans main (#539), installé |
+| VU-UNE-FOIS | « Déjà vu » mémorisé par compte | dans main (#541 serveur, #543 écran), installé |
+| BADGE-NOUVEAU | Composant commun, file « Nouveaux » | dans main (#543) |
+| RATTRAPAGE-PAIEMENT | 4 dossiers restés « versement impossible » après correction | dans main (#542), installé |
+| GESTES-RAISON | Pourquoi un geste manque ; Accepter masqué sans versement possible ; flèches aux bords | dans main (#545) |
+| COMPLEMENT-EN-COURS | La ligne dit si un complément est ouvert (serveur) | PR ouverte (#549) |
+| CLORE-COMPLEMENT-VRAI | « Clore le complément » seulement s’il y en a un (écran) | PR ouverte (#550), après #549 installée |
+| MOBILE-MONEY-GH-KE | Opérateurs Wise du Ghana et du Kenya | en cours (BE-S1) |
+| PIECE-TYPE | Vrai type de la pièce (image ou PDF) | en cours (BE-S1, après le précédent) |
+| DISPENSE-ECRAN, DEBLOQUER-VERSEMENT-ECRAN | Écrans des deux gestes serveur | en cours (BE-DOSSIER, après #550) |
 
 ## Vagues 2 à 5 (aucun ordre du directeur)
 
