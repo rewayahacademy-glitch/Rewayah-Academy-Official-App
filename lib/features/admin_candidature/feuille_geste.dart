@@ -335,6 +335,13 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           moyen: _moyenChoisi()!,
           motif: motif,
         );
+      case GesteCandidature.debloquerVersement:
+        return DemandeGeste.debloquerVersement(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
+        );
       case GesteCandidature.mettreEnPause:
         return DemandeGeste.mettreEnPause(
           candidatureId: id,
