@@ -10844,7 +10844,6 @@ class _Traductions$recrutement$dossier3$ar extends Traductions$recrutement$dossi
 	@override late final _Traductions$recrutement$dossier3$synthese$ar synthese = _Traductions$recrutement$dossier3$synthese$ar._(_root);
 	@override String get demanderAccord => 'طلب اتفاق';
 	@override late final _Traductions$recrutement$dossier3$raison$ar raison = _Traductions$recrutement$dossier3$raison$ar._(_root);
-	@override String legendeRaison({required Object geste, required Object raison}) => '⁨${geste}⁩: ⁨${raison}⁩';
 	@override String photoAgrandir({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير';
 }
 
@@ -21279,10 +21278,16 @@ class _Traductions$recrutement$dossier3$raison$ar extends Traductions$recrutemen
 	// Translations
 	@override String get droit => 'لا يمكنكم البتّ في هذا الملف.';
 	@override String get fermee => 'الملف مغلق.';
-	@override String get pause => 'الملف متوقف مؤقتًا.';
-	@override String get attente => 'في انتظار رد الشخص.';
-	@override String manque({required Object liste}) => 'ينقص: ⁨${liste}⁩.';
-	@override String get etape => 'غير ممكن في هذه المرحلة.';
+	@override String get pause => 'الملف متوقف مؤقتًا: استأنفوه لتتمكنوا من العمل عليه.';
+	@override String get attente => 'في انتظار المرشح: يستكمل ملفه.';
+	@override String manque({required Object liste}) => 'القبول: بقي تسوية ⁨${liste}⁩.';
+	@override String get etape => 'لا يوجد قرار يُتخذ في هذه المرحلة.';
+	@override String get versement => 'القبول: الدفع غير ممكن بعد.';
+	@override String get versementAConfirmer => 'القبول: وسيلة الدفع لم تُؤكَّد بعد.';
+	@override String get pret => 'الملف جاهز: يمكنكم اتخاذ القرار.';
+	@override String get entretienAPlanifier => 'تم اختياره للمقابلة: بقي تحديد موعدها.';
+	@override String get entretienPlanifie => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.';
+	@override String get decisionAttendue => 'تمت المقابلة: القرار في انتظاركم.';
 }
 
 // Path: recrutement.invitations.comptable
@@ -39328,11 +39333,16 @@ extension on TraductionsAr {
 			'recrutement.dossier3.demanderAccord' => 'طلب اتفاق',
 			'recrutement.dossier3.raison.droit' => 'لا يمكنكم البتّ في هذا الملف.',
 			'recrutement.dossier3.raison.fermee' => 'الملف مغلق.',
-			'recrutement.dossier3.raison.pause' => 'الملف متوقف مؤقتًا.',
-			'recrutement.dossier3.raison.attente' => 'في انتظار رد الشخص.',
-			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'ينقص: ⁨${liste}⁩.',
-			'recrutement.dossier3.raison.etape' => 'غير ممكن في هذه المرحلة.',
-			'recrutement.dossier3.legendeRaison' => ({required Object geste, required Object raison}) => '⁨${geste}⁩: ⁨${raison}⁩',
+			'recrutement.dossier3.raison.pause' => 'الملف متوقف مؤقتًا: استأنفوه لتتمكنوا من العمل عليه.',
+			'recrutement.dossier3.raison.attente' => 'في انتظار المرشح: يستكمل ملفه.',
+			'recrutement.dossier3.raison.manque' => ({required Object liste}) => 'القبول: بقي تسوية ⁨${liste}⁩.',
+			'recrutement.dossier3.raison.etape' => 'لا يوجد قرار يُتخذ في هذه المرحلة.',
+			'recrutement.dossier3.raison.versement' => 'القبول: الدفع غير ممكن بعد.',
+			'recrutement.dossier3.raison.versementAConfirmer' => 'القبول: وسيلة الدفع لم تُؤكَّد بعد.',
+			'recrutement.dossier3.raison.pret' => 'الملف جاهز: يمكنكم اتخاذ القرار.',
+			'recrutement.dossier3.raison.entretienAPlanifier' => 'تم اختياره للمقابلة: بقي تحديد موعدها.',
+			'recrutement.dossier3.raison.entretienPlanifie' => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.',
+			'recrutement.dossier3.raison.decisionAttendue' => 'تمت المقابلة: القرار في انتظاركم.',
 			'recrutement.dossier3.photoAgrandir' => ({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير',
 			'recrutement.file.outils' => 'أدوات',
 			'recrutement.file.outilsDe' => 'أدوات قائمة طلبات الترشح',
@@ -39832,13 +39842,13 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.riwayat.titre' => 'بأي روايات تقرأ؟',
 			'recrutement.parcours.q.riwayat.explication' => 'الرواية طريقة منقولة في قراءة القرآن. اختر كل ما تقرأ به.',
 			'recrutement.parcours.q.riwayat.court' => 'الروايات',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.hafs.libelle' => 'حفص',
 			'recrutement.parcours.q.riwayat.options.hafs.description' => 'رواية عن عاصم',
 			'recrutement.parcours.q.riwayat.options.shuba.libelle' => 'شعبة',
 			'recrutement.parcours.q.riwayat.options.shuba.description' => 'رواية عن عاصم',
 			'recrutement.parcours.q.riwayat.options.warsh.libelle' => 'ورش',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.riwayat.options.warsh.description' => 'رواية عن نافع',
 			'recrutement.parcours.q.riwayat.options.qalun.libelle' => 'قالون',
 			'recrutement.parcours.q.riwayat.options.qalun.description' => 'رواية عن نافع',
@@ -40346,13 +40356,13 @@ extension on TraductionsAr {
 			'juridique.annulation.s2.blocs.0' => 'يتوقف الاشتراك الشهري في أي وقت دون تبرير. وينتهي بنهاية الشهر الجاري.',
 			'juridique.annulation.s2.blocs.1' => 'بعد مهلة التراجع يبقى إيقاف الصيغة المدفوعة مسبقًا، كل ثلاثة أشهر أو كل سنة، حقًا لكم. تُحتسب الأشهر التي بدأت بالسعر الشهري العادي دون خصم الصيغة، ويُسترد الباقي.',
 			'juridique.annulation.s2.blocs.2' => 'التسجيل في منتصف الشهر لا يدفع إلا ثمن الحصص المتبقية من الشهر.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.annulation.s3.titre' => '٣. الغياب والحصص الملغاة',
 			'juridique.annulation.s3.blocs.0' => 'المقعد الذي فاتَ لا يُسترد ثمنه: فهو محجوز للطالب في فصل ثابت.',
 			'juridique.annulation.s3.blocs.1' => 'الحصة التي تلغيها الأكاديمية أو المعلم تُعوَّض.',
 			'juridique.annulation.s3.blocs.2' => 'إذا لم يُفتح الفصل لقلة المسجّلين فلا يُفوتَر أي مبلغ.',
 			'juridique.annulation.s4.titre' => '٤. تأخر الدفع',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s4.blocs.0' => 'قبل التجديد تصلكم تذكيرات تلقائية.',
 			'juridique.annulation.s4.blocs.1' => 'بعد تاريخ التجديد تُطبَّق مهلة سماح قصيرة: يتابع الطالب دروسه ويظهر المبلغ غير المدفوع عند وليّ الأمر.',
 			'juridique.annulation.s4.blocs.2' => 'إذا لم يصل الدفع بعد ذلك يُعلَّق الدخول إلى الحصص وإلى الموارد. ويبقى الفضاء مفتوحًا للاطلاع على الملف والسجل وللدفع. ويُحفظ المقعد لبعض الوقت.',
@@ -40860,13 +40870,13 @@ extension on TraductionsAr {
 			'alertes.cloche' => 'التنبيهات',
 			'alertes.clocheUneUrgente' => 'التنبيهات، واحد عاجل',
 			'alertes.clocheUrgentes' => ({required Object nombre}) => 'التنبيهات، ⁨${nombre}⁩ عاجلة',
+			_ => null,
+		} ?? switch (path) {
 			'n1.regles.auteurs.direction' => 'الإدارة',
 			'n1.regles.auteurs.enseignants' => 'المعلمون',
 			'n1.regles.auteurs.familles' => 'الأسر',
 			'n1.regles.auteurs.eleves' => 'الطلاب',
 			'n1.regles.auteurs.comptables' => 'المحاسبون',
-			_ => null,
-		} ?? switch (path) {
 			'n1.regles.auteurs.controleurs' => 'المراقبون',
 			'n1.regles.portee.touteAudience' => 'الأكاديمية كلها، أو جمهور، أو فصل',
 			'n1.regles.portee.saClasse' => 'فصله فقط',
@@ -41374,13 +41384,13 @@ extension on TraductionsAr {
 			'candidatsFlux.photo.titre' => 'صورتك',
 			'candidatsFlux.photo.requise' => 'أضف صورتك قبل إرسال ترشحك.',
 			'push1.invitation.titre' => 'هل تريدون استقبال الإشعارات؟',
+			_ => null,
+		} ?? switch (path) {
 			'push1.invitation.phrase' => 'تنبيه على هذا الجهاز عندما يتغيّر فصلكم أو يُنتظر حضوركم، حتى والتطبيق مغلق. يمكنكم إيقافه في أي وقت من التفضيلات.',
 			'push1.invitation.activer' => 'تفعيل',
 			'push1.invitation.plusTard' => 'لاحقًا',
 			'push1.evenements.admissionRecue' => 'طلب قبول جديد بانتظار الدراسة.',
 			'push1.evenements.candidatureEnseignant' => 'طلب انضمام معلم بانتظار الدراسة.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.evenements.demandeHoraireRecue' => 'طلب موعد جديد بانتظار الدراسة.',
 			'push1.evenements.creneauPersonnalise' => 'طُلب موعد خاص.',
 			'push1.evenements.pieceIdentite' => 'وثيقة هوية بانتظار التحقق.',
@@ -41888,13 +41898,13 @@ extension on TraductionsAr {
 			'motifs.refusDemande.exceptionnel' => 'تغيير المعلّم يبقى استثنائيًا',
 			'motifs.refusDemande.reglePlateforme' => 'تسري قاعدة المنصة',
 			'motifs.refusDemande.plafond' => 'بلوغ الحد الأقصى للطلاب',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.refusDemande.insuffisant' => 'معلومات غير كافية للبتّ',
 			'motifs.poserRegle.famille' => 'طلب الأسرة مقبول',
 			'motifs.poserRegle.pedagogique' => 'حاجة تعليمية للطالب',
 			'motifs.poserRegle.age' => 'مدة مناسبة للعمر',
 			'motifs.poserRegle.charge' => 'عبء المعلّم',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.poserRegle.parErreur' => 'تصحيح خطأ إدخال',
 			'motifs.cloreSurcharge.termine' => 'انتهاء الحاجة المؤقتة',
 			'motifs.cloreSurcharge.famille' => 'طلب الأسرة',

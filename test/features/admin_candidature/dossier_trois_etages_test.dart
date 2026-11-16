@@ -29,8 +29,7 @@ import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.d
     show ConversationEnPlace;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
-import '../../support/monter_recrutement.dart'
-    show laisser, monterRecrutement;
+import '../../support/monter_recrutement.dart' show laisser, monterRecrutement;
 import 'hote_candidature.dart';
 
 FauxCandidaturesDirection _port(
@@ -385,9 +384,7 @@ void main() {
           ),
         ),
         surcharges: <Override>[
-          portCandidaturesDirectionProvider.overrideWithValue(
-            _port(detail),
-          ),
+          portCandidaturesDirectionProvider.overrideWithValue(_port(detail)),
         ],
         hauteur: 3000,
       );
@@ -891,14 +888,7 @@ void main() {
         ]) {
           expect(find.byKey(BarreDecisionDossier.cleBouton(g)), findsNothing);
         }
-        expect(
-          find.byKey(
-            BarreDecisionDossier.cleRaison(
-              GesteCandidature.admettreVerifications,
-            ),
-          ),
-          findsOneWidget,
-        );
+        expect(find.byKey(BarreDecisionDossier.cleRaison), findsOneWidget);
         expect(_texte(tester), contains(t.recrutement.dossier3.raison.attente));
         // Refuser reste permis : il est rendu.
         expect(
@@ -990,6 +980,66 @@ void main() {
       }
       expect(_texte(tester), contains(t.recrutement.dossier3.raison.droit));
     });
+
+    // GESTES-RAISON (directeur, 16/11/2026) : la rangee dit toujours son etat,
+    // au meme endroit, quels que soient les boutons rendus.
+    for (final (
+          String nom,
+          DetailCandidature Function() detail,
+          String Function() phrase,
+        )
+        cas
+        in <(String, DetailCandidature Function(), String Function())>[
+          (
+            'en examen, versement compatible',
+            () => detailTest(
+              paiement: EtatVersement.compatible,
+              controles: const <ControleCandidature>[],
+            ),
+            () => t.recrutement.dossier3.raison.pret,
+          ),
+          (
+            'a completer',
+            () => detailTest(etat: EtatCandidature.aCompleter),
+            () => t.recrutement.dossier3.raison.attente,
+          ),
+          (
+            'versement impossible',
+            () => detailTest(paiement: EtatVersement.incompatible),
+            () => t.recrutement.dossier3.raison.versement,
+          ),
+          (
+            'entretien a planifier',
+            () => detailTest(
+              etape: EtapeCandidature.verifications,
+              etat: EtatCandidature.entretienAPlanifier,
+            ),
+            () => t.recrutement.dossier3.raison.entretienAPlanifier,
+          ),
+          (
+            'en pause',
+            () => detailTest(enPause: true),
+            () => t.recrutement.dossier3.raison.pause,
+          ),
+        ]) {
+      testWidgets('GESTES-RAISON : ${cas.$1}, une phrase sous la rangee', (
+        WidgetTester tester,
+      ) async {
+        await _monter(tester, port: _port(cas.$2()));
+        expect(find.byKey(BarreDecisionDossier.cleRaison), findsOneWidget);
+        expect(_texte(tester), contains(cas.$3()));
+        // La phrase est SOUS les boutons, jamais au-dessus.
+        final Finder boutons = find.byKey(
+          BarreDecisionDossier.cleBouton(GesteCandidature.refuser),
+        );
+        if (boutons.evaluate().isNotEmpty) {
+          expect(
+            tester.getTopLeft(find.byKey(BarreDecisionDossier.cleRaison)).dy,
+            greaterThan(tester.getBottomLeft(boutons).dy - 1),
+          );
+        }
+      });
+    }
 
     testWidgets('hors ligne : une note, aucun geste', (
       WidgetTester tester,

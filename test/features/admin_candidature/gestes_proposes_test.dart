@@ -38,7 +38,6 @@ void main() {
         c,
         GesteCandidature.confirmerMoyenPaiement,
         GesteCandidature.infirmerMoyenPaiement,
-        GesteCandidature.admettreVerifications,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,
@@ -65,7 +64,6 @@ void main() {
       principal: null,
       permis: <GesteCandidature>[
         c,
-        GesteCandidature.admettreVerifications,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,

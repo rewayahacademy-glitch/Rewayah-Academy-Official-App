@@ -108,6 +108,7 @@ import '../theme/app_spacing.dart';
 import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
+import 'lien_fleche.dart' show EncreLienSurFond;
 import 'menu_actions.dart';
 import 'menu_commun.dart' show MenuAncreControleur;
 import 'page_shell.dart';
@@ -1104,6 +1105,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
     );
   }
 
+  /// IMAGE-CANDIDAT : un message dont le texte n'est que le remplissage d'une
+  /// image (« [image] ») et qui ne porte aucune image n'est montre a personne :
+  /// le texte brut n'a aucun sens a lire. Le serveur le masque deja
+  /// (`com_fil_json`) ; ceci couvre un serveur pas encore a jour et la bulle
+  /// arrivee avant son image. L'auteur voit l'echec dans sa bulle locale.
+  static bool _imageFantome(MessageFil m) =>
+      m.image == null && m.texte.trim() == texteImageSeule;
+
   /// Le texte d'un message qui ne porte qu'une image n'est pas ecrit.
   static String _texteAffiche(MessageFil m) =>
       m.image != null && estTexteImageSeule(m.texte) ? '' : m.texte;
@@ -1664,7 +1673,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // bulle locale est encore la est ecartee (jamais deux bulles).
     final List<Object> entrees = <Object>[
       for (final MessageFil m in widget.messages)
-        if (!masques.contains(m.id)) m,
+        if (!masques.contains(m.id) && !_imageFantome(m)) m,
     ];
     for (final _MessageLocal local in locaux) {
       int place = entrees.length;
@@ -2374,7 +2383,14 @@ class _Bulle extends StatelessWidget {
                     if (complement case final Widget complement) ...<Widget>[
                       if (afficherNom || texte.isNotEmpty || imageRetiree)
                         Ecart.vSm,
-                      complement,
+                      // IMAGE-CANDIDAT : dans MA bulle (fond violet), les liens
+                      // prennent l'encre de la bulle, la meme que le texte.
+                      deSoi
+                          ? EncreLienSurFond(
+                              encre: fond.applyTo,
+                              child: complement,
+                            )
+                          : complement,
                     ],
                   ],
                 ),
