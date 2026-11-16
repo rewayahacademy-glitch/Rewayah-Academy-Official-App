@@ -26,6 +26,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/candidature/piece_candidature.dart' show GenreFichierPiece;
 import '../../core/dossier/service_validation.dart';
 import '../../core/fichiers/ouvrir_onglet.dart';
 import '../../core/i18n/strings.g.dart';
@@ -54,7 +55,16 @@ final FutureProviderFamily<String, String> adressePieceProvider = FutureProvider
 /// La pièce déposée, en vignette.
 class PieceVignette extends ConsumerWidget {
   /// Crée la vignette.
-  const PieceVignette({required this.documentId, required this.nom, super.key});
+  const PieceVignette({
+    required this.documentId,
+    required this.nom,
+    this.genre,
+    super.key,
+  });
+
+  /// Le genre du fichier, tel que le serveur l'a enregistre au depot ; `null` :
+  /// type non enregistre, la piece s'ouvre telle quelle (aucun type pretendu).
+  final GenreFichierPiece? genre;
 
   /// Le document le plus récent du candidat.
   final String documentId;
@@ -85,14 +95,8 @@ class PieceVignette extends ConsumerWidget {
   /// La hauteur de la vignette.
   static const double hauteur = 120;
 
-  /// Vrai quand l'adresse signée est celle d'un PDF. ATTENTION : les clés R2
-  /// n'ont PAS d'extension (`cles.ts`, « Pas d'extension »), seules les
-  /// anciennes pièces du seau `kyc` en ont une. Un PDF déposé sur R2 n'est donc
-  /// pas reconnu ici : il tombe dans le chemin « image non affichable », dont
-  /// l'icône dit « Fichier » (jamais « Image » à tort) et ouvre l'onglet. Un autre format est tenu pour une image :
-  /// s'il ne s'affiche pas, la phrase « Format non lisible » le dit.
-  static bool estPdf(String adresse) =>
-      Uri.tryParse(adresse)?.path.toLowerCase().endsWith('.pdf') ?? false;
+  /// La cle de la tuile « Fichier » d'une piece dont le type n'est pas connu.
+  static const Key cleFichier = ValueKey<String>('piece-vignette-fichier');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -107,11 +111,12 @@ class PieceVignette extends ConsumerWidget {
     final Widget apercu;
     if (adresse.hasValue) {
       final String url = adresse.requireValue;
-      final bool pdf = estPdf(url);
+      final bool pdf = genre == GenreFichierPiece.pdf;
+      final bool inconnu = genre == null;
       // Une icône qui dit ce que c'est (« Image », « PDF »), cliquable ; le
       // toucher de l'icône ou de la vignette ouvre la même chose.
       void ouvrir() => unawaited(
-        pdf
+        pdf || inconnu
             ? ref.read(ouvreurOngletProvider)(Uri.parse(url))
             : ouvrirPhotoEnGrand(
                 context,
@@ -120,7 +125,20 @@ class PieceVignette extends ConsumerWidget {
                 nom: r.pieceTitre(nom: nom),
               ),
       );
-      apercu = pdf
+      // Type non enregistre : ni image ni PDF affirme, le fichier s'ouvre tel quel.
+      apercu = inconnu
+          ? Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: BoutonOutil(
+                key: cleFichier,
+                icone: AppIcons.document,
+                libelle: r.pieceFichier,
+                avecLibelle: true,
+                forme: FormeBoutonOutil.tuile,
+                onPress: ouvrir,
+              ),
+            )
+          : pdf
           ? Align(
               alignment: AlignmentDirectional.centerStart,
               child: BoutonOutil(
