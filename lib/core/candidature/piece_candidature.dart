@@ -31,6 +31,16 @@ enum StatutPieceCandidature {
   inconnu,
 }
 
+/// Le genre du fichier de la piece, tel que le serveur l'a enregistre au depot
+/// (PIECE-TYPE, migration 20261129490000). Jamais devine par l'ecran.
+enum GenreFichierPiece {
+  /// Un PDF.
+  pdf,
+
+  /// Une image.
+  image,
+}
+
 /// La piece d'une candidature.
 class PieceCandidature {
   /// Cree la piece.
@@ -39,6 +49,8 @@ class PieceCandidature {
     this.profilId,
     this.documentId,
     this.motifRefus,
+    this.genre,
+    this.typeContenu,
   });
 
   /// Lit la reponse de `piece_dossier_candidat` ; `null` hors de portee.
@@ -56,6 +68,14 @@ class PieceCandidature {
       profilId: brut['profilId'] as String?,
       documentId: brut['documentId'] as String?,
       motifRefus: brut['motifRefus'] as String?,
+      // `genreFichier` absent (serveur plus ancien), null (aucun type
+      // enregistre) ou inconnu : null, l'ecran ne pretend rien savoir.
+      genre: switch (brut['genreFichier']) {
+        'pdf' => GenreFichierPiece.pdf,
+        'image' => GenreFichierPiece.image,
+        _ => null,
+      },
+      typeContenu: brut['typeContenu'] as String?,
     );
   }
 
@@ -70,6 +90,12 @@ class PieceCandidature {
 
   /// Le motif d'un refus.
   final String? motifRefus;
+
+  /// Le genre du fichier (`genreFichier`) ; `null` : type non enregistre.
+  final GenreFichierPiece? genre;
+
+  /// Le type MIME enregistre au depot (`typeContenu`) ; `null` : inconnu.
+  final String? typeContenu;
 }
 
 /// La lecture ; `null` : capacite indisponible (la fiche garde alors son

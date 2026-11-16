@@ -54,6 +54,7 @@ List<Override> _surcharges({required bool illisible}) => <Override>[
       statut: StatutPieceCandidature.enAttente,
       profilId: 'p1',
       documentId: 'd1',
+      genre: GenreFichierPiece.image,
     ),
   ),
   dossierPourRevueProvider('p1')
