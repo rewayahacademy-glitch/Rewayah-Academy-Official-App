@@ -65,6 +65,14 @@ Les états entre crochets existent déjà dans le code ; les autres sont **à v�
   pièce, versement, classes et heures, présence, remplacements, avancement des classes, dernier versement.
 - **Téléphone** : nom, pastille, une seule ligne de résumé propre à la phase, menu « … ».
 
+### 2.1 bis Le badge « Nouveau » (directeur, 16/11/2026)
+
+Avec 30 à 100 arrivées par heure ou par jour, on doit voir d'un coup d'œil qui vient d'arriver.
+
+- **Règle, calculée par le serveur** : « Nouveau » (fr), « New » (en), « جديد » (ar) tant que la personne est arrivée depuis moins de 7 jours **et** que personne de l'équipe n'a encore ouvert son dossier. Dès la première ouverture, le badge disparaît pour tous.
+- **Même badge partout** : lignes des listes de personnes et lignes du panneau des conversations, par un seul composant partagé (`lib/core/widgets`). Une conversation encore vide dit « Nouveau · aucun message » au lieu d'un aperçu vide (coordonné avec le pilote de la messagerie, 16/11).
+- **Filtre « Nouveaux »** dans chaque liste et dans le panneau des conversations ; compteur des nouveaux dans la file.
+
 ### 2.2 Gestes par ligne (menu « … »), servis par le serveur selon la phase
 
 Ouvrir le dossier · Écrire · Assigner un responsable · Accepter · Refuser (motif) · Demander une précision ·
