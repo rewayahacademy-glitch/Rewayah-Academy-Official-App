@@ -711,6 +711,14 @@ Règle :
 - Les garde-fous de sécurité restent entiers : checklist d'installation, aucune lecture de lignes de personnes, aucun
   effacement sans l'avis du directeur, relecture du pilote avant toute fusion.
 
+### Consigne 24 (17/11/2026, nuit) : toujours parler au directeur en français
+
+Citation : « tu dois parler en français ; il faut que ça soit une règle. »
+
+Règle : toute session, tout pilote, tout agent écrit au directeur en français, dans chaque réponse, chaque bilan,
+chaque message, chaque document qui lui est destiné, quelle que soit la langue des outils, des journaux ou des
+notifications reçues. Les noms de code (fonctions, fichiers, tables) restent tels quels, entre accents graves.
+
 ## 9. Autres
 
 **X1. Lire son dernier message en entier avant de répondre.**
