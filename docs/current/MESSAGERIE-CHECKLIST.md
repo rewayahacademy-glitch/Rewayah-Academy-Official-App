@@ -1,6 +1,6 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : lundi 16/11/2026, 21 h 40 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : lundi 16/11/2026, 22 h 55 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
@@ -27,11 +27,11 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
    - [x] CI lue par le pilote : 11 contrôles verts, 2 ignorés (aperçus)
    - [x] **moi** : captures relues, fusion
    - [ ] **vous** : voir en production (fermer puis rouvrir l'application)
-2. **NOUVEAU-FILS** : **en cours depuis 21 h 25**, même agent, migration `20261129510000`
-   - [ ] badge « Nouveau » sur une conversation de moins de 7 jours que personne de l'équipe n'a lue
-   - [ ] une conversation vide affiche « Nouveau · aucun message »
-   - [ ] filtre « Nouveaux » dans la liste
-   - [ ] une petite migration en base, que j'installerai moi-même
+2. **NOUVEAU-FILS** : **fusionné (#566) et déployé à 22 h 39, migration installée à 22 h 35 UTC**
+   - [x] badge « Nouveau » sur une conversation de moins de 7 jours que personne de l'équipe n'a lue
+   - [x] une conversation vide affiche « Nouveau » et « Aucun message »
+   - [x] filtre « Nouveaux » dans la liste
+   - [x] migration installée par le pilote et vérifiée ; appels réels en 200
 3. **NOUVELLE-VERSION** (ensuite) : bandeau « Nouvelle version disponible », jamais de rechargement
    pendant que vous écrivez.
 
@@ -39,7 +39,17 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
 
 ## Point du matin (dix lignes au plus)
 
-_Rempli au matin._
+1. **Fusionné et déployé** : #551 couleurs, croix du volet, champ (21 h 28 UTC) ; #566 NOUVEAU-FILS,
+   badge « Nouveau », « Aucun message », filtre « Nouveaux » (22 h 39 UTC). Déploiements verts.
+2. **Installé en base** : `nouveau_fils` (22 h 35 UTC), vérifié ; depuis, les appels réels à la liste et
+   au fil répondent 200, aucune erreur Postgres.
+3. **Pas prouvé** : rien n'est vu par vous. Fermez puis rouvrez l'application, puis regardez Messages.
+4. **Le badge « Nouveau » ne se voit que côté équipe** (décision du pilote : une famille ne doit pas
+   savoir si l'équipe a lu).
+5. **À décider par vous** : ajouter `scenarios_image_candidat.sql` et `scenarios_nouveau_fils.sql` à
+   `ci.yml` (zone interdite aux agents) ; bulles reçues pâles (sans contour, décision du pilote).
+6. **Aucun agent messagerie actif.** Suite en liste : NOUVELLE-VERSION, comptes Praxis, CHECK des
+   notifications (écart dépôt / production, aucune personne touchée).
 
 ## Faux, bloqué ou non prouvé (à lire d'abord)
 
@@ -139,3 +149,11 @@ _Rempli au matin._
 - 16/11, 21 h 25 : NOUVEAU-FILS confié au même agent ; migration `20261129510000` vérifiée libre sur main.
 - 16/11, 21 h 28 : déploiement de production de `906ba099` vert (« Flutter Web → Vercel », run 1302).
 - 16/11, 22 h 12 : signalement « annonces non notifiées » : faux en production (vérifié) ; vrai écart dépôt / production, mis en liste (n° 8).
+- 16/11, 22 h 34 : **#566 fusionnée** (`8f320a9b`) en premier, accord du Pilote Équipe ; CI relue (11 verts).
+- 16/11, 22 h 35 : **`nouveau_fils` installée** (enregistrée `20261116223511`). Avant : fonction plpgsql,
+  ancre unique, contexte (`f`, `p_moi`, `p_role`, `p_foyer`) et colonnes vérifiés en production. Après :
+  clé présente, attributs et droits inchangés. Appel direct de la fonction refusé par le garde-fou ;
+  remplacé par la lecture des journaux : appels réels `com_lister_fils` / `com_lire_fil` en 200 de 22 h 47
+  à 22 h 51, aucune erreur Postgres.
+- 16/11, 22 h 35 : agent `session_0163KjrwKsohCvdhrjhrWP5N` archivé (place libérée).
+- 16/11, 22 h 39 : déploiement de `8f320a9b` vert (run 1309).
