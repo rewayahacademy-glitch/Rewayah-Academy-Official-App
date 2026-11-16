@@ -30,6 +30,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/enseignants/modeles_enseignants.dart';
 import '../../core/enseignants/port_enseignants.dart';
+import '../../core/i18n/isolat_bidi.dart' show enchainer;
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
@@ -163,7 +164,7 @@ String? phraseManque(LigneEnseignant ligne) {
   final String virgule = LocaleSettings.currentLocale == AppLocale.ar
       ? '، '
       : ', ';
-  return t.admin.listeEnseignants.manque.intro(liste: mots.join(virgule));
+  return t.admin.listeEnseignants.manque.intro(liste: enchainer(mots, virgule));
 }
 
 /// Le mot de « qui attend », ou `null`.
@@ -1104,12 +1105,12 @@ class _CarteEnseignant extends StatelessWidget {
     final TextStyle attenue = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
-    final String semantique = <String>[
+    final String semantique = enchainer(<String>[
       nomAffiche(d),
       referenceAffichee(d),
       libellePhase(ligne.phase),
       if (d.nouveau) t.commun.nouveau,
-    ].join(', ');
+    ], ', ');
     final Widget carte = AppCard(
       key: cleEnseignant(ligne.id),
       onPress: onToucher,
