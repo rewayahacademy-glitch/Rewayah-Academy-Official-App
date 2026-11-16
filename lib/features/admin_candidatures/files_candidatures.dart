@@ -91,6 +91,7 @@ FiltreCandidatures _etat(FiltreCandidatures f, EtatCandidature e) => f.avec(
   pieceEnAttente: () => null,
   enPause: () => false,
   issue: () => IssueCandidature.enCours,
+  nouveau: () => null,
 );
 
 /// Les files, dans l'ordre de la rangee.
@@ -102,6 +103,7 @@ List<FileCandidatures> filesDe({
   required CompteursAlertes alertes,
   required int? totalToutes,
   required DateTime maintenant,
+  int compteurNouveaux = 0,
 }) {
   final e = t.admin.candidatures.etats;
   final a = t.admin.candidatures.attentes;
@@ -126,12 +128,29 @@ List<FileCandidatures> filesDe({
       alerteCreneau: alerteCreneau,
       appliquer: (FiltreCandidatures f) => _etat(f, etat),
       estChoisie: (FiltreCandidatures f) =>
-          f.etat == etat && f.pieceEnAttente == null,
+          f.etat == etat && f.pieceEnAttente == null && f.nouveau != true,
     );
   }
 
   final int creneaux = attentes?.creneauxOuverts ?? 0;
   final List<FileCandidatures?> files = <FileCandidatures?>[
+    // NOUVEAU-LISTE : les candidatures « nouvelles » (moins de 7 jours, dossier
+    // jamais ouvert), comptees par le serveur (`compteurNouveaux`) : en cours,
+    // pause comprise, comme le filtre `nouveau` que la file pose.
+    if (compteurNouveaux > 0)
+      FileCandidatures(
+        cle: 'nouveaux',
+        libelle: t.recrutement.file.nouveaux,
+        nombre: compteurNouveaux,
+        appliquer: (FiltreCandidatures f) => f.avec(
+          nouveau: () => true,
+          etat: () => null,
+          pieceEnAttente: () => null,
+          enPause: () => null,
+          issue: () => IssueCandidature.enCours,
+        ),
+        estChoisie: (FiltreCandidatures f) => f.nouveau == true,
+      ),
     etat(EtatCandidature.enExamen, e.enExamen),
     if (attentes != null && attentes.pieceAValider.nombre > 0)
       FileCandidatures(
@@ -149,8 +168,10 @@ List<FileCandidatures> filesDe({
           etat: () => null,
           enPause: () => false,
           issue: () => IssueCandidature.enCours,
+          nouveau: () => null,
         ),
-        estChoisie: (FiltreCandidatures f) => f.pieceEnAttente == true,
+        estChoisie: (FiltreCandidatures f) =>
+            f.pieceEnAttente == true && f.nouveau != true,
       ),
     etat(
       EtatCandidature.entretienAPlanifier,
@@ -176,9 +197,13 @@ List<FileCandidatures> filesDe({
           pieceEnAttente: () => null,
           enPause: () => true,
           issue: () => IssueCandidature.enCours,
+          nouveau: () => null,
         ),
         estChoisie: (FiltreCandidatures f) =>
-            f.enPause == true && f.etat == null && f.pieceEnAttente == null,
+            f.enPause == true &&
+            f.etat == null &&
+            f.pieceEnAttente == null &&
+            f.nouveau != true,
       ),
     FileCandidatures(
       cle: 'toutes',
@@ -189,12 +214,14 @@ List<FileCandidatures> filesDe({
         pieceEnAttente: () => null,
         enPause: () => null,
         issue: () => null,
+        nouveau: () => null,
       ),
       estChoisie: (FiltreCandidatures f) =>
           f.etat == null &&
           f.pieceEnAttente == null &&
           f.enPause == null &&
-          f.issue == null,
+          f.issue == null &&
+          f.nouveau == null,
     ),
     // Les alertes que le serveur compte sans savoir les filtrer : seulement
     // si le nombre n'est pas zero, jamais touchables.
@@ -238,6 +265,7 @@ int nombreFiltresPoses(FiltreCandidatures f, List<FileCandidatures> files) {
       f.pieceEnAttente,
       f.enPause,
       f.issue,
+      if (f.nouveau == true) f.nouveau,
     ].where((Object? x) => x != null).length;
   }
   return n < 0 ? 0 : n;

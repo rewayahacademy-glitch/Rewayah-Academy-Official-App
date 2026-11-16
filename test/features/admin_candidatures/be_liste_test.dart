@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/candidature/port_prevenir_candidats.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/badge_nouveau.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/core/widgets/menu_actions.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
@@ -672,6 +673,60 @@ void main() {
         texteMenu(tester),
         contains('${t.admin.candidatures.filtres.toutes} · 3'),
       );
+    });
+
+    testWidgets(
+      '« Nouveaux » : le badge sur la ligne, la file avec son nombre',
+      (tester) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: <LigneCandidature>[
+            ligneTest(id: 'c0', nom: 'Personne Numero0', nouveau: true),
+            ligneTest(id: 'c1', nom: 'Personne Numero1', nouveau: true),
+            ligneTest(id: 'c2', nom: 'Personne Numero2'),
+          ],
+        );
+        await monterCandidatures(
+          tester,
+          port: port,
+          surcharges: [
+            portAttentesRecrutementProvider.overrideWithValue(_FauxAttentes()),
+          ],
+        );
+        // Le badge est sur les deux lignes nouvelles, pas sur la troisieme.
+        expect(find.byType(BadgeNouveau), findsNWidgets(2));
+        expect(find.text(t.commun.nouveau), findsNWidgets(2));
+        // La file « Nouveaux · 2 » est dans le menu File.
+        await ouvrirMenuFile(tester);
+        expect(
+          find.textContaining('${t.recrutement.file.nouveaux} · 2'),
+          findsOneWidget,
+        );
+        await tester.tap(
+          find.textContaining('${t.recrutement.file.nouveaux} · 2'),
+        );
+        await laisser(tester);
+        final FiltreCandidatures f = port.appels.last.filtre;
+        expect(f.nouveau, isTrue);
+        expect(f.issue, IssueCandidature.enCours);
+        expect(f.etat, isNull);
+        expect(_adresse(tester).queryParameters['nouveau'], 'oui');
+        expect(
+          texteMenu(tester),
+          contains('${t.recrutement.file.nouveaux} · 2'),
+        );
+        // Seules les deux lignes nouvelles restent.
+        expect(find.byType(BadgeNouveau), findsNWidgets(2));
+        expect(find.text('Personne Numero2'), findsNothing);
+      },
+    );
+
+    testWidgets('sans nouvelle candidature : ni file « Nouveaux » ni badge', (
+      tester,
+    ) async {
+      await monter(tester);
+      expect(find.byType(BadgeNouveau), findsNothing);
+      await ouvrirMenuFile(tester);
+      expect(find.textContaining(t.recrutement.file.nouveaux), findsNothing);
     });
 
     testWidgets('« Piece a valider » filtre la meme liste sur pieceEnAttente', (

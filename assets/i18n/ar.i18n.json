@@ -337,6 +337,7 @@
     }
   },
   "commun": {
+    "nouveau": "جديد",
     "langue": {
       "systeme": "النظام",
       "francais": "Français",
@@ -5542,7 +5543,7 @@
         "invitee": "مدعوّ",
         "aCompleter": "يحتاج إلى استكمال",
         "enExamen": "قيد الدراسة",
-        "versementImpossible": "لا تستطيع الأكاديمية بعد صرف راتبك في البلد الذي اخترته. طلبك غير مرفوض: إنه قيد الانتظار. إن كان لك قريب موثوق يقيم في بلد مدعوم يمكنك اختيار بلده. وإلا فستخبرك الأكاديمية حال توفر وسيلة ممكنة.",
+        "versementImpossible": "صرف الراتب غير ممكن بعد",
         "entretienAPlanifier": "المقابلة تنتظر تحديد موعد",
         "entretienPlanifie": "المقابلة محدَّدة الموعد",
         "decisionEnAttente": "القرار قيد الانتظار",
@@ -13592,6 +13593,8 @@
       "files": "القوائم",
       "pieceCourt": "وثيقة للتحقق",
       "fileMenu": "القائمة",
+      "nouveaux": "الجدد",
+      "pasNouveaux": "غير الجدد",
       "confirmeesIndisponibles": "مؤكَّدة وغير متاحة",
       "piece": "وثيقة الهوية",
       "responsable": "المسؤول",

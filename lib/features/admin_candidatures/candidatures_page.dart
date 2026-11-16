@@ -986,6 +986,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
       alertes: reference?.compteursAlertes ?? const CompteursAlertes(),
       totalToutes: _totalToutes,
       maintenant: DateTime.now(),
+      compteurNouveaux: reference?.compteurNouveaux ?? 0,
     );
     final bool lectureComprise = ref.watch(lectureCompriseProvider);
     final Widget? menuOutils = outils.isEmpty
