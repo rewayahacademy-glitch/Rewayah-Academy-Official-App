@@ -38,3 +38,5 @@ Légende : ☐ à faire · ◐ en cours · ☑ fait · ⏸ attend le directeur
 | 32 | Type réel de la pièce (image ou PDF), clés R2 sans extension | ◐ | confié à BE-S1 (PIECE-TYPE) après MOBILE-MONEY |
 | 33 | Écrans « Dispenser d'entretien » et « Débloquer le versement » | ◐ | confiés à BE-DOSSIER après #550 |
 | 34 | Réponse aux candidats du Bénin sur la banque | ⏸ | après la décision D-1 (compte en dollars) |
+| 35 | Courriel d’admission à l’entretien : « choisissez le créneau » alors qu’aucun moment n’est ouvert (6 envois le 16/11 au soir) | ◐ | priorité 1 de BE-S1 (COURRIEL-ENTRETIEN) ; déploiement de la fonction courriel par le pilote |
+| 36 | Courriels de candidats du jour | ☑ | relevés à 19 h UTC : 1 question (h180h, brouillon non envoyé) répondue ; 2 messages sans question |
