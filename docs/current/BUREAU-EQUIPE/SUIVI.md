@@ -7,7 +7,7 @@ Statuts permis : `pas commencé`, `en cours` (agent, branche), `PR ouverte` (num
 
 | Lot | Contenu | Cahier | Statut |
 | :--- | :--- | :--- | :--- |
-| BE-0a | Message en double (rapprocher par la clé d'envoi) | aucun : remis à l'agent de la messagerie, par le pilote | pas commencé |
+| BE-0a | Message en double | aucun : corrigé par le pilote hors de ce chantier. Cause prouvée par lui : la liste des messages présents à l'ouverture était lue trop tard dans une conversation vide (pas le rapprochement par texte, que la stratégie supposait) | dans main (#503) |
 | BE-0b serveur | L'historique renvoie le détail et le nom du responsable | `CAHIER-BE-S1.md` | en cours (agent BE-S1, `claude/be-s1-lectures`) |
 | BE-1a | Ordre des dossiers (précédent, suivant), filtres sur les réponses, « pièce en attente », « mes dossiers » | `CAHIER-BE-S1.md` | en cours (agent BE-S1, `claude/be-s1-lectures`) |
 | BE-0b écran + BE-1d | Dossier en trois étages, rubriques repliées avec leurs gestes, photo qui s'ouvre au toucher, pièce sur place, barre de décision fixe | `CAHIER-BE-DOSSIER.md` | en cours (agent BE-DOSSIER, `claude/be-dossier-trois-etages`) |
