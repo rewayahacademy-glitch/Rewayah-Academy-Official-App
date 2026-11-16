@@ -7,7 +7,7 @@ l'embauche, l'écran et le serveur doivent tout préparer pour qu'on finisse une
 partie … sans oublier les imprimables … anticipe … apprends de nos erreurs … planifie pour qu'on suive tous
 ensemble … et consigne pour les élèves (surtout la liste). »
 
-Statut : **proposé par le pilote, à valider par le directeur** (§9 : les questions ouvertes). Une fois
+Statut : **en vigueur** (directeur, 16/11/2026 : « tu peux tout faire sans autorisation pour le moment ») ; les réponses du §9 sont celles du pilote, révisables par le directeur. Une fois
 validé, ce document prévaut, pour les listes de personnes, sur toute retouche ponctuelle. Il s'appuie sur
 `DECISION-LISTES-2026-10-23.md` (forme d'une liste, composants), `DECISION-DEFILEMENT-2026-11-01.md` (la
 liste est la page) et `VISION-ECOLE-2026-11-05.md` (le suivi pédagogique est la priorité n° 1). Il remplace
@@ -168,3 +168,11 @@ pilote met à jour les trois le jour même de chaque changement.
 3. Les actions groupées du §2.3 : toutes, ou d'abord Écrire, Accepter, Demander une précision, Refuser ?
 4. Les imprimables du §4 : lesquels en premier ?
 5. Les élèves (LP-6) : même ordre de priorité, ou avant les phases après l'embauche des enseignants ?
+
+### Réponses retenues (pilote, 16/11, sur délégation du directeur)
+
+1. Phases du §2 gardées, plus une **période d'essai** dans « En poste » (état, pas une phase).
+2. Un enseignant parti reste dans la liste, masqué par défaut, visible par le filtre « Partis ».
+3. Actions groupées d'abord : Écrire, Accepter, Demander une précision, Refuser ; les autres ensuite.
+4. Imprimables d'abord : la liste (PDF et CSV) et la fiche du dossier enseignant.
+5. La liste des élèves (LP-6) vient après LP-4.
