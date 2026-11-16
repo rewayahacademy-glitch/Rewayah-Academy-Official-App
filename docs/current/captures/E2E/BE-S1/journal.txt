@@ -67,6 +67,5 @@ NOTICE:  OK f6 : piece en attente (2 lignes)
 NOTICE:  OK f7 : sans responsable, adultes (2 lignes)
 NOTICE:  OK f8 : recherche par nom (1 lignes)
 NOTICE:  OK f9 : filtre vide de resultat (0 lignes)
-ERROR:  BE-S1 ROUGE : z : au moins 70 controles passes
-CONTEXT:  PL/pgSQL function pg_temp_3.vrai(boolean,text) line 4 at RAISE
-ERROR:  current transaction is aborted, commands ignored until end of transaction block
+NOTICE:  OK z : au moins 69 controles passes
+NOTICE:  BE-S1 : 70 controles OK

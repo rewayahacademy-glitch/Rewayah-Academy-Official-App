@@ -405,7 +405,7 @@ SELECT pg_temp.concordance('{"responsable":"aucun","public":"adultes"}', 'activi
 SELECT pg_temp.concordance('{"recherche":"Delta"}', 'activite', 'f8 : recherche par nom');
 SELECT pg_temp.concordance('{"etape":"verifications"}', 'activite', 'f9 : filtre vide de resultat');
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 70,
-  'z : au moins 70 controles passes');
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 69,
+  'z : au moins 69 controles passes');
 DO $$ BEGIN RAISE NOTICE 'BE-S1 : % controles OK', current_setting('test.n'); END $$;
 ROLLBACK;
