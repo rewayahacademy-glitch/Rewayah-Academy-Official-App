@@ -3319,6 +3319,7 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
   AppRole.student ||
   AppRole.controller ||
   AppRole.accountant ||
+  AppRole.associe ||
   null => RoleEspaceGroupe.eleve,
 };
 
@@ -3387,6 +3388,27 @@ class _CoquilleSecondaire extends ConsumerWidget {
     // `destinationsPour(role: AppRole.admin)`, videe par ce meme lot, et
     // perdait tout chrome -- exactement le defaut mesure le 18 septembre
     // 2026 sur ce meme ecran.
+    if (effectif == AppRole.associe) {
+      // BE-2b : le compte de l'associe garde le meme chrome restreint : un seul
+      // domaine, une seule page, la sortie par le menu du compte.
+      return AdminShell(
+        domaines: const <AdminDomaine>[AdminDomaine.personnes],
+        domaineActif: null,
+        onAller: aller,
+        onCompte: () => aller(Routes.compte),
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
+        onRetour: () => aller(Routes.racinePour(AppRole.associe)),
+        sousLiens: <AdminDomaine, List<SousLien>>{
+          AdminDomaine.personnes: <SousLien>[
+            (
+              libelle: t.admin.candidatures.titre,
+              chemin: Routes.adminPersonnesCandidatures,
+            ),
+          ],
+        },
+        child: child,
+      );
+    }
     if (effectif == AppRole.admin) {
       return AdminShell(
         onRechercheMetier:
@@ -3798,6 +3820,11 @@ class _CoquilleAdmin extends ConsumerWidget {
     final bool voitDirection = ref.watch(
       sessionProvider.select((SessionState s) => s.peutVoirDirection),
     );
+    // BE-2b : l'associe ne voit qu'une page, les candidatures ; ni les autres
+    // domaines, ni les alertes, ni les messages, ni le Studio, ni la cloche.
+    final bool associe = ref.watch(
+      sessionProvider.select((SessionState s) => s.role == AppRole.associe),
+    );
 
     // ALERTE-1 : la cloche n'existe que si la capacite « alertes » rend
     // quelque chose (jamais en production avant DASH-BR-03, Q5) ; son point
@@ -3824,12 +3851,14 @@ class _CoquilleAdmin extends ConsumerWidget {
         false;
 
     return RaccourciRecherche(
-      actif: rechercheServie,
+      actif: rechercheServie && !associe,
       child: AdminShell(
-        onRechercheMetier: rechercheServie
+        onRechercheMetier: rechercheServie && !associe
             ? () => aller(Routes.recherche)
             : null,
-        domaines: domainesAdmin(voitDirection: voitDirection),
+        domaines: associe
+            ? const <AdminDomaine>[AdminDomaine.personnes]
+            : domainesAdmin(voitDirection: voitDirection),
         domaineActif: domaine,
         onAller: aller,
         onCompte: () => aller(Routes.compte),
@@ -3840,7 +3869,7 @@ class _CoquilleAdmin extends ConsumerWidget {
         onRetour: domaine == AdminDomaine.accueil && !sousPage
             ? null
             : () => aller(Routes.admin),
-        cloche: urgentes == null
+        cloche: urgentes == null || associe
             ? null
             : ClocheNotifications(
                 // Une seule cloche dans l'en-tete, celle des notifications :
@@ -3855,7 +3884,7 @@ class _CoquilleAdmin extends ConsumerWidget {
                   _ => t.alertes.clocheUrgentes(nombre: urgentes),
                 },
               ),
-        messages: messagesNonLus == 0 && !surMessages
+        messages: associe || (messagesNonLus == 0 && !surMessages)
             ? null
             : ClocheNotifications(
                 key: const ValueKey<String>('admin-messages-non-lus'),
@@ -3874,17 +3903,20 @@ class _CoquilleAdmin extends ConsumerWidget {
         // montrent deja l'alerte en tete (D7, une information une fois).
         // Pose seulement quand une alerte urgente est ouverte ; fige en haut
         // par la coquille, hors de la zone qui defile (ALERTE-1b).
-        bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
+        bandeau:
+            associe || domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
             ? null
             : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
         // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
         // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
         // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
         // role.
-        onNotifications: () => aller(Routes.adminNotifications),
+        onNotifications: associe
+            ? null
+            : () => aller(Routes.adminNotifications),
         notificationsActives: notificationsOuvertes,
         // PORTS-DIRECTION : le Studio n'est montre que s'il a un serveur.
-        onStudio: ref.watch(studioOuvertProvider)
+        onStudio: !associe && ref.watch(studioOuvertProvider)
             ? () => aller(Routes.adminStudio)
             : null,
         // NAV-SOUS-LIENS (14/11/2026) : les pages de chaque domaine dans le
@@ -3894,10 +3926,19 @@ class _CoquilleAdmin extends ConsumerWidget {
         // lit rien de plus sur chaque page ; quand elle s'ouvre a quelqu'un,
         // les pages de Configuration gardent leur selecteur (le panneau ne
         // porte pas toutes leurs sections).
-        sousLiens: sousLiensAdmin(
-          vueGlobaleFinance: ref.watch(vueGlobaleFinanceOuverteProvider),
-          reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
-        ),
+        sousLiens: associe
+            ? <AdminDomaine, List<SousLien>>{
+                AdminDomaine.personnes: <SousLien>[
+                  (
+                    libelle: t.admin.candidatures.titre,
+                    chemin: Routes.adminPersonnesCandidatures,
+                  ),
+                ],
+              }
+            : sousLiensAdmin(
+                vueGlobaleFinance: ref.watch(vueGlobaleFinanceOuverteProvider),
+                reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
+              ),
         cheminCourant: adresseRouteurSur(context)?.path,
         // MESSAGERIE-PLEIN-ECRAN : au telephone, une conversation ouverte
         // porte sa propre barre ; la coquille s'efface.

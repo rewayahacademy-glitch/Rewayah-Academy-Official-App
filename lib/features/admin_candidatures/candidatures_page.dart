@@ -49,6 +49,7 @@ import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/recrutement/port_invitations_comptable.dart';
@@ -56,6 +57,8 @@ import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
+import '../../core/session/session_controleur.dart';
+import '../../core/session/session_state.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -871,6 +874,11 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     final AsyncValue<PageCandidatures> valeur = ref.watch(
       pageCandidaturesProvider(requete),
     );
+    // BE-2b : l'associe ne voit que la page des candidatures (le serveur filtre
+    // ses dossiers sur ses missions).
+    final bool associe = ref.watch(
+      sessionProvider.select((SessionState s) => s.role == AppRole.associe),
+    );
     if (valeur.hasValue) _derniere = valeur.requireValue;
     if (valeur.hasValue && _filtre.estVide) {
       _totalToutes = valeur.requireValue.total;
@@ -1030,10 +1038,22 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
               final Widget titre = Semantics(
                 header: true,
                 label: r.titre,
-                child: SousNavigationDomaine(
-                  onglets: ongletsPersonnes(),
-                  indexActif: 2,
-                ),
+                // BE-2b : l'associe ne voit que cette page ; les autres
+                // pages de Personnes ne lui sont pas proposees.
+                child: associe
+                    ? SousNavigationDomaine(
+                        onglets: <({String libelle, String chemin})>[
+                          (
+                            libelle: r.titre,
+                            chemin: Routes.adminPersonnesCandidatures,
+                          ),
+                        ],
+                        indexActif: 0,
+                      )
+                    : SousNavigationDomaine(
+                        onglets: ongletsPersonnes(),
+                        indexActif: 2,
+                      ),
               );
               final List<Widget> icones = <Widget>[
                 if (commandes) _boutonRecherche(),

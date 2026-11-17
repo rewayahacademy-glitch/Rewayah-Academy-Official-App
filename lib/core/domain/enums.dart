@@ -23,7 +23,11 @@ enum AppRole {
   guardian('guardian'),
 
   /// Eleve.
-  student('student');
+  student('student'),
+
+  /// Associe : une personne invitee par la direction, sans foyer ; elle n'agit
+  /// que par une mission (BE-2a-2). Son accueil est « Candidatures » seulement.
+  associe('associe');
 
   const AppRole(this.valeurSql);
 

@@ -513,6 +513,7 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
     AppRole.controller => t.admin.agents.parcoursControleur,
     AppRole.admin => t.admin.agents.parcoursAdmin,
     AppRole.accountant => t.admin.agents.parcoursComptable,
+    AppRole.associe => t.admin.agents.parcoursAssocie,
     null => t.admin.agents.parcoursInconnu,
   };
 
