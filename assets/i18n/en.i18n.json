@@ -6871,6 +6871,47 @@
       "plafondChamp": "Number of messages per hour (1 to 120)",
       "plafondEnregistrer": "Set the limit",
       "plafondInvalide": "Write a whole number between 1 and 120.",
+      "donnees": {
+        "titre": "Real data",
+        "fermees": "Closed: Praxis reads no real application file and no real conversation. Only the test conversations are open to it.",
+        "ouvertes": "Open: Praxis can read the conversations and application files its key allows it to see, on the sides of the person who issued it.",
+        "avertissement": "Open real data only after publishing the privacy policy that mentions the assistant. Until then, Praxis must read no real data. You can close it again at any time.",
+        "ouvrir": "Open real data",
+        "fermer": "Close real data"
+      },
+      "propositions": {
+        "titre": "Praxis proposals",
+        "pastille": "Praxis proposes",
+        "intro": "Praxis prepared this step. Nothing is done until you confirm: confirming runs the step as if you had done it yourself.",
+        "geste": {
+          "demanderComplement": "Ask for more information",
+          "planifierEntretien": "Schedule an interview",
+          "admettreVerifications": "Admit to the verification room"
+        },
+        "note": "What Praxis wrote",
+        "motif": "Reason given to the candidate",
+        "elements": "Items requested",
+        "quand": "Interview proposed on {date} at {heure}",
+        "duree(plural, param=n)": {
+          "one": "Duration: {n} minute",
+          "other": "Duration: {n} minutes"
+        },
+        "expire": "Expires on {date}",
+        "participants": "Participants",
+        "participantsAide": "Choose the people who will lead the interview: Praxis does not choose them.",
+        "participantsAucun": "No staff member to choose for this application.",
+        "participantsErreur": "The staff list could not be read. Try again in a moment.",
+        "erreur": "Praxis proposals could not be read. Try again in a moment.",
+        "horsLigne": "Praxis proposals are not loaded yet. Reload them.",
+        "motifEcart": "Reason (optional)",
+        "valider": "Confirm",
+        "ecarter": "Dismiss",
+        "fait": "Done: {geste}.",
+        "ecartee": "Proposal dismissed.",
+        "perimee": "The application has changed since this proposal: it can no longer be confirmed. Dismiss it.",
+        "close": "This proposal is no longer open: it was handled or it expired.",
+        "generique": "The proposal could not be handled. Nothing changed: try again."
+      },
       "essaiTitre": "Test conversations",
       "essaiVide": "Test mode off: Praxis can read every academy conversation it is allowed to read.",
       "essaiActif(plural, param=nombre)": {

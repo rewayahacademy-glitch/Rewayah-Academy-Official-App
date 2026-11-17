@@ -60,6 +60,14 @@ abstract final class ClesPraxis {
   /// Fixer le plafond.
   static const Key fixerPlafond = ValueKey<String>('praxis-plafond');
 
+  /// Ouvrir ou fermer les donnees reelles.
+  static const Key donneesReelles = ValueKey<String>('praxis-donnees-reelles');
+
+  /// La phrase d'avertissement des donnees reelles.
+  static const Key avertissementDonnees = ValueKey<String>(
+    'praxis-donnees-avertissement',
+  );
+
   /// Enregistrer les conversations d'essai.
   static const Key fixerEssai = ValueKey<String>('praxis-essai');
 
@@ -233,6 +241,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
     bool? autonome,
     int? envoisParHeure,
     List<String>? essaiFils,
+    bool? donneesReelles,
   }) async {
     if (_reglageEnCours != null) {
       return;
@@ -248,7 +257,9 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
       await avecDoubleVerification<void>(
         context,
         ref,
-        () => essaiFils != null
+        () => donneesReelles != null
+            ? _service.reglerDonneesReelles(ouvert: donneesReelles)
+            : essaiFils != null
             ? _service.reglerEssai(essaiFils)
             : _service.regler(
                 actif: actif,
@@ -579,6 +590,36 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
             pleineLargeur: false,
             enCours: _reglageEnCours == 'plafond',
             onPress: occupe ? () {} : () => unawaited(_fixerPlafond()),
+          ),
+          Ecart.vXxl,
+          Text(t.admin.praxis.donnees.titre, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(
+            etat.donneesReelles
+                ? t.admin.praxis.donnees.ouvertes
+                : t.admin.praxis.donnees.fermees,
+            style: textes.bodySmall,
+          ),
+          Ecart.vSm,
+          Text(
+            t.admin.praxis.donnees.avertissement,
+            key: ClesPraxis.avertissementDonnees,
+            style: textes.bodySmall,
+          ),
+          Ecart.vMd,
+          ActionPrincipale(
+            key: ClesPraxis.donneesReelles,
+            libelle: etat.donneesReelles
+                ? t.admin.praxis.donnees.fermer
+                : t.admin.praxis.donnees.ouvrir,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            enCours: _reglageEnCours == 'donnees',
+            onPress: occupe
+                ? () {}
+                : () => unawaited(
+                    _regler('donnees', donneesReelles: !etat.donneesReelles),
+                  ),
           ),
           Ecart.vXxl,
           Text(t.admin.praxis.essaiTitre, style: textes.titleSmall),

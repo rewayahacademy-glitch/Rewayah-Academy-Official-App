@@ -29,6 +29,7 @@ import '../../core/widgets/badge_nouveau.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/status_pill.dart';
 import 'libelles_candidatures.dart';
+import 'marque_propositions_praxis.dart';
 import 'messages_non_lus.dart';
 
 /// Ce que la page sait d'une ligne : retenue ou non, et en mode selection.
@@ -205,6 +206,7 @@ class _CelluleNom extends StatelessWidget {
           ),
         ],
         MarqueMessagesNonLus(candidatureId: ligne.id),
+        MarquePropositionsPraxis(reference: ligne.reference),
       ],
     );
   }
@@ -346,6 +348,7 @@ class CarteCandidature extends StatelessWidget {
                   ),
                 ],
                 MarqueMessagesNonLus(candidatureId: ligne.id),
+                MarquePropositionsPraxis(reference: ligne.reference),
               ],
             ),
           ),

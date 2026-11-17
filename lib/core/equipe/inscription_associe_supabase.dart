@@ -4,6 +4,9 @@
 // « pas encore verse » : le port est alors indisponible.
 library;
 
+import 'dart:async' show TimeoutException;
+
+import 'package:http/http.dart' show ClientException;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../capacites/capacite_indisponible.dart';
@@ -40,10 +43,12 @@ class InscriptionAssocieSupabase implements PortInscriptionAssocie {
         throw const CapaciteIndisponible(dependanceInscriptionAssocie);
       }
       rethrow;
-    } on FormatException {
+    } on Exception catch (e) {
+      // « Hors ligne » ne dit que ce qu'il sait : une coupure de reseau. Une
+      // autre erreur (session, reponse illisible, ...) remonte telle quelle,
+      // l'ecran en fait une phrase d'erreur, jamais « connexion ».
+      if (estCoupureReseau(e)) throw const HorsLigneInscriptionAssocie();
       rethrow;
-    } on Exception {
-      throw const HorsLigneInscriptionAssocie();
     }
   }
 
@@ -70,3 +75,12 @@ class InscriptionAssocieSupabase implements PortInscriptionAssocie {
     }),
   );
 }
+
+/// Vrai seulement pour une vraie coupure de reseau : delai depasse, erreur du
+/// client HTTP, ou prise (`SocketException`, lue par son nom : ce type n'existe
+/// pas sur le web).
+bool estCoupureReseau(Object erreur) =>
+    erreur is TimeoutException ||
+    erreur is ClientException ||
+    erreur.runtimeType.toString() == 'SocketException' ||
+    erreur.toString().contains('SocketException');

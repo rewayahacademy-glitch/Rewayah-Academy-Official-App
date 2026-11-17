@@ -64,6 +64,7 @@ import 'libelles_candidature.dart';
 import 'piece_sur_place.dart';
 import 'plan_dossier.dart';
 import 'portrait_dossier_fige.dart';
+import 'propositions_praxis_dossier.dart';
 import 'reponses_candidature.dart';
 
 // ---------------------------------------------------------------------------
@@ -771,8 +772,13 @@ class CorpsDossier extends ConsumerStatefulWidget {
     this.reglage,
     this.onDecisionPiece,
     this.ligneMajorite,
+    this.onPropositionTraitee,
     super.key,
   });
+
+  /// Une proposition de Praxis est validee ou ecartee : le dossier se relit
+  /// (PX-2) ; `null` : la page ne relit rien.
+  final VoidCallback? onPropositionTraitee;
 
   /// « 3 sur 176 » et les fleches (BE-SUIVANT), ou `null`.
   final Widget? navigation;
@@ -1215,6 +1221,13 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
       children: <Widget>[
         if (widget.passage != null) ...<Widget>[Ecart.vMd, widget.passage!],
         if (widget.reglage != null) ...<Widget>[Ecart.vMd, widget.reglage!],
+        // PX-2 : ce que Praxis a prepare pour ce dossier (rien s'il n'a rien
+        // prepare). Il n'execute jamais : la direction valide ou ecarte.
+        PropositionsPraxisDossier(
+          reference: detail.ligne.reference,
+          candidatureId: detail.ligne.id,
+          onTraitee: widget.onPropositionTraitee,
+        ),
       ],
     );
     final Widget liste = KeyedSubtree(

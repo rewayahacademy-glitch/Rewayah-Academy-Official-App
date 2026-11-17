@@ -1,7 +1,10 @@
 // L'adaptateur de l'inscription d'un associe : ce qu'il envoie, comment il lit
 // les reponses, et comment il traduit les refus du serveur.
 
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' show ClientException;
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/equipe/inscription_associe_supabase.dart';
 import 'package:rewayah_academy/core/equipe/port_inscription_associe.dart';
@@ -104,27 +107,46 @@ void main() {
     expect(await essayer('42883'), isA<CapaciteIndisponible>());
   });
 
-  test(
-    'un reseau qui manque est dit hors ligne, une autre erreur reste',
-    () async {
-      final InscriptionAssocieSupabase reseau =
-          InscriptionAssocieSupabase.avecAppel(
-            (String _, Map<String, dynamic> _) async =>
-                throw Exception('reseau'),
-          );
-      await expectLater(
-        reseau.verifier('ABCD'),
-        throwsA(isA<HorsLigneInscriptionAssocie>()),
+  test('seules les vraies coupures de reseau sont dites hors ligne', () async {
+    Future<Object> essayer(Exception erreur) async {
+      final InscriptionAssocieSupabase a = InscriptionAssocieSupabase.avecAppel(
+        (String _, Map<String, dynamic> _) async => throw erreur,
       );
-      final InscriptionAssocieSupabase autre =
-          InscriptionAssocieSupabase.avecAppel(
-            (String _, Map<String, dynamic> _) async =>
-                throw const PostgrestException(message: 'x', code: '57014'),
-          );
-      await expectLater(
-        autre.verifier('ABCD'),
-        throwsA(isA<PostgrestException>()),
-      );
-    },
-  );
+      try {
+        await a.verifier('ABCD');
+      } on Object catch (e) {
+        return e;
+      }
+      return 'rien';
+    }
+
+    // Les vraies coupures.
+    expect(
+      await essayer(ClientException('coupure')),
+      isA<HorsLigneInscriptionAssocie>(),
+    );
+    expect(
+      await essayer(TimeoutException('trop long')),
+      isA<HorsLigneInscriptionAssocie>(),
+    );
+    expect(
+      await essayer(Exception('SocketException: Failed host lookup')),
+      isA<HorsLigneInscriptionAssocie>(),
+    );
+    // Tout le reste remonte tel quel : l'ecran en fait une erreur, jamais
+    // « hors ligne ».
+    expect(
+      await essayer(const AuthException('session expiree')),
+      isA<AuthException>(),
+    );
+    expect(
+      await essayer(Exception('reponse illisible')),
+      isNot(isA<HorsLigneInscriptionAssocie>()),
+    );
+    expect(
+      await essayer(const PostgrestException(message: 'x', code: '57014')),
+      isA<PostgrestException>(),
+    );
+    expect(await essayer(const FormatException('x')), isA<FormatException>());
+  });
 }

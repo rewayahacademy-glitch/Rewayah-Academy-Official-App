@@ -121,6 +121,7 @@ class EtatPraxis {
     required this.envoisParHeure,
     required this.cles,
     this.essaiFils = const <String>[],
+    this.donneesReelles = false,
   });
 
   /// Lit la reponse de `direction_praxis_etat()`.
@@ -128,6 +129,7 @@ class EtatPraxis {
     actif: json['actif'] as bool? ?? false,
     autonome: json['autonome'] as bool? ?? false,
     envoisParHeure: (json['envoisParHeure'] as num?)?.toInt() ?? 30,
+    donneesReelles: json['donneesReelles'] as bool? ?? false,
     essaiFils: (json['essaiFils'] as List<dynamic>? ?? <dynamic>[])
         .whereType<String>()
         .toList(growable: false),
@@ -152,6 +154,10 @@ class EtatPraxis {
   /// Les conversations d'essai (MODE ESSAI) : vide, pas de mode essai ;
   /// sinon Praxis ne voit que celles-la et n'annonce rien.
   final List<String> essaiFils;
+
+  /// Les donnees reelles sont ouvertes (PX-2) : faux a l'installation ; tant
+  /// qu'il est faux, Praxis ne lit aucun dossier ni aucune conversation reels.
+  final bool donneesReelles;
 }
 
 /// Ce que l'emission rend, une seule fois.
@@ -257,6 +263,10 @@ abstract interface class ServicePraxis {
   /// au mode essai (double verification exigee par la base).
   Future<void> reglerEssai(List<String> fils);
 
+  /// Ouvre ou ferme les donnees reelles (double verification exigee par la
+  /// base).
+  Future<void> reglerDonneesReelles({required bool ouvert});
+
   /// Emet une cle. Rend le secret une seule fois. [cleEmission] est la cle
   /// d'idempotence : le meme appel rejoue ne remontre jamais le secret.
   Future<ClePraxisEmise> emettre({
@@ -319,6 +329,14 @@ class ServicePraxisSupabase implements ServicePraxis {
         'p_autonome': autonome,
         'p_envois_par_heure': envoisParHeure,
       },
+    );
+  }
+
+  @override
+  Future<void> reglerDonneesReelles({required bool ouvert}) async {
+    await _client.rpc<Object?>(
+      'direction_praxis_regler_donnees_reelles',
+      params: <String, dynamic>{'p_ouvert': ouvert},
     );
   }
 

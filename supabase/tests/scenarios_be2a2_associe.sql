@@ -360,6 +360,10 @@ BEGIN
     FROM pg_catalog.pg_policies p
    WHERE p.schemaname = 'public' AND p.permissive = 'PERMISSIVE' AND p.cmd IN ('SELECT', 'ALL')
      AND p.roles::text ~ 'authenticated|public'
+     -- Une politique dont la condition est litteralement `false` n'ouvre rien a personne : DETTE-PAYOUT-METHODS
+     -- (20261129880000, 17/11) ferme ainsi la lecture de payout_methods pour direction et comptabilite. Elle ne
+     -- nomme ni role ni identite, et ne doit pas rougir ce controle, qui cherche les lectures OUVERTES.
+     AND coalesce(p.qual, '') <> 'false'
      AND coalesce(p.qual, '') !~* '(app_role|auth\.uid|uid\(\)|app_household|jwt|est_direction|cand_lecteur|controleur_voit_|mission_|private\.|app_private\.|session_belongs|household)';
   SELECT pg_catalog.array_agg(e ORDER BY e) INTO v_en_trop
     FROM pg_catalog.unnest(coalesce(v_trouvees, ARRAY[]::text[])) e WHERE NOT (e = ANY (v_attendues));
