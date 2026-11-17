@@ -7160,7 +7160,7 @@ class _Traductions$admin$praxis$ar extends Traductions$admin$praxis$fr {
 	@override String get cleVide => 'لا مفتاح';
 	@override String get cleVideDetail => 'أصدر مفتاحًا لمخاطبة Praxis.';
 	@override String get erreur => 'تعذّرت قراءة إعدادات Praxis. أعد المحاولة بعد لحظة.';
-	@override String get horsLigne => 'لا اتصال. ستُقرأ إعدادات Praxis عند عودته.';
+	@override String get horsLigne => 'لم تُحمَّل إعدادات Praxis بعد. أعد تحميلها.';
 	@override String get journalTitre => 'ما أرسله Praxis';
 	@override String get journalIntro => 'الرسائل والإعلانات التي كتبها Praxis بنفسه، الأحدث أولًا. لا نص أسرة أبدًا.';
 	@override String get journalVide => 'لم يرسل Praxis شيئًا بعد';
@@ -35346,7 +35346,7 @@ extension on TraductionsAr {
 			'admin.praxis.cleVide' => 'لا مفتاح',
 			'admin.praxis.cleVideDetail' => 'أصدر مفتاحًا لمخاطبة Praxis.',
 			'admin.praxis.erreur' => 'تعذّرت قراءة إعدادات Praxis. أعد المحاولة بعد لحظة.',
-			'admin.praxis.horsLigne' => 'لا اتصال. ستُقرأ إعدادات Praxis عند عودته.',
+			'admin.praxis.horsLigne' => 'لم تُحمَّل إعدادات Praxis بعد. أعد تحميلها.',
 			'admin.praxis.journalTitre' => 'ما أرسله Praxis',
 			'admin.praxis.journalIntro' => 'الرسائل والإعلانات التي كتبها Praxis بنفسه، الأحدث أولًا. لا نص أسرة أبدًا.',
 			'admin.praxis.journalVide' => 'لم يرسل Praxis شيئًا بعد',

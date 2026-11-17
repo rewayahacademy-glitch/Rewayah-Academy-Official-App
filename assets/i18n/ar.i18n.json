@@ -8542,7 +8542,7 @@
       "cleVide": "لا مفتاح",
       "cleVideDetail": "أصدر مفتاحًا لمخاطبة Praxis.",
       "erreur": "تعذّرت قراءة إعدادات Praxis. أعد المحاولة بعد لحظة.",
-      "horsLigne": "لا اتصال. ستُقرأ إعدادات Praxis عند عودته.",
+      "horsLigne": "لم تُحمَّل إعدادات Praxis بعد. أعد تحميلها.",
       "journalTitre": "ما أرسله Praxis",
       "journalIntro": "الرسائل والإعلانات التي كتبها Praxis بنفسه، الأحدث أولًا. لا نص أسرة أبدًا.",
       "journalVide": "لم يرسل Praxis شيئًا بعد",

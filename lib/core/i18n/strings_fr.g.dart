@@ -14353,8 +14353,8 @@ class Traductions$admin$praxis$fr {
 	/// fr: 'Les réglages de Praxis n'ont pas pu être lus. Réessayez dans un instant.'
 	String get erreur => 'Les réglages de Praxis n\'ont pas pu être lus. Réessayez dans un instant.';
 
-	/// fr: 'Pas de connexion. Les réglages de Praxis se liront quand elle reviendra.'
-	String get horsLigne => 'Pas de connexion. Les réglages de Praxis se liront quand elle reviendra.';
+	/// fr: 'Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.'
+	String get horsLigne => 'Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.';
 
 	/// fr: 'Ce que Praxis a envoyé'
 	String get journalTitre => 'Ce que Praxis a envoyé';
@@ -60278,7 +60278,7 @@ extension on Traductions {
 			'admin.praxis.cleVide' => 'Aucune clé',
 			'admin.praxis.cleVideDetail' => 'Émettez une clé pour parler à Praxis.',
 			'admin.praxis.erreur' => 'Les réglages de Praxis n\'ont pas pu être lus. Réessayez dans un instant.',
-			'admin.praxis.horsLigne' => 'Pas de connexion. Les réglages de Praxis se liront quand elle reviendra.',
+			'admin.praxis.horsLigne' => 'Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.',
 			'admin.praxis.journalTitre' => 'Ce que Praxis a envoyé',
 			'admin.praxis.journalIntro' => 'Les messages et les annonces que Praxis a écrits lui-même, les plus récents d\'abord. Jamais le texte d\'une famille.',
 			'admin.praxis.journalVide' => 'Praxis n\'a encore rien envoyé',

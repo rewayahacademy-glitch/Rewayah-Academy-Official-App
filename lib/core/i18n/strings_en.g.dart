@@ -6864,7 +6864,7 @@ class _Traductions$admin$praxis$en extends Traductions$admin$praxis$fr {
 	@override String get cleVide => 'No key';
 	@override String get cleVideDetail => 'Issue a key to talk to Praxis.';
 	@override String get erreur => 'Praxis\'s settings could not be read. Try again in a moment.';
-	@override String get horsLigne => 'No connection. Praxis\'s settings will load when it comes back.';
+	@override String get horsLigne => 'Praxis\'s settings are not loaded yet. Reload them.';
 	@override String get journalTitre => 'What Praxis sent';
 	@override String get journalIntro => 'The messages and announcements Praxis wrote itself, most recent first. Never a family\'s text.';
 	@override String get journalVide => 'Praxis has not sent anything yet';
@@ -33087,7 +33087,7 @@ extension on TraductionsEn {
 			'admin.praxis.cleVide' => 'No key',
 			'admin.praxis.cleVideDetail' => 'Issue a key to talk to Praxis.',
 			'admin.praxis.erreur' => 'Praxis\'s settings could not be read. Try again in a moment.',
-			'admin.praxis.horsLigne' => 'No connection. Praxis\'s settings will load when it comes back.',
+			'admin.praxis.horsLigne' => 'Praxis\'s settings are not loaded yet. Reload them.',
 			'admin.praxis.journalTitre' => 'What Praxis sent',
 			'admin.praxis.journalIntro' => 'The messages and announcements Praxis wrote itself, most recent first. Never a family\'s text.',
 			'admin.praxis.journalVide' => 'Praxis has not sent anything yet',

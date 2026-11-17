@@ -6663,7 +6663,7 @@
       "cleVide": "No key",
       "cleVideDetail": "Issue a key to talk to Praxis.",
       "erreur": "Praxis's settings could not be read. Try again in a moment.",
-      "horsLigne": "No connection. Praxis's settings will load when it comes back.",
+      "horsLigne": "Praxis's settings are not loaded yet. Reload them.",
       "journalTitre": "What Praxis sent",
       "journalIntro": "The messages and announcements Praxis wrote itself, most recent first. Never a family's text.",
       "journalVide": "Praxis has not sent anything yet",

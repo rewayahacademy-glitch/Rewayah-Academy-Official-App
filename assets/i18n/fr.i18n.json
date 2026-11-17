@@ -6756,7 +6756,7 @@
       "cleVide": "Aucune clé",
       "cleVideDetail": "Émettez une clé pour parler à Praxis.",
       "erreur": "Les réglages de Praxis n'ont pas pu être lus. Réessayez dans un instant.",
-      "horsLigne": "Pas de connexion. Les réglages de Praxis se liront quand elle reviendra.",
+      "horsLigne": "Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.",
       "journalTitre": "Ce que Praxis a envoyé",
       "journalIntro": "Les messages et les annonces que Praxis a écrits lui-même, les plus récents d'abord. Jamais le texte d'une famille.",
       "journalVide": "Praxis n'a encore rien envoyé",
