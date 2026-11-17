@@ -350,6 +350,8 @@ declare
     'lister_enseignants(jsonb,text,integer)',
     -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
     'dispenser_entretien(uuid,text,text,integer,text)',
+    -- BE-1j (17/11) : la direction deplace le creneau d'un entretien planifie (transition 47).
+    'deplacer_entretien(uuid,timestamp with time zone,integer,text,integer,text)',
     -- COMPLEMENT-SALLE-EXAMEN (17/11) : la direction annule le complement demande en Salle d'examen (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; le dossier revient a en_examen).
     'annuler_complement_candidat(uuid,text,integer,text)',
     -- BE-1h (16/11) : la direction ramene une candidature de la decision a l'entretien (transition 46).
