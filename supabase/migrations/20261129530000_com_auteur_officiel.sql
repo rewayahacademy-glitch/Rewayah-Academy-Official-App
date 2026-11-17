@@ -14,15 +14,15 @@
 -- Rejouable : rien a faire si la cle est deja la.
 --
 -- FICHIER SANS MOT D'EFFACEMENT (compte : 0) ; sans BEGIN ni COMMIT de premier niveau.
--- S'installe apres 20261129520000 (qui ne touche pas com_fil_json) et 20261129600000 (socle : comptes_officiels).
+-- ORDRE : ce fichier (20261129530000) precede le socle Praxis (20261129600000) dans un rejeu complet, qui cree
+-- private.comptes_officiels. com_fil_json est en plpgsql : le nom de table n'est resolu qu'a l'execution, donc la
+-- retouche s'installe sans le socle, et la table existe a tout appel reel (rejeu complet puis scenarios).
+-- Aucune verification de la table ici (un controle au moment de l'installation casserait le rejeu complet).
 
 DO $preflight$
 BEGIN
   IF pg_catalog.to_regprocedure('private.com_fil_json(uuid,uuid,text,uuid)') IS NULL THEN
     RAISE EXCEPTION 'auteur officiel : private.com_fil_json absente';
-  END IF;
-  IF pg_catalog.to_regclass('private.comptes_officiels') IS NULL THEN
-    RAISE EXCEPTION 'auteur officiel : private.comptes_officiels absente (socle Praxis non installe)';
   END IF;
 END
 $preflight$;
