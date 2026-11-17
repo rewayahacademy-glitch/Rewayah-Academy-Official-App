@@ -33,6 +33,9 @@ seulement répondre. Répondre est la première brique, pas le but.
 - Praxis répond **à travers le compte de l'académie** (la conversation reste « avec l'académie », logo de l'académie
   en tête), mais **chaque bulle qu'il écrit porte son propre profil** : son image et le nom « #Ra_Praxis ».
 - **La mention « Assistant de l'académie · IA » se voit en touchant son profil** (détails du profil), pas sur la bulle.
+- **Précision du directeur (17/11, vers 13 h 30)** : avec les candidats et l'équipe, Praxis parle au nom du personnel,
+  sans mention IA dans le message ; avec les familles et les élèves, une ligne discrète « Assistant IA de l'académie »
+  termine ses messages.
 - S'il est interrogé (« êtes-vous un robot ? »), il répond oui, simplement : il ne ment jamais sur sa nature.
 - **Arbitrage du pilote (juriste par délégation)** : la règle du directeur est retenue. Risque à connaître : le droit
   européen sur l'IA (règlement 2024/1689, art. 50, applicable depuis le 02/08/2026) demande que la personne sache
@@ -95,9 +98,28 @@ consignes de la tâche reviennent à « lis ROUTINE-PRAXIS.md et les compétence
 **Ouvrir aux vraies personnes** (données réelles) ne se fait qu'après PX-BULLE, la politique de confidentialité
 publiée, et une journée de journal relue par le directeur.
 
+## 5 bis. Deux décisions du directeur du 17/11 (vers 13 h 30), arbitrées par le pilote
+
+**Les courriels (« il ne faut pas lui amputer les bras »).** L'interdit venait de la sécurité (R12) : un courriel sort de
+l'application, de l'interrupteur et du journal, et un message piégé pourrait faire envoyer des données à une adresse
+choisie par un attaquant. Arbitrage : Praxis **pourra envoyer des courriels**, par le circuit de courriels existant de
+l'académie (`COURRIELS.md`), **seulement à l'adresse enregistrée de la personne du fil, jamais à une adresse écrite dans
+un message**, jamais à un mineur, avec plafond, journal et interrupteur. Lot **PX-COURRIEL**, après PX-SUIVI.
+
+**Les pièces d'identité (« des milliers de documents, la chose qui prend le plus de temps »).** Praxis, qui lit des
+textes de tiers, ne verra pas les pièces. Arbitrage : un **circuit séparé et fermé** (une fonction serveur sans outil,
+qui envoie l'image à un modèle de vision et ne rend que des champs : type, nom, expiration, lisibilité, concordance,
+signes de retouche) **propose** un verdict sur le dossier ; la direction valide en lot d'un geste ; les doutes restent
+à l'humain (aucune décision entièrement automatique, RGPD art. 22). Lot **PX-KYC** : étude d'abord (BE-DOSSIER,
+`PLAN-KYC.md`), puis serveur et écran. Il faudra au directeur : une clé API Anthropic en secret serveur et une phrase
+de plus dans la politique de confidentialité le jour de la mise en service.
+
+**La politique de confidentialité** est publiée maintenant (#609, BE-SALLE), pour la partie messages, seule réelle.
+
 ## 6. Ce qu'on ne fait pas
 
 - Pas de session unique « qui reste allumée » : une session qui garderait tout en mémoire serait la cible d'un
   message piégé ; le chat du directeur et la base tiennent la continuité.
 - Aucun agent ne voit la clé ; aucun agent ne répond à la place de Praxis.
+- Praxis n'écrit jamais un courriel à une adresse lue dans un message.
 - Rien de niveau D, jamais.
