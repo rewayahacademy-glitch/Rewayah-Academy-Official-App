@@ -204,6 +204,9 @@ SELECT pg_temp.vrai((SELECT rang_familial = 3 AND total_mineur = 4500
   'facture : Hind, 3e membre payant, 50 - 5 = 45 USD (guide §1.3)');
 -- O et E recomptes ici, independamment : l'adhesion cree aussi les seances a
 -- venir de la classe (materialisation), elles comptent comme les autres.
+-- DETTE-COMPTABLE (20261129810000) : le comptable ne lit plus `sessions` ; O et E se recomptent avec
+-- les droits du proprietaire, puis on redevient le comptable (jeton inchange).
+RESET ROLE;
 SELECT set_config('test.o', (SELECT count(*) FROM public.sessions s
    WHERE s.groupe_id = 'fb000000-0000-4000-8000-000000000c01' AND s.deleted_at IS NULL
      AND s.status NOT IN ('canceled', 'canceled_late')
@@ -212,6 +215,7 @@ SELECT set_config('test.e', (SELECT count(*) FROM public.sessions s
    WHERE s.groupe_id = 'fb000000-0000-4000-8000-000000000c01' AND s.deleted_at IS NULL
      AND s.status NOT IN ('canceled', 'canceled_late')
      AND s.started_at >= pg_temp.mois() + 9 AND s.started_at < pg_temp.suivant())::text, true);
+SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(current_setting('test.e')::int < current_setting('test.o')::int
   AND (SELECT rang_familial = 4
     AND total_mineur = 4300 * current_setting('test.e')::int / current_setting('test.o')::int

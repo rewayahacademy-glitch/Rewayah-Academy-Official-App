@@ -107,6 +107,21 @@ SELECT pg_temp.appel(pg_temp.u(1), 'admin', 'aal2', $$SELECT public.direction_pr
 SELECT :'j'::jsonb ->> 'secret' AS cle \gset
 SELECT pg_temp.appel(pg_temp.u(1), 'admin', 'aal2', $$SELECT public.direction_praxis_regler(true, false, 100)$$);
 
+-- ============ 0 : donnees_reelles faux (PX-2) : seul le mode essai ouvre Praxis ============
+SELECT pg_temp.vrai(NOT (SELECT donnees_reelles FROM private.praxis_reglages), '0 : donnees_reelles est faux apres installation');
+SELECT pg_temp.srv(format('SELECT public.praxis_fil(%L, %L::uuid, 10)', :'cle', pg_temp.f(1))) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"donnees_reelles_fermees"}'::jsonb, '0 : sans liste d''essai, un fil reel est refuse donnees_reelles_fermees');
+SELECT pg_temp.srv(format('SELECT public.praxis_boite(%L, ''tout'', 50)', :'cle')) AS j \gset
+SELECT pg_temp.vrai(jsonb_array_length(:'j'::jsonb -> 'fils') = 0, '0 : sans liste d''essai, la boite est vide');
+SELECT pg_temp.appel(pg_temp.u(1), 'admin', 'aal2', format('SELECT public.direction_praxis_regler_essai(ARRAY[%L]::uuid[])', pg_temp.f(1)));
+SELECT pg_temp.srv(format('SELECT public.praxis_fil(%L, %L::uuid, 10)', :'cle', pg_temp.f(1))) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb ->> 'erreur' IS NULL, '0 : avec la liste d''essai, F1 est lisible meme si les donnees reelles sont fermees');
+SELECT pg_temp.srv(format('SELECT public.praxis_fil(%L, %L::uuid, 10)', :'cle', pg_temp.f(2))) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"hors_essai"}'::jsonb, '0 : et F2 reste hors de l''essai');
+SELECT pg_temp.appel(pg_temp.u(1), 'admin', 'aal2', 'SELECT public.direction_praxis_regler_essai(ARRAY[]::uuid[])');
+-- PX-2 : les donnees reelles sont ouvertes (la politique est publiee) pour la suite.
+UPDATE private.praxis_reglages SET donnees_reelles = true;
+
 -- ============ 1 : etat de depart ============
 SELECT pg_temp.vrai((SELECT essai_fils FROM private.praxis_reglages) = '{}'::uuid[], '1 : la liste d''essai est vide apres installation');
 SELECT pg_temp.srv(format('SELECT public.praxis_boite(%L, ''tout'', 50)', :'cle')) AS j \gset
@@ -187,8 +202,8 @@ SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"mineur"}'::jsonb, '5 : l''envoi da
 SELECT pg_temp.appel(pg_temp.u(1), 'admin', 'aal1', 'SELECT public.direction_praxis_etat()') AS j \gset
 SELECT pg_temp.vrai((:'j'::jsonb -> 'essaiFils') @> to_jsonb(pg_temp.f(4)::text) AND jsonb_array_length(:'j'::jsonb -> 'essaiFils') = 2,
   '7 : l''etat rend les conversations d''essai (lecture en aal1 permise)');
-SELECT pg_temp.vrai((SELECT count(*) FROM public.audit_logs WHERE action = 'praxis_regle_essai') = 3,
-  '7 : une ligne d''audit par changement reussi (3 a ce stade), aucune pour les refus');
+SELECT pg_temp.vrai((SELECT count(*) FROM public.audit_logs WHERE action = 'praxis_regle_essai') = 5,
+  '7 : une ligne d''audit par changement reussi (5 a ce stade), aucune pour les refus');
 
 -- ============ 6 : fin du mode essai ============
 SELECT pg_temp.appel(pg_temp.u(1), 'admin', 'aal2', 'SELECT public.direction_praxis_regler_essai(ARRAY[]::uuid[])') AS j \gset

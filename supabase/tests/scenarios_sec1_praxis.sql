@@ -169,6 +169,9 @@ CREATE FUNCTION pg_temp.nb_msg() RETURNS bigint LANGUAGE sql AS $$ SELECT count(
 CREATE FUNCTION pg_temp.sensible(p_j jsonb) RETURNS boolean LANGUAGE sql IMMUTABLE AS $$
   SELECT p_j::text ~* '(@|courriel|e-mail|email|phone|telephone|montant|birth|naissance|adresse|iban|token|jeton|password|mot_de_passe|secret|empreinte)' $$;
 
+-- PX-2 : les donnees reelles sont ouvertes (la politique est publiee) : sans cela, PX-1 est limite au mode essai.
+UPDATE private.praxis_reglages SET donnees_reelles = true;
+
 -- Les cles : emises par la direction (a1) en aal2. Le secret n'est montre qu'a l'emission.
 SELECT pg_temp.vrai(NOT (SELECT actif FROM private.praxis_reglages)
   AND NOT EXISTS (SELECT 1 FROM private.praxis_cles),
@@ -340,8 +343,9 @@ SELECT pg_temp.vrai((SELECT array_agg(p.oid::regprocedure::text ORDER BY p.prona
   = ARRAY['praxis_annoncer(text,text[],text,text,uuid)',
           'praxis_boite(text,text,integer)', 'praxis_calendrier_ajouter(text,text,text,date,text,uuid)',
           'praxis_calendrier_lire(text,date,date)', 'praxis_ecrire(text,uuid,text,uuid)', 'praxis_etat(text)',
-          'praxis_fil(text,uuid,integer)', 'praxis_noter_refus(text,text)', 'praxis_rendre_compte(text,integer)'],
-  'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (huit outils + praxis_noter_refus, M4)');
+          'praxis_fil(text,uuid,integer)', 'praxis_lire(text,text,jsonb,integer)', 'praxis_noter_refus(text,text)',
+          'praxis_preparer(text,text,text,jsonb,text,uuid)', 'praxis_rendre_compte(text,integer)'],
+  'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (dix outils + praxis_noter_refus, M4 ; PX-2 : lire et preparer)');
 SELECT pg_temp.vrai((SELECT bool_and(has_function_privilege('service_role', p.oid, 'EXECUTE')
                        AND NOT has_function_privilege('anon', p.oid, 'EXECUTE')
                        AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE')
@@ -368,10 +372,14 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
     FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
          LATERAL regexp_matches(p.prosrc, '(?:INSERT\s+INTO|UPDATE|MERGE\s+INTO)\s+([a-z_]+\.[a-z_]+|[a-z_]+)\s', 'gi') m
    WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
-  = ARRAY['private.praxis_noter>private.praxis_journal', 'private.praxis_porte>private.praxis_cles',
+  = (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY['private.praxis_noter>private.praxis_journal', 'private.praxis_porte>private.praxis_cles',
           'public.direction_praxis_emettre_cle>private.praxis_cles', 'public.direction_praxis_regler>private.praxis_reglages',
           'public.direction_praxis_regler_essai>private.praxis_reglages',
-          'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier'],
+          'private.praxis_propositions_expirer>private.praxis_propositions',
+          'public.direction_praxis_ecarter>private.praxis_propositions', 'public.direction_praxis_regler_donnees_reelles>private.praxis_reglages',
+          'public.direction_praxis_valider>private.praxis_propositions',
+          'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier',
+          'public.praxis_preparer>private.praxis_propositions']) x),
   'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
 -- R4 (suite, AR-10) : les ecritures INDIRECTES. TOUT appel qualifie `schema.fonction(` fait par une fonction praxis_*, private.praxis_* ou
 -- direction_praxis_* (schemas public, private, auth, extensions, tout schema hors pg_catalog) est dans une liste fermee ecrite ici. Un appel
@@ -382,16 +390,33 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
          LATERAL regexp_matches(p.prosrc, '\m([a-z_][a-z_0-9]*\.[a-z_][a-z_0-9]*)\s*\(', 'gi') m
    WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%')
      AND lower(m[1]) NOT LIKE 'pg\_catalog.%')
-  = ARRAY['auth.jwt', 'auth.uid', 'extensions.gen_random_bytes',
+  = (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY['auth.jwt', 'auth.uid', 'extensions.gen_random_bytes',
           'private.com_annonce_envoyer_interne', 'private.com_annonce_personnes', 'private.com_annonce_publics_valides',
           'private.com_envoyer_message_interne', 'private.com_est_mineur', 'private.com_est_partie', 'private.com_paires',
           'private.com_profil_valide', 'private.praxis_auteur_json', 'private.praxis_calendrier', 'private.praxis_cles',
           'private.praxis_cotes', 'private.praxis_empreinte', 'private.praxis_essai', 'private.praxis_est_equipe', 'private.praxis_est_officiel',
           'private.praxis_est_partie_a', 'private.praxis_fil_dans_cotes', 'private.praxis_fil_refus', 'private.praxis_journal',
           'private.praxis_noter', 'private.praxis_porte', 'private.praxis_profil', 'private.praxis_types_fil',
-          'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access'],
-  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (30 noms) ; aucun autre appel de public, private ou d''un autre schema');
+          -- PX-2 : la lecture des dossiers (cotes, gestes du moteur, complement), la table et l'aide des propositions, et les TROIS portes
+          -- publiques de geste que SEULE la validation (sous l'identite de la direction) appelle.
+          'private.cand_lecteur', 'private.candidature_complement_codes', 'private.candidature_complement_en_cours',
+          'private.gestes_regles_de_la_ligne', 'private.praxis_gestes_ligne', 'private.praxis_propositions',
+          'private.praxis_propositions_expirer', 'public.admettre_salle_verification', 'public.demander_complement_candidat',
+          'public.planifier_entretien',
+          'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
+  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (40 noms) ; aucun autre appel de public, private ou d''un autre schema');
 
+-- R4 / AR-10 (PX-2, revue R15) : des COUPLES (appelante, appelee), pas seulement une liste de noms. Les trois portes publiques de geste de la
+-- candidature ne sont appelees QUE par direction_praxis_valider (qui s'execute sous l'identite de la direction) : aucun outil de Praxis,
+-- aucune autre porte de la direction, ne peut les appeler.
+SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT p.proname || '>' || lower(m[1]) ORDER BY p.proname || '>' || lower(m[1])), ARRAY[]::text[])
+    FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
+         LATERAL regexp_matches(p.prosrc, '\m(public\.(?:demander_complement_candidat|planifier_entretien|admettre_salle_verification))\s*\(', 'gi') m
+   WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
+  = (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY[
+       'direction_praxis_valider>public.admettre_salle_verification', 'direction_praxis_valider>public.demander_complement_candidat',
+       'direction_praxis_valider>public.planifier_entretien']) x),
+  'R4 / AR-10 : les trois portes de geste de la candidature ne sont appelees que depuis direction_praxis_valider (couples appelante > appelee)');
 -- R1 (AR-9) : un controle qui a un sens. Chaque outil public a EXACTEMENT les arguments attendus (nom : type) ; aucun argument n'est un texte libre
 -- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
 SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname)
@@ -402,8 +427,14 @@ SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identi
           'praxis_calendrier_lire(p_cle text, p_du date, p_au date)',
           'praxis_ecrire(p_cle text, p_fil uuid, p_texte text, p_cle_idempotence uuid)',
           'praxis_etat(p_cle text)', 'praxis_fil(p_cle text, p_fil uuid, p_limite integer)',
-          'praxis_noter_refus(p_cle text, p_outil text)', 'praxis_rendre_compte(p_cle text, p_heures integer)'],
-  'R1 : les arguments de chaque outil public sont exactement ceux ecrits ici (aucun argument « requete », jsonb ni regclass ; les seuls textes sont les champs bornes listes)');
+          -- PX-2 : DEUX arguments jsonb, et seulement ceux-la : le filtre de praxis_lire et les parametres de praxis_preparer. Ce ne sont
+          -- pas des requetes : leurs cles et leurs valeurs sont validees contre des listes fermees (une cle ou une valeur inconnue est
+          -- refusee `parametre`, scenarios_px2_preparer.sql §2 et §5). Un jsonb de plus, ou un autre, est rouge ici.
+          'praxis_lire(p_cle text, p_vue text, p_filtre jsonb, p_limite integer)',
+          'praxis_noter_refus(p_cle text, p_outil text)',
+          'praxis_preparer(p_cle text, p_geste text, p_candidature text, p_parametres jsonb, p_texte text, p_cle_idempotence uuid)',
+          'praxis_rendre_compte(p_cle text, p_heures integer)'],
+  'R1 : les arguments de chaque outil public sont exactement ceux ecrits ici (aucun argument « requete » ni regclass ; jsonb seulement pour le filtre de praxis_lire et les parametres de praxis_preparer, valides contre des listes fermees ; les seuls textes sont les champs bornes listes)');
 SELECT pg_temp.vrai((SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
                       WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%')
                         AND p.prosrc ~* 'EXECUTE\s') = 0,
