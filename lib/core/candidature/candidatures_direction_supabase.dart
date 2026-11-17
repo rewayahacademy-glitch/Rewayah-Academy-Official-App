@@ -359,6 +359,26 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
           'p_motif': d.motif,
         },
       );
+    case GesteCandidature.restreindre:
+    case GesteCandidature.demanderVerificationPiece:
+    case GesteCandidature.demanderVerificationVersement:
+      return (
+        'restreindre_candidat',
+        <String, dynamic>{
+          ...commun,
+          'p_cause': switch (d.geste) {
+            GesteCandidature.demanderVerificationPiece => 'piece',
+            GesteCandidature.demanderVerificationVersement => 'paiement',
+            _ => 'manuelle',
+          },
+          'p_motif': d.motif,
+        },
+      );
+    case GesteCandidature.leverRestriction:
+      return (
+        'lever_restriction_candidat',
+        <String, dynamic>{...commun, 'p_motif': d.motif},
+      );
     case GesteCandidature.debloquerVersement:
       return (
         'debloquer_versement_candidat',

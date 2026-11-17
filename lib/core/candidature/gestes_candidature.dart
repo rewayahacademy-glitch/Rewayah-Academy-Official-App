@@ -69,7 +69,23 @@ enum GesteCandidature {
 
   /// Dispenser d'entretien (transition 45, `dispenser_entretien`, BE-1g) : la
   /// candidature passe a la decision comme apres un entretien tenu.
-  dispenserEntretien('dispenserEntretien');
+  dispenserEntretien('dispenserEntretien'),
+
+  /// Restreindre une candidature confirmee (transition 20, cause `manuelle`,
+  /// `restreindre_candidat`, APRES-CONFIRMEE).
+  restreindre('restreindre'),
+
+  /// Demander une verification de la piece apres l'accueil : restriction de
+  /// cause `piece` (transition 20, `restreindre_candidat`).
+  demanderVerificationPiece('demanderVerification'),
+
+  /// Demander une verification du versement apres l'accueil : restriction de
+  /// cause `paiement` (transition 20, `restreindre_candidat`).
+  demanderVerificationVersement('demanderVerification'),
+
+  /// Lever la restriction (transition 21, `lever_restriction_candidat`), sous
+  /// les controles de sa cause (piece validee, versement compatible).
+  leverRestriction('leverRestriction');
 
   const GesteCandidature(this.capacite);
 
@@ -86,6 +102,10 @@ enum GesteCandidature {
     refuser ||
     consignerRetrait ||
     dispenserEntretien ||
+    restreindre ||
+    demanderVerificationPiece ||
+    demanderVerificationVersement ||
+    leverRestriction ||
     rouvrir => true,
     admettreVerifications ||
     confirmerMoyenPaiement ||
@@ -300,6 +320,44 @@ class DemandeGeste {
     motif: motif,
     modele: modele,
     repriseLe: repriseLe,
+  );
+
+  /// Restreindre (cause manuelle), ou demander une verification de la piece ou
+  /// du versement : [geste] est l'un des trois, le [motif] est interne.
+  factory DemandeGeste.restriction({
+    required GesteCandidature geste,
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) {
+    assert(
+      geste == GesteCandidature.restreindre ||
+          geste == GesteCandidature.demanderVerificationPiece ||
+          geste == GesteCandidature.demanderVerificationVersement,
+      'une restriction : restreindre ou une demande de verification',
+    );
+    return DemandeGeste._(
+      geste: geste,
+      candidatureId: candidatureId,
+      versionAttendue: versionAttendue,
+      cleIdempotence: cleIdempotence,
+      motif: motif,
+    );
+  }
+
+  /// Lever la restriction, avec un [motif] interne.
+  factory DemandeGeste.leverRestriction({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.leverRestriction,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
+    motif: motif,
   );
 
   /// Lever la pause. Le motif est facultatif.

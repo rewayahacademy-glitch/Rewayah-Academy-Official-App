@@ -118,6 +118,16 @@ bool gestePermisPourLigne(
       return !enCours && !l.enPause && avantSalle3;
     case GesteCandidature.definirResponsable:
       return sansPause && etape != null;
+    case GesteCandidature.restreindre:
+    case GesteCandidature.demanderVerificationPiece:
+    case GesteCandidature.demanderVerificationVersement:
+      // APRES-CONFIRMEE (regles 20 du moteur) : apres l'accueil, en cours, hors
+      // pause, pas deja restreinte.
+      return sansPause && etape == EtapeCandidature.confirmee && !l.restreinte;
+    case GesteCandidature.leverRestriction:
+      // Regle 21 : apres l'accueil, restreinte, en cours, hors pause. Les
+      // controles de la cause restent ceux du serveur.
+      return sansPause && etape == EtapeCandidature.confirmee && l.restreinte;
     case GesteCandidature.dispenserEntretien:
       // BE-1g (regle 45 du moteur) : en Salle de verification et d'entretien,
       // entretien a planifier ou deja planifie, en cours, hors pause.
@@ -255,6 +265,10 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.admettreVerifications,
   GesteCandidature.validerPiece,
   GesteCandidature.dispenserEntretien,
+  GesteCandidature.restreindre,
+  GesteCandidature.demanderVerificationPiece,
+  GesteCandidature.demanderVerificationVersement,
+  GesteCandidature.leverRestriction,
   GesteCandidature.mettreEnPause,
   GesteCandidature.leverPause,
   GesteCandidature.refuser,

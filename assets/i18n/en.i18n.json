@@ -4585,7 +4585,11 @@
         "retrait": "Record a requested withdrawal",
         "rouvrir": "Reopen the application",
         "responsable": "Choose the manager",
-        "dispenserEntretien": "Waive the interview"
+        "dispenserEntretien": "Waive the interview",
+        "restreindre": "Restrict",
+        "demanderVerificationPiece": "Ask for a check of the ID document",
+        "demanderVerificationVersement": "Ask for a check of the payout",
+        "leverRestriction": "Lift the restriction"
       },
       "consequences": {
         "accueillir": "Their teacher account is activated and their space opens. The person teaches only once assigned to a class.",
@@ -4601,7 +4605,11 @@
         "retrait": "The application is closed at the person's request. You can reopen it.",
         "rouvrir": "The application returns to its original stage, if the server's checks allow it.",
         "responsable": "The manager follows this application.",
-        "dispenserEntretien": "The application moves on to the decision, as after a successful interview. An interview already scheduled is cancelled. No message is sent to the person."
+        "dispenserEntretien": "The application moves on to the decision, as after a successful interview. An interview already scheduled is cancelled. No message is sent to the person.",
+        "restreindre": "The application is restricted: it is no longer offered for assignment. The person is not notified.",
+        "demanderVerificationPiece": "The application is restricted (document) until a validated document lifts it. The person is not notified.",
+        "demanderVerificationVersement": "The application is restricted (payout) until a compatible payout method lifts it. The person is not notified.",
+        "leverRestriction": "The restriction is lifted if its cause is settled: a validated document, or a compatible payout."
       },
       "feuille": {
         "motif": "Internal reason",
@@ -4713,6 +4721,10 @@
         "rouvrir": "The application is reopened.",
         "responsable": "The manager is recorded.",
         "dispenserEntretien": "Interview waived. The decision is waiting for you.",
+        "restreindre": "The application is restricted.",
+        "demanderVerificationPiece": "Document check requested: the application is restricted.",
+        "demanderVerificationVersement": "Payout check requested: the application is restricted.",
+        "leverRestriction": "The restriction is lifted.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
       "genres": {"male": "Man", "female": "Woman"},

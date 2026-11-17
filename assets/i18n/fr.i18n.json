@@ -4585,7 +4585,11 @@
         "retrait": "Enregistrer un retrait demandé",
         "rouvrir": "Rouvrir la candidature",
         "responsable": "Choisir le responsable",
-        "dispenserEntretien": "Dispenser d'entretien"
+        "dispenserEntretien": "Dispenser d'entretien",
+        "restreindre": "Restreindre",
+        "demanderVerificationPiece": "Demander une vérification de la pièce",
+        "demanderVerificationVersement": "Demander une vérification du versement",
+        "leverRestriction": "Lever la restriction"
       },
       "consequences": {
         "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
@@ -4601,7 +4605,11 @@
         "retrait": "La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.",
         "rouvrir": "La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.",
         "responsable": "Le responsable suit cette candidature.",
-        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne."
+        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne.",
+        "restreindre": "La candidature est restreinte\u00a0: elle n'est plus proposée à une affectation. La personne n'est pas prévenue.",
+        "demanderVerificationPiece": "La candidature est restreinte (pièce) tant qu'une pièce validée ne la lève. La personne n'est pas prévenue.",
+        "demanderVerificationVersement": "La candidature est restreinte (versement) tant qu'un moyen de versement compatible ne la lève. La personne n'est pas prévenue.",
+        "leverRestriction": "La restriction est levée si la cause est réglée\u00a0: pièce validée, ou versement compatible."
       },
       "feuille": {
         "motif": "Motif interne",
@@ -4713,6 +4721,10 @@
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
         "dispenserEntretien": "Entretien dispensé. La décision vous attend.",
+        "restreindre": "La candidature est restreinte.",
+        "demanderVerificationPiece": "Vérification de la pièce demandée\u00a0: la candidature est restreinte.",
+        "demanderVerificationVersement": "Vérification du versement demandée\u00a0: la candidature est restreinte.",
+        "leverRestriction": "La restriction est levée.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
       "genres": {"male": "Homme", "female": "Femme"},

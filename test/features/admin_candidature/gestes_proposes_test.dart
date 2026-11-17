@@ -153,6 +153,9 @@ void main() {
       permis: <GesteCandidature>[
         GesteCandidature.mettreEnPause,
         GesteCandidature.definirResponsable,
+        GesteCandidature.restreindre,
+        GesteCandidature.demanderVerificationPiece,
+        GesteCandidature.demanderVerificationVersement,
       ],
     ),
     (
@@ -168,6 +171,7 @@ void main() {
         GesteCandidature.confirmerMoyenPaiement,
         GesteCandidature.mettreEnPause,
         GesteCandidature.definirResponsable,
+        GesteCandidature.leverRestriction,
       ],
     ),
     (
@@ -182,6 +186,7 @@ void main() {
       permis: <GesteCandidature>[
         GesteCandidature.mettreEnPause,
         GesteCandidature.definirResponsable,
+        GesteCandidature.leverRestriction,
       ],
     ),
     (

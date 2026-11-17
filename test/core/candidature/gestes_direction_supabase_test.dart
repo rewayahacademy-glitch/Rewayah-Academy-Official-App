@@ -251,6 +251,23 @@ DemandeGeste _demande(GesteCandidature g) {
         categorie: CategorieDispense.fondateur,
         motif: 'Fondateur de l\'academie.',
       );
+    case GesteCandidature.restreindre:
+    case GesteCandidature.demanderVerificationPiece:
+    case GesteCandidature.demanderVerificationVersement:
+      return DemandeGeste.restriction(
+        geste: g,
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Controle.',
+      );
+    case GesteCandidature.leverRestriction:
+      return DemandeGeste.leverRestriction(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Cause reglee.',
+      );
   }
 }
 
@@ -337,6 +354,22 @@ void main() {
               'p_categorie': 'fondateur',
               'p_motif': 'Fondateur de l\'academie.',
             },
+          ),
+          GesteCandidature.restreindre: (
+            'restreindre_candidat',
+            <String, Object?>{'p_cause': 'manuelle', 'p_motif': 'Controle.'},
+          ),
+          GesteCandidature.demanderVerificationPiece: (
+            'restreindre_candidat',
+            <String, Object?>{'p_cause': 'piece', 'p_motif': 'Controle.'},
+          ),
+          GesteCandidature.demanderVerificationVersement: (
+            'restreindre_candidat',
+            <String, Object?>{'p_cause': 'paiement', 'p_motif': 'Controle.'},
+          ),
+          GesteCandidature.leverRestriction: (
+            'lever_restriction_candidat',
+            <String, Object?>{'p_motif': 'Cause reglee.'},
           ),
         };
 
