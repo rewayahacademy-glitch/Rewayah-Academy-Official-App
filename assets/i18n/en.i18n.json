@@ -6912,8 +6912,8 @@
         "reponseVide": "Write the answer before sending it.",
         "envoyer": "Send to Praxis",
         "repondue": "Answer saved. Praxis will go back to the person on its next run.",
-        "erreurDejaRepondue": "This question already has an answer: the first one is kept.",
-        "erreurInconnue": "This question no longer exists.",
+        "erreurDejaRepondue": "This question already has an answer: the first one is kept. Refresh the list to see it.",
+        "erreurInconnue": "This question no longer exists. Refresh the list.",
         "erreurEnvoi": "The answer is not confirmed. The list has just been reloaded: if the question is still unanswered, send it again."
       },
       "donnees": {

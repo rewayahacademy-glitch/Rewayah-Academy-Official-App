@@ -34194,11 +34194,11 @@ class Traductions$admin$praxis$questions$fr {
 	/// fr: 'Réponse enregistrée. Praxis reviendra vers la personne à son prochain passage.'
 	String get repondue => 'Réponse enregistrée. Praxis reviendra vers la personne à son prochain passage.';
 
-	/// fr: 'Cette question a déjà reçu une réponse : la première est gardée.'
-	String get erreurDejaRepondue => 'Cette question a déjà reçu une réponse : la première est gardée.';
+	/// fr: 'Cette question a déjà reçu une réponse : la première est gardée. Actualisez la liste pour la voir.'
+	String get erreurDejaRepondue => 'Cette question a déjà reçu une réponse : la première est gardée. Actualisez la liste pour la voir.';
 
-	/// fr: 'Cette question n'existe plus.'
-	String get erreurInconnue => 'Cette question n\'existe plus.';
+	/// fr: 'Cette question n'existe plus. Actualisez la liste.'
+	String get erreurInconnue => 'Cette question n\'existe plus. Actualisez la liste.';
 
 	/// fr: 'La réponse n'est pas confirmée. La liste vient d'être relue : si la question est restée sans réponse, envoyez-la de nouveau.'
 	String get erreurEnvoi => 'La réponse n\'est pas confirmée. La liste vient d\'être relue : si la question est restée sans réponse, envoyez-la de nouveau.';
@@ -61713,8 +61713,8 @@ extension on Traductions {
 			'admin.praxis.questions.reponseVide' => 'Écrivez la réponse avant de l\'envoyer.',
 			'admin.praxis.questions.envoyer' => 'Envoyer à Praxis',
 			'admin.praxis.questions.repondue' => 'Réponse enregistrée. Praxis reviendra vers la personne à son prochain passage.',
-			'admin.praxis.questions.erreurDejaRepondue' => 'Cette question a déjà reçu une réponse : la première est gardée.',
-			'admin.praxis.questions.erreurInconnue' => 'Cette question n\'existe plus.',
+			'admin.praxis.questions.erreurDejaRepondue' => 'Cette question a déjà reçu une réponse : la première est gardée. Actualisez la liste pour la voir.',
+			'admin.praxis.questions.erreurInconnue' => 'Cette question n\'existe plus. Actualisez la liste.',
 			'admin.praxis.questions.erreurEnvoi' => 'La réponse n\'est pas confirmée. La liste vient d\'être relue : si la question est restée sans réponse, envoyez-la de nouveau.',
 			'admin.praxis.donnees.titre' => 'Données réelles',
 			'admin.praxis.donnees.fermees' => 'Fermées : Praxis ne lit aucun dossier de candidature ni aucune conversation réelle. Seules les conversations d\'essai lui sont ouvertes.',

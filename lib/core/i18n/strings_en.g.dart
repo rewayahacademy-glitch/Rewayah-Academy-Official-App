@@ -16573,8 +16573,8 @@ class _Traductions$admin$praxis$questions$en extends Traductions$admin$praxis$qu
 	@override String get reponseVide => 'Write the answer before sending it.';
 	@override String get envoyer => 'Send to Praxis';
 	@override String get repondue => 'Answer saved. Praxis will go back to the person on its next run.';
-	@override String get erreurDejaRepondue => 'This question already has an answer: the first one is kept.';
-	@override String get erreurInconnue => 'This question no longer exists.';
+	@override String get erreurDejaRepondue => 'This question already has an answer: the first one is kept. Refresh the list to see it.';
+	@override String get erreurInconnue => 'This question no longer exists. Refresh the list.';
 	@override String get erreurEnvoi => 'The answer is not confirmed. The list has just been reloaded: if the question is still unanswered, send it again.';
 }
 
@@ -33886,8 +33886,8 @@ extension on TraductionsEn {
 			'admin.praxis.questions.reponseVide' => 'Write the answer before sending it.',
 			'admin.praxis.questions.envoyer' => 'Send to Praxis',
 			'admin.praxis.questions.repondue' => 'Answer saved. Praxis will go back to the person on its next run.',
-			'admin.praxis.questions.erreurDejaRepondue' => 'This question already has an answer: the first one is kept.',
-			'admin.praxis.questions.erreurInconnue' => 'This question no longer exists.',
+			'admin.praxis.questions.erreurDejaRepondue' => 'This question already has an answer: the first one is kept. Refresh the list to see it.',
+			'admin.praxis.questions.erreurInconnue' => 'This question no longer exists. Refresh the list.',
 			'admin.praxis.questions.erreurEnvoi' => 'The answer is not confirmed. The list has just been reloaded: if the question is still unanswered, send it again.',
 			'admin.praxis.donnees.titre' => 'Real data',
 			'admin.praxis.donnees.fermees' => 'Closed: Praxis reads no real application file and no real conversation. Only the test conversations are open to it.',
