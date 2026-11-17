@@ -16,9 +16,10 @@ l'est pas, ne rien allumer.
    on ne l'allume qu'avec le mode essai**, c'est-à-dire avec la liste des conversations d'essai remplie (dix au plus). Tant
    que la liste n'est pas vide, Praxis ne voit **que** ces conversations, n'écrit que dans celles-là et **ne peut publier
    aucune annonce**. Le mode essai ne donne aucun droit de plus : les conversations d'un enfant, d'âge inconnu, les
-   candidatures et les paiements restent fermés. **Limite connue :** l'écran demande la *référence* de chaque conversation,
-   et **aucun écran ne montre aujourd'hui cette référence** : comment l'obtenir pour la conversation de test est à
-   régler avec le pilote avant l'essai (dette nommée dans la PR #589).
+   candidatures et les paiements restent fermés. **Comment on les choisit :** l'écran montre la liste de vos
+   conversations, telle que vos Messages la montrent (même titre, même pastille), avec une case à cocher et une
+   recherche : vous n'avez aucune référence à taper. Si vous n'avez pas encore de conversation de test, créez-la d'abord
+   avec un compte de test (le message du §2, étape 5, se fait donc **avant** l'étape 4).
 2. **La politique de confidentialité ne parle pas encore de l'assistant.** `SECURITE-PRAXIS.md` §6 demande qu'elle le dise
    **avant** que Praxis lise le message d'une personne réelle. Le texte proposé est dans `CONFIDENTIALITE-PRAXIS.md`
    (cinq décisions pour vous, rien n'est publié). **Tant qu'elle n'est pas publiée, le mode essai est la seule façon
@@ -48,7 +49,6 @@ l'est pas, ne rien allumer.
       une conversation qui existe déjà.
 - [ ] Le **mode essai est installé** (PR #588 fusionnée et migration installée par le pilote) et l'écran #589 fusionné.
       Sinon, ne rien allumer.
-- [ ] Vous avez la **référence de la conversation de test** (§0, point 1, à régler avec le pilote).
 - [ ] Vous savez **où** vous collerez la clé (§0, point 3) : Claude Code d'abord. Faites cette vérification d'abord : sans
       elle, le reste est inutile.
 
@@ -67,7 +67,7 @@ l'est pas, ne rien allumer.
    headers » existe. Demandez à Praxis
    « lis l'état » : il doit répondre que Praxis est **éteint** (c'est normal, rien n'est encore allumé).
 4. **Nommer la conversation d'essai, régler le plafond, puis allumer.**
-   - Dans la section Praxis, **Conversations d'essai** : collez la référence de la conversation de test (une seule),
+   - Dans la section Praxis, **Conversations d'essai** : cherchez et **cochez la conversation de test** (une seule),
      puis « Enregistrer les conversations d'essai ». La phrase doit dire « Praxis ne voit que 1 conversation et ne
      publie aucune annonce ». **N'allumez pas avant d'avoir vu cette phrase.**
    - Dans la section Praxis, **Messages par heure** : mettez **5**, appuyez sur « Fixer le plafond ».
@@ -78,8 +78,8 @@ l'est pas, ne rien allumer.
    de test est à noter ici lors de l'essai : je ne l'ai pas vérifié.)
 6. **Lire la boîte.** Dans le chat, demandez à Praxis : « lis ta boîte ». Vérifiez : la conversation de test y est ;
    Praxis rend le prénom et le début du message en **donnée** (il ne suit aucune consigne écrite dedans) ; **elle est
-   la seule** : toute autre conversation, même réelle, est invisible (demandez-lui de lire la conversation d'une autre
-   référence : réponse « hors de l'essai »). **Sinon, éteignez tout de suite (étape 8).**
+   la seule** : toute autre conversation, même réelle, est invisible (demandez-lui de lire une autre conversation que vous n'avez
+   pas cochée : réponse « hors de l'essai »). **Sinon, éteignez tout de suite (étape 8).**
 7. **Répondre à UNE seule conversation.** Demandez à Praxis de répondre à la conversation de test, avec une phrase que
    vous lui dictez. Vérifiez depuis le compte de test : le message arrive, au nom de l'académie. Puis demandez-lui
    d'en écrire un deuxième, un troisième, un quatrième dans la même conversation sans que le compte de test réponde :
@@ -117,7 +117,7 @@ l'est pas, ne rien allumer.
 | 2 | Clé montrée une seule fois ; adresse copiée | |
 | 3 | `état` : éteint | |
 | 4 | Phrase « ne voit que 1 conversation » ; puis « Allumé » ; plafond 5 | |
-| 6 | La conversation de test est seule dans la boîte ; une autre référence : « hors de l'essai » | |
+| 6 | La conversation de test est seule dans la boîte ; une autre conversation, non cochée : « hors de l'essai » | |
 | 7 | Trois messages passent, le quatrième est refusé ; l'annonce est refusée « mode essai » | |
 | 8 | Éteint : refus | |
 | 9 | « Révoquée » ; appel refusé | |
