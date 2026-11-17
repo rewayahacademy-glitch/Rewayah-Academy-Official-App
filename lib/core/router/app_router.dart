@@ -228,6 +228,7 @@ import '../../features/foyer/foyer_page.dart';
 import '../../features/foyer/invitation_conjoint.dart';
 import '../../features/foyer/nos_prix_page.dart';
 import '../../features/foyer/routes_n2_foyer_adulte.dart';
+import '../../features/inscription/associe_page.dart';
 import '../../features/inscription/etapes/genre_etape.dart';
 import '../../features/inscription/etapes/identite_etape.dart';
 import '../../features/inscription/etapes/recapitulatif_etape.dart';
@@ -607,6 +608,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
           codeInitial: etat.uri.queryParameters['code'],
           comptable: true,
         ),
+      ),
+      // Suite de BE-2a-2 : l'inscription d'un associe invite (code, prenom, nom,
+      // genre). Sous la porte `inscription`.
+      GoRouteSure(
+        path: Routes.inscriptionAssocie,
+        builder: (BuildContext _, GoRouterState etat) =>
+            AssociePage(codeInitial: etat.uri.queryParameters['code']),
       ),
       GoRouteSure(
         path: Routes.inscriptionIdentite,

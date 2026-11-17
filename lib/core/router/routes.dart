@@ -76,6 +76,11 @@ abstract final class Routes {
   static const String inscriptionInvitationComptable =
       '/inscription/invitation-comptable';
 
+  /// L'inscription d'un associe invite : le code recu de la direction, puis le
+  /// prenom, le nom et le genre. Sous la meme porte `inscription` ; le
+  /// parametre `code` d'un lien est verifie des l'ouverture.
+  static const String inscriptionAssocie = '/inscription/associe';
+
   /// Recapitulatif, avant la creation du profil.
   static const String inscriptionRecapitulatif = '/inscription/recapitulatif';
 
