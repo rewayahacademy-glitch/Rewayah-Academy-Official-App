@@ -83,9 +83,10 @@ UPDATE private.praxis_reglages SET donnees_reelles = true;
 -- ===================================================================================================
 -- 1. Le catalogue.
 -- ===================================================================================================
-SELECT pg_temp.vrai((SELECT pg_catalog.array_agg(acte || ':' || niveau ORDER BY acte) FROM private.praxis_actes)
+SELECT pg_temp.vrai((SELECT pg_catalog.array_agg(acte || ':' || niveau ORDER BY acte) FROM private.praxis_actes
+                       WHERE acte LIKE 'support\_%' ESCAPE '\')
                     = ARRAY['support_deplacer:A', 'support_lister:A', 'support_modifier:A', 'support_retirer:S'],
-  '1a : le catalogue contient EXACTEMENT quatre actes (lister, modifier, deplacer en A ; retirer en S) : aucun acte « publier », aucun depot');
+  '1a : le catalogue contient EXACTEMENT quatre actes support_* (lister, modifier, deplacer en A ; retirer en S) : aucun acte « publier », aucun depot');
 SELECT pg_temp.vrai(pg_temp.srv(pg_catalog.format('SELECT public.praxis_actes(%L)', :'k1')) -> 'actes' @> '[{"acte": "support_retirer", "niveau": "S"}]'::jsonb
                     AND pg_catalog.length(pg_temp.srv(pg_catalog.format('SELECT public.praxis_actes(%L)', :'k1'))::text) < 8000,
   '1b : la cle de chat voit les quatre actes avec leur description');

@@ -10,7 +10,8 @@
 import { type Json, OUTILS, preparer, schemaMcp, ErreurSchema } from './outils.ts'
 
 export const FORME_CLE = /^prx_[0-9a-f]{64}$/
-export const TAILLE_MAX = 16 * 1024
+// 32 Kio : un support texte (9 000 signes d'arabe = 27 Ko en UTF-8) doit tenir dans UNE requete (PX-BD-SUPPORT). Chaque outil borne ses propres champs.
+export const TAILLE_MAX = 32 * 1024
 export const DELAI_MS = 8000
 const VERSIONS = ['2025-06-18', '2025-03-26', '2024-11-05']
 

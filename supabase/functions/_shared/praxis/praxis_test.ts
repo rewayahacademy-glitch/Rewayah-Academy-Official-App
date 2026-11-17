@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['acte_confirmer', 'acte_preparer', 'actes', 'agir', 'annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte', 'terminer'])
+  assertEquals(noms, ['acte_confirmer', 'acte_preparer', 'actes', 'agir', 'annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte', 'support_deposer', 'terminer'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
@@ -302,7 +302,7 @@ Deno.test('AR-7 M2 : un corps trop grand sans content-length ni taille annoncee 
   const flux = new ReadableStream<Uint8Array>({
     start(c) {
       const bloc = new TextEncoder().encode('x'.repeat(4096))
-      for (let i = 0; i < 6; i++) c.enqueue(bloc)
+      for (let i = 0; i < 10; i++) c.enqueue(bloc)
       c.close()
     },
   })

@@ -89,3 +89,11 @@ la lecture du résultat par `support_lister`.
 (visibilité publique offerte, retrait sans révision attendue, lister qui montre les retirés, motif court accepté, retrait qui écrit à sec) ;
 listes fermées de `scenarios_sec1_praxis.sql` étendues (appels qualifiés, couples adaptateur > fonction de la Bibliothèque).
 **Non mutable** : le mode « à sec » d'un acte de niveau A (jamais appelé par `agir`).
+
+## 5. `support_deposer` (PX-BD-SUPPORT, 17/11/2026, option C du pilote)
+
+Format retenu : un texte **Markdown fermé** (titres `#` à `###`, paragraphes, listes à puces et numérotées, gras, italique, citation, séparateur), analysé par le même jeu de 43 vecteurs en TypeScript (serveur) et en Dart (lecteur de l'application). Tout le reste est refusé avec un code (HTML, lien, image, tableau, code, barre, imbrication, titre trop profond, caractère de contrôle ou de direction forcée).
+
+Chemin : l'outil `support_deposer` analyse, puis passe par le pont (`praxis_agir`, clé de chat, identité de la direction) : `depot_support_preparer` crée le **brouillon** et l'intention de dépôt ; la fonction Edge écrit l'objet dans R2 à la clé finale rendue par la base ; `depot_support_confirmer` confirme avec la signature HMAC que la base reverifie. Le support reste un **brouillon réservé à la direction** : la direction le publie elle-même.
+
+Limites déclarées : 9 000 signes par appel (la requête du connecteur passe de 16 à 32 Kio) ; 100 000 octets au plus en base ; les versets saisis par un modèle ne sont jamais publiés sans contrôle (dit dans la description de l'outil) ; le dépôt humain n'accepte toujours pas `text/markdown` (la fonction Edge `bibliotheque-upload` est inchangée).

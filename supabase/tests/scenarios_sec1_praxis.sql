@@ -422,10 +422,14 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           -- qu'ils appellent telles quelles (library_mettre_a_jour, library_retirer) ; couples ci-dessous.
           'private.praxis_acte_support_deplacer', 'private.praxis_acte_support_lister', 'private.praxis_acte_support_modifier',
           'private.praxis_acte_support_retirer', 'public.library_mettre_a_jour', 'public.library_retirer',
+          -- PX-BD-SUPPORT (20261129990000) : les deux adaptateurs du depot d'un support texte et les TROIS fonctions de la direction qu'ils appellent
+          -- telles quelles (brouillon, intention de depot, confirmation) ; couples ci-dessous.
+          'private.praxis_acte_depot_support_confirmer', 'private.praxis_acte_depot_support_preparer', 'public.confirmer_upload_bibliotheque',
+          'public.demander_upload_bibliotheque', 'public.library_creer_brouillon',
           'private.praxis_propositions_expirer', 'public.admettre_salle_verification', 'public.demander_complement_candidat',
           'public.planifier_entretien',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
-  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (51 noms) ; aucun autre appel de public, private ou d''un autre schema');
+  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (56 noms) ; aucun autre appel de public, private ou d''un autre schema');
 
 -- R4 / AR-10 (PX-2, revue R15) : des COUPLES (appelante, appelee), pas seulement une liste de noms. Les trois portes publiques de geste de la
 -- candidature ne sont appelees QUE par direction_praxis_valider (qui s'execute sous l'identite de la direction) : aucun outil de Praxis,
@@ -446,8 +450,16 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT p.proname || '>' || lowe
    WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
   = (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY[
        'praxis_acte_support_deplacer>public.library_mettre_a_jour', 'praxis_acte_support_modifier>public.library_mettre_a_jour',
+       'praxis_acte_depot_support_preparer>public.library_creer_brouillon',
        'praxis_acte_support_retirer>public.library_retirer']) x),
-  'R4 / AR-10 : les fonctions de la Bibliotheque atteintes par Praxis sont exactement library_mettre_a_jour et library_retirer, appelees par leurs seuls adaptateurs');
+  'R4 / AR-10 : les fonctions library_* atteintes par Praxis sont exactement library_mettre_a_jour, library_retirer et library_creer_brouillon (depot d''un support texte), appelees par leurs seuls adaptateurs');
+-- R4 / AR-10 (PX-BD-SUPPORT) : les deux fonctions de DEPOT de la Bibliotheque que Praxis atteint ne sont appelees QUE par les deux adaptateurs du depot d'un support texte.
+SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT p.proname || '>' || lower(m[1]) ORDER BY p.proname || '>' || lower(m[1])), ARRAY[]::text[])
+    FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
+         LATERAL regexp_matches(p.prosrc, '\m(public\.(?:demander|confirmer)_upload_bibliotheque)\s*\(', 'gi') m
+   WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
+  = ARRAY['praxis_acte_depot_support_confirmer>public.confirmer_upload_bibliotheque', 'praxis_acte_depot_support_preparer>public.demander_upload_bibliotheque'],
+  'R4 / AR-10 : demander_upload_bibliotheque et confirmer_upload_bibliotheque ne sont appelees que par leurs adaptateurs');
 -- R1 (AR-9) : un controle qui a un sens. Chaque outil public a EXACTEMENT les arguments attendus (nom : type) ; aucun argument n'est un texte libre
 -- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
 SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname)

@@ -253,6 +253,35 @@ export const OUTILS: readonly Outil[] = [
       code: { type: 'string', pattern: '^[0-9]{6}$', maxLength: 6, description: 'Le code a six chiffres que la direction t\'a dit.' },
     },
   },
+  // PX-BD-SUPPORT (17/11/2026) : DEPOSER un support texte redige avec la direction. La « fonction » n'est pas une fonction SQL : la fonction Edge
+  // `praxis-mcp` la traite elle-meme (analyse du Markdown, ecriture dans le coffre R2, signature de confirmation) et ne parle a la base que par
+  // `praxis_agir`, c'est-a-dire par le pont borne et l'identite de la direction emettrice (deux actes internes de niveau A).
+  {
+    nom: 'support_deposer',
+    description: 'CHAT SEULEMENT : depose un support texte que tu as REDIGE avec la direction, comme BROUILLON de la Bibliotheque (type texte structure), reserve a la direction : rien n\'est visible des inscrits, la direction le relit et le publie elle-meme. '
+      + 'Le texte est du Markdown FERME : titres # ## ###, paragraphes, listes a puces (- ) et numerotees (1. ), **gras**, *italique*, citation (> ), separateur (---). '
+      + 'REFUSES, avec un code : HTML, liens, images, tableaux, blocs de code, barre, listes imbriquees, titres plus profonds que ###, caracteres de controle. '
+      + 'L\'arabe s\'ecrit tel quel (vocalisation comprise) ; le sens de lecture se decide paragraphe par paragraphe. 9 000 signes au plus ; pour un long document, fais-en plusieurs. '
+      + 'VERSETS : ne cite JAMAIS un verset de memoire. Cite-le depuis une source verifiee (le Mushaf de l\'application ou un texte que la direction te donne), sinon ecris « A VERIFIER » a cote et dis-le a la direction : un verset saisi par un modele n\'est jamais publie sans controle. '
+      + 'Par defaut : rayon cours (Documents des cours). Donne le titre, la langue (fr, ar, en...) et le corps ; le reste se regle ensuite avec support_modifier et support_deplacer. Le meme cle_idempotence ne cree jamais deux brouillons.',
+    fonction: 'praxis_support_deposer',
+    parametres: [
+      { arg: 'titre', param: 'p_titre', requis: true },
+      { arg: 'langue', param: 'p_langue', requis: true },
+      { arg: 'corps', param: 'p_corps', requis: true },
+      { arg: 'rayon', param: 'p_rayon', requis: false },
+      { arg: 'description', param: 'p_description', requis: false },
+      { arg: 'cle_idempotence', param: 'p_cle_idempotence', requis: true },
+    ],
+    proprietes: {
+      titre: { type: 'string', minLength: 1, maxLength: 200, description: 'Le titre du support, 200 signes au plus.' },
+      langue: { type: 'string', pattern: '^[a-z]{2,3}$', maxLength: 3, description: 'La langue du document : fr, ar, en...' },
+      corps: { type: 'string', minLength: 1, maxLength: 9000, description: 'Le texte, en Markdown ferme (voir la description de l\'outil), 9 000 signes au plus.' },
+      rayon: { type: 'string', enum: ['cours', 'plus_loin'], description: 'cours = Documents des cours (par defaut), plus_loin = Pour aller plus loin.' },
+      description: { type: 'string', minLength: 1, maxLength: 1000, description: 'Une courte description pour la fiche, 1 000 signes au plus (facultative).' },
+      cle_idempotence: CLE_IDEM,
+    },
+  },
   {
     nom: 'terminer',
     description: 'ROUTINE SEULEMENT (une cle de chat est refusee) : note la fin de ton tir pour que la direction voie que la routine tourne. A appeler UNE fois, en dernier, avec l\'issue (ok, rien_a_faire, erreur), le nombre de fils lus, de messages envoyes, de fils passes a l\'equipe, de refus recus, et une note courte (200 signes au plus, jamais le texte d\'une personne).',
