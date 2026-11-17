@@ -151,8 +151,7 @@ une conversation, et inventer un serveur est exclu ; l'action existante est la r
 
 ### Image de Praxis dans les avatars (PRAXIS-IMAGE, 17/11/2026)
 
-L'image fournie par le directeur (plein format : `assets/brand/praxis/praxis-profil.png`, PR #616), réduite à 256 x 256 et 24 couleurs
-(3 Ko) et rangée EN CODE (`lib/core/communications/image_praxis.dart`, `pubspec.yaml` étant interdit aux agents). `AvatarParticipant`
+L'image fournie par le directeur (plein format : `assets/brand/praxis/praxis-profil.png`, PR #616), réduite à 256 x 256 (palette d'origine, aucune couleur retouchée) et rangée EN CODE (`lib/core/communications/image_praxis.dart`, `pubspec.yaml` étant interdit aux agents). `AvatarParticipant`
 (lignes 4, 5, 8, 30 et le panneau de contexte) l'emploie **seulement** pour le participant dont le code serveur `compte_officiel` est
 `praxis` ; un autre compte officiel, un serveur sans code et une personne gardent leur avatar. Preuves : `test/core/communications/image_praxis_test.dart`
 (24, 32, 48 points ; « autre code : pas d'image ») ; captures `docs/current/captures/E2E/PRAXIS-IMAGE/praxis-avatar-{light,dark}.png`.
