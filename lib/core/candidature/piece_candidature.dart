@@ -129,3 +129,21 @@ final FutureProviderFamily<PieceCandidature?, String> pieceCandidatureProvider =
       if (lire == null) return null;
       return lire(candidatureId);
     }, retry: (int _, Object _) => null);
+
+/// La porte qui valide ou refuse la piece SEULE (`decider_dossier`) ; `null` :
+/// capacite indisponible, la fiche ne rend ni « Valider » ni « Refuser ».
+final Provider<
+  Future<void> Function({
+    required String documentId,
+    required bool approuve,
+    String? motif,
+  })?
+>
+deciderPieceProvider =
+    Provider<
+      Future<void> Function({
+        required String documentId,
+        required bool approuve,
+        String? motif,
+      })?
+    >((Ref _) => null);
