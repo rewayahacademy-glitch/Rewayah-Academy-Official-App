@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte'])
+  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte', 'terminer'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
@@ -130,6 +130,13 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: 'demain', duree_minutes: 30, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: '2026-12-01T10:00:00Z', duree_minutes: 5, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'admettre_verifications', candidature: 'CAND-00001', texte: 'x'.repeat(1001), cle_idempotence: UUID2 }],
+    // PRAXIS-ROUTINE : terminer
+    ['terminer', { issue: 'zz', fils_lus: 0, messages_envoyes: 0, passes_equipe: 0, refus: 0 }],
+    ['terminer', { issue: 'ok', fils_lus: 201, messages_envoyes: 0, passes_equipe: 0, refus: 0 }],
+    ['terminer', { issue: 'ok', fils_lus: -1, messages_envoyes: 0, passes_equipe: 0, refus: 0 }],
+    ['terminer', { issue: 'ok', fils_lus: 0, messages_envoyes: 0, passes_equipe: 0 }], // refus absent
+    ['terminer', { issue: 'ok', fils_lus: 0, messages_envoyes: 0, passes_equipe: 0, refus: 0, note: 'x'.repeat(201) }],
+    ['terminer', { issue: 'ok', fils_lus: 0, messages_envoyes: 0, passes_equipe: 0, refus: 0, courriel: 'a@b.c' }],
     ['alerter_responsable', {}], // outil non livre
     ['etat', { quoi: 'que ce soit' }],
   ]
@@ -204,6 +211,11 @@ Deno.test('appel nominal : une fonction praxis_*, la cle en premier, parametres 
     const { porte, appels } = faux({})
     await traiter(requete(appelOutil('etat')), porte)
     assertEquals(appels, [{ fonction: 'praxis_etat', params: { p_cle: CLE } }])
+  }
+  {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil('terminer', { issue: 'ok', fils_lus: 7, messages_envoyes: 4, passes_equipe: 2, refus: 1, note: 'Tout va bien' })), porte)
+    assertEquals(appels, [{ fonction: 'praxis_terminer', params: { p_cle: CLE, p_issue: 'ok', p_lus: 7, p_envoyes: 4, p_passes: 2, p_refus: 1, p_note: 'Tout va bien' } }])
   }
   for (const p of PUBLICS) assert(p !== ('eleves' as string))
 })
