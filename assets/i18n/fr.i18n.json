@@ -4598,7 +4598,8 @@
         "retrait": "Enregistrer un retrait demandé",
         "rouvrir": "Rouvrir la candidature",
         "responsable": "Choisir le responsable",
-        "dispenserEntretien": "Dispenser d'entretien"
+        "dispenserEntretien": "Dispenser d'entretien",
+        "refaireEntretien": "Refaire l'entretien"
       },
       "consequences": {
         "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
@@ -4616,7 +4617,8 @@
         "retrait": "La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.",
         "rouvrir": "La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.",
         "responsable": "Le responsable suit cette candidature.",
-        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne."
+        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne.",
+        "refaireEntretien": "La candidature revient à l'entretien à planifier. L'entretien tenu ou la dispense d'avant ne compte plus, rien n'est effacé. Aucun message n'est envoyé à la personne."
       },
       "feuille": {
         "motif": "Motif interne",
@@ -4730,6 +4732,7 @@
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
         "dispenserEntretien": "Entretien dispensé. La décision vous attend.",
+        "refaireEntretien": "Entretien à refaire. La candidature attend un nouvel entretien.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
       "genres": {"male": "Homme", "female": "Femme"},

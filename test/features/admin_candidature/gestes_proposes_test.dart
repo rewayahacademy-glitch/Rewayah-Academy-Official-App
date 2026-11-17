@@ -153,6 +153,7 @@ void main() {
       permis: <GesteCandidature>[
         c,
         GesteCandidature.validerPiece,
+        GesteCandidature.refaireEntretien,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,
