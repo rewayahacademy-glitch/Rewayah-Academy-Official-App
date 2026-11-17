@@ -218,24 +218,27 @@ void main() {
       expect(veille.observer(enseignantPresent: false), isNull);
     });
 
-    test('seul dans la salle, la scene d attente le dit deja : aucune annonce '
-        'tant qu aucun camarade n est la ; parti, l annonce vient meme seul', () {
-      final VeilleEnseignant veille = VeilleEnseignant();
-      expect(veille.observer(enseignantPresent: false, seul: true), isNull);
-      expect(veille.observer(enseignantPresent: false, seul: true), isNull);
-      // Un camarade entre : l'annonce vient alors, une fois.
-      expect(
-        veille.observer(enseignantPresent: false)?.titre,
-        "Votre professeur n'est pas encore arrivé",
-      );
-      expect(veille.observer(enseignantPresent: false), isNull);
-      // L'enseignant est venu, puis parti : seul ou non, l'eleve le sait.
-      expect(veille.observer(enseignantPresent: true), isNull);
-      expect(
-        veille.observer(enseignantPresent: false, seul: true)?.titre,
-        "Votre enseignant n'est plus dans la salle",
-      );
-    });
+    test(
+      'seul dans la salle, la scene d attente le dit deja : aucune annonce '
+      'tant qu aucun camarade n est la ; parti, l annonce vient meme seul',
+      () {
+        final VeilleEnseignant veille = VeilleEnseignant();
+        expect(veille.observer(enseignantPresent: false, seul: true), isNull);
+        expect(veille.observer(enseignantPresent: false, seul: true), isNull);
+        // Un camarade entre : l'annonce vient alors, une fois.
+        expect(
+          veille.observer(enseignantPresent: false)?.titre,
+          "Votre professeur n'est pas encore arrivé",
+        );
+        expect(veille.observer(enseignantPresent: false), isNull);
+        // L'enseignant est venu, puis parti : seul ou non, l'eleve le sait.
+        expect(veille.observer(enseignantPresent: true), isNull);
+        expect(
+          veille.observer(enseignantPresent: false, seul: true)?.titre,
+          "Votre enseignant n'est plus dans la salle",
+        );
+      },
+    );
   });
 
   group('defaut n° 6 : la pause vue par toute la classe', () {

@@ -15,6 +15,7 @@ import 'package:flutter/foundation.dart';
 
 import '../router/chemin_retour.dart';
 import '../widgets/fil_discussion.dart' show EtatEnvoiMessage;
+import '../widgets/nom_officiel.dart';
 import 'image_message.dart';
 import 'port_pieces_jointes.dart';
 
@@ -227,6 +228,7 @@ class Participant {
     this.estSoi = false,
     this.profilId,
     this.equipe = false,
+    this.officiel = false,
   });
 
   /// Identifiant stable.
@@ -251,6 +253,14 @@ class Participant {
   /// il s'affiche « #Ra_staff » avec l'icone de l'application (`MarqueStaff`,
   /// decision du directeur du 14/11/2026), jamais avec le nom d'une personne.
   final bool equipe;
+
+  /// Vrai quand le participant est un compte officiel de l'academie (Praxis) :
+  /// son nom s'affiche « #Ra_Praxis » (`nom_officiel.dart`, SECRETAIRE-IA
+  /// §9). Indicateur du serveur (cle `officiel`), `false` s'il manque.
+  final bool officiel;
+
+  /// Le nom avec la marque des comptes officiels ([nomOfficielMarque]).
+  String get nomMarque => nomAvecMarque(nomAffiche, officiel: officiel);
 
   @override
   bool operator ==(Object other) => other is Participant && other.id == id;

@@ -130,3 +130,21 @@ ordinateur dans Messages, elle emporte alors le bouton « i » du panneau de con
   en test (390, 390 court, texte ×2, clavier, 320, 768, 1024, 1440, français et arabe) ne lèvent aucune exception, et la
   démonstration comme le playground n'atteignent pas le dossier d'un candidat (aucun compte de direction). Voir la PR.
 
+
+## Compte officiel (PRAXIS-AFFICHAGE, 17/11/2026)
+
+Le nom d'un compte officiel (Praxis) s'affiche « #Ra_Praxis » (directeur, 17/11 : « il s'appelle Ra_Praxis, Ra = Rewayah
+Academy » ; **sans italique**, « c'est moche »), par **une seule règle**, `lib/core/widgets/nom_officiel.dart`, à partir de
+l'indicateur `officiel` que `private.com_participant` rend désormais (migration `20261129520000`). Le nom « Ra_Praxis » vient
+de l'i18n, comme « #Ra_staff » ; le nom en base (« Praxis ») ne sert pas. Aucune ligne de matrice nouvelle (aucun fichier
+nouveau n'affiche une conversation) ; lignes touchées :
+
+| Ligne | Ce qui change | Preuve |
+| :--- | :--- | :--- |
+| 8 `liste_fils.dart`, 30 `ligne_fil.dart` (titre par `titreFil`) | titre « #Ra_Praxis » | `compte_officiel_test.dart` (fr, ar) ; captures `COMPTE-OFFICIEL/liste-*` |
+| 4 `barre_conversation.dart`, 5 `entete_fil_contexte.dart` | nom dans la barre (téléphone) et l'en-tête (ordinateur) | `compte_officiel_test.dart` (390 et 1440) ; captures `fil-*` |
+| 1 `fil_discussion.dart` (via `messageFilDe`) | nom d'auteur d'une bulle ; **il ne s'affiche que dans un fil de groupe** : testé en unité, **non capturé** | `compte_officiel_test.dart` |
+| `panneau_contexte_fil.dart` | participants : « #Ra_Praxis » et « Assistant de l'académie · IA » ; phrase du profil sous la liste | captures `fiche-1440-*` |
+
+**Non fait, dit en clair** : pas de bouton « Parler à l'équipe » dans la fiche : le panneau ne tient aucun port pour ouvrir
+une conversation, et inventer un serveur est exclu ; l'action existante est la rangée « Écrire à … » d'un objet.

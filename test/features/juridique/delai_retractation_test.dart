@@ -123,7 +123,10 @@ void main() {
     test(
       '« premiere semaine » et « sauf geste de la direction » ont disparu',
       () {
-        for (final AppLocale langue in <AppLocale>[AppLocale.fr, AppLocale.ar]) {
+        for (final AppLocale langue in <AppLocale>[
+          AppLocale.fr,
+          AppLocale.ar,
+        ]) {
           LocaleSettings.setLocaleSync(langue);
           for (final TexteJuridique x in <TexteJuridique>[
             TexteJuridique.annulation,

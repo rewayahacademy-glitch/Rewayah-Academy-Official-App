@@ -15,11 +15,16 @@ Map<String, dynamic> _remise({
 }) => <String, dynamic>{
   'access_token': 'a.b.c',
   'expires_at':
-      DateTime.now().toUtc().add(Duration(seconds: secondes)).millisecondsSinceEpoch ~/
+      DateTime.now()
+          .toUtc()
+          .add(Duration(seconds: secondes))
+          .millisecondsSinceEpoch ~/
       1000,
   'parcours': parcours,
   'identite_masquee': masquee,
-  'jeton_expire_le': DateTime.now().toUtc().add(const Duration(hours: 8))
+  'jeton_expire_le': DateTime.now()
+      .toUtc()
+      .add(const Duration(hours: 8))
       .toIso8601String(),
 };
 
@@ -56,11 +61,7 @@ void main() {
         'https://x.test/agent?jeton=bonjour',
         'https://x.test/agent?autre=rag_abc',
       ]) {
-        expect(
-          jetonAgentDeLUrl(Uri.parse(adresse)),
-          isNull,
-          reason: adresse,
-        );
+        expect(jetonAgentDeLUrl(Uri.parse(adresse)), isNull, reason: adresse);
       }
     });
   });
@@ -82,7 +83,11 @@ void main() {
       await porteur.jetonFrais();
       await porteur.jetonFrais();
 
-      expect(appels, 1, reason: 'chaque lecture ne doit pas rouvrir de session');
+      expect(
+        appels,
+        1,
+        reason: 'chaque lecture ne doit pas rouvrir de session',
+      );
     });
 
     test('redemande un jeton avant l expiration, pas apres', () async {
@@ -129,26 +134,29 @@ void main() {
       expect(appels, 1);
     });
 
-    test('un refus de la base remonte comme un refus, pas comme une panne', () async {
-      final PorteurSessionAgent porteur = PorteurSessionAgent(
-        jeton: 'rag_x',
-        url: 'https://x.test',
-        cleAnon: 'anon',
-        echangeur: (String _) async =>
-            throw const ErreurAgent(EchecAgent.jetonRefuse),
-      );
+    test(
+      'un refus de la base remonte comme un refus, pas comme une panne',
+      () async {
+        final PorteurSessionAgent porteur = PorteurSessionAgent(
+          jeton: 'rag_x',
+          url: 'https://x.test',
+          cleAnon: 'anon',
+          echangeur: (String _) async =>
+              throw const ErreurAgent(EchecAgent.jetonRefuse),
+        );
 
-      await expectLater(
-        porteur.ouvrir(),
-        throwsA(
-          isA<ErreurAgent>().having(
-            (ErreurAgent e) => e.cause,
-            'cause',
-            EchecAgent.jetonRefuse,
+        await expectLater(
+          porteur.ouvrir(),
+          throwsA(
+            isA<ErreurAgent>().having(
+              (ErreurAgent e) => e.cause,
+              'cause',
+              EchecAgent.jetonRefuse,
+            ),
           ),
-        ),
-      );
-    });
+        );
+      },
+    );
 
     test('une reponse sans jeton est illisible, pas valide', () async {
       final PorteurSessionAgent porteur = PorteurSessionAgent(
@@ -222,7 +230,9 @@ void main() {
       expect(
         _sessionActive(observation: const Observation(identiteMasquee: true)),
         isNot(
-          _sessionActive(observation: const Observation(identiteMasquee: false)),
+          _sessionActive(
+            observation: const Observation(identiteMasquee: false),
+          ),
         ),
       );
     });

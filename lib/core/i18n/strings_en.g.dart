@@ -19895,6 +19895,7 @@ class _Traductions$com$messages$panneau$en extends Traductions$com$messages$pann
 	@override String ouvrir({required Object objet}) => 'Open ${objet}';
 	@override String get inaccessible => 'This subject is no longer open to you. The conversation stays readable.';
 	@override String get vous => 'You';
+	@override late final _Traductions$com$messages$panneau$officiel$en officiel = _Traductions$com$messages$panneau$officiel$en._(_root);
 }
 
 // Path: com.messages.fil
@@ -26039,6 +26040,18 @@ class _Traductions$com$socle$navigation$demo$en extends Traductions$com$socle$na
 	@override String get titre => 'Communications demo';
 	@override String get detail => 'Fictional data, absent from production versions.';
 	@override String get choisir => 'Choose a space to try.';
+}
+
+// Path: com.messages.panneau.officiel
+class _Traductions$com$messages$panneau$officiel$en extends Traductions$com$messages$panneau$officiel$fr {
+	_Traductions$com$messages$panneau$officiel$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nom => 'Ra_Praxis';
+	@override String get mention => 'Academy assistant · AI';
+	@override String get phrase => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.';
 }
 
 // Path: com.messages.images.refus
@@ -38583,6 +38596,9 @@ extension on TraductionsEn {
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Open ${objet}',
 			'com.messages.panneau.inaccessible' => 'This subject is no longer open to you. The conversation stays readable.',
 			'com.messages.panneau.vous' => 'You',
+			'com.messages.panneau.officiel.nom' => 'Ra_Praxis',
+			'com.messages.panneau.officiel.mention' => 'Academy assistant · AI',
+			'com.messages.panneau.officiel.phrase' => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
 			'com.messages.images.joindre' => 'Attach an image',
 			'com.messages.images.prendrePhoto' => 'Take a photo',
@@ -39021,11 +39037,11 @@ extension on TraductionsEn {
 			'com.studio.recherche.aucun' => ({required Object texte}) => 'Nothing matches "${texte}" in your channels. Try another word.',
 			'com.studio.recherche.aucunDansFiltre' => 'Nothing of this type matches. Choose All to see the other results.',
 			'com.studio.recherche.resultatUn' => '1 result',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.recherche.resultats' => ({required Object nombre}) => '${nombre} results',
 			'com.studio.recherche.filtre' => 'Result type',
 			'com.studio.recherche.tout' => 'All',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.recherche.canaux' => 'Channels',
 			'com.studio.recherche.messages' => 'Messages',
 			'com.studio.recherche.fichiers' => 'Files',
@@ -39535,11 +39551,11 @@ extension on TraductionsEn {
 			'comptable.alertes.methodeModifieeRecemment' => 'Method recently changed',
 			'comptable.alertes.doublonPotentiel' => 'Potential duplicate',
 			'comptable.alertes.validationRequise' => 'Additional validation required',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.aujourdhui.attentionSousTitre' => 'What awaits an action from you, then the risks to watch.',
 			'comptable.aujourdhui.elementCompteur' => ({required Object libelle, required Object n}) => '${libelle}: ${n}',
 			'comptable.aujourdhui.elementDepuis' => ({required Object date}) => 'Waiting since ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.aujourdhui.aTraiterVide' => 'Nothing to handle today.',
 			'comptable.aujourdhui.aTraiterVideDetail' => 'The payments, reminders and reconciliations to do will appear here.',
 			'comptable.aujourdhui.alertesVide' => 'No alert right now.',
@@ -40049,11 +40065,11 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.aide.titulaire' => 'As written by your bank.',
 			'comptable.beneficiaires.recevoir.wise.aide.numeroCompte' => 'The digits and letters of your account, without spaces.',
 			'comptable.beneficiaires.recevoir.wise.aide.iban' => 'Starts with two letters, then digits.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.aide.swift' => '8 or 11 letters and digits, given by your bank.',
 			'comptable.beneficiaires.recevoir.wise.aide.adressePays' => 'The country of your address, chosen from the list.',
 			'comptable.beneficiaires.recevoir.wise.aide.adresseVille' => 'The city of your address.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.aide.adresseLigne' => 'The street or neighbourhood.',
 			'comptable.beneficiaires.recevoir.wise.aide.codePostal' => 'Optional: Guinea, for example, has none.',
 			'comptable.beneficiaires.recevoir.wise.aide.adresseEtat' => 'Only in the United States and Canada, for example TX.',
@@ -40563,11 +40579,11 @@ extension on TraductionsEn {
 			'juridique.mentions.s3.blocs.0' => 'The service relies on technical providers: hosting of the web pages, the database and account sign-in, video for the sessions, private file storage and a payment provider.',
 			'juridique.mentions.s4.titre' => '4. These texts',
 			'juridique.mentions.s4.blocs.0' => 'Each legal text carries its version and its date, shown at the top of the page. When a text changes, the new version replaces the old one on the date indicated.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.titre' => 'Terms of use and sale',
 			'juridique.conditions.resume' => 'The rules for using the service and selling subscriptions.',
 			'juridique.conditions.intro' => 'These terms apply as soon as you create an account or register a student. Read them in full, they are short.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.conditions.s1.titre' => '1. The service',
 			'juridique.conditions.s1.blocs.0' => 'Rewayah Academy offers Quran classes by video. Each student is placed in a Class: a small number of students, a recurring timetable and an assigned Teacher.',
 			'juridique.conditions.s1.blocs.1' => 'There are two plans: the child plan, from 6 to 17 years, and the adult plan, from 18 years. No minor shall be placed in an adults\' Class.',
@@ -41077,11 +41093,11 @@ extension on TraductionsEn {
 			'i1.familles.etat.compteCree' => 'Space opened',
 			'i1.familles.envoyeeLe' => ({required Object date}) => 'Sent on ${date}',
 			'i1.familles.envoyer' => 'Send the invitation',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.envoyerPour' => ({required Object email}) => 'Send the invitation to ${email}',
 			'i1.familles.renvoyer' => 'Resend the invitation',
 			'i1.familles.renvoyerPour' => ({required Object email}) => 'Resend the invitation to ${email}',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.envoyerToutes' => ({required Object n}) => 'Send to all families (${n})',
 			'i1.familles.toutesQuestion' => ({required Object n}) => 'Send the invitation to all the families to invite? Number of families: ${n}.',
 			'i1.familles.toutesConsequence' => 'Each family receives an email right away. An email that has gone out cannot be taken back.',
@@ -41591,11 +41607,11 @@ extension on TraductionsEn {
 			'push1.gestes.traiterSignalement' => 'Handle the report',
 			'push1.gestes.traiterDemande' => 'Handle the request',
 			'push1.gestes.trouverRemplacant' => 'Find a replacement',
+			_ => null,
+		} ?? switch (path) {
 			'push1.gestes.voirPaiement' => 'See the payment',
 			'push1.gestes.validerCoordonnees' => 'Approve the details',
 			'push1.gestes.voirRemboursement' => 'See the refund',
-			_ => null,
-		} ?? switch (path) {
 			'push1.gestes.remplirCahier' => 'Fill in the handover notebook',
 			'push1.gestes.rejoindreSalle' => 'Join the room',
 			'push1.reglages.lien' => 'Notifications on this device',
