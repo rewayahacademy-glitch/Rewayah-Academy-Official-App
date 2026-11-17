@@ -8,6 +8,7 @@
 // du bruit), et n'ecrit jamais la cle ni un texte dans ses journaux.
 
 import { type Json, OUTILS, preparer, schemaMcp, ErreurSchema } from './outils.ts'
+import { type Adresses, enteteWwwAuthenticate } from './oauth.ts'
 
 export const FORME_CLE = /^prx_[0-9a-f]{64}$/
 export const TAILLE_MAX = 16 * 1024
@@ -25,6 +26,7 @@ const entetes = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, content-type, mcp-protocol-version, mcp-session-id',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Expose-Headers': 'WWW-Authenticate',
 }
 
 function http(corps: unknown, statut: number): Response {
@@ -77,14 +79,22 @@ async function noterRefus(porte: PortePraxis, cle: string, outil: string): Promi
   }
 }
 
-export async function traiter(req: Request, porte: PortePraxis): Promise<Response> {
+/// PX-OAUTH 2a : un 401 de la porte annonce ou trouver les metadonnees de ressource (RFC 9728), comme claude.ai l'exige sur un 401 ;
+/// sans [adresses] (tests anciens, aucune racine connue), le 401 reste celui d'avant.
+function refuse401(adresses: Adresses | null): Response {
+  const r = http({ error: 'cle_refusee' }, 401)
+  if (adresses) r.headers.set('WWW-Authenticate', enteteWwwAuthenticate(adresses))
+  return r
+}
+
+export async function traiter(req: Request, porte: PortePraxis, adresses: Adresses | null = null): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: entetes })
   if (req.method !== 'POST') return http({ error: 'methode' }, 405)
 
   // La cle : presente et bien formee, sinon refus avant tout le reste.
   const auth = req.headers.get('Authorization') ?? ''
   const m = /^Bearer (\S+)$/.exec(auth)
-  if (!m || !FORME_CLE.test(m[1])) return http({ error: 'cle_refusee' }, 401)
+  if (!m || !FORME_CLE.test(m[1])) return refuse401(adresses)
   const cle = m[1]
 
   const taille = Number(req.headers.get('content-length') ?? '0')
