@@ -22008,7 +22008,7 @@ class _Traductions$juridique$confidentialite$s4$en extends Traductions$juridique
 		'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
 		'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
 		'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
-		'A digital assistant, called Praxis, helps the academy reply to families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. It reads the messages in conversations with the academy to reply to them or to prepare a reply. It does not read any conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no e-mail. It works under the responsibility of the management, which can stop it at any time.',
+		'A digital assistant, called Praxis, helps the academy reply to families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. It reads the messages in conversations with the academy to reply to them or to prepare a reply. It does not read any conversation in which a child takes part, nor any payment. It never writes to a child. It works under the responsibility of the management, which can stop it at any time.',
 	];
 }
 
@@ -40793,7 +40793,7 @@ extension on TraductionsEn {
 			'juridique.confidentialite.s4.blocs.0' => 'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
 			'juridique.confidentialite.s4.blocs.1' => 'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
 			'juridique.confidentialite.s4.blocs.2' => 'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
-			'juridique.confidentialite.s4.blocs.3' => 'A digital assistant, called Praxis, helps the academy reply to families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. It reads the messages in conversations with the academy to reply to them or to prepare a reply. It does not read any conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no e-mail. It works under the responsibility of the management, which can stop it at any time.',
+			'juridique.confidentialite.s4.blocs.3' => 'A digital assistant, called Praxis, helps the academy reply to families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. It reads the messages in conversations with the academy to reply to them or to prepare a reply. It does not read any conversation in which a child takes part, nor any payment. It never writes to a child. It works under the responsibility of the management, which can stop it at any time.',
 			'juridique.confidentialite.s5.titre' => '5. Live sessions and recording',
 			'juridique.confidentialite.s5.blocs.0' => 'Video goes through a specialist service. Access to a session is given by the server, for that session only and for a short time.',
 			'juridique.confidentialite.s5.blocs.1' => 'Today, the app does not record classes. If recording returns, we shall tell you beforehand why, how long it is kept and who can access it, and we shall ask for your agreement.',
