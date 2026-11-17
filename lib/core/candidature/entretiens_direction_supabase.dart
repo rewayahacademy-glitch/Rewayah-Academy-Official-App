@@ -50,6 +50,12 @@ void refusEntretien(
       throw const CandidatSansCompte();
     case 'entretien_deja_planifie':
       throw const EntretienDejaPlanifie();
+    case 'entretien_commence':
+      throw const EntretienCommence();
+    case 'meme_creneau':
+      throw const MemeCreneau();
+    case 'aucun_entretien_ouvert':
+      throw const EntretienIntrouvable();
     case 'entretien_consigne':
     case 'entretien_deja_consigne':
       throw const EntretienConsigne();
@@ -159,6 +165,26 @@ class EntretiensDirectionSupabase implements PortEntretiensDirection {
   );
 
   @override
+  Future<ResultatGeste> deplacer({
+    required String candidatureId,
+    required DateTime debut,
+    required int dureeMinutes,
+    required String motif,
+    required int versionAttendue,
+    required String cleIdempotence,
+  }) => _geste(
+    'deplacer_entretien',
+    parametresDeplacer(
+      candidatureId: candidatureId,
+      debut: debut,
+      dureeMinutes: dureeMinutes,
+      motif: motif,
+      versionAttendue: versionAttendue,
+      cleIdempotence: cleIdempotence,
+    ),
+  );
+
+  @override
   Future<void> ajouter(String sessionId, String profilId) =>
       _participant('ajouter_participant_entretien', sessionId, profilId);
 
@@ -247,6 +273,24 @@ Map<String, dynamic> parametresPlanifier({
   'p_debut': debut.toUtc().toIso8601String(),
   'p_duree_minutes': dureeMinutes,
   'p_participants': participants,
+  'p_version_attendue': versionAttendue,
+  'p_cle_idempotence': cleIdempotence,
+};
+
+/// Les parametres de `deplacer_entretien` (le debut en UTC, la version
+/// attendue et la cle d'idempotence partent avec le geste).
+Map<String, dynamic> parametresDeplacer({
+  required String candidatureId,
+  required DateTime debut,
+  required int dureeMinutes,
+  required String motif,
+  required int versionAttendue,
+  required String cleIdempotence,
+}) => <String, dynamic>{
+  'p_id': candidatureId,
+  'p_debut': debut.toUtc().toIso8601String(),
+  'p_duree_minutes': dureeMinutes,
+  'p_motif': motif,
   'p_version_attendue': versionAttendue,
   'p_cle_idempotence': cleIdempotence,
 };

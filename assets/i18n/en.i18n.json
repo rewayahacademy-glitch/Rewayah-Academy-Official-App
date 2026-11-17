@@ -2996,7 +2996,11 @@
         "reserveDirection": "An applicant has booked an interview you conduct.",
         "reserveDirectionQuand": "An applicant has booked an interview you conduct, on {quand}.",
         "rappelDirection": "You are conducting an interview that starts soon.",
-        "rappelDirectionQuand": "You are conducting an interview on {quand}."
+        "rappelDirectionQuand": "You are conducting an interview on {quand}.",
+        "annule": "The interview you were conducting will not take place.",
+        "annuleRefus": "The interview you were conducting will not take place: the application was declined.",
+        "annuleRetrait": "The interview you were conducting will not take place: the application was withdrawn.",
+        "annulePause": "The interview you were conducting will not take place: the application is on hold."
       }
     },
     "partage": {
@@ -4496,7 +4500,14 @@
         "piecePdf": "PDF file",
         "pieceOuvrirPdf": "Open the PDF of the ID document",
         "pieceTitre": "ID document of {nom}",
-        "pieceDecisionPlusTard": "The document is decided in the Verification and interview room."
+        "pieceValider": "Approve the document",
+        "pieceRefuser": "Reject the document",
+        "pieceRefusAnnuler": "Keep the document pending",
+        "pieceValidee": "Document approved.",
+        "pieceRefusee": "Document rejected.",
+        "pieceDejaDecidee": "This document has already been decided. Reload the file.",
+        "pieceNonConfirmee": "The result is not confirmed yet. Reload the file before trying again.",
+        "pieceHorsLigne": "Nothing was sent. Try again when the connection is back."
       },
       "controles": {
         "noms": {
@@ -4587,7 +4598,8 @@
         "retrait": "Record a requested withdrawal",
         "rouvrir": "Reopen the application",
         "responsable": "Choose the manager",
-        "dispenserEntretien": "Waive the interview"
+        "dispenserEntretien": "Waive the interview",
+        "refaireEntretien": "Redo the interview"
       },
       "consequences": {
         "accueillir": "Their teacher account is activated and their space opens. The person teaches only once assigned to a class.",
@@ -4605,7 +4617,8 @@
         "retrait": "The application is closed at the person's request. You can reopen it.",
         "rouvrir": "The application returns to its original stage, if the server's checks allow it.",
         "responsable": "The manager follows this application.",
-        "dispenserEntretien": "The application moves on to the decision, as after a successful interview. An interview already scheduled is cancelled. No message is sent to the person."
+        "dispenserEntretien": "The application moves on to the decision, as after a successful interview. An interview already scheduled is cancelled. No message is sent to the person.",
+        "refaireEntretien": "The application goes back to the interview to schedule. The earlier interview or waiver no longer counts, nothing is erased. No message is sent to the person."
       },
       "feuille": {
         "motif": "Internal reason",
@@ -4719,6 +4732,7 @@
         "rouvrir": "The application is reopened.",
         "responsable": "The manager is recorded.",
         "dispenserEntretien": "Interview waived. The decision is waiting for you.",
+        "refaireEntretien": "Interview to redo. The application is waiting for a new interview.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
       "genres": {"male": "Man", "female": "Woman"},
@@ -4782,6 +4796,7 @@
         "entree": "{nom} entered at {heure}",
         "sortie": "{nom} left at {heure}",
         "autreIssue": "Other outcome (cancelled, absence)",
+        "deplacer": "Move the interview",
         "resultat": {"titre": "Interview result", "concluant": "Conclusive", "nonConcluant": "Not conclusive", "aRefaire": "To redo", "texteConcluant": "Conclusive interview.", "texteNonConcluant": "Interview not conclusive.", "motifARefaire": "Interview to redo.", "retourConcluant": "Conclusive interview. You can welcome them into the team.", "retourNonConcluant": "Interview not conclusive. You can choose not to welcome them.", "retourARefaire": "Interview to redo. The person chooses a new time.", "refusNonParticipant": "Only a person who led the interview can give its result. Ask them to do it from this file.", "refusPasCommence": "The interview has not started yet. Come back at the start time.", "refusDejaConsigne": "The result is already recorded. Reload the file.", "refusAutre": "The result is not confirmed. Try again in a moment."},
         "consigner": "Record the outcome",
         "dernier": "Last interview: {date}. {issue}.",
@@ -4833,7 +4848,9 @@
           "retirerConsequence": "{nom} will no longer take part in this interview.",
           "consignerConsequence": "The outcome is written in the application's history and no longer changes.",
           "issueManquante": "Choose the outcome.",
-          "envoyerConsigner": "Record"
+          "envoyerConsigner": "Record",
+          "deplacerConsequence": "The person and the participants receive the new time of the interview. The participants stay the same. The old time is no longer used.",
+          "envoyerDeplacer": "Move"
         },
         "refus": {
           "fondateurs": "At least {exiges} founders are needed among the participants. Founders chosen: {presents}.",
@@ -4845,6 +4862,8 @@
           "autreCote": "A person chosen is not on the side of this application.",
           "sansCompte": "The person does not have an account yet: the interview cannot be scheduled.",
           "dejaPlanifie": "An interview is already scheduled for this application.",
+          "commence": "This interview has already started: it can no longer be moved.",
+          "memeCreneau": "This is already the time of this interview. Choose another day or another time.",
           "consigne": "This interview is already recorded: it no longer changes.",
           "dernier": "The interview keeps at least one participant.",
           "absent": "This person no longer takes part in the interview.",
@@ -4859,6 +4878,7 @@
           "planifie": "Interview scheduled.",
           "ajoute": "{nom} takes part in the interview.",
           "retire": "{nom} no longer takes part in the interview.",
+          "deplace": "Interview moved.",
           "consigne": "Outcome recorded."
         }
       }
@@ -6625,6 +6645,27 @@
       "plafondChamp": "Number of messages per hour (1 to 120)",
       "plafondEnregistrer": "Set the limit",
       "plafondInvalide": "Write a whole number between 1 and 120.",
+      "essaiTitre": "Test conversations",
+      "essaiVide": "Test mode off: Praxis can read every academy conversation it is allowed to read.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Test mode: Praxis sees only {nombre} conversation and publishes no announcement.",
+        "other": "Test mode: Praxis sees only {nombre} conversations and publishes no announcement."
+      },
+      "essaiChamp": "Choose the test conversations",
+      "essaiAide": "Tick at most ten conversations among your Messages. If you have none, first create a test conversation with a test account. While nothing is ticked and saved, there is no test.",
+      "essaiEnregistrer": "Save the test conversations",
+      "essaiFin": "End the test",
+      "essaiChoisies(plural, param=nombre)": {
+        "one": "{nombre} conversation ticked.",
+        "other": "{nombre} conversations ticked."
+      },
+      "essaiTrop(plural, param=nombre)": {
+        "one": "Ten conversations at most: untick one to choose another.",
+        "other": "Ten conversations at most: untick one to choose another."
+      },
+      "essaiListeErreur": "Your conversation list could not be read. Try again in a moment.",
+      "essaiAucune": "No conversation to choose. First create a test conversation with a test account, then come back here.",
+      "essaiAffinez": "Only the first {nombre} conversations are shown: narrow them with the search.",
       "reglageFait": "Setting applied.",
       "erreurReglage": "Setting not confirmed. Check the state above before trying again.",
       "doubleVerification": "This setting needs two-step verification. Turn it on in Account, then Security, and try again.",
@@ -6700,6 +6741,8 @@
       "refuseCause": "Refused: {cause}",
       "sansTexte": "Nothing was written.",
       "cause": {
+        "essai": "test mode, no announcement",
+        "horsEssai": "conversation outside the test",
         "plafondFil": "too many messages in a row without a reply",
         "plafond": "hourly limit reached",
         "plafondAnnonces": "two announcements already published today",

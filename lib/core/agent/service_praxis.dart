@@ -72,9 +72,8 @@ class ClePraxis {
     derniereUtilisationLe: DateTime.tryParse(
       json['derniereUtilisationLe'] as String? ?? '',
     )?.toLocal(),
-    revoqueeLe: DateTime.tryParse(
-      json['revoqueeLe'] as String? ?? '',
-    )?.toLocal(),
+    revoqueeLe: DateTime.tryParse(json['revoqueeLe'] as String? ?? '')
+        ?.toLocal(),
     motifRevocation: json['motifRevocation'] as String?,
   );
 
@@ -121,6 +120,7 @@ class EtatPraxis {
     required this.autonome,
     required this.envoisParHeure,
     required this.cles,
+    this.essaiFils = const <String>[],
   });
 
   /// Lit la reponse de `direction_praxis_etat()`.
@@ -128,6 +128,9 @@ class EtatPraxis {
     actif: json['actif'] as bool? ?? false,
     autonome: json['autonome'] as bool? ?? false,
     envoisParHeure: (json['envoisParHeure'] as num?)?.toInt() ?? 30,
+    essaiFils: (json['essaiFils'] as List<dynamic>? ?? <dynamic>[])
+        .whereType<String>()
+        .toList(growable: false),
     cles: (json['cles'] as List<dynamic>? ?? <dynamic>[])
         .whereType<Map<String, dynamic>>()
         .map(ClePraxis.depuisJson)
@@ -145,6 +148,10 @@ class EtatPraxis {
 
   /// Les cles, les plus recentes d'abord (100 au plus).
   final List<ClePraxis> cles;
+
+  /// Les conversations d'essai (MODE ESSAI) : vide, pas de mode essai ;
+  /// sinon Praxis ne voit que celles-la et n'annonce rien.
+  final List<String> essaiFils;
 }
 
 /// Ce que l'emission rend, une seule fois.
@@ -246,6 +253,10 @@ abstract interface class ServicePraxis {
   /// Regle un ou plusieurs reglages (double verification exigee par la base).
   Future<void> regler({bool? actif, bool? autonome, int? envoisParHeure});
 
+  /// Nomme les conversations d'essai (dix au plus) ; une liste vide met fin
+  /// au mode essai (double verification exigee par la base).
+  Future<void> reglerEssai(List<String> fils);
+
   /// Emet une cle. Rend le secret une seule fois. [cleEmission] est la cle
   /// d'idempotence : le meme appel rejoue ne remontre jamais le secret.
   Future<ClePraxisEmise> emettre({
@@ -308,6 +319,14 @@ class ServicePraxisSupabase implements ServicePraxis {
         'p_autonome': autonome,
         'p_envois_par_heure': envoisParHeure,
       },
+    );
+  }
+
+  @override
+  Future<void> reglerEssai(List<String> fils) async {
+    await _client.rpc<Object?>(
+      'direction_praxis_regler_essai',
+      params: <String, dynamic>{'p_essai_fils': fils},
     );
   }
 
