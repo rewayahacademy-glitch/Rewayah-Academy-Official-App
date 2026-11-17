@@ -181,7 +181,7 @@ SELECT pg_temp.vrai(
            WHERE e.candidature_id = pg_temp.c('01') AND e.type = 'entretien'
              AND e.etat_avant = 'entretien_planifie' AND e.etat_apres = 'entretien_planifie'
              AND e.auteur_id = pg_temp.p('a1')
-             AND e.details @> pg_catalog.jsonb_build_object('geste', 'deplacer_entretien', 'transition', 47,
+             AND e.details @> pg_catalog.jsonb_build_object('geste', 'deplacer_entretien', 'transition', 48,
                                                             'sessionAvant', pg_temp.s('01'))
              AND e.motif_interne LIKE 'Le candidat a demande%'),
   'a5 : un evenement du dossier garde l''ancienne et la nouvelle seance, le motif interne, l''auteur');

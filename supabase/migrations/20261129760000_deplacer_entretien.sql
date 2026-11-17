@@ -1,7 +1,7 @@
 -- BE-1j DEPLACER-ENTRETIEN (carte des gestes, lot 3, trou T8, arbitrage A2 du pilote : un seul geste pour la
 -- direction ; la personne est prevenue). Numero 20261129760000 (le 720000 est a BE-SALLE).
 --
--- Le geste `deplacer_entretien` (transition 47) : la direction change le creneau d'un entretien planifie
+-- Le geste `deplacer_entretien` (transition 48) : la direction change le creneau d'un entretien planifie
 -- d'une candidature (Salle de verification, etat `entretien_planifie`, en cours, hors pause).
 --   * un nouveau debut et une duree, un motif ecrit (interne) ;
 --   * les memes controles que planifier_entretien : debut entre dans 5 minutes et 90 jours, duree de 15 a 120
@@ -39,8 +39,8 @@ BEGIN
   IF pg_catalog.to_regprocedure('public.deplacer_entretien(uuid,timestamptz,integer,text,integer,text)') IS NOT NULL THEN
     RAISE EXCEPTION 'DEPLACER-ENTRETIEN : deja installee';
   END IF;
-  IF EXISTS (SELECT 1 FROM private.candidature_gestes_regles r WHERE r.transition = 47) THEN
-    RAISE EXCEPTION 'DEPLACER-ENTRETIEN : la transition 47 est deja prise';
+  IF EXISTS (SELECT 1 FROM private.candidature_gestes_regles r WHERE r.transition = 48) THEN
+    RAISE EXCEPTION 'DEPLACER-ENTRETIEN : la transition 48 est deja prise';
   END IF;
 END
 $preflight$;
@@ -141,7 +141,7 @@ INSERT INTO private.candidature_gestes_regles
   (geste, variante, transition, auteurs, etapes, etats, issues, pause, condition, motif_requis,
    modele_vers, groupable, type_evenement, cible, admis, brouillon)
 VALUES
-  ('deplacer_entretien', 1, 47, '{direction}', '{verifications}',
+  ('deplacer_entretien', 1, 48, '{direction}', '{verifications}',
    '{entretien_planifie}', '{en_cours}', 'interdite', NULL, '{direction}',
    NULL, false, 'entretien', '{"etat": "entretien_planifie"}', '{}', false)
 ON CONFLICT (geste, variante) DO NOTHING;
@@ -358,7 +358,7 @@ BEGIN
     'F86 candidate allowlist: signature=public.deplacer_entretien(uuid,timestamptz,integer,text,integer,text); md5_functiondef='
     || pg_catalog.md5(pg_catalog.pg_get_functiondef('public.deplacer_entretien(uuid,timestamptz,integer,text,integer,text)'::regprocedure))
     || '; guard_type=ROLE_POSITIVE_ADMIN_GENDER_SCOPE_ENGINE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-17. '
-    || 'BE-1j DEPLACER-ENTRETIEN. Direction active ; moteur (transition 47, motif ecrit) ; '
+    || 'BE-1j DEPLACER-ENTRETIEN. Direction active ; moteur (transition 48, motif ecrit) ; '
     || 'ancien entretien annule sans rien effacer, nouvel entretien aux memes participants ; avis par le circuit existant. '
     || 'Must-pass: supabase/tests/scenarios_deplacer_entretien.sql.');
   v_com := coalesce(pg_catalog.obj_description(f, 'pg_proc'), '');
