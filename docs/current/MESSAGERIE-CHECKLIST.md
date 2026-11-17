@@ -202,3 +202,10 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
 - **Second défaut à corriger (client)** : #622 n'affiche le marqueur que si `!m.deSoi` (`lecture_fil_communication.dart`,
   `messageFilDe`). Côté administration, un message de Praxis est « de soi » : le marqueur doit aussi s'y afficher
   (image et nom sur la bulle de soi), sans changer les messages écrits par un humain de l'équipe.
+
+### État de la correction PX-BULLE-2 (PR #634), 17/11 16 h 10 UTC
+
+- CI de #634 (commit 975421857) : migrations applicables sur Postgres 17 vertes, build web vert, tests Flutter lots 0 et 1 verts.
+- **Bloqué** : « Captures R3 » rouge, il manque les captures d'écran du changement (`docs/current/captures/E2E/PX-BULLE-2/`). Règle R3 : pas de capture, pas de fusion. Rien n'est fusionné, la migration 20261129530000 n'est **pas** installée.
+- Demande faite à l'agent (session_0163Kjrxownsxaf7Mi26sad3) : produire de vraies captures, ou dire qu'il ne peut pas. Interdiction de fabriquer une image.
+- Jeudi : si les captures sont là et la CI toute verte, fusionner #634, installer 20261129530000 (ancre `END || pg_catalog.jsonb_build_object('est_soi', m.auteur_id = p_moi))` à vérifier une fois en prod avant), puis le directeur ferme et rouvre l'appli.
