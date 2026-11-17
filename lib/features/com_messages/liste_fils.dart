@@ -18,19 +18,15 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/carte_lignes.dart' show LigneDeCarte;
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/ligne_conversation.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/surface_recherche.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
-import 'avatar_participant.dart';
-import 'entete_fil_contexte.dart';
+import 'ligne_fil.dart';
 import 'port_messages_metier.dart';
 import 'recherche_fils.dart';
 
@@ -95,8 +91,7 @@ class ListeFils extends StatefulWidget {
   );
 
   /// La cle de la ligne d'un fil, pour les tests.
-  static ValueKey<String> cleLigne(String filId) =>
-      ValueKey<String>('liste-fils-$filId');
+  static ValueKey<String> cleLigne(String filId) => LigneFil.cleLigne(filId);
 
   @override
   State<ListeFils> createState() => _ListeFilsState();
@@ -315,40 +310,13 @@ class _ListeFilsState extends State<ListeFils> {
   }
 
   /// Une conversation : photo de 48 (ou initiales), nom, apercu, heure et
-  /// nombre de non lus (BULLES-MESSAGERIE, `LigneConversation`).
+  /// nombre de non lus (BULLES-MESSAGERIE, `LigneConversation`), posee par
+  /// `LigneFil`, le seul endroit qui compose la ligne d'un fil.
   Widget _ligne(ResumeFil f, DateTime maintenant) {
-    final int nonLus = f.attention.nonLus;
-    final DateTime? dernier = f.dernierMessageLe;
-    final String titre = titreFil(f.interlocuteurs, f.objet.libelle);
-    final String apercu = f.apercuPhoto
-        ? t.com.messages.images.photoApercu
-        : f.apercu ??
-              (f.nouveau
-                  ? t.com.messages.ligne.sansMessage
-                  : t.com.messages.ligne.sansApercu);
     final String? selection = widget.filSelectionne;
-    return LigneConversation(
-      key: ValueKey<String>('ligne-${f.id}'),
-      // PHOTOS-2b et #Ra_staff : l'avatar du premier interlocuteur.
-      meneur: KeyedSubtree(
-        key: ListeFils.cleLigne(f.id),
-        child: AvatarParticipant(
-          participant: f.interlocuteurs.isEmpty ? null : f.interlocuteurs.first,
-          repli: f.objet.libelle,
-          diametre: AppAvatar.moyen,
-        ),
-      ),
-      titre: titre,
-      apercu: apercu,
-      apercuPhoto: f.apercuPhoto,
-      heure: dernier == null ? null : momentCourt(dernier, maintenant),
-      nouveau: f.nouveau,
-      nonLus: nonLus,
-      libelleNonLus: nonLus > 0 ? BadgeNonLu.libelleNonLus(nonLus) : null,
-      // Une attention sans nombre (mention, action requise) garde son badge.
-      marque: nonLus == 0 && f.attention.estVisible
-          ? BadgeNonLu(indicateur: f.attention, compact: true)
-          : null,
+    return LigneFil(
+      fil: f,
+      maintenant: maintenant,
       selectionnee: selection == null ? null : f.id == selection,
       onPress: () => widget.onOuvrir(f.id),
     );

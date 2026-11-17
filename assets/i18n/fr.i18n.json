@@ -6721,6 +6721,27 @@
       "plafondChamp": "Nombre de messages par heure (de 1 à 120)",
       "plafondEnregistrer": "Fixer le plafond",
       "plafondInvalide": "Écrivez un nombre entier entre 1 et 120.",
+      "essaiTitre": "Conversations d'essai",
+      "essaiVide": "Mode essai éteint : Praxis peut lire toutes les conversations de l'académie qu'il a le droit de lire.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Mode essai : Praxis ne voit que {nombre} conversation et ne publie aucune annonce.",
+        "other": "Mode essai : Praxis ne voit que {nombre} conversations et ne publie aucune annonce."
+      },
+      "essaiChamp": "Choisir les conversations d'essai",
+      "essaiAide": "Cochez au plus dix conversations parmi celles de vos Messages. Si vous n'en avez pas, créez d'abord une conversation de test avec un compte de test. Tant que rien n'est coché et enregistré, il n'y a pas d'essai.",
+      "essaiEnregistrer": "Enregistrer les conversations d'essai",
+      "essaiFin": "Mettre fin à l'essai",
+      "essaiChoisies(plural, param=nombre)": {
+        "one": "{nombre} conversation cochée.",
+        "other": "{nombre} conversations cochées."
+      },
+      "essaiTrop(plural, param=nombre)": {
+        "one": "Dix conversations au plus : décochez-en une pour en choisir une autre.",
+        "other": "Dix conversations au plus : décochez-en une pour en choisir une autre."
+      },
+      "essaiListeErreur": "La liste de vos conversations n'a pas pu être lue. Réessayez dans un instant.",
+      "essaiAucune": "Aucune conversation à choisir. Créez d'abord une conversation de test avec un compte de test, puis revenez ici.",
+      "essaiAffinez": "Seules les {nombre} premières conversations sont montrées : affinez avec la recherche.",
       "reglageFait": "Réglage appliqué.",
       "erreurReglage": "Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.",
       "doubleVerification": "Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.",
@@ -6796,6 +6817,8 @@
       "refuseCause": "Refusé : {cause}",
       "sansTexte": "Rien n'a été écrit.",
       "cause": {
+        "essai": "mode essai, aucune annonce",
+        "horsEssai": "conversation hors de l'essai",
         "plafondFil": "trop de messages de suite sans réponse",
         "plafond": "plafond par heure atteint",
         "plafondAnnonces": "deux annonces déjà publiées aujourd'hui",
