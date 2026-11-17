@@ -24,14 +24,14 @@ parallèle, un agent par lot, quatre agents au plus.
 | Chantier | Agent | Lots, dans l'ordre | Migrations |
 | :--- | :--- | :--- | :--- |
 | Praxis | BE-PIECE | PX-1 installé (☑) ; dette R4 indirecte, annuaire agent_ro, puis PX-2 | 202611296… |
-| Carte, lot 2 | BE-GESTES | #568 Débloquer le versement, puis GESTES-DU-SERVEUR (serveur puis écran) | 20261129430000 |
-| Carte, lots 5 et 8 | BE-DOSSIER | DISPENSE-ECRAN poussé maintenant (D-7 levé), ENTRETIEN-SUIT-LE-DOSSIER, REFAIRE-ENTRETIEN (arbitrage : autorisé, motif obligatoire) | 20261129460000, 20261129700000 |
-| Carte, lots 6 et 4 | BE-SALLE (Sonnet, créé le 17/11 à 23 h 18 UTC, `session_0163KjrugbgqtWp3ag4RYXr3`) | PIECE-SUR-LA-FICHE, COMPLEMENT-SALLE-EXAMEN | 20261129710000 |
-| Carte, lots 3 et 7 | le premier agent libre | DEPLACER-ENTRETIEN, APRES-CONFIRMEE | 20261129720000, 20261129730000 |
+| Carte, lot 2 | BE-GESTES | #568 ☑ fusionnée, puis GESTES-DU-SERVEUR (#573 serveur, puis écran) | 20261129740000 (renumérotée : 630000 était pris par Praxis) |
+| Carte, lots 5 et 8 | BE-DOSSIER | DISPENSE-ECRAN (#575 ☑ fusionnée), ENTRETIEN-SUIT-LE-DOSSIER (#576), REFAIRE-ENTRETIEN (#579, #580) | 20261129460000, 20261129750000, 20261129700000 |
+| Carte, lots 6, 4 et 7 | BE-SALLE (Sonnet, créé le 16/11 à 23 h 18 UTC, `session_0163KjrugbgqtWp3ag4RYXr3`) | PIECE-SUR-LA-FICHE (+ capacité deciderPiece), COMPLEMENT-SALLE-EXAMEN, APRES-CONFIRMEE | 20261129720000, 20261129710000, 20261129730000 |
+| Carte, lot 3 | BE-DOSSIER | DEPLACER-ENTRETIEN | 20261129760000 |
 | Vague 2 | après la carte | BE-2a-2 (associé), BE-2b (écran Équipe), BE-2c, BE-2d | à réserver |
 | Studio | après | — | — |
 
-Plage **2026112970… à 2026112973…** réservée au Pilote Équipe pour la carte (en plus de 202611294…).
+**Numéros attribués par le pilote seulement** (deux collisions la nuit du 16 au 17/11). Plage **2026112970… à 2026112976…** réservée au Pilote Équipe pour la carte (en plus de 202611294…).
 
 **Dette de sécurité (16/11, BE-PIECE)** : un compte `controller` sans capacité lit par l'API les séances, participants, enregistrements, affectations et disponibilités des familles. Aucun compte de ce rôle en production (vérifié 20 h 45) : à resserrer avant d'en créer un. Scénario `scenarios_cand_l2a2_gestes_direction.sql` rouge sur `main` (confirmé par BE-PIECE sur une copie de `main`). Les scénarios ACCUEIL-SEPARE, BE-2a et Praxis ne sont pas dans `ci.yml` (garde-fou : `.github` interdit aux agents).
 
