@@ -2385,9 +2385,15 @@ class _Bulle extends StatelessWidget {
                             if (afficherNom)
                               _NomAuteur(
                                 auteur: auteur,
-                                style: palette.inkMuted.applyTo(
-                                  textes.labelMedium ?? const TextStyle(),
-                                ),
+                                // PX-BULLE-2 : sur la bulle de soi (violet),
+                                // l'encre de la paire, sinon le nom est illisible.
+                                style: deSoi
+                                    ? fond.applyTo(
+                                        textes.labelMedium ?? const TextStyle(),
+                                      )
+                                    : palette.inkMuted.applyTo(
+                                        textes.labelMedium ?? const TextStyle(),
+                                      ),
                                 onOuvrir: onOuvrirAuteur,
                               ),
                             if (texte.isNotEmpty) ...<Widget>[
@@ -2725,6 +2731,7 @@ class _AvecAvatar extends StatelessWidget {
   });
 
   final Widget? avatar;
+
   /// PX-BULLE-2 : bulle « de soi » : l'avatar passe cote fin (droite en LTR).
   final bool aDroite;
   final VoidCallback? onOuvrir;
@@ -2739,17 +2746,17 @@ class _AvecAvatar extends StatelessWidget {
     final Widget? a = avatar;
     if (a == null) return child;
     final Widget avatarEtLien = KeyedSubtree(
-          key: cle,
-          child: onOuvrir == null
-              ? ExcludeSemantics(child: a)
-              : Pressable(
-                  onPress: onOuvrir,
-                  libelleSemantique: libelle,
-                  respecterCibleTactile: false,
-                  arrondiFocus: BorderRadius.circular(AppAvatar.petit),
-                  child: a,
-                ),
-        );
+      key: cle,
+      child: onOuvrir == null
+          ? ExcludeSemantics(child: a)
+          : Pressable(
+              onPress: onOuvrir,
+              libelleSemantique: libelle,
+              respecterCibleTactile: false,
+              arrondiFocus: BorderRadius.circular(AppAvatar.petit),
+              child: a,
+            ),
+    );
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
