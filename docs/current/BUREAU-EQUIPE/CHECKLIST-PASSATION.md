@@ -60,6 +60,11 @@ parallèle, un agent par lot, quatre agents au plus.
 | 11 | Vérification de trois gestes du menu | ☑ | faite dans la carte (n° 13) pour tous les gestes du menu ; les trois gestes n'étaient nommés nulle part |
 | 12 | #525 CAPTCHA-PLACE | ☐ | aucun aperçu Vercel dans la PR, base du matin ; à vérifier dans un navigateur après mise à jour, ou fermer |
 | 13 | **PREMIER TRAVAIL (§0 bis)** : `CARTE-GESTES-DIRECTION.md` | ☑ | écrite (14 trous, 8 lots, questions Q1 à Q5) ; deux faits clés revérifiés en base par le pilote ; arbitrée par le pilote le 16/11 à 20 h 10 (le directeur : « ne me demande plus rien ») |
+| 14 | #587 DETTE-CONTROLLER (800000) | ☑ | fusionnée (63bd7a61) ; **installée** le 17/11 ; vérifié : 4 politiques passent par `controleur_voit_session`, 6 exclusions du contrôleur, `mes_seances_v` security_barrier, `anon` sans EXECUTE, 0 compte contrôleur. La dette « controller » ci-dessus est fermée |
+| 15 | #588 PX-4 MODE ESSAI serveur (650000) | ☑ | fusionnée (5a41b9b9) ; relue : 5 fonctions remplacées, diff = la seule restriction d'essai, 0 mot d'effacement, empreintes de prod vérifiées avant ; **installée** le 17/11 ; après : 7 empreintes md5 = fichier, `essai_fils` vide, Praxis toujours éteint (actif et autonome faux), droits conformes |
+| 16 | #589 PX-4 écran (sélecteur de conversations) | ◐ | CI rouge (1 test, lot 3) renvoyée à BE-PIECE ; touche `com_messages/liste_fils.dart` : Pilote Messagerie prévenu avant fusion |
+| 17 | #578 COMPLEMENT-SALLE-EXAMEN (710000) | ◐ | migration relue et ancres vérifiées en prod (1 fois chacune, CHECK = 7 valeurs, transition 47 libre) ; **fusion refusée : conflit avec `main`** (#584) ; renvoyée à BE-SALLE, puis #574, #583 |
+| 18 | DETTE-COMPTABLE (810000) | ◐ | confiée à BE-GESTES : inventaire des lectures du rôle `accountant`, resserrer ce que la paie ne justifie pas |
 
 ## 2. Gros lots (dans l'ordre ; une étape ne commence que quand la précédente est livrée)
 
