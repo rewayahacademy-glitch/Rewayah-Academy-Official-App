@@ -30,6 +30,9 @@ BEGIN
   IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p WHERE p.oid = 'private.gestes_de_la_ligne(public.candidatures)'::pg_catalog.regprocedure) IS DISTINCT FROM 'ca5f643cdb0a1dca111f76e2311bc6db' THEN
     RAISE EXCEPTION 'PRAXIS-PX2 : la definition de private.gestes_de_la_ligne n''est pas celle attendue ; rien n''est modifie';
   END IF;
+  IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p WHERE p.oid = 'public.praxis_noter_refus(text,text)'::pg_catalog.regprocedure) IS DISTINCT FROM '6ab414eb52bb5b11f23829d0d8a0b858' THEN
+    RAISE EXCEPTION 'PRAXIS-PX2 : la definition de public.praxis_noter_refus n''est pas celle attendue ; rien n''est modifie';
+  END IF;
 END
 $preflight$;
 
@@ -244,6 +247,30 @@ BEGIN
   PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'annoncer', 'ok', NULL, ARRAY[(v_r ->> 'id')::uuid],
                                pg_catalog.left(v_titre || pg_catalog.chr(10) || v_texte, 3000), v_debut);
   RETURN pg_catalog.jsonb_build_object('ok', true, 'id', v_r -> 'id', 'destinataires', v_r -> 'destinataires');
+END;
+$function$;
+
+-- A.2 bis : praxis_noter_refus connait les deux outils de plus (la note d'un refus de parametre, M4).
+CREATE OR REPLACE FUNCTION public.praxis_noter_refus(p_cle text, p_outil text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_debut timestamptz := pg_catalog.clock_timestamp();
+  v_p record;
+BEGIN
+  SELECT * INTO v_p FROM private.praxis_porte(p_cle);
+  IF v_p.cle_id IS NULL OR v_p.cause_interne IN ('cle_revoquee', 'cle_expiree', 'emetteur_invalide', 'emetteur_sans_cote') THEN
+    RETURN pg_catalog.jsonb_build_object('ok', false);
+  END IF;
+  IF p_outil IS NULL OR p_outil NOT IN ('etat', 'boite', 'fil', 'ecrire', 'annoncer', 'calendrier_lire',
+                                        'calendrier_ajouter', 'rendre_compte', 'lire', 'preparer') THEN
+    RETURN pg_catalog.jsonb_build_object('ok', false);
+  END IF;
+  PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, p_outil, 'parametre', NULL, NULL, NULL, v_debut);
+  RETURN pg_catalog.jsonb_build_object('ok', true);
 END;
 $function$;
 
@@ -515,8 +542,9 @@ BEGIN
        OR pg_catalog.jsonb_array_length(v_parametres -> 'elements') NOT BETWEEN 1 AND 20
        OR EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(v_parametres -> 'elements') e
                    WHERE pg_catalog.jsonb_typeof(e.value) <> 'string')
-       OR (v_parametres ? 'motif' AND (pg_catalog.jsonb_typeof(v_parametres -> 'motif') <> 'string'
-                                       OR pg_catalog.length(v_parametres ->> 'motif') > 300)) THEN
+       -- Le moteur exige un motif pour demander un complement : il est dit au candidat, Praxis l'ecrit, l'humain le relit.
+       OR pg_catalog.jsonb_typeof(v_parametres -> 'motif') IS DISTINCT FROM 'string'
+       OR pg_catalog.length(pg_catalog.btrim(v_parametres ->> 'motif')) NOT BETWEEN 1 AND 300 THEN
       PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'parametre', NULL, ARRAY[v_c.id], NULL, v_debut);
       RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
     END IF;
