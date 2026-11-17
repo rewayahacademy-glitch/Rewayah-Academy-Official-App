@@ -1,13 +1,14 @@
 -- PX-2 PRAXIS niveau B (pilote, CAHIER-PX-2-PREPARER.md, 17/11/2026) : Praxis LIT les dossiers de candidature et PREPARE des
 -- propositions ; il n'execute jamais un geste. Cette migration est livree par etapes (un commit chacune) :
---   A. le reglage `donnees_reelles` (faux a l'installation, ouvert par le directeur seul, aal2, apres la publication de la politique de
+--   A. le reglage `donnees_reelles` (faux a l'installation, ouvert par une direction valide en aal2 (comme `actif` : tout administrateur valide en aal2 le peut, dette inscrite par le pilote), apres la publication de la politique de
 --      confidentialite) et la lecture `praxis_lire` (vues fermees `candidatures` et `demandes`, sans contact, piece, photo, note, motif ni
 --      montant ; le prenom dans `contenu_tiers` ; les cotes de la personne qui a emis la cle) ;
 --   B. la table des propositions et `praxis_preparer` ;
 --   C. les portes de la direction (lire les propositions, valider, ecarter) ;
 -- Tant que `donnees_reelles` est faux : tous les outils de PX-2 refusent (`donnees_reelles_fermees`) ; les outils de PX-1 restent limites
 -- au mode essai (praxis_fil_refus refuse tout fil hors liste d'essai ; praxis_annoncer refuse). Une liste d'essai non vide continue de
--- gouverner : elle borne meme quand les donnees reelles sont ouvertes.
+-- gouverner : elle borne meme quand les donnees reelles sont ouvertes. MODE ESSAI (arbitrage du pilote, le plus prudent) : tant que `essai_fils` est
+-- non vide, `praxis_lire` et `praxis_preparer` refusent aussi (`essai`, journalise), comme `praxis_annoncer` : l'essai ne touche aucun dossier.
 -- AUCUNE COPIE DE LOGIQUE : la requete des gestes permis par le moteur est EXTRAITE de private.gestes_de_la_ligne dans
 -- private.gestes_regles_de_la_ligne (ancre unique, empreinte verifiee) ; la liste de la direction et Praxis lisent la meme.
 -- Doit suivre 20261129650000 (mode essai) ET 20261129740000 (private.gestes_de_la_ligne) : numero 20261129840000 (le 20261129660000 reserve par le
@@ -34,6 +35,9 @@ BEGIN
   END IF;
   IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p WHERE p.oid = 'public.praxis_noter_refus(text,text)'::pg_catalog.regprocedure) IS DISTINCT FROM '6ab414eb52bb5b11f23829d0d8a0b858' THEN
     RAISE EXCEPTION 'PRAXIS-PX2 : la definition de public.praxis_noter_refus n''est pas celle attendue ; rien n''est modifie';
+  END IF;
+  IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p WHERE p.oid = 'public.direction_praxis_etat()'::pg_catalog.regprocedure) IS DISTINCT FROM 'c6c020f69cf3420ed954bbd4e02af16e' THEN
+    RAISE EXCEPTION 'PRAXIS-PX2 : la definition de public.direction_praxis_etat n''est pas celle attendue ; rien n''est modifie';
   END IF;
 END
 $preflight$;
@@ -276,6 +280,38 @@ BEGIN
 END;
 $function$;
 
+-- A.2 ter : l'etat de la direction rend aussi `donneesReelles`.
+CREATE OR REPLACE FUNCTION public.direction_praxis_etat()
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ STABLE SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'autorisation direction requise' USING ERRCODE = '42501';
+  END IF;
+  RETURN (SELECT pg_catalog.jsonb_build_object(
+    'actif', r.actif,
+    'autonome', r.autonome,
+    'envoisParHeure', r.envois_par_heure,
+    'modifieLe', r.modifie_le,
+    'essaiFils', pg_catalog.to_jsonb(r.essai_fils),
+    'donneesReelles', r.donnees_reelles,
+    'cles', coalesce((
+      SELECT pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+               'id', c.id, 'libelle', c.libelle, 'prefixe', c.prefixe, 'usage', c.usage,
+               'emiseLe', c.emise_le, 'expireLe', c.expire_le, 'derniereUtilisationLe', c.derniere_utilisation_le,
+               'revoqueeLe', c.revoquee_le, 'motifRevocation', c.motif_revocation,
+               -- L'etat vient de la base (son horloge), jamais d'une comparaison faite sur le poste (meme regle que jetons_agent_actifs).
+               'etat', CASE WHEN c.revoquee_le IS NOT NULL THEN 'revoquee'
+                            WHEN c.expire_le <= pg_catalog.clock_timestamp() THEN 'expiree' ELSE 'active' END)
+             ORDER BY c.emise_le DESC, c.id)
+        FROM (SELECT * FROM private.praxis_cles x ORDER BY x.emise_le DESC, x.id LIMIT 100) c), '[]'::jsonb))
+    FROM private.praxis_reglages r);
+END;
+$function$;
+
 -- A.3 Les gestes que Praxis peut PREPARER pour une ligne : ceux que le moteur permet (la meme liste que celle de la direction), dans les
 -- trois gestes de la liste fermee de Praxis, et seulement dans les COTES de la personne qui a emis la cle (AR-7 I2).
 CREATE FUNCTION private.praxis_gestes_ligne(c public.candidatures, p_cotes public.gender[])
@@ -310,6 +346,7 @@ DECLARE
   v_etat text;
   v_langue text;
   v_min integer;
+  v_nb numeric;
   v_lignes jsonb;
   v_total integer;
 BEGIN
@@ -319,6 +356,10 @@ BEGIN
       PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'lire', v_p.cause_interne, NULL, NULL, NULL, v_debut);
     END IF;
     RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
+  END IF;
+  IF coalesce(pg_catalog.cardinality(private.praxis_essai()), 0) > 0 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'lire', 'essai', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'essai');
   END IF;
   IF NOT coalesce((SELECT r.donnees_reelles FROM private.praxis_reglages r), false) THEN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'lire', 'donnees_reelles_fermees', NULL, NULL, NULL, v_debut);
@@ -342,7 +383,15 @@ BEGIN
   v_etape := v_filtre ->> 'etape';
   v_etat := v_filtre ->> 'etat';
   v_langue := v_filtre ->> 'langue';
-  v_min := (v_filtre ->> 'attente_min_jours')::numeric::integer;
+  -- Un nombre entier de 0 a 365 : tout autre (hors entier, hors plage, trop grand) est refuse `parametre` et journalise.
+  BEGIN
+    IF v_filtre ? 'attente_min_jours' THEN
+      v_nb := (v_filtre ->> 'attente_min_jours')::numeric;
+      v_min := CASE WHEN v_nb = pg_catalog.trunc(v_nb) AND v_nb BETWEEN 0 AND 365 THEN v_nb::integer ELSE -1 END;
+    END IF;
+  EXCEPTION WHEN OTHERS THEN
+    v_min := -1;
+  END;
   IF (v_etape IS NOT NULL AND v_etape NOT IN ('recue', 'invitee', 'prequalification', 'verifications', 'confirmee'))
      OR (v_etat IS NOT NULL AND v_etat NOT IN ('a_completer', 'en_examen', 'paiement_non_disponible',
                                                 'entretien_a_planifier', 'entretien_planifie', 'decision_en_attente'))
@@ -365,6 +414,7 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('vue', 'demandes', 'compteurs', v_lignes);
   END IF;
 
+  -- La page (le filtre, l'ordre, la limite) est choisie D'ABORD ; les gestes et le complement ne sont calcules que pour les lignes rendues.
   SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
            'reference', f.reference,
            'cote', f.genre,
@@ -372,28 +422,27 @@ BEGIN
            'etape', f.etape,
            'etat', f.etat,
            'attente_jours', f.attente,
-           'complement_en_cours', f.complement,
-           'gestes', f.gestes,
+           'complement_en_cours', pg_catalog.jsonb_array_length(private.candidature_complement_en_cours(c2)) > 0,
+           'gestes', private.praxis_gestes_ligne(c2, v_p.cotes),
            -- Le prenom est le seul texte d'une personne : une DONNEE, jamais un ordre.
            'contenu_tiers', pg_catalog.jsonb_build_object('prenom', f.prenom)) ORDER BY f.rang),
          '[]'::jsonb),
          coalesce(pg_catalog.max(f.total), 0)
     INTO v_lignes, v_total
-    FROM (SELECT x.*, pg_catalog.row_number() OVER (ORDER BY x.derniere_activite, x.id) AS rang
-            FROM (SELECT c.id, c.reference, c.genre, c.langue, c.etape, c.etat, c.derniere_activite,
-                         (EXTRACT(epoch FROM pg_catalog.clock_timestamp() - c.derniere_activite) / 86400)::integer AS attente,
-                         pg_catalog.jsonb_array_length(private.candidature_complement_en_cours(c)) > 0 AS complement,
-                         private.praxis_gestes_ligne(c, v_p.cotes) AS gestes,
-                         pg_catalog.split_part(pg_catalog.btrim(c.nom_complet), ' ', 1) AS prenom,
-                         pg_catalog.count(*) OVER ()::integer AS total
-                    FROM public.candidatures c
-                   WHERE c.type_code = 'enseignant' AND c.issue = 'en_cours' AND c.genre = ANY (v_p.cotes)
-                     AND (v_etape IS NULL OR c.etape = v_etape)
-                     AND (v_etat IS NULL OR c.etat = v_etat)
-                     AND (v_langue IS NULL OR c.langue = v_langue)
-                     AND (v_min IS NULL
-                          OR EXTRACT(epoch FROM pg_catalog.clock_timestamp() - c.derniere_activite) / 86400 >= v_min)) x) f
-   WHERE f.rang <= p_limite;
+    FROM (SELECT x.* FROM (SELECT c.id, c.reference, c.genre, c.langue, c.etape, c.etat, c.derniere_activite,
+                                  (EXTRACT(epoch FROM pg_catalog.clock_timestamp() - c.derniere_activite) / 86400)::integer AS attente,
+                                  pg_catalog.split_part(pg_catalog.btrim(c.nom_complet), ' ', 1) AS prenom,
+                                  pg_catalog.row_number() OVER (ORDER BY c.derniere_activite, c.id) AS rang,
+                                  pg_catalog.count(*) OVER ()::integer AS total
+                             FROM public.candidatures c
+                            WHERE c.type_code = 'enseignant' AND c.issue = 'en_cours' AND c.genre = ANY (v_p.cotes)
+                              AND (v_etape IS NULL OR c.etape = v_etape)
+                              AND (v_etat IS NULL OR c.etat = v_etat)
+                              AND (v_langue IS NULL OR c.langue = v_langue)
+                              AND (v_min IS NULL
+                                   OR EXTRACT(epoch FROM pg_catalog.clock_timestamp() - c.derniere_activite) / 86400 >= v_min)) x
+           WHERE x.rang <= p_limite) f
+    JOIN public.candidatures c2 ON c2.id = f.id;
   PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'lire', 'ok', NULL, NULL, NULL, v_debut);
   RETURN pg_catalog.jsonb_build_object('vue', 'candidatures', 'lignes', v_lignes, 'total', v_total);
 END;
@@ -495,6 +544,10 @@ BEGIN
     END IF;
     RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
   END IF;
+  IF coalesce(pg_catalog.cardinality(private.praxis_essai()), 0) > 0 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'essai', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'essai');
+  END IF;
   IF NOT coalesce((SELECT r.donnees_reelles FROM private.praxis_reglages r), false) THEN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'donnees_reelles_fermees', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'donnees_reelles_fermees');
@@ -518,14 +571,11 @@ BEGIN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'rejoue', NULL, ARRAY[v_existante], NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('ok', true, 'id', v_existante, 'rejoue', true);
   END IF;
-  SELECT c.* INTO v_c FROM public.candidatures c WHERE c.reference = p_candidature FOR SHARE;
-  IF NOT FOUND OR v_c.type_code <> 'enseignant' OR v_c.issue <> 'en_cours' THEN
+  SELECT c.* INTO v_c FROM public.candidatures c WHERE c.reference = p_candidature;
+  -- Un dossier inconnu, ferme, d'un autre type OU DE L'AUTRE COTE : la meme reponse (aucun indice d'existence).
+  IF NOT FOUND OR v_c.type_code <> 'enseignant' OR v_c.issue <> 'en_cours' OR NOT (v_c.genre = ANY (v_p.cotes)) THEN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'candidature_inconnue', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'candidature_inconnue');
-  END IF;
-  IF NOT (v_c.genre = ANY (v_p.cotes)) THEN
-    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'cote', NULL, NULL, NULL, v_debut);
-    RETURN pg_catalog.jsonb_build_object('erreur', 'cote');
   END IF;
   IF NOT (p_geste = ANY (ARRAY(SELECT pg_catalog.jsonb_array_elements_text(private.praxis_gestes_ligne(v_c, v_p.cotes))))) THEN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'geste_non_servi', NULL, ARRAY[v_c.id], NULL, v_debut);
@@ -646,10 +696,12 @@ BEGIN
       'creeLe', x.cree_le, 'expireLe', x.expire_le, 'traiteeLe', x.traitee_le, 'motifEcart', x.motif_ecart)
       ORDER BY x.cree_le DESC, x.id), '[]'::jsonb)
     FROM (SELECT y.* FROM private.praxis_propositions y
-           WHERE p_filtre = 'toutes' OR (y.statut = 'proposee' AND y.expire_le > pg_catalog.clock_timestamp())
+            JOIN public.candidatures cc ON cc.id = y.candidature_id
+           -- Le cote de la direction qui lit est applique AVANT la limite de 100.
+           WHERE (p_filtre = 'toutes' OR (y.statut = 'proposee' AND y.expire_le > pg_catalog.clock_timestamp()))
+             AND EXISTS (SELECT 1 FROM private.cand_lecteur() l WHERE l.super_admin OR l.genre = cc.genre)
            ORDER BY y.cree_le DESC, y.id LIMIT 100) x
-    JOIN public.candidatures c ON c.id = x.candidature_id
-   WHERE EXISTS (SELECT 1 FROM private.cand_lecteur() l WHERE l.super_admin OR l.genre = c.genre));
+    JOIN public.candidatures c ON c.id = x.candidature_id);
 END;
 $f$;
 
@@ -671,10 +723,20 @@ BEGIN
   IF p_proposition IS NULL OR p_version IS NULL OR p_cle IS NULL OR pg_catalog.length(p_cle) NOT BETWEEN 8 AND 100 THEN
     RAISE EXCEPTION 'validation invalide : proposition, version et cle attendues' USING ERRCODE = '22023';
   END IF;
-  PERFORM private.praxis_propositions_expirer();
-  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition FOR UPDATE;
+  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition;
   IF NOT FOUND THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_inconnue');
+  END IF;
+  -- Le COTE de la direction qui valide (AR-7 I2), avant tout verrou et avant tout statut : l'autre cote ne sait rien de la proposition.
+  IF NOT EXISTS (SELECT 1 FROM private.cand_lecteur() l JOIN public.candidatures c ON c.id = v_pr.candidature_id
+                  WHERE l.super_admin OR l.genre = c.genre) THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'hors_portee');
+  END IF;
+  PERFORM private.praxis_propositions_expirer();
+  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition FOR UPDATE;
+  IF v_pr.statut = 'proposee' AND v_pr.expire_le <= pg_catalog.clock_timestamp() THEN
+    UPDATE private.praxis_propositions SET statut = 'expiree' WHERE id = p_proposition;
+    RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_expiree');
   END IF;
   IF v_pr.statut = 'validee' AND v_pr.resultat ->> 'cle' = p_cle THEN
     RETURN pg_catalog.jsonb_build_object('ok', true, 'rejoue', true, 'resultat', v_pr.resultat -> 'reponse');
@@ -728,11 +790,16 @@ BEGIN
   IF p_proposition IS NULL OR p_cle IS NULL OR pg_catalog.length(v_motif) > 300 THEN
     RAISE EXCEPTION 'ecart invalide : proposition et cle attendues, motif de 300 signes au plus' USING ERRCODE = '22023';
   END IF;
-  PERFORM private.praxis_propositions_expirer();
-  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition FOR UPDATE;
+  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition;
   IF NOT FOUND THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_inconnue');
   END IF;
+  IF NOT EXISTS (SELECT 1 FROM private.cand_lecteur() l JOIN public.candidatures c ON c.id = v_pr.candidature_id
+                  WHERE l.super_admin OR l.genre = c.genre) THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'hors_portee');
+  END IF;
+  PERFORM private.praxis_propositions_expirer();
+  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition FOR UPDATE;
   IF v_pr.statut = 'ecartee' THEN
     RETURN pg_catalog.jsonb_build_object('ok', true, 'rejoue', true);
   END IF;
@@ -767,3 +834,35 @@ BEGIN
   END IF;
 END
 $postflight_c$;
+
+-- ====================================================================================================================
+-- D. Proprietaire et controle final : toute fonction neuve appartient a postgres (comme les fonctions voisines).
+-- ====================================================================================================================
+ALTER FUNCTION private.gestes_regles_de_la_ligne(public.candidatures) OWNER TO postgres;
+ALTER FUNCTION private.praxis_gestes_ligne(public.candidatures, public.gender[]) OWNER TO postgres;
+ALTER FUNCTION private.praxis_propositions_expirer() OWNER TO postgres;
+ALTER FUNCTION public.direction_praxis_regler_donnees_reelles(boolean) OWNER TO postgres;
+ALTER FUNCTION public.praxis_lire(text, text, jsonb, integer) OWNER TO postgres;
+ALTER FUNCTION public.praxis_preparer(text, text, text, jsonb, text, uuid) OWNER TO postgres;
+ALTER FUNCTION public.direction_praxis_propositions(text) OWNER TO postgres;
+ALTER FUNCTION public.direction_praxis_valider(uuid, integer, text, uuid[]) OWNER TO postgres;
+ALTER FUNCTION public.direction_praxis_ecarter(uuid, text, uuid) OWNER TO postgres;
+ALTER TABLE private.praxis_propositions OWNER TO postgres;
+
+DO $postflight_d$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
+              WHERE p.oid IN ('private.gestes_regles_de_la_ligne(public.candidatures)'::pg_catalog.regprocedure,
+                              'private.praxis_gestes_ligne(public.candidatures,public.gender[])'::pg_catalog.regprocedure,
+                              'private.praxis_propositions_expirer()'::pg_catalog.regprocedure,
+                              'public.direction_praxis_regler_donnees_reelles(boolean)'::pg_catalog.regprocedure,
+                              'public.praxis_lire(text,text,jsonb,integer)'::pg_catalog.regprocedure,
+                              'public.praxis_preparer(text,text,text,jsonb,text,uuid)'::pg_catalog.regprocedure,
+                              'public.direction_praxis_propositions(text)'::pg_catalog.regprocedure,
+                              'public.direction_praxis_valider(uuid,integer,text,uuid[])'::pg_catalog.regprocedure,
+                              'public.direction_praxis_ecarter(uuid,text,uuid)'::pg_catalog.regprocedure)
+                AND p.proowner <> (SELECT r.oid FROM pg_catalog.pg_roles r WHERE r.rolname = 'postgres')) THEN
+    RAISE EXCEPTION 'PRAXIS-PX2 (D) : une fonction neuve n''appartient pas a postgres';
+  END IF;
+END
+$postflight_d$;

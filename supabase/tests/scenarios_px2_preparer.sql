@@ -72,14 +72,17 @@ GRANT EXECUTE ON FUNCTION pg_temp.u(text), pg_temp.c(text), pg_temp.idem(integer
 -- Candidatures d'enseignants : 01 homme et 02 femme en examen ; 03 homme en salle de verification ; 04 homme en examen (contact et piece
 -- renseignes pour prouver qu'ils ne sortent jamais) ; 05 une famille (compteurs seulement).
 SET LOCAL session_replication_role = replica;
-INSERT INTO auth.users (id, email) SELECT pg_temp.u(s), 'px2-' || s || '@test.invalid' FROM unnest(ARRAY['a1', 'a2', '01', '02', '03', '04', '05']) s;
+INSERT INTO auth.users (id, email) SELECT pg_temp.u(s), 'px2-' || s || '@test.invalid' FROM unnest(ARRAY['a1', 'a2', 'a3', '01', '02', '03', '04', '05']) s;
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender) VALUES
   (pg_temp.u('a1'), 'PX2-ADM-0001', 'admin', 'Direction', 'Un', 'active', 'male'),
-  (pg_temp.u('a2'), 'PX2-ADM-0002', 'admin', 'Direction', 'Deux', 'active', 'female');
+  (pg_temp.u('a2'), 'PX2-ADM-0002', 'admin', 'Direction', 'Deux', 'active', 'female'),
+  (pg_temp.u('a3'), 'PX2-ADM-0003', 'admin', 'Direction', 'Trois', 'active', 'male');
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
   SELECT pg_temp.u(s), 'PX2-ENS-00' || s, 'teacher', 'Essai' || s, 'Fictif', 'pending_kyc', CASE WHEN s = '02' THEN 'female'::public.gender ELSE 'male'::public.gender END
   FROM unnest(ARRAY['01', '02', '03', '04']) s;
 INSERT INTO private.super_admin_kyc (profile_id) VALUES (pg_temp.u('a1'));
+-- Deux fondateurs (la regle des entretiens en exige deux parmi les participants).
+INSERT INTO public.personnel_fondateurs (profile_id, fondateur, modifie_par) VALUES (pg_temp.u('a1'), true, pg_temp.u('a1')), (pg_temp.u('a3'), true, pg_temp.u('a1'));
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, source, langue)
   SELECT pg_temp.c(v.s), 'enseignant', pg_temp.u(v.s), v.g::public.gender, 'Prenom' || v.s || ' Fictif', v.etape, v.etat, 'en_cours', 'lien_public', 'fr'
   FROM (VALUES ('01', 'male', 'prequalification', 'en_examen'), ('02', 'female', 'prequalification', 'en_examen'),
@@ -188,7 +191,8 @@ SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''demander_compleme
 SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"candidature_inconnue"}'::jsonb, '5 : une demande d''admission (famille) n''est pas une candidature pour Praxis');
 SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''demander_complement'', %L, ''{"elements":["langues"],"motif":"Il manque les langues."}'', ''X.'', %L::uuid)',
   :'cle_b', (SELECT reference FROM public.candidatures WHERE id = pg_temp.c('01')), pg_temp.idem(15))) AS j \gset
-SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"cote"}'::jsonb, '5 : un dossier de l''autre cote est refuse');
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"candidature_inconnue"}'::jsonb,
+  '5 : un dossier de l''autre cote recoit la MEME reponse qu''un dossier inconnu (aucun indice d''existence)');
 SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''demander_complement'', %L, ''{"elements":["rien_de_tel"],"motif":"x"}'', ''X.'', %L::uuid)',
   :'cle_a', (SELECT reference FROM public.candidatures WHERE id = pg_temp.c('02')), pg_temp.idem(16))) AS j \gset
 SELECT pg_temp.vrai(:'j'::jsonb ->> 'erreur' = 'elements_invalides', '5 : une piece hors de la liste fermee du moteur est refusee');
@@ -264,7 +268,6 @@ SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"proposition_expiree"}'::jsonb AND 
 -- ============ 9 : le dossier a change depuis ============
 SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''admettre_verifications'', %L, ''{}'', ''Admettre 04.'', %L::uuid)',
   :'cle_a', (SELECT reference FROM public.candidatures WHERE id = pg_temp.c('04')), pg_temp.idem(22))) AS j \gset
-SELECT pg_temp.vrai(:'j'::jsonb ->> 'erreur' IS NULL OR :'j'::jsonb ->> 'erreur' = 'geste_non_servi', '9 : (preparation de la proposition de scenario, ou geste non servi)');
 SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''demander_complement'', %L, ''{"elements":["langues"],"motif":"Il manque les langues."}'', ''Relance 04.'', %L::uuid)',
   :'cle_a', (SELECT reference FROM public.candidatures WHERE id = pg_temp.c('04')), pg_temp.idem(23))) AS j \gset
 SELECT :'j'::jsonb ->> 'id' AS p4 \gset
@@ -276,10 +279,67 @@ SELECT pg_temp.vrai(NOT :'j'::jsonb ? 'erreur', '9 : un humain a change le dossi
 SELECT pg_temp.empreinte_candidatures() AS e3 \gset
 SELECT version_candidature AS v_prop FROM private.praxis_propositions WHERE id = :'p4'::uuid \gset
 SELECT pg_temp.appel(pg_temp.u('a1'), 'admin', 'aal2', format('SELECT public.direction_praxis_valider(%L::uuid, %s, ''cle-valide-005'')', :'p4', :v_prop)) AS j \gset
-SELECT pg_temp.vrai(:'j'::jsonb ? 'erreur' AND :'j'::jsonb ->> 'proposition' = :'p4' AND :'j'::jsonb ->> 'erreur' <> 'proposition_perimee',
-  '9 : la validation est refusee PAR LE MOTEUR (sa phrase : ' || coalesce(:'j'::jsonb ->> 'erreur', '?') || ')');
+SELECT pg_temp.vrai(:'j'::jsonb ->> 'erreur' = 'conflit_candidature' AND :'j'::jsonb ->> 'proposition' = :'p4',
+  '9 : la validation est refusee PAR LE MOTEUR, avec UNE seule phrase attendue : conflit_candidature (obtenu : ' || coalesce(:'j'::jsonb ->> 'erreur', '?') || ')');
 SELECT pg_temp.vrai((SELECT statut FROM private.praxis_propositions WHERE id = :'p4'::uuid) = 'proposee' AND pg_temp.empreinte_candidatures() = :'e3',
   '9 : le dossier n''a pas bouge et la proposition reste ouverte (on peut l''ecarter)');
+
+-- ============ R15 : le cote de la direction qui ecarte ou valide ; les gestes reels ============
+SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''planifier_entretien'', %L, %L, ''Entretien propose.'', %L::uuid)',
+  :'cle_a', (SELECT reference FROM public.candidatures WHERE id = pg_temp.c('03')),
+  json_build_object('debut', (now() + interval '2 days')::text, 'duree_minutes', 45)::text, pg_temp.idem(30))) AS j \gset
+SELECT :'j'::jsonb ->> 'id' AS p5 \gset
+SELECT pg_temp.vrai(:'p5' IS NOT NULL AND :'p5' <> '', 'R15 : proposition planifier_entretien pour le dossier homme 03');
+SELECT pg_temp.empreinte_candidatures() AS e4 \gset
+SELECT pg_temp.appel(pg_temp.u('a2'), 'admin', 'aal2', format('SELECT public.direction_praxis_ecarter(%L::uuid, ''x'', ''b2333333-0000-4000-8000-000000000002''::uuid)', :'p5')) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"hors_portee"}'::jsonb AND (SELECT statut FROM private.praxis_propositions WHERE id = :'p5'::uuid) = 'proposee',
+  'R15 : une direction du cote femme ne peut pas ECARTER la proposition d''un dossier homme');
+SELECT pg_temp.appel(pg_temp.u('a2'), 'admin', 'aal2', format('SELECT public.direction_praxis_valider(%L::uuid, %s, ''cle-autre-cote-1'')', :'p5', pg_temp.v('03'))) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"hors_portee"}'::jsonb AND (SELECT statut FROM private.praxis_propositions WHERE id = :'p5'::uuid) = 'proposee'
+  AND pg_temp.empreinte_candidatures() = :'e4', 'R15 : ni VALIDER ; rien ne revele a l''autre cote ni statut ni expiration ni resultat');
+-- Un rejeu par cle ne revele rien non plus a l'autre cote.
+SELECT pg_temp.appel(pg_temp.u('a2'), 'admin', 'aal2', format('SELECT public.direction_praxis_valider(%L::uuid, 1, ''cle-valide-001'')', :'p1')) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"hors_portee"}'::jsonb, 'R15 : le rejeu par cle d''une proposition deja validee est refuse a l''autre cote (pas d''etat du dossier)');
+-- Sans participants : c'est le MOTEUR qui refuse.
+SELECT pg_temp.appel(pg_temp.u('a1'), 'admin', 'aal2', format('SELECT public.direction_praxis_valider(%L::uuid, %s, ''cle-planif-001'')', :'p5', pg_temp.v('03'))) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb ->> 'erreur' = 'participants_requis' AND pg_temp.empreinte_candidatures() = :'e4'
+  AND (SELECT statut FROM private.praxis_propositions WHERE id = :'p5'::uuid) = 'proposee',
+  'R15 : planifier_entretien sans participants : refuse par le moteur (participants_requis), proposition ouverte');
+-- Avec deux fondateurs : l'entretien est planifie par la porte publique, sous l'identite de a1.
+SELECT pg_temp.appel(pg_temp.u('a1'), 'admin', 'aal2', format('SELECT public.direction_praxis_valider(%L::uuid, %s, ''cle-planif-002'', ARRAY[%L, %L]::uuid[])',
+  :'p5', pg_temp.v('03'), pg_temp.u('a1'), pg_temp.u('a3'))) AS j \gset
+SELECT pg_temp.vrai((:'j'::jsonb ->> 'ok')::boolean AND NOT (:'j'::jsonb -> 'resultat') ? 'erreur'
+  AND (SELECT planifie_par FROM public.entretiens WHERE candidature_id = pg_temp.c('03')) = pg_temp.u('a1')
+  AND (SELECT statut FROM private.praxis_propositions WHERE id = :'p5'::uuid) = 'validee',
+  'R15 : planifier_entretien valide avec deux fondateurs : l''entretien existe, planifie par la direction qui a valide (' || :'j' || ')');
+-- admettre_verifications : la proposition est servie, la validation appelle la porte d'admission, dont le moteur refuse (controles).
+SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''admettre_verifications'', %L, ''{}'', ''Admettre.'', %L::uuid)',
+  :'cle_a', (SELECT reference FROM public.candidatures WHERE id = pg_temp.c('02')), pg_temp.idem(31))) AS j \gset
+SELECT :'j'::jsonb ->> 'id' AS p6 \gset
+SELECT pg_temp.vrai(:'p6' IS NOT NULL AND :'p6' <> '', 'R15 : proposition admettre_verifications pour le dossier femme 02 (servie par le moteur)');
+SELECT pg_temp.empreinte_candidatures() AS e5 \gset
+SELECT pg_temp.appel(pg_temp.u('a1'), 'admin', 'aal2', format('SELECT public.direction_praxis_valider(%L::uuid, %s, ''cle-admettre-001'')', :'p6', pg_temp.v('02'))) AS j \gset
+SELECT pg_temp.vrai(:'j'::jsonb ->> 'erreur' = 'controles_non_satisfaits' AND pg_temp.empreinte_candidatures() = :'e5',
+  'R15 : admettre_verifications valide : refuse par le moteur (' || coalesce(:'j'::jsonb ->> 'erreur', '?') || '), le dossier n''a pas bouge ; le POSITIF n''est pas prouve ici (paiement et cadre a fixturer)');
+-- Le mode essai : lire et preparer refusent `essai`, journalise, rien d'ecrit.
+UPDATE private.praxis_reglages SET essai_fils = ARRAY[pg_catalog.gen_random_uuid()];
+SELECT count(*) AS nb_prop_essai FROM private.praxis_propositions \gset
+SELECT pg_temp.srv(format('SELECT public.praxis_lire(%L, ''candidatures'', ''{}'', 20)', :'cle_a')) AS j \gset
+SELECT pg_temp.srv(format('SELECT public.praxis_preparer(%L, ''demander_complement'', %L, ''{"elements":["langues"],"motif":"x"}'', ''Essai.'', %L::uuid)',
+  :'cle_a', (SELECT reference FROM public.candidatures WHERE id = pg_temp.c('02')), pg_temp.idem(32))) AS j2 \gset
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"essai"}'::jsonb AND :'j2'::jsonb = '{"erreur":"essai"}'::jsonb
+  AND (SELECT count(*) FROM private.praxis_propositions) = :nb_prop_essai
+  AND (SELECT count(*) FROM private.praxis_journal WHERE outil IN ('lire', 'preparer') AND issue = 'essai') = 2,
+  'mode essai : praxis_lire et praxis_preparer refusent `essai` (journalise), aucune proposition ecrite');
+UPDATE private.praxis_reglages SET essai_fils = '{}'::uuid[];
+-- Filtre : un nombre hors entier ou trop grand est refuse `parametre` et journalise (pas d'erreur de cast).
+SELECT pg_temp.srv(format('SELECT public.praxis_lire(%L, ''candidatures'', ''{"attente_min_jours": 1e30}'', 20)', :'cle_a')) AS j \gset
+SELECT pg_temp.srv(format('SELECT public.praxis_lire(%L, ''candidatures'', ''{"attente_min_jours": 2.5}'', 20)', :'cle_a')) AS j2 \gset
+SELECT pg_temp.vrai(:'j'::jsonb = '{"erreur":"parametre"}'::jsonb AND :'j2'::jsonb = '{"erreur":"parametre"}'::jsonb,
+  '2 : attente_min_jours 1e30 ou 2.5 : refuse `parametre`, sans erreur de cast');
+-- L'etat de la direction rend donneesReelles.
+SELECT pg_temp.appel(pg_temp.u('a1'), 'admin', 'aal1', 'SELECT public.direction_praxis_etat()') AS j \gset
+SELECT pg_temp.vrai((:'j'::jsonb ->> 'donneesReelles')::boolean IS TRUE, 'direction_praxis_etat rend donneesReelles');
 
 -- ============ 8 : le plafond ============
 INSERT INTO private.praxis_propositions (geste, candidature_id, version_candidature, texte, cle_id, emise_par, cle_idempotence, expire_le)
