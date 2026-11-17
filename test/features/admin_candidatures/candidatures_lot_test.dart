@@ -459,4 +459,88 @@ void main() {
       expect(find.byKey(FeuilleLot.cleValider), findsNothing);
     });
   });
+
+  // DISPENSE-ECRAN (BE-1g, pilote 16/11/2026) : « Dispenser d'entretien » sur une
+  // selection. La categorie (fondateur ou autre) part par l'argument du modele.
+  group('dispenser d\'entretien en lot', () {
+    List<LigneCandidature> lignes() => <LigneCandidature>[
+      ligneTest(
+        id: 'v1',
+        nom: 'Karim Benali',
+        etape: EtapeCandidature.verifications,
+        etat: EtatCandidature.entretienAPlanifier,
+      ),
+      ligneTest(
+        id: 'v2',
+        nom: 'Salma Idrissi',
+        etape: EtapeCandidature.verifications,
+        etat: EtatCandidature.entretienPlanifie,
+      ),
+      // En Salle d'examen : exclue.
+      ligneTest(id: 'x3', nom: 'Omar Fall'),
+    ];
+
+    Future<FauxCandidaturesDirection> monter(WidgetTester tester) async {
+      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+        lignes: lignes(),
+        capacitesRendues: capacitesGestes,
+      );
+      await monterCandidatures(tester, port: port, hauteur: 3000);
+      return port;
+    }
+
+    testWidgets(
+      'la categorie, un motif et le bon nombre : sinon rien ne part',
+      (tester) async {
+        final FauxCandidaturesDirection port = await monter(tester);
+        await _cocher(tester, <String>['v1', 'v2', 'x3']);
+        await _ouvrirFeuille(tester, GesteLot.dispenserEntretien);
+        // L'exclue est nommee, la consequence se dit avant le choix.
+        expect(find.text(feuille.effetDispenser), findsOneWidget);
+        expect(find.text(feuille.neSeront(n: 1)), findsOneWidget);
+        await tester.enterText(find.byKey(FeuilleLot.cleNombre), '2');
+        await tester.pump();
+        await _valider(tester);
+        expect(port.appelsLot, isEmpty);
+        expect(
+          find.text(t.admin.candidatures.dispense.categorieManquante),
+          findsOneWidget,
+        );
+        final Finder fondateur = find.byKey(
+          const ValueKey<String>('dispense-fondateur'),
+        );
+        await tester.ensureVisible(fondateur);
+        await tester.pump();
+        await tester.tap(fondateur);
+        await laisser(tester);
+        await _valider(tester);
+        expect(port.appelsLot, isEmpty);
+        await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Fondateurs.');
+        await _valider(tester);
+        final DemandeLot d = port.appelsLot.single;
+        expect(d.geste, GesteLot.dispenserEntretien);
+        expect(d.modele, 'fondateur');
+        expect(d.motif, 'Fondateurs.');
+        // Les identifiants sont ceux de la selection, comme ceux de l'apercu ;
+        // le serveur retient les eligibles par le jeton.
+        expect(d.ids.toSet(), <String>{'v1', 'v2', 'x3'});
+      },
+    );
+
+    testWidgets('l\'autre categorie part telle quelle', (tester) async {
+      final FauxCandidaturesDirection port = await monter(tester);
+      await _cocher(tester, <String>['v1']);
+      await _ouvrirFeuille(tester, GesteLot.dispenserEntretien);
+      final Finder autre = find.byKey(const ValueKey<String>('dispense-autre'));
+      await tester.ensureVisible(autre);
+      await tester.pump();
+      await tester.tap(autre);
+      await laisser(tester);
+      await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Ancien.');
+      await tester.enterText(find.byKey(FeuilleLot.cleNombre), '1');
+      await tester.pump();
+      await _valider(tester);
+      expect(port.appelsLot.single.modele, 'autre');
+    });
+  });
 }

@@ -10988,6 +10988,7 @@ class Traductions$admin$candidatures$fr {
 	late final Traductions$admin$candidatures$gestes$fr gestes = Traductions$admin$candidatures$gestes$fr.internal(_root);
 	late final Traductions$admin$candidatures$consequences$fr consequences = Traductions$admin$candidatures$consequences$fr.internal(_root);
 	late final Traductions$admin$candidatures$feuille$fr feuille = Traductions$admin$candidatures$feuille$fr.internal(_root);
+	late final Traductions$admin$candidatures$dispense$fr dispense = Traductions$admin$candidatures$dispense$fr.internal(_root);
 	late final Traductions$admin$candidatures$complement$fr complement = Traductions$admin$candidatures$complement$fr.internal(_root);
 	late final Traductions$admin$candidatures$retrait$fr retrait = Traductions$admin$candidatures$retrait$fr.internal(_root);
 	late final Traductions$admin$candidatures$pause$fr pause = Traductions$admin$candidatures$pause$fr.internal(_root);
@@ -30269,6 +30270,9 @@ class Traductions$admin$candidatures$gestes$fr {
 
 	/// fr: 'Choisir le responsable'
 	String get responsable => 'Choisir le responsable';
+
+	/// fr: 'Dispenser d'entretien'
+	String get dispenserEntretien => 'Dispenser d\'entretien';
 }
 
 // Path: admin.candidatures.consequences
@@ -30317,6 +30321,9 @@ class Traductions$admin$candidatures$consequences$fr {
 
 	/// fr: 'Le responsable suit cette candidature.'
 	String get responsable => 'Le responsable suit cette candidature.';
+
+	/// fr: 'La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne.'
+	String get dispenserEntretien => 'La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n\'est envoyé à la personne.';
 }
 
 // Path: admin.candidatures.feuille
@@ -30353,6 +30360,33 @@ class Traductions$admin$candidatures$feuille$fr {
 
 	/// fr: 'Actualiser la candidature'
 	String get actualiser => 'Actualiser la candidature';
+}
+
+// Path: admin.candidatures.dispense
+class Traductions$admin$candidatures$dispense$fr {
+	Traductions$admin$candidatures$dispense$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qui dispensez-vous ?'
+	String get categorie => 'Qui dispensez-vous ?';
+
+	/// fr: 'Un fondateur'
+	String get fondateur => 'Un fondateur';
+
+	/// fr: 'Pour un fondateur de l'académie, dont l'entretien n'a pas lieu d'être.'
+	String get fondateurAide => 'Pour un fondateur de l\'académie, dont l\'entretien n\'a pas lieu d\'être.';
+
+	/// fr: 'Une autre personne'
+	String get autre => 'Une autre personne';
+
+	/// fr: 'Pour toute autre personne : le motif écrit dit pourquoi.'
+	String get autreAide => 'Pour toute autre personne : le motif écrit dit pourquoi.';
+
+	/// fr: 'Choisissez qui vous dispensez.'
+	String get categorieManquante => 'Choisissez qui vous dispensez.';
 }
 
 // Path: admin.candidatures.complement
@@ -30640,6 +30674,9 @@ class Traductions$admin$candidatures$retours$fr {
 
 	/// fr: 'Le responsable est enregistré.'
 	String get responsable => 'Le responsable est enregistré.';
+
+	/// fr: 'Entretien dispensé. La décision vous attend.'
+	String get dispenserEntretien => 'Entretien dispensé. La décision vous attend.';
 
 	/// fr: 'Ce geste avait déjà été fait : rien n'a été écrit une seconde fois.'
 	String get rejoue => 'Ce geste avait déjà été fait : rien n\'a été écrit une seconde fois.';
@@ -48068,8 +48105,14 @@ class Traductions$admin$candidatures$lot$feuille$fr {
 	/// fr: 'Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.'
 	String get effetRefuser => 'Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.';
 
+	/// fr: 'Les candidatures concernées passent à la décision, comme après un entretien tenu et favorable. Les entretiens déjà planifiés sont annulés. Aucun message n'est envoyé.'
+	String get effetDispenser => 'Les candidatures concernées passent à la décision, comme après un entretien tenu et favorable. Les entretiens déjà planifiés sont annulés. Aucun message n\'est envoyé.';
+
 	/// fr: 'Le même motif et le même message valent pour toutes les candidatures concernées.'
 	String get motifCommun => 'Le même motif et le même message valent pour toutes les candidatures concernées.';
+
+	/// fr: 'Le même motif et la même catégorie valent pour toutes les candidatures concernées.'
+	String get motifCommunDispense => 'Le même motif et la même catégorie valent pour toutes les candidatures concernées.';
 
 	/// fr: 'Nombre de candidatures concernées'
 	String get nombre => 'Nombre de candidatures concernées';
@@ -57768,7 +57811,9 @@ extension on Traductions {
 			'admin.candidatures.lot.feuille.effetPause' => 'Les candidatures concernées n\'avancent plus tant que la pause n\'est pas levée.',
 			'admin.candidatures.lot.feuille.effetLever' => 'Les candidatures concernées reprennent là où elles s\'étaient arrêtées.',
 			'admin.candidatures.lot.feuille.effetRefuser' => 'Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.',
+			'admin.candidatures.lot.feuille.effetDispenser' => 'Les candidatures concernées passent à la décision, comme après un entretien tenu et favorable. Les entretiens déjà planifiés sont annulés. Aucun message n\'est envoyé.',
 			'admin.candidatures.lot.feuille.motifCommun' => 'Le même motif et le même message valent pour toutes les candidatures concernées.',
+			'admin.candidatures.lot.feuille.motifCommunDispense' => 'Le même motif et la même catégorie valent pour toutes les candidatures concernées.',
 			'admin.candidatures.lot.feuille.nombre' => 'Nombre de candidatures concernées',
 			'admin.candidatures.lot.feuille.nombreAide' => ({required Object n}) => 'Saisissez ${n} pour confirmer.',
 			'admin.candidatures.lot.feuille.nombreFaux' => ({required Object n}) => 'Ce n\'est pas le bon nombre. Saisissez ${n}.',
@@ -58074,6 +58119,7 @@ extension on Traductions {
 			'admin.candidatures.gestes.retrait' => 'Enregistrer un retrait demandé',
 			'admin.candidatures.gestes.rouvrir' => 'Rouvrir la candidature',
 			'admin.candidatures.gestes.responsable' => 'Choisir le responsable',
+			'admin.candidatures.gestes.dispenserEntretien' => 'Dispenser d\'entretien',
 			'admin.candidatures.consequences.accueillir' => 'Son compte d\'enseignant est activé et son espace s\'ouvre. La personne n\'enseigne qu\'une fois affectée à une classe.',
 			'admin.candidatures.consequences.admettre' => 'La candidature passe en Salle de vérification et d\'entretien.',
 			'admin.candidatures.consequences.confirmerMoyen' => 'Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.',
@@ -58087,6 +58133,7 @@ extension on Traductions {
 			'admin.candidatures.consequences.retrait' => 'La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.',
 			'admin.candidatures.consequences.rouvrir' => 'La candidature reprend son étape d\'origine, si les contrôles du serveur le permettent.',
 			'admin.candidatures.consequences.responsable' => 'Le responsable suit cette candidature.',
+			'admin.candidatures.consequences.dispenserEntretien' => 'La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n\'est envoyé à la personne.',
 			'admin.candidatures.feuille.motif' => 'Motif interne',
 			'admin.candidatures.feuille.motifSeul' => 'La personne ne le lira pas.',
 			'admin.candidatures.feuille.motifAide' => 'La personne ne le lira pas. Elle lira seulement le message choisi.',
@@ -58096,6 +58143,12 @@ extension on Traductions {
 			'admin.candidatures.feuille.modeleManquant' => 'Choisissez le message que la personne lira.',
 			'admin.candidatures.feuille.enCours' => 'Envoi au serveur en cours',
 			'admin.candidatures.feuille.actualiser' => 'Actualiser la candidature',
+			'admin.candidatures.dispense.categorie' => 'Qui dispensez-vous ?',
+			'admin.candidatures.dispense.fondateur' => 'Un fondateur',
+			'admin.candidatures.dispense.fondateurAide' => 'Pour un fondateur de l\'académie, dont l\'entretien n\'a pas lieu d\'être.',
+			'admin.candidatures.dispense.autre' => 'Une autre personne',
+			'admin.candidatures.dispense.autreAide' => 'Pour toute autre personne : le motif écrit dit pourquoi.',
+			'admin.candidatures.dispense.categorieManquante' => 'Choisissez qui vous dispensez.',
 			'admin.candidatures.complement.elements' => 'Ce qui manque',
 			'admin.candidatures.complement.aide' => 'La personne lira cette liste.',
 			'admin.candidatures.complement.manquant' => 'Choisissez au moins un élément.',
@@ -58121,6 +58174,8 @@ extension on Traductions {
 			'admin.candidatures.moyens.mobile' => ({required Object nom}) => 'Monnaie mobile : ${nom}',
 			'admin.candidatures.moyens.mobileSansNom' => 'Monnaie mobile',
 			'admin.candidatures.moyens.aucunDeclare' => 'La personne n\'a déclaré aucun moyen de versement.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.responsables.choisir' => 'Choisissez le responsable de cette candidature.',
 			'admin.candidatures.responsables.aucun' => 'Aucun responsable',
 			'admin.candidatures.responsables.lectureEchec' => 'La liste des responsables n\'a pas pu être lue.',
@@ -58131,8 +58186,6 @@ extension on Traductions {
 			'admin.candidatures.modeles.pauseAttenteBesoin' => 'En attente d\'un besoin',
 			'admin.candidatures.modeles.pauseAttenteInformations' => 'En attente d\'informations',
 			'admin.candidatures.modeles.pauseDemandeCandidat' => 'À la demande de la personne',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.modeles.pauseGeneral' => 'Pause générale',
 			'admin.candidatures.modeles.autre' => 'Autre message',
 			'admin.candidatures.erreurs.controles' => ({required Object controles}) => 'Rien n\'a été fait. Il manque : ${controles}. Vérifiez ces points, puis réessayez.',
@@ -58171,6 +58224,7 @@ extension on Traductions {
 			'admin.candidatures.retours.retrait' => 'Le retrait est enregistré.',
 			'admin.candidatures.retours.rouvrir' => 'La candidature est rouverte.',
 			'admin.candidatures.retours.responsable' => 'Le responsable est enregistré.',
+			'admin.candidatures.retours.dispenserEntretien' => 'Entretien dispensé. La décision vous attend.',
 			'admin.candidatures.retours.rejoue' => 'Ce geste avait déjà été fait : rien n\'a été écrit une seconde fois.',
 			'admin.candidatures.genres.male' => 'Homme',
 			'admin.candidatures.genres.female' => 'Femme',
@@ -58634,6 +58688,8 @@ extension on Traductions {
 			'admin.groupes.c1.refusInconnu' => 'le serveur a refusé cette action sans en dire la raison. Vérifiez vos choix, puis pressez de nouveau.',
 			'admin.groupes.c1.connexion' => 'il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Pressez de nouveau dans un instant.',
 			'admin.groupes.detailTitre' => ({required Object libelle}) => 'Classe ${libelle}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.detailMembres' => 'Membres',
 			'admin.groupes.detailAucunMembre' => 'Aucun élève dans cette classe pour l\'instant.',
 			'admin.groupes.actionAjouter' => 'Ajouter un élève',
@@ -58645,8 +58701,6 @@ extension on Traductions {
 			'admin.groupes.nomClasse.aide' => 'Ce nom s\'affiche aux familles, aux élèves et à l\'enseignant de la classe.',
 			'admin.groupes.nomClasse.manque' => 'Il manque le nom de la classe : écrivez-le dans le champ.',
 			'admin.groupes.nomClasse.erreur' => ({required Object message}) => 'Le nom n\'a pas été changé : ${message} Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.nomClasse.erreurHoraire' => 'Le nom n\'a pas été changé : la liste des classes n\'était plus à jour. Fermez cette feuille, puis recommencez.',
 			'admin.groupes.nomClasse.dejaPris' => 'Une autre classe porte déjà ce nom : choisissez-en un autre.',
 			'admin.groupes.nomClasse.enregistrer' => 'Enregistrer',
@@ -59148,6 +59202,8 @@ extension on Traductions {
 			'admin.planClasse.sansEtape.erreurLecture' => 'La liste des élèves sans étape n\'a pas pu être lue. Réessayez dans un instant.',
 			'admin.planClasse.sansEtape.relire' => 'Relire la liste',
 			'admin.planClasse.sansEtape.toutPlace' => 'Chaque élève membre d\'une classe a son étape.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planClasse.brouillon.incomplet' => ({required Object etape}) => 'Ce brouillon ne peut pas être publié : l\'étape « ${etape} » n\'a pas encore tous ses objectifs et toutes ses durées. Complétez-la, ou repartez des bases.',
 			'admin.planClasse.brouillon.incoherent' => ({required Object niveau}) => 'Ce brouillon ne peut pas être publié : pour ${niveau}, les durées des étapes ne font pas la durée du niveau. Corrigez-les, ou repartez des bases.',
 			'admin.planClasse.brouillon.sansBases' => 'Ce brouillon ne peut pas être publié : il n\'a pas les quatre étapes des bases. Repartez des bases.',
@@ -59159,8 +59215,6 @@ extension on Traductions {
 			'admin.planClasse.brouillon.repartirErreur' => ({required Object message}) => 'La nouvelle version n\'est pas confirmée : ${message}',
 			'admin.qualite.titre' => 'Qualité',
 			'admin.qualite.intro' => 'Les anomalies pédagogiques détectées : rapports manquants, blocages sans suivi, évaluations en retard.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.qualite.erreur' => 'Les anomalies n\'ont pas pu être lues. Réessayez dans un instant.',
 			'admin.qualite.aucune' => 'Aucune anomalie détectée',
 			'admin.qualite.aucuneDetail' => 'Tout est à jour : rapports rédigés, blocages suivis, évaluations à l\'heure.',
@@ -59662,6 +59716,8 @@ extension on Traductions {
 			'admin.suppressions.horsLigne' => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.',
 			'admin.suppressions.retraits.sections' => 'Afficher',
 			'admin.suppressions.retraits.sectionDemandes' => 'Demandes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.suppressions.retraits.sectionSupprimes' => 'Comptes supprimés',
 			'admin.suppressions.retraits.contexte' => 'Les comptes supprimés par la direction ou par un tuteur. Pendant le délai de conservation, un compte peut être restauré. La restauration rouvre le compte, sans remettre l\'élève dans ses classes.',
 			'admin.suppressions.retraits.filtres.enCours' => 'En cours',
@@ -59673,8 +59729,6 @@ extension on Traductions {
 			'admin.suppressions.retraits.vide.restaures' => 'Aucun compte restauré.',
 			'admin.suppressions.retraits.vide.tous' => 'Aucun compte supprimé.',
 			'admin.suppressions.retraits.erreur' => 'Les comptes supprimés n\'ont pas pu être chargés. Réessayez.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.suppressions.retraits.sansDonnees' => 'Les comptes supprimés n\'ont pas pu être chargés',
 			'admin.suppressions.retraits.nomEfface' => 'Nom effacé',
 			'admin.suppressions.retraits.etat.supprime' => 'Supprimé',
@@ -60176,6 +60230,8 @@ extension on Traductions {
 			'admin.finance.paieWise.titulaire' => 'Titulaire du compte',
 			'admin.finance.paieWise.compteDeLEnseignant' => 'Au nom de l\'enseignant',
 			'admin.finance.paieWise.compteTiers' => ({required Object lien}) => 'Au nom d\'un tiers : ${lien}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.paieWise.accordLe' => ({required Object date}) => 'Accord de l\'enseignant donné le ${date}',
 			'admin.finance.paieWise.numero' => 'Numéro de compte',
 			'admin.finance.paieWise.pays' => 'Pays',
@@ -60187,8 +60243,6 @@ extension on Traductions {
 			'admin.finance.paieWise.lien.parent' => 'parent',
 			'admin.finance.paieWise.lien.conjoint' => 'conjoint',
 			'admin.finance.paieWise.lien.frereSoeur' => 'frère ou sœur',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.paieWise.lien.autre' => 'autre personne',
 			'admin.finance.paieWise.titre' => 'Paie des enseignants par Wise',
 			'admin.finance.paieWise.phrase' => 'Préparez le fichier de paie du mois, importez-le dans Wise (paiements groupés), puis notez chaque versement fait.',
@@ -60690,6 +60744,8 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.recherche' => 'Rechercher dans le catalogue',
 			'admin.bibliotheque.catalogue.segments.tous' => 'Tous',
 			'admin.bibliotheque.catalogue.segments.brouillons' => 'Brouillons',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.segments.aVerifier' => 'À vérifier',
 			'admin.bibliotheque.catalogue.segments.publies' => 'Publiés',
 			'admin.bibliotheque.catalogue.segments.retires' => 'Retirés',
@@ -60701,8 +60757,6 @@ extension on Traductions {
 			'admin.bibliotheque.catalogue.colonnes.support' => 'Document',
 			'admin.bibliotheque.catalogue.colonnes.type' => 'Type',
 			'admin.bibliotheque.catalogue.colonnes.langue' => 'Langue',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.colonnes.categorie' => 'Catégorie',
 			'admin.bibliotheque.catalogue.colonnes.version' => 'Version',
 			'admin.bibliotheque.catalogue.colonnes.publication' => 'Publication',
@@ -61204,6 +61258,8 @@ extension on Traductions {
 			'parcours.offreRecurrence' => ({required num seances, required Object duree}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(seances, one: '${seances} séance par semaine, ${duree} min', other: '${seances} séances par semaine, ${duree} min', ), 
 			'parcours.offreRecurrencePause' => ({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(seances, one: '${seances} séance par semaine, ${duree} min dont ${pause} min de pause', other: '${seances} séances par semaine, ${duree} min dont ${pause} min de pause', ), 
 			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(minimum, one: 'Une classe démarre à partir de ${minimum} élève. Nous vous préviendrons dès qu\'elle est confirmée.', other: 'Une classe démarre à partir de ${minimum} élèves. Nous vous préviendrons dès qu\'elle est confirmée.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'avatar.sansPhoto' => 'Pas encore de photo',
 			'nav.eleve.accueil' => 'Accueil',
 			'nav.eleve.maClasse' => 'Ma classe',
@@ -61215,8 +61271,6 @@ extension on Traductions {
 			'nav.eleve.apprendre' => 'Apprendre',
 			'nav.eleve.profil' => 'Profil',
 			'nav.tuteur.accueil' => 'Accueil',
-			_ => null,
-		} ?? switch (path) {
 			'nav.tuteur.foyer' => 'Foyer',
 			'nav.tuteur.disponibilites' => 'Disponibilités',
 			'nav.tuteur.reglages' => 'Réglages',
@@ -61718,6 +61772,8 @@ extension on Traductions {
 			'notifications.evenements.seanceTermineeTravail' => ({required Object travail}) => 'Travail à préparer : ${travail}',
 			'notifications.evenements.seanceTermineeAucunTravail' => 'Aucun travail à préparer.',
 			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} élève présent sur ${total}.', other: '${n} élèves présents sur ${total}.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.seanceTermineeCahierAttend' => 'Le cahier de transmission attend vos informations.',
 			'notifications.evenements.seanceTermineeCahierDepose' => 'Cahier déposé, merci.',
 			'notifications.evenements.seanceTermineePhrases' => ({required Object premiere, required Object suite}) => '${premiere} ${suite}',
@@ -61729,8 +61785,6 @@ extension on Traductions {
 			'notifications.filtreVidePhrase' => 'Choisissez « Toutes » pour revoir l\'ensemble de vos notifications.',
 			'notifications.voirToutes' => 'Voir toutes les notifications',
 			'notifications.sectionAFaire' => 'À faire',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.sectionNouvelles' => 'Nouvelles',
 			'notifications.sectionPlusAnciennes' => 'Plus anciennes',
 			'notifications.voirPlus' => 'Voir plus',
@@ -62232,6 +62286,8 @@ extension on Traductions {
 			'enseignant.bienvenue.horsLigne' => 'Vos créneaux pourront être enregistrés quand la connexion reviendra.',
 			'enseignant.bienvenue.dossierIncomplet' => 'Votre dossier n\'est pas encore validé.',
 			'enseignant.bienvenue.dossierIncompletDetail' => 'Le portail d\'attente vous dit ce qu\'il reste à fournir.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.versAttente' => 'Voir mon dossier',
 			'enseignant.bienvenue.erreur' => 'Votre profil n\'a pas pu être lu. Réessayez dans un instant.',
 			'enseignant.photo.titre' => 'Photo professionnelle',
@@ -62243,8 +62299,6 @@ extension on Traductions {
 			'enseignant.photo.utiliser' => 'Utiliser cette photo',
 			'enseignant.photo.remplacer' => 'Remplacer la photo',
 			'enseignant.photo.autre' => 'Choisir une autre photo',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
@@ -62746,6 +62800,8 @@ extension on Traductions {
 			'enseignant.revenus.taux' => 'Taux horaire effectif',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} par heure',
 			'enseignant.revenus.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.typeEnfants' => 'Enfants',
 			'enseignant.revenus.typeDebutants' => 'Enfants débutants',
 			'enseignant.revenus.typeAdultes' => 'Adultes',
@@ -62757,8 +62813,6 @@ extension on Traductions {
 			'enseignant.revenus.seanceDureeNonPrecisee' => 'Voir le relevé de l\'académie',
 			'enseignant.revenus.seanceConnecte' => 'Connecté pendant la fenêtre de paie',
 			'enseignant.revenus.present' => 'Présent',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.absent' => 'Absent',
 			'enseignant.revenus.presentPartiel' => 'Présent en partie',
 			'enseignant.revenus.partielleNote' => 'Une présence en partie est payée comme une présence.',
@@ -63260,6 +63314,8 @@ extension on Traductions {
 			'tc.outils.marquer.aide' => 'Choisissez ce que ce passage demande.',
 			'tc.outils.marquer.retirer' => 'Retirer le marqueur',
 			'tc.outils.revision.titre' => 'À préparer',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.revision.aide' => 'Le passage sélectionné devient un travail à préparer.',
 			'tc.outils.revision.groupeEntier' => 'Toute la classe',
 			'tc.outils.revision.consigne' => 'Consigne courte (facultatif)',
@@ -63271,8 +63327,6 @@ extension on Traductions {
 			'tc.outils.focus.quitter' => 'Quitter le focus',
 			'tc.outils.annotation.ancrageDegrade' => 'Ce passage n\'a pas de repère de texte : l\'annotation suivra la page, pas les mots.',
 			'tc.outils.annotation.horsPage' => 'Annotations masquées : leur passage n\'est pas à l\'écran.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.annotation.aucuneSelection' => 'Sélectionnez d\'abord un passage.',
 			'tc.classe.entete.titreEnseignant.sayyid' => 'Sayyid',
 			'tc.classe.entete.titreEnseignant.sayyida' => 'Sayyida',
@@ -63774,6 +63828,8 @@ extension on Traductions {
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} vous invite à rejoindre son forfait famille.',
 			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'Rejoindre le forfait famille ${dePrenom}',
 			'adulte.acceptation.faisonsTitre' => 'Ce que nous faisons',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} vous invite dans son forfait famille. Si vous acceptez, votre compte est rattaché à son foyer. Votre compte reste le vôtre. Rien n\'est fusionné.',
 			'adulte.acceptation.pourquoiTitre' => 'Pourquoi',
 			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} gère le foyer et paie pour ses membres. Pour payer vos cours, elle doit voir votre solde.',
@@ -63785,8 +63841,6 @@ extension on Traductions {
 			'adulte.acceptation.verraPas' => 'Votre classe. Votre niveau. Vos séances et votre présence. Vos progrès. Vos messages. Vos notifications. Vos moyens de paiement personnels. Vos pièces d\'identité.',
 			'adulte.acceptation.vousTitre' => 'Ce que vous ne verrez pas',
 			'adulte.acceptation.vous' => ({required Object dePrenom}) => 'Les cours, les progrès et les messages ${dePrenom} et des enfants du foyer. Vous ne pourrez pas ajouter d\'enfant, inviter quelqu\'un ni modifier le foyer.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.autresTitre' => 'Qui d\'autre voit',
 			'adulte.acceptation.autres' => 'Votre enseignant ne voit rien de votre foyer. L\'équipe de l\'académie voit le rattachement, pour le gérer et, si nécessaire, le valider.',
 			'adulte.acceptation.dureeTitre' => 'Combien de temps',
@@ -64288,6 +64342,8 @@ extension on Traductions {
 			'argent.periode.aucune' => 'Aucune période financée',
 			'argent.allocation.credite' => 'Crédité',
 			'argent.moyen.webStripe' => 'Carte bancaire',
+			_ => null,
+		} ?? switch (path) {
 			'argent.moyen.webStripeDetail' => 'Paiement par le web. Aucun débit avant votre confirmation.',
 			'argent.soldes.total' => 'Total des soldes (lecture)',
 			'argent.soldes.totalDetail' => 'Une lecture : chaque solde reste celui de son profil.',
@@ -64299,8 +64355,6 @@ extension on Traductions {
 			'argent.acces.enfantMessage' => 'Ton tuteur peut gérer l\'accès.',
 			'argent.acces.regulariserTitre' => 'Accès à régulariser',
 			'argent.acces.regulariserManque' => ({required Object montant, required Object mois}) => 'Il manque ${montant} pour financer ${mois}.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.acces.regulariserManqueNouvellePeriode' => ({required Object montant}) => 'Il manque ${montant} pour financer la nouvelle période.',
 			'argent.acces.regulariserSansManque' => 'La nouvelle période n\'est pas encore financée.',
 			'argent.acces.placeConservee' => ({required Object date}) => 'Place conservée jusqu\'au ${date}.',
@@ -64802,6 +64856,8 @@ extension on Traductions {
 			'com.communaute.demo.choisir' => 'Choisissez une situation à essayer, vue par un enseignant.',
 			'com.communaute.demo.aujourdhui' => 'Aujourd\'hui, avec le raccourci',
 			'com.communaute.demo.nominal' => 'Six publications',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.publication' => 'Une publication ouverte',
 			'com.communaute.demo.vide' => 'Aucune publication',
 			'com.communaute.demo.lectureEchouee' => 'Lecture en échec',
@@ -64813,8 +64869,6 @@ extension on Traductions {
 			'com.communaute.demo.f.categoriePedagogie' => 'Pédagogie',
 			'com.communaute.demo.f.categorieRessources' => 'Ressources',
 			'com.communaute.demo.f.categorieGestion' => 'Gestion',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.f.fonctionSoi' => 'Enseignant, classe Al-Fatiha',
 			'com.communaute.demo.f.prenomSoi' => 'Ibrahim',
 			'com.communaute.demo.f.samira' => 'Samira Belkacem',
@@ -65316,6 +65370,8 @@ extension on Traductions {
 			'comptable.nav.paiements' => 'Paiements',
 			'comptable.nav.tresorerie' => 'Trésorerie',
 			'comptable.nav.compte' => 'Compte',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.graphiques.masque' => 'Les montants sont masqués : le graphique ne se dessine pas. Affichez les montants pour le voir.',
 			'comptable.graphiques.voirValeurs' => 'Voir les valeurs',
 			'comptable.graphiques.masquerValeurs' => 'Masquer les valeurs',
@@ -65327,8 +65383,6 @@ extension on Traductions {
 			'comptable.graphiques.fluxResume' => ({required Object debut, required Object fin}) => 'Encaissements et décaissements du ${debut} au ${fin}.',
 			'comptable.graphiques.evolutionTitre' => 'Évolution sur 6 mois',
 			'comptable.graphiques.evolutionResume' => ({required Object debut, required Object fin}) => 'Trésorerie détenue de ${debut} à ${fin}.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.graphiques.legendeEntrees' => 'Entrées',
 			'comptable.graphiques.legendeSorties' => 'Sorties',
 			'comptable.graphiques.legendeEncaissements' => 'Encaissements',
@@ -65830,6 +65884,8 @@ extension on Traductions {
 			'comptable.encaissements.rap.marquerDoublon' => 'Marquer comme doublon',
 			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'État rendu par la source : ${etat}',
 			'comptable.encaissements.rap.erreurEnvoi' => 'Nous ne savons pas si l\'opération a été prise en compte. Actualisez la liste avant de réessayer.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.actualiser' => 'Actualiser',
 			'comptable.encaissements.rap.journal' => 'Journal de la transaction',
 			'comptable.encaissements.rap.journalVide' => 'Aucune opération enregistrée pour cette transaction.',
@@ -65841,8 +65897,6 @@ extension on Traductions {
 			'comptable.encaissements.rap.approbationRequise' => 'Approbation requise par la politique',
 			'comptable.encaissements.rap.approbationNon' => 'Sans approbation selon la politique',
 			'comptable.encaissements.rap.politiqueNote' => 'Les règles de remboursement appartiennent à la politique Finance. Ici, on les applique ; on ne les réécrit pas.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.executer' => 'Exécuter le remboursement',
 			'comptable.encaissements.rap.executerLecteur' => ({required Object beneficiaire}) => 'Exécuter le remboursement de ${beneficiaire}',
 			'comptable.encaissements.rap.executerTitre' => 'Exécuter ce remboursement ?',
@@ -66344,6 +66398,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Obligation manuelle non approuvée',
 			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'Une obligation saisie à la main et pas encore approuvée.',
 			'comptable.direction.titre' => 'Réserve et délégation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.sousTitre' => 'La politique de la Réserve stratégique et ce que le Comptable peut exécuter seul.',
 			'comptable.direction.reserve' => 'Politique de la Réserve stratégique',
 			'comptable.direction.delegation' => 'Délégation financière',
@@ -66355,8 +66411,6 @@ extension on Traductions {
 			'comptable.demo.groupeComptable' => 'Coquille du Comptable',
 			'comptable.demo.groupeCompte' => 'Compte et bénéficiaire',
 			'comptable.demo.groupeDirection' => 'Direction',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiementsFamilles.titre' => 'Paiements des familles',
 			'comptable.paiementsFamilles.entree' => 'Paiements des familles',
 			'presentationTuteur.titre' => 'Demandes de présentation',
@@ -66858,6 +66912,8 @@ extension on Traductions {
 			'courriels.admin.ecrire.champ.categorie' => 'Choisissez une catégorie.',
 			'courriels.admin.ecrire.champ.sujet' => 'Donnez un sujet de 1 à 120 caractères.',
 			'courriels.admin.ecrire.champ.corps' => 'Écrivez un message de 1 à 5000 caractères.',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.ecrire.champ.destinataireExclu' => 'Cette personne ne peut pas recevoir cet e-mail : compte d\'enfant ou désinscription.',
 			'courriels.admin.ecrire.retour.misEnFile' => 'Envoi dans la minute. Suivez-le dans la liste des envois.',
 			'courriels.admin.ecrire.retour.voir' => 'Voir les envois',
@@ -66869,8 +66925,6 @@ extension on Traductions {
 			'courriels.admin.file.filtre.envoi' => 'En cours d\'envoi',
 			'courriels.admin.file.filtre.envoye' => 'Envoyés',
 			'courriels.admin.file.filtre.echec' => 'Non envoyés',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.filtre.annule' => 'Annulés',
 			'courriels.admin.file.statut.enAttente' => 'En file',
 			'courriels.admin.file.statut.envoi' => 'En cours d\'envoi',
@@ -67372,6 +67426,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.comptes.dejaConnuesAide' => 'Déjà enregistrées : rien ne change.',
 			'candidatsFlux.importFormulaires.comptes.ignorees' => 'Ignorées',
 			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'Lignes vides ou répétées.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'À corriger',
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'Lignes illisibles : elles ne sont pas importées.',
 			'candidatsFlux.importFormulaires.comptes.corrigees' => 'Corrigées sur place',
@@ -67383,8 +67439,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.comptes.attendus.autres.titre' => 'D\'autres nombres',
 			'candidatsFlux.importFormulaires.comptes.attendus.autres.description' => 'Vous connaissez le nombre de lignes ou de personnes de votre fichier. Saisissez-le : Rewayah signale tout écart.',
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.titre' => 'Aucun décompte à comparer',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.description' => 'Vous confirmez en vous fiant à l\'aperçu.',
 			'candidatsFlux.importFormulaires.comptes.attendus.lignes' => 'Lignes attendues',
 			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'Personnes attendues',
@@ -67886,6 +67940,8 @@ extension on Traductions {
 			'calendrier.dates.feuille.enregistrer' => 'Enregistrer',
 			'calendrier.dates.feuille.aucuneClasse' => 'Aucune classe à choisir pour le moment.',
 			'calendrier.dates.publication.titre' => 'Publier la fermeture',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.publication.phrase' => 'Pendant ces jours, aucune nouvelle séance n\'est créée et la date limite de l\'étape de chaque élève concerné recule d\'autant. Les séances qui n\'ont pas encore commencé ces jours-là sont mises de côté, sans être supprimées ; une séance déjà commencée continue. Retirer la fermeture avant son début rétablit les séances de côté, si l\'enseignant n\'a pas pris un autre cours à la même heure entre-temps. Une fois commencée, la fermeture ne peut plus être retirée ni raccourcie.',
 			'calendrier.dates.publication.confirmer' => 'Publier la fermeture',
 			'calendrier.dates.notification.conflit.generale' => 'Une séance n\'est plus sous une fermeture mais ne peut pas être rétablie : l\'enseignant a pris un autre cours à la même heure. Libérez-le, la séance sera rétablie la nuit suivante.',
@@ -67897,8 +67953,6 @@ extension on Traductions {
 			'calendrier.dates.notification.quandLocal' => ({required Object local, required Object mecque}) => '${local} (${mecque}, heure de La Mecque)',
 			'calendrier.dates.notification.quandMecque' => ({required Object jour, required Object heure}) => '${jour} à ${heure}, heure de La Mecque',
 			'calendrier.dates.notification.annoncee.une' => ({required Object du, required Object au, required Object quand}) => 'L\'académie est fermée du ${du} au ${au}. La séance du ${quand} n\'aura pas lieu.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.notification.annoncee.plusieurs' => ({required Object du, required Object au, required Object n, required Object quand}) => 'L\'académie est fermée du ${du} au ${au}. Séances qui n\'auront pas lieu : ${n}, dont celle du ${quand}.',
 			'calendrier.dates.notification.levee.une' => ({required Object quand}) => 'La fermeture de l\'académie est retirée. La séance du ${quand} est rétablie.',
 			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'La fermeture de l\'académie est retirée. Séances rétablies : ${n}, dont celle du ${quand}.',

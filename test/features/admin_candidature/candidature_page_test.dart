@@ -198,6 +198,21 @@ Future<void> _tapper(WidgetTester tester, Finder f) async {
   await laisser(tester);
 }
 
+/// Les mots du menu « ... » du dossier, ouvert.
+Future<List<String>> _menuDossier(WidgetTester tester) async {
+  await _tapper(tester, find.byKey(BarreDecisionDossier.cleMenu));
+  return <String>[
+    for (final Element e
+        in find
+            .descendant(
+              of: find.byType(PopupMenuItem<int>),
+              matching: find.byType(Text),
+            )
+            .evaluate())
+      (e.widget as Text).data!,
+  ];
+}
+
 /// La prochaine action du serveur, ou qu'elle soit dans le dossier en trois
 /// etages (BE-DOSSIER) : la decision de la barre, ou le lien de la rubrique.
 const List<String> _clesPrincipal = <String>[
@@ -1108,6 +1123,7 @@ void main() {
         // Capture de production CAND-00068 : « Clore le complement » etait
         // propose alors qu'aucune demande n'etait en cours.
         expect(autres, <String>[
+          t.admin.candidatures.gestes.dispenserEntretien,
           t.admin.candidatures.gestes.mettreEnPause,
           t.admin.candidatures.gestes.retrait,
         ]);
@@ -1131,6 +1147,7 @@ void main() {
         final List<String> autres = await menu(tester);
         expect(autres, <String>[
           t.admin.candidatures.gestes.cloreComplement,
+          t.admin.candidatures.gestes.dispenserEntretien,
           t.admin.candidatures.gestes.mettreEnPause,
           t.admin.candidatures.gestes.retrait,
         ]);
@@ -1550,6 +1567,121 @@ void main() {
         findsOneWidget,
       );
     });
+
+    // DISPENSE-ECRAN (BE-1g, pilote 16/11/2026) : « Dispenser d'entretien ».
+    for (final (String nom, EtatCandidature etat, bool propose) cas
+        in <(String, EtatCandidature, bool)>[
+          ('entretien a planifier', EtatCandidature.entretienAPlanifier, true),
+          ('entretien planifie', EtatCandidature.entretienPlanifie, true),
+          ('decision en attente', EtatCandidature.decisionEnAttente, false),
+        ]) {
+      testWidgets(
+        'dispenser d\'entretien : ${cas.$1}, ${cas.$3 ? 'propose' : 'pas propose'}',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            _port(
+              detail: detailTest(
+                etape: EtapeCandidature.verifications,
+                etat: cas.$2,
+                paiement: EtatVersement.compatible,
+              ),
+            ),
+          );
+          final List<String> autres = await _menuDossier(tester);
+          expect(
+            autres.contains(t.admin.candidatures.gestes.dispenserEntretien),
+            cas.$3,
+          );
+        },
+      );
+    }
+
+    testWidgets('dispenser d\'entretien : pas propose en Salle d\'examen', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _port(detail: detailTest(paiement: EtatVersement.compatible)),
+      );
+      final List<String> autres = await _menuDossier(tester);
+      expect(
+        autres.contains(t.admin.candidatures.gestes.dispenserEntretien),
+        isFalse,
+      );
+    });
+
+    testWidgets(
+      'dispenser d\'entretien : la categorie et un motif, puis le geste part',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          detail: detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienAPlanifier,
+            paiement: EtatVersement.compatible,
+          ),
+        );
+        await _monter(tester, port);
+        await _geste(tester, GesteCandidature.dispenserEntretien);
+        // La consequence se dit avant le choix (K-58).
+        expect(
+          find.text(t.admin.candidatures.consequences.dispenserEntretien),
+          findsOneWidget,
+        );
+        // Rien ne part sans categorie ni motif ; chaque manque se dit.
+        await _valider(tester);
+        expect(port.appelsGeste, isEmpty);
+        expect(
+          find.text(t.admin.candidatures.dispense.categorieManquante),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.admin.candidatures.feuille.motifManquant),
+          findsOneWidget,
+        );
+        await _tapper(
+          tester,
+          find.byKey(const ValueKey<String>('dispense-fondateur')),
+        );
+        await _valider(tester);
+        expect(port.appelsGeste, isEmpty);
+        await _saisirMotif(tester, 'Fondateur de l\'academie.');
+        await _valider(tester);
+        final DemandeGeste d = port.appelsGeste.single.demande;
+        expect(d.geste, GesteCandidature.dispenserEntretien);
+        expect(d.categorieDispense, CategorieDispense.fondateur);
+        expect(d.motif, 'Fondateur de l\'academie.');
+        expect(
+          find.text(t.admin.candidatures.retours.dispenserEntretien),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'dispenser d\'entretien : l\'autre categorie part telle quelle',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          detail: detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienPlanifie,
+            paiement: EtatVersement.compatible,
+          ),
+        );
+        await _monter(tester, port);
+        await _geste(tester, GesteCandidature.dispenserEntretien);
+        await _tapper(
+          tester,
+          find.byKey(const ValueKey<String>('dispense-autre')),
+        );
+        await _saisirMotif(tester, 'Ancien enseignant de l\'academie.');
+        await _valider(tester);
+        expect(
+          port.appelsGeste.single.demande.categorieDispense,
+          CategorieDispense.autre,
+        );
+      },
+    );
 
     testWidgets(
       'mettre en pause : un message, un motif, une reprise facultative',

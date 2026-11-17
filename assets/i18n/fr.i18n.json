@@ -4191,7 +4191,9 @@
           "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
           "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
           "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
+          "effetDispenser": "Les candidatures concernées passent à la décision, comme après un entretien tenu et favorable. Les entretiens déjà planifiés sont annulés. Aucun message n'est envoyé.",
           "motifCommun": "Le même motif et le même message valent pour toutes les candidatures concernées.",
+          "motifCommunDispense": "Le même motif et la même catégorie valent pour toutes les candidatures concernées.",
           "nombre": "Nombre de candidatures concernées",
           "nombreAide": "Saisissez {n} pour confirmer.",
           "nombreFaux": "Ce n'est pas le bon nombre. Saisissez {n}.",
@@ -4586,7 +4588,8 @@
         "refuser": "Refuser la candidature",
         "retrait": "Enregistrer un retrait demandé",
         "rouvrir": "Rouvrir la candidature",
-        "responsable": "Choisir le responsable"
+        "responsable": "Choisir le responsable",
+        "dispenserEntretien": "Dispenser d'entretien"
       },
       "consequences": {
         "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
@@ -4601,7 +4604,8 @@
         "refuser": "La candidature est fermée. Vous pourrez la rouvrir.",
         "retrait": "La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.",
         "rouvrir": "La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.",
-        "responsable": "Le responsable suit cette candidature."
+        "responsable": "Le responsable suit cette candidature.",
+        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne."
       },
       "feuille": {
         "motif": "Motif interne",
@@ -4613,6 +4617,14 @@
         "modeleManquant": "Choisissez le message que la personne lira.",
         "enCours": "Envoi au serveur en cours",
         "actualiser": "Actualiser la candidature"
+      },
+      "dispense": {
+        "categorie": "Qui dispensez-vous\u00a0?",
+        "fondateur": "Un fondateur",
+        "fondateurAide": "Pour un fondateur de l'académie, dont l'entretien n'a pas lieu d'être.",
+        "autre": "Une autre personne",
+        "autreAide": "Pour toute autre personne\u00a0: le motif écrit dit pourquoi.",
+        "categorieManquante": "Choisissez qui vous dispensez."
       },
       "complement": {
         "elements": "Ce qui manque",
@@ -4704,6 +4716,7 @@
         "retrait": "Le retrait est enregistré.",
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
+        "dispenserEntretien": "Entretien dispensé. La décision vous attend.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
       "genres": {"male": "Homme", "female": "Femme"},
