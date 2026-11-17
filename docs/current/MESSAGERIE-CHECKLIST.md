@@ -1,6 +1,6 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : mardi 17/11/2026, 10 h 10 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : mardi 17/11/2026, 10 h 55 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
@@ -173,8 +173,11 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
 - [x] **Migration `com_compte_officiel` installée** (09 h 54 UTC, enregistrée `20261117095418`) : chaque participant
   porte `officiel` et `compte_officiel` (code du compte, `praxis` aujourd'hui). Vérifiée : attributs et droits
   inchangés. Journaux depuis : 41 appels de messagerie, tous 200 ou 204, aucune erreur Postgres.
-- [ ] **#618 image de Praxis** : l'image fournie par le directeur, réduite à 256 px sans retouche, affichée seulement
-  pour le compte `praxis` ; CI en cours. **#616** garde le PNG plein format dans le dépôt.
+- [x] **#618 image de Praxis fusionnée** (`d70c99a3`) et **déployée** (run 1409 vert, 10 h 38 UTC) : l'image fournie
+  par le directeur, réduite à 256 px sans retouche (14 Ko), affichée seulement pour le compte `praxis` ; captures
+  relues par le pilote (lisible à 24 pt, la toque se lit, les yeux sont petits). **Pas vue par vous.**
+- [x] **#616 fusionnée** : le PNG plein format est conservé dans `assets/brand/praxis/` (non embarqué dans l'appli).
+- [x] Agent `session_0163Kjry6zThXGyFJhJk9NHn` **archivé** à 10 h 28 : la messagerie n'a plus d'agent actif.
 - [ ] **Non fait** : bouton « Parler à l'équipe » (aucune action existante pour ouvrir une conversation avec l'équipe ;
   rien inventé).
 - Arrêté sur ordre direct du directeur : l'icône dessinée par l'agent (« je vais le faire moi-même »).
