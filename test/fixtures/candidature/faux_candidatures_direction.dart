@@ -232,6 +232,7 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
     'definirResponsable': true,
     'validerPiece': true,
     'dispenserEntretien': true,
+    'refaireEntretien': true,
     'agirEnLot': true,
   },
   listes: ListesGestes(

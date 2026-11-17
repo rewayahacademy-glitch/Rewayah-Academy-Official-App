@@ -251,6 +251,13 @@ DemandeGeste _demande(GesteCandidature g) {
         categorie: CategorieDispense.fondateur,
         motif: 'Fondateur de l\'academie.',
       );
+    case GesteCandidature.refaireEntretien:
+      return DemandeGeste.refaireEntretien(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Avis a refaire.',
+      );
   }
 }
 
@@ -337,6 +344,10 @@ void main() {
               'p_categorie': 'fondateur',
               'p_motif': 'Fondateur de l\'academie.',
             },
+          ),
+          GesteCandidature.refaireEntretien: (
+            'refaire_entretien',
+            <String, Object?>{'p_motif': 'Avis a refaire.'},
           ),
         };
 
