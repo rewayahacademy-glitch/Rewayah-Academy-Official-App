@@ -20,6 +20,7 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/equipe/modeles_equipe.dart';
 import '../../core/equipe/port_equipe.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
@@ -673,7 +674,12 @@ class _EtatAMotif extends ConsumerState<FeuilleAMotif>
       switch (widget.geste) {
         case GesteAMotif.retirer:
           await port.retirer(attribution: widget.cible, motif: motif, cle: c);
-          return t.admin.equipe.feuille.retirer.retiree(nom: widget.nom);
+          return t.admin.equipe.feuille.retirer.retiree(
+            deNom: deDevant(
+              widget.nom,
+              cle: 'admin.equipe.feuille.retirer.retiree',
+            ),
+          );
         case GesteAMotif.archiver:
           await port.archiverMission(id: widget.cible, motif: motif, cle: c);
           return t.admin.equipe.feuille.archiver.archivee;
@@ -689,7 +695,12 @@ class _EtatAMotif extends ConsumerState<FeuilleAMotif>
     final f = t.admin.equipe.feuille;
     final (String consequence, String bouton) = switch (widget.geste) {
       GesteAMotif.retirer => (
-        f.retirer.consequence(nom: widget.nom),
+        f.retirer.consequence(
+          deNom: deDevant(
+            widget.nom,
+            cle: 'admin.equipe.feuille.retirer.consequence',
+          ),
+        ),
         f.retirer.retirer,
       ),
       GesteAMotif.archiver => (f.archiver.consequence, f.archiver.archiver),

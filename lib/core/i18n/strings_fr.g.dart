@@ -31028,8 +31028,8 @@ class Traductions$admin$equipe$menu$fr {
 	/// fr: 'Révoquer'
 	String get revoquer => 'Révoquer';
 
-	/// fr: 'Actions de {nom}'
-	String plus({required Object nom}) => 'Actions de ${nom}';
+	/// fr: 'Actions pour {nom}'
+	String plus({required Object nom}) => 'Actions pour ${nom}';
 }
 
 // Path: admin.equipe.mission
@@ -31158,7 +31158,7 @@ class Traductions$admin$equipe$feuille$fr {
 	String get motif => 'Motif';
 
 	/// fr: 'Il est gardé au journal ; la personne ne le lit pas.'
-	String get motifAide => 'Il est gardé au journal ; la personne ne le lit pas.';
+	String get motifAide => 'Il est gardé au journal ; la personne ne le lit pas.';
 
 	/// fr: 'Écrivez un motif.'
 	String get motifManquant => 'Écrivez un motif.';
@@ -31183,10 +31183,10 @@ class Traductions$admin$equipe$refus$fr {
 	// Translations
 
 	/// fr: 'Ce compte ne peut pas recevoir de mission : il n'est pas actif, ou son rôle n'est pas admis.'
-	String get personneIndisponible => 'Ce compte ne peut pas recevoir de mission : il n\'est pas actif, ou son rôle n\'est pas admis.';
+	String get personneIndisponible => 'Ce compte ne peut pas recevoir de mission : il n\'est pas actif, ou son rôle n\'est pas admis.';
 
 	/// fr: 'Le genre de cette personne n'est pas connu : sa mission se porte de son côté. Complétez son compte d'abord.'
-	String get genreInconnu => 'Le genre de cette personne n\'est pas connu : sa mission se porte de son côté. Complétez son compte d\'abord.';
+	String get genreInconnu => 'Le genre de cette personne n\'est pas connu : sa mission se porte de son côté. Complétez son compte d\'abord.';
 
 	/// fr: 'Cette personne porte déjà cette mission. Retirez-la d'abord.'
 	String get attributionActive => 'Cette personne porte déjà cette mission. Retirez-la d\'abord.';
@@ -31195,7 +31195,7 @@ class Traductions$admin$equipe$refus$fr {
 	String get missionIndisponible => 'Cette mission n\'existe plus ou est archivée.';
 
 	/// fr: 'Les choix ne sont pas admis : vérifiez le nom, les dates et les limites.'
-	String get parametresInvalides => 'Les choix ne sont pas admis : vérifiez le nom, les dates et les limites.';
+	String get parametresInvalides => 'Les choix ne sont pas admis : vérifiez le nom, les dates et les limites.';
 
 	/// fr: 'Cette demande a déjà servi pour autre chose. Recommencez.'
 	String get cleDejaUtilisee => 'Cette demande a déjà servi pour autre chose. Recommencez.';
@@ -49377,7 +49377,7 @@ class Traductions$admin$equipe$feuille$accorder$fr {
 	String resume({required Object nom, required Object gestes, required Object perimetre, required Object duree}) => '${nom} pourra ${gestes}, sur ${perimetre}, ${duree}.';
 
 	/// fr: 'Choisissez une personne et une mission : une phrase dira ce qu'elle pourra faire.'
-	String get resumeVide => 'Choisissez une personne et une mission : une phrase dira ce qu\'elle pourra faire.';
+	String get resumeVide => 'Choisissez une personne et une mission : une phrase dira ce qu\'elle pourra faire.';
 
 	/// fr: 'Accorder la mission'
 	String get accorder => 'Accorder la mission';
@@ -49400,14 +49400,14 @@ class Traductions$admin$equipe$feuille$retirer$fr {
 	/// fr: 'Retirer la mission « {mission} » à {nom} ?'
 	String question({required Object mission, required Object nom}) => 'Retirer la mission « ${mission} » à ${nom} ?';
 
-	/// fr: 'Le compte de {nom} n'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.'
-	String consequence({required Object nom}) => 'Le compte de ${nom} n\'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.';
+	/// fr: 'Le compte {deNom} n'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.'
+	String consequence({required Object deNom}) => 'Le compte ${deNom} n\'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.';
 
 	/// fr: 'Retirer la mission'
 	String get retirer => 'Retirer la mission';
 
-	/// fr: 'Mission retirée. Le compte de {nom} n'a pas changé.'
-	String retiree({required Object nom}) => 'Mission retirée. Le compte de ${nom} n\'a pas changé.';
+	/// fr: 'Mission retirée. Le compte {deNom} n'a pas changé.'
+	String retiree({required Object deNom}) => 'Mission retirée. Le compte ${deNom} n\'a pas changé.';
 }
 
 // Path: admin.equipe.feuille.archiver
@@ -58985,7 +58985,7 @@ extension on Traductions {
 			'admin.equipe.menu.retirer' => 'Retirer la mission',
 			'admin.equipe.menu.archiver' => 'Archiver',
 			'admin.equipe.menu.revoquer' => 'Révoquer',
-			'admin.equipe.menu.plus' => ({required Object nom}) => 'Actions de ${nom}',
+			'admin.equipe.menu.plus' => ({required Object nom}) => 'Actions pour ${nom}',
 			'admin.equipe.mission.porteurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, zero: 'Personne ne la porte', one: 'Portée par ${n} personne', other: 'Portée par ${n} personnes', ), 
 			'admin.equipe.mission.archivee' => 'Archivée',
 			'admin.equipe.mission.gestes' => 'Ce qu\'elle permet',
@@ -59011,7 +59011,7 @@ extension on Traductions {
 			'admin.equipe.detail.retiree' => ({required Object motif}) => 'Retirée : ${motif}',
 			'admin.equipe.detail.sansNom' => 'Une personne de l\'équipe',
 			'admin.equipe.feuille.motif' => 'Motif',
-			'admin.equipe.feuille.motifAide' => 'Il est gardé au journal ; la personne ne le lit pas.',
+			'admin.equipe.feuille.motifAide' => 'Il est gardé au journal ; la personne ne le lit pas.',
 			'admin.equipe.feuille.motifManquant' => 'Écrivez un motif.',
 			'admin.equipe.feuille.annuler' => 'Annuler',
 			'admin.equipe.feuille.mission.titre' => 'Nouvelle mission',
@@ -59042,14 +59042,14 @@ extension on Traductions {
 			'admin.equipe.feuille.accorder.fin' => 'Fin (facultative)',
 			'admin.equipe.feuille.accorder.finAide' => 'Sans fin, la mission dure jusqu\'à son retrait.',
 			'admin.equipe.feuille.accorder.resume' => ({required Object nom, required Object gestes, required Object perimetre, required Object duree}) => '${nom} pourra ${gestes}, sur ${perimetre}, ${duree}.',
-			'admin.equipe.feuille.accorder.resumeVide' => 'Choisissez une personne et une mission : une phrase dira ce qu\'elle pourra faire.',
+			'admin.equipe.feuille.accorder.resumeVide' => 'Choisissez une personne et une mission : une phrase dira ce qu\'elle pourra faire.',
 			'admin.equipe.feuille.accorder.accorder' => 'Accorder la mission',
 			'admin.equipe.feuille.accorder.accordee' => 'Mission accordée.',
 			'admin.equipe.feuille.retirer.titre' => 'Retirer la mission',
 			'admin.equipe.feuille.retirer.question' => ({required Object mission, required Object nom}) => 'Retirer la mission « ${mission} » à ${nom} ?',
-			'admin.equipe.feuille.retirer.consequence' => ({required Object nom}) => 'Le compte de ${nom} n\'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.',
+			'admin.equipe.feuille.retirer.consequence' => ({required Object deNom}) => 'Le compte ${deNom} n\'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.',
 			'admin.equipe.feuille.retirer.retirer' => 'Retirer la mission',
-			'admin.equipe.feuille.retirer.retiree' => ({required Object nom}) => 'Mission retirée. Le compte de ${nom} n\'a pas changé.',
+			'admin.equipe.feuille.retirer.retiree' => ({required Object deNom}) => 'Mission retirée. Le compte ${deNom} n\'a pas changé.',
 			'admin.equipe.feuille.archiver.titre' => 'Archiver la mission',
 			'admin.equipe.feuille.archiver.question' => ({required Object mission}) => 'Archiver la mission « ${mission} » ?',
 			'admin.equipe.feuille.archiver.consequence' => 'Elle ne peut plus être accordée. Les personnes qui la portent la gardent jusqu\'à son retrait.',
@@ -59070,11 +59070,11 @@ extension on Traductions {
 			'admin.equipe.feuille.revoquer.consequence' => 'Le code ne sert plus. La personne ne peut plus créer de compte avec lui.',
 			'admin.equipe.feuille.revoquer.revoquer' => 'Révoquer',
 			'admin.equipe.feuille.revoquer.revoquee' => 'Invitation révoquée.',
-			'admin.equipe.refus.personneIndisponible' => 'Ce compte ne peut pas recevoir de mission : il n\'est pas actif, ou son rôle n\'est pas admis.',
-			'admin.equipe.refus.genreInconnu' => 'Le genre de cette personne n\'est pas connu : sa mission se porte de son côté. Complétez son compte d\'abord.',
+			'admin.equipe.refus.personneIndisponible' => 'Ce compte ne peut pas recevoir de mission : il n\'est pas actif, ou son rôle n\'est pas admis.',
+			'admin.equipe.refus.genreInconnu' => 'Le genre de cette personne n\'est pas connu : sa mission se porte de son côté. Complétez son compte d\'abord.',
 			'admin.equipe.refus.attributionActive' => 'Cette personne porte déjà cette mission. Retirez-la d\'abord.',
 			'admin.equipe.refus.missionIndisponible' => 'Cette mission n\'existe plus ou est archivée.',
-			'admin.equipe.refus.parametresInvalides' => 'Les choix ne sont pas admis : vérifiez le nom, les dates et les limites.',
+			'admin.equipe.refus.parametresInvalides' => 'Les choix ne sont pas admis : vérifiez le nom, les dates et les limites.',
 			'admin.equipe.refus.cleDejaUtilisee' => 'Cette demande a déjà servi pour autre chose. Recommencez.',
 			'admin.equipe.refus.gestesNonAdmis' => 'Un des gestes n\'est pas admis dans une mission.',
 			'admin.equipe.refus.autre' => 'Le serveur a refusé ce geste. Rien n\'a été écrit.',

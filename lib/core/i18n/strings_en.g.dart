@@ -24725,9 +24725,9 @@ class _Traductions$admin$equipe$feuille$retirer$en extends Traductions$admin$equ
 	// Translations
 	@override String get titre => 'Remove the mission';
 	@override String question({required Object mission, required Object nom}) => 'Remove the mission "${mission}" from ${nom}?';
-	@override String consequence({required Object nom}) => '${nom}\'s account is not changed: only this mission is removed. Their access to applications stops immediately.';
+	@override String consequence({required Object deNom}) => '${deNom}\'s account is not changed: only this mission is removed. Their access to applications stops immediately.';
 	@override String get retirer => 'Remove the mission';
-	@override String retiree({required Object nom}) => 'Mission removed. ${nom}\'s account has not changed.';
+	@override String retiree({required Object deNom}) => 'Mission removed. ${deNom}\'s account has not changed.';
 }
 
 // Path: admin.equipe.feuille.archiver
@@ -31842,9 +31842,9 @@ extension on TraductionsEn {
 			'admin.equipe.feuille.accorder.accordee' => 'Mission granted.',
 			'admin.equipe.feuille.retirer.titre' => 'Remove the mission',
 			'admin.equipe.feuille.retirer.question' => ({required Object mission, required Object nom}) => 'Remove the mission "${mission}" from ${nom}?',
-			'admin.equipe.feuille.retirer.consequence' => ({required Object nom}) => '${nom}\'s account is not changed: only this mission is removed. Their access to applications stops immediately.',
+			'admin.equipe.feuille.retirer.consequence' => ({required Object deNom}) => '${deNom}\'s account is not changed: only this mission is removed. Their access to applications stops immediately.',
 			'admin.equipe.feuille.retirer.retirer' => 'Remove the mission',
-			'admin.equipe.feuille.retirer.retiree' => ({required Object nom}) => 'Mission removed. ${nom}\'s account has not changed.',
+			'admin.equipe.feuille.retirer.retiree' => ({required Object deNom}) => 'Mission removed. ${deNom}\'s account has not changed.',
 			'admin.equipe.feuille.archiver.titre' => 'Archive the mission',
 			'admin.equipe.feuille.archiver.question' => ({required Object mission}) => 'Archive the mission "${mission}"?',
 			'admin.equipe.feuille.archiver.consequence' => 'It can no longer be granted. People who hold it keep it until it is removed.',

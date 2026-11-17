@@ -4971,9 +4971,9 @@
         "retirer": {
           "titre": "Remove the mission",
           "question": "Remove the mission \"{mission}\" from {nom}?",
-          "consequence": "{nom}'s account is not changed: only this mission is removed. Their access to applications stops immediately.",
+          "consequence": "{deNom}'s account is not changed: only this mission is removed. Their access to applications stops immediately.",
           "retirer": "Remove the mission",
-          "retiree": "Mission removed. {nom}'s account has not changed."
+          "retiree": "Mission removed. {deNom}'s account has not changed."
         },
         "archiver": {
           "titre": "Archive the mission",

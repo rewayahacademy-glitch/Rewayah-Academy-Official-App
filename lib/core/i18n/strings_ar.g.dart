@@ -25734,9 +25734,9 @@ class _Traductions$admin$equipe$feuille$retirer$ar extends Traductions$admin$equ
 	// Translations
 	@override String get titre => 'سحب المهمة';
 	@override String question({required Object mission, required Object nom}) => 'سحب المهمة «⁨${mission}⁩» من ⁨${nom}⁩؟';
-	@override String consequence({required Object nom}) => 'حساب ⁨${nom}⁩ لا يتغير: تُسحب هذه المهمة فقط. ينقطع وصوله إلى طلبات الترشح فورًا.';
+	@override String consequence({required Object deNom}) => 'حساب ⁨${deNom}⁩ لا يتغير: تُسحب هذه المهمة فقط. ينقطع وصوله إلى طلبات الترشح فورًا.';
 	@override String get retirer => 'سحب المهمة';
-	@override String retiree({required Object nom}) => 'سُحبت المهمة. حساب ⁨${nom}⁩ لم يتغير.';
+	@override String retiree({required Object deNom}) => 'سُحبت المهمة. حساب ⁨${deNom}⁩ لم يتغير.';
 }
 
 // Path: admin.equipe.feuille.archiver
@@ -33700,9 +33700,9 @@ extension on TraductionsAr {
 			'admin.equipe.feuille.accorder.accordee' => 'مُنحت المهمة.',
 			'admin.equipe.feuille.retirer.titre' => 'سحب المهمة',
 			'admin.equipe.feuille.retirer.question' => ({required Object mission, required Object nom}) => 'سحب المهمة «⁨${mission}⁩» من ⁨${nom}⁩؟',
-			'admin.equipe.feuille.retirer.consequence' => ({required Object nom}) => 'حساب ⁨${nom}⁩ لا يتغير: تُسحب هذه المهمة فقط. ينقطع وصوله إلى طلبات الترشح فورًا.',
+			'admin.equipe.feuille.retirer.consequence' => ({required Object deNom}) => 'حساب ⁨${deNom}⁩ لا يتغير: تُسحب هذه المهمة فقط. ينقطع وصوله إلى طلبات الترشح فورًا.',
 			'admin.equipe.feuille.retirer.retirer' => 'سحب المهمة',
-			'admin.equipe.feuille.retirer.retiree' => ({required Object nom}) => 'سُحبت المهمة. حساب ⁨${nom}⁩ لم يتغير.',
+			'admin.equipe.feuille.retirer.retiree' => ({required Object deNom}) => 'سُحبت المهمة. حساب ⁨${deNom}⁩ لم يتغير.',
 			'admin.equipe.feuille.archiver.titre' => 'أرشفة المهمة',
 			'admin.equipe.feuille.archiver.question' => ({required Object mission}) => 'أرشفة المهمة «⁨${mission}⁩»؟',
 			'admin.equipe.feuille.archiver.consequence' => 'لا يمكن منحها بعد الآن. من يحملونها يحتفظون بها حتى سحبها.',

@@ -4883,7 +4883,7 @@
         "retirer": "Retirer la mission",
         "archiver": "Archiver",
         "revoquer": "Révoquer",
-        "plus": "Actions de {nom}"
+        "plus": "Actions pour {nom}"
       },
       "mission": {
         "porteurs(param=n)": {
@@ -4930,7 +4930,7 @@
       },
       "feuille": {
         "motif": "Motif",
-        "motifAide": "Il est gardé au journal ; la personne ne le lit pas.",
+        "motifAide": "Il est gardé au journal\u00a0; la personne ne le lit pas.",
         "motifManquant": "Écrivez un motif.",
         "annuler": "Annuler",
         "mission": {
@@ -4964,16 +4964,16 @@
           "fin": "Fin (facultative)",
           "finAide": "Sans fin, la mission dure jusqu'à son retrait.",
           "resume": "{nom} pourra {gestes}, sur {perimetre}, {duree}.",
-          "resumeVide": "Choisissez une personne et une mission : une phrase dira ce qu'elle pourra faire.",
+          "resumeVide": "Choisissez une personne et une mission\u00a0: une phrase dira ce qu'elle pourra faire.",
           "accorder": "Accorder la mission",
           "accordee": "Mission accordée."
         },
         "retirer": {
           "titre": "Retirer la mission",
           "question": "Retirer la mission «\u00a0{mission}\u00a0» à {nom}\u00a0?",
-          "consequence": "Le compte de {nom} n'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.",
+          "consequence": "Le compte {deNom} n'est pas modifié\u00a0: seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.",
           "retirer": "Retirer la mission",
-          "retiree": "Mission retirée. Le compte de {nom} n'a pas changé."
+          "retiree": "Mission retirée. Le compte {deNom} n'a pas changé."
         },
         "archiver": {
           "titre": "Archiver la mission",
@@ -5003,11 +5003,11 @@
         }
       },
       "refus": {
-        "personneIndisponible": "Ce compte ne peut pas recevoir de mission : il n'est pas actif, ou son rôle n'est pas admis.",
-        "genreInconnu": "Le genre de cette personne n'est pas connu : sa mission se porte de son côté. Complétez son compte d'abord.",
+        "personneIndisponible": "Ce compte ne peut pas recevoir de mission\u00a0: il n'est pas actif, ou son rôle n'est pas admis.",
+        "genreInconnu": "Le genre de cette personne n'est pas connu\u00a0: sa mission se porte de son côté. Complétez son compte d'abord.",
         "attributionActive": "Cette personne porte déjà cette mission. Retirez-la d'abord.",
         "missionIndisponible": "Cette mission n'existe plus ou est archivée.",
-        "parametresInvalides": "Les choix ne sont pas admis : vérifiez le nom, les dates et les limites.",
+        "parametresInvalides": "Les choix ne sont pas admis\u00a0: vérifiez le nom, les dates et les limites.",
         "cleDejaUtilisee": "Cette demande a déjà servi pour autre chose. Recommencez.",
         "gestesNonAdmis": "Un des gestes n'est pas admis dans une mission.",
         "autre": "Le serveur a refusé ce geste. Rien n'a été écrit.",
