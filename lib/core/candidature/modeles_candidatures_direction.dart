@@ -19,6 +19,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart';
 
+import 'gestes_candidature.dart';
 import 'modeles_autres_competences.dart';
 import 'modeles_candidature.dart';
 
@@ -586,6 +587,7 @@ class LigneCandidature {
     this.recueLe,
     this.nouveau = false,
     this.complementEnCours = false,
+    this.gestes = const <String>[],
   });
 
   /// Lit une ligne rendue par le serveur, ou `null` quand elle n'a pas
@@ -632,6 +634,11 @@ class LigneCandidature {
       recueLe: DateTime.tryParse(texte('recueLe') ?? ''),
       nouveau: json['nouveau'] == true,
       complementEnCours: json['complementEnCours'] == true,
+      gestes: <String>[
+        if (json['gestes'] case final List<Object?> liste)
+          for (final Object? nom in liste)
+            if (nom is String && nom.isNotEmpty) nom,
+      ],
     );
   }
 
@@ -648,6 +655,23 @@ class LigneCandidature {
   /// complement » n'est pas rendu (un geste n'est rendu que s'il peut aboutir,
   /// K-56 ; capture de production CAND-00068 : « aucun complement en cours »).
   final bool complementEnCours;
+
+  /// Les gestes de la direction que le serveur permet sur cette ligne pour la
+  /// session (cle `gestes`, GESTES-DU-SERVEUR : la regle du moteur et le droit de
+  /// mission), par leurs noms du serveur. **Absente : vide, et aucun geste n'est
+  /// rendu** (K-56) : l'ecran ne recalcule plus les regles. Voir
+  /// [GesteCandidature.nomServeur].
+  final List<String> gestes;
+
+  /// Le serveur permet-il ce geste sur cette ligne ?
+  bool sert(GesteCandidature geste) => gestes.contains(geste.nomServeur);
+
+  /// Les noms servis que l'ecran ne sait pas faire (dispenser l'entretien,
+  /// restreindre...) : jamais montres, comptes ici pour qu'un test le dise.
+  List<String> get gestesInconnusDeLEcran => <String>[
+    for (final String nom in gestes)
+      if (GesteCandidature.depuisNomServeur(nom) == null) nom,
+  ];
 
   /// La reference `CAND-…`, jamais reattribuee, distincte du matricule.
   final String reference;
