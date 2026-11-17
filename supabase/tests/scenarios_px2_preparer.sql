@@ -1,4 +1,4 @@
--- PX-2 PRAXIS niveau B (migration 20261129660000) : Praxis LIT les dossiers et PREPARE des propositions. Les neuf scenarios du cahier :
+-- PX-2 PRAXIS niveau B (migration 20261129810000) : Praxis LIT les dossiers et PREPARE des propositions. Les neuf scenarios du cahier :
 --  1 donnees_reelles faux : praxis_lire, praxis_preparer et les outils de PX-1 refuses (PX-1 limite au mode essai) ; la porte du
 --    directeur exige l'aal2 ; vrai, l'acces s'ouvre ;
 --  2 aucune reponse de praxis_lire ne contient courriel, telephone, piece, photo, note, motif ni montant (les cles de chaque ligne sont
