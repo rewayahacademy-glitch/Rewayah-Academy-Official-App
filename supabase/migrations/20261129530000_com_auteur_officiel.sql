@@ -36,7 +36,6 @@ DECLARE
   v_n integer;
   v_avant record;
 BEGIN
-  PERFORM pg_catalog.set_config('check_function_bodies', 'off', true);
   IF pg_catalog.strpos(v_def, v_cle) > 0 THEN
     RAISE NOTICE 'auteur officiel : com_fil_json porte deja la cle compte_officiel de l''auteur';
     RETURN;
@@ -50,7 +49,7 @@ BEGIN
     FROM pg_catalog.pg_proc p WHERE p.oid = v_f;
   EXECUTE pg_catalog.replace(v_def, v_ancre,
     'END || pg_catalog.jsonb_build_object(''est_soi'', m.auteur_id = p_moi)' || pg_catalog.chr(10)
-    || '          || pg_catalog.jsonb_build_object(' || v_cle || ')))');
+    || '          || pg_catalog.jsonb_build_object(' || v_cle || '))');
   IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
                   WHERE p.oid = v_f AND p.prosecdef = v_avant.prosecdef
                     AND p.proowner = v_avant.proowner
