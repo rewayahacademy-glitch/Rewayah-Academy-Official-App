@@ -6625,6 +6625,27 @@
       "plafondChamp": "Number of messages per hour (1 to 120)",
       "plafondEnregistrer": "Set the limit",
       "plafondInvalide": "Write a whole number between 1 and 120.",
+      "essaiTitre": "Test conversations",
+      "essaiVide": "Test mode off: Praxis can read every academy conversation it is allowed to read.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Test mode: Praxis sees only {nombre} conversation and publishes no announcement.",
+        "other": "Test mode: Praxis sees only {nombre} conversations and publishes no announcement."
+      },
+      "essaiChamp": "Choose the test conversations",
+      "essaiAide": "Tick at most ten conversations among your Messages. If you have none, first create a test conversation with a test account. While nothing is ticked and saved, there is no test.",
+      "essaiEnregistrer": "Save the test conversations",
+      "essaiFin": "End the test",
+      "essaiChoisies(plural, param=nombre)": {
+        "one": "{nombre} conversation ticked.",
+        "other": "{nombre} conversations ticked."
+      },
+      "essaiTrop(plural, param=nombre)": {
+        "one": "Ten conversations at most: untick one to choose another.",
+        "other": "Ten conversations at most: untick one to choose another."
+      },
+      "essaiListeErreur": "Your conversation list could not be read. Try again in a moment.",
+      "essaiAucune": "No conversation to choose. First create a test conversation with a test account, then come back here.",
+      "essaiAffinez": "Only the first {nombre} conversations are shown: narrow them with the search.",
       "reglageFait": "Setting applied.",
       "erreurReglage": "Setting not confirmed. Check the state above before trying again.",
       "doubleVerification": "This setting needs two-step verification. Turn it on in Account, then Security, and try again.",
@@ -6700,6 +6721,8 @@
       "refuseCause": "Refused: {cause}",
       "sansTexte": "Nothing was written.",
       "cause": {
+        "essai": "test mode, no announcement",
+        "horsEssai": "conversation outside the test",
         "plafondFil": "too many messages in a row without a reply",
         "plafond": "hourly limit reached",
         "plafondAnnonces": "two announcements already published today",
