@@ -10,7 +10,7 @@
 -- gouverner : elle borne meme quand les donnees reelles sont ouvertes.
 -- AUCUNE COPIE DE LOGIQUE : la requete des gestes permis par le moteur est EXTRAITE de private.gestes_de_la_ligne dans
 -- private.gestes_regles_de_la_ligne (ancre unique, empreinte verifiee) ; la liste de la direction et Praxis lisent la meme.
--- Doit suivre 20261129650000 (mode essai) ET 20261129740000 (private.gestes_de_la_ligne) : numero 20261129810000 (le 20261129660000 reserve par le
+-- Doit suivre 20261129650000 (mode essai) ET 20261129740000 (private.gestes_de_la_ligne) : numero 20261129840000 (le 20261129660000 reserve par le
 -- pilote sortirait AVANT 20261129740000 et le preflight echouerait sur une base neuve).
 -- FICHIER SANS EFFACEMENT. Additif. Sans BEGIN/COMMIT de premier niveau.
 
