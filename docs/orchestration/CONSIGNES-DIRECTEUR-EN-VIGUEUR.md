@@ -693,6 +693,35 @@ Abréviations des fichiers :
 
 ---
 
+### Consigne 23 (17/11/2026, nuit) : agir sans attendre le directeur, et ne pas geler ce qui est commencé
+
+Citation : « Je t'ai donné toutes les autorisations. J'ai levé tous les blocages côté Supabase, GitHub, Drive […] et
+aussi dans Claude […] pour que tu agisses, pour que je puisse dormir. Et là, tu viens de me créer un faux problème
+pour demander mon autorisation. […] J'ai pas dit d'arrêter ce qui restait des autres lots déjà commencés. […] tu peux
+les travailler tout en déléguant, tout en commençant Praxis. […] tu peux confier ces petits lots à des sessions
+Sonnet. »
+
+Règle :
+- Le pilote ne fait jamais attendre un travail sur un geste du directeur qui ne relève que de son propre rôle :
+  pousser une branche, ouvrir une PR, fusionner un lot prouvé, installer une migration relue selon la checklist,
+  lancer un agent. Ce qui reste au directeur : la preuve en production, et les gestes que seul son compte peut
+  faire dans l'application (allumer Praxis, valider un texte de niveau C).
+- Une priorité nouvelle (comme Praxis) ne gèle pas les lots commencés ou décidés : ils avancent en parallèle, un agent
+  par lot, quatre agents au plus, de petits modèles pour les petits lots.
+- Les garde-fous de sécurité restent entiers : checklist d'installation, aucune lecture de lignes de personnes, aucun
+  effacement sans l'avis du directeur, relecture du pilote avant toute fusion.
+- **Aucun travail ne reste local** : tout agent pousse chaque commit sur sa branche aussitôt fait (un conteneur peut
+  être remplacé à tout moment). Fait du 17/11, nuit : l'écran DISPENSE-ECRAN, fini mais resté local en attendant un
+  « pousse », a été perdu avec le conteneur de BE-DOSSIER ; il est refait. Faute du pilote, qui l'avait fait attendre.
+
+### Consigne 24 (17/11/2026, nuit) : toujours parler au directeur en français
+
+Citation : « tu dois parler en français ; il faut que ça soit une règle. »
+
+Règle : toute session, tout pilote, tout agent écrit au directeur en français, dans chaque réponse, chaque bilan,
+chaque message, chaque document qui lui est destiné, quelle que soit la langue des outils, des journaux ou des
+notifications reçues. Les noms de code (fonctions, fichiers, tables) restent tels quels, entre accents graves.
+
 ## 9. Autres
 
 **X1. Lire son dernier message en entier avant de répondre.**
@@ -840,6 +869,7 @@ Les règles déjà présentes dans la partie A s'y retrouvent sous un autre num�
 | 19 | Choix d'interface (UX) : le directeur ne tranche pas ; la skill `design-taste-frontend` arbitre avec les meilleurs standards (Material 3, Apple HIG, Nielsen). Vaut pour les points « en attente du directeur » des UX_REVIEW, dont les 7 de `UX_REVIEW_NAV-DIRECTION.md`. Sur ordinateur, pas d'onglets ni de menus déroulants de téléphone ; ne pas faire sortir d'un dossier pour un geste simple. | 14/11 : « ne lui impose pas mes choix UX, dis-lui d'utiliser les meilleurs standards » ; « ces onglets ne sont pas pour le web » ; « je ne vais RIEN répondre… à toi de te débrouiller pour le bien des users » | ici, et chaque UX_REVIEW concerné |
 | 20 | Chaque problème rencontré par une vraie personne pendant une inscription (candidat, élève, parent) s'ajoute à `docs/current/RETOURS-TERRAIN-INSCRIPTIONS.md` : les faits, la cause prouvée et le nombre de personnes touchées, sans donnée personnelle, et ce qu'il faut prévoir pour les élèves. On cherche dans ce document avant de diagnostiquer. | 14/11 : « consigner tous les problèmes qu'on rencontre maintenant sur le recrutement dans un document accessible et visible pour tout le monde […] comme ça on ne sera pas obligé de refaire des diagnostics similaires » | RETOURS-TERRAIN-INSCRIPTIONS, CLAUDE.md |
 | 21 | **Les migrations s'installent par les agents, plus par le directeur.** Le pilote, ou un agent qui en a la charge, installe lui-même une migration en production (`apply_migration`) quand elle est nécessaire, avec une rigueur absolue (checklist de `supabase/CLAUDE.md`, « Installer une migration en production ») : fichier relu en entier, aucun `DROP`, `DELETE` ni `TRUNCATE` hors réécriture d'un CHECK, aucun `BEGIN`/`COMMIT`, RLS sur toute table nouvelle, migration rejouée sur un Postgres nu, vérification en production après installation, bilan au directeur. Ne jamais toucher aux données des personnes. La page à coller (règle du 23/10) ne sert plus que si le directeur la demande ou si le serveur exige une confirmation qu'un agent ne peut pas donner. | 16/11 : « oui, installe les migrations toi-même. Moi, j'ai jamais demandé à coller les migrations moi-même. Jamais. […] tu peux écrire dans les dépôts où tous les agents lisent qu'ils peuvent faire les migrations quand c'est nécessaire, mais avec beaucoup de rigueur. Make no mistakes in the data base » | CLAUDE.md, supabase/CLAUDE.md, ici |
+| 22 | **Le pilote gère et arbitre ; il ne pose plus de question au directeur.** Une décision de méthode, de produit ou d'ordre des lots se tranche par le pilote, s'écrit avec la date et la raison dans le document du lot (« Arbitrage du pilote »), et s'exécute. Le directeur peut la reprendre ; sans nouvel ordre de sa part, elle vaut. Restent au directeur seulement les gestes que personne d'autre ne peut faire (son compte, ses accès, ses paiements), signalés une fois comme blocage, pas comme une question. La vérité d'abord (§2) demeure : ce qui est faux, bloqué ou non prouvé se dit toujours. | 16/11, au soir : « c'est quoi ça? tu es là pour gérer, et arbitrer. ne me demande plus rien . » | BUREAU-EQUIPE/CARTE-GESTES-DIRECTION.md §4.3, ici |
 
 Règles de produit que le directeur a dû redire le 31/10. Le garde-cap a vérifié le 05/11 : toutes trois sont écrites.
 - **Remplacement d'un enseignant** à T+3, T+8 et T+11 au plus : `08` §5 bis (31/10) et `DECISION-CLASSES-SIMULTANEES-2026-10-10.md` l. 51-67, réglages `remplacement.*`.
