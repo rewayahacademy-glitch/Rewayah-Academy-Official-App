@@ -33,7 +33,9 @@ abstract final class ClesPraxis {
   static const Key carteReglages = ValueKey<String>('praxis-carte-reglages');
 
   /// La carte du formulaire d'emission d'une cle.
-  static const Key carteFormulaire = ValueKey<String>('praxis-carte-formulaire');
+  static const Key carteFormulaire = ValueKey<String>(
+    'praxis-carte-formulaire',
+  );
 
   /// La carte de la cle emise (le secret, montre une fois).
   static const Key carteCleEmise = ValueKey<String>('praxis-carte-cle-emise');
@@ -56,6 +58,12 @@ abstract final class ClesPraxis {
 
   /// Fixer le plafond.
   static const Key fixerPlafond = ValueKey<String>('praxis-plafond');
+
+  /// Enregistrer les conversations d'essai.
+  static const Key fixerEssai = ValueKey<String>('praxis-essai');
+
+  /// Mettre fin au mode essai.
+  static const Key finEssai = ValueKey<String>('praxis-essai-fin');
 
   /// Emettre la cle.
   static const Key emettre = ValueKey<String>('praxis-emettre');
@@ -106,6 +114,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
 
   final TextEditingController _libelle = TextEditingController();
   final TextEditingController _plafond = TextEditingController();
+  final TextEditingController _essai = TextEditingController();
 
   EtatPraxis? _etat;
   Object? _erreurEtat;
@@ -122,6 +131,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
   String? _message;
   String? _erreurReglage;
   String? _erreurPlafond;
+  String? _erreurEssai;
 
   UsageClePraxis _usage = UsageClePraxis.chat;
   int _jours = 30;
@@ -144,6 +154,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
   void dispose() {
     _libelle.dispose();
     _plafond.dispose();
+    _essai.dispose();
     super.dispose();
   }
 
@@ -166,6 +177,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
         _erreurEtat = null;
         _chargementEtat = false;
         _plafond.text = '${etat.envoisParHeure}';
+        _essai.text = etat.essaiFils.join('\n');
       });
     } on Object catch (e) {
       if (!mounted) {
@@ -221,6 +233,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
     bool? actif,
     bool? autonome,
     int? envoisParHeure,
+    List<String>? essaiFils,
   }) async {
     if (_reglageEnCours != null) {
       return;
@@ -236,11 +249,13 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
       await avecDoubleVerification<void>(
         context,
         ref,
-        () => _service.regler(
-          actif: actif,
-          autonome: autonome,
-          envoisParHeure: envoisParHeure,
-        ),
+        () => essaiFils != null
+            ? _service.reglerEssai(essaiFils)
+            : _service.regler(
+                actif: actif,
+                autonome: autonome,
+                envoisParHeure: envoisParHeure,
+              ),
       );
       message = t.admin.praxis.reglageFait;
     } on Object catch (e) {
@@ -269,6 +284,29 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
     }
     setState(() => _erreurPlafond = null);
     await _regler('plafond', envoisParHeure: valeur);
+  }
+
+  static final RegExp _identifiant = RegExp(
+    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
+  );
+
+  /// Les conversations d'essai : un identifiant par ligne (ou separes par une
+  /// virgule), dix au plus. Une liste vide met fin au mode essai.
+  Future<void> _fixerEssai({bool fin = false}) async {
+    final List<String> fils = fin
+        ? <String>[]
+        : _essai.text
+              .split(RegExp(r'[\s,;]+'))
+              .map((String x) => x.trim().toLowerCase())
+              .where((String x) => x.isNotEmpty)
+              .toSet()
+              .toList(growable: false);
+    if (fils.length > 10 || fils.any((String x) => !_identifiant.hasMatch(x))) {
+      setState(() => _erreurEssai = t.admin.praxis.essaiInvalide);
+      return;
+    }
+    setState(() => _erreurEssai = null);
+    await _regler(fin ? 'essaiFin' : 'essai', essaiFils: fils);
   }
 
   Future<void> _emettre() async {
@@ -488,9 +526,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
           ),
           Ecart.vXs,
           Text(
-            etat.actif
-                ? t.admin.praxis.allumeOui
-                : t.admin.praxis.allumeNon,
+            etat.actif ? t.admin.praxis.allumeOui : t.admin.praxis.allumeNon,
             style: textes.bodySmall,
           ),
           Ecart.vMd,
@@ -526,7 +562,8 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
             enCours: _reglageEnCours == 'autonome',
             onPress: occupe
                 ? () {}
-                : () => unawaited(_regler('autonome', autonome: !etat.autonome)),
+                : () =>
+                      unawaited(_regler('autonome', autonome: !etat.autonome)),
           ),
           Ecart.vXxl,
           Text(t.admin.praxis.plafond, style: textes.titleSmall),
@@ -558,6 +595,56 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
             enCours: _reglageEnCours == 'plafond',
             onPress: occupe ? () {} : () => unawaited(_fixerPlafond()),
           ),
+          Ecart.vXxl,
+          Text(t.admin.praxis.essaiTitre, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(
+            etat.essaiFils.isEmpty
+                ? t.admin.praxis.essaiVide
+                : t.admin.praxis.essaiActif(nombre: etat.essaiFils.length),
+            style: textes.bodySmall,
+          ),
+          Ecart.vMd,
+          ChampEtiquete(
+            libelle: t.admin.praxis.essaiChamp,
+            controller: _essai,
+            maxLines: 4,
+            directionTexte: TextDirection.ltr,
+            aide: t.admin.praxis.essaiAide,
+            onChanged: (String _) => setState(() => _erreurEssai = null),
+          ),
+          if (_erreurEssai != null) ...<Widget>[
+            Ecart.vMd,
+            Semantics(
+              liveRegion: true,
+              child: Text(
+                _erreurEssai!,
+                style: textes.bodyMedium?.copyWith(
+                  color: Theme.of(context).colorScheme.error,
+                ),
+              ),
+            ),
+          ],
+          Ecart.vMd,
+          ActionPrincipale(
+            key: ClesPraxis.fixerEssai,
+            libelle: t.admin.praxis.essaiEnregistrer,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            enCours: _reglageEnCours == 'essai',
+            onPress: occupe ? () {} : () => unawaited(_fixerEssai()),
+          ),
+          if (etat.essaiFils.isNotEmpty) ...<Widget>[
+            Ecart.vMd,
+            ActionPrincipale(
+              key: ClesPraxis.finEssai,
+              libelle: t.admin.praxis.essaiFin,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              enCours: _reglageEnCours == 'essaiFin',
+              onPress: occupe ? () {} : () => unawaited(_fixerEssai(fin: true)),
+            ),
+          ],
           Ecart.vXxl,
           const _PourraNePourraPas(),
         ],
@@ -711,8 +798,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
           action: true,
           texte: (ClePraxis c) =>
               c.etat == EtatClePraxis.active ? t.admin.praxis.revoquer : '',
-          rendu: (BuildContext _, ClePraxis c) =>
-              c.etat != EtatClePraxis.active
+          rendu: (BuildContext _, ClePraxis c) => c.etat != EtatClePraxis.active
               ? const SizedBox.shrink()
               : ActionPrincipale(
                   libelle: t.admin.praxis.revoquer,
@@ -804,6 +890,8 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
       : t.admin.praxis.refuseCause(cause: _cause(l.issue));
 
   String _cause(String issue) => switch (issue) {
+    'hors_essai' => t.admin.praxis.cause.horsEssai,
+    'essai' => t.admin.praxis.cause.essai,
     'plafond_fil' => t.admin.praxis.cause.plafondFil,
     'plafond' => t.admin.praxis.cause.plafond,
     'plafond_annonces' => t.admin.praxis.cause.plafondAnnonces,

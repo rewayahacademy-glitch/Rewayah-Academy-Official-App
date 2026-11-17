@@ -29,8 +29,7 @@ class _AgentsVide implements ServiceAgent {
   Future<List<JetonAgent>> lister() async => <JetonAgent>[];
 
   @override
-  Future<List<PersonneObservable>> personnes() async =>
-      <PersonneObservable>[];
+  Future<List<PersonneObservable>> personnes() async => <PersonneObservable>[];
 
   @override
   Future<JetonEmis> emettre({
@@ -44,7 +43,15 @@ class _AgentsVide implements ServiceAgent {
   Future<bool> revoquer(String id) async => true;
 }
 
-enum _Etat { contenu, cleEmise, vide, erreur, horsLigne, doubleVerification }
+enum _Etat {
+  contenu,
+  cleEmise,
+  vide,
+  erreur,
+  horsLigne,
+  doubleVerification,
+  essai,
+}
 
 FauxServicePraxis _faux(_Etat etat) {
   final List<List<LigneJournalPraxis>> pages = <List<LigneJournalPraxis>>[
@@ -74,13 +81,20 @@ FauxServicePraxis _faux(_Etat etat) {
       erreurEtat: Exception('panne'),
       erreurJournal: Exception('panne'),
     ),
-    _Etat.doubleVerification => FauxServicePraxis(pages: pages)
-      ..refusDroit = true,
+    _Etat.doubleVerification => FauxServicePraxis(
+      pages: pages,
+    )..refusDroit = true,
     _ => FauxServicePraxis(
       etat: EtatPraxis(
         actif: true,
         autonome: false,
         envoisParHeure: 30,
+        essaiFils: etat == _Etat.essai
+            ? const <String>[
+                'b4cccccc-0000-4000-8000-000000000001',
+                'b4cccccc-0000-4000-8000-000000000002',
+              ]
+            : const <String>[],
         cles: <ClePraxis>[
           clePraxisFictive(derniereUtilisation: DateTime(2026, 11, 15, 18)),
           clePraxisFictive(

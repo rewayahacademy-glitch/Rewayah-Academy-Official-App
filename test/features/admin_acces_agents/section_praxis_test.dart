@@ -36,9 +36,7 @@ Future<void> _monter(
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     hote(
-      const Scaffold(
-        body: SingleChildScrollView(child: SectionPraxis()),
-      ),
+      const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
       surcharges: <Override>[
         servicePraxisProvider.overrideWithValue(faux),
         ...en,
@@ -132,15 +130,15 @@ void main() {
         tester,
         FauxServicePraxis(erreurEtat: Exception('reseau')),
         en: <Override>[
-          horsLigneProvider.overrideWith(
-            (ref) => Stream<bool>.value(true),
-          ),
+          horsLigneProvider.overrideWith((ref) => Stream<bool>.value(true)),
         ],
       );
       expect(find.text(t.admin.praxis.horsLigne), findsOneWidget);
     });
 
-    testWidgets('erreur du journal seul : les reglages restent', (tester) async {
+    testWidgets('erreur du journal seul : les reglages restent', (
+      tester,
+    ) async {
       await _monter(
         tester,
         FauxServicePraxis(erreurJournal: Exception('panne')),
@@ -180,22 +178,82 @@ void main() {
       expect(faux.appels, contains('regler:null:false:null'));
     });
 
-    testWidgets('plafond : hors bornes refuse avant le serveur, valide envoye', (
+    testWidgets(
+      'plafond : hors bornes refuse avant le serveur, valide envoye',
+      (tester) async {
+        final FauxServicePraxis faux = FauxServicePraxis();
+        await _monter(tester, faux);
+        await tester.enterText(find.byKey(ClesPraxis.champPlafond), '121');
+        await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
+        expect(find.text(t.admin.praxis.plafondInvalide), findsOneWidget);
+        expect(faux.appels.where((a) => a.startsWith('regler')), isEmpty);
+        await tester.enterText(find.byKey(ClesPraxis.champPlafond), '45');
+        await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
+        expect(faux.appels, contains('regler:null:null:45'));
+        expect(
+          find.text(t.admin.praxis.plafondDetail(nombre: 45)),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'essai : les references sont verifiees, puis envoyees, puis fin',
+      (tester) async {
+        final FauxServicePraxis faux = FauxServicePraxis();
+        await _monter(tester, faux);
+        const String a = 'b4cccccc-0000-4000-8000-000000000001';
+        const String b = 'B4CCCCCC-0000-4000-8000-000000000002';
+        expect(find.text(t.admin.praxis.essaiVide), findsOneWidget);
+        expect(find.byKey(ClesPraxis.finEssai), findsNothing);
+        // Une ligne qui n'est pas une reference : refus avant le serveur.
+        await tester.enterText(
+          find.byType(TextField).at(1),
+          'pas une reference',
+        );
+        await _presser(tester, find.byKey(ClesPraxis.fixerEssai));
+        expect(find.text(t.admin.praxis.essaiInvalide), findsOneWidget);
+        expect(faux.appels.where((x) => x.startsWith('essai')), isEmpty);
+        // Plus de dix : refus.
+        await tester.enterText(
+          find.byType(TextField).at(1),
+          List<String>.generate(
+            11,
+            (int i) => 'b4cccccc-0000-4000-8000-0000000000${10 + i}',
+          ).join('\n'),
+        );
+        await _presser(tester, find.byKey(ClesPraxis.fixerEssai));
+        expect(find.text(t.admin.praxis.essaiInvalide), findsOneWidget);
+        expect(faux.appels.where((x) => x.startsWith('essai')), isEmpty);
+        // Deux references (une en majuscules, un doublon) : minuscules, uniques.
+        await tester.enterText(
+          find.byType(TextField).at(1),
+          '$a\n$b, ${a.toUpperCase()}',
+        );
+        await _presser(tester, find.byKey(ClesPraxis.fixerEssai));
+        expect(faux.appels, contains('essai:$a,${b.toLowerCase()}'));
+        expect(find.text(t.admin.praxis.essaiInvalide), findsNothing);
+        expect(find.text(t.admin.praxis.essaiActif(nombre: 2)), findsOneWidget);
+        // Fin de l'essai : une liste vide.
+        await _presser(tester, find.byKey(ClesPraxis.finEssai));
+        expect(faux.appels, contains('essai:'));
+        expect(find.text(t.admin.praxis.essaiVide), findsOneWidget);
+        expect(find.byKey(ClesPraxis.finEssai), findsNothing);
+      },
+    );
+
+    testWidgets('essai : refus faute de double verification, la phrase vraie', (
       tester,
     ) async {
-      final FauxServicePraxis faux = FauxServicePraxis();
+      final FauxServicePraxis faux = FauxServicePraxis()..refusDroit = true;
       await _monter(tester, faux);
-      await tester.enterText(find.byKey(ClesPraxis.champPlafond), '121');
-      await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
-      expect(find.text(t.admin.praxis.plafondInvalide), findsOneWidget);
-      expect(faux.appels.where((a) => a.startsWith('regler')), isEmpty);
-      await tester.enterText(find.byKey(ClesPraxis.champPlafond), '45');
-      await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
-      expect(faux.appels, contains('regler:null:null:45'));
-      expect(
-        find.text(t.admin.praxis.plafondDetail(nombre: 45)),
-        findsOneWidget,
+      await tester.enterText(
+        find.byType(TextField).at(1),
+        'b4cccccc-0000-4000-8000-000000000001',
       );
+      await _presser(tester, find.byKey(ClesPraxis.fixerEssai));
+      expect(find.text(t.admin.praxis.doubleVerification), findsOneWidget);
+      expect(find.text(t.admin.praxis.essaiVide), findsOneWidget);
     });
 
     testWidgets('refus faute de double verification : la phrase vraie', (
@@ -239,7 +297,7 @@ void main() {
       final FauxServicePraxis faux = FauxServicePraxis();
       await _monter(tester, faux);
       await tester.enterText(
-        find.byType(TextField).at(1),
+        find.byType(TextField).at(2),
         'Conversation du soir',
       );
       await _presser(tester, find.byKey(ClesPraxis.emettre));
@@ -261,7 +319,7 @@ void main() {
     testWidgets('l usage routine part avec la bonne valeur', (tester) async {
       final FauxServicePraxis faux = FauxServicePraxis();
       await _monter(tester, faux);
-      await tester.enterText(find.byType(TextField).at(1), 'Routine');
+      await tester.enterText(find.byType(TextField).at(2), 'Routine');
       await _presser(
         tester,
         find.widgetWithText(FilterPill, t.admin.praxis.usageRoutine),
@@ -278,7 +336,7 @@ void main() {
     ) async {
       final FauxServicePraxis faux = FauxServicePraxis()..refusDroit = true;
       await _monter(tester, faux);
-      await tester.enterText(find.byType(TextField).at(1), 'Test');
+      await tester.enterText(find.byType(TextField).at(2), 'Test');
       await _presser(tester, find.byKey(ClesPraxis.emettre));
       expect(find.text(t.admin.praxis.doubleVerification), findsOneWidget);
       expect(find.text(t.admin.praxis.cleEmise), findsNothing);

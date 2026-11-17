@@ -6712,6 +6712,17 @@
       "plafondChamp": "Nombre de messages par heure (de 1 à 120)",
       "plafondEnregistrer": "Fixer le plafond",
       "plafondInvalide": "Écrivez un nombre entier entre 1 et 120.",
+      "essaiTitre": "Conversations d'essai",
+      "essaiVide": "Mode essai éteint : Praxis peut lire toutes les conversations de l'académie qu'il a le droit de lire.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Mode essai : Praxis ne voit que {nombre} conversation et ne publie aucune annonce.",
+        "other": "Mode essai : Praxis ne voit que {nombre} conversations et ne publie aucune annonce."
+      },
+      "essaiChamp": "Conversations d'essai (une référence par ligne, dix au plus)",
+      "essaiAide": "Collez la référence de chaque conversation d'essai. Tant que la liste n'est pas vide, Praxis ne lit et n'écrit que dans celles-ci.",
+      "essaiEnregistrer": "Enregistrer les conversations d'essai",
+      "essaiFin": "Mettre fin à l'essai",
+      "essaiInvalide": "Chaque ligne doit être une référence de conversation valide, dix au plus.",
       "reglageFait": "Réglage appliqué.",
       "erreurReglage": "Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.",
       "doubleVerification": "Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.",
@@ -6787,6 +6798,8 @@
       "refuseCause": "Refusé : {cause}",
       "sansTexte": "Rien n'a été écrit.",
       "cause": {
+        "essai": "mode essai, aucune annonce",
+        "horsEssai": "conversation hors de l'essai",
         "plafondFil": "trop de messages de suite sans réponse",
         "plafond": "plafond par heure atteint",
         "plafondAnnonces": "deux annonces déjà publiées aujourd'hui",

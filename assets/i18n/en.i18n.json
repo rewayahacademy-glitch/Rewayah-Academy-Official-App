@@ -6619,6 +6619,17 @@
       "plafondChamp": "Number of messages per hour (1 to 120)",
       "plafondEnregistrer": "Set the limit",
       "plafondInvalide": "Write a whole number between 1 and 120.",
+      "essaiTitre": "Test conversations",
+      "essaiVide": "Test mode off: Praxis can read every academy conversation it is allowed to read.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Test mode: Praxis sees only {nombre} conversation and publishes no announcement.",
+        "other": "Test mode: Praxis sees only {nombre} conversations and publishes no announcement."
+      },
+      "essaiChamp": "Test conversations (one reference per line, ten at most)",
+      "essaiAide": "Paste the reference of each test conversation. While the list is not empty, Praxis reads and writes only in these.",
+      "essaiEnregistrer": "Save the test conversations",
+      "essaiFin": "End the test",
+      "essaiInvalide": "Each line must be a valid conversation reference, ten at most.",
       "reglageFait": "Setting applied.",
       "erreurReglage": "Setting not confirmed. Check the state above before trying again.",
       "doubleVerification": "This setting needs two-step verification. Turn it on in Account, then Security, and try again.",
@@ -6694,6 +6705,8 @@
       "refuseCause": "Refused: {cause}",
       "sansTexte": "Nothing was written.",
       "cause": {
+        "essai": "test mode, no announcement",
+        "horsEssai": "conversation outside the test",
         "plafondFil": "too many messages in a row without a reply",
         "plafond": "hourly limit reached",
         "plafondAnnonces": "two announcements already published today",
