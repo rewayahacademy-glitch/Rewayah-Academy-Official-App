@@ -441,7 +441,12 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
       );
     }
 
+    // ACCES-AGENTS-LISTE : la liste est la page (DECISION-DEFILEMENT-2026-11-01).
+    // Posee dans le defilement de la page, une collection qui defile seule rend
+    // un defilement non borne dans un defilement : erreur de mise en page, et
+    // tout ce qui suit (la liste, la section Praxis) restait blanc.
     return DataCollection<JetonAgent>(
+      defileAvecLaPage: true,
       lignes: _jetons,
       colonnes: <ColonneDonnees<JetonAgent>>[
         ColonneDonnees<JetonAgent>(
@@ -479,12 +484,15 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
         ColonneDonnees<JetonAgent>(
           titre: t.admin.agents.colonneEtat,
           texte: (JetonAgent j) => _nomEtat(j.etat),
-          rendu: (BuildContext _, JetonAgent j) => Row(
-            mainAxisSize: MainAxisSize.min,
+          // Un Wrap et non un Row : dans la colonne, l'etat et « Revoquer »
+          // debordaient de 166 px a 1440 px ; ils passent a la ligne.
+          rendu: (BuildContext _, JetonAgent j) => Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            crossAxisAlignment: WrapCrossAlignment.center,
             children: <Widget>[
               StatusPill(libelle: _nomEtat(j.etat), ton: _tonEtat(j.etat)),
               if (j.etat == EtatJeton.actif) ...<Widget>[
-                Ecart.hSm,
                 ActionPrincipale(
                   libelle: t.admin.agents.revoquer,
                   niveau: NiveauAction.destructive,
