@@ -80,6 +80,8 @@ parallèle, un agent par lot, quatre agents au plus.
 | 30 | #599 PRAXIS-PLAFOND-GLOBAL (870000) | ☑ | **fusionnée (f8fba8bf) et installée** ; vérifié : 3 empreintes = fichier, index, plafond 600, Praxis éteint, porte de réglage fermée à `anon` |
 | 31 | #596 docs (correction du grand livre) | ☑ | fusionnée (cfab596c) |
 | 32 | Envoi de message après PX-1 (610000, extraction com_envoyer_message) | ☑ | **prouvé en production** par le Pilote Messagerie (17/11, 4 h 15 UTC) : 3 messages réels en 200, une ligne chacun ; `com_annonce_envoyer` pas encore servi (non prouvé) ; double appel client absorbé par l'idempotence (chez le Pilote Messagerie) |
+| 33 | #581 REFAIRE-ENTRETIEN écran | ☑ | **fusionnée (56ab5eea)**, sans migration ; les trois lots de la carte de BE-DOSSIER sont dans `main` |
+| 34 | Audit de #585 (rôle `associe`) | ☑ | fait par le pilote le 17/11 vers 4 h 25 UTC (schéma seul) : 206 politiques, aucune par exclusion de rôle ; politiques « tout compte valide » = données de référence. **Un point exigé** : un associé lirait les documents de bibliothèque `inscrits` (library_resource_lecture, tranche_autorisee ELSE true, autoriser_lecture_version, n4_ressource_lisible) → correction demandée dans 780000 avant toute installation |
 
 ## 2. Gros lots (dans l'ordre ; une étape ne commence que quand la précédente est livrée)
 
