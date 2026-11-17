@@ -9,7 +9,7 @@
 export type Json = null | boolean | number | string | Json[] | { [cle: string]: Json }
 
 export interface Propriete {
-  type: 'string' | 'integer' | 'array' | 'boolean'
+  type: 'string' | 'integer' | 'array' | 'boolean' | 'object' | 'objects'
   description: string
   enum?: readonly string[]
   format?: 'uuid' | 'date' | 'datetime'
@@ -203,6 +203,56 @@ export const OUTILS: readonly Outil[] = [
       heures: { type: 'integer', minimum: 1, maximum: 168, description: 'La periode, en heures (168 au plus).' },
     },
   },
+  // PX-BD-0 (17/11/2026) : LES ACTES DU MODE CHAT. Les quatre outils ne servent QUE la cle de CHAT : la base refuse la routine
+  // (`chat_seulement`) avant toute autre chose, et le catalogue des actes est FERME cote base (private.praxis_actes, par migration).
+  {
+    nom: 'actes',
+    description: 'CHAT SEULEMENT : liste les actes que la direction t\'a ouverts (nom, niveau A ou S, description, taille de lot). Vide tant qu\'aucun acte n\'est ouvert. Niveau A : tu l\'accomplis avec « agir ». Niveau S : tu le PREPARES avec « acte_preparer », la direction lit un code dans l\'application, puis tu confirmes avec « acte_confirmer ».',
+    fonction: 'praxis_actes',
+    parametres: [],
+    proprietes: {},
+  },
+  {
+    nom: 'agir',
+    description: 'CHAT SEULEMENT : accomplit un acte de niveau A (simple, reversible, personne n\'est prevenue), a la demande de la direction, sous son identite, trace « via Praxis ». Plafonne a 60 par heure. Le meme cle_idempotence ne produit jamais deux fois l\'acte. Un acte de niveau S est refuse ici : prepare-le.',
+    fonction: 'praxis_agir',
+    parametres: [
+      { arg: 'acte', param: 'p_acte', requis: true },
+      { arg: 'parametres', param: 'p_params', requis: true },
+      { arg: 'cle_idempotence', param: 'p_cle_idempotence', requis: true },
+    ],
+    proprietes: {
+      acte: { type: 'string', pattern: '^[a-z][a-z0-9_]{2,59}$', maxLength: 60, description: 'Le nom de l\'acte, pris dans « actes ».' },
+      parametres: { type: 'object', description: 'Les parametres de l\'acte (un objet : cles en minuscules, valeurs texte, entier, booleen ou liste de textes). L\'acte refuse tout ce qu\'il ne connait pas.' },
+      cle_idempotence: CLE_IDEM,
+    },
+  },
+  {
+    nom: 'acte_preparer',
+    description: 'CHAT SEULEMENT : PREPARE un lot d\'actes de niveau S (sensible : une personne est prevenue, quelque chose est publie ou l\'academie est engagee). Rien n\'est execute. Tu recois un jeton et le resume de chaque ligne ; montre-le a la direction. La direction lit ensuite un CODE a six chiffres dans l\'application (section Praxis) et te le dit : un seul code vaut pour tout le lot. Le jeton expire en cinq minutes. 10 actes S par heure au plus.',
+    fonction: 'praxis_acte_preparer',
+    parametres: [
+      { arg: 'acte', param: 'p_acte', requis: true },
+      { arg: 'lot', param: 'p_lot', requis: true },
+    ],
+    proprietes: {
+      acte: { type: 'string', pattern: '^[a-z][a-z0-9_]{2,59}$', maxLength: 60, description: 'Le nom de l\'acte de niveau S, pris dans « actes ».' },
+      lot: { type: 'objects', minItems: 1, maxItems: 50, description: 'Les lignes du lot : un objet de parametres par ligne (1 a 50, la taille permise depend de l\'acte).' },
+    },
+  },
+  {
+    nom: 'acte_confirmer',
+    description: 'CHAT SEULEMENT : confirme un lot prepare, avec le jeton ET le code a six chiffres que la DIRECTION a lu dans l\'application. Ne devine jamais le code : trois erreurs verrouillent le lot et la cle pour l\'heure. Execute exactement le lot qui a ete montre. Rejouer un lot deja confirme rend son resultat.',
+    fonction: 'praxis_acte_confirmer',
+    parametres: [
+      { arg: 'jeton', param: 'p_jeton', requis: true },
+      { arg: 'code', param: 'p_code', requis: true },
+    ],
+    proprietes: {
+      jeton: { type: 'string', format: 'uuid', description: 'Le jeton rendu par « acte_preparer ».' },
+      code: { type: 'string', pattern: '^[0-9]{6}$', maxLength: 6, description: 'Le code a six chiffres que la direction t\'a dit.' },
+    },
+  },
   {
     nom: 'terminer',
     description: 'ROUTINE SEULEMENT (une cle de chat est refusee) : note la fin de ton tir pour que la direction voie que la routine tourne. A appeler UNE fois, en dernier, avec l\'issue (ok, rien_a_faire, erreur), le nombre de fils lus, de messages envoyes, de fils passes a l\'equipe, de refus recus, et une note courte (200 signes au plus, jamais le texte d\'une personne).',
@@ -227,6 +277,41 @@ export const OUTILS: readonly Outil[] = [
 ]
 
 export class ErreurSchema extends Error {}
+
+/// PX-BD-0 : les parametres d'un acte. Ce n'est PAS une requete : un objet plat (20 cles au plus, cles en minuscules), des valeurs
+/// simples (texte, entier, booleen, liste de textes). La base refuse l'acte inconnu ; chaque adaptateur d'acte valide ses cles contre
+/// une liste fermee. Ici, seulement la forme et la taille.
+function objetBorne(bad: (m: string) => Error, v: unknown): Json {
+  if (typeof v !== 'object' || v === null || Array.isArray(v)) throw bad('objet attendu')
+  const cles = Object.keys(v)
+  if (cles.length > 20) throw bad('trop de cles')
+  const sortie: { [cle: string]: Json } = {}
+  for (const k of cles) {
+    if (!/^[a-z][a-z0-9_]{0,39}$/.test(k)) throw bad('cle interdite')
+    const x = (v as Record<string, unknown>)[k]
+    if (typeof x === 'string') {
+      if (x.includes('\u0000') || x.length > 1000) throw bad('texte interdit ou trop long')
+      sortie[k] = x
+    } else if (typeof x === 'number') {
+      if (!Number.isSafeInteger(x)) throw bad('entier attendu')
+      sortie[k] = x
+    } else if (typeof x === 'boolean') {
+      sortie[k] = x
+    } else if (Array.isArray(x)) {
+      if (x.length > 50) throw bad('liste trop longue')
+      const liste: Json[] = []
+      for (const y of x) {
+        if (typeof y !== 'string' || y.includes('\u0000') || y.length > 200) throw bad('liste de textes attendue')
+        liste.push(y)
+      }
+      sortie[k] = liste
+    } else {
+      throw bad('valeur interdite')
+    }
+  }
+  if (JSON.stringify(sortie).length > 4000) throw bad('trop volumineux')
+  return sortie
+}
 
 function valide(nom: string, p: Propriete, v: unknown): Json {
   const bad = (m: string) => new ErreurSchema(`${nom} : ${m}`)
@@ -256,6 +341,16 @@ function valide(nom: string, p: Propriete, v: unknown): Json {
     case 'boolean': {
       if (typeof v !== 'boolean') throw bad('booleen attendu')
       return v
+    }
+    case 'object': {
+      return objetBorne(bad, v)
+    }
+    case 'objects': {
+      if (!Array.isArray(v)) throw bad('liste attendue')
+      if (p.minItems !== undefined && v.length < p.minItems) throw bad('liste trop courte')
+      if (p.maxItems !== undefined && v.length > p.maxItems) throw bad('liste trop longue')
+      if (JSON.stringify(v).length > 16000) throw bad('trop volumineux')
+      return v.map((x) => objetBorne(bad, x))
     }
     case 'array': {
       if (!Array.isArray(v)) throw bad('liste attendue')
@@ -308,7 +403,11 @@ export function preparer(
 export function schemaMcp(outil: Outil): { name: string; description: string; inputSchema: Json } {
   const proprietes: Record<string, Json> = {}
   for (const [nom, p] of Object.entries(outil.proprietes)) {
-    const o: Record<string, Json> = { type: p.type, description: p.description }
+    const o: Record<string, Json> = {
+      type: p.type === 'objects' ? 'array' : p.type, description: p.description,
+      ...(p.type === 'objects' ? { items: { type: 'object', additionalProperties: true } } : {}),
+      ...(p.type === 'object' ? { additionalProperties: true } : {}),
+    }
     if (p.enum) o.enum = [...p.enum]
     if (p.format && p.format !== 'datetime') o.format = p.format
     if (p.format === 'datetime') o.format = 'date-time'

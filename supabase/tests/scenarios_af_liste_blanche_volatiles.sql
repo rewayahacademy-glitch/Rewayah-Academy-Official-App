@@ -73,6 +73,11 @@ declare
     'direction_praxis_regler_donnees_reelles(boolean)',
     -- PRAXIS-PLAFOND-GLOBAL (20261129870000) : le plafond d'appels par cle et par heure ; admin, aal2, une ligne d'audit.
     'direction_praxis_regler_plafond(integer)',
+    -- PX-BD-0 (20261129960000) : les deux portes de la direction (administrateur valide, aal2) du SOCLE DES ACTES de Praxis en mode chat :
+    -- voir les lots en attente avec leur code a six chiffres (le code ne se lit que la ; marque « affiche » et journalise) et annuler un lot.
+    -- Elles n'ecrivent que private.praxis_confirmations (et une ligne d'audit) : aucun dossier, aucun compte, aucun message.
+    'direction_praxis_confirmation_annuler(uuid)',
+    'direction_praxis_confirmations()',
     'direction_praxis_valider(uuid,integer,text,uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
