@@ -33,6 +33,14 @@ BEGIN
      OR pg_catalog.to_regprocedure('private.candidature_geste_appliquer(uuid,text,smallint,text,uuid,text,text,jsonb,jsonb)') IS NULL THEN
     RAISE EXCEPTION 'APRES-CONFIRMEE : dependances absentes (moteur des gestes, controles de la salle 3)';
   END IF;
+  -- Les deux regles neuves reprennent la transition 20 de `restreindre` (meme famille : une restriction). Le moteur
+  -- n'exige pas des numeros uniques (cle primaire : geste, variante ; 7, 11, 18, 22 et 24 sont deja partages) ;
+  -- mais la 20 ne doit appartenir qu'a la famille de la restriction.
+  IF EXISTS (SELECT 1 FROM private.candidature_gestes_regles r
+              WHERE r.transition = 20
+                AND r.geste NOT IN ('restreindre', 'demander_verification_piece', 'demander_verification_versement')) THEN
+    RAISE EXCEPTION 'APRES-CONFIRMEE : la transition 20 est prise par une regle etrangere a la restriction';
+  END IF;
 END
 $preflight$;
 
