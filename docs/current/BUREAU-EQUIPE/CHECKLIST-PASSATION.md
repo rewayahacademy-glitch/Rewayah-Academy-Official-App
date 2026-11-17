@@ -50,6 +50,7 @@ parallèle, un agent par lot, quatre agents au plus.
 | 6 | **La case anti-robot Cloudflare** sous le bouton d'inscription et de connexion (#525, en retard depuis le 16/11) | BE-SALLE | ◐ mise à jour (f75e8ed2), tests locaux verts, CI en cours. Non prouvé : la vraie case ne se voit qu'en production |
 | 7 | **Inscription d'un associé invité** par un code (#604) | pilote (mise à jour après #606) ; BE-DOSSIER en pause (plafond de 4 agents) | ◐ bloquée par #606 |
 | 8 | **Des tests qui cassent selon l'heure** (bloquent la vérification automatique des PR le matin) | BE-GESTES | ◐ facturation corrigée (#606 fusionnée, 641ed4fe) ; drapeaux et balayage complet à suivre |
+| Dette, date limite 25/11 | **Un test des remboursements casse du 25 au 30 de chaque mois** (`scenarios_fn115b_remboursements.sql` l. 268, dans `ci.yml` : toute CI serait rouge). Cause à établir (test seul, ou vrai calcul des mois ?). Trouvé par le balayage horaire de BE-SALLE le 17/11 | BE-SALLE après #613 et #525 | ☐ |
 | Dette | **Un test de la prière casse tous les lundis** (`scenarios_priere_serveur.sql` l. 1851, collision avec une séance générée le jeudi à 19 h) ; hors `ci.yml`, ne bloque personne. Relevé par BE-GESTES le 17/11 | — | ☐ |
 | Plus tard | **Assainir les documents du dépôt que Praxis lit** : trop de mises à jour contradictoires (directeur, 17/11 : « pas maintenant ») | — | ☐ |
 | Après | Praxis fixe des objectifs et des check-lists (PX-3), propose des classes (PX-4), fait des rapports (PX-5) | — | ☐ |
