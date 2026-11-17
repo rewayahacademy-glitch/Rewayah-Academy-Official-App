@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
+import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -17,6 +18,7 @@ import 'package:rewayah_academy/features/connexion/recuperation_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 
 import '../features/support_form_l2.dart';
+import '../support/faux_service_praxis.dart';
 import '../support/harnais.dart' show FauxSelecteurFichier, FauxServiceDossier;
 import 'outil_capture.dart';
 
@@ -73,6 +75,7 @@ Future<void> _ouvrir(
   final List<Override> surcharges = <Override>[
     ...surchargesFormL2(comptes: FauxComptesFormL2(comptesFormL2)),
     serviceAgentProvider.overrideWithValue(_Agents()),
+    servicePraxisProvider.overrideWithValue(FauxServicePraxis()),
     serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
     selecteurFichierProvider.overrideWithValue(FauxSelecteurFichier(null)),
   ];
