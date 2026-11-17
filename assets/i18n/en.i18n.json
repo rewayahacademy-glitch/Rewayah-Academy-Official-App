@@ -2664,7 +2664,8 @@
           "profil_renseigne": "fill in the profile",
           "profil_unique": "check the profile is unique",
           "aucune_restriction": "lift the restriction",
-          "piece_validee": "validate the ID document"
+          "piece_validee": "validate the ID document",
+          "complement_clos": "close the request for additional information"
         },
         "vous": "Your turn: {geste}",
         "pause": "The file is paused.",
@@ -4186,7 +4187,9 @@
           "effetPause": "The applications concerned do not move forward until the pause is lifted.",
           "effetLever": "The applications concerned resume where they had stopped.",
           "effetRefuser": "The applications concerned are closed. You can reopen them one by one.",
+          "effetDispenser": "The selected applications move on to the decision, as after a successful interview. Interviews already scheduled are cancelled. No message is sent.",
           "motifCommun": "The same reason and the same message apply to all the applications concerned.",
+          "motifCommunDispense": "The same reason and the same category apply to all the selected applications.",
           "nombre": "Number of applications concerned",
           "nombreAide": "Enter {n} to confirm.",
           "nombreFaux": "That is not the right number. Enter {n}.",
@@ -4507,6 +4510,7 @@
           "profilUnique": "Unique profile",
           "aucuneRestriction": "No restriction or pause",
           "pieceValidee": "ID document validated",
+          "complementClos": "Additional information closed",
           "inconnu": "Server check"
         },
         "causes": {
@@ -4534,6 +4538,7 @@
           "pieceAbsente": "No identity document uploaded",
           "pieceAVerifier": "Document uploaded, to be checked",
           "pieceARedeposer": "Document refused, to be uploaded again",
+          "complementEnCours": "A requested additional information is still pending",
           "inconnue": "Cause not specified"
         }
       },
@@ -4571,6 +4576,7 @@
         "admettre": "Admit to the Verification and interview room",
         "confirmerMoyen": "Confirm the payout method",
         "ecarterMoyen": "Set this payout method aside",
+        "debloquerVersement": "Unlock the payout",
         "demanderComplement": "Ask for additional information",
         "cloreComplement": "Close the request for additional information",
         "mettreEnPause": "Pause",
@@ -4578,13 +4584,15 @@
         "refuser": "Decline the application",
         "retrait": "Record a requested withdrawal",
         "rouvrir": "Reopen the application",
-        "responsable": "Choose the manager"
+        "responsable": "Choose the manager",
+        "dispenserEntretien": "Waive the interview"
       },
       "consequences": {
         "accueillir": "Their teacher account is activated and their space opens. The person teaches only once assigned to a class.",
         "admettre": "The application moves to the Verification and interview room.",
         "confirmerMoyen": "This method lets Rewayah pay the remuneration in the person's country.",
         "ecarterMoyen": "This method is no longer kept. With no other possible method, the application waits for a method to become possible.",
+        "debloquerVersement": "The payout is confirmed by hand, even with no declared method. Your reason stays in the history. If the person changes their answers, the unlock is lifted.",
         "demanderComplement": "The application goes back to \"to complete\". The person will read the list of chosen items.",
         "cloreComplement": "The requested additional information is closed. The application stays in its room.",
         "mettreEnPause": "The application does not move forward until the pause is lifted.",
@@ -4592,7 +4600,8 @@
         "refuser": "The application is closed. You can reopen it.",
         "retrait": "The application is closed at the person's request. You can reopen it.",
         "rouvrir": "The application returns to its original stage, if the server's checks allow it.",
-        "responsable": "The manager follows this application."
+        "responsable": "The manager follows this application.",
+        "dispenserEntretien": "The application moves on to the decision, as after a successful interview. An interview already scheduled is cancelled. No message is sent to the person."
       },
       "feuille": {
         "motif": "Internal reason",
@@ -4604,6 +4613,14 @@
         "modeleManquant": "Choose the message the person will read.",
         "enCours": "Sending to the server",
         "actualiser": "Refresh the application"
+      },
+      "dispense": {
+        "categorie": "Who are you waiving?",
+        "fondateur": "A founder",
+        "fondateurAide": "For a founder of the academy, whose interview is not needed.",
+        "autre": "Someone else",
+        "autreAide": "For anyone else: the written reason says why.",
+        "categorieManquante": "Choose who you are waiving."
       },
       "complement": {
         "elements": "What is missing",
@@ -4686,6 +4703,7 @@
         "admettre": "The application is in the Verification and interview room.",
         "confirmerMoyen": "The payout method is confirmed.",
         "ecarterMoyen": "The payout method is set aside.",
+        "debloquerVersement": "The payout is unlocked.",
         "demanderComplement": "Additional information is requested.",
         "cloreComplement": "The additional information request is closed.",
         "mettreEnPause": "The application is paused.",
@@ -4694,6 +4712,7 @@
         "retrait": "The withdrawal is recorded.",
         "rouvrir": "The application is reopened.",
         "responsable": "The manager is recorded.",
+        "dispenserEntretien": "Interview waived. The decision is waiting for you.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
       "genres": {"male": "Man", "female": "Woman"},

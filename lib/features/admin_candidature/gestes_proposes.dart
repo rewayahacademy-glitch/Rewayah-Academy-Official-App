@@ -99,6 +99,14 @@ bool gestePermisPourLigne(
           enExamen &&
           (l.paiement == EtatVersement.aVerifier ||
               l.paiement == EtatVersement.compatible);
+    case GesteCandidature.debloquerVersement:
+      // La regle `debloquer_versement` du serveur (20261128500100) : en Salle
+      // d'examen, en examen ou versement impossible, en cours, hors pause.
+      // Aucune condition sur le moyen : le serveur recalcule le versement.
+      return sansPause &&
+          etape == EtapeCandidature.prequalification &&
+          (l.etat == EtatCandidature.enExamen ||
+              l.etat == EtatCandidature.paiementNonDisponible);
     case GesteCandidature.mettreEnPause:
       return sansPause && etape != null;
     case GesteCandidature.leverPause:
@@ -110,6 +118,13 @@ bool gestePermisPourLigne(
       return !enCours && !l.enPause && avantSalle3;
     case GesteCandidature.definirResponsable:
       return sansPause && etape != null;
+    case GesteCandidature.dispenserEntretien:
+      // BE-1g (regle 45 du moteur) : en Salle de verification et d'entretien,
+      // entretien a planifier ou deja planifie, en cours, hors pause.
+      return sansPause &&
+          etape == EtapeCandidature.verifications &&
+          (l.etat == EtatCandidature.entretienAPlanifier ||
+              l.etat == EtatCandidature.entretienPlanifie);
     case GesteCandidature.validerPiece:
       // Les sources permises de `valider_piece` (CAND-L2A1) : en Salle de
       // verification et d'entretien, la decision attendue, en cours, hors
@@ -236,8 +251,10 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.cloreComplement,
   GesteCandidature.confirmerMoyenPaiement,
   GesteCandidature.infirmerMoyenPaiement,
+  GesteCandidature.debloquerVersement,
   GesteCandidature.admettreVerifications,
   GesteCandidature.validerPiece,
+  GesteCandidature.dispenserEntretien,
   GesteCandidature.mettreEnPause,
   GesteCandidature.leverPause,
   GesteCandidature.refuser,

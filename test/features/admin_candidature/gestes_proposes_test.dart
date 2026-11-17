@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/features/admin_candidature/gestes_proposes.dart';
+import 'package:rewayah_academy/features/admin_candidature/libelles_candidature.dart';
 import 'package:rewayah_academy/features/admin_candidatures/menu_ligne_candidature.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -117,6 +118,7 @@ void main() {
       permis: <GesteCandidature>[
         c,
         GesteCandidature.cloreComplement,
+        GesteCandidature.dispenserEntretien,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,
@@ -428,5 +430,66 @@ void main() {
         isTrue,
       );
     });
+  });
+
+  group('Debloquer le versement : la regle debloquer_versement du serveur', () {
+    const GesteCandidature g = GesteCandidature.debloquerVersement;
+    bool propose(DetailCandidature d, {CapacitesCandidatures? caps}) {
+      final GestesProposes p = _pour(
+        d,
+        capacites: caps ?? capacitesAvecDeblocage,
+      );
+      return p.principal == g || p.autres.contains(g);
+    }
+
+    test('en examen, quel que soit le versement : propose', () {
+      for (final EtatVersement v in EtatVersement.values) {
+        expect(propose(detailTest(paiement: v)), isTrue, reason: v.name);
+      }
+    });
+
+    test('versement impossible (paiement_non_disponible) : propose', () {
+      expect(
+        propose(
+          detailTest(
+            etat: EtatCandidature.paiementNonDisponible,
+            paiement: EtatVersement.incompatible,
+          ),
+        ),
+        isTrue,
+      );
+    });
+
+    test('le serveur ne l\'ouvre pas (cle absente) : jamais propose', () {
+      expect(propose(detailTest(), caps: capacitesGestes), isFalse);
+    });
+
+    test('ailleurs qu\'en Salle d\'examen ou hors des deux etats : refuse', () {
+      expect(propose(detailTest(enPause: true)), isFalse);
+      expect(propose(detailTest(issue: IssueCandidature.refusee)), isFalse);
+      expect(
+        propose(detailTest(etape: EtapeCandidature.verifications, etat: null)),
+        isFalse,
+      );
+      expect(
+        propose(
+          detailTest(
+            etat: EtatCandidature.aCompleter,
+            paiement: EtatVersement.inconnu,
+          ),
+        ),
+        isFalse,
+      );
+    });
+
+    test(
+      'le menu d\'une ligne suit la meme table, avec son icone et son libelle',
+      () {
+        final DetailCandidature d = detailTest(paiement: EtatVersement.inconnu);
+        expect(gestePermisPourLigne(g, d.ligne), isTrue);
+        expect(iconeDuGeste(g), isNotNull);
+        expect(libelleGeste(g), isNotEmpty);
+      },
+    );
   });
 }

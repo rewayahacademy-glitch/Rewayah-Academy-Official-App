@@ -1,7 +1,8 @@
-// VERSEMENT-QUESTIONS (pilote, 16/11/2026) : le serveur rend `debloquerVersement`
-// dans les capacites de la direction avant que l'ecran n'existe. L'application
-// actuelle doit le tolerer : ni plantage, ni geste propose, les autres gestes
-// intacts.
+// VERSEMENT-QUESTIONS (pilote, 16/11/2026), puis DEBLOQUER-VERSEMENT-ECRAN : un
+// geste que le serveur rend dans les capacites de la direction avant que l'ecran
+// n'existe doit etre tolere : ni plantage, ni geste propose, les autres gestes
+// intacts. `debloquerVersement` a maintenant son ecran ; la cle inconnue du test
+// est `geste_futur_inconnu`.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
@@ -17,8 +18,7 @@ void main() {
         'gestes': <String, dynamic>{
           'refuser': true,
           'confirmerMoyenPaiement': true,
-          // Le geste du serveur sans ecran : inconnu de l'application.
-          'debloquerVersement': true,
+          // Un geste du serveur sans ecran : inconnu de l'application.
           'geste_futur_inconnu': true,
         },
       },
@@ -30,7 +30,7 @@ void main() {
     // le geste du serveur, donc aucun bouton, aucun ecran vide.
     expect(
       GesteCandidature.values.any(
-        (GesteCandidature g) => g.name == 'debloquerVersement',
+        (GesteCandidature g) => g.name == 'geste_futur_inconnu',
       ),
       isFalse,
     );

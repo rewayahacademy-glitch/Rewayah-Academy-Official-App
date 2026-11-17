@@ -2664,7 +2664,8 @@
           "profil_renseigne": "renseigner le profil",
           "profil_unique": "vérifier que le profil est unique",
           "aucune_restriction": "lever la restriction",
-          "piece_validee": "valider la pièce d'identité"
+          "piece_validee": "valider la pièce d'identité",
+          "complement_clos": "clore le complément"
         },
         "vous": "À vous : {geste}",
         "pause": "Le dossier est en pause.",
@@ -4186,7 +4187,9 @@
           "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
           "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
           "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
+          "effetDispenser": "Les candidatures concernées passent à la décision, comme après un entretien tenu et favorable. Les entretiens déjà planifiés sont annulés. Aucun message n'est envoyé.",
           "motifCommun": "Le même motif et le même message valent pour toutes les candidatures concernées.",
+          "motifCommunDispense": "Le même motif et la même catégorie valent pour toutes les candidatures concernées.",
           "nombre": "Nombre de candidatures concernées",
           "nombreAide": "Saisissez {n} pour confirmer.",
           "nombreFaux": "Ce n'est pas le bon nombre. Saisissez {n}.",
@@ -4507,6 +4510,7 @@
           "profilUnique": "Profil unique",
           "aucuneRestriction": "Aucune restriction ni pause",
           "pieceValidee": "Pièce d'identité validée",
+          "complementClos": "Complément clos",
           "inconnu": "Contrôle du serveur"
         },
         "causes": {
@@ -4534,6 +4538,7 @@
           "pieceAbsente": "Aucune pièce d'identité déposée",
           "pieceAVerifier": "Pièce déposée, à vérifier",
           "pieceARedeposer": "Pièce refusée, à déposer de nouveau",
+          "complementEnCours": "Un complément demandé est encore en cours",
           "inconnue": "Cause non précisée"
         }
       },
@@ -4571,6 +4576,7 @@
         "admettre": "Admettre en Salle de vérification et d'entretien",
         "confirmerMoyen": "Confirmer le moyen de versement",
         "ecarterMoyen": "Écarter ce moyen de versement",
+        "debloquerVersement": "Débloquer le versement",
         "demanderComplement": "Demander un complément",
         "cloreComplement": "Clore le complément",
         "mettreEnPause": "Mettre en pause",
@@ -4578,13 +4584,15 @@
         "refuser": "Refuser la candidature",
         "retrait": "Enregistrer un retrait demandé",
         "rouvrir": "Rouvrir la candidature",
-        "responsable": "Choisir le responsable"
+        "responsable": "Choisir le responsable",
+        "dispenserEntretien": "Dispenser d'entretien"
       },
       "consequences": {
         "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
         "admettre": "La candidature passe en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.",
         "ecarterMoyen": "Ce moyen n'est plus retenu. Sans autre moyen possible, la candidature attend qu'un moyen devienne possible.",
+        "debloquerVersement": "Le versement est confirmé à la main, même sans moyen déclaré. Votre motif reste dans l'historique. Si la personne modifie ses réponses, le déblocage tombe.",
         "demanderComplement": "La candidature repasse à compléter. La personne lira la liste des éléments choisis.",
         "cloreComplement": "Le complément demandé est clos. La candidature reste dans sa salle.",
         "mettreEnPause": "La candidature n'avance plus tant que la pause n'est pas levée.",
@@ -4592,7 +4600,8 @@
         "refuser": "La candidature est fermée. Vous pourrez la rouvrir.",
         "retrait": "La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.",
         "rouvrir": "La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.",
-        "responsable": "Le responsable suit cette candidature."
+        "responsable": "Le responsable suit cette candidature.",
+        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne."
       },
       "feuille": {
         "motif": "Motif interne",
@@ -4604,6 +4613,14 @@
         "modeleManquant": "Choisissez le message que la personne lira.",
         "enCours": "Envoi au serveur en cours",
         "actualiser": "Actualiser la candidature"
+      },
+      "dispense": {
+        "categorie": "Qui dispensez-vous\u00a0?",
+        "fondateur": "Un fondateur",
+        "fondateurAide": "Pour un fondateur de l'académie, dont l'entretien n'a pas lieu d'être.",
+        "autre": "Une autre personne",
+        "autreAide": "Pour toute autre personne\u00a0: le motif écrit dit pourquoi.",
+        "categorieManquante": "Choisissez qui vous dispensez."
       },
       "complement": {
         "elements": "Ce qui manque",
@@ -4686,6 +4703,7 @@
         "admettre": "La candidature est en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Le moyen de versement est confirmé.",
         "ecarterMoyen": "Le moyen de versement est écarté.",
+        "debloquerVersement": "Le versement est débloqué.",
         "demanderComplement": "Le complément est demandé.",
         "cloreComplement": "Le complément est clos.",
         "mettreEnPause": "La candidature est en pause.",
@@ -4694,6 +4712,7 @@
         "retrait": "Le retrait est enregistré.",
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
+        "dispenserEntretien": "Entretien dispensé. La décision vous attend.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
       "genres": {"male": "Homme", "female": "Femme"},

@@ -198,6 +198,21 @@ Future<void> _tapper(WidgetTester tester, Finder f) async {
   await laisser(tester);
 }
 
+/// Les mots du menu « ... » du dossier, ouvert.
+Future<List<String>> _menuDossier(WidgetTester tester) async {
+  await _tapper(tester, find.byKey(BarreDecisionDossier.cleMenu));
+  return <String>[
+    for (final Element e
+        in find
+            .descendant(
+              of: find.byType(PopupMenuItem<int>),
+              matching: find.byType(Text),
+            )
+            .evaluate())
+      (e.widget as Text).data!,
+  ];
+}
+
 /// La prochaine action du serveur, ou qu'elle soit dans le dossier en trois
 /// etages (BE-DOSSIER) : la decision de la barre, ou le lien de la rubrique.
 const List<String> _clesPrincipal = <String>[
@@ -1108,6 +1123,7 @@ void main() {
         // Capture de production CAND-00068 : « Clore le complement » etait
         // propose alors qu'aucune demande n'etait en cours.
         expect(autres, <String>[
+          t.admin.candidatures.gestes.dispenserEntretien,
           t.admin.candidatures.gestes.mettreEnPause,
           t.admin.candidatures.gestes.retrait,
         ]);
@@ -1131,6 +1147,7 @@ void main() {
         final List<String> autres = await menu(tester);
         expect(autres, <String>[
           t.admin.candidatures.gestes.cloreComplement,
+          t.admin.candidatures.gestes.dispenserEntretien,
           t.admin.candidatures.gestes.mettreEnPause,
           t.admin.candidatures.gestes.retrait,
         ]);
@@ -1294,6 +1311,79 @@ void main() {
       expect(d.moyen, const MoyenVersement.virement());
       expect(d.motif, 'Compte clos.');
     });
+
+    testWidgets('debloquer le versement : un motif, puis le geste serveur', (
+      WidgetTester tester,
+    ) async {
+      final FauxCandidaturesDirection port = _port(
+        capacites: capacitesAvecDeblocage,
+        detail: detailTest(paiement: EtatVersement.inconnu),
+      );
+      await _monter(tester, port);
+      await _geste(tester, GesteCandidature.debloquerVersement);
+      expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
+      // La consequence se dit avant le choix (K-58), un seul bouton plein.
+      expect(
+        find.text(t.admin.candidatures.consequences.debloquerVersement),
+        findsOneWidget,
+      );
+      expect(_pleins(find.byKey(FeuilleGeste.cle)), 1);
+      // Sans motif : rien n'est envoye, le manque est nomme.
+      await _valider(tester);
+      expect(port.appelsGeste, isEmpty);
+      expect(
+        find.text(t.admin.candidatures.feuille.motifManquant),
+        findsOneWidget,
+      );
+      await _saisirMotif(tester, '  Cas particulier, verifie.  ');
+      await _valider(tester);
+      final DemandeGeste d = port.appelsGeste.single.demande;
+      expect(d.geste, GesteCandidature.debloquerVersement);
+      expect(d.motif, 'Cas particulier, verifie.');
+      expect(d.versionAttendue, 3);
+    });
+
+    testWidgets(
+      'debloquer le versement : absent quand le serveur ne l\'ouvre pas',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          _port(detail: detailTest(paiement: EtatVersement.inconnu)),
+        );
+        expect(
+          find.byKey(
+            const ValueKey<String>('rubrique-geste-debloquerVersement'),
+          ),
+          findsNothing,
+        );
+        await _tapper(tester, find.byKey(BarreDecisionDossier.cleMenu));
+        expect(
+          find.text(t.admin.candidatures.gestes.debloquerVersement),
+          findsNothing,
+        );
+      },
+    );
+
+    testWidgets(
+      'debloquer le versement : le refus du serveur est dit, la feuille reste',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          capacites: capacitesAvecDeblocage,
+          detail: detailTest(paiement: EtatVersement.inconnu),
+          erreurGeste: (DemandeGeste _, int _) => const ConflitGeste(7),
+        );
+        await _monter(tester, port);
+        await _geste(tester, GesteCandidature.debloquerVersement);
+        await _saisirMotif(tester, 'Cas particulier.');
+        await _valider(tester);
+        expect(find.text(t.admin.candidatures.erreurs.conflit), findsOneWidget);
+        expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
+        expect(
+          find.text(t.admin.candidatures.retours.debloquerVersement),
+          findsNothing,
+        );
+      },
+    );
 
     testWidgets('refuser : motif et message, nommes quand ils manquent', (
       WidgetTester tester,
@@ -1477,6 +1567,121 @@ void main() {
         findsOneWidget,
       );
     });
+
+    // DISPENSE-ECRAN (BE-1g, pilote 16/11/2026) : « Dispenser d'entretien ».
+    for (final (String nom, EtatCandidature etat, bool propose) cas
+        in <(String, EtatCandidature, bool)>[
+          ('entretien a planifier', EtatCandidature.entretienAPlanifier, true),
+          ('entretien planifie', EtatCandidature.entretienPlanifie, true),
+          ('decision en attente', EtatCandidature.decisionEnAttente, false),
+        ]) {
+      testWidgets(
+        'dispenser d\'entretien : ${cas.$1}, ${cas.$3 ? 'propose' : 'pas propose'}',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            _port(
+              detail: detailTest(
+                etape: EtapeCandidature.verifications,
+                etat: cas.$2,
+                paiement: EtatVersement.compatible,
+              ),
+            ),
+          );
+          final List<String> autres = await _menuDossier(tester);
+          expect(
+            autres.contains(t.admin.candidatures.gestes.dispenserEntretien),
+            cas.$3,
+          );
+        },
+      );
+    }
+
+    testWidgets('dispenser d\'entretien : pas propose en Salle d\'examen', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _port(detail: detailTest(paiement: EtatVersement.compatible)),
+      );
+      final List<String> autres = await _menuDossier(tester);
+      expect(
+        autres.contains(t.admin.candidatures.gestes.dispenserEntretien),
+        isFalse,
+      );
+    });
+
+    testWidgets(
+      'dispenser d\'entretien : la categorie et un motif, puis le geste part',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          detail: detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienAPlanifier,
+            paiement: EtatVersement.compatible,
+          ),
+        );
+        await _monter(tester, port);
+        await _geste(tester, GesteCandidature.dispenserEntretien);
+        // La consequence se dit avant le choix (K-58).
+        expect(
+          find.text(t.admin.candidatures.consequences.dispenserEntretien),
+          findsOneWidget,
+        );
+        // Rien ne part sans categorie ni motif ; chaque manque se dit.
+        await _valider(tester);
+        expect(port.appelsGeste, isEmpty);
+        expect(
+          find.text(t.admin.candidatures.dispense.categorieManquante),
+          findsOneWidget,
+        );
+        expect(
+          find.text(t.admin.candidatures.feuille.motifManquant),
+          findsOneWidget,
+        );
+        await _tapper(
+          tester,
+          find.byKey(const ValueKey<String>('dispense-fondateur')),
+        );
+        await _valider(tester);
+        expect(port.appelsGeste, isEmpty);
+        await _saisirMotif(tester, 'Fondateur de l\'academie.');
+        await _valider(tester);
+        final DemandeGeste d = port.appelsGeste.single.demande;
+        expect(d.geste, GesteCandidature.dispenserEntretien);
+        expect(d.categorieDispense, CategorieDispense.fondateur);
+        expect(d.motif, 'Fondateur de l\'academie.');
+        expect(
+          find.text(t.admin.candidatures.retours.dispenserEntretien),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets(
+      'dispenser d\'entretien : l\'autre categorie part telle quelle',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          detail: detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienPlanifie,
+            paiement: EtatVersement.compatible,
+          ),
+        );
+        await _monter(tester, port);
+        await _geste(tester, GesteCandidature.dispenserEntretien);
+        await _tapper(
+          tester,
+          find.byKey(const ValueKey<String>('dispense-autre')),
+        );
+        await _saisirMotif(tester, 'Ancien enseignant de l\'academie.');
+        await _valider(tester);
+        expect(
+          port.appelsGeste.single.demande.categorieDispense,
+          CategorieDispense.autre,
+        );
+      },
+    );
 
     testWidgets(
       'mettre en pause : un message, un motif, une reprise facultative',
@@ -1846,6 +2051,48 @@ void main() {
         expect(texte, isNot(contains('non_accepte')));
         expect(find.byKey(FeuilleGeste.cle), findsOneWidget);
         expect(find.byKey(FeuilleGeste.cleValider), findsOneWidget);
+      },
+    );
+
+    testWidgets(
+      'accueil refuse : la piece non validee et le complement en cours sont dits en mots',
+      (WidgetTester tester) async {
+        await faireRefuser(
+          tester,
+          const ControlesNonSatisfaits(<({String nom, String? cause})>[
+            (nom: 'piece_validee', cause: 'piece_a_verifier'),
+            (nom: 'complement_clos', cause: 'complement_en_cours'),
+          ]),
+        );
+        final String texte = _toutLeTexte(tester);
+        expect(
+          texte,
+          contains(
+            t.admin.candidatures.detail.controleLigne(
+              nom: t.admin.candidatures.controles.noms.complementClos,
+              cause: t.admin.candidatures.controles.causes.complementEnCours,
+            ),
+          ),
+        );
+        expect(
+          texte,
+          contains(
+            t.admin.candidatures.detail.controleLigne(
+              nom: t.admin.candidatures.controles.noms.pieceValidee,
+              cause: t.admin.candidatures.controles.causes.pieceAVerifier,
+            ),
+          ),
+        );
+        // Ni le code, ni la phrase de repli.
+        expect(texte, isNot(contains('complement_en_cours')));
+        expect(
+          texte,
+          isNot(contains(t.admin.candidatures.controles.causes.inconnue)),
+        );
+        expect(
+          texte,
+          isNot(contains(t.admin.candidatures.controles.noms.inconnu)),
+        );
       },
     );
 

@@ -190,6 +190,13 @@ DemandeGeste _demande(GesteCandidature g) {
         moyen: const MoyenVersement.virement(),
         motif: 'Compte clos.',
       );
+    case GesteCandidature.debloquerVersement:
+      return DemandeGeste.debloquerVersement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Cas particulier.',
+      );
     case GesteCandidature.mettreEnPause:
       return DemandeGeste.mettreEnPause(
         candidatureId: id,
@@ -236,6 +243,14 @@ DemandeGeste _demande(GesteCandidature g) {
         cleIdempotence: cle,
         responsableId: 'r1',
       );
+    case GesteCandidature.dispenserEntretien:
+      return DemandeGeste.dispenserEntretien(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        categorie: CategorieDispense.fondateur,
+        motif: 'Fondateur de l\'academie.',
+      );
   }
 }
 
@@ -280,6 +295,10 @@ void main() {
               'p_motif': 'Compte clos.',
             },
           ),
+          GesteCandidature.debloquerVersement: (
+            'debloquer_versement_candidat',
+            <String, Object?>{'p_motif': 'Cas particulier.'},
+          ),
           GesteCandidature.mettreEnPause: (
             'mettre_en_pause_candidat',
             <String, Object?>{
@@ -311,6 +330,13 @@ void main() {
           GesteCandidature.definirResponsable: (
             'definir_responsable_candidat',
             <String, Object?>{'p_responsable_id': 'r1'},
+          ),
+          GesteCandidature.dispenserEntretien: (
+            'dispenser_entretien',
+            <String, Object?>{
+              'p_categorie': 'fondateur',
+              'p_motif': 'Fondateur de l\'academie.',
+            },
           ),
         };
 

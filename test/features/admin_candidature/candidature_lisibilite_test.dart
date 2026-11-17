@@ -50,7 +50,9 @@ FauxCandidaturesDirection _port(
     ResponsablePossible(id: 'r2', nom: 'Leila Benkacem'),
   ],
 }) => FauxCandidaturesDirection(
-  capacitesRendues: capacitesGestes,
+  // DEBLOQUER-VERSEMENT-ECRAN : le geste est ouvert par le serveur ici aussi,
+  // pour que sa feuille soit lue comme les autres.
+  capacitesRendues: capacitesAvecDeblocage,
   details: <DetailCandidature>[detail],
   erreurLire: erreurLire,
   responsables: responsables,
@@ -291,6 +293,10 @@ DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
   ),
   GesteCandidature.leverPause => detailTest(enPause: true),
   GesteCandidature.rouvrir => detailTest(issue: IssueCandidature.retiree),
+  GesteCandidature.dispenserEntretien => detailTest(
+    etape: EtapeCandidature.verifications,
+    etat: EtatCandidature.entretienAPlanifier,
+  ),
   GesteCandidature.cloreComplement => detailTest(
     etape: EtapeCandidature.verifications,
     etat: EtatCandidature.entretienAPlanifier,
