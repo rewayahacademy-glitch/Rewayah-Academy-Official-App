@@ -6808,6 +6808,27 @@ class _Traductions$admin$praxis$en extends Traductions$admin$praxis$fr {
 	@override String get plafondChamp => 'Number of messages per hour (1 to 120)';
 	@override String get plafondEnregistrer => 'Set the limit';
 	@override String get plafondInvalide => 'Write a whole number between 1 and 120.';
+	@override String get essaiTitre => 'Test conversations';
+	@override String get essaiVide => 'Test mode off: Praxis can read every academy conversation it is allowed to read.';
+	@override String essaiActif({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: 'Test mode: Praxis sees only ${nombre} conversation and publishes no announcement.',
+		other: 'Test mode: Praxis sees only ${nombre} conversations and publishes no announcement.',
+	);
+	@override String get essaiChamp => 'Choose the test conversations';
+	@override String get essaiAide => 'Tick at most ten conversations among your Messages. If you have none, first create a test conversation with a test account. While nothing is ticked and saved, there is no test.';
+	@override String get essaiEnregistrer => 'Save the test conversations';
+	@override String get essaiFin => 'End the test';
+	@override String essaiChoisies({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} conversation ticked.',
+		other: '${nombre} conversations ticked.',
+	);
+	@override String essaiTrop({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: 'Ten conversations at most: untick one to choose another.',
+		other: 'Ten conversations at most: untick one to choose another.',
+	);
+	@override String get essaiListeErreur => 'Your conversation list could not be read. Try again in a moment.';
+	@override String get essaiAucune => 'No conversation to choose. First create a test conversation with a test account, then come back here.';
+	@override String essaiAffinez({required Object nombre}) => 'Only the first ${nombre} conversations are shown: narrow them with the search.';
 	@override String get reglageFait => 'Setting applied.';
 	@override String get erreurReglage => 'Setting not confirmed. Check the state above before trying again.';
 	@override String get doubleVerification => 'This setting needs two-step verification. Turn it on in Account, then Security, and try again.';
@@ -16244,6 +16265,8 @@ class _Traductions$admin$praxis$cause$en extends Traductions$admin$praxis$cause$
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String get essai => 'test mode, no announcement';
+	@override String get horsEssai => 'conversation outside the test';
 	@override String get plafondFil => 'too many messages in a row without a reply';
 	@override String get plafond => 'hourly limit reached';
 	@override String get plafondAnnonces => 'two announcements already published today';
@@ -33091,6 +33114,18 @@ extension on TraductionsEn {
 			'admin.praxis.plafondChamp' => 'Number of messages per hour (1 to 120)',
 			'admin.praxis.plafondEnregistrer' => 'Set the limit',
 			'admin.praxis.plafondInvalide' => 'Write a whole number between 1 and 120.',
+			'admin.praxis.essaiTitre' => 'Test conversations',
+			'admin.praxis.essaiVide' => 'Test mode off: Praxis can read every academy conversation it is allowed to read.',
+			'admin.praxis.essaiActif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: 'Test mode: Praxis sees only ${nombre} conversation and publishes no announcement.', other: 'Test mode: Praxis sees only ${nombre} conversations and publishes no announcement.', ), 
+			'admin.praxis.essaiChamp' => 'Choose the test conversations',
+			'admin.praxis.essaiAide' => 'Tick at most ten conversations among your Messages. If you have none, first create a test conversation with a test account. While nothing is ticked and saved, there is no test.',
+			'admin.praxis.essaiEnregistrer' => 'Save the test conversations',
+			'admin.praxis.essaiFin' => 'End the test',
+			'admin.praxis.essaiChoisies' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} conversation ticked.', other: '${nombre} conversations ticked.', ), 
+			'admin.praxis.essaiTrop' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: 'Ten conversations at most: untick one to choose another.', other: 'Ten conversations at most: untick one to choose another.', ), 
+			'admin.praxis.essaiListeErreur' => 'Your conversation list could not be read. Try again in a moment.',
+			'admin.praxis.essaiAucune' => 'No conversation to choose. First create a test conversation with a test account, then come back here.',
+			'admin.praxis.essaiAffinez' => ({required Object nombre}) => 'Only the first ${nombre} conversations are shown: narrow them with the search.',
 			'admin.praxis.reglageFait' => 'Setting applied.',
 			'admin.praxis.erreurReglage' => 'Setting not confirmed. Check the state above before trying again.',
 			'admin.praxis.doubleVerification' => 'This setting needs two-step verification. Turn it on in Account, then Security, and try again.',
@@ -33162,6 +33197,8 @@ extension on TraductionsEn {
 			'admin.praxis.refuse' => 'Refused',
 			'admin.praxis.refuseCause' => ({required Object cause}) => 'Refused: ${cause}',
 			'admin.praxis.sansTexte' => 'Nothing was written.',
+			'admin.praxis.cause.essai' => 'test mode, no announcement',
+			'admin.praxis.cause.horsEssai' => 'conversation outside the test',
 			'admin.praxis.cause.plafondFil' => 'too many messages in a row without a reply',
 			'admin.praxis.cause.plafond' => 'hourly limit reached',
 			'admin.praxis.cause.plafondAnnonces' => 'two announcements already published today',
@@ -33436,6 +33473,8 @@ extension on TraductionsEn {
 			'admin.finance.pol.champsACorriger' => 'First correct the flagged fields',
 			'admin.finance.pol.champsACorrigerDetail' => 'An empty, badly entered or inconsistent field prevents preparing the publication: correct each flagged field as its sentence says, then publish.',
 			'admin.finance.pol.apercu' => 'Preview before publication',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercuDetail' => 'What the draft would give on screen, recalculated at each valid change. These are examples: nothing is invoiced or paid.',
 			'admin.finance.pol.apercuFamille' => 'Household example',
 			'admin.finance.pol.apercuFamilleDetail' => 'The monthly fee of each paying child, in rank order, then the household total.',
@@ -33450,8 +33489,6 @@ extension on TraductionsEn {
 			'admin.finance.pol.apercuTypeClasse' => 'Class type',
 			'admin.finance.pol.apercuClasseEnfants' => 'Children',
 			'admin.finance.pol.apercuClasseAdultes' => 'Adults',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.apercuClasseDebutants' => 'Beginners',
 			'admin.finance.pol.apercuAttente' => 'The preview awaits a valid entry',
 			'admin.finance.pol.apercuAttenteDetail' => 'A field in the draft is empty, badly entered or inconsistent: correct the flagged field, the preview recalculates right away.',
@@ -33950,6 +33987,8 @@ extension on TraductionsEn {
 			'admin.tirage.videDetail' => 'Draws will appear here as soon as sessions are live.',
 			'admin.tirage.aucunAvecCeFiltre' => 'No draw with this filter',
 			'admin.tirage.aucunAvecCeFiltreDetail' => 'Change the filter to see the other draws.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.positionSemantique' => ({required Object page, required Object total}) => 'Page ${page} of ${total} of the draw history',
 			'admin.tirage.precedente' => 'Previous page of the draw history',
 			'admin.tirage.suivante' => 'Next page of the draw history',
@@ -33964,8 +34003,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.nonAutorise' => 'You do not have access to the administration library.',
 			'admin.bibliotheque.indisponibleTitre' => 'Library not open yet',
 			'admin.bibliotheque.indisponiblePhrase' => 'This feature will be available once the server is connected.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.sansDonnees' => 'the catalogue',
 			'admin.bibliotheque.ficheTitre' => 'Document',
 			'admin.bibliotheque.retourCatalogue' => 'Back to the catalogue',
@@ -34464,6 +34501,8 @@ extension on TraductionsEn {
 			'choix.diminuer' => 'Decrease by 1',
 			'choix.augmenter' => 'Increase by 1',
 			'choix.selectionMultiple' => 'Several answers possible',
+			_ => null,
+		} ?? switch (path) {
 			'choix.exemple' => ({required Object texte}) => 'For example: ${texte}',
 			'lieu.titre' => 'Your city',
 			'lieu.consigneTuteur' => 'Choose the city where you live. It is used to show class times in your time. Only you, your household and the management see it.',
@@ -34478,8 +34517,6 @@ extension on TraductionsEn {
 			'lieu.chargeEchecPhrase' => 'The list could not be displayed. Try again in a moment.',
 			'lieu.choisie' => ({required Object ville, required Object pays}) => 'City chosen: ${ville}, ${pays}.',
 			'lieu.enregistrer' => 'Save my city',
-			_ => null,
-		} ?? switch (path) {
 			'lieu.plusTard' => 'Later',
 			'lieu.plusTardPhrase' => 'You can still postpone this step. Until it is done, your class times are shown in this device\'s time.',
 			'lieu.obligatoire' => 'This step is now needed to show your class times in your time.',
@@ -34978,6 +35015,8 @@ extension on TraductionsEn {
 			'historique.seance.dureePrevue' => 'Planned duration',
 			'historique.seance.classe' => 'Class',
 			'historique.seance.enseignant' => 'Teacher',
+			_ => null,
+		} ?? switch (path) {
 			'historique.seance.presence' => 'Attendance',
 			'historique.seance.arrivee' => 'Arrival',
 			'historique.seance.sortie' => 'Exit',
@@ -34992,8 +35031,6 @@ extension on TraductionsEn {
 			'historique.seance.introuvableTitre' => 'Session not found',
 			'historique.seance.introuvablePhrase' => 'This session is not in your household\'s history.',
 			'historique.observation.titreSansClasse' => ({required Object date}) => 'Observations of ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'historique.observation.blocResume' => 'Summary',
 			'historique.observation.blocVisites' => 'Visits',
 			'historique.observation.observateur' => 'Observer',
@@ -35492,6 +35529,8 @@ extension on TraductionsEn {
 			'classe.cartes.enregistree' => 'Card saved. The class sees it now.',
 			'classe.cartes.retiree' => 'Card removed. The class no longer sees it.',
 			'classe.cartes.types.annonce' => 'Announcement',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.types.devoir' => 'Homework',
 			'classe.cartes.types.lien' => 'Useful link',
 			'classe.cartes.types.rappel' => 'Reminder',
@@ -35506,8 +35545,6 @@ extension on TraductionsEn {
 			'classe.cartes.feuille.titreNouvelle' => 'New class card',
 			'classe.cartes.feuille.titreModifier' => ({required Object titre}) => 'Edit the card "${titre}"',
 			'classe.cartes.feuille.contexte' => 'Choose a template: it pre-fills the card. It is immediately visible to the class students and their families.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.feuille.modele' => 'Card template',
 			'classe.cartes.feuille.champTitre' => 'Card title',
 			'classe.cartes.feuille.champTexte' => 'Card text (optional)',
@@ -36006,6 +36043,8 @@ extension on TraductionsEn {
 			'enseignant.creneaux.refusPlafond' => 'You have reached your maximum number of students. Ask for an increase to follow one more.',
 			'enseignant.creneaux.mesDisponibilites' => 'My availability',
 			'enseignant.creneaux.ajouterCreneau' => 'Add a slot',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.heure' => ({required Object heure}) => '${heure}:00',
 			'enseignant.creneaux.classesDisponibles' => 'Available classes',
 			'enseignant.creneaux.etatDisponible' => 'Available',
@@ -36020,8 +36059,6 @@ extension on TraductionsEn {
 			'enseignant.creneaux.confirmerTitre' => 'Confirm this class?',
 			'enseignant.creneaux.confirmer' => 'Confirm this class',
 			'enseignant.creneaux.revenir' => 'Go back',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.cleNiveau' => 'Level',
 			'enseignant.creneaux.cleLangue' => 'Language',
 			'enseignant.creneaux.cleRecurrence' => 'Recurrence',
@@ -36520,6 +36557,8 @@ extension on TraductionsEn {
 			'tc.bibliotheque.type.audio' => 'Audio',
 			'tc.bibliotheque.type.video' => 'Video',
 			'tc.bibliotheque.type.lienExterne' => 'External link',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.type.quran' => 'Quran',
 			'tc.bibliotheque.type.texteStructure' => 'Text',
 			'tc.bibliotheque.type.pdf' => 'PDF',
@@ -36534,8 +36573,6 @@ extension on TraductionsEn {
 			'tc.bibliotheque.detail.apercuIndisponible' => 'The preview of this format is not yet available in the app. You can save a copy.',
 			'tc.bibliotheque.detail.renduCoran' => 'The Quran opens in its dedicated reader.',
 			'tc.bibliotheque.detail.entreeDetail' => 'All your revision resources, in one place.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.detail.entreeDetailEnseignant' => 'All the class documents, in one place.',
 			'tc.bibliotheque.detail.entreeLigne' => 'Open the library',
 			'tc.bibliotheque.action.telecharger' => 'Make available offline',
@@ -37034,6 +37071,8 @@ extension on TraductionsEn {
 			'adulte.recharge.resultat.attenteBandeauTitre' => 'Do not pay a second time.',
 			'adulte.recharge.resultat.attenteBandeauPhrase' => 'This payment may have already gone through. Reload in a few moments to see its status.',
 			'adulte.recharge.resultat.confirmeTitre' => 'Payment confirmed',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.confirmePhrase' => 'The payment is confirmed. Balances are about to be updated.',
 			'adulte.recharge.resultat.allocationPhrase' => 'Updating balances...',
 			'adulte.recharge.resultat.terminePhrase' => ({required Object montant}) => 'Your payment of ${montant} was made and split between the selected profiles.',
@@ -37048,8 +37087,6 @@ extension on TraductionsEn {
 			'adulte.recharge.resultat.soldesPhrase' => 'The new balances are available for each profile concerned.',
 			'adulte.recharge.resultat.retourSoldes' => 'Back to balances',
 			'adulte.recharge.resultat.echecTitre' => 'The payment failed',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.echecPhrase' => 'No balance was credited. Your selection is kept: you can try again or change payment method.',
 			'adulte.recharge.resultat.echecMotif' => 'Reason',
 			'adulte.recharge.resultat.reessayer' => 'Try again',
@@ -37548,6 +37585,8 @@ extension on TraductionsEn {
 			'suiviDemandes.notification.coursCommences' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: classes have started',
 			'suiviDemandes.notification.dejaEnClasse' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: student already in a class, request filed',
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: your class was merged with another, see the new class',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: new class, see the details',
 			'suiviDemandes.jalon.apres' => ({required Object date, required Object heure, required Object duree}) => '${date} at ${heure}, ${duree}',
 			'suiviDemandes.jalon.aussitot' => 'immediately',
@@ -37562,8 +37601,6 @@ extension on TraductionsEn {
 			'suiviDemandes.changement.enseignant' => 'Teacher',
 			'suiviDemandes.changement.sansEnseignant' => 'Their teacher will be announced as soon as one is appointed.',
 			'suiviDemandes.changement.date' => 'Change made on',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.changement.lien' => 'See the new class',
 			'suiviDemandes.changement.lienPour' => ({required Object dePrenom}) => 'See ${dePrenom}\'s new class',
 			'suiviDemandes.changement.retour' => 'Back to the tracking of requests',
@@ -38062,6 +38099,8 @@ extension on TraductionsEn {
 			'com.vocal.lecteur.ecouter' => 'Listen',
 			'com.vocal.lecteur.pause' => 'Pause',
 			'com.vocal.lecteur.reprendre' => 'Resume',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.lecteur.reecouter' => 'Listen again',
 			'com.vocal.lecteur.nonEcoute' => 'Not listened to yet',
 			'com.vocal.lecteur.lecture' => 'Playing',
@@ -38076,8 +38115,6 @@ extension on TraductionsEn {
 			'com.vocal.demo.autorise' => 'Microphone allowed',
 			'com.vocal.demo.aDemander' => 'To ask',
 			'com.vocal.demo.refuse' => 'Microphone refused',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.demo.nonConfirme' => 'Not confirmed',
 			'com.vocal.demo.indisponible' => 'Unavailable',
 			'com.vocal.demo.recu' => 'Voice message received',
@@ -38576,6 +38613,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.matrice.detail' => 'The academy\'s rule, applied to each publication.',
 			'com.annonces.administration.matrice.auteurs' => 'Who publishes',
 			'com.annonces.administration.matrice.peutPublier' => 'Can publish',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.matrice.audiences' => 'Recipients',
 			'com.annonces.administration.matrice.validation' => 'Validation required',
 			'com.annonces.administration.matrice.oui' => 'Yes',
@@ -38590,8 +38629,6 @@ extension on TraductionsEn {
 			'com.annonces.administration.moderation.regle' => 'Rule concerned',
 			'com.annonces.administration.moderation.approuver' => 'Approve after review',
 			'com.annonces.administration.moderation.masquer' => 'Hide the content',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.restaurer' => 'Restore the content',
 			'com.annonces.administration.moderation.rejeter' => 'Dismiss the report',
 			'com.annonces.administration.moderation.contexte' => 'Open the context',
@@ -39090,6 +39127,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.cadence' => 'Frequency',
 			'comptable.tresorerie.cadences.clotureCycle' => 'At each cycle closing',
 			'comptable.tresorerie.cadences.hebdomadaire' => 'Every week',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.cadences.mensuelle' => 'Every month',
 			'comptable.tresorerie.cadences.apresEncaissementConsolide' => 'After each consolidated collection',
 			'comptable.tresorerie.cadences.manuelle' => 'Manual',
@@ -39104,8 +39143,6 @@ extension on TraductionsEn {
 			'comptable.tresorerie.retirer' => 'Withdraw from the Strategic reserve',
 			'comptable.tresorerie.retraitBloque' => ({required Object raison}) => 'Withdrawal from the Strategic reserve: ${raison}.',
 			'comptable.tresorerie.alimenterBloque' => ({required Object raison}) => 'Funding of the Strategic reserve: ${raison}.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.aucunMouvement' => 'No movement between vaults is allowed for your account by the policy.',
 			'comptable.tresorerie.mouvementsHorsLigne' => 'Movements between vaults will resume as soon as sending is possible again.',
 			'comptable.tresorerie.interdits' => 'Client funds committed and Taxes & obligations never fund an ordinary expense; a past allocation cannot be changed.',
@@ -39604,6 +39641,8 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.pourcentageAuto' => 'Share of the consolidated collection',
 			'comptable.direction.reservePanneau.pourcentageAutoDetail' => 'The share allocated to the Reserve at each due date.',
 			'comptable.direction.reservePanneau.cadenceTitre' => 'Frequency',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.cadenceDetail' => 'When the funding takes place.',
 			'comptable.direction.reservePanneau.cadence.clotureCycle' => 'At each cycle closing',
 			'comptable.direction.reservePanneau.cadence.hebdomadaire' => 'Every week',
@@ -39618,8 +39657,6 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.retraitSwitch' => 'A withdrawal requires additional validation',
 			'comptable.direction.reservePanneau.retraitSwitchDetail' => 'Taking money out of the Reserve is a sensitive operation: someone other than the requester validates it.',
 			'comptable.direction.delegationPanneau.intro' => 'You set once what the Accountant can carry out alone. Everything else is yours.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'What the Accountant can do alone',
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'Pay standard payments',
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'A payment at the calculated amount, to a verified method, goes out without daily validation.',
@@ -40118,6 +40155,8 @@ extension on TraductionsEn {
 			'avis.form.indisponiblePhrase' => 'This feature will be available once the server is connected.',
 			'avis.admin.titre' => 'Reviews',
 			'avis.admin.sousTitre' => 'Reviews from families and students. The management reads them, publishes them or refuses them. It never edits a text.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.outil' => 'Family reviews',
 			'avis.admin.outilDetail' => 'Create a collection link, read the reviews, publish or refuse them',
 			'avis.admin.sections.libelle' => 'Review sections',
@@ -40132,8 +40171,6 @@ extension on TraductionsEn {
 			'avis.admin.filtre.enAttente' => 'Pending',
 			'avis.admin.filtre.publie' => 'Published',
 			'avis.admin.filtre.refuse' => 'Refused',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.filtre.retire' => 'Removed',
 			'avis.admin.attente' => ({required Object n}) => 'Reviews pending: ${n}',
 			'avis.admin.vide' => 'No reviews in this list.',
@@ -40632,6 +40669,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.colonnes.libelles.texte' => 'Multiple-choice answers (gender, languages, memorization level, possible start) are read using Rewayah\'s table of labels. A label that is not in it is flagged row by row, at the "Errors" step.',
 			'candidatsFlux.importFormulaires.colonnes.relecture' => 'Your corrections require the file to be read again before continuing.',
 			'candidatsFlux.importFormulaires.doublons.casTitre' => ({required Object nature, required Object n, required Object total}) => '${nature}: case ${n} of ${total}',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.question' => 'Do these rows come from the same person?',
 			'candidatsFlux.importFormulaires.doublons.explication' => 'When rows share an email or a phone number, Rewayah proposes them as one person. Without your choice, the most recent row is kept and the others stay in the history. Nothing is deleted.',
 			'candidatsFlux.importFormulaires.doublons.aucun' => 'No probable duplicate in this file.',
@@ -40646,8 +40685,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'Choose the row to keep, or say these are different people.',
 			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'See the choices for this case',
 			'candidatsFlux.importFormulaires.doublons.fermer' => 'Close the choices for this case',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'See ${n} more case', other: 'See ${n} more cases', ), 
 			'candidatsFlux.importFormulaires.doublons.etat.recente' => 'The most recent is kept',
 			'candidatsFlux.importFormulaires.doublons.etat.base' => 'The row already saved is kept',
@@ -41146,6 +41183,8 @@ extension on TraductionsEn {
 			'suiviAttente.carte.titre' => 'Your class request',
 			'suiviAttente.carte.titreSimple' => 'Your class request',
 			'suiviAttente.carte.ligne' => ({required Object prenom, required Object n, required Object total, required Object etape}) => '${prenom}: step ${n} of ${total}, ${etape}',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.carte.suivre' => 'Follow my request',
 			'suiviAttente.carte.pret' => ({required Object prenom, required Object quand}) => '${prenom}: all set. First class: ${quand}',
 			'suiviAttente.carte.pretSansDate' => ({required Object prenom}) => '${prenom}: all set.',
@@ -41160,8 +41199,6 @@ extension on TraductionsEn {
 			'suiviAttente.presentation.motAide' => '500 characters at most. Families read it exactly as you write it.',
 			'suiviAttente.presentation.nonConfirme' => 'You have not confirmed this choice yet. Until you do, your countries and your introduction, if entered, are shown on the tracking card.',
 			'suiviAttente.presentation.enregistrer' => 'Save',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.presentation.enregistre' => 'Saved.',
 			'suiviAttente.presentation.erreur' => 'Your choice is not confirmed: it may not have reached Rewayah. Try again in a moment.',
 			'suiviAttente.presentation.effacerPays' => 'Do not provide',

@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'rendre_compte'])
+  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
@@ -113,6 +113,23 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     ['calendrier_lire', { du: '2026-01-01' }],
     ['calendrier_ajouter', { sujet: 's', public: 'eleves', date: '2026-12-01', cle_idempotence: UUID2 }],
     ['rendre_compte', { heures: 169 }],
+    // PX-2 : lire et preparer
+    ['lire', { vue: 'profiles' }], // vue hors liste
+    ['lire', { vue: 'candidatures', filtre: { courriel: 'x@y.z' } }], // pas d'objet libre : un argument `filtre` n'existe pas
+    ['lire', { vue: 'candidatures', requete: 'select 1' }],
+    ['lire', { vue: 'candidatures', etape: 'archivee' }],
+    ['lire', { vue: 'candidatures', langue: 'FR; DROP' }],
+    ['lire', { vue: 'candidatures', attente_min_jours: 366 }],
+    ['lire', { vue: 'candidatures', limite: 51 }],
+    ['lire', {}],
+    ['preparer', { geste: 'refuser', candidature: 'CAND-00001', texte: 'x', cle_idempotence: UUID2 }], // geste hors liste fermee
+    ['preparer', { geste: 'admettre_verifications', candidature: '00001', texte: 'x', cle_idempotence: UUID2 }],
+    ['preparer', { geste: 'admettre_verifications', candidature: 'CAND-00001', texte: 'x', cle_idempotence: UUID2, courriel: 'a@b.c' }],
+    ['preparer', { geste: 'demander_complement', candidature: 'CAND-00001', elements: ['Piece Identite'], motif: 'm', texte: 'x', cle_idempotence: UUID2 }],
+    ['preparer', { geste: 'demander_complement', candidature: 'CAND-00001', elements: [], motif: 'm', texte: 'x', cle_idempotence: UUID2 }],
+    ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: 'demain', duree_minutes: 30, texte: 'x', cle_idempotence: UUID2 }],
+    ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: '2026-12-01T10:00:00Z', duree_minutes: 5, texte: 'x', cle_idempotence: UUID2 }],
+    ['preparer', { geste: 'admettre_verifications', candidature: 'CAND-00001', texte: 'x'.repeat(1001), cle_idempotence: UUID2 }],
     ['alerter_responsable', {}], // outil non livre
     ['etat', { quoi: 'que ce soit' }],
   ]
@@ -124,6 +141,43 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     assert(appels.every((a) => a.fonction === 'praxis_noter_refus' && Object.keys(a.params).sort().join() === 'p_cle,p_outil'),
       `${nom} : la base ne doit recevoir que la note de refus`)
     assert(appels.length <= 1)
+  }
+})
+
+Deno.test('PX-2 : lire et preparer composent un objet jsonb ferme (jamais une requete)', async () => {
+  {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil('lire', { vue: 'candidatures', etape: 'verifications', attente_min_jours: 3 })), porte)
+    assertEquals(appels.length, 1)
+    assertEquals(appels[0].fonction, 'praxis_lire')
+    assertEquals(appels[0].params, {
+      p_cle: CLE, p_vue: 'candidatures', p_filtre: { etape: 'verifications', attente_min_jours: 3 }, p_limite: 20,
+    })
+  }
+  {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil('lire', { vue: 'demandes' })), porte)
+    assertEquals(appels[0].params, { p_cle: CLE, p_vue: 'demandes', p_filtre: {}, p_limite: 20 }) // objet vide, jamais null
+  }
+  {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil('preparer', {
+      geste: 'demander_complement', candidature: 'CAND-00042', elements: ['langues', 'piece_identite'], motif: 'Il manque des informations.',
+      texte: 'Le dossier est a completer.', cle_idempotence: UUID2,
+    })), porte)
+    assertEquals(appels[0].fonction, 'praxis_preparer')
+    assertEquals(appels[0].params, {
+      p_cle: CLE, p_geste: 'demander_complement', p_candidature: 'CAND-00042',
+      p_parametres: { elements: ['langues', 'piece_identite'], motif: 'Il manque des informations.' },
+      p_texte: 'Le dossier est a completer.', p_cle_idempotence: UUID2,
+    })
+  }
+  {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil('preparer', {
+      geste: 'admettre_verifications', candidature: 'CAND-00042', texte: 'Admettre.', cle_idempotence: UUID2,
+    })), porte)
+    assertEquals(appels[0].params.p_parametres, {}) // objet vide
   }
 })
 
