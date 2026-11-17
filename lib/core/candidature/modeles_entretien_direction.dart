@@ -489,6 +489,18 @@ final class PersonneOccupee extends RefusEntretien {
   final DateTime? fin;
 }
 
+/// L'entretien a deja commence : il ne se deplace plus.
+final class EntretienCommence extends RefusEntretien {
+  /// Cree le refus.
+  const EntretienCommence();
+}
+
+/// Le nouveau moment est celui de l'entretien : rien a deplacer.
+final class MemeCreneau extends RefusEntretien {
+  /// Cree le refus.
+  const MemeCreneau();
+}
+
 /// L'entretien n'existe pas, ou plus, de ce cote.
 final class EntretienIntrouvable extends RefusEntretien {
   /// Cree le refus.

@@ -1591,7 +1591,11 @@ SELECT pg_temp.vrai((SELECT deleted_at FROM public.sessions WHERE id = pg_temp.u
 -- cN1 (enfants, b8) : e7 (6-9 ans, foyer f2, tuteur t2) y est deja ; e8 (ado, foyer f1, tuteur t1) la rejoint.
 -- Une fermeture de classe de 21 jours couvre deux seances : une notification par destinataire, qui les liste.
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
- (pg_temp.u('cN1'), pg_temp.u('b8'), 'enfant', 5, 'Notifie CP', 5, 7, 'UTC');
+ (pg_temp.u('cN1'), pg_temp.u('b8'), 'enfant', 5, 'Notifie CP',
+  -- Jour calcule (celui de J+10) : « notif1 » (J+3 a J+23) couvre alors J+3, J+10, J+17 ; la seance de J+3
+  -- tombe dans la fermeture d'ecole « en_cours » (J a J+7), donc jamais creee ; il reste exactement deux
+  -- seances de cote. Avec un vendredi fixe, le compte dependait du jour de la semaine.
+  extract(isodow FROM (now() AT TIME ZONE 'UTC')::date + 10)::int, 7, 'UTC');
 SELECT pg_temp.changer('e7', 'c14', 'cN1');
 INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at) VALUES (pg_temp.u('cN1'), pg_temp.u('e8'), pg_catalog.now());
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
@@ -1642,7 +1646,12 @@ SELECT pg_temp.vrai(
 -- vers son accueil ; son enseignant une seule ; le tuteur de son foyer (t3) aucune (il n'est pas destinataire
 -- d'un adulte autonome).
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
- (pg_temp.u('cN2'), pg_temp.u('b8'), 'adulte', 5, 'Notifie adultes CP', 6, 8, 'UTC');
+ (pg_temp.u('cN2'), pg_temp.u('b8'), 'adulte', 5, 'Notifie adultes CP',
+  -- Le jour de la classe se calcule : sa premiere seance doit tomber a J+8, dans la fermeture « notif2 »
+  -- (J+3 a J+9) et hors de la fermeture d'ecole « en_cours » (J a J+7), qui supprime toute seance neuve
+  -- de ces jours-la (CALENDRIER-ET-PAUSES, 12/11 : « aucune seance n'est creee un jour de fermeture
+  -- publiee »). Avec un jour fixe (6), le test ne passait qu'a certains jours de la semaine.
+  extract(isodow FROM (now() AT TIME ZONE 'UTC')::date + 8)::int, 12, 'UTC');
 SELECT pg_temp.changer('e6', 'cM', 'cN2');
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
@@ -1676,7 +1685,11 @@ SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE 
 -- e10 (adulte) y entre : la classe devient couverte, mais rien ne la resynchronise. Le balayage de nuit met de cote cette
 -- seance et previent par le meme chemin, une fois ; rejouee, elle ne redouble rien.
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
- (pg_temp.u('cT'), pg_temp.u('b8'), 'adulte', 5, 'Balayage CP', 4, 9, 'UTC');
+ (pg_temp.u('cT'), pg_temp.u('b8'), 'adulte', 5, 'Balayage CP',
+  -- Jour calcule : « tr_nuit » (J+13 a J+19) et « sans_rapport » (J+20 a J+22) doivent chacune couvrir une
+  -- seance de la classe. Le jour de J+21 en donne une a J+14 et une a J+21. Avec un jeudi fixe, la seconde
+  -- fermeture (3 jours) ne contenait un jeudi qu'a certains jours de la semaine.
+  extract(isodow FROM (now() AT TIME ZONE 'UTC')::date + 21)::int, 16, 'UTC');
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.fermer('tr_nuit', 'autre', 13, 19, 'tranche', 'adulte_18_plus');
@@ -1775,7 +1788,10 @@ SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.notifications WHERE 
 -- cours a la meme heure ; e7 (mineur) entre dans cU : la classe n'est plus couverte, mais la seance ne peut pas etre retablie :
 -- elle reste de cote, la direction est avertie UNE fois, a la detection (pas de levee pour la famille) ; l'enseignant libere : retablie.
 INSERT INTO public.groupes(id, teacher_id, type_public, seuil_max, libelle, weekday, hour_local, timezone_iana) VALUES
- (pg_temp.u('cU'), pg_temp.u('b8'), 'adulte', 5, 'Conflit CP', 3, 14, 'UTC');
+ (pg_temp.u('cU'), pg_temp.u('b8'), 'adulte', 5, 'Conflit CP',
+  -- Jour calcule (J+9) : un mercredi fixe chevauchait, certains jours de la semaine, le cours de 15 h que
+  -- b8 prend deja a J+8 (« sessions_no_teacher_overlap »), et le test echouait avant son propre conflit.
+  extract(isodow FROM (now() AT TIME ZONE 'UTC')::date + 9)::int, 14, 'UTC');
 SELECT pg_temp.changer('e6', 'cN2', 'cU');
 SELECT started_at AS debut_u FROM public.sessions WHERE groupe_id = pg_temp.u('cU') AND started_at > pg_catalog.now() + interval '25 days'
  ORDER BY started_at LIMIT 1 \gset r34_

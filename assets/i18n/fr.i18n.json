@@ -4500,7 +4500,14 @@
         "piecePdf": "Fichier PDF",
         "pieceOuvrirPdf": "Ouvrir le PDF de la pièce d'identité",
         "pieceTitre": "Pièce d'identité\u00a0: {nom}",
-        "pieceDecisionPlusTard": "La pièce se décide en Salle de vérification et d'entretien."
+        "pieceValider": "Valider la pièce",
+        "pieceRefuser": "Refuser la pièce",
+        "pieceRefusAnnuler": "Garder la pièce en attente",
+        "pieceValidee": "Pièce validée.",
+        "pieceRefusee": "Pièce refusée.",
+        "pieceDejaDecidee": "Cette pièce a déjà reçu une décision. Rechargez la fiche.",
+        "pieceNonConfirmee": "Le résultat n'est pas encore confirmé. Rechargez la fiche avant de réessayer.",
+        "pieceHorsLigne": "Rien n'a été envoyé. Réessayez quand la connexion sera revenue."
       },
       "controles": {
         "noms": {
@@ -4786,6 +4793,7 @@
         "entree": "Entrée de \u2068{nom}\u2069 à {heure}",
         "sortie": "Sortie de \u2068{nom}\u2069 à {heure}",
         "autreIssue": "Autre issue (annulé, absence)",
+        "deplacer": "Déplacer l'entretien",
         "resultat": {"titre": "Résultat de l'entretien", "concluant": "Concluant", "nonConcluant": "Non concluant", "aRefaire": "À refaire", "texteConcluant": "Entretien concluant.", "texteNonConcluant": "Entretien non concluant.", "motifARefaire": "Entretien à refaire.", "retourConcluant": "Entretien concluant. Vous pouvez l'accueillir dans l'équipe.", "retourNonConcluant": "Entretien non concluant. Vous pouvez ne pas l’accueillir.", "retourARefaire": "Entretien à refaire. La personne choisit un nouveau moment.", "refusNonParticipant": "Seule une personne qui a mené l'entretien peut en donner le résultat. Demandez-lui de le faire depuis cette fiche.", "refusPasCommence": "L'entretien n'a pas encore commencé. Revenez à l'heure de début.", "refusDejaConsigne": "Le résultat est déjà enregistré. Rechargez la fiche.", "refusAutre": "Le résultat n'est pas confirmé. Réessayez dans un instant."},
         "consigner": "Consigner l'issue",
         "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
@@ -4837,7 +4845,9 @@
           "retirerConsequence": "\u2068{nom}\u2069 ne prendra plus part à cet entretien.",
           "consignerConsequence": "L'issue est inscrite à l'historique de la candidature et ne change plus.",
           "issueManquante": "Choisissez l'issue.",
-          "envoyerConsigner": "Consigner"
+          "envoyerConsigner": "Consigner",
+          "deplacerConsequence": "La personne et les participants reçoivent le nouveau moment de l'entretien. Ce sont les mêmes participants. L'ancien moment n'est plus utilisé.",
+          "envoyerDeplacer": "Déplacer"
         },
         "refus": {
           "fondateurs": "Il faut au moins {exiges} fondateurs parmi les participants. Fondateurs choisis\u00a0: {presents}.",
@@ -4849,6 +4859,8 @@
           "autreCote": "Une personne choisie n'est pas du côté de cette candidature.",
           "sansCompte": "La personne n'a pas encore de compte\u00a0: l'entretien ne peut pas être planifié.",
           "dejaPlanifie": "Un entretien est déjà planifié pour cette candidature.",
+          "commence": "Cet entretien a déjà commencé\u00a0: il ne se déplace plus.",
+          "memeCreneau": "C'est déjà le moment de cet entretien. Choisissez un autre jour ou une autre heure.",
           "consigne": "Cet entretien est déjà consigné\u00a0: il ne change plus.",
           "dernier": "L'entretien garde au moins un participant.",
           "absent": "Cette personne ne prend déjà plus part à l'entretien.",
@@ -4863,6 +4875,7 @@
           "planifie": "Entretien planifié.",
           "ajoute": "\u2068{nom}\u2069 prend part à l'entretien.",
           "retire": "\u2068{nom}\u2069 ne prend plus part à l'entretien.",
+          "deplace": "Entretien déplacé.",
           "consigne": "Issue consignée."
         }
       }

@@ -51,6 +51,7 @@ const CapacitesCandidatures _caps = CapacitesCandidatures(
   gestes: <String, bool>{
     'planifierEntretien': true,
     'consignerEntretien': true,
+    'deplacerEntretien': true,
   },
 );
 
@@ -67,13 +68,16 @@ class _FauxEntretiens implements PortEntretiensDirection {
     this.liste = const <EntretienCandidature>[],
     this.detail,
     this.refusPlanifier,
+    this.refusDeplacer,
   });
 
   List<EntretienCandidature> liste;
   DetailEntretien? detail;
   Exception? refusPlanifier;
+  Exception? refusDeplacer;
 
   final List<Map<String, Object?>> planifies = <Map<String, Object?>>[];
+  final List<Map<String, Object?>> deplaces = <Map<String, Object?>>[];
   final List<(String, String)> ajouts = <(String, String)>[];
   final List<(String, String)> retraits = <(String, String)>[];
   final List<(IssueEntretien, String?, int)> consignes =
@@ -105,6 +109,27 @@ class _FauxEntretiens implements PortEntretiensDirection {
   @override
   Future<List<PersonnelEntretien>> personnel(String candidatureId) async =>
       personnelTest;
+
+  @override
+  Future<ResultatGeste> deplacer({
+    required String candidatureId,
+    required DateTime debut,
+    required int dureeMinutes,
+    required String motif,
+    required int versionAttendue,
+    required String cleIdempotence,
+  }) async {
+    deplaces.add(<String, Object?>{
+      'candidature': candidatureId,
+      'debut': debut,
+      'duree': dureeMinutes,
+      'motif': motif,
+      'version': versionAttendue,
+      'cle': cleIdempotence,
+    });
+    if (refusDeplacer case final Exception r) throw r;
+    return _resultat;
+  }
 
   @override
   Future<ResultatGeste> planifier({
@@ -231,6 +256,39 @@ void main() {
   setUp(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   group('Adaptateur', () {
+    test('deplacer : les parametres et les refus propres au deplacement', () {
+      final Map<String, dynamic> p = parametresDeplacer(
+        candidatureId: 'c1',
+        debut: DateTime.utc(2026, 11, 30, 16),
+        dureeMinutes: 45,
+        motif: 'Autre jour.',
+        versionAttendue: 3,
+        cleIdempotence: 'cle-deplacer-1',
+      );
+      expect(p, <String, dynamic>{
+        'p_id': 'c1',
+        'p_debut': '2026-11-30T16:00:00.000Z',
+        'p_duree_minutes': 45,
+        'p_motif': 'Autre jour.',
+        'p_version_attendue': 3,
+        'p_cle_idempotence': 'cle-deplacer-1',
+      });
+      expect(
+        () => refusEntretien(<String, dynamic>{'erreur': 'entretien_commence'}),
+        throwsA(isA<EntretienCommence>()),
+      );
+      expect(
+        () => refusEntretien(<String, dynamic>{'erreur': 'meme_creneau'}),
+        throwsA(isA<MemeCreneau>()),
+      );
+      expect(
+        () => refusEntretien(<String, dynamic>{
+          'erreur': 'aucun_entretien_ouvert',
+        }),
+        throwsA(isA<EntretienIntrouvable>()),
+      );
+    });
+
     test('les refus propres a l\'entretien', () {
       expect(
         () => refusEntretien(<String, dynamic>{
@@ -461,6 +519,150 @@ void main() {
         ),
         findsOneWidget,
       );
+    });
+  });
+
+  // DEPLACER-ENTRETIEN (BE-1j, pilote 17/11/2026) : « Deplacer l'entretien ».
+  group('Deplacer', () {
+    final EntretienCandidature avenir = EntretienCandidature(
+      sessionId: 's1',
+      candidatureId: 'c1',
+      debut: DateTime.now().add(const Duration(days: 2)),
+      fin: DateTime.now().add(const Duration(days: 2, minutes: 45)),
+      participants: 2,
+      fondateurs: 2,
+    );
+    final DetailCandidature planifie = detailTest(
+      etape: EtapeCandidature.verifications,
+      etat: EtatCandidature.entretienPlanifie,
+    );
+
+    testWidgets('un jour, une heure et un motif, puis le geste part', (
+      WidgetTester tester,
+    ) async {
+      final _FauxEntretiens port = _FauxEntretiens(
+        liste: <EntretienCandidature>[avenir],
+        detail: _detailOuvert,
+      );
+      await _monter(tester, port, detail: planifie);
+      await _toucher(tester, _cle('entretien-deplacer'));
+      expect(_cle('feuille-deplacer-entretien'), findsOneWidget);
+      // La consequence se dit avant le geste (K-58).
+      expect(
+        find.text(t.admin.candidatures.entretien.feuille.deplacerConsequence),
+        findsOneWidget,
+      );
+      // Rien ne part sans jour, heure ni motif ; chaque manque se dit.
+      await _toucher(tester, _cle('entretien-valider'));
+      expect(port.deplaces, isEmpty);
+      final f = t.admin.candidatures.entretien.feuille;
+      expect(find.text(f.jourManquant), findsOneWidget);
+      expect(find.text(f.heureManquante), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.feuille.motifManquant),
+        findsOneWidget,
+      );
+      tester
+          .widget<ChampDate>(find.byType(ChampDate))
+          .onChoix(DateTime(2026, 11, 30));
+      tester.widget<MenuFiltre<int>>(_cle('entretien-heure')).onChoix(16 * 60);
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        _cle('entretien-motif'),
+        'Le candidat a demande un autre jour.',
+      );
+      await tester.pumpAndSettle();
+      await _toucher(tester, _cle('entretien-valider'));
+      final Map<String, Object?> envoi = port.deplaces.single;
+      expect(envoi['debut'], DateTime(2026, 11, 30, 16));
+      expect(envoi['duree'], 45);
+      expect(envoi['motif'], 'Le candidat a demande un autre jour.');
+      expect(envoi['version'], 3);
+      expect(envoi['cle'], isA<String>());
+      expect(_cle('feuille-deplacer-entretien'), findsNothing);
+      expect(
+        find.text(t.admin.candidatures.entretien.retours.deplace),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('un refus se dit en mots, dans la feuille', (
+      WidgetTester tester,
+    ) async {
+      final _FauxEntretiens port = _FauxEntretiens(
+        liste: <EntretienCandidature>[avenir],
+        detail: _detailOuvert,
+        refusDeplacer: const MemeCreneau(),
+      );
+      await _monter(tester, port, detail: planifie);
+      await _toucher(tester, _cle('entretien-deplacer'));
+      tester
+          .widget<ChampDate>(find.byType(ChampDate))
+          .onChoix(DateTime(2026, 11, 30));
+      tester.widget<MenuFiltre<int>>(_cle('entretien-heure')).onChoix(10 * 60);
+      await tester.pumpAndSettle();
+      await tester.enterText(_cle('entretien-motif'), 'Autre jour.');
+      await tester.pumpAndSettle();
+      await _toucher(tester, _cle('entretien-valider'));
+      expect(_cle('feuille-deplacer-entretien'), findsOneWidget);
+      expect(
+        find.text(t.admin.candidatures.entretien.refus.memeCreneau),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('pas propose : entretien commence, hors ligne, sans le droit', (
+      WidgetTester tester,
+    ) async {
+      // Deja commence (debut passe).
+      await _monter(
+        tester,
+        _FauxEntretiens(
+          liste: <EntretienCandidature>[_ouvert],
+          detail: _detailOuvert,
+        ),
+        detail: planifie,
+      );
+      expect(_cle('entretien-deplacer'), findsNothing);
+    });
+
+    testWidgets('pas propose hors ligne', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        _FauxEntretiens(
+          liste: <EntretienCandidature>[avenir],
+          detail: _detailOuvert,
+        ),
+        detail: planifie,
+        horsLigne: true,
+      );
+      expect(_cle('entretien-deplacer'), findsNothing);
+    });
+
+    testWidgets('pas propose sans la capacite du serveur', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _FauxEntretiens(
+          liste: <EntretienCandidature>[avenir],
+          detail: _detailOuvert,
+        ),
+        detail: planifie,
+        capacites: const CapacitesCandidatures(
+          peutLire: true,
+          genreLecteurConnu: true,
+          peutDecider: true,
+          peutChoisirParticipants: true,
+          peutMenerEntretien: true,
+          fondateursExiges: 2,
+          gestes: <String, bool>{
+            'planifierEntretien': true,
+            'consignerEntretien': true,
+          },
+        ),
+      );
+      expect(_cle('entretien-deplacer'), findsNothing);
     });
   });
 
