@@ -21378,6 +21378,10 @@ class _Traductions$recrutement$entretien$notifications$ar extends Traductions$re
 	@override String reserveDirectionQuand({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ⁨${quand}⁩.';
 	@override String get rappelDirection => 'تُجري مقابلة تبدأ قريبًا.';
 	@override String rappelDirectionQuand({required Object quand}) => 'تُجري مقابلة يوم ⁨${quand}⁩.';
+	@override String get annule => 'لن تُجرى المقابلة التي كنت تُجريها.';
+	@override String get annuleRefus => 'لن تُجرى المقابلة التي كنت تُجريها: رُفض طلب الترشح.';
+	@override String get annuleRetrait => 'لن تُجرى المقابلة التي كنت تُجريها: سُحب طلب الترشح.';
+	@override String get annulePause => 'لن تُجرى المقابلة التي كنت تُجريها: طلب الترشح في وضع الإيقاف المؤقت.';
 }
 
 // Path: recrutement.partage.fait
@@ -39607,6 +39611,10 @@ extension on TraductionsAr {
 			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ⁨${quand}⁩.',
 			'recrutement.entretien.notifications.rappelDirection' => 'تُجري مقابلة تبدأ قريبًا.',
 			'recrutement.entretien.notifications.rappelDirectionQuand' => ({required Object quand}) => 'تُجري مقابلة يوم ⁨${quand}⁩.',
+			'recrutement.entretien.notifications.annule' => 'لن تُجرى المقابلة التي كنت تُجريها.',
+			'recrutement.entretien.notifications.annuleRefus' => 'لن تُجرى المقابلة التي كنت تُجريها: رُفض طلب الترشح.',
+			'recrutement.entretien.notifications.annuleRetrait' => 'لن تُجرى المقابلة التي كنت تُجريها: سُحب طلب الترشح.',
+			'recrutement.entretien.notifications.annulePause' => 'لن تُجرى المقابلة التي كنت تُجريها: طلب الترشح في وضع الإيقاف المؤقت.',
 			'recrutement.partage.titre' => 'ساعد شخصًا على تعلّم كلام الله',
 			'recrutement.partage.titreFemme' => 'ساعدي أختًا على تعلّم كلام الله',
 			'recrutement.partage.facultatif' => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
@@ -39848,12 +39856,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.niveauLectureTajwid.explication' => 'التجويد هو مجموعة الأحكام التي تبيّن كيف يُنطق كل حرف من القرآن.',
 			'recrutement.parcours.q.niveauLectureTajwid.court' => 'القراءة والتجويد',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.libelle' => 'أقرأ دون تطبيق أحكام التجويد',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.description' => 'تقرأ بطلاقة دون اتباع أحكام النطق.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.lecture_sans_regles_tajwid.exemple' => 'تقرأ صفحة دون تردد، لكنك لا تطبّق أحكام التجويد.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.libelle' => 'أطبّق أحكام التجويد أثناء القراءة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.description' => 'تلتزم بأحكام النطق حين تقرأ.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.explication' => 'يُتحقق من قراءتك أثناء المقابلة.',
 			'recrutement.parcours.q.niveauLectureTajwid.options.tajwid_applique.exemple' => 'تمدّ الحروف وتنطقها كما تقتضي أحكام التجويد.',
@@ -40362,12 +40370,12 @@ extension on TraductionsAr {
 			'juridique.conditions.s6.titre' => '٦. معلوماتكم',
 			'juridique.conditions.s6.blocs.0' => 'طريقة استخدامنا لمعلوماتكم مشروحة في نص الخصوصية.',
 			'juridique.conditions.s7.titre' => '٧. القانون المطبّق',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.conditions.s7.blocs.0' => 'يحدّد هذا الجزء القانون المطبّق والمحكمة المختصة.',
 			'juridique.annulation.titre' => 'الإلغاء والاسترداد',
 			'juridique.annulation.resume' => 'الإيقاف والاسترداد، وما يحدث إذا تأخر الدفع.',
 			'juridique.annulation.intro' => 'يمكنكم التوقف متى شئتم. هذا ما يُسترد وما لا يُسترد، وما يحدث إذا لم يصل الدفع.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.annulation.s1.titre' => '١. مهلة التراجع',
 			'juridique.annulation.s1.delai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).', one: 'مهلة التراجع يوم واحد من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', two: 'مهلة التراجع يومان من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', few: 'مهلة التراجع ⁨${jours}⁩ أيام من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', many: 'مهلة التراجع ⁨${jours}⁩ يومًا من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', other: 'مهلة التراجع ⁨${jours}⁩ يوم من يوم الدفع، وفق سياسة الأسعار المعمول بها (صفحة الأسعار).', ), 
 			'juridique.annulation.s1.delaiSansDuree' => 'تبدأ مهلة التراجع من يوم الدفع، وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار).',
@@ -40876,12 +40884,12 @@ extension on TraductionsAr {
 			'alertes.creeeLe' => ({required Object date, required Object heure}) => 'في ⁨${date}⁩ الساعة ⁨${heure}⁩',
 			'alertes.ligne' => ({required Object gravite, required Object titre, required Object date, required Object heure}) => '⁨${gravite}⁩، ⁨${titre}⁩، في ⁨${date}⁩ الساعة ⁨${heure}⁩',
 			'alertes.bandeauUne' => ({required Object titre}) => 'تنبيه عاجل: ⁨${titre}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.bandeauPlusieurs' => ({required Object nombre, required Object titre}) => '⁨${nombre}⁩ تنبيهات عاجلة. الأحدث: ⁨${titre}⁩',
 			'alertes.bandeauCourtUne' => 'تنبيه عاجل يحتاج إلى معالجة',
 			'alertes.bandeauCourtPlusieurs' => ({required Object nombre}) => '⁨${nombre}⁩ تنبيهات عاجلة تحتاج إلى معالجة',
 			'alertes.voirTout' => 'عرض كل التنبيهات',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.vide' => 'لا تنبيه جارٍ.',
 			'alertes.videTitre' => 'لا تنبيه جارٍ',
 			'alertes.videPhrase' => 'سيظهر هنا تنبيه عاجل، في المقدمة، فور وصوله.',
@@ -41390,12 +41398,12 @@ extension on TraductionsAr {
 			'candidatsFlux.langues.man' => 'المالينكية (الماندينكا)',
 			'candidatsFlux.publication.titre' => 'النشر على الموقع',
 			'candidatsFlux.publication.texte' => 'قد يظهر اسمك وصورتك وبلدك على الموقع العام لأكاديمية الرواية. هذا الاختيار منفصل عن ترشحك ولا يغيّر شيئًا في دراسته.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.publication.kCase' => 'أوافق على ظهور اسمي وصورتي وبلدي على الموقع العام لأكاديمية الرواية.',
 			'candidatsFlux.publication.signature' => ({required Object nom}) => 'اسمك بمثابة توقيع: ⁨${nom}⁩',
 			'candidatsFlux.publication.signe' => ({required Object date, required Object nom}) => 'أُعطيت الموافقة في ⁨${date}⁩، بتوقيع ⁨${nom}⁩.',
 			'candidatsFlux.publication.donner' => 'إعطاء موافقتي',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.publication.retirer' => 'سحب موافقتي',
 			'candidatsFlux.publication.retirerQuestion' => 'هل تسحب موافقتك على النشر؟',
 			'candidatsFlux.publication.retirerConsequence' => 'لن يظهر اسمك وصورتك وبلدك بعد الآن على الموقع العام. يمكنك إعطاء موافقتك من جديد لاحقًا.',
@@ -41904,12 +41912,12 @@ extension on TraductionsAr {
 			'motifs.ajoutEleve.diagnostic' => 'الإسناد بعد التشخيص',
 			'motifs.ajoutEleve.attente' => 'الخروج من قائمة الانتظار',
 			'motifs.ajoutEleve.transfert' => 'النقل من فصل آخر',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.ajoutEleve.famille' => 'طلب الأسرة',
 			'motifs.retraitEleve.famille' => 'طلب الأسرة',
 			'motifs.retraitEleve.transfert' => 'النقل إلى فصل آخر',
 			'motifs.retraitEleve.ecartNiveau' => 'فارق مستوى دائم',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.retraitEleve.finInscription' => 'انتهاء التسجيل',
 			'motifs.clotureClasse.finCycle' => 'نهاية مرحلة الفصل',
 			'motifs.clotureClasse.remplissage' => 'قلة الامتلاء',
