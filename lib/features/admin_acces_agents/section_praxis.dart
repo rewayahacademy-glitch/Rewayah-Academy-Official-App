@@ -26,6 +26,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import '../mfa_controleur/double_verification.dart';
+import 'choix_conversations_essai.dart';
 
 /// Les cles des widgets de la section, pour les tests.
 abstract final class ClesPraxis {
@@ -114,7 +115,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
 
   final TextEditingController _libelle = TextEditingController();
   final TextEditingController _plafond = TextEditingController();
-  final TextEditingController _essai = TextEditingController();
+  Set<String> _essaiChoisies = <String>{};
 
   EtatPraxis? _etat;
   Object? _erreurEtat;
@@ -131,7 +132,6 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
   String? _message;
   String? _erreurReglage;
   String? _erreurPlafond;
-  String? _erreurEssai;
 
   UsageClePraxis _usage = UsageClePraxis.chat;
   int _jours = 30;
@@ -154,7 +154,6 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
   void dispose() {
     _libelle.dispose();
     _plafond.dispose();
-    _essai.dispose();
     super.dispose();
   }
 
@@ -177,7 +176,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
         _erreurEtat = null;
         _chargementEtat = false;
         _plafond.text = '${etat.envoisParHeure}';
-        _essai.text = etat.essaiFils.join('\n');
+        _essaiChoisies = <String>{...etat.essaiFils};
       });
     } on Object catch (e) {
       if (!mounted) {
@@ -286,26 +285,12 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
     await _regler('plafond', envoisParHeure: valeur);
   }
 
-  static final RegExp _identifiant = RegExp(
-    r'^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$',
-  );
-
-  /// Les conversations d'essai : un identifiant par ligne (ou separes par une
-  /// virgule), dix au plus. Une liste vide met fin au mode essai.
+  /// Les conversations d'essai : celles qui sont cochees, dix au plus. Une
+  /// liste vide met fin au mode essai.
   Future<void> _fixerEssai({bool fin = false}) async {
     final List<String> fils = fin
         ? <String>[]
-        : _essai.text
-              .split(RegExp(r'[\s,;]+'))
-              .map((String x) => x.trim().toLowerCase())
-              .where((String x) => x.isNotEmpty)
-              .toSet()
-              .toList(growable: false);
-    if (fils.length > 10 || fils.any((String x) => !_identifiant.hasMatch(x))) {
-      setState(() => _erreurEssai = t.admin.praxis.essaiInvalide);
-      return;
-    }
-    setState(() => _erreurEssai = null);
+        : (<String>[..._essaiChoisies]..sort());
     await _regler(fin ? 'essaiFin' : 'essai', essaiFils: fils);
   }
 
@@ -605,26 +590,14 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
             style: textes.bodySmall,
           ),
           Ecart.vMd,
-          ChampEtiquete(
-            libelle: t.admin.praxis.essaiChamp,
-            controller: _essai,
-            maxLines: 4,
-            directionTexte: TextDirection.ltr,
-            aide: t.admin.praxis.essaiAide,
-            onChanged: (String _) => setState(() => _erreurEssai = null),
+          Text(t.admin.praxis.essaiChamp, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(t.admin.praxis.essaiAide, style: textes.bodySmall),
+          Ecart.vMd,
+          ChoixConversationsEssai(
+            choisies: _essaiChoisies,
+            onChange: (Set<String> v) => setState(() => _essaiChoisies = v),
           ),
-          if (_erreurEssai != null) ...<Widget>[
-            Ecart.vMd,
-            Semantics(
-              liveRegion: true,
-              child: Text(
-                _erreurEssai!,
-                style: textes.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.error,
-                ),
-              ),
-            ),
-          ],
           Ecart.vMd,
           ActionPrincipale(
             key: ClesPraxis.fixerEssai,

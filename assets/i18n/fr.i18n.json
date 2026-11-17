@@ -6718,11 +6718,21 @@
         "one": "Mode essai : Praxis ne voit que {nombre} conversation et ne publie aucune annonce.",
         "other": "Mode essai : Praxis ne voit que {nombre} conversations et ne publie aucune annonce."
       },
-      "essaiChamp": "Conversations d'essai (une référence par ligne, dix au plus)",
-      "essaiAide": "Collez la référence de chaque conversation d'essai. Tant que la liste n'est pas vide, Praxis ne lit et n'écrit que dans celles-ci.",
+      "essaiChamp": "Choisir les conversations d'essai",
+      "essaiAide": "Cochez au plus dix conversations parmi celles de vos Messages. Si vous n'en avez pas, créez d'abord une conversation de test avec un compte de test. Tant que rien n'est coché et enregistré, il n'y a pas d'essai.",
       "essaiEnregistrer": "Enregistrer les conversations d'essai",
       "essaiFin": "Mettre fin à l'essai",
-      "essaiInvalide": "Chaque ligne doit être une référence de conversation valide, dix au plus.",
+      "essaiChoisies(plural, param=nombre)": {
+        "one": "{nombre} conversation cochée.",
+        "other": "{nombre} conversations cochées."
+      },
+      "essaiTrop(plural, param=nombre)": {
+        "one": "Dix conversations au plus : décochez-en une pour en choisir une autre.",
+        "other": "Dix conversations au plus : décochez-en une pour en choisir une autre."
+      },
+      "essaiListeErreur": "La liste de vos conversations n'a pas pu être lue. Vérifiez la connexion, puis réessayez.",
+      "essaiAucune": "Aucune conversation à choisir. Créez d'abord une conversation de test avec un compte de test, puis revenez ici.",
+      "essaiAffinez": "Seules les {nombre} premières conversations sont montrées : affinez avec la recherche.",
       "reglageFait": "Réglage appliqué.",
       "erreurReglage": "Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.",
       "doubleVerification": "Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.",

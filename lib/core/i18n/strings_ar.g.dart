@@ -7110,11 +7110,29 @@ class _Traductions$admin$praxis$ar extends Traductions$admin$praxis$fr {
 		many: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.',
 		other: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.',
 	);
-	@override String get essaiChamp => 'محادثات التجربة (مرجع واحد في كل سطر، عشرة على الأكثر)';
-	@override String get essaiAide => 'الصق مرجع كل محادثة تجربة. ما دامت القائمة غير فارغة، لا يقرأ Praxis ولا يكتب إلا فيها.';
+	@override String get essaiChamp => 'اختيار محادثات التجربة';
+	@override String get essaiAide => 'حدّد عشر محادثات على الأكثر من رسائلك. إن لم تكن لديك أي محادثة، فأنشئ أولًا محادثة تجريبية بحساب تجريبي. ما دام لم يُحدَّد شيء ويُحفظ، فلا توجد تجربة.';
 	@override String get essaiEnregistrer => 'حفظ محادثات التجربة';
 	@override String get essaiFin => 'إنهاء التجربة';
-	@override String get essaiInvalide => 'يجب أن يكون كل سطر مرجع محادثة صالحًا، وعشرة على الأكثر.';
+	@override String essaiChoisies({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'تم تحديد ⁨${nombre}⁩ محادثة.',
+		one: 'تم تحديد ⁨${nombre}⁩ محادثة.',
+		two: 'تم تحديد ⁨${nombre}⁩ محادثة.',
+		few: 'تم تحديد ⁨${nombre}⁩ محادثة.',
+		many: 'تم تحديد ⁨${nombre}⁩ محادثة.',
+		other: 'تم تحديد ⁨${nombre}⁩ محادثة.',
+	);
+	@override String essaiTrop({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre,
+		zero: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.',
+		one: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.',
+		two: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.',
+		few: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.',
+		many: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.',
+		other: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.',
+	);
+	@override String get essaiListeErreur => 'تعذّرت قراءة قائمة محادثاتك. تحقق من الاتصال ثم أعد المحاولة.';
+	@override String get essaiAucune => 'لا توجد محادثة للاختيار. أنشئ أولًا محادثة تجريبية بحساب تجريبي ثم عد إلى هنا.';
+	@override String essaiAffinez({required Object nombre}) => 'تُعرض فقط أول ⁨${nombre}⁩ محادثة: ضيّق القائمة بالبحث.';
 	@override String get reglageFait => 'طُبّق الإعداد.';
 	@override String get erreurReglage => 'لم يُؤكَّد الإعداد. راجع الحالة أعلاه قبل المحاولة من جديد.';
 	@override String get doubleVerification => 'يتطلب هذا الإعداد التحقق المزدوج. فعّله من الحساب > الأمان، ثم أعد المحاولة.';
@@ -35344,11 +35362,15 @@ extension on TraductionsAr {
 			'admin.praxis.essaiTitre' => 'محادثات التجربة',
 			'admin.praxis.essaiVide' => 'وضع التجربة متوقف: يستطيع Praxis قراءة كل محادثات الأكاديمية المسموح له بقراءتها.',
 			'admin.praxis.essaiActif' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.', one: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.', two: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.', few: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.', many: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.', other: 'وضع التجربة: لا يرى Praxis إلا ⁨${nombre}⁩ محادثة ولا ينشر أي إعلان.', ), 
-			'admin.praxis.essaiChamp' => 'محادثات التجربة (مرجع واحد في كل سطر، عشرة على الأكثر)',
-			'admin.praxis.essaiAide' => 'الصق مرجع كل محادثة تجربة. ما دامت القائمة غير فارغة، لا يقرأ Praxis ولا يكتب إلا فيها.',
+			'admin.praxis.essaiChamp' => 'اختيار محادثات التجربة',
+			'admin.praxis.essaiAide' => 'حدّد عشر محادثات على الأكثر من رسائلك. إن لم تكن لديك أي محادثة، فأنشئ أولًا محادثة تجريبية بحساب تجريبي. ما دام لم يُحدَّد شيء ويُحفظ، فلا توجد تجربة.',
 			'admin.praxis.essaiEnregistrer' => 'حفظ محادثات التجربة',
 			'admin.praxis.essaiFin' => 'إنهاء التجربة',
-			'admin.praxis.essaiInvalide' => 'يجب أن يكون كل سطر مرجع محادثة صالحًا، وعشرة على الأكثر.',
+			'admin.praxis.essaiChoisies' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'تم تحديد ⁨${nombre}⁩ محادثة.', one: 'تم تحديد ⁨${nombre}⁩ محادثة.', two: 'تم تحديد ⁨${nombre}⁩ محادثة.', few: 'تم تحديد ⁨${nombre}⁩ محادثة.', many: 'تم تحديد ⁨${nombre}⁩ محادثة.', other: 'تم تحديد ⁨${nombre}⁩ محادثة.', ), 
+			'admin.praxis.essaiTrop' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.', one: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.', two: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.', few: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.', many: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.', other: 'عشر محادثات على الأكثر: ألغِ تحديد إحداها لتختار أخرى.', ), 
+			'admin.praxis.essaiListeErreur' => 'تعذّرت قراءة قائمة محادثاتك. تحقق من الاتصال ثم أعد المحاولة.',
+			'admin.praxis.essaiAucune' => 'لا توجد محادثة للاختيار. أنشئ أولًا محادثة تجريبية بحساب تجريبي ثم عد إلى هنا.',
+			'admin.praxis.essaiAffinez' => ({required Object nombre}) => 'تُعرض فقط أول ⁨${nombre}⁩ محادثة: ضيّق القائمة بالبحث.',
 			'admin.praxis.reglageFait' => 'طُبّق الإعداد.',
 			'admin.praxis.erreurReglage' => 'لم يُؤكَّد الإعداد. راجع الحالة أعلاه قبل المحاولة من جديد.',
 			'admin.praxis.doubleVerification' => 'يتطلب هذا الإعداد التحقق المزدوج. فعّله من الحساب > الأمان، ثم أعد المحاولة.',
@@ -35403,12 +35425,12 @@ extension on TraductionsAr {
 			'admin.praxis.cleVide' => 'لا مفتاح',
 			'admin.praxis.cleVideDetail' => 'أصدر مفتاحًا لمخاطبة Praxis.',
 			'admin.praxis.erreur' => 'تعذّرت قراءة إعدادات Praxis. أعد المحاولة بعد لحظة.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.praxis.horsLigne' => 'لم تُحمَّل إعدادات Praxis بعد. أعد تحميلها.',
 			'admin.praxis.journalTitre' => 'ما أرسله Praxis',
 			'admin.praxis.journalIntro' => 'الرسائل والإعلانات التي كتبها Praxis بنفسه، الأحدث أولًا. لا نص أسرة أبدًا.',
 			'admin.praxis.journalVide' => 'لم يرسل Praxis شيئًا بعد',
-			_ => null,
-		} ?? switch (path) {
 			'admin.praxis.journalVideDetail' => 'ستظهر هنا رسائله ورفضاته.',
 			'admin.praxis.journalErreur' => 'تعذّرت قراءة سجل Praxis. أعد المحاولة بعد لحظة.',
 			'admin.praxis.voirSuite' => 'عرض الإرسالات الأقدم',
@@ -35917,12 +35939,12 @@ extension on TraductionsAr {
 			'admin.bibliotheque.libelles.version.archivee' => 'مؤرشف',
 			'admin.bibliotheque.libelles.version.retire' => 'مسحوب',
 			'admin.bibliotheque.libelles.version.numero' => ({required Object numero}) => 'الإصدار ⁨${numero}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.libelles.version.aucune' => 'لا يوجد إصدار',
 			'admin.bibliotheque.libelles.droits.aVerifier' => 'بحاجة إلى مراجعة',
 			'admin.bibliotheque.libelles.droits.approuve' => 'معتمد',
 			'admin.bibliotheque.libelles.droits.refuse' => 'مرفوض',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.droits.expire' => 'منتهي الصلاحية',
 			'admin.bibliotheque.libelles.visibilite.publique' => 'عامة',
 			'admin.bibliotheque.libelles.visibilite.inscrits' => 'المسجّلون',
@@ -36431,12 +36453,12 @@ extension on TraductionsAr {
 			'comptable.statuts.reserve.regleInactive' => 'القاعدة غير مفعّلة',
 			'comptable.statuts.reserve.alimentationPrevue' => 'تغذية مقررة',
 			'comptable.statuts.reserve.mouvementSensible' => 'حركة حساسة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.obligation.brouillon' => 'مسودة',
 			'comptable.statuts.obligation.aApprouver' => 'للاعتماد',
 			'comptable.statuts.obligation.approuvee' => 'معتمَد',
 			'comptable.statuts.obligation.refusee' => 'مرفوض',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.obligation.payable' => 'قابل للدفع',
 			'comptable.statuts.obligation.payee' => 'مدفوع',
 			'comptable.statuts.obligation.annulee' => 'ملغى',
@@ -36945,12 +36967,12 @@ extension on TraductionsAr {
 			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'لا، هو باسم أحد أقاربي',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'سيُحوَّل راتبك إلى حساب أحد أقاربك بموافقتك. تتحقق منه الإدارة قبل أول تحويل.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'من صاحب الحساب؟',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'أبي أو أمي',
 			'comptable.beneficiaires.recevoir.wise.lien.conjoint' => 'زوجي أو زوجتي',
 			'comptable.beneficiaires.recevoir.wise.lien.frereSoeur' => 'أخي أو أختي',
 			'comptable.beneficiaires.recevoir.wise.lien.autre' => 'شخص آخر',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.lienLibelle' => 'الصلة بصاحب الحساب',
 			'comptable.beneficiaires.recevoir.wise.autorisation' => ({required Object titulaire}) => 'أوافق على أن تحوّل أكاديمية الرواية راتبي إلى هذا الحساب باسم ⁨${titulaire}⁩.',
 			'comptable.beneficiaires.recevoir.wise.autorisationRequise' => 'ضع علامة الموافقة: لا يمكن تسجيل حساب ليس باسمك دونها.',
@@ -37459,12 +37481,12 @@ extension on TraductionsAr {
 			'ficheEleve.interface.echec' => ({required Object dePrenom}) => 'لم يُحفظ التغيير، غالبًا بسبب انقطاع الاتصال بـRewayah. تحقّق من اتصالك، ثم المس اختيارك من جديد. يبقى العرض الحالي لـ⁨${dePrenom}⁩ كما هو على جهازه.',
 			'ficheEleve.interface.horsLigne' => 'أنت غير متصل. يمكن تغيير العرض عند عودة الاتصال.',
 			'ficheEleve.camera.titre' => 'الكاميرا أثناء الدرس',
+			_ => null,
+		} ?? switch (path) {
 			'ficheEleve.camera.ligne' => 'الكاميرا أثناء الحصص',
 			'ficheEleve.camera.autorisee' => ({required Object prenom}) => 'يمكن لـ⁨${prenom}⁩ تشغيل كاميرته أثناء الحصص.',
 			'ficheEleve.camera.interdite' => ({required Object prenom}) => 'لن يظهر زر الكاميرا لـ⁨${prenom}⁩ أثناء الحصص.',
 			'ficheEleve.camera.application' => ({required Object dePrenom}) => 'يُحتسب التغيير عند الدخول التالي لـ⁨${dePrenom}⁩ إلى حصة.',
-			_ => null,
-		} ?? switch (path) {
 			'ficheEleve.camera.distincte' => 'هذا الإعداد لا يغيّر إذن الكاميرا في الجهاز، الذي يطلبه الهاتف لقراءة رمز QR.',
 			'ficheEleve.camera.echec' => 'لم يُحفظ التغيير. أعد المحاولة.',
 			'ficheEleve.camera.horsLigne' => 'أنت غير متصل. يمكن ضبط الكاميرا عند عودة الاتصال.',
@@ -37973,12 +37995,12 @@ extension on TraductionsAr {
 			'appareils.plateforme.windows' => 'حاسوب',
 			'appareils.plateforme.inconnue' => 'جهاز',
 			'appareils.retrait.question' => 'إزالة هذا الجهاز؟',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.retrait.consequence' => ({required Object appareil, required Object dePrenom}) => 'لن يستطيع ⁨${appareil}⁩ الاتصال بملف ⁨${dePrenom}⁩. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
 			'appareils.retrait.confirmer' => 'إزالة الجهاز',
 			'appareils.retrait.enCours' => 'جارٍ الإزالة',
 			'appareils.retrait.reussi' => 'أُزيل الجهاز. إن كان متصلًا الآن، يبقى كذلك حتى انقطاعه التالي.',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.retrait.echec' => 'لم تكتمل الإزالة. ما زال الجهاز مسموحًا به. أعد المحاولة بعد لحظة.',
 			'appareils.retrait.horsLigne' => 'لا اتصال بالإنترنت: لم يُزل الجهاز.',
 			'appareils.emetteur.titre' => 'ربط جهاز',
@@ -38487,12 +38509,12 @@ extension on TraductionsAr {
 			'adulte.recharge.verificationEchecPhrase' => 'اختياراتك محفوظة. يمكنك إعادة المحاولة.',
 			'adulte.recharge.recapitulatif' => 'الملخص حسب المستفيد',
 			'adulte.recharge.montantPaye' => 'المبلغ المدفوع',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.soldeAttribue' => 'الرصيد المخصص',
 			'adulte.recharge.statut' => 'حالة التخصيص',
 			'adulte.recharge.total' => 'المجموع المستحق',
 			'adulte.recharge.payer' => ({required Object montant}) => 'دفع ⁨${montant}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.conditionsRemboursement' => 'الاسترداد والاعتراض: اقرأ الشروط',
 			'adulte.recharge.fraisContestation' => 'إذا اعترضتم على دفعة لدى بنككم، تُضاف رسوم الاعتراض إلى رصيد أسرتكم.',
 			'adulte.recharge.horsLignePayer' => 'أنت غير متصل. يمكنك الدفع عند عودة الاتصال.',
@@ -39001,12 +39023,12 @@ extension on TraductionsAr {
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
 			'protectionEnfants.prioritaireDetail' => 'تقرؤه الإدارة والمسؤول عن حماية الأطفال فورًا. لا يراه المعلم المعني ولا الأسر الأخرى أبدًا. لا تُرسل أي رسالة إلى الأسرة.',
 			'protectionEnfants.urgence' => 'في حال وجود خطر داهم، اتصل أولًا بخدمات الطوارئ في بلدك.',
+			_ => null,
+		} ?? switch (path) {
 			'protectionEnfants.direction' => 'تتلقى الإدارة بلاغك.',
 			'protectionEnfants.recuPar' => ({required Object nom}) => '⁨${nom}⁩ والإدارة يتلقيان بلاغك.',
 			'protectionEnfants.contact' => ({required Object courriel}) => 'البريد الإلكتروني للتواصل: ⁨${courriel}⁩',
 			'protectionEnfants.erreurLecture' => 'لا يظهر اسم المسؤول في الوقت الحالي. أعد المحاولة بعد قليل.',
-			_ => null,
-		} ?? switch (path) {
 			'codeConduite.titre' => 'مدونة سلوك المعلم',
 			'codeConduite.lien' => 'قراءة مدونة السلوك',
 			'codeConduite.intro' => 'تحمي هذه القواعد التلاميذ، وتحميك أنت أيضًا. اقرأها ثم وافق عليها.',
@@ -39515,12 +39537,12 @@ extension on TraductionsAr {
 			'formulaire.entier.horsBornes' => ({required Object min, required Object max}) => 'اختر قيمة بين ⁨${min}⁩ و⁨${max}⁩، أو إحدى القيم المقترحة.',
 			'formulaire.obligatoire' => 'حقل إلزامي',
 			'formulaire.champObligatoire' => ({required Object champ}) => '⁨${champ}⁩، حقل إلزامي',
+			_ => null,
+		} ?? switch (path) {
 			'formulaire.legendeObligatoire' => 'الحقول المعلَّمة بنقطة إلزامية.',
 			'recherche.titre' => 'بحث',
 			'recherche.retour' => 'رجوع',
 			'recherche.champ.libelle' => 'بحث',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.champ.aide' => 'كلمة',
 			'recherche.espace.famille' => 'في مساحة ولي الأمر',
 			'recherche.espace.eleve' => 'في مساحة الطالب',
@@ -40029,12 +40051,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.sw' => 'السواحيلية',
 			'recrutement.parcours.langues.ha' => 'الهوسا',
 			'recrutement.parcours.langues.wo' => 'الولوف',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.langues.bm' => 'البامبارا',
 			'recrutement.parcours.langues.snk' => 'السونينكي',
 			'recrutement.parcours.langues.mnk' => 'الماندينكا',
 			'recrutement.parcours.langues.francais' => 'الفرنسية',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.langues.english' => 'الإنجليزية',
 			'recrutement.parcours.langues.ar' => 'العربية',
 			'recrutement.parcours.langues.ps' => 'البشتو',
@@ -40543,12 +40565,12 @@ extension on TraductionsAr {
 			'argent.transparence.postes.visioconference' => 'الاتصال المرئي',
 			'argent.transparence.postes.applicationHebergement' => 'التطبيق والاستضافة',
 			'argent.transparence.postes.emails' => 'البريد الإلكتروني',
+			_ => null,
+		} ?? switch (path) {
 			'argent.transparence.postes.stockage' => 'تخزين الملفات',
 			'argent.transparence.postes.comptabilite' => 'المحاسبة',
 			'argent.transparence.postes.developpement' => 'تطوير التطبيق',
 			'argent.transparence.postes.administration' => 'إدارة الأكاديمية',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.postes.impotSocietes' => 'ضريبة الشركات',
 			'argent.transparence.postes.benefice' => 'ربح الأكاديمية',
 			'argent.transparence.posteSemantique' => ({required Object poste, required Object part}) => '⁨${poste}⁩: ⁨${part}⁩ من دفعة الطالب',
@@ -41057,12 +41079,12 @@ extension on TraductionsAr {
 			'admissions.titulaire' => ({required Object prenom}) => '⁨${prenom}⁩، لنفسه أو لنفسها',
 			'admissions.enfant' => ({required Object prenom, required Object age}) => '⁨${prenom}⁩، العمر ⁨${age}⁩',
 			'admissions.etat.aTraiter' => 'للمعالجة',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.etat.aCompleter' => 'للاستكمال',
 			'admissions.etat.acceptee' => 'مقبول',
 			'admissions.etat.refusee' => 'مرفوض',
 			'admissions.etat.retiree' => 'مسحوب',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.accepter' => ({required Object deNom}) => 'قبول طلب ⁨${deNom}⁩',
 			'admissions.accepterConsequence' => 'يُفتح حسابه وتُرسل فورًا رسالة «قُبل طلبك». تُنشأ ملفات الأطفال عند أول دخول له، بإجابات الطلب.',
 			'admissions.demanderPrecisions' => 'طلب توضيحات',
@@ -41571,12 +41593,12 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.attendus.question' => 'أي حصيلة كنتم تتوقعون؟',
 			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.titre' => 'ملف 21 أكتوبر',
 			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.description' => '440 سطرًا، أي 409 أشخاص بعد ضم التكرارات: الحصيلة المسجَّلة في المصنّف ذلك اليوم.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.attendus.autres.titre' => 'أعداد أخرى',
 			'candidatsFlux.importFormulaires.comptes.attendus.autres.description' => 'تعرفون عدد الأسطر أو الأشخاص في ملفكم. أدخلوه: تبيّن رواية أي فرق.',
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.titre' => 'لا حصيلة للمقارنة',
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.description' => 'تؤكدون بالاعتماد على المعاينة.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.attendus.lignes' => 'الأسطر المتوقعة',
 			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'الأشخاص المتوقعون',
 			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.',
@@ -42085,12 +42107,12 @@ extension on TraductionsAr {
 			'calendrier.dates.notification.conflit.rappelGenerale' => 'تذكير: ما زال تعذّر استرجاع حصة لم تعد تحت الإغلاق: لدى المعلّم درس آخر في الوقت نفسه. حرّره لاسترجاعها.',
 			'calendrier.dates.notification.conflit.rappelAvecNom' => ({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'تذكير: ما زال تعذّر استرجاع حصة الفصل ⁨${classe}⁩ بتاريخ ⁨${jour}⁩ الساعة ⁨${heure}⁩ (بتوقيت مكة المكرمة): لدى ⁨${enseignant}⁩ درس آخر في الوقت نفسه. حرّر المعلّم لاسترجاعها.',
 			'calendrier.dates.notification.conflit.rappelSansNom' => ({required Object classe, required Object jour, required Object heure}) => 'تذكير: ما زال تعذّر استرجاع حصة الفصل ⁨${classe}⁩ بتاريخ ⁨${jour}⁩ الساعة ⁨${heure}⁩ (بتوقيت مكة المكرمة): لدى المعلّم درس آخر في الوقت نفسه. حرّره لاسترجاعها.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.notification.quandLocal' => ({required Object local, required Object mecque}) => '⁨${local}⁩ (⁨${mecque}⁩، بتوقيت مكة المكرمة)',
 			'calendrier.dates.notification.quandMecque' => ({required Object jour, required Object heure}) => '⁨${jour}⁩ الساعة ⁨${heure}⁩، بتوقيت مكة المكرمة',
 			'calendrier.dates.notification.annoncee.une' => ({required Object du, required Object au, required Object quand}) => 'الأكاديمية مغلقة من ⁨${du}⁩ إلى ⁨${au}⁩. لن تُعقد الحصة المقررة في ⁨${quand}⁩.',
 			'calendrier.dates.notification.annoncee.plusieurs' => ({required Object du, required Object au, required Object n, required Object quand}) => 'الأكاديمية مغلقة من ⁨${du}⁩ إلى ⁨${au}⁩. الحصص التي لن تُعقد: ⁨${n}⁩، ومنها حصة ⁨${quand}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.notification.levee.une' => ({required Object quand}) => 'سُحب إغلاق الأكاديمية. أُعيدت الحصة المقررة في ⁨${quand}⁩.',
 			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'سُحب إغلاق الأكاديمية. الحصص المُعادة: ⁨${n}⁩، ومنها حصة ⁨${quand}⁩.',
 			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'سُحب إغلاق الأكاديمية، لكن الحصة المقررة في ⁨${quand}⁩ لن تُعقد.',

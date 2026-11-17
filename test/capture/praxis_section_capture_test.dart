@@ -19,9 +19,54 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/features/admin_acces_agents/acces_agents_page.dart';
 import 'package:rewayah_academy/features/admin_acces_agents/section_praxis.dart';
+import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
 import '../support/faux_service_praxis.dart';
 import 'outil_capture.dart';
+
+/// Les conversations de la direction, fictives (le choix des conversations
+/// d'essai les montre comme les Messages).
+class _MessagesDirection extends MessagesMetierIndisponibles {
+  const _MessagesDirection();
+
+  @override
+  Future<List<ResumeFil>> fils() async => <ResumeFil>[
+    for (final (String, String, String, String) x
+        in <(String, String, String, String)>[
+          (
+            'f1',
+            'Compte de test',
+            'Dossier de test',
+            'Bonjour, essai de la direction.',
+          ),
+          (
+            'f2',
+            'Famille fictive',
+            'Dossier fictif',
+            'Merci pour votre réponse.',
+          ),
+          (
+            'f3',
+            'Autre compte de test',
+            'Dossier de test',
+            'À quelle heure commence la Classe ?',
+          ),
+        ])
+      ResumeFil(
+        id: x.$1,
+        objet: ObjetLie(
+          type: TypeObjetLie.dossier,
+          id: 'o-${x.$1}',
+          libelle: x.$3,
+        ),
+        interlocuteurs: <Participant>[
+          Participant(id: 'p-${x.$1}', nomAffiche: x.$2, fonction: 'Parent'),
+        ],
+        apercu: x.$4,
+        dernierMessageLe: DateTime.utc(2026, 11, 16, 18),
+      ),
+  ];
+}
 
 /// Un service d'observation vide : seule la section Praxis est montree.
 class _AgentsVide implements ServiceAgent {
@@ -90,10 +135,7 @@ FauxServicePraxis _faux(_Etat etat) {
         autonome: false,
         envoisParHeure: 30,
         essaiFils: etat == _Etat.essai
-            ? const <String>[
-                'b4cccccc-0000-4000-8000-000000000001',
-                'b4cccccc-0000-4000-8000-000000000002',
-              ]
+            ? const <String>['f1', 'f2']
             : const <String>[],
         cles: <ClePraxis>[
           clePraxisFictive(derniereUtilisation: DateTime(2026, 11, 15, 18)),
@@ -122,6 +164,7 @@ Future<void> _ouvrir(WidgetTester tester, _Etat etat) async {
   final List<Override> surcharges = <Override>[
     servicePraxisProvider.overrideWithValue(faux),
     serviceAgentProvider.overrideWithValue(_AgentsVide()),
+    portMessagesMetierProvider.overrideWithValue(const _MessagesDirection()),
     if (etat == _Etat.horsLigne)
       horsLigneProvider.overrideWith((ref) => Stream<bool>.value(true)),
   ];
