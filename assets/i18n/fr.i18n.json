@@ -6718,6 +6718,33 @@
       "plafondChamp": "Nombre de messages par heure (de 1 à 120)",
       "plafondEnregistrer": "Fixer le plafond",
       "plafondInvalide": "Écrivez un nombre entier entre 1 et 120.",
+      "propositions": {
+        "titre": "Propositions de Praxis",
+        "pastille": "Praxis propose",
+        "intro": "Praxis a préparé ce geste. Rien n'est fait tant que vous ne validez pas : en validant, le geste est exécuté comme si vous l'aviez fait vous-même.",
+        "geste": {
+          "demanderComplement": "Demander un complément",
+          "planifierEntretien": "Planifier un entretien",
+          "admettreVerifications": "Admettre en salle de vérification"
+        },
+        "note": "Ce que Praxis a écrit",
+        "motif": "Motif dit au candidat",
+        "elements": "Éléments demandés",
+        "quand": "Entretien proposé le {date} à {heure}",
+        "duree": "Durée : {minutes} minutes",
+        "expire": "Expire le {date}",
+        "participants": "Participants",
+        "participantsAide": "Choisissez les personnes qui mènent l'entretien : Praxis ne les choisit pas.",
+        "participantsAucun": "Aucune personne du personnel à choisir pour ce dossier.",
+        "participantsErreur": "La liste du personnel n'a pas pu être lue. Réessayez dans un instant.",
+        "valider": "Valider",
+        "ecarter": "Écarter",
+        "fait": "Geste fait : {geste}.",
+        "ecartee": "Proposition écartée.",
+        "perimee": "Le dossier a changé depuis cette proposition : elle ne peut plus être validée. Écartez-la.",
+        "close": "Cette proposition n'est plus ouverte : elle a été traitée ou elle a expiré.",
+        "generique": "La proposition n'a pas pu être traitée. Rien n'a changé : réessayez."
+      },
       "essaiTitre": "Conversations d'essai",
       "essaiVide": "Mode essai éteint : Praxis peut lire toutes les conversations de l'académie qu'il a le droit de lire.",
       "essaiActif(plural, param=nombre)": {

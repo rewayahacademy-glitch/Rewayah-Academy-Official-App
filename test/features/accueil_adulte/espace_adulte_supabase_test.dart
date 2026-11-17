@@ -38,10 +38,7 @@ void main() {
     });
 
     test('une ligne sans date rendue ou sans bornes est ecartee', () {
-      expect(
-        seancePasseeDepuisLigne(ligne()..remove('date_locale')),
-        isNull,
-      );
+      expect(seancePasseeDepuisLigne(ligne()..remove('date_locale')), isNull);
       expect(seancePasseeDepuisLigne(ligne()..remove('started_at')), isNull);
     });
   });

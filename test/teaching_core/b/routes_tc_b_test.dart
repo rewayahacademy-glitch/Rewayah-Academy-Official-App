@@ -39,26 +39,25 @@ void main() {
     expect(RoutesTcB.avecGroupe('g1'), '/tc/bibliotheque?groupe=g1');
     // Un segment supplementaire entrerait en collision avec la fiche d'une
     // ressource : l'adresse composee doit rester celle de la Bibliotheque.
+    expect(Uri.parse(RoutesTcB.avecGroupe('g1')).path, RoutesTcB.bibliotheque);
     expect(
-      Uri.parse(RoutesTcB.avecGroupe('g1')).path,
-      RoutesTcB.bibliotheque,
-    );
-    expect(
-      Uri.parse(
-        RoutesTcB.avecGroupe('g1'),
-      ).queryParameters[RoutesTcB.parametreGroupe],
+      Uri.parse(RoutesTcB.avecGroupe('g1'))
+          .queryParameters[RoutesTcB.parametreGroupe],
       'g1',
     );
   });
 
-  test('un identifiant a caracteres reserves reste lisible apres composition', () {
-    final String adresse = RoutesTcB.avecGroupe('a b&c');
-    expect(adresse.contains(' '), isFalse);
-    expect(
-      Uri.parse(adresse).queryParameters[RoutesTcB.parametreGroupe],
-      'a b&c',
-    );
-  });
+  test(
+    'un identifiant a caracteres reserves reste lisible apres composition',
+    () {
+      final String adresse = RoutesTcB.avecGroupe('a b&c');
+      expect(adresse.contains(' '), isFalse);
+      expect(
+        Uri.parse(adresse).queryParameters[RoutesTcB.parametreGroupe],
+        'a b&c',
+      );
+    },
+  );
 
   testWidgets('l adresse composee porte le groupe jusqu a l ecran', (
     WidgetTester tester,
@@ -70,10 +69,14 @@ void main() {
     expect(await groupeMonte(tester, RoutesTcB.bibliotheque), isNull);
   });
 
-  testWidgets('une requete vide ou blanche vaut absence, pas identifiant vide', (
-    WidgetTester tester,
-  ) async {
-    expect(await groupeMonte(tester, '/tc/bibliotheque?groupe='), isNull);
-    expect(await groupeMonte(tester, '/tc/bibliotheque?groupe=%20%20'), isNull);
-  });
+  testWidgets(
+    'une requete vide ou blanche vaut absence, pas identifiant vide',
+    (WidgetTester tester) async {
+      expect(await groupeMonte(tester, '/tc/bibliotheque?groupe='), isNull);
+      expect(
+        await groupeMonte(tester, '/tc/bibliotheque?groupe=%20%20'),
+        isNull,
+      );
+    },
+  );
 }

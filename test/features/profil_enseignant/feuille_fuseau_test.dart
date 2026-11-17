@@ -42,11 +42,8 @@ Future<bool? Function()> _ouvrir(
                 rendu = await AppBottomSheet.ouvrir<bool>(
                   context,
                   titre: t.enseignant.profil.modifierFuseau,
-                  constructeur: (BuildContext _) => FeuilleFuseau(
-                    actuel: actuel,
-                    pays: pays,
-                    ecrire: ecrire,
-                  ),
+                  constructeur: (BuildContext _) =>
+                      FeuilleFuseau(actuel: actuel, pays: pays, ecrire: ecrire),
                 );
               },
               child: const Text('ouvrir'),
