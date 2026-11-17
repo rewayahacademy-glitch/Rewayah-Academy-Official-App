@@ -388,6 +388,11 @@ declare
     'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',
     'inviter_conjoint(text,uuid)',
     'inviter_comptable(text)',
+    -- BE-2a-2 (17/11) : l'invitation d'un associe (direction active en aal2, cle d'idempotence) et sa revocation
+    -- (direction active, motif ecrit) ; l'inscription est une session sans profil, code lie a l'adresse, usage unique.
+    'inviter_associe(text,text,uuid)',
+    'revoquer_invitation_associe(uuid,text,uuid)',
+    'inscrire_associe_invite(text,text,text,gender)',
     'inviter_enseignant(text)',
     -- CAND-L2A1 (22/10) : journal borne par genre (C15) ; ecrit la trace de l'exception super-admin.
     'journal_audit_filtres()',
