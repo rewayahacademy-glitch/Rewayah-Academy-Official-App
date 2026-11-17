@@ -14144,10 +14144,10 @@ class Traductions$admin$praxis$fr {
 	String get etatEteint => 'Éteint';
 
 	/// fr: 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.'
-	String get allumeOui => 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.';
+	String get allumeOui => 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.';
 
 	/// fr: 'Éteint : Praxis ne lit rien et n'écrit rien.'
-	String get allumeNon => 'Éteint : Praxis ne lit rien et n\'écrit rien.';
+	String get allumeNon => 'Éteint : Praxis ne lit rien et n\'écrit rien.';
 
 	/// fr: 'Allumer Praxis'
 	String get allumer => 'Allumer Praxis';
@@ -14159,10 +14159,10 @@ class Traductions$admin$praxis$fr {
 	String get autonome => 'Mode autonome';
 
 	/// fr: 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.'
-	String get autonomeOui => 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.';
+	String get autonomeOui => 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.';
 
 	/// fr: 'Dirigé : Praxis n'agit que dans une conversation que vous menez.'
-	String get autonomeNon => 'Dirigé : Praxis n\'agit que dans une conversation que vous menez.';
+	String get autonomeNon => 'Dirigé : Praxis n\'agit que dans une conversation que vous menez.';
 
 	/// fr: 'Autoriser le mode autonome'
 	String get autoriserAutonome => 'Autoriser le mode autonome';
@@ -14255,7 +14255,7 @@ class Traductions$admin$praxis$fr {
 	String get emettre => 'Émettre la clé';
 
 	/// fr: 'Il manque le nom de la clé : écrivez à quoi elle sert.'
-	String get manqueLibelle => 'Il manque le nom de la clé : écrivez à quoi elle sert.';
+	String get manqueLibelle => 'Il manque le nom de la clé : écrivez à quoi elle sert.';
 
 	/// fr: 'Émission non confirmée. Relisez la liste des clés avant de recommencer.'
 	String get erreurEmission => 'Émission non confirmée. Relisez la liste des clés avant de recommencer.';
@@ -14264,7 +14264,7 @@ class Traductions$admin$praxis$fr {
 	String get cleEmise => 'Clé émise';
 
 	/// fr: 'Copiez la clé maintenant. Elle n'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.'
-	String get cleEmiseDetail => 'Copiez la clé maintenant. Elle n\'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.';
+	String get cleEmiseDetail => 'Copiez la clé maintenant. Elle n\'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.';
 
 	/// fr: 'Copier la clé'
 	String get copierCle => 'Copier la clé';
@@ -14321,7 +14321,7 @@ class Traductions$admin$praxis$fr {
 	String get revoquer => 'Révoquer';
 
 	/// fr: 'Révoquer cette clé ?'
-	String get revoquerTitre => 'Révoquer cette clé ?';
+	String get revoquerTitre => 'Révoquer cette clé ?';
 
 	/// fr: 'Praxis ne pourra plus s'en servir, tout de suite. Une clé révoquée ne se rétablit pas.'
 	String get revoquerDetail => 'Praxis ne pourra plus s\'en servir, tout de suite. Une clé révoquée ne se rétablit pas.';
@@ -14333,7 +14333,7 @@ class Traductions$admin$praxis$fr {
 	String get revoquerMotifAide => 'Obligatoire. Quelques mots, gardés dans le journal.';
 
 	/// fr: 'Il manque le motif : écrivez pourquoi.'
-	String get manqueMotif => 'Il manque le motif : écrivez pourquoi.';
+	String get manqueMotif => 'Il manque le motif : écrivez pourquoi.';
 
 	/// fr: 'Révoquer la clé'
 	String get revoquerConfirmer => 'Révoquer la clé';
@@ -14399,7 +14399,7 @@ class Traductions$admin$praxis$fr {
 	String get refuse => 'Refusé';
 
 	/// fr: 'Refusé : {cause}'
-	String refuseCause({required Object cause}) => 'Refusé : ${cause}';
+	String refuseCause({required Object cause}) => 'Refusé : ${cause}';
 
 	/// fr: 'Rien n'a été écrit.'
 	String get sansTexte => 'Rien n\'a été écrit.';
@@ -60210,13 +60210,13 @@ extension on Traductions {
 			'admin.praxis.allume' => 'Praxis allumé',
 			'admin.praxis.etatAllume' => 'Allumé',
 			'admin.praxis.etatEteint' => 'Éteint',
-			'admin.praxis.allumeOui' => 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.',
-			'admin.praxis.allumeNon' => 'Éteint : Praxis ne lit rien et n\'écrit rien.',
+			'admin.praxis.allumeOui' => 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.',
+			'admin.praxis.allumeNon' => 'Éteint : Praxis ne lit rien et n\'écrit rien.',
 			'admin.praxis.allumer' => 'Allumer Praxis',
 			'admin.praxis.eteindre' => 'Éteindre Praxis',
 			'admin.praxis.autonome' => 'Mode autonome',
-			'admin.praxis.autonomeOui' => 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.',
-			'admin.praxis.autonomeNon' => 'Dirigé : Praxis n\'agit que dans une conversation que vous menez.',
+			'admin.praxis.autonomeOui' => 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.',
+			'admin.praxis.autonomeNon' => 'Dirigé : Praxis n\'agit que dans une conversation que vous menez.',
 			'admin.praxis.autoriserAutonome' => 'Autoriser le mode autonome',
 			'admin.praxis.reprendreDirige' => 'Revenir au mode dirigé',
 			'admin.praxis.plafond' => 'Messages par heure',
@@ -60245,10 +60245,10 @@ extension on Traductions {
 			'admin.praxis.dureeJours' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} jour', other: '${nombre} jours', ), 
 			'admin.praxis.dureePlafond' => 'Quatre-vingt-dix jours au maximum, et la base le vérifie elle-même.',
 			'admin.praxis.emettre' => 'Émettre la clé',
-			'admin.praxis.manqueLibelle' => 'Il manque le nom de la clé : écrivez à quoi elle sert.',
+			'admin.praxis.manqueLibelle' => 'Il manque le nom de la clé : écrivez à quoi elle sert.',
 			'admin.praxis.erreurEmission' => 'Émission non confirmée. Relisez la liste des clés avant de recommencer.',
 			'admin.praxis.cleEmise' => 'Clé émise',
-			'admin.praxis.cleEmiseDetail' => 'Copiez la clé maintenant. Elle n\'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.',
+			'admin.praxis.cleEmiseDetail' => 'Copiez la clé maintenant. Elle n\'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.',
 			'admin.praxis.copierCle' => 'Copier la clé',
 			'admin.praxis.cleCopiee' => 'Clé copiée',
 			'admin.praxis.adresse' => 'Adresse du connecteur',
@@ -60267,11 +60267,11 @@ extension on Traductions {
 			'admin.praxis.etatRevoquee' => 'Révoquée',
 			'admin.praxis.etatExpiree' => 'Expirée',
 			'admin.praxis.revoquer' => 'Révoquer',
-			'admin.praxis.revoquerTitre' => 'Révoquer cette clé ?',
+			'admin.praxis.revoquerTitre' => 'Révoquer cette clé ?',
 			'admin.praxis.revoquerDetail' => 'Praxis ne pourra plus s\'en servir, tout de suite. Une clé révoquée ne se rétablit pas.',
 			'admin.praxis.revoquerMotif' => 'Pourquoi',
 			'admin.praxis.revoquerMotifAide' => 'Obligatoire. Quelques mots, gardés dans le journal.',
-			'admin.praxis.manqueMotif' => 'Il manque le motif : écrivez pourquoi.',
+			'admin.praxis.manqueMotif' => 'Il manque le motif : écrivez pourquoi.',
 			'admin.praxis.revoquerConfirmer' => 'Révoquer la clé',
 			'admin.praxis.revoquee' => 'Clé révoquée.',
 			'admin.praxis.erreurRevocation' => 'Révocation non confirmée. Relisez la liste des clés avant de recommencer.',
@@ -60293,7 +60293,7 @@ extension on Traductions {
 			'admin.praxis.quoiAnnonce' => 'Annonce',
 			'admin.praxis.envoye' => 'Envoyé',
 			'admin.praxis.refuse' => 'Refusé',
-			'admin.praxis.refuseCause' => ({required Object cause}) => 'Refusé : ${cause}',
+			'admin.praxis.refuseCause' => ({required Object cause}) => 'Refusé : ${cause}',
 			'admin.praxis.sansTexte' => 'Rien n\'a été écrit.',
 			'admin.praxis.cause.plafondFil' => 'trop de messages de suite sans réponse',
 			'admin.praxis.cause.plafond' => 'plafond par heure atteint',
