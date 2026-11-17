@@ -282,6 +282,7 @@ import '../../features/ville/ville_page.dart';
 import '../accessibilite/mode_accessibilite.dart';
 import '../admin/admin_domaine.dart';
 import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
+import '../admin/sous_liens_coquille.dart';
 import '../admission/port_admissions_direction.dart'
     show DemandeAdmissionAOuvrir;
 import '../alertes/port_alertes.dart';
@@ -3959,7 +3960,15 @@ class _CoquilleAdmin extends ConsumerWidget {
         conversationOuverte: Routes.estConversationOuverte(
           adresseRouteurSur(context)?.path ?? '',
         ),
-        child: child,
+        // BE-2b : la coquille annonce aux pages celles qu'elle laisse ouvrir
+        // (navigation par role, la barriere reste la RLS) ; une page ne lit
+        // jamais le role.
+        child: associe
+            ? PagesOuvertesCoquille(
+                chemins: const <String>{Routes.adminPersonnesCandidatures},
+                child: child,
+              )
+            : child,
       ),
     );
   }

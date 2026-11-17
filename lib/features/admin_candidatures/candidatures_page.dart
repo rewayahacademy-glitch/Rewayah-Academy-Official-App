@@ -56,7 +56,6 @@ import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
-import '../../core/session/est_associe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -872,9 +871,6 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     final AsyncValue<PageCandidatures> valeur = ref.watch(
       pageCandidaturesProvider(requete),
     );
-    // BE-2b : l'associe ne voit que la page des candidatures (le serveur filtre
-    // ses dossiers sur ses missions).
-    final bool associe = ref.watch(estAssocieProvider);
     if (valeur.hasValue) _derniere = valeur.requireValue;
     if (valeur.hasValue && _filtre.estVide) {
       _totalToutes = valeur.requireValue.total;
@@ -1034,22 +1030,10 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
               final Widget titre = Semantics(
                 header: true,
                 label: r.titre,
-                // BE-2b : l'associe ne voit que cette page ; les autres
-                // pages de Personnes ne lui sont pas proposees.
-                child: associe
-                    ? SousNavigationDomaine(
-                        onglets: <({String libelle, String chemin})>[
-                          (
-                            libelle: r.titre,
-                            chemin: Routes.adminPersonnesCandidatures,
-                          ),
-                        ],
-                        indexActif: 0,
-                      )
-                    : SousNavigationDomaine(
-                        onglets: ongletsPersonnes(),
-                        indexActif: 2,
-                      ),
+                child: SousNavigationDomaine(
+                  onglets: ongletsPersonnes(),
+                  indexActif: 2,
+                ),
               );
               final List<Widget> icones = <Widget>[
                 if (commandes) _boutonRecherche(),

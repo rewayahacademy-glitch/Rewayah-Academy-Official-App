@@ -56,6 +56,50 @@ class SousNavigationDomaine extends StatelessWidget {
     // PORTS-COMPTABLE : quand les onglets sans serveur sont retires, il peut
     // n'en rester qu'un ; une sous-navigation d'un seul onglet n'en est pas
     // une, elle n'est pas montree.
+    // BE-2b : la coquille peut ne laisser ouvertes que certaines pages (un
+    // compte a portee restreinte) ; les autres sections ne sont pas montrees.
+    final Set<String>? ouvertes = PagesOuvertesCoquille.de(context);
+    if (ouvertes != null) {
+      final String? courant = indexActif >= 0 && indexActif < onglets.length
+          ? onglets[indexActif].chemin
+          : null;
+      final List<({String libelle, String chemin})> gardes =
+          <({String libelle, String chemin})>[
+            for (final ({String libelle, String chemin}) o in onglets)
+              if (ouvertes.contains(o.chemin)) o,
+          ];
+      return _SousNavigation(
+        onglets: gardes,
+        indexActif: courant == null
+            ? -1
+            : gardes.indexWhere(
+                (({String libelle, String chemin}) o) => o.chemin == courant,
+              ),
+        menuAuContenu: menuAuContenu,
+      );
+    }
+    return _SousNavigation(
+      onglets: onglets,
+      indexActif: indexActif,
+      menuAuContenu: menuAuContenu,
+    );
+  }
+}
+
+/// Le rendu de la sous-navigation, une fois les sections retenues.
+class _SousNavigation extends StatelessWidget {
+  const _SousNavigation({
+    required this.onglets,
+    required this.indexActif,
+    required this.menuAuContenu,
+  });
+
+  final List<({String libelle, String chemin})> onglets;
+  final int indexActif;
+  final bool menuAuContenu;
+
+  @override
+  Widget build(BuildContext context) {
     if (onglets.length < 2) {
       return const SizedBox.shrink();
     }
