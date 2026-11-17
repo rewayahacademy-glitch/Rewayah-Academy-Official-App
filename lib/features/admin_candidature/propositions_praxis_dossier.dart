@@ -26,6 +26,7 @@ import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -351,7 +352,10 @@ class _EtatCarteProposition extends ConsumerState<_CarteProposition> {
               style: textes.bodyMedium,
             ),
             if (x.dureeMinutes case final int minutes)
-              Text(p.duree(minutes: '$minutes'), style: attenue),
+              Text(
+                LibellesGroupe.insecable(p.duree(minutes: '$minutes')),
+                style: attenue,
+              ),
           ],
           if (planifie) ...<Widget>[
             Ecart.vMd,
