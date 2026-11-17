@@ -148,3 +148,13 @@ nouveau n'affiche une conversation) ; lignes touchées :
 
 **Non fait, dit en clair** : pas de bouton « Parler à l'équipe » dans la fiche : le panneau ne tient aucun port pour ouvrir
 une conversation, et inventer un serveur est exclu ; l'action existante est la rangée « Écrire à … » d'un objet.
+
+### Image de Praxis dans les avatars (PRAXIS-IMAGE, 17/11/2026)
+
+L'image fournie par le directeur (plein format : `assets/brand/praxis/praxis-profil.png`, PR #616), réduite à 256 x 256 et 24 couleurs
+(3 Ko) et rangée EN CODE (`lib/core/communications/image_praxis.dart`, `pubspec.yaml` étant interdit aux agents). `AvatarParticipant`
+(lignes 4, 5, 8, 30 et le panneau de contexte) l'emploie **seulement** pour le participant dont le code serveur `compte_officiel` est
+`praxis` ; un autre compte officiel, un serveur sans code et une personne gardent leur avatar. Preuves : `test/core/communications/image_praxis_test.dart`
+(24, 32, 48 points ; « autre code : pas d'image ») ; captures `docs/current/captures/E2E/PRAXIS-IMAGE/praxis-avatar-{light,dark}.png`.
+Non fait / non prouvé : lisibilité à 24 points jugée sur capture seulement (la toque se lit, les yeux sont très petits) ; rien vu en
+production ; l'image n'est pas encore en asset (étape pubspec, hors agents).

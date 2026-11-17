@@ -1,5 +1,7 @@
 // L'avatar d'un participant d'une conversation, en un seul endroit pour la
 // liste des fils, l'en-tete du fil et le panneau de contexte :
+//   - Praxis (code serveur `praxis`) : l'image du directeur (`ImagePraxis`,
+//     PRAXIS-IMAGE) ;
 //   - l'equipe : l'icone de l'application (`MarqueStaff.avatar`, #Ra_staff,
 //     decision du directeur du 14/11/2026) ;
 //   - une personne : sa photo par le fournisseur unique (PHOTOS-2b), sinon ses
@@ -8,6 +10,7 @@ library;
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/image_praxis.dart';
 import '../../core/communications/modeles_communication.dart';
 import '../../core/widgets/marque_staff.dart';
 import '../foyer/photo_eleve.dart';
@@ -34,6 +37,12 @@ class AvatarParticipant extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Participant? p = participant;
+    // Praxis : l'image du directeur, AVANT le test `equipe`, et seulement si le
+    // code serveur du compte est `praxis` (jamais un nom, jamais un autre
+    // compte officiel).
+    if (p != null && p.compteOfficiel == codeComptePraxis) {
+      return ImagePraxis(diametre: diametre);
+    }
     if (p != null && p.equipe) return MarqueStaff.avatar(diametre: diametre);
     return PhotoEleve(
       prenom: p?.nomAffiche ?? repli,
