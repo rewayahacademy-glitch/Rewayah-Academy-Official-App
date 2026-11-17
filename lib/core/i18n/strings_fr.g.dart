@@ -48062,7 +48062,7 @@ class Traductions$recrutement$dossier3$synthese$ageValeurs$fr {
 	String attestee({required Object date}) => '18 ans ou plus, attesté le ${date}';
 
 	/// fr: 'Moins de 18 ans : candidature en pause'
-	String get moins18 => 'Moins de 18 ans : candidature en pause';
+	String get moins18 => 'Moins de 18 ans : candidature en pause';
 
 	/// fr: 'Âge pas encore attesté'
 	String get nonAttestee => 'Âge pas encore attesté';
@@ -58228,7 +58228,7 @@ extension on Traductions {
 			'recrutement.dossier3.synthese.publicValeurs.adultes' => 'Adultes',
 			'recrutement.dossier3.synthese.age' => 'Âge',
 			'recrutement.dossier3.synthese.ageValeurs.attestee' => ({required Object date}) => '18 ans ou plus, attesté le ${date}',
-			'recrutement.dossier3.synthese.ageValeurs.moins18' => 'Moins de 18 ans : candidature en pause',
+			'recrutement.dossier3.synthese.ageValeurs.moins18' => 'Moins de 18 ans : candidature en pause',
 			'recrutement.dossier3.synthese.ageValeurs.nonAttestee' => 'Âge pas encore attesté',
 			'recrutement.dossier3.demanderAccord' => 'Demander un accord',
 			'recrutement.dossier3.raison.droit' => 'Vous ne pouvez pas décider de ce dossier.',
