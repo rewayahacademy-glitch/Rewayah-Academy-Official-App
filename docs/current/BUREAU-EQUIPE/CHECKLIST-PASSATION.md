@@ -76,6 +76,9 @@ parallèle, un agent par lot, quatre agents au plus.
 | 26 | #574 PIECE-SUR-LA-FICHE (720000) | ☑ | **fusionnée (72ae3cc4) et installée** le 17/11 vers 3 h 40 UTC ; vérifié : capacité `deciderPiece` (une fois), droits inchangés ; corrige aussi `scenarios_gestes_du_serveur` |
 | 27 | #593 DETTE-SCENARIOS-ROUGES | ☑ | **fusionnée (532b28db)** : 5 scénarios verts, geste 24 prouvé absent (code mort) |
 | 28 | #597 PRAXIS-PLAFOND-REFUS (860000) | ☑ | **fusionnée (adcbe70c) et installée** ; vérifié : empreinte = fichier, service_role seul, index présent. Suite : #599 plafond global (870000) |
+| 29 | #582 DEPLACER-ENTRETIEN (760000) | ☑ | **fusionnée (b9893b02) et installée** le 17/11 vers 4 h UTC ; vérifié : 3 fonctions = empreintes du fichier, règle 48, capacité `deplacerEntretien`, `planifier_entretien` passe par `entretien_controles_planification` (même comportement), porte DEFINER sans `anon`. #581 en conflit i18n après elle → BE-DOSSIER |
+| 30 | #599 PRAXIS-PLAFOND-GLOBAL (870000) | ☑ | **fusionnée (f8fba8bf) et installée** ; vérifié : 3 empreintes = fichier, index, plafond 600, Praxis éteint, porte de réglage fermée à `anon` |
+| 31 | #596 docs (correction du grand livre) | ☑ | fusionnée (cfab596c) |
 
 ## 2. Gros lots (dans l'ordre ; une étape ne commence que quand la précédente est livrée)
 
