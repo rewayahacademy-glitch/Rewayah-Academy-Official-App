@@ -60,8 +60,22 @@ List<String> gestesFauxServeur({
       etape == EtapeCandidature.prequalification &&
       etat == EtatCandidature.enExamen;
   return <String>[
-    if (sansPause && (enExamen || etape == EtapeCandidature.verifications))
+    // COMPLEMENT-SALLE-EXAMEN : demander (en examen, en salle de verification,
+    // en paiement non disponible : variante 4) ou modifier (a_completer avec un
+    // complement en cours : variante 3) ; annuler dans ce dernier cas.
+    if (sansPause &&
+        (enExamen ||
+            etape == EtapeCandidature.verifications ||
+            (etape == EtapeCandidature.prequalification &&
+                (etat == EtatCandidature.paiementNonDisponible ||
+                    (etat == EtatCandidature.aCompleter &&
+                        complementEnCours)))))
       'demander_complement',
+    if (sansPause &&
+        etape == EtapeCandidature.prequalification &&
+        etat == EtatCandidature.aCompleter &&
+        complementEnCours)
+      'annuler_complement',
     if (sansPause &&
         etape == EtapeCandidature.verifications &&
         complementEnCours)
@@ -320,6 +334,8 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
   gestes: <String, bool>{
     'demanderComplement': true,
     'cloreComplement': true,
+    'modifierComplement': true,
+    'annulerComplement': true,
     'admettreVerifications': true,
     'confirmerMoyenPaiement': true,
     'infirmerMoyenPaiement': true,

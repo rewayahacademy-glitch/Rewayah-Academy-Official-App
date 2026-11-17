@@ -156,6 +156,21 @@ DemandeGeste _demande(GesteCandidature g) {
         elements: const <String>['langues', 'versement'],
         motif: 'Preciser.',
       );
+    case GesteCandidature.modifierComplement:
+      return DemandeGeste.modifierComplement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        elements: const <String>['cadre_religieux'],
+        motif: 'Preciser.',
+      );
+    case GesteCandidature.annulerComplement:
+      return DemandeGeste.annulerComplement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Retiree.',
+      );
     case GesteCandidature.cloreComplement:
       return DemandeGeste.cloreComplement(
         candidatureId: id,
@@ -271,6 +286,17 @@ void main() {
               'p_elements': <String>['langues', 'versement'],
               'p_motif': 'Preciser.',
             },
+          ),
+          GesteCandidature.modifierComplement: (
+            'demander_complement_candidat',
+            <String, Object?>{
+              'p_elements': <String>['cadre_religieux'],
+              'p_motif': 'Preciser.',
+            },
+          ),
+          GesteCandidature.annulerComplement: (
+            'annuler_complement_candidat',
+            <String, Object?>{'p_motif': 'Retiree.'},
           ),
           GesteCandidature.cloreComplement: (
             'demander_complement_candidat',

@@ -33,6 +33,8 @@ import 'libelles_candidatures.dart';
 AppIcon iconeDuGeste(GesteCandidature geste) => switch (geste) {
   GesteCandidature.demanderComplement => AppIcons.discussion,
   GesteCandidature.cloreComplement => AppIcons.succes,
+  GesteCandidature.modifierComplement => AppIcons.discussion,
+  GesteCandidature.annulerComplement => AppIcons.interdit,
   GesteCandidature.admettreVerifications => AppIcons.suivant,
   GesteCandidature.confirmerMoyenPaiement => AppIcons.paiements,
   GesteCandidature.infirmerMoyenPaiement => AppIcons.interdit,

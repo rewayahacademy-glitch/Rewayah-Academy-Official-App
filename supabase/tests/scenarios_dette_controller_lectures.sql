@@ -234,10 +234,11 @@ DO $$ BEGIN
     RAISE EXCEPTION 'DETTE-CONTROLLER: admin ne lit plus les brouillons d offres'; END IF;
 END $$;
 
--- Comptable inchange : seances et affectations.
+-- Comptable : voyait seances et affectations avant DETTE-COMPTABLE (20261129810000) ; il ne les lit plus
+-- (la paie passe par des RPC SECURITY DEFINER, voir scenarios_dette_comptable_lectures.sql).
 SELECT pg_temp.comme('dc700000-0000-0000-0000-000000000008','accountant','aal2');
-SELECT pg_temp.attendu('comptable', 'sessions', 2);
-SELECT pg_temp.attendu('comptable', 'teacher_student_assignments', 1);
+SELECT pg_temp.attendu('comptable', 'sessions', 0);
+SELECT pg_temp.attendu('comptable', 'teacher_student_assignments', 0);
 
 -- Famille : voit les participants de ses enfants (inchange).
 SELECT pg_temp.comme('dc700000-0000-0000-0000-000000000007','guardian','aal2');
