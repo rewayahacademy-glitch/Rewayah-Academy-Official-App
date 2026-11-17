@@ -1,4 +1,4 @@
--- BE-1j DEPLACER-ENTRETIEN (carte des gestes, lot 3, T8) : migration 20261129720000_deplacer_entretien.sql.
+-- BE-1j DEPLACER-ENTRETIEN (carte des gestes, lot 3, T8) : migration 20261129760000_deplacer_entretien.sql.
 --
 -- Cas couverts : (a) la direction deplace le creneau d'un entretien planifie : l'ancien entretien est annule
 -- (issue annule, seance canceled, rien n'est efface), un nouvel entretien aux memes participants au nouveau
@@ -103,38 +103,43 @@ GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, text), pg_temp.ok(text), pg_te
 -- entretien ; 04 candidate (femme), entretien planifie ; 05 entretien planifie (i1) ; 06 occupe i1 plus tard.
 SET LOCAL session_replication_role = replica;
 INSERT INTO auth.users (id, email)
-SELECT pg_temp.p(s), 'dp-' || s || '@test.invalid' FROM unnest(ARRAY['a1', 'b1', 'b2', '01', '02', '03', '04', '05', '06']) AS s;
+SELECT pg_temp.p(s), 'dp-' || s || '@test.invalid' FROM unnest(ARRAY['a1', 'b1', 'b2', '01', '02', '03', '04', '05', '06', '07']) AS s;
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
 SELECT pg_temp.p(s), 'DP-ADM-00' || s, 'admin', 'Direction', s, 'active', 'male' FROM unnest(ARRAY['a1', 'b1', 'b2']) AS s;
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
 SELECT pg_temp.p(s), 'DP-ENS-00' || s, 'teacher', 'Essai' || s, 'Fictif', 'pending_kyc',
        CASE WHEN s = '04' THEN 'female'::gender ELSE 'male'::gender END
-FROM unnest(ARRAY['01', '02', '03', '04', '05', '06']) AS s;
+FROM unnest(ARRAY['01', '02', '03', '04', '05', '06', '07']) AS s;
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, source)
 SELECT pg_temp.c(v.s), 'enseignant', pg_temp.p(v.s), v.g::gender, 'Fixture ' || v.s, 'verifications', v.etat, 'en_cours', 'lien_public'
 FROM (VALUES ('01', 'male', 'entretien_planifie'), ('02', 'male', 'entretien_planifie'),
              ('03', 'male', 'entretien_a_planifier'), ('04', 'female', 'entretien_planifie'),
-             ('05', 'male', 'entretien_planifie'), ('06', 'male', 'entretien_a_planifier')) AS v(s, g, etat);
+             ('05', 'male', 'entretien_planifie'), ('06', 'male', 'entretien_a_planifier'),
+             ('07', 'male', 'entretien_planifie')) AS v(s, g, etat);
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, join_opens_at)
 SELECT pg_temp.s(x.s), pg_temp.p('a1'), x.d, x.d + interval '30 minutes', 'planned', 'entretien', x.d - interval '10 minutes'
 FROM (VALUES ('01', now() + interval '2 days'), ('02', now() - interval '1 hour'), ('04', now() + interval '2 days'),
-             ('05', now() + interval '2 days')) AS x(s, d);
+             ('05', now() + interval '2 days'), ('07', now() + interval '2 days')) AS x(s, d);
 INSERT INTO public.entretiens (session_id, candidature_id, candidat_id, planifie_par)
-SELECT pg_temp.s(s), pg_temp.c(s), pg_temp.p(s), pg_temp.p('a1') FROM unnest(ARRAY['01', '02', '04', '05']) AS s;
+SELECT pg_temp.s(s), pg_temp.c(s), pg_temp.p(s), pg_temp.p('a1') FROM unnest(ARRAY['01', '02', '04', '05', '07']) AS s;
 INSERT INTO public.entretien_participants (session_id, profile_id, fondateur, ajoute_par)
 SELECT pg_temp.s(s), pg_temp.p(q), false, pg_temp.p('a1')
-FROM (VALUES ('01', 'b1'), ('01', 'b2'), ('02', 'b1'), ('04', 'b1'), ('05', 'b1'), ('05', 'b2')) AS v(s, q);
+FROM (VALUES ('01', 'b1'), ('01', 'b2'), ('02', 'b1'), ('04', 'b1'), ('05', 'b1'), ('05', 'b2'), ('07', 'b1'), ('07', 'b2')) AS v(s, q);
 INSERT INTO public.session_participants (session_id, profile_id, role)
 SELECT pg_temp.s(s), pg_temp.p(q), 'intervieweur'::public.participant_role
-FROM (VALUES ('01', 'b1'), ('01', 'b2'), ('02', 'b1'), ('04', 'b1'), ('05', 'b1'), ('05', 'b2')) AS v(s, q)
+FROM (VALUES ('01', 'b1'), ('01', 'b2'), ('02', 'b1'), ('04', 'b1'), ('05', 'b1'), ('05', 'b2'), ('07', 'b1'), ('07', 'b2')) AS v(s, q)
 UNION ALL
-SELECT pg_temp.s(s), pg_temp.p(s), 'candidat'::public.participant_role FROM unnest(ARRAY['01', '02', '04', '05']) AS s;
+SELECT pg_temp.s(s), pg_temp.p(s), 'candidat'::public.participant_role FROM unnest(ARRAY['01', '02', '04', '05', '07']) AS s;
 -- 06 n'a pas d'entretien, mais i1 est pris dans 4 jours par un cours fictif (une seance d'entretien de 05 deplacee).
 INSERT INTO public.sessions (id, teacher_id, started_at, ended_at, status, session_type, join_opens_at)
 VALUES (pg_temp.s('90'), pg_temp.p('a1'), now() + interval '4 days', now() + interval '4 days 30 minutes', 'planned', 'entretien',
         now() + interval '4 days' - interval '10 minutes');
 INSERT INTO public.session_participants (session_id, profile_id, role)
 VALUES (pg_temp.s('90'), pg_temp.p('b1'), 'intervieweur');
+-- Deux creneaux reserves par un candidat : celui de 01 est a venir, celui de 07 est (par fixture) deja passe.
+INSERT INTO public.entretien_creneaux (id, cote, debut, duree_minutes, langues, ouvert_par, session_id, reserve_le)
+VALUES (pg_temp.s('c1'), 'male', now() + interval '2 days', 30, ARRAY['ar'], pg_temp.p('a1'), pg_temp.s('01'), now()),
+       (pg_temp.s('c7'), 'male', now() - interval '1 day', 30, ARRAY['ar'], pg_temp.p('a1'), pg_temp.s('07'), now());
 INSERT INTO public.personnel_fondateurs (profile_id, fondateur, modifie_par)
 SELECT pg_temp.p(q), true, pg_temp.p('a1') FROM unnest(ARRAY['b1', 'b2']) AS q;
 SET LOCAL session_replication_role = origin;
@@ -183,6 +188,19 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.vrai(
   EXISTS (SELECT 1 FROM private.entretien_avis_envoyes WHERE session_id = pg_temp.s('01') AND sorte = 'a_replanifier'),
   'a6 : l''ancienne seance est marquee « a replanifier deja envoye » (le candidat ne lira pas « n''a pas eu lieu »)');
+
+-- (a bis) Le creneau reserve de l'ancienne seance : a venir, il est rouvert ; passe, il reste tel quel
+SELECT pg_temp.vrai(
+  (SELECT session_id IS NULL AND reserve_le IS NULL AND annule_le IS NULL FROM public.entretien_creneaux WHERE id = pg_temp.s('c1'))
+  AND current_setting('test.r01')::jsonb IS NOT NULL
+  AND EXISTS (SELECT 1 FROM public.candidature_evenements e WHERE e.candidature_id = pg_temp.c('01')
+               AND e.details ->> 'creneauRouvert' = pg_temp.s('c1')::text),
+  'a7 : le creneau reserve de l''ancienne seance, a venir, est rouvert (libre pour un autre) et l''evenement le dit');
+SELECT pg_temp.dep('07', now() + interval '3 days 2 hours', 30, 'Autre jour', pg_temp.v('07'), 'cle-deplacer-07');
+SELECT pg_temp.vrai(
+  (SELECT session_id FROM public.entretien_creneaux WHERE id = pg_temp.s('c7')) = pg_temp.s('07')
+  AND (SELECT issue FROM public.entretiens WHERE session_id = pg_temp.s('07')) = 'annule',
+  'a8 : un creneau deja passe reste lie a l''ancienne seance (le deplacement reussit quand meme)');
 
 -- (b) Les avis existants, pour la nouvelle seance seulement
 SELECT private.entretien_avis_passer(pg_catalog.now());
@@ -259,6 +277,6 @@ SELECT pg_temp.vrai(
      FROM (SELECT 'public.deplacer_entretien(uuid,timestamptz,integer,text,integer,text)'::regprocedure AS f) x),
   'e3 : l''empreinte F86 est celle de la definition installee');
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 22,
-  'z : au moins 22 controles passes');
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 24,
+  'z : au moins 24 controles passes');
 ROLLBACK;
