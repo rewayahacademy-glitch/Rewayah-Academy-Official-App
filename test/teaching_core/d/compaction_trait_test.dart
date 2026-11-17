@@ -32,7 +32,8 @@ void main() {
     test('deux points ou moins passent tels quels', () {
       expect(simplifierTrait(const <PointNormalise>[]), isEmpty);
       expect(
-        simplifierTrait(const <PointNormalise>[PointNormalise(0.1, 0.1)]).length,
+        simplifierTrait(const <PointNormalise>[PointNormalise(0.1, 0.1)])
+            .length,
         1,
       );
     });
@@ -111,42 +112,45 @@ void main() {
       );
     });
 
-    test('le trait en cours part en ephemere, le trait fini en fiable', () async {
-      await diffusion.emettre(
-        EvenementTraitEnCours(
-          traitId: 't-1',
-          ancrage: ayah1,
-          pointsNouveaux: const <PointNormalise>[PointNormalise(0.1, 0.1)],
-          outil: OutilTrait.stylet,
-        ),
-      );
-      await diffusion.emettre(
-        EvenementTraitTermine(
-          coucheId: 'c-1',
-          portee: PorteeAnnotation.seance,
-          trait: TraitVectoriel(
-            id: 't-1',
+    test(
+      'le trait en cours part en ephemere, le trait fini en fiable',
+      () async {
+        await diffusion.emettre(
+          EvenementTraitEnCours(
+            traitId: 't-1',
             ancrage: ayah1,
+            pointsNouveaux: const <PointNormalise>[PointNormalise(0.1, 0.1)],
             outil: OutilTrait.stylet,
-            points: const <PointNormalise>[
-              PointNormalise(0.1, 0.1),
-              PointNormalise(0.9, 0.9),
-            ],
           ),
-        ),
-      );
+        );
+        await diffusion.emettre(
+          EvenementTraitTermine(
+            coucheId: 'c-1',
+            portee: PorteeAnnotation.seance,
+            trait: TraitVectoriel(
+              id: 't-1',
+              ancrage: ayah1,
+              outil: OutilTrait.stylet,
+              points: const <PointNormalise>[
+                PointNormalise(0.1, 0.1),
+                PointNormalise(0.9, 0.9),
+              ],
+            ),
+          ),
+        );
 
-      expect(transport.canaux, <CanalFiabilite>[
-        CanalFiabilite.ephemere,
-        CanalFiabilite.fiable,
-      ]);
-      expect(transport.types, <String>[
-        'tc.outils.trait_en_cours',
-        'tc.outils.trait_termine',
-      ]);
-      expect(transport.emis.first.message.emisLeUtc.isUtc, isTrue);
-      expect(transport.emis.first.message.sessionId, 'seance-1');
-    });
+        expect(transport.canaux, <CanalFiabilite>[
+          CanalFiabilite.ephemere,
+          CanalFiabilite.fiable,
+        ]);
+        expect(transport.types, <String>[
+          'tc.outils.trait_en_cours',
+          'tc.outils.trait_termine',
+        ]);
+        expect(transport.emis.first.message.emisLeUtc.isUtc, isTrue);
+        expect(transport.emis.first.message.sessionId, 'seance-1');
+      },
+    );
 
     test('le pointeur est ephemere, et ne porte aucune persistance', () async {
       await diffusion.emettre(EvenementPointeur(position: ayah1));

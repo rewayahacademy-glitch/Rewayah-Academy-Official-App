@@ -19914,6 +19914,7 @@ class _Traductions$com$messages$panneau$en extends Traductions$com$messages$pann
 	@override String ouvrir({required Object objet}) => 'Open ${objet}';
 	@override String get inaccessible => 'This subject is no longer open to you. The conversation stays readable.';
 	@override String get vous => 'You';
+	@override late final _Traductions$com$messages$panneau$officiel$en officiel = _Traductions$com$messages$panneau$officiel$en._(_root);
 }
 
 // Path: com.messages.fil
@@ -26058,6 +26059,18 @@ class _Traductions$com$socle$navigation$demo$en extends Traductions$com$socle$na
 	@override String get titre => 'Communications demo';
 	@override String get detail => 'Fictional data, absent from production versions.';
 	@override String get choisir => 'Choose a space to try.';
+}
+
+// Path: com.messages.panneau.officiel
+class _Traductions$com$messages$panneau$officiel$en extends Traductions$com$messages$panneau$officiel$fr {
+	_Traductions$com$messages$panneau$officiel$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get nom => 'Ra_Praxis';
+	@override String get mention => 'Academy assistant · AI';
+	@override String get phrase => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.';
 }
 
 // Path: com.messages.images.refus
@@ -38611,6 +38624,9 @@ extension on TraductionsEn {
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Open ${objet}',
 			'com.messages.panneau.inaccessible' => 'This subject is no longer open to you. The conversation stays readable.',
 			'com.messages.panneau.vous' => 'You',
+			'com.messages.panneau.officiel.nom' => 'Ra_Praxis',
+			'com.messages.panneau.officiel.mention' => 'Academy assistant · AI',
+			'com.messages.panneau.officiel.phrase' => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
 			'com.messages.images.joindre' => 'Attach an image',
 			'com.messages.images.prendrePhoto' => 'Take a photo',
@@ -39040,11 +39056,11 @@ extension on TraductionsEn {
 			'com.studio.enregistres.ouvrir' => ({required Object titre}) => 'Open ${titre}',
 			'com.studio.enregistres.sansDestination' => ({required Object type}) => '${type}, no longer opens from here',
 			'com.studio.enregistres.types.canal' => 'Channel',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.enregistres.types.publication' => 'Post',
 			'com.studio.enregistres.types.message' => 'Message',
 			'com.studio.enregistres.types.element' => 'Studio item',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.recherche.champ' => 'Search The Studio',
 			'com.studio.recherche.aide' => 'Channel, message or file',
 			'com.studio.recherche.aucunTitre' => 'No result',
@@ -39554,11 +39570,11 @@ extension on TraductionsEn {
 			'comptable.alertes.enseignantsAPayer' => 'Teachers to pay',
 			'comptable.alertes.contractuelsAEcheance' => 'Contractors due',
 			'comptable.alertes.infosManquantes' => 'Payment info missing',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.alertes.payoutEchoue' => 'Payout failed',
 			'comptable.alertes.paiementFamilleEchoue' => 'Family payment failed',
 			'comptable.alertes.transactionNonRapprochee' => 'Transaction not reconciled',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.alertes.remboursementEnAttente' => 'Refund pending',
 			'comptable.alertes.reserveSousObjectif' => 'Strategic reserve below target',
 			'comptable.alertes.soldePrestataireInsuffisant' => 'Provider balance insufficient',
@@ -40068,11 +40084,11 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.wise.champ.titulaire' => 'Account holder\'s name',
 			'comptable.beneficiaires.recevoir.wise.champ.numeroCompte' => 'Account number or IBAN',
 			'comptable.beneficiaires.recevoir.wise.champ.iban' => 'IBAN',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.champ.swift' => 'The bank\'s SWIFT code (BIC)',
 			'comptable.beneficiaires.recevoir.wise.champ.adressePays' => 'Country of your address',
 			'comptable.beneficiaires.recevoir.wise.champ.adresseVille' => 'City',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.champ.adresseLigne' => 'Address (street, neighbourhood)',
 			'comptable.beneficiaires.recevoir.wise.champ.codePostal' => 'Postcode',
 			'comptable.beneficiaires.recevoir.wise.champ.adresseEtat' => 'State or province',
@@ -40582,11 +40598,11 @@ extension on TraductionsEn {
 			'juridique.valeurs.representantUeDefaut' => 'Rewayah Academy',
 			'juridique.mentions.titre' => 'Legal notice',
 			'juridique.mentions.resume' => 'Who operates Rewayah Academy and how to contact it.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.mentions.intro' => 'Here is who operates Rewayah Academy and how to contact it.',
 			'juridique.mentions.s1.titre' => '1. Who operates the service',
 			'juridique.mentions.s1.blocs.0' => 'Rewayah Academy offers Quran classes by video, in stable Classes: the same students, a timetable that returns every week and an assigned Teacher.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.mentions.s2.titre' => '2. Contacting us',
 			'juridique.mentions.s2.blocs.0' => 'A single address for your questions about the service, about these texts and about your information.',
 			'juridique.mentions.s3.titre' => '3. Hosting and technical services',
@@ -41096,11 +41112,11 @@ extension on TraductionsEn {
 			'i1.familles.choixTitre' => 'A family already registered',
 			'i1.familles.choixExplication' => 'To choose for imported families: each receives an email to open their space, with nothing to re-enter.',
 			'i1.familles.titre' => 'Families to invite',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.aide' => 'Each imported family receives, on your action, an email inviting them to sign in with their address. Nothing is sent automatically.',
 			'i1.familles.personnes' => ({required Object n}) => 'People: ${n}',
 			'i1.familles.etat.aEnvoyer' => 'To send',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.etat.enFile' => 'Sending',
 			'i1.familles.etat.envoyee' => 'Sent',
 			'i1.familles.etat.echec' => 'Not sent',
@@ -41610,11 +41626,11 @@ extension on TraductionsEn {
 			'push1.evenements.paiementEchoue' => 'Your payment did not go through. It is paid in Payments.',
 			'push1.evenements.paiementEchoueDirection' => 'A payment failed.',
 			'push1.evenements.coordonneesAValider' => 'Payout details need approval.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.evenements.coordonneesValidees' => 'Your payout details are approved.',
 			'push1.evenements.remboursementDemande' => 'A refund is requested.',
 			'push1.evenements.remboursementEchec' => 'A refund did not go through.',
-			_ => null,
-		} ?? switch (path) {
 			'push1.evenements.cahierEnRetard' => 'A session\'s handover notebook is waiting for your information.',
 			'push1.gestes.examiner' => 'Review',
 			'push1.gestes.verifierPiece' => 'Check the document',

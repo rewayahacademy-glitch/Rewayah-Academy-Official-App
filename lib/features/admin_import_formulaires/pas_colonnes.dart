@@ -262,7 +262,9 @@ class _PasColonnesEtat extends State<PasColonnes> {
       key: cle,
       title: titre,
       description: description,
-      value: actuel ? t.candidatsFlux.importFormulaires.colonnes.choixActuel : null,
+      value: actuel
+          ? t.candidatsFlux.importFormulaires.colonnes.choixActuel
+          : null,
       onPress: () {
         _c.associer(position, champ);
         setState(() => _ouverte = null);

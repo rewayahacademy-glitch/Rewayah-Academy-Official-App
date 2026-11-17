@@ -55,6 +55,7 @@ const Size _bureau = Size(1440, 900);
 
 final Finder _page = find.byKey(SurfacePageFixe.clePage);
 final Finder _declencheur = find.byKey(DeclencheurCommandes.cle);
+
 /// L'entree « Commandes » : le declencheur, ou, pendant l'ecriture, le
 /// dernier bouton de la palette courte qui a pris sa place (TB-7b).
 final Finder _entreeCommandes = find.byWidgetPredicate(
@@ -492,11 +493,9 @@ void main() {
       bouton.onPress!();
       bouton.onPress!();
       await _attendre(tester);
-      expect(
-        _traits(tester).map((TraitVectoriel t) => t.id).toList(),
-        <String>[id],
-        reason: 'un seul effet : le trait gomme revient une fois',
-      );
+      expect(_traits(tester).map((TraitVectoriel t) => t.id).toList(), <String>[
+        id,
+      ], reason: 'un seul effet : le trait gomme revient une fois');
     });
   });
 
@@ -763,11 +762,9 @@ void main() {
       await _attendre(tester);
       await tester.runAsync(() => Future<void>.delayed(Duration.zero));
       await _attendre(tester);
-      expect(
-        conteneur.read(historiquePersonnelProvider).retires,
-        <String>{'trait-eleve'},
-        reason: 'le geste retire le trait de l eleve, pas celui d un autre',
-      );
+      expect(conteneur.read(historiquePersonnelProvider).retires, <String>{
+        'trait-eleve',
+      }, reason: 'le geste retire le trait de l eleve, pas celui d un autre');
       expect(
         <String>[
           for (final AnnotationLayer c in depot.couches)
@@ -1057,66 +1054,73 @@ void main() {
           .vue
           .ancrageSurface;
       expect(
-        _conteneur(
-          tester,
-        ).read(historiquePersonnelProvider).peutAnnuler(surLaSurface(surface)),
+        _conteneur(tester)
+            .read(historiquePersonnelProvider)
+            .peutAnnuler(surLaSurface(surface)),
         isFalse,
       );
     });
 
-    test('un retrait refuse sort du geste de gomme ; un geste vide s en va',
-        () {
-      final ProviderContainer c = ProviderContainer();
-      addTearDown(c.dispose);
-      const ContentPosition page = ContentPosition.page(resourceId: 'r', page: 1);
-      TraitVectoriel trait(String id) => TraitVectoriel(
-        id: id,
-        ancrage: page,
-        outil: OutilTrait.stylet,
-        points: const <PointNormalise>[
-          PointNormalise(0, 0),
-          PointNormalise(1, 1),
-        ],
-      );
-      final ControleurHistorique h = c.read(
-        historiquePersonnelProvider.notifier,
-      );
-      final PorteeAnnotation portee = c.read(etatOutilsProvider).portee;
-      h
-        ..masquer('a')
-        ..masquer('b')
-        ..traitsGommes(
-          <TraitVectoriel>[trait('a'), trait('b')],
-          surface: page,
-          portee: portee,
-        )
-        ..restaurer('a');
-      final OperationPersonnelle? op = c
-          .read(historiquePersonnelProvider)
-          .derniere(surLaSurface(page));
-      expect(
-        (op! as TraitsGommesPersonnels).traits.map((TraitVectoriel x) => x.id),
-        <String>['b'],
-      );
-      h.restaurer('b');
-      expect(
-        c.read(historiquePersonnelProvider).peutAnnuler(surLaSurface(page)),
-        isFalse,
-      );
-      // Refus arrive avant la fin du geste : le trait n'y entre pas.
-      h
-        ..masquer('c')
-        ..restaurer('c')
-        ..traitsGommes(
-          <TraitVectoriel>[trait('c')],
-          surface: page,
-          portee: portee,
+    test(
+      'un retrait refuse sort du geste de gomme ; un geste vide s en va',
+      () {
+        final ProviderContainer c = ProviderContainer();
+        addTearDown(c.dispose);
+        const ContentPosition page = ContentPosition.page(
+          resourceId: 'r',
+          page: 1,
         );
-      expect(
-        c.read(historiquePersonnelProvider).peutAnnuler(surLaSurface(page)),
-        isFalse,
-      );
-    });
+        TraitVectoriel trait(String id) => TraitVectoriel(
+          id: id,
+          ancrage: page,
+          outil: OutilTrait.stylet,
+          points: const <PointNormalise>[
+            PointNormalise(0, 0),
+            PointNormalise(1, 1),
+          ],
+        );
+        final ControleurHistorique h = c.read(
+          historiquePersonnelProvider.notifier,
+        );
+        final PorteeAnnotation portee = c.read(etatOutilsProvider).portee;
+        h
+          ..masquer('a')
+          ..masquer('b')
+          ..traitsGommes(
+            <TraitVectoriel>[trait('a'), trait('b')],
+            surface: page,
+            portee: portee,
+          )
+          ..restaurer('a');
+        final OperationPersonnelle? op = c
+            .read(historiquePersonnelProvider)
+            .derniere(surLaSurface(page));
+        expect(
+          (op! as TraitsGommesPersonnels).traits.map(
+            (TraitVectoriel x) => x.id,
+          ),
+          <String>['b'],
+        );
+        h.restaurer('b');
+        expect(
+          c.read(historiquePersonnelProvider).peutAnnuler(surLaSurface(page)),
+          isFalse,
+        );
+        // Refus arrive avant la fin du geste : le trait n'y entre pas.
+        h
+          ..masquer('c')
+          ..restaurer('c')
+          ..traitsGommes(
+            <TraitVectoriel>[trait('c')],
+            surface: page,
+            portee: portee,
+          );
+        expect(
+          c.read(historiquePersonnelProvider).peutAnnuler(surLaSurface(page)),
+          isFalse,
+        );
+      },
+    );
   });
 
   testWidgets('sans depot d annotations (Classe Live), une tuile d outil ne '

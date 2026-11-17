@@ -149,11 +149,7 @@ void main() {
       'sans doublon', () {
     _poser(_paris);
     final List<LigneHeure> lignes = lignesInterlocuteurs(
-      _lus(
-        moi: _paris,
-        enseignant: <String, Object?>{..._riyad},
-        classe: true,
-      ),
+      _lus(moi: _paris, enseignant: <String, Object?>{..._riyad}, classe: true),
       _seance,
     );
     expect(lignes.length, 1);
@@ -164,11 +160,7 @@ void main() {
   test('une classe pas encore convertie garde « Heure de la classe »', () {
     _poser(_delhi);
     final List<LigneHeure> lignes = lignesInterlocuteurs(
-      _lus(
-        moi: _delhi,
-        enseignant: <String, Object?>{..._paris},
-        classe: true,
-      ),
+      _lus(moi: _delhi, enseignant: <String, Object?>{..._paris}, classe: true),
       _seance,
     );
     // La classe est encore a Paris : sa ligne ne se dit pas « La Mecque », et
