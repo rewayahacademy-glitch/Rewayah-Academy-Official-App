@@ -15242,7 +15242,8 @@
           "- To follow attendance and progress.",
           "- To invoice the subscription.",
           "- To protect the students and review the quality of sessions.",
-          "- To repair outages."
+          "- To repair outages.",
+          "- To reply faster to your messages, with the help of a digital assistant (see point 4)."
         ]
       },
       "s4": {
@@ -15250,7 +15251,8 @@
         "blocs": [
           "A family sees only its own information. A child's information is never public and is never shown to other families.",
           "The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.",
-          "A quality reviewer may attend sessions. Sensitive accesses are recorded in a log."
+          "A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.",
+          "A digital assistant, called Praxis, helps the academy reply to families and candidates in the app's messaging. Its profile states that it is an artificial intelligence. It reads the messages in conversations with the academy to reply to them or to prepare a reply. It does not read any conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no e-mail. It works under the responsibility of the management, which can stop it at any time."
         ]
       },
       "s5": {
@@ -15265,7 +15267,8 @@
         "titre": "6. Where your information is",
         "blocs": [
           "We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.",
-          "To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service."
+          "To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.",
+          "To read and reply, the assistant relies on an artificial intelligence provider. Today, this is Anthropic PBC (Claude), a company based in the United States. The academy may also use, on the same terms, Google LLC (Gemini) or OpenAI (ChatGPT), based in the United States; the provider in use is always stated here. The messages the assistant reads are sent to the provider for this reason only. They are not used to train its models and are deleted on its side after 30 days at the latest. This transfer outside the European Union is covered by the European Commission's standard contractual clauses. We keep for 12 months a record of what the assistant sent, never the text of the messages you write. The legal basis is our legitimate interest in replying to you quickly."
         ]
       },
       "s7": {
@@ -15280,6 +15283,7 @@
           "- To see the information we hold about you.",
           "- To correct it.",
           "- To ask for its deletion or to limit its use.",
+          "You may ask at any time to speak to the team: a person takes over the conversation and the assistant no longer replies to you in it.",
           "Write to us. We first check that it is you, or the student's Guardian. You may also contact the data protection authority of your country."
         ]
       },

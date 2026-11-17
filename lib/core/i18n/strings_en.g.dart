@@ -21927,6 +21927,7 @@ class _Traductions$juridique$confidentialite$s3$en extends Traductions$juridique
 		'- To invoice the subscription.',
 		'- To protect the students and review the quality of sessions.',
 		'- To repair outages.',
+		'- To reply faster to your messages, with the help of a digital assistant (see point 4).',
 	];
 }
 
@@ -21942,6 +21943,7 @@ class _Traductions$juridique$confidentialite$s4$en extends Traductions$juridique
 		'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
 		'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
 		'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
+		'A digital assistant, called Praxis, helps the academy reply to families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. It reads the messages in conversations with the academy to reply to them or to prepare a reply. It does not read any conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no e-mail. It works under the responsibility of the management, which can stop it at any time.',
 	];
 }
 
@@ -21971,6 +21973,7 @@ class _Traductions$juridique$confidentialite$s6$en extends Traductions$juridique
 	@override List<String> get blocs => [
 		'We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.',
 		'To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.',
+		'To read and reply, the assistant relies on an artificial intelligence provider. Today, this is Anthropic PBC (Claude), a company based in the United States. The academy may also use, on the same terms, Google LLC (Gemini) or OpenAI (ChatGPT), based in the United States; the provider in use is always stated here. The messages the assistant reads are sent to the provider for this reason only. They are not used to train its models and are deleted on its side after 30 days at the latest. This transfer outside the European Union is covered by the European Commission\'s standard contractual clauses. We keep for 12 months a record of what the assistant sent, never the text of the messages you write. The legal basis is our legitimate interest in replying to you quickly.',
 	];
 }
 
@@ -21999,6 +22002,7 @@ class _Traductions$juridique$confidentialite$s8$en extends Traductions$juridique
 		'- To see the information we hold about you.',
 		'- To correct it.',
 		'- To ask for its deletion or to limit its use.',
+		'You may ask at any time to speak to the team: a person takes over the conversation and the assistant no longer replies to you in it.',
 		'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
 	];
 }
@@ -40646,10 +40650,12 @@ extension on TraductionsEn {
 			'juridique.confidentialite.s3.blocs.2' => '- To invoice the subscription.',
 			'juridique.confidentialite.s3.blocs.3' => '- To protect the students and review the quality of sessions.',
 			'juridique.confidentialite.s3.blocs.4' => '- To repair outages.',
+			'juridique.confidentialite.s3.blocs.5' => '- To reply faster to your messages, with the help of a digital assistant (see point 4).',
 			'juridique.confidentialite.s4.titre' => '4. Who sees what',
 			'juridique.confidentialite.s4.blocs.0' => 'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
 			'juridique.confidentialite.s4.blocs.1' => 'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
 			'juridique.confidentialite.s4.blocs.2' => 'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
+			'juridique.confidentialite.s4.blocs.3' => 'A digital assistant, called Praxis, helps the academy reply to families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. It reads the messages in conversations with the academy to reply to them or to prepare a reply. It does not read any conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no e-mail. It works under the responsibility of the management, which can stop it at any time.',
 			'juridique.confidentialite.s5.titre' => '5. Live sessions and recording',
 			'juridique.confidentialite.s5.blocs.0' => 'Video goes through a specialist service. Access to a session is given by the server, for that session only and for a short time.',
 			'juridique.confidentialite.s5.blocs.1' => 'Today, the app does not record classes. If recording returns, we shall tell you beforehand why, how long it is kept and who can access it, and we shall ask for your agreement.',
@@ -40657,13 +40663,15 @@ extension on TraductionsEn {
 			'juridique.confidentialite.s6.titre' => '6. Where your information is',
 			'juridique.confidentialite.s6.blocs.0' => 'We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.',
 			'juridique.confidentialite.s6.blocs.1' => 'To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.',
+			'juridique.confidentialite.s6.blocs.2' => 'To read and reply, the assistant relies on an artificial intelligence provider. Today, this is Anthropic PBC (Claude), a company based in the United States. The academy may also use, on the same terms, Google LLC (Gemini) or OpenAI (ChatGPT), based in the United States; the provider in use is always stated here. The messages the assistant reads are sent to the provider for this reason only. They are not used to train its models and are deleted on its side after 30 days at the latest. This transfer outside the European Union is covered by the European Commission\'s standard contractual clauses. We keep for 12 months a record of what the assistant sent, never the text of the messages you write. The legal basis is our legitimate interest in replying to you quickly.',
 			'juridique.confidentialite.s7.titre' => '7. How long',
 			'juridique.confidentialite.s7.blocs.0' => 'We keep each type of information for the time needed, no longer. A Teacher\'s ID document is deleted at the end of a fixed period. A deletion may be frozen in the event of a dispute.',
 			'juridique.confidentialite.s8.titre' => '8. Your rights',
 			'juridique.confidentialite.s8.blocs.0' => '- To see the information we hold about you.',
 			'juridique.confidentialite.s8.blocs.1' => '- To correct it.',
 			'juridique.confidentialite.s8.blocs.2' => '- To ask for its deletion or to limit its use.',
-			'juridique.confidentialite.s8.blocs.3' => 'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
+			'juridique.confidentialite.s8.blocs.3' => 'You may ask at any time to speak to the team: a person takes over the conversation and the assistant no longer replies to you in it.',
+			'juridique.confidentialite.s8.blocs.4' => 'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
 			'juridique.confidentialite.s9.titre' => '9. Security',
 			'juridique.confidentialite.s9.blocs.0' => 'Access rules are enforced by the server. ID documents are in a private space, separate from photos. No protection is absolute: if you see a problem, write to us.',
 			'juridique.confidentialite.s10.titre' => '10. Children',
@@ -41076,12 +41084,12 @@ extension on TraductionsEn {
 			'i1.familles.etat.echec' => 'Not sent',
 			'i1.familles.etat.compteCree' => 'Space opened',
 			'i1.familles.envoyeeLe' => ({required Object date}) => 'Sent on ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'i1.familles.envoyer' => 'Send the invitation',
 			'i1.familles.envoyerPour' => ({required Object email}) => 'Send the invitation to ${email}',
 			'i1.familles.renvoyer' => 'Resend the invitation',
 			'i1.familles.renvoyerPour' => ({required Object email}) => 'Resend the invitation to ${email}',
-			_ => null,
-		} ?? switch (path) {
 			'i1.familles.envoyerToutes' => ({required Object n}) => 'Send to all families (${n})',
 			'i1.familles.toutesQuestion' => ({required Object n}) => 'Send the invitation to all the families to invite? Number of families: ${n}.',
 			'i1.familles.toutesConsequence' => 'Each family receives an email right away. An email that has gone out cannot be taken back.',
@@ -41590,12 +41598,12 @@ extension on TraductionsEn {
 			'push1.gestes.verifierPiece' => 'Check the document',
 			'push1.gestes.traiterSignalement' => 'Handle the report',
 			'push1.gestes.traiterDemande' => 'Handle the request',
+			_ => null,
+		} ?? switch (path) {
 			'push1.gestes.trouverRemplacant' => 'Find a replacement',
 			'push1.gestes.voirPaiement' => 'See the payment',
 			'push1.gestes.validerCoordonnees' => 'Approve the details',
 			'push1.gestes.voirRemboursement' => 'See the refund',
-			_ => null,
-		} ?? switch (path) {
 			'push1.gestes.remplirCahier' => 'Fill in the handover notebook',
 			'push1.gestes.rejoindreSalle' => 'Join the room',
 			'push1.reglages.lien' => 'Notifications on this device',
