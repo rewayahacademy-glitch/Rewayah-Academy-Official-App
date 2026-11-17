@@ -11,6 +11,8 @@
 //    ouverte ; un refus faute de double verification aussi ;
 //  - la pastille « Praxis propose » de la file.
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -19,6 +21,7 @@ import 'package:rewayah_academy/core/candidature/modeles_entretien_direction.dar
 import 'package:rewayah_academy/core/candidature/port_entretiens_direction.dart';
 import 'package:rewayah_academy/core/capacites/permission_insuffisante.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/features/admin_candidature/propositions_praxis_dossier.dart';
 import 'package:rewayah_academy/features/admin_candidatures/marque_propositions_praxis.dart';
 
@@ -52,9 +55,13 @@ class _Faux implements ServicePropositionsPraxis {
   ResultatProposition Function()? reponse;
   bool refusDroit = false;
   Exception? erreurLecture;
+  Completer<List<PropositionPraxis>>? attente;
+  int lectures = 0;
 
   @override
   Future<List<PropositionPraxis>> ouvertes() async {
+    lectures++;
+    if (attente != null) return attente!.future;
     if (erreurLecture != null) throw erreurLecture!;
     return liste;
   }
@@ -99,6 +106,7 @@ Future<void> _monter(
   _Faux faux, {
   List<PersonnelEntretien>? personnel,
   Widget? enfant,
+  bool horsLigne = false,
   Size taille = const Size(1440, 2400),
 }) async {
   tester.view.physicalSize = taille;
@@ -118,6 +126,8 @@ Future<void> _monter(
       ),
       surcharges: <Override>[
         servicePropositionsPraxisProvider.overrideWithValue(faux),
+        if (horsLigne)
+          horsLigneProvider.overrideWith((ref) => Stream<bool>.value(true)),
         personnelEntretienProvider.overrideWith(
           (ref, String candidature) async =>
               personnel ??
@@ -173,13 +183,58 @@ void main() {
       expect(find.byKey(ClesPropositionsPraxis.bloc), findsNothing);
     });
 
-    testWidgets('lecture en echec : rien (la file ne ment pas)', (
+    testWidgets('chargement : un squelette, pas de phrase d\'erreur', (
+      tester,
+    ) async {
+      final _Faux faux = _Faux(<PropositionPraxis>[])
+        ..attente = Completer<List<PropositionPraxis>>();
+      tester.view.physicalSize = const Size(1440, 2400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hote(
+          const Scaffold(
+            body: PropositionsPraxisDossier(
+              reference: 'CAND-00042',
+              candidatureId: 'cand-42',
+            ),
+          ),
+          surcharges: <Override>[
+            servicePropositionsPraxisProvider.overrideWithValue(faux),
+          ],
+        ),
+      );
+      await tester.pump();
+      expect(find.byKey(ClesPropositionsPraxis.chargement), findsOneWidget);
+      expect(find.text(p.erreur), findsNothing);
+    });
+
+    testWidgets('lecture en echec : une phrase vraie et Reessayer relit', (
+      tester,
+    ) async {
+      final _Faux faux = _Faux(<PropositionPraxis>[
+        _prop('a', GestePrepare.admettreVerifications),
+      ])..erreurLecture = Exception('panne');
+      await _monter(tester, faux);
+      expect(find.byKey(ClesPropositionsPraxis.erreur), findsOneWidget);
+      expect(find.text(p.erreur), findsOneWidget);
+      expect(find.byKey(ClesPropositionsPraxis.bloc), findsNothing);
+      // Le serveur revient : Reessayer relit et montre la proposition.
+      faux.erreurLecture = null;
+      await _presser(tester, find.text(t.commun.reessayer));
+      expect(faux.lectures, 2);
+      expect(find.byKey(ClesPropositionsPraxis.carte('a')), findsOneWidget);
+      expect(find.text(p.erreur), findsNothing);
+    });
+
+    testWidgets('hors ligne : l\'etat commun, pas la phrase d\'erreur', (
       tester,
     ) async {
       final _Faux faux = _Faux(<PropositionPraxis>[])
         ..erreurLecture = Exception('panne');
-      await _monter(tester, faux);
-      expect(find.byKey(ClesPropositionsPraxis.bloc), findsNothing);
+      await _monter(tester, faux, horsLigne: true);
+      expect(find.text(p.horsLigne), findsOneWidget);
+      expect(find.text(p.erreur), findsNothing);
     });
 
     testWidgets(

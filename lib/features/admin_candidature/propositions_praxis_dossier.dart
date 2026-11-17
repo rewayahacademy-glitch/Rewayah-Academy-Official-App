@@ -23,6 +23,9 @@ import '../../core/candidature/entretiens_direction_supabase.dart'
 import '../../core/candidature/modeles_entretien_direction.dart';
 import '../../core/candidature/port_entretiens_direction.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
+import '../../core/reseau/etat_sans_donnees.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -30,6 +33,7 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/case_a_cocher.dart';
 import '../../core/widgets/champ_etiquete.dart';
+import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
@@ -40,6 +44,14 @@ import 'bloc_entretien.dart' show messageRefusEntretien;
 abstract final class ClesPropositionsPraxis {
   /// Le bloc entier.
   static const Key bloc = ValueKey<String>('propositions-praxis-bloc');
+
+  /// Le squelette de chargement.
+  static const Key chargement = ValueKey<String>(
+    'propositions-praxis-chargement',
+  );
+
+  /// L'etat d'erreur ou hors ligne.
+  static const Key erreur = ValueKey<String>('propositions-praxis-erreur');
 
   /// La carte d'une proposition.
   static Key carte(String id) => ValueKey<String>('proposition-praxis-$id');
@@ -103,15 +115,42 @@ class PropositionsPraxisDossier extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final p = t.admin.praxis.propositions;
+    final AsyncValue<List<PropositionPraxis>> lues = ref.watch(
+      propositionsPraxisProvider,
+    );
+    // Les cinq etats : chargement, erreur, hors ligne, vide (rien), contenu.
+    // Une lecture qui echoue se DIT : se taire ferait croire qu'il n'y a aucune
+    // proposition.
+    if (!lues.hasValue) {
+      if (lues.isLoading) {
+        return const Padding(
+          key: ClesPropositionsPraxis.chargement,
+          padding: EdgeInsets.only(top: AppSpacing.lg),
+          child: Skeleton(hauteur: 96),
+        );
+      }
+      void relire() => ref.invalidate(propositionsPraxisProvider);
+      final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+      return Padding(
+        key: ClesPropositionsPraxis.erreur,
+        padding: const EdgeInsets.only(top: AppSpacing.lg),
+        child: horsLigne
+            ? EtatSansDonnees(quoi: p.horsLigne, onAction: relire)
+            : EmptyState(
+                message: p.erreur,
+                icone: AppIcons.avertissement,
+                libelleAction: t.commun.reessayer,
+                onAction: relire,
+              ),
+      );
+    }
     final List<PropositionPraxis> liste = <PropositionPraxis>[
-      for (final PropositionPraxis x
-          in ref.watch(propositionsPraxisProvider).value ??
-              const <PropositionPraxis>[])
+      for (final PropositionPraxis x in lues.requireValue)
         if (x.reference == reference) x,
     ];
     if (liste.isEmpty) return const SizedBox.shrink();
-    final TextTheme textes = Theme.of(context).textTheme;
-    final p = t.admin.praxis.propositions;
     return Padding(
       key: ClesPropositionsPraxis.bloc,
       padding: const EdgeInsets.only(top: AppSpacing.lg),

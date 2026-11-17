@@ -6652,6 +6652,8 @@
         "participantsAide": "Choose the people who will lead the interview: Praxis does not choose them.",
         "participantsAucun": "No staff member to choose for this application.",
         "participantsErreur": "The staff list could not be read. Try again in a moment.",
+        "erreur": "Praxis proposals could not be read. Try again in a moment.",
+        "horsLigne": "Praxis proposals are not loaded yet. Reload them.",
         "motifEcart": "Reason (optional)",
         "valider": "Confirm",
         "ecarter": "Dismiss",

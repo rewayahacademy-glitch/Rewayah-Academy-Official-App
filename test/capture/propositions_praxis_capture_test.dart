@@ -17,15 +17,16 @@ import 'package:rewayah_academy/features/admin_candidature/propositions_praxis_d
 
 import 'outil_capture.dart';
 
-enum _Etat { complement, entretien, change }
+enum _Etat { complement, entretien, change, erreur }
 
 class _Service implements ServicePropositionsPraxis {
-  _Service(this.liste);
+  const _Service(this.liste);
 
-  final List<PropositionPraxis> liste;
+  final List<PropositionPraxis>? liste;
 
   @override
-  Future<List<PropositionPraxis>> ouvertes() async => liste;
+  Future<List<PropositionPraxis>> ouvertes() async =>
+      liste ?? (throw Exception('panne'));
 
   @override
   Future<ResultatProposition> valider({
@@ -76,6 +77,8 @@ PropositionPraxis _proposition(_Etat etat) {
         texte: 'Les vérifications sont faites : je propose un entretien.',
         expireLe: expire,
       );
+    case _Etat.erreur:
+      throw StateError('pas de proposition pour l\'etat erreur');
     case _Etat.change:
       return PropositionPraxis(
         id: 'p3',
@@ -104,7 +107,11 @@ void main() {
           fixerVueCapture(tester, const Size(360, 1100), 1);
           final List<Override> surcharges = <Override>[
             servicePropositionsPraxisProvider.overrideWithValue(
-              _Service(<PropositionPraxis>[_proposition(etat)]),
+              _Service(
+                etat == _Etat.erreur
+                    ? null
+                    : <PropositionPraxis>[_proposition(etat)],
+              ),
             ),
             personnelEntretienProvider.overrideWith(
               (ref, String candidature) async => const <PersonnelEntretien>[
