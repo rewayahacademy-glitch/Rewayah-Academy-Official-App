@@ -143,7 +143,7 @@ nouveau n'affiche une conversation) ; lignes touchées :
 | :--- | :--- | :--- |
 | 8 `liste_fils.dart`, 30 `ligne_fil.dart` (titre par `titreFil`) | titre « #Ra_Praxis » | `compte_officiel_test.dart` (fr, ar) ; captures `COMPTE-OFFICIEL/liste-*` |
 | 4 `barre_conversation.dart`, 5 `entete_fil_contexte.dart` | nom dans la barre (téléphone) et l'en-tête (ordinateur) | `compte_officiel_test.dart` (390 et 1440) ; captures `fil-*` |
-| 1 `fil_discussion.dart` (via `messageFilDe`) | nom d'auteur d'une bulle ; **il ne s'affiche que dans un fil de groupe** : testé en unité, **non capturé** | `compte_officiel_test.dart` |
+| 1 `fil_discussion.dart` (via `messageFilDe`) | PX-BULLE (directeur, 17/11/2026) : chaque bulle de Praxis (code serveur `praxis`) porte son avatar (`ImagePraxis`) et le nom « #Ra_Praxis », **même dans une conversation à deux** ; le toucher du nom ou de l'avatar ouvre le panneau de contexte (`EspaceTravailAdaptatif.ouvrirContexteDe`). Une bulle humaine ne change pas ; un autre compte officiel n'a pas d'image. L'en-tête de la conversation ne change pas | `px_bulle_test.dart` (390, 320 ×2, 1440, fr, ar) ; captures `PX-BULLE/bulle-praxis-{390,1440}-{fr,ar}-{clair,sombre}.png` |
 | `panneau_contexte_fil.dart` | participants : « #Ra_Praxis » et « Assistant de l'académie · IA » ; phrase du profil sous la liste | captures `fiche-1440-*` |
 
 **Non fait, dit en clair** : pas de bouton « Parler à l'équipe » dans la fiche : le panneau ne tient aucun port pour ouvrir

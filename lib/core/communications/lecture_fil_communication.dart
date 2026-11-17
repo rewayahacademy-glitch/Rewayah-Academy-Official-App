@@ -13,8 +13,10 @@ import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/dates_appareil.dart';
 import '../i18n/strings.g.dart';
 import '../tc_horloge/mon_horloge.dart';
+import '../widgets/avatar_tile.dart' show AppAvatar;
 import '../widgets/carte_piece_jointe.dart';
 import '../widgets/fil_discussion.dart';
+import 'image_praxis.dart';
 import 'modeles_communication.dart';
 import 'port_pieces_jointes.dart';
 
@@ -83,6 +85,13 @@ MessageFil messageFilDe(
   coeurs: m.coeurs,
   aimeParMoi: m.aimeParMoi,
   deSoi: m.deSoi,
+  // PX-BULLE (directeur, 17/11/2026) : chaque bulle de Praxis porte son avatar
+  // et son nom « #Ra_Praxis », meme dans une conversation a deux. Seul le code
+  // serveur `praxis` (jamais un nom, jamais un autre compte officiel) ; aucune
+  // bulle humaine n'est touchee.
+  avatarAuteur: !m.deSoi && m.auteur.compteOfficiel == codeComptePraxis
+      ? const ImagePraxis(diametre: AppAvatar.petit)
+      : null,
   // MESSAGERIE-LU : avec [suiviLecture], un message de soi dit s'il est lu
   // par l'autre partie (lu au plus tard a [luParAutresLe]).
   remise: !suiviLecture || !m.deSoi
