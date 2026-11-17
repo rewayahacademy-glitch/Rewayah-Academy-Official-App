@@ -100,9 +100,25 @@ void main() {
       );
     });
 
-    test('mes propres messages n\'en portent jamais', () {
+    test('mes propres messages humains n\'en portent jamais', () {
       final MessageFil m = messageFilDe(_msg('e', _soi, 'x', 1));
       expect(m.avatarAuteur, isNull);
+      expect(m.auteur, t.com.socle.composants.composer.auteurSoi);
+    });
+
+    test('un message de Praxis « de soi » (cote administration) porte '
+        'image et nom', () {
+      const Participant praxisSoi = Participant(
+        id: 'praxis-soi',
+        nomAffiche: 'Praxis',
+        officiel: true,
+        compteOfficiel: codeComptePraxis,
+        estSoi: true,
+      );
+      final MessageFil m = messageFilDe(_msg('f', praxisSoi, 'x', 1));
+      expect(m.deSoi, isTrue);
+      expect(m.avatarAuteur, isA<ImagePraxis>());
+      expect(m.auteur, nomOfficielMarque());
     });
   });
 
@@ -184,6 +200,61 @@ void main() {
       reason: 'sans groupe, une bulle humaine ne porte pas de nom',
     );
     expect(find.byType(ImagePraxis), findsNothing);
+  });
+
+  testWidgets('bulle de Praxis « de soi » : image et nom ; bulle humaine de '
+      'soi : rien', (WidgetTester tester) async {
+    const Participant praxisSoi = Participant(
+      id: 'praxis-soi',
+      nomAffiche: 'Praxis',
+      officiel: true,
+      compteOfficiel: codeComptePraxis,
+      estSoi: true,
+    );
+    final FilMetier fil = FilMetier(
+      id: 'fil-praxis-soi',
+      contexte: <ElementContexteFil>[
+        ElementContexteFil(
+          objet: ObjetLie(
+            type: TypeObjetLie.classe,
+            id: 'c',
+            libelle: 'Classe An-Nour',
+          ),
+        ),
+      ],
+      participants: <Participant>[_mariam, praxisSoi],
+      messages: <MessageCommunication>[
+        _msg('p1', praxisSoi, 'Rappel de Praxis.', 2),
+        _msg('h1', _soi, 'Merci.', 1),
+      ],
+      capacites: const <CapaciteFil>{CapaciteFil.ecrire},
+    );
+    await monterMessages(
+      tester,
+      port: FauxMessagesMetier(fils: <FilMetier>[fil]),
+      depart: cheminFilTest('fil-praxis-soi'),
+      taille: const Size(390, 844),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: _bulle('p1'),
+        matching: find.byType(ImagePraxis),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(
+        of: _bulle('p1'),
+        matching: find.text(nomOfficielMarque()),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.descendant(of: _bulle('h1'), matching: find.byType(ImagePraxis)),
+      findsNothing,
+    );
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('un autre compte officiel : le nom oui, aucune image', (
