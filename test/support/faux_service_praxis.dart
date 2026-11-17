@@ -145,6 +145,21 @@ class FauxServicePraxis implements ServicePraxis {
       autonome: autonome ?? _etat.autonome,
       envoisParHeure: envoisParHeure ?? _etat.envoisParHeure,
       essaiFils: _etat.essaiFils,
+      donneesReelles: _etat.donneesReelles,
+      cles: _etat.cles,
+    );
+  }
+
+  @override
+  Future<void> reglerDonneesReelles({required bool ouvert}) async {
+    appels.add('donnees:$ouvert');
+    _ecrire();
+    _etat = EtatPraxis(
+      actif: _etat.actif,
+      autonome: _etat.autonome,
+      envoisParHeure: _etat.envoisParHeure,
+      essaiFils: _etat.essaiFils,
+      donneesReelles: ouvert,
       cles: _etat.cles,
     );
   }
@@ -158,6 +173,7 @@ class FauxServicePraxis implements ServicePraxis {
       autonome: _etat.autonome,
       envoisParHeure: _etat.envoisParHeure,
       essaiFils: fils,
+      donneesReelles: _etat.donneesReelles,
       cles: _etat.cles,
     );
   }
@@ -176,6 +192,7 @@ class FauxServicePraxis implements ServicePraxis {
       autonome: _etat.autonome,
       envoisParHeure: _etat.envoisParHeure,
       essaiFils: _etat.essaiFils,
+      donneesReelles: _etat.donneesReelles,
       cles: <ClePraxis>[
         clePraxisFictive(id: 'c-neuve', libelle: libelle, usage: usage),
         ..._etat.cles,
@@ -201,6 +218,7 @@ class FauxServicePraxis implements ServicePraxis {
       autonome: _etat.autonome,
       envoisParHeure: _etat.envoisParHeure,
       essaiFils: _etat.essaiFils,
+      donneesReelles: _etat.donneesReelles,
       cles: <ClePraxis>[
         for (final ClePraxis c in _etat.cles)
           if (c.id == id)

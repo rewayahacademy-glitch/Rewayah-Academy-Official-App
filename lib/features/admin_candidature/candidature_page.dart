@@ -480,6 +480,7 @@ class _EtatCandidatureDirectionPage
                 horsLigne: horsLigne,
               ),
               deuxColonnes: deuxColonnes,
+              onPropositionTraitee: () => _relire(identifiant: d.ligne.id),
               retour: _passageEnCours || _finDeFile ? null : _retour,
               ecrireApres: _ecrireApres,
               navigation: voisins == null

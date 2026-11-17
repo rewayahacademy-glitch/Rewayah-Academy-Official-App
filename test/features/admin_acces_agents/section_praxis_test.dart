@@ -235,6 +235,34 @@ void main() {
       },
     );
 
+    testWidgets(
+      'donnees reelles : fermees au depart, la phrase d\'avertissement',
+      (tester) async {
+        final FauxServicePraxis faux = FauxServicePraxis();
+        await _monter(tester, faux);
+        expect(find.text(t.admin.praxis.donnees.fermees), findsOneWidget);
+        expect(find.byKey(ClesPraxis.avertissementDonnees), findsOneWidget);
+        expect(find.text(t.admin.praxis.donnees.avertissement), findsOneWidget);
+        // Une action sensible : elle attend le serveur, puis l'etat est relu.
+        await _presser(tester, find.byKey(ClesPraxis.donneesReelles));
+        expect(faux.appels, contains('donnees:true'));
+        expect(find.text(t.admin.praxis.donnees.ouvertes), findsOneWidget);
+        await _presser(tester, find.byKey(ClesPraxis.donneesReelles));
+        expect(faux.appels, contains('donnees:false'));
+        expect(find.text(t.admin.praxis.donnees.fermees), findsOneWidget);
+      },
+    );
+
+    testWidgets('donnees reelles : refus faute de double verification', (
+      tester,
+    ) async {
+      final FauxServicePraxis faux = FauxServicePraxis()..refusDroit = true;
+      await _monter(tester, faux);
+      await _presser(tester, find.byKey(ClesPraxis.donneesReelles));
+      expect(find.text(t.admin.praxis.doubleVerification), findsOneWidget);
+      expect(find.text(t.admin.praxis.donnees.fermees), findsOneWidget);
+    });
+
     testWidgets('essai : on coche des conversations, dix au plus, puis fin', (
       tester,
     ) async {
