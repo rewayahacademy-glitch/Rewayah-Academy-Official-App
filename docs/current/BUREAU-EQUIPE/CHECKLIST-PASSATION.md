@@ -48,7 +48,7 @@ parallèle, un agent par lot, quatre agents au plus.
 | 5 | **L'essai à blanc** : le directeur branche Praxis et lui fait répondre à un seul fil de test (`PRAXIS/ESSAI-A-BLANC.md`, écrit par BE-PIECE) | directeur | ⏸ prêt |
 | 6 | **La case anti-robot Cloudflare** sous le bouton d'inscription et de connexion (#525, en retard depuis le 16/11) | BE-SALLE | ◐ relancé à 8 h 25 |
 | 7 | **Inscription d'un associé invité** par un code (#604) | pilote (mise à jour après #606) ; BE-DOSSIER en pause (plafond de 4 agents) | ◐ bloquée par #606 |
-| 8 | **Un test de la facturation qui casse selon l'heure** (bloque la vérification automatique de toutes les PR le lundi et le mardi matin) | BE-GESTES (#606) | ◐ |
+| 8 | **Des tests qui cassent selon l'heure** (bloquent la vérification automatique des PR le matin) | BE-GESTES | ◐ facturation corrigée (#606 fusionnée, 641ed4fe) ; drapeaux et balayage complet à suivre |
 | Dette | **Un test de la prière casse tous les lundis** (`scenarios_priere_serveur.sql` l. 1851, collision avec une séance générée le jeudi à 19 h) ; hors `ci.yml`, ne bloque personne. Relevé par BE-GESTES le 17/11 | — | ☐ |
 | Après | Praxis fixe des objectifs et des check-lists (PX-3), propose des classes (PX-4), fait des rapports (PX-5) | — | ☐ |
 
