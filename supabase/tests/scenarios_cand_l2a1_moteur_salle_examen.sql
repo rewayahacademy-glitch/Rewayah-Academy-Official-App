@@ -1787,14 +1787,15 @@ SELECT pg_temp.vrai((SELECT string_agg(DISTINCT transition::text, ',' ORDER BY t
     -- BE-1g (16/11) : 45 = dispenser l'entretien, motif exige.
     -- BE-1h (16/11) : 46 = refaire l'entretien, motif exige.
     -- COMPLEMENT-SALLE-EXAMEN (17/11) : 47 = annuler le complement, motif exige.
-    = '12,15,16,17,18,19,20,21,23,25,44,45,46,47,7'
+    -- DEPLACER-ENTRETIEN (17/11) : 48 = deplacer l'entretien, motif exige.
+    = '12,15,16,17,18,19,20,21,23,25,44,45,46,47,48,7'
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite' AND geste NOT LIKE '%admission')
     = 'lever_pause,refuser,retirer'
   -- V1-b (03/11) : le candidat planifie aussi son entretien, en reservant un creneau.
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs) AND geste NOT LIKE '%admission')
     = 'enregistrer_reponses,envoyer_reponses,planifier_entretien,retirer'
   AND NOT EXISTS (SELECT 1 FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (motif_requis)),
-  'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25, 44, 45, 46, 47) ; en pause seuls lever, refuser, retirer');
+  'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25, 44, 45, 46, 47, 48) ; en pause seuls lever, refuser, retirer');
 
 -- L2-10 : chaque geste a motif, depuis une source valide, sans motif : refus,
 -- 0 ecriture ; avec motif (et modele quand il en faut un) : il s'ouvre.
@@ -1850,7 +1851,8 @@ BEGIN
   -- BE-1h (16/11) : refaire_entretien ; COMPLEMENT-SALLE-EXAMEN (17/11) : demander_complement variantes 3 et 4,
   -- annuler_complement : dix-sept ; APRES-CONFIRMEE (17/11) : demander_verification_piece et
   -- demander_verification_versement : dix-neuf.
-  PERFORM pg_temp.vrai(v_n = 19, 'L2-10 : dix-neuf variantes de gestes a motif');
+  -- DEPLACER-ENTRETIEN (17/11) : deplacer_entretien : vingt.
+  PERFORM pg_temp.vrai(v_n = 20, 'L2-10 : vingt variantes de gestes a motif');
 END $l2_10$;
 
 -- L2-9 : en pause, tout geste autre que lever la pause, refuser ou retirer
@@ -1908,7 +1910,8 @@ BEGIN
   -- BE-1g (16/11) : dispenser_entretien la porte a vingt-neuf.
   -- BE-1h (16/11) : refaire_entretien ; COMPLEMENT-SALLE-EXAMEN (17/11) : trois variantes de plus, trente-trois.
   -- APRES-CONFIRMEE (17/11) : deux variantes de plus, trente-cinq.
-  PERFORM pg_temp.vrai(v_n = 35, 'L2-9 : les trente-cinq variantes de la table des regles');
+  -- DEPLACER-ENTRETIEN (17/11) : une variante de plus, trente-six.
+  PERFORM pg_temp.vrai(v_n = 36, 'L2-9 : les trente-six variantes de la table des regles');
 END $l2_9$;
 
 -- Un geste de la direction de bout en bout par le moteur (c10) : refus avec
@@ -2422,8 +2425,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 469 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 469 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11 + 6 de refaire_entretien, 16/11 + 18 de COMPLEMENT-SALLE-EXAMEN, 17/11 : 3 variantes a motif x 6 + 12 d''APRES-CONFIRMEE, 17/11 : 2 variantes a motif x 6)', current_setting('test.n');
+  IF current_setting('test.n')::int <> 475 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 475 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11 + 6 de refaire_entretien, 16/11 + 18 de COMPLEMENT-SALLE-EXAMEN, 17/11 : 3 variantes a motif x 6 + 12 d''APRES-CONFIRMEE, 17/11 : 2 variantes a motif x 6 + 6 de deplacer_entretien, 17/11)', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;

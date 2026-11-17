@@ -377,6 +377,8 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
           'public.direction_praxis_regler_essai>private.praxis_reglages',
           'private.praxis_propositions_expirer>private.praxis_propositions',
           'public.direction_praxis_ecarter>private.praxis_propositions', 'public.direction_praxis_regler_donnees_reelles>private.praxis_reglages',
+          -- PRAXIS-PLAFOND-GLOBAL (20261129870000) : la porte du reglage du plafond d'appels par cle et par heure.
+          'public.direction_praxis_regler_plafond>private.praxis_reglages',
           'public.direction_praxis_valider>private.praxis_propositions',
           'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier',
           'public.praxis_preparer>private.praxis_propositions']) x),

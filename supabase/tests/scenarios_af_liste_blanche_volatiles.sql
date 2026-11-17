@@ -71,6 +71,8 @@ declare
     -- direction_praxis_propositions est STABLE : hors de cette liste.
     'direction_praxis_ecarter(uuid,text,uuid)',
     'direction_praxis_regler_donnees_reelles(boolean)',
+    -- PRAXIS-PLAFOND-GLOBAL (20261129870000) : le plafond d'appels par cle et par heure ; admin, aal2, une ligne d'audit.
+    'direction_praxis_regler_plafond(integer)',
     'direction_praxis_valider(uuid,integer,text,uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
@@ -350,6 +352,8 @@ declare
     'lister_enseignants(jsonb,text,integer)',
     -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
     'dispenser_entretien(uuid,text,text,integer,text)',
+    -- BE-1j (17/11) : la direction deplace le creneau d'un entretien planifie (transition 47).
+    'deplacer_entretien(uuid,timestamp with time zone,integer,text,integer,text)',
     -- COMPLEMENT-SALLE-EXAMEN (17/11) : la direction annule le complement demande en Salle d'examen (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; le dossier revient a en_examen).
     'annuler_complement_candidat(uuid,text,integer,text)',
     -- APRES-CONFIRMEE (17/11) : la direction restreint une candidature confirmee (ou demande une verification de la piece ou du versement) et leve la restriction (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; levee sous controles revérifiés).
