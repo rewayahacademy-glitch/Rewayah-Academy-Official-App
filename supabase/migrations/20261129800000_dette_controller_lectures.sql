@@ -46,7 +46,9 @@ AS $f$
     false);
 $f$;
 REVOKE ALL ON FUNCTION public.controleur_voit_session(uuid) FROM PUBLIC, anon;
-GRANT EXECUTE ON FUNCTION public.controleur_voit_session(uuid) TO authenticated;
+-- agent_ro (lecture seule des agents) est visé par les mêmes politiques : sans EXECUTE, ses lectures
+-- de `sessions` échouaient (scenarios_agt01, CI). La fonction rend faux pour tout non-contrôleur.
+GRANT EXECUTE ON FUNCTION public.controleur_voit_session(uuid) TO authenticated, agent_ro;
 
 ALTER POLICY sessions_read_privileged ON public.sessions
   USING (( SELECT app_account_valid() ) AND deleted_at IS NULL
