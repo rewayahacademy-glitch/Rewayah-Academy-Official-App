@@ -283,6 +283,13 @@ DemandeGeste _demande(GesteCandidature g) {
         cleIdempotence: cle,
         motif: 'Cause reglee.',
       );
+    case GesteCandidature.refaireEntretien:
+      return DemandeGeste.refaireEntretien(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Avis a refaire.',
+      );
   }
 }
 
@@ -396,6 +403,10 @@ void main() {
           GesteCandidature.leverRestriction: (
             'lever_restriction_candidat',
             <String, Object?>{'p_motif': 'Cause reglee.'},
+          ),
+          GesteCandidature.refaireEntretien: (
+            'refaire_entretien',
+            <String, Object?>{'p_motif': 'Avis a refaire.'},
           ),
         };
 

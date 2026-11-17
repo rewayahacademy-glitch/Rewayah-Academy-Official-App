@@ -309,6 +309,10 @@ DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
     etape: EtapeCandidature.verifications,
     etat: EtatCandidature.entretienAPlanifier,
   ),
+  GesteCandidature.refaireEntretien => detailTest(
+    etape: EtapeCandidature.verifications,
+    etat: EtatCandidature.decisionEnAttente,
+  ),
   GesteCandidature.cloreComplement => detailTest(
     etape: EtapeCandidature.verifications,
     etat: EtatCandidature.entretienAPlanifier,

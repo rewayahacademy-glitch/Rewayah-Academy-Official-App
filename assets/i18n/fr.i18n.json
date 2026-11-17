@@ -4602,7 +4602,8 @@
         "restreindre": "Restreindre",
         "demanderVerificationPiece": "Demander une vérification de la pièce",
         "demanderVerificationVersement": "Demander une vérification du versement",
-        "leverRestriction": "Lever la restriction"
+        "leverRestriction": "Lever la restriction",
+        "refaireEntretien": "Refaire l'entretien"
       },
       "consequences": {
         "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
@@ -4624,7 +4625,8 @@
         "restreindre": "La candidature est restreinte\u00a0: elle n'est plus proposée à une affectation. La personne n'est pas prévenue.",
         "demanderVerificationPiece": "La candidature est restreinte (pièce) tant qu'une pièce validée ne la lève. La personne n'est pas prévenue.",
         "demanderVerificationVersement": "La candidature est restreinte (versement) tant qu'un moyen de versement compatible ne la lève. La personne n'est pas prévenue.",
-        "leverRestriction": "La restriction est levée si la cause est réglée\u00a0: pièce validée, ou versement compatible."
+        "leverRestriction": "La restriction est levée si la cause est réglée\u00a0: pièce validée, ou versement compatible.",
+        "refaireEntretien": "La candidature revient à l'entretien à planifier. L'entretien tenu ou la dispense d'avant ne compte plus, rien n'est effacé. Aucun message n'est envoyé à la personne."
       },
       "feuille": {
         "motif": "Motif interne",
@@ -4743,6 +4745,7 @@
         "demanderVerificationPiece": "Vérification de la pièce demandée\u00a0: la candidature est restreinte.",
         "demanderVerificationVersement": "Vérification du versement demandée\u00a0: la candidature est restreinte.",
         "leverRestriction": "La restriction est levée.",
+        "refaireEntretien": "Entretien à refaire. La candidature attend un nouvel entretien.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
       "genres": {"male": "Homme", "female": "Femme"},

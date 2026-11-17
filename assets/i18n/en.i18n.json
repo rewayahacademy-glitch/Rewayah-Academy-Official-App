@@ -4602,7 +4602,8 @@
         "restreindre": "Restrict",
         "demanderVerificationPiece": "Ask for a check of the ID document",
         "demanderVerificationVersement": "Ask for a check of the payout",
-        "leverRestriction": "Lift the restriction"
+        "leverRestriction": "Lift the restriction",
+        "refaireEntretien": "Redo the interview"
       },
       "consequences": {
         "accueillir": "Their teacher account is activated and their space opens. The person teaches only once assigned to a class.",
@@ -4624,7 +4625,8 @@
         "restreindre": "The application is restricted: it is no longer offered for assignment. The person is not notified.",
         "demanderVerificationPiece": "The application is restricted (document) until a validated document lifts it. The person is not notified.",
         "demanderVerificationVersement": "The application is restricted (payout) until a compatible payout method lifts it. The person is not notified.",
-        "leverRestriction": "The restriction is lifted if its cause is settled: a validated document, or a compatible payout."
+        "leverRestriction": "The restriction is lifted if its cause is settled: a validated document, or a compatible payout.",
+        "refaireEntretien": "The application goes back to the interview to schedule. The earlier interview or waiver no longer counts, nothing is erased. No message is sent to the person."
       },
       "feuille": {
         "motif": "Internal reason",
@@ -4743,6 +4745,7 @@
         "demanderVerificationPiece": "Document check requested: the application is restricted.",
         "demanderVerificationVersement": "Payout check requested: the application is restricted.",
         "leverRestriction": "The restriction is lifted.",
+        "refaireEntretien": "Interview to redo. The application is waiting for a new interview.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
       "genres": {"male": "Man", "female": "Woman"},

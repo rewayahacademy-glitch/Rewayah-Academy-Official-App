@@ -93,7 +93,11 @@ enum GesteCandidature {
 
   /// Lever la restriction (transition 21, `lever_restriction_candidat`), sous
   /// les controles de sa cause (piece validee, versement compatible).
-  leverRestriction('leverRestriction');
+  leverRestriction('leverRestriction'),
+
+  /// Refaire l'entretien (transition 46, `refaire_entretien`, BE-1h) : la
+  /// candidature revient de la decision a l'entretien a planifier.
+  refaireEntretien('refaireEntretien');
 
   const GesteCandidature(this.capacite);
 
@@ -126,6 +130,7 @@ enum GesteCandidature {
     demanderVerificationPiece => 'demander_verification_piece',
     demanderVerificationVersement => 'demander_verification_versement',
     leverRestriction => 'lever_restriction',
+    refaireEntretien => 'refaire_entretien',
   };
 
   /// Le geste que l'ecran connait pour ce nom du serveur, ou `null` : un nom
@@ -155,6 +160,7 @@ enum GesteCandidature {
     demanderVerificationPiece ||
     demanderVerificationVersement ||
     leverRestriction ||
+    refaireEntretien ||
     rouvrir => true,
     modifierComplement ||
     admettreVerifications ||
@@ -546,6 +552,20 @@ class DemandeGeste {
     versionAttendue: versionAttendue,
     cleIdempotence: cleIdempotence,
     categorieDispense: categorie,
+    motif: motif,
+  );
+
+  /// Refaire l'entretien : un [motif] ecrit, que le serveur exige.
+  factory DemandeGeste.refaireEntretien({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.refaireEntretien,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
     motif: motif,
   );
 

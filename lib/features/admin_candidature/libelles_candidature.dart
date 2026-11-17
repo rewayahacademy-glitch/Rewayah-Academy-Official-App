@@ -39,6 +39,7 @@ String libelleGeste(GesteCandidature geste) {
     GesteCandidature.demanderVerificationVersement =>
       g.demanderVerificationVersement,
     GesteCandidature.leverRestriction => g.leverRestriction,
+    GesteCandidature.refaireEntretien => g.refaireEntretien,
   };
 }
 
@@ -68,6 +69,7 @@ String libelleConsequence(GesteCandidature geste) {
     GesteCandidature.demanderVerificationVersement =>
       c.demanderVerificationVersement,
     GesteCandidature.leverRestriction => c.leverRestriction,
+    GesteCandidature.refaireEntretien => c.refaireEntretien,
   };
 }
 
@@ -97,6 +99,7 @@ String libelleRetour(GesteCandidature geste) {
     GesteCandidature.demanderVerificationVersement =>
       r.demanderVerificationVersement,
     GesteCandidature.leverRestriction => r.leverRestriction,
+    GesteCandidature.refaireEntretien => r.refaireEntretien,
   };
 }
 
