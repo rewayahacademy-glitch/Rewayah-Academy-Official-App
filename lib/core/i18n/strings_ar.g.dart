@@ -9334,7 +9334,7 @@ class _Traductions$inscription$associe$ar extends Traductions$inscription$associ
 	@override String get expireeDetail => 'اطلب رمزًا جديدًا من الإدارة.';
 	@override String get dejaUtilisee => 'استُخدم هذا الرمز من قبل.';
 	@override String get dejaUtiliseeDetail => 'سجّل الدخول إلى حسابك.';
-	@override String get horsLigne => 'أنت غير متصل. لم يُرسَل شيء: أعد المحاولة عند توفر اتصال.';
+	@override String get horsLigne => 'الاتصال غير متوفر. لم يُرسَل شيء: أعد المحاولة عند عودته.';
 	@override String get erreur => 'لم يكتمل التحقق. رمزك لم يضع: أعد المحاولة بعد قليل.';
 	@override String get sessionRefusee => 'لهذا الحساب ملف شخصي بالفعل، أو لا عنوان له. سجّل الدخول بالعنوان المدعو.';
 	@override String get champsRefuses => 'تم رفض أحد الحقول: راجع اسمك الأول واسم العائلة والجنس.';
@@ -38958,7 +38958,7 @@ extension on TraductionsAr {
 			'inscription.associe.expireeDetail' => 'اطلب رمزًا جديدًا من الإدارة.',
 			'inscription.associe.dejaUtilisee' => 'استُخدم هذا الرمز من قبل.',
 			'inscription.associe.dejaUtiliseeDetail' => 'سجّل الدخول إلى حسابك.',
-			'inscription.associe.horsLigne' => 'أنت غير متصل. لم يُرسَل شيء: أعد المحاولة عند توفر اتصال.',
+			'inscription.associe.horsLigne' => 'الاتصال غير متوفر. لم يُرسَل شيء: أعد المحاولة عند عودته.',
 			'inscription.associe.erreur' => 'لم يكتمل التحقق. رمزك لم يضع: أعد المحاولة بعد قليل.',
 			'inscription.associe.sessionRefusee' => 'لهذا الحساب ملف شخصي بالفعل، أو لا عنوان له. سجّل الدخول بالعنوان المدعو.',
 			'inscription.associe.champsRefuses' => 'تم رفض أحد الحقول: راجع اسمك الأول واسم العائلة والجنس.',

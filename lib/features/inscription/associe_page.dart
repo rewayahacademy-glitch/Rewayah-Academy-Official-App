@@ -335,15 +335,30 @@ class _EtatAssocie extends ConsumerState<AssociePage> {
         // Hors ligne, la verification ne peut pas aboutir : le bouton n'est
         // pas rendu, la phrase le dit.
         if (!horsLigne)
-          ActionPrincipale(
-            key: AssociePage.cleVerifier,
+          _bouton(
+            cle: AssociePage.cleVerifier,
             libelle: r.verifier,
             enCours: enCours,
-            onPress: enCours ? null : () => unawaited(_verifier()),
+            surAppui: () => unawaited(_verifier()),
           ),
       ],
     );
   }
+
+  /// Le seul bouton plein de l'ecran (K-56) : « Verifier le code », puis « Creer
+  /// mon compte ». Un bouton qui ne peut pas aboutir n'est pas rendu (hors
+  /// ligne) ; pendant l'attente, il le dit et ne repart pas.
+  Widget _bouton({
+    required Key cle,
+    required String libelle,
+    required bool enCours,
+    required VoidCallback surAppui,
+  }) => ActionPrincipale(
+    key: cle,
+    libelle: libelle,
+    enCours: enCours,
+    onPress: enCours ? null : surAppui,
+  );
 
   Widget _videCode(Key cle, String message, String detail, AppIcon icone) =>
       Column(
@@ -444,11 +459,11 @@ class _EtatAssocie extends ConsumerState<AssociePage> {
           _message(horsLigne ? r.horsLigne : _phrase(_echec)),
           Ecart.vLg,
           if (!horsLigne)
-            ActionPrincipale(
-              key: AssociePage.cleCreer,
+            _bouton(
+              cle: AssociePage.cleCreer,
               libelle: r.creer,
               enCours: envoi,
-              onPress: envoi ? null : () => unawaited(_creer()),
+              surAppui: () => unawaited(_creer()),
             ),
           Ecart.vSm,
           Center(

@@ -1409,7 +1409,7 @@
       "expireeDetail": "Demandez un nouveau code à la direction.",
       "dejaUtilisee": "Ce code a déjà servi.",
       "dejaUtiliseeDetail": "Connectez-vous à votre compte.",
-      "horsLigne": "Vous êtes hors ligne. Rien n'a été envoyé\u00a0: réessayez avec une connexion.",
+      "horsLigne": "La connexion manque. Rien n'a été envoyé\u00a0: réessayez quand elle sera revenue.",
       "erreur": "La vérification n'a pas abouti. Votre code n'est pas perdu\u00a0: réessayez dans un instant.",
       "sessionRefusee": "Ce compte a déjà un profil, ou n'a pas d'adresse. Connectez-vous avec l'adresse invitée.",
       "champsRefuses": "Un champ est refusé\u00a0: relisez votre prénom, votre nom et votre genre.",

@@ -6823,8 +6823,8 @@ class Traductions$inscription$associe$fr {
 	/// fr: 'Connectez-vous à votre compte.'
 	String get dejaUtiliseeDetail => 'Connectez-vous à votre compte.';
 
-	/// fr: 'Vous êtes hors ligne. Rien n'a été envoyé : réessayez avec une connexion.'
-	String get horsLigne => 'Vous êtes hors ligne. Rien n\'a été envoyé : réessayez avec une connexion.';
+	/// fr: 'La connexion manque. Rien n'a été envoyé : réessayez quand elle sera revenue.'
+	String get horsLigne => 'La connexion manque. Rien n\'a été envoyé : réessayez quand elle sera revenue.';
 
 	/// fr: 'La vérification n'a pas abouti. Votre code n'est pas perdu : réessayez dans un instant.'
 	String get erreur => 'La vérification n\'a pas abouti. Votre code n\'est pas perdu : réessayez dans un instant.';
@@ -57074,7 +57074,7 @@ extension on Traductions {
 			'inscription.associe.expireeDetail' => 'Demandez un nouveau code à la direction.',
 			'inscription.associe.dejaUtilisee' => 'Ce code a déjà servi.',
 			'inscription.associe.dejaUtiliseeDetail' => 'Connectez-vous à votre compte.',
-			'inscription.associe.horsLigne' => 'Vous êtes hors ligne. Rien n\'a été envoyé : réessayez avec une connexion.',
+			'inscription.associe.horsLigne' => 'La connexion manque. Rien n\'a été envoyé : réessayez quand elle sera revenue.',
 			'inscription.associe.erreur' => 'La vérification n\'a pas abouti. Votre code n\'est pas perdu : réessayez dans un instant.',
 			'inscription.associe.sessionRefusee' => 'Ce compte a déjà un profil, ou n\'a pas d\'adresse. Connectez-vous avec l\'adresse invitée.',
 			'inscription.associe.champsRefuses' => 'Un champ est refusé : relisez votre prénom, votre nom et votre genre.',

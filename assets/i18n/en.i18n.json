@@ -1409,7 +1409,7 @@
       "expireeDetail": "Ask the management for a new code.",
       "dejaUtilisee": "This code has already been used.",
       "dejaUtiliseeDetail": "Sign in to your account.",
-      "horsLigne": "You are offline. Nothing was sent: try again with a connection.",
+      "horsLigne": "The connection is missing. Nothing was sent: try again when it is back.",
       "erreur": "The check did not go through. Your code is not lost: try again in a moment.",
       "sessionRefusee": "This account already has a profile, or has no address. Sign in with the invited address.",
       "champsRefuses": "A field was refused: check your first name, last name and gender.",

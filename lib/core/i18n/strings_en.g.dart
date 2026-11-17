@@ -3576,7 +3576,7 @@ class _Traductions$inscription$associe$en extends Traductions$inscription$associ
 	@override String get expireeDetail => 'Ask the management for a new code.';
 	@override String get dejaUtilisee => 'This code has already been used.';
 	@override String get dejaUtiliseeDetail => 'Sign in to your account.';
-	@override String get horsLigne => 'You are offline. Nothing was sent: try again with a connection.';
+	@override String get horsLigne => 'The connection is missing. Nothing was sent: try again when it is back.';
 	@override String get erreur => 'The check did not go through. Your code is not lost: try again in a moment.';
 	@override String get sessionRefusee => 'This account already has a profile, or has no address. Sign in with the invited address.';
 	@override String get champsRefuses => 'A field was refused: check your first name, last name and gender.';
@@ -29419,7 +29419,7 @@ extension on TraductionsEn {
 			'inscription.associe.expireeDetail' => 'Ask the management for a new code.',
 			'inscription.associe.dejaUtilisee' => 'This code has already been used.',
 			'inscription.associe.dejaUtiliseeDetail' => 'Sign in to your account.',
-			'inscription.associe.horsLigne' => 'You are offline. Nothing was sent: try again with a connection.',
+			'inscription.associe.horsLigne' => 'The connection is missing. Nothing was sent: try again when it is back.',
 			'inscription.associe.erreur' => 'The check did not go through. Your code is not lost: try again in a moment.',
 			'inscription.associe.sessionRefusee' => 'This account already has a profile, or has no address. Sign in with the invited address.',
 			'inscription.associe.champsRefuses' => 'A field was refused: check your first name, last name and gender.',
