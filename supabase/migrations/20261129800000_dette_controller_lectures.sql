@@ -73,7 +73,7 @@ ALTER POLICY matching_requests_privileged_read ON public.matching_requests
   USING (COALESCE((( SELECT app_role() ) = 'admin'::app_role) AND ( SELECT app_account_valid() ), false));
 
 ALTER POLICY intentions_horaire_parties ON public.intentions_horaire
-  USING ((partie_concernee(eleve_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role)
+  USING ((partie_concernee(eleve_id) AND NOT COALESCE(( SELECT app_role() ) = 'controller'::app_role AND ( SELECT app_account_valid() ), false))
          OR COALESCE((( SELECT app_role() ) = 'admin'::app_role) AND ( SELECT app_account_valid() ), false));
 
 ALTER POLICY offres_horaires_vitrine ON public.offres_horaires
@@ -82,7 +82,7 @@ ALTER POLICY offres_horaires_vitrine ON public.offres_horaires
 
 ALTER POLICY availability_slots_reader ON public.availability_slots
   USING (( SELECT app_account_valid() ) AND deleted_at IS NULL
-         AND partie_concernee(teacher_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role);
+         AND partie_concernee(teacher_id) AND NOT COALESCE(( SELECT app_role() ) = 'controller'::app_role AND ( SELECT app_account_valid() ), false));
 
 ALTER POLICY assignments_privileged_read ON public.teacher_student_assignments
   USING (COALESCE((( SELECT app_role() ) = ANY (ARRAY['admin'::app_role, 'accountant'::app_role]))
@@ -90,21 +90,21 @@ ALTER POLICY assignments_privileged_read ON public.teacher_student_assignments
 
 -- Deuxième voie de lecture : partie_concernee() rend vrai pour tout admin ou contrôleur au compte
 -- valide (GARDE-COMPTE-DESACTIVE). On ne la modifie pas (elle sert aussi à regle_effective, demander,
--- rechercher_personne_par_matricule et deux vues) ; on exclut le contrôleur dans les politiques.
+-- rechercher_personne_par_matricule et deux vues) ; on exclut le contrôleur dans les politiques (avec app_account_valid(), exigé par le garde COND h).
 ALTER POLICY matching_requests_parties_read ON public.matching_requests
   USING (requested_by = ( SELECT auth.uid() )
-         OR (partie_concernee(subject_profile_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role));
+         OR (partie_concernee(subject_profile_id) AND NOT COALESCE(( SELECT app_role() ) = 'controller'::app_role AND ( SELECT app_account_valid() ), false)));
 
 ALTER POLICY assignments_parties_read ON public.teacher_student_assignments
-  USING ((partie_concernee(student_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role)
+  USING ((partie_concernee(student_id) AND NOT COALESCE(( SELECT app_role() ) = 'controller'::app_role AND ( SELECT app_account_valid() ), false))
          OR teacher_id = ( SELECT auth.uid() ));
 
 -- Deux autres tables ouvertes au contrôleur par la même voie (arbitrage du pilote, 17/11).
 ALTER POLICY weekly_availability_parties_read ON public.weekly_availability
-  USING (partie_concernee(profile_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role);
+  USING (partie_concernee(profile_id) AND NOT COALESCE(( SELECT app_role() ) = 'controller'::app_role AND ( SELECT app_account_valid() ), false));
 
 ALTER POLICY rule_overrides_parties_read ON public.rule_overrides
-  USING (partie_concernee(profile_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role);
+  USING (partie_concernee(profile_id) AND NOT COALESCE(( SELECT app_role() ) = 'controller'::app_role AND ( SELECT app_account_valid() ), false));
 
 -- mes_seances_v (planning global du contrôleur) : vue security_barrier, exécutée avec les droits du
 -- propriétaire, donc elle n'héritait pas du resserrement de `sessions`. Seule la branche
