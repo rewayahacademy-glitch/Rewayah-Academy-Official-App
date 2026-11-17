@@ -496,6 +496,12 @@ verify_jwt = true
 [functions.kyc-confirme]
 verify_jwt = true
 
+# PX-KYC-1 (17/11/2026) : lecture automatique des pieces d'identite par un modele de vision. Isolee de Praxis. L'appelant
+# est la direction en aal2 (`direction_kyc_lecture_lancer`, rejouee en base) ; la lecture est FERMEE par defaut
+# (reglage `private.kyc_lecture_reglages`) et la cle du fournisseur est un secret du serveur (ANTHROPIC_API_KEY).
+[functions.piece-identite-lecture]
+verify_jwt = true
+
 # OAuth server configuration
 [auth.oauth_server]
 # Enable OAuth server functionality
