@@ -112,6 +112,10 @@ List<String> gestesFauxServeur({
     if (sansPause &&
         etape == EtapeCandidature.verifications &&
         etat == EtatCandidature.decisionEnAttente)
+      'refaire_entretien',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        etat == EtatCandidature.decisionEnAttente)
       'valider_piece',
   ];
 }
@@ -343,6 +347,7 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
     'definirResponsable': true,
     'validerPiece': true,
     'dispenserEntretien': true,
+    'refaireEntretien': true,
     'agirEnLot': true,
   },
   listes: ListesGestes(

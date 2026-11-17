@@ -34,6 +34,7 @@ String libelleGeste(GesteCandidature geste) {
     GesteCandidature.rouvrir => g.rouvrir,
     GesteCandidature.definirResponsable => g.responsable,
     GesteCandidature.dispenserEntretien => g.dispenserEntretien,
+    GesteCandidature.refaireEntretien => g.refaireEntretien,
   };
 }
 
@@ -58,6 +59,7 @@ String libelleConsequence(GesteCandidature geste) {
     GesteCandidature.rouvrir => c.rouvrir,
     GesteCandidature.definirResponsable => c.responsable,
     GesteCandidature.dispenserEntretien => c.dispenserEntretien,
+    GesteCandidature.refaireEntretien => c.refaireEntretien,
   };
 }
 
@@ -82,6 +84,7 @@ String libelleRetour(GesteCandidature geste) {
     GesteCandidature.rouvrir => r.rouvrir,
     GesteCandidature.definirResponsable => r.responsable,
     GesteCandidature.dispenserEntretien => r.dispenserEntretien,
+    GesteCandidature.refaireEntretien => r.refaireEntretien,
   };
 }
 

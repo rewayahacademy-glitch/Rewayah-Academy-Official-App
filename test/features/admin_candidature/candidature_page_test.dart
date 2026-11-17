@@ -1683,6 +1683,90 @@ void main() {
       },
     );
 
+    // REFAIRE-ENTRETIEN (BE-1h, pilote 16/11/2026) : « Refaire l'entretien ».
+    for (final (String nom, EtatCandidature etat, bool propose) cas
+        in <(String, EtatCandidature, bool)>[
+          ('decision en attente', EtatCandidature.decisionEnAttente, true),
+          ('entretien a planifier', EtatCandidature.entretienAPlanifier, false),
+          ('entretien planifie', EtatCandidature.entretienPlanifie, false),
+        ]) {
+      testWidgets(
+        'refaire l\'entretien : ${cas.$1}, ${cas.$3 ? 'propose' : 'pas propose'}',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            _port(
+              detail: detailTest(
+                etape: EtapeCandidature.verifications,
+                etat: cas.$2,
+                paiement: EtatVersement.compatible,
+              ),
+            ),
+          );
+          final List<String> autres = await _menuDossier(tester);
+          expect(
+            autres.contains(t.admin.candidatures.gestes.refaireEntretien),
+            cas.$3,
+          );
+        },
+      );
+    }
+
+    testWidgets('refaire l\'entretien : pas propose en pause', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _port(
+          detail: detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.decisionEnAttente,
+            paiement: EtatVersement.compatible,
+            enPause: true,
+          ),
+        ),
+      );
+      final List<String> autres = await _menuDossier(tester);
+      expect(
+        autres.contains(t.admin.candidatures.gestes.refaireEntretien),
+        isFalse,
+      );
+    });
+
+    testWidgets('refaire l\'entretien : un motif ecrit, puis le geste part', (
+      WidgetTester tester,
+    ) async {
+      final FauxCandidaturesDirection port = _port(
+        detail: detailTest(
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.decisionEnAttente,
+          paiement: EtatVersement.compatible,
+        ),
+      );
+      await _monter(tester, port);
+      await _geste(tester, GesteCandidature.refaireEntretien);
+      // La consequence se dit avant le geste (K-58).
+      expect(
+        find.text(t.admin.candidatures.consequences.refaireEntretien),
+        findsOneWidget,
+      );
+      await _valider(tester);
+      expect(port.appelsGeste, isEmpty);
+      expect(
+        find.text(t.admin.candidatures.feuille.motifManquant),
+        findsOneWidget,
+      );
+      await _saisirMotif(tester, 'Un second avis est necessaire.');
+      await _valider(tester);
+      final DemandeGeste d = port.appelsGeste.single.demande;
+      expect(d.geste, GesteCandidature.refaireEntretien);
+      expect(d.motif, 'Un second avis est necessaire.');
+      expect(
+        find.text(t.admin.candidatures.retours.refaireEntretien),
+        findsOneWidget,
+      );
+    });
+
     testWidgets(
       'mettre en pause : un message, un motif, une reprise facultative',
       (WidgetTester tester) async {

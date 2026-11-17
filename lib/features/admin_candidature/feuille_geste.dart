@@ -426,6 +426,13 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           categorie: _categorie!,
           motif: motif,
         );
+      case GesteCandidature.refaireEntretien:
+        return DemandeGeste.refaireEntretien(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
+        );
     }
   }
 

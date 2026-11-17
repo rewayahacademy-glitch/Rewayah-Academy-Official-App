@@ -77,7 +77,11 @@ enum GesteCandidature {
 
   /// Dispenser d'entretien (transition 45, `dispenser_entretien`, BE-1g) : la
   /// candidature passe a la decision comme apres un entretien tenu.
-  dispenserEntretien('dispenserEntretien');
+  dispenserEntretien('dispenserEntretien'),
+
+  /// Refaire l'entretien (transition 46, `refaire_entretien`, BE-1h) : la
+  /// candidature revient de la decision a l'entretien a planifier.
+  refaireEntretien('refaireEntretien');
 
   const GesteCandidature(this.capacite);
 
@@ -106,6 +110,7 @@ enum GesteCandidature {
     definirResponsable => 'definir_responsable',
     validerPiece => 'valider_piece',
     dispenserEntretien => 'dispenser_entretien',
+    refaireEntretien => 'refaire_entretien',
   };
 
   /// Le geste que l'ecran connait pour ce nom du serveur, ou `null` : un nom
@@ -131,6 +136,7 @@ enum GesteCandidature {
     refuser ||
     consignerRetrait ||
     dispenserEntretien ||
+    refaireEntretien ||
     rouvrir => true,
     modifierComplement ||
     admettreVerifications ||
@@ -484,6 +490,20 @@ class DemandeGeste {
     versionAttendue: versionAttendue,
     cleIdempotence: cleIdempotence,
     categorieDispense: categorie,
+    motif: motif,
+  );
+
+  /// Refaire l'entretien : un [motif] ecrit, que le serveur exige.
+  factory DemandeGeste.refaireEntretien({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.refaireEntretien,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
     motif: motif,
   );
 
