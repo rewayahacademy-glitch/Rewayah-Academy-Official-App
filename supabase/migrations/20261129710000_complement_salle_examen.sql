@@ -35,6 +35,13 @@ BEGIN
      OR pg_catalog.to_regprocedure('private.candidature_condition(public.candidatures,text)') IS NULL THEN
     RAISE EXCEPTION 'COMPLEMENT-SALLE-EXAMEN : dependances absentes (moteur des gestes, complement en cours)';
   END IF;
+  -- Le numero de transition de la regle neuve (47 ; 46 est refaire_entretien) ne doit appartenir a aucune autre
+  -- regle. Le moteur n'exige pas des numeros uniques (cle primaire : geste, variante) : les variantes d'un meme geste
+  -- partagent le leur (7 pour demander_complement, variantes 1, 3 et 4), mais un geste etranger ne le prend pas.
+  IF EXISTS (SELECT 1 FROM private.candidature_gestes_regles r
+              WHERE r.transition = 47 AND r.geste <> 'annuler_complement') THEN
+    RAISE EXCEPTION 'COMPLEMENT-SALLE-EXAMEN : la transition 47 est deja prise par une autre regle';
+  END IF;
 END
 $preflight$;
 
