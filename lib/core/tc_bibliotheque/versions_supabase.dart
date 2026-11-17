@@ -41,7 +41,9 @@ class VersionsSupabase implements PortVersionsRessource {
         params: <String, dynamic>{'p_resource_id': resourceId},
       );
     } on PostgrestException catch (e) {
-      throw EchecCatalogue(e.code == '42501' ? 'non autorise' : 'refus du serveur');
+      throw EchecCatalogue(
+        e.code == '42501' ? 'non autorise' : 'refus du serveur',
+      );
     } on Exception {
       throw const EchecCatalogue('hors ligne');
     }

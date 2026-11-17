@@ -191,9 +191,7 @@ void main() {
             verifierUnSeulBoutonPlein(tester);
             // Le haut (A qui, et l'apercu sur ordinateur), puis le bas (le
             // message, les options repliees, le bouton).
-            await tester.ensureVisible(
-              find.text(t.com.annonces.simple.aQui),
-            );
+            await tester.ensureVisible(find.text(t.com.annonces.simple.aQui));
             await stabiliser(tester);
             await capturerVue(tester, 'annonces-simples/$nom-haut');
             await tester.ensureVisible(find.byKey(PublieurAnnonce.cleAction));

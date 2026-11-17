@@ -480,24 +480,30 @@ void main() {
       return c;
     }
 
-    test('la page fermee pendant l\'envoi ne fait pas lever le controleur', () async {
-      final FauxImportCandidatures port = FauxImportCandidatures()
-        ..confirmationRetenue = Completer<RapportImport>();
-      final ControleurImportCandidatures c = await aLaConfirmation(port);
-      final Future<void> envoi = c.confirmer();
-      expect(c.occupe, isTrue);
-      c.dispose();
-      port.confirmationRetenue!.complete(rapportTest());
-      await envoi;
-    });
+    test(
+      'la page fermee pendant l\'envoi ne fait pas lever le controleur',
+      () async {
+        final FauxImportCandidatures port = FauxImportCandidatures()
+          ..confirmationRetenue = Completer<RapportImport>();
+        final ControleurImportCandidatures c = await aLaConfirmation(port);
+        final Future<void> envoi = c.confirmer();
+        expect(c.occupe, isTrue);
+        c.dispose();
+        port.confirmationRetenue!.complete(rapportTest());
+        await envoi;
+      },
+    );
 
-    test('un nom de classeur a espaces de bord part sans eux, comme la reference', () async {
-      final FauxImportCandidatures port = FauxImportCandidatures();
-      final ControleurImportCandidatures c = await aLaConfirmation(port);
-      expect(sansEspaces('  Classeur  '), 'Classeur');
-      await c.confirmer();
-      expect(port.confirmations.last.classeur, sansEspaces(c.noms.classeur));
-    });
+    test(
+      'un nom de classeur a espaces de bord part sans eux, comme la reference',
+      () async {
+        final FauxImportCandidatures port = FauxImportCandidatures();
+        final ControleurImportCandidatures c = await aLaConfirmation(port);
+        expect(sansEspaces('  Classeur  '), 'Classeur');
+        await c.confirmer();
+        expect(port.confirmations.last.classeur, sansEspaces(c.noms.classeur));
+      },
+    );
 
     test('rien n\'est dit importe avant la reponse du serveur', () async {
       final FauxImportCandidatures port = FauxImportCandidatures()
