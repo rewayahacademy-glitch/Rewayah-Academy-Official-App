@@ -21584,6 +21584,10 @@ class _Traductions$recrutement$entretien$notifications$ar extends Traductions$re
 	@override String reserveDirectionQuand({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ⁨${quand}⁩.';
 	@override String get rappelDirection => 'تُجري مقابلة تبدأ قريبًا.';
 	@override String rappelDirectionQuand({required Object quand}) => 'تُجري مقابلة يوم ⁨${quand}⁩.';
+	@override String get annule => 'لن تُجرى المقابلة التي كنت تُجريها.';
+	@override String get annuleRefus => 'لن تُجرى المقابلة التي كنت تُجريها: رُفض طلب الترشح.';
+	@override String get annuleRetrait => 'لن تُجرى المقابلة التي كنت تُجريها: سُحب طلب الترشح.';
+	@override String get annulePause => 'لن تُجرى المقابلة التي كنت تُجريها: طلب الترشح في وضع الإيقاف المؤقت.';
 }
 
 // Path: recrutement.partage.fait
@@ -39958,6 +39962,10 @@ extension on TraductionsAr {
 			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ⁨${quand}⁩.',
 			'recrutement.entretien.notifications.rappelDirection' => 'تُجري مقابلة تبدأ قريبًا.',
 			'recrutement.entretien.notifications.rappelDirectionQuand' => ({required Object quand}) => 'تُجري مقابلة يوم ⁨${quand}⁩.',
+			'recrutement.entretien.notifications.annule' => 'لن تُجرى المقابلة التي كنت تُجريها.',
+			'recrutement.entretien.notifications.annuleRefus' => 'لن تُجرى المقابلة التي كنت تُجريها: رُفض طلب الترشح.',
+			'recrutement.entretien.notifications.annuleRetrait' => 'لن تُجرى المقابلة التي كنت تُجريها: سُحب طلب الترشح.',
+			'recrutement.entretien.notifications.annulePause' => 'لن تُجرى المقابلة التي كنت تُجريها: طلب الترشح في وضع الإيقاف المؤقت.',
 			'recrutement.partage.titre' => 'ساعد شخصًا على تعلّم كلام الله',
 			'recrutement.partage.titreFemme' => 'ساعدي أختًا على تعلّم كلام الله',
 			'recrutement.partage.facultatif' => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
@@ -40056,12 +40064,12 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p2.remuneration.titre' => 'راتب موضَّح',
 			'recrutement.parcours.presentation.p2.remuneration.texte' => 'راتبك جزء من السعر الذي يدفعه كل طالب حاضر. يُشرح لك بالنسبة المئوية قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.presentation.p3.titre' => 'كيف يجري طلب ترشحك',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.presentation.p3.intro' => 'ثلاث مراحل، داخل التطبيق.',
 			'recrutement.parcours.presentation.p3.examen.titre' => 'طلب ترشحك',
 			'recrutement.parcours.presentation.p3.examen.texte' => 'تجيب عن الأسئلة، وتقرأ اتفاقاتنا وتقبلها، وتودع صورتك ووثيقة هويتك، ثم ترسل طلب ترشحك. تقرأه الإدارة.',
 			'recrutement.parcours.presentation.p3.entretien.titre' => 'لنتعارف',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.presentation.p3.entretien.texte' => 'إذا اختير طلب ترشحك، تختار موعدًا وتستقبلك الإدارة عبر الفيديو، داخل التطبيق.',
 			'recrutement.parcours.presentation.p3.verification.titre' => 'مرحبًا بك في الفريق',
 			'recrutement.parcours.presentation.p3.verification.texte' => 'حين يكتمل كل شيء، تنضم إلى فريق معلمي الأكاديمية، داخل التطبيق.',
@@ -40570,12 +40578,12 @@ extension on TraductionsAr {
 			'sansDonnees.beneficiaires' => 'تعذّر تحميل المستفيدين',
 			'sansDonnees.profilPaiement' => 'تعذّر تحميل ملف الدفع هذا',
 			'argent.transparence.titre' => 'أسعارنا بكل شفافية',
+			_ => null,
+		} ?? switch (path) {
 			'argent.transparence.lien' => 'أسعارنا بكل شفافية',
 			'argent.transparence.intro' => 'هكذا يتوزع كل دفعة يدفعها الطالب، بندًا بندًا، بالنسب المئوية.',
 			'argent.transparence.repartitionTitre' => 'أين تذهب كل دفعة',
 			'argent.transparence.version' => ({required Object date}) => 'تقدير للأسعار المعمول بها ابتداءً من ⁨${date}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.part' => ({required Object valeur}) => '⁨${valeur}⁩ ٪',
 			'argent.transparence.virgule' => '٫',
 			'argent.transparence.total' => 'المجموع',
@@ -41084,12 +41092,12 @@ extension on TraductionsAr {
 			'admissions.rechercherAide' => 'اسم أو عنوان بريد إلكتروني أو مرجع.',
 			'admissions.lectureErreur' => 'لا تظهر الطلبات الآن. أعد المحاولة بعد قليل.',
 			'admissions.vide' => 'لا طلبات في الوقت الحالي.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.videRecherche' => 'لا طلب يطابق هذا البحث.',
 			'admissions.pagePrecedente' => 'الصفحة السابقة',
 			'admissions.pageSuivante' => 'الصفحة التالية',
 			'admissions.pageSur' => ({required Object n, required Object total}) => 'الصفحة ⁨${n}⁩ من ⁨${total}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.feuilleTitre' => ({required Object deNom}) => 'طلب ⁨${deNom}⁩',
 			'admissions.ouvrir' => ({required Object deNom}) => 'فتح طلب ⁨${deNom}⁩',
 			'admissions.recueLe' => 'تاريخ الاستلام',
@@ -41598,12 +41606,12 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.question' => 'هل هذه الأعداد هي ما كنتم تتوقعونه؟',
 			'candidatsFlux.importFormulaires.comptes.explication' => 'هذا ما عدّته رواية في الملف. قارنوه بحصيلتكم قبل التأكيد.',
 			'candidatsFlux.importFormulaires.comptes.nouvelles' => 'جديدة',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.nouvellesAide' => 'غير معروفة بعد: ستُسجَّل.',
 			'candidatsFlux.importFormulaires.comptes.dejaConnues' => 'معروفة سابقًا',
 			'candidatsFlux.importFormulaires.comptes.dejaConnuesAide' => 'مسجَّلة سابقًا: لا يتغيّر شيء.',
 			'candidatsFlux.importFormulaires.comptes.ignorees' => 'متجاهَلة',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'أسطر فارغة أو مكررة.',
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
@@ -42112,12 +42120,12 @@ extension on TraductionsAr {
 			'calendrier.dates.feuille.champTranche' => 'الفئة العمرية',
 			'calendrier.dates.feuille.champClasse' => 'الفصل',
 			'calendrier.dates.feuille.champDu' => 'اليوم الأول',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.feuille.champAu' => 'اليوم الأخير',
 			'calendrier.dates.feuille.aideDates' => 'التواريخ بالتقويم الميلادي وتُدخَل كل عام: التطبيق لا يحسب التقويم القمري.',
 			'calendrier.dates.feuille.enregistrer' => 'حفظ',
 			'calendrier.dates.feuille.aucuneClasse' => 'لا يوجد فصل للاختيار حاليًا.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.publication.titre' => 'نشر الإغلاق',
 			'calendrier.dates.publication.phrase' => 'في هذه الأيام لا تُنشأ حصص جديدة، ويتأخر الموعد الأقصى لمرحلة كل طالب معني بالمدة نفسها. الحصص المقررة سلفًا في تلك الأيام تُوضع جانبًا دون حذف، وسحب الإغلاق قبل بدايته يعيدها. وبعد أن يبدأ الإغلاق لا يمكن سحبه ولا اختصاره.',
 			'calendrier.dates.publication.confirmer' => 'نشر الإغلاق',
