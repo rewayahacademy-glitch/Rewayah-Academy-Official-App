@@ -27,6 +27,7 @@ import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import '../mfa_controleur/double_verification.dart';
 import 'choix_conversations_essai.dart';
+import 'lots_praxis_section.dart';
 
 /// Les cles des widgets de la section, pour les tests.
 abstract final class ClesPraxis {
@@ -464,6 +465,10 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _reglages(context, etat),
+        Ecart.vXxl,
+        // PX-BD-0 : les lots que Praxis a prepares et que la direction confirme
+        // en lui disant leur code.
+        const LotsPraxisSection(),
         Ecart.vXxl,
         SectionHeader(
           titre: t.admin.praxis.clesTitre,
