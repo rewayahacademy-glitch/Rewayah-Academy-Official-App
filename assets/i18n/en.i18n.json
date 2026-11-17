@@ -4793,6 +4793,7 @@
         "entree": "{nom} entered at {heure}",
         "sortie": "{nom} left at {heure}",
         "autreIssue": "Other outcome (cancelled, absence)",
+        "deplacer": "Move the interview",
         "resultat": {"titre": "Interview result", "concluant": "Conclusive", "nonConcluant": "Not conclusive", "aRefaire": "To redo", "texteConcluant": "Conclusive interview.", "texteNonConcluant": "Interview not conclusive.", "motifARefaire": "Interview to redo.", "retourConcluant": "Conclusive interview. You can welcome them into the team.", "retourNonConcluant": "Interview not conclusive. You can choose not to welcome them.", "retourARefaire": "Interview to redo. The person chooses a new time.", "refusNonParticipant": "Only a person who led the interview can give its result. Ask them to do it from this file.", "refusPasCommence": "The interview has not started yet. Come back at the start time.", "refusDejaConsigne": "The result is already recorded. Reload the file.", "refusAutre": "The result is not confirmed. Try again in a moment."},
         "consigner": "Record the outcome",
         "dernier": "Last interview: {date}. {issue}.",
@@ -4844,7 +4845,9 @@
           "retirerConsequence": "{nom} will no longer take part in this interview.",
           "consignerConsequence": "The outcome is written in the application's history and no longer changes.",
           "issueManquante": "Choose the outcome.",
-          "envoyerConsigner": "Record"
+          "envoyerConsigner": "Record",
+          "deplacerConsequence": "The person and the participants receive the new time of the interview. The participants stay the same. The old time is no longer used.",
+          "envoyerDeplacer": "Move"
         },
         "refus": {
           "fondateurs": "At least {exiges} founders are needed among the participants. Founders chosen: {presents}.",
@@ -4856,6 +4859,8 @@
           "autreCote": "A person chosen is not on the side of this application.",
           "sansCompte": "The person does not have an account yet: the interview cannot be scheduled.",
           "dejaPlanifie": "An interview is already scheduled for this application.",
+          "commence": "This interview has already started: it can no longer be moved.",
+          "memeCreneau": "This is already the time of this interview. Choose another day or another time.",
           "consigne": "This interview is already recorded: it no longer changes.",
           "dernier": "The interview keeps at least one participant.",
           "absent": "This person no longer takes part in the interview.",
@@ -4870,6 +4875,7 @@
           "planifie": "Interview scheduled.",
           "ajoute": "{nom} takes part in the interview.",
           "retire": "{nom} no longer takes part in the interview.",
+          "deplace": "Interview moved.",
           "consigne": "Outcome recorded."
         }
       }
