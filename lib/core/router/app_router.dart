@@ -47,6 +47,7 @@ import '../../features/admin_dossiers/dossiers_page.dart'
     deferred as d_dossiers_page;
 import '../../features/admin_enseignants/enseignants_page.dart'
     deferred as d_enseignants_page;
+import '../../features/admin_equipe/equipe_page.dart' deferred as d_equipe_page;
 import '../../features/admin_finance/finance_page.dart'
     deferred as d_finance_page;
 import '../../features/admin_groupes/groupes_page.dart'
@@ -357,6 +358,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_diagnostics_page', d_diagnostics_page.loadLibrary),
   ('d_dossiers_page', d_dossiers_page.loadLibrary),
   ('d_encaissements_page', d_encaissements_page.loadLibrary),
+  ('d_equipe_page', d_equipe_page.loadLibrary),
   ('d_evaluations_page', d_evaluations_page.loadLibrary),
   ('d_fiche_page', d_fiche_page.loadLibrary),
   ('d_fil_profil_paiement_page', d_fil_profil_paiement_page.loadLibrary),
@@ -2342,6 +2344,18 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               // BE-SUIVANT : la file d'ou l'on vient (filtre, tri).
               requete: etat.uri.queryParameters,
             ),
+          ),
+        ),
+      ),
+      // BE-2b : l'ecran « Equipe » (missions et invitations d'associes).
+      GoRouteSure(
+        path: Routes.adminPersonnesEquipe,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_equipe_page',
+            charger: d_equipe_page.loadLibrary,
+            construire: () => d_equipe_page.EquipePage(),
           ),
         ),
       ),

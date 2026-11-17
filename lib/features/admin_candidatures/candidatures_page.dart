@@ -49,7 +49,6 @@ import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
-import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/recrutement/port_invitations_comptable.dart';
@@ -57,8 +56,7 @@ import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
-import '../../core/session/session_controleur.dart';
-import '../../core/session/session_state.dart';
+import '../../core/session/est_associe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
@@ -876,9 +874,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     );
     // BE-2b : l'associe ne voit que la page des candidatures (le serveur filtre
     // ses dossiers sur ses missions).
-    final bool associe = ref.watch(
-      sessionProvider.select((SessionState s) => s.role == AppRole.associe),
-    );
+    final bool associe = ref.watch(estAssocieProvider);
     if (valeur.hasValue) _derniere = valeur.requireValue;
     if (valeur.hasValue && _filtre.estVide) {
       _totalToutes = valeur.requireValue.total;

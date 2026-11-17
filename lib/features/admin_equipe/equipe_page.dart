@@ -79,6 +79,9 @@ class EquipePage extends ConsumerStatefulWidget {
     'equipe-nouvelle-mission',
   );
 
+  /// La cle du menu des autres commandes.
+  static const Key cleMenuCommandes = ValueKey<String>('equipe-menu-commandes');
+
   /// La cle de « Accorder une mission ».
   static const Key cleAccorder = ValueKey<String>('equipe-accorder');
 
@@ -187,7 +190,6 @@ class _EtatEquipe extends ConsumerState<EquipePage> {
     return PageShell(
       key: EquipePage.clePage,
       titre: e.titre,
-      sousTitre: e.sousTitre,
       entete: SousNavigationDomaine(
         onglets: ongletsPersonnes(),
         indexActif: index,
@@ -224,27 +226,38 @@ class _EtatEquipe extends ConsumerState<EquipePage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
-        // En tete : seulement deux commandes, rien de plus en permanence.
-        Wrap(
-          spacing: AppSpacing.md,
-          runSpacing: AppSpacing.md,
-          children: <Widget>[
-            ActionPrincipale(
-              key: EquipePage.cleInviter,
-              libelle: e.inviter,
-              niveau: NiveauAction.secondaire,
-              pleineLargeur: false,
-              onPress: horsLigne ? null : _inviter,
-            ),
-            ActionPrincipale(
-              key: EquipePage.cleNouvelleMission,
-              libelle: e.nouvelleMission,
-              niveau: NiveauAction.secondaire,
-              pleineLargeur: false,
-              onPress: horsLigne ? null : _nouvelleMission,
-            ),
-          ],
-        ),
+        // En tete, une seule rangee (mesure du premier nom : 360 x 800, moins de
+        // 300 points) : le geste courant, et un menu pour les deux autres. Hors
+        // ligne, aucune commande : un geste qui ne peut pas aboutir n'est pas
+        // rendu (K-56).
+        if (!horsLigne)
+          Row(
+            children: <Widget>[
+              Flexible(
+                child: ActionPrincipale(
+                  key: EquipePage.cleAccorder,
+                  libelle: e.accorder,
+                  niveau: NiveauAction.tertiaire,
+                  pleineLargeur: false,
+                  compacte: true,
+                  onPress: _accorder,
+                ),
+              ),
+              Ecart.hSm,
+              MenuActions(
+                key: EquipePage.cleMenuCommandes,
+                points: true,
+                libelle: e.plusActions,
+                actions: <EntreeAction>[
+                  EntreeAction(libelle: e.inviter, onChoix: _inviter),
+                  EntreeAction(
+                    libelle: e.nouvelleMission,
+                    onChoix: _nouvelleMission,
+                  ),
+                ],
+              ),
+            ],
+          ),
         if (_message != null) ...<Widget>[
           Ecart.vLg,
           BandeauAttention(
@@ -254,13 +267,7 @@ class _EtatEquipe extends ConsumerState<EquipePage> {
             ton: TonEtat.succes,
           ),
         ],
-        Ecart.vXl,
-        SectionHeader(
-          titre: e.porteurs,
-          libelleAction: e.accorder,
-          onAction: horsLigne ? null : _accorder,
-        ),
-        Ecart.vMd,
+        Ecart.vSm,
         BlocAsynchrone<List<Attribution>>(
           valeur: attributions,
           squelette: const Skeleton.texte(lignes: 3),
