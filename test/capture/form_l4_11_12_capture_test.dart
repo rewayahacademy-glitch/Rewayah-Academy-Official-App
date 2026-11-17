@@ -7,6 +7,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/agent/questions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
@@ -19,6 +20,7 @@ import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 
 import '../features/support_form_l2.dart';
 import '../support/faux_service_praxis.dart';
+import '../support/faux_service_questions_praxis.dart';
 import '../support/harnais.dart' show FauxSelecteurFichier, FauxServiceDossier;
 import 'outil_capture.dart';
 
@@ -76,6 +78,9 @@ Future<void> _ouvrir(
     ...surchargesFormL2(comptes: FauxComptesFormL2(comptesFormL2)),
     serviceAgentProvider.overrideWithValue(_Agents()),
     servicePraxisProvider.overrideWithValue(FauxServicePraxis()),
+    serviceQuestionsPraxisProvider.overrideWithValue(
+      const QuestionsPraxisVides(),
+    ),
     serviceDossierProvider.overrideWithValue(FauxServiceDossier()),
     selecteurFichierProvider.overrideWithValue(FauxSelecteurFichier(null)),
   ];
