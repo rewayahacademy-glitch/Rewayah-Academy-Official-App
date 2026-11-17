@@ -54,12 +54,17 @@ declare
     -- PX-1 (16/11) : les trois portes de la direction pour Praxis. Qui peut appeler : la direction seulement, garde positive
     -- public.app_account_valid(), public.app_role() = 'admin' et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit :
     -- emettre_cle une ligne de private.praxis_cles (l'empreinte sha256, jamais le secret) plus une ligne d'audit ;
-    -- revoquer_cle la revocation d'une cle (date, auteur, motif) plus une ligne d'audit ; regler les trois reglages
-    -- praxis.actif, praxis.autonome, praxis.envois_par_heure de app_config plus une ligne d'audit. Ce qu'elles n'ecrivent
+    -- revoquer_cle la revocation d'une cle (date, auteur, motif) plus une ligne d'audit ; regler les reglages de
+    -- private.praxis_reglages (actif, autonome, plafond par heure) plus une ligne d'audit. Ce qu'elles n'ecrivent
     -- jamais : un compte, un role, un message, une annonce. Les outils de Praxis (praxis_*) ne sont executables que par
     -- service_role : hors de cette liste.
     'direction_praxis_emettre_cle(text,text,timestamp with time zone,uuid)',
     'direction_praxis_regler(boolean,boolean,integer)',
+    -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
+    -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
+    -- praxis_journal_lu : qui a lu, la limite et le curseur, jamais un texte) : c'est pourquoi elle est VOLATILE.
+    -- direction_praxis_etat est STABLE et ne laisse aucune trace : hors de cette liste.
+    'direction_praxis_journal(integer,bigint)',
     'direction_praxis_revoquer_cle(uuid,text,uuid)',
     -- BE-2a-1 (16/11) : les missions. Qui peut appeler : la direction seulement, garde positive public.app_role() = 'admin',
     -- public.app_account_valid() et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit : une ligne de private.missions,
