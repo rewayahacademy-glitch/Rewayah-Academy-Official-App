@@ -430,6 +430,65 @@ BEGIN
 END
 $mission$;
 
+-- ============================================================
+-- 5. Bibliotheque : l'associe ne lit AUCUN document hors `publique` (audit du pilote, 17/11/2026)
+--    Cause : la politique library_resource_lecture et private.n4_ressource_lisible donnent
+--    `inscrits` a tout compte valide, et private.tranche_autorisee rend true pour tout role autre
+--    qu'eleve ou parent. Correctif : `inscrits` n'est lisible que par les six roles qui l'avaient
+--    deja ; l'associe garde `publique` seulement. Trois retouches par ancrage (une ancre chacune).
+--    autoriser_lecture_version refuse deja l'associe a sa porte de role ; la meme regle y est posee
+--    pour que les trois chemins disent la meme chose (son empreinte F86 est rafraichie).
+-- ============================================================
+DO $biblio$
+DECLARE
+  v_qual text;
+  v_def text;
+  v_md5 text;
+  v_com text;
+BEGIN
+  -- a. La politique de lecture de library_resource (USING seulement ; role, commande et WITH CHECK inchanges).
+  SELECT pg_catalog.pg_get_expr(p.polqual, p.polrelid) INTO v_qual
+    FROM pg_catalog.pg_policy p
+   WHERE p.polrelid = 'public.library_resource'::regclass AND p.polname = 'library_resource_lecture';
+  IF v_qual IS NULL THEN
+    RAISE EXCEPTION 'BE-2a-2 : politique library_resource_lecture introuvable';
+  END IF;
+  IF pg_catalog.strpos(v_qual, 'accountant') = 0 THEN
+    v_qual := pg_temp.remplacer(v_qual,
+      '(access_policy = ANY (ARRAY[''publique''::library_access_policy, ''inscrits''::library_access_policy]))',
+      '((access_policy = ''publique''::library_access_policy) OR ((access_policy = ''inscrits''::library_access_policy) AND ((SELECT app_role() AS app_role) = ANY (ARRAY[''admin''::app_role, ''accountant''::app_role, ''controller''::app_role, ''teacher''::app_role, ''guardian''::app_role, ''student''::app_role]))))',
+      'bibliotheque.politique');
+    EXECUTE pg_catalog.format('ALTER POLICY library_resource_lecture ON public.library_resource USING (%s)', v_qual);
+  END IF;
+
+  -- b. private.n4_ressource_lisible.
+  v_def := pg_catalog.pg_get_functiondef('private.n4_ressource_lisible(uuid)'::regprocedure);
+  IF pg_catalog.strpos(v_def, 'accountant') = 0 THEN
+    v_def := pg_temp.remplacer(v_def,
+      'r.access_policy IN (''publique'', ''inscrits'')',
+      '(r.access_policy = ''publique'' OR (r.access_policy = ''inscrits'' AND public.app_role() IN (''admin'', ''accountant'', ''controller'', ''teacher'', ''guardian'', ''student'')))',
+      'bibliotheque.n4');
+    EXECUTE v_def;
+  END IF;
+
+  -- c. public.autoriser_lecture_version (meme regle ; empreinte F86 rafraichie).
+  v_def := pg_catalog.pg_get_functiondef('public.autoriser_lecture_version(uuid)'::regprocedure);
+  IF pg_catalog.strpos(v_def, 'BE-2a-2') = 0 THEN
+    v_def := pg_temp.remplacer(v_def,
+      'r.access_policy in (''publique'', ''inscrits'')',
+      '(r.access_policy = ''publique'' OR (r.access_policy = ''inscrits'' AND v_role IN (''admin'', ''accountant'', ''controller'', ''teacher'', ''guardian'', ''student'')))  -- BE-2a-2',
+      'bibliotheque.lecture_version');
+    EXECUTE v_def;
+    v_md5 := pg_catalog.md5(pg_catalog.pg_get_functiondef('public.autoriser_lecture_version(uuid)'::regprocedure));
+    v_com := pg_catalog.obj_description('public.autoriser_lecture_version(uuid)'::regprocedure, 'pg_proc');
+    IF v_com LIKE '%md5_functiondef=%' THEN
+      v_com := pg_catalog.regexp_replace(v_com, 'md5_functiondef=[0-9A-Za-z_]+', 'md5_functiondef=' || v_md5);
+      EXECUTE pg_catalog.format('COMMENT ON FUNCTION public.autoriser_lecture_version(uuid) IS %L', v_com);
+    END IF;
+  END IF;
+END
+$biblio$;
+
 DO $postflight$
 DECLARE
   v_oid regprocedure;
@@ -467,6 +526,12 @@ BEGIN
           WHERE c.conrelid = 'public.profiles'::regclass AND c.conname = 'profiles_household_required')),
           'associe') = 0 THEN
     RAISE EXCEPTION 'BE-2a-2 : retouche absente';
+  END IF;
+  IF pg_catalog.strpos((SELECT pg_catalog.pg_get_expr(p.polqual, p.polrelid) FROM pg_catalog.pg_policy p
+        WHERE p.polrelid = 'public.library_resource'::regclass AND p.polname = 'library_resource_lecture'), 'accountant') = 0
+     OR pg_catalog.strpos(pg_catalog.pg_get_functiondef('private.n4_ressource_lisible(uuid)'::regprocedure), 'accountant') = 0
+     OR pg_catalog.strpos(pg_catalog.pg_get_functiondef('public.autoriser_lecture_version(uuid)'::regprocedure), 'BE-2a-2') = 0 THEN
+    RAISE EXCEPTION 'BE-2a-2 : retouche de la bibliotheque absente';
   END IF;
 END
 $postflight$;
