@@ -6727,12 +6727,12 @@
         "other": "{nombre} conversations cochées."
       },
       "essaiTrop(plural, param=nombre)": {
-        "one": "Dix conversations au plus : décochez-en une pour en choisir une autre.",
-        "other": "Dix conversations au plus : décochez-en une pour en choisir une autre."
+        "one": "Dix conversations au plus : décochez-en une pour en choisir une autre.",
+        "other": "Dix conversations au plus : décochez-en une pour en choisir une autre."
       },
-      "essaiListeErreur": "La liste de vos conversations n'a pas pu être lue. Vérifiez la connexion, puis réessayez.",
+      "essaiListeErreur": "La liste de vos conversations n'a pas pu être lue. Réessayez dans un instant.",
       "essaiAucune": "Aucune conversation à choisir. Créez d'abord une conversation de test avec un compte de test, puis revenez ici.",
-      "essaiAffinez": "Seules les {nombre} premières conversations sont montrées : affinez avec la recherche.",
+      "essaiAffinez": "Seules les {nombre} premières conversations sont montrées : affinez avec la recherche.",
       "reglageFait": "Réglage appliqué.",
       "erreurReglage": "Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.",
       "doubleVerification": "Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.",

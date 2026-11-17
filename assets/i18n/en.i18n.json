@@ -6637,7 +6637,7 @@
         "one": "Ten conversations at most: untick one to choose another.",
         "other": "Ten conversations at most: untick one to choose another."
       },
-      "essaiListeErreur": "Your conversation list could not be read. Check the connection, then try again.",
+      "essaiListeErreur": "Your conversation list could not be read. Try again in a moment.",
       "essaiAucune": "No conversation to choose. First create a test conversation with a test account, then come back here.",
       "essaiAffinez": "Only the first {nombre} conversations are shown: narrow them with the search.",
       "reglageFait": "Setting applied.",

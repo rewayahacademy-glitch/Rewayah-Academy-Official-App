@@ -6826,7 +6826,7 @@ class _Traductions$admin$praxis$en extends Traductions$admin$praxis$fr {
 		one: 'Ten conversations at most: untick one to choose another.',
 		other: 'Ten conversations at most: untick one to choose another.',
 	);
-	@override String get essaiListeErreur => 'Your conversation list could not be read. Check the connection, then try again.';
+	@override String get essaiListeErreur => 'Your conversation list could not be read. Try again in a moment.';
 	@override String get essaiAucune => 'No conversation to choose. First create a test conversation with a test account, then come back here.';
 	@override String essaiAffinez({required Object nombre}) => 'Only the first ${nombre} conversations are shown: narrow them with the search.';
 	@override String get reglageFait => 'Setting applied.';
@@ -33097,7 +33097,7 @@ extension on TraductionsEn {
 			'admin.praxis.essaiFin' => 'End the test',
 			'admin.praxis.essaiChoisies' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} conversation ticked.', other: '${nombre} conversations ticked.', ), 
 			'admin.praxis.essaiTrop' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: 'Ten conversations at most: untick one to choose another.', other: 'Ten conversations at most: untick one to choose another.', ), 
-			'admin.praxis.essaiListeErreur' => 'Your conversation list could not be read. Check the connection, then try again.',
+			'admin.praxis.essaiListeErreur' => 'Your conversation list could not be read. Try again in a moment.',
 			'admin.praxis.essaiAucune' => 'No conversation to choose. First create a test conversation with a test account, then come back here.',
 			'admin.praxis.essaiAffinez' => ({required Object nombre}) => 'Only the first ${nombre} conversations are shown: narrow them with the search.',
 			'admin.praxis.reglageFait' => 'Setting applied.',
