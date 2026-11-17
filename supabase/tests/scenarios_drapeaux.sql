@@ -100,10 +100,16 @@ INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES
  ('d2a00000-0000-4000-8000-0000000000c2','d2a00000-0000-4000-8000-0000000000e3');
 -- Les seances generees a la creation des Classes portent deja les eleves ;
 -- une seance posee en plus, pour un compte exact.
+-- DETTE-SCENARIO-DRAPEAUX (17/11/2026) : l'heure ne depend plus de l'heure de
+-- lancement. L'ancienne `now() + 20 jours` tombait, selon l'heure d'execution,
+-- sur la seance generee de la Classe C1 (lundi 09:00-10:00 UTC, meme
+-- enseignante) : `sessions_no_teacher_overlap`. A 23:00-23:45 UTC, aucune
+-- seance generee (09:00-10:00) ne chevauche, quel que soit le jour.
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id) VALUES
  ('d2a00000-0000-4000-8000-000000000501','d2a00000-0000-4000-8000-0000000000b1',
-  now() + interval '20 days', now() + interval '20 days 45 minutes', 'planned',
-  'd2a00000-0000-4000-8000-0000000000c1');
+  pg_catalog.date_trunc('day', pg_catalog.now() AT TIME ZONE 'UTC' + interval '20 days') AT TIME ZONE 'UTC' + interval '23 hours',
+  pg_catalog.date_trunc('day', pg_catalog.now() AT TIME ZONE 'UTC' + interval '20 days') AT TIME ZONE 'UTC' + interval '23 hours 45 minutes',
+  'planned', 'd2a00000-0000-4000-8000-0000000000c1');
 INSERT INTO public.session_participants(session_id, profile_id, role) VALUES
  ('d2a00000-0000-4000-8000-000000000501','d2a00000-0000-4000-8000-0000000000e1','student'),
  ('d2a00000-0000-4000-8000-000000000501','d2a00000-0000-4000-8000-0000000000e2','student');
