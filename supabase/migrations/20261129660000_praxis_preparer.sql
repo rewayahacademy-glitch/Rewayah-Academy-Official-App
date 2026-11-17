@@ -394,3 +394,192 @@ BEGIN
   END IF;
 END
 $postflight$;
+
+-- ====================================================================================================================
+-- B. Les propositions et praxis_preparer.
+-- Praxis n'ecrit QU'UNE PROPOSITION (geste, dossier, parametres, texte pour l'humain qui valide). Il n'execute jamais le geste, n'ecrit dans
+-- AUCUNE table de candidature. Le geste doit etre servi pour la ligne (la liste du moteur, dans les cotes de l'emetteur), sinon
+-- `geste_non_servi`. Plafond : 50 propositions ouvertes ; une seule ouverte par (dossier, geste) ; expiration a 72 heures ; cle d'idempotence.
+-- ====================================================================================================================
+CREATE TABLE private.praxis_propositions (
+  id uuid PRIMARY KEY DEFAULT pg_catalog.gen_random_uuid(),
+  geste text NOT NULL CHECK (geste IN ('admettre_verifications', 'demander_complement', 'planifier_entretien')),
+  -- Sans cle etrangere (aucun mot d'effacement dans ce fichier) : une proposition dont le dossier a disparu ne peut plus etre validee
+  -- (la validation relit le dossier) et expire seule.
+  candidature_id uuid NOT NULL,
+  version_candidature integer NOT NULL,
+  parametres jsonb NOT NULL DEFAULT '{}'::jsonb
+    CHECK (pg_catalog.jsonb_typeof(parametres) = 'object' AND pg_catalog.length(parametres::text) <= 2000),
+  texte text NOT NULL CHECK (pg_catalog.length(pg_catalog.btrim(texte)) BETWEEN 1 AND 1000),
+  statut text NOT NULL DEFAULT 'proposee' CHECK (statut IN ('proposee', 'validee', 'ecartee', 'expiree')),
+  cle_id uuid NOT NULL REFERENCES private.praxis_cles (id),
+  emise_par uuid NOT NULL REFERENCES public.profiles (id),
+  cle_idempotence uuid NOT NULL,
+  cree_le timestamptz NOT NULL DEFAULT pg_catalog.clock_timestamp(),
+  expire_le timestamptz NOT NULL,
+  traitee_le timestamptz,
+  traitee_par uuid REFERENCES public.profiles (id),
+  motif_ecart text CHECK (motif_ecart IS NULL OR pg_catalog.length(motif_ecart) <= 300),
+  resultat jsonb,
+  UNIQUE (cle_id, cle_idempotence)
+);
+ALTER TABLE private.praxis_propositions ENABLE ROW LEVEL SECURITY;
+REVOKE ALL ON TABLE private.praxis_propositions FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+CREATE UNIQUE INDEX praxis_propositions_ouverte_idx ON private.praxis_propositions (candidature_id, geste) WHERE statut = 'proposee';
+CREATE INDEX praxis_propositions_statut_idx ON private.praxis_propositions (statut, expire_le);
+
+-- Les propositions dont l'echeance est passee deviennent `expiree` (elles ne font rien sur le dossier).
+CREATE FUNCTION private.praxis_propositions_expirer()
+RETURNS void
+LANGUAGE sql
+SECURITY DEFINER
+SET search_path = ''
+AS $f$
+  UPDATE private.praxis_propositions SET statut = 'expiree' WHERE statut = 'proposee' AND expire_le <= pg_catalog.clock_timestamp();
+$f$;
+
+CREATE FUNCTION public.praxis_preparer(p_cle text, p_geste text, p_candidature text, p_parametres jsonb, p_texte text,
+                                       p_cle_idempotence uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $f$
+DECLARE
+  v_debut timestamptz := pg_catalog.clock_timestamp();
+  v_p record;
+  v_parametres jsonb := coalesce(p_parametres, '{}'::jsonb);
+  v_texte text := pg_catalog.btrim(coalesce(p_texte, ''));
+  v_c public.candidatures;
+  v_existante uuid;
+  v_id uuid;
+  v_codes text[];
+  v_elements text[];
+  v_inconnues text;
+  v_debut_rdv timestamptz;
+  v_duree integer;
+BEGIN
+  SELECT * INTO v_p FROM private.praxis_porte(p_cle);
+  IF v_p.cause IS NOT NULL THEN
+    IF v_p.cle_id IS NOT NULL THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', v_p.cause_interne, NULL, NULL, NULL, v_debut);
+    END IF;
+    RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
+  END IF;
+  IF NOT coalesce((SELECT r.donnees_reelles FROM private.praxis_reglages r), false) THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'donnees_reelles_fermees', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'donnees_reelles_fermees');
+  END IF;
+  IF p_geste IS NULL OR p_geste NOT IN ('admettre_verifications', 'demander_complement', 'planifier_entretien')
+     OR p_candidature IS NULL OR p_cle_idempotence IS NULL OR v_texte = ''
+     OR pg_catalog.jsonb_typeof(v_parametres) IS DISTINCT FROM 'object' THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'parametre', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
+  END IF;
+  IF pg_catalog.length(v_texte) > 1000 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'longueur', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'longueur');
+  END IF;
+  PERFORM pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('praxis-propositions', 0));
+  PERFORM private.praxis_propositions_expirer();
+  -- Rejeu : la meme cle d'idempotence, rien d'ecrit.
+  SELECT x.id INTO v_existante FROM private.praxis_propositions x
+   WHERE x.cle_id = v_p.cle_id AND x.cle_idempotence = p_cle_idempotence;
+  IF FOUND THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'rejoue', NULL, ARRAY[v_existante], NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('ok', true, 'id', v_existante, 'rejoue', true);
+  END IF;
+  SELECT c.* INTO v_c FROM public.candidatures c WHERE c.reference = p_candidature FOR SHARE;
+  IF NOT FOUND OR v_c.type_code <> 'enseignant' OR v_c.issue <> 'en_cours' THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'candidature_inconnue', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'candidature_inconnue');
+  END IF;
+  IF NOT (v_c.genre = ANY (v_p.cotes)) THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'cote', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'cote');
+  END IF;
+  IF NOT (p_geste = ANY (ARRAY(SELECT pg_catalog.jsonb_array_elements_text(private.praxis_gestes_ligne(v_c, v_p.cotes))))) THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'geste_non_servi', NULL, ARRAY[v_c.id], NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'geste_non_servi');
+  END IF;
+  -- Les parametres de chaque geste : des cles connues, des valeurs bornees, jamais un champ libre de plus.
+  IF p_geste = 'admettre_verifications' THEN
+    IF v_parametres <> '{}'::jsonb THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'parametre', NULL, ARRAY[v_c.id], NULL, v_debut);
+      RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
+    END IF;
+  ELSIF p_geste = 'demander_complement' THEN
+    SELECT pg_catalog.string_agg(k.cle, ',') INTO v_inconnues
+      FROM pg_catalog.jsonb_object_keys(v_parametres) AS k(cle) WHERE k.cle <> ALL (ARRAY['elements', 'motif']);
+    IF v_inconnues IS NOT NULL OR pg_catalog.jsonb_typeof(v_parametres -> 'elements') IS DISTINCT FROM 'array'
+       OR pg_catalog.jsonb_array_length(v_parametres -> 'elements') NOT BETWEEN 1 AND 20
+       OR EXISTS (SELECT 1 FROM pg_catalog.jsonb_array_elements(v_parametres -> 'elements') e
+                   WHERE pg_catalog.jsonb_typeof(e.value) <> 'string')
+       OR (v_parametres ? 'motif' AND (pg_catalog.jsonb_typeof(v_parametres -> 'motif') <> 'string'
+                                       OR pg_catalog.length(v_parametres ->> 'motif') > 300)) THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'parametre', NULL, ARRAY[v_c.id], NULL, v_debut);
+      RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
+    END IF;
+    -- Les pieces nommees sont dans la liste fermee du moteur pour ce dossier.
+    SELECT pg_catalog.array_agg(e.value #>> '{}' ORDER BY e.o) INTO v_elements
+      FROM pg_catalog.jsonb_array_elements(v_parametres -> 'elements') WITH ORDINALITY AS e(value, o);
+    v_codes := private.candidature_complement_codes(v_c.etape, v_c.type_code);
+    IF EXISTS (SELECT 1 FROM pg_catalog.unnest(v_elements) x WHERE NOT (x = ANY (v_codes))) THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'elements_invalides', NULL, ARRAY[v_c.id], NULL, v_debut);
+      RETURN pg_catalog.jsonb_build_object('erreur', 'elements_invalides', 'permis', pg_catalog.to_jsonb(v_codes));
+    END IF;
+  ELSE
+    SELECT pg_catalog.string_agg(k.cle, ',') INTO v_inconnues
+      FROM pg_catalog.jsonb_object_keys(v_parametres) AS k(cle) WHERE k.cle <> ALL (ARRAY['debut', 'duree_minutes']);
+    IF v_inconnues IS NOT NULL OR pg_catalog.jsonb_typeof(v_parametres -> 'debut') IS DISTINCT FROM 'string'
+       OR pg_catalog.jsonb_typeof(v_parametres -> 'duree_minutes') IS DISTINCT FROM 'number' THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'parametre', NULL, ARRAY[v_c.id], NULL, v_debut);
+      RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
+    END IF;
+    BEGIN
+      v_debut_rdv := (v_parametres ->> 'debut')::timestamptz;
+      v_duree := (v_parametres ->> 'duree_minutes')::numeric::integer;
+    EXCEPTION WHEN OTHERS THEN
+      v_debut_rdv := NULL;
+    END;
+    IF v_debut_rdv IS NULL OR v_duree IS NULL OR v_duree NOT BETWEEN 10 AND 120
+       OR v_debut_rdv <= pg_catalog.clock_timestamp() OR v_debut_rdv > pg_catalog.clock_timestamp() + interval '90 days' THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'parametre', NULL, ARRAY[v_c.id], NULL, v_debut);
+      RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
+    END IF;
+  END IF;
+  IF (SELECT pg_catalog.count(*) FROM private.praxis_propositions x WHERE x.statut = 'proposee') >= 50 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'plafond_propositions', NULL, ARRAY[v_c.id], NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'plafond_propositions');
+  END IF;
+  IF EXISTS (SELECT 1 FROM private.praxis_propositions x
+              WHERE x.candidature_id = v_c.id AND x.geste = p_geste AND x.statut = 'proposee') THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'deja_proposee', NULL, ARRAY[v_c.id], NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'deja_proposee');
+  END IF;
+  INSERT INTO private.praxis_propositions (geste, candidature_id, version_candidature, parametres, texte, cle_id, emise_par,
+                                           cle_idempotence, expire_le)
+  VALUES (p_geste, v_c.id, v_c.version, v_parametres, v_texte, v_p.cle_id, v_p.emise_par, p_cle_idempotence,
+          pg_catalog.clock_timestamp() + interval '72 hours')
+  RETURNING id INTO v_id;
+  PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'ok', NULL, ARRAY[v_id], v_texte, v_debut);
+  RETURN pg_catalog.jsonb_build_object('ok', true, 'id', v_id, 'expire_dans_heures', 72);
+END;
+$f$;
+
+REVOKE ALL ON FUNCTION private.praxis_propositions_expirer(), public.praxis_preparer(text, text, text, jsonb, text, uuid)
+  FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.praxis_preparer(text, text, text, jsonb, text, uuid) TO service_role;
+
+DO $postflight_b$
+BEGIN
+  IF NOT pg_catalog.has_function_privilege('service_role', 'public.praxis_preparer(text,text,text,jsonb,text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.praxis_preparer(text,text,text,jsonb,text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('authenticated', 'public.praxis_preparer(text,text,text,jsonb,text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('agent_ro', 'public.praxis_preparer(text,text,text,jsonb,text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('service_role', 'private.praxis_propositions_expirer()', 'EXECUTE')
+     OR NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'private.praxis_propositions'::pg_catalog.regclass) THEN
+    RAISE EXCEPTION 'PRAXIS-PX2 (B) : droits ou RLS incorrects apres installation';
+  END IF;
+END
+$postflight_b$;
