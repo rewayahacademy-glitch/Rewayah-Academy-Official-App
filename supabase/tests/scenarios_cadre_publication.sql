@@ -110,11 +110,14 @@ BEGIN
 EXCEPTION WHEN insufficient_privilege THEN
   RAISE NOTICE 'OK une version inventee est refusee (RLS)';
 END $$;
--- 6. Le contrat teacher_nda : jamais une acceptation hors francais (aucune
--- ligne nda en arabe n'existe, et sa policy lit locale = 'fr').
+-- 6. Le contrat teacher_nda : jamais une acceptation hors francais. Depuis LANGUES (directeur,
+-- 14/11/2026 ; migration 20261125400000_contrat_nda_traductions.sql) il existe deux lignes de
+-- courtoisie, ar et en, lues sous le texte francais ; le texte signe reste le francais (« la version
+-- francaise fait foi ») et la policy d'acceptation reste bornee a locale = 'fr' (controle suivant).
+-- Ancien controle (« aucune ligne teacher_nda hors fr ») perime par cette decision.
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM public.contract_texts t
-                                 WHERE t.contract_kind = 'teacher_nda' AND t.locale <> 'fr'),
-  'aucun contrat teacher_nda hors du francais');
+                                 WHERE t.contract_kind = 'teacher_nda' AND t.locale NOT IN ('fr', 'ar', 'en')),
+  'teacher_nda : aucune langue hors fr (texte signe), ar et en (courtoisie)');
 RESET ROLE;
 SELECT pg_temp.vrai(
   (SELECT pg_catalog.pg_get_expr(p.polwithcheck, p.polrelid) FROM pg_catalog.pg_policy p
