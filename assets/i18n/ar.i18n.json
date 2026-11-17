@@ -8742,7 +8742,7 @@
         "vide": "لا توجد أسئلة من Praxis.",
         "videDetail": "لم يطلب Praxis شيئًا من الفريق حتى الآن.",
         "erreur": "لم تظهر أسئلة Praxis. أعيدوا المحاولة.",
-        "horsLigne": "لا تُحمَّل أسئلة Praxis: يبدو أن الجهاز غير متصل.",
+        "horsLigne": "لم تُحمَّل أسئلة Praxis بعد. أعد تحميلها.",
         "colonneQuand": "وقت السؤال",
         "colonneQuestion": "السؤال",
         "colonneStatut": "الحالة",

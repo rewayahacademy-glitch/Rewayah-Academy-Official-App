@@ -6987,7 +6987,7 @@
         "vide": "Aucune question de Praxis.",
         "videDetail": "Praxis n'a rien demandé à l'équipe pour l'instant.",
         "erreur": "Les questions de Praxis ne se sont pas affichées. Réessayez.",
-        "horsLigne": "Les questions de Praxis ne se chargent pas : l'appareil semble hors ligne.",
+        "horsLigne": "Les questions de Praxis ne sont pas encore chargées. Rechargez-les.",
         "colonneQuand": "Posée",
         "colonneQuestion": "Question",
         "colonneStatut": "État",

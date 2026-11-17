@@ -34140,8 +34140,8 @@ class Traductions$admin$praxis$questions$fr {
 	/// fr: 'Les questions de Praxis ne se sont pas affichées. Réessayez.'
 	String get erreur => 'Les questions de Praxis ne se sont pas affichées. Réessayez.';
 
-	/// fr: 'Les questions de Praxis ne se chargent pas : l'appareil semble hors ligne.'
-	String get horsLigne => 'Les questions de Praxis ne se chargent pas : l\'appareil semble hors ligne.';
+	/// fr: 'Les questions de Praxis ne sont pas encore chargées. Rechargez-les.'
+	String get horsLigne => 'Les questions de Praxis ne sont pas encore chargées. Rechargez-les.';
 
 	/// fr: 'Posée'
 	String get colonneQuand => 'Posée';
@@ -61695,7 +61695,7 @@ extension on Traductions {
 			'admin.praxis.questions.vide' => 'Aucune question de Praxis.',
 			'admin.praxis.questions.videDetail' => 'Praxis n\'a rien demandé à l\'équipe pour l\'instant.',
 			'admin.praxis.questions.erreur' => 'Les questions de Praxis ne se sont pas affichées. Réessayez.',
-			'admin.praxis.questions.horsLigne' => 'Les questions de Praxis ne se chargent pas : l\'appareil semble hors ligne.',
+			'admin.praxis.questions.horsLigne' => 'Les questions de Praxis ne sont pas encore chargées. Rechargez-les.',
 			'admin.praxis.questions.colonneQuand' => 'Posée',
 			'admin.praxis.questions.colonneQuestion' => 'Question',
 			'admin.praxis.questions.colonneStatut' => 'État',

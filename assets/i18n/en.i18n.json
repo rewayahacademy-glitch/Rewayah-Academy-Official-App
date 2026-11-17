@@ -6894,7 +6894,7 @@
         "vide": "No questions from Praxis.",
         "videDetail": "Praxis has not asked the team anything yet.",
         "erreur": "Praxis's questions did not show. Try again.",
-        "horsLigne": "Praxis's questions are not loading: the device seems to be offline.",
+        "horsLigne": "Praxis's questions are not loaded yet. Reload them.",
         "colonneQuand": "Asked",
         "colonneQuestion": "Question",
         "colonneStatut": "Status",

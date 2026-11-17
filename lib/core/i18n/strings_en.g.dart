@@ -16555,7 +16555,7 @@ class _Traductions$admin$praxis$questions$en extends Traductions$admin$praxis$qu
 	@override String get vide => 'No questions from Praxis.';
 	@override String get videDetail => 'Praxis has not asked the team anything yet.';
 	@override String get erreur => 'Praxis\'s questions did not show. Try again.';
-	@override String get horsLigne => 'Praxis\'s questions are not loading: the device seems to be offline.';
+	@override String get horsLigne => 'Praxis\'s questions are not loaded yet. Reload them.';
 	@override String get colonneQuand => 'Asked';
 	@override String get colonneQuestion => 'Question';
 	@override String get colonneStatut => 'Status';
@@ -33868,7 +33868,7 @@ extension on TraductionsEn {
 			'admin.praxis.questions.vide' => 'No questions from Praxis.',
 			'admin.praxis.questions.videDetail' => 'Praxis has not asked the team anything yet.',
 			'admin.praxis.questions.erreur' => 'Praxis\'s questions did not show. Try again.',
-			'admin.praxis.questions.horsLigne' => 'Praxis\'s questions are not loading: the device seems to be offline.',
+			'admin.praxis.questions.horsLigne' => 'Praxis\'s questions are not loaded yet. Reload them.',
 			'admin.praxis.questions.colonneQuand' => 'Asked',
 			'admin.praxis.questions.colonneQuestion' => 'Question',
 			'admin.praxis.questions.colonneStatut' => 'Status',

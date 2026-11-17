@@ -19606,7 +19606,7 @@ class _Traductions$admin$praxis$questions$ar extends Traductions$admin$praxis$qu
 	@override String get vide => 'لا توجد أسئلة من Praxis.';
 	@override String get videDetail => 'لم يطلب Praxis شيئًا من الفريق حتى الآن.';
 	@override String get erreur => 'لم تظهر أسئلة Praxis. أعيدوا المحاولة.';
-	@override String get horsLigne => 'لا تُحمَّل أسئلة Praxis: يبدو أن الجهاز غير متصل.';
+	@override String get horsLigne => 'لم تُحمَّل أسئلة Praxis بعد. أعد تحميلها.';
 	@override String get colonneQuand => 'وقت السؤال';
 	@override String get colonneQuestion => 'السؤال';
 	@override String get colonneStatut => 'الحالة';
@@ -36116,7 +36116,7 @@ extension on TraductionsAr {
 			'admin.praxis.questions.vide' => 'لا توجد أسئلة من Praxis.',
 			'admin.praxis.questions.videDetail' => 'لم يطلب Praxis شيئًا من الفريق حتى الآن.',
 			'admin.praxis.questions.erreur' => 'لم تظهر أسئلة Praxis. أعيدوا المحاولة.',
-			'admin.praxis.questions.horsLigne' => 'لا تُحمَّل أسئلة Praxis: يبدو أن الجهاز غير متصل.',
+			'admin.praxis.questions.horsLigne' => 'لم تُحمَّل أسئلة Praxis بعد. أعد تحميلها.',
 			'admin.praxis.questions.colonneQuand' => 'وقت السؤال',
 			'admin.praxis.questions.colonneQuestion' => 'السؤال',
 			'admin.praxis.questions.colonneStatut' => 'الحالة',
