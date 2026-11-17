@@ -13,6 +13,7 @@ library;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
 
@@ -28,6 +29,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/case_a_cocher.dart';
+import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
@@ -153,6 +155,7 @@ class _CarteProposition extends ConsumerStatefulWidget {
 
 class _EtatCarteProposition extends ConsumerState<_CarteProposition> {
   final Set<String> _participants = <String>{};
+  final TextEditingController _motifEcart = TextEditingController();
 
   /// La cle d'idempotence du geste en cours : la meme a chaque essai.
   final String _cle = const Uuid().v4();
@@ -160,6 +163,12 @@ class _EtatCarteProposition extends ConsumerState<_CarteProposition> {
   bool _enCours = false;
   String? _retour;
   String? _refus;
+
+  @override
+  void dispose() {
+    _motifEcart.dispose();
+    super.dispose();
+  }
 
   String _nomGeste(GestePrepare g) {
     final x = t.admin.praxis.propositions.geste;
@@ -231,7 +240,13 @@ class _EtatCarteProposition extends ConsumerState<_CarteProposition> {
         ref,
         () => ref
             .read(servicePropositionsPraxisProvider)
-            .ecarter(id: x.id, cle: _cle),
+            .ecarter(
+              id: x.id,
+              cle: _cle,
+              motif: _motifEcart.text.trim().isEmpty
+                  ? null
+                  : _motifEcart.text.trim(),
+            ),
       );
       if (!resultat.fait) refus = phraseRefusProposition(resultat);
     } on Object catch (e) {
@@ -346,6 +361,14 @@ class _EtatCarteProposition extends ConsumerState<_CarteProposition> {
             Ecart.vMd,
             LocalFeedback(message: _retour),
           ],
+          Ecart.vMd,
+          ChampEtiquete(
+            libelle: p.motifEcart,
+            controller: _motifEcart,
+            inputFormatters: <TextInputFormatter>[
+              LengthLimitingTextInputFormatter(300),
+            ],
+          ),
           Ecart.vLg,
           Wrap(
             spacing: AppSpacing.md,

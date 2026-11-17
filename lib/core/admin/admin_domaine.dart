@@ -273,53 +273,53 @@ List<({String libelle, String chemin})> ongletsOperations() =>
 /// Les deux fonctions pairs du domaine Personnes : Dossiers a valider
 /// (`ADM-02`) et Comptes (`ADM-08`), modification UX n°1. Consommee par
 /// `SousNavigationDomaine` dans l'en-tete des deux ecrans.
-List<({String libelle, String chemin})> ongletsPersonnes() =>
-    <({String libelle, String chemin})>[
-      (libelle: t.dossiers.titre, chemin: Routes.adminPersonnesDossiers),
-      (libelle: t.admin.comptes.titre, chemin: Routes.adminPersonnesComptes),
-      // ADM-20 : la file des candidatures prend le rang de l'onglet Invitations
-      // (DEC:27, pas de septieme onglet). La page des invitations reste
-      // atteignable par un lien de la file (CAND-F01).
-      (
-        libelle: t.admin.candidatures.titre,
-        chemin: Routes.adminPersonnesCandidatures,
-      ),
-      // BACK-FRONT-REPRISE-1 : la file des reprises de foyer.
-      (libelle: t.reprisesAdmin.onglet, chemin: Routes.adminPersonnesReprises),
-      // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
-      (
-        libelle: t.admin.importInscriptions.onglet,
-        chemin: Routes.adminPersonnesImport,
-      ),
-      // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
-      (
-        libelle: t.admin.suppressions.onglet,
-        chemin: Routes.adminPersonnesSuppressions,
-      ),
-      // LP-2 (16/11/2026) : la liste des enseignants, pour toute leur vie. Placee
-      // avant Invitations pour ne decaler aucun index code en dur (Suppressions
-      // = 5, Admissions = derniere).
-      (
-        libelle: t.admin.listeEnseignants.titre,
-        chemin: Routes.adminPersonnesEnseignants,
-      ),
-      // I1 (02/11/2026, UX-015) : la page des invitations revient dans les
-      // sections, juste avant les admissions (qui restent la derniere : leur
-      // index se lit `length - 1`), sans decaler les index des autres pages.
-      // Huitieme section : `SelecteurSection` passe en menu (ONGLETS-1).
-      (
-        libelle: t.recrutement.invitations.onglet,
-        chemin: Routes.adminPersonnesInvitations,
-      ),
-      // Admission, lot C : les demandes d'admission, en dernier pour ne pas
-      // decaler les index des autres onglets.
-      // NAV-SOUS-LIENS (point 3) : « Demandes » seul se confondait avec les
-      // demandes des familles d'Operations ; le libelle dit lesquelles.
-      (
-        libelle: t.nav.admin.sousLiens.admissions,
-        chemin: Routes.adminPersonnesAdmissions,
-      ),
-    ];
+List<({String libelle, String chemin})>
+ongletsPersonnes() => <({String libelle, String chemin})>[
+  (libelle: t.dossiers.titre, chemin: Routes.adminPersonnesDossiers),
+  (libelle: t.admin.comptes.titre, chemin: Routes.adminPersonnesComptes),
+  // ADM-20 : la file des candidatures prend le rang de l'onglet Invitations
+  // (DEC:27, pas de septieme onglet). La page des invitations reste
+  // atteignable par un lien de la file (CAND-F01).
+  (
+    libelle: t.admin.candidatures.titre,
+    chemin: Routes.adminPersonnesCandidatures,
+  ),
+  // BACK-FRONT-REPRISE-1 : la file des reprises de foyer.
+  (libelle: t.reprisesAdmin.onglet, chemin: Routes.adminPersonnesReprises),
+  // IMM-ACCUEIL-FRONT : l'import des inscriptions actuelles.
+  (
+    libelle: t.admin.importInscriptions.onglet,
+    chemin: Routes.adminPersonnesImport,
+  ),
+  // CPT-SUPPR-EXPORT : les demandes de suppression de compte.
+  (
+    libelle: t.admin.suppressions.onglet,
+    chemin: Routes.adminPersonnesSuppressions,
+  ),
+  // LP-2 (16/11/2026) : la liste des enseignants, pour toute leur vie. Placee
+  // avant Invitations pour ne decaler aucun index code en dur (Suppressions
+  // = 5, Admissions = derniere).
+  (
+    libelle: t.admin.listeEnseignants.titre,
+    chemin: Routes.adminPersonnesEnseignants,
+  ),
+  // I1 (02/11/2026, UX-015) : la page des invitations revient dans les
+  // sections, juste avant les admissions (qui restent la derniere : leur
+  // index se lit `length - 1`), sans decaler les index des autres pages.
+  // Huitieme section : `SelecteurSection` passe en menu (ONGLETS-1).
+  (
+    libelle: t.recrutement.invitations.onglet,
+    chemin: Routes.adminPersonnesInvitations,
+  ),
+  // Admission, lot C : les demandes d'admission, en dernier pour ne pas
+  // decaler les index des autres onglets.
+  // NAV-SOUS-LIENS (point 3) : « Demandes » seul se confondait avec les
+  // demandes des familles d'Operations ; le libelle dit lesquelles.
+  (
+    libelle: t.nav.admin.sousLiens.admissions,
+    chemin: Routes.adminPersonnesAdmissions,
+  ),
+];
 
 /// Les deux fonctions pairs du domaine Securite et audit : le Journal et
 /// l'historique des observations (complement observation du mandat Tuteur

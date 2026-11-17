@@ -85,7 +85,7 @@ class _Faux implements ServicePropositionsPraxis {
     required String cle,
     String? motif,
   }) async {
-    appels.add('ecarter:$id');
+    appels.add('ecarter:$id:${motif ?? '-'}');
     liste = <PropositionPraxis>[
       for (final PropositionPraxis p in liste)
         if (p.id != id) p,
@@ -255,10 +255,22 @@ void main() {
         ]);
         await _monter(tester, faux);
         await _presser(tester, find.byKey(ClesPropositionsPraxis.ecarter('a')));
-        expect(faux.appels, <String>['ecarter:a']);
+        expect(faux.appels, <String>['ecarter:a:-']);
         expect(find.byKey(ClesPropositionsPraxis.bloc), findsNothing);
       },
     );
+
+    testWidgets('ecarter avec un motif : le motif part, sans espaces autour', (
+      tester,
+    ) async {
+      final _Faux faux = _Faux(<PropositionPraxis>[
+        _prop('a', GestePrepare.admettreVerifications),
+      ]);
+      await _monter(tester, faux);
+      await tester.enterText(find.byType(TextField), "  Pas pour l'instant  ");
+      await _presser(tester, find.byKey(ClesPropositionsPraxis.ecarter('a')));
+      expect(faux.appels, <String>["ecarter:a:Pas pour l'instant"]);
+    });
 
     testWidgets(
       'planifier : pas de Valider sans participant, puis ils partent',
