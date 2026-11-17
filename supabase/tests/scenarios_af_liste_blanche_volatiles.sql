@@ -60,6 +60,10 @@ declare
     -- service_role : hors de cette liste.
     'direction_praxis_emettre_cle(text,text,timestamp with time zone,uuid)',
     'direction_praxis_regler(boolean,boolean,integer)',
+    -- PX-4 (17/11) : MODE ESSAI, la porte du directeur (administrateur valide, aal2) qui nomme les conversations d'essai
+    -- (dix au plus, existantes) dans private.praxis_reglages.essai_fils, plus une ligne d'audit (praxis_regle_essai). Tant que la
+    -- liste n'est pas vide, Praxis ne voit que ces fils et n'annonce rien. Elle n'ecrit ni message, ni annonce, ni compte.
+    'direction_praxis_regler_essai(uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
     -- praxis_journal_lu : qui a lu, la limite et le curseur, jamais un texte) : c'est pourquoi elle est VOLATILE.

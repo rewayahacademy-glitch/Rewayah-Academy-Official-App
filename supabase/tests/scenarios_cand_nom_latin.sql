@@ -397,11 +397,11 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.vrai(
   NOT EXISTS (SELECT 1 FROM jsonb_array_elements(pg_temp.lu('liste2') -> 'lignes') l
                WHERE (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l) k) IS DISTINCT FROM
-                     ARRAY['complementEnCours', 'courrielAObtenir', 'derniereActivite', 'enPause', 'etape', 'etat', 'genre', 'id',
+                     ARRAY['complementEnCours', 'courrielAObtenir', 'derniereActivite', 'enPause', 'etape', 'etat', 'genre', 'gestes', 'id',
                            'indicatifAConfirmer', 'indisponible', 'indisponibleJusquAu', 'issue', 'nomComplet',
                            'nomLatin', 'nomLatinAConfirmer', 'nouveau', 'paiement', 'paysResidence', 'recueLe',
                            'reference', 'repriseLe', 'responsableId', 'restreinte', 'type']),
-  'f7 : la ligne de liste a 24 cles : les 19 d''avant, nomLatin, nomLatinAConfirmer, genre (SALLE2-GENRE, 14/11/2026), nouveau (NOUVEAU-LISTE, 16/11/2026) et complementEnCours (COMPLEMENT-EN-COURS, 16/11/2026) ; ni courriel ni telephone');
+  'f7 : la ligne de liste a 25 cles : les 19 d''avant, gestes (GESTES-DU-SERVEUR, 16/11/2026), nomLatin, nomLatinAConfirmer, genre (SALLE2-GENRE, 14/11/2026), nouveau (NOUVEAU-LISTE, 16/11/2026) et complementEnCours (COMPLEMENT-EN-COURS, 16/11/2026) ; ni courriel ni telephone');
 SELECT pg_temp.garde('dossier', pg_temp.en(pg_temp.p('a1'), 'admin',
   format($$SELECT public.lire_candidature(%L)$$, pg_temp.c('01'))));
 SELECT pg_temp.vrai(pg_temp.lu('dossier') ->> 'nomLatin' = 'Ahmed Bin Ali'
