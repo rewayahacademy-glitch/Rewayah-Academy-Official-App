@@ -4,6 +4,7 @@
 
 import { clientService } from '../_shared/clients.ts'
 import { type PortePraxis, traiter } from '../_shared/praxis/mcp.ts'
+import { adressesDe } from '../_shared/praxis/oauth.ts'
 
 const porte: PortePraxis = {
   async appeler(fonction, params, signal) {
@@ -13,4 +14,8 @@ const porte: PortePraxis = {
   },
 }
 
-Deno.serve((req) => traiter(req, porte))
+// PX-OAUTH 2a : un 401 annonce les metadonnees de ressource (WWW-Authenticate), pour que claude.ai lance l'autorisation.
+const racine = Deno.env.get('SUPABASE_URL')
+const adresses = racine ? adressesDe(racine) : null
+
+Deno.serve((req) => traiter(req, porte, adresses))
