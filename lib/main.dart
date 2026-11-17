@@ -155,6 +155,8 @@ import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
 import 'core/enseignants/enseignants_supabase.dart' show EnseignantsSupabase;
 import 'core/enseignants/port_enseignants.dart' show portEnseignantsProvider;
+import 'core/equipe/equipe_supabase.dart';
+import 'core/equipe/port_equipe.dart';
 import 'core/finance/page_paiement.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
@@ -330,6 +332,9 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Defaut 1.8 : le brouillon de l'inscription se garde sur l'appareil le
   // temps de l'inscription (un rechargement ne perd plus le prenom).
   persistanceBrouillonProvider.overrideWithValue(true),
+  portEquipeProvider.overrideWithValue(
+    EquipeSupabase(Supabase.instance.client),
+  ),
   // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
   // compte (migration 20261109000000) ; reglage vide : aucun controle.
   portCleTurnstileProvider.overrideWithValue(

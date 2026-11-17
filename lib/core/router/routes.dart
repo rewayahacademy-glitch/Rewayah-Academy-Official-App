@@ -948,6 +948,9 @@ abstract final class Routes {
   /// Les comptes du produit (`ADM-08`), sous Personnes.
   static const String adminPersonnesComptes = '/admin/personnes/comptes';
 
+  /// BE-2b : l'equipe, les missions confiees et les invitations d'associes.
+  static const String adminPersonnesEquipe = '/admin/personnes/equipe';
+
   /// Les comptes dont l'acces provisoire est echu (DASH-ADM-ECHUS) : la meme
   /// page, ouverte filtree, cible de « Acces echus » du Centre de commande.
   static const String adminPersonnesComptesEchus =
@@ -1498,7 +1501,7 @@ abstract final class Routes {
     AppRole.teacher => enseignantNotifications,
     AppRole.controller => controleurNotifications,
     AppRole.admin => adminNotifications,
-    AppRole.student || AppRole.accountant => null,
+    AppRole.student || AppRole.accountant || AppRole.associe => null,
   };
 
   /// La racine de chaque role, ou une redirection renvoie toujours.
@@ -1509,6 +1512,9 @@ abstract final class Routes {
     AppRole.controller => controleur,
     AppRole.admin => admin,
     AppRole.accountant => comptable,
+    // BE-2b : l'accueil de l'associe est la liste des candidatures, que le
+    // serveur filtre sur ses missions ; rien d'autre ne lui est montre.
+    AppRole.associe => adminPersonnesCandidatures,
   };
 
   /// Le prefixe de chemin reserve a un role. Sert a refuser une route d'un
@@ -1520,5 +1526,8 @@ abstract final class Routes {
     AppRole.controller => controleur,
     AppRole.admin => '/admin',
     AppRole.accountant => comptable,
+    // L'associe n'ouvre que les candidatures (liste et dossier) : le prefixe
+    // est celui de cette page, pas celui de l'administration.
+    AppRole.associe => adminPersonnesCandidatures,
   };
 }

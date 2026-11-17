@@ -33,6 +33,7 @@ EspaceRecherche? espaceRecherchePour(
     AppRole.accountant => EspaceRecherche.comptable,
     AppRole.controller => EspaceRecherche.controleur,
     AppRole.teacher => EspaceRecherche.enseignant,
+    AppRole.associe => null,
     AppRole.student =>
       guide ? EspaceRecherche.eleveGuide : EspaceRecherche.eleve,
     AppRole.guardian =>

@@ -298,7 +298,9 @@ void main() {
       () {
         for (final AppRole role in AppRole.values) {
           final String? chemin = Routes.notificationsPour(role);
-          if (role == AppRole.student || role == AppRole.accountant) {
+          if (role == AppRole.student ||
+              role == AppRole.accountant ||
+              role == AppRole.associe) {
             expect(chemin, isNull, reason: role.valeurSql);
             continue;
           }

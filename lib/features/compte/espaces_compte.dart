@@ -80,7 +80,11 @@ class EspacesCompte {
       AppRole.teacher => EspaceTravail.enseignement,
       AppRole.admin => EspaceTravail.administration,
       AppRole.controller => EspaceTravail.controle,
-      AppRole.guardian || AppRole.student || AppRole.accountant || null => null,
+      AppRole.guardian ||
+      AppRole.student ||
+      AppRole.accountant ||
+      AppRole.associe ||
+      null => null,
     };
     return seul == null
         ? aucun
