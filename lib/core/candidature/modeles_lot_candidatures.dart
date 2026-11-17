@@ -30,7 +30,11 @@ enum GesteLot {
   leverPause('leverPause', GesteCandidature.leverPause),
 
   /// Refuser la candidature.
-  refuser('refuser', GesteCandidature.refuser);
+  refuser('refuser', GesteCandidature.refuser),
+
+  /// Dispenser d'entretien (BE-1g). Pour ce geste seul, le modele envoye au
+  /// serveur porte la categorie (`fondateur` ou `autre`).
+  dispenserEntretien('dispenserEntretien', GesteCandidature.dispenserEntretien);
 
   const GesteLot(this.valeurSql, this.geste);
 
@@ -60,6 +64,7 @@ enum GesteLot {
     return switch (valeur) {
       'mettre_en_pause' => mettreEnPause,
       'lever_pause' => leverPause,
+      'dispenser_entretien' => dispenserEntretien,
       _ => null,
     };
   }
