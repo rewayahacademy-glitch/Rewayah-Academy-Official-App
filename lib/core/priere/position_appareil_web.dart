@@ -73,11 +73,10 @@ Future<PositionAppareil> lirePositionAppareil() {
         if (!fin.isCompleted) fin.completeError(const PositionNonPartagee());
       }).toJS,
       <String, Object>{
-            'enableHighAccuracy': false,
-            'timeout': 15000,
-            'maximumAge': 600000,
-          }.jsify()!
-          as JSObject,
+        'enableHighAccuracy': false,
+        'timeout': 15000,
+        'maximumAge': 600000,
+      }.jsify()! as JSObject,
     );
   } on Object {
     if (!fin.isCompleted) fin.completeError(const PositionNonPartagee());

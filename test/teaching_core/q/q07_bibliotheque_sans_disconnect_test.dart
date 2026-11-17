@@ -143,18 +143,17 @@ void main() {
       expect(moteur.etatCourant, EtatSalle.connecte);
     });
 
-    testWidgets(
-      'la barre « Seance toujours en direct » reste visible pendant tout cela',
-      (WidgetTester tester) async {
-        await monter(tester, <LibraryResource>[]);
-        expect(find.byKey(const Key('barre-cours-en-cours')), findsOneWidget);
+    testWidgets('la barre « Seance toujours en direct » reste visible pendant tout cela', (
+      WidgetTester tester,
+    ) async {
+      await monter(tester, <LibraryResource>[]);
+      expect(find.byKey(const Key('barre-cours-en-cours')), findsOneWidget);
 
-        await tester.tap(find.text('Bibliotheque'));
-        await tester.pumpAndSettle();
-        // Le panneau couvre l ecran, la barre reste montee dessous.
-        expect(find.byKey(const Key('barre-cours-en-cours')), findsOneWidget);
-      },
-    );
+      await tester.tap(find.text('Bibliotheque'));
+      await tester.pumpAndSettle();
+      // Le panneau couvre l ecran, la barre reste montee dessous.
+      expect(find.byKey(const Key('barre-cours-en-cours')), findsOneWidget);
+    });
   });
 
   group('Q-07 : une seule Bibliotheque, la meme dedans et dehors', () {
@@ -165,7 +164,13 @@ void main() {
       expect(toutesLesRessources(), hasLength(5));
       expect(
         toutesLesRessources().map((LibraryResource r) => r.id).toSet(),
-        <String>{'res-coran', 'res-pdf', 'res-texte', 'res-image', 'res-lecon'},
+        <String>{
+          'res-coran',
+          'res-pdf',
+          'res-texte',
+          'res-image',
+          'res-lecon',
+        },
       );
     });
 

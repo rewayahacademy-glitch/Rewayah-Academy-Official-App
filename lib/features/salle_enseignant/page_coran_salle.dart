@@ -163,8 +163,7 @@ class _EtatPageCoranSalle extends ConsumerState<PageCoranSalle> {
 
     // `hasValue` et non le type d'execution (piege deja paye, lib/CLAUDE.md).
     final bool resolue =
-        (page.hasValue || page.hasError) &&
-        (police.hasValue || police.hasError);
+        (page.hasValue || page.hasError) && (police.hasValue || police.hasError);
     final PageMushafVM? vue = page.value;
     final bool lisible =
         resolue &&

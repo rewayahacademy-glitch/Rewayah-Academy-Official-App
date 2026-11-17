@@ -444,14 +444,24 @@ void main() {
         _aGaucheDe(tester, marque: 'Mariam', precedent: 'محدد', suivant: '·');
         _aGaucheDe(tester, marque: 'Mariam', precedent: '·', suivant: 'Mariam');
       } else {
-        _aDroiteDe(tester, marque: 'avant l', precedent: 'envoi', suivant: '.');
+        _aDroiteDe(
+          tester,
+          marque: 'avant l',
+          precedent: 'envoi',
+          suivant: '.',
+        );
         _aDroiteDe(
           tester,
           marque: 'administration',
           precedent: 'administration',
           suivant: '.',
         );
-        _aDroiteDe(tester, marque: 'Mariam', precedent: 'précis', suivant: '·');
+        _aDroiteDe(
+          tester,
+          marque: 'Mariam',
+          precedent: 'précis',
+          suivant: '·',
+        );
         _aDroiteDe(tester, marque: 'Mariam', precedent: '·', suivant: 'Mariam');
       }
       verifierEcranSansMotCoupe(tester);

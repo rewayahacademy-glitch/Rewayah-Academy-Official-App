@@ -36,10 +36,7 @@ void main() {
         portMessagesMetierProvider.overrideWithValue(
           FauxMessagesMetier(
             conversations: <String, List<ConversationPossible>>{
-              cleObjet(
-                TypeObjetLie.candidature,
-                ouvert,
-              ): <ConversationPossible>[
+              cleObjet(TypeObjetLie.candidature, ouvert): <ConversationPossible>[
                 ConversationPossible(
                   interlocuteur: const Participant(
                     id: 'cand',
