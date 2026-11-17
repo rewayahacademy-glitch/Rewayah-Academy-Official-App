@@ -390,7 +390,8 @@ void main() {
         expect(
           _zone(tester).bottom,
           greaterThanOrEqualTo(zoneDeveloppee.bottom - 1),
-          reason: 'bas de la surface : developpe $zoneDeveloppee, '
+          reason:
+              'bas de la surface : developpe $zoneDeveloppee, '
               'focus ${_zone(tester)}',
         );
         // L'acces aux Commandes reste, sans recouvrir la page.

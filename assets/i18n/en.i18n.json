@@ -6625,6 +6625,33 @@
       "plafondChamp": "Number of messages per hour (1 to 120)",
       "plafondEnregistrer": "Set the limit",
       "plafondInvalide": "Write a whole number between 1 and 120.",
+      "propositions": {
+        "titre": "Praxis proposals",
+        "pastille": "Praxis proposes",
+        "intro": "Praxis prepared this step. Nothing is done until you confirm: confirming runs the step as if you had done it yourself.",
+        "geste": {
+          "demanderComplement": "Ask for more information",
+          "planifierEntretien": "Schedule an interview",
+          "admettreVerifications": "Admit to the verification room"
+        },
+        "note": "What Praxis wrote",
+        "motif": "Reason given to the candidate",
+        "elements": "Items requested",
+        "quand": "Interview proposed on {date} at {heure}",
+        "duree": "Duration: {minutes} minutes",
+        "expire": "Expires on {date}",
+        "participants": "Participants",
+        "participantsAide": "Choose the people who will lead the interview: Praxis does not choose them.",
+        "participantsAucun": "No staff member to choose for this application.",
+        "participantsErreur": "The staff list could not be read. Try again in a moment.",
+        "valider": "Confirm",
+        "ecarter": "Dismiss",
+        "fait": "Done: {geste}.",
+        "ecartee": "Proposal dismissed.",
+        "perimee": "The application has changed since this proposal: it can no longer be confirmed. Dismiss it.",
+        "close": "This proposal is no longer open: it was handled or it expired.",
+        "generique": "The proposal could not be handled. Nothing changed: try again."
+      },
       "essaiTitre": "Test conversations",
       "essaiVide": "Test mode off: Praxis can read every academy conversation it is allowed to read.",
       "essaiActif(plural, param=nombre)": {
