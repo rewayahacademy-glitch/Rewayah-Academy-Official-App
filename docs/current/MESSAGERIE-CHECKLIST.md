@@ -1,6 +1,6 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : mardi 17/11/2026, 04 h 15 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : mardi 17/11/2026, 10 h 10 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
@@ -164,3 +164,18 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
 - 16/11, 22 h 39 : déploiement de `8f320a9b` vert (run 1309).
 - 16/11, 23 h 14-16 : PX-1 (#567, Pilote Équipe) installé : extraction des internes de `com_envoyer_message` et `com_annonce_envoyer`, contrôle md5 passé, `com_fil_json` non touchée, CHECK des notifications non réécrit (relu par le pilote avant). Journaux depuis 23 h 13 : 42 appels de messagerie, 39 en 200, 3 en 204, 0 erreur ; aucun envoi réel, donc envoi non prouvé.
 - 17/11, 04 h 15 : envoi prouvé (3 messages réels en 200, 1 ligne en base chacun) ; double appel du client relevé, absorbé par l'idempotence (liste n° 9) ; envoi d'annonce pas encore exercé.
+
+### Matin du 17/11 : affichage de Praxis (ordre du directeur, « Praxis opérationnel ce soir »)
+
+- [x] **#612 PRAXIS-AFFICHAGE fusionnée** (`6f2e1c58`, 09 h 53 UTC) : nom **#Ra_Praxis sans italique** (directeur,
+  confirmé à 9 h 05 : « je confirme le nouveau nom et l'image est déposée »), indicateur de compte officiel, fiche du
+  profil « Assistant de l'académie · IA ». **Déployée** à 10 h 00 UTC (run 1400 vert). **Pas vue par vous.**
+- [x] **Migration `com_compte_officiel` installée** (09 h 54 UTC, enregistrée `20261117095418`) : chaque participant
+  porte `officiel` et `compte_officiel` (code du compte, `praxis` aujourd'hui). Vérifiée : attributs et droits
+  inchangés. Journaux depuis : 41 appels de messagerie, tous 200 ou 204, aucune erreur Postgres.
+- [ ] **#618 image de Praxis** : l'image fournie par le directeur, réduite à 256 px sans retouche, affichée seulement
+  pour le compte `praxis` ; CI en cours. **#616** garde le PNG plein format dans le dépôt.
+- [ ] **Non fait** : bouton « Parler à l'équipe » (aucune action existante pour ouvrir une conversation avec l'équipe ;
+  rien inventé).
+- Arrêté sur ordre direct du directeur : l'icône dessinée par l'agent (« je vais le faire moi-même »).
+- Pour le directeur : `scenarios_com_compte_officiel.sql` à ajouter à `ci.yml` (zone interdite aux agents).
