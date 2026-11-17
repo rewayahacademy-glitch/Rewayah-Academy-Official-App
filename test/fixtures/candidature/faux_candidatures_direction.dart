@@ -104,6 +104,17 @@ List<String> gestesFauxServeur({
     if (enCours && avantSalle3) 'retirer',
     if (!enCours && !enPause && avantSalle3) 'rouvrir',
     if (sansPause && etape != null) 'definir_responsable',
+    // APRES-CONFIRMEE : apres l'accueil, restreindre ou demander une verification ;
+    // lever la restriction quand la ligne en porte une.
+    if (sansPause &&
+        etape == EtapeCandidature.confirmee &&
+        !restreinte) ...<String>[
+      'restreindre',
+      'demander_verification_piece',
+      'demander_verification_versement',
+    ],
+    if (sansPause && etape == EtapeCandidature.confirmee && restreinte)
+      'lever_restriction',
     if (sansPause &&
         etape == EtapeCandidature.verifications &&
         (etat == EtatCandidature.entretienAPlanifier ||
@@ -347,6 +358,9 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
     'definirResponsable': true,
     'validerPiece': true,
     'dispenserEntretien': true,
+    'restreindre': true,
+    'demanderVerification': true,
+    'leverRestriction': true,
     'refaireEntretien': true,
     'agirEnLot': true,
   },

@@ -171,6 +171,9 @@ void main() {
       permis: <GesteCandidature>[
         GesteCandidature.mettreEnPause,
         GesteCandidature.definirResponsable,
+        GesteCandidature.restreindre,
+        GesteCandidature.demanderVerificationPiece,
+        GesteCandidature.demanderVerificationVersement,
       ],
     ),
     (
@@ -186,6 +189,7 @@ void main() {
         GesteCandidature.confirmerMoyenPaiement,
         GesteCandidature.mettreEnPause,
         GesteCandidature.definirResponsable,
+        GesteCandidature.leverRestriction,
       ],
     ),
     (
@@ -200,6 +204,7 @@ void main() {
       permis: <GesteCandidature>[
         GesteCandidature.mettreEnPause,
         GesteCandidature.definirResponsable,
+        GesteCandidature.leverRestriction,
       ],
     ),
     (
@@ -475,7 +480,7 @@ void main() {
               'gestes': <Object?>[
                 'refuser',
                 'annuler_admission',
-                'restreindre',
+                'indisponibilite',
                 'mettre_en_pause',
                 42,
                 '',
@@ -485,12 +490,12 @@ void main() {
           expect(l.gestes, <String>[
             'refuser',
             'annuler_admission',
-            'restreindre',
+            'indisponibilite',
             'mettre_en_pause',
           ]);
           expect(l.gestesInconnusDeLEcran, <String>[
             'annuler_admission',
-            'restreindre',
+            'indisponibilite',
           ]);
         },
       );
@@ -531,7 +536,7 @@ void main() {
             GesteCandidature.depuisNomServeur('demander_complement'),
             GesteCandidature.demanderComplement,
           );
-          expect(GesteCandidature.depuisNomServeur('restreindre'), isNull);
+          expect(GesteCandidature.depuisNomServeur('inviter'), isNull);
           // Aucun nom en double : un nom du serveur designe un seul geste.
           expect(
             aNomPropre.map((GesteCandidature g) => g.nomServeur).toSet(),
