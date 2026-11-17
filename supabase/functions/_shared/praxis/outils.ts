@@ -203,6 +203,27 @@ export const OUTILS: readonly Outil[] = [
       heures: { type: 'integer', minimum: 1, maximum: 168, description: 'La periode, en heures (168 au plus).' },
     },
   },
+  {
+    nom: 'terminer',
+    description: 'ROUTINE SEULEMENT (une cle de chat est refusee) : note la fin de ton tir pour que la direction voie que la routine tourne. A appeler UNE fois, en dernier, avec l\'issue (ok, rien_a_faire, erreur), le nombre de fils lus, de messages envoyes, de fils passes a l\'equipe, de refus recus, et une note courte (200 signes au plus, jamais le texte d\'une personne).',
+    fonction: 'praxis_terminer',
+    parametres: [
+      { arg: 'issue', param: 'p_issue', requis: true },
+      { arg: 'fils_lus', param: 'p_lus', requis: true },
+      { arg: 'messages_envoyes', param: 'p_envoyes', requis: true },
+      { arg: 'passes_equipe', param: 'p_passes', requis: true },
+      { arg: 'refus', param: 'p_refus', requis: true },
+      { arg: 'note', param: 'p_note', requis: false },
+    ],
+    proprietes: {
+      issue: { type: 'string', enum: ['ok', 'rien_a_faire', 'erreur'], description: 'ok : le tir a travaille ; rien_a_faire : rien en attente ou Praxis eteint ; erreur : le tir a echoue.' },
+      fils_lus: { type: 'integer', minimum: 0, maximum: 200, description: 'Fils lus pendant ce tir.' },
+      messages_envoyes: { type: 'integer', minimum: 0, maximum: 200, description: 'Messages que tu as envoyes pendant ce tir.' },
+      passes_equipe: { type: 'integer', minimum: 0, maximum: 200, description: 'Fils laisses a l\'equipe (niveau B, C ou D, doute, mineur).' },
+      refus: { type: 'integer', minimum: 0, maximum: 1000, description: 'Refus d\'outil recus pendant ce tir.' },
+      note: { type: 'string', minLength: 1, maxLength: 200, description: 'Une note courte pour la direction (200 signes au plus).' },
+    },
+  },
 ]
 
 export class ErreurSchema extends Error {}

@@ -28,7 +28,9 @@ import 'controleur_import.dart';
 /// Le libelle d'un nombre d'unites : « 440 lignes », « 1 personne ».
 String uniteDe(NatureCompte nature, int n) => switch (nature) {
   NatureCompte.lignes => t.candidatsFlux.importFormulaires.unite.lignes(n: n),
-  NatureCompte.personnes => t.candidatsFlux.importFormulaires.unite.personnes(n: n),
+  NatureCompte.personnes => t.candidatsFlux.importFormulaires.unite.personnes(
+    n: n,
+  ),
 };
 
 /// La phrase des ecarts : « Écart avec les comptes attendus : attendu 440

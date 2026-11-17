@@ -52,10 +52,11 @@ void main() {
 
     test('des octets presents sans demande valent en cache', () async {
       final FauxCacheMedia depot = FauxCacheMedia();
-      await depot.deposer(
-        EtatOfflineCache.cleCache('r1', 'v1'),
-        <int>[1, 2, 3],
-      );
+      await depot.deposer(EtatOfflineCache.cleCache('r1', 'v1'), <int>[
+        1,
+        2,
+        3,
+      ]);
       final EtatOfflineCache m = module(possible: true, depot: depot);
       addTearDown(m.fermer);
 
@@ -64,22 +65,25 @@ void main() {
       expect(await m.etatDe('r1'), EtatOffline.enCache);
     });
 
-    test('une cle porte la version : une version neuve repart de zero',
-        () async {
-      final FauxCacheMedia depot = FauxCacheMedia();
-      await depot.deposer(
-        EtatOfflineCache.cleCache('r1', 'v1'),
-        <int>[1, 2, 3],
-      );
-      final EtatOfflineCache m = module(
-        possible: true,
-        versionId: 'v2',
-        depot: depot,
-      );
-      addTearDown(m.fermer);
+    test(
+      'une cle porte la version : une version neuve repart de zero',
+      () async {
+        final FauxCacheMedia depot = FauxCacheMedia();
+        await depot.deposer(EtatOfflineCache.cleCache('r1', 'v1'), <int>[
+          1,
+          2,
+          3,
+        ]);
+        final EtatOfflineCache m = module(
+          possible: true,
+          versionId: 'v2',
+          depot: depot,
+        );
+        addTearDown(m.fermer);
 
-      expect(await m.etatDe('r1'), EtatOffline.aTelecharger);
-    });
+        expect(await m.etatDe('r1'), EtatOffline.aTelecharger);
+      },
+    );
   });
 
   group('Telechargement : un echec est nomme, jamais avale', () {
@@ -111,38 +115,42 @@ void main() {
       expect(await m.etatDe('r1'), EtatOffline.aTelecharger);
     });
 
-    test('une ressource qui interdit le hors ligne refuse la demande',
-        () async {
-      final EtatOfflineCache m = module(possible: false);
-      addTearDown(m.fermer);
+    test(
+      'une ressource qui interdit le hors ligne refuse la demande',
+      () async {
+        final EtatOfflineCache m = module(possible: false);
+        addTearDown(m.fermer);
 
-      await expectLater(
-        m.demanderTelechargement('r1'),
-        throwsA(isA<EchecTelechargementRessource>()),
-      );
-    });
+        await expectLater(
+          m.demanderTelechargement('r1'),
+          throwsA(isA<EchecTelechargementRessource>()),
+        );
+      },
+    );
 
-    test('un telechargement complet mene a telecharge, puis se libere',
-        () async {
-      final EtatOfflineCache m = module(
-        possible: true,
-        artefacts: <String, List<DownloadAsset>>{
-          'v1': <DownloadAsset>[
-            artefact(id: 'a1', versionId: 'v1', cle: 'supports/r1.pdf'),
-          ],
-        },
-        octets: <String, List<int>>{
-          'supports/r1.pdf': <int>[37, 80, 68, 70],
-        },
-      );
-      addTearDown(m.fermer);
+    test(
+      'un telechargement complet mene a telecharge, puis se libere',
+      () async {
+        final EtatOfflineCache m = module(
+          possible: true,
+          artefacts: <String, List<DownloadAsset>>{
+            'v1': <DownloadAsset>[
+              artefact(id: 'a1', versionId: 'v1', cle: 'supports/r1.pdf'),
+            ],
+          },
+          octets: <String, List<int>>{
+            'supports/r1.pdf': <int>[37, 80, 68, 70],
+          },
+        );
+        addTearDown(m.fermer);
 
-      await m.demanderTelechargement('r1');
-      expect(await m.etatDe('r1'), EtatOffline.telecharge);
+        await m.demanderTelechargement('r1');
+        expect(await m.etatDe('r1'), EtatOffline.telecharge);
 
-      await m.libererCache('r1');
-      expect(await m.etatDe('r1'), EtatOffline.aTelecharger);
-    });
+        await m.libererCache('r1');
+        expect(await m.etatDe('r1'), EtatOffline.aTelecharger);
+      },
+    );
   });
 
   group('Flux : l etat courant arrive a l abonnement', () {

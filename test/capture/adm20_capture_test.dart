@@ -287,10 +287,7 @@ void main() {
         WidgetTester tester,
       ) async {
         fixerVueCapture(tester, taille, 1, zoneSure: zone);
-        await _monter(
-          tester,
-          FauxCandidaturesDirection(lignes: _lignes()),
-        );
+        await _monter(tester, FauxCandidaturesDirection(lignes: _lignes()));
         await tester.enterText(
           find.byKey(const ValueKey<String>('candidatures-recherche')),
           'zzz',

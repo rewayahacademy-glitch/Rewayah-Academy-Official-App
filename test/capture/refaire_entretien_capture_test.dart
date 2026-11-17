@@ -64,7 +64,10 @@ void main() {
             find.text(libelleGeste(GesteCandidature.refaireEntretien)),
           );
           await laisser(tester, fois: 6);
-          await capturerVue(tester, 'REFAIRE-ENTRETIEN/feuille_${nom}_$largeur');
+          await capturerVue(
+            tester,
+            'REFAIRE-ENTRETIEN/feuille_${nom}_$largeur',
+          );
         });
       }
     }

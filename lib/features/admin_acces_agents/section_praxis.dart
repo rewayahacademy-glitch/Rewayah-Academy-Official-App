@@ -60,6 +60,12 @@ abstract final class ClesPraxis {
   /// Fixer le plafond.
   static const Key fixerPlafond = ValueKey<String>('praxis-plafond');
 
+  /// Le dernier tir de la routine (le pouls).
+  static const Key pouls = ValueKey<String>('praxis-pouls');
+
+  /// Aucun tir note : la routine n'a pas encore tourne.
+  static const Key poulsAucun = ValueKey<String>('praxis-pouls-aucun');
+
   /// Ouvrir ou fermer les donnees reelles.
   static const Key donneesReelles = ValueKey<String>('praxis-donnees-reelles');
 
@@ -591,6 +597,46 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
             enCours: _reglageEnCours == 'plafond',
             onPress: occupe ? () {} : () => unawaited(_fixerPlafond()),
           ),
+          Ecart.vXxl,
+          Text(t.admin.praxis.routine.titre, style: textes.titleSmall),
+          Ecart.vXs,
+          if (etat.derniereRoutine case final TirRoutinePraxis tir) ...<Widget>[
+            Text(
+              key: ClesPraxis.pouls,
+              t.admin.praxis.routine.dernier(
+                quand: _quand(tir.termineLe),
+                issue: switch (tir.issue) {
+                  'ok' => t.admin.praxis.routine.issueOk,
+                  'rien_a_faire' => t.admin.praxis.routine.issueRien,
+                  'erreur' => t.admin.praxis.routine.issueErreur,
+                  _ => t.admin.praxis.routine.issueInconnue,
+                },
+              ),
+              style: textes.bodyMedium,
+            ),
+            Ecart.vXs,
+            Text(
+              t.admin.praxis.routine.compteurs(
+                lus: '${tir.filsLus}',
+                envoyes: '${tir.messagesEnvoyes}',
+                passes: '${tir.passesEquipe}',
+                refus: '${tir.refus}',
+              ),
+              style: textes.bodySmall,
+            ),
+            if (tir.note case final String note
+                when note.isNotEmpty) ...<Widget>[
+              Ecart.vXs,
+              Text(note, style: textes.bodySmall),
+            ],
+          ] else
+            Text(
+              t.admin.praxis.routine.aucun,
+              key: ClesPraxis.poulsAucun,
+              style: textes.bodySmall,
+            ),
+          Ecart.vSm,
+          Text(t.admin.praxis.routine.aide, style: textes.bodySmall),
           Ecart.vXxl,
           Text(t.admin.praxis.donnees.titre, style: textes.titleSmall),
           Ecart.vXs,

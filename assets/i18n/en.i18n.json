@@ -6840,6 +6840,17 @@
       "plafondChamp": "Number of messages per hour (1 to 120)",
       "plafondEnregistrer": "Set the limit",
       "plafondInvalide": "Write a whole number between 1 and 120.",
+      "routine": {
+        "titre": "Hourly routine",
+        "dernier": "Last run: {quand} ({issue}).",
+        "issueOk": "worked",
+        "issueRien": "nothing to do",
+        "issueErreur": "failed",
+        "issueInconnue": "unknown outcome",
+        "compteurs": "Threads read: {lus}. Messages sent: {envoyes}. Left to the team: {passes}. Refusals received: {refus}.",
+        "aucun": "No run recorded: the routine has not run yet, or it is not set up.",
+        "aide": "The routine runs once an hour while Praxis is on and autonomous. If the last run is more than two hours old, the routine is not running."
+      },
       "donnees": {
         "titre": "Real data",
         "fermees": "Closed: Praxis reads no real application file and no real conversation. Only the test conversations are open to it.",
@@ -12738,7 +12749,12 @@
         "fichiers": "@:com.socle.lexique.fichiersPartages",
         "ouvrir": "Open {objet}",
         "inaccessible": "This subject is no longer open to you. The conversation stays readable.",
-        "vous": "You"
+        "vous": "You",
+        "officiel": {
+          "nom": "Ra_Praxis",
+          "mention": "Academy assistant · AI",
+          "phrase": "It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management."
+        }
       },
       "fil": {
         "lectureSeule": "You can read this conversation. Replying is not open to you here."

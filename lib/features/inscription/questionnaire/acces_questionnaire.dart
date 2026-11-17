@@ -303,10 +303,11 @@ class _EcranAccesQuestionnaireState
         clavier: TextInputType.emailAddress,
         autofill: const <String>[AutofillHints.email],
       ),
-      ?controle,
       Ecart.vLg,
       ActionsEntree(
         bureau: bureau,
+        // CAPTCHA-PLACE : la case se pose juste sous le bouton principal.
+        sousPrincipale: controle,
         principale: ActionPrincipale(
           key: const ValueKey<String>('questionnaire-acces-envoyer'),
           libelle: t.connexion.envoyerLien,
@@ -365,7 +366,6 @@ class _EcranAccesQuestionnaireState
         // reponses du questionnaire sont ici.
         Ecart.vXl,
         SaisieCodeCourriel(courriel: courriel),
-        ?controle,
         Ecart.vXxl,
         // ALIGN-RENVOI (garde-cap, 04/11) : « Renvoyer le lien » prend la
         // largeur du champ, a l'ordinateur comme au telephone.
@@ -377,6 +377,8 @@ class _EcranAccesQuestionnaireState
           niveau: NiveauAction.secondaire,
           pleineLargeur: true,
         ),
+        // CAPTCHA-PLACE : la case se pose juste sous le bouton.
+        ?controle,
         Ecart.vLg,
         LienEntree(
           libelle: t.connexion.changerAdresse,

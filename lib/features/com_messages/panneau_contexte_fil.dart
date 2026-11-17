@@ -124,11 +124,23 @@ class PanneauContexteFil extends StatelessWidget {
                   repli: q.nomAffiche,
                   diametre: AppAvatar.petit,
                 ),
-                libelle: q.nomAffiche,
-                legende: q.estSoi ? p.vous : q.fonction,
+                libelle: q.nomMarque,
+                // Compte officiel : la mention IA se lit ici, dans les
+                // details du profil, jamais dans chaque bulle (directeur,
+                // 17/11/2026).
+                legende: q.estSoi
+                    ? p.vous
+                    : q.officiel
+                    ? p.officiel.mention
+                    : q.fonction,
               ),
           ],
         ),
+        for (final Participant q in fil.participants)
+          if (q.officiel) ...<Widget>[
+            Ecart.vLg,
+            _FicheCompteOfficiel(participant: q),
+          ],
         if (pieces.isNotEmpty) ...<Widget>[
           Ecart.vXl,
           Semantics(
@@ -177,6 +189,27 @@ class PanneauContexteFil extends StatelessWidget {
       legende: legende,
       libelleSemantique: p.ouvrir(objet: e.objet.libelle),
       onPress: () => _ouvrir(context, chemin),
+    );
+  }
+}
+
+/// La fiche du profil d'un compte officiel : la phrase du profil
+/// (SECRETAIRE-IA §11) sous la ligne du participant, qui porte son nom marque
+/// et la mention IA en petit et en gris. « Parler a l'equipe » n'est pas
+/// rendu ici : le panneau ne tient aucun port pour ouvrir une conversation.
+class _FicheCompteOfficiel extends StatelessWidget {
+  const _FicheCompteOfficiel({required this.participant});
+
+  final Participant participant;
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Text(
+      t.com.messages.panneau.officiel.phrase,
+      key: ValueKey<String>('fiche-officiel-${participant.id}'),
+      style: palette.inkMuted.applyTo(textes.bodyMedium ?? const TextStyle()),
     );
   }
 }
