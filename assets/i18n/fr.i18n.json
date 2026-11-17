@@ -6983,11 +6983,11 @@
       },
       "questions": {
         "titre": "Questions de Praxis",
-        "intro": "Quand Praxis ne sait pas, il vous demande. Il résume la question lui-même, sans recopier le message de la personne. Répondez ici : à son prochain passage, il revient vers la personne avec votre réponse.",
+        "intro": "Quand Praxis ne sait pas, il vous demande. Il résume la question lui-même, sans recopier le message de la personne. Répondez ici : à son prochain passage, il revient vers la personne avec votre réponse.",
         "vide": "Aucune question de Praxis.",
         "videDetail": "Praxis n'a rien demandé à l'équipe pour l'instant.",
         "erreur": "Les questions de Praxis ne se sont pas affichées. Réessayez.",
-        "horsLigne": "Les questions de Praxis ne se chargent pas : l'appareil semble hors ligne.",
+        "horsLigne": "Les questions de Praxis ne se chargent pas : l'appareil semble hors ligne.",
         "colonneQuand": "Posée",
         "colonneQuestion": "Question",
         "colonneStatut": "État",
@@ -7001,13 +7001,13 @@
         "feuilleTitre": "Répondre à Praxis",
         "laQuestion": "La question de Praxis",
         "champReponse": "Votre réponse (1 500 signes au plus)",
-        "aideReponse": "N'écrivez que le fait à transmettre : Praxis le dira à la personne avec ses mots, dans la conversation.",
+        "aideReponse": "N'écrivez que le fait à transmettre : Praxis le dira à la personne avec ses mots, dans la conversation.",
         "reponseVide": "Écrivez la réponse avant de l'envoyer.",
         "envoyer": "Envoyer à Praxis",
         "repondue": "Réponse enregistrée. Praxis reviendra vers la personne à son prochain passage.",
-        "erreurDejaRepondue": "Cette question a déjà reçu une réponse : la première est gardée.",
+        "erreurDejaRepondue": "Cette question a déjà reçu une réponse : la première est gardée.",
         "erreurInconnue": "Cette question n'existe plus.",
-        "erreurEnvoi": "La réponse n'est pas confirmée. La liste vient d'être relue : si la question est restée sans réponse, envoyez-la de nouveau."
+        "erreurEnvoi": "La réponse n'est pas confirmée. La liste vient d'être relue : si la question est restée sans réponse, envoyez-la de nouveau."
       },
       "donnees": {
         "titre": "Données réelles",

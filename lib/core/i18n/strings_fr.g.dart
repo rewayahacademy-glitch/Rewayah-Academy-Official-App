@@ -34129,7 +34129,7 @@ class Traductions$admin$praxis$questions$fr {
 	String get titre => 'Questions de Praxis';
 
 	/// fr: 'Quand Praxis ne sait pas, il vous demande. Il résume la question lui-même, sans recopier le message de la personne. Répondez ici : à son prochain passage, il revient vers la personne avec votre réponse.'
-	String get intro => 'Quand Praxis ne sait pas, il vous demande. Il résume la question lui-même, sans recopier le message de la personne. Répondez ici : à son prochain passage, il revient vers la personne avec votre réponse.';
+	String get intro => 'Quand Praxis ne sait pas, il vous demande. Il résume la question lui-même, sans recopier le message de la personne. Répondez ici : à son prochain passage, il revient vers la personne avec votre réponse.';
 
 	/// fr: 'Aucune question de Praxis.'
 	String get vide => 'Aucune question de Praxis.';
@@ -34141,7 +34141,7 @@ class Traductions$admin$praxis$questions$fr {
 	String get erreur => 'Les questions de Praxis ne se sont pas affichées. Réessayez.';
 
 	/// fr: 'Les questions de Praxis ne se chargent pas : l'appareil semble hors ligne.'
-	String get horsLigne => 'Les questions de Praxis ne se chargent pas : l\'appareil semble hors ligne.';
+	String get horsLigne => 'Les questions de Praxis ne se chargent pas : l\'appareil semble hors ligne.';
 
 	/// fr: 'Posée'
 	String get colonneQuand => 'Posée';
@@ -34183,7 +34183,7 @@ class Traductions$admin$praxis$questions$fr {
 	String get champReponse => 'Votre réponse (1 500 signes au plus)';
 
 	/// fr: 'N'écrivez que le fait à transmettre : Praxis le dira à la personne avec ses mots, dans la conversation.'
-	String get aideReponse => 'N\'écrivez que le fait à transmettre : Praxis le dira à la personne avec ses mots, dans la conversation.';
+	String get aideReponse => 'N\'écrivez que le fait à transmettre : Praxis le dira à la personne avec ses mots, dans la conversation.';
 
 	/// fr: 'Écrivez la réponse avant de l'envoyer.'
 	String get reponseVide => 'Écrivez la réponse avant de l\'envoyer.';
@@ -34195,13 +34195,13 @@ class Traductions$admin$praxis$questions$fr {
 	String get repondue => 'Réponse enregistrée. Praxis reviendra vers la personne à son prochain passage.';
 
 	/// fr: 'Cette question a déjà reçu une réponse : la première est gardée.'
-	String get erreurDejaRepondue => 'Cette question a déjà reçu une réponse : la première est gardée.';
+	String get erreurDejaRepondue => 'Cette question a déjà reçu une réponse : la première est gardée.';
 
 	/// fr: 'Cette question n'existe plus.'
 	String get erreurInconnue => 'Cette question n\'existe plus.';
 
 	/// fr: 'La réponse n'est pas confirmée. La liste vient d'être relue : si la question est restée sans réponse, envoyez-la de nouveau.'
-	String get erreurEnvoi => 'La réponse n\'est pas confirmée. La liste vient d\'être relue : si la question est restée sans réponse, envoyez-la de nouveau.';
+	String get erreurEnvoi => 'La réponse n\'est pas confirmée. La liste vient d\'être relue : si la question est restée sans réponse, envoyez-la de nouveau.';
 }
 
 // Path: admin.praxis.donnees
@@ -61691,11 +61691,11 @@ extension on Traductions {
 			'admin.praxis.routine.aucun' => 'Aucun passage noté : la routine n\'a pas encore tourné, ou elle n\'est pas branchée.',
 			'admin.praxis.routine.aide' => 'La routine passe une fois par heure quand Praxis est allumé et autonome. Si le dernier passage date de plus de deux heures, la routine ne tourne pas.',
 			'admin.praxis.questions.titre' => 'Questions de Praxis',
-			'admin.praxis.questions.intro' => 'Quand Praxis ne sait pas, il vous demande. Il résume la question lui-même, sans recopier le message de la personne. Répondez ici : à son prochain passage, il revient vers la personne avec votre réponse.',
+			'admin.praxis.questions.intro' => 'Quand Praxis ne sait pas, il vous demande. Il résume la question lui-même, sans recopier le message de la personne. Répondez ici : à son prochain passage, il revient vers la personne avec votre réponse.',
 			'admin.praxis.questions.vide' => 'Aucune question de Praxis.',
 			'admin.praxis.questions.videDetail' => 'Praxis n\'a rien demandé à l\'équipe pour l\'instant.',
 			'admin.praxis.questions.erreur' => 'Les questions de Praxis ne se sont pas affichées. Réessayez.',
-			'admin.praxis.questions.horsLigne' => 'Les questions de Praxis ne se chargent pas : l\'appareil semble hors ligne.',
+			'admin.praxis.questions.horsLigne' => 'Les questions de Praxis ne se chargent pas : l\'appareil semble hors ligne.',
 			'admin.praxis.questions.colonneQuand' => 'Posée',
 			'admin.praxis.questions.colonneQuestion' => 'Question',
 			'admin.praxis.questions.colonneStatut' => 'État',
@@ -61709,13 +61709,13 @@ extension on Traductions {
 			'admin.praxis.questions.feuilleTitre' => 'Répondre à Praxis',
 			'admin.praxis.questions.laQuestion' => 'La question de Praxis',
 			'admin.praxis.questions.champReponse' => 'Votre réponse (1 500 signes au plus)',
-			'admin.praxis.questions.aideReponse' => 'N\'écrivez que le fait à transmettre : Praxis le dira à la personne avec ses mots, dans la conversation.',
+			'admin.praxis.questions.aideReponse' => 'N\'écrivez que le fait à transmettre : Praxis le dira à la personne avec ses mots, dans la conversation.',
 			'admin.praxis.questions.reponseVide' => 'Écrivez la réponse avant de l\'envoyer.',
 			'admin.praxis.questions.envoyer' => 'Envoyer à Praxis',
 			'admin.praxis.questions.repondue' => 'Réponse enregistrée. Praxis reviendra vers la personne à son prochain passage.',
-			'admin.praxis.questions.erreurDejaRepondue' => 'Cette question a déjà reçu une réponse : la première est gardée.',
+			'admin.praxis.questions.erreurDejaRepondue' => 'Cette question a déjà reçu une réponse : la première est gardée.',
 			'admin.praxis.questions.erreurInconnue' => 'Cette question n\'existe plus.',
-			'admin.praxis.questions.erreurEnvoi' => 'La réponse n\'est pas confirmée. La liste vient d\'être relue : si la question est restée sans réponse, envoyez-la de nouveau.',
+			'admin.praxis.questions.erreurEnvoi' => 'La réponse n\'est pas confirmée. La liste vient d\'être relue : si la question est restée sans réponse, envoyez-la de nouveau.',
 			'admin.praxis.donnees.titre' => 'Données réelles',
 			'admin.praxis.donnees.fermees' => 'Fermées : Praxis ne lit aucun dossier de candidature ni aucune conversation réelle. Seules les conversations d\'essai lui sont ouvertes.',
 			'admin.praxis.donnees.ouvertes' => 'Ouvertes : Praxis peut lire les conversations et les dossiers de candidature que sa clé lui permet de voir, dans les côtés de la personne qui l\'a émise.',
