@@ -195,3 +195,10 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
   confirmer ; 2) nouvelle migration (plage 202611295…) qui rend `compte_officiel` aussi quand l'auteur réel d'un message
   est un compte officiel, quelle que soit la nature affichée ; 3) test sur ce cas exact (fil avec l'académie, auteur
   Praxis de rôle `accountant`) ; 4) fermer puis rouvrir l'application pour vérifier.
+- **Règle précisée par le directeur (17/11, soir)** : Praxis n'a PAS de conversation à lui. Il écrit dans la conversation
+  entre l'académie et la personne, par le compte de l'académie. La personne voit en haut l'académie (#RA_STAFF), mais
+  chaque message écrit par Praxis porte son image et « #Ra_Praxis ». L'administration voit ces messages de son côté
+  (les siens), et ceux de Praxis sont marqués de son image.
+- **Second défaut à corriger (client)** : #622 n'affiche le marqueur que si `!m.deSoi` (`lecture_fil_communication.dart`,
+  `messageFilDe`). Côté administration, un message de Praxis est « de soi » : le marqueur doit aussi s'y afficher
+  (image et nom sur la bulle de soi), sans changer les messages écrits par un humain de l'équipe.
