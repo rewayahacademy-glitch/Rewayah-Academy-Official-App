@@ -41,7 +41,7 @@ parallèle, un agent par lot, quatre agents au plus.
 
 | Rang | Ce que c'est, en clair | Qui | État |
 | :-: | :--- | :--- | :-: |
-| 1 | **Praxis répond tout seul** aux messages, sans que le directeur ouvre son chat (mode autonome, étape 15) | BE-PIECE | ◐ proposition attendue |
+| 1 | **Praxis répond tout seul** aux messages, sans que le directeur ouvre son chat (mode autonome, étape 15) | BE-PIECE | ◐ arbitré à 8 h 15 : une tâche planifiée par heure, 24 h sur 24, dans un environnement dédié qui seul porte la clé « routine » (saisie par le directeur, jamais vue d'un agent) ; « pouls » visible (migration 900000) ; plafond 30 envois/heure ; tir à blanc en mode essai avant de dire « opérationnel » |
 | 2 | **Praxis répond aussi aux candidats** (leurs conversations lui sont fermées aujourd'hui) | BE-GESTES, migration 910000 | ◐ après #606 |
 | 3 | **Le profil de Praxis** : son image (fond violet, outils noirs) et la mention IA discrète, surtout dans le détail du profil | agent de la messagerie `session_0163Kjry6zThXGyFJhJk9NHn` (migration 520000 : le client apprend qu'un compte est officiel) | ◐ lancé à 8 h 10 |
 | 4 | **La politique de confidentialité** dit qu'un assistant lit les messages : texte arbitré par le pilote (`TEXTES-VALIDES/POLITIQUE-CONFIDENTIALITE-PRAXIS.md`), purge du journal à 12 mois, puis intégration | pilote ☑ texte ; BE-SALLE après #525, migration 920000 ; intégration : à attribuer | ◐ |
