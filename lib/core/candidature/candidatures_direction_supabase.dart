@@ -359,6 +359,11 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
           'p_motif': d.motif,
         },
       );
+    case GesteCandidature.refaireEntretien:
+      return (
+        'refaire_entretien',
+        <String, dynamic>{...commun, 'p_motif': d.motif},
+      );
     case GesteCandidature.debloquerVersement:
       return (
         'debloquer_versement_candidat',

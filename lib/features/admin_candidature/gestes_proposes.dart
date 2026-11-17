@@ -125,6 +125,12 @@ bool gestePermisPourLigne(
           etape == EtapeCandidature.verifications &&
           (l.etat == EtatCandidature.entretienAPlanifier ||
               l.etat == EtatCandidature.entretienPlanifie);
+    case GesteCandidature.refaireEntretien:
+      // BE-1h (regle 46 du moteur) : en Salle de verification et d'entretien,
+      // la decision attendue, en cours, hors pause.
+      return sansPause &&
+          etape == EtapeCandidature.verifications &&
+          l.etat == EtatCandidature.decisionEnAttente;
     case GesteCandidature.validerPiece:
       // Les sources permises de `valider_piece` (CAND-L2A1) : en Salle de
       // verification et d'entretien, la decision attendue, en cours, hors
@@ -255,6 +261,7 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.admettreVerifications,
   GesteCandidature.validerPiece,
   GesteCandidature.dispenserEntretien,
+  GesteCandidature.refaireEntretien,
   GesteCandidature.mettreEnPause,
   GesteCandidature.leverPause,
   GesteCandidature.refuser,
