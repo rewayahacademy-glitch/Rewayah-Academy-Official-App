@@ -54,7 +54,8 @@ SELECT pg_temp.vrai(
        -- que sous une fonction DEFINER, donc avec les droits du proprietaire, hors RLS (sans FORCE). Cas de
        -- private.candidature_geste_deplacer_entretien (20261129760000, deplacer_entretien) : EXECUTE retire
        -- a PUBLIC, anon, authenticated, service_role et agent_ro. Une fonction INVOKER executable par un
-       -- client reste rouge.
+       -- client reste rouge. Effet de bord accepte (pilote, 17/11) : une fonction DEFINER d'un autre proprietaire
+       -- que personne ne peut executer passerait aussi.
        AND EXISTS (SELECT 1 FROM pg_catalog.pg_roles r
                     WHERE r.rolname IN ('anon', 'authenticated', 'service_role', 'agent_ro')
                       AND pg_catalog.has_function_privilege(r.rolname, p.oid, 'EXECUTE'))),
