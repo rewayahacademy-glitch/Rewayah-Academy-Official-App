@@ -622,7 +622,7 @@ void main() {
         expect(candidat.appels.single.genre, 'male');
         expect(candidat.appels.single.telephone, '+33612345678');
         expect(candidat.appels.single.langue, 'fr');
-        expect(candidat.appels.single.versionConfidentialite, '2026-11-v1');
+        expect(candidat.appels.single.versionConfidentialite, '2026-11-v2');
         expect(candidat.creations, hasLength(1));
         expect(source.rafraichissements, 1);
         expect(find.text('ATTENTE'), findsOneWidget);

@@ -219,7 +219,7 @@ void main() {
         '/juridique/annulation-remboursement',
       );
       expect(ligneVersionJuridique(), contains(VersionsJuridiques.version));
-      expect(ligneVersionJuridique(), contains('2 novembre 2026'));
+      expect(ligneVersionJuridique(), contains('17 novembre 2026'));
     });
   });
 
