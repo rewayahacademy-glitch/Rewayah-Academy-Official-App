@@ -51,7 +51,8 @@ $preflight$;
 CREATE TABLE private.praxis_actes (
   acte text PRIMARY KEY CHECK (acte ~ '^[a-z][a-z0-9_]{2,59}$'),
   niveau text NOT NULL CHECK (niveau IN ('A', 'S')),
-  description text NOT NULL CHECK (pg_catalog.length(description) BETWEEN 1 AND 300),
+  -- La description est ce que le MODELE lit : elle dit les valeurs par defaut et ce qu'il doit demander (1200 signes au plus).
+  description text NOT NULL CHECK (pg_catalog.length(description) BETWEEN 1 AND 1200),
   lot_max smallint NOT NULL DEFAULT 1 CHECK (lot_max BETWEEN 1 AND 50),
   CONSTRAINT praxis_actes_a_sans_lot CHECK (niveau = 'S' OR lot_max = 1)
 );
