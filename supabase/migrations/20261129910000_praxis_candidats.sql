@@ -1,7 +1,7 @@
 -- PRAXIS-CANDIDATS (directeur, 17/11/2026 : « les candidats sont des centaines ») : Praxis lit et ecrit les conversations de CANDIDATURE
 -- entre un candidat enseignant et l'academie, jusqu'ici fermees (type_ferme). Retouche par ancrage de trois fonctions, signatures inchangees :
 --   private.praxis_types_fil()  : + 'candidature'
---   private.praxis_fil_refus    : candidature vivante (en_cours, hors pause, etape <> confirmee, type enseignant, partie A = le candidat),
+--   private.praxis_fil_refus    : candidature vivante (en_cours, hors pause, etape <> confirmee, type enseignant, majorite attestee, partie A = le candidat),
 --                                 cote = genre de la candidature ; mineur, essai, donnees reelles, hors_academie inchanges
 --   public.praxis_ecrire        : le test fil_ferme (com_paires, qui lit auth.uid()) ne s'applique plus aux candidatures
 -- Rien d'autre : ni piece d'identite, ni paiement, ni note d'entretien (Praxis ne lit que les messages du fil). La reprise par l'equipe
@@ -55,12 +55,14 @@ BEGIN
   END IF;
   -- PRAXIS-CANDIDATS (17/11/2026) : un fil de candidature n'est ouvert que s'il porte sur une candidature d'enseignant VIVANTE (en cours,
   -- hors pause, avant la confirmation) dont la partie A est bien le candidat. Meme regle que private.com_paires, sans auth.uid().
-  -- Sinon : type_ferme (aucune fuite d'existence).
+  -- La majorite doit etre ATTESTEE (majorite_declaree vrai) : pas de declaration ou « moins de 18 ans » = ferme (un candidat n'est pas un
+  -- eleve : com_est_mineur ne le voit pas). Une fausse declaration reste indetectable (risque accepte). Sinon : type_ferme (aucune fuite d'existence).
   IF f.type_objet = 'candidature' AND NOT EXISTS (
        SELECT 1 FROM public.candidatures cd
         WHERE cd.id = f.objet_id AND cd.type_code = 'enseignant' AND cd.profile_id IS NOT NULL
           AND f.partie_a_nature = 'profil' AND f.partie_a_id = cd.profile_id
-          AND cd.issue = 'en_cours' AND NOT cd.en_pause AND cd.etape <> 'confirmee') THEN
+          AND cd.issue = 'en_cours' AND NOT cd.en_pause AND cd.etape <> 'confirmee'
+          AND cd.majorite_declaree IS TRUE) THEN
     RETURN 'type_ferme';
   END IF;
   IF f.partie_a_nature = 'profil' AND private.com_est_mineur(f.partie_a_id) THEN RETURN 'mineur'; END IF;

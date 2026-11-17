@@ -2,7 +2,7 @@
 -- enseignant, jusqu'ici fermees (type_ferme). Chaque verification est isolee ; le fichier se termine par la liste ok / ROUGE puis echoue
 -- s'il reste un ROUGE. Avant la migration, les lignes « ouvert » sont ROUGES ; les lignes « ferme » (refus conserves) sont vertes avant et apres.
 -- Ouvert : candidature d'enseignant vivante (en_cours, hors pause, avant confirmee), partie A = le candidat, cote de la cle, adulte.
--- Ferme : issue refusee, pause, confirmee, fil sans candidature, partie A etrangere, mineur, autre cote, mode essai, donnees reelles fermees.
+-- Ferme : majorite non attestee (NULL ou faux : com_est_mineur ne voit pas un candidat mineur), issue refusee, pause, confirmee, fil sans candidature, partie A etrangere, mineur, autre cote, mode essai, donnees reelles fermees.
 -- A rejouer sur une base NEUVE (stub_auth puis toutes les migrations). Annule tout a la fin. Aucun mot d'effacement.
 \o /dev/null
 BEGIN;
@@ -140,6 +140,11 @@ INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, l
  (pg_temp.u('15'), 'PC-CAN-0015', 'teacher', NULL, 'Candidate', 'Quinze', 'pending_kyc', 'female');
 INSERT INTO public.teacher_profiles (profile_id, country, languages, kyc_status)
 SELECT pg_temp.u(n::text), 'SA', ARRAY[]::text[], 'pending' FROM generate_series(10, 15) n;
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
+ (pg_temp.u('17'), 'PC-CAN-0017', 'teacher', NULL, 'Candidate', 'SansAge', 'pending_kyc', 'female'),
+ (pg_temp.u('18'), 'PC-CAN-0018', 'teacher', NULL, 'Candidate', 'Moins18', 'pending_kyc', 'female');
+INSERT INTO public.teacher_profiles (profile_id, country, languages, kyc_status)
+SELECT pg_temp.u(n::text), 'SA', ARRAY[]::text[], 'pending' FROM generate_series(17, 18) n;
 INSERT INTO private.super_admin_kyc (profile_id) VALUES (pg_temp.u('1'));
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, en_pause, source) VALUES
  (pg_temp.c('10'), 'enseignant', pg_temp.u('10'), 'female', 'Fixture PC vivante', 'verifications', 'entretien_a_planifier', 'en_cours', false, 'lien_public'),
@@ -148,6 +153,13 @@ INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, 
  (pg_temp.c('13'), 'enseignant', pg_temp.u('13'), 'female', 'Fixture PC pause', 'verifications', 'entretien_a_planifier', 'en_cours', true, 'lien_public'),
  (pg_temp.c('14'), 'enseignant', pg_temp.u('14'), 'female', 'Fixture PC confirmee', 'confirmee', NULL, 'en_cours', false, 'lien_public'),
  (pg_temp.c('15'), 'enseignant', pg_temp.u('15'), 'female', 'Fixture PC quinze', 'verifications', 'entretien_a_planifier', 'en_cours', false, 'lien_public');
+INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, en_pause, source) VALUES
+ (pg_temp.c('17'), 'enseignant', pg_temp.u('17'), 'female', 'Fixture PC sans age', 'verifications', 'entretien_a_planifier', 'en_cours', false, 'lien_public'),
+ (pg_temp.c('18'), 'enseignant', pg_temp.u('18'), 'female', 'Fixture PC moins 18', 'verifications', 'entretien_a_planifier', 'en_cours', false, 'lien_public');
+-- La majorite est attestee (vrai) pour toutes, sauf c17 (aucune declaration : NULL) et c18 (« moins de 18 ans » : faux, ici sans pause).
+UPDATE public.candidatures SET majorite_declaree = true, majorite_attestee_le = pg_catalog.clock_timestamp()
+ WHERE id NOT IN (pg_temp.c('17'), pg_temp.c('18'));
+UPDATE public.candidatures SET majorite_declaree = false, majorite_attestee_le = pg_catalog.clock_timestamp() WHERE id = pg_temp.c('18');
 -- Un mineur (u16, eleve) ecrit dans le fil de la candidature u15 : ce fil se ferme (mineur), quoi que dise la candidature.
 INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender)
 VALUES (pg_temp.u('16'), 'PC-ELV-0016', 'student', pg_temp.h('2'), 'Eleve', 'Mineur', 'active', 'male');
@@ -162,6 +174,8 @@ INSERT INTO public.com_fils (id, type_objet, objet_id, partie_a_nature, partie_a
  -- Aucune candidature derriere ce fil ; et un fil dont la partie A n'est pas le candidat de la candidature.
  (pg_temp.f('16'), 'candidature', pg_temp.u('98'), 'profil', pg_temp.u('10'), 'equipe', NULL),
  (pg_temp.f('17'), 'candidature', pg_temp.c('10'), 'profil', pg_temp.u('3'), 'equipe', NULL),
+ (pg_temp.f('18'), 'candidature', pg_temp.c('17'), 'profil', pg_temp.u('17'), 'equipe', NULL),
+ (pg_temp.f('19'), 'candidature', pg_temp.c('18'), 'profil', pg_temp.u('18'), 'equipe', NULL),
  (pg_temp.f('1'), 'dossier', pg_temp.u('3'), 'foyer', pg_temp.h('1'), 'equipe', NULL);
 CREATE FUNCTION pg_temp.msg(p_fil text, p_auteur text, p_texte text, p_n text) RETURNS void LANGUAGE sql AS $$
   INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le)
@@ -169,6 +183,8 @@ CREATE FUNCTION pg_temp.msg(p_fil text, p_auteur text, p_texte text, p_n text) R
           pg_catalog.clock_timestamp() - interval '2 hours' + (p_n::int || ' seconds')::interval) $$;
 SELECT pg_temp.msg(n::text, n::text, 'Bonjour, ma candidature.', n::text) FROM generate_series(10, 15) n;
 SELECT pg_temp.msg('16', '10', 'Bonjour, fil sans candidature.', '16');
+SELECT pg_temp.msg('18', '17', 'Bonjour, sans declaration d''age.', '20');
+SELECT pg_temp.msg('19', '18', 'Bonjour, moins de 18 ans.', '21');
 SELECT pg_temp.msg('15', '16', 'Bonjour, c''est un enfant qui ecrit.', '19');
 SELECT pg_temp.msg('17', '3', 'Bonjour, partie A etrangere.', '17');
 SELECT pg_temp.msg('1', '3', 'Bonjour du dossier.', '18');
@@ -225,17 +241,17 @@ SELECT pg_temp.verif('FERME cote : la boite de la cle femme ne montre pas le fil
 
 -- ===== FERME : tout ce qui n'est pas une candidature vivante, en lecture ET en ecriture =====
 SELECT pg_temp.verif('FERME refusee : lecture ' || x.f, format($v$SELECT pg_temp.fil('both', %L) ->> 'erreur' = 'type_ferme'$v$, x.f))
-  FROM (VALUES ('12'), ('13'), ('14'), ('16'), ('17')) x(f);
+  FROM (VALUES ('12'), ('13'), ('14'), ('16'), ('17'), ('18'), ('19')) x(f);
 SELECT pg_temp.verif('FERME ecriture ' || x.f || ' : type_ferme, rien d''ecrit', format(
   $v$SELECT pg_temp.ecrire('both', %L, %L) ->> 'erreur' = 'type_ferme'
         AND NOT EXISTS (SELECT 1 FROM public.com_messages m WHERE m.fil_id = pg_temp.f(%L) AND m.auteur_id = private.praxis_profil())$v$,
   x.f, '2' || x.f, x.f))
-  FROM (VALUES ('12'), ('13'), ('14'), ('16'), ('17')) x(f);
+  FROM (VALUES ('12'), ('13'), ('14'), ('16'), ('17'), ('18'), ('19')) x(f);
 SELECT pg_temp.verif('FERME mineur : un mineur a ecrit dans le fil, refuse en lecture et en ecriture', $$
   SELECT pg_temp.fil('both', '15') ->> 'erreur' = 'mineur' AND pg_temp.ecrire('both', '15', '215') ->> 'erreur' = 'mineur' $$);
-SELECT pg_temp.verif('FERME boite : aucun fil refuse (12 13 14 15 16 17) n''apparait dans la boite', $$
+SELECT pg_temp.verif('FERME boite : aucun fil refuse (12 a 19) n''apparait dans la boite', $$
   SELECT NOT (pg_temp.srv(pg_catalog.format('SELECT public.praxis_boite(%L, ''tout'', 50)', pg_temp.k('both')))::text ~ ('(' ||
-    pg_temp.f('12') || '|' || pg_temp.f('13') || '|' || pg_temp.f('14') || '|' || pg_temp.f('15') || '|' || pg_temp.f('16') || '|' || pg_temp.f('17') || ')')) $$);
+    pg_temp.f('12') || '|' || pg_temp.f('13') || '|' || pg_temp.f('14') || '|' || pg_temp.f('15') || '|' || pg_temp.f('16') || '|' || pg_temp.f('17') || '|' || pg_temp.f('18') || '|' || pg_temp.f('19') || ')')) $$);
 -- Une candidature qui devient confirmee, en pause ou refusee APRES ouverture se referme.
 UPDATE public.candidatures SET en_pause = true WHERE id = pg_temp.c('11');
 SELECT pg_temp.verif('FERME apres coup : la candidature mise en pause se referme', $$ SELECT pg_temp.fil('both', '11') ->> 'erreur' = 'type_ferme' $$);
