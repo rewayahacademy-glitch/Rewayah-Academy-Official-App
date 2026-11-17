@@ -163,12 +163,14 @@ BEGIN
     EXECUTE v_def;
   END IF;
 
-  -- 4.2 Les capacites : le geste d'annulation.
+  -- 4.2 Les capacites : les gestes d'annulation et de modification (cles distinctes de demanderComplement,
+  -- pour que l'ecran ne confonde pas « demander » et « modifier »).
   v_def := pg_catalog.pg_get_functiondef('public.capacites_candidatures()'::regprocedure);
   IF pg_catalog.strpos(v_def, 'annulerComplement') = 0 THEN
     v_def := pg_temp.remplacer(v_def, '''cloreComplement'', v_decider,',
       '''cloreComplement'', v_decider,
-      ''annulerComplement'', v_decider,', 'capacites.geste');
+      ''annulerComplement'', v_decider,
+      ''modifierComplement'', v_decider,', 'capacites.geste');
     EXECUTE v_def;
   END IF;
 END;

@@ -75,7 +75,25 @@ bool gestePermisPourLigne(
       l.etat == EtatCandidature.enExamen;
   switch (geste) {
     case GesteCandidature.demanderComplement:
-      return sansPause && (enExamen || etape == EtapeCandidature.verifications);
+      // COMPLEMENT-SALLE-EXAMEN (T7) : aussi quand le paiement n'est pas
+      // disponible (variante 4 du serveur, le seul code `versement`).
+      return sansPause &&
+          (enExamen ||
+              etape == EtapeCandidature.verifications ||
+              (etape == EtapeCandidature.prequalification &&
+                  l.etat == EtatCandidature.paiementNonDisponible));
+    case GesteCandidature.modifierComplement:
+      // COMPLEMENT-SALLE-EXAMEN (T6) : la regle `demander_complement`
+      // variante 3 du serveur (a_completer, complement en cours).
+      return sansPause &&
+          etape == EtapeCandidature.prequalification &&
+          l.etat == EtatCandidature.aCompleter &&
+          l.complementEnCours;
+    case GesteCandidature.annulerComplement:
+      return sansPause &&
+          etape == EtapeCandidature.prequalification &&
+          l.etat == EtatCandidature.aCompleter &&
+          l.complementEnCours;
     case GesteCandidature.cloreComplement:
       // Le serveur refuse « aucun_complement » sans demande en cours : le
       // geste n'est rendu que si la ligne dit qu'une demande court.
@@ -242,6 +260,8 @@ RaisonGestes raisonDesGestes(
 const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.demanderComplement,
   GesteCandidature.cloreComplement,
+  GesteCandidature.modifierComplement,
+  GesteCandidature.annulerComplement,
   GesteCandidature.confirmerMoyenPaiement,
   GesteCandidature.infirmerMoyenPaiement,
   GesteCandidature.debloquerVersement,

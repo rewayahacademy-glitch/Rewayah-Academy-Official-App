@@ -221,6 +221,8 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
   gestes: <String, bool>{
     'demanderComplement': true,
     'cloreComplement': true,
+    'modifierComplement': true,
+    'annulerComplement': true,
     'admettreVerifications': true,
     'confirmerMoyenPaiement': true,
     'infirmerMoyenPaiement': true,

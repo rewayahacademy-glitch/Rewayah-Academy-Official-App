@@ -298,6 +298,8 @@ DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
     etat: EtatCandidature.entretienAPlanifier,
     complementEnCours: true,
   ),
+  GesteCandidature.modifierComplement || GesteCandidature.annulerComplement =>
+    detailTest(etat: EtatCandidature.aCompleter, complementEnCours: true),
   _ => detailTest(),
 };
 

@@ -83,6 +83,22 @@ void main() {
       ],
     ),
     (
+      nom: 'a completer, complement en cours : modifier ou annuler',
+      detail: detailTest(
+        etat: EtatCandidature.aCompleter,
+        complementEnCours: true,
+      ),
+      principal: null,
+      permis: <GesteCandidature>[
+        GesteCandidature.modifierComplement,
+        GesteCandidature.annulerComplement,
+        GesteCandidature.mettreEnPause,
+        GesteCandidature.refuser,
+        GesteCandidature.consignerRetrait,
+        GesteCandidature.definirResponsable,
+      ],
+    ),
+    (
       nom: 'versement pas encore possible',
       detail: detailTest(
         etat: EtatCandidature.paiementNonDisponible,
@@ -90,6 +106,7 @@ void main() {
       ),
       principal: null,
       permis: <GesteCandidature>[
+        c,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,
