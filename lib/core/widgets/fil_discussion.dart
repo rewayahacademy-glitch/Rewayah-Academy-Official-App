@@ -105,6 +105,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'avatar_tile.dart' show AppAvatar;
 import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
@@ -196,7 +197,15 @@ class MessageFil {
     this.image,
     this.coeurs = 0,
     this.aimeParMoi = false,
+    this.avatarAuteur,
   });
+
+  /// PX-BULLE (directeur, 17/11/2026) : l'avatar d'un compte officiel (Praxis)
+  /// qui parle, de [AppAvatar.petit] de diametre, ou `null` : une bulle
+  /// ordinaire, sans avatar. Quand il est donne, la bulle porte aussi le nom de
+  /// son auteur, meme dans une conversation a deux ; le toucher du nom ou de
+  /// l'avatar ouvre le panneau de contexte (le profil du compte officiel).
+  final Widget? avatarAuteur;
 
   /// IMAGES-MESSAGERIE : l'image du message, ou `null`.
   final ImageMessage? image;
@@ -1528,7 +1537,11 @@ class _FilDiscussionState extends State<FilDiscussion> {
       return _Bulle(
         key: ValueKey<String>('message-${m.id}'),
         auteur: m.auteur,
-        afficherNom: l.avecNom,
+        afficherNom: l.avecNom || m.avatarAuteur != null,
+        avatar: m.avatarAuteur,
+        onOuvrirAuteur: m.avatarAuteur == null
+            ? null
+            : EspaceTravailAdaptatif.ouvrirContexteDe(context),
         texte: _texteAffiche(m),
         image: m.image,
         adresse: m.image == null ? null : _miniatures[m.image!.id],
@@ -2236,6 +2249,8 @@ class _Bulle extends StatelessWidget {
     this.coeurs = 0,
     this.aime = false,
     this.groupe = false,
+    this.avatar,
+    this.onOuvrirAuteur,
     this.onOuvrirImage,
     this.onAimer,
     this.onCopier,
@@ -2254,6 +2269,11 @@ class _Bulle extends StatelessWidget {
   final int coeurs;
   final bool aime;
   final bool groupe;
+
+  /// PX-BULLE : l'avatar d'un compte officiel, a cote de la bulle (cote de
+  /// l'autre partie), et ce que le toucher du nom ou de l'avatar ouvre.
+  final Widget? avatar;
+  final VoidCallback? onOuvrirAuteur;
 
   /// Toucher l'image, double toucher, menu « Copier le texte ».
   final VoidCallback? onOuvrirImage;
@@ -2363,11 +2383,12 @@ class _Bulle extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
                             if (afficherNom)
-                              Text(
-                                auteur,
+                              _NomAuteur(
+                                auteur: auteur,
                                 style: palette.inkMuted.applyTo(
                                   textes.labelMedium ?? const TextStyle(),
                                 ),
+                                onOuvrir: onOuvrirAuteur,
                               ),
                             if (texte.isNotEmpty) ...<Widget>[
                               if (afficherNom) Ecart.vXs,
@@ -2587,20 +2608,26 @@ class _Bulle extends StatelessWidget {
       child: LayoutBuilder(
         builder: (BuildContext _, BoxConstraints colonne) {
           final double l = colonne.maxWidth;
+          // PX-BULLE : la place de l'avatar d'un compte officiel, prise sur la
+          // largeur de la bulle (le total ne depasse pas la limite d'avant).
+          final double reserve = avatar == null || deSoi
+              ? 0
+              : AppAvatar.petit + AppSpacing.sm;
           // Au plus 75 % de la colonne (560 sur ordinateur), et toujours 64
           // de libres du cote oppose.
           final double maxi = math.max(
             0,
             math.min(
-              math.min(
-                FilDiscussion.largeurBulleMax,
-                // Une bulle qui porte une piece (carte, lecteur vocal) prend
-                // la colonne moins la marge : le nom d'un fichier garde son
-                // debut (R-11).
-                l * (complement == null ? FilDiscussion.partBulle : 1),
-              ),
-              l - FilDiscussion.margeOpposee,
-            ),
+                  math.min(
+                    FilDiscussion.largeurBulleMax,
+                    // Une bulle qui porte une piece (carte, lecteur vocal) prend
+                    // la colonne moins la marge : le nom d'un fichier garde son
+                    // debut (R-11).
+                    l * (complement == null ? FilDiscussion.partBulle : 1),
+                  ),
+                  l - FilDiscussion.margeOpposee,
+                ) -
+                reserve,
           );
           return Align(
             alignment: deSoi
@@ -2610,36 +2637,122 @@ class _Bulle extends StatelessWidget {
               // Avec l'icone d'alerte, la colonne prend sa place en plus : elle
               // tient dans la marge libre de 64 du cote oppose.
               constraints: BoxConstraints(
-                maxWidth: iconeEchec == null
-                    ? maxi
-                    : math.min(l, maxi + cibleEchec + AppSpacing.xs),
+                maxWidth:
+                    reserve +
+                    (iconeEchec == null
+                        ? maxi
+                        : math.min(l, maxi + cibleEchec + AppSpacing.xs)),
               ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: deSoi
-                    ? CrossAxisAlignment.end
-                    : CrossAxisAlignment.start,
-                children: <Widget>[
-                  if (iconeEchec == null)
-                    construireBulle(maxi)
-                  else
-                    Row(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.center,
-                      children: <Widget>[
-                        iconeEchec,
-                        Ecart.hXs,
-                        Flexible(child: construireBulle(maxi)),
-                      ],
-                    ),
-                  ?pied,
-                  ?piedEchec,
-                ],
+              child: _AvecAvatar(
+                avatar: reserve == 0 ? null : avatar,
+                onOuvrir: onOuvrirAuteur,
+                libelle: auteur,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: deSoi
+                      ? CrossAxisAlignment.end
+                      : CrossAxisAlignment.start,
+                  children: <Widget>[
+                    if (iconeEchec == null)
+                      construireBulle(maxi)
+                    else
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: <Widget>[
+                          iconeEchec,
+                          Ecart.hXs,
+                          Flexible(child: construireBulle(maxi)),
+                        ],
+                      ),
+                    ?pied,
+                    ?piedEchec,
+                  ],
+                ),
               ),
             ),
           );
         },
       ),
+    );
+  }
+}
+
+/// PX-BULLE : le nom de l'auteur d'une bulle ; pour un compte officiel, un
+/// toucher ouvre son profil (le panneau de contexte). Sans [onOuvrir], un
+/// simple texte.
+class _NomAuteur extends StatelessWidget {
+  const _NomAuteur({
+    required this.auteur,
+    required this.style,
+    required this.onOuvrir,
+  });
+
+  final String auteur;
+  final TextStyle style;
+  final VoidCallback? onOuvrir;
+
+  /// La cle du nom touchable d'un compte officiel, pour les tests.
+  static const Key cle = ValueKey<String>('bulle-nom-officiel');
+
+  @override
+  Widget build(BuildContext context) {
+    final Text nom = Text(auteur, style: style);
+    if (onOuvrir == null) return nom;
+    return Pressable(
+      key: cle,
+      onPress: onOuvrir,
+      libelleSemantique: auteur,
+      // Sans la cible minimale : elle ouvrirait un vide de 48 entre le nom et
+      // le texte de la bulle ; l'avatar, a cote, est l'autre cible du profil.
+      respecterCibleTactile: false,
+      child: nom,
+    );
+  }
+}
+
+/// PX-BULLE : l'avatar d'un compte officiel a cote de la bulle (cote debut),
+/// aligne sur le haut ; le toucher de l'avatar ouvre le profil. Sans avatar,
+/// l'enfant tel quel.
+class _AvecAvatar extends StatelessWidget {
+  const _AvecAvatar({
+    required this.avatar,
+    required this.onOuvrir,
+    required this.libelle,
+    required this.child,
+  });
+
+  final Widget? avatar;
+  final VoidCallback? onOuvrir;
+  final String libelle;
+  final Widget child;
+
+  /// La cle de l'avatar d'un compte officiel, pour les tests.
+  static const Key cle = ValueKey<String>('bulle-avatar-officiel');
+
+  @override
+  Widget build(BuildContext context) {
+    final Widget? a = avatar;
+    if (a == null) return child;
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        KeyedSubtree(
+          key: cle,
+          child: onOuvrir == null
+              ? ExcludeSemantics(child: a)
+              : Pressable(
+                  onPress: onOuvrir,
+                  libelleSemantique: libelle,
+                  respecterCibleTactile: false,
+                  arrondiFocus: BorderRadius.circular(AppAvatar.petit),
+                  child: a,
+                ),
+        ),
+        Ecart.hSm,
+        Flexible(child: child),
+      ],
     );
   }
 }
