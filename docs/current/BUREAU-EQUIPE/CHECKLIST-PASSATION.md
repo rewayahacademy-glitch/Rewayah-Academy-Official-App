@@ -37,6 +37,20 @@ parallèle, un agent par lot, quatre agents au plus.
 
 **Gelé, sans agent ni travail** : #525, l'étape E, LP-3 à LP-7, BE-COLONNES, BE-1e, BE-1f, l'étape D.
 
+## 00. PRIORITÉS (recadrage du directeur, 17/11 à 8 h : « Praxis opérationnel ce soir à 100 % »)
+
+| Rang | Ce que c'est, en clair | Qui | État |
+| :-: | :--- | :--- | :-: |
+| 1 | **Praxis répond tout seul** aux messages, sans que le directeur ouvre son chat (mode autonome, étape 15) | BE-PIECE | ◐ proposition attendue |
+| 2 | **Praxis répond aussi aux candidats** (leurs conversations lui sont fermées aujourd'hui) | BE-GESTES, migration 910000 | ◐ après #606 |
+| 3 | **Le profil de Praxis** : son image (fond violet, outils noirs) et la mention IA discrète, surtout dans le détail du profil | Pilote Messagerie | ◐ relancé à 8 h 25 |
+| 4 | **La politique de confidentialité** dit qu'un assistant lit les messages : texte arbitré par le pilote (`TEXTES-VALIDES/POLITIQUE-CONFIDENTIALITE-PRAXIS.md`), purge du journal à 12 mois, puis intégration | pilote ☑ texte ; BE-DOSSIER, migration 920000 | ◐ |
+| 5 | **L'essai à blanc** : le directeur branche Praxis et lui fait répondre à un seul fil de test (`PRAXIS/ESSAI-A-BLANC.md`) | directeur | ⏸ prêt |
+| 6 | **La case anti-robot Cloudflare** sous le bouton d'inscription et de connexion (#525, en retard depuis le 16/11) | BE-SALLE | ◐ relancé à 8 h 25 |
+| 7 | **Inscription d'un associé invité** par un code (#604) | BE-DOSSIER | ◐ bloquée par #606 |
+| 8 | **Un test de la facturation qui casse selon l'heure** (bloque la vérification automatique de toutes les PR le lundi et le mardi matin) | BE-GESTES (#606) | ◐ |
+| Après | Praxis fixe des objectifs et des check-lists (PX-3), propose des classes (PX-4), fait des rapports (PX-5) | — | ☐ |
+
 ## 0. Pour le directeur au réveil
 
 Résumé de la nuit du 16 au 17/11 (pilote, 6 h UTC). Rien ne vous est demandé.
