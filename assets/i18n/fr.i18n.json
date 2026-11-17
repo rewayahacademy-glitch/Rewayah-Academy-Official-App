@@ -6933,6 +6933,17 @@
       "plafondChamp": "Nombre de messages par heure (de 1 à 120)",
       "plafondEnregistrer": "Fixer le plafond",
       "plafondInvalide": "Écrivez un nombre entier entre 1 et 120.",
+      "routine": {
+        "titre": "Routine horaire",
+        "dernier": "Dernier passage : {quand} ({issue}).",
+        "issueOk": "a travaillé",
+        "issueRien": "rien à faire",
+        "issueErreur": "a échoué",
+        "issueInconnue": "issue inconnue",
+        "compteurs": "Fils lus : {lus}. Messages envoyés : {envoyes}. Passés à l'équipe : {passes}. Refus reçus : {refus}.",
+        "aucun": "Aucun passage noté : la routine n'a pas encore tourné, ou elle n'est pas branchée.",
+        "aide": "La routine passe une fois par heure quand Praxis est allumé et autonome. Si le dernier passage date de plus de deux heures, la routine ne tourne pas."
+      },
       "donnees": {
         "titre": "Données réelles",
         "fermees": "Fermées : Praxis ne lit aucun dossier de candidature ni aucune conversation réelle. Seules les conversations d'essai lui sont ouvertes.",

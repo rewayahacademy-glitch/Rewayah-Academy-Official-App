@@ -6840,6 +6840,17 @@
       "plafondChamp": "Number of messages per hour (1 to 120)",
       "plafondEnregistrer": "Set the limit",
       "plafondInvalide": "Write a whole number between 1 and 120.",
+      "routine": {
+        "titre": "Hourly routine",
+        "dernier": "Last run: {quand} ({issue}).",
+        "issueOk": "worked",
+        "issueRien": "nothing to do",
+        "issueErreur": "failed",
+        "issueInconnue": "unknown outcome",
+        "compteurs": "Threads read: {lus}. Messages sent: {envoyes}. Left to the team: {passes}. Refusals received: {refus}.",
+        "aucun": "No run recorded: the routine has not run yet, or it is not set up.",
+        "aide": "The routine runs once an hour while Praxis is on and autonomous. If the last run is more than two hours old, the routine is not running."
+      },
       "donnees": {
         "titre": "Real data",
         "fermees": "Closed: Praxis reads no real application file and no real conversation. Only the test conversations are open to it.",
