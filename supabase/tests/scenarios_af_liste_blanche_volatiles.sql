@@ -64,6 +64,14 @@ declare
     -- (dix au plus, existantes) dans private.praxis_reglages.essai_fils, plus une ligne d'audit (praxis_regle_essai). Tant que la
     -- liste n'est pas vide, Praxis ne voit que ces fils et n'annonce rien. Elle n'ecrit ni message, ni annonce, ni compte.
     'direction_praxis_regler_essai(uuid[])',
+    -- PX-2 (17/11) : trois portes de la direction (administrateur valide, aal2). regler_donnees_reelles ouvre ou ferme les donnees reelles
+    -- (faux a l'installation, ouvert par le directeur apres la publication de la politique) ; valider execute le geste PREPARE par Praxis
+    -- par la porte publique existante, sous l'identite de la direction, et marque la proposition validee ; ecarter la marque ecartee.
+    -- Chacune ecrit private.praxis_reglages ou private.praxis_propositions et une ligne d'audit ; aucune n'ecrit directement un dossier.
+    -- direction_praxis_propositions est STABLE : hors de cette liste.
+    'direction_praxis_ecarter(uuid,text,uuid)',
+    'direction_praxis_regler_donnees_reelles(boolean)',
+    'direction_praxis_valider(uuid,integer,text,uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
     -- praxis_journal_lu : qui a lu, la limite et le curseur, jamais un texte) : c'est pourquoi elle est VOLATILE.
