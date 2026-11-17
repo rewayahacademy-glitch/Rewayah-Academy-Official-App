@@ -142,8 +142,8 @@ SELECT pg_temp.vrai(pg_temp.agir(:'k1', 'support_modifier', pg_catalog.format('{
                       -> 'resultat' ->> 'erreur' = 'parametre',
   '3g : la visibilite « ' || v || ' » n''est pas offerte au chat')
   FROM (VALUES (1, 'publique'), (2, 'admin'), (3, 'tous')) x(n, v);
-SELECT pg_temp.vrai((pg_temp.agir(:'k1', 'support_modifier', pg_catalog.format('{"id": "%s", "revision": %s, "visibilite": "groupe_assigne"}', pg_temp.s(1), :'r1'), 64)
-                      -> 'resultat' ->> 'ok')::boolean
+SELECT pg_temp.agir(:'k1', 'support_modifier', pg_catalog.format('{"id": "%s", "revision": %s, "visibilite": "groupe_assigne"}', pg_temp.s(1), :'r1'), 64) AS j \gset
+SELECT pg_temp.vrai((:'j'::jsonb -> 'resultat' ->> 'ok')::boolean
                     AND (SELECT access_policy::text FROM public.library_resource WHERE id = pg_temp.s(1)) = 'groupe_assigne',
   '3h : groupe_assigne est offert');
 SELECT pg_temp.rev(1) AS r1 \gset
@@ -163,8 +163,8 @@ SELECT pg_temp.vrai(pg_temp.agir(:'k1', 'support_modifier', pg_catalog.format('{
 SELECT pg_temp.vrai(pg_temp.agir(:'k1', 'support_modifier', pg_catalog.format('{"id": "%s", "revision": %s, "titre": ""}', pg_temp.s(1), :'r1'), 93) ->> 'erreur' = 'refuse',
   '3m : un titre vide est refuse par la fonction de la direction (cause fermee, rien ecrit)');
 SELECT pg_temp.rev(1) AS r1 \gset
-SELECT pg_temp.vrai((pg_temp.agir(:'k1', 'support_modifier', pg_catalog.format('{"id": "%s", "revision": %s, "tranches": ["adulte_18_plus"], "etapes": ["E1", "E2"], "lecture_coran": "hafs", "politique_hors_ligne": "sur_demande"}', pg_temp.s(1), :'r1'), 94)
-                      -> 'resultat' ->> 'ok')::boolean
+SELECT pg_temp.agir(:'k1', 'support_modifier', pg_catalog.format('{"id": "%s", "revision": %s, "tranches": ["adulte_18_plus"], "etapes": ["E1", "E2"], "lecture_coran": "hafs", "politique_hors_ligne": "sur_demande"}', pg_temp.s(1), :'r1'), 94) AS j \gset
+SELECT pg_temp.vrai((:'j'::jsonb -> 'resultat' ->> 'ok')::boolean
                     AND (SELECT tranches = ARRAY['adulte_18_plus'] AND etapes = ARRAY['E1', 'E2'] AND lecture_coran = 'hafs'
                                 AND offline_policy::text = 'sur_demande' FROM public.library_resource WHERE id = pg_temp.s(1)),
   '3n : tranches, etapes, lecture et lecture hors ligne se reglent');

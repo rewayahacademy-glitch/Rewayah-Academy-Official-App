@@ -418,10 +418,14 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.praxis_tirs',
           -- PX-BD-0 : le pont borne, le fabricant d'identite de la direction emettrice, les trois tables des actes.
           'private.praxis_confirmations', 'private.praxis_executer_acte', 'private.praxis_executions', 'private.praxis_identite',
+          -- PX-BD-BIBLIOTHEQUE (20261129970000) : les quatre adaptateurs d'actes (appeles par le pont seul) et les DEUX fonctions de la direction
+          -- qu'ils appellent telles quelles (library_mettre_a_jour, library_retirer) ; couples ci-dessous.
+          'private.praxis_acte_support_deplacer', 'private.praxis_acte_support_lister', 'private.praxis_acte_support_modifier',
+          'private.praxis_acte_support_retirer', 'public.library_mettre_a_jour', 'public.library_retirer',
           'private.praxis_propositions_expirer', 'public.admettre_salle_verification', 'public.demander_complement_candidat',
           'public.planifier_entretien',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
-  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (45 noms) ; aucun autre appel de public, private ou d''un autre schema');
+  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (51 noms) ; aucun autre appel de public, private ou d''un autre schema');
 
 -- R4 / AR-10 (PX-2, revue R15) : des COUPLES (appelante, appelee), pas seulement une liste de noms. Les trois portes publiques de geste de la
 -- candidature ne sont appelees QUE par direction_praxis_valider (qui s'execute sous l'identite de la direction) : aucun outil de Praxis,
@@ -434,6 +438,16 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT p.proname || '>' || lowe
        'direction_praxis_valider>public.admettre_salle_verification', 'direction_praxis_valider>public.demander_complement_candidat',
        'direction_praxis_valider>public.planifier_entretien']) x),
   'R4 / AR-10 : les trois portes de geste de la candidature ne sont appelees que depuis direction_praxis_valider (couples appelante > appelee)');
+-- R4 / AR-10 (PX-BD-BIBLIOTHEQUE) : les deux fonctions de la Bibliotheque que Praxis atteint par un acte ne sont appelees QUE par leurs adaptateurs
+-- (couples appelante > appelee) : modifier et deplacer ecrivent la fiche, retirer masque. Aucune autre fonction de la Bibliotheque n'est atteinte.
+SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT p.proname || '>' || lower(m[1]) ORDER BY p.proname || '>' || lower(m[1])), ARRAY[]::text[])
+    FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
+         LATERAL regexp_matches(p.prosrc, '\m(public\.library_[a-z_]+)\s*\(', 'gi') m
+   WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
+  = (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY[
+       'praxis_acte_support_deplacer>public.library_mettre_a_jour', 'praxis_acte_support_modifier>public.library_mettre_a_jour',
+       'praxis_acte_support_retirer>public.library_retirer']) x),
+  'R4 / AR-10 : les fonctions de la Bibliotheque atteintes par Praxis sont exactement library_mettre_a_jour et library_retirer, appelees par leurs seuls adaptateurs');
 -- R1 (AR-9) : un controle qui a un sens. Chaque outil public a EXACTEMENT les arguments attendus (nom : type) ; aucun argument n'est un texte libre
 -- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
 SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname)
