@@ -350,6 +350,15 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
         'definir_responsable_candidat',
         <String, dynamic>{...commun, 'p_responsable_id': d.responsableId},
       );
+    case GesteCandidature.dispenserEntretien:
+      return (
+        'dispenser_entretien',
+        <String, dynamic>{
+          ...commun,
+          'p_categorie': d.categorieDispense?.valeurSql,
+          'p_motif': d.motif,
+        },
+      );
     case GesteCandidature.debloquerVersement:
       return (
         'debloquer_versement_candidat',
