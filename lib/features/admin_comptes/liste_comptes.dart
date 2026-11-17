@@ -36,6 +36,7 @@ enum VueComptes {
       AppRole.teacher => VueComptes.enseignants,
       AppRole.admin ||
       AppRole.accountant ||
+      AppRole.associe ||
       AppRole.controller => VueComptes.direction,
       null => null,
     },

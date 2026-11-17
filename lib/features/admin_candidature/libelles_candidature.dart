@@ -34,6 +34,12 @@ String libelleGeste(GesteCandidature geste) {
     GesteCandidature.rouvrir => g.rouvrir,
     GesteCandidature.definirResponsable => g.responsable,
     GesteCandidature.dispenserEntretien => g.dispenserEntretien,
+    GesteCandidature.restreindre => g.restreindre,
+    GesteCandidature.demanderVerificationPiece => g.demanderVerificationPiece,
+    GesteCandidature.demanderVerificationVersement =>
+      g.demanderVerificationVersement,
+    GesteCandidature.leverRestriction => g.leverRestriction,
+    GesteCandidature.refaireEntretien => g.refaireEntretien,
   };
 }
 
@@ -58,6 +64,12 @@ String libelleConsequence(GesteCandidature geste) {
     GesteCandidature.rouvrir => c.rouvrir,
     GesteCandidature.definirResponsable => c.responsable,
     GesteCandidature.dispenserEntretien => c.dispenserEntretien,
+    GesteCandidature.restreindre => c.restreindre,
+    GesteCandidature.demanderVerificationPiece => c.demanderVerificationPiece,
+    GesteCandidature.demanderVerificationVersement =>
+      c.demanderVerificationVersement,
+    GesteCandidature.leverRestriction => c.leverRestriction,
+    GesteCandidature.refaireEntretien => c.refaireEntretien,
   };
 }
 
@@ -82,6 +94,12 @@ String libelleRetour(GesteCandidature geste) {
     GesteCandidature.rouvrir => r.rouvrir,
     GesteCandidature.definirResponsable => r.responsable,
     GesteCandidature.dispenserEntretien => r.dispenserEntretien,
+    GesteCandidature.restreindre => r.restreindre,
+    GesteCandidature.demanderVerificationPiece => r.demanderVerificationPiece,
+    GesteCandidature.demanderVerificationVersement =>
+      r.demanderVerificationVersement,
+    GesteCandidature.leverRestriction => r.leverRestriction,
+    GesteCandidature.refaireEntretien => r.refaireEntretien,
   };
 }
 

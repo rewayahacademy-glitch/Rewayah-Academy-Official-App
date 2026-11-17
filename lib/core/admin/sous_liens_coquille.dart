@@ -36,3 +36,29 @@ class SousLiensCoquille extends InheritedWidget {
   bool updateShouldNotify(SousLiensCoquille oldWidget) =>
       !setEquals(oldWidget.chemins, chemins);
 }
+
+/// BE-2b (17/11/2026) : les pages de [chemins] sont les seules que la coquille
+/// laisse ouvrir a la personne connectee ; toute sous-navigation retire les
+/// autres sections. Posee par la coquille, la ou elle distingue deja le compte
+/// (navigation par role, la barriere reste la RLS) : **une page ne lit jamais le
+/// role**, elle montre ce que la coquille lui annonce.
+class PagesOuvertesCoquille extends InheritedWidget {
+  /// Annonce [chemins] aux pages posees sous [child].
+  const PagesOuvertesCoquille({
+    required this.chemins,
+    required super.child,
+    super.key,
+  });
+
+  /// Les adresses des pages ouvertes.
+  final Set<String> chemins;
+
+  /// Les adresses ouvertes, ou nul : rien n'est restreint.
+  static Set<String>? de(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<PagesOuvertesCoquille>()
+      ?.chemins;
+
+  @override
+  bool updateShouldNotify(PagesOuvertesCoquille oldWidget) =>
+      !setEquals(oldWidget.chemins, chemins);
+}

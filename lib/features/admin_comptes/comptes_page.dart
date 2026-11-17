@@ -240,6 +240,7 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
             AppRole.teacher => VueComptes.enseignants,
             AppRole.admin ||
             AppRole.accountant ||
+            AppRole.associe ||
             AppRole.controller => VueComptes.direction,
           };
         }
@@ -1414,7 +1415,11 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
   /// refuse aussi : `compte_direction`).
   static bool _supprimable(CompteAdmin c) => switch (c.role) {
     AppRole.student || AppRole.guardian || AppRole.teacher => true,
-    AppRole.admin || AppRole.accountant || AppRole.controller || null => false,
+    AppRole.admin ||
+    AppRole.accountant ||
+    AppRole.associe ||
+    AppRole.controller ||
+    null => false,
   };
 
   /// Supprime [comptes] apres une confirmation qui dit leur nombre. Le
@@ -1645,6 +1650,7 @@ String _nomRole(AppRole role) => switch (role) {
   AppRole.teacher => t.admin.comptes.roleEnseignant,
   AppRole.guardian => t.admin.comptes.roleTuteur,
   AppRole.student => t.admin.comptes.roleEleve,
+  AppRole.associe => t.admin.comptes.roleAssocie,
 };
 
 String _nomPiece(EtatPiece piece) => switch (piece) {

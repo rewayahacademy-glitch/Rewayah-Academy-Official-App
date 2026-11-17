@@ -418,12 +418,36 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           cleIdempotence: cle,
           responsableId: _responsable,
         );
+      case GesteCandidature.restreindre:
+      case GesteCandidature.demanderVerificationPiece:
+      case GesteCandidature.demanderVerificationVersement:
+        return DemandeGeste.restriction(
+          geste: _geste,
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
+        );
+      case GesteCandidature.leverRestriction:
+        return DemandeGeste.leverRestriction(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
+        );
       case GesteCandidature.dispenserEntretien:
         return DemandeGeste.dispenserEntretien(
           candidatureId: id,
           versionAttendue: version,
           cleIdempotence: cle,
           categorie: _categorie!,
+          motif: motif,
+        );
+      case GesteCandidature.refaireEntretien:
+        return DemandeGeste.refaireEntretien(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
           motif: motif,
         );
     }

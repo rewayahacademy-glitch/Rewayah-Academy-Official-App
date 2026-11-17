@@ -105,11 +105,25 @@ class CandidatureDirectionPage extends ConsumerStatefulWidget {
       _EtatCandidatureDirectionPage();
 }
 
+/// Les gestes apres lesquels la page propose d'ecrire a la personne : aucun
+/// message ne part de lui-meme (APRES-CONFIRMEE).
+const Set<GesteCandidature> _gestesQuiInvitentAEcrire = <GesteCandidature>{
+  GesteCandidature.restreindre,
+  GesteCandidature.demanderVerificationPiece,
+  GesteCandidature.demanderVerificationVersement,
+  GesteCandidature.leverRestriction,
+};
+
 class _EtatCandidatureDirectionPage
     extends ConsumerState<CandidatureDirectionPage> {
   /// Le retour local du dernier geste : dit seulement apres la reponse du
   /// serveur.
   String? _retour;
+
+  /// APRES-CONFIRMEE (pilote, 17/11) : apres une restriction, une demande de
+  /// verification ou sa levee, aucun message ne part tout seul ; le retour local
+  /// propose « Ecrire a la personne » (la messagerie du dossier).
+  bool _ecrireApres = false;
 
   /// V2-a : le retour local du dernier geste d'entretien, dit dans la section
   /// Entretien.
@@ -146,6 +160,7 @@ class _EtatCandidatureDirectionPage
       _passageEnCours = false;
       _finDeFile = false;
       _retour = null;
+      _ecrireApres = false;
       _retourEntretien = null;
     }
   }
@@ -321,14 +336,18 @@ class _EtatCandidatureDirectionPage
     _relire(identifiant: detail.ligne.id);
     _retourEntretien = null;
     if (sortie.issue == IssueFeuille.fait) {
-      setState(
-        () => _retour = sortie.rejoue
+      setState(() {
+        _retour = sortie.rejoue
             ? t.admin.candidatures.retours.rejoue
-            : libelleRetour(geste),
-      );
+            : libelleRetour(geste);
+        _ecrireApres = _gestesQuiInvitentAEcrire.contains(geste);
+      });
       if (_gestesDeDecision.contains(geste)) _apresDecision(voisinsAvant);
     } else {
-      setState(() => _retour = null);
+      setState(() {
+        _retour = null;
+        _ecrireApres = false;
+      });
     }
   }
 
@@ -463,6 +482,7 @@ class _EtatCandidatureDirectionPage
               deuxColonnes: deuxColonnes,
               onPropositionTraitee: () => _relire(identifiant: d.ligne.id),
               retour: _passageEnCours || _finDeFile ? null : _retour,
+              ecrireApres: _ecrireApres,
               navigation: voisins == null
                   ? null
                   : NavigationFileDossier(
@@ -482,6 +502,7 @@ class _EtatCandidatureDirectionPage
                 _relire(identifiant: d.ligne.id);
                 setState(() {
                   _retour = message;
+                  _ecrireApres = false;
                   _retourEntretien = null;
                 });
                 _apresDecision(voisins);
@@ -504,6 +525,7 @@ class _EtatCandidatureDirectionPage
                 _relire(identifiant: d.ligne.id);
                 setState(() {
                   _retour = null;
+                  _ecrireApres = false;
                   _retourEntretien = message;
                 });
               },

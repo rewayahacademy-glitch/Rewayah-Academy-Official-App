@@ -91,8 +91,10 @@ SET LOCAL ROLE authenticated;
 SELECT pg_temp.vrai(pg_temp.essai($q$UPDATE public.payouts SET status = 'paid'
     WHERE id = '9d000000-0000-4000-8000-0000000000c1'$q$) = '42501',
   '2 : admin : passer un versement a paye en direct est refuse');
-SELECT pg_temp.vrai((SELECT count(*) FROM public.payout_methods WHERE id = '9d000000-0000-4000-8000-0000000000b1') = 1,
-  '2 : admin : la lecture des moyens de versement reste');
+-- DETTE-PAYOUT-METHODS (20261129880000, 17/11/2026) : la decision du 08/11 « la lecture permise reste » est
+-- perimee (0 ligne, 0 lecteur au 17/11, inventaire #600) : la direction ne lit plus les coordonnees.
+SELECT pg_temp.vrai((SELECT count(*) FROM public.payout_methods WHERE id = '9d000000-0000-4000-8000-0000000000b1') = 0,
+  '2 : admin : la lecture des moyens de versement est fermee (DETTE-PAYOUT-METHODS)');
 RESET ROLE;
 
 -- ------------------------------------------------------------------

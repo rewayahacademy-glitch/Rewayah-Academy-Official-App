@@ -354,6 +354,7 @@ String _nomRole(AppRole? role) => switch (role) {
   AppRole.teacher => t.admin.comptes.roleEnseignant,
   AppRole.guardian => t.admin.comptes.roleTuteur,
   AppRole.student => t.admin.comptes.roleEleve,
+  AppRole.associe => t.admin.comptes.roleAssocie,
   null => t.admin.comptes.roleInconnu,
 };
 

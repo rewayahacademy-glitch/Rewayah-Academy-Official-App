@@ -293,9 +293,25 @@ DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
   ),
   GesteCandidature.leverPause => detailTest(enPause: true),
   GesteCandidature.rouvrir => detailTest(issue: IssueCandidature.retiree),
+  GesteCandidature.restreindre ||
+  GesteCandidature.demanderVerificationPiece ||
+  GesteCandidature.demanderVerificationVersement => detailTest(
+    etape: EtapeCandidature.confirmee,
+    etat: null,
+  ),
+  GesteCandidature.leverRestriction => detailTest(
+    etape: EtapeCandidature.confirmee,
+    etat: null,
+    restreinte: true,
+    restrictionCause: 'manuelle',
+  ),
   GesteCandidature.dispenserEntretien => detailTest(
     etape: EtapeCandidature.verifications,
     etat: EtatCandidature.entretienAPlanifier,
+  ),
+  GesteCandidature.refaireEntretien => detailTest(
+    etape: EtapeCandidature.verifications,
+    etat: EtatCandidature.decisionEnAttente,
   ),
   GesteCandidature.cloreComplement => detailTest(
     etape: EtapeCandidature.verifications,

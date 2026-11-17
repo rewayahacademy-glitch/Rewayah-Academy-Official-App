@@ -1683,6 +1683,90 @@ void main() {
       },
     );
 
+    // REFAIRE-ENTRETIEN (BE-1h, pilote 16/11/2026) : « Refaire l'entretien ».
+    for (final (String nom, EtatCandidature etat, bool propose) cas
+        in <(String, EtatCandidature, bool)>[
+          ('decision en attente', EtatCandidature.decisionEnAttente, true),
+          ('entretien a planifier', EtatCandidature.entretienAPlanifier, false),
+          ('entretien planifie', EtatCandidature.entretienPlanifie, false),
+        ]) {
+      testWidgets(
+        'refaire l\'entretien : ${cas.$1}, ${cas.$3 ? 'propose' : 'pas propose'}',
+        (WidgetTester tester) async {
+          await _monter(
+            tester,
+            _port(
+              detail: detailTest(
+                etape: EtapeCandidature.verifications,
+                etat: cas.$2,
+                paiement: EtatVersement.compatible,
+              ),
+            ),
+          );
+          final List<String> autres = await _menuDossier(tester);
+          expect(
+            autres.contains(t.admin.candidatures.gestes.refaireEntretien),
+            cas.$3,
+          );
+        },
+      );
+    }
+
+    testWidgets('refaire l\'entretien : pas propose en pause', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        _port(
+          detail: detailTest(
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.decisionEnAttente,
+            paiement: EtatVersement.compatible,
+            enPause: true,
+          ),
+        ),
+      );
+      final List<String> autres = await _menuDossier(tester);
+      expect(
+        autres.contains(t.admin.candidatures.gestes.refaireEntretien),
+        isFalse,
+      );
+    });
+
+    testWidgets('refaire l\'entretien : un motif ecrit, puis le geste part', (
+      WidgetTester tester,
+    ) async {
+      final FauxCandidaturesDirection port = _port(
+        detail: detailTest(
+          etape: EtapeCandidature.verifications,
+          etat: EtatCandidature.decisionEnAttente,
+          paiement: EtatVersement.compatible,
+        ),
+      );
+      await _monter(tester, port);
+      await _geste(tester, GesteCandidature.refaireEntretien);
+      // La consequence se dit avant le geste (K-58).
+      expect(
+        find.text(t.admin.candidatures.consequences.refaireEntretien),
+        findsOneWidget,
+      );
+      await _valider(tester);
+      expect(port.appelsGeste, isEmpty);
+      expect(
+        find.text(t.admin.candidatures.feuille.motifManquant),
+        findsOneWidget,
+      );
+      await _saisirMotif(tester, 'Un second avis est necessaire.');
+      await _valider(tester);
+      final DemandeGeste d = port.appelsGeste.single.demande;
+      expect(d.geste, GesteCandidature.refaireEntretien);
+      expect(d.motif, 'Un second avis est necessaire.');
+      expect(
+        find.text(t.admin.candidatures.retours.refaireEntretien),
+        findsOneWidget,
+      );
+    });
+
     testWidgets(
       'mettre en pause : un message, un motif, une reprise facultative',
       (WidgetTester tester) async {
@@ -1767,6 +1851,49 @@ void main() {
         find.text(t.admin.candidatures.retours.leverPause),
         findsOneWidget,
       );
+    });
+
+    testWidgets(
+      'APRES-CONFIRMEE : restreindre propose « Ecrire a la personne », rien ne part seul',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          detail: detailTest(etape: EtapeCandidature.confirmee, etat: null),
+          effet: (DemandeGeste d, DetailCandidature a) => detailTest(
+            id: a.ligne.id,
+            etape: EtapeCandidature.confirmee,
+            etat: null,
+            restreinte: true,
+            restrictionCause: 'manuelle',
+          ),
+        );
+        await _monter(tester, port);
+        expect(find.byKey(CorpsDossier.cleEcrireApres), findsNothing);
+        await _geste(tester, GesteCandidature.restreindre);
+        await _saisirMotif(tester, 'Controle de routine.');
+        await _valider(tester);
+        final DemandeGeste d = port.appelsGeste.single.demande;
+        expect(d.geste, GesteCandidature.restreindre);
+        expect(
+          find.text(t.admin.candidatures.retours.restreindre),
+          findsOneWidget,
+        );
+        expect(find.byKey(CorpsDossier.cleEcrireApres), findsOneWidget);
+        expect(find.text(t.admin.candidatures.ecrireApres), findsOneWidget);
+      },
+    );
+
+    testWidgets('un autre geste (pause) ne propose pas d\'ecrire', (
+      WidgetTester tester,
+    ) async {
+      final FauxCandidaturesDirection port = _port(
+        detail: detailTest(enPause: true),
+        effet: (DemandeGeste d, DetailCandidature a) =>
+            _apres(a, enPause: false),
+      );
+      await _monter(tester, port);
+      await _agirPrincipal(tester);
+      await _valider(tester);
+      expect(find.byKey(CorpsDossier.cleEcrireApres), findsNothing);
     });
 
     testWidgets('admettre : une confirmation, qui dit ce qui arrive', (
