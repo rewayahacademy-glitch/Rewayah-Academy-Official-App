@@ -342,8 +342,11 @@ SELECT pg_temp.vrai((SELECT array_agg(p.oid::regprocedure::text ORDER BY p.prona
     WHERE p.pronamespace = 'public'::regnamespace AND p.proname LIKE 'praxis\_%')
   = ARRAY['praxis_annoncer(text,text[],text,text,uuid)',
           'praxis_boite(text,text,integer)', 'praxis_calendrier_ajouter(text,text,text,date,text,uuid)',
-          'praxis_calendrier_lire(text,date,date)', 'praxis_ecrire(text,uuid,text,uuid)', 'praxis_etat(text)',
+          'praxis_calendrier_lire(text,date,date)', 'praxis_cle_valide(text)', 'praxis_ecrire(text,uuid,text,uuid)', 'praxis_etat(text)',
           'praxis_fil(text,uuid,integer)', 'praxis_lire(text,text,jsonb,integer)', 'praxis_noter_refus(text,text)',
+          -- PX-OAUTH 2b : le serveur d'autorisation (service_role seul) ; aucune ne rend de donnee de personne.
+          'praxis_oauth_demander(text,text,text,text,text,text)', 'praxis_oauth_echanger(text,text,text,text)',
+          'praxis_oauth_enregistrer(text,text[])', 'praxis_oauth_renouveler(text,text)',
           'praxis_preparer(text,text,text,jsonb,text,uuid)', 'praxis_rendre_compte(text,integer)',
           'praxis_terminer(text,text,integer,integer,integer,integer,text)'],
   'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (dix outils + praxis_noter_refus, M4 ; PX-2 : lire et preparer ; PRAXIS-ROUTINE : terminer)');
@@ -383,6 +386,12 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
           'public.direction_praxis_valider>private.praxis_propositions',
           'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier',
           'public.praxis_preparer>private.praxis_propositions',
+          -- PX-OAUTH 2b : les trois tables du serveur d'autorisation et les cles qu'il emet ou revoque (une cle nee d'une connexion).
+          'private.praxis_oauth_emettre_cle>private.praxis_cles', 'private.praxis_oauth_revoquer_connexion>private.praxis_cles',
+          'private.praxis_oauth_revoquer_connexion>private.praxis_oauth_connexions',
+          'public.direction_praxis_oauth_decider>private.praxis_oauth_demandes', 'public.praxis_oauth_demander>private.praxis_oauth_demandes',
+          'public.praxis_oauth_echanger>private.praxis_oauth_connexions', 'public.praxis_oauth_echanger>private.praxis_oauth_demandes',
+          'public.praxis_oauth_enregistrer>private.praxis_oauth_clients', 'public.praxis_oauth_renouveler>private.praxis_oauth_connexions',
           -- PRAXIS-ROUTINE (20261129900000) : la routine note la fin de son tir.
           'public.praxis_terminer>private.praxis_tirs']) x),
   'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
@@ -408,7 +417,12 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.gestes_regles_de_la_ligne', 'private.praxis_gestes_ligne', 'private.praxis_propositions',
           -- PRAXIS-ROUTINE : la table des tirs de la routine (INSERT INTO private.praxis_tirs (...)).
           'private.praxis_tirs',
-          'private.praxis_propositions_expirer', 'public.admettre_salle_verification', 'public.demander_complement_candidat',
+          'private.praxis_propositions_expirer',
+          -- PX-OAUTH 2b : les tables et aides du serveur d'autorisation (b64url, urlenc, rappels, emetteur valide, emettre et revoquer).
+          'private.praxis_oauth_b64url', 'private.praxis_oauth_clients', 'private.praxis_oauth_connexions', 'private.praxis_oauth_demandes',
+          'private.praxis_oauth_emetteur_valide', 'private.praxis_oauth_emettre_cle', 'private.praxis_oauth_rappels',
+          'private.praxis_oauth_revoquer_connexion', 'private.praxis_oauth_urlenc',
+          'public.admettre_salle_verification', 'public.demander_complement_candidat',
           'public.planifier_entretien',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
   'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (41 noms) ; aucun autre appel de public, private ou d''un autre schema');
@@ -432,6 +446,7 @@ SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identi
           'praxis_boite(p_cle text, p_filtre text, p_limite integer)',
           'praxis_calendrier_ajouter(p_cle text, p_sujet text, p_public text, p_date date, p_recurrence text, p_cle_idempotence uuid)',
           'praxis_calendrier_lire(p_cle text, p_du date, p_au date)',
+          'praxis_cle_valide(p_cle text)',
           'praxis_ecrire(p_cle text, p_fil uuid, p_texte text, p_cle_idempotence uuid)',
           'praxis_etat(p_cle text)', 'praxis_fil(p_cle text, p_fil uuid, p_limite integer)',
           -- PX-2 : DEUX arguments jsonb, et seulement ceux-la : le filtre de praxis_lire et les parametres de praxis_preparer. Ce ne sont
@@ -439,6 +454,11 @@ SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identi
           -- refusee `parametre`, scenarios_px2_preparer.sql §2 et §5). Un jsonb de plus, ou un autre, est rouge ici.
           'praxis_lire(p_cle text, p_vue text, p_filtre jsonb, p_limite integer)',
           'praxis_noter_refus(p_cle text, p_outil text)',
+          -- PX-OAUTH 2b : le serveur d'autorisation ; AUCUN jsonb, AUCUN argument de requete : des textes bornes (client, rappel, code, verifier,
+          -- challenge, etat, scope, refresh) valides un a un dans le corps contre des formes fermees.
+          'praxis_oauth_demander(p_client text, p_rappel text, p_challenge text, p_methode text, p_etat text, p_scope text)',
+          'praxis_oauth_echanger(p_client text, p_code text, p_rappel text, p_verifier text)',
+          'praxis_oauth_enregistrer(p_nom text, p_rappels text[])', 'praxis_oauth_renouveler(p_client text, p_refresh text)',
           'praxis_preparer(p_cle text, p_geste text, p_candidature text, p_parametres jsonb, p_texte text, p_cle_idempotence uuid)',
           'praxis_rendre_compte(p_cle text, p_heures integer)',
           'praxis_terminer(p_cle text, p_issue text, p_lus integer, p_envoyes integer, p_passes integer, p_refus integer, p_note text)'],
