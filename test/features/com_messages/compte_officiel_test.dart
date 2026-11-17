@@ -139,6 +139,27 @@ void main() {
       );
     });
 
+    test('PX-BULLE-3 : auteur « equipe » ecrit par Praxis : image et nom', () {
+      const LibellesCommunication l = LibellesCommunicationSlang();
+      Participant lire(Map<String, dynamic> m) => participantJson(m, l);
+      final Participant equipe = lire(<String, dynamic>{
+        'id': 'e',
+        'nature': 'equipe',
+        'est_soi': true,
+        'compte_officiel': 'praxis',
+      });
+      expect(equipe.equipe, isTrue);
+      expect(equipe.compteOfficiel, 'praxis');
+      expect(equipe.nomMarque, '\u2066#Ra_Praxis\u2069');
+      final Participant humain = lire(<String, dynamic>{
+        'id': 'e',
+        'nature': 'equipe',
+      });
+      expect(humain.officiel, isFalse);
+      expect(humain.compteOfficiel, isNull);
+      expect(humain.nomMarque, isNot(contains('Praxis')));
+    });
+
     test(
       'la bulle d\'un compte officiel porte la marque, jamais celle de soi',
       () {

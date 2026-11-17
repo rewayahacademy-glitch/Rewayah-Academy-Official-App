@@ -129,6 +129,12 @@ Participant participantJson(
         nomAffiche: libelles.administration(),
         estSoi: soi,
         equipe: true,
+        // PX-BULLE-3 (directeur, 17/11/2026) : un message ecrit par Praxis
+        // dans le fil de l'academie reste « equipe » (en-tete #Ra_staff), mais
+        // le serveur dit son auteur reel (`compte_officiel`, 20261129530000) :
+        // la bulle porte alors l'image et le nom « #Ra_Praxis ».
+        officiel: texteOptionnel(m, 'compte_officiel') != null,
+        compteOfficiel: texteOptionnel(m, 'compte_officiel'),
       );
     case 'foyer':
       final Object? eleves = m['eleves'];
