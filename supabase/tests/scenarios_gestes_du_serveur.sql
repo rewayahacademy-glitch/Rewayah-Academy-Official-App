@@ -135,9 +135,12 @@ SELECT pg_temp.vrai(pg_temp.liste_gestes('a1', 'admin', 'M1') @> ARRAY['demander
 -- (private.paiement_etat, calcule des moyens declares) ; aucun moyen declare ici, donc ces deux gestes ne sont pas rendus.
 SELECT pg_temp.vrai(NOT (pg_temp.liste_gestes('a1', 'admin', 'M1') && ARRAY['confirmer_moyen_paiement', 'infirmer_moyen_paiement']),
   '1 : sans versement a verifier, la condition de la regle retire confirmer et ecarter le moyen');
-SELECT pg_temp.vrai(pg_temp.liste_gestes('a1', 'admin', 'M4') @> ARRAY['debloquer_versement', 'refuser', 'mettre_en_pause']
-  AND NOT (pg_temp.liste_gestes('a1', 'admin', 'M4') && ARRAY['demander_complement', 'admettre_verifications']),
-  '1 : « paiement non disponible » : debloquer le versement, refuser ; ni complement ni admission');
+-- COMPLEMENT-SALLE-EXAMEN (T7, #578) : en « paiement non disponible », la direction peut demander un complement
+-- sur le versement (variante 4 de demander_complement) ; l'admission reste fermee.
+SELECT pg_temp.vrai(pg_temp.liste_gestes('a1', 'admin', 'M4') @> ARRAY['debloquer_versement', 'refuser', 'mettre_en_pause',
+    'demander_complement']
+  AND NOT (pg_temp.liste_gestes('a1', 'admin', 'M4') && ARRAY['admettre_verifications', 'annuler_complement']),
+  '1 : « paiement non disponible » : debloquer le versement, demander un complement (versement), refuser ; pas d''admission');
 SELECT pg_temp.vrai(pg_temp.liste_gestes('a1', 'admin', 'M3') @> ARRAY['planifier_entretien', 'dispenser_entretien',
     'demander_complement', 'refuser']
   AND NOT (pg_temp.liste_gestes('a1', 'admin', 'M3') && ARRAY['admettre_verifications', 'debloquer_versement', 'valider_piece']),

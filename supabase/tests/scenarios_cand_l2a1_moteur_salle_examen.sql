@@ -2001,6 +2001,10 @@ SELECT pg_temp.vrai((SELECT bool_and(
                            WHERE e.candidature_id = c.id AND e.details ? 'geste'))
                      FROM public.candidatures c WHERE c.id::text LIKE 'ca2acccc%'),
   'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature');
+-- PERF-AUDIT (14/11, migration 20261126200000_audit_chaine_differee.sql) : une ligne d'audit est inseree
+-- `differee` et chainee dans la minute par pg_cron ; ce scenario, qui n'a pas de cron, chaine lui-meme
+-- (comme scenarios_adm04.sql) avant de verifier la chaine.
+SELECT private.audit_chainer();
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a1', 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.garde('chaine', (SELECT to_jsonb(v) FROM public.verifier_chaine_audit(5000) v));
