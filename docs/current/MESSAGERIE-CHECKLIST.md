@@ -182,3 +182,16 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
   rien inventé).
 - Arrêté sur ordre direct du directeur : l'icône dessinée par l'agent (« je vais le faire moi-même »).
 - Pour le directeur : `scenarios_com_compte_officiel.sql` à ajouter à `ci.yml` (zone interdite aux agents).
+
+## POUR JEUDI SOIR (20/11) — PX-BULLE ne s'affiche pas en production (constat du directeur, 17/11 ~16 h UTC)
+
+- **Faux** : #622 est déployée (13 h 51 UTC), mais le directeur voit encore « le compte de l'académie » sur un message de Praxis.
+- **Vérifié en base** : le message « Bonjour, oui, c'est bien moi… » (13 h 25 UTC) a bien pour auteur le compte Praxis
+  (`comptes_officiels.code = 'praxis'`), dont le rôle est `accountant`.
+- **Cause probable, NON prouvée** : dans un fil avec l'académie, `private.com_participant` rend l'auteur de l'équipe
+  sous la nature « équipe » (l'académie), pas « profil » ; la migration `20261129520000` n'a ajouté `officiel` et
+  `compte_officiel` que dans la branche « profil ». Le client ne reçoit donc pas `praxis` et n'affiche ni image ni nom.
+- **À faire** : 1) lire `pg_get_functiondef('private.com_participant(...)')` et le JSON d'un message de Praxis pour
+  confirmer ; 2) nouvelle migration (plage 202611295…) qui rend `compte_officiel` aussi quand l'auteur réel d'un message
+  est un compte officiel, quelle que soit la nature affichée ; 3) test sur ce cas exact (fil avec l'académie, auteur
+  Praxis de rôle `accountant`) ; 4) fermer puis rouvrir l'application pour vérifier.
