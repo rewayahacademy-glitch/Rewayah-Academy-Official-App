@@ -92,6 +92,11 @@ List<String> gestesFauxServeur({
     if (sansPause && etape != null) 'definir_responsable',
     if (sansPause &&
         etape == EtapeCandidature.verifications &&
+        (etat == EtatCandidature.entretienAPlanifier ||
+            etat == EtatCandidature.entretienPlanifie))
+      'dispenser_entretien',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
         etat == EtatCandidature.decisionEnAttente)
       'valider_piece',
   ];
@@ -321,6 +326,7 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
     'rouvrir': true,
     'definirResponsable': true,
     'validerPiece': true,
+    'dispenserEntretien': true,
     'agirEnLot': true,
   },
   listes: ListesGestes(
@@ -782,6 +788,16 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
         if (!enCours || !avantSalle3) {
           return (raison: 'transition_interdite', detail: 'etat');
         }
+      case GesteLot.dispenserEntretien:
+        // Regle 45 : Salle de verification, entretien a planifier ou planifie,
+        // en cours, hors pause.
+        if (!enCours ||
+            l.etape != EtapeCandidature.verifications ||
+            (l.etat != EtatCandidature.entretienAPlanifier &&
+                l.etat != EtatCandidature.entretienPlanifie)) {
+          return (raison: 'transition_interdite', detail: 'etat');
+        }
+        if (l.enPause) return (raison: 'transition_interdite', detail: 'pause');
     }
     return null;
   }
@@ -860,7 +876,10 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     return ApercuLot(
       geste: geste,
       motifRequis: geste != GesteLot.leverPause,
-      modeleRequis: geste != GesteLot.leverPause,
+      // Comme le serveur : seuls la pause et le refus lisent un modele ; la
+      // dispense envoie sa categorie par le meme argument, sans le declarer.
+      modeleRequis:
+          geste == GesteLot.mettreEnPause || geste == GesteLot.refuser,
       eligibles: eligibles,
       exclus: exclus,
       nombre: eligibles.length,
@@ -986,20 +1005,24 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
       GesteLot.mettreEnPause => true,
       GesteLot.leverPause => false,
       GesteLot.refuser => l.enPause,
+      GesteLot.dispenserEntretien => l.enPause,
     };
+    final EtatCandidature? etatApres = geste == GesteLot.dispenserEntretien
+        ? EtatCandidature.decisionEnAttente
+        : l.etat;
     lignes[i] = LigneCandidature(
       id: l.id,
       reference: l.reference,
       nomComplet: l.nomComplet,
       type: l.type,
       etape: l.etape,
-      etat: l.etat,
+      etat: etatApres,
       issue: issueApres,
       enPause: enPauseApres,
       // Le serveur recalcule les gestes de la ligne apres le geste.
       gestes: gestesFauxServeur(
         etape: l.etape,
-        etat: l.etat,
+        etat: etatApres,
         issue: issueApres,
         enPause: enPauseApres,
         restreinte: l.restreinte,

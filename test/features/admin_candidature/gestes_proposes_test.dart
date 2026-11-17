@@ -118,6 +118,7 @@ void main() {
       permis: <GesteCandidature>[
         c,
         GesteCandidature.cloreComplement,
+        GesteCandidature.dispenserEntretien,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,
@@ -455,7 +456,7 @@ void main() {
               'reference': 'CAND-000001',
               'gestes': <Object?>[
                 'refuser',
-                'dispenser_entretien',
+                'annuler_admission',
                 'restreindre',
                 'mettre_en_pause',
                 42,
@@ -465,12 +466,12 @@ void main() {
           )!;
           expect(l.gestes, <String>[
             'refuser',
-            'dispenser_entretien',
+            'annuler_admission',
             'restreindre',
             'mettre_en_pause',
           ]);
           expect(l.gestesInconnusDeLEcran, <String>[
-            'dispenser_entretien',
+            'annuler_admission',
             'restreindre',
           ]);
         },
@@ -480,11 +481,7 @@ void main() {
         'un nom du serveur que l\'ecran ne sait pas faire n\'est pas montre',
         () {
           final DetailCandidature d = detailTest(
-            gestes: const <String>[
-              'dispenser_entretien',
-              'refuser',
-              'inconnu_x',
-            ],
+            gestes: const <String>['annuler_admission', 'refuser', 'inconnu_x'],
           );
           final GestesProposes p = _pour(d);
           final Set<GesteCandidature> montres = <GesteCandidature>{
@@ -493,7 +490,7 @@ void main() {
           };
           expect(montres, <GesteCandidature>{GesteCandidature.refuser});
           expect(d.ligne.gestesInconnusDeLEcran, <String>[
-            'dispenser_entretien',
+            'annuler_admission',
             'inconnu_x',
           ]);
         },

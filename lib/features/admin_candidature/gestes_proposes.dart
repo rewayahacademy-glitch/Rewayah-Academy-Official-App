@@ -186,6 +186,7 @@ const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.debloquerVersement,
   GesteCandidature.admettreVerifications,
   GesteCandidature.validerPiece,
+  GesteCandidature.dispenserEntretien,
   GesteCandidature.mettreEnPause,
   GesteCandidature.leverPause,
   GesteCandidature.refuser,

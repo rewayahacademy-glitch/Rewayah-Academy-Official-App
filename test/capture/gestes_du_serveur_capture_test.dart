@@ -1,7 +1,7 @@
 // GESTES-DU-SERVEUR (pilote, 16/11/2026) : l'ecran n'affiche que les gestes que
 // le serveur sert pour la ligne (cle `gestes`), et ceux qu'il sait faire. Le menu
 // « ... » d'un dossier en Salle de verification, le serveur servant un geste que
-// l'ecran ne sait pas faire (dispenser l'entretien) : il n'est pas montre. 360,
+// l'ecran ne sait pas faire (restreindre) : il n'est pas montre. 360,
 // francais et arabe. Donnees fictives. Saute sans CAPTURE_DIR.
 
 import 'package:flutter/material.dart';
@@ -39,10 +39,10 @@ void main() {
                 etape: EtapeCandidature.verifications,
                 etat: EtatCandidature.entretienAPlanifier,
                 paiement: EtatVersement.compatible,
-                // Ce que le serveur sert : un geste que l'ecran sait faire,
-                // et la dispense, qu'il ne sait pas encore faire.
+                // Ce que le serveur sert : des gestes que l'ecran sait faire,
+                // et « restreindre », qu'il ne sait pas faire.
                 gestes: const <String>[
-                  'dispenser_entretien',
+                  'restreindre',
                   'mettre_en_pause',
                   'retirer',
                   'demander_complement',
