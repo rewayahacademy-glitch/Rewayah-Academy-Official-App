@@ -141,6 +141,11 @@ VALUES ('capacity','dc700000-0000-0000-0000-000000000005','test',
         'dc700000-0000-0000-0000-000000000001','admin');
 INSERT INTO public.teacher_student_assignments(teacher_id,student_id,weekday,hour_local)
 VALUES ('dc700000-0000-0000-0000-000000000004','dc700000-0000-0000-0000-000000000005',1,9);
+INSERT INTO public.weekly_availability(profile_id,weekday,hour_local)
+VALUES ('dc700000-0000-0000-0000-000000000004',1,9);
+INSERT INTO public.rule_overrides(profile_id,key,value,reason,set_by)
+VALUES ('dc700000-0000-0000-0000-000000000004','max_students_per_teacher','3'::jsonb,'test',
+        'dc700000-0000-0000-0000-000000000001');
 INSERT INTO public.session_events(session_id,event_type)
 SELECT 'dc720000-0000-0000-0000-000000000001'::uuid, e FROM (SELECT (enum_range(NULL::public.session_event_type))[1] e) x;
 INSERT INTO public.session_recordings(session_id,object_key,duration_seconds,size_bytes,expires_at)
@@ -183,7 +188,7 @@ END $$;
 SELECT pg_temp.comme('dc700000-0000-0000-0000-000000000006','controller','aal2');
 SELECT pg_temp.attendu('sans capacite', t, 0)
   FROM unnest(ARRAY['sessions','session_participants','session_events','session_recordings',
-    'teacher_student_assignments','matching_requests','intentions_horaire','availability_slots']) t;
+    'teacher_student_assignments','matching_requests','intentions_horaire','availability_slots','weekly_availability','rule_overrides','mes_seances_v']) t;
 DO $$ BEGIN
   IF (SELECT count(*) FROM public.offres_horaires WHERE etat <> 'publiee') <> 0 THEN
     RAISE EXCEPTION 'DETTE-CONTROLLER: sans capacite, offres non publiees lues'; END IF;
@@ -197,6 +202,9 @@ SELECT pg_temp.attendu('aal1', t, 0)
 -- Avec capacite, mission et aal2 : la seule seance de sa mission, rien d'autre.
 SELECT pg_temp.comme('dc700000-0000-0000-0000-000000000002','controller','aal2');
 SELECT pg_temp.attendu('controleur capable', 'sessions', 1);
+SELECT pg_temp.attendu('controleur capable', 'mes_seances_v', 1);
+SELECT pg_temp.attendu('controleur capable', 'weekly_availability', 0);
+SELECT pg_temp.attendu('controleur capable', 'rule_overrides', 0);
 SELECT pg_temp.attendu('controleur capable', 'session_recordings', 1);
 SELECT pg_temp.attendu('controleur capable', 'session_participants', 1);
 SELECT pg_temp.attendu('controleur capable', 'session_events', 1);
@@ -210,7 +218,7 @@ END $$;
 -- Un autre controleur, perimetre sur une autre classe : rien de cette seance.
 SELECT pg_temp.comme('dc700000-0000-0000-0000-000000000003','controller','aal2');
 SELECT pg_temp.attendu('autre perimetre', t, 0)
-  FROM unnest(ARRAY['sessions','session_participants','session_events','session_recordings']) t;
+  FROM unnest(ARRAY['sessions','session_participants','session_events','session_recordings','mes_seances_v']) t;
 
 -- Admin inchange : tout.
 SELECT pg_temp.comme('dc700000-0000-0000-0000-000000000001','admin','aal2');
@@ -218,6 +226,9 @@ SELECT pg_temp.attendu('admin', 'matching_requests', 1);
 SELECT pg_temp.attendu('admin', 'intentions_horaire', 1);
 SELECT pg_temp.attendu('admin', 'teacher_student_assignments', 1);
 SELECT pg_temp.attendu('admin', 'session_recordings', 2);
+SELECT pg_temp.attendu('admin', 'mes_seances_v', 2);
+SELECT pg_temp.attendu('admin', 'weekly_availability', 1);
+SELECT pg_temp.attendu('admin', 'rule_overrides', 1);
 DO $$ BEGIN
   IF (SELECT count(*) FROM public.offres_horaires WHERE etat='brouillon') <> 1 THEN
     RAISE EXCEPTION 'DETTE-CONTROLLER: admin ne lit plus les brouillons d offres'; END IF;
@@ -239,6 +250,8 @@ END $$;
 SELECT pg_temp.comme('dc700000-0000-0000-0000-000000000004','teacher','aal2');
 SELECT pg_temp.attendu('enseignant', 'sessions', 2);
 SELECT pg_temp.attendu('enseignant', 'availability_slots', 1);
+SELECT pg_temp.attendu('enseignant', 'mes_seances_v', 2);
+SELECT pg_temp.attendu('enseignant', 'weekly_availability', 1);
 
 RESET ROLE;
 ROLLBACK;

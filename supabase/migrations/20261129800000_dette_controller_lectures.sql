@@ -98,3 +98,53 @@ ALTER POLICY matching_requests_parties_read ON public.matching_requests
 ALTER POLICY assignments_parties_read ON public.teacher_student_assignments
   USING ((partie_concernee(student_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role)
          OR teacher_id = ( SELECT auth.uid() ));
+
+-- Deux autres tables ouvertes au contrôleur par la même voie (arbitrage du pilote, 17/11).
+ALTER POLICY weekly_availability_parties_read ON public.weekly_availability
+  USING (partie_concernee(profile_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role);
+
+ALTER POLICY rule_overrides_parties_read ON public.rule_overrides
+  USING (partie_concernee(profile_id) AND ( SELECT app_role() ) IS DISTINCT FROM 'controller'::app_role);
+
+-- mes_seances_v (planning global du contrôleur) : vue security_barrier, exécutée avec les droits du
+-- propriétaire, donc elle n'héritait pas du resserrement de `sessions`. Seule la branche
+-- « admin ou controller » change : admin garde tout, le contrôleur ne voit que la séance de sa mission.
+-- Colonnes, options et droits inchangés (définition de production relue : même empreinte que le local).
+CREATE OR REPLACE VIEW public.mes_seances_v WITH (security_barrier = true) AS
+SELECT s.id AS session_id,
+    s.started_at,
+    s.ended_at,
+    s.status,
+    s.session_type,
+    s.prayer_pause_minutes,
+    eleve.id AS student_id,
+        CASE
+            WHEN agent_identite_masquee() THEN eleve.immutable_id
+            ELSE eleve.first_name
+        END AS student_first_name,
+    eleve.immutable_id AS student_immutable_id,
+    ens.id AS teacher_id,
+        CASE
+            WHEN agent_identite_masquee() THEN ens.immutable_id
+            ELSE ens.first_name
+        END AS teacher_first_name,
+    ens.immutable_id AS teacher_immutable_id,
+        CASE
+            WHEN agent_identite_masquee() THEN NULL::text
+            ELSE tp.country
+        END AS teacher_country,
+    s.groupe_id,
+    cl.libelle AS groupe_libelle
+   FROM sessions s
+     JOIN session_participants spe ON spe.session_id = s.id AND spe.role = 'student'::participant_role AND spe.deleted_at IS NULL
+     JOIN profiles eleve ON eleve.id = spe.profile_id AND eleve.deleted_at IS NULL
+     JOIN profiles ens ON ens.id = s.teacher_id AND ens.deleted_at IS NULL
+     LEFT JOIN teacher_profiles tp ON tp.profile_id = ens.id AND tp.deleted_at IS NULL
+     LEFT JOIN groupes cl ON cl.id = s.groupe_id
+  WHERE s.deleted_at IS NULL AND app_account_valid() AND (app_role() = 'teacher'::app_role AND s.teacher_id = auth.uid() OR (app_role() = 'student'::app_role AND spe.profile_id = auth.uid() OR app_role() = 'guardian'::app_role AND eleve.household_id IS NOT NULL AND eleve.household_id = app_household_id()) AND NOT (EXISTS ( SELECT 1
+           FROM groupe_membres gm
+          WHERE gm.groupe_id = s.groupe_id AND gm.student_id = eleve.id AND gm.left_at IS NOT NULL AND gm.left_at <= s.started_at AND NOT (EXISTS ( SELECT 1
+                   FROM groupe_membres gm2
+                  WHERE gm2.groupe_id = s.groupe_id AND gm2.student_id = eleve.id AND gm2.left_at IS NULL)))) AND NOT (EXISTS ( SELECT 1
+           FROM groupes g
+          WHERE g.id = s.groupe_id AND g.ended_at IS NOT NULL AND g.ended_at <= s.started_at)) OR app_role() = 'admin'::app_role OR public.controleur_voit_session(s.id));
