@@ -34,6 +34,78 @@ const CapacitesCandidatures capacitesQuiLit = CapacitesCandidatures(
   genreLecteurConnu: true,
 );
 
+/// Ce que le **serveur** rendrait dans la cle `gestes` d'une ligne, pour un etat
+/// donne (GESTES-DU-SERVEUR). C'est l'ancienne table de l'ecran, deplacee ici :
+/// les tests simulent le serveur, l'ecran ne la contient plus. Les noms sont ceux
+/// du moteur (`GesteCandidature.nomServeur`). `restrictionCause` : la cause de la
+/// restriction, que le serveur lit (la ligne ne la porte pas).
+List<String> gestesFauxServeur({
+  required EtapeCandidature? etape,
+  required EtatCandidature? etat,
+  required IssueCandidature issue,
+  required bool enPause,
+  required bool restreinte,
+  required EtatVersement paiement,
+  bool complementEnCours = false,
+  String? restrictionCause,
+}) {
+  final bool enCours = issue == IssueCandidature.enCours;
+  final bool sansPause = enCours && !enPause;
+  final bool avantSalle3 =
+      etape == EtapeCandidature.recue ||
+      etape == EtapeCandidature.invitee ||
+      etape == EtapeCandidature.prequalification ||
+      etape == EtapeCandidature.verifications;
+  final bool enExamen =
+      etape == EtapeCandidature.prequalification &&
+      etat == EtatCandidature.enExamen;
+  return <String>[
+    if (sansPause && (enExamen || etape == EtapeCandidature.verifications))
+      'demander_complement',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        complementEnCours)
+      'clore_complement',
+    if (sansPause && enExamen) 'admettre_verifications',
+    if (sansPause &&
+        paiement == EtatVersement.aVerifier &&
+        (enExamen ||
+            (etape == EtapeCandidature.confirmee &&
+                restreinte &&
+                restrictionCause == 'paiement')))
+      'confirmer_moyen_paiement',
+    if (sansPause &&
+        enExamen &&
+        (paiement == EtatVersement.aVerifier ||
+            paiement == EtatVersement.compatible))
+      'infirmer_moyen_paiement',
+    if (sansPause &&
+        etape == EtapeCandidature.prequalification &&
+        (etat == EtatCandidature.enExamen ||
+            etat == EtatCandidature.paiementNonDisponible))
+      'debloquer_versement',
+    if (sansPause && etape != null) 'mettre_en_pause',
+    if (enCours && enPause && etape != null) 'lever_pause',
+    if (enCours && avantSalle3) 'refuser',
+    if (enCours && avantSalle3) 'retirer',
+    if (!enCours && !enPause && avantSalle3) 'rouvrir',
+    if (sansPause && etape != null) 'definir_responsable',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        (etat == EtatCandidature.entretienAPlanifier ||
+            etat == EtatCandidature.entretienPlanifie))
+      'dispenser_entretien',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        etat == EtatCandidature.decisionEnAttente)
+      'refaire_entretien',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        etat == EtatCandidature.decisionEnAttente)
+      'valider_piece',
+  ];
+}
+
 /// Une ligne de test, avec des valeurs par defaut raisonnables.
 LigneCandidature ligneTest({
   String id = 'c1',
@@ -55,6 +127,8 @@ LigneCandidature ligneTest({
   DateTime? derniereActivite,
   DateTime? recueLe,
   bool nouveau = false,
+  bool complementEnCours = false,
+  List<String>? gestes,
 }) => LigneCandidature(
   id: id,
   reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
@@ -76,6 +150,18 @@ LigneCandidature ligneTest({
   derniereActivite: derniereActivite ?? DateTime.utc(2026, 10, 20, 9),
   recueLe: recueLe ?? DateTime.utc(2026, 10, 1, 9),
   nouveau: nouveau,
+  complementEnCours: complementEnCours,
+  gestes:
+      gestes ??
+      gestesFauxServeur(
+        etape: etape,
+        etat: etat,
+        issue: issue,
+        enPause: enPause,
+        restreinte: restreinte,
+        paiement: paiement,
+        complementEnCours: complementEnCours,
+      ),
 );
 
 /// [n] lignes distinctes, reparties sur les cinq etapes, la derniere activite
@@ -156,6 +242,7 @@ DetailCandidature detailTest({
   DateTime? derniereActivite,
   DateTime? recueLe,
   bool complementEnCours = false,
+  List<String>? gestes,
 }) => DetailCandidature(
   ligne: LigneCandidature(
     id: id,
@@ -178,6 +265,18 @@ DetailCandidature detailTest({
     derniereActivite: derniereActivite ?? DateTime.utc(2026, 10, 20, 9),
     recueLe: recueLe ?? DateTime.utc(2026, 10, 1, 9),
     complementEnCours: complementEnCours,
+    gestes:
+        gestes ??
+        gestesFauxServeur(
+          etape: etape,
+          etat: etat,
+          issue: issue,
+          enPause: enPause,
+          restreinte: restreinte,
+          paiement: paiement,
+          complementEnCours: complementEnCours,
+          restrictionCause: restrictionCause,
+        ),
   ),
   version: version,
   provenance: provenance,
@@ -904,22 +1003,37 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
   void _appliquerAuLot(LigneCandidature l, GesteLot geste) {
     final int i = lignes.indexWhere((LigneCandidature x) => x.id == l.id);
     if (i < 0) return;
+    final IssueCandidature issueApres = geste == GesteLot.refuser
+        ? IssueCandidature.refusee
+        : l.issue;
+    final bool enPauseApres = switch (geste) {
+      GesteLot.mettreEnPause => true,
+      GesteLot.leverPause => false,
+      GesteLot.refuser => l.enPause,
+      GesteLot.dispenserEntretien => l.enPause,
+    };
+    final EtatCandidature? etatApres = geste == GesteLot.dispenserEntretien
+        ? EtatCandidature.decisionEnAttente
+        : l.etat;
     lignes[i] = LigneCandidature(
       id: l.id,
       reference: l.reference,
       nomComplet: l.nomComplet,
       type: l.type,
       etape: l.etape,
-      etat: geste == GesteLot.dispenserEntretien
-          ? EtatCandidature.decisionEnAttente
-          : l.etat,
-      issue: geste == GesteLot.refuser ? IssueCandidature.refusee : l.issue,
-      enPause: switch (geste) {
-        GesteLot.mettreEnPause => true,
-        GesteLot.leverPause => false,
-        GesteLot.refuser => l.enPause,
-        GesteLot.dispenserEntretien => l.enPause,
-      },
+      etat: etatApres,
+      issue: issueApres,
+      enPause: enPauseApres,
+      // Le serveur recalcule les gestes de la ligne apres le geste.
+      gestes: gestesFauxServeur(
+        etape: l.etape,
+        etat: etatApres,
+        issue: issueApres,
+        enPause: enPauseApres,
+        restreinte: l.restreinte,
+        paiement: l.paiement,
+        complementEnCours: l.complementEnCours,
+      ),
       restreinte: l.restreinte,
       indisponible: l.indisponible,
       paiement: l.paiement,
