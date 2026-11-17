@@ -160,6 +160,7 @@ Participant participantJson(
         profilId: id.isEmpty ? null : id,
         // Indicateur de compte officiel du serveur ; absent = faux.
         officiel: m['officiel'] == true,
+        compteOfficiel: texteOptionnel(m, 'compte_officiel'),
       );
     default:
       throw const FormatException('Nature de participant inconnue.');

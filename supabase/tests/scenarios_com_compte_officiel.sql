@@ -14,6 +14,8 @@ DECLARE
 BEGIN
   IF v_praxis -> 'officiel' IS DISTINCT FROM 'true'::jsonb THEN RAISE EXCEPTION 'Praxis doit etre officiel : %', v_praxis; END IF;
   IF v_autre -> 'officiel' IS DISTINCT FROM 'false'::jsonb THEN RAISE EXCEPTION 'un enseignant ne doit pas etre officiel : %', v_autre; END IF;
+  IF v_praxis ->> 'compte_officiel' IS DISTINCT FROM 'praxis' THEN RAISE EXCEPTION 'Praxis doit porter le code praxis : %', v_praxis; END IF;
+  IF NOT (v_autre ? 'compte_officiel') OR v_autre ->> 'compte_officiel' IS NOT NULL THEN RAISE EXCEPTION 'une personne doit porter compte_officiel nul : %', v_autre; END IF;
   IF v_autre ->> 'prenom' <> 'Maryam' OR v_autre ->> 'fonction' <> 'enseignant' OR v_autre ->> 'nature' <> 'profil' THEN
     RAISE EXCEPTION 'cles existantes alterees : %', v_autre;
   END IF;

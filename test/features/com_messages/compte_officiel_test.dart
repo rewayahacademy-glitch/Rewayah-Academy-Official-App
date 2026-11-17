@@ -114,6 +114,20 @@ void main() {
         isFalse,
         reason: 'une cle manquante ne casse rien',
       );
+      Participant avecCode(String? code) => lire(<String, dynamic>{
+        'id': 'p',
+        'nature': 'profil',
+        'prenom': 'Praxis',
+        'officiel': true,
+        'compte_officiel': ?code,
+      });
+      expect(avecCode('praxis').compteOfficiel, 'praxis');
+      expect(avecCode('staff').compteOfficiel, 'staff');
+      expect(
+        avecCode(null).compteOfficiel,
+        isNull,
+        reason: 'serveur plus ancien : pas de code, jamais invente',
+      );
       expect(
         lire(<String, dynamic>{
           'id': 'a',

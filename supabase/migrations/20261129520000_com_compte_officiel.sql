@@ -3,11 +3,13 @@
 -- indicateur du compte, jamais ranges dans le nom. Cet indicateur n'existait pas dans ce que lit la messagerie.
 --
 -- CHANGEMENT UNIQUE : private.com_participant (seul constructeur d'un participant : fils, parties, auteurs de
--- messages, interlocuteurs de com_conversations_pour_objet) rend, pour la nature « profil », une cle de plus
--- « officiel » (booleen) = private.praxis_est_officiel(profil). Les cles existantes ne changent pas, ni la cle
+-- messages, interlocuteurs de com_conversations_pour_objet) rend, pour la nature « profil », deux cles de plus :
+-- « officiel » (booleen) = private.praxis_est_officiel(profil), et « compte_officiel » (texte) = le code du compte dans
+-- private.comptes_officiels ('praxis' aujourd'hui ; NULL pour une personne ordinaire), pour que l'ecran sache QUEL compte
+-- officiel (jamais un nom en dur). Les cles existantes ne changent pas, ni la cle
 -- « nouveau » de com_fil_json (non touchee). Retouche par ancre, une fois ; proprietaire, droits, volatilite et
 -- search_path gardes et verifies. Aucune table, aucune vue, aucune fonction creee ; aucune donnee ecrite ; aucun
--- droit accorde. Rejouable : rien a faire si la cle est deja la. Une personne ordinaire recoit `false`.
+-- droit accorde. Rejouable : rien a faire si la cle est deja la. Une personne ordinaire recoit `false` et NULL.
 --
 -- FICHIER SANS MOT D'EFFACEMENT (compte : 0) ; sans BEGIN ni COMMIT de premier niveau.
 -- ORDRE : ce fichier (20261129520000) precede le socle Praxis (20261129600000) dans un rejeu complet ; la fonction
@@ -33,8 +35,8 @@ DECLARE
   v_avant record;
 BEGIN
   PERFORM pg_catalog.set_config('check_function_bodies', 'off', true);
-  IF pg_catalog.strpos(v_def, '''officiel'',') > 0 THEN
-    RAISE NOTICE 'compte officiel : com_participant porte deja la cle officiel';
+  IF pg_catalog.strpos(v_def, '''compte_officiel'',') > 0 THEN
+    RAISE NOTICE 'compte officiel : com_participant porte deja les cles officiel et compte_officiel';
     RETURN;
   END IF;
   v_n := (pg_catalog.length(v_def) - pg_catalog.length(pg_catalog.replace(v_def, v_ancre, '')))
@@ -46,6 +48,7 @@ BEGIN
     FROM pg_catalog.pg_proc p WHERE p.oid = v_f;
   EXECUTE pg_catalog.replace(v_def, v_ancre,
     '''officiel'', private.praxis_est_officiel(p.id),' || pg_catalog.chr(10)
+    || '        ''compte_officiel'', (SELECT o.code FROM private.comptes_officiels o WHERE o.profile_id = p.id),' || pg_catalog.chr(10)
     || '        ' || v_ancre);
   IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
                   WHERE p.oid = v_f AND p.prosecdef = v_avant.prosecdef
@@ -61,8 +64,8 @@ $participant$;
 DO $postflight$
 DECLARE v_def text := pg_catalog.pg_get_functiondef('private.com_participant(text,uuid,text,uuid)'::regprocedure);
 BEGIN
-  IF pg_catalog.strpos(v_def, '''officiel'',') = 0 THEN
-    RAISE EXCEPTION 'compte officiel : la cle officiel est absente de com_participant';
+  IF pg_catalog.strpos(v_def, '''officiel'',') = 0 OR pg_catalog.strpos(v_def, '''compte_officiel'',') = 0 THEN
+    RAISE EXCEPTION 'compte officiel : les cles officiel et compte_officiel sont absentes de com_participant';
   END IF;
   IF pg_catalog.strpos(v_def, '''prenom'', p.first_name,') = 0 OR pg_catalog.strpos(v_def, '''equipe'' THEN') = 0 THEN
     RAISE EXCEPTION 'compte officiel : une cle existante de com_participant a disparu';
