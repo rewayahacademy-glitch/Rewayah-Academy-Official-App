@@ -2996,7 +2996,11 @@
         "reserveDirection": "Un candidat a réservé un entretien que vous menez.",
         "reserveDirectionQuand": "Un candidat a réservé un entretien que vous menez, le {quand}.",
         "rappelDirection": "Vous menez un entretien qui commence bientôt.",
-        "rappelDirectionQuand": "Vous menez un entretien le {quand}."
+        "rappelDirectionQuand": "Vous menez un entretien le {quand}.",
+        "annule": "L'entretien que vous meniez n'aura pas lieu.",
+        "annuleRefus": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été refusée.",
+        "annuleRetrait": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été retirée.",
+        "annulePause": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature est en pause."
       }
     },
     "partage": {
@@ -4496,7 +4500,14 @@
         "piecePdf": "Fichier PDF",
         "pieceOuvrirPdf": "Ouvrir le PDF de la pièce d'identité",
         "pieceTitre": "Pièce d'identité\u00a0: {nom}",
-        "pieceDecisionPlusTard": "La pièce se décide en Salle de vérification et d'entretien."
+        "pieceValider": "Valider la pièce",
+        "pieceRefuser": "Refuser la pièce",
+        "pieceRefusAnnuler": "Garder la pièce en attente",
+        "pieceValidee": "Pièce validée.",
+        "pieceRefusee": "Pièce refusée.",
+        "pieceDejaDecidee": "Cette pièce a déjà reçu une décision. Rechargez la fiche.",
+        "pieceNonConfirmee": "Le résultat n'est pas encore confirmé. Rechargez la fiche avant de réessayer.",
+        "pieceHorsLigne": "Rien n'a été envoyé. Réessayez quand la connexion sera revenue."
       },
       "controles": {
         "noms": {
@@ -4587,7 +4598,8 @@
         "retrait": "Enregistrer un retrait demandé",
         "rouvrir": "Rouvrir la candidature",
         "responsable": "Choisir le responsable",
-        "dispenserEntretien": "Dispenser d'entretien"
+        "dispenserEntretien": "Dispenser d'entretien",
+        "refaireEntretien": "Refaire l'entretien"
       },
       "consequences": {
         "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
@@ -4605,7 +4617,8 @@
         "retrait": "La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.",
         "rouvrir": "La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.",
         "responsable": "Le responsable suit cette candidature.",
-        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne."
+        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne.",
+        "refaireEntretien": "La candidature revient à l'entretien à planifier. L'entretien tenu ou la dispense d'avant ne compte plus, rien n'est effacé. Aucun message n'est envoyé à la personne."
       },
       "feuille": {
         "motif": "Motif interne",
@@ -4719,6 +4732,7 @@
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
         "dispenserEntretien": "Entretien dispensé. La décision vous attend.",
+        "refaireEntretien": "Entretien à refaire. La candidature attend un nouvel entretien.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
       "genres": {"male": "Homme", "female": "Femme"},
@@ -4782,6 +4796,7 @@
         "entree": "Entrée de \u2068{nom}\u2069 à {heure}",
         "sortie": "Sortie de \u2068{nom}\u2069 à {heure}",
         "autreIssue": "Autre issue (annulé, absence)",
+        "deplacer": "Déplacer l'entretien",
         "resultat": {"titre": "Résultat de l'entretien", "concluant": "Concluant", "nonConcluant": "Non concluant", "aRefaire": "À refaire", "texteConcluant": "Entretien concluant.", "texteNonConcluant": "Entretien non concluant.", "motifARefaire": "Entretien à refaire.", "retourConcluant": "Entretien concluant. Vous pouvez l'accueillir dans l'équipe.", "retourNonConcluant": "Entretien non concluant. Vous pouvez ne pas l’accueillir.", "retourARefaire": "Entretien à refaire. La personne choisit un nouveau moment.", "refusNonParticipant": "Seule une personne qui a mené l'entretien peut en donner le résultat. Demandez-lui de le faire depuis cette fiche.", "refusPasCommence": "L'entretien n'a pas encore commencé. Revenez à l'heure de début.", "refusDejaConsigne": "Le résultat est déjà enregistré. Rechargez la fiche.", "refusAutre": "Le résultat n'est pas confirmé. Réessayez dans un instant."},
         "consigner": "Consigner l'issue",
         "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
@@ -4833,7 +4848,9 @@
           "retirerConsequence": "\u2068{nom}\u2069 ne prendra plus part à cet entretien.",
           "consignerConsequence": "L'issue est inscrite à l'historique de la candidature et ne change plus.",
           "issueManquante": "Choisissez l'issue.",
-          "envoyerConsigner": "Consigner"
+          "envoyerConsigner": "Consigner",
+          "deplacerConsequence": "La personne et les participants reçoivent le nouveau moment de l'entretien. Ce sont les mêmes participants. L'ancien moment n'est plus utilisé.",
+          "envoyerDeplacer": "Déplacer"
         },
         "refus": {
           "fondateurs": "Il faut au moins {exiges} fondateurs parmi les participants. Fondateurs choisis\u00a0: {presents}.",
@@ -4845,6 +4862,8 @@
           "autreCote": "Une personne choisie n'est pas du côté de cette candidature.",
           "sansCompte": "La personne n'a pas encore de compte\u00a0: l'entretien ne peut pas être planifié.",
           "dejaPlanifie": "Un entretien est déjà planifié pour cette candidature.",
+          "commence": "Cet entretien a déjà commencé\u00a0: il ne se déplace plus.",
+          "memeCreneau": "C'est déjà le moment de cet entretien. Choisissez un autre jour ou une autre heure.",
           "consigne": "Cet entretien est déjà consigné\u00a0: il ne change plus.",
           "dernier": "L'entretien garde au moins un participant.",
           "absent": "Cette personne ne prend déjà plus part à l'entretien.",
@@ -4859,6 +4878,7 @@
           "planifie": "Entretien planifié.",
           "ajoute": "\u2068{nom}\u2069 prend part à l'entretien.",
           "retire": "\u2068{nom}\u2069 ne prend plus part à l'entretien.",
+          "deplace": "Entretien déplacé.",
           "consigne": "Issue consignée."
         }
       }
@@ -6900,6 +6920,27 @@
       "plafondChamp": "Nombre de messages par heure (de 1 à 120)",
       "plafondEnregistrer": "Fixer le plafond",
       "plafondInvalide": "Écrivez un nombre entier entre 1 et 120.",
+      "essaiTitre": "Conversations d'essai",
+      "essaiVide": "Mode essai éteint : Praxis peut lire toutes les conversations de l'académie qu'il a le droit de lire.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Mode essai : Praxis ne voit que {nombre} conversation et ne publie aucune annonce.",
+        "other": "Mode essai : Praxis ne voit que {nombre} conversations et ne publie aucune annonce."
+      },
+      "essaiChamp": "Choisir les conversations d'essai",
+      "essaiAide": "Cochez au plus dix conversations parmi celles de vos Messages. Si vous n'en avez pas, créez d'abord une conversation de test avec un compte de test. Tant que rien n'est coché et enregistré, il n'y a pas d'essai.",
+      "essaiEnregistrer": "Enregistrer les conversations d'essai",
+      "essaiFin": "Mettre fin à l'essai",
+      "essaiChoisies(plural, param=nombre)": {
+        "one": "{nombre} conversation cochée.",
+        "other": "{nombre} conversations cochées."
+      },
+      "essaiTrop(plural, param=nombre)": {
+        "one": "Dix conversations au plus : décochez-en une pour en choisir une autre.",
+        "other": "Dix conversations au plus : décochez-en une pour en choisir une autre."
+      },
+      "essaiListeErreur": "La liste de vos conversations n'a pas pu être lue. Réessayez dans un instant.",
+      "essaiAucune": "Aucune conversation à choisir. Créez d'abord une conversation de test avec un compte de test, puis revenez ici.",
+      "essaiAffinez": "Seules les {nombre} premières conversations sont montrées : affinez avec la recherche.",
       "reglageFait": "Réglage appliqué.",
       "erreurReglage": "Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.",
       "doubleVerification": "Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.",
@@ -6975,6 +7016,8 @@
       "refuseCause": "Refusé : {cause}",
       "sansTexte": "Rien n'a été écrit.",
       "cause": {
+        "essai": "mode essai, aucune annonce",
+        "horsEssai": "conversation hors de l'essai",
         "plafondFil": "trop de messages de suite sans réponse",
         "plafond": "plafond par heure atteint",
         "plafondAnnonces": "deux annonces déjà publiées aujourd'hui",

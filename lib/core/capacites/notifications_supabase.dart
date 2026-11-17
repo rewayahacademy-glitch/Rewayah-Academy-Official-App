@@ -86,6 +86,9 @@ const Set<String> evenementsNotificationConnus = <String>{
   'entretien_rappel',
   'entretien_tenu',
   'entretien_a_replanifier',
+  // ENTRETIEN-SUIT-LE-DOSSIER (16/11/2026, migration 20261129750000) : un refus,
+  // un retrait ou une pause annule l'entretien, ceux qui le menaient sont prevenus.
+  'entretien_annule',
   // SALLE-3-ACCUEIL (07/11/2026, migrations 20261119000000 et 20261119000100) :
   // la direction accueille un enseignant dans l'equipe.
   'bienvenue_equipe',
@@ -572,7 +575,8 @@ TypeNotification _typePour(String evenement) => switch (evenement) {
   'entretien_reserve' ||
   'entretien_rappel' ||
   'entretien_tenu' ||
-  'entretien_a_replanifier' => TypeNotification.messageMetier,
+  'entretien_a_replanifier' ||
+  'entretien_annule' => TypeNotification.messageMetier,
   'controle_mission_attribuee' => TypeNotification.mission,
   'controle_mission_non_controlee' => TypeNotification.evenementOperationnel,
   'paiement_relance' ||

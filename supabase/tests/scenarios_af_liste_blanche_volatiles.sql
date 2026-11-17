@@ -64,6 +64,16 @@ declare
     -- (dix au plus, existantes) dans private.praxis_reglages.essai_fils, plus une ligne d'audit (praxis_regle_essai). Tant que la
     -- liste n'est pas vide, Praxis ne voit que ces fils et n'annonce rien. Elle n'ecrit ni message, ni annonce, ni compte.
     'direction_praxis_regler_essai(uuid[])',
+    -- PX-2 (17/11) : trois portes de la direction (administrateur valide, aal2). regler_donnees_reelles ouvre ou ferme les donnees reelles
+    -- (faux a l'installation, ouvert par le directeur apres la publication de la politique) ; valider execute le geste PREPARE par Praxis
+    -- par la porte publique existante, sous l'identite de la direction, et marque la proposition validee ; ecarter la marque ecartee.
+    -- Chacune ecrit private.praxis_reglages ou private.praxis_propositions et une ligne d'audit ; aucune n'ecrit directement un dossier.
+    -- direction_praxis_propositions est STABLE : hors de cette liste.
+    'direction_praxis_ecarter(uuid,text,uuid)',
+    'direction_praxis_regler_donnees_reelles(boolean)',
+    -- PRAXIS-PLAFOND-GLOBAL (20261129870000) : le plafond d'appels par cle et par heure ; admin, aal2, une ligne d'audit.
+    'direction_praxis_regler_plafond(integer)',
+    'direction_praxis_valider(uuid,integer,text,uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
     -- praxis_journal_lu : qui a lu, la limite et le curseur, jamais un texte) : c'est pourquoi elle est VOLATILE.
@@ -342,6 +352,8 @@ declare
     'lister_enseignants(jsonb,text,integer)',
     -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
     'dispenser_entretien(uuid,text,text,integer,text)',
+    -- BE-1j (17/11) : la direction deplace le creneau d'un entretien planifie (transition 47).
+    'deplacer_entretien(uuid,timestamp with time zone,integer,text,integer,text)',
     -- COMPLEMENT-SALLE-EXAMEN (17/11) : la direction annule le complement demande en Salle d'examen (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; le dossier revient a en_examen).
     'annuler_complement_candidat(uuid,text,integer,text)',
     -- BE-1h (16/11) : la direction ramene une candidature de la decision a l'entretien (transition 46).

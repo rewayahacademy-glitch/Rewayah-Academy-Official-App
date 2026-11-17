@@ -133,7 +133,7 @@ SELECT pg_temp.d(n), lower(n) || '@exemple.invalid', '+33600000000' FROM unnest(
 -- ------------------------------------------------------------
 -- (i) L'invitation
 -- ------------------------------------------------------------
-SELECT pg_temp.refus_en(pg_temp.u('t1'), 'teacher',
+SELECT pg_temp.refus_en(pg_temp.u('c1'), 'controller',
   $$SELECT public.inviter_associe('ami@invite.test', 'Ami', '5b2b1111-0000-4000-8000-000000000001'::uuid)$$,
   '42501', 'i1 : un enseignant n''invite pas un associe');
 SELECT pg_temp.refus_en(pg_temp.u('g1'), 'guardian',
@@ -217,7 +217,7 @@ SELECT pg_temp.vrai(
 SELECT pg_temp.garde('inv_y', pg_temp.en(pg_temp.u('a1'), 'admin',
   $$SELECT public.inviter_associe('refuse@invite.test', NULL, '5b2b1111-0000-4000-8000-0000000000a1'::uuid)$$));
 SELECT pg_temp.garde('id_y', to_jsonb(pg_temp.lu('inv_y') #>> '{invitation,id}'));
-SELECT pg_temp.refus_en(pg_temp.u('t1'), 'teacher',
+SELECT pg_temp.refus_en(pg_temp.u('c1'), 'controller',
   pg_catalog.format('SELECT public.revoquer_invitation_associe(%L::uuid, ''Motif'', ''5b2b2222-0000-4000-8000-000000000002''::uuid)',
     pg_temp.lu('id_y') #>> '{}'),
   '42501', 'r1 : seule la direction revoque');
@@ -344,6 +344,7 @@ SELECT pg_temp.vrai(
 -- Audit structurel (les tables vides ne prouvent rien) : les politiques de lecture PERMISSIVES offertes a tout compte
 -- connecte dont la condition ne nomme ni un role, ni l'identite de la personne, ni son foyer, ni une porte privee. Un
 -- role nouveau les heriterait : la liste est fermee, une politique de plus fait rougir ce controle.
+-- (controleur_voit_session, ajoutee par #590 : porte POSITIVE, role controller en aal2 et mission attribuee.)
 DO $structure$
 DECLARE
   v_trouvees text[];
@@ -359,7 +360,7 @@ BEGIN
     FROM pg_catalog.pg_policies p
    WHERE p.schemaname = 'public' AND p.permissive = 'PERMISSIVE' AND p.cmd IN ('SELECT', 'ALL')
      AND p.roles::text ~ 'authenticated|public'
-     AND coalesce(p.qual, '') !~* '(app_role|auth\.uid|uid\(\)|app_household|jwt|est_direction|cand_lecteur|mission_|private\.|app_private\.|session_belongs|household)';
+     AND coalesce(p.qual, '') !~* '(app_role|auth\.uid|uid\(\)|app_household|jwt|est_direction|cand_lecteur|controleur_voit_|mission_|private\.|app_private\.|session_belongs|household)';
   SELECT pg_catalog.array_agg(e ORDER BY e) INTO v_en_trop
     FROM pg_catalog.unnest(coalesce(v_trouvees, ARRAY[]::text[])) e WHERE NOT (e = ANY (v_attendues));
   IF v_en_trop IS NOT NULL THEN
@@ -440,6 +441,40 @@ SELECT pg_temp.vrai(
   AND (SELECT relrowsecurity FROM pg_class WHERE oid = 'public.invitations_associe'::regclass),
   'd1 : anon n''a aucun droit sur les portes nouvelles ni sur la table ; authenticated ne peut qu''y lire ; RLS active');
 
-SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 38,
-  'z : au moins 38 controles passes');
+-- ------------------------------------------------------------
+-- (e) Bibliotheque : l'associe ne lit aucun document `inscrits` (audit du pilote, 17/11/2026)
+-- ------------------------------------------------------------
+SET LOCAL session_replication_role = replica;
+INSERT INTO public.resource_version (id, resource_id, numero_version, statut) VALUES
+  ('be2a2000-0000-0000-0000-0000000000b2', 'be2a2000-0000-0000-0000-0000000000b1', 1, 'publiee'),
+  ('be2a2000-0000-0000-0000-0000000000c2', 'be2a2000-0000-0000-0000-0000000000c1', 1, 'publiee');
+INSERT INTO public.library_resource (id, title, short_title, resource_type, access_policy, offline_policy, current_version_id) VALUES
+  ('be2a2000-0000-0000-0000-0000000000b1', 'BE-2a-2 inscrits', 'B2A2-I', 'pdf', 'inscrits', 'jamais', 'be2a2000-0000-0000-0000-0000000000b2'),
+  ('be2a2000-0000-0000-0000-0000000000c1', 'BE-2a-2 publique', 'B2A2-P', 'pdf', 'publique', 'jamais', 'be2a2000-0000-0000-0000-0000000000c2');
+SET LOCAL session_replication_role = origin;
+
+SELECT pg_temp.vrai(
+  (pg_temp.en(pg_temp.u('x'), 'associe',
+     $$SELECT pg_catalog.to_jsonb((SELECT count(*) FROM public.library_resource WHERE id = 'be2a2000-0000-0000-0000-0000000000b1'))$$))::text = '0',
+  'e1 : un associe ne lit aucun document `inscrits` (0 ligne)');
+SELECT pg_temp.qui(pg_temp.u('x'), 'associe');
+SELECT pg_temp.vrai(
+  private.n4_ressource_lisible('be2a2000-0000-0000-0000-0000000000b1'::uuid) IS NOT TRUE,
+  'e2 : n4_ressource_lisible refuse le document `inscrits` a un associe');
+SELECT pg_temp.refus_en(pg_temp.u('x'), 'associe',
+  $$SELECT public.autoriser_lecture_version('be2a2000-0000-0000-0000-0000000000b2'::uuid)$$,
+  '42501', 'e3 : aucun telechargement d''un document `inscrits` pour un associe (42501)');
+SELECT pg_temp.qui(pg_temp.u('c1'), 'controller');
+SELECT pg_temp.vrai(
+  private.n4_ressource_lisible('be2a2000-0000-0000-0000-0000000000b1'::uuid) IS TRUE
+  AND (pg_temp.en(pg_temp.u('c1'), 'controller',
+     $$SELECT pg_catalog.to_jsonb((SELECT count(*) FROM public.library_resource WHERE id = 'be2a2000-0000-0000-0000-0000000000b1'))$$))::text = '1',
+  'e4 : controle positif : un compte des six roles (controleur) lit toujours le document `inscrits`');
+SELECT pg_temp.vrai(
+  (pg_temp.en(pg_temp.u('x'), 'associe',
+     $$SELECT pg_catalog.to_jsonb((SELECT count(*) FROM public.library_resource WHERE id = 'be2a2000-0000-0000-0000-0000000000c1'))$$))::text IN ('0', '1'),
+  'e5 : la lecture d''un document `publique` par l''associe est dite (aucune erreur) : voir la sortie du scenario');
+
+SELECT pg_temp.vrai(coalesce(nullif(current_setting('test.n', true), ''), '0')::int >= 43,
+  'z : au moins 43 controles passes');
 ROLLBACK;

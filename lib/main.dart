@@ -149,6 +149,7 @@ import 'core/controle/port_tirage_controle.dart';
 import 'core/controle/port_tirage_controle_supabase.dart';
 import 'core/dossier/port_acces_pieces_kyc.dart';
 import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
+import 'core/dossier/service_validation.dart';
 import 'core/enseignant/absence_remplacement.dart';
 import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
@@ -667,6 +668,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // fiche (migration 20261125900000).
   lirePieceCandidatureProvider.overrideWithValue(
     lirePieceCandidatureSupabase(Supabase.instance.client),
+  ),
+  // PIECE-SUR-LA-FICHE (16/11/2026) : valider ou refuser la piece sur la
+  // fiche, par `decider_dossier` (le serveur reste la barriere).
+  deciderPieceProvider.overrideWithValue(
+    ServiceValidationSupabase(Supabase.instance.client).decider,
   ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support

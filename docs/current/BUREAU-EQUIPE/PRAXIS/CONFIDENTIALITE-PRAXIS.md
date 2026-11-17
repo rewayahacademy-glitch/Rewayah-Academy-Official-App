@@ -128,6 +128,8 @@ These rights also apply to what the assistant reads and writes.
 | D | Base légale | Intérêt légitime ; à confirmer par un juriste |
 | E | Quand publier | Le jour où le directeur allume Praxis, avec la montée de version et l'avis de modification ; jamais avant |
 
+**Question ouverte sur C (17/11/2026, arbitrage du pilote, `AUDIT-JOURNAL-PRAXIS.md` et PRAXIS-PLAFOND-GLOBAL).** Le plafond global (600 appels par clé et par heure, migration `20261129870000`) borne le **débit** du journal, pas sa **durée**. La rétention est **reportée** : elle relève de la décision C. Faits à avoir en tête quand elle sera prise : le journal est « à ajout seul » par construction (R11) et **aucune purge n'existe** dans le dépôt ; toute durée de conservation demande donc une porte de purge dédiée, écrite et journalisée, qui contredit « à ajout seul » telle qu'écrite et doit être décidée explicitement ; les plafonds d'`ecrire` et d'`annoncer` se lisent au journal sur 1 h et 24 h : une purge ne doit jamais effacer ces fenêtres.
+
 ## 4. Ce qui reste à faire une fois validé (hors de cette PR)
 
 1. Intégrer les quatre ajouts dans `assets/i18n/{fr,en,ar}.i18n.json` (`juridique.confidentialite.s3`, `s4`, `s6`, `s8`),

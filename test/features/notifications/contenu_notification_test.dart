@@ -447,11 +447,27 @@ void main() {
       destinationNotificationAutorisee('/admin/personnes/candidatures'),
       isTrue,
     );
+    // ENTRETIEN-SUIT-LE-DOSSIER : la cause seule, a ceux qui menaient l'entretien.
+    for (final (String cause, String texte) in <(String, String)>[
+      ('refus', n.annuleRefus),
+      ('retrait', n.annuleRetrait),
+      ('pause', n.annulePause),
+      ('autre', n.annule),
+    ]) {
+      expect(
+        contenuNotificationPour('entretien_annule', <String, dynamic>{
+          'portee': 'direction',
+          'cause': cause,
+        }).titre,
+        texte,
+      );
+    }
     for (final String e in <String>[
       'entretien_reserve',
       'entretien_rappel',
       'entretien_tenu',
       'entretien_a_replanifier',
+      'entretien_annule',
     ]) {
       expect(evenementsNotificationConnus, contains(e));
     }

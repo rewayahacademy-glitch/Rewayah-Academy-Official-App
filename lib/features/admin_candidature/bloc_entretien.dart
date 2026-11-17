@@ -275,6 +275,16 @@ class _EntretienOuvert extends ConsumerWidget {
         !horsLigne &&
         capacites.peutDecider &&
         capacites.geste('consignerEntretien');
+    // BE-1j : le creneau se change tant que l'entretien n'a pas commence ;
+    // le serveur decide (regle 47, moteur des gestes).
+    final bool deplacer =
+        !horsLigne &&
+        capacites.peutDecider &&
+        capacites.geste('deplacerEntretien') &&
+        detail.ligne.issue == IssueCandidature.enCours &&
+        !detail.ligne.enPause &&
+        detail.ligne.etat == EtatCandidature.entretienPlanifie &&
+        DateTime.now().isBefore(entretien.debut);
     final AsyncValue<DetailEntretien> valeur = ref.watch(
       detailEntretienProvider(entretien.sessionId),
     );
@@ -514,6 +524,32 @@ class _EntretienOuvert extends ConsumerWidget {
             detail: detail,
             comptesRendus: valeur.requireValue.comptesRendus,
             onFait: (String m) => _relu(ref, m),
+          ),
+        ],
+        if (deplacer) ...<Widget>[
+          Ecart.vLg,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ActionPrincipale(
+              key: const ValueKey<String>('entretien-deplacer'),
+              libelle: e.deplacer,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              onPress: () async {
+                final String? m = await _ouvrir(
+                  context,
+                  e.deplacer,
+                  (VoidCallback fermer, ValueChanged<String> fini) =>
+                      FeuilleDeplacerEntretien(
+                        entretien: entretien,
+                        detail: detail,
+                        onFini: fini,
+                        onAnnuler: fermer,
+                      ),
+                );
+                if (m != null) _relu(ref, m);
+              },
+            ),
           ),
         ],
         if (consigner) ...<Widget>[
@@ -759,6 +795,8 @@ String messageRefusEntretien(Object refus, {bool retrait = false}) {
     ParticipantAutreCote() => r.autreCote,
     CandidatSansCompte() => r.sansCompte,
     EntretienDejaPlanifie() => r.dejaPlanifie,
+    EntretienCommence() => r.commence,
+    MemeCreneau() => r.memeCreneau,
     EntretienConsigne() => r.consigne,
     DernierParticipant() => r.dernier,
     ParticipantAbsent() => r.absent,
@@ -1167,6 +1205,182 @@ class _EtatPlanifier extends ConsumerState<FeuillePlanifierEntretien>
         ...bandeauRefus(),
         ...boutons(
           libelle: t.admin.evaluations.planifierEnvoyer,
+          onEnvoyer: _valider,
+          onAnnuler: widget.onAnnuler,
+        ),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Deplacer
+// ---------------------------------------------------------------------------
+
+/// La feuille « Deplacer l'entretien » (BE-1j) : un nouveau jour, une heure,
+/// une duree et un motif ecrit. Les participants restent les memes.
+class FeuilleDeplacerEntretien extends ConsumerStatefulWidget {
+  /// Cree la feuille.
+  const FeuilleDeplacerEntretien({
+    required this.entretien,
+    required this.detail,
+    required this.onFini,
+    required this.onAnnuler,
+    super.key,
+  });
+
+  /// L'entretien a deplacer.
+  final EntretienCandidature entretien;
+
+  /// Le dossier lu : sa version est la version attendue.
+  final DetailCandidature detail;
+
+  /// Le geste est fait : le message du retour local.
+  final ValueChanged<String> onFini;
+
+  /// La personne renonce.
+  final VoidCallback onAnnuler;
+
+  @override
+  ConsumerState<FeuilleDeplacerEntretien> createState() => _EtatDeplacer();
+}
+
+class _EtatDeplacer extends ConsumerState<FeuilleDeplacerEntretien>
+    with _EnvoiEntretien<FeuilleDeplacerEntretien> {
+  final TextEditingController _motif = TextEditingController();
+  DateTime? _jour;
+  int? _heure;
+  late int? _duree = dureesEntretien.contains(widget.entretien.dureeMinutes)
+      ? widget.entretien.dureeMinutes
+      : 45;
+
+  @override
+  void dispose() {
+    _motif.dispose();
+    super.dispose();
+  }
+
+  bool get _complet =>
+      _jour != null &&
+      _heure != null &&
+      _duree != null &&
+      _motif.text.trim().isNotEmpty;
+
+  Future<void> _valider() async {
+    if (!_complet) {
+      setState(() => tente = true);
+      return;
+    }
+    final DateTime j = _jour!;
+    // HEURES-PROFIL H3 : le jour et l'heure sont ceux du fuseau du PROFIL.
+    final DateTime debut = instantChezMoi(
+      j.year,
+      j.month,
+      j.day,
+      _heure! ~/ 60,
+      _heure! % 60,
+    );
+    await envoyer((PortEntretiensDirection port, String cle) async {
+      await port.deplacer(
+        candidatureId: widget.detail.ligne.id,
+        debut: debut,
+        dureeMinutes: _duree!,
+        motif: _motif.text.trim(),
+        versionAttendue: widget.detail.version,
+        cleIdempotence: cle,
+      );
+      return t.admin.candidatures.entretien.retours.deplace;
+    }, widget.onFini);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final e = t.admin.candidatures.entretien;
+    final f = e.feuille;
+    final g = t.admin.candidatures.feuille;
+    final DateTime maintenant = chezMoi(ref.read(horlogeFormulairesProvider)());
+    final DateTime aujourdhui = DateTime(
+      maintenant.year,
+      maintenant.month,
+      maintenant.day,
+    );
+    return Column(
+      key: const ValueKey<String>('feuille-deplacer-entretien'),
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        _consequence(context, f.deplacerConsequence),
+        Ecart.vLg,
+        ChampDate(
+          libelle: t.admin.groupes.formulaire.jour,
+          valeur: _jour,
+          aujourdhui: aujourdhui,
+          dernier: DateTime(
+            aujourdhui.year,
+            aujourdhui.month,
+            aujourdhui.day + 89,
+          ),
+          aide: f.jourAide,
+          onChoix: (DateTime j) => modifie(() => _jour = j),
+        ),
+        if (tente && _jour == null) _erreurChamp(context, f.jourManquant),
+        Ecart.vLg,
+        // Des choix de formulaire, pas des filtres : un menu par ligne.
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuFiltre<int>(
+            key: const ValueKey<String>('entretien-heure'),
+            libelle: t.admin.groupes.formulaire.heure,
+            valeur: _heure,
+            entrees: <EntreeFiltre<int>>[
+              for (final int m in heuresEntretien)
+                EntreeFiltre<int>(
+                  valeur: m,
+                  libelle: heureDeLAppareil(
+                    DateTime(2000, 1, 1, m ~/ 60, m % 60),
+                  ),
+                ),
+            ],
+            onChoix: (int? m) {
+              if (m != null) modifie(() => _heure = m);
+            },
+          ),
+        ),
+        if (tente && _heure == null) _erreurChamp(context, f.heureManquante),
+        Ecart.vMd,
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: MenuFiltre<int>(
+            key: const ValueKey<String>('entretien-duree'),
+            libelle: t.admin.groupes.formulaire.duree,
+            valeur: _duree,
+            entrees: <EntreeFiltre<int>>[
+              for (final int d in dureesEntretien)
+                EntreeFiltre<int>(
+                  valeur: d,
+                  libelle: LibellesGroupe.insecable(
+                    t.admin.regles.uniteMinutes(n: '$d'),
+                  ),
+                ),
+            ],
+            onChoix: (int? d) {
+              if (d != null) modifie(() => _duree = d);
+            },
+          ),
+        ),
+        Ecart.vLg,
+        ZoneSaisie(
+          cleChamp: const ValueKey<String>('entretien-motif'),
+          controleur: _motif,
+          libelle: g.motif,
+          explication: g.motifSeul,
+          erreur: tente && _motif.text.trim().isEmpty ? g.motifManquant : null,
+          minLignes: 3,
+          onChanged: (String _) => modifie(() {}),
+        ),
+        ...bandeauRefus(),
+        ...boutons(
+          libelle: f.envoyerDeplacer,
           onEnvoyer: _valider,
           onAnnuler: widget.onAnnuler,
         ),
