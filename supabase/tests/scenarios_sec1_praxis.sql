@@ -340,7 +340,8 @@ SELECT pg_temp.garde('regle_on2', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT p
 -- ============ R2, R4, R5, R3 : liste blanche, tables ecrites, rien de sensible ============
 SELECT pg_temp.vrai((SELECT array_agg(p.oid::regprocedure::text ORDER BY p.proname) FROM pg_proc p
     WHERE p.pronamespace = 'public'::regnamespace AND p.proname LIKE 'praxis\_%')
-  = ARRAY['praxis_annoncer(text,text[],text,text,uuid)',
+  = ARRAY['praxis_acte_confirmer(text,uuid,text)', 'praxis_acte_preparer(text,text,jsonb)', 'praxis_actes(text)',
+          'praxis_agir(text,text,jsonb,uuid)', 'praxis_annoncer(text,text[],text,text,uuid)',
           'praxis_boite(text,text,integer)', 'praxis_calendrier_ajouter(text,text,text,date,text,uuid)',
           'praxis_calendrier_lire(text,date,date)', 'praxis_ecrire(text,uuid,text,uuid)', 'praxis_etat(text)',
           'praxis_fil(text,uuid,integer)', 'praxis_lire(text,text,jsonb,integer)', 'praxis_noter_refus(text,text)',
@@ -381,6 +382,13 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
           -- PRAXIS-PLAFOND-GLOBAL (20261129870000) : la porte du reglage du plafond d'appels par cle et par heure.
           'public.direction_praxis_regler_plafond>private.praxis_reglages',
           'public.direction_praxis_valider>private.praxis_propositions',
+          -- PX-BD-0 (20261129960000) : le SOCLE DES ACTES du mode chat. Les lots prepares et leur code, les actes executes (plafonds,
+          -- idempotence) ; jamais un dossier, un compte, un role, un paiement ou une piece : les ECRITURES des actes eux-memes sont dans les
+          -- adaptateurs private.praxis_acte_* de chaque lot, relus un par un.
+          'public.direction_praxis_confirmation_annuler>private.praxis_confirmations',
+          'public.direction_praxis_confirmations>private.praxis_confirmations',
+          'public.praxis_acte_confirmer>private.praxis_confirmations', 'public.praxis_acte_confirmer>private.praxis_executions',
+          'public.praxis_acte_preparer>private.praxis_confirmations', 'public.praxis_agir>private.praxis_executions',
           'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier',
           'public.praxis_preparer>private.praxis_propositions',
           -- PRAXIS-ROUTINE (20261129900000) : la routine note la fin de son tir.
@@ -408,10 +416,12 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.gestes_regles_de_la_ligne', 'private.praxis_gestes_ligne', 'private.praxis_propositions',
           -- PRAXIS-ROUTINE : la table des tirs de la routine (INSERT INTO private.praxis_tirs (...)).
           'private.praxis_tirs',
+          -- PX-BD-0 : le pont borne, le fabricant d'identite de la direction emettrice, les trois tables des actes.
+          'private.praxis_confirmations', 'private.praxis_executer_acte', 'private.praxis_executions', 'private.praxis_identite',
           'private.praxis_propositions_expirer', 'public.admettre_salle_verification', 'public.demander_complement_candidat',
           'public.planifier_entretien',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
-  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (41 noms) ; aucun autre appel de public, private ou d''un autre schema');
+  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (45 noms) ; aucun autre appel de public, private ou d''un autre schema');
 
 -- R4 / AR-10 (PX-2, revue R15) : des COUPLES (appelante, appelee), pas seulement une liste de noms. Les trois portes publiques de geste de la
 -- candidature ne sont appelees QUE par direction_praxis_valider (qui s'execute sous l'identite de la direction) : aucun outil de Praxis,
@@ -428,7 +438,15 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT p.proname || '>' || lowe
 -- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
 SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname)
                        FROM pg_proc p WHERE p.pronamespace = 'public'::regnamespace AND p.proname LIKE 'praxis\_%')
-  = ARRAY['praxis_annoncer(p_cle text, p_publics text[], p_titre text, p_texte text, p_cle_idempotence uuid)',
+  = ARRAY[
+          -- PX-BD-0 : les actes du mode chat. DEUX jsonb de plus, et seulement ceux-la : les parametres d'un acte A (p_params) et le lot d'un
+          -- acte S (p_lot). Ce ne sont pas des requetes : l'acte DOIT etre dans le catalogue ferme (private.praxis_actes), et chaque parametre
+          -- est valide par l'adaptateur de l'acte contre une liste fermee (scenarios_praxis_actes_socle.sql §3 et §4).
+          'praxis_acte_confirmer(p_cle text, p_jeton uuid, p_code text)',
+          'praxis_acte_preparer(p_cle text, p_acte text, p_lot jsonb)',
+          'praxis_actes(p_cle text)',
+          'praxis_agir(p_cle text, p_acte text, p_params jsonb, p_cle_idempotence uuid)',
+          'praxis_annoncer(p_cle text, p_publics text[], p_titre text, p_texte text, p_cle_idempotence uuid)',
           'praxis_boite(p_cle text, p_filtre text, p_limite integer)',
           'praxis_calendrier_ajouter(p_cle text, p_sujet text, p_public text, p_date date, p_recurrence text, p_cle_idempotence uuid)',
           'praxis_calendrier_lire(p_cle text, p_du date, p_au date)',
