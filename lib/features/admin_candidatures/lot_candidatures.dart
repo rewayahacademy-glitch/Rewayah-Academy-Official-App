@@ -62,6 +62,9 @@ String libelleGesteLot(GesteLot geste) => switch (geste) {
   GesteLot.mettreEnPause => libelleGeste(GesteCandidature.mettreEnPause),
   GesteLot.leverPause => libelleGeste(GesteCandidature.leverPause),
   GesteLot.refuser => t.admin.candidatures.lot.refuser,
+  GesteLot.dispenserEntretien => libelleGeste(
+    GesteCandidature.dispenserEntretien,
+  ),
 };
 
 /// Ce que dit la direction d'une candidature exclue d'un apercu, en mots.
@@ -78,6 +81,7 @@ String raisonExclusion(ExclusLot e, GesteLot geste) {
           GesteLot.mettreEnPause => r.dejaEnPause,
           GesteLot.leverPause => r.pasEnPause,
           GesteLot.refuser => r.pause,
+          GesteLot.dispenserEntretien => r.pause,
         };
       }
       return r.etat(
@@ -296,11 +300,16 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
 
   bool get _nombreJuste => _nombreSaisi == _apercu?.nombre;
 
+  /// BE-1g : la dispense choisit une categorie (fondateur ou autre) ; le
+  /// serveur la lit dans l'argument du modele, que l'apercu ne declare pas.
+  bool get _categorieRequise => _geste == GesteLot.dispenserEntretien;
+
   bool get _complet {
     final ApercuLot? a = _apercu;
     if (a == null || a.nombre == 0) return false;
     if (a.motifRequis && _motif.text.trim().isEmpty) return false;
     if (a.modeleRequis && _modele == null) return false;
+    if (_categorieRequise && _modele == null) return false;
     return _nombreJuste;
   }
 
@@ -342,7 +351,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
           nombreConfirme: _nombreSaisi!,
           cleIdempotence: cle,
           motif: apercu.motifRequis ? _motif.text.trim() : null,
-          modele: apercu.modeleRequis ? _modele : null,
+          modele: apercu.modeleRequis || _categorieRequise ? _modele : null,
           repriseLe: _geste == GesteLot.mettreEnPause ? _reprise : null,
         ),
       );
@@ -530,6 +539,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       GesteLot.mettreEnPause => f.effetPause,
       GesteLot.leverPause => f.effetLever,
       GesteLot.refuser => f.effetRefuser,
+      GesteLot.dispenserEntretien => f.effetDispenser,
     };
   }
 
@@ -632,7 +642,9 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
     return <Widget>[
       if (a.motifRequis || a.modeleRequis) ...<Widget>[
         Ecart.vLg,
-        _texte(l.motifCommun),
+        // La dispense ne porte aucun message pour la personne : sa phrase
+        // commune ne parle pas de message.
+        _texte(_categorieRequise ? l.motifCommunDispense : l.motifCommun),
       ],
       if (a.modeleRequis) ...<Widget>[
         Ecart.vLg,
@@ -666,6 +678,36 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
           _texte(f.modeleLu),
           if (_tente && _modele == null) _erreurChamp(f.modeleManquant),
         ],
+      ],
+      if (_categorieRequise) ...<Widget>[
+        Ecart.vLg,
+        _titreChamp(t.admin.candidatures.dispense.categorie),
+        Ecart.vSm,
+        ChoiceCardGroup(
+          autoriserSaisieLibre: false,
+          options: <OptionChoix>[
+            OptionChoix(
+              cle: const ValueKey<String>('dispense-fondateur'),
+              valeur: CategorieDispense.fondateur.valeurSql,
+              libelle: t.admin.candidatures.dispense.fondateur,
+              explication: t.admin.candidatures.dispense.fondateurAide,
+            ),
+            OptionChoix(
+              cle: const ValueKey<String>('dispense-autre'),
+              valeur: CategorieDispense.autre.valeurSql,
+              libelle: t.admin.candidatures.dispense.autre,
+              explication: t.admin.candidatures.dispense.autreAide,
+            ),
+          ],
+          valeurInitiale: _modele == null
+              ? null
+              : ReponseChoix(valeurs: <String>{_modele!}),
+          onChange: (ReponseChoix r) => _modifie(() {
+            _modele = r.valeurs.isEmpty ? null : r.valeurs.first;
+          }),
+        ),
+        if (_tente && _modele == null)
+          _erreurChamp(t.admin.candidatures.dispense.categorieManquante),
       ],
       if (a.motifRequis) ...<Widget>[
         Ecart.vLg,
