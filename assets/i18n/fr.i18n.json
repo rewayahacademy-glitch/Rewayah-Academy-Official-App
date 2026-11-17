@@ -2996,7 +2996,11 @@
         "reserveDirection": "Un candidat a réservé un entretien que vous menez.",
         "reserveDirectionQuand": "Un candidat a réservé un entretien que vous menez, le {quand}.",
         "rappelDirection": "Vous menez un entretien qui commence bientôt.",
-        "rappelDirectionQuand": "Vous menez un entretien le {quand}."
+        "rappelDirectionQuand": "Vous menez un entretien le {quand}.",
+        "annule": "L'entretien que vous meniez n'aura pas lieu.",
+        "annuleRefus": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été refusée.",
+        "annuleRetrait": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été retirée.",
+        "annulePause": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature est en pause."
       }
     },
     "partage": {
@@ -4496,7 +4500,14 @@
         "piecePdf": "Fichier PDF",
         "pieceOuvrirPdf": "Ouvrir le PDF de la pièce d'identité",
         "pieceTitre": "Pièce d'identité\u00a0: {nom}",
-        "pieceDecisionPlusTard": "La pièce se décide en Salle de vérification et d'entretien."
+        "pieceValider": "Valider la pièce",
+        "pieceRefuser": "Refuser la pièce",
+        "pieceRefusAnnuler": "Garder la pièce en attente",
+        "pieceValidee": "Pièce validée.",
+        "pieceRefusee": "Pièce refusée.",
+        "pieceDejaDecidee": "Cette pièce a déjà reçu une décision. Rechargez la fiche.",
+        "pieceNonConfirmee": "Le résultat n'est pas encore confirmé. Rechargez la fiche avant de réessayer.",
+        "pieceHorsLigne": "Rien n'a été envoyé. Réessayez quand la connexion sera revenue."
       },
       "controles": {
         "noms": {
