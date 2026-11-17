@@ -340,6 +340,89 @@ SELECT j.cle_id, j.emise_par, 'etat', 'parametre', pg_catalog.clock_timestamp() 
 SELECT pg_temp.garde('pl_fenetre', pg_temp.srv(pg_catalog.format('SELECT public.praxis_noter_refus(%L, ''boite'')', pg_temp.k('routine'))));
 SELECT pg_temp.verif('PLAFOND : les notes de plus d une heure ne comptent pas (fenetre glissante)', $$ SELECT pg_temp.lu('pl_fenetre') ->> 'ok' = 'true' $$);
 
+CREATE FUNCTION pg_temp.refuse_pg(p_id uuid, p_role text, p_aal text, p_sql text) RETURNS void LANGUAGE plpgsql AS $$
+BEGIN
+  PERFORM pg_temp.qui(p_id, p_role, p_aal);
+  BEGIN
+    EXECUTE 'SET LOCAL ROLE authenticated';
+    EXECUTE p_sql;
+    EXECUTE 'RESET ROLE';
+    RAISE EXCEPTION 'PRAXIS ROUGE : aucun refus pour %', p_role;
+  EXCEPTION WHEN insufficient_privilege THEN
+    EXECUTE 'RESET ROLE';
+  END;
+END $$;
+GRANT EXECUTE ON FUNCTION pg_temp.refuse_pg(uuid, text, text, text) TO authenticated, anon;
+-- PRAXIS-PLAFOND-GLOBAL (20261129870000) : 600 appels par cle et par heure glissante (reglable 60 a 3600) au guichet ;
+-- au-dela, {"erreur": "plafond_global"}, aucune ligne sauf UNE ligne temoin par cle et par heure.
+-- La porte du reglage : direction seule, aal2, bornes 60 a 3600, journalisee ; l'etat rend la valeur.
+SELECT pg_temp.garde('pg_reg', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT public.direction_praxis_regler_plafond(60)$$));
+SELECT pg_temp.verif('PLAFOND GLOBAL : la porte du reglage ecrit 60 et l etat de la direction le rend', $$
+  SELECT pg_temp.lu('pg_reg') = '{"appelsParHeure": 60}'::jsonb
+     AND (SELECT appels_par_heure FROM private.praxis_reglages) = 60
+     AND pg_temp.en(pg_temp.u('1'), 'admin', 'SELECT public.direction_praxis_etat()') ->> 'appelsParHeure' = '60'
+     AND EXISTS (SELECT 1 FROM public.audit_logs WHERE action = 'praxis_regle_plafond') $$);
+DO $$ DECLARE v_ok boolean := true; v_c text;
+BEGIN
+  FOREACH v_c IN ARRAY ARRAY['59', '3601', 'NULL'] LOOP
+    BEGIN
+      PERFORM pg_temp.en(pg_temp.u('1'), 'admin', 'SELECT public.direction_praxis_regler_plafond(' || v_c || ')');
+      v_ok := false;
+    EXCEPTION WHEN SQLSTATE '22023' THEN NULL;
+    END;
+  END LOOP;
+  PERFORM pg_temp.refuse_pg(pg_temp.u('1'), 'admin', 'aal1', 'SELECT public.direction_praxis_regler_plafond(600)');
+  PERFORM pg_temp.refuse_pg(pg_temp.u('2'), 'teacher', 'aal2', 'SELECT public.direction_praxis_regler_plafond(600)');
+  PERFORM pg_temp.garde('pg_bornes', to_jsonb(v_ok));
+END $$;
+SELECT pg_temp.verif('PLAFOND GLOBAL : 59, 3601 et NULL refuses (22023) ; l aal1 et un enseignant refuses (42501) ; la valeur reste 60', $$
+  SELECT (pg_temp.lu('pg_bornes') #>> '{}')::boolean AND (SELECT appels_par_heure FROM private.praxis_reglages) = 60 $$);
+-- Une cle neuve : 60 appels passent, le 61e est refuse, une seule ligne temoin, rien de plus.
+SELECT pg_temp.garde('cle_g', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT public.direction_praxis_emettre_cle(
+  'Plafond global', 'chat', pg_catalog.now() + interval '30 days', '5c1a2222-0000-4000-8000-0000000000a3'::uuid)$$));
+DO $$
+DECLARE i integer; v jsonb; n integer := 0;
+BEGIN
+  FOR i IN 1 .. 60 LOOP
+    v := pg_temp.srv(pg_catalog.format('SELECT public.praxis_etat(%L)', pg_temp.k('cle_g')));
+    IF NOT v ? 'erreur' OR v ->> 'erreur' <> 'plafond_global' THEN n := n + 1; END IF;
+  END LOOP;
+  PERFORM pg_temp.garde('pg_passes', to_jsonb(n));
+  PERFORM pg_temp.garde('pg_61', pg_temp.srv(pg_catalog.format('SELECT public.praxis_etat(%L)', pg_temp.k('cle_g'))));
+  PERFORM pg_temp.garde('pg_62', pg_temp.srv(pg_catalog.format('SELECT public.praxis_boite(%L, ''attend'', 10)', pg_temp.k('cle_g'))));
+  PERFORM pg_temp.garde('pg_63', pg_temp.srv(pg_catalog.format('SELECT public.praxis_noter_refus(%L, ''etat'')', pg_temp.k('cle_g'))));
+END $$;
+SELECT pg_temp.verif('PLAFOND GLOBAL : les 60 premiers appels passent (aucun refus plafond_global)', $$
+  SELECT (pg_temp.lu('pg_passes') #>> '{}')::integer = 60 $$);
+SELECT pg_temp.verif('PLAFOND GLOBAL : le 61e appel (etat) et le suivant (boite) rendent plafond_global ; noter_refus rend ok false', $$
+  SELECT pg_temp.lu('pg_61') = '{"erreur": "plafond_global"}'::jsonb
+     AND pg_temp.lu('pg_62') = '{"erreur": "plafond_global"}'::jsonb
+     AND pg_temp.lu('pg_63') = '{"ok": false}'::jsonb $$);
+SELECT pg_temp.verif('PLAFOND GLOBAL : 60 lignes + UNE seule ligne temoin (outil porte, issue plafond_global), rien de plus', $$
+  SELECT (SELECT count(*) FROM private.praxis_journal j WHERE j.cle_id = (SELECT id FROM private.praxis_cles WHERE libelle = 'Plafond global')) = 61
+     AND (SELECT count(*) FROM private.praxis_journal j WHERE j.cle_id = (SELECT id FROM private.praxis_cles WHERE libelle = 'Plafond global')
+            AND j.outil = 'porte' AND j.issue = 'plafond_global') = 1 $$);
+-- Le plafond est PAR CLE : une autre cle neuve passe.
+SELECT pg_temp.garde('cle_h', pg_temp.en(pg_temp.u('1'), 'admin', $$SELECT public.direction_praxis_emettre_cle(
+  'Plafond global h', 'chat', pg_catalog.now() + interval '30 days', '5c1a2222-0000-4000-8000-0000000000a4'::uuid)$$));
+SELECT pg_temp.garde('pg_h', pg_temp.srv(pg_catalog.format('SELECT public.praxis_etat(%L)', pg_temp.k('cle_h'))));
+SELECT pg_temp.verif('PLAFOND GLOBAL : le plafond est PAR CLE, une autre cle passe', $$ SELECT NOT pg_temp.lu('pg_h') ? 'erreur' OR pg_temp.lu('pg_h') ->> 'erreur' <> 'plafond_global' $$);
+-- Fenetre glissante : 100 lignes vieilles de deux heures (posees par le proprietaire) ne comptent pas.
+INSERT INTO private.praxis_journal (cle_id, emise_par, outil, issue, cree_le)
+SELECT c.id, c.emise_par, 'etat', 'ok', pg_catalog.clock_timestamp() - interval '2 hours'
+  FROM private.praxis_cles c, generate_series(1, 100) WHERE c.libelle = 'Plafond global h';
+SELECT pg_temp.garde('pg_h2', pg_temp.srv(pg_catalog.format('SELECT public.praxis_etat(%L)', pg_temp.k('cle_h'))));
+SELECT pg_temp.verif('PLAFOND GLOBAL : les lignes de plus d une heure ne comptent pas (fenetre glissante)', $$
+  SELECT NOT pg_temp.lu('pg_h2') ? 'erreur' OR pg_temp.lu('pg_h2') ->> 'erreur' <> 'plafond_global' $$);
+-- Une cle REVOQUEE est sous le meme plafond : au-dela, plafond_global et aucune ligne de plus.
+SELECT pg_temp.garde('pg_rev', pg_temp.en(pg_temp.u('1'), 'admin', pg_catalog.format(
+  $q$SELECT to_jsonb(public.direction_praxis_revoquer_cle(%L::uuid, 'plafond global', '5c1a2222-0000-4000-8000-0000000000a5'::uuid))$q$,
+  (SELECT id FROM private.praxis_cles WHERE libelle = 'Plafond global'))));
+SELECT pg_temp.garde('pg_rev1', pg_temp.srv(pg_catalog.format('SELECT public.praxis_etat(%L)', pg_temp.k('cle_g'))));
+SELECT pg_temp.verif('PLAFOND GLOBAL : une cle revoquee au-dela du plafond rend plafond_global, sans ligne de plus', $$
+  SELECT pg_temp.lu('pg_rev1') = '{"erreur": "plafond_global"}'::jsonb
+     AND (SELECT count(*) FROM private.praxis_journal j WHERE j.cle_id = (SELECT id FROM private.praxis_cles WHERE libelle = 'Plafond global')) = 61 $$);
+
 \o
 SELECT nom, CASE WHEN ok THEN 'ok' ELSE 'ROUGE' END AS etat, left(detail, 90) AS detail FROM res ORDER BY nom;
 DO $$ BEGIN
