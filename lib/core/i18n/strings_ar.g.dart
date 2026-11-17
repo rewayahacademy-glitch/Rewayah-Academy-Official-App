@@ -21631,6 +21631,10 @@ class _Traductions$recrutement$entretien$notifications$ar extends Traductions$re
 	@override String reserveDirectionQuand({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ⁨${quand}⁩.';
 	@override String get rappelDirection => 'تُجري مقابلة تبدأ قريبًا.';
 	@override String rappelDirectionQuand({required Object quand}) => 'تُجري مقابلة يوم ⁨${quand}⁩.';
+	@override String get annule => 'لن تُجرى المقابلة التي كنت تُجريها.';
+	@override String get annuleRefus => 'لن تُجرى المقابلة التي كنت تُجريها: رُفض طلب الترشح.';
+	@override String get annuleRetrait => 'لن تُجرى المقابلة التي كنت تُجريها: سُحب طلب الترشح.';
+	@override String get annulePause => 'لن تُجرى المقابلة التي كنت تُجريها: طلب الترشح في وضع الإيقاف المؤقت.';
 }
 
 // Path: recrutement.partage.fait
@@ -40046,6 +40050,10 @@ extension on TraductionsAr {
 			'recrutement.entretien.notifications.reserveDirectionQuand' => ({required Object quand}) => 'حجز مترشح مقابلة تُجريها، يوم ⁨${quand}⁩.',
 			'recrutement.entretien.notifications.rappelDirection' => 'تُجري مقابلة تبدأ قريبًا.',
 			'recrutement.entretien.notifications.rappelDirectionQuand' => ({required Object quand}) => 'تُجري مقابلة يوم ⁨${quand}⁩.',
+			'recrutement.entretien.notifications.annule' => 'لن تُجرى المقابلة التي كنت تُجريها.',
+			'recrutement.entretien.notifications.annuleRefus' => 'لن تُجرى المقابلة التي كنت تُجريها: رُفض طلب الترشح.',
+			'recrutement.entretien.notifications.annuleRetrait' => 'لن تُجرى المقابلة التي كنت تُجريها: سُحب طلب الترشح.',
+			'recrutement.entretien.notifications.annulePause' => 'لن تُجرى المقابلة التي كنت تُجريها: طلب الترشح في وضع الإيقاف المؤقت.',
 			'recrutement.partage.titre' => 'ساعد شخصًا على تعلّم كلام الله',
 			'recrutement.partage.titreFemme' => 'ساعدي أختًا على تعلّم كلام الله',
 			'recrutement.partage.facultatif' => 'اختياري: المشاركة لا تغيّر شيئًا في طلب ترشحك.',
@@ -40115,12 +40123,12 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.moyenValide' => 'تتلقى راتبك بوسيلة تعتمدها أكاديمية الرواية.',
 			'recrutement.questionnaire.continuite' => 'بقبولك هذه الشروط تلتزم بتولّي فصلك في الأيام نفسها وفي الساعات نفسها كل أسبوع.',
 			'recrutement.questionnaire.plagesChevauchent' => 'تتداخل أوقات تفرّغك في اليوم نفسه. راجعها ثم أعد إرسال طلب ترشحك.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.choisir' => 'اختر إجابة للمتابعة.',
 			'recrutement.parcours.choisirPlusieurs' => 'اختر إجابة واحدة على الأقل للمتابعة.',
 			'recrutement.parcours.trop' => ({required num max}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(max, zero: 'اختر ⁨${max}⁩ إجابات على الأكثر.', one: 'اختر إجابة واحدة فقط.', two: 'اختر إجابتين على الأكثر.', few: 'اختر ⁨${max}⁩ إجابات على الأكثر.', many: 'اختر ⁨${max}⁩ إجابة على الأكثر.', other: 'اختر ⁨${max}⁩ إجابة على الأكثر.', ), 
 			'recrutement.parcours.aucune' => 'لا شيء',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.oui' => 'نعم',
 			'recrutement.parcours.non' => 'لا',
 			'recrutement.parcours.modifier' => 'تعديل',
@@ -40629,12 +40637,12 @@ extension on TraductionsAr {
 			'recrutement.talents.erreurs.horsLigne' => 'سيمكن حفظ إجاباتك لاحقًا، عند عودة الاتصال.',
 			'recrutement.talents.erreurs.echec' => 'لم يكتمل حفظ إجاباتك. أعد المحاولة بعد لحظة.',
 			'recrutement.talents.erreurs.retraitIncertain' => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يتم مرتين.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.erreurs.retraitHorsLigne' => 'سيمكن السحب لاحقًا، عند عودة الاتصال.',
 			'recrutement.talents.erreurs.retraitEchec' => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.',
 			'recrutement.statuts.titre' => 'العقد والإقرار',
 			'recrutement.statuts.contrat' => 'عقد المعلّم',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.statuts.accuse' => 'إقرار التسجيل والمراقبة',
 			'recrutement.statuts.signeCourante' => 'موقَّع، الإصدار الحالية',
 			'recrutement.statuts.signeAncienne' => ({required Object version}) => 'موقَّع، إصدار قديم ⁨${version}⁩',
@@ -41143,12 +41151,12 @@ extension on TraductionsAr {
 			'courriels.admin.file.actualiser' => 'تحديث',
 			'courriels.admin.file.reessayer' => 'إعادتها إلى الطابور',
 			'courriels.admin.file.vide' => 'لا توجد رسائل في هذه القائمة.',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.erreur' => 'تعذّر تحميل الإرسال. أعد المحاولة.',
 			'courriels.admin.file.sansDonnees' => 'تعذّر تحميل الإرسال',
 			'courriels.admin.file.retour.relance' => 'أُعيدت إلى الطابور. الإرسال خلال دقيقة.',
 			'courriels.admin.file.retour.introuvable' => 'لم تعد هذه الرسالة قابلة لإعادة المحاولة. تم تحديث القائمة.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.retour.echec' => 'لم تتأكد إعادتها إلى الطابور. أُعيدت قراءة القائمة: تحقق من حالة الرسالة قبل أن تحاول من جديد.',
 			'courriels.admin.file.retour.refus' => 'الإدارة المتصلة وحدها تستطيع إعادة إرسال رسالة.',
 			'courriels.admin.file.retour.horsLigne' => 'لم يُرسل شيء: الشبكة غير متوفرة. أعد المحاولة عند عودتها.',
@@ -41657,12 +41665,12 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.controle.ignorees.titre' => 'متجاهَلة',
 			'candidatsFlux.importFormulaires.controle.ignorees.aide' => 'أسطر فارغة أو مكررة بالمطابقة.',
 			'candidatsFlux.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'السطر ⁨${ligne}⁩: ⁨${motif}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ سطر إضافي', one: 'عرض سطر إضافي', two: 'عرض سطرين إضافيين', few: 'عرض ⁨${n}⁩ أسطر إضافية', many: 'عرض ⁨${n}⁩ سطرًا إضافيًا', other: 'عرض ⁨${n}⁩ سطر إضافي', ), 
 			'candidatsFlux.importFormulaires.motif.ligneVide' => 'سطر فارغ',
 			'candidatsFlux.importFormulaires.motif.horodatageIllisible' => 'تاريخ الرد غير مقروء',
 			'candidatsFlux.importFormulaires.motif.genreIllisible' => 'الجنس غير معروف',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.nomAbsent' => 'الاسم غير موجود',
 			'candidatsFlux.importFormulaires.motif.nomTropLong' => 'الاسم طويل جدًا',
 			'candidatsFlux.importFormulaires.motif.memeReferenceMemeContenu' => 'سطر مكرر بالمطابقة',
@@ -42171,12 +42179,12 @@ extension on TraductionsAr {
 			'calendrier.dates.type.rencontre' => 'لقاء تلاوة',
 			'calendrier.dates.type.evaluation' => 'تقييم',
 			'calendrier.dates.type.autre' => 'تاريخ آخر',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.categorie.ramadan' => 'رمضان، عشرون يومًا على الأكثر',
 			'calendrier.dates.categorie.aidAlAdha' => 'عيد الأضحى، عشرة أيام على الأكثر',
 			'calendrier.dates.categorie.autre' => 'إغلاق آخر',
 			'calendrier.dates.categorieAide' => 'رمضان: من العشرين من رمضان إلى السابع من شوال بما فيه. عيد الأضحى: من التاسع إلى الثامن عشر من ذي الحجة بما فيه.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.portee.ecole' => 'الأكاديمية كلها',
 			'calendrier.dates.portee.tranche' => 'فئة عمرية',
 			'calendrier.dates.portee.classe' => 'فصل',

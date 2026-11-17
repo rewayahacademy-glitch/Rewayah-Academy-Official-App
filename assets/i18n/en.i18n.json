@@ -2996,7 +2996,11 @@
         "reserveDirection": "An applicant has booked an interview you conduct.",
         "reserveDirectionQuand": "An applicant has booked an interview you conduct, on {quand}.",
         "rappelDirection": "You are conducting an interview that starts soon.",
-        "rappelDirectionQuand": "You are conducting an interview on {quand}."
+        "rappelDirectionQuand": "You are conducting an interview on {quand}.",
+        "annule": "The interview you were conducting will not take place.",
+        "annuleRefus": "The interview you were conducting will not take place: the application was declined.",
+        "annuleRetrait": "The interview you were conducting will not take place: the application was withdrawn.",
+        "annulePause": "The interview you were conducting will not take place: the application is on hold."
       }
     },
     "partage": {
