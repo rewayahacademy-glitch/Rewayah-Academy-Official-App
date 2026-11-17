@@ -43,6 +43,7 @@ const List<String> composants = <String>[
   'EnteteFilContexte',
   'LigneConversation',
   'ListeFils',
+  'LigneFil',
   'EspaceMessagesMetier',
   'MessagesPage',
   'MessagesAdminPage',

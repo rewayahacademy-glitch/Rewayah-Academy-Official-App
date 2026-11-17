@@ -26,6 +26,7 @@ import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import '../mfa_controleur/double_verification.dart';
+import 'choix_conversations_essai.dart';
 
 /// Les cles des widgets de la section, pour les tests.
 abstract final class ClesPraxis {
@@ -33,7 +34,9 @@ abstract final class ClesPraxis {
   static const Key carteReglages = ValueKey<String>('praxis-carte-reglages');
 
   /// La carte du formulaire d'emission d'une cle.
-  static const Key carteFormulaire = ValueKey<String>('praxis-carte-formulaire');
+  static const Key carteFormulaire = ValueKey<String>(
+    'praxis-carte-formulaire',
+  );
 
   /// La carte de la cle emise (le secret, montre une fois).
   static const Key carteCleEmise = ValueKey<String>('praxis-carte-cle-emise');
@@ -56,6 +59,12 @@ abstract final class ClesPraxis {
 
   /// Fixer le plafond.
   static const Key fixerPlafond = ValueKey<String>('praxis-plafond');
+
+  /// Enregistrer les conversations d'essai.
+  static const Key fixerEssai = ValueKey<String>('praxis-essai');
+
+  /// Mettre fin au mode essai.
+  static const Key finEssai = ValueKey<String>('praxis-essai-fin');
 
   /// Emettre la cle.
   static const Key emettre = ValueKey<String>('praxis-emettre');
@@ -106,6 +115,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
 
   final TextEditingController _libelle = TextEditingController();
   final TextEditingController _plafond = TextEditingController();
+  Set<String> _essaiChoisies = <String>{};
 
   EtatPraxis? _etat;
   Object? _erreurEtat;
@@ -166,6 +176,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
         _erreurEtat = null;
         _chargementEtat = false;
         _plafond.text = '${etat.envoisParHeure}';
+        _essaiChoisies = <String>{...etat.essaiFils};
       });
     } on Object catch (e) {
       if (!mounted) {
@@ -221,6 +232,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
     bool? actif,
     bool? autonome,
     int? envoisParHeure,
+    List<String>? essaiFils,
   }) async {
     if (_reglageEnCours != null) {
       return;
@@ -236,11 +248,13 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
       await avecDoubleVerification<void>(
         context,
         ref,
-        () => _service.regler(
-          actif: actif,
-          autonome: autonome,
-          envoisParHeure: envoisParHeure,
-        ),
+        () => essaiFils != null
+            ? _service.reglerEssai(essaiFils)
+            : _service.regler(
+                actif: actif,
+                autonome: autonome,
+                envoisParHeure: envoisParHeure,
+              ),
       );
       message = t.admin.praxis.reglageFait;
     } on Object catch (e) {
@@ -269,6 +283,15 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
     }
     setState(() => _erreurPlafond = null);
     await _regler('plafond', envoisParHeure: valeur);
+  }
+
+  /// Les conversations d'essai : celles qui sont cochees, dix au plus. Une
+  /// liste vide met fin au mode essai.
+  Future<void> _fixerEssai({bool fin = false}) async {
+    final List<String> fils = fin
+        ? <String>[]
+        : (<String>[..._essaiChoisies]..sort());
+    await _regler(fin ? 'essaiFin' : 'essai', essaiFils: fils);
   }
 
   Future<void> _emettre() async {
@@ -488,9 +511,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
           ),
           Ecart.vXs,
           Text(
-            etat.actif
-                ? t.admin.praxis.allumeOui
-                : t.admin.praxis.allumeNon,
+            etat.actif ? t.admin.praxis.allumeOui : t.admin.praxis.allumeNon,
             style: textes.bodySmall,
           ),
           Ecart.vMd,
@@ -526,7 +547,8 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
             enCours: _reglageEnCours == 'autonome',
             onPress: occupe
                 ? () {}
-                : () => unawaited(_regler('autonome', autonome: !etat.autonome)),
+                : () =>
+                      unawaited(_regler('autonome', autonome: !etat.autonome)),
           ),
           Ecart.vXxl,
           Text(t.admin.praxis.plafond, style: textes.titleSmall),
@@ -558,6 +580,44 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
             enCours: _reglageEnCours == 'plafond',
             onPress: occupe ? () {} : () => unawaited(_fixerPlafond()),
           ),
+          Ecart.vXxl,
+          Text(t.admin.praxis.essaiTitre, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(
+            etat.essaiFils.isEmpty
+                ? t.admin.praxis.essaiVide
+                : t.admin.praxis.essaiActif(nombre: etat.essaiFils.length),
+            style: textes.bodySmall,
+          ),
+          Ecart.vMd,
+          Text(t.admin.praxis.essaiChamp, style: textes.titleSmall),
+          Ecart.vXs,
+          Text(t.admin.praxis.essaiAide, style: textes.bodySmall),
+          Ecart.vMd,
+          ChoixConversationsEssai(
+            choisies: _essaiChoisies,
+            onChange: (Set<String> v) => setState(() => _essaiChoisies = v),
+          ),
+          Ecart.vMd,
+          ActionPrincipale(
+            key: ClesPraxis.fixerEssai,
+            libelle: t.admin.praxis.essaiEnregistrer,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: false,
+            enCours: _reglageEnCours == 'essai',
+            onPress: occupe ? () {} : () => unawaited(_fixerEssai()),
+          ),
+          if (etat.essaiFils.isNotEmpty) ...<Widget>[
+            Ecart.vMd,
+            ActionPrincipale(
+              key: ClesPraxis.finEssai,
+              libelle: t.admin.praxis.essaiFin,
+              niveau: NiveauAction.secondaire,
+              pleineLargeur: false,
+              enCours: _reglageEnCours == 'essaiFin',
+              onPress: occupe ? () {} : () => unawaited(_fixerEssai(fin: true)),
+            ),
+          ],
           Ecart.vXxl,
           const _PourraNePourraPas(),
         ],
@@ -711,8 +771,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
           action: true,
           texte: (ClePraxis c) =>
               c.etat == EtatClePraxis.active ? t.admin.praxis.revoquer : '',
-          rendu: (BuildContext _, ClePraxis c) =>
-              c.etat != EtatClePraxis.active
+          rendu: (BuildContext _, ClePraxis c) => c.etat != EtatClePraxis.active
               ? const SizedBox.shrink()
               : ActionPrincipale(
                   libelle: t.admin.praxis.revoquer,
@@ -804,6 +863,8 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
       : t.admin.praxis.refuseCause(cause: _cause(l.issue));
 
   String _cause(String issue) => switch (issue) {
+    'hors_essai' => t.admin.praxis.cause.horsEssai,
+    'essai' => t.admin.praxis.cause.essai,
     'plafond_fil' => t.admin.praxis.cause.plafondFil,
     'plafond' => t.admin.praxis.cause.plafond,
     'plafond_annonces' => t.admin.praxis.cause.plafondAnnonces,

@@ -55,7 +55,9 @@ class FauxServicePraxis implements ServicePraxis {
              autonome: false,
              envoisParHeure: 30,
              cles: <ClePraxis>[
-               clePraxisFictive(derniereUtilisation: DateTime(2026, 11, 15, 18)),
+               clePraxisFictive(
+                 derniereUtilisation: DateTime(2026, 11, 15, 18),
+               ),
                clePraxisFictive(
                  id: 'c2',
                  libelle: 'Routine du soir',
@@ -87,7 +89,8 @@ class FauxServicePraxis implements ServicePraxis {
   final List<String> appels = <String>[];
 
   @override
-  String get adresseConnecteur => 'https://exemple.test/functions/v1/praxis-mcp';
+  String get adresseConnecteur =>
+      'https://exemple.test/functions/v1/praxis-mcp';
 
   void _ecrire() {
     if (refusDroit) {
@@ -118,9 +121,7 @@ class FauxServicePraxis implements ServicePraxis {
     }
     final int index = avant == null
         ? 0
-        : _pages.indexWhere(
-            (List<LigneJournalPraxis> p) => p.first.id < avant,
-          );
+        : _pages.indexWhere((List<LigneJournalPraxis> p) => p.first.id < avant);
     if (index < 0) {
       return const PageJournalPraxis(lignes: <LigneJournalPraxis>[]);
     }
@@ -143,6 +144,20 @@ class FauxServicePraxis implements ServicePraxis {
       actif: actif ?? _etat.actif,
       autonome: autonome ?? _etat.autonome,
       envoisParHeure: envoisParHeure ?? _etat.envoisParHeure,
+      essaiFils: _etat.essaiFils,
+      cles: _etat.cles,
+    );
+  }
+
+  @override
+  Future<void> reglerEssai(List<String> fils) async {
+    appels.add('essai:${fils.join(',')}');
+    _ecrire();
+    _etat = EtatPraxis(
+      actif: _etat.actif,
+      autonome: _etat.autonome,
+      envoisParHeure: _etat.envoisParHeure,
+      essaiFils: fils,
       cles: _etat.cles,
     );
   }
@@ -160,6 +175,7 @@ class FauxServicePraxis implements ServicePraxis {
       actif: _etat.actif,
       autonome: _etat.autonome,
       envoisParHeure: _etat.envoisParHeure,
+      essaiFils: _etat.essaiFils,
       cles: <ClePraxis>[
         clePraxisFictive(id: 'c-neuve', libelle: libelle, usage: usage),
         ..._etat.cles,
@@ -184,6 +200,7 @@ class FauxServicePraxis implements ServicePraxis {
       actif: _etat.actif,
       autonome: _etat.autonome,
       envoisParHeure: _etat.envoisParHeure,
+      essaiFils: _etat.essaiFils,
       cles: <ClePraxis>[
         for (final ClePraxis c in _etat.cles)
           if (c.id == id)

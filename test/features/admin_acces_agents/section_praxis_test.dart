@@ -19,28 +19,64 @@ import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
+import 'package:rewayah_academy/features/admin_acces_agents/choix_conversations_essai.dart';
 import 'package:rewayah_academy/features/admin_acces_agents/section_praxis.dart';
+import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
 import '../../support/faux_service_praxis.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
+
+/// Les conversations de la messagerie de la direction, doubles.
+List<ResumeFil> _fils(int n) => <ResumeFil>[
+  for (int i = 0; i < n; i++)
+    ResumeFil(
+      id: 'f$i',
+      objet: ObjetLie(
+        type: TypeObjetLie.dossier,
+        id: 'o$i',
+        libelle: 'Dossier $i',
+      ),
+      interlocuteurs: <Participant>[
+        Participant(
+          id: 'p$i',
+          nomAffiche: i == 2 ? 'Bilal Haddad' : 'Amina Diallo $i',
+          fonction: 'Parent',
+        ),
+      ],
+      apercu: 'Bonjour $i',
+    ),
+];
+
+class _PortFils extends MessagesMetierIndisponibles {
+  const _PortFils(this._fils);
+  final List<ResumeFil>? _fils;
+
+  @override
+  Future<List<ResumeFil>> fils() => _fils == null
+      ? Future<List<ResumeFil>>.error(Exception('panne'))
+      : Future<List<ResumeFil>>.value(_fils);
+}
 
 Future<void> _monter(
   WidgetTester tester,
   FauxServicePraxis faux, {
   List<Override> en = const <Override>[],
   Size taille = const Size(1440, 3000),
+  List<ResumeFil>? fils,
+  bool panne = false,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
     hote(
-      const Scaffold(
-        body: SingleChildScrollView(child: SectionPraxis()),
-      ),
+      const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
       surcharges: <Override>[
         servicePraxisProvider.overrideWithValue(faux),
+        portMessagesMetierProvider.overrideWithValue(
+          _PortFils(panne ? null : (fils ?? _fils(4))),
+        ),
         ...en,
       ],
     ),
@@ -132,15 +168,15 @@ void main() {
         tester,
         FauxServicePraxis(erreurEtat: Exception('reseau')),
         en: <Override>[
-          horsLigneProvider.overrideWith(
-            (ref) => Stream<bool>.value(true),
-          ),
+          horsLigneProvider.overrideWith((ref) => Stream<bool>.value(true)),
         ],
       );
       expect(find.text(t.admin.praxis.horsLigne), findsOneWidget);
     });
 
-    testWidgets('erreur du journal seul : les reglages restent', (tester) async {
+    testWidgets('erreur du journal seul : les reglages restent', (
+      tester,
+    ) async {
       await _monter(
         tester,
         FauxServicePraxis(erreurJournal: Exception('panne')),
@@ -180,22 +216,119 @@ void main() {
       expect(faux.appels, contains('regler:null:false:null'));
     });
 
-    testWidgets('plafond : hors bornes refuse avant le serveur, valide envoye', (
+    testWidgets(
+      'plafond : hors bornes refuse avant le serveur, valide envoye',
+      (tester) async {
+        final FauxServicePraxis faux = FauxServicePraxis();
+        await _monter(tester, faux);
+        await tester.enterText(find.byKey(ClesPraxis.champPlafond), '121');
+        await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
+        expect(find.text(t.admin.praxis.plafondInvalide), findsOneWidget);
+        expect(faux.appels.where((a) => a.startsWith('regler')), isEmpty);
+        await tester.enterText(find.byKey(ClesPraxis.champPlafond), '45');
+        await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
+        expect(faux.appels, contains('regler:null:null:45'));
+        expect(
+          find.text(t.admin.praxis.plafondDetail(nombre: 45)),
+          findsOneWidget,
+        );
+      },
+    );
+
+    testWidgets('essai : on coche des conversations, dix au plus, puis fin', (
       tester,
     ) async {
       final FauxServicePraxis faux = FauxServicePraxis();
       await _monter(tester, faux);
-      await tester.enterText(find.byKey(ClesPraxis.champPlafond), '121');
-      await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
-      expect(find.text(t.admin.praxis.plafondInvalide), findsOneWidget);
-      expect(faux.appels.where((a) => a.startsWith('regler')), isEmpty);
-      await tester.enterText(find.byKey(ClesPraxis.champPlafond), '45');
-      await _presser(tester, find.byKey(ClesPraxis.fixerPlafond));
-      expect(faux.appels, contains('regler:null:null:45'));
+      expect(find.text(t.admin.praxis.essaiVide), findsOneWidget);
+      expect(find.byKey(ClesPraxis.finEssai), findsNothing);
       expect(
-        find.text(t.admin.praxis.plafondDetail(nombre: 45)),
+        find.text(t.admin.praxis.essaiChoisies(nombre: 0)),
         findsOneWidget,
       );
+      // La liste est celle de la messagerie : meme titre que `LigneFil`.
+      expect(find.textContaining('Amina Diallo'), findsWidgets);
+      await _presser(tester, find.byKey(ClesChoixEssai.case_('f1')));
+      await _presser(tester, find.byKey(ClesChoixEssai.case_('f2')));
+      expect(
+        find.text(t.admin.praxis.essaiChoisies(nombre: 2)),
+        findsOneWidget,
+      );
+      await _presser(tester, find.byKey(ClesPraxis.fixerEssai));
+      expect(faux.appels, contains('essai:f1,f2'));
+      expect(find.text(t.admin.praxis.essaiActif(nombre: 2)), findsOneWidget);
+      // Toucher la ligne coche aussi.
+      await _presser(tester, find.byKey(const ValueKey<String>('ligne-f3')));
+      expect(
+        find.text(t.admin.praxis.essaiChoisies(nombre: 3)),
+        findsOneWidget,
+      );
+      // Fin de l'essai : une liste vide.
+      await _presser(tester, find.byKey(ClesPraxis.finEssai));
+      expect(faux.appels, contains('essai:'));
+      expect(find.text(t.admin.praxis.essaiVide), findsOneWidget);
+      expect(find.byKey(ClesPraxis.finEssai), findsNothing);
+    });
+
+    testWidgets('essai : la onzieme conversation est refusee, rien d envoye', (
+      tester,
+    ) async {
+      final FauxServicePraxis faux = FauxServicePraxis();
+      await _monter(tester, faux, fils: _fils(12));
+      for (int i = 0; i < 11; i++) {
+        await _presser(tester, find.byKey(ClesChoixEssai.case_('f$i')));
+      }
+      expect(find.text(t.admin.praxis.essaiTrop(nombre: 10)), findsOneWidget);
+      expect(
+        find.byWidgetPredicate(
+          (Widget w) => w.key == ClesChoixEssai.case_('f10'),
+        ),
+        findsOneWidget,
+      );
+      await _presser(tester, find.byKey(ClesPraxis.fixerEssai));
+      final List<String> envois = faux.appels
+          .where((String x) => x.startsWith('essai:'))
+          .toList();
+      expect(envois, hasLength(1));
+      expect(envois.single.substring(6).split(',').length, 10);
+    });
+
+    testWidgets('essai : la recherche affine, comme dans les Messages', (
+      tester,
+    ) async {
+      final FauxServicePraxis faux = FauxServicePraxis();
+      await _monter(tester, faux);
+      await tester.enterText(find.byType(TextField).at(1), 'Bilal');
+      await tester.pumpAndSettle();
+      expect(find.byKey(ClesChoixEssai.case_('f1')), findsNothing);
+      expect(find.byKey(ClesChoixEssai.case_('f2')), findsOneWidget);
+    });
+
+    testWidgets('essai : aucune conversation, la phrase dit quoi faire', (
+      tester,
+    ) async {
+      final FauxServicePraxis faux = FauxServicePraxis();
+      await _monter(tester, faux, fils: <ResumeFil>[]);
+      expect(find.text(t.admin.praxis.essaiAucune), findsOneWidget);
+    });
+
+    testWidgets('essai : la liste ne se lit pas, une phrase et Reessayer', (
+      tester,
+    ) async {
+      final FauxServicePraxis faux = FauxServicePraxis();
+      await _monter(tester, faux, panne: true);
+      expect(find.text(t.admin.praxis.essaiListeErreur), findsOneWidget);
+    });
+
+    testWidgets('essai : refus faute de double verification, la phrase vraie', (
+      tester,
+    ) async {
+      final FauxServicePraxis faux = FauxServicePraxis()..refusDroit = true;
+      await _monter(tester, faux);
+      await _presser(tester, find.byKey(ClesChoixEssai.case_('f1')));
+      await _presser(tester, find.byKey(ClesPraxis.fixerEssai));
+      expect(find.text(t.admin.praxis.doubleVerification), findsOneWidget);
+      expect(find.text(t.admin.praxis.essaiVide), findsOneWidget);
     });
 
     testWidgets('refus faute de double verification : la phrase vraie', (
@@ -239,7 +372,7 @@ void main() {
       final FauxServicePraxis faux = FauxServicePraxis();
       await _monter(tester, faux);
       await tester.enterText(
-        find.byType(TextField).at(1),
+        find.byType(TextField).at(2),
         'Conversation du soir',
       );
       await _presser(tester, find.byKey(ClesPraxis.emettre));
@@ -261,7 +394,7 @@ void main() {
     testWidgets('l usage routine part avec la bonne valeur', (tester) async {
       final FauxServicePraxis faux = FauxServicePraxis();
       await _monter(tester, faux);
-      await tester.enterText(find.byType(TextField).at(1), 'Routine');
+      await tester.enterText(find.byType(TextField).at(2), 'Routine');
       await _presser(
         tester,
         find.widgetWithText(FilterPill, t.admin.praxis.usageRoutine),
@@ -278,7 +411,7 @@ void main() {
     ) async {
       final FauxServicePraxis faux = FauxServicePraxis()..refusDroit = true;
       await _monter(tester, faux);
-      await tester.enterText(find.byType(TextField).at(1), 'Test');
+      await tester.enterText(find.byType(TextField).at(2), 'Test');
       await _presser(tester, find.byKey(ClesPraxis.emettre));
       expect(find.text(t.admin.praxis.doubleVerification), findsOneWidget);
       expect(find.text(t.admin.praxis.cleEmise), findsNothing);
