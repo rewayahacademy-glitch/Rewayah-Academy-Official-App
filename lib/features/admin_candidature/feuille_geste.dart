@@ -218,6 +218,13 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
 
   List<String> get _elementsPermis {
     final ListesGestes l = widget.capacites.listes;
+    // COMPLEMENT-SALLE-EXAMEN (T7) : quand le paiement n'est pas disponible, le
+    // serveur n'admet que le code `versement` (variante 4).
+    if (widget.detail.ligne.etat == EtatCandidature.paiementNonDisponible) {
+      return l.complementSalleExamen.contains('versement')
+          ? const <String>['versement']
+          : const <String>[];
+    }
     final List<String> codes =
         widget.detail.ligne.etape == EtapeCandidature.verifications
         ? l.complementSalleVerification
@@ -249,7 +256,9 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   /// non vide (`motif_requis`, transitions 7 et 23) : il part, deduit de la
   /// liste, sans que la direction ait a l'ecrire (K-57 : deduit > choisi > saisi).
   bool get _exigeMotif =>
-      _geste.exigeMotif && _geste != GesteCandidature.demanderComplement;
+      _geste.exigeMotif &&
+      _geste != GesteCandidature.demanderComplement &&
+      _geste != GesteCandidature.modifierComplement;
 
   /// Le motif d'une demande de complement : les elements choisis, nommes, dans
   /// l'ordre de la liste du serveur.
@@ -265,6 +274,7 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
     if (_exigeMotif && _motif.text.trim().isEmpty) return false;
     switch (_geste) {
       case GesteCandidature.demanderComplement:
+      case GesteCandidature.modifierComplement:
         return _elements.isNotEmpty;
       case GesteCandidature.mettreEnPause:
       case GesteCandidature.refuser:
@@ -304,6 +314,21 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           cleIdempotence: cle,
           elements: _elementsPermis.where(_elements.contains).toList(),
           motif: _motifComplement,
+        );
+      case GesteCandidature.modifierComplement:
+        return DemandeGeste.modifierComplement(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          elements: _elementsPermis.where(_elements.contains).toList(),
+          motif: _motifComplement,
+        );
+      case GesteCandidature.annulerComplement:
+        return DemandeGeste.annulerComplement(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
         );
       case GesteCandidature.cloreComplement:
         return DemandeGeste.cloreComplement(
@@ -560,6 +585,7 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   bool get _servi {
     switch (_geste) {
       case GesteCandidature.demanderComplement:
+      case GesteCandidature.modifierComplement:
         return _elementsPermis.isNotEmpty;
       case GesteCandidature.mettreEnPause:
       case GesteCandidature.refuser:
@@ -586,7 +612,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
     final f = t.admin.candidatures.feuille;
     final bool modele = _geste.exigeModele;
     return <Widget>[
-      if (_geste == GesteCandidature.demanderComplement)
+      if (_geste == GesteCandidature.demanderComplement ||
+          _geste == GesteCandidature.modifierComplement)
         ..._champElements(context),
       if (_geste == GesteCandidature.mettreEnPause ||
           _geste == GesteCandidature.refuser)
