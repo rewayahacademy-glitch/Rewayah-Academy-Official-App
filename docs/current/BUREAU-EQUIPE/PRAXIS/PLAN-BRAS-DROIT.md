@@ -254,6 +254,26 @@ fait lui-même, dans l'application.** Chacun peut sortir de la liste par une dé
 | DB8 | Dépôt d'un fichier : lien de dépôt dans l'application (§5.1) | Oui ; le test d'un envoi direct depuis le chat se fait sur STAGING |
 | DB9 | Plafonds proposés : 10 actes S et 60 actes A par heure | À confirmer |
 
+## 8 bis. Décisions du 17/11/2026 (arbitrages du pilote, juriste par délégation du directeur)
+
+Elles prévalent sur les « options recommandées » du §8 et amendent `SECURITE-PRAXIS.md` pour le seul mode chat.
+
+| # | Décision |
+| :-: | :--- |
+| DB1 | **OUI** au pont borné `private.praxis_agir` : `service_role` seul, table d'actes fermée par migration, trace « via Praxis », clé de chat seulement. Relecture R15 par le pilote avant toute installation |
+| DB2 | La preuve du oui est le **code à six chiffres** affiché dans la section Praxis de l'application (aal2), 5 minutes, usage unique, **valable pour un LOT préparé entier** (un code pour « appliquer ces 40 relances »), pas un code par geste |
+| DB3 | La liste D du §5.7 est acceptée telle quelle |
+| DB4 | Finance : **en mode chat seulement**, lecture des totaux ET des factures et relevés tels que la direction les voit déjà (c'est le directeur qui lit par Praxis), journalisée ; **jamais en routine** (amende R5 pour le chat, palier 2 du §5.5) |
+| DB5 | Notes : chat seulement, ce que la direction voit déjà, journalisé |
+| DB6 | `droit_tiers` est toujours une affirmation personnelle du directeur (jamais du modèle) |
+| DB7 | Réglages : liste blanche fermée par migration, `praxis.*` exclus |
+| DB8 | Dépôt par lien dans l'application d'abord ; l'envoi direct par le chat à essayer ensuite |
+| DB9 | Plafonds : 10 actes S et 60 actes A par heure |
+
+Feu vert : **PX-BD-0 (socle)** puis **PX-BD-Bibliothèque**, une PR par lot ; migration `20261129960000` attribuée ;
+la connexion du chat du directeur (en-tête fixe ou OAuth) est un lot à part, traité par le pilote : le socle fonctionne
+avec une clé « conversation » existante.
+
 ## 9. Mesures en production (compteurs, une requête, aucune ligne de personne, 17/11/2026)
 
 | Quoi | Compteur |
