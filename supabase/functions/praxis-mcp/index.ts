@@ -18,4 +18,4 @@ const porte: PortePraxis = {
 const racine = Deno.env.get('SUPABASE_URL')
 const adresses = racine ? adressesDe(racine) : null
 
-Deno.serve((req) => traiter(req, porte, adresses))
+Deno.serve((req) => traiter(req, porte, adresses, true))
