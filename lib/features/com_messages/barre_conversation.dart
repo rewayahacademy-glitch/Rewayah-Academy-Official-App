@@ -124,7 +124,7 @@ class BarreConversation extends StatelessWidget {
     final String nomCourt = f == null
         ? titre!
         : gens.length == 1
-        ? gens.single.nomAffiche
+        ? gens.single.nomMarque
         : noms;
     final String role = gens.length == 1 ? (gens.single.fonction ?? '') : '';
     final String ligneRole = f == null

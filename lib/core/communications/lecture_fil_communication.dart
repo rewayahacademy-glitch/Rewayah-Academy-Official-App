@@ -73,7 +73,7 @@ MessageFil messageFilDe(
   id: m.id,
   auteur: m.deSoi
       ? t.com.socle.composants.composer.auteurSoi
-      : m.auteur.nomAffiche,
+      : m.auteur.nomMarque,
   texte: texteDuMessage(m, avecVocaux: false, avecDocuments: false),
   annonceTexte: texteDuMessage(m),
   complement: complement,

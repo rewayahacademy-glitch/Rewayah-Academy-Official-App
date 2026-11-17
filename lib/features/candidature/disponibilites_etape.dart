@@ -58,9 +58,7 @@ const List<({String code, Set<int> jours})> raccourcisJours =
         adultes: libelleDuree(dureeSeanceAdulteMinutes),
       );
       return (
-        titre: q.heures.titre(
-          jour: jour == null ? '' : _nomMinuscule(jour),
-        ),
+        titre: q.heures.titre(jour: jour == null ? '' : _nomMinuscule(jour)),
         explication: <String>[
           q.heures.explication,
           duree,
@@ -80,7 +78,9 @@ String _nomMinuscule(int jour) => t.disponibilites.joursLongs[jour - 1];
 
 /// « mercredi et vendredi », « mardi, jeudi et samedi ».
 String listeDeJours(Iterable<int> jours) {
-  final List<String> noms = <String>[for (final int j in jours) _nomMinuscule(j)];
+  final List<String> noms = <String>[
+    for (final int j in jours) _nomMinuscule(j),
+  ];
   if (noms.length <= 1) {
     return noms.join();
   }
@@ -193,7 +193,8 @@ class _JoursEtat extends State<_Jours> {
                   'mjs' => r.raccourciMjs,
                   _ => r.raccourciFinDeSemaine,
                 },
-                retenue: choisis.length == k.jours.length &&
+                retenue:
+                    choisis.length == k.jours.length &&
                     choisis.containsAll(k.jours),
                 onPress: () {
                   _c.choisirJours(k.jours);
@@ -205,7 +206,9 @@ class _JoursEtat extends State<_Jours> {
         Ecart.vSm,
         TexteSansCoupure(
           r.raccourcisAide,
-          style: palette.inkMuted.applyTo(textes.bodySmall ?? const TextStyle()),
+          style: palette.inkMuted.applyTo(
+            textes.bodySmall ?? const TextStyle(),
+          ),
         ),
         Ecart.vXl,
         ChoiceCardGroup(
@@ -214,7 +217,9 @@ class _JoursEtat extends State<_Jours> {
           selectionMultiple: true,
           valeurInitiale: choisis.isEmpty
               ? null
-              : ReponseChoix(valeurs: <String>{for (final int j in choisis) '$j'}),
+              : ReponseChoix(
+                  valeurs: <String>{for (final int j in choisis) '$j'},
+                ),
           options: <OptionChoix>[
             for (int j = 1; j <= joursParSemaine; j++)
               OptionChoix(
@@ -276,7 +281,10 @@ class PucesHeures extends StatelessWidget {
       children: <Widget>[
         Semantics(
           header: true,
-          child: TexteSansCoupure(titreMoment(m.code), style: textes.labelLarge),
+          child: TexteSansCoupure(
+            titreMoment(m.code),
+            style: textes.labelLarge,
+          ),
         ),
         Ecart.vSm,
         // Choix de formulaire, pas un filtre : les heures de debut d'un jour.
@@ -387,12 +395,12 @@ class ResumeCours extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            Text(
-              r.heuresChoisies(n: debuts.length),
-              style: textes.titleSmall,
-            ),
+            Text(r.heuresChoisies(n: debuts.length), style: textes.titleSmall),
             if (debuts.isNotEmpty) ...<Widget>[
-              for (final String ligne in lignes(debuts, controleur)) ...<Widget>[
+              for (final String ligne in lignes(
+                debuts,
+                controleur,
+              )) ...<Widget>[
                 Ecart.vSm,
                 TexteSansCoupure(ligne, style: textes.bodyMedium),
               ],
@@ -601,8 +609,13 @@ class _Semaine extends StatelessWidget {
                 key: DisponibilitesEtape.jourKey(jour),
                 title: nomDeJour(jour),
                 description: <String>[
-                  r.debutsDuJour(heures: libelleHeures(controleur.debutsDuJour(jour))),
-                  ...ResumeCours.lignes(controleur.debutsDuJour(jour), controleur),
+                  r.debutsDuJour(
+                    heures: libelleHeures(controleur.debutsDuJour(jour)),
+                  ),
+                  ...ResumeCours.lignes(
+                    controleur.debutsDuJour(jour),
+                    controleur,
+                  ),
                 ].join('\n'),
                 icon: AppIcons.disponibilites,
               ),
@@ -610,9 +623,13 @@ class _Semaine extends StatelessWidget {
         ),
         Ecart.vLg,
         TexteSansCoupure(
-          jours.length < seancesParClasse ? r.moinsDeTrois(n: jours.length) : r.troisSeances,
+          jours.length < seancesParClasse
+              ? r.moinsDeTrois(n: jours.length)
+              : r.troisSeances,
           key: DisponibilitesEtape.moinsDeTroisKey,
-          style: palette.inkMuted.applyTo(textes.bodyMedium ?? const TextStyle()),
+          style: palette.inkMuted.applyTo(
+            textes.bodyMedium ?? const TextStyle(),
+          ),
         ),
       ],
     );
