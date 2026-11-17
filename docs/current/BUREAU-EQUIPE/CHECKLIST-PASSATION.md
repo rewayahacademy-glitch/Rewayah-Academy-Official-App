@@ -45,7 +45,7 @@ parallèle, un agent par lot, quatre agents au plus.
 | 2 | **Praxis répond aussi aux candidats** (leurs conversations lui sont fermées aujourd'hui) | BE-GESTES, migration 910000 | ◐ après #606 |
 | 3 | **Le profil de Praxis** : son image (fond violet, outils noirs) et la mention IA discrète, surtout dans le détail du profil | agent de la messagerie `session_0163Kjry6zThXGyFJhJk9NHn` (migration 520000 : le client apprend qu'un compte est officiel) | ◐ lancé à 8 h 10 |
 | 4 | **La politique de confidentialité** dit qu'un assistant lit les messages : texte arbitré par le pilote (`TEXTES-VALIDES/POLITIQUE-CONFIDENTIALITE-PRAXIS.md`), purge du journal à 12 mois, puis intégration | pilote ☑ texte ; purge : #607 (BE-DOSSIER, migration 920000, un DELETE borné arbitré par le pilote) ; intégration : BE-SALLE après #525 | ◐ |
-| 5 | **L'essai à blanc** : le directeur branche Praxis et lui fait répondre à un seul fil de test (`PRAXIS/ESSAI-A-BLANC.md`) | directeur | ⏸ prêt |
+| 5 | **L'essai à blanc** : le directeur branche Praxis et lui fait répondre à un seul fil de test (`PRAXIS/ESSAI-A-BLANC.md`, écrit par BE-PIECE) | directeur | ⏸ prêt |
 | 6 | **La case anti-robot Cloudflare** sous le bouton d'inscription et de connexion (#525, en retard depuis le 16/11) | BE-SALLE | ◐ relancé à 8 h 25 |
 | 7 | **Inscription d'un associé invité** par un code (#604) | pilote (mise à jour après #606) ; BE-DOSSIER en pause (plafond de 4 agents) | ◐ bloquée par #606 |
 | 8 | **Un test de la facturation qui casse selon l'heure** (bloque la vérification automatique de toutes les PR le lundi et le mardi matin) | BE-GESTES (#606) | ◐ |
