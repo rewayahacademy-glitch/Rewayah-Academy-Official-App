@@ -83,6 +83,22 @@ void main() {
       ],
     ),
     (
+      nom: 'a completer, complement en cours : modifier ou annuler',
+      detail: detailTest(
+        etat: EtatCandidature.aCompleter,
+        complementEnCours: true,
+      ),
+      principal: null,
+      permis: <GesteCandidature>[
+        GesteCandidature.modifierComplement,
+        GesteCandidature.annulerComplement,
+        GesteCandidature.mettreEnPause,
+        GesteCandidature.refuser,
+        GesteCandidature.consignerRetrait,
+        GesteCandidature.definirResponsable,
+      ],
+    ),
+    (
       nom: 'versement pas encore possible',
       detail: detailTest(
         etat: EtatCandidature.paiementNonDisponible,
@@ -90,6 +106,7 @@ void main() {
       ),
       principal: null,
       permis: <GesteCandidature>[
+        c,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,
@@ -499,16 +516,25 @@ void main() {
       test(
         'chaque nom du serveur que l\'ecran sait faire se retrouve par son nom',
         () {
-          for (final GesteCandidature g in GesteCandidature.values) {
+          // Une seule exception, COMPLEMENT-SALLE-EXAMEN : « modifier le
+          // complement » porte le nom `demander_complement` (variante 3 du
+          // moteur) ; l'ecran la distingue par l'etat de la ligne.
+          final List<GesteCandidature> aNomPropre = <GesteCandidature>[
+            for (final GesteCandidature g in GesteCandidature.values)
+              if (g != GesteCandidature.modifierComplement) g,
+          ];
+          for (final GesteCandidature g in aNomPropre) {
             expect(GesteCandidature.depuisNomServeur(g.nomServeur), g);
           }
+          expect(
+            GesteCandidature.depuisNomServeur('demander_complement'),
+            GesteCandidature.demanderComplement,
+          );
           expect(GesteCandidature.depuisNomServeur('restreindre'), isNull);
           // Aucun nom en double : un nom du serveur designe un seul geste.
           expect(
-            GesteCandidature.values
-                .map((GesteCandidature g) => g.nomServeur)
-                .toSet(),
-            hasLength(GesteCandidature.values.length),
+            aNomPropre.map((GesteCandidature g) => g.nomServeur).toSet(),
+            hasLength(aNomPropre.length),
           );
         },
       );

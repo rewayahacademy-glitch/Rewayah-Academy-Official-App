@@ -344,6 +344,8 @@ declare
     'dispenser_entretien(uuid,text,text,integer,text)',
     -- BE-1j (17/11) : la direction deplace le creneau d'un entretien planifie (transition 47).
     'deplacer_entretien(uuid,timestamp with time zone,integer,text,integer,text)',
+    -- COMPLEMENT-SALLE-EXAMEN (17/11) : la direction annule le complement demande en Salle d'examen (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; le dossier revient a en_examen).
+    'annuler_complement_candidat(uuid,text,integer,text)',
     -- BE-1h (16/11) : la direction ramene une candidature de la decision a l'entretien (transition 46).
     'refaire_entretien(uuid,text,integer,text)',
     -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
