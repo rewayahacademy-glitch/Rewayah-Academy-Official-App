@@ -176,7 +176,15 @@ BEGIN
                                              envoye_le)
     VALUES (pg_temp.c(p_n), p_qv, p_doc || '{"accordRemuneration": true}'::jsonb, 'candidat', false,
             pg_catalog.clock_timestamp());
-    UPDATE public.candidatures SET paiement = private.paiement_etat(id) WHERE id = pg_temp.c(p_n);
+    -- BE-VERSEMENT (directeur, 16/11/2026 ; migration 20261128200000) : le calcul ne rend plus
+    -- `a_verifier` (un moyen qui suit la regle se valide seul : `compatible`). Le geste 24 (confirmer
+    -- le moyen) reste au serveur pour les donnees PASSEES ; ce scenario le modelise en posant l'ancien
+    -- etat de la colonne, celui que le calcul d'avant rendait pour ces fixtures. Le geste 24 et ses
+    -- controles, eux, sont toujours eprouves.
+    UPDATE public.candidatures
+       SET paiement = CASE private.paiement_etat(id) WHEN 'compatible' THEN 'a_verifier'
+                                                     ELSE private.paiement_etat(id) END
+     WHERE id = pg_temp.c(p_n);
   END IF;
   RETURN pg_temp.c(p_n);
 END $$;
@@ -362,9 +370,11 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 27,
+                         WHERE geste NOT LIKE '%admission') = 30,
     -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
-    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b (vingt-sept variantes)');
+    -- VERSEMENT-QUESTIONS (16/11, transition 44), BE-1g (16/11, transition 45) et BE-1h REFAIRE-ENTRETIEN
+    -- (17/11, migration 20261129700000, transition 46) : trois regles de direction de plus, soit 30.
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b et trois gestes de direction (trente variantes)');
 END $f86$;
 
 SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.refuser_candidat(pg_temp.c('15'), 'Motif', 'refus_general', 1, 'cle-anon-0001')$$,
@@ -421,18 +431,21 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": t
     "inviter": false, "consignerPrevenu": true, "garderPourSuivi": true, "rattacher": true,
     "planifierEntretien": true, "consignerEntretien": true, "pieceACorriger": false, "validerPiece": true,
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
-    "leverIndisponibilite": false}'::jsonb,
-  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien ; salle 3 du 03/11 : valider la piece)');
+    "leverIndisponibilite": false,
+    "debloquerVersement": true, "dispenserEntretien": true, "refaireEntretien": true}'::jsonb,
+  -- VERSEMENT-QUESTIONS (16/11, debloquer le versement), BE-1g (16/11, dispenser l'entretien) et BE-1h
+  -- REFAIRE-ENTRETIEN (17/11, migration 20261129700000, refaire l'entretien) : trois capacites de plus.
+  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien ; salle 3 du 03/11 : valider la piece ; debloquer le versement, dispenser et refaire l entretien)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
     "modelesPause": ["pause_attente_besoin", "pause_attente_informations", "pause_demande_candidat", "pause_general"],
     "complementSalleExamen": ["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux",
-      "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication"],
-    "complementSalleVerification": ["piece_identite", "cadre_religieux", "contrat", "avis"],
+      "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication", "pays_versement"],
+    "complementSalleVerification": ["piece_identite", "cadre_religieux", "contrat", "avis", "pays_versement"],
     "canauxRetrait": ["conversation", "courriel"],
     "codesClotureComplement": ["complement_clos"],
     "canauxPrevenu": ["whatsapp"], "modelesPrevenu": ["lien_inscription"]}'::jsonb,
-  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20) ; CAND-L3 (23/10) : canal et modele du geste « prevenu » ; COMPLEMENT-ET-FORMATS (14/11) : en salle 1, tout ce que le candidat fournit');
+  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20) ; CAND-L3 (23/10) : canal et modele du geste « prevenu » ; COMPLEMENT-ET-FORMATS (14/11) : en salle 1, tout ce que le candidat fournit ; pays_versement (migration 20261127000300) : le pays du versement, a completer en salles 1 et 2');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a3') @> '{"peutLire": false, "peutDecider": false, "peutEcrireReferentiel": false,
     "gestesGroupables": []}'::jsonb
   AND NOT EXISTS (SELECT 1 FROM jsonb_each(pg_temp.lu('cap_a3') -> 'gestes') g WHERE g.value <> 'false'::jsonb)
@@ -452,10 +465,12 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_k1') @> '{"peutLire": false, "peutDecider": 
 SELECT pg_temp.garde('t02', pg_temp.trace(pg_temp.c('02')));
 SELECT pg_temp.garde('ad02a', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.admettre_salle_verification(pg_temp.c('02'), 1, 'cle-admission-02-a')$$));
+-- BE-VERSEMENT (16/11, migration 20261128200000) : les controles lisent le calcul en direct, qui ne rend plus
+-- `a_verifier` : le moyen de 02 suit la regle, le controle du paiement passe seul. Il ne reste que le cadre.
 SELECT pg_temp.vrai(pg_temp.lu('ad02a') = '{"erreur": "controles_non_satisfaits", "controles": [
-    {"nom": "paiement_compatible", "cause": "a_verifier"}, {"nom": "cadre_religieux", "cause": "non_publie"}]}'::jsonb
+    {"nom": "cadre_religieux", "cause": "non_publie"}]}'::jsonb
   AND pg_temp.trace(pg_temp.c('02')) = pg_temp.lu('t02'),
-  'L2-4 : admission sans paiement compatible ni cadre publie : deux controles nommes avec leur cause, 0 ecriture');
+  'L2-4 : admission sans cadre publie : un controle nomme avec sa cause (le paiement passe seul depuis BE-VERSEMENT), 0 ecriture');
 SELECT pg_temp.garde('cf02', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('02'), 'virement_bancaire', NULL, 1, 'cle-confirmer-02')$$));
 SELECT pg_temp.vrai(pg_temp.lu('cf02') ->> 'rejoue' = 'false' AND pg_temp.lu('cf02') ->> 'paiement' = 'compatible'
@@ -1771,6 +1786,9 @@ SELECT pg_temp.vrai((SELECT bool_and(
         WHERE e.candidature_id::text LIKE 'ca2bcccc%' AND e.details ? 'geste'
           AND e.details ->> 'transition' IN ('7', '10', '16', '17', '18', '19', '23', '24', '25', '28')) = 50,
   'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature ; 50 gestes de ce lot (7, 10, 16 a 19, 23 a 25, 28)');
+-- PERF-AUDIT (14/11, migration 20261126200000) : les lignes d'audit sont chainees par pg_cron dans la
+-- minute ; sans cron ici, le scenario chaine lui-meme avant de verifier (comme scenarios_adm04.sql).
+SELECT private.audit_chainer();
 SELECT pg_temp.garde('chaine', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT to_jsonb(v) FROM public.verifier_chaine_audit(5000) v$$));
 SELECT pg_temp.vrai((pg_temp.lu('chaine') ->> 'rompues')::int = 0

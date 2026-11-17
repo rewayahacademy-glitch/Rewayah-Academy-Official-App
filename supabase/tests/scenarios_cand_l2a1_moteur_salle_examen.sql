@@ -1777,14 +1777,15 @@ SELECT pg_temp.vrai((SELECT string_agg(DISTINCT transition::text, ',' ORDER BY t
                         AND geste NOT LIKE '%admission')
     -- VERSEMENT-QUESTIONS (16/11) : 44 = debloquer le versement, motif exige.
     -- BE-1g (16/11) : 45 = dispenser l'entretien, motif exige.
-    = '12,15,16,17,18,19,20,21,23,25,44,45,7'
+    -- BE-1h REFAIRE-ENTRETIEN (17/11, migration 20261129700000) : 46 = refaire l'entretien, motif exige.
+    = '12,15,16,17,18,19,20,21,23,25,44,45,46,7'
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite' AND geste NOT LIKE '%admission')
     = 'lever_pause,refuser,retirer'
   -- V1-b (03/11) : le candidat planifie aussi son entretien, en reservant un creneau.
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs) AND geste NOT LIKE '%admission')
     = 'enregistrer_reponses,envoyer_reponses,planifier_entretien,retirer'
   AND NOT EXISTS (SELECT 1 FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (motif_requis)),
-  'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25, 44, 45) ; en pause seuls lever, refuser, retirer');
+  'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25, 44, 45, 46) ; en pause seuls lever, refuser, retirer');
 
 -- L2-10 : chaque geste a motif, depuis une source valide, sans motif : refus,
 -- 0 ecriture ; avec motif (et modele quand il en faut un) : il s'ouvre.
@@ -1836,8 +1837,9 @@ BEGIN
     PERFORM pg_temp.vrai(v_res = jsonb_build_object('ok', true, 'transition', r.transition, 'variante', r.variante),
       'L2-10 : ' || r.geste || ' avec motif : le geste s''ouvre depuis sa source');
   END LOOP;
-  -- VERSEMENT-QUESTIONS (16/11) : debloquer_versement, la douzieme ; BE-1g (16/11) : dispenser_entretien, la treizieme.
-  PERFORM pg_temp.vrai(v_n = 13, 'L2-10 : treize variantes de gestes a motif');
+  -- VERSEMENT-QUESTIONS (16/11) : debloquer_versement, la douzieme ; BE-1g (16/11) : dispenser_entretien, la treizieme ;
+  -- BE-1h REFAIRE-ENTRETIEN (17/11, migration 20261129700000) : refaire_entretien, la quatorzieme.
+  PERFORM pg_temp.vrai(v_n = 14, 'L2-10 : quatorze variantes de gestes a motif');
 END $l2_10$;
 
 -- L2-9 : en pause, tout geste autre que lever la pause, refuser ou retirer
@@ -1893,7 +1895,8 @@ BEGIN
   -- (un controle de plus dans la boucle : 418 au total).
   -- VERSEMENT-QUESTIONS (16/11) : debloquer_versement porte la table a vingt-huit variantes.
   -- BE-1g (16/11) : dispenser_entretien la porte a vingt-neuf.
-  PERFORM pg_temp.vrai(v_n = 29, 'L2-9 : les vingt-neuf variantes de la table des regles');
+  -- BE-1h REFAIRE-ENTRETIEN (17/11, migration 20261129700000) : refaire_entretien la porte a trente.
+  PERFORM pg_temp.vrai(v_n = 30, 'L2-9 : les trente variantes de la table des regles');
 END $l2_9$;
 
 -- Un geste de la direction de bout en bout par le moteur (c10) : refus avec
@@ -1988,6 +1991,10 @@ SELECT pg_temp.vrai((SELECT bool_and(
                            WHERE e.candidature_id = c.id AND e.details ? 'geste'))
                      FROM public.candidatures c WHERE c.id::text LIKE 'ca2acccc%'),
   'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature');
+-- PERF-AUDIT (14/11, migration 20261126200000_audit_chaine_differee.sql) : une ligne d'audit est inseree
+-- `differee` et chainee dans la minute par pg_cron ; ce scenario, qui n'a pas de cron, chaine lui-meme
+-- (comme scenarios_adm04.sql) avant de verifier la chaine.
+SELECT private.audit_chainer();
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a1', 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.garde('chaine', (SELECT to_jsonb(v) FROM public.verifier_chaine_audit(5000) v));
@@ -2403,8 +2410,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 433 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 433 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11)', current_setting('test.n');
+  IF current_setting('test.n')::int <> 439 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 439 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11 + 6 de refaire_entretien, 17/11, migration 20261129700000)', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;
