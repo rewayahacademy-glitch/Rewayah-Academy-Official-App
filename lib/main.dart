@@ -156,7 +156,9 @@ import 'core/enseignant/remplacements_supabase.dart';
 import 'core/enseignants/enseignants_supabase.dart' show EnseignantsSupabase;
 import 'core/enseignants/port_enseignants.dart' show portEnseignantsProvider;
 import 'core/equipe/equipe_supabase.dart';
+import 'core/equipe/inscription_associe_supabase.dart';
 import 'core/equipe/port_equipe.dart';
+import 'core/equipe/port_inscription_associe.dart';
 import 'core/finance/page_paiement.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
@@ -334,6 +336,9 @@ List<Override> _surchargesAppReelle() => <Override>[
   persistanceBrouillonProvider.overrideWithValue(true),
   portEquipeProvider.overrideWithValue(
     EquipeSupabase(Supabase.instance.client),
+  ),
+  portInscriptionAssocieProvider.overrideWithValue(
+    InscriptionAssocieSupabase(Supabase.instance.client),
   ),
   // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
   // compte (migration 20261109000000) ; reglage vide : aucun controle.

@@ -1331,6 +1331,7 @@ class _Traductions$inscription$ar extends Traductions$inscription$fr {
 	@override String get reessayer => 'إعادة المحاولة';
 	@override String get erreurActualisation => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.';
 	@override String get erreurInvitation => 'تعذّر استخدام رمز الدعوة: انتهت صلاحيته، أو استُعمل من قبل، أو لا يطابق عنوانك. اطلب رمزًا جديدًا من الإدارة، ثم أدخله من جديد.';
+	@override late final _Traductions$inscription$associe$ar associe = _Traductions$inscription$associe$ar._(_root);
 	@override late final _Traductions$inscription$usage$ar usage = _Traductions$inscription$usage$ar._(_root);
 	@override late final _Traductions$inscription$recap$ar recap = _Traductions$inscription$recap$ar._(_root);
 	@override late final _Traductions$inscription$telephone$ar telephone = _Traductions$inscription$telephone$ar._(_root);
@@ -9307,6 +9308,42 @@ class _Traductions$inscription$nomPropre$ar extends Traductions$inscription$nomP
 	@override String get nonConfirme => 'لم يتأكد تسجيل اسمك. اضغط «تسجيل اسمي» مرة أخرى بعد لحظة.';
 }
 
+// Path: inscription.associe
+class _Traductions$inscription$associe$ar extends Traductions$inscription$associe$fr {
+	_Traductions$inscription$associe$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'حساب شريك';
+	@override String get intro => 'دعتك الإدارة وأعطتك رمزًا. أدخله: لا يصلح إلا للعنوان الذي سجّلت الدخول به.';
+	@override String get champ => 'رمز الدعوة';
+	@override String get champVide => 'أدخل الرمز الذي استلمته.';
+	@override String get verifier => 'التحقق من الرمز';
+	@override String valide({required Object date}) => 'رمزك صالح حتى ⁨${date}⁩.';
+	@override String get formIntro => 'عرّفنا بنفسك. يُفتح حسابك دون أي صلاحية: لن ترى إلا ما تعهد به إليك الإدارة.';
+	@override String get genreQuestion => 'أنت';
+	@override String get genreRaison => 'تُحمل المهمة من جهة الشخص نفسه: هذا الاختيار ضروري.';
+	@override String get genreHommeExplication => 'ستتناول مهامك طلبات الرجال.';
+	@override String get genreFemmeExplication => 'ستتناول مهامك طلبات النساء.';
+	@override String get creer => 'إنشاء حسابي';
+	@override String get ressaisir => 'إدخال رمز آخر';
+	@override String get seConnecter => 'تسجيل الدخول';
+	@override String get inconnue => 'هذا الرمز لا يطابق أي دعوة لعنوانك.';
+	@override String get inconnueDetail => 'تحقق من الرمز ومن أنك مسجّل الدخول بالعنوان المدعو.';
+	@override String get expiree => 'انتهت صلاحية هذا الرمز.';
+	@override String get expireeDetail => 'اطلب رمزًا جديدًا من الإدارة.';
+	@override String get dejaUtilisee => 'استُخدم هذا الرمز من قبل.';
+	@override String get dejaUtiliseeDetail => 'سجّل الدخول إلى حسابك.';
+	@override String get horsLigne => 'الاتصال غير متوفر. لم يُرسَل شيء: أعد المحاولة عند عودته.';
+	@override String get erreur => 'لم يكتمل التحقق. رمزك لم يضع: أعد المحاولة بعد قليل.';
+	@override String get sessionRefusee => 'لهذا الحساب ملف شخصي بالفعل، أو لا عنوان له. سجّل الدخول بالعنوان المدعو.';
+	@override String get champsRefuses => 'تم رفض أحد الحقول: راجع اسمك الأول واسم العائلة والجنس.';
+	@override String get nonConfirme => 'تعذّر تأكيد الحساب. راجع بياناتك وأعد المحاولة؛ وإن تكرّرت الرسالة فأبلغ الإدارة.';
+	@override String get champsManquants => 'أدخل اسمك الأول واسم العائلة، واختر جنسك.';
+	@override String get indisponible => 'تسجيل الشريك غير متاح بعد على هذا الجهاز.';
+}
+
 // Path: inscription.usage
 class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr {
 	_Traductions$inscription$usage$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -9323,6 +9360,8 @@ class _Traductions$inscription$usage$ar extends Traductions$inscription$usage$fr
 	@override String get enseignantInvite => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.';
 	@override String get comptable => 'لدي رمز محاسب';
 	@override String get comptableInvite => 'هل أنت محاسب؟ تدعوك الإدارة عبر البريد الإلكتروني.';
+	@override String get associe => 'لدي رمز شريك';
+	@override String get associeInvite => 'هل دُعيتَ كشريك؟ أعطتك الإدارة رمزًا.';
 	@override String get coursQuestion => 'هل تتابع أنت أيضًا دروسًا؟';
 	@override String get coursOui => 'نعم';
 	@override String get coursNon => 'لا';
@@ -38943,15 +38982,46 @@ extension on TraductionsAr {
 			'inscription.reessayer' => 'إعادة المحاولة',
 			'inscription.erreurActualisation' => 'أُنشئ حسابك، لكن تعذّر تحديث الاتصال. أعد المحاولة، أو سجّل الخروج ثم الدخول من جديد.',
 			'inscription.erreurInvitation' => 'تعذّر استخدام رمز الدعوة: انتهت صلاحيته، أو استُعمل من قبل، أو لا يطابق عنوانك. اطلب رمزًا جديدًا من الإدارة، ثم أدخله من جديد.',
+			'inscription.associe.titre' => 'حساب شريك',
+			'inscription.associe.intro' => 'دعتك الإدارة وأعطتك رمزًا. أدخله: لا يصلح إلا للعنوان الذي سجّلت الدخول به.',
+			'inscription.associe.champ' => 'رمز الدعوة',
+			'inscription.associe.champVide' => 'أدخل الرمز الذي استلمته.',
+			'inscription.associe.verifier' => 'التحقق من الرمز',
+			'inscription.associe.valide' => ({required Object date}) => 'رمزك صالح حتى ⁨${date}⁩.',
+			'inscription.associe.formIntro' => 'عرّفنا بنفسك. يُفتح حسابك دون أي صلاحية: لن ترى إلا ما تعهد به إليك الإدارة.',
+			'inscription.associe.genreQuestion' => 'أنت',
+			'inscription.associe.genreRaison' => 'تُحمل المهمة من جهة الشخص نفسه: هذا الاختيار ضروري.',
+			'inscription.associe.genreHommeExplication' => 'ستتناول مهامك طلبات الرجال.',
+			'inscription.associe.genreFemmeExplication' => 'ستتناول مهامك طلبات النساء.',
+			'inscription.associe.creer' => 'إنشاء حسابي',
+			'inscription.associe.ressaisir' => 'إدخال رمز آخر',
+			'inscription.associe.seConnecter' => 'تسجيل الدخول',
+			'inscription.associe.inconnue' => 'هذا الرمز لا يطابق أي دعوة لعنوانك.',
+			'inscription.associe.inconnueDetail' => 'تحقق من الرمز ومن أنك مسجّل الدخول بالعنوان المدعو.',
+			'inscription.associe.expiree' => 'انتهت صلاحية هذا الرمز.',
+			'inscription.associe.expireeDetail' => 'اطلب رمزًا جديدًا من الإدارة.',
+			'inscription.associe.dejaUtilisee' => 'استُخدم هذا الرمز من قبل.',
+			'inscription.associe.dejaUtiliseeDetail' => 'سجّل الدخول إلى حسابك.',
+			'inscription.associe.horsLigne' => 'الاتصال غير متوفر. لم يُرسَل شيء: أعد المحاولة عند عودته.',
+			'inscription.associe.erreur' => 'لم يكتمل التحقق. رمزك لم يضع: أعد المحاولة بعد قليل.',
+			'inscription.associe.sessionRefusee' => 'لهذا الحساب ملف شخصي بالفعل، أو لا عنوان له. سجّل الدخول بالعنوان المدعو.',
+			'inscription.associe.champsRefuses' => 'تم رفض أحد الحقول: راجع اسمك الأول واسم العائلة والجنس.',
+			'inscription.associe.nonConfirme' => 'تعذّر تأكيد الحساب. راجع بياناتك وأعد المحاولة؛ وإن تكرّرت الرسالة فأبلغ الإدارة.',
+			'inscription.associe.champsManquants' => 'أدخل اسمك الأول واسم العائلة، واختر جنسك.',
+			'inscription.associe.indisponible' => 'تسجيل الشريك غير متاح بعد على هذا الجهاز.',
 			'inscription.usage.question' => 'لمن تنشئ هذا الحساب؟',
 			'inscription.usage.moiTitre' => 'أسجّل لنفسي',
 			'inscription.usage.moiDescription' => 'تتابع الدروس بنفسك. يُنشأ ملفك كطالب مع حسابك.',
 			'inscription.usage.familleTitre' => 'أسجّل طفلي',
 			'inscription.usage.familleDescription' => 'تسجّل طفلًا أو أكثر وتتابع تقدّمهم. يمكنك أيضًا متابعة الدروس بنفسك.',
 			'inscription.usage.enseignant' => 'لدي رمز دعوة',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.usage.enseignantInvite' => 'هل أنت معلّم؟ تدعوك الأكاديمية عبر البريد الإلكتروني.',
 			'inscription.usage.comptable' => 'لدي رمز محاسب',
 			'inscription.usage.comptableInvite' => 'هل أنت محاسب؟ تدعوك الإدارة عبر البريد الإلكتروني.',
+			'inscription.usage.associe' => 'لدي رمز شريك',
+			'inscription.usage.associeInvite' => 'هل دُعيتَ كشريك؟ أعطتك الإدارة رمزًا.',
 			'inscription.usage.coursQuestion' => 'هل تتابع أنت أيضًا دروسًا؟',
 			'inscription.usage.coursOui' => 'نعم',
 			'inscription.usage.coursNon' => 'لا',
@@ -38976,8 +39046,6 @@ extension on TraductionsAr {
 			'inscription.recap.langue' => 'اللغة',
 			'inscription.telephone.question' => 'رقم هاتفك',
 			'inscription.telephone.explication' => 'نستخدمه لتجنّب التكرار ولربط مراسلاتك مع الأكاديمية بترشحك. تراسلك الأكاديمية داخل التطبيق. ولا يظهر أبدًا للمتقدّمين الآخرين.',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.telephone.indicatif' => 'رمز الدولة',
 			'inscription.telephone.numero' => 'الرقم، دون رمز الدولة',
 			'inscription.telephone.indicatifManquant' => 'اختر رمز دولتك.',
@@ -39461,6 +39529,8 @@ extension on TraductionsAr {
 			'adulte.reprise.horsLigne' => 'أنت غير متصل. لم يُرسل شيء. يمكنك تقديم الطلب بنفسك عند عودة الاتصال.',
 			'adulte.reprise.depotEchecTitre' => 'لم يُؤكَّد الطلب.',
 			'adulte.reprise.echecPhrase' => 'تحقّق قبل إعادة المحاولة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.reprise.motif' => 'السبب',
 			'adulte.reprise.motifDeces' => 'وفاة صاحب الحساب المصرَّح بها',
 			'adulte.reprise.deposeeLe' => 'قُدِّم في',
@@ -39490,8 +39560,6 @@ extension on TraductionsAr {
 			'adulte.reprise.notifications.refusee' => 'رُفض طلبك لاستلام الأسرة.',
 			'adulte.demo.titre' => 'عرض تجريبي للطالب البالغ',
 			'adulte.demo.mention' => 'البيانات وهمية ولا يُرسل شيء.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.demo.intro' => 'اختر شاشة، ثم حالة من حالات أسرة ديالو.',
 			'adulte.demo.ecrans' => 'الشاشات',
 			'adulte.demo.situations' => 'حالات الأسرة',
@@ -39975,6 +40043,8 @@ extension on TraductionsAr {
 			'controleur.observation.interventionAdmin' => 'تدخل الإدارة مطلوب',
 			'controleur.observation.interventionAdminAide' => 'حين يجب أن تتصرف الإدارة · سيُطلب نصك، وتستلمه مع التقرير',
 			'controleur.observation.questionDomaine' => 'أي مجال تخص؟',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.observation.contexteDomaine' => 'يساعد المجال الإدارة على قراءة ملاحظتك.',
 			'controleur.observation.pedagogie' => 'التعليم',
 			'controleur.observation.pedagogieAide' => 'حين يتعلق الأمر بالتدريس: الشرح، التدرج، المواد',
@@ -40004,8 +40074,6 @@ extension on TraductionsAr {
 			'controleur.observation.rosterVide' => 'لا طالب حاضر في قائمة هذه الزيارة. اختر «الفصل كله» أو «لا مشارك محدد».',
 			'controleur.observation.questionTexte' => 'ماذا لاحظت؟',
 			'controleur.observation.texteObligatoire' => 'نصك ضروري لهذه الملاحظة.',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.observation.texteFacultatif' => 'هذا النص اختياري.',
 			'controleur.observation.libelleTexte' => 'ملاحظتك',
 			'controleur.observation.aideTexte' => 'صف فقط ما لاحظته.',
@@ -40489,6 +40557,8 @@ extension on TraductionsAr {
 			'recrutement.invitations.indisponiblePhrase' => 'ستتوفر هذه الوظيفة عند ربط الخادم.',
 			'recrutement.invitations.etat.active' => 'سارية',
 			'recrutement.invitations.etat.utilisee' => 'مستعملة',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.invitations.etat.expiree' => 'منتهية',
 			'recrutement.invitations.etat.revoquee' => 'ملغاة',
 			'recrutement.invitations.expireLe' => ({required Object date}) => 'تنتهي في ⁨${date}⁩',
@@ -40518,8 +40588,6 @@ extension on TraductionsAr {
 			'recrutement.candidat.dejaUtiliseeDetail' => 'إن كنت أنت، فسجّل الدخول بالحساب الذي أنشأته.',
 			'recrutement.candidat.seConnecter' => 'تسجيل الدخول',
 			'recrutement.candidat.inconnue' => 'الرمز غير معروف.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.candidat.inconnueDetail' => 'تحقّق من الرمز، ثم أدخله من جديد.',
 			'recrutement.candidat.ressaisir' => 'إدخال رمز آخر',
 			'recrutement.candidat.horsLigne' => 'لم يُتحقَّق من الرمز. أعد المحاولة بعد لحظات.',
@@ -41003,6 +41071,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.publics.court' => 'الفئات',
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'أطفال من 6 إلى 9 سنوات',
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'يبدؤون بكتاب القراءة الخاص بأكاديمية الرواية، حرفًا حرفًا، إلى الشدّة. ثم تأتي السور القصيرة الأولى وكلمات الصلاة والوضوء.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة. يُعرض الوضوء والصلاة عمليًا ومعهما رسوم توضيحية.',
 			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'فصل لأطفال في الثامنة من العمر، أيام الاثنين والأربعاء والجمعة.',
 			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'أطفال من 10 إلى 13 سنة',
@@ -41032,8 +41102,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.compteBancaire.titre' => 'هل عندك حساب مصرفي تستلم فيه راتبك، باسمك أو باسم أحد أقاربك؟',
 			'recrutement.parcours.q.compteBancaire.explication' => 'يُصرف الراتب بتحويل مصرفي حيث أكّدت الأكاديمية ذلك. لا تُطلب بياناتك إلا قبل أول دفعة.',
 			'recrutement.parcours.q.compteBancaire.court' => 'الحساب المصرفي',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.compteBancaire.options.oui.libelle' => 'نعم، باسمي أو باسم أحد أقاربي',
 			'recrutement.parcours.q.compteBancaire.options.oui.description' => 'حساب في أحد المصارف، باسمك أو باسم أحد أقاربك.',
 			'recrutement.parcours.q.compteBancaire.options.oui.explication' => 'قد يكون التحويل وسيلة صرف راتبك إذا أكّدته الأكاديمية في بلدك.',
@@ -41517,6 +41585,8 @@ extension on TraductionsAr {
 			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
 			'avis.form.qualite.erreur' => 'اختر صفتك.',
 			'avis.form.pays.libelle' => 'بلد الإقامة',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.pays.choisir' => 'اختيار بلد',
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
 			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
@@ -41546,8 +41616,6 @@ extension on TraductionsAr {
 			'avis.form.regles.titre' => 'ما تنشره الإدارة',
 			'avis.form.regles.intro' => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. لا تعدّل الإدارة نصك أبدًا. وهي ترفض فقط الرأي الذي يتضمن:',
 			'avis.form.regles.insulte' => 'إهانة',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.regles.tiers' => 'بيانات شخصية لطرف ثالث، مثل اسم طفل أو معلم',
 			'avis.form.regles.publicite' => 'إعلانًا',
 			'avis.form.regles.horsSujet' => 'كلامًا خارج الموضوع',
@@ -42031,6 +42099,8 @@ extension on TraductionsAr {
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
+			_ => null,
+		} ?? switch (path) {
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
@@ -42060,8 +42130,6 @@ extension on TraductionsAr {
 			'cahierSourates.retirerMotif' => 'السبب (اختياري)',
 			'cahierSourates.retirerFait' => ({required Object nom}) => 'لم تعد ⁨${nom}⁩ معتمدة.',
 			'cahierSourates.retirerRefus' => 'انقضت مهلة 24 ساعة: لا يسحبها الآن إلا الإدارة.',
-			_ => null,
-		} ?? switch (path) {
 			'cahierSourates.retirerEchec' => 'لم تُسحب السورة. أعد المحاولة.',
 			'souratesRetirables.titre' => 'سور اختيرت خطأً',
 			'souratesRetirables.aide' => 'السور المعتمدة في هذا الفصل التي يمكنك سحبها.',
@@ -42545,6 +42613,8 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',
 			'apprendre.bibliotheque.rayonPlusLoinVide' => 'ستظهر وثائق أخرى هنا',
 			'apprendre.bibliotheque.affichage.libelle' => 'طريقة عرض الوثائق',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.bibliotheque.affichage.grille' => 'شبكة',
 			'apprendre.bibliotheque.affichage.liste' => 'قائمة',
 			'apprendre.bibliotheque.filtres.libelle' => 'نوع الوثيقة',
@@ -42574,8 +42644,6 @@ extension on TraductionsAr {
 			'suiviAttente.tu.formationListeAttente' => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.',
 			'suiviAttente.tu.confirmeeFait' => 'تم تأكيد فصلك.',
 			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.tu.enseignantEnAttente' => 'فصلك ينتظر معلمه. تعيّنه الأكاديمية وتُخبرك.',
 			'suiviAttente.tu.pretEnCours' => 'تحدد الأكاديمية موعد أول حصة لك. تُخبرك حالما يُعرف الموعد.',
 			'suiviAttente.tu.pretAVenir' => 'يُعلن موعد أول حصة بعد تعيين المعلم.',
