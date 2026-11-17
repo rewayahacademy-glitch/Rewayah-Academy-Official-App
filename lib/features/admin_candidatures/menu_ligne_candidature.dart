@@ -47,6 +47,10 @@ AppIcon iconeDuGeste(GesteCandidature geste) => switch (geste) {
   GesteCandidature.definirResponsable => AppIcons.profil,
   GesteCandidature.validerPiece => AppIcons.pieceJointe,
   GesteCandidature.dispenserEntretien => AppIcons.etoile,
+  GesteCandidature.restreindre => AppIcons.interdit,
+  GesteCandidature.demanderVerificationPiece => AppIcons.document,
+  GesteCandidature.demanderVerificationVersement => AppIcons.paiements,
+  GesteCandidature.leverRestriction => AppIcons.succes,
   GesteCandidature.refaireEntretien => AppIcons.historique,
 };
 
