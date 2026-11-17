@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/modeles_entretien_direction.dart';
 import 'package:rewayah_academy/core/candidature/photo_dossier_candidat.dart';
-import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/port_entretiens_direction.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/photos/photo_personne.dart';
@@ -25,11 +24,9 @@ import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';
 import 'package:rewayah_academy/features/admin_dossiers/visionneuse_piece.dart';
 import 'package:rewayah_academy/features/candidature/libelles_parcours.dart'
     show libelleHeure;
-import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart'
-    show ConversationEnPlace;
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
-import '../../support/monter_recrutement.dart' show laisser, monterRecrutement;
+import '../../support/monter_recrutement.dart' show laisser;
 import 'hote_candidature.dart';
 
 FauxCandidaturesDirection _port(
@@ -357,57 +354,103 @@ void main() {
     );
   });
 
-  group('accords : emplacement de la majorite', () {
-    Future<void> monterCorps(WidgetTester tester, {String? majorite}) async {
-      final DetailCandidature detail = detailTest(
-        paiement: EtatVersement.compatible,
-        controles: _controles(),
-      );
-      await monterRecrutement(
-        tester,
-        chemin: '/corps',
-        ecran: (_) => Scaffold(
-          body: SingleChildScrollView(
-            child: CorpsDossier(
-              plan: PlanDossier(
-                detail: detail,
-                capacites: capacitesGestes,
-                horsLigne: false,
-              ),
-              deuxColonnes: false,
-              onGeste: (GesteCandidature _) {},
-              onDemanderElement: (String _) {},
-              onEntretien: (String _) {},
-              onOuvrirConversation: (ConversationEnPlace _) {},
-              ligneMajorite: majorite,
-            ),
-          ),
-        ),
-        surcharges: <Override>[
-          portCandidaturesDirectionProvider.overrideWithValue(_port(detail)),
-        ],
-        hauteur: 3000,
-      );
-    }
+  // MAJEUR-DIRECTION (17/11/2026) : l'age attesté par le candidat est la
+  // premiere ligne du resume, visible des l'ouverture du dossier.
+  group('age : la premiere ligne du resume', () {
+    final s = t.recrutement.dossier3.synthese;
+    final MajoriteCandidature attestee = MajoriteCandidature(
+      servie: true,
+      declaree: true,
+      attesteeLe: DateTime.utc(2026, 11, 12, 10),
+    );
 
-    testWidgets('sans phrase (champ pas encore servi) : rien', (
+    testWidgets('attestee : « 18 ans ou plus » avec la date, en tete', (
       WidgetTester tester,
     ) async {
-      await monterCorps(tester);
-      expect(find.byKey(CorpsDossier.cleMajorite), findsNothing);
+      await _monter(tester, port: _port(detailTest(majorite: attestee)));
+      final (String, String) premiere = lignesDeSynthese(tester).first;
+      expect(premiere.$1, s.age);
+      expect(premiere.$2, contains('18'));
+      expect(premiere.$2, contains('2026'));
+      expect(find.text(s.age), findsOneWidget);
     });
 
-    testWidgets('avec une phrase : elle est dans la ligne Accords', (
+    testWidgets('moins de 18 ans : la candidature est en pause', (
       WidgetTester tester,
     ) async {
-      await monterCorps(tester, majorite: 'Phrase de majorite');
-      expect(
-        find.descendant(
-          of: find.byKey(RubriqueDossier.cleDe(RubriqueDossierCode.accords)),
-          matching: find.byKey(CorpsDossier.cleMajorite),
+      await _monter(
+        tester,
+        port: _port(
+          detailTest(
+            enPause: true,
+            majorite: const MajoriteCandidature(servie: true, declaree: false),
+          ),
         ),
-        findsOneWidget,
       );
+      expect(lignesDeSynthese(tester).first, (s.age, s.ageValeurs.moins18));
+    });
+
+    testWidgets('pas encore attesté : la ligne le dit', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _port(
+          detailTest(majorite: const MajoriteCandidature(servie: true)),
+        ),
+      );
+      expect(lignesDeSynthese(tester).first, (s.age, s.ageValeurs.nonAttestee));
+    });
+
+    testWidgets('serveur d\'avant (cle absente) : aucune ligne fausse', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, port: _port(detailTest()));
+      expect(find.text(s.age), findsNothing);
+      expect(find.text(s.ageValeurs.nonAttestee), findsNothing);
+    });
+
+    testWidgets('320 px et texte agrandi deux fois : rien ne deborde', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _port(detailTest(majorite: attestee)),
+        largeur: 320,
+      );
+      tester.view.platformDispatcher.textScaleFactorTestValue = 2;
+      addTearDown(tester.view.platformDispatcher.clearTextScaleFactorTestValue);
+      await laisser(tester, fois: 3);
+      expect(find.text(s.age), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('1440 px : la ligne est la, sans exception', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        port: _port(detailTest(majorite: attestee)),
+        largeur: 1440,
+      );
+      expect(find.text(s.age), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('arabe : la valeur est isolée dans son sens de lecture', (
+      WidgetTester tester,
+    ) async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+      await _monter(
+        tester,
+        port: _port(detailTest(majorite: attestee)),
+        direction: TextDirection.rtl,
+      );
+      final (String, String) premiere = lignesDeSynthese(tester).first;
+      expect(premiere.$1, t.recrutement.dossier3.synthese.age);
+      expect(premiere.$2, startsWith('\u2068'));
+      expect(tester.takeException(), isNull);
     });
   });
 

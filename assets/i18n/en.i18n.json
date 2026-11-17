@@ -2720,7 +2720,9 @@
         "heuresDe": "{jours}: {heures}",
         "memorisationValeurs": {"aucune": "None", "moins_10_juz": "Under 10 juz", "de_10_a_29_juz": "10 to 29 juz", "coran_entier": "Whole Quran"},
         "ijazaValeurs": {"oui": "Yes", "pret_test": "No, ready for a test", "non": "No"},
-        "publicValeurs": {"6_9": "6-9 years", "10_13": "10-13 years", "14_17": "14-17 years", "adultes": "Adults"}
+        "publicValeurs": {"6_9": "6-9 years", "10_13": "10-13 years", "14_17": "14-17 years", "adultes": "Adults"},
+        "age": "Age",
+        "ageValeurs": {"attestee": "18 or older, confirmed on {date}", "moins18": "Under 18: application on hold", "nonAttestee": "Age not confirmed yet"}
       },
       "demanderAccord": "Ask for an agreement",
       "raison": {
@@ -2746,6 +2748,10 @@
       "replier": "Collapse",
       "trier": "Sort",
       "pieceSansAttente": "No ID document to validate",
+      "age": "Age",
+      "ageAttestee": "18 or older, confirmed",
+      "ageNonAttestee": "Age not confirmed yet",
+      "ageMoins18": "Under 18",
       "filtres": "Filters",
       "filtresPoses": {
         "one": "Filters, {n} applied",

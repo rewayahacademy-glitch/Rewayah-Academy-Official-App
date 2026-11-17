@@ -2720,7 +2720,9 @@
         "heuresDe": "{jours}\u00a0: {heures}",
         "memorisationValeurs": {"aucune": "Aucune", "moins_10_juz": "Moins de 10 juz", "de_10_a_29_juz": "10 à 29 juz", "coran_entier": "Coran entier"},
         "ijazaValeurs": {"oui": "Oui", "pret_test": "Non, prêt pour un test", "non": "Non"},
-        "publicValeurs": {"6_9": "6-9 ans", "10_13": "10-13 ans", "14_17": "14-17 ans", "adultes": "Adultes"}
+        "publicValeurs": {"6_9": "6-9 ans", "10_13": "10-13 ans", "14_17": "14-17 ans", "adultes": "Adultes"},
+        "age": "Âge",
+        "ageValeurs": {"attestee": "18 ans ou plus, attesté le {date}", "moins18": "Moins de 18 ans : candidature en pause", "nonAttestee": "Âge pas encore attesté"}
       },
       "demanderAccord": "Demander un accord",
       "raison": {
@@ -2746,6 +2748,10 @@
       "replier": "Replier",
       "trier": "Trier",
       "pieceSansAttente": "Sans pièce à valider",
+      "age": "Âge",
+      "ageAttestee": "18 ans ou plus attesté",
+      "ageNonAttestee": "Âge pas encore attesté",
+      "ageMoins18": "Moins de 18 ans",
       "filtres": "Filtres",
       "filtresPoses": {
         "one": "Filtres, {n} posé",
