@@ -4706,6 +4706,7 @@
         "titre": "Action refused",
         "nonConfirmeTitre": "Action not confirmed"
       },
+      "ecrireApres": "Write to the person",
       "retours": {
         "accueillir": "The person is welcomed into the team.",
         "admettre": "The application is in the Verification and interview room.",

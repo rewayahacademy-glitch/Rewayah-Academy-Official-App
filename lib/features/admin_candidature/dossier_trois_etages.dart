@@ -763,6 +763,7 @@ class CorpsDossier extends ConsumerStatefulWidget {
     required this.onOuvrirConversation,
     this.rangMessages = 0,
     this.retour,
+    this.ecrireApres = false,
     this.retourEntretien,
     this.autresActions = const <EntreeAction>[],
     this.navigation,
@@ -821,6 +822,13 @@ class CorpsDossier extends ConsumerStatefulWidget {
   /// Le retour local du dernier geste.
   final String? retour;
 
+  /// Le retour local propose « Ecrire a la personne » : la messagerie du dossier
+  /// vient dans la vue. Aucun texte n'est ecrit pour la direction.
+  final bool ecrireApres;
+
+  /// La cle du lien « Ecrire a la personne » du retour local.
+  static const Key cleEcrireApres = ValueKey<String>('dossier-ecrire-apres');
+
   /// Le retour local du dernier geste d'entretien.
   final String? retourEntretien;
 
@@ -835,6 +843,10 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
   /// La liste des rubriques garde son etat (rubriques ouvertes) quand la page
   /// passe d'une colonne a deux, ou l'inverse : une cle globale la suit.
   final GlobalKey _cleListe = GlobalKey(debugLabel: 'dossier-liste-rubriques');
+
+  /// La messagerie du dossier : le lien « Ecrire a la personne » la ramene dans
+  /// la vue.
+  final GlobalKey _cleMessagerie = GlobalKey(debugLabel: 'dossier-messagerie');
 
   @override
   Widget build(BuildContext context) {
@@ -1142,11 +1154,14 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
       // La messagerie est sur la carte : ses conversations, leurs non-lus, la
       // conversation s'ouvre dans le volet. Le bandeau « Messages pas en
       // direct » est celui de cette entree.
-      messagerie: EntreeMessagesContexte(
-        key: ValueKey<String>('entree-messages-$rangMessages'),
-        type: TypeObjetLie.candidature,
-        objetId: detail.ligne.id,
-        onOuvrirEnPlace: onOuvrirConversation,
+      messagerie: KeyedSubtree(
+        key: _cleMessagerie,
+        child: EntreeMessagesContexte(
+          key: ValueKey<String>('entree-messages-$rangMessages'),
+          type: TypeObjetLie.candidature,
+          objetId: detail.ligne.id,
+          onOuvrirEnPlace: onOuvrirConversation,
+        ),
       ),
     );
     final Widget resume = ResumeDossier(
@@ -1167,7 +1182,30 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         ? const SizedBox.shrink()
         : Padding(
             padding: const EdgeInsets.only(bottom: AppSpacing.lg),
-            child: LocalFeedback(message: retour),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                LocalFeedback(message: retour),
+                if (widget.ecrireApres) ...<Widget>[
+                  Ecart.vXs,
+                  Align(
+                    alignment: AlignmentDirectional.centerStart,
+                    child: LienFleche(
+                      key: CorpsDossier.cleEcrireApres,
+                      libelle: t.admin.candidatures.ecrireApres,
+                      alignerEnDebut: true,
+                      onPress: () {
+                        final BuildContext? c = _cleMessagerie.currentContext;
+                        if (c != null) {
+                          unawaited(Scrollable.ensureVisible(c));
+                        }
+                      },
+                    ),
+                  ),
+                ],
+              ],
+            ),
           );
     // BE-SUIVANT : l'annonce du passage au suivant (ou de la fin de file), puis
     // le reglage, juste sous la barre de decision.

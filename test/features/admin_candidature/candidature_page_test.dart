@@ -1769,6 +1769,49 @@ void main() {
       );
     });
 
+    testWidgets(
+      'APRES-CONFIRMEE : restreindre propose « Ecrire a la personne », rien ne part seul',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = _port(
+          detail: detailTest(etape: EtapeCandidature.confirmee, etat: null),
+          effet: (DemandeGeste d, DetailCandidature a) => detailTest(
+            id: a.ligne.id,
+            etape: EtapeCandidature.confirmee,
+            etat: null,
+            restreinte: true,
+            restrictionCause: 'manuelle',
+          ),
+        );
+        await _monter(tester, port);
+        expect(find.byKey(CorpsDossier.cleEcrireApres), findsNothing);
+        await _geste(tester, GesteCandidature.restreindre);
+        await _saisirMotif(tester, 'Controle de routine.');
+        await _valider(tester);
+        final DemandeGeste d = port.appelsGeste.single.demande;
+        expect(d.geste, GesteCandidature.restreindre);
+        expect(
+          find.text(t.admin.candidatures.retours.restreindre),
+          findsOneWidget,
+        );
+        expect(find.byKey(CorpsDossier.cleEcrireApres), findsOneWidget);
+        expect(find.text(t.admin.candidatures.ecrireApres), findsOneWidget);
+      },
+    );
+
+    testWidgets('un autre geste (pause) ne propose pas d\'ecrire', (
+      WidgetTester tester,
+    ) async {
+      final FauxCandidaturesDirection port = _port(
+        detail: detailTest(enPause: true),
+        effet: (DemandeGeste d, DetailCandidature a) =>
+            _apres(a, enPause: false),
+      );
+      await _monter(tester, port);
+      await _agirPrincipal(tester);
+      await _valider(tester);
+      expect(find.byKey(CorpsDossier.cleEcrireApres), findsNothing);
+    });
+
     testWidgets('admettre : une confirmation, qui dit ce qui arrive', (
       WidgetTester tester,
     ) async {

@@ -4706,6 +4706,7 @@
         "titre": "Geste refusé",
         "nonConfirmeTitre": "Geste non confirmé"
       },
+      "ecrireApres": "Écrire à la personne",
       "retours": {
         "accueillir": "La personne est accueillie dans l'équipe.",
         "admettre": "La candidature est en Salle de vérification et d'entretien.",
