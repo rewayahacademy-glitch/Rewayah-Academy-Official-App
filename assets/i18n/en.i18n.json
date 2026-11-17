@@ -4896,6 +4896,185 @@
         }
       }
     },
+    "equipe": {
+      "titre": "Team",
+      "sousTitre": "The people you entrust with actions on applications, for a time.",
+      "inviter": "Invite a person",
+      "nouvelleMission": "New mission",
+      "accorder": "Grant a mission",
+      "porteurs": "People with a mission",
+      "missions": "Missions",
+      "plusActions": "More actions",
+      "deplierMissions": "Show the missions",
+      "replierMissions": "Hide the missions",
+      "invitations": "Pending invitations",
+      "videTitre": "Nobody has a mission yet.",
+      "videPhrase": "Invite a person or create a mission.",
+      "aucuneMission": "No mission yet.",
+      "aucuneInvitation": "No pending invitation.",
+      "sansFin": "no end date",
+      "jusquAu": "until {date}",
+      "depuisLe": "since {date}",
+      "indisponibleTitre": "The team is not available yet.",
+      "indisponiblePhrase": "The server does not return missions yet. Come back later.",
+      "menu": {
+        "detail": "View details",
+        "retirer": "Remove the mission",
+        "archiver": "Archive",
+        "revoquer": "Revoke",
+        "plus": "Actions for {nom}"
+      },
+      "mission": {
+        "porteurs(param=n)": {
+          "zero": "Nobody holds it",
+          "one": "Held by {n} person",
+          "other": "Held by {n} people"
+        },
+        "archivee": "Archived",
+        "gestes": "What it allows"
+      },
+      "invitation": {
+        "code": "Code: {code}",
+        "expire": "Expires on {date}",
+        "etat": {
+          "active": "Pending",
+          "utilisee": "Account created",
+          "expiree": "Expired",
+          "revoquee": "Revoked"
+        }
+      },
+      "perimetre": {
+        "tous": "all applications on their side",
+        "langues": "applications in {langues}",
+        "salles": "{salles}",
+        "dossiers(param=n)": {
+          "one": "{n} application entrusted",
+          "other": "{n} applications entrusted"
+        }
+      },
+      "cote": {
+        "male": "men",
+        "female": "women",
+        "ligne": "Side: {cote}"
+      },
+      "detail": {
+        "titre": "Mission details",
+        "mission": "Mission",
+        "personne": "Person",
+        "perimetre": "Where they act",
+        "periode": "Period",
+        "gestes": "Actions",
+        "retiree": "Removed: {motif}",
+        "sansNom": "A team member"
+      },
+      "feuille": {
+        "motif": "Reason",
+        "motifAide": "It is kept in the log; the person does not read it.",
+        "motifManquant": "Write a reason.",
+        "annuler": "Cancel",
+        "mission": {
+          "titre": "New mission",
+          "nom": "Mission name",
+          "nomAide": "80 characters at most.",
+          "nomManquant": "Give the mission a name.",
+          "nomTropLong": "80 characters at most.",
+          "gestes": "What the person can do",
+          "gestesAide": "Tick at least one action. They can do nothing else.",
+          "gestesManquants": "Tick at least one action.",
+          "gestesIndisponibles": "The server does not return the list of actions. Reload the page.",
+          "creer": "Create the mission",
+          "creee": "Mission created."
+        },
+        "accorder": {
+          "titre": "Grant a mission",
+          "personne": "The person",
+          "personneManquante": "Choose a person.",
+          "mission": "The mission",
+          "missionManquante": "Choose a mission.",
+          "aucunePersonne": "No one can receive a mission yet. Invite someone.",
+          "aucuneMission": "Create a mission first.",
+          "perimetre": "Where they can act",
+          "langues": "Application languages",
+          "languesAide": "With no choice, all languages.",
+          "salles": "Rooms",
+          "sallesAide": "With no choice, all rooms.",
+          "debut": "Start",
+          "debutAide": "Now, if you do not choose a day.",
+          "fin": "End (optional)",
+          "finAide": "With no end, the mission lasts until it is removed.",
+          "resume": "{nom} will be able to {gestes}, on {perimetre}, {duree}.",
+          "resumeVide": "Choose a person and a mission: a sentence will say what they will be able to do.",
+          "accorder": "Grant the mission",
+          "accordee": "Mission granted."
+        },
+        "retirer": {
+          "titre": "Remove the mission",
+          "question": "Remove the mission \"{mission}\" from {nom}?",
+          "consequence": "{deNom}'s account is not changed: only this mission is removed. Their access to applications stops immediately.",
+          "retirer": "Remove the mission",
+          "retiree": "Mission removed. {deNom}'s account has not changed."
+        },
+        "archiver": {
+          "titre": "Archive the mission",
+          "question": "Archive the mission \"{mission}\"?",
+          "consequence": "It can no longer be granted. People who hold it keep it until it is removed.",
+          "archiver": "Archive",
+          "archivee": "Mission archived."
+        },
+        "inviter": {
+          "titre": "Invite a person",
+          "consequence": "The person receives a code to create their associate account. They see nothing until a mission is granted.",
+          "courriel": "E-mail address",
+          "courrielManquant": "Enter the e-mail address.",
+          "nom": "Name (optional)",
+          "envoyer": "Create the invitation",
+          "creee": "Invitation created. Code to pass on: {code}.",
+          "dejaInvite": "An invitation is already pending for this address. Code: {code}.",
+          "emailInvalide": "This e-mail address is not readable.",
+          "compteExistant": "An account already exists with this address."
+        },
+        "revoquer": {
+          "titre": "Revoke the invitation",
+          "question": "Revoke the invitation for {courriel}?",
+          "consequence": "The code no longer works. The person can no longer create an account with it.",
+          "revoquer": "Revoke",
+          "revoquee": "Invitation revoked."
+        }
+      },
+      "refus": {
+        "personneIndisponible": "This account cannot receive a mission: it is not active, or its role is not allowed.",
+        "genreInconnu": "This person's gender is not known: their mission is held on their side. Complete their account first.",
+        "attributionActive": "This person already holds this mission. Remove it first.",
+        "missionIndisponible": "This mission no longer exists or is archived.",
+        "parametresInvalides": "These choices are not allowed: check the name, the dates and the limits.",
+        "cleDejaUtilisee": "This request has already been used for something else. Start again.",
+        "gestesNonAdmis": "One of the actions is not allowed in a mission.",
+        "autre": "The server refused this action. Nothing was written.",
+        "permission": "You are not allowed to do this.",
+        "doubleVerification": "This action needs the second sign-in step.",
+        "nonConfirme": "The result is not confirmed. Reload the page to see what was saved.",
+        "echecTitre": "This action did not go through."
+      },
+      "gestes": {
+        "lire": "read applications",
+        "voir_contact": "see the e-mail address and phone",
+        "demander_complement": "ask for more information",
+        "admettre_verifications": "admit to verification",
+        "confirmer_moyen_paiement": "confirm the payout method",
+        "infirmer_moyen_paiement": "reject the payout method",
+        "debloquer_versement": "unblock the payout",
+        "definir_responsable": "choose the person in charge",
+        "consigner_prevenu": "note that a person was informed",
+        "rattacher": "attach an application to the person",
+        "planifier_entretien": "schedule the interview",
+        "consigner_entretien_tenu": "record a held interview",
+        "consigner_entretien_non_tenu": "record an interview that did not take place",
+        "valider_piece": "welcome into the team",
+        "rouvrir": "reopen an application",
+        "retirer": "note the withdrawal of an application",
+        "autre": "another action"
+      }
+    },
     "importInscriptions": {
       "onglet": "Import",
       "titre": "Import the registrations",
@@ -6226,6 +6405,7 @@
       "roleEleve": "Student",
       "roleControleur": "Reviewer",
       "roleComptable": "Accountant",
+      "roleAssocie": "Associate",
       "roleAucun": "Outside a session",
       "evtKycLu": "Identity file viewed",
       "evtKycTranche": "Identity file decided",
@@ -6445,6 +6625,7 @@
       "etatSansDecision": "No decision",
       "roleAdmin": "Administration",
       "roleComptable": "Accountant",
+      "roleAssocie": "Associate",
       "roleControleur": "Reviewer",
       "roleEnseignant": "Teacher",
       "roleTuteur": "Guardian",
@@ -6614,6 +6795,7 @@
       "parcoursControleur": "Quality review",
       "parcoursAdmin": "Administration",
       "parcoursComptable": "Accountant",
+      "parcoursAssocie": "Associate",
       "parcoursInconnu": "Unknown journey",
       "etatActif": "Active",
       "etatRevoque": "Revoked",
@@ -8673,6 +8855,7 @@
     "roles": {
       "admin": "Administrator",
       "accountant": "Accountant",
+      "associe": "Associate",
       "controller": "Reviewer",
       "teacher": "Teacher",
       "guardian": "Guardian",
@@ -8681,6 +8864,7 @@
     "roleDetail": {
       "admin": "Manages files, assignment and the academy's log",
       "accountant": "Manages payments and invoices",
+      "associe": "Follows the applications the administration entrusts to them",
       "controller": "Observes sessions for teaching quality",
       "teacher": "Gives classes and follows their slots",
       "guardian": "Follows the household and its children",

@@ -2854,6 +2854,7 @@
     "roles": {
       "admin": "مدير",
       "accountant": "محاسب",
+      "associe": "شريك",
       "controller": "مراقب",
       "teacher": "معلم",
       "guardian": "وليّ أمر",
@@ -2862,6 +2863,7 @@
     "roleDetail": {
       "admin": "يدير ملفات الأكاديمية والإسناد والسجل",
       "accountant": "يدير المدفوعات والفواتير",
+      "associe": "يتابع طلبات الترشح التي تكلّفه بها الإدارة",
       "controller": "يتابع الحصص من أجل الجودة التعليمية",
       "teacher": "يقدّم الدروس ويتابع مواعيده",
       "guardian": "يتابع الأسرة وأطفالها",
@@ -6148,6 +6150,192 @@
         }
       }
     },
+    "equipe": {
+      "titre": "الفريق",
+      "sousTitre": "الأشخاص الذين تكلّفونهم بإجراءات على طلبات الترشح، لمدة محددة.",
+      "inviter": "دعوة شخص",
+      "nouvelleMission": "مهمة جديدة",
+      "accorder": "منح مهمة",
+      "porteurs": "أشخاص لديهم مهمة",
+      "missions": "المهام",
+      "plusActions": "المزيد من الإجراءات",
+      "deplierMissions": "عرض المهام",
+      "replierMissions": "إخفاء المهام",
+      "invitations": "دعوات قيد الانتظار",
+      "videTitre": "لا أحد لديه مهمة بعد.",
+      "videPhrase": "ادعُ شخصًا أو أنشئ مهمة.",
+      "aucuneMission": "لا توجد مهمة حتى الآن.",
+      "aucuneInvitation": "لا توجد دعوة قيد الانتظار.",
+      "sansFin": "بلا نهاية",
+      "jusquAu": "حتى ⁨{date}⁩",
+      "depuisLe": "منذ ⁨{date}⁩",
+      "indisponibleTitre": "الفريق غير متاح بعد.",
+      "indisponiblePhrase": "الخادم لا يعرض المهام بعد. عودوا لاحقًا.",
+      "menu": {
+        "detail": "عرض التفاصيل",
+        "retirer": "سحب المهمة",
+        "archiver": "أرشفة",
+        "revoquer": "إلغاء",
+        "plus": "إجراءات ⁨{nom}⁩"
+      },
+      "mission": {
+        "porteurs(param=n)": {
+          "zero": "لا أحد يحملها",
+          "one": "يحملها شخص واحد",
+          "two": "يحملها شخصان",
+          "few": "يحملها ⁨{n}⁩ أشخاص",
+          "many": "يحملها ⁨{n}⁩ شخصًا",
+          "other": "يحملها ⁨{n}⁩ شخص"
+        },
+        "archivee": "مؤرشفة",
+        "gestes": "ما تتيحه"
+      },
+      "invitation": {
+        "code": "الرمز: ⁨{code}⁩",
+        "expire": "تنتهي في ⁨{date}⁩",
+        "etat": {
+          "active": "قيد الانتظار",
+          "utilisee": "أُنشئ الحساب",
+          "expiree": "منتهية",
+          "revoquee": "ملغاة"
+        }
+      },
+      "perimetre": {
+        "tous": "كل طلبات الترشح من جهتهم",
+        "langues": "طلبات الترشح بـ⁨{langues}⁩",
+        "salles": "⁨{salles}⁩",
+        "dossiers(param=n)": {
+          "zero": "لا ملفات موكلة",
+          "one": "ملف واحد موكل",
+          "two": "ملفان موكلان",
+          "few": "⁨{n}⁩ ملفات موكلة",
+          "many": "⁨{n}⁩ ملفًا موكلًا",
+          "other": "⁨{n}⁩ ملف موكل"
+        }
+      },
+      "cote": {
+        "male": "الرجال",
+        "female": "النساء",
+        "ligne": "الجهة: ⁨{cote}⁩"
+      },
+      "detail": {
+        "titre": "تفاصيل المهمة",
+        "mission": "المهمة",
+        "personne": "الشخص",
+        "perimetre": "أين يعمل",
+        "periode": "المدة",
+        "gestes": "الإجراءات",
+        "retiree": "سُحبت: ⁨{motif}⁩",
+        "sansNom": "عضو في الفريق"
+      },
+      "feuille": {
+        "motif": "السبب",
+        "motifAide": "يُحفظ في السجل ولا يقرؤه الشخص.",
+        "motifManquant": "اكتب سببًا.",
+        "annuler": "إلغاء",
+        "mission": {
+          "titre": "مهمة جديدة",
+          "nom": "اسم المهمة",
+          "nomAide": "80 حرفًا على الأكثر.",
+          "nomManquant": "أعطوا المهمة اسمًا.",
+          "nomTropLong": "80 حرفًا على الأكثر.",
+          "gestes": "ما يستطيع الشخص فعله",
+          "gestesAide": "حدّدوا إجراءً واحدًا على الأقل. لا يفعل شيئًا آخر.",
+          "gestesManquants": "حدّدوا إجراءً واحدًا على الأقل.",
+          "gestesIndisponibles": "الخادم لا يعرض قائمة الإجراءات. أعيدوا تحميل الصفحة.",
+          "creer": "إنشاء المهمة",
+          "creee": "أُنشئت المهمة."
+        },
+        "accorder": {
+          "titre": "منح مهمة",
+          "personne": "الشخص",
+          "personneManquante": "اختاروا شخصًا.",
+          "mission": "المهمة",
+          "missionManquante": "اختاروا مهمة.",
+          "aucunePersonne": "لا يمكن لأحد استلام مهمة حاليًا. ادعوا شخصًا.",
+          "aucuneMission": "أنشئوا مهمة أولًا.",
+          "perimetre": "أين يمكنه العمل",
+          "langues": "لغات طلبات الترشح",
+          "languesAide": "دون اختيار: كل اللغات.",
+          "salles": "القاعات",
+          "sallesAide": "دون اختيار: كل القاعات.",
+          "debut": "البداية",
+          "debutAide": "الآن، إن لم تختاروا يومًا.",
+          "fin": "النهاية (اختيارية)",
+          "finAide": "دون نهاية، تستمر المهمة حتى سحبها.",
+          "resume": "⁨{nom}⁩ سيستطيع ⁨{gestes}⁩، على ⁨{perimetre}⁩، ⁨{duree}⁩.",
+          "resumeVide": "اختاروا شخصًا ومهمة: ستقول جملة ما سيستطيع فعله.",
+          "accorder": "منح المهمة",
+          "accordee": "مُنحت المهمة."
+        },
+        "retirer": {
+          "titre": "سحب المهمة",
+          "question": "سحب المهمة «⁨{mission}⁩» من ⁨{nom}⁩؟",
+          "consequence": "حساب ⁨{deNom}⁩ لا يتغير: تُسحب هذه المهمة فقط. ينقطع وصوله إلى طلبات الترشح فورًا.",
+          "retirer": "سحب المهمة",
+          "retiree": "سُحبت المهمة. حساب ⁨{deNom}⁩ لم يتغير."
+        },
+        "archiver": {
+          "titre": "أرشفة المهمة",
+          "question": "أرشفة المهمة «⁨{mission}⁩»؟",
+          "consequence": "لا يمكن منحها بعد الآن. من يحملونها يحتفظون بها حتى سحبها.",
+          "archiver": "أرشفة",
+          "archivee": "أُرشفت المهمة."
+        },
+        "inviter": {
+          "titre": "دعوة شخص",
+          "consequence": "يتلقى الشخص رمزًا لإنشاء حساب الشريك. لا يرى شيئًا حتى تُمنح له مهمة.",
+          "courriel": "البريد الإلكتروني",
+          "courrielManquant": "اكتبوا البريد الإلكتروني.",
+          "nom": "الاسم (اختياري)",
+          "envoyer": "إنشاء الدعوة",
+          "creee": "أُنشئت الدعوة. الرمز الذي يُسلَّم: ⁨{code}⁩.",
+          "dejaInvite": "توجد دعوة قيد الانتظار لهذا العنوان. الرمز: ⁨{code}⁩.",
+          "emailInvalide": "هذا البريد الإلكتروني غير مقروء.",
+          "compteExistant": "يوجد حساب بهذا العنوان بالفعل."
+        },
+        "revoquer": {
+          "titre": "إلغاء الدعوة",
+          "question": "إلغاء دعوة ⁨{courriel}⁩؟",
+          "consequence": "لا يعمل الرمز بعد الآن. لا يستطيع الشخص إنشاء حساب به.",
+          "revoquer": "إلغاء",
+          "revoquee": "أُلغيت الدعوة."
+        }
+      },
+      "refus": {
+        "personneIndisponible": "لا يمكن لهذا الحساب استلام مهمة: إما أنه غير نشط أو أن دوره غير مسموح.",
+        "genreInconnu": "جنس هذا الشخص غير معروف: تُحمل مهمته من جهته. أكملوا حسابه أولًا.",
+        "attributionActive": "هذا الشخص يحمل هذه المهمة بالفعل. اسحبوها أولًا.",
+        "missionIndisponible": "هذه المهمة لم تعد موجودة أو مؤرشفة.",
+        "parametresInvalides": "هذه الاختيارات غير مسموحة: راجعوا الاسم والتواريخ والحدود.",
+        "cleDejaUtilisee": "استُخدم هذا الطلب لأمر آخر. أعيدوا المحاولة.",
+        "gestesNonAdmis": "أحد الإجراءات غير مسموح في مهمة.",
+        "autre": "رفض الخادم هذا الإجراء. لم يُكتب شيء.",
+        "permission": "لا تملكون صلاحية فعل ذلك.",
+        "doubleVerification": "يتطلب هذا الإجراء خطوة الدخول الثانية.",
+        "nonConfirme": "النتيجة غير مؤكدة. أعيدوا تحميل الصفحة لرؤية ما سُجّل.",
+        "echecTitre": "لم يكتمل هذا الإجراء."
+      },
+      "gestes": {
+        "lire": "قراءة طلبات الترشح",
+        "voir_contact": "رؤية البريد الإلكتروني والهاتف",
+        "demander_complement": "طلب استكمال",
+        "admettre_verifications": "القبول في مرحلة التحقق",
+        "confirmer_moyen_paiement": "تأكيد وسيلة الدفع",
+        "infirmer_moyen_paiement": "نفي وسيلة الدفع",
+        "debloquer_versement": "رفع الحجب عن الدفع",
+        "definir_responsable": "اختيار المسؤول",
+        "consigner_prevenu": "تسجيل أن شخصًا قد أُبلغ",
+        "rattacher": "ربط طلب ترشح بالشخص",
+        "planifier_entretien": "تحديد موعد المقابلة",
+        "consigner_entretien_tenu": "تسجيل مقابلة جرت",
+        "consigner_entretien_non_tenu": "تسجيل مقابلة لم تجرِ",
+        "valider_piece": "الترحيب بالشخص في الفريق",
+        "rouvrir": "إعادة فتح طلب ترشح",
+        "retirer": "تسجيل سحب طلب ترشح",
+        "autre": "إجراء آخر"
+      }
+    },
     "importInscriptions": {
       "onglet": "استيراد",
       "titre": "استيراد التسجيلات",
@@ -8033,6 +8221,7 @@
       "roleEleve": "طالب",
       "roleControleur": "مراقب",
       "roleComptable": "محاسب",
+      "roleAssocie": "شريك",
       "roleAucun": "خارج الجلسة",
       "evtKycLu": "اطُّلع على ملف الهوية",
       "evtKycTranche": "حُسم ملف الهوية",
@@ -8273,6 +8462,7 @@
       "etatInconnu": "حالة الحساب غير معروفة بعد",
       "roleAdmin": "الإدارة",
       "roleComptable": "محاسب",
+      "roleAssocie": "شريك",
       "roleControleur": "مراقب",
       "roleEnseignant": "معلم",
       "roleTuteur": "وليّ أمر",
@@ -8474,6 +8664,7 @@
       "parcoursControleur": "مراقبة الجودة",
       "parcoursAdmin": "الإدارة",
       "parcoursComptable": "محاسب",
+      "parcoursAssocie": "شريك",
       "parcoursInconnu": "مسار غير معروف",
       "etatActif": "نشط",
       "etatRevoque": "ملغى",

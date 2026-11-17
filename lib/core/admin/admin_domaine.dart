@@ -311,6 +311,9 @@ List<({String libelle, String chemin})> ongletsPersonnes() =>
         libelle: t.recrutement.invitations.onglet,
         chemin: Routes.adminPersonnesInvitations,
       ),
+      // BE-2b (17/11/2026) : l'equipe (missions, invitations d'associes), avant
+      // les admissions, qui restent les dernieres.
+      (libelle: t.admin.equipe.titre, chemin: Routes.adminPersonnesEquipe),
       // Admission, lot C : les demandes d'admission, en dernier pour ne pas
       // decaler les index des autres onglets.
       // NAV-SOUS-LIENS (point 3) : « Demandes » seul se confondait avec les

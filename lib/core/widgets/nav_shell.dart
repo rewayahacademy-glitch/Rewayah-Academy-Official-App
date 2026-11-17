@@ -318,6 +318,8 @@ List<Destination> destinationsPour({
     // qui ne partage pas cette limite de quatre : elle est nee pour un role a
     // barre courte, et huit domaines en feraient un menu si on les y forcait.
     AppRole.admin => const <Destination>[],
+    // L'associe n'a qu'une page, comme le comptable : pas de barre.
+    AppRole.associe => const <Destination>[],
   };
 
   final List<Destination> destinations = mode == InterfaceMode.enfant
