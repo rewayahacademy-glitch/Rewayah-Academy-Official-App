@@ -98,7 +98,7 @@ CREATE FUNCTION pg_temp.d(p_n text) RETURNS uuid LANGUAGE sql IMMUTABLE AS $$
 GRANT EXECUTE ON FUNCTION pg_temp.u(text), pg_temp.d(text) TO authenticated, anon;
 
 -- Un appel qui rend une erreur jsonb ou une valeur ; le role authenticated, aal2 (la double verification).
--- a1 direction homme, a2 direction femme ; h1 porteur homme (controller), h2 porteuse (femme), h3 sans mission
+-- a1 direction homme, a2 direction femme ; h1 porteur homme (associe), h2 porteuse (femme), h3 sans mission
 -- (homme), h4 tuteur ; M1..M4 dossiers d'hommes, F1 dossier de femme.
 INSERT INTO auth.users (id, email) SELECT pg_temp.u(s), 'be2a-' || s || '@test.invalid'
   FROM unnest(ARRAY['a1', 'a2', 'h1', 'h2', 'h3', 'h4']) AS s;
@@ -106,9 +106,9 @@ INSERT INTO public.households (id, timezone) VALUES ('5b2affff-ffff-4fff-8fff-00
 INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
  (pg_temp.u('a1'), 'B2-ADM-0001', 'admin', NULL, 'Direction', 'Homme', 'active', 'male'),
  (pg_temp.u('a2'), 'B2-ADM-0002', 'admin', NULL, 'Direction', 'Femme', 'active', 'female'),
- (pg_temp.u('h1'), 'B2-CTL-0001', 'controller', NULL, 'Porteur', 'Un', 'active', 'male'),
- (pg_temp.u('h2'), 'B2-CTL-0002', 'controller', NULL, 'Porteuse', 'Deux', 'active', 'female'),
- (pg_temp.u('h3'), 'B2-CTL-0003', 'controller', NULL, 'Sans', 'Mission', 'active', 'male'),
+ (pg_temp.u('h1'), 'B2-CTL-0001', 'associe', NULL, 'Porteur', 'Un', 'active', 'male'),
+ (pg_temp.u('h2'), 'B2-CTL-0002', 'associe', NULL, 'Porteuse', 'Deux', 'active', 'female'),
+ (pg_temp.u('h3'), 'B2-CTL-0003', 'associe', NULL, 'Sans', 'Mission', 'active', 'male'),
  (pg_temp.u('h4'), 'B2-TUT-0001', 'guardian', '5b2affff-ffff-4fff-8fff-000000000001', 'Tuteur', 'Essai', 'active', 'female');
 INSERT INTO auth.users (id, email) SELECT ('5b2a0000-0000-4000-8000-0000000000' || (20 + i))::uuid, 'be2a-c' || i || '@test.invalid'
   FROM generate_series(1, 5) i;
@@ -175,8 +175,8 @@ SELECT pg_temp.garde('att1', pg_temp.accorder('h1', 'm1', '{"langues": ["francai
 SELECT pg_temp.vrai(NOT pg_temp.lu('att1') ? 'erreur', 'c0 : h1 porte une mission qui contient valider_piece (fixture)');
 
 SELECT pg_temp.garde('cap_a1', pg_temp.en(pg_temp.u('a1'), 'admin', $$SELECT public.capacites_candidatures()$$));
-SELECT pg_temp.garde('cap_h1', pg_temp.en(pg_temp.u('h1'), 'controller', $$SELECT public.capacites_candidatures()$$));
-SELECT pg_temp.garde('cap_h3', pg_temp.en(pg_temp.u('h3'), 'controller', $$SELECT public.capacites_candidatures()$$));
+SELECT pg_temp.garde('cap_h1', pg_temp.en(pg_temp.u('h1'), 'associe', $$SELECT public.capacites_candidatures()$$));
+SELECT pg_temp.garde('cap_h3', pg_temp.en(pg_temp.u('h3'), 'associe', $$SELECT public.capacites_candidatures()$$));
 SELECT pg_temp.garde('cap_h4', pg_temp.en(pg_temp.u('h4'), 'guardian', $$SELECT public.capacites_candidatures()$$));
 
 SELECT pg_temp.vrai((pg_temp.lu('cap_a1') -> 'gestes' ->> 'deciderPiece')::boolean IS TRUE,
