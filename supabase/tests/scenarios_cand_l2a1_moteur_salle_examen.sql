@@ -1837,7 +1837,8 @@ BEGIN
       'L2-10 : ' || r.geste || ' avec motif : le geste s''ouvre depuis sa source');
   END LOOP;
   -- VERSEMENT-QUESTIONS (16/11) : debloquer_versement, la douzieme ; BE-1g (16/11) : dispenser_entretien, la treizieme.
-  PERFORM pg_temp.vrai(v_n = 13, 'L2-10 : treize variantes de gestes a motif');
+  -- APRES-CONFIRMEE (17/11) : demander_verification_piece et demander_verification_versement : quinze.
+  PERFORM pg_temp.vrai(v_n = 15, 'L2-10 : quinze variantes de gestes a motif');
 END $l2_10$;
 
 -- L2-9 : en pause, tout geste autre que lever la pause, refuser ou retirer
@@ -1893,7 +1894,8 @@ BEGIN
   -- (un controle de plus dans la boucle : 418 au total).
   -- VERSEMENT-QUESTIONS (16/11) : debloquer_versement porte la table a vingt-huit variantes.
   -- BE-1g (16/11) : dispenser_entretien la porte a vingt-neuf.
-  PERFORM pg_temp.vrai(v_n = 29, 'L2-9 : les vingt-neuf variantes de la table des regles');
+  -- APRES-CONFIRMEE (17/11) : deux variantes de plus, trente et une.
+  PERFORM pg_temp.vrai(v_n = 31, 'L2-9 : les trente et une variantes de la table des regles');
 END $l2_9$;
 
 -- Un geste de la direction de bout en bout par le moteur (c10) : refus avec
@@ -2403,8 +2405,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 433 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 433 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11)', current_setting('test.n');
+  IF current_setting('test.n')::int <> 445 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 445 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11 + 12 d''APRES-CONFIRMEE, 17/11 : 2 variantes a motif x 6)', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;
