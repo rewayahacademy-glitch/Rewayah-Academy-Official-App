@@ -7,8 +7,9 @@
 -- fil de l'administration.
 --
 -- CHANGEMENT UNIQUE : private.com_fil_json (plpgsql, 20261016090000) ajoute, a l'auteur de chaque message, la cle
--- « compte_officiel » (texte) = le code du compte dans private.comptes_officiels pour l'auteur REEL (m.auteur_id),
--- ou NULL pour une personne ordinaire. Les cles existantes ne changent pas (« est_soi », « nature », etc.).
+-- « compte_officiel » (texte) = le code du compte dans private.comptes_officiels pour l'auteur REEL (m.auteur_id).
+-- La cle n'est ajoutee QUE pour un compte officiel : un auteur ordinaire garde exactement sa forme d'avant (les
+-- assertions existantes comparent l'objet entier). Les cles existantes ne changent pas (« est_soi », « nature », etc.).
 -- Retouche par ancre, une fois ; proprietaire, droits, attributs, search_path gardes et verifies. Aucune table,
 -- aucune vue, aucune fonction creee ; aucune donnee ecrite ; aucun droit accorde ; aucune suppression.
 -- Rejouable : rien a faire si la cle est deja la.
@@ -32,7 +33,7 @@ DECLARE
   v_f regprocedure := 'private.com_fil_json(uuid,uuid,text,uuid)'::regprocedure;
   v_def text := pg_catalog.pg_get_functiondef(v_f);
   v_ancre constant text := 'END || pg_catalog.jsonb_build_object(''est_soi'', m.auteur_id = p_moi))';
-  v_cle constant text := '''compte_officiel'', (SELECT o.code FROM private.comptes_officiels o WHERE o.profile_id = m.auteur_id)';
+  v_cle constant text := 'pg_catalog.jsonb_build_object(''compte_officiel'', o.code)';
   v_n integer;
   v_avant record;
 BEGIN
@@ -49,7 +50,7 @@ BEGIN
     FROM pg_catalog.pg_proc p WHERE p.oid = v_f;
   EXECUTE pg_catalog.replace(v_def, v_ancre,
     'END || pg_catalog.jsonb_build_object(''est_soi'', m.auteur_id = p_moi)' || pg_catalog.chr(10)
-    || '          || pg_catalog.jsonb_build_object(' || v_cle || '))');
+    || '          || coalesce((SELECT ' || v_cle || ' FROM private.comptes_officiels o WHERE o.profile_id = m.auteur_id), ''{}''::jsonb))');
   IF NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
                   WHERE p.oid = v_f AND p.prosecdef = v_avant.prosecdef
                     AND p.proowner = v_avant.proowner
@@ -64,7 +65,7 @@ $fil_json$;
 DO $postflight$
 DECLARE v_def text := pg_catalog.pg_get_functiondef('private.com_fil_json(uuid,uuid,text,uuid)'::regprocedure);
 BEGIN
-  IF pg_catalog.strpos(v_def, '''compte_officiel'', (SELECT o.code FROM private.comptes_officiels o WHERE o.profile_id = m.auteur_id)') = 0 THEN
+  IF pg_catalog.strpos(v_def, 'jsonb_build_object(''compte_officiel'', o.code)') = 0 THEN
     RAISE EXCEPTION 'auteur officiel : la cle compte_officiel de l''auteur est absente de com_fil_json';
   END IF;
   IF pg_catalog.strpos(v_def, '''nouveau'',') = 0 OR pg_catalog.strpos(v_def, '''est_soi'', m.auteur_id = p_moi') = 0 THEN
