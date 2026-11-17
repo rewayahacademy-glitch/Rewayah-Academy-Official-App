@@ -370,6 +370,7 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
    WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
   = ARRAY['private.praxis_noter>private.praxis_journal', 'private.praxis_porte>private.praxis_cles',
           'public.direction_praxis_emettre_cle>private.praxis_cles', 'public.direction_praxis_regler>private.praxis_reglages',
+          'public.direction_praxis_regler_essai>private.praxis_reglages',
           'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier'],
   'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
 -- R4 (suite, AR-10) : les ecritures INDIRECTES. TOUT appel qualifie `schema.fonction(` fait par une fonction praxis_*, private.praxis_* ou
@@ -385,11 +386,11 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.com_annonce_envoyer_interne', 'private.com_annonce_personnes', 'private.com_annonce_publics_valides',
           'private.com_envoyer_message_interne', 'private.com_est_mineur', 'private.com_est_partie', 'private.com_paires',
           'private.com_profil_valide', 'private.praxis_auteur_json', 'private.praxis_calendrier', 'private.praxis_cles',
-          'private.praxis_cotes', 'private.praxis_empreinte', 'private.praxis_est_equipe', 'private.praxis_est_officiel',
+          'private.praxis_cotes', 'private.praxis_empreinte', 'private.praxis_essai', 'private.praxis_est_equipe', 'private.praxis_est_officiel',
           'private.praxis_est_partie_a', 'private.praxis_fil_dans_cotes', 'private.praxis_fil_refus', 'private.praxis_journal',
           'private.praxis_noter', 'private.praxis_porte', 'private.praxis_profil', 'private.praxis_types_fil',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access'],
-  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (29 noms) ; aucun autre appel de public, private ou d''un autre schema');
+  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (30 noms) ; aucun autre appel de public, private ou d''un autre schema');
 
 -- R1 (AR-9) : un controle qui a un sens. Chaque outil public a EXACTEMENT les arguments attendus (nom : type) ; aucun argument n'est un texte libre
 -- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
