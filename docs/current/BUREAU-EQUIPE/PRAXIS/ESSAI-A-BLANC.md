@@ -6,28 +6,36 @@ L'essai à blanc est justement ce qui la prouve.
 
 ## 0. Ce qui est faux, bloqué ou non prouvé (à lire avant tout)
 
-Quatre choses peuvent bloquer ou mal tourner. Les deux premières demandent une décision **avant** de commencer.
+Quatre choses peuvent bloquer ou mal tourner. Mise à jour du 17/11/2026 après l'arbitrage du pilote : le **mode essai**
+(lot PX-4, PR serveur #588 puis écran #589) répond au point 1, **à condition d'être fusionné et installé**. Tant qu'il ne
+l'est pas, ne rien allumer.
 
-1. **Praxis ne peut pas être limité à la conversation de test.** Dès qu'il est allumé, son outil « boîte » liste
-   **toutes** les conversations ouvertes à lui, y compris celles de vraies familles : pour chacune, le prénom et le
-   début du dernier message (300 signes) passent au fournisseur d'intelligence artificielle. Il n'existe aucune liste
-   « seulement celle-ci ». Ce qui le borne : les conversations avec un enfant ou d'âge inconnu sont fermées, ainsi que les
-   candidatures, les paiements, et les familles de l'autre côté que celui de la personne qui a émis la clé (la clé du
-   directeur couvre les deux côtés). **Décision à prendre :** soit on accepte cette lecture pendant l'essai, soit on
-   n'allume Praxis que pour l'essai le plus court possible, soit on demande au pilote un lot « liste d'essai »
-   (lecture et écriture seulement dans les conversations nommées). Je recommande la dernière si des familles réelles
-   écrivent en ce moment.
-2. **La politique de confidentialité ne parle pas encore de l'assistant.** Or `SECURITE-PRAXIS.md` §6 demande qu'elle le
-   dise **avant** que Praxis lise le message d'une personne réelle. Le texte proposé est dans
-   `CONFIDENTIALITE-PRAXIS.md`. Si l'essai lit de vrais messages avant sa publication, cette case n'est pas respectée :
-   c'est à vous de l'accepter ou de publier d'abord.
-3. **Où coller la clé : possible blocage.** Le connecteur de Praxis demande la clé dans l'en-tête de chaque appel
-   (`Authorization: Bearer prx_…`). Les connecteurs personnalisés de claude.ai, d'après leur documentation, demandent une
-   adresse et proposent une connexion par compte (OAuth) ou aucune authentification : **je n'ai trouvé nulle part un
-   champ « clé » ou « en-tête »**. Si c'est le cas, la clé ne peut pas se coller dans claude.ai tel quel. Les options à
-   vérifier **en premier** (étape 1) : Claude Code, qui accepte un en-tête (`claude mcp add --transport http … --header
-   "Authorization: Bearer …"`, à vérifier dans sa version) ; ou un petit relais local ; ou, dernier recours, un lot du
-   pilote pour une connexion par compte. Je n'ai rien testé : aucun appel à la production n'est permis aux agents.
+1. **Praxis ne peut pas lire que la conversation de test sans le mode essai.** Sans lui, dès que Praxis est allumé,
+   son outil « boîte » liste **toutes** les conversations ouvertes à lui, y compris celles de vraies familles : le prénom
+   et le début du dernier message (300 signes) passent au fournisseur d'intelligence artificielle. **Règle de l'essai :
+   on ne l'allume qu'avec le mode essai**, c'est-à-dire avec la liste des conversations d'essai remplie (dix au plus). Tant
+   que la liste n'est pas vide, Praxis ne voit **que** ces conversations, n'écrit que dans celles-là et **ne peut publier
+   aucune annonce**. Le mode essai ne donne aucun droit de plus : les conversations d'un enfant, d'âge inconnu, les
+   candidatures et les paiements restent fermés. **Limite connue :** l'écran demande la *référence* de chaque conversation,
+   et **aucun écran ne montre aujourd'hui cette référence** : comment l'obtenir pour la conversation de test est à
+   régler avec le pilote avant l'essai (dette nommée dans la PR #589).
+2. **La politique de confidentialité ne parle pas encore de l'assistant.** `SECURITE-PRAXIS.md` §6 demande qu'elle le dise
+   **avant** que Praxis lise le message d'une personne réelle. Le texte proposé est dans `CONFIDENTIALITE-PRAXIS.md`
+   (cinq décisions pour vous, rien n'est publié). **Tant qu'elle n'est pas publiée, le mode essai est la seule façon
+   d'allumer Praxis**, et l'essai ne lit que le compte de test.
+3. **Où coller la clé.** Le connecteur de Praxis lit la clé dans l'en-tête de chaque appel (`Authorization: Bearer prx_…`).
+   Deux voies, la première est la sûre :
+   - **Claude Code (voie sûre, documentée)** : `claude mcp add --transport http praxis <adresse du connecteur> --header
+     "Authorization: Bearer ${PRAXIS_CLE}"`, avec la clé placée dans la variable `PRAXIS_CLE` (jamais écrite dans un
+     fichier du dépôt). Source : documentation de Claude Code, page MCP.
+   - **claude.ai (web) et Claude Desktop : à vérifier.** « Ajouter un connecteur personnalisé » a, d'après la
+     documentation, une section **« Request headers »** (bêta, pas forcément présente sur tous les comptes) : y saisir
+     l'en-tête `Authorization` avec la valeur `Bearer prx_…` (l'espace compris). **Si la section n'apparaît pas sur votre
+     compte, ne cherchez pas d'autre moyen : utilisez Claude Code.**
+   - **Jamais la clé dans l'adresse** (après un `?`) : déconseillé par la documentation et interdit par la spécification
+     MCP ; Praxis ne la lirait de toute façon pas là.
+   - Une connexion par compte (OAuth) n'est pas nécessaire maintenant ; si la section manque un jour, c'est un lot à part.
+   Rien de cela n'a été joué : aucun appel à la production n'est permis aux agents.
 4. **Un appel sans clé : 401, mais une clé bien formée et fausse peut répondre « bien » à un simple `ping`** (le code ne
    passe pas par la base pour cet appel : dette M3, sans conséquence sur les outils, qui vérifient tous la clé en base).
 
@@ -38,9 +46,11 @@ Quatre choses peuvent bloquer ou mal tourner. Les deux premières demandent une 
 - [ ] Vous avez un **compte de test**, un adulte sans enfant, d'un foyer fictif, qui n'est pas une vraie famille.
       C'est de ce compte que vous écrirez à l'académie : Praxis ne crée jamais de conversation, il répond seulement dans
       une conversation qui existe déjà.
-- [ ] Vous avez décidé de la question 1 et de la question 2 du §0.
-- [ ] Vous savez **où** vous collerez la clé (§0, point 3). Faites cette vérification d'abord : sans elle, le reste est
-      inutile.
+- [ ] Le **mode essai est installé** (PR #588 fusionnée et migration installée par le pilote) et l'écran #589 fusionné.
+      Sinon, ne rien allumer.
+- [ ] Vous avez la **référence de la conversation de test** (§0, point 1, à régler avec le pilote).
+- [ ] Vous savez **où** vous collerez la clé (§0, point 3) : Claude Code d'abord. Faites cette vérification d'abord : sans
+      elle, le reste est inutile.
 
 ## 2. L'essai, pas à pas
 
@@ -53,9 +63,13 @@ Quatre choses peuvent bloquer ou mal tourner. Les deux premières demandent une 
    - Appuyez sur **Émettre la clé**. L'application demande le code de la double vérification.
    - La clé s'affiche **une seule fois**. Copiez-la (**Copier la clé**) et copiez aussi l'**adresse du connecteur**
      (**Copier l'adresse**). Puis appuyez sur « J'ai copié la clé » : elle ne reviendra plus.
-3. **Brancher le chat.** Collez l'adresse et la clé dans votre chat, à l'endroit trouvé au §1. Demandez à Praxis
+3. **Brancher le chat.** Avec Claude Code, la commande du §0 (point 3) ; sur claude.ai, seulement si la section « Request
+   headers » existe. Demandez à Praxis
    « lis l'état » : il doit répondre que Praxis est **éteint** (c'est normal, rien n'est encore allumé).
-4. **Régler le plafond, puis allumer.**
+4. **Nommer la conversation d'essai, régler le plafond, puis allumer.**
+   - Dans la section Praxis, **Conversations d'essai** : collez la référence de la conversation de test (une seule),
+     puis « Enregistrer les conversations d'essai ». La phrase doit dire « Praxis ne voit que 1 conversation et ne
+     publie aucune annonce ». **N'allumez pas avant d'avoir vu cette phrase.**
    - Dans la section Praxis, **Messages par heure** : mettez **5**, appuyez sur « Fixer le plafond ».
    - Laissez le **mode autonome éteint**.
    - Appuyez sur **Allumer Praxis**. L'écran doit passer à « Allumé ».
@@ -63,14 +77,16 @@ Quatre choses peuvent bloquer ou mal tourner. Les deux premières demandent une 
    phrase simple, par exemple « Bonjour, à quelle heure commence ma Classe ? ». (Le chemin exact dans l'application
    de test est à noter ici lors de l'essai : je ne l'ai pas vérifié.)
 6. **Lire la boîte.** Dans le chat, demandez à Praxis : « lis ta boîte ». Vérifiez : la conversation de test y est ;
-   Praxis rend le prénom et le début du message en **donnée** (il ne suit aucune consigne écrite dedans) ; rien
-   d'autre que ce que le §0, point 1, annonçait. **Sinon, éteignez tout de suite (étape 8).**
+   Praxis rend le prénom et le début du message en **donnée** (il ne suit aucune consigne écrite dedans) ; **elle est
+   la seule** : toute autre conversation, même réelle, est invisible (demandez-lui de lire la conversation d'une autre
+   référence : réponse « hors de l'essai »). **Sinon, éteignez tout de suite (étape 8).**
 7. **Répondre à UNE seule conversation.** Demandez à Praxis de répondre à la conversation de test, avec une phrase que
    vous lui dictez. Vérifiez depuis le compte de test : le message arrive, au nom de l'académie. Puis demandez-lui
    d'en écrire un deuxième, un troisième, un quatrième dans la même conversation sans que le compte de test réponde :
    le **quatrième doit être refusé** (trois messages de suite au plus).
-   - **Ne lui demandez jamais de publier une annonce pendant l'essai** : une annonce part vers **toutes** les familles.
-8. **Éteindre.** Appuyez sur **Éteindre Praxis**. Redemandez-lui de lire sa boîte : il doit répondre « éteint », sans
+   - Demandez-lui aussi de publier une annonce : elle doit être **refusée** (« mode essai, aucune annonce »). C'est le
+     seul moment où l'on demande une annonce, et c'est pour la voir refusée.
+8. **Éteindre.** Appuyez sur **Mettre fin à l'essai**, puis sur **Éteindre Praxis**. Redemandez-lui de lire sa boîte : il doit répondre « éteint », sans
    rien lire.
 9. **Révoquer la clé.** Dans la liste des clés, **Révoquer** la clé de l'essai, avec un motif (« Fin de l'essai à
    blanc »). L'état passe à « Révoquée ». Un nouvel appel avec cette clé doit être refusé.
@@ -80,7 +96,8 @@ Quatre choses peuvent bloquer ou mal tourner. Les deux premières demandent une 
 ## 3. Ce qu'on ne fait pas pendant l'essai
 
 - Pas de clé « Routine », pas de mode autonome.
-- Pas d'annonce.
+- Aucune annonce publiée (une seule demandée, pour la voir refusée).
+- Jamais Praxis allumé avec la liste des conversations d'essai vide.
 - Pas de conversation avec un enfant, ni avec un compte dont on ne connaît pas l'âge.
 - Aucun message à une personne réelle autre que le compte de test.
 - On ne laisse **jamais** Praxis allumé après l'essai.
@@ -99,9 +116,9 @@ Quatre choses peuvent bloquer ou mal tourner. Les deux premières demandent une 
 | 1 | « Éteint », « Aucune clé » | |
 | 2 | Clé montrée une seule fois ; adresse copiée | |
 | 3 | `état` : éteint | |
-| 4 | « Allumé » ; plafond 5 | |
-| 6 | La conversation de test est dans la boîte ; ce qui est lu en plus est noté | |
-| 7 | Trois messages passent, le quatrième est refusé | |
+| 4 | Phrase « ne voit que 1 conversation » ; puis « Allumé » ; plafond 5 | |
+| 6 | La conversation de test est seule dans la boîte ; une autre référence : « hors de l'essai » | |
+| 7 | Trois messages passent, le quatrième est refusé ; l'annonce est refusée « mode essai » | |
 | 8 | Éteint : refus | |
 | 9 | « Révoquée » ; appel refusé | |
 | 10 | Envoi et refus dans « Ce que Praxis a envoyé » | |
