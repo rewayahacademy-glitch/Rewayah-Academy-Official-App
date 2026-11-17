@@ -62,15 +62,15 @@ CREATE FUNCTION pg_temp.d(p_n text) RETURNS uuid LANGUAGE sql IMMUTABLE AS $$
     WHEN 'M4' THEN '04' WHEN 'M5' THEN '05' WHEN 'F1' THEN '06' END)::uuid $$;
 GRANT EXECUTE ON FUNCTION pg_temp.u(text), pg_temp.d(text) TO authenticated, anon;
 
--- a1 direction homme, a2 direction femme ; h1 porteur homme (controller) ; h3 sans mission (homme).
+-- a1 direction homme, a2 direction femme ; h1 porteur homme (associe) ; h3 sans mission (homme).
 -- M1 en examen (francais) ; M2 en examen (poular) ; M3 en Salle de verification, entretien a planifier (francais) ;
 -- M4 paiement non disponible ; M5 decision en attente ; F1 dossier de femme.
 INSERT INTO auth.users (id, email) SELECT pg_temp.u(s), 'gds-' || s || '@test.invalid' FROM unnest(ARRAY['a1', 'a2', 'h1', 'h3']) AS s;
 INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
  (pg_temp.u('a1'), 'GD-ADM-0001', 'admin', NULL, 'Direction', 'Homme', 'active', 'male'),
  (pg_temp.u('a2'), 'GD-ADM-0002', 'admin', NULL, 'Direction', 'Femme', 'active', 'female'),
- (pg_temp.u('h1'), 'GD-CTL-0001', 'controller', NULL, 'Porteur', 'Un', 'active', 'male'),
- (pg_temp.u('h3'), 'GD-CTL-0003', 'controller', NULL, 'Sans', 'Mission', 'active', 'male');
+ (pg_temp.u('h1'), 'GD-CTL-0001', 'associe', NULL, 'Porteur', 'Un', 'active', 'male'),
+ (pg_temp.u('h3'), 'GD-CTL-0003', 'associe', NULL, 'Sans', 'Mission', 'active', 'male');
 INSERT INTO auth.users (id, email) SELECT ('6e570000-0000-4000-8000-0000000000' || (20 + i))::uuid, 'gds-c' || i || '@test.invalid'
   FROM generate_series(1, 6) i;
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
@@ -177,31 +177,31 @@ SELECT pg_temp.garde('m_ens', pg_temp.en(pg_temp.u('a1'), 'admin', $$SELECT pg_c
 SELECT pg_temp.garde('att', pg_temp.en(pg_temp.u('a1'), 'admin', pg_catalog.format(
   'SELECT pg_catalog.to_jsonb(public.accorder_mission(%L::uuid, %L::uuid, ''{"langues": ["francais"]}''::jsonb, NULL, NULL, %L::uuid))',
   pg_temp.u('h1'), pg_temp.lu('m_ens') #>> '{}', '6e570000-2222-4000-8000-000000000001')));
-SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'controller', 'M1') = ARRAY['definir_responsable', 'demander_complement'],
+SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'associe', 'M1') = ARRAY['definir_responsable', 'demander_complement'],
   '4 : le porteur ne recoit sur M1 que les gestes COCHES que la regle de l''etat permet (definir_responsable, demander_complement)');
-SELECT pg_temp.vrai(NOT (pg_temp.liste_gestes('h1', 'controller', 'M1') && ARRAY['refuser', 'mettre_en_pause', 'retirer',
+SELECT pg_temp.vrai(NOT (pg_temp.liste_gestes('h1', 'associe', 'M1') && ARRAY['refuser', 'mettre_en_pause', 'retirer',
     'admettre_verifications', 'debloquer_versement', 'confirmer_moyen_paiement']),
   '4 : aucun geste que la mission ne coche pas (refuser, pause, retirer, admettre, versement)');
-SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'controller', 'M5') = ARRAY['definir_responsable', 'demander_complement', 'valider_piece'],
+SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'associe', 'M5') = ARRAY['definir_responsable', 'demander_complement', 'valider_piece'],
   '4 : en decision en attente, le porteur recoit valider_piece parce que sa mission le coche');
-SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'controller', 'M3') @> ARRAY['demander_complement']
-  AND 'clore_complement' = ANY (pg_temp.liste_gestes('h1', 'controller', 'M3')),
+SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'associe', 'M3') @> ARRAY['demander_complement']
+  AND 'clore_complement' = ANY (pg_temp.liste_gestes('h1', 'associe', 'M3')),
   '4 : « clore_complement » suit demander_complement : rendu au porteur quand un complement court et qu''il a ce geste');
-SELECT pg_temp.vrai(pg_temp.dossier_gestes('h1', 'controller', 'M1') = ARRAY['definir_responsable', 'demander_complement'],
+SELECT pg_temp.vrai(pg_temp.dossier_gestes('h1', 'associe', 'M1') = ARRAY['definir_responsable', 'demander_complement'],
   '4 : le dossier du porteur dit la meme chose que sa liste');
 
 -- 5 : hors du perimetre : langue (M2 poular), autre cote (F1) : le dossier n'est pas lu, donc aucun geste a montrer ;
 --     et l'aide elle-meme, appelee sur la ligne, rend rien
-SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'controller', 'M2') IS NULL AND pg_temp.dossier_gestes('h1', 'controller', 'M2') IS NULL
-  AND pg_temp.liste_gestes('h1', 'controller', 'F1') IS NULL AND pg_temp.dossier_gestes('h1', 'controller', 'F1') IS NULL,
+SELECT pg_temp.vrai(pg_temp.liste_gestes('h1', 'associe', 'M2') IS NULL AND pg_temp.dossier_gestes('h1', 'associe', 'M2') IS NULL
+  AND pg_temp.liste_gestes('h1', 'associe', 'F1') IS NULL AND pg_temp.dossier_gestes('h1', 'associe', 'F1') IS NULL,
   '5 : dossiers hors langue et de l''autre cote : ni dans la liste ni lisibles');
-SELECT pg_temp.qui(pg_temp.u('h1'), 'controller');
+SELECT pg_temp.qui(pg_temp.u('h1'), 'associe');
 SELECT pg_temp.vrai((SELECT private.gestes_de_la_ligne(c) FROM public.candidatures c WHERE c.id = pg_temp.d('M2')) = '[]'::jsonb
   AND (SELECT private.gestes_de_la_ligne(c) FROM public.candidatures c WHERE c.id = pg_temp.d('F1')) = '[]'::jsonb,
   '5 : l''aide rend la liste vide pour un dossier hors du perimetre, meme appelee directement');
 
 -- 5 bis : sans mission, ni direction : rien
-SELECT pg_temp.qui(pg_temp.u('h3'), 'controller');
+SELECT pg_temp.qui(pg_temp.u('h3'), 'associe');
 SELECT pg_temp.vrai((SELECT private.gestes_de_la_ligne(c) FROM public.candidatures c WHERE c.id = pg_temp.d('M1')) = '[]'::jsonb,
   '5 bis : un compte sans mission et sans droit de direction : liste vide');
 
@@ -209,7 +209,7 @@ SELECT pg_temp.vrai((SELECT private.gestes_de_la_ligne(c) FROM public.candidatur
 SELECT pg_temp.garde('retrait', pg_temp.en(pg_temp.u('a1'), 'admin', pg_catalog.format(
   'SELECT to_jsonb(public.retirer_mission(%L::uuid, ''fin de mission'', %L::uuid))', pg_temp.lu('att') #>> '{}',
   '6e570000-3333-4000-8000-000000000001')));
-SELECT pg_temp.qui(pg_temp.u('h1'), 'controller');
+SELECT pg_temp.qui(pg_temp.u('h1'), 'associe');
 SELECT pg_temp.vrai((SELECT private.gestes_de_la_ligne(c) FROM public.candidatures c WHERE c.id = pg_temp.d('M1')) = '[]'::jsonb,
   '6 : mission retiree : liste vide');
 
