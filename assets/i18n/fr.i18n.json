@@ -2996,7 +2996,11 @@
         "reserveDirection": "Un candidat a réservé un entretien que vous menez.",
         "reserveDirectionQuand": "Un candidat a réservé un entretien que vous menez, le {quand}.",
         "rappelDirection": "Vous menez un entretien qui commence bientôt.",
-        "rappelDirectionQuand": "Vous menez un entretien le {quand}."
+        "rappelDirectionQuand": "Vous menez un entretien le {quand}.",
+        "annule": "L'entretien que vous meniez n'aura pas lieu.",
+        "annuleRefus": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été refusée.",
+        "annuleRetrait": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été retirée.",
+        "annulePause": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature est en pause."
       }
     },
     "partage": {
