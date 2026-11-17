@@ -173,6 +173,9 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   String? _modele;
   DateTime? _reprise;
   CanalRetrait? _canal;
+
+  /// La categorie d'une dispense d'entretien (BE-1g).
+  CategorieDispense? _categorie;
   DateTime? _jourDemande;
   String? _moyen;
   String? _responsable;
@@ -278,6 +281,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
         return _modele != null;
       case GesteCandidature.consignerRetrait:
         return _canal != null && _jourDemande != null;
+      case GesteCandidature.dispenserEntretien:
+        return _categorie != null;
       case GesteCandidature.confirmerMoyenPaiement:
       case GesteCandidature.infirmerMoyenPaiement:
         return _moyen != null;
@@ -412,6 +417,14 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           versionAttendue: version,
           cleIdempotence: cle,
           responsableId: _responsable,
+        );
+      case GesteCandidature.dispenserEntretien:
+        return DemandeGeste.dispenserEntretien(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          categorie: _categorie!,
+          motif: motif,
         );
     }
   }
@@ -608,6 +621,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
       if (_geste == GesteCandidature.mettreEnPause) ..._champReprise(context),
       if (_geste == GesteCandidature.consignerRetrait)
         ..._champsRetrait(context),
+      if (_geste == GesteCandidature.dispenserEntretien)
+        ..._champCategorie(context),
       if (_geste == GesteCandidature.confirmerMoyenPaiement ||
           _geste == GesteCandidature.infirmerMoyenPaiement)
         ..._champMoyen(context),
@@ -843,6 +858,46 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           onPress: () => _modifie(() => _reprise = null),
         ),
       ],
+    ];
+  }
+
+  /// BE-1g : qui la direction dispense, fondateur ou autre. Chaque option dit
+  /// quand la choisir (K-58) ; aucune n'est preselectionnee.
+  List<Widget> _champCategorie(BuildContext context) {
+    final d = t.admin.candidatures.dispense;
+    return <Widget>[
+      Ecart.vLg,
+      _titreChamp(d.categorie),
+      Ecart.vSm,
+      ChoiceCardGroup(
+        // Sur ordinateur, des lignes compactes (panneau lateral).
+        compacte: _bureau(context),
+        autoriserSaisieLibre: false,
+        options: <OptionChoix>[
+          OptionChoix(
+            cle: const ValueKey<String>('dispense-fondateur'),
+            valeur: CategorieDispense.fondateur.valeurSql,
+            libelle: d.fondateur,
+            explication: d.fondateurAide,
+          ),
+          OptionChoix(
+            cle: const ValueKey<String>('dispense-autre'),
+            valeur: CategorieDispense.autre.valeurSql,
+            libelle: d.autre,
+            explication: d.autreAide,
+          ),
+        ],
+        valeurInitiale: _categorie == null
+            ? null
+            : ReponseChoix(valeurs: <String>{_categorie!.valeurSql}),
+        onChange: (ReponseChoix choix) => _modifie(() {
+          _categorie = <CategorieDispense>[
+            for (final CategorieDispense c in CategorieDispense.values)
+              if (choix.valeurs.contains(c.valeurSql)) c,
+          ].firstOrNull;
+        }),
+      ),
+      if (_tente && _categorie == null) _erreurChamp(d.categorieManquante),
     ];
   }
 

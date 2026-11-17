@@ -345,12 +345,12 @@ BEGIN
     'dix tables du lot : RLS active, aucun privilege client, aucune policy');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 32,
+                         WHERE geste NOT LIKE '%admission') = 33,
     -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : demander_complement variantes 3 et 4, annuler_complement (transition 46).
     -- BE-1g (20261129470000, 16/11) : dispenser_entretien, transition 45, direction.
     -- VERSEMENT-QUESTIONS (20261128500100, 16/11) : debloquer_versement, transition 44, direction.
     -- V1-b (20261109200000, 03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
-    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b (trente-deux variantes)');
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b (trente-trois variantes)');
 END $f86$;
 
 -- Le journal de l'import, des lots et des accords ne se modifie pas (ajout seul).

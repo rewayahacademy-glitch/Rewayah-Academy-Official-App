@@ -135,6 +135,7 @@ void main() {
       permis: <GesteCandidature>[
         c,
         GesteCandidature.cloreComplement,
+        GesteCandidature.dispenserEntretien,
         GesteCandidature.mettreEnPause,
         GesteCandidature.refuser,
         GesteCandidature.consignerRetrait,

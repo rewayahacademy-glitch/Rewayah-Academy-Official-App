@@ -37,7 +37,7 @@ enum GesteCandidature {
   modifierComplement('modifierComplement'),
 
   /// Annuler le complement en cours en Salle d'examen : la candidature revient
-  /// `en_examen` (`annuler_complement_candidat`, transition 46).
+  /// `en_examen` (`annuler_complement_candidat`, transition 47).
   annulerComplement('annulerComplement'),
 
   /// Admettre en Salle de verification et d'entretien (transition 10).
@@ -73,7 +73,11 @@ enum GesteCandidature {
 
   /// Accueillir dans l'equipe : entrer en Salle des prets a enseigner, compte
   /// d'enseignant active (transition 14, `valider_piece_candidat`).
-  validerPiece('validerPiece');
+  validerPiece('validerPiece'),
+
+  /// Dispenser d'entretien (transition 45, `dispenser_entretien`, BE-1g) : la
+  /// candidature passe a la decision comme apres un entretien tenu.
+  dispenserEntretien('dispenserEntretien');
 
   const GesteCandidature(this.capacite);
 
@@ -90,6 +94,7 @@ enum GesteCandidature {
     mettreEnPause ||
     refuser ||
     consignerRetrait ||
+    dispenserEntretien ||
     rouvrir => true,
     modifierComplement ||
     admettreVerifications ||
@@ -107,6 +112,21 @@ enum GesteCandidature {
       this == refuser ||
       this == consignerRetrait ||
       this == infirmerMoyenPaiement;
+}
+
+/// La categorie d'une dispense d'entretien : un fondateur, ou une autre
+/// personne (BE-1g). Ecrite en base telle quelle (`fondateur`, `autre`).
+enum CategorieDispense {
+  /// Un fondateur.
+  fondateur('fondateur'),
+
+  /// Une autre personne, dispensee pour une raison que le motif ecrit dit.
+  autre('autre');
+
+  const CategorieDispense(this.valeurSql);
+
+  /// La valeur envoyee au serveur.
+  final String valeurSql;
 }
 
 /// Le canal par lequel un retrait a ete demande hors de l'application.
@@ -178,6 +198,7 @@ class DemandeGeste {
     this.demandeRecueLe,
     this.moyen,
     this.responsableId,
+    this.categorieDispense,
   });
 
   /// Demander un complement : les [elements] choisis dans la liste fermee, et
@@ -413,6 +434,23 @@ class DemandeGeste {
     cleIdempotence: cleIdempotence,
   );
 
+  /// Dispenser d'entretien : la [categorie] (fondateur ou autre) et un
+  /// [motif] ecrit, que le serveur exige.
+  factory DemandeGeste.dispenserEntretien({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required CategorieDispense categorie,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.dispenserEntretien,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
+    categorieDispense: categorie,
+    motif: motif,
+  );
+
   /// Le geste.
   final GesteCandidature geste;
 
@@ -449,6 +487,9 @@ class DemandeGeste {
 
   /// Le responsable choisi.
   final String? responsableId;
+
+  /// La categorie d'une dispense d'entretien.
+  final CategorieDispense? categorieDispense;
 }
 
 /// Un refus que le serveur rend pour un geste, sans rien ecrire. Chaque refus

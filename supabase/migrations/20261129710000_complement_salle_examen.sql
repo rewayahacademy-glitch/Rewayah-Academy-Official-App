@@ -95,7 +95,7 @@ VALUES
   ('demander_complement', 4, 7, '{direction}', '{prequalification}', '{paiement_non_disponible}', '{en_cours}',
    'interdite', NULL, '{direction}', NULL, false, 'transition', '{"etat": "a_completer"}', '{}', false),
   -- Annuler : le dossier revient en examen, le complement est clos.
-  ('annuler_complement', 1, 46, '{direction}', '{prequalification}', '{a_completer}', '{en_cours}',
+  ('annuler_complement', 1, 47, '{direction}', '{prequalification}', '{a_completer}', '{en_cours}',
    'interdite', 'complement_en_cours', '{direction}', NULL, false, 'transition', '{"etat": "en_examen"}', '{}', false)
 ON CONFLICT (geste, variante) DO NOTHING;
 
@@ -188,7 +188,7 @@ BEGIN
     'F86 candidate allowlist: signature=public.annuler_complement_candidat(uuid,text,integer,text); md5_functiondef='
     || pg_catalog.md5(pg_catalog.pg_get_functiondef('public.annuler_complement_candidat(uuid,text,integer,text)'::regprocedure))
     || '; guard_type=ROLE_POSITIVE_ADMIN_GENDER_SCOPE_ENGINE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-16. '
-    || 'COMPLEMENT-SALLE-EXAMEN. Direction active (garde positive) ; moteur (transition 46, motif ecrit, complement en cours exige par la regle) ; '
+    || 'COMPLEMENT-SALLE-EXAMEN. Direction active (garde positive) ; moteur (transition 47, motif ecrit, complement en cours exige par la regle) ; '
     || 'le dossier revient a en_examen, la demande est close, rien n''est efface. '
     || 'Must-pass: supabase/tests/scenarios_complement_salle_examen.sql.');
   FOREACH f IN ARRAY ARRAY['public.demander_complement_candidat(uuid,text[],text,integer,text)'::regprocedure,

@@ -46,6 +46,7 @@ AppIcon iconeDuGeste(GesteCandidature geste) => switch (geste) {
   GesteCandidature.rouvrir => AppIcons.annuler,
   GesteCandidature.definirResponsable => AppIcons.profil,
   GesteCandidature.validerPiece => AppIcons.pieceJointe,
+  GesteCandidature.dispenserEntretien => AppIcons.etoile,
 };
 
 /// Les gestes que le menu de [ligne] propose, dans l'ordre du menu : la
