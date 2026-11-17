@@ -28,6 +28,7 @@ import '../../core/widgets/selecteur_personne.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
+import 'section_praxis.dart';
 
 /// `ADM-07` : l'acces des agents IA (ADR-025).
 ///
@@ -268,6 +269,10 @@ class _AccesAgentsPageEtat extends ConsumerState<AccesAgentsPage> {
                 ),
                 Ecart.vLg,
                 _liste(context),
+                Ecart.vSection,
+                // PX-3 : Praxis, le secretaire de l'academie (reglages, cles,
+                // ce qu'il a envoye).
+                const SectionPraxis(),
                 Ecart.vRespiration,
               ],
             ),

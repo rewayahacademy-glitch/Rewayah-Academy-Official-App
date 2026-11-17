@@ -1929,6 +1929,7 @@ class Traductions$admin$fr {
 	late final Traductions$admin$suppressions$fr suppressions = Traductions$admin$suppressions$fr.internal(_root);
 	late final Traductions$admin$comptes$fr comptes = Traductions$admin$comptes$fr.internal(_root);
 	late final Traductions$admin$agents$fr agents = Traductions$admin$agents$fr.internal(_root);
+	late final Traductions$admin$praxis$fr praxis = Traductions$admin$praxis$fr.internal(_root);
 	late final Traductions$admin$notifications$fr notifications = Traductions$admin$notifications$fr.internal(_root);
 	late final Traductions$admin$finance$fr finance = Traductions$admin$finance$fr.internal(_root);
 	late final Traductions$admin$planning$fr planning = Traductions$admin$planning$fr.internal(_root);
@@ -14204,6 +14205,296 @@ class Traductions$admin$agents$fr {
 		one: '${nombre} fois, la dernière ${quand}',
 		other: '${nombre} fois, la dernière ${quand}',
 	);
+}
+
+// Path: admin.praxis
+class Traductions$admin$praxis$fr {
+	Traductions$admin$praxis$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Praxis'
+	String get titre => 'Praxis';
+
+	/// fr: 'Praxis est le secrétaire de l'académie. Il lit les messages des familles et ne répond que dans les limites ci-dessous. Il est éteint tant que vous ne l'allumez pas.'
+	String get intro => 'Praxis est le secrétaire de l\'académie. Il lit les messages des familles et ne répond que dans les limites ci-dessous. Il est éteint tant que vous ne l\'allumez pas.';
+
+	/// fr: 'Réglages de Praxis'
+	String get reglagesTitre => 'Réglages de Praxis';
+
+	/// fr: 'Praxis allumé'
+	String get allume => 'Praxis allumé';
+
+	/// fr: 'Allumé'
+	String get etatAllume => 'Allumé';
+
+	/// fr: 'Éteint'
+	String get etatEteint => 'Éteint';
+
+	/// fr: 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.'
+	String get allumeOui => 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.';
+
+	/// fr: 'Éteint : Praxis ne lit rien et n'écrit rien.'
+	String get allumeNon => 'Éteint : Praxis ne lit rien et n\'écrit rien.';
+
+	/// fr: 'Allumer Praxis'
+	String get allumer => 'Allumer Praxis';
+
+	/// fr: 'Éteindre Praxis'
+	String get eteindre => 'Éteindre Praxis';
+
+	/// fr: 'Mode autonome'
+	String get autonome => 'Mode autonome';
+
+	/// fr: 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.'
+	String get autonomeOui => 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.';
+
+	/// fr: 'Dirigé : Praxis n'agit que dans une conversation que vous menez.'
+	String get autonomeNon => 'Dirigé : Praxis n\'agit que dans une conversation que vous menez.';
+
+	/// fr: 'Autoriser le mode autonome'
+	String get autoriserAutonome => 'Autoriser le mode autonome';
+
+	/// fr: 'Revenir au mode dirigé'
+	String get reprendreDirige => 'Revenir au mode dirigé';
+
+	/// fr: 'Messages par heure'
+	String get plafond => 'Messages par heure';
+
+	/// fr: '(one) {Praxis envoie au plus {nombre} message par heure.} (other) {Praxis envoie au plus {nombre} messages par heure.}'
+	String plafondDetail({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: 'Praxis envoie au plus ${nombre} message par heure.',
+		other: 'Praxis envoie au plus ${nombre} messages par heure.',
+	);
+
+	/// fr: 'Nombre de messages par heure (de 1 à 120)'
+	String get plafondChamp => 'Nombre de messages par heure (de 1 à 120)';
+
+	/// fr: 'Fixer le plafond'
+	String get plafondEnregistrer => 'Fixer le plafond';
+
+	/// fr: 'Écrivez un nombre entier entre 1 et 120.'
+	String get plafondInvalide => 'Écrivez un nombre entier entre 1 et 120.';
+
+	/// fr: 'Réglage appliqué.'
+	String get reglageFait => 'Réglage appliqué.';
+
+	/// fr: 'Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.'
+	String get erreurReglage => 'Réglage non confirmé. Relisez l\'état ci-dessus avant de recommencer.';
+
+	/// fr: 'Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.'
+	String get doubleVerification => 'Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.';
+
+	/// fr: 'Pourra'
+	String get pourra => 'Pourra';
+
+	/// fr: 'Lire les messages des familles de l'académie, répondre dans une conversation qui existe, publier une annonce pour les familles, noter un sujet au calendrier.'
+	String get pourraDetail => 'Lire les messages des familles de l\'académie, répondre dans une conversation qui existe, publier une annonce pour les familles, noter un sujet au calendrier.';
+
+	/// fr: 'Ne pourra pas'
+	String get nePourraPas => 'Ne pourra pas';
+
+	/// fr: 'Écrire à un enfant, ouvrir une conversation, envoyer un courriel, toucher à l'argent, aux comptes, aux droits ou aux pièces d'identité, ni se rallumer seul.'
+	String get nePourraPasDetail => 'Écrire à un enfant, ouvrir une conversation, envoyer un courriel, toucher à l\'argent, aux comptes, aux droits ou aux pièces d\'identité, ni se rallumer seul.';
+
+	/// fr: 'Clés de Praxis'
+	String get clesTitre => 'Clés de Praxis';
+
+	/// fr: 'Une clé permet à une conversation ou à une routine de parler à Praxis. Elle n'est montrée qu'une fois, au moment où vous l'émettez.'
+	String get clesIntro => 'Une clé permet à une conversation ou à une routine de parler à Praxis. Elle n\'est montrée qu\'une fois, au moment où vous l\'émettez.';
+
+	/// fr: 'À quoi sert cette clé'
+	String get cleLibelle => 'À quoi sert cette clé';
+
+	/// fr: 'Obligatoire. Une clé sans nom est une clé que personne n'ose révoquer.'
+	String get cleLibelleAide => 'Obligatoire. Une clé sans nom est une clé que personne n\'ose révoquer.';
+
+	/// fr: 'Conversation du directeur'
+	String get cleLibelleExemple => 'Conversation du directeur';
+
+	/// fr: 'Comment elle servira'
+	String get cleUsage => 'Comment elle servira';
+
+	/// fr: 'Conversation'
+	String get usageChat => 'Conversation';
+
+	/// fr: 'Vous parlez à Praxis dans une conversation. Il agit quand vous le lui demandez.'
+	String get usageChatDetail => 'Vous parlez à Praxis dans une conversation. Il agit quand vous le lui demandez.';
+
+	/// fr: 'Routine'
+	String get usageRoutine => 'Routine';
+
+	/// fr: 'Praxis travaille seul à heures fixes. Elle ne marche que si le mode autonome est autorisé.'
+	String get usageRoutineDetail => 'Praxis travaille seul à heures fixes. Elle ne marche que si le mode autonome est autorisé.';
+
+	/// fr: 'Jusqu'à quand'
+	String get cleDuree => 'Jusqu\'à quand';
+
+	/// fr: '(one) {{nombre} jour} (other) {{nombre} jours}'
+	String dureeJours({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre,
+		one: '${nombre} jour',
+		other: '${nombre} jours',
+	);
+
+	/// fr: 'Quatre-vingt-dix jours au maximum, et la base le vérifie elle-même.'
+	String get dureePlafond => 'Quatre-vingt-dix jours au maximum, et la base le vérifie elle-même.';
+
+	/// fr: 'Émettre la clé'
+	String get emettre => 'Émettre la clé';
+
+	/// fr: 'Il manque le nom de la clé : écrivez à quoi elle sert.'
+	String get manqueLibelle => 'Il manque le nom de la clé : écrivez à quoi elle sert.';
+
+	/// fr: 'Émission non confirmée. Relisez la liste des clés avant de recommencer.'
+	String get erreurEmission => 'Émission non confirmée. Relisez la liste des clés avant de recommencer.';
+
+	/// fr: 'Clé émise'
+	String get cleEmise => 'Clé émise';
+
+	/// fr: 'Copiez la clé maintenant. Elle n'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.'
+	String get cleEmiseDetail => 'Copiez la clé maintenant. Elle n\'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.';
+
+	/// fr: 'Copier la clé'
+	String get copierCle => 'Copier la clé';
+
+	/// fr: 'Clé copiée'
+	String get cleCopiee => 'Clé copiée';
+
+	/// fr: 'Adresse du connecteur'
+	String get adresse => 'Adresse du connecteur';
+
+	/// fr: 'Collez cette adresse dans la conversation de Praxis, avec la clé.'
+	String get adresseDetail => 'Collez cette adresse dans la conversation de Praxis, avec la clé.';
+
+	/// fr: 'Copier l'adresse'
+	String get copierAdresse => 'Copier l\'adresse';
+
+	/// fr: 'Adresse copiée'
+	String get adresseCopiee => 'Adresse copiée';
+
+	/// fr: 'J'ai copié la clé'
+	String get termine => 'J\'ai copié la clé';
+
+	/// fr: 'Clé'
+	String get colonneCle => 'Clé';
+
+	/// fr: 'Usage'
+	String get colonneUsage => 'Usage';
+
+	/// fr: 'Émise le'
+	String get colonneEmise => 'Émise le';
+
+	/// fr: 'Jusqu'au'
+	String get colonneExpire => 'Jusqu\'au';
+
+	/// fr: 'Dernière utilisation'
+	String get colonneUtilisee => 'Dernière utilisation';
+
+	/// fr: 'État'
+	String get colonneEtat => 'État';
+
+	/// fr: 'Jamais utilisée'
+	String get jamaisUtilisee => 'Jamais utilisée';
+
+	/// fr: 'Active'
+	String get etatActive => 'Active';
+
+	/// fr: 'Révoquée'
+	String get etatRevoquee => 'Révoquée';
+
+	/// fr: 'Expirée'
+	String get etatExpiree => 'Expirée';
+
+	/// fr: 'Révoquer'
+	String get revoquer => 'Révoquer';
+
+	/// fr: 'Révoquer cette clé ?'
+	String get revoquerTitre => 'Révoquer cette clé ?';
+
+	/// fr: 'Praxis ne pourra plus s'en servir, tout de suite. Une clé révoquée ne se rétablit pas.'
+	String get revoquerDetail => 'Praxis ne pourra plus s\'en servir, tout de suite. Une clé révoquée ne se rétablit pas.';
+
+	/// fr: 'Pourquoi'
+	String get revoquerMotif => 'Pourquoi';
+
+	/// fr: 'Obligatoire. Quelques mots, gardés dans le journal.'
+	String get revoquerMotifAide => 'Obligatoire. Quelques mots, gardés dans le journal.';
+
+	/// fr: 'Il manque le motif : écrivez pourquoi.'
+	String get manqueMotif => 'Il manque le motif : écrivez pourquoi.';
+
+	/// fr: 'Révoquer la clé'
+	String get revoquerConfirmer => 'Révoquer la clé';
+
+	/// fr: 'Clé révoquée.'
+	String get revoquee => 'Clé révoquée.';
+
+	/// fr: 'Révocation non confirmée. Relisez la liste des clés avant de recommencer.'
+	String get erreurRevocation => 'Révocation non confirmée. Relisez la liste des clés avant de recommencer.';
+
+	/// fr: 'Aucune clé'
+	String get cleVide => 'Aucune clé';
+
+	/// fr: 'Émettez une clé pour parler à Praxis.'
+	String get cleVideDetail => 'Émettez une clé pour parler à Praxis.';
+
+	/// fr: 'Les réglages de Praxis n'ont pas pu être lus. Réessayez dans un instant.'
+	String get erreur => 'Les réglages de Praxis n\'ont pas pu être lus. Réessayez dans un instant.';
+
+	/// fr: 'Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.'
+	String get horsLigne => 'Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.';
+
+	/// fr: 'Ce que Praxis a envoyé'
+	String get journalTitre => 'Ce que Praxis a envoyé';
+
+	/// fr: 'Les messages et les annonces que Praxis a écrits lui-même, les plus récents d'abord. Jamais le texte d'une famille.'
+	String get journalIntro => 'Les messages et les annonces que Praxis a écrits lui-même, les plus récents d\'abord. Jamais le texte d\'une famille.';
+
+	/// fr: 'Praxis n'a encore rien envoyé'
+	String get journalVide => 'Praxis n\'a encore rien envoyé';
+
+	/// fr: 'Ses envois, et ses refus, apparaîtront ici.'
+	String get journalVideDetail => 'Ses envois, et ses refus, apparaîtront ici.';
+
+	/// fr: 'Le journal de Praxis n'a pas pu être lu. Réessayez dans un instant.'
+	String get journalErreur => 'Le journal de Praxis n\'a pas pu être lu. Réessayez dans un instant.';
+
+	/// fr: 'Voir les envois plus anciens'
+	String get voirSuite => 'Voir les envois plus anciens';
+
+	/// fr: 'Quand'
+	String get colonneQuand => 'Quand';
+
+	/// fr: 'Quoi'
+	String get colonneQuoi => 'Quoi';
+
+	/// fr: 'Résultat'
+	String get colonneResultat => 'Résultat';
+
+	/// fr: 'Début du texte'
+	String get colonneExtrait => 'Début du texte';
+
+	/// fr: 'Message'
+	String get quoiMessage => 'Message';
+
+	/// fr: 'Annonce'
+	String get quoiAnnonce => 'Annonce';
+
+	/// fr: 'Envoyé'
+	String get envoye => 'Envoyé';
+
+	/// fr: 'Refusé'
+	String get refuse => 'Refusé';
+
+	/// fr: 'Refusé : {cause}'
+	String refuseCause({required Object cause}) => 'Refusé : ${cause}';
+
+	/// fr: 'Rien n'a été écrit.'
+	String get sansTexte => 'Rien n\'a été écrit.';
+
+	late final Traductions$admin$praxis$cause$fr cause = Traductions$admin$praxis$cause$fr.internal(_root);
 }
 
 // Path: admin.notifications
@@ -30336,6 +30627,12 @@ class Traductions$admin$candidatures$gestes$fr {
 	/// fr: 'Clore le complément'
 	String get cloreComplement => 'Clore le complément';
 
+	/// fr: 'Modifier le complément'
+	String get modifierComplement => 'Modifier le complément';
+
+	/// fr: 'Annuler le complément'
+	String get annulerComplement => 'Annuler le complément';
+
 	/// fr: 'Mettre en pause'
 	String get mettreEnPause => 'Mettre en pause';
 
@@ -30386,6 +30683,12 @@ class Traductions$admin$candidatures$consequences$fr {
 
 	/// fr: 'Le complément demandé est clos. La candidature reste dans sa salle.'
 	String get cloreComplement => 'Le complément demandé est clos. La candidature reste dans sa salle.';
+
+	/// fr: 'La personne reçoit une nouvelle demande, qui remplace la précédente.'
+	String get modifierComplement => 'La personne reçoit une nouvelle demande, qui remplace la précédente.';
+
+	/// fr: 'La demande est annulée. La candidature revient à l'examen. La personne n'est pas prévenue.'
+	String get annulerComplement => 'La demande est annulée. La candidature revient à l\'examen. La personne n\'est pas prévenue.';
 
 	/// fr: 'La candidature n'avance plus tant que la pause n'est pas levée.'
 	String get mettreEnPause => 'La candidature n\'avance plus tant que la pause n\'est pas levée.';
@@ -30739,6 +31042,12 @@ class Traductions$admin$candidatures$retours$fr {
 
 	/// fr: 'Le complément est clos.'
 	String get cloreComplement => 'Le complément est clos.';
+
+	/// fr: 'Le complément est modifié.'
+	String get modifierComplement => 'Le complément est modifié.';
+
+	/// fr: 'Le complément est annulé.'
+	String get annulerComplement => 'Le complément est annulé.';
 
 	/// fr: 'La candidature est en pause.'
 	String get mettreEnPause => 'La candidature est en pause.';
@@ -33521,6 +33830,69 @@ class Traductions$admin$comptes$retrait$fr {
 
 	/// fr: 'Rien n'est parti : le réseau est absent. Réessayez dès son retour.'
 	String get horsLigne => 'Rien n\'est parti : le réseau est absent. Réessayez dès son retour.';
+}
+
+// Path: admin.praxis.cause
+class Traductions$admin$praxis$cause$fr {
+	Traductions$admin$praxis$cause$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'trop de messages de suite sans réponse'
+	String get plafondFil => 'trop de messages de suite sans réponse';
+
+	/// fr: 'plafond par heure atteint'
+	String get plafond => 'plafond par heure atteint';
+
+	/// fr: 'deux annonces déjà publiées aujourd'hui'
+	String get plafondAnnonces => 'deux annonces déjà publiées aujourd\'hui';
+
+	/// fr: 'Praxis était éteint'
+	String get eteint => 'Praxis était éteint';
+
+	/// fr: 'un enfant est dans cette conversation'
+	String get mineur => 'un enfant est dans cette conversation';
+
+	/// fr: 'la direction a repris la conversation'
+	String get reprisParEquipe => 'la direction a repris la conversation';
+
+	/// fr: 'conversation hors de l'académie'
+	String get horsAcademie => 'conversation hors de l\'académie';
+
+	/// fr: 'type de conversation fermé à Praxis'
+	String get typeFerme => 'type de conversation fermé à Praxis';
+
+	/// fr: 'conversation de l'autre côté'
+	String get cote => 'conversation de l\'autre côté';
+
+	/// fr: 'texte trop long'
+	String get longueur => 'texte trop long';
+
+	/// fr: 'demande incomplète'
+	String get parametre => 'demande incomplète';
+
+	/// fr: 'conversation introuvable'
+	String get filInconnu => 'conversation introuvable';
+
+	/// fr: 'conversation fermée'
+	String get filFerme => 'conversation fermée';
+
+	/// fr: 'public refusé'
+	String get publicRefuse => 'public refusé';
+
+	/// fr: 'clé refusée'
+	String get cleRefusee => 'clé refusée';
+
+	/// fr: 'mode autonome requis'
+	String get autonomeRequis => 'mode autonome requis';
+
+	/// fr: 'refusé par la messagerie'
+	String get refusee => 'refusé par la messagerie';
+
+	/// fr: 'cause inconnue'
+	String get autre => 'cause inconnue';
 }
 
 // Path: admin.finance.vue
@@ -58706,6 +59078,8 @@ extension on Traductions {
 			'admin.candidatures.gestes.debloquerVersement' => 'Débloquer le versement',
 			'admin.candidatures.gestes.demanderComplement' => 'Demander un complément',
 			'admin.candidatures.gestes.cloreComplement' => 'Clore le complément',
+			'admin.candidatures.gestes.modifierComplement' => 'Modifier le complément',
+			'admin.candidatures.gestes.annulerComplement' => 'Annuler le complément',
 			'admin.candidatures.gestes.mettreEnPause' => 'Mettre en pause',
 			'admin.candidatures.gestes.leverPause' => 'Lever la pause',
 			'admin.candidatures.gestes.refuser' => 'Refuser la candidature',
@@ -58720,6 +59094,8 @@ extension on Traductions {
 			'admin.candidatures.consequences.debloquerVersement' => 'Le versement est confirmé à la main, même sans moyen déclaré. Votre motif reste dans l\'historique. Si la personne modifie ses réponses, le déblocage tombe.',
 			'admin.candidatures.consequences.demanderComplement' => 'La candidature repasse à compléter. La personne lira la liste des éléments choisis.',
 			'admin.candidatures.consequences.cloreComplement' => 'Le complément demandé est clos. La candidature reste dans sa salle.',
+			'admin.candidatures.consequences.modifierComplement' => 'La personne reçoit une nouvelle demande, qui remplace la précédente.',
+			'admin.candidatures.consequences.annulerComplement' => 'La demande est annulée. La candidature revient à l\'examen. La personne n\'est pas prévenue.',
 			'admin.candidatures.consequences.mettreEnPause' => 'La candidature n\'avance plus tant que la pause n\'est pas levée.',
 			'admin.candidatures.consequences.leverPause' => 'La candidature reprend là où elle s\'était arrêtée.',
 			'admin.candidatures.consequences.refuser' => 'La candidature est fermée. Vous pourrez la rouvrir.',
@@ -58767,12 +59143,12 @@ extension on Traductions {
 			'admin.candidatures.moyens.mobile' => ({required Object nom}) => 'Monnaie mobile : ${nom}',
 			'admin.candidatures.moyens.mobileSansNom' => 'Monnaie mobile',
 			'admin.candidatures.moyens.aucunDeclare' => 'La personne n\'a déclaré aucun moyen de versement.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.responsables.choisir' => 'Choisissez le responsable de cette candidature.',
 			'admin.candidatures.responsables.aucun' => 'Aucun responsable',
 			'admin.candidatures.responsables.lectureEchec' => 'La liste des responsables n\'a pas pu être lue.',
 			'admin.candidatures.modeles.refusGeneral' => 'Refus général',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.modeles.refusNiveau' => 'Niveau pas encore suffisant',
 			'admin.candidatures.modeles.refusBesoins' => 'Pas de besoin pour ce profil',
 			'admin.candidatures.modeles.refusSansReponse' => 'Sans réponse de la personne',
@@ -58811,6 +59187,8 @@ extension on Traductions {
 			'admin.candidatures.retours.debloquerVersement' => 'Le versement est débloqué.',
 			'admin.candidatures.retours.demanderComplement' => 'Le complément est demandé.',
 			'admin.candidatures.retours.cloreComplement' => 'Le complément est clos.',
+			'admin.candidatures.retours.modifierComplement' => 'Le complément est modifié.',
+			'admin.candidatures.retours.annulerComplement' => 'Le complément est annulé.',
 			'admin.candidatures.retours.mettreEnPause' => 'La candidature est en pause.',
 			'admin.candidatures.retours.leverPause' => 'La pause est levée.',
 			'admin.candidatures.retours.refuser' => 'La candidature est refusée.',
@@ -59279,14 +59657,14 @@ extension on Traductions {
 			'admin.demandes.reclameReaffectation' => ({required Object dePrenom}) => 'Changer l\'enseignant ${dePrenom}',
 			'admin.demandes.reclameRegle' => ({required Object regle, required Object valeur}) => 'Porter ${regle} à ${valeur} min',
 			'admin.demandes.reclameRegleSansValeur' => ({required Object regle}) => 'Revoir ${regle}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.motifDemande' => 'Motif invoqué',
 			'admin.demandes.verdict' => 'Décision',
 			'admin.demandes.accorder' => 'Accorder',
 			'admin.demandes.refuser' => 'Refuser',
 			'admin.demandes.motif' => 'Ce qui motive ce refus, en une phrase',
 			'admin.demandes.motifRequis' => 'Un refus doit dire pourquoi : c\'est la seule phrase que la partie recevra.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.demandes.effet' => 'Accorder applique l\'effet en base : l\'affectation se clôt, ou la règle se pose. Cet écran ne fait que rendre le verdict.',
 			'admin.demandes.journalisation' => 'Chaque décision et chaque règle posée sont inscrites au journal d\'audit, avec votre nom.',
 			'admin.demandes.feuille' => ({required Object dePrenom}) => 'Les règles ${dePrenom}',
@@ -59793,14 +60171,14 @@ extension on Traductions {
 			'admin.regroupements.manquent' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il manque ${n} demande pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt.', other: 'Il manque ${n} demandes pour atteindre le quota : la classe pourra être créée dès que le regroupement sera prêt.', ), 
 			'admin.regroupements.nonOuvert' => 'La création de cette classe ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.',
 			'admin.regroupements.affectationNonOuverte' => 'La confirmation de l\'enseignant ne vous est pas ouverte : un membre de la direction qui en a le droit peut la faire.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.classeAttend' => ({required Object libelle}) => 'Classe ${libelle} créée : son enseignant reste à confirmer.',
 			'admin.regroupements.creer' => 'Créer la classe',
 			'admin.regroupements.choisirEnseignant' => 'Choisir l\'enseignant',
 			'admin.regroupements.voirClasse' => 'Voir la classe',
 			'admin.regroupements.manquentCourt' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Il manque ${n} demande.', other: 'Il manque ${n} demandes.', ), 
 			'admin.regroupements.contexte' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'L\'élève de ces demandes sera intégré à la classe dès sa création. Vous confirmerez ensuite l\'enseignant proposé.', other: 'Les ${n} élèves de ces demandes seront intégrés à la classe dès sa création. Vous confirmerez ensuite l\'enseignant proposé.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'admin.regroupements.nomDetail' => 'Déduit du genre, du public, des jours et de l\'heure.',
 			'admin.regroupements.dejaCreee' => 'Un autre membre de la direction vient de créer cette classe : rien n\'a été créé en double. Fermez cette feuille pour retrouver la liste à jour.',
 			'admin.regroupements.refusee' => ({required Object motif}) => 'La classe n\'a pas été créée : ${motif}. Vérifiez les demandes, puis pressez de nouveau.',
@@ -60307,14 +60685,14 @@ extension on Traductions {
 			'admin.journal.chaineEnCoursDetail' => 'Relecture de l\'empreinte de chaque entrée.',
 			'admin.journal.periodeSemaine' => '7 derniers jours',
 			'admin.journal.periodeMois' => '30 derniers jours',
+			_ => null,
+		} ?? switch (path) {
 			'admin.journal.periodeTout' => 'Depuis le début',
 			'admin.journal.tousTypes' => 'Tous les événements',
 			'admin.journal.tousActeurs' => 'Tout le monde',
 			'admin.journal.colonneQuand' => 'Quand',
 			'admin.journal.colonneQui' => 'Qui',
 			'admin.journal.colonneRole' => 'À quel titre',
-			_ => null,
-		} ?? switch (path) {
 			'admin.journal.colonneQuoi' => 'Ce qui a été fait',
 			'admin.journal.colonneCible' => 'Sur quoi',
 			'admin.journal.colonneDetail' => 'Détail',
@@ -60654,6 +61032,115 @@ extension on Traductions {
 			'admin.agents.videDetail' => 'Aucun agent IA n\'a accès à l\'application pour l\'instant.',
 			'admin.agents.erreur' => 'La liste des jetons n\'a pas pu être lue.',
 			'admin.agents.usage' => ({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} fois, la dernière ${quand}', other: '${nombre} fois, la dernière ${quand}', ), 
+			'admin.praxis.titre' => 'Praxis',
+			'admin.praxis.intro' => 'Praxis est le secrétaire de l\'académie. Il lit les messages des familles et ne répond que dans les limites ci-dessous. Il est éteint tant que vous ne l\'allumez pas.',
+			'admin.praxis.reglagesTitre' => 'Réglages de Praxis',
+			'admin.praxis.allume' => 'Praxis allumé',
+			'admin.praxis.etatAllume' => 'Allumé',
+			'admin.praxis.etatEteint' => 'Éteint',
+			'admin.praxis.allumeOui' => 'Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.',
+			'admin.praxis.allumeNon' => 'Éteint : Praxis ne lit rien et n\'écrit rien.',
+			'admin.praxis.allumer' => 'Allumer Praxis',
+			'admin.praxis.eteindre' => 'Éteindre Praxis',
+			'admin.praxis.autonome' => 'Mode autonome',
+			'admin.praxis.autonomeOui' => 'Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.',
+			'admin.praxis.autonomeNon' => 'Dirigé : Praxis n\'agit que dans une conversation que vous menez.',
+			'admin.praxis.autoriserAutonome' => 'Autoriser le mode autonome',
+			'admin.praxis.reprendreDirige' => 'Revenir au mode dirigé',
+			'admin.praxis.plafond' => 'Messages par heure',
+			'admin.praxis.plafondDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: 'Praxis envoie au plus ${nombre} message par heure.', other: 'Praxis envoie au plus ${nombre} messages par heure.', ), 
+			'admin.praxis.plafondChamp' => 'Nombre de messages par heure (de 1 à 120)',
+			'admin.praxis.plafondEnregistrer' => 'Fixer le plafond',
+			'admin.praxis.plafondInvalide' => 'Écrivez un nombre entier entre 1 et 120.',
+			'admin.praxis.reglageFait' => 'Réglage appliqué.',
+			'admin.praxis.erreurReglage' => 'Réglage non confirmé. Relisez l\'état ci-dessus avant de recommencer.',
+			'admin.praxis.doubleVerification' => 'Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.',
+			'admin.praxis.pourra' => 'Pourra',
+			'admin.praxis.pourraDetail' => 'Lire les messages des familles de l\'académie, répondre dans une conversation qui existe, publier une annonce pour les familles, noter un sujet au calendrier.',
+			'admin.praxis.nePourraPas' => 'Ne pourra pas',
+			'admin.praxis.nePourraPasDetail' => 'Écrire à un enfant, ouvrir une conversation, envoyer un courriel, toucher à l\'argent, aux comptes, aux droits ou aux pièces d\'identité, ni se rallumer seul.',
+			'admin.praxis.clesTitre' => 'Clés de Praxis',
+			'admin.praxis.clesIntro' => 'Une clé permet à une conversation ou à une routine de parler à Praxis. Elle n\'est montrée qu\'une fois, au moment où vous l\'émettez.',
+			'admin.praxis.cleLibelle' => 'À quoi sert cette clé',
+			'admin.praxis.cleLibelleAide' => 'Obligatoire. Une clé sans nom est une clé que personne n\'ose révoquer.',
+			'admin.praxis.cleLibelleExemple' => 'Conversation du directeur',
+			'admin.praxis.cleUsage' => 'Comment elle servira',
+			'admin.praxis.usageChat' => 'Conversation',
+			'admin.praxis.usageChatDetail' => 'Vous parlez à Praxis dans une conversation. Il agit quand vous le lui demandez.',
+			'admin.praxis.usageRoutine' => 'Routine',
+			'admin.praxis.usageRoutineDetail' => 'Praxis travaille seul à heures fixes. Elle ne marche que si le mode autonome est autorisé.',
+			'admin.praxis.cleDuree' => 'Jusqu\'à quand',
+			'admin.praxis.dureeJours' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} jour', other: '${nombre} jours', ), 
+			'admin.praxis.dureePlafond' => 'Quatre-vingt-dix jours au maximum, et la base le vérifie elle-même.',
+			'admin.praxis.emettre' => 'Émettre la clé',
+			'admin.praxis.manqueLibelle' => 'Il manque le nom de la clé : écrivez à quoi elle sert.',
+			'admin.praxis.erreurEmission' => 'Émission non confirmée. Relisez la liste des clés avant de recommencer.',
+			'admin.praxis.cleEmise' => 'Clé émise',
+			'admin.praxis.cleEmiseDetail' => 'Copiez la clé maintenant. Elle n\'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.',
+			'admin.praxis.copierCle' => 'Copier la clé',
+			'admin.praxis.cleCopiee' => 'Clé copiée',
+			'admin.praxis.adresse' => 'Adresse du connecteur',
+			'admin.praxis.adresseDetail' => 'Collez cette adresse dans la conversation de Praxis, avec la clé.',
+			'admin.praxis.copierAdresse' => 'Copier l\'adresse',
+			'admin.praxis.adresseCopiee' => 'Adresse copiée',
+			'admin.praxis.termine' => 'J\'ai copié la clé',
+			'admin.praxis.colonneCle' => 'Clé',
+			'admin.praxis.colonneUsage' => 'Usage',
+			'admin.praxis.colonneEmise' => 'Émise le',
+			'admin.praxis.colonneExpire' => 'Jusqu\'au',
+			'admin.praxis.colonneUtilisee' => 'Dernière utilisation',
+			'admin.praxis.colonneEtat' => 'État',
+			'admin.praxis.jamaisUtilisee' => 'Jamais utilisée',
+			'admin.praxis.etatActive' => 'Active',
+			'admin.praxis.etatRevoquee' => 'Révoquée',
+			'admin.praxis.etatExpiree' => 'Expirée',
+			'admin.praxis.revoquer' => 'Révoquer',
+			'admin.praxis.revoquerTitre' => 'Révoquer cette clé ?',
+			'admin.praxis.revoquerDetail' => 'Praxis ne pourra plus s\'en servir, tout de suite. Une clé révoquée ne se rétablit pas.',
+			'admin.praxis.revoquerMotif' => 'Pourquoi',
+			'admin.praxis.revoquerMotifAide' => 'Obligatoire. Quelques mots, gardés dans le journal.',
+			'admin.praxis.manqueMotif' => 'Il manque le motif : écrivez pourquoi.',
+			'admin.praxis.revoquerConfirmer' => 'Révoquer la clé',
+			'admin.praxis.revoquee' => 'Clé révoquée.',
+			'admin.praxis.erreurRevocation' => 'Révocation non confirmée. Relisez la liste des clés avant de recommencer.',
+			'admin.praxis.cleVide' => 'Aucune clé',
+			'admin.praxis.cleVideDetail' => 'Émettez une clé pour parler à Praxis.',
+			'admin.praxis.erreur' => 'Les réglages de Praxis n\'ont pas pu être lus. Réessayez dans un instant.',
+			'admin.praxis.horsLigne' => 'Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.',
+			'admin.praxis.journalTitre' => 'Ce que Praxis a envoyé',
+			'admin.praxis.journalIntro' => 'Les messages et les annonces que Praxis a écrits lui-même, les plus récents d\'abord. Jamais le texte d\'une famille.',
+			'admin.praxis.journalVide' => 'Praxis n\'a encore rien envoyé',
+			'admin.praxis.journalVideDetail' => 'Ses envois, et ses refus, apparaîtront ici.',
+			'admin.praxis.journalErreur' => 'Le journal de Praxis n\'a pas pu être lu. Réessayez dans un instant.',
+			'admin.praxis.voirSuite' => 'Voir les envois plus anciens',
+			'admin.praxis.colonneQuand' => 'Quand',
+			'admin.praxis.colonneQuoi' => 'Quoi',
+			'admin.praxis.colonneResultat' => 'Résultat',
+			'admin.praxis.colonneExtrait' => 'Début du texte',
+			'admin.praxis.quoiMessage' => 'Message',
+			'admin.praxis.quoiAnnonce' => 'Annonce',
+			'admin.praxis.envoye' => 'Envoyé',
+			'admin.praxis.refuse' => 'Refusé',
+			'admin.praxis.refuseCause' => ({required Object cause}) => 'Refusé : ${cause}',
+			'admin.praxis.sansTexte' => 'Rien n\'a été écrit.',
+			'admin.praxis.cause.plafondFil' => 'trop de messages de suite sans réponse',
+			'admin.praxis.cause.plafond' => 'plafond par heure atteint',
+			'admin.praxis.cause.plafondAnnonces' => 'deux annonces déjà publiées aujourd\'hui',
+			'admin.praxis.cause.eteint' => 'Praxis était éteint',
+			'admin.praxis.cause.mineur' => 'un enfant est dans cette conversation',
+			'admin.praxis.cause.reprisParEquipe' => 'la direction a repris la conversation',
+			'admin.praxis.cause.horsAcademie' => 'conversation hors de l\'académie',
+			'admin.praxis.cause.typeFerme' => 'type de conversation fermé à Praxis',
+			'admin.praxis.cause.cote' => 'conversation de l\'autre côté',
+			'admin.praxis.cause.longueur' => 'texte trop long',
+			'admin.praxis.cause.parametre' => 'demande incomplète',
+			'admin.praxis.cause.filInconnu' => 'conversation introuvable',
+			'admin.praxis.cause.filFerme' => 'conversation fermée',
+			'admin.praxis.cause.publicRefuse' => 'public refusé',
+			'admin.praxis.cause.cleRefusee' => 'clé refusée',
+			'admin.praxis.cause.autonomeRequis' => 'mode autonome requis',
+			'admin.praxis.cause.refusee' => 'refusé par la messagerie',
+			'admin.praxis.cause.autre' => 'cause inconnue',
 			'admin.notifications.titre' => 'Notifications',
 			'admin.notifications.vide' => 'Aucune notification',
 			'admin.notifications.videDetail' => 'Rien à signaler pour l\'instant.',
@@ -60712,6 +61199,8 @@ extension on Traductions {
 			'admin.finance.vue.alerte.aRegulariser' => 'Période à régulariser',
 			'admin.finance.vue.alerte.aRegulariserMontant' => ({required Object qui, required Object montant}) => '${qui} : il manque ${montant} pour financer la période en cours.',
 			'admin.finance.vue.alerte.aRegulariserSansMontant' => ({required Object qui}) => '${qui} : la période en cours n\'est pas financée.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.vue.alerte.confirmation' => 'Paiement en attente de confirmation',
 			'admin.finance.vue.alerte.confirmationMontant' => ({required Object qui, required Object montant}) => '${qui} : un paiement de ${montant} attend sa confirmation.',
 			'admin.finance.vue.alerte.confirmationSansMontant' => ({required Object qui}) => '${qui} : un paiement attend sa confirmation.',
@@ -60827,8 +61316,6 @@ extension on Traductions {
 			'admin.finance.pol.plafondHoraire' => 'Plafond horaire (règle abandonnée)',
 			'admin.finance.pol.plafondHoraireDetail' => 'Ancien maximum par heure, abandonné le 19/10/2026 : seul compte le taux par élève présent.',
 			'admin.finance.pol.occupation' => 'Ancien calcul selon la classe (règle abandonnée)',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.occupationValeur' => 'Règle abandonnée',
 			'admin.finance.pol.occupationDetail' => 'Règle abandonnée le 19/10/2026 : seul un élève présent est payé, un absent jamais.',
 			'admin.finance.pol.classesObjectif' => 'Objectif de classes par enseignant',
@@ -61226,6 +61713,8 @@ extension on Traductions {
 			'admin.incidents.titre' => 'Incidents des 24 dernières heures',
 			'admin.incidents.sousTitre' => 'Les séances passées en incident technique, enseignant absent ou élève absent depuis 24 heures : ce que compte la tuile « Incidents (24 h) ».',
 			'admin.incidents.liste' => 'Séances en incident',
+			_ => null,
+		} ?? switch (path) {
 			'admin.incidents.natureTechnique' => 'Incident technique',
 			'admin.incidents.natureEnseignantAbsent' => 'Enseignant absent',
 			'admin.incidents.natureEleveAbsent' => 'Élève absent',
@@ -61341,8 +61830,6 @@ extension on Traductions {
 			'admin.fusion.transfertNonConfirme' => 'Le transfert n\'est pas confirmé : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans transfert en double.',
 			'admin.fusion.historiqueTitre' => ({required Object deLibelle}) => 'Historique ${deLibelle}',
 			'admin.fusion.historiqueVide' => 'Aucun mouvement',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fusion.historiqueVideDetail' => 'Les fusions et les transferts de cette classe apparaîtront ici.',
 			'admin.fusion.historiqueErreur' => 'L\'historique n\'a pas pu être lu. Réessayez dans un instant.',
 			'admin.fusion.evenementFusionSortante' => ({required num n, required Object autre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Fusionnée dans ${autre} : ${n} élève déplacé', other: 'Fusionnée dans ${autre} : ${n} élèves déplacés', ), 
@@ -61740,6 +62227,8 @@ extension on Traductions {
 			'admin.bibliotheque.import.simple.bloque' => ({required Object criteres}) => 'L\'enregistrement est bloqué, et rien n\'a changé. Ce qui bloque : ${criteres}. Corrigez-le dans « Plus de réglages », puis réessayez.',
 			'admin.bibliotheque.import.simple.bloqueSansDetail' => 'L\'enregistrement est bloqué, et rien n\'a changé. Ouvrez la vérification du document pour voir ce qui bloque.',
 			'admin.bibliotheque.import.simple.inactifTitre' => 'L\'enregistrement n\'est pas encore activé',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.simple.inactif' => 'Le serveur n\'a pas encore la mise à jour qui permet d\'enregistrer un document. Rien n\'est perdu : le fichier reste ajouté. Prévenez la personne qui installe les mises à jour.',
 			'admin.bibliotheque.import.simple.fichierPresent' => 'Ce document a déjà son fichier.',
 			'admin.bibliotheque.import.simple.detail' => 'Détail',
@@ -61855,8 +62344,6 @@ extension on Traductions {
 			'pin.titre' => 'Entre ton code',
 			'pin.erreur' => 'Ce code ne correspond pas',
 			'pin.effacer' => 'Effacer',
-			_ => null,
-		} ?? switch (path) {
 			'choix.autre' => 'Autre',
 			'choix.autreInvite' => 'Précisez',
 			'choix.diminuer' => 'Diminuer de 1',
@@ -62254,6 +62741,8 @@ extension on Traductions {
 			'compte.tuteur.pageInformations.modifier' => 'Modifier mes informations',
 			'compte.tuteur.pageInformations.enregistrer' => 'Enregistrer',
 			'compte.tuteur.pageInformations.prenomVide' => 'Écrivez votre prénom.',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pageInformations.nomVide' => 'Écrivez votre nom.',
 			'compte.tuteur.pageInformations.tropLong' => 'Pas plus de 80 caractères.',
 			'compte.tuteur.pageInformations.echec' => 'Votre prénom et votre nom n\'ont pas été changés.',
@@ -62369,8 +62858,6 @@ extension on Traductions {
 			'historique.observations.tronquee' => 'Seules les visites les plus récentes sont affichées.',
 			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations du ${date}, ${classe}, ${etat}',
 			'historique.seance.titreSansClasse' => ({required Object date}) => 'Séance du ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'historique.seance.blocSeance' => 'La séance',
 			'historique.seance.blocPresence' => ({required Object dePrenom}) => 'Présence ${dePrenom}',
 			'historique.seance.date' => 'Date',
@@ -62768,6 +63255,8 @@ extension on Traductions {
 			'classe.entree.enDirect' => 'Séance en direct',
 			'classe.entree.tempsEcoule' => 'Temps prévu écoulé',
 			'classe.entree.terminee' => 'Séance terminée',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.annulee' => 'Séance annulée',
 			'classe.entree.aucune' => 'Aucune séance prévue',
 			'classe.entree.horsLigne' => 'Vous pourrez entrer dans la séance dès le retour de la connexion.',
@@ -62883,8 +63372,6 @@ extension on Traductions {
 			'classe.cartes.copierLien' => ({required Object titre}) => 'Copier le lien de « ${titre} »',
 			'classe.cartes.copierLienCourt' => 'Copier le lien',
 			'classe.cartes.lienCopie' => 'Lien copié. Collez-le dans votre navigateur pour l\'ouvrir.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.cartes.indisponibleTitre' => 'Les cartes de la classe ne sont pas encore ouvertes',
 			'classe.cartes.indisponiblePhrase' => 'Elles apparaîtront ici dès leur ouverture. Rien à faire de votre côté.',
 			'classe.cartes.erreurLecture' => 'Les cartes de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
@@ -63282,6 +63769,8 @@ extension on Traductions {
 			'enseignant.cahier.faiblesseFluiditeDetail' => 'La lecture sans hésitation.',
 			'enseignant.cahier.faiblesseMemorisationDetail' => 'La récitation de mémoire.',
 			'enseignant.cahier.reprise' => 'Où la classe s\'est arrêtée',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.cahier.repriseDetail' => 'C\'est la position de reprise d\'un remplaçant.',
 			'enseignant.cahier.repriseProposee' => ({required Object sourate, required Object verset}) => 'Sourate ${sourate}, verset ${verset}',
 			'enseignant.cahier.repriseRequise' => 'Indiquez où la classe s\'est arrêtée : un remplaçant reprendra ici.',
@@ -63397,8 +63886,6 @@ extension on Traductions {
 			'enseignant.creneaux.feedErreurDetail' => 'Rien n\'est perdu : personne n\'a été pris, et vos heures restent posées.',
 			'enseignant.creneaux.horsLignePrise' => 'Vous pourrez prendre un élève quand la connexion reviendra. Les demandes ci-dessous restent consultables.',
 			'enseignant.creneaux.horsLigneDemande' => 'Cette demande pourra être envoyée quand la connexion reviendra.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.refusDejaPris' => 'Cet élève vient d\'être pris par un autre enseignant. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusDejaSuivi' => 'Cet élève a déjà un enseignant. La liste ci-dessous est à jour.',
 			'enseignant.creneaux.refusCreneauRetire' => 'Cette famille ne propose plus ce créneau. La liste ci-dessous est à jour.',
@@ -63796,6 +64283,8 @@ extension on Traductions {
 			'controleur.controle.indisponible' => 'Cette visite n\'est plus proposée : la séance a été annulée ou confiée à un autre contrôleur.',
 			'controleur.controle.attente' => 'Le contrôle s\'ouvrira dès que la séance sera en direct.',
 			'controleur.controle.dejaEnCours' => 'Un contrôle est déjà en cours dans cette classe.',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.controle.dejaEnCoursAide' => 'Un seul contrôle à la fois par classe. Choisissez une autre séance, ou revenez plus tard : vous pourrez commencer quand ce contrôle sera terminé.',
 			'controleur.controle.incognito' => 'Votre présence n\'est pas annoncée en temps réel.',
 			'controleur.controle.horaire' => ({required Object debut, required Object fin}) => '${debut} à ${fin}',
@@ -63911,8 +64400,6 @@ extension on Traductions {
 			'tc.bibliotheque.introuvable.message' => 'Ce document ne vous est pas ouvert',
 			'tc.bibliotheque.introuvable.invitation' => 'Il a peut-être été retiré, ou il est réservé à une autre classe. Votre enseignant peut vous le rouvrir.',
 			'tc.bibliotheque.offline.aTelecharger' => 'À télécharger',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.offline.enCours' => 'Téléchargement',
 			'tc.bibliotheque.offline.enCache' => 'En cache',
 			'tc.bibliotheque.offline.telecharge' => 'Téléchargé',
@@ -64310,6 +64797,8 @@ extension on Traductions {
 			'tc.parcours.feedback.technique.tresBien' => 'Très bons',
 			'tc.parcours.feedback.confiance.intitule' => 'Vous sentez-vous prêt pour le prochain cours ?',
 			'tc.parcours.feedback.confiance.difficile' => 'Pas encore',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.feedback.confiance.bien' => 'Plutôt',
 			'tc.parcours.feedback.confiance.tresBien' => 'Tout à fait',
 			'tc.parcours.feedback.nonPartie' => 'Votre réponse n\'est pas partie.',
@@ -64425,8 +64914,6 @@ extension on Traductions {
 			'adulte.recharge.resultat.formulaireEchecTitre' => 'Le formulaire de paiement ne s\'est pas affiché.',
 			'adulte.recharge.resultat.formulaireEchecPhrase' => 'Réessayez dans un instant. Rien n\'a été payé par ce formulaire.',
 			'adulte.recharge.resultat.formulaireSansPayer' => 'Revenir aux soldes sans payer',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.preparationTitre' => 'Paiement en préparation',
 			'adulte.recharge.resultat.preparationPhrase' => 'Vérifiez la répartition avant de payer.',
 			'adulte.recharge.resultat.attenteTitre' => 'Paiement en cours de confirmation',
@@ -64824,6 +65311,8 @@ extension on Traductions {
 			'motifs.presenceExcusee.conge' => 'Jour férié ou congé',
 			'motifs.presenceExcusee.familiale' => 'Raison familiale',
 			'motifs.signalement.pedagogique.renforcement' => 'Un renforcement est conseillé sur la leçon en cours.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.pedagogique.revision' => 'Un peu de révision à la maison aidera avant le prochain cours.',
 			'motifs.signalement.pedagogique.regularite' => 'La régularité du travail à la maison fera la différence.',
 			'motifs.signalement.pedagogique.echange' => 'Un échange avec l\'académie est proposé.',
@@ -64939,8 +65428,6 @@ extension on Traductions {
 			'suiviDemandes.accueil.voir' => 'Voir le suivi des demandes',
 			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est arrivée à l\'administration',
 			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre classe est prête, elle attend son enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : classe validée · enseignant affecté',
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande de créneau ${dePrenom} : ${motif}',
 			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => 'Demande de créneau ${dePrenom} : votre demande est en liste d\'attente',
@@ -65338,6 +65825,8 @@ extension on Traductions {
 			'com.messages.images.fermer' => 'Fermer l\'image',
 			'com.messages.images.enregistrer' => 'Enregistrer l\'image',
 			'com.messages.images.enregistree' => 'Image enregistrée',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.images.enregistrementEchec' => 'L\'enregistrement de l\'image n\'est pas confirmé. Votre appareil ou votre navigateur a refusé le fichier : réessayez dans un instant.',
 			'com.messages.images.imageJointe' => 'Image jointe au message',
 			'com.messages.images.chargement' => 'Chargement de l\'image',
@@ -65453,8 +65942,6 @@ extension on Traductions {
 			'com.vocal.composer.nonConfirme' => 'Ce message vocal n\'a pas encore été confirmé.',
 			'com.vocal.composer.nonConfirmeAide' => 'Il est possible qu\'il ne soit pas parvenu jusqu\'à Rewayah. Le message vocal est gardé ici ; réessayez dans un instant.',
 			'com.vocal.composer.reessayer' => 'Réessayer',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.envoye' => 'Message vocal envoyé.',
 			'com.vocal.composer.horsLigne' => 'Le message vocal est gardé ici : envoyez-le dès que l\'envoi est de nouveau possible.',
 			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'Message vocal de ${auteur}, ${duree}',
@@ -65852,6 +66339,8 @@ extension on Traductions {
 			'com.studio.demo.f.activiteAnnonce' => 'Annonce publiée : l\'académie ferme le 1er novembre',
 			'com.studio.demo.f.objetFermeture' => 'Fermeture du 1er novembre',
 			'com.studio.demo.f.activiteFichier' => ({required Object nom, required Object fichier}) => '${nom} a partagé ${fichier}',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.demo.f.activiteInscription' => 'Nouvelle demande d\'inscription reçue',
 			'com.studio.demo.f.objetDossierBenali' => 'Dossier de la famille Benali',
 			'com.studio.titre' => _root.com.socle.lexique.studio,
@@ -65967,8 +66456,6 @@ extension on Traductions {
 			'com.annonces.administration.publiees.pastille' => 'Publiée',
 			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · le ${date} à ${heure}',
 			'com.annonces.administration.planifiees.titre' => 'Annonces planifiées',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.planifiees.vide' => 'Aucune annonce planifiée.',
 			'com.annonces.administration.planifiees.pastille' => 'Planifiée',
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · prévue le ${date} à ${heure}',
@@ -66366,6 +66853,8 @@ extension on Traductions {
 			'comptable.paiements.confirmation.recalculePhrase' => 'Un calcul a changé à la source depuis le contrôle. Rien n\'est parti. Relancez le contrôle pour confirmer le nouveau montant.',
 			'comptable.paiements.confirmation.nouveauMontant' => ({required Object nom}) => 'Nouveau montant pour ${nom}',
 			'comptable.paiements.confirmation.refusTitre' => 'Paiement refusé par la source',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.confirmation.refusDejaSoumis' => 'Ce paiement a déjà été soumis : rien n\'est renvoyé. Suivez-le depuis l\'onglet des paiements en cours.',
 			'comptable.paiements.confirmation.refusHorsDelegation' => 'Le cumul dépasse votre délégation, par bénéficiaire ou par période. Rien n\'est parti. Relancez le contrôle : les paiements concernés seront exclus.',
 			'comptable.paiements.confirmation.refusPerime' => 'Le contrôle a expiré. Rien n\'est parti. Relancez le contrôle avant de confirmer.',
@@ -66481,8 +66970,6 @@ extension on Traductions {
 			'comptable.tresorerie.politiquePhrase' => 'Fixée par la direction. Vous l\'appliquez, vous ne la modifiez pas.',
 			'comptable.tresorerie.alimentationAuto' => 'Alimentation automatique',
 			'comptable.tresorerie.regle.desactivee' => 'Désactivée',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.regle.montantFixe' => 'Montant fixe à chaque échéance',
 			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % de chaque encaissement consolidé',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'Compléter jusqu\'au montant visé',
@@ -66880,6 +67367,8 @@ extension on Traductions {
 			'comptable.contractuels.champMontantSaisi' => 'Montant',
 			'comptable.contractuels.aideMontant' => 'Saisi une seule fois : il ne se modifie plus après l\'approbation.',
 			'comptable.contractuels.creer' => 'Créer l\'obligation',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.contractuels.horsLigneCreation' => 'L\'obligation ne peut pas être créée maintenant. Créez-la dès que l\'envoi est de nouveau possible.',
 			'comptable.contractuels.erreurObjet' => 'Saisissez l\'objet de l\'obligation.',
 			'comptable.contractuels.erreurMontant' => 'Saisissez un montant supérieur à zéro, par exemple 350 ou 350,50.',
@@ -66995,8 +67484,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'Une part de l\'encaissement consolidé.',
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'Jusqu\'à l\'objectif',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'Compléter ce qui manque pour atteindre l\'objectif.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.proposee' => 'Proposée',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'Une proposition que le Comptable confirme.',
 			'comptable.direction.reservePanneau.montantAuto' => 'Montant à affecter',
@@ -67394,6 +67881,8 @@ extension on Traductions {
 			'juridique.confidentialite.s3.blocs.3' => '- Protéger les élèves et contrôler la qualité des séances.',
 			'juridique.confidentialite.s3.blocs.4' => '- Réparer les pannes.',
 			'juridique.confidentialite.s4.titre' => '4. Qui voit quoi',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s4.blocs.0' => 'Une famille ne voit que ses propres informations. Les informations d\'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.',
 			'juridique.confidentialite.s4.blocs.1' => 'L\'enseignant voit ses élèves et ses Classes. La direction voit ce qu\'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.',
 			'juridique.confidentialite.s4.blocs.2' => 'Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.',
@@ -67509,8 +67998,6 @@ extension on Traductions {
 			'avis.form.ferme.titre' => 'Ce lien n\'accepte plus d\'avis',
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'Il est fermé, arrivé à échéance, ou le nombre d\'avis prévu est atteint. Pour donner votre avis, demandez un nouveau lien à la direction : ${courriel}.',
 			'avis.form.envoye.titre' => 'Merci pour votre avis',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'La direction le lira avant de le publier sur le site, avec votre nom affiché, votre pays et la date. Pour le faire retirer, écrivez à ${courriel}.',
 			'avis.form.erreurChargement' => 'Le formulaire n\'a pas pu s\'ouvrir. Réessayez dans un moment.',
 			'avis.form.sansDonnees' => 'Le formulaire n\'a pas pu s\'ouvrir',
@@ -67908,6 +68395,8 @@ extension on Traductions {
 			'a3bis.regles.alerteDirection' => 'Alerte de la direction',
 			'a3bis.regles.alerteDirectionDetail' => 'Si ni l\'enseignant ni un remplaçant n\'a rejoint la salle, la direction reçoit un e-mail, une seule fois par séance.',
 			'a3bis.regles.avertissementDetail' => 'L\'enseignant est prévenu qu\'il risque de perdre la séance. Les enseignants libres peuvent se proposer pour le remplacer.',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.regles.seanceTardive' => 'Séance créée tard',
 			'a3bis.regles.seanceTardiveDetail' => 'Une séance créée moins de ce délai avant son début n\'est jamais retirée à l\'enseignant automatiquement. L\'alerte de la direction part quand même.',
 			'a3bis.regles.bornesAlerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début.',
@@ -68023,8 +68512,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.colonnes.choixActuel' => 'Choix actuel',
 			'candidatsFlux.importFormulaires.colonnes.nePasLire' => 'Ne pas lire cette colonne',
 			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'Son contenu est ignoré par l\'import.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.fermer' => 'Fermer ce choix',
 			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'Associez d\'abord ces colonnes : ${champs}.',
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Plusieurs colonnes portent le titre de : ${champs}. Touchez celle qu\'il faut lire, puis choisissez ce qu\'elle contient.',
@@ -68422,6 +68909,8 @@ extension on Traductions {
 			'apprendre.sections.livret' => 'Mon livret',
 			'apprendre.bibliotheque.rayonCours' => 'Documents des cours',
 			'apprendre.bibliotheque.rayonClasse' => 'Pour cette classe',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.bibliotheque.classeErreur.message' => 'Les documents de cette classe ne s\'affichent pas pour l\'instant',
 			'apprendre.bibliotheque.classeErreur.invitation' => 'Touchez Réessayer dans un instant.',
 			'apprendre.bibliotheque.rayonPlusLoin' => 'Pour aller plus loin',
@@ -68537,8 +69026,6 @@ extension on Traductions {
 			'suiviAttente.vide.action' => 'Choisir une classe',
 			'suiviAttente.vide.messageSimple' => 'Il n\'y a pas encore de demande de classe pour toi.',
 			'suiviAttente.vide.invitationSimple' => 'Ton tuteur peut en faire une.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.erreur' => 'Nous n\'avons pas pu lire le suivi de votre demande. Cela vient souvent de la connexion. Réessayez dans un instant.',
 			'suiviAttente.sansDonnees' => 'Le suivi de votre demande n\'a pas pu être chargé',
 			'suiviAttente.introuvable' => 'Cette demande n\'existe plus dans votre suivi.',
