@@ -222,7 +222,7 @@ void main() {
           ),
         ),
       ],
-      participants: <Participant>[_mariam, praxisSoi],
+      participants: const <Participant>[_mariam, praxisSoi],
       messages: <MessageCommunication>[
         _msg('p1', praxisSoi, 'Rappel de Praxis.', 2),
         _msg('h1', _soi, 'Merci.', 1),
