@@ -542,8 +542,11 @@ BEGIN
     EXCEPTION WHEN OTHERS THEN
       v_debut_rdv := NULL;
     END;
-    IF v_debut_rdv IS NULL OR v_duree IS NULL OR v_duree NOT BETWEEN 10 AND 120
-       OR v_debut_rdv <= pg_catalog.clock_timestamp() OR v_debut_rdv > pg_catalog.clock_timestamp() + interval '90 days' THEN
+    -- Les memes bornes que la porte publique (debut dans 5 minutes a 90 jours, duree de 15 a 120 minutes) ; les participants ne sont
+    -- PAS choisis par Praxis (il ne voit aucun identifiant de personnel) : celui qui valide les nomme.
+    IF v_debut_rdv IS NULL OR v_duree IS NULL OR v_duree NOT BETWEEN 15 AND 120
+       OR v_debut_rdv < pg_catalog.clock_timestamp() + interval '5 minutes'
+       OR v_debut_rdv > pg_catalog.clock_timestamp() + interval '90 days' THEN
       PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'preparer', 'parametre', NULL, ARRAY[v_c.id], NULL, v_debut);
       RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
     END IF;
@@ -583,3 +586,154 @@ BEGIN
   END IF;
 END
 $postflight_b$;
+
+-- ====================================================================================================================
+-- C. Les portes de la direction : lire les propositions, valider, ecarter.
+-- VALIDER execute le geste par la PORTE PUBLIQUE existante, sous l'identite de la personne qui valide (auth.uid() est la sienne, jamais
+-- celle de Praxis) : le moteur decide comme pour un geste fait a la main, avec la version du dossier que Praxis a vue ; un dossier qui a
+-- change depuis est refuse par le moteur, avec sa phrase. Un geste refuse laisse la proposition ouverte (on peut l'ecarter). Ecarter, ou
+-- laisser expirer, ne fait rien sur le dossier. Les deux portes d'ecriture exigent la double verification (aal2) ; la lecture non.
+-- ====================================================================================================================
+CREATE FUNCTION public.direction_praxis_propositions(p_filtre text DEFAULT 'ouvertes')
+RETURNS jsonb
+LANGUAGE plpgsql
+STABLE
+SECURITY DEFINER
+SET search_path = ''
+AS $f$
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin', false) THEN
+    RAISE EXCEPTION 'autorisation direction requise' USING ERRCODE = '42501';
+  END IF;
+  IF p_filtre IS NULL OR p_filtre NOT IN ('ouvertes', 'toutes') THEN
+    RAISE EXCEPTION 'filtre invalide : ouvertes ou toutes' USING ERRCODE = '22023';
+  END IF;
+  RETURN (SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+      'id', x.id, 'geste', x.geste, 'reference', c.reference, 'nom', c.nom_complet,
+      'versionProposee', x.version_candidature, 'versionActuelle', c.version,
+      'parametres', x.parametres, 'texte', x.texte,
+      'statut', CASE WHEN x.statut = 'proposee' AND x.expire_le <= pg_catalog.clock_timestamp() THEN 'expiree' ELSE x.statut END,
+      'creeLe', x.cree_le, 'expireLe', x.expire_le, 'traiteeLe', x.traitee_le, 'motifEcart', x.motif_ecart)
+      ORDER BY x.cree_le DESC, x.id), '[]'::jsonb)
+    FROM (SELECT y.* FROM private.praxis_propositions y
+           WHERE p_filtre = 'toutes' OR (y.statut = 'proposee' AND y.expire_le > pg_catalog.clock_timestamp())
+           ORDER BY y.cree_le DESC, y.id LIMIT 100) x
+    JOIN public.candidatures c ON c.id = x.candidature_id
+   WHERE EXISTS (SELECT 1 FROM private.cand_lecteur() l WHERE l.super_admin OR l.genre = c.genre));
+END;
+$f$;
+
+CREATE FUNCTION public.direction_praxis_valider(p_proposition uuid, p_version integer, p_cle text,
+                                                p_participants uuid[] DEFAULT NULL)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $f$
+DECLARE
+  v_pr private.praxis_propositions%ROWTYPE;
+  v_r jsonb;
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin'
+                  AND auth.jwt() ->> 'aal' = 'aal2', false) THEN
+    RAISE EXCEPTION 'autorisation direction avec MFA requise' USING ERRCODE = '42501';
+  END IF;
+  IF p_proposition IS NULL OR p_version IS NULL OR p_cle IS NULL OR pg_catalog.length(p_cle) NOT BETWEEN 8 AND 100 THEN
+    RAISE EXCEPTION 'validation invalide : proposition, version et cle attendues' USING ERRCODE = '22023';
+  END IF;
+  PERFORM private.praxis_propositions_expirer();
+  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition FOR UPDATE;
+  IF NOT FOUND THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_inconnue');
+  END IF;
+  IF v_pr.statut = 'validee' AND v_pr.resultat ->> 'cle' = p_cle THEN
+    RETURN pg_catalog.jsonb_build_object('ok', true, 'rejoue', true, 'resultat', v_pr.resultat -> 'reponse');
+  END IF;
+  IF v_pr.statut <> 'proposee' THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_' || v_pr.statut);
+  END IF;
+  IF p_version <> v_pr.version_candidature THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_perimee');
+  END IF;
+  IF v_pr.geste = 'demander_complement' THEN
+    v_r := public.demander_complement_candidat(v_pr.candidature_id,
+             ARRAY(SELECT e.value #>> '{}' FROM pg_catalog.jsonb_array_elements(v_pr.parametres -> 'elements') WITH ORDINALITY AS e(value, o)
+                    ORDER BY e.o),
+             v_pr.parametres ->> 'motif', v_pr.version_candidature, p_cle);
+  ELSIF v_pr.geste = 'planifier_entretien' THEN
+    v_r := public.planifier_entretien(v_pr.candidature_id, (v_pr.parametres ->> 'debut')::timestamptz,
+             (v_pr.parametres ->> 'duree_minutes')::numeric::integer, coalesce(p_participants, '{}'::uuid[]),
+             v_pr.version_candidature, p_cle);
+  ELSE
+    v_r := public.admettre_salle_verification(v_pr.candidature_id, v_pr.version_candidature, p_cle);
+  END IF;
+  -- Le moteur a refuse : la proposition reste ouverte, le dossier n'a pas bouge, la phrase du moteur est rendue telle quelle.
+  IF v_r ? 'erreur' THEN
+    RETURN v_r || pg_catalog.jsonb_build_object('proposition', p_proposition);
+  END IF;
+  UPDATE private.praxis_propositions
+     SET statut = 'validee', traitee_le = pg_catalog.clock_timestamp(), traitee_par = auth.uid(),
+         resultat = pg_catalog.jsonb_build_object('cle', p_cle, 'reponse', v_r)
+   WHERE id = p_proposition;
+  PERFORM public.log_sensitive_access('praxis_proposition_validee', 'private.praxis_propositions', 'praxis',
+    pg_catalog.jsonb_build_object('proposition', p_proposition, 'geste', v_pr.geste));
+  RETURN pg_catalog.jsonb_build_object('ok', true, 'resultat', v_r);
+END;
+$f$;
+
+CREATE FUNCTION public.direction_praxis_ecarter(p_proposition uuid, p_motif text, p_cle uuid)
+RETURNS jsonb
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $f$
+DECLARE
+  v_pr private.praxis_propositions%ROWTYPE;
+  v_motif text := pg_catalog.btrim(coalesce(p_motif, ''));
+BEGIN
+  IF NOT coalesce(public.app_account_valid() AND public.app_role() = 'admin'
+                  AND auth.jwt() ->> 'aal' = 'aal2', false) THEN
+    RAISE EXCEPTION 'autorisation direction avec MFA requise' USING ERRCODE = '42501';
+  END IF;
+  IF p_proposition IS NULL OR p_cle IS NULL OR pg_catalog.length(v_motif) > 300 THEN
+    RAISE EXCEPTION 'ecart invalide : proposition et cle attendues, motif de 300 signes au plus' USING ERRCODE = '22023';
+  END IF;
+  PERFORM private.praxis_propositions_expirer();
+  SELECT x.* INTO v_pr FROM private.praxis_propositions x WHERE x.id = p_proposition FOR UPDATE;
+  IF NOT FOUND THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_inconnue');
+  END IF;
+  IF v_pr.statut = 'ecartee' THEN
+    RETURN pg_catalog.jsonb_build_object('ok', true, 'rejoue', true);
+  END IF;
+  IF v_pr.statut <> 'proposee' THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'proposition_' || v_pr.statut);
+  END IF;
+  UPDATE private.praxis_propositions
+     SET statut = 'ecartee', traitee_le = pg_catalog.clock_timestamp(), traitee_par = auth.uid(), motif_ecart = nullif(v_motif, '')
+   WHERE id = p_proposition;
+  PERFORM public.log_sensitive_access('praxis_proposition_ecartee', 'private.praxis_propositions', 'praxis',
+    pg_catalog.jsonb_build_object('proposition', p_proposition, 'geste', v_pr.geste));
+  RETURN pg_catalog.jsonb_build_object('ok', true);
+END;
+$f$;
+
+REVOKE ALL ON FUNCTION public.direction_praxis_propositions(text), public.direction_praxis_valider(uuid, integer, text, uuid[]),
+  public.direction_praxis_ecarter(uuid, text, uuid) FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+GRANT EXECUTE ON FUNCTION public.direction_praxis_propositions(text), public.direction_praxis_valider(uuid, integer, text, uuid[]),
+  public.direction_praxis_ecarter(uuid, text, uuid) TO authenticated;
+
+DO $postflight_c$
+BEGIN
+  IF NOT pg_catalog.has_function_privilege('authenticated', 'public.direction_praxis_propositions(text)', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege('authenticated', 'public.direction_praxis_valider(uuid,integer,text,uuid[])', 'EXECUTE')
+     OR NOT pg_catalog.has_function_privilege('authenticated', 'public.direction_praxis_ecarter(uuid,text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.direction_praxis_propositions(text)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.direction_praxis_valider(uuid,integer,text,uuid[])', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('anon', 'public.direction_praxis_ecarter(uuid,text,uuid)', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('service_role', 'public.direction_praxis_valider(uuid,integer,text,uuid[])', 'EXECUTE')
+     OR pg_catalog.has_function_privilege('agent_ro', 'public.direction_praxis_valider(uuid,integer,text,uuid[])', 'EXECUTE') THEN
+    RAISE EXCEPTION 'PRAXIS-PX2 (C) : droits incorrects apres installation';
+  END IF;
+END
+$postflight_c$;
