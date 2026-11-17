@@ -176,6 +176,8 @@ BEGIN
                                              envoye_le)
     VALUES (pg_temp.c(p_n), p_qv, p_doc || '{"accordRemuneration": true}'::jsonb, 'candidat', false,
             pg_catalog.clock_timestamp());
+    -- BE-VERSEMENT (16/11, 20261128200000) : le calcul ne rend plus `a_verifier` ; la colonne prend ce que le
+    -- serveur calcule (compatible pour un moyen qui suit la regle), comme en production.
     UPDATE public.candidatures SET paiement = private.paiement_etat(id) WHERE id = pg_temp.c(p_n);
   END IF;
   RETURN pg_temp.c(p_n);
@@ -260,11 +262,11 @@ SELECT pg_temp.cand('31', 'male', 'prequalification', 'en_examen', 'refusee', fa
 -- TEST publiee plus bas.
 
 SELECT pg_temp.vrai((SELECT count(*) FROM public.candidatures WHERE id::text LIKE 'ca2bcccc%') = 29
-  AND (SELECT paiement FROM public.candidatures WHERE id = pg_temp.c('02')) = 'a_verifier'
+  AND (SELECT paiement FROM public.candidatures WHERE id = pg_temp.c('02')) = 'compatible'
   AND (SELECT paiement FROM public.candidatures WHERE id = pg_temp.c('12')) = 'incompatible'
   AND (SELECT genre FROM public.candidatures WHERE id = pg_temp.c('06')) = 'female'
   AND public.cadre_religieux_version_requise() IS NULL,
-  'fixtures : 29 candidatures, paiement aligne sur L6, 06 et 27 du cote des femmes, aucun cadre publie');
+  'fixtures : 29 candidatures, paiement aligne sur L6 (compatible pour un moyen qui suit la regle, BE-VERSEMENT), 06 et 27 du cote des femmes, aucun cadre publie');
 
 -- ------------------------------------------------------------
 -- (a) Droits, empreintes F86, aides internes, tables
@@ -362,9 +364,13 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 27,
+                         WHERE geste NOT LIKE '%admission') = 33,
     -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
-    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b (vingt-sept variantes)');
+    -- VERSEMENT-QUESTIONS (16/11, transition 44), BE-1g (16/11, transition 45) et BE-1h REFAIRE-ENTRETIEN
+    -- (17/11, migration 20261129700000, transition 46) : trois regles de direction de plus, soit 30 ;
+    -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : demander_complement variantes 3 et 4 et
+    -- annuler_complement, soit 33.
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b et six gestes de direction (trente-trois variantes)');
 END $f86$;
 
 SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.refuser_candidat(pg_temp.c('15'), 'Motif', 'refus_general', 1, 'cle-anon-0001')$$,
@@ -421,18 +427,23 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": t
     "inviter": false, "consignerPrevenu": true, "garderPourSuivi": true, "rattacher": true,
     "planifierEntretien": true, "consignerEntretien": true, "pieceACorriger": false, "validerPiece": true,
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
-    "leverIndisponibilite": false}'::jsonb,
-  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien ; salle 3 du 03/11 : valider la piece)');
+    "leverIndisponibilite": false,
+    "debloquerVersement": true, "dispenserEntretien": true, "refaireEntretien": true,
+    "annulerComplement": true, "modifierComplement": true}'::jsonb,
+  -- VERSEMENT-QUESTIONS (16/11, debloquer le versement), BE-1g (16/11, dispenser l'entretien) et BE-1h
+  -- REFAIRE-ENTRETIEN (17/11, migration 20261129700000, refaire l'entretien) : trois capacites de plus ;
+  -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : annuler et modifier un complement, deux de plus.
+  'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien ; salle 3 du 03/11 : valider la piece ; debloquer le versement, dispenser et refaire l entretien)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
     "modelesPause": ["pause_attente_besoin", "pause_attente_informations", "pause_demande_candidat", "pause_general"],
     "complementSalleExamen": ["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux",
-      "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication"],
-    "complementSalleVerification": ["piece_identite", "cadre_religieux", "contrat", "avis"],
+      "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication", "pays_versement"],
+    "complementSalleVerification": ["piece_identite", "cadre_religieux", "contrat", "avis", "pays_versement"],
     "canauxRetrait": ["conversation", "courriel"],
     "codesClotureComplement": ["complement_clos"],
     "canauxPrevenu": ["whatsapp"], "modelesPrevenu": ["lien_inscription"]}'::jsonb,
-  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20) ; CAND-L3 (23/10) : canal et modele du geste « prevenu » ; COMPLEMENT-ET-FORMATS (14/11) : en salle 1, tout ce que le candidat fournit');
+  'listes fermees rendues a l''ecran : modeles, elements par salle, canaux du retrait, code de cloture du complement (D20) ; CAND-L3 (23/10) : canal et modele du geste « prevenu » ; COMPLEMENT-ET-FORMATS (14/11) : en salle 1, tout ce que le candidat fournit ; pays_versement (migration 20261127000300) : le pays du versement, a completer en salles 1 et 2');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a3') @> '{"peutLire": false, "peutDecider": false, "peutEcrireReferentiel": false,
     "gestesGroupables": []}'::jsonb
   AND NOT EXISTS (SELECT 1 FROM jsonb_each(pg_temp.lu('cap_a3') -> 'gestes') g WHERE g.value <> 'false'::jsonb)
@@ -452,35 +463,30 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_k1') @> '{"peutLire": false, "peutDecider": 
 SELECT pg_temp.garde('t02', pg_temp.trace(pg_temp.c('02')));
 SELECT pg_temp.garde('ad02a', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.admettre_salle_verification(pg_temp.c('02'), 1, 'cle-admission-02-a')$$));
+-- BE-VERSEMENT (16/11, migration 20261128200000) : les controles lisent le calcul en direct, qui ne rend plus
+-- `a_verifier` : le moyen de 02 suit la regle, le controle du paiement passe seul. Il ne reste que le cadre.
 SELECT pg_temp.vrai(pg_temp.lu('ad02a') = '{"erreur": "controles_non_satisfaits", "controles": [
-    {"nom": "paiement_compatible", "cause": "a_verifier"}, {"nom": "cadre_religieux", "cause": "non_publie"}]}'::jsonb
+    {"nom": "cadre_religieux", "cause": "non_publie"}]}'::jsonb
   AND pg_temp.trace(pg_temp.c('02')) = pg_temp.lu('t02'),
-  'L2-4 : admission sans paiement compatible ni cadre publie : deux controles nommes avec leur cause, 0 ecriture');
+  'L2-4 : admission sans cadre publie : un controle nomme avec sa cause (le paiement passe seul depuis BE-VERSEMENT), 0 ecriture');
+SELECT pg_temp.garde('t02', pg_temp.trace(pg_temp.c('02')));
+-- GESTE 24 (confirmer_moyen_paiement) : CODE MORT depuis BE-VERSEMENT (16/11, migration 20261128200000).
+-- Le calcul ne rend plus `a_verifier` (private.paiement_etat : un moyen qui suit la regle est `compatible`),
+-- et la condition de la regle lit ce calcul en direct : le geste n'est plus applicable a aucun dossier,
+-- meme dont la colonne `paiement` dit `a_verifier` (verifie en production le 17/11 : 3 dossiers, tous
+-- retires). Le commentaire de 20261128200000 (« reste au serveur pour les donnees passees ») est faux.
+-- Ce scenario prouve donc l'ABSENCE : refus nomme `transition_interdite` / `etat`, rejoue identique,
+-- aucune ecriture, aucune decision. Dette inscrite : retirer la regle 24 et la branche a_verifier.
 SELECT pg_temp.garde('cf02', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('02'), 'virement_bancaire', NULL, 1, 'cle-confirmer-02')$$));
-SELECT pg_temp.vrai(pg_temp.lu('cf02') ->> 'rejoue' = 'false' AND pg_temp.lu('cf02') ->> 'paiement' = 'compatible'
-  AND pg_temp.lu('cf02') #>> '{candidature,paiement}' = 'compatible'
-  AND pg_temp.lu('cf02') #>> '{candidature,etat}' = 'en_examen'
-  AND (SELECT count(*) FROM public.candidature_paiement_decisions
-        WHERE candidature_id = pg_temp.c('02') AND decision = 'confirme' AND methode = 'virement_bancaire'
-          AND pays = 'SA' AND operateur IS NULL AND auteur_id = pg_temp.p('a1')) = 1
-  AND (SELECT count(*) FROM public.candidature_evenements
-        WHERE candidature_id = pg_temp.c('02') AND type = 'controle' AND auteur_id = pg_temp.p('a1')
-          AND details @> '{"geste": "confirmer_moyen_paiement", "transition": 24, "decision": "confirme",
-                           "pays": "SA", "methode": "virement_bancaire"}'::jsonb) = 1
-  AND (SELECT count(*) FROM public.candidature_evenements
-        WHERE candidature_id = pg_temp.c('02') AND type = 'controle'
-          AND details @> '{"cause": "moyen_confirme", "paiementAvant": "a_verifier", "paiementApres": "compatible"}'::jsonb) = 1,
-  'transition 24 : moyen confirme, decision ecrite dans candidature_paiement_decisions, paiement recalcule par L6 (compatible), deux evenements');
-SELECT pg_temp.garde('t02', pg_temp.trace(pg_temp.c('02')));
 SELECT pg_temp.garde('cf02r', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('02'), 'virement_bancaire', NULL, 1, 'cle-confirmer-02')$$));
-SELECT pg_temp.garde('cf02b', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('02'), 'virement_bancaire', NULL, 3, 'cle-confirmer-02-b')$$));
-SELECT pg_temp.vrai(pg_temp.lu('cf02r') = (pg_temp.lu('cf02') - 'rejoue') || '{"rejoue": true}'::jsonb
-  AND pg_temp.lu('cf02b') @> '{"erreur": "transition_interdite", "geste": "confirmer_moyen_paiement", "raison": "etat"}'::jsonb
-  AND pg_temp.trace(pg_temp.c('02')) = pg_temp.lu('t02'),
-  'L2-8 : confirmation rejouee, premier resultat sans ecriture ; deja compatible, la regle refuse une seconde confirmation');
+SELECT pg_temp.vrai(pg_temp.lu('cf02') @> '{"erreur": "transition_interdite", "geste": "confirmer_moyen_paiement", "raison": "etat"}'::jsonb
+  AND pg_temp.lu('cf02r') = pg_temp.lu('cf02')
+  AND private.paiement_etat(pg_temp.c('02')) = 'compatible'
+  AND pg_temp.trace(pg_temp.c('02')) = pg_temp.lu('t02')
+  AND (SELECT count(*) FROM public.candidature_paiement_decisions WHERE candidature_id = pg_temp.c('02')) = 0,
+  'transition 24 : code mort depuis BE-VERSEMENT, refus nomme (transition_interdite / etat), rejoue identique, 0 ecriture, 0 decision ; le paiement est deja compatible sans geste');
 
 -- Version de TEST du cadre religieux, publiee dans la transaction du scenario.
 INSERT INTO public.contract_required_versions (contract_kind, version)
@@ -490,23 +496,27 @@ SELECT pg_temp.p(s), 'teacher_religious_framework', 'test-cadre-1'
 FROM unnest(ARRAY['01', '03', '04', '05', '06', '09', '11', '12']) AS s;
 
 SELECT pg_temp.garde('ad02b', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.admettre_salle_verification(pg_temp.c('02'), 3, 'cle-admission-02-b')$$));
+  $$SELECT public.admettre_salle_verification(pg_temp.c('02'), 1, 'cle-admission-02-b')$$));
 SELECT pg_temp.vrai(pg_temp.lu('ad02b') = '{"erreur": "controles_non_satisfaits", "controles": [
     {"nom": "cadre_religieux", "cause": "non_accepte"}]}'::jsonb
   AND pg_temp.trace(pg_temp.c('02')) = pg_temp.lu('t02'),
   'L2-4 : paiement compatible, cadre publie mais pas accepte : refus nomme cadre_religieux, 0 ecriture');
 
 -- 03 : questionnaire envoye a une version perimee.
-SELECT pg_temp.garde('cf03', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('03'), 'virement_bancaire', NULL, 1, 'cle-confirmer-03')$$));
 SELECT pg_temp.garde('t03', pg_temp.trace(pg_temp.c('03')));
 SELECT pg_temp.garde('ad03', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.admettre_salle_verification(pg_temp.c('03'), 3, 'cle-admission-03')$$));
-SELECT pg_temp.vrai(pg_temp.lu('cf03') ->> 'paiement' = 'compatible'
+  $$SELECT public.admettre_salle_verification(pg_temp.c('03'), 1, 'cle-admission-03')$$));
+SELECT pg_temp.vrai(private.paiement_etat(pg_temp.c('03')) = 'compatible'
   AND pg_temp.lu('ad03') = '{"erreur": "controles_non_satisfaits", "controles": [
     {"nom": "questionnaire_complet", "cause": "perime"}]}'::jsonb
   AND pg_temp.trace(pg_temp.c('03')) = pg_temp.lu('t03'),
   'admission : questionnaire envoye a une version perimee, refus nomme, 0 ecriture');
+
+-- MAJEUR (16/11/2026, migration 20261128400000) : l'envoi exige l'attestation « 18 ans ou plus »
+-- (erreur majorite_requise sans elle). Les candidats de ce scenario l'ont faite (fixture), avant leur
+-- premier envoi ; le refus a son propre scenario (scenarios_majeur.sql).
+UPDATE public.candidatures SET majorite_declaree = true, majorite_attestee_le = now()
+ WHERE majorite_declaree IS NULL;
 
 -- CAND-PHOTO (06/11/2026) : sans photo, l'envoi par ailleurs complet est
 -- refuse, nomme, sans aucune ecriture.
@@ -555,33 +565,29 @@ SELECT pg_temp.garde('e01', pg_temp.en(pg_temp.p('01'), 'teacher',
   $$SELECT public.envoyer_reponses_salle_examen('salle-examen-2', pg_temp.lu('complet_sa'), true, 'v2.0.0', 1,
     'cle-envoi-l2a2-01')$$));
 SELECT pg_temp.garde('t01', pg_temp.trace(pg_temp.c('01')));
-SELECT pg_temp.garde('ad01a', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 3, 'cle-admission-01-a')$$));
+-- BE-VERSEMENT (16/11, 20261128200000) : un moyen qui suit la regle est `compatible` des l'envoi ; la
+-- confirmation par la direction (geste 24, code mort) n'existe plus. L'admission n'est donc plus refusee
+-- pour le paiement : on prouve l'etat compatible, puis la version perimee, puis l'admission.
 SELECT pg_temp.vrai(pg_temp.lu('e01') #>> '{candidature,etat}' = 'en_examen'
-  AND pg_temp.lu('e01') #>> '{candidature,paiement}' = 'a_verifier'
-  AND pg_temp.lu('ad01a') = '{"erreur": "controles_non_satisfaits", "controles": [
-    {"nom": "paiement_compatible", "cause": "a_verifier"}]}'::jsonb
-  AND pg_temp.trace(pg_temp.c('01')) = pg_temp.lu('t01'),
-  'L2-4 : apres un envoi reel, admission refusee tant que le moyen n''est pas confirme par la direction');
-SELECT pg_temp.garde('cf01', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('01'), 'virement_bancaire', NULL, 3, 'cle-confirmer-01')$$));
+  AND pg_temp.lu('e01') #>> '{candidature,paiement}' = 'compatible'
+  AND pg_temp.lu('e01') #>> '{candidature,version}' = '3',
+  'L2-4 : apres un envoi reel, le moyen qui suit la regle est deja compatible (plus de confirmation par la direction)');
 SELECT pg_temp.garde('ad01p', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 3, 'cle-admission-01-p')$$));
+  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 2, 'cle-admission-01-p')$$));
 SELECT pg_temp.garde('t01', pg_temp.trace(pg_temp.c('01')));
 SELECT pg_temp.garde('ad01', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 5, 'cle-admission-01-b')$$));
-SELECT pg_temp.vrai(pg_temp.lu('cf01') #>> '{candidature,version}' = '5'
-  AND pg_temp.lu('ad01p') = '{"erreur": "conflit_candidature", "versionCourante": 5}'::jsonb
+  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 3, 'cle-admission-01-b')$$));
+SELECT pg_temp.vrai(pg_temp.lu('ad01p') = '{"erreur": "conflit_candidature", "versionCourante": 3}'::jsonb
   AND pg_temp.lu('ad01') ->> 'rejoue' = 'false'
   AND pg_temp.lu('ad01') -> 'candidature' @> '{"etape": "verifications", "etat": "entretien_a_planifier",
-      "issue": "en_cours", "paiement": "compatible", "version": 6}'::jsonb
+      "issue": "en_cours", "paiement": "compatible", "version": 4}'::jsonb
   AND NOT (pg_temp.lu('ad01') -> 'candidature') ?| ARRAY['nomComplet', 'paysResidence', 'reponses'],
   'transition 10 : version perimee refusee (conflit_candidature) ; puis admise en Salle de verification et d''entretien, etat relu sans nom ni reponse');
 -- SALLE-1 (07/11/2026, 20261119100000) : l'admission enfile le courriel
 -- « retenu pour un entretien », un seul, a la cle du geste ; les admissions
 -- refusees (controles, conflit) n'en enfilent aucun ; le geste rejoue non plus.
 SELECT pg_temp.garde('ad01r', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 5, 'cle-admission-01-b')$$));
+  $$SELECT public.admettre_salle_verification(pg_temp.c('01'), 3, 'cle-admission-01-b')$$));
 SELECT pg_temp.vrai(
   (SELECT count(*) FROM public.courriels_sortants o
     WHERE o.modele = 'retenu_entretien') = 1
@@ -636,12 +642,13 @@ SELECT pg_temp.garde('cf05a', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('05'), 'mobile_money', 'wave', 1, 'cle-confirmer-05-a')$$));
 SELECT pg_temp.garde('cf05b', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('05'), 'mobile_money', 'orange_money', 1, 'cle-confirmer-05-b')$$));
-SELECT pg_temp.vrai(pg_temp.lu('cf05a') = '{"erreur": "moyen_non_confirmable", "cause": "ligne_non_confirmee",
-    "etatLigne": "en_verification"}'::jsonb
-  AND pg_temp.lu('cf05b') = '{"erreur": "moyen_non_confirmable", "cause": "non_declare"}'::jsonb
+-- Geste 24 : code mort (voir plus haut). Une ligne en_verification et un moyen non declare ne se confirment
+-- pas davantage : meme refus nomme transition_interdite / etat, 0 ecriture, 0 decision.
+SELECT pg_temp.vrai(pg_temp.lu('cf05a') @> '{"erreur": "transition_interdite", "geste": "confirmer_moyen_paiement", "raison": "etat"}'::jsonb
+  AND pg_temp.lu('cf05b') @> '{"erreur": "transition_interdite", "geste": "confirmer_moyen_paiement", "raison": "etat"}'::jsonb
   AND pg_temp.trace(pg_temp.c('05')) = pg_temp.lu('t05')
-  AND (SELECT paiement FROM public.candidatures WHERE id = pg_temp.c('05')) = 'a_verifier',
-  'transition 24 : une ligne en_verification ne se confirme jamais ; un moyen non declare non plus ; 0 ecriture, 0 decision');
+  AND (SELECT count(*) FROM public.candidature_paiement_decisions WHERE candidature_id = pg_temp.c('05')) = 0,
+  'transition 24 : code mort, une ligne en_verification et un moyen non declare sont refuses comme tout le reste ; 0 ecriture, 0 decision');
 SELECT pg_temp.refus_en(pg_temp.p('a1'), 'admin', $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('05'),
   'virement_bancaire', 'wave', 1, 'cle-confirmer-05-c')$$, '22023', 'virement avec un operateur : 22023');
 SELECT pg_temp.refus_en(pg_temp.p('a1'), 'admin', $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('05'),
@@ -707,41 +714,40 @@ SELECT pg_temp.vrai(pg_temp.lu('cf15') @> '{"erreur": "transition_interdite", "e
 -- paiement devient compatible, la restriction reste (21, L2B).
 SELECT pg_temp.garde('cf07', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('07'), 'virement_bancaire', NULL, 1, 'cle-confirmer-07')$$));
-SELECT pg_temp.vrai(pg_temp.lu('cf07') ->> 'paiement' = 'compatible'
-  AND pg_temp.lu('cf07') -> 'candidature' @> '{"etape": "confirmee", "restreinte": true, "restrictionCause": "paiement",
-      "paiement": "compatible"}'::jsonb
-  AND EXISTS (SELECT 1 FROM public.candidature_evenements WHERE candidature_id = pg_temp.c('07')
-               AND etape_avant = 'confirmee' AND etape_apres = 'confirmee'
-               AND details @> '{"geste": "confirmer_moyen_paiement", "transition": 24}'::jsonb),
-  'transition 24 en salle 3 sous restriction de cause paiement : paiement compatible, restriction gardee (levee par 21, L2B)');
+-- Geste 24 (variante 2, restriction de cause paiement) : code mort comme sa variante 1 (BE-VERSEMENT, 16/11) ;
+-- le refus est nomme, la restriction reste, 0 decision.
+SELECT pg_temp.vrai(pg_temp.lu('cf07') @> '{"erreur": "transition_interdite", "geste": "confirmer_moyen_paiement", "raison": "etat"}'::jsonb
+  AND (SELECT restreinte AND restriction_cause = 'paiement' FROM public.candidatures WHERE id = pg_temp.c('07'))
+  AND (SELECT count(*) FROM public.candidature_paiement_decisions WHERE candidature_id = pg_temp.c('07')) = 0,
+  'transition 24 en salle 3 sous restriction de cause paiement : code mort, refus nomme, restriction gardee, 0 decision');
 
 -- ------------------------------------------------------------
 -- (e) Transitions 7 et 23 : complement nomme ; L2-18
 -- ------------------------------------------------------------
 SELECT pg_temp.garde('t02', pg_temp.trace(pg_temp.c('02')));
 SELECT pg_temp.garde('dc02a', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues'], NULL, 3, 'cle-complement-02-a')$$));
+  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues'], NULL, 1, 'cle-complement-02-a')$$));
 SELECT pg_temp.garde('dc02b', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY[]::text[], 'Motif', 3, 'cle-complement-02-b')$$));
+  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY[]::text[], 'Motif', 1, 'cle-complement-02-b')$$));
 SELECT pg_temp.garde('dc02c', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues', 'entretien', 'Commentaire libre'],
-    'Motif', 3, 'cle-complement-02-c')$$));
+    'Motif', 1, 'cle-complement-02-c')$$));
 SELECT pg_temp.vrai(pg_temp.lu('dc02a') = '{"erreur": "motif_requis", "geste": "demander_complement"}'::jsonb
   AND pg_temp.lu('dc02b') = '{"erreur": "elements_requis"}'::jsonb
   AND pg_temp.lu('dc02c') ->> 'erreur' = 'elements_invalides'
   AND pg_temp.lu('dc02c') -> 'elements' = '["?", "entretien"]'::jsonb
   AND pg_temp.lu('dc02c') -> 'permis' = '["langues", "recitation", "disponibilites", "publics", "versement", "cadre_religieux",
-                                           "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication"]'::jsonb
+                                           "contrat", "avis", "code_conduite", "piece_identite", "photo", "accord_publication", "pays_versement"]'::jsonb
   AND pg_temp.trace(pg_temp.c('02')) = pg_temp.lu('t02'),
   'transition 7 : sans motif, sans element, element hors de la liste de la salle (jamais un texte libre) : refus nommes, 0 ecriture');
 SELECT pg_temp.refus_en(pg_temp.p('a1'), 'admin', $$SELECT public.demander_complement_candidat(pg_temp.c('02'),
-  ARRAY['langues', NULL], 'Motif', 3, 'cle-complement-02-n')$$, '22023', 'element nul : 22023');
+  ARRAY['langues', NULL], 'Motif', 1, 'cle-complement-02-n')$$, '22023', 'element nul : 22023');
 SELECT pg_temp.garde('dc02', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['versement', 'langues', 'versement'],
-    'Motif interne L2A2 du complement', 3, 'cle-complement-02')$$));
+    'Motif interne L2A2 du complement', 1, 'cle-complement-02')$$));
 SELECT pg_temp.vrai(pg_temp.lu('dc02') ->> 'rejoue' = 'false'
   AND pg_temp.lu('dc02') -> 'aCompleter' = '["versement", "langues"]'::jsonb
-  AND pg_temp.lu('dc02') -> 'candidature' @> '{"etape": "prequalification", "etat": "a_completer", "version": 4}'::jsonb
+  AND pg_temp.lu('dc02') -> 'candidature' @> '{"etape": "prequalification", "etat": "a_completer", "version": 2}'::jsonb
   AND (SELECT count(*) FROM public.candidature_evenements
         WHERE candidature_id = pg_temp.c('02') AND type = 'transition' AND etat_avant = 'en_examen'
           AND etat_apres = 'a_completer' AND motif_interne = 'Motif interne L2A2 du complement'
@@ -753,23 +759,26 @@ SELECT pg_temp.vrai(pg_temp.lu('d02') @> '{"etat": "a_completer", "complementDem
   AND pg_temp.lu('d02')::text NOT LIKE '%Motif interne%',
   'le candidat lit les elements demandes (complementDemande), jamais le motif');
 SELECT pg_temp.garde('dc02d', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues'], 'Motif', 4, 'cle-complement-02-d')$$));
-SELECT pg_temp.vrai(pg_temp.lu('dc02d') @> '{"erreur": "transition_interdite", "etat": "a_completer", "raison": "etat"}'::jsonb,
-  'transition 7 depuis a_completer : transition_interdite');
+  $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues'], 'Motif', 2, 'cle-complement-02-d')$$));
+-- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11, T6) : depuis a_completer avec un complement EN COURS, la
+-- direction peut le MODIFIER (variante 3 du geste demander_complement) : ce n'est plus un refus.
+SELECT pg_temp.vrai(NOT pg_temp.lu('dc02d') ? 'erreur' AND pg_temp.lu('dc02d') -> 'aCompleter' = '["langues"]'::jsonb
+  AND pg_temp.lu('dc02d') -> 'candidature' @> '{"etat": "a_completer", "issue": "en_cours"}'::jsonb,
+  'transition 7 (variante 3) depuis a_completer avec un complement en cours : le complement est modifie (plus de refus)');
 
 -- 23 (01, Salle de verification et d'entretien) et le compteur des
 -- informations manquantes (L2-18).
 SELECT pg_temp.garde('lst_avant', pg_temp.en(pg_temp.p('a1'), 'admin', $$SELECT public.lister_candidatures()$$));
 SELECT pg_temp.garde('dc01a', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.demander_complement_candidat(pg_temp.c('01'), ARRAY['langues'], 'Motif', 6, 'cle-complement-01-a')$$));
+  $$SELECT public.demander_complement_candidat(pg_temp.c('01'), ARRAY['langues'], 'Motif', 4, 'cle-complement-01-a')$$));
 SELECT pg_temp.garde('dc01', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.demander_complement_candidat(pg_temp.c('01'), ARRAY['piece_identite', 'contrat'],
-    'Motif interne L2A2 salle 2', 6, 'cle-complement-01')$$));
+    'Motif interne L2A2 salle 2', 4, 'cle-complement-01')$$));
 SELECT pg_temp.garde('lst_apres', pg_temp.en(pg_temp.p('a1'), 'admin', $$SELECT public.lister_candidatures()$$));
 SELECT pg_temp.garde('d01', pg_temp.en(pg_temp.p('01'), 'teacher', $$SELECT public.etat_dossier() -> 'candidature'$$));
 SELECT pg_temp.vrai(pg_temp.lu('dc01a') @> '{"erreur": "elements_invalides", "elements": ["langues"]}'::jsonb
-  AND pg_temp.lu('dc01a') -> 'permis' = '["piece_identite", "cadre_religieux", "contrat", "avis"]'::jsonb
-  AND pg_temp.lu('dc01') -> 'candidature' @> '{"etape": "verifications", "etat": "entretien_a_planifier", "version": 7}'::jsonb
+  AND pg_temp.lu('dc01a') -> 'permis' = '["piece_identite", "cadre_religieux", "contrat", "avis", "pays_versement"]'::jsonb
+  AND pg_temp.lu('dc01') -> 'candidature' @> '{"etape": "verifications", "etat": "entretien_a_planifier", "version": 5}'::jsonb
   AND EXISTS (SELECT 1 FROM public.candidature_evenements WHERE candidature_id = pg_temp.c('01')
                AND details @> '{"geste": "demander_complement", "transition": 23,
                  "aCompleter": ["piece_identite", "contrat"], "aNotifier": "complement_demande"}'::jsonb
@@ -784,10 +793,10 @@ SELECT pg_temp.vrai((pg_temp.lu('lst_apres') #>> '{compteursAlertes,informations
 -- Une pause sort la candidature des informations manquantes ; la levee l'y
 -- remet.
 SELECT pg_temp.garde('pa01', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.mettre_en_pause_candidat(pg_temp.c('01'), 'Motif', 'pause_attente_informations', NULL, 7, 'cle-pause-01')$$));
+  $$SELECT public.mettre_en_pause_candidat(pg_temp.c('01'), 'Motif', 'pause_attente_informations', NULL, 5, 'cle-pause-01')$$));
 SELECT pg_temp.garde('lst_pause', pg_temp.en(pg_temp.p('a1'), 'admin', $$SELECT public.lister_candidatures()$$));
 SELECT pg_temp.garde('lv01', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.lever_pause_candidat(pg_temp.c('01'), 8, 'cle-levee-01')$$));
+  $$SELECT public.lever_pause_candidat(pg_temp.c('01'), 6, 'cle-levee-01')$$));
 SELECT pg_temp.garde('lst_levee', pg_temp.en(pg_temp.p('a1'), 'admin', $$SELECT public.lister_candidatures()$$));
 SELECT pg_temp.vrai((pg_temp.lu('lst_pause') #>> '{compteursAlertes,informationsManquantes}')::int
     = (pg_temp.lu('lst_avant') #>> '{compteursAlertes,informationsManquantes}')::int
@@ -937,9 +946,16 @@ BEGIN
       $$SELECT public.mettre_en_pause_candidat(pg_temp.c('09'), 'Motif', 'pause_general', NULL, 2, 'cle-l2-9-0006')$$] LOOP
     n := n + 1;
     v := pg_temp.en(pg_temp.p('a1'), 'admin', q);
-    PERFORM pg_temp.vrai(v @> '{"erreur": "transition_interdite", "enPause": true, "raison": "pause"}'::jsonb
-      AND pg_temp.trace(pg_temp.c('09')) = pg_temp.lu('t09'),
-      'L2-9 : en pause, ' || split_part(split_part(q, '(', 1), '.', 2) || ' refuse (raison pause), 0 ecriture');
+    IF q LIKE '%confirmer_moyen_paiement_candidat%' THEN
+      -- Geste 24 : code mort (BE-VERSEMENT, 16/11) ; sa condition d'etat echoue avant le controle de la pause.
+      PERFORM pg_temp.vrai(v @> '{"erreur": "transition_interdite", "raison": "etat"}'::jsonb
+        AND pg_temp.trace(pg_temp.c('09')) = pg_temp.lu('t09'),
+        'L2-9 : en pause, confirmer_moyen_paiement_candidat refuse (raison etat : geste 24 code mort), 0 ecriture');
+    ELSE
+      PERFORM pg_temp.vrai(v @> '{"erreur": "transition_interdite", "enPause": true, "raison": "pause"}'::jsonb
+        AND pg_temp.trace(pg_temp.c('09')) = pg_temp.lu('t09'),
+        'L2-9 : en pause, ' || split_part(split_part(q, '(', 1), '.', 2) || ' refuse (raison pause), 0 ecriture');
+    END IF;
   END LOOP;
 END $l2_9$;
 SELECT pg_temp.garde('lv09', pg_temp.en(pg_temp.p('a1'), 'admin',
@@ -983,7 +999,7 @@ SELECT pg_temp.garde('t11', pg_temp.trace(pg_temp.c('11')));
 SELECT pg_temp.garde('ro11', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.rouvrir_candidat(pg_temp.c('11'), 'Motif interne L2A2 de reouverture', 1, 'cle-rouvrir-11')$$));
 SELECT pg_temp.vrai(pg_temp.lu('ro11') -> 'candidature' @> '{"issue": "en_cours", "etape": "prequalification",
-    "etat": "en_examen", "refusModele": null, "paiement": "a_verifier"}'::jsonb
+    "etat": "en_examen", "refusModele": null, "paiement": "compatible"}'::jsonb
   AND (SELECT count(*) FROM public.candidature_evenements
         WHERE candidature_id = pg_temp.c('11') AND type = 'transition' AND issue_avant = 'refusee'
           AND issue_apres = 'en_cours' AND motif_interne = 'Motif interne L2A2 de reouverture'
@@ -991,7 +1007,7 @@ SELECT pg_temp.vrai(pg_temp.lu('ro11') -> 'candidature' @> '{"issue": "en_cours"
                            "controles": [{"nom": "compte_conforme", "valeur": true},
                                          {"nom": "questionnaire_complet", "valeur": true}]}'::jsonb) = 1
   AND (pg_temp.trace(pg_temp.c('11')) ->> 'audit')::int = (pg_temp.lu('t11') ->> 'audit')::int + 1,
-  'transition 19 : rouverte a l''etape et a l''etat d''origine, modele du refus efface, controles vrais traces, 1 ligne audit_logs');
+  'transition 19 : rouverte a l''etape et a l''etat d''origine, modele du refus efface, controles vrais traces, 1 ligne audit_logs ; paiement recalcule (compatible depuis BE-VERSEMENT, plus a_verifier)');
 SELECT pg_temp.garde('ro12', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.rouvrir_candidat(pg_temp.c('12'), 'Motif', 1, 'cle-rouvrir-12')$$));
 SELECT pg_temp.garde('ro13', pg_temp.en(pg_temp.p('a1'), 'admin',
@@ -1592,7 +1608,7 @@ INSERT INTO public.referentiel_paiement (pays, methode, operateur, etat, source,
 VALUES ('SA', 'mobile_money', 'orange_money', 'confirme', 'decision_directeur', 'scenario CAND-L2A2 relecture', current_date);
 SELECT pg_temp.vrai((SELECT etat = 'paiement_non_disponible' AND issue = 'refusee' AND paiement = 'incompatible'
                        FROM public.candidatures WHERE id = pg_temp.c('53'))
-  AND (SELECT etat = 'a_completer' AND issue = 'en_cours' AND paiement = 'a_verifier'
+  AND (SELECT etat = 'a_completer' AND issue = 'en_cours' AND paiement = 'compatible'
          FROM public.candidatures WHERE id = pg_temp.c('54'))
   AND pg_temp.lu('lr53') @> '{"issue": "refusee", "etat": "paiement_non_disponible", "refusModele": "refus_niveau"}'::jsonb,
   'D19 : la ligne passe confirme pendant le refus de 53 : le declencheur ne la voit pas, 54 (en cours) passe a_completer');
@@ -1604,15 +1620,15 @@ SELECT pg_temp.garde('ro55', pg_temp.en(pg_temp.p('a1'), 'admin',
 SELECT pg_temp.garde('d53', pg_temp.en(pg_temp.p('53'), 'teacher', $$SELECT public.etat_dossier() -> 'candidature'$$));
 SELECT pg_temp.garde('d54', pg_temp.en(pg_temp.p('54'), 'teacher', $$SELECT public.etat_dossier() -> 'candidature'$$));
 SELECT pg_temp.vrai(pg_temp.lu('ro53') -> 'candidature' @> '{"issue": "en_cours", "etape": "prequalification",
-      "etat": "a_completer", "paiement": "a_verifier", "refusModele": null, "version": 4}'::jsonb
+      "etat": "a_completer", "paiement": "compatible", "refusModele": null, "version": 4}'::jsonb
   AND (SELECT count(*) FROM public.candidature_evenements
         WHERE candidature_id = pg_temp.c('53') AND type = 'transition' AND details ->> 'transition' = '9'
           AND etat_avant = 'paiement_non_disponible' AND etat_apres = 'a_completer' AND auteur_id IS NULL
           AND details @> '{"cause": "reouverture", "aCompleter": ["versement"], "aNotifier": "paiement_possible",
-                           "paiementAvant": "incompatible", "paiementApres": "a_verifier"}'::jsonb) = 1
+                           "paiementAvant": "incompatible", "paiementApres": "compatible"}'::jsonb) = 1
   AND (SELECT count(*) FROM public.audit_logs WHERE row_id = pg_temp.c('53')::text
         AND action = 'candidature_effet_paiement' AND payload @> '{"cause": "reouverture", "effet": "a_completer"}'::jsonb) = 1
-  AND pg_temp.lu('d53') @> '{"etat": "a_completer", "paiement": "a_verifier", "complementDemande": ["versement"]}'::jsonb
+  AND pg_temp.lu('d53') @> '{"etat": "a_completer", "paiement": "compatible", "complementDemande": ["versement"]}'::jsonb
   AND NOT (pg_temp.lu('d53') -> 'envoiBloque') ? 'etat'
   AND pg_temp.lu('d53') -> 'complementDemande' = pg_temp.lu('d54') -> 'complementDemande',
   'D19 : 53 rouverte apres le passage de la ligne : transition 9 (a_completer, carte versement nommee, marqueur paiement_possible), le candidat peut de nouveau repondre, comme 54');
@@ -1693,12 +1709,13 @@ DECLARE
 BEGIN
   FOR g IN SELECT jsonb_array_elements_text(pg_temp.lu('cap_o7') -> 'gestesGroupables') LOOP
     r := pg_temp.en(pg_temp.p('a1'), 'admin', format($$SELECT public.apercu_lot_candidats(%L, ARRAY[pg_temp.c('52')])$$, g));
-    PERFORM pg_temp.vrai(NOT r ? 'erreur' AND r ->> 'geste' IN ('mettre_en_pause', 'lever_pause', 'refuser'),
+    PERFORM pg_temp.vrai(NOT r ? 'erreur' AND r ->> 'geste' IN ('mettre_en_pause', 'lever_pause', 'refuser', 'dispenser_entretien'),
       'D18 : gestesGroupables ' || g || ' accepte par l''apercu, code du moteur ' || coalesce(r ->> 'geste', '?'));
     v_codes := v_codes || (r ->> 'geste');
   END LOOP;
-  PERFORM pg_temp.vrai(v_codes = ARRAY['mettre_en_pause', 'lever_pause', 'refuser'],
-    'D18 : les trois gestes groupables de la capacite sont les trois du moteur');
+  -- BE-1g (16/11, migration 20261129470000) : dispenser_entretien est groupable, le quatrieme.
+  PERFORM pg_temp.vrai(v_codes = ARRAY['mettre_en_pause', 'lever_pause', 'refuser', 'dispenser_entretien'],
+    'D18 : les quatre gestes groupables de la capacite sont les quatre du moteur');
 END $o7$;
 SELECT pg_temp.garde('ap_v1', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.apercu_lot_candidats('mettreEnPause', ARRAY[pg_temp.c('52')])$$));
@@ -1769,8 +1786,14 @@ SELECT pg_temp.vrai((SELECT bool_and(
                      FROM public.candidatures c WHERE c.id::text LIKE 'ca2bcccc%')
   AND (SELECT count(*) FROM public.candidature_evenements e
         WHERE e.candidature_id::text LIKE 'ca2bcccc%' AND e.details ? 'geste'
-          AND e.details ->> 'transition' IN ('7', '10', '16', '17', '18', '19', '23', '24', '25', '28')) = 50,
-  'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature ; 50 gestes de ce lot (7, 10, 16 a 19, 23 a 25, 28)');
+          AND e.details ->> 'transition' IN ('7', '10', '16', '17', '18', '19', '23', '24', '25', '28')) = 47,
+  -- 47 et non 50 : le geste 24 (confirmer le moyen) est code mort depuis BE-VERSEMENT (16/11) ; ses quatre
+  -- confirmations (02, 03, 01, 07) ne laissent plus d'evenement ; et la modification d'un complement
+  -- (COMPLEMENT-SALLE-EXAMEN, 17/11, T6) laisse un evenement de transition 7 de plus.
+  'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature ; 47 gestes de ce lot (7, 10, 16 a 19, 23, 25, 28 ; le 24 est code mort)');
+-- PERF-AUDIT (14/11, migration 20261126200000) : les lignes d'audit sont chainees par pg_cron dans la
+-- minute ; sans cron ici, le scenario chaine lui-meme avant de verifier (comme scenarios_adm04.sql).
+SELECT private.audit_chainer();
 SELECT pg_temp.garde('chaine', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT to_jsonb(v) FROM public.verifier_chaine_audit(5000) v$$));
 SELECT pg_temp.vrai((pg_temp.lu('chaine') ->> 'rompues')::int = 0
@@ -1845,8 +1868,7 @@ SELECT pg_temp.vrai((SELECT jsonb_agg(n.nspname || '.' || p.proname ORDER BY n.n
 -- Salle de verification et d'entretien (moyen confirme, cadre accepte).
 INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
 VALUES (pg_temp.p('32'), 'teacher_religious_framework', 'test-cadre-1');
-SELECT pg_temp.garde('cf32', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.confirmer_moyen_paiement_candidat(pg_temp.c('32'), 'virement_bancaire', NULL, 1, 'cle-confirmer-32')$$));
+-- (le moyen de 32 est compatible sans confirmation : geste 24 code mort depuis BE-VERSEMENT)
 -- NOTIF-RETENU (08/11/2026) : une notification qui echoue n'empeche pas
 -- l'admission (declencheur d'echec simule sur la boite, retire ensuite).
 CREATE FUNCTION pg_temp.refuser_notification() RETURNS trigger LANGUAGE plpgsql AS $$
@@ -1854,14 +1876,14 @@ BEGIN RAISE EXCEPTION 'echec simule'; END $$;
 CREATE TRIGGER zz_echec_notification BEFORE INSERT ON public.notifications
   FOR EACH ROW WHEN (new.evenement = 'retenu_entretien') EXECUTE FUNCTION pg_temp.refuser_notification();
 SELECT pg_temp.garde('ad32', pg_temp.en(pg_temp.p('a1'), 'admin',
-  $$SELECT public.admettre_salle_verification(pg_temp.c('32'), 3, 'cle-admission-32')$$));
+  $$SELECT public.admettre_salle_verification(pg_temp.c('32'), 1, 'cle-admission-32')$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('ad32') -> 'candidature' @> '{"etape": "verifications"}'::jsonb
   AND (SELECT count(*) FROM public.notifications n
         WHERE n.evenement = 'retenu_entretien' AND n.destinataire = pg_temp.p('32')) = 0,
   'NOTIF-RETENU : notification en echec, l''admission est faite et aucune notification n''est posee');
 DROP TRIGGER zz_echec_notification ON public.notifications;
-SELECT pg_temp.vrai(pg_temp.lu('cf32') ->> 'paiement' = 'compatible'
+SELECT pg_temp.vrai(private.paiement_etat(pg_temp.c('32')) = 'compatible'
   AND pg_temp.lu('ad32') -> 'candidature' @> '{"etape": "verifications", "etat": "entretien_a_planifier"}'::jsonb
   AND (SELECT count(*) FROM public.candidature_evenements
         WHERE candidature_id = pg_temp.c('32') AND type = 'transition'
