@@ -21,11 +21,8 @@ import 'port_telechargement.dart';
 /// L'ouverture des documents, au serveur.
 class TelechargementSupabase implements PortTelechargement, LecteurArtefact {
   /// Cree l'adaptateur. [transport] se remplace dans les tests.
-  TelechargementSupabase(
-    this._client,
-    this._versions, {
-    http.Client? transport,
-  }) : _transport = transport ?? http.Client();
+  TelechargementSupabase(this._client, this._versions, {http.Client? transport})
+    : _transport = transport ?? http.Client();
 
   final SupabaseClient _client;
   final VersionsSupabase _versions;

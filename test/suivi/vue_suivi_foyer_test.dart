@@ -66,10 +66,10 @@ void main() {
 
       // Un tri par urgence ferait remonter l'absence : la ligne changerait de
       // place entre deux visites, et se ferait toucher a la place d'une autre.
-      expect(
-        vue.lignes.map((LigneSuivi l) => l.seance.id),
-        <String>['recent', 'vieux'],
-      );
+      expect(vue.lignes.map((LigneSuivi l) => l.seance.id), <String>[
+        'recent',
+        'vieux',
+      ]);
     });
 
     test('deux cours a la meme heure gardent un ordre stable', () {
@@ -250,30 +250,33 @@ void main() {
   });
 
   group('TUT-06 : les facettes et le filtre', () {
-    test('un enfant par facette, comptees avant filtre et triees par prenom', () {
-      final VueSuiviFoyer vue = VueSuiviFoyer.depuis(
-        seances: <Seance>[
-          _seance(id: 'a', ilYAMinutes: 60),
-          _seance(id: 'b', ilYAMinutes: 120),
-          _seance(
-            id: 'c',
-            ilYAMinutes: 180,
-            eleveId: 'enf-2',
-            elevePrenom: 'Ines',
-          ),
-        ],
-        presences: const <PresenceParticipant>[],
-        maintenant: _maintenant,
-      );
+    test(
+      'un enfant par facette, comptees avant filtre et triees par prenom',
+      () {
+        final VueSuiviFoyer vue = VueSuiviFoyer.depuis(
+          seances: <Seance>[
+            _seance(id: 'a', ilYAMinutes: 60),
+            _seance(id: 'b', ilYAMinutes: 120),
+            _seance(
+              id: 'c',
+              ilYAMinutes: 180,
+              eleveId: 'enf-2',
+              elevePrenom: 'Ines',
+            ),
+          ],
+          presences: const <PresenceParticipant>[],
+          maintenant: _maintenant,
+        );
 
-      expect(vue.enfants.map((FacetteEnfant e) => e.prenom), <String>[
-        'Ines',
-        'Sofia',
-      ]);
-      expect(vue.enfants.first.nombre, 1);
-      expect(vue.enfants.last.nombre, 2);
-      expect(vue.total, 3);
-    });
+        expect(vue.enfants.map((FacetteEnfant e) => e.prenom), <String>[
+          'Ines',
+          'Sofia',
+        ]);
+        expect(vue.enfants.first.nombre, 1);
+        expect(vue.enfants.last.nombre, 2);
+        expect(vue.total, 3);
+      },
+    );
 
     test('retenir un enfant ne garde que ses cours', () {
       final VueSuiviFoyer vue = VueSuiviFoyer.depuis(
@@ -325,7 +328,8 @@ void main() {
   group('TUT-06 : le pied de liste ne ment pas sur ce qu\'il montre', () {
     test('une lecture au plafond se declare tronquee', () {
       final List<Seance> pleine = <Seance>[
-        for (int i = 0; i < 4; i++) _seance(id: 'c$i', ilYAMinutes: 60 * (i + 1)),
+        for (int i = 0; i < 4; i++)
+          _seance(id: 'c$i', ilYAMinutes: 60 * (i + 1)),
       ];
 
       expect(

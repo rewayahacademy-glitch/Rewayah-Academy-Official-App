@@ -194,10 +194,7 @@ void main() {
       final FauxMoteurSalle moteur = FauxMoteurSalle();
       await moteur.rejoindre(_acces());
       final _CoranCompte coran = _CoranCompte();
-      await _monterPanneau(
-        tester,
-        _surcharges(moteur: moteur, coran: coran),
-      );
+      await _monterPanneau(tester, _surcharges(moteur: moteur, coran: coran));
       moteur.publierContenu(_contenu(42));
       await tester.pumpAndSettle();
       expect(_pageLue(tester), 42);
@@ -221,10 +218,7 @@ void main() {
       final FauxMoteurSalle moteur = FauxMoteurSalle();
       await moteur.rejoindre(_acces());
       final _CoranCompte coran = _CoranCompte();
-      await _monterPanneau(
-        tester,
-        _surcharges(moteur: moteur, coran: coran),
-      );
+      await _monterPanneau(tester, _surcharges(moteur: moteur, coran: coran));
       moteur.publierContenu(_contenu(42));
       await tester.pumpAndSettle();
       // La page 43 a ete lue en avance, a l'affichage de la 42.
@@ -255,10 +249,7 @@ void main() {
         final _CoranCompte coran = _CoranCompte();
         final Completer<void> page44 = Completer<void>();
         coran.retenues[44] = page44;
-        await _monterPanneau(
-          tester,
-          _surcharges(moteur: moteur, coran: coran),
-        );
+        await _monterPanneau(tester, _surcharges(moteur: moteur, coran: coran));
         moteur.publierContenu(_contenu(42));
         await tester.pumpAndSettle();
         await tester.tap(_suivant);
@@ -303,9 +294,7 @@ void main() {
         hote(
           Builder(
             builder: (BuildContext context) => MediaQuery(
-              data: MediaQuery.of(
-                context,
-              ).copyWith(disableAnimations: reduit),
+              data: MediaQuery.of(context).copyWith(disableAnimations: reduit),
               child: Scaffold(
                 body: ValueListenableBuilder<int>(
                   valueListenable: numero,
