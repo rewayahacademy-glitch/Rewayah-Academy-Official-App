@@ -268,6 +268,7 @@ DetailCandidature detailTest({
   DateTime? recueLe,
   bool complementEnCours = false,
   List<String>? gestes,
+  MajoriteCandidature majorite = MajoriteCandidature.nonServie,
 }) => DetailCandidature(
   ligne: LigneCandidature(
     id: id,
@@ -321,6 +322,7 @@ DetailCandidature detailTest({
   controles: controles,
   piece: piece,
   autresCompetences: autresCompetences,
+  majorite: majorite,
 );
 
 /// [capacitesGestes] avec en plus le geste « Debloquer le versement » que le

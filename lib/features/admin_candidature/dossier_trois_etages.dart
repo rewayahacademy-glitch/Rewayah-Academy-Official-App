@@ -33,6 +33,7 @@ import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/synthese_candidature.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/i18n/elision.dart';
+import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -295,6 +296,31 @@ class EtageUnDossier extends ConsumerWidget {
 // ---------------------------------------------------------------------------
 // Etage 2
 // ---------------------------------------------------------------------------
+
+/// La ligne d'age du dossier (MAJEUR-DIRECTION, 17/11/2026) : ce que le
+/// candidat a repondu a la question « 18 ans ou plus ? » (`DetailCandidature
+/// .majorite`, rendu par `lire_candidature`). `null` quand le serveur ne
+/// rend pas la cle : une ligne fausse ne se montre jamais.
+LigneSynthese? ligneAgeDuDossier(MajoriteCandidature majorite) {
+  if (!majorite.servie) return null;
+  final s = t.recrutement.dossier3.synthese;
+  final DateTime? le = majorite.attesteeLe;
+  final String valeur = switch (majorite.declaree) {
+    true =>
+      le == null
+          ? t.recrutement.file.ageAttestee
+          : s.ageValeurs.attestee(date: dateCourteCandidature(le)),
+    false => s.ageValeurs.moins18,
+    null => s.ageValeurs.nonAttestee,
+  };
+  // En arabe, le texte qui porte des chiffres s'isole dans son sens de lecture.
+  return (
+    cle: s.age,
+    valeur: LocaleSettings.currentLocale == AppLocale.ar
+        ? isolerSens(valeur)
+        : valeur,
+  );
+}
 
 /// L'etage 2 : la synthese, un tableau a deux colonnes (libelle court a
 /// gauche, valeur courte a droite), une ligne par critere. Une valeur trop
@@ -771,7 +797,6 @@ class CorpsDossier extends ConsumerStatefulWidget {
     this.passage,
     this.reglage,
     this.onDecisionPiece,
-    this.ligneMajorite,
     this.onPropositionTraitee,
     super.key,
   });
@@ -792,14 +817,6 @@ class CorpsDossier extends ConsumerStatefulWidget {
   /// Une decision sur la piece est prise (BE-SUIVANT : elle peut ouvrir le
   /// dossier suivant) ; `null` : elle ne compte que comme un retour local.
   final ValueChanged<String>? onDecisionPiece;
-
-  /// La phrase de majorite de la ligne Accords, ou `null` : rien n'est affiche.
-  /// `DetailCandidature.majorite` n'est pas encore dans `main` (PR 517) ; la
-  /// page passe `null` en attendant.
-  final String? ligneMajorite;
-
-  /// La cle de la phrase de majorite.
-  static const Key cleMajorite = ValueKey<String>('dossier-accords-majorite');
 
   /// Des entrees de plus dans le menu « ⋯ » de la barre de decision.
   final List<EntreeAction> autresActions;
@@ -1028,14 +1045,6 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
             children: <Widget>[
               for (final ControleCandidature c in accords)
                 LigneControleDossier(controle: c),
-              // Majorite (« 18 ans ou plus : atteste le ... ») : emplacement
-              // pret ; il n'affiche rien tant que la phrase est nulle.
-              if (widget.ligneMajorite case final String m)
-                TexteSansCoupure(
-                  m,
-                  key: CorpsDossier.cleMajorite,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
             ],
           ),
           gestes: <GesteRubrique?>[
@@ -1170,8 +1179,12 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
         ),
       ),
     );
+    // MAJEUR-DIRECTION (17/11/2026) : l'age attesté par le candidat est la
+    // premiere ligne du resume, visible des l'ouverture du dossier.
+    final LigneSynthese? ligneAge = ligneAgeDuDossier(detail.majorite);
     final Widget resume = ResumeDossier(
       lignes: <LigneSynthese>[
+        ?ligneAge,
         for (final LigneSynthese l in synthese)
           if (!cleProfil.contains(l.cle)) l,
       ],

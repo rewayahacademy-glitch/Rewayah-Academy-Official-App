@@ -264,6 +264,13 @@ class _FeuilleFiltresEtat extends ConsumerState<FeuilleFiltres> {
         ],
         (String? v) => _f.avec(responsable: () => v),
       ),
+      // MAJEUR-DIRECTION (17/11/2026) : la cle serveur `majorite` existait sans
+      // controle. Les trois valeurs sont celles du serveur.
+      _menu<String>('age', r.age, _f.majorite, <EntreeFiltre<String>>[
+        EntreeFiltre<String>(valeur: 'attestee', libelle: r.ageAttestee),
+        EntreeFiltre<String>(valeur: 'non_attestee', libelle: r.ageNonAttestee),
+        EntreeFiltre<String>(valeur: 'moins_18', libelle: r.ageMoins18),
+      ], (String? v) => _f.avec(majorite: () => v)),
       _menu<String>('genre', f.genre, _f.genre, <EntreeFiltre<String>>[
         EntreeFiltre<String>(
           valeur: 'male',

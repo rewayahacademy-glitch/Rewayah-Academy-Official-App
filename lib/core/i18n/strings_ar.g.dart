@@ -11097,6 +11097,10 @@ class _Traductions$recrutement$file$ar extends Traductions$recrutement$file$fr {
 	@override String get replier => 'طيّ';
 	@override String get trier => 'ترتيب';
 	@override String get pieceSansAttente => 'بلا وثيقة هوية للتحقق منها';
+	@override String get age => 'العمر';
+	@override String get ageAttestee => '18 سنة فأكثر، مؤكَّد';
+	@override String get ageNonAttestee => 'لم يُؤكَّد العمر بعد';
+	@override String get ageMoins18 => 'أقل من 18 سنة';
 	@override String get filtres => 'تصفية';
 	@override String filtresPoses({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'تصفية، ⁨${n}⁩ مطبّقة',
@@ -21821,6 +21825,8 @@ class _Traductions$recrutement$dossier3$synthese$ar extends Traductions$recrutem
 	@override late final _Traductions$recrutement$dossier3$synthese$memorisationValeurs$ar memorisationValeurs = _Traductions$recrutement$dossier3$synthese$memorisationValeurs$ar._(_root);
 	@override late final _Traductions$recrutement$dossier3$synthese$ijazaValeurs$ar ijazaValeurs = _Traductions$recrutement$dossier3$synthese$ijazaValeurs$ar._(_root);
 	@override late final _Traductions$recrutement$dossier3$synthese$publicValeurs$ar publicValeurs = _Traductions$recrutement$dossier3$synthese$publicValeurs$ar._(_root);
+	@override String get age => 'العمر';
+	@override late final _Traductions$recrutement$dossier3$synthese$ageValeurs$ar ageValeurs = _Traductions$recrutement$dossier3$synthese$ageValeurs$ar._(_root);
 }
 
 // Path: recrutement.dossier3.raison
@@ -26963,6 +26969,18 @@ class _Traductions$recrutement$dossier3$synthese$publicValeurs$ar extends Traduc
 	@override String get k1013 => '10-13 سنة';
 	@override String get k1417 => '14-17 سنة';
 	@override String get adultes => 'البالغون';
+}
+
+// Path: recrutement.dossier3.synthese.ageValeurs
+class _Traductions$recrutement$dossier3$synthese$ageValeurs$ar extends Traductions$recrutement$dossier3$synthese$ageValeurs$fr {
+	_Traductions$recrutement$dossier3$synthese$ageValeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String attestee({required Object date}) => '18 سنة فأكثر، أُكّد بتاريخ ⁨${date}⁩';
+	@override String get moins18 => 'أقل من 18 سنة: الترشح متوقف مؤقتًا';
+	@override String get nonAttestee => 'لم يُؤكَّد العمر بعد';
 }
 
 // Path: recrutement.parcours.presentation.p1
@@ -40440,6 +40458,10 @@ extension on TraductionsAr {
 			'recrutement.dossier3.synthese.publicValeurs.k1013' => '10-13 سنة',
 			'recrutement.dossier3.synthese.publicValeurs.k1417' => '14-17 سنة',
 			'recrutement.dossier3.synthese.publicValeurs.adultes' => 'البالغون',
+			'recrutement.dossier3.synthese.age' => 'العمر',
+			'recrutement.dossier3.synthese.ageValeurs.attestee' => ({required Object date}) => '18 سنة فأكثر، أُكّد بتاريخ ⁨${date}⁩',
+			'recrutement.dossier3.synthese.ageValeurs.moins18' => 'أقل من 18 سنة: الترشح متوقف مؤقتًا',
+			'recrutement.dossier3.synthese.ageValeurs.nonAttestee' => 'لم يُؤكَّد العمر بعد',
 			'recrutement.dossier3.demanderAccord' => 'طلب اتفاق',
 			'recrutement.dossier3.raison.droit' => 'لا يمكنكم البتّ في هذا الملف.',
 			'recrutement.dossier3.raison.fermee' => 'الملف مغلق.',
@@ -40460,6 +40482,10 @@ extension on TraductionsAr {
 			'recrutement.file.replier' => 'طيّ',
 			'recrutement.file.trier' => 'ترتيب',
 			'recrutement.file.pieceSansAttente' => 'بلا وثيقة هوية للتحقق منها',
+			'recrutement.file.age' => 'العمر',
+			'recrutement.file.ageAttestee' => '18 سنة فأكثر، مؤكَّد',
+			'recrutement.file.ageNonAttestee' => 'لم يُؤكَّد العمر بعد',
+			'recrutement.file.ageMoins18' => 'أقل من 18 سنة',
 			'recrutement.file.filtres' => 'تصفية',
 			'recrutement.file.filtresPoses' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'تصفية، ⁨${n}⁩ مطبّقة', one: 'تصفية، ⁨${n}⁩ مطبّقة', two: 'تصفية، ⁨${n}⁩ مطبّقان', few: 'تصفية، ⁨${n}⁩ مطبّقة', many: 'تصفية، ⁨${n}⁩ مطبّقة', other: 'تصفية، ⁨${n}⁩ مطبّقة', ), 
 			'recrutement.file.jaiCompris' => 'فهمت',
@@ -40549,6 +40575,8 @@ extension on TraductionsAr {
 			'recrutement.invitations.erreur' => 'لم يتأكد إنشاء الدعوة. ربما هي موجودة: انظر إلى القائمة قبل أن تعيد.',
 			'recrutement.invitations.creee' => ({required Object code}) => 'أُنشئت الدعوة. سلّم هذا الرمز إلى المعلّم: ⁨${code}⁩',
 			'recrutement.invitations.liste' => 'الدعوات',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.invitations.vide' => 'لا دعوات حاليًا',
 			'recrutement.invitations.videDetail' => 'ادعُ معلّمًا بعنوان بريده الإلكتروني: يظهر الرمز هنا.',
 			'recrutement.invitations.erreurListe' => 'تعذّرت قراءة الدعوات. أعد المحاولة بعد لحظات.',
@@ -40557,8 +40585,6 @@ extension on TraductionsAr {
 			'recrutement.invitations.indisponiblePhrase' => 'ستتوفر هذه الوظيفة عند ربط الخادم.',
 			'recrutement.invitations.etat.active' => 'سارية',
 			'recrutement.invitations.etat.utilisee' => 'مستعملة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.invitations.etat.expiree' => 'منتهية',
 			'recrutement.invitations.etat.revoquee' => 'ملغاة',
 			'recrutement.invitations.expireLe' => ({required Object date}) => 'تنتهي في ⁨${date}⁩',
@@ -41063,6 +41089,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.description' => 'ستكون متفرغًا خلال الأشهر الثلاثة القادمة.',
 			'recrutement.parcours.q.debutPossible.options.sous_3_mois.exemple' => 'تكون مسافرًا أو في امتحانات لبضعة أسابيع.',
 			'recrutement.parcours.q.debutPossible.options.inconnu.libelle' => 'لا أعرف بعد',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.debutPossible.options.inconnu.description' => 'لا تعرف بعد تاريخ بدئك.',
 			'recrutement.parcours.q.debutPossible.options.inconnu.explication' => 'يمكنك توضيح ذلك للإدارة أثناء المقابلة.',
 			'recrutement.parcours.q.debutPossible.options.inconnu.exemple' => 'يتوقف جدولك على جواب ما زلت تنتظره.',
@@ -41071,8 +41099,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.publics.court' => 'الفئات',
 			'recrutement.parcours.q.publics.options.o_6_9.libelle' => 'أطفال من 6 إلى 9 سنوات',
 			'recrutement.parcours.q.publics.options.o_6_9.description' => 'يبدؤون بكتاب القراءة الخاص بأكاديمية الرواية، حرفًا حرفًا، إلى الشدّة. ثم تأتي السور القصيرة الأولى وكلمات الصلاة والوضوء.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.publics.options.o_6_9.explication' => 'فصول من 5 أطفال على الأكثر (4 للمبتدئين)، ثلاث حصص في الأسبوع، مدة كل منها ساعة. يُعرض الوضوء والصلاة عمليًا ومعهما رسوم توضيحية.',
 			'recrutement.parcours.q.publics.options.o_6_9.exemple' => 'فصل لأطفال في الثامنة من العمر، أيام الاثنين والأربعاء والجمعة.',
 			'recrutement.parcours.q.publics.options.o_10_13.libelle' => 'أطفال من 10 إلى 13 سنة',
@@ -41577,6 +41603,8 @@ extension on TraductionsAr {
 			'juridique.enfants.s5.blocs.1' => 'في حال خطر داهم، اتصلوا أولًا بخدمات الطوارئ في بلدكم.',
 			'avis.form.titre' => 'شاركنا رأيك',
 			'avis.form.sousTitre' => 'بضعة أسطر عن تجربتك في Rewayah Academy. دقيقتان تكفيان.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.nom.libelle' => 'الاسم الظاهر',
 			'avis.form.nom.aide' => 'يكفي اسمك الأول والحرف الأول من اسم عائلتك.',
 			'avis.form.nom.erreur' => 'اكتب اسمًا من حرفين إلى 60 حرفًا.',
@@ -41585,8 +41613,6 @@ extension on TraductionsAr {
 			'avis.form.qualite.eleveAdulte' => 'طالب بالغ',
 			'avis.form.qualite.erreur' => 'اختر صفتك.',
 			'avis.form.pays.libelle' => 'بلد الإقامة',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.pays.choisir' => 'اختيار بلد',
 			'avis.form.pays.rechercheLibelle' => 'البحث عن بلد',
 			'avis.form.pays.rechercheAide' => 'اكتب اسم البلد',
@@ -42091,6 +42117,8 @@ extension on TraductionsAr {
 			'a3bis.regles.perteDetail' => 'إذا تقدّم معلم، فإنه يحل محل المعلم الذي لا يعود بإمكانه دخول حصة هذا اليوم، وتُبلَّغ الأسر. وإذا لم يتقدّم أحد، فلا يزال بإمكان المعلم الدخول: تبقى الحصة مفتوحة للاستبدال حتى نهايتها.',
 			'a3bis.regles.alerteDirection' => 'تنبيه الإدارة',
 			'a3bis.regles.alerteDirectionDetail' => 'إذا لم يدخل المعلم ولا بديل القاعة، تتلقى الإدارة بريدًا إلكترونيًا، مرة واحدة لكل حصة.',
+			_ => null,
+		} ?? switch (path) {
 			'a3bis.regles.avertissementDetail' => 'يُنبَّه المعلم إلى أنه قد يفقد الحصة. ويمكن للمعلمين المتاحين التقدّم لاستبداله.',
 			'a3bis.regles.seanceTardive' => 'حصة أُنشئت متأخرة',
 			'a3bis.regles.seanceTardiveDetail' => 'الحصة التي أُنشئت قبل بدايتها بأقل من هذه المدة لا تُسحب من المعلم تلقائيًا أبدًا. ومع ذلك يُرسَل تنبيه الإدارة.',
@@ -42099,8 +42127,6 @@ extension on TraductionsAr {
 			'payUx.repriseTitre' => 'هل غادرت النموذج دون أن تدفع؟',
 			'payUx.reprisePhrase' => 'تابع الدفع: يُفتح نموذج جديد. إن كان الدفع قد تمّ من قبل، فلا يُدفع شيء مرتين؛ حدّث الصفحة لترى حالته.',
 			'payUx.reprendre' => 'متابعة الدفع',
-			_ => null,
-		} ?? switch (path) {
 			'payUx.rassurance' => 'تتولّى شركة سترايب معالجة الدفع. تذهب بيانات بطاقتك مباشرة إلى سترايب: لا تراها Rewayah Academy ولا تحتفظ بها.',
 			'payUx.precedentOuvertTitre' => 'تعذّر إغلاق عملية الدفع التي بدأت قبل قليل',
 			'payUx.precedentOuvertPhrase' => 'لا يُدفع أي شيء مرتين، ولا يُفتح نموذج جديد. أعد المحاولة بعد قليل: إن كانت هذه الدفعة قد تمّت للتو، فستظهر في مدفوعاتك.',
@@ -42605,6 +42631,8 @@ extension on TraductionsAr {
 			'apprendre.sections.programme' => 'البرنامج',
 			'apprendre.sections.livret' => 'سجلّي',
 			'apprendre.bibliotheque.rayonCours' => 'وثائق الدروس',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.bibliotheque.rayonClasse' => 'لهذا الفصل',
 			'apprendre.bibliotheque.classeErreur.message' => 'لا تظهر مستندات هذا الفصل الآن',
 			'apprendre.bibliotheque.classeErreur.invitation' => 'اضغط إعادة المحاولة بعد لحظات.',
@@ -42613,8 +42641,6 @@ extension on TraductionsAr {
 			'apprendre.bibliotheque.rayonCoursVide.invitation' => 'تظهر بمجرد أن تنشرها الأكاديمية.',
 			'apprendre.bibliotheque.rayonPlusLoinVide' => 'ستظهر وثائق أخرى هنا',
 			'apprendre.bibliotheque.affichage.libelle' => 'طريقة عرض الوثائق',
-			_ => null,
-		} ?? switch (path) {
 			'apprendre.bibliotheque.affichage.grille' => 'شبكة',
 			'apprendre.bibliotheque.affichage.liste' => 'قائمة',
 			'apprendre.bibliotheque.filtres.libelle' => 'نوع الوثيقة',
@@ -43119,6 +43145,8 @@ extension on TraductionsAr {
 			'reprisesAdmin.refusee' => 'رُفض الاستلام.',
 			'reprisesAdmin.dejaTraitee' => 'سبقت معالجة هذا الطلب. القائمة محدَّثة.',
 			'reprisesAdmin.echecReseau' => 'تعذّر تأكيد القرار. تحقّق من القائمة قبل إعادة المحاولة.',
+			_ => null,
+		} ?? switch (path) {
 			'reprisesAdmin.vide' => 'لا طلب استلام للمعالجة.',
 			'reprisesAdmin.erreur' => 'تعذّر تحميل الطلبات. أعد المحاولة.',
 			'reprisesAdmin.sansDonnees' => 'طلبات الاستلام',
