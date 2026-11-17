@@ -36,7 +36,7 @@ Les outils `direction_praxis_*` n'écrivent pas dans ce journal (ils écrivent d
 ## 3. Les couches au-dessus de la base
 
 - **Fonction Edge `praxis-mcp`** (`supabase/functions/_shared/praxis/mcp.ts`) : une seule borne, **la taille du corps (16 Kio, réponse 413)**, lue en octets. **Aucune limite de débit** (recherche de `limit`, `rate`, `429`, `plafond`, `throttle` : aucune occurrence en dehors de ce commentaire : « toute la vérification se fait en base »).
-- **Rétention** : aucune. Le journal est « à ajout seul » (déclencheur sur `UPDATE`, aucun droit de suppression pour les rôles de l'API, aucune tâche `pg_cron` de purge). Les lignes ne disparaissent jamais.
+- **Rétention** : aucune. Le journal est « à ajout seul » (déclencheur sur `UPDATE`, aucun droit de suppression pour les rôles de l'API, aucune migration du dépôt ne crée de tâche de purge ; **je n'ai pas relu les tâches `pg_cron` de la production**). Dans le dépôt, les lignes ne disparaissent jamais.
 
 ## 4. Ce qui n'est pas borné, en une phrase
 
