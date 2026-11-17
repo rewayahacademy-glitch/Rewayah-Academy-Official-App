@@ -79,6 +79,7 @@ parallèle, un agent par lot, quatre agents au plus.
 | 29 | #582 DEPLACER-ENTRETIEN (760000) | ☑ | **fusionnée (b9893b02) et installée** le 17/11 vers 4 h UTC ; vérifié : 3 fonctions = empreintes du fichier, règle 48, capacité `deplacerEntretien`, `planifier_entretien` passe par `entretien_controles_planification` (même comportement), porte DEFINER sans `anon`. #581 en conflit i18n après elle → BE-DOSSIER |
 | 30 | #599 PRAXIS-PLAFOND-GLOBAL (870000) | ☑ | **fusionnée (f8fba8bf) et installée** ; vérifié : 3 empreintes = fichier, index, plafond 600, Praxis éteint, porte de réglage fermée à `anon` |
 | 31 | #596 docs (correction du grand livre) | ☑ | fusionnée (cfab596c) |
+| 32 | Envoi de message après PX-1 (610000, extraction com_envoyer_message) | ☑ | **prouvé en production** par le Pilote Messagerie (17/11, 4 h 15 UTC) : 3 messages réels en 200, une ligne chacun ; `com_annonce_envoyer` pas encore servi (non prouvé) ; double appel client absorbé par l'idempotence (chez le Pilote Messagerie) |
 
 ## 2. Gros lots (dans l'ordre ; une étape ne commence que quand la précédente est livrée)
 
