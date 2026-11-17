@@ -259,6 +259,15 @@ RESET ROLE;
 -- ------------------------------------------------------------------
 -- 4. Le jeton video refuse l'eleve suspendu
 -- ------------------------------------------------------------------
+-- Les groupes (c01 le lundi, c02 le mardi, 9 h Europe/Paris, soit 08:00-09:00 UTC en hiver) font creer par leur
+-- declencheur des seances a venir pour b1, avec leurs eleves pour participants. Une seance de test a « maintenant +
+-- 10 minutes » les heurtait (sessions_no_teacher_overlap pour b1, puis le chevauchement du meme profil pour e1 et
+-- e2) les lundis et mardis entre 06 h 50 et 08 h UTC : le test dependait de l'heure et du jour d'execution. On
+-- libere donc, dans la fixture, la SEULE fenetre de la seance de test : les seances generees qui la recouvrent. Ce que
+-- le test prouve (le jeton d'un eleve suspendu pour paiement) ne depend ni de ces seances ni de l'heure.
+DELETE FROM public.sessions
+ WHERE groupe_id IN ('f6000000-0000-4000-8000-000000000c01', 'f6000000-0000-4000-8000-000000000c02')
+   AND tstzrange(started_at, ended_at) && tstzrange(clock_timestamp() + interval '10 minutes', clock_timestamp() + interval '70 minutes');
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, session_type, groupe_id, join_opens_at)
 VALUES ('f6000000-0000-4000-8000-000000000501','f6000000-0000-4000-8000-0000000000b1',
         clock_timestamp() + interval '10 minutes', clock_timestamp() + interval '70 minutes',
