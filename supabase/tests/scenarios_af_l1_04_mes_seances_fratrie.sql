@@ -169,7 +169,7 @@ begin
   raise notice 'L1-04 ok : l''enfant d''un autre foyer ne lit rien';
 end $$;
 
--- Controleur C : tout, inchange.
+-- Controleur C : sans mission ni capacite, rien (DETTE-CONTROLLER, 17/11 ; avant : tout).
 do $$
 declare
   v_total int;
@@ -183,10 +183,10 @@ begin
   select count(*) into v_total from public.mes_seances_v
    where session_id in ('10000104-0000-0000-0000-0000000000a1', '10000104-0000-0000-0000-0000000000b2');
   reset role;
-  if v_total <> 2 then
-    raise exception 'L1-04 ECHEC controleur : lignes=% (attendu 2)', v_total;
+  if v_total <> 0 then
+    raise exception 'L1-04 ECHEC controleur : lignes=% (attendu 0)', v_total;
   end if;
-  raise notice 'L1-04 ok : le controleur lit toutes les seances';
+  raise notice 'L1-04 ok : le controleur sans mission ne lit aucune seance';
 end $$;
 
 -- Garde-fou : la vue garde security_barrier.

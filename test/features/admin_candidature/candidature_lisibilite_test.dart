@@ -293,11 +293,17 @@ DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
   ),
   GesteCandidature.leverPause => detailTest(enPause: true),
   GesteCandidature.rouvrir => detailTest(issue: IssueCandidature.retiree),
+  GesteCandidature.dispenserEntretien => detailTest(
+    etape: EtapeCandidature.verifications,
+    etat: EtatCandidature.entretienAPlanifier,
+  ),
   GesteCandidature.cloreComplement => detailTest(
     etape: EtapeCandidature.verifications,
     etat: EtatCandidature.entretienAPlanifier,
     complementEnCours: true,
   ),
+  GesteCandidature.modifierComplement || GesteCandidature.annulerComplement =>
+    detailTest(etat: EtatCandidature.aCompleter, complementEnCours: true),
   _ => detailTest(),
 };
 

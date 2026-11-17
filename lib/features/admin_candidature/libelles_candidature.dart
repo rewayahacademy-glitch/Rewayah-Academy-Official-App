@@ -25,12 +25,15 @@ String libelleGeste(GesteCandidature geste) {
     GesteCandidature.debloquerVersement => g.debloquerVersement,
     GesteCandidature.demanderComplement => g.demanderComplement,
     GesteCandidature.cloreComplement => g.cloreComplement,
+    GesteCandidature.modifierComplement => g.modifierComplement,
+    GesteCandidature.annulerComplement => g.annulerComplement,
     GesteCandidature.mettreEnPause => g.mettreEnPause,
     GesteCandidature.leverPause => g.leverPause,
     GesteCandidature.refuser => g.refuser,
     GesteCandidature.consignerRetrait => g.retrait,
     GesteCandidature.rouvrir => g.rouvrir,
     GesteCandidature.definirResponsable => g.responsable,
+    GesteCandidature.dispenserEntretien => g.dispenserEntretien,
   };
 }
 
@@ -46,12 +49,15 @@ String libelleConsequence(GesteCandidature geste) {
     GesteCandidature.debloquerVersement => c.debloquerVersement,
     GesteCandidature.demanderComplement => c.demanderComplement,
     GesteCandidature.cloreComplement => c.cloreComplement,
+    GesteCandidature.modifierComplement => c.modifierComplement,
+    GesteCandidature.annulerComplement => c.annulerComplement,
     GesteCandidature.mettreEnPause => c.mettreEnPause,
     GesteCandidature.leverPause => c.leverPause,
     GesteCandidature.refuser => c.refuser,
     GesteCandidature.consignerRetrait => c.retrait,
     GesteCandidature.rouvrir => c.rouvrir,
     GesteCandidature.definirResponsable => c.responsable,
+    GesteCandidature.dispenserEntretien => c.dispenserEntretien,
   };
 }
 
@@ -67,12 +73,15 @@ String libelleRetour(GesteCandidature geste) {
     GesteCandidature.debloquerVersement => r.debloquerVersement,
     GesteCandidature.demanderComplement => r.demanderComplement,
     GesteCandidature.cloreComplement => r.cloreComplement,
+    GesteCandidature.modifierComplement => r.modifierComplement,
+    GesteCandidature.annulerComplement => r.annulerComplement,
     GesteCandidature.mettreEnPause => r.mettreEnPause,
     GesteCandidature.leverPause => r.leverPause,
     GesteCandidature.refuser => r.refuser,
     GesteCandidature.consignerRetrait => r.retrait,
     GesteCandidature.rouvrir => r.rouvrir,
     GesteCandidature.definirResponsable => r.responsable,
+    GesteCandidature.dispenserEntretien => r.dispenserEntretien,
   };
 }
 

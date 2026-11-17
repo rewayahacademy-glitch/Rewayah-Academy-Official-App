@@ -370,17 +370,28 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
    WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
   = ARRAY['private.praxis_noter>private.praxis_journal', 'private.praxis_porte>private.praxis_cles',
           'public.direction_praxis_emettre_cle>private.praxis_cles', 'public.direction_praxis_regler>private.praxis_reglages',
+          'public.direction_praxis_regler_essai>private.praxis_reglages',
           'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier'],
   'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
--- R4 (suite) : les ecritures INDIRECTES. Les fonctions praxis_* n'appellent, parmi les fonctions private.com_*, que cette liste fermee.
-SELECT pg_temp.vrai(NOT EXISTS (
-    SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
-         LATERAL regexp_matches(p.prosrc, '(private\.com_[a-z_]+)\s*\(', 'gi') m
-     WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%')
-       AND lower(m[1]) NOT IN ('private.com_envoyer_message_interne', 'private.com_annonce_envoyer_interne', 'private.com_paires',
-                               'private.com_annonce_publics_valides', 'private.com_annonce_personnes', 'private.com_est_mineur',
-                               'private.com_est_partie', 'private.com_profil_valide')),
-  'R4 : les fonctions praxis_* n''appellent que les deux internes d''ecriture de la messagerie et six aides de lecture ou de controle (liste fermee)');
+-- R4 (suite, AR-10) : les ecritures INDIRECTES. TOUT appel qualifie `schema.fonction(` fait par une fonction praxis_*, private.praxis_* ou
+-- direction_praxis_* (schemas public, private, auth, extensions, tout schema hors pg_catalog) est dans une liste fermee ecrite ici. Un appel
+-- vers une autre fonction (par exemple direction_praxis_regler depuis un outil, ou une fonction de paiement) est rouge. Les noms de tables
+-- suivies d'une parenthese de colonnes (INSERT INTO private.praxis_cles (...)) sont dans la liste : leurs ecritures sont fermees par le test R4 precedent.
+SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY lower(m[1])), ARRAY[]::text[])
+    FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
+         LATERAL regexp_matches(p.prosrc, '\m([a-z_][a-z_0-9]*\.[a-z_][a-z_0-9]*)\s*\(', 'gi') m
+   WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%')
+     AND lower(m[1]) NOT LIKE 'pg\_catalog.%')
+  = ARRAY['auth.jwt', 'auth.uid', 'extensions.gen_random_bytes',
+          'private.com_annonce_envoyer_interne', 'private.com_annonce_personnes', 'private.com_annonce_publics_valides',
+          'private.com_envoyer_message_interne', 'private.com_est_mineur', 'private.com_est_partie', 'private.com_paires',
+          'private.com_profil_valide', 'private.praxis_auteur_json', 'private.praxis_calendrier', 'private.praxis_cles',
+          'private.praxis_cotes', 'private.praxis_empreinte', 'private.praxis_essai', 'private.praxis_est_equipe', 'private.praxis_est_officiel',
+          'private.praxis_est_partie_a', 'private.praxis_fil_dans_cotes', 'private.praxis_fil_refus', 'private.praxis_journal',
+          'private.praxis_noter', 'private.praxis_porte', 'private.praxis_profil', 'private.praxis_types_fil',
+          'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access'],
+  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (30 noms) ; aucun autre appel de public, private ou d''un autre schema');
+
 -- R1 (AR-9) : un controle qui a un sens. Chaque outil public a EXACTEMENT les arguments attendus (nom : type) ; aucun argument n'est un texte libre
 -- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
 SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname)

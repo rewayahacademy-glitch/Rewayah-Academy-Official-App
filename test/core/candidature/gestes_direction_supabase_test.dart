@@ -156,6 +156,21 @@ DemandeGeste _demande(GesteCandidature g) {
         elements: const <String>['langues', 'versement'],
         motif: 'Preciser.',
       );
+    case GesteCandidature.modifierComplement:
+      return DemandeGeste.modifierComplement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        elements: const <String>['cadre_religieux'],
+        motif: 'Preciser.',
+      );
+    case GesteCandidature.annulerComplement:
+      return DemandeGeste.annulerComplement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Retiree.',
+      );
     case GesteCandidature.cloreComplement:
       return DemandeGeste.cloreComplement(
         candidatureId: id,
@@ -243,6 +258,14 @@ DemandeGeste _demande(GesteCandidature g) {
         cleIdempotence: cle,
         responsableId: 'r1',
       );
+    case GesteCandidature.dispenserEntretien:
+      return DemandeGeste.dispenserEntretien(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        categorie: CategorieDispense.fondateur,
+        motif: 'Fondateur de l\'academie.',
+      );
   }
 }
 
@@ -256,6 +279,17 @@ void main() {
               'p_elements': <String>['langues', 'versement'],
               'p_motif': 'Preciser.',
             },
+          ),
+          GesteCandidature.modifierComplement: (
+            'demander_complement_candidat',
+            <String, Object?>{
+              'p_elements': <String>['cadre_religieux'],
+              'p_motif': 'Preciser.',
+            },
+          ),
+          GesteCandidature.annulerComplement: (
+            'annuler_complement_candidat',
+            <String, Object?>{'p_motif': 'Retiree.'},
           ),
           GesteCandidature.cloreComplement: (
             'demander_complement_candidat',
@@ -322,6 +356,13 @@ void main() {
           GesteCandidature.definirResponsable: (
             'definir_responsable_candidat',
             <String, Object?>{'p_responsable_id': 'r1'},
+          ),
+          GesteCandidature.dispenserEntretien: (
+            'dispenser_entretien',
+            <String, Object?>{
+              'p_categorie': 'fondateur',
+              'p_motif': 'Fondateur de l\'academie.',
+            },
           ),
         };
 
