@@ -4501,7 +4501,7 @@
         "pieceRefusee": "Pièce refusée.",
         "pieceDejaDecidee": "Cette pièce a déjà reçu une décision. Rechargez la fiche.",
         "pieceNonConfirmee": "Le résultat n'est pas encore confirmé. Rechargez la fiche avant de réessayer.",
-        "pieceHorsLigne": "Rien n'a été envoyé\u00a0: vous êtes hors ligne. Réessayez quand la connexion sera revenue."
+        "pieceHorsLigne": "Rien n'a été envoyé. Réessayez quand la connexion sera revenue."
       },
       "controles": {
         "noms": {

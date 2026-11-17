@@ -4501,7 +4501,7 @@
         "pieceRefusee": "Document rejected.",
         "pieceDejaDecidee": "This document has already been decided. Reload the file.",
         "pieceNonConfirmee": "The result is not confirmed yet. Reload the file before trying again.",
-        "pieceHorsLigne": "Nothing was sent: you are offline. Try again when the connection is back."
+        "pieceHorsLigne": "Nothing was sent. Try again when the connection is back."
       },
       "controles": {
         "noms": {

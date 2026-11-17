@@ -16,6 +16,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../core/candidature/piece_candidature.dart';
+import '../../core/candidature/port_candidatures_direction.dart'
+    show capacitesCandidaturesProvider;
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/theme/app_palette.dart';
@@ -24,6 +26,13 @@ import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/champ_etiquete.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../admin_dossiers/surfaces_decision.dart' show raisonEchecDecision;
+
+/// Le serveur ouvre-t-il la décision de la pièce à ce lecteur ? (`decider_dossier`
+/// : direction active de genre connu ; un porteur de mission ne l'a pas.)
+bool peutDeciderPiece(WidgetRef ref) =>
+    ref.watch(deciderPieceProvider) != null &&
+    (ref.watch(capacitesCandidaturesProvider).value?.geste('deciderPiece') ??
+        false);
 
 /// Valider ou refuser la pièce déposée, sur la fiche.
 class DecisionPiece extends ConsumerStatefulWidget {
@@ -145,9 +154,11 @@ class _EtatDecisionPiece extends ConsumerState<DecisionPiece> {
   @override
   Widget build(BuildContext context) {
     final r = t.admin.candidatures.detail;
-    // « Le bouton n'apparaît que si la capacité serveur le permet » : sans la
-    // porte branchée, rien n'est rendu (K-56).
-    if (ref.watch(deciderPieceProvider) == null) {
+    // « Le bouton n'apparaît que si la capacité serveur le permet » : la clé
+    // `gestes.deciderPiece` de `capacites_candidatures()` (CAPACITE-DECIDER-PIECE),
+    // jamais le simple branchement de la porte. Absente (porteur de mission,
+    // serveur plus ancien) : rien n'est rendu (K-56).
+    if (!peutDeciderPiece(ref)) {
       return const SizedBox.shrink(key: DecisionPiece.cle);
     }
     final TextStyle corps =

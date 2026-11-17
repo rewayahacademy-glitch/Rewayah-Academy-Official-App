@@ -14,6 +14,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/piece_candidature.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/fichiers/ouvrir_onglet.dart';
@@ -71,6 +72,7 @@ Future<_Signature> _monter(
     String? motif,
   })?
   decider,
+  CapacitesCandidatures? capacites,
 }) async {
   final _Signature signature = _Signature(extension: extension);
   final DetailCandidature detail = detailTest(
@@ -80,7 +82,7 @@ Future<_Signature> _monter(
   await monterCandidature(
     tester,
     port: FauxCandidaturesDirection(
-      capacitesRendues: capacitesGestes,
+      capacitesRendues: capacites ?? capacitesGestes,
       details: <DetailCandidature>[detail],
     ),
     surcharges: <Override>[
@@ -110,6 +112,27 @@ Future<_Signature> _monter(
 String _pastille(WidgetTester tester) => (tester.widget(
   find.byKey(RubriqueDossier.clePastille(RubriqueDossierCode.piece)),
 ) as StatusPill).libelle;
+
+/// La direction : la capacite serveur `gestes.deciderPiece` est vraie.
+final CapacitesCandidatures _direction = CapacitesCandidatures(
+  peutLire: true,
+  peutVoirContact: true,
+  genreLecteurConnu: true,
+  peutDecider: true,
+  gestes: <String, bool>{...capacitesGestes.gestes, 'deciderPiece': true},
+  listes: capacitesGestes.listes,
+);
+
+/// Un porteur de mission : il decide de gestes (dont `validerPiece`), jamais de
+/// la piece : la cle `deciderPiece` est absente.
+final CapacitesCandidatures _porteurDeMission = CapacitesCandidatures(
+  peutLire: true,
+  peutVoirContact: true,
+  genreLecteurConnu: true,
+  peutDecider: true,
+  gestes: <String, bool>{...capacitesGestes.gestes, 'validerPiece': true},
+  listes: capacitesGestes.listes,
+);
 
 void main() {
   setUpAll(() async {
@@ -277,7 +300,7 @@ void main() {
     testWidgets('sans la porte branchee, ni Valider ni Refuser', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, deposee);
+      await _monter(tester, deposee, capacites: _direction);
       expect(find.byKey(DecisionPiece.cleValider), findsNothing);
       expect(find.byKey(DecisionPiece.cleRefuser), findsNothing);
     });
@@ -360,6 +383,49 @@ void main() {
   group('PIECE-SUR-LA-FICHE : decider la piece sur la fiche', () {
     final r = t.admin.candidatures.detail;
 
+    testWidgets(
+      'porteur de mission : aucun bouton (pas de capacite deciderPiece)',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          deposee,
+          capacites: _porteurDeMission,
+          decider: ({
+            required String documentId,
+            required bool approuve,
+            String? motif,
+          }) async {},
+        );
+        expect(find.byKey(PieceVignette.cle), findsOneWidget);
+        expect(find.byKey(DecisionPiece.cleValider), findsNothing);
+        expect(find.byKey(DecisionPiece.cleRefuser), findsNothing);
+      },
+    );
+
+    testWidgets('direction : Valider et Refuser sont rendus', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        deposee,
+        capacites: _direction,
+        decider: ({
+          required String documentId,
+          required bool approuve,
+          String? motif,
+        }) async {},
+      );
+      expect(find.byKey(DecisionPiece.cleValider), findsOneWidget);
+      expect(find.byKey(DecisionPiece.cleRefuser), findsOneWidget);
+    });
+
+    testWidgets('capacite sans branchement de la porte : aucun bouton', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, deposee, capacites: _direction);
+      expect(find.byKey(DecisionPiece.cleValider), findsNothing);
+    });
+
     testWidgets('Valider appelle la porte avec le document', (
       WidgetTester tester,
     ) async {
@@ -367,6 +433,7 @@ void main() {
       await _monter(
         tester,
         deposee,
+        capacites: _direction,
         decider: ({
           required String documentId,
           required bool approuve,
@@ -387,6 +454,7 @@ void main() {
       await _monter(
         tester,
         deposee,
+        capacites: _direction,
         decider: ({
           required String documentId,
           required bool approuve,
@@ -420,6 +488,7 @@ void main() {
       await _monter(
         tester,
         deposee,
+        capacites: _direction,
         decider:
             ({
               required String documentId,
@@ -441,6 +510,7 @@ void main() {
       await _monter(
         tester,
         deposee,
+        capacites: _direction,
         decider:
             ({
               required String documentId,

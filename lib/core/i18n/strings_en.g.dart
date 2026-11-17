@@ -14825,7 +14825,7 @@ class _Traductions$admin$candidatures$detail$en extends Traductions$admin$candid
 	@override String get pieceRefusee => 'Document rejected.';
 	@override String get pieceDejaDecidee => 'This document has already been decided. Reload the file.';
 	@override String get pieceNonConfirmee => 'The result is not confirmed yet. Reload the file before trying again.';
-	@override String get pieceHorsLigne => 'Nothing was sent: you are offline. Try again when the connection is back.';
+	@override String get pieceHorsLigne => 'Nothing was sent. Try again when the connection is back.';
 }
 
 // Path: admin.candidatures.controles
@@ -31103,7 +31103,7 @@ extension on TraductionsEn {
 			'admin.candidatures.detail.pieceRefusee' => 'Document rejected.',
 			'admin.candidatures.detail.pieceDejaDecidee' => 'This document has already been decided. Reload the file.',
 			'admin.candidatures.detail.pieceNonConfirmee' => 'The result is not confirmed yet. Reload the file before trying again.',
-			'admin.candidatures.detail.pieceHorsLigne' => 'Nothing was sent: you are offline. Try again when the connection is back.',
+			'admin.candidatures.detail.pieceHorsLigne' => 'Nothing was sent. Try again when the connection is back.',
 			'admin.candidatures.controles.noms.compteConforme' => 'Account compliant',
 			'admin.candidatures.controles.noms.cadreReligieux' => 'Religious and teaching framework accepted',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'Questionnaire complete at the current version',

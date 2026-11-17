@@ -30194,8 +30194,8 @@ class Traductions$admin$candidatures$detail$fr {
 	/// fr: 'Le résultat n'est pas encore confirmé. Rechargez la fiche avant de réessayer.'
 	String get pieceNonConfirmee => 'Le résultat n\'est pas encore confirmé. Rechargez la fiche avant de réessayer.';
 
-	/// fr: 'Rien n'a été envoyé : vous êtes hors ligne. Réessayez quand la connexion sera revenue.'
-	String get pieceHorsLigne => 'Rien n\'a été envoyé : vous êtes hors ligne. Réessayez quand la connexion sera revenue.';
+	/// fr: 'Rien n'a été envoyé. Réessayez quand la connexion sera revenue.'
+	String get pieceHorsLigne => 'Rien n\'a été envoyé. Réessayez quand la connexion sera revenue.';
 }
 
 // Path: admin.candidatures.controles
@@ -58011,7 +58011,7 @@ extension on Traductions {
 			'admin.candidatures.detail.pieceRefusee' => 'Pièce refusée.',
 			'admin.candidatures.detail.pieceDejaDecidee' => 'Cette pièce a déjà reçu une décision. Rechargez la fiche.',
 			'admin.candidatures.detail.pieceNonConfirmee' => 'Le résultat n\'est pas encore confirmé. Rechargez la fiche avant de réessayer.',
-			'admin.candidatures.detail.pieceHorsLigne' => 'Rien n\'a été envoyé : vous êtes hors ligne. Réessayez quand la connexion sera revenue.',
+			'admin.candidatures.detail.pieceHorsLigne' => 'Rien n\'a été envoyé. Réessayez quand la connexion sera revenue.',
 			'admin.candidatures.controles.noms.compteConforme' => 'Compte conforme',
 			'admin.candidatures.controles.noms.cadreReligieux' => 'Cadre religieux et pédagogique accepté',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'Questionnaire complet à la version courante',

@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature_detail.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/piece_candidature.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -76,7 +77,14 @@ Future<void> _monter(WidgetTester tester, {required bool ar}) async {
   await monterCandidature(
     tester,
     port: FauxCandidaturesDirection(
-      capacitesRendues: capacitesGestes,
+      capacitesRendues: CapacitesCandidatures(
+        peutLire: true,
+        peutVoirContact: true,
+        genreLecteurConnu: true,
+        peutDecider: true,
+        gestes: <String, bool>{...capacitesGestes.gestes, 'deciderPiece': true},
+        listes: capacitesGestes.listes,
+      ),
       details: <DetailCandidature>[detailTest()],
     ),
     surcharges: <Override>[

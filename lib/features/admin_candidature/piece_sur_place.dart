@@ -81,7 +81,7 @@ class PieceSurPlace extends ConsumerWidget {
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         PieceVignette(documentId: documentId, nom: nom, genre: genre),
-        if (ref.watch(deciderPieceProvider) != null) ...<Widget>[
+        if (peutDeciderPiece(ref)) ...<Widget>[
           Ecart.vMd,
           DecisionPiece(
             documentId: documentId,

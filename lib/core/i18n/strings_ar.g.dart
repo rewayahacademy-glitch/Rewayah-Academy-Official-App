@@ -17191,7 +17191,7 @@ class _Traductions$admin$candidatures$detail$ar extends Traductions$admin$candid
 	@override String get pieceRefusee => 'تم رفض الوثيقة.';
 	@override String get pieceDejaDecidee => 'صدر قرار بشأن هذه الوثيقة من قبل. أعد تحميل الملف.';
 	@override String get pieceNonConfirmee => 'لم تتأكد النتيجة بعد. أعد تحميل الملف قبل المحاولة من جديد.';
-	@override String get pieceHorsLigne => 'لم يُرسل شيء: أنت غير متصل. أعد المحاولة عند عودة الاتصال.';
+	@override String get pieceHorsLigne => 'لم يُرسل شيء. أعد المحاولة عند عودة الاتصال.';
 }
 
 // Path: admin.candidatures.controles
@@ -32952,7 +32952,7 @@ extension on TraductionsAr {
 			'admin.candidatures.detail.pieceRefusee' => 'تم رفض الوثيقة.',
 			'admin.candidatures.detail.pieceDejaDecidee' => 'صدر قرار بشأن هذه الوثيقة من قبل. أعد تحميل الملف.',
 			'admin.candidatures.detail.pieceNonConfirmee' => 'لم تتأكد النتيجة بعد. أعد تحميل الملف قبل المحاولة من جديد.',
-			'admin.candidatures.detail.pieceHorsLigne' => 'لم يُرسل شيء: أنت غير متصل. أعد المحاولة عند عودة الاتصال.',
+			'admin.candidatures.detail.pieceHorsLigne' => 'لم يُرسل شيء. أعد المحاولة عند عودة الاتصال.',
 			'admin.candidatures.controles.noms.compteConforme' => 'الحساب مطابق',
 			'admin.candidatures.controles.noms.cadreReligieux' => 'الإطار الديني والتربوي مقبول',
 			'admin.candidatures.controles.noms.questionnaireComplet' => 'الاستبيان مكتمل بنسخته الحالية',
