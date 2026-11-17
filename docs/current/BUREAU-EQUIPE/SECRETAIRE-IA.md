@@ -299,7 +299,7 @@ Suivi : `SUIVI.md`.
 **Consignes du directeur du 17/11/2026 au matin** (reçues par l'agent de la messagerie, reportées par le pilote) :
 - « arrête tout ce qui est création de l'icône, je vais le faire moi-même » : **l'image de profil est fournie par le
   directeur** ; aucun agent ne la dessine (lot 11 arrêté, rien poussé).
-- Cité par l'agent, non retrouvé mot pour mot dans le transcript : « il s'appelle Ra_Praxis, "Ra = Rewayah Academy". et
+- **Confirmé par le directeur au pilote le 17/11 à 9 h 05** (« je confirme le nouveau nom et l'image est déposée »). Cité d'abord par l'agent : « il s'appelle Ra_Praxis, "Ra = Rewayah Academy". et
   supprime l'effet italique, c'est moche ». Appliqué par #612 : **`#Ra_Praxis`, sans italique**. Le passage ci-dessus
   sur l'italique est donc **caduc** pour Praxis et pour le compte de l'administration.
 
