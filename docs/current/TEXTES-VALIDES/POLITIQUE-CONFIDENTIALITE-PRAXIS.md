@@ -1,6 +1,6 @@
 # Politique de confidentialité : l'assistant Praxis (texte arbitré)
 
-- **Statut : arbitré par le pilote le 17/11/2026 à 8 h 30 UTC**, sur délégation écrite du directeur (« pour le texte à
+- **Statut : arbitré par le pilote le 17/11/2026 à 8 h 30 UTC, complété à 8 h 40 (autres fournisseurs, ordre du directeur)**, sur délégation écrite du directeur (« pour le texte à
   valider c'est toi seul le juriste ici, tu arbitres, et tu me montres un aperçu »). Base de travail : la proposition de
   BE-PIECE (`BUREAU-EQUIPE/PRAXIS/CONFIDENTIALITE-PRAXIS.md`), dont les six points ouverts sont tranchés au §1.
 - **Ce texte n'est pas un avis d'avocat.** Il décrit ce que fait le code, et rien de plus.
@@ -16,7 +16,7 @@
 
 | Point ouvert | Arbitrage | Raison |
 | :--- | :--- | :--- |
-| Fournisseur d'IA | **Anthropic PBC (États-Unis)**, fournisseur de Claude, qui fait tourner Praxis | C'est le seul outil employé. On le nomme, comme la politique nomme déjà Cloudflare |
+| Fournisseur d'IA | **Anthropic PBC (Claude)**, seul utilisé aujourd'hui ; **Google LLC (Gemini) et OpenAI (ChatGPT)** nommés comme fournisseurs possibles, aux mêmes conditions (directeur, 17/11 à 8 h 30 : « tu dois aussi mentionner les autres comme gemini, open ai ») | On nomme celui qui est employé, comme la politique nomme Cloudflare. Les deux autres sont nommés d'avance pour qu'un changement de fournisseur ne surprenne personne. **Règle** : le texte dit toujours lequel est utilisé ; en changer impose de mettre la phrase à jour le jour même, avec les mêmes garanties (pas d'entraînement, 30 jours au plus, clauses types) |
 | Transfert hors Union européenne | Oui, vers les États-Unis, sous les clauses contractuelles types de la Commission européenne | Anthropic traite aux États-Unis |
 | Entraînement des modèles | Les messages ne servent pas à entraîner les modèles | Vrai seulement avec le réglage désactivé : condition 1 |
 | Durée chez le fournisseur | Au plus 30 jours, puis effacement | Durée annoncée par le fournisseur quand l'entraînement est désactivé |
@@ -40,7 +40,7 @@ Un assistant numérique, appelé Praxis, aide l'académie à répondre aux famil
 
 **Point 6, « Où sont vos informations » : un bloc**
 
-Pour lire et répondre, l'assistant s'appuie sur Anthropic PBC, entreprise établie aux États-Unis. Les messages qu'il lit lui sont transmis pour cette seule raison. Ils ne servent pas à entraîner ses modèles et sont effacés chez lui au plus tard après 30 jours. Ce transfert hors de l'Union européenne est encadré par les clauses contractuelles types de la Commission européenne. Nous gardons pendant 12 mois une trace de ce que l'assistant a envoyé, jamais du texte des messages que vous écrivez. La base légale est notre intérêt légitime à vous répondre rapidement.
+Pour lire et répondre, l'assistant s'appuie sur un fournisseur d'intelligence artificielle. Aujourd'hui, il s'agit d'Anthropic PBC (Claude), entreprise établie aux États-Unis. L'académie peut aussi recourir, aux mêmes conditions, à Google LLC (Gemini) ou à OpenAI (ChatGPT), établies aux États-Unis ; le fournisseur utilisé est toujours indiqué ici. Les messages que l'assistant lit sont transmis au fournisseur pour cette seule raison. Ils ne servent pas à entraîner ses modèles et sont effacés chez lui au plus tard après 30 jours. Ce transfert hors de l'Union européenne est encadré par les clauses contractuelles types de la Commission européenne. Nous gardons pendant 12 mois une trace de ce que l'assistant a envoyé, jamais du texte des messages que vous écrivez. La base légale est notre intérêt légitime à vous répondre rapidement.
 
 **Point 8, « Vos droits » : une phrase après la liste**
 
@@ -48,7 +48,7 @@ Vous pouvez à tout moment demander à parler à l'équipe : une personne repren
 
 ## 3. Arabe et anglais
 
-À écrire à l'intégration avec la compétence `mots-rewayah`, même sens, même longueur. « Praxis » et « Anthropic PBC »
+À écrire à l'intégration avec la compétence `mots-rewayah`, même sens, même longueur. « Praxis », « Anthropic PBC », « Google LLC », « OpenAI », « Claude », « Gemini » et « ChatGPT »
 restent en lettres latines. Les trois langues sont publiées le même jour.
 
 ## 4. Ce qui reste à faire avant la publication
