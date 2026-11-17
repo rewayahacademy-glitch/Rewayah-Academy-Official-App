@@ -184,8 +184,7 @@ class FauxCatalogueClasse implements PortCatalogue {
   Future<ReprisLecture?> derniereLecture() async => null;
 
   @override
-  Future<List<RayonBibliotheque>> rayons() async =>
-      const <RayonBibliotheque>[];
+  Future<List<RayonBibliotheque>> rayons() async => const <RayonBibliotheque>[];
 }
 
 /// La progression, en memoire.

@@ -108,7 +108,10 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
       ..['sitekey'] = widget.cle.toJS
       ..['appearance'] = 'interaction-only'.toJS
       ..['language'] = widget.langue.toJS
-      ..['theme'] = 'auto'.toJS
+      // CAPTCHA-PLACE : le thème clair, jamais « auto » (la case sombre
+      // jurait sur le violet) ; taille flexible : la largeur du champ.
+      ..['theme'] = 'light'.toJS
+      ..['size'] = 'flexible'.toJS
       ..['callback'] = ((JSString jeton) {
         widget.controleur.recevoirJeton(jeton.toDart);
       }).toJS

@@ -403,6 +403,53 @@ void main() {
       expect(find.text(t.admin.candidatures.filtres.gardees), findsWidgets);
     });
 
+    // MAJEUR-DIRECTION (17/11/2026) : la cle serveur `majorite` a enfin son
+    // controle, avec les trois valeurs du serveur.
+    for (final (String, String, String) c in <(String, String, String)>[
+      ('attestee', t.recrutement.file.ageAttestee, 'attestee'),
+      ('non attestee', t.recrutement.file.ageNonAttestee, 'non_attestee'),
+      ('moins de 18 ans', t.recrutement.file.ageMoins18, 'moins_18'),
+    ]) {
+      testWidgets('filtre Age, ${c.$1} : la cle ${c.$3} part au serveur', (
+        tester,
+      ) async {
+        final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+          lignes: _lignes(),
+        );
+        await monterCandidatures(tester, port: port);
+        await ouvrirFeuilleFiltresDeTest(tester);
+        await choisirDansFeuille(tester, 'age', c.$2);
+        expect(port.appels.last.filtre.majorite, c.$3);
+        expect(port.appels.last.page, 1);
+        await ouvrirFeuilleFiltresDeTest(tester);
+        await choisirDansFeuille(
+          tester,
+          'age',
+          t.admin.candidatures.filtres.tous,
+        );
+        expect(port.appels.last.filtre.majorite, isNull);
+      });
+    }
+
+    for (final (double, double) v in <(double, double)>[(320, 2), (1440, 1)]) {
+      testWidgets('filtre Age : ${v.$1.toInt()} px, texte x${v.$2.toInt()}', (
+        tester,
+      ) async {
+        tester.view.platformDispatcher.textScaleFactorTestValue = v.$2;
+        addTearDown(
+          tester.view.platformDispatcher.clearTextScaleFactorTestValue,
+        );
+        await monterCandidatures(
+          tester,
+          port: FauxCandidaturesDirection(lignes: _lignes()),
+          largeur: v.$1,
+        );
+        await ouvrirFeuilleFiltresDeTest(tester);
+        expect(_cle('feuille-filtre-age'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      });
+    }
+
     testWidgets(
       'un filtre de la feuille filtre au serveur, « Tous » le relache',
       (tester) async {

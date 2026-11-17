@@ -31,7 +31,8 @@ import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/widgets/champ_date.dart';
-import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart' show BlocContact;
+import 'package:rewayah_academy/features/admin_candidature/blocs_candidature.dart'
+    show BlocContact;
 import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
 import 'package:rewayah_academy/features/admin_candidature/plan_dossier.dart';

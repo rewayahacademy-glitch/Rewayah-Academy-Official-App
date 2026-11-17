@@ -544,8 +544,15 @@ class ActionsEntree extends StatelessWidget {
     required this.principale,
     this.secondaire,
     this.tierce,
+    this.sousPrincipale,
     super.key,
   });
+
+  /// CAPTCHA-PLACE (directeur, 16/11/2026) : ce qui se pose juste sous
+  /// l'action principale (la case du controle anti-robot), jamais entre le
+  /// champ et elle. Sur telephone avec [tierce], sous [principale] et avant la
+  /// rangee des deux autres ; ailleurs, sous les boutons.
+  final Widget? sousPrincipale;
 
   /// Une seconde action secondaire, posee avant [secondaire].
   final Widget? tierce;
@@ -573,20 +580,28 @@ class ActionsEntree extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Widget? autre = secondaire;
+    final Widget? sous = sousPrincipale;
+    Widget avecSous(Widget actions) => sous == null
+        ? actions
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[actions, sous],
+          );
     if (autre == null) {
-      return principale;
+      return avecSous(principale);
     }
     final Widget? avant = tierce;
     if (avant == null) {
-      return _rangee(<Widget>[autre, principale]);
+      return avecSous(_rangee(<Widget>[autre, principale]));
     }
     if (bureau) {
-      return _rangee(<Widget>[avant, autre, principale]);
+      return avecSous(_rangee(<Widget>[avant, autre, principale]));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         principale,
+        ?sous,
         Ecart.vSm,
         _rangee(<Widget>[avant, autre]),
       ],

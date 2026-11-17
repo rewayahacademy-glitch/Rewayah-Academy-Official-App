@@ -11,6 +11,7 @@ import 'package:rewayah_academy/core/candidature/port_inscription_candidat.dart'
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
+import 'package:rewayah_academy/core/equipe/port_inscription_associe.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/offres/offre_horaire.dart';
@@ -150,6 +151,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   QuestionnaireInscription questionnaire = const QuestionnaireInscription(),
   bool languesChargees = true,
   PortInscriptionCandidat? inscriptionCandidat,
+  PortInscriptionAssocie? inscriptionAssocie,
 }) async {
   tester.view.physicalSize = const Size(390, 844);
   tester.view.devicePixelRatio = 1;
@@ -212,6 +214,11 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
           builder: (BuildContext _, GoRouterState _) =>
               const Scaffold(body: Text('ESPACE-COMPTABLE')),
         ),
+        GoRoute(
+          path: Routes.inscriptionAssocie,
+          builder: (BuildContext _, GoRouterState _) =>
+              const Scaffold(body: Text('CODE-ASSOCIE')),
+        ),
       ],
       surcharges: <Override>[
         serviceDossierProvider.overrideWithValue(dossier),
@@ -241,6 +248,7 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
           inscriptionComptable,
         ),
         portInscriptionCandidatProvider.overrideWithValue(inscriptionCandidat),
+        portInscriptionAssocieProvider.overrideWithValue(inscriptionAssocie),
         if (codeComptable != null)
           codeComptableRetenuProvider.overrideWith(
             () => _CodeDejaRetenu(codeComptable),
@@ -250,6 +258,22 @@ Future<(FauxServiceDossier, FausseSourceSession)> _monter(
   );
   await tester.pumpAndSettle();
   return (dossier, session);
+}
+
+/// Un port d'associe qui ne sert qu'a etre present (le lien se teste, pas le
+/// serveur).
+class _PortAssocieNeutre implements PortInscriptionAssocie {
+  @override
+  Future<ResultatCodeAssocie> verifier(String code) async =>
+      const CodeAssocieInconnu();
+
+  @override
+  Future<ResultatInscriptionAssocie> inscrire({
+    required String code,
+    required String prenom,
+    required String nom,
+    required String genre,
+  }) async => ResultatInscriptionAssocie.inconnue;
 }
 
 /// Un code d'invitation deja verifie et retenu (RECRUT-ECRANS, C-14).
@@ -653,6 +677,23 @@ void main() {
     ) async {
       await _monter(tester);
       expect(find.byKey(const Key('inscription-lien-comptable')), findsNothing);
+    });
+
+    // Suite de BE-2a-2 : l'associe invite, par son propre code.
+    testWidgets('sans port d\'associe, aucun lien associe', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(find.byKey(const Key('inscription-lien-associe')), findsNothing);
+    });
+
+    testWidgets('avec le port d\'associe, le lien mene au code de l\'associe', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, inscriptionAssocie: _PortAssocieNeutre());
+      expect(find.byKey(const Key('inscription-lien-associe')), findsOneWidget);
+      await _taper(tester, find.byKey(const Key('inscription-lien-associe')));
+      expect(find.text('CODE-ASSOCIE'), findsOneWidget);
     });
 
     testWidgets('le lien comptable sans code ouvre le champ du code', (

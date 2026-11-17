@@ -1388,6 +1388,35 @@
     "reessayer": "Réessayer",
     "erreurActualisation": "Votre compte est créé, mais la connexion n'a pas pu être actualisée. Réessayez, ou déconnectez-vous puis reconnectez-vous.",
     "erreurInvitation": "Votre code d'invitation n'a pas pu être utilisé\u00a0: il a expiré, a déjà servi ou ne correspond pas à votre adresse. Demandez un nouveau code à la direction, puis saisissez-le de nouveau.",
+    "associe": {
+      "titre": "Compte d'associé",
+      "intro": "La direction vous a invité et vous a donné un code. Saisissez-le\u00a0: il ne vaut que pour l'adresse avec laquelle vous êtes connecté.",
+      "champ": "Code d'invitation",
+      "champVide": "Saisissez le code reçu.",
+      "verifier": "Vérifier le code",
+      "valide": "Votre code est valable jusqu'au {date}.",
+      "formIntro": "Dites-nous qui vous êtes. Votre compte s'ouvre sans aucun droit\u00a0: vous ne verrez que ce que la direction vous confiera.",
+      "genreQuestion": "Vous êtes",
+      "genreRaison": "Une mission se porte du côté de la personne\u00a0: ce choix est nécessaire.",
+      "genreHommeExplication": "Vos missions porteront sur les candidatures d'hommes.",
+      "genreFemmeExplication": "Vos missions porteront sur les candidatures de femmes.",
+      "creer": "Créer mon compte",
+      "ressaisir": "Saisir un autre code",
+      "seConnecter": "Me connecter",
+      "inconnue": "Ce code ne correspond à aucune invitation pour votre adresse.",
+      "inconnueDetail": "Vérifiez le code, et que vous êtes connecté avec l'adresse invitée.",
+      "expiree": "Ce code a expiré.",
+      "expireeDetail": "Demandez un nouveau code à la direction.",
+      "dejaUtilisee": "Ce code a déjà servi.",
+      "dejaUtiliseeDetail": "Connectez-vous à votre compte.",
+      "horsLigne": "La connexion manque. Rien n'a été envoyé\u00a0: réessayez quand elle sera revenue.",
+      "erreur": "La vérification n'a pas abouti. Votre code n'est pas perdu\u00a0: réessayez dans un instant.",
+      "sessionRefusee": "Ce compte a déjà un profil, ou n'a pas d'adresse. Connectez-vous avec l'adresse invitée.",
+      "champsRefuses": "Un champ est refusé\u00a0: relisez votre prénom, votre nom et votre genre.",
+      "nonConfirme": "Le compte n'a pas pu être confirmé. Relisez vos informations et réessayez\u00a0; si le message revient, parlez-en à la direction.",
+      "champsManquants": "Saisissez votre prénom et votre nom, et choisissez votre genre.",
+      "indisponible": "L'inscription d'un associé n'est pas encore ouverte sur cet appareil."
+    },
     "usage": {
       "question": "Pour qui créez-vous ce compte\u00a0?",
       "moiTitre": "Je m'inscris pour moi",
@@ -1398,6 +1427,8 @@
       "enseignantInvite": "Vous êtes enseignant\u00a0? L'académie vous invite par courriel.",
       "comptable": "J'ai un code de comptable",
       "comptableInvite": "Vous êtes comptable\u00a0? La direction vous invite par courriel.",
+      "associe": "J'ai un code d'associé",
+      "associeInvite": "Vous êtes invité comme associé\u00a0? La direction vous a donné un code.",
       "coursQuestion": "Suivez-vous aussi des cours ?",
       "coursOui": "Oui",
       "coursNon": "Non",
@@ -2689,7 +2720,9 @@
         "heuresDe": "{jours}\u00a0: {heures}",
         "memorisationValeurs": {"aucune": "Aucune", "moins_10_juz": "Moins de 10 juz", "de_10_a_29_juz": "10 à 29 juz", "coran_entier": "Coran entier"},
         "ijazaValeurs": {"oui": "Oui", "pret_test": "Non, prêt pour un test", "non": "Non"},
-        "publicValeurs": {"6_9": "6-9 ans", "10_13": "10-13 ans", "14_17": "14-17 ans", "adultes": "Adultes"}
+        "publicValeurs": {"6_9": "6-9 ans", "10_13": "10-13 ans", "14_17": "14-17 ans", "adultes": "Adultes"},
+        "age": "Âge",
+        "ageValeurs": {"attestee": "18 ans ou plus, attesté le {date}", "moins18": "Moins de 18 ans\u00a0: candidature en pause", "nonAttestee": "Âge pas encore attesté"}
       },
       "demanderAccord": "Demander un accord",
       "raison": {
@@ -2715,6 +2748,10 @@
       "replier": "Replier",
       "trier": "Trier",
       "pieceSansAttente": "Sans pièce à valider",
+      "age": "Âge",
+      "ageAttestee": "18 ans ou plus attesté",
+      "ageNonAttestee": "Âge pas encore attesté",
+      "ageMoins18": "Moins de 18 ans",
       "filtres": "Filtres",
       "filtresPoses": {
         "one": "Filtres, {n} posé",
@@ -6933,6 +6970,17 @@
       "plafondChamp": "Nombre de messages par heure (de 1 à 120)",
       "plafondEnregistrer": "Fixer le plafond",
       "plafondInvalide": "Écrivez un nombre entier entre 1 et 120.",
+      "routine": {
+        "titre": "Routine horaire",
+        "dernier": "Dernier passage : {quand} ({issue}).",
+        "issueOk": "a travaillé",
+        "issueRien": "rien à faire",
+        "issueErreur": "a échoué",
+        "issueInconnue": "issue inconnue",
+        "compteurs": "Fils lus : {lus}. Messages envoyés : {envoyes}. Passés à l'équipe : {passes}. Refus reçus : {refus}.",
+        "aucun": "Aucun passage noté : la routine n'a pas encore tourné, ou elle n'est pas branchée.",
+        "aide": "La routine passe une fois par heure quand Praxis est allumé et autonome. Si le dernier passage date de plus de deux heures, la routine ne tourne pas."
+      },
       "donnees": {
         "titre": "Données réelles",
         "fermees": "Fermées : Praxis ne lit aucun dossier de candidature ni aucune conversation réelle. Seules les conversations d'essai lui sont ouvertes.",
@@ -12726,7 +12774,12 @@
         "fichiers": "@:com.socle.lexique.fichiersPartages",
         "ouvrir": "Ouvrir {objet}",
         "inaccessible": "Ce sujet ne vous est plus ouvert. La conversation reste lisible.",
-        "vous": "Vous"
+        "vous": "Vous",
+        "officiel": {
+          "nom": "Ra_Praxis",
+          "mention": "Assistant de l'académie · IA",
+          "phrase": "Il répond à vos messages, vous guide pas à pas et confie à l'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction."
+        }
       },
       "fil": {
         "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."

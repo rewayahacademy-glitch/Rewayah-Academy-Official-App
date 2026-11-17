@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/candidature/port_inscription_candidat.dart';
+import '../../../core/equipe/port_inscription_associe.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/recrutement/port_invitations_comptable.dart';
@@ -48,6 +49,10 @@ class UsageEtape extends ConsumerWidget {
     // codes (capacite servie, jamais un role).
     final bool comptableInvitable =
         ref.watch(portVerificationInvitationComptableProvider) != null;
+    // Suite de BE-2a-2 : le lien d'un associe invite, tant que l'adaptateur du
+    // serveur est branche ; sans lui, il ne pourrait pas aboutir.
+    final bool associeInvitable =
+        ref.watch(portInscriptionAssocieProvider) != null;
     // CAND-04 : le lien du site mene ici. Quand le serveur ouvre l'inscription
     // sans code, la personne peut deposer sa candidature ; sinon (fermee,
     // illisible, lot absent), le bloc reste celui d'aujourd'hui : l'academie
@@ -169,6 +174,25 @@ class UsageEtape extends ConsumerWidget {
                     );
                   }
                 },
+              ),
+            ),
+          ],
+          if (associeInvitable) ...<Widget>[
+            Text(
+              t.inscription.usage.associeInvite,
+              key: const Key('inscription-associe-invite'),
+              textAlign: TextAlign.center,
+              style: AppPalette.of(context).inkMuted.applyTo(
+                Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+              ),
+            ),
+            Center(
+              child: ActionPrincipale(
+                key: const Key('inscription-lien-associe'),
+                libelle: t.inscription.usage.associe,
+                niveau: NiveauAction.tertiaire,
+                pleineLargeur: false,
+                onPress: () => context.go(Routes.inscriptionAssocie),
               ),
             ),
           ],

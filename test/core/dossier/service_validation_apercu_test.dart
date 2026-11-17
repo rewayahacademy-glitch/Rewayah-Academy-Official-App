@@ -46,14 +46,17 @@ void main() {
     await server.close(force: true);
   });
 
-  test('appelle la fonction Edge avec le seul document_id et rend l’URL',
-      () async {
-    final String url = await ServiceValidationSupabase(client).apercu('doc-7');
+  test(
+    'appelle la fonction Edge avec le seul document_id et rend l’URL',
+    () async {
+      final String url = await ServiceValidationSupabase(client)
+          .apercu('doc-7');
 
-    expect(url, 'https://signee.invalid/piece?sig=fictif');
-    expect(chemin, '/functions/v1/piece-identite-acces');
-    expect(jsonDecode(corpsRecu!), <String, Object?>{'document_id': 'doc-7'});
-  });
+      expect(url, 'https://signee.invalid/piece?sig=fictif');
+      expect(chemin, '/functions/v1/piece-identite-acces');
+      expect(jsonDecode(corpsRecu!), <String, Object?>{'document_id': 'doc-7'});
+    },
+  );
 
   test('un refus 403 devient ApercuRefuse, pas une panne', () async {
     statut = HttpStatus.forbidden;

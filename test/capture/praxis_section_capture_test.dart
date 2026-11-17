@@ -96,6 +96,8 @@ enum _Etat {
   horsLigne,
   doubleVerification,
   essai,
+  pouls,
+  poulsAucun,
 }
 
 FauxServicePraxis _faux(_Etat etat) {
@@ -132,11 +134,22 @@ FauxServicePraxis _faux(_Etat etat) {
     _ => FauxServicePraxis(
       etat: EtatPraxis(
         actif: true,
-        autonome: false,
         envoisParHeure: 30,
+        autonome: etat == _Etat.pouls,
         essaiFils: etat == _Etat.essai
             ? const <String>['f1', 'f2']
             : const <String>[],
+        derniereRoutine: etat == _Etat.pouls
+            ? TirRoutinePraxis(
+                termineLe: DateTime(2026, 11, 17, 9, 14),
+                issue: 'ok',
+                filsLus: 7,
+                messagesEnvoyes: 4,
+                passesEquipe: 2,
+                refus: 1,
+                note: 'Un fil laissé à l\'équipe : demande de remboursement.',
+              )
+            : null,
         cles: <ClePraxis>[
           clePraxisFictive(derniereUtilisation: DateTime(2026, 11, 15, 18)),
           clePraxisFictive(
@@ -190,8 +203,13 @@ Future<void> _ouvrir(WidgetTester tester, _Etat etat) async {
   if (etat == _Etat.doubleVerification) {
     await toucher(find.byKey(ClesPraxis.interrupteur));
   }
-  // La section est sous la liste des jetons : on la met a l'ecran.
-  final Finder titre = find.text(t.admin.praxis.titre);
+  // La section est sous la liste des jetons : on la met a l'ecran (le pouls :
+  // le bloc de la routine).
+  final Finder titre = find.text(
+    etat == _Etat.pouls || etat == _Etat.poulsAucun
+        ? t.admin.praxis.routine.titre
+        : t.admin.praxis.titre,
+  );
   if (titre.evaluate().isNotEmpty) {
     await tester.ensureVisible(titre.first);
     await stabiliser(tester);
