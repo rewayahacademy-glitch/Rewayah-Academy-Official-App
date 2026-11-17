@@ -188,7 +188,9 @@ class CatalogueSupabase implements PortCatalogue {
               RayonBibliotheque.depuisJson(Map<String, dynamic>.from(m)),
         )
         .toList();
-    rayons.sort((RayonBibliotheque a, RayonBibliotheque b) => a.ordre - b.ordre);
+    rayons.sort(
+      (RayonBibliotheque a, RayonBibliotheque b) => a.ordre - b.ordre,
+    );
     return List<RayonBibliotheque>.unmodifiable(rayons);
   }
 
