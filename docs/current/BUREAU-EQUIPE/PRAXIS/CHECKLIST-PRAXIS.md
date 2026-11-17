@@ -35,7 +35,7 @@ Règles que le pilote s'impose ici :
 | 10 | Affichage *#RA_PRAXIS* et *#RA_STAFF*, « Assistant de l'académie · IA », « Parler à l'équipe » | Pilote Messagerie | `SECRETAIRE-IA.md` §9 et §11 | ☐ demandé le 16/11 |
 | 11 | Image de profil : le fichier, produit d'après la description du directeur (`SECRETAIRE-IA.md` §9), sans nouvelle question | pilote | — | ☐ |
 | 12 | Politique de confidentialité : la phrase sur l'assistant (niveau C) | pilote prépare | — | ⏸ le directeur valide |
-| 13 | Essai à blanc : le directeur connecte le lien MCP dans son chat avec une clé « chat » ; Praxis lit la boîte et répond à **un** fil de test | directeur et pilote | — | ⏸ |
+| 13 | Essai à blanc : le directeur connecte le lien MCP dans son chat avec une clé « chat » ; Praxis lit la boîte et répond à **un** fil de test | directeur et pilote | `ESSAI-A-BLANC.md` | ⏸ pas-à-pas prêt (17/11, 8 h 20 UTC) ; attend le directeur |
 | 14 | Mise en service : le directeur allume Praxis (dirigé) | directeur | — | ⏸ |
 | 15 | Mode autonome : la routine planifiée, sa fréquence, son plafond ; le directeur allume « autonome » | pilote prépare | — | ⏸ |
 | 16 | PX-2 (dossiers), PX-3 (objectifs et check-listes, avec le Studio), PX-4 (matching), PX-5 (état, chiffres, rapports), par la table d'accès de l'étape 3 | BE-PIECE | — | ◐ **PX-2 ☑** : serveur #590 (840000) installé le 17/11, écran #595 fusionné le 17/11 (propositions dans le dossier, Valider sous l'identité de la direction, Écarter) ; mode essai (#588 650000, #589 écran, nommé « PX-4 mode essai » à tort : ce n'est pas le matching). **PX-3, PX-4 (matching), PX-5 : non commencés** |
