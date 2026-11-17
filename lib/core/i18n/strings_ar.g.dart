@@ -9317,7 +9317,7 @@ class _Traductions$inscription$associe$ar extends Traductions$inscription$associ
 	@override String get champ => 'رمز الدعوة';
 	@override String get champVide => 'أدخل الرمز الذي استلمته.';
 	@override String get verifier => 'التحقق من الرمز';
-	@override String valide({required Object date}) => 'رمزك صالح حتى ${date}.';
+	@override String valide({required Object date}) => 'رمزك صالح حتى ⁨${date}⁩.';
 	@override String get formIntro => 'عرّفنا بنفسك. يُفتح حسابك دون أي صلاحية: لن ترى إلا ما تعهد به إليك الإدارة.';
 	@override String get genreQuestion => 'أنت';
 	@override String get genreRaison => 'تُحمل المهمة من جهة الشخص نفسه: هذا الاختيار ضروري.';
@@ -38842,7 +38842,7 @@ extension on TraductionsAr {
 			'inscription.associe.champ' => 'رمز الدعوة',
 			'inscription.associe.champVide' => 'أدخل الرمز الذي استلمته.',
 			'inscription.associe.verifier' => 'التحقق من الرمز',
-			'inscription.associe.valide' => ({required Object date}) => 'رمزك صالح حتى ${date}.',
+			'inscription.associe.valide' => ({required Object date}) => 'رمزك صالح حتى ⁨${date}⁩.',
 			'inscription.associe.formIntro' => 'عرّفنا بنفسك. يُفتح حسابك دون أي صلاحية: لن ترى إلا ما تعهد به إليك الإدارة.',
 			'inscription.associe.genreQuestion' => 'أنت',
 			'inscription.associe.genreRaison' => 'تُحمل المهمة من جهة الشخص نفسه: هذا الاختيار ضروري.',
