@@ -19623,7 +19623,7 @@ class _Traductions$admin$praxis$questions$ar extends Traductions$admin$praxis$qu
 	@override String get aideReponse => 'اكتبوا الواقعة المراد نقلها فقط: سيقولها Praxis للشخص بكلماته في المحادثة.';
 	@override String get reponseVide => 'اكتبوا الإجابة قبل إرسالها.';
 	@override String get envoyer => 'إرسال إلى Praxis';
-	@override String get repondue => 'حُفظت الإجابة. سيعود Praxis إلى الشخص في مروره التالي.';
+	@override String get repondue => 'سُجِّلت الإجابة. سيعود Praxis إلى الشخص في مروره التالي.';
 	@override String get erreurDejaRepondue => 'هذا السؤال أُجيب عنه من قبل: تبقى الإجابة الأولى. حدّث القائمة لرؤيتها.';
 	@override String get erreurInconnue => 'لم يعد هذا السؤال موجودًا. حدّث القائمة.';
 	@override String get erreurEnvoi => 'الإجابة غير مؤكدة. أُعيد تحميل القائمة للتو: إذا بقي السؤال بلا إجابة فأرسلوها من جديد.';
@@ -36133,7 +36133,7 @@ extension on TraductionsAr {
 			'admin.praxis.questions.aideReponse' => 'اكتبوا الواقعة المراد نقلها فقط: سيقولها Praxis للشخص بكلماته في المحادثة.',
 			'admin.praxis.questions.reponseVide' => 'اكتبوا الإجابة قبل إرسالها.',
 			'admin.praxis.questions.envoyer' => 'إرسال إلى Praxis',
-			'admin.praxis.questions.repondue' => 'حُفظت الإجابة. سيعود Praxis إلى الشخص في مروره التالي.',
+			'admin.praxis.questions.repondue' => 'سُجِّلت الإجابة. سيعود Praxis إلى الشخص في مروره التالي.',
 			'admin.praxis.questions.erreurDejaRepondue' => 'هذا السؤال أُجيب عنه من قبل: تبقى الإجابة الأولى. حدّث القائمة لرؤيتها.',
 			'admin.praxis.questions.erreurInconnue' => 'لم يعد هذا السؤال موجودًا. حدّث القائمة.',
 			'admin.praxis.questions.erreurEnvoi' => 'الإجابة غير مؤكدة. أُعيد تحميل القائمة للتو: إذا بقي السؤال بلا إجابة فأرسلوها من جديد.',
