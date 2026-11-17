@@ -21,8 +21,9 @@
 --     nouvel evenement (reecriture de la contrainte des evenements), non decide ici.
 --   * le dossier reste `entretien_planifie` ; l'evenement du dossier (type entretien) garde l'ancienne et la
 --     nouvelle seance, l'ancien et le nouveau debut.
---   * un creneau d'entretien reserve par le candidat (entretien_creneaux) reste lie a l'ancienne seance : il
---     n'est pas rouvert.
+--   * un creneau d'entretien reserve par le candidat (entretien_creneaux) : s'il est A VENIR, il est rouvert
+--     (libre pour un autre) et l'evenement du dossier le dit ; s'il est deja passe, il reste lie a l'ancienne
+--     seance (scenarios a7 et a8).
 -- Aucun message n'est ecrit ici : tout part par le circuit existant des avis d'entretien.
 --
 -- FICHIER SANS EFFACEMENT DE DONNEES : aucun mot d'effacement. Additif : une regle du moteur, deux fonctions ;
