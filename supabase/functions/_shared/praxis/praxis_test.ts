@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte', 'terminer'])
+  assertEquals(noms, ['acte_confirmer', 'acte_preparer', 'actes', 'agir', 'annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte', 'terminer'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
@@ -326,4 +326,83 @@ Deno.test('AR-7 M4 : une base en panne pendant la note de refus ne change pas la
   const porte: PortePraxis = { appeler: () => Promise.reject(new Error('base')) }
   const r = await (await traiter(requete(appelOutil('boite', { limite: 99 })), porte)).json()
   assertEquals(r.error?.code, -32602)
+})
+
+// ============ PX-BD-0 : les actes du mode chat ============
+
+Deno.test('PX-BD-0 : actes, agir, acte_preparer, acte_confirmer composent des appels types, la cle en premier', async () => {
+  const cas: Array<[string, Record<string, unknown>, string, Record<string, unknown>]> = [
+    ['actes', {}, 'praxis_actes', { p_cle: CLE }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { nom: 'Document', rayon: 'cours', classes: ['a', 'b'], epingler: true, revision: 3 }, cle_idempotence: UUID1 },
+      'praxis_agir', { p_cle: CLE, p_acte: 'bibliotheque_configurer', p_params: { nom: 'Document', rayon: 'cours', classes: ['a', 'b'], epingler: true, revision: 3 }, p_cle_idempotence: UUID1 }],
+    ['acte_preparer', { acte: 'relance_candidat', lot: [{ reference: 'CAND-1' }, { reference: 'CAND-2', motif: 'x' }] },
+      'praxis_acte_preparer', { p_cle: CLE, p_acte: 'relance_candidat', p_lot: [{ reference: 'CAND-1' }, { reference: 'CAND-2', motif: 'x' }] }],
+    ['acte_confirmer', { jeton: UUID2, code: '012345' }, 'praxis_acte_confirmer', { p_cle: CLE, p_jeton: UUID2, p_code: '012345' }],
+  ]
+  for (const [outil, args, fonction, params] of cas) {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil(outil, args)), porte)
+    assertEquals(appels, [{ fonction, params }], outil)
+  }
+})
+
+Deno.test('PX-BD-0 : tout ce qui sort du schema des actes est refuse AVANT la base', async () => {
+  const mauvais: Array<[string, unknown]> = [
+    ['agir', { acte: 'Majuscule', parametres: {}, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'a', parametres: {}, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: [], cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: 'texte', cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { Nom: 'x' }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { 'a b': 'x' }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { o: { imbrique: 1 } }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { n: null }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { n: 1.5 }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { t: 'x'.repeat(1001) }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { t: 'a\u0000b' }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: { l: [1] }, cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: Object.fromEntries(Array.from({ length: 21 }, (_, i) => [`k${i}`, 'x'])), cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: Object.fromEntries(Array.from({ length: 5 }, (_, i) => [`k${i}`, 'x'.repeat(900)])), cle_idempotence: UUID1 }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: {} }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: {}, cle_idempotence: 'pas-un-uuid' }],
+    ['agir', { acte: 'bibliotheque_configurer', parametres: {}, cle_idempotence: UUID1, p_cle: CLE }],
+    ['acte_preparer', { acte: 'relance_candidat', lot: [] }],
+    ['acte_preparer', { acte: 'relance_candidat', lot: Array.from({ length: 51 }, () => ({})) }],
+    ['acte_preparer', { acte: 'relance_candidat', lot: [{}, 'texte'] }],
+    ['acte_preparer', { acte: 'relance_candidat', lot: [{ o: { x: 1 } }] }],
+    ['acte_preparer', { acte: 'relance_candidat', lot: { reference: 'CAND-1' } }],
+    ['acte_preparer', { acte: 'relance_candidat' }],
+    ['acte_confirmer', { jeton: UUID2, code: '12345' }],
+    ['acte_confirmer', { jeton: UUID2, code: '1234567' }],
+    ['acte_confirmer', { jeton: UUID2, code: '12a456' }],
+    ['acte_confirmer', { jeton: 'pas-un-uuid', code: '123456' }],
+    ['acte_confirmer', { jeton: UUID2 }],
+    ['acte_confirmer', { jeton: UUID2, code: '123456', force: true }],
+    ['actes', { quoi: 'que ce soit' }],
+  ]
+  for (const [nom, args] of mauvais) {
+    const { porte, appels } = faux()
+    const r = await (await traiter(requete(appelOutil(nom, args)), porte)).json()
+    assertEquals(r.error?.code, -32602, `${nom} ${JSON.stringify(args).slice(0, 80)} aurait du etre refuse`)
+    assert(appels.every((a) => a.fonction === 'praxis_noter_refus'), `${nom} : la base ne doit recevoir que la note de refus`)
+  }
+})
+
+Deno.test('PX-BD-0 : un lot de cinquante lignes est accepte, et le schema MCP des actes est decrit', async () => {
+  const { porte, appels } = faux({ ok: true })
+  await traiter(requete(appelOutil('acte_preparer', { acte: 'relance_candidat', lot: Array.from({ length: 50 }, (_, i) => ({ reference: `CAND-${i}` })) })), porte)
+  assertEquals(appels.length, 1)
+  assertEquals((appels[0].params.p_lot as unknown[]).length, 50)
+  const r = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), faux().porte)).json()
+  const outils = r.result.tools as Array<{ name: string; inputSchema: { properties: Record<string, { type: string }>; required: string[] } }>
+  const agir = outils.find((o) => o.name === 'agir')!
+  assertEquals(agir.inputSchema.properties.parametres.type, 'object')
+  assertEquals(agir.inputSchema.required.sort(), ['acte', 'cle_idempotence', 'parametres'])
+  assertEquals(outils.find((o) => o.name === 'acte_preparer')!.inputSchema.properties.lot.type, 'array')
+})
+
+Deno.test('PX-BD-0 : aucun outil des actes ne rend ni ne prend le code autrement que par acte_confirmer', () => {
+  for (const o of OUTILS) {
+    const prendUnCode = o.parametres.some((d) => d.arg === 'code')
+    assertEquals(prendUnCode, o.nom === 'acte_confirmer', o.nom)
+  }
 })
