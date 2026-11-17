@@ -27,8 +27,8 @@ import 'port_messages_metier.dart';
 String nomParticipant(Participant p) {
   final String? fonction = p.fonction;
   return fonction == null || fonction.isEmpty
-      ? p.nomAffiche
-      : t.com.messages.noms.avecFonction(nom: p.nomAffiche, fonction: fonction);
+      ? p.nomMarque
+      : t.com.messages.noms.avecFonction(nom: p.nomMarque, fonction: fonction);
 }
 
 /// Les interlocuteurs d'un fil, en une ligne : un seul avec sa fonction ;
@@ -39,11 +39,11 @@ String nomsInterlocuteurs(List<Participant> interlocuteurs) {
     <Participant>[] => '',
     <Participant>[final Participant seul] => nomParticipant(seul),
     <Participant>[final Participant a, final Participant b] => n.deux(
-      premier: a.nomAffiche,
-      second: b.nomAffiche,
+      premier: a.nomMarque,
+      second: b.nomMarque,
     ),
     <Participant>[final Participant a, ...] => n.plusieurs(
-      premier: a.nomAffiche,
+      premier: a.nomMarque,
       nombre: interlocuteurs.length - 1,
     ),
   };

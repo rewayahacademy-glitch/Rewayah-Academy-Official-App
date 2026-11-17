@@ -51,8 +51,7 @@ void main() {
       final SharedContentState durable = etatDurablePourLateJoiner();
       backend.publier(durable);
 
-      final VueParticipantEtatPartage lateJoiner =
-          VueParticipantEtatPartage();
+      final VueParticipantEtatPartage lateJoiner = VueParticipantEtatPartage();
       lateJoiner.restaurerDepuis(await backend.restaurer(seancePartagee));
 
       expect(lateJoiner.courant?.revision, 7);
@@ -60,10 +59,13 @@ void main() {
       expect(backend.lectures, greaterThan(0));
     });
 
-    test('une seance sans etat publie restaure null, pas une page par defaut', () async {
-      final FauxBackendEtatPartage backend = FauxBackendEtatPartage();
-      expect(await backend.restaurer('seance-jamais-ouverte'), isNull);
-    });
+    test(
+      'une seance sans etat publie restaure null, pas une page par defaut',
+      () async {
+        final FauxBackendEtatPartage backend = FauxBackendEtatPartage();
+        expect(await backend.restaurer('seance-jamais-ouverte'), isNull);
+      },
+    );
   });
 
   group('Q-05 : la revision strictement croissante absorbe le reseau', () {
@@ -119,8 +121,10 @@ void main() {
         position: pagePartagee(500),
       );
       expect(
-        appliquerRevision(courant, memeRevisionAutreContenu).contentPosition
-            .page,
+        appliquerRevision(
+          courant,
+          memeRevisionAutreContenu,
+        ).contentPosition.page,
         5,
       );
     });

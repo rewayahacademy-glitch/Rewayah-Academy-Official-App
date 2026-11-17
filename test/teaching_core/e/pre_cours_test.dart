@@ -83,10 +83,7 @@ void main() {
 
     test('controleur : aucun test non plus', () {
       expect(
-        VuePreCours.depuis(
-          role: RoleSalle.controleur,
-          resultat: refuse,
-        ).detail,
+        VuePreCours.depuis(role: RoleSalle.controleur, resultat: refuse).detail,
         DetailPreCours.aucun,
       );
     });
@@ -108,10 +105,7 @@ void main() {
     test('une permission refusee se distingue d un micro absent', () {
       // C'est la seule cause qui se repare sans changer de materiel.
       expect(
-        VuePreCours.depuis(
-          role: RoleSalle.enseignant,
-          resultat: refuse,
-        ).motif,
+        VuePreCours.depuis(role: RoleSalle.enseignant, resultat: refuse).motif,
         MotifPreCours.permissionRefusee,
       );
     });
@@ -156,10 +150,7 @@ void main() {
       await tester.pumpWidget(
         hoteClasse(
           PreCours(
-            vue: VuePreCours.depuis(
-              role: RoleSalle.eleve,
-              resultat: complet,
-            ),
+            vue: VuePreCours.depuis(role: RoleSalle.eleve, resultat: complet),
             onReessayer: () {},
           ),
         ),
@@ -169,27 +160,19 @@ void main() {
       expect(find.byType(Text), findsNothing);
     });
 
-    testWidgets('un blocage propose de remesurer', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('un blocage propose de remesurer', (WidgetTester tester) async {
       int mesures = 0;
       await tester.pumpWidget(
         hoteClasse(
           PreCours(
-            vue: VuePreCours.depuis(
-              role: RoleSalle.eleve,
-              resultat: refuse,
-            ),
+            vue: VuePreCours.depuis(role: RoleSalle.eleve, resultat: refuse),
             onReessayer: () => mesures++,
           ),
         ),
       );
       await tester.pump();
 
-      expect(
-        find.text(t.tc.classe.prevol.permissionRefusee),
-        findsOneWidget,
-      );
+      expect(find.text(t.tc.classe.prevol.permissionRefusee), findsOneWidget);
       await tester.tap(find.text(t.tc.classe.prevol.reessayer));
       await tester.pump();
       expect(mesures, 1);

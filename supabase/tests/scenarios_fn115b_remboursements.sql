@@ -16,12 +16,16 @@
 BEGIN;
 
 ALTER TABLE public.politiques_commerciales DISABLE TRIGGER politiques_commerciales_immuable;
-UPDATE public.politiques_commerciales
-   SET date_effet = (date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date) - interval '1 month')::date
- WHERE version = 'v1.0.0';
+-- DETTE-SCENARIO-FIN-DE-MOIS : v2.0.0 d'abord, v1.0.0 ensuite. `date_effet` est unique : en decembre 2026,
+-- v1.0.0 -> 1er novembre heurtait la date d'effet d'origine de v2.0.0 (1er novembre) tant que v2.0.0 n'etait
+-- pas encore deplacee au 1er decembre (« duplicate key ... politiques_commerciales_date_effet_key »). Dans cet
+-- ordre, la place est libre a chaque mois.
 UPDATE public.politiques_commerciales
    SET date_effet = date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date)::date
  WHERE version = 'v2.0.0';
+UPDATE public.politiques_commerciales
+   SET date_effet = (date_trunc('month', (now() AT TIME ZONE 'Europe/Paris')::date) - interval '1 month')::date
+ WHERE version = 'v1.0.0';
 ALTER TABLE public.politiques_commerciales ENABLE TRIGGER politiques_commerciales_immuable;
 
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text, p_foyer uuid DEFAULT NULL)
@@ -124,6 +128,21 @@ INSERT INTO public.groupe_membres(groupe_id, student_id, joined_at)
 SELECT x.g::uuid, pg_temp.id(x.e), pg_temp.mois() - interval '20 days'
   FROM (VALUES ('fb000000-0000-4000-8000-000000000c01','e1'), ('fb000000-0000-4000-8000-000000000c01','e2'),
                ('fb000000-0000-4000-8000-000000000c03','e4'), ('fb000000-0000-4000-8000-000000000c03','e5')) AS x(g, e);
+-- DETTE-SCENARIO-FIN-DE-MOIS : la facture du mois n'est jamais une « premiere » facture.
+-- La premiere facture d'un profil est calculee au PRORATA des seances restantes du mois, seances d'essai
+-- exclues (private.fac_emettre_facture : v_premier = aucune facture non annulee ; private.fac_mensualite :
+-- prorata = base * seances_suivies / seances_du_mois - base). Tard dans le mois il ne reste que des seances
+-- d'essai : la facture tombe a zero, financee sans debit, et un remboursement ne la rouvre plus. Ce scenario
+-- prouve le retour d'argent sur une facture PLEINE ; il ne doit donc pas dependre du jour du mois ou il tourne
+-- (il echouait a partir du 25 au soir). La regle du prorata, elle, est la regle reelle et reste couverte par
+-- les scenarios de la facturation. On pose ici, pour chaque profil facture, la facture NON annulee du mois
+-- precedent, deja reglee (total 0, sans debit : etat valide de la contrainte), de sorte que la facture du mois
+-- soit la suivante et qu'elle ne soit jamais au prorata.
+INSERT INTO public.factures_mensuelles(profile_id, household_id, mois, politique_version, devise, rang_familial,
+                                       lignes, total_mineur, statut, financee_le)
+SELECT pg_temp.id(x.e), pg_temp.id(x.f), (pg_temp.mois() - interval '1 month')::date,
+       (private.fac_politique_au(pg_temp.mois())).version, 'USD', 1, '[]'::jsonb, 0, 'financee', now()
+  FROM (VALUES ('e1','f1'), ('e2','f1'), ('e4','f2'), ('e5','f3')) AS x(e, f);
 -- e1 a 50 USD d'avance : les remboursements partiels le laissent positif.
 INSERT INTO public.wallets(id, household_id, currency) VALUES
  ('fb000000-0000-4000-8000-000000000901', pg_temp.id('f1'), 'USD');

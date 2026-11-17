@@ -40842,6 +40842,8 @@ class Traductions$com$messages$panneau$fr {
 
 	/// fr: 'Vous'
 	String get vous => 'Vous';
+
+	late final Traductions$com$messages$panneau$officiel$fr officiel = Traductions$com$messages$panneau$officiel$fr.internal(_root);
 }
 
 // Path: com.messages.fil
@@ -52159,6 +52161,24 @@ class Traductions$com$socle$navigation$demo$fr {
 
 	/// fr: 'Choisissez un espace à essayer.'
 	String get choisir => 'Choisissez un espace à essayer.';
+}
+
+// Path: com.messages.panneau.officiel
+class Traductions$com$messages$panneau$officiel$fr {
+	Traductions$com$messages$panneau$officiel$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ra_Praxis'
+	String get nom => 'Ra_Praxis';
+
+	/// fr: 'Assistant de l'académie · IA'
+	String get mention => 'Assistant de l\'académie · IA';
+
+	/// fr: 'Il répond à vos messages, vous guide pas à pas et confie à l'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction.'
+	String get phrase => 'Il répond à vos messages, vous guide pas à pas et confie à l\'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction.';
 }
 
 // Path: com.messages.images.refus
@@ -66306,6 +66326,9 @@ extension on Traductions {
 			'com.messages.panneau.ouvrir' => ({required Object objet}) => 'Ouvrir ${objet}',
 			'com.messages.panneau.inaccessible' => 'Ce sujet ne vous est plus ouvert. La conversation reste lisible.',
 			'com.messages.panneau.vous' => 'Vous',
+			'com.messages.panneau.officiel.nom' => 'Ra_Praxis',
+			'com.messages.panneau.officiel.mention' => 'Assistant de l\'académie · IA',
+			'com.messages.panneau.officiel.phrase' => 'Il répond à vos messages, vous guide pas à pas et confie à l\'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction.',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
 			'com.messages.images.joindre' => 'Joindre une image',
 			'com.messages.images.prendrePhoto' => 'Prendre une photo',
@@ -66715,11 +66738,11 @@ extension on Traductions {
 			'com.studio.panneau.epingles' => _root.com.socle.lexique.elementsEpingles,
 			'com.studio.panneau.fichiers' => 'Fichiers récents',
 			'com.studio.panneau.liens' => 'Liens utiles',
+			_ => null,
+		} ?? switch (path) {
 			'com.studio.panneau.vous' => 'Vous',
 			'com.studio.panneau.parametres' => 'Paramètres du canal',
 			'com.studio.panneau.parametresDetail' => 'La modification des paramètres arrivera avec le service du Studio.',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.panneau.ouvrir' => ({required Object titre}) => 'Ouvrir ${titre}',
 			'com.studio.panneau.lienExterne' => ({required Object hote}) => 'Site externe : ${hote}',
 			'com.studio.panneau.aucunPartageTitre' => 'Rien de partagé pour le moment',
@@ -67229,11 +67252,11 @@ extension on Traductions {
 			'comptable.statuts.validation.enAttente' => 'Validation demandée',
 			'comptable.statuts.validation.validee' => 'Validée',
 			'comptable.statuts.validation.refusee' => 'Refusée',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.statuts.raison.autoPaiement' => 'Traitement par un autre responsable requis',
 			'comptable.statuts.raison.validationRequise' => 'Validation supplémentaire requise',
 			'comptable.statuts.raison.infosManquantes' => 'Informations de paiement manquantes',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.raison.verificationRequise' => 'Vérification paiement requise',
 			'comptable.statuts.raison.horsDelegation' => 'Hors délégation',
 			'comptable.statuts.raison.fournisseurIndisponible' => 'Fournisseur indisponible',
@@ -67743,11 +67766,11 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.wise.phraseAucune' => ({required Object devise}) => 'Renseignez vos coordonnées bancaires pour recevoir votre paie. Elle vous est versée par virement Wise, en ${devise}.',
 			'comptable.beneficiaires.recevoir.wise.phraseComplete' => ({required Object devise}) => 'Vos coordonnées sont enregistrées. Votre prochaine paie y sera versée, en ${devise}.',
 			'comptable.beneficiaires.recevoir.wise.phraseIncomplete' => 'Vos coordonnées sont incomplètes. Complétez-les pour recevoir votre prochaine paie.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.masquees' => 'Pour votre sécurité, seuls les 4 derniers caractères des numéros sont affichés.',
 			'comptable.beneficiaires.recevoir.wise.lecteurs' => 'Seules la direction et la comptabilité lisent ces coordonnées, au moment de préparer le versement.',
 			'comptable.beneficiaires.recevoir.wise.renseigner' => 'Renseigner mes coordonnées',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.wise.modifier' => 'Modifier mes coordonnées',
 			'comptable.beneficiaires.recevoir.wise.retirer' => 'Retirer mes coordonnées',
 			'comptable.beneficiaires.recevoir.wise.retirerQuestion' => 'Retirer vos coordonnées de versement ?',
@@ -68257,11 +68280,11 @@ extension on Traductions {
 			'juridique.coord.societe' => 'Société : Rewayah Academy Ltd',
 			'juridique.coord.numero' => 'Numéro d\'immatriculation : 16624644, Angleterre et pays de Galles',
 			'juridique.coord.adresse' => 'Siège : 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.aCompleter' => ({required Object quoi}) => '[à compléter par la direction : ${quoi}]',
 			'juridique.quoi.hebergeur' => 'hébergeur légal et ses coordonnées',
 			'juridique.quoi.lieuxHebergement' => 'pays où sont hébergées les informations',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.quoi.dureesConservation' => 'durée de conservation de chaque type d\'information',
 			'juridique.quoi.droitApplicable' => 'droit applicable et juridiction compétente',
 			'juridique.quoi.confirmationConseil' => 'relecture par un conseil juridique, droit de rétractation compris',
@@ -68771,11 +68794,11 @@ extension on Traductions {
 			'accueilInvite.roles.foyer' => 'Rewayah Academy vous invite en tant que tuteur.',
 			'accueilInvite.roles.enseignant' => 'Rewayah Academy vous invite en tant qu\'enseignant.',
 			'accueilInvite.roles.comptable' => 'Rewayah Academy vous invite en tant que comptable.',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInvite.roles.candidat' => 'Rewayah Academy vous invite en tant que candidat à l\'enseignement.',
 			'accueilInvite.invitant' => ({required Object prenom}) => 'Personne qui vous invite dans son foyer : ${prenom}.',
 			'accueilInvite.foyerIdentite' => 'Dites-nous qui vous êtes, puis répondez à l\'invitation. Votre compte n\'est créé que si vous l\'acceptez.',
-			_ => null,
-		} ?? switch (path) {
 			'accueilInvite.suite' => 'Continuez pour créer votre compte.',
 			'accueilInvite.champsRequis' => 'Indiquez votre prénom, votre nom et votre genre.',
 			'n1.regles.auteurs.direction' => 'Direction',
@@ -69285,11 +69308,11 @@ extension on Traductions {
 			'candidatsFlux.publication.retirerConsequence' => 'Votre nom, votre photo et votre pays ne paraîtront plus sur le site public. Vous pourrez redonner votre accord plus tard.',
 			'candidatsFlux.publication.echec' => 'Votre choix n\'est pas confirmé. Réessayez.',
 			'candidatsFlux.publication.lectureEchec' => 'Votre accord de publication n\'a pas pu être lu.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.publication.nonPublie' => 'Le texte de l\'accord de publication n\'est pas encore publié.',
 			'candidatsFlux.publication.horsLigne' => 'Votre choix pourra être enregistré quand la connexion reviendra.',
 			'candidatsFlux.photo.titre' => 'Votre photo',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.photo.requise' => 'Ajoutez votre photo avant d\'envoyer votre candidature.',
 			'push1.invitation.titre' => 'Recevoir les notifications ?',
 			'push1.invitation.phrase' => 'Une alerte sur cet appareil quand votre classe change ou qu\'on vous attend, même application fermée. Vous pourrez la couper à tout moment dans Préférences.',

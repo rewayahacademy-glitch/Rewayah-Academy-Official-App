@@ -12769,7 +12769,12 @@
         "fichiers": "@:com.socle.lexique.fichiersPartages",
         "ouvrir": "Open {objet}",
         "inaccessible": "This subject is no longer open to you. The conversation stays readable.",
-        "vous": "You"
+        "vous": "You",
+        "officiel": {
+          "nom": "Ra_Praxis",
+          "mention": "Academy assistant · AI",
+          "phrase": "It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management."
+        }
       },
       "fil": {
         "lectureSeule": "You can read this conversation. Replying is not open to you here."

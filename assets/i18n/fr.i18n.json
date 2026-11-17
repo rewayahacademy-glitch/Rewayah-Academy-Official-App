@@ -12757,7 +12757,12 @@
         "fichiers": "@:com.socle.lexique.fichiersPartages",
         "ouvrir": "Ouvrir {objet}",
         "inaccessible": "Ce sujet ne vous est plus ouvert. La conversation reste lisible.",
-        "vous": "Vous"
+        "vous": "Vous",
+        "officiel": {
+          "nom": "Ra_Praxis",
+          "mention": "Assistant de l'académie · IA",
+          "phrase": "Il répond à vos messages, vous guide pas à pas et confie à l'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction."
+        }
       },
       "fil": {
         "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."
