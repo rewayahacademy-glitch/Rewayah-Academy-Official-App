@@ -79,6 +79,22 @@ enum GesteCandidature {
   /// candidature passe a la decision comme apres un entretien tenu.
   dispenserEntretien('dispenserEntretien'),
 
+  /// Restreindre une candidature confirmee (transition 20, cause `manuelle`,
+  /// `restreindre_candidat`, APRES-CONFIRMEE).
+  restreindre('restreindre'),
+
+  /// Demander une verification de la piece apres l'accueil : restriction de
+  /// cause `piece` (transition 20, `restreindre_candidat`).
+  demanderVerificationPiece('demanderVerification'),
+
+  /// Demander une verification du versement apres l'accueil : restriction de
+  /// cause `paiement` (transition 20, `restreindre_candidat`).
+  demanderVerificationVersement('demanderVerification'),
+
+  /// Lever la restriction (transition 21, `lever_restriction_candidat`), sous
+  /// les controles de sa cause (piece validee, versement compatible).
+  leverRestriction('leverRestriction'),
+
   /// Refaire l'entretien (transition 46, `refaire_entretien`, BE-1h) : la
   /// candidature revient de la decision a l'entretien a planifier.
   refaireEntretien('refaireEntretien');
@@ -110,6 +126,10 @@ enum GesteCandidature {
     definirResponsable => 'definir_responsable',
     validerPiece => 'valider_piece',
     dispenserEntretien => 'dispenser_entretien',
+    restreindre => 'restreindre',
+    demanderVerificationPiece => 'demander_verification_piece',
+    demanderVerificationVersement => 'demander_verification_versement',
+    leverRestriction => 'lever_restriction',
     refaireEntretien => 'refaire_entretien',
   };
 
@@ -136,6 +156,10 @@ enum GesteCandidature {
     refuser ||
     consignerRetrait ||
     dispenserEntretien ||
+    restreindre ||
+    demanderVerificationPiece ||
+    demanderVerificationVersement ||
+    leverRestriction ||
     refaireEntretien ||
     rouvrir => true,
     modifierComplement ||
@@ -383,6 +407,44 @@ class DemandeGeste {
     motif: motif,
     modele: modele,
     repriseLe: repriseLe,
+  );
+
+  /// Restreindre (cause manuelle), ou demander une verification de la piece ou
+  /// du versement : [geste] est l'un des trois, le [motif] est interne.
+  factory DemandeGeste.restriction({
+    required GesteCandidature geste,
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) {
+    assert(
+      geste == GesteCandidature.restreindre ||
+          geste == GesteCandidature.demanderVerificationPiece ||
+          geste == GesteCandidature.demanderVerificationVersement,
+      'une restriction : restreindre ou une demande de verification',
+    );
+    return DemandeGeste._(
+      geste: geste,
+      candidatureId: candidatureId,
+      versionAttendue: versionAttendue,
+      cleIdempotence: cleIdempotence,
+      motif: motif,
+    );
+  }
+
+  /// Lever la restriction, avec un [motif] interne.
+  factory DemandeGeste.leverRestriction({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.leverRestriction,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
+    motif: motif,
   );
 
   /// Lever la pause. Le motif est facultatif.

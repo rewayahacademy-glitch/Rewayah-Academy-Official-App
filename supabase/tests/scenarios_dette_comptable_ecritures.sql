@@ -80,17 +80,19 @@ SELECT pg_temp.comme('dc800000-0000-0000-0000-000000000003','guardian');
 SELECT pg_temp.refuse('tuteur', $$INSERT INTO public.wallet_entries(wallet_id,amount_minor,currency,reference_type)
   VALUES ('dc850000-0000-0000-0000-000000000001',999999,'EUR','credit')$$);
 
--- Lectures conservees pour la direction et la comptabilite (GARDE-VERSEMENTS du 08/11 : moyens de versement compris).
+-- Lectures conservees pour la direction et la comptabilite (GARDE-VERSEMENTS du 08/11) ; les moyens de versement
+-- (coordonnees) ne se lisent plus depuis DETTE-PAYOUT-METHODS (17/11).
 SELECT pg_temp.comme('dc800000-0000-0000-0000-000000000002','accountant');
 SELECT pg_temp.n('comptable','wallets',2);
 SELECT pg_temp.n('comptable','wallet_entries',2);
 SELECT pg_temp.n('comptable','payouts',1);
-SELECT pg_temp.n('comptable','payout_methods',1);
+-- DETTE-PAYOUT-METHODS (20261129880000, 17/11/2026) : plus de lecture des coordonnees (0 ligne, 0 lecteur).
+SELECT pg_temp.n('comptable','payout_methods',0);
 SELECT pg_temp.comme('dc800000-0000-0000-0000-000000000001','admin');
 SELECT pg_temp.n('direction','wallets',2);
 SELECT pg_temp.n('direction','wallet_entries',2);
 SELECT pg_temp.n('direction','payouts',1);
-SELECT pg_temp.n('direction','payout_methods',1);
+SELECT pg_temp.n('direction','payout_methods',0);
 
 -- La famille garde la sienne ; l'autre foyer ne voit rien du premier.
 SELECT pg_temp.comme('dc800000-0000-0000-0000-000000000003','guardian');

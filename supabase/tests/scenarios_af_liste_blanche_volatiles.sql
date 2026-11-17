@@ -356,6 +356,9 @@ declare
     'deplacer_entretien(uuid,timestamp with time zone,integer,text,integer,text)',
     -- COMPLEMENT-SALLE-EXAMEN (17/11) : la direction annule le complement demande en Salle d'examen (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; le dossier revient a en_examen).
     'annuler_complement_candidat(uuid,text,integer,text)',
+    -- APRES-CONFIRMEE (17/11) : la direction restreint une candidature confirmee (ou demande une verification de la piece ou du versement) et leve la restriction (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; levee sous controles revérifiés).
+    'restreindre_candidat(uuid,text,text,integer,text)',
+    'lever_restriction_candidat(uuid,text,integer,text)',
     -- BE-1h (16/11) : la direction ramene une candidature de la decision a l'entretien (transition 46).
     'refaire_entretien(uuid,text,integer,text)',
     -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
@@ -385,6 +388,11 @@ declare
     'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',
     'inviter_conjoint(text,uuid)',
     'inviter_comptable(text)',
+    -- BE-2a-2 (17/11) : l'invitation d'un associe (direction active en aal2, cle d'idempotence) et sa revocation
+    -- (direction active, motif ecrit) ; l'inscription est une session sans profil, code lie a l'adresse, usage unique.
+    'inviter_associe(text,text,uuid)',
+    'revoquer_invitation_associe(uuid,text,uuid)',
+    'inscrire_associe_invite(text,text,text,gender)',
     'inviter_enseignant(text)',
     -- CAND-L2A1 (22/10) : journal borne par genre (C15) ; ecrit la trace de l'exception super-admin.
     'journal_audit_filtres()',

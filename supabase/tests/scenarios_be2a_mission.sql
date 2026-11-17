@@ -94,7 +94,7 @@ CREATE FUNCTION pg_temp.d(p_n text) RETURNS uuid LANGUAGE sql IMMUTABLE AS $$
 GRANT EXECUTE ON FUNCTION pg_temp.u(text), pg_temp.d(text) TO authenticated, anon;
 
 -- Un appel qui rend une erreur jsonb ou une valeur ; le role authenticated, aal2 (la double verification).
--- a1 direction homme, a2 direction femme ; h1 porteur homme (controller), h2 porteuse (femme), h3 sans mission
+-- a1 direction homme, a2 direction femme ; h1 porteur homme (associe), h2 porteuse (femme), h3 sans mission
 -- (homme), h4 tuteur ; M1..M4 dossiers d'hommes, F1 dossier de femme.
 INSERT INTO auth.users (id, email) SELECT pg_temp.u(s), 'be2a-' || s || '@test.invalid'
   FROM unnest(ARRAY['a1', 'a2', 'h1', 'h2', 'h3', 'h4']) AS s;
@@ -102,9 +102,9 @@ INSERT INTO public.households (id, timezone) VALUES ('5b2affff-ffff-4fff-8fff-00
 INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
  (pg_temp.u('a1'), 'B2-ADM-0001', 'admin', NULL, 'Direction', 'Homme', 'active', 'male'),
  (pg_temp.u('a2'), 'B2-ADM-0002', 'admin', NULL, 'Direction', 'Femme', 'active', 'female'),
- (pg_temp.u('h1'), 'B2-CTL-0001', 'controller', NULL, 'Porteur', 'Un', 'active', 'male'),
- (pg_temp.u('h2'), 'B2-CTL-0002', 'controller', NULL, 'Porteuse', 'Deux', 'active', 'female'),
- (pg_temp.u('h3'), 'B2-CTL-0003', 'controller', NULL, 'Sans', 'Mission', 'active', 'male'),
+ (pg_temp.u('h1'), 'B2-CTL-0001', 'associe', NULL, 'Porteur', 'Un', 'active', 'male'),
+ (pg_temp.u('h2'), 'B2-CTL-0002', 'associe', NULL, 'Porteuse', 'Deux', 'active', 'female'),
+ (pg_temp.u('h3'), 'B2-CTL-0003', 'associe', NULL, 'Sans', 'Mission', 'active', 'male'),
  (pg_temp.u('h4'), 'B2-TUT-0001', 'guardian', '5b2affff-ffff-4fff-8fff-000000000001', 'Tuteur', 'Essai', 'active', 'female');
 INSERT INTO auth.users (id, email) SELECT ('5b2a0000-0000-4000-8000-0000000000' || (20 + i))::uuid, 'be2a-c' || i || '@test.invalid'
   FROM generate_series(1, 5) i;
@@ -185,7 +185,7 @@ SELECT pg_temp.refus_en(pg_temp.u('a1'), 'admin',
 SELECT pg_temp.refus_en(pg_temp.u('a1'), 'admin',
   $$SELECT public.creer_mission('Piece', ARRAY['lire', 'piece_identite'], '11111111-0000-4000-8000-0000000000fe'::uuid)$$,
   '22023', '7 : la piece d''identite n''est pas un geste de mission');
-SELECT pg_temp.refus_en(pg_temp.u('h3'), 'controller',
+SELECT pg_temp.refus_en(pg_temp.u('h3'), 'associe',
   $$SELECT public.creer_mission('Pirate', ARRAY['lire'], '11111111-0000-4000-8000-0000000000fd'::uuid)$$,
   '42501', 'sans etre la direction : aucune mission ne se cree');
 
@@ -231,7 +231,7 @@ SELECT pg_temp.vrai(pg_temp.lu('g2') = '{"erreur": "hors_portee"}'::jsonb
   '2 : dossier de l''autre cote : hors_portee, rien d''ecrit');
 
 -- 1 : un geste que la mission ne coche pas (consigner un retrait)
-SELECT pg_temp.garde('g1x', pg_temp.en(pg_temp.u('h1'), 'controller', pg_catalog.format(
+SELECT pg_temp.garde('g1x', pg_temp.en(pg_temp.u('h1'), 'associe', pg_catalog.format(
   'SELECT public.consigner_retrait_candidat(%L::uuid, ''conversation'', current_date, NULL, %s, %L)', pg_temp.d('M1'),
   (SELECT version FROM public.candidatures WHERE id = pg_temp.d('M1')), 'cle-b2a-geste-0101')));
 SELECT pg_temp.vrai(pg_temp.lu('g1x') ->> 'erreur' = 'hors_mission'
@@ -239,32 +239,32 @@ SELECT pg_temp.vrai(pg_temp.lu('g1x') ->> 'erreur' = 'hors_mission'
   '1 : un geste non coche dans la mission : hors_mission, le dossier n''a pas bouge');
 
 -- Lecture : liste, dossier, voisins, contact, capacites
-SELECT pg_temp.garde('liste', pg_temp.en(pg_temp.u('h1'), 'controller',
+SELECT pg_temp.garde('liste', pg_temp.en(pg_temp.u('h1'), 'associe',
   $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$));
 SELECT pg_temp.vrai((SELECT array_agg(l ->> 'nomComplet' ORDER BY l ->> 'nomComplet') FROM jsonb_array_elements(pg_temp.lu('liste') -> 'lignes') l)
     = ARRAY['Fixture BE2A M1', 'Fixture BE2A M3', 'Fixture BE2A M4']
   AND (pg_temp.lu('liste') ->> 'total')::int = 3,
   '6 : la liste du porteur ne contient que son perimetre (langue francais, cote homme) ; M2 (poular) et F1 sont absents');
-SELECT pg_temp.garde('lire_m2', pg_temp.en(pg_temp.u('h1'), 'controller',
+SELECT pg_temp.garde('lire_m2', pg_temp.en(pg_temp.u('h1'), 'associe',
   $$SELECT public.lire_candidature(pg_temp.d('M2'))$$));
-SELECT pg_temp.garde('lire_m1', pg_temp.en(pg_temp.u('h1'), 'controller',
+SELECT pg_temp.garde('lire_m1', pg_temp.en(pg_temp.u('h1'), 'associe',
   $$SELECT public.lire_candidature(pg_temp.d('M1'))$$));
 SELECT pg_temp.vrai(pg_temp.lu('lire_m2') = '{"erreur": "hors_portee"}'::jsonb AND NOT (pg_temp.lu('lire_m1') ? 'erreur')
   AND pg_temp.lu('lire_m1') -> 'piece' = 'null'::jsonb,
   'lire : le dossier du perimetre est lu, celui hors langues est hors_portee ; la piece d''identite n''est jamais dans le dossier');
-SELECT pg_temp.garde('contact', pg_temp.en(pg_temp.u('h1'), 'controller',
+SELECT pg_temp.garde('contact', pg_temp.en(pg_temp.u('h1'), 'associe',
   $$SELECT public.lire_contact_candidature(pg_temp.d('M1'))$$));
 SELECT pg_temp.vrai(pg_temp.lu('contact') ->> 'courriel' = 'm1@exemple.invalid',
   'voir_contact coche : le contact du dossier du perimetre est lu');
 SELECT pg_temp.garde('att2', pg_temp.accorder('h2', 'm2', '{}'::jsonb, NULL, NULL, '22222222-0000-4000-8000-000000000002'));
-SELECT pg_temp.garde('liste_f', pg_temp.en(pg_temp.u('h2'), 'controller',
+SELECT pg_temp.garde('liste_f', pg_temp.en(pg_temp.u('h2'), 'associe',
   $$SELECT public.lister_candidatures('{"recherche": "f1@exemple.invalid"}'::jsonb, 'recente', 1)$$));
-SELECT pg_temp.refus_en(pg_temp.u('h2'), 'controller', $$SELECT public.lire_contact_candidature(pg_temp.d('F1'))$$,
+SELECT pg_temp.refus_en(pg_temp.u('h2'), 'associe', $$SELECT public.lire_contact_candidature(pg_temp.d('F1'))$$,
   '42501', '8 : voir le contact sans voir_contact : refuse (42501)');
 SELECT pg_temp.vrai(jsonb_array_length(pg_temp.lu('liste_f') -> 'lignes') = 0,
   '8 : la recherche par courriel ne trouve rien sans voir_contact (aucune fuite par la liste)');
 
-SELECT pg_temp.garde('cap1', pg_temp.en(pg_temp.u('h1'), 'controller', $$SELECT public.capacites_candidatures()$$));
+SELECT pg_temp.garde('cap1', pg_temp.en(pg_temp.u('h1'), 'associe', $$SELECT public.capacites_candidatures()$$));
 SELECT pg_temp.vrai(pg_temp.lu('cap1') ->> 'peutLire' = 'true' AND pg_temp.lu('cap1') ->> 'peutVoirContact' = 'true'
   AND pg_temp.lu('cap1') -> 'gestes' ->> 'definirResponsable' = 'true'
   AND pg_temp.lu('cap1') -> 'gestes' ->> 'validerPiece' = 'true'
@@ -272,12 +272,12 @@ SELECT pg_temp.vrai(pg_temp.lu('cap1') ->> 'peutLire' = 'true' AND pg_temp.lu('c
   AND pg_temp.lu('cap1') -> 'gestes' ->> 'rouvrir' = 'false'
   AND pg_temp.lu('cap1') ->> 'peutImporter' = 'false' AND pg_temp.lu('cap1') ->> 'peutLireHorsGenre' = 'false',
   'capacites : le porteur recoit ses gestes cochés, rien d''autre');
-SELECT pg_temp.garde('cap3', pg_temp.en(pg_temp.u('h3'), 'controller', $$SELECT public.capacites_candidatures()$$));
+SELECT pg_temp.garde('cap3', pg_temp.en(pg_temp.u('h3'), 'associe', $$SELECT public.capacites_candidatures()$$));
 SELECT pg_temp.vrai(pg_temp.lu('cap3') ->> 'peutLire' = 'false' AND pg_temp.lu('cap3') -> 'gestes' ->> 'definirResponsable' = 'false',
   'sans mission : aucune capacite');
 
 -- 7 : la piece d'identite reste reservee a la direction
-SELECT pg_temp.refus_en(pg_temp.u('h1'), 'controller', $$SELECT public.piece_dossier_candidat(pg_temp.d('M1'))$$,
+SELECT pg_temp.refus_en(pg_temp.u('h1'), 'associe', $$SELECT public.piece_dossier_candidat(pg_temp.d('M1'))$$,
   '42501', '7 : lire la piece d''identite avec une mission : refuse (42501)');
 
 -- 9 : droits des portes
@@ -290,13 +290,13 @@ SELECT pg_temp.vrai(NOT has_function_privilege('anon', 'public.accorder_mission(
   AND NOT has_function_privilege('authenticated', 'private.mission_droit(uuid,text)', 'EXECUTE')
   AND NOT has_function_privilege('authenticated', 'private.mission_acteur()', 'EXECUTE'),
   '9 : anon sans aucune porte, service_role sans accord, helpers prives fermes');
-SELECT pg_temp.refus_en(pg_temp.u('h3'), 'controller', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
+SELECT pg_temp.refus_en(pg_temp.u('h3'), 'associe', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
   '42501', '9 : authenticated sans mission : la liste est refusee (42501)');
-SELECT pg_temp.refus_en(pg_temp.u('h3'), 'controller', $$SELECT public.lister_missions()$$,
+SELECT pg_temp.refus_en(pg_temp.u('h3'), 'associe', $$SELECT public.lister_missions()$$,
   '42501', '9 : authenticated sans mission : lister_missions refuse (42501)');
 SELECT pg_temp.refus_en(pg_temp.u('h4'), 'guardian', $$SELECT public.lire_candidature(pg_temp.d('M1'))$$,
   '42501', '9 : un tuteur : lire un dossier refuse (42501)');
-SELECT pg_temp.refus_en(pg_temp.u('h3'), 'controller', pg_catalog.format(
+SELECT pg_temp.refus_en(pg_temp.u('h3'), 'associe', pg_catalog.format(
   'SELECT public.definir_responsable_candidat(%L::uuid, %L::uuid, 1, %L)', pg_temp.d('M1'), pg_temp.u('a1'), 'cle-b2a-geste-0009'),
   '42501', '9 : authenticated sans mission : aucune porte de geste ne s''execute (42501)');
 
@@ -305,10 +305,10 @@ SELECT pg_temp.garde('att3', pg_temp.accorder('h3', 'm1', '{}'::jsonb, NULL, NUL
 UPDATE private.mission_attributions
    SET debut = pg_catalog.clock_timestamp() - interval '2 days', fin = pg_catalog.clock_timestamp() - interval '1 minute'
  WHERE id = (pg_temp.lu('att3') #>> '{}')::uuid;
-SELECT pg_temp.refus_en(pg_temp.u('h3'), 'controller', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
+SELECT pg_temp.refus_en(pg_temp.u('h3'), 'associe', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
   '42501', '3 : mission expiree : la lecture est refusee (42501)');
 SELECT pg_temp.garde('t_m4', to_jsonb(pg_temp.etat_dossier('M4')));
-SELECT pg_temp.refus_en(pg_temp.u('h3'), 'controller', pg_catalog.format(
+SELECT pg_temp.refus_en(pg_temp.u('h3'), 'associe', pg_catalog.format(
   'SELECT public.definir_responsable_candidat(%L::uuid, %L::uuid, %s, %L)', pg_temp.d('M4'), pg_temp.u('a1'),
   (SELECT version FROM public.candidatures WHERE id = pg_temp.d('M4')), 'cle-b2a-geste-0003'),
   '42501', '3 : mission expiree : le geste est refuse (42501)');
@@ -323,15 +323,15 @@ SELECT pg_temp.vrai(pg_temp.en(pg_temp.u('a1'), 'admin', pg_catalog.format(
   'SELECT to_jsonb(public.retirer_mission(%L::uuid, ''fin de mission'', ''33333333-0000-4000-8000-000000000001''::uuid))',
   pg_temp.lu('att1') #>> '{}')) = 'false'::jsonb,
   '4 : le retrait aboutit une fois (vrai), puis rend faux');
-SELECT pg_temp.refus_en(pg_temp.u('h1'), 'controller', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
+SELECT pg_temp.refus_en(pg_temp.u('h1'), 'associe', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
   '42501', '4 : mission retiree : la lecture est refusee (42501), la liste est vide');
-SELECT pg_temp.refus_en(pg_temp.u('h1'), 'controller', pg_catalog.format(
+SELECT pg_temp.refus_en(pg_temp.u('h1'), 'associe', pg_catalog.format(
   'SELECT public.definir_responsable_candidat(%L::uuid, %L::uuid, %s, %L)', pg_temp.d('M4'), pg_temp.u('a1'),
   (SELECT version FROM public.candidatures WHERE id = pg_temp.d('M4')), 'cle-b2a-geste-0004'),
   '42501', '4 : mission retiree : le geste est refuse (42501)');
 SELECT pg_temp.vrai(pg_temp.compte('h1') = pg_temp.lu('compte_h1') #>> '{}'
   AND pg_temp.lu('cap1') ->> 'peutLire' = 'true'
-  AND pg_temp.en(pg_temp.u('h1'), 'controller', $$SELECT public.capacites_candidatures()$$) ->> 'peutLire' = 'false',
+  AND pg_temp.en(pg_temp.u('h1'), 'associe', $$SELECT public.capacites_candidatures()$$) ->> 'peutLire' = 'false',
   '4 : mission retiree : plus aucune capacite, et le compte (role, statut, genre) est inchange');
 SELECT pg_temp.vrai((SELECT count(*) FROM private.mission_journal WHERE evenement = 'retrait'
                        AND attribution_id = (pg_temp.lu('att1') #>> '{}')::uuid) = 1,
@@ -342,7 +342,7 @@ SELECT pg_temp.vrai(pg_temp.en(pg_temp.u('a1'), 'admin', pg_catalog.format(
   'SELECT to_jsonb(public.archiver_mission(%L::uuid, ''mission close'', ''44444444-0000-4000-8000-000000000001''::uuid))',
   pg_temp.lu('m2') #>> '{}')) = 'true'::jsonb,
   '5 : la mission « lecture seule » est archivee');
-SELECT pg_temp.refus_en(pg_temp.u('h2'), 'controller', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
+SELECT pg_temp.refus_en(pg_temp.u('h2'), 'associe', $$SELECT public.lister_candidatures('{}'::jsonb, 'recente', 1)$$,
   '42501', '5 : mission archivee : la lecture est refusee (42501)');
 SELECT pg_temp.refus_en(pg_temp.u('a1'), 'admin', $$SELECT public.accorder_mission(pg_temp.u('h3'), pg_temp.mid('m2'), '{}'::jsonb, NULL, NULL,
   '22222222-0000-4000-8000-0000000000b1'::uuid)$$, '22023', '5 : on n''accorde pas une mission archivee');
