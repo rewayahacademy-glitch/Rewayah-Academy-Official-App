@@ -503,25 +503,31 @@ void main() {
       ('fr', AppLocale.fr),
       ('ar', AppLocale.ar),
     ]) {
-      testWidgets('360 $nom', (WidgetTester tester) async {
-        await tester.runAsync(() => LocaleSettings.setLocale(langue));
-        late _ControleurJetons controleur;
-        await _monter(
-          tester,
-          auth: FauxServiceAuth(),
-          page: const ConnexionPage(),
-          cle: _Cle('0xCleDuSite'),
-          fabrique: () => controleur = _ControleurJetons(rendre: false),
-          taille: const Size(360, 800),
-        );
-        await capturerVue(tester, 'CAPTCHA-PLACE/captcha_${nom}_360_1cache');
-        controleur.signalerErreur();
-        await tester.pumpAndSettle();
-        await capturerVue(tester, 'CAPTCHA-PLACE/captcha_${nom}_360_2visible');
-        controleur.relancer();
-        await tester.pumpAndSettle();
-        await capturerVue(tester, 'CAPTCHA-PLACE/captcha_${nom}_360_3apres');
-      });
+      for (final (int largeur, Size taille) in <(int, Size)>[
+        (360, const Size(360, 800)),
+        (1440, const Size(1440, 900)),
+      ]) {
+        testWidgets('$largeur $nom', (WidgetTester tester) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          late _ControleurJetons controleur;
+          await _monter(
+            tester,
+            auth: FauxServiceAuth(),
+            page: const ConnexionPage(),
+            cle: _Cle('0xCleDuSite'),
+            fabrique: () => controleur = _ControleurJetons(rendre: false),
+            taille: taille,
+          );
+          final String base = 'CAPTCHA-PLACE/captcha_${nom}_$largeur';
+          await capturerVue(tester, '${base}_1cache');
+          controleur.signalerErreur();
+          await tester.pumpAndSettle();
+          await capturerVue(tester, '${base}_2visible');
+          controleur.relancer();
+          await tester.pumpAndSettle();
+          await capturerVue(tester, '${base}_3apres');
+        });
+      }
     }
   });
 
