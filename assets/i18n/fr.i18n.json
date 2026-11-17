@@ -4857,6 +4857,184 @@
         }
       }
     },
+    "equipe": {
+      "titre": "Équipe",
+      "sousTitre": "Les personnes à qui vous confiez des gestes sur les candidatures, pour un temps.",
+      "inviter": "Inviter une personne",
+      "nouvelleMission": "Nouvelle mission",
+      "accorder": "Accorder une mission",
+      "porteurs": "Personnes avec une mission",
+      "missions": "Missions",
+      "deplierMissions": "Afficher les missions",
+      "replierMissions": "Masquer les missions",
+      "invitations": "Invitations en attente",
+      "videTitre": "Personne n'a encore de mission.",
+      "videPhrase": "Invitez une personne ou créez une mission.",
+      "aucuneMission": "Aucune mission pour l'instant.",
+      "aucuneInvitation": "Aucune invitation en attente.",
+      "sansFin": "sans fin",
+      "jusquAu": "jusqu'au {date}",
+      "depuisLe": "depuis le {date}",
+      "indisponibleTitre": "L'équipe n'est pas encore disponible.",
+      "indisponiblePhrase": "Le serveur ne rend pas encore les missions. Revenez plus tard.",
+      "menu": {
+        "detail": "Voir le détail",
+        "retirer": "Retirer la mission",
+        "archiver": "Archiver",
+        "revoquer": "Révoquer",
+        "plus": "Actions de {nom}"
+      },
+      "mission": {
+        "porteurs(param=n)": {
+          "zero": "Personne ne la porte",
+          "one": "Portée par {n} personne",
+          "other": "Portée par {n} personnes"
+        },
+        "archivee": "Archivée",
+        "gestes": "Ce qu'elle permet"
+      },
+      "invitation": {
+        "code": "Code\u00a0: {code}",
+        "expire": "Expire le {date}",
+        "etat": {
+          "active": "En attente",
+          "utilisee": "Compte créé",
+          "expiree": "Expirée",
+          "revoquee": "Révoquée"
+        }
+      },
+      "perimetre": {
+        "tous": "toutes les candidatures de leur côté",
+        "langues": "les candidatures en {langues}",
+        "salles": "{salles}",
+        "dossiers(param=n)": {
+          "one": "{n} dossier confié",
+          "other": "{n} dossiers confiés"
+        }
+      },
+      "cote": {
+        "male": "hommes",
+        "female": "femmes",
+        "ligne": "Côté\u00a0: {cote}"
+      },
+      "detail": {
+        "titre": "Détail de la mission",
+        "mission": "Mission",
+        "personne": "Personne",
+        "perimetre": "Où elle agit",
+        "periode": "Période",
+        "gestes": "Gestes",
+        "retiree": "Retirée\u00a0: {motif}",
+        "sansNom": "Une personne de l'équipe"
+      },
+      "feuille": {
+        "motif": "Motif",
+        "motifAide": "Il est gardé au journal ; la personne ne le lit pas.",
+        "motifManquant": "Écrivez un motif.",
+        "annuler": "Annuler",
+        "mission": {
+          "titre": "Nouvelle mission",
+          "nom": "Nom de la mission",
+          "nomAide": "80 signes au plus.",
+          "nomManquant": "Donnez un nom à la mission.",
+          "nomTropLong": "80 signes au plus.",
+          "gestes": "Ce que la personne peut faire",
+          "gestesAide": "Cochez au moins un geste. Elle ne fait rien d'autre.",
+          "gestesManquants": "Cochez au moins un geste.",
+          "gestesIndisponibles": "Le serveur ne rend pas la liste des gestes. Rechargez la page.",
+          "creer": "Créer la mission",
+          "creee": "Mission créée."
+        },
+        "accorder": {
+          "titre": "Accorder une mission",
+          "personne": "La personne",
+          "personneManquante": "Choisissez une personne.",
+          "mission": "La mission",
+          "missionManquante": "Choisissez une mission.",
+          "aucunePersonne": "Aucune personne ne peut recevoir une mission pour l'instant. Invitez-en une.",
+          "aucuneMission": "Créez d'abord une mission.",
+          "perimetre": "Où elle peut agir",
+          "langues": "Langues des candidatures",
+          "languesAide": "Sans choix, toutes les langues.",
+          "salles": "Salles",
+          "sallesAide": "Sans choix, toutes les salles.",
+          "debut": "Début",
+          "debutAide": "Maintenant, si vous ne choisissez pas de jour.",
+          "fin": "Fin (facultative)",
+          "finAide": "Sans fin, la mission dure jusqu'à son retrait.",
+          "resume": "{nom} pourra {gestes}, sur {perimetre}, {duree}.",
+          "resumeVide": "Choisissez une personne et une mission : une phrase dira ce qu'elle pourra faire.",
+          "accorder": "Accorder la mission",
+          "accordee": "Mission accordée."
+        },
+        "retirer": {
+          "titre": "Retirer la mission",
+          "question": "Retirer la mission «\u00a0{mission}\u00a0» à {nom}\u00a0?",
+          "consequence": "Le compte de {nom} n'est pas modifié : seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.",
+          "retirer": "Retirer la mission",
+          "retiree": "Mission retirée. Le compte de {nom} n'a pas changé."
+        },
+        "archiver": {
+          "titre": "Archiver la mission",
+          "question": "Archiver la mission «\u00a0{mission}\u00a0»\u00a0?",
+          "consequence": "Elle ne peut plus être accordée. Les personnes qui la portent la gardent jusqu'à son retrait.",
+          "archiver": "Archiver",
+          "archivee": "Mission archivée."
+        },
+        "inviter": {
+          "titre": "Inviter une personne",
+          "consequence": "La personne reçoit un code pour créer son compte d'associé. Elle ne voit rien tant qu'une mission ne lui est pas accordée.",
+          "courriel": "Adresse e-mail",
+          "courrielManquant": "Saisissez l'adresse e-mail.",
+          "nom": "Nom (facultatif)",
+          "envoyer": "Créer l'invitation",
+          "creee": "Invitation créée. Code à transmettre\u00a0: {code}.",
+          "dejaInvite": "Une invitation est déjà en attente pour cette adresse. Code\u00a0: {code}.",
+          "emailInvalide": "Cette adresse e-mail n'est pas lisible.",
+          "compteExistant": "Un compte existe déjà avec cette adresse."
+        },
+        "revoquer": {
+          "titre": "Révoquer l'invitation",
+          "question": "Révoquer l'invitation de {courriel}\u00a0?",
+          "consequence": "Le code ne sert plus. La personne ne peut plus créer de compte avec lui.",
+          "revoquer": "Révoquer",
+          "revoquee": "Invitation révoquée."
+        }
+      },
+      "refus": {
+        "personneIndisponible": "Ce compte ne peut pas recevoir de mission : il n'est pas actif, ou son rôle n'est pas admis.",
+        "genreInconnu": "Le genre de cette personne n'est pas connu : sa mission se porte de son côté. Complétez son compte d'abord.",
+        "attributionActive": "Cette personne porte déjà cette mission. Retirez-la d'abord.",
+        "missionIndisponible": "Cette mission n'existe plus ou est archivée.",
+        "parametresInvalides": "Les choix ne sont pas admis : vérifiez le nom, les dates et les limites.",
+        "cleDejaUtilisee": "Cette demande a déjà servi pour autre chose. Recommencez.",
+        "gestesNonAdmis": "Un des gestes n'est pas admis dans une mission.",
+        "autre": "Le serveur a refusé ce geste. Rien n'a été écrit.",
+        "permission": "Vous n'avez pas le droit de faire cela.",
+        "doubleVerification": "Ce geste demande la seconde étape de connexion.",
+        "nonConfirme": "Le résultat n'est pas confirmé. Rechargez la page pour voir ce qui a été enregistré.",
+        "echecTitre": "Ce geste n'a pas abouti."
+      },
+      "gestes": {
+        "lire": "lire les candidatures",
+        "voir_contact": "voir l'adresse e-mail et le téléphone",
+        "demander_complement": "demander un complément",
+        "admettre_verifications": "admettre en vérification",
+        "confirmer_moyen_paiement": "confirmer le moyen de versement",
+        "infirmer_moyen_paiement": "infirmer le moyen de versement",
+        "debloquer_versement": "débloquer le versement",
+        "definir_responsable": "choisir le responsable",
+        "consigner_prevenu": "noter qu'une personne a été prévenue",
+        "rattacher": "rattacher une candidature à la personne",
+        "planifier_entretien": "planifier l'entretien",
+        "consigner_entretien_tenu": "consigner un entretien tenu",
+        "consigner_entretien_non_tenu": "consigner un entretien non tenu",
+        "valider_piece": "accueillir dans l'équipe",
+        "rouvrir": "rouvrir une candidature",
+        "retirer": "noter le retrait d'une candidature",
+        "autre": "un autre geste"
+      }
+    },
     "importInscriptions": {
       "onglet": "Importer",
       "titre": "Importer les inscriptions",

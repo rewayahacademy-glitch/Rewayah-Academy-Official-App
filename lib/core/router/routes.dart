@@ -948,6 +948,9 @@ abstract final class Routes {
   /// Les comptes du produit (`ADM-08`), sous Personnes.
   static const String adminPersonnesComptes = '/admin/personnes/comptes';
 
+  /// BE-2b : l'equipe, les missions confiees et les invitations d'associes.
+  static const String adminPersonnesEquipe = '/admin/personnes/equipe';
+
   /// Les comptes dont l'acces provisoire est echu (DASH-ADM-ECHUS) : la meme
   /// page, ouverte filtree, cible de « Acces echus » du Centre de commande.
   static const String adminPersonnesComptesEchus =

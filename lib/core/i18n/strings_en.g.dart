@@ -1014,6 +1014,7 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	// Translations
 	@override late final _Traductions$admin$listeEnseignants$en listeEnseignants = _Traductions$admin$listeEnseignants$en._(_root);
 	@override late final _Traductions$admin$candidatures$en candidatures = _Traductions$admin$candidatures$en._(_root);
+	@override late final _Traductions$admin$equipe$en equipe = _Traductions$admin$equipe$en._(_root);
 	@override late final _Traductions$admin$importInscriptions$en importInscriptions = _Traductions$admin$importInscriptions$en._(_root);
 	@override late final _Traductions$admin$tableau$en tableau = _Traductions$admin$tableau$en._(_root);
 	@override late final _Traductions$admin$traitement$en traitement = _Traductions$admin$traitement$en._(_root);
@@ -5574,6 +5575,43 @@ class _Traductions$admin$candidatures$en extends Traductions$admin$candidatures$
 	@override late final _Traductions$admin$candidatures$decision$en decision = _Traductions$admin$candidatures$decision$en._(_root);
 	@override late final _Traductions$admin$candidatures$creneaux$en creneaux = _Traductions$admin$candidatures$creneaux$en._(_root);
 	@override late final _Traductions$admin$candidatures$entretien$en entretien = _Traductions$admin$candidatures$entretien$en._(_root);
+}
+
+// Path: admin.equipe
+class _Traductions$admin$equipe$en extends Traductions$admin$equipe$fr {
+	_Traductions$admin$equipe$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Team';
+	@override String get sousTitre => 'The people you entrust with actions on applications, for a time.';
+	@override String get inviter => 'Invite a person';
+	@override String get nouvelleMission => 'New mission';
+	@override String get accorder => 'Grant a mission';
+	@override String get porteurs => 'People with a mission';
+	@override String get missions => 'Missions';
+	@override String get deplierMissions => 'Show the missions';
+	@override String get replierMissions => 'Hide the missions';
+	@override String get invitations => 'Pending invitations';
+	@override String get videTitre => 'Nobody has a mission yet.';
+	@override String get videPhrase => 'Invite a person or create a mission.';
+	@override String get aucuneMission => 'No mission yet.';
+	@override String get aucuneInvitation => 'No pending invitation.';
+	@override String get sansFin => 'no end date';
+	@override String jusquAu({required Object date}) => 'until ${date}';
+	@override String depuisLe({required Object date}) => 'since ${date}';
+	@override String get indisponibleTitre => 'The team is not available yet.';
+	@override String get indisponiblePhrase => 'The server does not return missions yet. Come back later.';
+	@override late final _Traductions$admin$equipe$menu$en menu = _Traductions$admin$equipe$menu$en._(_root);
+	@override late final _Traductions$admin$equipe$mission$en mission = _Traductions$admin$equipe$mission$en._(_root);
+	@override late final _Traductions$admin$equipe$invitation$en invitation = _Traductions$admin$equipe$invitation$en._(_root);
+	@override late final _Traductions$admin$equipe$perimetre$en perimetre = _Traductions$admin$equipe$perimetre$en._(_root);
+	@override late final _Traductions$admin$equipe$cote$en cote = _Traductions$admin$equipe$cote$en._(_root);
+	@override late final _Traductions$admin$equipe$detail$en detail = _Traductions$admin$equipe$detail$en._(_root);
+	@override late final _Traductions$admin$equipe$feuille$en feuille = _Traductions$admin$equipe$feuille$en._(_root);
+	@override late final _Traductions$admin$equipe$refus$en refus = _Traductions$admin$equipe$refus$en._(_root);
+	@override late final _Traductions$admin$equipe$gestes$en gestes = _Traductions$admin$equipe$gestes$en._(_root);
 }
 
 // Path: admin.importInscriptions
@@ -15187,6 +15225,159 @@ class _Traductions$admin$candidatures$entretien$en extends Traductions$admin$can
 	@override late final _Traductions$admin$candidatures$entretien$retours$en retours = _Traductions$admin$candidatures$entretien$retours$en._(_root);
 }
 
+// Path: admin.equipe.menu
+class _Traductions$admin$equipe$menu$en extends Traductions$admin$equipe$menu$fr {
+	_Traductions$admin$equipe$menu$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get detail => 'View details';
+	@override String get retirer => 'Remove the mission';
+	@override String get archiver => 'Archive';
+	@override String get revoquer => 'Revoke';
+	@override String plus({required Object nom}) => 'Actions for ${nom}';
+}
+
+// Path: admin.equipe.mission
+class _Traductions$admin$equipe$mission$en extends Traductions$admin$equipe$mission$fr {
+	_Traductions$admin$equipe$mission$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String porteurs({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		zero: 'Nobody holds it',
+		one: 'Held by ${n} person',
+		other: 'Held by ${n} people',
+	);
+	@override String get archivee => 'Archived';
+	@override String get gestes => 'What it allows';
+}
+
+// Path: admin.equipe.invitation
+class _Traductions$admin$equipe$invitation$en extends Traductions$admin$equipe$invitation$fr {
+	_Traductions$admin$equipe$invitation$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String code({required Object code}) => 'Code: ${code}';
+	@override String expire({required Object date}) => 'Expires on ${date}';
+	@override late final _Traductions$admin$equipe$invitation$etat$en etat = _Traductions$admin$equipe$invitation$etat$en._(_root);
+}
+
+// Path: admin.equipe.perimetre
+class _Traductions$admin$equipe$perimetre$en extends Traductions$admin$equipe$perimetre$fr {
+	_Traductions$admin$equipe$perimetre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get tous => 'all applications on their side';
+	@override String langues({required Object langues}) => 'applications in ${langues}';
+	@override String salles({required Object salles}) => '${salles}';
+	@override String dossiers({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} application entrusted',
+		other: '${n} applications entrusted',
+	);
+}
+
+// Path: admin.equipe.cote
+class _Traductions$admin$equipe$cote$en extends Traductions$admin$equipe$cote$fr {
+	_Traductions$admin$equipe$cote$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get male => 'men';
+	@override String get female => 'women';
+	@override String ligne({required Object cote}) => 'Side: ${cote}';
+}
+
+// Path: admin.equipe.detail
+class _Traductions$admin$equipe$detail$en extends Traductions$admin$equipe$detail$fr {
+	_Traductions$admin$equipe$detail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Mission details';
+	@override String get mission => 'Mission';
+	@override String get personne => 'Person';
+	@override String get perimetre => 'Where they act';
+	@override String get periode => 'Period';
+	@override String get gestes => 'Actions';
+	@override String retiree({required Object motif}) => 'Removed: ${motif}';
+	@override String get sansNom => 'A team member';
+}
+
+// Path: admin.equipe.feuille
+class _Traductions$admin$equipe$feuille$en extends Traductions$admin$equipe$feuille$fr {
+	_Traductions$admin$equipe$feuille$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get motif => 'Reason';
+	@override String get motifAide => 'It is kept in the log; the person does not read it.';
+	@override String get motifManquant => 'Write a reason.';
+	@override String get annuler => 'Cancel';
+	@override late final _Traductions$admin$equipe$feuille$mission$en mission = _Traductions$admin$equipe$feuille$mission$en._(_root);
+	@override late final _Traductions$admin$equipe$feuille$accorder$en accorder = _Traductions$admin$equipe$feuille$accorder$en._(_root);
+	@override late final _Traductions$admin$equipe$feuille$retirer$en retirer = _Traductions$admin$equipe$feuille$retirer$en._(_root);
+	@override late final _Traductions$admin$equipe$feuille$archiver$en archiver = _Traductions$admin$equipe$feuille$archiver$en._(_root);
+	@override late final _Traductions$admin$equipe$feuille$inviter$en inviter = _Traductions$admin$equipe$feuille$inviter$en._(_root);
+	@override late final _Traductions$admin$equipe$feuille$revoquer$en revoquer = _Traductions$admin$equipe$feuille$revoquer$en._(_root);
+}
+
+// Path: admin.equipe.refus
+class _Traductions$admin$equipe$refus$en extends Traductions$admin$equipe$refus$fr {
+	_Traductions$admin$equipe$refus$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get personneIndisponible => 'This account cannot receive a mission: it is not active, or its role is not allowed.';
+	@override String get genreInconnu => 'This person\'s gender is not known: their mission is held on their side. Complete their account first.';
+	@override String get attributionActive => 'This person already holds this mission. Remove it first.';
+	@override String get missionIndisponible => 'This mission no longer exists or is archived.';
+	@override String get parametresInvalides => 'These choices are not allowed: check the name, the dates and the limits.';
+	@override String get cleDejaUtilisee => 'This request has already been used for something else. Start again.';
+	@override String get gestesNonAdmis => 'One of the actions is not allowed in a mission.';
+	@override String get autre => 'The server refused this action. Nothing was written.';
+	@override String get permission => 'You are not allowed to do this.';
+	@override String get doubleVerification => 'This action needs the second sign-in step.';
+	@override String get nonConfirme => 'The result is not confirmed. Reload the page to see what was saved.';
+	@override String get echecTitre => 'This action did not go through.';
+}
+
+// Path: admin.equipe.gestes
+class _Traductions$admin$equipe$gestes$en extends Traductions$admin$equipe$gestes$fr {
+	_Traductions$admin$equipe$gestes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get lire => 'read applications';
+	@override String get voir_contact => 'see the e-mail address and phone';
+	@override String get demander_complement => 'ask for more information';
+	@override String get admettre_verifications => 'admit to verification';
+	@override String get confirmer_moyen_paiement => 'confirm the payout method';
+	@override String get infirmer_moyen_paiement => 'reject the payout method';
+	@override String get debloquer_versement => 'unblock the payout';
+	@override String get definir_responsable => 'choose the person in charge';
+	@override String get consigner_prevenu => 'note that a person was informed';
+	@override String get rattacher => 'attach an application to the person';
+	@override String get planifier_entretien => 'schedule the interview';
+	@override String get consigner_entretien_tenu => 'record a held interview';
+	@override String get consigner_entretien_non_tenu => 'record an interview that did not take place';
+	@override String get valider_piece => 'welcome into the team';
+	@override String get rouvrir => 'reopen an application';
+	@override String get retirer => 'note the withdrawal of an application';
+	@override String get autre => 'another action';
+}
+
 // Path: admin.importInscriptions.eleves
 class _Traductions$admin$importInscriptions$eleves$en extends Traductions$admin$importInscriptions$eleves$fr {
 	_Traductions$admin$importInscriptions$eleves$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -24462,6 +24653,129 @@ class _Traductions$admin$candidatures$entretien$retours$en extends Traductions$a
 	@override String get consigne => 'Outcome recorded.';
 }
 
+// Path: admin.equipe.invitation.etat
+class _Traductions$admin$equipe$invitation$etat$en extends Traductions$admin$equipe$invitation$etat$fr {
+	_Traductions$admin$equipe$invitation$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get active => 'Pending';
+	@override String get utilisee => 'Account created';
+	@override String get expiree => 'Expired';
+	@override String get revoquee => 'Revoked';
+}
+
+// Path: admin.equipe.feuille.mission
+class _Traductions$admin$equipe$feuille$mission$en extends Traductions$admin$equipe$feuille$mission$fr {
+	_Traductions$admin$equipe$feuille$mission$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'New mission';
+	@override String get nom => 'Mission name';
+	@override String get nomAide => '80 characters at most.';
+	@override String get nomManquant => 'Give the mission a name.';
+	@override String get nomTropLong => '80 characters at most.';
+	@override String get gestes => 'What the person can do';
+	@override String get gestesAide => 'Tick at least one action. They can do nothing else.';
+	@override String get gestesManquants => 'Tick at least one action.';
+	@override String get gestesIndisponibles => 'The server does not return the list of actions. Reload the page.';
+	@override String get creer => 'Create the mission';
+	@override String get creee => 'Mission created.';
+}
+
+// Path: admin.equipe.feuille.accorder
+class _Traductions$admin$equipe$feuille$accorder$en extends Traductions$admin$equipe$feuille$accorder$fr {
+	_Traductions$admin$equipe$feuille$accorder$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Grant a mission';
+	@override String get personne => 'The person';
+	@override String get personneManquante => 'Choose a person.';
+	@override String get mission => 'The mission';
+	@override String get missionManquante => 'Choose a mission.';
+	@override String get aucunePersonne => 'No one can receive a mission yet. Invite someone.';
+	@override String get aucuneMission => 'Create a mission first.';
+	@override String get perimetre => 'Where they can act';
+	@override String get langues => 'Application languages';
+	@override String get languesAide => 'With no choice, all languages.';
+	@override String get salles => 'Rooms';
+	@override String get sallesAide => 'With no choice, all rooms.';
+	@override String get debut => 'Start';
+	@override String get debutAide => 'Now, if you do not choose a day.';
+	@override String get fin => 'End (optional)';
+	@override String get finAide => 'With no end, the mission lasts until it is removed.';
+	@override String resume({required Object nom, required Object gestes, required Object perimetre, required Object duree}) => '${nom} will be able to ${gestes}, on ${perimetre}, ${duree}.';
+	@override String get resumeVide => 'Choose a person and a mission: a sentence will say what they will be able to do.';
+	@override String get accorder => 'Grant the mission';
+	@override String get accordee => 'Mission granted.';
+}
+
+// Path: admin.equipe.feuille.retirer
+class _Traductions$admin$equipe$feuille$retirer$en extends Traductions$admin$equipe$feuille$retirer$fr {
+	_Traductions$admin$equipe$feuille$retirer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Remove the mission';
+	@override String question({required Object mission, required Object nom}) => 'Remove the mission "${mission}" from ${nom}?';
+	@override String consequence({required Object nom}) => '${nom}\'s account is not changed: only this mission is removed. Their access to applications stops immediately.';
+	@override String get retirer => 'Remove the mission';
+	@override String retiree({required Object nom}) => 'Mission removed. ${nom}\'s account has not changed.';
+}
+
+// Path: admin.equipe.feuille.archiver
+class _Traductions$admin$equipe$feuille$archiver$en extends Traductions$admin$equipe$feuille$archiver$fr {
+	_Traductions$admin$equipe$feuille$archiver$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Archive the mission';
+	@override String question({required Object mission}) => 'Archive the mission "${mission}"?';
+	@override String get consequence => 'It can no longer be granted. People who hold it keep it until it is removed.';
+	@override String get archiver => 'Archive';
+	@override String get archivee => 'Mission archived.';
+}
+
+// Path: admin.equipe.feuille.inviter
+class _Traductions$admin$equipe$feuille$inviter$en extends Traductions$admin$equipe$feuille$inviter$fr {
+	_Traductions$admin$equipe$feuille$inviter$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Invite a person';
+	@override String get consequence => 'The person receives a code to create their associate account. They see nothing until a mission is granted.';
+	@override String get courriel => 'E-mail address';
+	@override String get courrielManquant => 'Enter the e-mail address.';
+	@override String get nom => 'Name (optional)';
+	@override String get envoyer => 'Create the invitation';
+	@override String creee({required Object code}) => 'Invitation created. Code to pass on: ${code}.';
+	@override String dejaInvite({required Object code}) => 'An invitation is already pending for this address. Code: ${code}.';
+	@override String get emailInvalide => 'This e-mail address is not readable.';
+	@override String get compteExistant => 'An account already exists with this address.';
+}
+
+// Path: admin.equipe.feuille.revoquer
+class _Traductions$admin$equipe$feuille$revoquer$en extends Traductions$admin$equipe$feuille$revoquer$fr {
+	_Traductions$admin$equipe$feuille$revoquer$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Revoke the invitation';
+	@override String question({required Object courriel}) => 'Revoke the invitation for ${courriel}?';
+	@override String get consequence => 'The code no longer works. The person can no longer create an account with it.';
+	@override String get revoquer => 'Revoke';
+	@override String get revoquee => 'Invitation revoked.';
+}
+
 // Path: admin.suppressions.retraits.filtres
 class _Traductions$admin$suppressions$retraits$filtres$en extends Traductions$admin$suppressions$retraits$filtres$fr {
 	_Traductions$admin$suppressions$retraits$filtres$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -31441,6 +31755,143 @@ extension on TraductionsEn {
 			'admin.candidatures.entretien.retours.ajoute' => ({required Object nom}) => '${nom} takes part in the interview.',
 			'admin.candidatures.entretien.retours.retire' => ({required Object nom}) => '${nom} no longer takes part in the interview.',
 			'admin.candidatures.entretien.retours.consigne' => 'Outcome recorded.',
+			'admin.equipe.titre' => 'Team',
+			'admin.equipe.sousTitre' => 'The people you entrust with actions on applications, for a time.',
+			'admin.equipe.inviter' => 'Invite a person',
+			'admin.equipe.nouvelleMission' => 'New mission',
+			'admin.equipe.accorder' => 'Grant a mission',
+			'admin.equipe.porteurs' => 'People with a mission',
+			'admin.equipe.missions' => 'Missions',
+			'admin.equipe.deplierMissions' => 'Show the missions',
+			'admin.equipe.replierMissions' => 'Hide the missions',
+			'admin.equipe.invitations' => 'Pending invitations',
+			'admin.equipe.videTitre' => 'Nobody has a mission yet.',
+			'admin.equipe.videPhrase' => 'Invite a person or create a mission.',
+			'admin.equipe.aucuneMission' => 'No mission yet.',
+			'admin.equipe.aucuneInvitation' => 'No pending invitation.',
+			'admin.equipe.sansFin' => 'no end date',
+			'admin.equipe.jusquAu' => ({required Object date}) => 'until ${date}',
+			'admin.equipe.depuisLe' => ({required Object date}) => 'since ${date}',
+			'admin.equipe.indisponibleTitre' => 'The team is not available yet.',
+			'admin.equipe.indisponiblePhrase' => 'The server does not return missions yet. Come back later.',
+			'admin.equipe.menu.detail' => 'View details',
+			'admin.equipe.menu.retirer' => 'Remove the mission',
+			'admin.equipe.menu.archiver' => 'Archive',
+			'admin.equipe.menu.revoquer' => 'Revoke',
+			'admin.equipe.menu.plus' => ({required Object nom}) => 'Actions for ${nom}',
+			'admin.equipe.mission.porteurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, zero: 'Nobody holds it', one: 'Held by ${n} person', other: 'Held by ${n} people', ), 
+			'admin.equipe.mission.archivee' => 'Archived',
+			'admin.equipe.mission.gestes' => 'What it allows',
+			'admin.equipe.invitation.code' => ({required Object code}) => 'Code: ${code}',
+			'admin.equipe.invitation.expire' => ({required Object date}) => 'Expires on ${date}',
+			'admin.equipe.invitation.etat.active' => 'Pending',
+			'admin.equipe.invitation.etat.utilisee' => 'Account created',
+			'admin.equipe.invitation.etat.expiree' => 'Expired',
+			'admin.equipe.invitation.etat.revoquee' => 'Revoked',
+			'admin.equipe.perimetre.tous' => 'all applications on their side',
+			'admin.equipe.perimetre.langues' => ({required Object langues}) => 'applications in ${langues}',
+			'admin.equipe.perimetre.salles' => ({required Object salles}) => '${salles}',
+			'admin.equipe.perimetre.dossiers' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} application entrusted', other: '${n} applications entrusted', ), 
+			'admin.equipe.cote.male' => 'men',
+			'admin.equipe.cote.female' => 'women',
+			'admin.equipe.cote.ligne' => ({required Object cote}) => 'Side: ${cote}',
+			'admin.equipe.detail.titre' => 'Mission details',
+			'admin.equipe.detail.mission' => 'Mission',
+			'admin.equipe.detail.personne' => 'Person',
+			'admin.equipe.detail.perimetre' => 'Where they act',
+			'admin.equipe.detail.periode' => 'Period',
+			'admin.equipe.detail.gestes' => 'Actions',
+			'admin.equipe.detail.retiree' => ({required Object motif}) => 'Removed: ${motif}',
+			'admin.equipe.detail.sansNom' => 'A team member',
+			'admin.equipe.feuille.motif' => 'Reason',
+			'admin.equipe.feuille.motifAide' => 'It is kept in the log; the person does not read it.',
+			'admin.equipe.feuille.motifManquant' => 'Write a reason.',
+			'admin.equipe.feuille.annuler' => 'Cancel',
+			'admin.equipe.feuille.mission.titre' => 'New mission',
+			'admin.equipe.feuille.mission.nom' => 'Mission name',
+			'admin.equipe.feuille.mission.nomAide' => '80 characters at most.',
+			'admin.equipe.feuille.mission.nomManquant' => 'Give the mission a name.',
+			'admin.equipe.feuille.mission.nomTropLong' => '80 characters at most.',
+			'admin.equipe.feuille.mission.gestes' => 'What the person can do',
+			'admin.equipe.feuille.mission.gestesAide' => 'Tick at least one action. They can do nothing else.',
+			'admin.equipe.feuille.mission.gestesManquants' => 'Tick at least one action.',
+			'admin.equipe.feuille.mission.gestesIndisponibles' => 'The server does not return the list of actions. Reload the page.',
+			'admin.equipe.feuille.mission.creer' => 'Create the mission',
+			'admin.equipe.feuille.mission.creee' => 'Mission created.',
+			'admin.equipe.feuille.accorder.titre' => 'Grant a mission',
+			'admin.equipe.feuille.accorder.personne' => 'The person',
+			'admin.equipe.feuille.accorder.personneManquante' => 'Choose a person.',
+			'admin.equipe.feuille.accorder.mission' => 'The mission',
+			'admin.equipe.feuille.accorder.missionManquante' => 'Choose a mission.',
+			'admin.equipe.feuille.accorder.aucunePersonne' => 'No one can receive a mission yet. Invite someone.',
+			'admin.equipe.feuille.accorder.aucuneMission' => 'Create a mission first.',
+			'admin.equipe.feuille.accorder.perimetre' => 'Where they can act',
+			'admin.equipe.feuille.accorder.langues' => 'Application languages',
+			'admin.equipe.feuille.accorder.languesAide' => 'With no choice, all languages.',
+			'admin.equipe.feuille.accorder.salles' => 'Rooms',
+			'admin.equipe.feuille.accorder.sallesAide' => 'With no choice, all rooms.',
+			'admin.equipe.feuille.accorder.debut' => 'Start',
+			'admin.equipe.feuille.accorder.debutAide' => 'Now, if you do not choose a day.',
+			'admin.equipe.feuille.accorder.fin' => 'End (optional)',
+			'admin.equipe.feuille.accorder.finAide' => 'With no end, the mission lasts until it is removed.',
+			'admin.equipe.feuille.accorder.resume' => ({required Object nom, required Object gestes, required Object perimetre, required Object duree}) => '${nom} will be able to ${gestes}, on ${perimetre}, ${duree}.',
+			'admin.equipe.feuille.accorder.resumeVide' => 'Choose a person and a mission: a sentence will say what they will be able to do.',
+			'admin.equipe.feuille.accorder.accorder' => 'Grant the mission',
+			'admin.equipe.feuille.accorder.accordee' => 'Mission granted.',
+			'admin.equipe.feuille.retirer.titre' => 'Remove the mission',
+			'admin.equipe.feuille.retirer.question' => ({required Object mission, required Object nom}) => 'Remove the mission "${mission}" from ${nom}?',
+			'admin.equipe.feuille.retirer.consequence' => ({required Object nom}) => '${nom}\'s account is not changed: only this mission is removed. Their access to applications stops immediately.',
+			'admin.equipe.feuille.retirer.retirer' => 'Remove the mission',
+			'admin.equipe.feuille.retirer.retiree' => ({required Object nom}) => 'Mission removed. ${nom}\'s account has not changed.',
+			'admin.equipe.feuille.archiver.titre' => 'Archive the mission',
+			'admin.equipe.feuille.archiver.question' => ({required Object mission}) => 'Archive the mission "${mission}"?',
+			'admin.equipe.feuille.archiver.consequence' => 'It can no longer be granted. People who hold it keep it until it is removed.',
+			'admin.equipe.feuille.archiver.archiver' => 'Archive',
+			'admin.equipe.feuille.archiver.archivee' => 'Mission archived.',
+			'admin.equipe.feuille.inviter.titre' => 'Invite a person',
+			'admin.equipe.feuille.inviter.consequence' => 'The person receives a code to create their associate account. They see nothing until a mission is granted.',
+			'admin.equipe.feuille.inviter.courriel' => 'E-mail address',
+			'admin.equipe.feuille.inviter.courrielManquant' => 'Enter the e-mail address.',
+			'admin.equipe.feuille.inviter.nom' => 'Name (optional)',
+			'admin.equipe.feuille.inviter.envoyer' => 'Create the invitation',
+			'admin.equipe.feuille.inviter.creee' => ({required Object code}) => 'Invitation created. Code to pass on: ${code}.',
+			'admin.equipe.feuille.inviter.dejaInvite' => ({required Object code}) => 'An invitation is already pending for this address. Code: ${code}.',
+			'admin.equipe.feuille.inviter.emailInvalide' => 'This e-mail address is not readable.',
+			'admin.equipe.feuille.inviter.compteExistant' => 'An account already exists with this address.',
+			'admin.equipe.feuille.revoquer.titre' => 'Revoke the invitation',
+			'admin.equipe.feuille.revoquer.question' => ({required Object courriel}) => 'Revoke the invitation for ${courriel}?',
+			'admin.equipe.feuille.revoquer.consequence' => 'The code no longer works. The person can no longer create an account with it.',
+			'admin.equipe.feuille.revoquer.revoquer' => 'Revoke',
+			'admin.equipe.feuille.revoquer.revoquee' => 'Invitation revoked.',
+			'admin.equipe.refus.personneIndisponible' => 'This account cannot receive a mission: it is not active, or its role is not allowed.',
+			'admin.equipe.refus.genreInconnu' => 'This person\'s gender is not known: their mission is held on their side. Complete their account first.',
+			'admin.equipe.refus.attributionActive' => 'This person already holds this mission. Remove it first.',
+			'admin.equipe.refus.missionIndisponible' => 'This mission no longer exists or is archived.',
+			'admin.equipe.refus.parametresInvalides' => 'These choices are not allowed: check the name, the dates and the limits.',
+			'admin.equipe.refus.cleDejaUtilisee' => 'This request has already been used for something else. Start again.',
+			'admin.equipe.refus.gestesNonAdmis' => 'One of the actions is not allowed in a mission.',
+			'admin.equipe.refus.autre' => 'The server refused this action. Nothing was written.',
+			'admin.equipe.refus.permission' => 'You are not allowed to do this.',
+			'admin.equipe.refus.doubleVerification' => 'This action needs the second sign-in step.',
+			'admin.equipe.refus.nonConfirme' => 'The result is not confirmed. Reload the page to see what was saved.',
+			'admin.equipe.refus.echecTitre' => 'This action did not go through.',
+			'admin.equipe.gestes.lire' => 'read applications',
+			'admin.equipe.gestes.voir_contact' => 'see the e-mail address and phone',
+			'admin.equipe.gestes.demander_complement' => 'ask for more information',
+			'admin.equipe.gestes.admettre_verifications' => 'admit to verification',
+			'admin.equipe.gestes.confirmer_moyen_paiement' => 'confirm the payout method',
+			'admin.equipe.gestes.infirmer_moyen_paiement' => 'reject the payout method',
+			'admin.equipe.gestes.debloquer_versement' => 'unblock the payout',
+			'admin.equipe.gestes.definir_responsable' => 'choose the person in charge',
+			'admin.equipe.gestes.consigner_prevenu' => 'note that a person was informed',
+			'admin.equipe.gestes.rattacher' => 'attach an application to the person',
+			'admin.equipe.gestes.planifier_entretien' => 'schedule the interview',
+			'admin.equipe.gestes.consigner_entretien_tenu' => 'record a held interview',
+			'admin.equipe.gestes.consigner_entretien_non_tenu' => 'record an interview that did not take place',
+			'admin.equipe.gestes.valider_piece' => 'welcome into the team',
+			'admin.equipe.gestes.rouvrir' => 'reopen an application',
+			'admin.equipe.gestes.retirer' => 'note the withdrawal of an application',
+			'admin.equipe.gestes.autre' => 'another action',
 			'admin.importInscriptions.onglet' => 'Import',
 			'admin.importInscriptions.titre' => 'Import the registrations',
 			'admin.importInscriptions.sousTitre' => 'Families and teachers already registered are welcomed without re-entering everything.',
@@ -31628,6 +32079,8 @@ extension on TraductionsEn {
 			'admin.demandes.motif' => 'What motivates this refusal, in one sentence',
 			'admin.demandes.motifRequis' => 'A refusal must say why: it is the only sentence the party will receive.',
 			'admin.demandes.effet' => 'Granting applies the effect in the database: the assignment closes, or the rule is set. This screen only gives the verdict.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.demandes.journalisation' => 'Each decision and each rule set is written in the audit log, with your name.',
 			'admin.demandes.feuille' => ({required Object dePrenom}) => '${dePrenom}\'s rules',
 			'admin.demandes.feuilleIntro' => 'The platform\'s value and the one that applies, side by side. A rule can be changed here without a request existing.',
@@ -31765,8 +32218,6 @@ extension on TraductionsEn {
 			'admin.groupes.detailAucunMembre' => 'No student in this class yet.',
 			'admin.groupes.actionAjouter' => 'Add a student',
 			'admin.groupes.actionRetirer' => 'Remove',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.actionModifierSeuil' => 'Change the ceiling',
 			'admin.groupes.nomClasse.action' => 'Change the name',
 			'admin.groupes.nomClasse.titre' => ({required Object nom}) => 'Change the name of the class ${nom}',
@@ -32142,6 +32593,8 @@ extension on TraductionsEn {
 			'admin.regroupements.manquentCourt' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} request is missing.', other: '${n} requests are missing.', ), 
 			'admin.regroupements.contexte' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The student of these requests will be placed in the class as soon as it is created. You will then confirm the proposed teacher.', other: 'The ${n} students of these requests will be placed in the class as soon as it is created. You will then confirm the proposed teacher.', ), 
 			'admin.regroupements.nomDetail' => 'Deduced from the gender, audience, days and time.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regroupements.dejaCreee' => 'Another member of the management has just created this class: nothing was created twice. Close this sheet to see the up-to-date list.',
 			'admin.regroupements.refusee' => ({required Object motif}) => 'The class was not created: ${motif}. Check the requests, then press again.',
 			'admin.regroupements.nonConfirmee' => 'The creation is not confirmed: the server\'s answer did not arrive. Press again: the same request will be resumed, with no duplicate class.',
@@ -32279,8 +32732,6 @@ extension on TraductionsEn {
 			'admin.regles.entretiensSection' => 'Interviews',
 			'admin.regles.entretiensIntro' => 'Founders are ticked in Accounts, Management and Teachers views.',
 			'admin.regles.regleFondateurs' => 'Require founders',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.regleFondateursDetail' => 'When on, an interview cannot be scheduled, and a participant cannot be removed, with fewer founders than the minimum.',
 			'admin.regles.fondateursMinimum' => 'Minimum founders',
 			'admin.regles.fondateursMinimumDetail' => 'The number of founders required among an interview\'s participants.',
@@ -32656,6 +33107,8 @@ extension on TraductionsEn {
 			'admin.observations.sortieAbsente' => 'Not recorded',
 			'admin.observations.dureeNonConfirmee' => 'Not confirmed',
 			'admin.observations.nomInconnu' => 'Name not available',
+			_ => null,
+		} ?? switch (path) {
 			'admin.observations.classeInconnue' => 'Class not available',
 			'admin.observations.plage' => ({required Object entree, required Object sortie}) => '${entree} - ${sortie}',
 			'admin.observations.ligne' => ({required Object rang, required Object date, required Object tuteur, required Object eleve, required Object classe, required Object entree, required Object sortie, required Object duree, required Object statut}) => 'Visit ${rang} of ${date}, ${tuteur} for ${eleve}, ${classe}, entry ${entree}, exit ${sortie}, length ${duree}, ${statut}',
@@ -32793,8 +33246,6 @@ extension on TraductionsEn {
 			'admin.comptes.filtreTousLesEtats' => 'All statuses',
 			'admin.comptes.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} account', other: '${n} accounts', ), 
 			'admin.comptes.filtreActifEtat' => ({required Object valeur}) => 'Status: ${valeur}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.filtreActifRecherche' => ({required Object texte}) => 'Search: ${texte}',
 			'admin.comptes.actionOuvrirDossier' => 'Open the identity file',
 			'admin.comptes.actionMarquerFondateur' => 'Mark as founder',
@@ -33170,6 +33621,8 @@ extension on TraductionsEn {
 			'admin.finance.pol.publicationRefusee' => 'Publication refused',
 			'admin.finance.pol.publicationRefuseeDetail' => 'Nothing was published: publishing prices requires two-step verification. Turn it on in Account > Security, then try again.',
 			'admin.finance.pol.publicationInvalide' => 'A value does not fit',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.publicationInvalideDetail' => 'Rewayah refused this version: the effective date must be upcoming and after the last version, and each discount must stay below the rate. Nothing was published: correct, then try again.',
 			'admin.finance.pol.champsACorriger' => 'First correct the flagged fields',
 			'admin.finance.pol.champsACorrigerDetail' => 'An empty, badly entered or inconsistent field prevents preparing the publication: correct each flagged field as its sentence says, then publish.',
@@ -33307,8 +33760,6 @@ extension on TraductionsEn {
 			'admin.finance.pai.rembConfirmer' => ({required Object montant}) => 'Refund ${montant}',
 			'admin.finance.pai.rembOui' => 'Yes, refund',
 			'admin.finance.pai.rembSansRetour' => 'The money goes to the payment provider, and this refund cannot be cancelled.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.rembQuestion' => ({required Object montant, required Object prenom}) => 'Refund ${montant} to ${prenom}?',
 			'admin.finance.pai.rembRien' => 'Nothing to give back on this payment.',
 			'admin.finance.pai.rembReglePrepaiement' => 'Plan paid in advance: months begun are due at the normal monthly price, with no discount; the rest is returned.',
@@ -33684,6 +34135,8 @@ extension on TraductionsEn {
 			'admin.tirage.critereAleatoire' => 'At random',
 			'admin.tirage.criterePonderation' => 'By weight',
 			'admin.tirage.critereCible' => 'Target',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.vide' => 'No draw for now',
 			'admin.tirage.videDetail' => 'Draws will appear here as soon as sessions are live.',
 			'admin.tirage.aucunAvecCeFiltre' => 'No draw with this filter',
@@ -33821,8 +34274,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.fiche.actions.verifier' => 'Check and publish',
 			'admin.bibliotheque.fiche.actions.nouvelleVersion' => 'Create a new version',
 			'admin.bibliotheque.fiche.actions.completerDroits' => 'Complete the rights',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.actions.associer' => 'Link to classes',
 			'admin.bibliotheque.fiche.actions.retirer' => 'Withdraw from the catalogue',
 			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'New version created as a draft.',
@@ -34198,6 +34649,8 @@ extension on TraductionsEn {
 			'pin.erreur' => 'This code does not match',
 			'pin.effacer' => 'Clear',
 			'choix.autre' => 'Other',
+			_ => null,
+		} ?? switch (path) {
 			'choix.autreInvite' => 'Specify',
 			'choix.diminuer' => 'Decrease by 1',
 			'choix.augmenter' => 'Increase by 1',
@@ -34335,8 +34788,6 @@ extension on TraductionsEn {
 			'parcours.offreRecurrencePause' => ({required num seances, required Object duree, required Object pause}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(seances, one: '${seances} session per week, ${duree} min including ${pause} min of break', other: '${seances} sessions per week, ${duree} min including ${pause} min of break', ), 
 			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minimum, one: 'A class starts once there is ${minimum} student. We will let you know as soon as it is confirmed.', other: 'A class starts once there are ${minimum} students. We will let you know as soon as it is confirmed.', ), 
 			'avatar.sansPhoto' => 'No photo yet',
-			_ => null,
-		} ?? switch (path) {
 			'nav.eleve.accueil' => 'Home',
 			'nav.eleve.maClasse' => 'My class',
 			'nav.eleve.coran' => 'Quran',
@@ -34712,6 +35163,8 @@ extension on TraductionsEn {
 			'historique.observations.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Observations of ${date}, ${classe}, ${etat}',
 			'historique.seance.titreSansClasse' => ({required Object date}) => 'Session of ${date}',
 			'historique.seance.blocSeance' => 'The session',
+			_ => null,
+		} ?? switch (path) {
 			'historique.seance.blocPresence' => ({required Object dePrenom}) => '${dePrenom}\'s attendance',
 			'historique.seance.date' => 'Date',
 			'historique.seance.horaire' => 'Time',
@@ -34849,8 +35302,6 @@ extension on TraductionsEn {
 			'notifications.evenements.seanceTermineeDe' => ({required Object deClasse, required Object quand}) => 'The session ${deClasse} of ${quand} has ended.',
 			'notifications.evenements.seanceTermineeTravail' => ({required Object travail}) => 'Work to prepare: ${travail}',
 			'notifications.evenements.seanceTermineeAucunTravail' => 'No work to prepare.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student present out of ${total}.', other: '${n} students present out of ${total}.', ), 
 			'notifications.evenements.seanceTermineeCahierAttend' => 'The handover notebook is waiting for your information.',
 			'notifications.evenements.seanceTermineeCahierDepose' => 'Notebook submitted, thank you.',
@@ -35226,6 +35677,8 @@ extension on TraductionsEn {
 			'classe.cartes.copierLienCourt' => 'Copy the link',
 			'classe.cartes.lienCopie' => 'Link copied. Paste it into your browser to open it.',
 			'classe.cartes.indisponibleTitre' => 'Class cards are not open yet',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.indisponiblePhrase' => 'They will appear here as soon as they open. Nothing to do on your side.',
 			'classe.cartes.erreurLecture' => 'The class cards could not be loaded. Try again in a moment.',
 			'classe.cartes.sansDonnees' => 'The class cards could not be loaded',
@@ -35363,8 +35816,6 @@ extension on TraductionsEn {
 			'enseignant.bienvenue.versJournee' => 'Go to my day',
 			'enseignant.bienvenue.horsLigne' => 'Your slots can be saved when the connection is back.',
 			'enseignant.bienvenue.dossierIncomplet' => 'Your file is not approved yet.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.dossierIncompletDetail' => 'The waiting page tells you what remains to be provided.',
 			'enseignant.bienvenue.versAttente' => 'See my file',
 			'enseignant.bienvenue.erreur' => 'Your profile could not be loaded. Try again in a moment.',
@@ -35740,6 +36191,8 @@ extension on TraductionsEn {
 			'enseignant.creneaux.horsLignePrise' => 'You will be able to take a student when the connection is back. The requests below stay available to read.',
 			'enseignant.creneaux.horsLigneDemande' => 'This request can be sent when the connection is back.',
 			'enseignant.creneaux.refusDejaPris' => 'This student has just been taken by another teacher. The list below is up to date.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.refusDejaSuivi' => 'This student already has a teacher. The list below is up to date.',
 			'enseignant.creneaux.refusCreneauRetire' => 'This family no longer offers this slot. The list below is up to date.',
 			'enseignant.creneaux.refusHorsMesHeures' => 'This slot is no longer in your times. Set it again in My times to be able to take it.',
@@ -35877,8 +36330,6 @@ extension on TraductionsEn {
 			'enseignant.revenus.capaciteValeur' => ({required Object nombre}) => '${nombre} seats',
 			'enseignant.revenus.taux' => 'Effective hourly rate',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} per hour',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.type' => 'Type',
 			'enseignant.revenus.typeEnfants' => 'Children',
 			'enseignant.revenus.typeDebutants' => 'Beginner children',
@@ -36254,6 +36705,8 @@ extension on TraductionsEn {
 			'tc.bibliotheque.introuvable.invitation' => 'It may have been withdrawn, or it is reserved for another class. Your teacher can reopen it for you.',
 			'tc.bibliotheque.offline.aTelecharger' => 'To download',
 			'tc.bibliotheque.offline.enCours' => 'Downloading',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.offline.enCache' => 'Cached',
 			'tc.bibliotheque.offline.telecharge' => 'Downloaded',
 			'tc.bibliotheque.offline.indisponible' => 'Offline unavailable',
@@ -36391,8 +36844,6 @@ extension on TraductionsEn {
 			'tc.outils.marquer.titre' => 'Mark this passage',
 			'tc.outils.marquer.aide' => 'Choose what this passage calls for.',
 			'tc.outils.marquer.retirer' => 'Remove the marker',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.revision.titre' => 'To prepare',
 			'tc.outils.revision.aide' => 'The selected passage becomes work to prepare.',
 			'tc.outils.revision.groupeEntier' => 'Whole class',
@@ -36768,6 +37219,8 @@ extension on TraductionsEn {
 			'adulte.recharge.resultat.formulaireEchecPhrase' => 'Try again in a moment. Nothing was paid through this form.',
 			'adulte.recharge.resultat.formulaireSansPayer' => 'Back to balances without paying',
 			'adulte.recharge.resultat.preparationTitre' => 'Payment being prepared',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.preparationPhrase' => 'Check the breakdown before paying.',
 			'adulte.recharge.resultat.attenteTitre' => 'Payment being confirmed',
 			'adulte.recharge.resultat.attentePhrase' => 'The payment provider has not confirmed yet. Balances only change after its confirmation.',
@@ -36905,8 +37358,6 @@ extension on TraductionsEn {
 			'adulte.invitation.renvoyerSiEchec' => 'If the person invited cannot create their account, resend them the invitation.',
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} invites you to join their family plan.',
 			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'Join ${dePrenom}\'s family plan',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.acceptation.faisonsTitre' => 'What we do',
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} invites you to their family plan. If you accept, your account is linked to their household. Your account stays yours. Nothing is merged.',
 			'adulte.acceptation.pourquoiTitre' => 'Why',
@@ -37282,6 +37733,8 @@ extension on TraductionsEn {
 			'suiviDemandes.notification.envoyee' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: your request has reached the administration',
 			'suiviDemandes.notification.classeValidee' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: your class is ready, it is waiting for its teacher',
 			'suiviDemandes.notification.enseignantAffecte' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: class approved · teacher assigned',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => '${dePrenom}\'s time slot request: ${motif}',
 			'suiviDemandes.notification.listeAttente' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: your request is on the waiting list',
 			'suiviDemandes.notification.eleveIntegre' => ({required Object dePrenom}) => '${dePrenom}\'s time slot request: student placed in the class',
@@ -37419,8 +37872,6 @@ extension on TraductionsEn {
 			'argent.periode.jusquau' => ({required Object date}) => 'Funded until ${date}',
 			'argent.periode.aucune' => 'No funded period',
 			'argent.allocation.credite' => 'Credited',
-			_ => null,
-		} ?? switch (path) {
 			'argent.moyen.webStripe' => 'Bank card',
 			'argent.moyen.webStripeDetail' => 'Payment on the web. Nothing is charged before you confirm.',
 			'argent.soldes.total' => 'Total balances (read-only)',
@@ -37796,6 +38247,8 @@ extension on TraductionsEn {
 			'com.vocal.composer.nonConfirmeAide' => 'It may not have reached Rewayah. The voice message is kept here; try again in a moment.',
 			'com.vocal.composer.reessayer' => 'Try again',
 			'com.vocal.composer.envoye' => 'Voice message sent.',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.horsLigne' => 'The voice message is kept here: send it as soon as sending is possible again.',
 			'com.vocal.lecteur.libelleAuteur' => ({required Object auteur, required Object duree}) => 'Voice message from ${auteur}, ${duree}',
 			'com.vocal.lecteur.libelle' => ({required Object duree}) => 'Voice message, ${duree}',
@@ -37933,8 +38386,6 @@ extension on TraductionsEn {
 			'com.communaute.demo.signalementNonConfirme' => 'Report not confirmed',
 			'com.communaute.demo.choisir' => 'Choose a situation to try, seen by a teacher.',
 			'com.communaute.demo.aujourdhui' => 'Today, with the shortcut',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.demo.nominal' => 'Six posts',
 			'com.communaute.demo.publication' => 'One post open',
 			'com.communaute.demo.vide' => 'No post',
@@ -38310,6 +38761,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.publiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · on ${date} at ${heure}',
 			'com.annonces.administration.planifiees.titre' => 'Announcements scheduled',
 			'com.annonces.administration.planifiees.vide' => 'No announcement scheduled.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.planifiees.pastille' => 'Scheduled',
 			'com.annonces.administration.planifiees.legende' => ({required Object cible, required Object date, required Object heure}) => '${cible} · planned for ${date} at ${heure}',
 			'com.annonces.administration.matrice.titre' => 'Announcement publishing rights',
@@ -38447,8 +38900,6 @@ extension on TraductionsEn {
 			'comptable.nav.aujourdhui' => 'Today',
 			'comptable.nav.paiements' => 'Payments',
 			'comptable.nav.tresorerie' => 'Cash position',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.nav.compte' => 'Account',
 			'comptable.graphiques.masque' => 'Amounts are hidden: the chart is not drawn. Show the amounts to see it.',
 			'comptable.graphiques.voirValeurs' => 'See the values',
@@ -38824,6 +39275,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.alimentationAuto' => 'Automatic funding',
 			'comptable.tresorerie.regle.desactivee' => 'Off',
 			'comptable.tresorerie.regle.montantFixe' => 'Fixed amount at each due date',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent}% of each consolidated collection',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'Top up to the target amount',
 			'comptable.tresorerie.regle.proposee' => 'Proposal to be confirmed by you',
@@ -38961,8 +39414,6 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.doublonPhrase' => 'This transaction looks like another already received. Check before reconciling: a duplicate is never validated silently.',
 			'comptable.encaissements.rap.marquerDoublon' => 'Mark as duplicate',
 			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'Status returned by the source: ${etat}',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.erreurEnvoi' => 'We do not know whether the operation was taken into account. Refresh the list before trying again.',
 			'comptable.encaissements.rap.actualiser' => 'Refresh',
 			'comptable.encaissements.rap.journal' => 'Transaction log',
@@ -39338,6 +39789,8 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'Up to the target',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'Make up what is missing to reach the target.',
 			'comptable.direction.reservePanneau.regle.proposee' => 'Proposed',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'A proposal that the Accountant confirms.',
 			'comptable.direction.reservePanneau.montantAuto' => 'Amount to allocate',
 			'comptable.direction.reservePanneau.montantAutoDetail' => 'The sum allocated to the Reserve at each due date.',
@@ -39475,8 +39928,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'A payment whose payment provider is unavailable.',
 			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Manual obligation not approved',
 			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'An obligation entered by hand and not yet approved.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.titre' => 'Reserve and delegation',
 			'comptable.direction.sousTitre' => 'The Strategic reserve policy and what the Accountant can carry out alone.',
 			'comptable.direction.reserve' => 'Strategic reserve policy',
@@ -39852,6 +40303,8 @@ extension on TraductionsEn {
 			'avis.form.ferme.phrase' => ({required Object courriel}) => 'It is closed, expired, or the planned number of reviews has been reached. To give your feedback, ask the management for a new link: ${courriel}.',
 			'avis.form.envoye.titre' => 'Thank you for your feedback',
 			'avis.form.envoye.phrase' => ({required Object courriel}) => 'The management will read it before publishing it on the website, with your display name, your country and the date. To have it removed, write to ${courriel}.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.erreurChargement' => 'The form could not be opened. Try again in a moment.',
 			'avis.form.sansDonnees' => 'The form could not be opened',
 			'avis.form.indisponibleTitre' => 'Feedback unavailable',
@@ -39989,8 +40442,6 @@ extension on TraductionsEn {
 			'courriels.admin.ecrire.champ.adresse' => 'Enter a valid email address.',
 			'courriels.admin.ecrire.champ.categorie' => 'Choose a category.',
 			'courriels.admin.ecrire.champ.sujet' => 'Give a subject of 1 to 120 characters.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.champ.corps' => 'Write a message of 1 to 5000 characters.',
 			'courriels.admin.ecrire.champ.destinataireExclu' => 'This person cannot receive this email: child account or unsubscribed.',
 			'courriels.admin.ecrire.retour.misEnFile' => 'Sending within the minute. Follow it in the list of sendings.',
@@ -40366,6 +40817,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.colonnes.nePasLire' => 'Do not read this column',
 			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'Its content is ignored by the import.',
 			'candidatsFlux.importFormulaires.colonnes.fermer' => 'Close this choice',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.manquants' => ({required Object champs}) => 'First match these columns: ${champs}.',
 			'candidatsFlux.importFormulaires.colonnes.ambigu' => ({required Object champs}) => 'Several columns carry the title of: ${champs}. Tap the one to read, then choose what it contains.',
 			'candidatsFlux.importFormulaires.colonnes.libelles.titre' => 'How answers are read',
@@ -40503,8 +40956,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.comptes.dejaConnues' => 'Already known',
 			'candidatsFlux.importFormulaires.comptes.dejaConnuesAide' => 'Already saved: nothing changes.',
 			'candidatsFlux.importFormulaires.comptes.ignorees' => 'Ignored',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.ignoreesAide' => 'Empty or repeated rows.',
 			'candidatsFlux.importFormulaires.comptes.aCorriger' => 'To correct',
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'Unreadable rows: they are not imported.',
@@ -40880,6 +41331,8 @@ extension on TraductionsEn {
 			'suiviAttente.vide.messageSimple' => 'There is no class request for you yet.',
 			'suiviAttente.vide.invitationSimple' => 'Your guardian can make one.',
 			'suiviAttente.erreur' => 'We could not read the tracking of your request. This is often caused by the connection. Try again in a moment.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.sansDonnees' => 'The tracking of your request could not be loaded',
 			'suiviAttente.introuvable' => 'This request no longer exists in your tracking.',
 			'suiviAttente.retour' => 'Back',
@@ -41017,8 +41470,6 @@ extension on TraductionsEn {
 			'calendrier.dates.feuille.aideDates' => 'Dates are those of the Gregorian calendar, entered each year: the app does not calculate the lunar calendar.',
 			'calendrier.dates.feuille.enregistrer' => 'Save',
 			'calendrier.dates.feuille.aucuneClasse' => 'No class to choose for now.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.publication.titre' => 'Publish the closure',
 			'calendrier.dates.publication.phrase' => 'During these days, no new session is created and the deadline of each concerned student\'s stage moves back by the same amount. Sessions that have not yet started on those days are set aside, not deleted; a session already started continues. Removing the closure before it starts restores the sessions set aside, unless the teacher took another class at the same time in the meantime. Once started, the closure can no longer be removed or shortened.',
 			'calendrier.dates.publication.confirmer' => 'Publish the closure',
