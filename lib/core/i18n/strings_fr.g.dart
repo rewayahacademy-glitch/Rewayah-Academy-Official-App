@@ -33584,8 +33584,11 @@ class Traductions$admin$praxis$propositions$fr {
 	/// fr: 'Entretien proposé le {date} à {heure}'
 	String quand({required Object date, required Object heure}) => 'Entretien proposé le ${date} à ${heure}';
 
-	/// fr: 'Durée : {minutes} minutes'
-	String duree({required Object minutes}) => 'Durée : ${minutes} minutes';
+	/// fr: '(one) {Durée : {n} minute} (other) {Durée : {n} minutes}'
+	String duree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n,
+		one: 'Durée : ${n} minute',
+		other: 'Durée : ${n} minutes',
+	);
 
 	/// fr: 'Expire le {date}'
 	String expire({required Object date}) => 'Expire le ${date}';
@@ -60513,7 +60516,7 @@ extension on Traductions {
 			'admin.praxis.propositions.motif' => 'Motif dit au candidat',
 			'admin.praxis.propositions.elements' => 'Éléments demandés',
 			'admin.praxis.propositions.quand' => ({required Object date, required Object heure}) => 'Entretien proposé le ${date} à ${heure}',
-			'admin.praxis.propositions.duree' => ({required Object minutes}) => 'Durée : ${minutes} minutes',
+			'admin.praxis.propositions.duree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Durée : ${n} minute', other: 'Durée : ${n} minutes', ), 
 			'admin.praxis.propositions.expire' => ({required Object date}) => 'Expire le ${date}',
 			'admin.praxis.propositions.participants' => 'Participants',
 			'admin.praxis.propositions.participantsAide' => 'Choisissez les personnes qui mènent l\'entretien : Praxis ne les choisit pas.',

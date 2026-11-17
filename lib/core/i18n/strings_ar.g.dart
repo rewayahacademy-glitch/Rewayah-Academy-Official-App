@@ -19332,7 +19332,14 @@ class _Traductions$admin$praxis$propositions$ar extends Traductions$admin$praxis
 	@override String get motif => 'السبب المُبلَّغ للمرشح';
 	@override String get elements => 'العناصر المطلوبة';
 	@override String quand({required Object date, required Object heure}) => 'مقابلة مقترحة يوم ⁨${date}⁩ الساعة ⁨${heure}⁩';
-	@override String duree({required Object minutes}) => 'المدة: ⁨${minutes}⁩ دقيقة';
+	@override String duree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'المدة: ⁨${n}⁩ دقيقة',
+		one: 'المدة: ⁨${n}⁩ دقيقة',
+		two: 'المدة: ⁨${n}⁩ دقيقة',
+		few: 'المدة: ⁨${n}⁩ دقائق',
+		many: 'المدة: ⁨${n}⁩ دقيقة',
+		other: 'المدة: ⁨${n}⁩ دقيقة',
+	);
 	@override String expire({required Object date}) => 'تنتهي في ⁨${date}⁩';
 	@override String get participants => 'المشاركون';
 	@override String get participantsAide => 'اختر الأشخاص الذين يجرون المقابلة: لا يختارهم Praxis.';
@@ -35453,7 +35460,7 @@ extension on TraductionsAr {
 			'admin.praxis.propositions.motif' => 'السبب المُبلَّغ للمرشح',
 			'admin.praxis.propositions.elements' => 'العناصر المطلوبة',
 			'admin.praxis.propositions.quand' => ({required Object date, required Object heure}) => 'مقابلة مقترحة يوم ⁨${date}⁩ الساعة ⁨${heure}⁩',
-			'admin.praxis.propositions.duree' => ({required Object minutes}) => 'المدة: ⁨${minutes}⁩ دقيقة',
+			'admin.praxis.propositions.duree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'المدة: ⁨${n}⁩ دقيقة', one: 'المدة: ⁨${n}⁩ دقيقة', two: 'المدة: ⁨${n}⁩ دقيقة', few: 'المدة: ⁨${n}⁩ دقائق', many: 'المدة: ⁨${n}⁩ دقيقة', other: 'المدة: ⁨${n}⁩ دقيقة', ), 
 			'admin.praxis.propositions.expire' => ({required Object date}) => 'تنتهي في ⁨${date}⁩',
 			'admin.praxis.propositions.participants' => 'المشاركون',
 			'admin.praxis.propositions.participantsAide' => 'اختر الأشخاص الذين يجرون المقابلة: لا يختارهم Praxis.',

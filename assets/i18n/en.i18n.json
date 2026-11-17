@@ -6650,7 +6650,10 @@
         "motif": "Reason given to the candidate",
         "elements": "Items requested",
         "quand": "Interview proposed on {date} at {heure}",
-        "duree": "Duration: {minutes} minutes",
+        "duree(plural, param=n)": {
+          "one": "Duration: {n} minute",
+          "other": "Duration: {n} minutes"
+        },
         "expire": "Expires on {date}",
         "participants": "Participants",
         "participantsAide": "Choose the people who will lead the interview: Praxis does not choose them.",

@@ -353,7 +353,7 @@ class _EtatCarteProposition extends ConsumerState<_CarteProposition> {
             ),
             if (x.dureeMinutes case final int minutes)
               Text(
-                LibellesGroupe.insecable(p.duree(minutes: '$minutes')),
+                LibellesGroupe.insecable(p.duree(n: minutes)),
                 style: attenue,
               ),
           ],

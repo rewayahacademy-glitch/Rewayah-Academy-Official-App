@@ -16287,7 +16287,10 @@ class _Traductions$admin$praxis$propositions$en extends Traductions$admin$praxis
 	@override String get motif => 'Reason given to the candidate';
 	@override String get elements => 'Items requested';
 	@override String quand({required Object date, required Object heure}) => 'Interview proposed on ${date} at ${heure}';
-	@override String duree({required Object minutes}) => 'Duration: ${minutes} minutes';
+	@override String duree({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Duration: ${n} minute',
+		other: 'Duration: ${n} minutes',
+	);
 	@override String expire({required Object date}) => 'Expires on ${date}';
 	@override String get participants => 'Participants';
 	@override String get participantsAide => 'Choose the people who will lead the interview: Praxis does not choose them.';
@@ -33186,7 +33189,7 @@ extension on TraductionsEn {
 			'admin.praxis.propositions.motif' => 'Reason given to the candidate',
 			'admin.praxis.propositions.elements' => 'Items requested',
 			'admin.praxis.propositions.quand' => ({required Object date, required Object heure}) => 'Interview proposed on ${date} at ${heure}',
-			'admin.praxis.propositions.duree' => ({required Object minutes}) => 'Duration: ${minutes} minutes',
+			'admin.praxis.propositions.duree' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Duration: ${n} minute', other: 'Duration: ${n} minutes', ), 
 			'admin.praxis.propositions.expire' => ({required Object date}) => 'Expires on ${date}',
 			'admin.praxis.propositions.participants' => 'Participants',
 			'admin.praxis.propositions.participantsAide' => 'Choose the people who will lead the interview: Praxis does not choose them.',

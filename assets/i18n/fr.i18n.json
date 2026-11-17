@@ -6743,7 +6743,10 @@
         "motif": "Motif dit au candidat",
         "elements": "Éléments demandés",
         "quand": "Entretien proposé le {date} à {heure}",
-        "duree": "Durée : {minutes} minutes",
+        "duree(plural, param=n)": {
+          "one": "Durée : {n} minute",
+          "other": "Durée : {n} minutes"
+        },
         "expire": "Expire le {date}",
         "participants": "Participants",
         "participantsAide": "Choisissez les personnes qui mènent l'entretien : Praxis ne les choisit pas.",
