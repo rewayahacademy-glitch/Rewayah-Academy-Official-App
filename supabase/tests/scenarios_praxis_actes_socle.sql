@@ -93,7 +93,12 @@ INSERT INTO private.super_admin_kyc (profile_id) VALUES (pg_temp.u(1));
 -- ===================================================================================================
 -- 1. Le catalogue est VIDE a l'installation.
 -- ===================================================================================================
-SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM private.praxis_actes) = 0, '1a : le catalogue des actes est vide a l''installation du socle');
+-- Le socle s'installe a catalogue VIDE (le postflight de la migration le verifie) ; les lots qui suivent y ajoutent leurs actes. Ce qui ne doit
+-- JAMAIS y entrer, en exigence positive : aucun nom d'acte du niveau D du plan (PLAN-BRAS-DROIT.md §5.7 : refuser une personne, une piece,
+-- l'argent, les droits, les prix, la suppression, les reglages de Praxis).
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM private.praxis_actes a
+                                  WHERE a.acte ~* '(refus|restreind|piece|verser|versement|paiement|rembours|facture|supprim|efface|droit|role|prix|tarif|politique|cle_praxis|kyc)'),
+  '1a : aucun acte du niveau D (refus, piece, argent, droits, prix, suppression, reglages de Praxis) n''est au catalogue');
 
 -- Des cles : un chat (k1), une routine (kr), puis d'autres chats au besoin. Reglages : Praxis allume, autonome ouvert, donnees reelles FERMEES.
 CREATE FUNCTION pg_temp.cle(p_n integer, p_usage text) RETURNS text LANGUAGE plpgsql AS $$
