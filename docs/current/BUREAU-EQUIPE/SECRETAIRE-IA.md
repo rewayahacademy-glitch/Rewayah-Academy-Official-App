@@ -296,6 +296,13 @@ Suivi : `SUIVI.md`.
 - **Signatures proposées par le directeur, aucune choisie** : « La pensée en mouvement »,
   « De l'idée à l'exécution », « L'intelligence appliquée au quotidien ».
 
+**Consignes du directeur du 17/11/2026 au matin** (reçues par l'agent de la messagerie, reportées par le pilote) :
+- « arrête tout ce qui est création de l'icône, je vais le faire moi-même » : **l'image de profil est fournie par le
+  directeur** ; aucun agent ne la dessine (lot 11 arrêté, rien poussé).
+- Cité par l'agent, non retrouvé mot pour mot dans le transcript : « il s'appelle Ra_Praxis, "Ra = Rewayah Academy". et
+  supprime l'effet italique, c'est moche ». Appliqué par #612 : **`#Ra_Praxis`, sans italique**. Le passage ci-dessus
+  sur l'italique est donc **caduc** pour Praxis et pour le compte de l'administration.
+
 Règles de construction qui en découlent :
 - L'italique et le « # » sont une **marque des comptes officiels**, rendue par
   l'application à partir d'un indicateur du compte (compte officiel), jamais des caractères
