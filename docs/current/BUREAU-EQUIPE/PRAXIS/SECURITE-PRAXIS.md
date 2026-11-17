@@ -246,3 +246,17 @@ d'abord ; le directeur peut l'assouplir par une décision datée.
   - **Premier commit de PX-2, avant toute autre ligne** : étendre la liste fermée à tous les appels de fonctions de
     ces deux schémas.
   - **#567 est fusionnable à la CI verte.**
+- **AR-11 (17/11, 01 h 20 UTC), le mode essai, après le relevé de BE-PIECE (PR #586).**
+  - Les faits :
+    - l'outil `boite` voit toutes les conversations qui lui sont ouvertes, celles des vraies familles comprises ;
+      il rend leur prénom et 300 signes du dernier message, qui partent chez le fournisseur d'IA ;
+    - la politique de confidentialité ne mentionne pas encore l'assistant.
+  - Règle : **tant que la politique n'est pas publiée, Praxis ne lit aucune conversation réelle.**
+  - Lot MODE-ESSAI (migration 20261129650000) :
+    - un réglage `essai_fils`, écrit en `aal2` ;
+    - quand il est rempli, `boite`, `fil`, `ecrire` et `rendre_compte` ne voient que ces fils, et `annoncer` est
+      refusé ;
+    - c'est la seule façon d'allumer Praxis avant la publication de la politique.
+  - **Point ouvert** : la connexion depuis claude.ai avec une clé. Le connecteur attend la clé dans l'en-tête
+    `Authorization: Bearer`, et le champ « clé » des connecteurs personnalisés n'est pas documenté. La voie sûre pour
+    l'essai est Claude Code, avec cet en-tête. claude.ai reste à vérifier.
