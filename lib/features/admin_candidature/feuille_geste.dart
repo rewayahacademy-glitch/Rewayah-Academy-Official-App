@@ -173,6 +173,9 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   String? _modele;
   DateTime? _reprise;
   CanalRetrait? _canal;
+
+  /// La categorie d'une dispense d'entretien (BE-1g).
+  CategorieDispense? _categorie;
   DateTime? _jourDemande;
   String? _moyen;
   String? _responsable;
@@ -215,6 +218,13 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
 
   List<String> get _elementsPermis {
     final ListesGestes l = widget.capacites.listes;
+    // COMPLEMENT-SALLE-EXAMEN (T7) : quand le paiement n'est pas disponible, le
+    // serveur n'admet que le code `versement` (variante 4).
+    if (widget.detail.ligne.etat == EtatCandidature.paiementNonDisponible) {
+      return l.complementSalleExamen.contains('versement')
+          ? const <String>['versement']
+          : const <String>[];
+    }
     final List<String> codes =
         widget.detail.ligne.etape == EtapeCandidature.verifications
         ? l.complementSalleVerification
@@ -246,7 +256,9 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   /// non vide (`motif_requis`, transitions 7 et 23) : il part, deduit de la
   /// liste, sans que la direction ait a l'ecrire (K-57 : deduit > choisi > saisi).
   bool get _exigeMotif =>
-      _geste.exigeMotif && _geste != GesteCandidature.demanderComplement;
+      _geste.exigeMotif &&
+      _geste != GesteCandidature.demanderComplement &&
+      _geste != GesteCandidature.modifierComplement;
 
   /// Le motif d'une demande de complement : les elements choisis, nommes, dans
   /// l'ordre de la liste du serveur.
@@ -262,12 +274,15 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
     if (_exigeMotif && _motif.text.trim().isEmpty) return false;
     switch (_geste) {
       case GesteCandidature.demanderComplement:
+      case GesteCandidature.modifierComplement:
         return _elements.isNotEmpty;
       case GesteCandidature.mettreEnPause:
       case GesteCandidature.refuser:
         return _modele != null;
       case GesteCandidature.consignerRetrait:
         return _canal != null && _jourDemande != null;
+      case GesteCandidature.dispenserEntretien:
+        return _categorie != null;
       case GesteCandidature.confirmerMoyenPaiement:
       case GesteCandidature.infirmerMoyenPaiement:
         return _moyen != null;
@@ -299,6 +314,21 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           cleIdempotence: cle,
           elements: _elementsPermis.where(_elements.contains).toList(),
           motif: _motifComplement,
+        );
+      case GesteCandidature.modifierComplement:
+        return DemandeGeste.modifierComplement(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          elements: _elementsPermis.where(_elements.contains).toList(),
+          motif: _motifComplement,
+        );
+      case GesteCandidature.annulerComplement:
+        return DemandeGeste.annulerComplement(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
         );
       case GesteCandidature.cloreComplement:
         return DemandeGeste.cloreComplement(
@@ -333,6 +363,13 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           versionAttendue: version,
           cleIdempotence: cle,
           moyen: _moyenChoisi()!,
+          motif: motif,
+        );
+      case GesteCandidature.debloquerVersement:
+        return DemandeGeste.debloquerVersement(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
           motif: motif,
         );
       case GesteCandidature.mettreEnPause:
@@ -380,6 +417,38 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           versionAttendue: version,
           cleIdempotence: cle,
           responsableId: _responsable,
+        );
+      case GesteCandidature.restreindre:
+      case GesteCandidature.demanderVerificationPiece:
+      case GesteCandidature.demanderVerificationVersement:
+        return DemandeGeste.restriction(
+          geste: _geste,
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
+        );
+      case GesteCandidature.leverRestriction:
+        return DemandeGeste.leverRestriction(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
+        );
+      case GesteCandidature.dispenserEntretien:
+        return DemandeGeste.dispenserEntretien(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          categorie: _categorie!,
+          motif: motif,
+        );
+      case GesteCandidature.refaireEntretien:
+        return DemandeGeste.refaireEntretien(
+          candidatureId: id,
+          versionAttendue: version,
+          cleIdempotence: cle,
+          motif: motif,
         );
     }
   }
@@ -540,6 +609,7 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
   bool get _servi {
     switch (_geste) {
       case GesteCandidature.demanderComplement:
+      case GesteCandidature.modifierComplement:
         return _elementsPermis.isNotEmpty;
       case GesteCandidature.mettreEnPause:
       case GesteCandidature.refuser:
@@ -566,7 +636,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
     final f = t.admin.candidatures.feuille;
     final bool modele = _geste.exigeModele;
     return <Widget>[
-      if (_geste == GesteCandidature.demanderComplement)
+      if (_geste == GesteCandidature.demanderComplement ||
+          _geste == GesteCandidature.modifierComplement)
         ..._champElements(context),
       if (_geste == GesteCandidature.mettreEnPause ||
           _geste == GesteCandidature.refuser)
@@ -574,6 +645,8 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
       if (_geste == GesteCandidature.mettreEnPause) ..._champReprise(context),
       if (_geste == GesteCandidature.consignerRetrait)
         ..._champsRetrait(context),
+      if (_geste == GesteCandidature.dispenserEntretien)
+        ..._champCategorie(context),
       if (_geste == GesteCandidature.confirmerMoyenPaiement ||
           _geste == GesteCandidature.infirmerMoyenPaiement)
         ..._champMoyen(context),
@@ -809,6 +882,46 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
           onPress: () => _modifie(() => _reprise = null),
         ),
       ],
+    ];
+  }
+
+  /// BE-1g : qui la direction dispense, fondateur ou autre. Chaque option dit
+  /// quand la choisir (K-58) ; aucune n'est preselectionnee.
+  List<Widget> _champCategorie(BuildContext context) {
+    final d = t.admin.candidatures.dispense;
+    return <Widget>[
+      Ecart.vLg,
+      _titreChamp(d.categorie),
+      Ecart.vSm,
+      ChoiceCardGroup(
+        // Sur ordinateur, des lignes compactes (panneau lateral).
+        compacte: _bureau(context),
+        autoriserSaisieLibre: false,
+        options: <OptionChoix>[
+          OptionChoix(
+            cle: const ValueKey<String>('dispense-fondateur'),
+            valeur: CategorieDispense.fondateur.valeurSql,
+            libelle: d.fondateur,
+            explication: d.fondateurAide,
+          ),
+          OptionChoix(
+            cle: const ValueKey<String>('dispense-autre'),
+            valeur: CategorieDispense.autre.valeurSql,
+            libelle: d.autre,
+            explication: d.autreAide,
+          ),
+        ],
+        valeurInitiale: _categorie == null
+            ? null
+            : ReponseChoix(valeurs: <String>{_categorie!.valeurSql}),
+        onChange: (ReponseChoix choix) => _modifie(() {
+          _categorie = <CategorieDispense>[
+            for (final CategorieDispense c in CategorieDispense.values)
+              if (choix.valeurs.contains(c.valeurSql)) c,
+          ].firstOrNull;
+        }),
+      ),
+      if (_tente && _categorie == null) _erreurChamp(d.categorieManquante),
     ];
   }
 

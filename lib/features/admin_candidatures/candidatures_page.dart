@@ -39,20 +39,16 @@ import '../../core/admin/admin_domaine.dart';
 import '../../core/candidature/attentes_recrutement.dart';
 import '../../core/candidature/creneaux_direction.dart';
 import '../../core/candidature/gestes_candidature.dart';
-import '../../core/candidature/modeles_autres_competences.dart';
-import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidature_detail.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/modeles_import_candidatures.dart';
 import '../../core/candidature/modeles_lot_candidatures.dart';
-import '../../core/candidature/port_autres_competences.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/candidature/port_import_candidatures.dart';
 import '../../core/candidature/port_invitations_personnelles.dart';
 import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
-import '../../core/i18n/pays_iso.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/recrutement/port_invitations_comptable.dart';
@@ -60,41 +56,37 @@ import '../../core/recrutement/port_invitations_enseignant.dart';
 import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
-import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
+import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/vus/vus_compte.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/barre_precedent_suivant.dart';
 import '../../core/widgets/barre_selection.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/champ_recherche.dart';
-import '../../core/widgets/controle_segmente.dart' show Segment;
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/empty_state.dart';
 import '../../core/widgets/etat_systeme.dart';
-import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/local_feedback.dart';
 import '../../core/widgets/menu_actions.dart';
 import '../../core/widgets/menu_filtre.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/pile_cartes.dart';
-import '../../core/widgets/pressable.dart' show EtatPression;
-import '../../core/widgets/rangee_filtres.dart';
-import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
+import '../../core/widgets/status_pill.dart';
 import '../admin_candidature/entretiens_du_jour.dart';
 import '../admin_candidature/feuille_geste.dart';
 import '../admin_candidature/gestes_proposes.dart';
 import '../admin_candidature/libelles_candidature.dart';
 import '../admin_import_formulaires/routes_candidats_flux.dart';
-import '../talents/libelles_talents.dart';
 import 'adresse_candidatures.dart';
-import 'carte_alertes.dart';
-import 'carte_attentes.dart';
-import 'etat_entete_liste.dart';
+import 'feuille_filtres.dart';
+import 'files_candidatures.dart';
 import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
@@ -148,6 +140,23 @@ class CandidaturesPage extends ConsumerStatefulWidget {
   /// BE-LISTE : le menu « Outils » de la liste.
   static const Key cleOutils = ValueKey<String>('candidatures-outils');
 
+  /// BE-LISTE-2 : l'icone « Filtres ».
+  static const Key cleFiltres = ValueKey<String>('candidatures-filtres');
+
+  /// BE-LISTE-2 : le nombre de filtres poses, sur l'icone « Filtres ».
+  static const Key cleNombreFiltres = ValueKey<String>(
+    'candidatures-filtres-nombre',
+  );
+
+  /// BE-LISTE-2 : l'icone « Trier ».
+  static const Key cleTri = ValueKey<String>('candidatures-tri');
+
+  /// BE-LISTE-2 : la loupe, qui ouvre le champ de recherche.
+  static const Key cleLoupe = ValueKey<String>('candidatures-loupe');
+
+  /// BE-LISTE-2 : « J'ai compris », qui ferme le bandeau.
+  static const Key cleJaiCompris = ValueKey<String>('candidatures-jai-compris');
+
   /// La cle de la page.
   static const Key clePage = ValueKey<String>('candidatures-page');
 
@@ -170,7 +179,21 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   /// filtres) restent affiches pendant qu'une autre page se charge.
   PageCandidatures? _derniere;
 
+  /// Le nombre de « Toutes » : le total d'une page lue sans filtre, garde tant
+  /// qu'on filtre (sinon la puce n'a pas de nombre).
+  int? _totalToutes;
+
+  /// La place que veut le titre-selecteur pour se lire entier (« Candidatures »
+  /// avec son menu).
+  static const double _largeurTitre = 176;
+
   late final TextEditingController _recherche;
+
+  /// Vrai : le champ de recherche est ouvert (la loupe a ete touchee).
+  bool _rechercheOuverte = false;
+
+  /// Le champ se voit ouvert par la loupe, ou tant qu'un texte est cherche.
+  bool get _rechercheVisible => _rechercheOuverte || _recherche.text.isNotEmpty;
   final GlobalKey _cleListe = GlobalKey(debugLabel: 'candidatures-liste');
 
   /// L'attente qui suit la derniere frappe : une page n'est demandee qu'une
@@ -315,38 +338,6 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     ..invalidate(pageCandidaturesProvider)
     ..invalidate(capacitesCandidaturesProvider)
     ..invalidate(attentesRecrutementProvider);
-
-  /// VISION-RECRUTEMENT : une ligne de « Qui attend quoi » pose le filtre qui
-  /// compte exactement ce qu'elle annonce (en cours, hors pause, cet etat), sur
-  /// une liste sans autre filtre.
-  void _filtrerAttente({EtatCandidature? etat, bool enPause = false}) {
-    _attenteSaisie?.cancel();
-    _recherche.clear();
-    _filtrer(
-      _filtre.efface.avec(
-        etat: () => etat,
-        issue: () => IssueCandidature.enCours,
-        enPause: () => enPause,
-      ),
-    );
-  }
-
-  /// BE-LISTE : « Piece d'identite a valider » pose le filtre que le serveur
-  /// compte pour cette ligne : une piece deposee attend la direction, dans les
-  /// candidatures en cours et hors pause. Avant l'installation de la migration
-  /// 20261128100000, le serveur ignore la cle `pieceEnAttente` et la liste est
-  /// plus longue que la ligne.
-  void _filtrerPiece() {
-    _attenteSaisie?.cancel();
-    _recherche.clear();
-    _filtrer(
-      _filtre.efface.avec(
-        pieceEnAttente: () => true,
-        issue: () => IssueCandidature.enCours,
-        enPause: () => false,
-      ),
-    );
-  }
 
   void _allerAPage(int numero) {
     setState(() => _page = numero);
@@ -546,392 +537,205 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     );
   }
 
-  // --- Filtres ------------------------------------------------------------
+  // --- Rangees -------------------------------------------------------------
 
-  Widget _filtres(PageCandidatures reference, CapacitesCandidatures caps) {
-    final f = t.admin.candidatures.filtres;
-    FilterPill pastille(EtapeCandidature? etape, String libelle, String cle) =>
-        FilterPill(
-          key: ValueKey<String>(cle),
-          libelle: libelle,
-          compteur: etape == null ? null : reference.compteursEtapes[etape],
-          retenue: _filtre.etape == etape,
-          onPress: () => _filtrer(
-            _filtre.avec(etape: () => _filtre.etape == etape ? null : etape),
-          ),
-        );
-
-    EntreeFiltre<T> tous<T>() => EntreeFiltre<T>(valeur: null, libelle: f.tous);
-
-    final List<PaysIso> pays = <PaysIso>[...paysIso]
-      ..sort(
-        (PaysIso a, PaysIso b) =>
-            formeDeRecherche(a.nom).compareTo(formeDeRecherche(b.nom)),
-      );
-
-    return RangeeFiltres(
-      filtres: <Widget>[
-        pastille(null, f.toutes, 'candidatures-filtre-toutes'),
-        // « Garder pour suivi » attend la reponse du directeur (CONS 0.3) :
-        // tant que le serveur ne l'ouvre pas, ni la puce ni le mot ne sont
-        // rendus.
-        if (caps.peutGarderPourSuivi)
-          pastille(
-            EtapeCandidature.recue,
-            f.gardees,
-            'candidatures-filtre-gardees',
-          ),
-        pastille(
-          EtapeCandidature.invitee,
-          f.invitees,
-          'candidatures-filtre-invitees',
-        ),
-        pastille(
-          EtapeCandidature.prequalification,
-          t.recrutement.salles.examen,
-          'candidatures-filtre-examen',
-        ),
-        pastille(
-          EtapeCandidature.verifications,
-          t.recrutement.salles.verification,
-          'candidatures-filtre-verification',
-        ),
-        pastille(
-          EtapeCandidature.confirmee,
-          t.recrutement.salles.prets,
-          'candidatures-filtre-prets',
-        ),
-        MenuFiltre<EtatCandidature>(
-          key: const ValueKey<String>('candidatures-filtre-etat'),
-          libelle: f.etat,
-          valeur: _filtre.etat,
-          entrees: <EntreeFiltre<EtatCandidature>>[
-            tous<EtatCandidature>(),
-            for (final EtatCandidature e in EtatCandidature.values)
-              EntreeFiltre<EtatCandidature>(valeur: e, libelle: libelleEtat(e)),
-          ],
-          onChoix: (EtatCandidature? e) =>
-              _filtrer(_filtre.avec(etat: () => e)),
-        ),
-        MenuFiltre<IssueCandidature>(
-          key: const ValueKey<String>('candidatures-filtre-issue'),
-          libelle: f.issue,
-          valeur: _filtre.issue,
-          entrees: <EntreeFiltre<IssueCandidature>>[
-            tous<IssueCandidature>(),
-            for (final IssueCandidature i in IssueCandidature.values)
-              EntreeFiltre<IssueCandidature>(
-                valeur: i,
-                libelle: libelleIssue(i),
-              ),
-          ],
-          onChoix: (IssueCandidature? i) =>
-              _filtrer(_filtre.avec(issue: () => i)),
-        ),
-        MenuFiltre<bool>(
-          key: const ValueKey<String>('candidatures-filtre-pause'),
-          libelle: f.pause,
-          valeur: _filtre.enPause,
-          entrees: <EntreeFiltre<bool>>[
-            tous<bool>(),
-            EntreeFiltre<bool>(
-              valeur: true,
-              libelle: t.admin.candidatures.etats.enPause,
-            ),
-            EntreeFiltre<bool>(valeur: false, libelle: f.sansPause),
-          ],
-          onChoix: (bool? p) => _filtrer(_filtre.avec(enPause: () => p)),
-        ),
-        MenuFiltre<EtatVersement>(
-          key: const ValueKey<String>('candidatures-filtre-versement'),
-          libelle: f.versement,
-          valeur: _filtre.paiement,
-          entrees: <EntreeFiltre<EtatVersement>>[
-            tous<EtatVersement>(),
-            for (final EtatVersement v in EtatVersement.values)
-              EntreeFiltre<EtatVersement>(
-                valeur: v,
-                libelle: libelleVersement(v),
-              ),
-          ],
-          onChoix: (EtatVersement? v) =>
-              _filtrer(_filtre.avec(paiement: () => v)),
-        ),
-        // SALLE2-GENRE (directeur, 14/11/2026) : filtrer par genre.
-        MenuFiltre<String>(
-          key: const ValueKey<String>('candidatures-filtre-genre'),
-          libelle: f.genre,
-          valeur: _filtre.genre,
-          entrees: <EntreeFiltre<String>>[
-            tous<String>(),
-            EntreeFiltre<String>(
-              valeur: 'male',
-              libelle: t.admin.candidatures.genres.male,
-            ),
-            EntreeFiltre<String>(
-              valeur: 'female',
-              libelle: t.admin.candidatures.genres.female,
-            ),
-          ],
-          onChoix: (String? g) => _filtrer(_filtre.avec(genre: () => g)),
-        ),
-        MenuFiltre<String>(
-          key: const ValueKey<String>('candidatures-filtre-pays'),
-          libelle: f.pays,
-          valeur: _filtre.paysResidence,
-          entrees: <EntreeFiltre<String>>[
-            tous<String>(),
-            for (final PaysIso p in pays)
-              EntreeFiltre<String>(valeur: p.code, libelle: p.nom),
-          ],
-          onChoix: (String? p) =>
-              _filtrer(_filtre.avec(paysResidence: () => p)),
-        ),
-        ..._filtresCompetences(tous),
-      ],
-    );
-  }
-
-  /// Les quatre axes des autres competences (CAND-07, « Vos autres talents ») :
-  /// le domaine (une famille, ou une competence du catalogue), le niveau minimum,
-  /// la disponibilite et l'accord d'etre contacte. Le serveur ne rend ces
-  /// personnes que si elles ont repondu ; aucune note, aucun classement.
-  ///
-  /// Les familles sont une liste fermee que l'application nomme : le menu du
-  /// domaine marche sans le catalogue. Les competences s'y ajoutent des que la
-  /// direction lit le catalogue (le sien, complet, desactivees comprises).
-  List<Widget> _filtresCompetences(EntreeFiltre<T> Function<T>() tous) {
-    final f = t.admin.candidatures.filtres.talents;
-    final CatalogueCompetences? catalogue = ref
-        .watch(catalogueCompetencesProvider)
-        .value;
-    final List<EntreeFiltre<String>> domaines = <EntreeFiltre<String>>[
-      tous<String>(),
-      for (final FamilleCompetence famille
-          in FamilleCompetence.values) ...<EntreeFiltre<String>>[
-        // La famille « autre » n'a qu'une competence, du meme nom : une seule
-        // entree.
-        if (famille != FamilleCompetence.autre)
-          EntreeFiltre<String>(
-            valeur: famille.valeurSql,
-            libelle: f.familleToutes(famille: titreFamille(famille)),
-          ),
-        for (final EntreeCatalogue e
-            in catalogue?.competences ?? const <EntreeCatalogue>[])
-          if (e.familleCode == famille.valeurSql)
-            EntreeFiltre<String>(
-              valeur: e.code,
-              libelle: nomDomaineFiltre(e.code, catalogue: catalogue),
-            ),
-      ],
-    ];
-    return <Widget>[
-      MenuFiltre<String>(
-        key: const ValueKey<String>('candidatures-filtre-competence'),
-        libelle: f.domaine,
-        valeur: _filtre.competenceDomaine,
-        entrees: domaines,
-        onChoix: (String? d) =>
-            _filtrer(_filtre.avec(competenceDomaine: () => d)),
-      ),
-      MenuFiltre<NiveauCompetence>(
-        key: const ValueKey<String>('candidatures-filtre-competence-niveau'),
-        libelle: f.niveau,
-        valeur: _filtre.competenceNiveauMin,
-        entrees: <EntreeFiltre<NiveauCompetence>>[
-          tous<NiveauCompetence>(),
-          EntreeFiltre<NiveauCompetence>(
-            valeur: NiveauCompetence.experience,
-            libelle: f.niveauExperience,
-          ),
-          EntreeFiltre<NiveauCompetence>(
-            valeur: NiveauCompetence.metier,
-            libelle: f.niveauMetier,
-          ),
-        ],
-        onChoix: (NiveauCompetence? n) =>
-            _filtrer(_filtre.avec(competenceNiveauMin: () => n)),
-      ),
-      MenuFiltre<DisponibiliteMission>(
-        key: const ValueKey<String>(
-          'candidatures-filtre-competence-disponibilite',
-        ),
-        libelle: f.disponibilite,
-        valeur: _filtre.competenceDisponibilite,
-        entrees: <EntreeFiltre<DisponibiliteMission>>[
-          tous<DisponibiliteMission>(),
-          for (final DisponibiliteMission d in DisponibiliteMission.values)
-            EntreeFiltre<DisponibiliteMission>(
-              valeur: d,
-              libelle: libelleDisponibilite(d),
-            ),
-        ],
-        onChoix: (DisponibiliteMission? d) =>
-            _filtrer(_filtre.avec(competenceDisponibilite: () => d)),
-      ),
-      MenuFiltre<bool>(
-        key: const ValueKey<String>('candidatures-filtre-competence-accord'),
-        libelle: f.accord,
-        valeur: _filtre.competenceAccord,
-        entrees: <EntreeFiltre<bool>>[
-          tous<bool>(),
-          EntreeFiltre<bool>(valeur: true, libelle: f.accordDonne),
-          EntreeFiltre<bool>(valeur: false, libelle: f.accordAbsent),
-        ],
-        onChoix: (bool? a) => _filtrer(_filtre.avec(competenceAccord: () => a)),
-      ),
-    ];
-  }
-
-  // --- Liste --------------------------------------------------------------
-
-  /// Vrai quand la carte « A traiter » a quelque chose a montrer au telephone
-  /// (au moins un compteur servi non nul).
-  bool _alerteVisible(CompteursAlertes c) => <int?>[
-    c.bloquees,
-    c.entretiensEnRetard,
-    c.informationsManquantes,
-    c.confirmeesIndisponibles,
-  ].any((int? n) => n != null && n > 0);
-
-  Widget _barreListe(
+  /// BE-LISTE-2 : la ligne de texte sous les files, « 383 candidatures » a
+  /// gauche, « Selectionner » a droite, alignes sur la meme ligne. Plus de
+  /// bouton « Trier » ici : le tri est l'icone de la rangee de la recherche.
+  Widget _ligneNombre(
     PageCandidatures page, {
     required bool selectionPossible,
-    required bool telephone,
   }) {
     final r = t.admin.candidatures;
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
-    if (telephone) {
-      // Une seule rangee quand elle tient : a gauche le nombre et
-      // « Selectionner » (ils passent a la ligne plutot que de couper un mot),
-      // a droite le tri, un menu : deux segments ne tiennent pas a cote.
-      return Row(
-        key: _cleListe,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: <Widget>[
-          Expanded(
-            child: Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.sm,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              children: <Widget>[
-                Semantics(
-                  header: true,
-                  liveRegion: true,
-                  child: TexteSansCoupure(
-                    r.total(n: page.total),
-                    key: const ValueKey<String>('candidatures-total'),
-                    style: palette.inkStrong.applyTo(
-                      textes.titleSmall ?? const TextStyle(),
-                    ),
-                  ),
-                ),
-                if (selectionPossible)
-                  LienFleche(
-                    key: const ValueKey<String>('candidatures-selectionner'),
-                    libelle: _enSelection
-                        ? r.selection.quitter
-                        : r.selection.selectionner,
-                    fleche: false,
-                    legende: true,
-                    onPress: _basculerSelection,
-                  ),
-              ],
-            ),
-          ),
-          Ecart.hSm,
-          // Le tri par defaut n'est pas un filtre retenu : le bouton dit
-          // « Trier » ; un autre tri se lit dans le bouton.
-          Flexible(
-            child: MenuFiltre<TriCandidatures>(
-              key: const ValueKey<String>('candidatures-tri'),
-              libelle: t.recrutement.file.trier,
-              valeur: _tri == TriCandidatures.activite ? null : _tri,
-              entrees: <EntreeFiltre<TriCandidatures>>[
-                EntreeFiltre<TriCandidatures>(
-                  valeur: TriCandidatures.activite,
-                  libelle: r.tri.activite,
-                ),
-                EntreeFiltre<TriCandidatures>(
-                  valeur: TriCandidatures.recente,
-                  libelle: r.tri.reception,
-                ),
-              ],
-              onChoix: (TriCandidatures? choisi) {
-                setState(() {
-                  _tri = choisi ?? TriCandidatures.activite;
-                  _page = 1;
-                });
-                _ecrireAdresse();
-              },
-            ),
-          ),
-        ],
-      );
-    }
-    return Column(
+    // Une seule ligne tant qu'elle tient (le nombre a gauche, « Selectionner » a
+    // droite) ; a texte agrandi elle passe a la ligne plutot que de deborder.
+    return Wrap(
       key: _cleListe,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
+      alignment: WrapAlignment.spaceBetween,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      spacing: AppSpacing.md,
+      runSpacing: AppSpacing.sm,
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.lg,
-          runSpacing: AppSpacing.sm,
-          crossAxisAlignment: WrapCrossAlignment.center,
-          children: <Widget>[
-            Semantics(
-              header: true,
-              liveRegion: true,
-              child: TexteSansCoupure(
-                r.total(n: page.total),
-                key: const ValueKey<String>('candidatures-total'),
-                style: palette.inkStrong.applyTo(
-                  textes.titleMedium ?? const TextStyle(),
-                ),
-              ),
+        Semantics(
+          header: true,
+          liveRegion: true,
+          child: TexteSansCoupure(
+            r.total(n: page.total),
+            key: const ValueKey<String>('candidatures-total'),
+            style: palette.inkStrong.applyTo(
+              textes.titleSmall ?? const TextStyle(),
             ),
-            if (selectionPossible)
-              LienFleche(
-                key: const ValueKey<String>('candidatures-selectionner'),
-                libelle: _enSelection
-                    ? r.selection.quitter
-                    : r.selection.selectionner,
-                fleche: false,
-                legende: true,
-                onPress: _basculerSelection,
-              ),
-          ],
+          ),
         ),
-        Ecart.vMd,
-        // Le tri est un choix ferme de deux valeurs, rendu par le composant
-        // unique des choix segmentes (menu quand le texte agrandi ne tient
-        // plus) : tout est visible, rien n'est tronque. Il part au serveur.
-        SelecteurSection<TriCandidatures>(
-          key: const ValueKey<String>('candidatures-tri'),
-          libelle: r.tri.titre,
-          valeur: _tri,
-          sections: <Segment<TriCandidatures>>[
-            Segment<TriCandidatures>(
-              valeur: TriCandidatures.activite,
-              libelle: r.tri.activite,
-            ),
-            Segment<TriCandidatures>(
-              valeur: TriCandidatures.recente,
-              libelle: r.tri.reception,
-            ),
-          ],
-          onChange: (TriCandidatures choisi) {
-            setState(() {
-              _tri = choisi;
-              _page = 1;
-            });
-            _ecrireAdresse();
-          },
-        ),
+        if (selectionPossible)
+          LienFleche(
+            key: const ValueKey<String>('candidatures-selectionner'),
+            libelle: _enSelection
+                ? r.selection.quitter
+                : r.selection.selectionner,
+            fleche: false,
+            legende: true,
+            alignerEnFin: true,
+            onPress: _basculerSelection,
+          ),
       ],
     );
   }
+
+  /// Les files : **un seul menu deroulant « File »** (revision du 16/11,
+  /// directeur : « cinq lignes pour ces filtres ? pourquoi pas un menu
+  /// deroulant ? »). Il dit la file choisie et son nombre (« En examen · 176 »)
+  /// et s'ouvre sur toutes les files avec leurs nombres. Les alertes que le
+  /// serveur compte sans savoir les filtrer restent des pastilles d'etat, sous
+  /// le menu, seulement quand leur nombre n'est pas zero.
+  Widget _zoneFiles(List<FileCandidatures> files) {
+    final List<FileCandidatures> choix = <FileCandidatures>[
+      for (final FileCandidatures x in files)
+        if (x.appliquer != null) x,
+    ];
+    final List<FileCandidatures> alertes = <FileCandidatures>[
+      for (final FileCandidatures x in files)
+        if (x.appliquer == null) x,
+    ];
+    final FileCandidatures? courante = choix
+        .where((FileCandidatures x) => x.estChoisie(_filtre))
+        .firstOrNull;
+    final String texte = courante == null
+        ? t.recrutement.file.fileMenu
+        : '${courante.libelle} · ${courante.nombre ?? ''}'.trim();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        MenuFiltre<String>(
+          key: const ValueKey<String>('candidatures-file-menu'),
+          libelle: texte,
+          valeur: courante?.cle,
+          entrees: <EntreeFiltre<String>>[
+            for (final FileCandidatures x in choix)
+              EntreeFiltre<String>(
+                valeur: x.cle,
+                libelle: '${x.libelle} · ${x.nombre ?? ''}'.trim(),
+              ),
+          ],
+          onChoix: (String? cle) {
+            if (cle == null) return;
+            final FileCandidatures x = choix.firstWhere(
+              (FileCandidatures f) => f.cle == cle,
+            );
+            _attenteSaisie?.cancel();
+            _filtrer(x.appliquer!(_filtre));
+          },
+        ),
+        if (alertes.isNotEmpty) ...<Widget>[
+          Ecart.vSm,
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (final FileCandidatures x in alertes)
+                StatusPill(
+                  key: ValueKey<String>('candidatures-file-${x.cle}'),
+                  libelle: '${x.libelle} ${x.nombre ?? ''}'.trim(),
+                  ton: TonEtat.avertissement,
+                ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+
+  /// L'icone « Filtres » : le nombre de filtres poses se lit dessus et se dit.
+  Widget _boutonFiltres(
+    List<FileCandidatures> Function() files,
+    CapacitesCandidatures caps,
+  ) {
+    final int n = nombreFiltresPoses(_filtre, files());
+    final AppPalette palette = AppPalette.of(context);
+    return Stack(
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        BoutonIcone(
+          key: CandidaturesPage.cleFiltres,
+          icone: AppIcons.filtrer,
+          libelle: n == 0
+              ? t.recrutement.file.filtres
+              : t.recrutement.file.filtresPoses(n: n),
+          selectionne: n > 0,
+          onPress: () => unawaited(
+            ouvrirFeuilleFiltres(
+              context,
+              lire: () => _filtre,
+              poser: _filtrer,
+              files: files,
+              garderPourSuivi: caps.peutGarderPourSuivi,
+            ),
+          ),
+        ),
+        if (n > 0)
+          PositionedDirectional(
+            top: AppSpacing.xs,
+            end: AppSpacing.xs,
+            child: ExcludeSemantics(
+              child: DecoratedBox(
+                key: CandidaturesPage.cleNombreFiltres,
+                decoration: palette.washAccent.decoration(
+                  borderRadius: AppRadius.arrondiFull,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: AppSpacing.xs,
+                  ),
+                  child: Text(
+                    '$n',
+                    style: TextStyle(
+                      color: palette.washAccent.onBackground,
+                      fontSize: AppSpacing.md,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  /// La loupe : le champ de recherche ne s'ouvre qu'au toucher.
+  Widget _boutonRecherche() => BoutonIcone(
+    key: CandidaturesPage.cleLoupe,
+    icone: AppIcons.recherche,
+    libelle: t.recrutement.file.rechercher,
+    selectionne: _rechercheVisible,
+    onPress: () => setState(() {
+      // Ouverte et vide : on la referme ; avec un texte, le champ reste.
+      _rechercheOuverte = _recherche.text.isNotEmpty || !_rechercheOuverte;
+    }),
+  );
+
+  /// L'icone « Trier ».
+  Widget _boutonTri() => BoutonIcone(
+    key: CandidaturesPage.cleTri,
+    icone: AppIcons.triNeutre,
+    libelle: t.admin.candidatures.tri.titre,
+    onPress: () => unawaited(
+      ouvrirFeuilleTri(
+        context,
+        lire: () => _tri,
+        poser: (TriCandidatures tri) {
+          setState(() {
+            _tri = tri;
+            _page = 1;
+          });
+          _ecrireAdresse();
+        },
+      ),
+    ),
+  );
+
+  // --- Liste --------------------------------------------------------------
 
   Widget _liste(PageCandidatures page, GestesLigne gestes) {
     final bool bureau =
@@ -1068,6 +872,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
       pageCandidaturesProvider(requete),
     );
     if (valeur.hasValue) _derniere = valeur.requireValue;
+    if (valeur.hasValue && _filtre.estVide) {
+      _totalToutes = valeur.requireValue.total;
+    }
     final PageCandidatures? reference = valeur.value ?? _derniere;
     final CapacitesCandidatures caps =
         ref.watch(capacitesCandidaturesProvider).value ??
@@ -1171,69 +978,38 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         ),
     ];
 
-    // BE-LISTE (telephone, sous 600) : le directeur traite des centaines de
-    // dossiers, le premier nom doit etre haut. Pas de phrase d'introduction,
-    // le selecteur de section et « Outils » sur une rangee, « A traiter » sans
-    // titre (et absent a zero), le nombre, « Selectionner » et le tri sur une
-    // rangee.
-    final bool telephone = MediaQuery.sizeOf(context).width < 600;
-    final Widget? boutonOutils = outils.isEmpty
-        ? null
-        : Align(
-            alignment: AlignmentDirectional.centerEnd,
-            child: MenuActions(
-              key: CandidaturesPage.cleOutils,
-              libelle: t.recrutement.file.outilsDe,
-              actions: outils,
-              declencheur: (BuildContext contexte, EtatPression etat) =>
-                  _DeclencheurOutils(etat: etat),
-            ),
-          );
-    final Widget navigation = SousNavigationDomaine(
-      onglets: ongletsPersonnes(),
-      indexActif: 2,
+    // BE-LISTE-2 : trois rangees au plus avant le premier nom. Le titre EST le
+    // selecteur de section (le mot n'apparait qu'une fois), plus « Outils » ;
+    // la recherche et deux icones, « Filtres » et « Trier » ; les files.
+    final List<FileCandidatures> files = filesDe(
+      attentes: attentes,
+      alertes: reference?.compteursAlertes ?? const CompteursAlertes(),
+      totalToutes: _totalToutes,
+      maintenant: DateTime.now(),
+      compteurNouveaux: reference?.compteurNouveaux ?? 0,
     );
+    // VU-UNE-FOIS : le bandeau se voit une seule fois dans la vie du compte
+    // (serveur, aucune memoire d'appareil). Cache tant que le serveur n'a pas
+    // repondu : il ne clignote jamais pour un compte qui l'a deja ferme.
+    final bool lectureComprise = ref
+        .watch(vusProvider)
+        .maybeWhen(
+          data: (Set<String> vus) => vus.contains(ClesVu.deuxCotes),
+          orElse: () => true,
+        );
+    final Widget? menuOutils = outils.isEmpty
+        ? null
+        : MenuActions(
+            key: CandidaturesPage.cleOutils,
+            libelle: t.recrutement.file.outilsDe,
+            icone: AppIcons.reglages,
+            actions: outils,
+          );
 
     return PageShell(
       key: CandidaturesPage.clePage,
-      titre: r.titre,
-      sousTitre: telephone ? null : r.sousTitre,
-      entete: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          if (telephone && boutonOutils != null)
-            // Une rangee ; a texte agrandi, « Outils » passe dessous plutot que
-            // de deborder.
-            if (MediaQuery.textScalerOf(context).scale(1) > 1.3)
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: <Widget>[navigation, Ecart.vSm, boutonOutils],
-              )
-            else
-              Row(
-                children: <Widget>[
-                  Expanded(child: navigation),
-                  Ecart.hMd,
-                  boutonOutils,
-                ],
-              )
-          else
-            navigation,
-          // L'exception de lecture du super-admin se dit en tete, quand le
-          // serveur la rend active (jamais deduite du role).
-          if (caps.peutLireHorsGenre)
-            Padding(
-              padding: const EdgeInsets.only(top: AppSpacing.sm),
-              child: _LectureDeuxCotes(
-                depliee: ref.watch(lectureDeplieeProvider),
-                onBasculer: () => ref
-                    .read(lectureDeplieeProvider.notifier)
-                    .choisir(valeur: !ref.read(lectureDeplieeProvider)),
-              ),
-            ),
-        ],
-      ),
+      // La page n'a pas de grand titre : le selecteur de section en tient lieu
+      // (sur ordinateur, le panneau porte deja les sections).
       // La barre du lot, seulement avec une selection, collee en bas. Ses
       // operations sont compactes et non pleines (K-56) : sans selection,
       // aucun bouton plein.
@@ -1244,18 +1020,113 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
+          // Rangee 1 (revision du 16/11, directeur : « libere cette place ») :
+          // le titre-selecteur, la loupe, « Filtres », « Trier » et « Outils »
+          // sur une seule rangee. Le champ de recherche ne s'ouvre qu'au toucher
+          // de la loupe. A texte agrandi (au-dela de 130 %), les icones passent
+          // sous le titre pour que rien ne soit coupe.
+          LayoutBuilder(
+            builder: (BuildContext contexte, BoxConstraints contraintes) {
+              final Widget titre = Semantics(
+                header: true,
+                label: r.titre,
+                child: SousNavigationDomaine(
+                  onglets: ongletsPersonnes(),
+                  indexActif: 2,
+                ),
+              );
+              final List<Widget> icones = <Widget>[
+                if (commandes) _boutonRecherche(),
+                if (commandes) _boutonFiltres(() => files, caps),
+                if (commandes) _boutonTri(),
+              ];
+              // Les icones de 48 et le titre entier ne tiennent sur une rangee
+              // que si la place suffit (le mot « Candidatures » veut environ
+              // 176 : en dessous, il serait coupe au milieu d'un mot). Plus
+              // etroit, ou a texte agrandi (au-dela de 130 %), le titre garde
+              // sa rangee avec « Outils », et les trois icones passent juste
+              // dessous.
+              final double besoin =
+                  _largeurTitre +
+                  AppTouchTarget.standard *
+                      (icones.length + (menuOutils == null ? 0 : 1));
+              final bool uneRangee =
+                  contraintes.maxWidth >= besoin &&
+                  MediaQuery.textScalerOf(contexte).scale(1) <= 1.3;
+              if (uneRangee) {
+                return Row(
+                  children: <Widget>[
+                    Expanded(child: titre),
+                    ...icones,
+                    ?menuOutils,
+                  ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(child: titre),
+                      ?menuOutils,
+                    ],
+                  ),
+                  if (icones.isNotEmpty) ...<Widget>[
+                    Ecart.vXs,
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: icones,
+                    ),
+                  ],
+                ],
+              );
+            },
+          ),
+          Ecart.vSm,
+          if (commandes && _rechercheVisible) ...<Widget>[
+            Semantics(
+              label: r.recherche,
+              child: ChampRecherche(
+                cleChamp: const ValueKey<String>('candidatures-recherche'),
+                cleEffacer: const ValueKey<String>(
+                  'candidatures-recherche-effacer',
+                ),
+                controleur: _recherche,
+                autofocus: true,
+                // Un mot court dans le champ : le libelle complet reste dit aux
+                // lecteurs d'ecran (`Semantics` ci-dessus).
+                libelle: t.recrutement.file.rechercher,
+                compact: true,
+                aide: r.rechercheAide,
+                onChange: _chercher,
+                onValider: _chercherTout,
+              ),
+            ),
+            Ecart.vSm,
+          ],
+          // L'exception de lecture du super-admin se dit en tete, quand le
+          // serveur la rend active (jamais deduite du role) ; « J'ai compris »
+          // la fait disparaitre pour de bon (aucune icone de rappel).
+          if (caps.peutLireHorsGenre && !lectureComprise) ...<Widget>[
+            BandeauAttention(
+              key: const ValueKey<String>('candidatures-exception'),
+              titre: r.exception.titre,
+              message: r.exception.message,
+              action: LienFleche(
+                key: CandidaturesPage.cleJaiCompris,
+                libelle: t.recrutement.file.jaiCompris,
+                fleche: false,
+                legende: true,
+                onPress: () => unawaited(
+                  ref.read(vusProvider.notifier).marquer(ClesVu.deuxCotes),
+                ),
+              ),
+            ),
+            Ecart.vSm,
+          ],
           // SALLE2-ENTRETIEN (directeur, 14/11/2026) : les entretiens du jour
           // et leur porte, en tete de la file.
           const EntretiensDuJour(ficheOuverte: true),
-          // BE-LISTE : les cinq liens (Invitations, Prevenir, Creneaux, Codes,
-          // Importer) tiennent dans un seul menu « Outils », rendu dans tous
-          // les etats (CAND-F01 : c'est le seul chemin vers les invitations).
-          // Chaque entree n'existe que si le serveur ouvre le geste et que le
-          // port est servi, jamais grisee.
-          if (!telephone && boutonOutils != null) ...<Widget>[
-            boutonOutils,
-            Ecart.vSm,
-          ],
           if (_ouverture != null) ...<Widget>[
             Semantics(
               liveRegion: true,
@@ -1294,53 +1165,10 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             Ecart.vSm,
           ],
           if (commandes) ...<Widget>[
-            if (attentes != null) ...<Widget>[
-              CarteAttentes(
-                attentes: attentes,
-                maintenant: DateTime.now(),
-                onFiltrer: (EtatCandidature e) => _filtrerAttente(etat: e),
-                onFiltrerPause: () => _filtrerAttente(enPause: true),
-                // La piece a valider ouvre la meme liste, filtree sur la cle
-                // serveur `pieceEnAttente` (PR 505, migration 20261128100000).
-                onFiltrerPiece: _filtrerPiece,
-                repliee: ref.watch(attentesRepliesProvider),
-                onBasculer: () => ref
-                    .read(attentesRepliesProvider.notifier)
-                    .choisir(valeur: !ref.read(attentesRepliesProvider)),
-              ),
-              telephone ? Ecart.vMd : Ecart.vXxl,
-            ],
-            CarteAlertes(
-              compteurs: reference.compteursAlertes,
-              compacte: telephone,
-            ),
-            // Rien a dire quand la carte compacte disparait : pas d'espace.
-            if (!telephone || _alerteVisible(reference.compteursAlertes))
-              telephone ? Ecart.vMd : Ecart.vXxl,
-            Semantics(
-              label: telephone ? r.recherche : null,
-              child: ChampRecherche(
-                cleChamp: const ValueKey<String>('candidatures-recherche'),
-                cleEffacer: const ValueKey<String>(
-                  'candidatures-recherche-effacer',
-                ),
-                controleur: _recherche,
-                // Telephone : l'aide du champ suffit a l'oeil ; le libelle, lui,
-                // reste dit aux lecteurs d'ecran (`Semantics` ci-dessous).
-                libelle: telephone ? r.rechercheAide : r.recherche,
-                aide: r.rechercheAide,
-                onChange: _chercher,
-                onValider: _chercherTout,
-              ),
-            ),
+            // Rangee 2 : le menu « File ».
+            _zoneFiles(files),
             Ecart.vMd,
-            _filtres(reference, caps),
-            telephone ? Ecart.vMd : Ecart.vLg,
-            _barreListe(
-              reference,
-              selectionPossible: selectionPossible,
-              telephone: telephone,
-            ),
+            _ligneNombre(reference, selectionPossible: selectionPossible),
             Ecart.vMd,
           ],
           BlocAsynchrone<PageCandidatures>(
@@ -1363,69 +1191,6 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             construire: (PageCandidatures page) => _contenu(page, gestes),
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// BE-LISTE : le declencheur du menu « Outils » : une icone et le mot, sur
-/// une cible de 48.
-class _DeclencheurOutils extends StatelessWidget {
-  const _DeclencheurOutils({required this.etat});
-
-  final EtatPression etat;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return ConstrainedBox(
-      constraints: BoxConstraints(
-        minHeight: AppMetriques.of(context).cibleTactile,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Icon(
-            AppIcons.reglages.repos,
-            color: palette.inkStrong.asIconTheme(size: AppSpacing.xl).color,
-          ),
-          Ecart.hSm,
-          Flexible(
-            child: TexteSansCoupure(
-              t.recrutement.file.outils,
-              style: palette.inkStrong.applyTo(
-                Theme.of(context).textTheme.labelLarge ?? const TextStyle(),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-/// BE-LISTE : « Lecture des deux cotes » sur une ligne ; la phrase se deplie.
-class _LectureDeuxCotes extends StatelessWidget {
-  const _LectureDeuxCotes({required this.depliee, required this.onBasculer});
-
-  final bool depliee;
-  final VoidCallback onBasculer;
-
-  @override
-  Widget build(BuildContext context) {
-    final r = t.admin.candidatures.exception;
-    return BandeauAttention(
-      key: const ValueKey<String>('candidatures-exception'),
-      titre: r.titre,
-      message: depliee ? r.message : '',
-      action: LienFleche(
-        key: const ValueKey<String>('candidatures-exception-bascule'),
-        libelle: depliee
-            ? t.recrutement.file.replier
-            : t.recrutement.file.afficher,
-        fleche: false,
-        legende: true,
-        onPress: onBasculer,
       ),
     );
   }

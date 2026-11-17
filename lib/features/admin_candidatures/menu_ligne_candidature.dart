@@ -33,9 +33,12 @@ import 'libelles_candidatures.dart';
 AppIcon iconeDuGeste(GesteCandidature geste) => switch (geste) {
   GesteCandidature.demanderComplement => AppIcons.discussion,
   GesteCandidature.cloreComplement => AppIcons.succes,
+  GesteCandidature.modifierComplement => AppIcons.discussion,
+  GesteCandidature.annulerComplement => AppIcons.interdit,
   GesteCandidature.admettreVerifications => AppIcons.suivant,
   GesteCandidature.confirmerMoyenPaiement => AppIcons.paiements,
   GesteCandidature.infirmerMoyenPaiement => AppIcons.interdit,
+  GesteCandidature.debloquerVersement => AppIcons.paiements,
   GesteCandidature.mettreEnPause => AppIcons.pause,
   GesteCandidature.leverPause => AppIcons.reconnexion,
   GesteCandidature.refuser => AppIcons.fermer,
@@ -43,6 +46,12 @@ AppIcon iconeDuGeste(GesteCandidature geste) => switch (geste) {
   GesteCandidature.rouvrir => AppIcons.annuler,
   GesteCandidature.definirResponsable => AppIcons.profil,
   GesteCandidature.validerPiece => AppIcons.pieceJointe,
+  GesteCandidature.dispenserEntretien => AppIcons.etoile,
+  GesteCandidature.restreindre => AppIcons.interdit,
+  GesteCandidature.demanderVerificationPiece => AppIcons.document,
+  GesteCandidature.demanderVerificationVersement => AppIcons.paiements,
+  GesteCandidature.leverRestriction => AppIcons.succes,
+  GesteCandidature.refaireEntretien => AppIcons.historique,
 };
 
 /// Les gestes que le menu de [ligne] propose, dans l'ordre du menu : la

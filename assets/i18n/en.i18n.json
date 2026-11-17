@@ -1,5 +1,6 @@
 {
   "commun": {
+    "nouveau": "New",
     "langue": {
       "systeme": "System",
       "francais": "Français",
@@ -1407,7 +1408,8 @@
       "coursNonExplication": "You register your family and follow their progress, with no classes for yourself. You can change your mind later.",
       "coursNonExemple": "you register your daughter and follow her sessions from your account.",
       "enseignantPostuler": "Do you want to teach at Rewayah?",
-      "deposerCandidature": "Submit my application"
+      "deposerCandidature": "Submit my application",
+      "postulerIci": "Want to teach with us? Apply here"
     },
     "recap": {
       "usage": "Account type",
@@ -2614,6 +2616,39 @@
     }
   },
   "recrutement": {
+    "majeur": {
+      "titre": "Before you start",
+      "explication": "Recruitment of teachers is reserved for people aged 18 and over.",
+      "coche": "I am 18 or older.",
+      "lienMoins18": "I am under 18",
+      "pourquoiBloque": "Tick the box to continue.",
+      "echec": "Your answer is not confirmed. Nothing was saved: try again in a moment.",
+      "dejaFaite": "Your answer is already saved. If it is wrong, write to the administration.",
+      "portail": {
+        "titre": "One thing to confirm",
+        "explication": "To continue your application, confirm that you are 18 or older."
+      },
+      "confirmer": {
+        "titre": "Are you under 18?",
+        "explication": "Recruitment is reserved for people aged 18 and over. Your application will be paused. Nothing is deleted.",
+        "action": "Yes, I am under 18",
+        "retour": "No, go back"
+      },
+      "moins18": {
+        "titre": "Thank you for being honest",
+        "texte": "Recruitment of teachers is reserved for people aged 18 and over. Your application is paused. Nothing is deleted."
+      }
+    },
+    "suivant": {
+      "position": "{rang} of {total}",
+      "precedent": "Previous file",
+      "suivant": "Next file",
+      "decisionEnregistree": "Decision saved. The next file opens in a moment.",
+      "rester": "Stay on this file",
+      "fin": "That was the last file in this queue.",
+      "versListe": "Back to the list",
+      "reglage": "Move to the next file after a decision"
+    },
     "dossier3": {
       "pastille": {"bon": "Good", "aVoir": "To check", "manque": "Missing"},
       "situation": {
@@ -2629,7 +2664,8 @@
           "profil_renseigne": "fill in the profile",
           "profil_unique": "check the profile is unique",
           "aucune_restriction": "lift the restriction",
-          "piece_validee": "validate the ID document"
+          "piece_validee": "validate the ID document",
+          "complement_clos": "close the request for additional information"
         },
         "vous": "Your turn: {geste}",
         "pause": "The file is paused.",
@@ -2659,12 +2695,17 @@
       "raison": {
         "droit": "You cannot decide on this file.",
         "fermee": "The file is closed.",
-        "pause": "The file is paused.",
-        "attente": "Waiting for the person's reply.",
-        "manque": "Missing: {liste}.",
-        "etape": "Not possible at this stage."
+        "pause": "Paused: resume the file to act.",
+        "attente": "Waiting for the candidate: they are completing their file.",
+        "manque": "Accept: still to settle: {liste}.",
+        "etape": "No decision to make at this stage.",
+        "versement": "Accept: payout is not yet possible.",
+        "versementAConfirmer": "Accept: the payout method is still to be confirmed.",
+        "pret": "The file is ready: you can decide.",
+        "entretienAPlanifier": "Kept for the interview: it still has to be scheduled.",
+        "entretienPlanifie": "Interview scheduled: the decision comes after the interview.",
+        "decisionAttendue": "Interview held: the decision is waiting for you."
       },
-      "legendeRaison": "{geste}: {raison}",
       "photoAgrandir": "View {deNom} photo full size"
     },
     "file": {
@@ -2673,7 +2714,38 @@
       "afficher": "Show",
       "replier": "Collapse",
       "trier": "Sort",
-      "pieceSansAttente": "No ID document to validate"
+      "pieceSansAttente": "No ID document to validate",
+      "filtres": "Filters",
+      "filtresPoses": {
+        "one": "Filters, {n} applied",
+        "other": "Filters, {n} applied"
+      },
+      "jaiCompris": "Got it",
+      "files": "Queues",
+      "pieceCourt": "ID to validate",
+      "fileMenu": "Queue",
+      "nouveaux": "New",
+      "pasNouveaux": "Not new",
+      "confirmeesIndisponibles": "Confirmed, unavailable",
+      "piece": "ID document",
+      "responsable": "Owner",
+      "responsableMoi": "Me",
+      "responsableAucun": "Nobody",
+      "ijaza": "Ijaza",
+      "langue": "Language of explanation",
+      "riwaya": "Riwaya",
+      "public": "Target audience",
+      "jours": "Available days",
+      "heureDe": "From",
+      "heureA": "Until",
+      "joursMin": "At least days",
+      "joursMinN": {
+        "one": "At least {n} day",
+        "other": "At least {n} days"
+      },
+      "salle": "Room",
+      "toutesLesFiles": "All",
+      "rechercher": "Search"
     },
     "nomLatin": {
       "titre": "Your name in Latin letters",
@@ -2876,14 +2948,16 @@
       "elementCodeConduite": "The code of conduct",
       "elementAccordPublication": "The publication agreement for your photo",
       "elementPaysVersement": "Payment country and account",
-      "paysVersementLien": "Change the payment country",
-      "paysVersementTitre": "Country of the payment account",
-      "paysVersementExplication": "The account can belong to a trusted relative, in a country the academy supports. Choose the country where that account is. The payment methods and details you already entered will have to be confirmed again.",
-      "paysVersementEnregistrer": "Save this country",
-      "paysVersementFait": "Payment country updated. The academy is reading your file again.",
-      "paysVersementEchec": "The country could not be changed. Nothing was modified: try again in a moment.",
-      "paysVersementInterdit": "The country can no longer be changed at this stage. Write to the academy from your file's conversation.",
-      "paysVersementHorsLigne": "You are offline. The country was not changed; try again once you are back online.",
+      "paysVersementLien": "Change my payment details",
+      "paysVersementTitre": "My payment details",
+      "paysVersementExplication": "You can change everything until the academy has validated your file: the bank account, the country and the phone payment services. Details you already entered will have to be confirmed again if the country changes.",
+      "paysVersementEnregistrer": "Save my payment details",
+      "paysVersementFait": "Payment details updated. The academy is reading your file again.",
+      "paysVersementEchec": "The payment details could not be changed. Nothing was modified: try again in a moment.",
+      "paysVersementInterdit": "The payment details can no longer be changed: your file is validated. Write to the academy from your file's conversation.",
+      "paysVersementHorsLigne": "You are offline. The payment details were not changed; try again once you are back online.",
+      "versementFerme": "Your file is validated: the payment details can no longer be changed here. To change them, write to the academy.",
+      "versementFermeLien": "Write to the academy",
       "pieceDemandee": "The academy management is asking you for a new photo of your document.",
       "photoDemandee": "The academy management is asking you for a new photo. Change it in the summary of your answers, before sending them."
     },
@@ -2894,7 +2968,7 @@
       "horaire": "{date}, from {debut} to {fin}",
       "choisir": "Choose a time.",
       "reserver": "Book this time",
-      "aucunCreneau": "No time is open for now. Come back later.",
+      "aucunCreneau": "Your application has been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open, and you will choose it here.",
       "erreurLecture": "The times could not be loaded. Try again.",
       "pris": "This time has just been taken. Choose another.",
       "dejaPlanifie": "Your interview is already set.",
@@ -2922,7 +2996,11 @@
         "reserveDirection": "An applicant has booked an interview you conduct.",
         "reserveDirectionQuand": "An applicant has booked an interview you conduct, on {quand}.",
         "rappelDirection": "You are conducting an interview that starts soon.",
-        "rappelDirectionQuand": "You are conducting an interview on {quand}."
+        "rappelDirectionQuand": "You are conducting an interview on {quand}.",
+        "annule": "The interview you were conducting will not take place.",
+        "annuleRefus": "The interview you were conducting will not take place: the application was declined.",
+        "annuleRetrait": "The interview you were conducting will not take place: the application was withdrawn.",
+        "annulePause": "The interview you were conducting will not take place: the application is on hold."
       }
     },
     "partage": {
@@ -3520,6 +3598,16 @@
           "explication": "The account that receives your pay can belong to a trusted relative, in a country the academy supports: if so, choose that relative's country. The academy checks, country by country, which payment method is possible. We carried over your country of residence: change it if needed.",
           "court": "Payment country"
         },
+        "paysVersementCompte": {
+          "titre": "In which country is this account?",
+          "explication": "The account can belong to a trusted relative. Choose the country where the bank is: the academy checks, country by country, that a bank transfer is possible. We used your country of residence: change it if needed.",
+          "court": "Account country"
+        },
+        "paysVersementMobile": {
+          "titre": "In which country can you receive money on your phone?",
+          "explication": "Choose the country of the phone payment service you use, or that a trusted relative uses. You will then choose the services of that country. We used your country of residence: change it if needed.",
+          "court": "Phone payment country"
+        },
         "compteBancaire": {
           "titre": "Do you have a bank account to receive your payment, in your name or a relative's?",
           "explication": "Pay is paid by bank transfer where the academy has confirmed it. Your details are only requested before the first payment.",
@@ -3987,6 +4075,74 @@
     }
   },
   "admin": {
+    "listeEnseignants": {
+      "titre": "Teachers",
+      "phase": "Phase",
+      "toutesPhases": "All phases",
+      "nouveaux": "New",
+      "phases": {
+        "candidat": "Candidate",
+        "accueil": "Onboarding",
+        "disponible": "Available",
+        "enPoste": "Teaching",
+        "absent": "Absent",
+        "pause": "Paused",
+        "suspendu": "Suspended",
+        "parti": "Left"
+      },
+      "attend": {
+        "candidat": "Waiting for: the candidate",
+        "direction": "Waiting for: management",
+        "enseignant": "Waiting for: the teacher"
+      },
+      "manque": {
+        "intro": "Missing: {liste}",
+        "compteInactif": "inactive account",
+        "pieceNonValidee": "ID to validate",
+        "languesAbsentes": "languages",
+        "genreInconnu": "gender",
+        "indisponible": "unavailable",
+        "photoAbsente": "photo",
+        "disponibilitesAbsentes": "availability"
+      },
+      "classes": {
+        "one": "{n} class",
+        "other": "{n} classes"
+      },
+      "heures": "{h} h per week",
+      "prochaineSeance": "Next session: {date}",
+      "remplacements": "Covers over 30 days: given {donnes}, received {recus}",
+      "colonnes": {
+        "nom": "Name",
+        "phase": "Phase",
+        "attend": "Waiting for",
+        "classes": "Classes",
+        "seance": "Next session",
+        "activite": "Last activity"
+      },
+      "total": {
+        "one": "{n} teacher",
+        "other": "{n} teachers"
+      },
+      "sansDossier": {
+        "one": "{n} teacher account has no application file: it is not in this list.",
+        "other": "{n} teacher accounts have no application file: they are not in this list."
+      },
+      "vide": "No teachers yet.",
+      "videDetail": "Teachers appear here as soon as a teacher application arrives.",
+      "aucunResultat": "No teacher matches.",
+      "lectureEchec": "The list of teachers could not be read",
+      "accesRefuse": "This list is reserved for management",
+      "genreInconnuTitre": "Your gender is not set",
+      "genreInconnu": "The list can only be read once your gender is set. Ask a founder to set it.",
+      "sansDonnees": "the list of teachers",
+      "resume": "{debut} to {fin} of {total}",
+      "attendCourt": {
+        "candidat": "The candidate",
+        "direction": "Management",
+        "enseignant": "The teacher"
+      }
+    },
     "candidatures": {
       "liste": {
         "titreGesteNonFait": "Action not done",
@@ -4035,7 +4191,9 @@
           "effetPause": "The applications concerned do not move forward until the pause is lifted.",
           "effetLever": "The applications concerned resume where they had stopped.",
           "effetRefuser": "The applications concerned are closed. You can reopen them one by one.",
+          "effetDispenser": "The selected applications move on to the decision, as after a successful interview. Interviews already scheduled are cancelled. No message is sent.",
           "motifCommun": "The same reason and the same message apply to all the applications concerned.",
+          "motifCommunDispense": "The same reason and the same category apply to all the selected applications.",
           "nombre": "Number of applications concerned",
           "nombreAide": "Enter {n} to confirm.",
           "nombreFaux": "That is not the right number. Enter {n}.",
@@ -4335,7 +4493,21 @@
           "misesAJour": "Last updated on {date}."
         },
         "pieceIllisible": "Unreadable format: this document (HEIC photo or PDF) does not display on a computer. Ask for a new document, as a JPEG or PNG photo.",
-        "demanderNouvellePiece": "Ask for a new ID document"
+        "demanderNouvellePiece": "Ask for a new ID document",
+        "pieceAgrandir": "Open the ID document full size",
+        "pieceImage": "Image",
+        "pieceFichier": "File",
+        "piecePdf": "PDF file",
+        "pieceOuvrirPdf": "Open the PDF of the ID document",
+        "pieceTitre": "ID document of {nom}",
+        "pieceValider": "Approve the document",
+        "pieceRefuser": "Reject the document",
+        "pieceRefusAnnuler": "Keep the document pending",
+        "pieceValidee": "Document approved.",
+        "pieceRefusee": "Document rejected.",
+        "pieceDejaDecidee": "This document has already been decided. Reload the file.",
+        "pieceNonConfirmee": "The result is not confirmed yet. Reload the file before trying again.",
+        "pieceHorsLigne": "Nothing was sent. Try again when the connection is back."
       },
       "controles": {
         "noms": {
@@ -4349,6 +4521,7 @@
           "profilUnique": "Unique profile",
           "aucuneRestriction": "No restriction or pause",
           "pieceValidee": "ID document validated",
+          "complementClos": "Additional information closed",
           "inconnu": "Server check"
         },
         "causes": {
@@ -4376,6 +4549,7 @@
           "pieceAbsente": "No identity document uploaded",
           "pieceAVerifier": "Document uploaded, to be checked",
           "pieceARedeposer": "Document refused, to be uploaded again",
+          "complementEnCours": "A requested additional information is still pending",
           "inconnue": "Cause not specified"
         }
       },
@@ -4413,28 +4587,46 @@
         "admettre": "Admit to the Verification and interview room",
         "confirmerMoyen": "Confirm the payout method",
         "ecarterMoyen": "Set this payout method aside",
+        "debloquerVersement": "Unlock the payout",
         "demanderComplement": "Ask for additional information",
         "cloreComplement": "Close the request for additional information",
+        "modifierComplement": "Change the request for additional information",
+        "annulerComplement": "Cancel the request for additional information",
         "mettreEnPause": "Pause",
         "leverPause": "Lift the pause",
         "refuser": "Decline the application",
         "retrait": "Record a requested withdrawal",
         "rouvrir": "Reopen the application",
-        "responsable": "Choose the manager"
+        "responsable": "Choose the manager",
+        "dispenserEntretien": "Waive the interview",
+        "restreindre": "Restrict",
+        "demanderVerificationPiece": "Ask for a check of the ID document",
+        "demanderVerificationVersement": "Ask for a check of the payout",
+        "leverRestriction": "Lift the restriction",
+        "refaireEntretien": "Redo the interview"
       },
       "consequences": {
         "accueillir": "Their teacher account is activated and their space opens. The person teaches only once assigned to a class.",
         "admettre": "The application moves to the Verification and interview room.",
         "confirmerMoyen": "This method lets Rewayah pay the remuneration in the person's country.",
         "ecarterMoyen": "This method is no longer kept. With no other possible method, the application waits for a method to become possible.",
+        "debloquerVersement": "The payout is confirmed by hand, even with no declared method. Your reason stays in the history. If the person changes their answers, the unlock is lifted.",
         "demanderComplement": "The application goes back to \"to complete\". The person will read the list of chosen items.",
         "cloreComplement": "The requested additional information is closed. The application stays in its room.",
+        "modifierComplement": "The person receives a new request that replaces the previous one.",
+        "annulerComplement": "The request is cancelled. The application goes back to review. The person is not notified.",
         "mettreEnPause": "The application does not move forward until the pause is lifted.",
         "leverPause": "The application resumes where it had stopped.",
         "refuser": "The application is closed. You can reopen it.",
         "retrait": "The application is closed at the person's request. You can reopen it.",
         "rouvrir": "The application returns to its original stage, if the server's checks allow it.",
-        "responsable": "The manager follows this application."
+        "responsable": "The manager follows this application.",
+        "dispenserEntretien": "The application moves on to the decision, as after a successful interview. An interview already scheduled is cancelled. No message is sent to the person.",
+        "restreindre": "The application is restricted: it is no longer offered for assignment. The person is not notified.",
+        "demanderVerificationPiece": "The application is restricted (document) until a validated document lifts it. The person is not notified.",
+        "demanderVerificationVersement": "The application is restricted (payout) until a compatible payout method lifts it. The person is not notified.",
+        "leverRestriction": "The restriction is lifted if its cause is settled: a validated document, or a compatible payout.",
+        "refaireEntretien": "The application goes back to the interview to schedule. The earlier interview or waiver no longer counts, nothing is erased. No message is sent to the person."
       },
       "feuille": {
         "motif": "Internal reason",
@@ -4446,6 +4638,14 @@
         "modeleManquant": "Choose the message the person will read.",
         "enCours": "Sending to the server",
         "actualiser": "Refresh the application"
+      },
+      "dispense": {
+        "categorie": "Who are you waiving?",
+        "fondateur": "A founder",
+        "fondateurAide": "For a founder of the academy, whose interview is not needed.",
+        "autre": "Someone else",
+        "autreAide": "For anyone else: the written reason says why.",
+        "categorieManquante": "Choose who you are waiving."
       },
       "complement": {
         "elements": "What is missing",
@@ -4523,19 +4723,29 @@
         "titre": "Action refused",
         "nonConfirmeTitre": "Action not confirmed"
       },
+      "ecrireApres": "Write to the person",
       "retours": {
         "accueillir": "The person is welcomed into the team.",
         "admettre": "The application is in the Verification and interview room.",
         "confirmerMoyen": "The payout method is confirmed.",
         "ecarterMoyen": "The payout method is set aside.",
+        "debloquerVersement": "The payout is unlocked.",
         "demanderComplement": "Additional information is requested.",
         "cloreComplement": "The additional information request is closed.",
+        "modifierComplement": "The additional information request is changed.",
+        "annulerComplement": "The additional information request is cancelled.",
         "mettreEnPause": "The application is paused.",
         "leverPause": "The pause is lifted.",
         "refuser": "The application is declined.",
         "retrait": "The withdrawal is recorded.",
         "rouvrir": "The application is reopened.",
         "responsable": "The manager is recorded.",
+        "dispenserEntretien": "Interview waived. The decision is waiting for you.",
+        "restreindre": "The application is restricted.",
+        "demanderVerificationPiece": "Document check requested: the application is restricted.",
+        "demanderVerificationVersement": "Payout check requested: the application is restricted.",
+        "leverRestriction": "The restriction is lifted.",
+        "refaireEntretien": "Interview to redo. The application is waiting for a new interview.",
         "rejoue": "This action had already been done: nothing was written a second time."
       },
       "genres": {"male": "Man", "female": "Woman"},
@@ -4599,6 +4809,7 @@
         "entree": "{nom} entered at {heure}",
         "sortie": "{nom} left at {heure}",
         "autreIssue": "Other outcome (cancelled, absence)",
+        "deplacer": "Move the interview",
         "resultat": {"titre": "Interview result", "concluant": "Conclusive", "nonConcluant": "Not conclusive", "aRefaire": "To redo", "texteConcluant": "Conclusive interview.", "texteNonConcluant": "Interview not conclusive.", "motifARefaire": "Interview to redo.", "retourConcluant": "Conclusive interview. You can welcome them into the team.", "retourNonConcluant": "Interview not conclusive. You can choose not to welcome them.", "retourARefaire": "Interview to redo. The person chooses a new time.", "refusNonParticipant": "Only a person who led the interview can give its result. Ask them to do it from this file.", "refusPasCommence": "The interview has not started yet. Come back at the start time.", "refusDejaConsigne": "The result is already recorded. Reload the file.", "refusAutre": "The result is not confirmed. Try again in a moment."},
         "consigner": "Record the outcome",
         "dernier": "Last interview: {date}. {issue}.",
@@ -4650,7 +4861,9 @@
           "retirerConsequence": "{nom} will no longer take part in this interview.",
           "consignerConsequence": "The outcome is written in the application's history and no longer changes.",
           "issueManquante": "Choose the outcome.",
-          "envoyerConsigner": "Record"
+          "envoyerConsigner": "Record",
+          "deplacerConsequence": "The person and the participants receive the new time of the interview. The participants stay the same. The old time is no longer used.",
+          "envoyerDeplacer": "Move"
         },
         "refus": {
           "fondateurs": "At least {exiges} founders are needed among the participants. Founders chosen: {presents}.",
@@ -4662,6 +4875,8 @@
           "autreCote": "A person chosen is not on the side of this application.",
           "sansCompte": "The person does not have an account yet: the interview cannot be scheduled.",
           "dejaPlanifie": "An interview is already scheduled for this application.",
+          "commence": "This interview has already started: it can no longer be moved.",
+          "memeCreneau": "This is already the time of this interview. Choose another day or another time.",
           "consigne": "This interview is already recorded: it no longer changes.",
           "dernier": "The interview keeps at least one participant.",
           "absent": "This person no longer takes part in the interview.",
@@ -4676,8 +4891,188 @@
           "planifie": "Interview scheduled.",
           "ajoute": "{nom} takes part in the interview.",
           "retire": "{nom} no longer takes part in the interview.",
+          "deplace": "Interview moved.",
           "consigne": "Outcome recorded."
         }
+      }
+    },
+    "equipe": {
+      "titre": "Team",
+      "sousTitre": "The people you entrust with actions on applications, for a time.",
+      "inviter": "Invite a person",
+      "nouvelleMission": "New mission",
+      "accorder": "Grant a mission",
+      "porteurs": "People with a mission",
+      "missions": "Missions",
+      "plusActions": "More actions",
+      "deplierMissions": "Show the missions",
+      "replierMissions": "Hide the missions",
+      "invitations": "Pending invitations",
+      "videTitre": "Nobody has a mission yet.",
+      "videPhrase": "Invite a person or create a mission.",
+      "aucuneMission": "No mission yet.",
+      "aucuneInvitation": "No pending invitation.",
+      "sansFin": "no end date",
+      "jusquAu": "until {date}",
+      "depuisLe": "since {date}",
+      "indisponibleTitre": "The team is not available yet.",
+      "indisponiblePhrase": "The server does not return missions yet. Come back later.",
+      "menu": {
+        "detail": "View details",
+        "retirer": "Remove the mission",
+        "archiver": "Archive",
+        "revoquer": "Revoke",
+        "plus": "Actions for {nom}"
+      },
+      "mission": {
+        "porteurs(param=n)": {
+          "zero": "Nobody holds it",
+          "one": "Held by {n} person",
+          "other": "Held by {n} people"
+        },
+        "archivee": "Archived",
+        "gestes": "What it allows"
+      },
+      "invitation": {
+        "code": "Code: {code}",
+        "expire": "Expires on {date}",
+        "etat": {
+          "active": "Pending",
+          "utilisee": "Account created",
+          "expiree": "Expired",
+          "revoquee": "Revoked"
+        }
+      },
+      "perimetre": {
+        "tous": "all applications on their side",
+        "langues": "applications in {langues}",
+        "salles": "{salles}",
+        "dossiers(param=n)": {
+          "one": "{n} application entrusted",
+          "other": "{n} applications entrusted"
+        }
+      },
+      "cote": {
+        "male": "men",
+        "female": "women",
+        "ligne": "Side: {cote}"
+      },
+      "detail": {
+        "titre": "Mission details",
+        "mission": "Mission",
+        "personne": "Person",
+        "perimetre": "Where they act",
+        "periode": "Period",
+        "gestes": "Actions",
+        "retiree": "Removed: {motif}",
+        "sansNom": "A team member"
+      },
+      "feuille": {
+        "motif": "Reason",
+        "motifAide": "It is kept in the log; the person does not read it.",
+        "motifManquant": "Write a reason.",
+        "annuler": "Cancel",
+        "mission": {
+          "titre": "New mission",
+          "nom": "Mission name",
+          "nomAide": "80 characters at most.",
+          "nomManquant": "Give the mission a name.",
+          "nomTropLong": "80 characters at most.",
+          "gestes": "What the person can do",
+          "gestesAide": "Tick at least one action. They can do nothing else.",
+          "gestesManquants": "Tick at least one action.",
+          "gestesIndisponibles": "The server does not return the list of actions. Reload the page.",
+          "creer": "Create the mission",
+          "creee": "Mission created."
+        },
+        "accorder": {
+          "titre": "Grant a mission",
+          "personne": "The person",
+          "personneManquante": "Choose a person.",
+          "mission": "The mission",
+          "missionManquante": "Choose a mission.",
+          "aucunePersonne": "No one can receive a mission yet. Invite someone.",
+          "aucuneMission": "Create a mission first.",
+          "perimetre": "Where they can act",
+          "langues": "Application languages",
+          "languesAide": "With no choice, all languages.",
+          "salles": "Rooms",
+          "sallesAide": "With no choice, all rooms.",
+          "debut": "Start",
+          "debutAide": "Now, if you do not choose a day.",
+          "fin": "End (optional)",
+          "finAide": "With no end, the mission lasts until it is removed.",
+          "resume": "{nom} will be able to {gestes}, on {perimetre}, {duree}.",
+          "resumeVide": "Choose a person and a mission: a sentence will say what they will be able to do.",
+          "accorder": "Grant the mission",
+          "accordee": "Mission granted."
+        },
+        "retirer": {
+          "titre": "Remove the mission",
+          "question": "Remove the mission \"{mission}\" from {nom}?",
+          "consequence": "{deNom}'s account is not changed: only this mission is removed. Their access to applications stops immediately.",
+          "retirer": "Remove the mission",
+          "retiree": "Mission removed. {deNom}'s account has not changed."
+        },
+        "archiver": {
+          "titre": "Archive the mission",
+          "question": "Archive the mission \"{mission}\"?",
+          "consequence": "It can no longer be granted. People who hold it keep it until it is removed.",
+          "archiver": "Archive",
+          "archivee": "Mission archived."
+        },
+        "inviter": {
+          "titre": "Invite a person",
+          "consequence": "The person receives a code to create their associate account. They see nothing until a mission is granted.",
+          "courriel": "E-mail address",
+          "courrielManquant": "Enter the e-mail address.",
+          "nom": "Name (optional)",
+          "envoyer": "Create the invitation",
+          "creee": "Invitation created. Code to pass on: {code}.",
+          "dejaInvite": "An invitation is already pending for this address. Code: {code}.",
+          "emailInvalide": "This e-mail address is not readable.",
+          "compteExistant": "An account already exists with this address."
+        },
+        "revoquer": {
+          "titre": "Revoke the invitation",
+          "question": "Revoke the invitation for {courriel}?",
+          "consequence": "The code no longer works. The person can no longer create an account with it.",
+          "revoquer": "Revoke",
+          "revoquee": "Invitation revoked."
+        }
+      },
+      "refus": {
+        "personneIndisponible": "This account cannot receive a mission: it is not active, or its role is not allowed.",
+        "genreInconnu": "This person's gender is not known: their mission is held on their side. Complete their account first.",
+        "attributionActive": "This person already holds this mission. Remove it first.",
+        "missionIndisponible": "This mission no longer exists or is archived.",
+        "parametresInvalides": "These choices are not allowed: check the name, the dates and the limits.",
+        "cleDejaUtilisee": "This request has already been used for something else. Start again.",
+        "gestesNonAdmis": "One of the actions is not allowed in a mission.",
+        "autre": "The server refused this action. Nothing was written.",
+        "permission": "You are not allowed to do this.",
+        "doubleVerification": "This action needs the second sign-in step.",
+        "nonConfirme": "The result is not confirmed. Reload the page to see what was saved.",
+        "echecTitre": "This action did not go through."
+      },
+      "gestes": {
+        "lire": "read applications",
+        "voir_contact": "see the e-mail address and phone",
+        "demander_complement": "ask for more information",
+        "admettre_verifications": "admit to verification",
+        "confirmer_moyen_paiement": "confirm the payout method",
+        "infirmer_moyen_paiement": "reject the payout method",
+        "debloquer_versement": "unblock the payout",
+        "definir_responsable": "choose the person in charge",
+        "consigner_prevenu": "note that a person was informed",
+        "rattacher": "attach an application to the person",
+        "planifier_entretien": "schedule the interview",
+        "consigner_entretien_tenu": "record a held interview",
+        "consigner_entretien_non_tenu": "record an interview that did not take place",
+        "valider_piece": "welcome into the team",
+        "rouvrir": "reopen an application",
+        "retirer": "note the withdrawal of an application",
+        "autre": "another action"
       }
     },
     "importInscriptions": {
@@ -6010,6 +6405,7 @@
       "roleEleve": "Student",
       "roleControleur": "Reviewer",
       "roleComptable": "Accountant",
+      "roleAssocie": "Associate",
       "roleAucun": "Outside a session",
       "evtKycLu": "Identity file viewed",
       "evtKycTranche": "Identity file decided",
@@ -6229,6 +6625,7 @@
       "etatSansDecision": "No decision",
       "roleAdmin": "Administration",
       "roleComptable": "Accountant",
+      "roleAssocie": "Associate",
       "roleControleur": "Reviewer",
       "roleEnseignant": "Teacher",
       "roleTuteur": "Guardian",
@@ -6398,6 +6795,7 @@
       "parcoursControleur": "Quality review",
       "parcoursAdmin": "Administration",
       "parcoursComptable": "Accountant",
+      "parcoursAssocie": "Associate",
       "parcoursInconnu": "Unknown journey",
       "etatActif": "Active",
       "etatRevoque": "Revoked",
@@ -6416,6 +6814,189 @@
       "usage(param=nombre)": {
         "one": "{nombre} time, the last {quand}",
         "other": "{nombre} times, the last {quand}"
+      }
+    },
+    "praxis": {
+      "titre": "Praxis",
+      "intro": "Praxis is the academy's secretary. It reads families' messages and answers only within the limits below. It stays off until you turn it on.",
+      "reglagesTitre": "Praxis settings",
+      "allume": "Praxis on",
+      "etatAllume": "On",
+      "etatEteint": "Off",
+      "allumeOui": "On: Praxis reads messages and writes within the limits below.",
+      "allumeNon": "Off: Praxis reads nothing and writes nothing.",
+      "allumer": "Turn Praxis on",
+      "eteindre": "Turn Praxis off",
+      "autonome": "Autonomous mode",
+      "autonomeOui": "Autonomous: Praxis can work alone, without you being in the conversation.",
+      "autonomeNon": "Directed: Praxis acts only in a conversation you lead.",
+      "autoriserAutonome": "Allow autonomous mode",
+      "reprendreDirige": "Go back to directed mode",
+      "plafond": "Messages per hour",
+      "plafondDetail(plural, param=nombre)": {
+        "one": "Praxis sends at most {nombre} message per hour.",
+        "other": "Praxis sends at most {nombre} messages per hour."
+      },
+      "plafondChamp": "Number of messages per hour (1 to 120)",
+      "plafondEnregistrer": "Set the limit",
+      "plafondInvalide": "Write a whole number between 1 and 120.",
+      "donnees": {
+        "titre": "Real data",
+        "fermees": "Closed: Praxis reads no real application file and no real conversation. Only the test conversations are open to it.",
+        "ouvertes": "Open: Praxis can read the conversations and application files its key allows it to see, on the sides of the person who issued it.",
+        "avertissement": "Open real data only after publishing the privacy policy that mentions the assistant. Until then, Praxis must read no real data. You can close it again at any time.",
+        "ouvrir": "Open real data",
+        "fermer": "Close real data"
+      },
+      "propositions": {
+        "titre": "Praxis proposals",
+        "pastille": "Praxis proposes",
+        "intro": "Praxis prepared this step. Nothing is done until you confirm: confirming runs the step as if you had done it yourself.",
+        "geste": {
+          "demanderComplement": "Ask for more information",
+          "planifierEntretien": "Schedule an interview",
+          "admettreVerifications": "Admit to the verification room"
+        },
+        "note": "What Praxis wrote",
+        "motif": "Reason given to the candidate",
+        "elements": "Items requested",
+        "quand": "Interview proposed on {date} at {heure}",
+        "duree(plural, param=n)": {
+          "one": "Duration: {n} minute",
+          "other": "Duration: {n} minutes"
+        },
+        "expire": "Expires on {date}",
+        "participants": "Participants",
+        "participantsAide": "Choose the people who will lead the interview: Praxis does not choose them.",
+        "participantsAucun": "No staff member to choose for this application.",
+        "participantsErreur": "The staff list could not be read. Try again in a moment.",
+        "erreur": "Praxis proposals could not be read. Try again in a moment.",
+        "horsLigne": "Praxis proposals are not loaded yet. Reload them.",
+        "motifEcart": "Reason (optional)",
+        "valider": "Confirm",
+        "ecarter": "Dismiss",
+        "fait": "Done: {geste}.",
+        "ecartee": "Proposal dismissed.",
+        "perimee": "The application has changed since this proposal: it can no longer be confirmed. Dismiss it.",
+        "close": "This proposal is no longer open: it was handled or it expired.",
+        "generique": "The proposal could not be handled. Nothing changed: try again."
+      },
+      "essaiTitre": "Test conversations",
+      "essaiVide": "Test mode off: Praxis can read every academy conversation it is allowed to read.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Test mode: Praxis sees only {nombre} conversation and publishes no announcement.",
+        "other": "Test mode: Praxis sees only {nombre} conversations and publishes no announcement."
+      },
+      "essaiChamp": "Choose the test conversations",
+      "essaiAide": "Tick at most ten conversations among your Messages. If you have none, first create a test conversation with a test account. While nothing is ticked and saved, there is no test.",
+      "essaiEnregistrer": "Save the test conversations",
+      "essaiFin": "End the test",
+      "essaiChoisies(plural, param=nombre)": {
+        "one": "{nombre} conversation ticked.",
+        "other": "{nombre} conversations ticked."
+      },
+      "essaiTrop(plural, param=nombre)": {
+        "one": "Ten conversations at most: untick one to choose another.",
+        "other": "Ten conversations at most: untick one to choose another."
+      },
+      "essaiListeErreur": "Your conversation list could not be read. Try again in a moment.",
+      "essaiAucune": "No conversation to choose. First create a test conversation with a test account, then come back here.",
+      "essaiAffinez": "Only the first {nombre} conversations are shown: narrow them with the search.",
+      "reglageFait": "Setting applied.",
+      "erreurReglage": "Setting not confirmed. Check the state above before trying again.",
+      "doubleVerification": "This setting needs two-step verification. Turn it on in Account, then Security, and try again.",
+      "pourra": "Will be able to",
+      "pourraDetail": "Read the academy's family messages, answer in a conversation that exists, publish an announcement for families, note a topic on the calendar.",
+      "nePourraPas": "Will not be able to",
+      "nePourraPasDetail": "Write to a child, open a conversation, send an email, touch money, accounts, rights or identity documents, or turn itself back on.",
+      "clesTitre": "Praxis keys",
+      "clesIntro": "A key lets a conversation or a routine talk to Praxis. It is shown only once, when you issue it.",
+      "cleLibelle": "What this key is for",
+      "cleLibelleAide": "Required. A key with no name is a key nobody dares to revoke.",
+      "cleLibelleExemple": "The director's conversation",
+      "cleUsage": "How it will be used",
+      "usageChat": "Conversation",
+      "usageChatDetail": "You talk to Praxis in a conversation. It acts when you ask it to.",
+      "usageRoutine": "Routine",
+      "usageRoutineDetail": "Praxis works alone at set times. It works only if autonomous mode is allowed.",
+      "cleDuree": "Until when",
+      "dureeJours(plural, param=nombre)": {
+        "one": "{nombre} day",
+        "other": "{nombre} days"
+      },
+      "dureePlafond": "Ninety days at most, and the database checks it itself.",
+      "emettre": "Issue the key",
+      "manqueLibelle": "The key's name is missing: write what it is for.",
+      "erreurEmission": "Issue not confirmed. Check the list of keys before trying again.",
+      "cleEmise": "Key issued",
+      "cleEmiseDetail": "Copy the key now. It will not appear again: neither this screen nor the database can retrieve it.",
+      "copierCle": "Copy the key",
+      "cleCopiee": "Key copied",
+      "adresse": "Connector address",
+      "adresseDetail": "Paste this address into Praxis's conversation, with the key.",
+      "copierAdresse": "Copy the address",
+      "adresseCopiee": "Address copied",
+      "termine": "I copied the key",
+      "colonneCle": "Key",
+      "colonneUsage": "Use",
+      "colonneEmise": "Issued on",
+      "colonneExpire": "Until",
+      "colonneUtilisee": "Last used",
+      "colonneEtat": "State",
+      "jamaisUtilisee": "Never used",
+      "etatActive": "Active",
+      "etatRevoquee": "Revoked",
+      "etatExpiree": "Expired",
+      "revoquer": "Revoke",
+      "revoquerTitre": "Revoke this key?",
+      "revoquerDetail": "Praxis will no longer be able to use it, right away. A revoked key cannot be restored.",
+      "revoquerMotif": "Why",
+      "revoquerMotifAide": "Required. A few words, kept in the log.",
+      "manqueMotif": "The reason is missing: write why.",
+      "revoquerConfirmer": "Revoke the key",
+      "revoquee": "Key revoked.",
+      "erreurRevocation": "Revocation not confirmed. Check the list of keys before trying again.",
+      "cleVide": "No key",
+      "cleVideDetail": "Issue a key to talk to Praxis.",
+      "erreur": "Praxis's settings could not be read. Try again in a moment.",
+      "horsLigne": "Praxis's settings are not loaded yet. Reload them.",
+      "journalTitre": "What Praxis sent",
+      "journalIntro": "The messages and announcements Praxis wrote itself, most recent first. Never a family's text.",
+      "journalVide": "Praxis has not sent anything yet",
+      "journalVideDetail": "Its sends, and its refusals, will appear here.",
+      "journalErreur": "Praxis's log could not be read. Try again in a moment.",
+      "voirSuite": "See older sends",
+      "colonneQuand": "When",
+      "colonneQuoi": "What",
+      "colonneResultat": "Result",
+      "colonneExtrait": "Start of the text",
+      "quoiMessage": "Message",
+      "quoiAnnonce": "Announcement",
+      "envoye": "Sent",
+      "refuse": "Refused",
+      "refuseCause": "Refused: {cause}",
+      "sansTexte": "Nothing was written.",
+      "cause": {
+        "essai": "test mode, no announcement",
+        "horsEssai": "conversation outside the test",
+        "plafondFil": "too many messages in a row without a reply",
+        "plafond": "hourly limit reached",
+        "plafondAnnonces": "two announcements already published today",
+        "eteint": "Praxis was off",
+        "mineur": "a child is in this conversation",
+        "reprisParEquipe": "the direction took the conversation over",
+        "horsAcademie": "conversation outside the academy",
+        "typeFerme": "conversation type closed to Praxis",
+        "cote": "conversation of the other side",
+        "longueur": "text too long",
+        "parametre": "incomplete request",
+        "filInconnu": "conversation not found",
+        "filFerme": "conversation closed",
+        "publicRefuse": "audience refused",
+        "cleRefusee": "key refused",
+        "autonomeRequis": "autonomous mode required",
+        "refusee": "refused by the messaging",
+        "autre": "unknown cause"
       }
     },
     "notifications": {
@@ -8315,6 +8896,7 @@
     "roles": {
       "admin": "Administrator",
       "accountant": "Accountant",
+      "associe": "Associate",
       "controller": "Reviewer",
       "teacher": "Teacher",
       "guardian": "Guardian",
@@ -8323,6 +8905,7 @@
     "roleDetail": {
       "admin": "Manages files, assignment and the academy's log",
       "accountant": "Manages payments and invoices",
+      "associe": "Follows the applications the administration entrusts to them",
       "controller": "Observes sessions for teaching quality",
       "teacher": "Gives classes and follows their slots",
       "guardian": "Follows the household and its children",
@@ -8609,7 +9192,7 @@
       "annonceDirection": "Academy announcement",
       "annonceDirectionTitre": "Announcement: {titre}",
       "bienvenueEquipe": "Welcome to the team. You still need to set up your space.",
-      "retenuEntretien": "You have been selected for an interview. Let's get to know each other: choose your time in the app.",
+      "retenuEntretien": "You have been selected for an interview. You have nothing to do for now: the academy will let you know as soon as a time is open.",
       "pauseRepondueAcceptee": "{dePrenom}'s one-month pause is accepted for {mois}. Their deadline moves back by the same amount. Their place is kept.",
       "pauseRepondueAccepteeAdulte": "Your one-month pause is accepted for {mois}. Your deadline moves back by the same amount. Your place is kept.",
       "pauseRepondueRefusee": "{dePrenom}'s one-month pause for {mois} is not accepted. The reason is in the app.",
@@ -12087,6 +12670,7 @@
         "ecrireA": "Write to {nom}",
         "conversationAvec": "Conversation with {nom}",
         "replier": "Fold the conversation",
+        "fermer": "Close the conversation",
         "ouvrirDansMessages": "Open in Messages",
         "voirTout": "See all conversations",
         "toutes": "All your conversations",
@@ -12112,11 +12696,14 @@
       "filtres": {
         "tous": "All",
         "nonLus": "Unread",
-        "aucunNonLu": "No unread conversation."
+        "aucunNonLu": "No unread conversation.",
+        "nouveaux": "New",
+        "aucunNouveau": "No new conversation."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",
         "sansApercu": "No message yet",
+        "sansMessage": "No message",
         "dateCourte": "{mois} {numero}"
       },
       "noms": {
@@ -12177,6 +12764,10 @@
         "aimeParVous": "Liked by you",
         "aimes": "Likes: {n}",
         "coeurEchec": "Your like is not confirmed. Try again in a moment.",
+        "photoApercu": "Photo",
+        "nonConfirmeToucher": "Not confirmed · Tap to try again",
+        "supprimerEchec": "Delete",
+        "actionsEchec": "Actions for the unconfirmed message",
         "refus": {
           "demandeInvalide": "This image is not confirmed: its size or format is not what was expected. Choose another photo.",
           "typeRefuse": "This file type is not accepted. Choose a JPEG, PNG or WebP photo.",
@@ -12191,7 +12782,7 @@
           "stockageIndisponible": "Image storage is not answering right now: it is not your device. Try again in a few minutes.",
           "confirmationIndisponible": "Image sending is not yet properly set up on the server: the team must fix it. Your text was sent.",
           "depotImpossible": "The image is not confirmed: this is a server fault, not yours. Try again in a moment.",
-          "envoiStockage": "Storage refused the image (expired address or interrupted upload). Try again.",
+          "envoiStockage": "The image could not be sent. Try again later.",
           "reseau": "The image may not have reached Rewayah. Try again in a moment.",
           "imageTropGrosse": "This photo is over 15 MB, or stays too heavy after shrinking. Choose a lighter one.",
           "imageIllisible": "This photo cannot be read. Choose another photo."

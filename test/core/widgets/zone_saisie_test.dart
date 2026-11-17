@@ -308,9 +308,11 @@ void main() {
         expect(tester.takeException(), isNull);
         expect(find.byType(ActionPrincipale), findsNothing);
         expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
+        // SUPERPOS-1 modifiee (directeur, 16/11/2026) : le bouton reste absent
+        // (jamais grise) mais plus aucune phrase d'aide ne l'explique.
         expect(
           find.text('Écrivez un message pour pouvoir l envoyer.'),
-          findsOneWidget,
+          findsNothing,
         );
       });
 

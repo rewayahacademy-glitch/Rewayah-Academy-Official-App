@@ -334,9 +334,15 @@ begin
    where profile_id in ('a1f00000-0000-4000-8000-000000000005', 'a1f00000-0000-4000-8000-000000000006');
   get diagnostics n = row_count;
   if n <> 0 then raise exception 'L1-V C5: enfant change camera_policy (%)', n; end if;
-  update public.wallets set currency = 'USD';
-  get diagnostics n = row_count;
-  if n <> 0 then raise exception 'L1-V C5: enfant modifie wallets (%)', n; end if;
+  -- DETTE-COMPTABLE-2 (migration 20261129830000) : l'API n'a plus aucun droit d'ecriture sur wallets ;
+  -- un refus de droit (42501) vaut, comme avant 0 ligne modifiee, « l'enfant ne modifie rien ».
+  begin
+    update public.wallets set currency = 'USD';
+    get diagnostics n = row_count;
+    if n <> 0 then raise exception 'L1-V C5: enfant modifie wallets (%)', n; end if;
+  exception when insufficient_privilege then
+    null;
+  end;
   begin
     insert into public.wallet_entries (wallet_id, amount_minor, currency, reference_type)
       values ('a1f00000-0000-4000-8000-0000000000a1', 50000, 'EUR', 'credit');

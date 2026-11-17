@@ -30,17 +30,63 @@ class BarreConversation extends StatelessWidget {
   /// Cree la barre du fil [fil]. [onRetour] : le retour vers la liste, ou
   /// `null` (ordinateur : la liste est deja a cote).
   const BarreConversation({
-    required this.fil,
+    required FilMetier this.fil,
     super.key,
     this.onRetour,
     this.replie = false,
-  });
+    this.libelleRetour,
+    this.iconeRetour,
+    this.onOuvrirMessages,
+    this.onFermer,
+  }) : titre = null,
+       ligne = null;
 
-  /// Le fil ouvert.
-  final FilMetier fil;
+  /// La barre d'une conversation qui n'est pas un fil de Messages (les
+  /// echanges du controleur sur une mission, le canal du Studio) : le meme
+  /// geste, la meme hauteur, le retour, un titre et une ligne fine dessous,
+  /// sans personne a montrer (CONVERSATIONS-PARTOUT, 16/11/2026).
+  const BarreConversation.libre({
+    required String this.titre,
+    super.key,
+    this.ligne,
+    this.onRetour,
+    this.replie = false,
+    this.libelleRetour,
+    this.iconeRetour,
+  }) : fil = null,
+       onOuvrirMessages = null,
+       onFermer = null;
+
+  /// Le fil ouvert, ou `null` pour la barre libre.
+  final FilMetier? fil;
+
+  /// Barre libre : le titre, et la ligne fine dessous.
+  final String? titre;
+  final String? ligne;
 
   /// Le retour vers la liste des conversations.
   final VoidCallback? onRetour;
+
+  /// CONVERSATIONS-PARTOUT : le mot du retour quand ce n'est pas « Retour a la
+  /// liste » (« Replier la conversation » dans un dossier) ; `null` : celui de
+  /// la liste.
+  final String? libelleRetour;
+
+  /// L'icone du retour ; `null` : la fleche de retour.
+  final AppIcon? iconeRetour;
+
+  /// « Ouvrir dans Messages », en bouton d'icone au bout de la barre, quand la
+  /// conversation vit dans une autre page (le dossier d'un candidat) ; `null` :
+  /// aucun.
+  final VoidCallback? onOuvrirMessages;
+
+  /// MESSAGERIE-COULEURS (pilote, 16/11/2026, regression de #540 : « la croix a
+  /// disparu ») : la conversation vit dans un VOLET de cote (ordinateur) ; sa
+  /// croix « Fermer la conversation » se pose au bord de FIN de la barre, apres
+  /// les autres boutons d'icone, en LTR comme en RTL. Elle remplace le retour
+  /// du bord de debut (qui reste la fleche de la page plein ecran). `null` :
+  /// aucune croix.
+  final VoidCallback? onFermer;
 
   /// Vrai quand la barre se replie : on remonte vers les anciens messages.
   final bool replie;
@@ -51,6 +97,11 @@ class BarreConversation extends StatelessWidget {
   /// La hauteur de la barre minimale, clavier ouvert : retour et nom.
   static const double hauteurMinimale = 48;
 
+  /// La cle du bouton « Ouvrir dans Messages », pour les tests.
+  static const ValueKey<String> cleOuvrirMessages = ValueKey<String>(
+    'barre-conversation-messages',
+  );
+
   /// La cle de la barre, pour les tests.
   static const ValueKey<String> cle = ValueKey<String>('barre-conversation');
 
@@ -59,23 +110,33 @@ class BarreConversation extends StatelessWidget {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final x = t.com.socle.composants.espace;
-    final String objets = libelleObjets(<ObjetLie>[
-      for (final ElementContexteFil e in fil.contexte) e.objet,
-    ]);
-    final String noms = titreFil(fil.interlocuteurs, objets);
+    final FilMetier? f = fil;
+    final List<Participant> gens = f?.interlocuteurs ?? const <Participant>[];
+    final String objets = f == null
+        ? ''
+        : libelleObjets(<ObjetLie>[
+            for (final ElementContexteFil e in f.contexte) e.objet,
+          ]);
+    final String noms = f == null ? titre! : titreFil(gens, objets);
     // Le nom seul en titre ; le role (fonction, ou objets du fil) sur UNE
     // ligne fine, coupee par une ellipse : la phrase entiere est lue (barre)
     // et ecrite dans le dossier (i).
-    final String nomCourt = fil.interlocuteurs.length == 1
-        ? fil.interlocuteurs.single.nomAffiche
+    final String nomCourt = f == null
+        ? titre!
+        : gens.length == 1
+        ? gens.single.nomAffiche
         : noms;
-    final String role = fil.interlocuteurs.length == 1
-        ? (fil.interlocuteurs.single.fonction ?? '')
-        : '';
-    final String ligneRole = role.isNotEmpty ? role : objets;
-    final String prenom = fil.interlocuteurs.isEmpty
+    final String role = gens.length == 1 ? (gens.single.fonction ?? '') : '';
+    final String ligneRole = f == null
+        ? (ligne ?? '')
+        : role.isNotEmpty
+        ? role
+        : objets;
+    final String prenom = f == null
+        ? titre!
+        : gens.isEmpty
         ? objets
-        : fil.interlocuteurs.first.nomAffiche;
+        : gens.first.nomAffiche;
     final VoidCallback? ouvrirContexte =
         EspaceTravailAdaptatif.ouvrirContexteDe(context);
     final VoidCallback? retour = onRetour;
@@ -102,9 +163,9 @@ class BarreConversation extends StatelessWidget {
               if (retour != null)
                 BoutonIcone(
                   key: EspaceTravailAdaptatif.cleRetourListe,
-                  icone: AppIcons.retour,
-                  libelle: x.retourListe,
-                  infobulle: x.retourListe,
+                  icone: iconeRetour ?? AppIcons.retour,
+                  libelle: libelleRetour ?? x.retourListe,
+                  infobulle: libelleRetour ?? x.retourListe,
                   onPress: retour,
                   forme: FormeBoutonIcone.nue,
                 )
@@ -120,7 +181,7 @@ class BarreConversation extends StatelessWidget {
                       roleWidget:
                           minimale ||
                               ligneRole.isEmpty ||
-                              fil.interlocuteurs.isEmpty
+                              (f != null && gens.isEmpty)
                           ? null
                           : Text(
                               ligneRole,
@@ -131,9 +192,7 @@ class BarreConversation extends StatelessWidget {
                               ),
                             ),
                       avatar: AvatarParticipant(
-                        participant: fil.interlocuteurs.isEmpty
-                            ? null
-                            : fil.interlocuteurs.first,
+                        participant: gens.isEmpty ? null : gens.first,
                         repli: prenom,
                         diametre: AppAvatar.moyen,
                       ),
@@ -145,6 +204,15 @@ class BarreConversation extends StatelessWidget {
                   ),
                 ),
               ),
+              if (onOuvrirMessages != null && !minimale)
+                BoutonIcone(
+                  key: cleOuvrirMessages,
+                  icone: AppIcons.lienExterne,
+                  libelle: t.com.messages.entree.ouvrirDansMessages,
+                  infobulle: t.com.messages.entree.ouvrirDansMessages,
+                  onPress: onOuvrirMessages!,
+                  forme: FormeBoutonIcone.nue,
+                ),
               if (ouvrirContexte != null && !minimale)
                 BoutonIcone(
                   key: EspaceTravailAdaptatif.cleOuvrirContexte,
@@ -156,6 +224,20 @@ class BarreConversation extends StatelessWidget {
                 )
               else
                 Ecart.hSm,
+              // La croix du volet : dernier controle de la barre, au bord de
+              // fin, toujours atteignable (la barre d'un volet ne se replie
+              // jamais). Meme cle que le retour de la page Messages.
+              if (onFermer != null) ...<Widget>[
+                BoutonIcone(
+                  key: EspaceTravailAdaptatif.cleRetourListe,
+                  icone: AppIcons.fermer,
+                  libelle: t.com.messages.entree.fermer,
+                  infobulle: t.com.messages.entree.fermer,
+                  onPress: onFermer!,
+                  forme: FormeBoutonIcone.nue,
+                ),
+                Ecart.hSm,
+              ],
             ],
           ),
         ),
@@ -185,15 +267,44 @@ class BarreConversation extends StatelessWidget {
 /// personne sur une page sans sortie.
 class BarreRetourConversation extends StatelessWidget {
   /// Cree la barre.
-  const BarreRetourConversation({super.key, this.onRetour});
+  const BarreRetourConversation({
+    super.key,
+    this.onRetour,
+    this.libelle,
+    this.onFermer,
+  });
+
+  /// La conversation vit dans un volet : une croix « Fermer la conversation »
+  /// au bord de fin, au lieu de la fleche de retour du bord de debut.
+  final VoidCallback? onFermer;
 
   /// Le retour vers la liste.
   final VoidCallback? onRetour;
+
+  /// Le mot du retour quand ce n'est pas « Retour a la liste ».
+  final String? libelle;
 
   @override
   Widget build(BuildContext context) {
     final x = t.com.socle.composants.espace;
     final VoidCallback? retour = onRetour;
+    final VoidCallback? fermer = onFermer;
+    if (fermer != null) {
+      return ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: BarreConversation.hauteur),
+        child: Align(
+          alignment: AlignmentDirectional.centerEnd,
+          child: BoutonIcone(
+            key: EspaceTravailAdaptatif.cleRetourListe,
+            icone: AppIcons.fermer,
+            libelle: t.com.messages.entree.fermer,
+            infobulle: t.com.messages.entree.fermer,
+            onPress: fermer,
+            forme: FormeBoutonIcone.nue,
+          ),
+        ),
+      );
+    }
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: BarreConversation.hauteur),
       child: Align(
@@ -203,8 +314,8 @@ class BarreRetourConversation extends StatelessWidget {
             : BoutonIcone(
                 key: EspaceTravailAdaptatif.cleRetourListe,
                 icone: AppIcons.retour,
-                libelle: x.retourListe,
-                infobulle: x.retourListe,
+                libelle: libelle ?? x.retourListe,
+                infobulle: libelle ?? x.retourListe,
                 onPress: retour,
                 forme: FormeBoutonIcone.nue,
               ),

@@ -3,7 +3,6 @@
 // depend). Depuis la VRAIE route de demonstration.
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart' show RenderParagraph;
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -11,11 +10,10 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
-import 'package:rewayah_academy/features/controleur/echanges_controleur_page.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../support/demo/controleur_demo.dart';
@@ -87,34 +85,22 @@ void main() {
       await _attendre(tester);
       expect(tester.takeException(), isNull);
 
-      // Titre compact : sous la taille proportionnelle (28 x 2), au-dessus
-      // d'un titre de section agrandi (22 x 2).
-      final double titre = tester
-          .renderObject<RenderParagraph>(
-            find.descendant(
-              of: find.byType(EntetePage),
-              matching: find.byWidgetPredicate(
-                (Widget w) =>
-                    w is RichText &&
-                    w.text
-                        .toPlainText()
-                        .replaceAll('\u2060', '')
-                        .startsWith('Classe Al-Badr'),
-              ),
-            ),
-          )
-          .textScaler
-          .scale(28);
-      expect(titre, lessThan(56));
-      expect(titre, greaterThan(44));
-
-      // Le contexte ne redit pas la Classe : elle n'est ecrite qu'au titre.
+      // CONVERSATIONS-PARTOUT : le titre est celui de la barre compacte de la
+      // conversation (une ligne, texte plafonne a 150 %), jamais un titre de
+      // page agrandi ; la Classe n'est ecrite qu'au titre, l'heure en ligne
+      // fine dessous.
+      final Finder barre = find.byKey(BarreConversation.cle);
+      expect(barre, findsOneWidget);
+      expect(
+        tester.getSize(barre).height,
+        lessThanOrEqualTo(BarreConversation.hauteur * 2.5),
+      );
       expect(
         find.descendant(
-          of: find.byKey(EchangesControleurPage.contexteCompactKey),
-          matching: find.textContaining('Al-Badr'),
+          of: barre,
+          matching: find.textContaining('17:00', findRichText: true),
         ),
-        findsNothing,
+        findsOneWidget,
       );
 
       // La zone visible : du haut de l'ecran a la barre du bas.

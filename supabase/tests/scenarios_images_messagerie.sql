@@ -282,9 +282,12 @@ DECLARE v jsonb; m jsonb;
 BEGIN
   v := public.com_lire_fil(current_setting('test.f1')::uuid);
   SELECT e INTO m FROM jsonb_array_elements(v -> 'messages') e WHERE e ->> 'id' = current_setting('test.m1');
-  PERFORM pg_temp.vrai(m ? 'image' AND m -> 'image' = 'null'::jsonb AND (m ->> 'coeurs')::int = 0
-    AND (m ->> 'aime_par_moi')::boolean = false,
-    'lecture du fil : image absente (en attente, non visible de l''autre tuteur), coeurs 0, aime_par_moi faux');
+  -- IMAGES-CORRECTIF : le message dont l'image n'est pas confirmee n'est rendu qu'a son auteur.
+  PERFORM pg_temp.vrai(m IS NULL
+    AND NOT EXISTS (SELECT 1 FROM jsonb_array_elements(v -> 'messages') e WHERE e ->> 'id' = current_setting('test.m1')),
+    'lecture du fil : le message dont l''image est en attente n''est pas rendu a l''autre tuteur');
+  PERFORM pg_temp.vrai((v ->> 'non_lus')::int = 1,
+    'lecture du fil : le message dont l''image est en attente ne compte pas dans les non lus');
   PERFORM pg_temp.vrai(public.message_images_a_signer(current_setting('test.f1')::uuid, NULL) = '[]'::jsonb,
     'liste des images : une image en attente n''est pas rendue a l''autre tuteur');
   PERFORM pg_temp.refus(format($$SELECT public.message_image_confirmer('%s', '%s', 'image/jpeg', 'image/webp', '%s')$$,
@@ -355,6 +358,69 @@ SELECT pg_temp.vrai((SELECT count(*) FROM public.com_message_images) = 0
 RESET ROLE;
 
 -- ------------------------------------------------------------
+-- 5 bis. IMAGES-CORRECTIF : confirmee_le, depot annule, liste des fils
+-- ------------------------------------------------------------
+SELECT pg_temp.qui('c0000000-0000-4000-8000-0000000000d1','guardian');
+SET LOCAL ROLE authenticated;
+DO $corr1$
+DECLARE v jsonb; m jsonb; v_id uuid; l jsonb;
+BEGIN
+  PERFORM pg_temp.vrai((SELECT confirmee_le IS NOT NULL FROM public.com_message_images
+                         WHERE id = current_setting('test.i1')::uuid),
+    'la confirmation pose confirmee_le');
+  v := public.com_lire_fil(current_setting('test.f1')::uuid);
+  SELECT e INTO m FROM jsonb_array_elements(v -> 'messages') e WHERE e ->> 'id' = current_setting('test.m1');
+  PERFORM pg_temp.vrai(m IS NOT NULL, 'l''auteur voit son message une fois l''image confirmee');
+  -- Un message dont le depot est annule : rendu a personne, pas meme a son auteur.
+  v := public.com_envoyer_message(current_setting('test.f1')::uuid, '[image]', 'c0000000-0000-4000-8000-000000000203');
+  PERFORM set_config('test.m3', v ->> 'id', true);
+  v := public.message_image_demander(current_setting('test.m3')::uuid, 'image/jpeg', 1000, 'image/webp', 100, 80, 60, NULL);
+  v_id := (v ->> 'image_id')::uuid;
+  v := public.com_lire_fil(current_setting('test.f1')::uuid);
+  SELECT e INTO m FROM jsonb_array_elements(v -> 'messages') e WHERE e ->> 'id' = current_setting('test.m3');
+  PERFORM pg_temp.vrai(m IS NOT NULL AND m -> 'image' ->> 'etat' = 'en_attente',
+    'l''auteur voit son message dont l''image est en attente');
+  l := public.com_lister_fils();
+  PERFORM pg_temp.vrai((SELECT e -> 'messages' -> -1 ->> 'id' FROM jsonb_array_elements(l) e
+                         WHERE e ->> 'id' = current_setting('test.f1')) = current_setting('test.m3'),
+    'liste des fils : l''auteur voit son message en attente comme dernier message');
+  PERFORM pg_temp.vrai(public.message_image_annuler(v_id), 'depot annule');
+  v := public.com_lire_fil(current_setting('test.f1')::uuid);
+  PERFORM pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(v -> 'messages') e WHERE e ->> 'id' = current_setting('test.m3')),
+    'depot annule (supprimee sans confirmee_le) : le message n''est rendu a personne, pas meme a son auteur');
+  l := public.com_lister_fils();
+  PERFORM pg_temp.vrai((SELECT e -> 'messages' -> -1 ->> 'id' FROM jsonb_array_elements(l) e
+                         WHERE e ->> 'id' = current_setting('test.f1')) = current_setting('test.m2'),
+    'liste des fils : le message annule n''est plus le dernier message');
+END $corr1$;
+RESET ROLE;
+
+-- Un message dont l'image est en attente n'est jamais le dernier message de la liste de l'autre tuteur.
+SELECT pg_temp.qui('c0000000-0000-4000-8000-0000000000d1','guardian');
+SET LOCAL ROLE authenticated;
+DO $corr2$
+DECLARE v jsonb;
+BEGIN
+  v := public.com_envoyer_message(current_setting('test.f1')::uuid, '[image]', 'c0000000-0000-4000-8000-000000000204');
+  PERFORM set_config('test.m4', v ->> 'id', true);
+  PERFORM public.message_image_demander(current_setting('test.m4')::uuid, 'image/jpeg', 1000, 'image/webp', 100, 80, 60, NULL);
+END $corr2$;
+RESET ROLE;
+SELECT pg_temp.qui('c0000000-0000-4000-8000-0000000000d2','guardian');
+SET LOCAL ROLE authenticated;
+DO $corr3$
+DECLARE l jsonb;
+BEGIN
+  l := public.com_lister_fils();
+  PERFORM pg_temp.vrai((SELECT e -> 'messages' -> -1 ->> 'id' FROM jsonb_array_elements(l) e
+                         WHERE e ->> 'id' = current_setting('test.f1')) = current_setting('test.m2')
+     AND (SELECT (e ->> 'non_lus')::int FROM jsonb_array_elements(l) e
+           WHERE e ->> 'id' = current_setting('test.f1')) = 2,
+    'liste des fils : l''autre tuteur ne voit ni dernier message ni non lu pour une image en attente');
+END $corr3$;
+RESET ROLE;
+
+-- ------------------------------------------------------------
 -- 6. Coeurs
 -- ------------------------------------------------------------
 SELECT pg_temp.qui('c0000000-0000-4000-8000-0000000000d1','guardian');
@@ -416,12 +482,12 @@ SET LOCAL ROLE authenticated;
 DO $limite$
 DECLARE r record; n integer := 0; v_msg text;
 BEGIN
-  -- L'image du message 1 compte deja : 19 de plus passent, la 20e (21e) est refusee.
-  FOR r IN SELECT x::uuid AS id FROM unnest((string_to_array(current_setting('test.lots'), ','))[1:19]) x LOOP
+  -- Trois depots comptent deja (message 1 et IMAGES-CORRECTIF m3, m4) : 17 de plus passent, la 20e (21e) est refusee.
+  FOR r IN SELECT x::uuid AS id FROM unnest((string_to_array(current_setting('test.lots'), ','))[1:17]) x LOOP
     PERFORM public.message_image_demander(r.id, 'image/png', 1000, 'image/png', 100, 100, 100, NULL);
     n := n + 1;
   END LOOP;
-  PERFORM pg_temp.vrai(n = 19, '20 images dans l''heure acceptees (19 de plus que la premiere)');
+  PERFORM pg_temp.vrai(n = 17, '20 images dans l''heure acceptees (17 de plus que les trois premieres)');
   BEGIN
     PERFORM public.message_image_demander((string_to_array(current_setting('test.lots'), ','))[25]::uuid,
       'image/png', 1000, 'image/png', 100, 100, 100, NULL);
@@ -447,6 +513,25 @@ SELECT pg_temp.vrai(public.message_image_annuler((SELECT i.id FROM public.com_me
     WHERE i.message_id = (string_to_array(current_setting('test.lots'), ','))[1]::uuid)),
   'depot annule : etat supprimee, un second appel est sans effet');
 RESET ROLE;
+
+-- ------------------------------------------------------------
+-- 7 bis. CONVERSATIONS-PARTOUT : rattrapage de confirmee_le (migration 20261129300000)
+-- ------------------------------------------------------------
+UPDATE public.com_message_images SET confirmee_le = NULL
+ WHERE id = current_setting('test.i1')::uuid;
+SELECT pg_temp.vrai((SELECT confirmee_le IS NULL FROM public.com_message_images
+                      WHERE id = current_setting('test.i1')::uuid),
+  'fixture : une image confirmee avant la migration n''a pas de date');
+-- L'instruction de la migration, mot pour mot.
+UPDATE public.com_message_images
+   SET confirmee_le = cree_le
+ WHERE etat = 'confirmee'
+   AND confirmee_le IS NULL;
+SELECT pg_temp.vrai((SELECT confirmee_le = cree_le FROM public.com_message_images
+                      WHERE id = current_setting('test.i1')::uuid)
+  AND NOT EXISTS (SELECT 1 FROM public.com_message_images
+                   WHERE etat = 'confirmee' AND confirmee_le IS NULL),
+  'rattrapage : toute image confirmee a une date (celle du depot), rejouable');
 
 -- ------------------------------------------------------------
 -- 8. Expiration a 90 jours : lue comme supprimee, puis purgee
@@ -507,8 +592,8 @@ RESET ROLE;
 
 DO $fin$
 BEGIN
-  IF current_setting('test.com_n')::int <> 59 THEN
-    RAISE EXCEPTION 'ROUGE : % controles executes, 59 attendus', current_setting('test.com_n');
+  IF current_setting('test.com_n')::int <> 70 THEN
+    RAISE EXCEPTION 'ROUGE : % controles executes, 70 attendus', current_setting('test.com_n');
   END IF;
   RAISE NOTICE 'IMAGES-MESSAGERIE : % controles verts', current_setting('test.com_n');
 END $fin$;

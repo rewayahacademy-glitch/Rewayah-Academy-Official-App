@@ -51,6 +51,44 @@ declare
     'affectation_candidat(uuid)',
     -- CAND-L2A2 (22/10) : admission en Salle de verification (transition 10), direction active de son cote (moteur, controles nommes).
     'admettre_salle_verification(uuid,integer,text)',
+    -- PX-1 (16/11) : les trois portes de la direction pour Praxis. Qui peut appeler : la direction seulement, garde positive
+    -- public.app_account_valid(), public.app_role() = 'admin' et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit :
+    -- emettre_cle une ligne de private.praxis_cles (l'empreinte sha256, jamais le secret) plus une ligne d'audit ;
+    -- revoquer_cle la revocation d'une cle (date, auteur, motif) plus une ligne d'audit ; regler les reglages de
+    -- private.praxis_reglages (actif, autonome, plafond par heure) plus une ligne d'audit. Ce qu'elles n'ecrivent
+    -- jamais : un compte, un role, un message, une annonce. Les outils de Praxis (praxis_*) ne sont executables que par
+    -- service_role : hors de cette liste.
+    'direction_praxis_emettre_cle(text,text,timestamp with time zone,uuid)',
+    'direction_praxis_regler(boolean,boolean,integer)',
+    -- PX-4 (17/11) : MODE ESSAI, la porte du directeur (administrateur valide, aal2) qui nomme les conversations d'essai
+    -- (dix au plus, existantes) dans private.praxis_reglages.essai_fils, plus une ligne d'audit (praxis_regle_essai). Tant que la
+    -- liste n'est pas vide, Praxis ne voit que ces fils et n'annonce rien. Elle n'ecrit ni message, ni annonce, ni compte.
+    'direction_praxis_regler_essai(uuid[])',
+    -- PX-2 (17/11) : trois portes de la direction (administrateur valide, aal2). regler_donnees_reelles ouvre ou ferme les donnees reelles
+    -- (faux a l'installation, ouvert par le directeur apres la publication de la politique) ; valider execute le geste PREPARE par Praxis
+    -- par la porte publique existante, sous l'identite de la direction, et marque la proposition validee ; ecarter la marque ecartee.
+    -- Chacune ecrit private.praxis_reglages ou private.praxis_propositions et une ligne d'audit ; aucune n'ecrit directement un dossier.
+    -- direction_praxis_propositions est STABLE : hors de cette liste.
+    'direction_praxis_ecarter(uuid,text,uuid)',
+    'direction_praxis_regler_donnees_reelles(boolean)',
+    -- PRAXIS-PLAFOND-GLOBAL (20261129870000) : le plafond d'appels par cle et par heure ; admin, aal2, une ligne d'audit.
+    'direction_praxis_regler_plafond(integer)',
+    'direction_praxis_valider(uuid,integer,text,uuid[])',
+    -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
+    -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
+    -- praxis_journal_lu : qui a lu, la limite et le curseur, jamais un texte) : c'est pourquoi elle est VOLATILE.
+    -- direction_praxis_etat est STABLE et ne laisse aucune trace : hors de cette liste.
+    'direction_praxis_journal(integer,bigint)',
+    'direction_praxis_revoquer_cle(uuid,text,uuid)',
+    -- BE-2a-1 (16/11) : les missions. Qui peut appeler : la direction seulement, garde positive public.app_role() = 'admin',
+    -- public.app_account_valid() et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit : une ligne de private.missions,
+    -- de private.mission_attributions ou de private.mission_journal, plus une ligne d'audit (log_sensitive_access).
+    -- Ce qu'elle n'ecrit jamais : le compte de la personne (role, statut, genre), les candidatures, les gestes.
+    -- lister_missions et lister_attributions n'ecrivent rien : elles sont STABLE, donc hors de cette liste.
+    'accorder_mission(uuid,uuid,jsonb,timestamp with time zone,timestamp with time zone,uuid)',
+    'archiver_mission(uuid,text,uuid)',
+    'creer_mission(text,text[],uuid)',
+    'retirer_mission(uuid,text,uuid)',
     'agent_pre_request()',
     'ajouter_eleve_groupe(uuid,uuid,text)',
     'ajouter_niveau_programme(uuid,text,text,text,integer,text)',
@@ -310,8 +348,25 @@ declare
     'lister_a_prevenir_candidats(boolean,integer)',
     'lister_formulaires_importes(jsonb,integer)',
     'lister_candidatures(jsonb,text,integer)',
+    -- LP-1 (16/11) : la liste des enseignants, meme garde et meme audit que lister_candidatures.
+    'lister_enseignants(jsonb,text,integer)',
+    -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
+    'dispenser_entretien(uuid,text,text,integer,text)',
+    -- BE-1j (17/11) : la direction deplace le creneau d'un entretien planifie (transition 47).
+    'deplacer_entretien(uuid,timestamp with time zone,integer,text,integer,text)',
+    -- COMPLEMENT-SALLE-EXAMEN (17/11) : la direction annule le complement demande en Salle d'examen (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; le dossier revient a en_examen).
+    'annuler_complement_candidat(uuid,text,integer,text)',
+    -- APRES-CONFIRMEE (17/11) : la direction restreint une candidature confirmee (ou demande une verification de la piece ou du versement) et leve la restriction (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; levee sous controles revérifiés).
+    'restreindre_candidat(uuid,text,text,integer,text)',
+    'lever_restriction_candidat(uuid,text,integer,text)',
+    -- BE-1h (16/11) : la direction ramene une candidature de la decision a l'entretien (transition 46).
+    'refaire_entretien(uuid,text,integer,text)',
     -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
     'voisins_candidature(text,jsonb,text)',
+    -- MAJEUR (16/11) : le candidat atteste avoir 18 ans ou plus ; il n'ecrit que sa propre candidature (une declaration, une pause si moins de 18 ans) ; garde positive : titulaire d'une candidature d'enseignant en cours, compte valide.
+    'attester_majorite(boolean)',
+    -- MAJEUR (16/11) : la direction remet a zero la declaration « 18 ans ou plus » d'une candidature (motif obligatoire, version attendue, pause de l'age levee) ; garde positive : direction active seule ; tracee (engagement, reprise, journal).
+    'rouvrir_declaration_majorite_candidat(uuid,integer,text)',
     'lister_rapprochements_candidats(integer)',
     'indicateurs_admin()',
     -- CAND-L3 (23/10) : inscription publique ou sur invitation (compte, accord, plafond horaire ; la candidature suit la confirmation du courriel).
@@ -333,6 +388,11 @@ declare
     'infirmer_moyen_paiement_candidat(uuid,text,text,text,integer,text)',
     'inviter_conjoint(text,uuid)',
     'inviter_comptable(text)',
+    -- BE-2a-2 (17/11) : l'invitation d'un associe (direction active en aal2, cle d'idempotence) et sa revocation
+    -- (direction active, motif ecrit) ; l'inscription est une session sans profil, code lie a l'adresse, usage unique.
+    'inviter_associe(text,text,uuid)',
+    'revoquer_invitation_associe(uuid,text,uuid)',
+    'inscrire_associe_invite(text,text,text,gender)',
     'inviter_enseignant(text)',
     -- CAND-L2A1 (22/10) : journal borne par genre (C15) ; ecrit la trace de l'exception super-admin.
     'journal_audit_filtres()',
@@ -426,6 +486,10 @@ declare
     'retrait_candidat(integer,text)',
     -- PAYS-VERSEMENT (20261127000300, 15/11/2026) : le candidat change le pays de son compte de versement apres l'envoi. Garde positive : titulaire d'une candidature en cours (private.candidature_du_titulaire, compte non supprime, statut pending_kyc, provisional_active ou active, acces non expire), sinon 42501 ; etat de la candidature controle ; pays dans la liste ISO. Ecrit UN document de reponses du titulaire, remet ses coordonnees a valider, une ligne de journal ; jamais d'effacement ni de refus. Meme garde que retrait_candidat.
     'modifier_mon_pays_versement(text)',
+    -- VERSEMENT-QUESTIONS (16/11) : le candidat modifie tout le bloc de versement (compte, pays, services) tant que le dossier n'est pas valide ; titulaire d'une candidature en cours seul.
+    'modifier_mon_versement(boolean,text,text[])',
+    -- VERSEMENT-QUESTIONS (16/11) : la direction debloque le versement (motif obligatoire, moteur des gestes) ; direction active et de genre connu.
+    'debloquer_versement_candidat(uuid,integer,text,text)',
     -- CAND-L2A2 (22/10) : reouverture d'une candidature refusee ou retiree (transition 19), direction active de son cote (moteur, controles nommes).
     'rouvrir_candidat(uuid,text,integer,text)',
     -- CAND-AUTRES (22/10) : retrait des reponses et de l'accord, meme titulaire (a toute issue de la candidature ; version attendue, cle d'idempotence).
@@ -524,6 +588,9 @@ declare
     -- NOUVEAUTES (07/11) : la personne a ouvert une fonctionnalite signalee
     -- (garde positive app_account_valid() et role de la ligne ; idempotent).
     'marquer_nouveaute_vue(text)',
+    -- VU-UNE-FOIS (16/11) : la personne a vu une aide ou une explication, une fois pour toute la vie
+    -- du compte (garde positive app_account_valid(), cle au format borne, 200 cles au plus ; idempotent).
+    'marquer_vu(text)',
     -- PHOTO-FIGEE (07/11) : la direction lit la photo figee d'un dossier de
     -- candidature (garde positive app_role() = 'admin' et app_account_valid(),
     -- genre du lecteur ; journalise l'exception super admin, d'ou VOLATILE).

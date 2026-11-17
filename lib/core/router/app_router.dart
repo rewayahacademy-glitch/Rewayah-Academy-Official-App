@@ -45,6 +45,9 @@ import '../../features/admin_demandes/demandes_page.dart'
     deferred as d_demandes_page;
 import '../../features/admin_dossiers/dossiers_page.dart'
     deferred as d_dossiers_page;
+import '../../features/admin_enseignants/enseignants_page.dart'
+    deferred as d_enseignants_page;
+import '../../features/admin_equipe/equipe_page.dart' deferred as d_equipe_page;
 import '../../features/admin_finance/finance_page.dart'
     deferred as d_finance_page;
 import '../../features/admin_groupes/groupes_page.dart'
@@ -279,6 +282,7 @@ import '../../features/ville/ville_page.dart';
 import '../accessibilite/mode_accessibilite.dart';
 import '../admin/admin_domaine.dart';
 import '../admin/port_classes_admin.dart' as classes_admin show ClasseListee;
+import '../admin/sous_liens_coquille.dart';
 import '../admission/port_admissions_direction.dart'
     show DemandeAdmissionAOuvrir;
 import '../alertes/port_alertes.dart';
@@ -342,6 +346,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_creneaux_entretien_page', d_creneaux_entretien_page.loadLibrary),
   ('d_calendrier_page', d_calendrier_page.loadLibrary),
   ('d_candidatures_page', d_candidatures_page.loadLibrary),
+  ('d_enseignants_page', d_enseignants_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
   ('d_comptes_page', d_comptes_page.loadLibrary),
@@ -354,6 +359,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_diagnostics_page', d_diagnostics_page.loadLibrary),
   ('d_dossiers_page', d_dossiers_page.loadLibrary),
   ('d_encaissements_page', d_encaissements_page.loadLibrary),
+  ('d_equipe_page', d_equipe_page.loadLibrary),
   ('d_evaluations_page', d_evaluations_page.loadLibrary),
   ('d_fiche_page', d_fiche_page.loadLibrary),
   ('d_fil_profil_paiement_page', d_fil_profil_paiement_page.loadLibrary),
@@ -2274,6 +2280,31 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
               requete: etat.uri.queryParameters,
               ouvrirCandidature: (LigneCandidature ligne) =>
                   GoRouter.of(contexte).push<void>(
+                    // BE-SUIVANT : le dossier recoit le filtre et le tri de la
+                    // liste, pour passer au suivant dans la meme file.
+                    Routes.adminPersonnesCandidaturePour(
+                      ligne.reference,
+                      fileDeLaListe: etat.uri.queryParameters,
+                    ),
+                    extra: ligne.id,
+                  ),
+            ),
+          ),
+        ),
+      ),
+      // LP-2 : la liste des enseignants, pour toute leur vie. Meme dossier que
+      // Candidatures (le dossier de candidature de la personne) ; chemin
+      // statique, AVANT ADM-21 (R5).
+      GoRouteSure(
+        path: Routes.adminPersonnesEnseignants,
+        builder: (BuildContext contexte, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_enseignants_page',
+            charger: d_enseignants_page.loadLibrary,
+            construire: () => d_enseignants_page.EnseignantsPage(
+              ouvrirCandidature: (LigneCandidature ligne) =>
+                  GoRouter.of(contexte).push<void>(
                     Routes.adminPersonnesCandidaturePour(ligne.reference),
                     extra: ligne.id,
                   ),
@@ -2311,7 +2342,21 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             construire: () => d_candidature_page.CandidatureDirectionPage(
               reference: etat.pathParameters['reference'] ?? '',
               identifiant: etat.extra is String ? etat.extra as String : null,
+              // BE-SUIVANT : la file d'ou l'on vient (filtre, tri).
+              requete: etat.uri.queryParameters,
             ),
+          ),
+        ),
+      ),
+      // BE-2b : l'ecran « Equipe » (missions et invitations d'associes).
+      GoRouteSure(
+        path: Routes.adminPersonnesEquipe,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_equipe_page',
+            charger: d_equipe_page.loadLibrary,
+            construire: () => d_equipe_page.EquipePage(),
           ),
         ),
       ),
@@ -3289,6 +3334,7 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
   AppRole.student ||
   AppRole.controller ||
   AppRole.accountant ||
+  AppRole.associe ||
   null => RoleEspaceGroupe.eleve,
 };
 
@@ -3357,6 +3403,27 @@ class _CoquilleSecondaire extends ConsumerWidget {
     // `destinationsPour(role: AppRole.admin)`, videe par ce meme lot, et
     // perdait tout chrome -- exactement le defaut mesure le 18 septembre
     // 2026 sur ce meme ecran.
+    if (effectif == AppRole.associe) {
+      // BE-2b : le compte de l'associe garde le meme chrome restreint : un seul
+      // domaine, une seule page, la sortie par le menu du compte.
+      return AdminShell(
+        domaines: const <AdminDomaine>[AdminDomaine.personnes],
+        domaineActif: null,
+        onAller: aller,
+        onCompte: () => aller(Routes.compte),
+        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
+        onRetour: () => aller(Routes.racinePour(AppRole.associe)),
+        sousLiens: <AdminDomaine, List<SousLien>>{
+          AdminDomaine.personnes: <SousLien>[
+            (
+              libelle: t.admin.candidatures.titre,
+              chemin: Routes.adminPersonnesCandidatures,
+            ),
+          ],
+        },
+        child: child,
+      );
+    }
     if (effectif == AppRole.admin) {
       return AdminShell(
         onRechercheMetier:
@@ -3768,6 +3835,11 @@ class _CoquilleAdmin extends ConsumerWidget {
     final bool voitDirection = ref.watch(
       sessionProvider.select((SessionState s) => s.peutVoirDirection),
     );
+    // BE-2b : l'associe ne voit qu'une page, les candidatures ; ni les autres
+    // domaines, ni les alertes, ni les messages, ni le Studio, ni la cloche.
+    final bool associe = ref.watch(
+      sessionProvider.select((SessionState s) => s.role == AppRole.associe),
+    );
 
     // ALERTE-1 : la cloche n'existe que si la capacite « alertes » rend
     // quelque chose (jamais en production avant DASH-BR-03, Q5) ; son point
@@ -3794,12 +3866,14 @@ class _CoquilleAdmin extends ConsumerWidget {
         false;
 
     return RaccourciRecherche(
-      actif: rechercheServie,
+      actif: rechercheServie && !associe,
       child: AdminShell(
-        onRechercheMetier: rechercheServie
+        onRechercheMetier: rechercheServie && !associe
             ? () => aller(Routes.recherche)
             : null,
-        domaines: domainesAdmin(voitDirection: voitDirection),
+        domaines: associe
+            ? const <AdminDomaine>[AdminDomaine.personnes]
+            : domainesAdmin(voitDirection: voitDirection),
         domaineActif: domaine,
         onAller: aller,
         onCompte: () => aller(Routes.compte),
@@ -3810,7 +3884,7 @@ class _CoquilleAdmin extends ConsumerWidget {
         onRetour: domaine == AdminDomaine.accueil && !sousPage
             ? null
             : () => aller(Routes.admin),
-        cloche: urgentes == null
+        cloche: urgentes == null || associe
             ? null
             : ClocheNotifications(
                 // Une seule cloche dans l'en-tete, celle des notifications :
@@ -3825,7 +3899,7 @@ class _CoquilleAdmin extends ConsumerWidget {
                   _ => t.alertes.clocheUrgentes(nombre: urgentes),
                 },
               ),
-        messages: messagesNonLus == 0 && !surMessages
+        messages: associe || (messagesNonLus == 0 && !surMessages)
             ? null
             : ClocheNotifications(
                 key: const ValueKey<String>('admin-messages-non-lus'),
@@ -3844,17 +3918,20 @@ class _CoquilleAdmin extends ConsumerWidget {
         // montrent deja l'alerte en tete (D7, une information une fois).
         // Pose seulement quand une alerte urgente est ouverte ; fige en haut
         // par la coquille, hors de la zone qui defile (ALERTE-1b).
-        bandeau: domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
+        bandeau:
+            associe || domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
             ? null
             : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
         // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
         // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
         // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
         // role.
-        onNotifications: () => aller(Routes.adminNotifications),
+        onNotifications: associe
+            ? null
+            : () => aller(Routes.adminNotifications),
         notificationsActives: notificationsOuvertes,
         // PORTS-DIRECTION : le Studio n'est montre que s'il a un serveur.
-        onStudio: ref.watch(studioOuvertProvider)
+        onStudio: !associe && ref.watch(studioOuvertProvider)
             ? () => aller(Routes.adminStudio)
             : null,
         // NAV-SOUS-LIENS (14/11/2026) : les pages de chaque domaine dans le
@@ -3864,17 +3941,34 @@ class _CoquilleAdmin extends ConsumerWidget {
         // lit rien de plus sur chaque page ; quand elle s'ouvre a quelqu'un,
         // les pages de Configuration gardent leur selecteur (le panneau ne
         // porte pas toutes leurs sections).
-        sousLiens: sousLiensAdmin(
-          vueGlobaleFinance: ref.watch(vueGlobaleFinanceOuverteProvider),
-          reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
-        ),
+        sousLiens: associe
+            ? <AdminDomaine, List<SousLien>>{
+                AdminDomaine.personnes: <SousLien>[
+                  (
+                    libelle: t.admin.candidatures.titre,
+                    chemin: Routes.adminPersonnesCandidatures,
+                  ),
+                ],
+              }
+            : sousLiensAdmin(
+                vueGlobaleFinance: ref.watch(vueGlobaleFinanceOuverteProvider),
+                reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
+              ),
         cheminCourant: adresseRouteurSur(context)?.path,
         // MESSAGERIE-PLEIN-ECRAN : au telephone, une conversation ouverte
         // porte sa propre barre ; la coquille s'efface.
         conversationOuverte: Routes.estConversationOuverte(
           adresseRouteurSur(context)?.path ?? '',
         ),
-        child: child,
+        // BE-2b : la coquille annonce aux pages celles qu'elle laisse ouvrir
+        // (navigation par role, la barriere reste la RLS) ; une page ne lit
+        // jamais le role.
+        child: associe
+            ? PagesOuvertesCoquille(
+                chemins: const <String>{Routes.adminPersonnesCandidatures},
+                child: child,
+              )
+            : child,
       ),
     );
   }

@@ -680,6 +680,11 @@ INSERT INTO public.accords_publication (profile_id, version, nom_signe)
 SELECT DISTINCT c.profile_id, 'publication-2026-11-v1', 'Fixture'
   FROM public.candidatures c
  WHERE NOT EXISTS (SELECT 1 FROM public.accords_publication a WHERE a.profile_id = c.profile_id AND a.retire_le IS NULL);
+-- MAJEUR (16/11/2026) : l'envoi exige l'attestation « 18 ans ou plus » (erreur majorite_requise
+-- sans elle). Les candidats de ce scenario l'ont faite (fixture), avant leur premier envoi ; le
+-- refus a son propre scenario (scenarios_majeur.sql).
+UPDATE public.candidatures SET majorite_declaree = true, majorite_attestee_le = now()
+ WHERE majorite_declaree IS NULL;
 
 INSERT INTO public.contract_required_versions (contract_kind, version)
 VALUES ('teacher_religious_framework', 'test-cadre-1');
@@ -1210,11 +1215,11 @@ SELECT pg_temp.vrai(NOT EXISTS (
               'etape', 'etat', 'issue', 'enPause', 'repriseLe', 'restreinte', 'indisponible',
               'indisponibleJusquAu', 'paiement', 'paysResidence', 'responsableId', 'courrielAObtenir',
               'indicatifAConfirmer', 'derniereActivite', 'recueLe', 'nomLatin', 'nomLatinAConfirmer',
-              'genre']) x))
+              'genre', 'nouveau', 'complementEnCours', 'gestes']) x))
   AND jsonb_array_length(pg_temp.lu('lst') -> 'lignes') = 18
   AND pg_temp.lu('lst')::text NOT LIKE '%comptabilite%' AND pg_temp.lu('lst')::text NOT LIKE '%Calligraphie%'
   AND pg_temp.lu('lst')::text NOT LIKE '%autresCompetences%',
-  'la liste de la direction garde ses vingt-deux cles (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer ; SALLE2-GENRE : genre) et ne porte aucune reponse (spec 8.3) : 18 candidatures d''hommes');
+  'la liste de la direction garde ses vingt-cinq cles (GESTES-DU-SERVEUR, 16/11/2026 : gestes ; CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer ; SALLE2-GENRE : genre ; NOUVEAU-LISTE, 16/11/2026 : nouveau ; COMPLEMENT-EN-COURS, 16/11/2026 : complementEnCours) et ne porte aucune reponse (spec 8.3) : 18 candidatures d''hommes');
 
 -- ------------------------------------------------------------
 -- (h) Le filtre de lister_candidatures

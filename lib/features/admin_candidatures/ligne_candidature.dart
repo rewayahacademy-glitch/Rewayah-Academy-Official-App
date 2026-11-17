@@ -25,9 +25,11 @@ import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/badge_nouveau.dart';
 import '../../core/widgets/data_collection.dart';
 import '../../core/widgets/status_pill.dart';
 import 'libelles_candidatures.dart';
+import 'marque_propositions_praxis.dart';
 import 'messages_non_lus.dart';
 
 /// Ce que la page sait d'une ligne : retenue ou non, et en mode selection.
@@ -191,18 +193,20 @@ class _CelluleNom extends StatelessWidget {
             textes.bodySmall ?? const TextStyle(),
           ),
         ),
-        if (marques.isNotEmpty) ...<Widget>[
+        if (marques.isNotEmpty || ligne.nouveau) ...<Widget>[
           Ecart.vSm,
           Wrap(
             spacing: AppSpacing.sm,
             runSpacing: AppSpacing.sm,
             children: <Widget>[
+              if (ligne.nouveau) const BadgeNouveau(),
               for (final String m in marques)
                 StatusPill(libelle: m, ton: TonEtat.avertissement),
             ],
           ),
         ],
         MarqueMessagesNonLus(candidatureId: ligne.id),
+        MarquePropositionsPraxis(reference: ligne.reference),
       ],
     );
   }
@@ -269,6 +273,7 @@ class CarteCandidature extends StatelessWidget {
       referenceAffichee(ligne),
       ?salle,
       ?etat?.libelle,
+      if (ligne.nouveau) t.commun.nouveau,
     ].join(', ');
 
     final Widget? menu = gestes.menuRendu?.call(context, ligne);
@@ -330,18 +335,20 @@ class CarteCandidature extends StatelessWidget {
                   style: attenue,
                 ),
                 if (detail != null) TexteSansCoupure(detail, style: attenue),
-                if (marques.isNotEmpty) ...<Widget>[
+                if (marques.isNotEmpty || ligne.nouveau) ...<Widget>[
                   Ecart.vSm,
                   Wrap(
                     spacing: AppSpacing.sm,
                     runSpacing: AppSpacing.sm,
                     children: <Widget>[
+                      if (ligne.nouveau) const BadgeNouveau(),
                       for (final String m in marques)
                         StatusPill(libelle: m, ton: TonEtat.avertissement),
                     ],
                   ),
                 ],
                 MarqueMessagesNonLus(candidatureId: ligne.id),
+                MarquePropositionsPraxis(reference: ligne.reference),
               ],
             ),
           ),

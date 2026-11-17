@@ -179,6 +179,14 @@ BEGIN
     INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source)
     VALUES (v_id, 'salle-examen-2', '{"paysVersement": "SA", "compteBancaire": true}', 'candidat');
   END IF;
+  -- COMPLEMENT-SALLE-EXAMEN (17/11) : la condition complement_en_cours lit la demande ouverte (dernier
+  -- evenement de transition qui porte aCompleter, etape inchangee).
+  IF r.condition = 'complement_en_cours' THEN
+    INSERT INTO public.candidature_evenements (candidature_id, type, etape_avant, etape_apres, etat_avant, etat_apres,
+                                               issue_avant, issue_apres, details)
+    VALUES (v_id, 'transition', v_etape, v_etape, 'en_examen', v_etat, 'en_cours', 'en_cours',
+            '{"transition": "7", "aCompleter": ["langues"]}'::jsonb);
+  END IF;
   RETURN v_id;
 END $$;
 
@@ -796,6 +804,11 @@ INSERT INTO public.accords_publication (profile_id, version, nom_signe)
 SELECT DISTINCT c.profile_id, 'publication-2026-11-v1', 'Fixture'
   FROM public.candidatures c
  WHERE NOT EXISTS (SELECT 1 FROM public.accords_publication a WHERE a.profile_id = c.profile_id AND a.retire_le IS NULL);
+-- MAJEUR (16/11/2026) : l'envoi exige l'attestation « 18 ans ou plus » (erreur majorite_requise
+-- sans elle). Les candidats de ce scenario l'ont faite (fixture), avant leur premier envoi ; le
+-- refus a son propre scenario (scenarios_majeur.sql).
+UPDATE public.candidatures SET majorite_declaree = true, majorite_attestee_le = now()
+ WHERE majorite_declaree IS NULL;
 
 SELECT pg_temp.garde('t01', pg_temp.trace('ca2acccc-0000-4000-8000-000000000001'));
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-000000000001', 'teacher');
@@ -1770,14 +1783,19 @@ SELECT pg_temp.refus($$SELECT private.candidature_geste_appliquer('ca2acccc-0000
 SELECT pg_temp.vrai((SELECT string_agg(DISTINCT transition::text, ',' ORDER BY transition::text)
                        FROM private.candidature_gestes_regles WHERE 'direction' = ANY (motif_requis)
                         AND geste NOT LIKE '%admission')
-    = '12,15,16,17,18,19,20,21,23,25,7'
+    -- VERSEMENT-QUESTIONS (16/11) : 44 = debloquer le versement, motif exige.
+    -- BE-1g (16/11) : 45 = dispenser l'entretien, motif exige.
+    -- BE-1h (16/11) : 46 = refaire l'entretien, motif exige.
+    -- COMPLEMENT-SALLE-EXAMEN (17/11) : 47 = annuler le complement, motif exige.
+    -- DEPLACER-ENTRETIEN (17/11) : 48 = deplacer l'entretien, motif exige.
+    = '12,15,16,17,18,19,20,21,23,25,44,45,46,47,48,7'
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite' AND geste NOT LIKE '%admission')
     = 'lever_pause,refuser,retirer'
   -- V1-b (03/11) : le candidat planifie aussi son entretien, en reservant un creneau.
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs) AND geste NOT LIKE '%admission')
     = 'enregistrer_reponses,envoyer_reponses,planifier_entretien,retirer'
   AND NOT EXISTS (SELECT 1 FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (motif_requis)),
-  'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25) ; en pause seuls lever, refuser, retirer');
+  'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25, 44, 45, 46, 47, 48) ; en pause seuls lever, refuser, retirer');
 
 -- L2-10 : chaque geste a motif, depuis une source valide, sans motif : refus,
 -- 0 ecriture ; avec motif (et modele quand il en faut un) : il s'ouvre.
@@ -1829,7 +1847,12 @@ BEGIN
     PERFORM pg_temp.vrai(v_res = jsonb_build_object('ok', true, 'transition', r.transition, 'variante', r.variante),
       'L2-10 : ' || r.geste || ' avec motif : le geste s''ouvre depuis sa source');
   END LOOP;
-  PERFORM pg_temp.vrai(v_n = 11, 'L2-10 : onze variantes de gestes a motif');
+  -- VERSEMENT-QUESTIONS (16/11) : debloquer_versement, la douzieme ; BE-1g (16/11) : dispenser_entretien, la treizieme.
+  -- BE-1h (16/11) : refaire_entretien ; COMPLEMENT-SALLE-EXAMEN (17/11) : demander_complement variantes 3 et 4,
+  -- annuler_complement : dix-sept ; APRES-CONFIRMEE (17/11) : demander_verification_piece et
+  -- demander_verification_versement : dix-neuf.
+  -- DEPLACER-ENTRETIEN (17/11) : deplacer_entretien : vingt.
+  PERFORM pg_temp.vrai(v_n = 20, 'L2-10 : vingt variantes de gestes a motif');
 END $l2_10$;
 
 -- L2-9 : en pause, tout geste autre que lever la pause, refuser ou retirer
@@ -1883,7 +1906,12 @@ BEGIN
   END LOOP;
   -- 27 depuis V1-b (03/11) : planifier_entretien variante 2, auteur candidat
   -- (un controle de plus dans la boucle : 418 au total).
-  PERFORM pg_temp.vrai(v_n = 27, 'L2-9 : les vingt-sept variantes de la table des regles');
+  -- VERSEMENT-QUESTIONS (16/11) : debloquer_versement porte la table a vingt-huit variantes.
+  -- BE-1g (16/11) : dispenser_entretien la porte a vingt-neuf.
+  -- BE-1h (16/11) : refaire_entretien ; COMPLEMENT-SALLE-EXAMEN (17/11) : trois variantes de plus, trente-trois.
+  -- APRES-CONFIRMEE (17/11) : deux variantes de plus, trente-cinq.
+  -- DEPLACER-ENTRETIEN (17/11) : une variante de plus, trente-six.
+  PERFORM pg_temp.vrai(v_n = 36, 'L2-9 : les trente-six variantes de la table des regles');
 END $l2_9$;
 
 -- Un geste de la direction de bout en bout par le moteur (c10) : refus avec
@@ -1978,6 +2006,10 @@ SELECT pg_temp.vrai((SELECT bool_and(
                            WHERE e.candidature_id = c.id AND e.details ? 'geste'))
                      FROM public.candidatures c WHERE c.id::text LIKE 'ca2acccc%'),
   'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature');
+-- PERF-AUDIT (14/11, migration 20261126200000_audit_chaine_differee.sql) : une ligne d'audit est inseree
+-- `differee` et chainee dans la minute par pg_cron ; ce scenario, qui n'a pas de cron, chaine lui-meme
+-- (comme scenarios_adm04.sql) avant de verifier la chaine.
+SELECT private.audit_chainer();
 SELECT pg_temp.qui('ca2a0000-0000-4000-8000-0000000000a1', 'admin');
 SET LOCAL ROLE authenticated;
 SELECT pg_temp.garde('chaine', (SELECT to_jsonb(v) FROM public.verifier_chaine_audit(5000) v));
@@ -2393,8 +2425,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 421 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 421 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11)', current_setting('test.n');
+  IF current_setting('test.n')::int <> 475 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 475 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11 + 6 de refaire_entretien, 16/11 + 18 de COMPLEMENT-SALLE-EXAMEN, 17/11 : 3 variantes a motif x 6 + 12 d''APRES-CONFIRMEE, 17/11 : 2 variantes a motif x 6 + 6 de deplacer_entretien, 17/11)', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;

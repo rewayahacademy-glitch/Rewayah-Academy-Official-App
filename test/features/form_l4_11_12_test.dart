@@ -21,6 +21,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
+import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
@@ -37,6 +38,7 @@ import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/inscription/questionnaire/memoire_appareil.dart';
 
 import '../router/support_routeur.dart';
+import '../support/faux_service_praxis.dart';
 import '../support/harnais.dart';
 import 'support_form_l2.dart';
 
@@ -448,6 +450,7 @@ Future<_AgentsQuiRetient> _ouvrirAgents(WidgetTester tester) async {
       const AccesAgentsPage(),
       surcharges: <Override>[
         serviceAgentProvider.overrideWithValue(agents),
+        servicePraxisProvider.overrideWithValue(FauxServicePraxis()),
         horlogeFormulairesProvider.overrideWithValue(() => aujourdhuiFormL2),
       ],
     ),

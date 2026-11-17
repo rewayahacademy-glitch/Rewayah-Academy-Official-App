@@ -39,6 +39,7 @@ import 'coquille_parcours.dart';
 import 'disponibilites_etape.dart';
 import 'lecture_page.dart';
 import 'libelles_parcours.dart';
+import 'majorite_etape.dart';
 import 'modele_questions.dart';
 import 'nom_latin_etape.dart';
 import 'presentation_etape.dart';
@@ -90,7 +91,12 @@ class _CandidaturePageState extends ConsumerState<CandidaturePage> {
       if (c.questionnaireOuvert) {
         // Le nom en lettres latines d'abord, quand il est du (decision du
         // directeur du 23/10/2026) ; sinon le parcours s'ouvre aussitot.
-        return PorteNomLatin(enfant: _Edition(candidature: c));
+        // MAJEUR (directeur, 16/11/2026) : « J'ai 18 ans ou plus » avant les
+        // questions, tant que le serveur la demande.
+        return PorteMajorite(
+          candidature: c,
+          enfant: PorteNomLatin(enfant: _Edition(candidature: c)),
+        );
       }
       if (c.questionnaire.envoyeLe != null) {
         return _LectureSeule(candidature: c);
@@ -246,11 +252,16 @@ class _ParcoursState extends ConsumerState<_Parcours> {
           );
         case EtapeChamp():
           final String code = etape.champ.code;
+          final Object? compte = _c.reponse('compteBancaire');
+          final bool? compteBancaire = compte is bool ? compte : null;
           return CoquilleParcours(
             numero: numero,
             total: total,
-            titre: titreQuestion(code) ?? '',
-            explication: explicationQuestion(code),
+            titre: titreQuestion(code, compteBancaire: compteBancaire) ?? '',
+            explication: explicationQuestion(
+              code,
+              compteBancaire: compteBancaire,
+            ),
             entete: _entete(etape),
             enfant: QuestionEtape(etape: etape, controleur: _c),
             libelleAction: t.commun.continuer,
@@ -299,7 +310,9 @@ class _ParcoursState extends ConsumerState<_Parcours> {
       return IndicationParcours(message: renvoi);
     }
     if (_c.brouillonNonGarde) {
-      return IndicationParcours(message: t.recrutement.parcours.sauvegardeEchec);
+      return IndicationParcours(
+        message: t.recrutement.parcours.sauvegardeEchec,
+      );
     }
     return null;
   }

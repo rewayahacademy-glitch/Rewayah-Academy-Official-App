@@ -5,10 +5,14 @@
 -- Droits facon Supabase (alter default privileges du projet).
 -- Auth provenance fields are added only to this scenario fixture.
 -- SCENARIOS-ISOLES (07/11/2026) : les lignes ajoutees ici sont retirees a la fin.
-\ir _lignes_photo.sql
-
+-- PX-1 (16/11/2026) : les deux colonnes de la fixture sont ajoutees AVANT la photo des lignes. Le compte officiel de
+-- Praxis est une ligne permanente de auth.users (migration 20261129600000) : prise avant l'ajout de created_at (NOT NULL),
+-- la photo n'avait pas cette colonne, et le retablissement la remettait a NULL (violation). Une colonne de fixture fait
+-- partie du schema, pas des lignes a retablir.
 alter table auth.users add column if not exists raw_app_meta_data jsonb not null default '{}'::jsonb;
 alter table auth.users add column if not exists created_at timestamptz not null default now();
+\ir _lignes_photo.sql
+
 \ir _acl_photo.sql
 grant usage on schema public to anon, authenticated, service_role;
 do $scenario_grants$

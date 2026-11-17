@@ -38,7 +38,7 @@
 // `recherche`, et depuis CAND-AUTRES `competenceDomaine`, `competenceNiveauMin`,
 // `competenceDisponibilite`, `competenceAccord`, et depuis BE-S1 `pieceEnAttente`,
 // `responsable`, `ijaza`, `langueExplication`, `riwaya`, `public`, `jours`,
-// `heureMin`, `heureMax`, `joursMin`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
+// `heureMin`, `heureMax`, `joursMin`, `majorite`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
 // n'est pas envoyee.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -294,7 +294,13 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
     'p_cle_idempotence': d.cleIdempotence,
   };
   switch (d.geste) {
+    case GesteCandidature.annulerComplement:
+      return (
+        'annuler_complement_candidat',
+        <String, dynamic>{...commun, 'p_motif': d.motif},
+      );
     case GesteCandidature.demanderComplement:
+    case GesteCandidature.modifierComplement:
     case GesteCandidature.cloreComplement:
       return (
         'demander_complement_candidat',
@@ -349,6 +355,45 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
       return (
         'definir_responsable_candidat',
         <String, dynamic>{...commun, 'p_responsable_id': d.responsableId},
+      );
+    case GesteCandidature.dispenserEntretien:
+      return (
+        'dispenser_entretien',
+        <String, dynamic>{
+          ...commun,
+          'p_categorie': d.categorieDispense?.valeurSql,
+          'p_motif': d.motif,
+        },
+      );
+    case GesteCandidature.restreindre:
+    case GesteCandidature.demanderVerificationPiece:
+    case GesteCandidature.demanderVerificationVersement:
+      return (
+        'restreindre_candidat',
+        <String, dynamic>{
+          ...commun,
+          'p_cause': switch (d.geste) {
+            GesteCandidature.demanderVerificationPiece => 'piece',
+            GesteCandidature.demanderVerificationVersement => 'paiement',
+            _ => 'manuelle',
+          },
+          'p_motif': d.motif,
+        },
+      );
+    case GesteCandidature.leverRestriction:
+      return (
+        'lever_restriction_candidat',
+        <String, dynamic>{...commun, 'p_motif': d.motif},
+      );
+    case GesteCandidature.refaireEntretien:
+      return (
+        'refaire_entretien',
+        <String, dynamic>{...commun, 'p_motif': d.motif},
+      );
+    case GesteCandidature.debloquerVersement:
+      return (
+        'debloquer_versement_candidat',
+        <String, dynamic>{...commun, 'p_motif': d.motif},
       );
     case GesteCandidature.confirmerMoyenPaiement:
       return (
@@ -430,6 +475,7 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
   // BE-S1 : la file (piece en attente, responsable) et les reponses (ijaza,
   // langue, riwaya, public, jours et heures dans le fuseau du candidat).
   if (filtre.pieceEnAttente != null) 'pieceEnAttente': filtre.pieceEnAttente!,
+  if (filtre.nouveau != null) 'nouveau': filtre.nouveau!,
   if (filtre.responsable != null) 'responsable': filtre.responsable!,
   if (filtre.ijaza != null) 'ijaza': filtre.ijaza!,
   if (filtre.langueExplication != null)
@@ -440,6 +486,8 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
   if (filtre.heureMin != null) 'heureMin': filtre.heureMin!,
   if (filtre.heureMax != null) 'heureMax': filtre.heureMax!,
   if (filtre.joursMin != null) 'joursMin': filtre.joursMin!,
+  // MAJEUR : l'attestation « 18 ans ou plus ».
+  if (filtre.majorite != null) 'majorite': filtre.majorite!,
 };
 
 /// Les deux refus d'une lecture de dossier, rendus dans la reponse.

@@ -62,7 +62,10 @@ void main() {
   tearDown(() => LocaleSettings.setLocaleSync(AppLocale.fr));
 
   group('une route, tous les roles', () {
-    for (final AppRole role in AppRole.values) {
+    // BE-2b : l'associe n'a ni recherche ni autre page que les candidatures.
+    for (final AppRole role in AppRole.values.where(
+      (AppRole r) => r != AppRole.associe,
+    )) {
       testWidgets('${role.name} ouvre /recherche et y reste', (
         WidgetTester tester,
       ) async {
@@ -72,6 +75,15 @@ void main() {
         expect(tester.takeException(), isNull);
       });
     }
+
+    testWidgets(
+      'l\'associe n\'a aucun espace de recherche : rien ne s\'y cherche',
+      (WidgetTester tester) async {
+        await _monter(tester, role: AppRole.associe);
+        expect(find.byKey(cleChampRecherche), findsNothing);
+        expect(tester.takeException(), isNull);
+      },
+    );
 
     testWidgets('sans session : la connexion, jamais la recherche', (
       WidgetTester tester,

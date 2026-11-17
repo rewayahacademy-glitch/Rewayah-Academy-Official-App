@@ -24,6 +24,8 @@ import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_dossiers/etat_file_dossiers.dart';
 import '../admin_dossiers/revue_dossier.dart';
+import 'piece_decision.dart';
+import 'piece_vignette.dart';
 
 /// La piece d'une candidature, sur la fiche.
 class PieceSurPlace extends ConsumerWidget {
@@ -31,7 +33,7 @@ class PieceSurPlace extends ConsumerWidget {
   const PieceSurPlace({
     required this.candidatureId,
     required this.onDecision,
-    this.onOuvrirDossier,
+    required this.nom,
     this.onDemanderNouvellePiece,
     super.key,
   });
@@ -52,8 +54,8 @@ class PieceSurPlace extends ConsumerWidget {
   /// Apres une decision sur la piece (message du retour local).
   final ValueChanged<String> onDecision;
 
-  /// Mene a « Dossiers a valider », ou `null`.
-  final VoidCallback? onOuvrirDossier;
+  /// Le nom du candidat (titre de la piece ouverte en grand).
+  final String nom;
 
   /// La cle du bloc.
   static const Key cle = ValueKey<String>('candidature-piece-sur-place');
@@ -68,16 +70,29 @@ class PieceSurPlace extends ConsumerWidget {
     );
     void relire() => ref.invalidate(pieceCandidatureProvider(candidatureId));
 
-    Widget lien() => onOuvrirDossier == null
-        ? const SizedBox.shrink()
-        : Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: LienFleche(
-              libelle: r.ouvrirDossier,
-              alignerEnDebut: true,
-              onPress: onOuvrirDossier,
-            ),
-          );
+    // PIECE-DANS-DOSSIER (16/11/2026) : plus de lien vers « Fichiers a
+    // valider » depuis la rubrique (la liste de tous les fichiers ne retrouve
+    // pas le candidat). Une piece deposee hors de la file s'apercoit ici.
+    // PIECE-SUR-LA-FICHE (16/11/2026) : sous la vignette, Valider et Refuser
+    // (`decider_dossier`), rendus seulement si la porte est branchee.
+    Widget vignette(String documentId, GenreFichierPiece? genre) => Column(
+      key: cle,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        PieceVignette(documentId: documentId, nom: nom, genre: genre),
+        if (peutDeciderPiece(ref)) ...<Widget>[
+          Ecart.vMd,
+          DecisionPiece(
+            documentId: documentId,
+            onDecision: (String message) {
+              relire();
+              onDecision(message);
+            },
+          ),
+        ],
+      ],
+    );
 
     if (!lecture.hasValue) {
       return lecture.hasError
@@ -91,14 +106,7 @@ class PieceSurPlace extends ConsumerWidget {
           : const Skeleton.liste(key: cle, lignes: 2);
     }
     final PieceCandidature? piece = lecture.requireValue;
-    if (piece == null) {
-      return Column(
-        key: cle,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[lien()],
-      );
-    }
+    if (piece == null) return const SizedBox.shrink(key: cle);
     final String? profil = piece.profilId;
     Widget phrase(String texte) => Column(
       key: cle,
@@ -123,7 +131,12 @@ class PieceSurPlace extends ConsumerWidget {
       case StatutPieceCandidature.inconnu:
         return phrase(r.etatsPiece.deposee);
       case StatutPieceCandidature.enAttente:
-        if (profil == null) return phrase(r.etatsPiece.deposee);
+        final String? document = piece.documentId;
+        if (profil == null) {
+          return document == null
+              ? phrase(r.etatsPiece.deposee)
+              : vignette(document, piece.genre);
+        }
     }
     final AsyncValue<DossierPourRevue> dossier = ref.watch(
       dossierPourRevueProvider(profil),
@@ -176,18 +189,13 @@ class PieceSurPlace extends ConsumerWidget {
       );
     }
     if (dossier.hasError) {
-      // Hors de la file (deja traitee ailleurs, ou file pas encore relue) :
-      // l'etat dit, et le chemin existant.
-      return Column(
-        key: cle,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(r.etatsPiece.deposee, style: muet),
-          Ecart.vXs,
-          lien(),
-        ],
-      );
+      // Hors de la file : une piece deposee en Salle d'examen n'y entre pas
+      // avant l'admission (migration 20261119100000). Elle s'apercoit ici, par
+      // son document ; sans document, l'etat seul.
+      final String? document = piece.documentId;
+      return document == null
+          ? phrase(r.etatsPiece.deposee)
+          : vignette(document, piece.genre);
     }
     return const Skeleton.liste(key: cle, lignes: 3);
   }

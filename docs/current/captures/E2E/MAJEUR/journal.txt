@@ -1,0 +1,33 @@
+NOTICE:  OK fixtures : 7 candidatures, une seule deja attestee (06)
+NOTICE:  OK a1 : sans session, refuse
+NOTICE:  OK a2 : la direction ne peut pas attester (aucune candidature a elle)
+NOTICE:  OK a3 : une demande de famille n'est pas du recrutement : refusee
+NOTICE:  OK a4 : une candidature refusee n'est plus en cours : refusee
+NOTICE:  OK a5 : une declaration nulle est un argument invalide
+NOTICE:  OK a6 : aucune ecriture directe de la colonne par un compte
+NOTICE:  OK a7 : les refus n'ont rien ecrit
+NOTICE:  OK c1 : l'envoi des reponses est refuse sans attestation (majorite_requise)
+NOTICE:  OK c2 : ce refus n'ecrit ni attestation ni transition
+NOTICE:  OK b0 : avant, l'etat du candidat rend majorite sans declaration
+NOTICE:  OK b1 : 18 ans ou plus : colonnes ecrites, un evenement engagement a son nom, ni pause ni version de plus
+NOTICE:  OK b2 : l'etat du candidat rend la declaration et sa date
+NOTICE:  OK b3 : rejouee, la meme declaration ne change rien (aucun evenement de plus)
+NOTICE:  OK b4 : dire l'inverse apres coup est refuse, sans ecriture, sans pause
+NOTICE:  OK e1 : personne d'autre n'est touche : la candidature voisine reste sans declaration
+NOTICE:  OK c3 : avec l'attestation vraie, l'envoi passe cette porte (il est examine pour ses autres conditions)
+NOTICE:  OK c4 : une candidature attestee des le depart passe aussi cette porte
+NOTICE:  OK d1 : moins de 18 ans : declaration fausse, candidature en pause, une version de plus
+NOTICE:  OK d2 : deux evenements (engagement a son nom, pause sans auteur, motif Age, cause age) ; la candidature est gardee
+NOTICE:  OK d3 : en pause pour l'age, l'envoi est refuse
+NOTICE:  OK d4 : la personne ne peut pas se dedire seule (la direction le voit et decide) ; rien n'est ecrit
+NOTICE:  OK f1 : le dossier de la direction rend majorite : vraie, fausse, sans declaration
+NOTICE:  OK f2 : filtre attestee
+NOTICE:  OK f3 : filtre non_attestee (sans declaration : les avances comme les autres)
+NOTICE:  OK f4 : filtre moins_18
+NOTICE:  OK f5 : le filtre se combine avec les autres cles
+NOTICE:  OK f6 : valeur hors liste refusee
+NOTICE:  OK f7 : les voisins suivent le meme filtre (2 candidatures attestees)
+NOTICE:  OK g1 : seul authenticated execute attester_majorite
+NOTICE:  OK g2 : empreinte F86 a jour, DEFINER, search_path vide
+NOTICE:  OK z : au moins 31 controles passes
+NOTICE:  MAJEUR : 32 controles OK

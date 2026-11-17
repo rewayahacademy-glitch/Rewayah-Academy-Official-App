@@ -149,9 +149,14 @@ import 'core/controle/port_tirage_controle.dart';
 import 'core/controle/port_tirage_controle_supabase.dart';
 import 'core/dossier/port_acces_pieces_kyc.dart';
 import 'core/dossier/port_acces_pieces_kyc_supabase.dart';
+import 'core/dossier/service_validation.dart';
 import 'core/enseignant/absence_remplacement.dart';
 import 'core/enseignant/port_remplacements.dart';
 import 'core/enseignant/remplacements_supabase.dart';
+import 'core/enseignants/enseignants_supabase.dart' show EnseignantsSupabase;
+import 'core/enseignants/port_enseignants.dart' show portEnseignantsProvider;
+import 'core/equipe/equipe_supabase.dart';
+import 'core/equipe/port_equipe.dart';
 import 'core/finance/page_paiement.dart';
 import 'core/foyer/port_reprises_admin.dart';
 import 'core/foyer/reprises_admin_supabase.dart';
@@ -243,6 +248,7 @@ import 'core/theme/app_delais.dart';
 import 'core/theme/polices_differees.dart';
 import 'core/video/releve_qualite.dart';
 import 'core/video/releve_qualite_supabase.dart';
+import 'core/vus/vus_compte.dart' show VusSupabase, portVusProvider;
 import 'features/_dev/playground/playground_racine.dart';
 import 'features/accueil_adulte/espace_adulte_supabase.dart';
 import 'features/accueil_adulte/port_espace_adulte.dart';
@@ -326,6 +332,9 @@ List<Override> _surchargesAppReelle() => <Override>[
   // Defaut 1.8 : le brouillon de l'inscription se garde sur l'appareil le
   // temps de l'inscription (un rechargement ne perd plus le prenom).
   persistanceBrouillonProvider.overrideWithValue(true),
+  portEquipeProvider.overrideWithValue(
+    EquipeSupabase(Supabase.instance.client),
+  ),
   // ANTI-ROBOT (03/11/2026) : la cle PUBLIQUE du controle Turnstile, lue sans
   // compte (migration 20261109000000) ; reglage vide : aucun controle.
   portCleTurnstileProvider.overrideWithValue(
@@ -660,6 +669,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   lirePieceCandidatureProvider.overrideWithValue(
     lirePieceCandidatureSupabase(Supabase.instance.client),
   ),
+  // PIECE-SUR-LA-FICHE (16/11/2026) : valider ou refuser la piece sur la
+  // fiche, par `decider_dossier` (le serveur reste la barriere).
+  deciderPieceProvider.overrideWithValue(
+    ServiceValidationSupabase(Supabase.instance.client).decider,
+  ),
   // Ports a defaut « indisponible » (ou en memoire) dont l'adaptateur
   // serveur existe : compte, tresorerie, observations, controleur, support
   // et etat partage de la classe.
@@ -710,6 +724,13 @@ List<Override> _surchargesAppReelle() => <Override>[
   // 20261123200000) ; la langue du compte est la langue ci-dessus.
   portThemeCompteProvider.overrideWithValue(
     ThemeCompteSupabase(Supabase.instance.client),
+  ),
+  // Ce que le compte a deja vu, cote serveur (VU-UNE-FOIS, #541) : un bandeau
+  // ferme ne revient jamais, sur aucun appareil.
+  portVusProvider.overrideWithValue(VusSupabase(Supabase.instance.client)),
+  // LP-2 : la liste des enseignants (lister_enseignants, LP-1).
+  portEnseignantsProvider.overrideWithValue(
+    EnseignantsSupabase(Supabase.instance.client),
   ),
   portSeriesTresorerieProvider.overrideWithValue(
     SeriesTresorerieSupabase(Supabase.instance.client),

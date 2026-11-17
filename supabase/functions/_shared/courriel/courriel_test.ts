@@ -163,8 +163,9 @@ Deno.test('une langue non ecrite part traduite du francais, liens intacts, note 
 // erreur de modele ; si la traduction echoue, rien ne part (rejoue plus tard),
 // jamais un courriel vide ni dans une autre langue.
 Deno.test('retenu_entretien vers en, es, pt : le francais traduit a l envoi, jamais vide', async () => {
+  // COURRIEL-ENTRETIEN (16/11/2026) : sans `creneauxOuverts`, le texte n'invite pas a choisir.
   const ligne = { modele: 'retenu_entretien', categorie: 'recrutement', essentielle: false,
-    donnees: { prenom: 'Awa', jeton_desinscription: 'abc' } }
+    donnees: { prenom: 'Awa', jeton_desinscription: 'abc', creneauxOuverts: true } }
   const fr = composer(rendre(ligne, 'fr').contenu)
   assert(fr.texte.includes('Choisissez dans l’application le créneau qui vous convient.'), fr.texte)
   for (const cible of ['en', 'es', 'pt']) {
@@ -748,4 +749,26 @@ Deno.test('creneau_change : refus de conversion, avis propre a la direction', ()
   const inconnue = contenuPour({ modele: 'creneau_change', categorie: 'classes', essentielle: true,
     donnees: { ...donnees, cause: 'n importe quoi' } })
   assert(JSON.stringify(inconnue).includes('une vérification a échoué'), JSON.stringify(inconnue))
+})
+
+// COURRIEL-ENTRETIEN (16/11/2026) : 6 courriels sont partis le 16/11 en invitant a choisir un creneau alors qu'aucun
+// moment n'etait ouvert. Le texte suit l'etat : il n'invite a choisir que si le serveur a pose `creneauxOuverts: true`.
+Deno.test('retenu_entretien : invite a choisir seulement quand des moments sont ouverts, sinon dit la verite', () => {
+  const base = { modele: 'retenu_entretien', categorie: 'recrutement', essentielle: false }
+  for (const langue of ['fr', 'ar']) {
+    const ouvert = composer(rendre({ ...base, donnees: { prenom: 'Awa', creneauxOuverts: true } }, langue).contenu).texte
+    for (const donnees of [{ prenom: 'Awa' }, { prenom: 'Awa', creneauxOuverts: false },
+        { prenom: 'Awa', creneauxOuverts: 'true' }, { prenom: 'Awa', creneauxOuverts: null }]) {
+      const ferme = composer(rendre({ ...base, donnees }, langue).contenu).texte
+      assert(ferme !== ouvert, `${langue} : meme texte ouvert et ferme`)
+      assert(!ferme.includes('Choisissez dans l’application') && !ferme.includes('اختر في التطبيق'),
+        `${langue} : invite a choisir sans moment ouvert : ${ferme}`)
+    }
+  }
+  const fr = composer(rendre({ ...base, donnees: { prenom: 'Awa' } }, 'fr').contenu).texte
+  assert(fr.includes('Nous vous écrirons dès que les moments d’entretien seront ouverts ; vous n’avez rien à faire pour l’instant.'), fr)
+  assert(composer(rendre({ ...base, donnees: { prenom: 'Awa', creneauxOuverts: true } }, 'fr').contenu).texte
+    .includes('Choisissez dans l’application le créneau qui vous convient.'))
+  const ar = composer(rendre({ ...base, donnees: { prenom: 'Awa' } }, 'ar').contenu).texte
+  assert(ar.includes('لا شيء مطلوب منك الآن'), ar)
 })

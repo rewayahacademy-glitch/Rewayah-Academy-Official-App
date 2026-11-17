@@ -202,10 +202,11 @@ class _AttentePageState extends ConsumerState<AttentePage> {
       actions: Column(
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          // PAYS-VERSEMENT : le pays du compte de versement se change apres
-          // l'envoi, tant que la candidature est en cours.
+          // PAYS-VERSEMENT puis VERSEMENT-QUESTIONS : le bloc de versement se
+          // modifie apres l'envoi tant que le dossier n'est pas valide ; apres,
+          // une phrase dit que c'est ferme et renvoie vers la messagerie.
           if (candidature != null &&
-              peutChangerPaysVersement(candidature)) ...<Widget>[
+              afficheBlocVersement(candidature)) ...<Widget>[
             LienPaysVersement(candidature: candidature),
             Ecart.vXs,
           ],

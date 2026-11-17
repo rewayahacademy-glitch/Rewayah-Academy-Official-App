@@ -563,7 +563,11 @@ begin
   if exists (
     select 1 from public.profiles p
     left join private.person_registrations r on r.profile_id = p.id
-    where r.profile_id is null or r.matricule is distinct from p.immutable_id
+    where (r.profile_id is null or r.matricule is distinct from p.immutable_id)
+      -- PX-1 (16/11/2026, AR-5) : un compte officiel (Praxis) n'est pas une personne : il n'a AUCUN matricule cherchable
+      -- (rechercher_personne_par_matricule, R13). Seules l'attribution, la reprise de pre-inscription et la recherche
+      -- lisent le registre ; aucune ne suppose qu'un profil y figure.
+      and not exists (select 1 from private.comptes_officiels o where o.profile_id = p.id)
   ) then
     raise exception 'IMM-02/04: profil sans matricule correspondant au registre';
   end if;

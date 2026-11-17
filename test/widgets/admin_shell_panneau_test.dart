@@ -231,6 +231,8 @@ void main() {
 
 /// NAV-SOUS-LIENS : les pages des domaines dans le panneau.
 void _sousLiensTests() {
+  // BE-2b : Personnes compte un onglet de plus (Equipe) ; le panneau defile de
+  // lui-meme, la hauteur du test garde les trois sections a l'ecran.
   testWidgets('1440 : trois sections, et les pages du domaine ouvert sous '
       'lui ; la page ouverte est annoncee selectionnee', (
     WidgetTester tester,
@@ -239,7 +241,7 @@ void _sousLiensTests() {
     final ({ProviderContainer conteneur, List<String> journal}) m =
         await _monter(
           tester,
-          taille: const Size(1440, 900),
+          taille: const Size(1440, 1000),
           domaineActif: AdminDomaine.personnes,
           sousLiens: sousLiensAdmin(),
           cheminCourant: Routes.adminPersonnesComptes,

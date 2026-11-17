@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/communications/textes_fil_communication.dar
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 
+import '../../support/echec_bulle.dart';
 import '../../support/hote_theme.dart';
 
 const Key _vocal = ValueKey<String>('test-emplacement-vocal');
@@ -83,7 +84,9 @@ void main() {
       find.bySemanticsLabel(RegExp(RegExp.escape(c.message))),
       findsWidgets,
     );
-    expect(find.text(c.champVide), findsOneWidget);
+    // SUPERPOS-1 modifiee (directeur, 16/11/2026) : plus de phrase d'aide
+    // sous le champ.
+    expect(find.text(c.champVide), findsNothing);
   });
 
   testWidgets('emplacement vocal : sous le champ, l envoi texte intact', (
@@ -129,22 +132,23 @@ void main() {
     );
   });
 
-  testWidgets('echec : « non confirme » et « Reessayer », saisie gardee', (
-    WidgetTester tester,
-  ) async {
-    final Completer<void> reponse = Completer<void>();
-    await _monter(tester, onEnvoyer: (String _) => reponse.future);
-    await tester.enterText(find.byKey(FilDiscussion.champKey), 'Question');
-    await tester.pump();
-    await tester.tap(find.byKey(FilDiscussion.envoyerKey));
-    await tester.pump();
-    expect(find.text(c.enCours), findsOneWidget);
-    reponse.completeError(Exception('reseau'));
-    await tester.pumpAndSettle();
-    expect(find.text(c.nonConfirme), findsOneWidget);
-    expect(find.text(c.reessayer), findsOneWidget);
-    expect(find.text('Question'), findsOneWidget);
-  });
+  testWidgets(
+    'echec : ligne « non confirme », icone d\'alerte, saisie gardee',
+    (WidgetTester tester) async {
+      final Completer<void> reponse = Completer<void>();
+      await _monter(tester, onEnvoyer: (String _) => reponse.future);
+      await tester.enterText(find.byKey(FilDiscussion.champKey), 'Question');
+      await tester.pump();
+      await tester.tap(find.byKey(FilDiscussion.envoyerKey));
+      await tester.pump();
+      expect(find.text(c.enCours), findsOneWidget);
+      reponse.completeError(Exception('reseau'));
+      await tester.pumpAndSettle();
+      expect(find.text(ligneEchec), findsOneWidget);
+      expect(find.byKey(FilDiscussion.cleIconeEchec), findsOneWidget);
+      expect(find.text('Question'), findsOneWidget);
+    },
+  );
 
   testWidgets('320 px, texte x2, tous les emplacements : aucun debordement', (
     WidgetTester tester,

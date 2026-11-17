@@ -389,20 +389,14 @@ class AppPalette extends ThemeExtension<AppPalette> {
           onBackground: Color(0xFFF1ECFA),
         );
 
-  /// BULLES-MESSAGERIE : le fond d'un fil de conversation, un peu plus sombre
-  /// que la carte d'un message recu (clair `#E9E5F0`, 1,24:1 sous la carte
-  /// blanche ; sombre `#1B1B24`, sous la carte `#272734`) pour que les bulles
-  /// s'y detachent. L'encre secondaire (`inkMuted`) s'y lit a 5,0:1 (clair) et
-  /// 8,1:1 (sombre).
-  AppColorPair get fondFil => estSombre
-      ? const AppColorPair(
-          background: Color(0xFF1B1B24),
-          onBackground: Color(0xFFF5F2FA),
-        )
-      : const AppColorPair(
-          background: Color(0xFFE9E5F0),
-          onBackground: Color(0xFF110E20),
-        );
+  /// Le fond d'un fil de conversation : **le fond de la page** (`surfaceCanvas` :
+  /// clair `#F1EFF4`, sombre `#16161E`), comme avant BULLES-MESSAGERIE.
+  /// Decision du directeur du 16/11/2026 (« je prefere la couleur d'avant »),
+  /// qui remplace le fond plus sombre de BULLES-MESSAGERIE (`#E9E5F0` /
+  /// `#1B1B24`). Les bulles recues, blanches, se detachent par leur ombre
+  /// legere (`AppElevation.bulle`). Un seul jeton : un fil et la page qui le
+  /// porte ne peuvent plus diverger.
+  AppColorPair get fondFil => surfaceCanvas;
 
   /// Le contenu d'un QR : fond blanc, modules quasi noirs, **identique en
   /// clair et en sombre** (manifeste visuel section 3.5 : « le QR reste noir

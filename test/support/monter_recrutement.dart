@@ -5,9 +5,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/agent/propositions_praxis.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 
 import 'harnais.dart';
+import 'propositions_praxis_vides.dart';
 
 /// Une destination qui ne dit que son nom.
 GoRoute temoin(String chemin) => GoRoute(
@@ -29,6 +31,7 @@ Future<void> monterRecrutement(
   double echelle = 1,
   TextDirection? direction,
   String? depart,
+  ThemeMode themeMode = ThemeMode.light,
 }) async {
   tester.view.physicalSize = Size(largeur, hauteur);
   tester.view.devicePixelRatio = 1;
@@ -38,6 +41,7 @@ Future<void> monterRecrutement(
       depart: depart ?? chemin,
       echelle: echelle,
       direction: direction,
+      themeMode: themeMode,
       routes: <RouteBase>[
         GoRoute(
           path: chemin,
@@ -48,6 +52,11 @@ Future<void> monterRecrutement(
       surcharges: <Override>[
         horsLigneProvider.overrideWith(
           (Ref _) => Stream<bool>.value(horsLigne),
+        ),
+        // PX-2 : aucune proposition de Praxis, lecture qui reussit (le bloc du
+        // dossier ne montre alors rien).
+        servicePropositionsPraxisProvider.overrideWithValue(
+          const PropositionsPraxisVides(),
         ),
         ...surcharges,
       ],

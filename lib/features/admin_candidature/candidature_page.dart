@@ -29,6 +29,7 @@ library;
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -43,6 +44,7 @@ import '../../core/reseau/etat_sans_donnees.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/theme/app_gabarit.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -55,8 +57,19 @@ import 'blocs_candidature.dart';
 import 'dossier_trois_etages.dart';
 import 'feuille_geste.dart';
 import 'libelles_candidature.dart';
+import 'navigation_dossier.dart';
 import 'plan_dossier.dart';
+import 'suivant_dossier.dart';
 import 'volet_conversation.dart';
+
+/// Les gestes qui sont une decision : apres eux, le dossier suivant s'ouvre
+/// (BE-SUIVANT) : admettre, demander une precision, refuser, valider la piece.
+const Set<GesteCandidature> _gestesDeDecision = <GesteCandidature>{
+  GesteCandidature.admettreVerifications,
+  GesteCandidature.demanderComplement,
+  GesteCandidature.refuser,
+  GesteCandidature.validerPiece,
+};
 
 /// L'ecran « Candidature ».
 class CandidatureDirectionPage extends ConsumerStatefulWidget {
@@ -66,7 +79,13 @@ class CandidatureDirectionPage extends ConsumerStatefulWidget {
     super.key,
     this.identifiant,
     this.onRetour,
+    this.requete,
   });
+
+  /// BE-SUIVANT : l'adresse du dossier (`depuis=liste` et le filtre et le tri
+  /// de la liste d'ou il est ouvert), ou `null`. Sans file, le dossier ne
+  /// propose ni « 3 sur 176 » ni passage au suivant.
+  final Map<String, String>? requete;
 
   /// La reference `CAND-…` de l'adresse.
   final String reference;
@@ -86,11 +105,25 @@ class CandidatureDirectionPage extends ConsumerStatefulWidget {
       _EtatCandidatureDirectionPage();
 }
 
+/// Les gestes apres lesquels la page propose d'ecrire a la personne : aucun
+/// message ne part de lui-meme (APRES-CONFIRMEE).
+const Set<GesteCandidature> _gestesQuiInvitentAEcrire = <GesteCandidature>{
+  GesteCandidature.restreindre,
+  GesteCandidature.demanderVerificationPiece,
+  GesteCandidature.demanderVerificationVersement,
+  GesteCandidature.leverRestriction,
+};
+
 class _EtatCandidatureDirectionPage
     extends ConsumerState<CandidatureDirectionPage> {
   /// Le retour local du dernier geste : dit seulement apres la reponse du
   /// serveur.
   String? _retour;
+
+  /// APRES-CONFIRMEE (pilote, 17/11) : apres une restriction, une demande de
+  /// verification ou sa levee, aucun message ne part tout seul ; le retour local
+  /// propose « Ecrire a la personne » (la messagerie du dossier).
+  bool _ecrireApres = false;
 
   /// V2-a : le retour local du dernier geste d'entretien, dit dans la section
   /// Entretien.
@@ -99,6 +132,131 @@ class _EtatCandidatureDirectionPage
   /// RECRUTEMENT-SANS-SORTIE (directeur, 14/11/2026) : la conversation
   /// ouverte dans le dossier (volet de cote sur ordinateur), ou `null`.
   ConversationEnPlace? _conversation;
+
+  /// BE-SUIVANT : le minuteur du passage au suivant, et ce qui est annonce.
+  Timer? _minuteurPassage;
+  bool _passageEnCours = false;
+  bool _finDeFile = false;
+
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_toucheClavier);
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_toucheClavier);
+    _minuteurPassage?.cancel();
+    super.dispose();
+  }
+
+  @override
+  void didUpdateWidget(CandidatureDirectionPage ancienne) {
+    super.didUpdateWidget(ancienne);
+    // Un autre dossier dans la meme page : rien de l'ancien ne reste annonce.
+    if (ancienne.reference != widget.reference) {
+      _minuteurPassage?.cancel();
+      _passageEnCours = false;
+      _finDeFile = false;
+      _retour = null;
+      _ecrireApres = false;
+      _retourEntretien = null;
+    }
+  }
+
+  FileDuDossier? get _file => FileDuDossier.depuis(widget.requete);
+
+  VoisinsCandidature? get _voisins {
+    final FileDuDossier? file = _file;
+    if (file == null) return null;
+    return ref
+        .read(voisinsDuDossierProvider(DemandeVoisins(widget.reference, file)))
+        .value;
+  }
+
+  /// Ouvre le dossier [reference] de la meme file ; il **remplace** le dossier
+  /// courant dans la pile : « retour » ramene toujours a la liste.
+  void _allerAuDossier(String reference) {
+    final FileDuDossier? file = _file;
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (file == null || routeur == null || !mounted) return;
+    _minuteurPassage?.cancel();
+    unawaited(
+      routeur.replace<void>(
+        Routes.adminPersonnesCandidaturePour(
+          reference,
+          fileDeLaListe: file.adresse,
+        ),
+      ),
+    );
+  }
+
+  /// Fleches du clavier sur ordinateur : precedent et suivant, jamais quand le
+  /// curseur est dans un champ de texte, jamais sous une feuille ou une boite
+  /// ouverte, jamais avec une touche de controle. En arabe, le sens des fleches
+  /// suit celui de la lecture.
+  bool _toucheClavier(KeyEvent evenement) {
+    if (evenement is! KeyDownEvent || !mounted) return false;
+    final LogicalKeyboardKey touche = evenement.logicalKey;
+    if (touche != LogicalKeyboardKey.arrowLeft &&
+        touche != LogicalKeyboardKey.arrowRight) {
+      return false;
+    }
+    if (MediaQuery.sizeOf(context).width < AppGabarit.seuilEtendu) return false;
+    if (HardwareKeyboard.instance.isControlPressed ||
+        HardwareKeyboard.instance.isMetaPressed ||
+        HardwareKeyboard.instance.isAltPressed ||
+        HardwareKeyboard.instance.isShiftPressed) {
+      return false;
+    }
+    if (ModalRoute.of(context)?.isCurrent != true) return false;
+    final BuildContext? focus = FocusManager.instance.primaryFocus?.context;
+    if (focus != null &&
+        (focus.widget is EditableText ||
+            focus.findAncestorWidgetOfExactType<EditableText>() != null)) {
+      return false;
+    }
+    final VoisinsCandidature? v = _voisins;
+    if (v == null) return false;
+    final bool arabe = Directionality.of(context) == TextDirection.rtl;
+    final bool versLaFin = (touche == LogicalKeyboardKey.arrowRight) != arabe;
+    final String? cible = versLaFin ? v.suivant : v.precedent;
+    if (cible == null) return false;
+    _allerAuDossier(cible);
+    return true;
+  }
+
+  /// Une decision vient d'etre enregistree : le dossier suivant s'ouvre seul
+  /// apres un instant, sauf si le reglage est coupe ou si l'on reste. En fin de
+  /// file, la phrase le dit.
+  void _apresDecision(VoisinsCandidature? voisins) {
+    if (_file == null || voisins == null || voisins.rang == null) return;
+    _minuteurPassage?.cancel();
+    final String? suivant = voisins.suivant;
+    if (suivant == null) {
+      setState(() {
+        _passageEnCours = false;
+        _finDeFile = true;
+      });
+      return;
+    }
+    if (!ref.read(passerAuSuivantProvider)) return;
+    setState(() {
+      _passageEnCours = true;
+      _finDeFile = false;
+    });
+    _minuteurPassage = Timer(AppMouvement.retourLocalMaintien, () {
+      if (mounted && _passageEnCours) _allerAuDossier(suivant);
+    });
+  }
+
+  /// Reste sur ce dossier : le suivant ne s'ouvre pas. La decision, elle, est
+  /// deja enregistree.
+  void _resterSurLeDossier() {
+    _minuteurPassage?.cancel();
+    setState(() => _passageEnCours = false);
+  }
 
   /// Relit l'entree des messages (ses badges) apres une lecture faite dans
   /// le volet ou la feuille.
@@ -145,7 +303,16 @@ class _EtatCandidatureDirectionPage
     } else if (context.canPop()) {
       context.pop();
     } else {
-      context.go(Routes.adminPersonnesCandidatures);
+      // Sans pile (page rechargee) : la liste, avec la file du dossier.
+      final FileDuDossier? file = _file;
+      context.go(
+        file == null
+            ? Routes.adminPersonnesCandidatures
+            : Uri(
+                path: Routes.adminPersonnesCandidatures,
+                queryParameters: file.adresse.isEmpty ? null : file.adresse,
+              ).toString(),
+      );
     }
   }
 
@@ -155,6 +322,9 @@ class _EtatCandidatureDirectionPage
     CapacitesCandidatures capacites, {
     Set<String> elementsInitiaux = const <String>{},
   }) async {
+    // Le suivant se lit AVANT le geste : apres, le dossier peut ne plus etre
+    // dans le filtre de la file (un dossier « en examen » qu'on accepte).
+    final VoisinsCandidature? voisinsAvant = _voisins;
     final SortieFeuille? sortie = await ouvrirFeuilleGeste(
       context,
       geste: geste,
@@ -166,13 +336,18 @@ class _EtatCandidatureDirectionPage
     _relire(identifiant: detail.ligne.id);
     _retourEntretien = null;
     if (sortie.issue == IssueFeuille.fait) {
-      setState(
-        () => _retour = sortie.rejoue
+      setState(() {
+        _retour = sortie.rejoue
             ? t.admin.candidatures.retours.rejoue
-            : libelleRetour(geste),
-      );
+            : libelleRetour(geste);
+        _ecrireApres = _gestesQuiInvitentAEcrire.contains(geste);
+      });
+      if (_gestesDeDecision.contains(geste)) _apresDecision(voisinsAvant);
     } else {
-      setState(() => _retour = null);
+      setState(() {
+        _retour = null;
+        _ecrireApres = false;
+      });
     }
   }
 
@@ -248,6 +423,16 @@ class _EtatCandidatureDirectionPage
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final DetailCandidature? detail = valeur.value;
     final r = t.admin.candidatures;
+    final FileDuDossier? file = _file;
+    final VoisinsCandidature? voisins = file == null
+        ? null
+        : ref
+              .watch(
+                voisinsDuDossierProvider(
+                  DemandeVoisins(widget.reference, file),
+                ),
+              )
+              .value;
 
     // Sur ordinateur, les etages 1 et 2 sont a gauche, les rubriques a droite.
     // Meme regle que l'ancienne page : la largeur de la page, et le texte pas
@@ -295,7 +480,33 @@ class _EtatCandidatureDirectionPage
                 horsLigne: horsLigne,
               ),
               deuxColonnes: deuxColonnes,
-              retour: _retour,
+              onPropositionTraitee: () => _relire(identifiant: d.ligne.id),
+              retour: _passageEnCours || _finDeFile ? null : _retour,
+              ecrireApres: _ecrireApres,
+              navigation: voisins == null
+                  ? null
+                  : NavigationFileDossier(
+                      voisins: voisins,
+                      onAller: _allerAuDossier,
+                    ),
+              passage: _passageEnCours || _finDeFile
+                  ? PassageAuSuivant(
+                      enCours: _passageEnCours,
+                      finDeFile: _finDeFile,
+                      onRester: _resterSurLeDossier,
+                      onListe: _retourALaFile,
+                    )
+                  : null,
+              reglage: voisins == null ? null : const ReglagePasserAuSuivant(),
+              onDecisionPiece: (String message) {
+                _relire(identifiant: d.ligne.id);
+                setState(() {
+                  _retour = message;
+                  _ecrireApres = false;
+                  _retourEntretien = null;
+                });
+                _apresDecision(voisins);
+              },
               onGeste: (GesteCandidature g) => _geste(g, d, capacites),
               // COMPLEMENT-ET-FORMATS : « Demander une nouvelle piece » (ou
               // photo) depuis un fichier illisible : la feuille du
@@ -306,10 +517,6 @@ class _EtatCandidatureDirectionPage
                 capacites,
                 elementsInitiaux: <String>{code},
               ),
-              // RECRUTEMENT-SANS-SORTIE : « Dossiers a valider » s'empile ;
-              // son retour ramene ici.
-              onOuvrirDossier: () =>
-                  unawaited(context.push<void>(Routes.adminPersonnesDossiers)),
               onOuvrirConversation: _ouvrirConversation,
               autresActions: actionsSupplementaires(context, ref, d),
               rangMessages: _rangMessages,
@@ -318,6 +525,7 @@ class _EtatCandidatureDirectionPage
                 _relire(identifiant: d.ligne.id);
                 setState(() {
                   _retour = null;
+                  _ecrireApres = false;
                   _retourEntretien = message;
                 });
               },

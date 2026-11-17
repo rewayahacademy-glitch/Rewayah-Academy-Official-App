@@ -592,6 +592,54 @@ class FauxMaCandidature implements PortMaCandidature {
     }
     return candidatureApresRetrait;
   }
+
+  /// MAJEUR : les declarations demandees a [attesterMajorite], dans l'ordre.
+  final List<bool> attestationsMajorite = <bool>[];
+
+  /// L'erreur jetee par [attesterMajorite], si elle est posee.
+  Object? erreurAttestationMajorite;
+
+  /// Tant que cette attente n'est pas terminee, [attesterMajorite] ne repond pas.
+  Completer<void>? attenteAttestationMajorite;
+
+  @override
+  Future<MajoriteCandidature> attesterMajorite({required bool majeur}) async {
+    attestationsMajorite.add(majeur);
+    await attenteAttestationMajorite?.future;
+    final Object? e = erreurAttestationMajorite;
+    if (e != null) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return MajoriteCandidature(
+      servie: true,
+      declaree: majeur,
+      attesteeLe: DateTime.utc(2026, 11, 16, 9),
+    );
+  }
+
+  /// Les modifications du bloc de versement demandees, dans l'ordre :
+  /// (compte bancaire, pays, services).
+  final List<(bool, String, List<String>)> versementsModifies =
+      <(bool, String, List<String>)>[];
+
+  /// L'erreur jetee par [modifierVersement], si elle est posee.
+  Object? erreurVersement;
+
+  @override
+  Future<CandidatureDossier> modifierVersement({
+    required bool compteBancaire,
+    required String pays,
+    List<String> operateurs = const <String>[],
+  }) async {
+    versementsModifies.add((compteBancaire, pays, operateurs));
+    final Object? e = erreurVersement;
+    if (e != null) {
+      // ignore: only_throw_errors
+      throw e;
+    }
+    return candidatureApresRetrait;
+  }
 }
 
 /// Un double dont tout manque : le lot serveur n'est pas verse.

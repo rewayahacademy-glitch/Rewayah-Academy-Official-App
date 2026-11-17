@@ -166,7 +166,8 @@ SELECT pg_temp.vrai(pg_temp.vues() = '71,72', 'FN-106 : l''enseignante de l''anc
 SELECT pg_temp.qui(pg_temp.u('a1'), 'admin');
 SELECT pg_temp.vrai(pg_temp.vues() = '71,72,73,74', 'FN-106 : la direction voit tout');
 SELECT pg_temp.qui(pg_temp.u('d1'), 'controller');
-SELECT pg_temp.vrai(pg_temp.vues() = '71,72,73,74', 'FN-106 : le controleur voit tout');
+-- DETTE-CONTROLLER (17/11) : le controleur sans mission ni capacite ne voit plus rien (avant : tout).
+SELECT pg_temp.vrai(coalesce(pg_temp.vues(), '') = '', 'FN-106 : le controleur sans mission ne voit aucune seance');
 RESET ROLE;
 
 \o

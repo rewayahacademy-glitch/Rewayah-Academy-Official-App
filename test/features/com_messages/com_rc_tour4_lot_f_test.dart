@@ -59,6 +59,7 @@ import '../../support/demo/communications/com_studio_demo.dart';
 import '../../support/demo/communications/com_vocal_demo.dart';
 import '../../support/demo/communications/demo_communications_page.dart';
 import '../../support/demo/mode_demonstration.dart';
+import '../../support/echec_bulle.dart';
 import '../../support/envoi_fil.dart';
 import '../../support/harnais.dart';
 
@@ -636,7 +637,7 @@ void main() {
       await tester.pump();
       await tester.tap(envoiDuFil());
       await _attendre(tester);
-      expect(find.text('Non confirme'), findsOneWidget);
+      expect(find.text(ligneEchec), findsOneWidget);
       expect((await brouillons.lire(cle))?.texte, 'A garder');
       expect(tester.takeException(), isNull);
     });

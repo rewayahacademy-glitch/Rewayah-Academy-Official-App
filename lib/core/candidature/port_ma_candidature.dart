@@ -79,6 +79,20 @@ final class AccordPublicationRequis extends ErreurCandidature {
   const AccordPublicationRequis();
 }
 
+/// MAJEUR (16/11/2026) : l'attestation « 18 ans ou plus » manque ; l'envoi est
+/// refuse par le serveur et rien n'est ecrit.
+final class MajoriteRequise extends ErreurCandidature {
+  /// Cree l'erreur.
+  const MajoriteRequise();
+}
+
+/// MAJEUR : la personne a deja fait sa declaration ; elle ne la change pas
+/// seule. Rien n'est ecrit.
+final class DeclarationDejaFaite extends ErreurCandidature {
+  /// Cree l'erreur.
+  const DeclarationDejaFaite();
+}
+
 /// La case de remuneration n'est pas cochee.
 final class AccordRemunerationRequis extends ErreurCandidature {
   /// Cree l'erreur.
@@ -194,6 +208,26 @@ abstract interface class PortMaCandidature {
   /// coordonnees a valider et recalcule le paiement ; la candidature n'est
   /// jamais refusee pour ce motif. Rend le bloc candidature relu.
   Future<CandidatureDossier> modifierPaysVersement(String pays);
+
+  /// MAJEUR (directeur, 16/11/2026) : la personne atteste elle-meme avoir 18 ans
+  /// ou plus ([majeur] vrai), ou declare avoir moins de 18 ans ([majeur] faux :
+  /// la candidature est alors mise en pause, rien n'est supprime). Rend
+  /// l'attestation relue au serveur. [DeclarationDejaFaite] quand une
+  /// declaration contraire existe deja ; [PermissionInsuffisante] sans
+  /// candidature d'enseignant en cours.
+  Future<MajoriteCandidature> attesterMajorite({required bool majeur});
+
+  /// VERSEMENT-QUESTIONS (directeur, 16/11/2026) : modifie tout le bloc de
+  /// versement d'une candidature deja envoyee (compte bancaire oui ou non,
+  /// pays, services de paiement sur telephone), tant que le dossier n'est pas
+  /// valide ; apres, le serveur refuse (`TransitionInterdite`). Le serveur
+  /// recalcule le paiement et remet les coordonnees a valider si le pays
+  /// change. Rend le bloc candidature relu.
+  Future<CandidatureDossier> modifierVersement({
+    required bool compteBancaire,
+    required String pays,
+    List<String> operateurs = const <String>[],
+  });
 }
 
 /// L'identifiant de la dependance serveur du questionnaire et de l'envoi

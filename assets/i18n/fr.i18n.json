@@ -1,5 +1,6 @@
 {
   "commun": {
+    "nouveau": "Nouveau",
     "langue": {
       "systeme": "Système",
       "francais": "Français",
@@ -1407,7 +1408,8 @@
       "coursNonExplication": "Vous inscrivez vos proches et suivez leurs progrès, sans cours pour vous. Vous pourrez changer d'avis plus tard.",
       "coursNonExemple": "vous inscrivez votre fille et suivez ses séances depuis votre compte.",
       "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
-      "deposerCandidature": "Déposer ma candidature"
+      "deposerCandidature": "Déposer ma candidature",
+      "postulerIci": "Vous voulez enseigner chez nous\u00a0? Postulez ici"
     },
     "recap": {
       "usage": "Type de compte",
@@ -2614,6 +2616,39 @@
     }
   },
   "recrutement": {
+    "majeur": {
+      "titre": "Avant de commencer",
+      "explication": "Le recrutement des enseignants est réservé aux personnes de 18 ans et plus.",
+      "coche": "J'ai 18 ans ou plus.",
+      "lienMoins18": "J'ai moins de 18 ans",
+      "pourquoiBloque": "Cochez la case pour continuer.",
+      "echec": "Votre réponse n'est pas confirmée. Rien n'est enregistré\u00a0: réessayez dans un instant.",
+      "dejaFaite": "Votre réponse est déjà enregistrée. Si elle est inexacte, écrivez à l'administration.",
+      "portail": {
+        "titre": "Une confirmation à faire",
+        "explication": "Pour continuer votre candidature, confirmez que vous avez 18 ans ou plus."
+      },
+      "confirmer": {
+        "titre": "Vous avez moins de 18 ans ?",
+        "explication": "Le recrutement est réservé aux personnes de 18 ans et plus. Votre candidature sera mise en pause. Rien n'est supprimé.",
+        "action": "Oui, j'ai moins de 18 ans",
+        "retour": "Non, revenir"
+      },
+      "moins18": {
+        "titre": "Merci de votre franchise",
+        "texte": "Le recrutement des enseignants est réservé aux personnes de 18 ans et plus. Votre candidature est en pause. Rien n'est supprimé."
+      }
+    },
+    "suivant": {
+      "position": "{rang} sur {total}",
+      "precedent": "Dossier précédent",
+      "suivant": "Dossier suivant",
+      "decisionEnregistree": "Décision enregistrée. Le dossier suivant s'ouvre dans un instant.",
+      "rester": "Rester sur ce dossier",
+      "fin": "C'était le dernier dossier de cette file.",
+      "versListe": "Retour à la liste",
+      "reglage": "Passer au suivant après une décision"
+    },
     "dossier3": {
       "pastille": {"bon": "Bon", "aVoir": "À voir", "manque": "Manque"},
       "situation": {
@@ -2629,7 +2664,8 @@
           "profil_renseigne": "renseigner le profil",
           "profil_unique": "vérifier que le profil est unique",
           "aucune_restriction": "lever la restriction",
-          "piece_validee": "valider la pièce d'identité"
+          "piece_validee": "valider la pièce d'identité",
+          "complement_clos": "clore le complément"
         },
         "vous": "À vous : {geste}",
         "pause": "Le dossier est en pause.",
@@ -2659,12 +2695,17 @@
       "raison": {
         "droit": "Vous ne pouvez pas décider de ce dossier.",
         "fermee": "Le dossier est fermé.",
-        "pause": "Le dossier est en pause.",
-        "attente": "On attend la réponse de la personne.",
-        "manque": "Il manque : {liste}.",
-        "etape": "Pas possible à cette étape."
+        "pause": "En pause\u00a0: reprenez le dossier pour agir.",
+        "attente": "En attente du candidat\u00a0: il complète son dossier.",
+        "manque": "Accepter\u00a0: il reste à régler {liste}.",
+        "etape": "Aucune décision à prendre à cette étape.",
+        "versement": "Accepter\u00a0: le versement n'est pas encore possible.",
+        "versementAConfirmer": "Accepter\u00a0: le moyen de versement reste à confirmer.",
+        "pret": "Le dossier est prêt\u00a0: vous pouvez décider.",
+        "entretienAPlanifier": "Retenu pour l'entretien\u00a0: il reste à le planifier.",
+        "entretienPlanifie": "Entretien planifié\u00a0: la décision vient après l'entretien.",
+        "decisionAttendue": "Entretien tenu\u00a0: la décision vous attend."
       },
-      "legendeRaison": "{geste} : {raison}",
       "photoAgrandir": "Voir la photo {deNom} en grand"
     },
     "file": {
@@ -2673,7 +2714,38 @@
       "afficher": "Afficher",
       "replier": "Replier",
       "trier": "Trier",
-      "pieceSansAttente": "Sans pièce à valider"
+      "pieceSansAttente": "Sans pièce à valider",
+      "filtres": "Filtres",
+      "filtresPoses": {
+        "one": "Filtres, {n} posé",
+        "other": "Filtres, {n} posés"
+      },
+      "jaiCompris": "J'ai compris",
+      "files": "Files",
+      "pieceCourt": "Pièce à valider",
+      "fileMenu": "File",
+      "nouveaux": "Nouveaux",
+      "pasNouveaux": "Pas nouveaux",
+      "confirmeesIndisponibles": "Confirmées indisponibles",
+      "piece": "Pièce d'identité",
+      "responsable": "Responsable",
+      "responsableMoi": "Moi",
+      "responsableAucun": "Personne",
+      "ijaza": "Ijaza",
+      "langue": "Langue d'explication",
+      "riwaya": "Riwaya",
+      "public": "Public visé",
+      "jours": "Jours disponibles",
+      "heureDe": "À partir de",
+      "heureA": "Jusqu'à",
+      "joursMin": "Jours au moins",
+      "joursMinN": {
+        "one": "{n} jour au moins",
+        "other": "{n} jours au moins"
+      },
+      "salle": "Salle",
+      "toutesLesFiles": "Toutes",
+      "rechercher": "Rechercher"
     },
     "nomLatin": {
       "titre": "Votre nom en lettres latines",
@@ -2876,14 +2948,16 @@
       "elementCodeConduite": "Le code de conduite",
       "elementAccordPublication": "L'accord de publication de votre photo",
       "elementPaysVersement": "Pays et compte de versement",
-      "paysVersementLien": "Changer le pays de versement",
-      "paysVersementTitre": "Pays du compte de versement",
-      "paysVersementExplication": "Le compte peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie. Choisissez le pays où se trouve ce compte. Les moyens de versement et les coordonnées déjà saisis devront être confirmés de nouveau.",
-      "paysVersementEnregistrer": "Enregistrer ce pays",
-      "paysVersementFait": "Pays de versement mis à jour. L'académie relit votre dossier.",
-      "paysVersementEchec": "Le pays n'a pas pu être changé. Rien n'a été modifié\u00a0: réessayez dans un instant.",
-      "paysVersementInterdit": "Le pays ne peut plus être changé à cette étape. Écrivez à l'académie depuis la conversation de votre dossier.",
-      "paysVersementHorsLigne": "Vous n'êtes pas connecté. Le pays n'a pas été changé\u00a0; réessayez une fois la connexion revenue.",
+      "paysVersementLien": "Modifier mon versement",
+      "paysVersementTitre": "Mon versement",
+      "paysVersementExplication": "Vous pouvez tout modifier tant que l'académie n'a pas validé votre dossier\u00a0: le compte bancaire, le pays et les services de paiement sur téléphone. Les coordonnées déjà saisies devront être confirmées de nouveau si le pays change.",
+      "paysVersementEnregistrer": "Enregistrer mon versement",
+      "paysVersementFait": "Versement mis à jour. L'académie relit votre dossier.",
+      "paysVersementEchec": "Le versement n'a pas pu être modifié. Rien n'a été changé\u00a0: réessayez dans un instant.",
+      "paysVersementInterdit": "Le versement ne peut plus être modifié\u00a0: votre dossier est validé. Écrivez à l'académie depuis la conversation de votre dossier.",
+      "paysVersementHorsLigne": "Vous n'êtes pas connecté. Le versement n'a pas été modifié\u00a0; réessayez une fois la connexion revenue.",
+      "versementFerme": "Votre dossier est validé\u00a0: le versement ne peut plus se modifier ici. Pour un changement, écrivez à l'académie.",
+      "versementFermeLien": "Écrire à l'académie",
       "pieceDemandee": "La direction vous demande une nouvelle photo de votre pièce.",
       "photoDemandee": "La direction vous demande une nouvelle photo. Changez-la au récapitulatif de vos réponses, avant de les envoyer."
     },
@@ -2894,7 +2968,7 @@
       "horaire": "{date}, de {debut} à {fin}",
       "choisir": "Choisissez un moment.",
       "reserver": "Réserver ce moment",
-      "aucunCreneau": "Aucun moment n'est ouvert pour l'instant. Revenez plus tard.",
+      "aucunCreneau": "Votre candidature est retenue pour l'entretien. Vous n'avez rien à faire pour l'instant : l'académie vous informera dès qu'un moment sera ouvert, et vous le choisirez ici.",
       "erreurLecture": "Les moments n'ont pas pu être chargés. Réessayez.",
       "pris": "Ce moment vient d'être pris. Choisissez-en un autre.",
       "dejaPlanifie": "Votre entretien est déjà fixé.",
@@ -2922,7 +2996,11 @@
         "reserveDirection": "Un candidat a réservé un entretien que vous menez.",
         "reserveDirectionQuand": "Un candidat a réservé un entretien que vous menez, le {quand}.",
         "rappelDirection": "Vous menez un entretien qui commence bientôt.",
-        "rappelDirectionQuand": "Vous menez un entretien le {quand}."
+        "rappelDirectionQuand": "Vous menez un entretien le {quand}.",
+        "annule": "L'entretien que vous meniez n'aura pas lieu.",
+        "annuleRefus": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été refusée.",
+        "annuleRetrait": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature a été retirée.",
+        "annulePause": "L'entretien que vous meniez n'aura pas lieu\u00a0: la candidature est en pause."
       }
     },
     "partage": {
@@ -3520,6 +3598,16 @@
           "explication": "Le compte qui reçoit votre rémunération peut être celui d'un proche de confiance, dans un pays pris en charge par l'académie\u00a0: choisissez alors le pays de ce proche. L'académie vérifie, pays par pays, quel moyen de versement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
           "court": "Pays de versement"
         },
+        "paysVersementCompte": {
+          "titre": "Dans quel pays est ce compte\u00a0?",
+          "explication": "Le compte peut être celui d'un proche de confiance. Choisissez le pays où se trouve la banque\u00a0: l'académie vérifie, pays par pays, que le virement est possible. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "court": "Pays du compte"
+        },
+        "paysVersementMobile": {
+          "titre": "Dans quel pays pouvez-vous recevoir de l'argent sur votre téléphone\u00a0?",
+          "explication": "Choisissez le pays du service de paiement sur téléphone que vous utilisez, ou de celui d'un proche de confiance. Vous choisirez ensuite les services de ce pays. Nous avons repris votre pays de résidence\u00a0: changez-le si besoin.",
+          "court": "Pays du paiement sur téléphone"
+        },
         "compteBancaire": {
           "titre": "Avez-vous un compte bancaire où recevoir votre paiement, à votre nom ou à celui d'un proche\u00a0?",
           "explication": "La rémunération se verse par virement bancaire là où l'académie l'a confirmé. Vos coordonnées ne sont demandées qu'avant le premier versement.",
@@ -3987,6 +4075,74 @@
     }
   },
   "admin": {
+    "listeEnseignants": {
+      "titre": "Enseignants",
+      "phase": "Phase",
+      "toutesPhases": "Toutes les phases",
+      "nouveaux": "Nouveaux",
+      "phases": {
+        "candidat": "Candidat",
+        "accueil": "Accueil",
+        "disponible": "Disponible",
+        "enPoste": "En poste",
+        "absent": "Absent",
+        "pause": "En pause",
+        "suspendu": "Suspendu",
+        "parti": "Parti"
+      },
+      "attend": {
+        "candidat": "Attend : le candidat",
+        "direction": "Attend : la direction",
+        "enseignant": "Attend : l'enseignant"
+      },
+      "manque": {
+        "intro": "Il manque : {liste}",
+        "compteInactif": "compte inactif",
+        "pieceNonValidee": "pièce à valider",
+        "languesAbsentes": "langues",
+        "genreInconnu": "genre",
+        "indisponible": "indisponible",
+        "photoAbsente": "photo",
+        "disponibilitesAbsentes": "disponibilités"
+      },
+      "classes": {
+        "one": "{n} classe",
+        "other": "{n} classes"
+      },
+      "heures": "{h} h par semaine",
+      "prochaineSeance": "Prochaine séance : {date}",
+      "remplacements": "Remplacements sur 30 jours : donnés {donnes}, reçus {recus}",
+      "colonnes": {
+        "nom": "Nom",
+        "phase": "Phase",
+        "attend": "Attend",
+        "classes": "Classes",
+        "seance": "Prochaine séance",
+        "activite": "Dernière activité"
+      },
+      "total": {
+        "one": "{n} enseignant",
+        "other": "{n} enseignants"
+      },
+      "sansDossier": {
+        "one": "{n} compte enseignant n'a pas de dossier de candidature : il n'est pas dans cette liste.",
+        "other": "{n} comptes enseignants n'ont pas de dossier de candidature : ils ne sont pas dans cette liste."
+      },
+      "vide": "Aucun enseignant pour l'instant.",
+      "videDetail": "Les enseignants apparaissent ici dès qu'une candidature d'enseignant arrive.",
+      "aucunResultat": "Aucun enseignant ne correspond.",
+      "lectureEchec": "La liste des enseignants n'a pas pu être lue",
+      "accesRefuse": "Cette liste est réservée à la direction",
+      "genreInconnuTitre": "Votre genre n'est pas renseigné",
+      "genreInconnu": "La liste n'est lisible qu'une fois votre genre renseigné. Demandez à un fondateur de le renseigner.",
+      "sansDonnees": "la liste des enseignants",
+      "resume": "{debut} à {fin} sur {total}",
+      "attendCourt": {
+        "candidat": "Le candidat",
+        "direction": "La direction",
+        "enseignant": "L'enseignant"
+      }
+    },
     "candidatures": {
       "liste": {
         "titreGesteNonFait": "Geste non fait",
@@ -4035,7 +4191,9 @@
           "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
           "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
           "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
+          "effetDispenser": "Les candidatures concernées passent à la décision, comme après un entretien tenu et favorable. Les entretiens déjà planifiés sont annulés. Aucun message n'est envoyé.",
           "motifCommun": "Le même motif et le même message valent pour toutes les candidatures concernées.",
+          "motifCommunDispense": "Le même motif et la même catégorie valent pour toutes les candidatures concernées.",
           "nombre": "Nombre de candidatures concernées",
           "nombreAide": "Saisissez {n} pour confirmer.",
           "nombreFaux": "Ce n'est pas le bon nombre. Saisissez {n}.",
@@ -4335,7 +4493,21 @@
           "misesAJour": "Dernière mise à jour le {date}."
         },
         "pieceIllisible": "Format non lisible\u00a0: cette pièce (photo HEIC ou PDF) ne s'affiche pas sur ordinateur. Demandez une nouvelle pièce, en photo JPEG ou PNG.",
-        "demanderNouvellePiece": "Demander une nouvelle pièce d'identité"
+        "demanderNouvellePiece": "Demander une nouvelle pièce d'identité",
+        "pieceAgrandir": "Ouvrir la pièce d'identité en grand",
+        "pieceImage": "Image",
+        "pieceFichier": "Fichier",
+        "piecePdf": "Fichier PDF",
+        "pieceOuvrirPdf": "Ouvrir le PDF de la pièce d'identité",
+        "pieceTitre": "Pièce d'identité\u00a0: {nom}",
+        "pieceValider": "Valider la pièce",
+        "pieceRefuser": "Refuser la pièce",
+        "pieceRefusAnnuler": "Garder la pièce en attente",
+        "pieceValidee": "Pièce validée.",
+        "pieceRefusee": "Pièce refusée.",
+        "pieceDejaDecidee": "Cette pièce a déjà reçu une décision. Rechargez la fiche.",
+        "pieceNonConfirmee": "Le résultat n'est pas encore confirmé. Rechargez la fiche avant de réessayer.",
+        "pieceHorsLigne": "Rien n'a été envoyé. Réessayez quand la connexion sera revenue."
       },
       "controles": {
         "noms": {
@@ -4349,6 +4521,7 @@
           "profilUnique": "Profil unique",
           "aucuneRestriction": "Aucune restriction ni pause",
           "pieceValidee": "Pièce d'identité validée",
+          "complementClos": "Complément clos",
           "inconnu": "Contrôle du serveur"
         },
         "causes": {
@@ -4376,6 +4549,7 @@
           "pieceAbsente": "Aucune pièce d'identité déposée",
           "pieceAVerifier": "Pièce déposée, à vérifier",
           "pieceARedeposer": "Pièce refusée, à déposer de nouveau",
+          "complementEnCours": "Un complément demandé est encore en cours",
           "inconnue": "Cause non précisée"
         }
       },
@@ -4413,28 +4587,46 @@
         "admettre": "Admettre en Salle de vérification et d'entretien",
         "confirmerMoyen": "Confirmer le moyen de versement",
         "ecarterMoyen": "Écarter ce moyen de versement",
+        "debloquerVersement": "Débloquer le versement",
         "demanderComplement": "Demander un complément",
         "cloreComplement": "Clore le complément",
+        "modifierComplement": "Modifier le complément",
+        "annulerComplement": "Annuler le complément",
         "mettreEnPause": "Mettre en pause",
         "leverPause": "Lever la pause",
         "refuser": "Refuser la candidature",
         "retrait": "Enregistrer un retrait demandé",
         "rouvrir": "Rouvrir la candidature",
-        "responsable": "Choisir le responsable"
+        "responsable": "Choisir le responsable",
+        "dispenserEntretien": "Dispenser d'entretien",
+        "restreindre": "Restreindre",
+        "demanderVerificationPiece": "Demander une vérification de la pièce",
+        "demanderVerificationVersement": "Demander une vérification du versement",
+        "leverRestriction": "Lever la restriction",
+        "refaireEntretien": "Refaire l'entretien"
       },
       "consequences": {
         "accueillir": "Son compte d'enseignant est activé et son espace s'ouvre. La personne n'enseigne qu'une fois affectée à une classe.",
         "admettre": "La candidature passe en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Ce moyen permet à Rewayah de verser la rémunération dans le pays de la personne.",
         "ecarterMoyen": "Ce moyen n'est plus retenu. Sans autre moyen possible, la candidature attend qu'un moyen devienne possible.",
+        "debloquerVersement": "Le versement est confirmé à la main, même sans moyen déclaré. Votre motif reste dans l'historique. Si la personne modifie ses réponses, le déblocage tombe.",
         "demanderComplement": "La candidature repasse à compléter. La personne lira la liste des éléments choisis.",
         "cloreComplement": "Le complément demandé est clos. La candidature reste dans sa salle.",
+        "modifierComplement": "La personne reçoit une nouvelle demande, qui remplace la précédente.",
+        "annulerComplement": "La demande est annulée. La candidature revient à l'examen. La personne n'est pas prévenue.",
         "mettreEnPause": "La candidature n'avance plus tant que la pause n'est pas levée.",
         "leverPause": "La candidature reprend là où elle s'était arrêtée.",
         "refuser": "La candidature est fermée. Vous pourrez la rouvrir.",
         "retrait": "La candidature est fermée à la demande de la personne. Vous pourrez la rouvrir.",
         "rouvrir": "La candidature reprend son étape d'origine, si les contrôles du serveur le permettent.",
-        "responsable": "Le responsable suit cette candidature."
+        "responsable": "Le responsable suit cette candidature.",
+        "dispenserEntretien": "La candidature passe à la décision, comme après un entretien tenu et favorable. Un entretien déjà planifié est annulé. Aucun message n'est envoyé à la personne.",
+        "restreindre": "La candidature est restreinte\u00a0: elle n'est plus proposée à une affectation. La personne n'est pas prévenue.",
+        "demanderVerificationPiece": "La candidature est restreinte (pièce) tant qu'une pièce validée ne la lève. La personne n'est pas prévenue.",
+        "demanderVerificationVersement": "La candidature est restreinte (versement) tant qu'un moyen de versement compatible ne la lève. La personne n'est pas prévenue.",
+        "leverRestriction": "La restriction est levée si la cause est réglée\u00a0: pièce validée, ou versement compatible.",
+        "refaireEntretien": "La candidature revient à l'entretien à planifier. L'entretien tenu ou la dispense d'avant ne compte plus, rien n'est effacé. Aucun message n'est envoyé à la personne."
       },
       "feuille": {
         "motif": "Motif interne",
@@ -4446,6 +4638,14 @@
         "modeleManquant": "Choisissez le message que la personne lira.",
         "enCours": "Envoi au serveur en cours",
         "actualiser": "Actualiser la candidature"
+      },
+      "dispense": {
+        "categorie": "Qui dispensez-vous\u00a0?",
+        "fondateur": "Un fondateur",
+        "fondateurAide": "Pour un fondateur de l'académie, dont l'entretien n'a pas lieu d'être.",
+        "autre": "Une autre personne",
+        "autreAide": "Pour toute autre personne\u00a0: le motif écrit dit pourquoi.",
+        "categorieManquante": "Choisissez qui vous dispensez."
       },
       "complement": {
         "elements": "Ce qui manque",
@@ -4523,19 +4723,29 @@
         "titre": "Geste refusé",
         "nonConfirmeTitre": "Geste non confirmé"
       },
+      "ecrireApres": "Écrire à la personne",
       "retours": {
         "accueillir": "La personne est accueillie dans l'équipe.",
         "admettre": "La candidature est en Salle de vérification et d'entretien.",
         "confirmerMoyen": "Le moyen de versement est confirmé.",
         "ecarterMoyen": "Le moyen de versement est écarté.",
+        "debloquerVersement": "Le versement est débloqué.",
         "demanderComplement": "Le complément est demandé.",
         "cloreComplement": "Le complément est clos.",
+        "modifierComplement": "Le complément est modifié.",
+        "annulerComplement": "Le complément est annulé.",
         "mettreEnPause": "La candidature est en pause.",
         "leverPause": "La pause est levée.",
         "refuser": "La candidature est refusée.",
         "retrait": "Le retrait est enregistré.",
         "rouvrir": "La candidature est rouverte.",
         "responsable": "Le responsable est enregistré.",
+        "dispenserEntretien": "Entretien dispensé. La décision vous attend.",
+        "restreindre": "La candidature est restreinte.",
+        "demanderVerificationPiece": "Vérification de la pièce demandée\u00a0: la candidature est restreinte.",
+        "demanderVerificationVersement": "Vérification du versement demandée\u00a0: la candidature est restreinte.",
+        "leverRestriction": "La restriction est levée.",
+        "refaireEntretien": "Entretien à refaire. La candidature attend un nouvel entretien.",
         "rejoue": "Ce geste avait déjà été fait : rien n'a été écrit une seconde fois."
       },
       "genres": {"male": "Homme", "female": "Femme"},
@@ -4599,6 +4809,7 @@
         "entree": "Entrée de \u2068{nom}\u2069 à {heure}",
         "sortie": "Sortie de \u2068{nom}\u2069 à {heure}",
         "autreIssue": "Autre issue (annulé, absence)",
+        "deplacer": "Déplacer l'entretien",
         "resultat": {"titre": "Résultat de l'entretien", "concluant": "Concluant", "nonConcluant": "Non concluant", "aRefaire": "À refaire", "texteConcluant": "Entretien concluant.", "texteNonConcluant": "Entretien non concluant.", "motifARefaire": "Entretien à refaire.", "retourConcluant": "Entretien concluant. Vous pouvez l'accueillir dans l'équipe.", "retourNonConcluant": "Entretien non concluant. Vous pouvez ne pas l’accueillir.", "retourARefaire": "Entretien à refaire. La personne choisit un nouveau moment.", "refusNonParticipant": "Seule une personne qui a mené l'entretien peut en donner le résultat. Demandez-lui de le faire depuis cette fiche.", "refusPasCommence": "L'entretien n'a pas encore commencé. Revenez à l'heure de début.", "refusDejaConsigne": "Le résultat est déjà enregistré. Rechargez la fiche.", "refusAutre": "Le résultat n'est pas confirmé. Réessayez dans un instant."},
         "consigner": "Consigner l'issue",
         "dernier": "Dernier entretien\u00a0: {date}. {issue}.",
@@ -4650,7 +4861,9 @@
           "retirerConsequence": "\u2068{nom}\u2069 ne prendra plus part à cet entretien.",
           "consignerConsequence": "L'issue est inscrite à l'historique de la candidature et ne change plus.",
           "issueManquante": "Choisissez l'issue.",
-          "envoyerConsigner": "Consigner"
+          "envoyerConsigner": "Consigner",
+          "deplacerConsequence": "La personne et les participants reçoivent le nouveau moment de l'entretien. Ce sont les mêmes participants. L'ancien moment n'est plus utilisé.",
+          "envoyerDeplacer": "Déplacer"
         },
         "refus": {
           "fondateurs": "Il faut au moins {exiges} fondateurs parmi les participants. Fondateurs choisis\u00a0: {presents}.",
@@ -4662,6 +4875,8 @@
           "autreCote": "Une personne choisie n'est pas du côté de cette candidature.",
           "sansCompte": "La personne n'a pas encore de compte\u00a0: l'entretien ne peut pas être planifié.",
           "dejaPlanifie": "Un entretien est déjà planifié pour cette candidature.",
+          "commence": "Cet entretien a déjà commencé\u00a0: il ne se déplace plus.",
+          "memeCreneau": "C'est déjà le moment de cet entretien. Choisissez un autre jour ou une autre heure.",
           "consigne": "Cet entretien est déjà consigné\u00a0: il ne change plus.",
           "dernier": "L'entretien garde au moins un participant.",
           "absent": "Cette personne ne prend déjà plus part à l'entretien.",
@@ -4676,8 +4891,188 @@
           "planifie": "Entretien planifié.",
           "ajoute": "\u2068{nom}\u2069 prend part à l'entretien.",
           "retire": "\u2068{nom}\u2069 ne prend plus part à l'entretien.",
+          "deplace": "Entretien déplacé.",
           "consigne": "Issue consignée."
         }
+      }
+    },
+    "equipe": {
+      "titre": "Équipe",
+      "sousTitre": "Les personnes à qui vous confiez des gestes sur les candidatures, pour un temps.",
+      "inviter": "Inviter une personne",
+      "nouvelleMission": "Nouvelle mission",
+      "accorder": "Accorder une mission",
+      "porteurs": "Personnes avec une mission",
+      "missions": "Missions",
+      "plusActions": "Plus d'actions",
+      "deplierMissions": "Afficher les missions",
+      "replierMissions": "Masquer les missions",
+      "invitations": "Invitations en attente",
+      "videTitre": "Personne n'a encore de mission.",
+      "videPhrase": "Invitez une personne ou créez une mission.",
+      "aucuneMission": "Aucune mission pour l'instant.",
+      "aucuneInvitation": "Aucune invitation en attente.",
+      "sansFin": "sans fin",
+      "jusquAu": "jusqu'au {date}",
+      "depuisLe": "depuis le {date}",
+      "indisponibleTitre": "L'équipe n'est pas encore disponible.",
+      "indisponiblePhrase": "Le serveur ne rend pas encore les missions. Revenez plus tard.",
+      "menu": {
+        "detail": "Voir le détail",
+        "retirer": "Retirer la mission",
+        "archiver": "Archiver",
+        "revoquer": "Révoquer",
+        "plus": "Actions pour {nom}"
+      },
+      "mission": {
+        "porteurs(param=n)": {
+          "zero": "Personne ne la porte",
+          "one": "Portée par {n} personne",
+          "other": "Portée par {n} personnes"
+        },
+        "archivee": "Archivée",
+        "gestes": "Ce qu'elle permet"
+      },
+      "invitation": {
+        "code": "Code\u00a0: {code}",
+        "expire": "Expire le {date}",
+        "etat": {
+          "active": "En attente",
+          "utilisee": "Compte créé",
+          "expiree": "Expirée",
+          "revoquee": "Révoquée"
+        }
+      },
+      "perimetre": {
+        "tous": "toutes les candidatures de leur côté",
+        "langues": "les candidatures en {langues}",
+        "salles": "{salles}",
+        "dossiers(param=n)": {
+          "one": "{n} dossier confié",
+          "other": "{n} dossiers confiés"
+        }
+      },
+      "cote": {
+        "male": "hommes",
+        "female": "femmes",
+        "ligne": "Côté\u00a0: {cote}"
+      },
+      "detail": {
+        "titre": "Détail de la mission",
+        "mission": "Mission",
+        "personne": "Personne",
+        "perimetre": "Où elle agit",
+        "periode": "Période",
+        "gestes": "Gestes",
+        "retiree": "Retirée\u00a0: {motif}",
+        "sansNom": "Une personne de l'équipe"
+      },
+      "feuille": {
+        "motif": "Motif",
+        "motifAide": "Il est gardé au journal\u00a0; la personne ne le lit pas.",
+        "motifManquant": "Écrivez un motif.",
+        "annuler": "Annuler",
+        "mission": {
+          "titre": "Nouvelle mission",
+          "nom": "Nom de la mission",
+          "nomAide": "80 signes au plus.",
+          "nomManquant": "Donnez un nom à la mission.",
+          "nomTropLong": "80 signes au plus.",
+          "gestes": "Ce que la personne peut faire",
+          "gestesAide": "Cochez au moins un geste. Elle ne fait rien d'autre.",
+          "gestesManquants": "Cochez au moins un geste.",
+          "gestesIndisponibles": "Le serveur ne rend pas la liste des gestes. Rechargez la page.",
+          "creer": "Créer la mission",
+          "creee": "Mission créée."
+        },
+        "accorder": {
+          "titre": "Accorder une mission",
+          "personne": "La personne",
+          "personneManquante": "Choisissez une personne.",
+          "mission": "La mission",
+          "missionManquante": "Choisissez une mission.",
+          "aucunePersonne": "Aucune personne ne peut recevoir une mission pour l'instant. Invitez-en une.",
+          "aucuneMission": "Créez d'abord une mission.",
+          "perimetre": "Où elle peut agir",
+          "langues": "Langues des candidatures",
+          "languesAide": "Sans choix, toutes les langues.",
+          "salles": "Salles",
+          "sallesAide": "Sans choix, toutes les salles.",
+          "debut": "Début",
+          "debutAide": "Maintenant, si vous ne choisissez pas de jour.",
+          "fin": "Fin (facultative)",
+          "finAide": "Sans fin, la mission dure jusqu'à son retrait.",
+          "resume": "{nom} pourra {gestes}, sur {perimetre}, {duree}.",
+          "resumeVide": "Choisissez une personne et une mission\u00a0: une phrase dira ce qu'elle pourra faire.",
+          "accorder": "Accorder la mission",
+          "accordee": "Mission accordée."
+        },
+        "retirer": {
+          "titre": "Retirer la mission",
+          "question": "Retirer la mission «\u00a0{mission}\u00a0» à {nom}\u00a0?",
+          "consequence": "Le compte {deNom} n'est pas modifié\u00a0: seule cette mission est retirée. Ses accès aux candidatures cessent tout de suite.",
+          "retirer": "Retirer la mission",
+          "retiree": "Mission retirée. Le compte {deNom} n'a pas changé."
+        },
+        "archiver": {
+          "titre": "Archiver la mission",
+          "question": "Archiver la mission «\u00a0{mission}\u00a0»\u00a0?",
+          "consequence": "Elle ne peut plus être accordée. Les personnes qui la portent la gardent jusqu'à son retrait.",
+          "archiver": "Archiver",
+          "archivee": "Mission archivée."
+        },
+        "inviter": {
+          "titre": "Inviter une personne",
+          "consequence": "La personne reçoit un code pour créer son compte d'associé. Elle ne voit rien tant qu'une mission ne lui est pas accordée.",
+          "courriel": "Adresse e-mail",
+          "courrielManquant": "Saisissez l'adresse e-mail.",
+          "nom": "Nom (facultatif)",
+          "envoyer": "Créer l'invitation",
+          "creee": "Invitation créée. Code à transmettre\u00a0: {code}.",
+          "dejaInvite": "Une invitation est déjà en attente pour cette adresse. Code\u00a0: {code}.",
+          "emailInvalide": "Cette adresse e-mail n'est pas lisible.",
+          "compteExistant": "Un compte existe déjà avec cette adresse."
+        },
+        "revoquer": {
+          "titre": "Révoquer l'invitation",
+          "question": "Révoquer l'invitation de {courriel}\u00a0?",
+          "consequence": "Le code ne sert plus. La personne ne peut plus créer de compte avec lui.",
+          "revoquer": "Révoquer",
+          "revoquee": "Invitation révoquée."
+        }
+      },
+      "refus": {
+        "personneIndisponible": "Ce compte ne peut pas recevoir de mission\u00a0: il n'est pas actif, ou son rôle n'est pas admis.",
+        "genreInconnu": "Le genre de cette personne n'est pas connu\u00a0: sa mission se porte de son côté. Complétez son compte d'abord.",
+        "attributionActive": "Cette personne porte déjà cette mission. Retirez-la d'abord.",
+        "missionIndisponible": "Cette mission n'existe plus ou est archivée.",
+        "parametresInvalides": "Les choix ne sont pas admis\u00a0: vérifiez le nom, les dates et les limites.",
+        "cleDejaUtilisee": "Cette demande a déjà servi pour autre chose. Recommencez.",
+        "gestesNonAdmis": "Un des gestes n'est pas admis dans une mission.",
+        "autre": "Le serveur a refusé ce geste. Rien n'a été écrit.",
+        "permission": "Vous n'avez pas le droit de faire cela.",
+        "doubleVerification": "Ce geste demande la seconde étape de connexion.",
+        "nonConfirme": "Le résultat n'est pas confirmé. Rechargez la page pour voir ce qui a été enregistré.",
+        "echecTitre": "Ce geste n'a pas abouti."
+      },
+      "gestes": {
+        "lire": "lire les candidatures",
+        "voir_contact": "voir l'adresse e-mail et le téléphone",
+        "demander_complement": "demander un complément",
+        "admettre_verifications": "admettre en vérification",
+        "confirmer_moyen_paiement": "confirmer le moyen de versement",
+        "infirmer_moyen_paiement": "infirmer le moyen de versement",
+        "debloquer_versement": "débloquer le versement",
+        "definir_responsable": "choisir le responsable",
+        "consigner_prevenu": "noter qu'une personne a été prévenue",
+        "rattacher": "rattacher une candidature à la personne",
+        "planifier_entretien": "planifier l'entretien",
+        "consigner_entretien_tenu": "consigner un entretien tenu",
+        "consigner_entretien_non_tenu": "consigner un entretien non tenu",
+        "valider_piece": "accueillir dans l'équipe",
+        "rouvrir": "rouvrir une candidature",
+        "retirer": "noter le retrait d'une candidature",
+        "autre": "un autre geste"
       }
     },
     "importInscriptions": {
@@ -6103,6 +6498,7 @@
       "roleEleve": "Élève",
       "roleControleur": "Contrôleur",
       "roleComptable": "Comptable",
+      "roleAssocie": "Associé",
       "roleAucun": "Hors session",
       "evtKycLu": "Dossier d'identité consulté",
       "evtKycTranche": "Dossier d'identité tranché",
@@ -6322,6 +6718,7 @@
       "etatSansDecision": "Sans décision",
       "roleAdmin": "Administration",
       "roleComptable": "Comptable",
+      "roleAssocie": "Associé",
       "roleControleur": "Contrôleur",
       "roleEnseignant": "Enseignant",
       "roleTuteur": "Tuteur",
@@ -6491,6 +6888,7 @@
       "parcoursControleur": "Contrôle qualité",
       "parcoursAdmin": "Administration",
       "parcoursComptable": "Comptable",
+      "parcoursAssocie": "Associé",
       "parcoursInconnu": "Parcours inconnu",
       "etatActif": "Actif",
       "etatRevoque": "Révoqué",
@@ -6509,6 +6907,189 @@
       "usage(param=nombre)": {
         "one": "{nombre} fois, la dernière {quand}",
         "other": "{nombre} fois, la dernière {quand}"
+      }
+    },
+    "praxis": {
+      "titre": "Praxis",
+      "intro": "Praxis est le secrétaire de l'académie. Il lit les messages des familles et ne répond que dans les limites ci-dessous. Il est éteint tant que vous ne l'allumez pas.",
+      "reglagesTitre": "Réglages de Praxis",
+      "allume": "Praxis allumé",
+      "etatAllume": "Allumé",
+      "etatEteint": "Éteint",
+      "allumeOui": "Allumé : Praxis lit les messages et écrit dans les limites ci-dessous.",
+      "allumeNon": "Éteint : Praxis ne lit rien et n'écrit rien.",
+      "allumer": "Allumer Praxis",
+      "eteindre": "Éteindre Praxis",
+      "autonome": "Mode autonome",
+      "autonomeOui": "Autonome : Praxis peut travailler seul, sans que vous soyez dans la conversation.",
+      "autonomeNon": "Dirigé : Praxis n'agit que dans une conversation que vous menez.",
+      "autoriserAutonome": "Autoriser le mode autonome",
+      "reprendreDirige": "Revenir au mode dirigé",
+      "plafond": "Messages par heure",
+      "plafondDetail(plural, param=nombre)": {
+        "one": "Praxis envoie au plus {nombre} message par heure.",
+        "other": "Praxis envoie au plus {nombre} messages par heure."
+      },
+      "plafondChamp": "Nombre de messages par heure (de 1 à 120)",
+      "plafondEnregistrer": "Fixer le plafond",
+      "plafondInvalide": "Écrivez un nombre entier entre 1 et 120.",
+      "donnees": {
+        "titre": "Données réelles",
+        "fermees": "Fermées : Praxis ne lit aucun dossier de candidature ni aucune conversation réelle. Seules les conversations d'essai lui sont ouvertes.",
+        "ouvertes": "Ouvertes : Praxis peut lire les conversations et les dossiers de candidature que sa clé lui permet de voir, dans les côtés de la personne qui l'a émise.",
+        "avertissement": "N'ouvrez les données réelles qu'après avoir publié la politique de confidentialité qui mentionne l'assistant. Tant que ce n'est pas fait, Praxis ne doit lire aucune donnée réelle. Vous pouvez les refermer à tout moment.",
+        "ouvrir": "Ouvrir les données réelles",
+        "fermer": "Fermer les données réelles"
+      },
+      "propositions": {
+        "titre": "Propositions de Praxis",
+        "pastille": "Praxis propose",
+        "intro": "Praxis a préparé ce geste. Rien n'est fait tant que vous ne validez pas : en validant, le geste est exécuté comme si vous l'aviez fait vous-même.",
+        "geste": {
+          "demanderComplement": "Demander un complément",
+          "planifierEntretien": "Planifier un entretien",
+          "admettreVerifications": "Admettre en salle de vérification"
+        },
+        "note": "Ce que Praxis a écrit",
+        "motif": "Motif dit au candidat",
+        "elements": "Éléments demandés",
+        "quand": "Entretien proposé le {date} à {heure}",
+        "duree(plural, param=n)": {
+          "one": "Durée : {n} minute",
+          "other": "Durée : {n} minutes"
+        },
+        "expire": "Expire le {date}",
+        "participants": "Participants",
+        "participantsAide": "Choisissez les personnes qui mènent l'entretien : Praxis ne les choisit pas.",
+        "participantsAucun": "Aucune personne du personnel à choisir pour ce dossier.",
+        "participantsErreur": "La liste du personnel n'a pas pu être lue. Réessayez dans un instant.",
+        "erreur": "Les propositions de Praxis n'ont pas pu être lues. Réessayez dans un instant.",
+        "horsLigne": "Les propositions de Praxis ne sont pas encore chargées. Rechargez-les.",
+        "motifEcart": "Motif (facultatif)",
+        "valider": "Valider",
+        "ecarter": "Écarter",
+        "fait": "Geste fait : {geste}.",
+        "ecartee": "Proposition écartée.",
+        "perimee": "Le dossier a changé depuis cette proposition : elle ne peut plus être validée. Écartez-la.",
+        "close": "Cette proposition n'est plus ouverte : elle a été traitée ou elle a expiré.",
+        "generique": "La proposition n'a pas pu être traitée. Rien n'a changé : réessayez."
+      },
+      "essaiTitre": "Conversations d'essai",
+      "essaiVide": "Mode essai éteint : Praxis peut lire toutes les conversations de l'académie qu'il a le droit de lire.",
+      "essaiActif(plural, param=nombre)": {
+        "one": "Mode essai : Praxis ne voit que {nombre} conversation et ne publie aucune annonce.",
+        "other": "Mode essai : Praxis ne voit que {nombre} conversations et ne publie aucune annonce."
+      },
+      "essaiChamp": "Choisir les conversations d'essai",
+      "essaiAide": "Cochez au plus dix conversations parmi celles de vos Messages. Si vous n'en avez pas, créez d'abord une conversation de test avec un compte de test. Tant que rien n'est coché et enregistré, il n'y a pas d'essai.",
+      "essaiEnregistrer": "Enregistrer les conversations d'essai",
+      "essaiFin": "Mettre fin à l'essai",
+      "essaiChoisies(plural, param=nombre)": {
+        "one": "{nombre} conversation cochée.",
+        "other": "{nombre} conversations cochées."
+      },
+      "essaiTrop(plural, param=nombre)": {
+        "one": "Dix conversations au plus : décochez-en une pour en choisir une autre.",
+        "other": "Dix conversations au plus : décochez-en une pour en choisir une autre."
+      },
+      "essaiListeErreur": "La liste de vos conversations n'a pas pu être lue. Réessayez dans un instant.",
+      "essaiAucune": "Aucune conversation à choisir. Créez d'abord une conversation de test avec un compte de test, puis revenez ici.",
+      "essaiAffinez": "Seules les {nombre} premières conversations sont montrées : affinez avec la recherche.",
+      "reglageFait": "Réglage appliqué.",
+      "erreurReglage": "Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.",
+      "doubleVerification": "Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.",
+      "pourra": "Pourra",
+      "pourraDetail": "Lire les messages des familles de l'académie, répondre dans une conversation qui existe, publier une annonce pour les familles, noter un sujet au calendrier.",
+      "nePourraPas": "Ne pourra pas",
+      "nePourraPasDetail": "Écrire à un enfant, ouvrir une conversation, envoyer un courriel, toucher à l'argent, aux comptes, aux droits ou aux pièces d'identité, ni se rallumer seul.",
+      "clesTitre": "Clés de Praxis",
+      "clesIntro": "Une clé permet à une conversation ou à une routine de parler à Praxis. Elle n'est montrée qu'une fois, au moment où vous l'émettez.",
+      "cleLibelle": "À quoi sert cette clé",
+      "cleLibelleAide": "Obligatoire. Une clé sans nom est une clé que personne n'ose révoquer.",
+      "cleLibelleExemple": "Conversation du directeur",
+      "cleUsage": "Comment elle servira",
+      "usageChat": "Conversation",
+      "usageChatDetail": "Vous parlez à Praxis dans une conversation. Il agit quand vous le lui demandez.",
+      "usageRoutine": "Routine",
+      "usageRoutineDetail": "Praxis travaille seul à heures fixes. Elle ne marche que si le mode autonome est autorisé.",
+      "cleDuree": "Jusqu'à quand",
+      "dureeJours(plural, param=nombre)": {
+        "one": "{nombre} jour",
+        "other": "{nombre} jours"
+      },
+      "dureePlafond": "Quatre-vingt-dix jours au maximum, et la base le vérifie elle-même.",
+      "emettre": "Émettre la clé",
+      "manqueLibelle": "Il manque le nom de la clé : écrivez à quoi elle sert.",
+      "erreurEmission": "Émission non confirmée. Relisez la liste des clés avant de recommencer.",
+      "cleEmise": "Clé émise",
+      "cleEmiseDetail": "Copiez la clé maintenant. Elle n'apparaîtra plus : ni cet écran ni la base ne peuvent la retrouver.",
+      "copierCle": "Copier la clé",
+      "cleCopiee": "Clé copiée",
+      "adresse": "Adresse du connecteur",
+      "adresseDetail": "Collez cette adresse dans la conversation de Praxis, avec la clé.",
+      "copierAdresse": "Copier l'adresse",
+      "adresseCopiee": "Adresse copiée",
+      "termine": "J'ai copié la clé",
+      "colonneCle": "Clé",
+      "colonneUsage": "Usage",
+      "colonneEmise": "Émise le",
+      "colonneExpire": "Jusqu'au",
+      "colonneUtilisee": "Dernière utilisation",
+      "colonneEtat": "État",
+      "jamaisUtilisee": "Jamais utilisée",
+      "etatActive": "Active",
+      "etatRevoquee": "Révoquée",
+      "etatExpiree": "Expirée",
+      "revoquer": "Révoquer",
+      "revoquerTitre": "Révoquer cette clé ?",
+      "revoquerDetail": "Praxis ne pourra plus s'en servir, tout de suite. Une clé révoquée ne se rétablit pas.",
+      "revoquerMotif": "Pourquoi",
+      "revoquerMotifAide": "Obligatoire. Quelques mots, gardés dans le journal.",
+      "manqueMotif": "Il manque le motif : écrivez pourquoi.",
+      "revoquerConfirmer": "Révoquer la clé",
+      "revoquee": "Clé révoquée.",
+      "erreurRevocation": "Révocation non confirmée. Relisez la liste des clés avant de recommencer.",
+      "cleVide": "Aucune clé",
+      "cleVideDetail": "Émettez une clé pour parler à Praxis.",
+      "erreur": "Les réglages de Praxis n'ont pas pu être lus. Réessayez dans un instant.",
+      "horsLigne": "Les réglages de Praxis ne sont pas encore chargés. Rechargez-les.",
+      "journalTitre": "Ce que Praxis a envoyé",
+      "journalIntro": "Les messages et les annonces que Praxis a écrits lui-même, les plus récents d'abord. Jamais le texte d'une famille.",
+      "journalVide": "Praxis n'a encore rien envoyé",
+      "journalVideDetail": "Ses envois, et ses refus, apparaîtront ici.",
+      "journalErreur": "Le journal de Praxis n'a pas pu être lu. Réessayez dans un instant.",
+      "voirSuite": "Voir les envois plus anciens",
+      "colonneQuand": "Quand",
+      "colonneQuoi": "Quoi",
+      "colonneResultat": "Résultat",
+      "colonneExtrait": "Début du texte",
+      "quoiMessage": "Message",
+      "quoiAnnonce": "Annonce",
+      "envoye": "Envoyé",
+      "refuse": "Refusé",
+      "refuseCause": "Refusé : {cause}",
+      "sansTexte": "Rien n'a été écrit.",
+      "cause": {
+        "essai": "mode essai, aucune annonce",
+        "horsEssai": "conversation hors de l'essai",
+        "plafondFil": "trop de messages de suite sans réponse",
+        "plafond": "plafond par heure atteint",
+        "plafondAnnonces": "deux annonces déjà publiées aujourd'hui",
+        "eteint": "Praxis était éteint",
+        "mineur": "un enfant est dans cette conversation",
+        "reprisParEquipe": "la direction a repris la conversation",
+        "horsAcademie": "conversation hors de l'académie",
+        "typeFerme": "type de conversation fermé à Praxis",
+        "cote": "conversation de l'autre côté",
+        "longueur": "texte trop long",
+        "parametre": "demande incomplète",
+        "filInconnu": "conversation introuvable",
+        "filFerme": "conversation fermée",
+        "publicRefuse": "public refusé",
+        "cleRefusee": "clé refusée",
+        "autonomeRequis": "mode autonome requis",
+        "refusee": "refusé par la messagerie",
+        "autre": "cause inconnue"
       }
     },
     "notifications": {
@@ -8312,6 +8893,7 @@
     "roles": {
       "admin": "Administrateur",
       "accountant": "Comptable",
+      "associe": "Associé",
       "controller": "Contrôleur",
       "teacher": "Enseignant",
       "guardian": "Tuteur",
@@ -8320,6 +8902,7 @@
     "roleDetail": {
       "admin": "Gère les dossiers, l'attribution et le journal de l'académie",
       "accountant": "Gère les paiements et les factures",
+      "associe": "Suit les candidatures que la direction lui confie",
       "controller": "Observe les séances pour la qualité pédagogique",
       "teacher": "Donne les cours et suit ses créneaux",
       "guardian": "Suit le foyer et ses enfants",
@@ -8606,7 +9189,7 @@
       "annonceDirection": "Annonce de l'académie",
       "annonceDirectionTitre": "Annonce : {titre}",
       "bienvenueEquipe": "Bienvenue dans l'équipe. Il vous reste à configurer votre espace.",
-      "retenuEntretien": "Vous êtes retenu pour un entretien. Faisons connaissance : choisissez votre horaire dans l'application.",
+      "retenuEntretien": "Vous êtes retenu pour un entretien. Vous n'avez rien à faire pour l'instant : l'académie vous informera dès qu'un moment sera ouvert.",
       "pauseRepondueAcceptee": "La pause d'un mois {dePrenom} est acceptée pour {mois}. Sa date limite recule d'autant. Sa place est gardée.",
       "pauseRepondueAccepteeAdulte": "Votre pause d'un mois est acceptée pour {mois}. Votre date limite recule d'autant. Votre place est gardée.",
       "pauseRepondueRefusee": "La pause d'un mois {dePrenom} pour {mois} n'est pas acceptée. Le motif est dans l'application.",
@@ -12075,6 +12658,7 @@
         "ecrireA": "Écrire à {nom}",
         "conversationAvec": "Conversation avec {nom}",
         "replier": "Replier la conversation",
+        "fermer": "Fermer la conversation",
         "ouvrirDansMessages": "Ouvrir dans Messages",
         "voirTout": "Voir toutes les conversations",
         "toutes": "Toutes vos conversations",
@@ -12100,11 +12684,14 @@
       "filtres": {
         "tous": "Tous",
         "nonLus": "Non lus",
-        "aucunNonLu": "Aucune conversation non lue."
+        "aucunNonLu": "Aucune conversation non lue.",
+        "nouveaux": "Nouveaux",
+        "aucunNouveau": "Aucune conversation nouvelle."
       },
       "ligne": {
         "legende": "{objet} · {apercu}",
         "sansApercu": "Aucun message pour le moment",
+        "sansMessage": "Aucun message",
         "dateCourte": "{numero} {mois}"
       },
       "noms": {
@@ -12165,6 +12752,10 @@
         "aimeParVous": "Aimé par vous",
         "aimes": "J'aime\u00a0: {n}",
         "coeurEchec": "Votre «\u00a0J'aime\u00a0» n'est pas confirmé. Réessayez dans un instant.",
+        "photoApercu": "Photo",
+        "nonConfirmeToucher": "Non confirmé · Toucher pour réessayer",
+        "supprimerEchec": "Supprimer",
+        "actionsEchec": "Actions du message non confirmé",
         "refus": {
           "demandeInvalide": "Cette image n'est pas confirmée\u00a0: ses dimensions ou son format ne sont pas ceux attendus. Choisissez une autre photo.",
           "typeRefuse": "Ce type de fichier n'est pas accepté. Choisissez une photo JPEG, PNG ou WebP.",
@@ -12179,7 +12770,7 @@
           "stockageIndisponible": "Le stockage des images n'a pas pris l'envoi pour le moment\u00a0: ce n'est pas votre appareil. Réessayez dans quelques minutes.",
           "confirmationIndisponible": "L'envoi d'images n'est pas encore bien réglé sur le serveur\u00a0: l'équipe doit le corriger. Votre texte est bien parti.",
           "depotImpossible": "L'image n'est pas confirmée\u00a0: c'est une panne du serveur, pas de votre faute. Réessayez dans un instant.",
-          "envoiStockage": "Le stockage a refusé l'image (adresse expirée ou envoi coupé). Réessayez.",
+          "envoiStockage": "L'envoi de l'image n'a pas abouti. Réessayez plus tard.",
           "reseau": "Il est possible que l'image ne soit pas parvenue jusqu'à Rewayah. Réessayez dans un instant.",
           "imageTropGrosse": "Cette photo pèse plus de 15 Mo, ou reste trop lourde après réduction. Choisissez-en une plus légère.",
           "imageIllisible": "Cette photo ne peut pas être lue. Choisissez une autre photo."

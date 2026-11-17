@@ -23,10 +23,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/communications/capacites_communication.dart';
 import '../../core/communications/veille_messages.dart';
+import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
+import 'barre_conversation.dart';
 import 'fil_contextuel.dart';
 import 'images_du_fil.dart';
 import 'port_messages_metier.dart';
@@ -38,10 +40,31 @@ import 'port_messages_metier.dart';
 /// defile.
 class FilEnPlace extends ConsumerStatefulWidget {
   /// Cree le fil en place.
-  const FilEnPlace({required this.filId, super.key, this.onLu});
+  const FilEnPlace({
+    required this.filId,
+    required this.onReplier,
+    super.key,
+    this.onLu,
+    this.onOuvrirMessages,
+    this.volet = false,
+  });
 
   /// Le fil a ouvrir.
   final String filId;
+
+  /// CONVERSATIONS-PARTOUT : replie la conversation (le dossier reprend la
+  /// place). C'est le retour de la barre compacte, la meme que celle de la
+  /// page Messages : aucun titre, aucun lien d'en-tete de plus.
+  final VoidCallback onReplier;
+
+  /// Vrai : la conversation vit dans un VOLET de cote (ordinateur). Une croix
+  /// « Fermer la conversation » au bord de fin de la barre, qui ne se replie
+  /// jamais (MESSAGERIE-COULEURS, pilote, 16/11/2026 : regression de #540).
+  /// Faux : une page, la fleche de retour du bord de debut.
+  final bool volet;
+
+  /// « Ouvrir dans Messages » (bouton d'icone de la barre), ou `null`.
+  final VoidCallback? onOuvrirMessages;
 
   /// Le fil vient d'etre marque lu par le serveur : la page hote relit ses
   /// badges.
@@ -155,14 +178,27 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
       (int? _, int _) => unawaited(_relireEnDirect()),
     );
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Chargement, erreur, fil refuse : la barre de retour seule, puis l'etat.
+    // Jamais une surface sans sortie.
+    Widget etat(Widget contenu) => Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        BarreRetourConversation(
+          onRetour: widget.volet ? null : widget.onReplier,
+          onFermer: widget.volet ? widget.onReplier : null,
+          libelle: t.com.messages.entree.replier,
+        ),
+        Expanded(child: SingleChildScrollView(child: contenu)),
+      ],
+    );
     if (_fil.isLoading) {
-      return const SingleChildScrollView(
-        child: VueEtatCommunication(etat: EtatCommunication.chargement),
+      return etat(
+        const VueEtatCommunication(etat: EtatCommunication.chargement),
       );
     }
     if (_fil.hasError) {
-      return SingleChildScrollView(
-        child: VueEtatCommunication.depuisErreur(
+      return etat(
+        VueEtatCommunication.depuisErreur(
           _fil.error!,
           horsLigne: horsLigne,
           onReessayer: _charger,
@@ -171,8 +207,8 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
     }
     final FilMetier? fil = _fil.value;
     if (fil == null) {
-      return const SingleChildScrollView(
-        child: VueEtatCommunication(
+      return etat(
+        const VueEtatCommunication(
           etat: EtatCommunication.permissionRefusee,
           dependance: 'COM-BR-01',
         ),
@@ -183,6 +219,16 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
       child: FilContextuel(
         key: ValueKey<String>('fil-en-place-${fil.id}'),
         fil: fil,
+        // La mise en page de la messagerie refaite : une barre compacte
+        // (avatar a cote du nom), le fil pleine page, ses marges.
+        pleinEcran: true,
+        // Un volet : une croix au bord de fin, une barre qui ne se replie
+        // jamais. Une page : la fleche de retour du bord de debut.
+        onRetour: widget.volet ? null : widget.onReplier,
+        onFermer: widget.volet ? widget.onReplier : null,
+        barreFixe: widget.volet,
+        libelleRetour: t.com.messages.entree.replier,
+        onOuvrirMessages: widget.onOuvrirMessages,
         // COM-BR-16 : tant que la capacite n'est pas lue, l'ecriture reste
         // fermee.
         ecritureOuverte:
@@ -195,6 +241,7 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
         images: imagesDuFil(ref, fil.id).source,
         onAimer: imagesDuFil(ref, fil.id).aimer,
         onEnvoyerImage: imagesDuFil(ref, fil.id).envoyer,
+        onAnnulerImage: imagesDuFil(ref, fil.id).annuler,
         onEnvoyerVocal: vocalOuvert(ref)
             ? (EnregistrementVocal v, String cle) =>
                   _envoyerVocal(fil.id, v, cle)

@@ -18,18 +18,15 @@ import '../../core/icons/app_icons.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/avatar_tile.dart';
-import '../../core/widgets/badge_non_lu.dart';
+import '../../core/widgets/carte_lignes.dart' show LigneDeCarte;
 import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/ligne_conversation.dart';
 import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/surface_recherche.dart';
 import '../accueil_famille/bloc_seance.dart' show heureDeLAppareil;
-import 'avatar_participant.dart';
-import 'entete_fil_contexte.dart';
+import 'ligne_fil.dart';
 import 'port_messages_metier.dart';
 import 'recherche_fils.dart';
 
@@ -88,9 +85,13 @@ class ListeFils extends StatefulWidget {
     'liste-fils-ouvrir-recherche',
   );
 
+  /// La cle du filtre « Nouveaux », pour les tests.
+  static const ValueKey<String> cleFiltreNouveaux = ValueKey<String>(
+    'liste-fils-filtre-nouveaux',
+  );
+
   /// La cle de la ligne d'un fil, pour les tests.
-  static ValueKey<String> cleLigne(String filId) =>
-      ValueKey<String>('liste-fils-$filId');
+  static ValueKey<String> cleLigne(String filId) => LigneFil.cleLigne(filId);
 
   @override
   State<ListeFils> createState() => _ListeFilsState();
@@ -100,8 +101,8 @@ class _ListeFilsState extends State<ListeFils> {
   RechercheFilsControleur? _propre;
   late RechercheFilsControleur _etat;
 
-  /// BULLES-MESSAGERIE : le filtre « Non lus ».
-  bool _nonLusSeulement = false;
+  /// BULLES-MESSAGERIE : le filtre « Non lus ». NOUVEAU-FILS : et « Nouveaux ».
+  _FiltreFils _filtre = _FiltreFils.tous;
 
   TextEditingController get _recherche => _etat.texte;
 
@@ -206,35 +207,46 @@ class _ListeFilsState extends State<ListeFils> {
   /// La liste, filtree par la recherche et par « Non lus ». Les resultats
   /// d'une recherche sont annonces (region polie) ; un filtre sans resultat
   /// dit quoi essayer. Les lignes se construisent au fur et a mesure du
-  /// defilement (`ListView.builder`), chacune sous la cle de son fil.
+  /// defilement, chacune sous la cle de son fil, en une carte blanche peinte ligne a ligne.
   Widget _resultats() {
     final r = t.com.messages.recherche;
     final String texte = _recherche.text.trim();
     final List<ResumeFil> cherches = filtrerFils(widget.fils, texte);
-    final List<ResumeFil> vus = _nonLusSeulement
-        ? <ResumeFil>[
-            for (final ResumeFil f in cherches)
-              if (f.attention.nonLus > 0) f,
-          ]
-        : cherches;
+    final List<ResumeFil> vus = switch (_filtre) {
+      _FiltreFils.tous => cherches,
+      _FiltreFils.nonLus => <ResumeFil>[
+        for (final ResumeFil f in cherches)
+          if (f.attention.nonLus > 0) f,
+      ],
+      _FiltreFils.nouveaux => <ResumeFil>[
+        for (final ResumeFil f in cherches)
+          if (f.nouveau) f,
+      ],
+    };
     final Widget filtres = Padding(
       padding: const EdgeInsets.only(bottom: AppSpacing.sm),
       child: RangeeFiltres(
         filtres: <Widget>[
           FilterPill(
             libelle: t.com.messages.filtres.tous,
-            retenue: !_nonLusSeulement,
-            onPress: () => setState(() => _nonLusSeulement = false),
+            retenue: _filtre == _FiltreFils.tous,
+            onPress: () => setState(() => _filtre = _FiltreFils.tous),
           ),
           FilterPill(
             libelle: t.com.messages.filtres.nonLus,
-            retenue: _nonLusSeulement,
-            onPress: () => setState(() => _nonLusSeulement = true),
+            retenue: _filtre == _FiltreFils.nonLus,
+            onPress: () => setState(() => _filtre = _FiltreFils.nonLus),
+          ),
+          FilterPill(
+            key: ListeFils.cleFiltreNouveaux,
+            libelle: t.com.messages.filtres.nouveaux,
+            retenue: _filtre == _FiltreFils.nouveaux,
+            onPress: () => setState(() => _filtre = _FiltreFils.nouveaux),
           ),
         ],
       ),
     );
-    if (vus.isEmpty && (texte.isNotEmpty || _nonLusSeulement)) {
+    if (vus.isEmpty && (texte.isNotEmpty || _filtre != _FiltreFils.tous)) {
       return SingleChildScrollView(
         padding: EdgeInsets.only(bottom: MediaQuery.paddingOf(context).bottom),
         child: Column(
@@ -245,7 +257,9 @@ class _ListeFilsState extends State<ListeFils> {
               nature: NatureEtat.aucunResultat,
               titre: r.aucunTitre,
               phrase: texte.isEmpty
-                  ? t.com.messages.filtres.aucunNonLu
+                  ? (_filtre == _FiltreFils.nouveaux
+                        ? t.com.messages.filtres.aucunNouveau
+                        : t.com.messages.filtres.aucunNonLu)
                   : r.aucun(texte: texte),
             ),
           ],
@@ -254,6 +268,8 @@ class _ListeFilsState extends State<ListeFils> {
     }
     final DateTime maintenant = widget.horloge();
     final int avant = 1 + (texte.isNotEmpty ? 1 : 0);
+    // Construite A LA DEMANDE (le directeur a des centaines de conversations) :
+    // chaque ligne peint son morceau de la carte blanche (`LigneDeCarte`).
     return ListView.builder(
       // La position de lecture survit a l'aller-retour de la recherche.
       key: const PageStorageKey<String>('liste-fils'),
@@ -280,42 +296,32 @@ class _ListeFilsState extends State<ListeFils> {
             ),
           );
         }
-        final ResumeFil f = vus[i - avant];
-        return _ligne(f, maintenant);
+        final int k = i - avant;
+        // MESSAGERIE-COULEURS (directeur, 16/11/2026) : l'aspect d'UNE carte
+        // blanche a lignes fines posee sur la page, comme avant BULLES-
+        // MESSAGERIE, sans perdre la construction ligne a ligne.
+        return LigneDeCarte(
+          premiere: k == 0,
+          derniere: k == vus.length - 1,
+          child: _ligne(vus[k], maintenant),
+        );
       },
     );
   }
 
   /// Une conversation : photo de 48 (ou initiales), nom, apercu, heure et
-  /// nombre de non lus (BULLES-MESSAGERIE, `LigneConversation`).
+  /// nombre de non lus (BULLES-MESSAGERIE, `LigneConversation`), posee par
+  /// `LigneFil`, le seul endroit qui compose la ligne d'un fil.
   Widget _ligne(ResumeFil f, DateTime maintenant) {
-    final int nonLus = f.attention.nonLus;
-    final DateTime? dernier = f.dernierMessageLe;
-    final String titre = titreFil(f.interlocuteurs, f.objet.libelle);
-    final String apercu = f.apercu ?? t.com.messages.ligne.sansApercu;
     final String? selection = widget.filSelectionne;
-    return LigneConversation(
-      key: ValueKey<String>('ligne-${f.id}'),
-      // PHOTOS-2b et #Ra_staff : l'avatar du premier interlocuteur.
-      meneur: KeyedSubtree(
-        key: ListeFils.cleLigne(f.id),
-        child: AvatarParticipant(
-          participant: f.interlocuteurs.isEmpty ? null : f.interlocuteurs.first,
-          repli: f.objet.libelle,
-          diametre: AppAvatar.moyen,
-        ),
-      ),
-      titre: titre,
-      apercu: apercu,
-      heure: dernier == null ? null : momentCourt(dernier, maintenant),
-      nonLus: nonLus,
-      libelleNonLus: nonLus > 0 ? BadgeNonLu.libelleNonLus(nonLus) : null,
-      // Une attention sans nombre (mention, action requise) garde son badge.
-      marque: nonLus == 0 && f.attention.estVisible
-          ? BadgeNonLu(indicateur: f.attention, compact: true)
-          : null,
+    return LigneFil(
+      fil: f,
+      maintenant: maintenant,
       selectionnee: selection == null ? null : f.id == selection,
       onPress: () => widget.onOuvrir(f.id),
     );
   }
 }
+
+/// Le filtre de la liste : tout, les non lus, les nouveaux (NOUVEAU-FILS).
+enum _FiltreFils { tous, nonLus, nouveaux }

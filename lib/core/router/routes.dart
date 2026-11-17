@@ -900,8 +900,23 @@ abstract final class Routes {
       '/admin/personnes/candidatures/creneaux';
 
   /// Le chemin de la candidature de reference [reference].
-  static String adminPersonnesCandidaturePour(String reference) =>
-      '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';
+  ///
+  /// BE-SUIVANT : [fileDeLaListe] est l'adresse de la liste d'ou l'on ouvre le
+  /// dossier (son filtre et son tri) : le dossier sait alors dans quelle file
+  /// il se trouve et peut passer au suivant. Sans elle (un dossier ouvert
+  /// depuis un message), l'adresse reste celle d'avant.
+  static String adminPersonnesCandidaturePour(
+    String reference, {
+    Map<String, String>? fileDeLaListe,
+  }) {
+    final String chemin =
+        '$adminPersonnesCandidatures/${Uri.encodeComponent(reference)}';
+    if (fileDeLaListe == null) return chemin;
+    return Uri(
+      path: chemin,
+      queryParameters: <String, String>{...fileDeLaListe, 'depuis': 'liste'},
+    ).toString();
+  }
 
   /// BACK-FRONT-REPRISE-1 : la file des reprises de foyer, sous Personnes.
   static const String adminPersonnesReprises = '/admin/personnes/reprises';
@@ -923,10 +938,18 @@ abstract final class Routes {
   static const String adminPersonnes = '/admin/personnes';
 
   /// Validation des dossiers d'identite (`ADM-02`), sous Personnes.
+  /// LP-2 : la liste des enseignants, pour toute leur vie (phase, classes,
+  /// gestes), sous Personnes.
+  static const String adminPersonnesEnseignants =
+      '/admin/personnes/enseignants';
+
   static const String adminPersonnesDossiers = '/admin/personnes/dossiers';
 
   /// Les comptes du produit (`ADM-08`), sous Personnes.
   static const String adminPersonnesComptes = '/admin/personnes/comptes';
+
+  /// BE-2b : l'equipe, les missions confiees et les invitations d'associes.
+  static const String adminPersonnesEquipe = '/admin/personnes/equipe';
 
   /// Les comptes dont l'acces provisoire est echu (DASH-ADM-ECHUS) : la meme
   /// page, ouverte filtree, cible de « Acces echus » du Centre de commande.
@@ -1478,7 +1501,7 @@ abstract final class Routes {
     AppRole.teacher => enseignantNotifications,
     AppRole.controller => controleurNotifications,
     AppRole.admin => adminNotifications,
-    AppRole.student || AppRole.accountant => null,
+    AppRole.student || AppRole.accountant || AppRole.associe => null,
   };
 
   /// La racine de chaque role, ou une redirection renvoie toujours.
@@ -1489,6 +1512,9 @@ abstract final class Routes {
     AppRole.controller => controleur,
     AppRole.admin => admin,
     AppRole.accountant => comptable,
+    // BE-2b : l'accueil de l'associe est la liste des candidatures, que le
+    // serveur filtre sur ses missions ; rien d'autre ne lui est montre.
+    AppRole.associe => adminPersonnesCandidatures,
   };
 
   /// Le prefixe de chemin reserve a un role. Sert a refuser une route d'un
@@ -1500,5 +1526,8 @@ abstract final class Routes {
     AppRole.controller => controleur,
     AppRole.admin => '/admin',
     AppRole.accountant => comptable,
+    // L'associe n'ouvre que les candidatures (liste et dossier) : le prefixe
+    // est celui de cette page, pas celui de l'administration.
+    AppRole.associe => adminPersonnesCandidatures,
   };
 }

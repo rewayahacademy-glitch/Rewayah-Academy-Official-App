@@ -42,6 +42,7 @@ import '../../core/communications/lecture_fil_communication.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/communications/textes_fil_communication.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/fil_discussion.dart';
@@ -72,6 +73,12 @@ class FilContextuel extends StatefulWidget {
     this.images,
     this.onAimer,
     this.onEnvoyerImage,
+    this.onAnnulerImage,
+    this.libelleRetour,
+    this.iconeRetour,
+    this.onOuvrirMessages,
+    this.onFermer,
+    this.barreFixe = false,
   });
 
   /// IMAGES-MESSAGERIE : les adresses des images du fil, ou `null`.
@@ -84,6 +91,9 @@ class FilContextuel extends StatefulWidget {
   /// IMAGES-MESSAGERIE : envoyer un message avec son image, ou `null` : pas
   /// d'icone (compte eleve de moins de 18 ans).
   final EnvoiImageFil? onEnvoyerImage;
+
+  /// IMAGES-CORRECTIF : abandonne le depot d'une bulle supprimee, ou `null`.
+  final Future<void> Function(String imageId)? onAnnulerImage;
 
   /// Le fil ouvert.
   final FilMetier fil;
@@ -114,6 +124,21 @@ class FilContextuel extends StatefulWidget {
   /// saisie fixe en bas. Faux : le fil a son en-tete dans une page a titre
   /// (tablette et ordinateur, ou le fil vit a cote de la liste).
   final bool pleinEcran;
+
+  /// CONVERSATIONS-PARTOUT : le mot et l'icone du retour de la barre (voir
+  /// `BarreConversation`), et le lien « Ouvrir dans Messages » ; passes tels
+  /// quels a la barre, jamais recomposes par la page qui pose le fil.
+  final String? libelleRetour;
+  final AppIcon? iconeRetour;
+  final VoidCallback? onOuvrirMessages;
+
+  /// MESSAGERIE-COULEURS : la croix « Fermer la conversation » d'un volet, au
+  /// bord de fin de la barre (voir `BarreConversation.onFermer`).
+  final VoidCallback? onFermer;
+
+  /// Vrai : la barre ne se replie jamais quand on remonte vers les anciens
+  /// messages (un volet n'a pas d'autre moyen d'etre ferme que sa barre).
+  final bool barreFixe;
 
   /// La cle du composer vocal du fil, pour les tests.
   static const ValueKey<String> cleComposerVocal = ValueKey<String>(
@@ -290,7 +315,11 @@ class _FilContextuelState extends State<FilContextuel>
         BarreConversation(
           fil: fil,
           onRetour: widget.onRetour,
-          replie: _barreRepliee,
+          replie: !widget.barreFixe && _barreRepliee,
+          libelleRetour: widget.libelleRetour,
+          iconeRetour: widget.iconeRetour,
+          onOuvrirMessages: widget.onOuvrirMessages,
+          onFermer: widget.onFermer,
         ),
         Expanded(
           child: NotificationListener<ScrollNotification>(
@@ -319,6 +348,7 @@ class _FilContextuelState extends State<FilContextuel>
               onEnvoyerImage: ecriture && widget.onEnvoyerImage != null
                   ? _envoyerImage
                   : null,
+              onAnnulerImage: widget.onAnnulerImage,
               cleBrouillon: ecriture ? cleBrouillonFil(fil.id) : null,
               emplacementVocal: !ecriture || vocal == null
                   ? null
@@ -409,6 +439,7 @@ class _FilContextuelState extends State<FilContextuel>
       images: widget.images,
       onAimer: widget.onAimer,
       onEnvoyerImage: widget.onEnvoyerImage == null ? null : _envoyerImage,
+      onAnnulerImage: widget.onAnnulerImage,
       cleBrouillon: cleBrouillonFil(fil.id),
       emplacementVocal: vocal == null
           ? null

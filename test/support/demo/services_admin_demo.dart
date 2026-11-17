@@ -17,7 +17,9 @@ import 'package:rewayah_academy/core/admin/service_plan_classe.dart';
 import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/admin/service_progression.dart';
 import 'package:rewayah_academy/core/admin/service_qualite.dart';
+import 'package:rewayah_academy/core/agent/propositions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
+import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/controle/service_controle.dart';
@@ -26,6 +28,8 @@ import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 import 'package:rewayah_academy/features/admin_observations/annuaire_observations.dart';
+
+import '../propositions_praxis_vides.dart';
 
 /// La dependance nommee par tout service neutralise de la demonstration.
 const String dependanceDemoAdmin = 'AD-BR-DEMO';
@@ -112,6 +116,10 @@ class ServiceAgentDemo with _IndisponibleDemo implements ServiceAgent {
   const ServiceAgentDemo();
 }
 
+class ServicePraxisDemo with _IndisponibleDemo implements ServicePraxis {
+  const ServicePraxisDemo();
+}
+
 class AnnuaireObservationsDemo
     with _IndisponibleDemo
     implements AnnuaireObservations {
@@ -170,6 +178,14 @@ List<Override> surchargesServicesAdminIndisponibles({
     serviceAuthProvider.overrideWithValue(const ServiceAuthDemo()),
   if (!sauf.contains(serviceAgentProvider))
     serviceAgentProvider.overrideWithValue(const ServiceAgentDemo()),
+  if (!sauf.contains(servicePraxisProvider))
+    servicePraxisProvider.overrideWithValue(const ServicePraxisDemo()),
+  // PX-2 : aucune proposition de Praxis, lecture qui reussit (le dossier de
+  // candidature ne montre alors aucun etat d'erreur sous test).
+  if (!sauf.contains(servicePropositionsPraxisProvider))
+    servicePropositionsPraxisProvider.overrideWithValue(
+      const PropositionsPraxisVides(),
+    ),
   if (!sauf.contains(annuaireObservationsProvider))
     annuaireObservationsProvider.overrideWithValue(
       const AnnuaireObservationsDemo(),
@@ -198,6 +214,8 @@ final List<Provider<Object>> providersServicesAdmin = <Provider<Object>>[
   serviceReglesProvider,
   serviceAuthProvider,
   serviceAgentProvider,
+  servicePraxisProvider,
+  servicePropositionsPraxisProvider,
   annuaireObservationsProvider,
   portPolitiqueObservationProvider,
 ];

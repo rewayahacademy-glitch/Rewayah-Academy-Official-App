@@ -50,7 +50,9 @@ FauxCandidaturesDirection _port(
     ResponsablePossible(id: 'r2', nom: 'Leila Benkacem'),
   ],
 }) => FauxCandidaturesDirection(
-  capacitesRendues: capacitesGestes,
+  // DEBLOQUER-VERSEMENT-ECRAN : le geste est ouvert par le serveur ici aussi,
+  // pour que sa feuille soit lue comme les autres.
+  capacitesRendues: capacitesAvecDeblocage,
   details: <DetailCandidature>[detail],
   erreurLire: erreurLire,
   responsables: responsables,
@@ -291,10 +293,33 @@ DetailCandidature _detailPour(GesteCandidature g) => switch (g) {
   ),
   GesteCandidature.leverPause => detailTest(enPause: true),
   GesteCandidature.rouvrir => detailTest(issue: IssueCandidature.retiree),
-  GesteCandidature.cloreComplement => detailTest(
+  GesteCandidature.restreindre ||
+  GesteCandidature.demanderVerificationPiece ||
+  GesteCandidature.demanderVerificationVersement => detailTest(
+    etape: EtapeCandidature.confirmee,
+    etat: null,
+  ),
+  GesteCandidature.leverRestriction => detailTest(
+    etape: EtapeCandidature.confirmee,
+    etat: null,
+    restreinte: true,
+    restrictionCause: 'manuelle',
+  ),
+  GesteCandidature.dispenserEntretien => detailTest(
     etape: EtapeCandidature.verifications,
     etat: EtatCandidature.entretienAPlanifier,
   ),
+  GesteCandidature.refaireEntretien => detailTest(
+    etape: EtapeCandidature.verifications,
+    etat: EtatCandidature.decisionEnAttente,
+  ),
+  GesteCandidature.cloreComplement => detailTest(
+    etape: EtapeCandidature.verifications,
+    etat: EtatCandidature.entretienAPlanifier,
+    complementEnCours: true,
+  ),
+  GesteCandidature.modifierComplement || GesteCandidature.annulerComplement =>
+    detailTest(etat: EtatCandidature.aCompleter, complementEnCours: true),
   _ => detailTest(),
 };
 

@@ -59,8 +59,9 @@ SELECT pg_temp.vrai((pg_temp.ligne('SA')).etat = 'confirme'
 SELECT pg_temp.vrai(NOT EXISTS (
   SELECT 1 FROM public.referentiel_paiement l
   JOIN public.referentiel_paiement_afrique a ON a.pays = l.pays
-  WHERE l.pays NOT IN ('NG', 'CI', 'SN') AND l.etat <> 'en_verification'),
-  'les 57 autres pays d''Afrique restent en_verification');
+  WHERE l.pays NOT IN ('NG', 'CI', 'SN', 'EG', 'MA', 'GH', 'KE', 'BJ', 'BF', 'ML', 'NE', 'SD', 'TD') AND l.etat <> 'en_verification'),
+  -- PAYS-DECISIONS (16/11/2026) : dix pays de plus ont recu une decision (EG, MA, GH, KE, BJ, BF, ML, NE, SD, TD).
+  'les 47 autres pays d''Afrique restent en_verification');
 SELECT pg_temp.vrai((SELECT pg_catalog.count(*) FROM public.referentiel_paiement
                      WHERE methode = 'virement_bancaire') = 249, '249 lignes de virement, aucune effacee');
 

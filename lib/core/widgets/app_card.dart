@@ -8,6 +8,7 @@ import '../theme/app_metriques.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import 'lien_fleche.dart' show EncreLienSurFond;
 import 'pressable.dart';
 
 /// La surface elevee du produit : `surfaceRaised`, `borderHairline`,
@@ -179,29 +180,33 @@ class AppCard extends StatelessWidget {
             ? AppElevation.niveau1(palette.ombre)
             : AppElevation.niveau0,
       ),
-      child: DefaultTextStyle.merge(
-        style: TextStyle(color: paire.onBackground),
-        child: IconTheme.merge(
-          data: IconThemeData(color: paire.onBackground),
-          child: entete == null && actions == null
-              ? child
-              : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: <Widget>[
-                    if (entete != null) ...<Widget>[entete!, Ecart.vLg],
-                    child,
-                    if (actions != null) ...<Widget>[
-                      Ecart.vLg,
-                      // Les actions gardent leur largeur, en fin de carte : une
-                      // cible de lien ne s'etire pas sur toute la carte (L4-07).
-                      Align(
-                        alignment: AlignmentDirectional.centerEnd,
-                        child: actions!,
-                      ),
+      // Une carte a son fond : les liens qu'elle porte gardent l'encre de la
+      // page, meme posee dans une bulle « de soi » (`EncreLienSurFond`).
+      child: EncreLienSurFond.page(
+        child: DefaultTextStyle.merge(
+          style: TextStyle(color: paire.onBackground),
+          child: IconTheme.merge(
+            data: IconThemeData(color: paire.onBackground),
+            child: entete == null && actions == null
+                ? child
+                : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: <Widget>[
+                      if (entete != null) ...<Widget>[entete!, Ecart.vLg],
+                      child,
+                      if (actions != null) ...<Widget>[
+                        Ecart.vLg,
+                        // Les actions gardent leur largeur, en fin de carte : une
+                        // cible de lien ne s'etire pas sur toute la carte (L4-07).
+                        Align(
+                          alignment: AlignmentDirectional.centerEnd,
+                          child: actions!,
+                        ),
+                      ],
                     ],
-                  ],
-                ),
+                  ),
+          ),
         ),
       ),
     );

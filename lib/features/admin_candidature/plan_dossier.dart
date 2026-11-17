@@ -76,15 +76,15 @@ enum PastilleRubrique {
   manque,
 }
 
-/// Une fente de la barre de decision : un geste, son mot, et, quand le serveur
-/// ne le propose pas, la raison en mots simples.
+/// Une fente de la barre de decision : un geste, son mot, et s'il est propose.
+/// La raison d'un geste absent est dite une seule fois, pour toute la rangee
+/// (`PlanDossier.phraseGestes`, GESTES-RAISON).
 class FenteDecision {
   /// Cree la fente.
   const FenteDecision({
     required this.geste,
     required this.libelle,
     required this.actif,
-    this.raison,
   });
 
   /// Le geste.
@@ -95,9 +95,6 @@ class FenteDecision {
 
   /// Vrai quand le serveur propose ce geste pour ce dossier.
   final bool actif;
-
-  /// Pourquoi il n'est pas disponible (seulement quand [actif] est faux).
-  final String? raison;
 }
 
 /// Le plan d'un dossier : tout ce que l'ecran en trois etages en lit.
@@ -126,6 +123,7 @@ class PlanDossier {
   static const Set<GesteCandidature> gestesDeRubrique = <GesteCandidature>{
     GesteCandidature.confirmerMoyenPaiement,
     GesteCandidature.infirmerMoyenPaiement,
+    GesteCandidature.debloquerVersement,
     GesteCandidature.definirResponsable,
   };
 
@@ -187,7 +185,10 @@ class PlanDossier {
           EtatPiece.validee => PastilleRubrique.bon,
           EtatPiece.deposee => PastilleRubrique.aVoir,
           EtatPiece.aDeposer || EtatPiece.aCorriger => PastilleRubrique.manque,
-          null => deControles(<String>['piece_validee']),
+          // Etat de la piece inconnu : le controle faux dit seulement « pas
+          // encore validee », jamais « manquante » (PIECE-DANS-DOSSIER,
+          // 16/11/2026) ; vrai, la piece est bonne ; sinon, pas de pastille.
+          null => c?['piece_validee'] == true ? PastilleRubrique.bon : null,
         };
       case RubriqueDossierCode.versement:
         return switch (detail.ligne.paiement) {
@@ -243,6 +244,7 @@ class PlanDossier {
       'profil_unique' => aFaire.profil_unique,
       'aucune_restriction' => aFaire.aucune_restriction,
       'piece_validee' => aFaire.piece_validee,
+      'complement_clos' => aFaire.complement_clos,
       _ => libelleControle(nom),
     };
     return <String>[
@@ -296,12 +298,7 @@ class PlanDossier {
         : GesteCandidature.admettreVerifications;
     FenteDecision fente(GesteCandidature g, String libelle) {
       final bool actif = propose(g);
-      return FenteDecision(
-        geste: g,
-        libelle: libelle,
-        actif: actif,
-        raison: actif ? null : _raison(g, accepter: g == accepter),
-      );
+      return FenteDecision(geste: g, libelle: libelle, actif: actif);
     }
 
     return <FenteDecision>[
@@ -346,20 +343,35 @@ class PlanDossier {
     }).toList();
   }
 
-  String _raison(GesteCandidature g, {required bool accepter}) {
+  /// Pourquoi la rangee des gestes montre ce qu'elle montre : une fonction
+  /// (`raisonDesGestes`), le meme etat que la table des gestes.
+  RaisonGestes raisonGestes() => raisonDesGestes(
+    detail.ligne,
+    peutDecider: capacites.peutDecider,
+    accepterPropose: fentesDecision().first.actif,
+    controlesBloquants: nomsBloquants.isNotEmpty,
+  );
+
+  /// La phrase courte, toujours posee au meme endroit sous la rangee.
+  String phraseGestes() {
     final r = t.recrutement.dossier3.raison;
-    final LigneCandidature l = detail.ligne;
-    if (!capacites.peutDecider) return r.droit;
-    if (l.issue != IssueCandidature.enCours) return r.fermee;
-    if (l.enPause) return r.pause;
-    if (accepter && nomsBloquants.isNotEmpty) {
-      return r.manque(
+    return switch (raisonGestes()) {
+      RaisonGestes.droit => r.droit,
+      RaisonGestes.fermee => r.fermee,
+      RaisonGestes.pause => r.pause,
+      RaisonGestes.attenteCandidat => r.attente,
+      RaisonGestes.versementImpossible => r.versement,
+      RaisonGestes.versementAConfirmer => r.versementAConfirmer,
+      RaisonGestes.controlesManquants => r.manque(
         liste: nomsBloquants.join(
           t.admin.candidatures.detail.separateurControles,
         ),
-      );
-    }
-    if (l.etat == EtatCandidature.aCompleter) return r.attente;
-    return r.etape;
+      ),
+      RaisonGestes.pretADecider => r.pret,
+      RaisonGestes.entretienAPlanifier => r.entretienAPlanifier,
+      RaisonGestes.entretienPlanifie => r.entretienPlanifie,
+      RaisonGestes.decisionAttendue => r.decisionAttendue,
+      RaisonGestes.aucuneDecision => r.etape,
+    };
   }
 }

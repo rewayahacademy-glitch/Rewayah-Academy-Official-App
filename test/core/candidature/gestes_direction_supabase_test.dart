@@ -156,6 +156,21 @@ DemandeGeste _demande(GesteCandidature g) {
         elements: const <String>['langues', 'versement'],
         motif: 'Preciser.',
       );
+    case GesteCandidature.modifierComplement:
+      return DemandeGeste.modifierComplement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        elements: const <String>['cadre_religieux'],
+        motif: 'Preciser.',
+      );
+    case GesteCandidature.annulerComplement:
+      return DemandeGeste.annulerComplement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Retiree.',
+      );
     case GesteCandidature.cloreComplement:
       return DemandeGeste.cloreComplement(
         candidatureId: id,
@@ -189,6 +204,13 @@ DemandeGeste _demande(GesteCandidature g) {
         cleIdempotence: cle,
         moyen: const MoyenVersement.virement(),
         motif: 'Compte clos.',
+      );
+    case GesteCandidature.debloquerVersement:
+      return DemandeGeste.debloquerVersement(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Cas particulier.',
       );
     case GesteCandidature.mettreEnPause:
       return DemandeGeste.mettreEnPause(
@@ -236,6 +258,38 @@ DemandeGeste _demande(GesteCandidature g) {
         cleIdempotence: cle,
         responsableId: 'r1',
       );
+    case GesteCandidature.dispenserEntretien:
+      return DemandeGeste.dispenserEntretien(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        categorie: CategorieDispense.fondateur,
+        motif: 'Fondateur de l\'academie.',
+      );
+    case GesteCandidature.restreindre:
+    case GesteCandidature.demanderVerificationPiece:
+    case GesteCandidature.demanderVerificationVersement:
+      return DemandeGeste.restriction(
+        geste: g,
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Controle.',
+      );
+    case GesteCandidature.leverRestriction:
+      return DemandeGeste.leverRestriction(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Cause reglee.',
+      );
+    case GesteCandidature.refaireEntretien:
+      return DemandeGeste.refaireEntretien(
+        candidatureId: id,
+        versionAttendue: v,
+        cleIdempotence: cle,
+        motif: 'Avis a refaire.',
+      );
   }
 }
 
@@ -249,6 +303,17 @@ void main() {
               'p_elements': <String>['langues', 'versement'],
               'p_motif': 'Preciser.',
             },
+          ),
+          GesteCandidature.modifierComplement: (
+            'demander_complement_candidat',
+            <String, Object?>{
+              'p_elements': <String>['cadre_religieux'],
+              'p_motif': 'Preciser.',
+            },
+          ),
+          GesteCandidature.annulerComplement: (
+            'annuler_complement_candidat',
+            <String, Object?>{'p_motif': 'Retiree.'},
           ),
           GesteCandidature.cloreComplement: (
             'demander_complement_candidat',
@@ -279,6 +344,10 @@ void main() {
               'p_operateur': null,
               'p_motif': 'Compte clos.',
             },
+          ),
+          GesteCandidature.debloquerVersement: (
+            'debloquer_versement_candidat',
+            <String, Object?>{'p_motif': 'Cas particulier.'},
           ),
           GesteCandidature.mettreEnPause: (
             'mettre_en_pause_candidat',
@@ -311,6 +380,33 @@ void main() {
           GesteCandidature.definirResponsable: (
             'definir_responsable_candidat',
             <String, Object?>{'p_responsable_id': 'r1'},
+          ),
+          GesteCandidature.dispenserEntretien: (
+            'dispenser_entretien',
+            <String, Object?>{
+              'p_categorie': 'fondateur',
+              'p_motif': 'Fondateur de l\'academie.',
+            },
+          ),
+          GesteCandidature.restreindre: (
+            'restreindre_candidat',
+            <String, Object?>{'p_cause': 'manuelle', 'p_motif': 'Controle.'},
+          ),
+          GesteCandidature.demanderVerificationPiece: (
+            'restreindre_candidat',
+            <String, Object?>{'p_cause': 'piece', 'p_motif': 'Controle.'},
+          ),
+          GesteCandidature.demanderVerificationVersement: (
+            'restreindre_candidat',
+            <String, Object?>{'p_cause': 'paiement', 'p_motif': 'Controle.'},
+          ),
+          GesteCandidature.leverRestriction: (
+            'lever_restriction_candidat',
+            <String, Object?>{'p_motif': 'Cause reglee.'},
+          ),
+          GesteCandidature.refaireEntretien: (
+            'refaire_entretien',
+            <String, Object?>{'p_motif': 'Avis a refaire.'},
           ),
         };
 

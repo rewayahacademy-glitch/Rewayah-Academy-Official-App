@@ -476,6 +476,7 @@ String _libelleRole(AppRole role) => switch (role) {
   AppRole.teacher => t.compte.roles.teacher,
   AppRole.guardian => t.compte.roles.guardian,
   AppRole.student => t.compte.roles.student,
+  AppRole.associe => t.compte.roles.associe,
 };
 
 String _detailRole(AppRole role) => switch (role) {
@@ -485,6 +486,7 @@ String _detailRole(AppRole role) => switch (role) {
   AppRole.teacher => t.compte.roleDetail.teacher,
   AppRole.guardian => t.compte.roleDetail.guardian,
   AppRole.student => t.compte.roleDetail.student,
+  AppRole.associe => t.compte.roleDetail.associe,
 };
 
 List<_EspaceCompte> _espacesPour(AppRole role) {
@@ -506,6 +508,14 @@ List<_EspaceCompte> _espacesPour(AppRole role) {
         t.compte.roles.admin,
         t.compte.roleDetail.admin,
         AppIcons.tableauDeBord,
+      ),
+    ],
+    AppRole.associe => <_EspaceCompte>[
+      espace(
+        'associe',
+        t.compte.roles.associe,
+        t.compte.roleDetail.associe,
+        AppIcons.dossiers,
       ),
     ],
     AppRole.accountant => <_EspaceCompte>[

@@ -204,6 +204,9 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // PX-3 : « Praxis », le nom propre du secretaire de l'academie, ecrit en
+  // latin dans toutes les langues (le titre de sa section n'est que ce nom).
+  'admin.praxis.titre',
   // HORLOGE-ET-LIEU : le credit de la liste des villes porte le nom propre de
   // la source et son adresse, tels que la licence les demande.
   'lieu.credit',
@@ -300,6 +303,8 @@ List<String> defautsIsolation(String texte) {
 /// nom de produit ou un sigle que l'arabe garde tel quel.
 const Set<String> _motsLatinsAdmis = <String>{
   'Rewayah',
+  // PX-3 : le nom propre du secretaire de l'academie.
+  'Praxis',
   // #Ra_staff (directeur, 14/11/2026) : le nom de l'equipe, identique dans
   // toutes les langues.
   'Ra',

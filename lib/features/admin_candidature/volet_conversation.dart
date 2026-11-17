@@ -7,22 +7,27 @@
 ///
 /// Le fil est celui de la page Messages (`FilEnPlace` -> `FilContextuel`) :
 /// temps reel, coches de lecture et envoi honnete ne sont pas recrees.
-/// « Ouvrir dans Messages » reste en lien secondaire ; il empile la page
-/// Messages, et son retour ramene au dossier.
+///
+/// CONVERSATIONS-PARTOUT (directeur, 16/11/2026) : ni titre, ni lien, ni bloc
+/// d'identite de plus au-dessus du fil. La conversation a la mise en page de la
+/// messagerie refaite : la barre compacte (`BarreConversation` : retour ou
+/// croix, avatar a cote du nom, « Ouvrir dans Messages » en bouton d'icone), le
+/// fil pleine page, ses marges. Aucune variante locale : tout vient de
+/// `FilEnPlace`. « Ouvrir dans Messages » empile la page Messages, et son
+/// retour ramene au dossier.
 library;
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
-import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/app_bottom_sheet.dart';
-import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/tete_panneau.dart';
+import '../../core/widgets/espace_travail_adaptatif.dart';
+import '../../core/widgets/page_conversation_plein_ecran.dart';
+import '../com_messages/barre_conversation.dart';
 import '../com_messages/entree_messages_contexte.dart';
 import '../com_messages/fil_en_place.dart';
 
@@ -48,13 +53,12 @@ class VoletConversation extends StatelessWidget {
   /// La cle du volet.
   static const Key cle = ValueKey<String>('volet-conversation');
 
-  /// La cle de la croix qui replie le volet.
-  static const Key cleReplier = ValueKey<String>('volet-conversation-replier');
+  /// La cle du bouton qui replie le volet : celui de la barre de la
+  /// conversation, le meme que celui de la page Messages.
+  static const Key cleReplier = EspaceTravailAdaptatif.cleRetourListe;
 
-  /// La cle du lien « Ouvrir dans Messages ».
-  static const Key cleMessages = ValueKey<String>(
-    'volet-conversation-messages',
-  );
+  /// La cle du bouton « Ouvrir dans Messages » de la barre.
+  static const Key cleMessages = BarreConversation.cleOuvrirMessages;
 
   @override
   Widget build(BuildContext context) {
@@ -67,47 +71,35 @@ class VoletConversation extends StatelessWidget {
       label: e.conversationAvec(nom: conversation.nom),
       // Le volet vit a cote de la page (hors de son Scaffold) : le champ du
       // fil demande une surface Material au-dessus de lui.
-      child: Material(
-        type: MaterialType.transparency,
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: palette.surfaceRaised.background,
-            border: BorderDirectional(
-              start: palette.borderHairline.asBorderSide(),
-            ),
-          ),
-          child: Padding(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                TetePanneau(
-                  titre: e.conversationAvec(nom: conversation.nom),
-                  icone: AppIcons.discussion,
-                  cleFermer: cleReplier,
-                  onFermer: onReplier,
+      // MESSAGERIE-COULEURS : Echap ferme le volet, depuis le champ comme depuis
+      // la barre. Le volet prend le focus a son ouverture : sans cela, la
+      // touche resterait dans le dossier.
+      child: CallbackShortcuts(
+        bindings: <ShortcutActivator, VoidCallback>{
+          const SingleActivator(LogicalKeyboardKey.escape): onReplier,
+        },
+        child: Focus(
+          autofocus: true,
+          skipTraversal: true,
+          child: Material(
+            type: MaterialType.transparency,
+            child: DecoratedBox(
+              decoration: BoxDecoration(
+                color: palette.surfaceRaised.background,
+                border: BorderDirectional(
+                  start: palette.borderHairline.asBorderSide(),
                 ),
-                Align(
-                  alignment: AlignmentDirectional.centerStart,
-                  child: LienFleche(
-                    key: cleMessages,
-                    libelle: e.ouvrirDansMessages,
-                    alignerEnDebut: true,
-                    onPress: () => unawaited(
-                      GoRouter.of(context)
-                          .push<void>(conversation.cheminMessages),
-                    ),
-                  ),
+              ),
+              child: FilEnPlace(
+                key: ValueKey<String>('volet-${conversation.filId}'),
+                filId: conversation.filId,
+                onLu: onLu,
+                onReplier: onReplier,
+                volet: true,
+                onOuvrirMessages: () => unawaited(
+                  GoRouter.of(context).push<void>(conversation.cheminMessages),
                 ),
-                Ecart.vSm,
-                Expanded(
-                  child: FilEnPlace(
-                    key: ValueKey<String>('volet-${conversation.filId}'),
-                    filId: conversation.filId,
-                    onLu: onLu,
-                  ),
-                ),
-              ],
+              ),
             ),
           ),
         ),
@@ -116,47 +108,40 @@ class VoletConversation extends StatelessWidget {
   }
 }
 
-/// Ouvre la conversation au telephone et a la tablette : une surface plein
-/// ecran au-dessus du dossier, que « Replier la conversation » (le disque
-/// retour, ou le retour du systeme) referme sur le dossier, a la meme
-/// position.
+/// Ouvre la conversation au telephone et a la tablette : une page plein ecran
+/// au-dessus du dossier (la meme que la conversation de la page Messages :
+/// barre compacte, fil, saisie), que « Replier la conversation » (le retour de
+/// la barre, ou le retour du systeme) referme sur le dossier, a la meme
+/// position. L'adresse du dossier ne change pas.
 Future<void> ouvrirFeuilleConversation(
   BuildContext context, {
   required ConversationEnPlace conversation,
   VoidCallback? onLu,
 }) {
-  final e = t.com.messages.entree;
   final GoRouter? routeur = GoRouter.maybeOf(context);
-  return AppBottomSheet.ouvrirLecture<void>(
-    context,
-    titre: e.conversationAvec(nom: conversation.nom),
-    libelleFermer: e.replier,
-    constructeur: (BuildContext contexte) => Column(
-      key: VoletConversation.cle,
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (routeur != null)
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: LienFleche(
-              key: VoletConversation.cleMessages,
-              libelle: e.ouvrirDansMessages,
-              alignerEnDebut: true,
-              onPress: () {
-                Navigator.of(contexte).pop();
-                unawaited(routeur.push<void>(conversation.cheminMessages));
-              },
-            ),
-          ),
-        Ecart.vSm,
-        Expanded(
+  return Navigator.of(context, rootNavigator: true).push<void>(
+    MaterialPageRoute<void>(
+      fullscreenDialog: true,
+      builder: (BuildContext contexte) => PageConversationPleinEcran(
+        child: Semantics(
+          key: VoletConversation.cle,
+          container: true,
+          explicitChildNodes: true,
+          label: t.com.messages.entree.conversationAvec(nom: conversation.nom),
           child: FilEnPlace(
             key: ValueKey<String>('feuille-${conversation.filId}'),
             filId: conversation.filId,
             onLu: onLu,
+            onReplier: () => Navigator.of(contexte).pop(),
+            onOuvrirMessages: routeur == null
+                ? null
+                : () {
+                    Navigator.of(contexte).pop();
+                    unawaited(routeur.push<void>(conversation.cheminMessages));
+                  },
           ),
         ),
-      ],
+      ),
     ),
   );
 }

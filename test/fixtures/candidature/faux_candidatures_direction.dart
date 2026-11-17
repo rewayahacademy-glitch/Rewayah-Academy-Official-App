@@ -34,6 +34,103 @@ const CapacitesCandidatures capacitesQuiLit = CapacitesCandidatures(
   genreLecteurConnu: true,
 );
 
+/// Ce que le **serveur** rendrait dans la cle `gestes` d'une ligne, pour un etat
+/// donne (GESTES-DU-SERVEUR). C'est l'ancienne table de l'ecran, deplacee ici :
+/// les tests simulent le serveur, l'ecran ne la contient plus. Les noms sont ceux
+/// du moteur (`GesteCandidature.nomServeur`). `restrictionCause` : la cause de la
+/// restriction, que le serveur lit (la ligne ne la porte pas).
+List<String> gestesFauxServeur({
+  required EtapeCandidature? etape,
+  required EtatCandidature? etat,
+  required IssueCandidature issue,
+  required bool enPause,
+  required bool restreinte,
+  required EtatVersement paiement,
+  bool complementEnCours = false,
+  String? restrictionCause,
+}) {
+  final bool enCours = issue == IssueCandidature.enCours;
+  final bool sansPause = enCours && !enPause;
+  final bool avantSalle3 =
+      etape == EtapeCandidature.recue ||
+      etape == EtapeCandidature.invitee ||
+      etape == EtapeCandidature.prequalification ||
+      etape == EtapeCandidature.verifications;
+  final bool enExamen =
+      etape == EtapeCandidature.prequalification &&
+      etat == EtatCandidature.enExamen;
+  return <String>[
+    // COMPLEMENT-SALLE-EXAMEN : demander (en examen, en salle de verification,
+    // en paiement non disponible : variante 4) ou modifier (a_completer avec un
+    // complement en cours : variante 3) ; annuler dans ce dernier cas.
+    if (sansPause &&
+        (enExamen ||
+            etape == EtapeCandidature.verifications ||
+            (etape == EtapeCandidature.prequalification &&
+                (etat == EtatCandidature.paiementNonDisponible ||
+                    (etat == EtatCandidature.aCompleter &&
+                        complementEnCours)))))
+      'demander_complement',
+    if (sansPause &&
+        etape == EtapeCandidature.prequalification &&
+        etat == EtatCandidature.aCompleter &&
+        complementEnCours)
+      'annuler_complement',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        complementEnCours)
+      'clore_complement',
+    if (sansPause && enExamen) 'admettre_verifications',
+    if (sansPause &&
+        paiement == EtatVersement.aVerifier &&
+        (enExamen ||
+            (etape == EtapeCandidature.confirmee &&
+                restreinte &&
+                restrictionCause == 'paiement')))
+      'confirmer_moyen_paiement',
+    if (sansPause &&
+        enExamen &&
+        (paiement == EtatVersement.aVerifier ||
+            paiement == EtatVersement.compatible))
+      'infirmer_moyen_paiement',
+    if (sansPause &&
+        etape == EtapeCandidature.prequalification &&
+        (etat == EtatCandidature.enExamen ||
+            etat == EtatCandidature.paiementNonDisponible))
+      'debloquer_versement',
+    if (sansPause && etape != null) 'mettre_en_pause',
+    if (enCours && enPause && etape != null) 'lever_pause',
+    if (enCours && avantSalle3) 'refuser',
+    if (enCours && avantSalle3) 'retirer',
+    if (!enCours && !enPause && avantSalle3) 'rouvrir',
+    if (sansPause && etape != null) 'definir_responsable',
+    // APRES-CONFIRMEE : apres l'accueil, restreindre ou demander une verification ;
+    // lever la restriction quand la ligne en porte une.
+    if (sansPause &&
+        etape == EtapeCandidature.confirmee &&
+        !restreinte) ...<String>[
+      'restreindre',
+      'demander_verification_piece',
+      'demander_verification_versement',
+    ],
+    if (sansPause && etape == EtapeCandidature.confirmee && restreinte)
+      'lever_restriction',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        (etat == EtatCandidature.entretienAPlanifier ||
+            etat == EtatCandidature.entretienPlanifie))
+      'dispenser_entretien',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        etat == EtatCandidature.decisionEnAttente)
+      'refaire_entretien',
+    if (sansPause &&
+        etape == EtapeCandidature.verifications &&
+        etat == EtatCandidature.decisionEnAttente)
+      'valider_piece',
+  ];
+}
+
 /// Une ligne de test, avec des valeurs par defaut raisonnables.
 LigneCandidature ligneTest({
   String id = 'c1',
@@ -54,6 +151,9 @@ LigneCandidature ligneTest({
   bool indicatifAConfirmer = false,
   DateTime? derniereActivite,
   DateTime? recueLe,
+  bool nouveau = false,
+  bool complementEnCours = false,
+  List<String>? gestes,
 }) => LigneCandidature(
   id: id,
   reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
@@ -74,6 +174,19 @@ LigneCandidature ligneTest({
   indicatifAConfirmer: indicatifAConfirmer,
   derniereActivite: derniereActivite ?? DateTime.utc(2026, 10, 20, 9),
   recueLe: recueLe ?? DateTime.utc(2026, 10, 1, 9),
+  nouveau: nouveau,
+  complementEnCours: complementEnCours,
+  gestes:
+      gestes ??
+      gestesFauxServeur(
+        etape: etape,
+        etat: etat,
+        issue: issue,
+        enPause: enPause,
+        restreinte: restreinte,
+        paiement: paiement,
+        complementEnCours: complementEnCours,
+      ),
 );
 
 /// [n] lignes distinctes, reparties sur les cinq etapes, la derniere activite
@@ -153,6 +266,8 @@ DetailCandidature detailTest({
   ReponsesAutresCompetences? autresCompetences,
   DateTime? derniereActivite,
   DateTime? recueLe,
+  bool complementEnCours = false,
+  List<String>? gestes,
 }) => DetailCandidature(
   ligne: LigneCandidature(
     id: id,
@@ -174,6 +289,19 @@ DetailCandidature detailTest({
     indicatifAConfirmer: indicatifAConfirmer,
     derniereActivite: derniereActivite ?? DateTime.utc(2026, 10, 20, 9),
     recueLe: recueLe ?? DateTime.utc(2026, 10, 1, 9),
+    complementEnCours: complementEnCours,
+    gestes:
+        gestes ??
+        gestesFauxServeur(
+          etape: etape,
+          etat: etat,
+          issue: issue,
+          enPause: enPause,
+          restreinte: restreinte,
+          paiement: paiement,
+          complementEnCours: complementEnCours,
+          restrictionCause: restrictionCause,
+        ),
   ),
   version: version,
   provenance: provenance,
@@ -195,6 +323,18 @@ DetailCandidature detailTest({
   autresCompetences: autresCompetences,
 );
 
+/// [capacitesGestes] avec en plus le geste « Debloquer le versement » que le
+/// serveur ouvre (DEBLOQUER-VERSEMENT-ECRAN) : le fixture commun ne l'ouvre pas,
+/// pour que les ecrans deja testes gardent leur menu.
+final CapacitesCandidatures capacitesAvecDeblocage = CapacitesCandidatures(
+  peutLire: capacitesGestes.peutLire,
+  peutVoirContact: capacitesGestes.peutVoirContact,
+  genreLecteurConnu: capacitesGestes.genreLecteurConnu,
+  peutDecider: capacitesGestes.peutDecider,
+  gestes: <String, bool>{...capacitesGestes.gestes, 'debloquerVersement': true},
+  listes: capacitesGestes.listes,
+);
+
 /// Les capacites d'une direction qui decide et dont le serveur ouvre les
 /// gestes de CAND-L2A2, avec leurs listes fermees.
 const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
@@ -205,6 +345,8 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
   gestes: <String, bool>{
     'demanderComplement': true,
     'cloreComplement': true,
+    'modifierComplement': true,
+    'annulerComplement': true,
     'admettreVerifications': true,
     'confirmerMoyenPaiement': true,
     'infirmerMoyenPaiement': true,
@@ -215,6 +357,11 @@ const CapacitesCandidatures capacitesGestes = CapacitesCandidatures(
     'rouvrir': true,
     'definirResponsable': true,
     'validerPiece': true,
+    'dispenserEntretien': true,
+    'restreindre': true,
+    'demanderVerification': true,
+    'leverRestriction': true,
+    'refaireEntretien': true,
     'agirEnLot': true,
   },
   listes: ListesGestes(
@@ -511,6 +658,13 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
               .length,
       },
       compteursAlertes: alertes ?? _alertesDuServeur(),
+      // NOUVEAU-LISTE : les nouvelles en cours, sans les autres filtres.
+      compteurNouveaux: portee
+          .where(
+            (LigneCandidature l) =>
+                l.nouveau && l.issue == IssueCandidature.enCours,
+          )
+          .length,
     );
   }
 
@@ -669,6 +823,16 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
         if (!enCours || !avantSalle3) {
           return (raison: 'transition_interdite', detail: 'etat');
         }
+      case GesteLot.dispenserEntretien:
+        // Regle 45 : Salle de verification, entretien a planifier ou planifie,
+        // en cours, hors pause.
+        if (!enCours ||
+            l.etape != EtapeCandidature.verifications ||
+            (l.etat != EtatCandidature.entretienAPlanifier &&
+                l.etat != EtatCandidature.entretienPlanifie)) {
+          return (raison: 'transition_interdite', detail: 'etat');
+        }
+        if (l.enPause) return (raison: 'transition_interdite', detail: 'pause');
     }
     return null;
   }
@@ -747,7 +911,10 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     return ApercuLot(
       geste: geste,
       motifRequis: geste != GesteLot.leverPause,
-      modeleRequis: geste != GesteLot.leverPause,
+      // Comme le serveur : seuls la pause et le refus lisent un modele ; la
+      // dispense envoie sa categorie par le meme argument, sans le declarer.
+      modeleRequis:
+          geste == GesteLot.mettreEnPause || geste == GesteLot.refuser,
       eligibles: eligibles,
       exclus: exclus,
       nombre: eligibles.length,
@@ -866,19 +1033,37 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
   void _appliquerAuLot(LigneCandidature l, GesteLot geste) {
     final int i = lignes.indexWhere((LigneCandidature x) => x.id == l.id);
     if (i < 0) return;
+    final IssueCandidature issueApres = geste == GesteLot.refuser
+        ? IssueCandidature.refusee
+        : l.issue;
+    final bool enPauseApres = switch (geste) {
+      GesteLot.mettreEnPause => true,
+      GesteLot.leverPause => false,
+      GesteLot.refuser => l.enPause,
+      GesteLot.dispenserEntretien => l.enPause,
+    };
+    final EtatCandidature? etatApres = geste == GesteLot.dispenserEntretien
+        ? EtatCandidature.decisionEnAttente
+        : l.etat;
     lignes[i] = LigneCandidature(
       id: l.id,
       reference: l.reference,
       nomComplet: l.nomComplet,
       type: l.type,
       etape: l.etape,
-      etat: l.etat,
-      issue: geste == GesteLot.refuser ? IssueCandidature.refusee : l.issue,
-      enPause: switch (geste) {
-        GesteLot.mettreEnPause => true,
-        GesteLot.leverPause => false,
-        GesteLot.refuser => l.enPause,
-      },
+      etat: etatApres,
+      issue: issueApres,
+      enPause: enPauseApres,
+      // Le serveur recalcule les gestes de la ligne apres le geste.
+      gestes: gestesFauxServeur(
+        etape: l.etape,
+        etat: etatApres,
+        issue: issueApres,
+        enPause: enPauseApres,
+        restreinte: l.restreinte,
+        paiement: l.paiement,
+        complementEnCours: l.complementEnCours,
+      ),
       restreinte: l.restreinte,
       indisponible: l.indisponible,
       paiement: l.paiement,
@@ -931,6 +1116,7 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     if (f.etat != null && l.etat != f.etat) return false;
     if (f.issue != null && l.issue != f.issue) return false;
     if (f.enPause != null && l.enPause != f.enPause) return false;
+    if (f.nouveau != null && l.nouveau != f.nouveau) return false;
     if (f.paiement != null && l.paiement != f.paiement) return false;
     if (f.paysResidence != null && l.paysResidence != f.paysResidence) {
       return false;

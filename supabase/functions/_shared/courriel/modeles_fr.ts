@@ -113,8 +113,14 @@ export const MODELES: Record<string, Fabrique> = {
     'Entrer dans l’application', '/'),
   // SALLE-1 (07/11/2026, migration 20261119100000) : a l'admission en salle 2
   // (« Faisons connaissance »). Texte valide par le garde-cap le 07/11/2026.
+  // COURRIEL-ENTRETIEN (16/11/2026) : le courriel dit la verite du moment. Le serveur pose `creneauxOuverts`
+  // a l'admission : vrai seulement quand au moins un moment d'entretien du bon cote est ouvert et choisissable.
+  // Sans la cle (courriel d'avant, ou absente), le texte qui n'invite pas a choisir : jamais une invitation a faire
+  // quelque chose d'impossible.
   retenu_entretien: (d) => avis(d, 'Votre candidature est retenue pour un entretien', 'Faisons connaissance',
-    'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Choisissez dans l’application le créneau qui vous convient.',
+    d.creneauxOuverts === true
+      ? 'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Choisissez dans l’application le créneau qui vous convient.'
+      : 'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Nous vous écrirons dès que les moments d’entretien seront ouverts ; vous n’avez rien à faire pour l’instant.',
     'Voir ma candidature', '/attente'),
   // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : a chaque
   // changement de coordonnees de versement, et a leur validation.

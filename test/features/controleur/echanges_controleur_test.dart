@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/core/widgets/marque_staff.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
+import 'package:rewayah_academy/features/com_messages/barre_conversation.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle.dart';
 import 'package:rewayah_academy/features/controleur/compte_rendu_controle_page.dart';
 import 'package:rewayah_academy/features/controleur/controle_page.dart';
@@ -29,6 +30,7 @@ import 'package:rewayah_academy/features/controleur/mission_controle.dart';
 
 import '../../support/demo/controleur_demo.dart';
 import '../../support/demo/demo_controleur_page.dart';
+import '../../support/echec_bulle.dart';
 
 Future<GoRouter> _monter(
   WidgetTester tester,
@@ -69,8 +71,8 @@ Future<void> _attendre(WidgetTester tester) async {
 Future<void> _ecrireEtEnvoyer(WidgetTester tester, String texte) async {
   final e = t.controleur.echanges;
   // Champ vide : le bouton n'est pas rendu (jamais grise, SUPERPOS-1), sa
-  // place est gardee, la raison est ecrite.
-  expect(find.text(e.champVide), findsOneWidget);
+  // place est gardee ; plus de phrase d'aide (directeur, 16/11/2026).
+  expect(find.text(e.champVide), findsNothing);
   expect(find.byKey(FilDiscussion.envoyerKey), findsNothing);
   expect(find.byKey(ZoneSaisie.placeEnvoiKey), findsOneWidget);
 
@@ -229,14 +231,13 @@ void main() {
     await tester.pump();
     await tester.tap(find.byKey(FilDiscussion.envoyerKey));
     await tester.pumpAndSettle();
-    expect(find.text(e.echec), findsOneWidget);
+    expect(find.text(ligneEchec), findsOneWidget);
     expect(find.text(e.envoye), findsNothing);
     // La saisie est gardee dans le message.
     expect(find.text('Bonjour.'), findsOneWidget);
-    await tester.tap(find.text(e.reessayer));
-    await tester.pumpAndSettle();
+    await choisirActionEchec(tester, e.reessayer);
     expect(find.text(e.envoye), findsOneWidget);
-    expect(find.text(e.echec), findsNothing);
+    expect(find.text(ligneEchec), findsNothing);
     expect(port.essais, 2);
   });
 
@@ -371,17 +372,20 @@ void main() {
     });
   }
 
-  // SUPERPOS-1 : en-tete compact. A 320 en texte double, le contexte en
+  // SUPERPOS-1 : en-tete compact (au telephone, desormais la barre de la
+  // conversation partagee, CONVERSATIONS-PARTOUT). A 320 en texte double, le contexte en
   // trois lignes cle / valeur et le titre prenaient tout l'ecran ; le
   // contexte tient alors en une phrase, sans rien retirer. Contre-epreuve :
   // echoue sur l'ancien code (aucune forme compacte).
   for (final (Size, double, bool) cas in <(Size, double, bool)>[
     (const Size(320, 640), 2, true),
-    (const Size(390, 844), 1, false),
+    (const Size(390, 844), 1, true),
     (const Size(1440, 900), 1, false),
   ]) {
     testWidgets('fil ${cas.$1.width.toInt()} x${cas.$2.toInt()} : contexte '
-        '${cas.$3 ? 'compact' : 'en lignes'}', (WidgetTester tester) async {
+        '${cas.$3 ? 'dans la barre' : 'en lignes'}', (
+      WidgetTester tester,
+    ) async {
       tester.platformDispatcher.textScaleFactorTestValue = cas.$2;
       addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
       await _monter(
@@ -394,8 +398,16 @@ void main() {
       );
       await _attendre(tester);
       expect(tester.takeException(), isNull);
+      // CONVERSATIONS-PARTOUT (directeur, 16/11/2026) : au telephone, le
+      // fil du controleur est une page a elle, la barre compacte de Messages
+      // (titre de la mission, heure en ligne fine) ; la phrase de contexte
+      // epinglee n'existe plus. Sur ordinateur, le contexte reste en lignes.
       expect(
         find.byKey(EchangesControleurPage.contexteCompactKey),
+        findsNothing,
+      );
+      expect(
+        find.byKey(BarreConversation.cle),
         cas.$3 ? findsOneWidget : findsNothing,
       );
       // Rien n'est retire : classe, date et heure restent ecrites.
@@ -408,6 +420,7 @@ void main() {
               w.text
                   .toPlainText()
                   .replaceAll('\u2060', '')
+                  .replaceAll('\u2011', '-')
                   .contains('Classe Al-Badr'),
         ),
         findsWidgets,

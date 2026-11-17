@@ -22,14 +22,24 @@ String libelleGeste(GesteCandidature geste) {
     GesteCandidature.validerPiece => g.accueillir,
     GesteCandidature.confirmerMoyenPaiement => g.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => g.ecarterMoyen,
+    GesteCandidature.debloquerVersement => g.debloquerVersement,
     GesteCandidature.demanderComplement => g.demanderComplement,
     GesteCandidature.cloreComplement => g.cloreComplement,
+    GesteCandidature.modifierComplement => g.modifierComplement,
+    GesteCandidature.annulerComplement => g.annulerComplement,
     GesteCandidature.mettreEnPause => g.mettreEnPause,
     GesteCandidature.leverPause => g.leverPause,
     GesteCandidature.refuser => g.refuser,
     GesteCandidature.consignerRetrait => g.retrait,
     GesteCandidature.rouvrir => g.rouvrir,
     GesteCandidature.definirResponsable => g.responsable,
+    GesteCandidature.dispenserEntretien => g.dispenserEntretien,
+    GesteCandidature.restreindre => g.restreindre,
+    GesteCandidature.demanderVerificationPiece => g.demanderVerificationPiece,
+    GesteCandidature.demanderVerificationVersement =>
+      g.demanderVerificationVersement,
+    GesteCandidature.leverRestriction => g.leverRestriction,
+    GesteCandidature.refaireEntretien => g.refaireEntretien,
   };
 }
 
@@ -42,14 +52,24 @@ String libelleConsequence(GesteCandidature geste) {
     GesteCandidature.validerPiece => c.accueillir,
     GesteCandidature.confirmerMoyenPaiement => c.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => c.ecarterMoyen,
+    GesteCandidature.debloquerVersement => c.debloquerVersement,
     GesteCandidature.demanderComplement => c.demanderComplement,
     GesteCandidature.cloreComplement => c.cloreComplement,
+    GesteCandidature.modifierComplement => c.modifierComplement,
+    GesteCandidature.annulerComplement => c.annulerComplement,
     GesteCandidature.mettreEnPause => c.mettreEnPause,
     GesteCandidature.leverPause => c.leverPause,
     GesteCandidature.refuser => c.refuser,
     GesteCandidature.consignerRetrait => c.retrait,
     GesteCandidature.rouvrir => c.rouvrir,
     GesteCandidature.definirResponsable => c.responsable,
+    GesteCandidature.dispenserEntretien => c.dispenserEntretien,
+    GesteCandidature.restreindre => c.restreindre,
+    GesteCandidature.demanderVerificationPiece => c.demanderVerificationPiece,
+    GesteCandidature.demanderVerificationVersement =>
+      c.demanderVerificationVersement,
+    GesteCandidature.leverRestriction => c.leverRestriction,
+    GesteCandidature.refaireEntretien => c.refaireEntretien,
   };
 }
 
@@ -62,14 +82,24 @@ String libelleRetour(GesteCandidature geste) {
     GesteCandidature.validerPiece => r.accueillir,
     GesteCandidature.confirmerMoyenPaiement => r.confirmerMoyen,
     GesteCandidature.infirmerMoyenPaiement => r.ecarterMoyen,
+    GesteCandidature.debloquerVersement => r.debloquerVersement,
     GesteCandidature.demanderComplement => r.demanderComplement,
     GesteCandidature.cloreComplement => r.cloreComplement,
+    GesteCandidature.modifierComplement => r.modifierComplement,
+    GesteCandidature.annulerComplement => r.annulerComplement,
     GesteCandidature.mettreEnPause => r.mettreEnPause,
     GesteCandidature.leverPause => r.leverPause,
     GesteCandidature.refuser => r.refuser,
     GesteCandidature.consignerRetrait => r.retrait,
     GesteCandidature.rouvrir => r.rouvrir,
     GesteCandidature.definirResponsable => r.responsable,
+    GesteCandidature.dispenserEntretien => r.dispenserEntretien,
+    GesteCandidature.restreindre => r.restreindre,
+    GesteCandidature.demanderVerificationPiece => r.demanderVerificationPiece,
+    GesteCandidature.demanderVerificationVersement =>
+      r.demanderVerificationVersement,
+    GesteCandidature.leverRestriction => r.leverRestriction,
+    GesteCandidature.refaireEntretien => r.refaireEntretien,
   };
 }
 
@@ -88,6 +118,7 @@ String libelleControle(String nom) {
     'profil_unique' => c.profilUnique,
     'aucune_restriction' => c.aucuneRestriction,
     'piece_validee' => c.pieceValidee,
+    'complement_clos' => c.complementClos,
     _ => c.inconnu,
   };
 }
@@ -130,6 +161,8 @@ String libelleCauseControle(String nom, String? cause) {
     'piece_absente' => c.pieceAbsente,
     'piece_a_verifier' => c.pieceAVerifier,
     'piece_a_redeposer' => c.pieceARedeposer,
+    // ACCUEIL-SEPARE : un complement demande bloque l'accueil.
+    'complement_en_cours' => c.complementEnCours,
     _ => c.inconnue,
   };
 }

@@ -259,6 +259,14 @@ SELECT pg_temp.vrai(
   'capacites : validerPiece vrai pour la direction de genre connu, faux sans genre, egal a peutDecider');
 
 -- ------------------------------------------------------------
+-- ACCUEIL-SEPARE (16/11/2026) : l'accueil n'approuve plus la piece, elle se decide a part
+-- (decider_dossier). Les candidates 01, 02 et 05 ont donc leur piece deja approuvee par la
+-- direction (a2 : la femme ; 05 est un homme, a1) ; 04 reste en attente (avant la salle 3).
+UPDATE public.kyc_documents SET status = 'approved', verified_by = pg_temp.p('a2'), verified_at = now()
+ WHERE profile_id IN (pg_temp.p('01'), pg_temp.p('02'));
+UPDATE public.kyc_documents SET status = 'approved', verified_by = pg_temp.p('a1'), verified_at = now()
+ WHERE profile_id = pg_temp.p('05');
+
 -- (b) Sans entretien en base : refus nomme, rien d'ecrit
 -- ------------------------------------------------------------
 SELECT pg_temp.garde('t01', pg_temp.trace('01'));
@@ -345,10 +353,10 @@ SELECT pg_temp.vrai(pg_temp.lu('r_e1') ->> 'erreur' = 'controles_non_satisfaits'
 SELECT pg_temp.garde('t03', pg_temp.trace('03'));
 SELECT pg_temp.garde('r_e2', pg_temp.valider('a2', '03', 'cle-salle3-e-0002'));
 SELECT pg_temp.vrai(pg_temp.lu('r_e2') ->> 'erreur' = 'controles_non_satisfaits'
-  AND pg_temp.lu('r_e2') -> 'controles' = '[{"nom": "piece_validee", "cause": "absente"}]'::jsonb
+  AND pg_temp.lu('r_e2') -> 'controles' = '[{"nom": "piece_validee", "cause": "piece_absente"}]'::jsonb
   AND pg_temp.trace('03') = pg_temp.lu('t03')
   AND (SELECT count(*) FROM public.weekly_availability WHERE profile_id = pg_temp.p('03')) = 0,
-  'aucune piece deposee : piece_validee nomme (absente), rien d''ecrit');
+  'aucune piece deposee : piece_validee nomme (piece_absente), rien d''ecrit');
 
 -- Version perimee : conflit, rien d'ecrit.
 SELECT pg_temp.garde('r_e3', pg_temp.en(pg_temp.p('a2'), 'admin',
