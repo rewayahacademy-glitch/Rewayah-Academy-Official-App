@@ -46,6 +46,18 @@ abstract interface class PortEntretiensDirection {
     required String cleIdempotence,
   });
 
+  /// Deplace l'entretien planifie de [candidatureId] a [debut] pour
+  /// [dureeMinutes] : l'ancien est annule, un nouveau naît aux memes
+  /// participants (BE-1j). [motif] ecrit, interne. Rend la candidature relue.
+  Future<ResultatGeste> deplacer({
+    required String candidatureId,
+    required DateTime debut,
+    required int dureeMinutes,
+    required String motif,
+    required int versionAttendue,
+    required String cleIdempotence,
+  });
+
   /// Ajoute [profilId] aux participants d'un entretien ouvert.
   Future<void> ajouter(String sessionId, String profilId);
 
