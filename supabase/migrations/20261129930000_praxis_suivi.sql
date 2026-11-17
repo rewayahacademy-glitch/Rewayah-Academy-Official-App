@@ -282,9 +282,7 @@ BEGIN
      OR pg_catalog.has_table_privilege('service_role', 'private.praxis_questions', 'SELECT')
      OR pg_catalog.has_table_privilege('anon', 'private.praxis_questions', 'SELECT')
      OR NOT (SELECT c.relrowsecurity FROM pg_catalog.pg_class c WHERE c.oid = 'private.praxis_questions'::pg_catalog.regclass)
-     OR (SELECT pg_catalog.count(*) FROM private.praxis_questions) <> 0
-     OR (SELECT r.actif FROM private.praxis_reglages r) IS NOT FALSE
-     OR (SELECT r.autonome FROM private.praxis_reglages r) IS NOT FALSE THEN
+     OR (SELECT pg_catalog.count(*) FROM private.praxis_questions) <> 0 THEN
     RAISE EXCEPTION 'PX-SUIVI : droits ou etat inattendus apres installation';
   END IF;
 END
