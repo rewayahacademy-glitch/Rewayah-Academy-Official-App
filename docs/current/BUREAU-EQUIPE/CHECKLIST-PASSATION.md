@@ -65,7 +65,8 @@ parallèle, un agent par lot, quatre agents au plus.
 | 16 | #589 PX-4 écran (sélecteur de conversations) | ◐ | CI rouge (1 test, lot 3) renvoyée à BE-PIECE ; touche `com_messages/liste_fils.dart` : **avis favorable du Pilote Messagerie** (déplacement pur de LigneFil), à condition d'une CI verte avec `messagerie_couleurs_test`, `nouveau_fils_test` et `verifier_conversations` |
 | 19 | Dette : 5 scénarios SQL rouges sur `main` | ☐ | `cadre_publication`, `calendrier_pauses`, `cand_l2a1`, `cand_l2a2`, `cand_l3` (signalés par BE-GESTES, 17/11) ; hors `ci.yml`, donc personne ne les voit échouer ; à confier après DETTE-COMPTABLE |
 | 17 | #578 COMPLEMENT-SALLE-EXAMEN (710000) | ◐ | migration relue et ancres vérifiées en prod (1 fois chacune, CHECK = 7 valeurs, transition 47 libre) ; **fusion refusée : conflit avec `main`** (#584) ; renvoyée à BE-SALLE, puis #574, #583 |
-| 18 | DETTE-COMPTABLE (810000) | ◐ | confiée à BE-GESTES : inventaire des lectures du rôle `accountant`, resserrer ce que la paie ne justifie pas |
+| 18 | #591 DETTE-COMPTABLE (810000) | ◐ | BE-GESTES ; relue, avis favorable (admin garde `sessions_admin_all`, aucune vue `security_invoker`, seule lecture directe de `sessions` = repli famille) ; fusion et installation à la CI verte |
+| 20 | Numéros attribués le 17/11, 2 h UTC | — | 810000 DETTE-COMPTABLE ; 820000 DETTE-SCENARIOS-ROUGES (si défaut serveur) ; 830000 DETTE-COMPTABLE-2 (versements) ; **840000 PX-2** (#590 ; BE-PIECE avait pris 810000 de lui-même : troisième collision, corrigée) ; 660000 libéré |
 
 ## 2. Gros lots (dans l'ordre ; une étape ne commence que quand la précédente est livrée)
 
