@@ -122,6 +122,7 @@ class EtatPraxis {
     required this.cles,
     this.essaiFils = const <String>[],
     this.donneesReelles = false,
+    this.derniereRoutine,
   });
 
   /// Lit la reponse de `direction_praxis_etat()`.
@@ -130,6 +131,7 @@ class EtatPraxis {
     autonome: json['autonome'] as bool? ?? false,
     envoisParHeure: (json['envoisParHeure'] as num?)?.toInt() ?? 30,
     donneesReelles: json['donneesReelles'] as bool? ?? false,
+    derniereRoutine: TirRoutinePraxis.depuisJson(json['derniereRoutine']),
     essaiFils: (json['essaiFils'] as List<dynamic>? ?? <dynamic>[])
         .whereType<String>()
         .toList(growable: false),
@@ -158,6 +160,64 @@ class EtatPraxis {
   /// Les donnees reelles sont ouvertes (PX-2) : faux a l'installation ; tant
   /// qu'il est faux, Praxis ne lit aucun dossier ni aucune conversation reels.
   final bool donneesReelles;
+
+  /// Le dernier tir de la routine horaire ; `null` tant qu'aucun n'a ete note.
+  final TirRoutinePraxis? derniereRoutine;
+}
+
+/// Le dernier tir de la routine horaire (PRAXIS-ROUTINE) : ce que le directeur
+/// voit pour savoir si la routine tourne. `issue` : `ok`, `rien_a_faire` ou
+/// `erreur`. Aucune donnee de personne : des compteurs et une note courte.
+@immutable
+class TirRoutinePraxis {
+  /// Cree un tir.
+  const TirRoutinePraxis({
+    required this.termineLe,
+    required this.issue,
+    required this.filsLus,
+    required this.messagesEnvoyes,
+    required this.passesEquipe,
+    required this.refus,
+    this.note,
+  });
+
+  /// Lit `derniereRoutine` de `direction_praxis_etat()` ; `null` si absent
+  /// ou illisible (aucun tir note, ou serveur sans la migration du pouls).
+  static TirRoutinePraxis? depuisJson(Object? brut) {
+    if (brut is! Map<String, dynamic>) return null;
+    final DateTime? fin = DateTime.tryParse(brut['termineLe'] as String? ?? '');
+    if (fin == null) return null;
+    return TirRoutinePraxis(
+      termineLe: fin.toLocal(),
+      issue: brut['issue'] as String? ?? '',
+      filsLus: (brut['filsLus'] as num?)?.toInt() ?? 0,
+      messagesEnvoyes: (brut['messagesEnvoyes'] as num?)?.toInt() ?? 0,
+      passesEquipe: (brut['passesEquipe'] as num?)?.toInt() ?? 0,
+      refus: (brut['refus'] as num?)?.toInt() ?? 0,
+      note: brut['note'] as String?,
+    );
+  }
+
+  /// La fin du tir (heure de la base).
+  final DateTime termineLe;
+
+  /// `ok`, `rien_a_faire` ou `erreur`.
+  final String issue;
+
+  /// Fils lus pendant le tir.
+  final int filsLus;
+
+  /// Messages envoyes pendant le tir.
+  final int messagesEnvoyes;
+
+  /// Fils laisses a l'equipe.
+  final int passesEquipe;
+
+  /// Refus d'outil recus.
+  final int refus;
+
+  /// Une note courte de la routine (200 signes au plus).
+  final String? note;
 }
 
 /// Ce que l'emission rend, une seule fois.

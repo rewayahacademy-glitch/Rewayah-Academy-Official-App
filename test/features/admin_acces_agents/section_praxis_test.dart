@@ -119,6 +119,68 @@ void main() {
       expect(find.textContaining(RegExp(r'prx_[0-9a-f]{20}')), findsNothing);
     });
 
+    testWidgets('pouls : aucun passage note, la phrase le dit', (tester) async {
+      await _monter(tester, FauxServicePraxis());
+      expect(find.byKey(ClesPraxis.poulsAucun), findsOneWidget);
+      expect(find.text(t.admin.praxis.routine.aucun), findsOneWidget);
+      expect(find.byKey(ClesPraxis.pouls), findsNothing);
+    });
+
+    testWidgets('pouls : le dernier passage, son issue et ses compteurs', (
+      tester,
+    ) async {
+      final FauxServicePraxis faux = FauxServicePraxis(
+        etat: EtatPraxis(
+          actif: true,
+          autonome: true,
+          envoisParHeure: 30,
+          cles: const <ClePraxis>[],
+          derniereRoutine: TirRoutinePraxis(
+            termineLe: DateTime(2026, 11, 17, 9, 14),
+            issue: 'erreur',
+            filsLus: 7,
+            messagesEnvoyes: 4,
+            passesEquipe: 2,
+            refus: 1,
+            note: 'Plafond atteint',
+          ),
+        ),
+      );
+      await _monter(tester, faux);
+      expect(find.byKey(ClesPraxis.pouls), findsOneWidget);
+      expect(find.byKey(ClesPraxis.poulsAucun), findsNothing);
+      expect(
+        find.textContaining(t.admin.praxis.routine.issueErreur),
+        findsWidgets,
+      );
+      expect(
+        find.text(
+          t.admin.praxis.routine.compteurs(
+            lus: '7',
+            envoyes: '4',
+            passes: '2',
+            refus: '1',
+          ),
+        ),
+        findsOneWidget,
+      );
+      expect(find.text('Plafond atteint'), findsOneWidget);
+    });
+
+    testWidgets('pouls : un serveur sans la migration ne casse rien', (
+      tester,
+    ) async {
+      expect(TirRoutinePraxis.depuisJson(null), isNull);
+      expect(TirRoutinePraxis.depuisJson('x'), isNull);
+      expect(TirRoutinePraxis.depuisJson(<String, dynamic>{}), isNull);
+      const Map<String, dynamic> brut = <String, dynamic>{
+        'actif': true,
+        'autonome': true,
+        'cles': <dynamic>[],
+      };
+      expect(EtatPraxis.depuisJson(brut).derniereRoutine, isNull);
+    });
+
     testWidgets('chargement : un squelette, puis le contenu', (tester) async {
       final FauxServicePraxis faux = FauxServicePraxis();
       tester.view.physicalSize = const Size(1440, 3000);

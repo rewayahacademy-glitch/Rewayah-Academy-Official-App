@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import '../auth/anti_robot.dart';
 import '../auth/rendu_turnstile.dart';
 import '../i18n/strings.g.dart';
+import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
 import 'lien_fleche.dart';
@@ -73,59 +74,78 @@ class _ControleAntiRobotState extends State<ControleAntiRobot> {
         // pose que quand la case ou une phrase se montre ; sinon le controle
         // ne prend qu'un point de haut et la page reste celle d'avant.
         final bool montre = _visible || phrase != null;
+        // CAPTCHA-PLACE (directeur, 16/11/2026 ; DECISION-FLUIDITE) : la case
+        // apparait et disparait sans saut : la hauteur s'anime (`AnimatedSize`)
+        // et la case se fond (`AnimatedOpacity`), environ 200 ms ; sous
+        // « reduire les animations », sans duree.
+        final Duration duree = AppMouvement.duree(
+          context,
+          AppMouvement.apparition,
+        );
         return Semantics(
           key: ControleAntiRobot.cleControle,
           container: true,
           label: t.connexion.controle.libelle,
-          child: Padding(
-            padding: EdgeInsetsDirectional.only(
-              top: montre ? AppSpacing.lg : 0,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
-              children: <Widget>[
-                // La case garde une place minime tant qu'elle est cachee : le
-                // widget de Cloudflare doit rester dans la page pour travailler.
-                Center(
-                  child: SizedBox(
-                    width: ControleAntiRobot.tailleCase.width,
-                    height: _visible ? ControleAntiRobot.tailleCase.height : 1,
-                    child: RenduTurnstile(
-                      cle: widget.cle,
-                      langue: langue,
-                      controleur: widget.controleur,
-                      onVisible: (bool v) {
-                        if (mounted && v != _visible) {
-                          setState(() => _visible = v);
-                        }
-                      },
+          child: AnimatedSize(
+            duration: duree,
+            curve: AppMouvement.entree,
+            alignment: AlignmentDirectional.topCenter,
+            child: Padding(
+              padding: EdgeInsetsDirectional.only(
+                top: montre ? AppSpacing.lg : 0,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  // La case garde une place minime tant qu'elle est cachee : le
+                  // widget de Cloudflare doit rester dans la page pour travailler.
+                  // Sur la largeur du champ (taille `flexible` de Cloudflare, 300
+                  // au moins) ; le fondu accompagne l'apparition.
+                  AnimatedOpacity(
+                    duration: duree,
+                    curve: AppMouvement.entree,
+                    opacity: _visible ? 1 : 0,
+                    child: SizedBox(
+                      height: _visible
+                          ? ControleAntiRobot.tailleCase.height
+                          : 1,
+                      child: RenduTurnstile(
+                        cle: widget.cle,
+                        langue: langue,
+                        controleur: widget.controleur,
+                        onVisible: (bool v) {
+                          if (mounted && v != _visible) {
+                            setState(() => _visible = v);
+                          }
+                        },
+                      ),
                     ),
                   ),
-                ),
-                if (phrase != null) ...<Widget>[
-                  Ecart.vSm,
-                  Semantics(
-                    liveRegion: true,
-                    child: Text(
-                      phrase,
-                      key: echec ? ControleAntiRobot.cleErreur : null,
-                      style: (echec ? palette.inkAlert : palette.inkMuted)
-                          .applyTo(textes.bodyMedium ?? const TextStyle()),
+                  if (phrase != null) ...<Widget>[
+                    Ecart.vSm,
+                    Semantics(
+                      liveRegion: true,
+                      child: Text(
+                        phrase,
+                        key: echec ? ControleAntiRobot.cleErreur : null,
+                        style: (echec ? palette.inkAlert : palette.inkMuted)
+                            .applyTo(textes.bodyMedium ?? const TextStyle()),
+                      ),
                     ),
-                  ),
+                  ],
+                  if (echec) ...<Widget>[
+                    Ecart.vXs,
+                    Align(
+                      alignment: AlignmentDirectional.centerStart,
+                      child: LienFleche(
+                        libelle: t.commun.reessayer,
+                        onPress: widget.controleur.relancer,
+                      ),
+                    ),
+                  ],
                 ],
-                if (echec) ...<Widget>[
-                  Ecart.vXs,
-                  Align(
-                    alignment: AlignmentDirectional.centerStart,
-                    child: LienFleche(
-                      libelle: t.commun.reessayer,
-                      onPress: widget.controleur.relancer,
-                    ),
-                  ),
-                ],
-              ],
+              ),
             ),
           ),
         );

@@ -841,15 +841,16 @@ class _Saisie extends StatelessWidget {
             masque: true,
           ),
         ],
-        // ANTI-ROBOT : le controle se pose entre le champ et les boutons ; il
-        // ne prend de place que s'il se montre (CONNEXION-UX).
-        ?controle,
+        // ANTI-ROBOT : le controle se pose juste sous le bouton principal, pas
+        // entre le champ et lui (CAPTCHA-PLACE) ; il ne prend de place que
+        // s'il se montre (CONNEXION-UX).
         Ecart.vLg,
         // CONNEXION-ALIGN (04/11/2026) : les boutons ont ensemble la largeur
         // du champ ([ActionsEntree]). Le parcours de demonstration n'ouvre pas
         // Google : un chemin reel vers un vrai compte.
         ActionsEntree(
           bureau: bureau,
+          sousPrincipale: controle,
           principale: ActionPrincipale(
             libelle: !versLien
                 ? t.connexion.entrerDemo
@@ -969,7 +970,6 @@ class _LienEnvoye extends StatelessWidget {
         // navigateur, ouvre la session meme si le lien s'ouvre ailleurs.
         Ecart.vXl,
         SaisieCodeCourriel(courriel: courriel),
-        ?controle,
         Ecart.vXxl,
         // ALIGN-RENVOI (04/11/2026) : le bouton seul a la largeur du champ,
         // sur ordinateur comme sur telephone (meme regle que CONNEXION-ALIGN).
@@ -981,6 +981,8 @@ class _LienEnvoye extends StatelessWidget {
           niveau: NiveauAction.secondaire,
           pleineLargeur: true,
         ),
+        // CAPTCHA-PLACE : la case se pose juste sous le bouton.
+        ?controle,
         Ecart.vLg,
         LienEntree(
           libelle: t.connexion.changerAdresse,
