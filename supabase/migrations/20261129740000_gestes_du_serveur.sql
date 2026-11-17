@@ -44,26 +44,63 @@ END;
 $f$;
 
 -- 1. L'aide : les gestes de la direction que la regle ET le droit permettent, pour la session, sur cette ligne.
+--
+-- MESURE (pilote, 16/11/2026 ; base locale, 502 dossiers, en direction, mediane de 25 appels) : une premiere version
+-- appelait private.mission_droit pour chaque geste permis (une dizaine par ligne), ce qui relit l'identite a chaque
+-- appel : lister_candidatures page de 50 lignes passait de 63 a 440 ms. Ici l'identite est lue UNE fois par ligne
+-- (private.cand_lecteur), le droit de la direction (genre connu, et son cote, ou l'exception super-admin, ou les types
+-- sans genre) est applique une fois, comme private.mission_droit ; seul un porteur de mission paie un droit par geste
+-- (private.mission_droit_dossier), sur une liste deja bornee par la regle. Meme resultat, calcul different.
 CREATE FUNCTION private.gestes_de_la_ligne(c public.candidatures)
 RETURNS jsonb
-LANGUAGE sql
+LANGUAGE plpgsql
 STABLE
 SET search_path = ''
 AS $function$
-  SELECT coalesce(pg_catalog.jsonb_agg(x.geste ORDER BY x.geste), '[]'::jsonb)
-    FROM (
-      SELECT g.geste
-        FROM (SELECT DISTINCT r.geste
-                FROM private.candidature_gestes_regles r
-               WHERE 'direction' = ANY (r.auteurs)) g
-       WHERE (private.candidature_regle(c, g.geste, 'direction', NULL, false)).geste IS NOT NULL
-         AND private.mission_droit(c.id, g.geste)
-      UNION ALL
-      SELECT 'clore_complement'
-       WHERE (private.candidature_regle(c, 'demander_complement', 'direction', 2::smallint, false)).geste IS NOT NULL
-         AND pg_catalog.jsonb_array_length(private.candidature_complement_en_cours(c)) > 0
-         AND private.mission_droit(c.id, 'demander_complement')
-    ) x;
+DECLARE
+  v_direction boolean;
+  v_cote boolean;
+  v_noms text[];
+BEGIN
+  SELECT true,
+         coalesce(l.genre IS NOT NULL AND (l.super_admin OR c.genre = l.genre OR c.type_code IN ('famille', 'eleve_adulte')),
+                  false)
+    INTO v_direction, v_cote
+    FROM private.cand_lecteur() l
+   LIMIT 1;
+  v_direction := coalesce(v_direction, false);
+  IF v_direction AND NOT v_cote THEN
+    RETURN '[]'::jsonb;
+  END IF;
+
+  -- Les gestes que la regle du moteur permet depuis l'etat de la ligne.
+  SELECT coalesce(pg_catalog.array_agg(g.geste ORDER BY g.geste), ARRAY[]::text[])
+    INTO v_noms
+    FROM (SELECT DISTINCT r.geste
+            FROM private.candidature_gestes_regles r
+           WHERE 'direction' = ANY (r.auteurs)
+             -- Prefiltre sur deux conditions que la regle exige toujours (etape et issue) : le moteur ne
+             -- decide que pour les regles restantes ; la decision reste la sienne.
+             AND c.etape = ANY (r.etapes) AND c.issue = ANY (r.issues)
+             AND (private.candidature_regle(c, r.geste, 'direction', NULL, false)).geste IS NOT NULL) g;
+
+  -- Un porteur de mission : seulement les gestes COCHES de sa mission, dans son perimetre.
+  IF NOT v_direction THEN
+    SELECT coalesce(pg_catalog.array_agg(n ORDER BY n), ARRAY[]::text[])
+      INTO v_noms
+      FROM pg_catalog.unnest(v_noms) n
+     WHERE private.mission_droit_dossier(c.id, n);
+  END IF;
+
+  -- « clore_complement » : la variante 2 de demander_complement (Salle de verification) quand un complement court.
+  IF (private.candidature_regle(c, 'demander_complement', 'direction', 2::smallint, false)).geste IS NOT NULL
+     AND pg_catalog.jsonb_array_length(private.candidature_complement_en_cours(c)) > 0
+     AND (v_direction OR private.mission_droit_dossier(c.id, 'demander_complement')) THEN
+    v_noms := v_noms || 'clore_complement'::text;
+  END IF;
+
+  RETURN pg_catalog.to_jsonb(ARRAY(SELECT n FROM pg_catalog.unnest(v_noms) n ORDER BY n));
+END;
 $function$;
 ALTER FUNCTION private.gestes_de_la_ligne(public.candidatures) OWNER TO postgres;
 REVOKE ALL ON FUNCTION private.gestes_de_la_ligne(public.candidatures)
