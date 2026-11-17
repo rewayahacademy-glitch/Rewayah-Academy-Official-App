@@ -364,13 +364,14 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 33,
+                         WHERE geste NOT LIKE '%admission') = 34,
     -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
     -- VERSEMENT-QUESTIONS (16/11, transition 44), BE-1g (16/11, transition 45) et BE-1h REFAIRE-ENTRETIEN
     -- (17/11, migration 20261129700000, transition 46) : trois regles de direction de plus, soit 30 ;
     -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : demander_complement variantes 3 et 4 et
-    -- annuler_complement, soit 33.
-    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b et six gestes de direction (trente-trois variantes)');
+    -- annuler_complement, soit 33 ; BE-1j DEPLACER-ENTRETIEN (20261129760000, 17/11) : deplacer_entretien,
+    -- transition 48, direction, motif exige, soit 34.
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b et six gestes de direction (trente-quatre variantes)');
 END $f86$;
 
 SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.refuser_candidat(pg_temp.c('15'), 'Motif', 'refus_general', 1, 'cle-anon-0001')$$,
@@ -429,10 +430,13 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": t
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
     "leverIndisponibilite": false,
     "debloquerVersement": true, "dispenserEntretien": true, "refaireEntretien": true,
-    "annulerComplement": true, "modifierComplement": true}'::jsonb,
+    "annulerComplement": true, "modifierComplement": true,
+    "deciderPiece": true, "deplacerEntretien": true}'::jsonb,
   -- VERSEMENT-QUESTIONS (16/11, debloquer le versement), BE-1g (16/11, dispenser l'entretien) et BE-1h
   -- REFAIRE-ENTRETIEN (17/11, migration 20261129700000, refaire l'entretien) : trois capacites de plus ;
-  -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : annuler et modifier un complement, deux de plus.
+  -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : annuler et modifier un complement, deux de plus ;
+  -- CAPACITE-DECIDER-PIECE (20261129720000, 17/11) : deciderPiece ; BE-1j DEPLACER-ENTRETIEN
+  -- (20261129760000, 17/11) : deplacerEntretien.
   'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien ; salle 3 du 03/11 : valider la piece ; debloquer le versement, dispenser et refaire l entretien)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
