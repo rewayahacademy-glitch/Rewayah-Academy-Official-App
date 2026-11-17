@@ -134,7 +134,7 @@ ordinateur dans Messages, elle emporte alors le bouton « i » du panneau de con
 ## Compte officiel (PRAXIS-AFFICHAGE, 17/11/2026)
 
 Le nom d'un compte officiel (Praxis) s'affiche « #Ra_Praxis » (directeur, 17/11 : « il s'appelle Ra_Praxis, Ra = Rewayah
-Academy » ; **sans italique**, « c'est moche »), par **une seule règle**, `lib/core/widgets/nom_officiel.dart`, à partir de
+Academy » ; **sans italique**, « c'est moche »), par **une seule règle**, `lib/core/communications/nom_officiel.dart`, à partir de
 l'indicateur `officiel` que `private.com_participant` rend désormais (migration `20261129520000`). Le nom « Ra_Praxis » vient
 de l'i18n, comme « #Ra_staff » ; le nom en base (« Praxis ») ne sert pas. Aucune ligne de matrice nouvelle (aucun fichier
 nouveau n'affiche une conversation) ; lignes touchées :

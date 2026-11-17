@@ -15,8 +15,8 @@ import 'package:flutter/foundation.dart';
 
 import '../router/chemin_retour.dart';
 import '../widgets/fil_discussion.dart' show EtatEnvoiMessage;
-import '../widgets/nom_officiel.dart';
 import 'image_message.dart';
+import 'nom_officiel.dart';
 import 'port_pieces_jointes.dart';
 
 export '../widgets/fil_discussion.dart' show EtatEnvoiMessage;

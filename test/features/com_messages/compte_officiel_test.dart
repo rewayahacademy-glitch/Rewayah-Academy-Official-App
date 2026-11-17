@@ -1,6 +1,6 @@
 // COMPTE-OFFICIEL (PRAXIS-AFFICHAGE, 17/11/2026) : le nom d'un compte officiel
 // s'affiche « #Ra_Praxis » sans italique, rendus par UNE regle de
-// `lib/core/widgets/nom_officiel.dart` a partir de l'indicateur `officiel` du
+// `lib/core/communications/nom_officiel.dart` a partir de l'indicateur `officiel` du
 // serveur (absent = faux) ; la mention IA se lit dans la fiche du profil.
 
 import 'package:flutter/material.dart';
@@ -8,11 +8,11 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/communications/communications_supabase.dart';
 import 'package:rewayah_academy/core/communications/lecture_fil_communication.dart';
 import 'package:rewayah_academy/core/communications/libelles_communication_slang.dart';
+import 'package:rewayah_academy/core/communications/nom_officiel.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/espace_travail_adaptatif.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart'
     show MessageFil;
-import 'package:rewayah_academy/core/widgets/nom_officiel.dart';
 import 'package:rewayah_academy/features/com_messages/panneau_contexte_fil.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
