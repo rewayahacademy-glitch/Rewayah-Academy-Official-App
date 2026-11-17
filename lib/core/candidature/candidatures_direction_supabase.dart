@@ -294,7 +294,13 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
     'p_cle_idempotence': d.cleIdempotence,
   };
   switch (d.geste) {
+    case GesteCandidature.annulerComplement:
+      return (
+        'annuler_complement_candidat',
+        <String, dynamic>{...commun, 'p_motif': d.motif},
+      );
     case GesteCandidature.demanderComplement:
+    case GesteCandidature.modifierComplement:
     case GesteCandidature.cloreComplement:
       return (
         'demander_complement_candidat',

@@ -381,8 +381,8 @@ BEGIN
               'etape', 'etat', 'issue', 'enPause', 'repriseLe', 'restreinte', 'indisponible',
               'indisponibleJusquAu', 'paiement', 'paysResidence', 'responsableId', 'courrielAObtenir',
               'indicatifAConfirmer', 'derniereActivite', 'recueLe', 'nomLatin', 'nomLatinAConfirmer',
-              'genre', 'nouveau', 'complementEnCours']) x)),
-    'chaque ligne porte exactement les vingt-quatre cles du contrat (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer ; SALLE2-GENRE : genre ; NOUVEAU-LISTE, 16/11/2026 : nouveau ; COMPLEMENT-EN-COURS, 16/11/2026 : complementEnCours)');
+              'genre', 'nouveau', 'complementEnCours', 'gestes']) x)),
+    'chaque ligne porte exactement les vingt-cinq cles du contrat (CAND-NOM-LATIN : nomLatin, nomLatinAConfirmer ; SALLE2-GENRE : genre ; NOUVEAU-LISTE, 16/11/2026 : nouveau ; COMPLEMENT-EN-COURS, 16/11/2026 : complementEnCours ; GESTES-DU-SERVEUR, 16/11/2026 : gestes)');
   PERFORM pg_temp.vrai(NOT EXISTS (
       SELECT 1 FROM jsonb_array_elements(r -> 'lignes') l
       WHERE l ? 'courriel' OR l ? 'telephone' OR l ? 'sourceRef')

@@ -32,6 +32,14 @@ enum GesteCandidature {
   /// (transition 23, code `complement_clos`).
   cloreComplement('cloreComplement'),
 
+  /// Modifier le complement en cours en Salle d'examen : une nouvelle demande
+  /// (variante 3 de `demander_complement`, transition 7).
+  modifierComplement('modifierComplement'),
+
+  /// Annuler le complement en cours en Salle d'examen : la candidature revient
+  /// `en_examen` (`annuler_complement_candidat`, transition 47).
+  annulerComplement('annulerComplement'),
+
   /// Admettre en Salle de verification et d'entretien (transition 10).
   admettreVerifications('admettreVerifications'),
 
@@ -92,10 +100,51 @@ enum GesteCandidature {
   /// La cle de `capacites_candidatures().gestes`.
   final String capacite;
 
+  /// Le nom que le moteur du serveur donne a ce geste dans la cle `gestes` de
+  /// chaque ligne de candidature (GESTES-DU-SERVEUR : `private.gestes_de_la_ligne`,
+  /// noms de `candidature_gestes_regles`, plus `clore_complement`).
+  String get nomServeur => switch (this) {
+    demanderComplement => 'demander_complement',
+    cloreComplement => 'clore_complement',
+    // Le meme nom que demanderComplement (variante 3 du moteur, en a_completer) :
+    // l'ecran nomme par l'etat de la ligne (gestes_proposes.dart).
+    modifierComplement => 'demander_complement',
+    annulerComplement => 'annuler_complement',
+    admettreVerifications => 'admettre_verifications',
+    confirmerMoyenPaiement => 'confirmer_moyen_paiement',
+    infirmerMoyenPaiement => 'infirmer_moyen_paiement',
+    debloquerVersement => 'debloquer_versement',
+    mettreEnPause => 'mettre_en_pause',
+    leverPause => 'lever_pause',
+    refuser => 'refuser',
+    consignerRetrait => 'retirer',
+    rouvrir => 'rouvrir',
+    definirResponsable => 'definir_responsable',
+    validerPiece => 'valider_piece',
+    dispenserEntretien => 'dispenser_entretien',
+    restreindre => 'restreindre',
+    demanderVerificationPiece => 'demander_verification_piece',
+    demanderVerificationVersement => 'demander_verification_versement',
+    leverRestriction => 'lever_restriction',
+  };
+
+  /// Le geste que l'ecran connait pour ce nom du serveur, ou `null` : un nom
+  /// que l'ecran ne sait pas faire (la dispense d'entretien, restreindre...)
+  /// n'est pas montre.
+  static GesteCandidature? depuisNomServeur(String nom) {
+    for (final GesteCandidature g in values) {
+      if (g.nomServeur == nom) {
+        return g;
+      }
+    }
+    return null;
+  }
+
   /// Le geste exige un motif interne, saisi par la direction.
   bool get exigeMotif => switch (this) {
     demanderComplement ||
     cloreComplement ||
+    annulerComplement ||
     infirmerMoyenPaiement ||
     debloquerVersement ||
     mettreEnPause ||
@@ -107,6 +156,7 @@ enum GesteCandidature {
     demanderVerificationVersement ||
     leverRestriction ||
     rouvrir => true,
+    modifierComplement ||
     admettreVerifications ||
     confirmerMoyenPaiement ||
     leverPause ||
@@ -225,6 +275,37 @@ class DemandeGeste {
     versionAttendue: versionAttendue,
     cleIdempotence: cleIdempotence,
     elements: List<String>.unmodifiable(elements),
+    motif: motif,
+  );
+
+  /// Modifier le complement en cours : les nouveaux [elements] remplacent la
+  /// demande (le motif se deduit de la liste, comme pour la demande).
+  factory DemandeGeste.modifierComplement({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required List<String> elements,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.modifierComplement,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
+    elements: List<String>.unmodifiable(elements),
+    motif: motif,
+  );
+
+  /// Annuler le complement en cours (Salle d'examen), avec un [motif].
+  factory DemandeGeste.annulerComplement({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.annulerComplement,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
     motif: motif,
   );
 

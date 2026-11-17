@@ -1036,6 +1036,7 @@ class _Traductions$admin$en extends Traductions$admin$fr {
 	@override late final _Traductions$admin$suppressions$en suppressions = _Traductions$admin$suppressions$en._(_root);
 	@override late final _Traductions$admin$comptes$en comptes = _Traductions$admin$comptes$en._(_root);
 	@override late final _Traductions$admin$agents$en agents = _Traductions$admin$agents$en._(_root);
+	@override late final _Traductions$admin$praxis$en praxis = _Traductions$admin$praxis$en._(_root);
 	@override late final _Traductions$admin$notifications$en notifications = _Traductions$admin$notifications$en._(_root);
 	@override late final _Traductions$admin$finance$en finance = _Traductions$admin$finance$en._(_root);
 	@override late final _Traductions$admin$planning$en planning = _Traductions$admin$planning$en._(_root);
@@ -6776,6 +6777,113 @@ class _Traductions$admin$agents$en extends Traductions$admin$agents$fr {
 		one: '${nombre} time, the last ${quand}',
 		other: '${nombre} times, the last ${quand}',
 	);
+}
+
+// Path: admin.praxis
+class _Traductions$admin$praxis$en extends Traductions$admin$praxis$fr {
+	_Traductions$admin$praxis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Praxis';
+	@override String get intro => 'Praxis is the academy\'s secretary. It reads families\' messages and answers only within the limits below. It stays off until you turn it on.';
+	@override String get reglagesTitre => 'Praxis settings';
+	@override String get allume => 'Praxis on';
+	@override String get etatAllume => 'On';
+	@override String get etatEteint => 'Off';
+	@override String get allumeOui => 'On: Praxis reads messages and writes within the limits below.';
+	@override String get allumeNon => 'Off: Praxis reads nothing and writes nothing.';
+	@override String get allumer => 'Turn Praxis on';
+	@override String get eteindre => 'Turn Praxis off';
+	@override String get autonome => 'Autonomous mode';
+	@override String get autonomeOui => 'Autonomous: Praxis can work alone, without you being in the conversation.';
+	@override String get autonomeNon => 'Directed: Praxis acts only in a conversation you lead.';
+	@override String get autoriserAutonome => 'Allow autonomous mode';
+	@override String get reprendreDirige => 'Go back to directed mode';
+	@override String get plafond => 'Messages per hour';
+	@override String plafondDetail({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: 'Praxis sends at most ${nombre} message per hour.',
+		other: 'Praxis sends at most ${nombre} messages per hour.',
+	);
+	@override String get plafondChamp => 'Number of messages per hour (1 to 120)';
+	@override String get plafondEnregistrer => 'Set the limit';
+	@override String get plafondInvalide => 'Write a whole number between 1 and 120.';
+	@override String get reglageFait => 'Setting applied.';
+	@override String get erreurReglage => 'Setting not confirmed. Check the state above before trying again.';
+	@override String get doubleVerification => 'This setting needs two-step verification. Turn it on in Account, then Security, and try again.';
+	@override String get pourra => 'Will be able to';
+	@override String get pourraDetail => 'Read the academy\'s family messages, answer in a conversation that exists, publish an announcement for families, note a topic on the calendar.';
+	@override String get nePourraPas => 'Will not be able to';
+	@override String get nePourraPasDetail => 'Write to a child, open a conversation, send an email, touch money, accounts, rights or identity documents, or turn itself back on.';
+	@override String get clesTitre => 'Praxis keys';
+	@override String get clesIntro => 'A key lets a conversation or a routine talk to Praxis. It is shown only once, when you issue it.';
+	@override String get cleLibelle => 'What this key is for';
+	@override String get cleLibelleAide => 'Required. A key with no name is a key nobody dares to revoke.';
+	@override String get cleLibelleExemple => 'The director\'s conversation';
+	@override String get cleUsage => 'How it will be used';
+	@override String get usageChat => 'Conversation';
+	@override String get usageChatDetail => 'You talk to Praxis in a conversation. It acts when you ask it to.';
+	@override String get usageRoutine => 'Routine';
+	@override String get usageRoutineDetail => 'Praxis works alone at set times. It works only if autonomous mode is allowed.';
+	@override String get cleDuree => 'Until when';
+	@override String dureeJours({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre,
+		one: '${nombre} day',
+		other: '${nombre} days',
+	);
+	@override String get dureePlafond => 'Ninety days at most, and the database checks it itself.';
+	@override String get emettre => 'Issue the key';
+	@override String get manqueLibelle => 'The key\'s name is missing: write what it is for.';
+	@override String get erreurEmission => 'Issue not confirmed. Check the list of keys before trying again.';
+	@override String get cleEmise => 'Key issued';
+	@override String get cleEmiseDetail => 'Copy the key now. It will not appear again: neither this screen nor the database can retrieve it.';
+	@override String get copierCle => 'Copy the key';
+	@override String get cleCopiee => 'Key copied';
+	@override String get adresse => 'Connector address';
+	@override String get adresseDetail => 'Paste this address into Praxis\'s conversation, with the key.';
+	@override String get copierAdresse => 'Copy the address';
+	@override String get adresseCopiee => 'Address copied';
+	@override String get termine => 'I copied the key';
+	@override String get colonneCle => 'Key';
+	@override String get colonneUsage => 'Use';
+	@override String get colonneEmise => 'Issued on';
+	@override String get colonneExpire => 'Until';
+	@override String get colonneUtilisee => 'Last used';
+	@override String get colonneEtat => 'State';
+	@override String get jamaisUtilisee => 'Never used';
+	@override String get etatActive => 'Active';
+	@override String get etatRevoquee => 'Revoked';
+	@override String get etatExpiree => 'Expired';
+	@override String get revoquer => 'Revoke';
+	@override String get revoquerTitre => 'Revoke this key?';
+	@override String get revoquerDetail => 'Praxis will no longer be able to use it, right away. A revoked key cannot be restored.';
+	@override String get revoquerMotif => 'Why';
+	@override String get revoquerMotifAide => 'Required. A few words, kept in the log.';
+	@override String get manqueMotif => 'The reason is missing: write why.';
+	@override String get revoquerConfirmer => 'Revoke the key';
+	@override String get revoquee => 'Key revoked.';
+	@override String get erreurRevocation => 'Revocation not confirmed. Check the list of keys before trying again.';
+	@override String get cleVide => 'No key';
+	@override String get cleVideDetail => 'Issue a key to talk to Praxis.';
+	@override String get erreur => 'Praxis\'s settings could not be read. Try again in a moment.';
+	@override String get horsLigne => 'Praxis\'s settings are not loaded yet. Reload them.';
+	@override String get journalTitre => 'What Praxis sent';
+	@override String get journalIntro => 'The messages and announcements Praxis wrote itself, most recent first. Never a family\'s text.';
+	@override String get journalVide => 'Praxis has not sent anything yet';
+	@override String get journalVideDetail => 'Its sends, and its refusals, will appear here.';
+	@override String get journalErreur => 'Praxis\'s log could not be read. Try again in a moment.';
+	@override String get voirSuite => 'See older sends';
+	@override String get colonneQuand => 'When';
+	@override String get colonneQuoi => 'What';
+	@override String get colonneResultat => 'Result';
+	@override String get colonneExtrait => 'Start of the text';
+	@override String get quoiMessage => 'Message';
+	@override String get quoiAnnonce => 'Announcement';
+	@override String get envoye => 'Sent';
+	@override String get refuse => 'Refused';
+	@override String refuseCause({required Object cause}) => 'Refused: ${cause}';
+	@override String get sansTexte => 'Nothing was written.';
+	@override late final _Traductions$admin$praxis$cause$en cause = _Traductions$admin$praxis$cause$en._(_root);
 }
 
 // Path: admin.notifications
@@ -14863,6 +14971,8 @@ class _Traductions$admin$candidatures$gestes$en extends Traductions$admin$candid
 	@override String get debloquerVersement => 'Unlock the payout';
 	@override String get demanderComplement => 'Ask for additional information';
 	@override String get cloreComplement => 'Close the request for additional information';
+	@override String get modifierComplement => 'Change the request for additional information';
+	@override String get annulerComplement => 'Cancel the request for additional information';
 	@override String get mettreEnPause => 'Pause';
 	@override String get leverPause => 'Lift the pause';
 	@override String get refuser => 'Decline the application';
@@ -14890,6 +15000,8 @@ class _Traductions$admin$candidatures$consequences$en extends Traductions$admin$
 	@override String get debloquerVersement => 'The payout is confirmed by hand, even with no declared method. Your reason stays in the history. If the person changes their answers, the unlock is lifted.';
 	@override String get demanderComplement => 'The application goes back to "to complete". The person will read the list of chosen items.';
 	@override String get cloreComplement => 'The requested additional information is closed. The application stays in its room.';
+	@override String get modifierComplement => 'The person receives a new request that replaces the previous one.';
+	@override String get annulerComplement => 'The request is cancelled. The application goes back to review. The person is not notified.';
 	@override String get mettreEnPause => 'The application does not move forward until the pause is lifted.';
 	@override String get leverPause => 'The application resumes where it had stopped.';
 	@override String get refuser => 'The application is closed. You can reopen it.';
@@ -15072,6 +15184,8 @@ class _Traductions$admin$candidatures$retours$en extends Traductions$admin$candi
 	@override String get debloquerVersement => 'The payout is unlocked.';
 	@override String get demanderComplement => 'Additional information is requested.';
 	@override String get cloreComplement => 'The additional information request is closed.';
+	@override String get modifierComplement => 'The additional information request is changed.';
+	@override String get annulerComplement => 'The additional information request is cancelled.';
 	@override String get mettreEnPause => 'The application is paused.';
 	@override String get leverPause => 'The pause is lifted.';
 	@override String get refuser => 'The application is declined.';
@@ -16127,6 +16241,33 @@ class _Traductions$admin$comptes$retrait$en extends Traductions$admin$comptes$re
 	@override String get indisponible => 'Account deletion is not yet installed on the server. Nothing was deleted.';
 	@override String get echec => 'The deletion could not be confirmed. Check the list and People, Deletions before trying again.';
 	@override String get horsLigne => 'Nothing was sent: there is no network. Try again as soon as it returns.';
+}
+
+// Path: admin.praxis.cause
+class _Traductions$admin$praxis$cause$en extends Traductions$admin$praxis$cause$fr {
+	_Traductions$admin$praxis$cause$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get plafondFil => 'too many messages in a row without a reply';
+	@override String get plafond => 'hourly limit reached';
+	@override String get plafondAnnonces => 'two announcements already published today';
+	@override String get eteint => 'Praxis was off';
+	@override String get mineur => 'a child is in this conversation';
+	@override String get reprisParEquipe => 'the direction took the conversation over';
+	@override String get horsAcademie => 'conversation outside the academy';
+	@override String get typeFerme => 'conversation type closed to Praxis';
+	@override String get cote => 'conversation of the other side';
+	@override String get longueur => 'text too long';
+	@override String get parametre => 'incomplete request';
+	@override String get filInconnu => 'conversation not found';
+	@override String get filFerme => 'conversation closed';
+	@override String get publicRefuse => 'audience refused';
+	@override String get cleRefusee => 'key refused';
+	@override String get autonomeRequis => 'autonomous mode required';
+	@override String get refusee => 'refused by the messaging';
+	@override String get autre => 'unknown cause';
 }
 
 // Path: admin.finance.vue
@@ -31194,6 +31335,8 @@ extension on TraductionsEn {
 			'admin.candidatures.gestes.debloquerVersement' => 'Unlock the payout',
 			'admin.candidatures.gestes.demanderComplement' => 'Ask for additional information',
 			'admin.candidatures.gestes.cloreComplement' => 'Close the request for additional information',
+			'admin.candidatures.gestes.modifierComplement' => 'Change the request for additional information',
+			'admin.candidatures.gestes.annulerComplement' => 'Cancel the request for additional information',
 			'admin.candidatures.gestes.mettreEnPause' => 'Pause',
 			'admin.candidatures.gestes.leverPause' => 'Lift the pause',
 			'admin.candidatures.gestes.refuser' => 'Decline the application',
@@ -31212,6 +31355,8 @@ extension on TraductionsEn {
 			'admin.candidatures.consequences.debloquerVersement' => 'The payout is confirmed by hand, even with no declared method. Your reason stays in the history. If the person changes their answers, the unlock is lifted.',
 			'admin.candidatures.consequences.demanderComplement' => 'The application goes back to "to complete". The person will read the list of chosen items.',
 			'admin.candidatures.consequences.cloreComplement' => 'The requested additional information is closed. The application stays in its room.',
+			'admin.candidatures.consequences.modifierComplement' => 'The person receives a new request that replaces the previous one.',
+			'admin.candidatures.consequences.annulerComplement' => 'The request is cancelled. The application goes back to review. The person is not notified.',
 			'admin.candidatures.consequences.mettreEnPause' => 'The application does not move forward until the pause is lifted.',
 			'admin.candidatures.consequences.leverPause' => 'The application resumes where it had stopped.',
 			'admin.candidatures.consequences.refuser' => 'The application is closed. You can reopen it.',
@@ -31255,12 +31400,12 @@ extension on TraductionsEn {
 			'admin.candidatures.retrait.dateManquante' => 'Choose the day of the request.',
 			'admin.candidatures.retrait.aide' => 'Between receiving the application and today.',
 			'admin.candidatures.pause.reprise' => 'Planned resumption',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.pause.repriseAide' => 'Optional. Without a date, the pause lasts until you lift it.',
 			'admin.candidatures.pause.effacerReprise' => 'Do not set a date',
 			'admin.candidatures.moyens.titre' => 'Payout method',
 			'admin.candidatures.moyens.manquant' => 'Choose the method.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.moyens.virement' => 'Bank transfer',
 			'admin.candidatures.moyens.mobile' => ({required Object nom}) => 'Mobile money: ${nom}',
 			'admin.candidatures.moyens.mobileSansNom' => 'Mobile money',
@@ -31308,6 +31453,8 @@ extension on TraductionsEn {
 			'admin.candidatures.retours.debloquerVersement' => 'The payout is unlocked.',
 			'admin.candidatures.retours.demanderComplement' => 'Additional information is requested.',
 			'admin.candidatures.retours.cloreComplement' => 'The additional information request is closed.',
+			'admin.candidatures.retours.modifierComplement' => 'The additional information request is changed.',
+			'admin.candidatures.retours.annulerComplement' => 'The additional information request is cancelled.',
 			'admin.candidatures.retours.mettreEnPause' => 'The application is paused.',
 			'admin.candidatures.retours.leverPause' => 'The pause is lifted.',
 			'admin.candidatures.retours.refuser' => 'The application is declined.',
@@ -31767,14 +31914,14 @@ extension on TraductionsEn {
 			'admin.groupes.c1.heureMinutes' => ({required Object h, required Object mm}) => '${h}:${mm}',
 			'admin.groupes.c1.fuseauEnseignant' => ({required Object deVille}) => 'Times in ${deVille} time, the teacher\'s time zone.',
 			'admin.groupes.c1.fuseauDefaut' => ({required Object deVille}) => 'Times in ${deVille} time, the time zone kept by default.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.c1.fuseauAcademie' => 'Times in Makkah time.',
 			'admin.groupes.c1.fuseauNonTransmis' => ({required Object deVille}) => 'Times in ${deVille} time, the time zone the server keeps for now. The teacher\'s time zone will be taken into account as soon as the server accepts it.',
 			'admin.groupes.c1.abandonQuestion' => 'Abandon the new class?',
 			'admin.groupes.c1.abandonConsequence' => 'The choices made in this form (audience, teacher, slots, name) will be lost.',
 			'admin.groupes.c1.abandonConfirmer' => 'Abandon the new class',
 			'admin.groupes.c1.abandonContinuer' => 'Continue editing',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.c1.eleveDejaEnClasse' => 'this student is already in an active class. First remove them from that class, or transfer them, then press again.',
 			'admin.groupes.c1.eleveInvalide' => 'this student\'s account no longer exists or is not active. Choose another student from the list.',
 			'admin.groupes.c1.eleveNonMembre' => 'this student is no longer in this class. Reload the list to see its members.',
@@ -32281,14 +32428,14 @@ extension on TraductionsEn {
 			'admin.regles.seancesSimultanees' => 'Simultaneous sessions per profile',
 			'admin.regles.seancesSimultaneesDetail' => 'The number of sessions the same profile can follow at the same time.',
 			'admin.regles.uniteMinutes' => ({required Object n}) => '${n} min',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} wk', other: '${n} wk', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
 			'admin.regles.classesParEnseignant' => 'Classes at most per teacher',
 			'admin.regles.classesParEnseignantDetail' => 'The number of classes a teacher can hold at the same time. A closed class and a one-off replacement do not count. A decrease removes no class already held. In their questionnaire, candidates choose from 1 up to this number.',
 			'admin.regles.remplacementSection' => 'When the teacher has not joined the room',
 			'admin.regles.remplacementIntro' => 'The minutes count from the session\'s start time. Each step comes after the previous one.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.remplacementAvertissement' => 'Warning to the teacher',
 			'admin.regles.remplacementAvertissementDetail' => 'The teacher is warned that they are about to lose the session. Free teachers can offer to replace them.',
 			'admin.regles.remplacementPerte' => 'Loss of the session',
@@ -32795,14 +32942,14 @@ extension on TraductionsEn {
 			'admin.comptes.roleEnseignant' => 'Teacher',
 			'admin.comptes.roleTuteur' => 'Guardian',
 			'admin.comptes.roleEleve' => 'Student',
+			_ => null,
+		} ?? switch (path) {
 			'admin.comptes.roleInconnu' => 'Unknown role',
 			'admin.comptes.pieceAucune' => 'No document submitted',
 			'admin.comptes.pieceAVerifier' => 'To verify',
 			'admin.comptes.pieceValidee' => 'Validated',
 			'admin.comptes.pieceRefusee' => 'Declined',
 			'admin.comptes.pieceNonVisible' => 'Outside your scope',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.pieceSansObjet' => 'Not applicable',
 			'admin.comptes.attendAujourdhui' => 'Today',
 			'admin.comptes.attendUnJour' => '1 day',
@@ -32936,6 +33083,115 @@ extension on TraductionsEn {
 			'admin.agents.videDetail' => 'No AI agent has access to the app for now.',
 			'admin.agents.erreur' => 'The list of tokens could not be read.',
 			'admin.agents.usage' => ({required num nombre, required Object quand}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} time, the last ${quand}', other: '${nombre} times, the last ${quand}', ), 
+			'admin.praxis.titre' => 'Praxis',
+			'admin.praxis.intro' => 'Praxis is the academy\'s secretary. It reads families\' messages and answers only within the limits below. It stays off until you turn it on.',
+			'admin.praxis.reglagesTitre' => 'Praxis settings',
+			'admin.praxis.allume' => 'Praxis on',
+			'admin.praxis.etatAllume' => 'On',
+			'admin.praxis.etatEteint' => 'Off',
+			'admin.praxis.allumeOui' => 'On: Praxis reads messages and writes within the limits below.',
+			'admin.praxis.allumeNon' => 'Off: Praxis reads nothing and writes nothing.',
+			'admin.praxis.allumer' => 'Turn Praxis on',
+			'admin.praxis.eteindre' => 'Turn Praxis off',
+			'admin.praxis.autonome' => 'Autonomous mode',
+			'admin.praxis.autonomeOui' => 'Autonomous: Praxis can work alone, without you being in the conversation.',
+			'admin.praxis.autonomeNon' => 'Directed: Praxis acts only in a conversation you lead.',
+			'admin.praxis.autoriserAutonome' => 'Allow autonomous mode',
+			'admin.praxis.reprendreDirige' => 'Go back to directed mode',
+			'admin.praxis.plafond' => 'Messages per hour',
+			'admin.praxis.plafondDetail' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: 'Praxis sends at most ${nombre} message per hour.', other: 'Praxis sends at most ${nombre} messages per hour.', ), 
+			'admin.praxis.plafondChamp' => 'Number of messages per hour (1 to 120)',
+			'admin.praxis.plafondEnregistrer' => 'Set the limit',
+			'admin.praxis.plafondInvalide' => 'Write a whole number between 1 and 120.',
+			'admin.praxis.reglageFait' => 'Setting applied.',
+			'admin.praxis.erreurReglage' => 'Setting not confirmed. Check the state above before trying again.',
+			'admin.praxis.doubleVerification' => 'This setting needs two-step verification. Turn it on in Account, then Security, and try again.',
+			'admin.praxis.pourra' => 'Will be able to',
+			'admin.praxis.pourraDetail' => 'Read the academy\'s family messages, answer in a conversation that exists, publish an announcement for families, note a topic on the calendar.',
+			'admin.praxis.nePourraPas' => 'Will not be able to',
+			'admin.praxis.nePourraPasDetail' => 'Write to a child, open a conversation, send an email, touch money, accounts, rights or identity documents, or turn itself back on.',
+			'admin.praxis.clesTitre' => 'Praxis keys',
+			'admin.praxis.clesIntro' => 'A key lets a conversation or a routine talk to Praxis. It is shown only once, when you issue it.',
+			'admin.praxis.cleLibelle' => 'What this key is for',
+			'admin.praxis.cleLibelleAide' => 'Required. A key with no name is a key nobody dares to revoke.',
+			'admin.praxis.cleLibelleExemple' => 'The director\'s conversation',
+			'admin.praxis.cleUsage' => 'How it will be used',
+			'admin.praxis.usageChat' => 'Conversation',
+			'admin.praxis.usageChatDetail' => 'You talk to Praxis in a conversation. It acts when you ask it to.',
+			'admin.praxis.usageRoutine' => 'Routine',
+			'admin.praxis.usageRoutineDetail' => 'Praxis works alone at set times. It works only if autonomous mode is allowed.',
+			'admin.praxis.cleDuree' => 'Until when',
+			'admin.praxis.dureeJours' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} day', other: '${nombre} days', ), 
+			'admin.praxis.dureePlafond' => 'Ninety days at most, and the database checks it itself.',
+			'admin.praxis.emettre' => 'Issue the key',
+			'admin.praxis.manqueLibelle' => 'The key\'s name is missing: write what it is for.',
+			'admin.praxis.erreurEmission' => 'Issue not confirmed. Check the list of keys before trying again.',
+			'admin.praxis.cleEmise' => 'Key issued',
+			'admin.praxis.cleEmiseDetail' => 'Copy the key now. It will not appear again: neither this screen nor the database can retrieve it.',
+			'admin.praxis.copierCle' => 'Copy the key',
+			'admin.praxis.cleCopiee' => 'Key copied',
+			'admin.praxis.adresse' => 'Connector address',
+			'admin.praxis.adresseDetail' => 'Paste this address into Praxis\'s conversation, with the key.',
+			'admin.praxis.copierAdresse' => 'Copy the address',
+			'admin.praxis.adresseCopiee' => 'Address copied',
+			'admin.praxis.termine' => 'I copied the key',
+			'admin.praxis.colonneCle' => 'Key',
+			'admin.praxis.colonneUsage' => 'Use',
+			'admin.praxis.colonneEmise' => 'Issued on',
+			'admin.praxis.colonneExpire' => 'Until',
+			'admin.praxis.colonneUtilisee' => 'Last used',
+			'admin.praxis.colonneEtat' => 'State',
+			'admin.praxis.jamaisUtilisee' => 'Never used',
+			'admin.praxis.etatActive' => 'Active',
+			'admin.praxis.etatRevoquee' => 'Revoked',
+			'admin.praxis.etatExpiree' => 'Expired',
+			'admin.praxis.revoquer' => 'Revoke',
+			'admin.praxis.revoquerTitre' => 'Revoke this key?',
+			'admin.praxis.revoquerDetail' => 'Praxis will no longer be able to use it, right away. A revoked key cannot be restored.',
+			'admin.praxis.revoquerMotif' => 'Why',
+			'admin.praxis.revoquerMotifAide' => 'Required. A few words, kept in the log.',
+			'admin.praxis.manqueMotif' => 'The reason is missing: write why.',
+			'admin.praxis.revoquerConfirmer' => 'Revoke the key',
+			'admin.praxis.revoquee' => 'Key revoked.',
+			'admin.praxis.erreurRevocation' => 'Revocation not confirmed. Check the list of keys before trying again.',
+			'admin.praxis.cleVide' => 'No key',
+			'admin.praxis.cleVideDetail' => 'Issue a key to talk to Praxis.',
+			'admin.praxis.erreur' => 'Praxis\'s settings could not be read. Try again in a moment.',
+			'admin.praxis.horsLigne' => 'Praxis\'s settings are not loaded yet. Reload them.',
+			'admin.praxis.journalTitre' => 'What Praxis sent',
+			'admin.praxis.journalIntro' => 'The messages and announcements Praxis wrote itself, most recent first. Never a family\'s text.',
+			'admin.praxis.journalVide' => 'Praxis has not sent anything yet',
+			'admin.praxis.journalVideDetail' => 'Its sends, and its refusals, will appear here.',
+			'admin.praxis.journalErreur' => 'Praxis\'s log could not be read. Try again in a moment.',
+			'admin.praxis.voirSuite' => 'See older sends',
+			'admin.praxis.colonneQuand' => 'When',
+			'admin.praxis.colonneQuoi' => 'What',
+			'admin.praxis.colonneResultat' => 'Result',
+			'admin.praxis.colonneExtrait' => 'Start of the text',
+			'admin.praxis.quoiMessage' => 'Message',
+			'admin.praxis.quoiAnnonce' => 'Announcement',
+			'admin.praxis.envoye' => 'Sent',
+			'admin.praxis.refuse' => 'Refused',
+			'admin.praxis.refuseCause' => ({required Object cause}) => 'Refused: ${cause}',
+			'admin.praxis.sansTexte' => 'Nothing was written.',
+			'admin.praxis.cause.plafondFil' => 'too many messages in a row without a reply',
+			'admin.praxis.cause.plafond' => 'hourly limit reached',
+			'admin.praxis.cause.plafondAnnonces' => 'two announcements already published today',
+			'admin.praxis.cause.eteint' => 'Praxis was off',
+			'admin.praxis.cause.mineur' => 'a child is in this conversation',
+			'admin.praxis.cause.reprisParEquipe' => 'the direction took the conversation over',
+			'admin.praxis.cause.horsAcademie' => 'conversation outside the academy',
+			'admin.praxis.cause.typeFerme' => 'conversation type closed to Praxis',
+			'admin.praxis.cause.cote' => 'conversation of the other side',
+			'admin.praxis.cause.longueur' => 'text too long',
+			'admin.praxis.cause.parametre' => 'incomplete request',
+			'admin.praxis.cause.filInconnu' => 'conversation not found',
+			'admin.praxis.cause.filFerme' => 'conversation closed',
+			'admin.praxis.cause.publicRefuse' => 'audience refused',
+			'admin.praxis.cause.cleRefusee' => 'key refused',
+			'admin.praxis.cause.autonomeRequis' => 'autonomous mode required',
+			'admin.praxis.cause.refusee' => 'refused by the messaging',
+			'admin.praxis.cause.autre' => 'unknown cause',
 			'admin.notifications.titre' => 'Notifications',
 			'admin.notifications.vide' => 'No notification',
 			'admin.notifications.videDetail' => 'Nothing to report for now.',
@@ -33200,6 +33456,8 @@ extension on TraductionsEn {
 			'admin.finance.pol.apercuEnfant' => ({required Object rang}) => 'Child ${rang}',
 			'admin.finance.pol.apercuPrixNormal' => 'Normal price, no discount',
 			'admin.finance.pol.apercuRemise' => ({required Object montant}) => 'Rank discount: ${montant}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.apercuTotalFamille' => 'Household total per month',
 			'admin.finance.pol.apercuEnseignant' => 'Teacher example',
 			'admin.finance.pol.apercuEnseignantDetail' => 'What one session hour earns depending on the students present; an absent student does not count.',
@@ -33315,8 +33573,6 @@ extension on TraductionsEn {
 			'admin.finance.pai.enregistrer' => ({required Object dePrenom}) => 'Record ${dePrenom}\'s payment',
 			'admin.finance.pai.annuler' => 'Cancel',
 			'admin.finance.pai.fermer' => 'Close',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pai.rembChargement' => 'Reading the payments…',
 			'admin.finance.pai.rembAucun' => 'No payment to refund for this student.',
 			'admin.finance.pai.rembErreur' => 'The refund could not be confirmed. Try again: it will go out only once.',
@@ -33714,6 +33970,8 @@ extension on TraductionsEn {
 			'admin.bibliotheque.intro' => 'Teaching documents: submit them, check their rights, publish a version, assign them to classes.',
 			'admin.bibliotheque.brouillonAlerte' => 'A draft gives no access to students or teachers.',
 			'admin.bibliotheque.ajouter' => 'Add a document',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.vide' => 'No document',
 			'admin.bibliotheque.videDetail' => 'Add a first document to prepare it, check its rights, then publish it.',
 			'admin.bibliotheque.erreur' => 'The catalogue could not be loaded. Try again.',
@@ -33829,8 +34087,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.fiche.enregistre' => 'Changes saved.',
 			'admin.bibliotheque.fiche.conflit' => 'Another administrator changed this document. Reload the sheet before continuing.',
 			'admin.bibliotheque.fiche.recharger' => 'Reload the sheet',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.echecEnregistrer' => 'The changes could not be confirmed. Try again.',
 			'admin.bibliotheque.fiche.titreVide' => 'The title is required.',
 			'admin.bibliotheque.fiche.retirerVignette' => 'Remove the thumbnail',
@@ -34228,6 +34484,8 @@ extension on TraductionsEn {
 			'lieu.aide' => 'The first letters of the name are enough, with or without accents.',
 			'lieu.propositions' => 'Cities in this device\'s time',
 			'lieu.resultats' => 'Cities found',
+			_ => null,
+		} ?? switch (path) {
 			'lieu.credit' => 'City list: GeoNames (geonames.org), CC BY 4.0 licence.',
 			'lieu.aucune' => ({required Object texte}) => 'No city starts with "${texte}". Try the first letters of the name, without accents.',
 			'lieu.chargeEchec' => 'The city list did not load',
@@ -34343,8 +34601,6 @@ extension on TraductionsEn {
 			'parcours.etatClasseEnFormation' => 'Class being formed',
 			'parcours.etatClasseEnFormationDetailSansMinimum' => 'A class starts once there are enough students. We will let you know as soon as it is confirmed.',
 			'parcours.etatClasseConfirmee' => 'Class confirmed',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.etatClasseConfirmeeDetail' => ({required Object dePrenom}) => '${dePrenom}\'s class is formed. You will find its sessions in their space.',
 			'parcours.fuseauChange' => 'Your location has changed since this choice',
 			'parcours.fuseauChangeDetail' => 'The schedule is the same for the academy, but it no longer falls at the same time for you. Check that it still suits you.',
@@ -34742,6 +34998,8 @@ extension on TraductionsEn {
 			'historique.seance.presencePartielle' => 'Partial attendance',
 			'historique.seance.interruption' => 'Interruption',
 			'historique.seance.verificationPhrase' => 'Attendance is not yet confirmed for this session.',
+			_ => null,
+		} ?? switch (path) {
 			'historique.seance.mesureAutomatique' => 'Attendance measured automatically from connections to the room.',
 			'historique.seance.nonTenuPhrase' => 'The session did not take place: this is not the student\'s doing.',
 			'historique.seance.annulePhrase' => 'The session was cancelled.',
@@ -34857,8 +35115,6 @@ extension on TraductionsEn {
 			'notifications.evenements.titulaireEnRetard' => 'The class teacher is late. The academy is looking for a replacement: stay in the room.',
 			'notifications.evenements.titulaireEnRetardDirection' => 'A class teacher has not entered their room. A replacement is being sought: see the schedule.',
 			'notifications.evenements.remplacantArrive' => 'A replacement is arriving: stay in the room.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.classeSupprimee' => 'The class is closed.',
 			'notifications.evenements.classeSupprimeeSoi' => 'Your class is closed.',
 			'notifications.evenements.classeSupprimeeFoyer' => 'The class of a student in your household is closed.',
@@ -35256,6 +35512,8 @@ extension on TraductionsEn {
 			'classe.cartes.typesDetail.lien' => 'To share a page or a material: paste its address.',
 			'classe.cartes.typesDetail.rappel' => 'For a date not to forget: outing, exam, schedule change.',
 			'classe.cartes.modeles.annonce' => 'Information for the class',
+			_ => null,
+		} ?? switch (path) {
 			'classe.cartes.modeles.devoir' => 'To prepare for the next session',
 			'classe.cartes.modeles.lien' => 'Material to look at',
 			'classe.cartes.modeles.rappel' => 'Do not forget',
@@ -35371,8 +35629,6 @@ extension on TraductionsEn {
 			'enseignant.bienvenue.prerequisPhoto' => 'Add my professional photo',
 			'enseignant.bienvenue.prerequisLangues' => 'Check my teaching languages',
 			'enseignant.bienvenue.prerequisFuseau' => 'Check my time zone',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.bienvenue.ctaPhoto' => 'Add my photo',
 			'enseignant.bienvenue.ctaInformations' => 'Check my information',
 			'enseignant.bienvenue.ctaJournee' => 'See my day',
@@ -35770,6 +36026,8 @@ extension on TraductionsEn {
 			'enseignant.creneaux.limiteDetail' => 'Your current load does not allow booking an additional class.',
 			'enseignant.creneaux.aucuneClasse' => 'No compatible class for now',
 			'enseignant.creneaux.aucuneClasseDetail' => 'Change your availability if your schedule has changed.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.creneaux.reserver' => 'Book this class',
 			'enseignant.creneaux.demandeTransmise' => 'Your request has been passed on.',
 			'enseignant.creneaux.demandeTransmiseDetail' => 'It will appear in your classes after confirmation.',
@@ -35885,8 +36143,6 @@ extension on TraductionsEn {
 			'enseignant.revenus.versementValeur' => ({required Object du, required Object au}) => 'From ${du} to ${au}',
 			'enseignant.revenus.versementDetail' => ({required Object mois}) => 'The pay for ${mois} is paid between these two dates.',
 			'enseignant.revenus.jourMois' => ({required Object mois, required Object jour}) => '${mois} ${jour}',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revenus.classesSection' => 'By class',
 			'enseignant.revenus.classesDetail' => 'Tap a class to see its sessions and what each student earned.',
 			'enseignant.revenus.nombreSeances' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session', other: '${n} sessions', ), 
@@ -36284,6 +36540,8 @@ extension on TraductionsEn {
 			'tc.bibliotheque.detail.titre' => 'Document',
 			'tc.bibliotheque.detail.lecture' => 'Quran recitation style',
 			'tc.bibliotheque.detail.ecole' => 'Legal school followed',
+			_ => null,
+		} ?? switch (path) {
 			'tc.bibliotheque.detail.capacites' => 'What this document allows',
 			'tc.bibliotheque.detail.niveaux' => 'Levels',
 			'tc.bibliotheque.detail.sansVersion' => 'No version published: nothing to open for now.',
@@ -36399,8 +36657,6 @@ extension on TraductionsEn {
 			'tc.outils.trait.annuler' => 'Undo',
 			'tc.outils.trait.plus' => 'More',
 			'tc.outils.trait.ardoise' => 'Annotation slate, optional: the class stays readable without it',
-			_ => null,
-		} ?? switch (path) {
 			'tc.outils.trait.effacerDernier' => 'Erase my last stroke',
 			'tc.outils.portee.temporaire' => 'Just while explaining',
 			'tc.outils.portee.seance' => 'Until the end of class',
@@ -36798,6 +37054,8 @@ extension on TraductionsEn {
 			'adulte.recharge.resultat.date' => 'Date',
 			'adulte.recharge.resultat.moyen' => 'Payment method',
 			'adulte.recharge.resultat.total' => 'Total amount',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.repartition' => 'Breakdown by profile',
 			'adulte.recharge.resultat.nouveauSolde' => ({required Object montant}) => 'New balance: ${montant}',
 			'adulte.recharge.resultat.soldesTitre' => 'Balances updated',
@@ -36913,8 +37171,6 @@ extension on TraductionsEn {
 			'adulte.invitation.annulationEchecPhrase' => 'Check before trying again.',
 			'adulte.invitation.valableJusquau' => ({required Object date}) => 'Valid until ${date}',
 			'adulte.invitation.renvoyer' => 'Resend the invitation',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.renvoyeePhrase' => ({required Object courriel}) => 'The invitation was sent again to ${courriel}, with a new code: the one in the previous email no longer works.',
 			'adulte.invitation.renvoisRestants' => ({required Object n}) => 'Resends still possible: ${n}',
 			'adulte.invitation.renvoiLimite' => 'The invitation has already been resent three times. Cancel it to send a new one.',
@@ -37312,6 +37568,8 @@ extension on TraductionsEn {
 			'suiviDemandes.jalon.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} day later', other: '${n} days later', ), 
 			'suiviDemandes.changement.titrePage' => 'Class change',
 			'suiviDemandes.changement.titre' => ({required Object dePrenom}) => '${dePrenom}\'s class has changed',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.changement.fusion' => ({required Object prenom}) => 'Your class was merged with another. ${prenom} now has the class below.',
 			'suiviDemandes.changement.transfert' => ({required Object prenom}) => 'The management moved ${prenom} to another class. Here is the new class.',
 			'suiviDemandes.changement.classe' => 'New class',
@@ -37427,8 +37685,6 @@ extension on TraductionsEn {
 			'argent.etat.finance' => 'Funded',
 			'argent.etat.essai' => 'Trial',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'Trial: ${n}/${max}',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.manque' => 'To fund',
 			'argent.etat.enConfirmation' => 'Being confirmed',
 			'argent.etat.expire' => 'Access expired',
@@ -37826,6 +38082,8 @@ extension on TraductionsEn {
 			'com.vocal.lecteur.position' => ({required Object position, required Object duree}) => '${position} of ${duree}',
 			'com.vocal.lecteur.indisponible' => 'Playback is not available here yet. The message stays in the conversation: come back later to listen to it.',
 			'com.vocal.lecteur.erreurLectureTitre' => 'This voice message could not be played.',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.lecteur.erreurLectureAction' => 'Try again',
 			'com.vocal.demo.contexte' => 'Voice message demo: no real microphone is used, the recording is simulated.',
 			'com.vocal.demo.situations' => 'Demo situations',
@@ -37941,8 +38199,6 @@ extension on TraductionsEn {
 			'com.communaute.regles.pasDonnees' => 'No personal data of a student or a family',
 			'com.communaute.regles.signaler' => 'Inappropriate content is reported from the post\'s menu.',
 			'com.communaute.regles.voir' => 'See the rules',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.entree.lecteur' => 'Open the Teachers community',
 			'com.communaute.entree.detail' => 'Questions, methods and resources between teachers',
 			'com.communaute.demo.avertissement' => 'Post to review: advertising',
@@ -38340,6 +38596,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.matrice.vide' => 'No publishing right is configured.',
 			'com.annonces.administration.moderation.titre' => 'Moderation queue',
 			'com.annonces.administration.moderation.legende' => ({required Object date, required Object heure}) => 'Reported on ${date} at ${heure}',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.motif' => ({required Object motif}) => 'Reason: ${motif}',
 			'com.annonces.administration.moderation.extraitTitre' => 'Reported content',
 			'com.annonces.administration.moderation.extraitAbsent' => 'This content\'s excerpt is not provided.',
@@ -38455,8 +38713,6 @@ extension on TraductionsEn {
 			'com.annonces.demo.f.adminSignalement' => 'A Community post has been reported',
 			'com.annonces.demo.f.adminReponse' => 'Reply from Bilal\'s family to your message',
 			'com.annonces.demo.f.adminPlanifiee' => 'A scheduled announcement needs checking before publication',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminOperationnel' => 'An-Nour class: full',
 			'com.annonces.demo.f.controleurMission' => 'New mission: visit to the An-Nour class',
 			'com.annonces.demo.f.controleurChangement' => 'Your Thursday mission is moved to 6 pm',
@@ -38854,6 +39110,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.retraitSansValidation' => 'The policy requires no validation for a withdrawal; it is still handled as a sensitive movement.',
 			'comptable.tresorerie.version' => ({required Object version}) => 'Version ${version}',
 			'comptable.tresorerie.versionDepuis' => ({required Object version, required Object date}) => 'Version ${version}, in force since ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.mouvementsTitre' => 'Movements between vaults',
 			'comptable.tresorerie.mouvementsPhrase' => 'Towards a protection: according to your delegation. Outflow from a protected vault: additional validation required.',
 			'comptable.tresorerie.preparerMouvement' => 'Prepare a movement',
@@ -38969,8 +39227,6 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.voirToutes' => 'See all transactions',
 			'comptable.encaissements.rap.ouvrirLecteur' => ({required Object libelle}) => 'Open the reconciliation of ${libelle}',
 			'comptable.encaissements.rap.candidats' => 'Proposed matches',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rap.candidatsAucun' => 'The source proposes no match for this transaction.',
 			'comptable.encaissements.rap.relieA' => ({required Object libelle}) => 'Linked to: ${libelle}',
 			'comptable.encaissements.rap.rapprocher' => 'Reconcile',
@@ -39368,6 +39624,8 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.cadence.manuelle' => 'Manual',
 			'comptable.direction.reservePanneau.seuilTitre' => 'Alert',
 			'comptable.direction.reservePanneau.seuil' => 'Alert threshold',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.seuilDetail' => 'Below this share of the target, the Reserve is flagged "below target". Leave empty to set no threshold.',
 			'comptable.direction.reservePanneau.seuilIndice' => 'No threshold',
 			'comptable.direction.reservePanneau.retraitTitre' => 'Withdrawal',
@@ -39483,8 +39741,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sensiblesDetail' => 'These five cases always require additional validation, whatever the settings above. The first payment and recent details are set higher up.',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuil' => 'Amount above threshold',
 			'comptable.direction.delegationPanneau.sensibleHorsSeuilDetail' => 'A payment above the ceilings set above.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleHorsCycle' => 'Off-cycle payment',
 			'comptable.direction.delegationPanneau.sensibleHorsCycleDetail' => 'A payment that does not follow the usual pay period.',
 			'comptable.direction.delegationPanneau.sensibleLieOperateur' => 'Beneficiary linked to the operator',
@@ -39882,6 +40138,8 @@ extension on TraductionsEn {
 			'avis.admin.statut.tous' => 'All',
 			'avis.admin.statut.enAttente' => 'Pending',
 			'avis.admin.statut.publie' => 'Published',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.statut.refuse' => 'Refused',
 			'avis.admin.statut.retire' => 'Removed',
 			'avis.admin.filtre.tous' => 'All',
@@ -39997,8 +40255,6 @@ extension on TraductionsEn {
 			'courriels.admin.ecrire.sujetAide' => '120 characters at most.',
 			'courriels.admin.ecrire.corps' => 'Message',
 			'courriels.admin.ecrire.corpsAide' => 'Plain text, 5000 characters at most. An empty line makes a new paragraph.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.traduction' => 'Each recipient receives it in their language: the message is translated automatically when sent.',
 			'courriels.admin.ecrire.envoyer' => 'Send the message',
 			'courriels.admin.ecrire.erreurCategories' => 'The categories could not be loaded. Try again.',
@@ -40396,6 +40652,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.tranches' => ({required Object choisis, required Object total}) => 'Choices made by you: ${choisis} of ${total}. For the others, the most recent row is kept.',
 			'candidatsFlux.importFormulaires.doublons.nature.courriel' => 'Same email',
 			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'Same phone',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'Same email and same phone',
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'Rows ${liste}',
 			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'and ${n} row already saved', other: 'and ${n} rows already saved', ), 
@@ -40511,8 +40769,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.avertissement.ijazaDeclareeEnG' => 'ijaza declared as memorization: memorization is for the person to fill in',
 			'candidatsFlux.importFormulaires.avertissement.experiencePretTest' => '"ready for a test" has no equivalent for experience: for the person to fill in',
 			'candidatsFlux.importFormulaires.avertissement.moinsDe3Heures' => 'less than 3 hours a week: that does not make a class, for the person to fill in',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.avertissement.creneauxContradictoires' => 'contradictory time slots, kept as they are',
 			'candidatsFlux.importFormulaires.comptes.question' => 'Are these the numbers you expected?',
 			'candidatsFlux.importFormulaires.comptes.explication' => 'Here is what Rewayah counted in the file. Compare with your own count before confirming.',
@@ -40910,6 +41166,8 @@ extension on TraductionsEn {
 			'suiviAttente.presentation.montrer' => 'Show my countries and my introduction on the tracking card',
 			'suiviAttente.presentation.paysOrigine' => 'Country of origin',
 			'suiviAttente.presentation.paysResidence' => 'Country of residence',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.presentation.choisirPays' => 'Choose a country',
 			'suiviAttente.presentation.nonRenseigne' => 'Not provided',
 			'suiviAttente.presentation.mot' => 'My introduction',
@@ -41025,8 +41283,6 @@ extension on TraductionsEn {
 			'calendrier.dates.feuille.champCategorie' => 'Which closure',
 			'calendrier.dates.feuille.champTitre' => 'Title',
 			'calendrier.dates.feuille.aideTitre' => 'The title families will read.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.feuille.champPortee' => 'Who it is for',
 			'calendrier.dates.feuille.champTranche' => 'Age group',
 			'calendrier.dates.feuille.champClasse' => 'Class',

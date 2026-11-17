@@ -60,6 +60,10 @@ declare
     -- service_role : hors de cette liste.
     'direction_praxis_emettre_cle(text,text,timestamp with time zone,uuid)',
     'direction_praxis_regler(boolean,boolean,integer)',
+    -- PX-4 (17/11) : MODE ESSAI, la porte du directeur (administrateur valide, aal2) qui nomme les conversations d'essai
+    -- (dix au plus, existantes) dans private.praxis_reglages.essai_fils, plus une ligne d'audit (praxis_regle_essai). Tant que la
+    -- liste n'est pas vide, Praxis ne voit que ces fils et n'annonce rien. Elle n'ecrit ni message, ni annonce, ni compte.
+    'direction_praxis_regler_essai(uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
     -- praxis_journal_lu : qui a lu, la limite et le curseur, jamais un texte) : c'est pourquoi elle est VOLATILE.
@@ -338,9 +342,13 @@ declare
     'lister_enseignants(jsonb,text,integer)',
     -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
     'dispenser_entretien(uuid,text,text,integer,text)',
+    -- COMPLEMENT-SALLE-EXAMEN (17/11) : la direction annule le complement demande en Salle d'examen (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; le dossier revient a en_examen).
+    'annuler_complement_candidat(uuid,text,integer,text)',
     -- APRES-CONFIRMEE (17/11) : la direction restreint une candidature confirmee (ou demande une verification de la piece ou du versement) et leve la restriction (garde positive direction active, moteur des gestes : motif ecrit, version, cle ; levee sous controles revérifiés).
     'restreindre_candidat(uuid,text,text,integer,text)',
     'lever_restriction_candidat(uuid,text,integer,text)',
+    -- BE-1h (16/11) : la direction ramene une candidature de la decision a l'entretien (transition 46).
+    'refaire_entretien(uuid,text,integer,text)',
     -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
     'voisins_candidature(text,jsonb,text)',
     -- MAJEUR (16/11) : le candidat atteste avoir 18 ans ou plus ; il n'ecrit que sa propre candidature (une declaration, une pause si moins de 18 ans) ; garde positive : titulaire d'une candidature d'enseignant en cours, compte valide.

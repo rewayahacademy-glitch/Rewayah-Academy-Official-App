@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/admin/service_programme.dart';
 import 'package:rewayah_academy/core/admin/service_progression.dart';
 import 'package:rewayah_academy/core/admin/service_qualite.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
+import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/controle/service_controle.dart';
@@ -112,6 +113,10 @@ class ServiceAgentDemo with _IndisponibleDemo implements ServiceAgent {
   const ServiceAgentDemo();
 }
 
+class ServicePraxisDemo with _IndisponibleDemo implements ServicePraxis {
+  const ServicePraxisDemo();
+}
+
 class AnnuaireObservationsDemo
     with _IndisponibleDemo
     implements AnnuaireObservations {
@@ -170,6 +175,8 @@ List<Override> surchargesServicesAdminIndisponibles({
     serviceAuthProvider.overrideWithValue(const ServiceAuthDemo()),
   if (!sauf.contains(serviceAgentProvider))
     serviceAgentProvider.overrideWithValue(const ServiceAgentDemo()),
+  if (!sauf.contains(servicePraxisProvider))
+    servicePraxisProvider.overrideWithValue(const ServicePraxisDemo()),
   if (!sauf.contains(annuaireObservationsProvider))
     annuaireObservationsProvider.overrideWithValue(
       const AnnuaireObservationsDemo(),
@@ -198,6 +205,7 @@ final List<Provider<Object>> providersServicesAdmin = <Provider<Object>>[
   serviceReglesProvider,
   serviceAuthProvider,
   serviceAgentProvider,
+  servicePraxisProvider,
   annuaireObservationsProvider,
   portPolitiqueObservationProvider,
 ];
