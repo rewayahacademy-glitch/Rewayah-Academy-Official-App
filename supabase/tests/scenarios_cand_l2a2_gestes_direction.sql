@@ -364,11 +364,13 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 30,
+                         WHERE geste NOT LIKE '%admission') = 33,
     -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
     -- VERSEMENT-QUESTIONS (16/11, transition 44), BE-1g (16/11, transition 45) et BE-1h REFAIRE-ENTRETIEN
-    -- (17/11, migration 20261129700000, transition 46) : trois regles de direction de plus, soit 30.
-    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b et trois gestes de direction (trente variantes)');
+    -- (17/11, migration 20261129700000, transition 46) : trois regles de direction de plus, soit 30 ;
+    -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : demander_complement variantes 3 et 4 et
+    -- annuler_complement, soit 33.
+    'la table des regles de CAND-L2A1 est inchangee, plus la reservation du candidat de V1-b et six gestes de direction (trente-trois variantes)');
 END $f86$;
 
 SELECT pg_temp.refus_en(NULL, NULL, $$SELECT public.refuser_candidat(pg_temp.c('15'), 'Motif', 'refus_general', 1, 'cle-anon-0001')$$,
@@ -426,9 +428,11 @@ SELECT pg_temp.vrai(pg_temp.lu('cap_a1') @> '{"peutLire": true, "peutDecider": t
     "planifierEntretien": true, "consignerEntretien": true, "pieceACorriger": false, "validerPiece": true,
     "restreindre": false, "leverRestriction": false, "noterIndisponibilite": false,
     "leverIndisponibilite": false,
-    "debloquerVersement": true, "dispenserEntretien": true, "refaireEntretien": true}'::jsonb,
+    "debloquerVersement": true, "dispenserEntretien": true, "refaireEntretien": true,
+    "annulerComplement": true, "modifierComplement": true}'::jsonb,
   -- VERSEMENT-QUESTIONS (16/11, debloquer le versement), BE-1g (16/11, dispenser l'entretien) et BE-1h
-  -- REFAIRE-ENTRETIEN (17/11, migration 20261129700000, refaire l'entretien) : trois capacites de plus.
+  -- REFAIRE-ENTRETIEN (17/11, migration 20261129700000, refaire l'entretien) : trois capacites de plus ;
+  -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : annuler et modifier un complement, deux de plus.
   'direction homme : decide de son cote ; une capacite par geste, vraie pour les seuls gestes que le serveur sait faire (CAND-L3 : prevenu, garder pour suivi et rattacher le sont desormais ; V1 : planifier et consigner un entretien ; salle 3 du 03/11 : valider la piece ; debloquer le versement, dispenser et refaire l entretien)');
 SELECT pg_temp.vrai(pg_temp.lu('cap_a1') -> 'listes' = '{
     "modelesRefus": ["refus_general", "refus_niveau", "refus_besoins", "refus_sans_reponse"],
@@ -756,8 +760,11 @@ SELECT pg_temp.vrai(pg_temp.lu('d02') @> '{"etat": "a_completer", "complementDem
   'le candidat lit les elements demandes (complementDemande), jamais le motif');
 SELECT pg_temp.garde('dc02d', pg_temp.en(pg_temp.p('a1'), 'admin',
   $$SELECT public.demander_complement_candidat(pg_temp.c('02'), ARRAY['langues'], 'Motif', 2, 'cle-complement-02-d')$$));
-SELECT pg_temp.vrai(pg_temp.lu('dc02d') @> '{"erreur": "transition_interdite", "etat": "a_completer", "raison": "etat"}'::jsonb,
-  'transition 7 depuis a_completer : transition_interdite');
+-- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11, T6) : depuis a_completer avec un complement EN COURS, la
+-- direction peut le MODIFIER (variante 3 du geste demander_complement) : ce n'est plus un refus.
+SELECT pg_temp.vrai(NOT pg_temp.lu('dc02d') ? 'erreur' AND pg_temp.lu('dc02d') -> 'aCompleter' = '["langues"]'::jsonb
+  AND pg_temp.lu('dc02d') -> 'candidature' @> '{"etat": "a_completer", "issue": "en_cours"}'::jsonb,
+  'transition 7 (variante 3) depuis a_completer avec un complement en cours : le complement est modifie (plus de refus)');
 
 -- 23 (01, Salle de verification et d'entretien) et le compteur des
 -- informations manquantes (L2-18).
@@ -1779,10 +1786,11 @@ SELECT pg_temp.vrai((SELECT bool_and(
                      FROM public.candidatures c WHERE c.id::text LIKE 'ca2bcccc%')
   AND (SELECT count(*) FROM public.candidature_evenements e
         WHERE e.candidature_id::text LIKE 'ca2bcccc%' AND e.details ? 'geste'
-          AND e.details ->> 'transition' IN ('7', '10', '16', '17', '18', '19', '23', '24', '25', '28')) = 46,
-  -- 46 et non 50 : le geste 24 (confirmer le moyen) est code mort depuis BE-VERSEMENT (16/11) ; ses quatre
-  -- confirmations (02, 03, 01, 07) ne laissent plus d'evenement.
-  'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature ; 46 gestes de ce lot (7, 10, 16 a 19, 23, 25, 28 ; le 24 est code mort)');
+          AND e.details ->> 'transition' IN ('7', '10', '16', '17', '18', '19', '23', '24', '25', '28')) = 47,
+  -- 47 et non 50 : le geste 24 (confirmer le moyen) est code mort depuis BE-VERSEMENT (16/11) ; ses quatre
+  -- confirmations (02, 03, 01, 07) ne laissent plus d'evenement ; et la modification d'un complement
+  -- (COMPLEMENT-SALLE-EXAMEN, 17/11, T6) laisse un evenement de transition 7 de plus.
+  'L2-11 : autant de lignes audit_logs que de transitions du moteur, candidature par candidature ; 47 gestes de ce lot (7, 10, 16 a 19, 23, 25, 28 ; le 24 est code mort)');
 -- PERF-AUDIT (14/11, migration 20261126200000) : les lignes d'audit sont chainees par pg_cron dans la
 -- minute ; sans cron ici, le scenario chaine lui-meme avant de verifier (comme scenarios_adm04.sql).
 SELECT private.audit_chainer();

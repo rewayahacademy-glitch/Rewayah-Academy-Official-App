@@ -58,7 +58,21 @@ bool gestePermis(GesteCandidature geste, DetailCandidature detail) =>
 /// (GESTES-RAISON : un bouton qui ne peut pas aboutir n'est pas rendu, K-56),
 /// parce que le serveur ne sert pas encore les controles.
 bool gestePermisPourLigne(GesteCandidature geste, LigneCandidature l) {
-  if (!l.sert(geste)) {
+  // COMPLEMENT-SALLE-EXAMEN : le serveur sert le meme nom `demander_complement`
+  // pour demander (en examen, en paiement non disponible, en salle de
+  // verification) et pour MODIFIER une demande en cours (variante 3, seule
+  // permise en `a_completer`). L'ecran les nomme par l'etat que la ligne porte :
+  // une presentation, pas une regle.
+  final bool enACompleter =
+      l.etape == EtapeCandidature.prequalification &&
+      l.etat == EtatCandidature.aCompleter;
+  if (geste == GesteCandidature.demanderComplement && enACompleter) {
+    return false;
+  }
+  if (geste == GesteCandidature.modifierComplement) {
+    return enACompleter && l.gestes.contains('demander_complement');
+  }
+  if (geste != GesteCandidature.modifierComplement && !l.sert(geste)) {
     return false;
   }
   if (geste == GesteCandidature.admettreVerifications) {
@@ -181,6 +195,8 @@ RaisonGestes raisonDesGestes(
 const List<GesteCandidature> _ordreMenu = <GesteCandidature>[
   GesteCandidature.demanderComplement,
   GesteCandidature.cloreComplement,
+  GesteCandidature.modifierComplement,
+  GesteCandidature.annulerComplement,
   GesteCandidature.confirmerMoyenPaiement,
   GesteCandidature.infirmerMoyenPaiement,
   GesteCandidature.debloquerVersement,

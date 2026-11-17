@@ -32,6 +32,14 @@ enum GesteCandidature {
   /// (transition 23, code `complement_clos`).
   cloreComplement('cloreComplement'),
 
+  /// Modifier le complement en cours en Salle d'examen : une nouvelle demande
+  /// (variante 3 de `demander_complement`, transition 7).
+  modifierComplement('modifierComplement'),
+
+  /// Annuler le complement en cours en Salle d'examen : la candidature revient
+  /// `en_examen` (`annuler_complement_candidat`, transition 47).
+  annulerComplement('annulerComplement'),
+
   /// Admettre en Salle de verification et d'entretien (transition 10).
   admettreVerifications('admettreVerifications'),
 
@@ -82,6 +90,10 @@ enum GesteCandidature {
   String get nomServeur => switch (this) {
     demanderComplement => 'demander_complement',
     cloreComplement => 'clore_complement',
+    // Le meme nom que demanderComplement (variante 3 du moteur, en a_completer) :
+    // l'ecran nomme par l'etat de la ligne (gestes_proposes.dart).
+    modifierComplement => 'demander_complement',
+    annulerComplement => 'annuler_complement',
     admettreVerifications => 'admettre_verifications',
     confirmerMoyenPaiement => 'confirmer_moyen_paiement',
     infirmerMoyenPaiement => 'infirmer_moyen_paiement',
@@ -112,6 +124,7 @@ enum GesteCandidature {
   bool get exigeMotif => switch (this) {
     demanderComplement ||
     cloreComplement ||
+    annulerComplement ||
     infirmerMoyenPaiement ||
     debloquerVersement ||
     mettreEnPause ||
@@ -119,6 +132,7 @@ enum GesteCandidature {
     consignerRetrait ||
     dispenserEntretien ||
     rouvrir => true,
+    modifierComplement ||
     admettreVerifications ||
     confirmerMoyenPaiement ||
     leverPause ||
@@ -237,6 +251,37 @@ class DemandeGeste {
     versionAttendue: versionAttendue,
     cleIdempotence: cleIdempotence,
     elements: List<String>.unmodifiable(elements),
+    motif: motif,
+  );
+
+  /// Modifier le complement en cours : les nouveaux [elements] remplacent la
+  /// demande (le motif se deduit de la liste, comme pour la demande).
+  factory DemandeGeste.modifierComplement({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required List<String> elements,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.modifierComplement,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
+    elements: List<String>.unmodifiable(elements),
+    motif: motif,
+  );
+
+  /// Annuler le complement en cours (Salle d'examen), avec un [motif].
+  factory DemandeGeste.annulerComplement({
+    required String candidatureId,
+    required int versionAttendue,
+    required String cleIdempotence,
+    required String motif,
+  }) => DemandeGeste._(
+    geste: GesteCandidature.annulerComplement,
+    candidatureId: candidatureId,
+    versionAttendue: versionAttendue,
+    cleIdempotence: cleIdempotence,
     motif: motif,
   );
 
