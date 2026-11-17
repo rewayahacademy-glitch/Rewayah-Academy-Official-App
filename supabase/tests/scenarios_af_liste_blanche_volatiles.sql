@@ -338,6 +338,8 @@ declare
     'lister_enseignants(jsonb,text,integer)',
     -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
     'dispenser_entretien(uuid,text,text,integer,text)',
+    -- BE-1j (17/11) : la direction deplace le creneau d'un entretien planifie (transition 47).
+    'deplacer_entretien(uuid,timestamp with time zone,integer,text,integer,text)',
     -- BE-S1 (16/11) : les voisins d'un dossier dans la file ; lecture de references seulement, bornee a son cote, volatile parce qu'une reference de l'autre cote est tracee (cand_hors_portee) ; garde positive direction active.
     'voisins_candidature(text,jsonb,text)',
     -- MAJEUR (16/11) : le candidat atteste avoir 18 ans ou plus ; il n'ecrit que sa propre candidature (une declaration, une pause si moins de 18 ans) ; garde positive : titulaire d'une candidature d'enseignant en cours, compte valide.
