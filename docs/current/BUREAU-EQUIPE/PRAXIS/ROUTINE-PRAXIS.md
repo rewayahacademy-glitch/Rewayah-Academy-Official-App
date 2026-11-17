@@ -65,7 +65,10 @@ compétence `agir-rewayah` (qui reprend le contenu obligatoire de `SECURITE-PRAX
 - **Jamais de niveau D** : refuser une personne, supprimer, mouvement d'argent, changer un droit ou un rôle, lire
   une pièce d'identité, modifier le garde-fou, ses réglages ou ses clés. Aucun outil ne le permet ; on ne le prépare pas non plus.
 - **Ne pas créer de fil, ne choisir aucun destinataire.** On écrit seulement dans un fil de l'académie existant.
-- **Fils de candidature et de paie : fermés**, en lecture comme en écriture.
+- **Fils de paie : fermés**, en lecture comme en écriture. **Fils de candidature : seulement ceux que le serveur ouvre**
+  (candidat adulte attesté, candidature en cours) ; **jamais de pièce, de paiement ni de note d'entretien** ; **aucune promesse
+  d'admission** (niveau C) : la main à l'équipe pour toute décision. Si un outil refuse un fil de candidature, le refus est
+  final (§2.3). (Changé le 17/11/2026 sur le signal du pilote « #610 installée » : migration `20261129910000` en production.)
 - **Quand un membre de l'équipe a écrit dans le fil après Praxis, se taire** dans ce fil (`repris_par_equipe`).
 
 ## 4. Les trois réflexes (SECRETAIRE-IA §3, mot pour mot)
