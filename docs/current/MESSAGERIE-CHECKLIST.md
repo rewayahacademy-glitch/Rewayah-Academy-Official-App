@@ -1,6 +1,6 @@
 # Messagerie : checklist du pilote
 
-**Mise à jour : lundi 16/11/2026, 22 h 55 UTC.** Cette page est mise à jour à chaque étape.
+**Mise à jour : mardi 17/11/2026, 10 h 55 UTC.** Cette page est mise à jour à chaque étape.
 
 ## Où on en est, en clair
 
@@ -48,7 +48,11 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
    savoir si l'équipe a lu).
 5. **À décider par vous** : ajouter `scenarios_image_candidat.sql` et `scenarios_nouveau_fils.sql` à
    `ci.yml` (zone interdite aux agents) ; bulles reçues pâles (sans contour, décision du pilote).
-6. **Aucun agent messagerie actif.** Suite en liste : NOUVELLE-VERSION, comptes Praxis, CHECK des
+6. **Praxis (Pilote Équipe, #567) a retouché l'envoi des messages et des annonces à 23 h 14-16 UTC**,
+   relu par le pilote avant. **Envoi d'un message prouvé en production** : 3 messages réels (00 h 27,
+   02 h 52, 03 h 19 UTC), réponse 200, un seul message en base chaque fois. L'envoi d'une annonce n'a pas
+   encore servi depuis : non prouvé.
+7. **Aucun agent messagerie actif.** Suite en liste : NOUVELLE-VERSION, comptes Praxis, CHECK des
    notifications (écart dépôt / production, aucune personne touchée).
 
 ## Faux, bloqué ou non prouvé (à lire d'abord)
@@ -92,6 +96,7 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
 | 5 | `scenarios_fac_f_relances_suspension.sql` indépendant de l'heure | sans urgence | échoue le lundi 7-8 h UTC |
 | 7 | Comptes officiels dans les conversations (Praxis) : *#RA_PRAXIS*, *#RA_STAFF*, « Assistant de l'académie · IA », « Parler à l'équipe » (`BUREAU-EQUIPE/SECRETAIRE-IA.md` §9, §11) | après NOUVEAU-FILS, pas cette nuit | signalé par le Pilote Équipe le 16/11 à 21 h 15 ; plage `202611296…` réservée à Praxis, pas à la messagerie |
 | 8 | Écart dépôt / production : `notifications_evenement_check` accepte `annonce_direction` en production, mais aucune migration du dépôt ne l'ajoute (`20261126900000` l'annonce seulement). Une base rejouée depuis le dépôt (CI) ne notifie aucune annonce | petit lot de rattrapage, après NOUVEAU-FILS | relevé par BE-PIECE (PX-1), vérifié en production par le pilote le 16/11 à 22 h 12 ; aucune personne touchée en production ; PX-1 prévenu de garder les 61 valeurs de la production s'il réécrit ce CHECK |
+| 9 | L'application appelle `com_envoyer_message` deux fois par envoi (30 à 150 ms d'écart) ; la clé d'idempotence évite le doublon en base (vérifié : 1 message par paire) | petit lot, sans urgence | relevé par le pilote le 17/11 à 04 h 15 dans les journaux de production |
 | 6 | Recette du directeur en production : #538, #540, #546, puis #551 | après fusion de #551 | liste d'essais, une par une, page humaine |
 
 ## Corrections non bloquantes demandées par le directeur
@@ -157,3 +162,23 @@ toutes les 30 minutes, je relis ses captures et la CI, puis je fusionne et j'ins
   à 22 h 51, aucune erreur Postgres.
 - 16/11, 22 h 35 : agent `session_0163KjrwKsohCvdhrjhrWP5N` archivé (place libérée).
 - 16/11, 22 h 39 : déploiement de `8f320a9b` vert (run 1309).
+- 16/11, 23 h 14-16 : PX-1 (#567, Pilote Équipe) installé : extraction des internes de `com_envoyer_message` et `com_annonce_envoyer`, contrôle md5 passé, `com_fil_json` non touchée, CHECK des notifications non réécrit (relu par le pilote avant). Journaux depuis 23 h 13 : 42 appels de messagerie, 39 en 200, 3 en 204, 0 erreur ; aucun envoi réel, donc envoi non prouvé.
+- 17/11, 04 h 15 : envoi prouvé (3 messages réels en 200, 1 ligne en base chacun) ; double appel du client relevé, absorbé par l'idempotence (liste n° 9) ; envoi d'annonce pas encore exercé.
+
+### Matin du 17/11 : affichage de Praxis (ordre du directeur, « Praxis opérationnel ce soir »)
+
+- [x] **#612 PRAXIS-AFFICHAGE fusionnée** (`6f2e1c58`, 09 h 53 UTC) : nom **#Ra_Praxis sans italique** (directeur,
+  confirmé à 9 h 05 : « je confirme le nouveau nom et l'image est déposée »), indicateur de compte officiel, fiche du
+  profil « Assistant de l'académie · IA ». **Déployée** à 10 h 00 UTC (run 1400 vert). **Pas vue par vous.**
+- [x] **Migration `com_compte_officiel` installée** (09 h 54 UTC, enregistrée `20261117095418`) : chaque participant
+  porte `officiel` et `compte_officiel` (code du compte, `praxis` aujourd'hui). Vérifiée : attributs et droits
+  inchangés. Journaux depuis : 41 appels de messagerie, tous 200 ou 204, aucune erreur Postgres.
+- [x] **#618 image de Praxis fusionnée** (`d70c99a3`) et **déployée** (run 1409 vert, 10 h 38 UTC) : l'image fournie
+  par le directeur, réduite à 256 px sans retouche (14 Ko), affichée seulement pour le compte `praxis` ; captures
+  relues par le pilote (lisible à 24 pt, la toque se lit, les yeux sont petits). **Pas vue par vous.**
+- [x] **#616 fusionnée** : le PNG plein format est conservé dans `assets/brand/praxis/` (non embarqué dans l'appli).
+- [x] Agent `session_0163Kjry6zThXGyFJhJk9NHn` **archivé** à 10 h 28 : la messagerie n'a plus d'agent actif.
+- [ ] **Non fait** : bouton « Parler à l'équipe » (aucune action existante pour ouvrir une conversation avec l'équipe ;
+  rien inventé).
+- Arrêté sur ordre direct du directeur : l'icône dessinée par l'agent (« je vais le faire moi-même »).
+- Pour le directeur : `scenarios_com_compte_officiel.sql` à ajouter à `ci.yml` (zone interdite aux agents).
