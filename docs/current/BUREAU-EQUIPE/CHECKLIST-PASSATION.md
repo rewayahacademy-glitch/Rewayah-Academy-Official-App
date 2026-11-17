@@ -39,7 +39,17 @@ parallèle, un agent par lot, quatre agents au plus.
 
 ## 0. Pour le directeur au réveil
 
-(rempli au matin : dix lignes au plus)
+Résumé de la nuit du 16 au 17/11 (pilote, 6 h UTC). Rien ne vous est demandé.
+1. **Rien de prouvé par vous** : tout ce qui suit est fusionné, installé et vérifié en base par le pilote, jamais joué par une vraie personne.
+2. **Migrations installées** : 650000, 710000, 720000, 730000, 760000, 460000 et 750000, 770000 et 780000, 790000, 800000, 810000, 830000, 840000 (PX-2), 860000, 870000, 880000. Chacune : fichier de `main` identique à la copie relue, ancres et empreintes vérifiées avant et après.
+3. **Carte des gestes de la direction** : pièce sur la fiche, complément en Salle d'examen, déplacer un entretien, l'entretien suit le dossier, restreindre / demander une vérification / lever (lots 2 à 8 livrés côté serveur).
+4. **Sécurité resserrée** : contrôleur et comptable ne lisent plus séances ni affectations ; personne n'écrit plus les portefeuilles ; coordonnées de versement fermées à la direction et à la comptabilité ; journal de Praxis plafonné.
+5. **Praxis** : PX-2 installé, **toujours éteint** (actif, autonome et données réelles faux ; 0 clé, 0 proposition). Vous seul l'allumez.
+6. **Associé et écran Équipe** : rôle `associe`, invitations, missions ; écran Équipe en ligne. 0 associé, 0 mission. Courriel d'invitation **non lancé** (aucun texte validé).
+7. **Un incident du pilote, corrigé** : une ligne vide perdue en recopiant une fonction (780000) ; remplacée par le texte exact quelques minutes après ; aucun effet sur les données.
+8. **Dettes ouvertes** : aucun message à une personne restreinte ; pages de l'associé décidées par la coque, pas par le serveur ; scénarios SQL hors `ci.yml` ; date limite d'étape d'un élève décalée d'un jour (non corrigée, touche le programme).
+9. **En cours** : #602 (scénarios rouges, sans migration), #595 (écran PX-2), écran d'inscription de l'associé.
+10. Détail ligne par ligne : §1 ci-dessous.
 
 ## 1. En cours
 
