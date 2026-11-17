@@ -99,10 +99,15 @@ abstract final class VersionsJuridiques {
   /// 2026-11-v1 (02/11/2026, FN-115a) : remboursement sauf les seances
   /// suivies, contestation bancaire, acces sans paiement. Le site public garde
   /// 2026-10-v1 tant que `site-public/` n'est pas mis a jour.
-  static const String version = '2026-11-v1';
+  /// 2026-11-v2 (17/11/2026) : l'assistant Praxis dans la politique de
+  /// confidentialite (points 3, 4, 6 et 8). Le reglage serveur
+  /// `candidatures.confidentialite_version` passe a la meme version par la
+  /// migration 20261129950000 : les deux se montent ensemble, sinon toute
+  /// inscription de candidat repond « confidentialite perimee ».
+  static const String version = '2026-11-v2';
 
   /// La date du texte.
-  static final DateTime date = DateTime(2026, 11, 2);
+  static final DateTime date = DateTime(2026, 11, 17);
 }
 
 /// Ce que seule la direction peut donner.

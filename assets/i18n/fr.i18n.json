@@ -15293,7 +15293,7 @@
           "Une famille ne voit que ses propres informations. Les informations d'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.",
           "L'enseignant voit ses élèves et ses Classes. La direction voit ce qu'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.",
           "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.",
-          "Un assistant numérique, appelé Praxis, aide l'académie à répondre aux familles et aux candidats dans la messagerie de l'application. Son profil indique qu'il s'agit d'une intelligence artificielle. Il lit les messages des conversations avec l'académie pour y répondre ou préparer une réponse. Il ne lit aucune conversation où un enfant participe, ni aucun paiement. Il n'écrit jamais à un enfant. Il travaille sous la responsabilité de la direction, qui peut l'arrêter à tout moment."
+          "Un assistant numérique, appelé Praxis, aide l'académie à répondre aux familles et aux candidats dans la messagerie de l'application. Son profil indique qu'il s'agit d'une intelligence artificielle. Il lit les messages des conversations avec l'académie pour y répondre ou préparer une réponse. Il ne lit aucune conversation où un enfant participe, ni les pièces d'identité, ni aucun paiement. Il n'écrit jamais à un enfant et n'envoie aucun courriel. Il travaille sous la responsabilité de la direction, qui peut l'arrêter à tout moment."
         ]
       },
       "s5": {
