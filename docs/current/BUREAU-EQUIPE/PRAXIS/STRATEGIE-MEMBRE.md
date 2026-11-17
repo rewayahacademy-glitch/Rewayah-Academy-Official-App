@@ -60,10 +60,25 @@ Ce qui les relie : **la base**. Les deux modes lisent et écrivent les mêmes fi
 à valider, journal). Une chose commencée en chat se termine en autonome, et l'inverse.
 
 **Le réveil (lot PX-REVEIL)** : quand une personne écrit dans une conversation ouverte à Praxis, la base le note et
-réveille la routine (au plus une fois toutes les 2 à 5 minutes, jamais pour un message de l'équipe ou de Praxis,
-jamais pour une conversation d'enfant ou de paie) ; le passage horaire reste en secours. **À vérifier d'abord** :
-qu'une tâche planifiée se déclenche par un appel extérieur authentifié. Sinon : une fonction serveur qui réveille
-la routine autrement (à étudier, rien n'est promis).
+réveille la routine (au plus une fois toutes les 3 minutes, jamais pour un message de l'équipe ou de Praxis,
+jamais pour une conversation d'enfant ou de paie) ; le passage horaire reste en secours.
+
+**Vérifié le 17/11 vers 13 h 10 UTC (documentation officielle, `code.claude.com/docs/en/routines`, et
+`platform.claude.com/docs/en/api/claude-code/routines-fire`, API marquée expérimentale)** : une tâche planifiée
+accepte un déclencheur **API** en plus de l'horaire. Le directeur l'ajoute dans claude.ai/code/routines : la tâche,
+menu, **Edit**, ligne **Trigger**, **+**, **API**, puis **Generate token** (montré une fois). L'appel est un
+`POST https://api.anthropic.com/v1/claude_code/routines/<trig_…>/fire` avec `Authorization: Bearer <jeton>` et
+`anthropic-version`. Limites : 30 déclenchements par heure et par tâche (API et « Run now » ensemble), 100 appels API
+par heure et par compte ; aucune clé d'idempotence (un réessai crée une session de plus). Conséquences pour le lot :
+- le jeton est rangé **côté serveur** par le directeur (secret de la fonction Edge ou coffre de la base), jamais vu par
+  un agent, jamais dans le dépôt ;
+- l'anti-rafale du serveur (une fois toutes les 3 minutes au plus, soit 20 par heure) tient sous la limite de 30 ;
+- l'appel ne se réessaie pas en boucle : un échec est noté, le passage horaire rattrape ;
+- le jeton se coupe d'un geste (**Delete token**) en cas de doute.
+
+**Le dépôt (PX-DEPOT), vérifié au même moment** : dans le même dialogue **Edit**, **Advanced settings**, onglet
+**General**, champ **Repository** : choisir le dépôt de l'académie, puis **Save changes**. Ensuite seulement, les
+consignes de la tâche reviennent à « lis ROUTINE-PRAXIS.md et les compétences » au lieu du résumé.
 
 ## 5. Les lots, dans l'ordre (une PR chacun, un agent chacun)
 
