@@ -100,6 +100,15 @@ INSERT INTO public.groupe_membres(groupe_id, student_id) VALUES
  ('d2a00000-0000-4000-8000-0000000000c2','d2a00000-0000-4000-8000-0000000000e3');
 -- Les seances generees a la creation des Classes portent deja les eleves ;
 -- une seance posee en plus, pour un compte exact.
+-- DETTE-SCENARIO-HORLOGE-2 : la Classe c1 (lundi, 9 h Africa/Abidjan, soit 09:00-10:00 UTC) fait creer par son
+-- declencheur des seances a venir pour b1, eleves e1 et e2 compris. La seance de test, a « maintenant + 20 jours »,
+-- les heurtait (sessions_no_teacher_overlap) les mardis entre 08 h 15 et 10 h UTC, quand ce jour-la tombe un lundi :
+-- le test dependait de l'heure et du jour d'execution. On libere donc, dans la fixture, la SEULE fenetre de la
+-- seance de test : les seances generees qui la recouvrent. Ce que le test prouve (les lignes de mes_seances_v, sans
+-- doublon par la fratrie) ne depend ni de ces seances ni de l'heure : le compte attendu est calcule apres coup.
+DELETE FROM public.sessions
+ WHERE groupe_id = 'd2a00000-0000-4000-8000-0000000000c1'
+   AND tstzrange(started_at, ended_at) && tstzrange(now() + interval '20 days', now() + interval '20 days 45 minutes');
 INSERT INTO public.sessions(id, teacher_id, started_at, ended_at, status, groupe_id) VALUES
  ('d2a00000-0000-4000-8000-000000000501','d2a00000-0000-4000-8000-0000000000b1',
   now() + interval '20 days', now() + interval '20 days 45 minutes', 'planned',
