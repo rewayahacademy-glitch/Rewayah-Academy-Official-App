@@ -345,6 +345,14 @@ NotificationContenu contenuNotificationPour(
       portee,
       quand,
     ),
+    // ENTRETIEN-SUIT-LE-DOSSIER : a ceux qui menaient l'entretien, jamais au
+    // candidat. La cause seule, ni nom ni motif.
+    'entretien_annule' => switch (params['cause']) {
+      'refus' => t.recrutement.entretien.notifications.annuleRefus,
+      'retrait' => t.recrutement.entretien.notifications.annuleRetrait,
+      'pause' => t.recrutement.entretien.notifications.annulePause,
+      _ => t.recrutement.entretien.notifications.annule,
+    },
     // PUSH-1 (07/11/2026) : ce qui attend un geste, par role. Aucun nom,
     // aucun montant, aucun motif : le detail est dans la page de destination.
     'admission_recue' => push1.admissionRecue,
