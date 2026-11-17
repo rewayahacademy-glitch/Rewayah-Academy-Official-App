@@ -12,7 +12,12 @@ enum FormatArtefact {
   audio('audio', 'audio/mpeg', 'mp3'),
 
   /// Une image.
-  image('image', 'image/png', 'png');
+  image('image', 'image/png', 'png'),
+
+  /// Un texte Markdown ferme, redige avec Praxis (PX-BD-SUPPORT). Le serveur
+  /// ne sert pas encore ce format : tant que la base ne le connait pas, la
+  /// fiche dit que l'apercu n'est pas disponible.
+  texte('texte', 'text/markdown', 'md');
 
   const FormatArtefact(this.valeurSql, this.typeMime, this.extension);
 

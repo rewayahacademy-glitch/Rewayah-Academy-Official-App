@@ -11015,6 +11015,8 @@
         "lienAbsent": "Ce document n'a pas encore de contenu à ouvrir.",
         "imageInaccessible": "L'image n'a pas pu être chargée pour le moment.",
         "imageIllisible": "Ce fichier image ne peut pas être affiché.",
+        "texteIllisible": "Ce document ne peut pas être affiché ici. Prévenez la direction.",
+        "texteInaccessible": "Ce document n'a pas pu être chargé. Réessayez dans un instant.",
         "reessayer": "Réessayer",
         "ouvrir": "Ouvrir",
         "ouvrirMushaf": "Ouvrir le mushaf",

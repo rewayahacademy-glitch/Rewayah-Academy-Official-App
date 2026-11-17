@@ -11027,6 +11027,8 @@
         "lienAbsent": "This document has no content to open yet.",
         "imageInaccessible": "The image could not be loaded for now.",
         "imageIllisible": "This image file cannot be displayed.",
+        "texteIllisible": "This document cannot be shown here. Let the administration know.",
+        "texteInaccessible": "This document could not be loaded. Try again in a moment.",
         "reessayer": "Try again",
         "ouvrir": "Open",
         "ouvrirMushaf": "Open the Mushaf",

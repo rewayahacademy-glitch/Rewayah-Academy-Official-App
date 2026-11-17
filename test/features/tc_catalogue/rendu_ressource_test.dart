@@ -6,6 +6,8 @@
 // jamais rendu ici ; PDF, texte structure et lecon disent honnetement qu'aucun
 // lecteur n'existe ; une ressource sans version publiee ne propose rien ;
 // l'enseignant entre dans la bibliotheque ; 320 px, texte x2, LTR et RTL.
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -14,6 +16,7 @@ import 'package:rewayah_academy/core/tc_bibliotheque/library_resource.dart';
 import 'package:rewayah_academy/core/tc_bibliotheque/resource_version.dart';
 import 'package:rewayah_academy/core/tc_telechargement/download_asset.dart';
 import 'package:rewayah_academy/features/tc_catalogue/detail_ressource_page.dart';
+import 'package:rewayah_academy/features/tc_catalogue/lecteur_markdown.dart';
 import 'package:rewayah_academy/features/tc_catalogue/rendu_ressource.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
@@ -31,11 +34,14 @@ const List<int> _png = <int>[
   0x00, 0x49, 0x45, 0x4E, 0x44, 0xAE, 0x42, 0x60, 0x82,
 ];
 
-DownloadAsset _image() => DownloadAsset(
+DownloadAsset _image({
+  FormatArtefact format = FormatArtefact.image,
+  String cle = 'supports/demo.png',
+}) => DownloadAsset(
   id: 'a1',
   resourceVersionId: 'v1',
-  format: FormatArtefact.image,
-  cleStockage: 'supports/demo.png',
+  format: format,
+  cleStockage: cle,
   tailleOctets: _png.length,
   origine: OrigineArtefact.importeTelQuel,
   creeLeUtc: DateTime.utc(2026, 9, 1),
@@ -46,6 +52,7 @@ List<Override> _surcharges({
   bool avecArtefact = false,
   bool avecOctets = false,
   bool publiee = true,
+  List<int>? texte,
 }) => surchargesCatalogue(
   ressources: <LibraryResource>[
     ressource(
@@ -62,10 +69,16 @@ List<Override> _surcharges({
       : const <String, List<ResourceVersion>>{},
   artefacts: avecArtefact
       ? <String, List<DownloadAsset>>{
-          'v1': <DownloadAsset>[_image()],
+          'v1': <DownloadAsset>[
+            texte == null
+                ? _image()
+                : _image(format: FormatArtefact.texte, cle: 'supports/t.md'),
+          ],
         }
       : const <String, List<DownloadAsset>>{},
-  octets: avecOctets
+  octets: texte != null
+      ? <String, List<int>>{'supports/t.md': texte}
+      : avecOctets
       ? <String, List<int>>{'supports/demo.png': _png}
       : const <String, List<int>>{},
 );
@@ -118,6 +131,71 @@ void main() {
     });
   });
 
+  group('texte (PX-BD-SUPPORT)', () {
+    testWidgets('lu dans l\'application par le lecteur', (tester) async {
+      await _monter(
+        tester,
+        _surcharges(
+          type: TypeRessource.texteStructure,
+          avecArtefact: true,
+          texte: utf8.encode('# Titre\n\nUn paragraphe.'),
+        ),
+      );
+      expect(find.byKey(ClesLecteurMarkdown.document), findsOneWidget);
+      expect(find.text('Titre'), findsOneWidget);
+      expect(_cle('rendu-echec'), findsNothing);
+    });
+
+    testWidgets('sans artefact : dit sans panne', (tester) async {
+      await _monter(tester, _surcharges(type: TypeRessource.texteStructure));
+      expect(_cle('rendu-sans-lecteur'), findsOneWidget);
+      expect(_cle('rendu-echec'), findsNothing);
+    });
+
+    testWidgets('octets introuvables : echec avec relance', (tester) async {
+      await _monter(
+        tester,
+        _surcharges(type: TypeRessource.texteStructure, avecArtefact: true),
+      );
+      // Un artefact image est present mais pas de texte : le port rend absent.
+      expect(
+        _cle('rendu-echec').evaluate().isNotEmpty ||
+            _cle('rendu-sans-lecteur').evaluate().isNotEmpty,
+        isTrue,
+      );
+    });
+
+    testWidgets('UTF-8 invalide : echec, jamais un texte repare', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        _surcharges(
+          type: TypeRessource.texteStructure,
+          avecArtefact: true,
+          texte: <int>[0xC3, 0x28],
+        ),
+      );
+      expect(_cle('rendu-echec'), findsOneWidget);
+      expect(find.text(t.tc.bibliotheque.rendu.texteInaccessible), findsOne);
+      expect(find.byKey(ClesLecteurMarkdown.document), findsNothing);
+    });
+
+    testWidgets('texte hors du sous-ensemble : phrase du lecteur', (
+      tester,
+    ) async {
+      await _monter(
+        tester,
+        _surcharges(
+          type: TypeRessource.texteStructure,
+          avecArtefact: true,
+          texte: utf8.encode('<b>non</b>'),
+        ),
+      );
+      expect(find.byKey(ClesLecteurMarkdown.illisible), findsOneWidget);
+    });
+  });
+
   group('autres types', () {
     testWidgets('Coran : jamais rendu ici', (tester) async {
       await _monter(tester, _surcharges(type: TypeRessource.quran));
@@ -127,7 +205,6 @@ void main() {
 
     for (final TypeRessource type in <TypeRessource>[
       TypeRessource.pdf,
-      TypeRessource.texteStructure,
       TypeRessource.lecon,
     ]) {
       testWidgets('${type.name} : aucun lecteur, dit honnetement', (

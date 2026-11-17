@@ -38144,6 +38144,12 @@ class Traductions$tc$bibliotheque$rendu$fr {
 	/// fr: 'Ce fichier image ne peut pas être affiché.'
 	String get imageIllisible => 'Ce fichier image ne peut pas être affiché.';
 
+	/// fr: 'Ce document ne peut pas être affiché ici. Prévenez la direction.'
+	String get texteIllisible => 'Ce document ne peut pas être affiché ici. Prévenez la direction.';
+
+	/// fr: 'Ce document n'a pas pu être chargé. Réessayez dans un instant.'
+	String get texteInaccessible => 'Ce document n\'a pas pu être chargé. Réessayez dans un instant.';
+
 	/// fr: 'Réessayer'
 	String get reessayer => 'Réessayer';
 
@@ -65041,6 +65047,8 @@ extension on Traductions {
 			'tc.bibliotheque.rendu.lienAbsent' => 'Ce document n\'a pas encore de contenu à ouvrir.',
 			'tc.bibliotheque.rendu.imageInaccessible' => 'L\'image n\'a pas pu être chargée pour le moment.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'Ce fichier image ne peut pas être affiché.',
+			'tc.bibliotheque.rendu.texteIllisible' => 'Ce document ne peut pas être affiché ici. Prévenez la direction.',
+			'tc.bibliotheque.rendu.texteInaccessible' => 'Ce document n\'a pas pu être chargé. Réessayez dans un instant.',
 			'tc.bibliotheque.rendu.reessayer' => 'Réessayer',
 			'tc.bibliotheque.rendu.ouvrir' => 'Ouvrir',
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Ouvrir le mushaf',
@@ -65266,10 +65274,10 @@ extension on Traductions {
 			'tc.observation.connexion.titre' => 'Connexion et vérification',
 			'tc.observation.connexion.phrase' => 'Vos visites restantes sont vérifiées. La visite commence dès que l\'entrée est acceptée, connexion vidéo comprise.',
 			'tc.observation.connexion.enCours' => 'Connexion et vérification en cours',
-			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
-			'tc.observation.connexion.impossibleTitre' => 'Entrée impossible',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.connexion.prolongee' => 'Restez sur cette page : la vérification continue.',
+			'tc.observation.connexion.impossibleTitre' => 'Entrée impossible',
 			'tc.observation.connexion.impossible' => 'L\'entrée dans la séance n\'a pas abouti. Réessayez : vos visites restantes seront vérifiées à nouveau.',
 			'tc.observation.duree.secondes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} seconde', other: '${n} secondes', ), 
 			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
@@ -65780,10 +65788,10 @@ extension on Traductions {
 			'adulte.demo.donnees.soldeAicha' => 'Solde de démonstration 3',
 			'adulte.demo.donnees.soldeOumar' => 'Solde de démonstration 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'Total de démonstration A',
-			'adulte.demo.donnees.totalSansSecondAdulte' => 'Total de démonstration B',
-			'adulte.demo.donnees.prixOffreA' => '5,00 € (démonstration)',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.donnees.totalSansSecondAdulte' => 'Total de démonstration B',
+			'adulte.demo.donnees.prixOffreA' => '5,00 € (démonstration)',
 			'adulte.demo.donnees.prixOffreB' => '10,00 € (démonstration)',
 			'adulte.demo.donnees.detailOffreA' => 'Solde de démonstration A',
 			'adulte.demo.donnees.detailOffreB' => 'Solde de démonstration B',
@@ -66294,10 +66302,10 @@ extension on Traductions {
 			'com.socle.motifs.harcelement' => 'Harcèlement ou langage inapproprié',
 			'com.socle.motifs.donneesPersonnelles' => 'Données personnelles d\'un élève ou d\'une famille',
 			'com.socle.motifs.autre' => 'Autre contenu à examiner',
-			'com.socle.signalement.titre' => 'Signaler ce contenu',
-			'com.socle.signalement.precision' => 'Précision facultative',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.signalement.titre' => 'Signaler ce contenu',
+			'com.socle.signalement.precision' => 'Précision facultative',
 			'com.socle.signalement.envoyer' => 'Envoyer le signalement',
 			'com.socle.signalement.confirme' => 'Le contenu a été signalé. Il sera examiné.',
 			'com.socle.signalement.erreur' => 'Le signalement n\'a pas encore été confirmé. Réessayez dans un instant.',
@@ -66808,10 +66816,10 @@ extension on Traductions {
 			'com.studio.sections.produitTechnique' => 'Produit & technique',
 			'com.studio.sections.direction' => 'Direction',
 			'com.studio.visibilite.restreint' => 'Restreint',
-			'com.studio.visibilite.prive' => 'Privé',
-			'com.studio.visibilite.visibleDetail' => 'Ouvert à toute l\'équipe.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.visibilite.prive' => 'Privé',
+			'com.studio.visibilite.visibleDetail' => 'Ouvert à toute l\'équipe.',
 			'com.studio.visibilite.restreintDetail' => 'Ouvert à une partie de l\'équipe, dont vous faites partie.',
 			'com.studio.visibilite.priveDetail' => 'Canal privé, ouvert à ses seuls membres. Vous en faites partie.',
 			'com.studio.canal.membresUn' => '1 membre',
@@ -67322,10 +67330,10 @@ extension on Traductions {
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Solde prestataire insuffisant',
 			'comptable.statuts.reserve.atteint' => 'Objectif atteint',
 			'comptable.statuts.reserve.sousObjectif' => 'Sous objectif',
-			'comptable.statuts.reserve.depassement' => 'Dépassement',
-			'comptable.statuts.reserve.regleInactive' => 'Règle inactive',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.reserve.depassement' => 'Dépassement',
+			'comptable.statuts.reserve.regleInactive' => 'Règle inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Alimentation prévue',
 			'comptable.statuts.reserve.mouvementSensible' => 'Mouvement sensible',
 			'comptable.statuts.obligation.brouillon' => 'Brouillon',
@@ -67836,10 +67844,10 @@ extension on Traductions {
 			'comptable.beneficiaires.recevoir.configurer' => 'Configurer mes paiements',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise ne verse pas dans ce pays : ${pays}. Vous pouvez donner le compte d\'un proche dans un autre pays ; sinon la direction vous paiera autrement.',
 			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Ce compte est-il à votre nom ?',
-			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Oui, il est à mon nom',
-			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'Non, il est au nom d\'un proche',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Oui, il est à mon nom',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'Non, il est au nom d\'un proche',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Votre paie ira sur le compte d\'un proche, avec votre accord. La direction le vérifie avant le premier versement.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Qui est le titulaire du compte ?',
 			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'Mon père ou ma mère',
@@ -68350,10 +68358,10 @@ extension on Traductions {
 			'sansDonnees.paiementsRecus' => 'Vos paiements reçus n\'ont pas pu être chargés',
 			'sansDonnees.revenus' => 'Vos revenus n\'ont pas pu être chargés',
 			'sansDonnees.aujourdhui' => 'Le tableau du jour n\'a pas pu être chargé',
-			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
-			'sansDonnees.paiementsAEffectuer' => 'Les paiements à effectuer n\'ont pas pu être chargés',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.paiement' => 'Ce paiement n\'a pas pu être chargé',
+			'sansDonnees.paiementsAEffectuer' => 'Les paiements à effectuer n\'ont pas pu être chargés',
 			'sansDonnees.encaissements' => 'Les encaissements n\'ont pas pu être chargés',
 			'sansDonnees.tresorerie' => 'La trésorerie n\'a pas pu être chargée',
 			'sansDonnees.obligation' => 'Cette obligation n\'a pas pu être chargée',
@@ -68864,10 +68872,10 @@ extension on Traductions {
 			'admissions.modeles.niveauPhrase' => '« Le niveau demandé n\'est pas encore proposé. »',
 			'admissions.modeles.sansReponse' => 'Pas de réponse',
 			'admissions.modeles.sansReponsePhrase' => '« Nous n\'avons pas reçu de réponse à notre dernier message. »',
-			'accueilInscrits.titre' => 'Nous vous connaissons déjà',
-			'accueilInscrits.phrase' => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.titre' => 'Nous vous connaissons déjà',
+			'accueilInscrits.phrase' => 'Votre inscription a été reprise. Vous n\'avez pas à tout ressaisir.',
 			'accueilInscrits.motTitre' => 'Un mot de la direction',
 			'accueilInscrits.elevesTitre' => 'Vos enfants déjà inscrits',
 			'accueilInscrits.elevesPhrase' => 'Leur prénom est déjà rempli. Il reste à indiquer leur âge.',
@@ -69378,10 +69386,10 @@ extension on Traductions {
 			'candidatsFlux.file.misEnFile' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} message mis en file', other: '${n} messages mis en file', ), 
 			'candidatsFlux.file.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} personne a demandé à ne plus recevoir de messages du recrutement : elle ne recevra pas le lien.', other: '${n} personnes ont demandé à ne plus recevoir de messages du recrutement : elles ne recevront pas le lien.', ), 
 			'candidatsFlux.file.reglage.libelle' => 'Messages de ce type par jour',
-			'candidatsFlux.file.reglage.aide' => 'De 1 à 2 000. Les messages liés à un compte, une classe, une inscription ou un paiement partent toujours sans attendre.',
-			'candidatsFlux.file.reglage.enregistrer' => 'Enregistrer le réglage',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.file.reglage.aide' => 'De 1 à 2 000. Les messages liés à un compte, une classe, une inscription ou un paiement partent toujours sans attendre.',
+			'candidatsFlux.file.reglage.enregistrer' => 'Enregistrer le réglage',
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Réglage enregistré : ${n} message par jour.', other: 'Réglage enregistré : ${n} messages par jour.', ), 
 			'candidatsFlux.file.reglage.invalide' => 'Écrivez un nombre entier de 1 à 2 000, sans espace.',
 			'candidatsFlux.file.reglage.echec' => 'Réglage non confirmé. Cause probable : la connexion au serveur s\'est interrompue. Réessayez dans un instant.',
@@ -69892,10 +69900,10 @@ extension on Traductions {
 			'pause.reponseAvant' => ({required Object date}) => 'La direction répond avant le ${date}.',
 			'pause.reponseMotif' => ({required Object motif}) => 'Réponse de la direction : ${motif}',
 			'pause.exceptionAccordee' => 'Pause accordée par la direction.',
-			'pause.annuler' => ({required Object mois}) => 'Annuler la pause de ${mois}',
-			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jour avant son début. Choisissez un mois plus lointain.', other: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jours avant son début. Choisissez un mois plus lointain.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'pause.annuler' => ({required Object mois}) => 'Annuler la pause de ${mois}',
+			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jour avant son début. Choisissez un mois plus lointain.', other: 'Ce mois commence trop tôt : une pause se demande au moins ${jours} jours avant son début. Choisissez un mois plus lointain.', ), 
 			'pause.refus.dejaDemandee' => 'Ce mois est déjà demandé ou accepté.',
 			'pause.refus.moisInvalide' => 'Ce mois n\'est pas lisible. Choisissez un mois dans la liste.',
 			'pause.refus.nonAnnulable' => 'Cette pause ne peut plus être annulée : elle a déjà commencé, ou elle est déjà refusée ou annulée.',

@@ -18512,6 +18512,8 @@ class _Traductions$tc$bibliotheque$rendu$en extends Traductions$tc$bibliotheque$
 	@override String get lienAbsent => 'This document has no content to open yet.';
 	@override String get imageInaccessible => 'The image could not be loaded for now.';
 	@override String get imageIllisible => 'This image file cannot be displayed.';
+	@override String get texteIllisible => 'This document cannot be shown here. Let the administration know.';
+	@override String get texteInaccessible => 'This document could not be loaded. Try again in a moment.';
 	@override String get reessayer => 'Try again';
 	@override String get ouvrir => 'Open';
 	@override String get ouvrirMushaf => 'Open the Mushaf';
@@ -37344,6 +37346,8 @@ extension on TraductionsEn {
 			'tc.bibliotheque.rendu.lienAbsent' => 'This document has no content to open yet.',
 			'tc.bibliotheque.rendu.imageInaccessible' => 'The image could not be loaded for now.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'This image file cannot be displayed.',
+			'tc.bibliotheque.rendu.texteIllisible' => 'This document cannot be shown here. Let the administration know.',
+			'tc.bibliotheque.rendu.texteInaccessible' => 'This document could not be loaded. Try again in a moment.',
 			'tc.bibliotheque.rendu.reessayer' => 'Try again',
 			'tc.bibliotheque.rendu.ouvrir' => 'Open',
 			'tc.bibliotheque.rendu.ouvrirMushaf' => 'Open the Mushaf',
@@ -37569,10 +37573,10 @@ extension on TraductionsEn {
 			'tc.observation.connexion.titre' => 'Connection and check',
 			'tc.observation.connexion.phrase' => 'Your remaining visits are being checked. The visit starts as soon as entry is accepted, video connection included.',
 			'tc.observation.connexion.enCours' => 'Connection and check in progress',
-			'tc.observation.connexion.prolongee' => 'Stay on this page: the check continues.',
-			'tc.observation.connexion.impossibleTitre' => 'Entry impossible',
 			_ => null,
 		} ?? switch (path) {
+			'tc.observation.connexion.prolongee' => 'Stay on this page: the check continues.',
+			'tc.observation.connexion.impossibleTitre' => 'Entry impossible',
 			'tc.observation.connexion.impossible' => 'Entry into the session did not go through. Try again: your remaining visits will be checked again.',
 			'tc.observation.duree.secondes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} second', other: '${n} seconds', ), 
 			'tc.observation.duree.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} minute', other: '${n} minutes', ), 
@@ -38083,10 +38087,10 @@ extension on TraductionsEn {
 			'adulte.demo.donnees.soldeAicha' => 'Demo balance 3',
 			'adulte.demo.donnees.soldeOumar' => 'Demo balance 4',
 			'adulte.demo.donnees.totalAvecSecondAdulte' => 'Demo total A',
-			'adulte.demo.donnees.totalSansSecondAdulte' => 'Demo total B',
-			'adulte.demo.donnees.prixOffreA' => '€5.00 (demo)',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.demo.donnees.totalSansSecondAdulte' => 'Demo total B',
+			'adulte.demo.donnees.prixOffreA' => '€5.00 (demo)',
 			'adulte.demo.donnees.prixOffreB' => '€10.00 (demo)',
 			'adulte.demo.donnees.detailOffreA' => 'Demo balance A',
 			'adulte.demo.donnees.detailOffreB' => 'Demo balance B',
@@ -38597,10 +38601,10 @@ extension on TraductionsEn {
 			'com.socle.motifs.harcelement' => 'Harassment or inappropriate language',
 			'com.socle.motifs.donneesPersonnelles' => 'Personal data of a student or a family',
 			'com.socle.motifs.autre' => 'Other content to review',
-			'com.socle.signalement.titre' => 'Report this content',
-			'com.socle.signalement.precision' => 'Optional detail',
 			_ => null,
 		} ?? switch (path) {
+			'com.socle.signalement.titre' => 'Report this content',
+			'com.socle.signalement.precision' => 'Optional detail',
 			'com.socle.signalement.envoyer' => 'Send the report',
 			'com.socle.signalement.confirme' => 'The content has been reported. It will be reviewed.',
 			'com.socle.signalement.erreur' => 'The report has not been confirmed yet. Try again in a moment.',
@@ -39111,10 +39115,10 @@ extension on TraductionsEn {
 			'com.studio.sections.produitTechnique' => 'Product & technical',
 			'com.studio.sections.direction' => 'Management',
 			'com.studio.visibilite.restreint' => 'Restricted',
-			'com.studio.visibilite.prive' => 'Private',
-			'com.studio.visibilite.visibleDetail' => 'Open to the whole team.',
 			_ => null,
 		} ?? switch (path) {
+			'com.studio.visibilite.prive' => 'Private',
+			'com.studio.visibilite.visibleDetail' => 'Open to the whole team.',
 			'com.studio.visibilite.restreintDetail' => 'Open to part of the team, which you belong to.',
 			'com.studio.visibilite.priveDetail' => 'Private channel, open to its members only. You belong to it.',
 			'com.studio.canal.membresUn' => '1 member',
@@ -39625,10 +39629,10 @@ extension on TraductionsEn {
 			'comptable.statuts.capacite.soldePrestataireInsuffisant' => 'Provider balance insufficient',
 			'comptable.statuts.reserve.atteint' => 'Target reached',
 			'comptable.statuts.reserve.sousObjectif' => 'Below target',
-			'comptable.statuts.reserve.depassement' => 'Exceeded',
-			'comptable.statuts.reserve.regleInactive' => 'Rule inactive',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.statuts.reserve.depassement' => 'Exceeded',
+			'comptable.statuts.reserve.regleInactive' => 'Rule inactive',
 			'comptable.statuts.reserve.alimentationPrevue' => 'Funding planned',
 			'comptable.statuts.reserve.mouvementSensible' => 'Sensitive movement',
 			'comptable.statuts.obligation.brouillon' => 'Draft',
@@ -40139,10 +40143,10 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.recevoir.configurer' => 'Set up my payments',
 			'comptable.beneficiaires.recevoir.wise.paysIndisponible' => ({required Object pays}) => 'Wise does not pay out in this country: ${pays}. You can give the account of a relative in another country; otherwise the management will pay you another way.',
 			'comptable.beneficiaires.recevoir.wise.aMonNomQuestion' => 'Is this account in your name?',
-			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
-			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'No, it is in a relative\'s name',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.beneficiaires.recevoir.wise.aMonNomOui' => 'Yes, it is in my name',
+			'comptable.beneficiaires.recevoir.wise.aMonNomNon' => 'No, it is in a relative\'s name',
 			'comptable.beneficiaires.recevoir.wise.aMonNomNonDetail' => 'Your pay will go to a relative\'s account, with your agreement. The management checks it before the first payment.',
 			'comptable.beneficiaires.recevoir.wise.lienQuestion' => 'Who holds the account?',
 			'comptable.beneficiaires.recevoir.wise.lien.parent' => 'My father or mother',
@@ -40653,10 +40657,10 @@ extension on TraductionsEn {
 			'sansDonnees.paiementsRecus' => 'Your payments received could not be loaded',
 			'sansDonnees.revenus' => 'Your earnings could not be loaded',
 			'sansDonnees.aujourdhui' => 'Today\'s board could not be loaded',
-			'sansDonnees.paiement' => 'This payment could not be loaded',
-			'sansDonnees.paiementsAEffectuer' => 'The payments to make could not be loaded',
 			_ => null,
 		} ?? switch (path) {
+			'sansDonnees.paiement' => 'This payment could not be loaded',
+			'sansDonnees.paiementsAEffectuer' => 'The payments to make could not be loaded',
 			'sansDonnees.encaissements' => 'The collections could not be loaded',
 			'sansDonnees.tresorerie' => 'The cash position could not be loaded',
 			'sansDonnees.obligation' => 'This obligation could not be loaded',
@@ -41167,10 +41171,10 @@ extension on TraductionsEn {
 			'admissions.modeles.niveauPhrase' => '"The level requested is not yet offered."',
 			'admissions.modeles.sansReponse' => 'No reply',
 			'admissions.modeles.sansReponsePhrase' => '"We did not receive a reply to our last message."',
-			'accueilInscrits.titre' => 'We already know you',
-			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			_ => null,
 		} ?? switch (path) {
+			'accueilInscrits.titre' => 'We already know you',
+			'accueilInscrits.phrase' => 'Your registration has been carried over. You do not have to enter everything again.',
 			'accueilInscrits.motTitre' => 'A word from the management',
 			'accueilInscrits.elevesTitre' => 'Your children already registered',
 			'accueilInscrits.elevesPhrase' => 'Their first name is already filled in. Their age remains to be entered.',
@@ -41681,10 +41685,10 @@ extension on TraductionsEn {
 			'candidatsFlux.file.misEnFile' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} message queued', other: '${n} messages queued', ), 
 			'candidatsFlux.file.desinscrits' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} person asked to stop receiving recruitment messages: they will not receive the link.', other: '${n} people asked to stop receiving recruitment messages: they will not receive the link.', ), 
 			'candidatsFlux.file.reglage.libelle' => 'Messages of this type per day',
-			'candidatsFlux.file.reglage.aide' => 'From 1 to 2,000. Messages tied to an account, a class, a registration or a payment always go out without waiting.',
-			'candidatsFlux.file.reglage.enregistrer' => 'Save the setting',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.file.reglage.aide' => 'From 1 to 2,000. Messages tied to an account, a class, a registration or a payment always go out without waiting.',
+			'candidatsFlux.file.reglage.enregistrer' => 'Save the setting',
 			'candidatsFlux.file.reglage.enregistre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Setting saved: ${n} message per day.', other: 'Setting saved: ${n} messages per day.', ), 
 			'candidatsFlux.file.reglage.invalide' => 'Enter a whole number from 1 to 2,000, without spaces.',
 			'candidatsFlux.file.reglage.echec' => 'Setting not confirmed. Probable cause: the connection to the server was interrupted. Try again in a moment.',
@@ -42195,10 +42199,10 @@ extension on TraductionsEn {
 			'pause.reponseAvant' => ({required Object date}) => 'The management replies before ${date}.',
 			'pause.reponseMotif' => ({required Object motif}) => 'Reply from the management: ${motif}',
 			'pause.exceptionAccordee' => 'Break granted by the management.',
-			'pause.annuler' => ({required Object mois}) => 'Cancel the break of ${mois}',
-			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'This month starts too soon: a break is requested at least ${jours} day before it starts. Choose a later month.', other: 'This month starts too soon: a break is requested at least ${jours} days before it starts. Choose a later month.', ), 
 			_ => null,
 		} ?? switch (path) {
+			'pause.annuler' => ({required Object mois}) => 'Cancel the break of ${mois}',
+			'pause.refus.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'This month starts too soon: a break is requested at least ${jours} day before it starts. Choose a later month.', other: 'This month starts too soon: a break is requested at least ${jours} days before it starts. Choose a later month.', ), 
 			'pause.refus.dejaDemandee' => 'This month is already requested or accepted.',
 			'pause.refus.moisInvalide' => 'This month is not readable. Choose a month from the list.',
 			'pause.refus.nonAnnulable' => 'This break can no longer be cancelled: it has already started, or it is already refused or cancelled.',

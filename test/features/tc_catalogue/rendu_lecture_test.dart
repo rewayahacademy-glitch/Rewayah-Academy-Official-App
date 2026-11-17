@@ -205,7 +205,6 @@ void main() {
 
   for (final TypeRessource type in <TypeRessource>[
     TypeRessource.pdf,
-    TypeRessource.texteStructure,
     TypeRessource.lecon,
   ]) {
     group('${type.name} : « Ouvrir » dans un nouvel onglet', () {

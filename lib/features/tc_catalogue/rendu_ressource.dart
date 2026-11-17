@@ -8,7 +8,9 @@
 ///   l'ecran le dit et, quand la capacite de lecture du Coran est la (eleve,
 ///   adulte eleve autonome), propose « Ouvrir le mushaf » vers ce lecteur.
 ///   Sans la capacite, la phrase seule : jamais un bouton grise.
-/// - **PDF, texte structure, lecon** : aucun lecteur n'est present dans
+/// - **Texte structure** (PX-BD-SUPPORT) : lu DANS l'application par
+///   `LecteurMarkdown` (Markdown ferme, sens par paragraphe, arabe vocalise).
+/// - **PDF, lecon** : aucun lecteur n'est present dans
 ///   l'application. Quand la source rend un lien de lecture court
 ///   (`PortTelechargement.lienLectureServi`, C-35) et qu'on est dans un
 ///   navigateur, « Ouvrir » demande ce lien, l'ouvre dans un nouvel onglet,
@@ -20,6 +22,7 @@
 library;
 
 import 'dart:async';
+import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -44,6 +47,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_bottom_sheet.dart';
 import '../../core/widgets/skeleton.dart';
+import 'lecteur_markdown.dart';
 
 /// Le rendu du support de [detail].
 class RenduRessource extends ConsumerWidget {
@@ -70,8 +74,14 @@ class RenduRessource extends ConsumerWidget {
         versionId: detail.version!.id,
         titre: r.title,
       ),
+      // PX-BD-SUPPORT : un texte redige avec Praxis (Markdown ferme) se lit
+      // DANS l'application, jamais par un onglet : l'arabe et sa vocalisation
+      // sont composes par le moteur de l'application.
+      TypeRessource.texteStructure => _RenduTexte(
+        key: ValueKey<String>('rendu-texte-${detail.version!.id}'),
+        versionId: detail.version!.id,
+      ),
       TypeRessource.pdf ||
-      TypeRessource.texteStructure ||
       TypeRessource.lecon => _RenduLecture(versionId: detail.version!.id),
       // Audio : l'URL signee s'ouvre dans le lecteur du navigateur (web). Le
       // lecteur audio de l'application est le lot LECTEUR : en attendant,
@@ -424,6 +434,74 @@ class _RenduImage extends ConsumerWidget {
       AsyncValue<_Image>(hasError: true) => _Echec(
         phrase: t.tc.bibliotheque.rendu.imageInaccessible,
         onReessayer: () => ref.invalidate(_imageProvider(versionId)),
+      ),
+      _ => const Skeleton.texte(lignes: 4),
+    };
+  }
+}
+
+/// Le texte d'un support, ou son absence : trois issues, jamais une exception.
+sealed class _Texte {
+  const _Texte();
+}
+
+final class _TextePret extends _Texte {
+  const _TextePret(this.source);
+  final String source;
+}
+
+final class _TexteAbsent extends _Texte {
+  const _TexteAbsent();
+}
+
+final class _TexteIntrouvable extends _Texte {
+  const _TexteIntrouvable();
+}
+
+final FutureProviderFamily<_Texte, String> _texteProvider =
+    FutureProvider.family<_Texte, String>((Ref ref, String versionId) async {
+      final DownloadAsset? a = await ref
+          .watch(portTelechargementProvider)
+          .artefactDe(versionId, FormatArtefact.texte);
+      if (a == null) return const _TexteAbsent();
+      final List<int>? octets = await ref
+          .watch(lecteurArtefactProvider)
+          .octets(a);
+      if (octets == null) return const _TexteIntrouvable();
+      try {
+        // Jamais de « reparation » : un texte qui n'est pas de l'UTF-8 valide
+        // est introuvable, pas affiche de travers.
+        return _TextePret(utf8.decode(octets));
+      } on FormatException {
+        return const _TexteIntrouvable();
+      }
+    });
+
+class _RenduTexte extends ConsumerWidget {
+  const _RenduTexte({required this.versionId, super.key});
+
+  final String versionId;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<_Texte> texte = ref.watch(_texteProvider(versionId));
+    final TextTheme textes = Theme.of(context).textTheme;
+    return switch (texte) {
+      AsyncValue<_Texte>(hasValue: true) => switch (texte.requireValue) {
+        _TextePret(:final String source) => LecteurMarkdown(source: source),
+        _TexteAbsent() => Text(
+          t.tc.bibliotheque.detail.apercuIndisponible,
+          key: const ValueKey<String>('rendu-sans-lecteur'),
+          style: textes.bodyMedium,
+        ),
+        _TexteIntrouvable() => _Echec(
+          phrase: t.tc.bibliotheque.rendu.texteInaccessible,
+          onReessayer: () => ref.invalidate(_texteProvider(versionId)),
+        ),
+      },
+      AsyncValue<_Texte>(hasError: true) => _Echec(
+        phrase: t.tc.bibliotheque.rendu.texteInaccessible,
+        onReessayer: () => ref.invalidate(_texteProvider(versionId)),
       ),
       _ => const Skeleton.texte(lignes: 4),
     };

@@ -5063,6 +5063,8 @@
   "admin.bibliotheque.attribution.conflit": "CAP29-E : attribution et retrait",
   "tc.bibliotheque.rendu.imageInaccessible": "CAP29-F : rendu par type",
   "tc.bibliotheque.rendu.imageIllisible": "CAP29-F : rendu par type",
+  "tc.bibliotheque.rendu.texteIllisible": "pilote équipe, 17/11/2026, PX-BD-SUPPORT : « un LECTEUR DANS L'APPLICATION écrit en Dart » pour les textes que Praxis rédige ; phrase d'un texte que l'analyseur du Markdown fermé refuse (le serveur ne le laisse pas passer ; cas de secours) ; rédigée par l'agent, à relire par le pilote.",
+  "tc.bibliotheque.rendu.texteInaccessible": "pilote équipe, 17/11/2026, PX-BD-SUPPORT : « un LECTEUR DANS L'APPLICATION » pour les textes que Praxis rédige ; phrase quand le texte déposé ne peut pas être chargé (réseau, serveur) ; sur le modèle de rendu.imageInaccessible ; rédigée par l'agent, à relire par le pilote.",
   "tc.bibliotheque.rendu.reessayer": "CAP29-F : rendu par type",
   "tc.bibliotheque.actif.indisponibleTitre": "CAP29-G : support actif",
   "tc.bibliotheque.actif.indisponible": "CAP29-G : support actif",
