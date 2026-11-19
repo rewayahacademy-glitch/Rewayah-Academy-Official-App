@@ -609,3 +609,52 @@ Formule de recherche : `<nom anglais> mobile app UI 2026`, ou `<nom anglais> das
 | Tirer pour actualiser | pull to refresh | Les listes |
 | Défilement sans fin | infinite scroll, pagination | Les longues listes |
 | Zone tactile | touch target, hit area | La barre du bas |
+
+## 12. Réponses et ajouts du directeur (19/11/2026, soir)
+
+### 12.1 Décisions (elles ferment des questions du §9)
+
+- **Q2, fermée.** Le nom arabe est **« عقد معلم »**. Le directeur précise sa demande : quand le
+  dossier dit qu'il manque quelque chose (ex. « لم يوقع على عقد معلم »), « Demander un complément »
+  s'ouvre avec **tous les éléments manquants déjà cochés** (un ou plusieurs, selon ce que le
+  système sait) ; la direction décoche ce qu'elle veut. Aujourd'hui, seule la pièce ou la photo
+  s'ouvre préselectionnée. Lot PE-C10. Le lot PE-B2 (un seul nom par élément) reste nécessaire.
+- **Q3, fermée.** Riwayat, trois réponses : « عندي إجازة في القراءات العشر » ; « عندي إجازة في
+  القراءات السبع » ; « عندي بعض القراءات », qui ouvre le choix des lectures maîtrisées. Lot PE-B1.
+  (Juz : pas de réponse nouvelle ; la proposition A10 tient.)
+- **Q6, expliquée, sans réponse encore.** « 7 jours » = le candidat qui a retiré sa candidature
+  par erreur peut l'annuler seul pendant 7 jours.
+- **Méthode.** Ce que le directeur doit lire lui est montré sur **une page lisible, dans la
+  conversation**, jamais dans un fichier `.md` : « git c'est pour vous les machines ». Les
+  documents du dépôt restent la mémoire des agents.
+- **Glitch.** Le directeur ne peut pas le filmer (imprévisible). PE-P2 devient : chercher dans le
+  code les deux sorties citées et la correction déjà faite ailleurs pour le même défaut.
+
+### 12.2 Nouveaux constats, lus dans le code le 19/11
+
+| Plainte du directeur | Fait lu | Lot |
+| :--- | :--- | :--- |
+| Le bandeau jaune (« nouveau message », « messages pas en direct ») décale l'écran et fait rater un toucher ; laid, répétitif. | Tous les bandeaux généraux sont des enfants d'une colonne **au-dessus** de l'écran (`lib/app.dart:121-135`) : ils poussent toute la page. « Nouveau message » disparaît en 3 s ; « Messages pas en direct » ne peut pas se fermer (`bandeau_messages_hors_direct.dart`). Composant : `OfflineBanner.message`. | PE-D8 |
+| La mise à jour impose de recharger. | `BandeauNouvelleVersion` : « Recharger » sans « plus tard » ni croix, il reste affiché ; vérification toutes les 15 minutes et au retour au premier plan (`lib/core/version/`). Un écran bloquant existe quand un morceau de l'application ne se charge plus (`page_differee.dart`). | PE-D9 |
+| Pas de glissement gauche ou droite. | Aucun `Dismissible`, aucune action par glissement, aucun glissement pour répondre ; sur le web, le retour par glissement n'existe pas (`app_transitions.dart:223-241`). Ce n'est pas une limite du langage : ce n'est pas construit. | PE-D10 |
+| « Tout sélectionner » au moindre toucher. | Un `SelectionArea` global entoure toute l'application (`selection_racine.dart`, `app.dart:117`). Le réglage qui ouvre le menu sur un simple toucher n'a pas été trouvé : à reproduire. | PE-D11 |
+| L'écran du code d'un membre invité montre un instant l'accueil d'un membre de l'équipe. | L'écran est imposé par la redirection du routeur (`redirection.dart:147-158`) ; l'accueil n'est pas construit dessous, et le serveur réserve ses lectures à la direction active. **Aucune donnée n'est exposée d'après le code** ; l'éclair lui-même reste inexpliqué. | PE-P2 |
+| Valider la pièce d'un candidat fige le bouton alors que l'action a réussi ; « ça marchait bien avant ». | Non vérifié : à reproduire, puis chercher la régression. | PE-D12 |
+| Il faut un rafraîchissement par « tirer vers le bas », partout. | À faire dans le composant de page commun (`PageShell`), une fois. | PE-D12 |
+
+### 12.3 Le langage de mouvement voulu par le directeur
+
+« Des animations et effets élastiques, ressorts, huilé ou liquide […] des rebonds, des choses qui
+s'étirent comme de l'élastique, des effets de lumière liquide ». Noms du métier : animation à
+ressort (*spring*), rebond avec écrasement et étirement (*squash and stretch*), élastique
+(*rubber band*), effet liquide (*gooey*, *metaball*, *liquid*), forme qui se transforme
+(*morphing*), reflet (*shimmer*), halo (*glow*). Cela **amende** `DECISION-MOUVEMENT-2026-11-11`
+et `DECISION-FLUIDITE` (« on n'anime que l'opacité, la position et l'échelle ») : à écrire comme
+décision datée avant tout lot d'animation, avec la contrainte de la fluidité (§10). Lot PE-F3.
+
+### 12.4 Application Android et iPhone : ce que cela veut dire (réponse donnée au directeur)
+
+Pas de migration : même compte, mêmes données, même code ; la version web continue. La personne
+installe l'application une fois ; les mises à jour suivent par la boutique. Ordre de grandeur :
+quelques semaines pour Android, davantage pour iPhone (compte développeur, validation). Reste une
+décision du directeur (Q9).

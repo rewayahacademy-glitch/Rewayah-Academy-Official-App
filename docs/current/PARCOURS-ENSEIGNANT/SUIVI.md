@@ -20,7 +20,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | | Lot | Contenu | Dépend de | Statut |
 | :-- | :--- | :--- | :--- | :--- |
 | [ ] | PE-P1 | Mesurer : premier écran, cinq écrans, images par seconde, poids, sur les trois appareils du directeur (§10.3) | l'aide du directeur | pas commencé |
-| [ ] | PE-P2 | Filmer l'éclair de la ligne déformée, lire image par image, nommer la cause (§10.2) | une capture vidéo du directeur | pas commencé |
+| [ ] | PE-P2 | L'éclair de la ligne déformée et l'éclair de l'écran du code : chercher dans le code les sorties citées et la correction déjà faite ailleurs (§10.2, §12.1) | | pas commencé |
 | [ ] | PE-P3 | Gains sans risque : chargement à la demande par rôle, polices d'icônes réduites | PE-P1 | pas commencé |
 | [ ] | PE-P4 | Essai de la construction WebAssembly sur un aperçu, comparé à PE-P1 | Q9 | pas commencé |
 | [ ] | PE-P5 | Vraie application Android puis iPhone, du même code | décision du directeur (Q9) | pas commencé |
@@ -42,8 +42,8 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 
 | | Lot | Contenu | Déjà commencé ailleurs | Statut |
 | :-- | :--- | :--- | :--- | :--- |
-| [ ] | PE-B1 | Juz (tout, rien, un nombre exact) et riwayat (une, toutes, les sept, quelques-unes en grille rangée) ; anciennes réponses gardées (A10) | `claude/candidature-ux` (riwayat « toutes » en tête) ; Q3 | pas commencé |
-| [ ] | PE-B2 | Un seul nom par élément, une table lue par le dossier, le complément, le portail et les accords (A11, §2.6) | Q2 | pas commencé |
+| [ ] | PE-B1 | Juz (tout, rien, un nombre exact) et riwayat (une, toutes, les sept, quelques-unes en grille rangée) ; anciennes réponses gardées (A10) | `claude/candidature-ux` (riwayat « toutes » en tête) ; décidé le 19/11 (§12.1) | pas commencé |
+| [ ] | PE-B2 | Un seul nom par élément, une table lue par le dossier, le complément, le portail et les accords (A11, §2.6) | nom décidé : « عقد معلم » (§12.1) | pas commencé |
 | [ ] | PE-B3 | Chaque saisie a sa sortie : nom latin, ville, téléphone dans le dossier (§2.7) | | pas commencé |
 | [ ] | PE-B4 | Accueil du candidat à trois onglets : Dossier, Messages, Académie ; annonce en une ligne fermable puis rangée (A9) | fil d'annonces de ANNONCES-SIMPLES déjà dans main | pas commencé |
 | [ ] | PE-B5 | État du dossier redessiné : ligne d'étapes, un seul « à faire maintenant », « rien à faire, on vous écrira » | maquette à valider | pas commencé |
@@ -66,6 +66,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-C7 | En-tête : icônes fixes, panneaux légers (messages avec réponse rapide, notifications, annonces), recherche qui trouve les personnes (A6) | | pas commencé |
 | [ ] | PE-C8 | Trois pages : Accueil, Personnes, Messages ; le reste dans « Plus » ; types de personnes en vues d'une seule liste ; famille qui se déplie (A3, A4) | LP-1 à LP-7 (`SPEC-LISTE-PERSONNES`) | pas commencé |
 | [ ] | PE-C9 | Lenteur du bureau : pages pour les comptes et la file des pièces, conversations lues une fois, selon PE-P1 (§3.7) | `STRATEGIE-BASE-ECONOME` | pas commencé |
+| [ ] | PE-C10 | « Demander un complément » s'ouvre avec tous les éléments manquants déjà cochés ; on décoche ce qu'on veut (§12.1) | R15 (liste des éléments) | pas commencé |
 
 ## Vague D. Les outils de l'échange et les pages secondaires
 
@@ -78,6 +79,11 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-D5 | Profil dans la conversation = la carte d'aperçu de PE-C1, avec ses gestes | PE-C1 | pas commencé |
 | [ ] | PE-D6 | Annonces : « Annoncer à ces N personnes » depuis la liste filtrée ou la sélection (A15) | PE-C4 | pas commencé |
 | [ ] | PE-D7 | Aperçu de lien, PDF lisible dans la conversation | | pas commencé |
+| [ ] | PE-D8 | **Les avis flottants** : remplacer les bandeaux qui poussent la page par un avis posé par-dessus, aux couleurs de la marque, animé, fermable ; « messages pas en direct » devient un signe discret (§12.2) | références du directeur | pas commencé |
+| [ ] | PE-D9 | Mise à jour : « Maintenant » ou « Plus tard », puis automatique à la prochaine ouverture ; l'avis reste (§12.2) | | pas commencé |
+| [ ] | PE-D10 | Gestes de glissement : retour par glissement, glisser une ligne pour agir, glisser pour répondre (§12.2) | PE-D4 | pas commencé |
+| [ ] | PE-D11 | Texte copiable sans menu « Tout sélectionner » au moindre toucher (§12.2) | à reproduire sur le téléphone du directeur | pas commencé |
+| [ ] | PE-D12 | **Tirer vers le bas pour actualiser**, partout, dans le composant de page commun ; et le bouton figé après la validation d'une pièce (régression) (§12.2) | | pas commencé |
 
 ## Vague E. L'espace de l'enseignant
 
@@ -93,6 +99,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | :-- | :--- | :--- | :--- | :--- |
 | [ ] | PE-F1 | Nouvelle famille d'icônes fixes, dans le seul fichier `app_icons.dart` | Q7 | pas commencé |
 | [ ] | PE-F2 | Une quinzaine d'icônes animées (barre du bas, cloche, envoyer, succès, épingler) | Q7 (paquet Lottie, `pubspec.yaml`) ; licence à vérifier | pas commencé |
+| [ ] | PE-F3 | Le langage de mouvement : ressort, rebond, élastique, liquide, reflet ; décision datée qui amende `DECISION-MOUVEMENT`, puis les composants communs (§12.3) | références du directeur ; PE-P1 | pas commencé |
 
 ## Vague G. Praxis
 
@@ -109,3 +116,4 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
   messages, courriels). Plan et check-liste écrits. Rien de codé. Neuf questions posées (§9).
 - 19/11/2026 (même jour) : le directeur ajoute la fluidité, l'éclair de la ligne déformée, la
   liste des noms d'éléments (§10, §11), et exclut l'espace de l'élève pour l'instant.
+- 19/11/2026 (soir) : le directeur ferme Q2 (« عقد معلم ») et Q3 (riwayat), ajoute les avis flottants, la mise à jour au choix, les gestes de glissement, la sélection de texte, tirer pour actualiser, le complément précoché et le langage de mouvement (§12). Lots PE-C10, PE-D8 à PE-D12, PE-F3. Une page lisible lui est remise dans la conversation (noms des éléments à chercher).
