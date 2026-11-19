@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/admin/service_qualite.dart';
 import 'package:rewayah_academy/core/agent/propositions_praxis.dart';
 import 'package:rewayah_academy/core/agent/questions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
+import 'package:rewayah_academy/core/agent/service_autorisation_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
@@ -30,6 +31,7 @@ import 'package:rewayah_academy/core/regles/service_regles.dart';
 import 'package:rewayah_academy/core/tc_observation/port_politique_observation.dart';
 import 'package:rewayah_academy/features/admin_observations/annuaire_observations.dart';
 
+import '../faux_service_autorisation_praxis.dart';
 import '../faux_service_questions_praxis.dart';
 import '../propositions_praxis_vides.dart';
 
@@ -182,6 +184,9 @@ List<Override> surchargesServicesAdminIndisponibles({
     serviceAgentProvider.overrideWithValue(const ServiceAgentDemo()),
   if (!sauf.contains(servicePraxisProvider))
     servicePraxisProvider.overrideWithValue(const ServicePraxisDemo()),
+  serviceAutorisationPraxisProvider.overrideWithValue(
+    FauxServiceAutorisationPraxis(),
+  ),
   // PX-2 : aucune proposition de Praxis, lecture qui reussit (le dossier de
   // candidature ne montre alors aucun etat d'erreur sous test).
   if (!sauf.contains(servicePropositionsPraxisProvider))

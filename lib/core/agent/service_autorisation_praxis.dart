@@ -90,8 +90,92 @@ class DecisionAutorisationPraxis {
   final String? erreur;
 }
 
+/// L'etat d'une connexion, tel que la base le calcule (jamais compare ici a
+/// l'horloge du poste).
+enum EtatConnexionPraxis {
+  /// Vivante : le client peut encore se renouveler.
+  active,
+
+  /// Coupee par la direction. Definitif.
+  revoquee,
+
+  /// Arrivee au terme de ses 90 jours : une nouvelle autorisation est requise.
+  expiree;
+
+  /// Lit `etat`. Un etat inconnu se traite comme mort.
+  static EtatConnexionPraxis depuisSql(String? valeur) => switch (valeur) {
+    'active' => EtatConnexionPraxis.active,
+    'revoquee' => EtatConnexionPraxis.revoquee,
+    _ => EtatConnexionPraxis.expiree,
+  };
+}
+
+/// Une connexion d'une application (claude.ai) a Praxis : une ligne par
+/// connexion, jamais une par cle d'une heure. Aucun secret.
+@immutable
+class ConnexionPraxis {
+  /// Cree une connexion.
+  const ConnexionPraxis({
+    required this.id,
+    required this.client,
+    required this.creeLe,
+    required this.expireLe,
+    required this.etat,
+    this.derniereUtilisationLe,
+    this.revoqueeLe,
+    this.motifRevocation,
+  });
+
+  /// Lit une ligne de `direction_praxis_oauth_connexions`.
+  factory ConnexionPraxis.depuisJson(Map<String, dynamic> json) =>
+      ConnexionPraxis(
+        id: json['id'] as String? ?? '',
+        client: json['client'] as String? ?? '',
+        creeLe: DateTime.parse(json['creeLe'] as String).toLocal(),
+        expireLe: DateTime.parse(json['expireLe'] as String).toLocal(),
+        etat: EtatConnexionPraxis.depuisSql(json['etat'] as String?),
+        derniereUtilisationLe: DateTime.tryParse(
+          json['derniereUtilisationLe'] as String? ?? '',
+        )?.toLocal(),
+        revoqueeLe: DateTime.tryParse(json['revoqueeLe'] as String? ?? '')
+            ?.toLocal(),
+        motifRevocation: json['motifRevocation'] as String?,
+      );
+
+  /// Identifiant de la connexion.
+  final String id;
+
+  /// Le nom que l'application s'est donne (texte libre, jamais une preuve).
+  final String client;
+
+  /// Quand la direction l'a autorisee.
+  final DateTime creeLe;
+
+  /// Le terme de la connexion (90 jours au plus).
+  final DateTime expireLe;
+
+  /// Vivante, coupee ou arrivee a son terme.
+  final EtatConnexionPraxis etat;
+
+  /// La derniere fois qu'elle a servi ; `null` si jamais.
+  final DateTime? derniereUtilisationLe;
+
+  /// Quand elle a ete coupee.
+  final DateTime? revoqueeLe;
+
+  /// Le motif ecrit par la direction.
+  final String? motifRevocation;
+}
+
 /// L'acces de la direction aux demandes de connexion a Praxis.
 abstract interface class ServiceAutorisationPraxis {
+  /// Les connexions, les plus recentes d'abord (50 au plus).
+  Future<List<ConnexionPraxis>> connexions();
+
+  /// Coupe une connexion et toutes ses cles, avec son motif (double
+  /// verification exigee par la base). Rend faux s'il n'y avait rien a couper.
+  Future<bool> revoquerConnexion({required String id, required String motif});
+
   /// Lit une demande.
   Future<DemandeAutorisationPraxis> lire(String demande);
 
@@ -108,6 +192,29 @@ class ServiceAutorisationPraxisSupabase implements ServiceAutorisationPraxis {
   ServiceAutorisationPraxisSupabase(this._client);
 
   final SupabaseClient _client;
+
+  @override
+  Future<List<ConnexionPraxis>> connexions() async {
+    final Object? rendu = await _client.rpc<Object?>(
+      'direction_praxis_oauth_connexions',
+    );
+    return (rendu is List<dynamic> ? rendu : <dynamic>[])
+        .whereType<Map<String, dynamic>>()
+        .map(ConnexionPraxis.depuisJson)
+        .toList(growable: false);
+  }
+
+  @override
+  Future<bool> revoquerConnexion({
+    required String id,
+    required String motif,
+  }) async {
+    final Object? rendu = await _client.rpc<Object?>(
+      'direction_praxis_oauth_revoquer',
+      params: <String, dynamic>{'p_id': id, 'p_motif': motif},
+    );
+    return rendu == true;
+  }
 
   @override
   Future<DemandeAutorisationPraxis> lire(String demande) async {
@@ -146,4 +253,10 @@ final demandeAutorisationPraxisProvider = FutureProvider.autoDispose
     .family<DemandeAutorisationPraxis, String>(
       (Ref ref, String demande) =>
           ref.watch(serviceAutorisationPraxisProvider).lire(demande),
+    );
+
+/// Les connexions lues pour la section Praxis.
+final connexionsPraxisProvider =
+    FutureProvider.autoDispose<List<ConnexionPraxis>>(
+      (Ref ref) => ref.watch(serviceAutorisationPraxisProvider).connexions(),
     );

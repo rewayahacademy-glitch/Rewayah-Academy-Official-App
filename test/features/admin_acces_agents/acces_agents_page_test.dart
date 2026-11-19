@@ -16,6 +16,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/agent/questions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
+import 'package:rewayah_academy/core/agent/service_autorisation_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -23,6 +24,7 @@ import 'package:rewayah_academy/features/admin_acces_agents/acces_agents_page.da
 import 'package:rewayah_academy/features/admin_acces_agents/section_praxis.dart';
 
 import '../../capture/outil_capture.dart';
+import '../../support/faux_service_autorisation_praxis.dart';
 import '../../support/faux_service_praxis.dart';
 import '../../support/faux_service_questions_praxis.dart';
 import '../../support/harnais.dart';
@@ -72,6 +74,9 @@ Future<void> _monter(WidgetTester tester, Size taille) async {
       surcharges: <Override>[
         serviceAgentProvider.overrideWithValue(_AgentsUnJeton()),
         servicePraxisProvider.overrideWithValue(FauxServicePraxis()),
+        serviceAutorisationPraxisProvider.overrideWithValue(
+          FauxServiceAutorisationPraxis(),
+        ),
         serviceQuestionsPraxisProvider.overrideWithValue(
           const QuestionsPraxisVides(),
         ),

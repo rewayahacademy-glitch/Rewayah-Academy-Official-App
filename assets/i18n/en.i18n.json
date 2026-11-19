@@ -6981,6 +6981,22 @@
       "reglageFait": "Setting applied.",
       "erreurReglage": "Setting not confirmed. Check the state above before trying again.",
       "doubleVerification": "This setting needs two-step verification. Turn it on in Account, then Security, and try again.",
+      "connexions": {
+        "titre": "Connected applications",
+        "intro": "Each line is an application you have allowed to talk to Praxis, for example Claude. Cutting a connection also stops its one-hour keys: the application does not reconnect by itself.",
+        "colonneClient": "Application",
+        "colonneAutorisee": "Allowed on",
+        "colonneFin": "Ends at the latest",
+        "vide": "No application connected",
+        "videDetail": "When you allow claude.ai to connect to Praxis, the connection appears here.",
+        "sansDonnees": "The connections could not be loaded",
+        "erreurLecture": "The connections could not be read. Try again.",
+        "revoquerTitre": "Cut this connection?",
+        "revoquerDetail": "The application will no longer be able to talk to Praxis, right away. To connect it again, you will have to allow it again.",
+        "revoquerConfirmer": "Cut the connection",
+        "revoquee": "Connection cut.",
+        "erreurRevocation": "Cut not confirmed. Check the list of connections before trying again."
+      },
       "autoriser": {
         "titre": "Allow a connection to Praxis",
         "demande": "“{client}” ({hote}) is asking to connect to Praxis on your behalf.",
