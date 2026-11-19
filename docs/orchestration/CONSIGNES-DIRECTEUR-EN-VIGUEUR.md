@@ -722,6 +722,14 @@ Règle : toute session, tout pilote, tout agent écrit au directeur en français
 chaque message, chaque document qui lui est destiné, quelle que soit la langue des outils, des journaux ou des
 notifications reçues. Les noms de code (fonctions, fichiers, tables) restent tels quels, entre accents graves.
 
+### Consigne 25 (19/11/2026) : la cause se cherche dans le code ; ce que le directeur doit lire est une page, pas un fichier
+
+Citations : « arrête de toujours me dire "cause inexpliquée" alors que tu as le code source, tu sais où trouver, quoi chercher » ; « arrête de me dire à chaque fois (il faut le tester/mesurer en vrai sur votre téléphone) : c'est sur mon téléphone et mes autres types d'appareils que je l'ai testé des dizaines de fois pour te donner ces retours » ; « si tu veux me montrer quelque chose tu prépares une page humaine normale, et non des .md car je ne suis pas l'IA […] git c'est pour vous les machines ».
+
+- Un constat du directeur est un fait déjà testé. L'agent ne lui demande ni de le reproduire, ni de le filmer, ni de le mesurer.
+- L'agent cherche la cause dans le code avant de répondre. S'il ne peut pas conclure, il donne l'hypothèse la plus probable, la preuve de code qui la soutient, et ce qu'il fait ensuite. Il ne s'arrête pas à « cause inconnue ».
+- Ce que le directeur doit lire ou valider lui est remis comme une page lisible dans la conversation (maquette qui marche, page illustrée). Les fichiers `.md` du dépôt sont la mémoire des agents.
+
 ## 9. Autres
 
 **X1. Lire son dernier message en entier avant de répondre.**

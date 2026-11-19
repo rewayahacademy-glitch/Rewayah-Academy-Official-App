@@ -2,8 +2,8 @@
 
 Statuts permis : `pas commencé`, `en cours` (branche), `PR ouverte` (numéro), `dans main` (numéro),
 `prouvé par le directeur` (date). Aucun autre mot. Une case n'est cochée que « prouvée par le
-directeur en production ». Mis à jour le 19/11/2026 : **tout est `pas commencé`, le plan n'est pas
-encore validé.**
+directeur en production ». Mis à jour le 19/11/2026 : **tout est `pas commencé`. Une maquette qui marche attend la confirmation du directeur
+(`maquettes/maquette-vivante.html`).**
 
 Détail de chaque lot : `PLAN.md` (le paragraphe entre parenthèses). Hors périmètre, sur ordre du
 directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
@@ -23,7 +23,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-P2 | L'éclair de la ligne déformée et l'éclair de l'écran du code : chercher dans le code les sorties citées et la correction déjà faite ailleurs (§10.2, §12.1) | | pas commencé |
 | [ ] | PE-P3 | Gains sans risque : chargement à la demande par rôle, polices d'icônes réduites | PE-P1 | pas commencé |
 | [ ] | PE-P4 | Essai de la construction WebAssembly sur un aperçu, comparé à PE-P1 | Q9 | pas commencé |
-| [ ] | PE-P5 | Vraie application Android puis iPhone, du même code | décision du directeur (Q9) | pas commencé |
+| [x] | PE-P5 | Vraie application Android puis iPhone | **écarté par le directeur le 19/11** (commission des boutiques) | fermé |
 
 ## Vague A. Les blocages d'aujourd'hui
 
@@ -34,7 +34,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-A3 | La porte « Apprendre » ou « Enseigner » pour tout nouveau compte ; l'espace porte son nom ; les inscriptions des élèves fermées le disent (§2.2) | PR #523 (lien « Postulez ici ») dans main | pas commencé |
 | [ ] | PE-A4 | Geste du bureau « Ce compte est un candidat enseignant », pour les comptes famille qui portent une candidature | Q1 | pas commencé |
 | [ ] | PE-A5 | « The check did not complete » : diagnostic, message qui dit quoi faire, sortie de secours (§0) | | pas commencé |
-| [ ] | PE-A6 | Le retrait se défait seul pendant 7 jours ; le lien quitte le pied de l'accueil (A8) | Q6 | pas commencé |
+| [ ] | PE-A6 | Le retrait se défait seul pendant 7 jours ; le lien quitte le pied de l'accueil (A8) | décidé : 7 jours, avec un écran qui explique (§13.2) | pas commencé |
 | [ ] | PE-A7 | Avis automatique au candidat quand un créneau d'entretien s'ouvre | R22, « à construire » depuis le 16/11 | pas commencé |
 | [ ] | PE-A8 | « Vouliez-vous dire gmail.com ? » à la saisie de l'adresse | R25 | pas commencé |
 
@@ -100,6 +100,10 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-F1 | Nouvelle famille d'icônes fixes, dans le seul fichier `app_icons.dart` | Q7 | pas commencé |
 | [ ] | PE-F2 | Une quinzaine d'icônes animées (barre du bas, cloche, envoyer, succès, épingler) | Q7 (paquet Lottie, `pubspec.yaml`) ; licence à vérifier | pas commencé |
 | [ ] | PE-F3 | Le langage de mouvement : ressort, rebond, élastique, liquide, reflet ; décision datée qui amende `DECISION-MOUVEMENT`, puis les composants communs (§12.3) | références du directeur ; PE-P1 | pas commencé |
+| [ ] | PE-F4 | Les coins justes : courbe continue et rayon intérieur = rayon extérieur − marge, dans `AppRadius` et les composants communs (§13.2) | | pas commencé |
+| [ ] | PE-F5 | Praxis, mascotte animée : dessin vectoriel, émotions, regard, entrées ; règles de présence (§13.2) | maquette à confirmer | pas commencé |
+| [ ] | PE-F6 | La compétence (skill) du mouvement, pour toute l'application et hors d'elle (§13.2) | maquette confirmée | pas commencé |
+| [ ] | PE-F7 | Composants vivants communs dans `lib/core/` : ressort au toucher, avis flottant, file d'avatars, jauge d'eau, bulle, capsule liquide, chiffre qui tressaute (§13) | PE-P1 ; maquette confirmée | pas commencé |
 
 ## Vague G. Praxis
 
@@ -117,3 +121,4 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 - 19/11/2026 (même jour) : le directeur ajoute la fluidité, l'éclair de la ligne déformée, la
   liste des noms d'éléments (§10, §11), et exclut l'espace de l'élève pour l'instant.
 - 19/11/2026 (soir) : le directeur ferme Q2 (« عقد معلم ») et Q3 (riwayat), ajoute les avis flottants, la mise à jour au choix, les gestes de glissement, la sélection de texte, tirer pour actualiser, le complément précoché et le langage de mouvement (§12). Lots PE-C10, PE-D8 à PE-D12, PE-F3. Une page lisible lui est remise dans la conversation (noms des éléments à chercher).
+- 19/11/2026 (nuit) : le directeur répond sur la page des références (10 commentaires) et donne la vision « objet vivant » (§13). Maquette qui marche remise (Bureau, Candidat, Atelier). Boutiques écartées ; 7 jours confirmés ; lots PE-F4 à PE-F7 ; consigne 25. Deux recherches de causes lancées dans le code (sélection de texte et bouton figé ; éclair coloré et écran du code).

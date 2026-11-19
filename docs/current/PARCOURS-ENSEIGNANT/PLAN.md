@@ -658,3 +658,78 @@ Pas de migration : même compte, mêmes données, même code ; la version web co
 installe l'application une fois ; les mises à jour suivent par la boutique. Ordre de grandeur :
 quelques semaines pour Android, davantage pour iPhone (compte développeur, validation). Reste une
 décision du directeur (Q9).
+
+## 13. Vision « objet vivant » et réponses du directeur sur la page des références (19/11/2026, nuit)
+
+Maquette qui marche, remise au directeur pour confirmation : `maquettes/maquette-vivante.html`
+(trois vues : Bureau, Candidat, Atelier ; clair et sombre ; français et arabe). **Non confirmée à
+l'heure où ces lignes sont écrites.** Elle est le critère d'acceptation des lots visuels une fois
+confirmée. La page des noms à chercher : `maquettes/references-a-chercher.html`.
+
+### 13.1 La vision (citation)
+
+« Une app qui n'est pas un document PDF qu'on feuillette : une app vivante qui interagit avec
+nous, au doigt, à la tape, à l'arrivée, au retour, à la sortie, qui marche comme les jeux mais
+sans les effets maximalistes. […] comme un objet vivant, réel, qu'on tient dans la main : comment
+ça va bouger, interagir, se secouer, se reposer, se réveiller, s'éteindre, tourner. »
+
+Règles tirées de cette vision, appliquées dans la maquette :
+1. Tout mouvement part du doigt, dépasse un peu, se pose, puis se tait. Rien ne tourne en boucle.
+2. Un élément touché s'enfonce ; relâché, il revient en ressort.
+3. Ce qui arrive vient de quelque part (du bouton touché, du bord, du haut) et y retourne.
+4. Un changement d'état se voit sur l'objet lui-même (le chiffre tressaute, la ligne s'en va, la
+   capsule coule), jamais par un bandeau qui pousse la page.
+5. Au repos, l'écran est immobile. Praxis s'endort après vingt secondes sans geste.
+6. Mêmes mouvements en clair, en sombre, de gauche à droite et de droite à gauche.
+
+### 13.2 Décisions et précisions du directeur
+
+- **Application dans les boutiques : non pour l'instant** (commission de 15 à 30 % sur chaque
+  paiement, non rentable). On essaie la construction WebAssembly de l'application web ; sinon on
+  améliore l'existant. PE-P5 est fermé ; PE-P4 passe devant.
+- **Retrait : 7 jours d'accord (Q6 fermée)**, à condition que le candidat comprenne par l'écran
+  ce qui lui arrive ; jamais de silence.
+- **Liquide** : une seule masse abstraite, de forme libre mais bornée, jamais coupée en deux.
+- **Coins** : « l'arrondi des rectangles est raté partout dans l'app », pire quand un rectangle
+  en contient un autre (barre d'outils de la salle, capsule de la barre du bas). Deux règles à
+  appliquer : courbe continue (superellipse), et **rayon intérieur = rayon extérieur − marge**.
+  Fait lu : `AppRadius.enfantDe` (`lib/core/theme/app_radius.dart:60-76`) rend « le cran
+  inférieur de l'échelle », pas « parent − marge » : c'est la cause des deux arrondis
+  incohérents. Lot PE-F4.
+- **Sélection de texte** : chez les autres, un appui long et voulu ; chez nous, le moindre
+  toucher ouvre « Tout sélectionner », la vraie sélection saute par blocs, et le sens (droite à
+  gauche) est inversé, curseur des champs compris. Cause en cours de recherche dans le code.
+- **L'éclair** : parfois vert, bleu ou violet, du bas vers le haut, parfois incliné ; vu dans la
+  salle sur iPad. L'écran qui s'affiche avant le code d'un membre invité : après la page de
+  connexion. Causes en cours de recherche dans le code.
+- **Pages secondaires oubliées**, à inclure : le jumelage d'un second appareil pour une famille
+  (depuis la connexion et depuis le profil du parent), restée à l'état de téléphone étiré ; le
+  code à scanner animé, avec le logo au centre.
+- **Animations demandées** : cartes d'action (Classes, en direct), profils des élèves, minutes
+  et secondes ; file d'avatars où l'arrivant tape les autres, qui réagissent puis se calment ;
+  barres de chargement et jauges à effet d'eau avec leur chiffre.
+- **Praxis devient la mascotte de la marque** : il tombe, rebondit, roule ; ses yeux portent les
+  émotions (heureux, soucieux, excité, en colère, pleure, rit, honte) ; il suit des yeux le texte
+  ou le curseur dans les conversations où il participe. À décider : quand il est visible, quand
+  il est déjà là, quand il arrive. **Cela amende `assets/brand/praxis/README.md`** (« ne pas la
+  redessiner ») : la version animée est un dessin vectoriel d'après l'image du directeur, à
+  valider par lui. Lot PE-F5.
+- **Une compétence (skill)** décrira ces animations pour toute l'application et hors d'elle
+  (Claude, autres modèles). Lot PE-F6, après confirmation de la maquette.
+- **Thèmes** : tout mouvement et toute forme sont décidés pour les thèmes de l'application.
+- **Le tableau de bord juge le design** (directeur) : il est la première vue de la maquette.
+
+### 13.3 Qui fait quoi (directeur, 19/11)
+
+Le grand modèle garde : les animations, les effets, la cohérence et la coordination entre
+éléments et pages, sous forme de **composants réutilisables dans `lib/core/`**, et tout
+l'arbitrage. Les tâches légères vont à un modèle moins coûteux (Opus ou Sonnet). Le champ
+d'aujourd'hui reste le parcours de départ ; les composants pour toute l'application viennent
+ensuite.
+
+### 13.4 Ce que la maquette ne prouve pas
+
+Elle est écrite en HTML. Rien ne prouve encore que les mêmes mouvements tiendront dans Flutter
+web sans coût. Règles pour y arriver : n'animer que des transformations et l'opacité, des
+ressorts courts qui s'arrêtent, aucun flou animé, aucune boucle, un seul élément en mouvement
+long par écran ; mesurer chaque composant avant de le poser partout (PE-P1).
