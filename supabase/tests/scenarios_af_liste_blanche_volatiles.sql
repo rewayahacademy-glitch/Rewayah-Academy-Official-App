@@ -71,6 +71,7 @@ declare
     -- direction_praxis_propositions est STABLE : hors de cette liste.
     'direction_praxis_ecarter(uuid,text,uuid)',
     'direction_praxis_regler_donnees_reelles(boolean)',
+    'direction_praxis_repondre(uuid,text)',
     -- PRAXIS-PLAFOND-GLOBAL (20261129870000) : le plafond d'appels par cle et par heure ; admin, aal2, une ligne d'audit.
     'direction_praxis_regler_plafond(integer)',
     'direction_praxis_valider(uuid,integer,text,uuid[])',

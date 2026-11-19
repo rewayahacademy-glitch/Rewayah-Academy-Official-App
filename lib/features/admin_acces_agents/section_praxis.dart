@@ -27,6 +27,7 @@ import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import '../mfa_controleur/double_verification.dart';
 import 'choix_conversations_essai.dart';
+import 'questions_praxis.dart';
 
 /// Les cles des widgets de la section, pour les tests.
 abstract final class ClesPraxis {
@@ -464,6 +465,9 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         _reglages(context, etat),
+        Ecart.vXxl,
+        // PX-SUIVI : les questions de Praxis a l'equipe, avant les cles.
+        const QuestionsPraxis(),
         Ecart.vXxl,
         SectionHeader(
           titre: t.admin.praxis.clesTitre,

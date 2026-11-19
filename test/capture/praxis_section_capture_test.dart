@@ -13,6 +13,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/agent/questions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -22,6 +23,7 @@ import 'package:rewayah_academy/features/admin_acces_agents/section_praxis.dart'
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
 import '../support/faux_service_praxis.dart';
+import '../support/faux_service_questions_praxis.dart';
 import 'outil_capture.dart';
 
 /// Les conversations de la direction, fictives (le choix des conversations
@@ -98,6 +100,11 @@ enum _Etat {
   essai,
   pouls,
   poulsAucun,
+  questions,
+  questionsVide,
+  questionsErreur,
+  questionsHorsLigne,
+  questionsFeuille,
 }
 
 FauxServicePraxis _faux(_Etat etat) {
@@ -172,13 +179,47 @@ FauxServicePraxis _faux(_Etat etat) {
   };
 }
 
+/// PX-SUIVI : les questions de Praxis, selon l'etat montre.
+ServiceQuestionsPraxis _questions(_Etat etat) => switch (etat) {
+  _Etat.questions || _Etat.questionsFeuille => FauxServiceQuestionsPraxis(
+    questions: <QuestionPraxis>[
+      questionPraxisFictive(
+        id: 'q1',
+        filId: 'f1',
+        question:
+            'Le tuteur demande si le cours du lundi peut passer au mardi : '
+            'peut-on le décaler ?',
+        poseeLe: DateTime(2026, 11, 17, 8, 40),
+      ),
+      questionPraxisFictive(
+        id: 'q2',
+        filId: 'f2',
+        question: 'Une famille demande si un frère peut suivre la même Classe.',
+        poseeLe: DateTime(2026, 11, 17, 9, 5),
+      ),
+      questionPraxisFictive(
+        id: 'q3',
+        filId: 'f3',
+        question: 'Que répondre sur les horaires du mois de Ramadan ?',
+        poseeLe: DateTime(2026, 11, 16, 18, 20),
+        reponse: 'Les horaires du Ramadan seront annoncés vendredi.',
+        utiliseeLe: DateTime(2026, 11, 17, 7),
+      ),
+    ],
+  ),
+  _Etat.questionsErreur || _Etat.questionsHorsLigne =>
+    FauxServiceQuestionsPraxis(erreurLecture: Exception('panne')),
+  _ => const QuestionsPraxisVides(),
+};
+
 Future<void> _ouvrir(WidgetTester tester, _Etat etat) async {
   final FauxServicePraxis faux = _faux(etat);
   final List<Override> surcharges = <Override>[
     servicePraxisProvider.overrideWithValue(faux),
+    serviceQuestionsPraxisProvider.overrideWithValue(_questions(etat)),
     serviceAgentProvider.overrideWithValue(_AgentsVide()),
     portMessagesMetierProvider.overrideWithValue(const _MessagesDirection()),
-    if (etat == _Etat.horsLigne)
+    if (etat == _Etat.horsLigne || etat == _Etat.questionsHorsLigne)
       horsLigneProvider.overrideWith((ref) => Stream<bool>.value(true)),
   ];
   await tester.pumpWidget(
@@ -203,11 +244,20 @@ Future<void> _ouvrir(WidgetTester tester, _Etat etat) async {
   if (etat == _Etat.doubleVerification) {
     await toucher(find.byKey(ClesPraxis.interrupteur));
   }
+  if (etat == _Etat.questionsFeuille) {
+    // Le menu de la premiere ligne, puis « Répondre à Praxis » : la feuille.
+    await toucher(
+      find.bySemanticsLabel(t.admin.praxis.questions.actions).first,
+    );
+    await toucher(find.text(t.admin.praxis.questions.actionRepondre).first);
+  }
   // La section est sous la liste des jetons : on la met a l'ecran (le pouls :
   // le bloc de la routine).
   final Finder titre = find.text(
     etat == _Etat.pouls || etat == _Etat.poulsAucun
         ? t.admin.praxis.routine.titre
+        : etat.name.startsWith('questions')
+        ? t.admin.praxis.questions.titre
         : t.admin.praxis.titre,
   );
   if (titre.evaluate().isNotEmpty) {
