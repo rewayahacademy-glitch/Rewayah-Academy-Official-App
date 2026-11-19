@@ -7186,6 +7186,7 @@ class _Traductions$admin$praxis$ar extends Traductions$admin$praxis$fr {
 	@override String get reglageFait => 'طُبّق الإعداد.';
 	@override String get erreurReglage => 'لم يُؤكَّد الإعداد. راجع الحالة أعلاه قبل المحاولة من جديد.';
 	@override String get doubleVerification => 'يتطلب هذا الإعداد التحقق المزدوج. فعّله من الحساب > الأمان، ثم أعد المحاولة.';
+	@override late final _Traductions$admin$praxis$autoriser$ar autoriser = _Traductions$admin$praxis$autoriser$ar._(_root);
 	@override String get pourra => 'سيستطيع';
 	@override String get pourraDetail => 'قراءة رسائل أسر الأكاديمية، والرد في محادثة قائمة، ونشر إعلان للأسر، وتدوين موضوع في التقويم.';
 	@override String get nePourraPas => 'لن يستطيع';
@@ -19682,6 +19683,38 @@ class _Traductions$admin$praxis$propositions$ar extends Traductions$admin$praxis
 	@override String get perimee => 'تغيّر الملف منذ هذا الاقتراح: لم يعد ممكنًا تأكيده. استبعده.';
 	@override String get close => 'لم يعد هذا الاقتراح مفتوحًا: عولج أو انتهت مدته.';
 	@override String get generique => 'تعذّرت معالجة الاقتراح. لم يتغيّر شيء: أعد المحاولة.';
+}
+
+// Path: admin.praxis.autoriser
+class _Traductions$admin$praxis$autoriser$ar extends Traductions$admin$praxis$autoriser$fr {
+	_Traductions$admin$praxis$autoriser$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'السماح باتصال بـ Praxis';
+	@override String demande({required Object client, required Object hote}) => 'يطلب «⁨${client}⁩» (⁨${hote}⁩) الاتصال بـ Praxis باسمك.';
+	@override String demandeSansHote({required Object client}) => 'يطلب «⁨${client}⁩» الاتصال بـ Praxis باسمك.';
+	@override String get clientInconnu => 'عميل بلا اسم';
+	@override String get duree => 'ينتهي الاتصال بعد 90 يومًا على الأكثر. يمكنك قطعه في أي وقت من «صلاحيات الموظفين».';
+	@override String get autoriser => 'السماح';
+	@override String get refuser => 'رفض';
+	@override String get sansCote => 'حسابك لا يفتح أي جانب أمام Praxis: لا يمكنك السماح بهذا الاتصال.';
+	@override String get erreurDecision => 'لم يتم تأكيد القرار. أعد المحاولة.';
+	@override String get dejaDecidee => 'سبق التعامل مع هذا الطلب';
+	@override String get dejaDecideeDetail => 'أعد بدء الاتصال من التطبيق الذي طلبه.';
+	@override String get expiree => 'انتهت صلاحية هذا الطلب';
+	@override String get expireeDetail => 'يدوم الطلب عشر دقائق. أعد بدء الاتصال من التطبيق الذي طلبه.';
+	@override String get inconnue => 'هذا الطلب غير موجود';
+	@override String get inconnueDetail => 'أعد بدء الاتصال من التطبيق الذي طلبه.';
+	@override String get termineAutorisee => 'تم السماح بالاتصال';
+	@override String termineAutoriseeDetail({required Object hote}) => 'العودة إلى ⁨${hote}⁩. إن لم يحدث شيء، عد إلى التطبيق الذي طلبه.';
+	@override String get termineAutoriseeDetailSansHote => 'إن لم يحدث شيء، عد إلى التطبيق الذي طلبه.';
+	@override String get termineRefusee => 'تم رفض الاتصال';
+	@override String get termineRefuseeDetail => 'لم يُسمح بأي شيء.';
+	@override String get versAcces => 'صلاحيات الموظفين';
+	@override String get sansDonnees => 'تعذّر تحميل هذا الطلب';
+	@override String get erreurLecture => 'تعذّرت قراءة هذا الطلب. أعد المحاولة.';
 }
 
 // Path: admin.praxis.cause
@@ -36184,6 +36217,29 @@ extension on TraductionsAr {
 			'admin.praxis.reglageFait' => 'طُبّق الإعداد.',
 			'admin.praxis.erreurReglage' => 'لم يُؤكَّد الإعداد. راجع الحالة أعلاه قبل المحاولة من جديد.',
 			'admin.praxis.doubleVerification' => 'يتطلب هذا الإعداد التحقق المزدوج. فعّله من الحساب > الأمان، ثم أعد المحاولة.',
+			'admin.praxis.autoriser.titre' => 'السماح باتصال بـ Praxis',
+			'admin.praxis.autoriser.demande' => ({required Object client, required Object hote}) => 'يطلب «⁨${client}⁩» (⁨${hote}⁩) الاتصال بـ Praxis باسمك.',
+			'admin.praxis.autoriser.demandeSansHote' => ({required Object client}) => 'يطلب «⁨${client}⁩» الاتصال بـ Praxis باسمك.',
+			'admin.praxis.autoriser.clientInconnu' => 'عميل بلا اسم',
+			'admin.praxis.autoriser.duree' => 'ينتهي الاتصال بعد 90 يومًا على الأكثر. يمكنك قطعه في أي وقت من «صلاحيات الموظفين».',
+			'admin.praxis.autoriser.autoriser' => 'السماح',
+			'admin.praxis.autoriser.refuser' => 'رفض',
+			'admin.praxis.autoriser.sansCote' => 'حسابك لا يفتح أي جانب أمام Praxis: لا يمكنك السماح بهذا الاتصال.',
+			'admin.praxis.autoriser.erreurDecision' => 'لم يتم تأكيد القرار. أعد المحاولة.',
+			'admin.praxis.autoriser.dejaDecidee' => 'سبق التعامل مع هذا الطلب',
+			'admin.praxis.autoriser.dejaDecideeDetail' => 'أعد بدء الاتصال من التطبيق الذي طلبه.',
+			'admin.praxis.autoriser.expiree' => 'انتهت صلاحية هذا الطلب',
+			'admin.praxis.autoriser.expireeDetail' => 'يدوم الطلب عشر دقائق. أعد بدء الاتصال من التطبيق الذي طلبه.',
+			'admin.praxis.autoriser.inconnue' => 'هذا الطلب غير موجود',
+			'admin.praxis.autoriser.inconnueDetail' => 'أعد بدء الاتصال من التطبيق الذي طلبه.',
+			'admin.praxis.autoriser.termineAutorisee' => 'تم السماح بالاتصال',
+			'admin.praxis.autoriser.termineAutoriseeDetail' => ({required Object hote}) => 'العودة إلى ⁨${hote}⁩. إن لم يحدث شيء، عد إلى التطبيق الذي طلبه.',
+			'admin.praxis.autoriser.termineAutoriseeDetailSansHote' => 'إن لم يحدث شيء، عد إلى التطبيق الذي طلبه.',
+			'admin.praxis.autoriser.termineRefusee' => 'تم رفض الاتصال',
+			'admin.praxis.autoriser.termineRefuseeDetail' => 'لم يُسمح بأي شيء.',
+			'admin.praxis.autoriser.versAcces' => 'صلاحيات الموظفين',
+			'admin.praxis.autoriser.sansDonnees' => 'تعذّر تحميل هذا الطلب',
+			'admin.praxis.autoriser.erreurLecture' => 'تعذّرت قراءة هذا الطلب. أعد المحاولة.',
 			'admin.praxis.pourra' => 'سيستطيع',
 			'admin.praxis.pourraDetail' => 'قراءة رسائل أسر الأكاديمية، والرد في محادثة قائمة، ونشر إعلان للأسر، وتدوين موضوع في التقويم.',
 			'admin.praxis.nePourraPas' => 'لن يستطيع',
@@ -36476,6 +36532,8 @@ extension on TraductionsAr {
 			'admin.planning.statutEleveAbsent' => 'الطالب غائب',
 			'admin.planning.remplacement.absenceSansRemplacant' => 'أعلن المعلم غيابه، ولا يوجد بديل',
 			'admin.planning.remplacement.remplacePar' => ({required Object nom}) => 'يحل محله ⁨${nom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planning.remplacement.remplaceParHorsGenre' => ({required Object nom}) => 'يحل محله ⁨${nom}⁩، من غير جنس الفصل (اختيار الإدارة)',
 			'admin.planning.remplacement.action' => ({required Object deClasse}) => 'تعيين بديل لهذه الحصة من ⁨${deClasse}⁩',
 			'admin.planning.remplacement.titre' => ({required Object deClasse}) => 'بديل لحصة ⁨${deClasse}⁩',
@@ -36499,8 +36557,6 @@ extension on TraductionsAr {
 			'admin.planning.remplacement.bilanContexte' => 'حسب المعلم الأصلي وحسب الفصل. يبقى إسناد الفصل إلى معلم آخر قرارًا للإدارة.',
 			'admin.planning.remplacement.bilanVide' => 'لا غياب لأي معلم هذا الأسبوع.',
 			'admin.planning.remplacement.bilanLigne' => ({required Object titulaire, required Object classe}) => '⁨${titulaire}⁩ · ⁨${classe}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'admin.planning.remplacement.bilanDetail' => ({required Object seances, required Object remplacees, required Object sans}) => 'الحصص المعنية: ⁨${seances}⁩ · المستبدلة: ⁨${remplacees}⁩ · دون بديل: ⁨${sans}⁩',
 			'admin.planning.remplacement.bilanErreur' => 'تعذرت قراءة استبدالات الأسبوع: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'admin.planning.remplacement.voirClasses' => 'عرض الفصول',
@@ -36990,6 +37046,8 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.refus.video' => 'هذا فيديو: حجمه أكبر من أن يُودَع هنا. أضِفه عن طريق رابطه.',
 			'admin.bibliotheque.import.simple.refus.inconnu' => 'هذا الملف ليس ملف PDF ولا ملفًا صوتيًا (MP3 أو M4A أو OGG) ولا صورة (PNG أو JPEG أو WebP). اختر ملفًا آخر.',
 			'admin.bibliotheque.import.simple.refus.tropLourd' => ({required Object limite}) => 'هذا الملف كبير جدًا: الحد الأقصى لهذا النوع ⁨${limite}⁩ ميغابايت. اختر ملفًا أخف.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.import.simple.fichierAjoute' => 'أُضيف الملف',
 			'admin.bibliotheque.import.simple.fichierEchec' => 'لم يُضَف الملف',
 			'admin.bibliotheque.import.simple.detailFichier' => ({required Object type, required Object taille}) => '⁨${type}⁩ · ⁨${taille}⁩',
@@ -37013,8 +37071,6 @@ extension on TraductionsAr {
 			'admin.bibliotheque.import.simple.droitTiers' => 'للأكاديمية الحق في نشر هذه الوثيقة',
 			'admin.bibliotheque.import.simple.droitTiersAide' => 'تُحدَّد لوثيقة ليست من الأكاديمية. يُحفظ اسمك والتاريخ مع هذا الإقرار.',
 			'admin.bibliotheque.import.simple.enregistreTitre' => 'تم تسجيل الوثيقة',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.simple.nonEnregistre' => 'لم تُحفظ الوثيقة بعد',
 			'admin.bibliotheque.import.simple.ouvrir' => 'فتح الوثيقة',
 			'admin.bibliotheque.import.simple.autre' => 'إضافة وثيقة أخرى',
@@ -37504,6 +37560,8 @@ extension on TraductionsAr {
 			'comptable.tresorerie.politiquePhrase' => 'تحددها الإدارة. أنت تطبّقها ولا تعدّلها.',
 			'comptable.tresorerie.alimentationAuto' => 'التغذية التلقائية',
 			'comptable.tresorerie.regle.desactivee' => 'معطّلة',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.regle.montantFixe' => 'مبلغ ثابت في كل موعد',
 			'comptable.tresorerie.regle.pourcentage' => ({required Object pourcent}) => '${pourcent} % من كل مقبوض مُثبَّت',
 			'comptable.tresorerie.regle.jusquAObjectif' => 'الإكمال حتى المبلغ المستهدف',
@@ -37527,8 +37585,6 @@ extension on TraductionsAr {
 			'comptable.tresorerie.alimenterBloque' => ({required Object raison}) => 'تغذية الاحتياطي الاستراتيجي: ${raison}.',
 			'comptable.tresorerie.aucunMouvement' => 'لا تسمح السياسة لحسابك بأي حركة بين الصناديق.',
 			'comptable.tresorerie.mouvementsHorsLigne' => 'غير متصل: تُستأنف الحركات بين الصناديق مع عودة الشبكة.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.interdits' => 'أموال العملاء الملتزَم بها والضرائب والالتزامات لا تموّل أبدًا مصروفًا عاديًا؛ والتخصيص السابق لا يُعدَّل.',
 			'comptable.tresorerie.previsionTitre' => 'التوقعات',
 			'comptable.tresorerie.previsionPhrase' => 'الداخل والخارج المتوقع، حسب التاريخ.',
@@ -38018,6 +38074,8 @@ extension on TraductionsAr {
 			'comptable.direction.reservePanneau.regle.pourcentageDetail' => 'حصة من المقبوض المُثبَّت.',
 			'comptable.direction.reservePanneau.regle.jusquAObjectif' => 'حتى بلوغ الهدف',
 			'comptable.direction.reservePanneau.regle.jusquAObjectifDetail' => 'إكمال ما ينقص لبلوغ الهدف.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.reservePanneau.regle.proposee' => 'مقترحة',
 			'comptable.direction.reservePanneau.regle.proposeeDetail' => 'اقتراح يؤكده المحاسب.',
 			'comptable.direction.reservePanneau.montantAuto' => 'المبلغ المخصَّص',
@@ -38041,8 +38099,6 @@ extension on TraductionsAr {
 			'comptable.direction.delegationPanneau.intro' => 'تحدد مرة واحدة ما يستطيع المحاسب تنفيذه وحده. وكل ما عدا ذلك يعود إليك.',
 			'comptable.direction.delegationPanneau.pouvoirsTitre' => 'ما يستطيع المحاسب فعله وحده',
 			'comptable.direction.delegationPanneau.paiementsStandards' => 'دفع المدفوعات العادية',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.paiementsStandardsDetail' => 'الدفعة بالمبلغ المحسوب، نحو وسيلة متحقَّق منها، تُرسَل دون مصادقة يومية.',
 			'comptable.direction.delegationPanneau.remboursement' => 'تنفيذ استرداد عادي',
 			'comptable.direction.delegationPanneau.remboursementDetail' => 'الاسترداد المطابق للقاعدة يُنفَّذ دون مصادقة.',
@@ -38532,6 +38588,8 @@ extension on TraductionsAr {
 			'parcours.etatDiagnosticRequis' => 'التفضيل محفوظ',
 			'parcours.etatDiagnosticRequisDetail' => ({required Object dePrenom}) => 'بقي لقاء مع معلم لتحديد مستوى ⁨${dePrenom}⁩. ستقترح عليك الأكاديمية موعدًا.',
 			'parcours.etatDiagnosticEnAttente' => 'الموعد مجدول',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.etatDiagnosticEnAttenteDetail' => ({required Object dePrenom}) => 'لقاء مجدول لتحديد مستوى ⁨${dePrenom}⁩.',
 			'parcours.etatClasseEnFormation' => 'الفصل قيد التكوين',
 			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(minimum, zero: 'يبدأ الفصل دون حد أدنى من الطلاب. سنعلمك بمجرد تأكيده.', one: 'يبدأ الفصل ابتداءً من طالب واحد. سنعلمك بمجرد تأكيده.', two: 'يبدأ الفصل ابتداءً من طالبين. سنعلمك بمجرد تأكيده.', few: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طلاب. سنعلمك بمجرد تأكيده.', many: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالبًا. سنعلمك بمجرد تأكيده.', other: 'يبدأ الفصل ابتداءً من ⁨${minimum}⁩ طالب. سنعلمك بمجرد تأكيده.', ), 
@@ -38555,8 +38613,6 @@ extension on TraductionsAr {
 			'eleveConnexion.profils.videAction' => 'إدخال رمز',
 			'eleveConnexion.profils.retire' => ({required Object prenom}) => 'أُزيل هذا الجهاز لـ⁨${prenom}⁩. اطلب من وليّ الأمر إعادة ربطه برمز جديد.',
 			'eleveConnexion.profils.jetonAbsent' => ({required Object dePrenom}) => 'لم يعد هذا الجهاز يجد اتصال ⁨${dePrenom}⁩. اطلب من وليّ الأمر عرض رمز جديد، ثم أدخله هنا.',
-			_ => null,
-		} ?? switch (path) {
 			'eleveConnexion.pin.bonjour' => ({required Object prenom}) => 'مرحبًا ⁨${prenom}⁩',
 			'eleveConnexion.pin.creer' => 'اختر رمزك الشخصي',
 			'eleveConnexion.pin.creerPhrase' => 'أربعة أرقام، لك وحدك. يبقى على هذا الجهاز.',
@@ -39046,6 +39102,8 @@ extension on TraductionsAr {
 			'inscription.genreFemmeEnseignant' => 'سيراجع وثيقة هويتك شخصٌ من الفريق.',
 			'inscription.recapitulatif' => 'قبل المتابعة',
 			'inscription.creer' => 'إنشاء حسابي',
+			_ => null,
+		} ?? switch (path) {
 			'inscription.erreur' => 'لم يكتمل إنشاء الحساب. أعد المحاولة بعد لحظة.',
 			'inscription.champRequis' => 'هذه الإجابة ضرورية للمتابعة.',
 			'inscription.nomEnLettresPrenom' => 'اكتب اسمك بالحروف، دون أرقام أو رموز.',
@@ -39069,8 +39127,6 @@ extension on TraductionsAr {
 			'inscription.associe.verifier' => 'التحقق من الرمز',
 			'inscription.associe.valide' => ({required Object date}) => 'رمزك صالح حتى ⁨${date}⁩.',
 			'inscription.associe.formIntro' => 'عرّفنا بنفسك. يُفتح حسابك دون أي صلاحية: لن ترى إلا ما تعهد به إليك الإدارة.',
-			_ => null,
-		} ?? switch (path) {
 			'inscription.associe.genreQuestion' => 'أنت',
 			'inscription.associe.genreRaison' => 'تُحمل المهمة من جهة الشخص نفسه: هذا الاختيار ضروري.',
 			'inscription.associe.genreHommeExplication' => 'ستتناول مهامك طلبات الرجال.',
@@ -39560,6 +39616,8 @@ extension on TraductionsAr {
 			'adulte.acceptation.sansCompteTitre' => 'دعوة إلى باقة الأسرة',
 			'adulte.acceptation.sansCompte' => 'للرد، سجّل الدخول إلى حسابك، أو أنشئ حسابًا. ستقرأ حينها ما سيراه الشخص الذي يدعوك وما لن يراه قبل أن تقرر.',
 			'adulte.acceptation.sansCompteAction' => 'تسجيل الدخول أو إنشاء حسابي',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.sortie.retirerElle' => 'إزالة زوجتي',
 			'adulte.sortie.retirerLui' => 'إزالة زوجي',
 			'adulte.sortie.retirerQuestionElle' => 'إزالة زوجتي؟',
@@ -39583,8 +39641,6 @@ extension on TraductionsAr {
 			'adulte.sortie.notificationRetiree' => ({required Object dePrenom}) => 'أُزلتِ من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.notificationRetire' => ({required Object dePrenom}) => 'أُزلتَ من باقة أسرة ⁨${dePrenom}⁩.',
 			'adulte.sortie.delaiTitre' => 'دعوة جديدة غير متاحة',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.sortie.delaiPhrase' => ({required Object date}) => 'يمكن تقديم طلب جديد ابتداءً من ⁨${date}⁩. ثم يجب أن تعتمده الإدارة.',
 			'adulte.sortie.pourquoi' => 'لماذا هذا الانتظار؟',
 			'adulte.sortie.pourquoiPhrase' => 'يضمن هذا الإجراء أمان الأسر وحسن إدارة وصول الأطفال.',
@@ -40074,6 +40130,8 @@ extension on TraductionsAr {
 			'controleur.compteRendu.titre' => 'التقرير',
 			'controleur.compteRendu.provisoire' => 'هذه الشاشة قيد التحضير.',
 			'controleur.compteRendu.revenir' => 'العودة إلى المراقبة',
+			_ => null,
+		} ?? switch (path) {
 			'controleur.compteRendu.sousTitre' => ({required Object classe, required Object heure}) => '⁨${classe}⁩ · ⁨${heure}⁩',
 			'controleur.compteRendu.faits' => 'السجل التلقائي للحصة',
 			'controleur.compteRendu.faitsReplies' => 'السجل التلقائي للحصة، مطوي',
@@ -40097,8 +40155,6 @@ extension on TraductionsAr {
 			'controleur.compteRendu.ajouterObservation' => 'إضافة ملاحظة',
 			'controleur.compteRendu.ajouterObservationAide' => 'حين تريد تدوين ما رأيته · بعض الأسئلة القصيرة، واحد في كل مرة',
 			'controleur.compteRendu.pointImportant' => 'الإبلاغ عن نقطة مهمة',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.compteRendu.pointImportantAide' => 'حين يتطلب ما رأيته انتباه الإدارة · سيُطلب نصك',
 			'controleur.compteRendu.envoyer' => 'إرسال التقرير',
 			'controleur.compteRendu.plusTard' => 'لاحقًا',
@@ -40588,6 +40644,8 @@ extension on TraductionsAr {
 			'recrutement.signature.nomCompteLecture' => 'لا يظهر اسم حسابك: التوقيع ينتظر. أعد المحاولة بعد لحظات.',
 			'recrutement.signature.titre' => 'العقد',
 			'recrutement.signature.traductionTitre' => 'ترجمة للاطلاع',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.signature.version' => ({required Object version}) => 'الإصدار ⁨${version}⁩',
 			'recrutement.signature.empreinte' => ({required Object empreinte}) => 'بصمة النص: ⁨${empreinte}⁩',
 			'recrutement.signature.texteAltere' => 'النص المستلم لا يطابق بصمته: لا يُعرض التوقيع. أعد المحاولة لاحقًا أو أبلغ الإدارة.',
@@ -40611,8 +40669,6 @@ extension on TraductionsAr {
 			'recrutement.signature.indisponible' => 'سيتوفر توقيع العقد عند ربط الخادم.',
 			'recrutement.signature.retour' => 'رجوع',
 			'recrutement.invitations.onglet' => 'الدعوات',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.invitations.comptable.titrePage' => 'دعوة شخص',
 			'recrutement.invitations.comptable.sousTitrePage' => 'اختر دور الشخص، ثم أدخل عنوانه. كل رمز يُستعمل مرة واحدة وتنتهي صلاحيته.',
 			'recrutement.invitations.comptable.choixQuestion' => 'ما دور هذا الشخص؟',
@@ -41102,6 +41158,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.ijazaPresentable.options.non.explication' => 'يُتحقق من مستواك حينئذ أثناء المقابلة.',
 			'recrutement.parcours.q.ijazaPresentable.options.non.exemple' => 'تعلّمت عند شيخ دون أن تتسلّم وثيقة مكتوبة.',
 			'recrutement.parcours.q.experienceDebutants.titre' => 'هل سبق أن علّمت مبتدئين؟',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.experienceDebutants.explication' => 'المبتدئ ما زال يتعلم قراءة الحروف ووصلها.',
 			'recrutement.parcours.q.experienceDebutants.court' => 'الخبرة مع المبتدئين',
 			'recrutement.parcours.q.experienceDebutants.options.oui.libelle' => 'نعم، سبق أن علّمت مبتدئين',
@@ -41125,8 +41183,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.explication' => ({required Object jours, required Object premier, required Object heures}) => 'اخترت ⁨${jours}⁩. يوم ⁨${premier}⁩، تبدأ في ⁨${heures}⁩.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.libelle' => 'نعم، الساعات نفسها',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.description' => ({required Object premier, required Object autres}) => 'ساعات يوم ⁨${premier}⁩ تصلح لباقي الأيام: ⁨${autres}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.explication' => 'يمكنك تغيير يوم قبل إرسال طلب ترشحك.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.oui.exemple' => 'تبدأ في الساعة 18:00 أيام الاثنين والأربعاء والجمعة.',
 			'recrutement.parcours.q.disponibilitesDeclarees.memes.non.libelle' => 'لا، يومًا بيوم',
@@ -41616,6 +41672,8 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s8.titre' => '٨. حقوقكم',
 			'juridique.confidentialite.s8.blocs.0' => '- الاطلاع على المعلومات التي لدينا عنكم.',
 			'juridique.confidentialite.s8.blocs.1' => '- تصحيحها.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s8.blocs.2' => '- طلب حذفها أو تقييد استخدامها.',
 			'juridique.confidentialite.s8.blocs.3' => 'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
 			'juridique.confidentialite.s9.titre' => '٩. الأمان',
@@ -41639,8 +41697,6 @@ extension on TraductionsAr {
 			'juridique.cookies.s4.blocs.0' => 'عندما يتعطل التطبيق قد يُرسَل تقرير تقني إلى خدمة تتبّع الأخطاء. وهو لا يحتوي على لقطة شاشة ولا اسم ولا هوية.',
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
 			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
 			'juridique.enfants.titre' => 'حماية الأطفال',
@@ -42130,6 +42186,8 @@ extension on TraductionsAr {
 			'i1.lien.refuseDetail' => 'تعذّر على هذا الرابط فتح جلستك. اطلب رابطًا جديدًا: أدخل عنوان بريدك الإلكتروني في صفحة تسجيل الدخول. وإن تكرر ذلك فاكتب إلى الأكاديمية.',
 			'd1ter.messages.titre' => ({required Object prenom}) => 'رسائل الأكاديمية عن ⁨${prenom}⁩',
 			'd1ter.messages.titreSoi' => 'رسائل الأكاديمية',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
 			'd1ter.messages.introSoi' => 'أرسلت إليكم الإدارة هذه الرسائل.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
@@ -42153,8 +42211,6 @@ extension on TraductionsAr {
 			'snt.planning.erreurLecture' => 'تعذّرت قراءة الحصص المؤجلة: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'snt.planning.feuilleTitre' => 'تحديد الموعد الجديد',
 			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'الفصل ⁨${classe}⁩، حصة كانت مقرّرة ⁨${quand}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.jour' => 'يوم الحصة الجديدة',
@@ -42644,6 +42700,8 @@ extension on TraductionsAr {
 			'push1.reglages.ignore' => 'لم تجيبوا بعد عن طلب المتصفح. اضغطوا الزر مرة أخرى لرؤيته.',
 			'push1.reglages.echecActivation' => 'لم يتأكد تسجيل هذا الجهاز: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'push1.reglages.compteNonAutoriseTitre' => 'لا إشعارات على الجهاز لهذا الحساب',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
 			'push1.reglages.erreurTitre' => 'تعذّرت قراءة الإعدادات',
 			'push1.reglages.erreur' => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
@@ -42667,8 +42725,6 @@ extension on TraductionsAr {
 			'suiviPedagogique.etapeFranchieLe' => ({required Object numero, required Object mois, required Object annee}) => 'المرحلة السابقة، الدخول في ⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'suiviPedagogique.etapeEnCours' => 'جارية',
 			'suiviPedagogique.etapeAVenir' => 'قادمة',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.sourates' => 'سور الأساسيات المعتمدة',
 			'suiviPedagogique.souratesDe' => ({required Object validees, required Object total}) => '⁨${validees}⁩ من ⁨${total}⁩',
 			'suiviPedagogique.revision' => 'المراجعة أسبوعيًا',
@@ -43158,6 +43214,8 @@ extension on TraductionsAr {
 			'motifs.signalement.pedagogique.regularite' => 'سيصنع انتظام العمل في البيت الفارق.',
 			'motifs.signalement.pedagogique.echange' => 'يُقترح تواصل مع الأكاديمية.',
 			'motifs.signalement.presence.absences' => 'عدة غيابات حديثة: الانتظام يساعد على التقدم.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.presence.retards' => 'تأخر في الحضور في الحصص الأخيرة.',
 			'motifs.signalement.presence.prevenir' => 'نرجو إبلاغ الأكاديمية عند الغياب.',
 			'motifs.signalement.technique.son' => 'أعاق الصوت أو الاتصال الدرس.',
@@ -43181,8 +43239,6 @@ extension on TraductionsAr {
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'فُعِّل العرض العادي لـ⁨${prenom}⁩.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'رُفض طلب ⁨${dePrenom}⁩.',
 			'presentationTuteur.echecReponse' => 'تعذّر تأكيد ردك. يبقى الطلب معلّقًا: أعد المحاولة.',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.vide' => 'لا طلب عرض عادٍ معلّق.',
 			'presentationTuteur.erreur' => 'تعذّر تحميل الطلبات. أعد المحاولة.',
 			'presentationTuteur.sansDonnees' => 'طلبات العرض العادي',

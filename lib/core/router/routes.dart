@@ -1065,6 +1065,12 @@ abstract final class Routes {
   static const String adminSecuriteAuditAccesAgents =
       '/admin/securite-audit/acces-agents';
 
+  /// PX-OAUTH 2d : la page de consentement d'une connexion a Praxis (claude.ai
+  /// demande a se connecter ; la direction autorise ou refuse). L'adresse porte
+  /// `?demande=<identifiant>` ; la fonction `praxis-oauth` y renvoie la personne.
+  static const String adminSecuriteAuditAutoriserPraxis =
+      '/admin/securite-audit/praxis-autoriser';
+
   /// L'historique des visites d'observation, onglet pair du Journal
   /// (complement observation du mandat Tuteur V1, section 8).
   static const String adminSecuriteAuditObservations =

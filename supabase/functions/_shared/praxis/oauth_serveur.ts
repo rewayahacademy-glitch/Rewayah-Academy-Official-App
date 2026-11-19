@@ -157,7 +157,7 @@ async function autoriser(req: Request, c: Contexte): Promise<Response> {
   }
   const demande = texte(r.demande)
   if (!demande || !/^[0-9a-f-]{36}$/.test(demande)) return pageErreur('Le service est indisponible. Reessayez dans un instant.', 503)
-  const dest = `${c.adresseApp}/praxis/autoriser?demande=${demande}`
+  const dest = `${c.adresseApp}/admin/securite-audit/praxis-autoriser?demande=${demande}`
   return new Response(null, { status: 302, headers: { Location: dest, 'Cache-Control': 'no-store' } })
 }
 
