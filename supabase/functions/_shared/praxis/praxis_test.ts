@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'rendre_compte', 'terminer'])
+  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'demander_equipe', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'question_traitee', 'rendre_compte', 'reponses_equipe', 'terminer'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
@@ -130,6 +130,22 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: 'demain', duree_minutes: 30, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: '2026-12-01T10:00:00Z', duree_minutes: 5, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'admettre_verifications', candidature: 'CAND-00001', texte: 'x'.repeat(1001), cle_idempotence: UUID2 }],
+    // PX-SUIVI : demander_equipe, reponses_equipe, question_traitee
+    ['demander_equipe', { fil: UUID1 }], // question absente
+    ['demander_equipe', { question: 'Q ?' }], // conversation absente
+    ['demander_equipe', { fil: 'pas-un-uuid', question: 'Q ?' }],
+    ['demander_equipe', { fil: UUID1, question: '' }],
+    ['demander_equipe', { fil: UUID1, question: 'x'.repeat(301) }],
+    ['demander_equipe', { fil: UUID1, question: 'x\u0000y' }],
+    ['demander_equipe', { fil: UUID1, question: 'Q ?', destinataire: UUID1 }], // propriete inconnue
+    ['demander_equipe', { fil: UUID1, question: 12 }],
+    ['reponses_equipe', { limite: 0 }],
+    ['reponses_equipe', { limite: 51 }],
+    ['reponses_equipe', { limite: 1.5 }],
+    ['reponses_equipe', { fil: UUID1 }], // propriete inconnue
+    ['question_traitee', {}],
+    ['question_traitee', { question: 'pas-un-uuid' }],
+    ['question_traitee', { question: UUID1, reponse: 'x' }], // propriete inconnue
     // PRAXIS-ROUTINE : terminer
     ['terminer', { issue: 'zz', fils_lus: 0, messages_envoyes: 0, passes_equipe: 0, refus: 0 }],
     ['terminer', { issue: 'ok', fils_lus: 201, messages_envoyes: 0, passes_equipe: 0, refus: 0 }],
@@ -216,6 +232,21 @@ Deno.test('appel nominal : une fonction praxis_*, la cle en premier, parametres 
     const { porte, appels } = faux({ ok: true })
     await traiter(requete(appelOutil('terminer', { issue: 'ok', fils_lus: 7, messages_envoyes: 4, passes_equipe: 2, refus: 1, note: 'Tout va bien' })), porte)
     assertEquals(appels, [{ fonction: 'praxis_terminer', params: { p_cle: CLE, p_issue: 'ok', p_lus: 7, p_envoyes: 4, p_passes: 2, p_refus: 1, p_note: 'Tout va bien' } }])
+  }
+  {
+    const { porte, appels } = faux({ ok: true, id: UUID2 })
+    await traiter(requete(appelOutil('demander_equipe', { fil: UUID1, question: 'Le tuteur demande si le cours peut passer au mardi : on peut ?' })), porte)
+    assertEquals(appels, [{ fonction: 'praxis_demander_equipe', params: { p_cle: CLE, p_fil: UUID1, p_question: 'Le tuteur demande si le cours peut passer au mardi : on peut ?' } }])
+  }
+  {
+    const { porte, appels } = faux({ reponses: [] })
+    await traiter(requete(appelOutil('reponses_equipe')), porte)
+    assertEquals(appels, [{ fonction: 'praxis_reponses_equipe', params: { p_cle: CLE, p_limite: 20 } }])
+  }
+  {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil('question_traitee', { question: UUID2 })), porte)
+    assertEquals(appels, [{ fonction: 'praxis_question_traitee', params: { p_cle: CLE, p_question: UUID2 } }])
   }
   for (const p of PUBLICS) assert(p !== ('eleves' as string))
 })

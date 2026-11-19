@@ -73,7 +73,9 @@ MessageFil messageFilDe(
   DateTime? luParAutresLe,
 }) => MessageFil(
   id: m.id,
-  auteur: m.deSoi
+  // PX-BULLE-2 : le compte officiel (Praxis) porte son nom « #Ra_Praxis » meme
+  // dans une bulle « de soi » cote administration, jamais « Vous ».
+  auteur: m.deSoi && m.auteur.compteOfficiel != codeComptePraxis
       ? t.com.socle.composants.composer.auteurSoi
       : m.auteur.nomMarque,
   texte: texteDuMessage(m, avecVocaux: false, avecDocuments: false),
@@ -89,7 +91,7 @@ MessageFil messageFilDe(
   // et son nom « #Ra_Praxis », meme dans une conversation a deux. Seul le code
   // serveur `praxis` (jamais un nom, jamais un autre compte officiel) ; aucune
   // bulle humaine n'est touchee.
-  avatarAuteur: !m.deSoi && m.auteur.compteOfficiel == codeComptePraxis
+  avatarAuteur: m.auteur.compteOfficiel == codeComptePraxis
       ? const ImagePraxis(diametre: AppAvatar.petit)
       : null,
   // MESSAGERIE-LU : avec [suiviLecture], un message de soi dit s'il est lu

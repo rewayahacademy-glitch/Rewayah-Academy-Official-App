@@ -472,6 +472,12 @@ verify_jwt = false
 [functions.praxis-mcp]
 verify_jwt = false
 
+# PX-OAUTH 2a (17/11/2026) : la decouverte OAuth du connecteur Praxis pour claude.ai (metadonnees de ressource et du serveur
+# d'autorisation). Ouverte sans JWT Supabase : elle ne publie que des metadonnees, ne touche ni la base ni un secret. Les points
+# /register, /authorize et /token rendent 503 a cette etape. Voir docs/current/BUREAU-EQUIPE/PRAXIS/PLAN-OAUTH.md.
+[functions.praxis-oauth]
+verify_jwt = false
+
 # FI-BR-06 : seul le titulaire connecte ouvre la page de paiement.
 [functions.recharge-payer]
 verify_jwt = true

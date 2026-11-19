@@ -15,15 +15,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/agent/questions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/widgets/filter_pill.dart';
 import 'package:rewayah_academy/features/admin_acces_agents/choix_conversations_essai.dart';
+import 'package:rewayah_academy/features/admin_acces_agents/questions_praxis.dart';
 import 'package:rewayah_academy/features/admin_acces_agents/section_praxis.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
 import '../../support/faux_service_praxis.dart';
+import '../../support/faux_service_questions_praxis.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 
@@ -65,6 +69,7 @@ Future<void> _monter(
   Size taille = const Size(1440, 3000),
   List<ResumeFil>? fils,
   bool panne = false,
+  ServiceQuestionsPraxis? questions,
 }) async {
   tester.view.physicalSize = taille;
   tester.view.devicePixelRatio = 1;
@@ -74,6 +79,9 @@ Future<void> _monter(
       const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
       surcharges: <Override>[
         servicePraxisProvider.overrideWithValue(faux),
+        serviceQuestionsPraxisProvider.overrideWithValue(
+          questions ?? const QuestionsPraxisVides(),
+        ),
         portMessagesMetierProvider.overrideWithValue(
           _PortFils(panne ? null : (fils ?? _fils(4))),
         ),
@@ -189,7 +197,12 @@ void main() {
       await tester.pumpWidget(
         hote(
           const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
-          surcharges: <Override>[servicePraxisProvider.overrideWithValue(faux)],
+          surcharges: <Override>[
+            servicePraxisProvider.overrideWithValue(faux),
+            serviceQuestionsPraxisProvider.overrideWithValue(
+              const QuestionsPraxisVides(),
+            ),
+          ],
         ),
       );
       // Avant la fin de la premiere lecture : pas encore de reglages.
@@ -445,6 +458,215 @@ void main() {
     });
   });
 
+  group('questions de Praxis (PX-SUIVI)', () {
+    Finder champReponse() => find.descendant(
+      of: find.byKey(ClesQuestionsPraxis.champReponse),
+      matching: find.byType(TextField),
+    );
+
+    Future<void> ouvrirMenu(WidgetTester tester) async {
+      await _presser(
+        tester,
+        find.bySemanticsLabel(t.admin.praxis.questions.actions).first,
+      );
+    }
+
+    testWidgets('chargement : un squelette, puis la liste', (tester) async {
+      tester.view.physicalSize = const Size(1440, 3000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final FauxServiceQuestionsPraxis q = FauxServiceQuestionsPraxis(
+        questions: <QuestionPraxis>[questionPraxisFictive()],
+      );
+      await tester.pumpWidget(
+        hote(
+          const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
+          surcharges: <Override>[
+            servicePraxisProvider.overrideWithValue(FauxServicePraxis()),
+            serviceQuestionsPraxisProvider.overrideWithValue(q),
+          ],
+        ),
+      );
+      // Avant la fin de la premiere lecture : pas encore de question.
+      expect(find.textContaining('Le tuteur demande'), findsNothing);
+      await tester.pumpAndSettle();
+      expect(find.textContaining('Le tuteur demande'), findsOneWidget);
+    });
+
+    testWidgets('contenu : ouvertes d abord, etat de chacune, reponse lue', (
+      tester,
+    ) async {
+      final FauxServiceQuestionsPraxis q = FauxServiceQuestionsPraxis(
+        questions: <QuestionPraxis>[
+          questionPraxisFictive(id: 'a', question: 'Question ouverte A'),
+          questionPraxisFictive(
+            id: 'b',
+            question: 'Question repondue B',
+            reponse: 'Reponse de la direction B',
+          ),
+          questionPraxisFictive(
+            id: 'c',
+            question: 'Question transmise C',
+            reponse: 'Reponse de la direction C',
+            utiliseeLe: DateTime(2026, 11, 17, 11),
+          ),
+        ],
+      );
+      await _monter(tester, FauxServicePraxis(), questions: q);
+      expect(find.text(t.admin.praxis.questions.titre), findsOneWidget);
+      expect(find.text('Question ouverte A'), findsOneWidget);
+      expect(find.text(t.admin.praxis.questions.statutOuverte), findsOneWidget);
+      expect(
+        find.text(t.admin.praxis.questions.statutRepondue),
+        findsOneWidget,
+      );
+      expect(
+        find.text(t.admin.praxis.questions.statutTransmise),
+        findsOneWidget,
+      );
+      expect(find.text('Reponse de la direction B'), findsOneWidget);
+      expect(find.byKey(ClesQuestionsPraxis.vide), findsNothing);
+    });
+
+    testWidgets('vide : la phrase dit qu il n y a rien', (tester) async {
+      await _monter(tester, FauxServicePraxis());
+      expect(find.byKey(ClesQuestionsPraxis.vide), findsOneWidget);
+      expect(find.text(t.admin.praxis.questions.vide), findsOneWidget);
+    });
+
+    testWidgets('erreur : une phrase vraie, et Reessayer relit', (
+      tester,
+    ) async {
+      final FauxServiceQuestionsPraxis q = FauxServiceQuestionsPraxis(
+        erreurLecture: Exception('panne'),
+      );
+      await _monter(tester, FauxServicePraxis(), questions: q);
+      expect(find.text(t.admin.praxis.questions.erreur), findsOneWidget);
+      // Jamais « aucune question » quand la lecture a echoue.
+      expect(find.byKey(ClesQuestionsPraxis.vide), findsNothing);
+      final int avant = q.appels.length;
+      q.erreurLecture = null;
+      await _presser(tester, find.text(t.commun.reessayer).last);
+      expect(q.appels.length, greaterThan(avant));
+      expect(find.text(t.admin.praxis.questions.erreur), findsNothing);
+      expect(find.byKey(ClesQuestionsPraxis.vide), findsOneWidget);
+    });
+
+    testWidgets('hors ligne : le bloc dit ce qui manque', (tester) async {
+      await _monter(
+        tester,
+        FauxServicePraxis(),
+        questions: FauxServiceQuestionsPraxis(
+          erreurLecture: Exception('reseau'),
+        ),
+        en: <Override>[
+          horsLigneProvider.overrideWith((ref) => Stream<bool>.value(true)),
+        ],
+      );
+      expect(find.text(t.admin.praxis.questions.horsLigne), findsOneWidget);
+      expect(find.text(t.admin.praxis.questions.erreur), findsNothing);
+    });
+
+    testWidgets('repondre : champ vide refuse, puis la reponse part', (
+      tester,
+    ) async {
+      final FauxServiceQuestionsPraxis q = FauxServiceQuestionsPraxis(
+        questions: <QuestionPraxis>[
+          questionPraxisFictive(question: 'Question ouverte A'),
+        ],
+      );
+      await _monter(tester, FauxServicePraxis(), questions: q);
+      await ouvrirMenu(tester);
+      await _presser(
+        tester,
+        find.text(t.admin.praxis.questions.actionRepondre),
+      );
+      // La feuille montre la question de Praxis et l'acces a la conversation.
+      expect(find.text(t.admin.praxis.questions.laQuestion), findsOneWidget);
+      expect(find.byKey(ClesQuestionsPraxis.conversation), findsOneWidget);
+      // Un champ vide : une phrase, rien n'est envoye.
+      await _presser(tester, find.byKey(ClesQuestionsPraxis.envoyer));
+      expect(find.text(t.admin.praxis.questions.reponseVide), findsOneWidget);
+      expect(q.textes, isEmpty);
+      await tester.enterText(
+        champReponse(),
+        '  Oui, le cours passe au mardi.  ',
+      );
+      await _presser(tester, find.byKey(ClesQuestionsPraxis.envoyer));
+      expect(q.textes, <String>['Oui, le cours passe au mardi.']);
+      expect(find.text(t.admin.praxis.questions.repondue), findsOneWidget);
+      // La liste est relue : la question n'est plus « Sans reponse ».
+      expect(find.text(t.admin.praxis.questions.statutOuverte), findsNothing);
+      expect(
+        find.text(t.admin.praxis.questions.statutRepondue),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('repondre : refus faute de double verification', (
+      tester,
+    ) async {
+      final FauxServiceQuestionsPraxis q = FauxServiceQuestionsPraxis(
+        questions: <QuestionPraxis>[
+          questionPraxisFictive(question: 'Question ouverte A'),
+        ],
+        erreurReponse: const PostgrestException(
+          message: 'refus',
+          code: '42501',
+        ),
+      );
+      await _monter(tester, FauxServicePraxis(), questions: q);
+      await ouvrirMenu(tester);
+      await _presser(
+        tester,
+        find.text(t.admin.praxis.questions.actionRepondre),
+      );
+      await tester.enterText(champReponse(), 'Oui.');
+      await _presser(tester, find.byKey(ClesQuestionsPraxis.envoyer));
+      expect(find.text(t.admin.praxis.doubleVerification), findsOneWidget);
+      // Rien n'a bouge : la question reste sans reponse.
+      expect(find.text(t.admin.praxis.questions.statutOuverte), findsOneWidget);
+    });
+
+    testWidgets('repondre : une question deja repondue le dit', (tester) async {
+      final FauxServiceQuestionsPraxis q = FauxServiceQuestionsPraxis(
+        questions: <QuestionPraxis>[
+          questionPraxisFictive(question: 'Question ouverte A'),
+        ],
+        resultat: const ResultatQuestion(fait: false, erreur: 'deja_repondue'),
+      );
+      await _monter(tester, FauxServicePraxis(), questions: q);
+      await ouvrirMenu(tester);
+      await _presser(
+        tester,
+        find.text(t.admin.praxis.questions.actionRepondre),
+      );
+      await tester.enterText(champReponse(), 'Oui.');
+      await _presser(tester, find.byKey(ClesQuestionsPraxis.envoyer));
+      expect(
+        find.text(t.admin.praxis.questions.erreurDejaRepondue),
+        findsOneWidget,
+      );
+    });
+
+    testWidgets('une question repondue ne propose plus de repondre', (
+      tester,
+    ) async {
+      final FauxServiceQuestionsPraxis q = FauxServiceQuestionsPraxis(
+        questions: <QuestionPraxis>[
+          questionPraxisFictive(question: 'Q', reponse: 'R'),
+        ],
+      );
+      await _monter(tester, FauxServicePraxis(), questions: q);
+      await ouvrirMenu(tester);
+      expect(find.text(t.admin.praxis.questions.actionRepondre), findsNothing);
+      expect(
+        find.text(t.admin.praxis.questions.actionConversation),
+        findsOneWidget,
+      );
+    });
+  });
+
   group('cles', () {
     testWidgets('le nom est obligatoire : la raison, pas un bouton grise', (
       tester,
@@ -636,6 +858,11 @@ class ProviderScopeAvecSection extends StatelessWidget {
         ),
       ),
     ),
-    surcharges: <Override>[servicePraxisProvider.overrideWithValue(faux)],
+    surcharges: <Override>[
+      servicePraxisProvider.overrideWithValue(faux),
+      serviceQuestionsPraxisProvider.overrideWithValue(
+        const QuestionsPraxisVides(),
+      ),
+    ],
   );
 }

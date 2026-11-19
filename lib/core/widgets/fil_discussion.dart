@@ -2385,9 +2385,15 @@ class _Bulle extends StatelessWidget {
                             if (afficherNom)
                               _NomAuteur(
                                 auteur: auteur,
-                                style: palette.inkMuted.applyTo(
-                                  textes.labelMedium ?? const TextStyle(),
-                                ),
+                                // PX-BULLE-2 : sur la bulle de soi (violet),
+                                // l'encre de la paire, sinon le nom est illisible.
+                                style: deSoi
+                                    ? fond.applyTo(
+                                        textes.labelMedium ?? const TextStyle(),
+                                      )
+                                    : palette.inkMuted.applyTo(
+                                        textes.labelMedium ?? const TextStyle(),
+                                      ),
                                 onOuvrir: onOuvrirAuteur,
                               ),
                             if (texte.isNotEmpty) ...<Widget>[
@@ -2610,7 +2616,7 @@ class _Bulle extends StatelessWidget {
           final double l = colonne.maxWidth;
           // PX-BULLE : la place de l'avatar d'un compte officiel, prise sur la
           // largeur de la bulle (le total ne depasse pas la limite d'avant).
-          final double reserve = avatar == null || deSoi
+          final double reserve = avatar == null
               ? 0
               : AppAvatar.petit + AppSpacing.sm;
           // Au plus 75 % de la colonne (560 sur ordinateur), et toujours 64
@@ -2645,6 +2651,7 @@ class _Bulle extends StatelessWidget {
               ),
               child: _AvecAvatar(
                 avatar: reserve == 0 ? null : avatar,
+                aDroite: deSoi,
                 onOuvrir: onOuvrirAuteur,
                 libelle: auteur,
                 child: Column(
@@ -2717,12 +2724,16 @@ class _NomAuteur extends StatelessWidget {
 class _AvecAvatar extends StatelessWidget {
   const _AvecAvatar({
     required this.avatar,
+    required this.aDroite,
     required this.onOuvrir,
     required this.libelle,
     required this.child,
   });
 
   final Widget? avatar;
+
+  /// PX-BULLE-2 : bulle « de soi » : l'avatar passe cote fin (droite en LTR).
+  final bool aDroite;
   final VoidCallback? onOuvrir;
   final String libelle;
   final Widget child;
@@ -2734,25 +2745,24 @@ class _AvecAvatar extends StatelessWidget {
   Widget build(BuildContext context) {
     final Widget? a = avatar;
     if (a == null) return child;
+    final Widget avatarEtLien = KeyedSubtree(
+      key: cle,
+      child: onOuvrir == null
+          ? ExcludeSemantics(child: a)
+          : Pressable(
+              onPress: onOuvrir,
+              libelleSemantique: libelle,
+              respecterCibleTactile: false,
+              arrondiFocus: BorderRadius.circular(AppAvatar.petit),
+              child: a,
+            ),
+    );
     return Row(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        KeyedSubtree(
-          key: cle,
-          child: onOuvrir == null
-              ? ExcludeSemantics(child: a)
-              : Pressable(
-                  onPress: onOuvrir,
-                  libelleSemantique: libelle,
-                  respecterCibleTactile: false,
-                  arrondiFocus: BorderRadius.circular(AppAvatar.petit),
-                  child: a,
-                ),
-        ),
-        Ecart.hSm,
-        Flexible(child: child),
-      ],
+      children: aDroite
+          ? <Widget>[Flexible(child: child), Ecart.hSm, avatarEtLien]
+          : <Widget>[avatarEtLien, Ecart.hSm, Flexible(child: child)],
     );
   }
 }

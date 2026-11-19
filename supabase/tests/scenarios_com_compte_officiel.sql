@@ -25,5 +25,24 @@ BEGIN
   END IF;
 END
 $t$;
+-- COM-AUTEUR-OFFICIEL (17/11/2026) : auteur Praxis (role accountant) dans un fil d'equipe -> compte_officiel = 'praxis'.
+INSERT INTO public.com_fils(id, type_objet, objet_id, partie_a_nature, partie_a_id, partie_b_nature, partie_b_id)
+VALUES ('e1000000-0000-4000-8000-0000000000f1', 'classe', 'e1000000-0000-4000-8000-0000000000c1',
+        'profil', 'e1000000-0000-4000-8000-0000000000a1', 'equipe', NULL);
+INSERT INTO public.com_messages(fil_id, auteur_id, cle_idempotence, texte)
+VALUES ('e1000000-0000-4000-8000-0000000000f1', '9ae15000-0000-4000-8000-000000000001', gen_random_uuid(), 'Rappel.');
+
+DO $t2$
+DECLARE
+  v_fil jsonb := private.com_fil_json('e1000000-0000-4000-8000-0000000000f1'::uuid,
+                   'e1000000-0000-4000-8000-0000000000a1'::uuid, 'teacher', NULL);
+  v_auteur jsonb := v_fil -> 'messages' -> 0 -> 'auteur';
+BEGIN
+  IF v_auteur ->> 'nature' <> 'equipe' THEN RAISE EXCEPTION 'auteur Praxis doit etre rendu equipe : %', v_auteur; END IF;
+  IF v_auteur ->> 'compte_officiel' IS DISTINCT FROM 'praxis' THEN
+    RAISE EXCEPTION 'auteur Praxis dans un fil d''equipe doit porter compte_officiel = praxis : %', v_auteur;
+  END IF;
+END
+$t2$;
 ROLLBACK;
 \echo OK com_compte_officiel
