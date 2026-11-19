@@ -733,3 +733,35 @@ Elle est écrite en HTML. Rien ne prouve encore que les mêmes mouvements tiendr
 web sans coût. Règles pour y arriver : n'animer que des transformations et l'opacité, des
 ressorts courts qui s'arrêtent, aucun flou animé, aucune boucle, un seul élément en mouvement
 long par écran ; mesurer chaque composant avant de le poser partout (PE-P1).
+
+## 14. Causes trouvées dans le code (19/11/2026, nuit)
+
+### 14.1 Sélection de texte (cause prouvée, Flutter 3.47.9 lu) : lot PE-D11
+
+- **Le menu au moindre toucher.** Le `SelectionArea` posé à la racine de l'application
+  (`lib/core/widgets/selection_racine.dart`, `lib/app.dart:117`) ajoute une reconnaissance
+  d'appui long (500 ms) à **chaque** toucher, boutons compris. Un doigt posé une demi-seconde
+  sur un bouton ou avant de défiler ouvre le menu ; sous un texte protégé rien n'est
+  sélectionné, donc il ne reste que « Tout sélectionner ». De plus, le nœud de focus est créé
+  avec `canRequestFocus: false` (`selection_racine.dart:29-33`) : la zone ne perd jamais le
+  focus, donc **une sélection ne s'efface jamais** et suit d'écran en écran ; sur iOS un simple
+  toucher sur son emplacement rouvre le menu, sur Android deux touchers rapprochés aussi.
+- **La sélection par blocs.** Au doigt, Flutter n'autorise que l'appui long puis le glissement,
+  mot par mot, sur une seule zone qui couvre toute l'application ; et tout ce qui se touche est
+  exclu de la sélection (`pressable.dart:409`). La sélection saute donc par-dessus les cartes.
+- **Le sens inversé.** Dans le SDK, l'ordre des textes d'une ligne est toujours de gauche à
+  droite et les poignées sont créées en `TextDirection.ltr`. Pour les champs (très probable) :
+  le champ du chat (`fil_discussion.dart:3002`) et la recherche (`champ_recherche.dart:131`) ne
+  reçoivent aucun sens ; ils prennent celui de l'interface, pas celui du texte tapé.
+- **Correctif** : retirer le `SelectionArea` global et ne le poser qu'autour de ce qui se lit
+  (bulles, documents, textes longs) ; donner aux champs le sens du texte tapé
+  (`sensDeLaSaisie` existe déjà dans `feuille_carte_classe.dart:50`).
+
+### 14.2 Bouton figé après la validation d'une pièce (hypothèse forte, non prouvée) : lot PE-D12
+
+Les trois chemins de validation relâchent bien leur état. Le plus probable : `DecisionPiece`
+(`piece_decision.dart:112`, ajouté par #574 le 17/11) appelle `decider_dossier` **sans délai
+maximal** ; si la réponse ne revient pas alors que le serveur a validé, le bouton tourne sans
+fin. Avant #574, la pièce passait par `RevueDossier`, qui a un délai et dit « résultat
+inconnu » : cela colle avec « ça marchait bien avant ». Correctif : même délai et même phrase
+dans `piece_decision.dart` ; remettre `_enCours` à faux dans `feuille_geste.dart:477`.
