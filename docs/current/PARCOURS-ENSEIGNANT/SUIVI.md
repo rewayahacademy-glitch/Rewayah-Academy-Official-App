@@ -37,6 +37,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-A6 | Le retrait se défait seul pendant 7 jours ; le lien quitte le pied de l'accueil (A8) | décidé : 7 jours, avec un écran qui explique (§13.2) | pas commencé |
 | [ ] | PE-A7 | Avis automatique au candidat quand un créneau d'entretien s'ouvre | R22, « à construire » depuis le 16/11 | pas commencé |
 | [ ] | PE-A8 | « Vouliez-vous dire gmail.com ? » à la saisie de l'adresse | R25 | pas commencé |
+| [ ] | PE-A9 | Membre invité : plus d'écran « Pour qui créez-vous ce compte ? » avant le code ; le code d'un associé mène à l'écran de l'associé, pas à celui des enseignants (§14.4) | BE-2a-2 ASSOCIE | pas commencé |
 
 ## Vague B. Le parcours du candidat
 
@@ -122,3 +123,4 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
   liste des noms d'éléments (§10, §11), et exclut l'espace de l'élève pour l'instant.
 - 19/11/2026 (soir) : le directeur ferme Q2 (« عقد معلم ») et Q3 (riwayat), ajoute les avis flottants, la mise à jour au choix, les gestes de glissement, la sélection de texte, tirer pour actualiser, le complément précoché et le langage de mouvement (§12). Lots PE-C10, PE-D8 à PE-D12, PE-F3. Une page lisible lui est remise dans la conversation (noms des éléments à chercher).
 - 19/11/2026 (nuit) : le directeur répond sur la page des références (10 commentaires) et donne la vision « objet vivant » (§13). Maquette qui marche remise (Bureau, Candidat, Atelier). Boutiques écartées ; 7 jours confirmés ; lots PE-F4 à PE-F7 ; consigne 25. Deux recherches de causes lancées dans le code (sélection de texte et bouton figé ; éclair coloré et écran du code).
+- 19/11/2026 (nuit) : causes trouvées dans le code et écrites au plan §14 : sélection de texte (prouvée), bouton figé (hypothèse forte), éclair coloré (halo et éléments HTML, très probable), écran avant le code d'un invité (prouvée, avec un second défaut : le code d'un associé part vers l'écran des enseignants). Lot PE-A9.

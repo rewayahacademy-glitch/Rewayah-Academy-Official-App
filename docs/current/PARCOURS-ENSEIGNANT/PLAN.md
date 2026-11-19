@@ -765,3 +765,41 @@ maximal** ; si la réponse ne revient pas alors que le serveur a validé, le bou
 fin. Avant #574, la pièce passait par `RevueDossier`, qui a un délai et dit « résultat
 inconnu » : cela colle avec « ça marchait bien avant ». Correctif : même délai et même phrase
 dans `piece_decision.dart` ; remettre `_enCours` à faux dans `feuille_geste.dart:477`.
+
+### 14.3 L'éclair d'une ligne colorée (composant prouvé, mécanisme très probable) : lot PE-P2
+
+- **Qui dessine du vert, du bleu, du violet** : un seul composant, `HaloLumiere`
+  (`lib/core/widgets/halo_lumiere.dart`), un dégradé circulaire qui tourne, avec un flou. Vert =
+  salle ouverte, bleu et violet = nouveauté, lilas et violet = parole dans la salle
+  (`app_palette.dart:1037-1125`). La rotation explique « un peu inclinée ».
+- **Quand** : il repart à chaque construction. Dans le bureau, chaque route construit sa propre
+  coquille ; en quittant la messagerie ou un dossier, la page d'arrivée naît avec ses lumières
+  (tuiles de l'accueil, carte verte des entretiens du jour), qui tournent pendant la transition.
+  Dans la salle, le halo de parole se pose sur la vidéo à chaque prise de parole
+  (`cadre_visage.dart:251`).
+- **Le point commun des trois lieux** : des éléments HTML insérés dans la page. La salle a la
+  vidéo ; la messagerie et le dossier ont les images des bulles, rendues en balises `<img>`
+  faute d'en-tête CORS sur le stockage (`image_bulle.dart:237`). Le moteur de rendu web doit
+  alors découper son dessin en plusieurs toiles superposées, qu'il crée ou redimensionne quand
+  ces éléments apparaissent ou partent : pendant une image, on voit l'ancien contenu étiré, un
+  trait du halo. Cette dernière étape est une hypothèse sur le moteur, non vérifiée dans le
+  moteur lui-même.
+- **Correctif** : autoriser CORS sur les lectures du stockage puis retirer le repli en `<img>` ;
+  remplacer le halo flou de parole par une bordure fixe sur une tuile vidéo ; ne lancer la
+  rotation du halo qu'après la fin de la transition de page. Correction antérieure du même
+  défaut : non retrouvée (historique local de 52 commits).
+
+### 14.4 L'écran qui s'affiche avant le code d'un membre invité (prouvé) : lot PE-A9
+
+- Après la connexion d'un compte sans profil, `/inscription` montre deux squelettes, puis
+  **construit « Pour qui créez-vous ce compte ? »** (`UsageEtape`, `inscription_page.dart:137`)
+  avant de partir vers l'écran du code (`_ouvrirParcours`, l.78-128). C'est l'écran aperçu.
+- **Second défaut, plus grave** : l'écran qui s'impose est celui du code **des enseignants**
+  (`InvitationCandidatPage`), choisi par la marque gardée dans le navigateur ; l'écran de
+  l'associé (`AssociePage`) ne s'ouvre que par un bouton. Le serveur ne connaît pas le rôle
+  « associé » dans `mon_invitation_accueil` (`20261122600000_invitation_accueil.sql:263-289`).
+  Un code d'associé y est probablement refusé : cela expliquerait « il la passe avec difficulté ».
+- Aucune donnée personnelle n'est lue pendant ce laps de temps.
+- **Correctif** : garder le squelette jusqu'au choix de la destination ; ajouter le rôle
+  « associé » à `mon_invitation_accueil`, avec sa destination ; ne plus envoyer un code
+  d'associé vers l'écran des enseignants.
