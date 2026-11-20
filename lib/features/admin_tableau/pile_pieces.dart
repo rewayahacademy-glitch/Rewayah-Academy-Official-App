@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/candidature/attentes_recrutement.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/i18n/elision.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_elevation.dart';
@@ -329,7 +330,10 @@ class _CartePiece extends StatelessWidget {
     return ToucherVivant(
       onPress: geste,
       libelleSemantique: t.admin.tableau.vivant.ouvrirDossierDe(
-        nom: ligne.nomComplet,
+        deNom: deDevant(
+          ligne.nomComplet,
+          cle: 'admin.tableau.vivant.ouvrirDossierDe',
+        ),
       ),
       arrondiFocus: const BorderRadius.all(Radius.circular(rayon)),
       enfoncement: 0.97,

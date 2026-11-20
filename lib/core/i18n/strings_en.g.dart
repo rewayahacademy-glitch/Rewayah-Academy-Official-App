@@ -15894,7 +15894,7 @@ class _Traductions$admin$tableau$vivant$en extends Traductions$admin$tableau$viv
 	@override String get pieceAide => 'Tap the card to open the file.';
 	@override String get piecesVide => 'No ID document is waiting.';
 	@override String get pieceIdentite => 'ID document';
-	@override String ouvrirDossierDe({required Object nom}) => 'Open the file of ${nom}';
+	@override String ouvrirDossierDe({required Object deNom}) => 'Open ${deNom}\'s file';
 	@override String get piecePrecedente => 'Previous document';
 	@override String get pieceSuivante => 'Next document';
 	@override String piecePosition({required Object rang, required Object total}) => '${rang} of ${total}';
@@ -32794,7 +32794,7 @@ extension on TraductionsEn {
 			'admin.tableau.vivant.pieceAide' => 'Tap the card to open the file.',
 			'admin.tableau.vivant.piecesVide' => 'No ID document is waiting.',
 			'admin.tableau.vivant.pieceIdentite' => 'ID document',
-			'admin.tableau.vivant.ouvrirDossierDe' => ({required Object nom}) => 'Open the file of ${nom}',
+			'admin.tableau.vivant.ouvrirDossierDe' => ({required Object deNom}) => 'Open ${deNom}\'s file',
 			'admin.tableau.vivant.piecePrecedente' => 'Previous document',
 			'admin.tableau.vivant.pieceSuivante' => 'Next document',
 			'admin.tableau.vivant.piecePosition' => ({required Object rang, required Object total}) => '${rang} of ${total}',

@@ -5301,7 +5301,7 @@
         "pieceAide": "Touchez la carte pour ouvrir le dossier.",
         "piecesVide": "Aucune pièce d'identité n'attend.",
         "pieceIdentite": "Pièce d'identité",
-        "ouvrirDossierDe": "Ouvrir le dossier de {nom}",
+        "ouvrirDossierDe": "Ouvrir le dossier {deNom}",
         "piecePrecedente": "Pièce précédente",
         "pieceSuivante": "Pièce suivante",
         "piecePosition": "{rang} sur {total}",

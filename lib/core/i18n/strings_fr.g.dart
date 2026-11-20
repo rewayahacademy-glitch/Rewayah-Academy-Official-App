@@ -32367,8 +32367,8 @@ class Traductions$admin$tableau$vivant$fr {
 	/// fr: 'Pièce d'identité'
 	String get pieceIdentite => 'Pièce d\'identité';
 
-	/// fr: 'Ouvrir le dossier de {nom}'
-	String ouvrirDossierDe({required Object nom}) => 'Ouvrir le dossier de ${nom}';
+	/// fr: 'Ouvrir le dossier {deNom}'
+	String ouvrirDossierDe({required Object deNom}) => 'Ouvrir le dossier ${deNom}';
 
 	/// fr: 'Pièce précédente'
 	String get piecePrecedente => 'Pièce précédente';
@@ -60810,7 +60810,7 @@ extension on Traductions {
 			'admin.tableau.vivant.pieceAide' => 'Touchez la carte pour ouvrir le dossier.',
 			'admin.tableau.vivant.piecesVide' => 'Aucune pièce d\'identité n\'attend.',
 			'admin.tableau.vivant.pieceIdentite' => 'Pièce d\'identité',
-			'admin.tableau.vivant.ouvrirDossierDe' => ({required Object nom}) => 'Ouvrir le dossier de ${nom}',
+			'admin.tableau.vivant.ouvrirDossierDe' => ({required Object deNom}) => 'Ouvrir le dossier ${deNom}',
 			'admin.tableau.vivant.piecePrecedente' => 'Pièce précédente',
 			'admin.tableau.vivant.pieceSuivante' => 'Pièce suivante',
 			'admin.tableau.vivant.piecePosition' => ({required Object rang, required Object total}) => '${rang} sur ${total}',

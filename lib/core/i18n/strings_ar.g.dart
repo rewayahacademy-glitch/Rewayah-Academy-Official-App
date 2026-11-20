@@ -18915,7 +18915,7 @@ class _Traductions$admin$tableau$vivant$ar extends Traductions$admin$tableau$viv
 	@override String get pieceAide => 'المس البطاقة لفتح الملف.';
 	@override String get piecesVide => 'لا وثائق هوية بانتظار التحقق.';
 	@override String get pieceIdentite => 'وثيقة هوية';
-	@override String ouvrirDossierDe({required Object nom}) => 'فتح ملف ⁨${nom}⁩';
+	@override String ouvrirDossierDe({required Object deNom}) => 'فتح ملف ⁨${deNom}⁩';
 	@override String get piecePrecedente => 'الوثيقة السابقة';
 	@override String get pieceSuivante => 'الوثيقة التالية';
 	@override String piecePosition({required Object rang, required Object total}) => '⁨${rang}⁩ من ⁨${total}⁩';
@@ -35154,7 +35154,7 @@ extension on TraductionsAr {
 			'admin.tableau.vivant.pieceAide' => 'المس البطاقة لفتح الملف.',
 			'admin.tableau.vivant.piecesVide' => 'لا وثائق هوية بانتظار التحقق.',
 			'admin.tableau.vivant.pieceIdentite' => 'وثيقة هوية',
-			'admin.tableau.vivant.ouvrirDossierDe' => ({required Object nom}) => 'فتح ملف ⁨${nom}⁩',
+			'admin.tableau.vivant.ouvrirDossierDe' => ({required Object deNom}) => 'فتح ملف ⁨${deNom}⁩',
 			'admin.tableau.vivant.piecePrecedente' => 'الوثيقة السابقة',
 			'admin.tableau.vivant.pieceSuivante' => 'الوثيقة التالية',
 			'admin.tableau.vivant.piecePosition' => ({required Object rang, required Object total}) => '⁨${rang}⁩ من ⁨${total}⁩',

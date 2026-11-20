@@ -5301,7 +5301,7 @@
         "pieceAide": "Tap the card to open the file.",
         "piecesVide": "No ID document is waiting.",
         "pieceIdentite": "ID document",
-        "ouvrirDossierDe": "Open the file of {nom}",
+        "ouvrirDossierDe": "Open {deNom}'s file",
         "piecePrecedente": "Previous document",
         "pieceSuivante": "Next document",
         "piecePosition": "{rang} of {total}",

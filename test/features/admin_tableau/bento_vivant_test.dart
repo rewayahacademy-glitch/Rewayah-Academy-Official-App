@@ -928,7 +928,7 @@ void main() {
         expect(
           find.bySemanticsLabel(
             RegExp(
-              '^${RegExp.escape(t.admin.tableau.vivant.ouvrirDossierDe(nom: 'Exemple Fictif'))}',
+              '^${RegExp.escape(t.admin.tableau.vivant.ouvrirDossierDe(deNom: "d'Exemple Fictif"))}',
             ),
           ),
           findsOneWidget,
