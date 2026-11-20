@@ -8,6 +8,7 @@
 // seulement sans piece) ; Valider et Refuser ne sont pas rendus (une phrase dit
 // ou la piece se decide).
 
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
@@ -19,6 +20,8 @@ import 'package:rewayah_academy/core/candidature/piece_candidature.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/fichiers/ouvrir_onglet.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_delais.dart';
+import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/status_pill.dart';
 import 'package:rewayah_academy/features/admin_candidature/dossier_trois_etages.dart';
 import 'package:rewayah_academy/features/admin_candidature/piece_decision.dart';
@@ -523,6 +526,37 @@ void main() {
       await tester.tap(find.byKey(DecisionPiece.cleValider));
       await laisser(tester);
       expect(find.textContaining('raison inattendue'), findsOneWidget);
+    });
+
+    // PE-D12 (bouton fige) : une reponse qui ne vient jamais ne laisse pas le
+    // bouton en attente au-dela du delai maximal ; la phrase dit que le
+    // resultat n'est pas confirme et qu'il faut verifier.
+    testWidgets('sans reponse du serveur, le bouton se libere apres le delai', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        deposee,
+        capacites: _direction,
+        decider: ({
+          required String documentId,
+          required bool approuve,
+          String? motif,
+        }) => Completer<void>().future,
+      );
+      await tester.ensureVisible(find.byKey(DecisionPiece.cleValider));
+      await tester.tap(find.byKey(DecisionPiece.cleValider));
+      await tester.pump();
+      bool enCours() => tester
+          .widget<ActionPrincipale>(find.byKey(DecisionPiece.cleValider))
+          .enCours;
+      expect(enCours(), isTrue);
+      await tester.pump(AppDelais.requeteMax - const Duration(seconds: 1));
+      expect(enCours(), isTrue);
+      await tester.pump(const Duration(seconds: 2));
+      await laisser(tester);
+      expect(enCours(), isFalse);
+      expect(find.text(r.pieceNonConfirmee), findsOneWidget);
     });
   });
 }

@@ -20,6 +20,7 @@ import '../../core/candidature/port_candidatures_direction.dart'
     show capacitesCandidaturesProvider;
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -113,7 +114,7 @@ class _EtatDecisionPiece extends ConsumerState<DecisionPiece> {
         documentId: widget.documentId,
         approuve: approuve,
         motif: approuve ? null : motif,
-      );
+      ).timeout(AppDelais.requeteMax);
     } on Object catch (e) {
       phraseEchec = _phrase(e, approuve: approuve);
     }
