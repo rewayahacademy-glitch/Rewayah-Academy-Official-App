@@ -347,13 +347,17 @@ SELECT pg_temp.vrai((SELECT array_agg(p.oid::regprocedure::text ORDER BY p.prona
           'praxis_demander_equipe(text,uuid,text)',
           'praxis_ecrire(text,uuid,text,uuid)', 'praxis_etat(text)',
           'praxis_fil(text,uuid,integer)', 'praxis_lire(text,text,jsonb,integer)', 'praxis_noter_refus(text,text)',
-          -- PX-OAUTH 2b : le serveur d'autorisation (service_role seul) ; aucune ne rend de donnee de personne.
           'praxis_oauth_demander(text,text,text,text,text,text)', 'praxis_oauth_echanger(text,text,text,text)',
           'praxis_oauth_enregistrer(text,text[])', 'praxis_oauth_renouveler(text,text)',
-          'praxis_preparer(text,text,text,jsonb,text,uuid)', 'praxis_question_traitee(text,uuid)', 'praxis_rendre_compte(text,integer)',
+          -- PX-3 (20261130100000, revue independante du 20/11/2026) : les QUATRE outils neufs, et eux seuls : cloturer et fixer un
+          -- objectif, lire les objectifs, ranger un dossier dans une pile (ordre des noms). Toute autre fonction praxis_* reste rouge.
+          'praxis_objectif_clore(text,uuid,text,text)', 'praxis_objectif_fixer(text,text,date,text,integer,uuid)',
+          'praxis_objectifs_lire(text,text,integer)',
+          'praxis_preparer(text,text,text,jsonb,text,uuid)', 'praxis_question_traitee(text,uuid)',
+          'praxis_ranger(text,text,text,text,uuid)', 'praxis_rendre_compte(text,integer)',
           'praxis_reponses_equipe(text,integer)',
           'praxis_terminer(text,text,integer,integer,integer,integer,text)'],
-  'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (dix outils + praxis_noter_refus, M4 ; PX-2 : lire et preparer ; PRAXIS-ROUTINE : terminer ; PX-SUIVI : demander_equipe, reponses_equipe, question_traitee)');
+  'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (dix outils + praxis_noter_refus, M4 ; PX-2 : lire et preparer ; PRAXIS-ROUTINE : terminer ; PX-SUIVI : demander_equipe, reponses_equipe, question_traitee ; PX-3 : ranger, objectif_fixer, objectif_clore, objectifs_lire)');
 SELECT pg_temp.vrai((SELECT bool_and(has_function_privilege('service_role', p.oid, 'EXECUTE')
                        AND NOT has_function_privilege('anon', p.oid, 'EXECUTE')
                        AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE')
@@ -400,8 +404,12 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
           'public.praxis_terminer>private.praxis_tirs',
           -- PX-SUIVI : les questions a l'equipe (poser, repondre, marquer utilisee).
           'public.praxis_demander_equipe>private.praxis_questions', 'public.praxis_question_traitee>private.praxis_questions',
-          'public.direction_praxis_repondre>private.praxis_questions']) x),
-  'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
+          'public.direction_praxis_repondre>private.praxis_questions',
+          -- PX-3 : ranger n'ecrit que SA table des piles ; fixer et clore n'ecrivent que la table des objectifs. Les deux tables
+          -- sont neuves, privees, sans droit client (RLS active, aucune politique). Aucune ecriture dans un dossier, un compte, un fil.
+          'public.praxis_ranger>private.praxis_rangements', 'public.praxis_objectif_fixer>private.praxis_objectifs',
+          'public.praxis_objectif_clore>private.praxis_objectifs']) x),
+  'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier, propositions, tirs, questions, piles et objectifs (PX-3) ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
 -- R4 (suite, AR-10) : les ecritures INDIRECTES. TOUT appel qualifie `schema.fonction(` fait par une fonction praxis_*, private.praxis_* ou
 -- direction_praxis_* (schemas public, private, auth, extensions, tout schema hors pg_catalog) est dans une liste fermee ecrite ici. Un appel
 -- vers une autre fonction (par exemple direction_praxis_regler depuis un outil, ou une fonction de paiement) est rouge. Les noms de tables
@@ -431,20 +439,28 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.praxis_oauth_revoquer_connexion', 'private.praxis_oauth_urlenc',
           'public.admettre_salle_verification', 'public.demander_complement_candidat',
           'public.planifier_entretien',
+          -- PX-3 : ce que les fonctions neuves ou retouchees appellent en plus, et rien d'autre : les controles du dossier (la fonction
+          -- de lire_candidature, lue, jamais copiee), les trois aides privees neuves, les deux tables neuves (INSERT INTO ... (...)), et la
+          -- QUATRIEME porte publique de geste (la dispense d'entretien), que seule la validation appelle (couples ci-dessous).
+          'private.candidature_controles_dossier', 'private.praxis_candidat_derniere_action', 'private.praxis_dossier_manques',
+          'private.praxis_objectifs', 'private.praxis_objectifs_json', 'private.praxis_rangements', 'public.dispenser_entretien',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
-  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (42 noms) ; aucun autre appel de public, private ou d''un autre schema');
+  'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (49 noms : 42, plus 7 de PX-3) ; aucun autre appel de public, private ou d''un autre schema');
 
 -- R4 / AR-10 (PX-2, revue R15) : des COUPLES (appelante, appelee), pas seulement une liste de noms. Les trois portes publiques de geste de la
 -- candidature ne sont appelees QUE par direction_praxis_valider (qui s'execute sous l'identite de la direction) : aucun outil de Praxis,
 -- aucune autre porte de la direction, ne peut les appeler.
 SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT p.proname || '>' || lower(m[1]) ORDER BY p.proname || '>' || lower(m[1])), ARRAY[]::text[])
     FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace,
-         LATERAL regexp_matches(p.prosrc, '\m(public\.(?:demander_complement_candidat|planifier_entretien|admettre_salle_verification))\s*\(', 'gi') m
+         LATERAL regexp_matches(p.prosrc, '\m(public\.(?:demander_complement_candidat|planifier_entretien|admettre_salle_verification|dispenser_entretien))\s*\(', 'gi') m
    WHERE n.nspname IN ('public', 'private') AND (p.proname LIKE 'praxis\_%' OR p.proname LIKE 'direction\_praxis\_%'))
   = (SELECT array_agg(x ORDER BY x) FROM unnest(ARRAY[
        'direction_praxis_valider>public.admettre_salle_verification', 'direction_praxis_valider>public.demander_complement_candidat',
+       -- PX-3 : la dispense d'entretien est SURVEILLEE comme les trois autres (le motif du controle la nomme desormais) : un outil de
+       -- Praxis qui l'appellerait serait rouge.
+       'direction_praxis_valider>public.dispenser_entretien',
        'direction_praxis_valider>public.planifier_entretien']) x),
-  'R4 / AR-10 : les trois portes de geste de la candidature ne sont appelees que depuis direction_praxis_valider (couples appelante > appelee)');
+  'R4 / AR-10 : les quatre portes de geste de la candidature (PX-3 : + dispenser_entretien) ne sont appelees que depuis direction_praxis_valider (couples appelante > appelee)');
 -- R1 (AR-9) : un controle qui a un sens. Chaque outil public a EXACTEMENT les arguments attendus (nom : type) ; aucun argument n'est un texte libre
 -- hors des champs listes (cle, filtre, texte borne, titre, sujet, public, recurrence, nom d'outil) ; aucun EXECUTE dynamique dans les corps.
 SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' ORDER BY p.proname)
@@ -468,8 +484,14 @@ SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identi
           'praxis_oauth_demander(p_client text, p_rappel text, p_challenge text, p_methode text, p_etat text, p_scope text)',
           'praxis_oauth_echanger(p_client text, p_code text, p_rappel text, p_verifier text)',
           'praxis_oauth_enregistrer(p_nom text, p_rappels text[])', 'praxis_oauth_renouveler(p_client text, p_refresh text)',
+          -- PX-3 : aucun jsonb, aucune requete. Les textes sont des champs BORNES ecrits par Praxis (note 300, libelle 200, raison 200) ;
+          -- periode, etat et pile sont des listes fermees ; la candidature est une reference (CAND-…), jamais un identifiant interne.
+          'praxis_objectif_clore(p_cle text, p_objectif uuid, p_etat text, p_note text)',
+          'praxis_objectif_fixer(p_cle text, p_periode text, p_date date, p_libelle text, p_cible integer, p_cle_idempotence uuid)',
+          'praxis_objectifs_lire(p_cle text, p_etat text, p_limite integer)',
           'praxis_preparer(p_cle text, p_geste text, p_candidature text, p_parametres jsonb, p_texte text, p_cle_idempotence uuid)',
           'praxis_question_traitee(p_cle text, p_question uuid)',
+          'praxis_ranger(p_cle text, p_candidature text, p_pile text, p_raison text, p_cle_idempotence uuid)',
           'praxis_rendre_compte(p_cle text, p_heures integer)',
           'praxis_reponses_equipe(p_cle text, p_limite integer)',
           'praxis_terminer(p_cle text, p_issue text, p_lus integer, p_envoyes integer, p_passes integer, p_refus integer, p_note text)'],
