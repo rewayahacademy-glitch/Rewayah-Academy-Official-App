@@ -3265,8 +3265,50 @@
         "rechercheAide": "Nom de la riwaya",
         "aucune": "Aucune riwaya ne correspond.",
         "retour": "Revenir aux riwayat proposées",
-        "toutes": "Je récite toutes les riwayat",
-        "toutesDescription": "Les vingt riwayat des dix lectures. Cette réponse remplace les autres."
+        "dix": "J'ai une ijaza dans les dix qiraat",
+        "dixDescription": "Les dix lectures du Coran, avec leurs vingt riwayat.",
+        "sept": "J'ai une ijaza dans les sept qiraat",
+        "septDescription": "Les sept lectures du Coran, avec leurs quatorze riwayat.",
+        "une": "Je récite une seule riwaya",
+        "uneDescription": "Vous choisissez laquelle, par exemple Hafs ou Warsh.",
+        "quelques": "Je récite quelques riwayat",
+        "quelquesDescription": "Vous les choisissez lecteur par lecteur.",
+        "titreUne": "Quelle riwaya récitez-vous\u00a0?",
+        "titreQuelques": "Touchez chaque riwaya que vous récitez.",
+        "rechercheLecteur": "Rechercher un lecteur ou une riwaya",
+        "rechercheLecteurAide": "Nom du lecteur ou de la riwaya",
+        "lecteurs": {
+          "nafi": "Nafi",
+          "ibnKathir": "Ibn Kathir",
+          "abuAmr": "Abu Amr",
+          "ibnAmir": "Ibn Amir",
+          "asim": "Asim",
+          "hamza": "Hamza",
+          "kisai": "Al-Kisai",
+          "abuJafar": "Abu Jafar",
+          "yaqub": "Yaqub",
+          "khalaf": "Khalaf, le dixième lecteur"
+        }
+      },
+      "juz": {
+        "nombre": "J'ai mémorisé un nombre précis de juz",
+        "nombreDescription": "De 1 à 29 juz entiers, sur les trente du Coran.",
+        "nombreExplication": "Ce niveau est constaté pendant l'entretien.",
+        "nombreExemple": "vous avez mémorisé douze juz\u00a0: choisissez 12.",
+        "compteur": "Nombre de juz mémorisés",
+        "moins": "Un juz de moins",
+        "plus": "Un juz de plus",
+        "valeur(param=n)": {
+          "one": "{n} juz",
+          "other": "{n} juz"
+        },
+        "ancienne": "Votre réponse enregistrée\u00a0: «\u00a0{reponse}\u00a0». Elle reste valable. Pour donner le nombre exact, touchez un nombre ci-dessous."
+      },
+      "aides": {
+        "ijazaTitre": "Qu'est-ce qu'une ijaza\u00a0?",
+        "ijazaTexte": "Une ijaza est une autorisation écrite qu'un cheikh vous donne après vous avoir entendu réciter devant lui le Coran en entier, ou la partie qu'elle nomme. Elle indique la riwaya (par exemple Hafs d'après Asim) et la chaîne des maîtres qui la transmettent, le sanad. Pendant l'entretien, on vous demande de la montrer en visio\u00a0: vous n'avez rien à envoyer maintenant. Sans ijaza, vous pouvez quand même poser votre candidature.",
+        "juzTitre": "Qu'est-ce qu'un juz\u00a0?",
+        "juzTexte": "Le Coran est partagé en trente parties de même longueur\u00a0: les juz. Comptez seulement les juz que vous savez réciter en entier, de mémoire."
       },
       "fuseau": {
         "heureChezVous": "Chez vous, il est {heure}\u00a0?",
@@ -12219,6 +12261,7 @@
     }
   },
   "formulaire": {
+    "courrielPropose(param=adresse)": "Vouliez-vous dire {adresse}\u00a0?",
     "motif": {
       "manque": "Il manque le motif : choisissez-en un dans la liste, ou touchez « Autre » et écrivez-le.",
       "autreVide": "Vous avez choisi « Autre » : écrivez le motif en quelques mots.",

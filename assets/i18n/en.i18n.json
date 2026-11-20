@@ -3265,8 +3265,50 @@
         "rechercheAide": "Riwaya name",
         "aucune": "No riwaya matches.",
         "retour": "Back to the riwayat offered",
-        "toutes": "I recite all the riwayat",
-        "toutesDescription": "The twenty riwayat of the ten readings. This answer replaces the others."
+        "dix": "I have an ijaza in the ten qiraat",
+        "dixDescription": "The ten readings of the Quran, with their twenty riwayat.",
+        "sept": "I have an ijaza in the seven qiraat",
+        "septDescription": "The seven readings of the Quran, with their fourteen riwayat.",
+        "une": "I recite a single riwaya",
+        "uneDescription": "You choose which one, for example Hafs or Warsh.",
+        "quelques": "I recite a few riwayat",
+        "quelquesDescription": "You choose them reader by reader.",
+        "titreUne": "Which riwaya do you recite?",
+        "titreQuelques": "Tap each riwaya you recite.",
+        "rechercheLecteur": "Search for a reader or a riwaya",
+        "rechercheLecteurAide": "Name of the reader or the riwaya",
+        "lecteurs": {
+          "nafi": "Nafi",
+          "ibnKathir": "Ibn Kathir",
+          "abuAmr": "Abu Amr",
+          "ibnAmir": "Ibn Amir",
+          "asim": "Asim",
+          "hamza": "Hamza",
+          "kisai": "Al-Kisai",
+          "abuJafar": "Abu Jafar",
+          "yaqub": "Yaqub",
+          "khalaf": "Khalaf, the tenth reader"
+        }
+      },
+      "juz": {
+        "nombre": "I have memorised a precise number of juz",
+        "nombreDescription": "From 1 to 29 whole juz, out of the thirty of the Quran.",
+        "nombreExplication": "This level is checked during the interview.",
+        "nombreExemple": "you have memorised twelve juz: choose 12.",
+        "compteur": "Number of juz memorised",
+        "moins": "One juz less",
+        "plus": "One juz more",
+        "valeur(param=n)": {
+          "one": "{n} juz",
+          "other": "{n} juz"
+        },
+        "ancienne": "Your saved answer: \"{reponse}\". It is still valid. To give the exact number, tap a number below."
+      },
+      "aides": {
+        "ijazaTitre": "What is an ijaza?",
+        "ijazaTexte": "An ijaza is a written authorisation that a sheikh gives you after hearing you recite the whole Quran before him, or the part it names. It states the riwaya (for example Hafs from Asim) and the chain of teachers who pass it on, the sanad. During the interview, you are asked to show it on video: you have nothing to send now. Without an ijaza, you can still apply.",
+        "juzTitre": "What is a juz?",
+        "juzTexte": "The Quran is divided into thirty parts of equal length: the juz. Count only the juz you can recite in full, from memory."
       },
       "fuseau": {
         "heureChezVous": "Is it {heure} where you are?",
@@ -12231,6 +12273,7 @@
     }
   },
   "formulaire": {
+    "courrielPropose(param=adresse)": "Did you mean {adresse}?",
     "motif": {
       "manque": "The reason is missing: choose one from the list, or tap \"Other\" and write it.",
       "autreVide": "You chose \"Other\": write the reason in a few words.",

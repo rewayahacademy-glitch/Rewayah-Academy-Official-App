@@ -119,6 +119,105 @@ const List<String> languesDuPublic = <String>[
 /// (CANDIDATS-FLUX, 06/11/2026).
 const Set<String> languesRetirees = <String>{'mnk'};
 
+/// PE-B1 (directeur, 19/11/2026, plan du parcours A10 et §12.1) : la
+/// memorisation se dit « tout le Coran », « rien pour l'instant », ou un
+/// nombre exact de juz, de 1 a 29.
+///
+/// Le format stocke : le meme champ `niveauMemorisationDeclare`, qui garde
+/// ses quatre anciens codes ([memorisationAnciennes] : `moins_10_juz` et
+/// `de_10_a_29_juz` ne sont plus proposes mais restent valides et se
+/// relisent) et accepte `juz_1` a `juz_29` (migration
+/// `20261130920000_juz_nombre_exact.sql`, qui les propose et les permet).
+const String champMemorisation = 'niveauMemorisationDeclare';
+
+/// Tout le Coran.
+const String memorisationTout = 'coran_entier';
+
+/// Rien pour l'instant.
+const String memorisationRien = 'aucune';
+
+/// Le plus grand nombre exact de juz (30 juz, c'est [memorisationTout]).
+const int juzMaximum = 29;
+
+/// Les anciennes reponses en tranche, qui ne sont plus proposees.
+const Set<String> memorisationAnciennes = <String>{
+  'moins_10_juz',
+  'de_10_a_29_juz',
+};
+
+/// Le code d'un nombre exact de juz : `juz_12`.
+String codeJuz(int n) => 'juz_$n';
+
+/// Le nombre exact de juz de [code] (`juz_12` : 12), ou `null` pour tout
+/// autre code (ancien ou inconnu). `juz_0`, `juz_30` et `juz_01` ne se lisent
+/// pas : le serveur les refuse.
+int? juzExact(String? code) {
+  final RegExpMatch? m = RegExp(r'^juz_([1-9]|1[0-9]|2[0-9])$')
+      .firstMatch(code ?? '');
+  return m == null ? null : int.parse(m.group(1)!);
+}
+
+/// PE-B1 (directeur, 19/11/2026, Q3) : les riwayat se choisissent par lecteur.
+/// Les dix lecteurs, dans l'ordre de la tradition, avec leurs deux riwayat
+/// (les codes du questionnaire). Les sept premiers sont « les sept ».
+const List<({String lecteur, List<String> riwayat})> lecteursRiwayat =
+    <({String lecteur, List<String> riwayat})>[
+      (lecteur: 'nafi', riwayat: <String>['qalun', 'warsh']),
+      (lecteur: 'ibnKathir', riwayat: <String>['al_bazzi', 'qunbul']),
+      (lecteur: 'abuAmr', riwayat: <String>['ad_duri_abi_amr', 'as_susi']),
+      (lecteur: 'ibnAmir', riwayat: <String>['hisham', 'ibn_dhakwan']),
+      (lecteur: 'asim', riwayat: <String>['shuba', 'hafs']),
+      (lecteur: 'hamza', riwayat: <String>['khalaf_an_hamza', 'khallad']),
+      (
+        lecteur: 'kisai',
+        riwayat: <String>['abu_al_harith', 'ad_duri_al_kisai'],
+      ),
+      (lecteur: 'abuJafar', riwayat: <String>['ibn_wardan', 'ibn_jammaz']),
+      (lecteur: 'yaqub', riwayat: <String>['ruways', 'rawh']),
+      (lecteur: 'khalaf', riwayat: <String>['ishaq', 'idris']),
+    ];
+
+/// Les quatorze riwayat des sept lecteurs.
+final Set<String> riwayatSept = <String>{
+  for (final l in lecteursRiwayat.take(7)) ...l.riwayat,
+};
+
+/// Les vingt riwayat des dix lecteurs.
+final Set<String> riwayatDix = <String>{
+  for (final l in lecteursRiwayat) ...l.riwayat,
+};
+
+/// Les quatre facons de repondre a la question des riwayat.
+enum ModeRiwayat {
+  /// Les dix lectures : les vingt riwayat.
+  dix,
+
+  /// Les sept lectures : les quatorze riwayat des sept lecteurs.
+  sept,
+
+  /// Une seule riwaya, choisie dans la liste.
+  une,
+
+  /// Quelques riwayat, choisies lecteur par lecteur.
+  quelques,
+}
+
+/// Le mode que montre une reponse deja enregistree : les vingt codes, les
+/// dix lectures ; les quatorze des sept lecteurs, les sept ; un seul code,
+/// une seule riwaya ; plusieurs, quelques-unes ; rien, `null`. Une ancienne
+/// reponse (avant ce lot) se relit ainsi sans perte : le format n'a pas
+/// change.
+ModeRiwayat? modeDesRiwayat(Set<String> codes) {
+  if (codes.isEmpty) return null;
+  if (codes.length == riwayatDix.length && codes.containsAll(riwayatDix)) {
+    return ModeRiwayat.dix;
+  }
+  if (codes.length == riwayatSept.length && codes.containsAll(riwayatSept)) {
+    return ModeRiwayat.sept;
+  }
+  return codes.length == 1 ? ModeRiwayat.une : ModeRiwayat.quelques;
+}
+
 /// Les champs connus de `salle-examen-1`, par code.
 const Map<String, ModeleQuestion> modelesQuestions = <String, ModeleQuestion>{
   'langueMaternelle': ModeleQuestion(

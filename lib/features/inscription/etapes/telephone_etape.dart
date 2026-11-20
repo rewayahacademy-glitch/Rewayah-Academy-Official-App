@@ -242,24 +242,9 @@ class _ListePaysState extends State<_ListePays> {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final String cle = formeDeRecherche(_saisie.replaceAll('+', ''));
-    final List<PaysIso> pays =
-        <PaysIso>[
-          for (final PaysIso p in paysAvecIndicatif)
-            if (cle.isEmpty ||
-                formeDeRecherche(p.fr).startsWith(cle) ||
-                formeDeRecherche(p.ar).startsWith(cle) ||
-                formeDeRecherche(p.nom).contains(' $cle') ||
-                (indicatifDuPays(p.code) ?? '').startsWith(cle))
-              p,
-        ]..sort((PaysIso a, PaysIso b) {
-          // Ce qui commence par la saisie d'abord (« ma » : Mali, Maroc).
-          final int debutA = formeDeRecherche(a.nom).startsWith(cle) ? 0 : 1;
-          final int debutB = formeDeRecherche(b.nom).startsWith(cle) ? 0 : 1;
-          return debutA != debutB
-              ? debutA - debutB
-              : formeDeRecherche(a.nom).compareTo(formeDeRecherche(b.nom));
-        });
+    // PE-B8 : noms francais, arabe et anglais, autres noms courants, code et
+    // indicatif, un mot n'importe ou dans le nom (`chercherPaysTelephone`).
+    final List<PaysIso> pays = chercherPaysTelephone(_saisie);
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -385,7 +370,7 @@ class _ChampNumero extends StatelessWidget {
               key: TelephoneEtape.paysChoisiKey,
               libelleSemantique: code == null
                   ? t.inscription.telephone.choisirPays
-                  : '${t.inscription.telephone.pays} : ${nomDuPays(code)}',
+                  : '${t.inscription.telephone.pays} : ${nomPaysTelephone(code)}',
               onPress: onChoisirPays,
               child: Padding(
                 padding: const EdgeInsets.symmetric(
