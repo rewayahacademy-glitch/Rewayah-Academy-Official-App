@@ -128,6 +128,7 @@ import '../../../core/widgets/pin_pad.dart';
 import '../../../core/widgets/point_rappel.dart';
 import '../../../core/widgets/porte_lumiere.dart';
 import '../../../core/widgets/pressable.dart';
+import '../../../core/widgets/proposition_courriel.dart';
 import '../../../core/widgets/puce_filtre_actif.dart';
 import '../../../core/widgets/raccourci_tactile.dart';
 import '../../../core/widgets/rangee_filtres.dart';
@@ -2431,6 +2432,44 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
           child: Align(
             alignment: AlignmentDirectional.topStart,
             child: LireJusquEnBas(),
+          ),
+        ),
+      ),
+    ],
+  ),
+  // PE-A8 (20/11/2026) : « Vouliez-vous dire ali@gmail.com ? » sous un champ
+  // d'adresse ; rien quand le domaine est juste ou inconnu.
+  EntreeGalerie(
+    nom: 'PropositionCourriel',
+    famille: FamilleComposant.composantEtat,
+    etats: <EtatGalerie>[
+      EtatGalerie(
+        'faute sur un domaine tres courant : proposee',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: PropositionCourriel(
+            controleur: TextEditingController(text: 'ali@gmial.com'),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'de droite a gauche',
+        (BuildContext _) => Directionality(
+          textDirection: TextDirection.rtl,
+          child: Align(
+            alignment: AlignmentDirectional.topStart,
+            child: PropositionCourriel(
+              controleur: TextEditingController(text: 'fatou@gmail.con'),
+            ),
+          ),
+        ),
+      ),
+      EtatGalerie(
+        'domaine juste ou reel : rien',
+        (BuildContext _) => Align(
+          alignment: AlignmentDirectional.topStart,
+          child: PropositionCourriel(
+            controleur: TextEditingController(text: 'ali@email.com'),
           ),
         ),
       ),

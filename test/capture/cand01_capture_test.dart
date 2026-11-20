@@ -383,6 +383,7 @@ void main() {
       await continuer(tester);
       await toucherCle(tester, 'option-niveauLectureTajwid-tajwid_applique');
       await continuer(tester);
+      await toucherCle(tester, 'option-riwayat-une');
       await toucherCle(tester, 'option-riwayat-hafs');
       await continuer(tester);
       await toucherCle(tester, 'option-ijazaPresentable-oui');

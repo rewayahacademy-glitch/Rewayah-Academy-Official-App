@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/features/candidature/candidature_page.dart';
 import 'package:rewayah_academy/features/candidature/fuseau_etape.dart';
+import 'package:rewayah_academy/features/candidature/modele_questions.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart'
     show PhotoPubliqueControleur, photoPubliqueProvider;
@@ -265,7 +266,8 @@ const List<(String, List<String>)> parcoursComplet = <(String, List<String>)>[
     'niveauLectureTajwid',
     <String>['option-niveauLectureTajwid-tajwid_applique'],
   ),
-  ('riwayat', <String>['option-riwayat-hafs']),
+  // PE-B1 : la riwaya se choisit apres le mode (« une seule », puis Hafs).
+  ('riwayat', <String>['option-riwayat-une', 'option-riwayat-hafs']),
   ('ijazaPresentable', <String>['option-ijazaPresentable-non']),
   ('experienceDebutants', <String>['option-experienceDebutants-oui']),
   ('publics', <String>['option-publics-6_9']),
@@ -364,4 +366,27 @@ class FauxAccordPublication implements PortAccordPublication {
     enCours = false;
     return _etat;
   }
+}
+
+/// Le questionnaire du double, avec juz_1 a juz_29 proposes (migration
+/// 20261130920000), et au besoin des reponses deja enregistrees.
+Map<String, dynamic> questionnaireAvecJuz({
+  Map<String, Object?>? dernieresReponses,
+}) {
+  final Map<String, dynamic> q = questionnaireJsonDeTest(
+    dernieresReponses: dernieresReponses,
+  );
+  for (final Map<String, dynamic> c
+      in (q['champs'] as List<Object?>).cast<Map<String, dynamic>>()) {
+    if (c['code'] == champMemorisation) {
+      c['options'] = <String>[
+        'aucune',
+        'moins_10_juz',
+        'de_10_a_29_juz',
+        'coran_entier',
+        for (int n = 1; n <= juzMaximum; n++) codeJuz(n),
+      ];
+    }
+  }
+  return q;
 }

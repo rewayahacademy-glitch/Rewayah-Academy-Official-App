@@ -55,6 +55,79 @@ PaysIso? paysDuCode(String? code) => _parCode[code?.toUpperCase()];
 /// inconnu (jamais un trou).
 String nomDuPays(String code) => paysDuCode(code)?.nom ?? code;
 
+/// PE-B8 (20/11/2026) : les autres noms courants d'un pays, que la recherche
+/// lit en plus de ses noms officiels (jamais affiches) : le nom usuel
+/// (« Angleterre », « بريطانيا »), le sigle (« USA », « UAE »), l'ancien nom
+/// (« Swaziland », « Birmanie » pour Myanmar) ou le nom de la capitale qui
+/// sert de nom (« Kinshasa »). Liste ecrite a la main, a completer quand un
+/// candidat ne trouve pas son pays.
+List<String> motsAlternatifsDuPays(String code) =>
+    _autresNoms[code.toUpperCase()] ?? const <String>[];
+
+const Map<String, List<String>> _autresNoms = <String, List<String>>{
+  'GB': <String>[
+    'Angleterre',
+    'England',
+    'Grande-Bretagne',
+    'Great Britain',
+    'Britain',
+    'UK',
+    'Ecosse',
+    'Scotland',
+    'بريطانيا',
+    'إنجلترا',
+    'انكلترا',
+  ],
+  'US': <String>['USA', 'Amérique', 'America', 'أمريكا', 'امريكا'],
+  'AE': <String>[
+    'UAE',
+    'Emirats',
+    'Emirates',
+    'Dubaï',
+    'Dubai',
+    'دبي',
+    'الامارات',
+  ],
+  'SA': <String>[
+    'KSA',
+    'Saudi',
+    'Arabie',
+    'المملكة العربية السعودية',
+    'السعوديه',
+  ],
+  'CI': <String>['Ivory Coast', 'Côte-d\'Ivoire', 'كوت ديفوار'],
+  'CD': <String>[
+    'RDC',
+    'DRC',
+    'Congo-Kinshasa',
+    'Kinshasa',
+    'Zaïre',
+    'الكونغو الديمقراطية',
+  ],
+  'CG': <String>['Congo-Brazzaville', 'Brazzaville'],
+  'NL': <String>['Hollande', 'Holland'],
+  'CZ': <String>['République tchèque', 'Czech Republic'],
+  'MM': <String>['Myanmar', 'Burma', 'Birmanie', 'بورما'],
+  'SZ': <String>['Swaziland', 'سوازيلاند'],
+  'MK': <String>['Macédoine', 'Macedonia'],
+  'TR': <String>['Türkiye', 'Turkiye', 'تركيه'],
+  'KR': <String>['Corée', 'Korea', 'كوريا'],
+  'KP': <String>['Corée du Nord', 'North Korea'],
+  'CV': <String>['Cabo Verde', 'كاب فيردي'],
+  'TL': <String>['East Timor', 'Timor-Leste'],
+  'PS': <String>['Gaza', 'غزة', 'الضفة الغربية'],
+  'SY': <String>['سورية'],
+  'MR': <String>['موريتانيا', 'شنقيط'],
+  'VA': <String>['Saint-Siège', 'Holy See'],
+  'RU': <String>['Russia', 'روسيا الاتحادية'],
+  'DE': <String>['Germany', 'ألمانيا'],
+  'BA': <String>['Bosnie', 'Bosnia'],
+  'GM': <String>['Gambie', 'Gambia'],
+  'GN': <String>['Guinée Conakry', 'Conakry', 'غينيا كوناكري'],
+  'GW': <String>['Guinée Bissau', 'Bissau', 'غينيا بيساو'],
+  'KM': <String>['Comores', 'Comoros', 'جزر القمر', 'القمر'],
+};
+
 /// La forme de recherche d'un texte : minuscules, sans accent, sans tiret ni
 /// apostrophe, espaces simples. Les marques arabes (voyelles breves) et la
 /// forme des lettres alif sont ramenees a l'alif nu.

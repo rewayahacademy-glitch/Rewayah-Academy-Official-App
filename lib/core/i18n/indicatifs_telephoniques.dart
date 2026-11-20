@@ -34,10 +34,103 @@ const int chiffresMaximum = 15;
 /// L'indicatif (sans « + ») du pays [iso], ou `null` s'il n'en a pas.
 String? indicatifDuPays(String? iso) => _parPays[iso?.toUpperCase()];
 
-/// Les pays qui ont un indicatif, dans l'ordre de `pays_iso.dart`.
-final List<PaysIso> paysAvecIndicatif = List<PaysIso>.unmodifiable(
-  paysIso.where((PaysIso p) => _parPays.containsKey(p.code)),
-);
+/// PE-B8 (20/11/2026) : les territoires qui ont leur indicatif sans etre dans
+/// la liste ISO 3166-1 de `pays_iso.dart`. Le Kosovo (+383) : reconnu par le
+/// serveur (`private.indicatifs_telephoniques`), absent de la liste des pays
+/// parce que son code `XK` n'est pas un code ISO officiel et que le serveur
+/// refuserait `XK` comme pays de residence. Il n'existe donc **que pour
+/// l'indicatif** : le serveur ne recoit jamais `XK`, seulement le numero
+/// `+383...`.
+const List<PaysIso> paysHorsIsoAvecIndicatif = <PaysIso>[
+  PaysIso('XK', 'Kosovo', 'كوسوفو', 'Kosovo'),
+];
+
+/// Les pays qui ont un indicatif, dans l'ordre de `pays_iso.dart`, puis
+/// [paysHorsIsoAvecIndicatif].
+final List<PaysIso> paysAvecIndicatif = List<PaysIso>.unmodifiable(<PaysIso>[
+  ...paysIso.where((PaysIso p) => _parPays.containsKey(p.code)),
+  ...paysHorsIsoAvecIndicatif,
+]);
+
+/// Le pays de [code] parmi [paysAvecIndicatif] (Kosovo compris), ou `null`.
+PaysIso? paysTelephoneDuCode(String? code) {
+  final String? c = code?.toUpperCase();
+  for (final PaysIso p in paysAvecIndicatif) {
+    if (p.code == c) return p;
+  }
+  return null;
+}
+
+/// Le nom, dans la langue active, du pays de [code] parmi
+/// [paysAvecIndicatif] ; le code lui-meme s'il est inconnu.
+String nomPaysTelephone(String code) => paysTelephoneDuCode(code)?.nom ?? code;
+
+/// PE-B8 (retours terrain R38, F20 : « le pays existe bien dans la liste, ne
+/// pas s'arreter aux premieres propositions ») : les pays de
+/// [paysAvecIndicatif] que trouve [saisie]. Ceux dont un nom COMMENCE par la
+/// saisie passent d'abord, puis ceux dont un MOT commence par elle ; dans
+/// chaque groupe, par nom dans la langue active.
+///
+/// La recherche lit le nom francais, arabe et anglais (un candidat dont
+/// l'application est en arabe tape souvent « Morocco »), les autres noms
+/// courants ([motsAlternatifsDuPays] : « Angleterre », « USA »), chaque mot
+/// sans l'article arabe (« جزائر » trouve « الجزائر »), le code ISO et
+/// l'indicatif (« 212 », « +212 »). Un mot interieur trouve son pays
+/// (« congo » trouve les deux Congo, « marin » Saint-Marin) ; un bout de mot
+/// non (« ma » ne trouve pas l'Allemagne). Avant ce lot, seul le debut du nom
+/// francais ou arabe comptait : « جزائر », « Morocco » ou « Angleterre » ne
+/// trouvaient rien.
+List<PaysIso> chercherPaysTelephone(String saisie) {
+  final String cle = formeDeRecherche(saisie.replaceAll('+', ''));
+  int ordre(PaysIso a, PaysIso b) =>
+      formeDeRecherche(a.nom).compareTo(formeDeRecherche(b.nom));
+  if (cle.isEmpty) {
+    return <PaysIso>[...paysAvecIndicatif]..sort(ordre);
+  }
+  if (RegExp(r'^[0-9]+$').hasMatch(cle)) {
+    return <PaysIso>[
+      for (final PaysIso p in paysAvecIndicatif)
+        if ((indicatifDuPays(p.code) ?? '').startsWith(cle)) p,
+    ]..sort(ordre);
+  }
+  List<String> noms(PaysIso p) => <String>[
+    p.fr,
+    p.ar,
+    p.en,
+    ...motsAlternatifsDuPays(p.code),
+  ];
+  bool nomCommence(PaysIso p) => noms(p).any(
+    (String n) =>
+        _sansArticle(formeDeRecherche(n)).any((String f) => f.startsWith(cle)),
+  );
+  bool motCommence(PaysIso p) =>
+      noms(p)
+          .any((String n) => _motsDe(n).any((String m) => m.startsWith(cle)));
+  final List<PaysIso> debut = <PaysIso>[];
+  final List<PaysIso> mot = <PaysIso>[];
+  for (final PaysIso p in paysAvecIndicatif) {
+    if (nomCommence(p) || p.code.toLowerCase() == cle) {
+      debut.add(p);
+    } else if (motCommence(p)) {
+      mot.add(p);
+    }
+  }
+  return <PaysIso>[...debut..sort(ordre), ...mot..sort(ordre)];
+}
+
+/// Un nom en forme de recherche, et le meme sans l'article arabe « ال ».
+Iterable<String> _sansArticle(String forme) sync* {
+  yield forme;
+  if (forme.startsWith('ال') && forme.length > 2) yield forme.substring(2);
+}
+
+/// Les mots d'un nom, en forme de recherche, chacun aussi sans l'article
+/// arabe « ال » (« الجزائر » donne « الجزائر » et « جزائر »).
+Iterable<String> _motsDe(String nom) sync* {
+  for (final String m in formeDeRecherche(nom).split(' ')) {
+    yield* _sansArticle(m);
+  }
+}
 
 /// L'indicatif tel qu'on l'affiche (par exemple « +33 »), isole pour que le
 /// signe plus reste en tete dans un texte ecrit de droite a gauche.
@@ -113,6 +206,8 @@ const Set<int> _separateurs = <int>{
 final Map<String, String> _parPays = <String, String>{
   for (final String ligne in _table.trim().split(RegExp(r'\s+')))
     ligne.split('|')[0]: ligne.split('|')[1],
+  // Le Kosovo, hors de la liste ISO (paysHorsIsoAvecIndicatif).
+  'XK': '383',
 };
 
 const String _table = '''
