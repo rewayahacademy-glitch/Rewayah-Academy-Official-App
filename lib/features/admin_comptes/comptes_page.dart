@@ -51,6 +51,7 @@ import '../../core/widgets/selecteur_section.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../admin_candidature/references_dossiers.dart';
 import '../foyer/photo_eleve.dart';
 import '../mfa_controleur/double_verification.dart';
 import 'changements_heure.dart';
@@ -405,6 +406,23 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     // La selection se recale sur la liste lue avant que la barre (collee en
     // bas, hors du corps) ne la dise.
     if (comptes.hasValue) _tranche(comptes.requireValue);
+    // DOSSIER-DIRECTION (PE-C1) : la reference du dossier de chaque compte qui
+    // peut porter une candidature d'enseignant, pour ouvrir LE dossier.
+    _references = comptes.hasValue
+        ? ref
+                  .watch(
+                    referencesDossiersProvider(
+                      ProfilsDemandes(<String>[
+                        for (final CompteAdmin c in comptes.requireValue)
+                          if (c.role == AppRole.teacher ||
+                              c.role == AppRole.guardian)
+                            c.profilId,
+                      ]),
+                    ),
+                  )
+                  .value ??
+              const <String, String>{}
+        : const <String, String>{};
     // HORLOGE-ET-LIEU : la vue n'est connue qu'apres `_tranche`.
     if (_vue == VueComptes.enseignants) {
       _lieux =
@@ -1304,12 +1322,30 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
     });
   }
 
-  /// Vrai quand un dossier d'identite est a verifier : seule action
-  /// **existante** qu'une ligne de compte peut porter (la meme navigation que
-  /// le tableau de bord, l'identifiant du profil en `extra`, jamais dans
-  /// l'adresse).
-  static bool _ouvreUnDossier(CompteAdmin c) =>
-      c.role == AppRole.teacher && c.piece == EtatPiece.aVerifier;
+  /// DOSSIER-DIRECTION (PE-C1) : les references des dossiers d'enseignant,
+  /// par profil. Vide tant qu'elles ne sont pas lues (ou si le serveur ne les
+  /// sert pas) : l'entree garde alors son ancienne destination.
+  Map<String, String> _references = const <String, String>{};
+
+  /// Vrai quand la ligne ouvre un dossier : celui de la candidature
+  /// d'enseignant quand sa reference est connue (PE-C1), sinon « Fichiers a
+  /// valider » pour une piece a verifier (l'identifiant du profil en `extra`,
+  /// jamais dans l'adresse).
+  bool _ouvreUnDossier(CompteAdmin c) =>
+      _references.containsKey(c.profilId) ||
+      (c.role == AppRole.teacher && c.piece == EtatPiece.aVerifier);
+
+  /// Ouvre le dossier de [c] : l'ecran du dossier (sa reference), ou
+  /// « Fichiers a valider » sans reference connue.
+  void _ouvrirDossier(BuildContext context, CompteAdmin c) {
+    final String? reference = _references[c.profilId];
+    final String chemin = cheminDossierDuProfil(reference);
+    unawaited(
+      reference == null
+          ? GoRouter.of(context).push<void>(chemin, extra: c.profilId)
+          : GoRouter.of(context).push<void>(chemin),
+    );
+  }
 
   /// L2 des listes (constat du directeur, 01/11/2026) : une ligne « En
   /// attente » d'une demande d'admission porte l'action qui la debloque.
@@ -1562,10 +1598,13 @@ class _ComptesPageEtat extends ConsumerState<ComptesPage> {
           ),
         if (_ouvreUnDossier(c))
           EntreeAction(
-            libelle: t.admin.comptes.actionOuvrirDossier,
+            // PE-C1 : le dossier du candidat quand sa reference est connue ;
+            // sinon la piece a verifier, comme avant.
+            libelle: _references.containsKey(c.profilId)
+                ? t.admin.candidatures.liste.ouvrirDossier
+                : t.admin.comptes.actionOuvrirDossier,
             icone: AppIcons.dossiers,
-            onChoix: () => GoRouter.of(context)
-                .push<void>(Routes.adminPersonnesDossiers, extra: c.profilId),
+            onChoix: () => _ouvrirDossier(context, c),
           ),
         if (_villeAVerifier(c))
           EntreeAction(

@@ -11221,6 +11221,7 @@ class _Traductions$recrutement$dossier3$ar extends Traductions$recrutement$dossi
 	@override String get demanderAccord => 'طلب اتفاق';
 	@override late final _Traductions$recrutement$dossier3$raison$ar raison = _Traductions$recrutement$dossier3$raison$ar._(_root);
 	@override String photoAgrandir({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير';
+	@override late final _Traductions$recrutement$dossier3$tete$ar tete = _Traductions$recrutement$dossier3$tete$ar._(_root);
 }
 
 // Path: recrutement.file
@@ -22325,6 +22326,34 @@ class _Traductions$recrutement$dossier3$raison$ar extends Traductions$recrutemen
 	@override String get decisionAttendue => 'تمت المقابلة: القرار في انتظاركم.';
 }
 
+// Path: recrutement.dossier3.tete
+class _Traductions$recrutement$dossier3$tete$ar extends Traductions$recrutement$dossier3$tete$fr {
+	_Traductions$recrutement$dossier3$tete$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manque => 'ما ينقص';
+	@override String get manqueRien => 'لا شيء من جهته';
+	@override late final _Traductions$recrutement$dossier3$tete$elements$ar elements = _Traductions$recrutement$dossier3$tete$elements$ar._(_root);
+	@override String get piece => 'وثيقة الهوية';
+	@override late final _Traductions$recrutement$dossier3$tete$pieceValeurs$ar pieceValeurs = _Traductions$recrutement$dossier3$tete$pieceValeurs$ar._(_root);
+	@override String get connexion => 'آخر دخول';
+	@override String get connexionAucune => 'لم يدخل بعد';
+	@override String get aujourdhui => 'اليوم';
+	@override String get hier => 'أمس';
+	@override String get anciennete => 'استُلم الطلب';
+	@override String ilYa({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'اليوم',
+		one: 'منذ يوم واحد',
+		two: 'منذ يومين',
+		few: 'منذ ⁨${n}⁩ أيام',
+		many: 'منذ ⁨${n}⁩ يومًا',
+		other: 'منذ ⁨${n}⁩ يوم',
+	);
+	@override String accueillirPiece({required Object geste}) => '«⁨${geste}⁩» يتطلب وثيقة هوية معتمدة: تحقق منها أولًا.';
+}
+
 // Path: recrutement.invitations.comptable
 class _Traductions$recrutement$invitations$comptable$ar extends Traductions$recrutement$invitations$comptable$fr {
 	_Traductions$recrutement$invitations$comptable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -27946,6 +27975,32 @@ class _Traductions$recrutement$dossier3$synthese$ageValeurs$ar extends Traductio
 	@override String attestee({required Object date}) => '18 سنة فأكثر، أُكّد بتاريخ ⁨${date}⁩';
 	@override String get moins18 => 'أقل من 18 سنة: الترشح متوقف مؤقتًا';
 	@override String get nonAttestee => 'لم يُؤكَّد العمر بعد';
+}
+
+// Path: recrutement.dossier3.tete.elements
+class _Traductions$recrutement$dossier3$tete$elements$ar extends Traductions$recrutement$dossier3$tete$elements$fr {
+	_Traductions$recrutement$dossier3$tete$elements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get compte => 'حسابه';
+	@override String get questionnaire => 'الاستبيان';
+	@override String get pays_versement => 'بلد صرف الراتب';
+}
+
+// Path: recrutement.dossier3.tete.pieceValeurs
+class _Traductions$recrutement$dossier3$tete$pieceValeurs$ar extends Traductions$recrutement$dossier3$tete$pieceValeurs$fr {
+	_Traductions$recrutement$dossier3$tete$pieceValeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get verifiee => 'معتمدة';
+	@override String get aVerifier => 'مودعة، في انتظار التحقق';
+	@override String get absente => 'لم تودع بعد';
+	@override String get aRedeposer => 'مرفوضة، يجب إيداعها من جديد';
+	@override String get compteAbsent => 'لا حساب بعد';
 }
 
 // Path: recrutement.accueil.messages.sections
@@ -41792,6 +41847,24 @@ extension on TraductionsAr {
 			'recrutement.dossier3.raison.entretienPlanifie' => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.',
 			'recrutement.dossier3.raison.decisionAttendue' => 'تمت المقابلة: القرار في انتظاركم.',
 			'recrutement.dossier3.photoAgrandir' => ({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير',
+			'recrutement.dossier3.tete.manque' => 'ما ينقص',
+			'recrutement.dossier3.tete.manqueRien' => 'لا شيء من جهته',
+			'recrutement.dossier3.tete.elements.compte' => 'حسابه',
+			'recrutement.dossier3.tete.elements.questionnaire' => 'الاستبيان',
+			'recrutement.dossier3.tete.elements.pays_versement' => 'بلد صرف الراتب',
+			'recrutement.dossier3.tete.piece' => 'وثيقة الهوية',
+			'recrutement.dossier3.tete.pieceValeurs.verifiee' => 'معتمدة',
+			'recrutement.dossier3.tete.pieceValeurs.aVerifier' => 'مودعة، في انتظار التحقق',
+			'recrutement.dossier3.tete.pieceValeurs.absente' => 'لم تودع بعد',
+			'recrutement.dossier3.tete.pieceValeurs.aRedeposer' => 'مرفوضة، يجب إيداعها من جديد',
+			'recrutement.dossier3.tete.pieceValeurs.compteAbsent' => 'لا حساب بعد',
+			'recrutement.dossier3.tete.connexion' => 'آخر دخول',
+			'recrutement.dossier3.tete.connexionAucune' => 'لم يدخل بعد',
+			'recrutement.dossier3.tete.aujourdhui' => 'اليوم',
+			'recrutement.dossier3.tete.hier' => 'أمس',
+			'recrutement.dossier3.tete.anciennete' => 'استُلم الطلب',
+			'recrutement.dossier3.tete.ilYa' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'اليوم', one: 'منذ يوم واحد', two: 'منذ يومين', few: 'منذ ⁨${n}⁩ أيام', many: 'منذ ⁨${n}⁩ يومًا', other: 'منذ ⁨${n}⁩ يوم', ), 
+			'recrutement.dossier3.tete.accueillirPiece' => ({required Object geste}) => '«⁨${geste}⁩» يتطلب وثيقة هوية معتمدة: تحقق منها أولًا.',
 			'recrutement.file.outils' => 'أدوات',
 			'recrutement.file.outilsDe' => 'أدوات قائمة طلبات الترشح',
 			'recrutement.file.afficher' => 'عرض',
@@ -42096,6 +42169,8 @@ extension on TraductionsAr {
 			'recrutement.accueil.lignes.pieceDetail' => 'صورة واضحة لجواز سفرك أو بطاقة هويتك، سارية الصلاحية. مثال: الصفحة التي فيها صورتك، كاملة ومن غير انعكاس.',
 			'recrutement.accueil.lignes.photoDetail' => 'صورة لك من الأمام. تُعرَّف بها للأسر، بموافقتك فقط.',
 			'recrutement.accueil.lignes.reponsesDetail' => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.accueil.praxis.pieceRefusee' => 'لم تُقبل وثيقة هويتك. أرسل وثيقة جديدة.',
 			'recrutement.accueil.praxis.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ شيء في ملفك.', one: 'بقي عنصر واحد لإتمام ملفك.', two: 'بقي عنصران لإتمام ملفك.', few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.', many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.', other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.', ), 
 			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'جديد: ⁨${titre}⁩',
@@ -42114,8 +42189,6 @@ extension on TraductionsAr {
 			'recrutement.accueil.messages.annonces.vide' => 'لا إعلان الآن. ستظهر إعلانات الإدارة هنا.',
 			'recrutement.accueil.messages.savoir.intro' => 'أجوبة عن أسئلة المترشحين، حين تنشرها الإدارة.',
 			'recrutement.accueil.academie.titre' => 'الأكاديمية',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.accueil.academie.annoncesVide' => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.',
 			'recrutement.accueil.academie.savoirTitre' => 'ما ينبغي معرفته',
 			'recrutement.accueil.academie.remuneration' => 'مستحقات المعلّم',
@@ -42610,6 +42683,8 @@ extension on TraductionsAr {
 			'recrutement.talents.competences.familles.autre' => 'مجال آخر',
 			'recrutement.talents.competences.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تختر أي مهارة', one: 'مهارة واحدة مختارة', two: 'مهارتان مختارتان', few: '⁨${n}⁩ مهارات مختارة', many: '⁨${n}⁩ مهارة مختارة', other: '⁨${n}⁩ مهارة مختارة', ), 
 			'recrutement.talents.competences.nonProposee' => 'لم تعد هذه المهارة مقترحة. يمكنك الإبقاء عليها أو إلغاء اختيارها.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.competences.autreChamp' => 'مجالك، في بضع كلمات',
 			'recrutement.talents.competences.autreAide' => 'يكفي سطر واحد.',
 			'recrutement.talents.competences.manque' => 'اختر مهارة واحدة على الأقل للمتابعة.',
@@ -42628,8 +42703,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.montage_video.description' => 'مونتاج مقاطع فيديو قصيرة وتحريكها.',
 			'recrutement.talents.c.montage_video.exemple' => 'قصّ فيديو، إضافة ترجمة نصية، تحريك عنوان',
 			'recrutement.talents.c.photographie.libelle' => 'التصوير',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.photographie.description' => 'التقاط صور وفيديوهات وتسجيلات صوتية بجودة جيدة.',
 			'recrutement.talents.c.photographie.exemple' => 'تصوير فعالية، تسجيل عرض قصير',
 			'recrutement.talents.c.redaction_contenus.libelle' => 'كتابة المحتوى وصناعته',
@@ -43124,6 +43197,8 @@ extension on TraductionsAr {
 			'avis.admin.champs.qualite' => 'الصفة',
 			'avis.admin.champs.depose' => 'تاريخ الإرسال',
 			'avis.admin.champs.accord' => 'الموافقة على النشر',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.champs.motif' => 'السبب',
 			'avis.admin.champs.modere' => 'تاريخ القرار',
 			'avis.admin.champs.publie' => 'تاريخ النشر',
@@ -43142,8 +43217,6 @@ extension on TraductionsAr {
 			'avis.admin.retirer.titre' => ({required Object deNom}) => 'سحب رأي ⁨${deNom}⁩',
 			'avis.admin.retirer.intro' => 'اختر سبب السحب.',
 			'avis.admin.retirer.consequence' => 'سيختفي الرأي من الموقع عند التحديث التالي للموقع. يُحفظ السبب.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.retirer.action' => 'سحب الرأي',
 			'avis.admin.retirer.rester' => 'عدم تغيير شيء',
 			'avis.admin.motifs.insulte' => 'إهانة',
@@ -43638,6 +43711,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.depot.noms.aide' => 'يُستعمل هذان الاسمان للتعرّف على كل رد. إن أعدتم لاحقًا استيراد الملف نفسه بعد تصحيحه فأبقوا الاسمين كما هما: لن يُضاف أي رد مرتين.',
 			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'تصحيح الاسمين',
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'إبقاء الاسمين',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'اسم المصنّف',
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'اسم الورقة',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'اسم الملف لا يذكر الورقة. اذكروها للمتابعة.',
@@ -43656,8 +43731,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.fichier.cause.malForme' => 'تنسيقه ليس تنسيق ملف CSV مُصدَّر',
 			'candidatsFlux.importFormulaires.fichier.cause.inconnue' => 'محتواه ليس محتوى ملف CSV مُصدَّر',
 			'candidatsFlux.importFormulaires.fichier.quoiFaire' => 'صدّروا الجدول من جديد بصيغة CSV من جداول بيانات Google ثم اختاروا الملف.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.colonnes.dejaAssocie' => ({required Object n}) => 'يُقرأ حاليًا في العمود ⁨${n}⁩. اختياره هنا يزيله من ذلك العمود.',
 			'candidatsFlux.importFormulaires.colonnes.titreColonne' => ({required Object n, required Object titre}) => 'العمود ⁨${n}⁩: ⁨${titre}⁩',
 			'candidatsFlux.importFormulaires.colonnes.question' => 'هل يحتوي كل عمود فعلًا على ما تظنه رواية؟',
@@ -44152,6 +44225,8 @@ extension on TraductionsAr {
 			'suiviAttente.ensuite' => ({required Object etape}) => 'بعد ذلك: ⁨${etape}⁩',
 			'suiviAttente.delai.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
 			'suiviAttente.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصلك إشعار بذلك.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.titreRefusee' => 'لم يُقبل طلبك',
 			'suiviAttente.cloture.titreRetiree' => 'تم سحب هذا الطلب',
 			'suiviAttente.cloture.titreClose' => 'أُغلق هذا الطلب',
@@ -44170,8 +44245,6 @@ extension on TraductionsAr {
 			'suiviAttente.enseignant.titreSimple' => 'معلمك',
 			'suiviAttente.enseignant.sayyid' => 'سيّد',
 			'suiviAttente.enseignant.sayyida' => 'سيّدة',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.enseignant.nomPlein' => ({required Object prenom}) => '⁨${prenom}⁩',
 			'suiviAttente.enseignant.nomAvecTitre' => ({required Object titre, required Object prenom}) => '⁨${titre}⁩ ⁨${prenom}⁩',
 			'suiviAttente.enseignant.langue' => 'لغة الدرس',
