@@ -762,7 +762,12 @@ void main() {
       await laisser(tester);
       expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
       for (final GesteLot g in GesteLot.values) {
-        expect(find.byKey(CandidaturesPage.cleOperationLot(g)), findsNothing);
+        // PE-LISTE-CANDIDATURES : « Ecrire » n'est pas un geste de la fiche ;
+        // il suit le seul droit d'agir en lot, que ces capacites ouvrent.
+        expect(
+          find.byKey(CandidaturesPage.cleOperationLot(g)),
+          g == GesteLot.ecrire ? findsOneWidget : findsNothing,
+        );
       }
     });
 

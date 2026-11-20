@@ -149,41 +149,29 @@ class TableauDeBordPage extends ConsumerWidget {
         ? null
         : ref.watch(creneauxDirectionProvider).value;
     // La file des pieces : lue seulement quand une piece attend (chaque
-    // lecture de la file est journalisee au serveur). La liste ne sait trier
-    // que par activite recente : « la plus ancienne en premier » n'est vrai
-    // que si toute la file tient dans la page lue ; alors elle est rangee
-    // ici, la plus ancienne devant. Sinon l'ordre du serveur est garde et
-    // rien ne pretend a l'anciennete.
+    // lecture de la file est journalisee au serveur). PE-LISTE-CANDIDATURES :
+    // le serveur la trie de la plus ancienne a la plus recente
+    // (`requetePieces`) : la premiere page commence par les plus anciennes,
+    // quelle que soit la longueur de la file.
     final PageCandidatures? pagePieces =
         (attentes?.pieceAValider.nombre ?? 0) > 0
         ? ref.watch(pageCandidaturesProvider(requetePieces)).value
         : null;
-    final bool piecesCompletes =
-        pagePieces != null && pagePieces.total <= pagePieces.lignes.length;
-    final List<LigneCandidature>? pieces = pagePieces == null
-        ? null
-        : (piecesCompletes
-              ? _plusAnciennesDabord(pagePieces.lignes)
-              : pagePieces.lignes);
-    // Les visages des plus anciens d'un etat : seulement quand toute sa file
-    // tient dans une page (sinon les plus anciens ne sont pas ceux qui sont
-    // lus). Un etat de plus de cinquante personnes n'a donc pas de visages
-    // tant que le serveur ne sait pas trier par anciennete.
+    final List<LigneCandidature>? pieces = pagePieces?.lignes;
+    // Les visages des trois plus anciens d'un etat : les trois premieres
+    // lignes de sa file triee par anciennete au serveur (`requeteEtat`), une
+    // lecture de 3 lignes affichees quel que soit le nombre de personnes.
     final Map<EtatCandidature, List<String>> visages =
         <EtatCandidature, List<String>>{};
     if (attentes != null) {
       for (final EtatCandidature etat in ParcoursCandidats.chemin) {
-        final int n = attentes.etat(etat).nombre;
-        if (n <= 0 || n > _taillePageListe) continue;
+        if (attentes.etat(etat).nombre <= 0) continue;
         final PageCandidatures? page = ref
             .watch(pageCandidaturesProvider(requeteEtat(etat)))
             .value;
-        if (page == null || page.total > page.lignes.length) continue;
+        if (page == null) continue;
         visages[etat] = <String>[
-          for (final LigneCandidature l in _plusAnciennesDabord(
-            page.lignes,
-          ).take(3))
-            l.nomComplet,
+          for (final LigneCandidature l in page.lignes.take(3)) l.nomComplet,
         ];
       }
     }
@@ -318,7 +306,7 @@ class TableauDeBordPage extends ConsumerWidget {
             courriels: courriels,
             creneaux: creneaux,
             pieces: pieces,
-            piecesPlusAncienneDabord: piecesCompletes,
+            piecesPlusAncienneDabord: pieces != null,
             visages: visages,
             messagesNonLus: messagesNonLus,
             dernierMessage: dernierMessage,
@@ -380,17 +368,6 @@ class TableauDeBordPage extends ConsumerWidget {
     );
   }
 }
-
-/// La taille d'une page de `lister_candidatures` : au-dela, la file n'est pas
-/// lue en entier.
-const int _taillePageListe = 50;
-
-/// Les lignes, de la plus ancienne activite a la plus recente.
-List<LigneCandidature> _plusAnciennesDabord(List<LigneCandidature> lignes) =>
-    <LigneCandidature>[...lignes]..sort(
-      (LigneCandidature a, LigneCandidature b) =>
-          a.derniereActivite.compareTo(b.derniereActivite),
-    );
 
 /// « lundi 5 octobre 2026 » : la date du jour de l'en-tete (ADMIN-SHELL-01).
 String _dateDuJour(DateTime jour) => enTeteArabe(

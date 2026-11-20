@@ -219,8 +219,24 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   /// L'echec d'un geste du menu, dit en mots, ou `null` : rien n'a ete fait.
   String? _echecLigne;
 
-  /// Les identifiants retenus, gardes d'une page a l'autre.
+  /// Les identifiants retenus, gardes d'une page a l'autre. L'ordre
+  /// d'insertion est garde : apres « Selectionner les N resultats », c'est
+  /// l'ordre de la liste rendu par le serveur.
   final Set<String> _retenues = <String>{};
+
+  /// PE-LISTE-CANDIDATURES : la selection est celle de tous les resultats du
+  /// filtre ([_totalTous] est le nombre exact rendu par le serveur).
+  bool _tousRetenus = false;
+  int? _totalTous;
+
+  /// La lecture de tous les resultats est en cours.
+  bool _lectureTous = false;
+
+  /// La lecture de tous les resultats a echoue : la selection n'a pas change.
+  bool _echecTous = false;
+
+  /// La cle de « Selectionner la page ».
+  static const Key _clePage = ValueKey<String>('candidatures-selection-page');
 
   @override
   void initState() {
@@ -323,6 +339,7 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         _retenues.clear();
         _retour = t.admin.candidatures.lot.selectionRetiree;
       }
+      _oublierTous();
       _filtre = filtre;
       _page = 1;
     });
@@ -357,18 +374,81 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
     if (!_retenues.remove(ligne.id)) {
       _retenues.add(ligne.id);
     }
+    _oublierTous();
   });
 
   void _relacherTout() => setState(() {
     _retenues.clear();
     _enSelection = false;
+    _oublierTous();
   });
 
   void _basculerSelection() => setState(() {
     _retour = null;
     _enSelection = !_enSelection;
     if (!_enSelection) _retenues.clear();
+    _oublierTous();
   });
+
+  /// La selection n'est plus « tous les resultats ».
+  void _oublierTous() {
+    _tousRetenus = false;
+    _totalTous = null;
+    _echecTous = false;
+  }
+
+  /// « Selectionner la page » : les lignes de la page lue s'ajoutent.
+  void _retenirPage(PageCandidatures page) => setState(() {
+    _retenues.addAll(<String>[
+      for (final LigneCandidature l in page.lignes) l.id,
+    ]);
+    _oublierTous();
+  });
+
+  /// « Selectionner les N resultats » : le serveur rend le nombre exact et les
+  /// identifiants du filtre en cours, dans l'ordre de la liste. Une lecture
+  /// sans effet : la selection ne change qu'a la reponse ; un echec le dit et
+  /// laisse la selection telle quelle.
+  Future<void> _retenirTous() async {
+    if (_lectureTous) return;
+    final PortCandidaturesDirection? port = ref.read(
+      portCandidaturesDirectionProvider,
+    );
+    if (port == null) return;
+    final FiltreCandidatures filtre = _filtre;
+    final TriCandidatures tri = _tri;
+    setState(() {
+      _lectureTous = true;
+      _echecTous = false;
+    });
+    try {
+      final SelectionCandidatures sel = await port.selectionnerTout(
+        filtre: filtre,
+        tri: tri,
+      );
+      if (!mounted) return;
+      // Le filtre ou le tri a change pendant la lecture : la reponse ne vaut
+      // plus (l'ordre des identifiants serait celui d'avant).
+      if (filtre != _filtre || tri != _tri) {
+        setState(() => _lectureTous = false);
+        return;
+      }
+      setState(() {
+        _lectureTous = false;
+        _retenues
+          ..clear()
+          ..addAll(sel.ids);
+        _tousRetenus = true;
+        _totalTous = sel.total;
+      });
+    } on Object {
+      if (!mounted) return;
+      setState(() {
+        _lectureTous = false;
+        _echecTous = true;
+      });
+    }
+  }
 
   // --- Un geste depuis le menu d'une ligne (REPRISE-CAND-4) --------------
 
@@ -461,25 +541,60 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   // --- Le traitement groupe ----------------------------------------------
 
   Future<void> _lancerLot(GesteLot geste, CapacitesCandidatures caps) async {
+    // Au-dela du plafond du serveur, le lot porte sur les premieres retenues,
+    // dans l'ordre de la liste ; la barre le dit avant (`lot.parTranche`).
     await ouvrirFeuilleLot(
       context,
       geste: geste,
-      ids: _retenues.toList(),
+      ids: _retenues.take(plafondLotCandidatures).toList(),
       capacites: caps,
       onRapport: _apresLot,
+      onAucunEligible: _retenues.length > plafondLotCandidatures
+          ? _reporterEnFin
+          : null,
     );
   }
 
+  /// Relecture adverse de la PR 658 (R2) : aucune candidature de ce lot ne
+  /// peut recevoir le geste. Elles restent retenues, en fin d'ordre : le lot
+  /// suivant porte sur les suivantes au lieu de retomber sur les memes.
+  void _reporterEnFin(List<String> ids) {
+    if (!mounted) return;
+    setState(() {
+      final List<String> tentees = <String>[
+        for (final String id in ids)
+          if (_retenues.remove(id)) id,
+      ];
+      _retenues.addAll(tentees);
+    });
+  }
+
   /// Le serveur a rendu son rapport : la liste se relit (filtres, tri et page
-  /// gardes) et la selection est videe, que la feuille soit encore ouverte ou
-  /// non. Le rapport ligne par ligne reste dans la feuille ; la page dit le
-  /// compte, seulement apres la reponse du serveur (DECISION-FLUIDITE).
+  /// gardes). PE-LISTE-CANDIDATURES : les lignes reussies sortent de la
+  /// selection ; celles qui n'etaient pas dans ce lot (au-dela de 200) restent
+  /// retenues, puis les exclues et les refusees, en fin d'ordre. Sans reste, le
+  /// mode selection se ferme. Le rapport ligne par ligne reste dans la
+  /// feuille ; la page dit le compte, seulement apres la reponse du serveur
+  /// (DECISION-FLUIDITE).
   void _apresLot(RapportLot rapport) {
     if (!mounted) return;
     _relire();
     setState(() {
-      _retenues.clear();
-      _enSelection = false;
+      _retenues.removeAll(<String>[
+        for (final LigneRapportLot l in rapport.lignes)
+          if (l.issue == IssueLigneLot.reussie) l.id,
+      ]);
+      // Relecture adverse de la PR 658 (R2) : les exclues et les refusees de
+      // ce lot restent retenues, mais passent en fin d'ordre. Le lot suivant
+      // (les 200 premieres) porte ainsi d'abord sur des dossiers pas encore
+      // tentes, au lieu de retomber sur les memes 200.
+      final List<String> tentees = <String>[
+        for (final LigneRapportLot l in rapport.lignes)
+          if (l.issue != IssueLigneLot.reussie && _retenues.remove(l.id)) l.id,
+      ];
+      _retenues.addAll(tentees);
+      if (_retenues.isEmpty) _enSelection = false;
+      _oublierTous();
       _retour = rapport.rejoue
           ? t.admin.candidatures.lot.feuille.rapport.rejoue
           : t.admin.candidatures.lot.feuille.rapport.reussies(
@@ -510,6 +625,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             dont: l.dontPage(n: surLaPage),
           )
         : l.selectionnees(n: n);
+    // PE-LISTE-CANDIDATURES : au-dela du plafond du serveur (200), les gestes
+    // restent offerts ; la phrase dit qu'ils portent sur les 200 premieres,
+    // dans l'ordre de la liste, et combien resteront.
     final bool tropNombreuses = n > plafondLotCandidatures;
     return BarreSelection.compacte(
       key: CandidaturesPage.cleBarreLot,
@@ -517,13 +635,20 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
       phrase: horsLigne
           ? t.admin.candidatures.selection.horsLigne
           : tropNombreuses
-          ? l.plafond(n: plafondLotCandidatures)
+          ? l.parTranche(
+              n: plafondLotCandidatures,
+              reste: n - plafondLotCandidatures,
+            )
           : l.autresGestes,
       onRelacher: _relacherTout,
       operations: <Widget>[
-        if (!horsLigne && !tropNombreuses)
+        if (!horsLigne)
           for (final GesteLot g in GesteLot.values)
-            if (caps.geste(g.geste.capacite))
+            // « Ecrire » n'est pas un geste de la fiche : il suit le droit
+            // d'agir en lot, que le serveur controle a nouveau.
+            if (g.geste == null
+                ? caps.peutAgirEnLot
+                : caps.geste(g.geste!.capacite))
               ActionPrincipale(
                 key: CandidaturesPage.cleOperationLot(g),
                 libelle: libelleGesteLot(g),
@@ -582,6 +707,92 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             onPress: _basculerSelection,
           ),
       ],
+    );
+  }
+
+  /// PE-LISTE-CANDIDATURES (le geste de Gmail, PLAN « Selection en nombre ») :
+  /// « Selectionner la page », puis, la page entiere retenue et d'autres
+  /// resultats au-dela, « Selectionner les N resultats », avec le nombre exact
+  /// du serveur. Jamais en silence : la ligne dit ce qui est retenu.
+  Widget _ligneSelectionTous(PageCandidatures page) {
+    final s = t.admin.candidatures.selection;
+    final TextTheme textes = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final TextStyle style = palette.inkMuted.applyTo(
+      textes.bodyMedium ?? const TextStyle(),
+    );
+    final bool pageRetenue =
+        page.lignes.isNotEmpty &&
+        page.lignes.every((LigneCandidature l) => _retenues.contains(l.id));
+    final int? total = _totalTous;
+    final List<Widget> morceaux;
+    if (_tousRetenus && total != null) {
+      morceaux = <Widget>[
+        TexteSansCoupure(
+          _retenues.length < total
+              ? s.tousPlafond(plafond: _retenues.length, n: total)
+              : s.tousRetenus(n: total),
+          key: const ValueKey<String>('candidatures-tous-retenus'),
+          style: style,
+        ),
+      ];
+    } else if (_lectureTous) {
+      morceaux = <Widget>[
+        const SizedBox.square(
+          dimension: AppSpacing.lg,
+          child: CircularProgressIndicator(strokeWidth: 2),
+        ),
+        TexteSansCoupure(s.lectureTous, style: style),
+      ];
+    } else if (!pageRetenue) {
+      morceaux = <Widget>[
+        LienFleche(
+          key: _clePage,
+          libelle: s.page,
+          fleche: false,
+          legende: true,
+          alignerEnDebut: true,
+          onPress: () => _retenirPage(page),
+        ),
+      ];
+    } else {
+      morceaux = <Widget>[
+        TexteSansCoupure(s.pageRetenue(n: page.lignes.length), style: style),
+        if (page.total > page.lignes.length)
+          LienFleche(
+            key: const ValueKey<String>('candidatures-selection-tous'),
+            libelle: s.tous(n: page.total),
+            fleche: false,
+            legende: true,
+            alignerEnDebut: true,
+            onPress: () => unawaited(_retenirTous()),
+          ),
+      ];
+    }
+    return Semantics(
+      liveRegion: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          Wrap(
+            crossAxisAlignment: WrapCrossAlignment.center,
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.xs,
+            children: morceaux,
+          ),
+          if (_echecTous)
+            Padding(
+              padding: const EdgeInsets.only(top: AppSpacing.xs),
+              child: TexteSansCoupure(
+                s.echecTous,
+                key: const ValueKey<String>('candidatures-tous-echec'),
+                style: palette.inkAlert.applyTo(
+                  textes.bodyMedium ?? const TextStyle(),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -1174,6 +1385,10 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
             Ecart.vMd,
             _ligneNombre(reference, selectionPossible: selectionPossible),
             Ecart.vMd,
+            if (gestes.enSelection) ...<Widget>[
+              _ligneSelectionTous(reference),
+              Ecart.vMd,
+            ],
           ],
           BlocAsynchrone<PageCandidatures>(
             key: const ValueKey<String>('candidatures-bloc'),
