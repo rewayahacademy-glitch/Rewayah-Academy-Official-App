@@ -191,6 +191,9 @@ contrôlés (chaque motif doit apparaître exactement une fois). Chaque ajout po
   `px3_lectures_direction`, `px4_mode_essai`, `px_suivi`, `messages_candidat`, `com_back_1_messagerie`,
   `af_liste_blanche_volatiles`, `cand_autres_competences`, `com_compte_officiel`, `candidats_flux`,
   `cand_l2a2_gestes_direction`, `messagerie_push`, `messagerie_temps_reel`.
+- **Rejeu complet du dépôt avec la migration**, chaque scénario sur une copie neuve : **361 verts sur 364**. Les 3 rouges
+  le sont aussi sur la base sans PX-5 : `calendrier_pauses`, `cand_l1b_concurrence` et `cand_l3_concurrence` (ces deux
+  derniers par dblink : « could not establish connection » sur ce poste).
 - Garde-fous mis à jour, chacun avec un commentaire `PX-5`, sans en affaiblir aucun :
   - `scenarios_sec1_praxis.sql` (R2, R4, AR-10, R1) ;
   - `scenarios_px2_preparer.sql` : clé `fil` dans la liste fermée. `fil` est retiré du texte soumis au motif interdit
