@@ -135,3 +135,57 @@ pour cette seule ligne ; prévenir avant de toucher `accueil_candidat.dart`, `me
 textes fr, en, ar ; Praxis par `AvatarPraxisCandidat` (`praxis_candidat.dart`), Praxis de référence avec la PR 664.
 Verrou : aucune lecture « accords requis acceptés » vérifiée ; piste `public.etat_dossier()`, sinon migration à partir
 de `20261130970000`. Espace enseignant : rien de construit ni de validé, question au directeur.
+
+## Le guide et ses interactions (directeur, 20/11/2026, 23 h)
+
+> « la page "lettres" qui doit s'appeler autre chose que lettre, je veux qu'il y ait quelques
+> interactions avec elle ; je veux que les gens puissent y commenter directement, ces commentaires
+> doivent être vus par l'admin et par Praxis qui peut y répondre directement ; on peut aussi laisser
+> des likes et vois pour le dislike ça peut aider. Ces interactions sont publiques, les autres peuvent
+> le voir, sauf les commentaires. »
+
+**Nom** (choix de l'agent, à confirmer) : « Guide de l'enseignant » (en : « Teacher's guide » ;
+ar : « دليل المعلّم »), adresse `/lire/guide-enseignant`. Les clés internes `recrutement.lettre.*`
+et la constante `Routes.lettreEnseignants` gardent leur nom ; seuls les mots visibles et la valeur de
+l'adresse changent.
+
+**Par partie** (choix de l'agent) : chaque partie a son « J'aime » et son « Pas clair », et son fil de
+commentaires. Un avis sur une partie précise dit à la direction quel passage réécrire ; un avis sur
+toute la page ne le dirait pas. « Pas clair » plutôt que « Je n'aime pas » : le directeur veut que le
+désaccord « aide » ; il signale un passage à reformuler, pas une humeur.
+
+**Qui voit quoi** :
+- les nombres de « J'aime » et de « Pas clair » de chaque partie : tous les lecteurs ;
+- l'avis donné par un lecteur : lui seul (on montre les totaux, jamais qui a cliqué) ;
+- un commentaire et ses réponses : son auteur, la direction et Praxis ; jamais les autres lecteurs.
+
+**Contrat serveur** (forme JSON, même règle d'accès que la lecture du guide) :
+- `lire_interactions_guide()` →
+  `{"parties": [{"code": "p1", "jaime": 12, "pas_clair": 3, "mon_avis": "jaime" | "pas_clair" | null}],
+    "commentaires": [{"id": "uuid", "partie": "p4", "corps": "...", "cree_le": "ISO 8601",
+                      "auteur": "moi" | "direction" | "praxis", "parent_id": "uuid" | null}]}`
+  (`commentaires` : seulement les fils de l'appelant, réponses comprises) ;
+- `donner_avis_guide(p_partie text, p_avis text)` : `jaime`, `pas_clair`, ou nul pour retirer ; un seul
+  avis par lecteur et par partie ; rend la ligne de la partie, à jour ;
+- `commenter_guide(p_partie text, p_corps text)` : 1 à 2 000 caractères ; rend le commentaire ;
+- côté direction : `commentaires_guide_direction()` (tous les fils, avec le nom et le rôle de l'auteur)
+  et `repondre_commentaire_guide(p_commentaire uuid, p_corps text)` (réponse signée « direction ») ;
+- côté Praxis : la même lecture et une réponse signée « praxis », par ses outils (Praxis est en pause
+  au 20/11 : il répondra quand il sera relancé ; la direction répond d'ici là).
+
+**Partage du travail** : la page du lecteur (boutons, fil, champ) est dans ma zone, sur le port
+`port_lettre.dart` ; les tables, les fonctions, l'adaptateur, l'écran de la direction et les outils de
+Praxis sont hors de ma zone (garde-fou) : proposés au pilote, sur sa branche empilée.
+
+**Côté lecteur, fait sur la branche (20/11, 23 h 30)** : port `PortInteractionsGuide` dans
+`port_lettre.dart` (forme JSON en tête de la section), indisponible par défaut ; boutons « J'aime » et
+« Pas clair » sous chaque partie, l'avis s'affiche tout de suite et revient en arrière si le serveur
+refuse ; « Commenter cette partie » ouvre le fil privé du lecteur (ce qu'il a écrit, les réponses de
+la direction et de Praxis, un champ, « Envoyer mon commentaire »). Rien ne s'affiche tant que le
+serveur des interactions n'est pas branché. Tests sur un faux serveur ; captures `avis-*` et
+`commentaire-*` dans `docs/current/captures/E2E/lettre-candidats/`.
+
+**Correction (20/11, 23 h 30)** : jusqu'ici, Praxis ne suivait pas la lecture : `PageShell` fait
+défiler toute la tête avec une page défilante, et il disparaissait en haut. La page garde maintenant sa
+tête fixe et fait défiler le corps seul (`REGLES-NOUVELLES.md`, I4) ; un test vérifie qu'il reste en
+haut après le défilement.

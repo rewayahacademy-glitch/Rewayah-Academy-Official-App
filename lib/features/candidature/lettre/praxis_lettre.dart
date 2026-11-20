@@ -169,7 +169,7 @@ class _EtatPraxisLettre extends State<PraxisLettre>
                     ),
                 child: AvatarPraxisCandidat(
                   sujet: phrase,
-                  taille: AppSpacing.respiration,
+                  taille: AppSpacing.titreEcran,
                 ),
               ),
               Ecart.hSm,

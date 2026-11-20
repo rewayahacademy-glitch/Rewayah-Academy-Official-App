@@ -10,7 +10,7 @@
 
 ---
 
-## 1. Pourquoi vous recevez cette lettre
+## 1. Pourquoi vous recevez ce guide
 
 Assalamu alaykum wa rahmatullahi wa barakatuh.
 
@@ -18,7 +18,7 @@ Le Prophète ﷺ a dit : « خيركم من تعلّم القرآن وعلّمه
 
 Ce travail est payé, et c'est normal. Mais sa vraie récompense est auprès d'Allah. Gardez cette intention en lisant tout ce qui suit.
 
-Vous lisez cette lettre parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.
+Vous lisez ce guide parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.
 
 Vous êtes venu sans connaître notre nom, ni la paie, ni les personnes derrière l'académie. Nous n'avions rien dit, et c'était voulu. Vous êtes venu quand même. Cela nous a touchés.
 

@@ -5,7 +5,7 @@
 
 ---
 
-## 1. Why you are receiving this letter
+## 1. Why you are receiving this guide
 
 Assalamu alaykum wa rahmatullahi wa barakatuh.
 
@@ -13,7 +13,7 @@ The Prophet ﷺ said: « خيركم من تعلّم القرآن وعلّمه »
 
 This work is paid, and that is normal. But its true reward is with Allah. Keep this intention as you read everything below.
 
-You are reading this letter because you signed up, by your own choice, to teach at Rewayah Academy, and you accepted our conditions.
+You are reading this guide because you signed up, by your own choice, to teach at Rewayah Academy, and you accepted our conditions.
 
 You came without knowing our name, the pay, or the people behind the academy. We did not tell you anything, and we did this on purpose. You came anyway. This touched us.
 

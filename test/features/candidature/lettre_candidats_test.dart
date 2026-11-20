@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/router/redirection.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
+import 'package:rewayah_academy/features/candidature/lettre/interactions_guide.dart';
 import 'package:rewayah_academy/features/candidature/lettre/lettre_candidats_page.dart';
 import 'package:rewayah_academy/features/candidature/lettre/port_lettre.dart';
 import 'package:rewayah_academy/features/candidature/lettre/praxis_lettre.dart';
@@ -42,6 +43,7 @@ Future<void> _monter(
   WidgetTester tester, {
   LectureLettre? reponse,
   Exception? erreur,
+  PortInteractionsGuide? interactions,
   Size taille = const Size(390, 844),
   double echelle = 1,
   TextDirection? direction,
@@ -71,6 +73,8 @@ Future<void> _monter(
         portLettreProvider.overrideWithValue(
           FauxPortLettre(reponse: reponse, erreur: erreur),
         ),
+        if (interactions != null)
+          portInteractionsProvider.overrideWithValue(interactions),
       ],
     ),
   );
@@ -99,12 +103,24 @@ void main() {
       await tester.scrollUntilVisible(
         find.byKey(ContenuLettre.clePartie(4)),
         400,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find
+            .descendant(
+              of: find.byKey(LettreCandidatsPage.cleDefilement),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
-      await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
+      await tester.drag(
+        find.byKey(LettreCandidatsPage.cleDefilement),
+        const Offset(0, -200),
+      );
       await tester.pumpAndSettle();
       expect(find.text(t.recrutement.lettre.praxis.paie), findsOneWidget);
       expect(find.byType(AvatarPraxisCandidat), findsOneWidget);
+      // Il est reste en haut de l'ecran : la tete ne defile pas avec le corps.
+      final Rect praxis = tester.getRect(find.byType(PraxisLettre));
+      expect(praxis.top, greaterThanOrEqualTo(0));
+      expect(praxis.bottom, lessThan(844 / 3));
     });
 
     testWidgets(
@@ -165,6 +181,111 @@ void main() {
       await _monter(tester, direction: TextDirection.rtl);
       expect(tester.takeException(), isNull);
       expect(find.text(t.recrutement.lettre.sommaire), findsOneWidget);
+    });
+  });
+
+  group('les interactions', () {
+    Future<void> versPartie(WidgetTester tester, String cle) async {
+      await tester.scrollUntilVisible(
+        find.byKey(ValueKey<String>(cle)),
+        300,
+        scrollable: find
+            .descendant(
+              of: find.byKey(LettreCandidatsPage.cleDefilement),
+              matching: find.byType(Scrollable),
+            )
+            .first,
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('serveur pas encore branche : la lecture, sans boutons', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      expect(find.byKey(ContenuLettre.cleSommaire), findsOneWidget);
+      expect(find.byKey(InteractionsPartie.cleJaime('p1')), findsNothing);
+    });
+
+    testWidgets('J\'aime : le total monte tout de suite, retouche le retire', (
+      WidgetTester tester,
+    ) async {
+      final FauxPortInteractions port = FauxPortInteractions();
+      await _monter(tester, interactions: port);
+      await versPartie(tester, 'guide-jaime-p1');
+      expect(find.text('${t.recrutement.lettre.jaime} 3'), findsWidgets);
+      await tester.tap(find.byKey(InteractionsPartie.cleJaime('p1')));
+      await tester.pumpAndSettle();
+      expect(find.text('${t.recrutement.lettre.jaime} 4'), findsOneWidget);
+      await tester.tap(find.byKey(InteractionsPartie.cleJaime('p1')));
+      await tester.pumpAndSettle();
+      expect(find.text('${t.recrutement.lettre.jaime} 4'), findsNothing);
+    });
+
+    testWidgets(
+      'serveur en panne : l\'avis revient en arriere, une phrase le dit',
+      (WidgetTester tester) async {
+        final FauxPortInteractions port = FauxPortInteractions(enPanne: true);
+        await _monter(tester, interactions: port);
+        await versPartie(tester, 'guide-pas-clair-p1');
+        await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
+        await tester.pumpAndSettle();
+        expect(find.text('${t.recrutement.lettre.pasClair} 0'), findsWidgets);
+        expect(find.text(t.recrutement.lettre.echecAvis), findsOneWidget);
+      },
+    );
+
+    testWidgets('commenter : le fil prive s\'ouvre, le commentaire y entre', (
+      WidgetTester tester,
+    ) async {
+      final FauxPortInteractions port = FauxPortInteractions();
+      await _monter(tester, interactions: port);
+      await versPartie(tester, 'guide-commenter-p1');
+      await tester.tap(find.byKey(InteractionsPartie.cleCommenter('p1')));
+      await tester.pumpAndSettle();
+      expect(find.text(t.recrutement.lettre.filPrive), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.filVide), findsOneWidget);
+      await tester.enterText(
+        find.descendant(
+          of: find.byKey(FilCommentaires.cleChamp),
+          matching: find.byType(EditableText),
+        ),
+        'Combien de classes au plus ?',
+      );
+      await tester.tap(find.byKey(FilCommentaires.cleEnvoyer));
+      await tester.pumpAndSettle();
+      expect(port.fil.single.partie, 'p1');
+      expect(find.text('Combien de classes au plus ?'), findsOneWidget);
+      expect(find.text(t.recrutement.lettre.auteurMoi), findsOneWidget);
+    });
+
+    test('les interactions se lisent depuis le serveur', () {
+      final InteractionsGuide g = InteractionsGuide.depuisJson(
+        <String, dynamic>{
+          'parties': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'code': 'p1',
+              'jaime': 2,
+              'pas_clair': 1,
+              'mon_avis': 'pas_clair',
+            },
+          ],
+          'commentaires': <Map<String, dynamic>>[
+            <String, dynamic>{
+              'id': 'a',
+              'partie': 'p1',
+              'corps': 'x',
+              'cree_le': '2026-11-20T23:00:00Z',
+              'auteur': 'praxis',
+              'parent_id': null,
+            },
+          ],
+        },
+      );
+      expect(g.avis['p1']!.monAvis, AvisGuide.pasClair);
+      expect(g.avis['p1']!.avec(AvisGuide.jaime).pasClair, 0);
+      expect(g.avis['p1']!.avec(AvisGuide.jaime).jaime, 3);
+      expect(g.commentaires.single.auteur, AuteurCommentaire.praxis);
     });
   });
 
