@@ -111,11 +111,20 @@ void main() {
           await _ouvrir(tester, vue: vue, lignes: 30, actions: true);
           expect(tester.takeException(), isNull);
           final Rect surface = _surface(tester);
-          // Toute la hauteur de l'ecran : au telephone, la feuille entiere ;
-          // au bureau, la boite devient la fenetre (DEFIL-FEUILLE-bis,
-          // DECISION-DEFILEMENT regle 1 : rien ne defile dans une boite posee
-          // au milieu de l'ecran).
-          expect(surface.height, closeTo(vue.height, 1));
+          // Au telephone, 90 % de l'ecran (PE-D3, directeur 19/11/2026 :
+          // jamais plus, la poignee reste sous la barre d'etat) ; au bureau,
+          // la boite devient la fenetre (DEFIL-FEUILLE-bis, DECISION-DEFILEMENT
+          // regle 1 : rien ne defile dans une boite posee au milieu de
+          // l'ecran).
+          expect(
+            surface.height,
+            closeTo(
+              vue.width < 840
+                  ? AppBottomSheet.hauteurMaxFeuille(vue.height)
+                  : vue.height,
+              1,
+            ),
+          );
           // Une seule zone qui defile : celle de la surface.
           expect(_defilements(tester), hasLength(1));
           // Le titre est dans le defilement, la zone d'actions collee hors de

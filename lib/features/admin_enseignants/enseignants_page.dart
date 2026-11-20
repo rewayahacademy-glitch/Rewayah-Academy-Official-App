@@ -503,7 +503,7 @@ class _EtatEnseignantsPage extends ConsumerState<EnseignantsPage> {
       operations: <Widget>[
         if (!horsLigne && !tropNombreuses)
           for (final GesteLot g in gestes)
-            if (caps.geste(g.geste.capacite))
+            if (g.geste != null && caps.geste(g.geste!.capacite))
               ActionPrincipale(
                 key: EnseignantsPage.cleOperationLot(g),
                 libelle: libelleGesteLot(g),

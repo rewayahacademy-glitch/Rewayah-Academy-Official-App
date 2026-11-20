@@ -12,9 +12,10 @@
 /// `replace` (le retour ne rejoue pas les filtres un a un). Une valeur
 /// inconnue est ignoree.
 ///
-/// **Pourquoi une page et pas un filtre de la file** : la file est paginee au
-/// serveur (`lister_candidatures`), qui ne connait ni la pile ni l'etiquette ;
-/// filtrer une page de 50 a l'ecran mentirait sur le reste. Ici, tout vient de
+/// **Pourquoi une page et pas seulement un filtre de la file** : la page dit la
+/// raison et l'avis de Praxis ; depuis PE-LISTE-CANDIDATURES, la file sait
+/// aussi filtrer par pile et par etiquette au serveur (`pilePraxis`,
+/// `etiquettePraxis`), et « Traiter ces dossiers dans la liste » y mene. Ici, tout vient de
 /// `direction_praxis_rangements` et `direction_praxis_impressions`, lues en
 /// entier ; les nombres par pile et par etiquette sont ceux du serveur.
 ///
@@ -31,6 +32,8 @@ import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/agent/travail_praxis.dart';
+import '../../core/candidature/modeles_candidature.dart';
+import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -50,6 +53,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/section_header.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/status_pill.dart';
+import 'adresse_candidatures.dart';
 import 'libelles_praxis.dart';
 import 'objectifs_praxis.dart';
 
@@ -132,6 +136,9 @@ class TravailPraxisPage extends ConsumerStatefulWidget {
 
   /// La cle de la page.
   static const Key clePage = ValueKey<String>('travail-praxis-page');
+
+  /// PE-LISTE-CANDIDATURES : « Traiter ces dossiers dans la liste ».
+  static const Key cleVoirListe = ValueKey<String>('travail-praxis-voir-liste');
 
   /// La pastille du filtre par pile [pile].
   static Key clePile(PilePraxis pile) =>
@@ -373,6 +380,34 @@ class _TravailPraxisPageEtat extends ConsumerState<TravailPraxisPage> {
             Theme.of(context).textTheme.bodySmall ?? const TextStyle(),
           ),
         ),
+        // PE-LISTE-CANDIDATURES : la liste sait desormais filtrer par pile et
+        // par etiquette au serveur ; une pile ou une etiquette choisie se
+        // traite la, en groupe (selection de tous les resultats, gestes
+        // groupes), de la plus ancienne a la plus recente.
+        if ((pile != null || etiquette != null) &&
+            filtres.isNotEmpty) ...<Widget>[
+          Ecart.vSm,
+          LienFleche(
+            key: TravailPraxisPage.cleVoirListe,
+            libelle: tr.voirListe,
+            alignerEnDebut: true,
+            onPress: () => GoRouter.of(context).go(
+              Uri(
+                path: Routes.adminPersonnesCandidatures,
+                queryParameters: requeteEnAdresse(
+                  RequeteCandidatures(
+                    filtre: FiltreCandidatures(
+                      issue: IssueCandidature.enCours,
+                      pilePraxis: pile?.sql,
+                      etiquettePraxis: etiquette?.sql,
+                    ),
+                    tri: TriCandidatures.ancienne,
+                  ),
+                ),
+              ).toString(),
+            ),
+          ),
+        ],
         Ecart.vMd,
         if (filtres.isEmpty)
           EmptyState(

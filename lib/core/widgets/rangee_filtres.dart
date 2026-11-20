@@ -8,6 +8,7 @@ import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_palette.dart';
 import '../theme/app_spacing.dart';
+import 'action_principale.dart';
 import 'app_bottom_sheet.dart';
 import 'bouton_icone.dart';
 import 'filter_pill.dart';
@@ -66,8 +67,53 @@ class RangeeFiltres extends StatefulWidget {
     this.replier = true,
     this.visiblesMax = RenduRangeeFiltres.puces,
     this.enPanneau = false,
+    this.onEffacer,
     super.key,
   });
+
+  /// PE-D3 (directeur, 19/11/2026 : « Effacer » visible dans la feuille des
+  /// filtres) : relache tous les filtres de l'ecran, quand l'ecran sait le
+  /// faire d'un coup. Nul (par defaut) : la feuille « Plus » relache elle-meme
+  /// les puces qu'elle range ([effacables]) ; si l'une d'elles ne sait pas se
+  /// relacher, « Tout effacer » n'est pas propose (jamais un bouton qui ne
+  /// peut pas aboutir).
+  final VoidCallback? onEffacer;
+
+  /// La cle de « Tout effacer » dans la feuille « Plus » (tests).
+  static const Key cleEffacerFeuille = ValueKey<String>(
+    'rangee-filtres-feuille-effacer',
+  );
+
+  /// Ce qui relache [filtres] retenus, puce par puce, ou `null` quand l'une
+  /// d'elles ne sait pas se relacher, ou quand aucune n'est retenue.
+  ///
+  /// Une `FilterPill` retenue se relache en la touchant (son contrat) ; un
+  /// `MenuFiltre` en choisissant l'entree « tous » (valeur nulle). Une puce
+  /// composee qui se declare retenue ([PuceFiltre]) n'a pas de geste connu.
+  static VoidCallback? effacables(Iterable<Widget> filtres) {
+    final List<VoidCallback> gestes = <VoidCallback>[];
+    for (final Widget w in filtres) {
+      switch (w) {
+        case final FilterPill p when p.retenue:
+          final VoidCallback? geste = p.onPress;
+          if (geste == null) return null;
+          gestes.add(geste);
+        case final MenuFiltre<Object?> m
+            when !m.selecteurDeSection && m.valeur != null:
+          gestes.add(m.relacher);
+        case final PuceFiltre p when p.retenue:
+          return null;
+        default:
+          break;
+      }
+    }
+    if (gestes.isEmpty) return null;
+    return () {
+      for (final VoidCallback geste in gestes) {
+        geste();
+      }
+    };
+  }
 
   /// LISTES-3 (directeur, 01/11/2026, `DECISION-LISTES-2026-10-23.md`
   /// §5 quater : « peu d'elements qui ne sont utiles qu'une seule fois, comme
@@ -354,27 +400,49 @@ class _RangeeFiltresState extends State<RangeeFiltres> {
   }
 
   /// Ouvre la feuille des filtres ranges sous « Plus ».
+  ///
+  /// PE-D3 (directeur, 19/11/2026) : chaque filtre y prend **toute la
+  /// largeur** de la feuille, un par ligne (un doigt n'a plus a viser une
+  /// puce au milieu d'un nuage), et « Tout effacer » reste au pied de la
+  /// feuille, visible sans defiler, tant qu'un filtre est retenu.
   Future<void> _ouvrirFeuille(BuildContext context) {
     final int depuis = _visibles;
+    List<Widget> ranges() => <Widget>[
+      for (int i = depuis; i < widget.filtres.length; i++) widget.filtres[i],
+    ];
+    VoidCallback? effacer() {
+      final List<Widget> filtres = ranges();
+      if (!filtres.any(_retenu)) return null;
+      return widget.onEffacer ?? RangeeFiltres.effacables(filtres);
+    }
+
     return AppBottomSheet.ouvrir<void>(
       context,
       titre: t.commun.filtres.titreFeuille,
       constructeur: (BuildContext _) => ListenableBuilder(
         listenable: _version,
-        builder: (BuildContext _, Widget? _) => LayoutBuilder(
-          builder: (BuildContext _, BoxConstraints contraintes) => Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: <Widget>[
-              for (int i = depuis; i < widget.filtres.length; i++)
-                _PuceBornee(
-                  largeurMax: contraintes.maxWidth,
-                  child: widget.filtres[i],
-                ),
-            ],
-          ),
+        builder: (BuildContext _, Widget? _) => Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          spacing: AppSpacing.sm,
+          children: ranges(),
         ),
       ),
+      actions: effacer() == null
+          ? null
+          : (BuildContext _) => ListenableBuilder(
+              listenable: _version,
+              builder: (BuildContext _, Widget? _) {
+                final VoidCallback? geste = effacer();
+                // Tout est relache : plus rien a effacer, le bouton part.
+                if (geste == null) return const SizedBox.shrink();
+                return ActionPrincipale(
+                  key: RangeeFiltres.cleEffacerFeuille,
+                  libelle: t.commun.listes.toutEffacer,
+                  niveau: NiveauAction.secondaire,
+                  onPress: geste,
+                );
+              },
+            ),
     );
   }
 
