@@ -355,8 +355,10 @@ SELECT pg_temp.vrai((SELECT array_agg(p.oid::regprocedure::text ORDER BY p.prona
           'praxis_objectif_clore(text,uuid,text,text)', 'praxis_objectif_fixer(text,text,date,text,integer,uuid)',
           'praxis_objectifs_lire(text,text,integer)', 'praxis_ouvrir(text,text,text,text,uuid)',
           'praxis_preparer(text,text,text,jsonb,text,uuid)', 'praxis_question_traitee(text,uuid)',
+          -- PX-5 (20261130300000) : deux outils neufs, et eux seuls : les questions ouvertes et le retrait d'une question (ordre des noms).
+          'praxis_questions_ouvertes(text,integer)',
           'praxis_ranger(text,text,text,text,uuid)', 'praxis_rendre_compte(text,integer)',
-          'praxis_reponses_equipe(text,integer)',
+          'praxis_reponses_equipe(text,integer)', 'praxis_retirer_question(text,uuid,text)',
           'praxis_terminer(text,text,integer,integer,integer,integer,text)'],
   'R2 : la liste des fonctions public.praxis_* est exactement la liste blanche ecrite ici (dix outils + praxis_noter_refus, M4 ; PX-2 : lire et preparer ; PRAXIS-ROUTINE : terminer ; PX-SUIVI : demander_equipe, reponses_equipe, question_traitee ; PX-3 : ranger, objectif_fixer, objectif_clore, objectifs_lire)');
 SELECT pg_temp.vrai((SELECT bool_and(has_function_privilege('service_role', p.oid, 'EXECUTE')
@@ -409,7 +411,10 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
           -- premier a un candidat) : c'est la seule ecriture d'une fonction praxis_* dans public.com_fils. Le message passe toujours par
           -- private.com_envoyer_message_interne. Aucune ecriture dans un dossier, un compte, un droit.
           'public.praxis_noter_impression>private.praxis_impressions', 'public.praxis_ouvrir>private.praxis_ouvertures',
-          'public.praxis_ouvrir>public.com_fils']) x),
+          'public.praxis_ouvrir>public.com_fils',
+          -- PX-5 : retirer_question remplit les deux colonnes neuves de SA question (jamais d'effacement) ; la porte neuve de la direction
+          -- regle le plafond des ouvertures (aal2, journalisee), comme direction_praxis_regler_plafond.
+          'public.praxis_retirer_question>private.praxis_questions', 'public.direction_praxis_regler_ouvertures>private.praxis_reglages']) x),
   'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier, propositions, tirs, questions, piles et objectifs (PX-3) ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
 -- R4 (suite, AR-10) : les ecritures INDIRECTES. TOUT appel qualifie `schema.fonction(` fait par une fonction praxis_*, private.praxis_* ou
 -- direction_praxis_* (schemas public, private, auth, extensions, tout schema hors pg_catalog) est dans une liste fermee ecrite ici. Un appel
@@ -445,6 +450,8 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.praxis_decision_positive', 'private.praxis_dossier_ouvert', 'private.praxis_fil_candidature', 'private.praxis_heure_locale',
           'private.praxis_impression_mot_interdit', 'private.praxis_impressions', 'private.praxis_ouverture_refus', 'private.praxis_ouvertures',
           'private.praxis_reponses', 'public.com_fils',
+          -- PX-5 : l'aide neuve qui dit ou en est le dossier d'une conversation (lue par boite et fil).
+          'private.praxis_dossier_resume',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
   'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (59 noms : 42, plus 7 de PX-3, plus 10 de PX-4) ; aucun autre appel de public, private ou d''un autre schema');
 
@@ -497,9 +504,12 @@ SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identi
           'praxis_ouvrir(p_cle text, p_candidature text, p_raison text, p_texte text, p_cle_idempotence uuid)',
           'praxis_preparer(p_cle text, p_geste text, p_candidature text, p_parametres jsonb, p_texte text, p_cle_idempotence uuid)',
           'praxis_question_traitee(p_cle text, p_question uuid)',
+          -- PX-5 : une limite bornee ; une question (uuid) et un motif dans une liste fermee. Aucun texte libre.
+          'praxis_questions_ouvertes(p_cle text, p_limite integer)',
           'praxis_ranger(p_cle text, p_candidature text, p_pile text, p_raison text, p_cle_idempotence uuid)',
           'praxis_rendre_compte(p_cle text, p_heures integer)',
           'praxis_reponses_equipe(p_cle text, p_limite integer)',
+          'praxis_retirer_question(p_cle text, p_question uuid, p_motif text)',
           'praxis_terminer(p_cle text, p_issue text, p_lus integer, p_envoyes integer, p_passes integer, p_refus integer, p_note text)'],
   'R1 : les arguments de chaque outil public sont exactement ceux ecrits ici (aucun argument « requete » ni regclass ; jsonb seulement pour le filtre de praxis_lire et les parametres de praxis_preparer, valides contre des listes fermees ; les seuls textes sont les champs bornes listes)');
 SELECT pg_temp.vrai((SELECT count(*) FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace

@@ -560,11 +560,21 @@ SELECT pg_temp.verif_annule('OUVRIR plafond : 3 relances en tout par personne',
     SELECT pg_temp.c('24'), 'relance', gen_random_uuid(), gen_random_uuid(), o.cle_id, o.emise_par, gen_random_uuid(), now() - interval '30 days'
       FROM (SELECT cle_id, emise_par FROM private.praxis_ouvertures LIMIT 1) o, generate_series(1, 3)$$,
   $$SELECT pg_temp.ouvrir('both', '24', 'relance', '370') ->> 'erreur' = 'plafond_relances'$$);
-SELECT pg_temp.verif_annule('OUVRIR plafond : 25 ouvertures par jour au total',
+-- PX-5 (20261130300000, directeur 20/11/2026 : « releve le plafond a 100 toutes les 5h ») : le plafond n'est plus de 25 par 24 heures mais
+-- de 100 par fenetre GLISSANTE de 5 heures (private.praxis_reglages). La fixture complete jusqu'a 100 ouvertures dans les 5 heures : refus ;
+-- les memes, posees il y a 6 heures, sont hors de la fenetre : plus de refus de plafond.
+SELECT pg_temp.verif_annule('OUVRIR plafond (PX-5) : 100 ouvertures par 5 heures glissantes, au total',
   $$INSERT INTO private.praxis_ouvertures (candidature_id, raison, fil_id, message_id, cle_id, emise_par, cle_idempotence, ouverte_le)
-    SELECT gen_random_uuid(), 'question', gen_random_uuid(), gen_random_uuid(), o.cle_id, o.emise_par, gen_random_uuid(), now() - interval '2 hours'
-      FROM (SELECT cle_id, emise_par FROM private.praxis_ouvertures LIMIT 1) o, generate_series(1, 24)$$,
+    SELECT gen_random_uuid(), 'question', gen_random_uuid(), gen_random_uuid(), o.cle_id, o.emise_par, gen_random_uuid(), now() - interval '4 hours'
+      FROM (SELECT cle_id, emise_par FROM private.praxis_ouvertures LIMIT 1) o,
+           generate_series(1, 100 - (SELECT count(*)::int FROM private.praxis_ouvertures x
+                                      WHERE x.raison <> 'felicitations' AND x.ouverte_le > now() - interval '5 hours'))$$,
   $$SELECT pg_temp.ouvrir('both', '24', 'relance', '371') ->> 'erreur' = 'plafond_ouvertures' AND pg_temp.ouvrir('both', '23', 'question', '372') ->> 'erreur' = 'plafond_ouvertures'$$);
+SELECT pg_temp.verif_annule('OUVRIR plafond (PX-5) : des ouvertures de plus de 5 heures ne comptent plus',
+  $$INSERT INTO private.praxis_ouvertures (candidature_id, raison, fil_id, message_id, cle_id, emise_par, cle_idempotence, ouverte_le)
+    SELECT gen_random_uuid(), 'question', gen_random_uuid(), gen_random_uuid(), o.cle_id, o.emise_par, gen_random_uuid(), now() - interval '6 hours'
+      FROM (SELECT cle_id, emise_par FROM private.praxis_ouvertures LIMIT 1) o, generate_series(1, 150)$$,
+  $$SELECT pg_temp.ouvrir('both', '23', 'question', '372') ->> 'erreur' IS DISTINCT FROM 'plafond_ouvertures'$$);
 SELECT pg_temp.verif_annule('OUVRIR plafond horaire des envois : partage avec ecrire',
   $$UPDATE private.praxis_reglages SET envois_par_heure = 1$$,
   $$SELECT pg_temp.ouvrir('both', '24', 'relance', '373') ->> 'erreur' = 'plafond'$$);
@@ -657,9 +667,12 @@ SELECT pg_temp.verif('ENTRETIEN ne decide rien : l''etape et l''etat du dossier 
   SELECT (SELECT c.etape = 'verifications' AND c.etat = 'entretien_a_planifier' FROM public.candidatures c WHERE c.id = pg_temp.c('21'))
      AND NOT EXISTS (SELECT 1 FROM private.praxis_propositions) AND NOT EXISTS (SELECT 1 FROM public.candidature_dispenses_entretien)
      AND (SELECT count(*) FROM public.candidature_evenements) = 4 $$);
-SELECT pg_temp.verif('ETAT : le plafond des ouvertures est lisible (25 par 24 heures, moins les questions, relances et entretiens envoyes)', $$
-  SELECT (e ->> 'ouverturesRestantesJour')::int = 25 - (SELECT count(*) FROM private.praxis_ouvertures o WHERE o.raison <> 'felicitations')::int
-     AND (e ->> 'ouverturesRestantesJour')::int = 22 AND e ? 'plafondRestantHeure' AND e ? 'annoncesRestantesJour' AND e ->> 'actif' = 'true'
+-- PX-5 : 100 par 5 heures glissantes ; ouverturesRestantesFenetre est le nom clair, ouverturesRestantesJour est gardee (meme valeur).
+SELECT pg_temp.verif('ETAT : le plafond des ouvertures est lisible (PX-5 : 100 par 5 heures, moins les questions, relances et entretiens envoyes)', $$
+  SELECT (e ->> 'ouverturesRestantesFenetre')::int = 100 - (SELECT count(*) FROM private.praxis_ouvertures o WHERE o.raison <> 'felicitations')::int
+     AND (e ->> 'ouverturesRestantesFenetre')::int = 97 AND (e ->> 'ouverturesRestantesJour')::int = 97
+     AND (e ->> 'ouverturesParFenetre')::int = 100 AND (e ->> 'ouverturesFenetreHeures')::int = 5
+     AND e ? 'plafondRestantHeure' AND e ? 'annoncesRestantesJour' AND e ->> 'actif' = 'true'
     FROM (SELECT pg_temp.srv(format('SELECT public.praxis_etat(%L)', pg_temp.k('both'))) AS e) x $$);
 SELECT pg_temp.verif('JOURNAL dialogue : chaque refus de l''ouverture laisse une ligne sous ecrire', $$
   SELECT (SELECT count(DISTINCT j.issue) FROM private.praxis_journal j WHERE j.outil = 'ecrire' AND j.issue IN ('ok', 'rejoue', 'ouverture_recente', 'raison_requise',
