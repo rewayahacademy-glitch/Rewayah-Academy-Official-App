@@ -518,7 +518,19 @@ class NavShell extends StatelessWidget {
   static const int maxDestinations = 4;
 
   /// Hauteur minimale de la barre basse flottante, hors zone sure.
-  static const double hauteurBarre = 64;
+  ///
+  /// PE-E3 (directeur, 19/11/2026 : « barre du bas moins haute, zones
+  /// tactiles plus genereuses ») : la hauteur de la capsule de l'onglet ouvert
+  /// (une cible de 48) et un retrait de 4 de chaque cote, et plus 64. La
+  /// capsule est concentrique a la pilule (rayon interieur = rayon exterieur
+  /// moins la marge : deux arrondis pleins).
+  static const double hauteurBarre =
+      AppTouchTarget.standard + 2 * retraitCapsule;
+
+  /// PE-E3 : le retrait de la capsule (et de chaque icone) dans la pilule.
+  /// Ce retrait fait partie de la zone tactile de l'onglet : toucher le bord
+  /// de la pilule au droit d'un onglet ouvre cet onglet.
+  static const double retraitCapsule = AppSpacing.xs;
 
   /// Epaisseur du soulignement de la destination active de la barre basse.
   /// Gardee pour la colonne laterale ; la barre flottante n'a plus de
@@ -978,14 +990,11 @@ class _BarreFlottante extends StatelessWidget {
                   ),
                 ),
               )
+            // PE-E3 : aucun retrait autour de la rangee. Chaque onglet prend
+            // toute sa colonne, bord de la pilule compris (zone tactile), et
+            // pose lui-meme sa capsule a 4 du bord ([NavShell.retraitCapsule]).
             : Padding(
-                // 4 de chaque cote : les icones fermees gardent 16 jusqu'au
-                // bord (cible de 48, icone de 24), et l'onglet ouvert la place
-                // de son nom a 320 en texte x2.
-                padding: const EdgeInsets.symmetric(
-                  horizontal: AppSpacing.xs,
-                  vertical: AppSpacing.sm,
-                ),
+                padding: EdgeInsets.zero,
                 child: MediaQuery.withClampedTextScaling(
                   maxScaleFactor: NavShell.echelleTexteMaxBarre,
                   // La part de la goutte dans la pilule : entre son fond et
@@ -1083,7 +1092,12 @@ class _BarreFlottante extends StatelessWidget {
     final List<Destination> onglets = _onglets;
     final int? actif = _actifOnglet;
     const double cible = AppTouchTarget.standard;
+    const double retrait = NavShell.retraitCapsule;
+    // La largeur ou se posent les capsules (celle d'avant PE-E3, quand la
+    // pilule avait 4 de marge interieure de chaque cote).
+    final double interieur = c.maxWidth - 2 * retrait;
     bool empile = false;
+    double? capsuleOuverte;
     if (actif != null && c.maxWidth.isFinite) {
       final TextStyle style = AppTypography.graisse(
         Theme.of(contexte).textTheme.labelLarge ?? const TextStyle(),
@@ -1095,37 +1109,75 @@ class _BarreFlottante extends StatelessWidget {
         textScaler: MediaQuery.textScalerOf(contexte),
         maxLines: 1,
       )..layout();
-      final double besoin =
-          (onglets.length - 1) * cible +
-          AppSpacing.xxl +
-          AppSpacing.sm +
-          p.width +
-          2 * AppSpacing.md;
+      final double capsule = math.max(
+        cible,
+        // Arrondi au point superieur : la colonne ne coupe jamais le nom.
+        (AppSpacing.xxl + AppSpacing.sm + p.width + 2 * AppSpacing.md)
+            .ceilToDouble(),
+      );
       p.dispose();
-      empile = besoin > c.maxWidth;
+      empile = (onglets.length - 1) * cible + capsule > interieur;
+      if (!empile) capsuleOuverte = capsule;
     }
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: <Widget>[
-        for (int i = 0; i < onglets.length; i++)
-          i == actif
-              ? Flexible(
-                  child: _OngletBarre(
-                    key: cles.onglets[i],
-                    destination: onglets[i],
-                    actif: true,
-                    empile: empile,
-                    onAller: onAller,
-                  ),
-                )
-              : _OngletBarre(
-                  key: cles.onglets[i],
-                  destination: onglets[i],
-                  actif: false,
-                  empile: false,
-                  onAller: onAller,
+    // PE-E3 : la zone tactile de chaque onglet remplit toute sa colonne, en
+    // largeur comme en hauteur ; plus aucun vide entre deux onglets ou on
+    // touchait la pilule sans rien ouvrir. L'onglet ouvert garde la largeur
+    // de sa capsule et ses deux retraits ; les autres se partagent le reste
+    // a parts egales.
+    // L'onglet ouvert recoit en plus jusqu'a 16 de jeu, pris sur la place
+    // laissee par les cibles minimales des autres : sa capsule n'est jamais
+    // serree au point pres par la mesure de son nom.
+    final double? colonneOuverte = capsuleOuverte == null
+        ? null
+        : capsuleOuverte +
+              2 * retrait +
+              math.min(
+                AppSpacing.lg,
+                math.max(
+                  0,
+                  interieur - (onglets.length - 1) * cible - capsuleOuverte,
                 ),
-      ],
+              );
+    // Nom empile (place insuffisante) : les onglets fermes gardent la cible
+    // minimale, l'onglet ouvert prend tout le reste pour son nom (comme
+    // avant PE-E3). Aucun onglet ouvert : parts egales.
+    final double? ouverte =
+        colonneOuverte ??
+        (actif != null && empile
+            ? c.maxWidth - (onglets.length - 1) * cible
+            : null);
+    final List<double>? largeurs = c.maxWidth.isFinite
+        ? <double>[
+            for (int i = 0; i < onglets.length; i++)
+              ouverte == null
+                  ? c.maxWidth / onglets.length
+                  : i == actif
+                  ? ouverte
+                  : (c.maxWidth - ouverte) / (onglets.length - 1),
+          ]
+        : null;
+    Widget colonne(int i, Widget onglet) => largeurs == null
+        ? Expanded(child: onglet)
+        : SizedBox(width: largeurs[i], child: onglet);
+    // La hauteur de la rangee est celle de l'onglet le plus haut (la capsule
+    // et ses retraits, ou le nom empile) ; chaque colonne la prend entiere.
+    return IntrinsicHeight(
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          for (int i = 0; i < onglets.length; i++)
+            colonne(
+              i,
+              _OngletBarre(
+                cleDessin: cles.onglets[i],
+                destination: onglets[i],
+                actif: i == actif,
+                empile: i == actif && empile,
+                onAller: onAller,
+              ),
+            ),
+        ],
+      ),
     );
   }
 
@@ -1329,12 +1381,16 @@ class _BarreFlottante extends StatelessWidget {
 
 class _OngletBarre extends ConsumerWidget {
   const _OngletBarre({
-    super.key,
+    required this.cleDessin,
     required this.destination,
     required this.actif,
     required this.empile,
     required this.onAller,
   });
+
+  /// PE-E3 : la cle de ce que la goutte recouvre (la capsule ouverte, ou le
+  /// carre de l'icone), et non de toute la colonne tactile.
+  final GlobalKey cleDessin;
 
   final Destination destination;
   final bool actif;
@@ -1441,17 +1497,15 @@ class _OngletBarre extends ConsumerWidget {
               ),
             ),
           )
-        : Tooltip(
-            message: destination.libelle,
-            excludeFromSemantics: true,
-            child: SizedBox.square(
-              dimension: AppTouchTarget.standard,
-              child: Center(child: iconeEtBadge),
-            ),
+        : SizedBox.square(
+            dimension: AppTouchTarget.standard,
+            child: Center(child: iconeEtBadge),
           );
 
     // Un seul noeud par onglet : bouton, libelle, etat selectionne.
-    return Semantics(
+    // PE-E3 : le toucher couvre toute la colonne de l'onglet ; la capsule (ou
+    // l'icone) y est centree, a [NavShell.retraitCapsule] des bords.
+    final Widget onglet = Semantics(
       container: true,
       selected: actif,
       child: Pressable(
@@ -1461,8 +1515,21 @@ class _OngletBarre extends ConsumerWidget {
         },
         libelleSemantique: libelleAvecNouveaute(destination.libelle, nouveau),
         arrondiFocus: AppRadius.arrondiFull,
-        child: ExcludeSemantics(child: dessin),
+        child: ExcludeSemantics(
+          child: Center(
+            child: Padding(
+              padding: const EdgeInsets.all(NavShell.retraitCapsule),
+              child: KeyedSubtree(key: cleDessin, child: dessin),
+            ),
+          ),
+        ),
       ),
+    );
+    if (actif) return onglet;
+    return Tooltip(
+      message: destination.libelle,
+      excludeFromSemantics: true,
+      child: onglet,
     );
   }
 }
