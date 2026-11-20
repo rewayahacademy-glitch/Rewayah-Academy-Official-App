@@ -105,6 +105,12 @@ class MenuFiltre<T> extends StatelessWidget {
   /// Ce qui se passe quand une valeur est choisie.
   final void Function(T? valeur) onChoix;
 
+  /// PE-D3 : relache le filtre (l'entree « tous », valeur nulle), comme
+  /// « Tout effacer » de la feuille des filtres. Appele sur la valeur de son
+  /// propre type : un appel de [onChoix] vu comme `MenuFiltre<Object?>`
+  /// echouerait a l'execution (type de parametre plus etroit).
+  void relacher() => onChoix(null);
+
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
