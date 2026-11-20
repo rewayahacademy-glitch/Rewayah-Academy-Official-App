@@ -41719,12 +41719,12 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s8.blocs.3' => 'يمكنكم في أي وقت أن تطلبوا التحدث إلى الفريق: فيتولى شخص المحادثة، ولا يعود المساعد يرد عليكم فيها.',
 			'juridique.confidentialite.s8.blocs.4' => 'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
 			'juridique.confidentialite.s9.titre' => '٩. الأمان',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s9.blocs.0' => 'يطبّق الخادم قواعد الدخول. ووثائق الهوية في مساحة خاصة منفصلة عن الصور. لا توجد حماية مطلقة: إذا لاحظتم مشكلة فاكتبوا لنا.',
 			'juridique.confidentialite.s10.titre' => '١٠. الأطفال',
 			'juridique.confidentialite.s10.blocs.0' => 'يقدّم وليّ الأمر معلومات الطفل ويديرها. انظروا نص حماية الأطفال.',
 			'juridique.cookies.titre' => 'ملفات تعريف الارتباط',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.resume' => 'ما يحتفظ به التطبيق والموقع على جهازكم.',
 			'juridique.cookies.intro' => 'يحتفظ التطبيق والموقع بالقليل على جهازكم. هذا هو.',
 			'juridique.cookies.s1.titre' => '١. ما هي',
@@ -41733,8 +41733,6 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.blocs.0' => '- جلسة تسجيل الدخول.',
 			'juridique.cookies.s2.blocs.1' => '- تفضيلات العرض، مثل اللغة والمظهر.',
 			'juridique.cookies.s2.blocs.2' => '- ذاكرة مؤقتة محدودة يمكنكم مسحها.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s2.blocs.3' => '- على جهاز الطالب، رمزه الشخصي، ولا يغادر الجهاز أبدًا.',
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
@@ -42235,12 +42233,12 @@ extension on TraductionsAr {
 			'd1ter.messages.intro' => ({required Object prenom}) => 'أرسلت إليكم الإدارة هذه الرسائل عن ⁨${prenom}⁩.',
 			'd1ter.messages.introSoi' => 'أرسلت إليكم الإدارة هذه الرسائل.',
 			'd1ter.messages.transmisLe' => ({required Object date}) => 'أُرسلت في ⁨${date}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'd1ter.messages.erreur' => 'تعذّرت قراءة رسائل الأكاديمية: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'd1ter.notifications.message' => 'كتب إليكم ⁦${_root.commun.staff.designation}⁩.',
 			'd1ter.notifications.messageEnfant' => ({required Object prenom}) => 'كتب إليكم ⁦${_root.commun.staff.designation}⁩ عن ⁨${prenom}⁩.',
 			'd1ter.notifications.messageSoi' => 'كتب إليكم ⁦${_root.commun.staff.designation}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.regles.nonTenue' => 'حصة لم تُعقد',
 			'snt.regles.nonTenueDetail' => 'إذا لم ينضمّ أي معلم إلى القاعة عند هذه المدة، تؤجَّل الحصة: يُبلَّغ الفصل وتحدّد الإدارة الموعد الجديد في الجدول.',
 			'snt.regles.bornesNonTenue' => ({required Object min, required Object max}) => 'بين ⁨${min}⁩ و⁨${max}⁩ بعد البداية.',
@@ -42249,8 +42247,6 @@ extension on TraductionsAr {
 			'snt.notifications.seanceReporteeQuand' => ({required Object quand}) => 'لم تُعقد حصة ⁨${quand}⁩: لقد أُجّلت. الموعد الجديد قريبًا.',
 			'snt.salle.reporteeTitre' => 'حصة مؤجلة',
 			'snt.salle.reportee' => 'لم ينضمّ أي معلم إلى القاعة في الوقت: أُجّلت الحصة. الموعد الجديد قريبًا، وسيُبلَّغ به الفصل.',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.section' => 'حصص مؤجلة',
 			'snt.planning.intro' => 'لم ينضمّ أي معلم إلى القاعة في الوقت. حدّدوا الموعد الجديد لكل حصة: ستُعقد مع معلم الفصل.',
 			'snt.planning.ligne' => ({required Object classe}) => 'حصة مؤجلة للفصل ⁨${classe}⁩',
@@ -42751,12 +42747,12 @@ extension on TraductionsAr {
 			'push1.reglages.compteNonAutorise' => 'الإشعارات على الجهاز مخصصة للحسابات النشطة للبالغين. تبقى كل إشعاراتكم في صفحة الإشعارات.',
 			'push1.reglages.erreurTitre' => 'تعذّرت قراءة الإعدادات',
 			'push1.reglages.erreur' => 'تعذّرت قراءة إعداداتكم: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
+			_ => null,
+		} ?? switch (path) {
 			'push1.reglages.horsLigne' => 'تُغيَّر إعدادات الإشعارات حين يعود الاتصال.',
 			'push1.reglages.changementNonConfirme' => 'لم يتأكد التغيير بعد: ربما انقطع الاتصال. أعيدوا المحاولة بعد قليل.',
 			'nouveautes.badge' => 'جديد',
 			'nouveautes.lu' => 'جديد',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.titreSoi' => 'موقعي في البرنامج',
 			'suiviPedagogique.titre' => ({required Object prenom}) => 'موقع ⁨${prenom}⁩ في البرنامج',
 			'suiviPedagogique.etape' => 'مرحلة البرنامج',
@@ -42765,8 +42761,6 @@ extension on TraductionsAr {
 			'suiviPedagogique.reprisePage' => ({required Object page}) => 'الصفحة ⁨${page}⁩ من المصحف',
 			'suiviPedagogique.aFinirAvant' => 'تنتهي قبل',
 			'suiviPedagogique.aFinirAvantDate' => ({required Object numero, required Object mois, required Object annee, required Object prevue}) => '⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩، عدد الأسابيع المقررة: ⁨${prevue}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.rythme' => 'وتيرة التقدّم',
 			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(ecoulees, zero: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', one: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', two: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', few: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', many: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', other: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', ), 
 			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(ecoulees, zero: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', one: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', two: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', few: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', many: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', other: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', ), 
@@ -43267,12 +43261,12 @@ extension on TraductionsAr {
 			'motifs.signalement.presence.retards' => 'تأخر في الحضور في الحصص الأخيرة.',
 			'motifs.signalement.presence.prevenir' => 'نرجو إبلاغ الأكاديمية عند الغياب.',
 			'motifs.signalement.technique.son' => 'أعاق الصوت أو الاتصال الدرس.',
+			_ => null,
+		} ?? switch (path) {
 			'motifs.signalement.technique.essai' => 'يُنصح بتجربة الجهاز قبل الدرس.',
 			'motifs.signalement.technique.camera' => 'لم تعمل الكاميرا أو الميكروفون.',
 			'motifs.signalement.changement.classe' => 'تغيير الفصل قيد الدراسة.',
 			'motifs.signalement.changement.niveau' => 'لم يعد مستوى الفصل يبدو مناسبًا.',
-			_ => null,
-		} ?? switch (path) {
 			'motifs.signalement.changement.suite' => 'ستعود إليكم الأكاديمية للحديث في ذلك.',
 			'identiteProfil.age' => ({required Object n}) => '⁨${n}⁩ سنة',
 			'identiteProfil.classe' => ({required Object classe}) => 'الفصل ⁨${classe}⁩',
@@ -43281,8 +43275,6 @@ extension on TraductionsAr {
 			'identiteProfil.lecteurAdulte' => ({required Object prenom}) => '⁨${prenom}⁩، ملف بالغ',
 			'identiteProfil.lecteurAvecClasse' => ({required Object profil, required Object classe}) => '⁨${profil}⁩، ⁨${classe}⁩',
 			'presentationTuteur.titre' => 'طلبات العرض العادي',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.contexte' => 'يطلب طفل من أسرتك العرض العادي. القرار قرارك.',
 			'presentationTuteur.ligne' => ({required Object prenom}) => 'يطلب ⁨${prenom}⁩ العرض العادي.',
 			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'طُلب في ⁨${date}⁩ الساعة ⁨${heure}⁩',

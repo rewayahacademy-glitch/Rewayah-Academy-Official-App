@@ -69066,12 +69066,12 @@ extension on Traductions {
 			'admissions.refuser' => 'Refuser la demande',
 			'admissions.refuserContexte' => 'Choisissez la phrase que la personne recevra, puis écrivez le motif pour la direction. La personne ne voit jamais le motif.',
 			'admissions.refuserQuestion' => ({required Object deNom}) => 'Refuser la demande ${deNom} ?',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.refuserConsequence' => 'La personne reçoit un e‑mail « Nous ne pouvons pas donner suite ». Le refus s\'annule pendant sept jours.',
 			'admissions.motifInterne' => 'Motif, pour la direction',
 			'admissions.motifInterneAide' => 'Il reste dans le journal de la demande.',
 			'admissions.precisionsContexte' => 'La demande passe « à compléter ». La personne reçoit votre message par e‑mail et le retrouve sur sa page d\'attente.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.precisionsMessage' => 'Ce qui manque',
 			'admissions.precisionsAide' => 'Une ou deux phrases, en mots simples.',
 			'admissions.precisionsEnvoyer' => 'Envoyer la demande de précisions',
@@ -69080,8 +69080,6 @@ extension on Traductions {
 			'admissions.contactMessage' => 'Message',
 			'admissions.contactEnvoyer' => 'Envoyer le message',
 			'admissions.annulerRefus' => 'Annuler le refus',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.annulerRefusDetail' => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.',
 			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'L\'acceptation de la demande ${deNom} est annulée.',
 			'admissions.annulerAcceptationConsequence' => 'Son compte repasse en attente tout de suite.',
@@ -69582,12 +69580,12 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'dont ${n} personne qui a reçu le courriel d\'attente de fin octobre', other: 'dont ${n} personnes qui ont reçu le courriel d\'attente de fin octobre', ), 
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copier le lien d\'inscription',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Lien d\'inscription personnel',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'Cette personne n\'a pas laissé d\'adresse e-mail. Saisissez celle qu\'elle utilisera pour créer son compte : elle est enregistrée sur sa réponse, et le code ne sert qu\'avec elle. Aucun e-mail ne part : vous lui transmettez le lien vous-même.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'Adresse e-mail de la personne',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Préparer le lien',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Code personnel',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Lien personnel',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valable jusqu\'au ${date}, une seule fois, avec cette adresse seulement.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copier le lien',
@@ -69596,8 +69594,6 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Saisissez l\'adresse e-mail que la personne utilisera.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.',
@@ -70098,12 +70094,12 @@ extension on Traductions {
 			'calendrier.pauses.terminerChamp' => 'Dernier jour de la pause',
 			'calendrier.pauses.terminerEnvoyer' => 'Terminer la pause',
 			'calendrier.pauses.finInitiale' => ({required Object date}) => 'Fin d\'origine : ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.termineePar' => ({required Object nom}) => 'Terminée plus tôt par ${nom}',
 			'calendrier.pauses.refus.motifRequis' => 'Un motif d\'au moins trois lettres est demandé.',
 			'calendrier.pauses.refus.dejaDecidee' => 'Cette demande a déjà reçu une réponse. Rechargez la liste.',
 			'calendrier.pauses.refus.debutPasse' => 'Le mois a déjà commencé : cette pause ne peut plus être acceptée. Vous pouvez la refuser.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.refus.datesInvalides' => 'Le dernier jour doit être aujourd\'hui ou après, à moins d\'un an.',
 			'calendrier.pauses.refus.exceptionTropLongue' => ({required Object mois}) => 'Une pause d\'exception dure ${mois} mois au plus. Raccourcissez-la ; vous pourrez en accorder une nouvelle ensuite.',
 			'calendrier.pauses.refus.nonTerminable' => 'Cette pause est déjà terminée ou n\'est pas une pause d\'exception.',
@@ -70112,8 +70108,6 @@ extension on Traductions {
 			'calendrier.pauses.refus.inconnu' => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'pause.titre' => 'Pause des cours',
 			'pause.entree' => 'Demander une pause d\'un mois',
-			_ => null,
-		} ?? switch (path) {
 			'pause.sousTitre' => ({required Object dePrenom}) => 'Pause ${dePrenom}',
 			'pause.indisponible' => 'Les pauses n\'ont pas pu être ouvertes : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'pause.erreur' => 'Les pauses n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',

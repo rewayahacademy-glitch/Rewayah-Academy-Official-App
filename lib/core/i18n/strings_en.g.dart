@@ -41285,12 +41285,12 @@ extension on TraductionsEn {
 			'admissions.refuser' => 'Refuse the request',
 			'admissions.refuserContexte' => 'Choose the sentence the person will receive, then write the reason for the management. The person never sees the reason.',
 			'admissions.refuserQuestion' => ({required Object deNom}) => 'Refuse ${deNom}\'s request?',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.refuserConsequence' => 'The person receives a "We cannot proceed" email. The refusal can be undone for seven days.',
 			'admissions.motifInterne' => 'Reason, for the management',
 			'admissions.motifInterneAide' => 'It stays in the request\'s log.',
 			'admissions.precisionsContexte' => 'The request goes to "to complete". The person receives your message by email and finds it on their waiting page.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.precisionsMessage' => 'What is missing',
 			'admissions.precisionsAide' => 'One or two sentences, in simple words.',
 			'admissions.precisionsEnvoyer' => 'Send the request for clarification',
@@ -41299,8 +41299,6 @@ extension on TraductionsEn {
 			'admissions.contactMessage' => 'Message',
 			'admissions.contactEnvoyer' => 'Send the message',
 			'admissions.annulerRefus' => 'Undo the refusal',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.annulerRefusDetail' => 'The refusal can be undone for seven days: the request returns to "to handle". The person does not receive an email.',
 			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'The acceptance of ${deNom}\'s request is undone.',
 			'admissions.annulerAcceptationConsequence' => 'Their account goes back to pending straight away.',
@@ -41801,12 +41799,12 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'including ${n} person who received the end-of-October waiting email', other: 'including ${n} people who received the end-of-October waiting email', ), 
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copy the sign-up link',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Personal sign-up link',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'This person did not leave an email address. Enter the one they will use to create their account: it is saved on their answer, and the code works only with it. No email is sent: you pass the link on yourself.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'The person\'s email address',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Prepare the link',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Personal code',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Personal link',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valid until ${date}, once, with this address only.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copy the link',
@@ -41815,8 +41813,6 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'The preparation is not confirmed. Try again with the same address: you will get the same code.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'This application no longer awaits a link: it changed in the meantime. Close, then read it again.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'This person already has an address: their code goes out with the sending of personal codes.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Enter the email address the person will use.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'This address does not look like an email address. Check it.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'An account already exists at this address: the person can sign in with it.',
@@ -42317,12 +42313,12 @@ extension on TraductionsEn {
 			'calendrier.pauses.terminerChamp' => 'Last day of the break',
 			'calendrier.pauses.terminerEnvoyer' => 'End the break',
 			'calendrier.pauses.finInitiale' => ({required Object date}) => 'Original end: ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.termineePar' => ({required Object nom}) => 'Ended early by ${nom}',
 			'calendrier.pauses.refus.motifRequis' => 'A reason of at least three letters is required.',
 			'calendrier.pauses.refus.dejaDecidee' => 'This request has already been answered. Reload the list.',
 			'calendrier.pauses.refus.debutPasse' => 'The month has already started: this break can no longer be accepted. You can refuse it.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.refus.datesInvalides' => 'The last day must be today or later, within a year.',
 			'calendrier.pauses.refus.exceptionTropLongue' => ({required Object mois}) => 'An exceptional break lasts ${mois} months at most. Shorten it; you can then grant a new one.',
 			'calendrier.pauses.refus.nonTerminable' => 'This break is already ended or is not an exceptional break.',
@@ -42331,8 +42327,6 @@ extension on TraductionsEn {
 			'calendrier.pauses.refus.inconnu' => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
 			'pause.titre' => 'Class breaks',
 			'pause.entree' => 'Request a one-month break',
-			_ => null,
-		} ?? switch (path) {
 			'pause.sousTitre' => ({required Object dePrenom}) => '${dePrenom}\'s break',
 			'pause.indisponible' => 'The breaks could not be opened: the request may not have reached Rewayah. Try again in a moment.',
 			'pause.erreur' => 'The breaks could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
