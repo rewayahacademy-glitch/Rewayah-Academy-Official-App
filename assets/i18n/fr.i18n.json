@@ -265,6 +265,18 @@
     "prete": "Une nouvelle version de l'application est prête.",
     "recharger": "Recharger"
   },
+  "racine": {
+    "miseAJour": {
+      "mettre": "Mettre à jour",
+      "plusTard": "Plus tard"
+    },
+    "avis": {
+      "fermer": "Fermer l'avis"
+    },
+    "horsDirect": {
+      "masquer": "Masquer l'avis « Messages pas en direct »"
+    }
+  },
   "reseau": {
     "horsLigne": "Pas de réseau. Ce qui est déjà affiché reste consultable.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",

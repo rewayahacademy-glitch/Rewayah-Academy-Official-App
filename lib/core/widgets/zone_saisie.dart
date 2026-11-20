@@ -2,6 +2,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../accessibilite/sens_du_contenu.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../icons/app_icons.dart';
 import '../tc_bibliotheque/contenu_arabe.dart';
@@ -78,6 +79,7 @@ class ZoneSaisie extends StatelessWidget {
     this.actionClavier = TextInputAction.newline,
     this.onSubmitted,
     this.sens,
+    this.sensDeLaFrappe = false,
     this.contenu = false,
     this.pilule = false,
   }) : assert(minLignes >= 1 && maxLignes >= minLignes);
@@ -157,6 +159,12 @@ class ZoneSaisie extends StatelessWidget {
   /// (CARTES-PERSO-1b, `sensDeLaSaisie`).
   final TextDirection? sens;
 
+  /// Vrai : sans [sens] fixe, le champ prend le sens du texte TAPE, recalcule
+  /// a chaque frappe (PE-D11, directeur, 19/11/2026 : arabe de droite a
+  /// gauche, latin de gauche a droite, quelle que soit la langue de
+  /// l'interface) ; vide, celui de l'ecran. Le champ d'un message l'emploie.
+  final bool sensDeLaFrappe;
+
   /// Vrai quand ce que l'on saisit est du CONTENU (le nom, la description d'un
   /// document) : s'il est en arabe, il s'ecrit dans la police du contenu arabe
   /// (`styleContenuArabe`), comme il sera lu. Faux (defaut) : police de
@@ -219,14 +227,14 @@ class ZoneSaisie extends StatelessWidget {
     final String? libelle = this.libelle;
     final InputDecorationThemeData theme = Theme.of(context)
         .inputDecorationTheme;
-    final Widget champ = TextField(
+    Widget construire(TextDirection? sensChamp) => TextField(
       key: cleChamp,
       controller: controleur,
       focusNode: noeud,
       autofocus: autofocus,
       readOnly: lectureSeule,
       enableInteractiveSelection: !champDeCode,
-      textDirection: sens,
+      textDirection: sensChamp,
       style: contenu
           ? styleContenuArabe(
               controleur.text,
@@ -267,6 +275,17 @@ class ZoneSaisie extends StatelessWidget {
               ),
       ),
     );
+    // PE-D11 : le sens suit le texte tape, recalcule a chaque frappe.
+    final Widget champ = sensDeLaFrappe && sens == null
+        ? ValueListenableBuilder<TextEditingValue>(
+            valueListenable: controleur,
+            builder:
+                (BuildContext context, TextEditingValue valeur, Widget? _) =>
+                    construire(
+                      sensDeTexte(valeur.text, Directionality.of(context)),
+                    ),
+          )
+        : construire(sens);
     if (libelle == null) return champ;
     final Widget nomme = Semantics(label: libelle, child: champ);
     if (!(libelleVisible ?? envoi == null)) return nomme;
