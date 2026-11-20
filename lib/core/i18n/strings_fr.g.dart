@@ -29510,8 +29510,8 @@ class Traductions$recrutement$accueil$etat$fr {
 
 	// Translations
 
-	/// fr: 'Votre dossier n'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture : vérifiez votre connexion, puis réessayez.'
-	String get perime => 'Votre dossier n\'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture : vérifiez votre connexion, puis réessayez.';
+	/// fr: 'Votre dossier n'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture. Réessayez dans un instant.'
+	String get perime => 'Votre dossier n\'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture. Réessayez dans un instant.';
 
 	/// fr: 'Vous n'êtes pas connecté. Ce que vous voyez date de votre dernière lecture ; réessayez une fois la connexion revenue.'
 	String get horsLigne => 'Vous n\'êtes pas connecté. Ce que vous voyez date de votre dernière lecture ; réessayez une fois la connexion revenue.';
@@ -59578,7 +59578,7 @@ extension on Traductions {
 			'recrutement.accueil.lignes.reponsesDetail' => 'Vos langues, votre récitation, vos disponibilités et votre versement. Vous pouvez enregistrer et revenir plus tard.',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'Ranger l\'annonce : ${titre}',
 			'recrutement.accueil.annonce.rangee' => 'Annonce rangée dans l\'onglet Académie.',
-			'recrutement.accueil.etat.perime' => 'Votre dossier n\'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture : vérifiez votre connexion, puis réessayez.',
+			'recrutement.accueil.etat.perime' => 'Votre dossier n\'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture. Réessayez dans un instant.',
 			'recrutement.accueil.etat.horsLigne' => 'Vous n\'êtes pas connecté. Ce que vous voyez date de votre dernière lecture ; réessayez une fois la connexion revenue.',
 			'recrutement.accueil.messages.intro' => 'Écrivez à l\'académie : elle vous répond ici.',
 			_ => null,

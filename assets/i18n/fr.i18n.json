@@ -3144,7 +3144,7 @@
         "rangee": "Annonce rangée dans l'onglet Académie."
       },
       "etat": {
-        "perime": "Votre dossier n'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture : vérifiez votre connexion, puis réessayez.",
+        "perime": "Votre dossier n'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture. Réessayez dans un instant.",
         "horsLigne": "Vous n'êtes pas connecté. Ce que vous voyez date de votre dernière lecture ; réessayez une fois la connexion revenue."
       },
       "messages": {

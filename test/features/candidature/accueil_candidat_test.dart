@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/features/candidature/accueil_candidat.dart';
+import 'package:rewayah_academy/features/candidature/carte_reprise.dart';
 import 'package:rewayah_academy/features/candidature/ligne_etapes.dart';
 import 'package:rewayah_academy/features/candidature/onglet_academie.dart';
 import 'package:rewayah_academy/features/candidature/onglet_dossier.dart';
@@ -1162,13 +1163,16 @@ void main() {
         );
         dossier.erreurAJeter = Exception('panne');
         await _toucher(tester, find.byKey(OngletDossier.cleActualiser));
+        // La phrase qui dit l'etat est en haut de la page : on la montre.
+        await tester.ensureVisible(find.byKey(OngletDossier.clePerime));
+        await tester.pumpAndSettle();
         await capturerVue(tester, '$d/$nom');
+        // Chaque etat a son hote : le suivant repart d'un arbre vide.
+        await tester.pumpWidget(const SizedBox.shrink());
       }
     });
 
-    testWidgets('etat vide et chargement (Academie)', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('etat vide (Academie)', (WidgetTester tester) async {
       await monter(
         tester,
         langue: AppLocale.fr,
@@ -1178,6 +1182,9 @@ void main() {
         depart: '${Routes.attente}?onglet=academie',
       );
       await capturerVue(tester, '$d/etat-vide-academie');
+    });
+
+    testWidgets('etat chargement (Academie)', (WidgetTester tester) async {
       await monter(
         tester,
         langue: AppLocale.fr,

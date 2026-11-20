@@ -3144,7 +3144,7 @@
         "rangee": "Announcement put away in the Academy tab."
       },
       "etat": {
-        "perime": "Your file could not be updated. What you see dates from your last reading: check your connection, then try again.",
+        "perime": "Your file could not be updated. What you see dates from your last reading. Try again in a moment.",
         "horsLigne": "You are offline. What you see dates from your last reading; try again once the connection is back."
       },
       "messages": {

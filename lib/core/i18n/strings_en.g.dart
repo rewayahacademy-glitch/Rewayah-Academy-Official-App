@@ -14405,7 +14405,7 @@ class _Traductions$recrutement$accueil$etat$en extends Traductions$recrutement$a
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
-	@override String get perime => 'Your file could not be updated. What you see dates from your last reading: check your connection, then try again.';
+	@override String get perime => 'Your file could not be updated. What you see dates from your last reading. Try again in a moment.';
 	@override String get horsLigne => 'You are offline. What you see dates from your last reading; try again once the connection is back.';
 }
 
@@ -31416,7 +31416,7 @@ extension on TraductionsEn {
 			'recrutement.accueil.lignes.reponsesDetail' => 'Your languages, your recitation, your availability and your payout. You can save and come back later.',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'Put away the announcement: ${titre}',
 			'recrutement.accueil.annonce.rangee' => 'Announcement put away in the Academy tab.',
-			'recrutement.accueil.etat.perime' => 'Your file could not be updated. What you see dates from your last reading: check your connection, then try again.',
+			'recrutement.accueil.etat.perime' => 'Your file could not be updated. What you see dates from your last reading. Try again in a moment.',
 			'recrutement.accueil.etat.horsLigne' => 'You are offline. What you see dates from your last reading; try again once the connection is back.',
 			'recrutement.accueil.messages.intro' => 'Write to the academy: it answers you here.',
 			_ => null,

@@ -22366,7 +22366,7 @@ class _Traductions$recrutement$accueil$annonce$ar extends Traductions$recrutemen
 
 	// Translations
 	@override String ranger({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩';
-	@override String get rangee => 'حُفظ الإعلان في تبويب الأكاديمية.';
+	@override String get rangee => 'نُقل الإعلان إلى تبويب الأكاديمية.';
 }
 
 // Path: recrutement.accueil.etat
@@ -22376,7 +22376,7 @@ class _Traductions$recrutement$accueil$etat$ar extends Traductions$recrutement$a
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get perime => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة: تحقّق من اتصالك ثم أعد المحاولة.';
+	@override String get perime => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة. أعد المحاولة بعد قليل.';
 	@override String get horsLigne => 'أنت غير متصل. ما تراه يعود إلى آخر قراءة؛ أعد المحاولة عند عودة الاتصال.';
 }
 
@@ -41519,8 +41519,8 @@ extension on TraductionsAr {
 			'recrutement.accueil.lignes.photoDetail' => 'صورة لك من الأمام. تُعرَّف بها للأسر، بموافقتك فقط.',
 			'recrutement.accueil.lignes.reponsesDetail' => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩',
-			'recrutement.accueil.annonce.rangee' => 'حُفظ الإعلان في تبويب الأكاديمية.',
-			'recrutement.accueil.etat.perime' => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة: تحقّق من اتصالك ثم أعد المحاولة.',
+			'recrutement.accueil.annonce.rangee' => 'نُقل الإعلان إلى تبويب الأكاديمية.',
+			'recrutement.accueil.etat.perime' => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة. أعد المحاولة بعد قليل.',
 			'recrutement.accueil.etat.horsLigne' => 'أنت غير متصل. ما تراه يعود إلى آخر قراءة؛ أعد المحاولة عند عودة الاتصال.',
 			'recrutement.accueil.messages.intro' => 'اكتب إلى الأكاديمية: تجيبك هنا.',
 			'recrutement.accueil.messages.vide' => 'تُفتح المراسلة هنا فور تسجيل طلب ترشحك.',
