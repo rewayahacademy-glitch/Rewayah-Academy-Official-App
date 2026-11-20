@@ -26,6 +26,7 @@ import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart'
 import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 import 'package:rewayah_academy/features/inscription/inscription_page.dart';
 
+import '../../features/inscription/portes_aide.dart';
 import '../../support/harnais.dart';
 import '../../support/hote_theme.dart';
 
@@ -305,6 +306,8 @@ void main() {
     testWidgets('usage : deux choix egaux, explications, exemples, carte '
         'entiere cliquable', (WidgetTester tester) async {
       await monterInscription(tester);
+      // PE-A3 : les deux cartes suivent la porte « Apprendre ».
+      await passerApprendre(tester);
       const Key usage = Key('inscription-usage');
       Size carte(String titre) => tester.getSize(
         find
