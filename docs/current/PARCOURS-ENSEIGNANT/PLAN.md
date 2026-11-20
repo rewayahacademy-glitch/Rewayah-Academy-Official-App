@@ -880,3 +880,52 @@ fermeture, partout où cela s'applique.
 - Eau : plus réaliste, couleur de la marque, en boucle. Bulle : aimée, mais où la mettre « pour
   qu'elle fasse vraiment bon effet » ? Code à scanner : l'application doit le générer avec le
   logo et il doit vraiment se lire ; à généraliser aux imprimables et aux factures.
+
+## 16. Le tableau de bord en vrai Flutter (20/11/2026)
+
+Ordre du directeur : « refais le tableau de bord directement en Flutter […] ne fais pas du banal,
+surprends-moi ». Puis, en cours de travail : « je n'aime pas les bulles utilisées comme ça sur le
+dashboard, je préfère le style familier, mais que tu dois perfectionner et rendre plus
+intéressant ; n'ajoute pas de couleurs nouvelles à part celles de l'app ».
+
+**Remis au directeur, non confirmé.** Source : `preuve-flutter/bureau/` (trois fichiers Dart en
+`.txt`, sans paquet ajouté ; analyse Flutter sans erreur ; gestes essayés dans un navigateur).
+Fluidité sur ses appareils : non prouvée, le compteur d'images par seconde est dans la page.
+
+### 16.1 Ce que contient la maquette
+
+- **Praxis parle** : sa phrase s'écrit, dit le seul blocage du moment, propose la suite en
+  pilules ; il change d'humeur à chaque décision.
+- **La pile de pièces** : on valide en glissant la carte à droite, on redemande en la glissant à
+  gauche ; un tampon apparaît pendant le geste ; « Annuler » la remet sur la pile.
+- **Le parcours** : quatre tuiles larges comme leur groupe, remplies comme un niveau d'eau, avec
+  les visages des plus anciens ; des points passent d'une tuile à l'autre ; un cadenas marque le
+  blocage (aucun créneau). L'ouvrir fait passer les chiffres d'une tuile à l'autre.
+- **Les messages** : des bulles de conversation ; la réponse s'ouvre sur place, envoi par flèche.
+- **L'en-tête** : la recherche s'élargit ; le chiffre d'une icône roule et l'icône remue quand un
+  message tombe ; **la page des messages sort de l'icône et y rentre**.
+- **Le volet** d'une tuile (panneau sur ordinateur, feuille au téléphone), la barre latérale qui
+  s'ouvre au survol avec sa capsule liquide, la barre du bas au téléphone, clair et sombre.
+- Une version « fleuve de bulles » a été écrite puis retirée sur l'avis du directeur.
+
+### 16.2 Règles de style ajoutées par le directeur
+
+- Pas de bulles comme structure d'un tableau de bord : le style familier (tuiles, cartes),
+  perfectionné et vivant.
+- Aucune couleur hors de la palette de l'application (visages, larmes et illustrations compris).
+
+### 16.3 Installer l'application hors des boutiques (réponse donnée au directeur)
+
+- **Android** : oui. Flutter produit un fichier d'installation (APK) ; on le propose en
+  téléchargement sur le site ; la personne autorise une fois « installer des applications
+  inconnues ». Vraie application native (pas un site emballé). Pas de commission.
+  Mises à jour : pas de boutique, donc l'application doit vérifier elle-même sa version et
+  proposer le nouveau fichier ; la personne confirme l'installation à chaque fois.
+- **Windows** : oui. Flutter produit une application Windows ; sans certificat de signature
+  (payant, annuel), Windows affiche un avertissement à l'installation. Mises à jour : possibles
+  automatiquement avec le format d'installation de Windows, à mettre en place.
+- **iPhone** : non, hors de l'Union européenne ; l'application web reste la voie.
+- **Sans rien construire** : l'application web s'installe déjà depuis Chrome ou Edge (« Installer
+  l'application »), sur Android et Windows : icône, fenêtre à elle, mises à jour toutes seules.
+- Non fait, non essayé : aucune de ces constructions n'a été lancée. La construction Windows
+  demande une machine Windows ; l'Android se construit dans la CI.
