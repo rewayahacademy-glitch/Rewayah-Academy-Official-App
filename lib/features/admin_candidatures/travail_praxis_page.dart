@@ -230,9 +230,25 @@ class _TravailPraxisPageEtat extends ConsumerState<TravailPraxisPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          TexteSansCoupure(tr.intro, style: attenue),
-          Ecart.vXs,
-          TexteSansCoupure(tr.rappel, style: attenue),
+          // Largeur de lecture : sur un ecran d'ordinateur, ces deux phrases
+          // ne s'etirent pas sur toute la page (garde du bureau, regle B4).
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppPage.largeurLecture,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  TexteSansCoupure(tr.intro, style: attenue),
+                  Ecart.vXs,
+                  TexteSansCoupure(tr.rappel, style: attenue),
+                ],
+              ),
+            ),
+          ),
           Ecart.vXl,
           const ObjectifsPraxis(),
           Ecart.vXxl,

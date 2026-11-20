@@ -91,7 +91,7 @@ class ObjectifsPraxis extends ConsumerWidget {
         registre: RegistreVide.subi,
       );
     } else {
-      corps = _Contenu(objectifs: lus.requireValue);
+      corps = _Lecture(child: _Contenu(objectifs: lus.requireValue));
     }
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -99,12 +99,29 @@ class ObjectifsPraxis extends ConsumerWidget {
       children: <Widget>[
         SectionHeader(titre: o.titre),
         Ecart.vXs,
-        TexteSansCoupure(o.intro, style: attenue),
+        _Lecture(child: TexteSansCoupure(o.intro, style: attenue)),
         Ecart.vMd,
         corps,
       ],
     );
   }
+}
+
+/// Largeur de lecture : sur un ecran d'ordinateur, un texte suivi ne
+/// s'etire pas sur toute la page (garde du bureau, regle B4).
+class _Lecture extends StatelessWidget {
+  const _Lecture({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) => Align(
+    alignment: AlignmentDirectional.centerStart,
+    child: ConstrainedBox(
+      constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
+      child: child,
+    ),
+  );
 }
 
 class _Contenu extends StatelessWidget {

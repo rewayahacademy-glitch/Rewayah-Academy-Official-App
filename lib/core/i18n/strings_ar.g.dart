@@ -19789,7 +19789,7 @@ class _Traductions$admin$praxis$travail$ar extends Traductions$admin$praxis$trav
 	// Translations
 	@override String get titre => 'عمل Praxis';
 	@override String get lien => 'عمل Praxis';
-	@override String lienDetail({required Object n}) => 'الملفات التي صنّفها Praxis: ${n}';
+	@override String lienDetail({required Object n}) => 'الملفات التي صنّفها Praxis: ⁨${n}⁩';
 	@override String get intro => 'ما قام به Praxis، مساعد الإدارة، في ملفات المترشحين للتدريس: الفئة التي يضع فيها كل ملف، ورأيه فيه.';
 	@override String get rappel => 'رأي من المساعد، وليس قرارًا.';
 	@override String get dossiers => 'الملفات المصنّفة والمقروءة';
@@ -19799,7 +19799,7 @@ class _Traductions$admin$praxis$travail$ar extends Traductions$admin$praxis$trav
 	@override String get toutesEtiquettes => 'كل التقييمات';
 	@override late final _Traductions$admin$praxis$travail$piles$ar piles = _Traductions$admin$praxis$travail$piles$ar._(_root);
 	@override late final _Traductions$admin$praxis$travail$etiquettes$ar etiquettes = _Traductions$admin$praxis$travail$etiquettes$ar._(_root);
-	@override String nombre({required Object n}) => 'الملفات المعروضة: ${n}';
+	@override String nombre({required Object n}) => 'الملفات المعروضة: ⁨${n}⁩';
 	@override String get colonneNom => 'المترشح';
 	@override String get colonnePile => 'الفئة';
 	@override String get colonneEtiquette => 'التقييم';
@@ -19807,7 +19807,7 @@ class _Traductions$admin$praxis$travail$ar extends Traductions$admin$praxis$trav
 	@override String get colonneDate => 'تاريخ الاطلاع';
 	@override String get pasLu => 'لم يُقرأ بعد';
 	@override String get pasRange => 'لم يُصنَّف';
-	@override String marque({required Object quoi}) => 'Praxis: ${quoi}';
+	@override String marque({required Object quoi}) => 'Praxis: ⁨${quoi}⁩';
 	@override String get vide => 'لم يصنّف Praxis أي ملف ولم يقرأه بعد.';
 	@override String get videDetail => 'ستظهر الملفات هنا بمجرد أن يصنّفها Praxis.';
 	@override String get aucunResultat => 'لا يوجد ملف يطابق هذه التصفية.';
@@ -19829,28 +19829,28 @@ class _Traductions$admin$praxis$avis$ar extends Traductions$admin$praxis$avis$fr
 	@override String get titre => 'رأي Praxis';
 	@override String get rappel => 'رأي من المساعد، وليس قرارًا.';
 	@override String get pasLu => 'لم يقرأ Praxis هذا الملف بعد.';
-	@override String confiance({required Object niveau}) => 'درجة الثقة: ${niveau}';
+	@override String confiance({required Object niveau}) => 'درجة الثقة: ⁨${niveau}⁩';
 	@override late final _Traductions$admin$praxis$avis$confiances$ar confiances = _Traductions$admin$praxis$avis$confiances$ar._(_root);
 	@override String get criteres => 'المعايير المقيَّمة';
 	@override late final _Traductions$admin$praxis$avis$critere$ar critere = _Traductions$admin$praxis$avis$critere$ar._(_root);
-	@override String note({required Object critere, required Object note}) => '${critere}: ${note} من 5';
+	@override String note({required Object critere, required Object note}) => '⁨${critere}⁩: ⁨${note}⁩ من 5';
 	@override String get synthese => 'الخلاصة';
-	@override String utilePour({required Object texte}) => 'مفيد في: ${texte}';
-	@override String situation({required Object texte}) => 'في أي وضع: ${texte}';
-	@override String reserves({required Object texte}) => 'التحفّظات: ${texte}';
+	@override String utilePour({required Object texte}) => 'مفيد في: ⁨${texte}⁩';
+	@override String situation({required Object texte}) => 'في أي وضع: ⁨${texte}⁩';
+	@override String reserves({required Object texte}) => 'التحفّظات: ⁨${texte}⁩';
 	@override String get videoOui => 'مقابلة بالفيديو: نعم';
 	@override String get videoNon => 'مقابلة بالفيديو: لا';
-	@override String videoOuiParce({required Object texte}) => 'مقابلة بالفيديو: نعم، لأن ${texte}';
-	@override String videoNonParce({required Object texte}) => 'مقابلة بالفيديو: لا، لأن ${texte}';
-	@override String videoParce({required Object texte}) => 'مقابلة بالفيديو: ${texte}';
+	@override String videoOuiParce({required Object texte}) => 'مقابلة بالفيديو: نعم، لأن ⁨${texte}⁩';
+	@override String videoNonParce({required Object texte}) => 'مقابلة بالفيديو: لا، لأن ⁨${texte}⁩';
+	@override String videoParce({required Object texte}) => 'مقابلة بالفيديو: ⁨${texte}⁩';
 	@override String get contexte => 'السياق';
 	@override late final _Traductions$admin$praxis$avis$effets$ar effets = _Traductions$admin$praxis$avis$effets$ar._(_root);
-	@override String source({required Object source}) => 'المصدر: ${source}';
+	@override String source({required Object source}) => 'المصدر: ⁨${source}⁩';
 	@override String get texte => 'ما كتبه Praxis';
-	@override String notee({required Object date, required Object heure}) => 'سُجّل الرأي يوم ${date} الساعة ${heure}';
+	@override String notee({required Object date, required Object heure}) => 'سُجّل الرأي يوم ⁨${date}⁩ الساعة ⁨${heure}⁩';
 	@override String get rangement => 'فئة Praxis';
-	@override String pile({required Object pile}) => 'صُنّف في: ${pile}';
-	@override String rangeLe({required Object date, required Object heure}) => 'صُنّف يوم ${date} الساعة ${heure}';
+	@override String pile({required Object pile}) => 'صُنّف في: ⁨${pile}⁩';
+	@override String rangeLe({required Object date, required Object heure}) => 'صُنّف يوم ⁨${date}⁩ الساعة ⁨${heure}⁩';
 	@override String get pasRange => 'لم يصنّف Praxis هذا الملف بعد.';
 	@override String get erreur => 'تعذّرت قراءة رأي Praxis. أعيدوا المحاولة بعد قليل.';
 	@override String get horsLigne => 'لم يُحمَّل رأي Praxis بعد. أعيدوا تحميله.';
@@ -19868,14 +19868,14 @@ class _Traductions$admin$praxis$objectifs$ar extends Traductions$admin$praxis$ob
 	@override String get jour => 'أهداف اليوم';
 	@override String get semaine => 'أهداف الأسبوع';
 	@override String get clos => 'أهداف أُغلقت مؤخرًا';
-	@override String cible({required Object n}) => 'العدد المستهدف: ${n}';
-	@override String pourLe({required Object date}) => 'ليوم ${date}';
-	@override String semaineDu({required Object date}) => 'أسبوع ${date}';
+	@override String cible({required Object n}) => 'العدد المستهدف: ⁨${n}⁩';
+	@override String pourLe({required Object date}) => 'ليوم ⁨${date}⁩';
+	@override String semaineDu({required Object date}) => 'أسبوع ⁨${date}⁩';
 	@override String get echu => 'انقضت المدة';
 	@override String get ouvert => 'مفتوح';
 	@override String get atteint => 'تحقّق';
 	@override String get abandonne => 'تُرك';
-	@override String closLe({required Object date}) => 'أُغلق يوم ${date}';
+	@override String closLe({required Object date}) => 'أُغلق يوم ⁨${date}⁩';
 	@override String get aucunJour => 'لا يوجد هدف مفتوح لليوم.';
 	@override String get aucunSemaine => 'لا يوجد هدف مفتوح للأسبوع.';
 	@override String get aucun => 'لم يضع Praxis أي هدف حتى الآن.';
@@ -36515,7 +36515,7 @@ extension on TraductionsAr {
 			'admin.praxis.cause.autre' => 'سبب غير معروف',
 			'admin.praxis.travail.titre' => 'عمل Praxis',
 			'admin.praxis.travail.lien' => 'عمل Praxis',
-			'admin.praxis.travail.lienDetail' => ({required Object n}) => 'الملفات التي صنّفها Praxis: ${n}',
+			'admin.praxis.travail.lienDetail' => ({required Object n}) => 'الملفات التي صنّفها Praxis: ⁨${n}⁩',
 			'admin.praxis.travail.intro' => 'ما قام به Praxis، مساعد الإدارة، في ملفات المترشحين للتدريس: الفئة التي يضع فيها كل ملف، ورأيه فيه.',
 			'admin.praxis.travail.rappel' => 'رأي من المساعد، وليس قرارًا.',
 			'admin.praxis.travail.dossiers' => 'الملفات المصنّفة والمقروءة',
@@ -36531,7 +36531,7 @@ extension on TraductionsAr {
 			'admin.praxis.travail.etiquettes.solide' => 'متين',
 			'admin.praxis.travail.etiquettes.aCreuser' => 'يستحق التعمّق',
 			'admin.praxis.travail.etiquettes.reserve' => 'عليه تحفّظ',
-			'admin.praxis.travail.nombre' => ({required Object n}) => 'الملفات المعروضة: ${n}',
+			'admin.praxis.travail.nombre' => ({required Object n}) => 'الملفات المعروضة: ⁨${n}⁩',
 			'admin.praxis.travail.colonneNom' => 'المترشح',
 			'admin.praxis.travail.colonnePile' => 'الفئة',
 			'admin.praxis.travail.colonneEtiquette' => 'التقييم',
@@ -36539,7 +36539,7 @@ extension on TraductionsAr {
 			'admin.praxis.travail.colonneDate' => 'تاريخ الاطلاع',
 			'admin.praxis.travail.pasLu' => 'لم يُقرأ بعد',
 			'admin.praxis.travail.pasRange' => 'لم يُصنَّف',
-			'admin.praxis.travail.marque' => ({required Object quoi}) => 'Praxis: ${quoi}',
+			'admin.praxis.travail.marque' => ({required Object quoi}) => 'Praxis: ⁨${quoi}⁩',
 			'admin.praxis.travail.vide' => 'لم يصنّف Praxis أي ملف ولم يقرأه بعد.',
 			'admin.praxis.travail.videDetail' => 'ستظهر الملفات هنا بمجرد أن يصنّفها Praxis.',
 			'admin.praxis.travail.aucunResultat' => 'لا يوجد ملف يطابق هذه التصفية.',
@@ -36552,7 +36552,7 @@ extension on TraductionsAr {
 			'admin.praxis.avis.titre' => 'رأي Praxis',
 			'admin.praxis.avis.rappel' => 'رأي من المساعد، وليس قرارًا.',
 			'admin.praxis.avis.pasLu' => 'لم يقرأ Praxis هذا الملف بعد.',
-			'admin.praxis.avis.confiance' => ({required Object niveau}) => 'درجة الثقة: ${niveau}',
+			'admin.praxis.avis.confiance' => ({required Object niveau}) => 'درجة الثقة: ⁨${niveau}⁩',
 			'admin.praxis.avis.confiances.faible' => 'ضعيفة',
 			'admin.praxis.avis.confiances.moyenne' => 'متوسطة',
 			'admin.praxis.avis.confiances.forte' => 'عالية',
@@ -36562,26 +36562,26 @@ extension on TraductionsAr {
 			'admin.praxis.avis.critere.vision' => 'الرؤية',
 			'admin.praxis.avis.critere.comportement' => 'السلوك',
 			'admin.praxis.avis.critere.disponibilite' => 'التفرّغ',
-			'admin.praxis.avis.note' => ({required Object critere, required Object note}) => '${critere}: ${note} من 5',
+			'admin.praxis.avis.note' => ({required Object critere, required Object note}) => '⁨${critere}⁩: ⁨${note}⁩ من 5',
 			'admin.praxis.avis.synthese' => 'الخلاصة',
-			'admin.praxis.avis.utilePour' => ({required Object texte}) => 'مفيد في: ${texte}',
-			'admin.praxis.avis.situation' => ({required Object texte}) => 'في أي وضع: ${texte}',
-			'admin.praxis.avis.reserves' => ({required Object texte}) => 'التحفّظات: ${texte}',
+			'admin.praxis.avis.utilePour' => ({required Object texte}) => 'مفيد في: ⁨${texte}⁩',
+			'admin.praxis.avis.situation' => ({required Object texte}) => 'في أي وضع: ⁨${texte}⁩',
+			'admin.praxis.avis.reserves' => ({required Object texte}) => 'التحفّظات: ⁨${texte}⁩',
 			'admin.praxis.avis.videoOui' => 'مقابلة بالفيديو: نعم',
 			'admin.praxis.avis.videoNon' => 'مقابلة بالفيديو: لا',
-			'admin.praxis.avis.videoOuiParce' => ({required Object texte}) => 'مقابلة بالفيديو: نعم، لأن ${texte}',
-			'admin.praxis.avis.videoNonParce' => ({required Object texte}) => 'مقابلة بالفيديو: لا، لأن ${texte}',
-			'admin.praxis.avis.videoParce' => ({required Object texte}) => 'مقابلة بالفيديو: ${texte}',
+			'admin.praxis.avis.videoOuiParce' => ({required Object texte}) => 'مقابلة بالفيديو: نعم، لأن ⁨${texte}⁩',
+			'admin.praxis.avis.videoNonParce' => ({required Object texte}) => 'مقابلة بالفيديو: لا، لأن ⁨${texte}⁩',
+			'admin.praxis.avis.videoParce' => ({required Object texte}) => 'مقابلة بالفيديو: ⁨${texte}⁩',
 			'admin.praxis.avis.contexte' => 'السياق',
 			'admin.praxis.avis.effets.atout' => 'نقطة قوة',
 			'admin.praxis.avis.effets.risque' => 'خطر',
 			'admin.praxis.avis.effets.aVerifier' => 'يحتاج إلى تحقّق',
-			'admin.praxis.avis.source' => ({required Object source}) => 'المصدر: ${source}',
+			'admin.praxis.avis.source' => ({required Object source}) => 'المصدر: ⁨${source}⁩',
 			'admin.praxis.avis.texte' => 'ما كتبه Praxis',
-			'admin.praxis.avis.notee' => ({required Object date, required Object heure}) => 'سُجّل الرأي يوم ${date} الساعة ${heure}',
+			'admin.praxis.avis.notee' => ({required Object date, required Object heure}) => 'سُجّل الرأي يوم ⁨${date}⁩ الساعة ⁨${heure}⁩',
 			'admin.praxis.avis.rangement' => 'فئة Praxis',
-			'admin.praxis.avis.pile' => ({required Object pile}) => 'صُنّف في: ${pile}',
-			'admin.praxis.avis.rangeLe' => ({required Object date, required Object heure}) => 'صُنّف يوم ${date} الساعة ${heure}',
+			'admin.praxis.avis.pile' => ({required Object pile}) => 'صُنّف في: ⁨${pile}⁩',
+			'admin.praxis.avis.rangeLe' => ({required Object date, required Object heure}) => 'صُنّف يوم ⁨${date}⁩ الساعة ⁨${heure}⁩',
 			'admin.praxis.avis.pasRange' => 'لم يصنّف Praxis هذا الملف بعد.',
 			'admin.praxis.avis.erreur' => 'تعذّرت قراءة رأي Praxis. أعيدوا المحاولة بعد قليل.',
 			'admin.praxis.avis.horsLigne' => 'لم يُحمَّل رأي Praxis بعد. أعيدوا تحميله.',
@@ -36590,14 +36590,14 @@ extension on TraductionsAr {
 			'admin.praxis.objectifs.jour' => 'أهداف اليوم',
 			'admin.praxis.objectifs.semaine' => 'أهداف الأسبوع',
 			'admin.praxis.objectifs.clos' => 'أهداف أُغلقت مؤخرًا',
-			'admin.praxis.objectifs.cible' => ({required Object n}) => 'العدد المستهدف: ${n}',
-			'admin.praxis.objectifs.pourLe' => ({required Object date}) => 'ليوم ${date}',
-			'admin.praxis.objectifs.semaineDu' => ({required Object date}) => 'أسبوع ${date}',
+			'admin.praxis.objectifs.cible' => ({required Object n}) => 'العدد المستهدف: ⁨${n}⁩',
+			'admin.praxis.objectifs.pourLe' => ({required Object date}) => 'ليوم ⁨${date}⁩',
+			'admin.praxis.objectifs.semaineDu' => ({required Object date}) => 'أسبوع ⁨${date}⁩',
 			'admin.praxis.objectifs.echu' => 'انقضت المدة',
 			'admin.praxis.objectifs.ouvert' => 'مفتوح',
 			'admin.praxis.objectifs.atteint' => 'تحقّق',
 			'admin.praxis.objectifs.abandonne' => 'تُرك',
-			'admin.praxis.objectifs.closLe' => ({required Object date}) => 'أُغلق يوم ${date}',
+			'admin.praxis.objectifs.closLe' => ({required Object date}) => 'أُغلق يوم ⁨${date}⁩',
 			'admin.praxis.objectifs.aucunJour' => 'لا يوجد هدف مفتوح لليوم.',
 			'admin.praxis.objectifs.aucunSemaine' => 'لا يوجد هدف مفتوح للأسبوع.',
 			'admin.praxis.objectifs.aucun' => 'لم يضع Praxis أي هدف حتى الآن.',
