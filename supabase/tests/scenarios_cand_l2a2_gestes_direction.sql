@@ -364,7 +364,8 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 36,
+                         WHERE geste NOT LIKE '%admission') = 37,
+    -- PE-A6 REPRISE-CANDIDATURE (20261130910000, 20/11) : reprendre, transition 19, auteur candidat, soit 37.
     -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
     -- VERSEMENT-QUESTIONS (16/11, transition 44), BE-1g (16/11, transition 45) et BE-1h REFAIRE-ENTRETIEN
     -- (17/11, migration 20261129700000, transition 46) : trois regles de direction de plus, soit 30 ;

@@ -3091,6 +3091,101 @@
       },
       "nonOuvert": "La carte à partager n'est pas encore disponible. Revenez sur cette page plus tard."
     },
+    "accueil": {
+      "onglets": {
+        "dossier": "Dossier",
+        "messages": "Messages",
+        "academie": "Académie"
+      },
+      "etapes": {
+        "position": "Étape {n} sur {total}",
+        "faite": "faite",
+        "enCours": "en cours",
+        "aVenir": "à venir",
+        "lecture": "{position}, {nom}, {etat}",
+        "detail1": "Vous envoyez vos réponses et vos documents. L'académie les lit.",
+        "detail2": "Un entretien en visio avec l'académie, au moment que vous choisissez.",
+        "detail3": "Votre espace d'enseignant s'ouvre.",
+        "ensuiteACompleter": "Ensuite : l'académie lit votre candidature.",
+        "ensuiteEnExamen": "Ensuite : si votre candidature est retenue, nous faisons connaissance en entretien.",
+        "ensuiteConnaissance": "Ensuite : après l'entretien, l'académie vous donne sa réponse ici.",
+        "ensuiteEquipe": "Ensuite : votre espace d'enseignant s'ouvre."
+      },
+      "aFaire": {
+        "titre": "À faire maintenant",
+        "rienTitre": "Rien à faire pour l'instant",
+        "rien": "Vous n'avez rien à faire. Nous vous écrirons ici dès qu'il y a du nouveau.",
+        "majorite": "Dites d'abord si vous avez 18 ans ou plus, dans la carte ci-dessus.",
+        "cadre": "Lisez et acceptez le cadre religieux et pédagogique.",
+        "accords": "Lisez et acceptez le contrat et nos accords.",
+        "piece": "Déposez votre pièce d'identité.",
+        "reponses": "Répondez aux questions, puis envoyez votre candidature.",
+        "entretien": "Choisissez le moment de votre entretien.",
+        "corriger": "Reprenez l'élément que l'académie vous demande de corriger."
+      },
+      "lignes": {
+        "titre": "Votre dossier, élément par élément",
+        "afficher": "Afficher le détail : {element}",
+        "masquer": "Masquer le détail : {element}",
+        "cadreDetail": "Le cadre dit ce que l'académie enseigne et comment. Vous le lisez en entier, puis vous l'acceptez.",
+        "accordsDetail": "Le contrat d'enseignant, l'avis sur les visites de contrôle et le code de conduite. Vous les lisez et vous les acceptez sur une seule page.",
+        "pieceDetail": "Une photo nette de votre passeport ou de votre carte d'identité, en cours de validité. Exemple : la page qui porte votre photo, entière et sans reflet.",
+        "photoDetail": "Une photo de vous, de face. Elle sert à vous présenter aux familles, seulement avec votre accord.",
+        "reponsesDetail": "Vos langues, votre récitation, vos disponibilités et votre versement. Vous pouvez enregistrer et revenir plus tard."
+      },
+      "annonce": {
+        "ranger": "Ranger l'annonce : {titre}",
+        "rangee": "Annonce rangée dans l'onglet Académie."
+      },
+      "etat": {
+        "perime": "Votre dossier n'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture : vérifiez votre connexion, puis réessayez.",
+        "horsLigne": "Vous n'êtes pas connecté. Ce que vous voyez date de votre dernière lecture ; réessayez une fois la connexion revenue."
+      },
+      "messages": {
+        "intro": "Écrivez à l'académie : elle vous répond ici.",
+        "vide": "La messagerie s'ouvrira ici dès que votre candidature sera enregistrée."
+      },
+      "academie": {
+        "titre": "L'académie",
+        "annoncesVide": "Aucune annonce pour l'instant. Les annonces de l'académie s'afficheront ici.",
+        "savoirTitre": "Ce qu'il faut savoir",
+        "remuneration": "La rémunération d'un enseignant",
+        "cours": "Le déroulement des cours",
+        "entretiens": "L'organisation des entretiens",
+        "bientot": "S'affichera ici quand l'académie le rendra public.",
+        "reglages": "Réglages",
+        "reglagesLegende": "Langue, versement, retrait de la candidature"
+      },
+      "retrait": {
+        "arret": "L'académie arrêtera d'étudier votre dossier.",
+        "entretien": "Votre entretien sera annulé. Si vous reprenez votre candidature, vous en choisirez un nouveau.",
+        "rienEfface": "Rien ne sera effacé : vos réponses et vos documents resteront enregistrés.",
+        "reprise(plural, param=n)": {
+          "one": "Vous pourrez la reprendre vous-même pendant {n} jour, depuis l'onglet Dossier.",
+          "other": "Vous pourrez la reprendre vous-même pendant {n} jours, depuis l'onglet Dossier."
+        },
+        "apres": "Après ce délai, seule l'académie pourra la rouvrir.",
+        "garder": "Non, je continue",
+        "confirmer": "Oui, retirer ma candidature",
+        "fait(plural, param=n)": {
+          "one": "Candidature retirée. Vous avez {n} jour pour la reprendre.",
+          "other": "Candidature retirée. Vous avez {n} jours pour la reprendre."
+        },
+        "faitSansDelai": "Candidature retirée."
+      },
+      "reprise": {
+        "possible": "Vous avez retiré votre candidature. Vous pouvez la reprendre vous-même jusqu'au {date}. Rien n'a été effacé.",
+        "bouton": "Reprendre ma candidature",
+        "faite": "Votre candidature est reprise. Rien n'est perdu.",
+        "delaiDepasse": "Le délai pour la reprendre vous-même est passé. Seule l'académie peut la rouvrir : écrivez-lui depuis l'onglet Messages.",
+        "parDirection": "Ce retrait a été enregistré par l'académie. Seule l'académie peut rouvrir votre candidature : écrivez-lui depuis l'onglet Messages.",
+        "controles": "Un élément de votre dossier a changé depuis votre retrait. Seule l'académie peut rouvrir votre candidature : écrivez-lui depuis l'onglet Messages.",
+        "echec": "La reprise n'a pas abouti. Rien n'a changé : réessayez dans un instant.",
+        "incertain": "Il est possible que votre reprise ne soit pas parvenue jusqu'à Rewayah. Réessayez : elle ne sera pas enregistrée deux fois.",
+        "horsLigne": "La reprise pourra être faite quand la connexion reviendra.",
+        "conflit": "Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis réessayez."
+      }
+    },
     "retrait": {
       "lien": "Retirer ma candidature",
       "question": "Retirer votre candidature\u00a0?",

@@ -194,7 +194,8 @@ void main() {
           echelle: echelle,
           direction: langue == AppLocale.ar ? TextDirection.rtl : null,
           depart: etat == 'portail avec la tuile'
-              ? Routes.attente
+              // PE-B4 (20/11/2026) : la tuile vit dans l'onglet Academie.
+              ? '${Routes.attente}?onglet=academie'
               : Routes.attenteTalents,
         );
         await _verifier(tester, '$etat, $nom');

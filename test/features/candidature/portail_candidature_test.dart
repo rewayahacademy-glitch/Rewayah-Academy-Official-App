@@ -31,8 +31,9 @@ Future<void> _toucherTexte(WidgetTester tester, Finder f) async {
 }
 
 /// Confirme le retrait : le bouton de la feuille est le dernier de l'arbre.
+/// PE-A6 : « Oui, retirer ma candidature » (et « Non, je continue »).
 Future<void> _confirmerRetrait(WidgetTester tester) async {
-  await tester.tap(_texte(t.recrutement.retrait.confirmer).last);
+  await tester.tap(_texte(t.recrutement.accueil.retrait.confirmer).last);
   await tester.pumpAndSettle();
 }
 
@@ -698,7 +699,10 @@ void main() {
         );
         expect(find.textContaining('10/01/2027'), findsOneWidget);
         expect(_texte(t.recrutement.portail.libreDePartir), findsOneWidget);
-        // Le retrait reste possible en pause.
+        // Le retrait reste possible en pause (PE-A6 : dans les reglages de
+        // l'onglet Academie, plus au pied de l'accueil).
+        expect(_cle('retrait-lien'), findsNothing);
+        await versLeRetrait(tester);
         expect(_cle('retrait-lien'), findsOneWidget);
       },
     );
@@ -763,12 +767,16 @@ void main() {
     ) async {
       final FauxMaCandidature port = FauxMaCandidature();
       await _portail(tester, candidatureAFaire(), port: port);
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       expect(_texte(t.recrutement.retrait.question), findsOneWidget);
+      // Sans lecture du serveur sur la reprise, aucun delai n'est promis :
+      // la phrase d'avant.
       expect(_texte(t.recrutement.retrait.consequence), findsOneWidget);
-      await tester.tap(_texte(t.commun.annuler));
+      await tester.tap(_texte(t.recrutement.accueil.retrait.garder));
       await tester.pumpAndSettle();
       expect(port.retraits, isEmpty);
+      await versOnglet(tester, t.recrutement.accueil.onglets.dossier);
       expect(_texte(t.recrutement.portail.aCompleterTitre), findsOneWidget);
     });
 
@@ -781,6 +789,7 @@ void main() {
           candidatureAFaire(),
           port: port,
         );
+        await versLeRetrait(tester);
         await toucherCle(tester, 'retrait-lien');
         // Le serveur retire, puis le dossier le dit.
         dossier.etatRendu = etatCandidat(
@@ -790,7 +799,11 @@ void main() {
         expect(port.retraits, hasLength(1));
         expect(port.retraits.single.$1, 3);
         expect(port.retraits.single.$2, startsWith('cand-'));
+        // PE-A6 : apres le retrait, l'accueil ramene a l'onglet Dossier.
         expect(_texte(t.recrutement.portail.retireeTitre), findsOneWidget);
+        expect(_cle('retrait-lien'), findsNothing);
+        await versOnglet(tester, t.recrutement.accueil.onglets.academie);
+        await toucherCle(tester, 'academie-reglages');
         expect(_cle('retrait-lien'), findsNothing);
       },
     );
@@ -807,6 +820,7 @@ void main() {
           version: 5,
         ),
       );
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       expect(
         _texte(t.recrutement.retrait.consequenceEntretien),
@@ -843,6 +857,7 @@ void main() {
         final FauxMaCandidature port = FauxMaCandidature()
           ..erreurRetrait = erreur;
         await _portail(tester, candidatureAFaire(), port: port);
+        await versLeRetrait(tester);
         await toucherCle(tester, 'retrait-lien');
         await _confirmerRetrait(tester);
         expect(_cle('retrait-message'), findsOneWidget);
@@ -857,6 +872,7 @@ void main() {
       final FauxMaCandidature port = FauxMaCandidature()
         ..erreurRetrait = const HorsLigneCandidature();
       await _portail(tester, candidatureAFaire(), port: port);
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       await _confirmerRetrait(tester);
       port.erreurRetrait = null;
@@ -872,6 +888,7 @@ void main() {
       final FauxMaCandidature port = FauxMaCandidature()
         ..erreurRetrait = const ConflitCandidature(9);
       await _portail(tester, candidatureAFaire(), port: port);
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       await _confirmerRetrait(tester);
       port.erreurRetrait = null;
@@ -885,6 +902,7 @@ void main() {
     ) async {
       final FauxMaCandidature port = FauxMaCandidature();
       await _portail(tester, candidatureAFaire(), port: port, horsLigne: true);
+      await versLeRetrait(tester);
       expect(_cle('retrait-lien'), findsNothing);
       expect(_cle('retrait-hors-ligne'), findsOneWidget);
       expect(port.retraits, isEmpty);
@@ -921,6 +939,9 @@ void main() {
           );
           expect(tester.takeException(), isNull);
           expect(_cle('portail-titre'), findsOneWidget);
+          // PE-A6 : le retrait vit dans les reglages de l'onglet Academie.
+          await versLeRetrait(tester);
+          expect(tester.takeException(), isNull);
           expect(_cle('retrait-lien'), findsOneWidget);
         },
       );

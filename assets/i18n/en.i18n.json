@@ -3091,6 +3091,101 @@
       },
       "nonOuvert": "The card to share is not available yet. Come back to this page later."
     },
+    "accueil": {
+      "onglets": {
+        "dossier": "File",
+        "messages": "Messages",
+        "academie": "Academy"
+      },
+      "etapes": {
+        "position": "Step {n} of {total}",
+        "faite": "done",
+        "enCours": "in progress",
+        "aVenir": "to come",
+        "lecture": "{position}, {nom}, {etat}",
+        "detail1": "You send your answers and your documents. The academy reads them.",
+        "detail2": "A video interview with the academy, at the time you choose.",
+        "detail3": "Your teacher space opens.",
+        "ensuiteACompleter": "Next: the academy reads your application.",
+        "ensuiteEnExamen": "Next: if your application is selected, we get to know each other in an interview.",
+        "ensuiteConnaissance": "Next: after the interview, the academy gives you its answer here.",
+        "ensuiteEquipe": "Next: your teacher space opens."
+      },
+      "aFaire": {
+        "titre": "To do now",
+        "rienTitre": "Nothing to do for now",
+        "rien": "You have nothing to do. We will write to you here as soon as there is news.",
+        "majorite": "First say whether you are 18 or older, in the card above.",
+        "cadre": "Read and accept the religious and teaching framework.",
+        "accords": "Read and accept the contract and our agreements.",
+        "piece": "Upload your identity document.",
+        "reponses": "Answer the questions, then send your application.",
+        "entretien": "Choose the time of your interview.",
+        "corriger": "Redo the item the academy asks you to correct."
+      },
+      "lignes": {
+        "titre": "Your file, item by item",
+        "afficher": "Show details: {element}",
+        "masquer": "Hide details: {element}",
+        "cadreDetail": "The framework says what the academy teaches and how. You read it in full, then you accept it.",
+        "accordsDetail": "The teacher contract, the notice about quality visits and the code of conduct. You read and accept them on a single page.",
+        "pieceDetail": "A clear photo of your passport or identity card, still valid. Example: the page with your photo, whole and without glare.",
+        "photoDetail": "A photo of you, facing the camera. It introduces you to families, only with your consent.",
+        "reponsesDetail": "Your languages, your recitation, your availability and your payout. You can save and come back later."
+      },
+      "annonce": {
+        "ranger": "Put away the announcement: {titre}",
+        "rangee": "Announcement put away in the Academy tab."
+      },
+      "etat": {
+        "perime": "Your file could not be updated. What you see dates from your last reading: check your connection, then try again.",
+        "horsLigne": "You are offline. What you see dates from your last reading; try again once the connection is back."
+      },
+      "messages": {
+        "intro": "Write to the academy: it answers you here.",
+        "vide": "Messaging will open here as soon as your application is recorded."
+      },
+      "academie": {
+        "titre": "The academy",
+        "annoncesVide": "No announcement for now. The academy's announcements will appear here.",
+        "savoirTitre": "What you need to know",
+        "remuneration": "A teacher's pay",
+        "cours": "How lessons run",
+        "entretiens": "How interviews are organised",
+        "bientot": "Will appear here when the academy makes it public.",
+        "reglages": "Settings",
+        "reglagesLegende": "Language, payout, withdrawing the application"
+      },
+      "retrait": {
+        "arret": "The academy will stop reviewing your file.",
+        "entretien": "Your interview will be cancelled. If you resume your application, you will choose a new one.",
+        "rienEfface": "Nothing will be erased: your answers and your documents will stay recorded.",
+        "reprise(plural, param=n)": {
+          "one": "You will be able to resume it yourself for {n} day, from the File tab.",
+          "other": "You will be able to resume it yourself for {n} days, from the File tab."
+        },
+        "apres": "After that, only the academy will be able to reopen it.",
+        "garder": "No, I continue",
+        "confirmer": "Yes, withdraw my application",
+        "fait(plural, param=n)": {
+          "one": "Application withdrawn. You have {n} day to resume it.",
+          "other": "Application withdrawn. You have {n} days to resume it."
+        },
+        "faitSansDelai": "Application withdrawn."
+      },
+      "reprise": {
+        "possible": "You withdrew your application. You can resume it yourself until {date}. Nothing was erased.",
+        "bouton": "Resume my application",
+        "faite": "Your application is resumed. Nothing is lost.",
+        "delaiDepasse": "The time to resume it yourself has passed. Only the academy can reopen it: write to it from the Messages tab.",
+        "parDirection": "This withdrawal was recorded by the academy. Only the academy can reopen your application: write to it from the Messages tab.",
+        "controles": "An item of your file changed since your withdrawal. Only the academy can reopen your application: write to it from the Messages tab.",
+        "echec": "The resumption did not go through. Nothing changed: try again in a moment.",
+        "incertain": "Your resumption may not have reached Rewayah. Try again: it will not be recorded twice.",
+        "horsLigne": "You can resume once the connection is back.",
+        "conflit": "Your application changed since this page was opened. Read it again, then retry."
+      }
+    },
     "retrait": {
       "lien": "Withdraw my application",
       "question": "Withdraw your application?",

@@ -486,6 +486,10 @@ declare
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
     'reprendre_alimentation_tresorerie()',
+    -- PE-A6 REPRISE-CANDIDATURE (20/11) : le candidat enseignant reprend lui-meme sa candidature retiree, pendant 7 jours.
+    -- Garde positive : session et titulaire d'une candidature (private.candidature_du_titulaire, compte valide), sinon 42501 ;
+    -- par le moteur (version attendue, cle d'idempotence) ; n'ecrit que SA candidature (issue, version, evenement, audit).
+    'reprise_candidat(integer,text)',
     -- CAND-L2A1 (22/10) : retrait par le candidat (transition 17), titulaire de la candidature (moteur).
     'retrait_candidat(integer,text)',
     -- PAYS-VERSEMENT (20261127000300, 15/11/2026) : le candidat change le pays de son compte de versement apres l'envoi. Garde positive : titulaire d'une candidature en cours (private.candidature_du_titulaire, compte non supprime, statut pending_kyc, provisional_active ou active, acces non expire), sinon 42501 ; etat de la candidature controle ; pays dans la liste ISO. Ecrit UN document de reponses du titulaire, remet ses coordonnees a valider, une ligne de journal ; jamais d'effacement ni de refus. Meme garde que retrait_candidat.
