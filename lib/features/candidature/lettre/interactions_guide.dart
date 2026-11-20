@@ -13,14 +13,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/strings.g.dart';
-import '../../../core/icons/app_icons.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
-import '../../../core/widgets/bouton_outil.dart';
-import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/zone_saisie.dart';
+import 'barre_avis.dart';
 import 'port_interactions_guide.dart';
 
 /// L'etat des interactions du lecteur.
@@ -131,9 +129,6 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
     if (lu == null || ligne == null) return const SizedBox.shrink();
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final TextStyle muet = palette.inkMuted.applyTo(
-      textes.bodyMedium ?? const TextStyle(),
-    );
     final l = t.recrutement.lettre;
     final int mesCommentaires = lu.commentaires
         .where(
@@ -145,30 +140,21 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Wrap(
-          spacing: AppSpacing.sm,
-          runSpacing: AppSpacing.sm,
-          children: <Widget>[
-            // Choix de formulaire, pas un filtre : deux avis sur la partie.
-            BoutonOutil(
-              key: InteractionsPartie.cleJaime(widget.code),
-              icone: AppIcons.coeur,
-              libelle: '${l.jaime} ${ligne.jaime}',
-              avecLibelle: true,
-              retenu: ligne.monAvis == AvisGuide.jaime,
-              iconeActive: ligne.monAvis == AvisGuide.jaime,
-              onPress: () => unawaited(_avis(ligne, AvisGuide.jaime)),
+        BarreAvis(
+          ligne: ligne,
+          mesCommentaires: mesCommentaires,
+          cleJaime: InteractionsPartie.cleJaime(widget.code),
+          clePasClair: InteractionsPartie.clePasClair(widget.code),
+          cleCommenter: InteractionsPartie.cleCommenter(widget.code),
+          onAvis: (AvisGuide a) => unawaited(_avis(ligne, a)),
+          onCommenter: () => unawaited(
+            AppBottomSheet.ouvrir<void>(
+              context,
+              titre: l.filTitre,
+              constructeur: (BuildContext _) =>
+                  FilCommentaires(code: widget.code),
             ),
-            BoutonOutil(
-              key: InteractionsPartie.clePasClair(widget.code),
-              icone: AppIcons.info,
-              libelle: '${l.pasClair} ${ligne.pasClair}',
-              avecLibelle: true,
-              retenu: ligne.monAvis == AvisGuide.pasClair,
-              iconeActive: ligne.monAvis == AvisGuide.pasClair,
-              onPress: () => unawaited(_avis(ligne, AvisGuide.pasClair)),
-            ),
-          ],
+          ),
         ),
         if (_echec)
           Padding(
@@ -180,21 +166,6 @@ class _EtatInteractions extends ConsumerState<InteractionsPartie> {
               ),
             ),
           ),
-        LienFleche(
-          key: InteractionsPartie.cleCommenter(widget.code),
-          alignerEnDebut: true,
-          libelle: l.commenter,
-          onPress: () => unawaited(
-            AppBottomSheet.ouvrir<void>(
-              context,
-              titre: l.filTitre,
-              constructeur: (BuildContext _) =>
-                  FilCommentaires(code: widget.code),
-            ),
-          ),
-        ),
-        if (mesCommentaires > 0)
-          Text(l.commentaires(n: mesCommentaires), style: muet),
       ],
     );
   }

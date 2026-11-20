@@ -214,13 +214,22 @@ void main() {
       final FauxPortInteractions port = FauxPortInteractions();
       await _monter(tester, interactions: port);
       await versPartie(tester, 'guide-jaime-p1');
-      expect(find.text('${t.recrutement.lettre.jaime} 3'), findsWidgets);
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.jaimeLecteur(n: 3)),
+        findsWidgets,
+      );
       await tester.tap(find.byKey(InteractionsPartie.cleJaime('p1')));
       await tester.pumpAndSettle();
-      expect(find.text('${t.recrutement.lettre.jaime} 4'), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.jaimeLecteur(n: 4)),
+        findsOneWidget,
+      );
       await tester.tap(find.byKey(InteractionsPartie.cleJaime('p1')));
       await tester.pumpAndSettle();
-      expect(find.text('${t.recrutement.lettre.jaime} 4'), findsNothing);
+      expect(
+        find.bySemanticsLabel(t.recrutement.lettre.jaimeLecteur(n: 4)),
+        findsNothing,
+      );
     });
 
     testWidgets(
@@ -231,7 +240,10 @@ void main() {
         await versPartie(tester, 'guide-pas-clair-p1');
         await tester.tap(find.byKey(InteractionsPartie.clePasClair('p1')));
         await tester.pumpAndSettle();
-        expect(find.text('${t.recrutement.lettre.pasClair} 0'), findsWidgets);
+        expect(
+          find.bySemanticsLabel(t.recrutement.lettre.pasClairLecteur(n: 0)),
+          findsWidgets,
+        );
         expect(find.text(t.recrutement.lettre.echecAvis), findsOneWidget);
       },
     );
