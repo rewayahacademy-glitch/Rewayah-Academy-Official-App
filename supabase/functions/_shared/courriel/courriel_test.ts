@@ -2,7 +2,7 @@
 import { assert, assertEquals, assertThrows } from 'jsr:@std/assert@1'
 import { composer } from './gabarit.ts'
 import { contenuPour, modelesConnus } from './modeles.ts'
-import { htmlAuth, LANGUES_AUTH, MODELES_AUTH, MODELES_AUTH_LANGUES } from './auth_modeles.ts'
+import { htmlAuth, LANGUES_AUTH, MODELES_AUTH, MODELES_AUTH_LANGUES, sujetAuth, sujetsAuthTexte } from './auth_modeles.ts'
 import { FRANCAIS, LANGUES } from './modeles.ts'
 import { TRADUITS_A_L_ENVOI } from './modeles_fr.ts'
 import { VILLES_FUSEAU_AR, VILLES_FUSEAU_FR, villeDuFuseau } from './villes_fuseau.ts'
@@ -162,13 +162,14 @@ Deno.test('une langue non ecrite part traduite du francais, liens intacts, note 
 // portugais, il part du francais, traduit a l'envoi : jamais vide, jamais en
 // erreur de modele ; si la traduction echoue, rien ne part (rejoue plus tard),
 // jamais un courriel vide ni dans une autre langue.
-Deno.test('retenu_entretien vers en, es, pt : le francais traduit a l envoi, jamais vide', async () => {
+Deno.test('retenu_entretien vers es, pt : le francais traduit a l envoi, jamais vide', async () => {
   // COURRIEL-ENTRETIEN (16/11/2026) : sans `creneauxOuverts`, le texte n'invite pas a choisir.
   const ligne = { modele: 'retenu_entretien', categorie: 'recrutement', essentielle: false,
     donnees: { prenom: 'Awa', jeton_desinscription: 'abc', creneauxOuverts: true } }
   const fr = composer(rendre(ligne, 'fr').contenu)
   assert(fr.texte.includes('Choisissez dans l’application le créneau qui vous convient.'), fr.texte)
-  for (const cible of ['en', 'es', 'pt']) {
+  // PE-A1 (20/11/2026) : l'anglais est ecrit a la main (test plus bas).
+  for (const cible of ['es', 'pt']) {
     const r = rendre(ligne, cible)
     assertEquals(r.traduireDepuis, 'fr', cible)
     assertEquals(r.contenu.langue, 'fr', cible)
@@ -223,7 +224,7 @@ Deno.test('chaque langue ecrite a tous les modeles et toutes les raisons', () =>
     assert(L, l)
     for (const m of modelesConnus) {
       // Traduit a l'envoi vers les langues qui ne l'ecrivent pas : verifie plus bas.
-      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m)) continue
+      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m) && !L.modeles[m]) continue
       assert(typeof L.modeles[m] === 'function', `${l} : modele ${m}`)
     }
     for (const c of CATEGORIES) assert(L.raisons[c] && L.raisons[c].length > 20, `${l} : raison ${c}`)
@@ -237,7 +238,8 @@ Deno.test('chaque modele dans chaque langue : leger, bonne langue, bonne directi
     for (const m of modelesConnus) {
       const base = { modele: m, categorie: 'classes', essentielle: false, donnees: { ...DONNEES, jeton_desinscription: 'abc', langue_source: l } }
       const r = rendre(base, l)
-      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m)) {
+      // PE-A1 : une langue peut ecrire a la main un modele de la liste ; sinon il part traduit.
+      if (l !== 'fr' && l !== 'ar' && TRADUITS_A_L_ENVOI.includes(m) && !LANGUES[l].modeles[m]) {
         assertEquals(r.traduireDepuis, 'fr', `${l} ${m} : traduit a l envoi`)
         continue
       }
@@ -755,13 +757,14 @@ Deno.test('creneau_change : refus de conversion, avis propre a la direction', ()
 // moment n'etait ouvert. Le texte suit l'etat : il n'invite a choisir que si le serveur a pose `creneauxOuverts: true`.
 Deno.test('retenu_entretien : invite a choisir seulement quand des moments sont ouverts, sinon dit la verite', () => {
   const base = { modele: 'retenu_entretien', categorie: 'recrutement', essentielle: false }
-  for (const langue of ['fr', 'ar']) {
+  for (const langue of ['fr', 'ar', 'en']) {
     const ouvert = composer(rendre({ ...base, donnees: { prenom: 'Awa', creneauxOuverts: true } }, langue).contenu).texte
     for (const donnees of [{ prenom: 'Awa' }, { prenom: 'Awa', creneauxOuverts: false },
         { prenom: 'Awa', creneauxOuverts: 'true' }, { prenom: 'Awa', creneauxOuverts: null }]) {
       const ferme = composer(rendre({ ...base, donnees }, langue).contenu).texte
       assert(ferme !== ouvert, `${langue} : meme texte ouvert et ferme`)
-      assert(!ferme.includes('Choisissez dans l’application') && !ferme.includes('اختر في التطبيق'),
+      assert(!ferme.includes('Choisissez dans l’application') && !ferme.includes('اختر في التطبيق')
+        && !ferme.includes('Choose the time'),
         `${langue} : invite a choisir sans moment ouvert : ${ferme}`)
     }
   }
@@ -771,4 +774,79 @@ Deno.test('retenu_entretien : invite a choisir seulement quand des moments sont 
     .includes('Choisissez dans l’application le créneau qui vous convient.'))
   const ar = composer(rendre({ ...base, donnees: { prenom: 'Awa' } }, 'ar').contenu).texte
   assert(ar.includes('لا شيء مطلوب منك الآن'), ar)
+})
+
+// ---------------------------------------------------------------------------------------------------------------
+// PE-A1 et PE-A7 (lot COURRIELS-CANDIDAT, 20/11/2026)
+// ---------------------------------------------------------------------------------------------------------------
+const FRANCAIS_RESTE = /Bonjour|Vous recevez|Ne plus recevoir|l’application|votre |Assalamou|Poursuivre|Faisons/
+
+Deno.test('PE-A1 : les courriels du candidat sont ecrits a la main en anglais, jamais traduits, sans francais', () => {
+  const cas = [
+    { modele: 'retenu_entretien', donnees: { prenom: 'Awa', creneauxOuverts: true } },
+    { modele: 'retenu_entretien', donnees: { prenom: 'Awa' } },
+    { modele: 'entretien_creneau_ouvert', donnees: { prenom: 'Awa' } },
+    { modele: 'invitation_enseignant', donnees: { code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-29T10:00:00Z' } },
+    { modele: 'invitation_candidat_importe', donnees: { code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-29T10:00:00Z', variante: 'A' } },
+    { modele: 'invitation_candidat_importe', donnees: { code: 'ABCD-EFGH-JKMN', variante: 'B' } },
+  ]
+  for (const c of cas) {
+    const ligne = { modele: c.modele, categorie: 'recrutement', essentielle: false, donnees: { ...c.donnees, jeton_desinscription: 'j' } }
+    const r = rendre(ligne, 'en')
+    assertEquals(r.traduireDepuis, undefined, c.modele)
+    const { html, texte } = composer(r.contenu)
+    assert(html.includes('<html lang="en" dir="ltr">'), c.modele)
+    assert(!FRANCAIS_RESTE.test(r.contenu.sujet + texte), `${c.modele} : du francais reste\n${texte}`)
+    const liens = (h: string) => [...h.matchAll(/href="([^"]+)"/g)].map((x) => x[1]).sort()
+    assertEquals(liens(html), liens(composer(rendre(ligne, 'fr').contenu).html), `${c.modele} : memes liens`)
+  }
+  const inv = composer(rendre({ modele: 'invitation_candidat_importe', categorie: 'recrutement', essentielle: false,
+    donnees: { code: 'ABCD-EFGH-JKMN', expire_le: '2026-11-29T10:00:00Z', variante: 'A' } }, 'en').contenu).texte
+  assert(inv.includes('ABCD-EFGH-JKMN') && inv.includes('29 November 2026') && inv.includes('“Let’s get to know each other”')
+    && inv.includes('“I have an invitation code”'), inv)
+})
+
+Deno.test('PE-A7 : entretien_creneau_ouvert, fr, ar et en, un seul bouton vers le choix du moment, sans date', () => {
+  const ligne = { modele: 'entretien_creneau_ouvert', categorie: 'recrutement', essentielle: false,
+    donnees: { prenom: 'Awa', jeton_desinscription: 'j' } }
+  const attendus: Record<string, [string, string]> = {
+    fr: ['Un moment d’entretien est ouvert', 'Choisir mon créneau'],
+    ar: ['فُتح موعد لمقابلتك', 'اختيار موعدي'],
+    en: ['An interview time is open', 'Choose my time'],
+  }
+  for (const [l, [sujet, bouton]] of Object.entries(attendus)) {
+    const r = rendre(ligne, l)
+    assertEquals(r.traduireDepuis, undefined, l)
+    assertEquals(r.contenu.sujet, sujet, l)
+    const { html, texte } = composer(r.contenu)
+    assert(texte.includes(bouton) && html.includes('https://app.rewayahacademy.com/#/attente/entretien'), `${l}\n${texte}`)
+    assert(html.includes('/courriels/desinscription?jeton=j'), `${l} : desinscription`)
+    assert(!/salle|examen|vérification|undefined/i.test(texte), `${l} : mot interdit\n${texte}`)
+  }
+  for (const l of ['es', 'pt']) assertEquals(rendre(ligne, l).traduireDepuis, 'fr', l)
+  assert(TRADUITS_A_L_ENVOI.includes('entretien_creneau_ouvert') && modelesConnus.includes('entretien_creneau_ouvert'))
+})
+
+Deno.test('PE-A1 : le nom du formulaire n est cite que dans sa propre ecriture', () => {
+  const avec = (formulaire: string, l: string) => composer(contenuPour({ modele: 'lien_inscription', categorie: 'recrutement',
+    essentielle: true, donnees: { date_reponse: '2026-10-14T09:12:00Z', formulaire } }, l)).texte
+  assert(avec('Enseignants 2026', 'fr').includes('« Enseignants 2026 »'))
+  assert(!avec('Enseignants 2026', 'ar').includes('Enseignants'), avec('Enseignants 2026', 'ar'))
+  assert(avec('استمارة المعلمين', 'ar').includes('«استمارة المعلمين»'), avec('استمارة المعلمين', 'ar'))
+  for (const l of ['en', 'es', 'pt']) assert(!avec('Enseignants 2026', l).includes('Enseignants'), l)
+})
+
+Deno.test('PE-A1 : sujets Auth, une ligne par message ramifiee par langue, fichier a jour, aucun caractere echappe', () => {
+  const fichier = Deno.readTextFileSync(new URL('../../../templates/sujets.txt', import.meta.url))
+  assertEquals(fichier, sujetsAuthTexte(), 'relancer supabase/templates/generer.ts')
+  for (const nom of Object.keys(MODELES_AUTH)) {
+    const s = sujetAuth(nom)
+    assert(!s.includes('\n') && fichier.includes(`[${nom}]\n${s}\n`), nom)
+    assert(s.startsWith('{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}'), nom)
+    for (const l of LANGUES_AUTH) assert(s.includes(`eq $l "${l}" }}${MODELES_AUTH_LANGUES[l][nom].sujet}{{`), `${nom} ${l}`)
+    assert(s.endsWith(`{{ else }}${MODELES_AUTH[nom].sujet}{{ end }}`), nom)
+    // Hors des balises, rien que html/template echapperait.
+    assert(!/['&<>]/.test(s.replace(/\{\{[^}]*\}\}/g, '')), `${nom} : caractere echappe`)
+    assertEquals((s.match(/\{\{ if /g) ?? []).length, (s.match(/\{\{ end \}\}/g) ?? []).length, nom)
+  }
 })

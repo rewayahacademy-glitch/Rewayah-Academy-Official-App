@@ -7,6 +7,7 @@ import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from '.
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
   precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
+import { nomFormulaireDans } from './outils.ts'
 
 const PAROLE: Parole = {
   salut: 'Olá',
@@ -296,7 +297,9 @@ const MODELES: Record<string, Fabrique> = {
   },
   lien_inscription: (d) => {
     const quand = dateLongue(d.date_reponse, PAROLE.locale)
-    const nom = typeof d.formulaire === 'string' && d.formulaire.trim() ? ` «${d.formulaire.trim()}»` : ''
+    // PE-A1 (20/11/2026) : le nom du formulaire est ecrit en francais ; il n'est pas cite ici.
+    const formulaire = nomFormulaireDans(d, null)
+    const nom = formulaire ? ` «${formulaire}»` : ''
     const rappel = `${quand ? `Em ${quand}, respondeu` : 'Respondeu'} ao nosso formulário${nom}.`
     return {
       sujet: 'A sua candidatura à Rewayah Academy: crie a sua conta',

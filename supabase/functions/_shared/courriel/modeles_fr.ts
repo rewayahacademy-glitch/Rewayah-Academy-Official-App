@@ -122,6 +122,12 @@ export const MODELES: Record<string, Fabrique> = {
       ? 'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Choisissez dans l’application le créneau qui vous convient.'
       : 'La direction a lu votre candidature et vous propose un entretien en visio, pour faire connaissance. Nous vous écrirons dès que les moments d’entretien seront ouverts ; vous n’avez rien à faire pour l’instant.',
     'Voir ma candidature', '/attente'),
+  // PE-A7 (20/11/2026, migration 20261130941000) : un moment d'entretien vient de s'ouvrir pour un candidat qui
+  // attend le sien (R22 : la promesse « nous vous ecrirons » de retenu_entretien). Aucune date : elle se lit
+  // dans l'application, ou le moment peut deja etre pris.
+  entretien_creneau_ouvert: (d) => avis(d, 'Un moment d’entretien est ouvert', 'Faisons connaissance',
+    'Un moment d’entretien en visio vient de s’ouvrir pour vous. Choisissez dans l’application le créneau qui vous convient : chaque créneau revient à la première personne qui le choisit.',
+    'Choisir mon créneau', '/attente/entretien'),
   // FINANCE-ENSEIGNANT (06/11/2026, migration 20261110700000) : a chaque
   // changement de coordonnees de versement, et a leur validation.
   coordonnees_versement_changees: (d) => avis(d, 'Vos coordonnées de versement ont changé', 'Coordonnées de versement modifiées',
@@ -564,6 +570,9 @@ export const MODELES: Record<string, Fabrique> = {
   nouvelles: (d) => libre(d),
 }
 
+/// PE-A1 (20/11/2026) : une langue peut ecrire a la main un modele de cette liste (l'anglais ecrit
+/// retenu_entretien, invitation_candidat_importe, invitation_enseignant et entretien_creneau_ouvert) : il part
+/// alors sans traduction ; les tests verifient chaque langue qui l'ecrit.
 /// Les modeles ecrits en francais et traduits a l'envoi vers la langue du
 /// destinataire (decision du directeur, 24/10/2026), sauf vers une langue qui
 /// les ecrit a la main : `attente_candidat` est ecrit en arabe (pilote,
@@ -588,6 +597,8 @@ export const TRADUITS_A_L_ENVOI: readonly string[] = [
   'entretien_reserve', 'entretien_rappel', 'entretien_rappel_direction', 'entretien_tenu', 'entretien_a_replanifier',
   // MESSAGERIE-PUSH (14/11/2026) : ecrit en francais et en arabe.
   'message_candidat_recu',
+  // PE-A7 (20/11/2026) : ecrit en francais, en arabe et en anglais ; espagnol et portugais traduits a l'envoi.
+  'entretien_creneau_ouvert',
 ]
 
 export const FRANCAIS: LangueEcrite = {

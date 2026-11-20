@@ -11,11 +11,15 @@
 // inscrit `langue` (fr, en, ar, es, pt, ff…). Une langue non ecrite ici recoit
 // le francais.
 //
-// ATTENTION, SUJETS : le sujet d'un e-mail Auth se regle dans
-// `supabase/config.toml` (`[auth.email.template.*] subject`), en une seule
-// chaine : il ne peut pas se ramifier par langue. Il reste donc en francais ;
-// seul le corps est dans la langue du compte. Les sujets `sujet` ci-dessous
-// ne servent qu'a la balise <title> du corps.
+// SUJETS (PE-A1, 20/11/2026) : le sujet d'un e-mail Auth se regle dans le
+// tableau de bord Supabase (Authentication > Emails), ou dans
+// `supabase/config.toml` pour la pile locale. Supabase Auth lit le sujet comme
+// un modele Go, avec les memes donnees que le corps (`.Data` = user_metadata) :
+// `sujetAuth(nom)` le ramifie par langue comme le corps. Le texte a coller est
+// ecrit par `supabase/templates/generer.ts` dans `supabase/templates/sujets.txt`.
+// NON PROUVE EN PRODUCTION : la ramification du sujet n'a ete executee que par le
+// moteur de modeles Go de la bibliotheque standard (voir la PR), pas par
+// Supabase Auth ; un premier envoi reel doit le confirmer.
 
 import { type Contenu, composer } from './gabarit.ts'
 
@@ -237,10 +241,27 @@ export function htmlAuthDans(nom: string, langue?: LangueAuth): string {
   return composer(c).html
 }
 
+/// Le sujet d'un message pour Supabase Auth : une branche Go-template par langue
+/// ecrite, le francais en repli, sur une seule ligne. Aucun caractere que le
+/// moteur de modeles echapperait (' " & < >).
+export function sujetAuth(nom: string): string {
+  const branches = LANGUES_AUTH.map((l, i) =>
+    `{{ ${i === 0 ? 'if' : 'else if'} eq $l "${l}" }}${MODELES_AUTH_LANGUES[l][nom].sujet}`).join('')
+  return `{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}${branches}{{ else }}${MODELES_AUTH[nom].sujet}{{ end }}`
+}
+
 /// Le fichier Supabase d'un message : une branche Go-template par langue
 /// ecrite, le francais en repli. `$l` vaut "" quand le compte n'a pas de langue.
 export function htmlAuth(nom: string): string {
   const branches = LANGUES_AUTH.map((l, i) =>
     `{{ ${i === 0 ? 'if' : 'else if'} eq $l "${l}" }}${htmlAuthDans(nom, l)}`).join('')
   return `{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}${branches}{{ else }}${htmlAuthDans(nom)}{{ end }}`
+}
+
+/// Le fichier `supabase/templates/sujets.txt` : pour chaque message, son nom
+/// entre crochets puis la ligne exacte a coller dans le champ « Subject ».
+export function sujetsAuthTexte(): string {
+  return '# Sujets des e-mails Supabase Auth, une ligne par message (PE-A1, 20/11/2026).\n'
+    + '# Ecrit par supabase/templates/generer.ts : ne pas modifier a la main.\n'
+    + Object.keys(MODELES_AUTH).map((nom) => `\n[${nom}]\n${sujetAuth(nom)}\n`).join('')
 }
