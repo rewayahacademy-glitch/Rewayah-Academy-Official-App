@@ -76,6 +76,8 @@ class ActionPrincipale extends StatelessWidget {
     this.affirmee = false,
     this.margeHorizontaleReduite = false,
     this.libelleReduit = false,
+    this.libelleAttente,
+    this.filetPale = false,
   });
 
   /// La paire de la surface sur laquelle une action [NiveauAction.tertiaire]
@@ -143,6 +145,21 @@ class ActionPrincipale extends StatelessWidget {
   /// defaut : rien ne change ailleurs.
   final bool libelleReduit;
 
+  /// ENTREE-PRAXIS (maquette « Praxis vous accueille », pilote, 20/11/2026) :
+  /// pendant [enCours], le bouton garde la peinture de son niveau (plein et
+  /// violet pour l'action principale affirmee) au lieu de la peinture inerte,
+  /// affiche ce libelle d'attente (« Envoi du lien… ») a la place de l'anneau,
+  /// et le fait battre doucement (aucun battement sous « Réduire les
+  /// effets »). Il reste inactif : pas de second envoi. Le lecteur d'ecran
+  /// garde [libelle] et la region vivante. Nul par defaut : rien ne change
+  /// ailleurs.
+  final String? libelleAttente;
+
+  /// ENTREE-PRAXIS (maquette) : un bouton secondaire au filet le plus pale de
+  /// la rampe (`borderHairline`, 1,5) au lieu de `borderStrong`. Faux par
+  /// defaut : rien ne change ailleurs.
+  final bool filetPale;
+
   /// Le libelle du bouton. **Un verbe et son objet** : « Poser un creneau »,
   /// pas « Valider » (`02-regles-ux.md` section 9).
   final String libelle;
@@ -205,9 +222,14 @@ class ActionPrincipale extends StatelessWidget {
 
   /// La marge laterale du bouton : au repos, [repos] ; en attente sans
   /// prefixe, diminuee de la demi-place de l'anneau (jamais negative).
-  double _margeLaterale(double repos) => enCours && prefixe == null
+  double _margeLaterale(double repos) =>
+      enCours && !_attentePleine && prefixe == null
       ? math.max(0, repos - _AvecIndicateur.placeAnneau / 2)
       : repos;
+
+  /// Vrai quand l'attente se montre pleine ([libelleAttente]).
+  bool get _attentePleine =>
+      enCours && libelleAttente != null && onPress != null;
 
   BorderRadius get _arrondi =>
       pilule ? AppRadius.arrondiFull : AppRadius.arrondiSm;
@@ -218,6 +240,9 @@ class ActionPrincipale extends StatelessWidget {
     final AppMetriques metriques = AppMetriques.of(context);
     final bool actif = onPress != null && !enCours;
     final bool reduit = compacte && !metriques.estEnfant;
+    // ENTREE-PRAXIS : l'attente pleine peint le bouton comme actif, sans
+    // le rendre pressable.
+    final bool peintActif = actif || _attentePleine;
 
     final Widget bouton = Pressable.selon(
       onPress: actif ? onPress : null,
@@ -234,7 +259,7 @@ class ActionPrincipale extends StatelessWidget {
           palette,
           metriques,
           etat,
-          actif: actif,
+          actif: peintActif,
           reduit: reduit,
         );
         // R-12 (decision du directeur du 05/10, choix a) : `widthFactor: 1`.
@@ -321,62 +346,84 @@ class ActionPrincipale extends StatelessWidget {
                 // anime sur `micro` en mouvement normal, immediat en
                 // mouvement reduit (ou l'anneau ne tourne pas).
                 child: _AvecIndicateur(
-                  enCours: enCours,
+                  enCours: enCours && !_attentePleine,
                   reussite: reussite,
                   avecPrefixe: prefixe != null,
                   encre: peinture.encre(const TextStyle()).color,
-                  child: AnimatedOpacity(
-                    opacity: enCours ? _opaciteAttente : 1,
-                    duration: AppMouvement.duree(context, AppMouvement.micro),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[
-                        // BOUTON-ATTENTE (DECISION-FLUIDITE-2026-11-07 §2) : le
-                        // prefixe, le libelle et la fleche restent en place pendant
-                        // l'attente : le bouton garde sa taille, et un libelle
-                        // d'attente (« Ouverture du support... ») se lit entier.
-                        // L'attente vivante passe par-dessus (voir plus bas).
-                        if (prefixe != null) ...<Widget>[
-                          // En attente, l'anneau prend la place du prefixe :
-                          // le prefixe garde sa place, invisible.
-                          if (enCours)
-                            Opacity(opacity: 0, child: prefixe)
-                          else
-                            prefixe!,
-                          if (margeHorizontaleReduite) Ecart.hXs else Ecart.hSm,
-                        ],
-                        // Le libelle est deja porte par `Pressable` : le texte visible
-                        // est retire de l'arbre semantique, sinon un lecteur d'ecran
-                        // annonce le bouton deux fois.
-                        Flexible(
+                  child: _attentePleine
+                      ? _BattementAttente(
                           child: ExcludeSemantics(
-                            // DASH-MA-PROD (lecon 8) : a 200 % dans une place
-                            // etroite, « Reessay / er » ; le mot entier se
-                            // reduit plutot que d'etre coupe.
                             child: TexteSansCoupure(
-                              libelle,
+                              libelleAttente!,
                               textAlign: TextAlign.center,
                               style: _styleLibelle(
                                 context,
                                 peinture,
-                                actif: actif,
+                                actif: true,
                               ),
                             ),
                           ),
-                        ),
-                        if (fleche) ...<Widget>[
-                          Ecart.hSm,
-                          IconTheme(
-                            data: IconThemeData(
-                              color: peinture.encre(const TextStyle()).color,
-                              size: AppSpacing.xl,
-                            ),
-                            child: Icon(AppIcons.flecheAction.repos),
+                        )
+                      : AnimatedOpacity(
+                          opacity: enCours ? _opaciteAttente : 1,
+                          duration: AppMouvement.duree(
+                            context,
+                            AppMouvement.micro,
                           ),
-                        ],
-                      ],
-                    ),
-                  ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: <Widget>[
+                              // BOUTON-ATTENTE (DECISION-FLUIDITE-2026-11-07 §2) : le
+                              // prefixe, le libelle et la fleche restent en place pendant
+                              // l'attente : le bouton garde sa taille, et un libelle
+                              // d'attente (« Ouverture du support... ») se lit entier.
+                              // L'attente vivante passe par-dessus (voir plus bas).
+                              if (prefixe != null) ...<Widget>[
+                                // En attente, l'anneau prend la place du prefixe :
+                                // le prefixe garde sa place, invisible.
+                                if (enCours)
+                                  Opacity(opacity: 0, child: prefixe)
+                                else
+                                  prefixe!,
+                                if (margeHorizontaleReduite)
+                                  Ecart.hXs
+                                else
+                                  Ecart.hSm,
+                              ],
+                              // Le libelle est deja porte par `Pressable` : le texte visible
+                              // est retire de l'arbre semantique, sinon un lecteur d'ecran
+                              // annonce le bouton deux fois.
+                              Flexible(
+                                child: ExcludeSemantics(
+                                  // DASH-MA-PROD (lecon 8) : a 200 % dans une place
+                                  // etroite, « Reessay / er » ; le mot entier se
+                                  // reduit plutot que d'etre coupe.
+                                  child: TexteSansCoupure(
+                                    libelle,
+                                    textAlign: TextAlign.center,
+                                    style: _styleLibelle(
+                                      context,
+                                      peinture,
+                                      actif: actif,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              if (fleche) ...<Widget>[
+                                Ecart.hSm,
+                                IconTheme(
+                                  data: IconThemeData(
+                                    color: peinture
+                                        .encre(const TextStyle())
+                                        .color,
+                                    size: AppSpacing.xl,
+                                  ),
+                                  child: Icon(AppIcons.flecheAction.repos),
+                                ),
+                              ],
+                            ],
+                          ),
+                        ),
                 ),
               ),
             ),
@@ -486,7 +533,9 @@ class ActionPrincipale extends StatelessWidget {
           return _Peinture(
             fond: paire.background,
             encre: paire.applyTo,
-            filet: palette.borderStrong.asBorderSide(),
+            filet: filetPale
+                ? palette.borderHairline.asBorderSide(width: 1.5)
+                : palette.borderStrong.asBorderSide(),
           );
         }
       case NiveauAction.tertiaire:
@@ -922,4 +971,53 @@ class _CocheReussiteState extends State<CocheReussite>
       child: widget.child,
     );
   }
+}
+
+/// ENTREE-PRAXIS : le battement du libelle d'attente pleine
+/// ([ActionPrincipale.libelleAttente]) : l'opacite va et vient doucement,
+/// comme dans la maquette. Sous « Réduire les effets », le libelle reste fixe.
+class _BattementAttente extends StatefulWidget {
+  const _BattementAttente({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_BattementAttente> createState() => _BattementAttenteState();
+}
+
+class _BattementAttenteState extends State<_BattementAttente>
+    with SingleTickerProviderStateMixin<_BattementAttente> {
+  late final AnimationController _a = AnimationController(
+    vsync: this,
+    duration: AppMouvement.pulsation,
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (AppMouvement.mouvementReduit(context)) {
+      _a
+        ..stop()
+        ..value = 1;
+    } else if (!_a.isAnimating) {
+      _a.repeat(reverse: true);
+    }
+  }
+
+  @override
+  void dispose() {
+    _a.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(
+    opacity: _a.drive(
+      Tween<double>(
+        begin: 0.55,
+        end: 1,
+      ).chain(CurveTween(curve: AppMouvement.pulsationCourbe)),
+    ),
+    child: widget.child,
+  );
 }

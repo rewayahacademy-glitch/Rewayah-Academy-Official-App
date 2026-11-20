@@ -1003,6 +1003,86 @@ abstract final class AppCouleursPorte {
   static const AppInkColor ombre = AppInkColor(Color(0xFF25113F));
 }
 
+/// Les couleurs de Praxis, le personnage (competence `praxis-rewayah` §3 ;
+/// directeur, 20/11/2026 : « les lumieres c'est entre la lavande, blanc,
+/// violet »). **Identiques en clair et en sombre** : le personnage est le
+/// meme partout ; seul le corail (la langue, les joues) a une valeur par
+/// theme. Lues par le seul dessin de Praxis (`lib/core/vivant/
+/// praxis_dessin.dart`), jamais par un ecran. Ce sont des valeurs deja
+/// presentes dans la palette (action douce, encre forte, violet du logo,
+/// accent sombre, point d'alerte clair) ; seul [corailSombre] est nouveau.
+abstract final class AppCouleursPraxis {
+  /// Le lilas : le corps, les mains, le plateau de la toque.
+  static const AppInkColor lilas = AppInkColor(Color(0xFFDCCAFD));
+
+  /// L'encre : les yeux, la toque, les pieds, les traits.
+  static const AppInkColor encre = AppInkColor(Color(0xFF110E20));
+
+  /// Le blanc : les pupilles, le coeur de sa lumiere.
+  static const AppInkColor blanc = AppInkColor(Color(0xFFFFFFFF));
+
+  /// Le violet du logo : le fond de son portrait.
+  static const AppInkColor violet = AppInkColor(Color(0xFF8652E6));
+
+  /// Le corail en theme clair : la langue et les joues, rien d'autre.
+  static const AppInkColor corailClair = AppInkColor(Color(0xFFE0375A));
+
+  /// Le corail en theme sombre.
+  static const AppInkColor corailSombre = AppInkColor(Color(0xFFFF8FA3));
+}
+
+/// ENTREE-PRAXIS (directeur, 20/11/2026, maquette « Praxis vous accueille »
+/// confirmee : « j'espere qu'elle sera fidele en production ») : les teintes
+/// de la scene d'entree (la porte du logo, sa lumiere, la route). Ce sont les
+/// valeurs de la palette (page, carte, creux, encre forte, filet, lavis
+/// d'accent, accent sombre), reprises ici une fois pour que les peintres de
+/// `lib/core/vivant/entree/` les lisent sans contexte. Lues par la scene
+/// seule ; un ecran passe par `AppPalette`. Decoratives, sauf [encreClair] et
+/// [encreSombre] : les mots de Praxis, poses sur le ciel de la scene.
+abstract final class AppCouleursEntree {
+  /// Le fond de page, clair.
+  static const AppInkColor fondClair = AppInkColor(Color(0xFFF7F5FE));
+
+  /// Le fond de page, sombre.
+  static const AppInkColor fondSombre = AppInkColor(Color(0xFF16161E));
+
+  /// La carte, claire.
+  static const AppInkColor surfaceClair = AppInkColor(Color(0xFFFFFFFF));
+
+  /// La carte, sombre.
+  static const AppInkColor surfaceSombre = AppInkColor(Color(0xFF272734));
+
+  /// Le creux, clair.
+  static const AppInkColor creuxClair = AppInkColor(Color(0xFFF1EFF4));
+
+  /// Le creux, sombre.
+  static const AppInkColor creuxSombre = AppInkColor(Color(0xFF20202B));
+
+  /// L'encre des mots de Praxis, claire.
+  static const AppInkColor encreClair = AppInkColor(Color(0xFF110E20));
+
+  /// L'encre des mots de Praxis, sombre.
+  static const AppInkColor encreSombre = AppInkColor(Color(0xFFF5F2FA));
+
+  /// Le filet, clair.
+  static const AppInkColor filetClair = AppInkColor(Color(0xFFE3DEE9));
+
+  /// Le filet, sombre.
+  static const AppInkColor filetSombre = AppInkColor(Color(0xFF3D3D50));
+
+  /// Le lavis d'accent, clair.
+  static const AppInkColor paleClair = AppInkColor(Color(0xFFEEE6FA));
+
+  /// Le lavis d'accent, sombre.
+  static const AppInkColor paleSombre = AppInkColor(Color(0xFF342B4D));
+
+  /// La lavande : l'accent du theme sombre, la lumiere lointaine.
+  static const AppInkColor lavande = AppInkColor(Color(0xFFBA98FB));
+
+  /// Le noir des masques et des ombres (jamais vu tel quel).
+  static const AppInkColor noir = AppInkColor(Color(0xFF000000));
+}
+
 /// Plan de la salle du 26/10/2026 (§3, demande du directeur : « des couleurs
 /// primaires, dix au moins, accessibles, standard tablette ») : les six
 /// couleurs franches du nuancier des traits, apres les quatre tons
