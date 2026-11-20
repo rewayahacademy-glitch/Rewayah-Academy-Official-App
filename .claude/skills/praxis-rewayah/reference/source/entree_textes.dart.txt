@@ -1,0 +1,159 @@
+// Les mots de la maquette « Praxis vous accueille », en français et en arabe.
+// Les libellés du formulaire reprennent assets/i18n du dépôt quand ils existent.
+import 'package:flutter/foundation.dart';
+
+/// Langue de la maquette : en arabe, toute la mise en page passe de droite à gauche.
+final ValueNotifier<bool> arabe = ValueNotifier<bool>(false);
+
+String tx(String fr, String ar) => arabe.value ? ar : fr;
+
+/// Les gestes de Praxis.
+enum Geste {
+  aucun, salut, joie, montre, etire, balaie, range, souffle, presque, suivre, cherche, pied, pause, reflexion, porte, cle,
+  desole, hoche, surPlace, allume, pointe, gene, un, envoie, coeur, applaudit, baille, genoux, chapeau, non, compte, respire,
+}
+
+/// Les visages de Praxis.
+enum Expr { neutre, sourire, joie, etonne, reflexion, desole, attente, paisible, gene, concentre, baille }
+
+class Replique {
+  const Replique(this.fr, this.ar, this.geste, this.expr, {this.tard = false});
+  final String fr, ar;
+  final Geste geste;
+  final Expr expr;
+
+  /// Une réplique « de fin » ne vient qu'après 55 %.
+  final bool tard;
+  String get texte => arabe.value ? ar : fr;
+}
+
+/// Mise à jour : les phrases qui font patienter, chacune avec son geste.
+const List<Replique> phrasesAttente = <Replique>[
+  Replique('Merci de patienter', 'شكرًا على انتظارك', Geste.coeur, Expr.sourire),
+  Replique('Je prépare votre espace', 'أجهّز لك مساحتك', Geste.balaie, Expr.paisible),
+  Replique('Je range vos affaires', 'أرتّب لك أغراضك', Geste.range, Expr.sourire),
+  Replique('Je vérifie que tout est à sa place', 'أتأكّد أن كل شيء في مكانه', Geste.reflexion, Expr.reflexion),
+  Replique('Les nouveautés arrivent', 'الجديد في الطريق إليك', Geste.joie, Expr.joie),
+  Replique('Ça avance bien', 'كل شيء يسير على ما يرام', Geste.hoche, Expr.joie),
+  Replique("J'allume les lumières", 'أُضيء الأنوار', Geste.allume, Expr.joie),
+  Replique('Tout se met en place', 'كل شيء يأخذ مكانه', Geste.compte, Expr.concentre),
+  Replique('Je balaie le chemin', 'أكنس لك الطريق', Geste.balaie, Expr.paisible),
+  Replique('Je ravive la lumière', 'أزيد النور قليلًا', Geste.souffle, Expr.neutre),
+  Replique('Un petit étirement', 'أتمدّد قليلًا', Geste.etire, Expr.paisible),
+  Replique("Je jette un œil à l'heure", 'ألقي نظرة على الساعة', Geste.montre, Expr.attente),
+  Replique('Encore un petit instant', 'لحظات وننتهي', Geste.pause, Expr.sourire),
+  Replique('Ça vaut la peine d’attendre', 'الأمر يستحق الانتظار', Geste.applaudit, Expr.joie),
+  Replique('Une dalle après l’autre', 'خطوة بعد خطوة', Geste.surPlace, Expr.sourire),
+  Replique('Je reste avec vous', 'أنا معك', Geste.salut, Expr.sourire),
+  Replique('Vos cours vous attendent', 'دروسك في انتظارك', Geste.porte, Expr.sourire),
+  Replique('On respire un bon coup', 'نأخذ نفسًا عميقًا', Geste.respire, Expr.paisible),
+  Replique('Vous y êtes presque', 'أوشكنا على الانتهاء', Geste.presque, Expr.sourire, tard: true),
+  Replique('Je vous ouvre la porte', 'سأفتح لك الباب', Geste.porte, Expr.sourire, tard: true),
+  Replique('Plus que quelques pas', 'بقيت خطوات قليلة', Geste.surPlace, Expr.sourire, tard: true),
+  Replique('On y est bientôt', 'اقتربنا كثيرًا', Geste.hoche, Expr.joie, tard: true),
+  Replique('Les dernières finitions', 'أضع اللمسات الأخيرة', Geste.cle, Expr.concentre, tard: true),
+];
+
+/// Chargement lent : ce qu'il dit après 8 secondes.
+const List<Replique> phrasesLenteur = <Replique>[
+  Replique("C'est plus long que d'habitude", 'الأمر يطول أكثر من المعتاد', Geste.montre, Expr.attente),
+  Replique('Je suis toujours là', 'ما زلت هنا', Geste.salut, Expr.sourire),
+  Replique('Votre connexion semble lente', 'يبدو أن اتصالك بطيء', Geste.cherche, Expr.reflexion),
+  Replique('Encore un instant', 'لحظة من فضلك', Geste.pause, Expr.sourire),
+];
+
+/// Quand on touche Praxis : jamais deux fois de suite la même réaction.
+const List<Replique> reactionsToucher = <Replique>[
+  Replique('Oui ?', 'نعم؟', Geste.aucun, Expr.etonne),
+  Replique('Ça chatouille !', 'هذا يدغدغني!', Geste.joie, Expr.joie),
+  Replique('Je suis là', 'أنا هنا', Geste.salut, Expr.sourire),
+  Replique('', '', Geste.chapeau, Expr.sourire),
+  Replique('', '', Geste.non, Expr.joie),
+  Replique('Bonjour !', 'مرحبًا!', Geste.coeur, Expr.gene),
+];
+
+/// Ce que Praxis dit dans chaque situation.
+abstract final class Dit {
+  // Connexion
+  static String get bonjour => tx('Bonjour, bienvenue.', 'أهلًا وسهلًا بك');
+  static String get adresseEtPorte => tx('Votre adresse, et je vous ouvre la porte.', 'اكتب بريدك، وأفتح لك الباب');
+  static String get habitue => tx('Bon retour, Amina.', 'أهلًا بعودتك يا أمينة');
+  static String get habitue2 => tx('Votre adresse est déjà là.', 'بريدك محفوظ هنا');
+  static String get parfait => tx('Parfait.', 'ممتاز');
+  static String get adresse => tx("Il manque le @ dans l'adresse.", 'العنوان ينقصه الرمز @');
+  static String get envoi => tx("J'envoie votre lien.", 'أرسل لك الرابط الآن');
+  static String get envoye => tx("C'est parti. Regardez vos courriels.", 'تم الإرسال. تفقّد بريدك');
+  static String get attenteLongue => tx('Toujours rien ? Je peux le renvoyer.', 'لم يصلك شيء بعد؟ أرسله لك من جديد');
+  static String get expire => tx("Ce lien a expiré. J'en envoie un autre ?", 'انتهت صلاحية الرابط. أرسل لك غيره؟');
+  static String get dejaUtilise => tx('Ce lien a déjà servi. Il en faut un nouveau.', 'هذا الرابط استُخدم من قبل. تحتاج رابطًا جديدًا');
+  static String get tropEssais => tx("Trop de demandes d'un coup. Une petite pause.", 'طلبات كثيرة دفعة واحدة. لنسترح قليلًا');
+  static String get horsLigne => tx('Plus de connexion Internet.', 'انقطع الاتصال بالإنترنت');
+  static String get retourLigne => tx('La connexion est revenue.', 'عاد الاتصال');
+  static String get reseauLent => tx("Le réseau est lent. Je continue d'envoyer.", 'الشبكة بطيئة. ما زلت أحاول الإرسال');
+  static String get serveur => tx("Ce n'est pas vous, c'est nous.", 'الخطأ من عندنا، لا من عندك');
+  static String get googleOuverte => tx('Choisissez votre compte Google.', 'اختر حسابك في Google');
+  static String get googleFermee => tx("La fenêtre s'est fermée. On réessaie ?", 'أُغلقت النافذة. نحاول مرة أخرى؟');
+  static String get googleRefuse => tx("Ce compte n'a pas encore d'invitation.", 'هذا الحساب لم تصله دعوة بعد');
+  static String get suivez => tx("C'est bon. Suivez-moi.", 'تمام. تفضّل معي');
+  static String get session => tx('Votre session a pris fin. On se reconnecte ?', 'انتهت جلستك. نسجّل الدخول من جديد؟');
+  // Chargement
+  static String get ouverture => tx("J'ouvre votre espace.", 'أفتح لك مساحتك');
+  static String get pret => tx("C'est prêt. Suivez-moi.", 'كل شيء جاهز. تفضّل معي');
+  static String get chargeEchec => tx("Je n'arrive pas à ouvrir.", 'لم أتمكّن من الفتح');
+  // Mise à jour
+  static String get majDispo => tx('Une nouvelle version est prête.', 'نسخة جديدة جاهزة');
+  static String get majDepart => tx("C'est parti. Je m'en occupe.", 'بدأنا. اترك الأمر لي');
+  static String get majEchec => tx("La mise à jour s'est arrêtée.", 'توقّف التحديث');
+  static String get maintenance => tx("Un peu d'entretien. Je reviens vite.", 'صيانة قصيرة. أعود سريعًا');
+}
+
+/// Les textes du formulaire et des écrans pleins.
+abstract final class Lib {
+  // Repris de assets/i18n (connexion.*)
+  static String get titre => tx('Se connecter', 'تسجيل الدخول');
+  static String get champ => tx('Votre adresse électronique', 'بريدك الإلكتروني');
+  static String get indice => tx('vous@exemple.com', 'name@example.com');
+  static String get envoyer => tx('Recevoir le lien', 'استلام الرابط');
+  static String get google => tx('Continuer avec Google', 'المتابعة بحساب Google');
+  static String get probleme => tx('Lien expiré ou jamais reçu ?', 'انتهت صلاحية الرابط أو لم يصل؟');
+  static String get envoyeTitre => tx('Lien envoyé', 'أُرسل الرابط');
+  static String get envoyeDetail => tx('Ouvrez le message envoyé à amina.b@exemple.com, puis suivez le lien. Vous pouvez laisser cette page ouverte.',
+      'افتح الرسالة المرسلة إلى \u2068amina.b@exemple.com\u2069، ثم اتبع الرابط. يمكنك ترك هذه الصفحة مفتوحة.');
+  static String get renvoyer => tx('Renvoyer le lien', 'إعادة إرسال الرابط');
+  static String get autreAdresse => tx('Utiliser une autre adresse', 'استخدام عنوان آخر');
+  static String get encartAttente => tx('Le message peut mettre quelques minutes à arriver. Pensez à regarder dans les courriers indésirables.',
+      'قد تستغرق الرسالة بضع دقائق لتصل. تذكّر أن تنظر في البريد غير المرغوب فيه.');
+  static String get erreurTropTot => tx("Un lien vient déjà de partir. Attendez un moment avant d'en demander un autre.", 'أُرسل رابط للتو. انتظر قليلًا قبل طلب رابط آخر.');
+  static String get horsLigne => tx('Le lien ne peut pas partir pour l’instant. Réessayez quand la connexion sera revenue.', 'أنت غير متصل: لا يمكن إرسال الرابط الآن.');
+  static String get retabli => tx('Réseau rétabli', 'عادت الشبكة');
+  static String get erreurServeur => tx("Le lien n'a pas pu partir. Réessayez dans un instant ; si cela se répète, écrivez à l'académie.", 'تعذّر إرسال الرابط. أعد المحاولة بعد قليل؛ وإن تكرر ذلك فاكتب إلى الأكاديمية.');
+  static String get expireTitre => tx("Ce lien n'est plus valable", 'هذا الرابط لم يعد صالحًا');
+  static String get expireDetail => tx("Un lien de connexion ne sert qu'une fois et expire au bout d'un moment. Demandez-en un nouveau ci-dessous.", 'رابط الدخول يُستخدم مرة واحدة وتنتهي صلاحيته بعد مدة. اطلب رابطًا جديدًا أدناه.');
+  static String get nouveauLien => tx('Recevoir un nouveau lien', 'استلام رابط جديد');
+  static String get sessionTitre => tx('Vous avez été déconnecté', 'تم تسجيل خروجك');
+  static String get reessayer => tx('Réessayer', 'إعادة المحاولة');
+  static String get majPrete => tx("Une nouvelle version de l'application est prête.", 'نسخة جديدة من التطبيق جاهزة.');
+  static String get recharger => tx('Recharger', 'إعادة التحميل');
+  // Propres à la maquette
+  static String get envoiEnCours => tx('Envoi du lien…', 'جارٍ إرسال الرابط…');
+  static String get erreurAdresse => tx("Il manque le signe @ dans l'adresse. Ajoutez-le, puis renvoyez.", 'ينقص العنوان الرمز @. أضفه ثم أعد الإرسال.');
+  static String get dejaTitre => tx('Ce lien a déjà servi', 'هذا الرابط سبق استخدامه');
+  static String get dejaDetail => tx("Un lien de connexion ne sert qu'une fois. Demandez-en un nouveau ci-dessous.", 'رابط الدخول يُستخدم مرة واحدة. اطلب رابطًا جديدًا أدناه.');
+  static String get sessionPhrase => tx('Votre session a pris fin. Reconnectez-vous ici.', 'انتهت جلستك. سجّل الدخول من جديد هنا.');
+  static String get reseauLent => tx("La connexion est lente : l'envoi continue, gardez la page ouverte.", 'الاتصال بطيء: الإرسال مستمر، أبقِ الصفحة مفتوحة.');
+  static String get googleAttente => tx('En attente de Google…', 'في انتظار Google…');
+  static String get googleFermee => tx("La fenêtre Google s'est fermée avant le choix d'un compte.", 'أُغلقت نافذة Google قبل اختيار حساب.');
+  static String get googleRefuse => tx("Les inscriptions se font pour l'instant sur invitation. Connectez-vous avec l'adresse qui a reçu l'invitation.", 'التسجيل يتم حاليًا بدعوة فقط. سجّل الدخول بالعنوان الذي وصلته الدعوة.');
+  static String get googleFenetre => tx('Choisir un compte', 'اختيار حساب');
+  static String get reessayerDans => tx('Réessayer dans', 'إعادة المحاولة بعد');
+  static String get bienvenue => tx('Bonjour Amina', 'أهلًا أمينة');
+  static String get espace => tx('Votre espace est ouvert.', 'مساحتك مفتوحة.');
+  static String get revoir => tx('Revoir l’arrivée', 'إعادة المشهد');
+  static String get majTitre => tx('Mise à jour de l’application', 'تحديث التطبيق');
+  static String get chargeTitre => tx('Ouverture de l’application', 'فتح التطبيق');
+  static String get chargeLent => tx('Ouverture plus longue que d’habitude', 'الفتح يستغرق وقتًا أطول من المعتاد');
+  static String get chargeEchec => tx('Le serveur ne répond pas. Vos données ne sont pas touchées.', 'الخادم لا يستجيب. بياناتك لم تتأثر.');
+  static String get majEchec => tx("Le téléchargement s'est interrompu. Rien n'est perdu : il reprendra où il s'est arrêté.", 'انقطع التنزيل. لم يضِع شيء: سيُستأنف من حيث توقف.');
+  static String get maintenance => tx("L'application est en maintenance. Elle rouvre dans quelques minutes.", 'التطبيق قيد الصيانة. يعود بعد دقائق.');
+  static String get majFinie => tx('Mise à jour terminée', 'اكتمل التحديث');
+}
