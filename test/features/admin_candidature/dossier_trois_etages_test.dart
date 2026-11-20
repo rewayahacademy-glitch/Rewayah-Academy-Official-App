@@ -1114,15 +1114,12 @@ void main() {
     });
   });
 
-  group(
-    'messages : le bandeau « pas en direct » reste dans la conversation',
-    () {
-      testWidgets('absent de la page, replie', (WidgetTester tester) async {
-        await _monter(tester, port: _port(detailTest()));
-        expect(find.text(t.com.messages.direct.horsDirect), findsNothing);
-      });
-    },
-  );
+  group('messages : aucun avis « pas en direct » sur la page', () {
+    testWidgets('absent de la page, replie', (WidgetTester tester) async {
+      await _monter(tester, port: _port(detailTest()));
+      expect(find.textContaining('30 secondes'), findsNothing);
+    });
+  });
 
   group('ordinateur : etages 1 et 2 a gauche, rubriques a droite', () {
     testWidgets('deux colonnes, une seule barre de defilement', (

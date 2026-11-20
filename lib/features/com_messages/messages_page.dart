@@ -46,7 +46,6 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/vue_etat_communication.dart';
 import '../com_vocal/envoi_vocal.dart';
 import '../com_vocal/port_enregistreur_vocal.dart';
-import 'bandeau_messages_hors_direct.dart';
 import 'barre_conversation.dart';
 import 'fil_contextuel.dart';
 import 'images_du_fil.dart';
@@ -449,9 +448,9 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
           const BandeauHorsLigneCommunication(encadre: true),
           Ecart.vLg,
         ],
-        // K-59 (MESSAGERIE-TEMPS-REEL) : le temps reel est tombe, la page le
-        // dit et se relit d'elle-meme.
-        const BandeauMessagesHorsDirect(ecartApres: Ecart.vLg),
+        // Directeur, 20/11/2026 : l'avis « Messages pas en direct » est
+        // retire (« inutile »). Quand le temps reel tombe, la page se relit
+        // d'elle-meme sans rien afficher.
         Expanded(
           child: LayoutBuilder(
             builder: (BuildContext context, BoxConstraints contraintes) =>

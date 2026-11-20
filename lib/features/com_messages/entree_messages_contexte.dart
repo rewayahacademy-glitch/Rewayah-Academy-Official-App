@@ -51,7 +51,6 @@ import '../../core/widgets/badge_non_lu.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/vue_etat_communication.dart';
-import 'bandeau_messages_hors_direct.dart';
 import 'port_messages_metier.dart';
 
 /// Le nombre de conversations rendues sur un objet ; au-dela, « Voir toutes
@@ -330,14 +329,7 @@ class _EntreeMessagesContexteState
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          ?widget.ecartAvant,
-          // K-59 : sur l'entree d'un objet (le dossier du candidat), dire que
-          // les messages n'arrivent plus en direct.
-          if (!_general) const BandeauMessagesHorsDirect(ecartApres: Ecart.vLg),
-          contenu,
-          ?widget.ecartApres,
-        ],
+        children: <Widget>[?widget.ecartAvant, contenu, ?widget.ecartApres],
       ),
     );
   }

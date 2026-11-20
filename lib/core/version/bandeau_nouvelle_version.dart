@@ -107,6 +107,10 @@ class _EtatBandeauNouvelleVersion
                   onPress: widget.recharger,
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: false,
+                  // Dans la pilule de l'avis : une petite pilule, pas un
+                  // bouton de formulaire.
+                  pilule: true,
+                  compacte: true,
                 ),
                 ActionPrincipale(
                   key: BandeauNouvelleVersion.clePlusTard,
@@ -114,6 +118,8 @@ class _EtatBandeauNouvelleVersion
                   onPress: remettre,
                   niveau: NiveauAction.tertiaire,
                   pleineLargeur: false,
+                  pilule: true,
+                  compacte: true,
                 ),
               ],
             ),

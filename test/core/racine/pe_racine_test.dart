@@ -9,11 +9,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
-import 'package:rewayah_academy/core/communications/veille_messages.dart';
 import 'package:rewayah_academy/core/fraicheur/avis_ephemere.dart';
 import 'package:rewayah_academy/core/fraicheur/avis_flottant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
-import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_mouvement.dart';
 import 'package:rewayah_academy/core/version/bandeau_nouvelle_version.dart';
 import 'package:rewayah_academy/core/version/nouvelle_version.dart';
@@ -21,7 +19,6 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/champ_recherche.dart';
 import 'package:rewayah_academy/core/widgets/selection_racine.dart';
 import 'package:rewayah_academy/core/widgets/zone_saisie.dart';
-import 'package:rewayah_academy/features/com_messages/bandeau_messages_hors_direct.dart';
 
 import '../../capture/outil_capture.dart';
 
@@ -29,12 +26,6 @@ import '../../capture/outil_capture.dart';
 class _VersionNouvelle extends SurveillanceVersion {
   @override
   bool build() => true;
-}
-
-/// Les messages hors direct, sans canal.
-class _VeilleTombee extends EtatVeilleMessagesControleur {
-  @override
-  EtatVeilleMessages build() => const EtatVeilleMessages(enDirect: false);
 }
 
 const Key _cleContenu = ValueKey<String>('contenu');
@@ -210,6 +201,30 @@ void main() {
       expect(find.text(t.com.messages.direct.nouveau), findsNothing);
     });
 
+    testWidgets('l\'avis court est une pilule sans croix, large comme son '
+        'texte', (WidgetTester tester) async {
+      tester.view.physicalSize = const Size(1440, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        hoteCapture(_ecran(avis: const <Widget>[BandeauAvisEphemere()])),
+      );
+      ProviderScope.containerOf(
+        tester.element(find.byType(BandeauAvisEphemere)),
+      ).read(avisEphemereProvider.notifier).dire('Avis');
+      await tester.pumpAndSettle();
+      // Directeur, 20/11/2026 : « un petit message qui surgit du haut pour
+      // quelques secondes », pas une carte pleine largeur avec une croix.
+      expect(find.byKey(AvisFlottant.cleFermer), findsNothing);
+      final Size pilule = tester.getSize(find.byKey(AvisFlottant.clePilule));
+      expect(pilule.width, lessThan(CoucheAvis.largeurMax / 2));
+      // Centree en haut de l'ecran.
+      final Offset centre = tester.getCenter(
+        find.byKey(AvisFlottant.clePilule),
+      );
+      expect(centre.dx, moreOrLessEquals(720, epsilon: 1));
+    });
+
     testWidgets('l\'avis se ferme en le glissant vers le haut', (
       WidgetTester tester,
     ) async {
@@ -249,27 +264,6 @@ void main() {
       await tester.sendKeyEvent(LogicalKeyboardKey.escape);
       await tester.pumpAndSettle();
       expect(find.text('Avis'), findsNothing);
-    });
-
-    testWidgets('« Messages pas en direct » : un signe qui se masque', (
-      WidgetTester tester,
-    ) async {
-      await tester.pumpWidget(
-        hoteCapture(
-          const Scaffold(body: BandeauMessagesHorsDirect()),
-          surcharges: <Override>[
-            etatVeilleMessagesProvider.overrideWith(_VeilleTombee.new),
-            horsLigneProvider.overrideWith(
-              (Ref _) => Stream<bool>.value(false),
-            ),
-          ],
-        ),
-      );
-      await tester.pump();
-      expect(find.byKey(BandeauMessagesHorsDirect.cle), findsOneWidget);
-      await tester.tap(find.byKey(BandeauMessagesHorsDirect.cleMasquer));
-      await tester.pump();
-      expect(find.byKey(BandeauMessagesHorsDirect.cle), findsNothing);
     });
   });
 
