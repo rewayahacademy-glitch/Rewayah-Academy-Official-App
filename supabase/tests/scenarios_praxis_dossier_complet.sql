@@ -534,9 +534,11 @@ SELECT pg_temp.verif('OUVRIR idempotence : la meme cle ne renvoie pas le message
 SELECT pg_temp.verif('OUVRIR 7 jours : ni relance ni question a la meme personne avant 7 jours', $$
   SELECT pg_temp.ouvrir('both', '16', 'relance', '301') ->> 'erreur' = 'ouverture_recente' AND pg_temp.ouvrir('both', '16', 'question', '302') ->> 'erreur' = 'ouverture_recente'
      AND (SELECT count(*) FROM public.com_messages m WHERE m.fil_id = (pg_temp.lu('o16') ->> 'fil')::uuid) = 1 $$);
+-- PX-6 (20261130800000) : c20 (la direction a ecrit il y a une heure) est desormais une conversation TENUE PAR LA DIRECTION : le refus
+-- `fil_de_la_direction` passe avant `raison_requise`. Le refus reste un refus, rien n'est ecrit.
 SELECT pg_temp.verif('ECRIRE sans raison : refuse quand la personne n''a jamais ecrit (c16) ou que la direction a repondu (c20)', $$
   SELECT pg_temp.ecrire('both', (pg_temp.lu('o16') ->> 'fil')::uuid, '310') ->> 'erreur' = 'raison_requise'
-     AND pg_temp.ecrire('both', pg_temp.f('20'), '311') ->> 'erreur' = 'raison_requise'
+     AND pg_temp.ecrire('both', pg_temp.f('20'), '311') ->> 'erreur' = 'fil_de_la_direction'
      AND (SELECT count(*) FROM public.com_messages m WHERE m.fil_id = pg_temp.f('20')) = 1 $$);
 SELECT pg_temp.verif('OUVRIR nuit : refuse entre 21 h et 8 h a l''heure du candidat', $$
   SELECT pg_temp.ouvrir('both', '17', 'relance', '320') ->> 'erreur' = 'heure_tardive' AND pg_temp.ouvrir('both', '17', 'question', '321') ->> 'erreur' = 'heure_tardive'
@@ -602,12 +604,16 @@ SELECT pg_temp.verif('OUVRIR felicitations : une fois par decision, puis la boit
 SELECT pg_temp.verif('OUVRIR felicitations : une decision de plus de 72 heures ne se felicite plus', $$
   SELECT NOT EXISTS (SELECT 1 FROM private.praxis_decision_positive(pg_temp.c('20')))
      AND EXISTS (SELECT 1 FROM public.candidature_evenements e WHERE e.candidature_id = pg_temp.c('20') AND e.details ->> 'geste' = 'admettre_verifications')
-     AND pg_temp.ouvrir('both', '20', 'felicitations', '430') ->> 'erreur' = 'felicitations_sans_objet'
+     -- PX-6 : `direction_recente` vaut aussi pour les felicitations (la direction a ecrit a c20 il y a une heure) et passe avant
+     -- felicitations_sans_objet ; l'absence de decision positive de moins de 72 heures est prouvee par la premiere ligne.
+     AND pg_temp.ouvrir('both', '20', 'felicitations', '430') ->> 'erreur' = 'direction_recente'
      AND pg_temp.dans_boite('both', 'a_feliciter', '20') IS NULL $$);
 SELECT pg_temp.verif('DOSSIER apres dialogue : les ouvertures et les comptes de la conversation', $$
   SELECT d -> 'praxis' -> 'ouvertures' -> 0 ->> 'raison' = 'relance' AND (d -> 'conversation' ->> 'de_praxis')::int = 1 AND (d -> 'conversation' ->> 'du_candidat')::int = 0
     FROM (SELECT pg_temp.dossier('both', '16') AS d) x $$);
 -- ===== ENTRETIEN ECRIT (directeur, 20/11/2026) : quelques questions par ecrit a la place de la video =====
+-- PX-6 (20261130800000) : les entretiens ecrits sont SUSPENDUS par defaut ; ce bloc prouve leurs regles quand la direction les a rouverts.
+UPDATE private.praxis_reglages SET entretiens_ecrits_ouverts = true;
 SELECT pg_temp.verif('ENTRETIEN boite a_interroger : l''entretien reste a planifier et aucune serie n''a ete envoyee', $$
   SELECT pg_temp.dans_boite('both', 'a_interroger', '21') ->> 'permis' = 'true' AND pg_temp.dans_boite('both', 'a_interroger', '21') ->> 'raison' = 'entretien_ecrit'
      AND jsonb_array_length(pg_temp.boite('both', 'a_interroger') -> 'candidats') = 1 $$);

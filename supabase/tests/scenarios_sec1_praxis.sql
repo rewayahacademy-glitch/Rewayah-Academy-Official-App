@@ -414,7 +414,10 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
           'public.praxis_ouvrir>public.com_fils',
           -- PX-5 : retirer_question remplit les deux colonnes neuves de SA question (jamais d'effacement) ; la porte neuve de la direction
           -- regle le plafond des ouvertures (aal2, journalisee), comme direction_praxis_regler_plafond.
-          'public.praxis_retirer_question>private.praxis_questions', 'public.direction_praxis_regler_ouvertures>private.praxis_reglages']) x),
+          'public.praxis_retirer_question>private.praxis_questions', 'public.direction_praxis_regler_ouvertures>private.praxis_reglages',
+          -- PX-6 : la porte neuve de la direction regle les conversations tenues par la direction et la reouverture des entretiens
+          -- ecrits (aal2, journalisee) ; elle n'ecrit que private.praxis_reglages.
+          'public.direction_praxis_regler_conversations>private.praxis_reglages']) x),
   'R4 : les couples (fonction praxis_* ou direction_praxis_*, table ecrite) sont exactement la liste fermee ecrite ici : journal, cles, reglages, calendrier, propositions, tirs, questions, piles et objectifs (PX-3) ; aucune ecriture dans profiles, app_config, paiements, pieces, comptes');
 -- R4 (suite, AR-10) : les ecritures INDIRECTES. TOUT appel qualifie `schema.fonction(` fait par une fonction praxis_*, private.praxis_* ou
 -- direction_praxis_* (schemas public, private, auth, extensions, tout schema hors pg_catalog) est dans une liste fermee ecrite ici. Un appel
@@ -452,6 +455,8 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.praxis_reponses', 'public.com_fils',
           -- PX-5 : l'aide neuve qui dit ou en est le dossier d'une conversation (lue par boite et fil).
           'private.praxis_dossier_resume',
+          -- PX-6 : l'aide neuve qui dit si une conversation est tenue par la direction (lue par boite, fil et ecrire).
+          'private.praxis_tenue_par_direction',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
   'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (59 noms : 42, plus 7 de PX-3, plus 10 de PX-4) ; aucun autre appel de public, private ou d''un autre schema');
 
