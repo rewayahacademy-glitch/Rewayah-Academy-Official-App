@@ -1008,3 +1008,34 @@ IA aux conversations de vraies personnes, et chaque changement doit porter son n
 - Praxis relance les candidats sans nouvelles, dans des limites fixées par le serveur.
 - Le « chat de la direction » : aujourd'hui, c'est la notification du point du jour et l'écran
   « Questions de Praxis ». Une conversation de direction dans l'application n'existe pas encore.
+
+### 17.5 Praxis doit être un vrai assistant, pas un filtre (directeur, 20/11/2026)
+
+Citation : « s'il se base seulement sur les données basiques, ce n'est pas la peine, car les
+filtres savent déjà faire tout ça. Il doit être une vraie IA, poussée à fond, pour trouver les
+pépites parmi les pépites ; s'il le faut, ouvrir le dialogue avec eux pour avoir plus de
+contexte, sans harceler ni mettre la pression. Il doit se fixer des objectifs lui-même, dans
+l'intérêt de la direction : les meilleurs enseignants, les meilleurs programmes, les meilleurs
+comportements, les meilleures visions (surtout), les meilleures stratégies. »
+
+Vérité : le lot PX-3 (`claude/praxis-travail`, PR 640) ne donne à Praxis que des codes et des
+états, ce que les filtres font déjà. Il ne lit pas les réponses d'un dossier.
+
+Lot lancé : **PX-4 PRAXIS-DOSSIER-COMPLET** (`claude/praxis-dossier-complet`, bâti sur PX-3) :
+1. outil `dossier` : toutes les réponses du questionnaire, l'historique, l'état de l'entretien ;
+   jamais de contact, de pièce, de photo, de coordonnées de versement, de notes d'entretien ;
+2. outil `noter_impression` : étiquette (pépite, solide, à creuser, réserve), cinq critères
+   notés (maîtrise, pédagogie, vision, comportement, disponibilité), les faits qui fondent
+   l'avis ; jamais une décision ;
+3. Praxis peut écrire le premier (question, relance, félicitations après une décision
+   positive), dans la conversation de candidature, que le serveur ouvre si elle n'existe pas ;
+   limites dans le serveur : une ouverture par personne tous les 7 jours, deux messages de suite
+   sans réponse au plus, 25 ouvertures par jour, jamais la nuit, jamais dans les 48 heures qui
+   suivent un message de la direction ;
+4. `lire` pour chercher les meilleurs (par étiquette, ijaza, riwaya, langue, public).
+
+Décisions du directeur que ce lot applique : Praxis lit les réponses des dossiers ; Praxis
+ouvre le dialogue ; Praxis peut ouvrir la conversation de candidature d'une personne qui n'en a
+pas. À vérifier avant la mise en service : que le texte publié aux candidats sur l'assistant IA
+le permet (sinon le modifier d'abord). Question ouverte : les notes d'entretien restent fermées
+à Praxis tant que le directeur n'a pas dit le contraire.
