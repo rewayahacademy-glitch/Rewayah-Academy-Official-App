@@ -63,4 +63,4 @@ l'application) ; **non vérifié** (peut exister, personne ne l'a lu dans le cod
 | # | Règle du directeur (20/11) | État |
 | --- | --- | --- |
 | D1 | **Seulement les enseignants, et les candidats enseignants qui ont accepté leurs accords** | écran et routeur : fait sur la branche du lot (`/lire` ouvert au seul rôle enseignant ; le candidat sans accords voit ce qui manque) |
-| D2 | **Le serveur doit décider aussi** | **absent** : le texte est compilé dans l'application, donc lisible par qui ouvre le code. Il faut le servir par le serveur (voir `LOT.md`, « Contrôle serveur »). Hors de la zone d'un agent d'écran (`supabase/` et les adaptateurs `*_supabase.dart` sont refusés par le garde-fou) : à confier par le pilote |
+| D2 | **Le serveur doit décider aussi** | en cours : le texte est retiré de l'application et la page lit un port serveur (`port_lettre.dart`) ; la fonction serveur et son adaptateur sont pris par le pilote (branche `claude/lettre-serveur`). Tant qu'ils ne sont pas fusionnés et installés, la page n'affiche rien |

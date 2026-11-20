@@ -16,17 +16,18 @@ n'est en production ni prouvé par le directeur.
   enseignant (actif, ou candidat en attente) ; la famille, l'élève, la direction et un compte suspendu
   sont refusés ; sans connexion, la connexion puis retour à la page. Le lien se partage donc entre
   enseignants et candidats, et la page reste dans l'application.
-- **Contrôle serveur : à faire, hors de ma zone.** Aujourd'hui le texte est compilé dans
-  l'application. Il faut le servir par le serveur :
-  1. une table des textes internes (clé `lettre_candidats`, langue, version, parties en JSON), sous
-     RLS, aucune lecture directe ;
-  2. une fonction `lire_lettre_candidats(langue)` qui rend les parties **seulement** si l'appelant a le
-     rôle enseignant et soit un compte actif, soit une candidature dont le contrat, le code de conduite
-     et l'engagement religieux publié sont acceptés à leur version requise ; sinon, la liste de ce qui
-     manque, sans texte ;
-  3. un adaptateur `*_supabase.dart` et un port, puis la page lit ce port ; les parties sortent des
-     fichiers de traduction (seule la tête de page y reste).
-  Le garde-fou refuse à un agent d'écran `supabase/` et les adaptateurs : à confier par le pilote.
+- **Contrôle serveur.** Le texte de la lettre n'est plus dans l'application compilée : il est retiré
+  des fichiers de traduction (seule la tête de page y reste) et la page lit le port
+  `lib/features/candidature/lettre/port_lettre.dart` (forme exacte de la réponse en tête du fichier).
+  Tant que l'adaptateur n'est pas branché, le port dit « capacité indisponible » et la page n'affiche
+  aucun texte. Le texte source reste dans `LETTRE-fr.md`, `LETTRE-en.md`, `LETTRE-ar.md`. **Le
+  pilote prend le serveur** (réponse du 20/11, 22 h 45) sur une branche empilée sur celle-ci
+  (`claude/lettre-serveur`) : table des textes sous RLS, fonction
+  `public.lire_lettre_candidats(p_langue text)` (rôle enseignant actif, ou candidat aux accords
+  acceptés ; sinon refus et liste de ce qui manque, sans texte), migration `20261130970000`, adaptateur
+  `*_supabase.dart`, entrée dans le profil de l'enseignant (clé `recrutement.lettre.entree`, route
+  `Routes.lettreEnseignants`), retrait de la ligne « La paie d'un enseignant » de « À savoir ». La PR
+  finale vers `main` sera celle de la branche empilée.
 - **Un seul Praxis** (directeur, 20/11 : « il ne doit pas apparaître plusieurs fois sur la même
   viewport, il est en haut, il saute et rebondit avec le scroll ») : dans la tête fixe de la page
   (`PageShell.enteteSecondaire`), il change de phrase avec la partie lue et saute à chaque changement

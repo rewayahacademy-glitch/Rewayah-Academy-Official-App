@@ -8,26 +8,22 @@
 // l'ouvre a tout compte connecte, en attente comme actif, et envoie un
 // visiteur sans session a la connexion, qui le ramene ici.
 //
-// Le verrou : un candidat (compte en attente) ne lit la lettre qu'une fois
-// ses accords acceptes (contrat, code de conduite, engagement religieux
-// publie). Ce que le serveur rend du dossier (`etat_dossier()`) decide ; la
-// page ne fait que le lire. Limite : le texte est compile dans l'application,
-// ce verrou est un affichage, pas un secret.
+// Le texte vient du SERVEUR (`port_lettre.dart`), qui ne le rend qu'a un
+// enseignant ou a un candidat dont les accords sont acceptes ; sinon il dit
+// ce qui manque, sans une ligne du texte. Aucun texte de la lettre n'est
+// compile dans l'application. Le routeur ne laisse entrer que le role
+// enseignant ; le serveur decide quand meme.
 //
-// Les cinq etats : chargement (squelette), contenu (la lettre), verrou (ce
-// qui manque et le chemin), erreur (« Reessayer »), hors ligne (le bandeau de
-// la coquille, et la lettre deja compilee reste lisible pour un compte actif).
+// Les cinq etats : chargement (squelette), contenu (la lettre), refus (ce qui
+// manque et le chemin), erreur (« Reessayer »), hors ligne (le bloc de ce qui
+// manque, sous le bandeau de la coquille) ; capacite pas encore branchee :
+// la phrase de l'etape non ouverte.
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/candidature/modeles_candidature.dart';
-import '../../../core/dossier/etat_dossier.dart';
-import '../../../core/dossier/service_dossier.dart';
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/router/routes.dart';
-import '../../../core/session/session_controleur.dart';
-import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
@@ -36,21 +32,13 @@ import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../lecture_page.dart';
+import 'port_lettre.dart';
 import 'praxis_lettre.dart';
 import 'texte_lettre.dart';
 
-/// Ce qu'un candidat doit encore accepter pour lire la lettre.
-enum AccordManquant {
-  /// Le contrat d'enseignant.
-  contrat,
-
-  /// Le code de conduite.
-  conduite,
-
-  /// L'engagement religieux, quand il est publie.
-  cadre;
-
-  /// Son nom, dans la phrase « il vous reste a accepter ».
+/// Le nom d'un accord, dans la phrase « il vous reste a accepter ».
+extension NomAccord on AccordManquant {
+  /// Son nom.
   String get nom {
     final l = t.recrutement.lettre;
     return switch (this) {
@@ -59,37 +47,6 @@ enum AccordManquant {
       AccordManquant.cadre => l.manqueCadre,
     };
   }
-}
-
-/// Les accords qui manquent, lus dans le dossier [d] que rend le serveur.
-List<AccordManquant> accordsManquants(EtatDossier d) {
-  final EtatCadre cadre = d.candidature.cadre;
-  return <AccordManquant>[
-    if (!d.contratSigne) AccordManquant.contrat,
-    if (!d.codeConduiteSigne) AccordManquant.conduite,
-    if (cadre.publie && !cadre.accepte) AccordManquant.cadre,
-  ];
-}
-
-/// Les quatorze parties de la lettre : titre et corps.
-List<(String, String)> partiesLettre() {
-  final p = t.recrutement.lettre.parties;
-  return <(String, String)>[
-    (p.p1.titre, p.p1.corps),
-    (p.p2.titre, p.p2.corps),
-    (p.p3.titre, p.p3.corps),
-    (p.p4.titre, p.p4.corps),
-    (p.p5.titre, p.p5.corps),
-    (p.p6.titre, p.p6.corps),
-    (p.p7.titre, p.p7.corps),
-    (p.p8.titre, p.p8.corps),
-    (p.p9.titre, p.p9.corps),
-    (p.p10.titre, p.p10.corps),
-    (p.p11.titre, p.p11.corps),
-    (p.p12.titre, p.p12.corps),
-    (p.p13.titre, p.p13.corps),
-    (p.p14.titre, p.p14.corps),
-  ];
 }
 
 /// La page de la lettre.
@@ -102,6 +59,9 @@ class LettreCandidatsPage extends ConsumerStatefulWidget {
 
   /// La cle du verrou.
   static const Key cleVerrou = ValueKey<String>('lettre-verrou');
+
+  /// La cle de la phrase « reservee aux enseignants ».
+  static const Key cleReservee = ValueKey<String>('lettre-reservee');
 
   @override
   ConsumerState<LettreCandidatsPage> createState() => _EtatLettre();
@@ -156,29 +116,32 @@ class _EtatLettre extends ConsumerState<LettreCandidatsPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool candidat =
-        ref.watch(sessionProvider).porte == PorteAcces.attente;
-    // Un compte actif lit la lettre sans condition.
-    if (!candidat) {
-      return _page(
-        guide: true,
-        corps: ContenuLettre(moment: _moment, secousses: _secousses),
-      );
-    }
-    return lecturePage<EtatDossier>(
+    final String langue = TranslationProvider.of(context).locale.languageCode;
+    return lecturePage<LectureLettre>(
       ref: ref,
       titre: t.recrutement.lettre.titre,
-      valeur: ref.watch(etatDossierProvider),
+      valeur: ref.watch(lettreProvider(langue)),
       titreEchec: t.recrutement.lettre.nonCharge,
-      onReessayer: () => ref.invalidate(etatDossierProvider),
-      construire: (EtatDossier lu) {
-        final List<AccordManquant> manques = accordsManquants(lu);
-        if (manques.isNotEmpty) {
-          return _page(corps: VerrouLettre(manques: manques));
+      onReessayer: () => ref.invalidate(lettreProvider(langue)),
+      construire: (LectureLettre lu) {
+        if (!lu.acces) {
+          return _page(
+            corps:
+                lu.raison == RaisonRefusLettre.accords && lu.manques.isNotEmpty
+                ? VerrouLettre(manques: lu.manques)
+                : Text(
+                    t.recrutement.lettre.reservee,
+                    key: LettreCandidatsPage.cleReservee,
+                  ),
+          );
         }
         return _page(
           guide: true,
-          corps: ContenuLettre(moment: _moment, secousses: _secousses),
+          corps: ContenuLettre(
+            parties: lu.parties,
+            moment: _moment,
+            secousses: _secousses,
+          ),
         );
       },
     );
@@ -244,10 +207,14 @@ class VerrouLettre extends StatelessWidget {
 class ContenuLettre extends StatefulWidget {
   /// Cree le contenu.
   const ContenuLettre({
+    required this.parties,
     required this.moment,
     required this.secousses,
     super.key,
   });
+
+  /// Les parties rendues par le serveur, dans l'ordre de lecture.
+  final List<PartieLettre> parties;
 
   /// La partie lue, que Praxis suit.
   final ValueNotifier<MomentLettre> moment;
@@ -267,8 +234,8 @@ class ContenuLettre extends StatefulWidget {
 
 class _EtatContenu extends State<ContenuLettre> {
   final GlobalKey _sommaire = GlobalKey();
-  final List<GlobalKey> _parties = List<GlobalKey>.generate(
-    14,
+  late final List<GlobalKey> _parties = List<GlobalKey>.generate(
+    widget.parties.length,
     (_) => GlobalKey(),
   );
   ScrollPosition? _position;
@@ -322,11 +289,12 @@ class _EtatContenu extends State<ContenuLettre> {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
     final l = t.recrutement.lettre;
-    final List<(String, String)> parties = partiesLettre();
+    final List<PartieLettre> parties = widget.parties;
     final TextStyle muet = palette.inkMuted.applyTo(
       textes.bodyMedium ?? const TextStyle(),
     );
-    String numero(int k) => k < 13 ? '${k + 1}. ' : '';
+    // La derniere partie (« Pour decider ») n'a pas de numero.
+    String numero(int k) => k < parties.length - 1 ? '${k + 1}. ' : '';
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -358,9 +326,9 @@ class _EtatContenu extends State<ContenuLettre> {
           lignes: <Widget>[
             for (int k = 0; k < parties.length; k++)
               SettingRow(
-                title: '${numero(k)}${parties[k].$1}',
+                title: '${numero(k)}${parties[k].titre}',
                 lien: true,
-                libelleSemantique: l.allerA(titre: parties[k].$1),
+                libelleSemantique: l.allerA(titre: parties[k].titre),
                 onPress: () => _aller(_parties[k]),
               ),
           ],
@@ -371,7 +339,7 @@ class _EtatContenu extends State<ContenuLettre> {
             key: _parties[k],
             header: true,
             child: Text(
-              '${numero(k)}${insecables(parties[k].$1)}',
+              '${numero(k)}${insecables(parties[k].titre)}',
               key: ContenuLettre.clePartie(k + 1),
               style: palette.inkStrong.applyTo(
                 textes.titleLarge ?? const TextStyle(),
@@ -379,7 +347,7 @@ class _EtatContenu extends State<ContenuLettre> {
             ),
           ),
           Ecart.vLg,
-          CorpsLettre(brut: parties[k].$2),
+          CorpsLettre(brut: parties[k].corps),
           Ecart.vMd,
           Align(
             alignment: AlignmentDirectional.centerStart,

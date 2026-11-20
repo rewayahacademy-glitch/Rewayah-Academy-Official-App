@@ -1,9 +1,12 @@
 // LETTRE-CANDIDATS (directeur, 20/11/2026) : la lettre aux candidats
 // enseignants, page interne partageable par lien, un seul Praxis en tete.
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/redirection.dart';
@@ -11,12 +14,14 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/features/candidature/lettre/lettre_candidats_page.dart';
+import 'package:rewayah_academy/features/candidature/lettre/port_lettre.dart';
 import 'package:rewayah_academy/features/candidature/lettre/praxis_lettre.dart';
 import 'package:rewayah_academy/features/candidature/lettre/texte_lettre.dart';
 import 'package:rewayah_academy/features/candidature/praxis_candidat.dart';
 
 import '../../fixtures/candidature/faux_ma_candidature.dart';
 import '../../support/harnais.dart';
+import 'faux_port_lettre.dart';
 import 'hote_candidature.dart';
 
 SessionState _session(AccountStatus statut, {AppRole role = AppRole.teacher}) =>
@@ -33,15 +38,10 @@ class _Candidat extends SessionControleur {
   SessionState build() => _session(AccountStatus.pendingKyc);
 }
 
-class _Actif extends SessionControleur {
-  @override
-  SessionState build() => _session(AccountStatus.active);
-}
-
 Future<void> _monter(
   WidgetTester tester, {
-  bool candidat = true,
-  bool accordsFaits = true,
+  LectureLettre? reponse,
+  Exception? erreur,
   Size taille = const Size(390, 844),
   double echelle = 1,
   TextDirection? direction,
@@ -65,12 +65,12 @@ Future<void> _monter(
       surcharges: <Override>[
         ...surchargesCandidature(
           port: FauxMaCandidature(),
-          etat: etatCandidat(
-            candidature: candidatureAFaire(),
-            accordsFaits: accordsFaits,
-          ),
+          etat: etatCandidat(candidature: candidatureAFaire()),
         ),
-        sessionProvider.overrideWith(candidat ? _Candidat.new : _Actif.new),
+        sessionProvider.overrideWith(_Candidat.new),
+        portLettreProvider.overrideWithValue(
+          FauxPortLettre(reponse: reponse, erreur: erreur),
+        ),
       ],
     ),
   );
@@ -107,28 +107,49 @@ void main() {
       expect(find.byType(AvatarPraxisCandidat), findsOneWidget);
     });
 
-    testWidgets('accords manquants : le verrou, sans Praxis ni lettre', (
+    testWidgets(
+      'le serveur refuse (accords) : le verrou, sans Praxis ni lettre',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          reponse: const LectureLettre.refusee(
+            raison: RaisonRefusLettre.accords,
+            manques: <AccordManquant>[AccordManquant.contrat],
+          ),
+        );
+        expect(find.byKey(LettreCandidatsPage.cleVerrou), findsOneWidget);
+        expect(find.byKey(ContenuLettre.cleSommaire), findsNothing);
+        expect(find.byType(PraxisLettre), findsNothing);
+        expect(
+          find.textContaining(t.recrutement.lettre.manqueContrat),
+          findsOneWidget,
+        );
+        await tester.tap(find.text(t.recrutement.lettre.completer));
+        await tester.pumpAndSettle();
+        expect(find.text('PAGE DES ACCORDS'), findsOneWidget);
+      },
+    );
+
+    testWidgets('le serveur refuse (role) : une phrase, aucun texte', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, accordsFaits: false);
-      expect(find.byKey(LettreCandidatsPage.cleVerrou), findsOneWidget);
-      expect(find.byKey(ContenuLettre.cleSommaire), findsNothing);
-      expect(find.byType(PraxisLettre), findsNothing);
-      expect(
-        find.textContaining(t.recrutement.lettre.manqueContrat),
-        findsOneWidget,
+      await _monter(
+        tester,
+        reponse: const LectureLettre.refusee(raison: RaisonRefusLettre.role),
       );
-      await tester.tap(find.text(t.recrutement.lettre.completer));
-      await tester.pumpAndSettle();
-      expect(find.text('PAGE DES ACCORDS'), findsOneWidget);
+      expect(find.byKey(LettreCandidatsPage.cleReservee), findsOneWidget);
+      expect(find.byKey(ContenuLettre.cleSommaire), findsNothing);
     });
 
-    testWidgets('un compte actif lit la lettre sans condition', (
+    testWidgets('serveur pas encore branche : aucune lettre', (
       WidgetTester tester,
     ) async {
-      await _monter(tester, candidat: false, accordsFaits: false);
-      expect(find.byKey(ContenuLettre.cleSommaire), findsOneWidget);
-      expect(find.byKey(LettreCandidatsPage.cleVerrou), findsNothing);
+      await _monter(
+        tester,
+        erreur: const CapaciteIndisponible('LETTRE-SERVEUR'),
+      );
+      expect(find.byKey(ContenuLettre.cleSommaire), findsNothing);
+      expect(find.byType(PraxisLettre), findsNothing);
     });
 
     testWidgets('320 points, texte x2 : rien ne deborde', (
@@ -148,18 +169,65 @@ void main() {
   });
 
   group('le texte', () {
-    test('les quatorze parties existent dans les trois langues', () async {
-      for (final AppLocale l in <AppLocale>[
-        AppLocale.fr,
-        AppLocale.en,
-        AppLocale.ar,
-      ]) {
-        await LocaleSettings.setLocale(l);
-        final List<(String, String)> p = partiesLettre();
-        expect(p, hasLength(14));
-        expect(p.every(((String, String) x) => x.$1.isNotEmpty), isTrue);
-        expect(p.every(((String, String) x) => x.$2.isNotEmpty), isTrue);
+    test('aucun texte de la lettre dans l\'application compilee', () {
+      // Une phrase propre a la lettre, par langue : elle ne vient que du
+      // serveur.
+      const Map<String, String> phrases = <String, String>{
+        'fr': 'Douze élèves s',
+        'en': 'Twelve students sign up',
+        'ar': 'اثنا عشر طالبًا',
+      };
+      for (final MapEntry<String, String> e in phrases.entries) {
+        final String brut = File('assets/i18n/${e.key}.i18n.json')
+            .readAsStringSync();
+        expect(brut.contains(e.value), isFalse, reason: e.key);
+        expect(
+          File('docs/current/CANDIDATURES/LETTRE-CANDIDATS/LETTRE-${e.key}.md')
+              .readAsStringSync()
+              .contains(e.value),
+          isTrue,
+          reason: 'la phrase temoin existe dans le texte du depot',
+        );
       }
+    });
+
+    test('les quatorze parties existent dans les trois langues du depot', () {
+      for (final String l in <String>['fr', 'en', 'ar']) {
+        final List<PartieLettre> p = partiesDuDepot(l);
+        expect(p, hasLength(14), reason: l);
+        expect(p.every((PartieLettre x) => x.titre.isNotEmpty), isTrue);
+        expect(p.every((PartieLettre x) => x.corps.isNotEmpty), isTrue);
+      }
+    });
+
+    test('la reponse du serveur se lit, et une forme inconnue est refusee', () {
+      final LectureLettre ouverte = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': true,
+        'version': '2026-11-20',
+        'langue': 'fr',
+        'parties': <Map<String, dynamic>>[
+          <String, dynamic>{'code': 'p1', 'titre': 'T', 'corps': 'C'},
+        ],
+      });
+      expect(ouverte.acces, isTrue);
+      expect(ouverte.parties.single.code, 'p1');
+      final LectureLettre refusee = LectureLettre.depuisJson(<String, dynamic>{
+        'acces': false,
+        'raison': 'accords',
+        'manques': <String>['contrat', 'cadre'],
+      });
+      expect(refusee.parties, isEmpty);
+      expect(refusee.manques, <AccordManquant>[
+        AccordManquant.contrat,
+        AccordManquant.cadre,
+      ]);
+      expect(
+        () => LectureLettre.depuisJson(<String, dynamic>{
+          'acces': false,
+          'raison': 'autre',
+        }),
+        throwsFormatException,
+      );
     });
 
     test('lireCorps reconnait sous-titre, listes, tableau et paragraphe', () {
@@ -176,17 +244,12 @@ void main() {
       expect(tab.lignes.single, <String>['X', '1', '2']);
     });
 
-    test('le tableau de la paie se lit dans chaque langue', () async {
-      for (final AppLocale l in <AppLocale>[
-        AppLocale.fr,
-        AppLocale.en,
-        AppLocale.ar,
-      ]) {
-        await LocaleSettings.setLocale(l);
-        final TableauLettre tab = lireCorps(partiesLettre()[3].$2)
+    test('le tableau de la paie se lit dans chaque langue', () {
+      for (final String l in <String>['fr', 'en', 'ar']) {
+        final TableauLettre tab = lireCorps(partiesDuDepot(l)[3].corps)
             .whereType<TableauLettre>()
             .single;
-        expect(tab.lignes, hasLength(8));
+        expect(tab.lignes, hasLength(8), reason: l);
         expect(tab.lignes.every((List<String> r) => r.length == 3), isTrue);
       }
     });

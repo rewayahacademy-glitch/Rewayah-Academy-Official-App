@@ -10,10 +10,12 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
 import 'package:rewayah_academy/features/candidature/lettre/lettre_candidats_page.dart';
+import 'package:rewayah_academy/features/candidature/lettre/port_lettre.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../fixtures/candidature/faux_ma_candidature.dart';
 import '../../support/harnais.dart';
+import 'faux_port_lettre.dart';
 import 'hote_candidature.dart';
 
 class _Candidat extends SessionControleur {
@@ -51,12 +53,22 @@ Future<void> _monter(
       surcharges: <Override>[
         ...surchargesCandidature(
           port: FauxMaCandidature(),
-          etat: etatCandidat(
-            candidature: candidatureAFaire(),
-            accordsFaits: accordsFaits,
-          ),
+          etat: etatCandidat(candidature: candidatureAFaire()),
         ),
         sessionProvider.overrideWith(_Candidat.new),
+        portLettreProvider.overrideWithValue(
+          FauxPortLettre(
+            reponse: accordsFaits
+                ? null
+                : const LectureLettre.refusee(
+                    raison: RaisonRefusLettre.accords,
+                    manques: <AccordManquant>[
+                      AccordManquant.contrat,
+                      AccordManquant.conduite,
+                    ],
+                  ),
+          ),
+        ),
       ],
     ),
   );
