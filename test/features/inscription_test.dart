@@ -41,6 +41,7 @@ import 'package:rewayah_academy/features/parcours_offres/libelles_parcours.dart'
 import '../fixtures/candidature/faux_inscription_candidat.dart';
 import '../support/demo/recrutement_demo.dart';
 import '../support/harnais.dart';
+import 'inscription/portes_aide.dart';
 
 /// Admission, lot B : le questionnaire deja repondu avant le compte.
 class _QuestionnaireRepondu extends QuestionnaireControleur {
@@ -458,6 +459,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester);
+      // PE-A3 : d'abord les deux portes, puis « Pour qui ».
+      expect(find.text(t.inscription.porte.question), findsOneWidget);
+      await passerApprendre(tester);
       expect(find.text(t.inscription.usage.question), findsOneWidget);
     });
 
@@ -504,6 +508,7 @@ void main() {
     testWidgets('usage : deux cartes aux textes du mandat, sans « Autre », '
         'sans preselection', (WidgetTester tester) async {
       await _monter(tester);
+      await passerApprendre(tester);
 
       expect(find.text(t.inscription.usage.question), findsOneWidget);
       // Admission, lot B (directeur, 29/10/2026) : les deux choix du mandat.
@@ -525,13 +530,9 @@ void main() {
         findsOneWidget,
       );
       // La disposition (deux choix egaux) : inscription_choix_egaux_test.dart.
-      expect(find.text('J\'ai un code d\'invitation'), findsOneWidget);
-      expect(
-        find.text(
-          'Vous êtes enseignant\u00a0? L\'académie vous invite par courriel.',
-        ),
-        findsOneWidget,
-      );
+      // PE-A3 : l'enseignant a sa porte avant ce choix ; ici, seulement les
+      // deux cartes de l'eleve.
+      expect(find.text('J\'ai un code d\'invitation'), findsNothing);
       expect(find.text('Je suis enseignant'), findsNothing);
       expect(find.text('Autre'), findsNothing);
       expect(find.text('1 sur 4'), findsOneWidget);
@@ -622,7 +623,7 @@ void main() {
         expect(candidat.appels.single.genre, 'male');
         expect(candidat.appels.single.telephone, '+33612345678');
         expect(candidat.appels.single.langue, 'fr');
-        expect(candidat.appels.single.versionConfidentialite, '2026-11-v1');
+        expect(candidat.appels.single.versionConfidentialite, '2026-11-v2');
         expect(candidat.creations, hasLength(1));
         expect(source.rafraichissements, 1);
         expect(find.text('ATTENTE'), findsOneWidget);
@@ -759,6 +760,7 @@ void main() {
     testWidgets('« J\'inscris mon enfant » apres la connexion, sans '
         'questionnaire : les questions s ouvrent', (WidgetTester tester) async {
       await _monter(tester);
+      await passerApprendre(tester);
       await _taper(tester, find.text(t.inscription.usage.familleTitre));
       await _continuer(tester);
       expect(find.byType(QuestionnairePage), findsOneWidget);

@@ -106,9 +106,9 @@ SELECT pg_temp.vrai(
 
 -- 2. Les refus ne laissent aucune ecriture.
 SELECT pg_temp.garde('avant', pg_temp.ecritures());
-SELECT pg_temp.garde('r_faux', pg_temp.en(pg_temp.p('b5'), $$SELECT public.inscrire_candidat('ZZZZ-ZZZZ-ZZZZ', 'Essai', 'Faux', 'male', '+966500000105', 'fr', '2026-11-v1')$$));
-SELECT pg_temp.garde('r_autre', pg_temp.en(pg_temp.p('b5'), $$SELECT public.inscrire_candidat('abcd - efgh - jkmn', 'Essai', 'Autre', 'male', '+966500000105', 'fr', '2026-11-v1')$$));
-SELECT pg_temp.garde('r_court', pg_temp.en(pg_temp.p('b5'), $$SELECT public.inscrire_candidat('abc', 'Essai', 'Court', 'male', '+966500000105', 'fr', '2026-11-v1')$$));
+SELECT pg_temp.garde('r_faux', pg_temp.en(pg_temp.p('b5'), $$SELECT public.inscrire_candidat('ZZZZ-ZZZZ-ZZZZ', 'Essai', 'Faux', 'male', '+966500000105', 'fr', '2026-11-v2')$$));
+SELECT pg_temp.garde('r_autre', pg_temp.en(pg_temp.p('b5'), $$SELECT public.inscrire_candidat('abcd - efgh - jkmn', 'Essai', 'Autre', 'male', '+966500000105', 'fr', '2026-11-v2')$$));
+SELECT pg_temp.garde('r_court', pg_temp.en(pg_temp.p('b5'), $$SELECT public.inscrire_candidat('abc', 'Essai', 'Court', 'male', '+966500000105', 'fr', '2026-11-v2')$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('r_faux') = '{"resultat": "inconnue"}'::jsonb
   AND pg_temp.lu('r_autre') = '{"resultat": "inconnue"}'::jsonb
@@ -118,24 +118,24 @@ SELECT pg_temp.vrai(
 
 -- 3. Les formes tapees d'un code valide sont acceptees : minuscules et espaces
 --    autour des tirets (le cas du robot), sans tirets, espaces seuls, forme stockee.
-SELECT pg_temp.garde('r1', pg_temp.en(pg_temp.p('b1'), $$SELECT public.inscrire_candidat('abcd - efgh - jkmn', 'Essai', 'Un', 'female', '+966500000101', 'fr', '2026-11-v1')$$));
+SELECT pg_temp.garde('r1', pg_temp.en(pg_temp.p('b1'), $$SELECT public.inscrire_candidat('abcd - efgh - jkmn', 'Essai', 'Un', 'female', '+966500000101', 'fr', '2026-11-v2')$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('r1') = '{"resultat": "acceptee"}'::jsonb
   AND (SELECT utilisee_par = pg_temp.p('b1') AND utilisee_le IS NOT NULL
          FROM public.invitations_enseignant WHERE code = 'ABCD-EFGH-JKMN')
   AND (SELECT source = 'invitation' FROM public.candidatures WHERE profile_id = pg_temp.p('b1')),
   'code tape « abcd - efgh - jkmn » (minuscules, espaces autour des tirets) : acceptee, invitation consommee, provenance invitation');
-SELECT pg_temp.garde('r2', pg_temp.en(pg_temp.p('b2'), $$SELECT public.inscrire_candidat('mnpqrstuvwxy', 'Essai', 'Deux', 'female', '+966500000102', 'fr', '2026-11-v1')$$));
+SELECT pg_temp.garde('r2', pg_temp.en(pg_temp.p('b2'), $$SELECT public.inscrire_candidat('mnpqrstuvwxy', 'Essai', 'Deux', 'female', '+966500000102', 'fr', '2026-11-v2')$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('r2') = '{"resultat": "acceptee"}'::jsonb
   AND (SELECT utilisee_par = pg_temp.p('b2') FROM public.invitations_enseignant WHERE code = 'MNPQ-RSTU-VWXY'),
   'code tape sans tirets, en minuscules : acceptee');
-SELECT pg_temp.garde('r3', pg_temp.en(pg_temp.p('b3'), $$SELECT public.inscrire_candidat(' 2345 6789 abcd ', 'Essai', 'Trois', 'female', '+966500000103', 'fr', '2026-11-v1')$$));
+SELECT pg_temp.garde('r3', pg_temp.en(pg_temp.p('b3'), $$SELECT public.inscrire_candidat(' 2345 6789 abcd ', 'Essai', 'Trois', 'female', '+966500000103', 'fr', '2026-11-v2')$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('r3') = '{"resultat": "acceptee"}'::jsonb
   AND (SELECT utilisee_par = pg_temp.p('b3') FROM public.invitations_enseignant WHERE code = '2345-6789-ABCD'),
   'code tape avec espaces seulement, espaces de bord compris : acceptee');
-SELECT pg_temp.garde('r4', pg_temp.en(pg_temp.p('b4'), $$SELECT public.inscrire_candidat('KMNP-QRST-UVWX', 'Essai', 'Quatre', 'female', '+966500000104', 'fr', '2026-11-v1')$$));
+SELECT pg_temp.garde('r4', pg_temp.en(pg_temp.p('b4'), $$SELECT public.inscrire_candidat('KMNP-QRST-UVWX', 'Essai', 'Quatre', 'female', '+966500000104', 'fr', '2026-11-v2')$$));
 SELECT pg_temp.vrai(
   pg_temp.lu('r4') = '{"resultat": "acceptee"}'::jsonb
   AND (SELECT utilisee_par = pg_temp.p('b4') FROM public.invitations_enseignant WHERE code = 'KMNP-QRST-UVWX'),

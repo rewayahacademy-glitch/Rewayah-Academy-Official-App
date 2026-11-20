@@ -68,6 +68,26 @@ InvitationDansAdresse? invitationDansAdresse(Uri adresse) {
   return type == null ? null : InvitationDansAdresse(type: type, code: code);
 }
 
+/// PE-A2 (20/11/2026) : vrai quand l'adresse est un lien d'invitation de
+/// candidat enseignant. Deux liens partent des courriels de l'academie :
+/// l'invitation personnelle (`invitation=1&code=...`, courriels
+/// `invitation_enseignant` et `invitation_candidat_importe`) et le lien du
+/// candidat (`candidature=1`, avec ou sans code). Le type envoye au serveur ne
+/// change pas (`equipe` reste `equipe` : la fonction Edge distingue elle-meme
+/// enseignant et comptable) ; seul l'ecran change. L'invitation d'un foyer
+/// n'en est jamais une.
+bool arriveeCandidatDansAdresse(Uri adresse) {
+  final InvitationDansAdresse? invitation = invitationDansAdresse(adresse);
+  if (invitation != null) {
+    return invitation.type != TypeInvitationCompte.foyer;
+  }
+  final Map<String, String> p = <String, String>{
+    ...adresse.queryParameters,
+    ...?Uri.tryParse(adresse.fragment)?.queryParameters,
+  };
+  return p['mode'] == 'creer' && p['candidature'] == '1';
+}
+
 /// La porte vers la fonction Edge `invitation-compte`.
 abstract interface class PortInvitationCompte {
   /// Demande la creation du compte de [courriel] pour l'[invitation]. Ne

@@ -174,6 +174,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// compte de l'adresse invitee, et seulement elle.
   InvitationDansAdresse? _invitation;
 
+  /// PE-A2 (20/11/2026) : la personne arrive par le lien d'invitation d'un
+  /// candidat enseignant ; la page le dit en haut et n'offre qu'une action.
+  bool _candidat = false;
+
   /// INVITATION-ENSEIGNANT-REPARE (14/11/2026) : sans code dans l'adresse, le
   /// visiteur saisit le sien ici : avant la connexion, aucun autre ecran ne
   /// l'accepte (la route du code est reservee aux comptes connectes).
@@ -249,6 +253,9 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     retenirInvitationDepuisAdresse(retour);
     // INVITATION-COMPTE (07/11/2026) : le code d'une invitation, lu une fois.
     _invitation = invitationDansAdresse(retour);
+    // PE-A2 : le lien du candidat ouvre la creation, sans autre chemin.
+    _candidat = arriveeCandidatDansAdresse(retour);
+    if (_candidat) _mode = ModeConnexion.creation;
     // Arrivee depuis un echec « compte supprime » (ou lien d'invitation sans
     // code) : le champ du code est deja ouvert.
     _codeOuvert =
@@ -523,6 +530,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               motDePasse: _motDePasse,
               demo: _demo,
               mode: _mode,
+              candidat: _candidat,
               // ONBOARDING-BOUCLE (14/11/2026) : un questionnaire deja rempli
               // sur cet appareil se dit, au lieu de passer sous silence.
               reponsesGardees:
@@ -624,6 +632,7 @@ class _Saisie extends StatelessWidget {
     required this.motDePasse,
     required this.demo,
     required this.mode,
+    required this.candidat,
     required this.codeDansAdresse,
     required this.code,
     required this.codeOuvert,
@@ -655,6 +664,9 @@ class _Saisie extends StatelessWidget {
   final TextEditingController motDePasse;
   final bool demo;
   final ModeConnexion mode;
+
+  /// PE-A2 : arrivee par le lien d'invitation d'un candidat enseignant.
+  final bool candidat;
 
   /// Le code d'invitation que l'adresse porte deja, ou nul.
   final String? codeDansAdresse;
@@ -720,9 +732,28 @@ class _Saisie extends StatelessWidget {
             ),
           ),
         Text(
-          creation ? t.connexion.titreCreation : t.connexion.titre,
+          candidat
+              ? t.connexion.candidat.titre
+              : creation
+              ? t.connexion.titreCreation
+              : t.connexion.titre,
+          key: const ValueKey<String>('connexion-titre'),
           style: textes.headlineMedium,
         ),
+        // PE-A2 (20/11/2026) : la personne venue par l'invitation de
+        // l'academie sait ou elle est et ce qu'elle doit faire. L'adresse
+        // n'est pas preremplie : le serveur ne la rend pas (reponse uniforme
+        // de `invitation-compte`), on ne l'invente pas.
+        if (candidat) ...<Widget>[
+          Ecart.vMd,
+          Text(
+            t.connexion.candidat.phrase,
+            key: const ValueKey<String>('connexion-candidat-phrase'),
+            style: palette.inkMuted.applyTo(
+              textes.bodyLarge ?? const TextStyle(),
+            ),
+          ),
+        ],
         // CONNEXION-UX (directeur, 03/11/2026) : la page est simple ; la
         // phrase d'introduction ne reste qu'en demonstration (hors
         // production), ou elle dit qu'aucun lien ne part.
@@ -736,31 +767,34 @@ class _Saisie extends StatelessWidget {
           ),
         ],
         Ecart.vXl,
-        // L4 : deux chemins distincts, choisis avant de saisir. Plus petits
-        // (CONNEXION-UX) : le registre de legende. CONNEXION-ALIGN
-        // (04/11/2026) : « petits » veut dire un texte plus petit, jamais plus
-        // etroits ; les onglets ont la largeur du champ.
-        Theme(
-          data: Theme.of(context).copyWith(
-            textTheme: textes.copyWith(labelLarge: textes.labelMedium),
+        // PE-A2 : une seule action pour le candidat invite ; ni « J'ai deja
+        // un compte », ni questionnaire des familles.
+        if (!candidat)
+          // L4 : deux chemins distincts, choisis avant de saisir. Plus petits
+          // (CONNEXION-UX) : le registre de legende. CONNEXION-ALIGN
+          // (04/11/2026) : « petits » veut dire un texte plus petit, jamais plus
+          // etroits ; les onglets ont la largeur du champ.
+          Theme(
+            data: Theme.of(context).copyWith(
+              textTheme: textes.copyWith(labelLarge: textes.labelMedium),
+            ),
+            child: ControleSegmente<ModeConnexion>(
+              key: const ValueKey<String>('connexion-mode'),
+              dense: true,
+              segments: <Segment<ModeConnexion>>[
+                Segment<ModeConnexion>(
+                  valeur: ModeConnexion.connexion,
+                  libelle: t.connexion.modeConnexion,
+                ),
+                Segment<ModeConnexion>(
+                  valeur: ModeConnexion.creation,
+                  libelle: t.connexion.modeCreation,
+                ),
+              ],
+              valeur: mode,
+              onChange: onMode,
+            ),
           ),
-          child: ControleSegmente<ModeConnexion>(
-            key: const ValueKey<String>('connexion-mode'),
-            dense: true,
-            segments: <Segment<ModeConnexion>>[
-              Segment<ModeConnexion>(
-                valeur: ModeConnexion.connexion,
-                libelle: t.connexion.modeConnexion,
-              ),
-              Segment<ModeConnexion>(
-                valeur: ModeConnexion.creation,
-                libelle: t.connexion.modeCreation,
-              ),
-            ],
-            valeur: mode,
-            onChange: onMode,
-          ),
-        ),
         if (creation && reponsesGardees) ...<Widget>[
           Ecart.vLg,
           Semantics(
