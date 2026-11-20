@@ -358,6 +358,21 @@ class EnvoiRefuse implements Exception {
   final String phrase;
 }
 
+/// PE-D1 (relecture adverse 2) : un envoi non confirme dont la cause est
+/// connue et qu'un nouvel essai peut lever (la session a pris fin, par
+/// exemple) : un echec ordinaire, brouillon garde et « Reessayer », avec
+/// [cause] dite au-dessus. Jamais reessaye seul.
+class EnvoiNonConfirme implements Exception {
+  /// Cree l'echec ; [cause] : la phrase deja traduite.
+  const EnvoiNonConfirme(this.cause);
+
+  /// La cause, en mots simples.
+  final String cause;
+
+  @override
+  String toString() => 'EnvoiNonConfirme($cause)';
+}
+
 /// PE-D1 (MESSAGERIE-FIABLE) : un envoi coupe en route (reseau, delai
 /// depasse), sans reponse du serveur. Le fil le reessaie seul, sous la meme
 /// cle d'envoi ([FilDiscussion.delaisReessai]), puis propose « Reessayer » :
@@ -500,6 +515,7 @@ class FilDiscussion extends StatefulWidget {
     this.plusAnciens = false,
     this.onPlusAnciens,
     this.delaisReessai = delaisReessaiParDefaut,
+    this.recalage = 0,
   }) : assert(
          lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
@@ -561,6 +577,12 @@ class FilDiscussion extends StatefulWidget {
   /// Seulement pour [onEnvoyerMessage] (une cle par bulle) : [onEnvoyer] n'a
   /// pas de cle, un nouvel essai pourrait doubler le message.
   final List<Duration> delaisReessai;
+
+  /// PE-D1 (relecture adverse 2) : change quand l'ecran a du repartir des
+  /// messages les plus recents (trop de messages arrives d'un coup pour
+  /// combler l'ecart) : la lecture se cale alors sur le dernier message, la
+  /// ou la personne retrouve le fil, et la rangee du haut ramene la suite.
+  final int recalage;
 
   /// Les attentes par defaut : trois essais de plus, en douze secondes.
   static const List<Duration> delaisReessaiParDefaut = <Duration>[
@@ -1026,6 +1048,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
       _lireMiniatures();
       _accueillirAnciens(ancien.messages);
       _rapprocherParCle();
+    }
+    if (ancien.recalage != widget.recalage) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => _allerEnBas(false));
     }
     if (ancien.plusAnciens != widget.plusAnciens ||
         !identical(ancien.messages, widget.messages)) {
@@ -1528,6 +1553,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
           // cause est dit par sa phrase, sans « Reessayer » ; tout autre
           // echec reste ordinaire.
           m.refus = null;
+          m.precision = null;
           // PE-D1 : un envoi coupe est reessaye seul, sous la meme cle ; un
           // refus du serveur ne l'est jamais. Si la copie confirmee revient
           // entre deux essais (relecture du fil), l'envoi est fini.
@@ -1542,6 +1568,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
               return;
             } on EnvoiRefuse catch (e) {
               m.refus = e.phrase;
+              rethrow;
+            } on EnvoiNonConfirme catch (e) {
+              m.precision = e.cause;
               rethrow;
             } on EnvoiCoupe {
               if (m.vuSurServeur) return;

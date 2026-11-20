@@ -376,6 +376,7 @@ class _FilContextuelState extends State<FilContextuel>
             onNotification: _surDefilement,
             child: FilDiscussion(
               plusAnciens: _plusAnciens,
+              recalage: _memoire.recalages,
               onPlusAnciens: _litParPages ? _chargerAnciens : null,
               pleinEcran: true,
               afficherAuteur: _estGroupe,
@@ -451,6 +452,7 @@ class _FilContextuelState extends State<FilContextuel>
       // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
       return FilDiscussion(
         plusAnciens: _plusAnciens,
+        recalage: _memoire.recalages,
         onPlusAnciens: _litParPages ? _chargerAnciens : null,
         afficherAuteur: _estGroupe,
         prendTeteDePage: _prendTete,
@@ -472,6 +474,7 @@ class _FilContextuelState extends State<FilContextuel>
         widget.onEnvoyerVocal;
     return FilDiscussion(
       plusAnciens: _plusAnciens,
+      recalage: _memoire.recalages,
       onPlusAnciens: _litParPages ? _chargerAnciens : null,
       afficherAuteur: _estGroupe,
       prendTeteDePage: _prendTete,

@@ -23,7 +23,8 @@ import '../../core/communications/phrases_images.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/theme/app_delais.dart';
-import '../../core/widgets/fil_discussion.dart' show EnvoiCoupe, EnvoiRefuse;
+import '../../core/widgets/fil_discussion.dart'
+    show EnvoiCoupe, EnvoiNonConfirme, EnvoiRefuse;
 import 'fonctions_images_messages.dart';
 import 'port_messages_metier.dart';
 
@@ -50,9 +51,16 @@ class MessagesMetierSupabase implements PortMessagesMetier, PortPagesFil {
     required this.libelles,
     AppelFonction? fonctions,
     http.Client? transport,
+    this.sessionOuverte,
     // ignore: prefer_initializing_formals
   }) : _fonctions = fonctions,
        _transport = transport ?? http.Client();
+
+  /// PE-D1 (relecture adverse 2) : vrai tant que la personne a une session,
+  /// lu a l'echec d'un envoi ; `null` : inconnu (tests, faux). Sans session,
+  /// le client appelle en anonyme et le serveur repond 42501 : ce n'est pas
+  /// une conversation fermee, la personne doit se reconnecter.
+  final bool Function()? sessionOuverte;
 
   final AppelRpc _appel;
 
@@ -306,6 +314,13 @@ class MessagesMetierSupabase implements PortMessagesMetier, PortPagesFil {
       // PE-D1 : un refus du serveur se dit par sa vraie phrase et n'est jamais
       // reessaye ; une coupure en route est reessayee seule par le fil, sous
       // la meme cle (jamais deux messages).
+      // Session finie (deconnexion ailleurs, jeton qui ne se renouvelle
+      // plus) : un echec ordinaire, brouillon garde et « Reessayer », avec la
+      // phrase qui demande de se reconnecter, jamais « conversation fermee ».
+      final bool Function()? session = sessionOuverte;
+      if (session != null && !session()) {
+        throw EnvoiNonConfirme(t.commun.etats.sessionExpiree.phrase);
+      }
       final Exception? classe = echecEnvoiMessage(e);
       if (classe == null) rethrow;
       throw classe;

@@ -12985,7 +12985,7 @@
       },
       "panneau": {
         "fichiersPartiels": "Seuls les fichiers des messages déjà chargés sont listés.",
-        "fichiersAucunCharge": "Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.",
+        "fichiersAucunCharge": "Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.",
         "chargerPrecedents": "Charger les messages précédents",
         "objets": "À propos de",
         "participants": "Participants",
