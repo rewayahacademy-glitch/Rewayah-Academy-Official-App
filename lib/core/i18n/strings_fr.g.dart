@@ -41512,7 +41512,7 @@ class Traductions$com$messages$panneau$fr {
 	String get fichiersPartiels => 'Seuls les fichiers des messages déjà chargés sont listés.';
 
 	/// fr: 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.'
-	String get fichiersAucunCharge => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.';
+	String get fichiersAucunCharge => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.';
 
 	/// fr: 'Charger les messages précédents'
 	String get chargerPrecedents => 'Charger les messages précédents';
@@ -67436,7 +67436,7 @@ extension on Traductions {
 			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
 			'com.messages.panneau.fichiersPartiels' => 'Seuls les fichiers des messages déjà chargés sont listés.',
-			'com.messages.panneau.fichiersAucunCharge' => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.',
+			'com.messages.panneau.fichiersAucunCharge' => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.',
 			'com.messages.panneau.chargerPrecedents' => 'Charger les messages précédents',
 			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
