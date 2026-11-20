@@ -12,6 +12,7 @@ import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/etat_dossier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
@@ -23,6 +24,7 @@ import 'package:rewayah_academy/features/profil_enseignant/photo_publique.dart'
     show PhotoPubliqueControleur, photoPubliqueProvider;
 
 import '../../fixtures/candidature/faux_ma_candidature.dart';
+import '../../support/destination_nav.dart';
 import '../../support/harnais.dart';
 
 /// L'etat d'un compte candidat (enseignant en attente) avec sa candidature.
@@ -196,6 +198,20 @@ Future<void> monterQuestionnaire(
   } else {
     await tester.pump();
   }
+}
+
+/// PE-B4 : ouvre l'onglet [libelle] de l'accueil du candidat (par son nom lu,
+/// le meme dans la capsule du telephone et dans la colonne).
+Future<void> versOnglet(WidgetTester tester, String libelle) async {
+  await tester.tap(destinationNav(libelle));
+  await tester.pumpAndSettle();
+}
+
+/// PE-A6 : le retrait a quitte le pied de l'accueil. Ouvre l'onglet Academie,
+/// puis deplie « Reglages », ou vit « Retirer ma candidature ».
+Future<void> versLeRetrait(WidgetTester tester) async {
+  await versOnglet(tester, t.recrutement.accueil.onglets.academie);
+  await toucherCle(tester, 'academie-reglages');
 }
 
 /// Touche le widget de cle [cle], apres l'avoir rendu visible.

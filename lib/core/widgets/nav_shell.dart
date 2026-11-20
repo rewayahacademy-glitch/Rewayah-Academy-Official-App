@@ -24,6 +24,7 @@ import '../theme/app_spacing.dart';
 import '../theme/app_typography.dart';
 import 'avatar_compte.dart';
 import 'avatar_tile.dart' show AppAvatar;
+import 'badge_non_lu.dart' show PastilleNombre;
 import 'brand_logo.dart';
 import 'cercle_selectionnable.dart';
 import 'halo_compte.dart';
@@ -45,7 +46,28 @@ class Destination {
     this.essentielle = true,
     this.nouveaute,
     this.compte = false,
+    this.compteur,
+    this.compteurLu,
   });
+
+  /// ACCUEIL-CANDIDAT (directeur, 20/11/2026) : un nombre a montrer en
+  /// pastille sur l'icone (les messages recus non lus, par exemple), ou
+  /// `null` (par defaut : rien ne change). 0 ou moins : rien n'est pose.
+  final int? compteur;
+
+  /// La phrase que le lecteur d'ecran entend apres le libelle quand
+  /// [compteur] est pose (« 3 messages non lus ») ; donnee par l'appelant,
+  /// qui sait ce qu'il compte.
+  final String? compteurLu;
+
+  /// Vrai quand une pastille de [compteur] est a poser.
+  bool get aCompteur => (compteur ?? 0) > 0;
+
+  /// Le libelle lu : le nom, la nouveaute, puis le compteur.
+  String libelleLu({required bool nouveau}) {
+    final String base = libelleAvecNouveaute(libelle, nouveau);
+    return aCompteur && compteurLu != null ? '$base, $compteurLu' : base;
+  }
 
   /// NAV-REFONTE (decision du directeur du 09/11/2026) : vrai pour la
   /// destination du Compte (Compte, Profil, Mon espace selon le role). Sur
@@ -415,6 +437,10 @@ class NavShell extends StatelessWidget {
   /// Cle du Compte au pied du panneau (photo, prenom, menu), sur tablette et
   /// ordinateur (NAV-REFONTE etape 3).
   static const Key piedCompteKey = ValueKey<String>('nav-shell-pied-compte');
+
+  /// La cle de la pastille du compteur de la destination [chemin].
+  static Key cleCompteur(String chemin) =>
+      ValueKey<String>('nav-shell-compteur-$chemin');
 
   /// Cree la coquille de navigation.
   ///
@@ -1423,6 +1449,18 @@ class _OngletBarre extends ConsumerWidget {
             top: -AppSpacing.xl,
             child: BadgeNouveau(cle: destination.nouveaute!),
           ),
+        // ACCUEIL-CANDIDAT : le compteur a cheval sur le coin de fin de
+        // l'icone, cercle borde de la couleur de la barre.
+        if (destination.aCompteur)
+          PositionedDirectional(
+            top: -AppSpacing.sm,
+            end: -AppSpacing.sm,
+            child: PastilleNombre(
+              key: NavShell.cleCompteur(destination.chemin),
+              nombre: destination.compteur!,
+              bordure: palette.surfaceMatiere.background,
+            ),
+          ),
       ],
     );
 
@@ -1513,7 +1551,7 @@ class _OngletBarre extends ConsumerWidget {
           if (nouveau) marquerNouveauteVue(ref, destination.nouveaute!);
           onAller(destination.chemin);
         },
-        libelleSemantique: libelleAvecNouveaute(destination.libelle, nouveau),
+        libelleSemantique: destination.libelleLu(nouveau: nouveau),
         arrondiFocus: AppRadius.arrondiFull,
         child: ExcludeSemantics(
           child: Center(
@@ -2580,7 +2618,7 @@ class _ItemColonne extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bool nouveau = estNouveau(ref, destination.nouveaute);
-    final String libelleLu = libelleAvecNouveaute(destination.libelle, nouveau);
+    final String libelleLu = destination.libelleLu(nouveau: nouveau);
     void onPress() {
       if (nouveau) marquerNouveauteVue(ref, destination.nouveaute!);
       this.onPress();
@@ -2654,6 +2692,13 @@ class _ItemColonne extends ConsumerWidget {
                     if (nouveau) ...<Widget>[
                       Ecart.hSm,
                       BadgeNouveau(cle: destination.nouveaute!),
+                    ],
+                    if (destination.aCompteur) ...<Widget>[
+                      Ecart.hSm,
+                      PastilleNombre(
+                        key: NavShell.cleCompteur(destination.chemin),
+                        nombre: destination.compteur!,
+                      ),
                     ],
                   ],
                 ),

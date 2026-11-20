@@ -44,11 +44,14 @@ Future<void> _monter(
   await monterQuestionnaire(
     tester,
     port: port,
-    depart: Routes.attente,
+    // PE-B4 et PE-A6 (20/11/2026) : le versement vit dans les reglages de
+    // l'onglet Academie de l'accueil du candidat.
+    depart: '${Routes.attente}?onglet=academie',
     taille: taille,
     dossier: dossier,
     direction: direction,
   );
+  await toucherCle(tester, 'academie-reglages');
 }
 
 void main() {

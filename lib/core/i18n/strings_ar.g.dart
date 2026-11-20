@@ -1861,6 +1861,7 @@ class _Traductions$recrutement$ar extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$portail$ar portail = _Traductions$recrutement$portail$ar._(_root);
 	@override late final _Traductions$recrutement$entretien$ar entretien = _Traductions$recrutement$entretien$ar._(_root);
 	@override late final _Traductions$recrutement$partage$ar partage = _Traductions$recrutement$partage$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$ar accueil = _Traductions$recrutement$accueil$ar._(_root);
 	@override late final _Traductions$recrutement$retrait$ar retrait = _Traductions$recrutement$retrait$ar._(_root);
 	@override late final _Traductions$recrutement$questionnaire$ar questionnaire = _Traductions$recrutement$questionnaire$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$ar parcours = _Traductions$recrutement$parcours$ar._(_root);
@@ -11524,6 +11525,26 @@ class _Traductions$recrutement$partage$ar extends Traductions$recrutement$partag
 	@override late final _Traductions$recrutement$partage$fait$ar fait = _Traductions$recrutement$partage$fait$ar._(_root);
 	@override late final _Traductions$recrutement$partage$echec$ar echec = _Traductions$recrutement$partage$echec$ar._(_root);
 	@override String get nonOuvert => 'البطاقة غير متاحة بعد. عد إلى هذه الصفحة لاحقًا.';
+}
+
+// Path: recrutement.accueil
+class _Traductions$recrutement$accueil$ar extends Traductions$recrutement$accueil$fr {
+	_Traductions$recrutement$accueil$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$accueil$onglets$ar onglets = _Traductions$recrutement$accueil$onglets$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$etapes$ar etapes = _Traductions$recrutement$accueil$etapes$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$aFaire$ar aFaire = _Traductions$recrutement$accueil$aFaire$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$lignes$ar lignes = _Traductions$recrutement$accueil$lignes$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$praxis$ar praxis = _Traductions$recrutement$accueil$praxis$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$annonce$ar annonce = _Traductions$recrutement$accueil$annonce$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$etat$ar etat = _Traductions$recrutement$accueil$etat$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$messages$ar messages = _Traductions$recrutement$accueil$messages$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$academie$ar academie = _Traductions$recrutement$accueil$academie$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$retrait$ar retrait = _Traductions$recrutement$accueil$retrait$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$reprise$ar reprise = _Traductions$recrutement$accueil$reprise$ar._(_root);
 }
 
 // Path: recrutement.retrait
@@ -22316,6 +22337,210 @@ class _Traductions$recrutement$partage$echec$ar extends Traductions$recrutement$
 	@override String get carte => 'تعذّر إعداد البطاقة. أعد المحاولة بعد قليل.';
 }
 
+// Path: recrutement.accueil.onglets
+class _Traductions$recrutement$accueil$onglets$ar extends Traductions$recrutement$accueil$onglets$fr {
+	_Traductions$recrutement$accueil$onglets$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get dossier => 'الملف';
+	@override String get messages => 'الرسائل';
+	@override String get academie => 'الأكاديمية';
+}
+
+// Path: recrutement.accueil.etapes
+class _Traductions$recrutement$accueil$etapes$ar extends Traductions$recrutement$accueil$etapes$fr {
+	_Traductions$recrutement$accueil$etapes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String position({required Object n, required Object total}) => 'المرحلة ⁨${n}⁩ من ⁨${total}⁩';
+	@override String get faite => 'تمّت';
+	@override String get enCours => 'جارية';
+	@override String get aVenir => 'قادمة';
+	@override String lecture({required Object position, required Object nom, required Object etat}) => '⁨${position}⁩، ⁨${nom}⁩، ⁨${etat}⁩';
+	@override String get detail1 => 'ترسل إجاباتك ووثائقك، فتقرؤها الأكاديمية.';
+	@override String get detail2 => 'مقابلة بالفيديو مع الأكاديمية، في الوقت الذي تختاره.';
+	@override String get detail3 => 'يُفتح لك فضاء المعلّم.';
+	@override String get ensuiteACompleter => 'بعد ذلك: تقرأ الأكاديمية طلب ترشحك.';
+	@override String get ensuiteEnExamen => 'بعد ذلك: إن قُبل طلب ترشحك نتعارف في مقابلة.';
+	@override String get ensuiteConnaissance => 'بعد ذلك: تبلّغك الأكاديمية جوابها هنا بعد المقابلة.';
+	@override String get ensuiteEquipe => 'بعد ذلك: يُفتح لك فضاء المعلّم.';
+}
+
+// Path: recrutement.accueil.aFaire
+class _Traductions$recrutement$accueil$aFaire$ar extends Traductions$recrutement$accueil$aFaire$fr {
+	_Traductions$recrutement$accueil$aFaire$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'المطلوب الآن';
+	@override String get rienTitre => 'لا شيء مطلوب منك الآن';
+	@override String get rien => 'ليس عليك شيء الآن. سنكتب لك هنا فور وجود جديد.';
+	@override String get majorite => 'أخبرنا أولًا هل بلغت 18 سنة أو أكثر، في البطاقة أعلاه.';
+	@override String get cadre => 'اقرأ الإطار الديني والتربوي واقبله.';
+	@override String get accords => 'اقرأ العقد واتفاقاتنا واقبلها.';
+	@override String get piece => 'ارفع وثيقة هويتك.';
+	@override String get reponses => 'أجب عن الأسئلة ثم أرسل طلب ترشحك.';
+	@override String get entretien => 'اختر موعد مقابلتك.';
+	@override String get corriger => 'أعد العنصر الذي طلبت الأكاديمية تصحيحه.';
+}
+
+// Path: recrutement.accueil.lignes
+class _Traductions$recrutement$accueil$lignes$ar extends Traductions$recrutement$accueil$lignes$fr {
+	_Traductions$recrutement$accueil$lignes$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'ملفك، عنصرًا عنصرًا';
+	@override String afficher({required Object element}) => 'إظهار التفاصيل: ⁨${element}⁩';
+	@override String masquer({required Object element}) => 'إخفاء التفاصيل: ⁨${element}⁩';
+	@override String get cadreDetail => 'الإطار يبيّن ما تعلّمه الأكاديمية وكيف تعلّمه. تقرؤه كاملًا ثم تقبله.';
+	@override String get accordsDetail => 'عقد المعلّم، وإشعار زيارات المراقبة، ومدوّنة السلوك. تقرؤها وتقبلها في صفحة واحدة.';
+	@override String get pieceDetail => 'صورة واضحة لجواز سفرك أو بطاقة هويتك، سارية الصلاحية. مثال: الصفحة التي فيها صورتك، كاملة ومن غير انعكاس.';
+	@override String get photoDetail => 'صورة لك من الأمام. تُعرَّف بها للأسر، بموافقتك فقط.';
+	@override String get reponsesDetail => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.';
+}
+
+// Path: recrutement.accueil.praxis
+class _Traductions$recrutement$accueil$praxis$ar extends Traductions$recrutement$accueil$praxis$fr {
+	_Traductions$recrutement$accueil$praxis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get pieceRefusee => 'لم تُقبل وثيقة هويتك. أرسل وثيقة جديدة.';
+	@override String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم يبقَ شيء في ملفك.',
+		one: 'بقي عنصر واحد لإتمام ملفك.',
+		two: 'بقي عنصران لإتمام ملفك.',
+		few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.',
+		many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.',
+		other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.',
+	);
+}
+
+// Path: recrutement.accueil.annonce
+class _Traductions$recrutement$accueil$annonce$ar extends Traductions$recrutement$accueil$annonce$fr {
+	_Traductions$recrutement$accueil$annonce$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String ligne({required Object titre}) => 'جديد: ⁨${titre}⁩';
+	@override String ranger({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩';
+	@override String get rangee => 'نُقل الإعلان إلى الرسائل، قسم الإعلانات.';
+}
+
+// Path: recrutement.accueil.etat
+class _Traductions$recrutement$accueil$etat$ar extends Traductions$recrutement$accueil$etat$fr {
+	_Traductions$recrutement$accueil$etat$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get perime => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة. أعد المحاولة بعد قليل.';
+	@override String get horsLigne => 'أنت غير متصل. ما تراه يعود إلى آخر قراءة؛ أعد المحاولة عند عودة الاتصال.';
+}
+
+// Path: recrutement.accueil.messages
+class _Traductions$recrutement$accueil$messages$ar extends Traductions$recrutement$accueil$messages$fr {
+	_Traductions$recrutement$accueil$messages$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'اكتب إلى الأكاديمية: تجيبك هنا.';
+	@override String get vide => 'تُفتح المراسلة هنا فور تسجيل طلب ترشحك.';
+	@override late final _Traductions$recrutement$accueil$messages$sections$ar sections = _Traductions$recrutement$accueil$messages$sections$ar._(_root);
+	@override String nonLus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا رسائل غير مقروءة',
+		one: 'رسالة واحدة غير مقروءة',
+		two: 'رسالتان غير مقروءتين',
+		few: '⁨${n}⁩ رسائل غير مقروءة',
+		many: '⁨${n}⁩ رسالة غير مقروءة',
+		other: '⁨${n}⁩ رسالة غير مقروءة',
+	);
+	@override late final _Traductions$recrutement$accueil$messages$annonces$ar annonces = _Traductions$recrutement$accueil$messages$annonces$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$messages$savoir$ar savoir = _Traductions$recrutement$accueil$messages$savoir$ar._(_root);
+}
+
+// Path: recrutement.accueil.academie
+class _Traductions$recrutement$accueil$academie$ar extends Traductions$recrutement$accueil$academie$fr {
+	_Traductions$recrutement$accueil$academie$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'الأكاديمية';
+	@override String get annoncesVide => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.';
+	@override String get savoirTitre => 'ما ينبغي معرفته';
+	@override String get remuneration => 'مستحقات المعلّم';
+	@override String get cours => 'سير الدروس';
+	@override String get entretiens => 'تنظيم المقابلات';
+	@override String get bientot => 'سيظهر هنا حين تنشره الإدارة.';
+	@override String get reglages => 'الإعدادات';
+	@override String get reglagesLegende => 'اللغة، صرف المستحقات، سحب طلب الترشح';
+}
+
+// Path: recrutement.accueil.retrait
+class _Traductions$recrutement$accueil$retrait$ar extends Traductions$recrutement$accueil$retrait$fr {
+	_Traductions$recrutement$accueil$retrait$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get arret => 'ستتوقف الأكاديمية عن دراسة ملفك.';
+	@override String get entretien => 'سيُلغى موعد مقابلتك. إن استأنفت طلب ترشحك فستختار موعدًا جديدًا.';
+	@override String get rienEfface => 'إجاباتك ووثائقك ستبقى محفوظة.';
+	@override String get pause => 'ملفك متوقف مؤقتًا. إن سحبته الآن فلن تستطيع استئنافه بنفسك: عليك أن تكتب إلى الأكاديمية، فهي وحدها تستطيع إعادة فتحه.';
+	@override String reprise({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'سيمكنك استئنافه بنفسك في اليوم نفسه، من تبويب الملف.',
+		one: 'سيمكنك استئنافه بنفسك خلال يوم واحد، من تبويب الملف.',
+		two: 'سيمكنك استئنافه بنفسك خلال يومين، من تبويب الملف.',
+		few: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ أيام، من تبويب الملف.',
+		many: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يومًا، من تبويب الملف.',
+		other: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يوم، من تبويب الملف.',
+	);
+	@override String get apres => 'بعد هذه المدة، وحدها الأكاديمية ستستطيع إعادة فتحه.';
+	@override String get garder => 'لا، أواصل';
+	@override String get confirmer => 'نعم، اسحب طلب ترشحي';
+	@override String fait({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'سُحب طلب الترشح. يمكنك استئنافه اليوم.',
+		one: 'سُحب طلب الترشح. أمامك يوم واحد لاستئنافه.',
+		two: 'سُحب طلب الترشح. أمامك يومان لاستئنافه.',
+		few: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ أيام لاستئنافه.',
+		many: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ يومًا لاستئنافه.',
+		other: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ يوم لاستئنافه.',
+	);
+	@override String get faitSansDelai => 'سُحب طلب الترشح.';
+}
+
+// Path: recrutement.accueil.reprise
+class _Traductions$recrutement$accueil$reprise$ar extends Traductions$recrutement$accueil$reprise$fr {
+	_Traductions$recrutement$accueil$reprise$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String possible({required Object date, required Object heure}) => 'لقد سحبت طلب ترشحك. يمكنك استئنافه بنفسك حتى ⁨${date}⁩ الساعة ⁨${heure}⁩. إجاباتك ووثائقك ما زالت محفوظة.';
+	@override String get bouton => 'استئناف طلب ترشحي';
+	@override String get faite => 'استؤنف طلب ترشحك. إجاباتك ووثائقك ما زالت محفوظة.';
+	@override String get delaiDepasse => 'انقضت مدة استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.';
+	@override String get enPause => 'كان ملفك متوقفًا مؤقتًا حين سحبته: لا تستطيع استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.';
+	@override String get origineInconnue => 'طلب ترشحك مسحوب. اكتب إلينا من تبويب الرسائل لاستئنافه.';
+	@override String get parDirection => 'هذا السحب سجّلته الأكاديمية. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.';
+	@override String get controles => 'تغيّر عنصر في ملفك منذ السحب. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.';
+	@override String get echec => 'لم يكتمل الاستئناف. لم يتغيّر شيء: أعد المحاولة بعد لحظة.';
+	@override String get incertain => 'قد لا يكون طلب الاستئناف قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.';
+	@override String get horsLigne => 'سيمكن الاستئناف عند عودة الاتصال.';
+	@override String get conflit => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أعد المحاولة.';
+}
+
 // Path: recrutement.parcours.presentation
 class _Traductions$recrutement$parcours$presentation$ar extends Traductions$recrutement$parcours$presentation$fr {
 	_Traductions$recrutement$parcours$presentation$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -27467,6 +27692,40 @@ class _Traductions$recrutement$dossier3$synthese$ageValeurs$ar extends Traductio
 	@override String attestee({required Object date}) => '18 سنة فأكثر، أُكّد بتاريخ ⁨${date}⁩';
 	@override String get moins18 => 'أقل من 18 سنة: الترشح متوقف مؤقتًا';
 	@override String get nonAttestee => 'لم يُؤكَّد العمر بعد';
+}
+
+// Path: recrutement.accueil.messages.sections
+class _Traductions$recrutement$accueil$messages$sections$ar extends Traductions$recrutement$accueil$messages$sections$fr {
+	_Traductions$recrutement$accueil$messages$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أقسام الرسائل';
+	@override String get messages => 'الرسائل';
+	@override String get annonces => 'الإعلانات';
+	@override String get savoir => 'معلومات';
+}
+
+// Path: recrutement.accueil.messages.annonces
+class _Traductions$recrutement$accueil$messages$annonces$ar extends Traductions$recrutement$accueil$messages$annonces$fr {
+	_Traductions$recrutement$accueil$messages$annonces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String lire({required Object titre}) => 'قراءة الإعلان: ⁨${titre}⁩';
+	@override String get vide => 'لا إعلان الآن. ستظهر إعلانات الإدارة هنا.';
+}
+
+// Path: recrutement.accueil.messages.savoir
+class _Traductions$recrutement$accueil$messages$savoir$ar extends Traductions$recrutement$accueil$messages$savoir$fr {
+	_Traductions$recrutement$accueil$messages$savoir$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'أجوبة عن أسئلة المترشحين، حين تنشرها الإدارة.';
 }
 
 // Path: recrutement.parcours.presentation.p1
@@ -41476,6 +41735,87 @@ extension on TraductionsAr {
 			'recrutement.partage.echec.copie' => 'تعذّر نسخ الرابط. حدّده في الصفحة ثم انسخه يدويًا.',
 			'recrutement.partage.echec.carte' => 'تعذّر إعداد البطاقة. أعد المحاولة بعد قليل.',
 			'recrutement.partage.nonOuvert' => 'البطاقة غير متاحة بعد. عد إلى هذه الصفحة لاحقًا.',
+			'recrutement.accueil.onglets.dossier' => 'الملف',
+			'recrutement.accueil.onglets.messages' => 'الرسائل',
+			'recrutement.accueil.onglets.academie' => 'الأكاديمية',
+			'recrutement.accueil.etapes.position' => ({required Object n, required Object total}) => 'المرحلة ⁨${n}⁩ من ⁨${total}⁩',
+			'recrutement.accueil.etapes.faite' => 'تمّت',
+			'recrutement.accueil.etapes.enCours' => 'جارية',
+			'recrutement.accueil.etapes.aVenir' => 'قادمة',
+			'recrutement.accueil.etapes.lecture' => ({required Object position, required Object nom, required Object etat}) => '⁨${position}⁩، ⁨${nom}⁩، ⁨${etat}⁩',
+			'recrutement.accueil.etapes.detail1' => 'ترسل إجاباتك ووثائقك، فتقرؤها الأكاديمية.',
+			'recrutement.accueil.etapes.detail2' => 'مقابلة بالفيديو مع الأكاديمية، في الوقت الذي تختاره.',
+			'recrutement.accueil.etapes.detail3' => 'يُفتح لك فضاء المعلّم.',
+			'recrutement.accueil.etapes.ensuiteACompleter' => 'بعد ذلك: تقرأ الأكاديمية طلب ترشحك.',
+			'recrutement.accueil.etapes.ensuiteEnExamen' => 'بعد ذلك: إن قُبل طلب ترشحك نتعارف في مقابلة.',
+			'recrutement.accueil.etapes.ensuiteConnaissance' => 'بعد ذلك: تبلّغك الأكاديمية جوابها هنا بعد المقابلة.',
+			'recrutement.accueil.etapes.ensuiteEquipe' => 'بعد ذلك: يُفتح لك فضاء المعلّم.',
+			'recrutement.accueil.aFaire.titre' => 'المطلوب الآن',
+			'recrutement.accueil.aFaire.rienTitre' => 'لا شيء مطلوب منك الآن',
+			'recrutement.accueil.aFaire.rien' => 'ليس عليك شيء الآن. سنكتب لك هنا فور وجود جديد.',
+			'recrutement.accueil.aFaire.majorite' => 'أخبرنا أولًا هل بلغت 18 سنة أو أكثر، في البطاقة أعلاه.',
+			'recrutement.accueil.aFaire.cadre' => 'اقرأ الإطار الديني والتربوي واقبله.',
+			'recrutement.accueil.aFaire.accords' => 'اقرأ العقد واتفاقاتنا واقبلها.',
+			'recrutement.accueil.aFaire.piece' => 'ارفع وثيقة هويتك.',
+			'recrutement.accueil.aFaire.reponses' => 'أجب عن الأسئلة ثم أرسل طلب ترشحك.',
+			'recrutement.accueil.aFaire.entretien' => 'اختر موعد مقابلتك.',
+			'recrutement.accueil.aFaire.corriger' => 'أعد العنصر الذي طلبت الأكاديمية تصحيحه.',
+			'recrutement.accueil.lignes.titre' => 'ملفك، عنصرًا عنصرًا',
+			'recrutement.accueil.lignes.afficher' => ({required Object element}) => 'إظهار التفاصيل: ⁨${element}⁩',
+			'recrutement.accueil.lignes.masquer' => ({required Object element}) => 'إخفاء التفاصيل: ⁨${element}⁩',
+			'recrutement.accueil.lignes.cadreDetail' => 'الإطار يبيّن ما تعلّمه الأكاديمية وكيف تعلّمه. تقرؤه كاملًا ثم تقبله.',
+			'recrutement.accueil.lignes.accordsDetail' => 'عقد المعلّم، وإشعار زيارات المراقبة، ومدوّنة السلوك. تقرؤها وتقبلها في صفحة واحدة.',
+			'recrutement.accueil.lignes.pieceDetail' => 'صورة واضحة لجواز سفرك أو بطاقة هويتك، سارية الصلاحية. مثال: الصفحة التي فيها صورتك، كاملة ومن غير انعكاس.',
+			'recrutement.accueil.lignes.photoDetail' => 'صورة لك من الأمام. تُعرَّف بها للأسر، بموافقتك فقط.',
+			'recrutement.accueil.lignes.reponsesDetail' => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.',
+			'recrutement.accueil.praxis.pieceRefusee' => 'لم تُقبل وثيقة هويتك. أرسل وثيقة جديدة.',
+			'recrutement.accueil.praxis.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ شيء في ملفك.', one: 'بقي عنصر واحد لإتمام ملفك.', two: 'بقي عنصران لإتمام ملفك.', few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.', many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.', other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.', ), 
+			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'جديد: ⁨${titre}⁩',
+			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩',
+			'recrutement.accueil.annonce.rangee' => 'نُقل الإعلان إلى الرسائل، قسم الإعلانات.',
+			'recrutement.accueil.etat.perime' => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة. أعد المحاولة بعد قليل.',
+			'recrutement.accueil.etat.horsLigne' => 'أنت غير متصل. ما تراه يعود إلى آخر قراءة؛ أعد المحاولة عند عودة الاتصال.',
+			'recrutement.accueil.messages.intro' => 'اكتب إلى الأكاديمية: تجيبك هنا.',
+			'recrutement.accueil.messages.vide' => 'تُفتح المراسلة هنا فور تسجيل طلب ترشحك.',
+			'recrutement.accueil.messages.sections.libelle' => 'أقسام الرسائل',
+			'recrutement.accueil.messages.sections.messages' => 'الرسائل',
+			'recrutement.accueil.messages.sections.annonces' => 'الإعلانات',
+			'recrutement.accueil.messages.sections.savoir' => 'معلومات',
+			'recrutement.accueil.messages.nonLus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رسائل غير مقروءة', one: 'رسالة واحدة غير مقروءة', two: 'رسالتان غير مقروءتين', few: '⁨${n}⁩ رسائل غير مقروءة', many: '⁨${n}⁩ رسالة غير مقروءة', other: '⁨${n}⁩ رسالة غير مقروءة', ), 
+			'recrutement.accueil.messages.annonces.lire' => ({required Object titre}) => 'قراءة الإعلان: ⁨${titre}⁩',
+			'recrutement.accueil.messages.annonces.vide' => 'لا إعلان الآن. ستظهر إعلانات الإدارة هنا.',
+			'recrutement.accueil.messages.savoir.intro' => 'أجوبة عن أسئلة المترشحين، حين تنشرها الإدارة.',
+			'recrutement.accueil.academie.titre' => 'الأكاديمية',
+			'recrutement.accueil.academie.annoncesVide' => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.',
+			'recrutement.accueil.academie.savoirTitre' => 'ما ينبغي معرفته',
+			'recrutement.accueil.academie.remuneration' => 'مستحقات المعلّم',
+			'recrutement.accueil.academie.cours' => 'سير الدروس',
+			'recrutement.accueil.academie.entretiens' => 'تنظيم المقابلات',
+			'recrutement.accueil.academie.bientot' => 'سيظهر هنا حين تنشره الإدارة.',
+			'recrutement.accueil.academie.reglages' => 'الإعدادات',
+			'recrutement.accueil.academie.reglagesLegende' => 'اللغة، صرف المستحقات، سحب طلب الترشح',
+			'recrutement.accueil.retrait.arret' => 'ستتوقف الأكاديمية عن دراسة ملفك.',
+			'recrutement.accueil.retrait.entretien' => 'سيُلغى موعد مقابلتك. إن استأنفت طلب ترشحك فستختار موعدًا جديدًا.',
+			'recrutement.accueil.retrait.rienEfface' => 'إجاباتك ووثائقك ستبقى محفوظة.',
+			'recrutement.accueil.retrait.pause' => 'ملفك متوقف مؤقتًا. إن سحبته الآن فلن تستطيع استئنافه بنفسك: عليك أن تكتب إلى الأكاديمية، فهي وحدها تستطيع إعادة فتحه.',
+			'recrutement.accueil.retrait.reprise' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سيمكنك استئنافه بنفسك في اليوم نفسه، من تبويب الملف.', one: 'سيمكنك استئنافه بنفسك خلال يوم واحد، من تبويب الملف.', two: 'سيمكنك استئنافه بنفسك خلال يومين، من تبويب الملف.', few: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ أيام، من تبويب الملف.', many: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يومًا، من تبويب الملف.', other: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يوم، من تبويب الملف.', ), 
+			'recrutement.accueil.retrait.apres' => 'بعد هذه المدة، وحدها الأكاديمية ستستطيع إعادة فتحه.',
+			'recrutement.accueil.retrait.garder' => 'لا، أواصل',
+			'recrutement.accueil.retrait.confirmer' => 'نعم، اسحب طلب ترشحي',
+			'recrutement.accueil.retrait.fait' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سُحب طلب الترشح. يمكنك استئنافه اليوم.', one: 'سُحب طلب الترشح. أمامك يوم واحد لاستئنافه.', two: 'سُحب طلب الترشح. أمامك يومان لاستئنافه.', few: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ أيام لاستئنافه.', many: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ يومًا لاستئنافه.', other: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ يوم لاستئنافه.', ), 
+			'recrutement.accueil.retrait.faitSansDelai' => 'سُحب طلب الترشح.',
+			'recrutement.accueil.reprise.possible' => ({required Object date, required Object heure}) => 'لقد سحبت طلب ترشحك. يمكنك استئنافه بنفسك حتى ⁨${date}⁩ الساعة ⁨${heure}⁩. إجاباتك ووثائقك ما زالت محفوظة.',
+			'recrutement.accueil.reprise.bouton' => 'استئناف طلب ترشحي',
+			'recrutement.accueil.reprise.faite' => 'استؤنف طلب ترشحك. إجاباتك ووثائقك ما زالت محفوظة.',
+			'recrutement.accueil.reprise.delaiDepasse' => 'انقضت مدة استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.',
+			'recrutement.accueil.reprise.enPause' => 'كان ملفك متوقفًا مؤقتًا حين سحبته: لا تستطيع استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.',
+			'recrutement.accueil.reprise.origineInconnue' => 'طلب ترشحك مسحوب. اكتب إلينا من تبويب الرسائل لاستئنافه.',
+			'recrutement.accueil.reprise.parDirection' => 'هذا السحب سجّلته الأكاديمية. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.',
+			'recrutement.accueil.reprise.controles' => 'تغيّر عنصر في ملفك منذ السحب. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.',
+			'recrutement.accueil.reprise.echec' => 'لم يكتمل الاستئناف. لم يتغيّر شيء: أعد المحاولة بعد لحظة.',
+			'recrutement.accueil.reprise.incertain' => 'قد لا يكون طلب الاستئناف قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.',
+			'recrutement.accueil.reprise.horsLigne' => 'سيمكن الاستئناف عند عودة الاتصال.',
+			'recrutement.accueil.reprise.conflit' => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أعد المحاولة.',
 			'recrutement.retrait.lien' => 'سحب طلب ترشحي',
 			'recrutement.retrait.question' => 'هل تسحب طلب ترشحك؟',
 			'recrutement.retrait.consequence' => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
@@ -41520,6 +41860,8 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.envoyee' => 'أُرسل طلب ترشحك. ستُعلمك الأكاديمية هنا إن لزم استكماله.',
 			'recrutement.questionnaire.envoyeeLe' => ({required Object date}) => 'أُرسل في ⁨${date}⁩.',
 			'recrutement.questionnaire.etatVersement' => ({required Object etat}) => 'وسيلة صرف الراتب: ⁨${etat}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.questionnaire.retourDossier' => 'العودة إلى ملفي',
 			'recrutement.questionnaire.complementCarte' => 'تطلب منك الأكاديمية استكمال هذا الجزء.',
 			'recrutement.questionnaire.moyenValide' => 'تتلقى راتبك بوسيلة تعتمدها أكاديمية الرواية.',
@@ -41601,8 +41943,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.pays.recherche' => 'البحث عن بلد',
 			'recrutement.parcours.pays.rechercheAide' => 'اسم البلد',
 			'recrutement.parcours.pays.aucun' => 'لا يوجد بلد مطابق.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.pays.retour' => 'العودة إلى البلدان المقترحة',
 			'recrutement.parcours.riwayat.autre' => 'رواية أخرى',
 			'recrutement.parcours.riwayat.recherche' => 'البحث عن رواية',
@@ -42034,6 +42374,8 @@ extension on TraductionsAr {
 			'recrutement.talents.niveaux.manque' => ({required Object competence}) => 'اختر مستواك في «⁨${competence}⁩» للمتابعة.',
 			'recrutement.talents.disponibilite.titre' => 'متى يمكنك المساعدة؟',
 			'recrutement.talents.disponibilite.explication' => 'أخبرنا كم من الوقت يمكنك تخصيصه لمهمة، إلى جانب التدريس. وفي الأسفل، أخبرنا إن كانت الأكاديمية تستطيع التواصل معك.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.disponibilite.quelques_heures.libelle' => 'بضع ساعات في الأسبوع',
 			'recrutement.talents.disponibilite.quelques_heures.description' => 'مساعدة خفيفة إلى جانب أنشطتك الأخرى.',
 			'recrutement.talents.disponibilite.mi_temps.libelle' => 'نصف دوام',
@@ -42115,8 +42457,6 @@ extension on TraductionsAr {
 			'argent.transparence.postes.visioconference' => 'الاتصال المرئي',
 			'argent.transparence.postes.applicationHebergement' => 'التطبيق والاستضافة',
 			'argent.transparence.postes.emails' => 'البريد الإلكتروني',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.postes.stockage' => 'تخزين الملفات',
 			'argent.transparence.postes.comptabilite' => 'المحاسبة',
 			'argent.transparence.postes.developpement' => 'تطوير التطبيق',
@@ -42548,6 +42888,8 @@ extension on TraductionsAr {
 			'courriels.admin.ecrire.partDe' => ({required Object adresse}) => 'تخرج من ⁨${adresse}⁩',
 			'courriels.admin.ecrire.desinscription' => 'تحمل كل رسالة رابطًا لإلغاء الاشتراك.',
 			'courriels.admin.ecrire.sujet' => 'الموضوع',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.ecrire.sujetAide' => '120 حرفًا على الأكثر.',
 			'courriels.admin.ecrire.corps' => 'الرسالة',
 			'courriels.admin.ecrire.corpsAide' => 'نص عادي، 5000 حرف على الأكثر. السطر الفارغ يبدأ فقرة جديدة.',
@@ -42629,8 +42971,6 @@ extension on TraductionsAr {
 			'admissions.recueLe' => 'تاريخ الاستلام',
 			'admissions.reference' => 'المرجع',
 			'admissions.courriel' => 'عنوان البريد الإلكتروني',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.etatLibelle' => 'الحالة',
 			'admissions.titulaire' => ({required Object prenom}) => '⁨${prenom}⁩، لنفسه أو لنفسها',
 			'admissions.enfant' => ({required Object prenom, required Object age}) => '⁨${prenom}⁩، العمر ⁨${age}⁩',
@@ -43062,6 +43402,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.issue.nouvelle' => 'جديدة',
 			'candidatsFlux.importFormulaires.issue.corrigee' => 'مصحَّحة',
 			'candidatsFlux.importFormulaires.issue.dejaConnue' => 'معروفة سابقًا',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.issue.ignoree' => 'متجاهَلة',
 			'candidatsFlux.importFormulaires.issue.aCorriger' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.issue.historique' => 'في السجل',
@@ -43143,8 +43485,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.aCorrigerAide' => 'أسطر غير مقروءة: لا تُستورد.',
 			'candidatsFlux.importFormulaires.comptes.corrigees' => 'مصحَّحة في مكانها',
 			'candidatsFlux.importFormulaires.comptes.personnes' => 'الأشخاص المعنيّون',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.lignesLues' => 'الأسطر المقروءة',
 			'candidatsFlux.importFormulaires.comptes.attendus.question' => 'أي حصيلة كنتم تتوقعون؟',
 			'candidatsFlux.importFormulaires.comptes.attendus.fichier2110.titre' => 'ملف 21 أكتوبر',
@@ -43576,6 +43916,8 @@ extension on TraductionsAr {
 			'journalSorties.accord.pasAccepte' => 'لا موافقة: لا يُسجَّل أي شيء.',
 			'journalSorties.accord.retirerPour' => ({required Object prenom}) => 'سحب موافقتي بخصوص ⁨${prenom}⁩',
 			'journalSorties.accord.retirer' => 'سحب موافقتي',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.accord.enregistrer' => 'حفظ موافقتي',
 			'journalSorties.accord.manque' => 'ضع علامة في خانة لحفظ موافقتك.',
 			'journalSorties.accord.erreur' => 'لم يتأكّد اختيارك: ربما لم يصل إلى رواية. حاول مرة أخرى بعد قليل.',
@@ -43657,8 +43999,6 @@ extension on TraductionsAr {
 			'calendrier.dates.publication.confirmer' => 'نشر الإغلاق',
 			'calendrier.dates.notification.conflit.generale' => 'لم تعد حصة تحت الإغلاق لكن تعذّر استرجاعها: أخذ المعلّم درسًا آخر في الوقت نفسه. حرّره لتُسترجع الحصة في الليلة التالية.',
 			'calendrier.dates.notification.conflit.avecNom' => ({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'لم تعد حصة الفصل ⁨${classe}⁩ بتاريخ ⁨${jour}⁩ الساعة ⁨${heure}⁩ (بتوقيت مكة المكرمة) تحت الإغلاق لكن تعذّر استرجاعها: لدى ⁨${enseignant}⁩ درس آخر في الوقت نفسه. حرّر المعلّم لتُسترجع الحصة في الليلة التالية.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.notification.conflit.sansNom' => ({required Object classe, required Object jour, required Object heure}) => 'لم تعد حصة الفصل ⁨${classe}⁩ بتاريخ ⁨${jour}⁩ الساعة ⁨${heure}⁩ (بتوقيت مكة المكرمة) تحت الإغلاق لكن تعذّر استرجاعها: لدى المعلّم درس آخر في الوقت نفسه. حرّره لتُسترجع الحصة في الليلة التالية.',
 			'calendrier.dates.notification.conflit.rappelGenerale' => 'تذكير: ما زال تعذّر استرجاع حصة لم تعد تحت الإغلاق: لدى المعلّم درس آخر في الوقت نفسه. حرّره لاسترجاعها.',
 			'calendrier.dates.notification.conflit.rappelAvecNom' => ({required Object classe, required Object jour, required Object heure, required Object enseignant}) => 'تذكير: ما زال تعذّر استرجاع حصة الفصل ⁨${classe}⁩ بتاريخ ⁨${jour}⁩ الساعة ⁨${heure}⁩ (بتوقيت مكة المكرمة): لدى ⁨${enseignant}⁩ درس آخر في الوقت نفسه. حرّر المعلّم لاسترجاعها.',
