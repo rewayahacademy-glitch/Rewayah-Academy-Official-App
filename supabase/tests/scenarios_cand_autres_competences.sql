@@ -508,6 +508,8 @@ SELECT pg_temp.vrai(pg_temp.citeurs() = ARRAY[
     -- du secretaire IA lit les domaines, le niveau, la disponibilite et l'accord. Toujours ni controle, ni paiement, ni transition.
     'public.praxis_dossier',
     'public.retirer_autres_competences',
+    -- PE-LISTE-CANDIDATURES (20/11/2026) : « Selectionner les N resultats », corps engendre depuis lister_candidatures.
+    'public.selection_resultats_file',
     -- BE-S1 (16/11) : voisins_candidature rejoue le filtre de competences de la liste.
     'public.voisins_candidature'],
   'seules les trois RPC du candidat, la lecture du catalogue (sa propre reponse) et les deux lectures de la direction citent la table des reponses : ni controle, ni paiement, ni transition, ni etat_dossier()');
@@ -525,6 +527,8 @@ SELECT pg_temp.vrai(pg_temp.citeurs_catalogue() = ARRAY[
     'public.enregistrer_competence_catalogue',
     'public.lire_catalogue_competences',
     'public.lister_candidatures',
+    -- PE-LISTE-CANDIDATURES (20/11/2026) : la selection de tous les resultats rejoue le filtre de la liste.
+    'public.selection_resultats_file',
     -- BE-S1 (16/11) : voisins_candidature rejoue le filtre de competences de la liste.
     'public.voisins_candidature'],
   'seuls la lecture et l''ecriture du catalogue, et le filtre de la liste de la direction, citent le catalogue (les aides competences_ mises a part) : ni controle, ni paiement, ni transition, ni etat_dossier(), ni les RPC du candidat directement');
