@@ -1227,6 +1227,29 @@
     "cadreNonPublie": "Sending your application will be possible once the religious and educational framework is published."
   },
   "connexion": {
+    "praxis": {
+      "scene": "Praxis welcomes you at the door of the academy",
+      "bonjour": "Hello, welcome.",
+      "adresseEtPorte": "Your address, and I open the door for you.",
+      "parfait": "Perfect.",
+      "adresse": "The @ is missing from the address.",
+      "adresseIncomplete": "This address is not complete.",
+      "envoi": "I am sending your link.",
+      "envoye": "It is on its way. Check your email.",
+      "attenteLongue": "Still nothing? I can send it again.",
+      "tropEssais": "Too many requests at once. A short break.",
+      "horsLigne": "No Internet connection.",
+      "retourLigne": "The connection is back.",
+      "reseauLent": "The network is slow. I keep sending.",
+      "serveur": "It is not you, it is us.",
+      "googleOuverte": "Choose your Google account.",
+      "googleRefuse": "This account has no invitation yet.",
+      "session": "Your session has ended. Shall we sign in again?",
+      "toucherOui": "Yes?",
+      "toucherChatouille": "That tickles!",
+      "toucherLa": "I am here",
+      "toucherBonjour": "Hello!"
+    },
     "candidat": {
       "titre": "Your teacher application",
       "phrase": "You are arriving through Rewayah Academy's invitation. Your application is waiting: enter the address that received this email, and we will send your sign-in link there."

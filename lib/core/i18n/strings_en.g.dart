@@ -479,6 +479,7 @@ class _Traductions$connexion$en extends Traductions$connexion$fr {
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$connexion$praxis$en praxis = _Traductions$connexion$praxis$en._(_root);
 	@override late final _Traductions$connexion$candidat$en candidat = _Traductions$connexion$candidat$en._(_root);
 	@override String get titre => 'Sign in';
 	@override String get sessionTermineeTitre => 'You have been signed out';
@@ -3449,6 +3450,36 @@ class _Traductions$salle$visiteControle$en extends Traductions$salle$visiteContr
 	@override String get retablirSon => 'Restore the received sound';
 	@override String get agrandir => 'Enlarge the document';
 	@override String get reduire => 'Shrink the document';
+}
+
+// Path: connexion.praxis
+class _Traductions$connexion$praxis$en extends Traductions$connexion$praxis$fr {
+	_Traductions$connexion$praxis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get scene => 'Praxis welcomes you at the door of the academy';
+	@override String get bonjour => 'Hello, welcome.';
+	@override String get adresseEtPorte => 'Your address, and I open the door for you.';
+	@override String get parfait => 'Perfect.';
+	@override String get adresse => 'The @ is missing from the address.';
+	@override String get adresseIncomplete => 'This address is not complete.';
+	@override String get envoi => 'I am sending your link.';
+	@override String get envoye => 'It is on its way. Check your email.';
+	@override String get attenteLongue => 'Still nothing? I can send it again.';
+	@override String get tropEssais => 'Too many requests at once. A short break.';
+	@override String get horsLigne => 'No Internet connection.';
+	@override String get retourLigne => 'The connection is back.';
+	@override String get reseauLent => 'The network is slow. I keep sending.';
+	@override String get serveur => 'It is not you, it is us.';
+	@override String get googleOuverte => 'Choose your Google account.';
+	@override String get googleRefuse => 'This account has no invitation yet.';
+	@override String get session => 'Your session has ended. Shall we sign in again?';
+	@override String get toucherOui => 'Yes?';
+	@override String get toucherChatouille => 'That tickles!';
+	@override String get toucherLa => 'I am here';
+	@override String get toucherBonjour => 'Hello!';
 }
 
 // Path: connexion.candidat
@@ -29645,6 +29676,27 @@ extension on TraductionsEn {
 			'accords.suivant' => 'Next',
 			'accords.dejaAcceptes' => 'Your agreements are already saved.',
 			'accords.cadreNonPublie' => 'Sending your application will be possible once the religious and educational framework is published.',
+			'connexion.praxis.scene' => 'Praxis welcomes you at the door of the academy',
+			'connexion.praxis.bonjour' => 'Hello, welcome.',
+			'connexion.praxis.adresseEtPorte' => 'Your address, and I open the door for you.',
+			'connexion.praxis.parfait' => 'Perfect.',
+			'connexion.praxis.adresse' => 'The @ is missing from the address.',
+			'connexion.praxis.adresseIncomplete' => 'This address is not complete.',
+			'connexion.praxis.envoi' => 'I am sending your link.',
+			'connexion.praxis.envoye' => 'It is on its way. Check your email.',
+			'connexion.praxis.attenteLongue' => 'Still nothing? I can send it again.',
+			'connexion.praxis.tropEssais' => 'Too many requests at once. A short break.',
+			'connexion.praxis.horsLigne' => 'No Internet connection.',
+			'connexion.praxis.retourLigne' => 'The connection is back.',
+			'connexion.praxis.reseauLent' => 'The network is slow. I keep sending.',
+			'connexion.praxis.serveur' => 'It is not you, it is us.',
+			'connexion.praxis.googleOuverte' => 'Choose your Google account.',
+			'connexion.praxis.googleRefuse' => 'This account has no invitation yet.',
+			'connexion.praxis.session' => 'Your session has ended. Shall we sign in again?',
+			'connexion.praxis.toucherOui' => 'Yes?',
+			'connexion.praxis.toucherChatouille' => 'That tickles!',
+			'connexion.praxis.toucherLa' => 'I am here',
+			'connexion.praxis.toucherBonjour' => 'Hello!',
 			'connexion.candidat.titre' => 'Your teacher application',
 			'connexion.candidat.phrase' => 'You are arriving through Rewayah Academy\'s invitation. Your application is waiting: enter the address that received this email, and we will send your sign-in link there.',
 			'connexion.titre' => 'Sign in',
@@ -29673,6 +29725,8 @@ extension on TraductionsEn {
 			'connexion.introDemo' => 'Demo mode: no link will be sent. You go straight in, without email.',
 			'connexion.essayerDemo' => 'Try the demo',
 			'connexion.avecGoogle' => 'Continue with Google',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.ou' => 'or',
 			'connexion.lienEnvoye' => 'Link sent',
 			'connexion.lienEnvoyeDetail' => ({required Object courriel}) => 'Open the message sent to ${courriel}, then follow the link. You can leave this page open.',
@@ -29694,8 +29748,6 @@ extension on TraductionsEn {
 			'connexion.code.erreurReseau' => 'The check did not go through, probably because the connection dropped. Try again in a moment.',
 			'connexion.revoirReponses' => 'Review my answers',
 			'connexion.inscriptionFermee' => 'Sign-ups are currently by invitation only. Did you apply to teach? You will receive a personal email from us: there is nothing for you to do. Are you a family? Sign-ups reopen soon.',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.invitationFoyer.titre' => 'Invitation to join a household',
 			'connexion.invitationFoyer.autreAdresse' => 'This invitation is for another address: sign out to open it.',
 			'connexion.invitationFoyer.autreAdressePhrase' => 'Nothing was used: the invitation stays valid for the person invited.',
@@ -30187,6 +30239,8 @@ extension on TraductionsEn {
 			'appareils.plateforme.android' => 'Android phone or tablet',
 			'appareils.plateforme.ios' => 'iPhone or iPad',
 			'appareils.plateforme.web' => 'Web browser',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.plateforme.windows' => 'Computer',
 			'appareils.plateforme.inconnue' => 'Device',
 			'appareils.retrait.question' => 'Remove this device?',
@@ -30208,8 +30262,6 @@ extension on TraductionsEn {
 			'appareils.emetteur.sortie' => ({required Object heure}) => 'Leaving this screen does not cancel the code: it stays valid until ${heure}.',
 			'appareils.emetteur.suiviIndisponible' => 'This screen cannot confirm the connection. Check on the student\'s device.',
 			'appareils.emetteur.preparation' => 'Preparing the code',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.emetteur.verification.titre' => 'Checking the code',
 			'appareils.emetteur.verification.phrase' => 'The code is hidden while we check that it is still valid.',
 			'appareils.emetteur.confirme.titre' => 'Device connected',
@@ -30701,6 +30753,8 @@ extension on TraductionsEn {
 			'priere.direction.feuille.plageAide' => 'Teacher\'s time, in HH:MM format. A slot that overlaps this window is reported to the management, without blocking.',
 			'priere.direction.feuille.apercu' => 'Times of the day',
 			'priere.direction.feuille.apercuVide' => 'No time to show until the location is saved.',
+			_ => null,
+		} ?? switch (path) {
 			'priere.direction.feuille.enregistrer' => 'Save the location',
 			'priere.direction.feuille.retirer' => 'Remove the location',
 			'priere.direction.feuille.invalide' => 'Check the location name, the coordinates, the time zone and Friday\'s window.',
@@ -30722,8 +30776,6 @@ extension on TraductionsEn {
 			'priere.regles.intro' => 'The server places the teacher\'s prayer break when a prayer falls during the session. These settings apply to the whole academy.',
 			'priere.regles.methode' => 'Calculation method',
 			'priere.regles.methodeDetail' => 'The Fajr and Isha angles. A teacher can have their own.',
-			_ => null,
-		} ?? switch (path) {
 			'priere.regles.ecole' => 'School for Asr',
 			'priere.regles.ecoleDetail' => 'The entry time of Asr. A teacher can have their own.',
 			'priere.regles.pause' => 'Prayer break length',
@@ -31215,6 +31267,8 @@ extension on TraductionsEn {
 			'recrutement.questionnaire.publicEnfant' => 'Children (6 to 17)',
 			'recrutement.questionnaire.publicAdulte' => 'Adults (18 and over)',
 			'recrutement.questionnaire.coordonneesPlusTard' => 'Your financial details will only be requested before your first payment.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.questionnaire.montantsSurDemande' => 'To find out the amounts, ask the administration.',
 			'recrutement.questionnaire.conditionsDateEffet' => ({required Object date}) => 'These terms apply from ${date}.',
 			'recrutement.questionnaire.accordRemuneration' => 'I have read these terms and I accept them.',
@@ -31236,8 +31290,6 @@ extension on TraductionsEn {
 			'recrutement.questionnaire.echec' => 'One of your answers needs to be reviewed. Read them again, then send your application again.',
 			'recrutement.questionnaire.incertain' => 'Your application may not have reached Rewayah. Try again: it will not be saved twice.',
 			'recrutement.questionnaire.horsLigne' => 'Your application can be sent when the connection is back.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.questionnaire.nonOuverte' => 'This step is not open yet. Your account is kept.',
 			'recrutement.questionnaire.nonCharge' => 'The questionnaire could not be loaded.',
 			'recrutement.questionnaire.conditionsNonCharge' => 'The pay terms could not be loaded.',
@@ -31729,6 +31781,8 @@ extension on TraductionsEn {
 			'recrutement.talents.disponibilite.plus.libelle' => 'More than half-time',
 			'recrutement.talents.disponibilite.plus.description' => 'A large part of your time.',
 			'recrutement.talents.disponibilite.pas_maintenant.libelle' => 'Not for now',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.disponibilite.pas_maintenant.description' => 'You just want the academy to know your talents.',
 			'recrutement.talents.disponibilite.accord' => 'I agree that the academy may contact me for a mission in these areas.',
 			'recrutement.talents.disponibilite.accordNote' => 'Without this box, the academy reads your answers but offers you no mission.',
@@ -31750,8 +31804,6 @@ extension on TraductionsEn {
 			'recrutement.talents.lecture.close' => 'Your teacher application is finished: you can no longer edit these answers. You can still withdraw them.',
 			'recrutement.talents.lecture.retire' => 'Your answers are withdrawn.',
 			'recrutement.talents.etats.nonEnvoyeTitre' => 'This step is not open yet',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.etats.nonEnvoye' => 'It opens when your application is sent. Finish your application first.',
 			'recrutement.talents.etats.closTitre' => 'This step is finished',
 			'recrutement.talents.etats.clos' => 'Your teacher application is no longer in progress: there is nothing to add here.',
@@ -32243,6 +32295,8 @@ extension on TraductionsEn {
 			'admin.candidatures.historique.auteur.automatique' => 'Automatic',
 			'admin.candidatures.historique.types.creee' => 'Application created',
 			'admin.candidatures.historique.types.transition' => 'Change of status',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.historique.types.pause' => 'Put on pause',
 			'admin.candidatures.historique.types.reprise' => 'Resumption',
 			'admin.candidatures.historique.types.restriction' => 'Restriction applied',
@@ -32264,8 +32318,6 @@ extension on TraductionsEn {
 			'admin.candidatures.gestes.accueillir' => 'Welcome into the team',
 			'admin.candidatures.gestes.admettre' => 'Admit to the Verification and interview room',
 			'admin.candidatures.gestes.confirmerMoyen' => 'Confirm the payout method',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.gestes.ecarterMoyen' => 'Set this payout method aside',
 			'admin.candidatures.gestes.debloquerVersement' => 'Unlock the payout',
 			'admin.candidatures.gestes.demanderComplement' => 'Ask for additional information',
@@ -32757,6 +32809,8 @@ extension on TraductionsEn {
 			'admin.importInscriptions.foyer.fermer' => 'Close',
 			'admin.importInscriptions.foyer.nonAffiches' => ({required Object n}) => 'Households not shown, with the common settings: ${n}',
 			'admin.importInscriptions.confirmer' => 'Confirm the import',
+			_ => null,
+		} ?? switch (path) {
 			'admin.importInscriptions.confirmation.question' => 'Import these registrations?',
 			'admin.importInscriptions.confirmation.consequence' => 'Households and people are created in the app. Replaying the import creates no duplicate. Refused rows are not imported.',
 			'admin.importInscriptions.horsLigne' => 'The import will be confirmed as soon as the network is back. Nothing is created until then.',
@@ -32778,8 +32832,6 @@ extension on TraductionsEn {
 			'admin.importInscriptions.echec.apercu' => 'The server\'s dry run did not go through. Try again in a moment.',
 			'admin.importInscriptions.acces.doubleTitre' => 'Two-step verification required',
 			'admin.importInscriptions.acces.doublePhrase' => 'Sign in with your second factor, then come back here to import the registrations.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.importInscriptions.indisponibleTitre' => 'Registrations import unavailable',
 			'admin.importInscriptions.indisponiblePhrase' => 'This feature will be available once the server is connected.',
 			'admin.importInscriptions.erreur' => 'The import rights could not be read. Try again.',
@@ -33271,6 +33323,8 @@ extension on TraductionsEn {
 			'admin.groupes.formulaire.dureeValeur' => ({required Object minutes}) => '${minutes} min',
 			'admin.groupes.formulaire.dureeContexte' => 'By default, a slot lasts the class\'s length, set by its audience. Choose another length for this slot only.',
 			'admin.groupes.formulaire.genreMixte' => 'Mixed',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.formulaire.genreMixteDetailEnfants' => 'Boys and girls together: any teacher whose gender is filled in will be able to take it. Choose only when teachers of one gender are missing.',
 			'admin.groupes.formulaire.genreMixteDetailAdultes' => 'Men and women together: any teacher whose gender is filled in will be able to take it. Choose only when teachers of one gender are missing.',
 			'admin.groupes.formulaire.genreHommesDetailSansSource' => 'Choose for a men\'s class. Teachers\' gender is not yet readable here: check yourself that the teacher chosen is a man.',
@@ -33292,8 +33346,6 @@ extension on TraductionsEn {
 			'admin.groupes.formulaire.raisonFilles' => 'Girls\' class: only a female teacher can take it.',
 			'admin.groupes.formulaire.raisonPris' => 'Already in class at this slot: change the slot to choose them.',
 			'admin.groupes.formulaire.raisonGenreInconnu' => 'Gender not filled in on their profile: no class can be entrusted to them until it is.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.formulaire.titreCreneau' => 'Slot',
 			'admin.groupes.formulaire.creneauContexte' => 'The day and time of the class, each week.',
 			'admin.groupes.formulaire.creneauxLibresDe' => ({required Object deNom}) => '${deNom}\'s free slots: tapping a slot sets the day and time.',
@@ -33785,6 +33837,8 @@ extension on TraductionsEn {
 			'admin.programmes.niveauxSur' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} level', other: '${nombre} levels', ), 
 			'admin.programmes.publierSansNiveau' => 'Add at least one level to be able to publish this version.',
 			'admin.programmes.contenu.colonne' => 'Stage content',
+			_ => null,
+		} ?? switch (path) {
 			'admin.programmes.contenu.pret' => 'Ready to publish',
 			'admin.programmes.contenu.aCompleter' => 'To complete',
 			'admin.programmes.contenu.ouvrir' => 'Goals and lengths',
@@ -33806,8 +33860,6 @@ extension on TraductionsEn {
 			'admin.programmes.contenu.dureesTitre' => 'Planned length and deadline, by age group',
 			'admin.programmes.contenu.dureesAide' => 'In weeks, counted from the student\'s entry into the stage. The deadline is entered: for each group, the sum of the stages must equal that of the level, otherwise the version cannot be published.',
 			'admin.programmes.contenu.tranche69' => '6 to 9 years',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.contenu.tranche1013' => '10 to 13 years',
 			'admin.programmes.contenu.tranche1417' => '14 to 17 years',
 			'admin.programmes.contenu.tranche18' => '18 years and over',
@@ -34299,6 +34351,8 @@ extension on TraductionsEn {
 			'admin.praxis.essaiAucune' => 'No conversation to choose. First create a test conversation with a test account, then come back here.',
 			'admin.praxis.essaiAffinez' => ({required Object nombre}) => 'Only the first ${nombre} conversations are shown: narrow them with the search.',
 			'admin.praxis.reglageFait' => 'Setting applied.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.praxis.erreurReglage' => 'Setting not confirmed. Check the state above before trying again.',
 			'admin.praxis.doubleVerification' => 'This setting needs two-step verification. Turn it on in Account, then Security, and try again.',
 			'admin.praxis.pourra' => 'Will be able to',
@@ -34320,8 +34374,6 @@ extension on TraductionsEn {
 			'admin.praxis.dureePlafond' => 'Ninety days at most, and the database checks it itself.',
 			'admin.praxis.emettre' => 'Issue the key',
 			'admin.praxis.manqueLibelle' => 'The key\'s name is missing: write what it is for.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.praxis.erreurEmission' => 'Issue not confirmed. Check the list of keys before trying again.',
 			'admin.praxis.cleEmise' => 'Key issued',
 			'admin.praxis.cleEmiseDetail' => 'Copy the key now. It will not appear again: neither this screen nor the database can retrieve it.',
@@ -34813,6 +34865,8 @@ extension on TraductionsEn {
 			'admin.finance.paieWise.moisPrecedent' => ({required Object mois}) => 'Pay for ${mois}',
 			'admin.finance.paieWise.moisPrecedentDetail' => 'The month just ended: pay is paid before the 5th.',
 			'admin.finance.paieWise.moisEnCours' => ({required Object mois}) => 'Pay for ${mois}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.paieWise.moisEnCoursDetail' => 'The current month, if an advance must be paid.',
 			'admin.finance.paieWise.preparer' => 'Prepare the file',
 			'admin.finance.paieWise.enregistrerFichier' => 'Save the file',
@@ -34834,8 +34888,6 @@ extension on TraductionsEn {
 			'admin.finance.paieWise.date' => 'Payment date',
 			'admin.finance.paieWise.dateAide' => 'In YYYY-MM-DD format, for example 2026-12-03.',
 			'admin.finance.paieWise.mois' => 'Pay month',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.paieWise.moyenVersement' => 'Method',
 			'admin.finance.paieWise.reference' => 'Operation reference',
 			'admin.finance.paieWise.referenceAide' => 'The transaction number given by Wise or the bank. Never an account number.',
@@ -35327,6 +35379,8 @@ extension on TraductionsEn {
 			'admin.bibliotheque.catalogue.videRecherche' => 'No result',
 			'admin.bibliotheque.catalogue.videRechercheDetail' => 'No document matches your search or your filters.',
 			'admin.bibliotheque.catalogue.effacerFiltres' => 'Clear the filters',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.catalogue.voirPlus' => 'See more documents',
 			'admin.bibliotheque.catalogue.pageErreur' => 'The rest of the catalogue could not be loaded.',
 			'admin.bibliotheque.catalogue.ouvrir' => ({required Object titre}) => 'Open the document ${titre}',
@@ -35348,8 +35402,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.fiche.apercuPublie' => 'Published version: the content is frozen.',
 			'admin.bibliotheque.fiche.deposer' => 'Submit a file',
 			'admin.bibliotheque.fiche.remplacer' => 'Replace the file',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.fiche.champs.titre' => 'Title',
 			'admin.bibliotheque.fiche.champs.titreCourt' => 'Short title',
 			'admin.bibliotheque.fiche.champs.edition' => 'Edition',
@@ -35841,6 +35893,8 @@ extension on TraductionsEn {
 			'parcours.langueRaison' => 'This is the language the teacher will speak during the session. It is independent of the app language, which you can change at any time in your settings.',
 			'parcours.lieuQuestion' => 'Where are you?',
 			'parcours.lieuRaison' => 'We only use it to show you schedules in your local time. We never ask for your exact location, and this answer does not leave your file.',
+			_ => null,
+		} ?? switch (path) {
 			'parcours.lieuSuggere' => 'Suggested from your device\'s time',
 			'parcours.niveauQuestion' => ({required Object prenom}) => 'Where is ${prenom} today?',
 			'parcours.niveauRaison' => 'Your answer guides the first suggestions. It does not set the official level: the academy assigns it after a conversation with a teacher.',
@@ -35862,8 +35916,6 @@ extension on TraductionsEn {
 			'parcours.momentSoir' => 'Evenings',
 			'parcours.offresQuestion' => ({required Object prenom}) => 'Here are the open schedules for ${prenom}',
 			'parcours.offresRaison' => 'These schedules are shown in your local time. Choosing a schedule saves your preference: it does not reserve a place and is not yet a class.',
-			_ => null,
-		} ?? switch (path) {
 			'parcours.offreRecommandee' => 'Closest to your answers',
 			'parcours.offresAutres' => 'Other possible schedules',
 			'parcours.offreLangue' => ({required Object langue}) => 'Class in ${langue}',
@@ -36355,6 +36407,8 @@ extension on TraductionsEn {
 			'notifications.evenements.litigeOuvert' => 'A payment is disputed with the bank. Access is suspended during the review.',
 			'notifications.evenements.litigeOuvertDirection' => 'A family is disputing a payment with their bank.',
 			'notifications.evenements.litigeClosGagne' => 'The dispute is closed: the bank ruled in the academy\'s favour.',
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.litigeClosPerdu' => 'The dispute is closed: the payment is refunded, the fees go to the household balance.',
 			'notifications.evenements.litigeClosDirection' => 'A payment dispute is closed.',
 			'notifications.evenements.enseignantAffecteSoi' => 'A teacher has been assigned to your class.',
@@ -36376,8 +36430,6 @@ extension on TraductionsEn {
 			'notifications.evenements.eleveRetire' => 'A student is no longer part of the class.',
 			'notifications.evenements.eleveRetireSoi' => 'You are no longer part of this class.',
 			'notifications.evenements.eleveRetireFoyer' => 'A student in your household is no longer part of their class.',
-			_ => null,
-		} ?? switch (path) {
 			'notifications.evenements.eleveRetireClasse' => 'A student leaves one of your classes.',
 			'notifications.evenements.creneauChange' => 'The class schedule has changed.',
 			'notifications.evenements.changementHeureUn' => ({required Object date, required Object cours, required Object jour, required Object avant, required Object apres}) => 'From ${date}, ${cours} on ${jour} moves from ${avant} to ${apres}.',
@@ -36869,6 +36921,8 @@ extension on TraductionsEn {
 			'enseignant.eleve.objectifsEtape' => 'Stage goals',
 			'enseignant.eleve.aFinirAvant' => 'To finish before',
 			'enseignant.eleve.aFinirAvantDate' => ({required Object mois, required Object numero, required Object annee, required Object prevue}) => '${mois} ${numero}, ${annee}, for ${prevue} planned weeks',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.eleve.aFinirEnSemaines' => ({required Object limite}) => 'In ${limite} weeks at most from the start of the stage',
 			'enseignant.eleve.renforcerNotees' => ({required Object mois, required Object numero, required Object annee}) => 'Noted on ${mois} ${numero}, ${annee}',
 			'enseignant.eleve.renforcerAucun' => 'Nothing noted to reinforce in this class\'s handover notebooks',
@@ -36890,8 +36944,6 @@ extension on TraductionsEn {
 			'enseignant.signalement.notice' => 'Internal details are not automatically sent to the family.',
 			'enseignant.signalement.choisirCategorie' => 'Choose a category to continue.',
 			'enseignant.signalement.detailsRequis' => 'For "Other", say in a few words what it is about.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.signalement.envoyer' => 'Send the report',
 			'enseignant.signalement.demoSucces' => 'Demo: this report is ready, but nothing was sent.',
 			'enseignant.signalement.demoSuccesDetail' => 'In the connected app, it will go to the academy team.',
@@ -37383,6 +37435,8 @@ extension on TraductionsEn {
 			'enseignant.ficheGroupe.supportsTitre' => 'Recent materials',
 			'enseignant.ficheGroupe.repriseEleve' => ({required Object page}) => 'Resume: ${page}',
 			'enseignant.ficheGroupe.dernierPoint' => ({required Object texte}) => 'Last point: ${texte}',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.ficheGroupe.chargementClasse' => 'Loading the class.',
 			'enseignant.ficheGroupe.ressourcesTitre' => 'Recent resources',
 			'enseignant.ficheGroupe.progressionTitre' => 'Class progress',
@@ -37404,8 +37458,6 @@ extension on TraductionsEn {
 			'enseignant.ficheGroupe.pause.indisponiblePhrase' => 'It will be offered here as soon as Rewayah serves it.',
 			'enseignant.ficheGroupe.pause.illisible' => 'The break setting could not be loaded.',
 			'enseignant.revue.titre' => 'Class review',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.revue.titreClasse' => ({required Object classe}) => 'Review of class ${classe}',
 			'enseignant.revue.aucuneAnomalie' => 'Nothing needs your attention.',
 			'enseignant.revue.erreur' => 'The review could not be loaded.',
@@ -37897,6 +37949,8 @@ extension on TraductionsEn {
 			'tc.coran.mushaf.page15.aProposPolice' => 'Font: KFGQPC UthmanicHafs v3.0 (King Fahd Complex)',
 			'tc.coran.mushaf.page15.aProposLicences' => 'Licences: the text and the font belong to the KFGQPC, the layout is published under CC BY 4.0 (quran.ws), the hizb quarters come from quran-meta (MIT).',
 			'tc.coran.mushaf.page15.aProposTanzil' => 'Tanzil asks that the source be clearly stated and that tanzil.net be reachable.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.coran.fidelite.approchee' => 'Approximate layout',
 			'tc.coran.fidelite.approcheeDetail' => 'The verses on this page are exactly those of the Madinah Mushaf page. Their split across lines, however, is that of this screen: the edition\'s line breaks are not imported yet.',
 			'tc.coran.fidelite.fidele' => 'Edition layout',
@@ -37918,8 +37972,6 @@ extension on TraductionsEn {
 			'tc.coran.sommaire.indisponible' => 'The list of surahs could not be read',
 			'tc.coran.sommaire.indisponibleDetail' => 'The connection may have been cut.',
 			'tc.coran.sommaire.absent' => 'The Quran text is not installed',
-			_ => null,
-		} ?? switch (path) {
 			'tc.coran.sommaire.absentDetail' => 'There is nothing to display.',
 			'tc.coran.reprise.groupe' => 'Resume the class',
 			'tc.coran.reprise.groupeDetail' => ({required Object page}) => 'The class was at page ${page}',
@@ -38411,6 +38463,8 @@ extension on TraductionsEn {
 			'adulte.famille.place.validationEnAttente' => 'Pending administrative approval',
 			'adulte.famille.place.validationRefusee' => 'Approval refused by the management',
 			'adulte.famille.place.nouvelleDemande' => 'Make a new request',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.place.nouvelleInvitation' => ({required Object date}) => 'A new invitation is possible from ${date}',
 			'adulte.famille.place.envoyeeA' => ({required Object courriel}) => 'Sent to ${courriel}',
 			'adulte.famille.place.expiree' => 'The previous invitation has expired. You can send a new one.',
@@ -38432,8 +38486,6 @@ extension on TraductionsEn {
 			'adulte.invitation.enteteNeutre' => 'A personal account for this person',
 			'adulte.invitation.phraseNeutre' => 'This person will use their own account. They will not be able to manage your household or the student profiles you created.',
 			'adulte.invitation.courrielAideNeutre' => 'The email address will be used to send this person the invitation to join Rewayah.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.invitation.refusPhraseFoyer' => 'Nothing was sent. An invitation may already be in progress for your household, or this address cannot join it. Check the address, then go back to the household.',
 			'adulte.invitation.prenomRequis' => 'Enter their first name.',
 			'adulte.invitation.courrielRequis' => 'Enter their email address.',
@@ -38925,6 +38977,8 @@ extension on TraductionsEn {
 			'alertes.traitement.cloreOui' => 'Yes, close',
 			'alertes.traitement.faitExamenTitre' => 'Report under review',
 			'alertes.traitement.faitExamenPhrase' => 'It stays in the alerts until it is closed.',
+			_ => null,
+		} ?? switch (path) {
 			'alertes.traitement.faitTransmisTitre' => 'Message saved',
 			'alertes.traitement.faitTransmisPhrase' => ({required Object cible}) => 'Saved for ${cible}. No family screen shows it yet.',
 			'alertes.traitement.faitClosTitre' => 'Report closed',
@@ -38946,8 +39000,6 @@ extension on TraductionsEn {
 			'argent.transparence.total' => 'Total',
 			'argent.transparence.postes.enseignant' => 'The class teacher',
 			'argent.transparence.postes.fraisCarteChange' => 'Card payment and currency exchange fees',
-			_ => null,
-		} ?? switch (path) {
 			'argent.transparence.postes.fraisEnvoiPaie' => 'Fees for sending pay to teachers',
 			'argent.transparence.postes.visioconference' => 'Video conferencing',
 			'argent.transparence.postes.applicationHebergement' => 'Application and hosting',
@@ -39439,6 +39491,8 @@ extension on TraductionsEn {
 			'com.communaute.publication.signalee' => 'The content has been reported to the moderation team.',
 			'com.communaute.publication.choisirTitre' => 'No post open',
 			'com.communaute.publication.choisir' => 'Choose a post from the list to read it and reply.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.publication.introuvableTitre' => 'Post unavailable',
 			'com.communaute.publication.introuvable' => 'This post has been withdrawn or is no longer accessible to you. Go back to the posts to choose another.',
 			'com.communaute.publication.revenir' => 'Back to the posts',
@@ -39460,8 +39514,6 @@ extension on TraductionsEn {
 			'com.communaute.signalement.politique.publicite' => 'Advertising is not allowed in the Teachers community.',
 			'com.communaute.signalement.politique.sollicitation' => 'Commercial solicitation is not allowed in this space.',
 			'com.communaute.signalement.motifManquant' => 'Choose a reason to send the report.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.composer.nouvelle' => 'New post',
 			'com.communaute.composer.contexte' => 'Share a question, a method or a resource useful for teaching.',
 			'com.communaute.composer.categorie' => 'Category',
@@ -39953,6 +40005,8 @@ extension on TraductionsEn {
 			'com.annonces.demoPublication.extraitVente' => 'I offer paid private lessons at the weekend, write to me.',
 			'com.annonces.demoPublication.signalementHorsSujet' => 'Reply under "Organizing a group revision"',
 			'com.annonces.section' => 'Class announcements',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.annonce' => 'Announcement',
 			'com.annonces.publier' => 'Publish an announcement',
 			'com.annonces.videPublier' => 'No announcement for this class. Publish the first one for the whole class.',
@@ -39974,8 +40028,6 @@ extension on TraductionsEn {
 			'com.annonces.demo.roles.admin' => 'Management',
 			'com.annonces.demo.roles.controleur' => 'Reviewer',
 			'com.annonces.demo.classeNour' => 'An-Nour class',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.classeFajr' => 'Al-Fajr class',
 			'com.annonces.demo.enseignante' => 'Class teacher',
 			'com.annonces.demo.f.adminStudioMention' => 'Studio: a discussion in the Programmes channel mentions you',
@@ -40467,6 +40519,8 @@ extension on TraductionsEn {
 			'comptable.encaissements.colFamille' => 'Family',
 			'comptable.encaissements.colReference' => 'Reference',
 			'comptable.encaissements.colBrut' => 'Gross',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.colFrais' => 'Fees',
 			'comptable.encaissements.colNet' => 'Net',
 			'comptable.encaissements.colMoyen' => 'Method',
@@ -40488,8 +40542,6 @@ extension on TraductionsEn {
 			'comptable.encaissements.prestataire' => 'Provider',
 			'comptable.encaissements.moyen' => 'Payment method',
 			'comptable.encaissements.foyer' => 'Household',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.date' => 'Date',
 			'comptable.encaissements.etat' => 'Status',
 			'comptable.encaissements.devise' => 'Currency',
@@ -40981,6 +41033,8 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.suspendueSansDate' => 'The Accountant can carry out nothing without your validation.',
 			'comptable.direction.delegationPanneau.suspendueEnCours' => 'Suspension in progress',
 			'comptable.direction.delegationPanneau.suspendueEchec' => 'The suspension is not confirmed: the request may not have reached Rewayah. Check the delegation\'s state before trying again.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.expirationTitre' => 'Expiry',
 			'comptable.direction.delegationPanneau.expirationDetail' => 'Each delegation expires and is renewed. Past the date, the Accountant can no longer carry out anything alone.',
 			'comptable.direction.delegationPanneau.expireLe' => ({required Object date}) => 'Expires on ${date}',
@@ -41002,8 +41056,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Cancel ${beneficiaire}\'s outflow',
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Cancel this outflow?',
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => '${beneficiaire}\'s outflow will not go out. The cancellation is written in the log.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Cancel the outflow',
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Keep the outflow',
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Outflow cancelled.',
@@ -41495,6 +41547,8 @@ extension on TraductionsEn {
 			'avis.admin.liens.creerIntro' => 'A link opens the feedback form, without an account or sign-in. Give it a name so you can recognise it.',
 			'avis.admin.liens.libelle' => 'Link name',
 			'avis.admin.liens.libelleAide' => 'For example: Families October 2026.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.libelleErreur' => 'Give the link a name.',
 			'avis.admin.liens.jours' => 'Duration in days',
 			'avis.admin.liens.joursAide' => '90 by default, 365 at most.',
@@ -41516,8 +41570,6 @@ extension on TraductionsEn {
 			'avis.admin.liens.etat.expire' => 'Expired',
 			'avis.admin.liens.etat.plein' => 'Full',
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Reviews received: ${recus} of ${max}',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fin' => ({required Object date}) => 'Ends on ${date}',
 			'avis.admin.liens.cree' => ({required Object date}) => 'Created on ${date}',
 			'avis.admin.liens.fermer' => 'Close the link',
@@ -42009,6 +42061,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.champ.telephone' => 'WhatsApp phone',
 			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'With the country code. Never completed or guessed.',
 			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'Mother tongue',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'Optional.',
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'Languages of explanation',
 			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'The languages in which the person can explain and correct.',
@@ -42030,8 +42084,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.champ.courrielAide' => 'Used to recognize the person when they sign up. Never shown here.',
 			'candidatsFlux.importFormulaires.champ.contact' => 'Phone or email',
 			'candidatsFlux.importFormulaires.controle.question' => 'Are there rows to correct?',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.explication' => 'A row to correct is not imported. Correct it in the workbook, export the file again, then replay the import: rows already imported are not added twice.',
 			'candidatsFlux.importFormulaires.controle.aucune' => 'No error or warning in this file.',
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'Every row could be read.',
@@ -42523,6 +42575,8 @@ extension on TraductionsEn {
 			'journalSorties.rapport.titre' => 'Exits from the app',
 			'journalSorties.rapport.nombreCle' => 'Count',
 			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} exit', other: '${n} exits', ), 
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.rapport.dureeTotale' => 'Total duration',
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'From ${debut} to ${fin}',
 			'journalSorties.rapport.sortieSalle' => 'Left the room after the delay',
@@ -42544,8 +42598,6 @@ extension on TraductionsEn {
 			'calendrier.sections.dates' => 'Academy dates',
 			'calendrier.sections.pauses' => 'Breaks',
 			'calendrier.indisponible' => 'The calendar could not be opened: the request may not have reached Rewayah. Try again in a moment.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.refusNouvelleDateFermee' => 'The date is not set: the class is closed that day. Choose another day, or remove the closure for this class.',
 			'calendrier.dates.intro' => 'The dates of the year, entered by the management each year. Only published dates take effect: a closure moves back the deadline of the stages concerned and sets aside the sessions that have not yet started on those days. Days are counted in Makkah time.',
 			'calendrier.dates.ajouter' => 'Add a date',

@@ -542,6 +542,7 @@ class ActionsEntree extends StatelessWidget {
   const ActionsEntree({
     required this.bureau,
     required this.principale,
+    this.empile = false,
     this.secondaire,
     this.tierce,
     this.sousPrincipale,
@@ -565,6 +566,11 @@ class ActionsEntree extends StatelessWidget {
 
   /// L'action secondaire, s'il y en a une.
   final Widget? secondaire;
+
+  /// ENTREE-PRAXIS (maquette « Praxis vous accueille ») : les boutons l'un
+  /// sous l'autre, chacun a la largeur du champ : le principal, ce qui se
+  /// pose sous lui, puis les autres.
+  final bool empile;
 
   /// Des boutons egaux, de meme hauteur, sur une rangee.
   static Widget _rangee(List<Widget> boutons) => IntrinsicHeight(
@@ -591,6 +597,18 @@ class ActionsEntree extends StatelessWidget {
       return avecSous(principale);
     }
     final Widget? avant = tierce;
+    if (empile) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          principale,
+          ?sous,
+          Ecart.vMd,
+          autre,
+          if (avant != null) ...<Widget>[Ecart.vMd, avant],
+        ],
+      );
+    }
     if (avant == null) {
       return avecSous(_rangee(<Widget>[autre, principale]));
     }
