@@ -19,10 +19,14 @@
 //   4. **Le rapport ligne par ligne** : reussies, exclues, refusees par le
 //      serveur. **Rien n'est dit reussi avant la reponse du serveur.**
 //
-// Le serveur ne sait grouper que trois gestes (mettre en pause, lever la pause,
-// refuser) et plafonne a 200 candidatures. Les huit autres se font un par un : la
-// barre de la page le dit, la feuille n'en offre aucun. Un lot dont l'apercu a
-// change (`jeton_perime`) ne part pas : il faut un nouvel apercu.
+// Le serveur groupe mettre en pause, lever la pause, refuser, dispenser
+// d'entretien et, depuis PE-LISTE-CANDIDATURES (20/11/2026), admettre en salle
+// de verification, demander un complement (un element pour tout le lot) et
+// ecrire (un message dans la conversation de chaque personne) ; il plafonne a
+// 200 candidatures. Les autres gestes se font un par un : la barre de la page le
+// dit, la feuille n'en offre aucun. Un lot dont l'apercu a change
+// (`jeton_perime`) ne part pas : il faut un nouvel apercu. C'est une action
+// sensible (DECISION-FLUIDITE) : rien n'est dit fait avant le rapport du serveur.
 library;
 
 import 'package:flutter/material.dart';
@@ -65,6 +69,11 @@ String libelleGesteLot(GesteLot geste) => switch (geste) {
   GesteLot.dispenserEntretien => libelleGeste(
     GesteCandidature.dispenserEntretien,
   ),
+  GesteLot.admettre => libelleGeste(GesteCandidature.admettreVerifications),
+  GesteLot.demanderComplement => libelleGeste(
+    GesteCandidature.demanderComplement,
+  ),
+  GesteLot.ecrire => t.admin.candidatures.lot.ecrire,
 };
 
 /// Ce que dit la direction d'une candidature exclue d'un apercu, en mots.
@@ -80,8 +89,11 @@ String raisonExclusion(ExclusLot e, GesteLot geste) {
         return switch (geste) {
           GesteLot.mettreEnPause => r.dejaEnPause,
           GesteLot.leverPause => r.pasEnPause,
-          GesteLot.refuser => r.pause,
-          GesteLot.dispenserEntretien => r.pause,
+          GesteLot.refuser ||
+          GesteLot.dispenserEntretien ||
+          GesteLot.admettre ||
+          GesteLot.demanderComplement => r.pause,
+          GesteLot.ecrire => r.conversationPause,
         };
       }
       return r.etat(
@@ -92,6 +104,18 @@ String raisonExclusion(ExclusLot e, GesteLot geste) {
           etat: e.etat,
         ),
       );
+    // PE-LISTE-CANDIDATURES : le controle d'admission faux, nomme ; la
+    // conversation impossible, et pourquoi.
+    case RaisonExclusion.controlesNonSatisfaits:
+      return e.detail == null
+          ? r.controles
+          : r.controle(controle: libelleControle(e.detail!));
+    case RaisonExclusion.sansConversation:
+      return switch (e.detail) {
+        'sans_compte' => r.sansCompte,
+        'pause' => r.conversationPause,
+        _ => r.conversationEtat,
+      };
     case RaisonExclusion.inconnue:
       return r.inconnue;
   }
@@ -128,6 +152,12 @@ String raisonLigneRapport(
       return r.conflit;
     case 'erreur_serveur':
       return r.erreurServeur;
+    case 'controles_non_satisfaits':
+      return e != null ? raisonExclusion(e, geste) : r.controles;
+    case 'sans_conversation':
+      return e != null ? raisonExclusion(e, geste) : r.conversationEtat;
+    case 'elements_invalides':
+      return r.elementNonPermis;
     default:
       return r.inconnue;
   }
@@ -296,6 +326,24 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       ? widget.capacites.listes.modelesRefus
       : widget.capacites.listes.modelesPause;
 
+  /// PE-LISTE-CANDIDATURES : un complement en lot demande UN element, choisi
+  /// dans les listes fermees du serveur (les deux salles), parmi celles qui ont
+  /// un mot ; la cloture n'est pas un element a demander.
+  bool get _complement => _geste == GesteLot.demanderComplement;
+
+  List<String> get _elementsPermis => <String>[
+    for (final String code in <String>{
+      ...widget.capacites.listes.complementSalleExamen,
+      ...widget.capacites.listes.complementSalleVerification,
+    })
+      if (code != 'complement_clos' && libelleElementComplement(code) != null)
+        code,
+  ];
+
+  /// PE-LISTE-CANDIDATURES : ecrire porte un message pour la personne, et non
+  /// un motif interne.
+  bool get _ecrire => _geste == GesteLot.ecrire;
+
   int? get _nombreSaisi => int.tryParse(_nombre.text.trim());
 
   bool get _nombreJuste => _nombreSaisi == _apercu?.nombre;
@@ -310,6 +358,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
     if (a.motifRequis && _motif.text.trim().isEmpty) return false;
     if (a.modeleRequis && _modele == null) return false;
     if (_categorieRequise && _modele == null) return false;
+    if (_complement && _modele == null) return false;
     return _nombreJuste;
   }
 
@@ -317,7 +366,8 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
   /// dit et n'offre aucun bouton qui ne puisse pas aboutir.
   bool get _servi => _apercu == null
       ? false
-      : !(_apercu!.modeleRequis && _modelesPermis.isEmpty);
+      : !(_apercu!.modeleRequis && _modelesPermis.isEmpty) &&
+            !(_complement && _elementsPermis.isEmpty);
 
   // --- Envoi --------------------------------------------------------------
 
@@ -351,7 +401,9 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
           nombreConfirme: _nombreSaisi!,
           cleIdempotence: cle,
           motif: apercu.motifRequis ? _motif.text.trim() : null,
-          modele: apercu.modeleRequis || _categorieRequise ? _modele : null,
+          modele: apercu.modeleRequis || _categorieRequise || _complement
+              ? _modele
+              : null,
           repriseLe: _geste == GesteLot.mettreEnPause ? _reprise : null,
         ),
       );
@@ -540,6 +592,9 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       GesteLot.leverPause => f.effetLever,
       GesteLot.refuser => f.effetRefuser,
       GesteLot.dispenserEntretien => f.effetDispenser,
+      GesteLot.admettre => f.effetAdmettre,
+      GesteLot.demanderComplement => f.effetComplement,
+      GesteLot.ecrire => f.effetEcrire,
     };
   }
 
@@ -640,11 +695,50 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
     final l = t.admin.candidatures.lot.feuille;
     final List<String> modeles = _modelesPermis;
     return <Widget>[
-      if (a.motifRequis || a.modeleRequis) ...<Widget>[
+      if ((a.motifRequis || a.modeleRequis) && !_ecrire) ...<Widget>[
         Ecart.vLg,
         // La dispense ne porte aucun message pour la personne : sa phrase
         // commune ne parle pas de message.
-        _texte(_categorieRequise ? l.motifCommunDispense : l.motifCommun),
+        _texte(
+          _categorieRequise
+              ? l.motifCommunDispense
+              : _complement
+              ? l.motifCommunComplement
+              : l.motifCommun,
+        ),
+      ],
+      if (_complement) ...<Widget>[
+        Ecart.vLg,
+        _titreChamp(l.element),
+        Ecart.vSm,
+        if (_elementsPermis.isEmpty)
+          EtatSysteme(
+            nature: NatureEtat.indisponible,
+            titre: t.commun.etats.branchementServeur,
+            phrase: '',
+          )
+        else ...<Widget>[
+          ChoiceCardGroup(
+            autoriserSaisieLibre: false,
+            options: <OptionChoix>[
+              for (final String code in _elementsPermis)
+                OptionChoix(
+                  cle: ValueKey<String>('element-$code'),
+                  valeur: code,
+                  libelle: libelleElementComplement(code)!,
+                ),
+            ],
+            valeurInitiale: _modele == null
+                ? null
+                : ReponseChoix(valeurs: <String>{_modele!}),
+            onChange: (ReponseChoix r) => _modifie(() {
+              _modele = r.valeurs.isEmpty ? null : r.valeurs.first;
+            }),
+          ),
+          Ecart.vSm,
+          _texte(l.elementAide),
+          if (_tente && _modele == null) _erreurChamp(l.elementManquant),
+        ],
       ],
       if (a.modeleRequis) ...<Widget>[
         Ecart.vLg,
@@ -714,9 +808,15 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
         ZoneSaisie(
           cleChamp: FeuilleLot.cleMotif,
           controleur: _motif,
-          libelle: f.motif,
-          explication: a.modeleRequis ? f.motifAide : f.motifSeul,
-          erreur: _tente && _motif.text.trim().isEmpty ? f.motifManquant : null,
+          libelle: _ecrire ? l.message : f.motif,
+          explication: _ecrire
+              ? l.messageAide
+              : a.modeleRequis
+              ? f.motifAide
+              : f.motifSeul,
+          erreur: _tente && _motif.text.trim().isEmpty
+              ? (_ecrire ? l.messageManquant : f.motifManquant)
+              : null,
           minLignes: 3,
           onChanged: (String _) => _modifie(() {}),
         ),

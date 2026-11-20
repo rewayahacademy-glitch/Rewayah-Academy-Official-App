@@ -8,9 +8,11 @@
 // nombre, le rapport ligne par ligne viennent du serveur. Le jeton est un
 // HMAC que le client ne peut ni fabriquer ni verifier.
 //
-// Le serveur ne sait grouper que trois gestes (mettre en pause, lever la
-// pause, refuser) et plafonne a 200 candidatures : un autre geste est refuse
-// (`geste_non_groupable`), et ce fichier n'en offre pas la valeur.
+// Le serveur groupe mettre en pause, lever la pause, refuser, dispenser
+// d'entretien et, depuis PE-LISTE-CANDIDATURES (20261130930000), admettre en
+// salle de verification, demander un complement et ecrire ; il plafonne a 200
+// candidatures. Un autre geste est refuse (`geste_non_groupable`), et ce
+// fichier n'en offre pas la valeur.
 library;
 
 import 'package:flutter/foundation.dart';
@@ -21,7 +23,7 @@ import 'modeles_candidature.dart';
 /// Le plafond de candidatures d'un lot, fixe par le serveur.
 const int plafondLotCandidatures = 200;
 
-/// Les trois gestes que le serveur sait faire en lot.
+/// Les gestes que le serveur sait faire en lot.
 enum GesteLot {
   /// Mettre en pause.
   mettreEnPause('mettreEnPause', GesteCandidature.mettreEnPause),
@@ -34,15 +36,30 @@ enum GesteLot {
 
   /// Dispenser d'entretien (BE-1g). Pour ce geste seul, le modele envoye au
   /// serveur porte la categorie (`fondateur` ou `autre`).
-  dispenserEntretien('dispenserEntretien', GesteCandidature.dispenserEntretien);
+  dispenserEntretien('dispenserEntretien', GesteCandidature.dispenserEntretien),
+
+  /// PE-LISTE-CANDIDATURES : admettre en salle de verification. Chaque ligne
+  /// passe par le geste de la fiche (controles d'admission, courriel, avis) ;
+  /// l'apercu exclut deja les dossiers dont un controle est faux.
+  admettre('admettre', GesteCandidature.admettreVerifications),
+
+  /// PE-LISTE-CANDIDATURES : demander un complement. Un seul element pour tout
+  /// le lot, envoye dans le modele (`p_modele`), et un motif.
+  demanderComplement('demanderComplement', GesteCandidature.demanderComplement),
+
+  /// PE-LISTE-CANDIDATURES : ecrire a chaque personne, dans sa conversation de
+  /// candidature. Le message part dans le motif (`p_motif`). Aucun geste de la
+  /// fiche ne lui correspond : sa capacite est celle du lot.
+  ecrire('ecrire', null);
 
   const GesteLot(this.valeurSql, this.geste);
 
   /// La valeur envoyee au serveur (`p_geste`).
   final String valeurSql;
 
-  /// Le geste individuel du meme nom : ses mots, ses modeles, sa capacite.
-  final GesteCandidature geste;
+  /// Le geste individuel du meme nom : ses mots, ses modeles, sa capacite ;
+  /// `null` pour [ecrire], qui n'est pas un geste de la fiche.
+  final GesteCandidature? geste;
 
   /// Le geste de lot d'un geste individuel, ou `null` : il ne se groupe pas.
   static GesteLot? depuisGeste(GesteCandidature g) {
@@ -65,6 +82,8 @@ enum GesteLot {
       'mettre_en_pause' => mettreEnPause,
       'lever_pause' => leverPause,
       'dispenser_entretien' => dispenserEntretien,
+      'admettre_verifications' => admettre,
+      'demander_complement' => demanderComplement,
       _ => null,
     };
   }
@@ -144,6 +163,14 @@ enum RaisonExclusion {
   /// Son etat ne permet pas ce geste.
   transitionInterdite,
 
+  /// PE-LISTE-CANDIDATURES : un controle d'admission est faux ([ExclusLot.detail]
+  /// le nomme).
+  controlesNonSatisfaits,
+
+  /// PE-LISTE-CANDIDATURES : aucune conversation possible avec la personne
+  /// ([ExclusLot.detail] : `sans_compte`, `pause` ou `etat`).
+  sansConversation,
+
   /// Une raison que cette version ne connait pas.
   inconnue;
 
@@ -152,6 +179,8 @@ enum RaisonExclusion {
     'absente' => absente,
     'hors_portee' => horsPortee,
     'transition_interdite' => transitionInterdite,
+    'controles_non_satisfaits' => controlesNonSatisfaits,
+    'sans_conversation' => sansConversation,
     _ => inconnue,
   };
 }
@@ -170,6 +199,7 @@ class ExclusLot {
     this.issue = IssueCandidature.enCours,
     this.enPause = false,
     this.parLaPause = false,
+    this.detail,
   });
 
   /// Lit un exclu, ou `null` sans identifiant lisible.
@@ -193,8 +223,13 @@ class ExclusLot {
       issue: IssueCandidature.depuisSql(brut['issue']),
       enPause: brut['enPause'] == true,
       parLaPause: brut['detail'] == 'pause',
+      detail: brut['detail'] is String ? brut['detail'] as String : null,
     );
   }
+
+  /// Le detail rendu par le serveur (`pause`, `etat`, le controle faux,
+  /// `sans_compte`), ou `null`.
+  final String? detail;
 
   /// L'identifiant.
   final String id;

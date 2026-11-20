@@ -94,12 +94,13 @@ PageCandidatures _pageListe(
   ],
 });
 
-/// Les trois personnes de la file des pieces, dans l'ordre du serveur (la
-/// plus recente activite d'abord).
+/// Les trois personnes de la file des pieces, dans l'ordre du serveur
+/// (PE-LISTE-CANDIDATURES : tri `ancienne`, la plus ancienne activite
+/// d'abord).
 const List<(String, String, int)> _troisPieces = <(String, String, int)>[
-  ('RA-26-4817', 'Personne De Test', 0),
-  ('RA-26-5920', 'Exemple Fictif', 1),
   ('RA-26-6031', 'Essai Modele', 3),
+  ('RA-26-5920', 'Exemple Fictif', 1),
+  ('RA-26-4817', 'Personne De Test', 0),
 ];
 
 List<Override> _surcharges({
@@ -853,12 +854,12 @@ void main() {
         matching: find.text(nom),
       );
 
-      testWidgets('toute la file lue : la plus ancienne est sur le dessus', (
+      testWidgets('la plus ancienne est sur le dessus (tri du serveur)', (
         WidgetTester tester,
       ) async {
         await monter(tester);
-        // Le serveur rend la plus recente d'abord ; la pile commence par la
-        // plus ancienne (3 jours), puis 1 jour, puis aujourd'hui.
+        // Le serveur rend la plus ancienne d'abord (tri `ancienne`) ; la pile
+        // garde son ordre : 3 jours, puis 1 jour, puis aujourd'hui.
         expect(carte('Essai Modele'), findsOneWidget);
         expect(
           find.text(t.admin.tableau.vivant.piecePosition(rang: 1, total: 3)),
@@ -867,10 +868,15 @@ void main() {
         expect(find.text(t.admin.tableau.vivant.piecesAide), findsOneWidget);
       });
 
-      testWidgets('file plus longue que la page lue : l ordre du serveur est '
-          'garde, rien ne pretend a l anciennete', (WidgetTester tester) async {
+      testWidgets('file plus longue que la page lue : la plus ancienne reste '
+          'dessus, le nombre est celui du serveur', (
+        WidgetTester tester,
+      ) async {
         await monter(tester, total: 80, nombre: 80);
-        expect(carte('Personne De Test'), findsOneWidget);
+        // PE-LISTE-CANDIDATURES : le serveur trie toute la file ; la premiere
+        // page commence par les plus anciennes, quelle que soit sa longueur.
+        expect(carte('Essai Modele'), findsOneWidget);
+        expect(find.text(t.admin.tableau.vivant.piecesAide), findsOneWidget);
         // Le nombre est celui du serveur, pas celui des cartes lues.
         expect(
           find.descendant(
@@ -938,7 +944,7 @@ void main() {
         expect(
           find.text(
             'ALLE /admin/personnes/candidatures/RA-26-5920'
-            '?issue=enCours&pause=non&piece=oui&depuis=liste',
+            '?issue=enCours&pause=non&piece=oui&tri=ancienne&depuis=liste',
           ),
           findsOneWidget,
         );
@@ -979,10 +985,9 @@ void main() {
     });
 
     group('les visages du parcours', () {
-      testWidgets('une file lue en entier : ses trois plus anciens ont un '
-          'visage ; une file trop longue ou non lue n en a pas', (
-        WidgetTester tester,
-      ) async {
+      testWidgets('les trois premieres lignes de la file triee par anciennete '
+          'ont un visage, quel que soit le nombre ; une file non lue n en a '
+          'pas', (WidgetTester tester) async {
         fixerVueCapture(tester, const Size(1440, 1600), 1);
         await tester.pumpWidget(
           hote(
@@ -990,18 +995,20 @@ void main() {
             surcharges: _surcharges(
               attentes: _attentes(),
               files: <EtatCandidature, PageCandidatures>{
-                // Douze personnes, toutes lues.
+                // Quatre personnes, dans l'ordre du serveur (la plus ancienne
+                // d'abord) : les trois premieres ont un visage.
                 EtatCandidature.enExamen: _pageListe(<(String, String, int)>[
-                  ('RA-26-7001', 'Recente Fictive', 0),
                   ('RA-26-7002', 'Ancienne Fictive', 9),
                   ('RA-26-7003', 'Milieu Fictif', 4),
                   ('RA-26-7004', 'Autre Fictif', 2),
+                  ('RA-26-7001', 'Recente Fictive', 0),
                 ]),
-                // Quarante personnes, mais la page n'en rend que deux : les
-                // plus anciens ne sont pas connus.
+                // Quarante personnes, la page n'en rend que deux : le serveur
+                // a trie toute la file, ce sont les deux plus anciennes ;
+                // elles ont un visage (avant le tri du serveur, aucune).
                 EtatCandidature.aCompleter: _pageListe(<(String, String, int)>[
-                  ('RA-26-7101', 'Page Une', 0),
-                  ('RA-26-7102', 'Page Deux', 1),
+                  ('RA-26-7101', 'Page Une', 30),
+                  ('RA-26-7102', 'Page Deux', 20),
                 ], total: 40),
               },
             ),
@@ -1021,9 +1028,21 @@ void main() {
           ]..sort(),
           <String>['Ancienne Fictive', 'Autre Fictif', 'Milieu Fictif'],
         );
+        final Finder visagesLongs = find.byKey(
+          ParcoursCandidats.cleVisages(EtatCandidature.aCompleter),
+        );
+        expect(visagesLongs, findsOneWidget);
         expect(
-          find.byKey(ParcoursCandidats.cleVisages(EtatCandidature.aCompleter)),
-          findsNothing,
+          <String>[
+            for (final AvatarNom a in tester.widgetList<AvatarNom>(
+              find.descendant(
+                of: visagesLongs,
+                matching: find.byType(AvatarNom),
+              ),
+            ))
+              a.prenom,
+          ],
+          <String>['Page Une', 'Page Deux'],
         );
         expect(
           find.byKey(

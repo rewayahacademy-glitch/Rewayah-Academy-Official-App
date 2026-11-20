@@ -18,6 +18,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/accessibilite/texte_sans_coupure.dart';
+import '../../core/agent/travail_praxis.dart';
 import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
@@ -36,6 +37,7 @@ import '../candidature/libelles_parcours.dart';
 import '../talents/libelles_talents.dart';
 import 'files_candidatures.dart';
 import 'libelles_candidatures.dart';
+import 'libelles_praxis.dart';
 
 /// Les codes de langue d'explication que la direction peut filtrer.
 const List<String> _langues = <String>['ar', 'fr', 'en'];
@@ -246,6 +248,32 @@ class _FeuilleFiltresEtat extends ConsumerState<FeuilleFiltres> {
             ),
         ],
         (EtatVersement? v) => _f.avec(paiement: () => v),
+      ),
+      // PE-LISTE-CANDIDATURES : il ne manque rien au dossier (calcule au
+      // serveur, la lecture de Praxis), puis la pile et l'etiquette de Praxis.
+      _menu<bool>('complet', f.dossier, _f.dossierComplet, <EntreeFiltre<bool>>[
+        EntreeFiltre<bool>(valeur: true, libelle: f.dossierComplet),
+        EntreeFiltre<bool>(valeur: false, libelle: f.dossierIncomplet),
+      ], (bool? v) => _f.avec(dossierComplet: () => v)),
+      _menu<String>(
+        'pile-praxis',
+        f.pilePraxis,
+        _f.pilePraxis,
+        <EntreeFiltre<String>>[
+          for (final PilePraxis p in PilePraxis.values)
+            EntreeFiltre<String>(valeur: p.sql, libelle: libellePile(p)),
+        ],
+        (String? v) => _f.avec(pilePraxis: () => v),
+      ),
+      _menu<String>(
+        'etiquette-praxis',
+        f.etiquettePraxis,
+        _f.etiquettePraxis,
+        <EntreeFiltre<String>>[
+          for (final EtiquettePraxis e in EtiquettePraxis.values)
+            EntreeFiltre<String>(valeur: e.sql, libelle: libelleEtiquette(e)),
+        ],
+        (String? v) => _f.avec(etiquettePraxis: () => v),
       ),
       _menu<bool>('piece', r.piece, _f.pieceEnAttente, <EntreeFiltre<bool>>[
         EntreeFiltre<bool>(
@@ -509,6 +537,8 @@ class FeuilleTri extends StatelessWidget {
       enPanneau: true,
       filtres: <Widget>[
         choix(TriCandidatures.activite, r.activite),
+        // PE-LISTE-CANDIDATURES : celle qui attend depuis le plus longtemps.
+        choix(TriCandidatures.ancienne, r.anciennete),
         choix(TriCandidatures.recente, r.reception),
       ],
     );

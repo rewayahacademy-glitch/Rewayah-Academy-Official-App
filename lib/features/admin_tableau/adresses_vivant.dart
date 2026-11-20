@@ -22,9 +22,13 @@ FiltreCandidatures filtreEtat(EtatCandidature etat) => FiltreCandidatures(
   issue: IssueCandidature.enCours,
 );
 
-/// La requete de la file d'un etat (meme tri que la liste).
-RequeteCandidatures requeteEtat(EtatCandidature etat) =>
-    RequeteCandidatures(filtre: filtreEtat(etat));
+/// La requete de la file d'un etat, de la plus ancienne a la plus recente
+/// (PE-LISTE-CANDIDATURES : le serveur trie par anciennete ; les trois
+/// premieres lignes sont les trois plus anciennes, quel que soit le nombre).
+RequeteCandidatures requeteEtat(EtatCandidature etat) => RequeteCandidatures(
+  filtre: filtreEtat(etat),
+  tri: TriCandidatures.ancienne,
+);
 
 /// Le filtre « piece a valider » : en cours, hors pause (cle serveur
 /// `pieceEnAttente`).
@@ -34,9 +38,12 @@ const FiltreCandidatures filtrePieces = FiltreCandidatures(
   issue: IssueCandidature.enCours,
 );
 
-/// La requete de la file des pieces a valider (meme tri que la liste).
+/// La requete de la file des pieces a valider, la plus ancienne en premier
+/// (PE-LISTE-CANDIDATURES : tri du serveur). Le dossier ouvert depuis la pile
+/// garde ce tri pour proposer le suivant.
 const RequeteCandidatures requetePieces = RequeteCandidatures(
   filtre: filtrePieces,
+  tri: TriCandidatures.ancienne,
 );
 
 /// L'adresse du dossier d'une candidature, ouvert dans la file des pieces :

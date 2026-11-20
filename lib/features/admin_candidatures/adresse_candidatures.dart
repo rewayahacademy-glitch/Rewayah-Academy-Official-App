@@ -9,6 +9,7 @@
 /// est ignoree : une adresse partagee et perimee ne doit jamais casser la page.
 library;
 
+import '../../core/agent/travail_praxis.dart';
 import '../../core/candidature/modeles_autres_competences.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
@@ -31,6 +32,9 @@ const Set<String> clesAdresseCandidatures = <String>{
   'accord',
   'piece',
   'nouveau',
+  'complet',
+  'pile',
+  'etiquette',
   'tri',
   'page',
 };
@@ -74,6 +78,17 @@ RequeteCandidatures requeteDepuisAdresse(Map<String, String> q) {
       competenceAccord: booleen('accord'),
       pieceEnAttente: booleen('piece'),
       nouveau: booleen('nouveau'),
+      // PE-LISTE-CANDIDATURES : seules les valeurs du serveur sont lues (la
+      // page « Le travail de Praxis » y mene par ces deux cles).
+      dossierComplet: booleen('complet'),
+      pilePraxis: _valeurPermise(
+        q['pile'],
+        PilePraxis.values.map((PilePraxis p) => p.sql),
+      ),
+      etiquettePraxis: _valeurPermise(
+        q['etiquette'],
+        EtiquettePraxis.values.map((EtiquettePraxis e) => e.sql),
+      ),
     ),
     tri: choix(TriCandidatures.values, 'tri') ?? TriCandidatures.activite,
     page: page == null || page < 1 ? 1 : page,
@@ -100,7 +115,13 @@ Map<String, String> requeteEnAdresse(RequeteCandidatures r) {
     if (f.competenceAccord != null) 'accord': oui(f.competenceAccord!),
     if (f.pieceEnAttente != null) 'piece': oui(f.pieceEnAttente!),
     if (f.nouveau != null) 'nouveau': oui(f.nouveau!),
+    if (f.dossierComplet != null) 'complet': oui(f.dossierComplet!),
+    if (f.pilePraxis != null) 'pile': f.pilePraxis!,
+    if (f.etiquettePraxis != null) 'etiquette': f.etiquettePraxis!,
     if (r.tri != TriCandidatures.activite) 'tri': r.tri.name,
     if (r.page > 1) 'page': '${r.page}',
   };
 }
+
+String? _valeurPermise(String? v, Iterable<String> permises) =>
+    v != null && permises.contains(v) ? v : null;

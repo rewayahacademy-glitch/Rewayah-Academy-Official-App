@@ -4270,7 +4270,13 @@
             "etat": "Ce geste n'est pas possible depuis l'état « {etat} ».",
             "conflit": "Elle a changé entre-temps.",
             "erreurServeur": "Le serveur n'a pas pu la traiter. Réessayez depuis son dossier.",
-            "inconnue": "Le serveur a refusé ce geste."
+            "inconnue": "Le serveur a refusé ce geste.",
+            "controle": "Pas encore admissible : « {controle} » n'est pas rempli.",
+            "controles": "Un contrôle d'admission n'est pas satisfait.",
+            "sansCompte": "Cette personne n'a pas encore de compte : aucune conversation n'est possible.",
+            "conversationPause": "Sa candidature est en pause : aucune conversation n'est possible.",
+            "conversationEtat": "Son état ne permet plus d'écrire dans la conversation de candidature.",
+            "elementNonPermis": "Cet élément ne se demande pas à son étape."
           },
           "rapport": {
             "titre": "Résultat",
@@ -4292,7 +4298,17 @@
             "ligneExclue": "Exclue",
             "ligneRefusee": "Refusée",
             "sansNom": "Candidature sans nom lisible"
-          }
+          },
+          "effetAdmettre": "Les candidatures concernées passent en Salle de vérification et d'entretien. Chaque personne qui a une adresse reçoit le courriel qui l'invite à l'entretien, et un avis dans l'application.",
+          "effetComplement": "Chaque personne concernée reçoit la même demande. Sa candidature attend sa réponse.",
+          "effetEcrire": "Chaque personne concernée reçoit le même message dans sa conversation avec la direction. Rien d'autre ne change.",
+          "motifCommunComplement": "Le même élément et le même motif valent pour toutes les candidatures concernées.",
+          "element": "Ce qui est demandé",
+          "elementAide": "Un seul élément pour tout le lot. Si une étape ne le permet pas, le résultat le dira ligne par ligne.",
+          "elementManquant": "Choisissez ce qui est demandé.",
+          "message": "Message",
+          "messageAide": "Le même message part à chaque personne concernée, au nom de la direction.",
+          "messageManquant": "Écrivez le message."
         },
         "erreurs": {
           "titre": "Traitement refusé",
@@ -4302,7 +4318,9 @@
           "cleReutilisee": "Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
           "horsPortee": "Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.",
           "lectureApercu": "L'aperçu n'a pas pu être lu. Rien n'a été fait. Réessayez."
-        }
+        },
+        "ecrire": "Écrire",
+        "parTranche": "Ce geste porte sur les {n} premières, dans l'ordre de la liste. Les {reste} autres restent à traiter ensuite."
       },
       "titre": "Candidatures",
       "sousTitre": "Les candidatures d'enseignement, de l'invitation à la Salle des prêts à enseigner.",
@@ -4374,12 +4392,18 @@
           "accord": "Accord de contact",
           "accordDonne": "Accord donné",
           "accordAbsent": "Répondu sans accord"
-        }
+        },
+        "dossier": "Dossier",
+        "dossierComplet": "Rien ne manque",
+        "dossierIncomplet": "Il manque quelque chose",
+        "pilePraxis": "Pile de Praxis",
+        "etiquettePraxis": "Étiquette de Praxis"
       },
       "tri": {
         "titre": "Trier par",
         "activite": "Dernière activité",
-        "reception": "Date de réception"
+        "reception": "Date de réception",
+        "anciennete": "Attente la plus longue"
       },
       "total": {
         "one": "{n} candidature",
@@ -4420,7 +4444,14 @@
         "phrase": "Choisissez l'action à lancer sur ces candidatures.",
         "agir": "Agir sur la sélection",
         "relacher": "Tout relâcher",
-        "horsLigne": "Les actions pourront être lancées quand la connexion reviendra."
+        "horsLigne": "Les actions pourront être lancées quand la connexion reviendra.",
+        "page": "Sélectionner la page",
+        "pageRetenue": {"one": "La candidature de cette page est sélectionnée.", "other": "Les {n} candidatures de cette page sont sélectionnées."},
+        "tous": {"one": "Sélectionner le résultat", "other": "Sélectionner les {n} résultats"},
+        "tousRetenus": {"one": "Le résultat du filtre est sélectionné.", "other": "Les {n} résultats du filtre sont sélectionnés."},
+        "tousPlafond": "Les {plafond} premiers résultats sur {n} sont sélectionnés.",
+        "lectureTous": "Lecture de tous les résultats.",
+        "echecTous": "Les résultats n'ont pas pu être lus. La sélection n'a pas changé."
       },
       "vide": "Aucune candidature pour le moment",
       "videDetail": "Une candidature apparaît ici dès que la personne s'inscrit par le lien du site ou avec une invitation.",
@@ -7282,7 +7313,8 @@
         "voirPlus": "Afficher les dossiers suivants",
         "erreur": "Le travail de Praxis n'a pas pu être lu. Réessayez dans un instant.",
         "horsLigne": "Le travail de Praxis n'est pas encore chargé. Rechargez-le.",
-        "permission": "Le travail de Praxis est réservé à la direction."
+        "permission": "Le travail de Praxis est réservé à la direction.",
+        "voirListe": "Traiter ces dossiers dans la liste"
       },
       "avis": {
         "titre": "L'avis de Praxis",
