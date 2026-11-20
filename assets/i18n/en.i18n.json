@@ -4256,6 +4256,7 @@
             "other": "{n} applications will not be affected"
           },
           "etAutres": "and {n} others",
+          "reporteesEnFin": "These applications stay selected, at the end of the selection: the next action will first cover the following ones.",
           "effetPause": "The applications concerned do not move forward until the pause is lifted.",
           "effetLever": "The applications concerned resume where they had stopped.",
           "effetRefuser": "The applications concerned are closed. You can reopen them one by one.",
@@ -4276,7 +4277,14 @@
             "etat": "This action is not possible from the status \"{etat}\".",
             "conflit": "It changed in the meantime.",
             "erreurServeur": "The server could not process it. Try again from its file.",
-            "inconnue": "The server refused this action."
+            "inconnue": "The server refused this action.",
+            "controle": "Not yet admissible: \"{controle}\" is not met.",
+            "controles": "An admission check is not met.",
+            "sansCompte": "This person has no account yet: no conversation is possible.",
+            "conversationPause": "Their application is paused: no conversation is possible.",
+            "conversationEtat": "Its status no longer allows writing in the application conversation.",
+            "elementNonPermis": "This item cannot be requested at its stage.",
+            "dejaEnvoye": "This same message was already sent to them by the management in the last 24 hours: it is not sent a second time."
           },
           "rapport": {
             "titre": "Result",
@@ -4298,7 +4306,18 @@
             "ligneExclue": "Excluded",
             "ligneRefusee": "Refused",
             "sansNom": "Application without a readable name"
-          }
+          },
+          "effetAdmettre": "The applications concerned move to the Verification and interview room. Each person with an address receives the email inviting them to the interview, and a notice in the app.",
+          "effetComplement": "Each application concerned waits for the same item. The person sees the request when opening the app: no email or notice is sent.",
+          "effetEcrire": "Each person concerned receives the same message in their conversation with the management. Nothing else changes.",
+          "motifCommunComplement": "The same item and the same reason apply to all the applications concerned.",
+          "element": "What is requested",
+          "elementAide": "A single item for the whole batch. If a stage does not allow it, the result will say so line by line.",
+          "elementManquant": "Choose what is requested.",
+          "message": "Message",
+          "messageAide": "The same message goes to each person concerned, on behalf of the management.",
+          "messageManquant": "Write the message.",
+          "elementAucunCommun": "No item can be requested at the stage of all these applications. Select applications from the same room."
         },
         "erreurs": {
           "titre": "Processing refused",
@@ -4306,9 +4325,13 @@
           "aucunEligible": "No application in the selection can receive this action. Nothing was done.",
           "nonGroupable": "This action cannot be done for several applications at once. Open each one's file to do it.",
           "cleReutilisee": "This request has already been used for another action. Close this window and start again.",
+          "cleReutiliseeEcrire": "The first sending may have gone out, with the previous message: its answer had not arrived. Open the candidates' conversations to check before starting again.",
+          "cleReutiliseeIncertaine": "The first sending may have gone out, with the previous choices: its answer had not arrived. Check the applications in the list before starting again.",
           "horsPortee": "An application in the selection is outside your access. Nothing was done. Refresh the preview.",
           "lectureApercu": "The preview could not be read. Nothing was done. Try again."
-        }
+        },
+        "ecrire": "Write",
+        "parTranche": "This action covers the first {n}, in list order. The other {reste} remain to be handled afterwards."
       },
       "titre": "Applications",
       "sousTitre": "Teaching applications, from invitation to the Ready-to-teach room.",
@@ -4380,12 +4403,18 @@
           "accord": "Agreement to be contacted",
           "accordDonne": "Agreement given",
           "accordAbsent": "Answered without agreement"
-        }
+        },
+        "dossier": "File",
+        "dossierComplet": "Nothing missing",
+        "dossierIncomplet": "Something missing",
+        "pilePraxis": "Praxis pile",
+        "etiquettePraxis": "Praxis label"
       },
       "tri": {
         "titre": "Sort by",
         "activite": "Last activity",
-        "reception": "Date received"
+        "reception": "Date received",
+        "anciennete": "Longest waiting"
       },
       "total": {
         "one": "{n} application",
@@ -4426,7 +4455,14 @@
         "phrase": "Choose the action to run on these applications.",
         "agir": "Act on the selection",
         "relacher": "Release all",
-        "horsLigne": "Actions can be run when the connection returns."
+        "horsLigne": "Actions can be run when the connection returns.",
+        "page": "Select this page",
+        "pageRetenue": {"one": "The application on this page is selected.", "other": "The {n} applications on this page are selected."},
+        "tous": {"one": "Select the result", "other": "Select all {n} results"},
+        "tousRetenus": {"one": "The filter's result is selected.", "other": "All {n} results of the filter are selected."},
+        "tousPlafond": "The first {plafond} results out of {n} are selected.",
+        "lectureTous": "Reading all results.",
+        "echecTous": "The results could not be read. The selection has not changed."
       },
       "vide": "No application yet",
       "videDetail": "An application appears here as soon as the person signs up through the website link or with an invitation.",
@@ -7195,7 +7231,8 @@
         "voirPlus": "Show the next files",
         "erreur": "Praxis's work could not be read. Try again in a moment.",
         "horsLigne": "Praxis's work is not loaded yet. Reload it.",
-        "permission": "Praxis's work is for the management only."
+        "permission": "Praxis's work is for the management only.",
+        "voirListe": "Handle these files in the list"
       },
       "avis": {
         "titre": "Praxis's opinion",

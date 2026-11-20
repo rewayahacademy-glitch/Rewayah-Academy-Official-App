@@ -1127,7 +1127,9 @@ DO $non_groupable$
 DECLARE
   g text;
 BEGIN
-  FOREACH g IN ARRAY ARRAY['inviter', 'consigner_prevenu', 'admettre_verifications', 'demander_complement', 'rouvrir',
+  -- PE-LISTE-CANDIDATURES (20261130930000, 20/11/2026) : admettre_verifications et demander_complement se groupent
+  -- desormais (scenarios_pe_liste_candidatures.sql) ; les autres restent refuses.
+  FOREACH g IN ARRAY ARRAY['inviter', 'consigner_prevenu', 'rouvrir',
                            'confirmer_moyen_paiement', 'geste_inconnu'] LOOP
     PERFORM pg_temp.vrai(pg_temp.en(pg_temp.p('a1'), 'admin', pg_catalog.format(
         $$SELECT public.apercu_lot_candidats(%L, pg_temp.ids('lot10'))$$, g))
@@ -1945,8 +1947,10 @@ BEGIN
   -- 237 depuis SALLE-1 (07/11) : le courriel retenu_entretien de l'admission.
   -- 238 depuis NOTIF-RETENU (08/11) : la notification de la meme admission.
   -- 239 : et son echec n'empeche pas l'admission.
-  IF current_setting('test.n')::int <> 239 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 239 attendus', current_setting('test.n');
+  -- 237 : PE-LISTE-CANDIDATURES (20/11/2026) retire deux gestes de la boucle geste_non_groupable (admettre_verifications
+  -- et demander_complement se groupent ; leurs controles sont dans scenarios_pe_liste_candidatures.sql).
+  IF current_setting('test.n')::int <> 237 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 237 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;

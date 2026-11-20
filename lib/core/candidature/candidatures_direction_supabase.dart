@@ -2,7 +2,8 @@
 // (`PortCandidaturesDirection`), sur les RPC de CAND-L1
 // (`20261021200000_cand_l1_socle_candidatures.sql`), redefinies par CAND-L2A2
 // (`20261022000100_cand_l2a2_gestes_direction.sql`) :
-// - la file (`ADM-20`) : `capacites_candidatures`, `lister_candidatures` ;
+// - la file (`ADM-20`) : `capacites_candidatures`, `lister_candidatures`, et
+//   « Selectionner les N resultats » : `selection_resultats_file` ;
 // - la candidature (`ADM-21`) : `lire_candidature`, `lire_contact_candidature`,
 //   `historique_candidature`, `options_paiement_confirmees` (L6), et une RPC par
 //   geste : `demander_complement_candidat`, `admettre_salle_verification`,
@@ -38,7 +39,8 @@
 // `recherche`, et depuis CAND-AUTRES `competenceDomaine`, `competenceNiveauMin`,
 // `competenceDisponibilite`, `competenceAccord`, et depuis BE-S1 `pieceEnAttente`,
 // `responsable`, `ijaza`, `langueExplication`, `riwaya`, `public`, `jours`,
-// `heureMin`, `heureMax`, `joursMin`, `majorite`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
+// `heureMin`, `heureMax`, `joursMin`, `majorite`, et depuis PE-LISTE-CANDIDATURES
+// `dossierComplet`, `pilePraxis`, `etiquettePraxis`) : une cle inconnue serait refusee (`22023`). Une cle sans valeur
 // n'est pas envoyee.
 
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -80,6 +82,21 @@ class CandidaturesDirectionSupabase implements PortCandidaturesDirection {
       'p_page': page,
     });
     return PageCandidatures.depuisJson(brut);
+  }
+
+  @override
+  Future<SelectionCandidatures> selectionnerTout({
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  }) async {
+    final Object? brut = await _appel(
+      'selection_resultats_file',
+      <String, dynamic>{
+        'p_filtre': filtreEnJson(filtre),
+        'p_tri': tri.valeurSql,
+      },
+    );
+    return SelectionCandidatures.depuisJson(brut);
   }
 
   @override
@@ -488,6 +505,11 @@ Map<String, Object> filtreEnJson(FiltreCandidatures filtre) => <String, Object>{
   if (filtre.joursMin != null) 'joursMin': filtre.joursMin!,
   // MAJEUR : l'attestation « 18 ans ou plus ».
   if (filtre.majorite != null) 'majorite': filtre.majorite!,
+  // PE-LISTE-CANDIDATURES : dossier complet, pile et etiquette de Praxis.
+  if (filtre.dossierComplet != null) 'dossierComplet': filtre.dossierComplet!,
+  if (filtre.pilePraxis != null) 'pilePraxis': filtre.pilePraxis!,
+  if (filtre.etiquettePraxis != null)
+    'etiquettePraxis': filtre.etiquettePraxis!,
 };
 
 /// Les deux refus d'une lecture de dossier, rendus dans la reponse.
@@ -604,6 +626,9 @@ void _refusDeLot(Map<String, dynamic> brut) {
       throw const ModeleInconnu();
     case 'date_reprise_invalide':
       throw const RepriseInvalide();
+    // PE-LISTE-CANDIDATURES : un complement en lot sans element.
+    case 'elements_requis':
+      throw const ElementsRequis();
     default:
       throw FormatException('Refus de lot inconnu : $erreur');
   }
