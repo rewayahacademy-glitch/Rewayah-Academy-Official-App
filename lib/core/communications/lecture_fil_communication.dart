@@ -71,8 +71,13 @@ MessageFil messageFilDe(
   Widget? complement,
   bool suiviLecture = false,
   DateTime? luParAutresLe,
+  String? idLocal,
 }) => MessageFil(
   id: m.id,
+  // PE-D1 : la bulle locale dont ce message est la copie confirmee (meme cle
+  // d'envoi), et si le serveur a rendu cette cle.
+  idLocal: idLocal,
+  cleEnvoiConnue: m.cleIdempotence != null,
   // PX-BULLE-2 : le compte officiel (Praxis) porte son nom « #Ra_Praxis » meme
   // dans une bulle « de soi » cote administration, jamais « Vous ».
   auteur: m.deSoi && m.auteur.compteOfficiel != codeComptePraxis

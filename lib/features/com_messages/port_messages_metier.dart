@@ -101,6 +101,7 @@ class FilMetier {
     this.attention = IndicateurAttention.aucun,
     Set<CapaciteFil> capacites = const <CapaciteFil>{},
     this.luParAutresLe,
+    this.plusAnciens = false,
   }) : assert(contexte.isNotEmpty, 'Un fil metier est lie a un objet.'),
        contexte = List<ElementContexteFil>.unmodifiable(contexte),
        participants = List<Participant>.unmodifiable(participants),
@@ -128,6 +129,10 @@ class FilMetier {
   /// MESSAGERIE-LU (migration 20261125860000) : la plus recente lecture du fil
   /// par l'AUTRE partie, ou `null` (jamais lu, ou serveur plus ancien).
   final DateTime? luParAutresLe;
+
+  /// PE-D1 (chargement par pages) : [messages] n'est que la page la plus
+  /// recente ; il en reste de plus anciens, a lire par [PortPagesFil].
+  final bool plusAnciens;
 
   /// L'objet principal du fil.
   ObjetLie get objet => contexte.first.objet;
@@ -277,6 +282,39 @@ abstract interface class PortMessagesMetier {
 
   /// Retire mon coeur de [messageId] (sans effet s'il n'y est pas).
   Future<EtatCoeur> nePlusAimer(String messageId);
+}
+
+/// PE-D1 (chargement par pages) : une page de messages plus anciens.
+@immutable
+class PageMessagesFil {
+  /// Cree la page.
+  PageMessagesFil({
+    required List<MessageCommunication> messages,
+    required this.plusAnciens,
+  }) : messages = List<MessageCommunication>.unmodifiable(messages);
+
+  /// Les messages de la page, du plus ancien au plus recent.
+  final List<MessageCommunication> messages;
+
+  /// Il reste des messages plus anciens que cette page.
+  final bool plusAnciens;
+}
+
+/// PE-D1 (chargement par pages) : la lecture d'un long fil en remontant. Un
+/// port qui ne la porte pas (demonstration, faux) rend le fil entier par
+/// `PortMessagesMetier.fil` ; l'ecran ne demande alors rien de plus.
+abstract interface class PortPagesFil {
+  /// Le nombre de messages d'une page.
+  static const int taillePage = 50;
+
+  /// Les messages du fil [filId] qui precedent le message [avantId] (le plus
+  /// ancien deja montre), au plus [limite]. Echoue si le serveur ne repond
+  /// pas ; un fil refuse rend une page vide.
+  Future<PageMessagesFil> messagesAvant(
+    String filId,
+    String avantId, {
+    int limite = taillePage,
+  });
 }
 
 /// Les cinq gestes d'images et de coeurs, tous refuses : pour les faux et les

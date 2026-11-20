@@ -272,12 +272,24 @@ void main() {
       expect(_dernier(port, 'riwayat'), <String>['hafs', 'warsh', 'ruways']);
     });
 
-    for (final (String nom, List<String> codes) in <(String, List<String>)>[
-      ('vingt codes', <String>[for (final l in lecteursRiwayat) ...l.riwayat]),
-      ('quatorze codes des sept', riwayatSept.toList()),
-    ]) {
-      testWidgets('relue, une reponse de $nom s ouvre sur la grille, jamais '
-          'sur une ijaza', (WidgetTester tester) async {
+    final List<String> vingt = <String>[
+      for (final l in lecteursRiwayat) ...l.riwayat,
+    ];
+    for (final (String nom, List<String> codes, String? carte)
+        in <(String, List<String>, String?)>[
+          ('les vingt des dix', vingt, 'dix'),
+          ('les quatorze des sept', riwayatSept.toList(), 'sept'),
+          ('dix-neuf codes', vingt.take(19).toList(), null),
+          (
+            'quatorze codes qui ne sont pas les sept',
+            <String>[...riwayatSept.take(13), 'ibn_wardan'],
+            null,
+          ),
+        ]) {
+      testWidgets('relue, une reponse de $nom s ouvre sur '
+          '${carte ?? 'la grille'} et repart a l identique', (
+        WidgetTester tester,
+      ) async {
         final FauxMaCandidature port = FauxMaCandidature(
           questionnaireJson: questionnaireJsonDeTest(
             dernieresReponses: <String, Object?>{
@@ -291,9 +303,14 @@ void main() {
         );
         await monterQuestionnaire(tester, port: port);
         await toucherCle(tester, 'parcours-retour');
+        // La carte « dix » ou « sept » pour la liste exacte ; sinon la grille.
+        expect(
+          find.byKey(ValueKey<String>('q-riwayat-${carte ?? 'quelques'}')),
+          findsOneWidget,
+        );
         expect(
           find.text(t.recrutement.parcours.riwayat.titreQuelques),
-          findsOneWidget,
+          carte == null ? findsOneWidget : findsNothing,
         );
         await continuer(tester);
         expect(_dernier(port, 'riwayat'), codes);

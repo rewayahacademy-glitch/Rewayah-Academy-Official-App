@@ -203,17 +203,23 @@ enum ModeRiwayat {
 }
 
 /// Le mode que montre une reponse deja enregistree, telle que la personne l'a
-/// donnee : un seul code, une seule riwaya ; plusieurs, quelques-unes (la
-/// grille, exactement ces codes coches) ; rien, `null`.
+/// donnee : exactement les vingt riwayat des dix lecteurs, « les dix » ;
+/// exactement les quatorze des sept, « les sept » ; un seul code, une seule
+/// riwaya ; toute autre liste, quelques-unes (la grille, exactement ces codes
+/// coches) ; rien, `null`.
 ///
-/// Jamais [ModeRiwayat.dix] ni [ModeRiwayat.sept], meme pour les vingt ou les
-/// quatorze codes : ces cartes disent « j'ai une ijaza dans les dix (sept)
-/// qiraat », et ce qui est stocke (la seule liste des codes) ne garde aucune
-/// trace d'une ijaza. Une ancienne reponse « je recite toutes les riwayat »
-/// ou quatorze riwayat cochees une a une ne s'affichent donc jamais comme une
-/// ijaza (pilote, 20/11/2026, relecture de la PR 660).
+/// Les cartes « dix » et « sept » disent « Je recite les dix (sept) qiraat »
+/// (directeur, 20/11/2026) : exactement ce que la liste enregistree porte, sans
+/// ijaza. Elles ne se presentent donc que pour la liste EXACTE : 19 codes, ou
+/// 14 codes qui ne sont pas les sept, s'ouvrent sur la grille.
 ModeRiwayat? modeDesRiwayat(Set<String> codes) {
   if (codes.isEmpty) return null;
+  if (codes.length == riwayatDix.length && codes.containsAll(riwayatDix)) {
+    return ModeRiwayat.dix;
+  }
+  if (codes.length == riwayatSept.length && codes.containsAll(riwayatSept)) {
+    return ModeRiwayat.sept;
+  }
   return codes.length == 1 ? ModeRiwayat.une : ModeRiwayat.quelques;
 }
 

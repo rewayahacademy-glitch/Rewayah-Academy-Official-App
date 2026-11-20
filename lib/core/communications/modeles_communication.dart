@@ -298,7 +298,14 @@ class MessageCommunication {
     this.image,
     this.coeurs = 0,
     this.aimeParMoi = false,
+    this.cleIdempotence,
   });
+
+  /// PE-D1 (MESSAGERIE-FIABLE) : la cle d'envoi du message, telle que le
+  /// serveur l'a recue, rendue SEULEMENT pour un message de la personne qui lit
+  /// (`com_lire_fil_page`) ; `null` sinon, ou avec un serveur plus ancien. Elle
+  /// rapproche la bulle locale de son message confirme, jamais le texte.
+  final String? cleIdempotence;
 
   /// IMAGES-MESSAGERIE : l'image du message (place reservee, couleur
   /// moyenne, etat), ou `null`. Lue avec le fil, sans requete de plus.

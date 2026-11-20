@@ -147,10 +147,14 @@ void main() {
 
     test('une reponse deja enregistree se relit dans son mode', () {
       expect(modeDesRiwayat(<String>{}), isNull);
-      // Relecture de la PR 660 : jamais « dix » ni « sept » (ijaza) a la
-      // relecture, meme pour les vingt ou les quatorze codes.
-      expect(modeDesRiwayat(riwayatDix), ModeRiwayat.quelques);
-      expect(modeDesRiwayat(riwayatSept), ModeRiwayat.quelques);
+      // Directeur, 20/11/2026 : les cartes disent « Je recite les dix (sept)
+      // qiraat », sans ijaza ; elles reviennent pour la liste EXACTE seulement.
+      expect(modeDesRiwayat(riwayatDix), ModeRiwayat.dix);
+      expect(modeDesRiwayat(riwayatSept), ModeRiwayat.sept);
+      expect(
+        modeDesRiwayat(riwayatDix.difference(<String>{'idris'})),
+        ModeRiwayat.quelques,
+      );
       expect(modeDesRiwayat(<String>{'hafs'}), ModeRiwayat.une);
       expect(modeDesRiwayat(<String>{'hafs', 'warsh'}), ModeRiwayat.quelques);
       expect(

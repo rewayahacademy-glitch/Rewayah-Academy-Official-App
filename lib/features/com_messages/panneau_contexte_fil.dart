@@ -17,6 +17,8 @@
 // (Suivi, Mode silencieux), « Voir tout », la presence en ligne et les menus
 // de participant n'ont aucun contrat (UX_REVIEW L0, ecart 13).
 
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
@@ -27,10 +29,12 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/avatar_tile.dart';
 import '../../core/widgets/carte_piece_jointe.dart';
 import '../../core/widgets/groupe_reglages.dart';
+import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/pile_cartes.dart';
 import 'apercu_profil_candidat.dart';
 import 'avatar_participant.dart';
 import 'entete_fil_contexte.dart';
+import 'memoire_pages_fil.dart';
 import 'port_messages_metier.dart';
 
 /// Le panneau de contexte d'un fil (`ThreadContextPanel`).
@@ -39,10 +43,25 @@ import 'port_messages_metier.dart';
 /// colonne comme en feuille.
 class PanneauContexteFil extends StatelessWidget {
   /// Cree le panneau du fil [fil].
-  const PanneauContexteFil({required this.fil, super.key, this.onOuvrirObjet});
+  const PanneauContexteFil({
+    required this.fil,
+    super.key,
+    this.onOuvrirObjet,
+    this.memoire,
+  });
 
   /// Le fil ouvert.
   final FilMetier fil;
+
+  /// PE-D1 : la memoire des messages charges de la conversation (pages
+  /// anciennes comprises), partagee avec le fil ; `null` : les fichiers du fil
+  /// rendu seulement.
+  final MemoirePagesFil? memoire;
+
+  /// La phrase « liste partielle » et son geste, pour les tests.
+  static const ValueKey<String> cleFichiersPartiels = ValueKey<String>(
+    'panneau-fichiers-partiels',
+  );
 
   /// Ouvre un objet lie a son chemin interne ; par defaut, le routeur.
   final ValueChanged<String>? onOuvrirObjet;
@@ -84,8 +103,30 @@ class PanneauContexteFil extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final MemoirePagesFil? m = memoire;
+    if (m == null) return _contenu(context, fil.piecesJointes, null);
+    return ListenableBuilder(
+      listenable: m,
+      builder: (BuildContext context, Widget? _) {
+        m.recevoir(fil);
+        return _contenu(context, <PieceJointe>[
+          for (final MessageCommunication x in m.messages.reversed)
+            ...x.piecesJointes,
+        ], m);
+      },
+    );
+  }
+
+  Widget _contenu(
+    BuildContext context,
+    List<PieceJointe> pieces,
+    MemoirePagesFil? memoire,
+  ) {
     final p = t.com.messages.panneau;
-    final List<PieceJointe> pieces = fil.piecesJointes;
+    // PE-D1 : la liste ne compte que les messages charges ; s'il en reste de
+    // plus anciens, le panneau le dit et propose de les charger.
+    final bool partiel =
+        memoire != null && memoire.plusAnciens && memoire.lire != null;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -163,6 +204,10 @@ class PanneauContexteFil extends StatelessWidget {
             ],
           ),
         ],
+        if (partiel) ...<Widget>[
+          Ecart.vLg,
+          _FichiersPartiels(memoire: memoire, sansFichier: pieces.isEmpty),
+        ],
       ],
     );
   }
@@ -189,6 +234,40 @@ class PanneauContexteFil extends StatelessWidget {
       legende: legende,
       libelleSemantique: p.ouvrir(objet: e.objet.libelle),
       onPress: () => _ouvrir(context, chemin),
+    );
+  }
+}
+
+/// PE-D1 : la liste des fichiers ne compte que les messages charges ; une
+/// phrase le dit, et un lien charge les messages precedents.
+class _FichiersPartiels extends StatelessWidget {
+  const _FichiersPartiels({required this.memoire, required this.sansFichier});
+
+  final MemoirePagesFil memoire;
+  final bool sansFichier;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = t.com.messages.panneau;
+    final TextTheme textes = Theme.of(context).textTheme;
+    return Column(
+      key: PanneauContexteFil.cleFichiersPartiels,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: <Widget>[
+        Text(
+          sansFichier ? p.fichiersAucunCharge : p.fichiersPartiels,
+          style: AppPalette.of(context).inkMuted
+              .applyTo(textes.bodySmall ?? const TextStyle()),
+        ),
+        if (!memoire.enCours)
+          LienFleche(
+            libelle: p.chargerPrecedents,
+            alignerEnDebut: true,
+            onPress: () =>
+                unawaited(memoire.chargerAnciens().catchError((Object _) {})),
+          ),
+      ],
     );
   }
 }

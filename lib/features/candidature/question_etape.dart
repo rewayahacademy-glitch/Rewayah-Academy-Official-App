@@ -792,10 +792,9 @@ String _trancheCourte(String code) {
 /// lecteurs), une seule riwaya (choisie dans la liste), ou quelques-unes
 /// (choisies lecteur par lecteur, avec une recherche). Le serveur recoit
 /// toujours la liste des codes, comme avant. Une reponse deja enregistree se
-/// relit telle que la personne l'a donnee ([modeDesRiwayat]) : un code, « une
-/// seule » ; plusieurs, la grille avec exactement ces codes coches, jamais les
-/// cartes « dix » ou « sept », qui annoncent une ijaza que rien de stocke ne
-/// porte. Ces deux cartes ne s'affichent choisies que touchees a cette visite.
+/// relit telle que la personne l'a donnee ([modeDesRiwayat]) : la liste exacte
+/// des dix ou des sept, sa carte ; un code, « une seule » ; toute autre liste,
+/// la grille avec exactement ces codes coches.
 class _Riwayat extends StatefulWidget {
   const _Riwayat({required this.champ, required this.controleur});
 
