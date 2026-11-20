@@ -14405,7 +14405,38 @@
         "entretienPlanifie": "المقابلة محدّدة: يأتي القرار بعد المقابلة.",
         "decisionAttendue": "تمت المقابلة: القرار في انتظاركم."
       },
-      "photoAgrandir": "عرض صورة \u2068{deNom}\u2069 بحجم كبير"
+      "photoAgrandir": "عرض صورة \u2068{deNom}\u2069 بحجم كبير",
+      "tete": {
+        "manque": "ما ينقص",
+        "manqueRien": "لا شيء من جهته",
+        "elements": {
+          "compte": "حسابه",
+          "questionnaire": "الاستبيان",
+          "pays_versement": "بلد صرف الراتب"
+        },
+        "piece": "وثيقة الهوية",
+        "pieceValeurs": {
+          "verifiee": "معتمدة",
+          "aVerifier": "مودعة، في انتظار التحقق",
+          "absente": "لم تودع بعد",
+          "aRedeposer": "مرفوضة، يجب إيداعها من جديد",
+          "compteAbsent": "لا حساب بعد"
+        },
+        "connexion": "آخر دخول",
+        "connexionAucune": "لم يدخل بعد",
+        "aujourdhui": "اليوم",
+        "hier": "أمس",
+        "anciennete": "استُلم الطلب",
+        "ilYa(plural)": {
+          "zero": "اليوم",
+          "one": "منذ يوم واحد",
+          "two": "منذ يومين",
+          "few": "منذ \u2068{n}\u2069 أيام",
+          "many": "منذ \u2068{n}\u2069 يومًا",
+          "other": "منذ \u2068{n}\u2069 يوم"
+        },
+        "accueillirPiece": "«\u2068{geste}\u2069» يتطلب وثيقة هوية معتمدة: تحقق منها أولًا."
+      }
     },
     "file": {
       "outils": "أدوات",

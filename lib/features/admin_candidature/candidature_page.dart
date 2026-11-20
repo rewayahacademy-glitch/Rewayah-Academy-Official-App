@@ -60,6 +60,7 @@ import 'libelles_candidature.dart';
 import 'navigation_dossier.dart';
 import 'plan_dossier.dart';
 import 'suivant_dossier.dart';
+import 'synthese_tete_dossier.dart';
 import 'volet_conversation.dart';
 
 /// Les gestes qui sont une decision : apres eux, le dossier suivant s'ouvre
@@ -330,7 +331,14 @@ class _EtatCandidatureDirectionPage
       geste: geste,
       detail: detail,
       capacites: capacites,
-      elementsInitiaux: elementsInitiaux,
+      // PE-C10 (directeur, 19/11/2026) : « Demander un complement » s'ouvre
+      // avec tous les elements manquants deja coches ; on decoche ce qu'on
+      // ne veut pas. Un element nomme par l'appelant (piece illisible) prime.
+      elementsInitiaux:
+          elementsInitiaux.isEmpty &&
+              geste == GesteCandidature.demanderComplement
+          ? elementsComplementManquants(detail)
+          : elementsInitiaux,
     );
     if (!mounted || sortie == null) return;
     _relire(identifiant: detail.ligne.id);

@@ -177,6 +177,9 @@ class DetailCandidature {
     this.responsableNom,
     this.majorite = MajoriteCandidature.nonServie,
     this.autreCote = false,
+    this.derniereConnexionServie = false,
+    this.derniereConnexion,
+    this.manquants,
   });
 
   /// Lit la reponse de `lire_candidature`. Une reponse sans ligne lisible n'est
@@ -221,6 +224,20 @@ class DetailCandidature {
       responsableNom: texte('responsableNom'),
       majorite: MajoriteCandidature.depuisJson(brut['majorite']),
       autreCote: brut['autreCote'] == true,
+      // DOSSIER-DIRECTION (PE-C2, PE-C10) : servis par la migration
+      // 20261130900000 ; absents d'un serveur d'avant.
+      derniereConnexionServie: brut.containsKey('derniereConnexion'),
+      derniereConnexion: switch (brut['derniereConnexion']) {
+        final String v => DateTime.tryParse(v),
+        _ => null,
+      },
+      manquants: switch (brut['manquants']) {
+        final List<Object?> codes => List<String>.unmodifiable(<String>[
+          for (final Object? c in codes)
+            if (c is String && c.isNotEmpty) c,
+        ]),
+        _ => null,
+      },
     );
   }
 
@@ -271,6 +288,20 @@ class DetailCandidature {
   /// elle vaut faux, et la phrase d'exception d'`ADM-21` ne se montre pas tant
   /// qu'il ne la rend pas.
   final bool autreCote;
+
+  /// DOSSIER-DIRECTION (PE-C2) : vrai quand le serveur rend la cle
+  /// `derniereConnexion` (meme nulle). Faux sur un serveur d'avant : la ligne
+  /// ne se montre pas, plutot que de dire « aucune connexion » a tort.
+  final bool derniereConnexionServie;
+
+  /// La derniere connexion du compte de la personne, ou `null` : jamais
+  /// connectee, pas encore de compte, ou cle non servie.
+  final DateTime? derniereConnexion;
+
+  /// Ce que la personne doit encore fournir, en codes du serveur
+  /// (`private.praxis_dossier_manques`), ou `null` quand le serveur ne le rend
+  /// pas. Vide : rien ne manque de son cote.
+  final List<String>? manquants;
 
   /// Les controles faux, nommes, avec leur cause.
   List<ControleCandidature> get blocages => <ControleCandidature>[

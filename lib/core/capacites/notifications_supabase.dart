@@ -167,6 +167,28 @@ bool destinationNotificationAutorisee(String? destination) =>
         _destinationClasse.hasMatch(destination) ||
         _destinationMessagesDirection.hasMatch(destination));
 
+/// DOSSIER-DIRECTION (PE-C1, migration 20261130900000) : une notification
+/// qui concerne un candidat enseignant (« candidature à examiner », « pièce
+/// déposée ») porte la référence de son dossier dans `params.reference`.
+/// La destination enregistrée reste la liste ou « Fichiers à valider » (la
+/// contrainte du serveur n'admet que des chemins fixes) : l'application ouvre
+/// alors le dossier lui-même, `/admin/personnes/candidatures/<référence>`.
+/// Sans référence valide, la destination reste celle du serveur. Pure.
+String? destinationDuDossier(String? destination, Object? reference) {
+  if (destination != '/admin/personnes/candidatures' &&
+      destination != '/admin/personnes/dossiers') {
+    return destination;
+  }
+  if (reference is! String || !_referenceDossier.hasMatch(reference)) {
+    return destination;
+  }
+  return '/admin/personnes/candidatures/$reference';
+}
+
+/// La forme d'une référence de dossier (`CAND-` puis des chiffres), la même
+/// que celle du serveur (`candidatures.reference`).
+final RegExp _referenceDossier = RegExp(r'^CAND-[0-9]{5,14}$');
+
 /// Adaptateur Supabase de la boîte privée de notifications.
 class NotificationsSupabase
     implements
@@ -466,8 +488,10 @@ NotificationTuteur notificationDepuis(
       row['ecartee_le'] == null &&
       row['geste_fait_le'] == null;
   final Object? classe = params['classe'];
-  final String? destinationRetenue =
-      destinationNotificationAutorisee(destination) ? destination : null;
+  final String? destinationRetenue = destinationDuDossier(
+    destinationNotificationAutorisee(destination) ? destination : null,
+    rawParams['reference'],
+  );
 
   return NotificationTuteur(
     id: id,

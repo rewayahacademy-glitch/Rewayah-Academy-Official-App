@@ -11152,6 +11152,7 @@ class _Traductions$recrutement$dossier3$ar extends Traductions$recrutement$dossi
 	@override String get demanderAccord => 'طلب اتفاق';
 	@override late final _Traductions$recrutement$dossier3$raison$ar raison = _Traductions$recrutement$dossier3$raison$ar._(_root);
 	@override String photoAgrandir({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير';
+	@override late final _Traductions$recrutement$dossier3$tete$ar tete = _Traductions$recrutement$dossier3$tete$ar._(_root);
 }
 
 // Path: recrutement.file
@@ -22151,6 +22152,34 @@ class _Traductions$recrutement$dossier3$raison$ar extends Traductions$recrutemen
 	@override String get decisionAttendue => 'تمت المقابلة: القرار في انتظاركم.';
 }
 
+// Path: recrutement.dossier3.tete
+class _Traductions$recrutement$dossier3$tete$ar extends Traductions$recrutement$dossier3$tete$fr {
+	_Traductions$recrutement$dossier3$tete$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manque => 'ما ينقص';
+	@override String get manqueRien => 'لا شيء من جهته';
+	@override late final _Traductions$recrutement$dossier3$tete$elements$ar elements = _Traductions$recrutement$dossier3$tete$elements$ar._(_root);
+	@override String get piece => 'وثيقة الهوية';
+	@override late final _Traductions$recrutement$dossier3$tete$pieceValeurs$ar pieceValeurs = _Traductions$recrutement$dossier3$tete$pieceValeurs$ar._(_root);
+	@override String get connexion => 'آخر دخول';
+	@override String get connexionAucune => 'لم يدخل بعد';
+	@override String get aujourdhui => 'اليوم';
+	@override String get hier => 'أمس';
+	@override String get anciennete => 'استُلم الطلب';
+	@override String ilYa({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'اليوم',
+		one: 'منذ يوم واحد',
+		two: 'منذ يومين',
+		few: 'منذ ⁨${n}⁩ أيام',
+		many: 'منذ ⁨${n}⁩ يومًا',
+		other: 'منذ ⁨${n}⁩ يوم',
+	);
+	@override String accueillirPiece({required Object geste}) => '«⁨${geste}⁩» يتطلب وثيقة هوية معتمدة: تحقق منها أولًا.';
+}
+
 // Path: recrutement.invitations.comptable
 class _Traductions$recrutement$invitations$comptable$ar extends Traductions$recrutement$invitations$comptable$fr {
 	_Traductions$recrutement$invitations$comptable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -27350,6 +27379,32 @@ class _Traductions$recrutement$dossier3$synthese$ageValeurs$ar extends Traductio
 	@override String attestee({required Object date}) => '18 سنة فأكثر، أُكّد بتاريخ ⁨${date}⁩';
 	@override String get moins18 => 'أقل من 18 سنة: الترشح متوقف مؤقتًا';
 	@override String get nonAttestee => 'لم يُؤكَّد العمر بعد';
+}
+
+// Path: recrutement.dossier3.tete.elements
+class _Traductions$recrutement$dossier3$tete$elements$ar extends Traductions$recrutement$dossier3$tete$elements$fr {
+	_Traductions$recrutement$dossier3$tete$elements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get compte => 'حسابه';
+	@override String get questionnaire => 'الاستبيان';
+	@override String get pays_versement => 'بلد صرف الراتب';
+}
+
+// Path: recrutement.dossier3.tete.pieceValeurs
+class _Traductions$recrutement$dossier3$tete$pieceValeurs$ar extends Traductions$recrutement$dossier3$tete$pieceValeurs$fr {
+	_Traductions$recrutement$dossier3$tete$pieceValeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get verifiee => 'معتمدة';
+	@override String get aVerifier => 'مودعة، في انتظار التحقق';
+	@override String get absente => 'لم تودع بعد';
+	@override String get aRedeposer => 'مرفوضة، يجب إيداعها من جديد';
+	@override String get compteAbsent => 'لا حساب بعد';
 }
 
 // Path: recrutement.parcours.presentation.p1
@@ -41011,6 +41066,24 @@ extension on TraductionsAr {
 			'recrutement.dossier3.raison.entretienPlanifie' => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.',
 			'recrutement.dossier3.raison.decisionAttendue' => 'تمت المقابلة: القرار في انتظاركم.',
 			'recrutement.dossier3.photoAgrandir' => ({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير',
+			'recrutement.dossier3.tete.manque' => 'ما ينقص',
+			'recrutement.dossier3.tete.manqueRien' => 'لا شيء من جهته',
+			'recrutement.dossier3.tete.elements.compte' => 'حسابه',
+			'recrutement.dossier3.tete.elements.questionnaire' => 'الاستبيان',
+			'recrutement.dossier3.tete.elements.pays_versement' => 'بلد صرف الراتب',
+			'recrutement.dossier3.tete.piece' => 'وثيقة الهوية',
+			'recrutement.dossier3.tete.pieceValeurs.verifiee' => 'معتمدة',
+			'recrutement.dossier3.tete.pieceValeurs.aVerifier' => 'مودعة، في انتظار التحقق',
+			'recrutement.dossier3.tete.pieceValeurs.absente' => 'لم تودع بعد',
+			'recrutement.dossier3.tete.pieceValeurs.aRedeposer' => 'مرفوضة، يجب إيداعها من جديد',
+			'recrutement.dossier3.tete.pieceValeurs.compteAbsent' => 'لا حساب بعد',
+			'recrutement.dossier3.tete.connexion' => 'آخر دخول',
+			'recrutement.dossier3.tete.connexionAucune' => 'لم يدخل بعد',
+			'recrutement.dossier3.tete.aujourdhui' => 'اليوم',
+			'recrutement.dossier3.tete.hier' => 'أمس',
+			'recrutement.dossier3.tete.anciennete' => 'استُلم الطلب',
+			'recrutement.dossier3.tete.ilYa' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'اليوم', one: 'منذ يوم واحد', two: 'منذ يومين', few: 'منذ ⁨${n}⁩ أيام', many: 'منذ ⁨${n}⁩ يومًا', other: 'منذ ⁨${n}⁩ يوم', ), 
+			'recrutement.dossier3.tete.accueillirPiece' => ({required Object geste}) => '«⁨${geste}⁩» يتطلب وثيقة هوية معتمدة: تحقق منها أولًا.',
 			'recrutement.file.outils' => 'أدوات',
 			'recrutement.file.outilsDe' => 'أدوات قائمة طلبات الترشح',
 			'recrutement.file.afficher' => 'عرض',
@@ -41440,6 +41513,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.fuseau.regions.Indian' => 'المحيط الهندي',
 			'recrutement.parcours.fuseau.regions.Pacific' => 'المحيط الهادئ',
 			'recrutement.parcours.fuseau.ouiExplication' => 'ستكون أوقات توفرك ومقابلتك بتوقيت بلدك.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.fuseau.changerExplication' => 'مفيد إن كنت مسافرًا أو إن كانت ساعة جهازك غير صحيحة.',
 			'recrutement.parcours.creneaux.heure' => ({required Object h}) => '⁦⁨${h}⁩:00⁩',
 			'recrutement.parcours.creneaux.heureMinutes' => ({required Object h, required Object m}) => '⁦⁨${h}⁩:⁨${m}⁩⁩',
@@ -41458,8 +41533,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.creneaux.troisSeances' => 'يُعقد الفصل ثلاث مرات في الأسبوع، في الأيام نفسها وفي الساعة نفسها.',
 			'recrutement.parcours.creneaux.durees' => ({required Object enfants, required Object adultes}) => 'مدة درس الأطفال ⁨${enfants}⁩، ومدة درس الكبار ⁨${adultes}⁩.',
 			'recrutement.parcours.creneaux.enseigneEnfants' => ({required Object duree, required Object intervalles}) => 'درس الأطفال (⁨${duree}⁩): تُدرّس ⁨${intervalles}⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.creneaux.enseigneAdultes' => ({required Object duree, required Object intervalles}) => 'درس الكبار (⁨${duree}⁩): تُدرّس ⁨${intervalles}⁩.',
 			'recrutement.parcours.creneaux.heuresChoisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تُختر أي ساعة بدء', one: 'ساعة بدء واحدة مختارة', two: 'ساعتا بدء مختارتان', few: '⁨${n}⁩ ساعات بدء مختارة', many: '⁨${n}⁩ ساعة بدء مختارة', other: '⁨${n}⁩ ساعة بدء مختارة', ), 
 			'recrutement.parcours.creneaux.debutsDuJour' => ({required Object heures}) => 'ساعات البدء الممكنة: ⁨${heures}⁩.',
@@ -41954,6 +42027,8 @@ extension on TraductionsAr {
 			'argent.soldes.paiements' => 'مدفوعات الشهر',
 			'juridique.titre' => 'المعلومات القانونية',
 			'juridique.intro' => 'النصوص التي تنظّم الخدمة. يمكن قراءتها دون تسجيل الدخول.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.traduction' => 'في حال وجود اختلاف، تُعتمد النسخة الفرنسية.',
 			'juridique.version' => ({required Object version, required Object date}) => 'الإصدار ⁨${version}⁩، نص ⁨${date}⁩',
 			'juridique.contact' => ({required Object contact}) => 'لأي سؤال، اكتبوا إلى ⁨${contact}⁩.',
@@ -41972,8 +42047,6 @@ extension on TraductionsAr {
 			'juridique.valeurs.hebergeur' => 'قاعدة البيانات وتسجيل الدخول إلى الحسابات: Supabase Inc. (supabase.com). التطبيق والصفحات الإلكترونية: Vercel Inc. (vercel.com). اسم النطاق: Cloudflare, Inc. (cloudflare.com).',
 			'juridique.valeurs.lieuxHebergement' => 'تُستضاف قاعدة البيانات في أيرلندا، داخل الاتحاد الأوروبي. وقد تعالج جهات أخرى بعض المعلومات خارج المملكة المتحدة، وتلتزم هذه العمليات بقواعد الحماية التي ينص عليها القانون.',
 			'juridique.valeurs.dureesConservation' => 'الحساب والملف الشخصي: ما دام الحساب قائمًا. بعد طلب الحذف ومهلة تفكير مدتها 14 يومًا، يُمحى الاسم والبريد الإلكتروني وبيانات التواصل. الفواتير والمدفوعات: 6 سنوات، كما يفرض قانون المحاسبة في المملكة المتحدة. وثيقة هوية المعلم: 90 يومًا على الأكثر بعد التحقق منها. الرسائل: ما دام الحساب قائمًا، وبعد الحذف يصبح كاتبها مجهول الهوية.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.valeurs.droitApplicable' => 'قانون إنجلترا وويلز، ومحاكم إنجلترا وويلز. وإذا كنتم مستهلكين، فتبقى لكم حماية القواعد الآمرة في بلد إقامتكم.',
 			'juridique.valeurs.confirmationConseil' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(jours, zero: 'حق العدول: لا مهلة للتراجع في سياسة الأسعار المعمول بها (صفحة الأسعار).', one: 'حق العدول: يمكنكم الإلغاء خلال يوم واحد من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', two: 'حق العدول: يمكنكم الإلغاء خلال يومين من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', few: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ أيام من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', many: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يومًا من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', other: 'حق العدول: يمكنكم الإلغاء خلال ⁨${jours}⁩ يوم من يوم الدفع، دون ذكر سبب. وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.', ), 
 			'juridique.valeurs.confirmationConseilSansDuree' => 'حق العدول: يمكنكم الإلغاء خلال مهلة التراجع، التي تبدأ من يوم الدفع، دون ذكر سبب. وتحدد مدتها سياسة الأسعار المعمول بها (صفحة الأسعار). وإذا بدأت الدروس بطلب منكم خلال هذه المهلة، فإن الجزء الذي تابعتموه يبقى مستحق الدفع.',
@@ -42468,6 +42541,8 @@ extension on TraductionsAr {
 			'accueilInscrits.aJour' => 'مكتمل',
 			'accueilInscrits.aCompleter' => 'يحتاج إلى إكمال',
 			'accueilInscrits.ajouterProfil' => ({required Object dePrenom}) => 'إضافة الملف الدراسي لـ ⁨${dePrenom}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'accueilInscrits.plusTard' => 'يمكنكم القيام بذلك لاحقًا أيضًا، من صفحة الأسرة.',
 			'accueilInscrits.sansEleve' => 'لم يُسترجع أي ملف دراسي لأسرتكم. يمكنكم إضافة ملف من صفحة الأسرة.',
 			'accueilInscrits.finirCompte' => 'تبقى بعض الأسئلة لإتمام حسابكم.',
@@ -42486,8 +42561,6 @@ extension on TraductionsAr {
 			'accueilInvite.champsRequis' => 'أدخل اسمك ولقبك وجنسك.',
 			'alertes.traitement.titre' => 'معالجة البلاغ',
 			'alertes.traitement.categorie' => 'الفئة',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.traitement.eleve' => 'الطالب',
 			'alertes.traitement.recu' => 'وصل',
 			'alertes.traitement.statut' => 'حالته',
@@ -42982,6 +43055,8 @@ extension on TraductionsAr {
 			'candidatsFlux.prevenir.envoyer' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'أرسلوا الرابط', one: 'أرسلوا الرابط إلى شخص واحد', two: 'أرسلوا الرابط إلى شخصين', few: 'أرسلوا الرابط إلى ⁨${n}⁩ أشخاص', many: 'أرسلوا الرابط إلى ⁨${n}⁩ شخصًا', other: 'أرسلوا الرابط إلى ⁨${n}⁩ شخص', ), 
 			'candidatsFlux.prevenir.envoyerSuivantes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'أرسلوا إلى التالين', one: 'أرسلوا إلى شخص آخر', two: 'أرسلوا إلى شخصين آخرين', few: 'أرسلوا إلى ⁨${n}⁩ أشخاص آخرين', many: 'أرسلوا إلى ⁨${n}⁩ شخصًا آخر', other: 'أرسلوا إلى ⁨${n}⁩ شخص آخر', ), 
 			'candidatsFlux.prevenir.sansDonnees' => 'تعذّر تحميل عدد الأشخاص الذين سيُبلَّغون.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.prevenir.horsLigne' => 'يصبح الإرسال ممكنًا عند عودة الشبكة.',
 			'candidatsFlux.prevenir.resultat.titre' => 'انطلق الإرسال',
 			'candidatsFlux.prevenir.resultat.mis' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رسالة تُرسَل', one: 'رسالة واحدة تُرسَل خلال الدقائق القادمة', two: 'رسالتان تُرسَلان خلال الدقائق القادمة', few: '⁨${n}⁩ رسائل تُرسَل خلال الدقائق القادمة', many: '⁨${n}⁩ رسالة تُرسَل خلال الدقائق القادمة', other: '⁨${n}⁩ رسالة تُرسَل خلال الدقائق القادمة', ), 
@@ -43000,8 +43075,6 @@ extension on TraductionsAr {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'تجهيز الرابط',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'الرمز الشخصي',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'الرابط الشخصي',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'صالح حتى ⁨${date}⁩، مرة واحدة، ومع هذا العنوان فقط.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'نسخ الرابط',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copie' => 'نُسخ الرابط.',
@@ -43496,6 +43569,8 @@ extension on TraductionsAr {
 			'calendrier.pauses.exceptionRecherche' => 'ابحث عن الطالب باسمه',
 			'calendrier.pauses.exceptionRechercheAide' => 'حرفان على الأقل.',
 			'calendrier.pauses.exceptionAucun' => 'لم يوجد طالب.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.exceptionEleve' => ({required Object nom}) => 'الطالب: ⁨${nom}⁩',
 			'calendrier.pauses.exceptionChanger' => 'اختيار طالب آخر',
 			'calendrier.pauses.exceptionMotif' => 'السبب',
@@ -43514,8 +43589,6 @@ extension on TraductionsAr {
 			'calendrier.pauses.refus.dejaDecidee' => 'سبق الرد على هذا الطلب. أعد تحميل القائمة.',
 			'calendrier.pauses.refus.debutPasse' => 'بدأ الشهر فعلًا: لم يعد قبول هذا التوقف ممكنًا. يمكنك رفضه.',
 			'calendrier.pauses.refus.datesInvalides' => 'يجب أن يكون اليوم الأخير اليوم أو بعده، وفي أقل من سنة.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.refus.exceptionTropLongue' => ({required Object mois}) => 'مدة التوقف الاستثنائي ⁨${mois}⁩ أشهر على الأكثر. اختصروها؛ يمكنكم بعد ذلك منح توقف جديد.',
 			'calendrier.pauses.refus.nonTerminable' => 'هذا التوقف انتهى أو ليس توقفًا استثنائيًا.',
 			'calendrier.pauses.refus.eleveIntrouvable' => 'لم يوجد هذا الطالب.',
