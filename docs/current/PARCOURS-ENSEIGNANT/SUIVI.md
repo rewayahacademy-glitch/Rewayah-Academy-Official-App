@@ -196,3 +196,21 @@ Rien de ce qui suit n'est prouvé par le directeur en production.
 | 662 accueil du candidat | en reprise sur la maquette et les décisions ci-dessus | planche à montrer au directeur |
 
 **Garde-fou** : deux agents ont voulu modifier une description de PR par `gh api` (refusé) puis ont demandé au pilote de le faire ; le pilote ne le fait pas à leur demande et met les descriptions à jour lui-même en relisant.
+
+## État de reprise du 20/11/2026, 22 h UTC
+
+**Fusionné et installé ce soir** (rien n'est « fait » tant que le directeur ne l'a pas prouvé en production) :
+
+| Lot | PR | Migration (nom dans le dépôt) | Vérifié en production |
+| :--- | :--- | :--- | :--- |
+| Formulaire du candidat (PE-B1, PE-B8, PE-A8) | 660 | `20261130920000_juz_nombre_exact` | empreintes après : `questionnaire_permis` `48d457e9…`, `questionnaire_options` `4da898bb…` ; aucun droit client |
+| Courriels dans la langue du candidat (PE-A1) | 654 | `20261130966000_courriels_langue_candidat` (renommée, ex 940000) | empreinte après `b94cabac…` ; deux déclencheurs actifs ; rattrapage NON lancé (accord écrit du directeur requis) ; sujets Auth à coller par le directeur (`A-COLLER-SUPABASE-AUTH.md`) ; redéploiement de `courriels-envoi` non vérifié |
+| Page d'entrée « Praxis vous accueille » | 664 | aucune | page vue en ligne à 390 et 1440 ; aucune demande de lien observée depuis ; porte de trois quarts à l'ordinateur (`Geo.troisQuarts`, retour à la version de face en une ligne) |
+
+**En cours** : PR 661 (dossier côté direction, migration renommée `20261130965000_dossier_direction`, recalée, CI verte, relecture adverse lancée) ; PE-B10 première moitié (branche `claude/pe-depot-piece`, horodatage réservé 967000) ; PE-B3 (branche `claude/pe-saisie-sortie`, sans migration).
+
+**À ne pas fusionner sans décision** : PR 655 (avis de créneau ; sa migration 942000 est maintenant antérieure à 966000 dont elle dépend : à renuméroter).
+
+**Message du directeur aux inscrits élèves (20/11)** : envoyé par courriel depuis la boîte de l'académie à 20 personnes (toutes les demandes d'inscription sauf la plus ancienne, déjà connue), en arabe et anglais pour les noms écrits en arabe, en anglais et français pour les autres. Deux adresses figurent dans la feuille des candidats enseignants et un nom correspond à une candidature d'enseignant : réponses à guetter. Aucun dossier transféré.
+
+**À retirer quand la lettre aux candidats (PR 665, autre session) sera fusionnée** : la ligne « La paie d'un enseignant : s'affichera ici… » de « À savoir », que la lettre contredit.
