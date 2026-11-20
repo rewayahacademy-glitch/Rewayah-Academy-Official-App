@@ -12,6 +12,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
 
+import '../theme/app_radius.dart';
 import 'anti_robot.dart';
 
 /// Le delai au-dela duquel le script de Cloudflare est tenu pour injoignable.
@@ -60,8 +61,11 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
       'createElement'.toJS,
       'div'.toJS,
     );
-    (hote['style']! as JSObject)['cssText'] = 'width:100%;height:100%;display:flex;justify-content:center;align-items:center;'
-        .toJS;
+    // PE-CASE-VERIFICATION : en bloc (la largeur du champ), rogne a sa place
+    // (rien ne deborde), aux coins des champs ; voir `styleHoteTurnstile`.
+    (hote['style']! as JSObject)['cssText'] = styleHoteTurnstile(
+      rayon: AppRadius.sm,
+    ).toJS;
     _hote = hote;
     ui_web.platformViewRegistry.registerViewFactory(_type, (int _) => hote);
     widget.controleur.brancher(_relancer);
