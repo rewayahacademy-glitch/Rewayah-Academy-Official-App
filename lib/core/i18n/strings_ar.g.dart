@@ -1794,6 +1794,7 @@ class _Traductions$formulaire$ar extends Traductions$formulaire$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override String courrielPropose({required Object adresse}) => 'هل تقصد ⁨${adresse}⁩؟';
 	@override String get manqueAccord => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.';
 	@override late final _Traductions$formulaire$motif$ar motif = _Traductions$formulaire$motif$ar._(_root);
 	@override late final _Traductions$formulaire$entier$ar entier = _Traductions$formulaire$entier$ar._(_root);
@@ -11671,6 +11672,8 @@ class _Traductions$recrutement$parcours$ar extends Traductions$recrutement$parco
 	@override late final _Traductions$recrutement$parcours$langues$ar langues = _Traductions$recrutement$parcours$langues$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$pays$ar pays = _Traductions$recrutement$parcours$pays$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$riwayat$ar riwayat = _Traductions$recrutement$parcours$riwayat$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$juz$ar juz = _Traductions$recrutement$parcours$juz$ar._(_root);
+	@override late final _Traductions$recrutement$parcours$aides$ar aides = _Traductions$recrutement$parcours$aides$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$fuseau$ar fuseau = _Traductions$recrutement$parcours$fuseau$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$creneaux$ar creneaux = _Traductions$recrutement$parcours$creneaux$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$versement$ar versement = _Traductions$recrutement$parcours$versement$ar._(_root);
@@ -22653,8 +22656,58 @@ class _Traductions$recrutement$parcours$riwayat$ar extends Traductions$recruteme
 	@override String get rechercheAide => 'اسم الرواية';
 	@override String get aucune => 'لا توجد رواية مطابقة.';
 	@override String get retour => 'العودة إلى الروايات المقترحة';
-	@override String get toutes => 'أقرأ بجميع الروايات';
-	@override String get toutesDescription => 'الروايات العشرون للقراءات العشر. تحل هذه الإجابة محل غيرها.';
+	@override String get dix => 'أقرأ بالقراءات العشر';
+	@override String get dixDescription => 'القراءات العشر برواياتها العشرين.';
+	@override String get sept => 'أقرأ بالقراءات السبع';
+	@override String get septDescription => 'القراءات السبع برواياتها الأربع عشرة.';
+	@override String get une => 'أقرأ برواية واحدة';
+	@override String get uneDescription => 'تختار أيّها، مثل حفص أو ورش.';
+	@override String get quelques => 'عندي بعض القراءات';
+	@override String get quelquesDescription => 'تختار رواياتك قارئًا بعد قارئ.';
+	@override String get titreUne => 'بأي رواية تقرأ؟';
+	@override String get titreQuelques => 'المس كل رواية تقرأ بها.';
+	@override String get rechercheLecteur => 'ابحث عن قارئ أو رواية';
+	@override String get rechercheLecteurAide => 'اسم القارئ أو الرواية';
+	@override late final _Traductions$recrutement$parcours$riwayat$lecteurs$ar lecteurs = _Traductions$recrutement$parcours$riwayat$lecteurs$ar._(_root);
+}
+
+// Path: recrutement.parcours.juz
+class _Traductions$recrutement$parcours$juz$ar extends Traductions$recrutement$parcours$juz$fr {
+	_Traductions$recrutement$parcours$juz$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nombre => 'حفظت عددًا محددًا من الأجزاء';
+	@override String get nombreDescription => 'من جزء واحد إلى 29 جزءًا كاملًا، والقرآن ثلاثون جزءًا.';
+	@override String get nombreExplication => 'يُتحقق من هذا المستوى أثناء المقابلة.';
+	@override String get nombreExemple => 'حفظت اثني عشر جزءًا: اختر 12.';
+	@override String get compteur => 'عدد الأجزاء المحفوظة';
+	@override String get choisir => 'اختر العدد';
+	@override String get moins => 'جزء أقل';
+	@override String get plus => 'جزء أكثر';
+	@override String valeur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا جزء',
+		one: 'جزء واحد',
+		two: 'جزآن',
+		few: '⁨${n}⁩ أجزاء',
+		many: '⁨${n}⁩ جزءًا',
+		other: '⁨${n}⁩ جزء',
+	);
+	@override String ancienne({required Object reponse}) => 'إجابتك المحفوظة: «⁨${reponse}⁩». ما زالت صالحة. لتحديد العدد بالضبط، المس عددًا أدناه.';
+}
+
+// Path: recrutement.parcours.aides
+class _Traductions$recrutement$parcours$aides$ar extends Traductions$recrutement$parcours$aides$fr {
+	_Traductions$recrutement$parcours$aides$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get ijazaTitre => 'ما هي الإجازة؟';
+	@override String get ijazaTexte => 'الإجازة إذن مكتوب يعطيك إياه شيخ بعد أن تقرأ عليه القرآن كاملًا، أو الجزء الذي تذكره الإجازة. وتذكر الرواية التي قرأت بها، مثل حفص عن عاصم، وسلسلة الشيوخ الذين نقلوها، وهي السند. في المقابلة نطلب منك أن تعرضها عبر الفيديو، ولا شيء تُرسله الآن. وإن لم تكن عندك إجازة فيمكنك أن تتقدّم أيضًا.';
+	@override String get juzTitre => 'ما هو الجزء؟';
+	@override String get juzTexte => 'القرآن مقسوم إلى ثلاثين قسمًا متساوية الطول، وهي الأجزاء. احسب فقط الأجزاء التي تستطيع أن تقرأها كاملة عن ظهر قلب.';
 }
 
 // Path: recrutement.parcours.fuseau
@@ -27749,6 +27802,25 @@ class _Traductions$recrutement$parcours$presentation$p3$ar extends Traductions$r
 	@override late final _Traductions$recrutement$parcours$presentation$p3$examen$ar examen = _Traductions$recrutement$parcours$presentation$p3$examen$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$presentation$p3$entretien$ar entretien = _Traductions$recrutement$parcours$presentation$p3$entretien$ar._(_root);
 	@override late final _Traductions$recrutement$parcours$presentation$p3$verification$ar verification = _Traductions$recrutement$parcours$presentation$p3$verification$ar._(_root);
+}
+
+// Path: recrutement.parcours.riwayat.lecteurs
+class _Traductions$recrutement$parcours$riwayat$lecteurs$ar extends Traductions$recrutement$parcours$riwayat$lecteurs$fr {
+	_Traductions$recrutement$parcours$riwayat$lecteurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get nafi => 'نافع';
+	@override String get ibnKathir => 'ابن كثير';
+	@override String get abuAmr => 'أبو عمرو';
+	@override String get ibnAmir => 'ابن عامر';
+	@override String get asim => 'عاصم';
+	@override String get hamza => 'حمزة';
+	@override String get kisai => 'الكسائي';
+	@override String get abuJafar => 'أبو جعفر';
+	@override String get yaqub => 'يعقوب';
+	@override String get khalaf => 'خلف العاشر';
 }
 
 // Path: recrutement.parcours.fuseau.regions
@@ -41272,6 +41344,7 @@ extension on TraductionsAr {
 			'suiviDemandes.notification.changementFusion' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: دُمج فصلكم مع فصل آخر، عرض الفصل الجديد',
 			'suiviDemandes.notification.changementTransfert' => ({required Object dePrenom}) => 'طلب موعد ⁨${dePrenom}⁩: فصل جديد، عرض التفاصيل',
 			'suiviDemandes.notification.close' => ({required Object dePrenom, required Object motif}) => 'طلب موعد ⁨${dePrenom}⁩: ⁨${motif}⁩',
+			'formulaire.courrielPropose' => ({required Object adresse}) => 'هل تقصد ⁨${adresse}⁩؟',
 			'formulaire.manqueAccord' => 'موافقتك ناقصة: ضع علامة في الخانة للمتابعة.',
 			'formulaire.motif.manqueSaisi' => 'السبب ناقص: اكتبه في كلمات قليلة.',
 			'formulaire.motif.manque' => 'السبب ناقص: اختر واحدًا من القائمة، أو المس «أخرى» واكتبه.',
@@ -41305,9 +41378,9 @@ extension on TraductionsAr {
 			'recherche.domaines.supports' => 'المواد',
 			'recherche.domaines.personnes' => 'الأشخاص',
 			'recherche.domaines.enseignants' => 'المعلّمون',
-			'recherche.domaines.pedagogie' => 'الطلاب',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.domaines.pedagogie' => 'الطلاب',
 			'recherche.domaines.controle' => 'المراقبة',
 			'recherche.domaines.finances' => 'المالية',
 			'recherche.domaines.fils' => 'المحادثات',
@@ -41819,9 +41892,9 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.accordRemuneration' => 'قرأت شروط الراتب هذه وأوافق عليها.',
 			'recrutement.questionnaire.accordManquant' => 'ضع علامة في المربع لقبول هذه الشروط وإرسال طلب ترشحك.',
 			'recrutement.questionnaire.envoyer' => 'إرسال طلب ترشحي',
-			'recrutement.questionnaire.cadreManquant' => 'اقبل أولًا الإطار الديني والتربوي.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.questionnaire.cadreManquant' => 'اقبل أولًا الإطار الديني والتربوي.',
 			'recrutement.questionnaire.cadreAccepte' => 'لقد قبلت الإطار الديني والتربوي.',
 			'recrutement.questionnaire.langues' => 'لغاتك',
 			'recrutement.questionnaire.recitation' => 'تلاوتك',
@@ -41930,8 +42003,42 @@ extension on TraductionsAr {
 			'recrutement.parcours.riwayat.rechercheAide' => 'اسم الرواية',
 			'recrutement.parcours.riwayat.aucune' => 'لا توجد رواية مطابقة.',
 			'recrutement.parcours.riwayat.retour' => 'العودة إلى الروايات المقترحة',
-			'recrutement.parcours.riwayat.toutes' => 'أقرأ بجميع الروايات',
-			'recrutement.parcours.riwayat.toutesDescription' => 'الروايات العشرون للقراءات العشر. تحل هذه الإجابة محل غيرها.',
+			'recrutement.parcours.riwayat.dix' => 'أقرأ بالقراءات العشر',
+			'recrutement.parcours.riwayat.dixDescription' => 'القراءات العشر برواياتها العشرين.',
+			'recrutement.parcours.riwayat.sept' => 'أقرأ بالقراءات السبع',
+			'recrutement.parcours.riwayat.septDescription' => 'القراءات السبع برواياتها الأربع عشرة.',
+			'recrutement.parcours.riwayat.une' => 'أقرأ برواية واحدة',
+			'recrutement.parcours.riwayat.uneDescription' => 'تختار أيّها، مثل حفص أو ورش.',
+			'recrutement.parcours.riwayat.quelques' => 'عندي بعض القراءات',
+			'recrutement.parcours.riwayat.quelquesDescription' => 'تختار رواياتك قارئًا بعد قارئ.',
+			'recrutement.parcours.riwayat.titreUne' => 'بأي رواية تقرأ؟',
+			'recrutement.parcours.riwayat.titreQuelques' => 'المس كل رواية تقرأ بها.',
+			'recrutement.parcours.riwayat.rechercheLecteur' => 'ابحث عن قارئ أو رواية',
+			'recrutement.parcours.riwayat.rechercheLecteurAide' => 'اسم القارئ أو الرواية',
+			'recrutement.parcours.riwayat.lecteurs.nafi' => 'نافع',
+			'recrutement.parcours.riwayat.lecteurs.ibnKathir' => 'ابن كثير',
+			'recrutement.parcours.riwayat.lecteurs.abuAmr' => 'أبو عمرو',
+			'recrutement.parcours.riwayat.lecteurs.ibnAmir' => 'ابن عامر',
+			'recrutement.parcours.riwayat.lecteurs.asim' => 'عاصم',
+			'recrutement.parcours.riwayat.lecteurs.hamza' => 'حمزة',
+			'recrutement.parcours.riwayat.lecteurs.kisai' => 'الكسائي',
+			'recrutement.parcours.riwayat.lecteurs.abuJafar' => 'أبو جعفر',
+			'recrutement.parcours.riwayat.lecteurs.yaqub' => 'يعقوب',
+			'recrutement.parcours.riwayat.lecteurs.khalaf' => 'خلف العاشر',
+			'recrutement.parcours.juz.nombre' => 'حفظت عددًا محددًا من الأجزاء',
+			'recrutement.parcours.juz.nombreDescription' => 'من جزء واحد إلى 29 جزءًا كاملًا، والقرآن ثلاثون جزءًا.',
+			'recrutement.parcours.juz.nombreExplication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
+			'recrutement.parcours.juz.nombreExemple' => 'حفظت اثني عشر جزءًا: اختر 12.',
+			'recrutement.parcours.juz.compteur' => 'عدد الأجزاء المحفوظة',
+			'recrutement.parcours.juz.choisir' => 'اختر العدد',
+			'recrutement.parcours.juz.moins' => 'جزء أقل',
+			'recrutement.parcours.juz.plus' => 'جزء أكثر',
+			'recrutement.parcours.juz.valeur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا جزء', one: 'جزء واحد', two: 'جزآن', few: '⁨${n}⁩ أجزاء', many: '⁨${n}⁩ جزءًا', other: '⁨${n}⁩ جزء', ), 
+			'recrutement.parcours.juz.ancienne' => ({required Object reponse}) => 'إجابتك المحفوظة: «⁨${reponse}⁩». ما زالت صالحة. لتحديد العدد بالضبط، المس عددًا أدناه.',
+			'recrutement.parcours.aides.ijazaTitre' => 'ما هي الإجازة؟',
+			'recrutement.parcours.aides.ijazaTexte' => 'الإجازة إذن مكتوب يعطيك إياه شيخ بعد أن تقرأ عليه القرآن كاملًا، أو الجزء الذي تذكره الإجازة. وتذكر الرواية التي قرأت بها، مثل حفص عن عاصم، وسلسلة الشيوخ الذين نقلوها، وهي السند. في المقابلة نطلب منك أن تعرضها عبر الفيديو، ولا شيء تُرسله الآن. وإن لم تكن عندك إجازة فيمكنك أن تتقدّم أيضًا.',
+			'recrutement.parcours.aides.juzTitre' => 'ما هو الجزء؟',
+			'recrutement.parcours.aides.juzTexte' => 'القرآن مقسوم إلى ثلاثين قسمًا متساوية الطول، وهي الأجزاء. احسب فقط الأجزاء التي تستطيع أن تقرأها كاملة عن ظهر قلب.',
 			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'هل الساعة عندك الآن ⁨${heure}⁩؟',
 			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'المنطقة الزمنية المقترحة: ⁨${lieu}⁩.',
 			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.',
@@ -42299,6 +42406,8 @@ extension on TraductionsAr {
 			'recrutement.talents.c.accompagnement_enfants.exemple' => 'علم نفس الطفل، الاحتياجات الخاصة، الأطفال شديدو الخجل',
 			'recrutement.talents.c.developpement.libelle' => 'تطوير الويب أو تطبيقات الجوال',
 			'recrutement.talents.c.developpement.description' => 'تطوير المواقع والتطبيقات.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.developpement.exemple' => 'موقع، تطبيق، أداة داخلية',
 			'recrutement.talents.c.assistance_technique.libelle' => 'الدعم التقني للأسر والمعلمين',
 			'recrutement.talents.c.assistance_technique.description' => 'حلّ المشكلات التقنية عن بُعد لمن يواجهها.',
@@ -42334,8 +42443,6 @@ extension on TraductionsAr {
 			'recrutement.talents.disponibilite.manque' => 'اختر مدى توفرك للمتابعة.',
 			'recrutement.talents.disponibilite.enregistrer' => 'حفظ إجاباتي',
 			'recrutement.talents.lecture.enregistre' => 'إجاباتك محفوظة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.lecture.misesAJour' => ({required Object date}) => 'آخر تحديث في ⁨${date}⁩.',
 			'recrutement.talents.lecture.competences' => 'مهاراتك',
 			'recrutement.talents.lecture.autreDomaine' => ({required Object texte}) => 'مجال آخر: ⁨${texte}⁩',
@@ -42813,6 +42920,8 @@ extension on TraductionsAr {
 			'avis.admin.liens.fermeOk' => 'تم إغلاق الرابط.',
 			'avis.admin.liens.fermeEchec' => 'لم يتأكد الإغلاق. أُعيدت قراءة القائمة: تحقق من حالة الرابط.',
 			'avis.admin.liens.vide' => 'لا توجد روابط حتى الآن. أنشئ رابطًا لجمع الآراء.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.erreur' => 'تعذّر تحميل الروابط. أعد المحاولة.',
 			'avis.admin.liens.sansDonnees' => 'تعذّر تحميل الروابط',
 			'courriels.admin.titre' => 'البريد الإلكتروني',
@@ -42848,8 +42957,6 @@ extension on TraductionsAr {
 			'courriels.admin.ecrire.champ.sujet' => 'اكتب موضوعًا من 1 إلى 120 حرفًا.',
 			'courriels.admin.ecrire.champ.corps' => 'اكتب رسالة من 1 إلى 5000 حرف.',
 			'courriels.admin.ecrire.champ.destinataireExclu' => 'لا يستطيع هذا الشخص تلقي هذه الرسالة: حساب طفل أو إلغاء اشتراك.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.ecrire.retour.misEnFile' => 'الإرسال خلال دقيقة. تابعه في قائمة الإرسال.',
 			'courriels.admin.ecrire.retour.voir' => 'عرض الإرسال',
 			'courriels.admin.ecrire.retour.refus' => 'الإدارة المتصلة وحدها تستطيع كتابة رسالة.',
@@ -43327,6 +43434,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'اختاروا هذا إن كانت الأسطر لأشخاص مختلفين يتشاركون وسيلة اتصال. يحتفظ كل منهم برده.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'شخصان من العائلة نفسها ردا بالرقم نفسه',
 			'candidatsFlux.importFormulaires.analyse.echec' => 'لم يكتمل التحليل.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.analyse.echecPhrase' => 'لم يُسجَّل شيء. أعيدوا المحاولة بعد قليل.',
 			'candidatsFlux.importFormulaires.analyse.refus' => 'لا يستطيع الخادم قراءة هذا الملف بهذين الاسمين. تحققوا من المصنّف والورقة والملف ثم أعيدوا المحاولة.',
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'إعادة التحليل',
@@ -43362,8 +43471,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.champ.telephoneAide' => 'مع رمز الدولة. لا يُكمَّل ولا يُخمَّن أبدًا.',
 			'candidatsFlux.importFormulaires.champ.langueMaternelle' => 'اللغة الأم',
 			'candidatsFlux.importFormulaires.champ.langueMaternelleAide' => 'اختياري.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.champ.languesExplication' => 'لغات الشرح',
 			'candidatsFlux.importFormulaires.champ.languesExplicationAide' => 'اللغات التي يستطيع الشخص الشرح والتصحيح بها.',
 			'candidatsFlux.importFormulaires.champ.memorisation' => 'حفظ القرآن',
@@ -43841,6 +43948,8 @@ extension on TraductionsAr {
 			'suiviAttente.mePresenter.erreur' => 'تعذّرت قراءة أسر الفصل. حاول مرة أخرى بعد قليل.',
 			'suiviAttente.mePresenter.vide' => 'اكتب رسالة قبل إرسالها.',
 			'journalSorties.texte.titre' => 'الخروج من التطبيق أثناء الدرس',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.texte.parent.quoi' => 'ما يُسجَّل: في كل مرة يخرج فيها طفلك من التطبيق أثناء الحصة، وقت خروجه، ووقت عودته، وهل أدّى هذا الغياب إلى خروجه من القاعة. لا شيء غير ذلك: لا ما يفعله في مكان آخر، ولا شاشته، ولا صورته، ولا صوته.',
 			'journalSorties.texte.parent.pourquoi' => 'لماذا: لمتابعة انتباه طفلك أثناء الدرس، لك ولمعلّمه.',
 			'journalSorties.texte.parent.qui' => 'من يمكنه قراءته: أنت، وطفلك، ومعلّم الحصة، والإدارة. ولا يقرؤه أبدًا الطلاب الآخرون ولا عائلاتهم.',
@@ -43876,8 +43985,6 @@ extension on TraductionsAr {
 			'journalSorties.rapport.nombreCle' => 'العدد',
 			'journalSorties.rapport.nombre' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا خروج', one: 'خروج واحد', two: 'خروجان', few: '⁨${n}⁩ مرات خروج', many: '⁨${n}⁩ مرة خروج', other: '⁨${n}⁩ مرة خروج', ), 
 			'journalSorties.rapport.dureeTotale' => 'المدة الإجمالية',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.rapport.plage' => ({required Object debut, required Object fin}) => 'من ⁨${debut}⁩ إلى ⁨${fin}⁩',
 			'journalSorties.rapport.sortieSalle' => 'خروج من القاعة بعد المهلة',
 			'journalSorties.rapport.secondes' => ({required Object n}) => '⁨${n}⁩ ث',

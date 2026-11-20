@@ -23,6 +23,7 @@ import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/controle_anti_robot.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/proposition_courriel.dart';
 import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
@@ -948,6 +949,9 @@ class _Saisie extends StatelessWidget {
           clavier: TextInputType.emailAddress,
           autofill: const <String>[AutofillHints.email],
         ),
+        // PE-A8 (retours terrain R25) : « Vouliez-vous dire gmail.com ? »,
+        // une proposition qui s'accepte d'un toucher et ne bloque rien.
+        PropositionCourriel(controleur: courriel, onAccepte: onChanged),
         // INVITATION-ENSEIGNANT-REPARE : le code d'invitation a une place. Pris
         // dans l'adresse, il se dit ; sinon un lien ouvre son champ.
         if (creation && codeDansAdresse != null) ...<Widget>[

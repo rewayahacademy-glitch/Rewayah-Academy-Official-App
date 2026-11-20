@@ -570,14 +570,16 @@ SELECT pg_temp.vrai((SELECT c ->> 'requis' = 'false' FROM jsonb_array_elements(p
 -- (d-22/10) Memorisation et ijaza : deux questions ; tranches d'age ; classes.
 SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
                       WHERE c ->> 'code' = 'niveauMemorisationDeclare')
+    -- PE-B1 (20261130920000) : les quatre codes de la definition, puis juz_1 a juz_29.
     = '["aucune", "moins_10_juz", "de_10_a_29_juz", "coran_entier"]'::jsonb
+      || (SELECT jsonb_agg(to_jsonb('juz_' || n::text) ORDER BY n) FROM generate_series(1, 29) n)
   AND (SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
         WHERE c ->> 'code' = 'ijazaPresentable') = '["oui", "pret_test", "non"]'::jsonb
   AND (SELECT c ->> 'requis' = 'true' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
         WHERE c ->> 'code' IN ('niveauMemorisationDeclare') )
   AND (SELECT c ->> 'requis' = 'true' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
         WHERE c ->> 'code' IN ('ijazaPresentable')),
-  'memorisation (aucune, moins de 10 juz'', de 10 a 29 juz'', Coran entier) et ijaza (oui, pret a un test, non) : deux questions, obligatoires');
+  'memorisation (aucune, moins de 10 juz'', de 10 a 29 juz'', Coran entier, puis juz_1 a juz_29) et ijaza (oui, pret a un test, non) : deux questions, obligatoires');
 SELECT pg_temp.vrai((SELECT c -> 'options' FROM jsonb_array_elements(pg_temp.lu('q') -> 'champs') c
                       WHERE c ->> 'code' = 'publics') = '["6_9", "10_13", "14_17", "adultes"]'::jsonb
   AND (SELECT c ->> 'type' = 'choix_multiple' AND c ->> 'min' = '1' AND c ->> 'max' = '4'

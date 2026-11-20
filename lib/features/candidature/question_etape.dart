@@ -24,7 +24,11 @@ import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
+import '../../core/widgets/champ_etiquete.dart' show TitreChamp;
+import '../../core/widgets/champ_recherche.dart';
 import '../../core/widgets/choice_card_group.dart';
+import '../../core/widgets/choix_nombre.dart';
+import '../../core/widgets/filter_pill.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/skeleton.dart';
 import 'choix_avec_recherche.dart';
@@ -60,7 +64,11 @@ const List<String> paysCourants = <String>[
 /// francais, arabe et anglais, et son code. Un candidat dont l'application est en
 /// arabe retrouve « Ghana » en lettres latines, et l'inverse (PAYS-RECHERCHE,
 /// 16/11/2026). Jamais affiche.
-String motsClesDuPays(PaysIso p) => '${p.fr} ${p.ar} ${p.en} ${p.code}';
+String motsClesDuPays(PaysIso p) =>
+    '${p.fr} ${p.ar} ${p.en} ${p.code} '
+    // PE-B8 : les autres noms courants (« Angleterre », « USA »), comme la
+    // recherche de l'indicatif.
+    '${motsAlternatifsDuPays(p.code).join(' ')}';
 
 /// Les riwayat proposees d'emblee, les plus connues d'abord (CANDIDATURE-UX,
 /// directeur, 14/11/2026 : Hafs, Warsh, Qaloun, Shu'ba, Duri, Susi) ; les
@@ -94,7 +102,38 @@ class QuestionEtape extends ConsumerWidget {
     final ChampQuestionnaire champ = etape.champ;
     switch (etape.forme) {
       case FormeQuestion.choix:
-        return _Cartes(champ: champ, controleur: controleur, multiple: false);
+        // PE-B1 : la memorisation se dit en nombre exact de juz, des que le
+        // serveur propose juz_1 a juz_29 (migration 20261130920000) ; sans
+        // elle, les anciennes cartes, que le serveur accepte.
+        if (champ.code == champMemorisation &&
+            champ.options.any(
+              (OptionQuestionnaire o) => o.code == codeJuz(1),
+            )) {
+          return _Juz(champ: champ, controleur: controleur);
+        }
+        final Widget cartes = _Cartes(
+          champ: champ,
+          controleur: controleur,
+          multiple: false,
+        );
+        // PE-B8 (retours terrain R38 : « qu'entendez-vous par ijaza ? ») :
+        // une aide courte, a cote de la question, qui se deplie.
+        if (champ.code == 'ijazaPresentable') {
+          final aides = t.recrutement.parcours.aides;
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              AideQuestion(
+                cle: 'aide-ijaza',
+                titre: aides.ijazaTitre,
+                texte: aides.ijazaTexte,
+              ),
+              Ecart.vLg,
+              cartes,
+            ],
+          );
+        }
+        return cartes;
       case FormeQuestion.choixMultiple:
         return _Cartes(champ: champ, controleur: controleur, multiple: true);
       case FormeQuestion.ouiNon:
@@ -477,59 +516,538 @@ class _Pays extends StatelessWidget {
   }
 }
 
-class _Riwayat extends StatelessWidget {
+/// PE-B8 : une aide courte posee a cote d'une question au vocabulaire
+/// specialise (l'ijaza, le juz). Repliee, une ligne qui dit la question que
+/// la personne se pose ; touchee, la reponse en quelques phrases dessous.
+class AideQuestion extends StatefulWidget {
+  /// Cree l'aide.
+  const AideQuestion({
+    required this.cle,
+    required this.titre,
+    required this.texte,
+    super.key,
+  });
+
+  /// Le prefixe des cles (tests) : `<cle>` sur le lien, `<cle>-texte` sur
+  /// la reponse.
+  final String cle;
+
+  /// La question que la personne se pose (« Qu'est-ce qu'une ijaza ? »).
+  final String titre;
+
+  /// La reponse.
+  final String texte;
+
+  @override
+  State<AideQuestion> createState() => _AideQuestionState();
+}
+
+class _AideQuestionState extends State<AideQuestion> {
+  bool _ouverte = false;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    mainAxisSize: MainAxisSize.min,
+    children: <Widget>[
+      Align(
+        alignment: AlignmentDirectional.centerStart,
+        child: Semantics(
+          expanded: _ouverte,
+          child: LienFleche(
+            key: ValueKey<String>(widget.cle),
+            libelle: widget.titre,
+            icone: AppIcons.info,
+            fleche: false,
+            alignerEnDebut: true,
+            onPress: () => setState(() => _ouverte = !_ouverte),
+          ),
+        ),
+      ),
+      if (_ouverte) ...<Widget>[
+        Ecart.vSm,
+        AppCard(
+          key: ValueKey<String>('${widget.cle}-texte'),
+          child: Text(
+            widget.texte,
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ),
+      ],
+    ],
+  );
+}
+
+/// PE-B1 : combien du Coran la personne a memorise. « Tout le Coran », « un
+/// nombre precis de juz » (de 1 a 29, au compteur ou par un raccourci), ou
+/// « rien pour l'instant ». Une ancienne reponse en tranche (« moins de
+/// 10 juz ») reste choisie et valable tant que la personne ne donne pas de
+/// nombre : elle se lit au-dessus du compteur.
+class _Juz extends StatefulWidget {
+  const _Juz({required this.champ, required this.controleur});
+
+  final ChampQuestionnaire champ;
+  final ParcoursControleur controleur;
+
+  /// Les raccourcis du compteur.
+  static const List<int> raccourcis = <int>[5, 10, 15, 20];
+
+  /// La valeur interne de la carte « un nombre precis de juz ».
+  static const String valeurNombre = r'$nombre';
+
+  @override
+  State<_Juz> createState() => _JuzState();
+}
+
+class _JuzState extends State<_Juz> {
+  /// La carte « un nombre precis » touchee pendant cette visite, avant tout
+  /// nombre choisi : le compteur s'ouvre, rien n'est retenu.
+  bool _nombreTouche = false;
+
+  /// La reponse (« tout le Coran » ou « rien ») que « un nombre precis » a
+  /// retiree de l'ecran, tant qu'aucun nombre n'est choisi. Si la personne
+  /// quitte la question sans choisir, elle revient : c'est elle que le
+  /// brouillon du serveur garde.
+  String? _avantNombre;
+
+  @override
+  void dispose() {
+    final String? avant = _avantNombre;
+    if (avant != null) {
+      rendreSiToujoursVide(widget.controleur, widget.champ.code, avant);
+    }
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final r = t.recrutement.parcours.juz;
+    final aides = t.recrutement.parcours.aides;
+    final ChampQuestionnaire champ = widget.champ;
+    final Object? brute = widget.controleur.reponse(champ.code);
+    final String? code = brute is String ? brute : null;
+    final int? nombre = juzExact(code);
+    final bool ancienne = memorisationAnciennes.contains(code);
+    final String? carte = code == memorisationTout || code == memorisationRien
+        ? code
+        : (nombre != null || ancienne || _nombreTouche)
+        ? _Juz.valeurNombre
+        : null;
+    final ModeleQuestion? modele = modelesQuestions[champ.code];
+    OptionChoix? option(String valeur) {
+      final TextesOption? x = textesOption(champ.code, valeur);
+      return x == null
+          ? null
+          : OptionChoix(
+              cle: ValueKey<String>('option-${champ.code}-$valeur'),
+              valeur: valeur,
+              libelle: x.libelle,
+              description: x.description,
+              explication: x.explication,
+              exemple: x.exemple,
+              icone: modele?.icones[valeur],
+            );
+    }
+
+    void repondre(int n) {
+      _avantNombre = null;
+      widget.controleur.repondre(champ.code, codeJuz(n));
+    }
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        AideQuestion(
+          cle: 'aide-juz',
+          titre: aides.juzTitre,
+          texte: aides.juzTexte,
+        ),
+        Ecart.vLg,
+        ChoiceCardGroup(
+          key: ValueKey<String>('q-${champ.code}-$carte'),
+          autoriserSaisieLibre: false,
+          valeurInitiale: carte == null
+              ? null
+              : ReponseChoix(valeurs: <String>{carte}),
+          options: <OptionChoix>[
+            ?option(memorisationTout),
+            OptionChoix(
+              cle: ValueKey<String>('option-${champ.code}-nombre'),
+              valeur: _Juz.valeurNombre,
+              libelle: r.nombre,
+              description: r.nombreDescription,
+              explication: r.nombreExplication,
+              exemple: r.nombreExemple,
+              icone: AppIcons.livreOuvert,
+            ),
+            ?option(memorisationRien),
+          ],
+          onChange: (ReponseChoix reponse) {
+            if (reponse.valeurs.isEmpty) return;
+            final String v = reponse.valeurs.first;
+            if (v == _Juz.valeurNombre) {
+              // Rien n'est retenu tant que la personne ne choisit pas un
+              // nombre : une ancienne tranche reste telle quelle ; « tout le
+              // Coran » ou « rien » ne valent plus, et « Continuer » demande
+              // le nombre.
+              setState(() => _nombreTouche = true);
+              if (code == memorisationTout || code == memorisationRien) {
+                _avantNombre = code;
+                widget.controleur.repondre(champ.code, null);
+              }
+            } else {
+              setState(() {
+                _nombreTouche = false;
+                _avantNombre = null;
+              });
+              widget.controleur.repondre(champ.code, v);
+            }
+          },
+        ),
+        if (carte == _Juz.valeurNombre) ...<Widget>[
+          Ecart.vLg,
+          if (ancienne && textesOption(champ.code, code!) != null) ...<Widget>[
+            Text(
+              r.ancienne(reponse: textesOption(champ.code, code)!.libelle),
+              key: const ValueKey<String>('juz-ancienne'),
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+            Ecart.vMd,
+          ],
+          ChoixNombre(
+            key: const ValueKey<String>('juz-compteur'),
+            libelle: r.compteur,
+            libelleMoins: r.moins,
+            libellePlus: r.plus,
+            // Sans nombre ni tranche, le compteur part de « choisissez » (0,
+            // jamais retenu) : « plus » donne 1 juz. Une ancienne tranche se
+            // lit telle quelle au centre, et le premier toucher donne un
+            // nombre DANS la tranche (moins de 10 : 4 ou 6 ; de 10 a 29 :
+            // 14 ou 16).
+            min: nombre == null && !ancienne ? 0 : 1,
+            max: juzMaximum,
+            valeur: nombre ?? (ancienne ? _milieuTranche(code!) : 0),
+            affichage: (int n) => nombre == null
+                ? (ancienne ? _trancheCourte(code!) : r.choisir)
+                : r.valeur(n: n),
+            onChange: (int n) {
+              if (n >= 1) repondre(n);
+            },
+          ),
+          Ecart.vMd,
+          // Choix de formulaire, pas un filtre : les raccourcis du compteur.
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: <Widget>[
+              for (final int n in _Juz.raccourcis)
+                FilterPill(
+                  key: ValueKey<String>('juz-raccourci-$n'),
+                  libelle: r.valeur(n: n),
+                  retenue: nombre == n,
+                  onPress: () => repondre(n),
+                ),
+            ],
+          ),
+        ],
+      ],
+    );
+  }
+}
+
+/// La valeur de depart du compteur pour une ancienne tranche : un nombre dans
+/// la tranche, dont les deux voisins y restent aussi.
+int _milieuTranche(String code) => code == 'de_10_a_29_juz' ? 15 : 5;
+
+/// Remet [valeur] au champ [code] apres l'image en cours, si la reponse est
+/// toujours vide et le parcours toujours ouvert : une reponse retiree de
+/// l'ecran par un geste inacheve (« un nombre precis » sans nombre, « une
+/// seule » sans riwaya) revient quand la personne quitte la question. Rien
+/// n'est ecrit au serveur : son brouillon l'a toujours.
+void rendreSiToujoursVide(
+  ParcoursControleur controleur,
+  String code,
+  Object valeur,
+) {
+  WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+    if (controleur.valeurs(code).isNotEmpty) return;
+    try {
+      controleur.repondre(code, valeur);
+    } on FlutterError {
+      // Le parcours est ferme (controleur libere) : rien a remettre, le
+      // brouillon du serveur garde la reponse.
+    }
+  });
+  WidgetsBinding.instance.ensureVisualUpdate();
+}
+
+/// Une ancienne tranche, en mots courts (« Moins de 10 juz »).
+String _trancheCourte(String code) {
+  final v = t.recrutement.dossier3.synthese.memorisationValeurs;
+  return code == 'de_10_a_29_juz' ? v.de_10_a_29_juz : v.moins_10_juz;
+}
+
+/// PE-B1 (directeur, 19/11/2026, Q3) : les riwayat. Quatre reponses : les dix
+/// qiraat (les vingt riwayat), les sept (les quatorze riwayat des sept
+/// lecteurs), une seule riwaya (choisie dans la liste), ou quelques-unes
+/// (choisies lecteur par lecteur, avec une recherche). Le serveur recoit
+/// toujours la liste des codes, comme avant. Une reponse deja enregistree se
+/// relit telle que la personne l'a donnee ([modeDesRiwayat]) : la liste exacte
+/// des dix ou des sept, sa carte ; un code, « une seule » ; toute autre liste,
+/// la grille avec exactement ces codes coches.
+class _Riwayat extends StatefulWidget {
   const _Riwayat({required this.champ, required this.controleur});
 
   final ChampQuestionnaire champ;
   final ParcoursControleur controleur;
 
   @override
+  State<_Riwayat> createState() => _RiwayatState();
+}
+
+class _RiwayatState extends State<_Riwayat> {
+  /// Le mode choisi a cet ecran ; sans choix, celui de la reponse lue.
+  ModeRiwayat? _mode;
+
+  final TextEditingController _recherche = TextEditingController();
+
+  /// Les riwayat retenues (plusieurs) que « une seule » a retirees de
+  /// l'ecran, tant qu'aucune riwaya n'y est choisie : « Continuer » demande
+  /// alors de choisir (l'ecran montre exactement ce qui sera envoye : rien) ;
+  /// « quelques-unes », ou quitter la question, les remet.
+  List<String>? _gardees;
+
+  @override
+  void dispose() {
+    final List<String>? gardees = _gardees;
+    if (gardees != null) {
+      rendreSiToujoursVide(widget.controleur, widget.champ.code, gardees);
+    }
+    _recherche.dispose();
+    super.dispose();
+  }
+
+  /// Les codes dans l'ordre du serveur, pas l'ordre des touches.
+  void _repondre(Set<String> codes) {
+    _gardees = null;
+    widget.controleur.repondre(widget.champ.code, <String>[
+      for (final OptionQuestionnaire o in widget.champ.options)
+        if (codes.contains(o.code)) o.code,
+    ]);
+  }
+
+  void _choisirMode(ModeRiwayat mode, Set<String> selection) {
+    setState(() => _mode = mode);
+    switch (mode) {
+      case ModeRiwayat.dix:
+        _repondre(riwayatDix);
+      case ModeRiwayat.sept:
+        _repondre(riwayatSept);
+      case ModeRiwayat.une:
+        // Plusieurs codes retenus sont mis de cote, pas perdus : rien n'est
+        // affiche ni envoye tant qu'une riwaya n'est pas choisie ici ;
+        // « quelques-unes » (ou quitter la question) les remet.
+        if (selection.length > 1) {
+          widget.controleur.repondre(widget.champ.code, null);
+          _gardees = <String>[...?_gardees, ...selection];
+        }
+      case ModeRiwayat.quelques:
+        // Ce qui etait retenu le reste : on retire ce qu'on ne recite pas.
+        // Ce que « une seule » avait mis de cote revient.
+        final List<String>? gardees = _gardees;
+        if (gardees != null && selection.isEmpty) {
+          _repondre(gardees.toSet());
+        }
+        _gardees = null;
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final r = t.recrutement.parcours.riwayat;
-    final List<ElementChoix> tous = <ElementChoix>[
+    final ChampQuestionnaire champ = widget.champ;
+    final Set<String> selection = widget.controleur.valeurs(champ.code);
+    final ModeRiwayat? mode = _mode ?? modeDesRiwayat(selection);
+    final Map<String, TextesOption> textes = <String, TextesOption>{
       for (final OptionQuestionnaire o in champ.options)
         if (textesOption(champ.code, o.code) case final TextesOption x)
-          ElementChoix(
-            code: o.code,
-            libelle: x.libelle,
-            description: x.description,
-            cle: ValueKey<String>('option-${champ.code}-${o.code}'),
+          o.code: x,
+    };
+    OptionChoix carte(ModeRiwayat m, String libelle, String description) =>
+        OptionChoix(
+          cle: ValueKey<String>('option-${champ.code}-${m.name}'),
+          valeur: m.name,
+          libelle: libelle,
+          description: description,
+          icone: switch (m) {
+            ModeRiwayat.dix || ModeRiwayat.sept => AppIcons.etoile,
+            ModeRiwayat.une => AppIcons.livreOuvert,
+            ModeRiwayat.quelques => AppIcons.liste,
+          },
+        );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: <Widget>[
+        ChoiceCardGroup(
+          key: ValueKey<String>('q-${champ.code}-${mode?.name}'),
+          autoriserSaisieLibre: false,
+          valeurInitiale: mode == null
+              ? null
+              : ReponseChoix(valeurs: <String>{mode.name}),
+          options: <OptionChoix>[
+            carte(ModeRiwayat.dix, r.dix, r.dixDescription),
+            carte(ModeRiwayat.sept, r.sept, r.septDescription),
+            carte(ModeRiwayat.une, r.une, r.uneDescription),
+            carte(ModeRiwayat.quelques, r.quelques, r.quelquesDescription),
+          ],
+          onChange: (ReponseChoix reponse) {
+            if (reponse.valeurs.isEmpty) return;
+            _choisirMode(
+              ModeRiwayat.values.byName(reponse.valeurs.first),
+              selection,
+            );
+          },
+        ),
+        if (mode == ModeRiwayat.une) ...<Widget>[
+          Ecart.vXl,
+          TitreChamp(r.titreUne, style: Theme.of(context).textTheme.titleSmall),
+          Ecart.vSm,
+          _une(textes, selection),
+        ],
+        if (mode == ModeRiwayat.quelques) ...<Widget>[
+          Ecart.vXl,
+          TitreChamp(
+            r.titreQuelques,
+            style: Theme.of(context).textTheme.titleSmall,
           ),
+          Ecart.vMd,
+          ..._grille(context, textes, selection),
+        ],
+      ],
+    );
+  }
+
+  /// Une seule riwaya : les plus connues, puis la recherche.
+  Widget _une(Map<String, TextesOption> textes, Set<String> selection) {
+    final r = t.recrutement.parcours.riwayat;
+    final ChampQuestionnaire champ = widget.champ;
+    final List<ElementChoix> tous = <ElementChoix>[
+      for (final MapEntry<String, TextesOption> e in textes.entries)
+        ElementChoix(
+          code: e.key,
+          libelle: e.value.libelle,
+          description: e.value.description,
+          cle: ValueKey<String>('option-${champ.code}-${e.key}'),
+        ),
     ];
     final Map<String, ElementChoix> parCode = <String, ElementChoix>{
       for (final ElementChoix e in tous) e.code: e,
     };
     return ChoixAvecRecherche(
-      cle: 'riwayat',
-      multiple: true,
-      rechercheEnTete: false,
-      // « J'ai maitrise toutes les riwayat », en tete, exclusive : elle
-      // retient les vingt codes, que le serveur accepte deja (max 20).
-      toutes: ElementChoix(
-        code: ChoixAvecRecherche.valeurToutes,
-        libelle: r.toutes,
-        description: r.toutesDescription,
-        cle: ValueKey<String>('option-${champ.code}-toutes'),
-      ),
+      cle: 'riwayat-une',
       courants: <ElementChoix>[
         for (final String c in riwayatCourantes)
           if (parCode[c] case final ElementChoix e) e,
       ],
       tous: tous,
-      selection: controleur.valeurs(champ.code),
+      // Plusieurs codes retenus (une reponse de « quelques-unes ») : rien n'est
+      // coche dans la liste d'une seule riwaya, et rien n'est efface.
+      selection: selection.length == 1 ? selection : const <String>{},
       textes: TextesRecherche(
         recherche: r.recherche,
         aide: r.rechercheAide,
         aucun: r.aucune,
         retour: r.retour,
-        autre: r.autre,
       ),
-      onChange: (Set<String> s) => controleur.repondre(champ.code, <String>[
-        for (final OptionQuestionnaire o in champ.options)
-          if (s.contains(o.code)) o.code,
-      ]),
+      onChange: _repondre,
     );
   }
+
+  /// Quelques riwayat : la recherche, puis chaque lecteur et ses deux
+  /// riwayat, cote a cote.
+  List<Widget> _grille(
+    BuildContext context,
+    Map<String, TextesOption> textes,
+    Set<String> selection,
+  ) {
+    final r = t.recrutement.parcours.riwayat;
+    final ChampQuestionnaire champ = widget.champ;
+    final String q = formeDeRecherche(_recherche.text);
+    final List<({String lecteur, List<String> riwayat})>
+    lecteurs = <({String lecteur, List<String> riwayat})>[
+      for (final l in lecteursRiwayat)
+        if (l.riwayat.every(textes.containsKey) &&
+            (q.isEmpty ||
+                formeDeRecherche(
+                  '${_nomLecteur(l.lecteur)} '
+                  '${l.riwayat.map((String c) => textes[c]!.libelle).join(' ')}',
+                ).contains(q)))
+          l,
+    ];
+    return <Widget>[
+      ChampRecherche(
+        cleChamp: const ValueKey<String>('riwayat-grille-recherche'),
+        controleur: _recherche,
+        libelle: r.rechercheLecteur,
+        aide: r.rechercheLecteurAide,
+        onChange: (String _) => setState(() {}),
+      ),
+      Ecart.vLg,
+      if (lecteurs.isEmpty)
+        Text(r.aucune, style: Theme.of(context).textTheme.bodyMedium),
+      for (final (int i, ({String lecteur, List<String> riwayat}) l)
+          in lecteurs.indexed) ...<Widget>[
+        if (i > 0) Ecart.vLg,
+        TitreChamp(
+          _nomLecteur(l.lecteur),
+          style: Theme.of(context).textTheme.labelLarge,
+        ),
+        Ecart.vSm,
+        ChoiceCardGroup(
+          key: ValueKey<String>(
+            'riwayat-lecteur-${l.lecteur}-'
+            '${l.riwayat.where(selection.contains).join('+')}',
+          ),
+          autoriserSaisieLibre: false,
+          selectionMultiple: true,
+          indicationMultiple: false,
+          enLigne: true,
+          valeurInitiale: ReponseChoix(
+            valeurs: <String>{...l.riwayat.where(selection.contains)},
+          ),
+          options: <OptionChoix>[
+            for (final String c in l.riwayat)
+              OptionChoix(
+                cle: ValueKey<String>('option-${champ.code}-$c'),
+                valeur: c,
+                libelle: textes[c]!.libelle,
+              ),
+          ],
+          onChange: (ReponseChoix reponse) => _repondre(<String>{
+            ...selection.difference(l.riwayat.toSet()),
+            ...reponse.valeurs.where(l.riwayat.contains),
+          }),
+        ),
+      ],
+    ];
+  }
+}
+
+/// Le nom d'un lecteur, par son code de [lecteursRiwayat].
+String _nomLecteur(String code) {
+  final l = t.recrutement.parcours.riwayat.lecteurs;
+  return switch (code) {
+    'nafi' => l.nafi,
+    'ibnKathir' => l.ibnKathir,
+    'abuAmr' => l.abuAmr,
+    'ibnAmir' => l.ibnAmir,
+    'asim' => l.asim,
+    'hamza' => l.hamza,
+    'kisai' => l.kisai,
+    'abuJafar' => l.abuJafar,
+    'yaqub' => l.yaqub,
+    _ => l.khalaf,
+  };
 }
 
 class _Operateurs extends ConsumerWidget {
