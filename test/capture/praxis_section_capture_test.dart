@@ -15,6 +15,7 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/agent/questions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
+import 'package:rewayah_academy/core/agent/service_autorisation_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -22,6 +23,7 @@ import 'package:rewayah_academy/features/admin_acces_agents/acces_agents_page.da
 import 'package:rewayah_academy/features/admin_acces_agents/section_praxis.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
+import '../support/faux_service_autorisation_praxis.dart';
 import '../support/faux_service_praxis.dart';
 import '../support/faux_service_questions_praxis.dart';
 import 'outil_capture.dart';
@@ -216,6 +218,9 @@ Future<void> _ouvrir(WidgetTester tester, _Etat etat) async {
   final FauxServicePraxis faux = _faux(etat);
   final List<Override> surcharges = <Override>[
     servicePraxisProvider.overrideWithValue(faux),
+    serviceAutorisationPraxisProvider.overrideWithValue(
+      FauxServiceAutorisationPraxis(),
+    ),
     serviceQuestionsPraxisProvider.overrideWithValue(_questions(etat)),
     serviceAgentProvider.overrideWithValue(_AgentsVide()),
     portMessagesMetierProvider.overrideWithValue(const _MessagesDirection()),

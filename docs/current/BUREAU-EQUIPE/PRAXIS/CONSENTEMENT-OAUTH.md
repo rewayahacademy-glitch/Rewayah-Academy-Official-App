@@ -25,3 +25,18 @@ Suite de `PLAN-OAUTH.md` (PX-OAUTH phase 1, PR #627). Écran neuf autorisé par 
 - Lien : « Accès des agents »
 - Lecture : « Cette demande n'a pas pu être chargée » · « Cette demande n'a pas pu être lue. Réessayez. »
 - Client sans nom : « Un client sans nom »
+
+## PX-OAUTH 2e : les connexions, dans la section Praxis d'« Accès des agents »
+
+Une ligne par connexion d'une application (jamais une par clé d'une heure), lue par `direction_praxis_oauth_connexions` (lecture de la direction, sans secret) et coupée par `direction_praxis_oauth_revoquer` (double vérification, motif obligatoire ; coupe la connexion, toutes ses clés et son renouvellement). La liste des clés de la section ne montre plus les clés nées d'une connexion (`direction_praxis_etat` retouchée).
+
+Textes (français) :
+
+- Titre : « Applications connectées »
+- Introduction : « Chaque ligne est une application que vous avez autorisée à parler à Praxis, par exemple Claude. Couper une connexion arrête aussi ses clés d'une heure : l'application ne se reconnecte pas seule. »
+- Colonnes : « Application » · « Autorisée le » · « Fin au plus tard » (puis « Dernière utilisation » et l'état : « Active » · « Révoquée » · « Expirée », déjà écrits pour les clés)
+- Vide : « Aucune application connectée » · « Quand vous autorisez claude.ai à se connecter à Praxis, la connexion apparaît ici. »
+- Feuille : « Couper cette connexion ? » · « L'application ne pourra plus parler à Praxis, tout de suite. Pour la reconnecter, il faudra l'autoriser de nouveau. » · bouton « Couper la connexion »
+- Après : « Connexion coupée. » · « Coupure non confirmée. Relisez la liste des connexions avant de recommencer. »
+- Lecture : « Les connexions n'ont pas pu être chargées » · « Les connexions n'ont pas pu être lues. Réessayez. »
+

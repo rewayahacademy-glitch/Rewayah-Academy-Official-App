@@ -27,6 +27,7 @@ import '../../core/widgets/status_pill.dart';
 import '../../core/widgets/texte_protege.dart';
 import '../mfa_controleur/double_verification.dart';
 import 'choix_conversations_essai.dart';
+import 'connexions_praxis.dart';
 import 'questions_praxis.dart';
 
 /// Les cles des widgets de la section, pour les tests.
@@ -368,7 +369,7 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
     final String? motif = await AppBottomSheet.ouvrir<String>(
       context,
       titre: t.admin.praxis.revoquerTitre,
-      constructeur: (BuildContext contexte) => _FeuilleRevocation(
+      constructeur: (BuildContext contexte) => FeuilleRevocationPraxis(
         onConfirmer: (String m) => Navigator.of(contexte).pop(m),
       ),
     );
@@ -494,6 +495,9 @@ class _SectionPraxisEtat extends ConsumerState<SectionPraxis> {
           _formulaireCle(context),
         Ecart.vLg,
         _listeCles(context, etat),
+        Ecart.vXxl,
+        // PX-OAUTH 2e : une ligne par connexion d'une application, revocable.
+        const ConnexionsPraxis(),
         Ecart.vXxl,
         SectionHeader(titre: t.admin.praxis.journalTitre),
         Ecart.vSm,
@@ -1126,17 +1130,32 @@ class _CarteCleEmise extends StatelessWidget {
   }
 }
 
-/// La feuille de revocation : le motif est obligatoire.
-class _FeuilleRevocation extends StatefulWidget {
-  const _FeuilleRevocation({required this.onConfirmer});
+/// La feuille de revocation : le motif est obligatoire. Partagee par la
+/// revocation d'une cle et celle d'une connexion (PX-OAUTH 2e) : [detail] et
+/// [confirmer] disent de laquelle il s'agit (par defaut, une cle).
+class FeuilleRevocationPraxis extends StatefulWidget {
+  /// Cree la feuille.
+  const FeuilleRevocationPraxis({
+    required this.onConfirmer,
+    super.key,
+    this.detail,
+    this.confirmer,
+  });
 
+  /// Appelee avec le motif (240 signes au plus).
   final ValueChanged<String> onConfirmer;
 
+  /// Le texte au-dessus du champ ; nul : celui de la revocation d'une cle.
+  final String? detail;
+
+  /// Le libelle du bouton ; nul : celui de la revocation d'une cle.
+  final String? confirmer;
+
   @override
-  State<_FeuilleRevocation> createState() => _FeuilleRevocationEtat();
+  State<FeuilleRevocationPraxis> createState() => _FeuilleRevocationEtat();
 }
 
-class _FeuilleRevocationEtat extends State<_FeuilleRevocation> {
+class _FeuilleRevocationEtat extends State<FeuilleRevocationPraxis> {
   final TextEditingController _motif = TextEditingController();
   String? _erreur;
 
@@ -1162,7 +1181,10 @@ class _FeuilleRevocationEtat extends State<_FeuilleRevocation> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(t.admin.praxis.revoquerDetail, style: textes.bodyMedium),
+        Text(
+          widget.detail ?? t.admin.praxis.revoquerDetail,
+          style: textes.bodyMedium,
+        ),
         Ecart.vLg,
         ChampEtiquete(
           libelle: t.admin.praxis.revoquerMotif,
@@ -1187,7 +1209,7 @@ class _FeuilleRevocationEtat extends State<_FeuilleRevocation> {
         Ecart.vLg,
         ActionPrincipale(
           key: ClesPraxis.confirmerRevocation,
-          libelle: t.admin.praxis.revoquerConfirmer,
+          libelle: widget.confirmer ?? t.admin.praxis.revoquerConfirmer,
           niveau: NiveauAction.destructive,
           onPress: _confirmer,
         ),

@@ -86,6 +86,11 @@ declare
     -- condense d'un code a usage unique, jamais le code) et une ligne d'audit (praxis_oauth_decision : la decision et le client, jamais le code).
     -- direction_praxis_oauth_lire est STABLE (lecture seule) : hors de cette liste.
     'direction_praxis_oauth_decider(uuid,boolean)',
+    -- PX-OAUTH 2e (19/11) : revoquer une CONNEXION de claude.ai a Praxis (et toutes ses cles). Administrateur au compte valide, double
+    -- verification (aal2), motif obligatoire ; elle n'ecrit que les lignes de revocation de private.praxis_oauth_connexions et de
+    -- private.praxis_cles (par l'aide privee) et une ligne d'audit (praxis_oauth_revocation : le client, jamais le motif).
+    -- direction_praxis_oauth_connexions est STABLE (lecture seule) : hors de cette liste.
+    'direction_praxis_oauth_revoquer(uuid,text)',
     -- BE-2a-1 (16/11) : les missions. Qui peut appeler : la direction seulement, garde positive public.app_role() = 'admin',
     -- public.app_account_valid() et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit : une ligne de private.missions,
     -- de private.mission_attributions ou de private.mission_journal, plus une ligne d'audit (log_sensitive_access).

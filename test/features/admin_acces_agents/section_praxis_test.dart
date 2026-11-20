@@ -16,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/agent/questions_praxis.dart';
+import 'package:rewayah_academy/core/agent/service_autorisation_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
@@ -26,6 +27,7 @@ import 'package:rewayah_academy/features/admin_acces_agents/section_praxis.dart'
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
 
+import '../../support/faux_service_autorisation_praxis.dart';
 import '../../support/faux_service_praxis.dart';
 import '../../support/faux_service_questions_praxis.dart';
 import '../../support/garde_interface.dart';
@@ -79,6 +81,9 @@ Future<void> _monter(
       const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
       surcharges: <Override>[
         servicePraxisProvider.overrideWithValue(faux),
+        serviceAutorisationPraxisProvider.overrideWithValue(
+          FauxServiceAutorisationPraxis(),
+        ),
         serviceQuestionsPraxisProvider.overrideWithValue(
           questions ?? const QuestionsPraxisVides(),
         ),
@@ -199,6 +204,9 @@ void main() {
           const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
           surcharges: <Override>[
             servicePraxisProvider.overrideWithValue(faux),
+            serviceAutorisationPraxisProvider.overrideWithValue(
+              FauxServiceAutorisationPraxis(),
+            ),
             serviceQuestionsPraxisProvider.overrideWithValue(
               const QuestionsPraxisVides(),
             ),
@@ -483,6 +491,9 @@ void main() {
           const Scaffold(body: SingleChildScrollView(child: SectionPraxis())),
           surcharges: <Override>[
             servicePraxisProvider.overrideWithValue(FauxServicePraxis()),
+            serviceAutorisationPraxisProvider.overrideWithValue(
+              FauxServiceAutorisationPraxis(),
+            ),
             serviceQuestionsPraxisProvider.overrideWithValue(q),
           ],
         ),
@@ -860,6 +871,9 @@ class ProviderScopeAvecSection extends StatelessWidget {
     ),
     surcharges: <Override>[
       servicePraxisProvider.overrideWithValue(faux),
+      serviceAutorisationPraxisProvider.overrideWithValue(
+        FauxServiceAutorisationPraxis(),
+      ),
       serviceQuestionsPraxisProvider.overrideWithValue(
         const QuestionsPraxisVides(),
       ),

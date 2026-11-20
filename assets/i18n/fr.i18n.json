@@ -7086,6 +7086,22 @@
       "reglageFait": "Réglage appliqué.",
       "erreurReglage": "Réglage non confirmé. Relisez l'état ci-dessus avant de recommencer.",
       "doubleVerification": "Ce réglage demande la double vérification. Activez-la dans Compte, puis Sécurité, et recommencez.",
+      "connexions": {
+        "titre": "Applications connectées",
+        "intro": "Chaque ligne est une application que vous avez autorisée à parler à Praxis, par exemple Claude. Couper une connexion arrête aussi ses clés d'une heure : l'application ne se reconnecte pas seule.",
+        "colonneClient": "Application",
+        "colonneAutorisee": "Autorisée le",
+        "colonneFin": "Fin au plus tard",
+        "vide": "Aucune application connectée",
+        "videDetail": "Quand vous autorisez claude.ai à se connecter à Praxis, la connexion apparaît ici.",
+        "sansDonnees": "Les connexions n'ont pas pu être chargées",
+        "erreurLecture": "Les connexions n'ont pas pu être lues. Réessayez.",
+        "revoquerTitre": "Couper cette connexion ?",
+        "revoquerDetail": "L'application ne pourra plus parler à Praxis, tout de suite. Pour la reconnecter, il faudra l'autoriser de nouveau.",
+        "revoquerConfirmer": "Couper la connexion",
+        "revoquee": "Connexion coupée.",
+        "erreurRevocation": "Coupure non confirmée. Relisez la liste des connexions avant de recommencer."
+      },
       "autoriser": {
         "titre": "Autoriser une connexion à Praxis",
         "demande": "« {client} » ({hote}) demande à se connecter à Praxis en votre nom.",
