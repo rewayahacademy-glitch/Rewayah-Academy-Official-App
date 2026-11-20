@@ -225,7 +225,7 @@ class DetailCandidature {
       majorite: MajoriteCandidature.depuisJson(brut['majorite']),
       autreCote: brut['autreCote'] == true,
       // DOSSIER-DIRECTION (PE-C2, PE-C10) : servis par la migration
-      // 20261130900000 ; absents d'un serveur d'avant.
+      // 20261130965000 ; absents d'un serveur d'avant.
       derniereConnexionServie: brut.containsKey('derniereConnexion'),
       derniereConnexion: switch (brut['derniereConnexion']) {
         final String v => DateTime.tryParse(v),

@@ -5,7 +5,7 @@
 // « Fichiers a valider ».
 //
 // Lu par `public.references_dossiers_admin(uuid[])` (migration
-// 20261130900000) : la reference seule, dans la portee de genre du lecteur ;
+// 20261130965000) : la reference seule, dans la portee de genre du lecteur ;
 // le dossier se lit ensuite par `lire_candidature`, avec toutes ses gardes.
 //
 // Repli honnete : tant que la fonction n'est pas installee (PGRST202, 42883),

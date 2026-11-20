@@ -9,7 +9,7 @@
 //
 // **Une presentation, pas une regle.** Tout vient de `lire_candidature` :
 // `manquants` (private.praxis_dossier_manques), `controles` (piece_validee),
-// `derniereConnexion` (migration 20261130900000) et `recueLe`. Une cle que le
+// `derniereConnexion` (migration 20261130965000) et `recueLe`. Une cle que le
 // serveur ne rend pas ne produit aucune ligne : jamais une valeur inventee.
 library;
 

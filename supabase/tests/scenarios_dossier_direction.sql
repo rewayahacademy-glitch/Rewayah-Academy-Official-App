@@ -1,4 +1,4 @@
--- DOSSIER-DIRECTION (migration 20261130900000_dossier_direction.sql) : PE-C1, PE-C2, PE-C10.
+-- DOSSIER-DIRECTION (migration 20261130965000_dossier_direction.sql) : PE-C1, PE-C2, PE-C10.
 --
 -- Ce que le scenario prouve (il ECHOUE sans la migration, il PASSE avec) :
 --   1. references_dossiers_admin : la direction du meme cote recoit la reference du candidat enseignant ;

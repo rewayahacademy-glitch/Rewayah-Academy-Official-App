@@ -36,7 +36,10 @@
 --
 -- MOTS D'EFFACEMENT : ZERO. Additif. Sans BEGIN/COMMIT de premier niveau.
 --
--- EMPREINTES ATTENDUES AVANT REMPLACEMENT (md5(prosrc), lues sur une base rejouee jusqu'a 20261130400000) :
+-- EMPREINTES ATTENDUES AVANT REMPLACEMENT (md5(prosrc), lues sur une base rejouee jusqu'a 20261130400000,
+-- puis relues identiques le 20/11/2026 sur une base rejouee jusqu'a 20261130960000, etat de main : aucune migration
+-- 20261130800000, 910000, 930000 ni 960000 ne remplace ces fonctions ; d'ou le nom 20261130965000, posterieur a
+-- celles deja installees en production) :
 --   public.lire_candidature(uuid)              a3e65e5dfcc469ef073986ab5940e94b
 --   private.push1_depuis_candidature()         dd4437ebaa00ccb5d2d32508ce103cf7
 --   private.push1_depuis_piece()               13c945780201c684443c8db0290e5c6f

@@ -24,7 +24,7 @@ import '../../fixtures/candidature/faux_candidatures_direction.dart';
 import '../../support/monter_recrutement.dart';
 import 'hote_candidature.dart';
 
-/// Le dossier [base] avec ce que la migration 20261130900000 ajoute.
+/// Le dossier [base] avec ce que la migration 20261130965000 ajoute.
 DetailCandidature _avec(
   DetailCandidature base, {
   List<String>? manquants,
