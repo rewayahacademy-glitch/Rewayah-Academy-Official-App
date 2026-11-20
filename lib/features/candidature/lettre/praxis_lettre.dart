@@ -187,6 +187,12 @@ class _EtatPraxisLettre extends State<PraxisLettre>
                       label: t.recrutement.lettre.praxisNom,
                       child: AnimatedSwitcher(
                         duration: AppMouvement.apparition,
+                        // La phrase part du bord de debut, comme tout texte.
+                        layoutBuilder:
+                            (Widget? courant, List<Widget> precedents) => Stack(
+                              alignment: AlignmentDirectional.centerStart,
+                              children: <Widget>[...precedents, ?courant],
+                            ),
                         child: Text(
                           phrase,
                           key: ValueKey<MomentLettre>(moment),
