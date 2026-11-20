@@ -24,6 +24,7 @@ import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/sous_navigation_domaine.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
 import 'package:rewayah_academy/features/com_annonces/administration_communications_page.dart';
 import 'package:rewayah_academy/features/com_annonces/publier_annonce_classe_page.dart';
 import 'package:rewayah_academy/features/com_communaute/communaute_page.dart';
@@ -558,13 +559,15 @@ void main() {
       );
       final Finder cloche = _clocheNotifications;
       expect(cloche, findsOneWidget);
+      // VIVANT : l'accueil n'a plus d'en-tete de page ; son contenu commence
+      // par le bento. La cloche reste dans la barre du haut, au-dessus.
       expect(
-        find.descendant(of: find.byType(EntetePage), matching: cloche),
+        find.descendant(of: find.byType(BentoVivant), matching: cloche),
         findsNothing,
       );
       expect(
         tester.getTopLeft(cloche).dy,
-        lessThan(tester.getTopLeft(find.byType(EntetePage)).dy),
+        lessThan(tester.getTopLeft(find.byType(BentoVivant)).dy),
       );
       await tester.tap(cloche);
       await stabiliser(tester);
@@ -726,7 +729,8 @@ void main() {
       final double basChamp = tester
           .getBottomLeft(find.bySemanticsLabel(t.nav.admin.menu))
           .dy;
-      final double hautTitre = tester.getTopLeft(find.byType(EntetePage)).dy;
+      // VIVANT : le contenu de l'accueil commence par le bento.
+      final double hautTitre = tester.getTopLeft(find.byType(BentoVivant)).dy;
       // La zone sure du haut n'est posee qu'une fois, par la barre.
       expect(hautTitre - basChamp, lessThan(47));
     });

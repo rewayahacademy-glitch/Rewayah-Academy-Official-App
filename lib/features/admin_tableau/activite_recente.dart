@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -117,9 +115,8 @@ class ActiviteRecente extends ConsumerWidget {
           ...corps,
           LienFleche(
             libelle: t.admin.tableau.activite.voirTout,
-            onPress: () => unawaited(
-              GoRouter.of(context).push<void>(Routes.adminSecuriteAuditJournal),
-            ),
+            onPress: () =>
+                GoRouter.of(context).go(Routes.adminSecuriteAuditJournal),
           ),
         ],
       ),

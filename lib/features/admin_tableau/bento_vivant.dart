@@ -11,8 +11,10 @@
 // s'affiche pas. Aucun nombre d'exemple, aucun nombre affiche deux fois.
 //
 // Contrat de navigation §2 : une case qui porte un nombre ouvre la liste deja
-// filtree, empilee (`push`), le filtre dans l'adresse.
-import 'dart:async';
+// filtree, le filtre dans l'adresse. La page s'ouvre par `go` : l'adresse du
+// navigateur la dit (un rechargement rend le meme ecran, contrat §5), et le
+// retour du bureau (`retourBureau`, BUREAU-NAV) ramene au parent logique :
+// la liste filtree depuis un dossier, l'Accueil depuis une liste.
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -207,8 +209,7 @@ class _EtatBentoVivant extends State<BentoVivant> {
     super.dispose();
   }
 
-  void _ouvrir(String adresse) =>
-      unawaited(GoRouter.of(context).push<void>(adresse));
+  void _ouvrir(String adresse) => GoRouter.of(context).go(adresse);
 
   @override
   Widget build(BuildContext context) {
@@ -651,9 +652,10 @@ class CaseNombre extends StatelessWidget {
       onPress: onPress,
       niveau: niveau,
       filet: filet,
+      // Le nombre et ce qu'il compte d'abord (« 3 Dossiers à valider »),
+      // puis les precisions.
       libelleSemantique: <String>[
-        '$nombre',
-        libelle,
+        '$nombre $libelle',
         ?precision,
         ?qui?.$1,
       ].join(', '),
@@ -1034,7 +1036,7 @@ class ParcoursCandidats extends StatelessWidget {
   /// Les cases cote a cote (tablette, ordinateur) ou empilees (telephone).
   final bool enLigne;
 
-  /// Ouvre une adresse, empilee.
+  /// Ouvre une adresse.
   final ValueChanged<String> onOuvrir;
 
   /// Les etats du parcours, dans l'ordre ou un candidat les traverse.

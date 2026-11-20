@@ -2904,6 +2904,9 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'centre de commande, compteurs calmes regroupes',
         (BuildContext _) => GrilleBento(
+          // Les cases vivantes prennent la hauteur de leur contenu (texte
+          // agrandi, Interface guidee) : rien n'est coupe.
+          hauteurContenu: true,
           tuiles: <TuileBento>[
             ..._tuilesBentoPrincipales(),
             TuileBento(
@@ -2925,6 +2928,9 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'centre de commande, compteurs separes',
         (BuildContext _) => GrilleBento(
+          // Les cases vivantes prennent la hauteur de leur contenu (texte
+          // agrandi, Interface guidee) : rien n'est coupe.
+          hauteurContenu: true,
           tuiles: <TuileBento>[
             ..._tuilesBentoPrincipales(),
             TuileBento(

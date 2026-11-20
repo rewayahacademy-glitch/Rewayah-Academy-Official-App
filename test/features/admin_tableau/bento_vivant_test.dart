@@ -1,7 +1,7 @@
 // VIVANT : le haut de l'accueil de la direction en bento vivant.
 //
 // Donnees reelles uniquement : une case sans lecture ne s'affiche pas. Une
-// case qui porte un nombre ouvre la liste deja filtree, empilee (contrat de
+// case qui porte un nombre ouvre la liste deja filtree, a son adresse (contrat de
 // navigation §2). La phrase de Praxis suit des regles ecrites.
 
 import 'package:flutter/material.dart';
@@ -399,7 +399,7 @@ void main() {
       ),
       (BentoVivant.cleEchus, 'acces echus', Routes.adminPersonnesComptesEchus),
     ]) {
-      testWidgets('toucher la case ${cas.$2} ouvre ${cas.$3}, empilee', (
+      testWidgets('toucher la case ${cas.$2} ouvre ${cas.$3}', (
         WidgetTester tester,
       ) async {
         fixerVueCapture(tester, const Size(1440, 1600), 1);
@@ -423,11 +423,16 @@ void main() {
         await tester.tap(find.byKey(cas.$1));
         await _vivre(tester, 10);
         expect(find.text('ALLE ${cas.$3}'), findsOneWidget);
-        // Empilee : le retour ramene a l'accueil.
+        // L'adresse du routeur dit la page et son filtre : un rechargement
+        // rend le meme ecran (contrat §5).
         final BuildContext contexte = tester.element(
           find.text('ALLE ${cas.$3}'),
         );
-        expect(GoRouter.of(contexte).canPop(), isTrue);
+        expect(
+          GoRouter.of(contexte).routerDelegate.currentConfiguration.uri
+              .toString(),
+          cas.$3,
+        );
       });
     }
 
