@@ -1100,3 +1100,15 @@ plupart de ces 13 questions ont une réponse connue (compétence `repondre-reway
   droit) ; relire et fermer ses propres questions ; écrire le premier.
 - **Non prouvé** : la nouvelle consigne tourne pour la première fois à 03:24 UTC, sur le modèle
   moins coûteux.
+
+### 17.10 Les réponses du directeur deviennent la base de Praxis (20/11/2026)
+
+« La plupart des réponses aussi sont dans mes propres réponses aux candidats. » Les 260 réponses
+du directeur aux candidats (14 au 19/11/2026) ont été lues et condensées, sans nom ni message de
+candidat : `../BUREAU-EQUIPE/PRAXIS/REPONSES-DIRECTEUR-2026-11-20.md` (24 familles de questions,
+ses formules, ce qu'il demande, ce qu'il renvoie à plus tard). La consigne de la routine les porte
+depuis 02:55 UTC. **Points où ses réponses varient, à trancher par lui** : 3 jours par semaine
+« obligatoire » ou « de préférence » ; compte bancaire nécessaire dès la candidature ou seulement
+après l'acceptation ; moyens de versement autres que le virement (Wise dit accepté une fois, mobile
+money décidé le 16/11) ; les montants de 115 et 125 dollars donnés une seule fois le 14/11 comme
+estimation (Praxis ne cite aucun chiffre). Même consigne à porter dans `repondre-rewayah`.
