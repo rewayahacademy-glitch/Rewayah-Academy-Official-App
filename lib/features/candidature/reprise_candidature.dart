@@ -27,6 +27,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../core/candidature/port_ma_candidature.dart';
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
+import '../../core/dossier/service_dossier.dart';
 
 /// L'identifiant de la dependance serveur de la reprise, pour la trace et les
 /// tests : jamais affiche.
@@ -256,8 +257,14 @@ final Provider<PortRepriseCandidature> portRepriseCandidatureProvider =
 
 /// Ce que le serveur dit de la reprise. Une lecture en echec ne se relance
 /// pas seule : l'ecran dit alors ce qui est vrai sans elle.
+///
+/// Elle suit le dossier : chaque relecture de [etatDossierProvider]
+/// (« Actualiser », tirer pour actualiser, retour dans l'application, un
+/// geste qui l'invalide) relit aussi la reprise, sans qu'aucun appelant ait a
+/// la nommer. On peut aussi l'invalider seule.
 final FutureProvider<RepriseCandidature> repriseCandidatureProvider =
-    FutureProvider<RepriseCandidature>(
-      (Ref ref) => ref.watch(portRepriseCandidatureProvider).lire(),
-      retry: (int _, Object _) => null,
-    );
+    FutureProvider<RepriseCandidature>((Ref ref) {
+      // Seule la relecture compte ici, pas sa valeur ni son echec.
+      ref.watch(etatDossierProvider.future).ignore();
+      return ref.watch(portRepriseCandidatureProvider).lire();
+    }, retry: (int _, Object _) => null);

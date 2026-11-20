@@ -12,6 +12,7 @@
 //   test/features/candidature/accueil_candidat_test.dart
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -19,6 +20,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/port_ma_candidature.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/communications/ma_candidature_fil.dart';
+import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/fraicheur/avis_ephemere.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -109,8 +111,12 @@ class _Reprise implements PortRepriseCandidature {
   Object? erreurReprise;
   final List<(int, String)> reprises = <(int, String)>[];
 
+  /// Le nombre de lectures servies.
+  int lectures = 0;
+
   @override
   Future<RepriseCandidature> lire() async {
+    lectures++;
     final Object? e = erreurLecture;
     // Volontairement un Object, comme le vrai client.
     // ignore: only_throw_errors
@@ -1010,6 +1016,26 @@ void main() {
         () => RepriseCandidature.depuisJson(const <String, Object?>{}),
         throwsFormatException,
       );
+    });
+    testWidgets('relire le dossier relit aussi la reprise (le delai passe se '
+        'voit sans rien invalider d autre)', (WidgetTester tester) async {
+      final _Reprise reprise = _Reprise(_repriseOuverte());
+      await _accueil(tester, _retiree, reprise: reprise);
+      expect(find.byKey(CarteReprise.cleBouton), findsOneWidget);
+      final int avant = reprise.lectures;
+      // Entre-temps, le delai est passe cote serveur.
+      reprise.lue = const RepriseCandidature(
+        retiree: true,
+        possible: false,
+        delaiJours: 7,
+        raison: RaisonRepriseFermee.delaiDepasse,
+      );
+      // Seul le dossier est invalide, comme le fait « tirer pour actualiser ».
+      ProviderScope.containerOf(tester.element(find.byType(AccueilCandidat)))
+          .invalidate(etatDossierProvider);
+      await tester.pumpAndSettle();
+      expect(reprise.lectures, avant + 1);
+      expect(find.byKey(CarteReprise.cleBouton), findsNothing);
     });
   });
 
