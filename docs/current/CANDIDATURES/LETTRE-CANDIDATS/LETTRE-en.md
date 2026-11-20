@@ -17,7 +17,7 @@ You are reading this letter because you signed up, by your own choice, to teach 
 
 You came without knowing our name, the pay, or the people behind the academy. We did not tell you anything, and we did this on purpose. You came anyway. This touched us.
 
-When we read your messages, we understood one thing. Some of you think that you need us. It is the opposite. The academy needs you. These children, far from Qur'an schools, need you. Their families need you, and so does the whole Muslim community. Having you with us is an honour for us.
+When we read your messages, we understood one thing. Some of you think that you need us. It is the opposite. The academy needs you. These children, far from places where the Qur'an is taught, need you. Their families need you, and so does the whole Muslim community. Having you with us is an honour for us.
 
 So we owe you the truth, the whole truth: who we are, how much you will earn, how many hours you will give, what we expect from you, and what is hard in this work.
 
@@ -31,7 +31,7 @@ It is an official company: **Rewayah Academy Ltd**, registered in England and Wa
 
 The academy has existed for almost three years. Before that, each of us taught on our own, for many years.
 
-Most of our students are Muslims of the diaspora. They are families who live far from the countries where you find a Qur'an school in every street.
+Most of our students are Muslims of the diaspora. They are families who live far from the countries where you can learn the Qur'an in every street.
 
 During these three years, the same problem came back again and again. Students wanted to learn, and we did not have the right teacher for them. We had to say no, or ask them to wait.
 
@@ -43,7 +43,7 @@ So we made a call to the men and women of the Qur'an. More than 2,000 people hav
 
 No Zoom, no Meet, no WhatsApp. The academy has its own application, with its own video classroom.
 
-With us, a student joins **a class**. Think of a class at your secondary school or your university: fixed hours, its students, its tools, its teacher. We even have the bell that rings at the end of the lesson.
+With us, a student joins **a class**. Think of a class in your college or your university: fixed hours, its students, its tools, its teacher. We even have the bell that rings at the end of the lesson.
 
 Men teach boys and men. Women teach girls and women. There is only one exception: to save a session, a substitute teacher of the other gender can give the lesson that day (see part 6).
 

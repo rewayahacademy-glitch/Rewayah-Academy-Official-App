@@ -208,6 +208,18 @@ Map<String, String> _domaine(String langue, String domaine) => _aplatir(
 
 /// Les textes gardes en latin (marque, format de fichier).
 const Set<String> _latins = <String>{
+  // LETTRE-CANDIDATS (directeur, 20/11/2026) : des noms propres gardes en
+  // latin, tels qu'ils s'ecrivent : Praxis ; la raison sociale et l'adresse
+  // de la societe au registre britannique (Companies House) ; les outils
+  // cites (Zoom, Meet, WhatsApp) ; le service de virement (Wise) ;
+  // l'adresse de courriel du support.
+  'recrutement.lettre.praxisNom',
+  'recrutement.lettre.praxis.accueil',
+  'recrutement.lettre.parties.p2.corps',
+  'recrutement.lettre.parties.p5.corps',
+  'recrutement.lettre.parties.p11.titre',
+  'recrutement.lettre.parties.p11.corps',
+  'recrutement.lettre.parties.p12.corps',
   // PX-3 : « Praxis », le nom propre du secretaire de l'academie, ecrit en
   // latin dans toutes les langues (le titre de sa section n'est que ce nom).
   'admin.praxis.titre',

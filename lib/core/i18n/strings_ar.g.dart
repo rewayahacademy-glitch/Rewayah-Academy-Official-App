@@ -11123,7 +11123,7 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	@override String get miseAJour => 'آخر تحديث: 20 نوفمبر 2026';
 	@override String get sommaire => 'المحتويات';
 	@override String get revenirSommaire => 'العودة إلى المحتويات';
-	@override String allerA({required Object titre}) => 'الانتقال إلى الجزء: ${titre}';
+	@override String allerA({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩';
 	@override String get entree => 'اقرأ الرسالة الموجّهة إلى المرشحين للتعليم';
 	@override String get entreeLegende => 'الأجر، وساعات العمل، وانتظار الفصل، وقواعدنا';
 	@override String get verrouTitre => 'تُفتح هذه الرسالة بعد قبول اتفاقياتك';
@@ -41529,7 +41529,7 @@ extension on TraductionsAr {
 			'recrutement.lettre.miseAJour' => 'آخر تحديث: 20 نوفمبر 2026',
 			'recrutement.lettre.sommaire' => 'المحتويات',
 			'recrutement.lettre.revenirSommaire' => 'العودة إلى المحتويات',
-			'recrutement.lettre.allerA' => ({required Object titre}) => 'الانتقال إلى الجزء: ${titre}',
+			'recrutement.lettre.allerA' => ({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩',
 			'recrutement.lettre.entree' => 'اقرأ الرسالة الموجّهة إلى المرشحين للتعليم',
 			'recrutement.lettre.entreeLegende' => 'الأجر، وساعات العمل، وانتظار الفصل، وقواعدنا',
 			'recrutement.lettre.verrouTitre' => 'تُفتح هذه الرسالة بعد قبول اتفاقياتك',
