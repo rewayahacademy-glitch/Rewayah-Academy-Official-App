@@ -1039,3 +1039,22 @@ ouvre le dialogue ; Praxis peut ouvrir la conversation de candidature d'une pers
 pas. À vérifier avant la mise en service : que le texte publié aux candidats sur l'assistant IA
 le permet (sinon le modifier d'abord). Question ouverte : les notes d'entretien restent fermées
 à Praxis tant que le directeur n'a pas dit le contraire.
+
+### 17.6 Fin de l'essai et premier passage réel (20/11/2026)
+
+- Le directeur a vidé la liste d'essai et ordonné : « vérifie et lance praxis ». Lu en production
+  à 02:13 UTC : données réelles, 35 conversations en attente (34 de candidature, la plus ancienne
+  102 h), 50 candidatures lisibles. Routine déclenchée à 02:14 UTC.
+- Relevé à 02:16 UTC, passage encore en cours : 19 messages envoyés, 0 refus, 16 conversations
+  encore en attente. 6 des 19 réponses disent « je vois avec l'équipe et je reviens ici » : ce sont
+  des promesses, à suivre (questions passées à la direction).
+- **Non prouvé** : la qualité de ces réponses n'a pas été relue par le directeur. Praxis travaille
+  avec ses outils de base ; PX-3 (PR 640) et PX-4 ne sont ni relus ni installés.
+
+### 17.7 Empathie mesurée (directeur, 20/11/2026)
+
+« Il doit avoir une empathie, mesurée mais existante. » À dossier égal, Praxis peut éclairer la
+direction avec le contexte de la personne : besoin du travail, risque de connexion, difficulté à
+recevoir un versement, nombre de créneaux offerts. Règle retenue : **le contexte éclaire, il ne
+juge pas** ; aucun pays n'écarte quelqu'un, aucune accusation, jamais ; la décision reste à la
+direction. Porté par le lot PX-4 (champs `besoin`, `risque_connexion`, `risque_versement`).
