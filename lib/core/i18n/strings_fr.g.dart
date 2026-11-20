@@ -49876,7 +49876,7 @@ class Traductions$admin$candidatures$lot$feuille$fr {
 	String etAutres({required Object n}) => 'et ${n} autres';
 
 	/// fr: 'Ces candidatures restent retenues, en fin de sélection : le prochain geste portera d'abord sur les suivantes.'
-	String get reporteesEnFin => 'Ces candidatures restent retenues, en fin de sélection : le prochain geste portera d\'abord sur les suivantes.';
+	String get reporteesEnFin => 'Ces candidatures restent retenues, en fin de sélection : le prochain geste portera d\'abord sur les suivantes.';
 
 	/// fr: 'Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.'
 	String get effetPause => 'Les candidatures concernées n\'avancent plus tant que la pause n\'est pas levée.';
@@ -49918,7 +49918,7 @@ class Traductions$admin$candidatures$lot$feuille$fr {
 	String get effetAdmettre => 'Les candidatures concernées passent en Salle de vérification et d\'entretien. Chaque personne qui a une adresse reçoit le courriel qui l\'invite à l\'entretien, et un avis dans l\'application.';
 
 	/// fr: 'Chaque candidature concernée attend le même élément. La personne voit la demande en ouvrant l'application : aucun courriel ni avis ne part.'
-	String get effetComplement => 'Chaque candidature concernée attend le même élément. La personne voit la demande en ouvrant l\'application : aucun courriel ni avis ne part.';
+	String get effetComplement => 'Chaque candidature concernée attend le même élément. La personne voit la demande en ouvrant l\'application : aucun courriel ni avis ne part.';
 
 	/// fr: 'Chaque personne concernée reçoit le même message dans sa conversation avec la direction. Rien d'autre ne change.'
 	String get effetEcrire => 'Chaque personne concernée reçoit le même message dans sa conversation avec la direction. Rien d\'autre ne change.';
@@ -49972,10 +49972,10 @@ class Traductions$admin$candidatures$lot$erreurs$fr {
 	String get cleReutilisee => 'Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.';
 
 	/// fr: 'Le premier envoi est peut-être parti, avec le message d'avant : sa réponse n'était pas arrivée. Ouvrez les conversations des candidats pour le vérifier avant de recommencer.'
-	String get cleReutiliseeEcrire => 'Le premier envoi est peut-être parti, avec le message d\'avant : sa réponse n\'était pas arrivée. Ouvrez les conversations des candidats pour le vérifier avant de recommencer.';
+	String get cleReutiliseeEcrire => 'Le premier envoi est peut-être parti, avec le message d\'avant : sa réponse n\'était pas arrivée. Ouvrez les conversations des candidats pour le vérifier avant de recommencer.';
 
 	/// fr: 'Le premier envoi est peut-être parti, avec les choix d'avant : sa réponse n'était pas arrivée. Vérifiez les candidatures dans la liste avant de recommencer.'
-	String get cleReutiliseeIncertaine => 'Le premier envoi est peut-être parti, avec les choix d\'avant : sa réponse n\'était pas arrivée. Vérifiez les candidatures dans la liste avant de recommencer.';
+	String get cleReutiliseeIncertaine => 'Le premier envoi est peut-être parti, avec les choix d\'avant : sa réponse n\'était pas arrivée. Vérifiez les candidatures dans la liste avant de recommencer.';
 
 	/// fr: 'Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.'
 	String get horsPortee => 'Une candidature de la sélection est hors de votre accès. Rien n\'a été fait. Actualisez l\'aperçu.';
@@ -55482,7 +55482,7 @@ class Traductions$admin$candidatures$lot$feuille$raisons$fr {
 	String get elementNonPermis => 'Cet élément ne se demande pas à son étape.';
 
 	/// fr: 'Ce même message lui a déjà été envoyé par la direction dans les dernières 24 heures : il ne part pas une seconde fois.'
-	String get dejaEnvoye => 'Ce même message lui a déjà été envoyé par la direction dans les dernières 24 heures : il ne part pas une seconde fois.';
+	String get dejaEnvoye => 'Ce même message lui a déjà été envoyé par la direction dans les dernières 24 heures : il ne part pas une seconde fois.';
 }
 
 // Path: admin.candidatures.lot.feuille.rapport
@@ -60104,7 +60104,7 @@ extension on Traductions {
 			'admin.candidatures.lot.feuille.seront' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} candidature sera concernée', other: '${n} candidatures seront concernées', ), 
 			'admin.candidatures.lot.feuille.neSeront' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} candidature ne sera pas concernée', other: '${n} candidatures ne seront pas concernées', ), 
 			'admin.candidatures.lot.feuille.etAutres' => ({required Object n}) => 'et ${n} autres',
-			'admin.candidatures.lot.feuille.reporteesEnFin' => 'Ces candidatures restent retenues, en fin de sélection : le prochain geste portera d\'abord sur les suivantes.',
+			'admin.candidatures.lot.feuille.reporteesEnFin' => 'Ces candidatures restent retenues, en fin de sélection : le prochain geste portera d\'abord sur les suivantes.',
 			'admin.candidatures.lot.feuille.effetPause' => 'Les candidatures concernées n\'avancent plus tant que la pause n\'est pas levée.',
 			'admin.candidatures.lot.feuille.effetLever' => 'Les candidatures concernées reprennent là où elles s\'étaient arrêtées.',
 			'admin.candidatures.lot.feuille.effetRefuser' => 'Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.',
@@ -60131,7 +60131,7 @@ extension on Traductions {
 			'admin.candidatures.lot.feuille.raisons.conversationPause' => 'Sa candidature est en pause : aucune conversation n\'est possible.',
 			'admin.candidatures.lot.feuille.raisons.conversationEtat' => 'Son état ne permet plus d\'écrire dans la conversation de candidature.',
 			'admin.candidatures.lot.feuille.raisons.elementNonPermis' => 'Cet élément ne se demande pas à son étape.',
-			'admin.candidatures.lot.feuille.raisons.dejaEnvoye' => 'Ce même message lui a déjà été envoyé par la direction dans les dernières 24 heures : il ne part pas une seconde fois.',
+			'admin.candidatures.lot.feuille.raisons.dejaEnvoye' => 'Ce même message lui a déjà été envoyé par la direction dans les dernières 24 heures : il ne part pas une seconde fois.',
 			'admin.candidatures.lot.feuille.rapport.titre' => 'Résultat',
 			'admin.candidatures.lot.feuille.rapport.reussies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} candidature traitée', other: '${n} candidatures traitées', ), 
 			'admin.candidatures.lot.feuille.rapport.exclues' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} exclue', other: '${n} exclues', ), 
@@ -60143,7 +60143,7 @@ extension on Traductions {
 			'admin.candidatures.lot.feuille.rapport.ligneRefusee' => 'Refusée',
 			'admin.candidatures.lot.feuille.rapport.sansNom' => 'Candidature sans nom lisible',
 			'admin.candidatures.lot.feuille.effetAdmettre' => 'Les candidatures concernées passent en Salle de vérification et d\'entretien. Chaque personne qui a une adresse reçoit le courriel qui l\'invite à l\'entretien, et un avis dans l\'application.',
-			'admin.candidatures.lot.feuille.effetComplement' => 'Chaque candidature concernée attend le même élément. La personne voit la demande en ouvrant l\'application : aucun courriel ni avis ne part.',
+			'admin.candidatures.lot.feuille.effetComplement' => 'Chaque candidature concernée attend le même élément. La personne voit la demande en ouvrant l\'application : aucun courriel ni avis ne part.',
 			'admin.candidatures.lot.feuille.effetEcrire' => 'Chaque personne concernée reçoit le même message dans sa conversation avec la direction. Rien d\'autre ne change.',
 			'admin.candidatures.lot.feuille.motifCommunComplement' => 'Le même élément et le même motif valent pour toutes les candidatures concernées.',
 			'admin.candidatures.lot.feuille.element' => 'Ce qui est demandé',
@@ -60158,8 +60158,8 @@ extension on Traductions {
 			'admin.candidatures.lot.erreurs.aucunEligible' => 'Aucune candidature de la sélection ne peut recevoir ce geste. Rien n\'a été fait.',
 			'admin.candidatures.lot.erreurs.nonGroupable' => 'Ce geste ne se fait pas pour plusieurs candidatures à la fois. Ouvrez le dossier de chacune pour le faire.',
 			'admin.candidatures.lot.erreurs.cleReutilisee' => 'Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.',
-			'admin.candidatures.lot.erreurs.cleReutiliseeEcrire' => 'Le premier envoi est peut-être parti, avec le message d\'avant : sa réponse n\'était pas arrivée. Ouvrez les conversations des candidats pour le vérifier avant de recommencer.',
-			'admin.candidatures.lot.erreurs.cleReutiliseeIncertaine' => 'Le premier envoi est peut-être parti, avec les choix d\'avant : sa réponse n\'était pas arrivée. Vérifiez les candidatures dans la liste avant de recommencer.',
+			'admin.candidatures.lot.erreurs.cleReutiliseeEcrire' => 'Le premier envoi est peut-être parti, avec le message d\'avant : sa réponse n\'était pas arrivée. Ouvrez les conversations des candidats pour le vérifier avant de recommencer.',
+			'admin.candidatures.lot.erreurs.cleReutiliseeIncertaine' => 'Le premier envoi est peut-être parti, avec les choix d\'avant : sa réponse n\'était pas arrivée. Vérifiez les candidatures dans la liste avant de recommencer.',
 			'admin.candidatures.lot.erreurs.horsPortee' => 'Une candidature de la sélection est hors de votre accès. Rien n\'a été fait. Actualisez l\'aperçu.',
 			'admin.candidatures.lot.erreurs.lectureApercu' => 'L\'aperçu n\'a pas pu être lu. Rien n\'a été fait. Réessayez.',
 			'admin.candidatures.lot.ecrire' => 'Écrire',
