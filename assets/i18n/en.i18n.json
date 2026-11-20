@@ -3140,6 +3140,7 @@
         "reponsesDetail": "Your languages, your recitation, your availability and your payout. You can save and come back later."
       },
       "annonce": {
+        "ligne": "New: {titre}",
         "ranger": "Put away the announcement: {titre}",
         "rangee": "Announcement put away in the Academy tab."
       },

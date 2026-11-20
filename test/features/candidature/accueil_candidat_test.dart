@@ -548,11 +548,48 @@ void main() {
         _texte(t.recrutement.accueil.etapes.position(n: 1, total: 3)),
         findsOneWidget,
       );
+      // A cote de la position : l'etat de la candidature, sans second titre
+      // (pilote, 20/11/2026). Le nom de l'etape et ce qui s'y passe se
+      // deplient au toucher.
       expect(
-        tester.widget<Text>(find.byKey(EnteteSalle.salleKey)).data,
-        t.recrutement.sallesCandidat.candidature,
+        tester.widget<Text>(find.byKey(StatutCandidature.titreKey)).data,
+        t.recrutement.portail.aCompleterTitre,
       );
-      expect(_texte(t.recrutement.accueil.etapes.detail1), findsOneWidget);
+      expect(find.byKey(LigneEtapes.cleDetail), findsNothing);
+      await tester.tap(find.byKey(LigneEtapes.cleStation(1)));
+      await tester.pumpAndSettle();
+      expect(
+        tester.widget<Text>(find.byKey(LigneEtapes.cleDetail)).data,
+        '${t.recrutement.sallesCandidat.candidature}. '
+        '${t.recrutement.accueil.etapes.detail1}',
+      );
+    });
+
+    testWidgets('maquette : l annonce au-dessus du titre ; une ligne du '
+        'dossier sans icone ni chevron ; aucun titre de section', (
+      WidgetTester tester,
+    ) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        fil: _Fil(recues: <AnnonceRecue>[_annonce]),
+      );
+      expect(
+        tester.getTopLeft(find.byKey(AnnonceEnLigne.cle)).dy,
+        lessThan(tester.getTopLeft(find.byKey(OngletDossier.cleTitre)).dy),
+      );
+      // « Nouveau : … » ; le titre est isole pour le sens de lecture.
+      expect(
+        tester.widget<Text>(find.textContaining(_annonce.titre)).data,
+        startsWith(t.recrutement.accueil.annonce.ligne(titre: '').trimRight()),
+      );
+      final Finder ligne = find.byKey(OngletDossier.cleLigne('piece'));
+      expect(
+        find.descendant(of: ligne, matching: find.byType(Icon)),
+        findsNothing,
+      );
+      expect(_texte(t.recrutement.accueil.lignes.titre), findsNothing);
+      expect(_texte(t.recrutement.portail.listeTitre), findsNothing);
     });
 
     testWidgets('toucher une station dit ce qui s y passe', (
@@ -1064,7 +1101,22 @@ void main() {
       await _accueil(
         tester,
         candidature ?? candidatureAFaire(),
-        fil: fil ?? _Fil(recues: <AnnonceRecue>[_annonce]),
+        fil:
+            fil ??
+            _Fil(
+              recues: <AnnonceRecue>[
+                // En arabe, une annonce ecrite en arabe (donnee fictive).
+                if (langue == AppLocale.ar)
+                  AnnonceRecue(
+                    id: 'a1',
+                    titre: 'تُفتح المقابلات يوم الاثنين',
+                    texte: 'ستُعرض المواعيد هنا صباح الاثنين.',
+                    publieeLe: _le,
+                  )
+                else
+                  _annonce,
+              ],
+            ),
         reprise: reprise ?? _Reprise(_enCours),
         taille: taille,
         themeMode: theme,
@@ -1098,6 +1150,16 @@ void main() {
             accordsFaits: false,
           );
           await capturerVue(tester, '$d/dossier-390-$l-$th');
+          if (l == 'fr' && th == 'clair') {
+            // La fin du defilement : la derniere ligne se lit en entier,
+            // au-dessus de la barre.
+            await tester.drag(
+              find.byKey(OngletDossier.cleAFaire),
+              const Offset(0, -2000),
+            );
+            await tester.pumpAndSettle();
+            await capturerVue(tester, '$d/dossier-390-fin-de-page');
+          }
         });
       }
     }

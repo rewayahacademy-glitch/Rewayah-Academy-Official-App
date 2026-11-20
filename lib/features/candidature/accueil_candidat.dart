@@ -203,8 +203,9 @@ class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
       ),
       onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
       child: PageShell(
+        // Dossier pose son titre lui-meme, sous l'annonce (maquette).
         titre: switch (onglet) {
-          OngletCandidat.dossier => t.attente.titreDossier,
+          OngletCandidat.dossier => null,
           OngletCandidat.messages => o.messages,
           OngletCandidat.academie => t.recrutement.accueil.academie.titre,
         },

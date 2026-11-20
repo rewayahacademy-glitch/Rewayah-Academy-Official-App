@@ -3140,6 +3140,7 @@
         "reponsesDetail": "Vos langues, votre récitation, vos disponibilités et votre versement. Vous pouvez enregistrer et revenir plus tard."
       },
       "annonce": {
+        "ligne": "Nouveau\u00a0: {titre}",
         "ranger": "Ranger l'annonce : {titre}",
         "rangee": "Annonce rangée dans l'onglet Académie."
       },

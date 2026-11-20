@@ -2,10 +2,12 @@
 // ordinaire » ; « la meilleure interface et une logique qui ne cache rien font
 // 80 % de la confiance ») : la ligne des trois etapes du candidat.
 //
-// Trois stations nommees, reliees par un trait. Ce qui est fait est plein ;
-// le trait de l'etape en cours se remplit de la part deja faite du dossier ;
-// ce qui vient est en contour. Chaque station se touche : elle dit ce qui
-// s'y passe. Rien n'est cache, rien n'est devine : le rang vient de l'etape
+// Trois capsules, comme la maquette, mais vivantes : ce qui est fait est
+// plein ; la capsule de l'etape en cours se remplit, en ressort, de la part
+// deja faite du dossier ; ce qui vient est vide. Chaque capsule se touche
+// (elle s'enfonce et revient) : elle dit alors ce qui s'y passe. A cote de
+// la position, l'etat de la candidature (pilote, 20/11/2026 : aucun second
+// titre, aucun cercle numerote). Rien n'est cache, rien n'est devine : le rang vient de l'etape
 // que le serveur rend, la part des lignes du dossier.
 //
 // Mouvement : a l'arrivee, les traits se remplissent en ressort depuis le
@@ -14,13 +16,14 @@
 import 'package:flutter/material.dart';
 
 import '../../core/i18n/strings.g.dart';
-import '../../core/icons/app_icons.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/vivant/ressort.dart';
 import '../../core/vivant/toucher_vivant.dart';
-import 'portail_candidature.dart' show EnteteSalle, sallesDuCandidat;
+import 'onglet_dossier.dart' show Depliant;
+import 'portail_candidature.dart'
+    show EnteteSalle, StatutCandidature, sallesDuCandidat;
 
 /// La ligne des etapes du candidat.
 class LigneEtapes extends StatefulWidget {
@@ -33,6 +36,7 @@ class LigneEtapes extends StatefulWidget {
     required this.part,
     super.key,
     this.fermee = false,
+    this.etat,
   });
 
   /// L'etape en cours, de 1 a [sallesDuCandidat].
@@ -44,14 +48,16 @@ class LigneEtapes extends StatefulWidget {
   /// Vrai quand la candidature n'avance plus.
   final bool fermee;
 
+  /// L'etat de la candidature, en quelques mots (« Votre candidature est
+  /// envoyee »), dit a cote de la position tant qu'aucune autre etape n'est
+  /// touchee ; `null` : le nom de l'etape.
+  final String? etat;
+
   /// La cle de la station [i] (de 1 a 3).
   static Key cleStation(int i) => ValueKey<String>('etape-station-$i');
 
   /// La cle de la phrase qui dit ce qui se passe a l'etape touchee.
   static const Key cleDetail = ValueKey<String>('etape-detail');
-
-  /// Le diametre d'une station.
-  static const double diametre = AppSpacing.xxl;
 
   /// L'epaisseur du trait.
   static const double trait = AppSpacing.sm;
@@ -87,6 +93,9 @@ class _EtatLigneEtapes extends State<LigneEtapes>
 
   /// L'etape dont le detail est montre ; l'etape en cours par defaut.
   late int _montree = widget.rang;
+
+  // Vrai des qu'une etape a ete touchee : son detail se deplie alors.
+  bool _touchee = false;
 
   @override
   Iterable<Ressort> get ressorts => <Ressort>[_avance, _gonfle];
@@ -125,7 +134,11 @@ class _EtatLigneEtapes extends State<LigneEtapes>
   }
 
   void _montrer(int i) {
-    if (_montree != i) setState(() => _montree = i);
+    setState(() {
+      // Retoucher l'etape montree replie son detail.
+      _touchee = !(_touchee && _montree == i);
+      _montree = i;
+    });
   }
 
   @override
@@ -138,39 +151,38 @@ class _EtatLigneEtapes extends State<LigneEtapes>
         ? palette.borderStrong.asBorderSide().color
         : palette.surfacePrimary.background;
     final Color vide = palette.borderHairline.asBorderSide().color;
+    // A cote de la position : l'etat de la candidature ; une autre etape
+    // touchee dit son nom.
+    final String? etat = widget.etat;
+    final bool ditEtat = etat != null && _montree == widget.rang;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            for (int i = 1; i <= sallesDuCandidat; i++)
+            for (int i = 1; i <= sallesDuCandidat; i++) ...<Widget>[
+              if (i > 1) Ecart.hSm,
               Expanded(
-                flex: i == sallesDuCandidat ? 0 : 1,
-                child: _Station(
+                child: _Segment(
                   key: LigneEtapes.cleStation(i),
                   rang: i,
                   enCours: i == widget.rang,
                   faite: i < widget.rang,
-                  fermee: widget.fermee,
-                  montree: i == _montree,
+                  montree: _touchee && i == _montree,
                   echelle: i == widget.rang ? _gonfle.x : 1,
-                  // La part pleine du trait qui suit la station [i].
-                  rempli: i == sallesDuCandidat
-                      ? null
-                      : (_avance.x - (i - 1)).clamp(0, 1).toDouble(),
+                  // La part pleine du segment [i] : il se remplit en ressort.
+                  rempli: (_avance.x - (i - 1)).clamp(0, 1).toDouble(),
                   plein: plein,
                   vide: vide,
                   onPress: () => _montrer(i),
                 ),
               ),
+            ],
           ],
         ),
-        Ecart.vMd,
-        // « Etape 1 sur 3 · Votre candidature » : la position, puis le nom
-        // de l'etape montree.
+        // « Etape 1 sur 3 · Votre candidature est a completer ».
         Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: AppSpacing.sm,
@@ -180,38 +192,55 @@ class _EtatLigneEtapes extends State<LigneEtapes>
               key: EnteteSalle.rangKey,
               semanticsLabel: _montree == widget.rang ? position : null,
               style: palette.inkMuted.applyTo(
-                textes.labelLarge ?? const TextStyle(),
+                textes.bodyMedium ?? const TextStyle(),
               ),
             ),
-            Text(
-              LigneEtapes.nom(_montree),
-              key: _montree == widget.rang ? EnteteSalle.salleKey : null,
-              style: palette.inkStrong.applyTo(
-                textes.titleSmall ?? const TextStyle(),
+            Semantics(
+              header: ditEtat,
+              child: Text(
+                ditEtat ? etat : LigneEtapes.nom(_montree),
+                key: ditEtat
+                    ? StatutCandidature.titreKey
+                    : _montree == widget.rang
+                    ? EnteteSalle.salleKey
+                    : null,
+                style: palette.inkStrong.applyTo(
+                  textes.titleSmall ?? const TextStyle(),
+                ),
               ),
             ),
           ],
         ),
-        Ecart.vXs,
-        Text(
-          LigneEtapes.detail(_montree),
-          key: LigneEtapes.cleDetail,
-          style: palette.inkMuted.applyTo(
-            textes.bodyMedium ?? const TextStyle(),
-          ),
+        // Ce qui se passe a l'etape touchee : une ligne, qui se deplie.
+        Depliant(
+          child: _touchee
+              ? Padding(
+                  padding: const EdgeInsets.only(top: AppSpacing.xs),
+                  child: Text(
+                    ditEtat
+                        ? '${LigneEtapes.nom(_montree)}. '
+                              '${LigneEtapes.detail(_montree)}'
+                        : LigneEtapes.detail(_montree),
+                    key: LigneEtapes.cleDetail,
+                    style: palette.inkMuted.applyTo(
+                      textes.bodyMedium ?? const TextStyle(),
+                    ),
+                  ),
+                )
+              : const SizedBox(width: double.infinity),
         ),
       ],
     );
   }
 }
 
-/// Une station et le trait qui la suit.
-class _Station extends StatelessWidget {
-  const _Station({
+/// Un segment de la ligne : une capsule qui se remplit. Elle se touche (elle
+/// s'enfonce, revient en ressort) et dit alors ce qui se passe a cette etape.
+class _Segment extends StatelessWidget {
+  const _Segment({
     required this.rang,
     required this.enCours,
     required this.faite,
-    required this.fermee,
     required this.montree,
     required this.echelle,
     required this.rempli,
@@ -224,10 +253,9 @@ class _Station extends StatelessWidget {
   final int rang;
   final bool enCours;
   final bool faite;
-  final bool fermee;
   final bool montree;
   final double echelle;
-  final double? rempli;
+  final double rempli;
   final Color plein;
   final Color vide;
   final VoidCallback onPress;
@@ -235,71 +263,30 @@ class _Station extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextTheme textes = Theme.of(context).textTheme;
     final e = t.recrutement.accueil.etapes;
-    final bool pleine = (faite || enCours) && !fermee;
     final String etat = faite
         ? e.faite
         : enCours
         ? e.enCours
         : e.aVenir;
-    final Widget disque = Transform.scale(
-      scale: echelle,
-      child: SizedBox.square(
-        dimension: LigneEtapes.diametre,
-        child: DecoratedBox(
-          decoration: ShapeDecoration(
-            color: pleine ? plein : null,
-            shape: CircleBorder(
-              side: pleine
-                  ? BorderSide.none
-                  : (enCours || faite
-                        ? palette.borderStrong.asBorderSide(width: 2)
-                        : palette.borderHairline.asBorderSide(width: 2)),
-            ),
-          ),
-          child: Center(
-            child: faite
-                ? IconTheme(
-                    data: pleine
-                        ? IconThemeData(
-                            size: AppSpacing.lg,
-                            color: palette.surfacePrimary.onBackground,
-                          )
-                        : palette.inkMuted.asIconTheme(size: AppSpacing.lg),
-                    child: Icon(AppIcons.succes.repos),
-                  )
-                : Text(
-                    '$rang',
-                    style:
-                        (pleine ? palette.surfacePrimary : null)?.applyTo(
-                          textes.labelLarge ?? const TextStyle(),
-                        ) ??
-                        palette.inkMuted.applyTo(
-                          textes.labelLarge ?? const TextStyle(),
-                        ),
-                  ),
-          ),
-        ),
-      ),
-    );
-    final double? part = rempli;
     return ToucherVivant(
       onPress: onPress,
+      enfoncement: 0.94,
       libelleSemantique: e.lecture(
-        position: e.position(n: rang, total: 3),
+        position: e.position(n: rang, total: sallesDuCandidat),
         nom: LigneEtapes.nom(rang),
         etat: etat,
       ),
-      child: Padding(
-        // La cible tactile : la station et sa marge, 48 de haut.
-        padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-        child: Row(
-          children: <Widget>[
-            // La station montree porte un anneau : jamais la couleur seule.
-            DecoratedBox(
+      child: SizedBox(
+        // La cible tactile : 48 de haut autour d'une capsule fine.
+        height: AppTouchTarget.standard,
+        child: Center(
+          child: Transform.scale(
+            scaleY: echelle,
+            child: DecoratedBox(
+              // L'etape touchee porte un contour : jamais la couleur seule.
               decoration: ShapeDecoration(
-                shape: CircleBorder(
+                shape: StadiumBorder(
                   side: montree
                       ? palette.inkAccent.asBorderSide(width: 2)
                       : BorderSide.none,
@@ -307,27 +294,16 @@ class _Station extends StatelessWidget {
               ),
               child: Padding(
                 padding: const EdgeInsets.all(AppSpacing.xs),
-                child: disque,
+                child: _Trait(part: rempli, plein: plein, vide: vide),
               ),
             ),
-            if (part != null)
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: AppSpacing.xs,
-                  ),
-                  child: _Trait(part: part, plein: plein, vide: vide),
-                ),
-              ),
-          ],
+          ),
         ),
       ),
     );
   }
 }
 
-/// Le trait entre deux stations, plein de [part] depuis le debut (la droite
-/// en arabe).
 class _Trait extends StatelessWidget {
   const _Trait({required this.part, required this.plein, required this.vide});
 

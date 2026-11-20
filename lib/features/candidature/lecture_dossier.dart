@@ -359,8 +359,6 @@ LectureDossier lireDossier(EtatDossier d) {
     return LectureDossier(
       titre: r.aCompleterTitre,
       phrases: <PhraseDossier>[
-        // SALLE-1-TOUT-ICI : tout se fait ici, et le deja fait se voit.
-        _phrase(r.toutIci, muette: true),
         if (demandes.isNotEmpty) ...<PhraseDossier>[
           _phrase(r.complementDemande),
           // La liste que la direction a choisie, jamais un texte libre.
@@ -397,7 +395,6 @@ LectureDossier lireDossier(EtatDossier d) {
   return LectureDossier(
     titre: r.enExamenTitre,
     phrases: <PhraseDossier>[
-      _phrase(r.enExamen),
       // AUDIT-PORTAIL-CANDIDAT : la piece refusee se dit, avec son chemin.
       if (pieceRefusee(d))
         _phrase(
@@ -475,13 +472,12 @@ LectureDossier _salleDeux(
       ),
     ];
   } else if (accordsAFaire || pieceManque) {
-    final int reste = (accordsAFaire ? 1 : 0) + (pieceManque ? 1 : 0);
     titre = t.attente.dossierIncomplet;
-    phrases = <PhraseDossier>[_phrase(t.attente.reste(n: reste))];
+    // Ce qui reste se lit dans « A faire maintenant » et dans les lignes.
+    phrases = const <PhraseDossier>[];
   } else {
     titre = t.attente.titre;
     phrases = <PhraseDossier>[
-      _phrase(t.attente.enVerification),
       _phrase(
         <String>[
           if (d.deposeLe != null) t.attente.deposeLe(date: _jour(d.deposeLe!)),

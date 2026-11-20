@@ -15,6 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../core/accessibilite/mode_accessibilite.dart';
+import '../../core/accessibilite/texte_sans_coupure.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/fraicheur/avis_ephemere.dart';
@@ -32,7 +33,6 @@ import '../../core/vivant/ressort.dart';
 import '../../core/vivant/toucher_vivant.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
-import '../../core/widgets/bouton_icone.dart';
 import '../../core/widgets/carte_groupee.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/status_pill.dart';
@@ -94,6 +94,9 @@ class OngletDossier extends ConsumerWidget {
   /// Ouvre l'onglet Academie (l'annonce en une ligne y mene).
   final VoidCallback onVoirAcademie;
 
+  /// La cle du titre de la page.
+  static const Key cleTitre = ValueKey<String>('dossier-titre');
+
   /// La cle de la carte « a faire maintenant ».
   static const Key cleAFaire = ValueKey<String>('dossier-a-faire');
 
@@ -127,9 +130,6 @@ class OngletDossier extends ConsumerWidget {
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
     final TextStyle corps = textes.bodyMedium ?? const TextStyle();
     final TextStyle muet = palette.inkMuted.applyTo(corps);
-    // Un texte tres agrandi passe d'un titre d'ecran a un titre de carte :
-    // « candidature » ne se coupe pas a 320 de large.
-    final bool agrandi = MediaQuery.textScalerOf(context).scale(14) / 14 > 1.3;
     final ActionDossier? action = lu.action;
     final String? entretien = libelleEntretienPortail(c);
 
@@ -139,8 +139,20 @@ class OngletDossier extends ConsumerWidget {
         // SALLE2-ENTRETIEN (directeur, 14/11/2026) : l'entretien proche ou
         // ouvert, en tete (une alerte urgente va toujours en tete).
         const CarteEntretienProche(),
-        // A9 : l'annonce nouvelle, en une ligne qui se ferme.
+        // A9 : l'annonce nouvelle, en une ligne qui se ferme, AU-DESSUS du
+        // titre (maquette) ; sans annonce, la marge de tete d'une page.
         AnnonceEnLigne(onVoir: onVoirAcademie),
+        // Le titre de la page : celui de `PageShell`, pose ici pour passer
+        // sous l'annonce.
+        Semantics(
+          header: true,
+          child: TexteSansCoupure(
+            t.attente.titreDossier,
+            key: cleTitre,
+            style: textes.headlineLarge ?? const TextStyle(),
+          ),
+        ),
+        Ecart.vSm,
         if (perime) ...<Widget>[
           _AvisPerime(horsLigne: horsLigne, onRelire: onRelire),
           Ecart.vLg,
@@ -153,17 +165,21 @@ class OngletDossier extends ConsumerWidget {
           Ecart.vLg,
         ],
         if (rang != null) ...<Widget>[
-          LigneEtapes(rang: rang, part: lu.partFaite, fermee: lu.fermee),
-          Ecart.vXl,
-        ],
-        // L'etat, en un titre et ses phrases.
-        if (lu.titre != null)
+          // L'etat se dit a cote de la position (« Etape 1 sur 3 · … ») :
+          // aucun second titre.
+          LigneEtapes(
+            rang: rang,
+            part: lu.partFaite,
+            fermee: lu.fermee,
+            etat: lu.titre,
+          ),
+        ] else if (lu.titre != null)
           Semantics(
             header: true,
             child: Text(
               lu.titre!,
               key: StatutCandidature.titreKey,
-              style: agrandi ? textes.titleMedium : textes.headlineSmall,
+              style: textes.titleMedium,
             ),
           ),
         for (final PhraseDossier p in lu.phrases) ...<Widget>[
@@ -224,16 +240,6 @@ class OngletDossier extends ConsumerWidget {
         ],
         if (lu.lignes.isNotEmpty) ...<Widget>[
           Ecart.vXl,
-          Semantics(
-            header: true,
-            child: Text(
-              lu.titreLignes ?? t.recrutement.accueil.lignes.titre,
-              style: palette.inkStrong.applyTo(
-                textes.titleSmall ?? const TextStyle(),
-              ),
-            ),
-          ),
-          Ecart.vMd,
           // Des contenus lies : UNE carte a lignes fines (K-55).
           CarteGroupee(
             sections: <Widget>[
@@ -508,16 +514,9 @@ class _EtatLigneDepliable extends State<LigneDepliable> {
     final TextTheme textes = Theme.of(context).textTheme;
     final a = t.recrutement.accueil.lignes;
     final bool fait = l.etat == EtatLigne.fait;
-    final bool rtl = Directionality.of(context) == TextDirection.rtl;
     // Un texte tres agrandi (ou 320 de large) : l'etat passe sous le nom, qui
     // garde toute la largeur ; aucun mot ne se coupe.
     final bool agrandi = MediaQuery.textScalerOf(context).scale(14) / 14 > 1.3;
-    final Widget icone = ExcludeSemantics(
-      child: IconTheme(
-        data: palette.inkAccent.asIconTheme(size: AppSpacing.xxl),
-        child: Icon(l.icone.repos),
-      ),
-    );
     final Widget nom = Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -539,53 +538,23 @@ class _EtatLigneDepliable extends State<LigneDepliable> {
         ],
       ],
     );
-    // Jamais la couleur seule : le mot dit l'etat, la coche le double.
+    // Comme la maquette : fait en vert, a faire en ambre. Jamais la couleur
+    // seule : le mot dit l'etat.
     final Widget etat = StatusPill(
       libelle: l.valeur,
-      ton: fait ? TonEtat.neutre : TonEtat.accent,
-      marqueur: fait
-          ? IconTheme(
-              data: palette.inkMuted.asIconTheme(size: AppSpacing.lg),
-              child: Icon(AppIcons.succes.repos),
-            )
-          : null,
-    );
-    final Widget chevron = ExcludeSemantics(
-      child: AnimatedRotation(
-        // Le chevron pointe vers la fin ; ouvert, il pointe vers le bas.
-        turns: _ouverte ? (rtl ? -0.25 : 0.25) : 0,
-        duration: AppMouvement.duree(context, AppMouvement.micro),
-        child: IconTheme(
-          data: palette.inkMuted.asIconTheme(size: AppSpacing.xl),
-          child: Icon(AppIcons.chevron.repos),
-        ),
-      ),
+      ton: fait ? TonEtat.succes : TonEtat.avertissement,
     );
     final Widget tete = agrandi
         ? Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
-            children: <Widget>[
-              nom,
-              Ecart.vSm,
-              Row(
-                children: <Widget>[
-                  Flexible(child: etat),
-                  const Spacer(),
-                  chevron,
-                ],
-              ),
-            ],
+            children: <Widget>[nom, Ecart.vSm, etat],
           )
         : Row(
             children: <Widget>[
-              icone,
-              Ecart.hMd,
               Expanded(child: nom),
               Ecart.hSm,
               etat,
-              Ecart.hXs,
-              chevron,
             ],
           );
     return Column(
@@ -611,10 +580,7 @@ class _EtatLigneDepliable extends State<LigneDepliable> {
         Depliant(
           child: _ouverte
               ? Padding(
-                  padding: EdgeInsetsDirectional.only(
-                    start: agrandi ? 0 : AppSpacing.xxl + AppSpacing.md,
-                    top: AppSpacing.sm,
-                  ),
+                  padding: const EdgeInsets.only(top: AppSpacing.sm),
                   child: Text(
                     l.detail,
                     key: OngletDossier.cleDetail(l.code),
@@ -704,33 +670,36 @@ class _EtatAnnonceEnLigne extends ConsumerState<AnnonceEnLigne> {
                   ),
                   child: Align(
                     alignment: AlignmentDirectional.centerStart,
-                    child: Text.rich(
-                      TextSpan(
-                        children: <InlineSpan>[
-                          TextSpan(
-                            text: '${t.com.annonces.fil.nouvelle}  ',
-                            style: textes.labelLarge,
-                          ),
-                          TextSpan(text: isolerSens(annonce.titre)),
-                        ],
+                    child: Text(
+                      t.recrutement.accueil.annonce.ligne(
+                        titre: isolerSens(annonce.titre),
                       ),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-                      style: fond.applyTo(
-                        textes.bodyMedium ?? const TextStyle(),
+                      style: palette.inkAccent.applyTo(
+                        textes.labelLarge ?? const TextStyle(),
                       ),
                     ),
                   ),
                 ),
               ),
             ),
-            BoutonIcone(
+            // Une croix simple (maquette), sur une cible de 48.
+            ToucherVivant(
               key: AnnonceEnLigne.cleFermer,
-              icone: AppIcons.fermer,
-              libelle: t.recrutement.accueil.annonce.ranger(
+              onPress: () => _ranger(annonce),
+              libelleSemantique: t.recrutement.accueil.annonce.ranger(
                 titre: annonce.titre,
               ),
-              onPress: () => _ranger(annonce),
+              child: SizedBox.square(
+                dimension: AppTouchTarget.standard,
+                child: Center(
+                  child: IconTheme(
+                    data: palette.inkAccent.asIconTheme(size: AppSpacing.xl),
+                    child: Icon(AppIcons.fermer.repos),
+                  ),
+                ),
+              ),
             ),
           ],
         ),
