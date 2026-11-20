@@ -1,0 +1,45 @@
+<meta charset="utf-8">
+<title>Praxis vous accueille</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<style>
+/* La maquette occupe la page ; ce qu'il faut toucher vient dessous. */
+:root{--fond:#F7F5FE;--surface:#FFFFFF;--encre:#110E20;--doux:#655E70;--filet:#E3DEE9;--pale:#EEE6FA;--accent:#8652E6;--secours-fond:#EEE6FA;--secours:#110E20;--texte:system-ui,-apple-system,"Segoe UI",sans-serif}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--fond:#16161E;--surface:#272734;--encre:#F5F2FA;--doux:#B3ABC2;--filet:#3D3D50;--pale:#342B4D;--accent:#BA98FB;--secours-fond:#342B4D;--secours:#F5F2FA;color-scheme:dark}}
+:root[data-theme="dark"]{--fond:#16161E;--surface:#272734;--encre:#F5F2FA;--doux:#B3ABC2;--filet:#3D3D50;--pale:#342B4D;--accent:#BA98FB;--secours-fond:#342B4D;--secours:#F5F2FA;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fond);color:var(--encre);font:16px/1.55 var(--texte)}
+.page{max-width:1500px;margin:0 auto;padding-block:16px 64px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:18px}
+h1{font-size:clamp(22px,4vw,30px);margin:0;line-height:1.15;letter-spacing:-.02em}
+h2{font-size:17px;margin:0}
+p{margin:0;max-width:72ch}
+.doux{color:var(--doux)}
+.cadre{border:1px solid var(--filet);border-radius:26px;overflow:hidden;position:relative;height:min(1000px,92vh);min-height:560px;background:var(--fond)}
+#flutter{position:absolute;inset:0}
+#etat{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:20px;color:var(--doux);font-weight:600}
+.secours{background:var(--secours-fond);color:var(--secours);border-radius:14px;padding:12px 16px;font-size:15px}
+.cartes{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.carte{background:var(--surface);border:1px solid var(--filet);border-radius:18px;padding:16px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.carte p{font-size:15px;color:var(--doux)}
+</style>
+
+<div class="page">
+  <div><h1>Praxis vous accueille</h1><p class="doux">Connexion, ouverture et mise à jour de l'application, en vrai Flutter. Tout ce qui est dans le cadre est du Flutter compilé ; le compteur d'images par seconde est en haut à gauche de l'écran.</p></div>
+  <div class="cadre"><div id="flutter"></div><div id="etat">Chargement du moteur Flutter…</div></div>
+  <p class="secours" id="secours" hidden>Le moteur Flutter n'a pas démarré dans cette page. Dites-le-moi : je vous l'enverrai autrement.</p>
+
+  <div class="cartes">
+    <div class="carte"><h2>La porte et la route</h2><p>Le vide de l'arche est de la lumière, plus une plaque blanche. Les deux pieds de l'arche descendent au sol et deviennent les bordures de la route : une seule ligne, de la clé de l'arche jusqu'au bord de l'écran.</p></div>
+    <div class="carte"><h2>Ses yeux</h2><p>Ce sont ceux du Praxis d'origine, trait pour trait : même ovale, même pupille, même place. Ils clignent, rien d'autre. Aucun sourcil ; seuls les mains, les pieds et la bouche s'ajoutent.</p></div>
+    <div class="carte"><h2>La lumière</h2><p>Une seule source : la porte du logo. Elle éclaire la route, les dalles et Praxis ; elle porte son ombre vers vous, de plus en plus longue à mesure qu'il s'éloigne d'elle. Blanc, lilas, lavande, violet : aucune autre teinte. « Hors connexion » l'éteint, « Connexion revenue » la rallume.</p></div>
+    <div class="carte"><h2>Connexion</h2><p>Dix-neuf situations dans la ligne « Jouer » : arrivée, habitué, saisie, adresse mal écrite, envoi, attente longue, liens expirés, réseau, serveur, Google (fenêtre ouverte, fermée, compte non invité), réussite. Praxis passe d'une situation à l'autre sans jamais sauter d'une place à l'autre.</p></div>
+    <div class="carte"><h2>Chargement et mise à jour</h2><p>Chargement : normal, lent (il le dit après huit secondes), en échec. Mise à jour : disponible, en cours (vingt-trois phrases d'attente, jamais deux fois de suite la même), presque finie, terminée, en échec, maintenance.</p></div>
+    <div class="carte"><h2>Réglages</h2><p>Téléphone, petit téléphone, ordinateur ; clair ou sombre ; français ou arabe (tout passe de droite à gauche) ; animations réduites. Touchez Praxis : il réagit, jamais deux fois de suite pareil. Le compteur d'images par seconde est en haut à gauche de l'écran.</p></div>
+  </div>
+</div>
+
+<script src="flutter_bootstrap.js" async></script>
+<script>
+(function(){var e=document.getElementById('etat'),s=document.getElementById('secours'),t0=Date.now();
+  var v=setInterval(function(){if(window.preuvePrete){e.style.display='none';clearInterval(v);return}
+    if(Date.now()-t0>25000){e.textContent="Le moteur Flutter n'a pas démarré ici.";s.hidden=false;clearInterval(v)}},300)})();
+</script>

@@ -15,15 +15,20 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
+import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 
 import '../capture/outil_capture.dart' hide stabiliser;
-import '../support/harnais.dart' show FausseSourceSession;
+import '../support/harnais.dart'
+    show FauxServiceAdmin, FauxServiceValidation, FausseSourceSession;
 import 'support_routeur.dart';
 
 const Map<String, String> _ecrans = <String, String>{
@@ -51,6 +56,7 @@ Future<void> _monter(
   Size taille = const Size(390, 844),
   double texte = 1,
   ThemeMode mode = ThemeMode.light,
+  List<Override> plus = const <Override>[],
 }) async {
   fixerVueCapture(tester, taille, 1);
   addTearDown(tester.view.reset);
@@ -62,6 +68,7 @@ Future<void> _monter(
         portClassesFoyerProvider.overrideWithValue(
           const ClassesFoyerIndisponible(),
         ),
+        ...plus,
       ],
       child: TranslationProvider(
         child: RepaintBoundary(
@@ -131,10 +138,80 @@ void main() {
     WidgetTester tester,
   ) async {
     LocaleSettings.setLocaleSync(AppLocale.fr);
-    final String titreFr = t.admin.tableau.titre;
+    // VIVANT : la page n'a plus de titre ; aucun libelle francais de ses
+    // cases ne doit y rester.
+    final List<String> libellesFr = <String>[
+      t.admin.tableau.titre,
+      t.admin.tableau.dossiers,
+      t.admin.tableau.demandes,
+      t.admin.tableau.foyers,
+      t.admin.tableau.rapports,
+      t.admin.tableau.vivant.activiteTitre,
+      t.admin.tableau.vivant.bonjour,
+      t.admin.tableau.vivant.bonApresMidi,
+      t.admin.tableau.vivant.bonsoir,
+    ];
     await LocaleSettings.setLocale(AppLocale.ar);
-    await _monter(tester, Routes.admin);
-    expect(find.text(t.admin.tableau.titre), findsWidgets);
-    expect(find.text(titreFr), findsNothing);
+    // Des compteurs lus : sans eux la page n'affiche que sa forme, et le
+    // test ne prouverait rien de l'arabe.
+    await _monter(
+      tester,
+      Routes.admin,
+      taille: const Size(1440, 1800),
+      plus: <Override>[
+        serviceAdminProvider.overrideWithValue(
+          FauxServiceAdmin()
+            ..indicateursRendus = const IndicateursAdmin(
+              dossiersEnAttente: 0,
+              foyersSansEnseignant: 2,
+              rapportsManquants: 1,
+              incidents24h: 0,
+              comptesEchus: 0,
+              demandesEnAttente: 4,
+            ),
+        ),
+        serviceValidationProvider.overrideWithValue(FauxServiceValidation()),
+      ],
+    );
+    expect(find.byType(TableauDeBordPage), findsOneWidget);
+    expect(find.byType(BentoVivant), findsOneWidget);
+    for (final String fr in libellesFr) {
+      expect(find.text(fr), findsNothing, reason: fr);
+    }
+    // Les textes arabes attendus, ecrits ici en toutes lettres (jamais relus
+    // dans les traductions) : la page doit les afficher tels quels.
+    for (final String ar in <String>[
+      'ملفات للاعتماد',
+      'طلبات للحسم',
+      'طلاب دون معلم',
+      'دفاتر متابعة ناقصة',
+      'ما الذي تغيّر',
+    ]) {
+      expect(find.text(ar), findsOneWidget, reason: ar);
+    }
+    // Le salut de Praxis, selon l'heure : l'un des trois, en arabe.
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) =>
+            w is Text &&
+            const <String>[
+              'صباح الخير.',
+              'طاب يومكم.',
+              'مساء الخير.',
+            ].contains(w.data),
+      ),
+      findsOneWidget,
+    );
+    // La semaine des creneaux ne s'ecrit pas avec l'alif de l'article commun
+    // aux sept jours : chaque jour a sa lettre.
+    expect(t.admin.tableau.vivant.joursInitiales, <String>[
+      'ن',
+      'ث',
+      'ر',
+      'خ',
+      'ج',
+      'س',
+      'ح',
+    ]);
   });
 }

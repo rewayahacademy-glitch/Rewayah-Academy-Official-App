@@ -17,6 +17,8 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/auth/adresse_retour.dart' show parametreCodeInvitationRetour;
+
 /// Le type d'invitation lu dans l'adresse.
 enum TypeInvitationCompte {
   /// Le second adulte d'un foyer.
@@ -66,6 +68,38 @@ InvitationDansAdresse? invitationDansAdresse(Uri adresse) {
       ? TypeInvitationCompte.equipe
       : null;
   return type == null ? null : InvitationDansAdresse(type: type, code: code);
+}
+
+/// PE-A2 (20/11/2026) : vrai quand l'adresse est un lien d'invitation de
+/// candidat enseignant. Deux liens partent des courriels de l'academie :
+/// l'invitation personnelle (`invitation=1&code=...`, courriels
+/// `invitation_enseignant` et `invitation_candidat_importe`) et le lien du
+/// candidat (`candidature=1`, avec ou sans code). Le type envoye au serveur ne
+/// change pas (`equipe` reste `equipe` : la fonction Edge distingue elle-meme
+/// enseignant et comptable) ; seul l'ecran change. L'invitation d'un foyer
+/// n'en est jamais une.
+///
+/// PE-A2, suite (20/11/2026) : aussi l'adresse de retour du lien de connexion
+/// (`/?candidature=1`, ou `/?invitation=1&code_invitation=...`,
+/// `adresse_retour.dart`) quand la personne y arrive sans session (lien
+/// ouvert dans un autre navigateur, ou le flux de connexion refuse) : elle ne
+/// retombe plus sur la connexion ordinaire. Le `code` d'une adresse de retour
+/// est celui du flux de connexion : il n'est jamais lu ici.
+/// `mode=creer&invitation=1` sans code reste la saisie du code d'un compte
+/// supprime (`cheminSaisieCode`) : ce n'est pas un candidat.
+bool arriveeCandidatDansAdresse(Uri adresse) {
+  final InvitationDansAdresse? invitation = invitationDansAdresse(adresse);
+  if (invitation != null) {
+    return invitation.type != TypeInvitationCompte.foyer;
+  }
+  final Map<String, String> p = <String, String>{
+    ...adresse.queryParameters,
+    ...?Uri.tryParse(adresse.fragment)?.queryParameters,
+  };
+  if (p['foyer'] == '1') return false;
+  if (p['candidature'] == '1') return true;
+  return p['invitation'] == '1' &&
+      (p[parametreCodeInvitationRetour] ?? '').trim().isNotEmpty;
 }
 
 /// La porte vers la fonction Edge `invitation-compte`.

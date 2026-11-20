@@ -158,7 +158,7 @@ import '../../../core/widgets/texte_protege.dart';
 import '../../../core/widgets/timeline_row.dart';
 import '../../../core/widgets/vue_etat_communication.dart';
 import '../../../core/widgets/zone_saisie.dart';
-import '../../admin_tableau/tuiles_compteur.dart';
+import '../../admin_tableau/bento_vivant.dart';
 import '../../enseignant_classes/mes_classes_page.dart' show MarquesClasse;
 import 'entrees_etats_comptable.dart';
 import 'entrees_etats_tuteur.dart';
@@ -351,58 +351,58 @@ final List<EntreeJournee> _entreesJournee = <EntreeJournee>[
 List<Destination> _destinationsExemple() =>
     destinationsPour(role: AppRole.guardian, mode: InterfaceMode.standard);
 
-/// Les quatre tuiles de tete du Centre de commande, avec les vraies tuiles
-/// (GALERIE-BENTO-2, K-10) : chiffre tabulaire, phrase de detail et apercu
-/// des trois plus anciens dossiers, comme dans tableau_de_bord_page.dart.
+/// Quatre cases de l'accueil de la direction, avec les vraies cases
+/// (`CaseNombre` du bento vivant, VIVANT 20/11/2026) : nombre a rouleaux,
+/// libelle, precision ; une case a zero est discrete (un filet).
 List<TuileBento> _tuilesBentoPrincipales() => <TuileBento>[
   TuileBento(
     etendue: EtendueBento.grande,
-    child: TuileCompteur(
-      valeur: 5,
-      libelle: t.admin.tableau.dossiers,
-      detail: t.admin.tableau.dossiersDetail,
-      // Chaque nom ouvre son dossier (DASH-ADM-1, D4 (a)).
-      apercu: <LigneApercu>[
-        LigneApercu(
-          'Aicha · ${t.admin.tableau.attenteJours(jours: 4)}',
-          onPress: _rien,
-        ),
-        LigneApercu(
-          'Ibrahim · ${t.admin.tableau.attenteUnJour}',
-          onPress: _rien,
-        ),
-        LigneApercu(
-          'Youssef · ${t.admin.tableau.attenteAujourdhui}',
-          onPress: _rien,
-        ),
-      ],
-      enLigne: true,
-      onPress: _rien,
+    child: Builder(
+      builder: (BuildContext context) => CaseNombre(
+        nombre: 5,
+        libelle: t.admin.tableau.dossiers,
+        detail: 'Aicha · ${t.admin.tableau.attenteJours(jours: 4)}',
+        icone: AppIcons.dossiers,
+        paire: AppPalette.of(context).washWarning,
+        onPress: _rien,
+      ),
     ),
   ),
   TuileBento(
     etendue: EtendueBento.haute,
-    child: TuileCompteur(
-      valeur: 3,
-      libelle: t.admin.tableau.demandes,
-      detail: t.admin.tableau.demandesDetail,
-      onPress: _rien,
+    child: Builder(
+      builder: (BuildContext context) => CaseNombre(
+        nombre: 3,
+        libelle: t.admin.tableau.demandes,
+        icone: AppIcons.attribution,
+        paire: AppPalette.of(context).washWarning,
+        onPress: _rien,
+      ),
     ),
   ),
   TuileBento(
     etendue: EtendueBento.carree,
-    child: TuileCompteur(
-      valeur: 17,
-      libelle: t.admin.tableau.foyers,
-      onPress: _rien,
+    child: Builder(
+      builder: (BuildContext context) => CaseNombre(
+        nombre: 17,
+        libelle: t.admin.tableau.foyers,
+        icone: AppIcons.classes,
+        paire: AppPalette.of(context).washWarning,
+        onPress: _rien,
+      ),
     ),
   ),
   TuileBento(
     etendue: EtendueBento.carree,
-    child: TuileCompteur(
-      valeur: 0,
-      libelle: t.admin.tableau.rapports,
-      onPress: _rien,
+    child: Builder(
+      builder: (BuildContext context) => CaseNombre(
+        nombre: 0,
+        libelle: t.admin.tableau.rapports,
+        icone: AppIcons.historique,
+        paire: AppPalette.of(context).washWarning,
+        filet: true,
+        onPress: _rien,
+      ),
     ),
   ),
 ];
@@ -2904,14 +2904,22 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'centre de commande, compteurs calmes regroupes',
         (BuildContext _) => GrilleBento(
+          // Les cases vivantes prennent la hauteur de leur contenu (texte
+          // agrandi, Interface guidee) : rien n'est coupe.
+          hauteurContenu: true,
           tuiles: <TuileBento>[
             ..._tuilesBentoPrincipales(),
             TuileBento(
               etendue: EtendueBento.large,
               etendueLarge: const EtendueBento(4, 1),
-              child: TuileDouble(
-                gauche: (0, t.admin.tableau.incidents),
-                droite: (0, t.admin.tableau.comptes),
+              child: Builder(
+                builder: (BuildContext context) => CaseNombre(
+                  nombre: 0,
+                  libelle: t.admin.tableau.incidents,
+                  icone: AppIcons.oeil,
+                  paire: AppPalette.of(context).washAlert,
+                  filet: true,
+                ),
               ),
             ),
           ],
@@ -2920,20 +2928,34 @@ List<EntreeGalerie> catalogueGalerie() => <EntreeGalerie>[
       EtatGalerie(
         'centre de commande, compteurs separes',
         (BuildContext _) => GrilleBento(
+          // Les cases vivantes prennent la hauteur de leur contenu (texte
+          // agrandi, Interface guidee) : rien n'est coupe.
+          hauteurContenu: true,
           tuiles: <TuileBento>[
             ..._tuilesBentoPrincipales(),
             TuileBento(
               etendue: EtendueBento.carree,
               etendueLarge: EtendueBento.large,
-              child: TuileCompteur(
-                valeur: 2,
-                libelle: t.admin.tableau.incidents,
+              child: Builder(
+                builder: (BuildContext context) => CaseNombre(
+                  nombre: 2,
+                  libelle: t.admin.tableau.incidents,
+                  icone: AppIcons.oeil,
+                  paire: AppPalette.of(context).washAlert,
+                ),
               ),
             ),
             TuileBento(
               etendue: EtendueBento.carree,
               etendueLarge: EtendueBento.large,
-              child: TuileCompteur(valeur: 1, libelle: t.admin.tableau.comptes),
+              child: Builder(
+                builder: (BuildContext context) => CaseNombre(
+                  nombre: 1,
+                  libelle: t.admin.tableau.comptes,
+                  icone: AppIcons.verrou,
+                  paire: AppPalette.of(context).washWarning,
+                ),
+              ),
             ),
           ],
         ),

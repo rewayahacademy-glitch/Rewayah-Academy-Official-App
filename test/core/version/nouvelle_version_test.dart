@@ -79,7 +79,9 @@ void main() {
     expect(find.text(t.miseAJour.prete), findsNothing);
   });
 
-  testWidgets('nouveau numero de build : le bandeau et « Recharger »', (
+  // PE-D9 (19/11/2026) : « Recharger » devient « Mettre a jour », a cote de
+  // « Plus tard » (test/core/racine/pe_racine_test.dart).
+  testWidgets('nouveau numero de build : l avis et « Mettre a jour »', (
     WidgetTester tester,
   ) async {
     final _Serveur serveur = _Serveur();
@@ -87,9 +89,9 @@ void main() {
     await _monter(tester, serveur, recharger: () => recharges++);
     serveur.corps = '{"version":"1.0.0","build_number":"8"}';
     await tester.pump(cadenceVersion);
-    await tester.pump();
+    await tester.pumpAndSettle();
     expect(find.text(t.miseAJour.prete), findsOneWidget);
-    await tester.tap(find.text(t.miseAJour.recharger));
+    await tester.tap(find.text(t.racine.miseAJour.mettre));
     expect(recharges, 1);
   });
 

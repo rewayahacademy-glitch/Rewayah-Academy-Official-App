@@ -57,6 +57,7 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../inscription/brouillon_inscription.dart';
 import '../inscription/code_comptable_retenu.dart';
+import '../inscription/inscription_page.dart' show NomEspace;
 import '../inscription/invitation_en_cours.dart';
 import '../salle_seance/information_controle.dart' show InformationControle;
 
@@ -223,22 +224,38 @@ class _InvitationCandidatPageState
         alignment: AlignmentDirectional.topStart,
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
-          child: !capable
-              ? EtatSysteme(
-                  key: const ValueKey<String>('candidat-indisponible'),
-                  nature: NatureEtat.indisponible,
-                  titre: titre,
-                  phrase: widget.comptable
-                      ? r.comptable.indisponible
-                      : r.indisponible,
-                  dependance: widget.comptable
-                      ? dependanceInvitationsComptable
-                      : dependanceInvitations,
-                )
-              : _corps(horsLigne),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              // PE-A3 (20/11/2026) : le candidat sait toujours ou il est,
+              // comme aux autres etapes de son parcours.
+              if (!widget.comptable) ...<Widget>[
+                NomEspace(t.inscription.porte.espaceEnseignant),
+                Ecart.vMd,
+              ],
+              _contenu(capable, horsLigne, titre),
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _contenu(bool capable, bool horsLigne, String titre) {
+    final r = t.recrutement.candidat;
+    return !capable
+        ? EtatSysteme(
+            key: const ValueKey<String>('candidat-indisponible'),
+            nature: NatureEtat.indisponible,
+            titre: titre,
+            phrase: widget.comptable
+                ? r.comptable.indisponible
+                : r.indisponible,
+            dependance: widget.comptable
+                ? dependanceInvitationsComptable
+                : dependanceInvitations,
+          )
+        : _corps(horsLigne);
   }
 
   /// La phrase et le lien de l'entree sans code, ou rien tant que le serveur ne

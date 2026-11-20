@@ -265,6 +265,15 @@
     "prete": "A new version of the app is ready.",
     "recharger": "Reload"
   },
+  "racine": {
+    "miseAJour": {
+      "mettre": "Update",
+      "plusTard": "Later"
+    },
+    "avis": {
+      "fermer": "Close the notice"
+    }
+  },
   "reseau": {
     "horsLigne": "No network. What is already displayed stays available.",
     "enAttenteEnvoi": "Will be sent as soon as the network is back",
@@ -1218,6 +1227,10 @@
     "cadreNonPublie": "Sending your application will be possible once the religious and educational framework is published."
   },
   "connexion": {
+    "candidat": {
+      "titre": "Your teacher application",
+      "phrase": "You are arriving through Rewayah Academy's invitation. Your application is waiting: enter the address that received this email, and we will send your sign-in link there."
+    },
     "titre": "Sign in",
     "sessionTermineeTitre": "You have been signed out",
     "sessionTermineePhrase": "Your session has ended: this account, or another one, signed in elsewhere, in this browser or on another device. Sign in again here. To use two accounts at the same time, open the second one in a private window or on another device.",
@@ -1280,7 +1293,13 @@
     "controle": {
       "libelle": "Security check",
       "chargement": "Security check in progress.",
-      "erreur": "The check did not complete. Try again.",
+      "erreur": "The security check did not complete. Tap \"Try again\"; if it fails again, reload the page.",
+      "erreurNavigateur": "The security check does not work in this browser. Open the page in Chrome or Safari (not inside a messaging app), turn off any ad blocker, then tap \"Try again\".",
+      "erreurHorloge": "The security check rejects your device's time. Set the date and time to \"automatic\", then tap \"Try again\".",
+      "erreurReglage": "The security check is not working right now because of a setting on our side. Try again later.",
+      "refuse": "The security check was not accepted. Tap the button again in a few seconds; if it happens again, reload the page.",
+      "autreCheminGoogle": "You can also continue with Google: that way does not go through this check.",
+      "rechargerPage": "Reload the page",
       "horsLigne": "The check cannot be done right now. Try again when the connection is back."
     },
     "probleme": "Link expired or never received?",
@@ -1441,6 +1460,18 @@
       "enseignantPostuler": "Do you want to teach at Rewayah?",
       "deposerCandidature": "Submit my application",
       "postulerIci": "Want to teach with us? Apply here"
+    },
+    "porte": {
+      "question": "What brings you to Rewayah Academy?",
+      "explication": "Choose your space. You will then only see the questions for that space.",
+      "apprendreTitre": "Learn",
+      "apprendreDescription": "Take the academy's classes, for yourself or for your child. You will say who next.",
+      "apprendreExemple": "you are learning recitation, or you are enrolling your 9-year-old daughter.",
+      "enseignerTitre": "Teach",
+      "enseignerDescription": "Submit your teacher application. The academy reviews it before any class.",
+      "enseignerExemple": "you received an invitation from the academy by email.",
+      "espaceEnseignant": "Teacher application",
+      "espaceEleve": "Student enrolment"
     },
     "recap": {
       "usage": "Account type",
@@ -5232,6 +5263,56 @@
       "sansDonnees": "the registrations import"
     },
     "tableau": {
+      "vivant": {
+        "verifierPieces": {
+          "one": "Check the document",
+          "other": "Check the {n} documents"
+        },
+        "repondreMessages": {
+          "one": "Answer the message",
+          "other": "Answer the {n} messages"
+        },
+        "activiteTitre": "What changed",
+        "semaineCreneaux": "Interview slots over the next seven days",
+        "bonjour": "Good morning.",
+        "bonApresMidi": "Good afternoon.",
+        "bonsoir": "Good evening.",
+        "praxisCreneaux": {
+          "one": "{n} applicant is waiting for an interview and no slot is open.",
+          "other": "{n} applicants are waiting for an interview and no slot is open."
+        },
+        "praxisPieces": {
+          "one": "{n} ID document is waiting for your validation.",
+          "other": "{n} ID documents are waiting for your validation."
+        },
+        "praxisDossiers": {
+          "one": "{n} identity file is waiting for your validation.",
+          "other": "{n} identity files are waiting for your validation."
+        },
+        "praxisDemandes": {
+          "one": "{n} request is waiting for your answer.",
+          "other": "{n} requests are waiting for your answer."
+        },
+        "praxisMessages": {
+          "one": "{n} conversation is waiting to be read.",
+          "other": "{n} conversations are waiting to be read."
+        },
+        "ouvrirCreneaux": "Open slots",
+        "parcoursTitre": "The applicants' journey",
+        "parcoursAide": "Each tile is as wide as its number of applicants.",
+        "messagesNonLus": "Unread conversations",
+        "courriels": "Emails sent in 24 hours",
+        "courrielsSur": "out of {max}",
+        "piecesAide": "Flip through the cards. Tap one to open the file.",
+        "pieceAide": "Tap the card to open the file.",
+        "piecesVide": "No ID document is waiting.",
+        "pieceIdentite": "ID document",
+        "ouvrirDossierDe": "Open {deNom}'s file",
+        "piecePrecedente": "Previous document",
+        "pieceSuivante": "Next document",
+        "piecePosition": "{rang} of {total}",
+        "joursInitiales": ["M", "T", "W", "T", "F", "S", "S"]
+      },
       "titre": "Command centre",
       "dossiers": "Files to validate",
       "dossiersDetail": "Open the queue, oldest first.",
@@ -7073,6 +7154,113 @@
         "autonomeRequis": "autonomous mode required",
         "refusee": "refused by the messaging",
         "autre": "unknown cause"
+      },
+      "travail": {
+        "titre": "Praxis's work",
+        "lien": "Praxis's work",
+        "lienDetail": "Files sorted by Praxis: {n}",
+        "intro": "What Praxis, the management's assistant, has done on teacher applicants' files: the pile it puts each file in, and its opinion.",
+        "rappel": "An opinion from the assistant, not a decision.",
+        "dossiers": "Files sorted and read",
+        "pile": "Pile",
+        "toutesPiles": "All piles",
+        "etiquette": "Label",
+        "toutesEtiquettes": "All labels",
+        "piles": {
+          "pretADecider": "Ready to decide",
+          "incomplet": "Incomplete",
+          "sansNouvelles": "No news",
+          "aRegarder": "To look at"
+        },
+        "etiquettes": {
+          "pepite": "Gem",
+          "solide": "Solid",
+          "aCreuser": "To dig into",
+          "reserve": "Reservations"
+        },
+        "nombre": "Files shown: {n}",
+        "colonneNom": "Applicant",
+        "colonnePile": "Pile",
+        "colonneEtiquette": "Label",
+        "colonneRaison": "Reason given by Praxis",
+        "colonneDate": "Seen on",
+        "pasLu": "Not read yet",
+        "pasRange": "Not sorted",
+        "marque": "Praxis: {quoi}",
+        "vide": "Praxis has not sorted or read any file yet.",
+        "videDetail": "Files will appear here as soon as Praxis sorts them.",
+        "aucunResultat": "No file matches these filters.",
+        "aucunResultatDetail": "Choose another pile or another label.",
+        "effacer": "Clear filters",
+        "voirPlus": "Show the next files",
+        "erreur": "Praxis's work could not be read. Try again in a moment.",
+        "horsLigne": "Praxis's work is not loaded yet. Reload it.",
+        "permission": "Praxis's work is for the management only."
+      },
+      "avis": {
+        "titre": "Praxis's opinion",
+        "rappel": "An opinion from the assistant, not a decision.",
+        "pasLu": "Praxis has not read this file yet.",
+        "confiance": "Confidence: {niveau}",
+        "confiances": {
+          "faible": "low",
+          "moyenne": "medium",
+          "forte": "high"
+        },
+        "criteres": "Criteria rated",
+        "critere": {
+          "maitrise": "Mastery",
+          "pedagogie": "Teaching",
+          "vision": "Vision",
+          "comportement": "Conduct",
+          "disponibilite": "Availability"
+        },
+        "note": "{critere}: {note} out of 5",
+        "synthese": "Summary",
+        "utilePour": "Useful for: {texte}",
+        "situation": "In which situation: {texte}",
+        "reserves": "Reservations: {texte}",
+        "videoOui": "Video: yes",
+        "videoNon": "Video: no",
+        "videoOuiParce": "Video: yes, because {texte}",
+        "videoNonParce": "Video: no, because {texte}",
+        "videoParce": "Video: {texte}",
+        "contexte": "Context",
+        "effets": {
+          "atout": "Strength",
+          "risque": "Risk",
+          "aVerifier": "To check"
+        },
+        "source": "Source: {source}",
+        "texte": "What Praxis wrote",
+        "notee": "Opinion noted on {date} at {heure}",
+        "rangement": "Praxis's pile",
+        "pile": "Sorted into: {pile}",
+        "rangeLe": "Sorted on {date} at {heure}",
+        "pasRange": "Praxis has not sorted this file yet.",
+        "erreur": "Praxis's opinion could not be read. Try again in a moment.",
+        "horsLigne": "Praxis's opinion is not loaded yet. Reload it."
+      },
+      "objectifs": {
+        "titre": "Praxis's goals",
+        "intro": "The goals Praxis sets itself for the day and for the week. It sets and closes them itself.",
+        "jour": "Goals for the day",
+        "semaine": "Goals for the week",
+        "clos": "Recently closed goals",
+        "cible": "Target: {n}",
+        "pourLe": "For {date}",
+        "semaineDu": "Week of {date}",
+        "echu": "Period over",
+        "ouvert": "Open",
+        "atteint": "Reached",
+        "abandonne": "Dropped",
+        "closLe": "Closed on {date}",
+        "aucunJour": "No open goal for the day.",
+        "aucunSemaine": "No open goal for the week.",
+        "aucun": "Praxis has not set any goal yet.",
+        "aucunDetail": "Its goals for the day and the week will appear here.",
+        "erreur": "Praxis's goals could not be read. Try again in a moment.",
+        "horsLigne": "Praxis's goals are not loaded yet. Reload them."
       }
     },
     "notifications": {
@@ -12731,7 +12919,6 @@
       },
       "direct": {
         "nouveau": "You have received a new message.",
-        "horsDirect": "Messages are not live right now (connection). Updating every 30 seconds.",
         "icone": "Messages",
         "iconeUnNonLu": "Messages, 1 unread",
         "iconeNonLus": "Messages, {nombre} unread"
@@ -15323,7 +15510,8 @@
           "- To follow attendance and progress.",
           "- To invoice the subscription.",
           "- To protect the students and review the quality of sessions.",
-          "- To repair outages."
+          "- To repair outages.",
+          "- To answer your messages faster, with the help of a digital assistant (see point 4)."
         ]
       },
       "s4": {
@@ -15331,7 +15519,8 @@
         "blocs": [
           "A family sees only its own information. A child's information is never public and is never shown to other families.",
           "The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.",
-          "A quality reviewer may attend sessions. Sensitive accesses are recorded in a log."
+          "A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.",
+          "A digital assistant, called Praxis, helps the academy answer families and candidates in the app's messaging. Its profile states that it is an artificial intelligence. The academy is helped by an AI assistant. It reads your application and your messages, except your contact details, your identity document, your photo and your payment details. It may write to you, ask you questions about your background and your way of teaching, and prepare an opinion for the management. Every decision on your application is made by the management. It reads no conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no email. It works under the responsibility of the management, which can stop it at any time."
         ]
       },
       "s5": {
@@ -15346,7 +15535,8 @@
         "titre": "6. Where your information is",
         "blocs": [
           "We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.",
-          "To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service."
+          "To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.",
+          "To read and answer, the assistant relies on an artificial intelligence provider. Today, this is Anthropic PBC (Claude), a company established in the United States. The academy may also use, under the same conditions, Google LLC (Gemini) or OpenAI (ChatGPT), both established in the United States; the provider in use is always stated here. The messages the assistant reads are sent to the provider for this reason only. They are not used to train its models and are deleted on its side after 30 days at the latest. This transfer outside the European Union is governed by the standard contractual clauses of the European Commission. We keep for 12 months a record of what the assistant sent, never of the text of the messages you write. The legal basis is our legitimate interest in answering you quickly."
         ]
       },
       "s7": {
@@ -15361,6 +15551,7 @@
           "- To see the information we hold about you.",
           "- To correct it.",
           "- To ask for its deletion or to limit its use.",
+          "You may at any time ask to speak to the team: a person takes over the conversation and the assistant no longer answers you in it.",
           "Write to us. We first check that it is you, or the student's Guardian. You may also contact the data protection authority of your country."
         ]
       },

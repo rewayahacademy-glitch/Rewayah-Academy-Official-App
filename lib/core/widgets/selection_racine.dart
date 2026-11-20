@@ -1,13 +1,79 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-/// Le seul `SelectionArea` de l'application (directeur, 07/11/2026) : tout le
-/// texte se sélectionne et se copie, sans le déclarer écran par écran.
+/// Ce qui se lit, et seulement cela, se sélectionne et se copie (PE-D11,
+/// directeur, 19/11/2026) : le texte d'une bulle de message, un document, un
+/// contrat, le cadre, un texte long de lecture.
 ///
-/// Posé une fois, dans le `builder` de `MaterialApp` (`RewayahApp`). À cet
-/// endroit aucun `Overlay` n'existe encore au-dessus (celui du `Navigator` est
-/// dans [child]) : le menu « Copier » n'aurait aucune couche où se poser. On
-/// donne donc à la sélection sa propre couche.
+/// Remplace le `SelectionArea` global d'avant (cause prouvée, PLAN §14.1) :
+/// posé autour de toute l'application, il ajoutait un appui long à chaque
+/// toucher, boutons compris, et ouvrait « Tout sélectionner » au moindre
+/// doigt posé ; son nœud de focus ne se laissait pas prendre, si bien
+/// qu'une sélection ne s'effaçait jamais. Ici la zone est petite, son nœud
+/// de focus est l'ordinaire : toucher ailleurs efface la sélection.
+///
+/// Il se pose sous le `Navigator` (dans une page) : le menu « Copier » prend
+/// la couche de la page. Le menu est celui de l'application
+/// ([menuSelection]).
+class TexteSelectionnable extends StatelessWidget {
+  /// Rend [child] sélectionnable.
+  const TexteSelectionnable({required this.child, super.key});
+
+  /// Le texte à lire.
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) =>
+      SelectionArea(contextMenuBuilder: menuSelection, child: child);
+}
+
+/// Le menu « Copier » / « Tout sélectionner » dans la police de
+/// l'application. Le bouton Material du menu natif pose un style sans
+/// famille : la police par défaut du système, au lieu de celle du thème
+/// (l'arabe y perd `NotoSansArabic`). Sur iOS et macOS, le menu natif reste.
+Widget menuSelection(BuildContext contexte, SelectableRegionState region) {
+  final List<ContextMenuButtonItem> boutons = region.contextMenuButtonItems;
+  switch (defaultTargetPlatform) {
+    case TargetPlatform.iOS:
+    case TargetPlatform.macOS:
+      return AdaptiveTextSelectionToolbar.buttonItems(
+        anchors: region.contextMenuAnchors,
+        buttonItems: boutons,
+      );
+    case TargetPlatform.android:
+    case TargetPlatform.fuchsia:
+    case TargetPlatform.linux:
+    case TargetPlatform.windows:
+      final TextStyle? style = Theme.of(contexte).textTheme.bodyMedium;
+      return AdaptiveTextSelectionToolbar(
+        anchors: region.contextMenuAnchors,
+        children: <Widget>[
+          for (int i = 0; i < boutons.length; i++)
+            TextSelectionToolbarTextButton(
+              padding: TextSelectionToolbarTextButton.getPadding(
+                i,
+                boutons.length,
+              ),
+              onPressed: boutons[i].onPressed,
+              child: Text(
+                AdaptiveTextSelectionToolbar.getButtonLabel(
+                  contexte,
+                  boutons[i],
+                ),
+                style: style,
+              ),
+            ),
+        ],
+      );
+  }
+}
+
+/// L'ancienne sélection de toute l'application (directeur, 07/11/2026).
+///
+/// **Plus posée par `RewayahApp` depuis PE-D11** (19/11/2026) : voir
+/// [TexteSelectionnable]. Elle ne sert plus qu'aux hôtes de test et à la
+/// galerie qui éprouvent `TexteProtege` sur un écran entier ; ne pas la
+/// reposer à la racine.
 ///
 /// Ce qui ne doit pas se copier se retire par `TexteProtege`, jamais par un
 /// `SelectionContainer.disabled` écrit à la main.
@@ -35,51 +101,10 @@ class _SelectionRacineState extends State<SelectionRacine> {
   late final OverlayEntry _entree = OverlayEntry(
     builder: (BuildContext _) => SelectionArea(
       focusNode: _focus,
-      contextMenuBuilder: _menu,
+      contextMenuBuilder: menuSelection,
       child: widget.child,
     ),
   );
-
-  /// Le menu « Copier » / « Tout sélectionner » dans la police de
-  /// l'application. Le bouton Material du menu natif pose un style sans
-  /// famille : la police par défaut du système, au lieu de celle du thème
-  /// (l'arabe y perd `NotoSansArabic`). Sur iOS et macOS, le menu natif reste.
-  static Widget _menu(BuildContext contexte, SelectableRegionState region) {
-    final List<ContextMenuButtonItem> boutons = region.contextMenuButtonItems;
-    switch (defaultTargetPlatform) {
-      case TargetPlatform.iOS:
-      case TargetPlatform.macOS:
-        return AdaptiveTextSelectionToolbar.buttonItems(
-          anchors: region.contextMenuAnchors,
-          buttonItems: boutons,
-        );
-      case TargetPlatform.android:
-      case TargetPlatform.fuchsia:
-      case TargetPlatform.linux:
-      case TargetPlatform.windows:
-        final TextStyle? style = Theme.of(contexte).textTheme.bodyMedium;
-        return AdaptiveTextSelectionToolbar(
-          anchors: region.contextMenuAnchors,
-          children: <Widget>[
-            for (int i = 0; i < boutons.length; i++)
-              TextSelectionToolbarTextButton(
-                padding: TextSelectionToolbarTextButton.getPadding(
-                  i,
-                  boutons.length,
-                ),
-                onPressed: boutons[i].onPressed,
-                child: Text(
-                  AdaptiveTextSelectionToolbar.getButtonLabel(
-                    contexte,
-                    boutons[i],
-                  ),
-                  style: style,
-                ),
-              ),
-          ],
-        );
-    }
-  }
 
   @override
   void didUpdateWidget(SelectionRacine ancien) {

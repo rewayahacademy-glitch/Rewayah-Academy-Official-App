@@ -265,6 +265,15 @@
     "prete": "Une nouvelle version de l'application est prête.",
     "recharger": "Recharger"
   },
+  "racine": {
+    "miseAJour": {
+      "mettre": "Mettre à jour",
+      "plusTard": "Plus tard"
+    },
+    "avis": {
+      "fermer": "Fermer l'avis"
+    }
+  },
   "reseau": {
     "horsLigne": "Pas de réseau. Ce qui est déjà affiché reste consultable.",
     "enAttenteEnvoi": "Sera envoyé dès le retour du réseau",
@@ -1218,6 +1227,10 @@
     "cadreNonPublie": "L'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié."
   },
   "connexion": {
+    "candidat": {
+      "titre": "Votre candidature d'enseignant",
+      "phrase": "Vous arrivez par l'invitation de Rewayah Academy. Votre candidature vous attend\u00a0: écrivez l'adresse qui a reçu ce courriel, nous y envoyons votre lien pour entrer."
+    },
     "titre": "Se connecter",
     "sessionTermineeTitre": "Vous avez été déconnecté",
     "sessionTermineePhrase": "Votre session a pris fin\u00a0: ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.",
@@ -1280,7 +1293,13 @@
     "controle": {
       "libelle": "Vérification de sécurité",
       "chargement": "Vérification de sécurité en cours.",
-      "erreur": "La vérification n'a pas abouti. Réessayez.",
+      "erreur": "La vérification de sécurité n'a pas abouti. Touchez « Réessayer » ; si elle échoue encore, rechargez la page.",
+      "erreurNavigateur": "La vérification de sécurité ne passe pas dans ce navigateur. Ouvrez la page dans Chrome ou Safari (pas dans une application de messagerie), coupez un éventuel bloqueur de publicité, puis touchez « Réessayer ».",
+      "erreurHorloge": "La vérification de sécurité refuse l'heure de votre appareil. Réglez la date et l'heure sur « automatique », puis touchez « Réessayer ».",
+      "erreurReglage": "La vérification de sécurité ne fonctionne pas pour l'instant, à cause d'un réglage de notre côté. Réessayez plus tard.",
+      "refuse": "La vérification de sécurité n'a pas été acceptée. Touchez de nouveau le bouton dans quelques secondes ; si cela recommence, rechargez la page.",
+      "autreCheminGoogle": "Vous pouvez aussi continuer avec Google : ce chemin ne passe pas par cette vérification.",
+      "rechargerPage": "Recharger la page",
       "horsLigne": "La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue."
     },
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
@@ -1441,6 +1460,18 @@
       "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
       "deposerCandidature": "Déposer ma candidature",
       "postulerIci": "Vous voulez enseigner chez nous\u00a0? Postulez ici"
+    },
+    "porte": {
+      "question": "Que venez-vous faire à Rewayah Academy\u00a0?",
+      "explication": "Choisissez votre espace. Vous ne verrez ensuite que les questions de cet espace.",
+      "apprendreTitre": "Apprendre",
+      "apprendreDescription": "Suivre les cours de l'académie, pour vous ou pour votre enfant. Vous direz ensuite pour qui.",
+      "apprendreExemple": "vous apprenez la récitation, ou vous inscrivez votre fille de 9 ans.",
+      "enseignerTitre": "Enseigner",
+      "enseignerDescription": "Déposer votre candidature d'enseignant. L'académie l'étudie avant toute classe.",
+      "enseignerExemple": "vous avez reçu une invitation de l'académie par courriel.",
+      "espaceEnseignant": "Candidature d'enseignant",
+      "espaceEleve": "Inscription d'un élève"
     },
     "recap": {
       "usage": "Type de compte",
@@ -5232,6 +5263,56 @@
       "sansDonnees": "l'import des inscriptions"
     },
     "tableau": {
+      "vivant": {
+        "verifierPieces": {
+          "one": "Vérifier la pièce",
+          "other": "Vérifier les {n} pièces"
+        },
+        "repondreMessages": {
+          "one": "Répondre au message",
+          "other": "Répondre aux {n} messages"
+        },
+        "activiteTitre": "Ce qui a changé",
+        "semaineCreneaux": "Créneaux d'entretien des sept prochains jours",
+        "bonjour": "Bonjour.",
+        "bonApresMidi": "Bon après-midi.",
+        "bonsoir": "Bonsoir.",
+        "praxisCreneaux": {
+          "one": "{n} candidat attend un entretien et aucun créneau n'est ouvert.",
+          "other": "{n} candidats attendent un entretien et aucun créneau n'est ouvert."
+        },
+        "praxisPieces": {
+          "one": "{n} pièce d'identité attend votre validation.",
+          "other": "{n} pièces d'identité attendent votre validation."
+        },
+        "praxisDossiers": {
+          "one": "{n} dossier d'identité attend votre validation.",
+          "other": "{n} dossiers d'identité attendent votre validation."
+        },
+        "praxisDemandes": {
+          "one": "{n} demande attend votre réponse.",
+          "other": "{n} demandes attendent votre réponse."
+        },
+        "praxisMessages": {
+          "one": "{n} conversation attend votre lecture.",
+          "other": "{n} conversations attendent votre lecture."
+        },
+        "ouvrirCreneaux": "Ouvrir des créneaux",
+        "parcoursTitre": "Le parcours des candidats",
+        "parcoursAide": "Chaque case est large comme le nombre de ses candidats.",
+        "messagesNonLus": "Conversations non lues",
+        "courriels": "Courriels envoyés en 24 heures",
+        "courrielsSur": "sur {max}",
+        "piecesAide": "Feuilletez les cartes. Touchez-en une pour ouvrir le dossier.",
+        "pieceAide": "Touchez la carte pour ouvrir le dossier.",
+        "piecesVide": "Aucune pièce d'identité n'attend.",
+        "pieceIdentite": "Pièce d'identité",
+        "ouvrirDossierDe": "Ouvrir le dossier {deNom}",
+        "piecePrecedente": "Pièce précédente",
+        "pieceSuivante": "Pièce suivante",
+        "piecePosition": "{rang} sur {total}",
+        "joursInitiales": ["L", "M", "M", "J", "V", "S", "D"]
+      },
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",
       "dossiersDetail": "Ouvrir la file, le plus ancien en premier.",
@@ -7166,6 +7247,113 @@
         "autonomeRequis": "mode autonome requis",
         "refusee": "refusé par la messagerie",
         "autre": "cause inconnue"
+      },
+      "travail": {
+        "titre": "Le travail de Praxis",
+        "lien": "Le travail de Praxis",
+        "lienDetail": "Dossiers rangés par Praxis\u00a0: {n}",
+        "intro": "Ce que Praxis, l'assistant de la direction, a fait sur les dossiers des candidats enseignants\u00a0: la pile où il range chaque dossier, et son avis.",
+        "rappel": "Un avis de l'assistant, pas une décision.",
+        "dossiers": "Dossiers rangés et lus",
+        "pile": "Pile",
+        "toutesPiles": "Toutes les piles",
+        "etiquette": "Étiquette",
+        "toutesEtiquettes": "Toutes les étiquettes",
+        "piles": {
+          "pretADecider": "Prêt à décider",
+          "incomplet": "Incomplet",
+          "sansNouvelles": "Sans nouvelles",
+          "aRegarder": "À regarder"
+        },
+        "etiquettes": {
+          "pepite": "Pépite",
+          "solide": "Solide",
+          "aCreuser": "À creuser",
+          "reserve": "Réserve"
+        },
+        "nombre": "Dossiers affichés\u00a0: {n}",
+        "colonneNom": "Candidat",
+        "colonnePile": "Pile",
+        "colonneEtiquette": "Étiquette",
+        "colonneRaison": "Raison donnée par Praxis",
+        "colonneDate": "Vu le",
+        "pasLu": "Pas encore lu",
+        "pasRange": "Pas rangé",
+        "marque": "Praxis\u00a0: {quoi}",
+        "vide": "Praxis n'a encore rangé ni lu aucun dossier.",
+        "videDetail": "Les dossiers apparaîtront ici dès que Praxis les aura rangés.",
+        "aucunResultat": "Aucun dossier ne correspond à ces filtres.",
+        "aucunResultatDetail": "Choisissez une autre pile ou une autre étiquette.",
+        "effacer": "Effacer les filtres",
+        "voirPlus": "Afficher les dossiers suivants",
+        "erreur": "Le travail de Praxis n'a pas pu être lu. Réessayez dans un instant.",
+        "horsLigne": "Le travail de Praxis n'est pas encore chargé. Rechargez-le.",
+        "permission": "Le travail de Praxis est réservé à la direction."
+      },
+      "avis": {
+        "titre": "L'avis de Praxis",
+        "rappel": "Un avis de l'assistant, pas une décision.",
+        "pasLu": "Praxis n'a pas encore lu ce dossier.",
+        "confiance": "Confiance\u00a0: {niveau}",
+        "confiances": {
+          "faible": "faible",
+          "moyenne": "moyenne",
+          "forte": "forte"
+        },
+        "criteres": "Critères notés",
+        "critere": {
+          "maitrise": "Maîtrise",
+          "pedagogie": "Pédagogie",
+          "vision": "Vision",
+          "comportement": "Comportement",
+          "disponibilite": "Disponibilité"
+        },
+        "note": "{critere}\u00a0: {note} sur 5",
+        "synthese": "Synthèse",
+        "utilePour": "Utile pour\u00a0: {texte}",
+        "situation": "Dans quelle situation\u00a0: {texte}",
+        "reserves": "Réserves\u00a0: {texte}",
+        "videoOui": "Vidéo\u00a0: oui",
+        "videoNon": "Vidéo\u00a0: non",
+        "videoOuiParce": "Vidéo\u00a0: oui, parce que {texte}",
+        "videoNonParce": "Vidéo\u00a0: non, parce que {texte}",
+        "videoParce": "Vidéo\u00a0: {texte}",
+        "contexte": "Contexte",
+        "effets": {
+          "atout": "Atout",
+          "risque": "Risque",
+          "aVerifier": "À vérifier"
+        },
+        "source": "Source\u00a0: {source}",
+        "texte": "Ce que Praxis a écrit",
+        "notee": "Avis noté le {date} à {heure}",
+        "rangement": "Pile de Praxis",
+        "pile": "Rangé dans\u00a0: {pile}",
+        "rangeLe": "Rangé le {date} à {heure}",
+        "pasRange": "Praxis n'a pas encore rangé ce dossier.",
+        "erreur": "L'avis de Praxis n'a pas pu être lu. Réessayez dans un instant.",
+        "horsLigne": "L'avis de Praxis n'est pas encore chargé. Rechargez-le."
+      },
+      "objectifs": {
+        "titre": "Objectifs de Praxis",
+        "intro": "Les objectifs que Praxis se fixe pour le jour et pour la semaine. Il les fixe et les clôt lui-même.",
+        "jour": "Objectifs du jour",
+        "semaine": "Objectifs de la semaine",
+        "clos": "Objectifs clos récemment",
+        "cible": "Cible\u00a0: {n}",
+        "pourLe": "Pour le {date}",
+        "semaineDu": "Semaine du {date}",
+        "echu": "Période passée",
+        "ouvert": "Ouvert",
+        "atteint": "Atteint",
+        "abandonne": "Abandonné",
+        "closLe": "Clos le {date}",
+        "aucunJour": "Aucun objectif du jour ouvert.",
+        "aucunSemaine": "Aucun objectif de la semaine ouvert.",
+        "aucun": "Praxis ne s'est fixé aucun objectif pour l'instant.",
+        "aucunDetail": "Ses objectifs du jour et de la semaine apparaîtront ici.",
+        "erreur": "Les objectifs de Praxis n'ont pas pu être lus. Réessayez dans un instant.",
+        "horsLigne": "Les objectifs de Praxis ne sont pas encore chargés. Rechargez-les."
       }
     },
     "notifications": {
@@ -12719,7 +12907,6 @@
       },
       "direct": {
         "nouveau": "Vous avez reçu un nouveau message.",
-        "horsDirect": "Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.",
         "icone": "Messages",
         "iconeUnNonLu": "Messages, 1 non lu",
         "iconeNonLus": "Messages, {nombre} non lus"
@@ -15311,7 +15498,8 @@
           "- Suivre la présence et la progression.",
           "- Facturer l'abonnement.",
           "- Protéger les élèves et contrôler la qualité des séances.",
-          "- Réparer les pannes."
+          "- Réparer les pannes.",
+          "- Répondre plus vite à vos messages, avec l'aide d'un assistant numérique (voir le point 4)."
         ]
       },
       "s4": {
@@ -15319,7 +15507,8 @@
         "blocs": [
           "Une famille ne voit que ses propres informations. Les informations d'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.",
           "L'enseignant voit ses élèves et ses Classes. La direction voit ce qu'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.",
-          "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal."
+          "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.",
+          "Un assistant numérique, appelé Praxis, aide l'académie à répondre aux familles et aux candidats dans la messagerie de l'application. Son profil indique qu'il s'agit d'une intelligence artificielle. L'académie est aidée par un assistant IA. Il lit votre candidature et vos messages, à l'exception de vos coordonnées, de votre pièce d'identité, de votre photo et de vos informations de versement. Il peut vous écrire, vous poser des questions sur votre parcours et votre façon d'enseigner, et préparer un avis pour la direction. Toute décision sur votre candidature est prise par la direction. Il ne lit aucune conversation où un enfant participe, ni les pièces d'identité, ni les paiements. Il n'écrit jamais à un enfant et n'envoie aucun courriel. Il travaille sous la responsabilité de la direction, qui peut l'arrêter à tout moment."
         ]
       },
       "s5": {
@@ -15334,7 +15523,8 @@
         "titre": "6. Où sont vos informations",
         "blocs": [
           "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.",
-          "Pour protéger la connexion contre les robots, nous utilisons Cloudflare Turnstile (Cloudflare, Inc.). Au moment de la vérification, Cloudflare traite votre adresse IP et des informations techniques sur votre navigateur, uniquement pour ce contrôle et sans cookie publicitaire. Base légale\u00a0: notre intérêt légitime à sécuriser le service."
+          "Pour protéger la connexion contre les robots, nous utilisons Cloudflare Turnstile (Cloudflare, Inc.). Au moment de la vérification, Cloudflare traite votre adresse IP et des informations techniques sur votre navigateur, uniquement pour ce contrôle et sans cookie publicitaire. Base légale\u00a0: notre intérêt légitime à sécuriser le service.",
+          "Pour lire et répondre, l'assistant s'appuie sur un fournisseur d'intelligence artificielle. Aujourd'hui, il s'agit d'Anthropic PBC (Claude), entreprise établie aux États-Unis. L'académie peut aussi recourir, aux mêmes conditions, à Google LLC (Gemini) ou à OpenAI (ChatGPT), établies aux États-Unis\u00a0; le fournisseur utilisé est toujours indiqué ici. Les messages que l'assistant lit sont transmis au fournisseur pour cette seule raison. Ils ne servent pas à entraîner ses modèles et sont effacés chez lui au plus tard après 30 jours. Ce transfert hors de l'Union européenne est encadré par les clauses contractuelles types de la Commission européenne. Nous gardons pendant 12 mois une trace de ce que l'assistant a envoyé, jamais du texte des messages que vous écrivez. La base légale est notre intérêt légitime à vous répondre rapidement."
         ]
       },
       "s7": {
@@ -15349,6 +15539,7 @@
           "- Voir les informations que nous avons sur vous.",
           "- Les corriger.",
           "- Demander leur suppression ou limiter leur usage.",
+          "Vous pouvez à tout moment demander à parler à l'équipe\u00a0: une personne reprend la conversation et l'assistant ne vous répond plus dans celle-ci.",
           "Écrivez-nous. Nous vérifions d'abord que c'est bien vous, ou le tuteur de l'élève. Vous pouvez aussi vous adresser à l'autorité de protection des données de votre pays."
         ]
       },

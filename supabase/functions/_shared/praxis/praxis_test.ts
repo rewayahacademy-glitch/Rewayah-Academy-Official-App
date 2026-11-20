@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'demander_equipe', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'question_traitee', 'rendre_compte', 'reponses_equipe', 'terminer'])
+  assertEquals(noms, ['annoncer', 'boite', 'boite_candidats', 'calendrier_ajouter', 'calendrier_lire', 'demander_equipe', 'dossier', 'ecrire', 'etat', 'fil', 'lire', 'noter_impression', 'objectif_clore', 'objectif_fixer', 'objectifs_lire', 'ouvrir', 'preparer', 'question_traitee', 'questions_ouvertes', 'ranger', 'rendre_compte', 'reponses_equipe', 'retirer_question', 'terminer'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
@@ -130,6 +130,18 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: 'demain', duree_minutes: 30, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: '2026-12-01T10:00:00Z', duree_minutes: 5, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'admettre_verifications', candidature: 'CAND-00001', texte: 'x'.repeat(1001), cle_idempotence: UUID2 }],
+    // PX-3 : dispense, ranger, objectifs
+    ['preparer', { geste: 'dispenser_entretien', candidature: 'CAND-00001', categorie: 'ami', motif: 'm', texte: 'x', cle_idempotence: UUID2 }], // categorie hors liste
+    ['ranger', { candidature: 'CAND-00001', pile: 'refuses', raison: 'r', cle_idempotence: UUID2 }], // pile hors liste
+    ['ranger', { candidature: 'CAND-00001', pile: 'incomplet', raison: 'r'.repeat(201), cle_idempotence: UUID2 }],
+    ['ranger', { candidature: 'CAND-00001', pile: 'incomplet', raison: 'r' }], // cle d'idempotence absente
+    ['ranger', { candidature: UUID1, pile: 'incomplet', raison: 'r', cle_idempotence: UUID2 }], // jamais un identifiant interne
+    ['objectif_fixer', { periode: 'mois', date: '2026-12-01', libelle: 'l', cle_idempotence: UUID2 }],
+    ['objectif_fixer', { periode: 'jour', date: '2026-12-01', libelle: 'l'.repeat(201), cle_idempotence: UUID2 }],
+    ['objectif_fixer', { periode: 'jour', date: '2026-12-01', libelle: 'l', cible: 0, cle_idempotence: UUID2 }],
+    ['objectif_clore', { objectif: UUID1, etat: 'ouvert' }],
+    ['objectif_clore', { objectif: 'x', etat: 'atteint' }],
+    ['objectifs_lire', { etat: 'supprimes' }],
     // PX-SUIVI : demander_equipe, reponses_equipe, question_traitee
     ['demander_equipe', { fil: UUID1 }], // question absente
     ['demander_equipe', { question: 'Q ?' }], // conversation absente
@@ -146,6 +158,18 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     ['question_traitee', {}],
     ['question_traitee', { question: 'pas-un-uuid' }],
     ['question_traitee', { question: UUID1, reponse: 'x' }], // propriete inconnue
+    // PX-5 : questions_ouvertes, retirer_question, decalage de lire
+    ['questions_ouvertes', { limite: 0 }],
+    ['questions_ouvertes', { limite: 51 }],
+    ['questions_ouvertes', { fil: UUID1 }], // propriete inconnue
+    ['retirer_question', { question: UUID1 }], // motif absent
+    ['retirer_question', { question: UUID1, motif: 'effacer' }], // motif hors liste
+    ['retirer_question', { question: 'pas-un-uuid', motif: 'sans_objet' }],
+    ['retirer_question', { question: UUID1, motif: 'sans_objet', texte: 'x' }], // propriete inconnue
+    ['lire', { vue: 'candidatures', decalage: -1 }],
+    ['lire', { vue: 'candidatures', decalage: 5001 }],
+    ['lire', { vue: 'candidatures', decalage: 2.5 }],
+    ['lire', { vue: 'candidatures', decalage: '20' }],
     // PRAXIS-ROUTINE : terminer
     ['terminer', { issue: 'zz', fils_lus: 0, messages_envoyes: 0, passes_equipe: 0, refus: 0 }],
     ['terminer', { issue: 'ok', fils_lus: 201, messages_envoyes: 0, passes_equipe: 0, refus: 0 }],
@@ -247,6 +271,23 @@ Deno.test('appel nominal : une fonction praxis_*, la cle en premier, parametres 
     const { porte, appels } = faux({ ok: true })
     await traiter(requete(appelOutil('question_traitee', { question: UUID2 })), porte)
     assertEquals(appels, [{ fonction: 'praxis_question_traitee', params: { p_cle: CLE, p_question: UUID2 } }])
+  }
+  // PX-5
+  {
+    const { porte, appels } = faux({ questions: [] })
+    await traiter(requete(appelOutil('questions_ouvertes')), porte)
+    assertEquals(appels, [{ fonction: 'praxis_questions_ouvertes', params: { p_cle: CLE, p_limite: 20 } }])
+  }
+  {
+    const { porte, appels } = faux({ ok: true })
+    await traiter(requete(appelOutil('retirer_question', { question: UUID2, motif: 'repondu_par_praxis' })), porte)
+    assertEquals(appels, [{ fonction: 'praxis_retirer_question', params: { p_cle: CLE, p_question: UUID2, p_motif: 'repondu_par_praxis' } }])
+  }
+  {
+    // Le decalage n'est pas un parametre de la fonction : c'est une cle du filtre de lire, comme les autres filtres.
+    const { porte, appels } = faux({ vue: 'candidatures', lignes: [], total: 0 })
+    await traiter(requete(appelOutil('lire', { vue: 'candidatures', etape: 'verifications', decalage: 50, limite: 50 })), porte)
+    assertEquals(appels, [{ fonction: 'praxis_lire', params: { p_cle: CLE, p_vue: 'candidatures', p_filtre: { etape: 'verifications', decalage: 50 }, p_limite: 50 } }])
   }
   for (const p of PUBLICS) assert(p !== ('eleves' as string))
 })

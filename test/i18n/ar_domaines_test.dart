@@ -34,6 +34,10 @@ const Map<String, int> _domaines = <String, int>{
   'reseau': 3,
   // Lot demarrage (25/10/2026) : bandeau « nouvelle version ».
   'miseAJour': 1,
+  // Lot RACINE (PE-D8, PE-D9, 19/11/2026) : avis flottants, mise a jour.
+  // 20/11/2026 : `racine.horsDirect.masquer` est retire avec l'avis « Messages
+  // pas en direct » (directeur : « inutile »), le domaine compte 3 cles.
+  'racine': 2,
   'etat': 10,
   'vide': 4,
   'notifications': 5,
@@ -207,6 +211,9 @@ const Set<String> _latins = <String>{
   // PX-3 : « Praxis », le nom propre du secretaire de l'academie, ecrit en
   // latin dans toutes les langues (le titre de sa section n'est que ce nom).
   'admin.praxis.titre',
+  // PRAXIS-VISIBLE : la marque « Praxis : <ce qu'il a fait> » ; hors du nom
+  // propre, tout le texte vient du parametre, deja traduit.
+  'admin.praxis.travail.marque',
   // HORLOGE-ET-LIEU : le credit de la liste des villes porte le nom propre de
   // la source et son adresse, tels que la licence les demande.
   'lieu.credit',
@@ -335,6 +342,10 @@ const Set<String> _motsLatinsAdmis = <String>{
   'QR',
   'UTC',
   'Google',
+  // PE-A5 (20/11/2026) : les navigateurs conseilles quand la verification de
+  // securite echoue, nommes tels quels dans toutes les langues.
+  'Chrome',
+  'Safari',
   'Android',
   'iPhone',
   'iPad',
@@ -355,6 +366,16 @@ const Set<String> _motsLatinsAdmis = <String>{
   'GDPR',
   'ICO',
   'Stripe',
+  // CONFIDENTIALITE-PRAXIS (20/11/2026) : les fournisseurs d'IA nommes par la
+  // politique de confidentialite (juridique.confidentialite.s6), gardes en
+  // lettres latines dans toutes les langues (POLITIQUE-CONFIDENTIALITE-PRAXIS.md).
+  'Anthropic',
+  'PBC',
+  'Claude',
+  'LLC',
+  'Gemini',
+  'OpenAI',
+  'ChatGPT',
   'iOS',
   'Play',
   'App',

@@ -9,9 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/communications/veille_messages.dart';
-import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
-import 'package:rewayah_academy/features/com_messages/bandeau_messages_hors_direct.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 
 import '../../support/demo/communications/com_messages_demo.dart';
@@ -180,7 +178,7 @@ void main() {
   });
 
   testWidgets(
-    'temps reel tombe : la page le dit (K-59), un seul bouton plein',
+    'temps reel tombe : la page ne dit rien (directeur, 20/11), un seul bouton plein',
     (WidgetTester tester) async {
       final _PortVivant port = _PortVivant(
         portDemo(RoleDemoCommunications.enseignant),
@@ -192,11 +190,13 @@ void main() {
         taille: const Size(320, 700),
         echelleTexte: 2,
       );
-      expect(find.byKey(BandeauMessagesHorsDirect.cle), findsNothing);
+      const Key ancienAvis = ValueKey<String>('messages-hors-direct');
+      expect(find.byKey(ancienAvis), findsNothing);
       veilleDe(tester).horsDirect();
       await tester.pumpAndSettle();
-      expect(find.byKey(BandeauMessagesHorsDirect.cle), findsOneWidget);
-      expect(find.text(t.com.messages.direct.horsDirect), findsOneWidget);
+      // L'avis « Messages pas en direct » n'existe plus : rien ne s'affiche.
+      expect(find.byKey(ancienAvis), findsNothing);
+      expect(find.textContaining('30 secondes'), findsNothing);
       verifierUnSeulBoutonPlein(tester);
       expect(tester.takeException(), isNull);
     },
