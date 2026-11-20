@@ -17,6 +17,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../../core/observabilite/journal_dev.dart';
 import '../../core/router/routes.dart';
 
 /// La lecture des references de dossier depuis des profils.
@@ -114,7 +115,7 @@ final referencesDossiersProvider = FutureProvider.autoDispose
             .watch(portReferencesDossiersProvider)
             .references(demande.profils);
       } on Object catch (e) {
-        debugPrint('references_dossiers_admin : $e');
+        journalDev('references_dossiers_admin : $e');
         return const <String, String>{};
       }
     });
