@@ -11,6 +11,7 @@ import '../../core/config/env.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/marque/logo_google.dart';
+import '../../core/reseau/service_reseau.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/session_controleur.dart';
 import '../../core/session/source_session.dart'
@@ -23,6 +24,7 @@ import '../../core/widgets/controle_anti_robot.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/proposition_courriel.dart';
+import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
 import '../inscription/invitation_en_cours.dart';
@@ -30,11 +32,13 @@ import '../inscription/questionnaire/questionnaire_inscription.dart'
     show questionnaireInscriptionProvider;
 import '../juridique/textes_juridiques.dart';
 import 'coquille_entree.dart';
+import 'coquille_praxis.dart';
 import 'feuille_appareil_eleve.dart';
 import 'invitation_compte.dart';
 import 'lien_ailleurs.dart';
 import 'recuperation_page.dart';
 import 'saisie_code_courriel.dart';
+import 'scenes_entree.dart';
 
 /// L'environnement compile, lu par un provider pour que les tests le
 /// surchargent. La garde reste [environnementAutoriseDemo], la meme que
@@ -165,6 +169,55 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   bool _renvoye = false;
   String? _erreurRenvoi;
   late ModeConnexion _mode = widget.mode;
+
+  /// ENTREE-PRAXIS : ce que Praxis joue quand un envoi echoue (la cause
+  /// reelle : adresse, attente, reseau, invitation, serveur), ou nul.
+  SituationEntree? _praxisErreur;
+
+  /// ENTREE-PRAXIS : le dernier bouton du premier ecran (Google). La scene
+  /// de Praxis prend la place que laisse le formulaire jusqu'a lui ; le reste
+  /// (appareil d'un eleve, liens du bas) vient en faisant defiler la page.
+  final GlobalKey _pli = GlobalKey(debugLabel: 'entree-praxis-pli');
+
+  /// ENTREE-PRAXIS : la fenetre de Google vient d'etre demandee.
+  bool _googleDemande = false;
+
+  /// ENTREE-PRAXIS : la derniere erreur vient de Google, pas de l'envoi du
+  /// lien (le bouton principal ne dit alors pas « Réessayer »).
+  bool _echecGoogle = false;
+
+  /// ENTREE-PRAXIS : l'appareil est hors connexion, ou vient d'en revenir.
+  SituationEntree? _praxisReseau;
+
+  /// ENTREE-PRAXIS : la situation de la page, que la scene de Praxis suit.
+  /// Elle ne decide de rien : elle lit l'etat de l'ecran.
+  SituationEntree get _situation {
+    if (_praxisReseau == SituationEntree.horsLigne) {
+      return SituationEntree.horsLigne;
+    }
+    if (_envoi || _renvoi) return SituationEntree.envoi;
+    if (_envoye) {
+      return _erreurRenvoi != null
+          ? (_praxisErreur ?? SituationEntree.serveur)
+          : SituationEntree.envoye;
+    }
+    if (_erreur != null) return _praxisErreur ?? SituationEntree.serveur;
+    if (_googleDemande) return SituationEntree.googleOuverte;
+    if (_praxisReseau != null) return _praxisReseau!;
+    if (_courriel.text.isNotEmpty) return SituationEntree.saisie;
+    return sessionTermineeParLeServeur.value
+        ? SituationEntree.session
+        : SituationEntree.arrivee;
+  }
+
+  /// La scene d'un envoi manque, d'apres sa cause.
+  static SituationEntree _praxisPour(Object erreur) =>
+      switch (issueEchecEnvoi(erreur)) {
+        IssueEnvoiLien.tropTot => SituationEntree.tropEssais,
+        IssueEnvoiLien.horsLigne => SituationEntree.horsLigne,
+        IssueEnvoiLien.inscriptionFermee => SituationEntree.sansInvitation,
+        _ => SituationEntree.serveur,
+      };
 
   /// FN-111 : le lien de connexion a ete ouvert ailleurs que la ou il a ete
   /// demande. Lu une fois, a l'ouverture : l'adresse d'arrivee ne change pas.
@@ -349,12 +402,17 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
 
   Future<void> _envoyerLien() async {
     if (!courrielPlausible(_courriel.text)) {
-      setState(() => _erreur = t.connexion.erreurCourriel);
+      setState(() {
+        _erreur = t.connexion.erreurCourriel;
+        _praxisErreur = SituationEntree.adresse;
+      });
       return;
     }
     setState(() {
       _envoi = true;
       _erreur = null;
+      _echecGoogle = false;
+      _praxisReseau = null;
     });
     try {
       final ({String? jeton, bool ok}) controle = await _jetonControle();
@@ -373,7 +431,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       }
     } on Object catch (erreur) {
       if (mounted) {
-        setState(() => _erreur = _phraseEchec(erreur));
+        setState(() {
+          _erreur = _phraseEchec(erreur);
+          _praxisErreur = _praxisPour(erreur);
+        });
       }
     } finally {
       _apresEnvoi();
@@ -405,7 +466,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       }
     } on Object catch (erreur) {
       if (mounted) {
-        setState(() => _erreurRenvoi = _phraseEchec(erreur));
+        setState(() {
+          _erreurRenvoi = _phraseEchec(erreur);
+          _praxisErreur = _praxisPour(erreur);
+        });
       }
     } finally {
       _apresEnvoi();
@@ -457,10 +521,19 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   }
 
   Future<void> _google() async {
-    setState(() => _erreur = null);
+    setState(() {
+      _erreur = null;
+      _googleDemande = true;
+    });
     try {
       await ref.read(serviceAuthProvider).connexionGoogle();
     } on AuthException catch (erreur) {
+      _googleDemande = false;
+      _echecGoogle = true;
+      _praxisErreur =
+          estInscriptionFermee(code: erreur.code, message: erreur.message)
+          ? SituationEntree.sansInvitation
+          : SituationEntree.serveur;
       // **Le message du fournisseur se montre, il ne se resume pas.** Cet
       // ecran a longtemps affiche « L'envoi n'a pas abouti » sur un refus
       // `invalid_client` : le bouton Google etait casse pour tout le monde, et
@@ -474,6 +547,9 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
         );
       }
     } on Object {
+      _googleDemande = false;
+      _echecGoogle = true;
+      _praxisErreur = SituationEntree.serveur;
       if (mounted) {
         setState(() => _erreur = t.connexion.erreurEnvoi);
       }
@@ -508,9 +584,29 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             envoiEnCours: enCours,
             googlePropose: !_envoye && !_demo,
           );
-    return CoquilleEntree(
+    // ENTREE-PRAXIS : la porte s'eteint quand l'appareil perd la connexion,
+    // et se rallume quand elle revient.
+    ref.listen<AsyncValue<bool>>(horsLigneProvider, (
+      AsyncValue<bool>? avant,
+      AsyncValue<bool> apres,
+    ) {
+      final bool hors = apres.hasValue && (apres.value ?? false);
+      final bool etait = _praxisReseau == SituationEntree.horsLigne;
+      if (hors == etait) return;
+      setState(
+        () => _praxisReseau = hors
+            ? SituationEntree.horsLigne
+            : SituationEntree.retourLigne,
+      );
+    });
+    return CoquillePraxis(
+      situation: _situation,
+      pli: _pli,
+      texteSaisi: _courriel.text,
+      adresseComplete: courrielPlausible(_courriel.text),
       formulaire: (bool bureau) => _envoye
           ? _LienEnvoye(
+              pli: _pli,
               controle: controle(_renvoi),
               courriel: _courriel.text.trim(),
               renvoi: _renvoi,
@@ -526,6 +622,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             )
           : _Saisie(
               bureau: bureau,
+              pli: _pli,
               lienAilleurs: _lienAilleurs,
               controle: controle(_envoi),
               courriel: _courriel,
@@ -557,6 +654,11 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                 });
               },
               erreur: _erreur,
+              reessayer:
+                  _erreur != null &&
+                  !_echecGoogle &&
+                  (_praxisErreur == SituationEntree.serveur ||
+                      _praxisErreur == SituationEntree.horsLigne),
               envoi: _envoi,
               onChanged: () => setState(() {}),
               onSoumettre: () => unawaited(_soumettre()),
@@ -581,12 +683,14 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               // jamais recu).
               LienPied(
                 cibleReduite: true,
+                accent: true,
                 cle: const ValueKey<String>('connexion-probleme'),
                 libelle: t.connexion.probleme,
                 onPress: _versRecuperation,
               ),
               LienPied(
                 cibleReduite: true,
+                accent: true,
                 cle: const ValueKey<String>('connexion-appareil-eleve-aide'),
                 libelle: t.connexion.appareilEleveAide,
                 onPress: () => unawaited(_entreeEleve()),
@@ -596,6 +700,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             // passe dessous plutot que de deborder.
             Wrap(
               spacing: AppSpacing.lg,
+              alignment: WrapAlignment.center,
               children: <Widget>[
                 LienPied(
                   cibleReduite: true,
@@ -628,6 +733,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
 class _Saisie extends StatelessWidget {
   const _Saisie({
     required this.bureau,
+    required this.pli,
     required this.lienAilleurs,
     required this.controle,
     required this.courriel,
@@ -643,6 +749,7 @@ class _Saisie extends StatelessWidget {
     required this.reponsesGardees,
     required this.onRevoirReponses,
     required this.erreur,
+    this.reessayer = false,
     required this.envoi,
     required this.onChanged,
     required this.onSoumettre,
@@ -654,6 +761,9 @@ class _Saisie extends StatelessWidget {
   /// Vrai dans le volet du formulaire sur ordinateur : boutons a la largeur
   /// de leur contenu, au bord de fin.
   final bool bureau;
+
+  /// ENTREE-PRAXIS : la cle du dernier bouton du premier ecran.
+  final GlobalKey pli;
 
   /// FN-111 : le lien de connexion a ete ouvert sur un autre appareil ou dans
   /// un autre navigateur ; la page le dit avant tout le reste.
@@ -684,6 +794,10 @@ class _Saisie extends StatelessWidget {
   final bool reponsesGardees;
   final VoidCallback onRevoirReponses;
   final String? erreur;
+
+  /// ENTREE-PRAXIS (maquette) : l'envoi vient d'echouer pour une cause qui
+  /// ne tient pas a l'adresse (serveur, reseau) : le bouton dit « Réessayer ».
+  final bool reessayer;
   final bool envoi;
   final VoidCallback onChanged;
   final VoidCallback onSoumettre;
@@ -715,9 +829,12 @@ class _Saisie extends StatelessWidget {
                   padding: const EdgeInsetsDirectional.only(
                     bottom: AppSpacing.lg,
                   ),
+                  // ENTREE-PRAXIS : l'encart lavande de la maquette, une
+                  // information sans faute (et non un avertissement ambre).
                   child: BandeauAttention(
                     titre: t.connexion.sessionTermineeTitre,
                     message: t.connexion.sessionTermineePhrase,
+                    ton: TonEtat.accent,
                   ),
                 )
               : const SizedBox.shrink(),
@@ -783,6 +900,9 @@ class _Saisie extends StatelessWidget {
             child: ControleSegmente<ModeConnexion>(
               key: const ValueKey<String>('connexion-mode'),
               dense: true,
+              // ENTREE-PRAXIS : la piste a la forme du champ (coins de 16,
+              // meme aplat creux), et non celle d'une pilule.
+              rectangle: true,
               segments: <Segment<ModeConnexion>>[
                 Segment<ModeConnexion>(
                   valeur: ModeConnexion.connexion,
@@ -818,6 +938,8 @@ class _Saisie extends StatelessWidget {
         Ecart.vXl,
         ChampEntree(
           cle: 'connexion-courriel',
+          // ENTREE-PRAXIS : sur la carte, dans le theme de la page.
+          surCarte: true,
           etiquette: t.connexion.courriel,
           indice: t.connexion.courrielIndice,
           controleur: courriel,
@@ -889,15 +1011,22 @@ class _Saisie extends StatelessWidget {
         // Google : un chemin reel vers un vrai compte.
         ActionsEntree(
           bureau: bureau,
+          // ENTREE-PRAXIS : les boutons l'un sous l'autre (maquette).
+          empile: true,
           sousPrincipale: controle,
           principale: ActionPrincipale(
             libelle: !versLien
                 ? t.connexion.entrerDemo
+                : reessayer
+                ? t.commun.reessayer
                 : creation
                 ? t.connexion.envoyerLienCreation
                 : t.connexion.envoyerLien,
             onPress: onSoumettre,
             enCours: envoi,
+            // ENTREE-PRAXIS (maquette, pilote 20/11) : pendant l'envoi, le
+            // bouton reste plein et violet et dit « Envoi du lien… ».
+            libelleAttente: versLien ? t.connexion.envoiEnCours : null,
             // Sur la marque, l'aplat blanc a encre violette ; sur le volet
             // caramel, le violet a encre blanche (fiche, sections 3 et 4).
             affirmee: true,
@@ -906,17 +1035,22 @@ class _Saisie extends StatelessWidget {
             // Texte reduit seulement quand le bouton partage sa rangee
             // (ordinateur, ou creation sur telephone) ; seul en pleine
             // largeur sur telephone, il garde son texte (garde-cap, 04/11).
-            libelleReduit: !demo && (bureau || creation),
+            libelleReduit: false,
           ),
           secondaire: demo
               ? null
               : ActionPrincipale(
+                  key: pli,
                   libelle: t.connexion.avecGoogle,
                   onPress: onGoogle,
                   niveau: NiveauAction.secondaire,
+                  // ENTREE-PRAXIS : le filet pale de la maquette.
+                  filetPale: true,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
-                  libelleReduit: true,
+                  // ENTREE-PRAXIS : les boutons sont empiles, chacun a la
+                  // largeur du champ : le libelle garde son corps (maquette).
+                  libelleReduit: false,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
                   // le libelle. Sur le violet du telephone, pose sur un disque
@@ -936,9 +1070,11 @@ class _Saisie extends StatelessWidget {
                   libelle: t.connexion.appareilEleve,
                   onPress: onEleve,
                   niveau: NiveauAction.secondaire,
+                  // Le meme filet que Google, juste au-dessus.
+                  filetPale: true,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
-                  libelleReduit: true,
+                  libelleReduit: false,
                   prefixe: Icon(AppIcons.enfant.repos, size: AppSpacing.xl),
                 ),
         ),
@@ -949,6 +1085,7 @@ class _Saisie extends StatelessWidget {
 
 class _LienEnvoye extends StatelessWidget {
   const _LienEnvoye({
+    required this.pli,
     required this.controle,
     required this.courriel,
     required this.renvoi,
@@ -958,6 +1095,9 @@ class _LienEnvoye extends StatelessWidget {
     required this.onChangerAdresse,
     required this.onProbleme,
   });
+
+  /// ENTREE-PRAXIS : la cle du dernier bouton du premier ecran.
+  final GlobalKey pli;
 
   /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
   final Widget? controle;
@@ -1008,17 +1148,20 @@ class _LienEnvoye extends StatelessWidget {
         // ONBOARDING-BOUCLE (14/11/2026) : le code du message, saisi dans ce
         // navigateur, ouvre la session meme si le lien s'ouvre ailleurs.
         Ecart.vXl,
-        SaisieCodeCourriel(courriel: courriel),
+        SaisieCodeCourriel(courriel: courriel, surCarte: true),
         Ecart.vXxl,
         // ALIGN-RENVOI (04/11/2026) : le bouton seul a la largeur du champ,
         // sur ordinateur comme sur telephone (meme regle que CONNEXION-ALIGN).
-        ActionPrincipale(
-          key: const ValueKey<String>('connexion-renvoyer'),
-          libelle: t.connexion.renvoyer,
-          onPress: onRenvoyer,
-          enCours: renvoi,
-          niveau: NiveauAction.secondaire,
-          pleineLargeur: true,
+        KeyedSubtree(
+          key: pli,
+          child: ActionPrincipale(
+            key: const ValueKey<String>('connexion-renvoyer'),
+            libelle: t.connexion.renvoyer,
+            onPress: onRenvoyer,
+            enCours: renvoi,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: true,
+          ),
         ),
         // CAPTCHA-PLACE : la case se pose juste sous le bouton.
         ?controle,

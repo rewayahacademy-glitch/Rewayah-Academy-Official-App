@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/widgets/brand_logo.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 import 'package:rewayah_academy/core/widgets/page_shell.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
+import 'package:rewayah_academy/features/connexion/coquille_praxis.dart';
 
 import '../support/harnais.dart';
 import '../support/hote_theme.dart';
@@ -176,11 +177,13 @@ void main() {
   });
 
   for (final Size vue in <Size>[const Size(320, 640), vueBureau]) {
-    testWidgets('connexion : logo horizontal blanc centre en haut '
-        '(${vue.width} px)', (WidgetTester tester) async {
-      // Decision du directeur du 25/10/2026 (16:40) : logo horizontal blanc,
-      // centre en haut, sur la surface de marque ; le second dessin du logo
-      // est le symbole de l'illustration, decoratif.
+    testWidgets('connexion : la porte du logo dans la scene de Praxis, '
+        'la marque annoncee (${vue.width} px)', (WidgetTester tester) async {
+      // ENTREE-PRAXIS (directeur, 20/11/2026, maquette « Praxis vous
+      // accueille » confirmee) : la page d'entree n'a plus de logo horizontal
+      // en tete (decision du 25/10/2026, remplacee) ; le symbole du logo est
+      // la porte de la scene, d'ou sort Praxis. La marque reste annoncee par
+      // son nom, une fois.
       fixerVue(tester, vue);
       await tester.pumpWidget(
         hoteTheme(
@@ -192,23 +195,23 @@ void main() {
         ),
       );
       await tester.pump(AppMouvement.entreeIllustration);
-      final Finder entete = find.byKey(const ValueKey<String>('entree-logo'));
-      final BrandLogo logo = tester.widget<BrandLogo>(entete);
-      expect(logo.variante, VarianteLogo.horizontal);
-      expect(logo.fond, FondLogo.violet);
-      expect(
-        tester
-            .renderObject<RenduLogo>(
-              find.descendant(of: entete, matching: find.byType(LogoPeint)),
-            )
-            .hauteurDessin,
-        greaterThanOrEqualTo(BrandLogo.minimumHorizontal),
-      );
-      // Centre dans la page (telephone) ou dans le volet de marque, la
-      // premiere moitie de la fenetre (bureau).
-      final double centre = vue.width >= 840 ? vue.width / 4 : vue.width / 2;
-      expect(tester.getRect(entete).center.dx, closeTo(centre, 1));
+      expect(find.byKey(const ValueKey<String>('entree-logo')), findsNothing);
+      expect(find.byType(BrandLogo), findsNothing);
       expect(find.bySemanticsLabel(t.commun.marque), findsOneWidget);
+      // La porte : en haut et au centre de la page (telephone) ; dans la
+      // zone laissee libre par la carte du formulaire (bureau).
+      final Rect porte = tester
+          .state<CoquillePraxisState>(find.byType(CoquillePraxis))
+          .regie
+          .th
+          .geo
+          .logo;
+      expect(porte.top, lessThan(vue.height / 4));
+      if (vue.width >= 840) {
+        expect(porte.right, lessThan(vue.width - largeurCarteEntree));
+      } else {
+        expect(porte.center.dx, closeTo(vue.width / 2, vue.width * 0.1));
+      }
       expect(tester.takeException(), isNull);
     });
   }

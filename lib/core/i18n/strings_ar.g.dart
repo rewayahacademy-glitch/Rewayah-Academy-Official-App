@@ -1158,6 +1158,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$connexion$praxis$ar praxis = _Traductions$connexion$praxis$ar._(_root);
 	@override late final _Traductions$connexion$candidat$ar candidat = _Traductions$connexion$candidat$ar._(_root);
 	@override String get titre => 'تسجيل الدخول';
 	@override String get intro => 'نرسل لك رابطًا بالبريد الإلكتروني. لا كلمة مرور تحفظها، ولا كلمة مرور تضيع.';
@@ -1165,6 +1166,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get courrielIndice => 'name@example.com';
 	@override String get motDePasseDemo => 'كلمة مرور العرض التجريبي';
 	@override String get envoyerLien => 'استلام الرابط';
+	@override String get envoiEnCours => 'جارٍ إرسال الرابط…';
 	@override String get entrerDemo => 'الدخول إلى العرض التجريبي';
 	@override String get introDemo => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.';
 	@override String get essayerDemo => 'تجربة العرض التجريبي';
@@ -9215,6 +9217,36 @@ class _Traductions$appareils$emetteur$ar extends Traductions$appareils$emetteur$
 	@override late final _Traductions$appareils$emetteur$dejaActif$ar dejaActif = _Traductions$appareils$emetteur$dejaActif$ar._(_root);
 	@override late final _Traductions$appareils$emetteur$horsLigne$ar horsLigne = _Traductions$appareils$emetteur$horsLigne$ar._(_root);
 	@override late final _Traductions$appareils$emetteur$erreur$ar erreur = _Traductions$appareils$emetteur$erreur$ar._(_root);
+}
+
+// Path: connexion.praxis
+class _Traductions$connexion$praxis$ar extends Traductions$connexion$praxis$fr {
+	_Traductions$connexion$praxis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get scene => 'براكسيس يستقبلك عند باب الأكاديمية';
+	@override String get bonjour => 'أهلًا وسهلًا بك';
+	@override String get adresseEtPorte => 'اكتب بريدك، وأفتح لك الباب';
+	@override String get parfait => 'ممتاز';
+	@override String get adresse => 'العنوان ينقصه الرمز @';
+	@override String get adresseIncomplete => 'هذا العنوان غير مكتمل';
+	@override String get envoi => 'أرسل لك الرابط الآن';
+	@override String get envoye => 'تم الإرسال. تفقّد بريدك';
+	@override String get attenteLongue => 'لم يصلك شيء بعد؟ أرسله لك من جديد';
+	@override String get tropEssais => 'طلبات كثيرة دفعة واحدة. لنسترح قليلًا';
+	@override String get horsLigne => 'انقطع الاتصال بالإنترنت';
+	@override String get retourLigne => 'عاد الاتصال';
+	@override String get reseauLent => 'يأخذ الأمر بعض الوقت. ما زلت أحاول الإرسال';
+	@override String get serveur => 'الخطأ من عندنا، لا من عندك';
+	@override String get googleOuverte => 'اختر حسابك في Google';
+	@override String get googleRefuse => 'هذا الحساب لم تصله دعوة بعد';
+	@override String get session => 'انتهت جلستك. نسجّل الدخول من جديد؟';
+	@override String get toucherOui => 'نعم؟';
+	@override String get toucherChatouille => 'هذا يدغدغني!';
+	@override String get toucherLa => 'أنا هنا';
+	@override String get toucherBonjour => 'مرحبًا!';
 }
 
 // Path: connexion.candidat
@@ -39811,6 +39843,27 @@ extension on TraductionsAr {
 			'appareils.regenerer' => 'إنشاء رمز جديد',
 			'appareils.revoquer' => 'إزالة',
 			'appareils.revoquerConfirmation' => 'إزالة هذا الجهاز؟ لن يستطيع الاتصال ما لم يُعد وليّ الأمر ربطه برمز جديد.',
+			'connexion.praxis.scene' => 'براكسيس يستقبلك عند باب الأكاديمية',
+			'connexion.praxis.bonjour' => 'أهلًا وسهلًا بك',
+			'connexion.praxis.adresseEtPorte' => 'اكتب بريدك، وأفتح لك الباب',
+			'connexion.praxis.parfait' => 'ممتاز',
+			'connexion.praxis.adresse' => 'العنوان ينقصه الرمز @',
+			'connexion.praxis.adresseIncomplete' => 'هذا العنوان غير مكتمل',
+			'connexion.praxis.envoi' => 'أرسل لك الرابط الآن',
+			'connexion.praxis.envoye' => 'تم الإرسال. تفقّد بريدك',
+			'connexion.praxis.attenteLongue' => 'لم يصلك شيء بعد؟ أرسله لك من جديد',
+			'connexion.praxis.tropEssais' => 'طلبات كثيرة دفعة واحدة. لنسترح قليلًا',
+			'connexion.praxis.horsLigne' => 'انقطع الاتصال بالإنترنت',
+			'connexion.praxis.retourLigne' => 'عاد الاتصال',
+			'connexion.praxis.reseauLent' => 'يأخذ الأمر بعض الوقت. ما زلت أحاول الإرسال',
+			'connexion.praxis.serveur' => 'الخطأ من عندنا، لا من عندك',
+			'connexion.praxis.googleOuverte' => 'اختر حسابك في Google',
+			'connexion.praxis.googleRefuse' => 'هذا الحساب لم تصله دعوة بعد',
+			'connexion.praxis.session' => 'انتهت جلستك. نسجّل الدخول من جديد؟',
+			'connexion.praxis.toucherOui' => 'نعم؟',
+			'connexion.praxis.toucherChatouille' => 'هذا يدغدغني!',
+			'connexion.praxis.toucherLa' => 'أنا هنا',
+			'connexion.praxis.toucherBonjour' => 'مرحبًا!',
 			'connexion.candidat.titre' => 'طلب ترشحك معلّمًا',
 			'connexion.candidat.phrase' => 'وصلت عبر دعوة أكاديمية الرواية. طلب ترشحك في انتظارك: اكتب البريد الإلكتروني الذي وصلته هذه الرسالة، وسنرسل إليه رابط الدخول.',
 			'connexion.titre' => 'تسجيل الدخول',
@@ -39819,6 +39872,7 @@ extension on TraductionsAr {
 			'connexion.courrielIndice' => 'name@example.com',
 			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
 			'connexion.envoyerLien' => 'استلام الرابط',
+			'connexion.envoiEnCours' => 'جارٍ إرسال الرابط…',
 			'connexion.entrerDemo' => 'الدخول إلى العرض التجريبي',
 			'connexion.introDemo' => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.',
 			'connexion.essayerDemo' => 'تجربة العرض التجريبي',
@@ -39837,6 +39891,8 @@ extension on TraductionsAr {
 			'connexion.code.titre' => 'أو أدخل الرمز الذي وصلك',
 			'connexion.code.aide' => 'تحتوي الرسالة أيضًا على رمز من 6 أرقام. أدخله هنا: يعمل حتى لو فُتح الرابط في متصفح آخر.',
 			'connexion.code.etiquette' => 'رمز الرسالة',
+			_ => null,
+		} ?? switch (path) {
 			'connexion.code.indice' => '6 أرقام',
 			'connexion.code.valider' => 'تأكيد الرمز',
 			'connexion.code.erreurLongueur' => 'ينقصك بعض الأرقام: الرمز من 6 أرقام. انسخه من أحدث رسالة.',
@@ -39859,8 +39915,6 @@ extension on TraductionsAr {
 			'connexion.controle.erreurHorloge' => 'يرفض التحقق الأمني وقت جهازك. اضبط التاريخ والوقت على «تلقائي»، ثم المس «إعادة المحاولة».',
 			'connexion.controle.erreurReglage' => 'لا يعمل التحقق الأمني الآن بسبب إعداد من جهتنا. أعد المحاولة لاحقًا.',
 			'connexion.controle.refuse' => 'لم يُقبل التحقق الأمني. المس الزر مرة أخرى بعد ثوانٍ؛ وإن تكرر ذلك فأعد تحميل الصفحة.',
-			_ => null,
-		} ?? switch (path) {
 			'connexion.controle.autreCheminGoogle' => 'يمكنك أيضًا المتابعة عبر ⁨Google⁩: هذا الطريق لا يمر بهذا التحقق.',
 			'connexion.controle.rechargerPage' => 'إعادة تحميل الصفحة',
 			'connexion.controle.horsLigne' => 'لا يمكن إجراء التحقق الآن. أعد المحاولة عند عودة الاتصال.',
@@ -40351,6 +40405,8 @@ extension on TraductionsAr {
 			'adulte.recharge.resultat.attentePhrase' => 'لم تؤكد جهة الدفع بعد. لا تتغير الأرصدة إلا بعد تأكيدها.',
 			'adulte.recharge.resultat.attenteBandeauTitre' => 'لا تدفع مرة ثانية.',
 			'adulte.recharge.resultat.attenteBandeauPhrase' => 'ربما تمت هذه الدفعة بالفعل. أعد التحميل بعد لحظات لترى حالتها.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.resultat.confirmeTitre' => 'تم تأكيد الدفعة',
 			'adulte.recharge.resultat.confirmePhrase' => 'تم تأكيد الدفعة. ستُحدَّث الأرصدة.',
 			'adulte.recharge.resultat.allocationPhrase' => 'جارٍ تحديث الأرصدة...',
@@ -40373,8 +40429,6 @@ extension on TraductionsAr {
 			'adulte.recharge.resultat.annuleTitre' => 'أُلغيت الدفعة',
 			'adulte.recharge.resultat.annulePhrase' => 'أُلغيت الدفعة قبل تأكيدها. لم يُضف أي رصيد. يمكنك البدء من جديد بالاختيار نفسه.',
 			'adulte.recharge.resultat.perimeTitre' => 'انتهت صلاحية الطلب',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.resultat.perimePhrase' => 'انقضت مهلة دفع هذا الطلب. لم يُضف أي رصيد. أعد الشحن للحصول على طلب جديد.',
 			'adulte.recharge.resultat.recommencer' => 'إعادة الشحن',
 			'adulte.recharge.resultat.actualiser' => 'إعادة التحميل',
@@ -40865,6 +40919,8 @@ extension on TraductionsAr {
 			'contrat.titre' => 'ما توقّع عليه',
 			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
 			'contrat.pointEnregistrement' => 'سوف يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
 			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
 			'contrat.lireTexte' => 'قراءة النص كاملًا',
@@ -40887,8 +40943,6 @@ extension on TraductionsAr {
 			'contrat.a3.jaiLu' => 'قرأت',
 			'contrat.e1.quoi' => 'قد يتم تسجيل الدرس صوتيًا. لا تُسجَّل الصورة. ويمكن أيضًا لشخص من الأكاديمية مكلَّف بالمراقبة أن يتابع الدرس مباشرة: يرى الدرس ويسمعه دون أن يُرى أو يُسمع. ولا يسجّل شيئًا. ثم يرسل تقريرًا إلى الأكاديمية. وتذكّر القاعة بذلك باستمرار.',
 			'contrat.e1.pourquoi' => 'لحماية الأطفال والمعلمين. إذا أبلغ أحد عن مشكلة، يمكننا التحقق مما حدث. وهو أيضًا دليل لك إذا اشتكت أسرة دون حق.',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.e1.refusTitre' => 'إذا رفضت.',
 			'contrat.e1.refus' => 'لا يمكننا أن نعهد إليك بطلاب، لأن هذا الإجراء يحمي الأطفال. نخبرك بذلك قبل توقيعك.',
 			'contrat.resignature' => 'تم تحديث العقد: أُرفقت به الآن سياسة مراقبة الدروس. وقّع هذه الإصدار الجديد لتتابع.',
@@ -41379,6 +41433,8 @@ extension on TraductionsAr {
 			'recherche.domaines.supports' => 'المواد',
 			'recherche.domaines.personnes' => 'الأشخاص',
 			'recherche.domaines.enseignants' => 'المعلّمون',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.domaines.pedagogie' => 'الطلاب',
 			'recherche.domaines.controle' => 'المراقبة',
 			'recherche.domaines.finances' => 'المالية',
@@ -41401,8 +41457,6 @@ extension on TraductionsAr {
 			'recherche.etats.horsLigne.phrase' => 'سيستأنف عند عودة الاتصال. لا تُحفظ أي نتيجة خاصة في الانتظار.',
 			'recherche.etats.sessionExpiree.titre' => 'انتهت جلستك.',
 			'recherche.etats.sessionExpiree.phrase' => 'سجّل الدخول من جديد لمتابعة البحث.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.etats.nonRaccorde.titre' => 'البحث غير متاح حاليًا.',
 			'recherche.etats.nonRaccorde.phrase' => 'هذا البحث لم يُفتح بعد في مساحتك.',
 			'recherche.etats.nonRaccorde.action' => 'رجوع',
@@ -41893,6 +41947,8 @@ extension on TraductionsAr {
 			'recrutement.retrait.question' => 'هل تسحب طلب ترشحك؟',
 			'recrutement.retrait.consequence' => 'وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
 			'recrutement.retrait.consequenceEntretien' => 'سيُلغى موعد مقابلتك. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.retrait.confirmer' => 'سحب طلب ترشحي',
 			'recrutement.retrait.echec' => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.',
 			'recrutement.retrait.incertain' => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.',
@@ -41915,8 +41971,6 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.cadreAccepte' => 'لقد قبلت الإطار الديني والتربوي.',
 			'recrutement.questionnaire.langues' => 'لغاتك',
 			'recrutement.questionnaire.recitation' => 'تلاوتك',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.questionnaire.disponibilites' => 'أوقات تفرّغك',
 			'recrutement.questionnaire.publics' => 'الفئات التي تستطيع تعليمها',
 			'recrutement.questionnaire.versement' => 'بلدك وصرف راتبك',
@@ -42407,6 +42461,8 @@ extension on TraductionsAr {
 			'recrutement.talents.c.gestion_financiere.exemple' => 'إعداد ميزانية تقديرية، متابعة السيولة',
 			'recrutement.talents.c.juridique_donnees.libelle' => 'القانون وحماية البيانات',
 			'recrutement.talents.c.juridique_donnees.description' => 'السهر على احترام الأكاديمية للقانون وحمايتها للبيانات الشخصية.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.juridique_donnees.exemple' => 'مراجعة عقد، كتابة شروط الاستعمال، حماية الخصوصية',
 			'recrutement.talents.c.conception_programmes.libelle' => 'تصميم المناهج والمواد التعليمية',
 			'recrutement.talents.c.conception_programmes.description' => 'إعداد ما يتعلمه الطلاب والمواد التي يُدرَّس بها.',
@@ -42429,8 +42485,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.assistance_technique.libelle' => 'الدعم التقني للأسر والمعلمين',
 			'recrutement.talents.c.assistance_technique.description' => 'حلّ المشكلات التقنية عن بُعد لمن يواجهها.',
 			'recrutement.talents.c.assistance_technique.exemple' => 'المساعدة على الاتصال، ضبط الصوت والكاميرا',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.donnees_tableurs.libelle' => 'البيانات والجداول',
 			'recrutement.talents.c.donnees_tableurs.description' => 'تنظيم الأرقام واستخلاص جداول واضحة منها.',
 			'recrutement.talents.c.donnees_tableurs.exemple' => 'جدول متابعة، إحصاءات، تقرير',
@@ -42921,6 +42975,8 @@ extension on TraductionsAr {
 			'avis.admin.liens.creePhrase' => 'انسخ هذا الرابط الآن. لن يظهر مرة أخرى بعد إغلاق هذا الإطار. إذا فقدته فأغلق هذا الرابط وأنشئ رابطًا آخر.',
 			'avis.admin.liens.creeAdresse' => 'عنوان الرابط',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'صالح حتى ⁨${date}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.copier' => 'نسخ الرابط',
 			'avis.admin.liens.copie' => 'تم نسخ الرابط.',
 			'avis.admin.liens.creeFermer' => 'لقد نسخت الرابط',
@@ -42943,8 +42999,6 @@ extension on TraductionsAr {
 			'avis.admin.liens.sansDonnees' => 'تعذّر تحميل الروابط',
 			'courriels.admin.titre' => 'البريد الإلكتروني',
 			'courriels.admin.sousTitre' => 'اكتب إلى شخص وتابع الرسائل التي تخرج من الأكاديمية.',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.outil' => 'البريد الإلكتروني',
 			'courriels.admin.outilDetail' => 'كتابة رسالة، ومتابعة الإرسال، وعرض عناوين الإرسال',
 			'courriels.admin.sections.libelle' => 'أقسام البريد الإلكتروني',
@@ -43435,6 +43489,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'عرض خيارات هذه الحالة',
 			'candidatsFlux.importFormulaires.doublons.fermer' => 'إغلاق خيارات هذه الحالة',
 			'candidatsFlux.importFormulaires.doublons.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ حالة إضافية', one: 'عرض حالة إضافية', two: 'عرض حالتين إضافيتين', few: 'عرض ⁨${n}⁩ حالات إضافية', many: 'عرض ⁨${n}⁩ حالة إضافية', other: 'عرض ⁨${n}⁩ حالة إضافية', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.etat.recente' => 'يُحتفظ بالأحدث',
 			'candidatsFlux.importFormulaires.doublons.etat.base' => 'يُحتفظ بالسطر المسجَّل سابقًا',
 			'candidatsFlux.importFormulaires.doublons.etat.ligne' => ({required Object ligne}) => 'يُحتفظ بالسطر ⁨${ligne}⁩',
@@ -43457,8 +43513,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.analyse.refus' => 'لا يستطيع الخادم قراءة هذا الملف بهذين الاسمين. تحققوا من المصنّف والورقة والملف ثم أعيدوا المحاولة.',
 			'candidatsFlux.importFormulaires.analyse.reessayer' => 'إعادة التحليل',
 			'candidatsFlux.importFormulaires.apercu.question' => 'هل هذا هو الملف المطلوب؟',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.explication' => 'هذا ما قرأته رواية. لم يُسجَّل شيء بعد.',
 			'candidatsFlux.importFormulaires.apercu.contactsMasques' => 'جهات الاتصال مخفية في المعاينة.',
 			'candidatsFlux.importFormulaires.apercu.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر مقروءة', one: 'سطر واحد مقروء', two: 'سطران مقروءان', few: '⁨${n}⁩ أسطر مقروءة', many: '⁨${n}⁩ سطرًا مقروءًا', other: '⁨${n}⁩ سطر مقروء', ), 
@@ -43949,6 +44003,8 @@ extension on TraductionsAr {
 			'suiviAttente.presentation.nonConfirme' => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده تُعرض بلداك وكلمتك، إن كتبتهما، في بطاقة المتابعة.',
 			'suiviAttente.presentation.enregistrer' => 'حفظ',
 			'suiviAttente.presentation.enregistre' => 'سُجِّل اختيارك.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.presentation.erreur' => 'تعذّر حفظ الاختيار. حاول مرة أخرى بعد قليل.',
 			'suiviAttente.presentation.effacerPays' => 'عدم التحديد',
 			'suiviAttente.mePresenter.lien' => 'أعرّف بنفسي للأسر',
@@ -43971,8 +44027,6 @@ extension on TraductionsAr {
 			'journalSorties.texte.parent.pourquoi' => 'لماذا: لمتابعة انتباه طفلك أثناء الدرس، لك ولمعلّمه.',
 			'journalSorties.texte.parent.qui' => 'من يمكنه قراءته: أنت، وطفلك، ومعلّم الحصة، والإدارة. ولا يقرؤه أبدًا الطلاب الآخرون ولا عائلاتهم.',
 			'journalSorties.texte.parent.retrait' => 'يمكنك سحب موافقتك في أي وقت، من هنا. بمجرد سحبها، لا يُسجَّل أي شيء بعد ذلك.',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.texte.parent.sansAccord' => 'دون موافقتك، لا يُسجَّل أي شيء ولا يتغيّر شيء في الدرس. الطالب الذي يبقى خارج التطبيق مدة طويلة يخرج من القاعة، بموافقة أو دونها: وهذا لا يحفظ أي شيء.',
 			'journalSorties.texte.parent.caseAccord' => ({required Object dePrenom}) => 'أوافق على تدوين مرات خروج ⁨${dePrenom}⁩ من التطبيق أثناء الحصص.',
 			'journalSorties.texte.adulte.quoi' => 'ما يُسجَّل: في كل مرة تخرج فيها من التطبيق أثناء الحصة، وقت خروجك، ووقت عودتك، وهل أدّى هذا الغياب إلى خروجك من القاعة. لا شيء غير ذلك: لا ما تفعله في مكان آخر، ولا شاشتك، ولا صورتك، ولا صوتك.',

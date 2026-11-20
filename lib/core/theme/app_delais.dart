@@ -27,6 +27,16 @@ abstract final class AppDelais {
   /// long, et seulement ensuite que c'est perdu.
   static const Duration requeteMax = Duration(seconds: 20);
 
+  /// ENTREE-PRAXIS : au-dela, un lien qui part encore fait dire a Praxis que
+  /// le reseau est lent (la situation « Reseau lent » de la maquette). Le meme
+  /// seuil que [chargementProlonge].
+  static const Duration praxisReseauLent = chargementProlonge;
+
+  /// ENTREE-PRAXIS : au-dela, un lien parti et pas encore suivi fait proposer
+  /// a Praxis de le renvoyer (la situation « Attente longue » de la maquette).
+  /// Valeur proposee, non mesuree.
+  static const Duration praxisAttenteLongue = Duration(seconds: 45);
+
   /// La relecture programmee d'un accueil d'eleve qui precede sa seance
   /// connue (la seconde tombe a l'heure de debut). Decision du directeur du
   /// 29/10/2026 : aucune minuterie fixe.
