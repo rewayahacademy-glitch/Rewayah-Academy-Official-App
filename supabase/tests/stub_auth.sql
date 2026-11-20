@@ -23,7 +23,9 @@ create table auth.users (
   email text,
   email_confirmed_at timestamptz,
   -- Lue par COURRIELS-1 (un compte enfant porte child_of) ; Supabase l'a toujours.
-  raw_app_meta_data jsonb not null default '{}'::jsonb
+  raw_app_meta_data jsonb not null default '{}'::jsonb,
+  -- Lue par DOSSIER-DIRECTION (derniere connexion du candidat) ; Supabase l'a toujours.
+  last_sign_in_at timestamptz
 );
 
 create function auth.uid() returns uuid language sql stable as $auth_uid$

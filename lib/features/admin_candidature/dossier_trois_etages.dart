@@ -68,6 +68,7 @@ import 'plan_dossier.dart';
 import 'portrait_dossier_fige.dart';
 import 'propositions_praxis_dossier.dart';
 import 'reponses_candidature.dart';
+import 'synthese_tete_dossier.dart';
 
 // ---------------------------------------------------------------------------
 // Etage 1
@@ -259,6 +260,13 @@ class EtageUnDossier extends ConsumerWidget {
         children: <Widget>[
           if (navigation != null) ...<Widget>[navigation!, Ecart.vMd],
           identite,
+          // PE-C2 : ce qui manque, la piece, la derniere connexion,
+          // l'anciennete ; et « Accueillir demande une piece verifiee ».
+          Ecart.vMd,
+          SyntheseTeteDossier(
+            detail: detail,
+            accepter: plan.fentesDecision().first.geste,
+          ),
           if (profil.isNotEmpty) ...<Widget>[
             Ecart.vMd,
             Column(

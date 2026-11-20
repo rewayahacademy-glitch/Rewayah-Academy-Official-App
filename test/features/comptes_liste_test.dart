@@ -28,12 +28,27 @@ import 'package:rewayah_academy/core/widgets/pied_de_liste.dart';
 import 'package:rewayah_academy/core/widgets/puce_filtre_actif.dart';
 import 'package:rewayah_academy/core/widgets/rangee_filtres.dart';
 import 'package:rewayah_academy/core/widgets/selecteur_section.dart';
+import 'package:rewayah_academy/features/admin_candidature/references_dossiers.dart';
 import 'package:rewayah_academy/features/admin_comptes/comptes_page.dart';
 import 'package:rewayah_academy/features/admin_comptes/liste_comptes.dart';
 
 import '../router/support_routeur.dart';
 import '../support/harnais.dart';
 import '../support/rangee_plus.dart';
+
+/// Les references de dossier servies au test (PE-C1).
+class _References implements PortReferencesDossiers {
+  const _References(this._table);
+
+  final Map<String, String> _table;
+
+  @override
+  Future<Map<String, String>> references(List<String> profils) async =>
+      <String, String>{
+        for (final String p in profils)
+          if (_table[p] case final String r) p: r,
+      };
+}
 
 class _Service implements ServiceComptes {
   _Service(this._comptes, {this.attente});
@@ -824,6 +839,61 @@ void main() {
       expect(find.text('dossiers'), findsOneWidget);
       expect(extra, 'p-TEACHER-OB-000005');
     });
+
+    testWidgets(
+      'PE-C1 : un candidat enseignant dont la reference est connue ouvre son '
+      'dossier, jamais « Fichiers a valider »',
+      (tester) async {
+        tester.view.devicePixelRatio = 1;
+        tester.view.physicalSize = const Size(1440, 900);
+        addTearDown(tester.view.reset);
+        String? reference;
+        bool fichiers = false;
+        await tester.pumpWidget(
+          hoteRoutant(
+            depart: '/c',
+            routes: <RouteBase>[
+              GoRoute(
+                path: '/c',
+                builder: (BuildContext _, GoRouterState etat) =>
+                    ComptesPage(requete: etat.uri.queryParameters),
+              ),
+              GoRoute(
+                path: Routes.adminPersonnesDossiers,
+                builder: (BuildContext _, GoRouterState _) {
+                  fichiers = true;
+                  return const Scaffold(body: Text('dossiers'));
+                },
+              ),
+              GoRoute(
+                path: Routes.adminPersonnesCandidature,
+                builder: (BuildContext _, GoRouterState etat) {
+                  reference = etat.pathParameters['reference'];
+                  return const Scaffold(body: Text('dossier A'));
+                },
+              ),
+            ],
+            surcharges: <Override>[
+              serviceComptesProvider.overrideWithValue(_Service(_annuaire())),
+              serviceReseauProvider.overrideWithValue(FauxServiceReseau()),
+              portReferencesDossiersProvider.overrideWithValue(
+                const _References(<String, String>{
+                  'p-TEACHER-OB-000005': 'CAND-00042',
+                }),
+              ),
+            ],
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.bySemanticsLabel('Actions\u00a0: Omar Ba'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text(t.admin.candidatures.liste.ouvrirDossier));
+        await tester.pumpAndSettle();
+        expect(find.text('dossier A'), findsOneWidget);
+        expect(reference, 'CAND-00042');
+        expect(fichiers, isFalse);
+      },
+    );
 
     testWidgets('pagination cote client : 25 / 50 / 100 et fleches', (
       tester,
