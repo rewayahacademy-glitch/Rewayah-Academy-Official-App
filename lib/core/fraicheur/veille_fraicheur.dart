@@ -9,21 +9,42 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../features/accueil_famille/accueil_famille_page.dart'
     show classeDeLEleveProvider;
+import '../../features/accueil_famille/carte_horaire.dart'
+    show demandesHoraireProvider;
 import '../../features/classe_tuteur/contexte_classe.dart'
     show contexteClasseProvider;
 import '../../features/classe_tuteur/planning_classe_page.dart'
     show planningClasseProvider;
+import '../../features/com_annonces/port_annonces_direction.dart'
+    show mesAnnoncesProvider;
+import '../../features/com_messages/non_lus_messages.dart'
+    show nonLusMessagesProvider;
+import '../../features/compte/donnees_compte.dart' show accesFoyerProvider;
+import '../../features/dossier/apprenants_demande.dart'
+    show apprenantsDemandeProvider, demandeFamilleProvider;
 import '../../features/foyer/foyer_page.dart' show classesMembreProvider;
+import '../../features/foyer/invitation_conjoint.dart'
+    show invitationRecueProvider;
 import '../../features/ma_classe_adulte/ma_classe_adulte_page.dart'
     show maClasseAdulteProvider;
 import '../../features/notifications/notifications_page.dart'
     show notificationsTuteurProvider;
-import '../appairage/service_appairage.dart' show elevesDuFoyerProvider;
+import '../accessibilite/port_reponse_presentation.dart'
+    show demandesPresentationProvider;
+import '../appairage/service_appairage.dart'
+    show appareilsDuFoyerProvider, elevesDuFoyerProvider;
+import '../candidature/entretien_candidat.dart' show monEntretienProvider;
+import '../capacites/consentements_supabase.dart' show accordsTitulaireProvider;
+import '../dossier/service_dossier.dart' show etatDossierProvider;
 import '../enseignant/port_remplacements.dart' show offresCommunesProvider;
 import '../enseignant/service_enseignant.dart';
+import '../foyer/selection_eleve.dart' show profilsElevesFoyerProvider;
 import '../observabilite/journal_dev.dart';
 import '../observabilite/supervision.dart';
+import '../offres/service_offres.dart'
+    show parcoursFoyerProvider, reglesAcademieProvider;
 import '../planning/service_planning.dart' show seancesProvider;
+import '../priere/service_priere.dart' show pausePrevueProvider;
 import '../reseau/service_reseau.dart';
 import '../seance_famille/port_seances_famille.dart';
 import '../session/session_controleur.dart';
@@ -89,6 +110,47 @@ final Map<FamilleLecture, List<void Function(Ref)>> lecturesVeillees =
         (Ref ref) => ref.invalidate(offresCommunesProvider),
       ],
     };
+
+/// PE-D12 (directeur, 19/11/2026 ; pilote, 20/11/2026 : « un geste qui
+/// montre une attente sans rien relire trompe la personne ») : ce que la
+/// relecture generale relit EN PLUS des familles veillees, quand on tire une
+/// page vers le bas (et au retour sur un onglet ou dans l'application, au
+/// plus toutes les 10 s). **Jamais sur un signal du serveur** : la veille
+/// garde exactement ses familles et ses delais. Une lecture d'accueil qui
+/// doit suivre le geste s'ajoute ICI. Sans ecran qui l'ecoute,
+/// l'invalidation ne lit rien.
+final List<void Function(Ref)> lecturesDuGeste = <void Function(Ref)>[
+  // L'accueil du candidat (`/attente`) : son dossier et sa candidature, la
+  // demande d'une famille et ses apprenants (comme « Actualiser l'etat du
+  // dossier »), son entretien, les annonces de l'academie.
+  (Ref ref) => ref.invalidate(etatDossierProvider),
+  (Ref ref) => ref.invalidate(demandeFamilleProvider),
+  (Ref ref) => ref.invalidate(apprenantsDemandeProvider),
+  (Ref ref) => ref.invalidate(monEntretienProvider),
+  (Ref ref) => ref.invalidate(mesAnnoncesProvider),
+  // Toutes les coquilles : les conversations non lues (icone des messages).
+  (Ref ref) => ref.invalidate(nonLusMessagesProvider),
+  // L'accueil de la famille : profils, parcours, demandes d'horaire et de
+  // presentation, invitation, appareils, accords, acces, regles.
+  (Ref ref) => ref.invalidate(profilsElevesFoyerProvider),
+  (Ref ref) => ref.invalidate(parcoursFoyerProvider),
+  (Ref ref) => ref.invalidate(demandesHoraireProvider),
+  (Ref ref) => ref.invalidate(demandesPresentationProvider),
+  (Ref ref) => ref.invalidate(invitationRecueProvider),
+  (Ref ref) => ref.invalidate(appareilsDuFoyerProvider),
+  (Ref ref) => ref.invalidate(accordsTitulaireProvider),
+  (Ref ref) => ref.invalidate(accesFoyerProvider),
+  (Ref ref) => ref.invalidate(reglesAcademieProvider),
+  // La Journee de l'enseignant : la pause de priere prevue d'une seance.
+  (Ref ref) => ref.invalidate(pausePrevueProvider),
+];
+
+/// Invalide les lectures du geste ([lecturesDuGeste]).
+void invaliderLecturesDuGeste(Ref ref) {
+  for (final void Function(Ref) invalider in lecturesDuGeste) {
+    invalider(ref);
+  }
+}
 
 /// Les familles a relire pour un signal : la famille de la table, ou toutes
 /// quand le canal vient d'etre (re)joint. Pure.

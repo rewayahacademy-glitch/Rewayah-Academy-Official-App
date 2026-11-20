@@ -15,7 +15,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../session/session_controleur.dart';
 import 'port_veille.dart' show FamilleLecture;
-import 'veille_fraicheur.dart' show invaliderFamille;
+import 'veille_fraicheur.dart' show invaliderFamille, invaliderLecturesDuGeste;
 
 /// L'intervalle minimal entre deux relectures automatiques (onglet, retour
 /// dans l'application) : passer d'un onglet a l'autre en rafale ne relit pas
@@ -33,6 +33,8 @@ final Provider<void Function()> relectureGeneraleProvider =
         for (final FamilleLecture famille in FamilleLecture.values) {
           invaliderFamille(ref, famille);
         }
+        // PE-D12 : et les lectures des accueils, que la veille ne suit pas.
+        invaliderLecturesDuGeste(ref);
       },
     );
 
