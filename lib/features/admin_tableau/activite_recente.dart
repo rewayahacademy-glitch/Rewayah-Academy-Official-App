@@ -106,19 +106,32 @@ class ActiviteRecente extends ConsumerWidget {
     }
     return CaseVivante(
       paire: palette.surfaceRaised,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(t.admin.tableau.vivant.activiteTitre, style: textes.titleMedium),
-          Ecart.vSm,
-          ...corps,
-          LienFleche(
-            libelle: t.admin.tableau.activite.voirTout,
-            onPress: () =>
-                GoRouter.of(context).go(Routes.adminSecuriteAuditJournal),
+      // Une ligne de texte suivi ne depasse jamais la largeur de lecture,
+      // meme quand la case prend toute la page (garde du bureau, B4).
+      child: Align(
+        alignment: AlignmentDirectional.topStart,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: CaseVivante.largeurLecture,
           ),
-        ],
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                t.admin.tableau.vivant.activiteTitre,
+                style: textes.titleMedium,
+              ),
+              Ecart.vSm,
+              ...corps,
+              LienFleche(
+                libelle: t.admin.tableau.activite.voirTout,
+                onPress: () =>
+                    GoRouter.of(context).go(Routes.adminSecuriteAuditJournal),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

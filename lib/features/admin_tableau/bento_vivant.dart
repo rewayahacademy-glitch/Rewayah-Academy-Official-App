@@ -507,6 +507,10 @@ class CaseVivante extends StatelessWidget {
   /// La marge interieure d'une case.
   static const double marge = AppSpacing.lg;
 
+  /// La largeur de lecture d'un texte suivi dans une case : une ligne ne
+  /// depasse jamais 800 points sur ordinateur (garde du bureau, B4).
+  static const double largeurLecture = 640;
+
   /// Le fond et son encre.
   final AppColorPair paire;
 
@@ -855,10 +859,14 @@ class _Heros extends StatelessWidget {
                     Ecart.vSm,
                     Padding(
                       padding: grand ? placePraxis : EdgeInsets.zero,
-                      child: Text(
-                        texte,
-                        style: (textes.bodyLarge ?? const TextStyle()).copyWith(
-                          color: lavande,
+                      child: ConstrainedBox(
+                        constraints: const BoxConstraints(
+                          maxWidth: CaseVivante.largeurLecture,
+                        ),
+                        child: Text(
+                          texte,
+                          style: (textes.bodyLarge ?? const TextStyle())
+                              .copyWith(color: lavande),
                         ),
                       ),
                     ),
