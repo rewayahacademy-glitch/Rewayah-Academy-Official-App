@@ -604,6 +604,21 @@ class _JuzState extends State<_Juz> {
   /// nombre choisi : le compteur s'ouvre, rien n'est retenu.
   bool _nombreTouche = false;
 
+  /// La reponse (« tout le Coran » ou « rien ») que « un nombre precis » a
+  /// retiree de l'ecran, tant qu'aucun nombre n'est choisi. Si la personne
+  /// quitte la question sans choisir, elle revient : c'est elle que le
+  /// brouillon du serveur garde.
+  String? _avantNombre;
+
+  @override
+  void dispose() {
+    final String? avant = _avantNombre;
+    if (avant != null) {
+      rendreSiToujoursVide(widget.controleur, widget.champ.code, avant);
+    }
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     final r = t.recrutement.parcours.juz;
@@ -634,7 +649,10 @@ class _JuzState extends State<_Juz> {
             );
     }
 
-    void repondre(int n) => widget.controleur.repondre(champ.code, codeJuz(n));
+    void repondre(int n) {
+      _avantNombre = null;
+      widget.controleur.repondre(champ.code, codeJuz(n));
+    }
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -674,10 +692,14 @@ class _JuzState extends State<_Juz> {
               // le nombre.
               setState(() => _nombreTouche = true);
               if (code == memorisationTout || code == memorisationRien) {
+                _avantNombre = code;
                 widget.controleur.repondre(champ.code, null);
               }
             } else {
-              setState(() => _nombreTouche = false);
+              setState(() {
+                _nombreTouche = false;
+                _avantNombre = null;
+              });
               widget.controleur.repondre(champ.code, v);
             }
           },
@@ -737,6 +759,28 @@ class _JuzState extends State<_Juz> {
 /// la tranche, dont les deux voisins y restent aussi.
 int _milieuTranche(String code) => code == 'de_10_a_29_juz' ? 15 : 5;
 
+/// Remet [valeur] au champ [code] apres l'image en cours, si la reponse est
+/// toujours vide et le parcours toujours ouvert : une reponse retiree de
+/// l'ecran par un geste inacheve (« un nombre precis » sans nombre, « une
+/// seule » sans riwaya) revient quand la personne quitte la question. Rien
+/// n'est ecrit au serveur : son brouillon l'a toujours.
+void rendreSiToujoursVide(
+  ParcoursControleur controleur,
+  String code,
+  Object valeur,
+) {
+  WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+    if (controleur.valeurs(code).isNotEmpty) return;
+    try {
+      controleur.repondre(code, valeur);
+    } on FlutterError {
+      // Le parcours est ferme (controleur libere) : rien a remettre, le
+      // brouillon du serveur garde la reponse.
+    }
+  });
+  WidgetsBinding.instance.ensureVisualUpdate();
+}
+
 /// Une ancienne tranche, en mots courts (« Moins de 10 juz »).
 String _trancheCourte(String code) {
   final v = t.recrutement.dossier3.synthese.memorisationValeurs;
@@ -768,18 +812,30 @@ class _RiwayatState extends State<_Riwayat> {
 
   final TextEditingController _recherche = TextEditingController();
 
+  /// Les riwayat retenues (plusieurs) que « une seule » a retirees de
+  /// l'ecran, tant qu'aucune riwaya n'y est choisie : « Continuer » demande
+  /// alors de choisir (l'ecran montre exactement ce qui sera envoye : rien) ;
+  /// « quelques-unes », ou quitter la question, les remet.
+  List<String>? _gardees;
+
   @override
   void dispose() {
+    final List<String>? gardees = _gardees;
+    if (gardees != null) {
+      rendreSiToujoursVide(widget.controleur, widget.champ.code, gardees);
+    }
     _recherche.dispose();
     super.dispose();
   }
 
   /// Les codes dans l'ordre du serveur, pas l'ordre des touches.
-  void _repondre(Set<String> codes) =>
-      widget.controleur.repondre(widget.champ.code, <String>[
-        for (final OptionQuestionnaire o in widget.champ.options)
-          if (codes.contains(o.code)) o.code,
-      ]);
+  void _repondre(Set<String> codes) {
+    _gardees = null;
+    widget.controleur.repondre(widget.champ.code, <String>[
+      for (final OptionQuestionnaire o in widget.champ.options)
+        if (codes.contains(o.code)) o.code,
+    ]);
+  }
 
   void _choisirMode(ModeRiwayat mode, Set<String> selection) {
     setState(() => _mode = mode);
@@ -789,12 +845,21 @@ class _RiwayatState extends State<_Riwayat> {
       case ModeRiwayat.sept:
         _repondre(riwayatSept);
       case ModeRiwayat.une:
-        // Plusieurs codes retenus restent retenus tant qu'aucune riwaya n'est
-        // choisie ici : revenir a « quelques-unes » les retrouve.
-        break;
+        // Plusieurs codes retenus sont mis de cote, pas perdus : rien n'est
+        // affiche ni envoye tant qu'une riwaya n'est pas choisie ici ;
+        // « quelques-unes » (ou quitter la question) les remet.
+        if (selection.length > 1) {
+          widget.controleur.repondre(widget.champ.code, null);
+          _gardees = <String>[...?_gardees, ...selection];
+        }
       case ModeRiwayat.quelques:
         // Ce qui etait retenu le reste : on retire ce qu'on ne recite pas.
-        break;
+        // Ce que « une seule » avait mis de cote revient.
+        final List<String>? gardees = _gardees;
+        if (gardees != null && selection.isEmpty) {
+          _repondre(gardees.toSet());
+        }
+        _gardees = null;
     }
   }
 

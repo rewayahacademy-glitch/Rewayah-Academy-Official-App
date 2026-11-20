@@ -155,6 +155,35 @@ void main() {
       });
     }
 
+    testWidgets('un nombre precis puis retour sans nombre : l ancienne '
+        'reponse revient', (WidgetTester tester) async {
+      final FauxMaCandidature port = FauxMaCandidature(
+        questionnaireJson: questionnaireAvecJuz(
+          dernieresReponses: <String, Object?>{
+            'langueMaternelle': 'poular',
+            'languesExplication': <String>['poular'],
+            champMemorisation: 'coran_entier',
+          },
+        ),
+      );
+      await monterQuestionnaire(tester, port: port);
+      await toucherCle(tester, 'parcours-retour');
+      await toucherCle(tester, 'option-$champMemorisation-nombre');
+      expect(find.text(t.recrutement.parcours.juz.choisir), findsOneWidget);
+      // Retour a la question precedente, puis de nouveau la memorisation.
+      await toucherCle(tester, 'parcours-retour');
+      await continuer(tester);
+      expect(
+        find.byKey(const ValueKey<String>('juz-compteur')),
+        findsNothing,
+        reason: 'tout le Coran est de nouveau choisi, pas le compteur vide',
+      );
+      final int avant = port.brouillons.length;
+      await continuer(tester);
+      expect(port.brouillons.length, greaterThan(avant));
+      expect(_dernier(port, champMemorisation), 'coran_entier');
+    });
+
     testWidgets('sans juz_N au serveur : les quatre anciennes cartes', (
       WidgetTester tester,
     ) async {
@@ -288,6 +317,44 @@ void main() {
       await toucherCle(tester, 'parcours-retour');
       await toucherCle(tester, 'option-riwayat-une');
       await toucherCle(tester, 'option-riwayat-quelques');
+      await continuer(tester);
+      expect(_dernier(port, 'riwayat'), <String>['hafs', 'warsh']);
+    });
+
+    testWidgets('« une seule » sans choix : Continuer demande, rien ne part ; '
+        'au retour, la grille avec les riwayat gardees', (
+      WidgetTester tester,
+    ) async {
+      final FauxMaCandidature port = FauxMaCandidature(
+        questionnaireJson: questionnaireJsonDeTest(
+          dernieresReponses: <String, Object?>{
+            'langueMaternelle': 'poular',
+            'languesExplication': <String>['poular'],
+            champMemorisation: 'coran_entier',
+            'niveauLectureTajwid': 'tajwid_enseigne',
+            'riwayat': <String>['hafs', 'warsh'],
+          },
+        ),
+      );
+      await monterQuestionnaire(tester, port: port);
+      await toucherCle(tester, 'parcours-retour');
+      await toucherCle(tester, 'option-riwayat-une');
+      final int avant = port.brouillons.length;
+      await continuer(tester);
+      // L'ecran montre « une seule » sans riwaya : rien ne part, la question
+      // reste.
+      expect(port.brouillons.length, avant);
+      expect(
+        find.text(t.recrutement.parcours.riwayat.titreUne),
+        findsOneWidget,
+      );
+      // Quitter la question, y revenir : la grille, les deux riwayat.
+      await toucherCle(tester, 'parcours-retour');
+      await continuer(tester);
+      expect(
+        find.text(t.recrutement.parcours.riwayat.titreQuelques),
+        findsOneWidget,
+      );
       await continuer(tester);
       expect(_dernier(port, 'riwayat'), <String>['hafs', 'warsh']);
     });
