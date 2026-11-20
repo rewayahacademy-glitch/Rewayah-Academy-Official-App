@@ -1236,7 +1236,7 @@
       "adresseIncomplete": "Cette adresse n'est pas complète.",
       "envoi": "J'envoie votre lien.",
       "envoye": "C'est parti. Regardez vos courriels.",
-      "attenteLongue": "Toujours rien ? Je peux le renvoyer.",
+      "attenteLongue": "Toujours rien\u00a0? Je peux le renvoyer.",
       "tropEssais": "Trop de demandes d'un coup. Une petite pause.",
       "horsLigne": "Plus de connexion Internet.",
       "retourLigne": "La connexion est revenue.",
@@ -1244,11 +1244,11 @@
       "serveur": "Ce n'est pas vous, c'est nous.",
       "googleOuverte": "Choisissez votre compte Google.",
       "googleRefuse": "Ce compte n'a pas encore d'invitation.",
-      "session": "Votre session a pris fin. On se reconnecte ?",
-      "toucherOui": "Oui ?",
-      "toucherChatouille": "Ça chatouille !",
+      "session": "Votre session a pris fin. On se reconnecte\u00a0?",
+      "toucherOui": "Oui\u00a0?",
+      "toucherChatouille": "Ça chatouille\u00a0!",
       "toucherLa": "Je suis là",
-      "toucherBonjour": "Bonjour !"
+      "toucherBonjour": "Bonjour\u00a0!"
     },
     "candidat": {
       "titre": "Votre candidature d'enseignant",

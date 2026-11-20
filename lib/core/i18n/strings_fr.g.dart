@@ -6558,7 +6558,7 @@ class Traductions$connexion$praxis$fr {
 	String get envoye => 'C\'est parti. Regardez vos courriels.';
 
 	/// fr: 'Toujours rien ? Je peux le renvoyer.'
-	String get attenteLongue => 'Toujours rien ? Je peux le renvoyer.';
+	String get attenteLongue => 'Toujours rien ? Je peux le renvoyer.';
 
 	/// fr: 'Trop de demandes d'un coup. Une petite pause.'
 	String get tropEssais => 'Trop de demandes d\'un coup. Une petite pause.';
@@ -6582,19 +6582,19 @@ class Traductions$connexion$praxis$fr {
 	String get googleRefuse => 'Ce compte n\'a pas encore d\'invitation.';
 
 	/// fr: 'Votre session a pris fin. On se reconnecte ?'
-	String get session => 'Votre session a pris fin. On se reconnecte ?';
+	String get session => 'Votre session a pris fin. On se reconnecte ?';
 
 	/// fr: 'Oui ?'
-	String get toucherOui => 'Oui ?';
+	String get toucherOui => 'Oui ?';
 
 	/// fr: 'Ça chatouille !'
-	String get toucherChatouille => 'Ça chatouille !';
+	String get toucherChatouille => 'Ça chatouille !';
 
 	/// fr: 'Je suis là'
 	String get toucherLa => 'Je suis là';
 
 	/// fr: 'Bonjour !'
-	String get toucherBonjour => 'Bonjour !';
+	String get toucherBonjour => 'Bonjour !';
 }
 
 // Path: connexion.candidat
@@ -57754,7 +57754,7 @@ extension on Traductions {
 			'connexion.praxis.adresseIncomplete' => 'Cette adresse n\'est pas complète.',
 			'connexion.praxis.envoi' => 'J\'envoie votre lien.',
 			'connexion.praxis.envoye' => 'C\'est parti. Regardez vos courriels.',
-			'connexion.praxis.attenteLongue' => 'Toujours rien ? Je peux le renvoyer.',
+			'connexion.praxis.attenteLongue' => 'Toujours rien ? Je peux le renvoyer.',
 			'connexion.praxis.tropEssais' => 'Trop de demandes d\'un coup. Une petite pause.',
 			'connexion.praxis.horsLigne' => 'Plus de connexion Internet.',
 			'connexion.praxis.retourLigne' => 'La connexion est revenue.',
@@ -57762,11 +57762,11 @@ extension on Traductions {
 			'connexion.praxis.serveur' => 'Ce n\'est pas vous, c\'est nous.',
 			'connexion.praxis.googleOuverte' => 'Choisissez votre compte Google.',
 			'connexion.praxis.googleRefuse' => 'Ce compte n\'a pas encore d\'invitation.',
-			'connexion.praxis.session' => 'Votre session a pris fin. On se reconnecte ?',
-			'connexion.praxis.toucherOui' => 'Oui ?',
-			'connexion.praxis.toucherChatouille' => 'Ça chatouille !',
+			'connexion.praxis.session' => 'Votre session a pris fin. On se reconnecte ?',
+			'connexion.praxis.toucherOui' => 'Oui ?',
+			'connexion.praxis.toucherChatouille' => 'Ça chatouille !',
 			'connexion.praxis.toucherLa' => 'Je suis là',
-			'connexion.praxis.toucherBonjour' => 'Bonjour !',
+			'connexion.praxis.toucherBonjour' => 'Bonjour !',
 			'connexion.candidat.titre' => 'Votre candidature d\'enseignant',
 			'connexion.candidat.phrase' => 'Vous arrivez par l\'invitation de Rewayah Academy. Votre candidature vous attend : écrivez l\'adresse qui a reçu ce courriel, nous y envoyons votre lien pour entrer.',
 			'connexion.titre' => 'Se connecter',
