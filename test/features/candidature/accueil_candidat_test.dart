@@ -25,11 +25,16 @@ import 'package:rewayah_academy/core/fraicheur/avis_ephemere.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
+import 'package:rewayah_academy/core/widgets/controle_segmente.dart';
 import 'package:rewayah_academy/core/widgets/lien_fleche.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/core/widgets/selecteur_section.dart';
+import 'package:rewayah_academy/features/candidature/a_savoir_candidat.dart';
 import 'package:rewayah_academy/features/candidature/accueil_candidat.dart';
+import 'package:rewayah_academy/features/candidature/annonces_candidat.dart';
 import 'package:rewayah_academy/features/candidature/carte_reprise.dart';
 import 'package:rewayah_academy/features/candidature/ligne_etapes.dart';
+import 'package:rewayah_academy/features/candidature/messages_candidat.dart';
 import 'package:rewayah_academy/features/candidature/onglet_academie.dart';
 import 'package:rewayah_academy/features/candidature/onglet_dossier.dart';
 import 'package:rewayah_academy/features/candidature/portail_candidature.dart';
@@ -37,6 +42,7 @@ import 'package:rewayah_academy/features/candidature/reprise_candidature.dart';
 import 'package:rewayah_academy/features/com_annonces/annonces_recues.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces_direction.dart';
 import 'package:rewayah_academy/features/com_messages/entree_messages_contexte.dart';
+import 'package:rewayah_academy/features/com_messages/fil_en_place.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 
@@ -201,6 +207,8 @@ Future<FauxServiceDossier> _accueil(
   bool attendre = true,
   bool avecAvis = false,
   bool avecMessagerie = false,
+  bool filOuvert = true,
+  int nonLus = 2,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
     ..etatRendu = etatCandidat(
@@ -268,6 +276,26 @@ Future<FauxServiceDossier> _accueil(
         if (avecMessagerie && idCandidature != null) ...<Override>[
           portMessagesMetierProvider.overrideWithValue(
             FauxMessagesMetier(
+              fils: <FilMetier>[
+                if (filOuvert)
+                  filAvec(
+                    id: 'fil-cand',
+                    autre: const Participant(
+                      id: 'administration',
+                      nomAffiche: 'Administration',
+                      fonction: 'administration',
+                    ),
+                    objets: <ObjetLie>[
+                      ObjetLie(
+                        type: TypeObjetLie.candidature,
+                        id: idCandidature,
+                        libelle: 'Candidature',
+                      ),
+                    ],
+                    attention: IndicateurAttention(nonLus: nonLus),
+                    texte: 'Bonjour, votre dossier est bien reçu.',
+                  ),
+              ],
               conversations: <String, List<ConversationPossible>>{
                 cleObjet(
                   TypeObjetLie.candidature,
@@ -285,8 +313,8 @@ Future<FauxServiceDossier> _accueil(
                       id: idCandidature,
                       libelle: 'Candidature',
                     ),
-                    filId: 'fil-cand',
-                    attention: const IndicateurAttention(nonLus: 2),
+                    filId: filOuvert ? 'fil-cand' : null,
+                    attention: IndicateurAttention(nonLus: nonLus),
                   ),
                 ],
               },
@@ -377,7 +405,7 @@ void main() {
         tester.widget<NavShell>(find.byType(NavShell)).indexActif,
         OngletCandidat.academie.index,
       );
-      expect(find.byKey(OngletAcademie.cleSavoir), findsOneWidget);
+      expect(find.byKey(OngletAcademie.cleReglages), findsOneWidget);
     });
 
     testWidgets('une valeur inconnue du parametre ouvre Dossier', (
@@ -400,15 +428,209 @@ void main() {
       expect(_texte(t.recrutement.accueil.messages.vide), findsOneWidget);
     });
 
-    testWidgets('Messages : avec une candidature, l intro et l entree', (
-      WidgetTester tester,
-    ) async {
-      await _accueil(tester, candidatureAFaire(), avecMessagerie: true);
+    testWidgets('Messages : conversation pas encore ouverte, l intro et '
+        'l entree existante', (WidgetTester tester) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        avecMessagerie: true,
+        filOuvert: false,
+      );
       await versOnglet(tester, t.recrutement.accueil.onglets.messages);
       expect(_texte(t.recrutement.accueil.messages.intro), findsOneWidget);
       expect(find.byKey(AccueilCandidat.cleMessagesVide), findsNothing);
       // L'entree des Messages existante : la conversation avec la direction.
       expect(find.byKey(EntreeMessagesContexte.cleObjet), findsOneWidget);
+      expect(find.byKey(FilEnPlace.cle), findsNothing);
+    });
+
+    testWidgets('Messages : conversation ouverte, le fil en place, sans '
+        'quitter l accueil', (WidgetTester tester) async {
+      await _accueil(tester, candidatureAFaire(), avecMessagerie: true);
+      await versOnglet(tester, t.recrutement.accueil.onglets.messages);
+      expect(find.byKey(FilEnPlace.cle), findsOneWidget);
+      expect(_texte('Bonjour, votre dossier est bien reçu.'), findsOneWidget);
+      expect(_adresse(tester), '${Routes.attente}?onglet=messages');
+      // Le champ du fil reste au-dessus de la barre du bas.
+      final Rect barre = tester.getRect(find.byKey(NavShell.barreBasseKey));
+      final Rect champ = tester.getRect(find.byType(EditableText).last);
+      expect(champ.bottom, lessThanOrEqualTo(barre.top));
+    });
+
+    testWidgets('la barre : le nombre de messages recus non lus, seul, sur '
+        'Messages', (WidgetTester tester) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        avecMessagerie: true,
+        nonLus: 3,
+      );
+      final Finder pastille = find.byKey(
+        NavShell.cleCompteur(OngletCandidat.messages.chemin),
+      );
+      expect(pastille, findsOneWidget);
+      expect(
+        find.descendant(of: pastille, matching: find.text('3')),
+        findsOneWidget,
+      );
+      expect(find.byKey(NavShell.cleCompteur(Routes.attente)), findsNothing);
+      expect(
+        find.byKey(NavShell.cleCompteur(OngletCandidat.academie.chemin)),
+        findsNothing,
+      );
+    });
+
+    testWidgets('la barre : aucun message non lu, aucune pastille', (
+      WidgetTester tester,
+    ) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        avecMessagerie: true,
+        nonLus: 0,
+      );
+      expect(
+        find.byKey(NavShell.cleCompteur(OngletCandidat.messages.chemin)),
+        findsNothing,
+      );
+    });
+
+    testWidgets('Messages : trois rubriques ; la rubrique est dans l adresse', (
+      WidgetTester tester,
+    ) async {
+      await _accueil(tester, candidatureAFaire());
+      await versOnglet(tester, t.recrutement.accueil.onglets.messages);
+      final s = t.recrutement.accueil.messages.sections;
+      expect(find.byType(SelecteurMessages), findsOneWidget);
+      final SelecteurSection<SectionMessages> selecteur = tester
+          .widget<SelecteurSection<SectionMessages>>(
+            find.byType(SelecteurSection<SectionMessages>),
+          );
+      // Trois rubriques, dans l'ordre (le rendu segmente ou en menu depend
+      // de la place : la police des tests est plus large).
+      expect(
+        selecteur.sections.map((Segment<SectionMessages> g) => g.libelle),
+        <String>[s.messages, s.annonces, s.savoir],
+      );
+      selecteur.onChange(SectionMessages.savoir);
+      await tester.pumpAndSettle();
+      expect(
+        _adresse(tester),
+        '${Routes.attente}?onglet=messages&section=savoir',
+      );
+      expect(find.byKey(ASavoirCandidat.cle), findsOneWidget);
+      // Rien n'est invente : chaque emplacement attend la direction.
+      final a = t.recrutement.accueil.academie;
+      for (final EmplacementSavoir e in EmplacementSavoir.values) {
+        expect(find.byKey(ASavoirCandidat.cleEmplacement(e)), findsOneWidget);
+      }
+      expect(_texte(a.remuneration), findsOneWidget);
+      expect(_texte(a.cours), findsOneWidget);
+      expect(_texte(a.entretiens), findsOneWidget);
+      expect(_texte(a.bientot), findsNWidgets(3));
+      verifierUnSeulBoutonPlein(tester);
+    });
+  });
+
+  group('Messages : la rubrique Annonces', () {
+    AnnonceRecue annonce(String id, {bool vue = false, int jours = 0}) =>
+        AnnonceRecue(
+          id: id,
+          titre: 'Annonce $id',
+          texte: 'Le texte entier de l annonce $id.',
+          publieeLe: _le.subtract(Duration(days: jours)),
+          vue: vue,
+        );
+
+    testWidgets('une grille ; « Nouvelle » sur ce qui n a pas ete vu', (
+      WidgetTester tester,
+    ) async {
+      final _Fil fil = _Fil(
+        recues: <AnnonceRecue>[
+          annonce('a1'),
+          annonce('a2', vue: true, jours: 1),
+          annonce('a3', jours: 2),
+        ],
+      );
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        fil: fil,
+        depart: '${Routes.attente}?onglet=messages&section=annonces',
+      );
+      expect(find.byKey(AnnoncesCandidat.cleGrille), findsOneWidget);
+      // La plus recente sur toute la largeur, les suivantes en deux colonnes.
+      final Rect r1 = tester.getRect(
+        find.byKey(AnnoncesCandidat.cleCarte('a1')),
+      );
+      final Rect r2 = tester.getRect(
+        find.byKey(AnnoncesCandidat.cleCarte('a2')),
+      );
+      final Rect r3 = tester.getRect(
+        find.byKey(AnnoncesCandidat.cleCarte('a3')),
+      );
+      expect(r2.top, r3.top);
+      expect(r1.width, greaterThan(r2.width * 1.8));
+      expect(r3.top - r1.bottom, greaterThanOrEqualTo(16));
+      expect(find.byKey(AnnoncesCandidat.clePastille('a1')), findsOneWidget);
+      expect(find.byKey(AnnoncesCandidat.clePastille('a2')), findsNothing);
+      expect(find.byKey(AnnoncesCandidat.clePastille('a3')), findsOneWidget);
+      expect(_texte(t.com.annonces.fil.nouvelle), findsNWidgets(2));
+      // « Urgent » : le serveur ne rend aucune priorite, rien n'est devine.
+      expect(_texte(t.com.socle.composants.badge.urgent), findsNothing);
+      expect(fil.vues, isEmpty);
+    });
+
+    testWidgets('toucher une carte ouvre l annonce entiere et la compte vue', (
+      WidgetTester tester,
+    ) async {
+      final _Fil fil = _Fil(recues: <AnnonceRecue>[annonce('a1')]);
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        fil: fil,
+        depart: '${Routes.attente}?onglet=messages&section=annonces',
+      );
+      await _toucher(tester, find.byKey(AnnoncesCandidat.cleCarte('a1')));
+      expect(fil.vues, <String>['a1']);
+      expect(_texte('Le texte entier de l annonce a1.'), findsWidgets);
+    });
+
+    testWidgets('sans annonce : la phrase', (WidgetTester tester) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        depart: '${Routes.attente}?onglet=messages&section=annonces',
+      );
+      expect(find.byKey(AnnoncesCandidat.cleVide), findsOneWidget);
+    });
+
+    testWidgets('en chargement : le squelette', (WidgetTester tester) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        fil: _Fil(jamais: true),
+        depart: '${Routes.attente}?onglet=messages&section=annonces',
+        attendre: false,
+      );
+      await tester.pump();
+      expect(find.byKey(AnnoncesCandidat.cleVide), findsNothing);
+      expect(find.byKey(AnnoncesCandidat.cleGrille), findsNothing);
+      // Purge le minuteur de la lecture qui ne repond pas.
+      await tester.pump(const Duration(days: 2));
+    });
+
+    testWidgets('en echec : une phrase vraie et Reessayer', (
+      WidgetTester tester,
+    ) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        fil: _Fil(erreur: Exception('panne')),
+        depart: '${Routes.attente}?onglet=messages&section=annonces',
+      );
+      expect(find.byKey(AnnoncesCandidat.cleGrille), findsNothing);
+      expect(_texte(t.commun.etats.actions.reessayer), findsOneWidget);
     });
   });
 
@@ -431,7 +653,7 @@ void main() {
       );
     });
 
-    testWidgets('fermee : comptee vue, un avis le dit, rangee dans Academie', (
+    testWidgets('fermee : comptee vue, un avis le dit, rangee dans Annonces', (
       WidgetTester tester,
     ) async {
       final _Fil fil = _Fil(recues: <AnnonceRecue>[_annonce]);
@@ -445,24 +667,33 @@ void main() {
       // L'avis part seul.
       await tester.pump(const Duration(seconds: 4));
       await tester.pumpAndSettle();
-      await versOnglet(tester, t.recrutement.accueil.onglets.academie);
-      expect(find.byKey(AnnoncesRecues.cleAnnonce('a1')), findsOneWidget);
-      expect(_texte(_annonce.texte), findsOneWidget);
+      await versOnglet(tester, t.recrutement.accueil.onglets.messages);
+      tester
+          .widget<SelecteurSection<SectionMessages>>(
+            find.byType(SelecteurSection<SectionMessages>),
+          )
+          .onChange(SectionMessages.annonces);
+      await tester.pumpAndSettle();
+      expect(find.byKey(AnnoncesCandidat.cleCarte('a1')), findsOneWidget);
+      expect(find.byKey(AnnoncesCandidat.clePastille('a1')), findsNothing);
       // De retour sur Dossier : plus de ligne.
       await versOnglet(tester, t.recrutement.accueil.onglets.dossier);
       expect(find.byKey(AnnonceEnLigne.cle), findsNothing);
     });
 
-    testWidgets('toucher la ligne ouvre Academie, ou l annonce se lit', (
+    testWidgets('toucher la ligne ouvre la rubrique Annonces', (
       WidgetTester tester,
     ) async {
       final _Fil fil = _Fil(recues: <AnnonceRecue>[_annonce]);
       await _accueil(tester, candidatureAFaire(), fil: fil);
       await tester.tap(find.textContaining(_annonce.titre));
       await tester.pumpAndSettle();
-      expect(_adresse(tester), '${Routes.attente}?onglet=academie');
-      expect(_texte(_annonce.texte), findsOneWidget);
-      expect(fil.vues, <String>['a1']);
+      expect(
+        _adresse(tester),
+        '${Routes.attente}?onglet=messages&section=annonces',
+      );
+      expect(find.byKey(AnnoncesCandidat.cleCarte('a1')), findsOneWidget);
+      expect(find.byKey(AnnoncesCandidat.clePastille('a1')), findsOneWidget);
     });
 
     testWidgets('une annonce deja vue : aucune ligne', (
@@ -483,18 +714,14 @@ void main() {
       expect(find.byKey(AnnonceEnLigne.cle), findsNothing);
     });
 
-    testWidgets('Academie sans annonce : la phrase, et ce qu il faut savoir', (
+    testWidgets('Academie : partager, reglages replies, deconnexion', (
       WidgetTester tester,
     ) async {
       await _accueil(tester, candidatureAFaire());
       await versOnglet(tester, t.recrutement.accueil.onglets.academie);
-      expect(find.byKey(OngletAcademie.cleAnnoncesVide), findsOneWidget);
-      final a = t.recrutement.accueil.academie;
-      expect(_texte(a.remuneration), findsOneWidget);
-      expect(_texte(a.cours), findsOneWidget);
-      expect(_texte(a.entretiens), findsOneWidget);
-      // Rien n'est invente : chaque ligne dit qu'elle attend la direction.
-      expect(_texte(a.bientot), findsNWidgets(3));
+      // Les annonces et « A savoir » sont dans Messages.
+      expect(find.byKey(AnnoncesCandidat.cleGrille), findsNothing);
+      expect(find.byKey(ASavoirCandidat.cle), findsNothing);
       // La langue et le retrait sont dans un reglage, replie.
       expect(_cle('retrait-lien'), findsNothing);
       expect(find.byKey(OngletAcademie.cleReglagesOuverts), findsNothing);
@@ -504,35 +731,6 @@ void main() {
       expect(_cle('retrait-lien'), findsOneWidget);
       // La deconnexion reste visible, sans deplier.
       expect(find.byKey(OngletAcademie.cleDeconnexion), findsOneWidget);
-    });
-
-    testWidgets('Academie : les annonces qui chargent, puis en echec', (
-      WidgetTester tester,
-    ) async {
-      await _accueil(
-        tester,
-        candidatureAFaire(),
-        fil: _Fil(jamais: true),
-        depart: '${Routes.attente}?onglet=academie',
-        attendre: false,
-      );
-      expect(find.byKey(OngletAcademie.cleAnnoncesVide), findsNothing);
-      expect(find.byKey(OngletAcademie.cleSavoir), findsOneWidget);
-      // Purge le minuteur de la lecture qui ne repond pas.
-      await tester.pump(const Duration(days: 2));
-    });
-
-    testWidgets('Academie : annonces en echec, une phrase et Reessayer', (
-      WidgetTester tester,
-    ) async {
-      await _accueil(
-        tester,
-        candidatureAFaire(),
-        fil: _Fil(erreur: Exception('panne')),
-        depart: '${Routes.attente}?onglet=academie',
-      );
-      expect(_texte(t.com.annonces.fil.echec), findsOneWidget);
-      expect(_texte(t.commun.etats.actions.reessayer), findsOneWidget);
     });
   });
 
@@ -1207,6 +1405,93 @@ void main() {
       });
     }
 
+    // Les trois rubriques de Messages (directeur, 20/11/2026) : le premier
+    // etat de chacune, francais et arabe, au telephone.
+    for (final (AppLocale langue, String l) in <(AppLocale, String)>[
+      (AppLocale.fr, 'fr'),
+      (AppLocale.ar, 'ar'),
+    ]) {
+      testWidgets('rubriques de Messages 390 $l', (WidgetTester tester) async {
+        final bool ar = langue == AppLocale.ar;
+        AnnonceRecue annonce(
+          String id,
+          String titre,
+          String texte,
+          int jours, {
+          bool vue = false,
+        }) => AnnonceRecue(
+          id: id,
+          titre: titre,
+          texte: texte,
+          publieeLe: _le.subtract(Duration(days: jours)),
+          vue: vue,
+        );
+        // Donnees fictives.
+        final _Fil fil = _Fil(
+          recues: <AnnonceRecue>[
+            if (ar) ...<AnnonceRecue>[
+              annonce(
+                'a1',
+                'تُفتح المقابلات يوم الاثنين',
+                'ستُعرض المواعيد هنا صباح الاثنين.',
+                0,
+              ),
+              annonce(
+                'a2',
+                'تذكير بالوثائق',
+                'تأكد من إرسال وثيقة الهوية قبل المقابلة.',
+                2,
+              ),
+              annonce(
+                'a3',
+                'أهلًا بالمترشحين الجدد',
+                'شكرًا لاهتمامكم بالتدريس في الأكاديمية.',
+                5,
+                vue: true,
+              ),
+            ] else ...<AnnonceRecue>[
+              annonce(
+                'a1',
+                'Les entretiens ouvrent lundi',
+                'Des créneaux seront proposés ici dès lundi matin.',
+                0,
+              ),
+              annonce(
+                'a2',
+                'Rappel sur les pièces',
+                'Vérifiez que votre pièce d’identité est envoyée avant l’entretien.',
+                2,
+              ),
+              annonce(
+                'a3',
+                'Bienvenue aux nouveaux candidats',
+                'Merci de votre intérêt pour l’enseignement à l’académie.',
+                5,
+                vue: true,
+              ),
+            ],
+          ],
+        );
+        for (final (SectionMessages section, String nom)
+            in <(SectionMessages, String)>[
+              (SectionMessages.messages, 'messages'),
+              (SectionMessages.annonces, 'annonces'),
+              (SectionMessages.savoir, 'savoir'),
+            ]) {
+          await monter(
+            tester,
+            langue: langue,
+            theme: ThemeMode.light,
+            taille: const Size(390, 844),
+            fil: fil,
+            depart: AccueilCandidat.cheminMessages(section),
+          );
+          await capturerVue(tester, '$d/rubrique-$nom-390-$l');
+          await tester.pumpWidget(const SizedBox.shrink());
+        }
+      });
+    }
+
     testWidgets('etats', (WidgetTester tester) async {
       const Size tel = Size(390, 844);
       // Contenu, une ligne depliee.
@@ -1281,30 +1566,30 @@ void main() {
       }
     });
 
-    testWidgets('etat vide (Academie)', (WidgetTester tester) async {
+    testWidgets('etat vide (Annonces)', (WidgetTester tester) async {
       await monter(
         tester,
         langue: AppLocale.fr,
         theme: ThemeMode.light,
         taille: const Size(390, 844),
         fil: _Fil(),
-        depart: '${Routes.attente}?onglet=academie',
+        depart: AccueilCandidat.cheminMessages(SectionMessages.annonces),
       );
-      await capturerVue(tester, '$d/etat-vide-academie');
+      await capturerVue(tester, '$d/etat-vide-annonces');
     });
 
-    testWidgets('etat chargement (Academie)', (WidgetTester tester) async {
+    testWidgets('etat chargement (Annonces)', (WidgetTester tester) async {
       await monter(
         tester,
         langue: AppLocale.fr,
         theme: ThemeMode.light,
         taille: const Size(390, 844),
         fil: _Fil(jamais: true),
-        depart: '${Routes.attente}?onglet=academie',
+        depart: AccueilCandidat.cheminMessages(SectionMessages.annonces),
         attendre: false,
       );
       await tester.pump(const Duration(milliseconds: 400));
-      await capturerVue(tester, '$d/etat-chargement-academie');
+      await capturerVue(tester, '$d/etat-chargement-annonces');
       await tester.pump(const Duration(days: 2));
     });
 

@@ -22423,7 +22423,7 @@ class _Traductions$recrutement$accueil$annonce$ar extends Traductions$recrutemen
 	// Translations
 	@override String ligne({required Object titre}) => 'جديد: ⁨${titre}⁩';
 	@override String ranger({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩';
-	@override String get rangee => 'نُقل الإعلان إلى تبويب الأكاديمية.';
+	@override String get rangee => 'نُقل الإعلان إلى الرسائل، قسم الإعلانات.';
 }
 
 // Path: recrutement.accueil.etat
@@ -22446,6 +22446,17 @@ class _Traductions$recrutement$accueil$messages$ar extends Traductions$recruteme
 	// Translations
 	@override String get intro => 'اكتب إلى الأكاديمية: تجيبك هنا.';
 	@override String get vide => 'تُفتح المراسلة هنا فور تسجيل طلب ترشحك.';
+	@override late final _Traductions$recrutement$accueil$messages$sections$ar sections = _Traductions$recrutement$accueil$messages$sections$ar._(_root);
+	@override String nonLus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لا رسائل غير مقروءة',
+		one: 'رسالة واحدة غير مقروءة',
+		two: 'رسالتان غير مقروءتين',
+		few: '⁨${n}⁩ رسائل غير مقروءة',
+		many: '⁨${n}⁩ رسالة غير مقروءة',
+		other: '⁨${n}⁩ رسالة غير مقروءة',
+	);
+	@override late final _Traductions$recrutement$accueil$messages$annonces$ar annonces = _Traductions$recrutement$accueil$messages$annonces$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$messages$savoir$ar savoir = _Traductions$recrutement$accueil$messages$savoir$ar._(_root);
 }
 
 // Path: recrutement.accueil.academie
@@ -22461,7 +22472,7 @@ class _Traductions$recrutement$accueil$academie$ar extends Traductions$recruteme
 	@override String get remuneration => 'مستحقات المعلّم';
 	@override String get cours => 'سير الدروس';
 	@override String get entretiens => 'تنظيم المقابلات';
-	@override String get bientot => 'سيظهر هنا حين تنشره الأكاديمية.';
+	@override String get bientot => 'سيظهر هنا حين تنشره الإدارة.';
 	@override String get reglages => 'الإعدادات';
 	@override String get reglagesLegende => 'اللغة، صرف المستحقات، سحب طلب الترشح';
 }
@@ -27618,6 +27629,40 @@ class _Traductions$recrutement$dossier3$synthese$ageValeurs$ar extends Traductio
 	@override String attestee({required Object date}) => '18 سنة فأكثر، أُكّد بتاريخ ⁨${date}⁩';
 	@override String get moins18 => 'أقل من 18 سنة: الترشح متوقف مؤقتًا';
 	@override String get nonAttestee => 'لم يُؤكَّد العمر بعد';
+}
+
+// Path: recrutement.accueil.messages.sections
+class _Traductions$recrutement$accueil$messages$sections$ar extends Traductions$recrutement$accueil$messages$sections$fr {
+	_Traductions$recrutement$accueil$messages$sections$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'أقسام الرسائل';
+	@override String get messages => 'الرسائل';
+	@override String get annonces => 'الإعلانات';
+	@override String get savoir => 'معلومات';
+}
+
+// Path: recrutement.accueil.messages.annonces
+class _Traductions$recrutement$accueil$messages$annonces$ar extends Traductions$recrutement$accueil$messages$annonces$fr {
+	_Traductions$recrutement$accueil$messages$annonces$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String lire({required Object titre}) => 'قراءة الإعلان: ⁨${titre}⁩';
+	@override String get vide => 'لا إعلان الآن. ستظهر إعلانات الإدارة هنا.';
+}
+
+// Path: recrutement.accueil.messages.savoir
+class _Traductions$recrutement$accueil$messages$savoir$ar extends Traductions$recrutement$accueil$messages$savoir$fr {
+	_Traductions$recrutement$accueil$messages$savoir$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'أجوبة عن أسئلة المترشحين، حين تنشرها الإدارة.';
 }
 
 // Path: recrutement.parcours.presentation.p1
@@ -41637,18 +41682,26 @@ extension on TraductionsAr {
 			'recrutement.accueil.praxis.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ شيء في ملفك.', one: 'بقي عنصر واحد لإتمام ملفك.', two: 'بقي عنصران لإتمام ملفك.', few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.', many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.', other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.', ), 
 			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'جديد: ⁨${titre}⁩',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩',
-			'recrutement.accueil.annonce.rangee' => 'نُقل الإعلان إلى تبويب الأكاديمية.',
+			'recrutement.accueil.annonce.rangee' => 'نُقل الإعلان إلى الرسائل، قسم الإعلانات.',
 			'recrutement.accueil.etat.perime' => 'تعذّر تحديث ملفك. ما تراه يعود إلى آخر قراءة. أعد المحاولة بعد قليل.',
 			'recrutement.accueil.etat.horsLigne' => 'أنت غير متصل. ما تراه يعود إلى آخر قراءة؛ أعد المحاولة عند عودة الاتصال.',
 			'recrutement.accueil.messages.intro' => 'اكتب إلى الأكاديمية: تجيبك هنا.',
 			'recrutement.accueil.messages.vide' => 'تُفتح المراسلة هنا فور تسجيل طلب ترشحك.',
+			'recrutement.accueil.messages.sections.libelle' => 'أقسام الرسائل',
+			'recrutement.accueil.messages.sections.messages' => 'الرسائل',
+			'recrutement.accueil.messages.sections.annonces' => 'الإعلانات',
+			'recrutement.accueil.messages.sections.savoir' => 'معلومات',
+			'recrutement.accueil.messages.nonLus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا رسائل غير مقروءة', one: 'رسالة واحدة غير مقروءة', two: 'رسالتان غير مقروءتين', few: '⁨${n}⁩ رسائل غير مقروءة', many: '⁨${n}⁩ رسالة غير مقروءة', other: '⁨${n}⁩ رسالة غير مقروءة', ), 
+			'recrutement.accueil.messages.annonces.lire' => ({required Object titre}) => 'قراءة الإعلان: ⁨${titre}⁩',
+			'recrutement.accueil.messages.annonces.vide' => 'لا إعلان الآن. ستظهر إعلانات الإدارة هنا.',
+			'recrutement.accueil.messages.savoir.intro' => 'أجوبة عن أسئلة المترشحين، حين تنشرها الإدارة.',
 			'recrutement.accueil.academie.titre' => 'الأكاديمية',
 			'recrutement.accueil.academie.annoncesVide' => 'لا إعلان الآن. ستظهر إعلانات الأكاديمية هنا.',
 			'recrutement.accueil.academie.savoirTitre' => 'ما ينبغي معرفته',
 			'recrutement.accueil.academie.remuneration' => 'مستحقات المعلّم',
 			'recrutement.accueil.academie.cours' => 'سير الدروس',
 			'recrutement.accueil.academie.entretiens' => 'تنظيم المقابلات',
-			'recrutement.accueil.academie.bientot' => 'سيظهر هنا حين تنشره الأكاديمية.',
+			'recrutement.accueil.academie.bientot' => 'سيظهر هنا حين تنشره الإدارة.',
 			'recrutement.accueil.academie.reglages' => 'الإعدادات',
 			'recrutement.accueil.academie.reglagesLegende' => 'اللغة، صرف المستحقات، سحب طلب الترشح',
 			'recrutement.accueil.retrait.arret' => 'ستتوقف الأكاديمية عن دراسة ملفك.',
@@ -41725,6 +41778,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.aucune' => 'لا شيء',
 			'recrutement.parcours.oui' => 'نعم',
 			'recrutement.parcours.non' => 'لا',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.modifier' => 'تعديل',
 			'recrutement.parcours.sauvegardeEchec' => 'تعذّر حفظ آخر إجاباتك. تبقى على الشاشة: تابع، وستُرسل مع طلب ترشحك.',
 			'recrutement.parcours.presentation.p1.titre' => 'من هي أكاديمية الرواية؟',
@@ -41733,8 +41788,6 @@ extension on TraductionsAr {
 			'recrutement.parcours.presentation.p1.academie.texte' => 'تعلّم أكاديمية الرواية القرآن عن بُعد، في فصول ثابتة، مع معلم مخصّص لكل فصل. وهي تُدرّس منذ 1 مايو 2024.',
 			'recrutement.parcours.presentation.p1.liberte.titre' => 'تبقى حرًّا',
 			'recrutement.parcours.presentation.p1.liberte.texte' => 'ما دمت لم تصبح معلّمًا، يمكنك سحب طلب ترشحك من ملفك.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.presentation.p1.donnees.titre' => 'بياناتك محميّة',
 			'recrutement.parcours.presentation.p1.donnees.texte' => 'لا يقرأ إجاباتك إلا من يدرس طلب ترشحك في الأكاديمية.',
 			'recrutement.parcours.presentation.p1.separation.titre' => 'فصل بين النساء والرجال',
@@ -42239,6 +42292,8 @@ extension on TraductionsAr {
 			'recrutement.statuts.contrat' => 'عقد المعلّم',
 			'recrutement.statuts.accuse' => 'إقرار التسجيل والمراقبة',
 			'recrutement.statuts.signeCourante' => 'موقَّع، الإصدار الحالية',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.statuts.signeAncienne' => ({required Object version}) => 'موقَّع، إصدار قديم ⁨${version}⁩',
 			'recrutement.statuts.nonSigne' => 'غير موقَّع',
 			'recrutement.statuts.bloque' => 'العقد غير موقَّع على الإصدار الحالية: لا يمكن اعتماد الملف ما لم يُوقَّع العقد والإقرار على الإصدار الحالية.',
@@ -42247,8 +42302,6 @@ extension on TraductionsAr {
 			'recrutement.statuts.manqueAccuse' => 'ينقص: الإقرار.',
 			'recrutement.statuts.manqueLesDeux' => 'ينقص: العقد والإقرار.',
 			'recrutement.statuts.inviter' => 'دعوة معلّم',
-			_ => null,
-		} ?? switch (path) {
 			'sansDonnees.mesDonnees' => 'تعذّر تحميل معلومات حذف الحساب',
 			'sansDonnees.paiementsRecus' => 'تعذّر تحميل مدفوعاتك المستلمة',
 			'sansDonnees.revenus' => 'تعذّر تحميل مداخيلك',
@@ -42753,6 +42806,8 @@ extension on TraductionsAr {
 			'courriels.admin.file.vide' => 'لا توجد رسائل في هذه القائمة.',
 			'courriels.admin.file.erreur' => 'تعذّر تحميل الإرسال. أعد المحاولة.',
 			'courriels.admin.file.sansDonnees' => 'تعذّر تحميل الإرسال',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.retour.relance' => 'أُعيدت إلى الطابور. الإرسال خلال دقيقة.',
 			'courriels.admin.file.retour.introuvable' => 'لم تعد هذه الرسالة قابلة لإعادة المحاولة. تم تحديث القائمة.',
 			'courriels.admin.file.retour.echec' => 'لم تتأكد إعادتها إلى الطابور. أُعيدت قراءة القائمة: تحقق من حالة الرسالة قبل أن تحاول من جديد.',
@@ -42761,8 +42816,6 @@ extension on TraductionsAr {
 			'courriels.admin.adresses.intro' => 'تخرج كل فئة من عنوانها، وتصل الردود إلى الصندوق المذكور. تُقرأ هذه القائمة هنا ولا تُعدَّل داخل التطبيق.',
 			'courriels.admin.adresses.champs.expediteur' => 'تخرج من',
 			'courriels.admin.adresses.champs.nom' => 'الاسم المعروض',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.adresses.champs.reponses' => 'الردود إلى',
 			'courriels.admin.adresses.champs.type' => 'النوع',
 			'courriels.admin.adresses.essentielle' => 'مرتبطة بالخدمة، دون إلغاء اشتراك',
@@ -43267,6 +43320,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.controle.ligne' => ({required Object ligne, required Object motif}) => 'السطر ⁨${ligne}⁩: ⁨${motif}⁩',
 			'candidatsFlux.importFormulaires.controle.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ سطر إضافي', one: 'عرض سطر إضافي', two: 'عرض سطرين إضافيين', few: 'عرض ⁨${n}⁩ أسطر إضافية', many: 'عرض ⁨${n}⁩ سطرًا إضافيًا', other: 'عرض ⁨${n}⁩ سطر إضافي', ), 
 			'candidatsFlux.importFormulaires.motif.ligneVide' => 'سطر فارغ',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.horodatageIllisible' => 'تاريخ الرد غير مقروء',
 			'candidatsFlux.importFormulaires.motif.genreIllisible' => 'الجنس غير معروف',
 			'candidatsFlux.importFormulaires.motif.nomAbsent' => 'الاسم غير موجود',
@@ -43275,8 +43330,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.motif.memeReferenceContenuDifferent' => 'تاريخ الرد نفسه في سطر آخر لكن بمحتوى مختلف',
 			'candidatsFlux.importFormulaires.motif.genreChangeSurLigneSuivie' => 'تغيّر الجنس رغم أن الشخص قيد المتابعة: فهو يحدّد جهته',
 			'candidatsFlux.importFormulaires.motif.inscription1210' => 'معروفة سابقًا من استيراد التسجيلات',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.motif.inconnu' => 'نقطة في هذا السطر تحتاج إلى تحقق',
 			'candidatsFlux.importFormulaires.avertissement.telephoneIllisible' => 'الهاتف غير مقروء',
 			'candidatsFlux.importFormulaires.avertissement.formatNational' => 'الهاتف بلا رمز الدولة',
@@ -43781,6 +43834,8 @@ extension on TraductionsAr {
 			'calendrier.dates.type.autre' => 'تاريخ آخر',
 			'calendrier.dates.categorie.ramadan' => 'رمضان، عشرون يومًا على الأكثر',
 			'calendrier.dates.categorie.aidAlAdha' => 'عيد الأضحى، عشرة أيام على الأكثر',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.categorie.autre' => 'إغلاق آخر',
 			'calendrier.dates.categorieAide' => 'رمضان: من العشرين من رمضان إلى السابع من شوال بما فيه. عيد الأضحى: من التاسع إلى الثامن عشر من ذي الحجة بما فيه.',
 			'calendrier.dates.portee.ecole' => 'الأكاديمية كلها',
@@ -43789,8 +43844,6 @@ extension on TraductionsAr {
 			'calendrier.dates.publiee' => 'منشور',
 			'calendrier.dates.nonPubliee' => 'غير منشور',
 			'calendrier.dates.publier' => 'نشر',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.retirer' => 'سحب من النشر',
 			'calendrier.dates.modifier' => 'تعديل',
 			'calendrier.dates.periode' => ({required Object du, required Object au}) => 'من ⁨${du}⁩ إلى ⁨${au}⁩',

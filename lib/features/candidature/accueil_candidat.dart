@@ -1,5 +1,8 @@
 // PE-B4 (directeur, 19/11/2026, PLAN arbitrage A9) : l'accueil du candidat
-// enseignant, a trois onglets : Dossier, Messages, Academie.
+// enseignant, a trois onglets : Dossier, Messages, Academie. Decisions du
+// directeur du 20/11/2026 : la barre est celle de l'application ; l'onglet
+// Messages y montre seulement le nombre de messages recus non lus ; dans
+// Messages, trois rubriques (Messages, Annonces, A savoir).
 //
 // La page d'attente (`/attente`, `AttentePage`) lui delegue tout candidat
 // enseignant ; les familles, l'eleve adulte et le compte suspendu gardent la
@@ -24,8 +27,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../core/capacites/capacite_indisponible.dart';
-import '../../core/communications/ma_candidature_fil.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -33,12 +34,12 @@ import '../../core/router/etat_routeur_sur.dart';
 import '../../core/router/routes.dart';
 import '../../core/session/deconnexion.dart';
 import '../../core/theme/app_mouvement.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/nav_shell.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/skeleton.dart';
-import '../com_messages/entree_messages_candidature.dart';
+import 'a_savoir_candidat.dart';
+import 'annonces_candidat.dart';
+import 'messages_candidat.dart';
 import 'onglet_academie.dart';
 import 'onglet_dossier.dart';
 
@@ -47,10 +48,10 @@ enum OngletCandidat {
   /// Ou en est la candidature.
   dossier(null),
 
-  /// La conversation avec l'academie.
+  /// La conversation, les annonces, ce qu'il faut savoir.
   messages('messages'),
 
-  /// Les annonces, ce qu'il faut savoir, les reglages.
+  /// Partager, autres talents, reglages (question ouverte au directeur).
   academie('academie');
 
   const OngletCandidat(this.parametre);
@@ -96,9 +97,13 @@ class AccueilCandidat extends ConsumerStatefulWidget {
       ValueKey<String>('accueil-candidat-${o.name}');
 
   /// La cle de la phrase de l'onglet Messages sans messagerie.
-  static const Key cleMessagesVide = ValueKey<String>(
-    'accueil-candidat-messages-vide',
-  );
+  static const Key cleMessagesVide = ConversationCandidat.cleVide;
+
+  /// L'adresse de la rubrique [s] de l'onglet Messages.
+  static String cheminMessages(SectionMessages s) => s.parametre == null
+      ? OngletCandidat.messages.chemin
+      : '${OngletCandidat.messages.chemin}&${SectionMessages.cleParametre}='
+            '${s.parametre}';
 
   @override
   ConsumerState<AccueilCandidat> createState() => _EtatAccueilCandidat();
@@ -107,6 +112,9 @@ class AccueilCandidat extends ConsumerStatefulWidget {
 class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
   /// L'onglet d'un hote sans routeur (un test, une galerie).
   OngletCandidat _local = OngletCandidat.dossier;
+
+  /// La rubrique de Messages d'un hote sans routeur.
+  SectionMessages _sectionLocale = SectionMessages.messages;
 
   /// Le defilement de la page : toucher l'onglet ouvert ramene en haut.
   final ScrollController _defilement = ScrollController();
@@ -123,6 +131,27 @@ class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
     return OngletCandidat.depuis(
       adresse.queryParameters[OngletCandidat.cleParametre],
     );
+  }
+
+  SectionMessages _section(BuildContext context) {
+    final Uri? adresse = adresseRouteurSur(context);
+    if (adresse == null) return _sectionLocale;
+    return SectionMessages.depuis(
+      adresse.queryParameters[SectionMessages.cleParametre],
+    );
+  }
+
+  /// Ouvre la rubrique [s] de l'onglet Messages (remplace, sans empiler).
+  void _allerSection(SectionMessages s) {
+    final GoRouter? routeur = GoRouter.maybeOf(context);
+    if (routeur == null) {
+      setState(() {
+        _local = OngletCandidat.messages;
+        _sectionLocale = s;
+      });
+    } else {
+      routeur.go(AccueilCandidat.cheminMessages(s));
+    }
   }
 
   void _aller(OngletCandidat cible) {
@@ -161,7 +190,10 @@ class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
     TranslationProvider.of(context);
     final EtatDossier dossier = widget.etat.requireValue;
     final OngletCandidat onglet = _courant(context);
+    final SectionMessages section = _section(context);
     final o = t.recrutement.accueil.onglets;
+    // Le nombre de messages recus non lus, seul, sur l'onglet Messages.
+    final int nonLus = ref.watch(messagesNonLusCandidatProvider).value ?? 0;
     final List<Destination> destinations = <Destination>[
       Destination(
         libelle: o.dossier,
@@ -172,6 +204,8 @@ class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
         libelle: o.messages,
         icone: AppIcons.discussion,
         chemin: OngletCandidat.messages.chemin,
+        compteur: nonLus,
+        compteurLu: t.recrutement.accueil.messages.nonLus(n: nonLus),
       ),
       Destination(
         libelle: o.academie,
@@ -179,18 +213,75 @@ class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
         chemin: OngletCandidat.academie.chemin,
       ),
     ];
-    final Widget contenu = switch (onglet) {
-      OngletCandidat.dossier => OngletDossier(
-        dossier: dossier,
-        // Riverpod garde la derniere valeur quand une relecture echoue.
-        perime: widget.etat.hasError,
-        onRelire: widget.onRelire,
-        onVoirAcademie: () => _aller(OngletCandidat.academie),
+    Widget borne(Widget enfant) => Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: AppPage.largeurReglages),
+        child: KeyedSubtree(
+          key: AccueilCandidat.cleOnglet(onglet),
+          child: enfant,
+        ),
       ),
-      OngletCandidat.messages => const _OngletMessages(),
-      OngletCandidat.academie => OngletAcademie(
-        candidature: dossier.candidature,
-        onRetire: () => _aller(OngletCandidat.dossier),
+    );
+    final Widget selecteur = SelecteurMessages(
+      section: section,
+      onChange: _allerSection,
+    );
+    final Widget page = switch (onglet) {
+      // Dossier pose son titre lui-meme, sous l'annonce (maquette).
+      OngletCandidat.dossier => PageShell(
+        child: borne(
+          OngletDossier(
+            dossier: dossier,
+            // Riverpod garde la derniere valeur quand une relecture echoue.
+            perime: widget.etat.hasError,
+            onRelire: widget.onRelire,
+            onVoirAnnonces: () => _allerSection(SectionMessages.annonces),
+          ),
+        ),
+      ),
+      // La conversation remplit la hauteur : le fil defile seul, champ en
+      // bas, au-dessus de la barre (comme la page des messages).
+      OngletCandidat.messages when section == SectionMessages.messages =>
+        PageShell(
+          defilante: false,
+          child: borne(
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                selecteur,
+                Ecart.vMd,
+                Expanded(
+                  child: ConversationCandidat(
+                    onReplier: () => _aller(OngletCandidat.dossier),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      OngletCandidat.messages => PageShell(
+        child: borne(
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: <Widget>[
+              selecteur,
+              Ecart.vLg,
+              if (section == SectionMessages.annonces)
+                const AnnoncesCandidat()
+              else
+                const ASavoirCandidat(),
+            ],
+          ),
+        ),
+      ),
+      OngletCandidat.academie => PageShell(
+        titre: t.recrutement.accueil.academie.titre,
+        child: borne(
+          OngletAcademie(
+            candidature: dossier.candidature,
+            onRetire: () => _aller(OngletCandidat.dossier),
+          ),
+        ),
       ),
     };
     return NavShell(
@@ -202,58 +293,7 @@ class _EtatAccueilCandidat extends ConsumerState<AccueilCandidat> {
         ),
       ),
       onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
-      child: PageShell(
-        // Dossier pose son titre lui-meme, sous l'annonce (maquette).
-        titre: switch (onglet) {
-          OngletCandidat.dossier => null,
-          OngletCandidat.messages => o.messages,
-          OngletCandidat.academie => t.recrutement.accueil.academie.titre,
-        },
-        child: Center(
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: AppPage.largeurReglages,
-            ),
-            child: KeyedSubtree(
-              key: AccueilCandidat.cleOnglet(onglet),
-              child: contenu,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// L'onglet Messages : la conversation du candidat avec l'academie, par
-/// l'entree des Messages existante (MESSAGES-CANDIDAT, aucun second circuit).
-class _OngletMessages extends ConsumerWidget {
-  const _OngletMessages();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final AsyncValue<String?> id = ref.watch(maCandidatureIdProvider);
-    final m = t.recrutement.accueil.messages;
-    final AppPalette palette = AppPalette.of(context);
-    final TextStyle muet = palette.inkMuted.applyTo(
-      Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
-    );
-    // Pas de messagerie pour cette candidature (serveur d'avant, ou aucune
-    // candidature enregistree) : une phrase, jamais un onglet vide.
-    final bool sans =
-        id.error is CapaciteIndisponible || (id.hasValue && id.value == null);
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: <Widget>[
-        if (!id.hasValue && !id.hasError)
-          const Skeleton.liste(lignes: 2)
-        else if (sans)
-          Text(m.vide, key: AccueilCandidat.cleMessagesVide, style: muet)
-        else ...<Widget>[
-          Text(m.intro, style: muet),
-          const EntreeMessagesCandidature(ecartAvant: Ecart.vLg),
-        ],
-      ],
+      child: page,
     );
   }
 }

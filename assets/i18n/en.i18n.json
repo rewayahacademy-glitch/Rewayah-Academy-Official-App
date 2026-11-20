@@ -3149,7 +3149,7 @@
       "annonce": {
         "ligne": "New: {titre}",
         "ranger": "Put away the announcement: {titre}",
-        "rangee": "Announcement put away in the Academy tab."
+        "rangee": "Announcement put away in Messages, Announcements section."
       },
       "etat": {
         "perime": "Your file could not be updated. What you see dates from your last reading. Try again in a moment.",
@@ -3157,7 +3157,11 @@
       },
       "messages": {
         "intro": "Write to the academy: it answers you here.",
-        "vide": "Messaging will open here as soon as your application is recorded."
+        "vide": "Messaging will open here as soon as your application is recorded.",
+        "sections": {"libelle": "Message sections", "messages": "Messages", "annonces": "Announcements", "savoir": "Good to know"},
+        "nonLus(plural, param=n)": {"one": "{n} unread message", "other": "{n} unread messages"},
+        "annonces": {"lire": "Read the announcement: {titre}", "vide": "No announcement for now. The management's announcements will appear here."},
+        "savoir": {"intro": "Answers to candidates' questions, once the management publishes them."}
       },
       "academie": {
         "titre": "The academy",
@@ -3166,7 +3170,7 @@
         "remuneration": "A teacher's pay",
         "cours": "How lessons run",
         "entretiens": "How interviews are organised",
-        "bientot": "Will appear here when the academy makes it public.",
+        "bientot": "Will appear here when the management makes it public.",
         "reglages": "Settings",
         "reglagesLegende": "Language, payout, withdrawing the application"
       },

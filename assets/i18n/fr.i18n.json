@@ -3149,7 +3149,7 @@
       "annonce": {
         "ligne": "Nouveau\u00a0: {titre}",
         "ranger": "Ranger l'annonce : {titre}",
-        "rangee": "Annonce rangée dans l'onglet Académie."
+        "rangee": "Annonce rangée dans Messages, rubrique Annonces."
       },
       "etat": {
         "perime": "Votre dossier n'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture. Réessayez dans un instant.",
@@ -3157,16 +3157,20 @@
       },
       "messages": {
         "intro": "Écrivez à l'académie : elle vous répond ici.",
-        "vide": "La messagerie s'ouvrira ici dès que votre candidature sera enregistrée."
+        "vide": "La messagerie s'ouvrira ici dès que votre candidature sera enregistrée.",
+        "sections": {"libelle": "Rubriques des messages", "messages": "Messages", "annonces": "Annonces", "savoir": "À savoir"},
+        "nonLus(plural, param=n)": {"one": "{n} message non lu", "other": "{n} messages non lus"},
+        "annonces": {"lire": "Lire l'annonce : {titre}", "vide": "Aucune annonce pour l'instant. Les annonces de la direction s'afficheront ici."},
+        "savoir": {"intro": "Les réponses aux questions des candidats, quand la direction les publiera."}
       },
       "academie": {
         "titre": "L'académie",
         "annoncesVide": "Aucune annonce pour l'instant. Les annonces de l'académie s'afficheront ici.",
         "savoirTitre": "Ce qu'il faut savoir",
-        "remuneration": "La rémunération d'un enseignant",
+        "remuneration": "La paie d'un enseignant",
         "cours": "Le déroulement des cours",
         "entretiens": "L'organisation des entretiens",
-        "bientot": "S'affichera ici quand l'académie le rendra public.",
+        "bientot": "S'affichera ici quand la direction le rendra public.",
         "reglages": "Réglages",
         "reglagesLegende": "Langue, versement, retrait de la candidature"
       },

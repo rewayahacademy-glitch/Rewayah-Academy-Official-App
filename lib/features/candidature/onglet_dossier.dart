@@ -29,7 +29,6 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/vivant/praxis_vivant.dart';
 import '../../core/vivant/ressort.dart';
 import '../../core/vivant/toucher_vivant.dart';
 import '../../core/widgets/action_principale.dart';
@@ -44,6 +43,7 @@ import 'lecture_dossier.dart';
 import 'ligne_etapes.dart';
 import 'majorite_etape.dart';
 import 'portail_candidature.dart';
+import 'praxis_candidat.dart';
 
 bool _effetsReduits(BuildContext context) =>
     EffetsReduits.de(context) || AppMouvement.mouvementReduit(context);
@@ -78,7 +78,7 @@ class OngletDossier extends ConsumerWidget {
   const OngletDossier({
     required this.dossier,
     required this.onRelire,
-    required this.onVoirAcademie,
+    required this.onVoirAnnonces,
     super.key,
     this.perime = false,
   });
@@ -92,8 +92,9 @@ class OngletDossier extends ConsumerWidget {
   /// Relit le dossier.
   final Future<void> Function() onRelire;
 
-  /// Ouvre l'onglet Academie (l'annonce en une ligne y mene).
-  final VoidCallback onVoirAcademie;
+  /// Ouvre la rubrique Annonces de l'onglet Messages (l'annonce en une ligne
+  /// y mene).
+  final VoidCallback onVoirAnnonces;
 
   /// La cle du titre de la page.
   static const Key cleTitre = ValueKey<String>('dossier-titre');
@@ -142,7 +143,7 @@ class OngletDossier extends ConsumerWidget {
         const CarteEntretienProche(),
         // A9 : l'annonce nouvelle, en une ligne qui se ferme, AU-DESSUS du
         // titre (maquette) ; sans annonce, la marge de tete d'une page.
-        AnnonceEnLigne(onVoir: onVoirAcademie),
+        AnnonceEnLigne(onVoir: onVoirAnnonces),
         // Le titre de la page : celui de `PageShell`, pose ici pour passer
         // sous l'annonce.
         Semantics(
@@ -441,9 +442,8 @@ class _EtatCarteAFaire extends State<CarteAFaire>
 /// Praxis sur l'accueil du candidat (directeur, 20/11/2026) : present, en
 /// plus petit que sur les autres ecrans, pour pointer UNE information
 /// urgente. Il ne dit que des faits rendus par le serveur pour ce candidat ;
-/// rien quand il n'y a rien a dire. Le dessin est celui de `PraxisVivant`
-/// (reference de la competence praxis-rewayah), employe sans le modifier ;
-/// il se tait seul, et ne bouge pas sous « Reduire les effets ».
+/// rien quand il n'y a rien a dire. Le dessin est celui d'[AvatarPraxisCandidat]
+/// (eveille, puis pose yeux ouverts ; immobile sous « Reduire les effets »).
 class PraxisDuDossier extends StatelessWidget {
   /// Cree la ligne. [soucieux] : un blocage a signaler.
   const PraxisDuDossier({
@@ -460,9 +460,6 @@ class PraxisDuDossier extends StatelessWidget {
 
   /// La cle de la ligne.
   static const Key cle = ValueKey<String>('dossier-praxis');
-
-  /// La largeur de Praxis ici (120 ailleurs).
-  static const double taille = AppSpacing.section;
 
   /// L'information la plus urgente de [d], ou `null` quand il n'y a rien a
   /// dire. Dans l'ordre : une piece refusee, puis ce qui reste a terminer.
@@ -482,14 +479,12 @@ class PraxisDuDossier extends StatelessWidget {
     return Row(
       key: cle,
       children: <Widget>[
-        ExcludeSemantics(
-          child: PraxisVivant(
-            taille: taille,
-            // Pose a sa place : a cette taille, une chute passerait sur la
-            // ligne d'etapes.
-            tombe: false,
-            humeur: soucieux ? HumeurPraxis.soucieux : HumeurPraxis.calme,
-          ),
+        // Le dessin vit derriere un seul composant du lot.
+        AvatarPraxisCandidat(
+          sujet: phrase,
+          humeur: soucieux
+              ? HumeurPraxisCandidat.soucieux
+              : HumeurPraxisCandidat.calme,
         ),
         Ecart.hMd,
         Expanded(
@@ -591,26 +586,11 @@ class _EtatLigneDepliable extends State<LigneDepliable> {
     // Un texte tres agrandi (ou 320 de large) : l'etat passe sous le nom, qui
     // garde toute la largeur ; aucun mot ne se coupe.
     final bool agrandi = MediaQuery.textScalerOf(context).scale(14) / 14 > 1.3;
-    final Widget nom = Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        Text(
-          l.libelle,
-          style: palette.inkStrong.applyTo(
-            textes.bodyLarge ?? const TextStyle(),
-          ),
-        ),
-        if (l.legende != null) ...<Widget>[
-          Ecart.vXs,
-          Text(
-            l.legende!,
-            style: palette.inkMuted.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
-          ),
-        ],
-      ],
+    // Une ligne simple (directeur, 20/11/2026) : le nom et sa pastille ; ce
+    // qui la precise (legende, description) se lit en la depliant.
+    final Widget nom = Text(
+      l.libelle,
+      style: palette.inkStrong.applyTo(textes.bodyLarge ?? const TextStyle()),
     );
     // Comme la maquette : fait en vert, a faire en ambre. Jamais la couleur
     // seule : le mot dit l'etat.
@@ -656,7 +636,7 @@ class _EtatLigneDepliable extends State<LigneDepliable> {
               ? Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.sm),
                   child: Text(
-                    l.detail,
+                    l.legende == null ? l.detail : '${l.legende}\n${l.detail}',
                     key: OngletDossier.cleDetail(l.code),
                     style: palette.inkMuted.applyTo(
                       textes.bodyMedium ?? const TextStyle(),
@@ -671,13 +651,13 @@ class _EtatLigneDepliable extends State<LigneDepliable> {
 }
 
 /// A9 : l'annonce nouvelle de l'academie, en UNE ligne qui se ferme. Fermee
-/// (ou glissee), elle est comptee « vue » et ne vit plus que dans l'onglet
-/// Academie, ou toutes les annonces sont rangees.
+/// (ou glissee), elle est comptee « vue » et ne vit plus que dans la rubrique
+/// Annonces de l'onglet Messages, ou toutes les annonces sont rangees.
 class AnnonceEnLigne extends ConsumerStatefulWidget {
-  /// Cree la ligne. [onVoir] ouvre l'onglet Academie.
+  /// Cree la ligne. [onVoir] ouvre la rubrique Annonces.
   const AnnonceEnLigne({required this.onVoir, super.key});
 
-  /// Ouvre l'onglet Academie.
+  /// Ouvre la rubrique Annonces.
   final VoidCallback onVoir;
 
   /// La cle de la ligne.
@@ -696,7 +676,7 @@ class _EtatAnnonceEnLigne extends ConsumerState<AnnonceEnLigne> {
 
   void _ranger(AnnonceRecue annonce) {
     setState(() => _rangees.add(annonce.id));
-    // Un echec n'empeche rien : l'annonce reste lisible dans Academie, et
+    // Un echec n'empeche rien : l'annonce reste lisible dans Annonces, et
     // sera recomptee a la prochaine ouverture.
     unawaited(
       ref
