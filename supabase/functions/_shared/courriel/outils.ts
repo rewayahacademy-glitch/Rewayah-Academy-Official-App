@@ -60,6 +60,14 @@ export function bonjour(d: Donnees, p: Parole = PAROLE_FR): string {
   return `${p.salut}${prenom}${p.fin}`
 }
 
+/// PE-A1 (20/11/2026) : le nom d'un formulaire importe (`formulaire`), cite seulement s'il est ecrit dans
+/// l'ecriture de la langue du message (`ecriture`) ; `null` : jamais cite (une langue dont on ne peut pas
+/// distinguer l'ecriture du francais). Le francais le cite tel quel.
+export function nomFormulaireDans(d: Donnees, ecriture: RegExp | null): string | null {
+  const n = typeof d.formulaire === 'string' ? d.formulaire.trim() : ''
+  return n !== '' && ecriture !== null && ecriture.test(n) ? n : null
+}
+
 export function lienApp(d: Donnees, repli: string): string {
   const dest = typeof d.destination === 'string' && /^\/[a-z][a-z0-9/_-]*$/.test(d.destination) ? d.destination : repli
   // L'application route sur le fragment : /#/chemin (CAND-04, 06/11/2026).

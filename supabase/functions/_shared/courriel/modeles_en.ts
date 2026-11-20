@@ -6,6 +6,7 @@ import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from '.
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
   precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
+import { nomFormulaireDans } from './outils.ts'
 
 const PAROLE: Parole = {
   salut: 'Hello',
@@ -293,9 +294,75 @@ const MODELES: Record<string, Fabrique> = {
       ],
     }
   },
+  // PE-A1 (20/11/2026) : les courriels du candidat enseignant, ecrits a la main en anglais (ils partaient
+  // traduits automatiquement du francais). Memes liens, memes boutons que modeles_fr.ts.
+  retenu_entretien: (d) => avis(d, 'Your application is selected for an interview', 'Let’s get to know each other',
+    d.creneauxOuverts === true
+      ? 'The management has read your application and invites you to a video interview, to get to know each other. Choose the time that suits you in the app.'
+      : 'The management has read your application and invites you to a video interview, to get to know each other. We will write to you as soon as interview times are open; there is nothing for you to do for now.',
+    'See my application', '/attente'),
+  // PE-A7 (20/11/2026) : voir modeles_fr.ts.
+  entretien_creneau_ouvert: (d) => avis(d, 'An interview time is open', 'Let’s get to know each other',
+    'A video interview time has just opened for you. Choose the time that suits you in the app: each time goes to the first person who chooses it.',
+    'Choose my time', '/attente/entretien'),
+  invitation_enseignant: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le, PAROLE.locale)
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    return {
+      sujet: 'Your invitation to teach at Rewayah Academy',
+      apercu: 'The management invites you to create your teacher account.',
+      titre: 'You are invited to teach at Rewayah Academy',
+      blocs: [
+        { type: 'texte', texte: bonjour(d, PAROLE) },
+        { type: 'texte', texte: 'The management of Rewayah Academy invites you to create your teacher account.' },
+        ...(code ? [{ type: 'texte', texte: 'Your invitation code:' } as const, { type: 'code', code } as const] : []),
+        { type: 'bouton', libelle: 'Create my teacher account', href: lien },
+        { type: 'texte', texte: 'Create your account with this e-mail address: the code only works with it. If the button does not open, go to app.rewayahacademy.com, tap “I have an invitation code” and copy the code.' },
+        { type: 'note', texte: (fin ? `The invitation is valid until ${fin} and can only be used once. ` : 'The invitation can only be used once. ') + 'Nothing to pay, at any stage. If you were not expecting this invitation, ignore this message.' },
+      ],
+    }
+  },
+  invitation_candidat_importe: (d) => {
+    const code = typeof d.code === 'string' && /^[A-Z0-9]{4}-[A-Z0-9]{4}-[A-Z0-9]{4}$/.test(d.code) ? d.code : null
+    const fin = dateLongue(d.expire_le, PAROLE.locale)
+    const promesse = d.variante === 'A'
+    const lien = `${APP}/#/connexion?mode=creer&invitation=1${code ? `&code=${code}` : ''}`
+    const sujet = 'Your personal invitation to join Rewayah Academy'
+    return {
+      sujet,
+      apercu: promesse
+        ? 'As promised, here is your personal link to continue your application in the app.'
+        : 'Here is your personal link to continue your application in the app.',
+      titre: sujet,
+      lettre: true,
+      blocs: [
+        { type: 'texte', texte: 'Assalamu alaykum wa rahmatullah,' },
+        { type: 'texte', texte: promesse
+          ? 'At the end of October, we promised you a personal e-mail. Here it is.'
+          : 'Thank you for filling in our form to teach the Quran at Rewayah Academy.' },
+        { type: 'texte', texte: 'We invite you to continue your application in the Rewayah app. Everything happens in one place, at your own pace:' },
+        { type: 'texte', texte: '1. Create your account with the button below. Your answers to the form are already waiting for you there: you have nothing to type again.\n' +
+          '2. Complete your application: read and accept our commitments, add your photo and your identity document.\n' +
+          '3. Then choose, in the app, the time of our video interview, “Let’s get to know each other”.' },
+        { type: 'bouton', libelle: 'Continue my application', href: lien },
+        ...(code ? [{ type: 'texte', texte: 'Your personal code:' } as const, { type: 'code', code } as const] : []),
+        { type: 'texte', texte: 'Create your account with this e-mail address: the code only works with it. If the button does not open, go to app.rewayahacademy.com, tap “I have an invitation code” and copy the code.' },
+        { type: 'texte', texte: 'There is nothing to pay, at any stage: teaching at Rewayah Academy is paid work.' },
+        { type: 'note', texte: (fin ? `This invitation is valid until ${fin} and can only be used once. ` : 'This invitation can only be used once. ') +
+          'If you no longer wish to teach with us, one click on the link at the bottom of this message is enough, with no need to explain.' },
+        { type: 'texte', texte: promesse
+          ? 'May Allah reward you for your patience.'
+          : 'May Allah reward you for your initiative.' },
+        { type: 'texte', texte: 'The management\nRewayah Academy' },
+      ],
+    }
+  },
   lien_inscription: (d) => {
     const quand = dateLongue(d.date_reponse, PAROLE.locale)
-    const nom = typeof d.formulaire === 'string' && d.formulaire.trim() ? ` “${d.formulaire.trim()}”` : ''
+    // PE-A1 (20/11/2026) : le nom du formulaire est ecrit en francais ; il n'est pas cite en anglais.
+    const formulaire = nomFormulaireDans(d, null)
+    const nom = formulaire ? ` “${formulaire}”` : ''
     const rappel = `${quand ? `On ${quand}, you` : 'You'} answered our form${nom}.`
     return {
       sujet: 'Your application to Rewayah Academy: create your account',

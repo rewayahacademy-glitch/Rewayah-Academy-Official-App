@@ -61,7 +61,8 @@ Deno.serve(async (req) => {
         // valide, l'ancienne adresse d'un compte supprime est liberee et le compte
         // neuf (sans profil) cree AVANT l'envoi : Google, lien et code marchent tous.
         // Si l'adresse tient encore, le courriel ne part pas (ligne a reessayer).
-        if ((await preparerAdresseInvitee(l.modele, l.donnees, l.a, liberation)) === 'echec') {
+        // PE-A1 : le compte neuf recoit la langue du courriel (lien de connexion dans cette langue).
+        if ((await preparerAdresseInvitee(l.modele, l.donnees, l.a, liberation, l.langue)) === 'echec') {
           throw new Error('adresse invitee non preparee')
         }
         // COURRIELS-2 : dans la langue du destinataire ; traduit du francais (ou de

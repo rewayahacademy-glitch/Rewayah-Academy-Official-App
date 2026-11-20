@@ -1,0 +1,30 @@
+magic_link	sans-langue	sujet=Votre lien de connexion à Rewayah Academy	lang=fr
+magic_link	sans-donnees	sujet=Votre lien de connexion à Rewayah Academy	lang=fr
+magic_link	ar	sujet=رابط تسجيل دخولك إلى Rewayah Academy	lang=ar
+magic_link	en	sujet=Your sign-in link for Rewayah Academy	lang=en
+magic_link	fr	sujet=Votre lien de connexion à Rewayah Academy	lang=fr
+confirmation	sans-langue	sujet=Confirmez votre adresse e-mail	lang=fr
+confirmation	sans-donnees	sujet=Confirmez votre adresse e-mail	lang=fr
+confirmation	ar	sujet=أكّد عنوان بريدك الإلكتروني	lang=ar
+confirmation	en	sujet=Confirm your e-mail address	lang=en
+confirmation	fr	sujet=Confirmez votre adresse e-mail	lang=fr
+invite	sans-donnees	sujet=Votre accès à Rewayah Academy	lang=fr
+invite	ar	sujet=دخولك إلى Rewayah Academy	lang=ar
+invite	en	sujet=Your access to Rewayah Academy	lang=en
+invite	fr	sujet=Votre accès à Rewayah Academy	lang=fr
+invite	sans-langue	sujet=Votre accès à Rewayah Academy	lang=fr
+recovery	en	sujet=Choose a new password	lang=en
+recovery	fr	sujet=Choisir un nouveau mot de passe	lang=fr
+recovery	sans-langue	sujet=Choisir un nouveau mot de passe	lang=fr
+recovery	sans-donnees	sujet=Choisir un nouveau mot de passe	lang=fr
+recovery	ar	sujet=اختيار كلمة مرور جديدة	lang=ar
+email_change	sans-donnees	sujet=Confirmez votre nouvelle adresse e-mail	lang=fr
+email_change	ar	sujet=أكّد عنوان بريدك الإلكتروني الجديد	lang=ar
+email_change	en	sujet=Confirm your new e-mail address	lang=en
+email_change	fr	sujet=Confirmez votre nouvelle adresse e-mail	lang=fr
+email_change	sans-langue	sujet=Confirmez votre nouvelle adresse e-mail	lang=fr
+reauthentication	sans-donnees	sujet=Votre code de vérification	lang=fr
+reauthentication	ar	sujet=رمز التحقق الخاص بك	lang=ar
+reauthentication	en	sujet=Your verification code	lang=en
+reauthentication	fr	sujet=Votre code de vérification	lang=fr
+reauthentication	sans-langue	sujet=Votre code de vérification	lang=fr

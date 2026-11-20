@@ -9,6 +9,7 @@ import { causeConversionRefusee, nomClasse, type MotsConversionRefusee } from '.
 import { avec, avisDans, bonjour, dateLongue, type Fabrique, type LangueEcrite, libre, type Parole, montantLisible,
   precisions, type Precisions, phraseChangementHeure, type MotsChangementHeure} from './outils.ts'
 import { quandSeance, codeCandidat } from './modeles_fr.ts'
+import { nomFormulaireDans } from './outils.ts'
 
 const PAROLE: Parole = {
   salut: 'مرحبًا',
@@ -94,6 +95,10 @@ const MODELES: Record<string, Fabrique> = {
       ? 'قرأت الإدارة طلبك وتقترح عليك مقابلة بالفيديو للتعارف. اختر في التطبيق الموعد الذي يناسبك.'
       : 'قرأت الإدارة طلبك وتقترح عليك مقابلة بالفيديو للتعارف. سنكتب إليك حين تُفتح مواعيد المقابلات؛ لا شيء مطلوب منك الآن.',
     'عرض طلبي', '/attente'),
+  // PE-A7 (20/11/2026) : voir modeles_fr.ts.
+  entretien_creneau_ouvert: (d) => avis(d, 'فُتح موعد لمقابلتك', 'لنتعارف',
+    'فُتح موعد لمقابلة التعارف عبر الفيديو. اختر في التطبيق الموعد الذي يناسبك؛ يُحجز كل موعد لأول من يختاره.',
+    'اختيار موعدي', '/attente/entretien'),
   coordonnees_versement_changees: (d) => avis(d, 'تغيّرت بيانات التحويل الخاصة بك', 'عُدّلت بيانات التحويل',
     'عُدّلت للتو من حسابك البيانات التي تُحوَّل إليها راتبك. ستُستعمل بعد أن تعتمدها الإدارة. إن لم تكن أنت من عدّلها فاكتب إلى الإدارة فورًا.',
     'عرض بياناتي', '/compte/paiements-recus'),
@@ -405,7 +410,10 @@ const MODELES: Record<string, Fabrique> = {
   }),
   lien_inscription: (d) => {
     const quand = dateLongue(d.date_reponse, PAROLE.locale)
-    const nom = typeof d.formulaire === 'string' && d.formulaire.trim() ? ` «${d.formulaire.trim()}»` : ''
+    // PE-A1 (20/11/2026) : le nom du formulaire n'est cite que s'il est ecrit en arabe (un nom francais au
+    // milieu d'une phrase arabe : constat du 19/11).
+    const formulaire = nomFormulaireDans(d, /[\u0600-\u06FF]/)
+    const nom = formulaire ? ` «${formulaire}»` : ''
     const rappel = `${quand ? `في ${quand}، أجبت` : 'أجبت'} عن نموذجنا${nom}.`
     return {
       sujet: 'ترشحك إلى Rewayah Academy: أنشئ حسابك',
