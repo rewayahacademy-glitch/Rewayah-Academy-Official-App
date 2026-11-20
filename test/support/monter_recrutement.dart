@@ -6,10 +6,12 @@ import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/agent/propositions_praxis.dart';
+import 'package:rewayah_academy/core/agent/travail_praxis.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 
 import 'harnais.dart';
 import 'propositions_praxis_vides.dart';
+import 'travail_praxis_vide.dart';
 
 /// Une destination qui ne dit que son nom.
 GoRoute temoin(String chemin) => GoRoute(
@@ -57,6 +59,11 @@ Future<void> monterRecrutement(
         // dossier ne montre alors rien).
         servicePropositionsPraxisProvider.overrideWithValue(
           const PropositionsPraxisVides(),
+        ),
+        // PRAXIS-VISIBLE : rien de range ni de lu, lecture qui reussit (la
+        // carte « L'avis de Praxis » dit alors « pas encore lu »).
+        serviceTravailPraxisProvider.overrideWithValue(
+          const TravailPraxisVide(),
         ),
         ...surcharges,
       ],

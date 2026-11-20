@@ -211,6 +211,9 @@ const Set<String> _latins = <String>{
   // PX-3 : « Praxis », le nom propre du secretaire de l'academie, ecrit en
   // latin dans toutes les langues (le titre de sa section n'est que ce nom).
   'admin.praxis.titre',
+  // PRAXIS-VISIBLE : la marque « Praxis : <ce qu'il a fait> » ; hors du nom
+  // propre, tout le texte vient du parametre, deja traduit.
+  'admin.praxis.travail.marque',
   // HORLOGE-ET-LIEU : le credit de la liste des villes porte le nom propre de
   // la source et son adresse, tels que la licence les demande.
   'lieu.credit',

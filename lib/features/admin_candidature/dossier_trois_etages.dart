@@ -57,6 +57,7 @@ import '../admin_candidatures/libelles_candidatures.dart';
 import '../admin_dossiers/visionneuse_piece.dart' show imagePieceProvider;
 import '../com_messages/entree_messages_contexte.dart';
 import '../com_messages/port_messages_metier.dart' show TypeObjetLie;
+import 'avis_praxis_dossier.dart';
 import 'bloc_autres_competences.dart';
 import 'bloc_entretien.dart';
 import 'blocs_candidature.dart';
@@ -1240,6 +1241,13 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
           reference: detail.ligne.reference,
           candidatureId: detail.ligne.id,
           onTraitee: widget.onPropositionTraitee,
+        ),
+        // PRAXIS-VISIBLE : l'avis de Praxis sur ce dossier et la pile ou il
+        // l'a range, a cote des informations du dossier. Un avis, jamais une
+        // decision : rien ne s'y fait.
+        Padding(
+          padding: const EdgeInsets.only(top: AppSpacing.lg),
+          child: AvisPraxisDossier(reference: detail.ligne.reference),
         ),
       ],
     );
