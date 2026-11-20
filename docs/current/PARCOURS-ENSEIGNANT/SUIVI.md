@@ -30,14 +30,14 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | | Lot | Contenu | Déjà commencé ailleurs | Statut |
 | :-- | :--- | :--- | :--- | :--- |
 | [ ] | PE-A1 | Courriels dans la langue de la personne : sujet et corps du lien de connexion et de la confirmation ; invitation personnelle ; « retenue pour un entretien » ; nom du formulaire et lien de désinscription (§2.1) | R10 (à faire depuis le 14/11) | pas commencé |
-| [ ] | PE-A2 | Le lien qui me connaît : la marque « candidat » voyage dans le lien, l'adresse est déjà là, l'écran d'arrivée dit « votre candidature vous attend », jamais la page de connexion ordinaire ; `invitation=1` lu comme candidat (§2.2, A-standard « lien magique ») | PR #524 (marque dans l'adresse de retour) : à relire d'abord | pas commencé |
-| [ ] | PE-A3 | La porte « Apprendre » ou « Enseigner » pour tout nouveau compte ; l'espace porte son nom ; les inscriptions des élèves fermées le disent (§2.2) | PR #523 (lien « Postulez ici ») dans main | pas commencé |
+| [ ] | PE-A2 | Le lien qui me connaît : la marque « candidat » voyage dans le lien, l'adresse est déjà là, l'écran d'arrivée dit « votre candidature vous attend », jamais la page de connexion ordinaire ; `invitation=1` lu comme candidat (§2.2, A-standard « lien magique ») | PR #524 (marque dans l'adresse de retour) : à relire d'abord | PR ouverte (#643) ; non prouvé en production |
+| [ ] | PE-A3 | La porte « Apprendre » ou « Enseigner » pour tout nouveau compte ; l'espace porte son nom ; les inscriptions des élèves fermées le disent (§2.2) | PR #523 (lien « Postulez ici ») dans main | PR ouverte (#643) ; non prouvé en production |
 | [ ] | PE-A4 | Geste du bureau « Ce compte est un candidat enseignant », pour les comptes famille qui portent une candidature | Q1 | pas commencé |
 | [ ] | PE-A5 | « The check did not complete » : diagnostic, message qui dit quoi faire, sortie de secours (§0) | | pas commencé |
 | [ ] | PE-A6 | Le retrait se défait seul pendant 7 jours ; le lien quitte le pied de l'accueil (A8) | décidé : 7 jours, avec un écran qui explique (§13.2) | pas commencé |
 | [ ] | PE-A7 | Avis automatique au candidat quand un créneau d'entretien s'ouvre | R22, « à construire » depuis le 16/11 | pas commencé |
 | [ ] | PE-A8 | « Vouliez-vous dire gmail.com ? » à la saisie de l'adresse | R25 | pas commencé |
-| [ ] | PE-A9 | Membre invité : plus d'écran « Pour qui créez-vous ce compte ? » avant le code ; le code d'un associé mène à l'écran de l'associé, pas à celui des enseignants (§14.4) | BE-2a-2 ASSOCIE | pas commencé |
+| [ ] | PE-A9 | Membre invité : plus d'écran « Pour qui créez-vous ce compte ? » avant le code ; le code d'un associé mène à l'écran de l'associé, pas à celui des enseignants (§14.4) | BE-2a-2 ASSOCIE | PR ouverte (#643), partie écran seulement ; le rôle associé côté serveur reste à faire |
 
 ## Vague B. Le parcours du candidat
 
@@ -80,10 +80,10 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-D5 | Profil dans la conversation = la carte d'aperçu de PE-C1, avec ses gestes | PE-C1 | pas commencé |
 | [ ] | PE-D6 | Annonces : « Annoncer à ces N personnes » depuis la liste filtrée ou la sélection (A15) | PE-C4 | pas commencé |
 | [ ] | PE-D7 | Aperçu de lien, PDF lisible dans la conversation | | pas commencé |
-| [ ] | PE-D8 | **Les avis flottants** : remplacer les bandeaux qui poussent la page par un avis posé par-dessus, aux couleurs de la marque, animé, fermable ; « messages pas en direct » devient un signe discret (§12.2) | références du directeur | pas commencé |
-| [ ] | PE-D9 | Mise à jour : « Maintenant » ou « Plus tard », puis automatique à la prochaine ouverture ; l'avis reste (§12.2) | | pas commencé |
+| [ ] | PE-D8 | **Les avis flottants** : remplacer les bandeaux qui poussent la page par un avis posé par-dessus, aux couleurs de la marque, animé, fermable ; « messages pas en direct » devient un signe discret (§12.2) | références du directeur | PR ouverte (#641) ; non prouvé en production |
+| [ ] | PE-D9 | Mise à jour : « Maintenant » ou « Plus tard », puis automatique à la prochaine ouverture ; l'avis reste (§12.2) | | PR ouverte (#641) ; non prouvé en production |
 | [ ] | PE-D10 | Gestes de glissement : retour par glissement, glisser une ligne pour agir, glisser pour répondre (§12.2) | PE-D4 | pas commencé |
-| [ ] | PE-D11 | Texte copiable sans menu « Tout sélectionner » au moindre toucher (§12.2) | à reproduire sur le téléphone du directeur | pas commencé |
+| [ ] | PE-D11 | Texte copiable sans menu « Tout sélectionner » au moindre toucher (§12.2) | à reproduire sur le téléphone du directeur | PR ouverte (#641) ; non prouvé en production |
 | [ ] | PE-D12 | **Tirer vers le bas pour actualiser**, partout, dans le composant de page commun ; et le bouton figé après la validation d'une pièce (régression) (§12.2) | | PR ouverte (#639), partiel : délai du bouton figé ; tirer pour actualiser non fait |
 
 ## Vague E. L'espace de l'enseignant
@@ -129,3 +129,4 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 - 20/11/2026 : le directeur valide la maquette du tableau de bord (« on valide cette maquette pour aller vite ») et ordonne de lancer les chantiers. Écrits : `CONTRAT-NAVIGATION.md` et `PLAN-DE-LANCEMENT.md`. Quatre agents lancés : RACINE (`claude/pe-racine` : PE-D8, PE-D9, PE-D11), ENTRÉE (`claude/pe-entree` : PE-A2, PE-A3, PE-A9 écran), BUREAU-NAV (`claude/pe-bureau-nav` : PE-C1, PE-D4, PE-C7, PE-D12), VIVANT (`claude/pe-vivant` : PE-F7, PE-F4, PE-C6). Statut de ces lots : en cours.
 - 20/11/2026 : ordre du directeur de mettre Praxis au travail (plan §17). Lu en production : Praxis allumé et autonome, mais en mode essai (2 conversations, données réelles fermées, 5 messages par heure). Fait : consigne de la routine horaire complétée, point du jour créé, chantier serveur PRAXIS-TRAVAIL lancé (`claude/praxis-travail`). Reste au directeur : trois interrupteurs à l'écran. Consigne 26 écrite.
 - 20/11/2026 (02:30 UTC) : rapport de BUREAU-NAV (PR #639), testé en local seulement. Bloqué côté serveur : ajouter la référence de candidature à la lecture des comptes et à `read_kyc_documents`, et envoyer `/admin/personnes/candidatures/<référence>` comme destination des notifications (à mettre dans la série de migrations). Praxis : premier passage réel terminé à 02:16 UTC, 19 conversations sur 35, 19 messages, 0 refus, 7 questions à la direction, 3 propositions ; 16 conversations encore en attente.
+- 20/11/2026 (03:05 UTC) : rapports de RACINE (PR #641) et d'ENTRÉE (PR #643). RACINE : sélection de texte limitée au cadre et au contrat, plus rien ne pousse la page, Échap ferme l'avis ; ouverts : sélection partielle dans un message (décision du directeur), avis d'observation sans croix, Échap ferme tous les avis. ENTRÉE : écran parasite retiré, deux portes, nom de l'espace sur l'écran du code, textes arabes corrigés ; ouverts : le nom arabe de l'académie n'est pas une décision écrite ; préremplissage de l'adresse, rôle associé et marque dans le lien attendent le serveur. Praxis : PX-3 (PR #640) déclaré installable par son relecteur, fusion en attente de la décision du directeur ; PX-4 (PR #644) en relecture ; texte de confidentialité validé par le directeur, publication en cours.
