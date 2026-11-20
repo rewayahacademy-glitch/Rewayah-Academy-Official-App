@@ -272,9 +272,6 @@
     },
     "avis": {
       "fermer": "Close the notice"
-    },
-    "horsDirect": {
-      "masquer": "Hide the notice \"Messages not live\""
     }
   },
   "reseau": {
@@ -12759,7 +12756,6 @@
       },
       "direct": {
         "nouveau": "You have received a new message.",
-        "horsDirect": "Messages are not live right now (connection). Updating every 30 seconds.",
         "icone": "Messages",
         "iconeUnNonLu": "Messages, 1 unread",
         "iconeNonLus": "Messages, {nombre} unread"

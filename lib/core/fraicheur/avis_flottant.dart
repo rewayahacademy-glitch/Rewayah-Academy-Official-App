@@ -7,10 +7,16 @@
 // par-dessus, sur ordinateur comme au telephone. §4 : il se ferme par sa croix
 // ou en le glissant vers le haut ; un avis court se retire aussi de lui-meme.
 //
-// Mouvement (DECISION-MOUVEMENT-2026-11-11, DECISION-FLUIDITE-2026-11-07) :
-// entree et sortie par le ressort a amortissement critique de la maison
-// (`AppMouvement.ressortDeplacement`), aux durees des jetons ; sous « reduire
-// les animations », plus de glissement, seulement le fondu.
+// Forme (directeur, 20/11/2026 : « le visuel ne respecte pas les elements des
+// maquettes qu'on a valide, avec un petit message qui surgit du haut pour
+// quelques secondes ») : une pilule large comme son texte, centree, sur la
+// surface inverse du theme (sombre sur clair, claire sur sombre), un point
+// d'accent devant la phrase, ses actions dedans. Plus de carte pleine largeur
+// ni de croix : un avis court part seul ; un avis qui reste porte sa croix.
+//
+// Mouvement : il tombe du haut par `AppMouvement.ressortAvis` (il depasse sa
+// place de quelques points puis s'y pose) et repart vers le haut en
+// accelerant ; sous « reduire les animations », seulement le fondu.
 library;
 
 import 'package:flutter/material.dart';
@@ -18,6 +24,7 @@ import 'package:flutter/services.dart';
 
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
+import '../theme/app_color_pair.dart';
 import '../theme/app_elevation.dart';
 import '../theme/app_mouvement.dart';
 import '../theme/app_palette.dart';
@@ -64,7 +71,7 @@ class CoucheAvis extends StatelessWidget {
                 constraints: const BoxConstraints(maxWidth: largeurMax),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  // Chaque avis est large comme son texte, centre.
                   spacing: AppSpacing.sm,
                   children: avis,
                 ),
@@ -77,8 +84,8 @@ class CoucheAvis extends StatelessWidget {
   );
 }
 
-/// L'entree et la sortie d'un avis : il descend du haut et s'y retire, par le
-/// ressort de la maison. [child] `null` : rien.
+/// L'entree et la sortie d'un avis : il tombe du haut, depasse sa place de
+/// quelques points, s'y pose, puis repart vers le haut. [child] `null` : rien.
 class PassageAvis extends StatelessWidget {
   /// Cree le passage.
   const PassageAvis({required this.child, super.key});
@@ -86,26 +93,46 @@ class PassageAvis extends StatelessWidget {
   /// L'avis a montrer (avec une cle propre a son message), ou `null`.
   final Widget? child;
 
+  /// D'ou tombe l'avis, en hauteurs d'avis au-dessus de sa place.
+  static const double _hauteurDeChute = 1.4;
+
   @override
   Widget build(BuildContext context) {
     final bool reduit = AppMouvement.mouvementReduit(context);
     return AnimatedSwitcher(
-      duration: AppMouvement.deplacementEntree,
+      duration: AppMouvement.avisEntree,
       reverseDuration: AppMouvement.deplacementSortie,
-      switchInCurve: AppMouvement.ressortDeplacement,
-      switchOutCurve: AppMouvement.sortie,
+      // Les courbes sont posees ci-dessous, une par propriete.
+      switchInCurve: AppMouvement.sansCourbe,
+      switchOutCurve: AppMouvement.sansCourbe,
       layoutBuilder: (Widget? courant, List<Widget> precedents) => Stack(
         alignment: Alignment.topCenter,
         children: <Widget>[...precedents, ?courant],
       ),
       transitionBuilder: (Widget enfant, Animation<double> avancement) {
-        final Widget fondu = FadeTransition(opacity: avancement, child: enfant);
+        final Widget fondu = FadeTransition(
+          opacity: CurvedAnimation(
+            parent: avancement,
+            curve: AppMouvement.courbeFondu,
+          ),
+          child: enfant,
+        );
         if (reduit) return fondu;
         return SlideTransition(
-          position: Tween<Offset>(
-            begin: const Offset(0, -1),
-            end: Offset.zero,
-          ).animate(avancement),
+          position:
+              Tween<Offset>(
+                begin: const Offset(0, -_hauteurDeChute),
+                end: Offset.zero,
+              ).animate(
+                CurvedAnimation(
+                  parent: avancement,
+                  // Il tombe et rebondit.
+                  curve: AppMouvement.ressortAvis,
+                  // Au retour le controleur va de 1 a 0 : cette courbe le
+                  // fait partir doucement puis filer vers le haut.
+                  reverseCurve: AppMouvement.entree,
+                ),
+              ),
           child: fondu,
         );
       },
@@ -114,9 +141,10 @@ class PassageAvis extends StatelessWidget {
   }
 }
 
-/// Un avis flottant : une icone, une phrase, des actions facultatives et une
-/// croix. Il se ferme par la croix ou en le glissant vers le haut ; il ne
-/// recouvre que la bande du haut, jamais tout l'ecran.
+/// Un avis flottant : une pilule, un point d'accent (ou une icone), une
+/// phrase et des actions facultatives. Il se ferme en le glissant vers le
+/// haut, par Echap, ou par sa croix quand il en porte une ([croix]) ; il ne
+/// recouvre qu'un petit morceau du haut de l'ecran.
 class AvisFlottant extends StatefulWidget {
   /// Cree l'avis.
   const AvisFlottant({
@@ -124,26 +152,35 @@ class AvisFlottant extends StatefulWidget {
     required this.onFermer,
     this.icone,
     this.actions = const <Widget>[],
+    this.croix = false,
     super.key,
   });
 
   /// Ce qui se passe, en une phrase.
   final String message;
 
-  /// La fermeture (croix ou glissement vers le haut).
+  /// La fermeture (glissement vers le haut, Echap, croix).
   final VoidCallback onFermer;
 
-  /// L'icone devant la phrase, `null` pour l'icone d'information.
+  /// L'icone devant la phrase ; `null` : le point d'accent.
   final IconData? icone;
 
   /// Les actions, au bout de la phrase (« Mettre a jour », « Plus tard »).
+  /// Elles sont rendues dans le theme inverse, celui de la pilule.
   final List<Widget> actions;
+
+  /// Vrai : l'avis porte une croix. A reserver a l'avis qui ne part pas seul
+  /// et dont aucune action ne le ferme.
+  final bool croix;
 
   /// La cle de la croix.
   static const Key cleFermer = ValueKey<String>('avis-flottant-fermer');
 
   /// La cle de la zone qui se glisse.
   static const Key cleGlisser = ValueKey<String>('avis-flottant-glisser');
+
+  /// La cle de la pilule, pour les tests.
+  static const Key clePilule = ValueKey<String>('avis-flottant-pilule');
 
   @override
   State<AvisFlottant> createState() => _EtatAvisFlottant();
@@ -190,10 +227,29 @@ class _EtatAvisFlottant extends State<AvisFlottant> {
   @override
   Widget build(BuildContext context) {
     if (_parti) return const SizedBox.shrink();
+    final ThemeData theme = Theme.of(context);
     final AppPalette palette = AppPalette.of(context);
-    final TextStyle corps = palette.surfaceRaised.applyTo(
-      Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+    // La pilule est un morceau de l'autre theme : sombre sur une page claire,
+    // claire sur une page sombre. Ses enfants (point, actions, croix) lisent
+    // donc la palette inverse.
+    final AppPalette inverse = palette.estSombre
+        ? AppPalette.claire()
+        : AppPalette.sombre();
+    final ThemeData themeInverse = theme.copyWith(
+      // Meme ecriture que `choice_card_group.dart` (le compilateur refuse
+      // `ThemeExtension<dynamic>` ici) : les autres extensions restent, seule
+      // la palette change.
+      extensions: <ThemeExtension<ThemeExtension<dynamic>>>[
+        ...theme.extensions.values
+            .where((ThemeExtension<dynamic> e) => e is! AppPalette)
+            .cast<ThemeExtension<ThemeExtension<dynamic>>>(),
+        inverse,
+      ],
     );
+    final TextStyle corps = palette.surfaceInverse.applyTo(
+      theme.textTheme.bodyMedium ?? const TextStyle(),
+    );
+    final bool avecFin = widget.croix || widget.actions.isNotEmpty;
     return Dismissible(
       key: AvisFlottant.cleGlisser,
       direction: DismissDirection.up,
@@ -203,54 +259,83 @@ class _EtatAvisFlottant extends State<AvisFlottant> {
       child: Semantics(
         container: true,
         liveRegion: true,
-        child: Container(
-          padding: const EdgeInsetsDirectional.only(
-            start: AppSpacing.lg,
-            top: AppSpacing.xs,
-            bottom: AppSpacing.xs,
-          ),
-          decoration: AppElevation.avecFilet(
-            // Les couleurs de l'application, pas le jaune d'alerte : un avis
-            // informe, il n'alarme pas.
-            surface: palette.surfaceRaised,
-            filet: palette.borderHairline,
-            ombre: palette.ombre,
-            arrondi: AppRadius.arrondiMd,
-            ombres: AppElevation.niveau2(palette.ombre),
-          ),
-          child: Row(
-            children: <Widget>[
-              ExcludeSemantics(
-                child: IconTheme(
-                  data: palette.inkAccent.asIconTheme(),
-                  child: Icon(widget.icone ?? AppIcons.info.repos),
+        onDismiss: widget.onFermer,
+        child: Theme(
+          data: themeInverse,
+          child: Container(
+            key: AvisFlottant.clePilule,
+            padding: EdgeInsetsDirectional.only(
+              start: AppSpacing.lg,
+              end: avecFin ? AppSpacing.xs : AppSpacing.lg,
+              top: AppSpacing.xs,
+              bottom: AppSpacing.xs,
+            ),
+            decoration: BoxDecoration(
+              color: palette.surfaceInverse.background,
+              borderRadius: AppRadius.arrondiLg,
+              boxShadow: AppElevation.niveau3(palette.ombre),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                ExcludeSemantics(
+                  child: widget.icone == null
+                      ? _PointAccent(encre: inverse.inkAccent)
+                      : IconTheme(
+                          data: inverse.inkAccent.asIconTheme(),
+                          child: Icon(widget.icone),
+                        ),
                 ),
-              ),
-              Ecart.hMd,
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
-                  child: Wrap(
-                    crossAxisAlignment: WrapCrossAlignment.center,
-                    spacing: AppSpacing.sm,
-                    children: <Widget>[
-                      Text(widget.message, style: corps),
-                      ...widget.actions,
-                    ],
+                Ecart.hMd,
+                Flexible(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      spacing: AppSpacing.sm,
+                      children: <Widget>[
+                        Text(widget.message, style: corps),
+                        ...widget.actions,
+                      ],
+                    ),
                   ),
                 ),
-              ),
-              BoutonIcone(
-                key: AvisFlottant.cleFermer,
-                icone: AppIcons.fermer,
-                libelle: t.racine.avis.fermer,
-                infobulle: t.racine.avis.fermer,
-                onPress: widget.onFermer,
-              ),
-            ],
+                if (widget.croix)
+                  BoutonIcone(
+                    key: AvisFlottant.cleFermer,
+                    icone: AppIcons.fermer,
+                    libelle: t.racine.avis.fermer,
+                    infobulle: t.racine.avis.fermer,
+                    onPress: widget.onFermer,
+                  ),
+              ],
+            ),
           ),
         ),
       ),
     );
   }
+}
+
+/// Le point d'accent devant la phrase : un disque plein, de l'encre d'accent
+/// du theme de la pilule.
+class _PointAccent extends StatelessWidget {
+  const _PointAccent({required this.encre});
+
+  final AppInkColor encre;
+
+  static const double _diametre = AppSpacing.sm;
+
+  @override
+  Widget build(BuildContext context) => SizedBox.square(
+    dimension: _diametre,
+    child: DecoratedBox(
+      decoration: ShapeDecoration(
+        // Un trait epais comme le rayon remplit le disque.
+        shape: CircleBorder(side: encre.asBorderSide(width: _diametre / 2)),
+      ),
+    ),
+  );
 }

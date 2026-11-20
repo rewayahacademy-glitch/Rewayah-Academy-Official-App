@@ -272,9 +272,6 @@
     },
     "avis": {
       "fermer": "Fermer l'avis"
-    },
-    "horsDirect": {
-      "masquer": "Masquer l'avis « Messages pas en direct »"
     }
   },
   "reseau": {
@@ -12747,7 +12744,6 @@
       },
       "direct": {
         "nouveau": "Vous avez reçu un nouveau message.",
-        "horsDirect": "Messages pas en direct pour le moment (connexion). Mise à jour toutes les 30 secondes.",
         "icone": "Messages",
         "iconeUnNonLu": "Messages, 1 non lu",
         "iconeNonLus": "Messages, {nombre} non lus"

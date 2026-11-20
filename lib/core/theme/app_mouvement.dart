@@ -390,6 +390,25 @@ abstract final class AppMouvement {
   /// indeterminees. Interdit partout ailleurs.
   static const Curve progressionIndeterminee = Curves.linear;
 
+  /// L'avis qui tombe du haut de l'ecran (maquette du bureau validee par le
+  /// directeur le 20/11/2026 : « un petit message qui surgit du haut pour
+  /// quelques secondes »). Un ressort **sous-amorti** : l'avis depasse sa
+  /// place de quelques points puis s'y pose. C'est la seule courbe a rebond
+  /// de la maison ; la salle garde [ressortDeplacement], sans rebond
+  /// (decision du 10/11/2026).
+  static const Curve ressortAvis = _CourbeRessortRebond(
+    amortissement: 0.55,
+    pulsation: 9,
+  );
+
+  /// La duree de la chute de l'avis, rebond compris.
+  static const Duration avisEntree = Duration(milliseconds: 520);
+
+  /// Laisse une transition appliquer elle-meme ses courbes (une par
+  /// propriete : le glissement rebondit, le fondu non). A ne donner qu'a un
+  /// `AnimatedSwitcher` dont le `transitionBuilder` pose ses propres courbes.
+  static const Curve sansCourbe = Curves.linear;
+
   /// Ressort des feuilles et du conteneur partage.
   ///
   /// Amortissement critique : aucun rebond visible, seulement une arrivee qui
@@ -504,6 +523,34 @@ abstract final class AppMouvement {
   /// (`04-systeme-mouvement.md` section 5).
   static bool mouvementReduit(BuildContext context) =>
       MediaQuery.disableAnimationsOf(context);
+}
+
+/// Un ressort sous-amorti, vu comme une courbe sur [0, 1] :
+/// `x(t) = 1 - e^(-z w t) (cos(wd t) + (z w / wd) sin(wd t))`, normalise pour
+/// finir exactement a 1. Il depasse 1 puis y revient : [amortissement] (z,
+/// entre 0 et 1) regle l'ampleur du depassement, [pulsation] (w, en temps
+/// normalise) la vitesse.
+class _CourbeRessortRebond extends Curve {
+  const _CourbeRessortRebond({
+    required this.amortissement,
+    required this.pulsation,
+  });
+
+  final double amortissement;
+  final double pulsation;
+
+  double _x(double t) {
+    final double amortie =
+        pulsation * math.sqrt(1 - amortissement * amortissement);
+    final double enveloppe = math.exp(-amortissement * pulsation * t);
+    return 1 -
+        enveloppe *
+            (math.cos(amortie * t) +
+                (amortissement * pulsation / amortie) * math.sin(amortie * t));
+  }
+
+  @override
+  double transformInternal(double t) => _x(t) / _x(1);
 }
 
 /// Un ressort a amortissement critique, vu comme une courbe sur [0, 1] :

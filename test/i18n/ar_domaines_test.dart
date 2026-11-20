@@ -35,7 +35,9 @@ const Map<String, int> _domaines = <String, int>{
   // Lot demarrage (25/10/2026) : bandeau « nouvelle version ».
   'miseAJour': 1,
   // Lot RACINE (PE-D8, PE-D9, 19/11/2026) : avis flottants, mise a jour.
-  'racine': 3,
+  // 20/11/2026 : `racine.horsDirect.masquer` est retire avec l'avis « Messages
+  // pas en direct » (directeur : « inutile »), le domaine compte 3 cles.
+  'racine': 2,
   'etat': 10,
   'vide': 4,
   'notifications': 5,
