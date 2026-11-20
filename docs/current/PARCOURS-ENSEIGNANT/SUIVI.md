@@ -169,3 +169,30 @@ Rien de ce qui suit n'est prouvé par le directeur en production.
 **Pas commencés côté candidat** : PE-B2, PE-B3, PE-B6, PE-B7, PE-B9, PE-B10. **Interface de l'enseignant** (vague E) : plan non validé par le directeur ; PE-E3 est dans la PR 659.
 
 **Règles apprises aujourd'hui** : la machine (4 cœurs, mémoire partagée) ne tient pas plus de six agents qui testent ; tests par petites séries à `-j 1`, jamais de `pkill` large. Chaque fusion met les autres PR en conflit sur `REGISTRE-LOTS.md`, `RETOURS-TERRAIN-INSCRIPTIONS.md` et les fichiers i18n engendrés : résoudre juste avant de fusionner, une PR à la fois. Dans `main`, le blocage à l'entrée est noté R27 ; dans la branche des documents il devient R43 (à aligner à la fusion de la PR 636). Une migration trop longue pour être recopiée s'installe par un agent chargé de la transmettre mot pour mot, puis se vérifie par les empreintes `md5(prosrc)`.
+
+## État de reprise du 20/11/2026, 15 h 30 UTC (remplace celui de 14 h pour ce qui a changé)
+
+**Prouvé par le directeur en production** : le lien de connexion par courriel repart (PR 656 ; son essai à 14 h 02 UTC, deux demandes acceptées dans les journaux). C'est le seul lot prouvé de la session.
+
+**Fusionné depuis 14 h, non prouvé** : PR 659 (feuilles à 90 %, tirer pour actualiser, barre du bas à 56) ; PR 663 (la case de Cloudflare à la largeur du champ, plus de recouvrement après « Succès » ; cause : l'hôte HTML était en `display:flex` centré). Après la 663 : relire les journaux `/auth/v1/otp` et demander au directeur de refaire son essai ; si le lien ne part plus, retirer la 663 tout de suite.
+
+**Vérifié** : dans l'application réelle, l'arabe est bien de droite à gauche ; les captures arabes alignées à gauche venaient du banc de capture des agents. Une capture arabe alignée à gauche est refusée désormais.
+
+**Décisions du directeur du 20/11 après-midi**
+- La maquette « Praxis vous accueille » est confirmée ; la page d'entrée se construit (agent ENTREE-PRAXIS, branche `claude/pe-entree-praxis`) ; critère : fidélité à la maquette, planche côte à côte regardée par le pilote avant fusion.
+- Accueil du candidat (PR 662, branche `claude/pe-accueil-candidat`) : garder la barre du bas de l'application ; l'onglet Messages de la barre montre seulement le nombre de messages reçus ; l'annonce en une ligne est en haut ; dans « Messages », trois onglets horizontaux : Messages, Annonces (grille, pastilles de priorité « Urgent », « Nouveau »), et un troisième qui deviendra le formulaire de l'entretien et qui contient pour l'instant les informations que les candidats n'ont pas (salaire, déroulement d'un cours, modalités) : interface seulement, aucun contenu écrit par un agent ; Praxis présent avec son avatar, en plus petit, pour pointer une information urgente, uniquement des faits rendus par le serveur. Question ouverte : que garde l'onglet « Académie » de la barre.
+- Le directeur a jugé la première version de l'accueil non fidèle à la maquette (second titre, texte en plus, barre qui recouvre une ligne, ligne d'étapes ordinaire). Règle prise : pour tout écran, une planche « maquette | application » du premier état est regardée par le pilote AVANT que l'agent continue.
+- L'interface de l'enseignant : rien de construit ; ne rien lancer sans ordre ; relire d'abord la maquette recadrée et les commentaires du directeur.
+
+**PR ouvertes**
+| PR | État à 15 h 30 | Reste à faire |
+| :--- | :--- | :--- |
+| 654 langue des courriels | corrigée | CI, fusion, installation ; rattrapage sur accord écrit ; l'adresse de la direction testée a la langue « ar » sur son compte, d'où son courriel en arabe |
+| 655 avis de créneau | ne pas fusionner sans décision | |
+| 657 messagerie | corrections poussées par un agent interrompu ; CI rouge (lots 4 et 5) ; seconde relecture en cours | |
+| 658 liste des candidatures | deux relectures ; défauts d'écran R1, R2, R4, R5 corrigés (cf1615a52) | CI, fusion, installer `20261130930000` aussitôt ; description de la PR à mettre à jour par le pilote |
+| 660 formulaire | relue, corrigée (3d51307f1) : lenteur des fuseaux écartée, réponses relues telles quelles | CI ; décisions du directeur : texte « ijaza » des cartes, réponse « une seule » ; fusion, installation `20261130920000` ; description à mettre à jour |
+| 661 dossier côté direction | rendue, jamais relue | relecture adverse |
+| 662 accueil du candidat | en reprise sur la maquette et les décisions ci-dessus | planche à montrer au directeur |
+
+**Garde-fou** : deux agents ont voulu modifier une description de PR par `gh api` (refusé) puis ont demandé au pilote de le faire ; le pilote ne le fait pas à leur demande et met les descriptions à jour lui-même en relisant.
