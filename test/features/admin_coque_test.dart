@@ -14,6 +14,7 @@ import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/admin_shell.dart';
 import 'package:rewayah_academy/core/widgets/entete_page.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
 
 import '../support/demo/mode_demonstration.dart';
 import '../support/demo/repere_demonstration.dart';
@@ -300,9 +301,13 @@ void main() {
       const Size(1440, 900),
       Routes.admin,
     );
-    // DASH-ADM-1 : les lignes sont celles de l'apercu de la tuile Dossiers
-    // (« Prenom · anciennete »), chacune vers son dossier (D4 (a)).
-    final Finder lignes = find.textContaining(' · ');
+    // DASH-ADM-1, retabli dans VIVANT : les lignes sont celles de la case
+    // « Dossiers à valider » (« Prenom · anciennete »), chacune vers son
+    // dossier (D4 (a) ; contrat de navigation §2).
+    final Finder lignes = find.descendant(
+      of: find.byKey(BentoVivant.cleDossiers),
+      matching: find.textContaining(' · '),
+    );
     expect(lignes, findsAtLeastNWidgets(2));
     String prenomDe(int i) =>
         tester.widget<Text>(lignes.at(i)).data!.split(' · ').first.trim();

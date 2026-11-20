@@ -6,6 +6,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
+import 'package:rewayah_academy/core/theme/app_palette.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/bento_tile.dart';
@@ -16,6 +17,8 @@ import 'package:rewayah_academy/core/widgets/groupe_reglages.dart';
 import 'package:rewayah_academy/core/widgets/pile_cartes.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
+import 'package:rewayah_academy/features/admin_tableau/heros_praxis.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 
@@ -34,7 +37,11 @@ bool _estCarte(Widget w) =>
     w is GroupeReglages ||
     w is CarteLignes ||
     w is CarteGroupee ||
-    w is SettingRow;
+    w is SettingRow ||
+    // VIVANT (20/11/2026) : les cases du bento de l'accueil de la direction
+    // sont des cartes de contenu comme les autres, la case de Praxis aussi.
+    w is CaseVivante ||
+    w is HerosPraxis;
 
 bool _estPastille(Widget w) =>
     w is AppCard && w.marge != null && w.marge! < AppSpacing.lg;
@@ -133,6 +140,30 @@ void main() {
         () => verifierAucuneCarteCollee(tester, estCarte: _estCarte),
         throwsA(isA<TestFailure>()),
       );
+    });
+
+    testWidgets('le garde voit deux cases du bento collees, et les accepte '
+        'a 16', (WidgetTester tester) async {
+      Widget cases(double ecart) => Builder(
+        builder: (BuildContext context) => Column(
+          spacing: ecart,
+          children: <Widget>[
+            for (final String x in <String>['un', 'deux'])
+              CaseVivante(
+                paire: AppPalette.of(context).surfaceRaised,
+                child: Text(x),
+              ),
+          ],
+        ),
+      );
+      fixerVue(tester, const Size(320, 800));
+      await tester.pumpWidget(hoteTheme(cases(0), defilant: false));
+      expect(
+        () => verifierAucuneCarteCollee(tester, estCarte: _estCarte),
+        throwsA(isA<TestFailure>()),
+      );
+      await tester.pumpWidget(hoteTheme(cases(AppSpacing.lg), defilant: false));
+      expect(verifierAucuneCarteCollee(tester, estCarte: _estCarte), 2);
     });
   });
 
@@ -308,9 +339,10 @@ void main() {
           serviceAdminProvider.overrideWithValue(admin),
           serviceValidationProvider.overrideWithValue(validation),
         ],
-        // DASH-ADM-1 : les cinq tuiles et la carte des raccourcis ; la liste
-        // « A traiter en premier » (trois lignes-cartes) a quitte l'ecran.
-        minimumSurfaces: 6,
+        // VIVANT (20/11/2026) : les cases du bento sont comptees
+        // (`CaseVivante`). Sans lecture du recrutement, la page montre huit
+        // cases : Praxis, les six cases-chiffres, « Ce qui a changé ».
+        minimumSurfaces: 8,
       );
     });
 

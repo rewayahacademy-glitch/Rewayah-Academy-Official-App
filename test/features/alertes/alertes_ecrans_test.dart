@@ -22,8 +22,8 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/alertes/alertes_page.dart';
 import 'package:rewayah_academy/features/alertes/bandeau_alerte_urgente.dart';
@@ -275,7 +275,7 @@ void main() {
       );
       expect(
         _haut(tester, find.byKey(SectionAlertes.cle)),
-        lessThan(_haut(tester, find.byType(GrilleBento))),
+        lessThan(_haut(tester, find.byType(BentoVivant))),
       );
       // La phrase calme serait fausse : une urgente attend.
       expect(find.text(t.admin.tableau.calme), findsNothing);
@@ -293,7 +293,7 @@ void main() {
       );
       expect(
         _haut(tester, find.byKey(SectionAlertes.cle)),
-        greaterThan(_haut(tester, find.byType(GrilleBento))),
+        greaterThan(_haut(tester, find.byType(BentoVivant))),
       );
       // Une information n'empeche pas le calme.
       expect(find.text(t.admin.tableau.calme), findsOneWidget);
@@ -344,7 +344,7 @@ void main() {
       await tester.pump(const Duration(milliseconds: 300));
       expect(
         _haut(tester, find.byKey(SectionAlertes.cle)),
-        greaterThan(_haut(tester, find.byType(GrilleBento))),
+        greaterThan(_haut(tester, find.byType(BentoVivant))),
       );
 
       port.flux.add(<Alerte>[
@@ -356,7 +356,7 @@ void main() {
       expect(port.abonnements, 1, reason: 'aucune relecture');
       expect(
         _haut(tester, find.byKey(SectionAlertes.cle)),
-        lessThan(_haut(tester, find.byType(GrilleBento))),
+        lessThan(_haut(tester, find.byType(BentoVivant))),
       );
       expect(
         _haut(tester, find.byKey(const ValueKey<String>('alerte-u'))),

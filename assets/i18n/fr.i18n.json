@@ -5257,6 +5257,56 @@
       "sansDonnees": "l'import des inscriptions"
     },
     "tableau": {
+      "vivant": {
+        "verifierPieces": {
+          "one": "Vérifier la pièce",
+          "other": "Vérifier les {n} pièces"
+        },
+        "repondreMessages": {
+          "one": "Répondre au message",
+          "other": "Répondre aux {n} messages"
+        },
+        "activiteTitre": "Ce qui a changé",
+        "semaineCreneaux": "Créneaux d'entretien des sept prochains jours",
+        "bonjour": "Bonjour.",
+        "bonApresMidi": "Bon après-midi.",
+        "bonsoir": "Bonsoir.",
+        "praxisCreneaux": {
+          "one": "{n} candidat attend un entretien et aucun créneau n'est ouvert.",
+          "other": "{n} candidats attendent un entretien et aucun créneau n'est ouvert."
+        },
+        "praxisPieces": {
+          "one": "{n} pièce d'identité attend votre validation.",
+          "other": "{n} pièces d'identité attendent votre validation."
+        },
+        "praxisDossiers": {
+          "one": "{n} dossier d'identité attend votre validation.",
+          "other": "{n} dossiers d'identité attendent votre validation."
+        },
+        "praxisDemandes": {
+          "one": "{n} demande attend votre réponse.",
+          "other": "{n} demandes attendent votre réponse."
+        },
+        "praxisMessages": {
+          "one": "{n} conversation attend votre lecture.",
+          "other": "{n} conversations attendent votre lecture."
+        },
+        "ouvrirCreneaux": "Ouvrir des créneaux",
+        "parcoursTitre": "Le parcours des candidats",
+        "parcoursAide": "Chaque case est large comme le nombre de ses candidats.",
+        "messagesNonLus": "Conversations non lues",
+        "courriels": "Courriels envoyés en 24 heures",
+        "courrielsSur": "sur {max}",
+        "piecesAide": "Feuilletez les cartes. Touchez-en une pour ouvrir le dossier.",
+        "pieceAide": "Touchez la carte pour ouvrir le dossier.",
+        "piecesVide": "Aucune pièce d'identité n'attend.",
+        "pieceIdentite": "Pièce d'identité",
+        "ouvrirDossierDe": "Ouvrir le dossier {deNom}",
+        "piecePrecedente": "Pièce précédente",
+        "pieceSuivante": "Pièce suivante",
+        "piecePosition": "{rang} sur {total}",
+        "joursInitiales": ["L", "M", "M", "J", "V", "S", "D"]
+      },
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",
       "dossiersDetail": "Ouvrir la file, le plus ancien en premier.",

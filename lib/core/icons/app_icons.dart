@@ -486,6 +486,13 @@ abstract final class AppIcons {
     IconData(0xe2fa, fontFamily: _actif),
   );
 
+  /// Passage ouvert (VIVANT, le cadenas du parcours quand des creneaux
+  /// existent) : Phosphor `lock-open` (0xe306).
+  static const AppIcon verrouOuvert = AppIcon._(
+    IconData(0xe306, fontFamily: _repos),
+    IconData(0xe306, fontFamily: _actif),
+  );
+
   /// Session expiree, se reconnecter : Phosphor `sign-in` (0xe428).
   static const AppIcon seReconnecter = AppIcon._(
     IconData(0xe428, fontFamily: _repos, matchTextDirection: true),

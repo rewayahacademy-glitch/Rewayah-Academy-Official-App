@@ -17,9 +17,9 @@ import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/journal/service_journal.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
-import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_tableau/activite_recente.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 
 import '../../support/garde_interface.dart';
@@ -92,7 +92,7 @@ FauxServiceJournal _journalTrois() =>
 
 void main() {
   group('ADM-01 (AD-X, ADMIN-SHELL-01) : composition', () {
-    testWidgets('1440 : activite recente en colonne de fin, 336 de large', (
+    testWidgets('1440 : activite recente en case large, au bord de fin', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -101,19 +101,28 @@ void main() {
         journal: _journalTrois(),
       );
 
-      final Rect grille = tester.getRect(find.byType(GrilleBento));
+      // VIVANT : l'activite est la case large du dernier rang, au bord de
+      // fin, alignee en haut avec les cases des incidents et des acces.
+      final Rect echus = tester.getRect(find.byKey(BentoVivant.cleEchus));
       final Rect activite = tester.getRect(find.byType(ActiviteRecente));
-      expect(activite.width, TableauDeBordPage.largeurActivite);
-      // A cote, au bord de fin, aligne en haut avec les tuiles.
-      expect(activite.left, greaterThan(grille.right));
-      expect(activite.top, moinsDe(grille.top + 1));
-      // Le sous-titre de l'image du directeur, et la date du jour.
-      expect(find.text(t.admin.tableau.sousTitre), findsOneWidget);
-      expect(find.byKey(TableauDeBordPage.cleDate), findsOneWidget);
+      expect(activite.width, greaterThan(echus.width * 1.9));
+      expect(activite.left, greaterThan(echus.right));
+      expect(activite.top, moinsDe(echus.top + 1));
+      // Plus de titre ni de sous-titre : la case de Praxis est l'en-tete,
+      // et porte la date du jour.
+      expect(find.text(t.admin.tableau.titre), findsNothing);
+      expect(find.text(t.admin.tableau.sousTitre), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(BentoVivant.cleHeros),
+          matching: find.byKey(BentoVivant.cleDate),
+        ),
+        findsOneWidget,
+      );
       expect(find.text('lundi 5 octobre 2026'), findsOneWidget);
     });
 
-    testWidgets('390 : activite recente sous les tuiles, sans date', (
+    testWidgets('390 : activite recente sous les cases, sans date', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -122,11 +131,11 @@ void main() {
         journal: _journalTrois(),
       );
 
-      final Rect grille = tester.getRect(find.byType(GrilleBento));
+      final Rect echus = tester.getRect(find.byKey(BentoVivant.cleEchus));
       final Rect activite = tester.getRect(find.byType(ActiviteRecente));
-      expect(activite.top, greaterThan(grille.bottom));
-      expect(find.byKey(TableauDeBordPage.cleDate), findsNothing);
-      expect(find.text(t.admin.tableau.sousTitre), findsOneWidget);
+      expect(activite.top, greaterThan(echus.bottom));
+      expect(find.byKey(BentoVivant.cleDate), findsNothing);
+      expect(find.text(t.admin.tableau.sousTitre), findsNothing);
     });
 
     testWidgets('1440, texte x2 : une seule colonne', (
@@ -139,9 +148,9 @@ void main() {
         taille: const Size(1440, 900),
         journal: _journalTrois(),
       );
-      final Rect grille = tester.getRect(find.byType(GrilleBento));
+      final Rect echus = tester.getRect(find.byKey(BentoVivant.cleEchus));
       final Rect activite = tester.getRect(find.byType(ActiviteRecente));
-      expect(activite.top, greaterThan(grille.bottom));
+      expect(activite.top, greaterThan(echus.bottom));
     });
   });
 

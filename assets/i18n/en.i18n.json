@@ -5257,6 +5257,56 @@
       "sansDonnees": "the registrations import"
     },
     "tableau": {
+      "vivant": {
+        "verifierPieces": {
+          "one": "Check the document",
+          "other": "Check the {n} documents"
+        },
+        "repondreMessages": {
+          "one": "Answer the message",
+          "other": "Answer the {n} messages"
+        },
+        "activiteTitre": "What changed",
+        "semaineCreneaux": "Interview slots over the next seven days",
+        "bonjour": "Good morning.",
+        "bonApresMidi": "Good afternoon.",
+        "bonsoir": "Good evening.",
+        "praxisCreneaux": {
+          "one": "{n} applicant is waiting for an interview and no slot is open.",
+          "other": "{n} applicants are waiting for an interview and no slot is open."
+        },
+        "praxisPieces": {
+          "one": "{n} ID document is waiting for your validation.",
+          "other": "{n} ID documents are waiting for your validation."
+        },
+        "praxisDossiers": {
+          "one": "{n} identity file is waiting for your validation.",
+          "other": "{n} identity files are waiting for your validation."
+        },
+        "praxisDemandes": {
+          "one": "{n} request is waiting for your answer.",
+          "other": "{n} requests are waiting for your answer."
+        },
+        "praxisMessages": {
+          "one": "{n} conversation is waiting to be read.",
+          "other": "{n} conversations are waiting to be read."
+        },
+        "ouvrirCreneaux": "Open slots",
+        "parcoursTitre": "The applicants' journey",
+        "parcoursAide": "Each tile is as wide as its number of applicants.",
+        "messagesNonLus": "Unread conversations",
+        "courriels": "Emails sent in 24 hours",
+        "courrielsSur": "out of {max}",
+        "piecesAide": "Flip through the cards. Tap one to open the file.",
+        "pieceAide": "Tap the card to open the file.",
+        "piecesVide": "No ID document is waiting.",
+        "pieceIdentite": "ID document",
+        "ouvrirDossierDe": "Open {deNom}'s file",
+        "piecePrecedente": "Previous document",
+        "pieceSuivante": "Next document",
+        "piecePosition": "{rang} of {total}",
+        "joursInitiales": ["M", "T", "W", "T", "F", "S", "S"]
+      },
       "titre": "Command centre",
       "dossiers": "Files to validate",
       "dossiersDetail": "Open the queue, oldest first.",

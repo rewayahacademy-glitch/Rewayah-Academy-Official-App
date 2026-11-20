@@ -74,4 +74,30 @@ abstract final class AppRadius {
   /// L'arrondi correspondant au cran immediatement inferieur a [parent].
   static BorderRadius arrondiEnfantDe(double parent) =>
       BorderRadius.all(Radius.circular(enfantDe(parent)));
+
+  /// Le rayon interieur d'une forme posee dans une autre : **rayon exterieur
+  /// moins la marge** qui les separe, jamais sous le plus petit cran ([xs]).
+  ///
+  /// C'est la regle des coins concentriques (PARCOURS-ENSEIGNANT, PLAN §16) :
+  /// une case de rayon 24 et de marge 12 porte des enfants de rayon 12, et les
+  /// deux courbes restent paralleles. [enfantDe] ne connait pas la marge : il
+  /// rend le cran d'en dessous quelle que soit la distance, et l'arrondi de
+  /// l'enfant parait trop ouvert des que la marge depasse l'ecart entre deux
+  /// crans (carte [lg] a marge 24 : [enfantDe] rend 16, la regle rend 8).
+  /// [enfantDe] reste tel quel pour les ecrans qui en dependent.
+  static double interieur(double exterieur, double marge) {
+    final double r = exterieur - marge;
+    return r < xs ? xs : r;
+  }
+
+  /// Le coin a courbe continue (superellipse) de rayon [rayon] : la courbure
+  /// arrive progressivement, sans la cassure d'un quart de cercle. Pour les
+  /// surfaces du chantier VIVANT ; [bordure] trace un filet sur la forme.
+  static ShapeBorder coinContinu(
+    double rayon, {
+    BorderSide bordure = BorderSide.none,
+  }) => RoundedSuperellipseBorder(
+    borderRadius: BorderRadius.all(Radius.circular(rayon)),
+    side: bordure,
+  );
 }

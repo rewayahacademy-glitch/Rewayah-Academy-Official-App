@@ -9,6 +9,12 @@ import '../../core/admin/service_admin.dart';
 import '../../core/admin/sous_liens_coquille.dart';
 import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
+import '../../core/candidature/attentes_recrutement.dart';
+import '../../core/candidature/creneaux_direction.dart';
+import '../../core/candidature/modeles_candidature.dart';
+import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/port_candidatures_direction.dart';
+import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
@@ -18,17 +24,15 @@ import '../../core/router/routes.dart';
 import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
-import '../../core/widgets/carte_lignes.dart';
-import '../../core/widgets/data_collection.dart';
-import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/halo_lumiere.dart';
-import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/page_shell.dart';
-import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../alertes/section_alertes.dart';
+import '../com_messages/non_lus_messages.dart';
 import 'activite_recente.dart';
-import 'tuiles_compteur.dart';
+import 'bento_vivant.dart';
+import 'dernier_non_lu.dart';
+import 'phrase_praxis.dart';
 
 /// `ADM-01` : le centre de commande.
 ///
@@ -46,16 +50,8 @@ class TableauDeBordPage extends ConsumerWidget {
   /// changerait de resultat selon l'heure a laquelle la CI le lance.
   final DateTime Function() horloge;
 
-  /// Largeur de la colonne « Activite recente » sur bureau : celle de la file
-  /// du contrat D (DESIGN-GOV §4 bis.4).
-  static const double largeurActivite = 336;
-
-  /// En dessous, la grille Bento n'aurait plus ses quatre colonnes
-  /// (`GrilleBento`, 600) : l'activite passe sous les tuiles.
-  static const double largeurPrincipaleMin = GrilleBento.seuilQuatreColonnes;
-
-  /// La date du jour, au bord de fin de l'en-tete (bureau seulement).
-  static const Key cleDate = ValueKey<String>('adm01-date');
+  /// La date du jour, dans la case de Praxis (tablette et ordinateur).
+  static const Key cleDate = BentoVivant.cleDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -87,20 +83,6 @@ class TableauDeBordPage extends ConsumerWidget {
           (DossierAValider a, DossierAValider b) =>
               a.deposeLe.compareTo(b.deposeLe),
         );
-    final List<LigneApercu> apercu = <LigneApercu>[
-      for (final DossierAValider d in plusAnciens.take(3))
-        LigneApercu(
-          '${d.libelleCourt} · ${_anciennete(maintenant, d.deposeLe)}',
-          onPress: () =>
-              // BE-LISTE : `push`, le retour ramene a l'Accueil.
-              unawaited(
-                GoRouter.of(
-                  context,
-                ).push<void>(Routes.adminPersonnesDossiers, extra: d.profilId),
-              ),
-        ),
-    ];
-
     // ALERTE-1 : une alerte urgente va en tete de la page, au-dessus de tout
     // autre contenu, jusqu'a son traitement. Sans alerte urgente, la section
     // suit les compteurs (D2 : agir, savoir, aller). Lit la capacite (le flux
@@ -148,263 +130,267 @@ class TableauDeBordPage extends ConsumerWidget {
           (Alerte a) => a.gravite != GraviteAlerte.info,
         );
 
-    // 1. AGIR ET SAVOIR : les compteurs, rendus des que la lecture aboutit,
-    // zeros compris (D8). Les getters, jamais le type d'execution : Riverpod 3
-    // relance un provider en echec tout seul, et l'etat repasse par
-    // `AsyncLoading` en conservant `hasError`.
-    final Widget compteurs = indicateurs.hasValue
-        ? _Compteurs(
+    // VIVANT (20/11/2026) : une seule page, une seule grammaire. Chaque case
+    // lit une lecture qui existe deja ; une lecture absente (capacite
+    // indisponible : `hasValue` faux) n'affiche pas sa case. Praxis dit le
+    // blocage du moment, calcule sur ces seuls compteurs (`phrase_praxis`).
+    final AttentesRecrutement? attentes = ref
+        .watch(attentesRecrutementProvider)
+        .value;
+    final EtatFileCourriels? courriels = ref
+        .watch(etatFileCourrielsProvider)
+        .value;
+    final int? messagesNonLus = ref.watch(nonLusMessagesProvider).value;
+    final (String, String)? dernierMessage = (messagesNonLus ?? 0) > 0
+        ? ref.watch(dernierNonLuProvider).value
+        : null;
+    // Les creneaux ne se lisent que la ou le recrutement se lit.
+    final List<CreneauDirection>? creneaux = attentes == null
+        ? null
+        : ref.watch(creneauxDirectionProvider).value;
+    // La file des pieces : lue seulement quand une piece attend (chaque
+    // lecture de la file est journalisee au serveur). La liste ne sait trier
+    // que par activite recente : « la plus ancienne en premier » n'est vrai
+    // que si toute la file tient dans la page lue ; alors elle est rangee
+    // ici, la plus ancienne devant. Sinon l'ordre du serveur est garde et
+    // rien ne pretend a l'anciennete.
+    final PageCandidatures? pagePieces =
+        (attentes?.pieceAValider.nombre ?? 0) > 0
+        ? ref.watch(pageCandidaturesProvider(requetePieces)).value
+        : null;
+    final bool piecesCompletes =
+        pagePieces != null && pagePieces.total <= pagePieces.lignes.length;
+    final List<LigneCandidature>? pieces = pagePieces == null
+        ? null
+        : (piecesCompletes
+              ? _plusAnciennesDabord(pagePieces.lignes)
+              : pagePieces.lignes);
+    // Les visages des plus anciens d'un etat : seulement quand toute sa file
+    // tient dans une page (sinon les plus anciens ne sont pas ceux qui sont
+    // lus). Un etat de plus de cinquante personnes n'a donc pas de visages
+    // tant que le serveur ne sait pas trier par anciennete.
+    final Map<EtatCandidature, List<String>> visages =
+        <EtatCandidature, List<String>>{};
+    if (attentes != null) {
+      for (final EtatCandidature etat in ParcoursCandidats.chemin) {
+        final int n = attentes.etat(etat).nombre;
+        if (n <= 0 || n > _taillePageListe) continue;
+        final PageCandidatures? page = ref
+            .watch(pageCandidaturesProvider(requeteEtat(etat)))
+            .value;
+        if (page == null || page.total > page.lignes.length) continue;
+        visages[etat] = <String>[
+          for (final LigneCandidature l in _plusAnciennesDabord(
+            page.lignes,
+          ).take(3))
+            l.nomComplet,
+        ];
+      }
+    }
+    final int? dossiersAffiches = dossiers.hasValue
+        ? RevueDossiersDepuisValidation.enseignantsSeulement(
+            dossiers.requireValue,
+          ).length
+        : valeurs?.dossiersEnAttente;
+
+    // 3. ALLER : au telephone, le menu ne montre pas les pages d'un domaine ;
+    // les destinations qui n'ont que l'Accueil pour entree restent, dans une
+    // case d'outils (jamais une liste a part). Sur tablette et ordinateur,
+    // le panneau de navigation les porte toutes (NAV-SOUS-LIENS) : la case
+    // ne s'affiche pas. Les E-mails n'y sont pas repetes quand leur case est
+    // lue.
+    final List<OutilAccueil> tousLesOutils = <OutilAccueil>[
+      // AD-X : la file reunie des dossiers et des demandes (ADM-18).
+      (
+        cle: null,
+        icone: AppIcons.attribution,
+        libelle: t.admin.tableau.outilsTraitement,
+        adresse: Routes.adminOperationsTraitement,
+      ),
+      // OFFRES-ADM-1 : les demandes des familles reunies, et la creation
+      // de leur classe.
+      (
+        cle: null,
+        icone: AppIcons.classes,
+        libelle: t.admin.tableau.outilsRegroupements,
+        adresse: Routes.adminOperationsRegroupements,
+      ),
+      // L2-05 : les creneaux de la vitrine.
+      (
+        cle: const ValueKey<String>('tableau-offres'),
+        icone: AppIcons.creneaux,
+        libelle: t.admin.tableau.outilsOffres,
+        adresse: Routes.adminOperationsOffres,
+      ),
+      // AVIS-PUBLICS : les liens de collecte des avis, et leur moderation.
+      (
+        cle: const ValueKey<String>('tableau-avis'),
+        icone: AppIcons.etoile,
+        libelle: t.avis.admin.outil,
+        adresse: Routes.adminOperationsAvis,
+      ),
+      // COURRIELS-1 : seulement si la case des courriels n'est pas la.
+      if (courriels == null)
+        (
+          cle: const ValueKey<String>('tableau-courriels'),
+          icone: AppIcons.envoyerMessage,
+          libelle: t.courriels.admin.outil,
+          adresse: Routes.adminOperationsCourriels,
+        ),
+      // ECHELLE-ADM-PILOTAGE-1 : la demande et l'offre par horaire.
+      (
+        cle: const ValueKey<String>('tableau-pilotage'),
+        icone: AppIcons.tableauDeBord,
+        libelle: t.admin.tableau.outilsPilotage,
+        adresse: Routes.adminOperationsPilotage,
+      ),
+      // DASH-ADM-PLANNING : les seances de la semaine, toutes classes.
+      (
+        cle: const ValueKey<String>('tableau-planning'),
+        icone: AppIcons.planningGlobal,
+        libelle: t.admin.tableau.outilsPlanning,
+        adresse: Routes.adminOperationsPlanning,
+      ),
+      (
+        cle: null,
+        icone: AppIcons.classes,
+        libelle: t.admin.groupes.titre,
+        adresse: Routes.adminOperationsGroupes,
+      ),
+      // COM-F-b (UX_REV-03, QUESTIONS Q4) : sans cette entree, au telephone,
+      // les Communications ne s'atteignent que par la recherche.
+      (
+        cle: const ValueKey<String>('tableau-communications'),
+        icone: AppIcons.annonce,
+        libelle: t.com.socle.navigation.communications,
+        adresse: Routes.adminOperationsCommunications,
+      ),
+      (
+        cle: null,
+        icone: AppIcons.profil,
+        libelle: t.admin.tableau.outilsComptes,
+        adresse: Routes.adminPersonnesComptes,
+      ),
+      (
+        cle: null,
+        icone: AppIcons.controleQualite,
+        libelle: t.admin.tableau.outilsAccesAgents,
+        adresse: Routes.adminSecuriteAuditAccesAgents,
+      ),
+    ];
+    final bool outilsDansPanneau = SousLiensCoquille.couvre(context, <String>[
+      for (final OutilAccueil o in tousLesOutils) o.adresse,
+    ]);
+    final bool outilsVisibles =
+        !outilsDansPanneau &&
+        MediaQuery.sizeOf(context).width < BentoVivant.seuilDeux;
+
+    final Widget vivant = indicateurs.hasValue
+        ? BentoVivant(
+            maintenant: maintenant,
             indicateurs: indicateurs.requireValue,
+            dossiers: dossiersAffiches ?? 0,
+            // K-47 : des noms d'enseignants, comme la file qu'ouvre la case.
+            // Chaque nom ouvre SON dossier par `extra`, jamais par l'URL
+            // (spec l.1933), et jamais le premier de la file (modification
+            // UX n°2, D4 (a)). La file illisible (genre du lecteur inconnu)
+            // n'emporte que les noms.
+            nomsDossiers: <NomDossier>[
+              for (final DossierAValider d in plusAnciens.take(3))
+                (
+                  libelle:
+                      '${d.libelleCourt} · '
+                      '${_anciennete(maintenant, d.deposeLe)}',
+                  onOuvrir: () => unawaited(
+                    GoRouter.of(context).push<void>(
+                      Routes.adminPersonnesDossiers,
+                      extra: d.profilId,
+                    ),
+                  ),
+                ),
+            ],
+            dossiersErreur: dossiers.hasError
+                ? t.admin.tableau.apercuErreur
+                : null,
+            activite: ({required bool deuxColonnes}) =>
+                ActiviteRecente(deuxColonnes: deuxColonnes),
+            attentes: attentes,
+            courriels: courriels,
+            creneaux: creneaux,
+            pieces: pieces,
+            piecesPlusAncienneDabord: piecesCompletes,
+            visages: visages,
+            messagesNonLus: messagesNonLus,
+            dernierMessage: dernierMessage,
+            date: _dateDuJour(maintenant),
             lumieres: <MotifDirection, NatureHalo?>{
               for (final MotifDirection m in MotifDirection.values)
                 m: lumiere(m),
             },
-            apercu: apercu,
-            // La file passe par `read_kyc_documents()`, qui refuse la lecture
-            // quand le genre du lecteur est inconnu. Ce refus n'emporte que
-            // les noms : le chiffre vient d'une autre fonction et reste juste
-            // (D11, erreur par source).
-            apercuErreur: dossiers.hasError
-                ? t.admin.tableau.apercuErreur
+            // Sans alerte urgente, les alertes ouvertes suivent les cases.
+            // Une source absente ou une liste vide ne montre rien ici : la
+            // page des alertes (icone de l'en-tete) dit ces etats.
+            alertes: !urgence && (alertes?.isNotEmpty ?? false)
+                ? sectionAlertes
                 : null,
-            // m1 (AD-NETTOYAGE) : la tuile compte comme la liste « A traiter »
-            // (enseignants seulement, meme cache). Tant que la liste n'est pas
-            // lue, le compteur serveur reste la valeur (il compte encore les
-            // tuteurs : BR-1.c).
-            dossiersEnAttente: dossiers.hasValue
-                ? RevueDossiersDepuisValidation.enseignantsSeulement(
-                    dossiers.requireValue,
-                  ).length
-                : null,
+            outils: outilsVisibles ? tousLesOutils : const <OutilAccueil>[],
+            phrase: PhrasePraxis.depuis(
+              calme: calme,
+              entretiensAPlanifier: attentes
+                  ?.etat(EtatCandidature.entretienAPlanifier)
+                  .nombre,
+              creneauxOuverts: attentes?.creneauxOuverts,
+              pieces: attentes?.pieceAValider.nombre,
+              dossiers: dossiersAffiches,
+              demandes: valeurs?.demandesEnAttente,
+              messages: messagesNonLus,
+            ),
           )
         : indicateurs.hasError
         // Une seule source pour les six chiffres : une phrase a la place de
-        // toute la grille, jamais des tuiles a 0 (D10). L'encre d'alerte,
-        // jamais la paire : `surfaceAlert` ecrit en blanc, illisible sur la
-        // page.
-        ? Text(
-            t.admin.tableau.compteursErreur,
-            style: palette.inkAlert.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
+        // toute la grille, jamais des cases a 0 (D10). L'encre d'alerte,
+        // jamais la paire : `surfaceAlert` ecrit en blanc.
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: AppSpacing.lg,
+            children: <Widget>[
+              Text(
+                t.admin.tableau.compteursErreur,
+                style: palette.inkAlert.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+              const ActiviteRecente(),
+            ],
           )
-        : const _SqueletteCompteurs();
-
-    // 3. ALLER : les raccourcis vers Operations, Personnes et Securite.
-    //
-    // **Ni un menu, ni un ecran vide.** Le gel d'architecture retire le
-    // regroupement autonome « Outils » (un deuxieme menu, doublon de la
-    // sidebar a huit domaines) mais garde les raccourcis : Groupes, Comptes et
-    // Acces des agents restent atteints depuis l'Accueil
-    // (docs/archive/2026-09-pre-remise-a-plat/architecture/ADMIN_IA_AUDIT.md,
-    // cartographie ADM-07 et ADM-08 ; DASH_STRATEGIE §3.1, Q2 : aucun lien
-    // Planning tant que la page n'existe pas).
-    //
-    // `ADM-08` avant les agents, et pas par gout : c'est le seul ecran qui
-    // montre une personne inscrite qui n'a pas encore depose sa piece. Sans
-    // lui, trois enseignants ont attendu sept jours sans qu'aucun ecran ne les
-    // nomme (defaut mesure le 18 septembre 2026).
-    final Widget raccourcis = CarteLignes(
-      lignes: <Widget>[
-        // AD-X : la file reunie des dossiers et des demandes (ADM-18), la
-        // liste « Elements a traiter » de l'image ADMIN-SHELL-01 sur sa page.
-        SettingRow(
-          title: t.admin.tableau.outilsTraitement,
-          description: t.admin.tableau.outilsTraitementDetail,
-          icon: AppIcons.attribution,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsTraitement),
-        ),
-        // OFFRES-ADM-1 : les demandes des familles reunies quand elles se
-        // ressemblent, et la creation de leur classe.
-        SettingRow(
-          title: t.admin.tableau.outilsRegroupements,
-          description: t.admin.tableau.outilsRegroupementsDetail,
-          icon: AppIcons.classes,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsRegroupements),
-        ),
-        // L2-05 : les creneaux de la vitrine, crees et publies par
-        // l'administration seule.
-        SettingRow(
-          key: const ValueKey<String>('tableau-offres'),
-          title: t.admin.tableau.outilsOffres,
-          description: t.admin.tableau.outilsOffresDetail,
-          icon: AppIcons.creneaux,
-          onPress: () => GoRouter.of(context).go(Routes.adminOperationsOffres),
-        ),
-        // AVIS-PUBLICS : les liens de collecte des avis des familles, et leur
-        // moderation (publier, refuser, retirer).
-        SettingRow(
-          key: const ValueKey<String>('tableau-avis'),
-          title: t.avis.admin.outil,
-          description: t.avis.admin.outilDetail,
-          icon: AppIcons.etoile,
-          onPress: () => GoRouter.of(context).go(Routes.adminOperationsAvis),
-        ),
-        // COURRIELS-1 : ecrire un e-mail, suivre la file d'envoi et voir les
-        // adresses d'envoi.
-        SettingRow(
-          key: const ValueKey<String>('tableau-courriels'),
-          title: t.courriels.admin.outil,
-          description: t.courriels.admin.outilDetail,
-          icon: AppIcons.envoyerMessage,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsCourriels),
-        ),
-        // ECHELLE-ADM-PILOTAGE-1 : la demande et l'offre d'enseignants par
-        // horaire, R7 et R19.
-        SettingRow(
-          key: const ValueKey<String>('tableau-pilotage'),
-          title: t.admin.tableau.outilsPilotage,
-          description: t.admin.tableau.outilsPilotageDetail,
-          icon: AppIcons.tableauDeBord,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsPilotage),
-        ),
-        // DASH-ADM-PLANNING : les seances de la semaine, toutes classes.
-        SettingRow(
-          key: const ValueKey<String>('tableau-planning'),
-          title: t.admin.tableau.outilsPlanning,
-          description: t.admin.tableau.outilsPlanningDetail,
-          icon: AppIcons.planningGlobal,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsPlanning),
-        ),
-        SettingRow(
-          title: t.admin.groupes.titre,
-          description: t.admin.tableau.outilsGroupesDetail,
-          icon: AppIcons.classes,
-          onPress: () => GoRouter.of(context).go(Routes.adminOperationsGroupes),
-        ),
-        // COM-F-b (UX_REV-03, QUESTIONS Q4) : la racine Operations redirige
-        // vers Groupes et n'a pas de sous-navigation ; sans cette ligne, les
-        // Communications ne s'atteignent que par la recherche. Le domaine
-        // Operations reste surligne.
-        SettingRow(
-          key: const ValueKey<String>('tableau-communications'),
-          title: t.com.socle.navigation.communications,
-          description: t.com.socle.navigation.communicationsDetail,
-          icon: AppIcons.annonce,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsCommunications),
-        ),
-        SettingRow(
-          title: t.admin.tableau.outilsComptes,
-          description: t.admin.tableau.outilsComptesDetail,
-          icon: AppIcons.profil,
-          onPress: () => GoRouter.of(context).go(Routes.adminPersonnesComptes),
-        ),
-        SettingRow(
-          title: t.admin.tableau.outilsAccesAgents,
-          description: t.admin.tableau.outilsAccesAgentsDetail,
-          icon: AppIcons.controleQualite,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminSecuriteAuditAccesAgents),
-        ),
-      ],
-    );
-
-    // NAV-SOUS-LIENS (14/11/2026, point 2 de la revue) : sur tablette et
-    // ordinateur, quand le panneau montre deja chacun de ces raccourcis en
-    // sous-lien, l'Accueil ne les repete pas. Au telephone, ils restent : le
-    // tiroir n'a pas de sous-liens.
-    final bool raccourcisDansPanneau = SousLiensCoquille.couvre(
-      context,
-      const <String>[
-        Routes.adminOperationsTraitement,
-        Routes.adminOperationsRegroupements,
-        Routes.adminOperationsOffres,
-        Routes.adminOperationsAvis,
-        Routes.adminOperationsCourriels,
-        Routes.adminOperationsPilotage,
-        Routes.adminOperationsPlanning,
-        Routes.adminOperationsGroupes,
-        Routes.adminOperationsCommunications,
-        Routes.adminPersonnesComptes,
-        Routes.adminSecuriteAuditAccesAgents,
-      ],
-    );
-
-    final Widget principal = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        // ALERTE-1 : une alerte urgente va en tete, avant les compteurs ;
-        // sans urgence, la section suit les compteurs.
-        if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
-        compteurs,
-        if (calme) ...<Widget>[
-          Ecart.vLg,
-          Text(t.admin.tableau.calme, style: textes.bodyMedium),
-        ],
-        if (!urgence) ...<Widget>[Ecart.vXxl, sectionAlertes],
-      ],
-    );
+        // La forme de la grille, pour que la page ne saute pas (D11).
+        : const _SqueletteBento();
 
     return PageShell(
-      titre: t.admin.tableau.titre,
-      // AD-X (ADMIN-SHELL-01) : le sous-titre de l'image du directeur, et la
-      // date du jour au bord de fin sur bureau. La salutation de l'image
-      // n'est pas reprise : un titre d'ecran ne se souhaite pas la bienvenue.
-      sousTitre: t.admin.tableau.sousTitre,
-      actionsEntete: <Widget>[
-        if (DataCollection.enTableau(context))
-          Text(
-            _dateDuJour(maintenant),
-            key: TableauDeBordPage.cleDate,
-            style: palette.inkMuted.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-      ],
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints contraintes) {
-          // 2. SAVOIR CE QUI S'EST PASSE : l'activite recente. Colonne de fin
-          // de 336 (la file du contrat D) quand la place le permet, sous les
-          // tuiles sinon ; jamais deux colonnes a 200 % de texte.
-          final bool deuxColonnes =
-              MediaQuery.textScalerOf(context).scale(1) < 2 &&
-              contraintes.maxWidth >=
-                  TableauDeBordPage.largeurActivite +
-                      AppSpacing.xxl +
-                      TableauDeBordPage.largeurPrincipaleMin;
-          if (deuxColonnes) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(child: principal),
-                    Ecart.hXxl,
-                    const SizedBox(
-                      width: TableauDeBordPage.largeurActivite,
-                      child: ActiviteRecente(),
-                    ),
-                  ],
-                ),
-                if (!raccourcisDansPanneau) ...<Widget>[
-                  Ecart.vXxxl,
-                  raccourcis,
-                ],
-              ],
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              principal,
-              Ecart.vXxl,
-              const ActiviteRecente(),
-              if (!raccourcisDansPanneau) ...<Widget>[Ecart.vXxl, raccourcis],
-            ],
-          );
-        },
+      // VIVANT : plus de titre ni de sous-titre, la case de Praxis est
+      // l'en-tete de la page (« Bonjour. » y est le titre lu en premier).
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // ALERTE-1 : une alerte urgente va en tete, avant tout.
+          if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
+          vivant,
+        ],
       ),
     );
   }
 }
+
+/// La taille d'une page de `lister_candidatures` : au-dela, la file n'est pas
+/// lue en entier.
+const int _taillePageListe = 50;
+
+/// Les lignes, de la plus ancienne activite a la plus recente.
+List<LigneCandidature> _plusAnciennesDabord(List<LigneCandidature> lignes) =>
+    <LigneCandidature>[...lignes]..sort(
+      (LigneCandidature a, LigneCandidature b) =>
+          a.derniereActivite.compareTo(b.derniereActivite),
+    );
 
 /// « lundi 5 octobre 2026 » : la date du jour de l'en-tete (ADMIN-SHELL-01).
 String _dateDuJour(DateTime jour) => enTeteArabe(
@@ -416,148 +402,33 @@ String _dateDuJour(DateTime jour) => enTeteArabe(
   ),
 );
 
-/// Les memes tuiles que [_Compteurs], vides, le temps de la premiere lecture
-/// (D11, DESIGN-GOV §4 bis.6 regle 3) : la page ne saute pas quand les
-/// chiffres arrivent.
-class _SqueletteCompteurs extends StatelessWidget {
-  const _SqueletteCompteurs();
+/// La forme de la grille le temps de la premiere lecture : la grande case,
+/// puis deux rangs de cases (D11, DESIGN-GOV §4 bis.6 regle 3).
+class _SqueletteBento extends StatelessWidget {
+  const _SqueletteBento();
 
   @override
-  Widget build(BuildContext context) {
-    Widget bloc() => LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints c) => Skeleton.tuileBento(
-        hauteur: c.hasBoundedHeight
-            ? c.maxHeight
-            : GrilleBento.hauteurLignePour(
-                MediaQuery.textScalerOf(context).scale(1),
-              ),
+  Widget build(BuildContext context) => const Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    spacing: AppSpacing.lg,
+    children: <Widget>[
+      Skeleton.tuileBento(hauteur: 240),
+      Row(
+        spacing: AppSpacing.lg,
+        children: <Widget>[
+          Expanded(child: Skeleton.tuileBento()),
+          Expanded(child: Skeleton.tuileBento()),
+        ],
       ),
-    );
-    return GrilleBento(
-      tuiles: <TuileBento>[
-        for (final (EtendueBento etendue, EtendueBento? large) in _etendues)
-          TuileBento(etendue: etendue, etendueLarge: large, child: bloc()),
-      ],
-    );
-  }
-}
-
-/// L'etendue des cinq tuiles, sur deux colonnes puis sur quatre : une seule
-/// source pour la grille et son squelette.
-const List<(EtendueBento, EtendueBento?)> _etendues =
-    <(EtendueBento, EtendueBento?)>[
-      (EtendueBento.grande, null),
-      (EtendueBento.haute, null),
-      (EtendueBento.carree, null),
-      (EtendueBento.carree, null),
-      (EtendueBento.large, EtendueBento(4, 1)),
-    ];
-
-/// Les six compteurs en cinq tuiles Bento (BENTO-1, DASH_STRATEGIE §3.1).
-///
-/// **Jamais un damier.** La taille d'une tuile suit l'urgence de ce qu'elle
-/// compte : « Dossiers a valider » est la grande tuile, avec les trois plus
-/// anciens ; « Demandes a trancher » la tuile haute ; les deux suivants des
-/// carres ; « Incidents et acces » une seule tuile large en bas, qui garde ses
-/// deux chiffres quelles que soient leurs valeurs (D3 : cinq indicateurs dans
-/// tous les cas).
-///
-/// Quatre portent vers un ecran d'action (dossiers, demandes, regroupements,
-/// rapports manquants). Incidents et acces echus n'ont encore aucune page qui
-/// s'ouvre filtree sur ce qu'ils comptent (DASH-ADM-INC, DASH-ADM-ECHUS) : une
-/// tuile sans appui est un rapport, jamais un bouton grise (D9).
-class _Compteurs extends StatelessWidget {
-  const _Compteurs({
-    required this.indicateurs,
-    this.apercu = const <LigneApercu>[],
-    this.apercuErreur,
-    this.dossiersEnAttente,
-    this.lumieres = const <MotifDirection, NatureHalo?>{},
-  });
-
-  final IndicateursAdmin indicateurs;
-
-  /// Le nombre de dossiers de la tuile, quand la liste est lue (enseignants
-  /// seulement, comme la liste « A traiter », m1 d'AD-NETTOYAGE) ; sinon le
-  /// compteur du serveur.
-  final int? dossiersEnAttente;
-
-  /// Les lumieres des tuiles (LUMIERE-ACCUEILS 4), par motif.
-  final Map<MotifDirection, NatureHalo?> lumieres;
-
-  /// Les plus anciens dossiers, nom et delai, chacun vers son dossier.
-  final List<LigneApercu> apercu;
-
-  /// La phrase a la place des noms quand la file n'a pas pu etre lue.
-  final String? apercuErreur;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> contenus = <Widget>[
-      // Le plus urgent : la grande tuile. Le chiffre mene a la file, chaque
-      // nom a son dossier.
-      LumiereAutour(
-        nature: lumieres[MotifDirection.dossiers],
-        child: TuileCompteur(
-          valeur: dossiersEnAttente ?? indicateurs.dossiersEnAttente,
-          libelle: t.admin.tableau.dossiers,
-          detail: t.admin.tableau.dossiersDetail,
-          apercu: apercu,
-          apercuErreur: apercuErreur,
-          enLigne: true,
-          onPress: () => GoRouter.of(context).go(Routes.adminPersonnesDossiers),
-        ),
+      Row(
+        spacing: AppSpacing.lg,
+        children: <Widget>[
+          Expanded(child: Skeleton.tuileBento()),
+          Expanded(child: Skeleton.tuileBento()),
+        ],
       ),
-      LumiereAutour(
-        nature: lumieres[MotifDirection.demandes],
-        child: TuileCompteur(
-          valeur: indicateurs.demandesEnAttente,
-          libelle: t.admin.tableau.demandes,
-          detail: t.admin.tableau.demandesDetail,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsDemandes),
-        ),
-      ),
-      TuileCompteur(
-        valeur: indicateurs.foyersSansEnseignant,
-        libelle: t.admin.tableau.foyers,
-        onPress: () =>
-            GoRouter.of(context).go(Routes.adminOperationsRegroupements),
-      ),
-      TuileCompteur(
-        valeur: indicateurs.rapportsManquants,
-        libelle: t.admin.tableau.rapports,
-        // Branche le 19 septembre 2026 : Pedagogie > Qualite (ADM-14)
-        // affiche le groupe « Rapport manquant » ouvert par defaut.
-        onPress: () => GoRouter.of(context).go(Routes.adminPedagogieQualite),
-      ),
-      LumiereAutour(
-        nature: lumieres[MotifDirection.incidents],
-        child: TuileDouble(
-          titre: t.admin.tableau.incidentsEtAcces,
-          gauche: (indicateurs.incidents24h, t.admin.tableau.incidents),
-          droite: (indicateurs.comptesEchus, t.admin.tableau.comptes),
-          // DASH-ADM-ECHUS : Comptes s'ouvre filtre sur les acces echus.
-          // DASH-ADM-INC : la page des incidents liste les seances que compte
-          // le chiffre (D9).
-          onPressGauche: () =>
-              GoRouter.of(context).go(Routes.adminSecuriteAuditIncidents),
-          onPressDroite: () =>
-              GoRouter.of(context).go(Routes.adminPersonnesComptesEchus),
-        ),
-      ),
-    ];
-    return GrilleBento(
-      tuiles: <TuileBento>[
-        for (int i = 0; i < _etendues.length; i++)
-          TuileBento(
-            etendue: _etendues[i].$1,
-            etendueLarge: _etendues[i].$2,
-            child: contenus[i],
-          ),
-      ],
-    );
-  }
+    ],
+  );
 }
 
 /// Depuis quand une ligne attend, dit en jours, jamais en heures : une ligne
