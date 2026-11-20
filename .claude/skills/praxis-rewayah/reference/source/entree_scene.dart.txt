@@ -1,0 +1,880 @@
+// La scène de Praxis : la porte du logo, seule source de lumière ; la route en perspective ;
+// les mots qui naissent à sa bouche ; la lumière qui ouvre l'application.
+import 'dart:async';
+import 'dart:math' as math;
+import 'dart:typed_data';
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+
+import 'entree_lumiere.dart';
+import 'entree_praxis.dart';
+import 'entree_symbole.dart';
+import 'entree_textes.dart';
+import 'entree_trace_svg.dart';
+import 'vivant.dart';
+
+/// Le symbole du logo, lu une fois depuis les traces du SVG livré.
+final List<Path> symbole = <Path>[
+  for (final String d in symboleTraces) _chemin(d),
+];
+Path _chemin(String d) {
+  final Path p = Path();
+  for (final CommandeTrace c in lireTraceSvg(d)) {
+    final List<double> k = c.coordonnees;
+    switch (c.nature) {
+      case NatureCommande.deplacer:
+        p.moveTo(k[0], k[1]);
+      case NatureCommande.ligne:
+        p.lineTo(k[0], k[1]);
+      case NatureCommande.cubique:
+        p.cubicTo(k[0], k[1], k[2], k[3], k[4], k[5]);
+      case NatureCommande.quadratique:
+        p.quadraticBezierTo(k[0], k[1], k[2], k[3]);
+      case NatureCommande.fermer:
+        p.close();
+    }
+  }
+  return p;
+}
+
+/// Le jour de l'arche (unités du symbole) : le vide du logo, c'est-à-dire l'arche découpée dans
+/// le disque (de 176 à 540), fermée en bas par le cercle du disque lui-même. Aucun rectangle ne
+/// dépasse du disque : ce vide est de la lumière, pas une plaque.
+final Path _jourArche = Path.combine(
+  PathOperation.intersect,
+  Path()
+    ..moveTo(175, 720)
+    ..lineTo(175, 368.4)
+    ..arcToPoint(const Offset(541, 368.4), radius: const Radius.circular(183))
+    ..lineTo(541, 720)
+    ..close(),
+  Path()..addOval(Rect.fromCircle(center: const Offset(358, 357.3), radius: 358.6)),
+);
+
+/// Les repères de la porte, en unités du symbole : son axe, les bords extérieur et intérieur de
+/// l'arche blanche, l'endroit où cette arche quitte le disque, et le sol.
+const double _axePorte = 358, _demiExt = 182, _demiInt = 148, _piedArche = 664;
+
+enum CadreScene { tel, telPlein, large, largePlein }
+
+/// La géométrie de la scène. La caméra est au-dessus de Praxis et regarde la route vers la
+/// porte : tout point du sol à la profondeur z se projette à `horizon + H / z`, les largeurs
+/// en `1 / z`. Les bords de la route convergent donc vers la porte, et les dalles se resserrent.
+class Geo {
+  Geo(this.taille, this.cadre, this.rtl, this.hautScene, this.carte, {this.cam = 0}) {
+    final double w = taille.width, h = taille.height;
+    double cx = w / 2, top, lw0;
+    switch (cadre) {
+      case CadreScene.tel:
+        champ = Rect.fromLTWH(0, 0, w, hautScene);
+        // De haut en bas : le logo, une ligne pour ses mots, Praxis, le bord du formulaire.
+        final double libre = hautScene - 122;
+        lw0 = math.min(w * 0.40, libre * 0.43);
+        top = 46;
+        tProche = math.min(w * 0.47, libre / 1.86);
+        yProche = hautScene - 46;
+        xProche = w / 2;
+        demiLargeur = 1.08;
+      case CadreScene.telPlein:
+        champ = Offset.zero & taille;
+        lw0 = math.min(w * 0.52, h * 0.25);
+        top = math.max(64, h * 0.115);
+        tProche = math.min(w * 0.50, h * 0.235);
+        yProche = math.min(h * 0.735, h - 232);
+        xProche = w / 2;
+        demiLargeur = 1.0;
+      case CadreScene.large:
+        champ = Offset.zero & taille;
+        final double zone = rtl ? w - carte.right : carte.left, x0 = rtl ? carte.right : 0;
+        cx = x0 + zone * (rtl ? 0.60 : 0.40);
+        lw0 = math.min(zone * 0.42, h * 0.36);
+        top = h * 0.075;
+        tProche = h * 0.33;
+        yProche = h * 0.905;
+        xProche = rtl ? carte.right + tProche * 0.62 : carte.left - tProche * 0.62;
+        demiLargeur = 1.0;
+      case CadreScene.largePlein:
+        champ = Offset.zero & taille;
+        lw0 = h * 0.33;
+        top = h * 0.06;
+        tProche = h * 0.25;
+        yProche = h * 0.72;
+        xProche = w / 2;
+        demiLargeur = 1.0;
+    }
+    // La caméra accompagne l'approche : elle plonge un peu (le lointain monte), avance un peu
+    // (le lointain grossit) et glisse de côté. Quelques pour cent, pas davantage.
+    final double monte = champ.height * 0.032 * cam;
+    lw = lw0 * (1 + 0.035 * cam);
+    k = lw / symboleLargeur;
+    final double bas = top + symboleHauteur * (lw0 / symboleLargeur) - monte;
+    final double glisse = (cx - xProche) * 0.02 * cam + (cadre == CadreScene.tel || cadre == CadreScene.telPlein ? 0 : 0);
+    logo = Rect.fromLTWH(cx + glisse - lw * _axePorte / symboleLargeur, bas - symboleHauteur * k, lw, symboleHauteur * k);
+    porte = Offset(logo.left + _axePorte * k, logo.bottom);
+    lueur = Offset(logo.left + 379 * k, logo.top + 548 * k);
+    Z = cl(tProche / (lw0 * 0.122), 6, 14);
+    lnZ = math.log(Z);
+    horizon = (porte.dy - yProche / Z) / (1 - 1 / Z);
+    H = yProche - horizon;
+  }
+  final Size taille;
+  final CadreScene cadre;
+  final bool rtl;
+  final double hautScene, cam;
+  final Rect carte;
+  late final Rect champ, logo;
+  late final double tProche, yProche, xProche, k, lw, Z, lnZ, horizon, H, demiLargeur;
+  late final Offset porte, lueur;
+
+  bool get plein => cadre == CadreScene.telPlein || cadre == CadreScene.largePlein;
+  bool get grand => cadre == CadreScene.large || cadre == CadreScene.largePlein;
+  double get hc => H / tProche;
+
+  /// La profondeur à la position q du chemin (0 à la porte, 1 au premier plan).
+  double z(double q) => math.exp(lnZ * (1 - q));
+
+  /// Un point du sol : profondeur z, écart en travers (en largeurs de Praxis).
+  Offset solZ(double z, [double travers = 0]) {
+    final double e = 1 / z, u = (e - 1 / Z) / (1 - 1 / Z);
+    return Offset(porte.dx + (xProche - porte.dx) * u + travers * tProche * e, horizon + H * e);
+  }
+
+  Offset sol(double q, [double travers = 0]) => solZ(z(q), travers);
+
+  /// La demi-largeur de la route à l'écran, à la profondeur z. À la porte, elle vaut exactement
+  /// celle de l'arche blanche du logo (bord extérieur, ou intérieur) : les deux pieds de l'arche
+  /// se prolongent en bordures de la route, d'un seul trait. Au premier plan, la route garde sa
+  /// largeur. Entre les deux et au-delà, la bordure est une droite : elle ne s'arrête jamais.
+  double demiRoute(double z, {bool interieur = false}) {
+    final double u = (1 / z - 1 / Z) / (1 - 1 / Z);
+    final double loin = (interieur ? _demiInt : _demiExt) * k, pres = tProche * demiLargeur * (interieur ? 0.92 : 1);
+    return loin + (pres - loin) * u;
+  }
+
+  /// Un point de la route : f vaut -1 et 1 sur les bords (extérieurs, ou intérieurs).
+  Offset route(double z, double f, {bool interieur = false}) => solZ(z) + Offset(f * demiRoute(z, interieur: interieur), 0);
+  double largeur(double q) => tProche / z(q);
+}
+
+/// Un mot qui sort de la bouche de Praxis : dessiné une fois dans une image, puis déplacé.
+class MotVol {
+  MotVol(this.image, this.taille, this.fin, this.debut);
+  final ui.Image image;
+  final Size taille;
+  final Offset fin; // centre du mot posé
+  final double debut;
+  final R t = R(0, k: 150, c: 15.5), s = R(0, k: 14, c: 6.2);
+  Offset naissance = Offset.zero;
+  bool ne = false, part = false;
+}
+
+class Parole {
+  Parole(this.mots, this.depart, this.fini);
+  final List<MotVol> mots;
+  final double depart;
+  final Completer<void> fini;
+  double age = 0;
+}
+
+/// Une étincelle qui part de sa main vers la porte.
+class Etincelle {
+  Etincelle(this.de);
+  final Offset de;
+  double t = 0;
+}
+
+class Annule implements Exception {}
+
+/// Le théâtre : une seule horloge pour Praxis, la porte, la route et les mots. Elle avance du
+/// temps réellement écoulé, par sous-pas fixes : quand les images tombent, l'animation garde
+/// sa vitesse.
+class Theatre extends ChangeNotifier {
+  final Corps px = Corps();
+  Geo geo = Geo(const Size(390, 844), CadreScene.telPlein, false, 844, Rect.zero);
+  final R eclat = R(0.25, k: 12, c: 5.6), inonde = R(0, k: 5, c: 4.7), clavier = R(0, k: 170, c: 22), cam = R(0, k: 7, c: 5.2);
+  final List<R> dalles = List<R>.generate(24, (_) => R(0, k: 120, c: 9));
+  final List<Etincelle> etincelles = <Etincelle>[];
+  double progres = -1; // -1 : pas de progression
+  bool reduit = false;
+  Parole? parole;
+  int gen = 0;
+  double temps = 0, _reste = 0;
+  static const double sousPas = 1 / 120;
+
+  /// La lumière de la porte : son niveau, avec une respiration lente et continue.
+  double get lum => math.max(0, eclat.x) * (reduit ? 1 : 1 + 0.045 * math.sin(temps * 1.25) + 0.022 * math.sin(temps * 0.83 + 1.7));
+
+  /// Avance du temps réel écoulé depuis la dernière image, par sous-pas de 1/120 s.
+  /// Le rattrapage est borné : après un long gel, on ne rejoue pas plus d'un quart de seconde.
+  void avancer(double dtReel) {
+    _reste += math.min(dtReel, 0.25);
+    int n = 0;
+    while (_reste >= sousPas && n < 40) {
+      _pas(sousPas);
+      _reste -= sousPas;
+      n++;
+    }
+    notifyListeners();
+  }
+
+  void _pas(double dt) {
+    temps += dt;
+    px
+      ..lnZ = geo.lnZ
+      ..hc = geo.hc
+      ..reduit = reduit;
+    px.pas(dt);
+    cam.cible = reduit ? 1 : cl(px.q);
+    for (final R r in <R>[eclat, inonde, clavier, cam, ...dalles]) {
+      r.pas(dt);
+    }
+    // Les rangées de dalles s'allument de Praxis vers la porte.
+    final int n = rangees;
+    for (int i = 0; i < dalles.length; i++) {
+      dalles[i].cible = progres >= 0 && i < n && progres > seuilRangee(i) ? 1 : 0;
+    }
+    for (final Etincelle e in etincelles) {
+      e.t += dt / 0.95;
+    }
+    if (etincelles.isNotEmpty && etincelles.first.t >= 1) {
+      etincelles.removeAt(0);
+      eclat.v += 2.2;
+    }
+    _parler(dt);
+  }
+
+  // ───── Les dalles : rangées d'égale profondeur réelle ─────
+  static const double zDepart = 0.56, zPas = 0.5;
+  int get rangees => math.min(dalles.length, ((geo.Z - zDepart) / zPas).floor());
+
+  /// À quelle progression la rangée i s'allume : à mi-chemin entre la distance à l'écran et la
+  /// distance réelle, pour que la lumière avance régulièrement à l'œil.
+  double seuilRangee(int i) {
+    final double zc = zDepart + (i + 0.5) * zPas;
+    if (zc <= 1.15) return 0.01;
+    final double ecran = (1 - 1 / zc) / (1 - 1 / geo.Z), reel = (zc - 1) / (geo.Z - 1);
+    return cl(0.55 * ecran + 0.45 * reel - 0.04, 0.02, 0.985);
+  }
+
+  // ───── Praxis à l'écran ─────
+  Offset get piedPraxis => geo.sol(px.q, px.lat.x);
+  double get largeurPraxis => geo.largeur(px.q);
+  Offset versEcran(Offset unite) => piedPraxis + (unite - const Offset(100, 206)) * (largeurPraxis / 200);
+  Offset get bouchePraxis => versEcran(px.bouche);
+  Offset get centrePraxis => versEcran(Offset(100, 108 + px.hauteurCorps));
+
+  Eclairage get eclairage {
+    final Offset d = geo.lueur - centrePraxis;
+    final double dist = d.distance, l = lum;
+    return Eclairage(
+      couleur: Teinte.coeur,
+      dir: dist < largeurPraxis * 0.4 ? const Offset(0, -1) : d / dist,
+      contre: cl(0.9 + 0.3 * (1 - px.q), 0, 1.2) * cl(l, 0, 1.25),
+      brume: lisse2(0.8, 0.0, px.q),
+      surex: reduit ? 0 : px.surex,
+      niveau: cl(l),
+    );
+  }
+
+  // ───── Les mots ─────
+  TextStyle styleMots(double corps) => arabe.value
+      ? TextStyle(fontFamily: 'Arabe', fontFamilyFallback: const <String>['Jakarta'], fontSize: corps * 1.06, fontWeight: FontWeight.w700, color: T.encre, height: 1.42)
+      : TextStyle(fontFamily: 'Jakarta', fontSize: corps, fontWeight: FontWeight.w800, color: T.encre, height: 1.2, letterSpacing: -0.2, fontFeatures: const <ui.FontFeature>[ui.FontFeature.disable('liga')]);
+
+  Future<void> dire(String texte, {double? tenir}) {
+    _finir();
+    if (texte.isEmpty) return Future<void>.value();
+    final TextDirection dir = arabe.value ? TextDirection.rtl : TextDirection.ltr;
+    final Geo g = geo;
+    final double w = g.taille.width;
+    // La ligne se pose au-dessus de sa tête, dans la place libre.
+    double gauche = 16, droite = w - 16;
+    if (g.cadre == CadreScene.large) {
+      if (g.rtl) {
+        gauche = g.carte.right + 24;
+      } else {
+        droite = g.carte.left - 24;
+      }
+    }
+    final double mw = math.min(droite - gauche, g.grand ? 520 : 400);
+    double corps = g.grand ? 27 : 21;
+    TextPainter mise(double c, int lignes) =>
+        TextPainter(text: TextSpan(text: texte, style: styleMots(c)), textDirection: dir, textAlign: TextAlign.center, maxLines: lignes, textWidthBasis: TextWidthBasis.longestLine)..layout(maxWidth: mw);
+    TextPainter tout = mise(corps, 1);
+    if (tout.didExceedMaxLines) {
+      corps *= 0.9;
+      tout = mise(corps, 2);
+    }
+    final TextStyle st = styleMots(corps);
+    final Offset pied = piedPraxis;
+    final double l = largeurPraxis;
+    final double tete = pied.dy - l * (1.06 - 0.08 * cl(px.assis.x)) - 10;
+    final double cx = cl(pied.dx, gauche + tout.width / 2, math.max(gauche + tout.width / 2, droite - tout.width / 2));
+    final double haut = math.max(g.champ.top + (g.grand ? 14 : 48), tete - tout.height);
+    final Offset origine = Offset(cx - tout.width / 2, haut);
+    final List<MotVol> mots = <MotVol>[];
+    double t = 0.16;
+    const double marge = 6, ech = 3;
+    for (final RegExpMatch m in RegExp(r'[^ ]+').allMatches(texte)) {
+      final List<TextBox> b = tout.getBoxesForSelection(TextSelection(baseOffset: m.start, extentOffset: m.end));
+      if (b.isEmpty) continue;
+      Rect r = b.first.toRect();
+      for (final TextBox x in b.skip(1)) {
+        r = r.expandToInclude(x.toRect());
+      }
+      final String mot = m.group(0)!;
+      final TextPainter tp = TextPainter(text: TextSpan(text: mot, style: st), textDirection: dir)..layout();
+      final TextPainter halo = TextPainter(
+          text: TextSpan(
+              text: mot,
+              style: st.copyWith(
+                  foreground: Paint()
+                    ..style = PaintingStyle.stroke
+                    ..strokeWidth = 5.5
+                    ..strokeJoin = StrokeJoin.round
+                    ..color = T.fond.withValues(alpha: 0.86))),
+          textDirection: dir)
+        ..layout();
+      final Size taille = Size(tp.width + marge * 2, tp.height + marge * 2);
+      final ui.PictureRecorder rec = ui.PictureRecorder();
+      final Canvas c = Canvas(rec)..scale(ech);
+      halo.paint(c, const Offset(marge, marge));
+      tp.paint(c, const Offset(marge, marge));
+      final ui.Picture pic = rec.endRecording();
+      final ui.Image image = pic.toImageSync((taille.width * ech).ceil(), (taille.height * ech).ceil());
+      pic.dispose();
+      tp.dispose();
+      halo.dispose();
+      mots.add(MotVol(image, taille, origine + r.center, t));
+      t += 0.11 + 0.013 * mot.length;
+    }
+    tout.dispose();
+    final double dernier = mots.isEmpty ? 0 : mots.last.debut;
+    final double garde = tenir ?? math.max(2.0, 0.9 + 0.34 * mots.length);
+    final Parole pa = Parole(mots, dernier + 0.5 + garde, Completer<void>());
+    parole = pa;
+    px.parle = true;
+    return pa.fini.future;
+  }
+
+  void _parler(double dt) {
+    final Parole? pa = parole;
+    if (pa == null) return;
+    pa.age += dt;
+    for (int i = 0; i < pa.mots.length; i++) {
+      final MotVol m = pa.mots[i];
+      if (!m.ne && pa.age >= m.debut) {
+        m.ne = true;
+        m.naissance = bouchePraxis;
+        m.t.cible = 1;
+        if (reduit) m.t.k = 60;
+      }
+      if (!m.part && pa.age >= pa.depart + i * 0.07) {
+        m.part = true;
+        m.s.cible = 1;
+      }
+      m.t.pas(dt);
+      m.s.pas(dt);
+    }
+    final bool parle = pa.mots.isNotEmpty && pa.age < pa.mots.last.debut + 0.28;
+    if (px.parle && !parle) {
+      px.parle = false;
+      px.poser(px.expr);
+    }
+    if (pa.age >= pa.depart + 0.35 && !pa.fini.isCompleted) pa.fini.complete();
+    if (pa.mots.every((MotVol m) => m.s.x > 0.985)) _finir();
+  }
+
+  void _finir() {
+    final Parole? pa = parole;
+    if (pa == null) return;
+    for (final MotVol m in pa.mots) {
+      m.image.dispose();
+    }
+    if (!pa.fini.isCompleted) pa.fini.complete();
+    parole = null;
+    if (px.parle) {
+      px.parle = false;
+      px.poser(px.expr);
+    }
+  }
+
+  /// Les mots en cours s'envolent tout de suite.
+  void taire() {
+    final Parole? pa = parole;
+    if (pa == null) return;
+    for (final MotVol m in pa.mots) {
+      m.ne = true;
+      if (m.naissance == Offset.zero) m.naissance = m.fin;
+      m.part = true;
+      m.s.cible = 1;
+      m.s.k = 40;
+      m.s.c = 11;
+    }
+    if (!pa.fini.isCompleted) pa.fini.complete();
+    if (px.parle) {
+      px.parle = false;
+      px.poser(px.expr);
+    }
+  }
+
+  void etincelle() {
+    if (reduit) return;
+    etincelles.add(Etincelle(versEcran(Offset(100 + px.mdx.x, 108 + px.mdy.x + px.hauteurCorps))));
+  }
+
+  // ───── Le temps des scènes : il suit l'horloge du théâtre ─────
+  Future<void> attendre(int ms, int g) async {
+    final double fin = temps + ms / 1000;
+    while (temps < fin) {
+      await Future<void>.delayed(const Duration(milliseconds: 16));
+      if (g != gen) throw Annule();
+    }
+  }
+
+  Future<void> jusqua(bool Function() fait, int g, {int max = 12000}) async {
+    final double fin = temps + max / 1000;
+    while (!fait() && temps < fin) {
+      await Future<void>.delayed(const Duration(milliseconds: 16));
+      if (g != gen) throw Annule();
+    }
+  }
+
+  Future<void> parler(String texte, int g, {double? tenir}) async {
+    await dire(texte, tenir: tenir);
+    if (g != gen) throw Annule();
+  }
+
+  bool get present => px.q > 0.2 && inonde.cible == 0 && px.fondu.cible > 0.5;
+
+  /// Remise à zéro : Praxis est derrière la lumière, la porte attend.
+  void initial() {
+    gen++;
+    _finir();
+    etincelles.clear();
+    px
+      ..lnZ = geo.lnZ
+      ..hc = geo.hc
+      ..reduit = reduit
+      ..placer(-0.08)
+      ..vMax = 0.25
+      ..pietine = 0
+      ..y = 0
+      ..vy = 0
+      ..faire(Geste.aucun)
+      ..poser(Expr.neutre)
+      ..regarder(0, 0);
+    px.tourne.x = px.tourne.cible = 0;
+    px.tourne.v = 0;
+    px.assis.x = px.assis.cible = 0;
+    px.fondu.x = reduit ? 0 : 1;
+    px.fondu.cible = reduit ? 0 : 1;
+    inonde.x = inonde.cible = 0;
+    inonde.v = 0;
+    eclat.x = 0.25;
+    eclat.cible = 0.25;
+    cam.x = cam.cible = reduit ? 1 : 0;
+    progres = -1;
+    for (final R d in dalles) {
+      d.x = d.cible = 0;
+      d.v = 0;
+    }
+  }
+
+  /// La lumière monte, Praxis sort de la porte et suit la route jusqu'à nous.
+  Future<void> arriver(int g, {bool vite = false, double jusque = 1, double travers = 0}) async {
+    eclat.cible = 1.16;
+    if (reduit) {
+      px.placer(jusque, travers: travers);
+      px.fondu.cible = 1;
+      px.poser(Expr.sourire);
+      eclat.cible = 1;
+      await attendre(500, g);
+      return;
+    }
+    await attendre(vite ? 260 : 620, g);
+    px.poser(Expr.sourire);
+    px.regarder(0, 0.15);
+    px.allerA(jusque, travers: travers, vitesse: vite ? 0.44 : 0.25);
+    await jusqua(() => px.q > 0.45, g);
+    eclat.cible = 1;
+    await jusqua(() => px.arrive, g);
+    px.regarder(0, 0);
+  }
+
+  /// Il se retourne, remonte la route, devient silhouette de lumière ; l'iris s'ouvre.
+  Future<void> repartir(int g, {VoidCallback? ouvert}) async {
+    if (reduit) {
+      taire();
+      px.fondu.cible = 0;
+      await attendre(450, g);
+      inonde.k = 30;
+      inonde.c = 11;
+      inonde.cible = 1;
+      await attendre(700, g);
+      ouvert?.call();
+      return;
+    }
+    px.faire(Geste.aucun);
+    px.regarder(0, 0);
+    px.cote = geo.rtl ? 1 : -1;
+    px.assis.cible = 0;
+    px.tourne.cible = 1;
+    px.pietine = 3;
+    await attendre(640, g);
+    taire();
+    px.anticipe();
+    await attendre(170, g);
+    px.allerA(-0.09, travers: 0, vitesse: 0.36);
+    await jusqua(() => px.q < 0.34, g);
+    eclat.cible = 1.42;
+    await jusqua(() => px.q < 0.03, g);
+    inonde.k = 2.4;
+    inonde.c = 3.2;
+    inonde.cible = 1;
+    await jusqua(() => inonde.x > 0.975, g, max: 7000);
+    ouvert?.call();
+  }
+}
+
+// ───────────────────────── Les peintres ─────────────────────────
+final Paint _trait = Paint();
+final Paint _plein = Paint();
+
+/// Vingt poussières lentes dans le faisceau : (angle, distance, phase, taille).
+final List<List<double>> _poussieres = () {
+  final math.Random h = math.Random(21);
+  return List<List<double>>.generate(20, (int i) => <double>[(h.nextDouble() - 0.5) * 1.5, 0.14 + h.nextDouble() * 0.9, h.nextDouble() * 6.28, 0.7 + h.nextDouble() * 0.8]);
+}();
+
+void _peindrePoussieres(Canvas c, Theatre th, int de, int a, double force) {
+  final ui.Image? grainP = Atelier.poussiere;
+  if (grainP == null || force < 0.01) return;
+  final Geo g = th.geo;
+  final Offset o = g.lueur + Offset(0, g.lw * 0.1);
+  final double t = th.reduit ? 0 : th.temps;
+  final List<RSTransform> tr = <RSTransform>[];
+  final List<Rect> src = <Rect>[];
+  final List<Color> cs = <Color>[];
+  for (int i = de; i < a; i++) {
+    final List<double> p = _poussieres[i];
+    final double ang = p[0] + 0.06 * math.sin(t * 0.19 + p[2]), d = p[1] + 0.035 * math.sin(t * 0.13 + p[2] * 2);
+    final Offset pos = o + Offset(math.sin(ang) * d * g.H * 0.95 + 5 * math.sin(t * 0.31 + p[2] * 3), math.cos(ang) * d * g.H * 0.92 - 7 * math.sin(t * 0.23 + p[2]));
+    final double al = force * (0.5 + 0.5 * math.sin(t * 0.45 + p[2] * 3)) * math.exp(-d * d / 0.7) * math.exp(-p[0] * p[0] / 0.5);
+    final double r = (1.3 + 2.6 * d) * p[3] * (g.grand ? 1.5 : 1) * (i >= 14 ? 1.7 : 1);
+    tr.add(RSTransform.fromComponents(rotation: 0, scale: r / 16, anchorX: 16, anchorY: 16, translateX: pos.dx, translateY: pos.dy));
+    src.add(const Rect.fromLTWH(0, 0, 32, 32));
+    cs.add(Teinte.coeur.withValues(alpha: cl(al * (i >= 14 ? 0.5 : 1))));
+  }
+  c.drawAtlas(grainP, tr, src, cs, BlendMode.modulate, null, Paint()..filterQuality = FilterQuality.medium);
+}
+
+/// Le décor : ciel, route, dalles, lumière de la porte sur l'espace, ombre de Praxis, logo.
+class DecorPeintre extends CustomPainter {
+  DecorPeintre(this.th) : super(repaint: th);
+  final Theatre th;
+  @override
+  void paint(Canvas c, Size taille) {
+    final Geo g = th.geo;
+    final Rect ch = g.champ;
+    final double hz = g.horizon, H = g.H, lum = th.lum, lv = cl(lum);
+    c.save();
+    c.clipRect(ch);
+    // 1. Le ciel et le sol : un seul dégradé, calé sur l'horizon (aucune couture).
+    c.save();
+    c.translate(0, hz);
+    c.scale(1, H);
+    _plein
+      ..shader = Atelier.memo(
+          'fond',
+          () => ui.Gradient.linear(const Offset(0, -0.9), const Offset(0, 1.5), <Color>[
+                Teinte.cielHaut,
+                melange(Teinte.cielHaut, Teinte.cielHorizon, 0.5),
+                Teinte.cielHorizon,
+                melange(Teinte.cielHorizon, Teinte.solProche, 0.55),
+                Teinte.solProche,
+              ], <double>[0, 0.2, 0.375, 0.5, 1]))
+      ..color = const Color(0xFF000000);
+    c.drawRect(Rect.fromLTRB(ch.left, (ch.top - hz) / H - 0.1, ch.right, (ch.bottom - hz) / H + 0.1), _plein);
+    c.restore();
+    // 2. L'aura derrière le logo : un seul dégradé, gaussien.
+    Atelier.etaler(c, Atelier.aura, g.lueur, g.lw * 1.75, g.lw * 1.75, cl(0.10 + 0.9 * lum));
+    // 3. La route : deux bords droits qui convergent vers la porte ; elle se fond dans la lumière au loin.
+    final double zNear = math.max(0.2, H / (ch.bottom + 60 - hz));
+    final double yPied = g.logo.top + _piedArche * g.k;
+    final Path route = Path()
+      ..addPolygon(<Offset>[g.route(g.Z, -1), g.route(g.Z, 1), g.route(zNear, 1), g.route(zNear, -1)], true)
+      // Sous le disque, entre les deux pieds de l'arche : le seuil, déjà de la route.
+      ..addRect(Rect.fromLTRB(g.porte.dx - _demiExt * g.k, yPied, g.porte.dx + _demiExt * g.k, g.porte.dy + 0.5));
+    c.save();
+    c.translate(0, hz);
+    c.scale(1, H);
+    _plein.shader = Atelier.memo('route${g.Z.toStringAsFixed(1)}', () {
+      final double e = 1 / g.Z;
+      return ui.Gradient.linear(Offset.zero, const Offset(0, 1), <Color>[
+        Teinte.route.withValues(alpha: 0.45),
+        Teinte.route.withValues(alpha: 0.6),
+        Teinte.route.withValues(alpha: 0.85),
+        Teinte.route,
+      ], <double>[e, e + 0.06, e + 0.2, e + 0.45]);
+    });
+    c.drawPath(route.transform((Matrix4.identity()..scaleByDouble(1, 1 / H, 1, 1)..translateByDouble(0, -hz, 0, 1)).storage), _plein);
+    c.restore();
+    // 4. Les dalles : rangées d'égale profondeur réelle, en appareil décalé.
+    final int n = th.rangees;
+    final Color dalle = Teinte.dalle, brume = melange(Teinte.cielHorizon, Teinte.coeur, 0.5);
+    for (int i = n - 1; i >= 0; i--) {
+      final double za = Theatre.zDepart + i * Theatre.zPas, zb = za + Theatre.zPas * 0.93;
+      final double ya = hz + H / za, yb = hz + H / zb;
+      if (yb > ch.bottom + 2 || ya - yb < 0.6) continue;
+      final double loin = lisse2(1.5, g.Z, (za + zb) / 2);
+      final double lit = cl(th.dalles[i].x, 0, 1.25);
+      final Color base = melange(dalle, brume, loin * 0.85).withValues(alpha: 1 - 0.7 * loin * loin);
+      final List<double> coupes = i.isEven ? const <double>[-1, 0, 1] : const <double>[-1, -0.5, 0.5, 1];
+      final double joint = 0.035;
+      if (lit > 0.01) {
+        final Offset m = g.solZ((za + zb) / 2);
+        Atelier.poser(c, m, g.demiRoute((za + zb) / 2, interieur: true) * 1.22, (ya - yb) * 1.15 + 5, Teinte.lueurDalle, (T.s ? 0.55 : 0.75) * math.min(1, lit));
+      }
+      for (int j = 0; j < coupes.length - 1; j++) {
+        final double f0 = coupes[j] * 0.97 + (j == 0 ? 0 : joint), f1 = coupes[j + 1] * 0.97 - (j == coupes.length - 2 ? 0 : joint);
+        final Offset p0 = g.route(za, f0, interieur: true), p1 = g.route(za, f1, interieur: true), p2 = g.route(zb, f1, interieur: true), p3 = g.route(zb, f0, interieur: true);
+        final Path forme = Path()..addPolygon(<Offset>[p0, p1, p2, p3], true);
+        _plein
+          ..shader = null
+          ..color = lit > 0.01 ? Color.lerp(base, Teinte.dalleAllumee, math.min(1, lit))! : base;
+        c.drawPath(forme, _plein);
+        // L'arête tournée vers la porte accroche la lumière.
+        final double ar = (0.55 * (1 - loin) + 0.25) * lv * (T.s ? 0.32 : 1);
+        if (ya - yb > 2.5 && ar > 0.02) {
+          _trait
+            ..color = Teinte.coeur.withValues(alpha: cl(ar))
+            ..strokeWidth = math.max(0.7, 1.6 / za)
+            ..style = PaintingStyle.stroke;
+          c.drawLine(p3, p2, _trait);
+        }
+        if (lit > 0.01) {
+          _trait
+            ..color = Teinte.lueurDalle.withValues(alpha: (T.s ? 0.5 : 0.8) * math.min(1, lit))
+            ..strokeWidth = math.max(0.7, 1.6 / za)
+            ..style = PaintingStyle.stroke
+            ..strokeJoin = StrokeJoin.round;
+          c.drawPath(forme, _trait);
+        }
+      }
+    }
+    // 5. La nappe de lumière au sol, puis son reflet sur les dalles, devant la porte.
+    final double ry = H * 0.66;
+    Atelier.etaler(c, Atelier.nappe, g.porte + Offset(0, ry * 0.9), g.lw * 2.0, ry, cl(lum * (T.s ? 0.9 : 1)));
+    c.save();
+    c.clipPath(route);
+    final double ry2 = H * 0.46;
+    Atelier.etaler(c, Atelier.nappe, g.porte + Offset(0, ry2 * 0.9), g.lw * 0.34, ry2, cl(lum * 0.7));
+    c.restore();
+    // 6. L'ombre de Praxis : portée (vers nous, à l'opposé de la porte) et de contact.
+    _ombres(c, g, lum);
+    // 7. La porte : la lumière derrière les jours du logo, le symbole, puis la surexposition.
+    c.save();
+    c.translate(g.logo.left, g.logo.top);
+    c.scale(g.k);
+    final Color jourCoeur = melange(Teinte.cielHorizon, Teinte.coeur, cl(0.2 + 0.8 * lum));
+    final Color jourBord = melange(jourCoeur, Teinte.logo, 0.14);
+    _plein
+      ..color = const Color(0xFF000000)
+      ..shader = ui.Gradient.radial(const Offset(379, 548), 380, <Color>[jourCoeur, jourCoeur, jourBord], const <double>[0, 0.34, 1]);
+    c.drawPath(_jourArche, _plein);
+    _plein
+      ..shader = null
+      ..color = Teinte.logo;
+    for (final Path p in symbole) {
+      c.drawPath(p, _plein);
+    }
+    c.restore();
+    // Les deux pieds de l'arche descendent au sol, puis filent le long de la route : une seule
+    // ligne, de la clé de l'arche jusqu'au bord de l'écran.
+    for (final double cote in const <double>[-1, 1]) {
+      final double xe = g.porte.dx + cote * _demiExt * g.k, xi = g.porte.dx + cote * _demiInt * g.k;
+      final Path bordure = Path()
+        ..moveTo(xe, yPied - 1)
+        ..lineTo(xe, g.porte.dy)
+        ..lineTo(g.route(zNear, cote).dx, g.route(zNear, cote).dy)
+        ..lineTo(g.route(zNear, cote, interieur: true).dx, g.route(zNear, cote, interieur: true).dy)
+        ..lineTo(xi, g.porte.dy)
+        ..lineTo(xi, yPied - 1)
+        ..close();
+      _plein
+        ..shader = null
+        ..color = jourBord;
+      c.drawPath(bordure, _plein);
+    }
+    Atelier.etaler(c, Atelier.bloom, g.lueur, g.lw * 0.46, g.lw * 0.56, cl(lum * 0.82));
+    // 8. Les rais, très discrets, qui sortent de l'ouverture ; les poussières dans le faisceau.
+    final ui.Image? rais = Atelier.rais;
+    if (rais != null && lum > 0.02) {
+      final double cote = H * 1.25;
+      final Offset o = g.lueur + Offset(0, g.lw * 0.12);
+      for (int i = 0; i < 2; i++) {
+        c.save();
+        c.translate(o.dx, o.dy);
+        c.rotate((th.reduit ? 0 : math.sin(th.temps * (i == 0 ? 0.23 : 0.17) + i * 2) * 0.035) + (g.xProche - g.porte.dx) / g.H * -0.35);
+        if (i == 1) c.scale(-1, 1);
+        c.drawImageRect(
+            rais,
+            const Rect.fromLTWH(0, 0, 256, 256),
+            Rect.fromLTWH(-cote / 2, 0, cote, cote),
+            Paint()
+              ..filterQuality = FilterQuality.medium
+              ..colorFilter = ColorFilter.mode(Teinte.coeur, BlendMode.srcIn)
+              ..color = Color.fromRGBO(0, 0, 0, cl((T.s ? 0.075 : 0.20) * lum * (i == 0 ? 1 : 0.7))));
+        c.restore();
+      }
+    }
+    _peindrePoussieres(c, th, 0, 20, cl(lum) * (T.s ? 0.55 : 0.95));
+    // 9. Quand la porte faiblit, toute la scène s'assombrit ; puis vignettage et grain.
+    if (lv < 0.98) {
+      _plein
+        ..shader = null
+        ..color = (T.s ? const Color(0xFF000000) : melange(T.nuit, Teinte.violet, 0.3)).withValues(alpha: (T.s ? 0.42 : 0.30) * (1 - lv));
+      c.drawRect(ch, _plein);
+    }
+    Atelier.etaler(c, Atelier.vignette, ch.center, ch.width * 0.80, ch.height * 0.74, 1, cadre: const Rect.fromLTRB(-2, -2, 2, 2));
+    final ui.Shader? grain = Atelier.grainTuile;
+    if (grain != null) {
+      _plein
+        ..shader = grain
+        ..color = Color.fromRGBO(0, 0, 0, T.s ? 0.05 : 0.032);
+      c.drawRect(ch, _plein);
+      _plein.shader = null;
+    }
+    c.restore();
+  }
+
+  void _ombres(Canvas c, Geo g, double lum) {
+    final Corps px = th.px;
+    final double op = px.opacite * (1 - px.surex);
+    if (op < 0.02) return;
+    final double zb = g.z(px.q), l = g.tProche / zb, u = l / 200;
+    final Offset pied = g.solZ(zb, px.lat.x);
+    final double force = Teinte.ombreForce * op;
+    final double saut = cl(-px.y / 200 * 2.4);
+    // Portée : la porte est derrière lui, l'ombre vient vers nous. Sa longueur suit la distance
+    // réelle à la porte (source à 4,2 hauteurs de Praxis) ; elle s'élargit en s'éloignant de lui.
+    final ui.Shader? tex = Atelier.ombreTexture;
+    final double portee = cl(0.12 + 0.88 * lum) * (1 - 0.35 * saut);
+    if (tex != null && force * portee > 0.01) {
+      final double depuisPorte = math.max(0.0001, g.Z - zb);
+      final double z0 = zb * 1.035, longueur = depuisPorte / 3.2 + zb * 0.035;
+      const int n = 16;
+      final Float32List pos = Float32List((n + 1) * 4), uv = Float32List((n + 1) * 4);
+      final Int32List cs = Int32List((n + 1) * 2);
+      final int teinte = Teinte.ombre.withValues(alpha: cl(force * portee)).toARGB32();
+      int k = 0;
+      for (int i = 0; i <= n; i++) {
+        final double t = i / n;
+        final double z = z0 - t * longueur;
+        if (z < 0.3) break;
+        final double ecart = (g.Z - z) / depuisPorte;
+        final Offset o = g.solZ(z, px.lat.x * ecart);
+        final double demi = 0.43 * math.min(2.4, ecart) * g.tProche / z * (1 + 0.5 * t);
+        pos[k * 4] = o.dx - demi;
+        pos[k * 4 + 1] = o.dy;
+        pos[k * 4 + 2] = o.dx + demi;
+        pos[k * 4 + 3] = o.dy;
+        uv[k * 4] = 0;
+        uv[k * 4 + 1] = t * Atelier.ombreH;
+        uv[k * 4 + 2] = Atelier.ombreL.toDouble();
+        uv[k * 4 + 3] = t * Atelier.ombreH;
+        cs[k * 2] = teinte;
+        cs[k * 2 + 1] = teinte;
+        k++;
+      }
+      if (k >= 2) {
+        final ui.Vertices v = ui.Vertices.raw(ui.VertexMode.triangleStrip, Float32List.sublistView(pos, 0, k * 4),
+            textureCoordinates: Float32List.sublistView(uv, 0, k * 4), colors: Int32List.sublistView(cs, 0, k * 2));
+        c.drawVertices(v, BlendMode.modulate, Paint()..shader = tex);
+        v.dispose();
+      }
+    }
+    // Contact : sombre et net sous le corps et sous chaque pied posé ; plus pâle quand le pied se lève.
+    final double as_ = cl(px.assis.x);
+    Atelier.poser(c, pied + Offset(0, l * (0.012 + 0.03 * as_)), l * (0.47 + 0.05 * as_) * (1 - 0.3 * saut), l * (0.075 + 0.02 * as_), Teinte.ombre, force * (0.85 + 0.25 * as_) * (1 - 0.6 * saut));
+    for (final Pied f in <Pied>[px.pg, px.pd]) {
+      final (double x, double yy, double sc, double lev) = px.piedVu(f);
+      final Offset o = pied + Offset((x - 100) * u, (yy - 206 + 8 * sc) * u);
+      Atelier.poser(c, o, 22 * sc * u * (1 + 0.5 * lev), 6.5 * sc * u * (1 + 0.3 * lev), Teinte.ombre, force * 1.5 * (1 - 0.78 * cl(lev)) * (1 - 0.6 * saut));
+    }
+  }
+
+  @override
+  bool shouldRepaint(DecorPeintre o) => true;
+}
+
+/// Le premier plan : Praxis, les poussières proches, les mots, puis l'iris de lumière.
+class ScenePeintre extends CustomPainter {
+  ScenePeintre(this.th) : super(repaint: th);
+  final Theatre th;
+  @override
+  void paint(Canvas c, Size taille) {
+    final Geo g = th.geo;
+    final Corps px = th.px;
+    peindrePraxis(c, px, th.piedPraxis, th.largeurPraxis, th.eclairage);
+    // Les étincelles : de sa main vers la porte.
+    for (final Etincelle e in th.etincelles) {
+      final double t = lisse(e.t);
+      for (int i = 0; i < 4; i++) {
+        final double tt = cl(t - i * 0.05);
+        final Offset p = Offset.lerp(e.de, g.lueur, tt)! + Offset(math.sin(tt * math.pi) * 26 * (g.rtl ? -1 : 1), -math.sin(tt * math.pi) * 30);
+        final double r = (9 - i * 1.6) * (1 - 0.55 * tt);
+        Atelier.poser(c, p, r, r, Teinte.coeur, (1 - i * 0.22) * math.sin(cl(e.t * 1.1) * math.pi).clamp(0.0, 1.0) * 0.95 + 0.05);
+        if (i == 0) Atelier.poser(c, p, r * 2.4, r * 2.4, Teinte.loin, 0.45);
+      }
+    }
+    // Les mots : nés à sa bouche, posés en une ligne, puis envolés vers la porte.
+    final Parole? pa = th.parole;
+    if (pa != null) {
+      for (final MotVol m in pa.mots) {
+        if (!m.ne) continue;
+        final double t = m.t.x, e = cl(m.s.x);
+        Offset pos;
+        double sc, o;
+        if (th.reduit) {
+          pos = m.fin;
+          sc = 1;
+          o = cl(t) * (1 - e);
+        } else {
+          final double tt = cl(t, 0, 1.2);
+          pos = Offset.lerp(m.naissance, m.fin, tt)! + Offset(0, -math.sin(math.pi * cl(tt)) * 14);
+          sc = 0.12 + 0.88 * tt;
+          o = cl(tt * 4);
+          pos += (g.lueur - m.fin) * (e * e * 0.78) + Offset(0, -22 * math.sin(e * math.pi));
+          sc *= 1 - 0.62 * e;
+          o *= 1 - e * e * e;
+        }
+        if (o < 0.01) continue;
+        final Size s = m.taille * sc;
+        _plein
+          ..shader = null
+          ..filterQuality = FilterQuality.medium
+          ..color = Color.fromRGBO(0, 0, 0, o);
+        c.drawImageRect(m.image, Rect.fromLTWH(0, 0, m.image.width.toDouble(), m.image.height.toDouble()), Rect.fromCenter(center: pos, width: s.width, height: s.height), _plein);
+      }
+    }
+    // La lumière qui ouvre l'application : un iris à bord très doux, sans flash.
+    final double f = cl(th.inonde.x);
+    if (f > 0.001) {
+      if (th.reduit) {
+        c.drawRect(Offset.zero & taille, Paint()..color = T.fond.withValues(alpha: f));
+      } else {
+        final double diag = math.sqrt(taille.width * taille.width + taille.height * taille.height);
+        final double r = diag * (0.16 + 2.1 * f);
+        Atelier.etaler(c, Atelier.iris, g.lueur, r, r, lisse2(0, 0.22, f), cadre: const Rect.fromLTRB(-1, -1, 1, 1));
+        final double fin = lisse2(0.80, 1.0, f);
+        if (fin > 0.001) c.drawRect(Offset.zero & taille, Paint()..color = Teinte.irisFin.withValues(alpha: fin));
+      }
+    }
+  }
+
+  @override
+  bool shouldRepaint(ScenePeintre o) => true;
+}

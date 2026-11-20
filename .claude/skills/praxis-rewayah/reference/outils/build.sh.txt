@@ -1,0 +1,6 @@
+#!/bin/bash
+export PATH="/tmp/claude-0/-home-user-Rewayah-Academy-Official-App/bd3d0d1b-90a8-5432-bebf-dbe5f74f950e/scratchpad/sdk/flutter/bin:$PATH"
+cd /tmp/claude-0/-home-user-Rewayah-Academy-Official-App/bd3d0d1b-90a8-5432-bebf-dbe5f74f950e/scratchpad/bureau
+flutter analyze lib/main_entree.dart lib/entree_scene.dart lib/entree_praxis.dart lib/entree_textes.dart lib/entree_lumiere.dart 2>&1 | grep -E "error|warning|info|No issues" | head -20
+flutter build web --release -t lib/main_entree.dart -o ../build-entree 2>&1 | grep -E "Built|rror" | head
+../entree-outils/assembler.sh | tail -3

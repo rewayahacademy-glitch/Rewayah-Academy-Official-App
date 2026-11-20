@@ -1,0 +1,562 @@
+// Briques vivantes communes : thème, ressort, toucher, carte qui penche, Praxis.
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+
+import 'package:flutter/gestures.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+
+/// Le thème : clair ou sombre. Sur fond sombre, l'accent est la lavande, jamais le violet.
+final ValueNotifier<bool> sombre = ValueNotifier<bool>(false);
+
+abstract final class T {
+  static bool get s => sombre.value;
+  static Color get fond => s ? const Color(0xFF16161E) : const Color(0xFFF7F5FE);
+  static Color get surface => s ? const Color(0xFF272734) : const Color(0xFFFFFFFF);
+  static Color get surface2 => s ? const Color(0xFF20202B) : const Color(0xFFF1EFF4);
+  static Color get encre => s ? const Color(0xFFF5F2FA) : const Color(0xFF110E20);
+  static Color get doux => s ? const Color(0xFFB3ABC2) : const Color(0xFF655E70);
+  static Color get filet => s ? const Color(0xFF3D3D50) : const Color(0xFFE3DEE9);
+  static Color get accent => s ? const Color(0xFFBA98FB) : const Color(0xFF8652E6);
+  static Color get surAccent => s ? const Color(0xFF25113F) : const Color(0xFFFFFFFF);
+  static Color get pale => s ? const Color(0xFF342B4D) : const Color(0xFFEEE6FA);
+  static Color get vert => s ? const Color(0xFF70EE9C) : const Color(0xFF199C55);
+  static Color get vertPale => s ? const Color(0xFF1C3526) : const Color(0xFFE4F4EB);
+  static Color get corail => s ? const Color(0xFFFF8FA3) : const Color(0xFFE0375A);
+  static Color get corailPale => s ? const Color(0xFF4A1522) : const Color(0xFFFCE8ED);
+  static Color get ambre => s ? const Color(0xFFFFD772) : const Color(0xFFB38000);
+  static Color get ambrePale => s ? const Color(0xFF3A2E0E) : const Color(0xFFFEF5E4);
+  static Color get ombre => s ? const Color(0x80000000) : const Color(0x22211E28);
+  static const Color lilas = Color(0xFFDCCAFD);
+  static const Color nuit = Color(0xFF110E20);
+}
+
+TextStyle titre(double taille, {Color? couleur, FontWeight poids = FontWeight.w800}) =>
+    TextStyle(fontFamily: 'Jakarta', fontSize: taille, fontWeight: poids, color: couleur ?? T.encre, height: 1.15, letterSpacing: -0.3);
+TextStyle texte(double taille, {Color? couleur, FontWeight poids = FontWeight.w400}) =>
+    TextStyle(fontFamily: 'DMSans', fontSize: taille, fontWeight: poids, color: couleur ?? T.encre, height: 1.4);
+
+/// Coin à courbe continue. Pour un enfant : rayon du parent moins la marge.
+ShapeBorder coin(double r) => RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(r)));
+
+/// Un ressort : position, vitesse, cible.
+class R {
+  R(this.x, {this.k = 220, this.c = 16}) : cible = x;
+  double x, v = 0, cible, k, c;
+  bool get repos => (x - cible).abs() < 0.001 && v.abs() < 0.01;
+  void pas(double dt) {
+    v += ((cible - x) * k - v * c) * dt;
+    x += v * dt;
+  }
+}
+
+/// Fait vivre des ressorts tant qu'ils bougent, puis se tait.
+mixin Vivant<W extends StatefulWidget> on State<W>, SingleTickerProviderStateMixin<W> {
+  late final Ticker _t = createTicker(_tic);
+  Duration _avant = Duration.zero;
+  double temps = 0;
+  Iterable<R> get ressorts;
+  bool get toujours => false;
+  bool get finiAussi => true;
+  void surPas(double dt) {}
+  void reveil() {
+    if (!_t.isActive) {
+      _avant = Duration.zero;
+      _t.start();
+    }
+  }
+
+  void _tic(Duration d) {
+    final double dt = math.min(0.032, (d - _avant).inMicroseconds / 1e6);
+    _avant = d;
+    temps += dt;
+    for (final R r in ressorts) {
+      r.pas(dt);
+    }
+    surPas(dt);
+    setState(() {});
+    if (!toujours && finiAussi && ressorts.every((R r) => r.repos)) _t.stop();
+  }
+
+  @override
+  void dispose() {
+    _t.dispose();
+    super.dispose();
+  }
+}
+
+/// Tout ce qui se touche s'enfonce au doigt et revient en ressort.
+class Touche extends StatefulWidget {
+  const Touche({super.key, required this.child, this.surTouche, this.fond = 0.94});
+  final Widget child;
+  final VoidCallback? surTouche;
+  final double fond;
+  @override
+  State<Touche> createState() => _ToucheState();
+}
+
+class _ToucheState extends State<Touche> with SingleTickerProviderStateMixin<Touche>, Vivant<Touche> {
+  final R e = R(1, k: 420, c: 14);
+  @override
+  Iterable<R> get ressorts => <R>[e];
+  void _vers(double v) {
+    e.cible = v;
+    reveil();
+  }
+
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+        cursor: widget.surTouche == null ? MouseCursor.defer : SystemMouseCursors.click,
+        onEnter: (_) => _vers(1.03),
+        onExit: (_) => _vers(1),
+        child: GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          onTapDown: (_) => _vers(widget.fond),
+          onTapCancel: () => _vers(1),
+          onTapUp: (_) {
+            _vers(1);
+            widget.surTouche?.call();
+          },
+          child: Transform.scale(scale: e.x, child: widget.child),
+        ),
+      );
+}
+
+/// Bouton en pilule.
+class Pilule extends StatelessWidget {
+  const Pilule(this.label, {super.key, this.surTouche, this.fort = false, this.icone, this.couleur, this.encre});
+  final String label;
+  final VoidCallback? surTouche;
+  final bool fort;
+  final IconData? icone;
+  final Color? couleur, encre;
+  @override
+  Widget build(BuildContext context) {
+    final Color e = encre ?? (fort ? T.surAccent : T.encre);
+    return Touche(
+      surTouche: surTouche,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+        decoration: ShapeDecoration(color: couleur ?? (fort ? T.accent : T.surface2), shape: const StadiumBorder()),
+        child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+          if (icone != null) ...<Widget>[Icon(icone, size: 16, color: e), const SizedBox(width: 6)],
+          Text(label, style: texte(13, couleur: e, poids: FontWeight.w600)),
+        ]),
+      ),
+    );
+  }
+}
+
+/// Une surface qui penche vers le pointeur au survol, et se redresse en ressort.
+class Penche extends StatefulWidget {
+  const Penche({super.key, required this.child, this.force = 0.05});
+  final Widget child;
+  final double force;
+  @override
+  State<Penche> createState() => _PencheState();
+}
+
+class _PencheState extends State<Penche> with SingleTickerProviderStateMixin<Penche>, Vivant<Penche> {
+  final R rx = R(0, k: 160, c: 14), ry = R(0, k: 160, c: 14), haut = R(0, k: 200, c: 18);
+  @override
+  Iterable<R> get ressorts => <R>[rx, ry, haut];
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+        onHover: (PointerHoverEvent e) {
+          final Size s = context.size ?? const Size(1, 1);
+          ry.cible = (e.localPosition.dx / s.width - 0.5) * widget.force * 2;
+          rx.cible = -(e.localPosition.dy / s.height - 0.5) * widget.force * 2;
+          haut.cible = 1;
+          reveil();
+        },
+        onExit: (_) {
+          rx.cible = 0;
+          ry.cible = 0;
+          haut.cible = 0;
+          reveil();
+        },
+        child: Transform(
+          alignment: Alignment.center,
+          transform: Matrix4.identity()
+            ..setEntry(3, 2, 0.0012)
+            ..rotateX(rx.x)
+            ..rotateY(ry.x)
+            ..translateByDouble(0, -4 * haut.x, 0, 1),
+          child: widget.child,
+        ),
+      );
+}
+
+/// Un nombre qui change en glissant, comme un compteur à rouleaux.
+class Rouleau extends StatelessWidget {
+  const Rouleau(this.valeur, {super.key, required this.style});
+  final int valeur;
+  final TextStyle style;
+  @override
+  Widget build(BuildContext context) => AnimatedSwitcher(
+        duration: const Duration(milliseconds: 520),
+        switchInCurve: Curves.elasticOut,
+        switchOutCurve: Curves.easeIn,
+        transitionBuilder: (Widget w, Animation<double> a) => ClipRect(
+            child: SlideTransition(position: Tween<Offset>(begin: const Offset(0, 0.9), end: Offset.zero).animate(a), child: FadeTransition(opacity: a, child: w))),
+        child: Text('$valeur', key: ValueKey<int>(valeur), style: style.copyWith(fontFeatures: const <ui.FontFeature>[ui.FontFeature.tabularFigures()])),
+      );
+}
+
+/// Pastille ronde avec des initiales.
+class Visage extends StatelessWidget {
+  const Visage(this.nom, {super.key, this.taille = 40, this.teinte = 0, this.bord = false});
+  final String nom;
+  final double taille;
+  final int teinte;
+  final bool bord;
+  // Uniquement les couleurs de l'application : violet, vert, ambre, rose.
+  static const List<List<Color>> teintes = <List<Color>>[
+    <Color>[Color(0xFFDCCAFD), Color(0xFF8652E6)], <Color>[Color(0xFF70EE9C), Color(0xFF199C55)],
+    <Color>[Color(0xFFFFD772), Color(0xFFB38000)], <Color>[Color(0xFFFFB1BD), Color(0xFFB01B3C)],
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final List<Color> c = teintes[teinte % teintes.length];
+    return Container(
+      width: taille,
+      height: taille,
+      alignment: Alignment.center,
+      decoration: BoxDecoration(shape: BoxShape.circle, border: bord ? Border.all(color: T.surface, width: 2) : null, gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: <Color>[c[0], c[1]])),
+      child: Text(nom.split(' ').map((String m) => m[0]).take(2).join(), style: titre(taille * 0.34, couleur: Colors.white, poids: FontWeight.w700)),
+    );
+  }
+}
+
+// ───────────────────────── Praxis ─────────────────────────
+enum Humeur { calme, heureux, rit, curieux, excite, soucieux, colere, pleure, gene, dort }
+
+class Praxis extends StatefulWidget {
+  const Praxis({super.key, required this.doigt, this.taille = 120, this.depart = Humeur.heureux, this.tombe = true});
+  final ValueNotifier<Offset> doigt;
+  final double taille;
+  final Humeur depart;
+  final bool tombe;
+  @override
+  State<Praxis> createState() => PraxisState();
+}
+
+class PraxisState extends State<Praxis> with SingleTickerProviderStateMixin<Praxis>, Vivant<Praxis> {
+  Humeur humeur = Humeur.calme;
+  final List<R> haut = <R>[R(0), R(0)], pente = <R>[R(0), R(0)], bas = <R>[R(0), R(0)], taille = <R>[R(1), R(1)];
+  final R gx = R(0, k: 300, c: 26), gy = R(0, k: 300, c: 26);
+  final R teteX = R(0, k: 380, c: 13), penche = R(0, k: 160, c: 11), ecrase = R(0, k: 320, c: 11);
+  final R pompon = R(0, k: 70, c: 4.5), rouge = R(0, k: 60, c: 14), joues = R(0, k: 300, c: 9);
+  double y = 0, vy = 0, larme = -1, clin = 0;
+  bool chute = false;
+  int larmes = 0;
+  int _retour = 0;
+  @override
+  Iterable<R> get ressorts => <R>[...haut, ...pente, ...bas, ...taille, gx, gy, teteX, penche, ecrase, pompon, rouge, joues];
+  @override
+  bool get finiAussi => !chute && larme < 0 && humeur != Humeur.rit && clin <= 0;
+
+  @override
+  void initState() {
+    super.initState();
+    widget.doigt.addListener(_regard);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      poser(widget.depart);
+      if (widget.tombe) tomber();
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.doigt.removeListener(_regard);
+    super.dispose();
+  }
+
+  void _regard() {
+    final RenderBox? b = context.findRenderObject() as RenderBox?;
+    if (b == null || !b.attached) return;
+    final Offset d = widget.doigt.value - b.localToGlobal(b.size.center(Offset.zero));
+    final double l = math.max(1, d.distance), f = math.min(1, l / 260);
+    gx.cible = d.dx / l * f;
+    gy.cible = d.dy / l * f;
+    if (humeur == Humeur.dort) poser(Humeur.calme);
+    reveil();
+  }
+
+  /// Pose une humeur. Avec [pour], revient au calme après ce délai.
+  void poser(Humeur h, {Duration? pour}) {
+    humeur = h;
+    for (int i = 0; i < 2; i++) {
+      final double s = i == 0 ? -1 : 1;
+      double ph = 0, pe = 0, pb = 0, ta = 1;
+      switch (h) {
+        case Humeur.calme:
+          break;
+        case Humeur.heureux:
+          pb = 0.52;
+        case Humeur.rit:
+          pb = 0.62;
+        case Humeur.curieux:
+          ta = i == 0 ? 1.22 : 0.9;
+          ph = i == 0 ? 0 : 0.22;
+        case Humeur.excite:
+          ta = 1.2;
+        case Humeur.soucieux:
+          ph = 0.36;
+          pe = 0.3 * s;
+        case Humeur.colere:
+          ph = 0.46;
+          pe = -0.36 * s;
+        case Humeur.pleure:
+          ph = 0.4;
+          pe = 0.34 * s;
+        case Humeur.gene:
+          ph = 0.3;
+        case Humeur.dort:
+          ph = 1.1;
+      }
+      haut[i].cible = ph;
+      pente[i].cible = pe;
+      bas[i].cible = pb;
+      taille[i].cible = ta;
+    }
+    penche.cible = h == Humeur.curieux ? 0.12 : 0;
+    rouge.cible = h == Humeur.gene ? 1 : 0;
+    joues.cible = h == Humeur.rit ? 1 : 0;
+    pompon.v += 5;
+    if (h == Humeur.excite) {
+      vy = -560;
+      chute = true;
+    }
+    if (h == Humeur.pleure) {
+      larmes = 3;
+      larme = 0;
+    }
+    final int moi = ++_retour;
+    if (pour != null) {
+      Future<void>.delayed(pour, () {
+        if (mounted && moi == _retour) poser(Humeur.calme);
+      });
+    }
+    reveil();
+  }
+
+  void tomber() {
+    y = -widget.taille * 2.2;
+    vy = 0;
+    chute = true;
+    reveil();
+  }
+
+  void cligner() {
+    clin = 1;
+    reveil();
+  }
+
+  Future<void> non() async {
+    for (final double c in <double>[-1, 1, -0.7, 0.7, 0]) {
+      teteX.cible = c;
+      reveil();
+      await Future<void>.delayed(const Duration(milliseconds: 130));
+    }
+  }
+
+  @override
+  void surPas(double dt) {
+    if (chute) {
+      vy += 2600 * dt;
+      y += vy * dt;
+      if (y >= 0) {
+        y = 0;
+        ecrase.v += vy * 0.004;
+        pompon.v += vy * 0.012;
+        vy = -vy * 0.42;
+        if (vy.abs() < 60) {
+          vy = 0;
+          chute = false;
+        }
+      }
+    }
+    pompon.cible = -teteX.v * 0.02 - gx.v * 0.6;
+    if (humeur == Humeur.rit) joues.cible = 0.6 + 0.4 * math.sin(temps * 22);
+    if (clin > 0) clin -= dt * 6;
+    if (larme >= 0) {
+      larme += dt * 0.95;
+      if (larme > 1.3) {
+        larmes--;
+        larme = larmes > 0 ? 0 : -1;
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) =>
+      SizedBox(width: widget.taille, height: widget.taille * 1.18, child: CustomPaint(painter: _PraxisPeintre(this)));
+}
+
+class _PraxisPeintre extends CustomPainter {
+  _PraxisPeintre(this.s);
+  final PraxisState s;
+  @override
+  void paint(Canvas c, Size t) {
+    final double u = t.width / 200;
+    c.save();
+    c.translate(0, t.height - 200 * u);
+    c.scale(u);
+    final double e = s.ecrase.x.clamp(-0.35, 0.35);
+    final double dxTete = s.teteX.x * 14;
+    c.save();
+    c.translate(100 + dxTete, 194 + s.y);
+    c.rotate(s.penche.x);
+    c.scale(1 + e + s.joues.x * 0.05, 1 - e);
+    c.translate(-100, -194);
+    c.drawCircle(const Offset(100, 108), 86, Paint()..color = T.lilas);
+    if (s.rouge.x > 0.01) {
+      for (final double x in <double>[56, 148]) {
+        c.drawCircle(Offset(x, 150), 30,
+            Paint()..shader = ui.Gradient.radial(Offset(x, 150), 30, <Color>[const Color(0xFFE0375A).withValues(alpha: 0.5 * s.rouge.x), const Color(0x00E0375A)]));
+      }
+    }
+    c.translate(s.gx.x * 5, s.gy.x * 3);
+    final Paint noir = Paint()..color = T.nuit;
+    final Paint trait = Paint()
+      ..color = T.nuit
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 4
+      ..strokeJoin = StrokeJoin.round
+      ..strokeCap = StrokeCap.round;
+    c.drawPath(Path()..moveTo(61, 79)..lineTo(96, 78)..lineTo(128, 63)..lineTo(135, 95)..quadraticBezierTo(101, 60, 67, 110)..close(), noir);
+    final Path plateau = Path()..moveTo(41, 76)..lineTo(90, 51)..lineTo(146, 53)..lineTo(96, 78)..close();
+    c.drawPath(plateau, Paint()..color = T.lilas);
+    c.drawPath(plateau, trait);
+    c.drawLine(const Offset(93, 65), const Offset(138, 57), trait);
+    c.save();
+    c.translate(139, 56);
+    c.rotate(s.pompon.x.clamp(-1.2, 1.2));
+    c.drawLine(Offset.zero, const Offset(3, 13), trait);
+    c.drawRRect(RRect.fromRectAndRadius(const Rect.fromLTWH(-3, 12, 12, 19), const Radius.circular(2)), noir);
+    c.restore();
+    final double clin = s.clin > 0 ? math.sin(s.clin.clamp(0, 1) * math.pi) : 0;
+    for (int i = 0; i < 2; i++) {
+      c.save();
+      c.translate(i == 0 ? 84 : 122, 128);
+      c.scale(s.taille[i].x);
+      final Rect oeil = Rect.fromCenter(center: Offset.zero, width: 26, height: 36);
+      final double ph = math.max(s.haut[i].x, clin * 1.1);
+      if (ph > 1.0) {
+        c.drawPath(Path()..moveTo(-11, 3)..quadraticBezierTo(0, 11, 11, 3), trait);
+      } else {
+        c.save();
+        c.clipPath(Path()..addOval(oeil));
+        c.drawOval(oeil, noir);
+        c.drawCircle(Offset(s.gx.x * 5.5, s.gy.x * 5.5 - s.bas[i].x * 9), 6, Paint()..color = Colors.white);
+        final Paint peau = Paint()..color = T.lilas;
+        c.save();
+        c.rotate(s.pente[i].x);
+        c.drawRect(Rect.fromLTWH(-30, -64 + ph * 38, 60, 46), peau);
+        c.restore();
+        c.drawCircle(Offset(0, 46 - s.bas[i].x * 36), 26, peau);
+        c.restore();
+      }
+      c.restore();
+    }
+    c.restore();
+    // Larmes : elles quittent les yeux, coulent le long du visage, tombent plus bas et éclaboussent.
+    if (s.larme >= 0) {
+      final Paint eau = Paint()..color = const Color(0xFF8652E6);
+      for (final double x in <double>[84, 122]) {
+        final double cote = x < 100 ? -1 : 1, xx = x + dxTete;
+        if (s.larme < 1) {
+          final double k = s.larme, yy = 144 + 84 * k * k;
+          final Offset p = Offset(xx + cote * 7 * math.sin(k * math.pi * 0.5), yy);
+          c.drawPath(
+              Path()
+                ..moveTo(p.dx, p.dy - 9)
+                ..quadraticBezierTo(p.dx + 5.5, p.dy, p.dx, p.dy + 5)
+                ..quadraticBezierTo(p.dx - 5.5, p.dy, p.dx, p.dy - 9),
+              eau);
+        } else {
+          final double k = ((s.larme - 1) / 0.3).clamp(0, 1);
+          for (int i = -1; i <= 1; i++) {
+            c.drawCircle(Offset(xx + cote * 7 + i * 10 * k, 230 - 12 * math.sin(k * math.pi)), 2.6 * (1 - k), eau);
+          }
+        }
+      }
+    }
+    c.restore();
+  }
+
+  @override
+  bool shouldRepaint(_PraxisPeintre o) => true;
+}
+
+/// La bulle vivante : une seule masse qui respire quand on l'éveille.
+class Bulle extends StatefulWidget {
+  const Bulle({super.key, this.couleurs, this.child, this.repos = 0.12});
+  final List<Color>? couleurs;
+  final Widget? child;
+  final double repos;
+  @override
+  State<Bulle> createState() => BulleState();
+}
+
+class BulleState extends State<Bulle> with SingleTickerProviderStateMixin<Bulle>, Vivant<Bulle> {
+  final R energie = R(0, k: 3, c: 3.2);
+  final math.Random _h = math.Random(11);
+  late final List<List<double>> ph =
+      List<List<double>>.generate(9, (_) => <double>[_h.nextDouble() * 6.3, 0.6 + _h.nextDouble() * 0.9, _h.nextDouble() * 6.3, 0.3 + _h.nextDouble() * 0.5]);
+  @override
+  Iterable<R> get ressorts => <R>[energie];
+  void eveil(double f) {
+    energie.x = math.min(1.3, energie.x + f);
+    reveil();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) => eveil(1));
+  }
+
+  @override
+  Widget build(BuildContext context) => MouseRegion(
+        onHover: (_) => eveil(0.02),
+        child: Listener(
+          onPointerDown: (_) => eveil(0.9),
+          child: CustomPaint(painter: _BullePeintre(widget.repos + energie.x, temps, ph, widget.couleurs ?? <Color>[T.accent, T.lilas]), child: widget.child),
+        ),
+      );
+}
+
+class _BullePeintre extends CustomPainter {
+  _BullePeintre(this.e, this.t, this.ph, this.couleurs);
+  final double e, t;
+  final List<List<double>> ph;
+  final List<Color> couleurs;
+  @override
+  void paint(Canvas c, Size s) {
+    const int n = 9;
+    final List<Offset> p = <Offset>[
+      for (int i = 0; i < n; i++)
+        s.center(Offset.zero) +
+            Offset(math.cos(i / n * 6.283) * s.width * 0.43, math.sin(i / n * 6.283) * s.height * 0.43) *
+                (1 + e * (0.16 * math.sin(t * ph[i][1] * 2.2 + ph[i][0]) + 0.08 * math.sin(t * ph[i][3] * 5 + ph[i][2])))
+    ];
+    final Path path = Path();
+    for (int i = 0; i < n; i++) {
+      final Offset a = p[i], m = (a + p[(i + 1) % n]) / 2;
+      if (i == 0) {
+        path.moveTo(m.dx, m.dy);
+      } else {
+        path.quadraticBezierTo(a.dx, a.dy, m.dx, m.dy);
+      }
+    }
+    final Offset m0 = (p[0] + p[1]) / 2;
+    path.quadraticBezierTo(p[0].dx, p[0].dy, m0.dx, m0.dy);
+    c.drawPath(path, Paint()..shader = ui.Gradient.linear(Offset.zero, Offset(s.width, s.height), couleurs));
+  }
+
+  @override
+  bool shouldRepaint(_BullePeintre o) => true;
+}
