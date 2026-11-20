@@ -182,7 +182,7 @@ class _EtatLigneEtapes extends State<LigneEtapes>
             ],
           ],
         ),
-        // « Etape 1 sur 3 · Votre candidature est a completer ».
+        // « Etape 1 sur 3 · Votre candidature », puis l'etat en une ligne.
         Wrap(
           crossAxisAlignment: WrapCrossAlignment.center,
           spacing: AppSpacing.sm,
@@ -195,32 +195,35 @@ class _EtatLigneEtapes extends State<LigneEtapes>
                 textes.bodyMedium ?? const TextStyle(),
               ),
             ),
-            Semantics(
-              header: ditEtat,
-              child: Text(
-                ditEtat ? etat : LigneEtapes.nom(_montree),
-                key: ditEtat
-                    ? StatutCandidature.titreKey
-                    : _montree == widget.rang
-                    ? EnteteSalle.salleKey
-                    : null,
-                style: palette.inkStrong.applyTo(
-                  textes.titleSmall ?? const TextStyle(),
-                ),
+            Text(
+              LigneEtapes.nom(_montree),
+              key: _montree == widget.rang ? EnteteSalle.salleKey : null,
+              style: palette.inkMuted.applyTo(
+                textes.bodyMedium ?? const TextStyle(),
               ),
             ),
           ],
         ),
+        if (ditEtat) ...<Widget>[
+          Ecart.vXs,
+          Semantics(
+            header: true,
+            child: Text(
+              etat,
+              key: StatutCandidature.titreKey,
+              style: palette.inkStrong.applyTo(
+                textes.titleSmall ?? const TextStyle(),
+              ),
+            ),
+          ),
+        ],
         // Ce qui se passe a l'etape touchee : une ligne, qui se deplie.
         Depliant(
           child: _touchee
               ? Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.xs),
                   child: Text(
-                    ditEtat
-                        ? '${LigneEtapes.nom(_montree)}. '
-                              '${LigneEtapes.detail(_montree)}'
-                        : LigneEtapes.detail(_montree),
+                    LigneEtapes.detail(_montree),
                     key: LigneEtapes.cleDetail,
                     style: palette.inkMuted.applyTo(
                       textes.bodyMedium ?? const TextStyle(),

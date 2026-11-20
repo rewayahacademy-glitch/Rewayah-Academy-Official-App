@@ -559,10 +559,10 @@ void main() {
       await tester.tap(find.byKey(LigneEtapes.cleStation(1)));
       await tester.pumpAndSettle();
       expect(
-        tester.widget<Text>(find.byKey(LigneEtapes.cleDetail)).data,
-        '${t.recrutement.sallesCandidat.candidature}. '
-        '${t.recrutement.accueil.etapes.detail1}',
+        tester.widget<Text>(find.byKey(EnteteSalle.salleKey)).data,
+        t.recrutement.sallesCandidat.candidature,
       );
+      expect(_texte(t.recrutement.accueil.etapes.detail1), findsOneWidget);
     });
 
     testWidgets('maquette : l annonce au-dessus du titre ; une ligne du '

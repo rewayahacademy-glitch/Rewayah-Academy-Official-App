@@ -104,8 +104,11 @@ void main() {
         accordsFaits: false,
         pieceDeposee: false,
       );
-      expect(_texte(t.recrutement.portail.toutIci), findsOneWidget);
-      expect(_texte(t.recrutement.portail.listeTitre), findsOneWidget);
+      // ACCUEIL-CANDIDAT (pilote, 20/11/2026, retours du directeur sur la
+      // planche) : ecran allege, ni phrase « Tout se fait ici », ni titre de
+      // section ; les elements se lisent dans les lignes.
+      expect(_texte(t.recrutement.portail.toutIci), findsNothing);
+      expect(_texte(t.recrutement.portail.listeTitre), findsNothing);
       expect(_texte(t.recrutement.portail.elementAccords), findsOneWidget);
       expect(_texte(t.recrutement.portail.elementPiece), findsOneWidget);
       expect(_texte(t.recrutement.portail.etatADeposer), findsOneWidget);
@@ -457,7 +460,10 @@ void main() {
     ) async {
       await _portail(tester, _enExamen);
       expect(_texte(t.recrutement.portail.enExamenTitre), findsOneWidget);
-      expect(_texte(t.recrutement.portail.enExamen), findsOneWidget);
+      // ACCUEIL-CANDIDAT (20/11/2026) : la phrase qui redisait la carte
+      // « Rien a faire pour l'instant » est retiree ; la carte le dit.
+      expect(_texte(t.recrutement.portail.enExamen), findsNothing);
+      expect(_texte(t.recrutement.accueil.aFaire.rien), findsOneWidget);
       expect(_texte(t.recrutement.portail.completer), findsNothing);
       expect(_cle('portail-versement'), findsNothing);
     });
