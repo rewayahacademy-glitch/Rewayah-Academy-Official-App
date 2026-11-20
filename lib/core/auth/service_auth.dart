@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import '../i18n/strings.g.dart';
 import '../observabilite/journal_dev.dart';
 import 'adresse_retour.dart';
 
@@ -78,12 +79,21 @@ class ServiceAuthSupabase implements ServiceAuth {
     origine: kIsWeb ? Uri.base.origin : null,
   );
 
+  /// LANGUE-LIEN (pilote, 20/11/2026) : la langue de l'interface voyage avec
+  /// la demande (`data.langue` : fr, ar, en), pour que le courriel d'un compte
+  /// tout neuf parte dans sa langue (les modeles `supabase/templates/*.html`
+  /// lisent `.Data.langue`). Cote serveur (GoTrue), `data` ne sert qu'a
+  /// l'inscription : un compte deja confirme garde ses metadonnees, la langue
+  /// qu'il a choisie n'est donc pas ecrasee.
   @override
   Future<void> envoyerLienCourriel(String courriel, {String? jetonControle}) =>
       _client.auth.signInWithOtp(
         email: courriel.trim(),
         emailRedirectTo: _retour,
         captchaToken: jetonControle,
+        data: <String, dynamic>{
+          'langue': LocaleSettings.currentLocale.languageCode,
+        },
       );
 
   @override
