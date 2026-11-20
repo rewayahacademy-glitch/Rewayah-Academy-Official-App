@@ -89,7 +89,7 @@ Deno.test('/authorize : une demande valable mene a la page de consentement, sans
   const { c, appels } = contexte({ demande: DEMANDE })
   const r = await traiterServeur(autoriser(QUERY), c)
   assertEquals(r.status, 302)
-  assertEquals(r.headers.get('Location'), `https://app.test/praxis/autoriser?demande=${DEMANDE}`)
+  assertEquals(r.headers.get('Location'), `https://app.test/admin/securite-audit/praxis-autoriser?demande=${DEMANDE}`)
   assertEquals(appels, [{ fonction: 'praxis_oauth_demander', params: {
     p_client: CLIENT, p_rappel: RAPPEL, p_challenge: 'a'.repeat(43), p_methode: 'S256', p_etat: 'etat 1&x', p_scope: null,
   } }])

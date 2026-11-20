@@ -18,6 +18,8 @@ import '../../features/accueil_famille/ancre_horloge_serveur.dart'
 import '../../features/accueil_inscrits/accueil_inscrits_page.dart';
 import '../../features/admin_acces_agents/acces_agents_page.dart'
     deferred as d_acces_agents_page;
+import '../../features/admin_acces_agents/autoriser_praxis_page.dart'
+    deferred as d_autoriser_praxis_page;
 import '../../features/admin_admissions/admissions_page.dart'
     deferred as d_admissions_page;
 import '../../features/admin_avis/avis_page.dart' deferred as d_avis_page;
@@ -333,6 +335,7 @@ import 'routes.dart';
 /// 29/10/2026), pour les precharger d'un coup (`test/flutter_test_config.dart`).
 final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_acces_agents_page', d_acces_agents_page.loadLibrary),
+  ('d_autoriser_praxis_page', d_autoriser_praxis_page.loadLibrary),
   ('d_admin_offres_page', d_admin_offres_page.loadLibrary),
   ('d_nouvelle_offre_page', d_nouvelle_offre_page.loadLibrary),
   ('d_admissions_page', d_admissions_page.loadLibrary),
@@ -2812,6 +2815,22 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_acces_agents_page',
             charger: d_acces_agents_page.loadLibrary,
             construire: () => d_acces_agents_page.AccesAgentsPage(),
+          ),
+        ),
+      ),
+      // PX-OAUTH 2d : la page de consentement d'une connexion a Praxis. Admin
+      // seulement (sous-arbre `/admin`) ; la base exige aussi la double
+      // verification. L'adresse porte la demande : `?demande=<identifiant>`.
+      GoRouteSure(
+        path: Routes.adminSecuriteAuditAutoriserPraxis,
+        builder: (BuildContext _, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.securite,
+          child: PageDifferee(
+            cle: 'd_autoriser_praxis_page',
+            charger: d_autoriser_praxis_page.loadLibrary,
+            construire: () => d_autoriser_praxis_page.AutoriserPraxisPage(
+              demande: etat.uri.queryParameters['demande'] ?? '',
+            ),
           ),
         ),
       ),
