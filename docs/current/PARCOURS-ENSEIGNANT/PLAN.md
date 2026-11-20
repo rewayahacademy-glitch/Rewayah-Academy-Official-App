@@ -1080,3 +1080,23 @@ direction. Porté par le lot PX-4 (champs `besoin`, `risque_connexion`, `risque_
   sur leur modèle ; tout nouvel agent part sur le modèle moins coûteux.
 - Cause du premier passage arrêté à 19 conversations : la consigne lit 20 conversations par
   passage. Les suivantes sont prises au passage horaire suivant.
+
+### 17.9 Praxis décide et prend l'initiative (directeur, 20/11/2026)
+
+« En fait il ne prend pas de décision ni initiative ; donc on ne va pas avancer vite. » Constat
+lu en production : en deux passages, 34 réponses dont 13 renvois à la direction, alors que la
+plupart de ces 13 questions ont une réponse connue (compétence `repondre-rewayah`).
+
+- **Fait le 20/11 à 02:39 UTC** : consigne de la routine réécrite. Praxis répond seul sur le fond
+  (suite de la candidature, entretien, canal, disponibilités, documents, pays et moyen de
+  versement, lien de connexion, double candidature) ; il ne passe à la direction que : accepter ou
+  refuser une personne, un montant, une banque ou un pays que le serveur ne confirme pas, un nom ou
+  un compte, une pièce d'identité, une plainte, une question religieuse ou juridique, un enfant, et
+  il joint alors sa proposition de réponse. Il lit 50 conversations par passage, parcourt tous les
+  dossiers, et « déjà proposée » n'arrête plus le classement (20 propositions par passage).
+- **Pas encore possible, il faut le serveur (lot PX-4)** : appliquer un geste sans attendre la
+  direction (réglage `gestes_autonomes`, vide par défaut : admettre aux vérifications, demander un
+  complément, entretien écrit, relances ; jamais refuser, accepter définitivement, argent, compte,
+  droit) ; relire et fermer ses propres questions ; écrire le premier.
+- **Non prouvé** : la nouvelle consigne tourne pour la première fois à 03:24 UTC, sur le modèle
+  moins coûteux.
