@@ -32,6 +32,28 @@ import '../config/env.dart';
 /// essais. La cle de production vient du reglage, jamais d'ici.
 const String cleTurnstileApercu = '1x00000000000000000000AA';
 
+/// PE-CASE-VERIFICATION (20/11/2026) : le style de l'element HTML qui recoit
+/// le widget de Cloudflare.
+///
+/// - `display:block`, jamais `flex` : dans une boite `flex` centree, le
+///   conteneur de Cloudflare prend la largeur de son contenu, et la taille
+///   `flexible` (100 % de son parent, 300 au moins) retombait a 300 points,
+///   plus etroite que le champ. En bloc, il prend toute la largeur de la vue
+///   (mesure dans Chromium a 390 de large : 300 en `flex`, 358 en bloc, soit
+///   la largeur exacte du champ).
+/// - `overflow:hidden` : la case est ROGNEE a la place que Flutter lui donne
+///   (1 point cachee, sa hauteur pleine montree). Elle reste dans la page et
+///   peinte (le rognage ne la retire pas, PE-A5) ; elle ne deborde plus sur le
+///   bouton et les liens du dessous quand sa place se referme apres « Succes ».
+/// - `border-radius` : le rayon des champs et des boutons, pour que le gris de
+///   la case epouse leurs coins.
+///
+/// Jamais `opacity:0`, `visibility:hidden` ni `display:none` : la verification
+/// ne tournerait plus.
+String styleHoteTurnstile({required double rayon}) =>
+    'display:block;width:100%;height:100%;overflow:hidden;'
+    'border-radius:${rayon.toStringAsFixed(0)}px;';
+
 /// La lecture de la cle publique du site.
 abstract interface class PortCleTurnstile {
   /// La cle publique, ou `null` quand le reglage est vide (aucun controle).
