@@ -17,21 +17,31 @@
 --      `langue` du courriel ; la langue de la candidature de ce compte ; celle d'une candidature dont le
 --      contact est cette adresse ; la langue explicitement donnee au dernier courriel de cette adresse ;
 --      l'arabe si la reponse importee de cette adresse (nom ou formulaire) est ecrite en arabe ; sinon le
---      francais. Un courriel sans profil retrouve le compte qui porte son adresse. Rien d'autre ne change.
+--      francais. Un courriel sans profil retrouve le compte qui porte son adresse (sans tenir compte de la casse).
+--      ATTENTION, PORTEE : la langue de la candidature vaut pour TOUS les courriels d'un compte sans langue
+--      choisie, pas seulement ceux du recrutement : un enseignant admis dont la candidature est en arabe recevra
+--      aussi ses courriels de classes, de remplacement et de paie en arabe, tant qu'il ne choisit pas une
+--      langue dans son compte (le choix du compte passe toujours en premier).
 --   2. private.auth_langue_synchroniser(uuid) : recopie dans auth.users.raw_user_meta_data.langue la langue
 --      du compte (choisie, sinon celle de sa candidature), pour que Supabase Auth ecrive le lien de connexion
 --      dans cette langue. Deux declencheurs la tiennent a jour (choix de langue du compte ; langue d'une
---      candidature) ; un rattrapage l'applique une fois aux comptes existants. Une ecriture qui echoue ne
---      bloque jamais le choix de langue ni la candidature (avertissement seulement).
---   3. Un index sur courriels_sortants (destinataire_adresse, cree_le) pour la lecture 1.
+--      candidature) a partir de l'installation. Une ecriture qui echoue ne bloque jamais le choix de langue ni
+--      la candidature (avertissement seulement). Seul un raw_user_meta_data absent (NULL SQL) ou objet JSON est
+--      ecrit : un JSON null, un scalaire ou un tableau n'est jamais touche.
+--   3. private.auth_langue_rattraper() : le rattrapage des comptes EXISTANTS, rendu comme une fonction privee
+--      (aucun droit client) que ce fichier N'APPELLE PAS : il attend la decision du directeur (ecriture sur
+--      des donnees de personnes). Elle rend le nombre de comptes changes. Le pilote l'appellera par une
+--      migration d'une ligne (SELECT private.auth_langue_rattraper();) le jour ou le directeur le decide.
+--   4. Un index sur courriels_sortants (destinataire_adresse, cree_le) pour la lecture 1.
 --
 -- CE QUE CE FICHIER NE FAIT PAS (hors du serveur) : le SUJET des courriels Auth se regle dans le tableau de
 -- bord Supabase (texte a coller : docs/current/captures/E2E/pe-courriels-candidat/A-COLLER-SUPABASE-AUTH.md).
 --
 -- MOTS D'EFFACEMENT : ZERO. Additif : une fonction remplacee a l'identique de signature (droits et
--- proprietaire gardes par CREATE OR REPLACE), deux fonctions privees neuves, deux declencheurs neufs, un index.
--- Ecriture de donnees : seulement raw_user_meta_data.langue des comptes dont la langue est connue et differe
--- (le rattrapage dit combien). Sans BEGIN ni COMMIT de premier niveau. Rejouable.
+-- proprietaire gardes par CREATE OR REPLACE), trois fonctions privees neuves, deux declencheurs neufs, un index.
+-- Ecriture de donnees A L'INSTALLATION : AUCUNE (le rattrapage n'est pas appele). Ensuite, seuls les
+-- declencheurs ecrivent raw_user_meta_data.langue, au moment ou une personne choisit sa langue ou depose une
+-- candidature. Sans BEGIN ni COMMIT de premier niveau. Rejouable.
 
 DO $preflight$
 DECLARE
@@ -39,9 +49,9 @@ DECLARE
 BEGIN
   SELECT pg_catalog.md5(p.prosrc) INTO v_md5
     FROM pg_catalog.pg_proc p WHERE p.oid = 'public.courriel_langue_a_l_entree()'::pg_catalog.regprocedure;
-  -- 8948fb01... : la definition de 20261023140000 (jamais retouchee depuis) ; 6c6a2152... : celle de ce fichier.
+  -- 8948fb01... : la definition de 20261023140000 (jamais retouchee depuis) ; b94cabac... : celle de ce fichier.
   IF v_md5 IS DISTINCT FROM '8948fb01f326c3ba42d827629b823fec'
-     AND v_md5 IS DISTINCT FROM '6c6a2152ebeb78ac202ef1fe8fd8a276' THEN
+     AND v_md5 IS DISTINCT FROM 'b94cabac83d7ee59ef30715777e0a923' THEN
     RAISE EXCEPTION 'PE-A1 : la definition de courriel_langue_a_l_entree n''est pas celle attendue (%) ; rien n''est modifie', v_md5;
   END IF;
   IF pg_catalog.to_regclass('public.candidatures') IS NULL
@@ -72,7 +82,7 @@ BEGIN
   IF v_profil IS NULL THEN
     SELECT p.id INTO v_profil
       FROM auth.users u JOIN public.profiles p ON p.id = u.id
-     WHERE u.email = NEW.destinataire_adresse
+     WHERE pg_catalog.lower(u.email) = NEW.destinataire_adresse
      LIMIT 1;
   END IF;
   -- 1. La langue choisie dans le compte.
@@ -156,6 +166,8 @@ BEGIN
   EXECUTE 'UPDATE auth.users SET raw_user_meta_data = coalesce(raw_user_meta_data, ''{}''::jsonb)'
        || ' || pg_catalog.jsonb_build_object(''langue'', $2::text)'
        || ' WHERE id = $1 AND (raw_user_meta_data ->> ''langue'') IS DISTINCT FROM $2::text'
+       -- Un JSON null, un scalaire ou un tableau n'est jamais touche.
+       || ' AND (raw_user_meta_data IS NULL OR pg_catalog.jsonb_typeof(raw_user_meta_data) = ''object'')'
     USING p_profil, v_langue;
   GET DIAGNOSTICS v_n = ROW_COUNT;
   RETURN v_n > 0;
@@ -220,26 +232,39 @@ BEGIN
 END
 $declencheurs$;
 
--- Le rattrapage : une fois, les comptes dont la langue est connue.
-DO $rattrapage$
+-- Le rattrapage des comptes existants : une fonction privee, JAMAIS appelee par ce fichier (decision du
+-- directeur attendue). Elle rend le nombre de comptes dont la langue a ete recopiee ; un second appel rend 0.
+CREATE OR REPLACE FUNCTION private.auth_langue_rattraper()
+RETURNS integer
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = ''
+AS $function$
 DECLARE
   v_id uuid;
   v_n integer := 0;
-  v_vus integer := 0;
 BEGIN
   FOR v_id IN
     SELECT p.id FROM public.profiles p
      WHERE p.langue_communication IS NOT NULL
         OR EXISTS (SELECT 1 FROM public.candidatures c WHERE c.profile_id = p.id AND c.langue IS NOT NULL)
   LOOP
-    v_vus := v_vus + 1;
     IF private.auth_langue_synchroniser(v_id) THEN
       v_n := v_n + 1;
     END IF;
   END LOOP;
-  RAISE NOTICE 'PE-A1 : % comptes a langue connue, % recopies pour l''authentification', v_vus, v_n;
+  RETURN v_n;
+END;
+$function$;
+ALTER FUNCTION private.auth_langue_rattraper() OWNER TO postgres;
+REVOKE ALL ON FUNCTION private.auth_langue_rattraper() FROM PUBLIC, anon, authenticated, service_role;
+DO $droits$
+BEGIN
+  IF EXISTS (SELECT 1 FROM pg_catalog.pg_roles WHERE rolname = 'agent_ro') THEN
+    REVOKE ALL ON FUNCTION private.auth_langue_rattraper() FROM agent_ro;
+  END IF;
 END
-$rattrapage$;
+$droits$;
 
 -- ====================================================================================================================
 -- Controle final
@@ -249,7 +274,7 @@ DECLARE
   v text;
 BEGIN
   IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p
-       WHERE p.oid = 'public.courriel_langue_a_l_entree()'::pg_catalog.regprocedure) IS DISTINCT FROM '6c6a2152ebeb78ac202ef1fe8fd8a276'
+       WHERE p.oid = 'public.courriel_langue_a_l_entree()'::pg_catalog.regprocedure) IS DISTINCT FROM 'b94cabac83d7ee59ef30715777e0a923'
      OR NOT EXISTS (SELECT 1 FROM pg_catalog.pg_proc p
                      WHERE p.oid = 'public.courriel_langue_a_l_entree()'::pg_catalog.regprocedure
                        AND p.prosecdef AND p.proconfig @> ARRAY['search_path=""']) THEN
@@ -260,7 +285,8 @@ BEGIN
                     AND t.tgfoid = 'public.courriel_langue_a_l_entree()'::pg_catalog.regprocedure) THEN
     RAISE EXCEPTION 'PE-A1 : le declencheur courriel_langue ne lit plus la fonction attendue';
   END IF;
-  FOREACH v IN ARRAY ARRAY['private.auth_langue_synchroniser(uuid)', 'private.auth_langue_suivre()'] LOOP
+  FOREACH v IN ARRAY ARRAY['private.auth_langue_synchroniser(uuid)', 'private.auth_langue_suivre()',
+                           'private.auth_langue_rattraper()'] LOOP
     IF pg_catalog.has_function_privilege('anon', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('authenticated', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('service_role', v, 'EXECUTE')
