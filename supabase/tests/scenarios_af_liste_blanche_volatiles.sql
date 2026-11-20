@@ -355,6 +355,9 @@ declare
     'lister_a_prevenir_candidats(boolean,integer)',
     'lister_formulaires_importes(jsonb,integer)',
     'lister_candidatures(jsonb,text,integer)',
+    -- PE-LISTE-CANDIDATURES (20/11) : « Selectionner les N resultats », corps engendre depuis lister_candidatures
+    -- (meme garde positive admin ou mission ET app_account_valid, meme audit).
+    'selection_resultats_file(jsonb,text)',
     -- LP-1 (16/11) : la liste des enseignants, meme garde et meme audit que lister_candidatures.
     'lister_enseignants(jsonb,text,integer)',
     -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
