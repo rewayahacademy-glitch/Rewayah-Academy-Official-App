@@ -234,6 +234,15 @@ final Provider<PortLieu> portLieuProvider = Provider<PortLieu>((Ref ref) {
   }
 });
 
+/// La ville enregistree de la personne connectee (`mon_lieu`), ou `null`
+/// quand elle n'en a pas choisi. Lue a l'ouverture de l'ecran qui la montre
+/// (PE-B3 : « Votre candidature ») ; l'echec reste une erreur, l'ecran la dit.
+final FutureProvider<LieuChoisi?> monLieuProvider =
+    FutureProvider.autoDispose<LieuChoisi?>(
+      (Ref ref) => ref.watch(portLieuProvider).monLieu(),
+      retry: (int _, Object _) => null,
+    );
+
 /// L'etat de l'etape de la ville de la personne connectee : lu une fois par
 /// compte (le role et l'identifiant le renouvellent), `null` pour qui n'a pas
 /// de ville a donner (eleve, direction, comptable, controleur).

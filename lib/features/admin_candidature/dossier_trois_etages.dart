@@ -323,6 +323,20 @@ LigneSynthese? ligneAgeDuDossier(MajoriteCandidature majorite) {
   );
 }
 
+/// PE-B3 (directeur, 05/11 et 19/11/2026 : « une donnee saisie doit servir »,
+/// PLAN §2.7) : le nom que le candidat a confirme en lettres latines, sur la
+/// carte de profil. Il vient de la ligne (`nomLatin`, rendu par le serveur
+/// depuis CAND-NOM-LATIN). `null` quand il n'y en a pas, ou quand il ne fait
+/// que repeter le nom d'origine (deja latin) : jamais une ligne en double.
+/// Un nom latin reste de gauche a droite dans une page arabe.
+LigneSynthese? ligneNomLatinDuDossier(LigneCandidature ligne) {
+  final String? latin = ligne.nomLatin?.trim();
+  if (latin == null || latin.isEmpty || latin == ligne.nomComplet.trim()) {
+    return null;
+  }
+  return (cle: t.inscription.nomLatin.court, valeur: isolerSens(latin));
+}
+
 /// L'etage 2 : la synthese, un tableau a deux colonnes (libelle court a
 /// gauche, valeur courte a droite), une ligne par critere. Une valeur trop
 /// longue passe a la ligne entre les mots, jamais tronquee. En arabe, le
@@ -1163,6 +1177,7 @@ class _EtatCorpsDossier extends ConsumerState<CorpsDossier> {
       plan: plan,
       navigation: widget.navigation,
       profil: <LigneSynthese>[
+        ?ligneNomLatinDuDossier(detail.ligne),
         for (final LigneSynthese l in synthese)
           if (cleProfil.contains(l.cle)) l,
       ],

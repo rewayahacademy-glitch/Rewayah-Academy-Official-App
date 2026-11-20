@@ -37,6 +37,7 @@ import '../../core/widgets/skeleton.dart';
 import 'controleur_parcours.dart';
 import 'coquille_parcours.dart';
 import 'disponibilites_etape.dart';
+import 'identite_candidature.dart';
 import 'lecture_page.dart';
 import 'libelles_parcours.dart';
 import 'majorite_etape.dart';
@@ -455,6 +456,9 @@ class _LectureSeule extends ConsumerWidget {
                       ],
                     ),
                   ),
+                  // PE-B3 : le nom latin et la ville, saisis hors du
+                  // questionnaire, se relisent ici (rien quand il n'y a rien).
+                  const BlocIdentiteCandidature(),
                   Ecart.vSection,
                   CartesRecapitulatif(questionnaire: q, reponses: reponses),
                 ],

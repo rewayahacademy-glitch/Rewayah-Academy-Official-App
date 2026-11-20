@@ -1558,7 +1558,8 @@
       "libelle": "Your name in Latin letters",
       "raison": "For lists, certificates and exchanges with the academy.",
       "aide": "Here is our suggestion. Correct it if your name is not written this way.",
-      "erreur": "Write your name using Latin alphabet letters (a, b, c) to continue."
+      "erreur": "Write your name using Latin alphabet letters (a, b, c) to continue.",
+      "court": "Name in Latin letters"
     }
   },
   "protectionEnfants": {
@@ -3277,6 +3278,7 @@
       "conditionsNonCharge": "The pay terms could not be loaded.",
       "envoyee": "Your application has been sent. The academy will notify you here if it needs to be completed.",
       "envoyeeLe": "Sent on {date}.",
+      "identiteTitre": "Your name and city",
       "etatVersement": "Payment method: {etat}",
       "retourDossier": "Back to my file",
       "complementCarte": "The academy asks you to complete this part.",
