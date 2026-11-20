@@ -1558,7 +1558,8 @@
       "libelle": "Votre nom en lettres latines",
       "raison": "Pour les listes, les attestations et les échanges avec l'académie.",
       "aide": "Voici notre proposition. Corrigez-la si votre nom ne s'écrit pas ainsi.",
-      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer."
+      "erreur": "Écrivez votre nom avec les lettres de l'alphabet latin (a, b, c) pour continuer.",
+      "court": "Nom en lettres latines"
     }
   },
   "protectionEnfants": {
@@ -3304,6 +3305,7 @@
       "conditionsNonCharge": "Les conditions de rémunération n'ont pas pu être chargées.",
       "envoyee": "Votre candidature est envoyée. L'académie vous préviendra ici s'il faut la compléter.",
       "envoyeeLe": "Envoyée le {date}.",
+      "identiteTitre": "Votre nom et votre ville",
       "etatVersement": "Moyen de versement\u00a0: {etat}",
       "retourDossier": "Retour à mon dossier",
       "complementCarte": "L'académie vous demande de compléter cette partie.",
