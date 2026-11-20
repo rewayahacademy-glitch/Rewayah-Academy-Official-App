@@ -22783,6 +22783,7 @@ class _Traductions$juridique$confidentialite$s3$ar extends Traductions$juridique
 		'- فوترة الاشتراك.',
 		'- حماية الطلاب ومراقبة جودة الحصص.',
 		'- إصلاح الأعطال.',
+		'- الرد على رسائلكم بسرعة أكبر، بمساعدة مساعد رقمي (انظر البند ٤).',
 	];
 }
 
@@ -22798,6 +22799,7 @@ class _Traductions$juridique$confidentialite$s4$ar extends Traductions$juridique
 		'لا ترى الأسرة إلا معلوماتها. ومعلومات الطفل ليست عامة أبدًا ولا تُعرض على الأسر الأخرى.',
 		'يرى المعلم طلابه وفصوله. وترى الإدارة ما يلزم لتسيير التسجيلات والفصول والمدفوعات. وتُضبط هذه الصلاحيات من جهة الخادم.',
 		'قد يحضر مراقب الجودة الحصص. وتُسجَّل الدخولات الحساسة في سجل.',
+		'يساعد مساعدٌ رقمي اسمه Praxis الأكاديميةَ في الرد على الأسر والمترشحين في مراسلة التطبيق. ويبيّن ملفه التعريفي أنه ذكاء اصطناعي. تستعين الأكاديمية بمساعد ذكاء اصطناعي. يقرأ طلب ترشحكم ورسائلكم، باستثناء بيانات الاتصال بكم ووثيقة هويتكم وصورتكم وبيانات التحويل الخاصة بكم. ويمكنه أن يكتب إليكم، وأن يسألكم عن مساركم وطريقتكم في التدريس، وأن يُعدّ رأيًا للإدارة. وكل قرار بشأن ترشحكم تتخذه الإدارة. ولا يقرأ أي محادثة يشارك فيها طفل، ولا وثائق الهوية، ولا المدفوعات. ولا يكتب أبدًا إلى طفل ولا يرسل أي بريد إلكتروني. ويعمل تحت مسؤولية الإدارة، التي يمكنها إيقافه في أي وقت.',
 	];
 }
 
@@ -22827,6 +22829,7 @@ class _Traductions$juridique$confidentialite$s6$ar extends Traductions$juridique
 	@override List<String> get blocs => [
 		'نستخدم مستضيفًا لصفحات الويب، وقاعدة بيانات مع تسجيل دخول الحسابات، وخدمة فيديو، وتخزينًا خاصًا للملفات، ومزوّدًا للدفع، وخدمة لتقارير الأخطاء. وهي تعالج معلوماتكم لحسابنا ولهذه الأسباب فقط.',
 		'لحماية تسجيل الدخول من البرامج الآلية، نستخدم خدمة Cloudflare Turnstile (شركة Cloudflare). عند التحقق، تعالج Cloudflare عنوان IP الخاص بكم ومعلومات تقنية عن متصفحكم، لهذا التحقق فقط ودون ملفات تعريف ارتباط إعلانية. الأساس القانوني: مصلحتنا المشروعة في تأمين الخدمة.',
+		'للقراءة والرد، يعتمد المساعد على مزوّد للذكاء الاصطناعي. وهو اليوم شركة Anthropic PBC (Claude)، ومقرها في الولايات المتحدة. ويمكن للأكاديمية أيضًا، بالشروط نفسها، أن تستعين بشركة Google LLC (Gemini) أو بشركة OpenAI (ChatGPT)، ومقرهما في الولايات المتحدة؛ ويُذكر هنا دائمًا المزوّد المستخدم. وتُرسل الرسائل التي يقرؤها المساعد إلى المزوّد لهذا السبب وحده. ولا تُستخدم لتدريب نماذجه، وتُحذف لديه بعد 30 يومًا على الأكثر. ويخضع هذا النقل إلى خارج الاتحاد الأوروبي للبنود التعاقدية النموذجية للمفوضية الأوروبية. ونحتفظ مدة 12 شهرًا بأثر لما أرسله المساعد، ولا نحتفظ أبدًا بنص الرسائل التي تكتبونها. والأساس القانوني هو مصلحتنا المشروعة في الرد عليكم بسرعة.',
 	];
 }
 
@@ -22855,6 +22858,7 @@ class _Traductions$juridique$confidentialite$s8$ar extends Traductions$juridique
 		'- الاطلاع على المعلومات التي لدينا عنكم.',
 		'- تصحيحها.',
 		'- طلب حذفها أو تقييد استخدامها.',
+		'يمكنكم في أي وقت أن تطلبوا التحدث إلى الفريق: فيتولى شخص المحادثة، ولا يعود المساعد يرد عليكم فيها.',
 		'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
 	];
 }
@@ -41600,10 +41604,12 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s3.blocs.2' => '- فوترة الاشتراك.',
 			'juridique.confidentialite.s3.blocs.3' => '- حماية الطلاب ومراقبة جودة الحصص.',
 			'juridique.confidentialite.s3.blocs.4' => '- إصلاح الأعطال.',
+			'juridique.confidentialite.s3.blocs.5' => '- الرد على رسائلكم بسرعة أكبر، بمساعدة مساعد رقمي (انظر البند ٤).',
 			'juridique.confidentialite.s4.titre' => '٤. من يرى ماذا',
 			'juridique.confidentialite.s4.blocs.0' => 'لا ترى الأسرة إلا معلوماتها. ومعلومات الطفل ليست عامة أبدًا ولا تُعرض على الأسر الأخرى.',
 			'juridique.confidentialite.s4.blocs.1' => 'يرى المعلم طلابه وفصوله. وترى الإدارة ما يلزم لتسيير التسجيلات والفصول والمدفوعات. وتُضبط هذه الصلاحيات من جهة الخادم.',
 			'juridique.confidentialite.s4.blocs.2' => 'قد يحضر مراقب الجودة الحصص. وتُسجَّل الدخولات الحساسة في سجل.',
+			'juridique.confidentialite.s4.blocs.3' => 'يساعد مساعدٌ رقمي اسمه Praxis الأكاديميةَ في الرد على الأسر والمترشحين في مراسلة التطبيق. ويبيّن ملفه التعريفي أنه ذكاء اصطناعي. تستعين الأكاديمية بمساعد ذكاء اصطناعي. يقرأ طلب ترشحكم ورسائلكم، باستثناء بيانات الاتصال بكم ووثيقة هويتكم وصورتكم وبيانات التحويل الخاصة بكم. ويمكنه أن يكتب إليكم، وأن يسألكم عن مساركم وطريقتكم في التدريس، وأن يُعدّ رأيًا للإدارة. وكل قرار بشأن ترشحكم تتخذه الإدارة. ولا يقرأ أي محادثة يشارك فيها طفل، ولا وثائق الهوية، ولا المدفوعات. ولا يكتب أبدًا إلى طفل ولا يرسل أي بريد إلكتروني. ويعمل تحت مسؤولية الإدارة، التي يمكنها إيقافه في أي وقت.',
 			'juridique.confidentialite.s5.titre' => '٥. الحصص المباشرة والتسجيل',
 			'juridique.confidentialite.s5.blocs.0' => 'يمر الفيديو عبر خدمة متخصصة. ويمنح الخادم الدخول إلى الحصة لهذه الحصة فقط ولمدة قصيرة.',
 			'juridique.confidentialite.s5.blocs.1' => 'اليوم لا يسجّل التطبيق الدروس. وإذا عاد التسجيل فسنقول لكم قبل ذلك لماذا، وكم مدة الحفظ، ومن يمكنه الاطلاع عليه، وسنطلب موافقتكم.',
@@ -41611,13 +41617,15 @@ extension on TraductionsAr {
 			'juridique.confidentialite.s6.titre' => '٦. أين توجد معلوماتكم',
 			'juridique.confidentialite.s6.blocs.0' => 'نستخدم مستضيفًا لصفحات الويب، وقاعدة بيانات مع تسجيل دخول الحسابات، وخدمة فيديو، وتخزينًا خاصًا للملفات، ومزوّدًا للدفع، وخدمة لتقارير الأخطاء. وهي تعالج معلوماتكم لحسابنا ولهذه الأسباب فقط.',
 			'juridique.confidentialite.s6.blocs.1' => 'لحماية تسجيل الدخول من البرامج الآلية، نستخدم خدمة Cloudflare Turnstile (شركة Cloudflare). عند التحقق، تعالج Cloudflare عنوان IP الخاص بكم ومعلومات تقنية عن متصفحكم، لهذا التحقق فقط ودون ملفات تعريف ارتباط إعلانية. الأساس القانوني: مصلحتنا المشروعة في تأمين الخدمة.',
+			'juridique.confidentialite.s6.blocs.2' => 'للقراءة والرد، يعتمد المساعد على مزوّد للذكاء الاصطناعي. وهو اليوم شركة Anthropic PBC (Claude)، ومقرها في الولايات المتحدة. ويمكن للأكاديمية أيضًا، بالشروط نفسها، أن تستعين بشركة Google LLC (Gemini) أو بشركة OpenAI (ChatGPT)، ومقرهما في الولايات المتحدة؛ ويُذكر هنا دائمًا المزوّد المستخدم. وتُرسل الرسائل التي يقرؤها المساعد إلى المزوّد لهذا السبب وحده. ولا تُستخدم لتدريب نماذجه، وتُحذف لديه بعد 30 يومًا على الأكثر. ويخضع هذا النقل إلى خارج الاتحاد الأوروبي للبنود التعاقدية النموذجية للمفوضية الأوروبية. ونحتفظ مدة 12 شهرًا بأثر لما أرسله المساعد، ولا نحتفظ أبدًا بنص الرسائل التي تكتبونها. والأساس القانوني هو مصلحتنا المشروعة في الرد عليكم بسرعة.',
 			'juridique.confidentialite.s7.titre' => '٧. كم من الوقت',
 			'juridique.confidentialite.s7.blocs.0' => 'نحتفظ بكل نوع من المعلومات للمدة اللازمة فقط. وتُحذف وثيقة هوية المعلم عند انتهاء مهلة محددة. وقد يُجمَّد الحذف عند وجود نزاع.',
 			'juridique.confidentialite.s8.titre' => '٨. حقوقكم',
 			'juridique.confidentialite.s8.blocs.0' => '- الاطلاع على المعلومات التي لدينا عنكم.',
 			'juridique.confidentialite.s8.blocs.1' => '- تصحيحها.',
 			'juridique.confidentialite.s8.blocs.2' => '- طلب حذفها أو تقييد استخدامها.',
-			'juridique.confidentialite.s8.blocs.3' => 'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
+			'juridique.confidentialite.s8.blocs.3' => 'يمكنكم في أي وقت أن تطلبوا التحدث إلى الفريق: فيتولى شخص المحادثة، ولا يعود المساعد يرد عليكم فيها.',
+			'juridique.confidentialite.s8.blocs.4' => 'اكتبوا لنا. نتحقق أولًا أنكم أنتم، أو وليّ أمر الطالب. ويمكنكم أيضًا التوجه إلى هيئة حماية البيانات في بلدكم.',
 			'juridique.confidentialite.s9.titre' => '٩. الأمان',
 			'juridique.confidentialite.s9.blocs.0' => 'يطبّق الخادم قواعد الدخول. ووثائق الهوية في مساحة خاصة منفصلة عن الصور. لا توجد حماية مطلقة: إذا لاحظتم مشكلة فاكتبوا لنا.',
 			'juridique.confidentialite.s10.titre' => '١٠. الأطفال',
@@ -41635,12 +41643,12 @@ extension on TraductionsAr {
 			'juridique.cookies.s2.blocs.4' => 'هذه العناصر ضرورية لعمل التطبيق.',
 			'juridique.cookies.s3.titre' => '٣. ما لا نستخدمه',
 			'juridique.cookies.s3.blocs.0' => 'في تاريخ هذا النص، لا يستخدم التطبيق ولا الموقع ملفات إعلانية ولا قياسًا للزيارات.',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s4.titre' => '٤. تقارير الأخطاء',
 			'juridique.cookies.s4.blocs.0' => 'عندما يتعطل التطبيق قد يُرسَل تقرير تقني إلى خدمة تتبّع الأخطاء. وهو لا يحتوي على لقطة شاشة ولا اسم ولا هوية.',
 			'juridique.cookies.s5.titre' => '٥. التحكم بها',
 			'juridique.cookies.s5.blocs.0' => 'يمكنكم مسح بيانات الموقع من إعدادات متصفحكم، أو تسجيل الخروج من الحساب. وعندئذٍ ستسجّلون الدخول من جديد وتعيدون ضبط تفضيلات العرض.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s6.titre' => '٦. خدمات أطراف ثالثة',
 			'juridique.cookies.s6.blocs.0' => 'إذا غادرتم أكاديمية الرواية إلى خدمة أخرى، مثل الدفع، فإن تلك الخدمة تطبّق قواعدها الخاصة.',
 			'juridique.enfants.titre' => 'حماية الأطفال',
@@ -42149,12 +42157,12 @@ extension on TraductionsAr {
 			'snt.planning.intro' => 'لم ينضمّ أي معلم إلى القاعة في الوقت. حدّدوا الموعد الجديد لكل حصة: ستُعقد مع معلم الفصل.',
 			'snt.planning.ligne' => ({required Object classe}) => 'حصة مؤجلة للفصل ⁨${classe}⁩',
 			'snt.planning.ligneQuand' => ({required Object quand}) => 'كانت مقرّرة ⁨${quand}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'snt.planning.fixer' => 'تحديد الموعد الجديد',
 			'snt.planning.erreurLecture' => 'تعذّرت قراءة الحصص المؤجلة: قد لا يكون الطلب قد وصل إلى أكاديمية الرواية. أعيدوا المحاولة بعد لحظة.',
 			'snt.planning.feuilleTitre' => 'تحديد الموعد الجديد',
 			'snt.planning.feuilleSeance' => ({required Object classe, required Object quand}) => 'الفصل ⁨${classe}⁩، حصة كانت مقرّرة ⁨${quand}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'snt.planning.feuilleContexte' => ({required Object enseignant, required Object minutes}) => 'تُعقد الحصة الجديدة مع ⁨${enseignant}⁩، معلم الفصل، ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.feuilleContexteSansNom' => ({required Object minutes}) => 'تُعقد الحصة الجديدة مع معلم الفصل ومدتها ⁨${minutes}⁩ د مثل الحصة المؤجلة. يُبلَّغ الفصل بالموعد الجديد.',
 			'snt.planning.jour' => 'يوم الحصة الجديدة',
@@ -42663,12 +42671,12 @@ extension on TraductionsAr {
 			'suiviPedagogique.dansLesTemps' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(ecoulees, zero: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', one: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', two: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', few: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', many: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', other: 'ضمن المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع', ), 
 			'suiviPedagogique.auDelaDuPrevu' => ({required num ecoulees, required Object prevue}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(ecoulees, zero: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', one: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', two: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', few: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', many: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', other: 'تجاوز المدة المقررة: ⁨${ecoulees}⁩ من ⁨${prevue}⁩ أسابيع، قبل الموعد النهائي', ), 
 			'suiviPedagogique.etapesTitre' => 'المراحل',
+			_ => null,
+		} ?? switch (path) {
 			'suiviPedagogique.etapeFranchie' => 'المرحلة السابقة',
 			'suiviPedagogique.etapeFranchieLe' => ({required Object numero, required Object mois, required Object annee}) => 'المرحلة السابقة، الدخول في ⁨${numero}⁩ ⁨${mois}⁩ ⁨${annee}⁩',
 			'suiviPedagogique.etapeEnCours' => 'جارية',
 			'suiviPedagogique.etapeAVenir' => 'قادمة',
-			_ => null,
-		} ?? switch (path) {
 			'suiviPedagogique.sourates' => 'سور الأساسيات المعتمدة',
 			'suiviPedagogique.souratesDe' => ({required Object validees, required Object total}) => '⁨${validees}⁩ من ⁨${total}⁩',
 			'suiviPedagogique.revision' => 'المراجعة أسبوعيًا',
@@ -43177,12 +43185,12 @@ extension on TraductionsAr {
 			'presentationTuteur.ligne' => ({required Object prenom}) => 'يطلب ⁨${prenom}⁩ العرض العادي.',
 			'presentationTuteur.demandeeLe' => ({required Object date, required Object heure}) => 'طُلب في ⁨${date}⁩ الساعة ⁨${heure}⁩',
 			'presentationTuteur.accepter' => 'قبول',
+			_ => null,
+		} ?? switch (path) {
 			'presentationTuteur.refuser' => 'رفض',
 			'presentationTuteur.acceptee' => ({required Object prenom}) => 'فُعِّل العرض العادي لـ⁨${prenom}⁩.',
 			'presentationTuteur.refusee' => ({required Object dePrenom}) => 'رُفض طلب ⁨${dePrenom}⁩.',
 			'presentationTuteur.echecReponse' => 'تعذّر تأكيد ردك. يبقى الطلب معلّقًا: أعد المحاولة.',
-			_ => null,
-		} ?? switch (path) {
 			'presentationTuteur.vide' => 'لا طلب عرض عادٍ معلّق.',
 			'presentationTuteur.erreur' => 'تعذّر تحميل الطلبات. أعد المحاولة.',
 			'presentationTuteur.sansDonnees' => 'طلبات العرض العادي',

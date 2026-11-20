@@ -57,7 +57,7 @@ class FauxInscriptionCandidat implements PortInscriptionCandidat {
   /// Cree le double ; [cleOuverte] est la cle de mise en ligne.
   FauxInscriptionCandidat({
     this.cleOuverte = true,
-    this.versionAttendue = '2026-11-v1',
+    this.versionAttendue = '2026-11-v2',
     this.codesValides = const <String>{},
     this.codesUtilises = const <String>{},
     this.codesExpires = const <String>{},

@@ -355,6 +355,16 @@ const Set<String> _motsLatinsAdmis = <String>{
   'GDPR',
   'ICO',
   'Stripe',
+  // CONFIDENTIALITE-PRAXIS (20/11/2026) : les fournisseurs d'IA nommes par la
+  // politique de confidentialite (juridique.confidentialite.s6), gardes en
+  // lettres latines dans toutes les langues (POLITIQUE-CONFIDENTIALITE-PRAXIS.md).
+  'Anthropic',
+  'PBC',
+  'Claude',
+  'LLC',
+  'Gemini',
+  'OpenAI',
+  'ChatGPT',
   'iOS',
   'Play',
   'App',
