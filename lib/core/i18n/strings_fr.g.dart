@@ -5346,7 +5346,7 @@ class Traductions$racine$horsDirect$fr {
 	// Translations
 
 	/// fr: 'Masquer l'avis « Messages pas en direct »'
-	String get masquer => 'Masquer l\'avis « Messages pas en direct »';
+	String get masquer => 'Masquer l\'avis « Messages pas en direct »';
 }
 
 // Path: salle.vignette
@@ -56345,7 +56345,7 @@ extension on Traductions {
 			'racine.miseAJour.mettre' => 'Mettre à jour',
 			'racine.miseAJour.plusTard' => 'Plus tard',
 			'racine.avis.fermer' => 'Fermer l\'avis',
-			'racine.horsDirect.masquer' => 'Masquer l\'avis « Messages pas en direct »',
+			'racine.horsDirect.masquer' => 'Masquer l\'avis « Messages pas en direct »',
 			'reseau.horsLigne' => 'Pas de réseau. Ce qui est déjà affiché reste consultable.',
 			'reseau.enAttenteEnvoi' => 'Sera envoyé dès le retour du réseau',
 			'reseau.retabli' => 'Réseau rétabli',
