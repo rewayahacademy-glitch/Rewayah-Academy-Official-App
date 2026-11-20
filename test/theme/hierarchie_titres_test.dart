@@ -145,12 +145,17 @@ void main() {
         );
         await tester.pump();
 
-        // La marque de la connexion est le logo horizontal (25/10/2026), une
-        // image, plus un texte ; HIER-1 ne compare que des textes. Le titre
-        // reste le seul titre d'ecran, sans mot-marque concurrent.
+        // ENTREE-PRAXIS (20/11/2026) : la marque de la connexion est la
+        // porte du logo, peinte dans la scene de Praxis (une image, plus un
+        // texte ni un logo horizontal) ; HIER-1 ne compare que des textes.
+        // Le titre reste le seul titre d'ecran, sans mot-marque concurrent.
         expect(find.text(t.connexion.titre), findsOneWidget);
         expect(find.text(t.commun.marque), findsNothing);
-        expect(logoRendu(VarianteLogo.horizontal), findsOneWidget);
+        expect(logoRendu(VarianteLogo.horizontal), findsNothing);
+        expect(
+          find.bySemanticsLabel(t.connexion.praxis.scene),
+          findsOneWidget,
+        );
       });
 
       testWidgets('compte : titre d\'ecran et titres de section '

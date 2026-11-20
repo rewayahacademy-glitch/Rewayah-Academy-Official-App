@@ -23,6 +23,12 @@ abstract final class AppRadius {
   /// Tuiles Bento, feuilles de bas d'ecran.
   static const double lg = 24;
 
+  /// ENTREE-PRAXIS (maquette « Praxis vous accueille », confirmee par le
+  /// directeur le 20/11/2026) : la feuille et la carte du formulaire de la
+  /// page d'entree, posees sur la scene de Praxis. Hors de l'echelle : ce
+  /// rayon ne sert qu'a cette page.
+  static const double entree = 40;
+
   /// Avatars, pilules d'etat. Volontairement enorme : c'est un demi-cercle
   /// quelle que soit la hauteur du controle.
   static const double full = 999;

@@ -335,7 +335,9 @@ void main() {
       expect(find.byType(LienFleche), findsNothing);
     });
 
-    testWidgets("l'eleve et Google sur une ligne, l'eleve au debut (390)", (
+    // ENTREE-PRAXIS (20/11/2026, maquette « Praxis vous accueille ») : les
+    // boutons sont l'un sous l'autre, chacun a la largeur du champ.
+    testWidgets("Google puis l'eleve, l'un sous l'autre, meme largeur (390)", (
       WidgetTester tester,
     ) async {
       await _monter(tester);
@@ -345,8 +347,9 @@ void main() {
       final Rect google = tester.getRect(
         find.widgetWithText(ActionPrincipale, t.connexion.avecGoogle),
       );
-      expect(eleve.top, google.top);
-      expect(eleve.right, lessThan(google.left));
+      expect(google.bottom, lessThan(eleve.top));
+      expect(eleve.left, google.left);
+      expect(eleve.width, google.width);
     });
 
     testWidgets('le bouton Google porte le logo Google', (
