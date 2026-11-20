@@ -299,9 +299,13 @@ $f$;
 -- 3. PROPOSER LA DISPENSE D'ENTRETIEN. Le CHECK du geste est REECRIT (trois gestes deviennent quatre) : le seul mot d'effacement du
 -- fichier, sur une contrainte, sans toucher une ligne. Les fonctions retouchees sont plus bas (section 5).
 -- ====================================================================================================================
-ALTER TABLE private.praxis_propositions DROP CONSTRAINT praxis_propositions_geste_check;
-ALTER TABLE private.praxis_propositions ADD CONSTRAINT praxis_propositions_geste_check
-  CHECK (geste IN ('admettre_verifications', 'demander_complement', 'planifier_entretien', 'dispenser_entretien'));
+-- Revue du 20/11/2026 : UNE SEULE instruction (retrait et ajout ensemble), pour qu'il n'existe aucun instant, quel que soit le mode
+-- d'execution (transaction unique ou instruction par instruction), ou la colonne serait sans CHECK. Les lignes existantes ne portent
+-- que les trois anciens gestes : elles satisfont le nouveau CHECK, qui les contient.
+ALTER TABLE private.praxis_propositions
+  DROP CONSTRAINT praxis_propositions_geste_check,
+  ADD CONSTRAINT praxis_propositions_geste_check
+    CHECK (geste IN ('admettre_verifications', 'demander_complement', 'planifier_entretien', 'dispenser_entretien'));
 
 -- ====================================================================================================================
 -- 4. OBJECTIFS. Praxis se fixe des objectifs du JOUR ou de la SEMAINE (libelle de 200 signes au plus, SANS NOM DE PERSONNE : regle de
@@ -356,7 +360,10 @@ BEGIN
   END IF;
   IF p_periode IS NULL OR p_periode NOT IN ('jour', 'semaine') OR p_date IS NULL OR p_cle_idempotence IS NULL OR v_libelle = ''
      -- Un jour : de la veille a dans 14 jours. Une semaine : tout jour de la semaine en cours (son lundi peut etre passe) a dans 14 jours.
-     OR p_date < current_date - (CASE p_periode WHEN 'semaine' THEN 6 ELSE 1 END) OR p_date > current_date + 14 OR (p_cible IS NOT NULL AND p_cible NOT BETWEEN 1 AND 100000) THEN
+     -- Revue du 20/11/2026 : la borne basse d'une semaine est le LUNDI DE LA SEMAINE EN COURS (avant : « il y a 6 jours », qui laissait
+     -- fixer un objectif pour la semaine precedente, deja echue, des le mardi).
+     OR p_date < (CASE p_periode WHEN 'semaine' THEN pg_catalog.date_trunc('week', current_date::timestamp)::date ELSE current_date - 1 END)
+     OR p_date > current_date + 14 OR (p_cible IS NOT NULL AND p_cible NOT BETWEEN 1 AND 100000) THEN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'objectif_fixer', 'parametre', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
   END IF;
@@ -511,7 +518,7 @@ $f$;
 -- ====================================================================================================================
 
 -- 5.1 Les gestes que Praxis peut PREPARER : + dispenser_entretien.
-CREATE OR REPLACE FUNCTION private.praxis_gestes_ligne(c candidatures, p_cotes gender[])
+CREATE OR REPLACE FUNCTION private.praxis_gestes_ligne(c public.candidatures, p_cotes public.gender[])
  RETURNS jsonb
  LANGUAGE sql
  STABLE
@@ -519,7 +526,7 @@ CREATE OR REPLACE FUNCTION private.praxis_gestes_ligne(c candidatures, p_cotes g
 AS $function$
   SELECT CASE WHEN c.genre = ANY (p_cotes)
               THEN pg_catalog.to_jsonb(ARRAY(SELECT g FROM pg_catalog.unnest(private.gestes_regles_de_la_ligne(c)) g
-                                              -- PX-3 : + dispenser_entretien (20261129470000), propose comme les trois autres, jamais execute par Praxis.
+                                              -- PX-3 : + dispenser_entretien (20261129470000), propose comme les trois autres ; Praxis ne le lance jamais.
                                               WHERE g IN ('admettre_verifications', 'demander_complement', 'planifier_entretien', 'dispenser_entretien')
                                               ORDER BY g))
               ELSE '[]'::jsonb END;
@@ -859,7 +866,7 @@ BEGIN
   ELSIF v_pr.geste = 'admettre_verifications' THEN
     v_r := public.admettre_salle_verification(v_pr.candidature_id, v_pr.version_candidature, p_cle);
   ELSE
-    -- PX-3 : un geste que cette porte ne connait pas n'execute RIEN (avant : toute autre valeur executait l'admission).
+    -- PX-3 : un geste que cette porte ne connait pas ne lance RIEN (avant : toute autre valeur lancait l'admission).
     RETURN pg_catalog.jsonb_build_object('erreur', 'geste_inconnu', 'proposition', p_proposition);
   END IF;
   -- Le moteur a refuse : la proposition reste ouverte, le dossier n'a pas bouge, la phrase du moteur est rendue telle quelle.

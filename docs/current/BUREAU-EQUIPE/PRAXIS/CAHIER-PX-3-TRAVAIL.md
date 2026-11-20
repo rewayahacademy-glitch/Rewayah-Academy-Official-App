@@ -10,6 +10,8 @@ je valide un dossier j'écris dans le privé, pas pour tout le monde : il doit l
 - **Deux points sur six ne sont pas livrés** : les relances (point 5, filtre `sans_nouvelles`) et le mot privé après
   une décision (point 6, filtre `a_feliciter`). Rien n'est écrit pour eux. Praxis ne relance donc pas encore et ne
   félicite pas encore. Voir §6 pour ce qu'il faut décider avant de les écrire.
+- **Revue indépendante du 20/11/2026 (soir) : les deux scénarios ci-dessous sont corrigés et verts**, sans être
+  affaiblis, et la migration a reçu quatre retouches (voir §0 bis). Le texte qui suit est gardé pour l'historique.
 - **Deux scénarios existants deviennent ROUGES avec cette migration, et je ne les ai pas modifiés** (ce sont des
   garde-fous, hors de ma zone : au pilote de décider) :
   - `scenarios_sec1_praxis.sql`, vérification « R2 : la liste des fonctions public.praxis_* est exactement la liste
@@ -35,6 +37,33 @@ je valide un dossier j'écris dans le privé, pas pour tout le monde : il doit l
   la routine, Praxis ne rangera rien et ne fixera aucun objectif.
 - `manquants` ne nomme que **le premier accord manquant** (contrat, puis avis, puis code de conduite) : c'est ce
   que rend la fonction existante des contrôles, réutilisée sans copie.
+
+## 0 bis. Revue indépendante du 20/11/2026 : ce qui a été trouvé et corrigé
+
+Rien n'est installé. La revue a rejoué la migration sur un Postgres 16 local (pas 17) et a lu la production en
+lecture seule (aucune écriture).
+
+- **Défaut trouvé dans la migration (important)** : deux commentaires écrits DANS le corps de fonctions
+  (`praxis_gestes_ligne`, `direction_praxis_valider`) contenaient le mot « execute » suivi d'un espace. Le garde-fou
+  R1 de `scenarios_sec1_praxis.sql` (« aucun EXECUTE dynamique ») cherche ce motif : il devenait rouge. Aucun SQL
+  dynamique n'existait ; les commentaires sont réécrits (« lance »), le garde-fou n'est pas touché.
+- **Durcissement** : le retrait et l'ajout du CHECK `praxis_propositions_geste_check` sont réunis en UNE instruction
+  `ALTER TABLE`, pour qu'aucun mode d'exécution ne laisse la colonne sans CHECK. Toujours un seul mot d'effacement.
+- **Durcissement** : la signature de `praxis_gestes_ligne` qualifie ses types (`public.candidatures`,
+  `public.gender[]`) au lieu de dépendre du `search_path` de la session qui installe.
+- **Défaut mineur corrigé** : `praxis_objectif_fixer` acceptait, pour une semaine, une date jusqu'à six jours en
+  arrière, donc la semaine précédente. La borne est le lundi de la semaine en cours ; une vérification de plus dans
+  `scenarios_praxis_travail.sql` (63 vérifications).
+- **`scenarios_sec1_praxis.sql`** : les quatre outils neufs entrent dans la liste blanche (R2) et dans la liste des
+  arguments (R1) ; les trois couples (fonction, table écrite) neufs et les sept appels qualifiés neufs entrent dans
+  les listes fermées (R4, AR-10) ; la dispense d'entretien est désormais SURVEILLÉE comme les trois autres portes de
+  geste (seule `direction_praxis_valider` l'appelle).
+- **`scenarios_px2_preparer.sql`** : le motif interdit (pièce, photo, note, motif, montant…) s'applique toujours,
+  mot pour mot, à toute la réponse de `lire` SAUF aux deux listes `manquants` et `attend_direction`, qui sont
+  contrôlées à part contre des listes fermées de codes ; les six clés neuves entrent dans la liste fermée des clés.
+- **Lu en production (lecture seule)** : Postgres 17.6 ; les six empreintes du contrôle d'entrée sont celles de la
+  production ; les dépendances, la règle `dispenser_entretien`, le nom du CHECK et les colonnes lues existent ;
+  `private.praxis_propositions` est vide ; aucune des deux tables neuves n'existe ; la version est libre.
 
 ## 1. Ce qui est livré
 
