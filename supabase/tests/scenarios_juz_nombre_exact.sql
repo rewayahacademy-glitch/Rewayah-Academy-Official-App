@@ -7,7 +7,9 @@
 --       lister_candidatures (liste de la direction, sans filtre et avec le filtre riwaya : le candidat n'en disparait pas),
 --       voisins_candidature, private.praxis_reponses (ce que lit praxis_dossier) ;
 --   (c) une ANCIENNE reponse (« moins_10_juz ») envoyee avant ce lot se relit telle quelle, complete, par les memes lectures ;
---   (d) les riwayat « les sept » (14 codes) et « toutes » (20 codes) sont acceptees telles quelles (aucun changement de format).
+--   (d) les riwayat « les sept » (14 codes) et « toutes » (20 codes) sont acceptees telles quelles (aucun changement de format) ;
+--   (e) la liste des fuseaux du questionnaire se lit toujours dans la table figee app_private.fuseaux_connus, jamais dans la vue
+--       lente pg_timezone_names (PERF-FUSEAUX-Q, 20261126000000), et rend les memes noms que la vue sous le motif.
 -- A rejouer sur une base NEUVE (stub_auth puis toutes les migrations). Annule tout a la fin. Aucun mot d'effacement.
 BEGIN;
 
@@ -149,5 +151,14 @@ SELECT pg_temp.vrai(NOT coalesce(pg_temp.lu('e2')::text ~ 'niveauMemorisationDec
   AND pg_temp.lu('d2')::text ~ '"niveauMemorisationDeclare": "moins_10_juz"'
   AND private.praxis_reponses(pg_temp.c('02')) ->> 'niveauMemorisationDeclare' = 'moins_10_juz',
   'ancienne reponse moins_10_juz : complete, relue telle quelle par le dossier et par Praxis');
+
+-- ===== (e) les fuseaux, toujours dans la table figee =====
+SELECT pg_temp.vrai(
+  (SELECT pg_catalog.strpos(p.prosrc, 'pg_timezone_names') = 0 AND pg_catalog.strpos(p.prosrc, 'app_private.fuseaux_connus') > 0
+     FROM pg_catalog.pg_proc p WHERE p.oid = 'private.questionnaire_options(jsonb,jsonb)'::regprocedure)
+  AND private.questionnaire_options('{}'::jsonb, '{"liste": "fuseaux"}'::jsonb)
+      = (SELECT pg_catalog.jsonb_agg(z.name ORDER BY z.name) FROM pg_catalog.pg_timezone_names z
+          WHERE z.name ~ private.questionnaire_fuseau_motif()),
+  'questionnaire_options lit les fuseaux dans app_private.fuseaux_connus, sans pg_timezone_names, memes noms que la vue');
 
 ROLLBACK;

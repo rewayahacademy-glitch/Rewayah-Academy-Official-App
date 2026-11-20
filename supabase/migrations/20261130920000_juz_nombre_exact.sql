@@ -19,8 +19,10 @@
 --     (ni juz_0, ni juz_30, ni juz_01) ;
 --   * private.questionnaire_options (ce que l'ecran recoit) : les valeurs de la definition, puis juz_1 a juz_29. Un ecran d'avant
 --     ce lot ne montre que les options qui ont un texte : il ne voit pas les juz_N et reste tel quel.
--- Les deux corps sont ceux de 20261022000300 (derniere definition), recopies a l'identique hors ce champ, apres controle de
--- l'empreinte md5(prosrc). CREATE OR REPLACE a signature identique : proprietaire, droits (aucun EXECUTE client) et search_path vide
+-- Les deux corps sont les DERNIERS installes, recopies a l'identique hors ce champ, apres controle de l'empreinte md5(prosrc) :
+-- questionnaire_permis tel que 20261022000300 l'a laisse ; questionnaire_options tel que 20261126000000 (PERF-FUSEAUX-Q) l'a
+-- laisse, qui lit les fuseaux dans la table figee app_private.fuseaux_connus et plus dans pg_timezone_names (508 ms par appel en
+-- production le 14/11). Le controle final refuse tout corps qui relirait pg_timezone_names. CREATE OR REPLACE a signature identique : proprietaire, droits (aucun EXECUTE client) et search_path vide
 -- conserves ; le controle final le verifie.
 --
 -- LECTEURS de niveauMemorisationDeclare (releve du 20/11 sur une base rejouee jusqu'a 20261130400000) :
@@ -157,9 +159,9 @@ BEGIN
   ELSIF p_champ ->> 'liste' = 'pays' THEN
     RETURN (SELECT pg_catalog.jsonb_agg(x.code ORDER BY x.rang) FROM private.pays_iso_3166 x);
   ELSIF p_champ ->> 'liste' = 'fuseaux' THEN
-    RETURN (SELECT pg_catalog.jsonb_agg(z.name ORDER BY z.name)
-              FROM pg_catalog.pg_timezone_names z
-             WHERE z.name ~ private.questionnaire_fuseau_motif());
+    RETURN (SELECT pg_catalog.jsonb_agg(z.nom ORDER BY z.nom)
+              FROM app_private.fuseaux_connus z
+             WHERE z.nom ~ private.questionnaire_fuseau_motif());
   END IF;
   RETURN NULL;
 END;
@@ -186,8 +188,9 @@ BEGIN
        OR pg_catalog.pg_get_userbyid(v_p.proowner) <> 'postgres'
        OR NOT coalesce(v_p.proconfig @> ARRAY['search_path=""'], false)
        OR pg_catalog.strpos(v_p.prosrc, 'classesSouhaitees') = 0
-       OR pg_catalog.strpos(v_p.prosrc, 'niveauMemorisationDeclare') = 0 THEN
-      RAISE EXCEPTION 'PE-B1 : % : STABLE, INVOKER, a postgres, search_path vide, classes et memorisation', v_f;
+       OR pg_catalog.strpos(v_p.prosrc, 'niveauMemorisationDeclare') = 0
+       OR pg_catalog.strpos(v_p.prosrc, 'pg_timezone_names') > 0 THEN
+      RAISE EXCEPTION 'PE-B1 : % : STABLE, INVOKER, a postgres, search_path vide, classes et memorisation, sans pg_timezone_names', v_f;
     END IF;
     FOREACH v_role IN ARRAY ARRAY['anon', 'authenticated', 'service_role', 'agent_ro'] LOOP
       IF pg_catalog.has_function_privilege(v_role, v_f, 'EXECUTE') THEN
@@ -213,6 +216,12 @@ BEGIN
        '["aucune", "moins_10_juz", "de_10_a_29_juz", "coran_entier"]'::jsonb
        || (SELECT pg_catalog.jsonb_agg(pg_catalog.to_jsonb('juz_' || n::text) ORDER BY n) FROM pg_catalog.generate_series(1, 29) n)) THEN
     RAISE EXCEPTION 'PE-B1 : les options de niveauMemorisationDeclare sont inattendues';
+  END IF;
+  -- Les fuseaux se lisent dans la table figee (PERF-FUSEAUX-Q).
+  IF pg_catalog.strpos((SELECT p.prosrc FROM pg_catalog.pg_proc p
+                         WHERE p.oid = pg_catalog.to_regprocedure('private.questionnaire_options(jsonb,jsonb)')),
+                       'app_private.fuseaux_connus') = 0 THEN
+    RAISE EXCEPTION 'PE-B1 : questionnaire_options ne lit plus app_private.fuseaux_connus';
   END IF;
   -- Un autre champ a valeurs n'accepte pas juz_N, et classesSouhaitees suit toujours le maximum.
   SELECT c INTO v_champ FROM pg_catalog.jsonb_array_elements(v_def -> 'champs') c WHERE c ->> 'code' = 'ijazaPresentable';
