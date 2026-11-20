@@ -34,6 +34,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/lire_jusqu_en_bas.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/selection_racine.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/zone_saisie.dart';
 import '../code_conduite/code_conduite.dart' show TexteCodeConduite;
@@ -854,14 +855,18 @@ class _Paragraphes extends StatelessWidget {
   final List<ParagrapheTexte> paragraphes;
 
   @override
-  Widget build(BuildContext context) => GroupeReglages(
-    lignes: <LigneRubrique>[
-      for (final ParagrapheTexte p in paragraphes)
-        LigneRubrique(
-          icone: AppIcons.controleQualite,
-          libelle: p.titre,
-          legende: p.corps,
-        ),
-    ],
+  // PE-D11 : le contrat et les accords se lisent : leur texte se selectionne
+  // et se copie, par un appui long voulu, dans cette seule carte.
+  Widget build(BuildContext context) => TexteSelectionnable(
+    child: GroupeReglages(
+      lignes: <LigneRubrique>[
+        for (final ParagrapheTexte p in paragraphes)
+          LigneRubrique(
+            icone: AppIcons.controleQualite,
+            libelle: p.titre,
+            legende: p.corps,
+          ),
+      ],
+    ),
   );
 }

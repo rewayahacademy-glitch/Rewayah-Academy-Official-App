@@ -16,6 +16,7 @@ import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/capacites/port_classes_foyer.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/fraicheur/avis_ephemere.dart';
+import 'package:rewayah_academy/core/fraicheur/avis_flottant.dart';
 import 'package:rewayah_academy/core/fraicheur/classe_disparue.dart';
 import 'package:rewayah_academy/core/fraicheur/port_veille.dart';
 import 'package:rewayah_academy/core/fraicheur/veille_fraicheur.dart';
@@ -75,11 +76,13 @@ void main() {
                     Brightness.light,
                   ),
                   routerConfig: routeur,
-                  builder: (BuildContext _, Widget? enfant) => Column(
-                    children: <Widget>[
-                      const BandeauAvisEphemere(),
-                      Expanded(child: enfant ?? const SizedBox.shrink()),
-                    ],
+                  // PE-D8 (19/11/2026) : comme `RewayahApp`, l'avis flotte
+                  // par-dessus l'ecran, dans la couche de la racine.
+                  builder: (BuildContext _, Widget? enfant) => Overlay.wrap(
+                    child: CoucheAvis(
+                      avis: const <Widget>[BandeauAvisEphemere()],
+                      child: enfant ?? const SizedBox.shrink(),
+                    ),
                   ),
                 );
               },

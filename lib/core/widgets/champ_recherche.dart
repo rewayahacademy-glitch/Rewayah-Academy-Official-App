@@ -9,6 +9,7 @@
 
 import 'package:flutter/material.dart';
 
+import '../accessibilite/sens_du_contenu.dart';
 import '../accessibilite/texte_sans_coupure.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -133,6 +134,13 @@ class ChampRecherche extends StatelessWidget {
                 controller: controleur,
                 focusNode: focusNode,
                 autofocus: autofocus,
+                // PE-D11 : le sens du texte TAPE (un nom arabe de droite a
+                // gauche, un nom latin de gauche a droite), recalcule a la
+                // frappe ; vide, celui de l'interface.
+                textDirection: sensDeTexte(
+                  valeur.text,
+                  Directionality.of(context),
+                ),
                 textInputAction: TextInputAction.search,
                 onChanged: onChange,
                 onSubmitted: onValider,
