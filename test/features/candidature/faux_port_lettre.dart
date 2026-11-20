@@ -60,7 +60,13 @@ class FauxPortLettre implements PortLettre {
 /// panne a la demande.
 class FauxPortInteractions implements PortInteractionsGuide {
   /// Cree le faux port avec [jaime] « J'aime » par partie au depart.
-  FauxPortInteractions({this.jaime = 3, this.enPanne = false});
+  FauxPortInteractions({
+    this.jaime = 3,
+    this.enPanne = false,
+    List<CommentaireGuide> fil = const <CommentaireGuide>[],
+  }) {
+    _fil.addAll(fil);
+  }
 
   /// Les « J'aime » de depart par partie.
   final int jaime;

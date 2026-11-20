@@ -8,15 +8,19 @@
 // Tant que le serveur des interactions n'est pas branche, rien ne s'affiche :
 // la lecture du guide n'en depend pas.
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/i18n/strings.g.dart';
+import '../../../core/icons/app_icons.dart';
+import '../../../core/theme/app_color_pair.dart';
 import '../../../core/theme/app_palette.dart';
+import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
-import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/app_bottom_sheet.dart';
+import '../../../core/widgets/bouton_icone.dart';
 import '../../../core/widgets/zone_saisie.dart';
 import 'barre_avis.dart';
 import 'port_interactions_guide.dart';
@@ -202,7 +206,7 @@ class _EtatFil extends ConsumerState<FilCommentaires> {
 
   Future<void> _envoyer() async {
     final String corps = _texte.text.trim();
-    if (corps.isEmpty) return;
+    if (corps.isEmpty || _envoi) return;
     final l = t.recrutement.lettre;
     if (corps.length > longueurMaxCommentaire) {
       setState(() => _erreur = l.tropLong(max: longueurMaxCommentaire));
@@ -251,38 +255,113 @@ class _EtatFil extends ConsumerState<FilCommentaires> {
                 const <CommentaireGuide>[])
             .where((CommentaireGuide c) => c.partie == widget.code)
             .toList();
+    final bool rtl = Directionality.of(context) == TextDirection.rtl;
+    // Une bulle ne prend jamais toute la largeur : on voit de quel cote elle est.
+    final double largeurBulle = math.min(
+      AppPage.largeurEtatVide,
+      MediaQuery.sizeOf(context).width * 0.78,
+    );
+    // Les bulles, comme dans la messagerie : les siennes au bord de fin,
+    // couleur douce de la marque ; celles de la direction et de Praxis au bord
+    // de debut, sur la surface. Aucun contour.
+    Widget bulle(CommentaireGuide c) {
+      final bool moi = c.auteur == AuteurCommentaire.moi;
+      final AppColorPair fond = moi
+          ? palette.washAccent
+          : palette.surfaceSunken;
+      return Semantics(
+        // Le lecteur d'ecran dit qui parle, meme quand la bulle ne l'ecrit pas.
+        label: '${_auteur(c.auteur)} : ${c.corps}',
+        container: true,
+        excludeSemantics: true,
+        child: Align(
+          alignment: moi
+              ? AlignmentDirectional.centerEnd
+              : AlignmentDirectional.centerStart,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: largeurBulle),
+            child: Column(
+              crossAxisAlignment: moi
+                  ? CrossAxisAlignment.end
+                  : CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                if (!moi)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: AppSpacing.xs),
+                    child: Text(_auteur(c.auteur), style: muet),
+                  ),
+                Material(
+                  color: fond.background,
+                  shape: AppRadius.coinContinu(AppRadius.md),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: AppSpacing.md,
+                      vertical: AppSpacing.sm,
+                    ),
+                    child: Text(c.corps, style: fond.applyTo(corps)),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      );
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        Text(l.filPrive, style: muet),
-        Ecart.vLg,
-        if (fil.isEmpty) Text(l.filVide, style: muet),
-        for (final CommentaireGuide c in fil) ...<Widget>[
-          Text(
-            _auteur(c.auteur),
-            style: palette.inkStrong.applyTo(
-              textes.titleSmall ?? const TextStyle(),
+        Row(
+          children: <Widget>[
+            ExcludeSemantics(
+              child: Icon(
+                AppIcons.verrou.resoudre(),
+                size: AppSpacing.lg,
+                color: palette.inkMuted.asIconTheme().color,
+              ),
             ),
-          ),
-          Ecart.vXs,
-          Text(c.corps, style: corps),
-          Ecart.vLg,
-        ],
-        ZoneSaisie(
-          controleur: _texte,
-          cleChamp: FilCommentaires.cleChamp,
-          libelle: l.champ,
-          libelleVisible: true,
-          minLignes: 2,
-          erreur: _erreur,
+            Ecart.hSm,
+            Expanded(child: Text(l.filPrive, style: muet)),
+          ],
         ),
         Ecart.vLg,
-        ActionPrincipale(
-          key: FilCommentaires.cleEnvoyer,
-          libelle: l.envoyer,
-          enCours: _envoi,
-          onPress: () => unawaited(_envoyer()),
+        if (fil.isEmpty)
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
+            child: Text(l.filVide, style: muet, textAlign: TextAlign.center),
+          ),
+        for (final CommentaireGuide c in fil) ...<Widget>[bulle(c), Ecart.vSm],
+        Ecart.vSm,
+        // Le champ et sa fleche d'envoi, sur une seule ligne, comme dans la
+        // messagerie de l'application.
+        Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: <Widget>[
+            Expanded(
+              child: ZoneSaisie(
+                controleur: _texte,
+                cleChamp: FilCommentaires.cleChamp,
+                libelle: l.champ,
+                libelleVisible: false,
+                minLignes: 1,
+                maxLignes: 5,
+                erreur: _erreur,
+              ),
+            ),
+            Ecart.hSm,
+            Transform.flip(
+              flipX: rtl,
+              child: BoutonIcone(
+                key: FilCommentaires.cleEnvoyer,
+                icone: AppIcons.envoyerMessage,
+                libelle: l.envoyer,
+                forme: FormeBoutonIcone.disque,
+                onPress: () => unawaited(_envoyer()),
+              ),
+            ),
+          ],
         ),
       ],
     );

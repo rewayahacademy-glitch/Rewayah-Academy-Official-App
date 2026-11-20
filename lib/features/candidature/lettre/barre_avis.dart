@@ -1,24 +1,24 @@
-// GUIDE-INTERACTIONS (directeur, 20/11/2026, 23 h 50 : « c'est une UI
-// ancienne ça. Regarde les maquettes […] sur les styles globaux et les
-// animations ») : la barre d'avis d'une partie du guide, dans le langage
-// VIVANT du parcours (PARCOURS-ENSEIGNANT/PLAN §13.1, maquette vivante).
+// GUIDE-INTERACTIONS (directeur, 20/11/2026 : « malgre les reseaux sociaux
+// remplis de ces types d'interactions tu me sors quelque chose de 1990 ?
+// […] Pourquoi diable ces contours ? ») : la rangee de reactions d'une partie
+// du guide, a la maniere des reseaux sociaux.
 //
-// - Une seule capsule a courbe continue porte les deux avis ; le rayon de
-//   chaque moitie retenue vaut le rayon de la capsule moins sa marge
-//   (`AppRadius.interieur`, regle des coins du directeur, 19/11).
-// - Tout ce qui se touche s'enfonce et revient en ressort (`ToucherVivant`).
-// - Le nombre change en roulant (`NombreRouleaux`), sur l'objet lui-meme ;
-//   jamais un bandeau qui pousse la page.
-// - L'icone donnee bat une fois (1 -> 1,25 -> 1), puis tout se tait ; rien ne
-//   tourne en boucle ; sous « Reduire les effets », aucun battement.
-// - « Commenter » est une capsule de la meme famille, avec le nombre de ses
-//   propres commentaires.
+// - Aucun contour, aucune capsule : une icone et son nombre, poses sur la
+//   page, comme sous une publication.
+// - Le coeur donne se remplit, eclate d'un anneau de six points, depasse et se
+//   pose (ressort) ; le nombre roule (`NombreRouleaux`) ; tout se tait apres.
+// - Tout ce qui se touche s'enfonce et revient (`ToucherVivant`).
+// - Sous « Reduire les effets » : ni eclat ni rebond, le changement reste
+//   lisible (icone pleine, couleur, nombre).
+// - Un nombre nul ne s'ecrit pas : le mot le remplace (« J'aime »,
+//   « Pas clair », « Commenter »), comme sur les reseaux.
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../../core/i18n/strings.g.dart';
 import '../../../core/icons/app_icons.dart';
 import '../../../core/mouvement/mouvement.dart';
-import '../../../core/theme/app_color_pair.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_radius.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -26,12 +26,9 @@ import '../../../core/vivant/nombre_rouleaux.dart';
 import '../../../core/vivant/toucher_vivant.dart';
 import 'port_interactions_guide.dart';
 
-const double _rayon = AppRadius.lg;
-const double _marge = AppSpacing.xs;
-
-/// La barre d'avis et de commentaire d'une partie.
+/// La rangee de reactions d'une partie.
 class BarreAvis extends StatelessWidget {
-  /// Cree la barre.
+  /// Cree la rangee.
   const BarreAvis({
     required this.ligne,
     required this.mesCommentaires,
@@ -60,52 +57,38 @@ class BarreAvis extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
     final l = t.recrutement.lettre;
-    Widget avis(bool large) => _Capsule(
-      large: large,
-      enfants: <Widget>[
-        _Moitie(
+    return Wrap(
+      spacing: AppSpacing.lg,
+      runSpacing: AppSpacing.xs,
+      crossAxisAlignment: WrapCrossAlignment.center,
+      children: <Widget>[
+        // Choix de formulaire, pas un filtre : les reactions d'une partie.
+        _Reaction(
           key: cleJaime,
           icone: AppIcons.coeur,
-          libelle: l.jaime,
+          mot: l.jaime,
           nombre: ligne.jaime,
-          retenue: ligne.monAvis == AvisGuide.jaime,
+          donnee: ligne.monAvis == AvisGuide.jaime,
+          eclat: true,
           semantique: l.jaimeLecteur(n: ligne.jaime),
-          large: large,
           onPress: () => onAvis(AvisGuide.jaime),
         ),
-        SizedBox(
-          height: AppSpacing.xxl,
-          child: VerticalDivider(
-            width: AppSpacing.xs,
-            thickness: 1,
-            color: palette.borderHairline.asIconTheme().color,
-          ),
-        ),
-        _Moitie(
+        _Reaction(
           key: clePasClair,
           icone: AppIcons.info,
-          libelle: l.pasClair,
+          mot: l.pasClair,
           nombre: ligne.pasClair,
-          retenue: ligne.monAvis == AvisGuide.pasClair,
+          donnee: ligne.monAvis == AvisGuide.pasClair,
           semantique: l.pasClairLecteur(n: ligne.pasClair),
-          large: large,
           onPress: () => onAvis(AvisGuide.pasClair),
         ),
-      ],
-    );
-    Widget commenter(bool large) => _Capsule(
-      large: large,
-      enfants: <Widget>[
-        _Moitie(
+        _Reaction(
           key: cleCommenter,
           icone: AppIcons.discussion,
-          libelle: l.commenter,
+          mot: l.commenter,
           nombre: mesCommentaires,
-          montrerZero: false,
-          retenue: false,
-          large: large,
+          donnee: false,
           semantique: mesCommentaires > 0
               ? '${l.commenter}. ${l.commentaires(n: mesCommentaires)}'
               : l.commenter,
@@ -113,107 +96,54 @@ class BarreAvis extends StatelessWidget {
         ),
       ],
     );
-    return LayoutBuilder(
-      builder: (BuildContext _, BoxConstraints c) {
-        // Au telephone (ou en texte agrandi), chaque capsule prend la largeur
-        // de la colonne et ses moities se partagent la place : rien ne deborde,
-        // aucun mot ne se coupe.
-        final bool etroit =
-            c.maxWidth < AppPage.largeurEtatVide * 1.5 ||
-            MediaQuery.textScalerOf(context).scale(1) > 1.3;
-        if (etroit) {
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisSize: MainAxisSize.min,
-            spacing: AppSpacing.sm,
-            children: <Widget>[avis(true), commenter(true)],
-          );
-        }
-        return Row(
-          children: <Widget>[avis(false), Ecart.hSm, commenter(false)],
-        );
-      },
-    );
   }
 }
 
-/// La capsule : une surface a courbe continue, a filet fin.
-class _Capsule extends StatelessWidget {
-  const _Capsule({required this.enfants, this.large = false});
-
-  final List<Widget> enfants;
-
-  /// Vrai : la capsule prend toute la largeur, ses moities se la partagent.
-  final bool large;
-
-  @override
-  Widget build(BuildContext context) {
-    final AppPalette palette = AppPalette.of(context);
-    return Material(
-      color: palette.surfaceRaised.background,
-      shape: AppRadius.coinContinu(
-        _rayon,
-        bordure: palette.borderHairline.asBorderSide(width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(_marge),
-        child: Row(
-          mainAxisSize: large ? MainAxisSize.max : MainAxisSize.min,
-          children: <Widget>[
-            for (final Widget e in enfants)
-              if (large && e is _Moitie) Expanded(child: e) else e,
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// Une moitie de capsule : une icone, un mot, un nombre qui roule.
-class _Moitie extends StatefulWidget {
-  const _Moitie({
+/// Une reaction : une icone, puis son nombre (ou son mot quand il est nul).
+class _Reaction extends StatefulWidget {
+  const _Reaction({
     required this.icone,
-    required this.libelle,
+    required this.mot,
     required this.nombre,
-    required this.retenue,
+    required this.donnee,
     required this.semantique,
     required this.onPress,
-    this.montrerZero = true,
-    this.large = false,
+    this.eclat = false,
     super.key,
   });
 
   final AppIcon icone;
-  final String libelle;
+  final String mot;
   final int nombre;
-  final bool retenue;
+  final bool donnee;
   final String semantique;
   final VoidCallback onPress;
-  final bool montrerZero;
-  final bool large;
+
+  /// Vrai pour le coeur : il eclate quand on le donne.
+  final bool eclat;
 
   @override
-  State<_Moitie> createState() => _EtatMoitie();
+  State<_Reaction> createState() => _EtatReaction();
 }
 
-class _EtatMoitie extends State<_Moitie> with SingleTickerProviderStateMixin {
-  late final AnimationController _battement = AnimationController(
+class _EtatReaction extends State<_Reaction>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _pop = AnimationController(
     vsync: this,
-    duration: Mouvement.moyen,
+    duration: Mouvement.maximum,
   );
 
   @override
-  void didUpdateWidget(_Moitie ancien) {
+  void didUpdateWidget(_Reaction ancien) {
     super.didUpdateWidget(ancien);
-    // Un avis donne : l'icone bat une fois. Retire : elle se pose sans bruit.
-    if (widget.retenue && !ancien.retenue && !Mouvement.reduit(context)) {
-      _battement.forward(from: 0);
+    if (widget.donnee && !ancien.donnee && !Mouvement.reduit(context)) {
+      _pop.forward(from: 0);
     }
   }
 
   @override
   void dispose() {
-    _battement.dispose();
+    _pop.dispose();
     super.dispose();
   }
 
@@ -221,66 +151,108 @@ class _EtatMoitie extends State<_Moitie> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final AppColorPair douce = palette.washAccent;
-    final Color encre = widget.retenue
-        ? douce.onBackground
-        : palette.inkStrong.asIconTheme().color!;
+    final Color repos = palette.inkMuted.asIconTheme().color!;
+    final Color vive = palette.inkAccent.asIconTheme().color!;
+    final Color encre = widget.donnee ? vive : repos;
     final TextStyle style = (textes.labelLarge ?? const TextStyle()).copyWith(
       color: encre,
     );
+    // Le pop : petit, gonfle, depasse, se pose (ressort court, puis rien).
     final Animation<double> echelle = TweenSequence<double>(
       <TweenSequenceItem<double>>[
         TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 1, end: 1.25),
-          weight: 1,
+          tween: Tween<double>(begin: 1, end: 0.7),
+          weight: 15,
         ),
         TweenSequenceItem<double>(
-          tween: Tween<double>(begin: 1.25, end: 1),
-          weight: 1,
+          tween: Tween<double>(begin: 0.7, end: 1.3),
+          weight: 35,
+        ),
+        TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 1.3, end: 0.92),
+          weight: 25,
+        ),
+        TweenSequenceItem<double>(
+          tween: Tween<double>(begin: 0.92, end: 1),
+          weight: 25,
         ),
       ],
-    ).animate(CurvedAnimation(parent: _battement, curve: Mouvement.entree));
+    ).animate(_pop);
     return ToucherVivant(
       onPress: widget.onPress,
       libelleSemantique: widget.semantique,
-      arrondiFocus: BorderRadius.circular(AppRadius.interieur(_rayon, _marge)),
-      child: AnimatedContainer(
-        duration: Mouvement.court,
-        curve: Mouvement.entree,
-        constraints: const BoxConstraints(minHeight: AppSpacing.section),
-        padding: const EdgeInsets.symmetric(horizontal: AppSpacing.md),
-        decoration: ShapeDecoration(
-          color: widget.retenue
-              ? douce.background
-              : palette.surfaceRaised.background,
-          shape: AppRadius.coinContinu(AppRadius.interieur(_rayon, _marge)),
-        ),
+      arrondiFocus: AppRadius.arrondiFull,
+      enfoncement: 0.9,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: AppSpacing.titreEcran),
         child: ExcludeSemantics(
           child: Row(
-            mainAxisSize: widget.large ? MainAxisSize.max : MainAxisSize.min,
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
             children: <Widget>[
-              ScaleTransition(
-                scale: echelle,
-                child: Icon(
-                  widget.icone.resoudre(selectionne: widget.retenue),
-                  size: AppSpacing.xl,
-                  color: encre,
+              SizedBox.square(
+                dimension: AppSpacing.xxxl,
+                child: AnimatedBuilder(
+                  animation: _pop,
+                  builder: (BuildContext _, Widget? icone) => CustomPaint(
+                    painter: widget.eclat
+                        ? _Eclat(progres: _pop.value, couleur: vive)
+                        : null,
+                    child: Center(
+                      child: Transform.scale(
+                        scale: echelle.value,
+                        child: icone,
+                      ),
+                    ),
+                  ),
+                  child: AnimatedSwitcher(
+                    duration: Mouvement.court,
+                    child: Icon(
+                      widget.icone.resoudre(selectionne: widget.donnee),
+                      key: ValueKey<bool>(widget.donnee),
+                      size: AppSpacing.xxl,
+                      color: encre,
+                    ),
+                  ),
                 ),
               ),
-              Ecart.hSm,
-              if (widget.large)
-                Flexible(child: Text(widget.libelle, style: style))
+              Ecart.hXs,
+              if (widget.nombre > 0)
+                NombreRouleaux(widget.nombre, style: style)
               else
-                Text(widget.libelle, style: style),
-              if (widget.montrerZero || widget.nombre > 0) ...<Widget>[
-                Ecart.hSm,
-                NombreRouleaux(widget.nombre, style: style),
-              ],
+                Flexible(child: Text(widget.mot, style: style)),
             ],
           ),
         ),
       ),
     );
   }
+}
+
+/// L'eclat du coeur : un anneau de six points qui s'ecarte et s'efface.
+class _Eclat extends CustomPainter {
+  _Eclat({required this.progres, required this.couleur});
+
+  final double progres;
+  final Color couleur;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (progres <= 0.15 || progres >= 1) return;
+    final double k = (progres - 0.15) / 0.85;
+    final Offset centre = size.center(Offset.zero);
+    final double rayon = size.shortestSide * (0.35 + 0.45 * k);
+    final Paint p = Paint()..color = couleur.withValues(alpha: 1 - k);
+    for (int i = 0; i < 6; i++) {
+      final double a = i * math.pi / 3 - math.pi / 2;
+      canvas.drawCircle(
+        centre + Offset(math.cos(a), math.sin(a)) * rayon,
+        AppSpacing.xs * (1 - k * 0.6) / 2 + 0.5,
+        p,
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(_Eclat ancien) =>
+      ancien.progres != progres || ancien.couleur != couleur;
 }

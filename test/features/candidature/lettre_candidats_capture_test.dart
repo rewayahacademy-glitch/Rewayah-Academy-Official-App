@@ -58,7 +58,28 @@ Future<void> _monter(
           etat: etatCandidat(candidature: candidatureAFaire()),
         ),
         sessionProvider.overrideWith(_Candidat.new),
-        portInteractionsProvider.overrideWithValue(FauxPortInteractions()),
+        portInteractionsProvider.overrideWithValue(
+          FauxPortInteractions(
+            jaime: 12,
+            fil: <CommentaireGuide>[
+              CommentaireGuide(
+                id: 'c1',
+                partie: 'p4',
+                corps: 'Est-ce que la moitie pour un absent vaut aussi pour les adultes ?',
+                creeLe: DateTime(2026, 11, 20, 21),
+                auteur: AuteurCommentaire.moi,
+              ),
+              CommentaireGuide(
+                id: 'c2',
+                partie: 'p4',
+                corps: 'Oui, la regle est la meme pour les enfants et les adultes.',
+                creeLe: DateTime(2026, 11, 20, 22),
+                auteur: AuteurCommentaire.direction,
+                parentId: 'c1',
+              ),
+            ],
+          ),
+        ),
         portLettreProvider.overrideWithValue(
           FauxPortLettre(
             reponse: accordsFaits
@@ -117,6 +138,7 @@ void main() {
                 )
                 .first,
           );
+          await tester.tap(find.byKey(InteractionsPartie.cleJaime('p4')));
           await stabiliser(tester);
           await capturerVue(tester, 'lettre-candidats/avis-$nom');
           await tester.tap(find.byKey(InteractionsPartie.cleCommenter('p4')));

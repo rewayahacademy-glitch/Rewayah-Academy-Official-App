@@ -269,7 +269,12 @@ void main() {
       await tester.pumpAndSettle();
       expect(port.fil.single.partie, 'p1');
       expect(find.text('Combien de classes au plus ?'), findsOneWidget);
-      expect(find.text(t.recrutement.lettre.auteurMoi), findsOneWidget);
+      expect(
+        find.bySemanticsLabel(
+          '${t.recrutement.lettre.auteurMoi} : Combien de classes au plus ?',
+        ),
+        findsOneWidget,
+      );
     });
 
     test('les interactions se lisent depuis le serveur', () {
