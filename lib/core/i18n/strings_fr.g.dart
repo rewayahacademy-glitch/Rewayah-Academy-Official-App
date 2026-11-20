@@ -55434,16 +55434,16 @@ class Traductions$admin$candidatures$lot$feuille$raisons$fr {
 	String get inconnue => 'Le serveur a refusé ce geste.';
 
 	/// fr: 'Pas encore admissible : « {controle} » n'est pas rempli.'
-	String controle({required Object controle}) => 'Pas encore admissible : « ${controle} » n\'est pas rempli.';
+	String controle({required Object controle}) => 'Pas encore admissible : « ${controle} » n\'est pas rempli.';
 
 	/// fr: 'Un contrôle d'admission n'est pas satisfait.'
 	String get controles => 'Un contrôle d\'admission n\'est pas satisfait.';
 
 	/// fr: 'Cette personne n'a pas encore de compte : aucune conversation n'est possible.'
-	String get sansCompte => 'Cette personne n\'a pas encore de compte : aucune conversation n\'est possible.';
+	String get sansCompte => 'Cette personne n\'a pas encore de compte : aucune conversation n\'est possible.';
 
 	/// fr: 'Sa candidature est en pause : aucune conversation n'est possible.'
-	String get conversationPause => 'Sa candidature est en pause : aucune conversation n\'est possible.';
+	String get conversationPause => 'Sa candidature est en pause : aucune conversation n\'est possible.';
 
 	/// fr: 'Son état ne permet plus d'écrire dans la conversation de candidature.'
 	String get conversationEtat => 'Son état ne permet plus d\'écrire dans la conversation de candidature.';
@@ -60085,10 +60085,10 @@ extension on Traductions {
 			'admin.candidatures.lot.feuille.raisons.conflit' => 'Elle a changé entre-temps.',
 			'admin.candidatures.lot.feuille.raisons.erreurServeur' => 'Le serveur n\'a pas pu la traiter. Réessayez depuis son dossier.',
 			'admin.candidatures.lot.feuille.raisons.inconnue' => 'Le serveur a refusé ce geste.',
-			'admin.candidatures.lot.feuille.raisons.controle' => ({required Object controle}) => 'Pas encore admissible : « ${controle} » n\'est pas rempli.',
+			'admin.candidatures.lot.feuille.raisons.controle' => ({required Object controle}) => 'Pas encore admissible : « ${controle} » n\'est pas rempli.',
 			'admin.candidatures.lot.feuille.raisons.controles' => 'Un contrôle d\'admission n\'est pas satisfait.',
-			'admin.candidatures.lot.feuille.raisons.sansCompte' => 'Cette personne n\'a pas encore de compte : aucune conversation n\'est possible.',
-			'admin.candidatures.lot.feuille.raisons.conversationPause' => 'Sa candidature est en pause : aucune conversation n\'est possible.',
+			'admin.candidatures.lot.feuille.raisons.sansCompte' => 'Cette personne n\'a pas encore de compte : aucune conversation n\'est possible.',
+			'admin.candidatures.lot.feuille.raisons.conversationPause' => 'Sa candidature est en pause : aucune conversation n\'est possible.',
 			'admin.candidatures.lot.feuille.raisons.conversationEtat' => 'Son état ne permet plus d\'écrire dans la conversation de candidature.',
 			'admin.candidatures.lot.feuille.raisons.elementNonPermis' => 'Cet élément ne se demande pas à son étape.',
 			'admin.candidatures.lot.feuille.rapport.titre' => 'Résultat',

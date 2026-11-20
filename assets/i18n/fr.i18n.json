@@ -4271,10 +4271,10 @@
             "conflit": "Elle a changé entre-temps.",
             "erreurServeur": "Le serveur n'a pas pu la traiter. Réessayez depuis son dossier.",
             "inconnue": "Le serveur a refusé ce geste.",
-            "controle": "Pas encore admissible : « {controle} » n'est pas rempli.",
+            "controle": "Pas encore admissible\u00a0: «\u00a0{controle}\u00a0» n'est pas rempli.",
             "controles": "Un contrôle d'admission n'est pas satisfait.",
-            "sansCompte": "Cette personne n'a pas encore de compte : aucune conversation n'est possible.",
-            "conversationPause": "Sa candidature est en pause : aucune conversation n'est possible.",
+            "sansCompte": "Cette personne n'a pas encore de compte\u00a0: aucune conversation n'est possible.",
+            "conversationPause": "Sa candidature est en pause\u00a0: aucune conversation n'est possible.",
             "conversationEtat": "Son état ne permet plus d'écrire dans la conversation de candidature.",
             "elementNonPermis": "Cet élément ne se demande pas à son étape."
           },
