@@ -2,18 +2,21 @@
 //
 // Premier usage (fiche du 27/10/2026, ligne 7) : « Cette classe n'existe
 // plus. » quand la classe dont l'ecran est ouvert est supprimee, avant le
-// retour a l'accueil du role. Le registre est celui du bandeau hors ligne
-// (`OfflineBanner.message`), comme `BandeauNouvelleVersion` : il prend sa
-// place dans la colonne de `RewayahApp`, il ne recouvre rien.
+// retour a l'accueil du role. Second usage : « Vous avez recu un nouveau
+// message. » (`veille_messages.dart`).
+//
+// PE-D8 (directeur, 19/11/2026) : il ne prend plus sa place dans une colonne
+// au-dessus de l'ecran (il poussait toute la page et faisait rater un
+// toucher) ; c'est un `AvisFlottant`, pose par-dessus dans `CoucheAvis`, qui
+// se ferme seul, par sa croix ou en le glissant vers le haut.
 
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../icons/app_icons.dart';
 import '../theme/app_mouvement.dart';
-import '../widgets/offline_banner.dart';
+import 'avis_flottant.dart';
 
 /// L'avis a montrer, `null` quand il n'y en a aucun.
 final NotifierProvider<AvisEphemereControleur, String?> avisEphemereProvider =
@@ -48,17 +51,23 @@ class AvisEphemereControleur extends Notifier<String?> {
   }
 }
 
-/// Le bandeau de l'avis : rien tant qu'il n'y a rien a dire.
+/// L'avis flottant : rien tant qu'il n'y a rien a dire.
 class BandeauAvisEphemere extends ConsumerWidget {
-  /// Cree le bandeau.
+  /// Cree l'avis.
   const BandeauAvisEphemere({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String? avis = ref.watch(avisEphemereProvider);
-    if (avis == null) {
-      return const SizedBox.shrink();
-    }
-    return OfflineBanner.message(message: avis, icone: AppIcons.info.repos);
+    return PassageAvis(
+      child: avis == null
+          ? null
+          : AvisFlottant(
+              // La cle porte le message : un nouvel avis rejoue l'entree.
+              key: ValueKey<String>('avis-ephemere-$avis'),
+              message: avis,
+              onFermer: ref.read(avisEphemereProvider.notifier).effacer,
+            ),
+    );
   }
 }
