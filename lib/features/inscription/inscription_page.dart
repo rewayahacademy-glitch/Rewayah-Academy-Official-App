@@ -17,12 +17,17 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/page_etape.dart';
 import '../../core/widgets/page_shell.dart';
+import '../../core/widgets/skeleton.dart';
 import '../accueil_inscrits/accueil_inscrits_page.dart';
 import 'brouillon_inscription.dart';
 import 'brouillon_persistant.dart';
 import 'etapes/usage_etape.dart';
 import 'invitation_en_cours.dart';
 import 'questionnaire/questionnaire_inscription.dart';
+
+/// PE-A9 : la cle du squelette garde tant que la destination du parcours est
+/// ailleurs que « Pour qui creez-vous ce compte ? ».
+const Key cleAttenteDestination = Key('inscription-attente-destination');
 
 /// `TUT-00c` : creer son profil, en pages courtes.
 ///
@@ -42,9 +47,20 @@ class InscriptionPage extends ConsumerStatefulWidget {
 class _InscriptionPageState extends ConsumerState<InscriptionPage> {
   bool _parcoursOuvert = false;
 
+  /// PE-A9 (20/11/2026) : la destination du parcours, calculee une seule
+  /// fois, avant la premiere image du parcours. `null` : « Pour qui creez-vous
+  /// ce compte ? » est vraiment la destination.
+  String? _destination;
+  bool _destinationConnue = false;
+
   @override
   void initState() {
     super.initState();
+    // POSTULER-ICI (16/11/2026) : le lien de connexion ouvert dans un autre
+    // navigateur n'a pas la memoire de l'appareil ; la marque du candidat
+    // (`candidature=1`, l'invitation) revient dans l'adresse de retour. Lue
+    // avant toute image (PE-A9), pour que la destination la connaisse.
+    retenirInvitationDepuisAdresse(Uri.base);
     // Apres la premiere image : modifier un provider pendant la construction
     // est refuse.
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
@@ -75,15 +91,41 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
   static bool _parcoursLibre(EtatAccueilInscrits etat) =>
       etat is AccueilSansInscription || (etat is AccueilConnu && etat.vu);
 
+  /// PE-A9 : ou mene le parcours, sans rien modifier. Une invitation en
+  /// cours mene a son code ; une reponse deja donnee (brouillon, ou « Pour
+  /// qui » du questionnaire) mene a la premiere etape sans reponse ; sinon,
+  /// `null` : « Pour qui creez-vous ce compte ? ».
+  String? _destinationCalculee() {
+    if (_destinationConnue) return _destination;
+    final BrouillonInscription brouillon = ref.read(
+      brouillonInscriptionProvider,
+    );
+    final UsageInscription? usageQuestionnaire = ref
+        .read(questionnaireInscriptionProvider)
+        .usage;
+    final BrouillonInscription effectif =
+        usageQuestionnaire != null && brouillon.usage == null
+        ? brouillon.copier(usage: usageQuestionnaire)
+        : brouillon;
+    final String manquante = effectif.premiereEtapeManquante;
+    _destination =
+        routeInvitationEnCours(brouillon) ??
+        (manquante == Routes.inscriptionUsage ? null : manquante);
+    _destinationConnue = true;
+    return _destination;
+  }
+
+  /// PE-A9 : « Pour qui » ne se construit que s'il est la destination ;
+  /// sinon le squelette reste jusqu'au depart (aucune image intermediaire).
+  Widget _vueParcours() => _destinationCalculee() == null
+      ? const UsageEtape()
+      : const PageShell(child: Skeleton.liste(key: cleAttenteDestination));
+
   void _ouvrirParcours() {
     if (_parcoursOuvert || !mounted) {
       return;
     }
     _parcoursOuvert = true;
-    // POSTULER-ICI (16/11/2026) : le lien de connexion ouvert dans un autre
-    // navigateur n'a pas la memoire de l'appareil ; la marque du candidat
-    // (`candidature=1`, l'invitation) revient dans l'adresse de retour.
-    retenirInvitationDepuisAdresse(Uri.base);
     // I1 (UX-013) : au retour du lien de connexion, une invitation
     // d'enseignant en cours reprend sur son code, pas sur « Pour qui ».
     final String? invitation = routeInvitationEnCours(
@@ -133,11 +175,11 @@ class _InscriptionPageState extends ConsumerState<InscriptionPage> {
     // Sans serveur de reclamation (tests, demonstration) : le parcours
     // habituel, sans attente.
     if (!ref.watch(portReclamationPreinscriptionProvider).disponible) {
-      return const UsageEtape();
+      return _vueParcours();
     }
     final EtatAccueilInscrits etat = ref.watch(accueilInscritsProvider);
     if (_parcoursLibre(etat)) {
-      return const UsageEtape();
+      return _vueParcours();
     }
     // La reprise n'a pas cree de profil (porte toujours `inscription`) : le
     // mot de la direction, puis les questions habituelles.
@@ -249,7 +291,17 @@ class CoquilleEtape extends ConsumerWidget {
     this.souscription,
     this.complement,
     this.choix = false,
+    this.espace,
   });
+
+  /// PE-A3 : le nom de l'espace, en haut de l'ecran (« Candidature
+  /// d'enseignant », « Inscription d'un eleve »). `null` : deduit de l'usage
+  /// du brouillon, sauf sur l'etape d'usage (les deux portes n'ont pas
+  /// d'espace).
+  final String? espace;
+
+  /// La cle du nom de l'espace.
+  static const Key espaceKey = Key('inscription-espace');
 
   /// Vrai quand l'etape est un choix entre des cartes (usage, genre) : la
   /// colonne large de [PageEtape.colonneLarge], ou les cartes passent en
@@ -310,6 +362,17 @@ class CoquilleEtape extends ConsumerWidget {
     final BrouillonInscription brouillon = ref.watch(
       brouillonInscriptionProvider,
     );
+    final String? nomEspace =
+        espace ??
+        (route == Routes.inscriptionUsage
+            ? null
+            : switch (brouillon.usage) {
+                UsageInscription.enseignant =>
+                  t.inscription.porte.espaceEnseignant,
+                UsageInscription.moi ||
+                UsageInscription.famille => t.inscription.porte.espaceEleve,
+                _ => null,
+              });
     return PageEtape(
       // L'etape d'usage d'un titulaire n'est plus dans sa liste (il a
       // repondu dans le questionnaire) : elle reste la premiere.
@@ -348,6 +411,7 @@ class CoquilleEtape extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
+          if (nomEspace != null) ...<Widget>[NomEspace(nomEspace), Ecart.vXs],
           // COUPE-MOTS-4 : « souhaitez-vous » reduit son echelle plutot que
           // de se couper en Interface guidee a 320 px texte x2.
           TexteSansCoupure(
@@ -369,6 +433,29 @@ class CoquilleEtape extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// PE-A3 : le nom de l'espace, en haut de chaque ecran du parcours
+/// (« Candidature d'enseignant », « Inscription d'un eleve ») : le meme
+/// composant pour les etapes et l'ecran du code.
+class NomEspace extends StatelessWidget {
+  /// Cree le nom.
+  const NomEspace(this.nom, {super.key});
+
+  /// Le nom de l'espace.
+  final String nom;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    // Le nom reduit son echelle plutot que de se couper (320 px, texte x2).
+    child: TexteSansCoupure(
+      nom,
+      key: CoquilleEtape.espaceKey,
+      style: AppPalette.of(context).inkMuted
+          .applyTo(Theme.of(context).textTheme.labelLarge ?? const TextStyle()),
+    ),
+  );
 }
 
 /// Une ligne d'erreur, dite en une phrase et annoncee.

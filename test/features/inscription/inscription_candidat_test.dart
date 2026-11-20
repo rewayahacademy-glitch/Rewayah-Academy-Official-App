@@ -43,6 +43,8 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/entete_page.dart'
+    show DisqueRetour;
 import 'package:rewayah_academy/features/inscription/brouillon_inscription.dart';
 import 'package:rewayah_academy/features/inscription/etapes/genre_etape.dart';
 import 'package:rewayah_academy/features/inscription/etapes/identite_etape.dart';
@@ -59,6 +61,7 @@ import '../../fixtures/candidature/faux_nom_latin.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import '../../support/sens_et_echelle.dart';
+import 'portes_aide.dart';
 
 const Key _caseConfidentialite = Key('inscription-confidentialite');
 const Key _lienPolitique = Key('inscription-confidentialite-lire');
@@ -345,58 +348,87 @@ Future<void> _cocherEtCreer(WidgetTester tester) async {
   await _taper(tester, find.text(t.inscription.candidat.envoyer));
 }
 
+/// PE-A3 : les deux portes, en francais et en arabe (preuve R3).
+void _capturesPortes() {
+  group('PE-A3 : captures des deux portes', skip: sautSansCapture, () {
+    setUpAll(chargerPolicesDuDepot);
+    setUp(masquerRubanDebug);
+    for (final (String nom, AppLocale langue) in <(String, AppLocale)>[
+      ('fr', AppLocale.fr),
+      ('ar', AppLocale.ar),
+    ]) {
+      for (final Size taille in const <Size>[Size(390, 844), Size(1440, 900)]) {
+        testWidgets('portes $nom ${taille.width.toInt()}', (
+          WidgetTester tester,
+        ) async {
+          await tester.runAsync(() => LocaleSettings.setLocale(langue));
+          await _monter(tester, taille: taille);
+          await tester.pumpAndSettle();
+          await capturerVue(
+            tester,
+            'pe-entree/portes_${nom}_${taille.width.toInt()}',
+          );
+        });
+      }
+    }
+  });
+}
+
 void main() {
   tearDown(() async {
     await LocaleSettings.setLocale(AppLocale.fr);
   });
   _capturesLangue();
+  _capturesPortes();
   _capturesPostulerIci();
 
+  // PE-A3 (20/11/2026) : « Enseigner » est une porte de meme poids
+  // qu'« Apprendre » ; la ligne POSTULER-ICI et les liens sans code qu'elle
+  // remplace ne sont plus rendus.
   group('l\'entree sans code, lue au serveur', () {
-    testWidgets(
-      'fermee : le bloc reste celui d\'aujourd\'hui, 0 lien sans code',
-      (WidgetTester tester) async {
-        await _monter(
-          tester,
-          candidat: FauxInscriptionCandidat(cleOuverte: false),
-        );
-        expect(
-          find.byKey(const Key('inscription-enseignant-invite')),
-          findsOneWidget,
-        );
-        expect(find.text(t.inscription.usage.enseignantInvite), findsOneWidget);
-        expect(find.text(t.inscription.usage.enseignantPostuler), findsNothing);
-        expect(
-          find.byKey(const Key('inscription-deposer-candidature')),
-          findsNothing,
-        );
-        expect(find.text(t.inscription.usage.deposerCandidature), findsNothing);
-        // L'entree par le code reste.
-        expect(
-          find.byKey(const Key('inscription-lien-enseignant')),
-          findsOneWidget,
-        );
-      },
-    );
+    testWidgets('deux portes de meme poids, aucune preselection, un seul '
+        'bouton plein', (WidgetTester tester) async {
+      await _monter(tester);
+      expect(find.byKey(UsageEtape.portesKey), findsOneWidget);
+      expect(find.text(t.inscription.porte.apprendreTitre), findsOneWidget);
+      expect(find.text(t.inscription.porte.enseignerTitre), findsOneWidget);
+      expect(find.byKey(const Key('inscription-postuler-ici')), findsNothing);
+      expect(find.text(t.inscription.usage.moiTitre), findsNothing);
+      // L'entree par le code reste un lien discret.
+      expect(
+        find.byKey(const Key('inscription-lien-enseignant')),
+        findsOneWidget,
+      );
+      verifierUnSeulBoutonPlein(tester);
+      // Sans porte choisie, « Continuer » ne mene nulle part.
+      await _continuer(tester);
+      expect(find.byKey(UsageEtape.portesKey), findsOneWidget);
+    });
 
-    testWidgets(
-      'ouverte : la phrase change, deux liens, 0 « invite par courriel »',
-      (WidgetTester tester) async {
-        await _monter(tester);
-        expect(find.text(t.inscription.usage.enseignantInvite), findsNothing);
-        expect(
-          find.text(t.inscription.usage.enseignantPostuler),
-          findsOneWidget,
-        );
-        expect(
-          find.text(t.inscription.usage.deposerCandidature),
-          findsOneWidget,
-        );
-        expect(find.text(t.inscription.usage.enseignant), findsOneWidget);
-        // Un seul bouton plein : « Continuer ». Les liens sont discrets.
-        verifierUnSeulBoutonPlein(tester);
-      },
-    );
+    testWidgets('ouverte : « Enseigner » ouvre l\'identite, a 2 sur 5, '
+        'nommee « Candidature d\'enseignant »', (WidgetTester tester) async {
+      final _Hote hote = await _monter(tester);
+      await passerEnseigner(tester);
+      expect(hote.chemin, Routes.inscriptionIdentite);
+      expect(find.byKey(const Key('inscription-prenom')), findsOneWidget);
+      expect(find.text('2 sur 5'), findsOneWidget);
+      expect(find.text(t.inscription.porte.espaceEnseignant), findsOneWidget);
+      final BrouillonInscription b = _brouillon(tester);
+      expect(b.usage, UsageInscription.enseignant);
+      expect(b.sansCode, isTrue);
+    });
+
+    testWidgets('fermee : « Enseigner » mene au champ du code', (
+      WidgetTester tester,
+    ) async {
+      final _Hote hote = await _monter(
+        tester,
+        candidat: FauxInscriptionCandidat(cleOuverte: false),
+      );
+      await passerEnseigner(tester);
+      expect(hote.chemin, Routes.inscriptionInvitation);
+      expect(_brouillon(tester).sansCode, isFalse);
+    });
 
     testWidgets('sans port, illisible, sans lot serveur : comme fermee', (
       WidgetTester tester,
@@ -407,69 +439,24 @@ void main() {
         FauxInscriptionCandidat()..panneLecture = StateError('autre'),
       ];
       for (final FauxInscriptionCandidat c in cas) {
-        await _monter(tester, candidat: c);
+        final _Hote hote = await _monter(tester, candidat: c);
         expect(c.lectures, 1);
-        expect(find.text(t.inscription.usage.enseignantInvite), findsOneWidget);
-        expect(find.text(t.inscription.usage.deposerCandidature), findsNothing);
+        await passerEnseigner(tester);
+        expect(hote.chemin, Routes.inscriptionInvitation);
       }
-      await _monter(tester, inscriptionAbsente: true);
-      expect(find.text(t.inscription.usage.enseignantInvite), findsOneWidget);
-      expect(find.text(t.inscription.usage.deposerCandidature), findsNothing);
     });
 
-    testWidgets('« Deposer ma candidature » ouvre l\'identite, a 2 sur 5', (
-      WidgetTester tester,
-    ) async {
-      final _Hote hote = await _monter(tester);
-      await _taper(
-        tester,
-        find.byKey(const Key('inscription-deposer-candidature')),
-      );
-      expect(hote.chemin, Routes.inscriptionIdentite);
-      expect(find.byKey(const Key('inscription-prenom')), findsOneWidget);
-      expect(find.text('2 sur 5'), findsOneWidget);
-      final BrouillonInscription b = _brouillon(tester);
-      expect(b.usage, UsageInscription.enseignant);
-      expect(b.sansCode, isTrue);
-    });
-
-    testWidgets('POSTULER-ICI : la ligne est tout en haut, avant le choix', (
-      WidgetTester tester,
-    ) async {
+    testWidgets('« Apprendre » : « Pour qui », nomme « Inscription d\'un '
+        'eleve », et le retour ramene aux portes', (WidgetTester tester) async {
       await _monter(tester);
-      final Finder ligne = find.byKey(const Key('inscription-postuler-ici'));
-      expect(ligne, findsOneWidget);
-      expect(find.text(t.inscription.usage.postulerIci), findsOneWidget);
-      // Avant les deux cartes de choix.
-      expect(
-        tester.getTopLeft(ligne).dy,
-        lessThan(
-          tester.getTopLeft(find.byKey(const Key('inscription-usage'))).dy,
-        ),
-      );
+      await passerApprendre(tester);
+      expect(find.text(t.inscription.usage.question), findsOneWidget);
+      expect(find.text(t.inscription.porte.espaceEleve), findsOneWidget);
+      expect(find.byKey(UsageEtape.portesKey), findsNothing);
       verifierUnSeulBoutonPlein(tester);
-    });
-
-    testWidgets('POSTULER-ICI, entree sans code ouverte : mene a l\'identite', (
-      WidgetTester tester,
-    ) async {
-      final _Hote hote = await _monter(tester);
-      await _taper(tester, find.byKey(const Key('inscription-postuler-ici')));
-      expect(hote.chemin, Routes.inscriptionIdentite);
-      expect(_brouillon(tester).usage, UsageInscription.enseignant);
-      expect(_brouillon(tester).sansCode, isTrue);
-    });
-
-    testWidgets('POSTULER-ICI, entree fermee : mene au champ du code', (
-      WidgetTester tester,
-    ) async {
-      final _Hote hote = await _monter(
-        tester,
-        candidat: FauxInscriptionCandidat(cleOuverte: false),
-      );
-      await _taper(tester, find.byKey(const Key('inscription-postuler-ici')));
-      expect(hote.chemin, Routes.inscriptionInvitation);
-      expect(_brouillon(tester).sansCode, isFalse);
+      await _taper(tester, find.byType(DisqueRetour));
+      expect(find.byKey(UsageEtape.portesKey), findsOneWidget);
+      expect(find.text(t.inscription.porte.espaceEleve), findsNothing);
     });
 
     testWidgets('« J\'ai un code d\'invitation » garde la porte du code', (
@@ -488,10 +475,7 @@ void main() {
       WidgetTester tester,
     ) async {
       await _monter(tester);
-      await _taper(
-        tester,
-        find.byKey(const Key('inscription-deposer-candidature')),
-      );
+      await passerEnseigner(tester);
       expect(_brouillon(tester).sansCode, isTrue);
       _conteneur(tester)
           .read(brouillonInscriptionProvider.notifier)
@@ -702,10 +686,7 @@ void main() {
       WidgetTester tester,
     ) async {
       final _Hote hote = await _monter(tester);
-      await _taper(
-        tester,
-        find.byKey(const Key('inscription-deposer-candidature')),
-      );
+      await passerEnseigner(tester);
       expect(find.text('2 sur 5'), findsOneWidget);
       await tester.enterText(
         find.byKey(const Key('inscription-prenom')),

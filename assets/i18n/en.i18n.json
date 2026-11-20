@@ -1230,6 +1230,10 @@
     "cadreNonPublie": "Sending your application will be possible once the religious and educational framework is published."
   },
   "connexion": {
+    "candidat": {
+      "titre": "Your teacher application",
+      "phrase": "You are arriving through Rewayah Academy's invitation. Your application is waiting: enter the address that received this email, and we will send your sign-in link there."
+    },
     "titre": "Sign in",
     "sessionTermineeTitre": "You have been signed out",
     "sessionTermineePhrase": "Your session has ended: this account, or another one, signed in elsewhere, in this browser or on another device. Sign in again here. To use two accounts at the same time, open the second one in a private window or on another device.",
@@ -1453,6 +1457,18 @@
       "enseignantPostuler": "Do you want to teach at Rewayah?",
       "deposerCandidature": "Submit my application",
       "postulerIci": "Want to teach with us? Apply here"
+    },
+    "porte": {
+      "question": "What brings you to Rewayah Academy?",
+      "explication": "Choose your space. You will then only see the questions for that space.",
+      "apprendreTitre": "Learn",
+      "apprendreDescription": "Take the academy's classes, for yourself or for your child. You will say who next.",
+      "apprendreExemple": "you are learning recitation, or you are enrolling your 9-year-old daughter.",
+      "enseignerTitre": "Teach",
+      "enseignerDescription": "Submit your teacher application. The academy reviews it before any class.",
+      "enseignerExemple": "you received an invitation from the academy by email.",
+      "espaceEnseignant": "Teacher application",
+      "espaceEleve": "Student enrolment"
     },
     "recap": {
       "usage": "Account type",
