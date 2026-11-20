@@ -1,6 +1,6 @@
 -- PRAXIS PX-6 (20/11/2026) : Praxis ne repond plus a la place de la direction, et les entretiens ecrits sont suspendus.
--- Bati sur PX-5 (20261130300000, installe en production le 20/11/2026) et apres 20261130700000 (retrait des entretiens ecrits restes
--- sans reponse), memes conventions, memes gardes.
+-- Bati sur PX-5 (20261130300000, installe en production le 20/11/2026), memes conventions, memes gardes. Ne depend d'aucune migration
+-- posterieure a 20261130400000 (la migration 20261130700000 n'est pas installee et sort du depot, PR 653).
 --
 -- LE PROBLEME (mesure en production, lecture seule, 20/11/2026) : sur 54 reponses de Praxis, 20 s'adressaient a une personne qui repondait a
 -- un message de la direction (le plus souvent un simple remerciement apres une information donnee par le directeur) ; sur 100 entretiens
@@ -11,9 +11,15 @@
 -- pour certaines raisons de `ouvrir`, sur 48 heures.
 --
 -- LIVRE ICI (la regle est tenue par le serveur, pas seulement par la consigne de Praxis) :
+--   0. UNE definition de « la direction » comme auteur, UNE fonction privee : private.praxis_auteur_direction(profil, fil) = un membre de
+--      l'equipe de la conversation au sens de private.praxis_est_equipe (administrateur) OU un compte officiel autre que Praxis
+--      (private.comptes_officiels, par exemple le compte de l'administration #RA_STAFF, code 'staff', prevu par SECRETAIRE-IA §9 :
+--      praxis_est_equipe l'ecarte, il aurait echappe a la regle). Praxis n'est jamais « la direction ».
+--      LIMITE CONNUE (relecture du 20/11/2026, non corrigee) : « la direction » se lit au role ACTUEL de l'auteur ; si un administrateur
+--      change de role, ses anciens messages ne tiennent plus la conversation (et un administrateur supprime en douceur la tient encore).
 --   1. UNE definition, UNE fonction privee : private.praxis_tenue_par_direction(fil). Une conversation est TENUE PAR LA DIRECTION quand le
---      dernier message ecrit du cote de l'academie (Praxis, ou un membre de l'equipe au sens de private.praxis_est_equipe) est d'un membre de
---      l'equipe, et date de moins de N jours. N = private.praxis_reglages.direction_tient_jours (colonne neuve, 7 par defaut, de 1 a 60).
+--      dernier message ecrit du cote de l'academie (Praxis, ou la direction au sens du point 0) est de la direction, et date de moins de
+--      N jours. N = private.praxis_reglages.direction_tient_jours (colonne neuve, 7 par defaut, de 1 a 60).
 --   2. `boite` (praxis_boite) : chaque conversation rend `tenue_par_la_direction` ; le filtre `attend` n'inclut plus une conversation tenue
 --      par la direction ; un filtre neuf `direction` rend seulement celles-la quand le dernier message est de la personne (avec
 --      attente_heures), pour que Praxis le signale EN PRIVE a la direction (demander_equipe). `non_lu` et `tout` ne filtrent pas : ils
@@ -35,14 +41,21 @@
 --      `etat` rend entretiensEcritsSuspendus et directionTientJours. Aucune ligne existante n'est supprimee ni modifiee.
 --   7. Une porte neuve de la direction, seule a changer ces deux reglages : public.direction_praxis_regler_conversations(jours, entretiens),
 --      administrateur en aal2, journalisee (comme direction_praxis_regler_ouvertures). NULL = inchange.
---   8. UN ENTRETIEN RETIRE N'EST PLUS EN COURS (relecture du 20/11/2026) : la migration 20261130700000 retire de public.com_messages les
---      entretiens ecrits de Praxis restes sans reponse, sans toucher private.praxis_ouvertures (message_id sans cle etrangere). Toute
---      lecture de private.praxis_ouvertures qui dit « un entretien est ouvert, en cours, a relancer » ou qui presente une ouverture a Praxis
---      ignore desormais une ouverture dont le message n'existe plus dans public.com_messages (sans dependre d'une table de retraits) :
+--   8. UNE OUVERTURE SANS MESSAGE N'EST PLUS EN COURS (garde defensive, relecture du 20/11/2026) : private.praxis_ouvertures.message_id
+--      n'a pas de cle etrangere vers public.com_messages. Si un message d'ouverture venait a manquer (un retrait decide plus tard par le
+--      directeur, par exemple), toute lecture de private.praxis_ouvertures qui dit « un entretien est ouvert, en cours, a relancer » ou qui
+--      presente une ouverture a Praxis ignore une ouverture dont le message n'existe pas dans public.com_messages. Aujourd'hui
+--      public.com_messages n'accepte que des ajouts (declencheur com_messages_ajout_seul) : la garde ne change rien a ce qui est lu. Lectures :
 --      private.praxis_ouverture_refus (entretien_en_cours, relance_entretien_sans_objet), public.praxis_dossier (entretien_ecrit, et la liste
 --      praxis.ouvertures), public.praxis_boite_candidats (a_interroger). Les LIMITES comptent toujours toutes les ouvertures (la personne a
 --      bien ete contactee) : ouverture_recente, plafond_ouvertures, plafond_entretiens, entretien_deja_relance, plafond_relances, et les
 --      compteurs de `etat`. private.praxis_dossier_resume ne lit pas private.praxis_ouvertures : non touchee.
+--   9. `reponses_equipe` (praxis_reponses_equipe, relecture du 20/11/2026) : chaque reponse de la direction rend
+--      `tenue_par_la_direction` (la conversation est tenue maintenant : `ecrire` refusera) et `perimee` (la direction a ecrit dans la
+--      conversation APRES avoir repondu en prive, au sens du point 0 : elle a traite elle-meme). `a_transmettre` = ni perimee, ni tenue.
+--      Une reponse perimee reste rendue (visible, jamais effacee) : Praxis ne la transmet pas et appelle question_traitee. Sans cela,
+--      une reponse privee (« ne reponds pas, je m'en occupe ») restait a transmettre sans limite de temps, et Praxis l'aurait portee a la
+--      personne des que la conversation n'etait plus tenue.
 --   Les descriptions d'outils lues par Praxis vivent dans supabase/functions/_shared/praxis/outils.ts (fonction Edge praxis-mcp) : elles
 --   sont mises a jour dans la meme pull request, et la fonction Edge doit etre REDEPLOYEE (le filtre `direction` est refuse par sa
 --   validation tant qu'elle ne l'est pas).
@@ -62,6 +75,9 @@
 --   * public.praxis_boite_candidats(text, text, integer, integer) <- 20261130200000 (PX-4). Appelant : l'outil `boite_candidats` (point 8).
 --   * public.praxis_etat(text)                            <- 20261130300000 (PX-5). Appelant : l'outil `etat`.
 --   * public.praxis_rendre_compte(text, integer)          <- 20261130100000 (PX-3, travail). Appelant : l'outil `rendre_compte`.
+--   * public.praxis_reponses_equipe(text, integer)        <- 20261130300000 (PX-5). Appelant : l'outil `reponses_equipe` (point 9).
+-- FONCTIONS CREEES : private.praxis_auteur_direction(uuid, uuid), private.praxis_tenue_par_direction(uuid) (aides privees, aucun droit),
+-- public.direction_praxis_regler_conversations(integer, boolean) (porte de la direction).
 -- Rien n'est allume par cette migration (actif, autonome, donnees_reelles ne changent pas). Sans BEGIN ni COMMIT de premier niveau.
 
 DO $preflight$
@@ -72,6 +88,8 @@ BEGIN
      OR pg_catalog.to_regclass('private.praxis_ouvertures') IS NULL
      OR pg_catalog.to_regprocedure('private.praxis_est_equipe(uuid,uuid)') IS NULL
      OR pg_catalog.to_regprocedure('private.praxis_est_partie_a(uuid,uuid)') IS NULL
+     OR pg_catalog.to_regprocedure('private.praxis_est_officiel(uuid)') IS NULL
+     OR pg_catalog.to_regprocedure('public.praxis_reponses_equipe(text,integer)') IS NULL
      OR pg_catalog.to_regprocedure('private.praxis_profil()') IS NULL
      OR pg_catalog.to_regprocedure('private.praxis_dossier_resume(uuid,public.gender[])') IS NULL
      OR pg_catalog.to_regprocedure('public.praxis_ouvrir(text,text,text,text,uuid)') IS NULL
@@ -85,6 +103,7 @@ BEGIN
   IF EXISTS (SELECT 1 FROM pg_catalog.pg_attribute a WHERE a.attrelid = 'private.praxis_reglages'::pg_catalog.regclass
               AND a.attname IN ('direction_tient_jours', 'entretiens_ecrits_ouverts') AND NOT a.attisdropped)
      OR pg_catalog.to_regprocedure('private.praxis_tenue_par_direction(uuid)') IS NOT NULL
+     OR pg_catalog.to_regprocedure('private.praxis_auteur_direction(uuid,uuid)') IS NOT NULL
      OR pg_catalog.to_regprocedure('public.direction_praxis_regler_conversations(integer,boolean)') IS NOT NULL THEN
     RAISE EXCEPTION 'PX-6 : deja installe ; rien n''est modifie';
   END IF;
@@ -96,10 +115,12 @@ BEGIN
       ('public.praxis_etat(text)', '41563b247222c6ff5dec260ef244bc8a'),
       ('public.praxis_dossier(text,text)', 'ff5c331ef2eb2b124db31f70377e990f'),
       ('public.praxis_boite_candidats(text,text,integer,integer)', '6506de3129e7cf0c41984061ce6c3690'),
+      ('public.praxis_rendre_compte(text,integer)', '8e5b2b14363669074b1dd4e7e60c1371'),
+      ('public.praxis_reponses_equipe(text,integer)', 'e8b1e87634103991899eb83c15817cc7'),
       -- Non remplacees, mais leur comportement en depend.
       ('public.praxis_ouvrir(text,text,text,text,uuid)', '9400c10b892383999a9a020a7f1395db'),
-      ('public.praxis_rendre_compte(text,integer)', '8e5b2b14363669074b1dd4e7e60c1371'),
-      ('private.praxis_est_equipe(uuid,uuid)', '35dc52fea5840c71a81873f640efcd1a')) AS t(f, md5) LOOP
+      ('private.praxis_est_equipe(uuid,uuid)', '35dc52fea5840c71a81873f640efcd1a'),
+      ('private.praxis_est_officiel(uuid)', '6e17426dcd6e8cb6584917f6e665e384')) AS t(f, md5) LOOP
     IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p WHERE p.oid = v.f::pg_catalog.regprocedure) IS DISTINCT FROM v.md5 THEN
       RAISE EXCEPTION 'PX-6 : la definition de % n''est pas celle attendue ; rien n''est modifie', v.f;
     END IF;
@@ -121,12 +142,24 @@ ALTER TABLE private.praxis_reglages
   ADD COLUMN entretiens_ecrits_ouverts boolean NOT NULL DEFAULT false;
 
 -- ====================================================================================================================
--- 2. LA DEFINITION UNIQUE : une conversation tenue par la direction.
+-- 2. LES DEFINITIONS UNIQUES : « la direction » comme auteur, et une conversation tenue par la direction.
 -- ====================================================================================================================
--- Le dernier message ecrit du cote de l'academie (Praxis, ou un membre humain de l'equipe de cette conversation au sens de
--- private.praxis_est_equipe, qui exclut les comptes officiels) est d'un membre de l'equipe, et il date de moins de N jours. Une conversation
--- sans message de l'academie, ou dont le dernier message de l'academie est de Praxis, n'est pas tenue par la direction. Ordre des messages :
--- celui de toutes les lectures de Praxis (envoye_le, puis id).
+-- 2.0 La direction, auteur d'un message de la conversation : un membre de l'equipe (private.praxis_est_equipe : administrateur, comptes
+-- officiels exclus) OU un compte officiel autre que Praxis (le compte de l'administration #RA_STAFF, code 'staff'). Jamais Praxis, jamais un
+-- profil inconnu ou nul. Role lu au moment de l'appel (limite connue, voir l'en-tete).
+CREATE FUNCTION private.praxis_auteur_direction(p_profil uuid, p_fil uuid)
+RETURNS boolean
+LANGUAGE sql
+STABLE
+SET search_path = ''
+AS $f$
+  SELECT coalesce(p_profil IS DISTINCT FROM private.praxis_profil()
+                  AND (private.praxis_est_equipe(p_profil, p_fil) OR private.praxis_est_officiel(p_profil)), false);
+$f$;
+
+-- 2.1 Le dernier message ecrit du cote de l'academie (Praxis, ou la direction au sens de 2.0) est de la direction, et il date de moins de
+-- N jours. Une conversation sans message de l'academie, ou dont le dernier message de l'academie est de Praxis, n'est pas tenue par la
+-- direction. Ordre des messages : celui de toutes les lectures de Praxis (envoye_le, puis id).
 CREATE FUNCTION private.praxis_tenue_par_direction(p_fil uuid)
 RETURNS boolean
 LANGUAGE sql
@@ -137,10 +170,10 @@ AS $f$
     SELECT d.de_la_direction
            AND d.envoye_le > pg_catalog.clock_timestamp()
                              - pg_catalog.make_interval(days => coalesce((SELECT r.direction_tient_jours FROM private.praxis_reglages r), 7))
-      FROM (SELECT m.envoye_le, private.praxis_est_equipe(m.auteur_id, p_fil) AS de_la_direction
+      FROM (SELECT m.envoye_le, private.praxis_auteur_direction(m.auteur_id, p_fil) AS de_la_direction
               FROM public.com_messages m
              WHERE m.fil_id = p_fil
-               AND (m.auteur_id = private.praxis_profil() OR private.praxis_est_equipe(m.auteur_id, p_fil))
+               AND (m.auteur_id = private.praxis_profil() OR private.praxis_auteur_direction(m.auteur_id, p_fil))
              ORDER BY m.envoye_le DESC, m.id DESC
              LIMIT 1) d), false);
 $f$;
@@ -308,11 +341,12 @@ BEGIN
     FROM (SELECT m.envoye_le AS le, pg_catalog.jsonb_build_object(
                    'auteur', private.praxis_auteur_json(m.auteur_id, p_fil),
                    'est_praxis', m.auteur_id = private.praxis_profil(),
-                   -- PX-6 : DE QUI est le message, en un mot : praxis (toi), direction (un membre de l'equipe de l'academie),
+                   -- PX-6 : DE QUI est le message, en un mot : praxis (toi), direction (un membre de l'equipe de l'academie ou un compte
+                   -- officiel autre que Praxis, private.praxis_auteur_direction),
                    -- interlocuteur (la personne ou la famille de la conversation), autre. Un message de la direction n'est JAMAIS celui
                    -- de la personne, meme si son texte est aussi sous contenu_tiers.
                    'de', CASE WHEN m.auteur_id = private.praxis_profil() THEN 'praxis'
-                              WHEN private.praxis_est_equipe(m.auteur_id, p_fil) THEN 'direction'
+                              WHEN private.praxis_auteur_direction(m.auteur_id, p_fil) THEN 'direction'
                               WHEN private.praxis_est_partie_a(m.auteur_id, p_fil) THEN 'interlocuteur'
                               ELSE 'autre' END,
                    'envoye_le', m.envoye_le)
@@ -506,7 +540,7 @@ BEGIN
         WHERE m.fil_id = v_fil
           AND m.envoye_le > pg_catalog.clock_timestamp()
                             - pg_catalog.make_interval(days => coalesce((SELECT r.direction_tient_jours FROM private.praxis_reglages r), 7))
-          AND private.praxis_est_equipe(m.auteur_id, v_fil)) THEN
+          AND private.praxis_auteur_direction(m.auteur_id, v_fil)) THEN
     RETURN 'direction_recente';
   END IF;
   IF p_raison IN ('question', 'relance', 'entretien_ecrit', 'relance_entretien') THEN
@@ -960,13 +994,66 @@ BEGIN
 END;
 $function$;
 
+-- 4.9 public.praxis_reponses_equipe(text,integer) (corps de la derniere definition, ajouts marques PX-6).
+CREATE OR REPLACE FUNCTION public.praxis_reponses_equipe(p_cle text, p_limite integer DEFAULT 20)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_debut timestamptz := pg_catalog.clock_timestamp();
+  v_p record;
+  v_liste jsonb;
+BEGIN
+  SELECT * INTO v_p FROM private.praxis_porte(p_cle);
+  IF v_p.cause IS NOT NULL THEN
+    IF v_p.cle_id IS NOT NULL THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'reponses_equipe', v_p.cause_interne, NULL, NULL, NULL, v_debut);
+    END IF;
+    RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
+  END IF;
+  IF p_limite IS NULL OR p_limite NOT BETWEEN 1 AND 50 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'reponses_equipe', 'parametre', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
+  END IF;
+  SELECT coalesce(pg_catalog.jsonb_agg(x.j ORDER BY x.le), '[]'::jsonb) INTO v_liste
+    FROM (SELECT r.repondue_le AS le,
+                 pg_catalog.jsonb_build_object('id', r.id, 'fil', r.fil_id, 'question', r.question,
+                   'reponse_de_la_direction', r.reponse, 'repondue_le', r.repondue_le,
+                   -- PX-5 : vrai si Praxis avait RETIRE la question (il a deja repondu seul) avant que la direction reponde : ne
+                   -- transmettre que ce qui corrige ou complete ce qu'il a deja dit.
+                   'question_retiree', r.retiree_le IS NOT NULL,
+                   -- PX-6 : la conversation est tenue par la direction maintenant (`ecrire` refusera fil_de_la_direction).
+                   'tenue_par_la_direction', r.tenue,
+                   -- PX-6 : la direction a ecrit dans la conversation APRES sa reponse privee : elle a traite elle-meme. La reponse
+                   -- reste visible ; Praxis ne la transmet pas et appelle question_traitee.
+                   'perimee', r.perimee,
+                   -- PX-6 : a transmettre maintenant = ni perimee, ni conversation tenue.
+                   'a_transmettre', NOT r.perimee AND NOT r.tenue) AS j
+            FROM (SELECT q.*, private.praxis_tenue_par_direction(q.fil_id) AS tenue,
+                         EXISTS (SELECT 1 FROM public.com_messages m
+                                  WHERE m.fil_id = q.fil_id AND m.envoye_le > q.repondue_le
+                                    AND private.praxis_auteur_direction(m.auteur_id, q.fil_id)) AS perimee
+                    FROM (SELECT q0.* FROM private.praxis_questions q0
+                           WHERE q0.repondue_le IS NOT NULL AND q0.utilisee_le IS NULL
+                           ORDER BY q0.repondue_le, q0.id LIMIT 200) q) r
+           WHERE private.praxis_fil_refus(r.fil_id, v_p.cotes) IS NULL
+           ORDER BY r.repondue_le, r.id LIMIT p_limite) x;
+  PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'reponses_equipe', 'ok', NULL, NULL, NULL, v_debut);
+  RETURN pg_catalog.jsonb_build_object('reponses', v_liste);
+END;
+$function$;
+
 -- ====================================================================================================================
 -- 5. DROITS. Porte de la direction : authenticated (garde d'administrateur aal2 dans la fonction). Aide privee : personne. Les fonctions
 -- remplacees gardent leurs droits (CREATE OR REPLACE) ; le controle final le verifie.
 -- ====================================================================================================================
+ALTER FUNCTION private.praxis_auteur_direction(uuid, uuid) OWNER TO postgres;
 ALTER FUNCTION private.praxis_tenue_par_direction(uuid) OWNER TO postgres;
 ALTER FUNCTION public.direction_praxis_regler_conversations(integer, boolean) OWNER TO postgres;
-REVOKE ALL ON FUNCTION private.praxis_tenue_par_direction(uuid), public.direction_praxis_regler_conversations(integer, boolean)
+REVOKE ALL ON FUNCTION private.praxis_auteur_direction(uuid, uuid), private.praxis_tenue_par_direction(uuid),
+                        public.direction_praxis_regler_conversations(integer, boolean)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 GRANT EXECUTE ON FUNCTION public.direction_praxis_regler_conversations(integer, boolean) TO authenticated;
 
@@ -980,7 +1067,8 @@ BEGIN
   -- Les outils remplaces : service_role seul, SECURITY DEFINER, search_path vide, proprietaire postgres, et le corps porte PX-6.
   FOREACH v IN ARRAY ARRAY['public.praxis_boite(text,text,integer)', 'public.praxis_fil(text,uuid,integer)',
       'public.praxis_ecrire(text,uuid,text,uuid)', 'public.praxis_etat(text)', 'public.praxis_dossier(text,text)',
-      'public.praxis_boite_candidats(text,text,integer,integer)', 'public.praxis_rendre_compte(text,integer)'] LOOP
+      'public.praxis_boite_candidats(text,text,integer,integer)', 'public.praxis_rendre_compte(text,integer)',
+      'public.praxis_reponses_equipe(text,integer)'] LOOP
     IF NOT pg_catalog.has_function_privilege('service_role', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('anon', v, 'EXECUTE') OR pg_catalog.has_function_privilege('authenticated', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('agent_ro', v, 'EXECUTE')
@@ -1008,7 +1096,7 @@ BEGIN
     RAISE EXCEPTION 'PX-6 : droits ou definition inattendus pour %', v;
   END IF;
   -- Les aides privees : personne.
-  FOREACH v IN ARRAY ARRAY['private.praxis_tenue_par_direction(uuid)',
+  FOREACH v IN ARRAY ARRAY['private.praxis_tenue_par_direction(uuid)', 'private.praxis_auteur_direction(uuid,uuid)',
       'private.praxis_ouverture_refus(public.candidatures,text,public.gender[])'] LOOP
     IF pg_catalog.has_function_privilege('anon', v, 'EXECUTE') OR pg_catalog.has_function_privilege('authenticated', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('service_role', v, 'EXECUTE') OR pg_catalog.has_function_privilege('agent_ro', v, 'EXECUTE')

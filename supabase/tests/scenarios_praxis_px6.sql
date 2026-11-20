@@ -2,6 +2,8 @@
 -- DIRECTION sort de `boite` attend et de `laisse_en_attente`, `ecrire` la refuse `fil_de_la_direction` sans exception),
 -- `direction_recente` vaut pour toutes les raisons de `ouvrir` sur N jours, les entretiens ecrits sont suspendus (reouverture par la
 -- direction seule), et une serie d'entretien dont le message a disparu n'est plus annoncee ni relancee (les limites la comptent toujours).
+-- Relecture du 20/11/2026 : « la direction » inclut un compte officiel autre que Praxis (#RA_STAFF fictif, u3) ; `reponses_equipe` dit si
+-- une reponse est tenue, perimee, a transmettre ; une conversation de foyer (type dossier) suit la meme regle.
 -- Chaque verification est isolee ; le fichier se termine par la liste ok / ROUGE puis echoue s'il reste un ROUGE. Les aides du debut sont
 -- celles de scenarios_praxis_px5.sql. A rejouer sur une base NEUVE (stub_auth puis toutes les migrations). Annule tout a la fin.
 -- Aucun mot d'effacement.
@@ -124,6 +126,10 @@ SELECT pg_temp.u(n::text), 'P6-CAN-00' || n, 'teacher', NULL, 'Prenomsecret' || 
 INSERT INTO public.teacher_profiles (profile_id, country, languages, kyc_status)
 SELECT pg_temp.u(n::text), 'SA', ARRAY[]::text[], 'pending' FROM generate_series(10, 19) n;
 INSERT INTO private.super_admin_kyc (profile_id) VALUES (pg_temp.u('1'));
+-- u3 : le compte de l'administration (#RA_STAFF fictif), role accountant ; il n'est compte officiel ('staff') que dans les verifications
+-- qui l'inscrivent (annulees). Le role importe peu : c'est l'inscription officielle qui en fait « la direction ».
+INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
+ (pg_temp.u('3'), 'P6-STAFF-0003', 'accountant', NULL, 'Staff', 'Officiel', 'active', 'male');
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, source, recue_le, derniere_activite)
 SELECT pg_temp.c(n::text), 'enseignant', pg_temp.u(n::text), 'female', 'Prenomsecret' || n || ' Famillesecrete',
        CASE WHEN n IN (15, 17, 18, 19) THEN 'verifications' ELSE 'prequalification' END,
@@ -196,13 +202,18 @@ SELECT pg_temp.verif('DROITS porte direction_praxis_regler_conversations : authe
      AND NOT has_function_privilege('agent_ro', 'public.direction_praxis_regler_conversations(integer,boolean)', 'EXECUTE')
      AND NOT has_function_privilege('service_role', 'private.praxis_tenue_par_direction(uuid)', 'EXECUTE')
      AND NOT has_function_privilege('authenticated', 'private.praxis_tenue_par_direction(uuid)', 'EXECUTE')
-     AND NOT has_function_privilege('anon', 'private.praxis_tenue_par_direction(uuid)', 'EXECUTE') $$);
+     AND NOT has_function_privilege('anon', 'private.praxis_tenue_par_direction(uuid)', 'EXECUTE')
+     AND NOT has_function_privilege('service_role', 'private.praxis_auteur_direction(uuid,uuid)', 'EXECUTE')
+     AND NOT has_function_privilege('authenticated', 'private.praxis_auteur_direction(uuid,uuid)', 'EXECUTE')
+     AND NOT has_function_privilege('anon', 'private.praxis_auteur_direction(uuid,uuid)', 'EXECUTE') $$);
 SELECT pg_temp.verif('DROITS outils remplaces : service_role seul, SECURITY DEFINER, search_path vide', $$
   SELECT bool_and(has_function_privilege('service_role', p.oid, 'EXECUTE') AND NOT has_function_privilege('authenticated', p.oid, 'EXECUTE')
                   AND NOT has_function_privilege('anon', p.oid, 'EXECUTE') AND p.prosecdef AND p.proconfig @> ARRAY['search_path=""'])
+           AND count(*) = 8
     FROM pg_proc p WHERE p.oid IN ('public.praxis_boite(text,text,integer)'::regprocedure, 'public.praxis_fil(text,uuid,integer)'::regprocedure,
       'public.praxis_ecrire(text,uuid,text,uuid)'::regprocedure, 'public.praxis_etat(text)'::regprocedure,
-      'public.praxis_dossier(text,text)'::regprocedure, 'public.praxis_boite_candidats(text,text,integer,integer)'::regprocedure) $$);
+      'public.praxis_dossier(text,text)'::regprocedure, 'public.praxis_boite_candidats(text,text,integer,integer)'::regprocedure,
+      'public.praxis_rendre_compte(text,integer)'::regprocedure, 'public.praxis_reponses_equipe(text,integer)'::regprocedure) $$);
 SELECT pg_temp.verif('REGLAGES a l''installation : 7 jours, entretiens ecrits suspendus', $$
   SELECT r.direction_tient_jours = 7 AND NOT r.entretiens_ecrits_ouverts FROM private.praxis_reglages r $$);
 
@@ -218,6 +229,55 @@ SELECT pg_temp.verif_annule('1 REGLAGE N : a 30 jours, c12 (direction il y a 10 
 SELECT pg_temp.verif_annule('1 REGLAGE N : a 1 jour, c10 (direction il y a 2 jours) n''est plus tenue et revient dans attend', $$
   SELECT pg_temp.en(pg_temp.u('1'), 'admin', 'SELECT public.direction_praxis_regler_conversations(1, NULL)') $$, $$
   SELECT NOT pg_temp.tenue('10') AND NOT pg_temp.tenue('12') AND pg_temp.ligne_boite('attend', '10') IS NOT NULL $$);
+
+-- ===== 1 bis. LA DIRECTION, AUTEUR : un compte officiel autre que Praxis (#RA_STAFF) compte ; Praxis et un compte ordinaire non =====
+SELECT pg_temp.verif_annule('1 bis STAFF : la direction ecrit par le compte officiel staff, la candidate remercie (c11) : tenue, hors attend, de = direction, ecrire refuse', $$
+  INSERT INTO private.comptes_officiels (profile_id, code) VALUES (pg_temp.u('3'), 'staff');
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le) VALUES
+   (pg_temp.f('11'), pg_temp.u('3'), pg_temp.idem('901'), 'Note d''information de la direction.', clock_timestamp() - interval '2 hours'),
+   (pg_temp.f('11'), pg_temp.u('11'), pg_temp.idem('902'), 'Merci beaucoup.', clock_timestamp() - interval '1 hour') $$, $$
+  SELECT pg_temp.tenue('11') AND pg_temp.ligne_boite('attend', '11') IS NULL AND pg_temp.ligne_boite('direction', '11') IS NOT NULL
+     AND (SELECT m ->> 'de' FROM jsonb_array_elements(pg_temp.fil('11') -> 'messages') m WHERE m #>> '{contenu_tiers,texte}' LIKE 'Note%') = 'direction'
+     AND pg_temp.ecrire('11', '903') ->> 'erreur' = 'fil_de_la_direction'
+     AND pg_temp.n($q$public.com_messages m WHERE m.fil_id = pg_temp.f('11')$q$) = 3 $$);
+SELECT pg_temp.verif_annule('1 bis STAFF : un message du compte staff il y a 1 jour suffit a direction_recente (c16, question refusee)', $$
+  INSERT INTO private.comptes_officiels (profile_id, code) VALUES (pg_temp.u('3'), 'staff');
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le) VALUES
+   (pg_temp.f('16'), pg_temp.u('3'), pg_temp.idem('904'), 'Note d''information de la direction.', clock_timestamp() - interval '1 day') $$, $$
+  SELECT pg_temp.ouvrir('16', 'question', '905') ->> 'erreur' = 'direction_recente' $$);
+SELECT pg_temp.verif_annule('1 bis TEMOIN : le meme compte NON officiel (accountant ordinaire) n''est pas la direction : non tenue, de = autre', $$
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le) VALUES
+   (pg_temp.f('11'), pg_temp.u('3'), pg_temp.idem('906'), 'Message ordinaire.', clock_timestamp() - interval '2 hours') $$, $$
+  SELECT NOT pg_temp.tenue('11')
+     AND (SELECT m ->> 'de' FROM jsonb_array_elements(pg_temp.fil('11') -> 'messages') m WHERE m #>> '{contenu_tiers,texte}' = 'Message ordinaire.') = 'autre' $$);
+SELECT pg_temp.verif('1 bis PRAXIS n''est jamais la direction (aide privee)', $$
+  SELECT NOT private.praxis_auteur_direction(private.praxis_profil(), pg_temp.f('13')) AND private.praxis_auteur_direction(pg_temp.u('2'), pg_temp.f('13'))
+     AND NOT private.praxis_auteur_direction(pg_temp.u('13'), pg_temp.f('13')) AND NOT private.praxis_auteur_direction(NULL, pg_temp.f('13'))
+     AND NOT private.praxis_auteur_direction(gen_random_uuid(), pg_temp.f('13')) $$);
+-- Hors candidature : une conversation de FOYER (type dossier, une tutrice), meme regle.
+SELECT pg_temp.verif_annule('1 bis FOYER (type dossier) : la direction informe, la tutrice remercie : tenue, hors attend, ecrire refuse', $$
+  INSERT INTO public.households (id) VALUES ('5c1dbbbb-0000-4000-8000-000000000020');
+  INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
+   (pg_temp.u('20'), 'P6-TUT-0020', 'guardian', '5c1dbbbb-0000-4000-8000-000000000020', 'Tutrice', 'Foyer', 'active', 'female');
+  INSERT INTO public.com_fils (id, type_objet, objet_id, partie_a_nature, partie_a_id, partie_b_nature, partie_b_id)
+  VALUES (pg_temp.f('20'), 'dossier', pg_temp.u('20'), 'foyer', '5c1dbbbb-0000-4000-8000-000000000020', 'equipe', NULL);
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le) VALUES
+   (pg_temp.f('20'), pg_temp.u('2'), pg_temp.idem('920'), 'Information de la direction au foyer.', clock_timestamp() - interval '2 days'),
+   (pg_temp.f('20'), pg_temp.u('20'), pg_temp.idem('921'), 'Merci.', clock_timestamp() - interval '1 day') $$, $$
+  SELECT pg_temp.tenue('20') AND pg_temp.ligne_boite('attend', '20') IS NULL AND pg_temp.ligne_boite('direction', '20') IS NOT NULL
+     AND pg_temp.ecrire('20', '922') ->> 'erreur' = 'fil_de_la_direction'
+     AND pg_temp.n($q$public.com_messages m WHERE m.fil_id = pg_temp.f('20')$q$) = 2 $$);
+SELECT pg_temp.verif_annule('1 bis FOYER (type dossier) TEMOIN : a N = 1 jour, la meme conversation attend Praxis et ecrire passe', $$
+  INSERT INTO public.households (id) VALUES ('5c1dbbbb-0000-4000-8000-000000000020');
+  INSERT INTO public.profiles (id, immutable_id, role, household_id, first_name, last_name, account_status, gender) VALUES
+   (pg_temp.u('20'), 'P6-TUT-0020', 'guardian', '5c1dbbbb-0000-4000-8000-000000000020', 'Tutrice', 'Foyer', 'active', 'female');
+  INSERT INTO public.com_fils (id, type_objet, objet_id, partie_a_nature, partie_a_id, partie_b_nature, partie_b_id)
+  VALUES (pg_temp.f('20'), 'dossier', pg_temp.u('20'), 'foyer', '5c1dbbbb-0000-4000-8000-000000000020', 'equipe', NULL);
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le) VALUES
+   (pg_temp.f('20'), pg_temp.u('2'), pg_temp.idem('923'), 'Information de la direction au foyer.', clock_timestamp() - interval '2 days'),
+   (pg_temp.f('20'), pg_temp.u('20'), pg_temp.idem('924'), 'Merci.', clock_timestamp() - interval '1 day');
+  UPDATE private.praxis_reglages SET direction_tient_jours = 1 $$, $$
+  SELECT NOT pg_temp.tenue('20') AND pg_temp.ligne_boite('attend', '20') IS NOT NULL AND pg_temp.ecrire('20', '925') ->> 'ok' = 'true' $$);
 
 -- ===== 2. BOITE =====
 SELECT pg_temp.verif('2 BOITE attend : c10 (remerciement apres la direction) n''y est PAS ; c11, c12, c13 y sont', $$
@@ -272,6 +332,37 @@ SELECT pg_temp.verif('4 ECRIRE sans exception : la direction a repondu en prive 
   SELECT EXISTS (SELECT 1 FROM private.praxis_questions q WHERE q.id = (pg_temp.lu('q14') ->> 'id')::uuid AND q.repondue_le IS NOT NULL)
      AND pg_temp.ecrire('14', '142') ->> 'erreur' = 'fil_de_la_direction'
      AND pg_temp.n($q$public.com_messages m WHERE m.fil_id = pg_temp.f('14')$q$) = 2 $$);
+-- ===== 4 ter. REPONSES_EQUIPE : tenue, perimee, a transmettre =====
+CREATE FUNCTION pg_temp.reponse(p_q text) RETURNS jsonb LANGUAGE sql AS $$
+  SELECT l.x FROM jsonb_array_elements(pg_temp.srv(format('SELECT public.praxis_reponses_equipe(%L, 50)', pg_temp.k('both'))) -> 'reponses') l(x)
+   WHERE l.x ->> 'id' = pg_temp.lu(p_q) ->> 'id' $$;
+GRANT EXECUTE ON FUNCTION pg_temp.reponse(text) TO service_role;
+SELECT pg_temp.verif('4 ter REPONSES : c14 tenue, la direction a repondu en prive : rendue, tenue vrai, perimee faux, a_transmettre faux', $$
+  SELECT pg_temp.reponse('q14') ->> 'reponse_de_la_direction' = 'Ne reponds pas, je m''en occupe.'
+     AND pg_temp.reponse('q14') ->> 'tenue_par_la_direction' = 'true' AND pg_temp.reponse('q14') ->> 'perimee' = 'false'
+     AND pg_temp.reponse('q14') ->> 'a_transmettre' = 'false' $$);
+SELECT pg_temp.verif_annule('4 ter REPONSES : la direction ecrit a c14 APRES sa reponse privee : perimee, jamais a transmettre, meme a N = 1 jour ; toujours rendue', $$
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte) VALUES
+   (pg_temp.f('14'), pg_temp.u('2'), pg_temp.idem('930'), 'La direction repond elle-meme.');
+  UPDATE private.praxis_reglages SET direction_tient_jours = 1 $$, $$
+  SELECT pg_temp.reponse('q14') IS NOT NULL AND pg_temp.reponse('q14') ->> 'perimee' = 'true'
+     AND pg_temp.reponse('q14') ->> 'a_transmettre' = 'false'
+     AND EXISTS (SELECT 1 FROM private.praxis_questions q WHERE q.id = (pg_temp.lu('q14') ->> 'id')::uuid AND q.utilisee_le IS NULL) $$);
+SELECT pg_temp.verif_annule('4 ter REPONSES : perimee aussi quand la direction ecrit par le compte officiel staff', $$
+  INSERT INTO private.comptes_officiels (profile_id, code) VALUES (pg_temp.u('3'), 'staff');
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte) VALUES
+   (pg_temp.f('14'), pg_temp.u('3'), pg_temp.idem('931'), 'Note de la direction.') $$, $$
+  SELECT pg_temp.reponse('q14') ->> 'perimee' = 'true' AND pg_temp.reponse('q14') ->> 'a_transmettre' = 'false' $$);
+SELECT pg_temp.verif_annule('4 ter REPONSES : c14 n''est plus tenue (N = 1 jour) et rien n''est venu depuis : a_transmettre vrai', $$
+  UPDATE private.praxis_reglages SET direction_tient_jours = 1 $$, $$
+  SELECT pg_temp.reponse('q14') ->> 'tenue_par_la_direction' = 'false' AND pg_temp.reponse('q14') ->> 'perimee' = 'false'
+     AND pg_temp.reponse('q14') ->> 'a_transmettre' = 'true' $$);
+SELECT pg_temp.verif_annule('4 ter REPONSES : un message de la personne apres la reponse ne la rend pas perimee (N = 1 jour)', $$
+  UPDATE private.praxis_reglages SET direction_tient_jours = 1;
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte) VALUES
+   (pg_temp.f('14'), pg_temp.u('14'), pg_temp.idem('932'), 'Encore une question.') $$, $$
+  SELECT pg_temp.reponse('q14') ->> 'perimee' = 'false' AND pg_temp.reponse('q14') ->> 'a_transmettre' = 'true' $$);
+
 SELECT pg_temp.verif_annule('4 ECRIRE sans exception : une question retiree puis repondue ne rouvre rien non plus', $$
   UPDATE private.praxis_questions SET retiree_le = clock_timestamp(), retiree_motif = 'sans_objet' WHERE id = (pg_temp.lu('q14') ->> 'id')::uuid $$, $$
   SELECT pg_temp.ecrire('14', '143') ->> 'erreur' = 'fil_de_la_direction' $$);
@@ -352,12 +443,17 @@ SELECT pg_temp.verif('8 RETIRE : les limites comptent toujours ces ouvertures (d
          = 100 - pg_temp.n($q$private.praxis_ouvertures o WHERE o.raison <> 'felicitations' AND o.ouverte_le > now() - interval '5 hours'$q$)::int
      AND pg_temp.n($q$private.praxis_ouvertures o WHERE o.candidature_id = pg_temp.c('19') AND o.ouverte_le > now() - interval '5 hours'$q$) = 1 $$);
 SELECT pg_temp.verif('8 TEMOIN : une serie dont le message existe reste en cours (c17, envoyee plus haut)', $$
-  SELECT pg_temp.dossier('17') -> 'entretien_ecrit' ->> 'etat' = 'en_cours'
-     AND pg_temp.ouvrir('17', 'entretien_ecrit', '173', 'Encore ?') ->> 'erreur' IN ('ouverture_recente', 'entretien_en_cours') $$);
+  SELECT pg_temp.dossier('17') -> 'entretien_ecrit' ->> 'etat' = 'en_cours' $$);
+-- La serie de c17 est vieillie de 8 jours (hors ouverture_recente) : seul entretien_en_cours peut refuser une nouvelle serie.
+SELECT pg_temp.verif_annule('8 TEMOIN : serie de c17 vieillie de 8 jours, message present : une nouvelle serie est refusee entretien_en_cours', $$
+  UPDATE private.praxis_ouvertures SET ouverte_le = ouverte_le - interval '8 days' WHERE candidature_id = pg_temp.c('17') $$, $$
+  SELECT pg_temp.ouvrir('17', 'entretien_ecrit', '173', 'Encore ?') ->> 'erreur' = 'entretien_en_cours' $$);
 
 -- ===== AUCUNE DONNEE EFFACEE =====
 SELECT pg_temp.verif('AUCUN EFFACEMENT : les messages et les ouvertures de la fixture sont tous la', $$
-  SELECT pg_temp.n('public.com_messages m WHERE m.fil_id IN (SELECT f.id FROM public.com_fils f WHERE f.objet_id IN (SELECT c.id FROM public.candidatures c WHERE c.nom_complet LIKE ''Prenomsecret%''))') >= 12
+  -- Les 12 messages de la fixture (cles idem 1 a 12) sont tous la, plus l'entretien ecrit de c17 (6 ROUVERT), rien d'autre.
+  SELECT pg_temp.n('public.com_messages m WHERE m.cle_idempotence IN (SELECT pg_temp.idem(n::text) FROM generate_series(1, 12) n)') = 12
+     AND pg_temp.n('public.com_messages m WHERE m.fil_id IN (SELECT f.id FROM public.com_fils f WHERE f.objet_id IN (SELECT c.id FROM public.candidatures c WHERE c.nom_complet LIKE ''Prenomsecret%''))') = 13
      AND pg_temp.n('private.praxis_ouvertures o WHERE o.candidature_id IN (pg_temp.c(''18''), pg_temp.c(''19''))') = 3 $$);
 
 \o

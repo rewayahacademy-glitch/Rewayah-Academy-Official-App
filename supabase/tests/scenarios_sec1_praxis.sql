@@ -455,8 +455,9 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.praxis_reponses', 'public.com_fils',
           -- PX-5 : l'aide neuve qui dit ou en est le dossier d'une conversation (lue par boite et fil).
           'private.praxis_dossier_resume',
-          -- PX-6 : l'aide neuve qui dit si une conversation est tenue par la direction (lue par boite, fil et ecrire).
-          'private.praxis_tenue_par_direction',
+          -- PX-6 : les deux aides neuves : la conversation tenue par la direction (lue par boite, fil, ecrire, rendre_compte,
+          -- reponses_equipe) et « la direction » comme auteur (equipe ou compte officiel autre que Praxis).
+          'private.praxis_tenue_par_direction', 'private.praxis_auteur_direction',
           'public.app_account_valid', 'public.app_role', 'public.log_sensitive_access']) x),
   'R4 / AR-10 : tout appel qualifie fait par les fonctions praxis_* et direction_praxis_* est dans la liste fermee ecrite ici (59 noms : 42, plus 7 de PX-3, plus 10 de PX-4) ; aucun autre appel de public, private ou d''un autre schema');
 
