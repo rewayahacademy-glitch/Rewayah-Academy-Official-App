@@ -1,7 +1,35 @@
 # Lot LETTRE-CANDIDATS : la lettre de vérité aux candidats enseignants (ouvert le 20/11/2026)
 
-**Statut : À LIVRER. Rien n'est dans l'application.** Le texte français est écrit et en relecture
-(`LETTRE-fr.md`) ; aucune page, aucune traduction, aucune migration n'existe.
+**Statut au 20/11/2026 au soir : À LIVRER, codé sur la branche, testé localement seulement.** Rien
+n'est en production ni prouvé par le directeur.
+
+- Texte français **validé** par le directeur le 20/11 (« OUI c'est bon »), plus deux ajouts demandés
+  après ce « oui » (mérite des gens du Coran, cours individuels), à relire par lui.
+- Traductions arabe et anglaise faites par agent, **non relues par un humain** (`LETTRE-ar.md`,
+  `LETTRE-en.md`). Langues choisies d'après les candidatures en base le 20/11 : `ar` 396, `en` 171,
+  `fr` 41, sans langue 21.
+- Page : `lib/features/candidature/lettre/` (page, corps, Praxis), route `Routes.lettreEnseignants`
+  (`/lire/lettre-enseignants`), entrée dans « À savoir » du candidat. Le texte est dans
+  `assets/i18n/*.i18n.json` sous `recrutement.lettre`.
+- **Le lien se partage** (question du directeur, 20/11) : toute personne connectée l'ouvre, candidat en
+  attente comme compte actif de n'importe quel rôle ; sans connexion, la connexion puis retour à la
+  page ; compte suspendu refusé (`deciderRedirection`, sous-arbre `Routes.lecture`). La page reste dans
+  l'application, rien n'est public.
+- **Un seul Praxis** (directeur, 20/11 : « il ne doit pas apparaître plusieurs fois sur la même
+  viewport, il est en haut, il saute et rebondit avec le scroll ») : dans la tête fixe de la page
+  (`PageShell.enteteSecondaire`), il change de phrase avec la partie lue et saute à chaque changement
+  et à chaque reprise du défilement ; aucun saut sous « Réduire les effets ».
+- Verrou : un candidat dont le contrat, le code de conduite ou l'engagement religieux publié manque
+  voit ce qui manque et « Accepter mes accords ». **Limite** : le texte est compilé dans l'application,
+  le verrou est un affichage, pas un secret.
+- Écarts aux règles du dépôt, signalés au directeur : l'emoji demandé (la cloche) est retiré de
+  l'application (règle « zéro emoji » contrôlée par la CI) ; « groupes » remplacé par « cas » (mot
+  interdit) ; une bande fixe en haut de page, petite, sur ordre du directeur malgré
+  `DECISION-DEFILEMENT-2026-11-01` (« rien de gros collé au-dessus du contenu »).
+- Encore ouverts : l'emplacement dans l'espace enseignant (rien n'y est construit) ; la ligne « La paie
+  d'un enseignant : s'affichera ici… » de « À savoir » contredit maintenant la lettre (zone de la
+  session « Parcours candidat enseignant », prévenue) ; le montrer aux élèves et aux familles donnerait
+  les montants de la paie, ce que la décision du 22/10 réservait aux pourcentages.
 
 ## L'ordre du directeur (20/11/2026)
 

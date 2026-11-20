@@ -1802,6 +1802,7 @@ class Traductions$recrutement$fr {
 	final Traductions _root; // ignore: unused_field
 
 	// Translations
+	late final Traductions$recrutement$lettre$fr lettre = Traductions$recrutement$lettre$fr.internal(_root);
 	late final Traductions$recrutement$majeur$fr majeur = Traductions$recrutement$majeur$fr.internal(_root);
 	late final Traductions$recrutement$suivant$fr suivant = Traductions$recrutement$suivant$fr.internal(_root);
 	late final Traductions$recrutement$dossier3$fr dossier3 = Traductions$recrutement$dossier3$fr.internal(_root);
@@ -9514,6 +9515,69 @@ class Traductions$eleveConnexion$refus$fr {
 
 	/// fr: 'La vérification du code n'a pas abouti. Réessayez dans un instant.'
 	String get generique => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.';
+}
+
+// Path: recrutement.lettre
+class Traductions$recrutement$lettre$fr {
+	Traductions$recrutement$lettre$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Tout ce que vous devez savoir avant de continuer'
+	String get titre => 'Tout ce que vous devez savoir avant de continuer';
+
+	/// fr: 'La paie, les heures, l'attente d'une classe, nos règles, et ce qui est dur dans ce travail. À la fin, vous saurez si vous continuez avec nous.'
+	String get chapeau => 'La paie, les heures, l\'attente d\'une classe, nos règles, et ce qui est dur dans ce travail. À la fin, vous saurez si vous continuez avec nous.';
+
+	/// fr: 'Environ 15 minutes de lecture'
+	String get duree => 'Environ 15 minutes de lecture';
+
+	/// fr: 'Mise à jour : 20 novembre 2026'
+	String get miseAJour => 'Mise à jour : 20 novembre 2026';
+
+	/// fr: 'Sommaire'
+	String get sommaire => 'Sommaire';
+
+	/// fr: 'Revenir au sommaire'
+	String get revenirSommaire => 'Revenir au sommaire';
+
+	/// fr: 'Aller à la partie : {titre}'
+	String allerA({required Object titre}) => 'Aller à la partie : ${titre}';
+
+	/// fr: 'Lire la lettre aux candidats enseignants'
+	String get entree => 'Lire la lettre aux candidats enseignants';
+
+	/// fr: 'La paie, les heures, l'attente d'une classe, nos règles'
+	String get entreeLegende => 'La paie, les heures, l\'attente d\'une classe, nos règles';
+
+	/// fr: 'Cette lettre s'ouvre quand vos accords sont acceptés'
+	String get verrouTitre => 'Cette lettre s\'ouvre quand vos accords sont acceptés';
+
+	/// fr: 'Pour la lire, il vous reste à accepter :'
+	String get verrouIntro => 'Pour la lire, il vous reste à accepter :';
+
+	/// fr: 'le contrat d'enseignant'
+	String get manqueContrat => 'le contrat d\'enseignant';
+
+	/// fr: 'le code de conduite'
+	String get manqueConduite => 'le code de conduite';
+
+	/// fr: 'l'engagement religieux'
+	String get manqueCadre => 'l\'engagement religieux';
+
+	/// fr: 'Accepter mes accords'
+	String get completer => 'Accepter mes accords';
+
+	/// fr: 'La lettre n'a pas pu s'ouvrir.'
+	String get nonCharge => 'La lettre n\'a pas pu s\'ouvrir.';
+
+	/// fr: 'Praxis, assistant de l'académie (IA)'
+	String get praxisNom => 'Praxis, assistant de l\'académie (IA)';
+
+	late final Traductions$recrutement$lettre$praxis$fr praxis = Traductions$recrutement$lettre$praxis$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$fr parties = Traductions$recrutement$lettre$parties$fr.internal(_root);
 }
 
 // Path: recrutement.majeur
@@ -28939,6 +29003,59 @@ class Traductions$priere$direction$feuille$fr {
 
 	/// fr: 'Il est possible que le lieu ne soit pas parvenu jusqu'à Rewayah, ou qu'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.'
 	String get erreurEnregistrement => 'Il est possible que le lieu ne soit pas parvenu jusqu\'à Rewayah, ou qu\'une valeur soit refusée. Vérifiez la fiche, puis réessayez dans un instant.';
+}
+
+// Path: recrutement.lettre.praxis
+class Traductions$recrutement$lettre$praxis$fr {
+	Traductions$recrutement$lettre$praxis$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps.'
+	String get accueil => 'Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps.';
+
+	/// fr: 'Ici, les vrais chiffres. Regardez le tableau, tout y est.'
+	String get paie => 'Ici, les vrais chiffres. Regardez le tableau, tout y est.';
+
+	/// fr: 'Retenez trois chiffres : 3, 8 et 11 minutes.'
+	String get retard => 'Retenez trois chiffres : 3, 8 et 11 minutes.';
+
+	/// fr: 'L'attente peut durer. Gardez vos activités, et surveillez vos messages.'
+	String get attente => 'L\'attente peut durer. Gardez vos activités, et surveillez vos messages.';
+
+	/// fr: 'C'est pour protéger les enfants. Et c'est vous aussi qu'on protège.'
+	String get piece => 'C\'est pour protéger les enfants. Et c\'est vous aussi qu\'on protège.';
+
+	/// fr: 'C'est moi ! Je suis en pause pour l'instant : on me règle avant de me relancer.'
+	String get moi => 'C\'est moi ! Je suis en pause pour l\'instant : on me règle avant de me relancer.';
+
+	/// fr: 'Quelle que soit votre réponse, merci d'avoir lu jusqu'au bout.'
+	String get fin => 'Quelle que soit votre réponse, merci d\'avoir lu jusqu\'au bout.';
+}
+
+// Path: recrutement.lettre.parties
+class Traductions$recrutement$lettre$parties$fr {
+	Traductions$recrutement$lettre$parties$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+	late final Traductions$recrutement$lettre$parties$p1$fr p1 = Traductions$recrutement$lettre$parties$p1$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p2$fr p2 = Traductions$recrutement$lettre$parties$p2$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p3$fr p3 = Traductions$recrutement$lettre$parties$p3$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p4$fr p4 = Traductions$recrutement$lettre$parties$p4$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p5$fr p5 = Traductions$recrutement$lettre$parties$p5$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p6$fr p6 = Traductions$recrutement$lettre$parties$p6$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p7$fr p7 = Traductions$recrutement$lettre$parties$p7$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p8$fr p8 = Traductions$recrutement$lettre$parties$p8$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p9$fr p9 = Traductions$recrutement$lettre$parties$p9$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p10$fr p10 = Traductions$recrutement$lettre$parties$p10$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p11$fr p11 = Traductions$recrutement$lettre$parties$p11$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p12$fr p12 = Traductions$recrutement$lettre$parties$p12$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p13$fr p13 = Traductions$recrutement$lettre$parties$p13$fr.internal(_root);
+	late final Traductions$recrutement$lettre$parties$p14$fr p14 = Traductions$recrutement$lettre$parties$p14$fr.internal(_root);
 }
 
 // Path: recrutement.majeur.portail
@@ -48928,6 +49045,216 @@ class Traductions$salle$fin$enseignant$recharge1$fr {
 	String get erreurCahier => 'Le cahier de transmission ne s\'ouvre pas depuis cet écran. Revenez à votre journée : vous le remplirez depuis la carte de la séance.';
 }
 
+// Path: recrutement.lettre.parties.p1
+class Traductions$recrutement$lettre$parties$p1$fr {
+	Traductions$recrutement$lettre$parties$p1$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pourquoi vous recevez cette lettre'
+	String get titre => 'Pourquoi vous recevez cette lettre';
+
+	/// fr: 'Assalamu alaykum wa rahmatullahi wa barakatuh. Le Prophète ﷺ a dit : « خيركم من تعلّم القرآن وعلّمه », « le meilleur d'entre vous est celui qui apprend le Coran et l'enseigne » (rapporté par al-Bukhârî). Les gens du Coran ont un rang à part. Celui qui l'enseigne porte la parole d'Allah jusqu'au cœur d'un enfant. Ce travail est payé, et c'est normal. Mais sa vraie récompense est auprès d'Allah. Gardez cette intention en lisant tout ce qui suit. Vous lisez cette lettre parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions. Vous êtes venu sans connaître notre nom, ni la paie, ni les personnes derrière l'académie. Nous n'avions rien dit, et c'était voulu. Vous êtes venu quand même. Cela nous a touchés. En lisant vos messages, nous avons compris une chose. Certains d'entre vous pensent que ce sont eux qui ont besoin de nous. C'est le contraire. C'est l'académie qui a besoin de vous. Ce sont ces enfants, loin des écoles coraniques, qui ont besoin de vous. Ce sont leurs familles, et toute la communauté musulmane. Vous avoir avec nous est un honneur, pour nous. Alors nous vous devons la vérité, toute la vérité : qui nous sommes, combien vous gagnerez, combien d'heures vous donnerez, ce que nous attendons de vous, et ce qui est dur dans ce travail. Lisez jusqu'au bout. À la fin, vous saurez si vous continuez avec nous ou non. Les deux réponses sont respectables.'
+	String get corps => 'Assalamu alaykum wa rahmatullahi wa barakatuh.\n\nLe Prophète ﷺ a dit : « خيركم من تعلّم القرآن وعلّمه », « le meilleur d\'entre vous est celui qui apprend le Coran et l\'enseigne » (rapporté par al-Bukhârî). Les gens du Coran ont un rang à part. Celui qui l\'enseigne porte la parole d\'Allah jusqu\'au cœur d\'un enfant.\n\nCe travail est payé, et c\'est normal. Mais sa vraie récompense est auprès d\'Allah. Gardez cette intention en lisant tout ce qui suit.\n\nVous lisez cette lettre parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.\n\nVous êtes venu sans connaître notre nom, ni la paie, ni les personnes derrière l\'académie. Nous n\'avions rien dit, et c\'était voulu. Vous êtes venu quand même. Cela nous a touchés.\n\nEn lisant vos messages, nous avons compris une chose. Certains d\'entre vous pensent que ce sont eux qui ont besoin de nous. C\'est le contraire. C\'est l\'académie qui a besoin de vous. Ce sont ces enfants, loin des écoles coraniques, qui ont besoin de vous. Ce sont leurs familles, et toute la communauté musulmane. Vous avoir avec nous est un honneur, pour nous.\n\nAlors nous vous devons la vérité, toute la vérité : qui nous sommes, combien vous gagnerez, combien d\'heures vous donnerez, ce que nous attendons de vous, et ce qui est dur dans ce travail.\n\nLisez jusqu\'au bout. À la fin, vous saurez si vous continuez avec nous ou non. Les deux réponses sont respectables.';
+}
+
+// Path: recrutement.lettre.parties.p2
+class Traductions$recrutement$lettre$parties$p2$fr {
+	Traductions$recrutement$lettre$parties$p2$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Qui nous sommes'
+	String get titre => 'Qui nous sommes';
+
+	/// fr: 'Nous nous appelons **Rewayah Academy**. C'est une société officielle : **Rewayah Academy Ltd**, enregistrée en Angleterre et au pays de Galles sous le numéro **16624644**. Son siège est au 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Tout le monde peut le vérifier dans le registre public des sociétés britanniques (Companies House). L'académie existe depuis près de trois ans. Avant cela, chacun de nous enseignait de son côté, depuis des années. Nos élèves sont surtout des musulmans de la diaspora. Ce sont des familles qui vivent loin des pays où l'on trouve une école coranique au coin de la rue. Pendant ces trois ans, le même problème est revenu. Des élèves voulaient apprendre, et nous n'avions pas le bon enseignant pour eux. Il fallait refuser, ou faire attendre. Cette fois, nous faisons l'inverse : **d'abord les enseignants, ensuite les élèves**. Nous ne promettons rien à une famille tant que nous n'avons pas des enseignants prêts. Nous avons donc lancé un appel aux hommes et aux femmes du Coran. Plus de 2 000 personnes ont déjà répondu. Le premier jour, notre serveur est tombé sous le nombre. Et il en arrive encore chaque jour, du Golfe, d'Afrique, d'Europe, de plus de 50 nationalités. Vous êtes l'un d'eux. ### Comment on enseigne chez nous Pas de Zoom, pas de Meet, pas de WhatsApp. L'académie a sa propre application, avec sa propre salle de classe en vidéo. Chez nous, un élève entre dans **une classe**. Pensez à une classe de votre lycée ou de votre université : ses heures fixes, ses élèves, ses outils, son enseignant. Nous avons même la cloche qui sonne la fin du cours. Les hommes enseignent aux garçons et aux hommes. Les femmes enseignent aux filles et aux femmes. Une seule exception : pour sauver une séance, un remplaçant de l'autre genre peut donner le cours ce jour-là (voir la partie 6).'
+	String get corps => 'Nous nous appelons **Rewayah Academy**.\n\nC\'est une société officielle : **Rewayah Academy Ltd**, enregistrée en Angleterre et au pays de Galles sous le numéro **16624644**. Son siège est au 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Tout le monde peut le vérifier dans le registre public des sociétés britanniques (Companies House).\n\nL\'académie existe depuis près de trois ans. Avant cela, chacun de nous enseignait de son côté, depuis des années.\n\nNos élèves sont surtout des musulmans de la diaspora. Ce sont des familles qui vivent loin des pays où l\'on trouve une école coranique au coin de la rue.\n\nPendant ces trois ans, le même problème est revenu. Des élèves voulaient apprendre, et nous n\'avions pas le bon enseignant pour eux. Il fallait refuser, ou faire attendre.\n\nCette fois, nous faisons l\'inverse : **d\'abord les enseignants, ensuite les élèves**. Nous ne promettons rien à une famille tant que nous n\'avons pas des enseignants prêts.\n\nNous avons donc lancé un appel aux hommes et aux femmes du Coran. Plus de 2 000 personnes ont déjà répondu. Le premier jour, notre serveur est tombé sous le nombre. Et il en arrive encore chaque jour, du Golfe, d\'Afrique, d\'Europe, de plus de 50 nationalités. Vous êtes l\'un d\'eux.\n\n### Comment on enseigne chez nous\n\nPas de Zoom, pas de Meet, pas de WhatsApp. L\'académie a sa propre application, avec sa propre salle de classe en vidéo.\n\nChez nous, un élève entre dans **une classe**. Pensez à une classe de votre lycée ou de votre université : ses heures fixes, ses élèves, ses outils, son enseignant. Nous avons même la cloche qui sonne la fin du cours.\n\nLes hommes enseignent aux garçons et aux hommes. Les femmes enseignent aux filles et aux femmes. Une seule exception : pour sauver une séance, un remplaçant de l\'autre genre peut donner le cours ce jour-là (voir la partie 6).';
+}
+
+// Path: recrutement.lettre.parties.p3
+class Traductions$recrutement$lettre$parties$p3$fr {
+	Traductions$recrutement$lettre$parties$p3$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce que vous enseignerez'
+	String get titre => 'Ce que vous enseignerez';
+
+	/// fr: 'Cette application sert à une seule chose : **le Coran**. Un élève qui débute commence par **les bases**, en quatre étapes : 1. Les lettres. 2. Lire avec les voyelles. 3. Lire dans le Coran. 4. Al-Fatiha et les sourates courtes, d'An-Nâs jusqu'à Az-Zalzalah. En chemin, il apprend les règles simples du tajwid. D'abord il imite, ensuite il apprend le nom de la règle. Les plus jeunes apprennent aussi les paroles de la prière et les ablutions. À la fin des bases, il passe un examen. Ensuite il continue avec le Coran : le lire en entier, ou le mémoriser. Vous n'avez pas à inventer le programme. L'académie fixe les étapes, les objectifs et les dates, séance par séance. La manière d'expliquer, elle, vous appartient. Dans votre classe, c'est vous qui décidez. **La langue du cours.** Vous expliquez dans la langue de vos élèves : français, anglais, arabe, poular, portugais, et d'autres. Une classe d'élèves arabophones reçoit un enseignant arabophone. Sachez seulement que beaucoup de nos élèves ne comprennent pas encore l'arabe : si vous parlez une autre langue en plus, plus de classes s'ouvrent à vous. **Et les autres sciences ?** Le fiqh, la aqida, la sira approfondie ne s'enseignent pas ici. L'académie a une autre plateforme pour les sciences islamiques. Pour l'instant elle fonctionne en français et en poular seulement. Nous vous la présenterons quand elle s'ouvrira au monde.'
+	String get corps => 'Cette application sert à une seule chose : **le Coran**.\n\nUn élève qui débute commence par **les bases**, en quatre étapes :\n1. Les lettres.\n2. Lire avec les voyelles.\n3. Lire dans le Coran.\n4. Al-Fatiha et les sourates courtes, d\'An-Nâs jusqu\'à Az-Zalzalah.\n\nEn chemin, il apprend les règles simples du tajwid. D\'abord il imite, ensuite il apprend le nom de la règle. Les plus jeunes apprennent aussi les paroles de la prière et les ablutions.\n\nÀ la fin des bases, il passe un examen. Ensuite il continue avec le Coran : le lire en entier, ou le mémoriser.\n\nVous n\'avez pas à inventer le programme. L\'académie fixe les étapes, les objectifs et les dates, séance par séance. La manière d\'expliquer, elle, vous appartient. Dans votre classe, c\'est vous qui décidez.\n\n**La langue du cours.** Vous expliquez dans la langue de vos élèves : français, anglais, arabe, poular, portugais, et d\'autres. Une classe d\'élèves arabophones reçoit un enseignant arabophone. Sachez seulement que beaucoup de nos élèves ne comprennent pas encore l\'arabe : si vous parlez une autre langue en plus, plus de classes s\'ouvrent à vous.\n\n**Et les autres sciences ?** Le fiqh, la aqida, la sira approfondie ne s\'enseignent pas ici. L\'académie a une autre plateforme pour les sciences islamiques. Pour l\'instant elle fonctionne en français et en poular seulement. Nous vous la présenterons quand elle s\'ouvrira au monde.';
+}
+
+// Path: recrutement.lettre.parties.p4
+class Traductions$recrutement$lettre$parties$p4$fr {
+	Traductions$recrutement$lettre$parties$p4$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'La paie'
+	String get titre => 'La paie';
+
+	/// fr: 'Une seule règle : **vous êtes payé par élève**. Plus vous avez d'élèves, plus vous gagnez. Pas d'élève, pas de paie. Sur ce que paie chaque élève, presque la moitié vous revient : - **47 %** pour une classe d'adultes ; - **environ 45 %** pour une classe d'enfants. | | Classe d'enfants (6 à 17 ans) | Classe d'adultes | | --- | --- | --- | | Séances | 3 par semaine, 1 h chacune | 3 par semaine, 1 h 30 chacune | | Pause dans la séance | 5 minutes | 10 minutes | | Vos heures | 3 h par semaine, environ 13 h par mois | 4 h 30 par semaine, environ 19 h 30 par mois | | Élèves dans la classe | 3 à 5, jamais plus de 5 | 3 à 6, jamais plus de 6 | | Prix payé par l'élève, par mois | 55 $ | 65 $ | | Votre part, par élève et par mois | environ 24 $ | environ 30 $ | | Petite classe (3 élèves) | environ 72 $ par mois | environ 90 $ par mois | | Classe pleine | 5 x 24 $ = environ 120 $ par mois | 6 x 30 $ = environ 180 $ par mois | Les montants sont en dollars américains. Ils valent quand les élèves viennent à toutes les séances. L'académie accorde parfois une remise à une famille : plusieurs enfants inscrits, un nouveau converti, et d'autres cas. **Ces remises ne touchent jamais votre part.** C'est l'académie qui les prend sur elle. ### Le minimum et le maximum Pour **une** classe, comptez entre **70 $ et 180 $ par mois**. À l'heure, cela fait environ 9 $ pour une classe pleine, et environ 5 $ pour une classe de 3 élèves. Vous pouvez avoir plusieurs classes, si vos horaires le permettent et s'il y a des classes pour vous. Un exemple : deux classes d'enfants pleines et une classe d'adultes pleine, cela fait 120 + 120 + 180 = 420 $ par mois, pour 10 h 30 de cours par semaine. Cet exemple n'est pas une promesse. Vous pouvez aussi rester des mois sans classe, donc sans paie (voir la partie 7). ### Pourquoi 47 % pour les adultes et 45 % pour les enfants ? Avec un adulte, presque tout se passe pendant votre cours. Avec un enfant, l'académie ajoute un suivi après le cours, pour que ses parents sachent où il en est et l'aident à la maison. Ce suivi a un coût. ### Pourquoi pas plus ? Parce que l'académie coûte cher à faire tourner. Avec l'autre moitié, elle paie les serveurs de la salle vidéo, l'application et ceux qui la construisent, les frais de carte bancaire, l'envoi de votre paie, la comptabilité, l'administration, le suivi des enfants, et les impôts que toute société doit payer. Vous verrez cette répartition, en pourcentages, dans votre espace enseignant. Nous n'avons rien à cacher.'
+	String get corps => 'Une seule règle : **vous êtes payé par élève**. Plus vous avez d\'élèves, plus vous gagnez. Pas d\'élève, pas de paie.\n\nSur ce que paie chaque élève, presque la moitié vous revient :\n- **47 %** pour une classe d\'adultes ;\n- **environ 45 %** pour une classe d\'enfants.\n\n|  | Classe d\'enfants (6 à 17 ans) | Classe d\'adultes |\n| --- | --- | --- |\n| Séances | 3 par semaine, 1 h chacune | 3 par semaine, 1 h 30 chacune |\n| Pause dans la séance | 5 minutes | 10 minutes |\n| Vos heures | 3 h par semaine, environ 13 h par mois | 4 h 30 par semaine, environ 19 h 30 par mois |\n| Élèves dans la classe | 3 à 5, jamais plus de 5 | 3 à 6, jamais plus de 6 |\n| Prix payé par l\'élève, par mois | 55 \$ | 65 \$ |\n| Votre part, par élève et par mois | environ 24 \$ | environ 30 \$ |\n| Petite classe (3 élèves) | environ 72 \$ par mois | environ 90 \$ par mois |\n| Classe pleine | 5 x 24 \$ = environ 120 \$ par mois | 6 x 30 \$ = environ 180 \$ par mois |\n\nLes montants sont en dollars américains. Ils valent quand les élèves viennent à toutes les séances.\n\nL\'académie accorde parfois une remise à une famille : plusieurs enfants inscrits, un nouveau converti, et d\'autres cas. **Ces remises ne touchent jamais votre part.** C\'est l\'académie qui les prend sur elle.\n\n### Le minimum et le maximum\n\nPour **une** classe, comptez entre **70 \$ et 180 \$ par mois**. À l\'heure, cela fait environ 9 \$ pour une classe pleine, et environ 5 \$ pour une classe de 3 élèves.\n\nVous pouvez avoir plusieurs classes, si vos horaires le permettent et s\'il y a des classes pour vous. Un exemple : deux classes d\'enfants pleines et une classe d\'adultes pleine, cela fait 120 + 120 + 180 = 420 \$ par mois, pour 10 h 30 de cours par semaine.\n\nCet exemple n\'est pas une promesse. Vous pouvez aussi rester des mois sans classe, donc sans paie (voir la partie 7).\n\n### Pourquoi 47 % pour les adultes et 45 % pour les enfants ?\n\nAvec un adulte, presque tout se passe pendant votre cours. Avec un enfant, l\'académie ajoute un suivi après le cours, pour que ses parents sachent où il en est et l\'aident à la maison. Ce suivi a un coût.\n\n### Pourquoi pas plus ?\n\nParce que l\'académie coûte cher à faire tourner. Avec l\'autre moitié, elle paie les serveurs de la salle vidéo, l\'application et ceux qui la construisent, les frais de carte bancaire, l\'envoi de votre paie, la comptabilité, l\'administration, le suivi des enfants, et les impôts que toute société doit payer.\n\nVous verrez cette répartition, en pourcentages, dans votre espace enseignant. Nous n\'avons rien à cacher.';
+}
+
+// Path: recrutement.lettre.parties.p5
+class Traductions$recrutement$lettre$parties$p5$fr {
+	Traductions$recrutement$lettre$parties$p5$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Comment et quand vous êtes payé'
+	String get titre => 'Comment et quand vous êtes payé';
+
+	/// fr: 'Après chaque séance, l'application calcule ce que vous avez gagné. Vous le voyez dans votre espace. Le total du mois vous est envoyé **au plus tard le 5 du mois suivant**, par virement international (Wise) ou par un autre moyen selon votre pays. Les frais d'envoi sont pour l'académie. Dans quelques pays, les banques bloquent ces virements : si c'est votre cas, nous vous le dirons et nous chercherons avec vous un moyen autorisé. Si vous recevez une classe au milieu d'un mois, vous êtes payé pour les séances qui restent dans ce mois, pas pour le mois entier. ### Ce qui fait monter ou baisser votre paie Deux enseignants ne gagnent pas la même chose. Voici pourquoi. - **Le nombre d'élèves.** Une classe de 3 rapporte moins qu'une classe de 5. - **Le nombre de classes** que vous avez. - **Les absences des élèves.** Si un élève manque une séance, vous recevez la moitié de sa part pour cette séance, pas la part entière. Nous l'avons voulu ainsi pour que chacun ait envie de garder ses élèves présents. - **Les départs.** Si vos élèves quittent la classe un par un, votre paie baisse avec eux. Un élève reste là où il progresse et où il se sent respecté. Tous les départs ne seront pas votre faute. Mais c'est un risque réel, pensez-y avant de vous engager. - **Les vacances des élèves.** Une famille peut mettre un élève en pause pour un mois. Pendant ce mois, vous n'êtes pas payé pour lui. - **Les fermetures de l'académie.** Pas de cours à la fin du Ramadan et pendant l'Aïd al-Fitr (environ 20 jours), ni autour de l'Aïd al-Adha (10 jours). Pas de cours, pas de paie. - **Vos propres absences.** Une séance donnée par un remplaçant est payée au remplaçant. - **Le point de fin de séance.** À la fin du cours, vous indiquez en quelques touches ce que la classe a vu et où elle s'est arrêtée. Cela prend moins de 20 secondes. Tant que ce point manque, la paie du mois attend.'
+	String get corps => 'Après chaque séance, l\'application calcule ce que vous avez gagné. Vous le voyez dans votre espace.\n\nLe total du mois vous est envoyé **au plus tard le 5 du mois suivant**, par virement international (Wise) ou par un autre moyen selon votre pays. Les frais d\'envoi sont pour l\'académie. Dans quelques pays, les banques bloquent ces virements : si c\'est votre cas, nous vous le dirons et nous chercherons avec vous un moyen autorisé.\n\nSi vous recevez une classe au milieu d\'un mois, vous êtes payé pour les séances qui restent dans ce mois, pas pour le mois entier.\n\n### Ce qui fait monter ou baisser votre paie\n\nDeux enseignants ne gagnent pas la même chose. Voici pourquoi.\n- **Le nombre d\'élèves.** Une classe de 3 rapporte moins qu\'une classe de 5.\n- **Le nombre de classes** que vous avez.\n- **Les absences des élèves.** Si un élève manque une séance, vous recevez la moitié de sa part pour cette séance, pas la part entière. Nous l\'avons voulu ainsi pour que chacun ait envie de garder ses élèves présents.\n- **Les départs.** Si vos élèves quittent la classe un par un, votre paie baisse avec eux. Un élève reste là où il progresse et où il se sent respecté. Tous les départs ne seront pas votre faute. Mais c\'est un risque réel, pensez-y avant de vous engager.\n- **Les vacances des élèves.** Une famille peut mettre un élève en pause pour un mois. Pendant ce mois, vous n\'êtes pas payé pour lui.\n- **Les fermetures de l\'académie.** Pas de cours à la fin du Ramadan et pendant l\'Aïd al-Fitr (environ 20 jours), ni autour de l\'Aïd al-Adha (10 jours). Pas de cours, pas de paie.\n- **Vos propres absences.** Une séance donnée par un remplaçant est payée au remplaçant.\n- **Le point de fin de séance.** À la fin du cours, vous indiquez en quelques touches ce que la classe a vu et où elle s\'est arrêtée. Cela prend moins de 20 secondes. Tant que ce point manque, la paie du mois attend.';
+}
+
+// Path: recrutement.lettre.parties.p6
+class Traductions$recrutement$lettre$parties$p6$fr {
+	Traductions$recrutement$lettre$parties$p6$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Être à l'heure, être remplacé, s'absenter'
+	String get titre => 'Être à l\'heure, être remplacé, s\'absenter';
+
+	/// fr: 'L'académie ne tolère pas le manque d'assiduité. Voici pourquoi. Nous sommes fermes avec les familles. Un élève qui manque un cours paie quand même son mois, et il rattrape seul. Alors nous devons tenir notre part : **à l'heure du cours, il y a un enseignant dans la salle. Toujours.** ### Si vous êtes en retard Voici ce que fait l'application, minute par minute. 1. **20 minutes avant le cours**, la salle s'ouvre. Vous pouvez entrer et vous préparer. 2. **À l'heure du cours**, si vous n'êtes pas entré, vous recevez un rappel. 3. **3 minutes après**, un avertissement : si vous n'entrez pas, la séance sera donnée à un autre. 4. **8 minutes après**, c'est trop tard pour cette séance. Une alerte part chez tous les enseignants connectés. 5. Un remplaçant accepte et entre dans la salle, en général en moins d'une minute. Le but : que les élèves aient leur enseignant **11 minutes après l'heure, au plus tard**. Si plusieurs enseignants acceptent en même temps, l'application choisit d'abord quelqu'un du même genre que la classe (un homme pour des hommes, une femme pour des femmes), puis quelqu'un qui parle sa langue. Sinon, c'est le premier disponible. Un homme peut donc remplacer dans une classe de femmes, et l'inverse, pour cette séance seulement. **La paie de cette séance va au remplaçant, à 100 %.** Vous ne recevez rien pour elle. ### Ce que vous gardez, ce que vous risquez Être remplacé une fois ne vous enlève pas votre classe. Elle reste la vôtre. Le remplaçant ne peut plus y entrer une fois sa séance finie. Mais si cela se répète, vous recevez des avertissements. Et si cela continue, la classe passe à quelqu'un d'autre. ### Si vous devez vous absenter Un voyage, un événement de famille, une maladie, qu'Allah nous en préserve : cela arrive à tout le monde. Prévenez la direction **avant**, avec votre date de départ et votre date de retour. Un remplaçant tient votre classe pendant ce temps, et il est payé pour ses séances. À votre retour, vous reprenez votre classe. Si vous ne revenez pas à la date annoncée, vous perdez cette classe. Vous ne perdez pas votre place à l'académie : vous restez, vous vous déclarez disponible, et une autre classe peut vous être confiée plus tard. ### Si c'est vous le remplaçant Chaque séance de remplacement vous est payée. Ces gains s'additionnent dans votre espace. Ils vous sont envoyés quand ils atteignent un montant minimum fixé par la direction, pour éviter des virements de quelques dollars.'
+	String get corps => 'L\'académie ne tolère pas le manque d\'assiduité. Voici pourquoi.\n\nNous sommes fermes avec les familles. Un élève qui manque un cours paie quand même son mois, et il rattrape seul. Alors nous devons tenir notre part : **à l\'heure du cours, il y a un enseignant dans la salle. Toujours.**\n\n### Si vous êtes en retard\n\nVoici ce que fait l\'application, minute par minute.\n1. **20 minutes avant le cours**, la salle s\'ouvre. Vous pouvez entrer et vous préparer.\n2. **À l\'heure du cours**, si vous n\'êtes pas entré, vous recevez un rappel.\n3. **3 minutes après**, un avertissement : si vous n\'entrez pas, la séance sera donnée à un autre.\n4. **8 minutes après**, c\'est trop tard pour cette séance. Une alerte part chez tous les enseignants connectés.\n5. Un remplaçant accepte et entre dans la salle, en général en moins d\'une minute. Le but : que les élèves aient leur enseignant **11 minutes après l\'heure, au plus tard**.\n\nSi plusieurs enseignants acceptent en même temps, l\'application choisit d\'abord quelqu\'un du même genre que la classe (un homme pour des hommes, une femme pour des femmes), puis quelqu\'un qui parle sa langue. Sinon, c\'est le premier disponible. Un homme peut donc remplacer dans une classe de femmes, et l\'inverse, pour cette séance seulement.\n\n**La paie de cette séance va au remplaçant, à 100 %.** Vous ne recevez rien pour elle.\n\n### Ce que vous gardez, ce que vous risquez\n\nÊtre remplacé une fois ne vous enlève pas votre classe. Elle reste la vôtre. Le remplaçant ne peut plus y entrer une fois sa séance finie.\n\nMais si cela se répète, vous recevez des avertissements. Et si cela continue, la classe passe à quelqu\'un d\'autre.\n\n### Si vous devez vous absenter\n\nUn voyage, un événement de famille, une maladie, qu\'Allah nous en préserve : cela arrive à tout le monde. Prévenez la direction **avant**, avec votre date de départ et votre date de retour.\n\nUn remplaçant tient votre classe pendant ce temps, et il est payé pour ses séances. À votre retour, vous reprenez votre classe.\n\nSi vous ne revenez pas à la date annoncée, vous perdez cette classe. Vous ne perdez pas votre place à l\'académie : vous restez, vous vous déclarez disponible, et une autre classe peut vous être confiée plus tard.\n\n### Si c\'est vous le remplaçant\n\nChaque séance de remplacement vous est payée. Ces gains s\'additionnent dans votre espace. Ils vous sont envoyés quand ils atteignent un montant minimum fixé par la direction, pour éviter des virements de quelques dollars.';
+}
+
+// Path: recrutement.lettre.parties.p7
+class Traductions$recrutement$lettre$parties$p7$fr {
+	Traductions$recrutement$lettre$parties$p7$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Après l'entretien : ce qui se passe vraiment'
+	String get titre => 'Après l\'entretien : ce qui se passe vraiment';
+
+	/// fr: 'Beaucoup d'entre vous pensent : « Je passe l'entretien, et le lendemain j'ai une classe. » **Non.** Voici les étapes. 1. **Votre dossier est accepté et l'entretien se passe bien.** Vous recevez l'accès à l'espace enseignant et un matricule officiel. À partir de là, une classe peut vous être confiée. 2. **Vous êtes formé à l'application.** L'académie vous montre comment marche la salle de classe. 3. **Vous attendez une classe.** Quelques jours, ou plusieurs mois. 4. **Une classe vous est confiée.** Vous recevez un message, et la classe apparaît sur votre accueil. ### Pourquoi faut-il attendre ? On ne donne pas une classe au hasard. Il faut que tout colle entre vous et les élèves qui s'inscrivent : - **le jour et l'heure** : les élèves choisissent un horaire, et vous devez être libre à ce moment ; - **la langue** : vous devez parler celle des élèves ; - **le genre** : un homme pour les garçons et les hommes, une femme pour les filles et les femmes ; - **l'expérience** : des enfants qui débutent, des adultes, la mémorisation, ce n'est pas le même métier. Un exemple. Douze élèves s'inscrivent cette semaine : huit petites filles qui parlent français, le soir en Europe, et quatre hommes qui parlent anglais, le matin. Il faut donc des enseignantes francophones libres le soir, et un enseignant anglophone libre le matin. Un très bon enseignant qui ne correspond à aucun de ces deux cas attendra les inscriptions suivantes. Des classes s'ouvrent tout au long de l'année, pas seulement en début de mois. **Notre conseil : ne quittez rien pour nous.** Gardez votre travail, continuez vos études, surveillez vos e-mails et l'application. Et faites des dou'as. ### Et s'il n'y a pas assez d'élèves pour 2 000 enseignants ? C'est possible. Au début, c'est même probable. Nous ne pouvons pas donner une classe à chacun tout de suite. Si vous êtes admis et sans classe, vous restez avec nous. Vous pouvez : - **être remplaçant** : donner le cours d'un enseignant malade, absent ou en retard, et être payé pour chaque séance ; - **attendre** qu'une classe s'ouvre ou se libère. ### Et les cours individuels ? Beaucoup nous demandent des cours seul à seul : un enseignant pour un élève. L'académie étudie la possibilité d'en proposer, en plus des classes. Nous ne donnons aucune date. Nous avons déjà pratiqué ce modèle. Il a montré ses limites, et il est bien plus dur qu'on ne le croit, pour l'enseignant comme pour l'élève. Nous ne l'ouvrirons que le jour où nous saurons bien le faire.'
+	String get corps => 'Beaucoup d\'entre vous pensent : « Je passe l\'entretien, et le lendemain j\'ai une classe. » **Non.** Voici les étapes.\n1. **Votre dossier est accepté et l\'entretien se passe bien.** Vous recevez l\'accès à l\'espace enseignant et un matricule officiel. À partir de là, une classe peut vous être confiée.\n2. **Vous êtes formé à l\'application.** L\'académie vous montre comment marche la salle de classe.\n3. **Vous attendez une classe.** Quelques jours, ou plusieurs mois.\n4. **Une classe vous est confiée.** Vous recevez un message, et la classe apparaît sur votre accueil.\n\n### Pourquoi faut-il attendre ?\n\nOn ne donne pas une classe au hasard. Il faut que tout colle entre vous et les élèves qui s\'inscrivent :\n- **le jour et l\'heure** : les élèves choisissent un horaire, et vous devez être libre à ce moment ;\n- **la langue** : vous devez parler celle des élèves ;\n- **le genre** : un homme pour les garçons et les hommes, une femme pour les filles et les femmes ;\n- **l\'expérience** : des enfants qui débutent, des adultes, la mémorisation, ce n\'est pas le même métier.\n\nUn exemple. Douze élèves s\'inscrivent cette semaine : huit petites filles qui parlent français, le soir en Europe, et quatre hommes qui parlent anglais, le matin. Il faut donc des enseignantes francophones libres le soir, et un enseignant anglophone libre le matin. Un très bon enseignant qui ne correspond à aucun de ces deux cas attendra les inscriptions suivantes.\n\nDes classes s\'ouvrent tout au long de l\'année, pas seulement en début de mois.\n\n**Notre conseil : ne quittez rien pour nous.** Gardez votre travail, continuez vos études, surveillez vos e-mails et l\'application. Et faites des dou\'as.\n\n### Et s\'il n\'y a pas assez d\'élèves pour 2 000 enseignants ?\n\nC\'est possible. Au début, c\'est même probable. Nous ne pouvons pas donner une classe à chacun tout de suite.\n\nSi vous êtes admis et sans classe, vous restez avec nous. Vous pouvez :\n- **être remplaçant** : donner le cours d\'un enseignant malade, absent ou en retard, et être payé pour chaque séance ;\n- **attendre** qu\'une classe s\'ouvre ou se libère.\n\n### Et les cours individuels ?\n\nBeaucoup nous demandent des cours seul à seul : un enseignant pour un élève. L\'académie étudie la possibilité d\'en proposer, en plus des classes. Nous ne donnons aucune date.\n\nNous avons déjà pratiqué ce modèle. Il a montré ses limites, et il est bien plus dur qu\'on ne le croit, pour l\'enseignant comme pour l\'élève. Nous ne l\'ouvrirons que le jour où nous saurons bien le faire.';
+}
+
+// Path: recrutement.lettre.parties.p8
+class Traductions$recrutement$lettre$parties$p8$fr {
+	Traductions$recrutement$lettre$parties$p8$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pourquoi nous demandons votre pièce d'identité et votre photo'
+	String get titre => 'Pourquoi nous demandons votre pièce d\'identité et votre photo';
+
+	/// fr: 'Plusieurs d'entre vous ont posé la question. Elle est normale. Voici la réponse, sans détour. Sur internet, il y a de tout. Et nous, nous avons des élèves dès l'âge de 6 ans. Pensez à ce que voit un enseignant. Il voit le visage de l'enfant en vidéo. Il entend sa voix. Il connaît son prénom, son âge, ses horaires. Il lui parle trois fois par semaine, et l'enfant lui fait confiance. Maintenant, imaginez que cette place soit donnée à n'importe qui. Voici ce qui peut arriver : - **Quelqu'un qui ment sur son identité.** Un faux nom, un faux diplôme, et personne à retrouver le jour où il y a un problème. - **Quelqu'un qui cherche les enfants, pas le Coran.** Ces personnes existent. Elles gagnent la confiance d'un enfant petit à petit, puis essaient de lui parler en privé, loin de ses parents. - **Quelqu'un qui filme ou photographie.** L'image et la voix d'un enfant peuvent être copiées, gardées, diffusées. - **Quelqu'un qui a été renvoyé ailleurs** pour un comportement grave, et qui revient sous un autre nom. - **Quelqu'un qui passe l'entretien, puis fait enseigner un autre** à sa place. - **Quelqu'un qui veut glisser d'autres idées** dans la tête des enfants, sous le nom du Coran. Un seul de ces cas, et c'est un enfant blessé, une famille brisée, et la confiance dans toute l'académie qui tombe. Les honnêtes enseignants, c'est-à-dire vous, en paieraient le prix aussi. Il y a aussi la loi. Nos élèves vivent dans beaucoup de pays. Les lois de protection de l'enfance nous demandent de savoir exactement à qui nous confions un enfant. Et pour vous envoyer votre paie, la banque exige votre vrai nom. **Ce que nous faisons de vos documents.** Ils ne sont vus que par la direction. Ils ne sont jamais montrés aux élèves ni aux familles. Si vous retirez votre candidature, vous pouvez demander leur suppression. **Ce que nous vous demandons en retour.** Ne demandez jamais à un élève son numéro ou un autre moyen de le joindre. Ne le contactez jamais en dehors de l'application. Ne filmez pas, ne photographiez pas la classe. C'est une règle sans exception. Un parent nous confie ce qu'il a de plus cher. Montrer qui vous êtes, c'est le premier geste de confiance. Si vous étiez ce parent, vous l'exigeriez aussi.'
+	String get corps => 'Plusieurs d\'entre vous ont posé la question. Elle est normale. Voici la réponse, sans détour.\n\nSur internet, il y a de tout. Et nous, nous avons des élèves dès l\'âge de 6 ans.\n\nPensez à ce que voit un enseignant. Il voit le visage de l\'enfant en vidéo. Il entend sa voix. Il connaît son prénom, son âge, ses horaires. Il lui parle trois fois par semaine, et l\'enfant lui fait confiance.\n\nMaintenant, imaginez que cette place soit donnée à n\'importe qui. Voici ce qui peut arriver :\n- **Quelqu\'un qui ment sur son identité.** Un faux nom, un faux diplôme, et personne à retrouver le jour où il y a un problème.\n- **Quelqu\'un qui cherche les enfants, pas le Coran.** Ces personnes existent. Elles gagnent la confiance d\'un enfant petit à petit, puis essaient de lui parler en privé, loin de ses parents.\n- **Quelqu\'un qui filme ou photographie.** L\'image et la voix d\'un enfant peuvent être copiées, gardées, diffusées.\n- **Quelqu\'un qui a été renvoyé ailleurs** pour un comportement grave, et qui revient sous un autre nom.\n- **Quelqu\'un qui passe l\'entretien, puis fait enseigner un autre** à sa place.\n- **Quelqu\'un qui veut glisser d\'autres idées** dans la tête des enfants, sous le nom du Coran.\n\nUn seul de ces cas, et c\'est un enfant blessé, une famille brisée, et la confiance dans toute l\'académie qui tombe. Les honnêtes enseignants, c\'est-à-dire vous, en paieraient le prix aussi.\n\nIl y a aussi la loi. Nos élèves vivent dans beaucoup de pays. Les lois de protection de l\'enfance nous demandent de savoir exactement à qui nous confions un enfant. Et pour vous envoyer votre paie, la banque exige votre vrai nom.\n\n**Ce que nous faisons de vos documents.** Ils ne sont vus que par la direction. Ils ne sont jamais montrés aux élèves ni aux familles. Si vous retirez votre candidature, vous pouvez demander leur suppression.\n\n**Ce que nous vous demandons en retour.** Ne demandez jamais à un élève son numéro ou un autre moyen de le joindre. Ne le contactez jamais en dehors de l\'application. Ne filmez pas, ne photographiez pas la classe. C\'est une règle sans exception.\n\nUn parent nous confie ce qu\'il a de plus cher. Montrer qui vous êtes, c\'est le premier geste de confiance. Si vous étiez ce parent, vous l\'exigeriez aussi.';
+}
+
+// Path: recrutement.lettre.parties.p9
+class Traductions$recrutement$lettre$parties$p9$fr {
+	Traductions$recrutement$lettre$parties$p9$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Ce que nous demandons, et ce qui est dur'
+	String get titre => 'Ce que nous demandons, et ce qui est dur';
+
+	/// fr: '### Qui nous avons refusé jusqu'ici L'académie est sunnite, ouvertement, sur la voie d'Ahl as-Sunna. Elle défend ses valeurs. Celui qui s'y oppose n'a pas sa place parmi nous. Jusqu'ici, nous n'avons refusé que deux sortes de candidatures : - ceux qui n'ont pas signé **l'engagement religieux**. Ce texte demande de respecter le Coran, la Sunna, tous les Compagnons du Prophète ﷺ, d'abord les quatre califes bien guidés, et les pieux prédécesseurs ; - ceux dont l'apparence allait clairement contre les règles de la religion : une coiffure interdite en islam, une tenue qui ne les respecte pas. Pourquoi ? Parce qu'un enfant apprend d'abord en regardant son enseignant. Les enfants de la diaspora grandissent au milieu de toutes les idées de ce siècle. Ils sont l'espoir de demain, et ils sont fragiles. Bien choisir leur enseignant, c'est notre premier devoir. ### La difficulté que vous rencontrerez Nous connaissons la diaspora depuis des années. Nous devons vous prévenir d'une chose. Beaucoup de familles voient le cours comme un achat. Elles se sentent clientes, et pour elles l'enseignant est un vendeur. Et un client pense qu'il a toujours raison. Vous le sentirez dans leur façon de parler, d'écrire, de réclamer. Nous savons que c'est une erreur. L'enseignant du Coran a un rang (له حرمته). Mais eux ne le savent pas encore. Personne ne le leur a appris. C'est à vous de le leur apprendre, avec sagesse et bonne parole (بالحكمة والموعظة الحسنة), et avec patience. Ici, vous n'êtes pas seulement un enseignant. Vous êtes d'abord un prédicateur (داعية). Un exemple. Un père vous écrit sèchement : « Je paie, donc mon fils doit avancer plus vite. » Vous pouvez vous vexer et lui répondre sur le même ton. Ou vous pouvez lui montrer calmement où en est son fils, ce qu'il doit réviser à la maison, et l'inviter à l'écouter réciter. Dans le premier cas, vous perdez un élève. Dans le second, vous gagnez souvent toute une famille. Nous l'avons vu bien des fois : quand l'enseignant est plus sage et plus patient que l'élève, les choses finissent par s'arranger. Si cette patience vous pèse déjà, ce travail n'est pas pour vous. Mieux vaut le savoir aujourd'hui.'
+	String get corps => '### Qui nous avons refusé jusqu\'ici\n\nL\'académie est sunnite, ouvertement, sur la voie d\'Ahl as-Sunna. Elle défend ses valeurs. Celui qui s\'y oppose n\'a pas sa place parmi nous.\n\nJusqu\'ici, nous n\'avons refusé que deux sortes de candidatures :\n- ceux qui n\'ont pas signé **l\'engagement religieux**. Ce texte demande de respecter le Coran, la Sunna, tous les Compagnons du Prophète ﷺ, d\'abord les quatre califes bien guidés, et les pieux prédécesseurs ;\n- ceux dont l\'apparence allait clairement contre les règles de la religion : une coiffure interdite en islam, une tenue qui ne les respecte pas.\n\nPourquoi ? Parce qu\'un enfant apprend d\'abord en regardant son enseignant. Les enfants de la diaspora grandissent au milieu de toutes les idées de ce siècle. Ils sont l\'espoir de demain, et ils sont fragiles. Bien choisir leur enseignant, c\'est notre premier devoir.\n\n### La difficulté que vous rencontrerez\n\nNous connaissons la diaspora depuis des années. Nous devons vous prévenir d\'une chose.\n\nBeaucoup de familles voient le cours comme un achat. Elles se sentent clientes, et pour elles l\'enseignant est un vendeur. Et un client pense qu\'il a toujours raison. Vous le sentirez dans leur façon de parler, d\'écrire, de réclamer.\n\nNous savons que c\'est une erreur. L\'enseignant du Coran a un rang (له حرمته). Mais eux ne le savent pas encore. Personne ne le leur a appris.\n\nC\'est à vous de le leur apprendre, avec sagesse et bonne parole (بالحكمة والموعظة الحسنة), et avec patience. Ici, vous n\'êtes pas seulement un enseignant. Vous êtes d\'abord un prédicateur (داعية).\n\nUn exemple. Un père vous écrit sèchement : « Je paie, donc mon fils doit avancer plus vite. » Vous pouvez vous vexer et lui répondre sur le même ton. Ou vous pouvez lui montrer calmement où en est son fils, ce qu\'il doit réviser à la maison, et l\'inviter à l\'écouter réciter. Dans le premier cas, vous perdez un élève. Dans le second, vous gagnez souvent toute une famille.\n\nNous l\'avons vu bien des fois : quand l\'enseignant est plus sage et plus patient que l\'élève, les choses finissent par s\'arranger. Si cette patience vous pèse déjà, ce travail n\'est pas pour vous. Mieux vaut le savoir aujourd\'hui.';
+}
+
+// Path: recrutement.lettre.parties.p10
+class Traductions$recrutement$lettre$parties$p10$fr {
+	Traductions$recrutement$lettre$parties$p10$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'L'académie voit ce qui se passe en classe'
+	String get titre => 'L\'académie voit ce qui se passe en classe';
+
+	/// fr: 'Nous préférons vous le dire avant, pas après. **L'application note vos entrées et vos sorties**, et celles des élèves. Vous n'avez donc aucun cahier de présence à tenir : elle le fait pour vous. **Elle mesure votre connexion pendant le cours** : bonne, faible ou perdue. Elle ne garde ni le son ni l'image. Le jour où une famille se plaint d'un cours, l'académie sait d'où venait le problème, et vous n'êtes pas accusé à tort. **Une visite de contrôle peut avoir lieu, sans prévenir.** Un membre de la direction entre dans la salle. Vous ne le voyez pas, et il n'a ni micro ni caméra. Quand une enseignante donne son cours, la visite est toujours faite par une femme de l'équipe, jamais par un homme. Le visiteur regarde une chose : est-ce que l'enseignant travaille vraiment avec ses élèves ? **Vous ne pouvez pas donner deux cours en même temps.** Le visiteur le voit. Et si vous quittez la salle plus de 30 secondes pendant votre cours, l'application vous en sort et prévient la direction. Pour le reste, vous êtes libre. L'académie ne vous impose ni un endroit précis de la maison, ni une position, ni un décor. Elle demande deux choses : un endroit calme et une bonne connexion. Sans cela, ce sont les élèves qui en souffrent.'
+	String get corps => 'Nous préférons vous le dire avant, pas après.\n\n**L\'application note vos entrées et vos sorties**, et celles des élèves. Vous n\'avez donc aucun cahier de présence à tenir : elle le fait pour vous.\n\n**Elle mesure votre connexion pendant le cours** : bonne, faible ou perdue. Elle ne garde ni le son ni l\'image. Le jour où une famille se plaint d\'un cours, l\'académie sait d\'où venait le problème, et vous n\'êtes pas accusé à tort.\n\n**Une visite de contrôle peut avoir lieu, sans prévenir.** Un membre de la direction entre dans la salle. Vous ne le voyez pas, et il n\'a ni micro ni caméra. Quand une enseignante donne son cours, la visite est toujours faite par une femme de l\'équipe, jamais par un homme. Le visiteur regarde une chose : est-ce que l\'enseignant travaille vraiment avec ses élèves ?\n\n**Vous ne pouvez pas donner deux cours en même temps.** Le visiteur le voit. Et si vous quittez la salle plus de 30 secondes pendant votre cours, l\'application vous en sort et prévient la direction.\n\nPour le reste, vous êtes libre. L\'académie ne vous impose ni un endroit précis de la maison, ni une position, ni un décor. Elle demande deux choses : un endroit calme et une bonne connexion. Sans cela, ce sont les élèves qui en souffrent.';
+}
+
+// Path: recrutement.lettre.parties.p11
+class Traductions$recrutement$lettre$parties$p11$fr {
+	Traductions$recrutement$lettre$parties$p11$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Praxis, notre assistant'
+	String get titre => 'Praxis, notre assistant';
+
+	/// fr: 'Vous êtes plus de 2 000. Vous parlez des dizaines de langues, vous vivez sous tous les fuseaux horaires, et vos messages arrivent jour et nuit. Notre équipe ne peut pas répondre à chacun assez vite. Nous avons donc créé **Praxis**, un assistant d'intelligence artificielle. Ce n'est pas une personne, et il ne se fera jamais passer pour une personne. - **Ce qu'il fait** : il répond aux questions qui reviennent, il donne des précisions, il vous dit où en est une démarche. - **Ce qu'il ne fait pas** : il ne décide rien. Il n'accepte ni ne refuse personne, il ne donne pas de classe, il ne touche pas à la paie. - **Qui le dirige** : la direction. Il n'agit que si elle lui confie une mission. Où en est-il aujourd'hui ? Nous avons commencé à le tester. Il a fait quelques erreurs, alors nous l'avons mis en pause. Nous étudions ses réponses pour le régler, puis nous le relancerons. Certains d'entre vous ont peut-être déjà reçu un message de lui. Quand il sera de retour, si sa réponse ne vous suffit pas, dites-le dans votre message : un membre de l'équipe prendra la suite.'
+	String get corps => 'Vous êtes plus de 2 000. Vous parlez des dizaines de langues, vous vivez sous tous les fuseaux horaires, et vos messages arrivent jour et nuit. Notre équipe ne peut pas répondre à chacun assez vite.\n\nNous avons donc créé **Praxis**, un assistant d\'intelligence artificielle. Ce n\'est pas une personne, et il ne se fera jamais passer pour une personne.\n- **Ce qu\'il fait** : il répond aux questions qui reviennent, il donne des précisions, il vous dit où en est une démarche.\n- **Ce qu\'il ne fait pas** : il ne décide rien. Il n\'accepte ni ne refuse personne, il ne donne pas de classe, il ne touche pas à la paie.\n- **Qui le dirige** : la direction. Il n\'agit que si elle lui confie une mission.\n\nOù en est-il aujourd\'hui ? Nous avons commencé à le tester. Il a fait quelques erreurs, alors nous l\'avons mis en pause. Nous étudions ses réponses pour le régler, puis nous le relancerons. Certains d\'entre vous ont peut-être déjà reçu un message de lui.\n\nQuand il sera de retour, si sa réponse ne vous suffit pas, dites-le dans votre message : un membre de l\'équipe prendra la suite.';
+}
+
+// Path: recrutement.lettre.parties.p12
+class Traductions$recrutement$lettre$parties$p12$fr {
+	Traductions$recrutement$lettre$parties$p12$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Si cela ne vous convient pas'
+	String get titre => 'Si cela ne vous convient pas';
+
+	/// fr: 'Vous êtes libre de partir, à tout moment, sans vous justifier. Rewayah Academy est une société anglaise. La loi l'oblige à respecter votre droit de vous retirer. Vous pouvez retirer votre candidature et demander la suppression de votre compte et de vos données. Après cela, vous ne recevrez plus aucun message de l'académie. Si vous changez d'avis, vous pouvez reprendre votre candidature vous-même pendant 7 jours après l'avoir retirée. Pour cela, écrivez à **support@rewayahacademy.com**.'
+	String get corps => 'Vous êtes libre de partir, à tout moment, sans vous justifier.\n\nRewayah Academy est une société anglaise. La loi l\'oblige à respecter votre droit de vous retirer. Vous pouvez retirer votre candidature et demander la suppression de votre compte et de vos données. Après cela, vous ne recevrez plus aucun message de l\'académie. Si vous changez d\'avis, vous pouvez reprendre votre candidature vous-même pendant 7 jours après l\'avoir retirée.\n\nPour cela, écrivez à **support@rewayahacademy.com**.';
+}
+
+// Path: recrutement.lettre.parties.p13
+class Traductions$recrutement$lettre$parties$p13$fr {
+	Traductions$recrutement$lettre$parties$p13$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Vos questions'
+	String get titre => 'Vos questions';
+
+	/// fr: '**Je me suis inscrit. Suis-je déjà enseignant de l'académie ?** Pas encore. Vous êtes candidat. Il reste l'étude de votre dossier, puis l'entretien. **Dois-je payer pour être admis ou pour la formation ?** Non. Rien, jamais. Si quelqu'un vous demande de l'argent en notre nom, c'est une fraude : prévenez-nous. **Combien de temps vais-je attendre une classe ?** Nous ne le savons pas, et nous ne vous donnerons pas une date que nous ne pourrions pas tenir. Cela dépend des élèves qui s'inscrivent, de vos horaires, de votre langue et de votre expérience. **À quelle heure seront mes cours ?** À l'heure choisie par les élèves de la classe, la même chaque semaine. On ne vous confiera une classe que si son horaire vous va. L'application affiche chaque horaire à votre heure, puis à l'heure de La Mecque, qui est l'horloge de l'académie. **Combien vais-je gagner, exactement ?** Environ 24 $ par mois pour chaque enfant, environ 30 $ par mois pour chaque adulte, s'ils viennent à toutes les séances. Comptez vos élèves, multipliez, vous avez votre mois. **Un élève est absent. Suis-je payé pour lui ?** À moitié. Vous recevez la moitié de sa part pour cette séance. **J'ai été en retard une fois et on m'a remplacé. Ai-je perdu ma classe ?** Non. Vous avez perdu la paie de cette séance. Vous ne perdez la classe que si cela se répète, après des avertissements. **De quoi ai-je besoin pour enseigner ?** Une bonne connexion internet, un ordinateur ou une tablette avec caméra et micro, et un endroit calme. Rien d'autre à installer que l'application de l'académie. **Puis-je enseigner ailleurs en même temps ?** Oui, tant que vos autres heures ne tombent pas sur celles de l'académie. Ce qui est interdit, c'est de donner deux cours au même moment. **Les montants peuvent-ils changer ?** Oui, la direction peut les revoir. Vous serez prévenu avant, et un mois déjà travaillé ne sera jamais touché.'
+	String get corps => '**Je me suis inscrit. Suis-je déjà enseignant de l\'académie ?** Pas encore. Vous êtes candidat. Il reste l\'étude de votre dossier, puis l\'entretien.\n\n**Dois-je payer pour être admis ou pour la formation ?** Non. Rien, jamais. Si quelqu\'un vous demande de l\'argent en notre nom, c\'est une fraude : prévenez-nous.\n\n**Combien de temps vais-je attendre une classe ?** Nous ne le savons pas, et nous ne vous donnerons pas une date que nous ne pourrions pas tenir. Cela dépend des élèves qui s\'inscrivent, de vos horaires, de votre langue et de votre expérience.\n\n**À quelle heure seront mes cours ?** À l\'heure choisie par les élèves de la classe, la même chaque semaine. On ne vous confiera une classe que si son horaire vous va. L\'application affiche chaque horaire à votre heure, puis à l\'heure de La Mecque, qui est l\'horloge de l\'académie.\n\n**Combien vais-je gagner, exactement ?** Environ 24 \$ par mois pour chaque enfant, environ 30 \$ par mois pour chaque adulte, s\'ils viennent à toutes les séances. Comptez vos élèves, multipliez, vous avez votre mois.\n\n**Un élève est absent. Suis-je payé pour lui ?** À moitié. Vous recevez la moitié de sa part pour cette séance.\n\n**J\'ai été en retard une fois et on m\'a remplacé. Ai-je perdu ma classe ?** Non. Vous avez perdu la paie de cette séance. Vous ne perdez la classe que si cela se répète, après des avertissements.\n\n**De quoi ai-je besoin pour enseigner ?** Une bonne connexion internet, un ordinateur ou une tablette avec caméra et micro, et un endroit calme. Rien d\'autre à installer que l\'application de l\'académie.\n\n**Puis-je enseigner ailleurs en même temps ?** Oui, tant que vos autres heures ne tombent pas sur celles de l\'académie. Ce qui est interdit, c\'est de donner deux cours au même moment.\n\n**Les montants peuvent-ils changer ?** Oui, la direction peut les revoir. Vous serez prévenu avant, et un mois déjà travaillé ne sera jamais touché.';
+}
+
+// Path: recrutement.lettre.parties.p14
+class Traductions$recrutement$lettre$parties$p14$fr {
+	Traductions$recrutement$lettre$parties$p14$fr.internal(this._root);
+
+	final Traductions _root; // ignore: unused_field
+
+	// Translations
+
+	/// fr: 'Pour décider'
+	String get titre => 'Pour décider';
+
+	/// fr: '**Continuez avec nous si** vous acceptez d'être payé par élève, d'attendre peut-être longtemps votre première classe, d'être à l'heure à chaque séance, de montrer qui vous êtes, et d'être patient avec des familles qui ne connaissent pas encore le rang de l'enseignant du Coran. **Ne continuez pas si** vous cherchez un revenu fixe et tout de suite, si vous ne pouvez pas tenir un horaire régulier, ou si l'engagement religieux de l'académie n'est pas le vôtre. Dans les deux cas, qu'Allah vous récompense d'avoir répondu à notre appel. La direction de Rewayah Academy #Ra_staff'
+	String get corps => '**Continuez avec nous si** vous acceptez d\'être payé par élève, d\'attendre peut-être longtemps votre première classe, d\'être à l\'heure à chaque séance, de montrer qui vous êtes, et d\'être patient avec des familles qui ne connaissent pas encore le rang de l\'enseignant du Coran.\n\n**Ne continuez pas si** vous cherchez un revenu fixe et tout de suite, si vous ne pouvez pas tenir un horaire régulier, ou si l\'engagement religieux de l\'académie n\'est pas le vôtre.\n\nDans les deux cas, qu\'Allah vous récompense d\'avoir répondu à notre appel.\n\nLa direction de Rewayah Academy\n\n#Ra_staff';
+}
+
 // Path: recrutement.dossier3.situation.aFaire
 class Traductions$recrutement$dossier3$situation$aFaire$fr {
 	Traductions$recrutement$dossier3$situation$aFaire$fr.internal(this._root);
@@ -59401,6 +59728,58 @@ extension on Traductions {
 			'eleveConnexion.refus.nonEnregistre' => 'Cet appareil n\'a pas pu garder la connexion. Le code a sans doute déjà servi : affichez un nouveau code sur l\'appareil du tuteur, puis recommencez.',
 			'eleveConnexion.refus.generiqueTitre' => 'Connexion non aboutie',
 			'eleveConnexion.refus.generique' => 'La vérification du code n\'a pas abouti. Réessayez dans un instant.',
+			'recrutement.lettre.titre' => 'Tout ce que vous devez savoir avant de continuer',
+			'recrutement.lettre.chapeau' => 'La paie, les heures, l\'attente d\'une classe, nos règles, et ce qui est dur dans ce travail. À la fin, vous saurez si vous continuez avec nous.',
+			'recrutement.lettre.duree' => 'Environ 15 minutes de lecture',
+			'recrutement.lettre.miseAJour' => 'Mise à jour : 20 novembre 2026',
+			'recrutement.lettre.sommaire' => 'Sommaire',
+			'recrutement.lettre.revenirSommaire' => 'Revenir au sommaire',
+			'recrutement.lettre.allerA' => ({required Object titre}) => 'Aller à la partie : ${titre}',
+			'recrutement.lettre.entree' => 'Lire la lettre aux candidats enseignants',
+			'recrutement.lettre.entreeLegende' => 'La paie, les heures, l\'attente d\'une classe, nos règles',
+			'recrutement.lettre.verrouTitre' => 'Cette lettre s\'ouvre quand vos accords sont acceptés',
+			'recrutement.lettre.verrouIntro' => 'Pour la lire, il vous reste à accepter :',
+			'recrutement.lettre.manqueContrat' => 'le contrat d\'enseignant',
+			'recrutement.lettre.manqueConduite' => 'le code de conduite',
+			'recrutement.lettre.manqueCadre' => 'l\'engagement religieux',
+			'recrutement.lettre.completer' => 'Accepter mes accords',
+			'recrutement.lettre.nonCharge' => 'La lettre n\'a pas pu s\'ouvrir.',
+			'recrutement.lettre.praxisNom' => 'Praxis, assistant de l\'académie (IA)',
+			'recrutement.lettre.praxis.accueil' => 'Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps.',
+			'recrutement.lettre.praxis.paie' => 'Ici, les vrais chiffres. Regardez le tableau, tout y est.',
+			'recrutement.lettre.praxis.retard' => 'Retenez trois chiffres : 3, 8 et 11 minutes.',
+			'recrutement.lettre.praxis.attente' => 'L\'attente peut durer. Gardez vos activités, et surveillez vos messages.',
+			'recrutement.lettre.praxis.piece' => 'C\'est pour protéger les enfants. Et c\'est vous aussi qu\'on protège.',
+			'recrutement.lettre.praxis.moi' => 'C\'est moi ! Je suis en pause pour l\'instant : on me règle avant de me relancer.',
+			'recrutement.lettre.praxis.fin' => 'Quelle que soit votre réponse, merci d\'avoir lu jusqu\'au bout.',
+			'recrutement.lettre.parties.p1.titre' => 'Pourquoi vous recevez cette lettre',
+			'recrutement.lettre.parties.p1.corps' => 'Assalamu alaykum wa rahmatullahi wa barakatuh.\n\nLe Prophète ﷺ a dit : « خيركم من تعلّم القرآن وعلّمه », « le meilleur d\'entre vous est celui qui apprend le Coran et l\'enseigne » (rapporté par al-Bukhârî). Les gens du Coran ont un rang à part. Celui qui l\'enseigne porte la parole d\'Allah jusqu\'au cœur d\'un enfant.\n\nCe travail est payé, et c\'est normal. Mais sa vraie récompense est auprès d\'Allah. Gardez cette intention en lisant tout ce qui suit.\n\nVous lisez cette lettre parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.\n\nVous êtes venu sans connaître notre nom, ni la paie, ni les personnes derrière l\'académie. Nous n\'avions rien dit, et c\'était voulu. Vous êtes venu quand même. Cela nous a touchés.\n\nEn lisant vos messages, nous avons compris une chose. Certains d\'entre vous pensent que ce sont eux qui ont besoin de nous. C\'est le contraire. C\'est l\'académie qui a besoin de vous. Ce sont ces enfants, loin des écoles coraniques, qui ont besoin de vous. Ce sont leurs familles, et toute la communauté musulmane. Vous avoir avec nous est un honneur, pour nous.\n\nAlors nous vous devons la vérité, toute la vérité : qui nous sommes, combien vous gagnerez, combien d\'heures vous donnerez, ce que nous attendons de vous, et ce qui est dur dans ce travail.\n\nLisez jusqu\'au bout. À la fin, vous saurez si vous continuez avec nous ou non. Les deux réponses sont respectables.',
+			'recrutement.lettre.parties.p2.titre' => 'Qui nous sommes',
+			'recrutement.lettre.parties.p2.corps' => 'Nous nous appelons **Rewayah Academy**.\n\nC\'est une société officielle : **Rewayah Academy Ltd**, enregistrée en Angleterre et au pays de Galles sous le numéro **16624644**. Son siège est au 71-75 Shelton Street, Covent Garden, Londres WC2H 9JQ, Royaume-Uni. Tout le monde peut le vérifier dans le registre public des sociétés britanniques (Companies House).\n\nL\'académie existe depuis près de trois ans. Avant cela, chacun de nous enseignait de son côté, depuis des années.\n\nNos élèves sont surtout des musulmans de la diaspora. Ce sont des familles qui vivent loin des pays où l\'on trouve une école coranique au coin de la rue.\n\nPendant ces trois ans, le même problème est revenu. Des élèves voulaient apprendre, et nous n\'avions pas le bon enseignant pour eux. Il fallait refuser, ou faire attendre.\n\nCette fois, nous faisons l\'inverse : **d\'abord les enseignants, ensuite les élèves**. Nous ne promettons rien à une famille tant que nous n\'avons pas des enseignants prêts.\n\nNous avons donc lancé un appel aux hommes et aux femmes du Coran. Plus de 2 000 personnes ont déjà répondu. Le premier jour, notre serveur est tombé sous le nombre. Et il en arrive encore chaque jour, du Golfe, d\'Afrique, d\'Europe, de plus de 50 nationalités. Vous êtes l\'un d\'eux.\n\n### Comment on enseigne chez nous\n\nPas de Zoom, pas de Meet, pas de WhatsApp. L\'académie a sa propre application, avec sa propre salle de classe en vidéo.\n\nChez nous, un élève entre dans **une classe**. Pensez à une classe de votre lycée ou de votre université : ses heures fixes, ses élèves, ses outils, son enseignant. Nous avons même la cloche qui sonne la fin du cours.\n\nLes hommes enseignent aux garçons et aux hommes. Les femmes enseignent aux filles et aux femmes. Une seule exception : pour sauver une séance, un remplaçant de l\'autre genre peut donner le cours ce jour-là (voir la partie 6).',
+			'recrutement.lettre.parties.p3.titre' => 'Ce que vous enseignerez',
+			'recrutement.lettre.parties.p3.corps' => 'Cette application sert à une seule chose : **le Coran**.\n\nUn élève qui débute commence par **les bases**, en quatre étapes :\n1. Les lettres.\n2. Lire avec les voyelles.\n3. Lire dans le Coran.\n4. Al-Fatiha et les sourates courtes, d\'An-Nâs jusqu\'à Az-Zalzalah.\n\nEn chemin, il apprend les règles simples du tajwid. D\'abord il imite, ensuite il apprend le nom de la règle. Les plus jeunes apprennent aussi les paroles de la prière et les ablutions.\n\nÀ la fin des bases, il passe un examen. Ensuite il continue avec le Coran : le lire en entier, ou le mémoriser.\n\nVous n\'avez pas à inventer le programme. L\'académie fixe les étapes, les objectifs et les dates, séance par séance. La manière d\'expliquer, elle, vous appartient. Dans votre classe, c\'est vous qui décidez.\n\n**La langue du cours.** Vous expliquez dans la langue de vos élèves : français, anglais, arabe, poular, portugais, et d\'autres. Une classe d\'élèves arabophones reçoit un enseignant arabophone. Sachez seulement que beaucoup de nos élèves ne comprennent pas encore l\'arabe : si vous parlez une autre langue en plus, plus de classes s\'ouvrent à vous.\n\n**Et les autres sciences ?** Le fiqh, la aqida, la sira approfondie ne s\'enseignent pas ici. L\'académie a une autre plateforme pour les sciences islamiques. Pour l\'instant elle fonctionne en français et en poular seulement. Nous vous la présenterons quand elle s\'ouvrira au monde.',
+			'recrutement.lettre.parties.p4.titre' => 'La paie',
+			'recrutement.lettre.parties.p4.corps' => 'Une seule règle : **vous êtes payé par élève**. Plus vous avez d\'élèves, plus vous gagnez. Pas d\'élève, pas de paie.\n\nSur ce que paie chaque élève, presque la moitié vous revient :\n- **47 %** pour une classe d\'adultes ;\n- **environ 45 %** pour une classe d\'enfants.\n\n|  | Classe d\'enfants (6 à 17 ans) | Classe d\'adultes |\n| --- | --- | --- |\n| Séances | 3 par semaine, 1 h chacune | 3 par semaine, 1 h 30 chacune |\n| Pause dans la séance | 5 minutes | 10 minutes |\n| Vos heures | 3 h par semaine, environ 13 h par mois | 4 h 30 par semaine, environ 19 h 30 par mois |\n| Élèves dans la classe | 3 à 5, jamais plus de 5 | 3 à 6, jamais plus de 6 |\n| Prix payé par l\'élève, par mois | 55 \$ | 65 \$ |\n| Votre part, par élève et par mois | environ 24 \$ | environ 30 \$ |\n| Petite classe (3 élèves) | environ 72 \$ par mois | environ 90 \$ par mois |\n| Classe pleine | 5 x 24 \$ = environ 120 \$ par mois | 6 x 30 \$ = environ 180 \$ par mois |\n\nLes montants sont en dollars américains. Ils valent quand les élèves viennent à toutes les séances.\n\nL\'académie accorde parfois une remise à une famille : plusieurs enfants inscrits, un nouveau converti, et d\'autres cas. **Ces remises ne touchent jamais votre part.** C\'est l\'académie qui les prend sur elle.\n\n### Le minimum et le maximum\n\nPour **une** classe, comptez entre **70 \$ et 180 \$ par mois**. À l\'heure, cela fait environ 9 \$ pour une classe pleine, et environ 5 \$ pour une classe de 3 élèves.\n\nVous pouvez avoir plusieurs classes, si vos horaires le permettent et s\'il y a des classes pour vous. Un exemple : deux classes d\'enfants pleines et une classe d\'adultes pleine, cela fait 120 + 120 + 180 = 420 \$ par mois, pour 10 h 30 de cours par semaine.\n\nCet exemple n\'est pas une promesse. Vous pouvez aussi rester des mois sans classe, donc sans paie (voir la partie 7).\n\n### Pourquoi 47 % pour les adultes et 45 % pour les enfants ?\n\nAvec un adulte, presque tout se passe pendant votre cours. Avec un enfant, l\'académie ajoute un suivi après le cours, pour que ses parents sachent où il en est et l\'aident à la maison. Ce suivi a un coût.\n\n### Pourquoi pas plus ?\n\nParce que l\'académie coûte cher à faire tourner. Avec l\'autre moitié, elle paie les serveurs de la salle vidéo, l\'application et ceux qui la construisent, les frais de carte bancaire, l\'envoi de votre paie, la comptabilité, l\'administration, le suivi des enfants, et les impôts que toute société doit payer.\n\nVous verrez cette répartition, en pourcentages, dans votre espace enseignant. Nous n\'avons rien à cacher.',
+			'recrutement.lettre.parties.p5.titre' => 'Comment et quand vous êtes payé',
+			'recrutement.lettre.parties.p5.corps' => 'Après chaque séance, l\'application calcule ce que vous avez gagné. Vous le voyez dans votre espace.\n\nLe total du mois vous est envoyé **au plus tard le 5 du mois suivant**, par virement international (Wise) ou par un autre moyen selon votre pays. Les frais d\'envoi sont pour l\'académie. Dans quelques pays, les banques bloquent ces virements : si c\'est votre cas, nous vous le dirons et nous chercherons avec vous un moyen autorisé.\n\nSi vous recevez une classe au milieu d\'un mois, vous êtes payé pour les séances qui restent dans ce mois, pas pour le mois entier.\n\n### Ce qui fait monter ou baisser votre paie\n\nDeux enseignants ne gagnent pas la même chose. Voici pourquoi.\n- **Le nombre d\'élèves.** Une classe de 3 rapporte moins qu\'une classe de 5.\n- **Le nombre de classes** que vous avez.\n- **Les absences des élèves.** Si un élève manque une séance, vous recevez la moitié de sa part pour cette séance, pas la part entière. Nous l\'avons voulu ainsi pour que chacun ait envie de garder ses élèves présents.\n- **Les départs.** Si vos élèves quittent la classe un par un, votre paie baisse avec eux. Un élève reste là où il progresse et où il se sent respecté. Tous les départs ne seront pas votre faute. Mais c\'est un risque réel, pensez-y avant de vous engager.\n- **Les vacances des élèves.** Une famille peut mettre un élève en pause pour un mois. Pendant ce mois, vous n\'êtes pas payé pour lui.\n- **Les fermetures de l\'académie.** Pas de cours à la fin du Ramadan et pendant l\'Aïd al-Fitr (environ 20 jours), ni autour de l\'Aïd al-Adha (10 jours). Pas de cours, pas de paie.\n- **Vos propres absences.** Une séance donnée par un remplaçant est payée au remplaçant.\n- **Le point de fin de séance.** À la fin du cours, vous indiquez en quelques touches ce que la classe a vu et où elle s\'est arrêtée. Cela prend moins de 20 secondes. Tant que ce point manque, la paie du mois attend.',
+			'recrutement.lettre.parties.p6.titre' => 'Être à l\'heure, être remplacé, s\'absenter',
+			'recrutement.lettre.parties.p6.corps' => 'L\'académie ne tolère pas le manque d\'assiduité. Voici pourquoi.\n\nNous sommes fermes avec les familles. Un élève qui manque un cours paie quand même son mois, et il rattrape seul. Alors nous devons tenir notre part : **à l\'heure du cours, il y a un enseignant dans la salle. Toujours.**\n\n### Si vous êtes en retard\n\nVoici ce que fait l\'application, minute par minute.\n1. **20 minutes avant le cours**, la salle s\'ouvre. Vous pouvez entrer et vous préparer.\n2. **À l\'heure du cours**, si vous n\'êtes pas entré, vous recevez un rappel.\n3. **3 minutes après**, un avertissement : si vous n\'entrez pas, la séance sera donnée à un autre.\n4. **8 minutes après**, c\'est trop tard pour cette séance. Une alerte part chez tous les enseignants connectés.\n5. Un remplaçant accepte et entre dans la salle, en général en moins d\'une minute. Le but : que les élèves aient leur enseignant **11 minutes après l\'heure, au plus tard**.\n\nSi plusieurs enseignants acceptent en même temps, l\'application choisit d\'abord quelqu\'un du même genre que la classe (un homme pour des hommes, une femme pour des femmes), puis quelqu\'un qui parle sa langue. Sinon, c\'est le premier disponible. Un homme peut donc remplacer dans une classe de femmes, et l\'inverse, pour cette séance seulement.\n\n**La paie de cette séance va au remplaçant, à 100 %.** Vous ne recevez rien pour elle.\n\n### Ce que vous gardez, ce que vous risquez\n\nÊtre remplacé une fois ne vous enlève pas votre classe. Elle reste la vôtre. Le remplaçant ne peut plus y entrer une fois sa séance finie.\n\nMais si cela se répète, vous recevez des avertissements. Et si cela continue, la classe passe à quelqu\'un d\'autre.\n\n### Si vous devez vous absenter\n\nUn voyage, un événement de famille, une maladie, qu\'Allah nous en préserve : cela arrive à tout le monde. Prévenez la direction **avant**, avec votre date de départ et votre date de retour.\n\nUn remplaçant tient votre classe pendant ce temps, et il est payé pour ses séances. À votre retour, vous reprenez votre classe.\n\nSi vous ne revenez pas à la date annoncée, vous perdez cette classe. Vous ne perdez pas votre place à l\'académie : vous restez, vous vous déclarez disponible, et une autre classe peut vous être confiée plus tard.\n\n### Si c\'est vous le remplaçant\n\nChaque séance de remplacement vous est payée. Ces gains s\'additionnent dans votre espace. Ils vous sont envoyés quand ils atteignent un montant minimum fixé par la direction, pour éviter des virements de quelques dollars.',
+			'recrutement.lettre.parties.p7.titre' => 'Après l\'entretien : ce qui se passe vraiment',
+			'recrutement.lettre.parties.p7.corps' => 'Beaucoup d\'entre vous pensent : « Je passe l\'entretien, et le lendemain j\'ai une classe. » **Non.** Voici les étapes.\n1. **Votre dossier est accepté et l\'entretien se passe bien.** Vous recevez l\'accès à l\'espace enseignant et un matricule officiel. À partir de là, une classe peut vous être confiée.\n2. **Vous êtes formé à l\'application.** L\'académie vous montre comment marche la salle de classe.\n3. **Vous attendez une classe.** Quelques jours, ou plusieurs mois.\n4. **Une classe vous est confiée.** Vous recevez un message, et la classe apparaît sur votre accueil.\n\n### Pourquoi faut-il attendre ?\n\nOn ne donne pas une classe au hasard. Il faut que tout colle entre vous et les élèves qui s\'inscrivent :\n- **le jour et l\'heure** : les élèves choisissent un horaire, et vous devez être libre à ce moment ;\n- **la langue** : vous devez parler celle des élèves ;\n- **le genre** : un homme pour les garçons et les hommes, une femme pour les filles et les femmes ;\n- **l\'expérience** : des enfants qui débutent, des adultes, la mémorisation, ce n\'est pas le même métier.\n\nUn exemple. Douze élèves s\'inscrivent cette semaine : huit petites filles qui parlent français, le soir en Europe, et quatre hommes qui parlent anglais, le matin. Il faut donc des enseignantes francophones libres le soir, et un enseignant anglophone libre le matin. Un très bon enseignant qui ne correspond à aucun de ces deux cas attendra les inscriptions suivantes.\n\nDes classes s\'ouvrent tout au long de l\'année, pas seulement en début de mois.\n\n**Notre conseil : ne quittez rien pour nous.** Gardez votre travail, continuez vos études, surveillez vos e-mails et l\'application. Et faites des dou\'as.\n\n### Et s\'il n\'y a pas assez d\'élèves pour 2 000 enseignants ?\n\nC\'est possible. Au début, c\'est même probable. Nous ne pouvons pas donner une classe à chacun tout de suite.\n\nSi vous êtes admis et sans classe, vous restez avec nous. Vous pouvez :\n- **être remplaçant** : donner le cours d\'un enseignant malade, absent ou en retard, et être payé pour chaque séance ;\n- **attendre** qu\'une classe s\'ouvre ou se libère.\n\n### Et les cours individuels ?\n\nBeaucoup nous demandent des cours seul à seul : un enseignant pour un élève. L\'académie étudie la possibilité d\'en proposer, en plus des classes. Nous ne donnons aucune date.\n\nNous avons déjà pratiqué ce modèle. Il a montré ses limites, et il est bien plus dur qu\'on ne le croit, pour l\'enseignant comme pour l\'élève. Nous ne l\'ouvrirons que le jour où nous saurons bien le faire.',
+			'recrutement.lettre.parties.p8.titre' => 'Pourquoi nous demandons votre pièce d\'identité et votre photo',
+			'recrutement.lettre.parties.p8.corps' => 'Plusieurs d\'entre vous ont posé la question. Elle est normale. Voici la réponse, sans détour.\n\nSur internet, il y a de tout. Et nous, nous avons des élèves dès l\'âge de 6 ans.\n\nPensez à ce que voit un enseignant. Il voit le visage de l\'enfant en vidéo. Il entend sa voix. Il connaît son prénom, son âge, ses horaires. Il lui parle trois fois par semaine, et l\'enfant lui fait confiance.\n\nMaintenant, imaginez que cette place soit donnée à n\'importe qui. Voici ce qui peut arriver :\n- **Quelqu\'un qui ment sur son identité.** Un faux nom, un faux diplôme, et personne à retrouver le jour où il y a un problème.\n- **Quelqu\'un qui cherche les enfants, pas le Coran.** Ces personnes existent. Elles gagnent la confiance d\'un enfant petit à petit, puis essaient de lui parler en privé, loin de ses parents.\n- **Quelqu\'un qui filme ou photographie.** L\'image et la voix d\'un enfant peuvent être copiées, gardées, diffusées.\n- **Quelqu\'un qui a été renvoyé ailleurs** pour un comportement grave, et qui revient sous un autre nom.\n- **Quelqu\'un qui passe l\'entretien, puis fait enseigner un autre** à sa place.\n- **Quelqu\'un qui veut glisser d\'autres idées** dans la tête des enfants, sous le nom du Coran.\n\nUn seul de ces cas, et c\'est un enfant blessé, une famille brisée, et la confiance dans toute l\'académie qui tombe. Les honnêtes enseignants, c\'est-à-dire vous, en paieraient le prix aussi.\n\nIl y a aussi la loi. Nos élèves vivent dans beaucoup de pays. Les lois de protection de l\'enfance nous demandent de savoir exactement à qui nous confions un enfant. Et pour vous envoyer votre paie, la banque exige votre vrai nom.\n\n**Ce que nous faisons de vos documents.** Ils ne sont vus que par la direction. Ils ne sont jamais montrés aux élèves ni aux familles. Si vous retirez votre candidature, vous pouvez demander leur suppression.\n\n**Ce que nous vous demandons en retour.** Ne demandez jamais à un élève son numéro ou un autre moyen de le joindre. Ne le contactez jamais en dehors de l\'application. Ne filmez pas, ne photographiez pas la classe. C\'est une règle sans exception.\n\nUn parent nous confie ce qu\'il a de plus cher. Montrer qui vous êtes, c\'est le premier geste de confiance. Si vous étiez ce parent, vous l\'exigeriez aussi.',
+			'recrutement.lettre.parties.p9.titre' => 'Ce que nous demandons, et ce qui est dur',
+			'recrutement.lettre.parties.p9.corps' => '### Qui nous avons refusé jusqu\'ici\n\nL\'académie est sunnite, ouvertement, sur la voie d\'Ahl as-Sunna. Elle défend ses valeurs. Celui qui s\'y oppose n\'a pas sa place parmi nous.\n\nJusqu\'ici, nous n\'avons refusé que deux sortes de candidatures :\n- ceux qui n\'ont pas signé **l\'engagement religieux**. Ce texte demande de respecter le Coran, la Sunna, tous les Compagnons du Prophète ﷺ, d\'abord les quatre califes bien guidés, et les pieux prédécesseurs ;\n- ceux dont l\'apparence allait clairement contre les règles de la religion : une coiffure interdite en islam, une tenue qui ne les respecte pas.\n\nPourquoi ? Parce qu\'un enfant apprend d\'abord en regardant son enseignant. Les enfants de la diaspora grandissent au milieu de toutes les idées de ce siècle. Ils sont l\'espoir de demain, et ils sont fragiles. Bien choisir leur enseignant, c\'est notre premier devoir.\n\n### La difficulté que vous rencontrerez\n\nNous connaissons la diaspora depuis des années. Nous devons vous prévenir d\'une chose.\n\nBeaucoup de familles voient le cours comme un achat. Elles se sentent clientes, et pour elles l\'enseignant est un vendeur. Et un client pense qu\'il a toujours raison. Vous le sentirez dans leur façon de parler, d\'écrire, de réclamer.\n\nNous savons que c\'est une erreur. L\'enseignant du Coran a un rang (له حرمته). Mais eux ne le savent pas encore. Personne ne le leur a appris.\n\nC\'est à vous de le leur apprendre, avec sagesse et bonne parole (بالحكمة والموعظة الحسنة), et avec patience. Ici, vous n\'êtes pas seulement un enseignant. Vous êtes d\'abord un prédicateur (داعية).\n\nUn exemple. Un père vous écrit sèchement : « Je paie, donc mon fils doit avancer plus vite. » Vous pouvez vous vexer et lui répondre sur le même ton. Ou vous pouvez lui montrer calmement où en est son fils, ce qu\'il doit réviser à la maison, et l\'inviter à l\'écouter réciter. Dans le premier cas, vous perdez un élève. Dans le second, vous gagnez souvent toute une famille.\n\nNous l\'avons vu bien des fois : quand l\'enseignant est plus sage et plus patient que l\'élève, les choses finissent par s\'arranger. Si cette patience vous pèse déjà, ce travail n\'est pas pour vous. Mieux vaut le savoir aujourd\'hui.',
+			'recrutement.lettre.parties.p10.titre' => 'L\'académie voit ce qui se passe en classe',
+			'recrutement.lettre.parties.p10.corps' => 'Nous préférons vous le dire avant, pas après.\n\n**L\'application note vos entrées et vos sorties**, et celles des élèves. Vous n\'avez donc aucun cahier de présence à tenir : elle le fait pour vous.\n\n**Elle mesure votre connexion pendant le cours** : bonne, faible ou perdue. Elle ne garde ni le son ni l\'image. Le jour où une famille se plaint d\'un cours, l\'académie sait d\'où venait le problème, et vous n\'êtes pas accusé à tort.\n\n**Une visite de contrôle peut avoir lieu, sans prévenir.** Un membre de la direction entre dans la salle. Vous ne le voyez pas, et il n\'a ni micro ni caméra. Quand une enseignante donne son cours, la visite est toujours faite par une femme de l\'équipe, jamais par un homme. Le visiteur regarde une chose : est-ce que l\'enseignant travaille vraiment avec ses élèves ?\n\n**Vous ne pouvez pas donner deux cours en même temps.** Le visiteur le voit. Et si vous quittez la salle plus de 30 secondes pendant votre cours, l\'application vous en sort et prévient la direction.\n\nPour le reste, vous êtes libre. L\'académie ne vous impose ni un endroit précis de la maison, ni une position, ni un décor. Elle demande deux choses : un endroit calme et une bonne connexion. Sans cela, ce sont les élèves qui en souffrent.',
+			'recrutement.lettre.parties.p11.titre' => 'Praxis, notre assistant',
+			'recrutement.lettre.parties.p11.corps' => 'Vous êtes plus de 2 000. Vous parlez des dizaines de langues, vous vivez sous tous les fuseaux horaires, et vos messages arrivent jour et nuit. Notre équipe ne peut pas répondre à chacun assez vite.\n\nNous avons donc créé **Praxis**, un assistant d\'intelligence artificielle. Ce n\'est pas une personne, et il ne se fera jamais passer pour une personne.\n- **Ce qu\'il fait** : il répond aux questions qui reviennent, il donne des précisions, il vous dit où en est une démarche.\n- **Ce qu\'il ne fait pas** : il ne décide rien. Il n\'accepte ni ne refuse personne, il ne donne pas de classe, il ne touche pas à la paie.\n- **Qui le dirige** : la direction. Il n\'agit que si elle lui confie une mission.\n\nOù en est-il aujourd\'hui ? Nous avons commencé à le tester. Il a fait quelques erreurs, alors nous l\'avons mis en pause. Nous étudions ses réponses pour le régler, puis nous le relancerons. Certains d\'entre vous ont peut-être déjà reçu un message de lui.\n\nQuand il sera de retour, si sa réponse ne vous suffit pas, dites-le dans votre message : un membre de l\'équipe prendra la suite.',
+			'recrutement.lettre.parties.p12.titre' => 'Si cela ne vous convient pas',
+			'recrutement.lettre.parties.p12.corps' => 'Vous êtes libre de partir, à tout moment, sans vous justifier.\n\nRewayah Academy est une société anglaise. La loi l\'oblige à respecter votre droit de vous retirer. Vous pouvez retirer votre candidature et demander la suppression de votre compte et de vos données. Après cela, vous ne recevrez plus aucun message de l\'académie. Si vous changez d\'avis, vous pouvez reprendre votre candidature vous-même pendant 7 jours après l\'avoir retirée.\n\nPour cela, écrivez à **support@rewayahacademy.com**.',
+			'recrutement.lettre.parties.p13.titre' => 'Vos questions',
+			'recrutement.lettre.parties.p13.corps' => '**Je me suis inscrit. Suis-je déjà enseignant de l\'académie ?** Pas encore. Vous êtes candidat. Il reste l\'étude de votre dossier, puis l\'entretien.\n\n**Dois-je payer pour être admis ou pour la formation ?** Non. Rien, jamais. Si quelqu\'un vous demande de l\'argent en notre nom, c\'est une fraude : prévenez-nous.\n\n**Combien de temps vais-je attendre une classe ?** Nous ne le savons pas, et nous ne vous donnerons pas une date que nous ne pourrions pas tenir. Cela dépend des élèves qui s\'inscrivent, de vos horaires, de votre langue et de votre expérience.\n\n**À quelle heure seront mes cours ?** À l\'heure choisie par les élèves de la classe, la même chaque semaine. On ne vous confiera une classe que si son horaire vous va. L\'application affiche chaque horaire à votre heure, puis à l\'heure de La Mecque, qui est l\'horloge de l\'académie.\n\n**Combien vais-je gagner, exactement ?** Environ 24 \$ par mois pour chaque enfant, environ 30 \$ par mois pour chaque adulte, s\'ils viennent à toutes les séances. Comptez vos élèves, multipliez, vous avez votre mois.\n\n**Un élève est absent. Suis-je payé pour lui ?** À moitié. Vous recevez la moitié de sa part pour cette séance.\n\n**J\'ai été en retard une fois et on m\'a remplacé. Ai-je perdu ma classe ?** Non. Vous avez perdu la paie de cette séance. Vous ne perdez la classe que si cela se répète, après des avertissements.\n\n**De quoi ai-je besoin pour enseigner ?** Une bonne connexion internet, un ordinateur ou une tablette avec caméra et micro, et un endroit calme. Rien d\'autre à installer que l\'application de l\'académie.\n\n**Puis-je enseigner ailleurs en même temps ?** Oui, tant que vos autres heures ne tombent pas sur celles de l\'académie. Ce qui est interdit, c\'est de donner deux cours au même moment.\n\n**Les montants peuvent-ils changer ?** Oui, la direction peut les revoir. Vous serez prévenu avant, et un mois déjà travaillé ne sera jamais touché.',
+			'recrutement.lettre.parties.p14.titre' => 'Pour décider',
+			'recrutement.lettre.parties.p14.corps' => '**Continuez avec nous si** vous acceptez d\'être payé par élève, d\'attendre peut-être longtemps votre première classe, d\'être à l\'heure à chaque séance, de montrer qui vous êtes, et d\'être patient avec des familles qui ne connaissent pas encore le rang de l\'enseignant du Coran.\n\n**Ne continuez pas si** vous cherchez un revenu fixe et tout de suite, si vous ne pouvez pas tenir un horaire régulier, ou si l\'engagement religieux de l\'académie n\'est pas le vôtre.\n\nDans les deux cas, qu\'Allah vous récompense d\'avoir répondu à notre appel.\n\nLa direction de Rewayah Academy\n\n#Ra_staff',
 			'recrutement.majeur.titre' => 'Avant de commencer',
 			'recrutement.majeur.explication' => 'Le recrutement des enseignants est réservé aux personnes de 18 ans et plus.',
 			'recrutement.majeur.coche' => 'J\'ai 18 ans ou plus.',
@@ -59760,6 +60139,8 @@ extension on Traductions {
 			'recrutement.partage.langueCarte' => 'Langue de la carte',
 			'recrutement.partage.apercu' => 'Aperçu de la carte à partager',
 			'recrutement.partage.partager' => 'Je partage',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.partage.partagerLaCarte' => 'Partager la carte de l\'offre',
 			'recrutement.partage.enregistrer' => 'Enregistrer l\'image',
 			'recrutement.partage.copier' => 'Copier le lien',
@@ -59812,8 +60193,6 @@ extension on Traductions {
 			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'Nouveau : ${titre}',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'Ranger l\'annonce : ${titre}',
 			'recrutement.accueil.annonce.rangee' => 'Annonce rangée dans Messages, rubrique Annonces.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.accueil.etat.perime' => 'Votre dossier n\'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture. Réessayez dans un instant.',
 			'recrutement.accueil.etat.horsLigne' => 'Vous n\'êtes pas connecté. Ce que vous voyez date de votre dernière lecture ; réessayez une fois la connexion revenue.',
 			'recrutement.accueil.messages.intro' => 'Écrivez à l\'académie : elle vous répond ici.',
@@ -60274,6 +60653,8 @@ extension on Traductions {
 			'recrutement.talents.intro.usage.titre' => 'Ce que nous en faisons',
 			'recrutement.talents.intro.usage.texte' => 'Vos réponses servent seulement à vous proposer une mission de l\'académie. La direction les lit, et elle seule.',
 			'recrutement.talents.intro.liberte.titre' => 'Vous gardez la main',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.intro.liberte.texte' => 'Vous pouvez modifier vos réponses ou les retirer quand vous le voulez, et retirer l\'accord qui permet de vous contacter.',
 			'recrutement.talents.intro.missions.titre' => 'Chaque mission a ses conditions',
 			'recrutement.talents.intro.missions.texte' => 'L\'académie vous les présente quand elle vous contacte. Cette page ne promet aucune mission.',
@@ -60326,8 +60707,6 @@ extension on Traductions {
 			'recrutement.talents.c.accueil_familles.description' => 'Être le premier contact des familles qui s\'inscrivent.',
 			'recrutement.talents.c.accueil_familles.exemple' => 'Répondre à une question, accompagner une inscription, prendre des nouvelles',
 			'recrutement.talents.c.gestion_projet.libelle' => 'Planification et gestion de projet',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.gestion_projet.description' => 'Organiser un travail à plusieurs, du début à la fin.',
 			'recrutement.talents.c.gestion_projet.exemple' => 'Établir un calendrier, répartir les tâches, suivre l\'avancement',
 			'recrutement.talents.c.ressources_humaines.libelle' => 'Ressources humaines et recrutement',
@@ -60788,6 +61167,8 @@ extension on Traductions {
 			'admin.candidatures.etats.retiree' => 'Retirée',
 			'admin.candidatures.etats.enPause' => 'En pause',
 			'admin.candidatures.etats.restreinte' => 'Restreinte',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.etats.restreintePiece' => 'Restreinte : pièce',
 			'admin.candidatures.etats.restreinteVersement' => 'Restreinte : versement',
 			'admin.candidatures.etats.restreinteDirection' => 'Restreinte : décision de la direction',
@@ -60840,8 +61221,6 @@ extension on Traductions {
 			'admin.candidatures.detail.ouvrirDossier' => 'Ouvrir dans Dossiers à valider',
 			'admin.candidatures.detail.responsable' => 'Responsable',
 			'admin.candidatures.detail.contact.titre' => 'Contact',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.detail.contact.masque' => 'Contact masqué',
 			'admin.candidatures.detail.contact.voir' => 'Voir le contact',
 			'admin.candidatures.detail.contact.journal' => 'Cette ouverture est inscrite au journal.',
@@ -61302,6 +61681,8 @@ extension on Traductions {
 			'admin.equipe.feuille.mission.nomAide' => '80 signes au plus.',
 			'admin.equipe.feuille.mission.nomManquant' => 'Donnez un nom à la mission.',
 			'admin.equipe.feuille.mission.nomTropLong' => '80 signes au plus.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.equipe.feuille.mission.gestes' => 'Ce que la personne peut faire',
 			'admin.equipe.feuille.mission.gestesAide' => 'Cochez au moins un geste. Elle ne fait rien d\'autre.',
 			'admin.equipe.feuille.mission.gestesManquants' => 'Cochez au moins un geste.',
@@ -61354,8 +61735,6 @@ extension on Traductions {
 			'admin.equipe.feuille.revoquer.revoquer' => 'Révoquer',
 			'admin.equipe.feuille.revoquer.revoquee' => 'Invitation révoquée.',
 			'admin.equipe.refus.personneIndisponible' => 'Ce compte ne peut pas recevoir de mission : il n\'est pas actif, ou son rôle n\'est pas admis.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.equipe.refus.genreInconnu' => 'Le genre de cette personne n\'est pas connu : sa mission se porte de son côté. Complétez son compte d\'abord.',
 			'admin.equipe.refus.attributionActive' => 'Cette personne porte déjà cette mission. Retirez-la d\'abord.',
 			'admin.equipe.refus.missionIndisponible' => 'Cette mission n\'existe plus ou est archivée.',
@@ -61816,6 +62195,8 @@ extension on Traductions {
 			'admin.groupes.refusDeplacement.nonDisponible' => 'L\'horaire n\'est pas changé : l\'enseignant n\'a pas déclaré toutes les heures de ce cours, de son début à sa fin. Choisissez un autre horaire.',
 			'admin.groupes.refusDeplacement.chevauchementClasse' => 'L\'horaire n\'est pas changé : l\'enseignant a déjà une classe ou un élève à ce moment. Choisissez un autre horaire.',
 			'admin.groupes.refusDeplacement.chevauchementSeance' => 'L\'horaire n\'est pas changé : une séance est déjà prévue à ce moment, pour l\'enseignant (dans cette classe à son ancien horaire ou dans une autre classe). Choisissez un autre horaire.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.refusDeplacement.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'L\'horaire n\'est pas changé : l\'enseignant tient déjà ${n} classe active, pour un maximum de ${maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles.', other: 'L\'horaire n\'est pas changé : l\'enseignant tient déjà ${n} classes actives, pour un maximum de ${maximum}. Clôturez une de ses classes, ou relevez le maximum dans les Règles.', ), 
 			'admin.groupes.refusDeplacement.plafondClassesSansNombre' => 'L\'horaire n\'est pas changé : l\'enseignant tient déjà le nombre maximum de classes actives. Clôturez une de ses classes, ou relevez le maximum dans les Règles.',
 			'admin.groupes.refusDeplacement.inconnu' => 'L\'horaire n\'est pas changé : le serveur a refusé ce choix. Vérifiez l\'enseignant et l\'horaire, puis pressez de nouveau.',
@@ -61868,8 +62249,6 @@ extension on Traductions {
 			'admin.groupes.partage.modifiePar' => ({required Object date, required Object auteur}) => 'Dernière modification : ${date}, par ${auteur}',
 			'admin.groupes.partage.modifieLe' => ({required Object date}) => 'Dernière modification : ${date}',
 			'admin.groupes.partage.etatActif' => 'Activé pour la classe',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.partage.etatInactif' => 'Désactivé pour la classe',
 			'admin.groupes.partage.confirmerActiver' => 'Activer le partage automatique pour cette classe ?',
 			'admin.groupes.partage.consequenceActiver' => 'Les comptes rendus déjà partagés redeviennent lisibles pour les familles. Ceux retenus pendant la désactivation ne sont pas publiés d\'un coup.',
@@ -62330,6 +62709,8 @@ extension on Traductions {
 			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.',
 			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.',
 			'admin.regles.remplacementOrdreRefuse' => 'L\'ordre des délais n\'est plus respecté : un autre réglage a changé entre-temps. Fermez cette fenêtre, puis rouvrez la ligne pour voir les valeurs à jour.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.entretiensSection' => 'Entretiens',
 			'admin.regles.entretiensIntro' => 'Les fondateurs se cochent dans les Comptes, vues Direction et Enseignants.',
 			'admin.regles.regleFondateurs' => 'Exiger des fondateurs',
@@ -62382,8 +62763,6 @@ extension on Traductions {
 			'admin.protectionEnfants.nonRenseigne' => 'Non renseigné',
 			'admin.protectionEnfants.champNom' => 'Nom du responsable',
 			'admin.protectionEnfants.champCourriel' => 'Courriel du responsable',
-			_ => null,
-		} ?? switch (path) {
 			'admin.protectionEnfants.enregistrer' => 'Enregistrer',
 			'admin.protectionEnfants.videAide' => 'Laissez vide pour retirer le responsable.',
 			'admin.protectionEnfants.nomTropLong' => 'Ce nom est trop long. 120 signes au plus.',
@@ -62844,6 +63223,8 @@ extension on Traductions {
 			'admin.comptes.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: '${jours} jour', other: '${jours} jours', ), 
 			'admin.comptes.recherche' => 'Rechercher un compte',
 			'admin.comptes.filtreEtat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'admin.comptes.filtreTousLesEtats' => 'Tous les états',
 			'admin.comptes.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} compte', other: '${n} comptes', ), 
 			'admin.comptes.filtreActifEtat' => ({required Object valeur}) => 'État : ${valeur}',
@@ -62896,8 +63277,6 @@ extension on Traductions {
 			'admin.comptes.trancheAdulte' => 'Adulte',
 			'admin.comptes.trancheInconnue' => 'Non renseigné',
 			'admin.comptes.colonneClasse' => 'Classe',
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.classeAucune' => 'Sans classe',
 			'admin.comptes.classeEtAutres' => ({required num n, required Object classe}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${classe} et ${n} autre', other: '${classe} et ${n} autres', ), 
 			'admin.comptes.colonneTuteur' => 'Tuteur',
@@ -63358,6 +63737,8 @@ extension on Traductions {
 			'admin.finance.pol.uniteJours' => 'jours',
 			'admin.finance.pol.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
 			'admin.finance.pol.mois' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} mois', other: '${n} mois', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.uniteMinutes' => 'minutes',
 			'admin.finance.pol.uniteMois' => 'mois',
 			'admin.finance.pol.uniteJourDuMois' => 'du mois',
@@ -63410,8 +63791,6 @@ extension on Traductions {
 			'admin.finance.pol.essaiActivation' => 'Activation de l\'essai',
 			'admin.finance.pol.essaiActivationDetail' => 'Désactivé, un nouveau profil commence directement par sa première période payante.',
 			'admin.finance.pol.essaiActive' => 'Activé',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.essaiDesactive' => 'Désactivé',
 			'admin.finance.pol.remises' => 'Remises familiales',
 			'admin.finance.pol.remisesDetail' => 'Par rang de membre payant du foyer, sans jamais réécrire une facture déjà payée.',
@@ -63872,6 +64251,8 @@ extension on Traductions {
 			'admin.pilotage.nombreEtGenres' => ({required Object n, required Object genres}) => '${n} (${genres})',
 			'admin.pilotage.genreHommes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enseignant', other: '${n} enseignants', ), 
 			'admin.pilotage.genreFemmes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enseignante', other: '${n} enseignantes', ), 
+			_ => null,
+		} ?? switch (path) {
 			'admin.pilotage.genreIndetermine' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enseignant, genre à confirmer', other: '${n} enseignants, genre à confirmer', ), 
 			'admin.pilotage.etatPenurie' => 'Pénurie d\'enseignants',
 			'admin.pilotage.etatSousMinimum' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} classe sous le minimum', other: '${n} classes sous le minimum', ), 
@@ -63924,8 +64305,6 @@ extension on Traductions {
 			'admin.fusion.fusionNonConfirmee' => 'La fusion n\'est pas confirmée : la réponse du serveur n\'est pas arrivée. Pressez de nouveau : la même demande sera reprise, sans fusion en double.',
 			'admin.fusion.manqueCible' => 'Il manque la classe qui accueille les élèves : choisissez-la dans la liste.',
 			'admin.fusion.transfertTitre' => ({required Object deLibelle}) => 'Transférer un élève ${deLibelle}',
-			_ => null,
-		} ?? switch (path) {
 			'admin.fusion.transfertContexte' => 'Choisissez l\'élève, puis la classe parallèle qui l\'accueille. Le transfert est tracé, et la famille en est prévenue.',
 			'admin.fusion.eleveTitre' => 'Élève à transférer',
 			'admin.fusion.aucunEleve' => 'Cette classe n\'a aucun élève',
@@ -64386,6 +64765,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.explications.preuve' => 'Déposez la preuve d\'autorisation de cette version.',
 			'admin.bibliotheque.publication.explications.usageApplication' => 'Autorisez l\'usage dans l\'application dans la revue des droits.',
 			'admin.bibliotheque.publication.explications.usageClasse' => 'Autorisez l\'affichage en classe dans la revue des droits.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.explications.usageTelechargement' => 'Le serveur doit pouvoir trancher le téléchargement et la lecture sans internet.',
 			'admin.bibliotheque.publication.explications.expirationAttribution' => 'La licence est échue ou son attribution manque : renouvelez-la.',
 			'admin.bibliotheque.publication.explications.fichierSain' => 'Déposez un fichier : le serveur doit l\'analyser.',
@@ -64438,8 +64819,6 @@ extension on Traductions {
 			'agent.jeton' => 'Jeton d\'observation',
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Ouvrir l\'application',
-			_ => null,
-		} ?? switch (path) {
 			'agent.ouverture' => 'Ouverture',
 			'agent.refus' => 'Jeton refusé',
 			'agent.refusDetail' => 'Ce jeton est inconnu, révoqué ou expiré. Demandez-en un nouveau à l\'académie.',
@@ -64900,6 +65279,8 @@ extension on Traductions {
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
 			'historique.detailSeance' => 'Détail de la séance',
+			_ => null,
+		} ?? switch (path) {
 			'historique.segments.seances' => 'Séances',
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'janv.',
@@ -64952,8 +65333,6 @@ extension on Traductions {
 			'historique.seances.filtreVideTitre' => 'Aucune séance ne correspond',
 			'historique.seances.filtreVidePhrase' => 'Changez les filtres pour retrouver les autres séances.',
 			'historique.seances.tronquee' => ({required Object nombre}) => 'Les ${nombre} séances les plus récentes sont affichées.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Séance du ${date}, ${classe}, ${etat}',
 			'historique.observations.indisponibleTitre' => 'Historique des observations indisponible',
 			'historique.observations.indisponiblePhrase' => 'Les visites enregistrées ne peuvent pas encore être lues dans l\'application.',
@@ -65414,6 +65793,8 @@ extension on Traductions {
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'Le détail de la classe n\'est pas encore disponible ici.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.introuvableTitre' => 'Cette classe n\'est pas ouverte à ce profil',
 			'classe.introuvablePhrase' => 'Elle a peut-être pris fin, ou elle concerne un autre élève du foyer.',
 			'classe.disparue' => 'Cette classe n\'existe plus.',
@@ -65466,8 +65847,6 @@ extension on Traductions {
 			'classe.pageRessources.aucuneDetail' => 'Les supports choisis par l\'enseignant apparaîtront ici.',
 			'classe.pageRessources.indisponible' => 'La bibliothèque de la classe n\'est pas encore reliée à cet espace.',
 			'classe.pageProgression.indisponible' => ({required Object dePrenom}) => 'La progression ${dePrenom} n\'est pas encore partagée ici.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageProgression.niveau' => 'Niveau',
 			'classe.pageProgression.jalons' => 'Étapes franchies',
 			'classe.pageProgression.aucune' => 'Aucune étape partagée pour l\'instant',
@@ -65928,6 +66307,8 @@ extension on Traductions {
 			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
 			'enseignant.profil.verification' => 'Vérification du dossier',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.verificationEnAttente' => 'En attente',
 			'enseignant.profil.verificationValidee' => 'Validée',
 			'enseignant.profil.verificationRefusee' => 'À reprendre',
@@ -65980,8 +66361,6 @@ extension on Traductions {
 			'enseignant.profil.revenusHeures' => ({required Object heures, required Object mois}) => '${heures} assurées en ${mois}',
 			'enseignant.profil.publicationDonnee' => 'Donné',
 			'enseignant.profil.publicationNonDonnee' => 'Non donné',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure} h',
 			'enseignant.creneaux.aucuneHeure' => 'Vous n\'avez proposé aucune heure. Sans créneau, aucune classe ne peut vous être proposée.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} enregistré',
@@ -66442,6 +66821,8 @@ extension on Traductions {
 			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Cours dans ${jours} jour', other: 'Cours dans ${jours} jours', ), 
 			'tc.groupe.temps.imminent' => 'Cours imminent',
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Salle ouverte · ${reste}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.temps.salleOuverteCourt' => 'Salle ouverte',
 			'tc.groupe.temps.attente' => 'Vous êtes dans la salle. Le cours n\'a pas encore commencé.',
 			'tc.groupe.temps.attenteDetail' => 'Ce temps d\'attente ne compte pas dans votre présence.',
@@ -66494,8 +66875,6 @@ extension on Traductions {
 			'tc.bibliotheque.rechercheLibelle' => 'Rechercher un document',
 			'tc.bibliotheque.effacerRecherche' => 'Tout afficher',
 			'tc.bibliotheque.filtre.type' => 'Type',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.filtre.disponibilite' => 'Disponibilité',
 			'tc.bibliotheque.sections.continuer' => 'Continuer',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'Pour cette classe',
@@ -66956,6 +67335,8 @@ extension on Traductions {
 			'adulte.accueil.prochaineSeance' => 'Prochaine séance',
 			'adulte.accueil.parcours' => 'Mon parcours',
 			'adulte.accueil.dernieresSeances' => 'Dernières séances',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.accueil.ressources' => 'Ressources de la classe',
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'Aucune classe pour le moment.',
@@ -67008,8 +67389,6 @@ extension on Traductions {
 			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Solde actuel : ${montant}',
 			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Montant suggéré : ${montant}',
 			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Montant pour ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Diminuer le montant pour ${prenom}',
 			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Augmenter le montant pour ${prenom}',
 			'adulte.recharge.repartition' => 'Un seul paiement sera effectué. Chaque montant va au solde de son profil : il n\'y a pas de solde commun.',
@@ -67470,6 +67849,8 @@ extension on Traductions {
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève intégré à la classe',
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => 'Demande ${dePrenom} : première séance effectuée',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => 'Demande ${dePrenom} : ${motif}',
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => 'Demande ${dePrenom} : élève déjà en classe, demande classée',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Étape ${n} sur ${total} : ${etape}',
@@ -67522,8 +67903,6 @@ extension on Traductions {
 			'suiviDemandes.close.retiree' => 'Demande retirée',
 			'suiviDemandes.close.nonRetenue' => 'Demande non retenue',
 			'suiviDemandes.close.close' => 'Demande close',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.close.motif.retraitFamille' => 'Vous avez retiré cette demande.',
 			'suiviDemandes.close.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
@@ -67984,6 +68363,8 @@ extension on Traductions {
 			'com.messages.demo.choisirRole' => 'Choisissez le point de vue de cette démonstration.',
 			'com.messages.demo.roles.tuteur' => 'Famille',
 			'com.messages.demo.roles.enseignant' => 'Enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.roles.adulte' => 'Élève adulte',
 			'com.messages.demo.roles.admin' => 'Direction',
 			'com.messages.demo.roles.controleur' => 'Contrôleur',
@@ -68036,8 +68417,6 @@ extension on Traductions {
 			'com.vocal.composer.erreurInterrompu' => 'L\'enregistrement s\'est interrompu. Vérifiez le microphone, puis recommencez.',
 			'com.vocal.composer.permissionTitre' => 'Le microphone est nécessaire',
 			'com.vocal.composer.permissionPhrase' => 'Rewayah a besoin du microphone pour enregistrer votre message vocal. Rien ne part sans votre accord.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.autoriser' => 'Autoriser le microphone',
 			'com.vocal.composer.annuler' => 'Annuler',
 			'com.vocal.composer.refuse' => 'Le microphone n\'est pas autorisé pour Rewayah.',
@@ -68498,6 +68877,8 @@ extension on Traductions {
 			'com.annonces.simple.envoyer' => 'Envoyer l\'annonce',
 			'com.annonces.simple.manquePublic' => 'Choisissez au moins un public pour envoyer.',
 			'com.annonces.simple.manqueTexte' => 'Écrivez le message pour envoyer.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.simple.calcul' => 'Calcul du nombre de personnes.',
 			'com.annonces.simple.videPersonne' => 'Personne ne correspond à ce choix : rien ne peut partir. Choisissez un autre public.',
 			'com.annonces.simple.videCote' => 'Votre profil ne dit pas si vous êtes une femme ou un homme : la séparation des côtés empêche l\'envoi. Demandez au directeur de compléter votre profil.',
@@ -68550,8 +68931,6 @@ extension on Traductions {
 			'com.annonces.publieur.enCours' => 'Publication en cours. Attendez la confirmation.',
 			'com.annonces.publieur.publiee' => 'Annonce publiée. Les destinataires la reçoivent.',
 			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'Annonce planifiée pour le ${date} à ${heure}.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.nonConfirmee' => 'Cette annonce n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez : elle ne partira qu\'une fois.',
 			'com.annonces.publieur.horsLigne' => 'Cette annonce n\'est pas encore confirmée. Réessayez dès que l\'envoi est de nouveau possible.',
 			'com.annonces.publieur.indisponible' => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.',
@@ -69012,6 +69391,8 @@ extension on Traductions {
 			'comptable.paiements.types.contractuel' => 'Contractuel',
 			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Un paiement', other: '${n} paiements', ), 
 			'comptable.paiements.actions.voir' => 'Voir',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.actions.payer' => 'Payer',
 			'comptable.paiements.actions.demanderValidation' => 'Demander validation',
 			'comptable.paiements.actions.relancer' => 'Relancer',
@@ -69064,8 +69445,6 @@ extension on Traductions {
 			'comptable.paiements.ecart.motifs.ligneEnTrop' => 'Cette ligne ne devrait pas être là',
 			'comptable.paiements.ecart.motifs.sourceErronee' => 'La source citée n\'est pas la bonne',
 			'comptable.paiements.ecart.envoyer' => 'Envoyer le signalement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.ecart.annuler' => 'Annuler',
 			'comptable.paiements.ecart.envoye' => ({required Object date}) => 'Écart signalé le ${date}. Le montant reste celui de la source jusqu\'au recalcul.',
 			'comptable.paiements.ecart.erreurEnvoi' => 'Le signalement n\'a pas abouti. Réessayez : il ne sera enregistré qu\'une fois.',
@@ -69526,6 +69905,8 @@ extension on Traductions {
 			'comptable.validation.detail.raison' => 'Raison',
 			'comptable.validation.detail.montant' => 'Montant exact',
 			'comptable.validation.detail.etat' => 'État',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.detail.historique' => 'Historique',
 			'comptable.validation.detail.historiqueVide' => 'Aucune entrée pour l\'instant.',
 			'comptable.validation.detail.historiqueErreur' => 'L\'historique n\'a pas pu être lu : ce n\'est pas qu\'il est vide. Réessayez dans un instant.',
@@ -69578,8 +69959,6 @@ extension on Traductions {
 			'comptable.direction.historiqueVide' => 'Aucune version avant celle-ci.',
 			'comptable.direction.etatActuel' => 'État actuel de la Réserve',
 			'comptable.direction.suffixeMois' => 'mois',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.suffixeJours' => 'jours',
 			'comptable.direction.suffixePourcent' => '%',
 			'comptable.direction.erreurNombre' => 'Saisissez un nombre entier supérieur à zéro.',
@@ -70040,6 +70419,8 @@ extension on Traductions {
 			'juridique.cookies.s2.blocs.3' => '- Sur l\'appareil d\'un élève, son code personnel, qui ne quitte jamais l\'appareil.',
 			'juridique.cookies.s2.blocs.4' => 'Ces éléments sont nécessaires au fonctionnement de l\'application.',
 			'juridique.cookies.s3.titre' => '3. Ce que nous n\'utilisons pas',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s3.blocs.0' => 'À la date de ce texte, ni l\'application ni le site n\'utilisent de cookies publicitaires ni de mesure d\'audience.',
 			'juridique.cookies.s4.titre' => '4. Rapports d\'erreurs',
 			'juridique.cookies.s4.blocs.0' => 'Quand l\'application plante, un rapport technique peut être envoyé à un service de suivi des erreurs. Il ne contient ni capture d\'écran, ni nom, ni identité.',
@@ -70092,8 +70473,6 @@ extension on Traductions {
 			'avis.form.note.libelle' => 'Votre note',
 			'avis.form.note.aide' => 'Touchez une étoile : 1 est la note la plus basse, 5 la plus haute.',
 			'avis.form.note.etoile' => ({required Object n}) => 'Donner la note ${n} sur 5',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.note.lue' => ({required Object n}) => 'Note : ${n} sur 5',
 			'avis.form.note.surCinq' => ({required Object n}) => '${n} sur 5',
 			'avis.form.note.erreur' => 'Choisissez une note de 1 à 5 étoiles.',
@@ -70554,6 +70933,8 @@ extension on Traductions {
 			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Retirer ${nom} des sourates validées',
 			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'Retirer ${nom} des sourates validées ?',
 			'cahierSourates.retirerConsequence' => 'Elle ne comptera plus comme validée pour cet élève.',
+			_ => null,
+		} ?? switch (path) {
 			'cahierSourates.retirerMotif' => 'Motif (facultatif)',
 			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} n\'est plus validée.',
 			'cahierSourates.retirerRefus' => 'Le délai de 24 heures est passé : seule la direction peut encore la retirer.',
@@ -70606,8 +70987,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.depot.noms.aide' => 'Ces deux noms servent à reconnaître chaque réponse. Si vous rejouez plus tard le même fichier corrigé, gardez exactement les mêmes noms : aucune réponse ne sera ajoutée deux fois.',
 			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'Corriger ces noms',
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'Garder ces noms',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'Nom du classeur',
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'Nom de l\'onglet',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'Le nom du fichier ne dit pas l\'onglet. Indiquez-le pour continuer.',
@@ -71068,6 +71447,8 @@ extension on Traductions {
 			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',
 			'suiviAttente.titre' => 'Où en est votre demande',
 			'suiviAttente.titreSimple' => 'Où en est ta demande',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.tu.formationListeAttente' => 'Toutes les classes de ce créneau sont pleines. Ta demande attend qu\'une place s\'ouvre.',
 			'suiviAttente.tu.confirmeeFait' => 'Ta classe est confirmée.',
 			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'Ta classe « ${classe} » est confirmée.',
@@ -71120,8 +71501,6 @@ extension on Traductions {
 			'suiviAttente.ensuite' => ({required Object etape}) => 'Ensuite : ${etape}',
 			'suiviAttente.delai.depasse' => 'La formation de votre classe prend plus de temps que prévu.',
 			'suiviAttente.changement' => ({required Object date}) => 'Le créneau de la classe a changé le ${date}. Vous avez reçu l\'avis dans vos notifications.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.cloture.titreRefusee' => 'Votre demande n\'a pas été retenue',
 			'suiviAttente.cloture.titreRetiree' => 'Cette demande est retirée',
 			'suiviAttente.cloture.titreClose' => 'Cette demande est close',

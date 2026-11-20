@@ -55,14 +55,11 @@ a { color: var(--accent) }
 .fil { display: flex; align-items: center; gap: 8px; color: var(--muet); font-size: 14px; padding-block: 14px 6px }
 .fil .retour { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--carte); border: 1px solid var(--filet); color: var(--encre) }
 
-.entete { display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; align-items: center; padding-block: 12px 8px }
+.entete { padding-block: 12px 8px }
 .entete h1 { font-family: var(--titre); font-weight: 700; font-size: clamp(28px, 6vw, 40px); line-height: 1.12; margin: 0; text-wrap: balance; letter-spacing: -.01em }
 .entete .chapeau { color: var(--muet); margin: 10px 0 0; max-width: 52ch }
 .entete .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px }
 .pastille { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--lilas-pale); color: var(--sur-lilas-pale); font-weight: 600 }
-.entete .px-fig { width: 150px; height: 160px }
-@media (max-width: 520px) { .entete { grid-template-columns: 1fr } .entete .px-hero { order: -1 } .entete .px-fig { width: 112px; height: 120px } }
-
 .sommaire { background: var(--carte); border: 1px solid var(--filet); border-radius: 16px; padding: 16px 18px; margin-block: 18px 8px }
 .sommaire h2 { font-family: var(--titre); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muet); margin: 0 0 8px }
 .sommaire ol { list-style: none; margin: 0; padding: 0; columns: 2 260px; column-gap: 24px }
@@ -106,9 +103,21 @@ tr.fort { background: var(--lilas-pale) }
 .signature { font-family: var(--titre); font-weight: 700; margin-top: 18px !important }
 
 /* Praxis */
-.px-guide { display: flex; align-items: flex-end; gap: 6px; margin: 4px 0 18px; max-width: 560px }
-.px-guide.px-g { margin-left: auto }
-.px-fig { width: 124px; height: 132px; flex: none }
+.cadre { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 32px; align-items: start }
+.colonne { min-width: 0 }
+.suiveur { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 8px }
+.suiveur .px-fig { width: 150px; height: 160px }
+.suiveur .px-bulle { margin: 0; border-radius: 18px 6px 18px 18px; transition: opacity .25s ease }
+.suiveur .px-bulle.change { opacity: 0 }
+@media (max-width: 900px) {
+  .cadre { grid-template-columns: minmax(0, 1fr); gap: 0 }
+  .suiveur { order: -1; top: env(safe-area-inset-top, 0px); z-index: 4; flex-direction: row; align-items: center; gap: 4px;
+    background: var(--fond); padding: 6px 0; border-bottom: 1px solid var(--filet); margin-inline: -4px }
+  .suiveur .px-fig { width: 60px; height: 64px }
+  .suiveur .px-bulle { font-size: 14px; padding: 6px 12px; border-radius: 6px 18px 18px 18px; max-width: none; flex: 1 }
+  .suiveur .px-nom { display: none }
+}
+.px-fig { flex: none }
 .px-fig svg { width: 100%; height: 100%; overflow: visible; display: block }
 .px-bulle { position: relative; background: var(--lilas-pale); color: var(--encre); border-radius: 18px 18px 18px 6px; padding: 10px 14px; margin: 0 0 26px; font-size: 15px; line-height: 1.45; max-width: 40ch }
 .px-nom { display: block; font-family: var(--titre); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--sur-lilas-pale); margin-bottom: 2px }
@@ -121,6 +130,7 @@ tr.fort { background: var(--lilas-pale) }
 .verrou ul { margin: 8px 0 14px; padding-left: 1.2em }
 .verrou .bouton { display: inline-block; background: var(--violet); color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: 600 }
 .verrou .exemple { font-size: 12px; color: var(--attention-encre); background: var(--attention-fond); padding: 2px 8px; border-radius: 6px; margin-left: 6px }
+.floute .suiveur { visibility: hidden }
 .floute { filter: blur(6px); pointer-events: none; user-select: none; opacity: .5 }
 @media (max-width: 520px) { .verrou { grid-template-columns: 1fr } }
 .haut { font-size: 14px; display: inline-block; margin: 6px 0 18px }
@@ -148,7 +158,6 @@ html { scroll-behavior: smooth }
       <p class="chapeau">La paie, les heures, l'attente d'une classe, nos règles, et ce qui est dur dans ce travail. À la fin, vous saurez si vous continuez avec nous.</p>
       <div class="meta"><span class="pastille">Environ 15 minutes de lecture</span><span class="pastille">Mise à jour : 20 novembre 2026</span></div>
     </div>
-    <div class="px-hero"><div class="px-fig" data-geste="salut" data-expr="joie" data-vague="1" role="img" aria-label="Praxis vous salue"></div></div>
   </header>
 
   <section class="verrou" id="bloc-verrou" hidden>
@@ -162,12 +171,18 @@ html { scroll-behavior: smooth }
     </div>
   </section>
 
-  <div id="contenu">
+  <div class="cadre" id="contenu">
+   <div class="colonne">
     <nav class="sommaire" id="sommaire" aria-label="Sommaire">
       <h2>Sommaire</h2>
       <ol>{{TOC}}</ol>
     </nav>
     {{CONTENT}}
+   </div>
+   <aside class="suiveur" aria-live="polite" aria-label="Praxis">
+     <div class="px-fig" id="suiveur-fig" data-geste="salut" data-expr="joie" data-vague="1" role="img" aria-label="Praxis, l'assistant de l'académie"></div>
+     <p class="px-bulle" id="suiveur-bulle"><span class="px-nom">Praxis</span><span id="suiveur-texte">Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps.</span></p>
+   </aside>
   </div>
 </main>
 
@@ -277,6 +292,31 @@ html { scroll-behavior: smooth }
   }
 
   const figures = [...document.querySelectorAll(".px-fig")].map(dessiner);
+  const suiveurEl = document.getElementById("suiveur-fig");
+  const bulle = document.getElementById("suiveur-bulle"), texte = document.getElementById("suiveur-texte");
+  function changer(geste, expr, phrase) {
+    const i = figures.findIndex(x => x.el === suiveurEl); if (i < 0) return;
+    if (suiveurEl.dataset.geste === geste && suiveurEl.dataset.expr === expr && texte.textContent === phrase) return;
+    suiveurEl.dataset.geste = geste; suiveurEl.dataset.expr = expr; suiveurEl.dataset.vague = geste === "salut" ? "1" : "0";
+    const n = dessiner(suiveurEl); n.visible = true; n.entree = performance.now(); figures[i] = n; poser(n, performance.now());
+    bulle.classList.add("change");
+    setTimeout(() => { texte.textContent = phrase; bulle.classList.remove("change"); }, 220);
+  }
+  const parties = [...document.querySelectorAll(".partie[data-phrase]")];
+  const vues = new IntersectionObserver(es => {
+    const vis = es.filter(e => e.isIntersecting);
+    if (!vis.length) return;
+    const s = vis[0].target;
+    changer(s.dataset.geste, s.dataset.expr, s.dataset.phrase);
+  }, { rootMargin: "-20% 0px -65% 0px" });
+  parties.forEach(p => vues.observe(p));
+  // Il rebondit quand on défile : un petit saut au début de chaque mouvement.
+  let dernierSaut = 0, enMouvement = null;
+  addEventListener("scroll", () => {
+    const t = performance.now();
+    if (!enMouvement && t - dernierSaut > 900) { const f = figures.find(x => x.el === suiveurEl); if (f) { f.entree = t; dernierSaut = t; } }
+    clearTimeout(enMouvement); enMouvement = setTimeout(() => { enMouvement = null; }, 250);
+  }, { passive: true });
   let pointeur = null;
   addEventListener("pointermove", e => { pointeur = [e.clientX, e.clientY]; }, { passive: true });
 

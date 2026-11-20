@@ -55,14 +55,11 @@ a { color: var(--accent) }
 .fil { display: flex; align-items: center; gap: 8px; color: var(--muet); font-size: 14px; padding-block: 14px 6px }
 .fil .retour { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--carte); border: 1px solid var(--filet); color: var(--encre) }
 
-.entete { display: grid; grid-template-columns: 1fr auto; gap: 8px 20px; align-items: center; padding-block: 12px 8px }
+.entete { padding-block: 12px 8px }
 .entete h1 { font-family: var(--titre); font-weight: 700; font-size: clamp(28px, 6vw, 40px); line-height: 1.12; margin: 0; text-wrap: balance; letter-spacing: -.01em }
 .entete .chapeau { color: var(--muet); margin: 10px 0 0; max-width: 52ch }
 .entete .meta { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px }
 .pastille { font-size: 13px; padding: 3px 10px; border-radius: 999px; background: var(--lilas-pale); color: var(--sur-lilas-pale); font-weight: 600 }
-.entete .px-fig { width: 150px; height: 160px }
-@media (max-width: 520px) { .entete { grid-template-columns: 1fr } .entete .px-hero { order: -1 } .entete .px-fig { width: 112px; height: 120px } }
-
 .sommaire { background: var(--carte); border: 1px solid var(--filet); border-radius: 16px; padding: 16px 18px; margin-block: 18px 8px }
 .sommaire h2 { font-family: var(--titre); font-size: 13px; text-transform: uppercase; letter-spacing: .08em; color: var(--muet); margin: 0 0 8px }
 .sommaire ol { list-style: none; margin: 0; padding: 0; columns: 2 260px; column-gap: 24px }
@@ -106,9 +103,21 @@ tr.fort { background: var(--lilas-pale) }
 .signature { font-family: var(--titre); font-weight: 700; margin-top: 18px !important }
 
 /* Praxis */
-.px-guide { display: flex; align-items: flex-end; gap: 6px; margin: 4px 0 18px; max-width: 560px }
-.px-guide.px-g { margin-left: auto }
-.px-fig { width: 124px; height: 132px; flex: none }
+.cadre { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 32px; align-items: start }
+.colonne { min-width: 0 }
+.suiveur { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 20px); display: flex; flex-direction: column; align-items: center; gap: 8px; padding-top: 8px }
+.suiveur .px-fig { width: 150px; height: 160px }
+.suiveur .px-bulle { margin: 0; border-radius: 18px 6px 18px 18px; transition: opacity .25s ease }
+.suiveur .px-bulle.change { opacity: 0 }
+@media (max-width: 900px) {
+  .cadre { grid-template-columns: minmax(0, 1fr); gap: 0 }
+  .suiveur { order: -1; top: env(safe-area-inset-top, 0px); z-index: 4; flex-direction: row; align-items: center; gap: 4px;
+    background: var(--fond); padding: 6px 0; border-bottom: 1px solid var(--filet); margin-inline: -4px }
+  .suiveur .px-fig { width: 60px; height: 64px }
+  .suiveur .px-bulle { font-size: 14px; padding: 6px 12px; border-radius: 6px 18px 18px 18px; max-width: none; flex: 1 }
+  .suiveur .px-nom { display: none }
+}
+.px-fig { flex: none }
 .px-fig svg { width: 100%; height: 100%; overflow: visible; display: block }
 .px-bulle { position: relative; background: var(--lilas-pale); color: var(--encre); border-radius: 18px 18px 18px 6px; padding: 10px 14px; margin: 0 0 26px; font-size: 15px; line-height: 1.45; max-width: 40ch }
 .px-nom { display: block; font-family: var(--titre); font-weight: 700; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; color: var(--sur-lilas-pale); margin-bottom: 2px }
@@ -121,6 +130,7 @@ tr.fort { background: var(--lilas-pale) }
 .verrou ul { margin: 8px 0 14px; padding-left: 1.2em }
 .verrou .bouton { display: inline-block; background: var(--violet); color: #fff; text-decoration: none; padding: 10px 18px; border-radius: 999px; font-weight: 600 }
 .verrou .exemple { font-size: 12px; color: var(--attention-encre); background: var(--attention-fond); padding: 2px 8px; border-radius: 6px; margin-left: 6px }
+.floute .suiveur { visibility: hidden }
 .floute { filter: blur(6px); pointer-events: none; user-select: none; opacity: .5 }
 @media (max-width: 520px) { .verrou { grid-template-columns: 1fr } }
 .haut { font-size: 14px; display: inline-block; margin: 6px 0 18px }
@@ -148,7 +158,6 @@ html { scroll-behavior: smooth }
       <p class="chapeau">La paie, les heures, l'attente d'une classe, nos règles, et ce qui est dur dans ce travail. À la fin, vous saurez si vous continuez avec nous.</p>
       <div class="meta"><span class="pastille">Environ 15 minutes de lecture</span><span class="pastille">Mise à jour : 20 novembre 2026</span></div>
     </div>
-    <div class="px-hero"><div class="px-fig" data-geste="salut" data-expr="joie" data-vague="1" role="img" aria-label="Praxis vous salue"></div></div>
   </header>
 
   <section class="verrou" id="bloc-verrou" hidden>
@@ -162,14 +171,16 @@ html { scroll-behavior: smooth }
     </div>
   </section>
 
-  <div id="contenu">
+  <div class="cadre" id="contenu">
+   <div class="colonne">
     <nav class="sommaire" id="sommaire" aria-label="Sommaire">
       <h2>Sommaire</h2>
       <ol><li><a href="#partie-1"><span class="num">1</span>Pourquoi vous recevez cette lettre</a></li><li><a href="#partie-2"><span class="num">2</span>Qui nous sommes</a></li><li><a href="#partie-3"><span class="num">3</span>Ce que vous enseignerez</a></li><li><a href="#partie-4"><span class="num">4</span>La paie</a></li><li><a href="#partie-5"><span class="num">5</span>Comment et quand vous êtes payé</a></li><li><a href="#partie-6"><span class="num">6</span>Être à l'heure, être remplacé, s'absenter</a></li><li><a href="#partie-7"><span class="num">7</span>Après l'entretien : ce qui se passe vraiment</a></li><li><a href="#partie-8"><span class="num">8</span>Pourquoi nous demandons votre pièce d'identité et votre photo</a></li><li><a href="#partie-9"><span class="num">9</span>Ce que nous demandons, et ce qui est dur</a></li><li><a href="#partie-10"><span class="num">10</span>L'académie voit ce qui se passe en classe</a></li><li><a href="#partie-11"><span class="num">11</span>Praxis, notre assistant</a></li><li><a href="#partie-12"><span class="num">12</span>Si cela ne vous convient pas</a></li><li><a href="#partie-13"><span class="num">13</span>Vos questions</a></li><li><a href="#partie-decider"><span class="num">✓</span>Pour décider</a></li></ol>
     </nav>
-    <section class="partie" id="partie-1"><h2><span class="num">1</span>Pourquoi vous recevez cette lettre</h2>
-<aside class="px-guide px-d" aria-label="Praxis"><div class="px-fig" data-geste="salut" data-expr="joie" role="img" aria-label="Praxis, l'assistant de l'académie"></div><p class="px-bulle"><span class="px-nom">Praxis</span>Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps.</p></aside>
+    <section class="partie" id="partie-1" data-geste="salut" data-expr="joie" data-phrase="Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps."><h2><span class="num">1</span>Pourquoi vous recevez cette lettre</h2>
 <p>Assalamu alaykum wa rahmatullahi wa barakatuh.</p>
+<p>Le Prophète ﷺ a dit : « خيركم من تعلّم القرآن وعلّمه », « le meilleur d'entre vous est celui qui apprend le Coran et l'enseigne » (rapporté par al-Bukhârî). Les gens du Coran ont un rang à part. Celui qui l'enseigne porte la parole d'Allah jusqu'au cœur d'un enfant.</p>
+<p>Ce travail est payé, et c'est normal. Mais sa vraie récompense est auprès d'Allah. Gardez cette intention en lisant tout ce qui suit.</p>
 <p>Vous lisez cette lettre parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.</p>
 <p>Vous êtes venu sans connaître notre nom, ni la paie, ni les personnes derrière l'académie. Nous n'avions rien dit, et c'était voulu. Vous êtes venu quand même. Cela nous a touchés.</p>
 <p>En lisant vos messages, nous avons compris une chose. Certains d'entre vous pensent que ce sont eux qui ont besoin de nous. C'est le contraire. C'est l'académie qui a besoin de vous. Ce sont ces enfants, loin des écoles coraniques, qui ont besoin de vous. Ce sont leurs familles, et toute la communauté musulmane. Vous avoir avec nous est un honneur, pour nous.</p>
@@ -186,7 +197,7 @@ html { scroll-behavior: smooth }
 <p>Nous avons donc lancé un appel aux hommes et aux femmes du Coran. Plus de 2 000 personnes ont déjà répondu. Le premier jour, notre serveur est tombé sous le nombre. Et il en arrive encore chaque jour, du Golfe, d'Afrique, d'Europe, de plus de 50 nationalités. Vous êtes l'un d'eux.</p>
 <h3>Comment on enseigne chez nous</h3>
 <p>Pas de Zoom, pas de Meet, pas de WhatsApp. L'académie a sa propre application, avec sa propre salle de classe en vidéo.</p>
-<p>Chez nous, un élève entre dans <strong>une classe</strong>. Pensez à une classe de votre lycée ou de votre université : ses heures fixes, ses élèves, ses outils, son enseignant. Nous avons même la cloche qui sonne la fin du cours 😊.</p>
+<p>Chez nous, un élève entre dans <strong>une classe</strong>. Pensez à une classe de votre lycée ou de votre université : ses heures fixes, ses élèves, ses outils, son enseignant. Nous avons même la cloche qui sonne la fin du cours.</p>
 <p>Les hommes enseignent aux garçons et aux hommes. Les femmes enseignent aux filles et aux femmes. Une seule exception : pour sauver une séance, un remplaçant de l'autre genre peut donner le cours ce jour-là (voir la partie 6).</p>
 </section>
 <section class="partie" id="partie-3"><h2><span class="num">3</span>Ce que vous enseignerez</h2>
@@ -199,8 +210,7 @@ html { scroll-behavior: smooth }
 <p><strong>La langue du cours.</strong> Vous expliquez dans la langue de vos élèves : français, anglais, arabe, poular, portugais, et d'autres. Une classe d'élèves arabophones reçoit un enseignant arabophone. Sachez seulement que beaucoup de nos élèves ne comprennent pas encore l'arabe : si vous parlez une autre langue en plus, plus de classes s'ouvrent à vous.</p>
 <p><strong>Et les autres sciences ?</strong> Le fiqh, la aqida, la sira approfondie ne s'enseignent pas ici. L'académie a une autre plateforme pour les sciences islamiques. Pour l'instant elle fonctionne en français et en poular seulement. Nous vous la présenterons quand elle s'ouvrira au monde.</p>
 </section>
-<section class="partie" id="partie-4"><h2><span class="num">4</span>La paie</h2>
-<aside class="px-guide px-g" aria-label="Praxis"><div class="px-fig" data-geste="pointe" data-expr="sourire" role="img" aria-label="Praxis, l'assistant de l'académie"></div><p class="px-bulle"><span class="px-nom">Praxis</span>Ici, les vrais chiffres. Regardez le tableau, tout y est.</p></aside>
+<section class="partie" id="partie-4" data-geste="pointe" data-expr="sourire" data-phrase="Ici, les vrais chiffres. Regardez le tableau, tout y est."><h2><span class="num">4</span>La paie</h2>
 <p>Une seule règle : <strong>vous êtes payé par élève</strong>. Plus vous avez d'élèves, plus vous gagnez. Pas d'élève, pas de paie.</p>
 <p>Sur ce que paie chaque élève, presque la moitié vous revient :</p>
 <ul><li><strong>47 %</strong> pour une classe d'adultes ;</li><li><strong>environ 45 %</strong> pour une classe d'enfants.</li></ul>
@@ -225,8 +235,7 @@ html { scroll-behavior: smooth }
 <p>Deux enseignants ne gagnent pas la même chose. Voici pourquoi.</p>
 <ul><li><strong>Le nombre d'élèves.</strong> Une classe de 3 rapporte moins qu'une classe de 5.</li><li><strong>Le nombre de classes</strong> que vous avez.</li><li><strong>Les absences des élèves.</strong> Si un élève manque une séance, vous recevez la moitié de sa part pour cette séance, pas la part entière. Nous l'avons voulu ainsi pour que chacun ait envie de garder ses élèves présents.</li><li><strong>Les départs.</strong> Si vos élèves quittent la classe un par un, votre paie baisse avec eux. Un élève reste là où il progresse et où il se sent respecté. Tous les départs ne seront pas votre faute. Mais c'est un risque réel, pensez-y avant de vous engager.</li><li><strong>Les vacances des élèves.</strong> Une famille peut mettre un élève en pause pour un mois. Pendant ce mois, vous n'êtes pas payé pour lui.</li><li><strong>Les fermetures de l'académie.</strong> Pas de cours à la fin du Ramadan et pendant l'Aïd al-Fitr (environ 20 jours), ni autour de l'Aïd al-Adha (10 jours). Pas de cours, pas de paie.</li><li><strong>Vos propres absences.</strong> Une séance donnée par un remplaçant est payée au remplaçant.</li><li><strong>Le point de fin de séance.</strong> À la fin du cours, vous indiquez en quelques touches ce que la classe a vu et où elle s'est arrêtée. Cela prend moins de 20 secondes. Tant que ce point manque, la paie du mois attend.</li></ul>
 </section>
-<section class="partie" id="partie-6"><h2><span class="num">6</span>Être à l'heure, être remplacé, s'absenter</h2>
-<aside class="px-guide px-d" aria-label="Praxis"><div class="px-fig" data-geste="un" data-expr="concentre" role="img" aria-label="Praxis, l'assistant de l'académie"></div><p class="px-bulle"><span class="px-nom">Praxis</span>Retenez trois chiffres : 3, 8 et 11 minutes.</p></aside>
+<section class="partie" id="partie-6" data-geste="un" data-expr="concentre" data-phrase="Retenez trois chiffres : 3, 8 et 11 minutes."><h2><span class="num">6</span>Être à l'heure, être remplacé, s'absenter</h2>
 <p>L'académie ne tolère pas le manque d'assiduité. Voici pourquoi.</p>
 <p>Nous sommes fermes avec les familles. Un élève qui manque un cours paie quand même son mois, et il rattrape seul. Alors nous devons tenir notre part : <strong>à l'heure du cours, il y a un enseignant dans la salle. Toujours.</strong></p>
 <h3>Si vous êtes en retard</h3>
@@ -244,23 +253,24 @@ html { scroll-behavior: smooth }
 <h3>Si c'est vous le remplaçant</h3>
 <p>Chaque séance de remplacement vous est payée. Ces gains s'additionnent dans votre espace. Ils vous sont envoyés quand ils atteignent un montant minimum fixé par la direction, pour éviter des virements de quelques dollars.</p>
 </section>
-<section class="partie" id="partie-7"><h2><span class="num">7</span>Après l'entretien : ce qui se passe vraiment</h2>
-<aside class="px-guide px-g" aria-label="Praxis"><div class="px-fig" data-geste="montre" data-expr="attente" role="img" aria-label="Praxis, l'assistant de l'académie"></div><p class="px-bulle"><span class="px-nom">Praxis</span>L&#x27;attente peut durer. Gardez vos activités, et surveillez vos messages.</p></aside>
+<section class="partie" id="partie-7" data-geste="montre" data-expr="attente" data-phrase="L&#x27;attente peut durer. Gardez vos activités, et surveillez vos messages."><h2><span class="num">7</span>Après l'entretien : ce qui se passe vraiment</h2>
 <p>Beaucoup d'entre vous pensent : « Je passe l'entretien, et le lendemain j'ai une classe. » <strong>Non.</strong> Voici les étapes.</p>
 <ol class="etapes"><li><strong>Votre dossier est accepté et l'entretien se passe bien.</strong> Vous recevez l'accès à l'espace enseignant et un matricule officiel. À partir de là, une classe peut vous être confiée.</li><li><strong>Vous êtes formé à l'application.</strong> L'académie vous montre comment marche la salle de classe.</li><li><strong>Vous attendez une classe.</strong> Quelques jours, ou plusieurs mois.</li><li><strong>Une classe vous est confiée.</strong> Vous recevez un message, et la classe apparaît sur votre accueil.</li></ol>
 <h3>Pourquoi faut-il attendre ?</h3>
 <p>On ne donne pas une classe au hasard. Il faut que tout colle entre vous et les élèves qui s'inscrivent :</p>
 <ul><li><strong>le jour et l'heure</strong> : les élèves choisissent un horaire, et vous devez être libre à ce moment ;</li><li><strong>la langue</strong> : vous devez parler celle des élèves ;</li><li><strong>le genre</strong> : un homme pour les garçons et les hommes, une femme pour les filles et les femmes ;</li><li><strong>l'expérience</strong> : des enfants qui débutent, des adultes, la mémorisation, ce n'est pas le même métier.</li></ul>
-<p>Un exemple. Douze élèves s'inscrivent cette semaine : huit petites filles qui parlent français, le soir en Europe, et quatre hommes qui parlent anglais, le matin. Il faut donc des enseignantes francophones libres le soir, et un enseignant anglophone libre le matin. Un très bon enseignant qui ne correspond à aucun de ces deux groupes attendra les inscriptions suivantes.</p>
+<p>Un exemple. Douze élèves s'inscrivent cette semaine : huit petites filles qui parlent français, le soir en Europe, et quatre hommes qui parlent anglais, le matin. Il faut donc des enseignantes francophones libres le soir, et un enseignant anglophone libre le matin. Un très bon enseignant qui ne correspond à aucun de ces deux cas attendra les inscriptions suivantes.</p>
 <p>Des classes s'ouvrent tout au long de l'année, pas seulement en début de mois.</p>
 <p><strong>Notre conseil : ne quittez rien pour nous.</strong> Gardez votre travail, continuez vos études, surveillez vos e-mails et l'application. Et faites des dou'as.</p>
 <h3>Et s'il n'y a pas assez d'élèves pour 2 000 enseignants ?</h3>
 <p>C'est possible. Au début, c'est même probable. Nous ne pouvons pas donner une classe à chacun tout de suite.</p>
 <p>Si vous êtes admis et sans classe, vous restez avec nous. Vous pouvez :</p>
 <ul><li><strong>être remplaçant</strong> : donner le cours d'un enseignant malade, absent ou en retard, et être payé pour chaque séance ;</li><li><strong>attendre</strong> qu'une classe s'ouvre ou se libère.</li></ul>
+<h3>Et les cours individuels ?</h3>
+<p>Beaucoup nous demandent des cours seul à seul : un enseignant pour un élève. L'académie étudie la possibilité d'en proposer, en plus des classes. Nous ne donnons aucune date.</p>
+<p>Nous avons déjà pratiqué ce modèle. Il a montré ses limites, et il est bien plus dur qu'on ne le croit, pour l'enseignant comme pour l'élève. Nous ne l'ouvrirons que le jour où nous saurons bien le faire.</p>
 </section>
-<section class="partie" id="partie-8"><h2><span class="num">8</span>Pourquoi nous demandons votre pièce d'identité et votre photo</h2>
-<aside class="px-guide px-d" aria-label="Praxis"><div class="px-fig" data-geste="coeur" data-expr="paisible" role="img" aria-label="Praxis, l'assistant de l'académie"></div><p class="px-bulle"><span class="px-nom">Praxis</span>C&#x27;est pour protéger les enfants. Et c&#x27;est vous aussi qu&#x27;on protège.</p></aside>
+<section class="partie" id="partie-8" data-geste="coeur" data-expr="paisible" data-phrase="C&#x27;est pour protéger les enfants. Et c&#x27;est vous aussi qu&#x27;on protège."><h2><span class="num">8</span>Pourquoi nous demandons votre pièce d'identité et votre photo</h2>
 <p>Plusieurs d'entre vous ont posé la question. Elle est normale. Voici la réponse, sans détour.</p>
 <p>Sur internet, il y a de tout. Et nous, nous avons des élèves dès l'âge de 6 ans.</p>
 <p>Pensez à ce que voit un enseignant. Il voit le visage de l'enfant en vidéo. Il entend sa voix. Il connaît son prénom, son âge, ses horaires. Il lui parle trois fois par semaine, et l'enfant lui fait confiance.</p>
@@ -294,8 +304,7 @@ html { scroll-behavior: smooth }
 <p><strong>Vous ne pouvez pas donner deux cours en même temps.</strong> Le visiteur le voit. Et si vous quittez la salle plus de 30 secondes pendant votre cours, l'application vous en sort et prévient la direction.</p>
 <p>Pour le reste, vous êtes libre. L'académie ne vous impose ni un endroit précis de la maison, ni une position, ni un décor. Elle demande deux choses : un endroit calme et une bonne connexion. Sans cela, ce sont les élèves qui en souffrent.</p>
 </section>
-<section class="partie" id="partie-11"><h2><span class="num">11</span>Praxis, notre assistant</h2>
-<aside class="px-guide px-g" aria-label="Praxis"><div class="px-fig" data-geste="salut" data-expr="gene" role="img" aria-label="Praxis, l'assistant de l'académie"></div><p class="px-bulle"><span class="px-nom">Praxis</span>C&#x27;est moi ! Je suis en pause pour l&#x27;instant : on me règle avant de me relancer.</p></aside>
+<section class="partie" id="partie-11" data-geste="salut" data-expr="gene" data-phrase="C&#x27;est moi ! Je suis en pause pour l&#x27;instant : on me règle avant de me relancer."><h2><span class="num">11</span>Praxis, notre assistant</h2>
 <p>Vous êtes plus de 2 000. Vous parlez des dizaines de langues, vous vivez sous tous les fuseaux horaires, et vos messages arrivent jour et nuit. Notre équipe ne peut pas répondre à chacun assez vite.</p>
 <p>Nous avons donc créé <strong>Praxis</strong>, un assistant d'intelligence artificielle. Ce n'est pas une personne, et il ne se fera jamais passer pour une personne.</p>
 <ul><li><strong>Ce qu'il fait</strong> : il répond aux questions qui reviennent, il donne des précisions, il vous dit où en est une démarche.</li><li><strong>Ce qu'il ne fait pas</strong> : il ne décide rien. Il n'accepte ni ne refuse personne, il ne donne pas de classe, il ne touche pas à la paie.</li><li><strong>Qui le dirige</strong> : la direction. Il n'agit que si elle lui confie une mission.</li></ul>
@@ -321,14 +330,18 @@ html { scroll-behavior: smooth }
 <p><strong>Les montants peuvent-ils changer ?</strong> Oui, la direction peut les revoir. Vous serez prévenu avant, et un mois déjà travaillé ne sera jamais touché.</p>
 </div>
 </section>
-<section class="partie" id="partie-decider"><h2>Pour décider</h2>
-<aside class="px-guide px-d" aria-label="Praxis"><div class="px-fig" data-geste="coeur" data-expr="sourire" role="img" aria-label="Praxis, l'assistant de l'académie"></div><p class="px-bulle"><span class="px-nom">Praxis</span>Quelle que soit votre réponse, merci d&#x27;avoir lu jusqu&#x27;au bout.</p></aside>
+<section class="partie" id="partie-decider" data-geste="coeur" data-expr="sourire" data-phrase="Quelle que soit votre réponse, merci d&#x27;avoir lu jusqu&#x27;au bout."><h2>Pour décider</h2>
 <p><strong>Continuez avec nous si</strong> vous acceptez d'être payé par élève, d'attendre peut-être longtemps votre première classe, d'être à l'heure à chaque séance, de montrer qui vous êtes, et d'être patient avec des familles qui ne connaissent pas encore le rang de l'enseignant du Coran.</p>
 <p><strong>Ne continuez pas si</strong> vous cherchez un revenu fixe et tout de suite, si vous ne pouvez pas tenir un horaire régulier, ou si l'engagement religieux de l'académie n'est pas le vôtre.</p>
 <p>Dans les deux cas, qu'Allah vous récompense d'avoir répondu à notre appel.</p>
 <p class="signature">La direction de Rewayah Academy</p>
 <p class="signature">#Ra_staff</p>
 </section>
+   </div>
+   <aside class="suiveur" aria-live="polite" aria-label="Praxis">
+     <div class="px-fig" id="suiveur-fig" data-geste="salut" data-expr="joie" data-vague="1" role="img" aria-label="Praxis, l'assistant de l'académie"></div>
+     <p class="px-bulle" id="suiveur-bulle"><span class="px-nom">Praxis</span><span id="suiveur-texte">Bonjour ! Je suis Praxis. Je vous accompagne dans cette lettre. Prenez votre temps.</span></p>
+   </aside>
   </div>
 </main>
 
@@ -438,6 +451,31 @@ html { scroll-behavior: smooth }
   }
 
   const figures = [...document.querySelectorAll(".px-fig")].map(dessiner);
+  const suiveurEl = document.getElementById("suiveur-fig");
+  const bulle = document.getElementById("suiveur-bulle"), texte = document.getElementById("suiveur-texte");
+  function changer(geste, expr, phrase) {
+    const i = figures.findIndex(x => x.el === suiveurEl); if (i < 0) return;
+    if (suiveurEl.dataset.geste === geste && suiveurEl.dataset.expr === expr && texte.textContent === phrase) return;
+    suiveurEl.dataset.geste = geste; suiveurEl.dataset.expr = expr; suiveurEl.dataset.vague = geste === "salut" ? "1" : "0";
+    const n = dessiner(suiveurEl); n.visible = true; n.entree = performance.now(); figures[i] = n; poser(n, performance.now());
+    bulle.classList.add("change");
+    setTimeout(() => { texte.textContent = phrase; bulle.classList.remove("change"); }, 220);
+  }
+  const parties = [...document.querySelectorAll(".partie[data-phrase]")];
+  const vues = new IntersectionObserver(es => {
+    const vis = es.filter(e => e.isIntersecting);
+    if (!vis.length) return;
+    const s = vis[0].target;
+    changer(s.dataset.geste, s.dataset.expr, s.dataset.phrase);
+  }, { rootMargin: "-20% 0px -65% 0px" });
+  parties.forEach(p => vues.observe(p));
+  // Il rebondit quand on défile : un petit saut au début de chaque mouvement.
+  let dernierSaut = 0, enMouvement = null;
+  addEventListener("scroll", () => {
+    const t = performance.now();
+    if (!enMouvement && t - dernierSaut > 900) { const f = figures.find(x => x.el === suiveurEl); if (f) { f.entree = t; dernierSaut = t; } }
+    clearTimeout(enMouvement); enMouvement = setTimeout(() => { enMouvement = null; }, 250);
+  }, { passive: true });
   let pointeur = null;
   addEventListener("pointermove", e => { pointeur = [e.clientX, e.clientY]; }, { passive: true });
 

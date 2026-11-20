@@ -192,6 +192,21 @@ String? deciderRedirection({
         final bool presentable = billet != null && billet.valideA(maintenant);
         return presentable ? null : Routes.attente;
       }
+      // LETTRE-CANDIDATS (directeur, 20/11/2026) : les pages a lire par un
+      // lien partage s'ouvrent au candidat en attente (pas a un compte
+      // suspendu) ; au sortir de la connexion, il y est ramene.
+      if (session.porte == PorteAcces.attente) {
+        if (_dansLeSousArbre(cheminDemande, Routes.lecture)) {
+          return null;
+        }
+        if (cheminDemande == Routes.connexion) {
+          final String? cible = cheminRetourValide(retour);
+          if (cible != null &&
+              _dansLeSousArbre(Uri.parse(cible).path, Routes.lecture)) {
+            return cible;
+          }
+        }
+      }
       return _dansLeSousArbre(cheminDemande, Routes.attente) || !routeConnue
           ? null
           : Routes.attente;
@@ -244,6 +259,12 @@ String? deciderRedirection({
       }
       if (_dansLeSousArbre(cheminDemande, Routes.mfaControleur)) {
         return racine;
+      }
+
+      // LETTRE-CANDIDATS : les pages a lire par un lien partage s'ouvrent a
+      // tout compte actif, quel que soit son role.
+      if (_dansLeSousArbre(cheminDemande, Routes.lecture)) {
+        return null;
       }
 
       // Un compte actif n'a plus rien a faire sur la racine, la connexion,

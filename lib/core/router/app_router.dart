@@ -124,6 +124,7 @@ import '../../features/cahier/cahier_page.dart';
 import '../../features/candidature/cadre_religieux_page.dart';
 import '../../features/candidature/candidature_page.dart';
 import '../../features/candidature/entretien_candidat_page.dart';
+import '../../features/candidature/lettre/lettre_candidats_page.dart';
 import '../../features/classe_tuteur/classe_tuteur_page.dart';
 import '../../features/classe_tuteur/planning_classe_page.dart';
 import '../../features/classe_tuteur/progression_classe_page.dart';
@@ -673,6 +674,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
         path: '${Routes.avis}/:jeton',
         builder: (BuildContext _, GoRouterState etat) =>
             AvisPublicPage(jeton: etat.pathParameters['jeton'] ?? ''),
+      ),
+      // LETTRE-CANDIDATS : la lettre aux candidats enseignants, ouverte a
+      // toute personne connectee par un lien partage (`Routes.lecture`).
+      GoRouteSure(
+        path: Routes.lettreEnseignants,
+        builder: (BuildContext _, GoRouterState _) =>
+            const LettreCandidatsPage(),
       ),
       // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
       // un compte en attente, la racine seule ne suffirait pas.

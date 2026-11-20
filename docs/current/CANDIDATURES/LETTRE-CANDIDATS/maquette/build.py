@@ -57,10 +57,11 @@ while i < len(lines):
         sid = f"partie-{key}"
         cur_sec = key
         toc.append((sid, num, titre))
-        out.append(f'<section class="partie" id="{sid}"><h2>' + (f'<span class="num">{num}</span>' if num else "") + f"{inline(titre)}</h2>")
+        attrs = ""
         if key in PRAXIS:
-            out.append(praxis_block(key, side))
-            side = "g" if side == "d" else "d"
+            g, e, ph = PRAXIS[key]
+            attrs = f' data-geste="{g}" data-expr="{e}" data-phrase="{html.escape(ph, quote=True)}"'
+        out.append(f'<section class="partie" id="{sid}"{attrs}><h2>' + (f'<span class="num">{num}</span>' if num else "") + f"{inline(titre)}</h2>")
         if key == "13":
             out.append('<div class="faq">'); in_faq = True
         i += 1; continue

@@ -956,6 +956,7 @@ class _Traductions$recrutement$en extends Traductions$recrutement$fr {
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override late final _Traductions$recrutement$lettre$en lettre = _Traductions$recrutement$lettre$en._(_root);
 	@override late final _Traductions$recrutement$majeur$en majeur = _Traductions$recrutement$majeur$en._(_root);
 	@override late final _Traductions$recrutement$suivant$en suivant = _Traductions$recrutement$suivant$en._(_root);
 	@override late final _Traductions$recrutement$dossier3$en dossier3 = _Traductions$recrutement$dossier3$en._(_root);
@@ -4874,6 +4875,34 @@ class _Traductions$eleveConnexion$refus$en extends Traductions$eleveConnexion$re
 	@override String get nonEnregistre => 'This device could not keep the sign-in. The code has probably already been used: show a new code on the guardian\'s device, then start again.';
 	@override String get generiqueTitre => 'Sign-in did not complete';
 	@override String get generique => 'The code check did not complete. Try again in a moment.';
+}
+
+// Path: recrutement.lettre
+class _Traductions$recrutement$lettre$en extends Traductions$recrutement$lettre$fr {
+	_Traductions$recrutement$lettre$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Everything you need to know before you continue';
+	@override String get chapeau => 'Pay, hours, waiting for a class, our rules, and what is hard in this work. At the end, you will know if you continue with us.';
+	@override String get duree => 'About 15 minutes of reading';
+	@override String get miseAJour => 'Updated: 20 November 2026';
+	@override String get sommaire => 'Contents';
+	@override String get revenirSommaire => 'Back to the contents';
+	@override String allerA({required Object titre}) => 'Go to the part: ${titre}';
+	@override String get entree => 'Read the letter to teacher candidates';
+	@override String get entreeLegende => 'Pay, hours, waiting for a class, our rules';
+	@override String get verrouTitre => 'This letter opens once your agreements are accepted';
+	@override String get verrouIntro => 'To read it, you still need to accept:';
+	@override String get manqueContrat => 'the teacher contract';
+	@override String get manqueConduite => 'the code of conduct';
+	@override String get manqueCadre => 'the religious commitment';
+	@override String get completer => 'Accept my agreements';
+	@override String get nonCharge => 'The letter could not open.';
+	@override String get praxisNom => 'Praxis, the academy\'s assistant (AI)';
+	@override late final _Traductions$recrutement$lettre$praxis$en praxis = _Traductions$recrutement$lettre$praxis$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$en parties = _Traductions$recrutement$lettre$parties$en._(_root);
 }
 
 // Path: recrutement.majeur
@@ -14087,6 +14116,45 @@ class _Traductions$priere$direction$feuille$en extends Traductions$priere$direct
 	@override String get retirer => 'Remove the location';
 	@override String get invalide => 'Check the location name, the coordinates, the time zone and Friday\'s window.';
 	@override String get erreurEnregistrement => 'The location may not have reached Rewayah, or a value was refused. Check the form, then try again in a moment.';
+}
+
+// Path: recrutement.lettre.praxis
+class _Traductions$recrutement$lettre$praxis$en extends Traductions$recrutement$lettre$praxis$fr {
+	_Traductions$recrutement$lettre$praxis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get accueil => 'Hello! I am Praxis. I will walk with you through this letter. Take your time.';
+	@override String get paie => 'Here are the real numbers. Look at the table, everything is there.';
+	@override String get retard => 'Remember three numbers: 3, 8 and 11 minutes.';
+	@override String get attente => 'The wait can be long. Keep your activities, and watch your messages.';
+	@override String get piece => 'This protects the children. And it protects you too.';
+	@override String get moi => 'That\'s me! I am paused for now: the team is adjusting me before I come back.';
+	@override String get fin => 'Whatever you decide, thank you for reading to the end.';
+}
+
+// Path: recrutement.lettre.parties
+class _Traductions$recrutement$lettre$parties$en extends Traductions$recrutement$lettre$parties$fr {
+	_Traductions$recrutement$lettre$parties$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$lettre$parties$p1$en p1 = _Traductions$recrutement$lettre$parties$p1$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p2$en p2 = _Traductions$recrutement$lettre$parties$p2$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p3$en p3 = _Traductions$recrutement$lettre$parties$p3$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p4$en p4 = _Traductions$recrutement$lettre$parties$p4$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p5$en p5 = _Traductions$recrutement$lettre$parties$p5$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p6$en p6 = _Traductions$recrutement$lettre$parties$p6$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p7$en p7 = _Traductions$recrutement$lettre$parties$p7$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p8$en p8 = _Traductions$recrutement$lettre$parties$p8$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p9$en p9 = _Traductions$recrutement$lettre$parties$p9$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p10$en p10 = _Traductions$recrutement$lettre$parties$p10$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p11$en p11 = _Traductions$recrutement$lettre$parties$p11$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p12$en p12 = _Traductions$recrutement$lettre$parties$p12$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p13$en p13 = _Traductions$recrutement$lettre$parties$p13$en._(_root);
+	@override late final _Traductions$recrutement$lettre$parties$p14$en p14 = _Traductions$recrutement$lettre$parties$p14$en._(_root);
 }
 
 // Path: recrutement.majeur.portail
@@ -24227,6 +24295,160 @@ class _Traductions$salle$fin$enseignant$recharge1$en extends Traductions$salle$f
 	@override String get erreurCahier => 'The handover notebook does not open from this screen. Go back to your day: you will fill it in from the session card.';
 }
 
+// Path: recrutement.lettre.parties.p1
+class _Traductions$recrutement$lettre$parties$p1$en extends Traductions$recrutement$lettre$parties$p1$fr {
+	_Traductions$recrutement$lettre$parties$p1$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Why you are receiving this letter';
+	@override String get corps => 'Assalamu alaykum wa rahmatullahi wa barakatuh.\n\nThe Prophet ﷺ said: « خيركم من تعلّم القرآن وعلّمه », "the best of you are those who learn the Qur\'an and teach it" (reported by al-Bukhari). The people of the Qur\'an have a special rank. The one who teaches it carries the word of Allah to the heart of a child.\n\nThis work is paid, and that is normal. But its true reward is with Allah. Keep this intention as you read everything below.\n\nYou are reading this letter because you signed up, by your own choice, to teach at Rewayah Academy, and you accepted our conditions.\n\nYou came without knowing our name, the pay, or the people behind the academy. We did not tell you anything, and we did this on purpose. You came anyway. This touched us.\n\nWhen we read your messages, we understood one thing. Some of you think that you need us. It is the opposite. The academy needs you. These children, far from Qur\'an schools, need you. Their families need you, and so does the whole Muslim community. Having you with us is an honour for us.\n\nSo we owe you the truth, the whole truth: who we are, how much you will earn, how many hours you will give, what we expect from you, and what is hard in this work.\n\nRead to the end. At the end, you will know if you continue with us or not. Both answers deserve respect.';
+}
+
+// Path: recrutement.lettre.parties.p2
+class _Traductions$recrutement$lettre$parties$p2$en extends Traductions$recrutement$lettre$parties$p2$fr {
+	_Traductions$recrutement$lettre$parties$p2$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Who we are';
+	@override String get corps => 'Our name is **Rewayah Academy**.\n\nIt is an official company: **Rewayah Academy Ltd**, registered in England and Wales under number **16624644**. Its registered office is at 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom. Anyone can check this in the public register of British companies (Companies House).\n\nThe academy has existed for almost three years. Before that, each of us taught on our own, for many years.\n\nMost of our students are Muslims of the diaspora. They are families who live far from the countries where you find a Qur\'an school in every street.\n\nDuring these three years, the same problem came back again and again. Students wanted to learn, and we did not have the right teacher for them. We had to say no, or ask them to wait.\n\nThis time, we do the opposite: **teachers first, students second**. We promise nothing to a family until we have teachers who are ready.\n\nSo we made a call to the men and women of the Qur\'an. More than 2,000 people have already answered. On the first day, our server stopped working because there were so many. And more people still arrive every day, from the Gulf, from Africa, from Europe, from more than 50 nationalities. You are one of them.\n\n### How we teach\n\nNo Zoom, no Meet, no WhatsApp. The academy has its own application, with its own video classroom.\n\nWith us, a student joins **a class**. Think of a class at your secondary school or your university: fixed hours, its students, its tools, its teacher. We even have the bell that rings at the end of the lesson.\n\nMen teach boys and men. Women teach girls and women. There is only one exception: to save a session, a substitute teacher of the other gender can give the lesson that day (see part 6).';
+}
+
+// Path: recrutement.lettre.parties.p3
+class _Traductions$recrutement$lettre$parties$p3$en extends Traductions$recrutement$lettre$parties$p3$fr {
+	_Traductions$recrutement$lettre$parties$p3$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What you will teach';
+	@override String get corps => 'This application has only one purpose: **the Qur\'an**.\n\nA beginner student starts with **the basics**, in four steps:\n1. The letters.\n2. Reading with the vowels.\n3. Reading in the Qur\'an.\n4. Al-Fatiha and the short surahs, from An-Nas to Az-Zalzalah.\n\nOn the way, the student learns the simple rules of tajwid. First the student copies, then learns the name of the rule. The youngest students also learn the words of the prayer and the ablutions.\n\nAt the end of the basics, the student takes an exam. After that, the student continues with the Qur\'an: reading all of it, or memorising it.\n\nYou do not have to create the programme. The academy sets the steps, the goals and the dates, session by session. But the way you explain belongs to you. In your class, you decide.\n\n**The language of the lesson.** You explain in the language of your students: French, English, Arabic, Pulaar, Portuguese, and others. A class of Arabic-speaking students gets an Arabic-speaking teacher. But know this: many of our students do not understand Arabic yet. If you also speak another language, more classes are open to you.\n\n**What about the other sciences?** Fiqh, aqida and detailed sira are not taught here. The academy has another platform for the Islamic sciences. For now it works in French and Pulaar only. We will present it to you when it opens to the world.';
+}
+
+// Path: recrutement.lettre.parties.p4
+class _Traductions$recrutement$lettre$parties$p4$en extends Traductions$recrutement$lettre$parties$p4$fr {
+	_Traductions$recrutement$lettre$parties$p4$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'The pay';
+	@override String get corps => 'There is only one rule: **you are paid per student**. The more students you have, the more you earn. No student, no pay.\n\nOut of what each student pays, almost half goes to you:\n- **47 %** for a class of adults;\n- **about 45 %** for a class of children.\n\n|  | Class of children (6 to 17 years old) | Class of adults |\n| --- | --- | --- |\n| Sessions | 3 per week, 1 h each | 3 per week, 1 h 30 each |\n| Break during the session | 5 minutes | 10 minutes |\n| Your hours | 3 h per week, about 13 h per month | 4 h 30 per week, about 19 h 30 per month |\n| Students in the class | 3 to 5, never more than 5 | 3 to 6, never more than 6 |\n| Price paid by the student, per month | \$55 | \$65 |\n| Your share, per student and per month | about \$24 | about \$30 |\n| Small class (3 students) | about \$72 per month | about \$90 per month |\n| Full class | 5 x \$24 = about \$120 per month | 6 x \$30 = about \$180 per month |\n\nThe amounts are in US dollars. They are correct when the students come to every session.\n\nSometimes the academy gives a discount to a family: several children enrolled, a new Muslim, and other cases. **These discounts never touch your share.** The academy pays for them itself.\n\n### The minimum and the maximum\n\nFor **one** class, expect between **\$70 and \$180 per month**. Per hour, this is about \$9 for a full class, and about \$5 for a class of 3 students.\n\nYou can have several classes, if your hours allow it and if there are classes for you. An example: two full classes of children and one full class of adults make 120 + 120 + 180 = \$420 per month, for 10 h 30 of lessons per week.\n\nThis example is not a promise. You can also stay for months without a class, so without pay (see part 7).\n\n### Why 47 % for adults and 45 % for children?\n\nWith an adult, almost everything happens during your lesson. With a child, the academy adds a follow-up after the lesson, so that the parents know the child\'s progress and can help at home. This follow-up has a cost.\n\n### Why not more?\n\nBecause the academy costs a lot to run. With the other half, it pays for the servers of the video classroom, the application and the people who build it, card payment fees, the sending of your pay, accounting, administration, the follow-up of the children, and the taxes that every company must pay.\n\nYou will see this split, in percentages, in your teacher space. We have nothing to hide.';
+}
+
+// Path: recrutement.lettre.parties.p5
+class _Traductions$recrutement$lettre$parties$p5$en extends Traductions$recrutement$lettre$parties$p5$fr {
+	_Traductions$recrutement$lettre$parties$p5$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'How and when you are paid';
+	@override String get corps => 'After each session, the application calculates what you earned. You see it in your space.\n\nThe total for the month is sent to you **no later than the 5th of the next month**, by international transfer (Wise) or by another method, depending on your country. The academy pays the transfer fees. In a few countries, banks block these transfers. If this is your case, we will tell you, and we will look with you for a method that is allowed.\n\nIf you receive a class in the middle of a month, you are paid for the sessions left in that month, not for the whole month.\n\n### What makes your pay go up or down\n\nTwo teachers do not earn the same amount. Here is why.\n- **The number of students.** A class of 3 earns less than a class of 5.\n- **The number of classes** you have.\n- **Student absences.** If a student misses a session, you receive half of that student\'s share for that session, not the full share. We chose this so that everyone wants to keep their students present.\n- **Students leaving.** If your students leave the class one by one, your pay goes down with them. A student stays where he makes progress and where he feels respected. Not every departure will be your fault. But it is a real risk. Think about it before you commit.\n- **Student holidays.** A family can pause a student for one month. During that month, you are not paid for that student.\n- **Academy closures.** There are no lessons at the end of Ramadan and during Eid al-Fitr (about 20 days), and none around Eid al-Adha (10 days). No lessons, no pay.\n- **Your own absences.** A session given by a substitute teacher is paid to the substitute teacher.\n- **The end-of-session report.** At the end of the lesson, you note in a few taps what the class covered and where it stopped. This takes less than 20 seconds. Until this report is done, the pay for the month waits.';
+}
+
+// Path: recrutement.lettre.parties.p6
+class _Traductions$recrutement$lettre$parties$p6$en extends Traductions$recrutement$lettre$parties$p6$fr {
+	_Traductions$recrutement$lettre$parties$p6$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Being on time, being replaced, being absent';
+	@override String get corps => 'The academy does not accept a lack of regular attendance. Here is why.\n\nWe are firm with families. A student who misses a lesson still pays for the month, and catches up alone. So we must do our part: **at the time of the lesson, there is a teacher in the classroom. Always.**\n\n### If you are late\n\nHere is what the application does, minute by minute.\n1. **20 minutes before the lesson**, the classroom opens. You can enter and get ready.\n2. **At the time of the lesson**, if you have not entered, you receive a reminder.\n3. **3 minutes after**, a warning: if you do not enter, the session will be given to someone else.\n4. **8 minutes after**, it is too late for this session. An alert goes to all the teachers who are connected.\n5. A substitute teacher accepts and enters the classroom, usually in less than one minute. The goal: the students have their teacher **11 minutes after the start time, at the latest**.\n\nIf several teachers accept at the same time, the application first chooses someone of the same gender as the class (a man for men, a woman for women), then someone who speaks its language. If not, it is the first one available. So a man can replace a teacher in a class of women, and the opposite, for that session only.\n\n**The pay for that session goes to the substitute teacher, 100 %.** You receive nothing for it.\n\n### What you keep, what you risk\n\nBeing replaced once does not take your class away from you. It stays yours. The substitute teacher can no longer enter it once the session is over.\n\nBut if it happens again and again, you receive warnings. And if it continues, the class goes to someone else.\n\n### If you must be absent\n\nA trip, a family event, an illness, may Allah protect us from it: this happens to everyone. Tell the management **before**, with the date you leave and the date you come back.\n\nA substitute teacher takes your class during that time, and is paid for those sessions. When you come back, you take your class again.\n\nIf you do not come back on the date you gave, you lose this class. You do not lose your place at the academy: you stay, you say you are available, and another class can be given to you later.\n\n### If you are the substitute teacher\n\nEach session you give as a substitute teacher is paid. These earnings add up in your space. They are sent to you when they reach a minimum amount set by the management, to avoid transfers of only a few dollars.';
+}
+
+// Path: recrutement.lettre.parties.p7
+class _Traductions$recrutement$lettre$parties$p7$en extends Traductions$recrutement$lettre$parties$p7$fr {
+	_Traductions$recrutement$lettre$parties$p7$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'After the interview: what really happens';
+	@override String get corps => 'Many of you think: "I pass the interview, and the next day I have a class." **No.** Here are the steps.\n1. **Your application is accepted and the interview goes well.** You receive access to the teacher space and an official ID number. From this point, a class can be given to you.\n2. **You are trained to use the application.** The academy shows you how the classroom works.\n3. **You wait for a class.** A few days, or several months.\n4. **A class is given to you.** You receive a message, and the class appears on your home screen.\n\n### Why must you wait?\n\nWe do not give a class at random. Everything must match between you and the students who sign up:\n- **the day and the time**: the students choose a time, and you must be free at that time;\n- **the language**: you must speak the language of the students;\n- **the gender**: a man for boys and men, a woman for girls and women;\n- **the experience**: beginner children, adults, memorisation: these are not the same job.\n\nAn example. Twelve students sign up this week: eight little girls who speak French, in the evening in Europe, and four men who speak English, in the morning. So we need French-speaking women teachers who are free in the evening, and an English-speaking man teacher who is free in the morning. A very good teacher who does not match either of these two cases will wait for the next sign-ups.\n\nClasses open all through the year, not only at the start of the month.\n\n**Our advice: do not leave anything for us.** Keep your job, continue your studies, check your e-mails and the application. And make du\'a.\n\n### What if there are not enough students for 2,000 teachers?\n\nIt is possible. At the start, it is even likely. We cannot give a class to everyone right away.\n\nIf you are accepted and you have no class, you stay with us. You can:\n- **be a substitute teacher**: give the lesson of a teacher who is ill, absent or late, and be paid for each session;\n- **wait** for a class to open or become free.\n\n### What about one-to-one lessons?\n\nMany people ask us for one-to-one lessons: one teacher for one student. The academy is studying the possibility of offering them, in addition to the classes. We give no date.\n\nWe have already used this model. It showed its limits, and it is much harder than people think, for the teacher and for the student. We will only open it on the day we know how to do it well.';
+}
+
+// Path: recrutement.lettre.parties.p8
+class _Traductions$recrutement$lettre$parties$p8$en extends Traductions$recrutement$lettre$parties$p8$fr {
+	_Traductions$recrutement$lettre$parties$p8$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Why we ask for your ID document and your photo';
+	@override String get corps => 'Several of you have asked this question. It is a normal question. Here is the answer, directly.\n\nOn the internet, there are all kinds of people. And we have students from the age of 6.\n\nThink about what a teacher sees. The teacher sees the child\'s face on video. The teacher hears the child\'s voice. The teacher knows the child\'s first name, age and timetable. The teacher speaks to the child three times a week, and the child trusts the teacher.\n\nNow, imagine that this place is given to just anyone. Here is what can happen:\n- **Someone who lies about who they are.** A false name, a false diploma, and no one to find on the day there is a problem.\n- **Someone who is looking for children, not for the Qur\'an.** These people exist. They slowly win a child\'s trust, then try to speak to the child in private, away from the parents.\n- **Someone who films or takes photos.** The image and the voice of a child can be copied, kept and shared.\n- **Someone who was dismissed elsewhere** for serious behaviour, and who comes back under another name.\n- **Someone who passes the interview, then makes another person teach** in their place.\n- **Someone who wants to put other ideas** into the minds of children, in the name of the Qur\'an.\n\nOnly one of these cases means a hurt child, a broken family, and the loss of trust in the whole academy. Honest teachers, that is to say you, would also pay the price.\n\nThere is also the law. Our students live in many countries. Child protection laws ask us to know exactly to whom we give a child. And to send you your pay, the bank requires your real name.\n\n**What we do with your documents.** Only the management sees them. They are never shown to students or families. If you withdraw your application, you can ask for them to be deleted.\n\n**What we ask from you in return.** Never ask a student for a phone number or any other way to contact them. Never contact a student outside the application. Do not film the class, do not take photos of the class. This rule has no exception.\n\nA parent gives us what is most precious to them. Showing who you are is the first act of trust. If you were this parent, you would demand it too.';
+}
+
+// Path: recrutement.lettre.parties.p9
+class _Traductions$recrutement$lettre$parties$p9$en extends Traductions$recrutement$lettre$parties$p9$fr {
+	_Traductions$recrutement$lettre$parties$p9$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'What we ask, and what is hard';
+	@override String get corps => '### Who we have refused until now\n\nThe academy is Sunni, openly, on the path of Ahl as-Sunna. It defends its values. A person who opposes them has no place among us.\n\nUntil now, we have refused only two kinds of applications:\n- people who did not sign **the religious commitment**. This text asks you to respect the Qur\'an, the Sunnah, all the Companions of the Prophet ﷺ, first of all the four rightly guided caliphs, and the pious predecessors;\n- people whose appearance clearly went against the rules of the religion: a hairstyle forbidden in Islam, or clothing that does not respect these rules.\n\nWhy? Because a child learns first by watching the teacher. Children of the diaspora grow up surrounded by all the ideas of this century. They are the hope of tomorrow, and they are fragile. Choosing their teacher well is our first duty.\n\n### The difficulty you will face\n\nWe have known the diaspora for many years. We must warn you about one thing.\n\nMany families see the lesson as a purchase. They feel like customers, and for them the teacher is a seller. And a customer thinks he is always right. You will feel it in the way they speak, write and complain.\n\nWe know this is a mistake. The teacher of the Qur\'an has a rank and deserves respect (له حرمته). But they do not know this yet. No one has taught them.\n\nIt is your job to teach them, with wisdom and good words (بالحكمة والموعظة الحسنة), and with patience. Here, you are not only a teacher. You are first a caller to Islam (داعية).\n\nAn example. A father writes to you harshly: "I pay, so my son must move forward faster." You can feel offended and answer him in the same tone. Or you can calmly show him where his son is, what he must revise at home, and invite him to listen to his son recite. In the first case, you lose a student. In the second, you often win a whole family.\n\nWe have seen it many times: when the teacher is wiser and more patient than the student, things work out in the end. If this patience already feels heavy to you, this work is not for you. It is better to know it today.';
+}
+
+// Path: recrutement.lettre.parties.p10
+class _Traductions$recrutement$lettre$parties$p10$en extends Traductions$recrutement$lettre$parties$p10$fr {
+	_Traductions$recrutement$lettre$parties$p10$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'The academy sees what happens in class';
+	@override String get corps => 'We prefer to tell you before, not after.\n\n**The application records when you enter and leave**, and when the students do. So you do not have to keep an attendance register: the application does it for you.\n\n**It measures your connection during the lesson**: good, weak or lost. It keeps neither the sound nor the image. On the day a family complains about a lesson, the academy knows where the problem came from, and you are not wrongly accused.\n\n**A check visit can take place, without warning.** A member of the management enters the classroom. You do not see this person, and this person has no microphone and no camera. When a woman teacher gives her lesson, the visit is always made by a woman from the team, never by a man. The visitor looks at one thing: is the teacher really working with the students?\n\n**You cannot give two lessons at the same time.** The visitor sees it. And if you leave the classroom for more than 30 seconds during your lesson, the application removes you and informs the management.\n\nFor the rest, you are free. The academy does not require a specific place in your home, a position or a background. It asks for two things: a quiet place and a good connection. Without these, it is the students who suffer.';
+}
+
+// Path: recrutement.lettre.parties.p11
+class _Traductions$recrutement$lettre$parties$p11$en extends Traductions$recrutement$lettre$parties$p11$fr {
+	_Traductions$recrutement$lettre$parties$p11$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Praxis, our assistant';
+	@override String get corps => 'There are more than 2,000 of you. You speak dozens of languages, you live in every time zone, and your messages arrive day and night. Our team cannot answer each person fast enough.\n\nSo we created **Praxis**, an artificial intelligence assistant. It is not a person, and it will never pretend to be a person.\n- **What it does**: it answers the questions that come back often, it gives details, it tells you the status of a request.\n- **What it does not do**: it decides nothing. It does not accept or refuse anyone, it does not give classes, it does not touch the pay.\n- **Who directs it**: the management. It acts only when the management gives it a task.\n\nWhere is it today? We started to test it. It made some mistakes, so we paused it. We are studying its answers to adjust it, then we will start it again. Some of you may have already received a message from it.\n\nWhen it comes back, if its answer is not enough for you, say so in your message: a member of the team will take over.';
+}
+
+// Path: recrutement.lettre.parties.p12
+class _Traductions$recrutement$lettre$parties$p12$en extends Traductions$recrutement$lettre$parties$p12$fr {
+	_Traductions$recrutement$lettre$parties$p12$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'If this does not suit you';
+	@override String get corps => 'You are free to leave, at any time, without giving a reason.\n\nRewayah Academy is an English company. The law requires it to respect your right to withdraw. You can withdraw your application and ask for your account and your data to be deleted. After that, you will not receive any more messages from the academy. If you change your mind, you can restart your application yourself within 7 days after you withdrew it.\n\nTo do this, write to **support@rewayahacademy.com**.';
+}
+
+// Path: recrutement.lettre.parties.p13
+class _Traductions$recrutement$lettre$parties$p13$en extends Traductions$recrutement$lettre$parties$p13$fr {
+	_Traductions$recrutement$lettre$parties$p13$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Your questions';
+	@override String get corps => '**I signed up. Am I already a teacher at the academy?** Not yet. You are a candidate. We still need to study your application, then there is the interview.\n\n**Do I have to pay to be accepted or for the training?** No. Nothing, ever. If someone asks you for money in our name, it is a fraud: tell us.\n\n**How long will I wait for a class?** We do not know, and we will not give you a date that we might not keep. It depends on the students who sign up, your hours, your language and your experience.\n\n**At what time will my lessons be?** At the time chosen by the students of the class, the same time every week. You will only be given a class if its time suits you. The application shows each time in your own time, then in Makkah time, which is the academy\'s clock.\n\n**How much will I earn, exactly?** About \$24 per month for each child, about \$30 per month for each adult, if they come to every session. Count your students, multiply, and you have your month.\n\n**A student is absent. Am I paid for this student?** Half. You receive half of this student\'s share for that session.\n\n**I was late once and someone replaced me. Have I lost my class?** No. You lost the pay for that session. You only lose the class if it happens again and again, after warnings.\n\n**What do I need to teach?** A good internet connection, a computer or a tablet with a camera and a microphone, and a quiet place. Nothing else to install except the academy\'s application.\n\n**Can I teach somewhere else at the same time?** Yes, as long as your other hours do not fall on the academy\'s hours. What is forbidden is giving two lessons at the same moment.\n\n**Can the amounts change?** Yes, the management can review them. You will be told before, and a month already worked will never be touched.';
+}
+
+// Path: recrutement.lettre.parties.p14
+class _Traductions$recrutement$lettre$parties$p14$en extends Traductions$recrutement$lettre$parties$p14$fr {
+	_Traductions$recrutement$lettre$parties$p14$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'To decide';
+	@override String get corps => '**Continue with us if** you accept to be paid per student, to maybe wait a long time for your first class, to be on time for every session, to show who you are, and to be patient with families who do not yet know the rank of the teacher of the Qur\'an.\n\n**Do not continue if** you are looking for a fixed income right away, if you cannot keep a regular timetable, or if the religious commitment of the academy is not yours.\n\nIn both cases, may Allah reward you for answering our call.\n\nThe management of Rewayah Academy\n\n#Ra_staff';
+}
+
 // Path: recrutement.dossier3.situation.aFaire
 class _Traductions$recrutement$dossier3$situation$aFaire$en extends Traductions$recrutement$dossier3$situation$aFaire$fr {
 	_Traductions$recrutement$dossier3$situation$aFaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -31121,6 +31343,58 @@ extension on TraductionsEn {
 			'eleveConnexion.refus.nonEnregistre' => 'This device could not keep the sign-in. The code has probably already been used: show a new code on the guardian\'s device, then start again.',
 			'eleveConnexion.refus.generiqueTitre' => 'Sign-in did not complete',
 			'eleveConnexion.refus.generique' => 'The code check did not complete. Try again in a moment.',
+			'recrutement.lettre.titre' => 'Everything you need to know before you continue',
+			'recrutement.lettre.chapeau' => 'Pay, hours, waiting for a class, our rules, and what is hard in this work. At the end, you will know if you continue with us.',
+			'recrutement.lettre.duree' => 'About 15 minutes of reading',
+			'recrutement.lettre.miseAJour' => 'Updated: 20 November 2026',
+			'recrutement.lettre.sommaire' => 'Contents',
+			'recrutement.lettre.revenirSommaire' => 'Back to the contents',
+			'recrutement.lettre.allerA' => ({required Object titre}) => 'Go to the part: ${titre}',
+			'recrutement.lettre.entree' => 'Read the letter to teacher candidates',
+			'recrutement.lettre.entreeLegende' => 'Pay, hours, waiting for a class, our rules',
+			'recrutement.lettre.verrouTitre' => 'This letter opens once your agreements are accepted',
+			'recrutement.lettre.verrouIntro' => 'To read it, you still need to accept:',
+			'recrutement.lettre.manqueContrat' => 'the teacher contract',
+			'recrutement.lettre.manqueConduite' => 'the code of conduct',
+			'recrutement.lettre.manqueCadre' => 'the religious commitment',
+			'recrutement.lettre.completer' => 'Accept my agreements',
+			'recrutement.lettre.nonCharge' => 'The letter could not open.',
+			'recrutement.lettre.praxisNom' => 'Praxis, the academy\'s assistant (AI)',
+			'recrutement.lettre.praxis.accueil' => 'Hello! I am Praxis. I will walk with you through this letter. Take your time.',
+			'recrutement.lettre.praxis.paie' => 'Here are the real numbers. Look at the table, everything is there.',
+			'recrutement.lettre.praxis.retard' => 'Remember three numbers: 3, 8 and 11 minutes.',
+			'recrutement.lettre.praxis.attente' => 'The wait can be long. Keep your activities, and watch your messages.',
+			'recrutement.lettre.praxis.piece' => 'This protects the children. And it protects you too.',
+			'recrutement.lettre.praxis.moi' => 'That\'s me! I am paused for now: the team is adjusting me before I come back.',
+			'recrutement.lettre.praxis.fin' => 'Whatever you decide, thank you for reading to the end.',
+			'recrutement.lettre.parties.p1.titre' => 'Why you are receiving this letter',
+			'recrutement.lettre.parties.p1.corps' => 'Assalamu alaykum wa rahmatullahi wa barakatuh.\n\nThe Prophet ﷺ said: « خيركم من تعلّم القرآن وعلّمه », "the best of you are those who learn the Qur\'an and teach it" (reported by al-Bukhari). The people of the Qur\'an have a special rank. The one who teaches it carries the word of Allah to the heart of a child.\n\nThis work is paid, and that is normal. But its true reward is with Allah. Keep this intention as you read everything below.\n\nYou are reading this letter because you signed up, by your own choice, to teach at Rewayah Academy, and you accepted our conditions.\n\nYou came without knowing our name, the pay, or the people behind the academy. We did not tell you anything, and we did this on purpose. You came anyway. This touched us.\n\nWhen we read your messages, we understood one thing. Some of you think that you need us. It is the opposite. The academy needs you. These children, far from Qur\'an schools, need you. Their families need you, and so does the whole Muslim community. Having you with us is an honour for us.\n\nSo we owe you the truth, the whole truth: who we are, how much you will earn, how many hours you will give, what we expect from you, and what is hard in this work.\n\nRead to the end. At the end, you will know if you continue with us or not. Both answers deserve respect.',
+			'recrutement.lettre.parties.p2.titre' => 'Who we are',
+			'recrutement.lettre.parties.p2.corps' => 'Our name is **Rewayah Academy**.\n\nIt is an official company: **Rewayah Academy Ltd**, registered in England and Wales under number **16624644**. Its registered office is at 71-75 Shelton Street, Covent Garden, London WC2H 9JQ, United Kingdom. Anyone can check this in the public register of British companies (Companies House).\n\nThe academy has existed for almost three years. Before that, each of us taught on our own, for many years.\n\nMost of our students are Muslims of the diaspora. They are families who live far from the countries where you find a Qur\'an school in every street.\n\nDuring these three years, the same problem came back again and again. Students wanted to learn, and we did not have the right teacher for them. We had to say no, or ask them to wait.\n\nThis time, we do the opposite: **teachers first, students second**. We promise nothing to a family until we have teachers who are ready.\n\nSo we made a call to the men and women of the Qur\'an. More than 2,000 people have already answered. On the first day, our server stopped working because there were so many. And more people still arrive every day, from the Gulf, from Africa, from Europe, from more than 50 nationalities. You are one of them.\n\n### How we teach\n\nNo Zoom, no Meet, no WhatsApp. The academy has its own application, with its own video classroom.\n\nWith us, a student joins **a class**. Think of a class at your secondary school or your university: fixed hours, its students, its tools, its teacher. We even have the bell that rings at the end of the lesson.\n\nMen teach boys and men. Women teach girls and women. There is only one exception: to save a session, a substitute teacher of the other gender can give the lesson that day (see part 6).',
+			'recrutement.lettre.parties.p3.titre' => 'What you will teach',
+			'recrutement.lettre.parties.p3.corps' => 'This application has only one purpose: **the Qur\'an**.\n\nA beginner student starts with **the basics**, in four steps:\n1. The letters.\n2. Reading with the vowels.\n3. Reading in the Qur\'an.\n4. Al-Fatiha and the short surahs, from An-Nas to Az-Zalzalah.\n\nOn the way, the student learns the simple rules of tajwid. First the student copies, then learns the name of the rule. The youngest students also learn the words of the prayer and the ablutions.\n\nAt the end of the basics, the student takes an exam. After that, the student continues with the Qur\'an: reading all of it, or memorising it.\n\nYou do not have to create the programme. The academy sets the steps, the goals and the dates, session by session. But the way you explain belongs to you. In your class, you decide.\n\n**The language of the lesson.** You explain in the language of your students: French, English, Arabic, Pulaar, Portuguese, and others. A class of Arabic-speaking students gets an Arabic-speaking teacher. But know this: many of our students do not understand Arabic yet. If you also speak another language, more classes are open to you.\n\n**What about the other sciences?** Fiqh, aqida and detailed sira are not taught here. The academy has another platform for the Islamic sciences. For now it works in French and Pulaar only. We will present it to you when it opens to the world.',
+			'recrutement.lettre.parties.p4.titre' => 'The pay',
+			'recrutement.lettre.parties.p4.corps' => 'There is only one rule: **you are paid per student**. The more students you have, the more you earn. No student, no pay.\n\nOut of what each student pays, almost half goes to you:\n- **47 %** for a class of adults;\n- **about 45 %** for a class of children.\n\n|  | Class of children (6 to 17 years old) | Class of adults |\n| --- | --- | --- |\n| Sessions | 3 per week, 1 h each | 3 per week, 1 h 30 each |\n| Break during the session | 5 minutes | 10 minutes |\n| Your hours | 3 h per week, about 13 h per month | 4 h 30 per week, about 19 h 30 per month |\n| Students in the class | 3 to 5, never more than 5 | 3 to 6, never more than 6 |\n| Price paid by the student, per month | \$55 | \$65 |\n| Your share, per student and per month | about \$24 | about \$30 |\n| Small class (3 students) | about \$72 per month | about \$90 per month |\n| Full class | 5 x \$24 = about \$120 per month | 6 x \$30 = about \$180 per month |\n\nThe amounts are in US dollars. They are correct when the students come to every session.\n\nSometimes the academy gives a discount to a family: several children enrolled, a new Muslim, and other cases. **These discounts never touch your share.** The academy pays for them itself.\n\n### The minimum and the maximum\n\nFor **one** class, expect between **\$70 and \$180 per month**. Per hour, this is about \$9 for a full class, and about \$5 for a class of 3 students.\n\nYou can have several classes, if your hours allow it and if there are classes for you. An example: two full classes of children and one full class of adults make 120 + 120 + 180 = \$420 per month, for 10 h 30 of lessons per week.\n\nThis example is not a promise. You can also stay for months without a class, so without pay (see part 7).\n\n### Why 47 % for adults and 45 % for children?\n\nWith an adult, almost everything happens during your lesson. With a child, the academy adds a follow-up after the lesson, so that the parents know the child\'s progress and can help at home. This follow-up has a cost.\n\n### Why not more?\n\nBecause the academy costs a lot to run. With the other half, it pays for the servers of the video classroom, the application and the people who build it, card payment fees, the sending of your pay, accounting, administration, the follow-up of the children, and the taxes that every company must pay.\n\nYou will see this split, in percentages, in your teacher space. We have nothing to hide.',
+			'recrutement.lettre.parties.p5.titre' => 'How and when you are paid',
+			'recrutement.lettre.parties.p5.corps' => 'After each session, the application calculates what you earned. You see it in your space.\n\nThe total for the month is sent to you **no later than the 5th of the next month**, by international transfer (Wise) or by another method, depending on your country. The academy pays the transfer fees. In a few countries, banks block these transfers. If this is your case, we will tell you, and we will look with you for a method that is allowed.\n\nIf you receive a class in the middle of a month, you are paid for the sessions left in that month, not for the whole month.\n\n### What makes your pay go up or down\n\nTwo teachers do not earn the same amount. Here is why.\n- **The number of students.** A class of 3 earns less than a class of 5.\n- **The number of classes** you have.\n- **Student absences.** If a student misses a session, you receive half of that student\'s share for that session, not the full share. We chose this so that everyone wants to keep their students present.\n- **Students leaving.** If your students leave the class one by one, your pay goes down with them. A student stays where he makes progress and where he feels respected. Not every departure will be your fault. But it is a real risk. Think about it before you commit.\n- **Student holidays.** A family can pause a student for one month. During that month, you are not paid for that student.\n- **Academy closures.** There are no lessons at the end of Ramadan and during Eid al-Fitr (about 20 days), and none around Eid al-Adha (10 days). No lessons, no pay.\n- **Your own absences.** A session given by a substitute teacher is paid to the substitute teacher.\n- **The end-of-session report.** At the end of the lesson, you note in a few taps what the class covered and where it stopped. This takes less than 20 seconds. Until this report is done, the pay for the month waits.',
+			'recrutement.lettre.parties.p6.titre' => 'Being on time, being replaced, being absent',
+			'recrutement.lettre.parties.p6.corps' => 'The academy does not accept a lack of regular attendance. Here is why.\n\nWe are firm with families. A student who misses a lesson still pays for the month, and catches up alone. So we must do our part: **at the time of the lesson, there is a teacher in the classroom. Always.**\n\n### If you are late\n\nHere is what the application does, minute by minute.\n1. **20 minutes before the lesson**, the classroom opens. You can enter and get ready.\n2. **At the time of the lesson**, if you have not entered, you receive a reminder.\n3. **3 minutes after**, a warning: if you do not enter, the session will be given to someone else.\n4. **8 minutes after**, it is too late for this session. An alert goes to all the teachers who are connected.\n5. A substitute teacher accepts and enters the classroom, usually in less than one minute. The goal: the students have their teacher **11 minutes after the start time, at the latest**.\n\nIf several teachers accept at the same time, the application first chooses someone of the same gender as the class (a man for men, a woman for women), then someone who speaks its language. If not, it is the first one available. So a man can replace a teacher in a class of women, and the opposite, for that session only.\n\n**The pay for that session goes to the substitute teacher, 100 %.** You receive nothing for it.\n\n### What you keep, what you risk\n\nBeing replaced once does not take your class away from you. It stays yours. The substitute teacher can no longer enter it once the session is over.\n\nBut if it happens again and again, you receive warnings. And if it continues, the class goes to someone else.\n\n### If you must be absent\n\nA trip, a family event, an illness, may Allah protect us from it: this happens to everyone. Tell the management **before**, with the date you leave and the date you come back.\n\nA substitute teacher takes your class during that time, and is paid for those sessions. When you come back, you take your class again.\n\nIf you do not come back on the date you gave, you lose this class. You do not lose your place at the academy: you stay, you say you are available, and another class can be given to you later.\n\n### If you are the substitute teacher\n\nEach session you give as a substitute teacher is paid. These earnings add up in your space. They are sent to you when they reach a minimum amount set by the management, to avoid transfers of only a few dollars.',
+			'recrutement.lettre.parties.p7.titre' => 'After the interview: what really happens',
+			'recrutement.lettre.parties.p7.corps' => 'Many of you think: "I pass the interview, and the next day I have a class." **No.** Here are the steps.\n1. **Your application is accepted and the interview goes well.** You receive access to the teacher space and an official ID number. From this point, a class can be given to you.\n2. **You are trained to use the application.** The academy shows you how the classroom works.\n3. **You wait for a class.** A few days, or several months.\n4. **A class is given to you.** You receive a message, and the class appears on your home screen.\n\n### Why must you wait?\n\nWe do not give a class at random. Everything must match between you and the students who sign up:\n- **the day and the time**: the students choose a time, and you must be free at that time;\n- **the language**: you must speak the language of the students;\n- **the gender**: a man for boys and men, a woman for girls and women;\n- **the experience**: beginner children, adults, memorisation: these are not the same job.\n\nAn example. Twelve students sign up this week: eight little girls who speak French, in the evening in Europe, and four men who speak English, in the morning. So we need French-speaking women teachers who are free in the evening, and an English-speaking man teacher who is free in the morning. A very good teacher who does not match either of these two cases will wait for the next sign-ups.\n\nClasses open all through the year, not only at the start of the month.\n\n**Our advice: do not leave anything for us.** Keep your job, continue your studies, check your e-mails and the application. And make du\'a.\n\n### What if there are not enough students for 2,000 teachers?\n\nIt is possible. At the start, it is even likely. We cannot give a class to everyone right away.\n\nIf you are accepted and you have no class, you stay with us. You can:\n- **be a substitute teacher**: give the lesson of a teacher who is ill, absent or late, and be paid for each session;\n- **wait** for a class to open or become free.\n\n### What about one-to-one lessons?\n\nMany people ask us for one-to-one lessons: one teacher for one student. The academy is studying the possibility of offering them, in addition to the classes. We give no date.\n\nWe have already used this model. It showed its limits, and it is much harder than people think, for the teacher and for the student. We will only open it on the day we know how to do it well.',
+			'recrutement.lettre.parties.p8.titre' => 'Why we ask for your ID document and your photo',
+			'recrutement.lettre.parties.p8.corps' => 'Several of you have asked this question. It is a normal question. Here is the answer, directly.\n\nOn the internet, there are all kinds of people. And we have students from the age of 6.\n\nThink about what a teacher sees. The teacher sees the child\'s face on video. The teacher hears the child\'s voice. The teacher knows the child\'s first name, age and timetable. The teacher speaks to the child three times a week, and the child trusts the teacher.\n\nNow, imagine that this place is given to just anyone. Here is what can happen:\n- **Someone who lies about who they are.** A false name, a false diploma, and no one to find on the day there is a problem.\n- **Someone who is looking for children, not for the Qur\'an.** These people exist. They slowly win a child\'s trust, then try to speak to the child in private, away from the parents.\n- **Someone who films or takes photos.** The image and the voice of a child can be copied, kept and shared.\n- **Someone who was dismissed elsewhere** for serious behaviour, and who comes back under another name.\n- **Someone who passes the interview, then makes another person teach** in their place.\n- **Someone who wants to put other ideas** into the minds of children, in the name of the Qur\'an.\n\nOnly one of these cases means a hurt child, a broken family, and the loss of trust in the whole academy. Honest teachers, that is to say you, would also pay the price.\n\nThere is also the law. Our students live in many countries. Child protection laws ask us to know exactly to whom we give a child. And to send you your pay, the bank requires your real name.\n\n**What we do with your documents.** Only the management sees them. They are never shown to students or families. If you withdraw your application, you can ask for them to be deleted.\n\n**What we ask from you in return.** Never ask a student for a phone number or any other way to contact them. Never contact a student outside the application. Do not film the class, do not take photos of the class. This rule has no exception.\n\nA parent gives us what is most precious to them. Showing who you are is the first act of trust. If you were this parent, you would demand it too.',
+			'recrutement.lettre.parties.p9.titre' => 'What we ask, and what is hard',
+			'recrutement.lettre.parties.p9.corps' => '### Who we have refused until now\n\nThe academy is Sunni, openly, on the path of Ahl as-Sunna. It defends its values. A person who opposes them has no place among us.\n\nUntil now, we have refused only two kinds of applications:\n- people who did not sign **the religious commitment**. This text asks you to respect the Qur\'an, the Sunnah, all the Companions of the Prophet ﷺ, first of all the four rightly guided caliphs, and the pious predecessors;\n- people whose appearance clearly went against the rules of the religion: a hairstyle forbidden in Islam, or clothing that does not respect these rules.\n\nWhy? Because a child learns first by watching the teacher. Children of the diaspora grow up surrounded by all the ideas of this century. They are the hope of tomorrow, and they are fragile. Choosing their teacher well is our first duty.\n\n### The difficulty you will face\n\nWe have known the diaspora for many years. We must warn you about one thing.\n\nMany families see the lesson as a purchase. They feel like customers, and for them the teacher is a seller. And a customer thinks he is always right. You will feel it in the way they speak, write and complain.\n\nWe know this is a mistake. The teacher of the Qur\'an has a rank and deserves respect (له حرمته). But they do not know this yet. No one has taught them.\n\nIt is your job to teach them, with wisdom and good words (بالحكمة والموعظة الحسنة), and with patience. Here, you are not only a teacher. You are first a caller to Islam (داعية).\n\nAn example. A father writes to you harshly: "I pay, so my son must move forward faster." You can feel offended and answer him in the same tone. Or you can calmly show him where his son is, what he must revise at home, and invite him to listen to his son recite. In the first case, you lose a student. In the second, you often win a whole family.\n\nWe have seen it many times: when the teacher is wiser and more patient than the student, things work out in the end. If this patience already feels heavy to you, this work is not for you. It is better to know it today.',
+			'recrutement.lettre.parties.p10.titre' => 'The academy sees what happens in class',
+			'recrutement.lettre.parties.p10.corps' => 'We prefer to tell you before, not after.\n\n**The application records when you enter and leave**, and when the students do. So you do not have to keep an attendance register: the application does it for you.\n\n**It measures your connection during the lesson**: good, weak or lost. It keeps neither the sound nor the image. On the day a family complains about a lesson, the academy knows where the problem came from, and you are not wrongly accused.\n\n**A check visit can take place, without warning.** A member of the management enters the classroom. You do not see this person, and this person has no microphone and no camera. When a woman teacher gives her lesson, the visit is always made by a woman from the team, never by a man. The visitor looks at one thing: is the teacher really working with the students?\n\n**You cannot give two lessons at the same time.** The visitor sees it. And if you leave the classroom for more than 30 seconds during your lesson, the application removes you and informs the management.\n\nFor the rest, you are free. The academy does not require a specific place in your home, a position or a background. It asks for two things: a quiet place and a good connection. Without these, it is the students who suffer.',
+			'recrutement.lettre.parties.p11.titre' => 'Praxis, our assistant',
+			'recrutement.lettre.parties.p11.corps' => 'There are more than 2,000 of you. You speak dozens of languages, you live in every time zone, and your messages arrive day and night. Our team cannot answer each person fast enough.\n\nSo we created **Praxis**, an artificial intelligence assistant. It is not a person, and it will never pretend to be a person.\n- **What it does**: it answers the questions that come back often, it gives details, it tells you the status of a request.\n- **What it does not do**: it decides nothing. It does not accept or refuse anyone, it does not give classes, it does not touch the pay.\n- **Who directs it**: the management. It acts only when the management gives it a task.\n\nWhere is it today? We started to test it. It made some mistakes, so we paused it. We are studying its answers to adjust it, then we will start it again. Some of you may have already received a message from it.\n\nWhen it comes back, if its answer is not enough for you, say so in your message: a member of the team will take over.',
+			'recrutement.lettre.parties.p12.titre' => 'If this does not suit you',
+			'recrutement.lettre.parties.p12.corps' => 'You are free to leave, at any time, without giving a reason.\n\nRewayah Academy is an English company. The law requires it to respect your right to withdraw. You can withdraw your application and ask for your account and your data to be deleted. After that, you will not receive any more messages from the academy. If you change your mind, you can restart your application yourself within 7 days after you withdrew it.\n\nTo do this, write to **support@rewayahacademy.com**.',
+			'recrutement.lettre.parties.p13.titre' => 'Your questions',
+			'recrutement.lettre.parties.p13.corps' => '**I signed up. Am I already a teacher at the academy?** Not yet. You are a candidate. We still need to study your application, then there is the interview.\n\n**Do I have to pay to be accepted or for the training?** No. Nothing, ever. If someone asks you for money in our name, it is a fraud: tell us.\n\n**How long will I wait for a class?** We do not know, and we will not give you a date that we might not keep. It depends on the students who sign up, your hours, your language and your experience.\n\n**At what time will my lessons be?** At the time chosen by the students of the class, the same time every week. You will only be given a class if its time suits you. The application shows each time in your own time, then in Makkah time, which is the academy\'s clock.\n\n**How much will I earn, exactly?** About \$24 per month for each child, about \$30 per month for each adult, if they come to every session. Count your students, multiply, and you have your month.\n\n**A student is absent. Am I paid for this student?** Half. You receive half of this student\'s share for that session.\n\n**I was late once and someone replaced me. Have I lost my class?** No. You lost the pay for that session. You only lose the class if it happens again and again, after warnings.\n\n**What do I need to teach?** A good internet connection, a computer or a tablet with a camera and a microphone, and a quiet place. Nothing else to install except the academy\'s application.\n\n**Can I teach somewhere else at the same time?** Yes, as long as your other hours do not fall on the academy\'s hours. What is forbidden is giving two lessons at the same moment.\n\n**Can the amounts change?** Yes, the management can review them. You will be told before, and a month already worked will never be touched.',
+			'recrutement.lettre.parties.p14.titre' => 'To decide',
+			'recrutement.lettre.parties.p14.corps' => '**Continue with us if** you accept to be paid per student, to maybe wait a long time for your first class, to be on time for every session, to show who you are, and to be patient with families who do not yet know the rank of the teacher of the Qur\'an.\n\n**Do not continue if** you are looking for a fixed income right away, if you cannot keep a regular timetable, or if the religious commitment of the academy is not yours.\n\nIn both cases, may Allah reward you for answering our call.\n\nThe management of Rewayah Academy\n\n#Ra_staff',
 			'recrutement.majeur.titre' => 'Before you start',
 			'recrutement.majeur.explication' => 'Recruitment of teachers is reserved for people aged 18 and over.',
 			'recrutement.majeur.coche' => 'I am 18 or older.',
@@ -31480,6 +31754,8 @@ extension on TraductionsEn {
 			'recrutement.partage.langueCarte' => 'Card language',
 			'recrutement.partage.apercu' => 'Preview of the card to share',
 			'recrutement.partage.partager' => 'I\'m sharing',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.partage.partagerLaCarte' => 'Share the offer card',
 			'recrutement.partage.enregistrer' => 'Save the image',
 			'recrutement.partage.copier' => 'Copy the link',
@@ -31532,8 +31808,6 @@ extension on TraductionsEn {
 			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'New: ${titre}',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'Put away the announcement: ${titre}',
 			'recrutement.accueil.annonce.rangee' => 'Announcement put away in Messages, Announcements section.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.accueil.etat.perime' => 'Your file could not be updated. What you see dates from your last reading. Try again in a moment.',
 			'recrutement.accueil.etat.horsLigne' => 'You are offline. What you see dates from your last reading; try again once the connection is back.',
 			'recrutement.accueil.messages.intro' => 'Write to the academy: it answers you here.',
@@ -31994,6 +32268,8 @@ extension on TraductionsEn {
 			'recrutement.talents.intro.usage.titre' => 'What we do with it',
 			'recrutement.talents.intro.usage.texte' => 'Your answers are used only to offer you an academy mission. The management reads them, and only the management.',
 			'recrutement.talents.intro.liberte.titre' => 'You stay in control',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.intro.liberte.texte' => 'You can edit or withdraw your answers whenever you want, and withdraw the agreement that allows us to contact you.',
 			'recrutement.talents.intro.missions.titre' => 'Each mission has its conditions',
 			'recrutement.talents.intro.missions.texte' => 'The academy presents them to you when it contacts you. This page promises no mission.',
@@ -32046,8 +32322,6 @@ extension on TraductionsEn {
 			'recrutement.talents.c.accueil_familles.description' => 'Be the first contact for families who sign up.',
 			'recrutement.talents.c.accueil_familles.exemple' => 'Answer a question, support a registration, check in',
 			'recrutement.talents.c.gestion_projet.libelle' => 'Project planning and management',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.gestion_projet.description' => 'Organize teamwork from start to finish.',
 			'recrutement.talents.c.gestion_projet.exemple' => 'Draw up a schedule, share out tasks, follow progress',
 			'recrutement.talents.c.ressources_humaines.libelle' => 'Human resources and recruitment',
@@ -32508,6 +32782,8 @@ extension on TraductionsEn {
 			'admin.candidatures.etats.retiree' => 'Withdrawn',
 			'admin.candidatures.etats.enPause' => 'Paused',
 			'admin.candidatures.etats.restreinte' => 'Restricted',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.etats.restreintePiece' => 'Restricted: document',
 			'admin.candidatures.etats.restreinteVersement' => 'Restricted: payout',
 			'admin.candidatures.etats.restreinteDirection' => 'Restricted: management decision',
@@ -32560,8 +32836,6 @@ extension on TraductionsEn {
 			'admin.candidatures.detail.ouvrirDossier' => 'Open in Files to validate',
 			'admin.candidatures.detail.responsable' => 'Manager',
 			'admin.candidatures.detail.contact.titre' => 'Contact',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.detail.contact.masque' => 'Contact hidden',
 			'admin.candidatures.detail.contact.voir' => 'See the contact',
 			'admin.candidatures.detail.contact.journal' => 'This opening is written in the log.',
@@ -33022,6 +33296,8 @@ extension on TraductionsEn {
 			'admin.equipe.feuille.mission.nomAide' => '80 characters at most.',
 			'admin.equipe.feuille.mission.nomManquant' => 'Give the mission a name.',
 			'admin.equipe.feuille.mission.nomTropLong' => '80 characters at most.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.equipe.feuille.mission.gestes' => 'What the person can do',
 			'admin.equipe.feuille.mission.gestesAide' => 'Tick at least one action. They can do nothing else.',
 			'admin.equipe.feuille.mission.gestesManquants' => 'Tick at least one action.',
@@ -33074,8 +33350,6 @@ extension on TraductionsEn {
 			'admin.equipe.feuille.revoquer.revoquer' => 'Revoke',
 			'admin.equipe.feuille.revoquer.revoquee' => 'Invitation revoked.',
 			'admin.equipe.refus.personneIndisponible' => 'This account cannot receive a mission: it is not active, or its role is not allowed.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.equipe.refus.genreInconnu' => 'This person\'s gender is not known: their mission is held on their side. Complete their account first.',
 			'admin.equipe.refus.attributionActive' => 'This person already holds this mission. Remove it first.',
 			'admin.equipe.refus.missionIndisponible' => 'This mission no longer exists or is archived.',
@@ -33536,6 +33810,8 @@ extension on TraductionsEn {
 			'admin.groupes.refusDeplacement.nonDisponible' => 'The timetable is not changed: the teacher has not declared all the hours of this class, from its start to its end. Choose another timetable.',
 			'admin.groupes.refusDeplacement.chevauchementClasse' => 'The timetable is not changed: the teacher already has a class or a student at this time. Choose another timetable.',
 			'admin.groupes.refusDeplacement.chevauchementSeance' => 'The timetable is not changed: a session is already planned at this time, for the teacher (in this class at its old timetable or in another class). Choose another timetable.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.refusDeplacement.plafondClasses' => ({required num n, required Object maximum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The timetable is not changed: the teacher already holds ${n} active class, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.', other: 'The timetable is not changed: the teacher already holds ${n} active classes, for a maximum of ${maximum}. Close one of their classes, or raise the maximum in the Rules.', ), 
 			'admin.groupes.refusDeplacement.plafondClassesSansNombre' => 'The timetable is not changed: the teacher already holds the maximum number of active classes. Close one of their classes, or raise the maximum in the Rules.',
 			'admin.groupes.refusDeplacement.inconnu' => 'The timetable is not changed: the server refused this choice. Check the teacher and the timetable, then press again.',
@@ -33588,8 +33864,6 @@ extension on TraductionsEn {
 			'admin.groupes.partage.modifiePar' => ({required Object date, required Object auteur}) => 'Last change: ${date}, by ${auteur}',
 			'admin.groupes.partage.modifieLe' => ({required Object date}) => 'Last change: ${date}',
 			'admin.groupes.partage.etatActif' => 'Turned on for the class',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.partage.etatInactif' => 'Turned off for the class',
 			'admin.groupes.partage.confirmerActiver' => 'Turn on automatic sharing for this class?',
 			'admin.groupes.partage.consequenceActiver' => 'Reports already shared become readable again for families. Those held back during the deactivation are not published all at once.',
@@ -34050,6 +34324,8 @@ extension on TraductionsEn {
 			'admin.conservationDonnees.suppressionCompteDetail' => 'The number of days of reflection before the management can process an account deletion request.',
 			'admin.conservationDonnees.uniteJours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} d', other: '${n} d', ), 
 			'admin.politiqueRevueKyc.titre' => 'Teacher verification by gender',
+			_ => null,
+		} ?? switch (path) {
 			'admin.politiqueRevueKyc.libelle' => 'Limit teacher verification by gender',
 			'admin.politiqueRevueKyc.aide' => 'When this rule is off, any member allowed to review files can handle the files in their scope, whatever their gender.',
 			'admin.politiqueRevueKyc.echecEnregistrement' => _root.admin.groupes.observationErreur,
@@ -34102,8 +34378,6 @@ extension on TraductionsEn {
 			'admin.evaluations.annulerErreur' => ({required Object message}) => 'The cancellation did not go through: ${message}',
 			'admin.evaluations.champMotif' => 'Reason',
 			'admin.evaluations.motifRequis' => 'A reason is required, it is written in the audit log.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.evaluations.journalisation' => 'Each scheduling, result and cancellation is written in the audit log.',
 			'admin.evaluations.manqueResultat' => 'First choose the assessment\'s result.',
 			'admin.progression.titre' => 'Progress',
@@ -34564,6 +34838,8 @@ extension on TraductionsEn {
 			'admin.agents.quiVide' => 'Choose a person',
 			'admin.agents.chercher' => 'Search for a name or identifier',
 			'admin.agents.duree' => 'For how long',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.dureeHeure' => ({required Object nombre}) => '${nombre} h',
 			'admin.agents.dureePlafond' => 'Twenty-four hours at most, and the database checks it itself.',
 			'admin.agents.identite' => 'First names',
@@ -34616,8 +34892,6 @@ extension on TraductionsEn {
 			'admin.praxis.intro' => 'Praxis is the academy\'s secretary. It reads families\' messages and answers only within the limits below. It stays off until you turn it on.',
 			'admin.praxis.reglagesTitre' => 'Praxis settings',
 			'admin.praxis.allume' => 'Praxis on',
-			_ => null,
-		} ?? switch (path) {
 			'admin.praxis.etatAllume' => 'On',
 			'admin.praxis.etatEteint' => 'Off',
 			'admin.praxis.allumeOui' => 'On: Praxis reads messages and writes within the limits below.',
@@ -35078,6 +35352,8 @@ extension on TraductionsEn {
 			'admin.finance.pol.internet' => 'Internet allowance',
 			'admin.finance.pol.internetDetail' => 'One allowance per eligible teacher, never multiplied by class or by student.',
 			'admin.finance.pol.internetNonFixee' => 'Not set yet',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.sectionClasses' => 'Classes',
 			'admin.finance.pol.sectionClassesDetail' => 'The size of classes and the threshold for opening one.',
 			'admin.finance.pol.capaciteEnfant' => 'Children\'s class capacity',
@@ -35130,8 +35406,6 @@ extension on TraductionsEn {
 			'admin.finance.pol.budgetComparaison' => ({required Object libelle, required Object valeur}) => '${libelle}: ${valeur}',
 			'admin.finance.pol.separateurComparaison' => ' ; ',
 			'admin.finance.pol.invariants' => 'Fixed rules',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.invariantsDetail' => 'They protect families\' money: they are not settings, no version changes them.',
 			'admin.finance.pol.invariantConfirmation' => 'A payment is confirmed before any credit to a profile.',
 			'admin.finance.pol.invariantDoubleDebit' => 'The same payment is never debited twice.',
@@ -35592,6 +35866,8 @@ extension on TraductionsEn {
 			'admin.tirage.titre' => 'Review draw',
 			'admin.tirage.sousTitre' => 'The server randomly draws the session each reviewer receives. The management sets the rules; the reviewer never chooses their class.',
 			'admin.tirage.sansDonnees' => 'The draws could not be loaded',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.erreur' => 'The draws could not be read: the read may not have reached Rewayah. Try again in a moment.',
 			'admin.tirage.indisponibleTitre' => 'Available once the server is connected',
 			'admin.tirage.indisponiblePhrase' => 'The draw rules and history will be shown here once the server is connected. Until then, nothing is shown: no draw is invented.',
@@ -35644,8 +35920,6 @@ extension on TraductionsEn {
 			'admin.tirage.filtreTous' => 'All',
 			'admin.tirage.filtreAttribuees' => 'Assigned',
 			'admin.tirage.filtreEnCours' => 'Reviews in progress',
-			_ => null,
-		} ?? switch (path) {
 			'admin.tirage.filtreControlees' => 'Reviewed',
 			'admin.tirage.filtreNonControlees' => 'Not reviewed',
 			'admin.tirage.filtreDejaControlees' => 'Already reviewed',
@@ -36106,6 +36380,8 @@ extension on TraductionsEn {
 			'admin.planClasse.dateMotifs.confirme' => 'Day confirmed with the teacher',
 			'admin.planClasse.refus.dateFuture' => 'This day has not come yet. Choose today or a past day.',
 			'admin.planClasse.refus.dateSousPlancher' => ({required Object date}) => 'This day is too old. The oldest accepted day is ${date}. Choose a day from that date onwards.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planClasse.refus.eleveSansEtape' => 'This student does not have a stage yet. Place them first in Pedagogy, Diagnostics.',
 			'admin.planClasse.refus.niveauNonPublie' => 'This stage is not in the published version of the programme. Choose a stage from the list.',
 			'admin.planClasse.refus.classeClose' => 'This class is closed.',
@@ -36158,8 +36434,6 @@ extension on TraductionsEn {
 			'agent.jeton' => 'Observation token',
 			'agent.jetonExemple' => 'rag_...',
 			'agent.entrer' => 'Open the app',
-			_ => null,
-		} ?? switch (path) {
 			'agent.ouverture' => 'Opening',
 			'agent.refus' => 'Token refused',
 			'agent.refusDetail' => 'This token is unknown, revoked or expired. Ask the academy for a new one.',
@@ -36620,6 +36894,8 @@ extension on TraductionsEn {
 			'compte.tuteur.pageLegal.textes' => 'Terms and privacy',
 			'historique.titre' => 'History',
 			'historique.detailSeance' => 'Session details',
+			_ => null,
+		} ?? switch (path) {
 			'historique.segments.seances' => 'Sessions',
 			'historique.segments.observations' => 'Observations',
 			'historique.moisCourts.0' => 'Jan',
@@ -36672,8 +36948,6 @@ extension on TraductionsEn {
 			'historique.seances.filtreVideTitre' => 'No session matches',
 			'historique.seances.filtreVidePhrase' => 'Change the filters to find the other sessions.',
 			'historique.seances.tronquee' => ({required Object nombre}) => 'The ${nombre} most recent sessions are shown.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.seances.ouvrir' => ({required Object date, required Object classe, required Object etat}) => 'Session of ${date}, ${classe}, ${etat}',
 			'historique.observations.indisponibleTitre' => 'Observation history unavailable',
 			'historique.observations.indisponiblePhrase' => 'Recorded visits cannot be read in the app yet.',
@@ -37134,6 +37408,8 @@ extension on TraductionsEn {
 			'classe.historique' => 'History',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
 			'classe.indisponiblePhrase' => 'The class details are not yet available here.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.introuvableTitre' => 'This class is not open to this profile',
 			'classe.introuvablePhrase' => 'It may have ended, or it concerns another student in the household.',
 			'classe.disparue' => 'This class no longer exists.',
@@ -37186,8 +37462,6 @@ extension on TraductionsEn {
 			'classe.pageRessources.aucuneDetail' => 'The materials chosen by the teacher will appear here.',
 			'classe.pageRessources.indisponible' => 'The class library is not yet linked to this space.',
 			'classe.pageProgression.indisponible' => ({required Object dePrenom}) => '${dePrenom}\'s progress is not shared here yet.',
-			_ => null,
-		} ?? switch (path) {
 			'classe.pageProgression.niveau' => 'Level',
 			'classe.pageProgression.jalons' => 'Stages completed',
 			'classe.pageProgression.aucune' => 'No stage shared yet',
@@ -37648,6 +37922,8 @@ extension on TraductionsEn {
 			'enseignant.profil.statutInconnuDetail' => 'We could not load your status.',
 			'enseignant.profil.statutDivergent' => 'This status has just changed. Reopen the app so your access follows.',
 			'enseignant.profil.verification' => 'File verification',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.verificationEnAttente' => 'Pending',
 			'enseignant.profil.verificationValidee' => 'Approved',
 			'enseignant.profil.verificationRefusee' => 'To redo',
@@ -37700,8 +37976,6 @@ extension on TraductionsEn {
 			'enseignant.profil.revenusHeures' => ({required Object heures, required Object mois}) => '${heures} taught in ${mois}',
 			'enseignant.profil.publicationDonnee' => 'Given',
 			'enseignant.profil.publicationNonDonnee' => 'Not given',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.heureLibelle' => ({required Object jour, required Object heure}) => '${jour} ${heure}:00',
 			'enseignant.creneaux.aucuneHeure' => 'You have not offered any time. Without a slot, no class can be offered to you.',
 			'enseignant.creneaux.heureEnregistree' => ({required Object heure}) => '${heure} saved',
@@ -38162,6 +38436,8 @@ extension on TraductionsEn {
 			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Class in ${jours} day', other: 'Class in ${jours} days', ), 
 			'tc.groupe.temps.imminent' => 'Class about to start',
 			'tc.groupe.temps.salleOuverte' => ({required Object reste}) => 'Room open · ${reste}',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.temps.salleOuverteCourt' => 'Room open',
 			'tc.groupe.temps.attente' => 'You are in the room. The class has not started yet.',
 			'tc.groupe.temps.attenteDetail' => 'This waiting time does not count towards your attendance.',
@@ -38214,8 +38490,6 @@ extension on TraductionsEn {
 			'tc.bibliotheque.rechercheLibelle' => 'Search for a document',
 			'tc.bibliotheque.effacerRecherche' => 'Show all',
 			'tc.bibliotheque.filtre.type' => 'Type',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.filtre.disponibilite' => 'Availability',
 			'tc.bibliotheque.sections.continuer' => 'Continue',
 			'tc.bibliotheque.sections.pourCeGroupe' => 'For this class',
@@ -38676,6 +38950,8 @@ extension on TraductionsEn {
 			'adulte.accueil.prochaineSeance' => 'Next session',
 			'adulte.accueil.parcours' => 'My journey',
 			'adulte.accueil.dernieresSeances' => 'Latest sessions',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.accueil.ressources' => 'Class resources',
 			'adulte.accueil.absence' => 'Absence',
 			'adulte.accueil.aucuneClasse' => 'No class for now.',
@@ -38728,8 +39004,6 @@ extension on TraductionsEn {
 			'adulte.recharge.soldeActuel' => ({required Object montant}) => 'Current balance: ${montant}',
 			'adulte.recharge.montantSuggere' => ({required Object montant}) => 'Suggested amount: ${montant}',
 			'adulte.recharge.montantPour' => ({required Object prenom}) => 'Amount for ${prenom}',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.recharge.diminuer' => ({required Object prenom}) => 'Decrease the amount for ${prenom}',
 			'adulte.recharge.augmenter' => ({required Object prenom}) => 'Increase the amount for ${prenom}',
 			'adulte.recharge.repartition' => 'A single payment will be made. Each amount goes to the balance of its profile: there is no shared balance.',
@@ -39190,6 +39464,8 @@ extension on TraductionsEn {
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => '${dePrenom}\'s request: on the waiting list',
 			'suiviFamille.notification.eleveIntegre' => ({required Object dePrenom}) => '${dePrenom}\'s request: student placed in the class',
 			'suiviFamille.notification.premiereSeance' => ({required Object dePrenom}) => '${dePrenom}\'s request: first session held',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.notification.close' => ({required Object dePrenom, required Object motif}) => '${dePrenom}\'s request: ${motif}',
 			'suiviFamille.notification.dejaEnClasse' => ({required Object dePrenom}) => '${dePrenom}\'s request: student already in a class, request filed',
 			'suiviFamille.etapeSurTotal' => ({required Object n, required Object total, required Object etape}) => 'Step ${n} of ${total}: ${etape}',
@@ -39242,8 +39518,6 @@ extension on TraductionsEn {
 			'suiviDemandes.close.retiree' => 'Request withdrawn',
 			'suiviDemandes.close.nonRetenue' => 'Request not accepted',
 			'suiviDemandes.close.close' => 'Request closed',
-			_ => null,
-		} ?? switch (path) {
 			'suiviDemandes.close.motif.retraitFamille' => 'You withdrew this request.',
 			'suiviDemandes.close.motif.offreRetiree' => 'The academy removed this slot from its offers.',
 			'suiviDemandes.close.motif.classeNonConstituee' => 'The class for this slot could not be formed.',
@@ -39704,6 +39978,8 @@ extension on TraductionsEn {
 			'com.messages.demo.choisirRole' => 'Choose the point of view for this demo.',
 			'com.messages.demo.roles.tuteur' => 'Family',
 			'com.messages.demo.roles.enseignant' => 'Teacher',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.roles.adulte' => 'Adult student',
 			'com.messages.demo.roles.admin' => 'Management',
 			'com.messages.demo.roles.controleur' => 'Reviewer',
@@ -39756,8 +40032,6 @@ extension on TraductionsEn {
 			'com.vocal.composer.erreurInterrompu' => 'The recording was interrupted. Check the microphone, then start again.',
 			'com.vocal.composer.permissionTitre' => 'The microphone is needed',
 			'com.vocal.composer.permissionPhrase' => 'Rewayah needs the microphone to record your voice message. Nothing is sent without your agreement.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.autoriser' => 'Allow the microphone',
 			'com.vocal.composer.annuler' => 'Cancel',
 			'com.vocal.composer.refuse' => 'The microphone is not allowed for Rewayah.',
@@ -40218,6 +40492,8 @@ extension on TraductionsEn {
 			'com.annonces.simple.envoyer' => 'Send the announcement',
 			'com.annonces.simple.manquePublic' => 'Choose at least one audience to send.',
 			'com.annonces.simple.manqueTexte' => 'Write the message to send.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.simple.calcul' => 'Counting the people.',
 			'com.annonces.simple.videPersonne' => 'Nobody matches this choice: nothing can be sent. Choose another audience.',
 			'com.annonces.simple.videCote' => 'Your profile does not say whether you are a woman or a man: the separation of sides prevents sending. Ask the director to complete your profile.',
@@ -40270,8 +40546,6 @@ extension on TraductionsEn {
 			'com.annonces.publieur.enCours' => 'Publishing in progress. Wait for confirmation.',
 			'com.annonces.publieur.publiee' => 'Announcement published. The recipients receive it.',
 			'com.annonces.publieur.planifiee' => ({required Object date, required Object heure}) => 'Announcement scheduled for ${date} at ${heure}.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.publieur.nonConfirmee' => 'This announcement is not confirmed yet: it may not have reached Rewayah. Try again: it will go out only once.',
 			'com.annonces.publieur.horsLigne' => 'This announcement is not confirmed yet. Try again as soon as sending is possible again.',
 			'com.annonces.publieur.indisponible' => 'Publishing announcements is not available yet. Come back later.',
@@ -40732,6 +41006,8 @@ extension on TraductionsEn {
 			'comptable.paiements.types.contractuel' => 'Contractor',
 			'comptable.paiements.compteur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'One payment', other: '${n} payments', ), 
 			'comptable.paiements.actions.voir' => 'See',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.actions.payer' => 'Pay',
 			'comptable.paiements.actions.demanderValidation' => 'Request validation',
 			'comptable.paiements.actions.relancer' => 'Remind',
@@ -40784,8 +41060,6 @@ extension on TraductionsEn {
 			'comptable.paiements.ecart.motifs.ligneEnTrop' => 'This line should not be there',
 			'comptable.paiements.ecart.motifs.sourceErronee' => 'The cited source is not the right one',
 			'comptable.paiements.ecart.envoyer' => 'Send the report',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.ecart.annuler' => 'Cancel',
 			'comptable.paiements.ecart.envoye' => ({required Object date}) => 'Discrepancy reported on ${date}. The amount stays the source\'s until recalculation.',
 			'comptable.paiements.ecart.erreurEnvoi' => 'The report did not go through. Try again: it will be recorded only once.',
@@ -41246,6 +41520,8 @@ extension on TraductionsEn {
 			'comptable.validation.detail.raison' => 'Reason',
 			'comptable.validation.detail.montant' => 'Exact amount',
 			'comptable.validation.detail.etat' => 'Status',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.detail.historique' => 'History',
 			'comptable.validation.detail.historiqueVide' => 'No entry yet.',
 			'comptable.validation.detail.historiqueErreur' => 'The history could not be read: it is not that it is empty. Try again in a moment.',
@@ -41298,8 +41574,6 @@ extension on TraductionsEn {
 			'comptable.direction.historiqueVide' => 'No version before this one.',
 			'comptable.direction.etatActuel' => 'Current state of the Reserve',
 			'comptable.direction.suffixeMois' => 'months',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.suffixeJours' => 'days',
 			'comptable.direction.suffixePourcent' => '%',
 			'comptable.direction.erreurNombre' => 'Enter a whole number greater than zero.',
@@ -41760,6 +42034,8 @@ extension on TraductionsEn {
 			'juridique.cookies.s2.blocs.3' => '- On a student\'s device, their personal code, which never leaves the device.',
 			'juridique.cookies.s2.blocs.4' => 'These items are necessary for the app to work.',
 			'juridique.cookies.s3.titre' => '3. What we do not use',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.cookies.s3.blocs.0' => 'At the date of this text, neither the app nor the website uses advertising cookies or audience measurement.',
 			'juridique.cookies.s4.titre' => '4. Error reports',
 			'juridique.cookies.s4.blocs.0' => 'When the app crashes, a technical report may be sent to an error tracking service. It contains no screenshot, no name and no identity.',
@@ -41812,8 +42088,6 @@ extension on TraductionsEn {
 			'avis.form.note.libelle' => 'Your rating',
 			'avis.form.note.aide' => 'Tap a star: 1 is the lowest rating, 5 the highest.',
 			'avis.form.note.etoile' => ({required Object n}) => 'Give a rating of ${n} out of 5',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.note.lue' => ({required Object n}) => 'Rating: ${n} out of 5',
 			'avis.form.note.surCinq' => ({required Object n}) => '${n} out of 5',
 			'avis.form.note.erreur' => 'Choose a rating from 1 to 5 stars.',
@@ -42274,6 +42548,8 @@ extension on TraductionsEn {
 			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Remove ${nom} from the validated surahs',
 			'cahierSourates.retirerQuestion' => ({required Object nom}) => 'Remove ${nom} from the validated surahs?',
 			'cahierSourates.retirerConsequence' => 'It will no longer count as validated for this student.',
+			_ => null,
+		} ?? switch (path) {
 			'cahierSourates.retirerMotif' => 'Reason (optional)',
 			'cahierSourates.retirerFait' => ({required Object nom}) => '${nom} is no longer validated.',
 			'cahierSourates.retirerRefus' => 'The 24-hour delay has passed: only the management can still remove it.',
@@ -42326,8 +42602,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.depot.noms.aide' => 'These two names are used to recognize each answer. If you replay the same corrected file later, keep exactly the same names: no answer will be added twice.',
 			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'Correct these names',
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'Keep these names',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'Workbook name',
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'Tab name',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'The file name does not give the tab. Enter it to continue.',
@@ -42788,6 +43062,8 @@ extension on TraductionsEn {
 			'apprendre.livret.videTu' => 'Your results, your reports and your certificates will appear here',
 			'suiviAttente.titre' => 'Where your request stands',
 			'suiviAttente.titreSimple' => 'Where your request stands',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.tu.formationListeAttente' => 'All classes for this slot are full. Your request is waiting for a place to open.',
 			'suiviAttente.tu.confirmeeFait' => 'Your class is confirmed.',
 			'suiviAttente.tu.confirmeeFaitNom' => ({required Object classe}) => 'Your class "${classe}" is confirmed.',
@@ -42840,8 +43116,6 @@ extension on TraductionsEn {
 			'suiviAttente.ensuite' => ({required Object etape}) => 'Next: ${etape}',
 			'suiviAttente.delai.depasse' => 'Forming your class is taking longer than expected.',
 			'suiviAttente.changement' => ({required Object date}) => 'The class slot changed on ${date}. You received the notice in your notifications.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.cloture.titreRefusee' => 'Your request was not accepted',
 			'suiviAttente.cloture.titreRetiree' => 'This request is withdrawn',
 			'suiviAttente.cloture.titreClose' => 'This request is closed',

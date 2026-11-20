@@ -1,17 +1,22 @@
 # Lettre aux candidats enseignants (français)
 
-- **Statut** : texte en relecture par le directeur, **non validé**. Il n'est pas dans
-  `docs/current/TEXTES-VALIDES/` : aucun agent ne l'affiche tel quel avant le « oui » du directeur.
-- **Version** : 20/11/2026, copie du document de travail
-  (https://claude.ai/artifact/8VA2oy3s5g529ZUqbqbiKd, révision 2115). Le document fait foi
-  tant que le texte n'est pas validé ; cette copie existe pour qu'il ne se perde pas.
-- **Lot** : `LOT.md` dans ce dossier (où l'afficher, ce qui reste faux, à qui parler).
+- **Statut** : **validé par le directeur le 20/11/2026** (« OUI c'est bon »), avec deux ajouts demandés
+  le même soir et écrits après ce « oui » : la mention du mérite des gens du Coran (partie 1) et les
+  cours individuels (partie 7, « Et les cours individuels ? »). Ces deux passages sont à relire par lui.
+- **Version** : 20/11/2026, document de travail https://claude.ai/artifact/8VA2oy3s5g529ZUqbqbiKd
+  (révision 2117). Ce fichier fait foi pour l'application ; une correction se fait ici, puis dans les
+  traductions (`LETTRE-ar.md`, `LETTRE-en.md`) et dans `assets/i18n/*.i18n.json` (`lettreCandidats.*`).
+- **Lot** : `LOT.md` dans ce dossier.
 
 ---
 
 ## 1. Pourquoi vous recevez cette lettre
 
 Assalamu alaykum wa rahmatullahi wa barakatuh.
+
+Le Prophète ﷺ a dit : « خيركم من تعلّم القرآن وعلّمه », « le meilleur d'entre vous est celui qui apprend le Coran et l'enseigne » (rapporté par al-Bukhârî). Les gens du Coran ont un rang à part. Celui qui l'enseigne porte la parole d'Allah jusqu'au cœur d'un enfant.
+
+Ce travail est payé, et c'est normal. Mais sa vraie récompense est auprès d'Allah. Gardez cette intention en lisant tout ce qui suit.
 
 Vous lisez cette lettre parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.
 
@@ -43,7 +48,7 @@ Nous avons donc lancé un appel aux hommes et aux femmes du Coran. Plus de 2 000
 
 Pas de Zoom, pas de Meet, pas de WhatsApp. L'académie a sa propre application, avec sa propre salle de classe en vidéo.
 
-Chez nous, un élève entre dans **une classe**. Pensez à une classe de votre lycée ou de votre université : ses heures fixes, ses élèves, ses outils, son enseignant. Nous avons même la cloche qui sonne la fin du cours 😊.
+Chez nous, un élève entre dans **une classe**. Pensez à une classe de votre lycée ou de votre université : ses heures fixes, ses élèves, ses outils, son enseignant. Nous avons même la cloche qui sonne la fin du cours.
 
 Les hommes enseignent aux garçons et aux hommes. Les femmes enseignent aux filles et aux femmes. Une seule exception : pour sauver une séance, un remplaçant de l'autre genre peut donner le cours ce jour-là (voir la partie 6).
 
@@ -187,7 +192,7 @@ On ne donne pas une classe au hasard. Il faut que tout colle entre vous et les �
 - **l'expérience** : des enfants qui débutent, des adultes, la mémorisation, ce n'est pas le même métier.
 
 
-Un exemple. Douze élèves s'inscrivent cette semaine : huit petites filles qui parlent français, le soir en Europe, et quatre hommes qui parlent anglais, le matin. Il faut donc des enseignantes francophones libres le soir, et un enseignant anglophone libre le matin. Un très bon enseignant qui ne correspond à aucun de ces deux groupes attendra les inscriptions suivantes.
+Un exemple. Douze élèves s'inscrivent cette semaine : huit petites filles qui parlent français, le soir en Europe, et quatre hommes qui parlent anglais, le matin. Il faut donc des enseignantes francophones libres le soir, et un enseignant anglophone libre le matin. Un très bon enseignant qui ne correspond à aucun de ces deux cas attendra les inscriptions suivantes.
 
 Des classes s'ouvrent tout au long de l'année, pas seulement en début de mois.
 
@@ -201,6 +206,12 @@ Si vous êtes admis et sans classe, vous restez avec nous. Vous pouvez :
 - **être remplaçant** : donner le cours d'un enseignant malade, absent ou en retard, et être payé pour chaque séance ;
 - **attendre** qu'une classe s'ouvre ou se libère.
 
+
+### Et les cours individuels ?
+
+Beaucoup nous demandent des cours seul à seul : un enseignant pour un élève. L'académie étudie la possibilité d'en proposer, en plus des classes. Nous ne donnons aucune date.
+
+Nous avons déjà pratiqué ce modèle. Il a montré ses limites, et il est bien plus dur qu'on ne le croit, pour l'enseignant comme pour l'élève. Nous ne l'ouvrirons que le jour où nous saurons bien le faire.
 
 ## 8. Pourquoi nous demandons votre pièce d'identité et votre photo
 

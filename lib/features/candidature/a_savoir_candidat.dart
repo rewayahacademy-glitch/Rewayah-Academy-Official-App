@@ -11,12 +11,15 @@
 // emplacement lira son texte au serveur ; la liste [EmplacementSavoir] est le
 // seul endroit a completer.
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/router/routes.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_groupee.dart';
+import '../../core/widgets/lien_fleche.dart';
 
 /// Un emplacement nomme de la rubrique.
 enum EmplacementSavoir {
@@ -55,6 +58,9 @@ class ASavoirCandidat extends StatelessWidget {
   /// La cle de la carte des emplacements.
   static const Key cle = ValueKey<String>('a-savoir-candidat');
 
+  /// La cle de l'entree de la lettre aux candidats.
+  static const Key cleLettre = ValueKey<String>('a-savoir-lettre');
+
   /// La cle de l'emplacement [e].
   static Key cleEmplacement(EmplacementSavoir e) =>
       ValueKey<String>('a-savoir-${e.name}');
@@ -73,6 +79,19 @@ class ASavoirCandidat extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
         Text(t.recrutement.accueil.messages.savoir.intro, style: muet),
+        Ecart.vLg,
+        // LETTRE-CANDIDATS (directeur, 20/11/2026) : la lettre aux candidats,
+        // seule entree de la page depuis l'accueil du candidat.
+        Align(
+          alignment: AlignmentDirectional.centerStart,
+          child: LienFleche(
+            key: ASavoirCandidat.cleLettre,
+            alignerEnDebut: true,
+            libelle: t.recrutement.lettre.entree,
+            onPress: () => GoRouter.of(context).push(Routes.lettreEnseignants),
+          ),
+        ),
+        Text(t.recrutement.lettre.entreeLegende, style: muet),
         Ecart.vLg,
         // Des contenus lies : UNE carte a lignes fines (K-55).
         CarteGroupee(
