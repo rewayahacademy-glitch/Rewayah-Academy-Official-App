@@ -3,8 +3,10 @@ import 'dart:typed_data';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
 import '../domain/enums.dart';
+import 'depot_resilient.dart';
 import 'echec_depot.dart';
 import 'etat_dossier.dart';
 
@@ -48,6 +50,17 @@ class PieceAEnvoyer {
     }
     return nomFichier.substring(point + 1).toLowerCase();
   }
+
+  /// Le type annonce au seau, tire de l'extension : le seau `kyc` n'admet
+  /// que `image/jpeg` et `image/png` (migration 20261126800000).
+  String get typeMime => switch (extension) {
+    'jpg' || 'jpeg' => 'image/jpeg',
+    'png' => 'image/png',
+    'webp' => 'image/webp',
+    'heic' => 'image/heic',
+    'pdf' => 'application/pdf',
+    _ => 'application/octet-stream',
+  };
 }
 
 /// Tout ce qui touche au dossier d'inscription et de KYC.
@@ -113,9 +126,12 @@ abstract interface class ServiceDossier {
 /// L'implementation reelle.
 class ServiceDossierSupabase implements ServiceDossier {
   /// Cree le service a partir d'un client Supabase.
-  const ServiceDossierSupabase(this._client);
+  const ServiceDossierSupabase(this._client, {this.attendre = attenteReelle});
 
   final SupabaseClient _client;
+
+  /// L'attente avant un nouvel essai (remplacee dans les tests).
+  final Attente attendre;
 
   /// Le seau prive des pieces d'identite, cree par la migration 0004.
   static const String seauKyc = 'kyc';
@@ -203,27 +219,44 @@ class ServiceDossierSupabase implements ServiceDossier {
   Future<void> deposerPiece(PieceAEnvoyer piece) async {
     final String? uid = _client.auth.currentUser?.id;
     if (uid == null) {
-      throw StateError('aucune session');
+      throw const SessionAbsente();
     }
 
     // Le chemin porte l'identifiant du deposant en premier segment : c'est ce
     // que la policy de stockage compare a `auth.uid()`. Un nom de fichier
     // aleatoire evite qu'un second depot ecrase le premier avant sa lecture.
+    //
+    // PE-B10 : la cle et l'identifiant de la ligne sont tires UNE fois, avant
+    // le premier essai. Chaque etape est reessayee seule sur une panne
+    // passagere (`depot_resilient.dart`), en reprenant la ou elle a echoue :
+    // un nouvel essai qui trouve le fichier ou la ligne deja la (reponse
+    // perdue) les tient pour faits. Jamais deux fichiers ni deux lignes.
     final String cle =
         '$uid/${DateTime.now().toUtc().millisecondsSinceEpoch}.${piece.extension}';
+    final String idLigne = const Uuid().v4();
 
-    await _client.storage
-        .from(ServiceDossierSupabase.seauKyc)
-        .uploadBinary(cle, piece.octets);
+    await envoyerAuSeau(
+      _client,
+      seau: ServiceDossierSupabase.seauKyc,
+      cle: cle,
+      octets: piece.octets,
+      typeMime: piece.typeMime,
+      attendre: attendre,
+    );
 
     // FN-101 (option B, garde-cap 06/11/2026) : le serveur lit les 16 premiers
     // octets de l'objet et confirme que le contenu correspond au type. Sans
     // cette confirmation, la policy d'insertion refuse la ligne
-    // (migration 20261110800000).
+    // (migration 20261110800000). La confirmation est idempotente
+    // (`ON CONFLICT DO NOTHING`) : la reessayer ne cree rien de plus.
     try {
-      await _client.functions.invoke(
-        'kyc-confirme',
-        body: <String, dynamic>{'object_key': cle},
+      await avecNouveauxEssais<void>(
+        () => _client.functions.invoke(
+          'kyc-confirme',
+          body: <String, dynamic>{'object_key': cle},
+        ),
+        attendre: attendre,
+        rafraichir: () => rafraichirSession(_client),
       );
     } on FunctionException catch (e) {
       if (e.status == 422) throw const ContenuPieceNonConforme();
@@ -234,12 +267,20 @@ class ServiceDossierSupabase implements ServiceDossier {
     // lecture pour le titulaire, qui suit son dossier par `etat_dossier()`.
     //
     // Ni `gender` ni `purge_at` ne sont envoyes : un declencheur de la base les
-    // pose, et ecrase toute valeur qui arriverait d'ici.
-    await _client.from('kyc_documents').insert(<String, dynamic>{
-      'profile_id': uid,
-      'doc_type': piece.type.valeurSql,
-      'object_key': cle,
-    });
+    // pose, et ecrase toute valeur qui arriverait d'ici. L'identifiant, lui,
+    // vient d'ici : un nouvel essai apres une reponse perdue recoit `23505`
+    // (cle primaire deja prise) au lieu de creer une seconde ligne.
+    await avecNouveauxEssais<void>(
+      () => _client.from('kyc_documents').insert(<String, dynamic>{
+        'id': idLigne,
+        'profile_id': uid,
+        'doc_type': piece.type.valeurSql,
+        'object_key': cle,
+      }),
+      attendre: attendre,
+      rafraichir: () => rafraichirSession(_client),
+      dejaFait: (_) {},
+    );
   }
 }
 

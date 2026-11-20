@@ -27,6 +27,7 @@ import 'package:rewayah_academy/features/dossier/accords_page.dart';
 import 'package:rewayah_academy/features/dossier/attente_page.dart';
 import 'package:rewayah_academy/features/dossier/depot_piece_page.dart';
 import 'package:rewayah_academy/features/dossier/signature_page.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../capture/outil_capture.dart';
 import '../support/annonces.dart';
@@ -742,8 +743,77 @@ void main() {
       await _toucher(tester, find.text(t.kyc.envoyer));
       await tester.pumpAndSettle();
 
-      expect(find.text(t.kyc.erreur), findsOneWidget);
+      // PE-B10 : une cause que l'application ne sait pas nommer se dit comme
+      // telle, avec le geste utile ; la photo reste choisie.
+      expect(find.text(t.fichiers.echecAutre), findsOneWidget);
+      expect(find.byKey(DepotPiecePage.cleEchec), findsOneWidget);
+      expect(find.text(t.kyc.fichierChoisi), findsOneWidget);
       expect(find.text('portail'), findsNothing);
+    });
+
+    // PE-B10 : chaque cause vue en production dit sa phrase vraie.
+    for (final (String nom, Object erreur, String Function() phrase)
+        in <(String, Object, String Function())>[
+          (
+            'panne passagere (544)',
+            const StorageException('Timeout', statusCode: '544'),
+            () => t.fichiers.echecIndisponible,
+          ),
+          (
+            'coupure du reseau',
+            const StorageException('x', statusCode: 'ClientException'),
+            () => t.fichiers.echecReseau,
+          ),
+          (
+            'session expiree (401)',
+            const FunctionException(status: 401),
+            () => t.fichiers.echecSession,
+          ),
+          (
+            'refus du serveur (403)',
+            const FunctionException(status: 403),
+            () => t.fichiers.echecRefus,
+          ),
+        ]) {
+      testWidgets('PE-B10 : $nom', (WidgetTester tester) async {
+        final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+        dossier.erreurAJeter = erreur;
+
+        await _toucher(tester, find.text(t.kyc.carteIdentite));
+        await tester.pumpAndSettle();
+        await _toucher(tester, find.text(t.kyc.choisirFichier));
+        await tester.pumpAndSettle();
+        await _toucher(tester, find.text(t.kyc.envoyer));
+        await tester.pumpAndSettle();
+
+        expect(find.text(phrase()), findsOneWidget);
+        expect(find.text(t.kyc.echecTitre), findsOneWidget);
+        expect(find.text(t.kyc.fichierChoisi), findsOneWidget);
+        expect(find.text('portail'), findsNothing);
+      });
+    }
+
+    testWidgets('PE-B10 : pendant l envoi, la page le dit', (
+      WidgetTester tester,
+    ) async {
+      final (FauxServiceDossier dossier, _) = await monter(tester, _piece());
+      final Completer<void> fin = Completer<void>();
+      dossier.depotEnAttente = fin.future;
+
+      await _toucher(tester, find.text(t.kyc.carteIdentite));
+      await tester.pumpAndSettle();
+      await _toucher(tester, find.text(t.kyc.choisirFichier));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.text(t.kyc.envoyer));
+      await tester.tap(find.text(t.kyc.envoyer));
+      await tester.pump();
+
+      expect(find.byKey(DepotPiecePage.cleEnCours), findsOneWidget);
+      expect(find.text(t.kyc.enCours), findsOneWidget);
+
+      fin.complete();
+      await tester.pumpAndSettle();
+      expect(find.text('portail'), findsOneWidget);
     });
 
     testWidgets('FN-101 : le serveur refuse le contenu, la page le dit', (

@@ -88,7 +88,7 @@ void main() {
     await _toucher(tester, find.byKey(EditeurPhotoPublique.choisirKey));
     await _toucher(tester, find.byKey(EditeurPhotoPublique.utiliserKey));
 
-    expect(find.text(t.enseignant.photo.echec), findsOneWidget);
+    expect(find.text(t.fichiers.echecAutre), findsOneWidget);
     expect(find.text(t.enseignant.photo.succes), findsNothing);
   });
 

@@ -1354,6 +1354,21 @@ class Traductions$fichiers$fr {
 
 	/// fr: 'Une photo JPEG ou PNG, {taille} Mo au plus. Une photo d'iPhone est convertie avant l'envoi.'
 	String formatsPiece({required Object taille}) => 'Une photo JPEG ou PNG, ${taille} Mo au plus. Une photo d\'iPhone est convertie avant l\'envoi.';
+
+	/// fr: 'Rewayah n'a pas pu enregistrer votre photo pour le moment, même après deux nouveaux essais. Votre photo reste choisie : réessayez dans quelques minutes.'
+	String get echecIndisponible => 'Rewayah n\'a pas pu enregistrer votre photo pour le moment, même après deux nouveaux essais. Votre photo reste choisie : réessayez dans quelques minutes.';
+
+	/// fr: 'Votre photo n'est pas parvenue jusqu'à Rewayah, même après deux nouveaux essais : la connexion internet de cet appareil est coupée ou trop lente. Votre photo reste choisie : réessayez quand la connexion revient, ou passez sur un autre réseau (Wi-Fi par exemple).'
+	String get echecReseau => 'Votre photo n\'est pas parvenue jusqu\'à Rewayah, même après deux nouveaux essais : la connexion internet de cet appareil est coupée ou trop lente. Votre photo reste choisie : réessayez quand la connexion revient, ou passez sur un autre réseau (Wi-Fi par exemple).';
+
+	/// fr: 'Votre session a expiré : Rewayah ne peut pas enregistrer votre photo sans elle. Déconnectez-vous, reconnectez-vous avec votre adresse, puis choisissez de nouveau la photo.'
+	String get echecSession => 'Votre session a expiré : Rewayah ne peut pas enregistrer votre photo sans elle. Déconnectez-vous, reconnectez-vous avec votre adresse, puis choisissez de nouveau la photo.';
+
+	/// fr: 'Rewayah a refusé ce dépôt pour votre compte : un nouvel essai donnerait le même résultat. Écrivez à la direction depuis votre dossier pour qu'elle regarde.'
+	String get echecRefus => 'Rewayah a refusé ce dépôt pour votre compte : un nouvel essai donnerait le même résultat. Écrivez à la direction depuis votre dossier pour qu\'elle regarde.';
+
+	/// fr: 'L'enregistrement de votre photo n'a pas abouti, pour une raison que l'application ne sait pas nommer. Votre photo reste choisie : réessayez ; si cela recommence, écrivez à la direction depuis votre dossier.'
+	String get echecAutre => 'L\'enregistrement de votre photo n\'a pas abouti, pour une raison que l\'application ne sait pas nommer. Votre photo reste choisie : réessayez ; si cela recommence, écrivez à la direction depuis votre dossier.';
 }
 
 // Path: kyc
@@ -1418,14 +1433,8 @@ class Traductions$kyc$fr {
 	/// fr: 'Pièce reçue'
 	String get deposee => 'Pièce reçue';
 
-	/// fr: 'L'envoi n'a pas abouti. Réessayez dans un instant.'
-	String get erreur => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.';
-
 	/// fr: 'Ce fichier n'a pas été accepté : seules les photos JPEG ou PNG le sont. Prenez votre pièce en photo, puis choisissez cette photo.'
 	String get erreurFormat => 'Ce fichier n\'a pas été accepté : seules les photos JPEG ou PNG le sont. Prenez votre pièce en photo, puis choisissez cette photo.';
-
-	/// fr: 'L'envoi n'a pas abouti : il est possible que la demande ne soit pas parvenue jusqu'à Rewayah. Touchez « Envoyer ma pièce » à nouveau dans un instant.'
-	String get erreurReseau => 'L\'envoi n\'a pas abouti : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Touchez « Envoyer ma pièce » à nouveau dans un instant.';
 
 	/// fr: 'Ce fichier ne s'ouvre pas comme une photo : il est peut-être abîmé, ou d'un autre type renommé. Choisissez une photo JPEG ou PNG de votre pièce d'identité.'
 	String get contenuNonConforme => 'Ce fichier ne s\'ouvre pas comme une photo : il est peut-être abîmé, ou d\'un autre type renommé. Choisissez une photo JPEG ou PNG de votre pièce d\'identité.';
@@ -1438,6 +1447,24 @@ class Traductions$kyc$fr {
 
 	/// fr: 'Choisissez d'abord la pièce que vous déposez.'
 	String get manqueType => 'Choisissez d\'abord la pièce que vous déposez.';
+
+	/// fr: 'Envoi de votre pièce'
+	String get enCoursTitre => 'Envoi de votre pièce';
+
+	/// fr: 'Gardez cette page ouverte. Si la connexion internet coupe, l'application réessaie seule, deux fois.'
+	String get enCours => 'Gardez cette page ouverte. Si la connexion internet coupe, l\'application réessaie seule, deux fois.';
+
+	/// fr: 'Pièce envoyée'
+	String get reussiTitre => 'Pièce envoyée';
+
+	/// fr: 'La direction va la vérifier. Vous suivez la suite depuis votre dossier.'
+	String get reussi => 'La direction va la vérifier. Vous suivez la suite depuis votre dossier.';
+
+	/// fr: 'Revenir à mon dossier'
+	String get revenirDossier => 'Revenir à mon dossier';
+
+	/// fr: 'Votre pièce n'est pas encore envoyée'
+	String get echecTitre => 'Votre pièce n\'est pas encore envoyée';
 }
 
 // Path: appareils
@@ -18188,9 +18215,6 @@ class Traductions$enseignant$photo$fr {
 
 	/// fr: 'La photo est enregistrée.'
 	String get succes => 'La photo est enregistrée.';
-
-	/// fr: 'La photo n'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.'
-	String get echec => 'La photo n\'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.';
 
 	/// fr: 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.'
 	String get enregistree => 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.';
@@ -58942,6 +58966,11 @@ extension on Traductions {
 			'fichiers.heicNonConverti' => 'Cette photo d\'iPhone (HEIC) ne peut pas être convertie sur cet appareil. Ouvrez cette page sur votre iPhone et choisissez la photo de nouveau, ou enregistrez-la d\'abord en JPEG.',
 			'fichiers.tropLourd' => ({required Object taille}) => 'Ce fichier dépasse ${taille} Mo. Reprenez la photo en qualité plus basse, puis choisissez-la de nouveau.',
 			'fichiers.formatsPiece' => ({required Object taille}) => 'Une photo JPEG ou PNG, ${taille} Mo au plus. Une photo d\'iPhone est convertie avant l\'envoi.',
+			'fichiers.echecIndisponible' => 'Rewayah n\'a pas pu enregistrer votre photo pour le moment, même après deux nouveaux essais. Votre photo reste choisie : réessayez dans quelques minutes.',
+			'fichiers.echecReseau' => 'Votre photo n\'est pas parvenue jusqu\'à Rewayah, même après deux nouveaux essais : la connexion internet de cet appareil est coupée ou trop lente. Votre photo reste choisie : réessayez quand la connexion revient, ou passez sur un autre réseau (Wi-Fi par exemple).',
+			'fichiers.echecSession' => 'Votre session a expiré : Rewayah ne peut pas enregistrer votre photo sans elle. Déconnectez-vous, reconnectez-vous avec votre adresse, puis choisissez de nouveau la photo.',
+			'fichiers.echecRefus' => 'Rewayah a refusé ce dépôt pour votre compte : un nouvel essai donnerait le même résultat. Écrivez à la direction depuis votre dossier pour qu\'elle regarde.',
+			'fichiers.echecAutre' => 'L\'enregistrement de votre photo n\'a pas abouti, pour une raison que l\'application ne sait pas nommer. Votre photo reste choisie : réessayez ; si cela recommence, écrivez à la direction depuis votre dossier.',
 			'kyc.titre' => 'Votre pièce d\'identité',
 			'kyc.intro' => 'Photographiez le côté ou la page qui porte votre photo et votre nom. Une photo lisible suffit. Elle est conservée le temps de la vérification, puis effacée.',
 			'kyc.confidentialite' => 'Votre pièce d\'identité se dépose telle quelle : elle n\'est jamais publique, seule la direction la consulte, et elle est exigée par la réglementation sur la protection de l\'enfance.',
@@ -58960,13 +58989,17 @@ extension on Traductions {
 			'kyc.envoyer' => 'Envoyer ma pièce',
 			'kyc.envoiEnCours' => 'Envoi en cours',
 			'kyc.deposee' => 'Pièce reçue',
-			'kyc.erreur' => 'L\'envoi n\'a pas abouti. Réessayez dans un instant.',
 			'kyc.erreurFormat' => 'Ce fichier n\'a pas été accepté : seules les photos JPEG ou PNG le sont. Prenez votre pièce en photo, puis choisissez cette photo.',
-			'kyc.erreurReseau' => 'L\'envoi n\'a pas abouti : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Touchez « Envoyer ma pièce » à nouveau dans un instant.',
 			'kyc.contenuNonConforme' => 'Ce fichier ne s\'ouvre pas comme une photo : il est peut-être abîmé, ou d\'un autre type renommé. Choisissez une photo JPEG ou PNG de votre pièce d\'identité.',
 			'kyc.memeNom' => 'Envoyez une pièce qui porte exactement le nom écrit dans votre compte.',
 			'kyc.tropVolumineux' => ({required Object taille}) => 'Cette photo dépasse ${taille} Mo. Reprenez-la en qualité plus basse.',
 			'kyc.manqueType' => 'Choisissez d\'abord la pièce que vous déposez.',
+			'kyc.enCoursTitre' => 'Envoi de votre pièce',
+			'kyc.enCours' => 'Gardez cette page ouverte. Si la connexion internet coupe, l\'application réessaie seule, deux fois.',
+			'kyc.reussiTitre' => 'Pièce envoyée',
+			'kyc.reussi' => 'La direction va la vérifier. Vous suivez la suite depuis votre dossier.',
+			'kyc.revenirDossier' => 'Revenir à mon dossier',
+			'kyc.echecTitre' => 'Votre pièce n\'est pas encore envoyée',
 			'appareils.titre' => 'Appareils',
 			'appareils.foyer.titre' => 'Appareils du foyer',
 			'appareils.foyer.phrase' => 'Chaque profil élève a ses propres appareils. Touchez un profil pour voir ses appareils, en retirer un ou en connecter un nouveau.',
@@ -58991,6 +59024,8 @@ extension on Traductions {
 			'appareils.eleve.introuvableAction' => 'Voir les appareils du foyer',
 			'appareils.eleve.connecteLe' => ({required Object date}) => 'Connecté le ${date}',
 			'appareils.eleve.utiliseLe' => ({required Object date}) => 'Dernière utilisation : ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'appareils.eleve.jamaisUtilise' => 'Pas encore utilisé',
 			'appareils.eleve.retirerLibelle' => ({required Object appareil}) => 'Retirer ${appareil}',
 			'appareils.eleve.horsLigne' => 'Vous pourrez retirer ou connecter un appareil quand la connexion reviendra.',
@@ -59000,8 +59035,6 @@ extension on Traductions {
 			'appareils.eleve.retrait' => 'Un appareil retiré ne peut plus se reconnecter. S\'il est connecté en ce moment, il le reste jusqu\'à sa prochaine déconnexion.',
 			'appareils.plateforme.android' => 'Téléphone ou tablette Android',
 			'appareils.plateforme.ios' => 'iPhone ou iPad',
-			_ => null,
-		} ?? switch (path) {
 			'appareils.plateforme.web' => 'Navigateur web',
 			'appareils.plateforme.windows' => 'Ordinateur',
 			'appareils.plateforme.inconnue' => 'Appareil',
@@ -59505,6 +59538,8 @@ extension on Traductions {
 			'priere.direction.feuille.fuseau' => ({required Object exemple}) => 'Fuseau (par exemple ${exemple})',
 			'priere.direction.feuille.methode' => 'Méthode de calcul',
 			'priere.direction.feuille.methodeEcole' => 'Celle de l\'académie',
+			_ => null,
+		} ?? switch (path) {
 			'priere.direction.feuille.ecole' => 'École pour l\'Asr',
 			'priere.direction.feuille.ecoleEcole' => 'Celle de l\'académie',
 			'priere.direction.feuille.vendredi' => 'Assiste à la prière du vendredi',
@@ -59514,8 +59549,6 @@ extension on Traductions {
 			'priere.direction.feuille.vendrediFin' => 'Fin de la plage du vendredi',
 			'priere.direction.feuille.plageAide' => 'Heure de l\'enseignant, au format HH:MM. Un créneau qui chevauche cette plage est signalé à la direction, sans blocage.',
 			'priere.direction.feuille.apercu' => 'Heures du jour',
-			_ => null,
-		} ?? switch (path) {
 			'priere.direction.feuille.apercuVide' => 'Aucune heure à montrer tant que le lieu n\'est pas enregistré.',
 			'priere.direction.feuille.enregistrer' => 'Enregistrer le lieu',
 			'priere.direction.feuille.retirer' => 'Retirer le lieu',
@@ -60019,6 +60052,8 @@ extension on Traductions {
 			'recrutement.accueil.etapes.faite' => 'faite',
 			'recrutement.accueil.etapes.enCours' => 'en cours',
 			'recrutement.accueil.etapes.aVenir' => 'à venir',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.accueil.etapes.lecture' => ({required Object position, required Object nom, required Object etat}) => '${position}, ${nom}, ${etat}',
 			'recrutement.accueil.etapes.detail1' => 'Vous envoyez vos réponses et vos documents. L\'académie les lit.',
 			'recrutement.accueil.etapes.detail2' => 'Un entretien en visio avec l\'académie, au moment que vous choisissez.',
@@ -60028,8 +60063,6 @@ extension on Traductions {
 			'recrutement.accueil.etapes.ensuiteConnaissance' => 'Ensuite : après l\'entretien, l\'académie vous donne sa réponse ici.',
 			'recrutement.accueil.etapes.ensuiteEquipe' => 'Ensuite : votre espace d\'enseignant s\'ouvre.',
 			'recrutement.accueil.aFaire.titre' => 'À faire maintenant',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.accueil.aFaire.rienTitre' => 'Rien à faire pour l\'instant',
 			'recrutement.accueil.aFaire.rien' => 'Vous n\'avez rien à faire. Nous vous écrirons ici dès qu\'il y a du nouveau.',
 			'recrutement.accueil.aFaire.majorite' => 'Dites d\'abord si vous avez 18 ans ou plus, dans la carte ci-dessus.',
@@ -60533,6 +60566,8 @@ extension on Traductions {
 			'recrutement.parcours.moyens.virement' => 'Virement bancaire',
 			'recrutement.parcours.moyens.explication' => 'Choisissez-le s\'il est courant là où vous vivez.',
 			'recrutement.parcours.moyens.nonElimine' => 'Cette question est facultative et n\'élimine personne : votre candidature ne dépend pas de votre réponse. Elle aide l\'académie à connaître les moyens utilisés là où vous vivez.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.choisirJour' => 'Choisissez au moins un jour pour continuer.',
 			'recrutement.parcours.choisirHeure' => 'Choisissez au moins une heure de début pour continuer.',
 			'recrutement.parcours.choisirHeureJour' => ({required Object jour}) => 'Choisissez au moins une heure de début pour le ${jour}.',
@@ -60542,8 +60577,6 @@ extension on Traductions {
 			'recrutement.talents.tuile.enregistreClose' => 'Vos réponses sont enregistrées. Vous pouvez les retirer.',
 			'recrutement.talents.intro.texte' => 'L\'académie grandit. Elle aura besoin d\'aide pour s\'organiser, accompagner les familles, tenir ses comptes ou se faire connaître. Si vous savez faire autre chose, dites-le : nous vous contacterons d\'abord, avant de publier une annonce.',
 			'recrutement.talents.intro.facultatif.titre' => 'Facultatif',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.intro.facultatif.texte' => 'Cela ne change rien à votre candidature d\'enseignant.',
 			'recrutement.talents.intro.usage.titre' => 'Ce que nous en faisons',
 			'recrutement.talents.intro.usage.texte' => 'Vos réponses servent seulement à vous proposer une mission de l\'académie. La direction les lit, et elle seule.',
@@ -61047,6 +61080,8 @@ extension on Traductions {
 			'admin.candidatures.sansDonnees' => 'La liste des candidatures n\'a pas pu être chargée',
 			'admin.candidatures.accesRefuse' => 'Vous n\'avez pas accès aux candidatures.',
 			'admin.candidatures.genreInconnuTitre' => 'Les candidatures ne s\'affichent pas',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.genreInconnu' => 'Votre fiche ne dit pas de quel côté vous travaillez. Demandez à la direction de la compléter.',
 			'admin.candidatures.etats.gardee' => 'Gardée pour suivi',
 			'admin.candidatures.etats.invitee' => 'Invitée',
@@ -61056,8 +61091,6 @@ extension on Traductions {
 			'admin.candidatures.etats.entretienAPlanifier' => 'Entretien à planifier',
 			'admin.candidatures.etats.entretienPlanifie' => 'Entretien planifié',
 			'admin.candidatures.etats.decisionEnAttente' => 'Décision en attente',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.etats.refusee' => 'Refusée',
 			'admin.candidatures.etats.retiree' => 'Retirée',
 			'admin.candidatures.etats.enPause' => 'En pause',
@@ -61561,6 +61594,8 @@ extension on Traductions {
 			'admin.equipe.detail.mission' => 'Mission',
 			'admin.equipe.detail.personne' => 'Personne',
 			'admin.equipe.detail.perimetre' => 'Où elle agit',
+			_ => null,
+		} ?? switch (path) {
 			'admin.equipe.detail.periode' => 'Période',
 			'admin.equipe.detail.gestes' => 'Gestes',
 			'admin.equipe.detail.retiree' => ({required Object motif}) => 'Retirée : ${motif}',
@@ -61570,8 +61605,6 @@ extension on Traductions {
 			'admin.equipe.feuille.motifManquant' => 'Écrivez un motif.',
 			'admin.equipe.feuille.annuler' => 'Annuler',
 			'admin.equipe.feuille.mission.titre' => 'Nouvelle mission',
-			_ => null,
-		} ?? switch (path) {
 			'admin.equipe.feuille.mission.nom' => 'Nom de la mission',
 			'admin.equipe.feuille.mission.nomAide' => '80 signes au plus.',
 			'admin.equipe.feuille.mission.nomManquant' => 'Donnez un nom à la mission.',
@@ -62075,6 +62108,8 @@ extension on Traductions {
 			'admin.groupes.champMotif' => 'Motif',
 			'admin.groupes.motifRequis' => 'Un motif est requis, il s\'inscrit au journal d\'audit.',
 			'admin.groupes.ajouterEnvoyer' => 'Ajouter',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.ajouterErreur' => ({required Object message}) => 'L\'ajout n\'a pas abouti : ${message}',
 			'admin.groupes.retirerTitre' => ({required Object prenom, required Object deLibelle}) => 'Retirer ${prenom} ${deLibelle}',
 			'admin.groupes.retirerEnvoyer' => 'Retirer',
@@ -62084,8 +62119,6 @@ extension on Traductions {
 			'admin.groupes.modifierSeuilErreur' => ({required Object message}) => 'La modification n\'a pas abouti : ${message}',
 			'admin.groupes.refusDeplacement.enseignantIndisponible' => 'L\'horaire n\'est pas changé : le compte de l\'enseignant, sa pièce d\'identité, la langue du cours ou son genre renseigné ne permettent plus cette classe. Vérifiez sa fiche, puis pressez de nouveau.',
 			'admin.groupes.refusDeplacement.genreIncompatible' => 'L\'horaire n\'est pas changé : le genre de l\'enseignant ne correspond pas au public de la classe.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.refusDeplacement.plafond' => 'L\'horaire n\'est pas changé : l\'enseignant dépasserait son plafond d\'heures par semaine.',
 			'admin.groupes.refusDeplacement.nonDisponible' => 'L\'horaire n\'est pas changé : l\'enseignant n\'a pas déclaré toutes les heures de ce cours, de son début à sa fin. Choisissez un autre horaire.',
 			'admin.groupes.refusDeplacement.chevauchementClasse' => 'L\'horaire n\'est pas changé : l\'enseignant a déjà une classe ou un élève à ce moment. Choisissez un autre horaire.',
@@ -62589,6 +62622,8 @@ extension on Traductions {
 			'admin.regles.uniteSemaines' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} sem.', other: '${n} sem.', ), 
 			'admin.regles.uniteNombre' => ({required Object n}) => '${n}',
 			'admin.regles.classesParEnseignant' => 'Classes au plus par enseignant',
+			_ => null,
+		} ?? switch (path) {
 			'admin.regles.classesParEnseignantDetail' => 'Le nombre de classes qu\'un enseignant peut tenir en même temps. Une classe close et un remplacement ponctuel ne comptent pas. Une baisse ne retire aucune classe déjà tenue. Dans leur questionnaire, les candidats choisissent de 1 jusqu\'à ce nombre.',
 			'admin.regles.remplacementSection' => 'Quand l\'enseignant n\'a pas rejoint la salle',
 			'admin.regles.remplacementIntro' => 'Les minutes comptent depuis l\'heure du début de la séance. Chaque étape vient après la précédente.',
@@ -62598,8 +62633,6 @@ extension on Traductions {
 			'admin.regles.remplacementPerteDetail' => 'L\'enseignant est noté absent et ne peut plus rejoindre la séance de ce jour. Un enseignant qui s\'est proposé le remplace, et les familles sont prévenues.',
 			'admin.regles.remplacementObjectif' => 'Remplaçant dans la salle',
 			'admin.regles.remplacementObjectifDetail' => 'L\'objectif : le remplaçant a rejoint la salle.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.regles.remplacementBornesAvertissement' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour aller au-delà de ${max}, relevez d\'abord la perte de la séance.',
 			'admin.regles.remplacementBornesPerte' => ({required Object min, required Object max}) => 'Entre ${min} et ${max} après le début. Pour descendre sous ${min}, baissez d\'abord l\'avertissement. Pour aller au-delà de ${max}, relevez d\'abord l\'objectif.',
 			'admin.regles.remplacementBornesObjectif' => ({required Object min}) => 'Au moins ${min} après le début. Pour descendre sous ${min}, baissez d\'abord la perte de la séance.',
@@ -63103,6 +63136,8 @@ extension on Traductions {
 			'admin.comptes.roleTuteur' => 'Tuteur',
 			'admin.comptes.roleEleve' => 'Élève',
 			'admin.comptes.roleInconnu' => 'Rôle inconnu',
+			_ => null,
+		} ?? switch (path) {
 			'admin.comptes.pieceAucune' => 'Aucune pièce déposée',
 			'admin.comptes.pieceAVerifier' => 'À vérifier',
 			'admin.comptes.pieceValidee' => 'Validée',
@@ -63112,8 +63147,6 @@ extension on Traductions {
 			'admin.comptes.attendAujourdhui' => 'Aujourd\'hui',
 			'admin.comptes.attendUnJour' => '1 jour',
 			'admin.comptes.attenteUne' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Une personne attend une décision depuis ${jours} jour.', other: 'Une personne attend une décision depuis ${jours} jours.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'admin.comptes.attentePlusieurs' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(nombre, one: '${nombre} personne attend une décision.', other: '${nombre} personnes attendent une décision.', ), 
 			'admin.comptes.attendJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: '${jours} jour', other: '${jours} jours', ), 
 			'admin.comptes.recherche' => 'Rechercher un compte',
@@ -63617,6 +63650,8 @@ extension on Traductions {
 			'admin.finance.pol.erreurClassesMax' => ({required Object objectif}) => 'Le maximum est sous l\'objectif (${objectif}) : saisissez au moins l\'objectif.',
 			'admin.finance.pol.erreurMinimum' => ({required Object capacite}) => 'Le minimum dépasse la plus petite classe (${capacite}) : elle ne pourrait jamais ouvrir. Saisissez au plus cette capacité.',
 			'admin.finance.pol.erreurRemise' => ({required Object tarif}) => 'La remise dépasse le tarif (${tarif}) : la mensualité deviendrait négative. Saisissez au plus ce montant.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.parHeure' => ({required Object montant}) => '${montant} / h',
 			'admin.finance.pol.suffixeParHeure' => ({required Object symbole}) => '${symbole} / h',
 			'admin.finance.pol.suffixeRemise' => ({required Object symbole}) => '${symbole} de remise',
@@ -63626,8 +63661,6 @@ extension on Traductions {
 			'admin.finance.pol.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour', other: '${n} jours', ), 
 			'admin.finance.pol.uniteEleves' => 'élèves',
 			'admin.finance.pol.uniteSeances' => 'séances',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.uniteClasses' => 'classes',
 			'admin.finance.pol.uniteJours' => 'jours',
 			'admin.finance.pol.minutes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} minute', other: '${n} minutes', ), 
@@ -64131,6 +64164,8 @@ extension on Traductions {
 			'admin.pilotage.horairesTitre' => 'Horaires',
 			'admin.pilotage.horaire' => ({required Object jour, required Object heure, required Object ville}) => '${jour} · ${heure} · ${ville}',
 			'admin.pilotage.colonneHoraire' => 'Horaire',
+			_ => null,
+		} ?? switch (path) {
 			'admin.pilotage.colonnePublic' => 'Public',
 			'admin.pilotage.colonneClasses' => 'Classes',
 			'admin.pilotage.colonneRemplissage' => 'Remplissage',
@@ -64140,8 +64175,6 @@ extension on Traductions {
 			'admin.pilotage.colonneEtat' => 'À signaler',
 			'admin.pilotage.remplissage' => ({required Object taux, required Object effectif, required Object capacite}) => '${taux} % (${effectif} sur ${capacite})',
 			'admin.pilotage.remplissageInconnu' => 'Aucune place ouverte',
-			_ => null,
-		} ?? switch (path) {
 			'admin.pilotage.aucun' => 'Aucun',
 			'admin.pilotage.nombreEtGenres' => ({required Object n, required Object genres}) => '${n} (${genres})',
 			'admin.pilotage.genreHommes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} enseignant', other: '${n} enseignants', ), 
@@ -64645,6 +64678,8 @@ extension on Traductions {
 			'admin.bibliotheque.publication.criteres.source' => 'Source confirmée',
 			'admin.bibliotheque.publication.criteres.titulaire' => 'Titulaire du droit connu',
 			'admin.bibliotheque.publication.criteres.preuve' => 'Preuve d\'autorisation vérifiée',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.publication.criteres.usageApplication' => 'Usage dans l\'application permis',
 			'admin.bibliotheque.publication.criteres.usageClasse' => 'Affichage en classe permis',
 			'admin.bibliotheque.publication.criteres.usageTelechargement' => 'Téléchargement et lecture sans internet tranchés',
@@ -64654,8 +64689,6 @@ extension on Traductions {
 			'admin.bibliotheque.publication.criteres.langueNiveau' => 'Langue et niveau renseignés',
 			'admin.bibliotheque.publication.criteres.versionEmpreinte' => 'Version et empreinte figées',
 			'admin.bibliotheque.publication.explications.source' => 'Indiquez la source d\'origine dans la revue des droits.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.publication.explications.titulaire' => 'Indiquez le titulaire du droit, ou l\'origine institutionnelle.',
 			'admin.bibliotheque.publication.explications.preuve' => 'Déposez la preuve d\'autorisation de cette version.',
 			'admin.bibliotheque.publication.explications.usageApplication' => 'Autorisez l\'usage dans l\'application dans la revue des droits.',
@@ -65159,6 +65192,8 @@ extension on Traductions {
 			'compte.tuteur.pagePaiements.refusTitre' => 'Paiements tenus par le titulaire du foyer',
 			'compte.tuteur.pagePaiements.refusPhrase' => 'Seul le titulaire du foyer voit l\'historique des paiements.',
 			'compte.tuteur.pagePreferences.notifications' => 'Notifications',
+			_ => null,
+		} ?? switch (path) {
 			'compte.tuteur.pagePreferences.notificationsDetail' => 'Cet appareil et ce que vous recevez',
 			'compte.tuteur.pageAide.titre' => 'Aide et support',
 			'compte.tuteur.pageAide.indisponibleTitre' => 'Aide pas encore disponible',
@@ -65168,8 +65203,6 @@ extension on Traductions {
 			'compte.tuteur.pageAide.aucunCanal' => 'Aucun canal d\'aide n\'est publié pour le moment.',
 			'compte.tuteur.pageLegal.conditionsTuteur' => 'Conditions du tuteur',
 			'compte.tuteur.pageLegal.contratEnseignant' => 'Contrat enseignant',
-			_ => null,
-		} ?? switch (path) {
 			'compte.tuteur.pageLegal.accuseEnregistrement' => 'Accusé d\'enregistrement des cours',
 			'compte.tuteur.pageLegal.textes' => 'Conditions et confidentialité',
 			'historique.titre' => 'Historique',
@@ -65673,6 +65706,8 @@ extension on Traductions {
 			'classe.entree.demo.etats.changementHeure' => 'Changement d\'heure',
 			'classe.entree.demo.formeBouton' => 'Forme : bouton',
 			'classe.entree.demo.formeLigne' => 'Forme : ligne d\'état',
+			_ => null,
+		} ?? switch (path) {
 			'classe.entree.demo.lecteur' => ({required Object texte}) => 'Lecteur d\'écran : ${texte}',
 			'classe.entree.demo.annonce' => ({required Object texte}) => 'Annonce : ${texte}',
 			'classe.entree.demo.detail' => ({required Object texte}) => 'Détail : ${texte}',
@@ -65682,8 +65717,6 @@ extension on Traductions {
 			'classe.ressources' => 'Bibliothèque',
 			'classe.progression' => 'Progression',
 			'classe.observer' => 'Observer la séance',
-			_ => null,
-		} ?? switch (path) {
 			'classe.titre' => 'Classe',
 			'classe.historique' => 'Historique',
 			'classe.sousTitre' => ({required Object prenom, required Object enseignant}) => '${prenom} · ${enseignant}',
@@ -65910,7 +65943,6 @@ extension on Traductions {
 			'enseignant.photo.changer' => 'Changer la photo',
 			'enseignant.photo.alternatif' => 'Votre photo publique',
 			'enseignant.photo.succes' => 'La photo est enregistrée.',
-			'enseignant.photo.echec' => 'La photo n\'est pas confirmée. Touchez « Utiliser cette photo » de nouveau dans un instant.',
 			'enseignant.photo.enregistree' => 'Votre photo est enregistrée. Vous pouvez la remplacer à tout moment.',
 			'enseignant.photo.selectionEchec' => 'La photo n\'a pas pu être ouverte. Vérifiez l\'accès aux photos de l\'appareil, puis réessayez.',
 			'enseignant.photo.horsLigne' => 'La photo pourra être envoyée quand la connexion reviendra.',
@@ -66188,6 +66220,8 @@ extension on Traductions {
 			'enseignant.profil.plafond' => 'Plafond hebdomadaire',
 			'enseignant.profil.plafondDetail' => 'Fixé par l\'académie.',
 			'enseignant.profil.nonRenseigne' => 'Non renseigné',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.statutSection' => 'Statut du compte',
 			'enseignant.profil.statutValideDetail' => 'Vous pouvez enseigner et déclarer vos heures.',
 			'enseignant.profil.statutEnAttente' => 'Dossier en cours de vérification',
@@ -66196,8 +66230,6 @@ extension on Traductions {
 			'enseignant.profil.statutProvisoireDetail' => 'Vous enseignez déjà. Votre dossier reste à compléter, sans coupure automatique.',
 			'enseignant.profil.statutSuspendu' => 'Compte suspendu',
 			'enseignant.profil.statutSuspenduDetail' => 'Vous pouvez joindre l\'académie pour connaître la marche à suivre.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.profil.statutInconnu' => 'Statut non disponible',
 			'enseignant.profil.statutInconnuDetail' => 'Nous n\'avons pas pu lire votre statut.',
 			'enseignant.profil.statutDivergent' => 'Ce statut vient de changer. Rouvrez l\'application pour que votre accès suive.',
@@ -66702,6 +66734,8 @@ extension on Traductions {
 			'tc.groupe.carte.dureeLibelle' => 'Durée',
 			'tc.groupe.carte.rejoindre' => 'Rejoindre',
 			'tc.groupe.carte.entreeSePrepare' => 'Votre entrée se prépare. Réessayez dans un instant.',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.carte.entreeAttendReseau' => 'Vous pourrez entrer dès que le réseau revient.',
 			'tc.groupe.enseignant.sayyid' => 'Sayyid',
 			'tc.groupe.enseignant.sayyida' => 'Sayyida',
@@ -66710,8 +66744,6 @@ extension on Traductions {
 			'tc.groupe.cours.coursEtNiveau' => ({required Object cours, required Object niveau}) => '${cours} · ${niveau}',
 			'tc.groupe.temps.dansMinutes' => ({required Object minutes}) => 'Cours dans ${minutes} min',
 			'tc.groupe.temps.dansHeures' => ({required Object heures, required Object minutes}) => 'Cours dans ${heures} h ${minutes}',
-			_ => null,
-		} ?? switch (path) {
 			'tc.groupe.temps.demainA' => ({required Object heure}) => 'Cours demain à ${heure}',
 			'tc.groupe.temps.dansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Cours dans ${jours} jour', other: 'Cours dans ${jours} jours', ), 
 			'tc.groupe.temps.imminent' => 'Cours imminent',
@@ -67216,6 +67248,8 @@ extension on Traductions {
 			'tc.parcours.postCours.reprise' => 'Reprise proposée',
 			'tc.parcours.postCours.repriseInconnue' => 'Aucune position de reprise connue pour cette séance.',
 			'tc.parcours.postCours.travail' => 'Travail proposé',
+			_ => null,
+		} ?? switch (path) {
 			'tc.parcours.postCours.travailAucun' => 'Aucun travail proposé pour l\'instant.',
 			'tc.parcours.postCours.valider' => 'Valider',
 			'tc.parcours.postCours.enFile' => 'Enregistré. Il partira dès le retour du réseau.',
@@ -67224,8 +67258,6 @@ extension on Traductions {
 			'adulte.nav.accueil' => 'Accueil',
 			'adulte.nav.maClasse' => 'Ma classe',
 			'adulte.nav.coran' => 'Coran',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.accueil.salutation' => ({required Object prenom}) => 'Bonjour ${prenom}',
 			'adulte.accueil.prochaineSeance' => 'Prochaine séance',
 			'adulte.accueil.parcours' => 'Mon parcours',
@@ -67730,6 +67762,8 @@ extension on Traductions {
 			'suiviFamille.etapes.classeCreee' => 'Classe créée',
 			'suiviFamille.etapes.enseignantAffecte' => 'Enseignant affecté',
 			'suiviFamille.etapes.eleveIntegre' => 'Élève intégré',
+			_ => null,
+		} ?? switch (path) {
 			'suiviFamille.etapes.premiereSeance' => 'Première séance',
 			'suiviFamille.etats.fait' => 'Fait',
 			'suiviFamille.etats.enCours' => 'En cours',
@@ -67738,8 +67772,6 @@ extension on Traductions {
 			'suiviFamille.motif.aucunEnseignantLibre' => 'Aucun enseignant n\'est libre sur ce créneau pour le moment. Vous serez prévenu dès que ce changera.',
 			'suiviFamille.motif.inconnu' => 'Votre demande est en attente. Vous serez prévenu dès qu\'elle avance.',
 			'suiviFamille.intervalle.moinsHeure' => 'Moins d\'une heure plus tard',
-			_ => null,
-		} ?? switch (path) {
 			'suiviFamille.intervalle.heures' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} heure plus tard', other: '${n} heures plus tard', ), 
 			'suiviFamille.intervalle.jours' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} jour plus tard', other: '${n} jours plus tard', ), 
 			'suiviFamille.notification.enAttente' => ({required Object dePrenom}) => 'Demande ${dePrenom} : en liste d\'attente',
@@ -68244,6 +68276,8 @@ extension on Traductions {
 			'com.messages.images.refus.mineurRefuse' => 'Les images ne sont pas ouvertes aux comptes élèves de moins de 18 ans. Écrivez votre message sans image.',
 			'com.messages.images.refus.limiteHoraire' => 'Vous avez envoyé 20 images dans l\'heure : c\'est la limite. Réessayez dans une heure.',
 			'com.messages.images.refus.dejaUneImage' => 'Ce message a déjà reçu son image, ou son dépôt a été abandonné. Écrivez un nouveau message pour joindre une image.',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.images.refus.depotIndisponible' => 'Le dépôt de cette image n\'est plus valable (trop ancien, ou déjà terminé). Écrivez un nouveau message pour joindre l\'image.',
 			'com.messages.images.refus.contenuDifferent' => 'Ce fichier n\'est pas une image du type annoncé. Choisissez une vraie photo.',
 			'com.messages.images.refus.objetIntrouvable' => 'L\'image n\'est pas arrivée entière sur le serveur. Réessayez.',
@@ -68252,8 +68286,6 @@ extension on Traductions {
 			'com.messages.images.refus.depotImpossible' => 'L\'image n\'est pas confirmée : c\'est une panne du serveur, pas de votre faute. Réessayez dans un instant.',
 			'com.messages.images.refus.envoiStockage' => 'L\'envoi de l\'image n\'a pas abouti. Réessayez plus tard.',
 			'com.messages.images.refus.reseau' => 'Il est possible que l\'image ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'com.messages.images.refus.imageTropGrosse' => 'Cette photo pèse plus de 15 Mo, ou reste trop lourde après réduction. Choisissez-en une plus légère.',
 			'com.messages.images.refus.imageIllisible' => 'Cette photo ne peut pas être lue. Choisissez une autre photo.',
 			'com.messages.demo.choisirRole' => 'Choisissez le point de vue de cette démonstration.',
@@ -68758,6 +68790,8 @@ extension on Traductions {
 			'com.annonces.simple.champTitre' => 'Titre (facultatif)',
 			'com.annonces.simple.champTexte' => 'Message',
 			'com.annonces.simple.options' => 'Options',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.simple.programmer' => 'Programmer l\'envoi',
 			'com.annonces.simple.programmerDetail' => 'Choisissez un moment : l\'annonce l\'attend.',
 			'com.annonces.simple.courriel' => 'Envoyer aussi par courriel',
@@ -68766,8 +68800,6 @@ extension on Traductions {
 			'com.annonces.simple.courrielJours' => ({required Object adresses, required Object parJour, required Object jours}) => 'Courriels à envoyer : ${adresses}. Au plus ${parJour} partent par jour : avec ceux qui attendent déjà, l\'envoi prendra environ ${jours} jours.',
 			'com.annonces.simple.courrielAucun' => 'Aucune adresse de courriel joignable dans ce public.',
 			'com.annonces.simple.envoyerA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Envoyer à ${n} personne', other: 'Envoyer à ${n} personnes', ), 
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.simple.programmerPour' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Programmer pour ${n} personne', other: 'Programmer pour ${n} personnes', ), 
 			'com.annonces.simple.publierDans' => ({required Object cible}) => 'Publier dans ${cible}',
 			'com.annonces.simple.envoyer' => 'Envoyer l\'annonce',
@@ -69272,6 +69304,8 @@ extension on Traductions {
 			'comptable.paiements.filtres.toutesClasses' => 'Toutes les classes',
 			'comptable.paiements.filtres.periode' => 'Période',
 			'comptable.paiements.filtres.toutesPeriodes' => 'Toutes les périodes',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.filtres.effacer' => 'Effacer les filtres',
 			'comptable.paiements.colonnes.beneficiaire' => 'Bénéficiaire',
 			'comptable.paiements.colonnes.type' => 'Type',
@@ -69280,8 +69314,6 @@ extension on Traductions {
 			'comptable.paiements.colonnes.destination' => 'Destination',
 			'comptable.paiements.colonnes.echeance' => 'Échéance',
 			'comptable.paiements.colonnes.statut' => 'Statut',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.paiements.colonnes.action' => 'Action',
 			'comptable.paiements.types.enseignant' => 'Enseignant',
 			'comptable.paiements.types.contractuel' => 'Contractuel',
@@ -69786,6 +69818,8 @@ extension on Traductions {
 			'comptable.validation.natures.paiementRecu' => 'Paiement reçu d\'une famille',
 			'comptable.validation.demandePar' => ({required Object demandeur, required Object date}) => 'Demandée par ${demandeur} le ${date}',
 			'comptable.validation.valideePar' => ({required Object decideur, required Object date}) => 'Validée par ${decideur} le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.refuseePar' => ({required Object decideur, required Object date}) => 'Refusée par ${decideur} le ${date}',
 			'comptable.validation.motif' => ({required Object motif}) => 'Motif : ${motif}',
 			'comptable.validation.ouvrir' => ({required Object objet}) => 'Voir la demande : ${objet}',
@@ -69794,8 +69828,6 @@ extension on Traductions {
 			'comptable.validation.detail.titre' => 'Demande de validation',
 			'comptable.validation.detail.nature' => 'Nature',
 			'comptable.validation.detail.objet' => 'Objet',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.validation.detail.demandeur' => 'Demandée par',
 			'comptable.validation.detail.date' => 'Date de la demande',
 			'comptable.validation.detail.raison' => 'Raison',
@@ -70300,6 +70332,8 @@ extension on Traductions {
 			'juridique.confidentialite.s9.titre' => '9. Sécurité',
 			'juridique.confidentialite.s9.blocs.0' => 'Les règles d\'accès sont appliquées par le serveur. Les pièces d\'identité sont dans un espace privé, séparé des photos. Aucune protection n\'est absolue : si vous voyez un problème, écrivez-nous.',
 			'juridique.confidentialite.s10.titre' => '10. Les enfants',
+			_ => null,
+		} ?? switch (path) {
 			'juridique.confidentialite.s10.blocs.0' => 'Les informations d\'un enfant sont données et gérées par son tuteur. Voir le texte Protection des enfants.',
 			'juridique.cookies.titre' => 'Cookies',
 			'juridique.cookies.resume' => 'Ce que l\'application et le site gardent sur votre appareil.',
@@ -70308,8 +70342,6 @@ extension on Traductions {
 			'juridique.cookies.s1.blocs.0' => 'Un cookie ou une donnée locale est un petit élément gardé par votre navigateur ou votre appareil. Il aide un service à vous reconnaître ou à retenir un réglage.',
 			'juridique.cookies.s2.titre' => '2. Ce que l\'application garde',
 			'juridique.cookies.s2.blocs.0' => '- Votre session de connexion.',
-			_ => null,
-		} ?? switch (path) {
 			'juridique.cookies.s2.blocs.1' => '- Vos préférences d\'affichage, comme la langue et le thème.',
 			'juridique.cookies.s2.blocs.2' => '- Un cache limité, que vous pouvez effacer.',
 			'juridique.cookies.s2.blocs.3' => '- Sur l\'appareil d\'un élève, son code personnel, qui ne quitte jamais l\'appareil.',
@@ -70814,6 +70846,8 @@ extension on Traductions {
 			'cahierC3.corriger' => 'Corriger l\'endroit où la classe s\'est arrêtée',
 			'cahierC3.positionPage' => ({required Object page}) => 'Page ${page} du Mushaf',
 			'cahierC3.renforcerTitre' => 'Points à renforcer',
+			_ => null,
+		} ?? switch (path) {
 			'cahierC3.renforcerAide' => 'Touchez seulement l\'objectif de l\'étape que cet élève doit renforcer. Le reste vaut « comme prévu ».',
 			'cahierC3.pretBilan' => 'Prêt pour le petit bilan',
 			'cahierC3.pretBilanDetail' => 'L\'administration planifie le petit bilan ; rien n\'est automatique.',
@@ -70822,8 +70856,6 @@ extension on Traductions {
 			'cahierSourates.dejaValidees' => ({required Object n, required Object total}) => 'Sourates des bases déjà validées : ${n} sur ${total}',
 			'cahierSourates.toutes' => 'Toutes les sourates des bases sont validées.',
 			'cahierSourates.retirerTitre' => 'Cochée par erreur ?',
-			_ => null,
-		} ?? switch (path) {
 			'cahierSourates.retirerAide' => 'Une sourate que vous avez validée se retire pendant 24 heures.',
 			'cahierSourates.retirer' => 'Retirer',
 			'cahierSourates.retirerLibelle' => ({required Object nom}) => 'Retirer ${nom} des sourates validées',
@@ -71328,6 +71360,8 @@ extension on Traductions {
 			'apprendre.bibliotheque.coran.edition' => 'Édition de Médine',
 			'apprendre.bibliotheque.carte.document' => ({required Object titre, required Object type}) => '${titre}, ${type}',
 			'apprendre.bibliotheque.carte.lien' => ({required Object titre}) => '${titre}, lien externe, s\'ouvre hors de l\'application',
+			_ => null,
+		} ?? switch (path) {
 			'apprendre.programme.vide' => 'L\'étape apparaîtra dès l\'entrée dans une classe',
 			'apprendre.programme.sansEtape' => 'Votre programme ne s\'affiche pas encore : aucune étape n\'est publiée pour vous. Elle apparaîtra ici, avec son parcours et ses objectifs, dès que la direction aura placé votre classe. Pour en savoir plus, contactez la direction.',
 			'apprendre.programme.titreProgramme' => 'Le programme de l\'académie',
@@ -71336,8 +71370,6 @@ extension on Traductions {
 			'apprendre.programme.datesEcoleVide' => 'Les dates de l\'académie seront affichées ici',
 			'apprendre.programme.genre.evaluation' => 'Évaluation',
 			'apprendre.programme.genre.fermeture' => 'Fermeture de l\'académie',
-			_ => null,
-		} ?? switch (path) {
 			'apprendre.programme.genre.rencontre' => 'Rencontre de récitation',
 			'apprendre.livret.vide' => 'Vos résultats, vos bilans et vos attestations apparaîtront ici',
 			'apprendre.livret.videTu' => 'Tes résultats, tes bilans et tes attestations apparaîtront ici',
