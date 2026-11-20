@@ -29,6 +29,7 @@ import 'package:rewayah_academy/features/talents/talents_page.dart';
 import 'package:rewayah_academy/features/talents/tuile_talents.dart';
 
 import '../../fixtures/candidature/faux_autres_competences.dart';
+import '../../support/destination_nav.dart';
 import '../../support/garde_interface.dart';
 import '../../support/harnais.dart';
 import 'hote_talents.dart';
@@ -64,7 +65,9 @@ Future<void> _portail(
   ];
   await tester.pumpWidget(
     hoteRoutant(
-      depart: Routes.attente,
+      // PE-B4 (20/11/2026) : « Vos autres talents » vit dans l'onglet
+      // Academie de l'accueil du candidat.
+      depart: '${Routes.attente}?onglet=academie',
       routes: routesTalents(),
       surcharges: surcharges,
       echelle: echelle,
@@ -214,7 +217,9 @@ void main() {
           ..erreurLectureDurable = Exception('panne'),
       );
       expect(_tuile, findsNothing);
-      expect(_texte(t.attente.titreDossier), findsOneWidget);
+      // PE-B4 : l'onglet Academie reste lisible sans la tuile.
+      expect(_texte(t.recrutement.accueil.academie.titre), findsOneWidget);
+      expect(find.byType(AttentePage), findsOneWidget);
     });
 
     testWidgets('capacite indisponible : pas de tuile', (
@@ -286,6 +291,9 @@ void main() {
       WidgetTester tester,
     ) async {
       await _portail(tester, port: FauxAutresCompetences());
+      // PE-B4 : la barre du bas de l'accueil peut couvrir la tuile.
+      await tester.ensureVisible(_tuile);
+      await tester.pump();
       await tester.tap(_tuile);
       await tester.pumpAndSettle();
       expect(find.byType(TalentsPage), findsOneWidget);
@@ -312,8 +320,14 @@ void main() {
     testWidgets('une candidature en examen : le portail garde son etat et son '
         'unique action', (WidgetTester tester) async {
       await _portail(tester, port: FauxAutresCompetences());
-      expect(_texte(t.recrutement.portail.enExamenTitre), findsOneWidget);
       expect(find.byType(AttentePage), findsOneWidget);
+      // PE-B4 : l'etat et son unique action sont sur l'onglet Dossier, que la
+      // tuile (onglet Academie) ne touche pas.
+      await tester.tap(destinationNav(t.recrutement.accueil.onglets.dossier));
+      await tester.pumpAndSettle();
+      expect(_texte(t.recrutement.portail.enExamenTitre), findsOneWidget);
+      expect(_tuile, findsNothing);
+      verifierUnSeulBoutonPlein(tester);
     });
   });
 }

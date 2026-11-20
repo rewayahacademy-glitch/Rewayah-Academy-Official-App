@@ -974,6 +974,7 @@ class _Traductions$recrutement$en extends Traductions$recrutement$fr {
 	@override late final _Traductions$recrutement$portail$en portail = _Traductions$recrutement$portail$en._(_root);
 	@override late final _Traductions$recrutement$entretien$en entretien = _Traductions$recrutement$entretien$en._(_root);
 	@override late final _Traductions$recrutement$partage$en partage = _Traductions$recrutement$partage$en._(_root);
+	@override late final _Traductions$recrutement$accueil$en accueil = _Traductions$recrutement$accueil$en._(_root);
 	@override late final _Traductions$recrutement$retrait$en retrait = _Traductions$recrutement$retrait$en._(_root);
 	@override late final _Traductions$recrutement$questionnaire$en questionnaire = _Traductions$recrutement$questionnaire$en._(_root);
 	@override late final _Traductions$recrutement$parcours$en parcours = _Traductions$recrutement$parcours$en._(_root);
@@ -5327,6 +5328,26 @@ class _Traductions$recrutement$partage$en extends Traductions$recrutement$partag
 	@override late final _Traductions$recrutement$partage$fait$en fait = _Traductions$recrutement$partage$fait$en._(_root);
 	@override late final _Traductions$recrutement$partage$echec$en echec = _Traductions$recrutement$partage$echec$en._(_root);
 	@override String get nonOuvert => 'The card to share is not available yet. Come back to this page later.';
+}
+
+// Path: recrutement.accueil
+class _Traductions$recrutement$accueil$en extends Traductions$recrutement$accueil$fr {
+	_Traductions$recrutement$accueil$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override late final _Traductions$recrutement$accueil$onglets$en onglets = _Traductions$recrutement$accueil$onglets$en._(_root);
+	@override late final _Traductions$recrutement$accueil$etapes$en etapes = _Traductions$recrutement$accueil$etapes$en._(_root);
+	@override late final _Traductions$recrutement$accueil$aFaire$en aFaire = _Traductions$recrutement$accueil$aFaire$en._(_root);
+	@override late final _Traductions$recrutement$accueil$lignes$en lignes = _Traductions$recrutement$accueil$lignes$en._(_root);
+	@override late final _Traductions$recrutement$accueil$praxis$en praxis = _Traductions$recrutement$accueil$praxis$en._(_root);
+	@override late final _Traductions$recrutement$accueil$annonce$en annonce = _Traductions$recrutement$accueil$annonce$en._(_root);
+	@override late final _Traductions$recrutement$accueil$etat$en etat = _Traductions$recrutement$accueil$etat$en._(_root);
+	@override late final _Traductions$recrutement$accueil$messages$en messages = _Traductions$recrutement$accueil$messages$en._(_root);
+	@override late final _Traductions$recrutement$accueil$academie$en academie = _Traductions$recrutement$accueil$academie$en._(_root);
+	@override late final _Traductions$recrutement$accueil$retrait$en retrait = _Traductions$recrutement$accueil$retrait$en._(_root);
+	@override late final _Traductions$recrutement$accueil$reprise$en reprise = _Traductions$recrutement$accueil$reprise$en._(_root);
 }
 
 // Path: recrutement.retrait
@@ -14328,6 +14349,194 @@ class _Traductions$recrutement$partage$echec$en extends Traductions$recrutement$
 	@override String get enregistrement => 'Saving the image is not confirmed. Try again, or copy the link.';
 	@override String get copie => 'The link could not be copied. Select it on the page to copy it by hand.';
 	@override String get carte => 'The card could not be prepared. Try again in a moment.';
+}
+
+// Path: recrutement.accueil.onglets
+class _Traductions$recrutement$accueil$onglets$en extends Traductions$recrutement$accueil$onglets$fr {
+	_Traductions$recrutement$accueil$onglets$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get dossier => 'File';
+	@override String get messages => 'Messages';
+	@override String get academie => 'Academy';
+}
+
+// Path: recrutement.accueil.etapes
+class _Traductions$recrutement$accueil$etapes$en extends Traductions$recrutement$accueil$etapes$fr {
+	_Traductions$recrutement$accueil$etapes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String position({required Object n, required Object total}) => 'Step ${n} of ${total}';
+	@override String get faite => 'done';
+	@override String get enCours => 'in progress';
+	@override String get aVenir => 'to come';
+	@override String lecture({required Object position, required Object nom, required Object etat}) => '${position}, ${nom}, ${etat}';
+	@override String get detail1 => 'You send your answers and your documents. The academy reads them.';
+	@override String get detail2 => 'A video interview with the academy, at the time you choose.';
+	@override String get detail3 => 'Your teacher space opens.';
+	@override String get ensuiteACompleter => 'Next: the academy reads your application.';
+	@override String get ensuiteEnExamen => 'Next: if your application is selected, we get to know each other in an interview.';
+	@override String get ensuiteConnaissance => 'Next: after the interview, the academy gives you its answer here.';
+	@override String get ensuiteEquipe => 'Next: your teacher space opens.';
+}
+
+// Path: recrutement.accueil.aFaire
+class _Traductions$recrutement$accueil$aFaire$en extends Traductions$recrutement$accueil$aFaire$fr {
+	_Traductions$recrutement$accueil$aFaire$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'To do now';
+	@override String get rienTitre => 'Nothing to do for now';
+	@override String get rien => 'You have nothing to do. We will write to you here as soon as there is news.';
+	@override String get majorite => 'First say whether you are 18 or older, in the card above.';
+	@override String get cadre => 'Read and accept the religious and teaching framework.';
+	@override String get accords => 'Read and accept the contract and our agreements.';
+	@override String get piece => 'Upload your identity document.';
+	@override String get reponses => 'Answer the questions, then send your application.';
+	@override String get entretien => 'Choose the time of your interview.';
+	@override String get corriger => 'Redo the item the academy asks you to correct.';
+}
+
+// Path: recrutement.accueil.lignes
+class _Traductions$recrutement$accueil$lignes$en extends Traductions$recrutement$accueil$lignes$fr {
+	_Traductions$recrutement$accueil$lignes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Your file, item by item';
+	@override String afficher({required Object element}) => 'Show details: ${element}';
+	@override String masquer({required Object element}) => 'Hide details: ${element}';
+	@override String get cadreDetail => 'The framework says what the academy teaches and how. You read it in full, then you accept it.';
+	@override String get accordsDetail => 'The teacher contract, the notice about quality visits and the code of conduct. You read and accept them on a single page.';
+	@override String get pieceDetail => 'A clear photo of your passport or identity card, still valid. Example: the page with your photo, whole and without glare.';
+	@override String get photoDetail => 'A photo of you, facing the camera. It introduces you to families, only with your consent.';
+	@override String get reponsesDetail => 'Your languages, your recitation, your availability and your payout. You can save and come back later.';
+}
+
+// Path: recrutement.accueil.praxis
+class _Traductions$recrutement$accueil$praxis$en extends Traductions$recrutement$accueil$praxis$fr {
+	_Traductions$recrutement$accueil$praxis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pieceRefusee => 'Your identity document was not accepted. Please upload a new one.';
+	@override String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} item is still to be completed in your file.',
+		other: '${n} items are still to be completed in your file.',
+	);
+}
+
+// Path: recrutement.accueil.annonce
+class _Traductions$recrutement$accueil$annonce$en extends Traductions$recrutement$accueil$annonce$fr {
+	_Traductions$recrutement$accueil$annonce$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String ligne({required Object titre}) => 'New: ${titre}';
+	@override String ranger({required Object titre}) => 'Put away the announcement: ${titre}';
+	@override String get rangee => 'Announcement put away in Messages, Announcements section.';
+}
+
+// Path: recrutement.accueil.etat
+class _Traductions$recrutement$accueil$etat$en extends Traductions$recrutement$accueil$etat$fr {
+	_Traductions$recrutement$accueil$etat$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get perime => 'Your file could not be updated. What you see dates from your last reading. Try again in a moment.';
+	@override String get horsLigne => 'You are offline. What you see dates from your last reading; try again once the connection is back.';
+}
+
+// Path: recrutement.accueil.messages
+class _Traductions$recrutement$accueil$messages$en extends Traductions$recrutement$accueil$messages$fr {
+	_Traductions$recrutement$accueil$messages$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'Write to the academy: it answers you here.';
+	@override String get vide => 'Messaging will open here as soon as your application is recorded.';
+	@override late final _Traductions$recrutement$accueil$messages$sections$en sections = _Traductions$recrutement$accueil$messages$sections$en._(_root);
+	@override String nonLus({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: '${n} unread message',
+		other: '${n} unread messages',
+	);
+	@override late final _Traductions$recrutement$accueil$messages$annonces$en annonces = _Traductions$recrutement$accueil$messages$annonces$en._(_root);
+	@override late final _Traductions$recrutement$accueil$messages$savoir$en savoir = _Traductions$recrutement$accueil$messages$savoir$en._(_root);
+}
+
+// Path: recrutement.accueil.academie
+class _Traductions$recrutement$accueil$academie$en extends Traductions$recrutement$accueil$academie$fr {
+	_Traductions$recrutement$accueil$academie$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'The academy';
+	@override String get annoncesVide => 'No announcement for now. The academy\'s announcements will appear here.';
+	@override String get savoirTitre => 'What you need to know';
+	@override String get remuneration => 'A teacher\'s pay';
+	@override String get cours => 'How lessons run';
+	@override String get entretiens => 'How interviews are organised';
+	@override String get bientot => 'Will appear here when the management makes it public.';
+	@override String get reglages => 'Settings';
+	@override String get reglagesLegende => 'Language, payout, withdrawing the application';
+}
+
+// Path: recrutement.accueil.retrait
+class _Traductions$recrutement$accueil$retrait$en extends Traductions$recrutement$accueil$retrait$fr {
+	_Traductions$recrutement$accueil$retrait$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get arret => 'The academy will stop reviewing your file.';
+	@override String get entretien => 'Your interview will be cancelled. If you resume your application, you will choose a new one.';
+	@override String get rienEfface => 'Your answers and your documents will stay recorded.';
+	@override String get pause => 'Your file is on pause. If you withdraw it now, you will not be able to resume it yourself: you will have to write to the academy, which alone will be able to reopen it.';
+	@override String reprise({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'You will be able to resume it yourself for ${n} day, from the File tab.',
+		other: 'You will be able to resume it yourself for ${n} days, from the File tab.',
+	);
+	@override String get apres => 'After that, only the academy will be able to reopen it.';
+	@override String get garder => 'No, I continue';
+	@override String get confirmer => 'Yes, withdraw my application';
+	@override String fait({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n,
+		one: 'Application withdrawn. You have ${n} day to resume it.',
+		other: 'Application withdrawn. You have ${n} days to resume it.',
+	);
+	@override String get faitSansDelai => 'Application withdrawn.';
+}
+
+// Path: recrutement.accueil.reprise
+class _Traductions$recrutement$accueil$reprise$en extends Traductions$recrutement$accueil$reprise$fr {
+	_Traductions$recrutement$accueil$reprise$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String possible({required Object date, required Object heure}) => 'You withdrew your application. You can resume it yourself until ${date} at ${heure}. Your answers and your documents are still recorded.';
+	@override String get bouton => 'Resume my application';
+	@override String get faite => 'Your application is resumed. Your answers and your documents are still recorded.';
+	@override String get delaiDepasse => 'The time to resume it yourself has passed. Only the academy can reopen it: write to it from the Messages tab.';
+	@override String get enPause => 'Your file was on pause when you withdrew it: you cannot resume it yourself. Only the academy can reopen it: write to it from the Messages tab.';
+	@override String get origineInconnue => 'Your application is withdrawn. Write to us from the Messages tab to resume it.';
+	@override String get parDirection => 'This withdrawal was recorded by the academy. Only the academy can reopen your application: write to it from the Messages tab.';
+	@override String get controles => 'An item of your file changed since your withdrawal. Only the academy can reopen your application: write to it from the Messages tab.';
+	@override String get echec => 'The resumption did not go through. Nothing changed: try again in a moment.';
+	@override String get incertain => 'Your resumption may not have reached Rewayah. Try again: it will not be recorded twice.';
+	@override String get horsLigne => 'You can resume once the connection is back.';
+	@override String get conflit => 'Your application changed since this page was opened. Read it again, then retry.';
 }
 
 // Path: recrutement.parcours.presentation
@@ -24137,6 +24346,40 @@ class _Traductions$recrutement$dossier3$synthese$ageValeurs$en extends Traductio
 	@override String get nonAttestee => 'Age not confirmed yet';
 }
 
+// Path: recrutement.accueil.messages.sections
+class _Traductions$recrutement$accueil$messages$sections$en extends Traductions$recrutement$accueil$messages$sections$fr {
+	_Traductions$recrutement$accueil$messages$sections$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get libelle => 'Message sections';
+	@override String get messages => 'Messages';
+	@override String get annonces => 'Announcements';
+	@override String get savoir => 'Good to know';
+}
+
+// Path: recrutement.accueil.messages.annonces
+class _Traductions$recrutement$accueil$messages$annonces$en extends Traductions$recrutement$accueil$messages$annonces$fr {
+	_Traductions$recrutement$accueil$messages$annonces$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String lire({required Object titre}) => 'Read the announcement: ${titre}';
+	@override String get vide => 'No announcement for now. The management\'s announcements will appear here.';
+}
+
+// Path: recrutement.accueil.messages.savoir
+class _Traductions$recrutement$accueil$messages$savoir$en extends Traductions$recrutement$accueil$messages$savoir$fr {
+	_Traductions$recrutement$accueil$messages$savoir$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get intro => 'Answers to candidates\' questions, once the management publishes them.';
+}
+
 // Path: recrutement.parcours.presentation.p1
 class _Traductions$recrutement$parcours$presentation$p1$en extends Traductions$recrutement$parcours$presentation$p1$fr {
 	_Traductions$recrutement$parcours$presentation$p1$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -31305,6 +31548,89 @@ extension on TraductionsEn {
 			'recrutement.partage.echec.copie' => 'The link could not be copied. Select it on the page to copy it by hand.',
 			'recrutement.partage.echec.carte' => 'The card could not be prepared. Try again in a moment.',
 			'recrutement.partage.nonOuvert' => 'The card to share is not available yet. Come back to this page later.',
+			'recrutement.accueil.onglets.dossier' => 'File',
+			'recrutement.accueil.onglets.messages' => 'Messages',
+			'recrutement.accueil.onglets.academie' => 'Academy',
+			'recrutement.accueil.etapes.position' => ({required Object n, required Object total}) => 'Step ${n} of ${total}',
+			'recrutement.accueil.etapes.faite' => 'done',
+			'recrutement.accueil.etapes.enCours' => 'in progress',
+			'recrutement.accueil.etapes.aVenir' => 'to come',
+			'recrutement.accueil.etapes.lecture' => ({required Object position, required Object nom, required Object etat}) => '${position}, ${nom}, ${etat}',
+			'recrutement.accueil.etapes.detail1' => 'You send your answers and your documents. The academy reads them.',
+			'recrutement.accueil.etapes.detail2' => 'A video interview with the academy, at the time you choose.',
+			'recrutement.accueil.etapes.detail3' => 'Your teacher space opens.',
+			'recrutement.accueil.etapes.ensuiteACompleter' => 'Next: the academy reads your application.',
+			'recrutement.accueil.etapes.ensuiteEnExamen' => 'Next: if your application is selected, we get to know each other in an interview.',
+			'recrutement.accueil.etapes.ensuiteConnaissance' => 'Next: after the interview, the academy gives you its answer here.',
+			'recrutement.accueil.etapes.ensuiteEquipe' => 'Next: your teacher space opens.',
+			'recrutement.accueil.aFaire.titre' => 'To do now',
+			_ => null,
+		} ?? switch (path) {
+			'recrutement.accueil.aFaire.rienTitre' => 'Nothing to do for now',
+			'recrutement.accueil.aFaire.rien' => 'You have nothing to do. We will write to you here as soon as there is news.',
+			'recrutement.accueil.aFaire.majorite' => 'First say whether you are 18 or older, in the card above.',
+			'recrutement.accueil.aFaire.cadre' => 'Read and accept the religious and teaching framework.',
+			'recrutement.accueil.aFaire.accords' => 'Read and accept the contract and our agreements.',
+			'recrutement.accueil.aFaire.piece' => 'Upload your identity document.',
+			'recrutement.accueil.aFaire.reponses' => 'Answer the questions, then send your application.',
+			'recrutement.accueil.aFaire.entretien' => 'Choose the time of your interview.',
+			'recrutement.accueil.aFaire.corriger' => 'Redo the item the academy asks you to correct.',
+			'recrutement.accueil.lignes.titre' => 'Your file, item by item',
+			'recrutement.accueil.lignes.afficher' => ({required Object element}) => 'Show details: ${element}',
+			'recrutement.accueil.lignes.masquer' => ({required Object element}) => 'Hide details: ${element}',
+			'recrutement.accueil.lignes.cadreDetail' => 'The framework says what the academy teaches and how. You read it in full, then you accept it.',
+			'recrutement.accueil.lignes.accordsDetail' => 'The teacher contract, the notice about quality visits and the code of conduct. You read and accept them on a single page.',
+			'recrutement.accueil.lignes.pieceDetail' => 'A clear photo of your passport or identity card, still valid. Example: the page with your photo, whole and without glare.',
+			'recrutement.accueil.lignes.photoDetail' => 'A photo of you, facing the camera. It introduces you to families, only with your consent.',
+			'recrutement.accueil.lignes.reponsesDetail' => 'Your languages, your recitation, your availability and your payout. You can save and come back later.',
+			'recrutement.accueil.praxis.pieceRefusee' => 'Your identity document was not accepted. Please upload a new one.',
+			'recrutement.accueil.praxis.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} item is still to be completed in your file.', other: '${n} items are still to be completed in your file.', ), 
+			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'New: ${titre}',
+			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'Put away the announcement: ${titre}',
+			'recrutement.accueil.annonce.rangee' => 'Announcement put away in Messages, Announcements section.',
+			'recrutement.accueil.etat.perime' => 'Your file could not be updated. What you see dates from your last reading. Try again in a moment.',
+			'recrutement.accueil.etat.horsLigne' => 'You are offline. What you see dates from your last reading; try again once the connection is back.',
+			'recrutement.accueil.messages.intro' => 'Write to the academy: it answers you here.',
+			'recrutement.accueil.messages.vide' => 'Messaging will open here as soon as your application is recorded.',
+			'recrutement.accueil.messages.sections.libelle' => 'Message sections',
+			'recrutement.accueil.messages.sections.messages' => 'Messages',
+			'recrutement.accueil.messages.sections.annonces' => 'Announcements',
+			'recrutement.accueil.messages.sections.savoir' => 'Good to know',
+			'recrutement.accueil.messages.nonLus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} unread message', other: '${n} unread messages', ), 
+			'recrutement.accueil.messages.annonces.lire' => ({required Object titre}) => 'Read the announcement: ${titre}',
+			'recrutement.accueil.messages.annonces.vide' => 'No announcement for now. The management\'s announcements will appear here.',
+			'recrutement.accueil.messages.savoir.intro' => 'Answers to candidates\' questions, once the management publishes them.',
+			'recrutement.accueil.academie.titre' => 'The academy',
+			'recrutement.accueil.academie.annoncesVide' => 'No announcement for now. The academy\'s announcements will appear here.',
+			'recrutement.accueil.academie.savoirTitre' => 'What you need to know',
+			'recrutement.accueil.academie.remuneration' => 'A teacher\'s pay',
+			'recrutement.accueil.academie.cours' => 'How lessons run',
+			'recrutement.accueil.academie.entretiens' => 'How interviews are organised',
+			'recrutement.accueil.academie.bientot' => 'Will appear here when the management makes it public.',
+			'recrutement.accueil.academie.reglages' => 'Settings',
+			'recrutement.accueil.academie.reglagesLegende' => 'Language, payout, withdrawing the application',
+			'recrutement.accueil.retrait.arret' => 'The academy will stop reviewing your file.',
+			'recrutement.accueil.retrait.entretien' => 'Your interview will be cancelled. If you resume your application, you will choose a new one.',
+			'recrutement.accueil.retrait.rienEfface' => 'Your answers and your documents will stay recorded.',
+			'recrutement.accueil.retrait.pause' => 'Your file is on pause. If you withdraw it now, you will not be able to resume it yourself: you will have to write to the academy, which alone will be able to reopen it.',
+			'recrutement.accueil.retrait.reprise' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'You will be able to resume it yourself for ${n} day, from the File tab.', other: 'You will be able to resume it yourself for ${n} days, from the File tab.', ), 
+			'recrutement.accueil.retrait.apres' => 'After that, only the academy will be able to reopen it.',
+			'recrutement.accueil.retrait.garder' => 'No, I continue',
+			'recrutement.accueil.retrait.confirmer' => 'Yes, withdraw my application',
+			'recrutement.accueil.retrait.fait' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Application withdrawn. You have ${n} day to resume it.', other: 'Application withdrawn. You have ${n} days to resume it.', ), 
+			'recrutement.accueil.retrait.faitSansDelai' => 'Application withdrawn.',
+			'recrutement.accueil.reprise.possible' => ({required Object date, required Object heure}) => 'You withdrew your application. You can resume it yourself until ${date} at ${heure}. Your answers and your documents are still recorded.',
+			'recrutement.accueil.reprise.bouton' => 'Resume my application',
+			'recrutement.accueil.reprise.faite' => 'Your application is resumed. Your answers and your documents are still recorded.',
+			'recrutement.accueil.reprise.delaiDepasse' => 'The time to resume it yourself has passed. Only the academy can reopen it: write to it from the Messages tab.',
+			'recrutement.accueil.reprise.enPause' => 'Your file was on pause when you withdrew it: you cannot resume it yourself. Only the academy can reopen it: write to it from the Messages tab.',
+			'recrutement.accueil.reprise.origineInconnue' => 'Your application is withdrawn. Write to us from the Messages tab to resume it.',
+			'recrutement.accueil.reprise.parDirection' => 'This withdrawal was recorded by the academy. Only the academy can reopen your application: write to it from the Messages tab.',
+			'recrutement.accueil.reprise.controles' => 'An item of your file changed since your withdrawal. Only the academy can reopen your application: write to it from the Messages tab.',
+			'recrutement.accueil.reprise.echec' => 'The resumption did not go through. Nothing changed: try again in a moment.',
+			'recrutement.accueil.reprise.incertain' => 'Your resumption may not have reached Rewayah. Try again: it will not be recorded twice.',
+			'recrutement.accueil.reprise.horsLigne' => 'You can resume once the connection is back.',
+			'recrutement.accueil.reprise.conflit' => 'Your application changed since this page was opened. Read it again, then retry.',
 			'recrutement.retrait.lien' => 'Withdraw my application',
 			'recrutement.retrait.question' => 'Withdraw your application?',
 			'recrutement.retrait.consequence' => 'Only the academy will be able to reopen your application.',
@@ -31321,8 +31647,6 @@ extension on TraductionsEn {
 			'recrutement.questionnaire.partPublic' => ({required Object public, required Object part}) => '${public}: ${part} of the public price, for each student present.',
 			'recrutement.questionnaire.publicEnfant' => 'Children (6 to 17)',
 			'recrutement.questionnaire.publicAdulte' => 'Adults (18 and over)',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.questionnaire.coordonneesPlusTard' => 'Your financial details will only be requested before your first payment.',
 			'recrutement.questionnaire.montantsSurDemande' => 'To find out the amounts, ask the administration.',
 			'recrutement.questionnaire.conditionsDateEffet' => ({required Object date}) => 'These terms apply from ${date}.',
@@ -31754,6 +32078,8 @@ extension on TraductionsEn {
 			'recrutement.talents.c.montage_video.libelle' => 'Video editing and animation',
 			'recrutement.talents.c.montage_video.description' => 'Edit and animate short videos.',
 			'recrutement.talents.c.montage_video.exemple' => 'Cut a video, add subtitles, animate a title',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.photographie.libelle' => 'Photography and shooting',
 			'recrutement.talents.c.photographie.description' => 'Take quality photos, videos or sound recordings.',
 			'recrutement.talents.c.photographie.exemple' => 'Photograph an event, record a short presentation',
@@ -31835,8 +32161,6 @@ extension on TraductionsEn {
 			'recrutement.talents.disponibilite.mi_temps.description' => 'About half of a full-time job.',
 			'recrutement.talents.disponibilite.plus.libelle' => 'More than half-time',
 			'recrutement.talents.disponibilite.plus.description' => 'A large part of your time.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.disponibilite.pas_maintenant.libelle' => 'Not for now',
 			'recrutement.talents.disponibilite.pas_maintenant.description' => 'You just want the academy to know your talents.',
 			'recrutement.talents.disponibilite.accord' => 'I agree that the academy may contact me for a mission in these areas.',
@@ -32268,6 +32592,8 @@ extension on TraductionsEn {
 			'admin.candidatures.detail.prochaineAction' => 'Next action',
 			'admin.candidatures.detail.enAttentePersonne' => 'Waiting for the person',
 			'admin.candidatures.detail.aucuneAction' => 'No action is available for now.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.candidatures.detail.fermee' => 'This application is closed. You can reopen it.',
 			'admin.candidatures.detail.autresGestes' => 'Other actions',
 			'admin.candidatures.detail.reponses' => 'Answers',
@@ -32349,8 +32675,6 @@ extension on TraductionsEn {
 			'admin.candidatures.controles.noms.entretienConclu' => 'Interview concluded',
 			'admin.candidatures.controles.noms.evaluationValidee' => 'Assessment validated',
 			'admin.candidatures.controles.noms.accordsSignes' => 'Agreements signed',
-			_ => null,
-		} ?? switch (path) {
 			'admin.candidatures.controles.noms.profilRenseigne' => 'Profile filled in',
 			'admin.candidatures.controles.noms.profilUnique' => 'Unique profile',
 			'admin.candidatures.controles.noms.aucuneRestriction' => 'No restriction or pause',
@@ -32782,6 +33106,8 @@ extension on TraductionsEn {
 			'admin.equipe.feuille.retirer.question' => ({required Object mission, required Object nom}) => 'Remove the mission "${mission}" from ${nom}?',
 			'admin.equipe.feuille.retirer.consequence' => ({required Object deNom}) => '${deNom}\'s account is not changed: only this mission is removed. Their access to applications stops immediately.',
 			'admin.equipe.feuille.retirer.retirer' => 'Remove the mission',
+			_ => null,
+		} ?? switch (path) {
 			'admin.equipe.feuille.retirer.retiree' => ({required Object deNom}) => 'Mission removed. ${deNom}\'s account has not changed.',
 			'admin.equipe.feuille.archiver.titre' => 'Archive the mission',
 			'admin.equipe.feuille.archiver.question' => ({required Object mission}) => 'Archive the mission "${mission}"?',
@@ -32863,8 +33189,6 @@ extension on TraductionsEn {
 			'admin.importInscriptions.serveur.foyers' => 'Households counted by the server',
 			'admin.importInscriptions.serveur.personnes' => 'People counted by the server',
 			'admin.importInscriptions.serveur.refusees' => 'Rows refused by the server',
-			_ => null,
-		} ?? switch (path) {
 			'admin.importInscriptions.serveur.indisponible' => 'The server could not confirm this preview. Go back and start again.',
 			'admin.importInscriptions.ligne' => ({required Object fichier, required Object ligne, required Object motif}) => '${fichier}, row ${ligne}: ${motif}',
 			'admin.importInscriptions.fichier.eleves' => 'Students',
@@ -33296,6 +33620,8 @@ extension on TraductionsEn {
 			'admin.groupes.cahiers.nonValide' => 'The notebook is not validated yet.',
 			'admin.groupes.cahiers.corrigeLe' => ({required Object date}) => 'Corrected on ${date}',
 			'admin.groupes.cahiers.enseignant' => 'Teacher',
+			_ => null,
+		} ?? switch (path) {
 			'admin.groupes.cahiers.seanceDu' => ({required Object date}) => 'Session of ${date}',
 			'admin.groupes.cahiers.rubriqueTravail' => 'Work to prepare',
 			'admin.groupes.cahiers.rubriqueObjectif' => 'Personal goal',
@@ -33377,8 +33703,6 @@ extension on TraductionsEn {
 			'admin.groupes.partage.consequenceRevoquer' => 'The family no longer sees it, right away. The notebook and the session stay validated.',
 			'admin.groupes.partage.publie' => 'This report is now visible to the family.',
 			'admin.groupes.partage.revoque' => 'Access to this report has been revoked.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.groupes.partage.conflitApercu' => 'Another member of the management changed this report. The up-to-date state is shown.',
 			'admin.groupes.partage.historique' => 'History of actions',
 			'admin.groupes.partage.actionPublication' => 'Manual publication',
@@ -33810,6 +34134,8 @@ extension on TraductionsEn {
 			'admin.evaluations.statutAnnulee' => 'Cancelled',
 			'admin.evaluations.resultatReussi' => 'Stage validated',
 			'admin.evaluations.resultatEchec' => 'A new check is needed',
+			_ => null,
+		} ?? switch (path) {
 			'admin.evaluations.resultatARevoir' => 'A few points need reinforcing',
 			'admin.evaluations.planifier' => 'Schedule an assessment',
 			'admin.evaluations.planifierTitre' => 'Schedule an assessment',
@@ -33891,8 +34217,6 @@ extension on TraductionsEn {
 			'admin.programmes.ajouterNiveau' => 'Add a level',
 			'admin.programmes.ajouterNiveauTitre' => ({required Object version}) => 'Add a level to ${version}',
 			'admin.programmes.ajouterNiveauEnvoyer' => 'Add',
-			_ => null,
-		} ?? switch (path) {
 			'admin.programmes.ajouterNiveauErreur' => ({required Object message}) => 'The addition of the level was not confirmed: ${message}. The technical code may already exist in this version: change it, then try again.',
 			'admin.programmes.modifierNiveau' => 'Edit',
 			'admin.programmes.modifierNiveauTitre' => ({required Object nom}) => 'Edit ${nom}',
@@ -34324,6 +34648,8 @@ extension on TraductionsEn {
 			'admin.agents.parcoursEnseignant' => 'Teacher',
 			'admin.agents.parcoursControleur' => 'Quality review',
 			'admin.agents.parcoursAdmin' => 'Administration',
+			_ => null,
+		} ?? switch (path) {
 			'admin.agents.parcoursComptable' => 'Accountant',
 			'admin.agents.parcoursAssocie' => 'Associate',
 			'admin.agents.parcoursInconnu' => 'Unknown journey',
@@ -34405,8 +34731,6 @@ extension on TraductionsEn {
 			'admin.praxis.donnees.fermer' => 'Close real data',
 			'admin.praxis.propositions.titre' => 'Praxis proposals',
 			'admin.praxis.propositions.pastille' => 'Praxis proposes',
-			_ => null,
-		} ?? switch (path) {
 			'admin.praxis.propositions.intro' => 'Praxis prepared this step. Nothing is done until you confirm: confirming runs the step as if you had done it yourself.',
 			'admin.praxis.propositions.geste.demanderComplement' => 'Ask for more information',
 			'admin.praxis.propositions.geste.planifierEntretien' => 'Schedule an interview',
@@ -34838,6 +35162,8 @@ extension on TraductionsEn {
 			'admin.finance.pol.relanceComparaison' => ({required Object rang, required Object apres}) => '${rang}: ${apres}',
 			'admin.finance.pol.pilotage' => 'Steering',
 			'admin.finance.pol.pilotageDetail' => 'Guides for reading the figures, never rules that block.',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pol.marge' => 'Reference margin',
 			'admin.finance.pol.margeDetail' => 'A guide for reading the overview, never a sanction, refusal or block.',
 			'admin.finance.pol.margeObjectif' => 'Target margin',
@@ -34919,8 +35245,6 @@ extension on TraductionsEn {
 			'admin.finance.pol.apercuPresentsDetail' => 'Only a student present is paid; there is no minimum.',
 			'admin.finance.pol.apercuPresents' => ({required Object presents, required Object capacite}) => '${presents} of ${capacite}',
 			'admin.finance.pol.apercuPresentsMoins' => 'One student present fewer',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.pol.apercuPresentsPlus' => 'One student present more',
 			'admin.finance.pol.apercuParEleve' => 'Per student present',
 			'admin.finance.pol.apercuHeure' => 'For one session hour',
@@ -35352,6 +35676,8 @@ extension on TraductionsEn {
 			'admin.tirage.cibleClasse' => 'Class',
 			'admin.tirage.cibleEnseignant' => 'Teacher',
 			'admin.tirage.retirerCible' => ({required Object libelle}) => 'Remove ${libelle}',
+			_ => null,
+		} ?? switch (path) {
 			'admin.tirage.ajouterCible' => 'Add a target',
 			'admin.tirage.ajouterTitre' => 'Add a target',
 			'admin.tirage.ajouterContexte' => 'Choose the class or teacher to draw first. The target is added to the rules, which you then save.',
@@ -35433,8 +35759,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.libelles.droits.refuse' => 'Declined',
 			'admin.bibliotheque.libelles.droits.expire' => 'Expired',
 			'admin.bibliotheque.libelles.visibilite.publique' => 'Public',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.libelles.visibilite.inscrits' => 'Registered',
 			'admin.bibliotheque.libelles.visibilite.groupeAssigne' => 'Assigned classes',
 			'admin.bibliotheque.libelles.visibilite.enseignantSeul' => 'Teacher only',
@@ -35866,6 +36190,8 @@ extension on TraductionsEn {
 			'admin.planClasse.sansEtape.raisonAttente' => 'Can already read: their stage is decided after the reading interview (Decide a placement, below)',
 			'admin.planClasse.sansEtape.raisonDebutant' => 'Beginner: they will receive stage 1 when attached',
 			'admin.planClasse.sansEtape.rattacher' => 'Attach the beginners and the classes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.planClasse.sansEtape.rattacherTitre' => 'Attachment',
 			'admin.planClasse.sansEtape.rattacherDetail' => 'Stage 1 of the basics will be given to all open classes without a stage and to the beginner students in the list, starting today. Students who can already read are not affected. You can then say which day each one really started.',
 			'admin.planClasse.sansEtape.rattacherEnvoyer' => 'Attach now',
@@ -35947,8 +36273,6 @@ extension on TraductionsEn {
 			'lieu.incPaysFuseau' => 'their recorded country and time zone do not go together',
 			'lieu.villeLigne' => ({required Object ville, required Object pays}) => '${ville} (${pays})',
 			'lieu.incoherencesCompte' => ({required Object n}) => '${n} to verify',
-			_ => null,
-		} ?? switch (path) {
 			'lieu.changementsTitre' => 'Upcoming time changes',
 			'lieu.changementsLigne' => ({required Object date, required Object ville, required Object familles, required Object enseignants, required Object avant, required Object apres}) => '${date}, ${ville}: families: ${familles}; teachers: ${enseignants}; from ${avant} to ${apres}.',
 			'lieu.changementsAucun' => ({required Object jours}) => 'No time change in the next ${jours} days for families and teachers.',
@@ -36380,6 +36704,8 @@ extension on TraductionsEn {
 			'historique.selecteur.plusieurs' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} session', other: '${n} sessions', ), 
 			'historique.filtres.classe' => 'Class',
 			'historique.filtres.toutesClasses' => 'All classes',
+			_ => null,
+		} ?? switch (path) {
 			'historique.filtres.periode' => 'Period',
 			'historique.filtres.toutePeriode' => 'Whole period',
 			'historique.filtres.septJours' => 'Last 7 days',
@@ -36461,8 +36787,6 @@ extension on TraductionsEn {
 			'historique.compteRendu.corrigeLe' => ({required Object date}) => 'Corrected on ${date}',
 			'historique.compteRendu.nonDisponibleTitre' => 'Teaching report not available',
 			'historique.compteRendu.nonPartagePhrase' => 'The observations of this session are not shared with your family for now.',
-			_ => null,
-		} ?? switch (path) {
 			'historique.compteRendu.enAttentePhrase' => 'The report is not available yet.',
 			'historique.compteRendu.illisiblePhrase' => 'The report cannot be displayed.',
 			'historique.compteRendu.horsLignePhrase' => 'A connection is needed to view the report.',
@@ -36894,6 +37218,8 @@ extension on TraductionsEn {
 			'classe.observation.motif.garantieServeurAbsente' => 'Session observation is not open yet.',
 			'classe.observation.motif.reseau' => 'The availability of observation could not be verified.',
 			'classe.observation.motif.capaciteAbsente' => 'Observation cannot open for this session.',
+			_ => null,
+		} ?? switch (path) {
 			'classe.observation.visites' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} visit available', other: '${nombre} visits available', ), 
 			'classe.observation.restantes' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(nombre, one: '${nombre} visit left for this session', other: '${nombre} visits left for this session', ), 
 			'classe.pagePlanning.prochaines' => 'Upcoming sessions',
@@ -36975,8 +37301,6 @@ extension on TraductionsEn {
 			'classe.cartes.feuille.defauts.texteLong' => ({required Object max}) => 'The text exceeds ${max} characters. Shorten it or share a link.',
 			'classe.cartes.feuille.defauts.lienInvalide' => 'This link is not a full address. Paste an address that starts with https://.',
 			'classe.cartes.feuille.defauts.echeanceManquante' => 'Homework needs a due date. Choose the due date.',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.pays.semantique' => ({required Object pays}) => 'Country: ${pays}',
 			'enseignant.classes.titre' => 'Classes',
 			'enseignant.classes.vide' => 'No class assigned',
@@ -37408,6 +37732,8 @@ extension on TraductionsEn {
 			'enseignant.profil.fuseauExpert' => 'Or write the name of the time zone',
 			'enseignant.profil.fuseauExpertAide' => 'For a time zone missing from the list, its international name. For example: Asia/Riyadh',
 			'enseignant.profil.fuseauRequis' => 'Choose a time zone, or write its name.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.profil.fuseauInconnu' => 'This time zone name is not recognised. Check how it is written, for example Asia/Riyadh.',
 			'enseignant.profil.fuseauErreur' => 'Saving the time zone is not confirmed. Try again.',
 			'enseignant.profil.modifierLangues' => 'Change the languages',
@@ -37489,8 +37815,6 @@ extension on TraductionsEn {
 			'enseignant.creneaux.raccourciWeekEnd' => 'Weekend',
 			'enseignant.creneaux.raccourcisDetail' => 'Evening and Morning set the hours. Weekend chooses Saturday and Sunday.',
 			'enseignant.creneaux.jours' => 'Days',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.creneaux.heures' => 'Hours',
 			'enseignant.creneaux.menuDe' => 'Start time',
 			'enseignant.creneaux.menuA' => 'End time',
@@ -37922,6 +38246,8 @@ extension on TraductionsEn {
 			'tc.groupe.horloges.familles' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} family', other: '${n} families', ), 
 			'tc.groupe.horloges.aConfirmer' => 'Time to be confirmed',
 			'tc.groupe.horloges.enCeMoment' => 'Right now',
+			_ => null,
+		} ?? switch (path) {
 			'tc.groupe.dst.j30' => 'Clock change in one month',
 			'tc.groupe.dst.j7' => 'Clock change next week',
 			'tc.groupe.dst.j1' => 'Clock change tomorrow',
@@ -38003,8 +38329,6 @@ extension on TraductionsEn {
 			'tc.bibliotheque.rendu.ouvrirLien' => 'Open the link',
 			'tc.bibliotheque.rendu.lienAutreSite' => 'This link opens on another site.',
 			'tc.bibliotheque.rendu.lienSansNavigateur' => 'This link opens from the web version of the app.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.bibliotheque.rendu.lienAbsent' => 'This document has no content to open yet.',
 			'tc.bibliotheque.rendu.imageInaccessible' => 'The image could not be loaded for now.',
 			'tc.bibliotheque.rendu.imageIllisible' => 'This image file cannot be displayed.',
@@ -38436,6 +38760,8 @@ extension on TraductionsEn {
 			'adulte.recharge.sansDonnees' => 'The beneficiaries to top up could not be loaded',
 			'adulte.recharge.indisponibleTitre' => 'Top-up not available yet',
 			'adulte.recharge.indisponiblePhrase' => 'Top-up is not yet available in the app. No payment is possible here for now.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.recharge.verificationEchecTitre' => 'The check did not complete.',
 			'adulte.recharge.verificationEchecPhrase' => 'Your choices are kept. You can try again.',
 			'adulte.recharge.recapitulatif' => 'Summary by profile',
@@ -38517,8 +38843,6 @@ extension on TraductionsEn {
 			'adulte.recharge.source.motifs.paiementRefuse' => 'The payment was refused by the bank or the card. Nothing was charged.',
 			'adulte.recharge.source.motifs.montantIncoherent' => 'The amount received does not match the top-up. Nothing was credited: the management checks with the provider.',
 			'adulte.recharge.source.motifs.sessionExpiree' => 'The payment page expired before payment. Nothing was charged.',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.paiements.beneficiaires' => 'Beneficiaries',
 			'adulte.paiements.recharger' => 'Top up',
 			'adulte.paiements.recapitulatif' => ({required Object valeur}) => 'Household summary: ${valeur}. Each balance stays that of its beneficiary.',
@@ -38950,6 +39274,8 @@ extension on TraductionsEn {
 			'suiviDemandes.etapes.listeAttente' => 'On the waiting list',
 			'suiviDemandes.etapes.eleveIntegre' => 'Student placed in the class',
 			'suiviDemandes.etapes.coursCommences' => 'Classes start',
+			_ => null,
+		} ?? switch (path) {
 			'suiviDemandes.etats.fait' => 'Done',
 			'suiviDemandes.etats.enCours' => 'In progress',
 			'suiviDemandes.etats.prochaine' => 'Next step',
@@ -39031,8 +39357,6 @@ extension on TraductionsEn {
 			'alertes.videPhrase' => 'An urgent alert will appear here, at the top, as soon as it arrives.',
 			'alertes.indisponibleTitre' => 'Alerts are not available yet',
 			'alertes.indisponiblePhrase' => 'Urgent alerts will appear here, at the top, as soon as their source is open.',
-			_ => null,
-		} ?? switch (path) {
 			'alertes.erreurTitre' => 'The alerts could not be loaded',
 			'alertes.sansDonnees' => 'The alerts could not be loaded',
 			'alertes.cloche' => 'Alerts',
@@ -39464,6 +39788,8 @@ extension on TraductionsEn {
 			'com.messages.demo.f.missionNour' => 'Review visit, An-Nour class',
 			'com.messages.demo.f.pieceDevoir' => 'Homework_week_3.pdf',
 			'com.messages.demo.f.pieceAttestation' => 'Old_certificate.pdf',
+			_ => null,
+		} ?? switch (path) {
 			'com.messages.demo.f.pieceVocal' => 'voice.m4a',
 			'com.messages.demo.f.typeAudio' => 'Audio',
 			'com.messages.demo.f.adamQuestion' => 'Hello, I wanted to know how today\'s session went for Adam. Thank you very much.',
@@ -39545,8 +39871,6 @@ extension on TraductionsEn {
 			'com.vocal.titre' => 'Voice message',
 			'com.communaute.garde.aide' => 'No advertising. No affiliate links. No sales.',
 			'com.communaute.garde.avertissement' => 'This post seems to contain a commercial promotion. Remove the link, code or offer before publishing.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.garde.bloqueAffilie' => 'Affiliate links are not allowed in the Teachers community.',
 			'com.communaute.garde.bloqueVente' => 'Selling products or services is not allowed in this space.',
 			'com.communaute.garde.titreAvertissement' => 'Post to review',
@@ -39978,6 +40302,8 @@ extension on TraductionsEn {
 			'com.annonces.publieur.contexte.programmation' => 'Choose when the announcement goes out. A scheduled announcement waits for its date.',
 			'com.annonces.publieur.contexte.previsualisation' => 'Here is the announcement as the recipients will read it.',
 			'com.annonces.publieur.contexte.publication' => 'Review the recipients and the date, then publish. Nothing is published before confirmation.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.champTitre' => 'Announcement title',
 			'com.annonces.publieur.champTexte' => 'Announcement text',
 			'com.annonces.publieur.nature.classe' => 'Only the families and students of this class receive it.',
@@ -40059,8 +40385,6 @@ extension on TraductionsEn {
 			'com.annonces.administration.moderation.horsLigne' => 'You are offline. The moderation queue cannot be refreshed.',
 			'com.annonces.administration.moderation.indisponible' => 'Moderation is not available yet. Come back later.',
 			'com.annonces.administration.moderation.videTitre' => 'No content to review',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.vide' => 'Reports from the Teachers community arrive here.',
 			'com.annonces.administration.moderation.refuseTitre' => 'Queue reserved for moderation',
 			'com.annonces.administration.moderation.refuse' => 'Only the people in charge of moderation see this queue.',
@@ -40492,6 +40816,8 @@ extension on TraductionsEn {
 			'comptable.paiements.detail.echeance' => 'Due date',
 			'comptable.paiements.detail.prestataire' => 'Planned provider',
 			'comptable.paiements.detail.preuve' => 'Proof',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.detail.classes' => 'Classes',
 			'comptable.paiements.detail.version' => 'Calculation version',
 			'comptable.paiements.detail.historique' => 'History',
@@ -40573,8 +40899,6 @@ extension on TraductionsEn {
 			'comptable.tresorerie.historiquePhrase' => 'Each movement is logged; nothing in it can be changed.',
 			'comptable.tresorerie.historiqueVide' => 'No movement between vaults recorded.',
 			'comptable.tresorerie.transfert.titre' => 'Movement between vaults',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.choix' => 'Movement allowed by the policy',
 			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
 			'comptable.tresorerie.transfert.delegable' => 'Towards a protection: executed according to your delegation.',
@@ -41006,6 +41330,8 @@ extension on TraductionsEn {
 			'comptable.validation.inconnuPhrase' => 'We do not know whether your decision was saved. Read the list again before deciding again.',
 			'comptable.validation.relireListe' => 'Read the list again',
 			'comptable.validation.horsLigne' => 'Decision impossible now: decide as soon as sending is possible again.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.validation.suiviEnAttente' => ({required Object date}) => 'Requested on ${date}. Another authorized person will decide; nothing goes out before their decision.',
 			'comptable.validation.suiviValidee' => ({required Object decideur, required Object date}) => 'Validated by ${decideur} on ${date}.',
 			'comptable.validation.suiviRefusee' => ({required Object decideur, required Object date, required Object motif}) => 'Declined by ${decideur} on ${date}. Reason: ${motif}',
@@ -41087,8 +41413,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.plafondTransaction' => 'Ceiling per transaction',
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'The maximum amount of a single payment.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Ceiling per batch',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'The maximum amount of a batch of payments.',
 			'comptable.direction.delegationPanneau.plafondPeriode' => 'Cumulative ceiling per period',
 			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'The maximum total over the period; it prevents getting around a ceiling by splitting.',
@@ -41520,6 +41844,8 @@ extension on TraductionsEn {
 			'juridique.enfants.s5.blocs.0' => 'If something worries you, write to us. Say what you saw, when, and in which Class.',
 			'juridique.enfants.s5.blocs.1' => 'In case of immediate danger, first contact the emergency services of your country.',
 			'avis.form.titre' => 'Give your feedback',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.sousTitre' => 'A few lines about your experience at Rewayah Academy. Two minutes is enough.',
 			'avis.form.nom.libelle' => 'Display name',
 			'avis.form.nom.aide' => 'Your first name and the initial of your last name are enough.',
@@ -41601,8 +41927,6 @@ extension on TraductionsEn {
 			'avis.admin.refuse' => 'Only the signed-in management reads and decides on reviews. Sign in again with the right account, then try again.',
 			'avis.admin.indisponibleTitre' => 'Reviews unavailable',
 			'avis.admin.indisponiblePhrase' => 'This feature will be available once the server is connected.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.champs.lien' => 'Link',
 			'avis.admin.champs.pays' => 'Country',
 			'avis.admin.champs.depuis' => 'With us since',
@@ -42034,6 +42358,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.pas.depot' => 'Drop the file',
 			'candidatsFlux.importFormulaires.pas.apercu' => 'Preview',
 			'candidatsFlux.importFormulaires.pas.colonnes' => 'Columns',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.pas.doublons' => 'Duplicates',
 			'candidatsFlux.importFormulaires.pas.controle' => 'Errors',
 			'candidatsFlux.importFormulaires.pas.comptes' => 'Accounts',
@@ -42115,8 +42441,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.etat.enregistre' => 'Choice already saved',
 			'candidatsFlux.importFormulaires.doublons.option.recente.titre' => ({required Object ligne}) => 'Keep the most recent (row ${ligne})',
 			'candidatsFlux.importFormulaires.doublons.option.recente.description' => 'The other rows stay in the history, nothing is deleted. This is what Rewayah does without your choice.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.base.titre' => 'Keep the row already saved',
 			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'A previous import already kept a row for this person. The rows in this file stay in the history.',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'Keep your previous choice',
@@ -42548,6 +42872,8 @@ extension on TraductionsEn {
 			'suiviAttente.etats.aVenir' => 'Upcoming',
 			'suiviAttente.dit.recueFait' => 'Your request has reached the academy.',
 			'suiviAttente.dit.recueFaitSimple' => 'Your request has reached the academy.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.dit.formationEnCours' => 'The academy is bringing together the students of this class.',
 			'suiviAttente.dit.formationListeAttente' => 'All classes for this slot are full. Your request is waiting for a place to open.',
 			'suiviAttente.dit.formationFait' => 'The students of the class have been brought together.',
@@ -42629,8 +42955,6 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.contexte' => 'A message is already written. You can edit it before sending. It goes in Messages, to the families of the class and to adult students.',
 			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyid ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
 			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyida ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.mePresenter.champ' => 'Your message',
 			'suiviAttente.mePresenter.rappel' => 'This message is read by the guardians of minor students and by adult students. It is never sent to a minor. Do not exchange phone numbers or addresses: everything goes through the app.',
 			'suiviAttente.mePresenter.envoyer' => 'Send to the families',

@@ -345,7 +345,8 @@ BEGIN
     'dix tables du lot : RLS active, aucun privilege client, aucune policy');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 36,
+                         WHERE geste NOT LIKE '%admission') = 37,
+    -- PE-A6 REPRISE-CANDIDATURE (20261130910000, 20/11) : reprendre, transition 19, auteur candidat, soit 37.
     -- COMPLEMENT-SALLE-EXAMEN (20261129710000, 17/11) : demander_complement variantes 3 et 4, annuler_complement (transition 47).
     -- DEPLACER-ENTRETIEN (20261129760000, 17/11) : deplacer_entretien, transition 48.
     -- APRES-CONFIRMEE (20261129730000, 17/11) : demander_verification_piece et demander_verification_versement, transition 20.

@@ -7,10 +7,14 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/widgets/nav_shell.dart';
 
-/// La destination [libelle] de la coquille [NavShell], par son nom lu.
+/// La destination [libelle] de la coquille [NavShell], par son nom lu. Le nom
+/// peut etre suivi de ce qui s'y ajoute (« , 3 messages non lus » :
+/// ACCUEIL-CANDIDAT, compteur de `Destination`).
 Finder destinationNav(String libelle) => find
     .descendant(
       of: find.byType(NavShell),
-      matching: find.bySemanticsLabel(libelle),
+      matching: find.bySemanticsLabel(
+        RegExp('^${RegExp.escape(libelle)}(, .*)?\$'),
+      ),
     )
     .first;
