@@ -141,7 +141,7 @@ class ParcoursState extends State<Parcours> with SingleTickerProviderStateMixin<
               shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(r)), side: BorderSide(color: vide ? T.filet : (choisie ? teinte : Colors.transparent), width: 2)),
             ),
             child: Stack(children: <Widget>[
-              if (!vide) Positioned.fill(child: CustomPaint(painter: _NiveauPeintre(niveau[i].x.clamp(0, 0.9), temps + i * 1.7, teinte))),
+              if (!vide) Positioned.fill(child: CustomPaint(painter: NiveauPeintre(niveau[i].x.clamp(0, 0.9), temps + i * 1.7, teinte))),
               Padding(
                 padding: EdgeInsets.all(petite ? 12 : 18),
                 child: petite
@@ -181,8 +181,8 @@ class ParcoursState extends State<Parcours> with SingleTickerProviderStateMixin<
 }
 
 /// Le niveau d'une tuile : une surface d'eau qui respire.
-class _NiveauPeintre extends CustomPainter {
-  _NiveauPeintre(this.n, this.t, this.c);
+class NiveauPeintre extends CustomPainter {
+  NiveauPeintre(this.n, this.t, this.c);
   final double n, t;
   final Color c;
   @override
@@ -201,7 +201,7 @@ class _NiveauPeintre extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(_NiveauPeintre o) => true;
+  bool shouldRepaint(NiveauPeintre o) => true;
 }
 
 /// Les liens entre les tuiles : des points qui passent, ou qui s'entassent devant la barrière.

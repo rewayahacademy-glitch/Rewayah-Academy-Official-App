@@ -167,73 +167,7 @@ class _BureauState extends State<Bureau> with SingleTickerProviderStateMixin<Bur
         child: ConstrainedBox(
           constraints: const BoxConstraints(maxWidth: 1240),
           child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-            _ligne(large, <(int, Widget)>[
-              (6, Accueil(praxis: praxis, doigt: doigt, phrase: phrase, actions: <Widget>[
-                if (bassins[2].bloque) Pilule('Ouvrir des créneaux', fort: true, icone: Icons.event_available_rounded, surTouche: ouvrirCreneaux),
-                Pilule('Vérifier les $nbPieces pièces', icone: Icons.badge_outlined, surTouche: () => pile.currentState?.appeler()),
-                Pilule('Répondre aux $nbMsg messages', icone: Icons.chat_bubble_outline_rounded, surTouche: ouvrirMessagerie),
-              ])),
-              (5, Pile(
-                key: pile,
-                restant: nbPieces,
-                surDecision: (Personne p, bool ok) {
-                  setState(() => nbPieces--);
-                  praxis.currentState?.poser(ok ? Humeur.heureux : Humeur.soucieux, pour: const Duration(milliseconds: 1600));
-                  avis(ok ? 'Pièce de ${p.nom} validée' : 'Nouvelle pièce demandée à ${p.nom}', action: 'Annuler', surAction: () {
-                    setState(() => nbPieces++);
-                    pile.currentState?.rendre(p);
-                  });
-                },
-              )),
-            ]),
-            const SizedBox(height: 22),
-            Row(children: <Widget>[
-              Text('Le parcours des candidats', style: titre(20)),
-              const SizedBox(width: 10),
-              Flexible(child: Text('Chaque tuile est large comme son groupe. Touchez-en une.', style: texte(13, couleur: T.doux), overflow: TextOverflow.ellipsis)),
-            ]),
-            const SizedBox(height: 12),
-            GestureDetector(
-              onScaleStart: (_) => _baseHauteur = hauteur.cible,
-              onScaleUpdate: (ScaleUpdateDetails d) {
-                if (d.pointerCount < 2 || !large) return;
-                hauteur.cible = (_baseHauteur * d.verticalScale).clamp(170, 300);
-                reveil();
-              },
-              child: Parcours(key: fleuve, bassins: bassins, choisi: choisi, hauteur: hauteur.x, surOuvrir: ouvrirCreneaux, surChoix: (int i) => choisir(choisi == i ? null : i)),
-            ),
-            if (large)
-              MouseRegion(
-                cursor: SystemMouseCursors.resizeRow,
-                child: GestureDetector(
-                  behavior: HitTestBehavior.opaque,
-                  onVerticalDragUpdate: (DragUpdateDetails d) {
-                    hauteur.cible = (hauteur.cible + d.delta.dy).clamp(170, 300);
-                    hauteur.x = hauteur.cible;
-                    reveil();
-                  },
-                  onVerticalDragEnd: (_) {
-                    hauteur.v += 160; // un petit élan, puis le ressort le reprend
-                    reveil();
-                  },
-                  child: SizedBox(height: 26, child: Center(child: Container(width: 54, height: 5, decoration: ShapeDecoration(color: T.filet, shape: const StadiumBorder())))),
-                ),
-              )
-            else
-              const SizedBox(height: 26),
-            _ligne(large, <(int, Widget)>[
-              (5, Bulles(messages: messages, surOuvrir: ouvrirMessagerie, surReponse: (int i) {
-                setState(() {
-                  messages.removeAt(i);
-                  nbMsg = math.max(0, nbMsg - 1);
-                });
-                icMsg.currentState?.remuer();
-                praxis.currentState?.poser(Humeur.heureux, pour: const Duration(milliseconds: 1400));
-                avis('Réponse envoyée');
-              })),
-              (3, const Sante()),
-              (5, const Activite()),
-            ]),
+            ...bento(ecran.width, large),
             const SizedBox(height: 18),
             Text("Maquette : « À compléter », « En examen », « Entretien à planifier » et « Versement à débloquer » viennent de la production du 19/11. Les noms et les autres chiffres sont des exemples.",
                 style: texte(12, couleur: T.doux)),
@@ -287,6 +221,124 @@ class _BureauState extends State<Bureau> with SingleTickerProviderStateMixin<Bur
     );
   }
 
+  /// La grille en bento : une grande case sombre pour Praxis, puis des cases de tailles
+  /// différentes, chacune avec un seul rôle. Quatre colonnes, deux, ou une selon la largeur.
+  List<Widget> bento(double largeurEcran, bool large) {
+    const double g = 14;
+    const Widget h = SizedBox(height: g), w = SizedBox(width: g);
+    final bool quatre = largeurEcran >= 1180, deux = largeurEcran >= 700;
+    Widget heros(bool borne) => Heros(praxis: praxis, doigt: doigt, phrase: phrase, borne: borne, compact: !deux, ouvert: !bassins[2].bloque, actions: <Widget>[
+          if (bassins[2].bloque) Pilule('Ouvrir des créneaux', fort: true, icone: Icons.event_available_rounded, surTouche: ouvrirCreneaux),
+          Pilule('Vérifier les $nbPieces pièces', icone: Icons.badge_outlined, surTouche: () => pile.currentState?.appeler()),
+          Pilule('Répondre aux $nbMsg messages', icone: Icons.chat_bubble_outline_rounded, surTouche: ouvrirMessagerie),
+        ]);
+    final Widget casePile = Case(
+      penche: false,
+      child: Pile(
+        key: pile,
+        restant: nbPieces,
+        surDecision: (Personne p, bool ok) {
+          setState(() => nbPieces--);
+          praxis.currentState?.poser(ok ? Humeur.heureux : Humeur.soucieux, pour: const Duration(milliseconds: 1600));
+          avis(ok ? 'Pièce de ${p.nom} validée' : 'Nouvelle pièce demandée à ${p.nom}', action: 'Annuler', surAction: () {
+            setState(() => nbPieces++);
+            pile.currentState?.rendre(p);
+          });
+        },
+      ),
+    );
+    final Widget msg = CaseMessages(nombre: nbMsg, dernier: messages.isEmpty ? null : messages.first, surTouche: ouvrirMessagerie);
+    const Widget eau = CaseEau();
+    final Widget vus = CaseChiffre(nombre: 33, label: 'candidats vus\nen 24 heures', fond: T.vertPale, encre: T.vert, icone: Icons.visibility_outlined);
+    final Widget retraits = CaseChiffre(
+      nombre: 13,
+      label: 'retraits à rouvrir\nou à clore',
+      fond: T.corailPale,
+      encre: T.corail,
+      icone: Icons.undo_rounded,
+      surTouche: () => dire('13 candidats ont retiré leur dossier, certains par erreur. Je vous les montre un par un.', Humeur.soucieux),
+    );
+    const Widget activite = Case(child: Activite());
+    final Widget parcours = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+      const SizedBox(height: 26),
+      Row(children: <Widget>[
+        Text('Le parcours des candidats', style: titre(20)),
+        const SizedBox(width: 10),
+        Flexible(child: Text('Chaque case est large comme son groupe. Touchez-en une.', style: texte(13, couleur: T.doux), overflow: TextOverflow.ellipsis)),
+      ]),
+      const SizedBox(height: 12),
+      GestureDetector(
+        onScaleStart: (_) => _baseHauteur = hauteur.cible,
+        onScaleUpdate: (ScaleUpdateDetails d) {
+          if (d.pointerCount < 2 || !large) return;
+          hauteur.cible = (_baseHauteur * d.verticalScale).clamp(170, 300);
+          reveil();
+        },
+        child: Parcours(key: fleuve, bassins: bassins, choisi: choisi, hauteur: hauteur.x, surOuvrir: ouvrirCreneaux, surChoix: (int i) => choisir(choisi == i ? null : i)),
+      ),
+      if (large)
+        MouseRegion(
+          cursor: SystemMouseCursors.resizeRow,
+          child: GestureDetector(
+            behavior: HitTestBehavior.opaque,
+            onVerticalDragUpdate: (DragUpdateDetails d) {
+              hauteur.cible = (hauteur.cible + d.delta.dy).clamp(170, 300);
+              hauteur.x = hauteur.cible;
+              reveil();
+            },
+            onVerticalDragEnd: (_) {
+              hauteur.v += 160;
+              reveil();
+            },
+            child: SizedBox(height: 26, child: Center(child: Container(width: 54, height: 5, decoration: ShapeDecoration(color: T.filet, shape: const StadiumBorder())))),
+          ),
+        )
+      else
+        const SizedBox(height: 26),
+    ]);
+    Widget rang(double hauteur, List<(int, Widget)> e) => SizedBox(
+          height: hauteur,
+          child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+            for (int i = 0; i < e.length; i++) ...<Widget>[if (i > 0) w, Expanded(flex: e[i].$1, child: e[i].$2)],
+          ]),
+        );
+    final Widget deuxPetites = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[Expanded(child: msg), h, const Expanded(child: eau)]);
+    if (quatre) {
+      return <Widget>[
+        const SizedBox(height: 62), // la place de Praxis, assis sur le bord de sa case
+        rang(388, <(int, Widget)>[(2, heros(true)), (1, casePile), (1, deuxPetites)]),
+        parcours,
+        rang(172, <(int, Widget)>[(1, vus), (1, retraits), (2, activite)]),
+      ];
+    }
+    if (deux) {
+      return <Widget>[
+        const SizedBox(height: 62),
+        SizedBox(height: 290, child: heros(true)),
+        h,
+        rang(388, <(int, Widget)>[(1, casePile), (1, deuxPetites)]),
+        parcours,
+        rang(172, <(int, Widget)>[(1, vus), (1, retraits)]),
+        h,
+        const SizedBox(height: 200, child: activite),
+      ];
+    }
+    return <Widget>[
+      const SizedBox(height: 58),
+      heros(false),
+      h,
+      SizedBox(height: 388, child: casePile),
+      parcours,
+      SizedBox(height: 172, child: msg),
+      h,
+      rang(150, <(int, Widget)>[(1, eau), (1, vus)]),
+      h,
+      SizedBox(height: 132, child: retraits),
+      h,
+      activite,
+    ];
+  }
+
   Widget _volet({bool bas = false}) => Volet(
         bassin: bassins[choisi ?? 0],
         bas: bas,
@@ -306,13 +358,6 @@ class _BureauState extends State<Bureau> with SingleTickerProviderStateMixin<Bur
             : null,
       );
 
-  Widget _ligne(bool large, List<(int, Widget)> enfants) => large
-      ? Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-          for (int i = 0; i < enfants.length; i++) ...<Widget>[if (i > 0) const SizedBox(width: 28), Expanded(flex: enfants[i].$1, child: enfants[i].$2)],
-        ])
-      : Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-          for (int i = 0; i < enfants.length; i++) ...<Widget>[if (i > 0) const SizedBox(height: 26), enfants[i].$2],
-        ]);
 }
 
 // ───────────────────────── Accueil : Praxis parle ─────────────────────────
@@ -354,8 +399,9 @@ class Accueil extends StatelessWidget {
 
 /// La phrase de Praxis s'écrit devant vous, puis ne bouge plus.
 class Dit extends StatefulWidget {
-  const Dit(this.phrase, {super.key});
+  const Dit(this.phrase, {super.key, this.couleur});
   final String phrase;
+  final Color? couleur;
   @override
   State<Dit> createState() => _DitState();
 }
@@ -376,7 +422,7 @@ class _DitState extends State<Dit> with SingleTickerProviderStateMixin<Dit> {
           return Text.rich(TextSpan(children: <InlineSpan>[
             TextSpan(text: widget.phrase.substring(0, n)),
             TextSpan(text: widget.phrase.substring(n), style: const TextStyle(color: Colors.transparent)),
-          ]), style: texte(17, couleur: T.doux));
+          ]), style: texte(17, couleur: widget.couleur ?? T.doux));
         },
       );
 }
@@ -435,16 +481,16 @@ class _PileState extends State<Pile> with SingleTickerProviderStateMixin<Pile>, 
     final double pencher = dx.x / 520;
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
       Row(children: <Widget>[
-        Rouleau(widget.restant, style: titre(34, couleur: T.accent)),
+        Rouleau(widget.restant, style: titre(40, couleur: T.accent)),
         const SizedBox(width: 10),
-        Expanded(child: Text('pièces à vérifier\nGlissez à droite pour valider, à gauche pour redemander.', style: texte(13, couleur: T.doux))),
+        Expanded(child: Text('pièces à vérifier\nGlissez la carte pour décider.', style: texte(13, couleur: T.doux))),
       ]),
       const SizedBox(height: 10),
       SizedBox(
         height: 212,
         child: cartes.isEmpty
             ? Center(child: Text('Plus aucune pièce. Rien ne vous attend ici.', style: texte(15, couleur: T.doux)))
-            : Stack(alignment: Alignment.center, clipBehavior: Clip.none, children: <Widget>[
+            : FittedBox(fit: BoxFit.scaleDown, child: SizedBox(width: 340, height: 212, child: Stack(alignment: Alignment.center, clipBehavior: Clip.none, children: <Widget>[
                 for (int i = math.min(2, cartes.length - 1); i >= 0; i--)
                   if (i == 0)
                     Transform.translate(
@@ -485,9 +531,9 @@ class _PileState extends State<Pile> with SingleTickerProviderStateMixin<Pile>, 
                         child: Transform.rotate(angle: 0.05 * i * (i.isOdd ? 1 : -1), child: Opacity(opacity: 1 - 0.25 * i, child: Carte(cartes[i]))),
                       ),
                     ),
-              ]),
+              ]))),
       ),
-      const SizedBox(height: 4),
+      const Spacer(),
       Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
         Pilule('Redemander', icone: Icons.west_rounded, couleur: T.ambrePale, encre: T.ambre, surTouche: () => decider(false)),
         const SizedBox(width: 10),
@@ -791,35 +837,45 @@ class Activite extends StatelessWidget {
     ('21:40', 'Amina B', 'a déposé sa pièce', 0), ('21:12', 'Praxis', 'a rangé 12 dossiers', 9), ('20:55', 'Salma T', 'a signé le contrat', 4),
     ('19:30', 'Ibrahim S', 'a corrigé son pays de versement', 3),
   ];
+  Widget _fait(int i) => Padding(
+        padding: const EdgeInsets.only(bottom: 10),
+        child: Row(children: <Widget>[
+          faits[i].$4 == 9
+              ? Container(width: 32, height: 32, decoration: const BoxDecoration(color: T.lilas, shape: BoxShape.circle), child: const Icon(Icons.school_rounded, size: 17, color: T.nuit))
+              : Visage(faits[i].$2, taille: 32, teinte: faits[i].$4),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Text.rich(
+              TextSpan(children: <InlineSpan>[
+                TextSpan(text: '${faits[i].$2} ', style: texte(13.5, poids: FontWeight.w700)),
+                TextSpan(text: faits[i].$3, style: texte(13.5, couleur: T.doux)),
+                TextSpan(text: '  ${faits[i].$1}', style: texte(11.5, couleur: T.doux)),
+              ]),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ]),
+      );
+
   @override
   Widget build(BuildContext context) {
     Theme.of(context);
-    return Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
-        Text('Ce qui a changé', style: titre(20)),
+    return LayoutBuilder(builder: (BuildContext context, BoxConstraints bc) {
+      final bool deux = bc.maxWidth >= 420;
+      return Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Text('Ce qui a changé', style: titre(18)),
         const SizedBox(height: 12),
-        for (int i = 0; i < faits.length; i++)
-          IntrinsicHeight(
-            child: Row(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
-              Column(children: <Widget>[
-                faits[i].$4 == 9
-                    ? Container(width: 34, height: 34, decoration: const BoxDecoration(color: T.lilas, shape: BoxShape.circle), child: const Icon(Icons.school_rounded, size: 18, color: T.nuit))
-                    : Visage(faits[i].$2, taille: 34, teinte: faits[i].$4),
-                if (i < faits.length - 1) Expanded(child: Container(width: 2, margin: const EdgeInsets.symmetric(vertical: 4), color: T.filet)),
-              ]),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Padding(
-                  padding: const EdgeInsets.only(bottom: 16, top: 2),
-                  child: Text.rich(TextSpan(children: <InlineSpan>[
-                    TextSpan(text: '${faits[i].$2} ', style: texte(14, poids: FontWeight.w700)),
-                    TextSpan(text: faits[i].$3, style: texte(14, couleur: T.doux)),
-                    TextSpan(text: '   ${faits[i].$1}', style: texte(12, couleur: T.doux)),
-                  ])),
-                ),
-              ),
-            ]),
-          ),
+        if (deux)
+          Row(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Expanded(child: Column(children: <Widget>[_fait(0), _fait(1)])),
+            const SizedBox(width: 18),
+            Expanded(child: Column(children: <Widget>[_fait(2), _fait(3)])),
+          ])
+        else
+          for (int i = 0; i < faits.length; i++) _fait(i),
       ]);
+    });
   }
 }
 
@@ -1479,5 +1535,188 @@ class _CompteurState extends State<Compteur> {
           decoration: ShapeDecoration(color: T.nuit.withValues(alpha: 0.82), shape: const StadiumBorder()),
           child: Text(t, style: texte(12, couleur: Colors.white, poids: FontWeight.w600).copyWith(fontFeatures: const <ui.FontFeature>[ui.FontFeature.tabularFigures()])),
         ),
+      );
+}
+
+
+// ───────────────────────── Les cases du bento ─────────────────────────
+/// Une case : coin continu de 34, marge de 18 (un enfant arrondi prend donc 16).
+class Case extends StatelessWidget {
+  const Case({super.key, required this.child, this.fond, this.penche = true, this.surTouche});
+  final Widget child;
+  final Color? fond;
+  final bool penche;
+  final VoidCallback? surTouche;
+  @override
+  Widget build(BuildContext context) {
+    Theme.of(context);
+    Widget c = Container(
+      padding: const EdgeInsets.all(18),
+      clipBehavior: Clip.antiAlias,
+      decoration: ShapeDecoration(color: fond ?? T.surface, shape: coin(34)),
+      child: child,
+    );
+    if (surTouche != null) c = Touche(fond: 0.97, surTouche: surTouche, child: c);
+    return penche ? Penche(force: 0.03, child: c) : c;
+  }
+}
+
+/// La grande case sombre : Praxis est assis sur son bord et vous dit le seul blocage du moment.
+class Heros extends StatelessWidget {
+  const Heros({super.key, required this.praxis, required this.doigt, required this.phrase, required this.actions, required this.borne, required this.compact, required this.ouvert});
+  final GlobalKey<PraxisState> praxis;
+  final ValueNotifier<Offset> doigt;
+  final String phrase;
+  final List<Widget> actions;
+  final bool borne, compact, ouvert;
+  @override
+  Widget build(BuildContext context) {
+    final int h = DateTime.now().hour;
+    final Color fond = T.s ? const Color(0xFF2A2440) : T.nuit;
+    return Stack(clipBehavior: Clip.none, children: <Widget>[
+      Positioned.fill(
+        child: Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(color: fond, shape: coin(40)),
+          child: Stack(children: <Widget>[
+            Positioned(right: -70, top: -90, child: Container(width: 300, height: 300, decoration: BoxDecoration(shape: BoxShape.circle, color: T.lilas.withValues(alpha: 0.07)))),
+            Positioned(right: 40, bottom: -120, child: Container(width: 220, height: 220, decoration: BoxDecoration(shape: BoxShape.circle, color: T.lilas.withValues(alpha: 0.05)))),
+          ]),
+        ),
+      ),
+      Positioned(right: compact ? 16 : 30, top: compact ? -52 : -62, child: Praxis(key: praxis, doigt: doigt, taille: compact ? 104 : 138)),
+      Padding(
+        padding: EdgeInsets.fromLTRB(compact ? 20 : 28, compact ? 22 : 28, compact ? 20 : 28, compact ? 20 : 24),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: borne ? MainAxisSize.max : MainAxisSize.min, children: <Widget>[
+          Text(h < 12 ? 'Bonjour.' : h < 18 ? 'Bon après-midi.' : 'Bonsoir.', style: titre(compact ? 34 : 48, couleur: Colors.white)),
+          SizedBox(height: compact ? 18 : 12),
+          ConstrainedBox(constraints: const BoxConstraints(maxWidth: 470), child: Dit(phrase, key: ValueKey<String>(phrase), couleur: T.lilas)),
+          if (borne) const Spacer() else const SizedBox(height: 20),
+          // La semaine des entretiens : sept jours vides tant que rien n'est ouvert ; ils se remplissent un à un.
+          Text(ouvert ? '12 créneaux ouverts cette semaine' : "Créneaux d'entretien cette semaine : aucun", style: texte(12.5, couleur: T.lilas.withValues(alpha: 0.75), poids: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Wrap(spacing: 6, runSpacing: 6, children: <Widget>[
+            for (int i = 0; i < 7; i++)
+              AnimatedContainer(
+                duration: Duration(milliseconds: 380 + i * 150),
+                curve: Curves.easeOutBack,
+                width: 38,
+                height: ouvert ? 46 : 38,
+                alignment: Alignment.center,
+                decoration: ShapeDecoration(
+                  color: ouvert && i < 6 ? const Color(0xFFBA98FB) : Colors.white.withValues(alpha: 0.07),
+                  shape: RoundedSuperellipseBorder(borderRadius: const BorderRadius.all(Radius.circular(14)), side: BorderSide(color: Colors.white.withValues(alpha: ouvert ? 0 : 0.16))),
+                ),
+                child: Text(const <String>['L', 'M', 'M', 'J', 'V', 'S', 'D'][i], style: texte(13, poids: FontWeight.w700, couleur: ouvert && i < 6 ? T.nuit : Colors.white.withValues(alpha: 0.55))),
+              ),
+          ]),
+          const SizedBox(height: 16),
+          Wrap(spacing: 8, runSpacing: 8, children: actions),
+        ]),
+      ),
+    ]);
+  }
+}
+
+/// Les messages : une case pleine, à la couleur d'accent. Le dernier message jaillit dedans.
+class CaseMessages extends StatelessWidget {
+  const CaseMessages({super.key, required this.nombre, required this.dernier, required this.surTouche});
+  final int nombre;
+  final (String, String, int)? dernier;
+  final VoidCallback surTouche;
+  @override
+  Widget build(BuildContext context) => Case(
+        fond: T.accent,
+        surTouche: surTouche,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(crossAxisAlignment: CrossAxisAlignment.center, children: <Widget>[
+            Rouleau(nombre, style: titre(48, couleur: T.surAccent)),
+            const SizedBox(width: 10),
+            Expanded(child: Text('messages\nsans réponse', style: texte(13, couleur: T.surAccent, poids: FontWeight.w600))),
+            Icon(Icons.north_east_rounded, size: 20, color: T.surAccent),
+          ]),
+          const Spacer(),
+          if (dernier != null)
+            Jaillit(
+              key: ValueKey<String>(dernier!.$1 + dernier!.$2),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: ShapeDecoration(color: T.surAccent.withValues(alpha: 0.16), shape: coin(16)),
+                child: Row(children: <Widget>[
+                  Visage(dernier!.$1, taille: 30, teinte: dernier!.$3, bord: true),
+                  const SizedBox(width: 8),
+                  Expanded(child: Text(dernier!.$2, maxLines: 2, overflow: TextOverflow.ellipsis, style: texte(12.5, couleur: T.surAccent, poids: FontWeight.w500))),
+                ]),
+              ),
+            ),
+        ]),
+      );
+}
+
+/// Les courriels du jour : la case entière est un réservoir.
+class CaseEau extends StatefulWidget {
+  const CaseEau({super.key});
+  @override
+  State<CaseEau> createState() => _CaseEauState();
+}
+
+class _CaseEauState extends State<CaseEau> with SingleTickerProviderStateMixin<CaseEau>, Vivant<CaseEau> {
+  final R niveau = R(0, k: 22, c: 6);
+  @override
+  Iterable<R> get ressorts => <R>[niveau];
+  @override
+  bool get toujours => true;
+  @override
+  void initState() {
+    super.initState();
+    niveau.cible = 412 / 900;
+    reveil();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    Theme.of(context);
+    return MouseRegion(
+      onEnter: (_) => niveau.v += 0.5,
+      child: GestureDetector(
+        onTap: () => niveau.v += 0.9,
+        child: Container(
+          clipBehavior: Clip.antiAlias,
+          decoration: ShapeDecoration(color: T.surface, shape: coin(34)),
+          child: Stack(children: <Widget>[
+            Positioned.fill(child: RepaintBoundary(child: CustomPaint(painter: NiveauPeintre(niveau.x.clamp(0, 0.95), temps, T.accent.withValues(alpha: 0.9))))),
+            Padding(
+              padding: const EdgeInsets.all(18),
+              child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                Text('412', style: titre(40)),
+                Text('courriels envoyés\nsur 900 aujourd\'hui', style: texte(12.5, poids: FontWeight.w600, couleur: T.doux)),
+              ]),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class CaseChiffre extends StatelessWidget {
+  const CaseChiffre({super.key, required this.nombre, required this.label, required this.fond, required this.encre, required this.icone, this.surTouche});
+  final int nombre;
+  final String label;
+  final Color fond, encre;
+  final IconData icone;
+  final VoidCallback? surTouche;
+  @override
+  Widget build(BuildContext context) => Case(
+        fond: fond,
+        surTouche: surTouche,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+          Row(children: <Widget>[
+            Expanded(child: Text('$nombre', style: titre(48, couleur: encre))),
+            Container(width: 38, height: 38, decoration: BoxDecoration(color: encre.withValues(alpha: 0.14), shape: BoxShape.circle), child: Icon(icone, size: 19, color: encre)),
+          ]),
+          const Spacer(),
+          Text(label, style: texte(13, couleur: encre, poids: FontWeight.w600)),
+        ]),
       );
 }

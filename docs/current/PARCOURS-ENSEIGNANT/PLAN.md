@@ -929,3 +929,32 @@ Fluidité sur ses appareils : non prouvée, le compteur d'images par seconde est
   l'application »), sur Android et Windows : icône, fenêtre à elle, mises à jour toutes seules.
 - Non fait, non essayé : aucune de ces constructions n'a été lancée. La construction Windows
   demande une machine Windows ; l'Android se construit dans la CI.
+
+### 16.4 Tableau de bord, version 2 : la grille en bento (20/11/2026)
+
+Avis du directeur sur la première version : « il manque toujours l'effet wow. Ici ce ne sont pas
+les animations les plus importantes, mais le layout ; j'aime bien des layouts un peu en bento,
+mais bien pensés, et non comme mon app actuelle. Les choses swipables sont jolies si tu penses
+que ça va marcher. »
+
+Version 2 remise, non confirmée (même source, `preuve-flutter/bureau/`) :
+- quatre colonnes sur grand écran, deux sur tablette, une au téléphone ;
+- une grande case sombre pour Praxis, assis sur le bord de sa case, avec sa phrase, la semaine
+  des entretiens (sept jours vides qui se remplissent quand on ouvre des créneaux) et les gestes ;
+- une case haute pour la pile de pièces à glisser ; deux petites cases (messages sans réponse,
+  en couleur d'accent ; courriels du jour, case-réservoir) ;
+- le parcours : quatre cases larges comme leur groupe, et le versement accroché dessous ;
+- deux cases-chiffres (vus en 24 h ; retraits à rouvrir, 13 lus en production) et une case large
+  « Ce qui a changé » ;
+- règle des cases : coin continu de 34, marge de 18, un enfant arrondi prend 16.
+
+### 16.5 Application Android installable : ce que cela demande (lu dans le dépôt, non essayé)
+
+- Les dossiers `android/`, `ios/`, `windows/` existent déjà dans le dépôt.
+- 22 fichiers de `lib/` emploient des fonctions propres au navigateur : à doubler d'une version
+  pour téléphone avant qu'une construction Android passe.
+- À faire ensuite : autorisations caméra et micro pour la salle, retour du lien de connexion
+  vers l'application, notifications, clé de signature, vérification de version et proposition
+  du nouveau fichier, page de téléchargement.
+- Ordre de grandeur, non prouvé : un premier fichier installable d'essai en quelques jours ; une
+  version au niveau de l'application web en deux à trois semaines. Aucune construction lancée.
