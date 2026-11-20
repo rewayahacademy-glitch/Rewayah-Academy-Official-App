@@ -77,6 +77,9 @@ declare
     -- PX-5 (20261130300000) : le plafond des ouvertures de dialogue de Praxis (100 par 5 heures a l'installation) ; admin, aal2, une
     -- ligne d'audit (praxis_regle_ouvertures). Elle n'ecrit que private.praxis_reglages : ni message, ni dossier, ni compte.
     'direction_praxis_regler_ouvertures(integer,integer)',
+    -- PX-6 (20261130800000) : les jours pendant lesquels une conversation reste a la direction, et la reouverture des entretiens
+    -- ecrits de Praxis ; admin, aal2, une ligne d'audit (praxis_regle_conversations). Elle n'ecrit que private.praxis_reglages.
+    'direction_praxis_regler_conversations(integer,boolean)',
     'direction_praxis_valider(uuid,integer,text,uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
