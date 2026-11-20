@@ -87,7 +87,25 @@ function refuse401(adresses: Adresses | null): Response {
   return r
 }
 
-export async function traiter(req: Request, porte: PortePraxis, adresses: Adresses | null = null): Promise<Response> {
+/// PX-OAUTH 2c : une cle revoquee, expiree, d'un emetteur qui n'est plus direction, ou inconnue rend 401 (claude.ai ne renouvelle son jeton
+/// que sur un 401). La base dit `false` seulement pour la cause « cle refusee » : un interrupteur coupe, un plafond atteint ou une
+/// erreur d'outil ne sont PAS des problemes de jeton et restent des erreurs d'outil. Si la verification elle-meme echoue (base
+/// injoignable), l'appel continue : chaque outil refait la verification en base et repond `serveur` ; le 401 n'est rendu que sur un
+/// `false` certain.
+async function cleRefusee(porte: PortePraxis, cle: string): Promise<boolean> {
+  const ctrl = new AbortController()
+  const minuteur = setTimeout(() => ctrl.abort(), DELAI_MS)
+  try {
+    return (await porte.appeler('praxis_cle_valide', { p_cle: cle }, ctrl.signal)) === false
+  } catch {
+    return false
+  } finally {
+    clearTimeout(minuteur)
+  }
+}
+
+/// [controleCle] : active la verification du 401 (`praxis_cle_valide`) ; la fonction deployee la passe a `true`, les tests anciens non.
+export async function traiter(req: Request, porte: PortePraxis, adresses: Adresses | null = null, controleCle = false): Promise<Response> {
   if (req.method === 'OPTIONS') return new Response('ok', { headers: entetes })
   if (req.method !== 'POST') return http({ error: 'methode' }, 405)
 
@@ -96,6 +114,7 @@ export async function traiter(req: Request, porte: PortePraxis, adresses: Adress
   const m = /^Bearer (\S+)$/.exec(auth)
   if (!m || !FORME_CLE.test(m[1])) return refuse401(adresses)
   const cle = m[1]
+  if (controleCle && await cleRefusee(porte, cle)) return refuse401(adresses)
 
   const taille = Number(req.headers.get('content-length') ?? '0')
   if (taille > TAILLE_MAX) return http({ error: 'trop_grand' }, 413)
