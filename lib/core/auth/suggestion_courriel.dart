@@ -13,15 +13,17 @@
 //
 // Ce qu'elle ne fait pas : elle ne dit pas qu'une adresse existe, elle ne
 // valide pas la forme de l'adresse (le serveur le fait), et elle ne propose
-// rien pour un domaine qu'elle connait deja, ni pour un domaine trop eloigne
-// des domaines courants (une adresse d'universite ou d'entreprise reste
-// telle quelle).
+// rien pour un domaine qu'elle connait deja (tres courant ou reel connu), ni
+// pour un domaine trop eloigne des dix domaines tres courants (une adresse
+// d'universite ou d'entreprise reste telle quelle). En cas de doute, rien.
 library;
 
-/// Les domaines courants, dans l'ordre de preference en cas d'egalite (le plus
-/// repandu chez les candidats d'abord). Un domaine de cette liste n'appelle
-/// jamais de proposition : « mail.com » et « gmx.de » sont de vrais domaines.
-const List<String> domainesCourants = <String>[
+/// Les domaines tres courants, les SEULS que l'on propose, dans l'ordre de
+/// preference en cas d'egalite (le plus repandu chez les candidats d'abord).
+/// Une faute sur un autre domaine (msn.com, gmx.fr...) ne recoit aucune
+/// proposition : en cas de doute, rien (pilote, 20/11/2026, relecture de la
+/// PR 660).
+const List<String> domainesProposes = <String>[
   'gmail.com',
   'yahoo.com',
   'hotmail.com',
@@ -32,38 +34,62 @@ const List<String> domainesCourants = <String>[
   'outlook.fr',
   'live.com',
   'live.fr',
+];
+
+/// Des domaines REELS, proches d'un domaine tres courant ou d'usage courant :
+/// tapes tels quels, ils ne recoivent jamais de proposition (« email.com »
+/// n'est pas une faute de « gmail.com », ni « mtn.com » de « msn.com »).
+/// Avec [domainesProposes], ce sont les domaines connus.
+const Set<String> domainesReels = <String>{
+  'email.com',
+  'mail.com',
+  'ymail.com',
+  'rocketmail.com',
+  'googlemail.com',
+  'gmx.com',
+  'gmx.net',
+  'gmx.fr',
+  'gmx.de',
+  'me.com',
+  'mac.com',
   'msn.com',
   'aol.com',
-  'ymail.com',
-  'googlemail.com',
-  'me.com',
-  'mail.com',
+  'aim.com',
+  'cloud.com',
+  'mtn.com',
+  'gail.com',
+  'inbox.com',
+  'usa.com',
+  'post.com',
+  'myself.com',
+  'consultant.com',
+  'gmail.ru',
+  'mail.ru',
+  'yandex.com',
+  'yandex.ru',
+  'proton.me',
+  'protonmail.com',
   'orange.fr',
   'free.fr',
   'sfr.fr',
   'laposte.net',
   'wanadoo.fr',
-  'gmx.com',
-  'gmx.fr',
-  'gmx.de',
-  'proton.me',
-  'protonmail.com',
-  'yandex.com',
-  'yandex.ru',
-  'mail.ru',
   'hotmail.co.uk',
   'yahoo.co.uk',
-];
+  'live.co.uk',
+};
 
 /// L'adresse corrigee que l'on propose pour [adresse], ou `null` quand il n'y
-/// a rien a proposer (adresse sans « @ », domaine connu, domaine trop eloigne
-/// d'un domaine courant). La partie avant « @ » n'est jamais touchee ; seul le
+/// a rien a proposer : adresse sans « @ », domaine connu ([domainesProposes],
+/// [domainesReels]), domaine qui n'est pas a une ou deux fautes d'un domaine
+/// tres courant. La partie avant « @ » n'est jamais touchee ; seul le
 /// domaine change.
 ///
 /// Exemples : `ali@gmial.com` -> `ali@gmail.com` ; `ali@gmail.con` ->
 /// `ali@gmail.com` ; `ali@hotmial.com` -> `ali@hotmail.com` ;
 /// `ali@yaho.com` -> `ali@yahoo.com` ; `ali@gmail` -> `ali@gmail.com` ;
-/// `ali@gmail.com` -> `null` ; `ali@univ-paris.fr` -> `null`.
+/// `ali@gmail.com` -> `null` ; `ali@email.com` -> `null` ;
+/// `ali@univ-paris.fr` -> `null`.
 String? proposerCourriel(String adresse) {
   final String saisie = adresse.trim();
   final int arobase = saisie.lastIndexOf('@');
@@ -72,21 +98,21 @@ String? proposerCourriel(String adresse) {
   }
   final String local = saisie.substring(0, arobase);
   final String domaine = saisie.substring(arobase + 1).toLowerCase();
-  if (domaine.length < 2 || domaine.contains(' ')) {
+  if (domaine.length < 2 || domaine.contains(' ') || local.contains('@')) {
     return null;
   }
-  if (domainesCourants.contains(domaine)) {
+  if (domainesProposes.contains(domaine) || domainesReels.contains(domaine)) {
     return null;
   }
-  // Sans extension (« gmail ») : le domaine courant de ce nom.
+  // Sans extension (« gmail ») : le domaine tres courant de ce nom.
   if (!domaine.contains('.')) {
-    for (final String candidat in domainesCourants) {
+    for (final String candidat in domainesProposes) {
       if (_nom(candidat) == domaine) return '$local@$candidat';
     }
   }
   String? meilleur;
   int distanceMeilleure = 1 << 30;
-  for (final String candidat in domainesCourants) {
+  for (final String candidat in domainesProposes) {
     // Meme nom, autre extension de pays bien formee (« orange.sn »,
     // « yahoo.co.jp », « outlook.sa ») : un vrai domaine, pas une faute.
     // Une seule faute dans l'extension (« gmail.con », « yahoo.fe ») reste

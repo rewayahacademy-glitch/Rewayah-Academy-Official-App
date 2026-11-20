@@ -56,7 +56,8 @@ void main() {
         find.byKey(const ValueKey<String>('juz-compteur')),
         findsOneWidget,
       );
-      expect(find.text(t.recrutement.parcours.juz.valeur(n: 1)), findsWidgets);
+      // Aucun nombre par defaut : le compteur attend un choix.
+      expect(find.text(t.recrutement.parcours.juz.choisir), findsOneWidget);
       await toucherCle(tester, 'juz-raccourci-15');
       await continuer(tester);
       expect(_dernier(port, champMemorisation), 'juz_15');
@@ -103,6 +104,56 @@ void main() {
       await continuer(tester);
       expect(_dernier(port, champMemorisation), 'moins_10_juz');
     });
+
+    testWidgets('un nombre precis sans nombre : rien n est retenu, Continuer '
+        'demande le nombre', (WidgetTester tester) async {
+      final FauxMaCandidature port = FauxMaCandidature(
+        questionnaireJson: questionnaireAvecJuz(),
+      );
+      await monterQuestionnaire(tester, port: port);
+      await repondreAvant(tester, 'niveauMemorisationDeclare');
+      // « Rien » puis « un nombre precis » : « rien » ne vaut plus.
+      await toucherCle(tester, 'option-$champMemorisation-aucune');
+      await toucherCle(tester, 'option-$champMemorisation-nombre');
+      final int avant = port.brouillons.length;
+      await continuer(tester);
+      expect(port.brouillons.length, avant);
+      expect(
+        find.byKey(const ValueKey<String>('juz-compteur')),
+        findsOneWidget,
+        reason: 'le parcours reste sur la question',
+      );
+      // « plus » donne 1 juz, un vrai choix.
+      await toucherCle(tester, 'choix-nombre-plus');
+      await continuer(tester);
+      expect(_dernier(port, champMemorisation), 'juz_1');
+    });
+
+    for (final (String tranche, String touche, String attendu)
+        in <(String, String, String)>[
+          ('moins_10_juz', 'choix-nombre-plus', 'juz_6'),
+          ('moins_10_juz', 'choix-nombre-moins', 'juz_4'),
+          ('de_10_a_29_juz', 'choix-nombre-plus', 'juz_16'),
+          ('de_10_a_29_juz', 'choix-nombre-moins', 'juz_14'),
+        ]) {
+      testWidgets('ancienne tranche $tranche : $touche donne $attendu, dans '
+          'la tranche', (WidgetTester tester) async {
+        final FauxMaCandidature port = FauxMaCandidature(
+          questionnaireJson: questionnaireAvecJuz(
+            dernieresReponses: <String, Object?>{
+              'langueMaternelle': 'poular',
+              'languesExplication': <String>['poular'],
+              champMemorisation: tranche,
+            },
+          ),
+        );
+        await monterQuestionnaire(tester, port: port);
+        await toucherCle(tester, 'parcours-retour');
+        await toucherCle(tester, touche);
+        await continuer(tester);
+        expect(_dernier(port, champMemorisation), attendu);
+      });
+    }
 
     testWidgets('sans juz_N au serveur : les quatre anciennes cartes', (
       WidgetTester tester,
@@ -190,6 +241,55 @@ void main() {
       await toucherCle(tester, 'option-riwayat-ruways');
       await continuer(tester);
       expect(_dernier(port, 'riwayat'), <String>['hafs', 'warsh', 'ruways']);
+    });
+
+    for (final (String nom, List<String> codes) in <(String, List<String>)>[
+      ('vingt codes', <String>[for (final l in lecteursRiwayat) ...l.riwayat]),
+      ('quatorze codes des sept', riwayatSept.toList()),
+    ]) {
+      testWidgets('relue, une reponse de $nom s ouvre sur la grille, jamais '
+          'sur une ijaza', (WidgetTester tester) async {
+        final FauxMaCandidature port = FauxMaCandidature(
+          questionnaireJson: questionnaireJsonDeTest(
+            dernieresReponses: <String, Object?>{
+              'langueMaternelle': 'poular',
+              'languesExplication': <String>['poular'],
+              champMemorisation: 'coran_entier',
+              'niveauLectureTajwid': 'tajwid_enseigne',
+              'riwayat': codes,
+            },
+          ),
+        );
+        await monterQuestionnaire(tester, port: port);
+        await toucherCle(tester, 'parcours-retour');
+        expect(
+          find.text(t.recrutement.parcours.riwayat.titreQuelques),
+          findsOneWidget,
+        );
+        await continuer(tester);
+        expect(_dernier(port, 'riwayat'), codes);
+      });
+    }
+
+    testWidgets('« une seule » ne vide pas plusieurs riwayat ; « quelques-'
+        'unes » les retrouve', (WidgetTester tester) async {
+      final FauxMaCandidature port = FauxMaCandidature(
+        questionnaireJson: questionnaireJsonDeTest(
+          dernieresReponses: <String, Object?>{
+            'langueMaternelle': 'poular',
+            'languesExplication': <String>['poular'],
+            champMemorisation: 'coran_entier',
+            'niveauLectureTajwid': 'tajwid_enseigne',
+            'riwayat': <String>['hafs', 'warsh'],
+          },
+        ),
+      );
+      await monterQuestionnaire(tester, port: port);
+      await toucherCle(tester, 'parcours-retour');
+      await toucherCle(tester, 'option-riwayat-une');
+      await toucherCle(tester, 'option-riwayat-quelques');
+      await continuer(tester);
+      expect(_dernier(port, 'riwayat'), <String>['hafs', 'warsh']);
     });
 
     testWidgets('une ancienne reponse se relit dans son mode', (

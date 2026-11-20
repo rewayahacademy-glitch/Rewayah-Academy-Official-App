@@ -147,8 +147,10 @@ void main() {
 
     test('une reponse deja enregistree se relit dans son mode', () {
       expect(modeDesRiwayat(<String>{}), isNull);
-      expect(modeDesRiwayat(riwayatDix), ModeRiwayat.dix);
-      expect(modeDesRiwayat(riwayatSept), ModeRiwayat.sept);
+      // Relecture de la PR 660 : jamais « dix » ni « sept » (ijaza) a la
+      // relecture, meme pour les vingt ou les quatorze codes.
+      expect(modeDesRiwayat(riwayatDix), ModeRiwayat.quelques);
+      expect(modeDesRiwayat(riwayatSept), ModeRiwayat.quelques);
       expect(modeDesRiwayat(<String>{'hafs'}), ModeRiwayat.une);
       expect(modeDesRiwayat(<String>{'hafs', 'warsh'}), ModeRiwayat.quelques);
       expect(

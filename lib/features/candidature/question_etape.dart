@@ -600,6 +600,10 @@ class _Juz extends StatefulWidget {
 }
 
 class _JuzState extends State<_Juz> {
+  /// La carte « un nombre precis » touchee pendant cette visite, avant tout
+  /// nombre choisi : le compteur s'ouvre, rien n'est retenu.
+  bool _nombreTouche = false;
+
   @override
   Widget build(BuildContext context) {
     final r = t.recrutement.parcours.juz;
@@ -611,7 +615,7 @@ class _JuzState extends State<_Juz> {
     final bool ancienne = memorisationAnciennes.contains(code);
     final String? carte = code == memorisationTout || code == memorisationRien
         ? code
-        : (nombre != null || ancienne)
+        : (nombre != null || ancienne || _nombreTouche)
         ? _Juz.valeurNombre
         : null;
     final ModeleQuestion? modele = modelesQuestions[champ.code];
@@ -664,10 +668,16 @@ class _JuzState extends State<_Juz> {
             if (reponse.valeurs.isEmpty) return;
             final String v = reponse.valeurs.first;
             if (v == _Juz.valeurNombre) {
-              // Une ancienne tranche reste retenue telle quelle ; sinon le
-              // compteur part de 1 juz, visible et modifiable.
-              if (nombre == null && !ancienne) repondre(1);
+              // Rien n'est retenu tant que la personne ne choisit pas un
+              // nombre : une ancienne tranche reste telle quelle ; « tout le
+              // Coran » ou « rien » ne valent plus, et « Continuer » demande
+              // le nombre.
+              setState(() => _nombreTouche = true);
+              if (code == memorisationTout || code == memorisationRien) {
+                widget.controleur.repondre(champ.code, null);
+              }
             } else {
+              setState(() => _nombreTouche = false);
               widget.controleur.repondre(champ.code, v);
             }
           },
@@ -687,15 +697,20 @@ class _JuzState extends State<_Juz> {
             libelle: r.compteur,
             libelleMoins: r.moins,
             libellePlus: r.plus,
-            min: 1,
+            // Sans nombre ni tranche, le compteur part de « choisissez » (0,
+            // jamais retenu) : « plus » donne 1 juz. Une ancienne tranche se
+            // lit telle quelle au centre, et le premier toucher donne un
+            // nombre DANS la tranche (moins de 10 : 4 ou 6 ; de 10 a 29 :
+            // 14 ou 16).
+            min: nombre == null && !ancienne ? 0 : 1,
             max: juzMaximum,
-            // Une ancienne tranche se lit telle quelle au centre ; le premier
-            // toucher donne un nombre exact.
-            valeur: nombre ?? (code == 'de_10_a_29_juz' ? 10 : 1),
-            affichage: (int n) => nombre == null && ancienne
-                ? _trancheCourte(code!)
+            valeur: nombre ?? (ancienne ? _milieuTranche(code!) : 0),
+            affichage: (int n) => nombre == null
+                ? (ancienne ? _trancheCourte(code!) : r.choisir)
                 : r.valeur(n: n),
-            onChange: repondre,
+            onChange: (int n) {
+              if (n >= 1) repondre(n);
+            },
           ),
           Ecart.vMd,
           // Choix de formulaire, pas un filtre : les raccourcis du compteur.
@@ -718,6 +733,10 @@ class _JuzState extends State<_Juz> {
   }
 }
 
+/// La valeur de depart du compteur pour une ancienne tranche : un nombre dans
+/// la tranche, dont les deux voisins y restent aussi.
+int _milieuTranche(String code) => code == 'de_10_a_29_juz' ? 15 : 5;
+
 /// Une ancienne tranche, en mots courts (« Moins de 10 juz »).
 String _trancheCourte(String code) {
   final v = t.recrutement.dossier3.synthese.memorisationValeurs;
@@ -728,8 +747,11 @@ String _trancheCourte(String code) {
 /// qiraat (les vingt riwayat), les sept (les quatorze riwayat des sept
 /// lecteurs), une seule riwaya (choisie dans la liste), ou quelques-unes
 /// (choisies lecteur par lecteur, avec une recherche). Le serveur recoit
-/// toujours la liste des codes, comme avant : une reponse deja enregistree se
-/// relit dans le mode qui lui correspond ([modeDesRiwayat]).
+/// toujours la liste des codes, comme avant. Une reponse deja enregistree se
+/// relit telle que la personne l'a donnee ([modeDesRiwayat]) : un code, « une
+/// seule » ; plusieurs, la grille avec exactement ces codes coches, jamais les
+/// cartes « dix » ou « sept », qui annoncent une ijaza que rien de stocke ne
+/// porte. Ces deux cartes ne s'affichent choisies que touchees a cette visite.
 class _Riwayat extends StatefulWidget {
   const _Riwayat({required this.champ, required this.controleur});
 
@@ -767,7 +789,9 @@ class _RiwayatState extends State<_Riwayat> {
       case ModeRiwayat.sept:
         _repondre(riwayatSept);
       case ModeRiwayat.une:
-        if (selection.length != 1) _repondre(<String>{});
+        // Plusieurs codes retenus restent retenus tant qu'aucune riwaya n'est
+        // choisie ici : revenir a « quelques-unes » les retrouve.
+        break;
       case ModeRiwayat.quelques:
         // Ce qui etait retenu le reste : on retire ce qu'on ne recite pas.
         break;
@@ -862,7 +886,9 @@ class _RiwayatState extends State<_Riwayat> {
           if (parCode[c] case final ElementChoix e) e,
       ],
       tous: tous,
-      selection: selection,
+      // Plusieurs codes retenus (une reponse de « quelques-unes ») : rien n'est
+      // coche dans la liste d'une seule riwaya, et rien n'est efface.
+      selection: selection.length == 1 ? selection : const <String>{},
       textes: TextesRecherche(
         recherche: r.recherche,
         aide: r.rechercheAide,

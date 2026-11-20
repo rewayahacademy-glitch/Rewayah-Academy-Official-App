@@ -2,8 +2,10 @@
 // Ce que le test prouve : les fautes relevees sur le terrain (gmail.coma,
 // gamil.com, gmail.co ; pas geml.com, trop loin) et les fautes courantes (gmial, gmail.con,
 // hotmial, yaho) recoivent une proposition ; un domaine courant juste, un vrai
-// domaine proche (mail.com, gmx.de), un domaine d'universite ou d'entreprise
-// n'en recoivent aucune ; la partie avant « @ » n'est jamais touchee.
+// domaine proche (mail.com, gmx.de, email.com, mtn.com, cloud.com, gmail.ru),
+// un domaine d'universite ou d'entreprise n'en recoivent aucune ; seuls les
+// domaines tres courants sont proposes ; la partie avant « @ » n'est jamais
+// touchee.
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/auth/suggestion_courriel.dart';
@@ -55,6 +57,25 @@ void main() {
         'ali@yahoo.co.jp',
         'ali@outlook.sa',
         'ali@hotmail.de',
+        // Relecture de la PR 660 : de vrais domaines, proches d'un domaine
+        // courant, ne recoivent aucune proposition.
+        'ali@email.com',
+        'ali@mtn.com',
+        'ali@cloud.com',
+        'ali@gmail.ru',
+        'ali@gmx.com',
+        'ali@gmx.net',
+        'ali@ymail.com',
+        'ali@live.fr',
+        'ali@mac.com',
+        'ali@gail.com',
+        'ali@msn.com',
+        'ali@msm.com',
+        'ali@hotmail.ca',
+        'ali@hotmail.com.tr',
+        'ali@protonmail.ch',
+        'ali@yahoo.co.in',
+        'a@b@gmial.com',
         'ali',
         'ali@',
         '@gmial.com',

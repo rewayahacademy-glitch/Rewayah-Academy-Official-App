@@ -3302,6 +3302,7 @@
         "nombreExplication": "This level is checked during the interview.",
         "nombreExemple": "you have memorised twelve juz: choose 12.",
         "compteur": "Number of juz memorised",
+        "choisir": "Choose a number",
         "moins": "One juz less",
         "plus": "One juz more",
         "valeur(param=n)": {

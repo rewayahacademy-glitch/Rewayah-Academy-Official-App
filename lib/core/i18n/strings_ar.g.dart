@@ -22378,10 +22378,11 @@ class _Traductions$recrutement$parcours$juz$ar extends Traductions$recrutement$p
 
 	// Translations
 	@override String get nombre => 'حفظت عددًا محددًا من الأجزاء';
-	@override String get nombreDescription => 'من جزء واحد إلى 29 جزءًا كاملًا، من ثلاثين جزءًا هي القرآن كله.';
+	@override String get nombreDescription => 'من جزء واحد إلى 29 جزءًا كاملًا، والقرآن ثلاثون جزءًا.';
 	@override String get nombreExplication => 'يُتحقق من هذا المستوى أثناء المقابلة.';
 	@override String get nombreExemple => 'حفظت اثني عشر جزءًا: اختر 12.';
 	@override String get compteur => 'عدد الأجزاء المحفوظة';
+	@override String get choisir => 'اختر العدد';
 	@override String get moins => 'جزء أقل';
 	@override String get plus => 'جزء أكثر';
 	@override String valeur({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
@@ -22392,7 +22393,7 @@ class _Traductions$recrutement$parcours$juz$ar extends Traductions$recrutement$p
 		many: '⁨${n}⁩ جزءًا',
 		other: '⁨${n}⁩ جزء',
 	);
-	@override String ancienne({required Object reponse}) => 'إجابتك المحفوظة: «⁨${reponse}⁩». ما زالت صالحة. لتذكر العدد بالضبط، المس عددًا أدناه.';
+	@override String ancienne({required Object reponse}) => 'إجابتك المحفوظة: «⁨${reponse}⁩». ما زالت صالحة. لتحديد العدد بالضبط، المس عددًا أدناه.';
 }
 
 // Path: recrutement.parcours.aides
@@ -41520,23 +41521,24 @@ extension on TraductionsAr {
 			'recrutement.parcours.riwayat.lecteurs.yaqub' => 'يعقوب',
 			'recrutement.parcours.riwayat.lecteurs.khalaf' => 'خلف العاشر',
 			'recrutement.parcours.juz.nombre' => 'حفظت عددًا محددًا من الأجزاء',
-			'recrutement.parcours.juz.nombreDescription' => 'من جزء واحد إلى 29 جزءًا كاملًا، من ثلاثين جزءًا هي القرآن كله.',
+			'recrutement.parcours.juz.nombreDescription' => 'من جزء واحد إلى 29 جزءًا كاملًا، والقرآن ثلاثون جزءًا.',
 			'recrutement.parcours.juz.nombreExplication' => 'يُتحقق من هذا المستوى أثناء المقابلة.',
 			'recrutement.parcours.juz.nombreExemple' => 'حفظت اثني عشر جزءًا: اختر 12.',
 			'recrutement.parcours.juz.compteur' => 'عدد الأجزاء المحفوظة',
+			'recrutement.parcours.juz.choisir' => 'اختر العدد',
 			'recrutement.parcours.juz.moins' => 'جزء أقل',
 			'recrutement.parcours.juz.plus' => 'جزء أكثر',
 			'recrutement.parcours.juz.valeur' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا جزء', one: 'جزء واحد', two: 'جزآن', few: '⁨${n}⁩ أجزاء', many: '⁨${n}⁩ جزءًا', other: '⁨${n}⁩ جزء', ), 
-			'recrutement.parcours.juz.ancienne' => ({required Object reponse}) => 'إجابتك المحفوظة: «⁨${reponse}⁩». ما زالت صالحة. لتذكر العدد بالضبط، المس عددًا أدناه.',
+			'recrutement.parcours.juz.ancienne' => ({required Object reponse}) => 'إجابتك المحفوظة: «⁨${reponse}⁩». ما زالت صالحة. لتحديد العدد بالضبط، المس عددًا أدناه.',
 			'recrutement.parcours.aides.ijazaTitre' => 'ما هي الإجازة؟',
 			'recrutement.parcours.aides.ijazaTexte' => 'الإجازة إذن مكتوب يعطيك إياه شيخ بعد أن تقرأ عليه القرآن كاملًا، أو الجزء الذي تذكره الإجازة. وتذكر الرواية التي قرأت بها، مثل حفص عن عاصم، وسلسلة الشيوخ الذين نقلوها، وهي السند. في المقابلة نطلب منك أن تعرضها عبر الفيديو، ولا شيء تُرسله الآن. وإن لم تكن عندك إجازة فيمكنك أن تتقدّم أيضًا.',
 			'recrutement.parcours.aides.juzTitre' => 'ما هو الجزء؟',
 			'recrutement.parcours.aides.juzTexte' => 'القرآن مقسوم إلى ثلاثين قسمًا متساوية الطول، وهي الأجزاء. احسب فقط الأجزاء التي تستطيع أن تقرأها كاملة عن ظهر قلب.',
 			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'هل الساعة عندك الآن ⁨${heure}⁩؟',
 			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'المنطقة الزمنية المقترحة: ⁨${lieu}⁩.',
-			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.',
 			'recrutement.parcours.fuseau.oui' => 'نعم، هذا هو الوقت عندي',
 			'recrutement.parcours.fuseau.ouiDescription' => 'تُؤكَّد منطقتك الزمنية.',
 			'recrutement.parcours.fuseau.changer' => 'لا، أريد تغييرها',
@@ -42048,9 +42050,9 @@ extension on TraductionsAr {
 			'argent.acces.reactiveTuteurSansDate' => ({required Object prenom}) => 'يستطيع ⁨${prenom}⁩ الانضمام إلى حصصه من جديد.',
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'يمكنك الانضمام إلى حصصك من جديد منذ ⁨${date}⁩.',
 			'argent.acces.reactiveAdulteSansDate' => 'يمكنك الانضمام إلى حصصك من جديد.',
-			'argent.acces.pastilleSuspendu' => 'معلَّق',
 			_ => null,
 		} ?? switch (path) {
+			'argent.acces.pastilleSuspendu' => 'معلَّق',
 			'argent.acces.pastilleReactive' => 'أُعيد تفعيله',
 			'argent.etat.finance' => 'ممول',
 			'argent.etat.essai' => 'تجربة',
@@ -42562,9 +42564,9 @@ extension on TraductionsAr {
 			'admissions.faitRefusee' => ({required Object deNom}) => 'رُفض طلب ⁨${deNom}⁩، والرسالة في الطريق.',
 			'admissions.faitPrecisions' => ({required Object nom}) => 'طُلبت التوضيحات من ⁨${nom}⁩، والرسالة في الطريق.',
 			'admissions.faitContact' => ({required Object nom}) => 'الرسالة إلى ⁨${nom}⁩ في الطريق.',
-			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'أُلغي رفض طلب ⁨${deNom}⁩.',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'أُلغي رفض طلب ⁨${deNom}⁩.',
 			'admissions.refus.dejaTraitee' => 'عالج شخص آخر من الإدارة هذا الطلب للتو. تُعاد قراءة القائمة.',
 			'admissions.refus.transitionInterdite' => 'لم يعد هذا الإجراء صالحًا لهذا الطلب (تغيرت حالته أو انقضت مهلة الأيام السبعة).',
 			'admissions.refus.motifRequis' => 'يلزم سبب لهذا الإجراء.',
@@ -43076,9 +43078,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.rapport.compteurs.nouvelles' => 'سُجِّلت.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'مسجَّلة سابقًا: لم يتغيّر شيء.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'أسطر غير مقروءة: لم تُستورد.',
-			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'استُبدلت بأحدث: ⁨${n}⁩',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'استُبدلت بأحدث: ⁨${n}⁩',
 			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'سطرًا سطرًا',
 			'candidatsFlux.importFormulaires.rapport.lignes.aide' => 'يُعرَّف كل سطر بتاريخ رده لا باسم الشخص.',
 			'candidatsFlux.importFormulaires.rapport.lignes.reference' => ({required Object reference}) => 'الرد بتاريخ ⁨${reference}⁩',
@@ -43590,9 +43592,9 @@ extension on TraductionsAr {
 			'calendrier.pauses.ligneDescription' => ({required Object mois, required Object n}) => 'الشهر المطلوب: ⁨${mois}⁩. الأشهر الممنوحة سلفًا: ⁨${n}⁩.',
 			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'الرد قبل ⁨${date}⁩',
 			'calendrier.pauses.enRetard' => 'انقضت المهلة',
-			'calendrier.pauses.accepter' => 'قبول',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.pauses.accepter' => 'قبول',
 			'calendrier.pauses.refuser' => 'رفض',
 			'calendrier.pauses.refusTitre' => 'الرد على الطلب',
 			'calendrier.pauses.refusPhrase' => 'السبب إلزامي عند الرفض، وتقرؤه الأسرة في التطبيق.',

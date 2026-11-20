@@ -3302,6 +3302,7 @@
         "nombreExplication": "Ce niveau est constaté pendant l'entretien.",
         "nombreExemple": "vous avez mémorisé douze juz\u00a0: choisissez 12.",
         "compteur": "Nombre de juz mémorisés",
+        "choisir": "Choisissez un nombre",
         "moins": "Un juz de moins",
         "plus": "Un juz de plus",
         "valeur(param=n)": {

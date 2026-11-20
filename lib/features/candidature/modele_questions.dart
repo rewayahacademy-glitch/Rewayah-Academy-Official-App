@@ -202,19 +202,18 @@ enum ModeRiwayat {
   quelques,
 }
 
-/// Le mode que montre une reponse deja enregistree : les vingt codes, les
-/// dix lectures ; les quatorze des sept lecteurs, les sept ; un seul code,
-/// une seule riwaya ; plusieurs, quelques-unes ; rien, `null`. Une ancienne
-/// reponse (avant ce lot) se relit ainsi sans perte : le format n'a pas
-/// change.
+/// Le mode que montre une reponse deja enregistree, telle que la personne l'a
+/// donnee : un seul code, une seule riwaya ; plusieurs, quelques-unes (la
+/// grille, exactement ces codes coches) ; rien, `null`.
+///
+/// Jamais [ModeRiwayat.dix] ni [ModeRiwayat.sept], meme pour les vingt ou les
+/// quatorze codes : ces cartes disent « j'ai une ijaza dans les dix (sept)
+/// qiraat », et ce qui est stocke (la seule liste des codes) ne garde aucune
+/// trace d'une ijaza. Une ancienne reponse « je recite toutes les riwayat »
+/// ou quatorze riwayat cochees une a une ne s'affichent donc jamais comme une
+/// ijaza (pilote, 20/11/2026, relecture de la PR 660).
 ModeRiwayat? modeDesRiwayat(Set<String> codes) {
   if (codes.isEmpty) return null;
-  if (codes.length == riwayatDix.length && codes.containsAll(riwayatDix)) {
-    return ModeRiwayat.dix;
-  }
-  if (codes.length == riwayatSept.length && codes.containsAll(riwayatSept)) {
-    return ModeRiwayat.sept;
-  }
   return codes.length == 1 ? ModeRiwayat.une : ModeRiwayat.quelques;
 }
 

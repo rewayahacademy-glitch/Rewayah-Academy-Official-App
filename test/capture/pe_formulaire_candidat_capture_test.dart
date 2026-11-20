@@ -93,10 +93,21 @@ Future<void> _monterConnexion(WidgetTester tester) async {
   await tester.pumpAndSettle();
 }
 
-/// Fait voir [cle] (en bas de l'ecran s'il le faut), puis capture.
-Future<void> _photo(WidgetTester tester, String nom, {String? cle}) async {
+/// Fait voir [cle] (en bas de l'ecran s'il le faut ; en HAUT de l'ecran avec
+/// [enHaut]), puis capture.
+Future<void> _photo(
+  WidgetTester tester,
+  String nom, {
+  String? cle,
+  bool enHaut = false,
+}) async {
   if (cle != null) {
-    await tester.ensureVisible(find.byKey(ValueKey<String>(cle)));
+    final Finder f = find.byKey(ValueKey<String>(cle));
+    if (enHaut) {
+      await Scrollable.ensureVisible(tester.element(f), alignment: 0.05);
+    } else {
+      await tester.ensureVisible(f);
+    }
     await tester.pumpAndSettle();
   }
   debugPrint('PNG ${await capturer(tester, nom)}');
@@ -128,6 +139,12 @@ void main() {
           cle: 'option-$champMemorisation-aucune',
         );
         await toucherCle(tester, 'option-$champMemorisation-nombre');
+        // Aucun nombre par defaut : le compteur attend un choix.
+        await _photo(
+          tester,
+          'juz-nombre-choisir_${l}_390',
+          cle: 'juz-raccourci-20',
+        );
         await toucherCle(tester, 'juz-raccourci-10');
         final Finder plus = find.descendant(
           of: find.byKey(const ValueKey<String>('juz-compteur')),
@@ -178,10 +195,12 @@ void main() {
         );
         await toucherCle(tester, 'option-riwayat-quelques');
         await toucherCle(tester, 'option-riwayat-warsh');
+        // Le haut de la grille : la recherche, puis Nafi et Ibn Kathir.
         await _photo(
           tester,
           'riwayat-quelques_${l}_390',
-          cle: 'option-riwayat-shuba',
+          cle: 'riwayat-grille-recherche',
+          enHaut: true,
         );
         await _photo(
           tester,
