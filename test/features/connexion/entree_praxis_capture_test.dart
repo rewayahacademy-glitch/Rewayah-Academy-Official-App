@@ -76,6 +76,9 @@ void main() {
     TestWidgetsFlutterBinding.ensureInitialized();
     await chargerPolicesDuDepot();
     await Atelier.preparer();
+    // L'arabe est charge a la demande : une fois ici, puis retour au francais.
+    await LocaleSettings.setLocale(AppLocale.ar);
+    await LocaleSettings.setLocale(AppLocale.fr);
   });
 
   group('captures de la page d entree', skip: sautSansCapture, () {

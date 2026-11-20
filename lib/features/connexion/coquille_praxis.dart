@@ -357,7 +357,13 @@ class CoquillePraxisState extends State<CoquillePraxis>
     return SingleChildScrollView(
       child: Stack(
         children: <Widget>[
-          Positioned(top: 0, left: 0, right: 0, height: h, child: _decor()),
+          PositionedDirectional(
+            top: 0,
+            start: 0,
+            end: 0,
+            height: h,
+            child: _decor(),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -382,7 +388,7 @@ class CoquillePraxisState extends State<CoquillePraxis>
                         maxWidth: _largeurContenuFeuille,
                       ),
                       child: Padding(
-                        padding: const EdgeInsets.fromLTRB(
+                        padding: const EdgeInsetsDirectional.fromSTEB(
                           AppSpacing.xxl,
                           AppSpacing.xxl,
                           AppSpacing.xxl,

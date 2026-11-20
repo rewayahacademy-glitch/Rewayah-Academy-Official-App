@@ -13,7 +13,6 @@ import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/app_card.dart';
 import 'package:rewayah_academy/core/widgets/brand_logo.dart';
 import 'package:rewayah_academy/core/widgets/porte_lumiere.dart';
-import 'package:rewayah_academy/features/connexion/connexion_page.dart';
 import 'package:rewayah_academy/features/connexion/recuperation_page.dart';
 
 import '../../support/garde_interface.dart';
@@ -63,8 +62,10 @@ void main() {
     await tester.pump();
   }
 
+  // ENTREE-PRAXIS (20/11/2026) : la connexion a quitte la surface de marque
+  // pour la scene de Praxis ; son rendu est prouve par
+  // `entree_praxis_test.dart`. Ce balayage garde la recuperation d'acces.
   for (final (String nom, Widget page) in <(String, Widget)>[
-    ('connexion', const ConnexionPage()),
     ('recuperation', const RecuperationPage()),
   ]) {
     for (final Size vue in <Size>[
@@ -184,7 +185,7 @@ void main() {
   ) async {
     await monter(
       tester,
-      const ConnexionPage(),
+      const RecuperationPage(),
       vue: const Size(1440, 900),
       theme: ThemeMode.dark,
     );
@@ -195,7 +196,7 @@ void main() {
   testWidgets('l illustration joue une fois puis s arrete', (
     WidgetTester tester,
   ) async {
-    await monter(tester, const ConnexionPage(), vue: const Size(390, 844));
+    await monter(tester, const RecuperationPage(), vue: const Size(390, 844));
     // Aucune animation ne reste armee : la page se stabilise en moins de
     // deux secondes (une boucle sans fin ferait echouer cet appel).
     await tester.pumpAndSettle(
