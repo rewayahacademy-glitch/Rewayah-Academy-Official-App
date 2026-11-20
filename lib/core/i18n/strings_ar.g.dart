@@ -1521,9 +1521,6 @@ class _Traductions$kyc$ar extends Traductions$kyc$fr {
 	@override String get manqueType => 'اختر أولًا الوثيقة التي تودعها.';
 	@override String get enCoursTitre => 'جارٍ إرسال وثيقتك';
 	@override String get enCours => 'أبقِ هذه الصفحة مفتوحة. إذا انقطع الاتصال بالإنترنت، يعيد التطبيق المحاولة وحده مرتين.';
-	@override String get reussiTitre => 'أُرسلت وثيقتك';
-	@override String get reussi => 'ستتحقق منها الإدارة. تتابع ما يلي من ملفك.';
-	@override String get revenirDossier => 'العودة إلى ملفي';
 	@override String get echecTitre => 'لم تُرسل وثيقتك بعد';
 }
 
@@ -11200,6 +11197,7 @@ class _Traductions$recrutement$dossier3$ar extends Traductions$recrutement$dossi
 	@override String get demanderAccord => 'طلب اتفاق';
 	@override late final _Traductions$recrutement$dossier3$raison$ar raison = _Traductions$recrutement$dossier3$raison$ar._(_root);
 	@override String photoAgrandir({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير';
+	@override late final _Traductions$recrutement$dossier3$tete$ar tete = _Traductions$recrutement$dossier3$tete$ar._(_root);
 }
 
 // Path: recrutement.file
@@ -22265,6 +22263,34 @@ class _Traductions$recrutement$dossier3$raison$ar extends Traductions$recrutemen
 	@override String get decisionAttendue => 'تمت المقابلة: القرار في انتظاركم.';
 }
 
+// Path: recrutement.dossier3.tete
+class _Traductions$recrutement$dossier3$tete$ar extends Traductions$recrutement$dossier3$tete$fr {
+	_Traductions$recrutement$dossier3$tete$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get manque => 'ما ينقص';
+	@override String get manqueRien => 'لا شيء من جهته';
+	@override late final _Traductions$recrutement$dossier3$tete$elements$ar elements = _Traductions$recrutement$dossier3$tete$elements$ar._(_root);
+	@override String get piece => 'وثيقة الهوية';
+	@override late final _Traductions$recrutement$dossier3$tete$pieceValeurs$ar pieceValeurs = _Traductions$recrutement$dossier3$tete$pieceValeurs$ar._(_root);
+	@override String get connexion => 'آخر دخول';
+	@override String get connexionAucune => 'لم يدخل بعد';
+	@override String get aujourdhui => 'اليوم';
+	@override String get hier => 'أمس';
+	@override String get anciennete => 'استُلم الطلب';
+	@override String ilYa({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'اليوم',
+		one: 'منذ يوم واحد',
+		two: 'منذ يومين',
+		few: 'منذ ⁨${n}⁩ أيام',
+		many: 'منذ ⁨${n}⁩ يومًا',
+		other: 'منذ ⁨${n}⁩ يوم',
+	);
+	@override String accueillirPiece({required Object geste}) => '«⁨${geste}⁩» يتطلب وثيقة هوية معتمدة: تحقق منها أولًا.';
+}
+
 // Path: recrutement.invitations.comptable
 class _Traductions$recrutement$invitations$comptable$ar extends Traductions$recrutement$invitations$comptable$fr {
 	_Traductions$recrutement$invitations$comptable$ar._(TraductionsAr root) : this._root = root, super.internal(root);
@@ -27732,6 +27758,32 @@ class _Traductions$recrutement$dossier3$synthese$ageValeurs$ar extends Traductio
 	@override String attestee({required Object date}) => '18 سنة فأكثر، أُكّد بتاريخ ⁨${date}⁩';
 	@override String get moins18 => 'أقل من 18 سنة: الترشح متوقف مؤقتًا';
 	@override String get nonAttestee => 'لم يُؤكَّد العمر بعد';
+}
+
+// Path: recrutement.dossier3.tete.elements
+class _Traductions$recrutement$dossier3$tete$elements$ar extends Traductions$recrutement$dossier3$tete$elements$fr {
+	_Traductions$recrutement$dossier3$tete$elements$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get compte => 'حسابه';
+	@override String get questionnaire => 'الاستبيان';
+	@override String get pays_versement => 'بلد صرف الراتب';
+}
+
+// Path: recrutement.dossier3.tete.pieceValeurs
+class _Traductions$recrutement$dossier3$tete$pieceValeurs$ar extends Traductions$recrutement$dossier3$tete$pieceValeurs$fr {
+	_Traductions$recrutement$dossier3$tete$pieceValeurs$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get verifiee => 'معتمدة';
+	@override String get aVerifier => 'مودعة، في انتظار التحقق';
+	@override String get absente => 'لم تودع بعد';
+	@override String get aRedeposer => 'مرفوضة، يجب إيداعها من جديد';
+	@override String get compteAbsent => 'لا حساب بعد';
 }
 
 // Path: recrutement.accueil.messages.sections
@@ -40847,9 +40899,6 @@ extension on TraductionsAr {
 			'kyc.manqueType' => 'اختر أولًا الوثيقة التي تودعها.',
 			'kyc.enCoursTitre' => 'جارٍ إرسال وثيقتك',
 			'kyc.enCours' => 'أبقِ هذه الصفحة مفتوحة. إذا انقطع الاتصال بالإنترنت، يعيد التطبيق المحاولة وحده مرتين.',
-			'kyc.reussiTitre' => 'أُرسلت وثيقتك',
-			'kyc.reussi' => 'ستتحقق منها الإدارة. تتابع ما يلي من ملفك.',
-			'kyc.revenirDossier' => 'العودة إلى ملفي',
 			'kyc.echecTitre' => 'لم تُرسل وثيقتك بعد',
 			'protectionEnfants.categorie' => 'سلامة طفل',
 			'protectionEnfants.prioritaireTitre' => 'إبلاغ ذو أولوية',
@@ -40872,11 +40921,11 @@ extension on TraductionsAr {
 			'codeConduite.regles.7' => 'إذا أقلقتك سلامة طفل، فأبلغ فورًا عبر «الإشارة إلى حاجة»، فئة «سلامة طفل». تقرؤه الإدارة أولًا.',
 			'codeConduite.regles.8' => 'إذا رفضت هذه القواعد، فلا تستطيع الأكاديمية أن تُسند إليك تلاميذ، لأنها تحمي الأطفال.',
 			'codeConduite.caseAccord' => 'قرأت مدونة السلوك وأوافق عليها.',
-			_ => null,
-		} ?? switch (path) {
 			'codeConduite.accepter' => 'أوافق على مدونة السلوك',
 			'codeConduite.accepteLe' => ({required Object date, required Object version}) => 'تمت الموافقة في ⁨${date}⁩. الإصدار ⁨${version}⁩.',
 			'codeConduite.erreur' => 'لم تُسجَّل موافقتك. أعد المحاولة بعد قليل.',
+			_ => null,
+		} ?? switch (path) {
 			'codeConduite.erreurLecture' => 'تعذّرت قراءة موافقاتك. أعد المحاولة.',
 			'codeConduite.aAccepter' => 'تنتظر موافقتك',
 			'contrat.titre' => 'ما توقّع عليه',
@@ -41386,11 +41435,11 @@ extension on TraductionsAr {
 			'recherche.initial.phrase' => 'اكتب اسمًا أو فصلًا أو مادة. لا يُبحث عن شيء قبل أن تكتب.',
 			'recherche.courte' => 'اكتب ثلاثة أحرف على الأقل.',
 			'recherche.formeAttendue' => 'ابحث برقم التسجيل كاملاً، مثل ⁦RA-26-4817⁩.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.chargement' => 'جارٍ البحث…',
 			'recherche.lent' => 'يستغرق البحث وقتًا أطول من المتوقع. تبقى النتائج التي وصلت معروضة.',
 			'recherche.resultatsPour' => ({required Object requete}) => 'نتائج «⁨${requete}⁩»',
+			_ => null,
+		} ?? switch (path) {
 			'recherche.categoriesAffichees' => ({required num nombre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(nombre, zero: 'لا فئة معروضة', one: 'فئة واحدة معروضة', two: 'فئتان معروضتان', few: '⁨${nombre}⁩ فئات معروضة', many: '⁨${nombre}⁩ فئةً معروضة', other: '⁨${nombre}⁩ فئة معروضة', ), 
 			'recherche.domaines.classes' => 'الفصول',
 			'recherche.domaines.supports' => 'المواد',
@@ -41534,6 +41583,24 @@ extension on TraductionsAr {
 			'recrutement.dossier3.raison.entretienPlanifie' => 'المقابلة محدّدة: يأتي القرار بعد المقابلة.',
 			'recrutement.dossier3.raison.decisionAttendue' => 'تمت المقابلة: القرار في انتظاركم.',
 			'recrutement.dossier3.photoAgrandir' => ({required Object deNom}) => 'عرض صورة ⁨${deNom}⁩ بحجم كبير',
+			'recrutement.dossier3.tete.manque' => 'ما ينقص',
+			'recrutement.dossier3.tete.manqueRien' => 'لا شيء من جهته',
+			'recrutement.dossier3.tete.elements.compte' => 'حسابه',
+			'recrutement.dossier3.tete.elements.questionnaire' => 'الاستبيان',
+			'recrutement.dossier3.tete.elements.pays_versement' => 'بلد صرف الراتب',
+			'recrutement.dossier3.tete.piece' => 'وثيقة الهوية',
+			'recrutement.dossier3.tete.pieceValeurs.verifiee' => 'معتمدة',
+			'recrutement.dossier3.tete.pieceValeurs.aVerifier' => 'مودعة، في انتظار التحقق',
+			'recrutement.dossier3.tete.pieceValeurs.absente' => 'لم تودع بعد',
+			'recrutement.dossier3.tete.pieceValeurs.aRedeposer' => 'مرفوضة، يجب إيداعها من جديد',
+			'recrutement.dossier3.tete.pieceValeurs.compteAbsent' => 'لا حساب بعد',
+			'recrutement.dossier3.tete.connexion' => 'آخر دخول',
+			'recrutement.dossier3.tete.connexionAucune' => 'لم يدخل بعد',
+			'recrutement.dossier3.tete.aujourdhui' => 'اليوم',
+			'recrutement.dossier3.tete.hier' => 'أمس',
+			'recrutement.dossier3.tete.anciennete' => 'استُلم الطلب',
+			'recrutement.dossier3.tete.ilYa' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'اليوم', one: 'منذ يوم واحد', two: 'منذ يومين', few: 'منذ ⁨${n}⁩ أيام', many: 'منذ ⁨${n}⁩ يومًا', other: 'منذ ⁨${n}⁩ يوم', ), 
+			'recrutement.dossier3.tete.accueillirPiece' => ({required Object geste}) => '«⁨${geste}⁩» يتطلب وثيقة هوية معتمدة: تحقق منها أولًا.',
 			'recrutement.file.outils' => 'أدوات',
 			'recrutement.file.outilsDe' => 'أدوات قائمة طلبات الترشح',
 			'recrutement.file.afficher' => 'عرض',
@@ -41885,6 +41952,8 @@ extension on TraductionsAr {
 			'recrutement.accueil.reprise.echec' => 'لم يكتمل الاستئناف. لم يتغيّر شيء: أعد المحاولة بعد لحظة.',
 			'recrutement.accueil.reprise.incertain' => 'قد لا يكون طلب الاستئناف قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يُسجَّل مرتين.',
 			'recrutement.accueil.reprise.horsLigne' => 'سيمكن الاستئناف عند عودة الاتصال.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.accueil.reprise.conflit' => 'تغيّر طلب ترشحك منذ فتح هذه الصفحة. راجعه ثم أعد المحاولة.',
 			'recrutement.retrait.lien' => 'سحب طلب ترشحي',
 			'recrutement.retrait.question' => 'هل تسحب طلب ترشحك؟',
@@ -41900,8 +41969,6 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.conditionsTitre' => 'شروط الراتب',
 			'recrutement.questionnaire.part' => ({required Object part}) => 'حصتك: ⁨${part}⁩ من السعر المعلن، عن كل طالب حاضر.',
 			'recrutement.questionnaire.partPublic' => ({required Object public, required Object part}) => '⁨${public}⁩: ⁨${part}⁩ من السعر المعلن، عن كل طالب حاضر.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.questionnaire.publicEnfant' => 'الأطفال (من 6 إلى 17 سنة)',
 			'recrutement.questionnaire.publicAdulte' => 'الكبار (18 سنة فأكثر)',
 			'recrutement.questionnaire.coordonneesPlusTard' => 'لن تُطلب منك بياناتك المالية إلا قبل أول دفعة تتلقاها.',
@@ -42399,6 +42466,8 @@ extension on TraductionsAr {
 			'recrutement.talents.c.comptabilite.libelle' => 'المحاسبة',
 			'recrutement.talents.c.comptabilite.description' => 'مسك حسابات الأكاديمية.',
 			'recrutement.talents.c.comptabilite.exemple' => 'تسجيل الفواتير، متابعة المدفوعات، إعداد ميزانية ختامية',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.c.gestion_financiere.libelle' => 'التسيير المالي',
 			'recrutement.talents.c.gestion_financiere.description' => 'متابعة الأموال وتحضير القرارات.',
 			'recrutement.talents.c.gestion_financiere.exemple' => 'إعداد ميزانية تقديرية، متابعة السيولة',
@@ -42414,8 +42483,6 @@ extension on TraductionsAr {
 			'recrutement.talents.c.qualite_cours.libelle' => 'ملاحظة الدروس وجودتها',
 			'recrutement.talents.c.qualite_cours.description' => 'ملاحظة الحصص والمساعدة على تحسينها.',
 			'recrutement.talents.c.qualite_cours.exemple' => 'حضور حصة، كتابة ملاحظات مكتوبة',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.c.tests_niveau.libelle' => 'اختبارات تحديد المستوى',
 			'recrutement.talents.c.tests_niveau.description' => 'تحديد مستوى طالب جديد.',
 			'recrutement.talents.c.tests_niveau.exemple' => 'الاستماع إلى تلاوة طالب جديد قبل دخوله فصلًا',
@@ -42913,6 +42980,8 @@ extension on TraductionsAr {
 			'avis.admin.liens.maxAide' => '200 افتراضيًا و2000 على الأكثر.',
 			'avis.admin.liens.maxErreur' => 'اكتب عددًا من الآراء من 1 إلى 2000.',
 			'avis.admin.liens.creer' => 'إنشاء الرابط',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.echecCreation' => 'لم يتأكد إنشاء الرابط. انظر قائمة الروابط قبل أن تحاول من جديد.',
 			'avis.admin.liens.creeTitre' => 'تم إنشاء الرابط',
 			'avis.admin.liens.creePhrase' => 'انسخ هذا الرابط الآن. لن يظهر مرة أخرى بعد إغلاق هذا الإطار. إذا فقدته فأغلق هذا الرابط وأنشئ رابطًا آخر.',
@@ -42928,8 +42997,6 @@ extension on TraductionsAr {
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'الآراء الواردة: ⁨${recus}⁩ من ⁨${max}⁩',
 			'avis.admin.liens.fin' => ({required Object date}) => 'ينتهي في ⁨${date}⁩',
 			'avis.admin.liens.cree' => ({required Object date}) => 'أُنشئ في ⁨${date}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermer' => 'إغلاق الرابط',
 			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'هل تغلق الرابط «⁨${nom}⁩»؟',
 			'avis.admin.liens.fermerConsequence' => 'من يفتح هذا الرابط سيرى أنه مغلق ولن يستطيع إرسال رأي. تبقى الآراء التي وصلت. الرابط المغلق لا يُعاد فتحه.',
@@ -43427,6 +43494,8 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.nature.telephone' => 'الهاتف نفسه',
 			'candidatsFlux.importFormulaires.doublons.nature.courrielEtTelephone' => 'البريد الإلكتروني والهاتف نفسهما',
 			'candidatsFlux.importFormulaires.doublons.lignes' => ({required Object liste}) => 'الأسطر ⁨${liste}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.dansLaBase' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'و⁨${n}⁩ سطر مسجَّل سابقًا', one: 'وسطر واحد مسجَّل سابقًا', two: 'وسطران مسجَّلان سابقًا', few: 'و⁨${n}⁩ أسطر مسجَّلة سابقًا', many: 'و⁨${n}⁩ سطرًا مسجَّلًا سابقًا', other: 'و⁨${n}⁩ سطر مسجَّل سابقًا', ), 
 			'candidatsFlux.importFormulaires.doublons.choisirLigne' => 'اختاروا السطر الذي يُحتفظ به، أو بيّنوا أنهم أشخاص مختلفون.',
 			'candidatsFlux.importFormulaires.doublons.ouvrir' => 'عرض خيارات هذه الحالة',
@@ -43442,8 +43511,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.doublons.option.base.titre' => 'الاحتفاظ بالسطر المسجَّل سابقًا',
 			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'اعتمد استيراد سابق سطرًا لهذا الشخص. وتبقى أسطر هذا الملف في السجل.',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'الاحتفاظ باختياركم السابق',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.distinctes' => 'سبق أن بيّنتم أنهم أشخاص مختلفون.',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.ligne' => 'سبق أن اخترتم السطر الذي يُحتفظ به لهذا الشخص.',
 			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'الاحتفاظ بالسطر ⁨${ligne}⁩ بدلًا من ذلك',
@@ -43941,6 +44008,8 @@ extension on TraductionsAr {
 			'suiviAttente.presentation.paysResidence' => 'بلد الإقامة',
 			'suiviAttente.presentation.choisirPays' => 'اختيار بلد',
 			'suiviAttente.presentation.nonRenseigne' => 'غير محدد',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.presentation.mot' => 'كلمتي للتعريف',
 			'suiviAttente.presentation.motAide' => 'حتى 500 حرف. تقرؤها الأسر كما كتبتها.',
 			'suiviAttente.presentation.nonConfirme' => 'لم تؤكد هذا الاختيار بعد. إلى أن تؤكده تُعرض بلداك وكلمتك، إن كتبتهما، في بطاقة المتابعة.',
@@ -43956,8 +44025,6 @@ extension on TraductionsAr {
 			'suiviAttente.mePresenter.champ' => 'رسالتك',
 			'suiviAttente.mePresenter.rappel' => 'يقرأ هذه الرسالة أولياء أمور الطلاب القاصرين والطلاب البالغون. لا تُرسل أبدًا إلى قاصر. لا تتبادلوا هاتفًا ولا عنوانًا: كل شيء يمر عبر التطبيق.',
 			'suiviAttente.mePresenter.envoyer' => 'إرسال إلى الأسر',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.mePresenter.envoye' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'أُرسلت الرسالة إلى ⁨${n}⁩ أسرة.', one: 'أُرسلت الرسالة إلى أسرة واحدة.', two: 'أُرسلت الرسالة إلى أسرتين.', few: 'أُرسلت الرسالة إلى ⁨${n}⁩ أسر.', many: 'أُرسلت الرسالة إلى ⁨${n}⁩ أسرة.', other: 'أُرسلت الرسالة إلى ⁨${n}⁩ أسرة.', ), 
 			'suiviAttente.mePresenter.dejaEcrit' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لدى ⁨${n}⁩ أسرة محادثة معك بالفعل: لا تتلقى هذه الرسالة.', one: 'لدى أسرة واحدة محادثة معك بالفعل: لا تتلقى هذه الرسالة.', two: 'لدى أسرتين محادثة معك بالفعل: لا تتلقيان هذه الرسالة.', few: 'لدى ⁨${n}⁩ أسر محادثة معك بالفعل: لا تتلقى هذه الرسالة.', many: 'لدى ⁨${n}⁩ أسرة محادثة معك بالفعل: لا تتلقى هذه الرسالة.', other: 'لدى ⁨${n}⁩ أسرة محادثة معك بالفعل: لا تتلقى هذه الرسالة.', ), 
 			'suiviAttente.mePresenter.aucune' => 'لا توجد حاليًا أسرة في هذا الفصل يمكنها تلقي رسالة.',

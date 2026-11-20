@@ -2800,7 +2800,34 @@
         "entretienPlanifie": "Entretien planifié\u00a0: la décision vient après l'entretien.",
         "decisionAttendue": "Entretien tenu\u00a0: la décision vous attend."
       },
-      "photoAgrandir": "Voir la photo {deNom} en grand"
+      "photoAgrandir": "Voir la photo {deNom} en grand",
+      "tete": {
+        "manque": "Ce qui manque",
+        "manqueRien": "Rien, de son côté",
+        "elements": {
+          "compte": "Son compte",
+          "questionnaire": "Le questionnaire",
+          "pays_versement": "Le pays de versement"
+        },
+        "piece": "Pièce d'identité",
+        "pieceValeurs": {
+          "verifiee": "Vérifiée",
+          "aVerifier": "Déposée, à vérifier",
+          "absente": "Pas encore déposée",
+          "aRedeposer": "Refusée, à déposer de nouveau",
+          "compteAbsent": "Pas encore de compte"
+        },
+        "connexion": "Dernière connexion",
+        "connexionAucune": "Aucune connexion",
+        "aujourdhui": "Aujourd'hui",
+        "hier": "Hier",
+        "anciennete": "Candidature reçue",
+        "ilYa(plural)": {
+          "one": "Il y a {n} jour",
+          "other": "Il y a {n} jours"
+        },
+        "accueillirPiece": "«\u00a0{geste}\u00a0» demande une pièce d'identité vérifiée\u00a0: vérifiez-la d'abord."
+      }
     },
     "file": {
       "outils": "Outils",
