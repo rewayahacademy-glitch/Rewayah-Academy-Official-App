@@ -9185,8 +9185,8 @@ class _Traductions$connexion$candidat$ar extends Traductions$connexion$candidat$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get titre => 'ترشّحك للتدريس';
-	@override String get phrase => 'وصلت عبر دعوة أكاديمية رواية. ترشّحك في انتظارك: اكتب العنوان الذي وصلته هذه الرسالة، وسنرسل إليه رابط الدخول.';
+	@override String get titre => 'طلب ترشحك معلّمًا';
+	@override String get phrase => 'وصلت عبر دعوة أكاديمية الرواية. طلب ترشحك في انتظارك: اكتب البريد الإلكتروني الذي وصلته هذه الرسالة، وسنرسل إليه رابط الدخول.';
 }
 
 // Path: connexion.code
@@ -9397,15 +9397,15 @@ class _Traductions$inscription$porte$ar extends Traductions$inscription$porte$fr
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get question => 'ماذا تريد أن تفعل في أكاديمية رواية؟';
+	@override String get question => 'ماذا تريد أن تفعل في أكاديمية الرواية؟';
 	@override String get explication => 'اختر مساحتك. لن ترى بعد ذلك إلا أسئلة هذه المساحة.';
 	@override String get apprendreTitre => 'أتعلّم';
 	@override String get apprendreDescription => 'متابعة دروس الأكاديمية، لنفسك أو لطفلك. ستحدّد بعد ذلك لمن.';
 	@override String get apprendreExemple => 'تتعلّم التلاوة، أو تسجّل ابنتك ذات التسع سنوات.';
-	@override String get enseignerTitre => 'أُدرّس';
-	@override String get enseignerDescription => 'تقديم ترشّحك للتدريس. تدرسه الأكاديمية قبل أي فصل.';
+	@override String get enseignerTitre => 'أعلّم';
+	@override String get enseignerDescription => 'تقديم طلب ترشحك معلّمًا. تدرسه الأكاديمية قبل أي فصل.';
 	@override String get enseignerExemple => 'وصلتك دعوة من الأكاديمية بالبريد الإلكتروني.';
-	@override String get espaceEnseignant => 'الترشّح للتدريس';
+	@override String get espaceEnseignant => 'طلب الترشح معلّمًا';
 	@override String get espaceEleve => 'تسجيل طالب';
 }
 
@@ -38883,8 +38883,8 @@ extension on TraductionsAr {
 			'appareils.regenerer' => 'إنشاء رمز جديد',
 			'appareils.revoquer' => 'إزالة',
 			'appareils.revoquerConfirmation' => 'إزالة هذا الجهاز؟ لن يستطيع الاتصال ما لم يُعد وليّ الأمر ربطه برمز جديد.',
-			'connexion.candidat.titre' => 'ترشّحك للتدريس',
-			'connexion.candidat.phrase' => 'وصلت عبر دعوة أكاديمية رواية. ترشّحك في انتظارك: اكتب العنوان الذي وصلته هذه الرسالة، وسنرسل إليه رابط الدخول.',
+			'connexion.candidat.titre' => 'طلب ترشحك معلّمًا',
+			'connexion.candidat.phrase' => 'وصلت عبر دعوة أكاديمية الرواية. طلب ترشحك في انتظارك: اكتب البريد الإلكتروني الذي وصلته هذه الرسالة، وسنرسل إليه رابط الدخول.',
 			'connexion.titre' => 'تسجيل الدخول',
 			'connexion.intro' => 'نرسل لك رابطًا بالبريد الإلكتروني. لا كلمة مرور تحفظها، ولا كلمة مرور تضيع.',
 			'connexion.courriel' => 'بريدك الإلكتروني',
@@ -39148,15 +39148,15 @@ extension on TraductionsAr {
 			'inscription.usage.enseignantPostuler' => 'هل ترغب في التدريس في أكاديمية الرواية؟',
 			'inscription.usage.deposerCandidature' => 'تقديم طلب ترشحي',
 			'inscription.usage.postulerIci' => 'هل ترغب في التدريس معنا؟ قدّم طلبك هنا',
-			'inscription.porte.question' => 'ماذا تريد أن تفعل في أكاديمية رواية؟',
+			'inscription.porte.question' => 'ماذا تريد أن تفعل في أكاديمية الرواية؟',
 			'inscription.porte.explication' => 'اختر مساحتك. لن ترى بعد ذلك إلا أسئلة هذه المساحة.',
 			'inscription.porte.apprendreTitre' => 'أتعلّم',
 			'inscription.porte.apprendreDescription' => 'متابعة دروس الأكاديمية، لنفسك أو لطفلك. ستحدّد بعد ذلك لمن.',
 			'inscription.porte.apprendreExemple' => 'تتعلّم التلاوة، أو تسجّل ابنتك ذات التسع سنوات.',
-			'inscription.porte.enseignerTitre' => 'أُدرّس',
-			'inscription.porte.enseignerDescription' => 'تقديم ترشّحك للتدريس. تدرسه الأكاديمية قبل أي فصل.',
+			'inscription.porte.enseignerTitre' => 'أعلّم',
+			'inscription.porte.enseignerDescription' => 'تقديم طلب ترشحك معلّمًا. تدرسه الأكاديمية قبل أي فصل.',
 			'inscription.porte.enseignerExemple' => 'وصلتك دعوة من الأكاديمية بالبريد الإلكتروني.',
-			'inscription.porte.espaceEnseignant' => 'الترشّح للتدريس',
+			'inscription.porte.espaceEnseignant' => 'طلب الترشح معلّمًا',
 			'inscription.porte.espaceEleve' => 'تسجيل طالب',
 			'inscription.recap.usage' => 'نوع الحساب',
 			'inscription.recap.identite' => 'الاسم',

@@ -411,19 +411,7 @@ class CoquilleEtape extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: <Widget>[
-          if (nomEspace != null) ...<Widget>[
-            Semantics(
-              header: true,
-              child: Text(
-                nomEspace,
-                key: espaceKey,
-                style: palette.inkMuted.applyTo(
-                  textes.labelLarge ?? const TextStyle(),
-                ),
-              ),
-            ),
-            Ecart.vXs,
-          ],
+          if (nomEspace != null) ...<Widget>[NomEspace(nomEspace), Ecart.vXs],
           // COUPE-MOTS-4 : « souhaitez-vous » reduit son echelle plutot que
           // de se couper en Interface guidee a 320 px texte x2.
           TexteSansCoupure(
@@ -445,6 +433,29 @@ class CoquilleEtape extends ConsumerWidget {
       ),
     );
   }
+}
+
+/// PE-A3 : le nom de l'espace, en haut de chaque ecran du parcours
+/// (« Candidature d'enseignant », « Inscription d'un eleve ») : le meme
+/// composant pour les etapes et l'ecran du code.
+class NomEspace extends StatelessWidget {
+  /// Cree le nom.
+  const NomEspace(this.nom, {super.key});
+
+  /// Le nom de l'espace.
+  final String nom;
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    header: true,
+    // Le nom reduit son echelle plutot que de se couper (320 px, texte x2).
+    child: TexteSansCoupure(
+      nom,
+      key: CoquilleEtape.espaceKey,
+      style: AppPalette.of(context).inkMuted
+          .applyTo(Theme.of(context).textTheme.labelLarge ?? const TextStyle()),
+    ),
+  );
 }
 
 /// Une ligne d'erreur, dite en une phrase et annoncee.
