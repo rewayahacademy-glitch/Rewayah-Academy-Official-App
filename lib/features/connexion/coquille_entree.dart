@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/domain/enums.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_color_pair.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_metriques.dart';
 import '../../core/theme/app_mouvement.dart';
@@ -441,6 +442,22 @@ class ChampEntree extends StatelessWidget {
             Brightness.light,
           );
     final String? erreurCarte = surCarte ? erreur : null;
+    // ENTREE-PRAXIS (maquette « Praxis vous accueille ») : sur la carte, le
+    // champ est un aplat creux a peine cerne (filet le plus fin de la rampe),
+    // aux coins de 16 comme les boutons ; l'etiquette au corps du texte
+    // courant, en demi-gras. Le focus garde le filet d'accent de 2, l'erreur
+    // celui de l'alerte : l'etat ne repose pas sur le seul aplat.
+    OutlineInputBorder bordCarte(AppInkColor encre, {double largeur = 1}) =>
+        OutlineInputBorder(
+          borderRadius: AppRadius.arrondiMd,
+          borderSide: encre.asBorderSide(width: largeur),
+        );
+    final TextStyle? styleEtiquette = surCarte
+        ? textes.labelLarge?.copyWith(
+            fontSize: textes.bodyMedium?.fontSize,
+            height: textes.bodyMedium?.height,
+          )
+        : textes.labelLarge;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -449,13 +466,13 @@ class ChampEntree extends StatelessWidget {
           ExcludeSemantics(
             child: TitreChamp(
               etiquette,
-              style: textes.labelLarge,
+              style: styleEtiquette,
               obligatoire: true,
               sansCoupure: false,
             ),
           )
         else
-          Text(etiquette, style: textes.labelLarge),
+          Text(etiquette, style: styleEtiquette),
         Ecart.vSm,
         Theme(
           data: champ,
@@ -483,6 +500,17 @@ class ChampEntree extends StatelessWidget {
                 errorStyle: page.inkAlert.applyTo(
                   textes.bodySmall ?? const TextStyle(),
                 ),
+                border: surCarte ? bordCarte(page.borderHairline) : null,
+                enabledBorder: surCarte ? bordCarte(page.borderHairline) : null,
+                focusedBorder: surCarte
+                    ? bordCarte(page.inkAccent, largeur: 2)
+                    : null,
+                errorBorder: surCarte
+                    ? bordCarte(page.inkAlert, largeur: 2)
+                    : null,
+                focusedErrorBorder: surCarte
+                    ? bordCarte(page.inkAlert, largeur: 2)
+                    : null,
               ),
             ),
           ),
@@ -495,9 +523,7 @@ class ChampEntree extends StatelessWidget {
               decoration: ShapeDecoration(
                 color: page.washAlert.background,
                 shape: const RoundedSuperellipseBorder(
-                  borderRadius: BorderRadius.all(
-                    Radius.circular(AppRadius.md),
-                  ),
+                  borderRadius: BorderRadius.all(Radius.circular(AppRadius.md)),
                 ),
               ),
               child: Padding(
@@ -676,8 +702,15 @@ class LienPied extends StatelessWidget {
     required this.onPress,
     this.cle,
     this.cibleReduite = false,
+    this.accent = false,
     super.key,
   });
+
+  /// ENTREE-PRAXIS (maquette « Praxis vous accueille ») : un lien d'aide sous
+  /// les boutons, centre, a l'encre d'accent et en demi-gras, sans
+  /// soulignement (un lien seul sur sa ligne, pas un lien dans un texte).
+  /// Faux par defaut : le petit lien souligne a l'encre attenuee.
+  final bool accent;
 
   /// Cible de 40 au lieu de 48, sans chevauchement (au-dessus des 24 de
   /// WCAG 2.2 AA, critere 2.5.8) : les petits liens empiles du pied de la
@@ -697,9 +730,17 @@ class LienPied extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppPalette palette = AppPalette.of(context);
-    final TextStyle base =
-        Theme.of(context).textTheme.bodySmall ?? const TextStyle();
-    return Semantics(
+    final TextTheme textes = Theme.of(context).textTheme;
+    final TextStyle base = textes.bodySmall ?? const TextStyle();
+    final TextStyle style = accent
+        ? palette.inkAccent.applyTo(textes.labelLarge ?? base)
+        : palette.inkMuted
+              .applyTo(base)
+              .copyWith(
+                decoration: TextDecoration.underline,
+                decorationColor: palette.inkMuted.applyTo(base).color,
+              );
+    final Widget lien = Semantics(
       link: true,
       child: Pressable.selon(
         key: cle,
@@ -714,22 +755,21 @@ class LienPied extends StatelessWidget {
                 )
               : const BoxConstraints(),
           child: Align(
-            alignment: AlignmentDirectional.centerStart,
+            alignment: accent
+                ? Alignment.center
+                : AlignmentDirectional.centerStart,
             widthFactor: 1,
             heightFactor: 1,
             child: Text(
               libelle,
-              style: palette.inkMuted
-                  .applyTo(base)
-                  .copyWith(
-                    decoration: TextDecoration.underline,
-                    decorationColor: palette.inkMuted.applyTo(base).color,
-                  ),
+              style: style,
+              textAlign: accent ? TextAlign.center : null,
             ),
           ),
         ),
       ),
     );
+    return accent ? Center(child: lien) : lien;
   }
 }
 

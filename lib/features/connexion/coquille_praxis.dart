@@ -129,13 +129,16 @@ class CoquillePraxisState extends State<CoquillePraxis>
       _jouer(widget.situation);
     } else if (widget.situation == SituationEntree.saisie) {
       final bool arobase =
-          widget.texteSaisi.contains('@') && !oldWidget.texteSaisi.contains('@');
+          widget.texteSaisi.contains('@') &&
+          !oldWidget.texteSaisi.contains('@');
       if (arobase) {
         reactionArobase(regie.th);
         regie.reveiller();
       }
       if (widget.texteSaisi.isEmpty) _parfaitDit = false;
-      if (widget.adresseComplete && !oldWidget.adresseComplete && !_parfaitDit) {
+      if (widget.adresseComplete &&
+          !oldWidget.adresseComplete &&
+          !_parfaitDit) {
         _parfaitDit = true;
         unawaited(regie.reagir(reactionAdresseComplete()));
       } else if (widget.texteSaisi != oldWidget.texteSaisi) {
@@ -198,7 +201,10 @@ class CoquillePraxisState extends State<CoquillePraxis>
         .toDouble();
     final Offset fin = decor.globalToLocal(
       champ.localToGlobal(
-        Offset(_rtl ? champ.size.width - avance : avance, champ.size.height / 2),
+        Offset(
+          _rtl ? champ.size.width - avance : avance,
+          champ.size.height / 2,
+        ),
       ),
     );
     final Offset d = fin - regie.th.centrePraxis;

@@ -23,6 +23,7 @@ import '../../core/widgets/bandeau_attention.dart';
 import '../../core/widgets/controle_anti_robot.dart';
 import '../../core/widgets/controle_segmente.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/status_pill.dart' show TonEtat;
 import '../demo/mode_demonstration.dart';
 import '../demo/racine_demonstrable.dart';
 import '../inscription/invitation_en_cours.dart';
@@ -179,6 +180,10 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
 
   /// ENTREE-PRAXIS : la fenetre de Google vient d'etre demandee.
   bool _googleDemande = false;
+
+  /// ENTREE-PRAXIS : la derniere erreur vient de Google, pas de l'envoi du
+  /// lien (le bouton principal ne dit alors pas « Réessayer »).
+  bool _echecGoogle = false;
 
   /// ENTREE-PRAXIS : l'appareil est hors connexion, ou vient d'en revenir.
   SituationEntree? _praxisReseau;
@@ -405,6 +410,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     setState(() {
       _envoi = true;
       _erreur = null;
+      _echecGoogle = false;
       _praxisReseau = null;
     });
     try {
@@ -522,6 +528,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       await ref.read(serviceAuthProvider).connexionGoogle();
     } on AuthException catch (erreur) {
       _googleDemande = false;
+      _echecGoogle = true;
       _praxisErreur =
           estInscriptionFermee(code: erreur.code, message: erreur.message)
           ? SituationEntree.sansInvitation
@@ -540,6 +547,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
       }
     } on Object {
       _googleDemande = false;
+      _echecGoogle = true;
       _praxisErreur = SituationEntree.serveur;
       if (mounted) {
         setState(() => _erreur = t.connexion.erreurEnvoi);
@@ -645,6 +653,11 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
                 });
               },
               erreur: _erreur,
+              reessayer:
+                  _erreur != null &&
+                  !_echecGoogle &&
+                  (_praxisErreur == SituationEntree.serveur ||
+                      _praxisErreur == SituationEntree.horsLigne),
               envoi: _envoi,
               onChanged: () => setState(() {}),
               onSoumettre: () => unawaited(_soumettre()),
@@ -669,12 +682,14 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
               // jamais recu).
               LienPied(
                 cibleReduite: true,
+                accent: true,
                 cle: const ValueKey<String>('connexion-probleme'),
                 libelle: t.connexion.probleme,
                 onPress: _versRecuperation,
               ),
               LienPied(
                 cibleReduite: true,
+                accent: true,
                 cle: const ValueKey<String>('connexion-appareil-eleve-aide'),
                 libelle: t.connexion.appareilEleveAide,
                 onPress: () => unawaited(_entreeEleve()),
@@ -684,6 +699,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             // passe dessous plutot que de deborder.
             Wrap(
               spacing: AppSpacing.lg,
+              alignment: WrapAlignment.center,
               children: <Widget>[
                 LienPied(
                   cibleReduite: true,
@@ -732,6 +748,7 @@ class _Saisie extends StatelessWidget {
     required this.reponsesGardees,
     required this.onRevoirReponses,
     required this.erreur,
+    this.reessayer = false,
     required this.envoi,
     required this.onChanged,
     required this.onSoumettre,
@@ -776,6 +793,10 @@ class _Saisie extends StatelessWidget {
   final bool reponsesGardees;
   final VoidCallback onRevoirReponses;
   final String? erreur;
+
+  /// ENTREE-PRAXIS (maquette) : l'envoi vient d'echouer pour une cause qui
+  /// ne tient pas a l'adresse (serveur, reseau) : le bouton dit « Réessayer ».
+  final bool reessayer;
   final bool envoi;
   final VoidCallback onChanged;
   final VoidCallback onSoumettre;
@@ -807,9 +828,12 @@ class _Saisie extends StatelessWidget {
                   padding: const EdgeInsetsDirectional.only(
                     bottom: AppSpacing.lg,
                   ),
+                  // ENTREE-PRAXIS : l'encart lavande de la maquette, une
+                  // information sans faute (et non un avertissement ambre).
                   child: BandeauAttention(
                     titre: t.connexion.sessionTermineeTitre,
                     message: t.connexion.sessionTermineePhrase,
+                    ton: TonEtat.accent,
                   ),
                 )
               : const SizedBox.shrink(),
@@ -875,6 +899,9 @@ class _Saisie extends StatelessWidget {
             child: ControleSegmente<ModeConnexion>(
               key: const ValueKey<String>('connexion-mode'),
               dense: true,
+              // ENTREE-PRAXIS : la piste a la forme du champ (coins de 16,
+              // meme aplat creux), et non celle d'une pilule.
+              rectangle: true,
               segments: <Segment<ModeConnexion>>[
                 Segment<ModeConnexion>(
                   valeur: ModeConnexion.connexion,
@@ -986,6 +1013,8 @@ class _Saisie extends StatelessWidget {
           principale: ActionPrincipale(
             libelle: !versLien
                 ? t.connexion.entrerDemo
+                : reessayer
+                ? t.commun.reessayer
                 : creation
                 ? t.connexion.envoyerLienCreation
                 : t.connexion.envoyerLien,
@@ -1010,7 +1039,9 @@ class _Saisie extends StatelessWidget {
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
-                  libelleReduit: true,
+                  // ENTREE-PRAXIS : les boutons sont empiles, chacun a la
+                  // largeur du champ : le libelle garde son corps (maquette).
+                  libelleReduit: false,
                   // Une marque tierce se montre, elle ne se decrit pas : le
                   // logo est ce que l'usager cherche des yeux avant de lire
                   // le libelle. Sur le violet du telephone, pose sur un disque
@@ -1032,7 +1063,7 @@ class _Saisie extends StatelessWidget {
                   niveau: NiveauAction.secondaire,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
-                  libelleReduit: true,
+                  libelleReduit: false,
                   prefixe: Icon(AppIcons.enfant.repos, size: AppSpacing.xl),
                 ),
         ),

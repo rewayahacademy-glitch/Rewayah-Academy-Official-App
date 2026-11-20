@@ -5,6 +5,7 @@
 //   CAPTURE_DIR=docs/current/captures/E2E/pe-entree-praxis/application \
 //     flutter test --no-pub test/features/connexion/entree_praxis_capture_test.dart
 import 'dart:async';
+import 'dart:io' show Platform;
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -18,8 +19,10 @@ import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
 import 'package:rewayah_academy/core/vivant/entree/lumiere_entree.dart';
+import 'package:rewayah_academy/core/vivant/entree/scene_entree.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
+import 'package:rewayah_academy/features/connexion/coquille_praxis.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../capture/outil_capture.dart';
@@ -56,19 +59,22 @@ class _Reseau implements ServiceReseau {
 
 const String _adresse = 'amina.b@exemple.com';
 
-/// Les etats captures : nom, secondes d'attente avant la capture.
-const List<(String, int)> _etats = <(String, int)>[
-  ('arrivee', 13),
-  ('saisie', 11),
-  ('adresse', 11),
-  ('envoi', 10),
-  ('envoye', 11),
-  ('serveur', 11),
-  ('trop', 11),
-  ('horsLigne', 12),
-  ('session', 11),
-  ('sansInvitation', 11),
-  ('candidat', 13),
+/// Les etats captures et deux bornes en millisecondes depuis l'ouverture de
+/// la page (celles des captures de la maquette, `entree-outils/lot-*.json`) :
+/// la scene n'est pas jugee au repos avant la premiere, et on cesse de
+/// l'attendre 8 secondes apres la seconde.
+const List<(String, int, int)> _etats = <(String, int, int)>[
+  ('arrivee', 8500, 12000),
+  ('saisie', 7500, 10500),
+  ('adresse', 7000, 9500),
+  ('envoi', 6500, 8500),
+  ('envoye', 6500, 9000),
+  ('serveur', 7000, 10000),
+  ('trop', 7000, 10500),
+  ('horsLigne', 8500, 11000),
+  ('session', 7000, 10500),
+  ('sansInvitation', 7000, 10000),
+  ('candidat', 8500, 12000),
 ];
 
 void main() {
@@ -89,7 +95,7 @@ void main() {
         ]) {
       for (final bool sombre in <bool>[false, true]) {
         for (final String langue in <String>['fr', 'ar']) {
-          for (final (String etat, int secondes) in _etats) {
+          for (final (String etat, int t1, int t2) in _etats) {
             final String nom =
                 '$format-${sombre ? 'sombre' : 'clair'}-$langue--$etat';
             testWidgets(nom, (WidgetTester tester) async {
@@ -145,10 +151,12 @@ void main() {
                   ),
                 ),
               );
+              int ecoule = 0;
               Future<void> attendre(int ms) async {
                 for (int i = 0; i < ms ~/ 50; i++) {
                   await tester.pump(const Duration(milliseconds: 50));
                 }
+                ecoule += ms ~/ 50 * 50;
               }
 
               await attendre(400);
@@ -188,8 +196,52 @@ void main() {
                   bouton.onPress!();
                 }
               }
-              await attendre(secondes * 1000);
-              await capturer(tester, nom);
+              // CAPTURE_INSTANTS=3000,4000,... : une suite d'images, pour
+              // suivre une scene.
+              final String? suite = Platform.environment['CAPTURE_INSTANTS'];
+              if (suite != null) {
+                for (final int t in suite.split(',').map(int.parse)) {
+                  await attendre(t - ecoule);
+                  await capturer(tester, '$nom@$t');
+                }
+                return;
+              }
+              // Deux moments de la scene, lus sur la regie (et non a l'heure :
+              // l'horloge de la maquette, dans un navigateur, varie d'une
+              // seconde d'un essai a l'autre) : « -1 », la phrase de Praxis
+              // posee au-dessus de sa tete, tous ses mots nes, aucun encore
+              // envole (a defaut, l'instant de la maquette) ; « -2 », la scene
+              // revenue au repos, les mots partis dans la porte.
+              final Theatre th = tester
+                  .state<CoquillePraxisState>(find.byType(CoquillePraxis))
+                  .regie
+                  .th;
+              bool posee() {
+                final Parole? p = th.parole;
+                return p != null &&
+                    p.mots.isNotEmpty &&
+                    p.mots.every((MotVol m) => m.ne && m.t.x > 0.98) &&
+                    !p.mots.any((MotVol m) => m.part);
+              }
+
+              // La derniere phrase posee de la scene ecrase les precedentes.
+              Parole? derniere;
+              while (ecoule < t2 + 8000) {
+                final Parole? p = th.parole;
+                if (posee() && !identical(p, derniere)) {
+                  derniere = p;
+                  // Le temps que le dernier mot ne rebondisse plus.
+                  await attendre(400);
+                  if (identical(th.parole, p) && posee()) {
+                    await capturer(tester, '$nom-1');
+                  }
+                }
+                if (ecoule >= t1 && th.parole == null && !th.attend) break;
+                await attendre(50);
+              }
+              if (derniere == null) await capturer(tester, '$nom-1');
+              await attendre(400);
+              await capturer(tester, '$nom-2');
             });
           }
         }

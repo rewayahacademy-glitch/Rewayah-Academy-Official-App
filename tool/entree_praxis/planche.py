@@ -21,4 +21,5 @@ def main():
     p=Image.open(b).convert("RGB"); p=p.resize((int(p.width*H/p.height),H),Image.LANCZOS)
     g=24; o=Image.new("RGB",(m.width+p.width+3*g,H+2*g),(255,255,255))
     o.paste(m,(g,g)); o.paste(p,(m.width+2*g,g)); o.save(out)
-main()
+if __name__ == "__main__":
+    main()
