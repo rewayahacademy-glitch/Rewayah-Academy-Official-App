@@ -103,6 +103,12 @@ String? resumeReponse(
   ];
   switch (modele.forme) {
     case FormeQuestion.choix || FormeQuestion.choixMultiple:
+      // PE-B1 : un nombre exact de juz (`juz_12`) n'a pas de texte d'option :
+      // il se dit « 12 juz », ici, pour le recapitulatif du candidat et pour
+      // le dossier de la direction, qui lit cette meme fonction.
+      if (juzExact(reponse is String ? reponse : null) case final int n) {
+        return t.recrutement.parcours.juz.valeur(n: n);
+      }
       final List<String> noms = <String>[
         for (final String c in codes())
           if (option(c) case final String nom) nom,

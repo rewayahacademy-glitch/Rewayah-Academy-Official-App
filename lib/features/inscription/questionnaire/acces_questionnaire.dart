@@ -33,6 +33,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
 import '../../../core/widgets/controle_anti_robot.dart';
 import '../../../core/widgets/page_etape.dart';
+import '../../../core/widgets/proposition_courriel.dart';
 import '../../connexion/coquille_entree.dart';
 import '../../connexion/recuperation_page.dart'
     show estInscriptionFermee, issueEchecEnvoi, phraseEchecEnvoi;
@@ -302,6 +303,11 @@ class _EcranAccesQuestionnaireState
         onSoumettre: () => unawaited(_envoyerLien()),
         clavier: TextInputType.emailAddress,
         autofill: const <String>[AutofillHints.email],
+      ),
+      // PE-A8 (retours terrain R25) : « Vouliez-vous dire gmail.com ? ».
+      PropositionCourriel(
+        controleur: _courriel,
+        onAccepte: () => setState(() {}),
       ),
       Ecart.vLg,
       ActionsEntree(

@@ -13,6 +13,7 @@ import 'dart:io';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/i18n/indicatifs_telephoniques.dart';
 import 'package:rewayah_academy/core/i18n/pays_iso.dart';
+import 'package:rewayah_academy/core/i18n/strings.g.dart';
 
 Set<String> _indicatifsDuServeur() {
   final String migration = File(
@@ -36,7 +37,13 @@ void main() {
           if (indicatifDuPays(p.code) == null) p.code,
       ];
       expect(sans, <String>['BV']);
-      expect(paysAvecIndicatif.length, paysIso.length - 1);
+      // PE-B8 : tous les pays ISO sauf Bouvet, plus le Kosovo (+383).
+      expect(
+        paysAvecIndicatif.length,
+        paysIso.length - 1 + paysHorsIsoAvecIndicatif.length,
+      );
+      expect(indicatifDuPays('XK'), '383');
+      expect(nomPaysTelephone('XK'), 'Kosovo');
     });
 
     test('chaque indicatif est reconnu par le serveur', () {
@@ -111,6 +118,63 @@ void main() {
       expect(t('33', '123456'), '+33123456'); // 8 chiffres
       expect(t('33', '1234567890123'), '+331234567890123'); // 15 chiffres
       expect(t('33', '12345678901234'), isNull); // 16 chiffres
+    });
+  });
+
+  group('PE-B8 : chercher un pays pour l indicatif', () {
+    setUp(() => LocaleSettings.setLocale(AppLocale.fr));
+    tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+
+    List<String> codes(String saisie) => <String>[
+      for (final PaysIso p in chercherPaysTelephone(saisie)) p.code,
+    ];
+
+    test('sans saisie : tous les pays, Kosovo compris', () {
+      expect(codes(''), hasLength(paysAvecIndicatif.length));
+      expect(codes(''), contains('XK'));
+    });
+
+    test('en arabe sans article : « جزائر » trouve l Algerie', () {
+      expect(codes('جزائر'), contains('DZ'));
+      expect(codes('مغرب'), contains('MA'));
+      expect(codes('سعودية'), contains('SA'));
+    });
+
+    test('le nom anglais, quelle que soit la langue de l ecran', () async {
+      await LocaleSettings.setLocale(AppLocale.ar);
+      expect(codes('Morocco'), contains('MA'));
+      expect(codes('Saudi'), contains('SA'));
+      expect(codes('Ivory'), contains('CI'));
+    });
+
+    test('les autres noms courants : Angleterre, USA, بريطانيا, Kinshasa', () {
+      expect(codes('Angleterre'), contains('GB'));
+      expect(codes('usa'), contains('US'));
+      expect(codes('بريطانيا'), contains('GB'));
+      expect(codes('Kinshasa'), contains('CD'));
+      expect(codes('Kosovo'), <String>['XK']);
+    });
+
+    test('un mot au milieu du nom : « congo » trouve les deux Congo', () {
+      expect(codes('congo'), containsAll(<String>['CG', 'CD']));
+    });
+
+    test('par l indicatif, avec ou sans « + »', () {
+      expect(codes('212'), contains('MA'));
+      expect(codes('+212'), contains('MA'));
+      expect(codes('383'), <String>['XK']);
+    });
+
+    test(
+      'un bout de mot ne trouve rien : « ma » ne trouve pas l Allemagne',
+      () {
+        expect(codes('ma'), isNot(contains('DE')));
+        expect(codes('arabie saoudite'), contains('SA'));
+      },
+    );
+
+    test('ce qui commence par la saisie passe d abord', () {
+      expect(codes('ma').indexOf('MA'), lessThan(codes('ma').indexOf('SM')));
     });
   });
 }
