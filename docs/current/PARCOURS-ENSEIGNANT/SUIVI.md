@@ -2,7 +2,7 @@
 
 Statuts permis : `pas commencé`, `en cours` (branche), `PR ouverte` (numéro), `dans main` (numéro),
 `prouvé par le directeur` (date). Aucun autre mot. Une case n'est cochée que « prouvée par le
-directeur en production ». Mis à jour le 20/11/2026 (11:40 UTC) : sur 61 lots, **0 prouvé par le directeur**, 7 dans `main`, 11 en partie, 40 pas commencés, 1 maquette remise, 1 arrêté, 1 écarté.
+directeur en production ». Compte du 20/11/2026 (22:30 UTC) : sur 61 lots, **1 prouvé par le directeur** (PE-A5, connexion par lien), 22 dans `main`, 14 en partie, 23 pas commencés, 1 arrêté, 1 écarté. **Attention : la colonne « Statut » des tables ci-dessous date de 11:40 UTC ; pour les lots livrés depuis (PE-A1, A5, A6, A8, B1, B4, B5, B8, C1, C2, C4, C10, D1, D3, D12, E3, F8 en partie), la section « État de reprise du 20/11/2026, 22 h UTC » en bas de ce fichier fait foi, et la page lisible est à jour.** Réserve connue de la PR 661 : la notification « pièce déposée » porte la référence du candidat à toute la direction sans filtre de genre ; à corriger avant d'ajouter une seconde personne à la direction.
 La même check-liste, lisible par le directeur : https://claude.ai/artifact/BibtoazPWBr75CoQUyAXQv
 
 Détail de chaque lot : `PLAN.md` (le paragraphe entre parenthèses). Hors périmètre, sur ordre du
