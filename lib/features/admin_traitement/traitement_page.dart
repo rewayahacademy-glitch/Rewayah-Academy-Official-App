@@ -27,6 +27,7 @@ import '../../core/widgets/rangee_filtres.dart';
 import '../../core/widgets/skeleton.dart';
 import '../../core/widgets/sous_navigation_domaine.dart';
 import '../../core/widgets/status_pill.dart';
+import '../admin_candidature/references_dossiers.dart';
 import '../admin_dossiers/textes_dossier.dart' show quandDepuis;
 import 'elements_a_traiter.dart';
 
@@ -81,18 +82,25 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       ..invalidate(demandesProvider);
   }
 
-  /// L'ecran ou la decision se prend : le dossier par `extra`, jamais par
-  /// l'adresse (spec l.1933) ; la demande dans la file des demandes.
+  /// DOSSIER-DIRECTION (PE-C1) : les references des dossiers d'enseignant
+  /// des pieces de la file, par profil (vide tant qu'elles ne sont pas lues).
+  Map<String, String> _references = const <String, String>{};
+
+  /// L'ecran ou la decision se prend : le dossier d'un candidat enseignant par
+  /// sa reference (PE-C1) ; sinon « Fichiers a valider », le profil par
+  /// `extra`, jamais par l'adresse (spec l.1933) ; la demande dans la file des
+  /// demandes.
   void _ouvrir(ElementATraiter e) {
     final GoRouter routeur = GoRouter.of(context);
     final DossierAValider? dossier = e.dossier;
     if (dossier != null) {
+      final String? reference = _references[dossier.profilId];
+      final String chemin = cheminDossierDuProfil(reference);
       // BE-LISTE : `push`, le retour ramene ici, pas a l'Accueil.
       unawaited(
-        routeur.push<void>(
-          Routes.adminPersonnesDossiers,
-          extra: dossier.profilId,
-        ),
+        reference == null
+            ? routeur.push<void>(chemin, extra: dossier.profilId)
+            : routeur.push<void>(chemin),
       );
     } else {
       unawaited(routeur.push<void>(Routes.adminOperationsDemandes));
@@ -105,6 +113,19 @@ class _TraitementPageEtat extends ConsumerState<TraitementPage> {
       dossiersEnAttenteProvider,
     );
     final AsyncValue<List<Demande>> demandes = ref.watch(demandesProvider);
+    _references =
+        ref
+            .watch(
+              referencesDossiersProvider(
+                ProfilsDemandes(<String>[
+                  for (final DossierAValider d
+                      in dossiers.value ?? const <DossierAValider>[])
+                    d.profilId,
+                ]),
+              ),
+            )
+            .value ??
+        const <String, String>{};
     final bool bureau = DataCollection.enTableau(context);
     final List<FiltreActif> actifs = <FiltreActif>[
       if (_nature case final NatureElement nature)

@@ -2794,7 +2794,34 @@
         "entretienPlanifie": "Interview scheduled: the decision comes after the interview.",
         "decisionAttendue": "Interview held: the decision is waiting for you."
       },
-      "photoAgrandir": "View {deNom} photo full size"
+      "photoAgrandir": "View {deNom} photo full size",
+      "tete": {
+        "manque": "What is missing",
+        "manqueRien": "Nothing, on their side",
+        "elements": {
+          "compte": "Their account",
+          "questionnaire": "The questionnaire",
+          "pays_versement": "The payment country"
+        },
+        "piece": "ID document",
+        "pieceValeurs": {
+          "verifiee": "Verified",
+          "aVerifier": "Uploaded, to be checked",
+          "absente": "Not uploaded yet",
+          "aRedeposer": "Refused, to be uploaded again",
+          "compteAbsent": "No account yet"
+        },
+        "connexion": "Last sign-in",
+        "connexionAucune": "No sign-in",
+        "aujourdhui": "Today",
+        "hier": "Yesterday",
+        "anciennete": "Application received",
+        "ilYa(plural)": {
+          "one": "{n} day ago",
+          "other": "{n} days ago"
+        },
+        "accueillirPiece": "“{geste}” needs a verified ID document: check it first."
+      }
     },
     "file": {
       "outils": "Tools",
