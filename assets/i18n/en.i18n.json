@@ -1293,7 +1293,13 @@
     "controle": {
       "libelle": "Security check",
       "chargement": "Security check in progress.",
-      "erreur": "The check did not complete. Try again.",
+      "erreur": "The security check did not complete. Tap \"Try again\"; if it fails again, reload the page.",
+      "erreurNavigateur": "The security check does not work in this browser. Open the page in Chrome or Safari (not inside a messaging app), turn off any ad blocker, then tap \"Try again\".",
+      "erreurHorloge": "The security check rejects your device's time. Set the date and time to \"automatic\", then tap \"Try again\".",
+      "erreurReglage": "The security check is not working right now because of a setting on our side. Try again later.",
+      "refuse": "The security check was not accepted. Tap the button again in a few seconds; if it happens again, reload the page.",
+      "autreCheminGoogle": "You can also continue with Google: that way does not go through this check.",
+      "rechargerPage": "Reload the page",
       "horsLigne": "The check cannot be done right now. Try again when the connection is back."
     },
     "probleme": "Link expired or never received?",
