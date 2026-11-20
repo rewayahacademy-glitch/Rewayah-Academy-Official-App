@@ -803,3 +803,80 @@ dans `piece_decision.dart` ; remettre `_enCours` à faux dans `feuille_geste.dar
 - **Correctif** : garder le squelette jusqu'au choix de la destination ; ajouter le rôle
   « associé » à `mon_invitation_accueil`, avec sa destination ; ne plus envoyer un code
   d'associé vers l'écran des enseignants.
+
+## 15. Flutter sait-il le faire ? Preuve compilée, et retours du directeur sur la maquette (20/11/2026)
+
+Question du directeur : « est-ce que ces effets et styles sont possibles avec Flutter, car je
+pense que tu es juste en train de me donner de faux espoirs ».
+
+### 15.1 Ce qui est prouvé, et ce qui ne l'est pas
+
+- **Prouvé** : les mouvements de la maquette existent maintenant en vrai Flutter 3.47.9
+  (la version de la CI), compilés pour le web avec le même moteur que l'application (CanvasKit) :
+  ressort au toucher, Praxis (dix humeurs, regard, tête qui suit, corde du bonnet, chute et
+  écrasement, « non » de la tête, larmes qui éclaboussent, gêne en halo), jauge d'eau en boucle,
+  bulle d'une seule masse, file d'avatars qui s'entrechoque, capsule liquide, avis flottant,
+  coins à courbe continue (`RoundedSuperellipseBorder`, présent dans le SDK). Source :
+  `preuve-flutter/preuve_vivante.dart.txt` (un seul fichier, aucun paquet ajouté). Analyse
+  Flutter sans erreur ; lancé dans un navigateur ici, sans erreur.
+- **Non prouvé** : la fluidité sur les appareils du directeur. La machine de la session n'a pas
+  de carte graphique (33 à 39 images par seconde en rendu logiciel) : ce chiffre ne vaut rien.
+  La preuve porte un compteur d'images par seconde pour que le directeur lise le vrai chiffre.
+- **Non vérifié** : que la page publiée pour le directeur lance bien le moteur (le lecteur de
+  pages peut le bloquer) ; une vidéo du programme en marche l'accompagne.
+- **Non prouvé** : la page qui sort d'une icône et y rentre ; le code à scanner avec logo
+  réellement lisible ; le redimensionnement des blocs au pincement ; le coût de ces composants
+  dans la grande application.
+- **Fait utile** : Flutter est maintenant installable dans une session (adresses
+  `storage.googleapis.com`, `pub.dev`, `pub.dartlang.org` autorisées par le directeur le 20/11
+  dans l'environnement `praxis-routine`). Un agent peut donc compiler et vérifier un lot.
+
+### 15.2 Retours du directeur sur la maquette (28 commentaires, 19/11 au soir)
+
+**Règles générales**
+- Aucun émoji dans les interfaces : seulement des icônes ou des images.
+- Le violet est interdit directement sur un fond sombre : la lavande le remplace (logo compris).
+- La règle des coins (courbe continue, rayon intérieur = rayon extérieur − marge) : « inscris
+  cette règle partout ».
+- Les signes « + » et « − » mal centrés dans leurs cercles : défaut réel de l'application aussi.
+- Chaque élément dit ce qu'il fait au défilement, à l'appui et au survol.
+
+**Tableau de bord** : « l'accueil le plus nul que j'ai connu ». Pas de rectangles uniformes :
+des formes différentes, la bulle déformable, parfois une image dans un bloc, « de la vie, pas
+que des chiffres qui bougent ». Blocs redimensionnables au pincement et au glisser. Les
+interactions avec le panneau latéral manquent. **Le tableau de bord est à refaire.**
+
+**En-tête** : dire comment la recherche se comporte au clic, après un résultat, et quand
+d'autres icônes rejoignent l'en-tête ; comment le chiffre d'une icône remue quand un message
+tombe ; ce que fait la petite fenêtre des notifications si un événement arrive pendant qu'elle
+est ouverte ; avatars dans la liste des messages ; flèche d'envoi au lieu du mot « Envoyer »
+(à arbitrer) ; « Ouvrir la messagerie » : la page doit sortir de l'icône et y rentrer à la
+fermeture, partout où cela s'applique.
+
+**Candidat**
+- L'accueil s'adresse à des gens « pas encore convaincus », venus d'un code scanné sur un mur
+  d'université, qui s'attendent à une liste Excel et à des groupes WhatsApp. La barre d'étapes
+  est « très ordinaire » : la meilleure interface et une logique qui ne cache rien font « 80 %
+  de la confiance ».
+- Une ligne du dossier (pièce, contrat) se déplie au toucher : description, exemple si possible.
+- Onglet Académie : « Langue » et « Retirer ma candidature » vont dans un réglage. La place sert
+  aux informations que les candidats n'ont pas (salaire, détail des cours, organisation des
+  entretiens), avec un état d'attente : « s'affichera ici quand la direction le rendra public ».
+- Partage : un objet qui dépasse vers le haut, comme posé dans un panier, et qui ressort au
+  toucher.
+- Messages : en tête de conversation, l'icône de l'académie, pas Praxis ; si Praxis participe,
+  il apparaît en premier dans la file ; l'animation du cœur, vue des deux côtés ; l'animation
+  quand c'est Praxis qui rédige.
+
+**Praxis**
+- « Bienvenue » : ses yeux doivent être contents. La tête bouge à gauche et à droite, la corde
+  du bonnet suit, il se contracte avant de rebondir, un œil peut bouger sans l'autre.
+- Rire : pas de bouche, donc étirer les joues. Larmes : elles tombent hors du visage et
+  éclaboussent. Gêne : un halo dégradé rose, pas des ronds. « Non » : toute la tête, yeux
+  compris, quand quelque chose manque (formulaire incomplet). Tous les scénarios sont à proposer.
+  Ces points sont repris dans la preuve Flutter.
+
+**Atelier**
+- Eau : plus réaliste, couleur de la marque, en boucle. Bulle : aimée, mais où la mettre « pour
+  qu'elle fasse vraiment bon effet » ? Code à scanner : l'application doit le générer avec le
+  logo et il doit vraiment se lire ; à généraliser aux imprimables et aux factures.
