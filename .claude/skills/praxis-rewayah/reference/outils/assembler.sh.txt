@@ -1,0 +1,15 @@
+#!/bin/bash
+set -e
+S=/tmp/claude-0/-home-user-Rewayah-Academy-Official-App/bd3d0d1b-90a8-5432-bebf-dbe5f74f950e/scratchpad
+B=$S/build-entree; P=$S/publication-entree
+rm -rf $P; mkdir -p $P/canvaskit $P/assets
+cp $B/main.dart.js $B/flutter_bootstrap.js $B/version.json $P/
+cp $B/canvaskit/canvaskit.js $B/canvaskit/canvaskit.wasm $P/canvaskit/
+cp -r $B/canvaskit/chromium $P/canvaskit/
+rm -f $P/canvaskit/chromium/*.symbols
+cp $B/assets/AssetManifest.bin.json $B/assets/FontManifest.json $P/assets/
+cp -r $B/assets/fonts $B/assets/packages $P/assets/
+mkdir -p $P/assets/fonts/fallback; cp $S/publication-bureau/assets/fonts/fallback/Roboto-Regular.ttf $P/assets/fonts/fallback/
+cp $S/entree-outils/entree-flutter.html $P/
+find $P -name "*.bin" -o -name "*.frag" | xargs -r rm -f
+du -sh $P; find $P -type f | sort

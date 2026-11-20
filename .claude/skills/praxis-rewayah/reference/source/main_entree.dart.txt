@@ -1,0 +1,1647 @@
+// « Praxis vous accueille » : connexion, chargement et mise à jour, en vrai Flutter.
+// Maquette hors de l'application. Aucune donnée réelle : l'adresse est un exemple.
+import 'dart:async';
+import 'dart:convert';
+import 'dart:math' as math;
+import 'dart:ui' as ui;
+
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/services.dart';
+
+import 'entree_lumiere.dart';
+import 'entree_police_arabe.dart';
+import 'entree_praxis.dart';
+import 'entree_scene.dart';
+import 'entree_textes.dart';
+import 'entree_trace_svg.dart';
+import 'polices.dart';
+import 'vivant.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  Future<ByteData> octets(String b) async => ByteData.sublistView(Uint8List.fromList(base64Decode(b)));
+  await (FontLoader('DMSans')..addFont(octets(dmSans))).load();
+  await (FontLoader('Jakarta')..addFont(octets(jakarta))).load();
+  await (FontLoader('Arabe')..addFont(octets(notoArabe))).load();
+  final Uri u = Uri.base;
+  if (u.queryParameters['theme'] == 'sombre') sombre.value = true;
+  if (u.queryParameters['langue'] == 'ar') arabe.value = true;
+  await Atelier.preparer();
+  runApp(u.queryParameters.containsKey('planche') ? const PlancheApp() : const EntreeApp());
+}
+
+/// Styles qui passent à la police arabe en arabe.
+TextStyle t1(double taille, {Color? couleur}) => arabe.value
+    ? TextStyle(fontFamily: 'Arabe', fontFamilyFallback: const <String>['Jakarta'], fontSize: taille * 0.95, fontWeight: FontWeight.w700, color: couleur ?? T.encre, height: 1.35)
+    : titre(taille, couleur: couleur);
+TextStyle t2(double taille, {Color? couleur, FontWeight poids = FontWeight.w400}) => arabe.value
+    ? TextStyle(fontFamily: 'Arabe', fontFamilyFallback: const <String>['DMSans'], fontSize: taille, fontWeight: poids, color: couleur ?? T.encre, height: 1.5)
+    : texte(taille, couleur: couleur, poids: poids);
+
+enum EcranId { connexion, chargement, miseAJour }
+
+enum Format { tel, petit, large }
+
+/// Tous les scénarios, groupés par écran. Le nom sert de bouton dans la barre de commande.
+enum Sc {
+  arrivee(EcranId.connexion, 'Première arrivée'),
+  habitue(EcranId.connexion, 'Retour d’un habitué'),
+  session(EcranId.connexion, 'Session expirée'),
+  saisie(EcranId.connexion, 'Saisie'),
+  adresse(EcranId.connexion, 'Adresse mal écrite'),
+  envoi(EcranId.connexion, 'Envoi'),
+  reseauLent(EcranId.connexion, 'Réseau lent'),
+  envoye(EcranId.connexion, 'Lien envoyé'),
+  attenteLongue(EcranId.connexion, 'Attente longue'),
+  expire(EcranId.connexion, 'Lien expiré'),
+  dejaUtilise(EcranId.connexion, 'Lien déjà utilisé'),
+  trop(EcranId.connexion, "Trop d'essais"),
+  horsLigne(EcranId.connexion, 'Hors connexion'),
+  retourLigne(EcranId.connexion, 'Connexion revenue'),
+  serveur(EcranId.connexion, 'Erreur du serveur'),
+  googleOuverte(EcranId.connexion, 'Google : fenêtre ouverte'),
+  googleFermee(EcranId.connexion, 'Google : fermée sans choisir'),
+  googleRefuse(EcranId.connexion, 'Google : compte non invité'),
+  reussite(EcranId.connexion, 'Réussite'),
+  chargeNormal(EcranId.chargement, 'Normal'),
+  chargeLent(EcranId.chargement, 'Lent (plus de 8 s)'),
+  chargeEchec(EcranId.chargement, 'Échec'),
+  majDispo(EcranId.miseAJour, 'Disponible'),
+  majLente(EcranId.miseAJour, 'En cours, lentement (60 s)'),
+  majNormale(EcranId.miseAJour, 'En cours (30 s)'),
+  majVite(EcranId.miseAJour, 'En cours, vite (10 s)'),
+  majPresque(EcranId.miseAJour, 'Presque finie'),
+  majFinie(EcranId.miseAJour, 'Terminée'),
+  majEchec(EcranId.miseAJour, 'Échec'),
+  maintenance(EcranId.miseAJour, 'Maintenance');
+
+  const Sc(this.ecran, this.nom);
+  final EcranId ecran;
+  final String nom;
+}
+
+Sc premier(EcranId e) => switch (e) { EcranId.connexion => Sc.arrivee, EcranId.chargement => Sc.chargeNormal, EcranId.miseAJour => Sc.majNormale };
+
+class EntreeApp extends StatefulWidget {
+  const EntreeApp({super.key});
+  @override
+  State<EntreeApp> createState() => _EntreeAppState();
+}
+
+class _EntreeAppState extends State<EntreeApp> {
+  EcranId ecran = EcranId.connexion;
+  Format format = Format.tel;
+  bool reduit = false;
+  Sc? depart;
+  final GlobalKey<EcranEntreeState> scene = GlobalKey<EcranEntreeState>();
+  final ValueNotifier<Sc?> enCours = ValueNotifier<Sc?>(null);
+  final ScrollController _defile = ScrollController();
+
+  @override
+  void initState() {
+    super.initState();
+    final Map<String, String> q = Uri.base.queryParameters;
+    ecran = <String, EcranId>{'chargement': EcranId.chargement, 'maj': EcranId.miseAJour}[q['ecran']] ?? EcranId.connexion;
+    for (final Sc s in Sc.values) {
+      if (s.name == q['etat']) {
+        depart = s;
+        ecran = s.ecran;
+      }
+    }
+    format = <String, Format>{'petit': Format.petit, 'large': Format.large}[q['format']] ?? Format.tel;
+    reduit = q['reduit'] == '1';
+  }
+
+  Size get taille => switch (format) { Format.tel => const Size(390, 844), Format.petit => const Size(375, 667), Format.large => const Size(1200, 760) };
+
+  @override
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+        valueListenable: sombre,
+        builder: (_, bool s, _) => ValueListenableBuilder<bool>(
+          valueListenable: arabe,
+          builder: (_, bool ar, _) => MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(fontFamily: 'DMSans', fontFamilyFallback: const <String>['Arabe'], brightness: s ? Brightness.dark : Brightness.light, scaffoldBackgroundColor: T.fond),
+            home: Scaffold(
+              backgroundColor: T.fond,
+              body: SafeArea(
+                child: Column(children: <Widget>[
+                  if (Uri.base.queryParameters['barre'] != '0') barre(),
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(12, 4, 12, 12),
+                      child: Center(
+                        child: FittedBox(
+                          child: Cadre(
+                            telephone: format != Format.large,
+                            taille: taille,
+                            child: Directionality(
+                              textDirection: ar ? TextDirection.rtl : TextDirection.ltr,
+                              child: EcranEntree(key: scene, ecran: ecran, depart: depart, taille: taille, large: format == Format.large, reduit: reduit, arabe: ar, enCours: enCours),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ]),
+              ),
+            ),
+          ),
+        ),
+      );
+
+  Widget _groupe(String nom, List<Widget> enfants) => Wrap(spacing: 4, runSpacing: 4, crossAxisAlignment: WrapCrossAlignment.center, children: <Widget>[
+        Padding(padding: const EdgeInsets.only(right: 2), child: Text(nom, style: texte(12, couleur: T.doux, poids: FontWeight.w600))),
+        ...enfants,
+      ]);
+
+  Widget _choix(String l, bool actif, VoidCallback f, {String? cle}) => Pilule(l, fort: actif, surTouche: f, key: cle == null ? null : ValueKey<String>(cle));
+
+  void _ecran(EcranId e) => setState(() {
+        ecran = e;
+        depart = null;
+      });
+
+  Widget barre() => Padding(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 6),
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+            Wrap(spacing: 14, runSpacing: 6, crossAxisAlignment: WrapCrossAlignment.center, children: <Widget>[
+              _groupe('Écran', <Widget>[
+                _choix('Connexion', ecran == EcranId.connexion, () => _ecran(EcranId.connexion), cle: 'ecran-connexion'),
+                _choix('Chargement', ecran == EcranId.chargement, () => _ecran(EcranId.chargement), cle: 'ecran-chargement'),
+                _choix('Mise à jour', ecran == EcranId.miseAJour, () => _ecran(EcranId.miseAJour), cle: 'ecran-maj'),
+              ]),
+              _groupe('Format', <Widget>[
+                _choix('Téléphone', format == Format.tel, () => setState(() => format = Format.tel)),
+                _choix('Petit téléphone', format == Format.petit, () => setState(() => format = Format.petit)),
+                _choix('Ordinateur', format == Format.large, () => setState(() => format = Format.large)),
+              ]),
+              _groupe('Réglages', <Widget>[
+                _choix(sombre.value ? 'Thème sombre' : 'Thème clair', false, () => sombre.value = !sombre.value, cle: 'theme'),
+                _choix(arabe.value ? 'العربية' : 'Français', false, () => arabe.value = !arabe.value, cle: 'langue'),
+                _choix(reduit ? 'Animations réduites' : 'Animations complètes', reduit, () => setState(() => reduit = !reduit), cle: 'reduit'),
+              ]),
+            ]),
+            const SizedBox(height: 6),
+            // Les scénarios de l'écran choisi : une seule ligne, qui défile de côté.
+            ValueListenableBuilder<Sc?>(
+              valueListenable: enCours,
+              builder: (_, Sc? actif, _) => Row(children: <Widget>[
+                Padding(padding: const EdgeInsets.only(right: 6, bottom: 10), child: Text('Jouer', style: texte(12, couleur: T.doux, poids: FontWeight.w600))),
+                Expanded(
+                  child: ScrollConfiguration(
+                    behavior: const _Glisse(),
+                    child: Scrollbar(
+                      controller: _defile,
+                      thumbVisibility: true,
+                      thickness: 4,
+                      child: SingleChildScrollView(
+                        controller: _defile,
+                        scrollDirection: Axis.horizontal,
+                        padding: const EdgeInsets.only(bottom: 10),
+                        child: Row(children: <Widget>[
+                          for (final Sc s in Sc.values)
+                            if (s.ecran == ecran) Padding(padding: const EdgeInsets.only(right: 4), child: _choix(s.nom, s == actif, () => scene.currentState?.jouer(s), cle: 'etat-${s.name}')),
+                          _choix('Toucher Praxis', false, () => scene.currentState?.toucher(), cle: 'toucher'),
+                        ]),
+                      ),
+                    ),
+                  ),
+                ),
+              ]),
+            ),
+          ]),
+        ),
+      );
+}
+
+/// La ligne des scénarios se fait glisser à la souris comme au doigt.
+class _Glisse extends MaterialScrollBehavior {
+  const _Glisse();
+  @override
+  Set<ui.PointerDeviceKind> get dragDevices => <ui.PointerDeviceKind>{ui.PointerDeviceKind.touch, ui.PointerDeviceKind.mouse, ui.PointerDeviceKind.trackpad, ui.PointerDeviceKind.stylus};
+}
+
+/// Le cadre : un téléphone (bord sombre, coin continu, îlot) ou une fenêtre d'ordinateur.
+class Cadre extends StatelessWidget {
+  const Cadre({super.key, required this.telephone, required this.taille, required this.child});
+  final bool telephone;
+  final Size taille;
+  final Widget child;
+  @override
+  Widget build(BuildContext context) {
+    final double marge = telephone ? 12 : 10, r = telephone ? 58 : 30;
+    return Container(
+      padding: EdgeInsets.all(marge),
+      decoration: ShapeDecoration(color: T.s ? const Color(0xFF0B0A12) : T.nuit, shape: coin(r)),
+      child: ClipRSuperellipse(
+        borderRadius: BorderRadius.all(Radius.circular(r - marge)),
+        child: SizedBox.fromSize(size: taille, child: child),
+      ),
+    );
+  }
+}
+
+enum Forme { principale, envoye, lienMort }
+
+enum Bas { cours, lent, echecCharge, dispo, echecMaj, maintenance, finie }
+
+enum Ton { info, erreur, bon }
+
+// ───────────────────────── L'écran ─────────────────────────
+class EcranEntree extends StatefulWidget {
+  const EcranEntree({super.key, required this.ecran, required this.depart, required this.taille, required this.large, required this.reduit, required this.arabe, required this.enCours});
+  final EcranId ecran;
+  final Sc? depart;
+  final Size taille;
+  final bool large, reduit, arabe;
+  final ValueNotifier<Sc?> enCours;
+  @override
+  State<EcranEntree> createState() => EcranEntreeState();
+}
+
+class EcranEntreeState extends State<EcranEntree> with SingleTickerProviderStateMixin<EcranEntree> {
+  final Theatre th = Theatre();
+  late final Ticker _t = createTicker(_tic);
+  Duration _avant = Duration.zero;
+  final ValueNotifier<double> hautScene = ValueNotifier<double>(0);
+  final ValueNotifier<int> pct = ValueNotifier<int>(0);
+  final GlobalKey cleScene = GlobalKey(), cleTexte = GlobalKey();
+  Sc sc = Sc.arrivee;
+  Bas piedEtat = Bas.cours;
+  String saisi = '';
+  bool appOuverte = false, relance = false;
+  int compte = 30, secousse = 0, _derniereReaction = -1;
+  Timer? _minuterie;
+  final math.Random _h = math.Random();
+
+  bool _premier = true;
+  bool get plein => widget.ecran != EcranId.connexion;
+  bool get rtl => widget.arabe;
+  Corps get px => th.px;
+
+  @override
+  void initState() {
+    super.initState();
+    th.reduit = widget.reduit;
+    sc = widget.depart ?? premier(widget.ecran);
+    _geo();
+    _t.start();
+    WidgetsBinding.instance.addPostFrameCallback((_) => _demarrer());
+  }
+
+  @override
+  void didUpdateWidget(EcranEntree oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final EcranEntree o = oldWidget;
+    if (o.ecran != widget.ecran || o.taille != widget.taille || o.arabe != widget.arabe || o.reduit != widget.reduit) {
+      th.reduit = widget.reduit;
+      th.px.reduit = widget.reduit;
+      if (o.ecran != widget.ecran) sc = premier(widget.ecran);
+      _geo();
+      _demarrer();
+    }
+  }
+
+  void _demarrer() {
+    final Map<String, String> q = Uri.base.queryParameters;
+    final Sc s = _premier && widget.depart != null ? widget.depart! : (sc.ecran == widget.ecran ? sc : premier(widget.ecran));
+    jouer(s, neuf: true);
+    if (_premier && q.containsKey('touche')) {
+      final int v = int.tryParse(q['touche'] ?? '') ?? 0;
+      Future<void>.delayed(Duration(milliseconds: int.tryParse(q['toucheA'] ?? '') ?? 6000), () {
+        if (mounted) toucher(variante: v);
+      });
+    }
+    // Pour vérifier les transitions : `?puis=googleFermee&puisA=9000` joue un second scénario après un délai.
+    if (_premier && q.containsKey('puis')) {
+      Future<void>.delayed(Duration(milliseconds: int.tryParse(q['puisA'] ?? '') ?? 9000), () {
+        if (!mounted) return;
+        for (final Sc x in Sc.values) {
+          if (x.name == q['puis'] && x.ecran == widget.ecran) jouer(x);
+        }
+      });
+    }
+    _premier = false;
+  }
+
+  @override
+  void dispose() {
+    _minuterie?.cancel();
+    th.gen++;
+    _t.dispose();
+    super.dispose();
+  }
+
+  Rect get carteLarge {
+    final Size s = widget.taille;
+    const double w = 440, h = 560;
+    final double x = rtl ? 72 : s.width - w - 72;
+    return Rect.fromLTWH(x, (s.height - h) / 2, w, h);
+  }
+
+  double get hautClavier => widget.taille.height * 0.30;
+
+  Forme get forme => switch (sc) {
+        Sc.envoye || Sc.attenteLongue => Forme.envoye,
+        Sc.expire || Sc.dejaUtilise => Forme.lienMort,
+        _ => Forme.principale,
+      };
+
+  (String, Ton)? get message => switch (sc) {
+        Sc.adresse => (Lib.erreurAdresse, Ton.erreur),
+        Sc.reseauLent => (Lib.reseauLent, Ton.info),
+        Sc.trop => (Lib.erreurTropTot, Ton.info),
+        Sc.horsLigne => (Lib.horsLigne, Ton.erreur),
+        Sc.retourLigne => (Lib.retabli, Ton.bon),
+        Sc.serveur => (Lib.erreurServeur, Ton.erreur),
+        Sc.googleFermee => (Lib.googleFermee, Ton.info),
+        Sc.googleRefuse => (Lib.googleRefuse, Ton.erreur),
+        _ => null,
+      };
+
+  int _lignes(String t, double largeur, double corps) => (t.length * corps * (rtl ? 0.47 : 0.5) / largeur).ceil().clamp(1, 6);
+
+  /// La hauteur dont le formulaire a besoin sur téléphone.
+  double get besoin {
+    final double lc = widget.taille.width - 48;
+    if (th.clavier.cible > 0.5) return 244;
+    switch (forme) {
+      case Forme.envoye:
+        return 28 + 36 + 12 + _lignes(Lib.envoyeDetail, lc, 16) * 24 + (sc == Sc.attenteLongue ? 14 + 22 + _lignes(Lib.encartAttente, lc - 28, 14.5) * 22 : 0) + 22 + 56 + 10 + 30 + 18;
+      case Forme.lienMort:
+        return 28 + 36 + 8 + _lignes(sc == Sc.expire ? Lib.expireDetail : Lib.dejaDetail, lc, 16) * 24 + 18 + 84 + 16 + 56 + 20;
+      case Forme.principale:
+        double b = 28 + 36 + 18 + 84 + 16 + 56 + 12 + 56 + 20;
+        final (String, Ton)? m = message;
+        if (m != null) b += 12 + 22 + _lignes(m.$1, lc - 28, 14.5) * 22;
+        if (sc == Sc.session) b += 24 + 22 + _lignes(Lib.sessionPhrase, lc - 28, 14.5) * 22 + 16;
+        if (m == null && sc != Sc.session) b += 38;
+        return b;
+    }
+  }
+
+  void _geo() {
+    final Size s = widget.taille;
+    double hs = s.height;
+    CadreScene c;
+    if (widget.large) {
+      c = plein ? CadreScene.largePlein : CadreScene.large;
+    } else if (plein) {
+      c = CadreScene.telPlein;
+    } else {
+      c = CadreScene.tel;
+      // La scène garde 38 % de la hauteur au moins, 56 % au plus.
+      hs = (s.height - hautClavier * th.clavier.x - _besoinLisse + 26).clamp(s.height * 0.38, s.height * 0.56);
+    }
+    th.geo = Geo(s, c, rtl, hs, carteLarge, cam: th.cam.x);
+    if ((hautScene.value - hs).abs() > 0.3) hautScene.value = hs;
+  }
+
+  double _besoinLisse = 362;
+  void _tic(Duration d) {
+    final double dt = (d - _avant).inMicroseconds / 1e6;
+    _avant = d;
+    if (dt <= 0) return;
+    // Le formulaire change de hauteur en douceur : la scène suit.
+    final double b = besoin;
+    _besoinLisse += (b - _besoinLisse) * (1 - math.exp(-dt * 9));
+    if ((b - _besoinLisse).abs() < 0.2) _besoinLisse = b;
+    _geo();
+    if (sc == Sc.saisie && !plein) _suivreTexte();
+    th.avancer(dt / _ralenti);
+  }
+
+  /// Pour l'examen image par image : `?ralenti=8` joue la scène huit fois plus lentement.
+  final double _ralenti = math.max(0.1, double.tryParse(Uri.base.queryParameters['ralenti'] ?? '') ?? 1);
+
+  /// Ses yeux suivent la fin du texte tapé.
+  void _suivreTexte() {
+    final RenderBox? b = cleTexte.currentContext?.findRenderObject() as RenderBox?;
+    final RenderBox? scn = cleScene.currentContext?.findRenderObject() as RenderBox?;
+    if (b == null || scn == null || !b.attached) return;
+    final Offset caret = scn.globalToLocal(b.localToGlobal(Offset(b.size.width, b.size.height / 2)));
+    final Offset d = caret - th.centrePraxis;
+    px.regarder(d.dx / 130, d.dy / 110);
+  }
+
+  // ───── Mise en scène ─────
+  Future<void> _scene(Future<void> Function() f) async {
+    try {
+      await f();
+    } on Annule {
+      // Une autre scène a commencé.
+    }
+  }
+
+  /// D'où qu'il soit, il se relève, se remet de face et revient au premier plan, sans saut.
+  Future<void> _revenir(int g, {double travers = 0}) async {
+    th.taire();
+    px.faire(Geste.aucun);
+    px.regarder(0, 0);
+    th.eclat.cible = 1;
+    if (px.assis.cible > 0.5) {
+      px.assis.cible = 0;
+      px.ecrase.v -= 1.2;
+      await th.attendre(380, g);
+    }
+    if (px.tourne.cible != 0) {
+      px.tourne.cible = 0;
+      px.pietine = 2;
+    }
+    if ((px.q - 1).abs() > 0.01 || (px.lat.x - travers).abs() > 0.03) {
+      px.anticipe();
+      await th.attendre(130, g);
+      px.allerA(1, travers: travers, vitesse: 0.32);
+      await th.jusqua(() => px.arrive, g);
+    }
+  }
+
+  /// Le bord de la route où il s'écarte : côté opposé au formulaire en version large.
+  double get bord => widget.large ? (rtl ? 0.62 : -0.62) : (rtl ? -0.4 : 0.4);
+
+  void jouer(Sc e, {bool neuf = false}) {
+    _minuterie?.cancel();
+    const Set<Sc> entrees = <Sc>{Sc.arrivee, Sc.habitue, Sc.session, Sc.chargeNormal, Sc.chargeLent, Sc.chargeEchec, Sc.majDispo, Sc.maintenance};
+    final bool depuisPorte = neuf || appOuverte || !th.present || entrees.contains(e) || sc == Sc.maintenance || sc.ecran != e.ecran;
+    if (depuisPorte) {
+      th.initial();
+    } else {
+      th.gen++;
+    }
+    final int g = th.gen;
+    final Sc avant = sc;
+    th.clavier.cible = e == Sc.saisie ? 1 : 0;
+    widget.enCours.value = e;
+    setState(() {
+      sc = e;
+      appOuverte = false;
+      relance = false;
+      piedEtat = Bas.cours;
+      saisi = switch (e) {
+        Sc.arrivee || Sc.saisie => '',
+        Sc.adresse => 'amina.bexemple.com',
+        _ => 'amina.b@exemple.com',
+      };
+      if (e == Sc.adresse) secousse++;
+    });
+    _scene(() => switch (e.ecran) {
+          EcranId.connexion => _connexion(e, g, depuisPorte, avant),
+          EcranId.chargement => _chargement(e, g),
+          EcranId.miseAJour => _miseAJour(e, g, depuisPorte),
+        });
+  }
+
+  Future<void> _connexion(Sc e, int g, bool depuisPorte, Sc avant) async {
+    final bool court = e == Sc.habitue || e == Sc.session;
+    if (depuisPorte) {
+      await th.arriver(g, vite: court || e != Sc.arrivee);
+    } else {
+      await _revenir(g);
+    }
+    Future<void> att(int ms) => th.attendre(ms, g);
+    switch (e) {
+      case Sc.arrivee:
+        px.faire(Geste.salut);
+        px.poser(Expr.sourire);
+        await att(250);
+        await th.parler(Dit.bonjour, g, tenir: 1.2);
+        px.faire(Geste.pointe);
+        px.regarder(0, 0.9);
+        await th.parler(Dit.adresseEtPorte, g, tenir: 2.0);
+        px.faire(Geste.aucun);
+        px.regarder(0, 0);
+      case Sc.habitue:
+        px.faire(Geste.hoche);
+        px.poser(Expr.joie);
+        await th.parler(Dit.habitue, g, tenir: 1.1);
+        px.faire(Geste.pointe);
+        px.poser(Expr.sourire);
+        px.regarder(0, 0.9);
+        await th.parler(Dit.habitue2, g, tenir: 1.4);
+        px.faire(Geste.aucun);
+        px.regarder(0, 0);
+      case Sc.session:
+        px.poser(Expr.desole);
+        px.faire(Geste.desole);
+        await att(250);
+        await th.parler(Dit.session, g);
+        px.faire(Geste.pointe);
+        px.poser(Expr.sourire);
+        px.regarder(0, 0.9);
+        await att(1600);
+        px.faire(Geste.aucun);
+        px.regarder(0, 0);
+      case Sc.saisie:
+        px.poser(Expr.neutre);
+        px.regarder(0, 1);
+        await att(750);
+        const String adresse = 'amina.b@exemple.com';
+        for (int i = 1; i <= adresse.length; i++) {
+          await att(90 + _h.nextInt(110));
+          setState(() => saisi = adresse.substring(0, i));
+          if (adresse[i - 1] == '@') {
+            px.poser(Expr.sourire);
+            px.pendV += 5;
+            px.hoche.v += 3;
+          }
+        }
+        await att(300);
+        px.faire(Geste.hoche);
+        px.poser(Expr.joie);
+        await th.parler(Dit.parfait, g, tenir: 0.9);
+        px.poser(Expr.sourire);
+      case Sc.adresse:
+        px.sursaut();
+        px.poser(Expr.etonne);
+        px.regarder(0, 1);
+        await att(600);
+        px.faire(Geste.pointe);
+        await th.parler(Dit.adresse, g);
+        px.poser(Expr.reflexion);
+      case Sc.envoi:
+        px.cote = rtl ? 1 : -1;
+        px.tourne.cible = 0.16;
+        px.pietine = 2;
+        px.poser(Expr.concentre);
+        px.faire(Geste.envoie);
+        px.regarder(rtl ? 0.5 : -0.5, -0.8);
+        await att(330);
+        th.etincelle();
+        await th.parler(Dit.envoi, g, tenir: 1.3);
+        px.faire(Geste.pied);
+        px.poser(Expr.attente);
+      case Sc.reseauLent:
+        px.cote = rtl ? 1 : -1;
+        px.tourne.cible = 0.12;
+        px.poser(Expr.attente);
+        px.faire(Geste.montre);
+        px.regarder(-0.5, 0.7);
+        await att(1300);
+        px.regarder(0, 0);
+        px.faire(Geste.pied);
+        await th.parler(Dit.reseauLent, g);
+        for (int i = 0; i < 3; i++) {
+          px.faire(Geste.envoie);
+          px.regarder(rtl ? 0.5 : -0.5, -0.8);
+          await att(330);
+          th.etincelle();
+          await att(1500);
+          px.faire(Geste.pied);
+          px.regarder(0, 0);
+          await att(2600);
+        }
+      case Sc.envoye:
+        px.poser(Expr.joie);
+        px.faire(Geste.joie);
+        await att(300);
+        await th.parler(Dit.envoye, g);
+        px.faire(Geste.aucun);
+        px.poser(Expr.sourire);
+      case Sc.attenteLongue:
+        // Il regarde l'heure, va s'asseoir au bord de la route, bâille, puis propose de renvoyer.
+        px.poser(Expr.attente);
+        px.faire(Geste.montre);
+        px.regarder(-0.5, 0.7);
+        await att(1400);
+        px.faire(Geste.aucun);
+        px.regarder(bord.sign * 0.7, 0.2);
+        px.anticipe();
+        await att(140);
+        px.allerA(1, travers: bord, vitesse: 0.3);
+        await th.jusqua(() => px.arrive, g);
+        px.regarder(0, 0);
+        px.assis.cible = 1;
+        px.faire(Geste.genoux);
+        await att(1100);
+        px.faire(Geste.montre);
+        px.regarder(-0.5, 0.7);
+        await att(1500);
+        px.faire(Geste.baille);
+        px.poser(Expr.baille);
+        await att(1300);
+        px.poser(Expr.sourire);
+        px.faire(Geste.genoux);
+        px.regarder(0, 0);
+        await att(300);
+        setState(() => relance = true);
+        px.faire(Geste.pointe);
+        await th.parler(Dit.attenteLongue, g);
+        px.faire(Geste.genoux);
+      case Sc.expire:
+        px.poser(Expr.desole);
+        px.faire(Geste.desole);
+        await att(300);
+        await th.parler(Dit.expire, g);
+        px.faire(Geste.pointe);
+        px.poser(Expr.sourire);
+        px.regarder(0, 0.9);
+        await att(1500);
+        px.faire(Geste.aucun);
+        px.regarder(0, 0);
+      case Sc.dejaUtilise:
+        px.poser(Expr.reflexion);
+        px.faire(Geste.un);
+        await att(300);
+        await th.parler(Dit.dejaUtilise, g);
+        px.faire(Geste.pointe);
+        px.poser(Expr.sourire);
+        px.regarder(0, 0.9);
+        await att(1500);
+        px.faire(Geste.aucun);
+        px.regarder(0, 0);
+      case Sc.trop:
+        compte = 30;
+        _minuterie = Timer.periodic(const Duration(seconds: 1), (Timer t) {
+          if (!mounted) return t.cancel();
+          setState(() => compte = math.max(0, compte - 1));
+          if (compte == 0) t.cancel();
+        });
+        px.poser(Expr.sourire);
+        px.faire(Geste.pause);
+        await att(250);
+        await th.parler(Dit.tropEssais, g);
+        px.faire(Geste.respire);
+        px.poser(Expr.paisible);
+      case Sc.horsLigne:
+        // La porte s'éteint : toute la scène perd sa lumière. Il se retourne pour voir.
+        th.eclat.cible = 0.2;
+        await att(350);
+        px.sursaut();
+        px.poser(Expr.etonne);
+        px.cote = rtl ? 1 : -1;
+        px.tourne.cible = 0.34;
+        px.pietine = 2;
+        px.regarder(rtl ? 0.6 : -0.6, -0.8);
+        await att(1000);
+        px.tourne.cible = 0;
+        px.pietine = 2;
+        px.faire(Geste.cherche);
+        px.poser(Expr.reflexion);
+        await att(1500);
+        px.faire(Geste.desole);
+        px.poser(Expr.desole);
+        px.regarder(0, 0);
+        await th.parler(Dit.horsLigne, g);
+        px.faire(Geste.aucun);
+      case Sc.retourLigne:
+        if (avant != Sc.horsLigne || depuisPorte) {
+          th.eclat.cible = 0.2;
+          px.poser(Expr.desole);
+          await att(900);
+        }
+        th.eclat.cible = 1.12;
+        await att(350);
+        px.poser(Expr.joie);
+        px.faire(Geste.applaudit);
+        px.sauter(240);
+        await th.parler(Dit.retourLigne, g);
+        th.eclat.cible = 1;
+        px.faire(Geste.aucun);
+        px.poser(Expr.sourire);
+      case Sc.serveur:
+        px.poser(Expr.gene);
+        px.faire(Geste.gene);
+        await att(500);
+        await th.parler(Dit.serveur, g);
+        px.faire(Geste.pointe);
+        px.poser(Expr.sourire);
+        px.regarder(0, 0.9);
+        await att(1500);
+        px.faire(Geste.aucun);
+        px.regarder(0, 0);
+      case Sc.googleOuverte:
+        // Il s'écarte pour laisser la place à la fenêtre, et attend poliment.
+        px.poser(Expr.sourire);
+        px.regarder(-bord.sign * 0.5, 0.6);
+        px.anticipe();
+        await att(130);
+        px.allerA(1, travers: bord * 0.8, vitesse: 0.3);
+        await th.jusqua(() => px.arrive, g);
+        px.faire(Geste.suivre);
+        await th.parler(Dit.googleOuverte, g);
+        px.faire(Geste.pied);
+        px.poser(Expr.attente);
+      case Sc.googleFermee:
+        px.poser(Expr.etonne);
+        px.regarder(0, 0.8);
+        await att(600);
+        px.poser(Expr.sourire);
+        px.faire(Geste.desole);
+        px.regarder(0, 0);
+        await th.parler(Dit.googleFermee, g);
+        px.faire(Geste.aucun);
+      case Sc.googleRefuse:
+        px.poser(Expr.desole);
+        px.faire(Geste.non);
+        await att(400);
+        await th.parler(Dit.googleRefuse, g);
+        px.faire(Geste.pointe);
+        px.poser(Expr.sourire);
+        px.regarder(0, 0.9);
+        await att(1500);
+        px.faire(Geste.aucun);
+        px.regarder(0, 0);
+      case Sc.reussite:
+        px.poser(Expr.joie);
+        px.faire(Geste.joie);
+        await att(650);
+        px.faire(Geste.suivre);
+        await th.parler(Dit.suivez, g, tenir: 0.9);
+        await th.repartir(g, ouvert: () => setState(() => appOuverte = true));
+      default:
+        break;
+    }
+  }
+
+  /// Chargement : il sort, dit ce qu'il fait, repart quand c'est prêt.
+  Future<void> _chargement(Sc e, int g) async {
+    final double debut = th.temps;
+    Future<void> att(int ms) => th.attendre(ms, g);
+    await th.arriver(g, vite: true);
+    px.faire(Geste.salut);
+    px.poser(Expr.sourire);
+    await th.parler(Dit.ouverture, g, tenir: 1.0);
+    px.faire(Geste.aucun);
+    if (e == Sc.chargeEchec) {
+      await th.jusqua(() => th.temps - debut > 5.2, g);
+      th.eclat.cible = 0.3;
+      await att(400);
+      px.poser(Expr.desole);
+      px.faire(Geste.desole);
+      setState(() => piedEtat = Bas.echecCharge);
+      await th.parler(Dit.chargeEchec, g);
+      px.faire(Geste.pointe);
+      px.regarder(0, 0.9);
+      await att(1500);
+      px.faire(Geste.aucun);
+      px.regarder(0, 0);
+      return;
+    }
+    if (e == Sc.chargeLent) {
+      // Après huit secondes, il le dit : d'autres phrases, d'autres gestes.
+      await th.jusqua(() => th.temps - debut > 8, g);
+      setState(() => piedEtat = Bas.lent);
+      int i = 0;
+      while (th.temps - debut < 17.5) {
+        final Replique r = phrasesLenteur[i % phrasesLenteur.length];
+        i++;
+        px.poser(r.expr);
+        px.faire(r.geste);
+        if (r.geste == Geste.montre) px.regarder(-0.5, 0.7);
+        await th.parler(r.texte, g, tenir: 1.5);
+        px.faire(Geste.pied);
+        px.regarder(0, 0);
+        await att(700);
+      }
+    } else {
+      await th.jusqua(() => th.temps - debut > 4.4, g);
+    }
+    setState(() => piedEtat = Bas.cours);
+    px.poser(Expr.joie);
+    px.faire(Geste.suivre);
+    await th.parler(Dit.pret, g, tenir: 0.8);
+    await th.repartir(g, ouvert: () => setState(() => appOuverte = true));
+  }
+
+  /// Mise à jour : les dalles s'allument de Praxis vers la porte, il parle pour faire patienter.
+  Future<void> _miseAJour(Sc e, int g, bool depuisPorte) async {
+    Future<void> att(int ms) => th.attendre(ms, g);
+    void avancement(double v) {
+      th.progres = v;
+      pct.value = (v * 100).floor();
+    }
+
+    if (e == Sc.maintenance) {
+      // La porte est en veilleuse ; il balaie la route, à mi-chemin.
+      setState(() => piedEtat = Bas.maintenance);
+      th.eclat.cible = 0.5;
+      await att(300);
+      th.eclat.cible = 0.5;
+      px.poser(Expr.paisible);
+      px.allerA(0.93, travers: 0, vitesse: 0.42);
+      await th.jusqua(() => px.arrive, g);
+      px.faire(Geste.balaie);
+      await att(1600);
+      px.poser(Expr.sourire);
+      await th.parler(Dit.maintenance, g);
+      px.poser(Expr.paisible);
+      return;
+    }
+    if (e == Sc.majDispo) {
+      setState(() => piedEtat = Bas.dispo);
+      await th.arriver(g, vite: true);
+      px.poser(Expr.joie);
+      px.faire(Geste.porte);
+      px.regarder(rtl ? 0.4 : -0.4, -0.8);
+      await th.parler(Dit.majDispo, g);
+      px.faire(Geste.pointe);
+      px.poser(Expr.sourire);
+      px.regarder(0, 0.9);
+      await att(1600);
+      px.faire(Geste.aucun);
+      px.regarder(0, 0);
+      return;
+    }
+    final double secondes = switch (e) { Sc.majLente => 60, Sc.majVite => 10, Sc.majPresque => 40, Sc.majEchec => 14, _ => 30 };
+    double v = switch (e) { Sc.majPresque => 0.86, Sc.majFinie => 0.97, Sc.majEchec => th.progres > 0 ? th.progres : 0.34, _ => 0 };
+    final double plafond = e == Sc.majEchec ? 0.62 : 1;
+    avancement(v);
+    if (depuisPorte) {
+      await th.arriver(g, vite: true);
+    } else {
+      await _revenir(g);
+    }
+    if (e == Sc.majNormale || e == Sc.majLente || e == Sc.majVite) {
+      px.poser(Expr.joie);
+      px.faire(Geste.allume);
+      await att(450);
+      th.etincelle();
+      await th.parler(Dit.majDepart, g, tenir: 0.7);
+    }
+    // La progression n'est pas une droite : elle avance par à-coups, comme une vraie.
+    DateTime dernierChiffre = DateTime.now();
+    _minuterie = Timer.periodic(const Duration(milliseconds: 120), (Timer t) {
+      if (!mounted || g != th.gen) return t.cancel();
+      v = math.min(plafond, v + 0.12 / secondes * (0.2 + _h.nextDouble() * 1.6));
+      th.progres = v;
+      // Le rouleau a besoin d'un demi-temps pour tourner : le chiffre ne change qu'après.
+      final DateTime m = DateTime.now();
+      if (v >= plafond || m.difference(dernierChiffre).inMilliseconds > 1100) {
+        dernierChiffre = m;
+        pct.value = (v * 100).floor();
+      }
+      if (v >= plafond) t.cancel();
+    });
+    int dernier = -1;
+    final List<int> vues = <int>[];
+    while (th.progres < plafond - 0.0001) {
+      final List<int> possibles = <int>[
+        for (int i = 0; i < phrasesAttente.length; i++)
+          if (i != dernier && (phrasesAttente[i].tard == (th.progres >= 0.72) || th.progres >= 0.55 && th.progres < 0.72) && !vues.contains(i)) i
+      ];
+      if (possibles.isEmpty) {
+        vues.clear();
+        await att(60);
+        continue;
+      }
+      final int i = possibles[_h.nextInt(possibles.length)];
+      dernier = i;
+      vues.add(i);
+      final Replique r = phrasesAttente[i];
+      px.poser(r.expr);
+      px.faire(r.geste);
+      if (r.geste == Geste.porte) px.regarder(rtl ? 0.5 : -0.5, -0.9);
+      if (r.geste == Geste.montre) px.regarder(-0.5, 0.7);
+      if (r.geste == Geste.compte || r.geste == Geste.balaie) px.regarder(0.2, 0.9);
+      if (r.geste == Geste.allume) {
+        unawaited(_scene(() async {
+          await att(450);
+          th.etincelle();
+        }));
+      }
+      if (r.geste == Geste.souffle) th.eclat.cible = 1.22;
+      await th.parler(r.texte, g, tenir: 1.9);
+      th.eclat.cible = 1;
+      px.faire(Geste.aucun);
+      px.regarder(0, 0);
+      await att(380);
+    }
+    if (e == Sc.majEchec) {
+      // Les dalles s'éteignent en remontant vers lui ; la porte faiblit.
+      setState(() => piedEtat = Bas.echecMaj);
+      px.sursaut();
+      px.poser(Expr.etonne);
+      th.eclat.cible = 0.45;
+      final double v0 = th.progres;
+      for (int i = 1; i <= 24; i++) {
+        th.progres = v0 * (1 - i / 24);
+        await att(45);
+      }
+      px.poser(Expr.desole);
+      px.faire(Geste.desole);
+      await th.parler(Dit.majEchec, g);
+      px.faire(Geste.pointe);
+      px.regarder(0, 0.9);
+      await att(1500);
+      px.faire(Geste.aucun);
+      px.regarder(0, 0);
+      return;
+    }
+    setState(() => piedEtat = Bas.finie);
+    pct.value = 100;
+    px.poser(Expr.joie);
+    px.faire(Geste.joie);
+    await att(700);
+    px.faire(Geste.suivre);
+    await th.parler(Dit.pret, g, tenir: 0.9);
+    await th.repartir(g, ouvert: () => setState(() => appOuverte = true));
+  }
+
+  /// On le touche : il réagit, jamais deux fois de suite pareil.
+  void toucher({int? variante}) {
+    if (!th.present || appOuverte) return;
+    int i = variante ?? _h.nextInt(reactionsToucher.length);
+    if (variante == null && i == _derniereReaction) i = (i + 1 + _h.nextInt(reactionsToucher.length - 1)) % reactionsToucher.length;
+    i %= reactionsToucher.length;
+    _derniereReaction = i;
+    final Replique r = reactionsToucher[i];
+    final int g = th.gen;
+    px.ecrase.v += 1.4;
+    px.pendV += 6;
+    px.poser(r.expr);
+    px.faire(r.geste);
+    if (r.geste == Geste.aucun) px.sursaut();
+    if (r.geste == Geste.non && !th.reduit && px.tourne.cible == 0) {
+      // Un tour complet sur lui-même, en sautant.
+      px.sauter(300);
+      px.tourne.x = 2;
+      px.pietine = 4;
+    }
+    if (r.texte.isNotEmpty) th.dire(r.texte, tenir: 1.0);
+    _scene(() async {
+      await th.attendre(1900, g);
+      // Il reprend sa contenance, sauf si la scène en cours lui a déjà donné autre chose à faire.
+      if (px.expr == r.expr) px.poser(Expr.sourire);
+      if (px.geste == r.geste) px.faire(Geste.aucun);
+    });
+  }
+
+  void _pointeur(PointerUpEvent e) {
+    final RenderBox? b = cleScene.currentContext?.findRenderObject() as RenderBox?;
+    if (b == null) return;
+    final Offset p = b.globalToLocal(e.position);
+    if ((p - th.centrePraxis).distance < th.largeurPraxis * 0.5) toucher();
+  }
+
+  // ───── Construction ─────
+  @override
+  Widget build(BuildContext context) {
+    Theme.of(context);
+    final Size s = widget.taille;
+    return ValueListenableBuilder<double>(
+      valueListenable: hautScene,
+      builder: (_, double hs, _) {
+        final bool tel = !widget.large;
+        return Listener(
+          behavior: HitTestBehavior.translucent,
+          onPointerUp: _pointeur,
+          child: Stack(key: cleScene, clipBehavior: Clip.hardEdge, children: <Widget>[
+            Positioned.fill(child: ColoredBox(color: T.surface)),
+            Positioned.fill(child: RepaintBoundary(child: CustomPaint(painter: DecorPeintre(th)))),
+            if (!plein && tel)
+              Positioned(
+                left: 0,
+                right: 0,
+                top: hs - 26,
+                bottom: 0,
+                child: Container(
+                  decoration: ShapeDecoration(
+                    color: T.surface,
+                    shadows: <BoxShadow>[BoxShadow(color: T.ombre, blurRadius: 30, offset: const Offset(0, -6))],
+                    shape: const RoundedSuperellipseBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(40))),
+                  ),
+                  child: SingleChildScrollView(
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(24, 28, 24, 20),
+                    child: formulaire(compact: th.clavier.cible > 0.5, serre: true),
+                  ),
+                ),
+              ),
+            if (!plein && !tel)
+              Positioned.fromRect(
+                rect: carteLarge,
+                child: Container(
+                  padding: const EdgeInsets.all(36),
+                  decoration: ShapeDecoration(
+                    color: T.surface,
+                    shadows: <BoxShadow>[BoxShadow(color: T.ombre, blurRadius: 40, offset: const Offset(0, 12))],
+                    shape: coin(40),
+                  ),
+                  child: Center(child: formulaire(compact: false, serre: false)),
+                ),
+              ),
+            if (plein) Positioned(left: 20, right: 20, bottom: tel ? 26 : 22, child: _pied()),
+            if (tel && !plein) Positioned(left: 0, right: 0, bottom: -1, child: _clavier()),
+            if (!plein && sc == Sc.googleOuverte) ...<Widget>[
+              Positioned.fromRect(
+                rect: tel ? Rect.fromLTRB(0, hs - 26, s.width, s.height) : carteLarge,
+                child: IgnorePointer(child: Container(decoration: ShapeDecoration(color: T.surface.withValues(alpha: 0.72), shape: tel ? const RoundedSuperellipseBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(40))) : coin(40)))),
+              ),
+              _fenetreGoogle(tel, hs),
+            ],
+            Positioned.fill(child: IgnorePointer(child: RepaintBoundary(child: CustomPaint(painter: ScenePeintre(th))))),
+            Positioned.fill(
+              child: IgnorePointer(
+                ignoring: !appOuverte,
+                child: AnimatedOpacity(opacity: appOuverte ? 1 : 0, duration: const Duration(milliseconds: 900), curve: Curves.easeInOutCubic, child: _application()),
+              ),
+            ),
+            Positioned(left: 14, top: tel ? 14 : 12, child: const Directionality(textDirection: TextDirection.ltr, child: Compteur())),
+            if (tel) Positioned(top: 10, left: s.width / 2 - 52, child: Container(width: 104, height: 30, decoration: const ShapeDecoration(color: Colors.black, shape: StadiumBorder()))),
+          ]),
+        );
+      },
+    );
+  }
+
+  /// Le bas des écrans pleins : où on en est, la vraie cause en cas d'échec, une seule action.
+  Widget _pied() {
+    final bool maj = widget.ecran == EcranId.miseAJour;
+    final (String t, String? detail, String? bouton, VoidCallback? action) = switch (piedEtat) {
+      Bas.cours => (maj ? Lib.majTitre : Lib.chargeTitre, null, null, null),
+      Bas.finie => (Lib.majFinie, null, null, null),
+      Bas.lent => (Lib.chargeLent, null, null, null),
+      Bas.echecCharge => (Lib.chargeTitre, Lib.chargeEchec, Lib.reessayer, () => jouer(Sc.chargeNormal)),
+      Bas.dispo => (Lib.majTitre, Lib.majPrete, Lib.recharger, () => jouer(Sc.majNormale)),
+      Bas.echecMaj => (Lib.majTitre, Lib.majEchec, Lib.reessayer, () => jouer(Sc.majNormale)),
+      Bas.maintenance => (Lib.majTitre, Lib.maintenance, Lib.reessayer, () => jouer(Sc.maintenance)),
+    };
+    final bool chiffre = maj && (piedEtat == Bas.cours || piedEtat == Bas.finie || piedEtat == Bas.echecMaj);
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 360),
+      curve: Curves.easeOutCubic,
+      alignment: Alignment.bottomCenter,
+      child: Center(
+        // Une plaque douce derrière le texte : il reste lisible sur les dalles allumées comme sur l'ombre.
+        child: Container(
+          constraints: const BoxConstraints(maxWidth: 420),
+          padding: const EdgeInsets.fromLTRB(22, 12, 22, 14),
+          decoration: ShapeDecoration(color: T.surface.withValues(alpha: T.s ? 0.80 : 0.86), shape: coin(26)),
+          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            if (chiffre)
+              ValueListenableBuilder<int>(
+                valueListenable: pct,
+                builder: (_, int v, _) => Row(mainAxisSize: MainAxisSize.min, textDirection: TextDirection.ltr, children: <Widget>[
+                  Rouleau(v, style: titre_(30)),
+                  Text(' %', style: titre_(20, couleur: T.doux)),
+                ]),
+              ),
+            const SizedBox(height: 4),
+            Text(t, style: t2(14.5, couleur: T.doux, poids: FontWeight.w600), textAlign: TextAlign.center),
+            if (detail != null) ...<Widget>[
+              const SizedBox(height: 10),
+              Text(detail, style: t2(16, couleur: T.encre, poids: FontWeight.w500), textAlign: TextAlign.center),
+            ],
+            if (bouton != null) ...<Widget>[
+              const SizedBox(height: 18),
+              SizedBox(width: 260, child: _bouton(bouton, surTouche: action)),
+            ],
+          ]),
+        ),
+      ),
+    );
+  }
+
+  TextStyle titre_(double t, {Color? couleur}) => titre(t, couleur: couleur ?? T.encre).copyWith(fontFeatures: const <ui.FontFeature>[ui.FontFeature.tabularFigures()]);
+
+  Widget _application() => ColoredBox(
+        color: T.fond,
+        child: Center(
+          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            SizedBox(width: 72, height: 72, child: CustomPaint(painter: _SymbolePeintre())),
+            const SizedBox(height: 24),
+            Text(Lib.bienvenue, style: t1(32)),
+            const SizedBox(height: 8),
+            Text(Lib.espace, style: t2(16, couleur: T.doux)),
+            const SizedBox(height: 28),
+            Pilule(Lib.revoir, fort: true, surTouche: () => jouer(premier(widget.ecran), neuf: true), key: const ValueKey<String>('revoir')),
+          ]),
+        ),
+      );
+
+  // ───── Le formulaire : le lien par courriel d'abord, Google ensuite, comme dans l'application ─────
+  Widget formulaire({required bool compact, required bool serre}) {
+    final List<Widget> l;
+    final double e1 = serre ? 18 : 24, e2 = serre ? 12 : 16;
+    switch (forme) {
+      case Forme.envoye:
+        l = <Widget>[
+          Text(Lib.envoyeTitre, style: t1(28)),
+          const SizedBox(height: 12),
+          Text(Lib.envoyeDetail, style: t2(16, couleur: T.doux)),
+          if (sc == Sc.attenteLongue) ...<Widget>[const SizedBox(height: 14), _encart(Lib.encartAttente, Ton.info)],
+          const SizedBox(height: 22),
+          _bouton(Lib.renvoyer, secondaire: !relance, attire: relance, surTouche: () => jouer(Sc.envoi)),
+          const SizedBox(height: 10),
+          _lien(Lib.autreAdresse, () => jouer(Sc.arrivee)),
+        ];
+      case Forme.lienMort:
+        l = <Widget>[
+          Text(sc == Sc.expire ? Lib.expireTitre : Lib.dejaTitre, style: t1(28)),
+          const SizedBox(height: 8),
+          Text(sc == Sc.expire ? Lib.expireDetail : Lib.dejaDetail, style: t2(16, couleur: T.doux)),
+          const SizedBox(height: 18),
+          _champ(),
+          const SizedBox(height: 16),
+          _bouton(Lib.nouveauLien, surTouche: () => jouer(Sc.envoi)),
+        ];
+      case Forme.principale:
+        final (String, Ton)? m = message;
+        l = <Widget>[
+          if (sc == Sc.session && !compact) ...<Widget>[_encart(Lib.sessionPhrase, Ton.info, titre: Lib.sessionTitre), const SizedBox(height: 16)],
+          Text(Lib.titre, style: t1(28)),
+          SizedBox(height: compact ? 14 : e1),
+          _champ(),
+          if (m != null && !compact) ...<Widget>[const SizedBox(height: 12), _encart(m.$1, m.$2)],
+          SizedBox(height: compact ? 14 : 16),
+          _boutonPrincipal(),
+          if (!compact) ...<Widget>[
+            SizedBox(height: e2),
+            _boutonGoogle(),
+            if (m == null && sc != Sc.session) ...<Widget>[const SizedBox(height: 10), _lien(Lib.probleme, () => jouer(Sc.expire))],
+          ],
+        ];
+    }
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 380),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      layoutBuilder: (Widget? courant, List<Widget> anciens) => Stack(alignment: Alignment.topCenter, children: <Widget>[...anciens, ?courant]),
+      transitionBuilder: (Widget w, Animation<double> a) =>
+          FadeTransition(opacity: a, child: SlideTransition(position: Tween<Offset>(begin: const Offset(0, 0.04), end: Offset.zero).animate(a), child: w)),
+      child: Column(
+        key: ValueKey<Forme>(forme),
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: l,
+      ),
+    );
+  }
+
+  Widget _lien(String l, VoidCallback f) =>
+      Center(child: Touche(surTouche: f, child: Padding(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), child: Text(l, style: t2(15, couleur: T.accent, poids: FontWeight.w600)))));
+
+  /// Un encart : la vraie cause, en une phrase. Jamais d'ambre : lavande, corail ou vert de la palette.
+  Widget _encart(String t, Ton ton, {String? titre}) {
+    final Color fond = switch (ton) { Ton.erreur => T.corailPale, Ton.bon => T.vertPale, Ton.info => T.pale };
+    final Color encre = switch (ton) { Ton.erreur => T.corail, Ton.bon => T.vert, Ton.info => T.encre };
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 260),
+      child: Container(
+        key: ValueKey<String>(t),
+        width: double.infinity,
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 11),
+        decoration: ShapeDecoration(color: fond, shape: coin(16)),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.start, mainAxisSize: MainAxisSize.min, children: <Widget>[
+          if (titre != null) Padding(padding: const EdgeInsets.only(bottom: 2), child: Text(titre, style: t2(15, couleur: T.encre, poids: FontWeight.w700))),
+          Text(t, style: t2(14.5, couleur: encre, poids: FontWeight.w500)),
+        ]),
+      ),
+    );
+  }
+
+  Widget _champ() {
+    final bool erreur = sc == Sc.adresse, actif = sc == Sc.saisie;
+    final Widget champ = Column(crossAxisAlignment: CrossAxisAlignment.stretch, mainAxisSize: MainAxisSize.min, children: <Widget>[
+      Text(Lib.champ, style: t2(14, couleur: T.encre, poids: FontWeight.w600)),
+      const SizedBox(height: 8),
+      AnimatedContainer(
+        duration: const Duration(milliseconds: 260),
+        curve: Curves.easeOutCubic,
+        height: 56,
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        decoration: ShapeDecoration(
+          color: T.surface2,
+          shape: RoundedSuperellipseBorder(
+            borderRadius: const BorderRadius.all(Radius.circular(16)),
+            side: BorderSide(color: erreur ? T.corail : (actif ? T.accent : T.filet), width: erreur || actif ? 2 : 1),
+          ),
+        ),
+        alignment: Alignment.centerLeft,
+        child: Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(children: <Widget>[
+            if (saisi.isEmpty && !actif) Text(Lib.indice, style: texte(17, couleur: T.doux)),
+            if (saisi.isNotEmpty || actif) Text(saisi, key: cleTexte, style: texte(17, poids: FontWeight.w500)),
+            if (actif) const _Curseur(),
+          ]),
+        ),
+      ),
+    ]);
+    return TweenAnimationBuilder<double>(
+      key: ValueKey<int>(secousse),
+      tween: Tween<double>(begin: secousse == 0 ? 1 : 0, end: 1),
+      duration: const Duration(milliseconds: 620),
+      builder: (_, double v, Widget? c) => Transform.translate(offset: Offset(math.sin(v * math.pi * 7) * (1 - v) * 12, 0), child: c),
+      child: champ,
+    );
+  }
+
+  Widget _boutonPrincipal() => switch (sc) {
+        Sc.envoi || Sc.reseauLent => _bouton(Lib.envoiEnCours, attente: true),
+        Sc.horsLigne || Sc.serveur => _bouton(Lib.reessayer, surTouche: () => jouer(Sc.envoi)),
+        Sc.trop => _bouton('', bloque: true),
+        Sc.reussite => _bouton(Lib.envoyer, fait: true),
+        Sc.googleOuverte => Opacity(opacity: 0.45, child: _bouton(Lib.envoyer)),
+        _ => _bouton(Lib.envoyer, surTouche: () => jouer(saisi.isEmpty ? Sc.saisie : Sc.envoi)),
+      };
+
+  /// « Continuer avec Google » : le bouton secondaire, à filet, avec le logo officiel.
+  Widget _boutonGoogle() {
+    final bool attente = sc == Sc.googleOuverte;
+    final Widget contenu = Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+      const SizedBox(width: 20, height: 20, child: CustomPaint(painter: _GooglePeintre())),
+      const SizedBox(width: 10),
+      Flexible(child: Text(attente ? Lib.googleAttente : Lib.google, style: t2(16.5, couleur: T.encre, poids: FontWeight.w700), maxLines: 1, overflow: TextOverflow.fade, softWrap: false)),
+    ]);
+    return Touche(
+      surTouche: () => jouer(attente ? Sc.googleFermee : Sc.googleOuverte),
+      fond: 0.97,
+      key: const ValueKey<String>('google'),
+      child: Container(
+        height: 56,
+        alignment: Alignment.center,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        decoration: ShapeDecoration(color: T.surface, shape: RoundedSuperellipseBorder(borderRadius: const BorderRadius.all(Radius.circular(16)), side: BorderSide(color: T.filet, width: 1.5))),
+        child: attente ? _Pulse(child: contenu) : contenu,
+      ),
+    );
+  }
+
+  Widget _bouton(String l, {VoidCallback? surTouche, bool secondaire = false, bool attente = false, bool bloque = false, bool fait = false, bool attire = false}) {
+    final Color fond = secondaire || bloque ? T.surface2 : T.accent;
+    final Color encre = secondaire ? T.accent : (bloque ? T.doux : T.surAccent);
+    Widget contenu = Text(l, style: t2(16.5, couleur: encre, poids: FontWeight.w700));
+    if (bloque) {
+      contenu = Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+        Text('${Lib.reessayerDans} ', style: t2(16.5, couleur: encre, poids: FontWeight.w700)),
+        Directionality(
+          textDirection: TextDirection.ltr,
+          child: Row(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Text('0:', style: titre_(17, couleur: encre)),
+            Rouleau(compte ~/ 10, style: titre_(17, couleur: encre)),
+            Rouleau(compte % 10, style: titre_(17, couleur: encre)),
+          ]),
+        ),
+      ]);
+    }
+    if (fait) contenu = Icon(Icons.check_rounded, color: encre, size: 26);
+    if (attente) contenu = _Pulse(child: contenu);
+    Widget b = AnimatedContainer(
+      duration: const Duration(milliseconds: 320),
+      height: 56,
+      alignment: Alignment.center,
+      decoration: ShapeDecoration(color: fond, shape: coin(16)),
+      child: contenu,
+    );
+    if (attire) b = _Pulse(bas: 0.78, child: b);
+    return Touche(surTouche: surTouche, fond: 0.97, child: b);
+  }
+
+  /// La fenêtre de Google, figurée : un compte à choisir, ou fermer sans choisir.
+  Widget _fenetreGoogle(bool tel, double hs) {
+    final Size s = widget.taille;
+    final Rect r = tel ? Rect.fromLTWH(20, hs + 34, s.width - 40, 214) : Rect.fromCenter(center: carteLarge.center + const Offset(0, 40), width: carteLarge.width - 56, height: 214);
+    return Positioned.fromRect(
+      rect: r,
+      child: TweenAnimationBuilder<double>(
+        tween: Tween<double>(begin: 0, end: 1),
+        duration: const Duration(milliseconds: 520),
+        curve: Curves.easeOutBack,
+        builder: (_, double v, Widget? c) => Opacity(opacity: v.clamp(0.0, 1.0), child: Transform.scale(scale: 0.9 + 0.1 * v, child: c)),
+        child: Container(
+          padding: const EdgeInsets.fromLTRB(18, 14, 14, 14),
+          decoration: ShapeDecoration(color: T.surface, shadows: <BoxShadow>[BoxShadow(color: T.s ? const Color(0xAA000000) : const Color(0x44211E28), blurRadius: 36, offset: const Offset(0, 12))], shape: coin(26)),
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+            Row(children: <Widget>[
+              const SizedBox(width: 20, height: 20, child: CustomPaint(painter: _GooglePeintre())),
+              const SizedBox(width: 10),
+              Expanded(child: Text(Lib.googleFenetre, style: t2(16, poids: FontWeight.w700))),
+              Touche(
+                surTouche: () => jouer(Sc.googleFermee),
+                key: const ValueKey<String>('google-fermer'),
+                child: Container(width: 36, height: 36, decoration: ShapeDecoration(color: T.surface2, shape: const CircleBorder()), child: Icon(Icons.close_rounded, size: 20, color: T.doux)),
+              ),
+            ]),
+            const SizedBox(height: 12),
+            for (final (String nom, String adr, VoidCallback f) in <(String, String, VoidCallback)>[
+              ('Amina B.', 'amina.b@exemple.com', () => jouer(Sc.reussite)),
+              ('A. Bureau', 'amina@travail.exemple', () => jouer(Sc.googleRefuse)),
+            ])
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Touche(
+                  surTouche: f,
+                  fond: 0.98,
+                  child: Container(
+                    height: 60,
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    decoration: ShapeDecoration(color: T.surface2, shape: coin(16)),
+                    child: Row(children: <Widget>[
+                      Container(width: 36, height: 36, alignment: Alignment.center, decoration: ShapeDecoration(color: T.pale, shape: const CircleBorder()), child: Text(nom[0], style: titre(15, couleur: T.accent))),
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(mainAxisAlignment: MainAxisAlignment.center, crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                          Directionality(textDirection: TextDirection.ltr, child: Text(nom, style: texte(15, poids: FontWeight.w600))),
+                          Directionality(textDirection: TextDirection.ltr, child: Text(adr, style: texte(13, couleur: T.doux))),
+                        ]),
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+          ]),
+        ),
+      ),
+    );
+  }
+
+  Widget _clavier() {
+    final double h = hautClavier;
+    const List<String> rangs = <String>['azertyuiop', 'qsdfghjklm', 'wxcvbn@.'];
+    return AnimatedBuilder(
+      animation: th,
+      builder: (_, Widget? c) => Transform.translate(offset: Offset(0, h * (1 - th.clavier.x)), child: c),
+      child: Directionality(
+        textDirection: TextDirection.ltr,
+        child: Container(
+          height: h,
+          padding: const EdgeInsets.fromLTRB(4, 10, 4, 26),
+          color: T.s ? const Color(0xFF20202B) : const Color(0xFFE3DEE9),
+          child: Column(children: <Widget>[
+            for (final String r in rangs)
+              Expanded(
+                child: Row(mainAxisAlignment: MainAxisAlignment.center, children: <Widget>[
+                  for (final String k in r.split(''))
+                    Container(
+                      width: 33,
+                      margin: const EdgeInsets.all(2.5),
+                      alignment: Alignment.center,
+                      decoration: ShapeDecoration(color: T.surface, shape: coin(7)),
+                      child: Text(k, style: texte(17, couleur: T.encre)),
+                    ),
+                ]),
+              ),
+            Expanded(
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 70, vertical: 2.5),
+                decoration: ShapeDecoration(color: T.surface, shape: coin(7)),
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+class _Curseur extends StatefulWidget {
+  const _Curseur();
+  @override
+  State<_Curseur> createState() => _CurseurState();
+}
+
+class _CurseurState extends State<_Curseur> with SingleTickerProviderStateMixin<_Curseur> {
+  late final AnimationController a = AnimationController(vsync: this, duration: const Duration(milliseconds: 1000))..repeat();
+  @override
+  void dispose() {
+    a.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(
+        opacity: a.drive(TweenSequence<double>(<TweenSequenceItem<double>>[
+          TweenSequenceItem<double>(tween: ConstantTween<double>(1), weight: 1),
+          TweenSequenceItem<double>(tween: ConstantTween<double>(0), weight: 1),
+        ])),
+        child: Container(width: 2, height: 22, margin: const EdgeInsets.only(left: 1), color: T.accent),
+      );
+}
+
+class _Pulse extends StatefulWidget {
+  const _Pulse({required this.child, this.bas = 0.55});
+  final Widget child;
+  final double bas;
+  @override
+  State<_Pulse> createState() => _PulseState();
+}
+
+class _PulseState extends State<_Pulse> with SingleTickerProviderStateMixin<_Pulse> {
+  late final AnimationController a = AnimationController(vsync: this, duration: const Duration(milliseconds: 1100))..repeat(reverse: true);
+  @override
+  void dispose() {
+    a.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => FadeTransition(opacity: a.drive(Tween<double>(begin: widget.bas, end: 1).chain(CurveTween(curve: Curves.easeInOutSine))), child: widget.child);
+}
+
+class _SymbolePeintre extends CustomPainter {
+  @override
+  void paint(Canvas c, Size s) {
+    final double k = s.width / 716;
+    c.scale(k);
+    final Paint p = Paint()..color = T.s ? Colors.white : Teinte.violet;
+    for (final Path x in symbole) {
+      c.drawPath(x, p);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_SymbolePeintre o) => true;
+}
+
+/// Le logo Google : les quatre tracés officiels et leurs couleurs, recopiés de
+/// lib/core/marque/logo_google.dart du dépôt. Il ne suit ni le thème ni le sens de lecture.
+const List<(String, Color)> _tracesGoogle = <(String, Color)>[
+  ('M45.12 24.5c0-1.56-.14-3.06-.4-4.5H24v8.51h11.84c-.51 2.75-2.06 5.08-4.39 6.64v5.52h7.11c4.16-3.83 6.56-9.47 6.56-16.17z', Color(0xFF4285F4)),
+  ('M24 46c5.94 0 10.92-1.97 14.56-5.33l-7.11-5.52c-1.97 1.32-4.49 2.1-7.45 2.1-5.73 0-10.58-3.87-12.31-9.07H4.34v5.7C7.96 41.07 15.4 46 24 46z', Color(0xFF34A853)),
+  ('M11.69 28.18C11.25 26.86 11 25.45 11 24s.25-2.86.69-4.18v-5.7H4.34C2.85 17.09 2 20.45 2 24s.85 6.91 2.34 9.88l7.35-5.7z', Color(0xFFFBBC05)),
+  ('M24 10.75c3.23 0 6.13 1.11 8.41 3.29l6.31-6.31C34.91 4.18 29.93 2 24 2 15.4 2 7.96 6.93 4.34 14.12l7.35 5.7c1.73-5.2 6.58-9.07 12.31-9.07z', Color(0xFFEA4335)),
+];
+final List<(Path, Color)> _google = <(Path, Color)>[
+  for (final (String d, Color c) in _tracesGoogle) (_cheminSvg(d), c),
+];
+Path _cheminSvg(String d) {
+  final Path p = Path();
+  for (final CommandeTrace c in lireTraceSvg(d)) {
+    final List<double> k = c.coordonnees;
+    switch (c.nature) {
+      case NatureCommande.deplacer:
+        p.moveTo(k[0], k[1]);
+      case NatureCommande.ligne:
+        p.lineTo(k[0], k[1]);
+      case NatureCommande.cubique:
+        p.cubicTo(k[0], k[1], k[2], k[3], k[4], k[5]);
+      case NatureCommande.quadratique:
+        p.quadraticBezierTo(k[0], k[1], k[2], k[3]);
+      case NatureCommande.fermer:
+        p.close();
+    }
+  }
+  return p;
+}
+
+class _GooglePeintre extends CustomPainter {
+  const _GooglePeintre();
+  @override
+  void paint(Canvas c, Size s) {
+    c.scale(s.shortestSide / 48);
+    for (final (Path p, Color couleur) in _google) {
+      c.drawPath(p, Paint()..color = couleur);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_GooglePeintre o) => false;
+}
+
+// ───────────────────────── Planche de vérification ─────────────────────────
+/// `?planche=1` : le Praxis d'origine (vivant.dart) à gauche, celui de la maquette à droite,
+/// dans chaque expression ; puis la toque sous tous les angles.
+class PlancheApp extends StatelessWidget {
+  const PlancheApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    final ValueNotifier<Offset> doigt = ValueNotifier<Offset>(Offset.zero);
+    Corps pose(Expr e, {double tour = 0, Geste geste = Geste.aucun, bool assis = false}) {
+      final Corps c = Corps()
+        ..placer(1)
+        ..poser(e)
+        ..faire(geste);
+      c.tourne.x = c.tourne.cible = tour;
+      c.assis.x = c.assis.cible = assis ? 1 : 0;
+      c.fondu.x = 1;
+      for (int i = 0; i < 150; i++) {
+        c.pas(1 / 120);
+      }
+      c.clin = 0;
+      c.gx.x = 0;
+      c.gy.x = 0;
+      return c;
+    }
+
+    Widget mien(Corps c, {Offset dir = const Offset(0, -1)}) => SizedBox(
+        width: 260,
+        height: 268,
+        child: CustomPaint(painter: _PosePeintre(c, Eclairage(couleur: Teinte.coeur, dir: dir, contre: 0.7))));
+    Widget cellule(String nom, List<Widget> enfants) => Container(
+          margin: const EdgeInsets.all(8),
+          padding: const EdgeInsets.fromLTRB(12, 8, 12, 4),
+          decoration: ShapeDecoration(color: Teinte.cielHorizon, shape: coin(20)),
+          child: Column(mainAxisSize: MainAxisSize.min, children: <Widget>[
+            Text(nom, style: texte(14, poids: FontWeight.w700)),
+            Row(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.end, children: enfants),
+          ]),
+        );
+    final String quoi = Uri.base.queryParameters['planche'] ?? '1';
+    // `?planche=avatar` : le portrait de Praxis, plein cadre, pour l'image de profil.
+    // `fond=clair` : sur le lilas pâle au lieu du violet du logo.
+    if (quoi == 'avatar') {
+      return MaterialApp(
+        debugShowCheckedModeBanner: false,
+        home: SizedBox.expand(
+          child: CustomPaint(painter: _AvatarPeintre(pose(Expr.sourire), Uri.base.queryParameters['fond'] == 'clair')),
+        ),
+      );
+    }
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(fontFamily: 'DMSans', scaffoldBackgroundColor: T.fond),
+      home: Scaffold(
+        body: SingleChildScrollView(
+          child: Wrap(children: <Widget>[
+            if (quoi == '1')
+              for (final Expr e in Expr.values)
+                cellule('${e.name} : origine à gauche, maquette à droite', <Widget>[
+                  Padding(padding: const EdgeInsets.fromLTRB(30, 0, 30, 26), child: Praxis(doigt: doigt, taille: 200, depart: Humeur.calme, tombe: false)),
+                  mien(pose(e)),
+                ]),
+            if (quoi == 'toque') ...<Widget>[
+              for (final double t in <double>[0, 0.15, 0.3, 0.5, 0.7, 0.85, 1]) cellule('demi-tour : ${(t * 180).round()}°', <Widget>[mien(pose(Expr.sourire, tour: t))]),
+              cellule('lumière à gauche', <Widget>[mien(pose(Expr.sourire), dir: const Offset(-0.7, -0.7))]),
+              cellule('lumière à droite', <Widget>[mien(pose(Expr.sourire), dir: const Offset(0.7, -0.7))]),
+              cellule('assis', <Widget>[mien(pose(Expr.attente, geste: Geste.genoux, assis: true))]),
+              for (final Geste g in <Geste>[Geste.salut, Geste.pointe, Geste.montre, Geste.gene, Geste.un, Geste.cherche, Geste.reflexion, Geste.pause, Geste.balaie, Geste.coeur, Geste.desole, Geste.porte])
+                cellule('geste : ${g.name}', <Widget>[mien(pose(Expr.sourire, geste: g))]),
+            ],
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+/// Le portrait : la tête de Praxis devant la lumière de la porte, sur le violet du logo.
+class _AvatarPeintre extends CustomPainter {
+  _AvatarPeintre(this.c, this.clair);
+  final Corps c;
+  final bool clair;
+  @override
+  void paint(Canvas canvas, Size s) {
+    final double cote = math.min(s.width, s.height);
+    final Rect cadre = Rect.fromLTWH(0, 0, cote, cote);
+    canvas.clipRect(cadre);
+    canvas.drawRect(cadre, Paint()..color = clair ? const Color(0xFFEEE6FA) : Teinte.violet);
+    // La lumière de la porte, derrière lui : un seul dégradé.
+    Atelier.etaler(canvas, Atelier.aura, Offset(cote * 0.5, cote * 0.50), cote * 0.74, cote * 0.74, clair ? 0.95 : 0.62);
+    final double largeur = cote * 0.80;
+    peindrePraxis(canvas, c, Offset(cote * 0.5, cote * 0.985), largeur, Eclairage(couleur: Teinte.coeur, dir: const Offset(0, -1), contre: 0.75));
+  }
+
+  @override
+  bool shouldRepaint(_AvatarPeintre o) => false;
+}
+
+class _PosePeintre extends CustomPainter {
+  _PosePeintre(this.c, this.e);
+  final Corps c;
+  final Eclairage e;
+  @override
+  void paint(Canvas canvas, Size s) => peindrePraxis(canvas, c, Offset(s.width / 2, s.height - 20), 200, e);
+  @override
+  bool shouldRepaint(_PosePeintre o) => false;
+}
+
+// ───────────────────────── Images par seconde ─────────────────────────
+class Compteur extends StatefulWidget {
+  const Compteur({super.key});
+  @override
+  State<Compteur> createState() => _CompteurState();
+}
+
+class _CompteurState extends State<Compteur> {
+  final List<FrameTiming> _lot = <FrameTiming>[];
+  String t = '…';
+  DateTime _dernier = DateTime.now();
+  @override
+  void initState() {
+    super.initState();
+    SchedulerBinding.instance.addTimingsCallback(_recu);
+  }
+
+  void _recu(List<FrameTiming> f) {
+    _lot.addAll(f);
+    final DateTime m = DateTime.now();
+    final int ms = m.difference(_dernier).inMilliseconds;
+    if (ms < 800 || !mounted) return;
+    final double moy = _lot.fold<int>(0, (int s, FrameTiming x) => s + x.totalSpan.inMicroseconds) / math.max(1, _lot.length) / 1000;
+    final String n = '${(_lot.length * 1000 / ms).round()} images/s · ${moy.toStringAsFixed(1)} ms';
+    _lot.clear();
+    _dernier = m;
+    setState(() => t = n);
+  }
+
+  @override
+  void dispose() {
+    SchedulerBinding.instance.removeTimingsCallback(_recu);
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => IgnorePointer(
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+          decoration: ShapeDecoration(color: T.nuit.withValues(alpha: 0.78), shape: const StadiumBorder()),
+          child: Text(t, style: texte(11.5, couleur: Colors.white, poids: FontWeight.w600).copyWith(fontFeatures: const <ui.FontFeature>[ui.FontFeature.tabularFigures()])),
+        ),
+      );
+}

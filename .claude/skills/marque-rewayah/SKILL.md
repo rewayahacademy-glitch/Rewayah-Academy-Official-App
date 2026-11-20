@@ -43,3 +43,8 @@ des **candidates**. La vision, la mission, l'ambition, les valeurs et le texte d
 5. « Certifié », « garanti », « 100 % sécurisé », « gratuit », « le meilleur », « cours enregistré ».
 
 Une contradiction ? Écris-la dans la section 3 du registre et continue sans la trancher.
+
+## Praxis
+
+Le personnage Praxis (l'assistant de la direction, visage de la communication) a sa propre compétence :
+`praxis-rewayah`. Tout visuel, toute animation et toute image de Praxis en partent, sans exception.
