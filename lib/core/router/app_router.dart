@@ -3594,9 +3594,12 @@ class _CoquilleNavigation extends ConsumerWidget {
     // Lot B2 : l'eleve adulte (capacite « eleve autonome », jamais le role)
     // voit sa barre, Aujourd'hui, Apprendre, Suivi, Profil ; les branches
     // restent celles de [destinations], retrouvees par chemin.
-    final bool eleveAdulte =
-        role == AppRole.student &&
-        ref.watch(sessionProvider.select((SessionState s) => s.eleveAutonome));
+    final bool eleveAdulte = SessionState.barreEleveAdultePour(
+      role,
+      eleveAutonome: ref.watch(
+        sessionProvider.select((SessionState s) => s.eleveAutonome),
+      ),
+    );
     final List<Destination> visibles = destinationsPour(
       role: role,
       mode: mode,

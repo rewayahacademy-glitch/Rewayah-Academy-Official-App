@@ -179,7 +179,7 @@ String phraseEchecEnvoi(IssueEnvoiLien issue) => switch (issue) {
   IssueEnvoiLien.tropTot => t.connexion.erreurTropTot,
   IssueEnvoiLien.horsLigne => t.connexion.horsLigne,
   IssueEnvoiLien.inscriptionFermee => t.connexion.inscriptionFermee,
-  IssueEnvoiLien.verificationNonAboutie => t.connexion.controle.erreur,
+  IssueEnvoiLien.verificationNonAboutie => t.connexion.controle.refuse,
   IssueEnvoiLien.serveur => t.connexion.erreurServeur,
   IssueEnvoiLien.erreur => t.connexion.erreurEnvoi,
 };
@@ -265,15 +265,15 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
       _erreurChamp = null;
       _erreurEnvoi = null;
     });
-    final bool controlePose = ref.read(cleTurnstileProvider).value != null;
+    bool controlePose = false;
     try {
+      // PE-A5 : une cle nulle est relue avant l'envoi ; sans jeton, l'echec et
+      // ses issues se disent sous le bouton (controle), rien ne part.
+      controlePose = await cleTurnstilePourEnvoi(ref) != null;
       final String? jeton = controlePose
           ? await _controle.jetonPourEnvoi()
           : null;
-      if (controlePose && jeton == null) {
-        if (mounted) setState(() => _erreurEnvoi = t.connexion.controle.erreur);
-        return;
-      }
+      if (controlePose && jeton == null) return;
       await ref
           .read(serviceAuthProvider)
           .envoyerLienCourriel(_courriel.text, jetonControle: jeton);
@@ -290,8 +290,10 @@ class _RecuperationPageState extends ConsumerState<RecuperationPage> {
         );
       }
     } finally {
-      // Le jeton est use : un autre est demande.
-      if (controlePose) _controle.apresEnvoi();
+      // Le jeton est use : un autre est demande (rien a relancer sans jeton).
+      if (controlePose && _controle.etat == EtatAntiRobot.pret) {
+        _controle.apresEnvoi();
+      }
       if (mounted) {
         setState(() => _envoi = false);
       }

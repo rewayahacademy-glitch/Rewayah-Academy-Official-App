@@ -9268,7 +9268,13 @@ class _Traductions$connexion$controle$ar extends Traductions$connexion$controle$
 	// Translations
 	@override String get libelle => 'التحقق الأمني';
 	@override String get chargement => 'جارٍ التحقق الأمني.';
-	@override String get erreur => 'لم يكتمل التحقق. أعد المحاولة.';
+	@override String get erreur => 'لم يكتمل التحقق الأمني. المس «إعادة المحاولة»؛ وإن فشل مرة أخرى فأعد تحميل الصفحة.';
+	@override String get erreurNavigateur => 'لا يعمل التحقق الأمني في هذا المتصفح. افتح الصفحة في ⁨Chrome⁩ أو ⁨Safari⁩ (لا داخل تطبيق مراسلة)، وأوقف مانع الإعلانات إن وُجد، ثم المس «إعادة المحاولة».';
+	@override String get erreurHorloge => 'يرفض التحقق الأمني وقت جهازك. اضبط التاريخ والوقت على «تلقائي»، ثم المس «إعادة المحاولة».';
+	@override String get erreurReglage => 'لا يعمل التحقق الأمني الآن بسبب إعداد من جهتنا. أعد المحاولة لاحقًا.';
+	@override String get refuse => 'لم يُقبل التحقق الأمني. المس الزر مرة أخرى بعد ثوانٍ؛ وإن تكرر ذلك فأعد تحميل الصفحة.';
+	@override String get autreCheminGoogle => 'يمكنك أيضًا المتابعة عبر ⁨Google⁩: هذا الطريق لا يمر بهذا التحقق.';
+	@override String get rechargerPage => 'إعادة تحميل الصفحة';
 	@override String get horsLigne => 'لا يمكن إجراء التحقق الآن. أعد المحاولة عند عودة الاتصال.';
 }
 
@@ -39424,7 +39430,13 @@ extension on TraductionsAr {
 			'connexion.horsLigne' => 'أنت غير متصل: لا يمكن إرسال الرابط الآن.',
 			'connexion.controle.libelle' => 'التحقق الأمني',
 			'connexion.controle.chargement' => 'جارٍ التحقق الأمني.',
-			'connexion.controle.erreur' => 'لم يكتمل التحقق. أعد المحاولة.',
+			'connexion.controle.erreur' => 'لم يكتمل التحقق الأمني. المس «إعادة المحاولة»؛ وإن فشل مرة أخرى فأعد تحميل الصفحة.',
+			'connexion.controle.erreurNavigateur' => 'لا يعمل التحقق الأمني في هذا المتصفح. افتح الصفحة في ⁨Chrome⁩ أو ⁨Safari⁩ (لا داخل تطبيق مراسلة)، وأوقف مانع الإعلانات إن وُجد، ثم المس «إعادة المحاولة».',
+			'connexion.controle.erreurHorloge' => 'يرفض التحقق الأمني وقت جهازك. اضبط التاريخ والوقت على «تلقائي»، ثم المس «إعادة المحاولة».',
+			'connexion.controle.erreurReglage' => 'لا يعمل التحقق الأمني الآن بسبب إعداد من جهتنا. أعد المحاولة لاحقًا.',
+			'connexion.controle.refuse' => 'لم يُقبل التحقق الأمني. المس الزر مرة أخرى بعد ثوانٍ؛ وإن تكرر ذلك فأعد تحميل الصفحة.',
+			'connexion.controle.autreCheminGoogle' => 'يمكنك أيضًا المتابعة عبر ⁨Google⁩: هذا الطريق لا يمر بهذا التحقق.',
+			'connexion.controle.rechargerPage' => 'إعادة تحميل الصفحة',
 			'connexion.controle.horsLigne' => 'لا يمكن إجراء التحقق الآن. أعد المحاولة عند عودة الاتصال.',
 			'connexion.probleme' => 'انتهت صلاحية الرابط أو لم يصل؟',
 			'connexion.recuperation.titre' => 'استعادة الوصول',
@@ -39467,14 +39479,14 @@ extension on TraductionsAr {
 			'connexion.introCreation' => 'اكتب عنوانك: نرسل إليك رابطا ينشئ حسابك. لا كلمة مرور تختارها.',
 			'connexion.envoyerLienCreation' => 'استلام رابط التسجيل',
 			'attente.titre' => 'ملفك قيد التحقق',
+			_ => null,
+		} ?? switch (path) {
 			'attente.dossierIncomplet' => 'ما زالت تنقص ملفك بعض الوثائق.',
 			'attente.enVerification' => 'نتحقق من ملفك.',
 			'attente.refuse' => 'رُفض الملف',
 			'attente.suspendu' => 'حسابك موقوف.',
 			'attente.contacterAcademie' => 'التواصل مع الأكاديمية',
 			'attente.deposeLe' => ({required Object date}) => 'أُودع في ⁨${date}⁩',
-			_ => null,
-		} ?? switch (path) {
 			'attente.delai' => 'يستغرق التحقق عادة أقل من 48 ساعة.',
 			'attente.aFournir' => 'للتقديم',
 			'attente.pieceIdentite' => 'وثيقة هوية',
@@ -39981,14 +39993,14 @@ extension on TraductionsAr {
 			'adulte.paiements.soldesSansDonnees' => 'تعذّر تحميل أرصدة أسرتك',
 			'adulte.famille.ajouter' => 'إضافة أسرتي',
 			'adulte.famille.ajouterLegende' => 'سجّل أطفالك وادعُ زوجك أو زوجتك للانضمام إلى باقة الأسرة.',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.famille.ajouterPhrase' => 'يمكنك إضافة أطفالك ودعوة زوجك أو زوجتك للانضمام إلى باقة الأسرة. تبقى مساحتك كطالب كما هي.',
 			'adulte.famille.inscrireEnfant' => 'تسجيل طفل',
 			'adulte.famille.maFamille' => 'أسرتي',
 			'adulte.famille.forfaitFamille' => 'باقة الأسرة',
 			'adulte.famille.titulaire' => 'أنت صاحب حساب الأسرة',
 			'adulte.famille.paiementsFoyer' => 'مدفوعات الأسرة',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.famille.aProposForfait' => 'عن باقة الأسرة',
 			'adulte.famille.aProposForfaitPhrase' => 'تضم باقة الأسرة صاحب الحساب، وزوجًا أو زوجة بالغًا، والأطفال أو المراهقين الذين في رعاية صاحب الحساب. يحتفظ كل بالغ بحسابه الخاص.',
 			'adulte.famille.profilNonCreeTitre' => 'عرض تجريبي: لم يُنشأ أي ملف',
@@ -40495,14 +40507,14 @@ extension on TraductionsAr {
 			'contrat.politique.s6.blocs.2' => '- تكتب **السبب**. بلا سبب مكتوب لا يُنظر في الطلب.',
 			'contrat.politique.s6.blocs.3' => '- تدرس الإدارة اعتراضك وتردّ عليك كتابةً. لا يُعاد كتابة التقرير؛ يُضاف إليه اعتراضك وقرار الإدارة.',
 			'contrat.politique.s6.blocs.4' => 'هذا الاعتراض إجراء داخلي. **لا يسقط أيًّا من حقوقك القانونية** (الجزء 8)، ويمكنك ممارستها في أي وقت، حتى بعد 7 أيام.',
+			_ => null,
+		} ?? switch (path) {
 			'contrat.politique.s7.titre' => '7. ما يمكن للأكاديمية أن تقرره',
 			'contrat.politique.s7.blocs.0' => 'انطلاقًا من تقرير، يمكن للإدارة: أن تهنئك، أو تقترح عليك تدريبًا، أو تطلب منك تغيير ممارسة ما، أو تسحب منك فصلًا، أو تنهي العقد في الحالات الخطيرة. كل إجراء يقرره شخص، بعد القراءة، ويُشرح لك. وعند وجود خطر على طفل، يمكن للأكاديمية أن تتصرف فورًا وتُبلغك بعد ذلك.',
 			'contrat.politique.s8.titre' => '8. حقوقك',
 			'contrat.politique.s8.blocs.0' => '- **الاطلاع**: يمكنك طلب نسخة من بياناتك، بما فيها التقارير التي تخصك. نجيب خلال شهر. يُحجب اسم المراقب وبيانات الطلاب (DPA 2018، الملحق 2، الجزء 3، الفقرة 16: بيانات طرف ثالث).',
 			'contrat.politique.s8.blocs.1' => '- **التصحيح**: إذا كانت واقعة ما خاطئة (الوقت، الحضور)، نصحّحها.',
 			'contrat.politique.s8.blocs.2' => '- **الاعتراض على المعالجة**: يمكنك الاعتراض على المراقبة. ندرس طلبك. ولأن المراقبة تحمي الأطفال، يجوز لنا إبقاؤها. وفي هذه الحالة لا يمكننا أن نوكل إليك فصل أطفال، ونبلغك بذلك كتابةً.',
-			_ => null,
-		} ?? switch (path) {
 			'contrat.politique.s8.blocs.3' => '- **الشكوى**: يمكنك اللجوء إلى سلطة حماية البيانات (في المملكة المتحدة ICO؛ وفي الاتحاد الأوروبي سلطة بلدك).',
 			'contrat.politique.s9.titre' => '9. الأساس القانوني',
 			'contrat.politique.s9.blocs.0' => 'المصلحة المشروعة للأكاديمية والطلاب: حماية الأطفال وضمان جودة الدروس (UK GDPR، المادة 6(1)(f)). اختبار الموازنة مكتوب وموقَّع. لا نطلب منك «موافقتك» على المراقبة، لأنك لن تستطيع رفضها بحرية.',
@@ -41009,14 +41021,14 @@ extension on TraductionsAr {
 			'recrutement.suivant.position' => ({required Object rang, required Object total}) => '⁨${rang}⁩ من ⁨${total}⁩',
 			'recrutement.suivant.precedent' => 'الملف السابق',
 			'recrutement.suivant.suivant' => 'الملف التالي',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.suivant.decisionEnregistree' => 'تم تسجيل القرار. سيُفتح الملف التالي بعد لحظات.',
 			'recrutement.suivant.rester' => 'البقاء على هذا الملف',
 			'recrutement.suivant.fin' => 'كان هذا آخر ملف في هذه القائمة.',
 			'recrutement.suivant.versListe' => 'العودة إلى القائمة',
 			'recrutement.suivant.reglage' => 'الانتقال إلى الملف التالي بعد القرار',
 			'recrutement.dossier3.pastille.bon' => 'جيد',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.dossier3.pastille.aVoir' => 'للمراجعة',
 			'recrutement.dossier3.pastille.manque' => 'ناقص',
 			'recrutement.dossier3.situation.reste' => ({required Object liste}) => 'المتبقي: ⁨${liste}⁩.',
@@ -41523,14 +41535,14 @@ extension on TraductionsAr {
 			'recrutement.parcours.fuseau.heureChezVous' => ({required Object heure}) => 'هل الساعة عندك الآن ⁨${heure}⁩؟',
 			'recrutement.parcours.fuseau.lieuPropose' => ({required Object lieu}) => 'المنطقة الزمنية المقترحة: ⁨${lieu}⁩.',
 			'recrutement.parcours.fuseau.retenu' => ({required Object lieu}) => 'المنطقة الزمنية المعتمدة: ⁨${lieu}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.fuseau.oui' => 'نعم، هذا هو الوقت عندي',
 			'recrutement.parcours.fuseau.ouiDescription' => 'تُؤكَّد منطقتك الزمنية.',
 			'recrutement.parcours.fuseau.changer' => 'لا، أريد تغييرها',
 			'recrutement.parcours.fuseau.changerDescription' => 'تختار أقرب مدينة إلى مكان إقامتك.',
 			'recrutement.parcours.fuseau.choisirTitre' => 'ما أقرب مدينة إلى مكان إقامتك؟',
 			'recrutement.parcours.fuseau.choisirExplication' => 'تحدّد منطقتك الزمنية. ستظهر ساعات مقابلتك بتوقيت هذه المنطقة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.parcours.fuseau.recherche' => 'البحث عن مدينة',
 			'recrutement.parcours.fuseau.rechercheAide' => 'اسم المدينة',
 			'recrutement.parcours.fuseau.aucune' => 'لا توجد مدينة مطابقة.',
@@ -42037,14 +42049,14 @@ extension on TraductionsAr {
 			'argent.acces.reactiveAdulte' => ({required Object date}) => 'يمكنك الانضمام إلى حصصك من جديد منذ ⁨${date}⁩.',
 			'argent.acces.reactiveAdulteSansDate' => 'يمكنك الانضمام إلى حصصك من جديد.',
 			'argent.acces.pastilleSuspendu' => 'معلَّق',
+			_ => null,
+		} ?? switch (path) {
 			'argent.acces.pastilleReactive' => 'أُعيد تفعيله',
 			'argent.etat.finance' => 'ممول',
 			'argent.etat.essai' => 'تجربة',
 			'argent.etat.essaiCompte' => ({required Object n, required Object max}) => 'تجربة: ⁨${n}⁩/⁨${max}⁩',
 			'argent.etat.manque' => 'بحاجة إلى تمويل',
 			'argent.etat.enConfirmation' => 'قيد التأكيد',
-			_ => null,
-		} ?? switch (path) {
 			'argent.etat.expire' => 'انتهى الوصول',
 			'argent.etat.pause' => 'متوقف مؤقتًا',
 			'argent.etat.aRegulariser' => 'بحاجة إلى تسوية',
@@ -42551,14 +42563,14 @@ extension on TraductionsAr {
 			'admissions.faitPrecisions' => ({required Object nom}) => 'طُلبت التوضيحات من ⁨${nom}⁩، والرسالة في الطريق.',
 			'admissions.faitContact' => ({required Object nom}) => 'الرسالة إلى ⁨${nom}⁩ في الطريق.',
 			'admissions.faitRefusAnnule' => ({required Object deNom}) => 'أُلغي رفض طلب ⁨${deNom}⁩.',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.refus.dejaTraitee' => 'عالج شخص آخر من الإدارة هذا الطلب للتو. تُعاد قراءة القائمة.',
 			'admissions.refus.transitionInterdite' => 'لم يعد هذا الإجراء صالحًا لهذا الطلب (تغيرت حالته أو انقضت مهلة الأيام السبعة).',
 			'admissions.refus.motifRequis' => 'يلزم سبب لهذا الإجراء.',
 			'admissions.refus.adresseInconnue' => 'عنوان البريد الإلكتروني لهذا الشخص غير معروف: لا يمكن إرسال أي رسالة.',
 			'admissions.refus.enfantEnClasse' => 'أحد أطفال هذا الطلب في فصل بالفعل: لم يعد إلغاء القبول ممكنًا.',
 			'admissions.refus.autre' => 'رفض الخادم هذا الإجراء. أعد فتح الطلب لترى حالته.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.modeles.general' => 'دون تفصيل',
 			'admissions.modeles.generalPhrase' => '«لا يمكننا متابعة طلبك في الوقت الحالي.»',
 			'admissions.modeles.besoins' => 'فصولنا لا تلبي الطلب',
@@ -43065,14 +43077,14 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.rapport.compteurs.dejaConnues' => 'مسجَّلة سابقًا: لم يتغيّر شيء.',
 			'candidatsFlux.importFormulaires.rapport.compteurs.aCorriger' => 'أسطر غير مقروءة: لم تُستورد.',
 			'candidatsFlux.importFormulaires.rapport.historique' => ({required Object n}) => 'استُبدلت بأحدث: ⁨${n}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.rapport.lignes.titre' => 'سطرًا سطرًا',
 			'candidatsFlux.importFormulaires.rapport.lignes.aide' => 'يُعرَّف كل سطر بتاريخ رده لا باسم الشخص.',
 			'candidatsFlux.importFormulaires.rapport.lignes.reference' => ({required Object reference}) => 'الرد بتاريخ ⁨${reference}⁩',
 			'candidatsFlux.importFormulaires.rapport.lignes.sansReference' => 'بلا مرجع',
 			'candidatsFlux.importFormulaires.rapport.plus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'عرض ⁨${n}⁩ سطر إضافي', one: 'عرض سطر إضافي', two: 'عرض سطرين إضافيين', few: 'عرض ⁨${n}⁩ أسطر إضافية', many: 'عرض ⁨${n}⁩ سطرًا إضافيًا', other: 'عرض ⁨${n}⁩ سطر إضافي', ), 
 			'candidatsFlux.importFormulaires.rapport.autreFichier' => 'استيراد ملف آخر',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.prevenir.lien' => 'إبلاغ الأشخاص بالبريد الإلكتروني',
 			'candidatsFlux.prevenir.titre' => 'إبلاغ الأشخاص بالبريد الإلكتروني',
 			'candidatsFlux.prevenir.contexte' => 'يُرسَل رابط التسجيل بالبريد الإلكتروني إلى أصحاب النماذج المستوردة الذين تركوا عنوانًا ولا يملكون حسابًا بعد. لا يتلقى العنوان نفسه الرسالة مرتين.',
@@ -43579,14 +43591,14 @@ extension on TraductionsAr {
 			'calendrier.pauses.repondreAvant' => ({required Object date}) => 'الرد قبل ⁨${date}⁩',
 			'calendrier.pauses.enRetard' => 'انقضت المهلة',
 			'calendrier.pauses.accepter' => 'قبول',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.refuser' => 'رفض',
 			'calendrier.pauses.refusTitre' => 'الرد على الطلب',
 			'calendrier.pauses.refusPhrase' => 'السبب إلزامي عند الرفض، وتقرؤه الأسرة في التطبيق.',
 			'calendrier.pauses.refusMotif' => 'السبب',
 			'calendrier.pauses.refusEnvoyer' => 'رفض التوقف',
 			'calendrier.pauses.decisionsRecentes' => 'القرارات الأخيرة',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.decisionsVide' => 'لا توجد قرارات حاليًا.',
 			'calendrier.pauses.statut.demandee' => 'قيد الانتظار',
 			'calendrier.pauses.statut.acceptee' => 'مقبول',

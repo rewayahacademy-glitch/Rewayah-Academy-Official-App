@@ -2,7 +2,8 @@
 // une page qui le reconnait. Ce que le test prouve :
 //
 // - `invitation=1&code=...` et `candidature=1` sont des arrivees de candidat ;
-//   le lien d'un foyer, l'adresse sans repere, non ;
+//   le lien d'un foyer, l'adresse sans repere, non ; l'adresse de retour du
+//   lien de connexion aussi, sans jamais lire le code du flux de connexion ;
 // - la page dit en haut « Votre candidature d'enseignant » et quoi faire, et
 //   n'offre qu'une action (ni « J'ai deja un compte », ni questionnaire) ;
 // - le type envoye au serveur ne change pas (`equipe` reste `equipe`) ;
@@ -93,14 +94,52 @@ void main() {
         arriveeCandidatDansAdresse(Uri.parse('$_app?mode=creer')),
         isFalse,
       );
-      expect(
-        arriveeCandidatDansAdresse(Uri.parse('$_app?candidature=1')),
-        isFalse,
-      );
       // Le champ du code ouvert depuis la recuperation : pas un candidat.
       expect(
         arriveeCandidatDansAdresse(Uri.parse('$_app?mode=creer&invitation=1')),
         isFalse,
+      );
+    });
+  });
+
+  // PE-A2, suite (20/11/2026) : l'adresse de retour du lien de connexion
+  // (`adresse_retour.dart`), ouverte sans session.
+  group('adresse de retour du lien de connexion', () {
+    const String retour = 'https://app.rewayahacademy.com/';
+    const String pkce = '0f8fad5b-d9cb-469f-a165-70867728950e';
+
+    test('candidature=1, ou invitation=1 avec son code : candidat', () {
+      expect(
+        arriveeCandidatDansAdresse(
+          Uri.parse('$retour?candidature=1&code=$pkce#/connexion'),
+        ),
+        isTrue,
+      );
+      expect(
+        arriveeCandidatDansAdresse(
+          Uri.parse(
+            '$retour?invitation=1&code_invitation=ABCD-EFGH-JKMN'
+            '&code=$pkce#/connexion',
+          ),
+        ),
+        isTrue,
+      );
+    });
+
+    test('le code du flux de connexion n est jamais un code d invitation', () {
+      final Uri adresse = Uri.parse('$retour?invitation=1&code=$pkce');
+      expect(arriveeCandidatDansAdresse(adresse), isFalse);
+      expect(invitationDansAdresse(adresse), isNull);
+    });
+
+    testWidgets('sans session, la page du candidat, jamais l ordinaire', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester, '$retour?candidature=1&code=$pkce#/connexion');
+      expect(find.text(t.connexion.candidat.titre), findsOneWidget);
+      expect(
+        find.byKey(const ValueKey<String>('connexion-mode')),
+        findsNothing,
       );
     });
   });
@@ -206,6 +245,23 @@ void main() {
           '$_app?mode=creer&invitation=1&code=ABCD-EFGH-JKMN',
         );
         await capturerVue(tester, 'pe-entree/arrivee-lien_${nom}_390');
+      });
+      // PE-A2, suite : le lien de connexion ouvert sans session (autre
+      // navigateur) revient sur la page du candidat.
+      testWidgets('retour du lien de connexion $nom', (
+        WidgetTester tester,
+      ) async {
+        await tester.runAsync(() => LocaleSettings.setLocale(langue));
+        addTearDown(() => LocaleSettings.setLocale(AppLocale.fr));
+        await _monter(
+          tester,
+          'https://app.rewayahacademy.com/?invitation=1'
+          '&code_invitation=ABCD-EFGH-JKMN#/connexion',
+        );
+        await capturerVue(
+          tester,
+          'pe-entree-candidat/arrivee-retour_${nom}_390',
+        );
       });
     }
   });

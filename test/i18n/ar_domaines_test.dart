@@ -342,6 +342,10 @@ const Set<String> _motsLatinsAdmis = <String>{
   'QR',
   'UTC',
   'Google',
+  // PE-A5 (20/11/2026) : les navigateurs conseilles quand la verification de
+  // securite echoue, nommes tels quels dans toutes les langues.
+  'Chrome',
+  'Safari',
   'Android',
   'iPhone',
   'iPad',
