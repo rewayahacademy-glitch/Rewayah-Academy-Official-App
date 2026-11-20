@@ -17,6 +17,7 @@ import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/version/bandeau_nouvelle_version.dart';
 import 'package:rewayah_academy/core/version/nouvelle_version.dart';
+import 'package:rewayah_academy/features/candidature/cadre_religieux_page.dart';
 import 'package:rewayah_academy/features/com_messages/bandeau_messages_hors_direct.dart';
 
 import 'outil_capture.dart';
@@ -95,6 +96,41 @@ void main() {
           await tester.pumpAndSettle();
         });
       }
+    }
+
+    // PE-D11 : un texte long de lecture (le cadre), selectionne dans sa
+    // seule zone, en arabe (de droite a gauche) puis en francais.
+    for (final AppLocale langue in <AppLocale>[AppLocale.ar, AppLocale.fr]) {
+      final String nom = 'texte_selectionne_${langue.name}_390x844';
+      testWidgets(nom, (WidgetTester tester) async {
+        await _langue(tester, langue);
+        tester.view.physicalSize = const Size(390, 844);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
+        final String texte = langue == AppLocale.ar
+            ? 'الإطار الديني والتربوي\n\nنقرأ القرآن بتدبر ونحترم المعلم والطالب.\n\nيلتزم المعلم بالمنهج وبمواعيد الحصة.'
+            : 'Le cadre religieux et pedagogique\n\nNous lisons le Coran avec attention et respectons chacun.\n\nL\'enseignant suit le programme et les horaires.';
+        await tester.pumpWidget(
+          hoteCapture(
+            Scaffold(
+              body: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(AppSpacing.lg),
+                  child: TexteCadrePublie(texte: texte),
+                ),
+              ),
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.longPress(find.byType(TexteCadrePublie));
+        await tester.pumpAndSettle();
+        tester
+            .state<SelectableRegionState>(find.byType(SelectableRegion))
+            .selectAll();
+        await stabiliser(tester);
+        debugPrint('PNG ${await capturer(tester, '$_dossier/$nom')}');
+      });
     }
   });
 }

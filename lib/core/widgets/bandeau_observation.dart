@@ -5,7 +5,9 @@ import '../icons/app_icons.dart';
 import '../session/session_state.dart';
 import '../tc_horloge/mon_horloge.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_elevation.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 
 /// Le bandeau d'une session d'observation par un agent IA (ADR-025).
@@ -63,13 +65,20 @@ class BandeauObservation extends StatelessWidget {
 
     return Semantics(
       liveRegion: true,
+      // PE-D8 (directeur, 19/11/2026 : « rien ne pousse la page ») : une
+      // carte posee par-dessus l'ecran, en haut (`CoucheAvis` de
+      // `RewayahApp`), qui ne decale plus le contenu. Elle reste visible tant
+      // que l'observation dure, sans croix : une observation qui ne se voit
+      // pas est une observation cachee.
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: paire.background,
-          border: Border(bottom: palette.borderStrong.asBorderSide()),
+        decoration: AppElevation.avecFilet(
+          surface: paire,
+          filet: palette.borderStrong,
+          ombre: palette.ombre,
+          arrondi: AppRadius.arrondiMd,
+          ombres: AppElevation.niveau2(palette.ombre),
         ),
-        child: SafeArea(
-          bottom: false,
+        child: SizedBox(
           child: Padding(
             padding: const EdgeInsets.symmetric(
               horizontal: AppSpacing.lg,

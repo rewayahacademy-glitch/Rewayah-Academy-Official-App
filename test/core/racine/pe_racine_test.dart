@@ -235,6 +235,22 @@ void main() {
       );
     });
 
+    testWidgets('Echap ferme l\'avis (contrat §9)', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hoteCapture(_ecran(avis: const <Widget>[BandeauAvisEphemere()])),
+      );
+      ProviderScope.containerOf(
+        tester.element(find.byType(BandeauAvisEphemere)),
+      ).read(avisEphemereProvider.notifier).dire('Avis');
+      await tester.pumpAndSettle();
+      expect(find.text('Avis'), findsOneWidget);
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('Avis'), findsNothing);
+    });
+
     testWidgets('« Messages pas en direct » : un signe qui se masque', (
       WidgetTester tester,
     ) async {

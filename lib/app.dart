@@ -135,17 +135,21 @@ class RewayahApp extends ConsumerWidget {
                         .startsWith('/salle'),
                   ),
                   const BandeauAvisEphemere(),
+                  // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le son
+                  // bloque, salle reduite.
+                  BandeauSonBloqueHorsSalle(routeur: routeur),
+                  // NOTIF-DEFAUT : la demande des notifications, une fois par
+                  // appareil.
+                  const BandeauInvitationPush(),
+                  // L'observation reste visible tant qu'elle dure, posee
+                  // par-dessus, sans croix.
+                  if (observation != null)
+                    BandeauObservation(observation: observation),
                 ],
                 child: Column(
                   children: <Widget>[
-                    // NOTIF-DEFAUT : la demande des notifications, une fois par appareil.
-                    const BandeauInvitationPush(),
-                    if (observation != null)
-                      BandeauObservation(observation: observation),
-                    // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le son
-                    // bloque, salle reduite ; l'eleve sorti pendant son absence
-                    // hors de l'application retrouve l'ecran du retour.
-                    BandeauSonBloqueHorsSalle(routeur: routeur),
+                    // L'eleve sorti pendant son absence hors de l'application
+                    // retrouve l'ecran du retour (ne rend rien).
                     RetourHorsApplication(routeur: routeur),
                     // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
                     // relire au retour sur un onglet ou dans l'application.

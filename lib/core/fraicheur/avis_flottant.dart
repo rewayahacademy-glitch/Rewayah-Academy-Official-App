@@ -14,6 +14,7 @@
 library;
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
@@ -152,6 +153,34 @@ class _EtatAvisFlottant extends State<AvisFlottant> {
   /// Vrai une fois glisse hors de l'ecran : il ne se redessine plus (un
   /// `Dismissible` parti ne doit pas rester dans l'arbre pendant la sortie).
   bool _parti = false;
+
+  /// Vrai une fois ferme par Echap : un second appui ne ferme rien de plus.
+  bool _fermeParEchap = false;
+
+  @override
+  void initState() {
+    super.initState();
+    HardwareKeyboard.instance.addHandler(_touche);
+  }
+
+  @override
+  void dispose() {
+    HardwareKeyboard.instance.removeHandler(_touche);
+    super.dispose();
+  }
+
+  /// Contrat de navigation §9 : Echap ferme la surface du dessus ; l'avis
+  /// est la couche la plus haute de l'application.
+  bool _touche(KeyEvent evenement) {
+    if (_parti || _fermeParEchap) return false;
+    if (evenement is! KeyDownEvent ||
+        evenement.logicalKey != LogicalKeyboardKey.escape) {
+      return false;
+    }
+    _fermeParEchap = true;
+    widget.onFermer();
+    return true;
+  }
 
   void _glisse() {
     setState(() => _parti = true);
