@@ -17,17 +17,16 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/fraicheur/avis_flottant.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
 import '../../core/router/billet_salle.dart';
 import '../../core/router/routes.dart';
 import '../../core/tc_classe/port_session_persistante.dart';
 import '../../core/tc_classe/session_persistante.dart';
-import '../../core/theme/app_palette.dart';
 import '../../core/video/livekit_session_provider.dart';
 import '../../core/video/video_session_provider.dart';
 import '../../core/widgets/lien_fleche.dart';
-import '../../core/widgets/offline_banner.dart';
 
 /// La page affichee est-elle la salle ? Lue sur la route du dessus de la
 /// pile (le tuteur entre par `push`), comme l'ile de la seance.
@@ -68,13 +67,21 @@ class _BandeauSonBloqueEtat extends ConsumerState<BandeauSonBloqueHorsSalle> {
   StreamSubscription<bool>? _suivi;
   bool _bloque = false;
 
+  /// PE-D8 : l'avis ferme par la personne ; il revient au prochain blocage.
+  bool _ferme = false;
+
   @override
   void initState() {
     super.initState();
     if (_moteur case final SonRecuBloque son) {
       _bloque = son.sonBloque;
       _suivi = son.sonBloqueChange.listen((bool b) {
-        if (mounted) setState(() => _bloque = b);
+        if (mounted) {
+          setState(() {
+            if (b && !_bloque) _ferme = false;
+            _bloque = b;
+          });
+        }
       });
     }
     widget.routeur.routerDelegate.addListener(_routeChangee);
@@ -113,25 +120,32 @@ class _BandeauSonBloqueEtat extends ConsumerState<BandeauSonBloqueHorsSalle> {
   @override
   Widget build(BuildContext context) {
     final SessionEnCours? cours = ref.watch(etatSessionProvider).value?.cours;
-    if (!_bloque || cours == null || estSurLaSalle(widget.routeur)) {
-      return const SizedBox.shrink();
-    }
-    return OfflineBanner.message(
-      key: BandeauSonBloqueHorsSalle.cle,
-      message: t.salle.sonBloque,
-      icone: AppIcons.avertissement.repos,
-      action: LienFleche(
-        key: BandeauSonBloqueHorsSalle.cleActiver,
-        libelle: t.salle.activerSon,
-        fleche: false,
-        encre: AppPalette.of(context).washWarning.applyTo,
-        // Le navigateur ne relance la lecture que sur un geste.
-        onPress: () {
-          if (_moteur case final SonRecuBloque son) {
-            unawaited(son.activerSon());
-          }
-        },
-      ),
+    final bool montrer =
+        _bloque && !_ferme && cours != null && !estSurLaSalle(widget.routeur);
+    // PE-D8 (directeur, 19/11/2026) : un avis flottant, par-dessus l'ecran,
+    // qui ne pousse plus la page ; fermable par sa croix ou en le glissant.
+    return PassageAvis(
+      child: !montrer
+          ? null
+          : AvisFlottant(
+              key: BandeauSonBloqueHorsSalle.cle,
+              message: t.salle.sonBloque,
+              icone: AppIcons.avertissement.repos,
+              onFermer: () => setState(() => _ferme = true),
+              actions: <Widget>[
+                LienFleche(
+                  key: BandeauSonBloqueHorsSalle.cleActiver,
+                  libelle: t.salle.activerSon,
+                  fleche: false,
+                  // Le navigateur ne relance la lecture que sur un geste.
+                  onPress: () {
+                    if (_moteur case final SonRecuBloque son) {
+                      unawaited(son.activerSon());
+                    }
+                  },
+                ),
+              ],
+            ),
     );
   }
 }

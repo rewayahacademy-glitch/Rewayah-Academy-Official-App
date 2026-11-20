@@ -27,6 +27,38 @@ import 'adresse_version.dart';
 /// La cadence de relecture de `version.json`.
 const Duration cadenceVersion = Duration(minutes: 15);
 
+/// PE-D9 (directeur, 19/11/2026) : apres « Plus tard », la mise a jour se fait
+/// seule au retour au premier plan, mais seulement apres une VRAIE absence :
+/// une application quittee au moins ce temps-la. Un aller-retour rapide vers
+/// une autre application ne recharge rien sous les doigts de la personne.
+const Duration absenceAvantMiseAJour = Duration(minutes: 30);
+
+/// Vrai quand la mise a jour remise a plus tard doit se faire maintenant, au
+/// retour au premier plan. **Pure.**
+///
+/// Jamais pendant une seance ([enSeance]) : recharger couperait l'appel.
+bool miseAJourAuRetour({
+  required bool nouvelle,
+  required bool remise,
+  required Duration absence,
+  required bool enSeance,
+}) => nouvelle && remise && !enSeance && absence >= absenceAvantMiseAJour;
+
+/// Vrai une fois « Plus tard » choisi : l'avis ne revient pas avant la mise a
+/// jour (prochain demarrage, ou retour apres une vraie absence). En memoire
+/// seulement : un demarrage charge de toute facon la nouvelle version.
+final NotifierProvider<MiseAJourRemise, bool> miseAJourRemiseProvider =
+    NotifierProvider<MiseAJourRemise, bool>(MiseAJourRemise.new);
+
+/// Porte le choix « Plus tard ».
+class MiseAJourRemise extends Notifier<bool> {
+  @override
+  bool build() => false;
+
+  /// Range l'avis jusqu'a la mise a jour.
+  void remettre() => state = true;
+}
+
 /// L'empreinte d'un `version.json` : `version+build_number`, ou `null` si le
 /// corps est illisible ou ne porte ni l'une ni l'autre.
 String? empreinteVersion(String corps) {

@@ -265,6 +265,18 @@
     "prete": "A new version of the app is ready.",
     "recharger": "Reload"
   },
+  "racine": {
+    "miseAJour": {
+      "mettre": "Update",
+      "plusTard": "Later"
+    },
+    "avis": {
+      "fermer": "Close the notice"
+    },
+    "horsDirect": {
+      "masquer": "Hide the notice \"Messages not live\""
+    }
+  },
   "reseau": {
     "horsLigne": "No network. What is already displayed stays available.",
     "enAttenteEnvoi": "Will be sent as soon as the network is back",

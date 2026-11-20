@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../i18n/strings.g.dart';
 import '../icons/app_icons.dart';
 import '../theme/app_color_pair.dart';
+import '../theme/app_elevation.dart';
 import '../theme/app_palette.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
 import '../widgets/action_principale.dart';
 import '../widgets/lien_fleche.dart';
@@ -34,14 +36,21 @@ class BandeauInvitationPush extends ConsumerWidget {
     if (!etat.visible) return const SizedBox.shrink();
     final InvitationPush invitation = ref.read(invitationPushProvider.notifier);
     final AppPalette palette = AppPalette.of(context);
-    final AppColorPair paire = palette.washWarning;
+    // PE-D8 (directeur, 19/11/2026) : une carte flottante posee par-dessus
+    // l'ecran (`CoucheAvis` de `RewayahApp`), aux couleurs de l'application,
+    // plus un bandeau jaune qui pousse la page. Elle se ferme par « Plus
+    // tard » ou « Activer ».
+    final AppColorPair paire = palette.surfaceRaised;
     final TextTheme textes = Theme.of(context).textTheme;
     return Semantics(
       liveRegion: true,
       child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: paire.background,
-          border: Border(bottom: palette.borderStrong.asBorderSide()),
+        decoration: AppElevation.avecFilet(
+          surface: paire,
+          filet: palette.borderHairline,
+          ombre: palette.ombre,
+          arrondi: AppRadius.arrondiMd,
+          ombres: AppElevation.niveau2(palette.ombre),
         ),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.lg),
