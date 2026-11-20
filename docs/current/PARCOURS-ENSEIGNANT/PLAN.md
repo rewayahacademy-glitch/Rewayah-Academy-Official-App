@@ -1156,3 +1156,32 @@ réessayer) ; à la fin il repart vers la porte et disparaît dans la lumière. 
 jour : même scène, avec plusieurs phrases qui font patienter. Défaut constaté : la moitié basse de
 ces écrans contient tout (adresse, lien), trop compacté ; remonter l'univers de Praxis. Le directeur
 attend des maquettes. Lot PE-F8, statut : maquette en cours ; rien dans l'application.
+
+### 18.3 PX-4 installé ; candidats admis jamais prévenus ; plafond ; lieu des 20 demandes (20/11, 03:50 UTC)
+
+- **PX-4 (PR #644) fusionné (`84a6385b`) et installé à 03:39 UTC** (version enregistrée
+  `20261120033935`, nom `praxis_dossier_complet`). Fidélité prouvée : texte enregistré identique au
+  fichier de `main` (88 176 octets, même md5), 16 fonctions aux empreintes attendues, deux tables
+  neuves fermées et vides, réglages et propositions inchangés. `praxis-mcp` déployée ; lu en
+  production : `boite_candidats` répond (169 candidats « à interroger », tous refusés à 03:40 UTC
+  pour `heure_tardive` : il fait nuit chez eux).
+- **Constat (directeur, 20/11)** : Praxis a répondu « on étudie dans l'ordre » à une candidate
+  admise à l'étape suivante depuis le 17/11. Causes : `boite` et `fil` ne rendent rien sur le
+  dossier ; la consigne interdisait à Praxis d'annoncer une avancée. Mesure : 169 candidats à
+  l'étape `verifications` (entretien à planifier), dont 113 sans message de la direction depuis leur
+  admission et 43 sans conversation. Formule du directeur retrouvée (14/11, 7 fois) et mise dans la
+  consigne de la routine (03:41 UTC) : rattrapage par `ouvrir`, annonce puis entretien écrit.
+- **Lot PX-5 lancé** (`claude/praxis-px5`, migration `20261130300000`) : `boite` et `fil` rendent
+  l'état du dossier et « informé de son étape » ; pagination de `lire` ; `questions_ouvertes` et
+  `retirer_question` ; **plafond des ouvertures : 100 par fenêtre glissante de 5 heures** (ordre du
+  directeur : « relève le plafond à 100 toutes les 5h » ; aujourd'hui 25 par jour, codé dans PX-4).
+- **Les 20 demandes côté « apprendre » : le lieu de résidence n'est enregistré nulle part.** Pays et
+  fuseau vides sur les 20 ; le fuseau du foyer vaut « Europe/Paris » pour 19, mais c'est la valeur
+  par défaut (20 foyers sur 23 en tout) ; aucun téléphone ; 20 adresses gmail. Seuls indices :
+  langue des apprenants (arabe 12, anglais 6, français 2, poular 2), moments (matin 10, soir 10).
+  Le directeur ne peut pas voir ces dossiers : aucun écran n'affiche les demandes ni leurs réponses.
+  À faire : un écran des demandes côté « apprendre » ; demander le pays à l'inscription.
+- Une autre session (« Pilote Équipe ») tient la chaîne PX-OAUTH (#632 à #638) ; coordination
+  convenue : s'écrire avant chaque `apply_migration` ; cette session tient Praxis et sa routine.
+- La machine de travail a redémarré vers 03:45 UTC ; quatre agents relancés (VIVANT, maquette de
+  Praxis, PX-5, confidentialité).
