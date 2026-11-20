@@ -4256,6 +4256,7 @@
             "other": "{n} applications will not be affected"
           },
           "etAutres": "and {n} others",
+          "reporteesEnFin": "These applications stay selected, at the end of the selection: the next action will first cover the following ones.",
           "effetPause": "The applications concerned do not move forward until the pause is lifted.",
           "effetLever": "The applications concerned resume where they had stopped.",
           "effetRefuser": "The applications concerned are closed. You can reopen them one by one.",
@@ -4283,7 +4284,7 @@
             "conversationPause": "Their application is paused: no conversation is possible.",
             "conversationEtat": "Its status no longer allows writing in the application conversation.",
             "elementNonPermis": "This item cannot be requested at its stage.",
-            "dejaEnvoye": "This message was already sent to them today."
+            "dejaEnvoye": "This same message was already sent to them by the management in the last 24 hours: it is not sent a second time."
           },
           "rapport": {
             "titre": "Result",
@@ -4307,7 +4308,7 @@
             "sansNom": "Application without a readable name"
           },
           "effetAdmettre": "The applications concerned move to the Verification and interview room. Each person with an address receives the email inviting them to the interview, and a notice in the app.",
-          "effetComplement": "Each person concerned receives the same request. Their application waits for their answer.",
+          "effetComplement": "Each application concerned waits for the same item. The person sees the request when opening the app: no email or notice is sent.",
           "effetEcrire": "Each person concerned receives the same message in their conversation with the management. Nothing else changes.",
           "motifCommunComplement": "The same item and the same reason apply to all the applications concerned.",
           "element": "What is requested",
@@ -4324,6 +4325,8 @@
           "aucunEligible": "No application in the selection can receive this action. Nothing was done.",
           "nonGroupable": "This action cannot be done for several applications at once. Open each one's file to do it.",
           "cleReutilisee": "This request has already been used for another action. Close this window and start again.",
+          "cleReutiliseeEcrire": "The first sending may have gone out, with the previous message: its answer had not arrived. Open the candidates' conversations to check before starting again.",
+          "cleReutiliseeIncertaine": "The first sending may have gone out, with the previous choices: its answer had not arrived. Check the applications in the list before starting again.",
           "horsPortee": "An application in the selection is outside your access. Nothing was done. Refresh the preview.",
           "lectureApercu": "The preview could not be read. Nothing was done. Try again."
         },

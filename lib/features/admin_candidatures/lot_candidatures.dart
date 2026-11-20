@@ -181,6 +181,7 @@ Future<RapportLot?> ouvrirFeuilleLot(
   required List<String> ids,
   required CapacitesCandidatures capacites,
   required ValueChanged<RapportLot> onRapport,
+  ValueChanged<List<String>>? onAucunEligible,
 }) => AppBottomSheet.ouvrir<RapportLot>(
   context,
   titre: libelleGesteLot(geste),
@@ -189,6 +190,7 @@ Future<RapportLot?> ouvrirFeuilleLot(
     ids: ids,
     capacites: capacites,
     onRapport: onRapport,
+    onAucunEligible: onAucunEligible,
     onFermer: (RapportLot? r) => Navigator.of(contexte).pop(r),
   ),
 );
@@ -202,6 +204,7 @@ class FeuilleLot extends ConsumerStatefulWidget {
     required this.capacites,
     required this.onRapport,
     required this.onFermer,
+    this.onAucunEligible,
     super.key,
   });
 
@@ -219,6 +222,12 @@ class FeuilleLot extends ConsumerStatefulWidget {
 
   /// La feuille se ferme, avec le rapport ou `null`.
   final ValueChanged<RapportLot?> onFermer;
+
+  /// Relecture adverse de la PR 658 (R2) : l'apercu ne retient aucune
+  /// candidature de ce lot. La page passe alors ces candidatures en fin de
+  /// selection, pour que le lot suivant porte sur d'autres. `null` quand il
+  /// n'y a rien au-dela de ce lot : la feuille n'en dit rien.
+  final ValueChanged<List<String>>? onAucunEligible;
 
   /// La cle de la feuille.
   static const Key cle = ValueKey<String>('feuille-lot');
@@ -270,6 +279,12 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
   RefusLot? _refusLot;
   Object? _autre;
 
+  /// Le serveur a refuse la cle (`cle_idempotence_reutilisee`) alors que
+  /// l'essai precedent etait incertain : le premier envoi est peut-etre parti,
+  /// avec le contenu d'avant. L'ecran le dit et invite a verifier avant de
+  /// recommencer (relecture adverse de la PR 658, R4).
+  bool _premierPeutEtreParti = false;
+
   /// La cle d'idempotence du lot en cours : neuve a chaque demande, gardee
   /// seulement pour rejouer un essai non confirme.
   String? _cle;
@@ -311,6 +326,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       );
       if (!mounted) return;
       setState(() => _apercu = apercu);
+      if (apercu.nombre == 0) widget.onAucunEligible?.call(widget.ids);
     } on Object catch (e) {
       if (!mounted) return;
       setState(() => _erreurApercu = e);
@@ -318,17 +334,33 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
   }
 
   /// Vrai apres une issue incertaine (pas de reponse du serveur, panne que
-  /// l'on ne sait pas dire) : le lot a pu partir. La cle est alors GARDEE,
-  /// meme si un champ change : rejouee telle quelle, le serveur rend le premier
-  /// rapport ; avec un autre texte, il la refuse (`cle_idempotence_reutilisee`)
-  /// au lieu d'envoyer une seconde fois.
+  /// l'on ne sait pas dire) : le lot a pu partir. Pour les trois gestes neufs
+  /// (voir [_empreinteCouvreContenu]), la cle est alors GARDEE meme si un champ
+  /// change : rejouee telle quelle, le serveur rend le premier rapport ; avec
+  /// un autre texte, il la refuse (`cle_idempotence_reutilisee`) au lieu
+  /// d'envoyer une seconde fois.
   bool _incertain = false;
 
+  /// Vrai quand le serveur compare aussi le contenu (motif et modele) a la
+  /// cle du lot : admettre, demander un complement, ecrire. Pour mettre en
+  /// pause, lever la pause, refuser et dispenser, la cle ne couvre que le geste
+  /// et les candidatures : la meme cle avec un autre motif ou un autre modele
+  /// rendrait en silence le premier rapport (relecture adverse de la PR 658,
+  /// R1). Ces gestes gardent donc le comportement d'avant : un champ change,
+  /// une cle neuve, et le serveur dit `jeton_perime` si le premier est passe.
+  bool get _empreinteCouvreContenu => switch (_geste) {
+    GesteLot.admettre || GesteLot.demanderComplement || GesteLot.ecrire => true,
+    GesteLot.mettreEnPause ||
+    GesteLot.leverPause ||
+    GesteLot.refuser ||
+    GesteLot.dispenserEntretien => false,
+  };
+
   /// Un champ change : c'est une autre demande, avec une autre cle, sauf apres
-  /// une issue incertaine (voir [_incertain]).
+  /// une issue incertaine d'un geste neuf (voir [_incertain]).
   void _modifie(VoidCallback changement) => setState(() {
     changement();
-    if (!_incertain) _cle = null;
+    if (!(_incertain && _empreinteCouvreContenu)) _cle = null;
     if (_refusGeste is GesteNonConfirme) {
       _refusGeste = null;
     }
@@ -467,6 +499,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _premierPeutEtreParti = e is CleLotReutilisee && _incertain;
         _incertain = false;
         _refusLot = e;
         // Un refus nomme n'a rien ecrit : un nouvel essai est une autre demande.
@@ -600,6 +633,10 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       _texte(_effet()),
       Ecart.vLg,
       ..._rendreApercu(context, apercu),
+      if (apercu.nombre == 0 && widget.onAucunEligible != null) ...<Widget>[
+        Ecart.vLg,
+        _texte(f.reporteesEnFin),
+      ],
       if (apercu.nombre > 0 && !aRelire) ...<Widget>[
         ..._champs(context, apercu),
       ],
@@ -923,7 +960,12 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
               ? t.admin.candidatures.lot.feuille.nombreFaux(n: 0)
               : t.admin.candidatures.lot.feuille.nombreFaux(n: nombre),
         GesteNonGroupable() => e.nonGroupable,
-        CleLotReutilisee() => e.cleReutilisee,
+        CleLotReutilisee() =>
+          !_premierPeutEtreParti
+              ? e.cleReutilisee
+              : _geste == GesteLot.ecrire
+              ? e.cleReutiliseeEcrire
+              : e.cleReutiliseeIncertaine,
       };
     } else if (autre is CandidatureHorsPortee) {
       titre = e.titre;

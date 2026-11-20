@@ -221,8 +221,8 @@ void main() {
   });
 
   group('Apres un lot', () {
-    testWidgets('au-dela de 200 : les reussies sortent, les exclues et les '
-        'suivantes restent retenues', (WidgetTester tester) async {
+    testWidgets('au-dela de 200 : les reussies sortent, les suivantes puis '
+        'les exclues restent retenues', (WidgetTester tester) async {
       final FauxCandidaturesDirection port = await _monter(tester, 260)
         ..sansCompte.add('p1');
       await _toutRetenir(tester);
@@ -238,12 +238,14 @@ void main() {
       await tester.ensureVisible(terminer);
       await tester.tap(terminer);
       await laisser(tester);
-      // 199 reussies sortent ; restent p1 (exclue) et les 60 au-dela de 200.
+      // 199 reussies sortent ; restent les 60 au-dela de 200, puis p1
+      // (exclue), passee en fin d'ordre (seconde relecture, R2).
       expect(find.textContaining(l.selectionnees(n: 61)), findsOneWidget);
       await _ouvrirLot(tester, GesteLot.ecrire);
       final List<String> second = port.appelsApercuLot.last.ids;
       expect(second, hasLength(61));
-      expect(second.first, 'p1');
+      expect(second.first, 'p200');
+      expect(second.last, 'p1');
       expect(second, contains('p200'));
       expect(second, isNot(contains('p0')));
     });
@@ -279,6 +281,125 @@ void main() {
           port.appelsLot[0].cleIdempotence,
           reason: 'le lot a pu partir : jamais une seconde cle',
         );
+      },
+    );
+
+    testWidgets(
+      'R4 : la cle refusee apres une panne incertaine dit que le premier '
+      'envoi est peut-etre parti, et invite a verifier les conversations',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = await _monter(tester, 2)
+          ..erreurLot = (DemandeLot d, int essai) =>
+              essai == 1 ? const GesteNonConfirme() : const CleLotReutilisee();
+        await tester.tap(
+          find.byKey(const ValueKey<String>('candidatures-selectionner')),
+        );
+        await laisser(tester);
+        await tester.tap(
+          find.byKey(const ValueKey<String>('candidatures-selection-page')),
+        );
+        await laisser(tester);
+        await _ouvrirLot(tester, GesteLot.ecrire);
+        await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Bonjour.');
+        await tester.enterText(find.byKey(FeuilleLot.cleNombre), '2');
+        final Finder valider = find.byKey(FeuilleLot.cleValider);
+        await tester.ensureVisible(valider);
+        await tester.tap(valider);
+        await laisser(tester);
+        await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Bonjour !');
+        await tester.ensureVisible(valider);
+        await tester.tap(valider);
+        await laisser(tester);
+        expect(port.appelsLot, hasLength(2));
+        expect(find.text(l.erreurs.cleReutiliseeEcrire), findsOneWidget);
+        expect(find.text(l.erreurs.cleReutilisee), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'R4 : sans panne incertaine, la cle refusee garde sa phrase d avant',
+      (WidgetTester tester) async {
+        await _monter(tester, 2).then(
+          (FauxCandidaturesDirection p) =>
+              p.erreurLot = (DemandeLot d, int essai) =>
+                  const CleLotReutilisee(),
+        );
+        await tester.tap(
+          find.byKey(const ValueKey<String>('candidatures-selectionner')),
+        );
+        await laisser(tester);
+        await tester.tap(
+          find.byKey(const ValueKey<String>('candidatures-selection-page')),
+        );
+        await laisser(tester);
+        await _ouvrirLot(tester, GesteLot.ecrire);
+        await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Bonjour.');
+        await tester.enterText(find.byKey(FeuilleLot.cleNombre), '2');
+        final Finder valider = find.byKey(FeuilleLot.cleValider);
+        await tester.ensureVisible(valider);
+        await tester.tap(valider);
+        await laisser(tester);
+        expect(find.text(l.erreurs.cleReutilisee), findsOneWidget);
+        expect(find.text(l.erreurs.cleReutiliseeEcrire), findsNothing);
+      },
+    );
+
+    testWidgets(
+      'R2 : 450 retenues dont les 200 premieres ne peuvent pas recevoir le '
+      'geste : elles passent en fin, le second apercu porte sur les suivantes',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = await _monter(tester, 450);
+        for (int i = 0; i < 200; i++) {
+          port.sansCompte.add('p$i');
+        }
+        await _toutRetenir(tester);
+        await _ouvrirLot(tester, GesteLot.ecrire);
+        final List<String> premier = port.appelsApercuLot.last.ids;
+        expect(premier.first, 'p0');
+        expect(premier.last, 'p199');
+        expect(find.text(l.feuille.reporteesEnFin), findsOneWidget);
+        final Finder annuler = find.byKey(FeuilleLot.cleAnnuler);
+        await tester.ensureVisible(annuler);
+        await tester.tap(annuler);
+        await laisser(tester);
+        expect(find.textContaining(l.selectionnees(n: 450)), findsOneWidget);
+        await _ouvrirLot(tester, GesteLot.ecrire);
+        final List<String> second = port.appelsApercuLot.last.ids;
+        expect(second, hasLength(200));
+        expect(second.first, 'p200');
+        expect(second.toSet().intersection(premier.toSet()), isEmpty);
+      },
+    );
+
+    testWidgets(
+      'R2 : apres un rapport, les exclues passent en fin ; le lot suivant '
+      'porte sur des dossiers non encore tentes',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = await _monter(tester, 450);
+        // Une seule eligible parmi les 200 premieres : p0.
+        for (int i = 1; i < 200; i++) {
+          port.sansCompte.add('p$i');
+        }
+        await _toutRetenir(tester);
+        await _ouvrirLot(tester, GesteLot.ecrire);
+        await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Bonjour.');
+        await tester.enterText(find.byKey(FeuilleLot.cleNombre), '1');
+        final Finder valider = find.byKey(FeuilleLot.cleValider);
+        await tester.ensureVisible(valider);
+        await tester.tap(valider);
+        await laisser(tester);
+        final List<String> premier = port.appelsLot.single.ids;
+        final Finder terminer = find.byKey(FeuilleLot.cleTerminer);
+        await tester.ensureVisible(terminer);
+        await tester.tap(terminer);
+        await laisser(tester);
+        // p0 sort ; les 199 exclues restent, apres les 250 non tentees.
+        expect(find.textContaining(l.selectionnees(n: 449)), findsOneWidget);
+        await _ouvrirLot(tester, GesteLot.ecrire);
+        final List<String> second = port.appelsApercuLot.last.ids;
+        expect(second, hasLength(200));
+        expect(second.first, 'p200');
+        expect(second.toSet().intersection(premier.toSet()), isEmpty);
       },
     );
 

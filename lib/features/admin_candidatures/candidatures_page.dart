@@ -549,13 +549,30 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
       ids: _retenues.take(plafondLotCandidatures).toList(),
       capacites: caps,
       onRapport: _apresLot,
+      onAucunEligible: _retenues.length > plafondLotCandidatures
+          ? _reporterEnFin
+          : null,
     );
+  }
+
+  /// Relecture adverse de la PR 658 (R2) : aucune candidature de ce lot ne
+  /// peut recevoir le geste. Elles restent retenues, en fin d'ordre : le lot
+  /// suivant porte sur les suivantes au lieu de retomber sur les memes.
+  void _reporterEnFin(List<String> ids) {
+    if (!mounted) return;
+    setState(() {
+      final List<String> tentees = <String>[
+        for (final String id in ids)
+          if (_retenues.remove(id)) id,
+      ];
+      _retenues.addAll(tentees);
+    });
   }
 
   /// Le serveur a rendu son rapport : la liste se relit (filtres, tri et page
   /// gardes). PE-LISTE-CANDIDATURES : les lignes reussies sortent de la
-  /// selection ; les exclues, les refusees et celles qui n'etaient pas dans ce
-  /// lot (au-dela de 200) restent retenues, pour le lot suivant. Sans reste, le
+  /// selection ; celles qui n'etaient pas dans ce lot (au-dela de 200) restent
+  /// retenues, puis les exclues et les refusees, en fin d'ordre. Sans reste, le
   /// mode selection se ferme. Le rapport ligne par ligne reste dans la
   /// feuille ; la page dit le compte, seulement apres la reponse du serveur
   /// (DECISION-FLUIDITE).
@@ -567,6 +584,15 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         for (final LigneRapportLot l in rapport.lignes)
           if (l.issue == IssueLigneLot.reussie) l.id,
       ]);
+      // Relecture adverse de la PR 658 (R2) : les exclues et les refusees de
+      // ce lot restent retenues, mais passent en fin d'ordre. Le lot suivant
+      // (les 200 premieres) porte ainsi d'abord sur des dossiers pas encore
+      // tentes, au lieu de retomber sur les memes 200.
+      final List<String> tentees = <String>[
+        for (final LigneRapportLot l in rapport.lignes)
+          if (l.issue != IssueLigneLot.reussie && _retenues.remove(l.id)) l.id,
+      ];
+      _retenues.addAll(tentees);
       if (_retenues.isEmpty) _enSelection = false;
       _oublierTous();
       _retour = rapport.rejoue

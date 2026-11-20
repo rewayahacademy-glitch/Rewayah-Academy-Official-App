@@ -4256,6 +4256,7 @@
             "other": "{n} candidatures ne seront pas concernées"
           },
           "etAutres": "et {n} autres",
+          "reporteesEnFin": "Ces candidatures restent retenues, en fin de sélection : le prochain geste portera d'abord sur les suivantes.",
           "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
           "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
           "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
@@ -4283,7 +4284,7 @@
             "conversationPause": "Sa candidature est en pause\u00a0: aucune conversation n'est possible.",
             "conversationEtat": "Son état ne permet plus d'écrire dans la conversation de candidature.",
             "elementNonPermis": "Cet élément ne se demande pas à son étape.",
-            "dejaEnvoye": "Ce message lui a déjà été envoyé aujourd'hui."
+            "dejaEnvoye": "Ce même message lui a déjà été envoyé par la direction dans les dernières 24 heures : il ne part pas une seconde fois."
           },
           "rapport": {
             "titre": "Résultat",
@@ -4307,7 +4308,7 @@
             "sansNom": "Candidature sans nom lisible"
           },
           "effetAdmettre": "Les candidatures concernées passent en Salle de vérification et d'entretien. Chaque personne qui a une adresse reçoit le courriel qui l'invite à l'entretien, et un avis dans l'application.",
-          "effetComplement": "Chaque personne concernée reçoit la même demande. Sa candidature attend sa réponse.",
+          "effetComplement": "Chaque candidature concernée attend le même élément. La personne voit la demande en ouvrant l'application : aucun courriel ni avis ne part.",
           "effetEcrire": "Chaque personne concernée reçoit le même message dans sa conversation avec la direction. Rien d'autre ne change.",
           "motifCommunComplement": "Le même élément et le même motif valent pour toutes les candidatures concernées.",
           "element": "Ce qui est demandé",
@@ -4324,6 +4325,8 @@
           "aucunEligible": "Aucune candidature de la sélection ne peut recevoir ce geste. Rien n'a été fait.",
           "nonGroupable": "Ce geste ne se fait pas pour plusieurs candidatures à la fois. Ouvrez le dossier de chacune pour le faire.",
           "cleReutilisee": "Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
+          "cleReutiliseeEcrire": "Le premier envoi est peut-être parti, avec le message d'avant : sa réponse n'était pas arrivée. Ouvrez les conversations des candidats pour le vérifier avant de recommencer.",
+          "cleReutiliseeIncertaine": "Le premier envoi est peut-être parti, avec les choix d'avant : sa réponse n'était pas arrivée. Vérifiez les candidatures dans la liste avant de recommencer.",
           "horsPortee": "Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.",
           "lectureApercu": "L'aperçu n'a pas pu être lu. Rien n'a été fait. Réessayez."
         },

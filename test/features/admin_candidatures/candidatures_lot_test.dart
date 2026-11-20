@@ -381,10 +381,14 @@ void main() {
     );
 
     testWidgets(
-      // PE-LISTE-CANDIDATURES (relecture adverse de la PR 658) : apres un « non
-      // confirme », le lot a pu partir ; la cle est GARDEE meme si un champ
-      // change (le serveur refuse alors la meme cle avec un autre texte).
-      'changer un champ apres un « non confirme » garde la cle',
+      // PE-LISTE-CANDIDATURES (seconde relecture adverse de la PR 658, R1) :
+      // pour un geste d'avant (pause, reprise, refus, dispense), le serveur ne
+      // compare ni le motif ni le modele a la cle ; la garder rendrait en
+      // silence le premier rapport. Un champ change : une cle neuve, comme
+      // avant le lot. Les trois gestes neufs gardent la cle (voir
+      // pe_liste_candidatures_test.dart).
+      'geste d\'avant : changer un champ apres un « non confirme » prend une '
+      'cle neuve',
       (tester) async {
         final FauxCandidaturesDirection port = FauxCandidaturesDirection(
           lignes: _lignes(),
@@ -406,7 +410,9 @@ void main() {
         expect(port.appelsLot, hasLength(2));
         expect(
           port.appelsLot[1].cleIdempotence,
-          port.appelsLot[0].cleIdempotence,
+          isNot(port.appelsLot[0].cleIdempotence),
+          reason:
+              'un geste d\'avant ne rejoue jamais une cle avec un autre motif',
         );
       },
     );
