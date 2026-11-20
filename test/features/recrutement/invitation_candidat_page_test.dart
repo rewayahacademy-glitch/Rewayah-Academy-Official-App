@@ -94,6 +94,21 @@ void main() {
     expect(find.byKey(const ValueKey<String>('candidat-code')), findsNothing);
   });
 
+  // PE-A3 (20/11/2026) : l'ecran du code porte le nom de l'espace, comme
+  // les autres etapes du candidat.
+  testWidgets('le nom de l espace est en haut', (tester) async {
+    await _monter(tester, port: InvitationsDemo());
+    expect(find.text(t.inscription.porte.espaceEnseignant), findsOneWidget);
+    expect(
+      tester.getTopLeft(find.text(t.inscription.porte.espaceEnseignant)).dy,
+      lessThan(
+        tester
+            .getTopLeft(find.byKey(const ValueKey<String>('candidat-code')))
+            .dy,
+      ),
+    );
+  });
+
   testWidgets('saisie vide : erreur de champ, rien n\'est envoye', (
     tester,
   ) async {
