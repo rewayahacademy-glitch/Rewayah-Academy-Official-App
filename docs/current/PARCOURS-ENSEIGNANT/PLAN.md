@@ -86,7 +86,7 @@ document qui prépare l'inscription des élèves ; donner les standards ; arbitr
 | Le lien `invitation=1` est lu comme une invitation d'**équipe**, pas de candidat. | `invitation_compte.dart:54-69`. |
 | Un nouveau compte ne choisit jamais « enseigner » par une carte : seulement par un lien. | `usage_etape.dart:208-270`. |
 | `/connexion` sans paramètre sur un appareil inconnu envoie vers le questionnaire des **familles**. | `ordre_entree.dart:70-79`. |
-| **20 candidatures sont portées par un compte au rôle famille**, 600 par un compte enseignant. Il existe 20 demandes de type élève adulte (18) ou famille (2). On ne sait pas lesquelles sont de vrais élèves. | Production, 19/11. |
+| **Corrigé le 20/11 : aucune candidature d'enseignant n'est portée par un compte famille** (602 candidatures d'enseignant, toutes sur un compte enseignant). Il existe 20 demandes du côté « apprendre » : 18 d'élève adulte, 2 de famille. Rien ne prouve que ce sont des enseignants égarés (voir §18.1). La ligne d'origine disait « 20 candidatures portées par un compte au rôle famille » : c'était mal dit. | Production, 19/11, revérifié le 20/11. |
 | Un candidat a reçu 9 liens de connexion en 80 minutes. | Courriels lus le 19/11. |
 
 ### 2.3 Le formulaire
@@ -1129,3 +1129,30 @@ estimation (Praxis ne cite aucun chiffre). Même consigne à porter dans `repond
   `attend_direction`, `complet`, `pile`, `jours_sans_activite_candidat` ; `objectifs_lire` répond.
 - PR #639 (BUREAU-NAV) fusionnée (`7924bea7`). **Non prouvé** : rien n'a encore été vu par le
   directeur en production.
+
+## 18. Vérification et nouvelle demande du 20/11/2026 (03:20 UTC)
+
+### 18.1 Les « 20 enseignants côté élèves » : non prouvé
+
+Question du directeur : « tu l'as pris de ce que j'ai dit ou bien tu as bien vérifié ? » Réponse :
+le chiffre 20 vient de la base (19/11), mais « enseignants égarés » était une supposition, jamais
+vérifiée. Relu en production le 20/11 :
+
+- 20 demandes du côté « apprendre » (18 élève adulte, 2 famille), 18 à l'étape « reçue », 2 confirmées.
+- Pour : 16 des 20 sont arrivées du 14 au 17/11, les jours où les candidats enseignants ont été
+  invités ; avant, 2 en deux semaines.
+- Contre : aucune n'a la même adresse qu'une candidature d'enseignant ; 1 seule a le même nom
+  complet ; aucune de ces personnes n'a écrit de message ; aucune n'a demandé d'horaire ; 1 seule est
+  revenue après le premier jour ; 7 se déclarent au niveau « début des lettres » ou « lecture lente ».
+- Conclusion : on ne sait pas. Le seul moyen de le savoir est de leur écrire. Ne supprimer ni
+  convertir aucun de ces comptes sur cette supposition.
+
+### 18.2 Praxis sur les écrans d'attente (demande du directeur, 20/11)
+
+« Pour les animations on a oublié les pages de chargement, de connexion. » Voulu : Praxis sort de
+la porte du logo, suit la route qui mène au logo, s'approche de la caméra, fait des gestes adaptés
+(sourire, étonnement), les mots sortent de sa bouche en texte (par exemple pour demander de
+réessayer) ; à la fin il repart vers la porte et disparaît dans la lumière. Sur l'écran de mise à
+jour : même scène, avec plusieurs phrases qui font patienter. Défaut constaté : la moitié basse de
+ces écrans contient tout (adresse, lien), trop compacté ; remonter l'univers de Praxis. Le directeur
+attend des maquettes. Lot PE-F8, statut : maquette en cours ; rien dans l'application.
