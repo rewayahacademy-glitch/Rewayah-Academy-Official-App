@@ -4282,7 +4282,8 @@
             "sansCompte": "Cette personne n'a pas encore de compte\u00a0: aucune conversation n'est possible.",
             "conversationPause": "Sa candidature est en pause\u00a0: aucune conversation n'est possible.",
             "conversationEtat": "Son état ne permet plus d'écrire dans la conversation de candidature.",
-            "elementNonPermis": "Cet élément ne se demande pas à son étape."
+            "elementNonPermis": "Cet élément ne se demande pas à son étape.",
+            "dejaEnvoye": "Ce message lui a déjà été envoyé aujourd'hui."
           },
           "rapport": {
             "titre": "Résultat",
@@ -4314,7 +4315,8 @@
           "elementManquant": "Choisissez ce qui est demandé.",
           "message": "Message",
           "messageAide": "Le même message part à chaque personne concernée, au nom de la direction.",
-          "messageManquant": "Écrivez le message."
+          "messageManquant": "Écrivez le message.",
+          "elementAucunCommun": "Aucun élément ne se demande à l'étape de toutes ces candidatures. Retenez des candidatures d'une même salle."
         },
         "erreurs": {
           "titre": "Traitement refusé",

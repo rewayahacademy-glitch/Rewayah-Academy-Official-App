@@ -10,7 +10,7 @@
 //   ecrit deux fois ; un refus nomme (jeton perime...) remet une cle neuve et
 //   demande un nouvel apercu ;
 // - le rapport dit chaque ligne : reussie, exclue, refusee ; rien n'est dit
-//   reussi avant la reponse du serveur ; la liste se relit et la selection se vide.
+//   reussi avant la reponse du serveur ; la liste se relit ; les reussies sortent de la selection, les autres restent.
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -288,12 +288,14 @@ void main() {
           findsOneWidget,
         );
         expect(find.text(p.ligneReussie), findsOneWidget);
-        // La liste se relit, la selection est videe.
+        // La liste se relit ; PE-LISTE-CANDIDATURES : la reussie sort de la
+        // selection, l'exclue et la refusee restent retenues.
         expect(port.appels.length, greaterThan(lectures));
         await tester.tap(find.byKey(FeuilleLot.cleTerminer));
         await laisser(tester, fois: 12);
         expect(find.byKey(FeuilleLot.cle), findsNothing);
-        expect(find.byKey(CandidaturesPage.cleBarreLot), findsNothing);
+        expect(find.byKey(CandidaturesPage.cleBarreLot), findsOneWidget);
+        expect(find.textContaining(lot.selectionnees(n: 2)), findsOneWidget);
         expect(find.text(p.reussies(n: 1)), findsOneWidget);
       },
     );
@@ -379,7 +381,10 @@ void main() {
     );
 
     testWidgets(
-      'changer un champ apres un « non confirme » prend une cle neuve',
+      // PE-LISTE-CANDIDATURES (relecture adverse de la PR 658) : apres un « non
+      // confirme », le lot a pu partir ; la cle est GARDEE meme si un champ
+      // change (le serveur refuse alors la meme cle avec un autre texte).
+      'changer un champ apres un « non confirme » garde la cle',
       (tester) async {
         final FauxCandidaturesDirection port = FauxCandidaturesDirection(
           lignes: _lignes(),
@@ -401,7 +406,7 @@ void main() {
         expect(port.appelsLot, hasLength(2));
         expect(
           port.appelsLot[1].cleIdempotence,
-          isNot(port.appelsLot[0].cleIdempotence),
+          port.appelsLot[0].cleIdempotence,
         );
       },
     );

@@ -13,6 +13,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:rewayah_academy/core/candidature/gestes_candidature.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/modeles_lot_candidatures.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -215,6 +217,108 @@ void main() {
       expect(port.appelsLot.single.modele, 'photo');
       expect(port.appelsLot.single.motif, 'Merci.');
       expect(port.appelsLot.single.geste, GesteLot.demanderComplement);
+    });
+  });
+
+  group('Apres un lot', () {
+    testWidgets('au-dela de 200 : les reussies sortent, les exclues et les '
+        'suivantes restent retenues', (WidgetTester tester) async {
+      final FauxCandidaturesDirection port = await _monter(tester, 260)
+        ..sansCompte.add('p1');
+      await _toutRetenir(tester);
+      await _ouvrirLot(tester, GesteLot.ecrire);
+      await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Bonjour.');
+      await tester.enterText(find.byKey(FeuilleLot.cleNombre), '199');
+      final Finder valider = find.byKey(FeuilleLot.cleValider);
+      await tester.ensureVisible(valider);
+      await tester.tap(valider);
+      await laisser(tester);
+      expect(port.appelsLot.single.ids, hasLength(200));
+      final Finder terminer = find.byKey(FeuilleLot.cleTerminer);
+      await tester.ensureVisible(terminer);
+      await tester.tap(terminer);
+      await laisser(tester);
+      // 199 reussies sortent ; restent p1 (exclue) et les 60 au-dela de 200.
+      expect(find.textContaining(l.selectionnees(n: 61)), findsOneWidget);
+      await _ouvrirLot(tester, GesteLot.ecrire);
+      final List<String> second = port.appelsApercuLot.last.ids;
+      expect(second, hasLength(61));
+      expect(second.first, 'p1');
+      expect(second, contains('p200'));
+      expect(second, isNot(contains('p0')));
+    });
+
+    testWidgets(
+      'une panne incertaine garde la cle, meme si le message change',
+      (WidgetTester tester) async {
+        final FauxCandidaturesDirection port = await _monter(tester, 2)
+          ..erreurLot = (DemandeLot d, int essai) =>
+              essai == 1 ? const GesteNonConfirme() : null;
+        await tester.tap(
+          find.byKey(const ValueKey<String>('candidatures-selectionner')),
+        );
+        await laisser(tester);
+        await tester.tap(
+          find.byKey(const ValueKey<String>('candidatures-selection-page')),
+        );
+        await laisser(tester);
+        await _ouvrirLot(tester, GesteLot.ecrire);
+        await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Bonjour.');
+        await tester.enterText(find.byKey(FeuilleLot.cleNombre), '2');
+        final Finder valider = find.byKey(FeuilleLot.cleValider);
+        await tester.ensureVisible(valider);
+        await tester.tap(valider);
+        await laisser(tester);
+        await tester.enterText(find.byKey(FeuilleLot.cleMotif), 'Bonjour !');
+        await tester.ensureVisible(valider);
+        await tester.tap(valider);
+        await laisser(tester);
+        expect(port.appelsLot, hasLength(2));
+        expect(
+          port.appelsLot[1].cleIdempotence,
+          port.appelsLot[0].cleIdempotence,
+          reason: 'le lot a pu partir : jamais une seconde cle',
+        );
+      },
+    );
+
+    testWidgets('complement : seuls les elements acceptes par toutes les '
+        'candidatures retenues sont proposes', (WidgetTester tester) async {
+      final FauxCandidaturesDirection port = FauxCandidaturesDirection(
+        lignes: <LigneCandidature>[
+          ligneTest(id: 'x1', nom: 'Examen Fictif'),
+          ligneTest(
+            id: 'x2',
+            nom: 'Verification Fictive',
+            etape: EtapeCandidature.verifications,
+            etat: EtatCandidature.entretienAPlanifier,
+          ),
+        ],
+        capacitesRendues: capacitesGestes,
+      );
+      await monterCandidatures(
+        tester,
+        port: port,
+        largeur: 1440,
+        hauteur: 6000,
+      );
+      await tester.tap(
+        find.byKey(const ValueKey<String>('candidatures-selectionner')),
+      );
+      await laisser(tester);
+      await tester.tap(
+        find.byKey(const ValueKey<String>('candidatures-selection-page')),
+      );
+      await laisser(tester);
+      await _ouvrirLot(tester, GesteLot.demanderComplement);
+      expect(
+        find.byKey(const ValueKey<String>('element-contrat')),
+        findsOneWidget,
+      );
+      expect(
+        find.byKey(const ValueKey<String>('element-langues')),
+        findsNothing,
+      );
     });
   });
 

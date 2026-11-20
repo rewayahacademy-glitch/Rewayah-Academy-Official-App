@@ -979,6 +979,12 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
             issue: l.issue,
             enPause: l.enPause,
             version: _versionDuLot(l.id),
+            // PE-LISTE-CANDIDATURES : les elements que l'etape accepte.
+            elementsPermis: geste == GesteLot.demanderComplement
+                ? (l.etape == EtapeCandidature.verifications
+                      ? capacitesRendues.listes.complementSalleVerification
+                      : capacitesRendues.listes.complementSalleExamen)
+                : null,
           ),
         );
       } else {
@@ -1038,9 +1044,14 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     if (e != null && !perdu) {
       Error.throwWithStackTrace(e, StackTrace.current);
     }
-    if (demande.geste != GesteLot.leverPause) {
+    // Comme le serveur : ni la reprise ni l'admission ne portent de motif ;
+    // ecrire et l'admission ne portent pas de modele.
+    if (demande.geste != GesteLot.leverPause &&
+        demande.geste != GesteLot.admettre) {
       if ((demande.motif ?? '').trim().isEmpty) throw const MotifRequis();
-      if (demande.modele == null) throw const ModeleRequis();
+      if (demande.geste != GesteLot.ecrire && demande.modele == null) {
+        throw const ModeleRequis();
+      }
     }
     final List<String> eligibles = <String>[
       for (final String id in demande.ids.toSet())

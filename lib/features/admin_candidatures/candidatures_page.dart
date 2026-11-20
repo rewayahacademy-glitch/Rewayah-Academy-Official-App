@@ -427,8 +427,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
         tri: tri,
       );
       if (!mounted) return;
-      // Le filtre a change pendant la lecture : la reponse ne vaut plus.
-      if (filtre != _filtre) {
+      // Le filtre ou le tri a change pendant la lecture : la reponse ne vaut
+      // plus (l'ordre des identifiants serait celui d'avant).
+      if (filtre != _filtre || tri != _tri) {
         setState(() => _lectureTous = false);
         return;
       }
@@ -552,15 +553,21 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
   }
 
   /// Le serveur a rendu son rapport : la liste se relit (filtres, tri et page
-  /// gardes) et la selection est videe, que la feuille soit encore ouverte ou
-  /// non. Le rapport ligne par ligne reste dans la feuille ; la page dit le
-  /// compte, seulement apres la reponse du serveur (DECISION-FLUIDITE).
+  /// gardes). PE-LISTE-CANDIDATURES : les lignes reussies sortent de la
+  /// selection ; les exclues, les refusees et celles qui n'etaient pas dans ce
+  /// lot (au-dela de 200) restent retenues, pour le lot suivant. Sans reste, le
+  /// mode selection se ferme. Le rapport ligne par ligne reste dans la
+  /// feuille ; la page dit le compte, seulement apres la reponse du serveur
+  /// (DECISION-FLUIDITE).
   void _apresLot(RapportLot rapport) {
     if (!mounted) return;
     _relire();
     setState(() {
-      _retenues.clear();
-      _enSelection = false;
+      _retenues.removeAll(<String>[
+        for (final LigneRapportLot l in rapport.lignes)
+          if (l.issue == IssueLigneLot.reussie) l.id,
+      ]);
+      if (_retenues.isEmpty) _enSelection = false;
       _oublierTous();
       _retour = rapport.rejoue
           ? t.admin.candidatures.lot.feuille.rapport.rejoue

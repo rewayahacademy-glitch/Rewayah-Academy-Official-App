@@ -2,7 +2,9 @@
 -- « Selectionner les N resultats », lecture de Praxis pour un dossier, gestes groupes admettre / demander un complement / ecrire.
 -- Chaque verification est isolee ; le fichier se termine par la liste ok / ROUGE puis echoue s'il reste un ROUGE.
 -- A rejouer sur une base NEUVE (stub_auth puis toutes les migrations). Annule tout a la fin. Aucun mot d'effacement.
--- Donnees fictives seulement.
+-- Donnees fictives seulement. Ce scenario n'est PAS dans .github/workflows/ci.yml (zone interdite a ce lot) : il se rejoue a la main
+-- ou par la pile locale de tool/e2e/. La section 8 compare la selection a la liste sur une grille de filtres et de tris :
+-- une retouche future de lister_candidatures qui oublie selection_resultats_file la fait echouer.
 \o /dev/null
 BEGIN;
 CREATE FUNCTION pg_temp.qui(p_id uuid, p_role text) RETURNS void
@@ -314,6 +316,153 @@ SELECT pg_temp.verif('AVANT : la pause en lot marche comme avant et ecrit dans p
      AND EXISTS (SELECT 1 FROM public.candidature_lots l WHERE l.cle = 'pelc-cle-pse-0001' AND l.geste = 'mettre_en_pause')
      AND NOT EXISTS (SELECT 1 FROM private.candidature_lots_suite l WHERE l.cle = 'pelc-cle-pse-0001') $$);
 
+-- ===== 7. UN LOT DE 200, CONTROLES D'ADMISSION REELS =====
+-- 200 candidates fictives en Salle d'examen, chacune avec un compte et une adresse, un questionnaire complet envoye, un
+-- versement compatible (calcule par le serveur) et le cadre religieux accepte a la version requise : les controles
+-- d'admission sont satisfaits par la fixture, sans bouchon. Une 201e, en Salle d'examen, sert au complement mixte.
+CREATE FUNCTION pg_temp.d(p_n int) RETURNS uuid LANGUAGE sql IMMUTABLE AS $$
+  SELECT ('9e1d0000-0000-4000-8000-' || lpad(p_n::text, 12, '0'))::uuid $$;
+CREATE FUNCTION pg_temp.dc(p_n int) RETURNS uuid LANGUAGE sql IMMUTABLE AS $$
+  SELECT ('9e1dcccc-0000-4000-8000-' || lpad(p_n::text, 12, '0'))::uuid $$;
+GRANT EXECUTE ON FUNCTION pg_temp.d(int), pg_temp.dc(int) TO authenticated, anon;
+INSERT INTO auth.users (id, email) SELECT pg_temp.d(n), 'pelc-lot-' || n || '@test.invalid' FROM generate_series(1, 201) n;
+INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
+SELECT pg_temp.d(n), 'PELC-LOT-' || n, 'teacher', 'Lot', 'Fictive ' || n, 'pending_kyc', 'female' FROM generate_series(1, 201) n;
+INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, source, recue_le,
+                                 derniere_activite)
+SELECT pg_temp.dc(n), 'enseignant', pg_temp.d(n), 'female', 'Lot Fictive ' || n, 'prequalification', 'en_examen', 'en_cours',
+       'lien_public', now() - (n || ' hours')::interval, now() - ((300 - n) || ' minutes')::interval
+  FROM generate_series(1, 201) n;
+INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source, brouillon, envoye_le)
+SELECT pg_temp.dc(n), 'salle-examen-2', $j$
+{"langueMaternelle": "ar", "languesExplication": ["francais", "poular"], "niveauMemorisationDeclare": "coran_entier",
+ "niveauLectureTajwid": "tajwid_enseigne", "riwayat": ["hafs", "warsh"], "ijazaPresentable": "oui", "experienceDebutants": "oui",
+ "disponibilitesDeclarees": [{"jour": 1, "debut": "20:00", "fin": "22:00"}], "fuseauIana": "Asia/Riyadh",
+ "classesSouhaitees": "2", "debutPossible": "immediat", "publics": ["6_9", "adultes"], "paysResidence": "SA",
+ "paysVersement": "SA", "compteBancaire": true, "operateurs": [], "accordRemuneration": true}
+$j$::jsonb, 'candidat', false, clock_timestamp() FROM generate_series(1, 201) n;
+UPDATE public.candidatures SET paiement = private.paiement_etat(id) WHERE id IN (SELECT pg_temp.dc(n) FROM generate_series(1, 201) n);
+INSERT INTO public.contract_acceptances (profile_id, contract_kind, version)
+SELECT pg_temp.d(n), 'teacher_religious_framework', public.cadre_religieux_version_requise() FROM generate_series(1, 201) n;
+CREATE FUNCTION pg_temp.lot200() RETURNS uuid[] LANGUAGE sql AS $$ SELECT ARRAY(SELECT pg_temp.dc(n) FROM generate_series(1, 200) n) $$;
+GRANT EXECUTE ON FUNCTION pg_temp.lot200() TO authenticated, anon;
+
+SELECT pg_temp.verif('LOT200 fixture : les controles d''admission sont tous vrais (pas de bouchon)', $$
+  SELECT bool_and(pg_catalog.jsonb_array_length(private.candidature_controles_faux(private.candidature_controles_entree(c, 'admission'))) = 0
+                  AND public.courriel_adresse_profil(c.profile_id) IS NOT NULL)
+    FROM public.candidatures c WHERE c.id = ANY (pg_temp.lot200()) $$);
+
+SELECT pg_temp.garde('ap_a200', pg_temp.en(pg_temp.u('2'), 'admin',
+  'SELECT public.apercu_lot_candidats(''admettre'', pg_temp.lot200())'));
+SELECT pg_temp.garde('ex_a200', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''admettre'', pg_temp.lot200(), %L, 200, ''pelc-cle-a200-0001'')',
+  pg_temp.lu('ap_a200') ->> 'jeton')));
+SELECT pg_temp.verif('LOT200 admettre : apercu 200, 200 reussies, 0 refusee (cle de courriel courte)', $$
+  SELECT (pg_temp.lu('ap_a200') ->> 'nombre')::int = 200
+     AND (pg_temp.lu('ex_a200') ->> 'reussies')::int = 200 AND (pg_temp.lu('ex_a200') ->> 'refusees')::int = 0
+     AND (SELECT count(*) FROM public.candidatures c WHERE c.id = ANY (pg_temp.lot200())
+             AND c.etape = 'verifications' AND c.etat = 'entretien_a_planifier') = 200 $$);
+SELECT pg_temp.verif('LOT200 admettre : 200 courriels « retenu pour un entretien », 200 avis, une cle de courriel <= 120 signes', $$
+  SELECT (SELECT count(*) FROM public.courriels_sortants o WHERE o.modele = 'retenu_entretien'
+             AND o.destinataire_profil IN (SELECT pg_temp.d(n) FROM generate_series(1, 200) n)) = 200
+     AND (SELECT max(char_length(o.cle_idempotence)) FROM public.courriels_sortants o WHERE o.modele = 'retenu_entretien') <= 120
+     AND (SELECT count(DISTINCT o.cle_idempotence) FROM public.courriels_sortants o WHERE o.modele = 'retenu_entretien'
+             AND o.destinataire_profil IN (SELECT pg_temp.d(n) FROM generate_series(1, 200) n)) = 200
+     AND (SELECT count(*) FROM public.notifications x WHERE x.evenement = 'retenu_entretien'
+             AND x.destinataire IN (SELECT pg_temp.d(n) FROM generate_series(1, 200) n)) = 200 $$);
+SELECT pg_temp.garde('rj_a200', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''admettre'', pg_temp.lot200(), %L, 200, ''pelc-cle-a200-0001'')',
+  pg_temp.lu('ap_a200') ->> 'jeton')));
+SELECT pg_temp.verif('LOT200 admettre rejoue : premier rapport, aucun courriel en plus', $$
+  SELECT pg_temp.lu('rj_a200') ->> 'rejoue' = 'true'
+     AND (SELECT count(*) FROM public.courriels_sortants o WHERE o.modele = 'retenu_entretien'
+             AND o.destinataire_profil IN (SELECT pg_temp.d(n) FROM generate_series(1, 200) n)) = 200 $$);
+
+-- Ecrire a 200 : le meme apercu sert a deux lots (deux cles) : un seul message par fil.
+SELECT pg_temp.garde('ap_e200', pg_temp.en(pg_temp.u('2'), 'admin',
+  'SELECT public.apercu_lot_candidats(''ecrire'', pg_temp.lot200())'));
+SELECT pg_temp.garde('ex_e200a', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''ecrire'', pg_temp.lot200(), %L, 200, ''pelc-cle-e200-000A'', ''Bonjour, votre entretien approche.'')',
+  pg_temp.lu('ap_e200') ->> 'jeton')));
+SELECT pg_temp.garde('ex_e200b', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''ecrire'', pg_temp.lot200(), %L, 200, ''pelc-cle-e200-000B'', ''  bonjour,   VOTRE entretien approche. '')',
+  pg_temp.lu('ap_e200') ->> 'jeton')));
+SELECT pg_temp.verif('LOT200 ecrire : 200 messages, un par fil ; le second lot (autre cle, meme texte normalise) n''envoie rien et dit deja_envoye', $$
+  SELECT (pg_temp.lu('ex_e200a') ->> 'reussies')::int = 200
+     AND (pg_temp.lu('ex_e200b') ->> 'reussies')::int = 0 AND (pg_temp.lu('ex_e200b') ->> 'refusees')::int = 200
+     AND (SELECT bool_and(l ->> 'raison' = 'deja_envoye') FROM jsonb_array_elements(pg_temp.lu('ex_e200b') -> 'lignes') l)
+     AND (SELECT count(*) FROM public.com_messages m JOIN public.com_fils f ON f.id = m.fil_id
+           WHERE f.type_objet = 'candidature' AND f.objet_id = ANY (pg_temp.lot200())) = 200
+     AND (SELECT count(DISTINCT m.fil_id) FROM public.com_messages m JOIN public.com_fils f ON f.id = m.fil_id
+           WHERE f.type_objet = 'candidature' AND f.objet_id = ANY (pg_temp.lot200())) = 200 $$);
+SELECT pg_temp.garde('ex_e200c', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''ecrire'', pg_temp.lot200(), %L, 200, ''pelc-cle-e200-000A'', ''Un autre texte.'')',
+  pg_temp.lu('ap_e200') ->> 'jeton')));
+SELECT pg_temp.verif('LOT200 ecrire : la meme cle avec un autre texte est refusee (cle_idempotence_reutilisee), rien n''est envoye', $$
+  SELECT pg_temp.lu('ex_e200c') ->> 'erreur' = 'cle_idempotence_reutilisee'
+     AND NOT EXISTS (SELECT 1 FROM public.com_messages m WHERE m.texte = 'Un autre texte.') $$);
+SELECT pg_temp.garde('ex_e200d', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''ecrire'', pg_temp.lot200(), %L, 200, ''pelc-cle-e200-000D'', ''Un second message, different.'')',
+  pg_temp.lu('ap_e200') ->> 'jeton')));
+SELECT pg_temp.verif('LOT200 ecrire : un texte different, nouvelle cle, part a nouveau (200 messages de plus)', $$
+  SELECT (pg_temp.lu('ex_e200d') ->> 'reussies')::int = 200
+     AND (SELECT count(*) FROM public.com_messages m WHERE m.texte = 'Un second message, different.') = 200 $$);
+
+-- Complement mixte : 199 dossiers en Salle de verification et 1 en Salle d'examen. L'apercu donne a chaque eligible ses
+-- elements permis ; un element absent d'une des deux listes rend le lot perime (rien n'est ecrit) ; un element commun part.
+SELECT pg_temp.garde('ap_c201', pg_temp.en(pg_temp.u('2'), 'admin',
+  'SELECT public.apercu_lot_candidats(''demanderComplement'', (pg_temp.lot200())[1:199] || pg_temp.dc(201))'));
+SELECT pg_temp.verif('COMPLEMENT mixte apercu : 200 eligibles, chacun avec ses elements permis (langues : salle d''examen seulement)', $$
+  SELECT (a ->> 'nombre')::int = 200
+     AND (SELECT bool_and(e ? 'elementsPermis') FROM jsonb_array_elements(a -> 'eligibles') e)
+     AND (SELECT count(*) FROM jsonb_array_elements(a -> 'eligibles') e WHERE e -> 'elementsPermis' ? 'langues') = 1
+     AND (SELECT count(*) FROM jsonb_array_elements(a -> 'eligibles') e WHERE e -> 'elementsPermis' ? 'contrat') = 200
+    FROM (SELECT pg_temp.lu('ap_c201') a) x $$);
+SELECT pg_temp.garde('ex_c201a', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''demanderComplement'', (pg_temp.lot200())[1:199] || pg_temp.dc(201), %L, 200, ''pelc-cle-c201-000A'', ''Merci.'', ''langues'')',
+  pg_temp.lu('ap_c201') ->> 'jeton')));
+SELECT pg_temp.verif('COMPLEMENT mixte : un element non accepte par tous rend le lot perime, rien n''est ecrit', $$
+  SELECT pg_temp.lu('ex_c201a') ->> 'erreur' = 'jeton_perime'
+     AND NOT EXISTS (SELECT 1 FROM public.candidature_evenements e WHERE e.candidature_id = ANY (pg_temp.lot200())
+                       AND e.details ->> 'aCompleter' IS NOT NULL) $$);
+SELECT pg_temp.garde('ex_c201b', pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format(
+  'SELECT public.executer_lot_candidats(''demanderComplement'', (pg_temp.lot200())[1:199] || pg_temp.dc(201), %L, 200, ''pelc-cle-c201-000B'', ''Merci.'', ''contrat'')',
+  pg_temp.lu('ap_c201') ->> 'jeton')));
+SELECT pg_temp.verif('COMPLEMENT mixte : un element commun, 200 annoncees, 200 reussies', $$
+  SELECT (pg_temp.lu('ex_c201b') ->> 'reussies')::int = 200 AND (pg_temp.lu('ex_c201b') ->> 'refusees')::int = 0 $$);
+
+-- ===== 8. LA SELECTION NE DIVERGE PAS DE LA LISTE =====
+-- Les identifiants de selection_resultats_file, compares a la concatenation des pages de lister_candidatures, sur une grille
+-- de filtres et de tris (plus d'une page : plus de 200 candidatures de ce cote). Une retouche future de la liste qui oublie
+-- la selection fait echouer cette verification.
+CREATE FUNCTION pg_temp.ids_pages(p_filtre jsonb, p_tri text) RETURNS text[] LANGUAGE plpgsql AS $$
+DECLARE
+  v_page int := 1;
+  v_r jsonb;
+  v_ids text[] := ARRAY[]::text[];
+BEGIN
+  LOOP
+    v_r := pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format('SELECT public.lister_candidatures(%L::jsonb, %L, %s)',
+                                                                 p_filtre, p_tri, v_page));
+    v_ids := v_ids || ARRAY(SELECT l ->> 'id' FROM pg_catalog.jsonb_array_elements(v_r -> 'lignes') l);
+    EXIT WHEN pg_catalog.jsonb_array_length(v_r -> 'lignes') < 50;
+    v_page := v_page + 1;
+  END LOOP;
+  RETURN v_ids;
+END $$;
+CREATE FUNCTION pg_temp.sel(p_filtre jsonb, p_tri text) RETURNS jsonb LANGUAGE sql AS $$
+  SELECT pg_temp.en(pg_temp.u('2'), 'admin', pg_catalog.format('SELECT public.selection_resultats_file(%L::jsonb, %L)',
+                                                               p_filtre, p_tri)) $$;
+SELECT pg_temp.verif('GRILLE ' || f || ' / ' || tr, pg_catalog.format($v$
+  SELECT ARRAY(SELECT jsonb_array_elements_text(pg_temp.sel(%L::jsonb, %L) -> 'ids')) = pg_temp.ids_pages(%L::jsonb, %L)
+     AND (pg_temp.sel(%L::jsonb, %L) ->> 'total')::int = cardinality(pg_temp.ids_pages(%L::jsonb, %L)) $v$,
+  f, tr, f, tr, f, tr, f, tr))
+  FROM unnest(ARRAY['{}', '{"etape": "verifications"}', '{"etape": "prequalification"}', '{"enPause": false}',
+                    '{"pilePraxis": "pret_a_decider"}', '{"etiquettePraxis": "pepite"}', '{"dossierComplet": false}',
+                    '{"recherche": "Lot Fictive 1"}', '{"etat": "a_completer"}', '{"issue": "en_cours", "enPause": false}',
+                    '{"nouveau": false}']) f,
+       unnest(ARRAY['activite', 'recente', 'nom', 'ancienne']) tr;
+
 -- ===== 6. DROITS =====
 SELECT pg_temp.verif('DROITS : fonctions publiques neuves pour authenticated seulement', $$
   SELECT bool_and(has_function_privilege('authenticated', f, 'EXECUTE') AND NOT has_function_privilege('anon', f, 'EXECUTE')
@@ -325,7 +474,7 @@ SELECT pg_temp.verif('DROITS : aides privees fermees, table des rapports fermee 
      AND NOT has_table_privilege('service_role', 'private.candidature_lots_suite', 'INSERT')
      AND (SELECT relrowsecurity FROM pg_class WHERE oid = 'private.candidature_lots_suite'::regclass)
     FROM unnest(ARRAY['private.pelc_filtre_valider(jsonb)', 'private.pelc_predicat(public.candidatures,jsonb)',
-                      'private.pelc_lot_examiner(text,uuid[],uuid,public.gender)', 'private.pelc_ecrire_un(uuid,text,text)',
+                      'private.pelc_lot_examiner(text,uuid[],uuid,public.gender,text)', 'private.pelc_ecrire_un(uuid,text)',
                       'private.pelc_geste_de_lot(uuid,text,uuid,integer,text,text,text,date,jsonb)']) f $$);
 
 \o

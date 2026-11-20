@@ -4282,7 +4282,8 @@
             "sansCompte": "This person has no account yet: no conversation is possible.",
             "conversationPause": "Their application is paused: no conversation is possible.",
             "conversationEtat": "Its status no longer allows writing in the application conversation.",
-            "elementNonPermis": "This item cannot be requested at its stage."
+            "elementNonPermis": "This item cannot be requested at its stage.",
+            "dejaEnvoye": "This message was already sent to them today."
           },
           "rapport": {
             "titre": "Result",
@@ -4314,7 +4315,8 @@
           "elementManquant": "Choose what is requested.",
           "message": "Message",
           "messageAide": "The same message goes to each person concerned, on behalf of the management.",
-          "messageManquant": "Write the message."
+          "messageManquant": "Write the message.",
+          "elementAucunCommun": "No item can be requested at the stage of all these applications. Select applications from the same room."
         },
         "erreurs": {
           "titre": "Processing refused",

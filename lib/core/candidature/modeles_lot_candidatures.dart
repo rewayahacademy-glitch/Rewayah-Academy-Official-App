@@ -102,6 +102,7 @@ class EligibleLot {
     this.issue = IssueCandidature.enCours,
     this.enPause = false,
     this.version,
+    this.elementsPermis,
   });
 
   /// Lit un eligible, ou `null` sans identifiant lisible.
@@ -124,8 +125,18 @@ class EligibleLot {
       issue: IssueCandidature.depuisSql(brut['issue']),
       enPause: brut['enPause'] == true,
       version: brut['version'] is int ? brut['version'] as int : null,
+      elementsPermis: brut['elementsPermis'] is List
+          ? List<String>.unmodifiable(<String>[
+              for (final Object? x in brut['elementsPermis'] as List)
+                if (x is String) x,
+            ])
+          : null,
     );
   }
+
+  /// PE-LISTE-CANDIDATURES : pour un complement, les elements que l'etape de
+  /// ce dossier accepte (rendus par le serveur), ou `null`.
+  final List<String>? elementsPermis;
 
   /// L'identifiant de la candidature.
   final String id;
@@ -167,6 +178,10 @@ enum RaisonExclusion {
   /// le nomme).
   controlesNonSatisfaits,
 
+  /// PE-LISTE-CANDIDATURES : l'element du complement ne se demande pas a son
+  /// etape.
+  elementNonPermis,
+
   /// PE-LISTE-CANDIDATURES : aucune conversation possible avec la personne
   /// ([ExclusLot.detail] : `sans_compte`, `pause` ou `etat`).
   sansConversation,
@@ -181,6 +196,7 @@ enum RaisonExclusion {
     'transition_interdite' => transitionInterdite,
     'controles_non_satisfaits' => controlesNonSatisfaits,
     'sans_conversation' => sansConversation,
+    'element_non_permis' => elementNonPermis,
     _ => inconnue,
   };
 }

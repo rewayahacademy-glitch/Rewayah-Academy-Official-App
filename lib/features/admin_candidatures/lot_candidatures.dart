@@ -116,6 +116,8 @@ String raisonExclusion(ExclusLot e, GesteLot geste) {
         'pause' => r.conversationPause,
         _ => r.conversationEtat,
       };
+    case RaisonExclusion.elementNonPermis:
+      return r.elementNonPermis;
     case RaisonExclusion.inconnue:
       return r.inconnue;
   }
@@ -157,7 +159,11 @@ String raisonLigneRapport(
     case 'sans_conversation':
       return e != null ? raisonExclusion(e, geste) : r.conversationEtat;
     case 'elements_invalides':
+    case 'element_non_permis':
       return r.elementNonPermis;
+    // PE-LISTE-CANDIDATURES : le meme texte, au meme candidat, le meme jour.
+    case 'deja_envoye':
+      return r.dejaEnvoye;
     default:
       return r.inconnue;
   }
@@ -311,10 +317,18 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
     }
   }
 
-  /// Un champ change : c'est une autre demande, avec une autre cle.
+  /// Vrai apres une issue incertaine (pas de reponse du serveur, panne que
+  /// l'on ne sait pas dire) : le lot a pu partir. La cle est alors GARDEE,
+  /// meme si un champ change : rejouee telle quelle, le serveur rend le premier
+  /// rapport ; avec un autre texte, il la refuse (`cle_idempotence_reutilisee`)
+  /// au lieu d'envoyer une seconde fois.
+  bool _incertain = false;
+
+  /// Un champ change : c'est une autre demande, avec une autre cle, sauf apres
+  /// une issue incertaine (voir [_incertain]).
   void _modifie(VoidCallback changement) => setState(() {
     changement();
-    _cle = null;
+    if (!_incertain) _cle = null;
     if (_refusGeste is GesteNonConfirme) {
       _refusGeste = null;
     }
@@ -331,14 +345,40 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
   /// un mot ; la cloture n'est pas un element a demander.
   bool get _complement => _geste == GesteLot.demanderComplement;
 
-  List<String> get _elementsPermis => <String>[
-    for (final String code in <String>{
+  ///
+  /// Le serveur rend, pour chaque eligible, les elements que son etape
+  /// accepte : seuls ceux de TOUS les eligibles sont proposes, si bien que le
+  /// nombre annonce est celui qui reussira (un autre element rend le lot
+  /// perime au serveur). Un serveur qui ne les rend pas : les listes fermees.
+  List<String> get _elementsPermis {
+    final List<EligibleLot> eligibles =
+        _apercu?.eligibles ?? const <EligibleLot>[];
+    final bool parLigne =
+        eligibles.isNotEmpty &&
+        eligibles.every((EligibleLot e) => e.elementsPermis != null);
+    final Iterable<String> codes = parLigne
+        ? eligibles
+              .map((EligibleLot e) => e.elementsPermis!.toSet())
+              .reduce((Set<String> a, Set<String> b) => a.intersection(b))
+        : <String>{
+            ...widget.capacites.listes.complementSalleExamen,
+            ...widget.capacites.listes.complementSalleVerification,
+          };
+    // L'ordre des listes fermees du serveur, pour une feuille stable.
+    final List<String> ordre = <String>[
       ...widget.capacites.listes.complementSalleExamen,
       ...widget.capacites.listes.complementSalleVerification,
-    })
-      if (code != 'complement_clos' && libelleElementComplement(code) != null)
-        code,
-  ];
+      ...codes,
+    ];
+    final Set<String> retenus = codes.toSet();
+    return <String>[
+      for (final String code in <String>{...ordre})
+        if (retenus.contains(code) &&
+            code != 'complement_clos' &&
+            libelleElementComplement(code) != null)
+          code,
+    ];
+  }
 
   /// PE-LISTE-CANDIDATURES : ecrire porte un message pour la personne, et non
   /// un motif interne.
@@ -412,6 +452,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = false;
         _rapport = rapport;
       });
     } on GesteNonConfirme catch (e) {
@@ -419,12 +460,14 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = true;
         _refusGeste = e;
       });
     } on RefusLot catch (e) {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = false;
         _refusLot = e;
         // Un refus nomme n'a rien ecrit : un nouvel essai est une autre demande.
         _cle = null;
@@ -433,6 +476,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = false;
         _refusGeste = e;
         _cle = null;
       });
@@ -440,6 +484,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = true;
         _autre = e;
         // Une panne que l'on ne sait pas dire : le lot a pu partir. La meme cle
         // est gardee : si le premier est passe, le serveur rend son rapport.
@@ -712,11 +757,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
         _titreChamp(l.element),
         Ecart.vSm,
         if (_elementsPermis.isEmpty)
-          EtatSysteme(
-            nature: NatureEtat.indisponible,
-            titre: t.commun.etats.branchementServeur,
-            phrase: '',
-          )
+          _texte(l.elementAucunCommun)
         else ...<Widget>[
           ChoiceCardGroup(
             autoriserSaisieLibre: false,

@@ -26,11 +26,21 @@
 --        admettre            -> admettre_verifications : chaque ligne passe par public.admettre_salle_verification (controles
 --                               d'admission, courriel « retenu pour un entretien », notification) ; l'apercu EXCLUT deja, avec
 --                               leur raison, les dossiers dont un controle d'admission est faux ;
+--                               La cle passee a la fonction est courte (`lot-<md5 de la cle de ligne>`) : la fonction en derive
+--                               la cle de son courriel, bornee a 120 signes (relecture adverse de la PR 658) ;
 --        demanderComplement  -> demander_complement : chaque ligne passe par public.demander_complement_candidat, avec UN element
 --                               pour tout le lot (porte par p_modele, comme la categorie de la dispense, BE-1g) et le motif ;
+--                               l'apercu rend pour chaque eligible les elements que son etape accepte ; a l'execution, un
+--                               element que l'un d'eux n'accepte pas rend le lot perime (jeton_perime) : le nombre annonce est
+--                               celui qui reussira ;
 --        ecrire              -> un message de la direction dans la conversation de candidature de chaque personne
---                               (public.com_ouvrir_conversation puis public.com_envoyer_message, cle derivee : jamais deux fois) ;
---                               l'apercu exclut qui n'a pas de conversation possible (sans compte, en pause, hors etape).
+--                               (public.com_ouvrir_conversation puis public.com_envoyer_message). La cle du message derive du
+--                               fil, du jour et du texte normalise, jamais de la cle du lot : le meme texte au meme candidat le
+--                               meme jour ne part qu'une fois, quels que soient le lot, l'onglet ou l'auteur (ligne
+--                               `deja_envoye`) ; l'apercu exclut qui n'a pas de conversation possible (sans compte, en pause,
+--                               hors etape).
+--      Pour ces trois gestes, l'empreinte de la cle du lot couvre aussi le motif et le modele : la meme cle avec un autre texte
+--      est refusee (cle_idempotence_reutilisee), jamais rejouee en silence.
 --      Aucun de ces gestes n'existait en lot : ils sont ecrits ici (rien dans main, rien sur une branche du bureau : la vague 3 du
 --      bureau n'a pas d'ordre). Les gestes groupes d'avant (pause, reprise, refus, dispense) ne changent pas d'un octet de
 --      comportement.
@@ -346,11 +356,17 @@ COMMENT ON TABLE private.candidature_lots_suite IS
   'PE-LISTE-CANDIDATURES : rapport de chaque lot admettre, demander un complement, ecrire, sous sa cle d''idempotence, en ajout '
   'seul ; memes colonnes que public.candidature_lots ; aucune policy, aucun privilege client.';
 
--- L'examen d'un lot. Les gestes d'avant : l'examen d'avant, tel quel. Admettre : l'examen d'avant, puis les dossiers dont un
--- controle d'admission est faux passent dans les exclus (raison controles_non_satisfaits, detail = le premier controle faux) ;
--- le jeton couvre ces exclusions. Ecrire : une ligne est eligible quand la conversation de candidature est possible (dossier
--- d'enseignant en cours, hors pause, avant la salle des prets, avec un compte : les conditions de private.com_paires).
-CREATE FUNCTION private.pelc_lot_examiner(p_geste text, p_ids uuid[], p_auteur uuid, p_genre public.gender)
+-- L'examen d'un lot. Les gestes d'avant : l'examen d'avant, tel quel.
+--   Admettre : l'examen d'avant, puis les dossiers dont un controle d'admission est faux passent dans les exclus (raison
+--     controles_non_satisfaits, detail = le premier controle faux) ; le jeton couvre ces exclusions.
+--   Demander un complement : chaque eligible porte `elementsPermis`, les elements que son etape accepte (l'ecran ne propose
+--     que ceux de TOUS les eligibles) ; avec un element ([p_element], celui de l'execution), les dossiers qui ne l'acceptent
+--     pas passent dans les exclus (element_non_permis) et le jeton change : un lot dont l'element n'est pas accepte par tous
+--     les eligibles de l'apercu ne part pas (jeton_perime), le nombre annonce est donc celui qui reussira.
+--   Ecrire : une ligne est eligible quand la conversation de candidature est possible (dossier d'enseignant en cours, hors
+--     pause, avant la salle des prets, avec un compte : les conditions de private.com_paires).
+CREATE FUNCTION private.pelc_lot_examiner(p_geste text, p_ids uuid[], p_auteur uuid, p_genre public.gender,
+                                          p_element text DEFAULT NULL)
 RETURNS jsonb
 LANGUAGE plpgsql
 STABLE
@@ -368,6 +384,7 @@ DECLARE
   v_n integer := 0;
   v_raison text;
   v_faux jsonb;
+  v_permis text[];
   v_message text;
 BEGIN
   SELECT s.secret INTO v_secret FROM private.candidature_lot_secret s;
@@ -416,27 +433,43 @@ BEGIN
   END IF;
 
   v_ex := private.candidature_lot_examiner(p_geste, p_ids, p_auteur, p_genre);
-  IF p_geste IS DISTINCT FROM 'admettre_verifications' THEN
+  IF p_geste IS DISTINCT FROM 'admettre_verifications' AND p_geste IS DISTINCT FROM 'demander_complement' THEN
     RETURN v_ex;
   END IF;
   FOR v_l IN SELECT x.e FROM pg_catalog.jsonb_array_elements(v_ex -> 'lignes') WITH ORDINALITY AS x(e, o) ORDER BY x.o LOOP
     IF (v_l ->> 'eligible')::boolean THEN
       SELECT c.* INTO v_c FROM public.candidatures c WHERE c.id = (v_l ->> 'id')::uuid;
-      v_faux := private.candidature_controles_faux(private.candidature_controles_entree(v_c, 'admission'));
-      IF pg_catalog.jsonb_array_length(v_faux) > 0 THEN
-        v_l := v_l || pg_catalog.jsonb_build_object('eligible', false, 'raison', 'controles_non_satisfaits',
-                                                    'detail', v_faux -> 0 ->> 'nom');
-        v_part_x := v_part_x || ((v_l ->> 'id') || ':' || coalesce(v_faux -> 0 ->> 'nom', '?'));
+      IF p_geste = 'admettre_verifications' THEN
+        v_faux := private.candidature_controles_faux(private.candidature_controles_entree(v_c, 'admission'));
+        IF pg_catalog.jsonb_array_length(v_faux) > 0 THEN
+          v_l := v_l || pg_catalog.jsonb_build_object('eligible', false, 'raison', 'controles_non_satisfaits',
+                                                      'detail', v_faux -> 0 ->> 'nom');
+          v_part_x := v_part_x || ((v_l ->> 'id') || ':' || coalesce(v_faux -> 0 ->> 'nom', '?'));
+        ELSE
+          v_n := v_n + 1;
+        END IF;
       ELSE
-        v_n := v_n + 1;
+        -- Les elements que demander_complement_candidat accepte pour ce dossier (memes regles : la variante 4, paiement
+        -- non disponible, ne porte que sur le versement ; la cloture n'est pas un element a demander en lot).
+        v_permis := CASE WHEN v_c.etape = 'prequalification' AND v_c.etat = 'paiement_non_disponible'
+                         THEN ARRAY['versement']::text[]
+                         ELSE ARRAY(SELECT x FROM pg_catalog.unnest(private.candidature_complement_codes(v_c.etape, v_c.type_code)) AS x
+                                     WHERE x <> 'complement_clos') END;
+        v_l := v_l || pg_catalog.jsonb_build_object('elementsPermis', pg_catalog.to_jsonb(v_permis));
+        IF p_element IS NOT NULL AND NOT (p_element = ANY (v_permis)) THEN
+          v_l := v_l || pg_catalog.jsonb_build_object('eligible', false, 'raison', 'element_non_permis');
+          v_part_x := v_part_x || ((v_l ->> 'id') || ':element_non_permis');
+        ELSE
+          v_n := v_n + 1;
+        END IF;
       END IF;
     END IF;
     v_lignes := v_lignes || pg_catalog.jsonb_build_array(v_l);
   END LOOP;
   IF pg_catalog.cardinality(v_part_x) = 0 THEN
-    RETURN v_ex;
+    RETURN pg_catalog.jsonb_build_object('lignes', v_lignes, 'nombre', v_n, 'jeton', v_ex ->> 'jeton');
   END IF;
-  v_message := (v_ex ->> 'jeton') || '|controles|'
+  v_message := (v_ex ->> 'jeton') || '|' || p_geste || '|'
     || pg_catalog.array_to_string(ARRAY(SELECT e FROM pg_catalog.unnest(v_part_x) AS e ORDER BY e), ',');
   RETURN pg_catalog.jsonb_build_object('lignes', v_lignes, 'nombre', v_n,
     'jeton', pg_catalog.substr(pg_catalog.encode(extensions.hmac(pg_catalog.convert_to(v_message, 'UTF8'),
@@ -444,9 +477,11 @@ BEGIN
 END;
 $f$;
 
--- Ecrire a une personne : sa conversation de candidature (ouverte au besoin), un message de la direction, une cle derivee de celle
--- de la ligne (rejouer le lot ne l'envoie pas deux fois).
-CREATE FUNCTION private.pelc_ecrire_un(p_id uuid, p_texte text, p_cle text)
+-- Ecrire a une personne : sa conversation de candidature (ouverte au besoin), un message de la direction. La cle du message
+-- derive du FIL, du JOUR (UTC) et du TEXTE normalise (casse et blancs), jamais de la cle du lot : le meme texte au meme
+-- candidat le meme jour par un lot ne part qu'une fois, quel que soit le lot, l'onglet ou l'auteur ; la ligne le dit alors
+-- (`deja_envoye`).
+CREATE FUNCTION private.pelc_ecrire_un(p_id uuid, p_texte text)
 RETURNS jsonb
 LANGUAGE plpgsql
 SET search_path = ''
@@ -454,6 +489,8 @@ AS $f$
 DECLARE
   v_c public.candidatures;
   v_fil jsonb;
+  v_fil_id uuid;
+  v_cle uuid;
   v_m jsonb;
 BEGIN
   SELECT c.* INTO v_c FROM public.candidatures c WHERE c.id = p_id;
@@ -464,7 +501,16 @@ BEGIN
   IF v_fil IS NULL OR v_fil ->> 'id' IS NULL THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'sans_conversation');
   END IF;
-  v_m := public.com_envoyer_message((v_fil ->> 'id')::uuid, p_texte, pg_catalog.md5('pelc-ecrire:' || p_cle)::uuid);
+  v_fil_id := (v_fil ->> 'id')::uuid;
+  v_cle := pg_catalog.md5('pelc-ecrire|' || v_fil_id::text || '|'
+                          || (pg_catalog.now() AT TIME ZONE 'UTC')::date::text || '|'
+                          || pg_catalog.lower(pg_catalog.regexp_replace(pg_catalog.btrim(p_texte), '\s+', ' ', 'g')))::uuid;
+  -- Deux lots concurrents pour le meme fil se suivent.
+  PERFORM pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('pelc-ecrire:' || v_cle::text, 0));
+  IF EXISTS (SELECT 1 FROM public.com_messages m WHERE m.fil_id = v_fil_id AND m.cle_idempotence = v_cle) THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'deja_envoye');
+  END IF;
+  v_m := public.com_envoyer_message(v_fil_id, p_texte, v_cle);
   IF v_m IS NOT NULL AND pg_catalog.jsonb_typeof(v_m) = 'object' AND v_m ? 'erreur' THEN
     RETURN pg_catalog.jsonb_build_object('erreur', coalesce(v_m ->> 'erreur', 'message_refuse'));
   END IF;
@@ -473,7 +519,10 @@ END;
 $f$;
 
 -- Une ligne d'un lot : les gestes neufs par leur fonction publique (memes controles, memes courriels, meme journal que le geste
--- fait sur la fiche) ; les gestes d'avant par le coeur d'avant, inchange.
+-- fait sur la fiche) ; les gestes d'avant par le coeur d'avant, inchange. [p_cle] est la cle de LIGNE du moteur
+-- (`lot-<md5 de la cle du lot>-<identifiant>`, 73 signes, unique par lot et par ligne) : admettre et le complement recoivent
+-- `lot-<md5 de cette cle de ligne>` (36 signes, toujours unique par lot et par ligne), car admettre_salle_verification en
+-- derive la cle de son courriel (`retenu_entretien:<id>:<cle>`, 120 signes au plus).
 CREATE FUNCTION private.pelc_geste_de_lot(p_id uuid, p_geste text, p_auteur uuid, p_version integer, p_cle text, p_motif text,
                                           p_modele text, p_reprise_le date, p_details jsonb)
 RETURNS jsonb
@@ -483,11 +532,12 @@ AS $f$
 BEGIN
   CASE p_geste
     WHEN 'admettre_verifications' THEN
-      RETURN public.admettre_salle_verification(p_id, p_version, p_cle);
+      RETURN public.admettre_salle_verification(p_id, p_version, 'lot-' || pg_catalog.md5(p_cle));
     WHEN 'demander_complement' THEN
-      RETURN public.demander_complement_candidat(p_id, ARRAY[p_modele]::text[], p_motif, p_version, p_cle);
+      RETURN public.demander_complement_candidat(p_id, ARRAY[p_modele]::text[], p_motif, p_version,
+                                                 'lot-' || pg_catalog.md5(p_cle));
     WHEN 'ecrire' THEN
-      RETURN private.pelc_ecrire_un(p_id, p_motif, p_cle);
+      RETURN private.pelc_ecrire_un(p_id, p_motif);
     ELSE
       RETURN private.candidature_geste_groupe(p_id, p_geste, p_auteur, p_version, p_cle, p_motif, p_modele, p_reprise_le,
                                               p_details);
@@ -495,11 +545,11 @@ BEGIN
 END;
 $f$;
 
-ALTER FUNCTION private.pelc_lot_examiner(text, uuid[], uuid, public.gender) OWNER TO postgres;
-ALTER FUNCTION private.pelc_ecrire_un(uuid, text, text) OWNER TO postgres;
+ALTER FUNCTION private.pelc_lot_examiner(text, uuid[], uuid, public.gender, text) OWNER TO postgres;
+ALTER FUNCTION private.pelc_ecrire_un(uuid, text) OWNER TO postgres;
 ALTER FUNCTION private.pelc_geste_de_lot(uuid, text, uuid, integer, text, text, text, date, jsonb) OWNER TO postgres;
-REVOKE ALL ON FUNCTION private.pelc_lot_examiner(text, uuid[], uuid, public.gender) FROM PUBLIC, anon, authenticated, service_role, agent_ro;
-REVOKE ALL ON FUNCTION private.pelc_ecrire_un(uuid, text, text) FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+REVOKE ALL ON FUNCTION private.pelc_lot_examiner(text, uuid[], uuid, public.gender, text) FROM PUBLIC, anon, authenticated, service_role, agent_ro;
+REVOKE ALL ON FUNCTION private.pelc_ecrire_un(uuid, text) FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 REVOKE ALL ON FUNCTION private.pelc_geste_de_lot(uuid, text, uuid, integer, text, text, text, date, jsonb)
   FROM PUBLIC, anon, authenticated, service_role, agent_ro;
 
@@ -544,7 +594,13 @@ BEGIN
     'executer groupables');
   v_def := pg_temp.remplacer(v_def,
     'SELECT l.* INTO v_lot FROM public.candidature_lots l WHERE l.cle = p_cle_idempotence;',
-    'SELECT l.* INTO v_lot
+    '-- PE-LISTE-CANDIDATURES : pour les gestes neufs, l''empreinte couvre aussi le motif (le message d''ecrire) et le modele
+  -- (l''element du complement) : la meme cle rejouee avec un autre texte est refusee (cle_idempotence_reutilisee), jamais
+  -- rejouee en silence. L''empreinte des gestes d''avant ne change pas.
+  IF v_geste IN (''admettre_verifications'', ''demander_complement'', ''ecrire'') THEN
+    v_empreinte := pg_catalog.md5(v_empreinte || ''|'' || coalesce(v_motif, '''') || ''|'' || coalesce(p_modele, ''''));
+  END IF;
+  SELECT l.* INTO v_lot
     FROM (SELECT * FROM public.candidature_lots UNION ALL SELECT * FROM private.candidature_lots_suite) l
    WHERE l.cle = p_cle_idempotence;',
     'executer rejeu');
@@ -566,7 +622,8 @@ BEGIN
     'executer exigences');
   v_def := pg_temp.remplacer(v_def,
     'v_ex := private.candidature_lot_examiner(v_geste, p_ids, v_lecteur, v_genre);',
-    'v_ex := private.pelc_lot_examiner(v_geste, p_ids, v_lecteur, v_genre);',
+    'v_ex := private.pelc_lot_examiner(v_geste, p_ids, v_lecteur, v_genre,
+                                     CASE WHEN v_geste = ''demander_complement'' THEN p_modele END);',
     'executer examen');
   v_def := pg_temp.remplacer(v_def,
     'v_r := private.candidature_geste_groupe(',
@@ -647,7 +704,7 @@ BEGIN
   END LOOP;
   -- Les aides privees : aucun compte client.
   FOREACH v_f IN ARRAY ARRAY['private.pelc_filtre_valider(jsonb)', 'private.pelc_predicat(public.candidatures,jsonb)',
-                             'private.pelc_lot_examiner(text,uuid[],uuid,public.gender)', 'private.pelc_ecrire_un(uuid,text,text)',
+                             'private.pelc_lot_examiner(text,uuid[],uuid,public.gender,text)', 'private.pelc_ecrire_un(uuid,text)',
                              'private.pelc_geste_de_lot(uuid,text,uuid,integer,text,text,text,date,jsonb)'] LOOP
     IF pg_catalog.has_function_privilege('anon', v_f, 'EXECUTE')
        OR pg_catalog.has_function_privilege('authenticated', v_f, 'EXECUTE') THEN
