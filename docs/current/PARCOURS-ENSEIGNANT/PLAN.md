@@ -1112,3 +1112,20 @@ depuis 02:55 UTC. **Points où ses réponses varient, à trancher par lui** : 3 
 après l'acceptation ; moyens de versement autres que le virement (Wise dit accepté une fois, mobile
 money décidé le 16/11) ; les montants de 115 et 125 dollars donnés une seule fois le 14/11 comme
 estimation (Praxis ne cite aucun chiffre). Même consigne à porter dans `repondre-rewayah`.
+
+### 17.11 PX-3 fusionné, installé et en ligne (20/11/2026, 03:12 UTC)
+
+- PR #640 fusionnée dans `main` (commit `e1c08d94`) par le pilote, après relecture adverse
+  (INSTALLABLE), CI verte dont « Migrations applicables (Postgres 17) », et suite complète rejouée
+  sur le fichier final : 361 verts sur 362 (le rouge, `scenarios_calendrier_pauses`, est rouge
+  aussi sans le lot : dette à corriger à part).
+- Migration `20261130100000_praxis_travail.sql` installée en production à 03:11 UTC, en un appel.
+  La base l'enregistre sous la version `20261120031149`, nom `praxis_travail`. Fidélité prouvée :
+  le texte enregistré a le md5 et la taille du fichier de `main` ; les 15 fonctions ont l'empreinte
+  attendue ; deux tables neuves avec RLS, 0 politique, 0 ligne, fermées à `anon`, `authenticated`
+  et `service_role` ; CHECK à quatre gestes ; réglages et propositions inchangés.
+- Fonction `praxis-mcp` déployée par le workflow de `main` (premier essai en échec à l'installation
+  de l'outil Supabase, second réussi). Lu en production : `lire` rend `manquants`,
+  `attend_direction`, `complet`, `pile`, `jours_sans_activite_candidat` ; `objectifs_lire` répond.
+- PR #639 (BUREAU-NAV) fusionnée (`7924bea7`). **Non prouvé** : rien n'a encore été vu par le
+  directeur en production.
