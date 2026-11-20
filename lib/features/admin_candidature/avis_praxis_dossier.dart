@@ -306,12 +306,11 @@ class _ElementContexte extends StatelessWidget {
           children: <Widget>[
             TexteSansCoupure(
               element.theme,
-              // Plus petit que le titre de la section (HIER-1), plus gras que
-              // le constat.
+              // Plus petit que le titre de la section (HIER-1) ; il se
+              // distingue du constat par son encre forte, pas par une graisse
+              // posee a la main (jetons).
               style: palette.inkStrong.applyTo(
-                (textes.bodyMedium ?? const TextStyle()).copyWith(
-                  fontWeight: FontWeight.w600,
-                ),
+                textes.bodyMedium ?? const TextStyle(),
               ),
             ),
             StatusPill(
