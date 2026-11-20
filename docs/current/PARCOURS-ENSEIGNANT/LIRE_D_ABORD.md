@@ -12,6 +12,8 @@ demande explicite la plus récente du directeur, qui prévaut.
 
 | Quoi | Où |
 | :--- | :--- |
+| **Le plan resserré : les quatre chantiers en cours, leurs zones, ce qui est gelé (20/11)** | `PLAN-DE-LANCEMENT.md` |
+| **Le contrat de navigation : ce que fait chaque toucher, la sélection, le retour, le fil d'Ariane (20/11)** | `CONTRAT-NAVIGATION.md` |
 | **La check-liste lot par lot (à tenir à jour à chaque PR, dans la PR même)** | `SUIVI.md` |
 | Ce que le directeur a demandé, les constats prouvés, les arbitrages, les standards, le modèle du bureau | `PLAN.md` |
 | Le manuscrit du directeur, transcrit mot à mot | `MANUSCRIT-2026-11-19.md` |
