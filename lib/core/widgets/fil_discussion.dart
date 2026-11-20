@@ -1515,6 +1515,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
           } on EnvoiRefuse catch (e) {
             m.refus = e.phrase;
             rethrow;
+          } on EnvoiNonConfirme catch (e) {
+            m.precision = e.cause;
+            rethrow;
           }
         },
       ),
