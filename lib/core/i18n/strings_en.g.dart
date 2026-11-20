@@ -20257,6 +20257,9 @@ class _Traductions$com$messages$panneau$en extends Traductions$com$messages$pann
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String get fichiersPartiels => 'Only files from messages already loaded are listed.';
+	@override String get fichiersAucunCharge => 'No files in the messages already loaded; there are older messages.';
+	@override String get chargerPrecedents => 'Load earlier messages';
 	@override String get objets => 'About';
 	@override String get participants => 'Participants';
 	@override String get fichiers => _root.com.socle.lexique.fichiersPartages;
@@ -20274,6 +20277,10 @@ class _Traductions$com$messages$fil$en extends Traductions$com$messages$fil$fr {
 
 	// Translations
 	@override String get lectureSeule => 'You can read this conversation. Replying is not open to you here.';
+	@override String get anciensChargement => 'Loading earlier messages';
+	@override String get anciensEchec => 'Earlier messages did not load.';
+	@override String get refusFerme => 'You can no longer write in this conversation.';
+	@override String get refusTexte => 'This message is empty or too long: 5,000 characters at most.';
 }
 
 // Path: com.messages.images
@@ -39312,6 +39319,9 @@ extension on TraductionsEn {
 			'com.messages.types.candidature' => 'Application',
 			'com.messages.types.profilPaiement' => 'Payment profile',
 			'com.messages.types.autre' => 'Other subject',
+			'com.messages.panneau.fichiersPartiels' => 'Only files from messages already loaded are listed.',
+			'com.messages.panneau.fichiersAucunCharge' => 'No files in the messages already loaded; there are older messages.',
+			'com.messages.panneau.chargerPrecedents' => 'Load earlier messages',
 			'com.messages.panneau.objets' => 'About',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -39322,6 +39332,10 @@ extension on TraductionsEn {
 			'com.messages.panneau.officiel.mention' => 'Academy assistant · AI',
 			'com.messages.panneau.officiel.phrase' => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
+			'com.messages.fil.anciensChargement' => 'Loading earlier messages',
+			'com.messages.fil.anciensEchec' => 'Earlier messages did not load.',
+			'com.messages.fil.refusFerme' => 'You can no longer write in this conversation.',
+			'com.messages.fil.refusTexte' => 'This message is empty or too long: 5,000 characters at most.',
 			'com.messages.images.joindre' => 'Attach an image',
 			'com.messages.images.prendrePhoto' => 'Take a photo',
 			'com.messages.images.choisirGalerie' => 'Choose from the gallery',
@@ -39499,6 +39513,8 @@ extension on TraductionsEn {
 			'com.communaute.videTitre' => 'No post',
 			'com.communaute.rechercheVideTitre' => 'No result',
 			'com.communaute.rechercheVide' => 'No post matches your search. Try another word.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.videToutes' => 'No post yet.',
 			'com.communaute.flux.ouvrir' => ({required Object titre}) => 'Open the post ${titre}',
 			'com.communaute.flux.reponseUne' => '1 reply',
@@ -39506,8 +39522,6 @@ extension on TraductionsEn {
 			'com.communaute.flux.aucuneReponse' => 'No reply',
 			'com.communaute.flux.categorie' => ({required Object categorie}) => 'Category ${categorie}',
 			'com.communaute.recherche.ouvrir' => 'Search for a post',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.recherche.champ' => 'Search for a post',
 			'com.communaute.recherche.aide' => 'A word from the title or the text',
 			'com.communaute.moment.instant' => 'Just now',
@@ -40013,6 +40027,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.moderation.regles.pasSollicitation' => 'No commercial solicitation',
 			'com.annonces.administration.moderation.regles.pasDonnees' => 'No personal data of a student or a family',
 			'com.annonces.demoPublication.lienAdministration' => 'Communications administration (management)',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demoPublication.lienPublier' => 'Publish an announcement for a class (teacher)',
 			'com.annonces.demoPublication.toutes' => 'The whole academy',
 			'com.annonces.demoPublication.familles' => 'Families',
@@ -40020,8 +40036,6 @@ extension on TraductionsEn {
 			'com.annonces.demoPublication.eleves' => 'Students',
 			'com.annonces.demoPublication.controleurs' => 'Reviewers',
 			'com.annonces.demoPublication.direction' => 'Management',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demoPublication.audiencesDirection' => 'The whole academy, an audience or a class',
 			'com.annonces.demoPublication.audiencesEnseignant' => 'Its class only',
 			'com.annonces.demoPublication.vacancesTitre' => 'Winter holiday calendar',
@@ -40527,6 +40541,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.transfert.reference' => ({required Object reference}) => 'Reference: ${reference}',
 			'comptable.tresorerie.transfert.validationTitre' => 'Validation requested',
 			'comptable.tresorerie.transfert.validationPhrase' => 'Another person must decide. The origin vault stays unchanged until then.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.refusTitre' => 'Movement refused by the source',
 			'comptable.tresorerie.transfert.refusPhrase' => ({required Object raison}) => 'Reason: ${raison}. Nothing was moved.',
 			'comptable.tresorerie.transfert.erreurEnvoiTitre' => 'Answer not received',
@@ -40534,8 +40550,6 @@ extension on TraductionsEn {
 			'comptable.tresorerie.transfert.indisponible' => 'Movements between vaults are not yet connected to the server. Nothing was moved.',
 			'comptable.tresorerie.transfert.aucunCouple' => 'No movement is allowed by the policy for your account.',
 			'comptable.tresorerie.titre' => 'Cash position and vaults',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.sousTitre' => 'Free cash is the only spendable figure.',
 			'comptable.tresorerie.alimenter' => 'Fund the Strategic reserve',
 			'comptable.tresorerie.erreurPartielle' => 'Part of the page could not be read: the rest is up to date. Try again to complete it.',
@@ -41041,6 +41055,8 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.politiqueTarifaire' => 'Changing the prices',
 			'comptable.direction.delegationPanneau.politiqueTarifaireDetail' => 'The pricing policy stays with the management.',
 			'comptable.direction.delegationPanneau.suspendreTitre' => 'Suspend all delegations',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.suspendreDetail' => 'The Accountant can no longer carry out anything alone, immediately: each operation goes back through the management.',
 			'comptable.direction.delegationPanneau.suspendreAction' => 'Suspend all delegations',
 			'comptable.direction.delegationPanneau.suspendreConfirmerTitre' => 'Suspend all delegations?',
@@ -41048,8 +41064,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.suspendreConfirmer' => 'Suspend',
 			'comptable.direction.delegationPanneau.suspendreGarder' => 'Keep the delegations',
 			'comptable.direction.delegationPanneau.reactiverTitre' => 'Reactivate the delegations',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.reactiverDetail' => 'The delegations are suspended. Lifting them is an act of the management, with a written reason.',
 			'comptable.direction.delegationPanneau.reactiverAction' => 'Reactivate the delegations',
 			'comptable.direction.delegationPanneau.reactiverPhrase' => 'The Accountant will be able to act again within the limits of the policy. An expired delegation is never restored: it will have to be renewed. Cancelled outflows stay cancelled. The reactivation is written in the log.',
@@ -41555,6 +41569,8 @@ extension on TraductionsEn {
 			'avis.admin.refuser.action' => 'Refuse the review',
 			'avis.admin.refuser.rester' => 'Change nothing',
 			'avis.admin.retirer.titre' => ({required Object deNom}) => 'Remove ${deNom}\'s review',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.retirer.intro' => 'Choose the reason for removal.',
 			'avis.admin.retirer.consequence' => 'The review will disappear from the site at the site\'s next update. The reason is kept.',
 			'avis.admin.retirer.action' => 'Remove the review',
@@ -41562,8 +41578,6 @@ extension on TraductionsEn {
 			'avis.admin.motifs.insulte' => 'Insult',
 			'avis.admin.motifs.tiers' => 'Personal data of a third party',
 			'avis.admin.motifs.publicite' => 'Advertising',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.motifs.horsSujet' => 'Off topic',
 			'avis.admin.motifs.doublon' => 'Duplicate',
 			'avis.admin.motifs.demande' => 'Request from the person',
@@ -42069,6 +42083,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.apercu.premieres' => 'The first rows',
 			'candidatsFlux.importFormulaires.apercu.ligne' => ({required Object ligne}) => 'Row ${ligne}',
 			'candidatsFlux.importFormulaires.apercu.autres' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} other row is not shown here.', other: '${n} other rows are not shown here.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.sansLignes' => 'The rows will be read as soon as the columns are matched.',
 			'candidatsFlux.importFormulaires.apercu.colonnesATitre' => 'Some columns still need matching',
 			'candidatsFlux.importFormulaires.apercu.mappageIncomplet' => ({required Object champs}) => 'First match these columns: ${champs}.',
@@ -42076,8 +42092,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.apercu.ambigu' => ({required Object champs}) => 'Several columns carry the title of: ${champs}. Say which one to read, at the next step.',
 			'candidatsFlux.importFormulaires.apercu.marque.courrielAObtenir' => 'Email to obtain',
 			'candidatsFlux.importFormulaires.apercu.marque.indicatifAConfirmer' => 'Country code to confirm',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.apercu.aideMarques' => '"Email to obtain": no valid email, the person cannot be invited. "Country code to confirm": the phone has no recognized country code. "Ignored": empty or repeated row.',
 			'candidatsFlux.importFormulaires.issue.nouvelle' => 'New',
 			'candidatsFlux.importFormulaires.issue.corrigee' => 'Corrected',
@@ -42583,6 +42597,8 @@ extension on TraductionsEn {
 			'journalSorties.texte.adulte.qui' => 'Who can read it: you, the session\'s teacher and the management. Never the other students or their families.',
 			'journalSorties.texte.adulte.retrait' => 'You can withdraw your agreement at any time, right here. As soon as you withdraw it, nothing more is recorded.',
 			'journalSorties.texte.adulte.sansAccord' => 'Without your agreement, nothing is recorded and nothing changes for the class. If you stay out of the app too long, you leave the room, with or without agreement: that keeps nothing.',
+			_ => null,
+		} ?? switch (path) {
 			'journalSorties.texte.adulte.caseAccord' => 'I agree that my exits from the app during sessions be recorded.',
 			'journalSorties.accord.titre' => 'Exits from the app',
 			'journalSorties.accord.ligne' => 'Exits from the app during class',
@@ -42590,8 +42606,6 @@ extension on TraductionsEn {
 			'journalSorties.accord.ligneDetailAdulte' => 'Your agreement',
 			'journalSorties.accord.intro' => 'Read this text, then choose for each child. Nothing is recorded without your agreement.',
 			'journalSorties.accord.introAdulte' => 'Read this text, then choose. Nothing is recorded without your agreement.',
-			_ => null,
-		} ?? switch (path) {
 			'journalSorties.accord.accepteLe' => ({required Object date}) => 'Accepted on ${date}',
 			'journalSorties.accord.pasAccepte' => 'Not agreed: nothing is recorded.',
 			'journalSorties.accord.retirerPour' => ({required Object prenom}) => 'Withdraw my agreement for ${prenom}',
