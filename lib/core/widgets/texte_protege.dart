@@ -2,9 +2,10 @@ import 'package:flutter/widgets.dart';
 
 /// Texte hors de la sélection de l'application (directeur, 07/11/2026).
 ///
-/// Tout le texte de l'application se sélectionne et se copie : un seul
-/// `SelectionArea` à la racine (`RewayahApp`). Ce widget est le **seul**
-/// moyen d'en retirer un morceau ; on ne recopie jamais
+/// Depuis PE-D11 (directeur, 19/11/2026), il n'y a plus de `SelectionArea` à
+/// la racine : seul ce qui se lit se sélectionne, dans une zone locale
+/// (`TexteSelectionnable` : documents, contrat, cadre). Ce widget est le
+/// **seul** moyen d'en retirer un morceau ; on ne recopie jamais
 /// `SelectionContainer.disabled` à la main.
 ///
 /// À poser autour de ce qui ne doit pas sortir de l'écran par un copier :

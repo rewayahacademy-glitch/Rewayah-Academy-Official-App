@@ -401,7 +401,8 @@ class _PressableState extends State<Pressable>
           onLongPress: widget.actif ? widget.onLongPress : null,
           // CURSEUR-CLIC (directeur, 08/11/2026 : « sur chaque lien, quand
           // tu viens pour cliquer, c'est le curseur de copier qui
-          // s'affiche ») : un `Text` pose sous le `SelectionArea` racine
+          // s'affiche ») : un `Text` pose sous un `SelectionArea` (depuis
+          // PE-D11, seulement `TexteSelectionnable` : une bulle, un document)
           // s'entoure de son propre curseur de texte, plus proche du
           // pointeur que la fleche de `FocusableActionDetector`, donc
           // gagnant. Ce qui se touche sort de la selection, ici, une fois :

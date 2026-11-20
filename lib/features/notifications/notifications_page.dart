@@ -374,8 +374,21 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     }
     return () {
       lire();
-      GoRouter.of(context).go(destination);
+      _ouvrirDestination(destination);
     };
+  }
+
+  /// BUREAU-NAV (contrat de navigation §2 et §5) : dans le bureau, l'objet
+  /// d'une notification s'empile sur le centre ; son retour y ramene. Ailleurs
+  /// (les espaces a barre du bas), la destination remplace la page, comme
+  /// avant : empiler dans une autre branche de coquille la perdrait.
+  void _ouvrirDestination(String destination) {
+    final GoRouter routeur = GoRouter.of(context);
+    if (destination.startsWith('${Routes.admin}/')) {
+      unawaited(routeur.push<void>(destination));
+    } else {
+      routeur.go(destination);
+    }
   }
 
   /// Enregistre la lecture de [n] (et de son annonce), puis relit la liste.
@@ -823,7 +836,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       notification: n,
       onOuvrir: destination == null
           ? null
-          : () => GoRouter.of(context).go(destination),
+          : () => _ouvrirDestination(destination),
     );
   }
 }

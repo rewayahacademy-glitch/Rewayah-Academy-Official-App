@@ -44,6 +44,7 @@ import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/etat_systeme.dart';
 import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/selection_racine.dart';
 import '../../core/widgets/skeleton.dart';
 import '../consentements/texte_observation.dart';
 import 'lecture_page.dart';
@@ -306,21 +307,25 @@ class TexteCadrePublie extends StatelessWidget {
         .split(RegExp(r'\n[ \t]*\n'))
         .where((String p) => p.trim().isNotEmpty)
         .toList();
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        for (int i = 0; i < paragraphes.length; i++) ...<Widget>[
-          if (i > 0) Ecart.vMd,
-          if (i == 0)
-            Semantics(
-              header: true,
-              child: Text(paragraphes[i], style: textes.titleMedium ?? corps),
-            )
-          else
-            Text(paragraphes[i], style: corps),
+    // PE-D11 : un texte long de lecture se selectionne et se copie, par un
+    // appui long voulu, dans sa seule zone.
+    return TexteSelectionnable(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          for (int i = 0; i < paragraphes.length; i++) ...<Widget>[
+            if (i > 0) Ecart.vMd,
+            if (i == 0)
+              Semantics(
+                header: true,
+                child: Text(paragraphes[i], style: textes.titleMedium ?? corps),
+              )
+            else
+              Text(paragraphes[i], style: corps),
+          ],
         ],
-      ],
+      ),
     );
   }
 }
