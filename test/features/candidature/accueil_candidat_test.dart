@@ -1578,6 +1578,36 @@ void main() {
       await capturerVue(tester, '$d/etat-vide-annonces');
     });
 
+    testWidgets('annonce longue ouverte', (WidgetTester tester) async {
+      // Donnee fictive : un texte long, coupe dans la carte, entier une fois
+      // la carte touchee.
+      final _Fil fil = _Fil(
+        recues: <AnnonceRecue>[
+          AnnonceRecue(
+            id: 'long',
+            titre: 'Comment se passent les entretiens',
+            texte: List<String>.filled(
+              6,
+              'Chaque entretien dure une trentaine de minutes, en visio, avec '
+              'une personne de la direction.',
+            ).join(' '),
+            publieeLe: _le,
+          ),
+        ],
+      );
+      await monter(
+        tester,
+        langue: AppLocale.fr,
+        theme: ThemeMode.light,
+        taille: const Size(390, 844),
+        fil: fil,
+        depart: AccueilCandidat.cheminMessages(SectionMessages.annonces),
+      );
+      await capturerVue(tester, '$d/annonce-longue-carte');
+      await _toucher(tester, find.byKey(AnnoncesCandidat.cleCarte('long')));
+      await capturerVue(tester, '$d/annonce-longue-ouverte');
+    });
+
     testWidgets('etat chargement (Annonces)', (WidgetTester tester) async {
       await monter(
         tester,
