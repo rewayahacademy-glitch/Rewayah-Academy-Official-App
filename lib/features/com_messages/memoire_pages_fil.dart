@@ -23,6 +23,7 @@
 
 import 'package:flutter/foundation.dart';
 
+import '../../core/theme/app_delais.dart';
 import 'port_messages_metier.dart';
 
 /// La lecture d'une page plus ancienne : les messages qui precedent le message
@@ -194,7 +195,9 @@ class MemoirePagesFil extends ChangeNotifier {
     notifyListeners();
     try {
       for (int i = 0; i < pagesComblement && !joint && plus; i++) {
-        final PageMessagesFil p = await lecture(avantId);
+        // Une lecture sans reponse finit en echec : jamais d'ecran fige.
+        final PageMessagesFil p = await lecture(avantId)
+            .timeout(AppDelais.requeteMax);
         if (_liberee || generation != _generation) return;
         chargees = <MessageCommunication>[...p.messages, ...chargees];
         plus = p.plusAnciens;
@@ -280,7 +283,9 @@ class MemoirePagesFil extends ChangeNotifier {
     _enCours = true;
     notifyListeners();
     try {
-      final PageMessagesFil page = await lecture(connus.first.id);
+      // Une rangee « chargement » ne tourne jamais sans fin.
+      final PageMessagesFil page = await lecture(connus.first.id)
+          .timeout(AppDelais.requeteMax);
       if (_liberee || generation != _generation) return;
       final Set<String> deja = <String>{
         for (final MessageCommunication m in messages) m.id,
