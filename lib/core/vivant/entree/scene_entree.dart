@@ -38,24 +38,111 @@ Path _chemin(String d) {
   return p;
 }
 
-/// Le jour de l'arche (unités du symbole) : le vide du logo, c'est-à-dire l'arche découpée dans
-/// le disque (de 176 à 540), fermée en bas par le cercle du disque lui-même. Aucun rectangle ne
-/// dépasse du disque : ce vide est de la lumière, pas une plaque.
-final Path _jourArche = Path.combine(
-  PathOperation.intersect,
-  Path()
-    ..moveTo(175, 720)
-    ..lineTo(175, 368.4)
-    ..arcToPoint(const Offset(541, 368.4), radius: const Radius.circular(183))
-    ..lineTo(541, 720)
-    ..close(),
-  Path()..addOval(Rect.fromCircle(center: const Offset(358, 357.3), radius: 358.6)),
-);
-
 /// Les repères de la porte, en unités du symbole : son axe, les bords extérieur et intérieur de
-/// l'arche blanche, l'endroit où cette arche quitte le disque, et le sol.
+/// l'arche blanche, et le sol (le bas du symbole).
 const double symboleLargeur = 716, symboleHauteur = 707;
-const double _axePorte = 358, _demiExt = 182, _demiInt = 148, _piedArche = 664;
+const double _axePorte = 358, _demiExt = 182, _demiInt = 148;
+
+/// La naissance du cintre de l'arche, et le bord avant du tableau de la porte : l'arche blanche
+/// du logo se lit en volume, une face plate (de 182 à 164) puis un tableau qui s'enfonce jusqu'au
+/// plan de la porte (148 quand l'œil est dans l'axe).
+const double _cintre = 368.4, _demiFace = 164;
+
+/// Une arche debout : deux jambes jusqu'au sol, un cintre en plein cintre.
+Path _arche(double demi, double sol) => Path()
+  ..moveTo(_axePorte - demi, sol)
+  ..lineTo(_axePorte - demi, _cintre)
+  ..arcToPoint(Offset(_axePorte + demi, _cintre), radius: Radius.circular(demi))
+  ..lineTo(_axePorte + demi, sol)
+  ..close();
+
+/// L'ouverture découpée dans le disque (de 176 à 540), jusqu'au sol, et le bord avant du tableau.
+final Path _ouvertureDisque = _arche(_demiExt + 1, symboleHauteur + 0.5), _ouvertureTableau = _arche(_demiFace, symboleHauteur + 0.5);
+
+/// La face de l'arche : la bande plate entre le disque et le tableau.
+final Path _faceArche = Path.combine(PathOperation.difference, _ouvertureDisque, _arche(_demiFace - 1, symboleHauteur + 2));
+
+/// La porte du logo vue depuis l'œil de la route, en unités du symbole.
+///
+/// La route donne l'horizon et le point de fuite ([Geo.fuite]) : sa ligne médiane, la marche de
+/// Praxis et son ombre y vont, et ses rangées de dalles se resserrent sur cet horizon. La porte est
+/// debout au bout de la route, face à elle : sa face avant (le disque, l'arche) reste de face,
+/// et tout ce qui est en profondeur glisse vers ce point. Le tableau de l'arche s'enfonce jusqu'au
+/// plan de la porte ([fond]) ; le battant pivote sur ses gonds, à gauche, vers l'intérieur.
+/// Quand l'œil est dans l'axe, à la hauteur du dessin, on retrouve le symbole livré : arche de
+/// 148, battant de 210 à 353, jour de 353 à 405.
+class VuePorte {
+  VuePorte(this.oeil, double ouverture) {
+    centre = versFond(const Offset(_axePorte, _cintre));
+    rayon = _demiFace * fond;
+    sol = versFond(const Offset(_axePorte, symboleHauteur)).dy;
+    gond = centre.dx - rayon;
+    haut = centre.dy - 37.86;
+    montant = centre + const Offset(47.34, 6.23);
+    // Le battant : large de 198, à 257 de l'œil. S'il cache tout le jour (œil du côté opposé
+    // aux gonds), il s'ouvre davantage : la porte reste la source de la lumière.
+    double a = ouverture, e, x;
+    while (true) {
+      e = _recul / (_recul + _battant * math.sin(a));
+      x = oeil.dx + (gond + _battant * math.cos(a) - oeil.dx) * e;
+      if (montant.dx - x >= 24 || a >= 1.5) break;
+      a += 0.03;
+    }
+    x = cl(x, gond + 6, montant.dx - 6);
+    libreHaut = Offset(x, oeil.dy + (haut - oeil.dy) * e);
+    libreBas = Offset(x, oeil.dy + (sol - oeil.dy) * e);
+    lueur = Offset((x + montant.dx) / 2, centre.dy + 175);
+  }
+
+  /// La profondeur du plan de la porte : ce que mesure, vu de l'œil, une longueur du plan avant.
+  static const double fond = _demiInt / _demiFace;
+
+  /// L'ouverture du battant du symbole livré, en radians, sa largeur et son recul à l'œil.
+  static const double entrouverte = math.pi / 4;
+  static const double _battant = 198, _recul = 257;
+
+  final Offset oeil;
+  late final Offset centre, montant, libreHaut, libreBas, lueur;
+  late final double rayon, sol, gond, haut;
+
+  /// Un point du plan avant, reculé jusqu'au plan de la porte : il glisse vers le point de fuite.
+  Offset versFond(Offset p) => oeil + (p - oeil) * fond;
+
+  /// Le tableau (les deux murs et la voûte) et le fond, sans le seuil : le sol reste la route.
+  Path get murs {
+    final Offset g = versFond(const Offset(_axePorte - _demiFace, symboleHauteur)), d = versFond(const Offset(_axePorte + _demiFace, symboleHauteur));
+    return Path()
+      ..moveTo(_axePorte - _demiFace, symboleHauteur + 0.5)
+      ..lineTo(_axePorte - _demiFace, _cintre)
+      ..arcToPoint(const Offset(_axePorte + _demiFace, _cintre), radius: const Radius.circular(_demiFace))
+      ..lineTo(_axePorte + _demiFace, symboleHauteur + 0.5)
+      ..lineTo(d.dx, d.dy)
+      ..lineTo(g.dx, g.dy)
+      ..close();
+  }
+
+  /// Le seuil : la route qui entre sous l'arche, du plan avant au plan de la porte.
+  List<Offset> get seuil => <Offset>[
+        const Offset(_axePorte - _demiFace, symboleHauteur),
+        const Offset(_axePorte + _demiFace, symboleHauteur),
+        versFond(const Offset(_axePorte + _demiFace, symboleHauteur)),
+        versFond(const Offset(_axePorte - _demiFace, symboleHauteur)),
+      ];
+
+  /// La porte elle-même, dans son plan : une arche posée sur le sol.
+  Path get porte => Path()
+    ..moveTo(centre.dx - rayon, sol)
+    ..lineTo(centre.dx - rayon, centre.dy)
+    ..arcToPoint(Offset(centre.dx + rayon, centre.dy), radius: Radius.circular(rayon))
+    ..lineTo(centre.dx + rayon, sol)
+    ..close();
+
+  /// Le jour : ce que le battant entrouvert laisse voir de la lumière.
+  Path get jour {
+    final Offset coin = Offset.lerp(Offset(gond, haut), libreHaut, 0.174)!;
+    return Path()..addPolygon(<Offset>[montant, coin, libreHaut, libreBas, Offset(gond, sol), Offset(montant.dx, sol)], true);
+  }
+}
 
 enum CadreScene { tel, telPlein, large, largePlein }
 
@@ -113,11 +200,28 @@ class Geo {
     final double glisse = (cx - xProche) * 0.02 * cam + (cadre == CadreScene.tel || cadre == CadreScene.telPlein ? 0 : 0);
     logo = Rect.fromLTWH(cx + glisse - lw * _axePorte / symboleLargeur, bas - symboleHauteur * k, lw, symboleHauteur * k);
     porte = Offset(logo.left + _axePorte * k, logo.bottom);
-    lueur = Offset(logo.left + 379 * k, logo.top + 548 * k);
     Z = cl(tProche / (lw0 * 0.122), 6, 14);
     lnZ = math.log(Z);
     horizon = (porte.dy - yProche / Z) / (1 - 1 / Z);
     H = yProche - horizon;
+    // Le point de fuite de la route : là où sa ligne médiane rejoint l'horizon (profondeur infinie).
+    fuite = Offset(porte.dx - (xProche - porte.dx) / (Z - 1), horizon);
+    // Variante « trois quarts » : l'œil est devant le premier plan (là où Praxis s'arrête) et
+    // regarde droit devant lui ; la route part en biais, et le plan de la porte, qui lui est
+    // perpendiculaire, tourne d'autant. Ses horizontales fuient vers le second point de fuite,
+    // sur le même horizon (les deux points de fuite sont à angle droit pour cet œil).
+    final double biais = xProche - fuite.dx;
+    if (troisQuarts && grand && biais.abs() > 1) {
+      final double focale = champ.height * 0.72, angle = math.atan(biais / focale);
+      _cos = math.cos(angle);
+      _fuite2 = xProche + focale * focale / biais;
+      _fuit = _cos / (_fuite2 - porte.dx);
+    } else {
+      _cos = 1;
+      _fuite2 = double.infinity;
+      _fuit = 0;
+    }
+    lueur = ecran(vue(VuePorte.entrouverte).lueur);
   }
   final Size taille;
   final CadreScene cadre;
@@ -126,7 +230,58 @@ class Geo {
   final Rect carte;
   late final Rect champ, logo;
   late final double tProche, yProche, xProche, k, lw, Z, lnZ, horizon, H, demiLargeur;
-  late final Offset porte, lueur;
+  late final Offset porte, lueur, fuite;
+  late final double _cos, _fuit, _fuite2;
+
+  /// Paramètre interne du peintre : vrai (B, retenu), la porte est vue de trois quarts quand la
+  /// route part en biais, et les traverses de la route fuient avec elle ; faux (A), la porte fait
+  /// face à l'image et les traverses restent horizontales. Pour revenir à A :
+  /// `--dart-define=PORTE_TROIS_QUARTS=false`, ou `defaultValue: false` ici.
+  static const bool troisQuarts = bool.fromEnvironment('PORTE_TROIS_QUARTS', defaultValue: true);
+
+  /// Vrai quand la porte est vue de trois quarts (route en biais, variante B).
+  bool get deBiais => _fuit != 0;
+
+  /// Un point de la traverse qui passe par [c], à l'écart [t] (mesuré de face) : la traverse
+  /// fuit vers le second point de fuite, sur l'horizon, comme les horizontales de la porte.
+  Offset _surTraverse(Offset c, double t) {
+    if (_fuit == 0) return Offset(c.dx + t, c.dy);
+    final double w = 1 + t * _cos / (_fuite2 - c.dx);
+    return Offset(c.dx + t * _cos / w, horizon + (c.dy - horizon) / w);
+  }
+
+  /// Le plan de la porte, tourné autour de son axe vertical : les verticales restent verticales,
+  /// les horizontales fuient sur l'horizon de la route. Sans biais, rien ne bouge.
+  Offset tourner(Offset p) {
+    final double w = 1 + (p.dx - porte.dx) * _fuit;
+    return Offset(porte.dx + (p.dx - porte.dx) * _cos / w, horizon + (p.dy - horizon) / w);
+  }
+
+  /// La même rotation, pour la toile ; nul quand la porte est de face.
+  Matrix4? get rotationPorte {
+    if (_fuit == 0) return null;
+    final double x0 = porte.dx;
+    return Matrix4.identity()
+      ..setEntry(0, 0, x0 * _fuit + _cos)
+      ..setEntry(0, 3, x0 * (1 - _fuit * x0 - _cos))
+      ..setEntry(1, 0, horizon * _fuit)
+      ..setEntry(1, 3, -horizon * _fuit * x0)
+      ..setEntry(3, 0, _fuit)
+      ..setEntry(3, 3, 1 - _fuit * x0);
+  }
+
+  /// Un point du symbole (unités du logo) à l'écran.
+  Offset ecran(Offset p) => tourner(logo.topLeft + p * k);
+
+  /// Un pied de l'arche au sol (bord extérieur, ou intérieur) : là où part la bordure de la route.
+  Offset pied(double cote, {bool interieur = false}) => tourner(Offset(porte.dx + cote * (interieur ? _demiInt : _demiExt) * k, porte.dy));
+
+  /// La porte du logo vue depuis l'œil de la route, le battant ouvert de [ouverture] radians.
+  /// L'œil est le point de fuite, ramené dans le plan de la porte.
+  VuePorte vue(double ouverture) {
+    final double t = fuite.dx - porte.dx;
+    return VuePorte((Offset(porte.dx + t / (_cos - t * _fuit), horizon) - logo.topLeft) / k, ouverture);
+  }
 
   bool get plein => cadre == CadreScene.telPlein || cadre == CadreScene.largePlein;
   bool get grand => cadre == CadreScene.large || cadre == CadreScene.largePlein;
@@ -138,7 +293,8 @@ class Geo {
   /// Un point du sol : profondeur z, écart en travers (en largeurs de Praxis).
   Offset solZ(double z, [double travers = 0]) {
     final double e = 1 / z, u = (e - 1 / Z) / (1 - 1 / Z);
-    return Offset(porte.dx + (xProche - porte.dx) * u + travers * tProche * e, horizon + H * e);
+    final Offset c = Offset(porte.dx + (xProche - porte.dx) * u, horizon + H * e);
+    return travers == 0 ? c : _surTraverse(c, travers * tProche * e);
   }
 
   Offset sol(double q, [double travers = 0]) => solZ(z(q), travers);
@@ -154,7 +310,20 @@ class Geo {
   }
 
   /// Un point de la route : f vaut -1 et 1 sur les bords (extérieurs, ou intérieurs).
-  Offset route(double z, double f, {bool interieur = false}) => solZ(z) + Offset(f * demiRoute(z, interieur: interieur), 0);
+  /// Chaque bord est la droite qui joint le pied de l'arche au premier plan ; de biais, la
+  /// traverse qui passe par la ligne médiane fuit vers le second point de fuite et coupe ce bord.
+  Offset route(double z, double f, {bool interieur = false}) {
+    final Offset c = solZ(z);
+    if (f == 0) return c;
+    final double cote = f.sign;
+    if (_fuit == 0) return Offset(c.dx + f * demiRoute(z, interieur: interieur), c.dy);
+    final Offset p = pied(cote, interieur: interieur), b = Offset(xProche + cote * tProche * demiLargeur * (interieur ? 0.92 : 1), yProche) - p;
+    final Offset d = Offset(_fuite2 - c.dx, horizon - c.dy);
+    final double det = d.dx * b.dy - d.dy * b.dx;
+    if (det.abs() < 1e-9) return c;
+    final double r = ((p.dx - c.dx) * b.dy - (p.dy - c.dy) * b.dx) / det;
+    return c + d * (r * f.abs());
+  }
   double largeur(double q) => tProche / z(q);
 }
 
@@ -212,6 +381,10 @@ class Theatre extends ChangeNotifier {
 
   /// La lumière de la porte : son niveau, avec une respiration lente et continue.
   double get lum => math.max(0, eclat.x) * (reduit ? 1 : 1 + 0.045 * math.sin(temps * 1.25) + 0.022 * math.sin(temps * 0.83 + 1.7));
+
+  /// L'ouverture du battant : il pivote sur ses gonds avec la lumière (presque clos quand la
+  /// porte s'éteint, un peu plus ouvert quand elle éclate). Sans la respiration : il ne bat pas.
+  double get ouverture => VuePorte.entrouverte + 0.30 * cl(eclat.x - 1, -0.75, 0.42);
 
   /// Avance du temps réel écoulé depuis la dernière image, par sous-pas de 1/120 s.
   /// Le rattrapage est borné : après un long gel, on ne rejoue pas plus d'un quart de seconde.
@@ -647,12 +820,13 @@ class DecorPeintre extends CustomPainter {
     // 2. L'aura derrière le logo : un seul dégradé, gaussien.
     Atelier.etaler(c, Atelier.aura, g.lueur, g.lw * 1.75, g.lw * 1.75, cl(0.10 + 0.9 * lum));
     // 3. La route : deux bords droits qui convergent vers la porte ; elle se fond dans la lumière au loin.
-    final double zNear = math.max(0.2, H / (ch.bottom + 60 - hz));
-    final double yPied = g.logo.top + _piedArche * g.k;
+    // De biais, les traverses penchent : la route se prolonge plus bas pour couvrir tout le champ.
+    final double zNear = math.max(g.deBiais ? 0.1 : 0.2, H / (ch.bottom + 60 - hz) * (g.deBiais ? 0.45 : 1));
+    final VuePorte vue = g.vue(th.ouverture);
     final Path route = Path()
-      ..addPolygon(<Offset>[g.route(g.Z, -1), g.route(g.Z, 1), g.route(zNear, 1), g.route(zNear, -1)], true)
-      // Sous le disque, entre les deux pieds de l'arche : le seuil, déjà de la route.
-      ..addRect(Rect.fromLTRB(g.porte.dx - _demiExt * g.k, yPied, g.porte.dx + _demiExt * g.k, g.porte.dy + 0.5));
+      ..addPolygon(<Offset>[g.pied(-1), g.pied(1), g.route(zNear, 1), g.route(zNear, -1)], true)
+      // Sous l'arche : le seuil, la route qui continue jusqu'au plan de la porte, vers le point de fuite.
+      ..addPolygon(<Offset>[for (final Offset p in vue.seuil) g.ecran(p) + Offset(0, p.dy == symboleHauteur ? 0.5 : -0.5)], true);
     c.save();
     c.translate(0, hz);
     c.scale(1, H);
@@ -673,7 +847,7 @@ class DecorPeintre extends CustomPainter {
     for (int i = n - 1; i >= 0; i--) {
       final double za = Theatre.zDepart + i * Theatre.zPas, zb = za + Theatre.zPas * 0.93;
       final double ya = hz + H / za, yb = hz + H / zb;
-      if (yb > ch.bottom + 2 || ya - yb < 0.6) continue;
+      if (yb > ch.bottom + (g.deBiais ? ch.height * 0.5 : 2) || ya - yb < 0.6) continue;
       final double loin = lisse2(1.5, g.Z, (za + zb) / 2);
       final double lit = cl(th.dalles[i].x, 0, 1.25);
       final Color base = melange(dalle, brume, loin * 0.85).withValues(alpha: 1 - 0.7 * loin * loin);
@@ -711,44 +885,75 @@ class DecorPeintre extends CustomPainter {
       }
     }
     // 5. La nappe de lumière au sol, puis son reflet sur les dalles, devant la porte.
-    final double ry = H * 0.66;
-    Atelier.etaler(c, Atelier.nappe, g.porte + Offset(0, ry * 0.9), g.lw * 2.0, ry, cl(lum * (T.s ? 0.9 : 1)));
+    // Elle tombe dans l'axe de la route : la nappe est couchée le long de sa ligne médiane.
+    final double ry = H * 0.66, penche = (g.xProche - g.porte.dx) / (g.yProche - g.porte.dy);
+    void dansLAxe(VoidCallback peindre) {
+      c.save();
+      c.translate(g.porte.dx, g.porte.dy);
+      c.skew(penche, 0);
+      c.translate(-g.porte.dx, -g.porte.dy);
+      peindre();
+      c.restore();
+    }
+
+    dansLAxe(() => Atelier.etaler(c, Atelier.nappe, g.porte + Offset(0, ry * 0.9), g.lw * 2.0, ry, cl(lum * (T.s ? 0.9 : 1))));
     c.save();
     c.clipPath(route);
     final double ry2 = H * 0.46;
-    Atelier.etaler(c, Atelier.nappe, g.porte + Offset(0, ry2 * 0.9), g.lw * 0.34, ry2, cl(lum * 0.7));
+    dansLAxe(() => Atelier.etaler(c, Atelier.nappe, g.porte + Offset(0, ry2 * 0.9), g.lw * 0.34, ry2, cl(lum * 0.7)));
     c.restore();
     // 6. L'ombre de Praxis : portée (vers nous, à l'opposé de la porte) et de contact.
     _ombres(c, g, lum);
-    // 7. La porte : la lumière derrière les jours du logo, le symbole, puis la surexposition.
-    c.save();
-    c.translate(g.logo.left, g.logo.top);
-    c.scale(g.k);
+    // 7. La porte, debout au bout de la route et vue du même œil : le disque de face, la face
+    // de l'arche, son tableau qui fuit vers le point de fuite, la porte au fond, le battant sur
+    // ses gonds, et la lumière dans le jour.
     final Color jourCoeur = melange(Teinte.cielHorizon, Teinte.coeur, cl(0.2 + 0.8 * lum));
     final Color jourBord = melange(jourCoeur, Teinte.logo, 0.14);
+    c.save();
+    final Matrix4? rotation = g.rotationPorte;
+    if (rotation != null) c.transform(rotation.storage);
+    c.translate(g.logo.left, g.logo.top);
+    c.scale(g.k);
+    final ui.Shader jour = ui.Gradient.radial(vue.lueur, 380, <Color>[jourCoeur, jourCoeur, jourBord], const <double>[0, 0.34, 1]);
+    c.save();
+    c.clipPath(_ouvertureDisque);
+    // La face de l'arche, plate, dans le plan du disque (elle passe d'une unité sous le tableau :
+    // aucune couture) ; puis, sur le seuil, le pied des bordures qui filent jusqu'à la porte.
+    _plein
+      ..shader = null
+      ..color = jourBord;
+    c.drawPath(_faceArche, _plein);
+    for (final double cote in const <double>[-1, 1]) {
+      final Offset a = Offset(_axePorte + cote * _demiInt, symboleHauteur + 0.5), b = Offset(_axePorte + cote * _demiFace, symboleHauteur + 0.5);
+      c.drawPath(Path()..addPolygon(<Offset>[a, b, vue.versFond(b), vue.versFond(a)], true), _plein);
+    }
+    // Le tableau : les murs et la voûte, éclairés par la porte.
+    c.clipPath(_ouvertureTableau);
+    c.clipPath(vue.murs);
     _plein
       ..color = T.noir
-      ..shader = ui.Gradient.radial(const Offset(379, 548), 380, <Color>[jourCoeur, jourCoeur, jourBord], const <double>[0, 0.34, 1]);
-    c.drawPath(_jourArche, _plein);
+      ..shader = jour;
+    c.drawPaint(_plein);
+    // La porte, au fond ; puis le jour que laisse le battant.
+    c.clipPath(vue.porte);
     _plein
       ..shader = null
       ..color = Teinte.logo;
-    for (final Path p in symbole) {
-      c.drawPath(p, _plein);
-    }
+    c.drawPaint(_plein);
+    _plein
+      ..color = T.noir
+      ..shader = jour;
+    c.drawPath(vue.jour, _plein);
     c.restore();
-    // Les deux pieds de l'arche descendent au sol, puis filent le long de la route : une seule
-    // ligne, de la clé de l'arche jusqu'au bord de l'écran.
+    _plein
+      ..shader = null
+      ..color = Teinte.logo;
+    c.drawPath(symbole[1], _plein);
+    c.restore();
+    // Les deux pieds de l'arche touchent le sol, et les bordures de la route partent de là : une
+    // seule ligne, du fond du tableau jusqu'au bord de l'écran.
     for (final double cote in const <double>[-1, 1]) {
-      final double xe = g.porte.dx + cote * _demiExt * g.k, xi = g.porte.dx + cote * _demiInt * g.k;
-      final Path bordure = Path()
-        ..moveTo(xe, yPied - 1)
-        ..lineTo(xe, g.porte.dy)
-        ..lineTo(g.route(zNear, cote).dx, g.route(zNear, cote).dy)
-        ..lineTo(g.route(zNear, cote, interieur: true).dx, g.route(zNear, cote, interieur: true).dy)
-        ..lineTo(xi, g.porte.dy)
-        ..lineTo(xi, yPied - 1)
-        ..close();
+      final Path bordure = Path()..addPolygon(<Offset>[g.pied(cote), g.route(zNear, cote), g.route(zNear, cote, interieur: true), g.pied(cote, interieur: true)], true);
       _plein
         ..shader = null
         ..color = jourBord;
@@ -821,12 +1026,13 @@ class DecorPeintre extends CustomPainter {
         final double z = z0 - t * longueur;
         if (z < 0.3) break;
         final double ecart = (g.Z - z) / depuisPorte;
-        final Offset o = g.solZ(z, px.lat.x * ecart);
-        final double demi = 0.43 * math.min(2.4, ecart) * g.tProche / z * (1 + 0.5 * t);
-        pos[k * 4] = o.dx - demi;
-        pos[k * 4 + 1] = o.dy;
-        pos[k * 4 + 2] = o.dx + demi;
-        pos[k * 4 + 3] = o.dy;
+        // Les deux bords de l'ombre suivent la traverse, comme les dalles.
+        final double demi = 0.43 * math.min(2.4, ecart) * (1 + 0.5 * t);
+        final Offset o1 = g.solZ(z, px.lat.x * ecart - demi), o2 = g.solZ(z, px.lat.x * ecart + demi);
+        pos[k * 4] = o1.dx;
+        pos[k * 4 + 1] = o1.dy;
+        pos[k * 4 + 2] = o2.dx;
+        pos[k * 4 + 3] = o2.dy;
         uv[k * 4] = 0;
         uv[k * 4 + 1] = t * Atelier.ombreH;
         uv[k * 4 + 2] = Atelier.ombreL.toDouble();
