@@ -1,11 +1,13 @@
 import 'dart:math' as math;
 
 import 'package:flutter/foundation.dart' show listEquals;
+import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart' show SchedulerBinding;
 import 'package:go_router/go_router.dart';
 
+import '../accessibilite/mode_accessibilite.dart' show EffetsReduits;
 import '../accessibilite/texte_sans_coupure.dart';
 import '../fraicheur/relecture_page.dart';
 import '../router/fil_ariane.dart';
@@ -553,9 +555,9 @@ class PageShell extends StatelessWidget {
                 // [_Bascule] qui mesure la tete et ne la fait defiler que si
                 // elle ne laisse plus au corps une cible tactile.
                 gouttiereDedans: !bordABord,
-                child: _tirable(
-                  relire,
-                  _Bascule(
+                child: TirerPourActualiser(
+                  relire: relire,
+                  child: _Bascule(
                     tirable: relire != null,
                     gouttiere: bordABord ? 0 : gabarit.gouttiere,
                     // SANS-BARRE-FIXE : sur une page defilante, la tete defile
@@ -599,11 +601,147 @@ class PageShell extends StatelessWidget {
   }
 }
 
-/// R3 : [enfant] sous un « tirer pour rafraichir » quand [relire] existe.
-Widget _tirable(Future<void> Function()? relire, Widget enfant) =>
-    relire == null
-    ? enfant
-    : RefreshIndicator(onRefresh: relire, child: enfant);
+/// R3 puis PE-D12 (directeur, 19/11/2026 : « il faut un rafraichissement par
+/// tirer vers le bas, partout ») : le geste « tirer pour actualiser » de toute
+/// page qui defile, pose une fois ici et jamais par un ecran.
+///
+/// - **Au doigt seulement** (et au stylet) : sur ordinateur, ni la souris, ni
+///   le pave tactile, ni le clavier ne declenchent rien ; la page s'y
+///   comporte comme avant.
+/// - **Aux couleurs de la marque** : l'anneau prend l'encre d'accent (violet
+///   en clair, lavande en sombre, jamais le violet sur un fond sombre) sur le
+///   disque des surfaces elevees.
+/// - **Une attente qui se voit** : l'anneau reste au moins
+///   [AppMouvement.reussiteMaintien] apres la relecture, qui rend la main
+///   tout de suite (les lectures se relisent ensuite, en gardant leurs
+///   donnees affichees) ; sans ce maintien, il disparaissait avant d'avoir
+///   ete vu.
+/// - **« Reduire les effets »** (reglage du compte ou du systeme) : aucun
+///   anneau qui tourne ; un anneau fixe dit l'attente, au meme endroit,
+///   le temps de la relecture (le mouvement reduit ne supprime pas
+///   l'information).
+///
+/// [relire] nul (une page montee seule, une page qui porte son propre
+/// defilement) : [child] est rendu tel quel.
+class TirerPourActualiser extends StatefulWidget {
+  /// Pose le geste autour de [child].
+  const TirerPourActualiser({
+    required this.relire,
+    required this.child,
+    super.key,
+  });
+
+  /// La relecture, ou `null` : aucun geste.
+  final Future<void> Function()? relire;
+
+  /// Le contenu qui defile.
+  final Widget child;
+
+  /// La cle de l'anneau fixe des effets reduits (tests).
+  static const Key anneauFixeKey = ValueKey<String>('tirer-anneau-fixe');
+
+  /// Vrai pour un appareil qui tire au doigt (le doigt, le stylet).
+  static bool appareilTactile(PointerDeviceKind? appareil) =>
+      appareil == PointerDeviceKind.touch ||
+      appareil == PointerDeviceKind.stylus ||
+      appareil == PointerDeviceKind.invertedStylus;
+
+  @override
+  State<TirerPourActualiser> createState() => _TirerPourActualiserEtat();
+}
+
+class _TirerPourActualiserEtat extends State<TirerPourActualiser> {
+  /// Le dernier geste de defilement vient-il d'un doigt ?
+  bool _auDoigt = false;
+
+  /// Une relecture est en cours (l'anneau fixe des effets reduits).
+  bool _enCours = false;
+
+  /// Le geste ne s'arme qu'au doigt : chaque debut de glissement dit d'ou il
+  /// vient, et tout ce qui suit en depend.
+  bool _accepte(ScrollNotification avis) {
+    if (avis is ScrollStartNotification) {
+      _auDoigt = TirerPourActualiser.appareilTactile(avis.dragDetails?.kind);
+    }
+    return _auDoigt && defaultScrollNotificationPredicate(avis);
+  }
+
+  Future<void> _actualiser() async {
+    final Future<void> Function()? relire = widget.relire;
+    if (relire == null) return;
+    setState(() => _enCours = true);
+    try {
+      await Future.wait(<Future<void>>[
+        relire(),
+        Future<void>.delayed(AppMouvement.reussiteMaintien),
+      ]);
+    } finally {
+      if (mounted) setState(() => _enCours = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (widget.relire == null) return widget.child;
+    final AppPalette palette = AppPalette.of(context);
+    final Color encre = palette.inkAccent.asBorderSide().color;
+    final Color disque = palette.surfaceRaised.background;
+    final bool reduits =
+        AppMouvement.mouvementReduit(context) || EffetsReduits.de(context);
+    if (!reduits) {
+      return RefreshIndicator(
+        onRefresh: _actualiser,
+        notificationPredicate: _accepte,
+        color: encre,
+        backgroundColor: disque,
+        child: widget.child,
+      );
+    }
+    return Stack(
+      children: <Widget>[
+        RefreshIndicator.noSpinner(
+          onRefresh: _actualiser,
+          notificationPredicate: _accepte,
+          child: widget.child,
+        ),
+        if (_enCours)
+          PositionedDirectional(
+            top: AppSpacing.section,
+            start: 0,
+            end: 0,
+            child: Center(
+              child: Semantics(
+                liveRegion: true,
+                label: MaterialLocalizations.of(context)
+                    .refreshIndicatorSemanticLabel,
+                child: DecoratedBox(
+                  key: TirerPourActualiser.anneauFixeKey,
+                  decoration: BoxDecoration(
+                    color: disque,
+                    shape: BoxShape.circle,
+                    boxShadow: AppElevation.niveau1(palette.ombre),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.sm),
+                    child: SizedBox.square(
+                      dimension: AppSpacing.xxl,
+                      // Un anneau aux trois quarts, immobile : une valeur
+                      // donnee ne lance aucune animation.
+                      child: CircularProgressIndicator(
+                        value: 0.75,
+                        color: encre,
+                        backgroundColor: disque,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
 
 /// Les actions d'en-tete qu'une **coquille de role** pose sur chacune de ses
 /// pages : la cloche des notifications, et, a partir de la tablette, la

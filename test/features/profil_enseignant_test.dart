@@ -596,6 +596,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.byKey(FeuilleLangues.carteKey('Poular')));
       await tester.pumpAndSettle();
+      // PE-D3 : la feuille s'arrete a 90 % de l'ecran ; le bouton, au bout
+      // de la liste des langues, s'atteint en faisant defiler la feuille
+      // (comme celui des pays, plus bas).
+      await tester.ensureVisible(find.byKey(FeuilleLangues.enregistrerKey));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(FeuilleLangues.enregistrerKey));
       await tester.pumpAndSettle();
 
@@ -624,6 +629,11 @@ void main() {
 
       await _taperLigne(tester, t.enseignant.profil.langues);
       expect(find.byKey(FeuilleLangues.carteKey('Français')), findsOneWidget);
+      // PE-D3 : la feuille s'arrete a 90 % de l'ecran ; le bouton, au bout
+      // de la liste des langues, s'atteint en faisant defiler la feuille
+      // (comme celui des pays, plus bas).
+      await tester.ensureVisible(find.byKey(FeuilleLangues.enregistrerKey));
+      await tester.pumpAndSettle();
       await tester.tap(find.byKey(FeuilleLangues.enregistrerKey));
       await tester.pumpAndSettle();
 
