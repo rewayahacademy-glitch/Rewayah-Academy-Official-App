@@ -171,8 +171,14 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb 
           -- PX-3 : six cles de plus, et elles seules (a_une_conversation, attend_direction, complet, jours_sans_activite_candidat,
           -- manquants, pile). Toute autre cle reste rouge.
           <> ARRAY['a_une_conversation', 'attend_direction', 'attente_jours', 'complement_en_cours', 'complet', 'contenu_tiers', 'cote',
-                   'etape', 'etat', 'gestes', 'jours_sans_activite_candidat', 'langue', 'manquants', 'pile', 'reference']),
+                   -- PX-4 (20261130200000) : une cle de plus, et elle seule : `impression`, l'avis de Praxis (ci-dessous).
+                   'etape', 'etat', 'gestes', 'impression', 'jours_sans_activite_candidat', 'langue', 'manquants', 'pile', 'reference']),
   '2 : les cles de chaque ligne sont une liste fermee');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
+    WHERE NOT (jsonb_typeof(l -> 'impression') = 'null'
+               OR (jsonb_typeof(l -> 'impression') = 'object'
+                   AND (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l -> 'impression') k) = ARRAY['confiance', 'etiquette', 'vision']))),
+  '2 (PX-4) : impression est vide, ou un objet a trois cles (etiquette, note de vision, confiance) : aucun texte, aucune donnee de personne');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
     WHERE (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l -> 'contenu_tiers') k) <> ARRAY['prenom']
        OR l ->> 'prenom' IS NOT NULL),

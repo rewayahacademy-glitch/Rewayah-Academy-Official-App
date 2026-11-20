@@ -186,10 +186,40 @@ List<SegmentFil> ancetresFil({
       segments = <SegmentFil>[plan.accueil, ...segments];
     }
   }
-  return <SegmentFil>[
+  final List<SegmentFil> ancetres = <SegmentFil>[
     for (final SegmentFil s in segments)
       if (s.chemin != page) s,
   ];
+  // BUREAU-NAV (contrat §6) : un dossier ouvert depuis une liste porte la file
+  // de cette liste dans son adresse (`depuis=liste`, BE-SUIVANT) ; le maillon
+  // de la liste la rouvre dans l'etat ou on l'a laissee (filtre, tri, page).
+  final Map<String, String> file = _fileDeLAdresse(chemin);
+  if (file.isNotEmpty && ancetres.isNotEmpty) {
+    final SegmentFil liste = ancetres.last;
+    if (liste.chemin case final String cheminListe
+        when page.startsWith('$cheminListe/')) {
+      ancetres[ancetres.length - 1] = SegmentFil(
+        libelle: liste.libelle,
+        chemin: Uri(path: cheminListe, queryParameters: file).toString(),
+      );
+    }
+  }
+  return ancetres;
+}
+
+/// Le filtre, le tri et la page de la liste d'ou vient la page [chemin]
+/// (`?…&depuis=liste`), sans `depuis` ; vide sinon.
+Map<String, String> _fileDeLAdresse(String chemin) {
+  final int i = chemin.indexOf('?');
+  if (i == -1) return const <String, String>{};
+  final Map<String, String> requete;
+  try {
+    requete = Uri.splitQueryString(chemin.substring(i + 1));
+  } on FormatException {
+    return const <String, String>{};
+  }
+  if (requete['depuis'] != 'liste') return const <String, String>{};
+  return <String, String>{...requete}..remove('depuis');
 }
 
 /// Le fil complet d'une page : ses ancetres, puis la page elle-meme
@@ -366,7 +396,10 @@ class ContexteFilAriane extends InheritedWidget {
   if (etat == null) {
     return null;
   }
+  // BUREAU-NAV : le chemin rendu garde sa requete (la file d'ou vient un
+  // dossier, pour le fil) ; la pile se lit sur le seul chemin.
   final String chemin = etat.uri.path;
+  final String adresse = etat.uri.toString();
   // Les ecrans de la pile, du bas vers le haut : la page la plus profonde de
   // la configuration de base, puis chaque page poussee (`push`).
   final List<String> ecrans = <String>[];
@@ -390,14 +423,14 @@ class ContexteFilAriane extends InheritedWidget {
   try {
     parcourir(routeur.routerDelegate.currentConfiguration.matches);
   } on Object {
-    return (chemin: chemin, precedent: null, peutRevenir: false);
+    return (chemin: adresse, precedent: null, peutRevenir: false);
   }
   if (base != null) {
     ecrans.add(base!);
   }
   final int i = ecrans.lastIndexOf(chemin);
   return (
-    chemin: chemin,
+    chemin: adresse,
     precedent: i > 0 ? ecrans[i - 1] : null,
     peutRevenir: i > 0,
   );

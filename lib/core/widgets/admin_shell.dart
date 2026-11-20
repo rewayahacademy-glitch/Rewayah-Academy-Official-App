@@ -1750,9 +1750,19 @@ class _BarreMobileState extends State<_BarreMobile> {
               // il reste dans le menu (tiroir), la cloche reste en haut.
               final bool sansCompte =
                   c.maxWidth < boutons * AppMetriques.of(context).cibleTactile;
+              // BUREAU-NAV (contrat §2) : l'icone des messages reste toujours
+              // dans la barre, compteur a zero compris. Quand meme sans le
+              // compte les cibles ne tiennent pas (320, Interface guidee),
+              // l'icone des alertes cede sa place : le bandeau d'alerte
+              // urgente, en tete de page, y mene deja, et l'Accueil aussi.
+              final bool sansAlertes =
+                  sansCompte &&
+                  c.maxWidth <
+                      (boutons - 1) * AppMetriques.of(context).cibleTactile;
               return _rangee(
                 serre ? const SizedBox.shrink() : Ecart.hSm,
                 compte: !sansCompte,
+                alertes: !sansAlertes,
               );
             },
           ),
@@ -1762,7 +1772,11 @@ class _BarreMobileState extends State<_BarreMobile> {
   }
 
   /// Menu, recherche, cloche et compte, separes par [ecart].
-  Widget _rangee(Widget ecart, {bool compte = true}) => Builder(
+  Widget _rangee(
+    Widget ecart, {
+    bool compte = true,
+    bool alertes = true,
+  }) => Builder(
     builder: (BuildContext context) {
       return Row(
         children: <Widget>[
@@ -1789,7 +1803,7 @@ class _BarreMobileState extends State<_BarreMobile> {
             messages,
             ecart,
           ],
-          if (widget.cloche case final Widget cloche) ...<Widget>[
+          if (widget.cloche case final Widget cloche when alertes) ...<Widget>[
             cloche,
             ecart,
           ],
