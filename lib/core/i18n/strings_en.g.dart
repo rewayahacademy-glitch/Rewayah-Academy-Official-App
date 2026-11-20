@@ -41253,12 +41253,12 @@ extension on TraductionsEn {
 			'admissions.contactMessage' => 'Message',
 			'admissions.contactEnvoyer' => 'Send the message',
 			'admissions.annulerRefus' => 'Undo the refusal',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.annulerRefusDetail' => 'The refusal can be undone for seven days: the request returns to "to handle". The person does not receive an email.',
 			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'The acceptance of ${deNom}\'s request is undone.',
 			'admissions.annulerAcceptationConsequence' => 'Their account goes back to pending straight away.',
 			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'Undo ${deNom}\'s acceptance?',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.annulerAcceptationDetail' => 'The acceptance can be undone for seven days, as long as no child of the request is in a class. The request returns to "to handle" and the account goes back to pending; the children\'s profiles are set aside, never erased. The person does not receive an email: write to them if needed.',
 			'admissions.annulerAcceptation' => 'Undo the acceptance',
 			'admissions.retour' => 'Back to the request',
@@ -41767,12 +41767,12 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'The preparation is not confirmed. Try again with the same address: you will get the same code.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'This application no longer awaits a link: it changed in the meantime. Close, then read it again.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'This person already has an address: their code goes out with the sending of personal codes.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Enter the email address the person will use.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'This address does not look like an email address. Check it.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'An account already exists at this address: the person can sign in with it.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseUtilisee' => 'Another person already uses this address. Ask for an address that belongs to them alone.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.desinscrit' => 'This address asked to stop receiving recruitment messages.',
 			'candidatsFlux.invitationsPersonnelles.lien' => 'Send the personal codes',
 			'candidatsFlux.invitationsPersonnelles.titre' => 'Personal codes for imported candidates',
@@ -42281,12 +42281,12 @@ extension on TraductionsEn {
 			'calendrier.pauses.refus.inconnu' => 'The decision is not confirmed: the request may not have reached Rewayah. Try again in a moment.',
 			'pause.titre' => 'Class breaks',
 			'pause.entree' => 'Request a one-month break',
+			_ => null,
+		} ?? switch (path) {
 			'pause.sousTitre' => ({required Object dePrenom}) => '${dePrenom}\'s break',
 			'pause.indisponible' => 'The breaks could not be opened: the request may not have reached Rewayah. Try again in a moment.',
 			'pause.erreur' => 'The breaks could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
 			'pause.regleTitre' => 'The rule',
-			_ => null,
-		} ?? switch (path) {
 			'pause.regle.moisEntier' => 'A break lasts a whole calendar month, from the first to the last day of the month.',
 			'pause.regle.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'You request it at least ${jours} day before the start of the month.', other: 'You request it at least ${jours} days before the start of the month.', ), 
 			'pause.regle.plafond' => ({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(delai, one: 'Up to ${mois} months of break within ${fenetre} months. Beyond that, the management decides and replies within ${delai} day.', other: 'Up to ${mois} months of break within ${fenetre} months. Beyond that, the management decides and replies within ${delai} days.', ), 

@@ -311,7 +311,7 @@ SELECT pg_temp.vrai(
 INSERT INTO auth.users (id, email, email_confirmed_at)
 VALUES (pg_temp.p('c1'), 'inv-rep01@test.invalid', clock_timestamp());
 SELECT pg_temp.garde('arrivee', pg_temp.en(pg_temp.p('c1'), NULL, pg_catalog.format(
-  $q$SELECT public.inscrire_candidat(%L, 'Essai', 'Invite', 'male', '+966500000701', 'fr', '2026-11-v1')$q$,
+  $q$SELECT public.inscrire_candidat(%L, 'Essai', 'Invite', 'male', '+966500000701', 'fr', '2026-11-v2')$q$,
   (pg_temp.file('02', 1)).donnees ->> 'code')));
 SELECT pg_temp.vrai(
   pg_temp.lu('arrivee') = '{"resultat": "acceptee"}'::jsonb
@@ -355,7 +355,7 @@ INSERT INTO auth.users (id, email, email_confirmed_at)
 VALUES (pg_temp.p('c2'), 'inv-rep12@test.invalid', clock_timestamp());
 SELECT pg_temp.vrai(
   pg_temp.en(pg_temp.p('c2'), NULL, pg_catalog.format(
-    $q$SELECT public.inscrire_candidat(%L, 'Essai', 'Distincte', 'male', '+966500000712', 'fr', '2026-11-v1')$q$,
+    $q$SELECT public.inscrire_candidat(%L, 'Essai', 'Distincte', 'male', '+966500000712', 'fr', '2026-11-v2')$q$,
     (pg_temp.file('12', 1)).donnees ->> 'code')) = '{"resultat": "acceptee"}'::jsonb
   AND (SELECT bool_and(r.candidature_id IS NULL) FROM public.formulaires_reponses r
         WHERE r.id IN (pg_temp.r('12'), pg_temp.r('13'))),
@@ -461,7 +461,7 @@ SELECT pg_temp.vrai(
 INSERT INTO auth.users (id, email, email_confirmed_at)
 VALUES (pg_temp.p('c4'), 'saisie-quatre@test.invalid', clock_timestamp());
 SELECT pg_temp.garde('arrivee4', pg_temp.en(pg_temp.p('c4'), NULL, pg_catalog.format(
-  $q$SELECT public.inscrire_candidat(%L, 'Essai', 'Quatre', 'male', '+33600000004', 'fr', '2026-11-v1')$q$,
+  $q$SELECT public.inscrire_candidat(%L, 'Essai', 'Quatre', 'male', '+33600000004', 'fr', '2026-11-v2')$q$,
   pg_temp.lu('lien1') ->> 'code')));
 SELECT pg_temp.vrai(
   pg_temp.lu('arrivee4') = '{"resultat": "acceptee"}'::jsonb

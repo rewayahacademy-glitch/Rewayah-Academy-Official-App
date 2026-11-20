@@ -69010,12 +69010,12 @@ extension on Traductions {
 			'admissions.contactMessage' => 'Message',
 			'admissions.contactEnvoyer' => 'Envoyer le message',
 			'admissions.annulerRefus' => 'Annuler le refus',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.annulerRefusDetail' => 'Le refus s\'annule pendant sept jours : la demande revient « à traiter ». La personne ne reçoit pas d\'e‑mail.',
 			'admissions.faitAcceptationAnnulee' => ({required Object deNom}) => 'L\'acceptation de la demande ${deNom} est annulée.',
 			'admissions.annulerAcceptationConsequence' => 'Son compte repasse en attente tout de suite.',
 			'admissions.annulerAcceptationQuestion' => ({required Object deNom}) => 'Annuler l\'acceptation ${deNom} ?',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.annulerAcceptationDetail' => 'L\'acceptation s\'annule pendant sept jours, tant qu\'aucun enfant de la demande n\'est dans une classe. La demande revient « à traiter » et le compte repasse en attente ; les profils des enfants sont mis de côté, jamais effacés. La personne ne reçoit pas d\'e‑mail : écrivez-lui si besoin.',
 			'admissions.annulerAcceptation' => 'Annuler l\'acceptation',
 			'admissions.retour' => 'Revenir à la demande',
@@ -69524,12 +69524,12 @@ extension on Traductions {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.nonConfirme' => 'La préparation n\'est pas confirmée. Réessayez avec la même adresse : vous retrouverez le même code.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.ligneIntrouvable' => 'Cette candidature n\'attend plus de lien : elle a changé entre-temps. Fermez, puis relisez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseConnue' => 'Cette personne a déjà une adresse : son code part avec l\'envoi des codes personnels.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseRequise' => 'Saisissez l\'adresse e-mail que la personne utilisera.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.emailInvalide' => 'Cette adresse n\'a pas la forme d\'une adresse e-mail. Vérifiez-la.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.dejaInscrit' => 'Un compte existe déjà à cette adresse : la personne peut se connecter avec elle.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.adresseUtilisee' => 'Une autre personne porte déjà cette adresse. Demandez une adresse qui soit à elle seule.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.refus.desinscrit' => 'Cette adresse a demandé à ne plus recevoir les messages du recrutement.',
 			'candidatsFlux.invitationsPersonnelles.lien' => 'Envoyer les codes personnels',
 			'candidatsFlux.invitationsPersonnelles.titre' => 'Codes personnels des candidats importés',
@@ -70038,12 +70038,12 @@ extension on Traductions {
 			'calendrier.pauses.refus.inconnu' => 'La décision n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'pause.titre' => 'Pause des cours',
 			'pause.entree' => 'Demander une pause d\'un mois',
+			_ => null,
+		} ?? switch (path) {
 			'pause.sousTitre' => ({required Object dePrenom}) => 'Pause ${dePrenom}',
 			'pause.indisponible' => 'Les pauses n\'ont pas pu être ouvertes : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'pause.erreur' => 'Les pauses n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'pause.regleTitre' => 'La règle',
-			_ => null,
-		} ?? switch (path) {
 			'pause.regle.moisEntier' => 'Une pause dure un mois civil entier, du premier au dernier jour du mois.',
 			'pause.regle.preavis' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(jours, one: 'Vous la demandez au moins ${jours} jour avant le début du mois.', other: 'Vous la demandez au moins ${jours} jours avant le début du mois.', ), 
 			'pause.regle.plafond' => ({required num delai, required Object mois, required Object fenetre}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(delai, one: 'Jusqu\'à ${mois} mois de pause sur ${fenetre} mois. Au-delà, la direction décide et répond sous ${delai} jour.', other: 'Jusqu\'à ${mois} mois de pause sur ${fenetre} mois. Au-delà, la direction décide et répond sous ${delai} jours.', ), 
