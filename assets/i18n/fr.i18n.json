@@ -1293,7 +1293,13 @@
     "controle": {
       "libelle": "Vérification de sécurité",
       "chargement": "Vérification de sécurité en cours.",
-      "erreur": "La vérification n'a pas abouti. Réessayez.",
+      "erreur": "La vérification de sécurité n'a pas abouti. Touchez « Réessayer » ; si elle échoue encore, rechargez la page.",
+      "erreurNavigateur": "La vérification de sécurité ne passe pas dans ce navigateur. Ouvrez la page dans Chrome ou Safari (pas dans une application de messagerie), coupez un éventuel bloqueur de publicité, puis touchez « Réessayer ».",
+      "erreurHorloge": "La vérification de sécurité refuse l'heure de votre appareil. Réglez la date et l'heure sur « automatique », puis touchez « Réessayer ».",
+      "erreurReglage": "La vérification de sécurité ne fonctionne pas pour l'instant, à cause d'un réglage de notre côté. Réessayez plus tard.",
+      "refuse": "La vérification de sécurité n'a pas été acceptée. Touchez de nouveau le bouton dans quelques secondes ; si cela recommence, rechargez la page.",
+      "autreCheminGoogle": "Vous pouvez aussi continuer avec Google : ce chemin ne passe pas par cette vérification.",
+      "rechargerPage": "Recharger la page",
       "horsLigne": "La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue."
     },
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
