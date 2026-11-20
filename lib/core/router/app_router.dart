@@ -3882,17 +3882,19 @@ class _CoquilleAdmin extends ConsumerWidget {
         false;
 
     // BUREAU-NAV (contrat §4) : la touche retour du systeme fait comme la
-    // fleche. Sur une page empilee, le navigateur la retire ; au bas de la
-    // pile (lien direct, rechargement, onglet), le parent logique au lieu de
-    // quitter l'application ; sur l'Accueil, rien ne change (au telephone, on
-    // quitte).
-    final bool baseDeLaPile = !(ModalRoute.of(context)?.canPop ?? false);
-    final bool retourRetenu =
-        baseDeLaPile && !(domaine == AdminDomaine.accueil && !sousPage);
-    return PopScope(
-      canPop: !retourRetenu,
-      onPopInvokedWithResult: (bool fait, Object? _) {
-        if (!fait && retourRetenu) retourBureau(context);
+    // fleche. Ce qui est le plus proche se ferme d'abord (une boite, le detail
+    // d'une liste, une page empilee : le navigateur et les `PopScope` des
+    // pages decident) ; seulement quand rien ne s'est ferme (bas de la pile :
+    // lien direct, rechargement, onglet), le parent logique au lieu de
+    // quitter. Sur l'Accueil, rien ne change (au telephone, on quitte).
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        if (domaine == AdminDomaine.accueil && !sousPage) return false;
+        if (!(ModalRoute.of(context)?.isCurrent ?? true)) return false;
+        if (await Navigator.of(context).maybePop()) return true;
+        if (!context.mounted) return true;
+        retourBureau(context);
+        return true;
       },
       child: RaccourciRecherche(
         actif: rechercheServie && !associe,
