@@ -269,11 +269,13 @@ DetailCandidature detailTest({
   bool complementEnCours = false,
   List<String>? gestes,
   MajoriteCandidature majorite = MajoriteCandidature.nonServie,
+  String? nomLatin,
 }) => DetailCandidature(
   ligne: LigneCandidature(
     id: id,
     reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
     nomComplet: nom,
+    nomLatin: nomLatin,
     type: 'enseignant',
     etape: etape,
     etat: etat,
