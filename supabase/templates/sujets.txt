@@ -1,0 +1,20 @@
+# Sujets des e-mails Supabase Auth, une ligne par message (PE-A1, 20/11/2026).
+# Ecrit par supabase/templates/generer.ts : ne pas modifier a la main.
+
+[magic_link]
+{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}{{ if eq $l "en" }}Your sign-in link for Rewayah Academy{{ else if eq $l "ar" }}رابط تسجيل دخولك إلى Rewayah Academy{{ else if eq $l "es" }}Su enlace de acceso a Rewayah Academy{{ else if eq $l "pt" }}A sua ligação de acesso à Rewayah Academy{{ else }}Votre lien de connexion à Rewayah Academy{{ end }}
+
+[confirmation]
+{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}{{ if eq $l "en" }}Confirm your e-mail address{{ else if eq $l "ar" }}أكّد عنوان بريدك الإلكتروني{{ else if eq $l "es" }}Confirme su dirección de correo electrónico{{ else if eq $l "pt" }}Confirme o seu endereço de e-mail{{ else }}Confirmez votre adresse e-mail{{ end }}
+
+[invite]
+{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}{{ if eq $l "en" }}Your access to Rewayah Academy{{ else if eq $l "ar" }}دخولك إلى Rewayah Academy{{ else if eq $l "es" }}Su acceso a Rewayah Academy{{ else if eq $l "pt" }}O seu acesso à Rewayah Academy{{ else }}Votre accès à Rewayah Academy{{ end }}
+
+[recovery]
+{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}{{ if eq $l "en" }}Choose a new password{{ else if eq $l "ar" }}اختيار كلمة مرور جديدة{{ else if eq $l "es" }}Elija una nueva contraseña{{ else if eq $l "pt" }}Escolha uma nova palavra-passe{{ else }}Choisir un nouveau mot de passe{{ end }}
+
+[email_change]
+{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}{{ if eq $l "en" }}Confirm your new e-mail address{{ else if eq $l "ar" }}أكّد عنوان بريدك الإلكتروني الجديد{{ else if eq $l "es" }}Confirme su nueva dirección de correo electrónico{{ else if eq $l "pt" }}Confirme o seu novo endereço de e-mail{{ else }}Confirmez votre nouvelle adresse e-mail{{ end }}
+
+[reauthentication]
+{{ $l := "" }}{{ if .Data }}{{ $l = printf "%v" .Data.langue }}{{ end }}{{ if eq $l "en" }}Your verification code{{ else if eq $l "ar" }}رمز التحقق الخاص بك{{ else if eq $l "es" }}Su código de verificación{{ else if eq $l "pt" }}O seu código de verificação{{ else }}Votre code de vérification{{ end }}

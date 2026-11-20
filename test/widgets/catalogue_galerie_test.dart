@@ -279,6 +279,9 @@ const List<String> composantsDuCatalogue = <String>[
   // pour confirmer » des accords et des contrats (PLAN-TROIS-SALLES §2),
   // partagee par deux features (dossier, recrutement).
   'LireJusquEnBas',
+  // PE-A8 (20/11/2026, PR 660) : la proposition d'adresse sous un champ
+  // d'adresse (connexion, questionnaire des familles).
+  'PropositionCourriel',
 ];
 
 /// Les trois largeurs de `docs/archive/2026-09-pre-remise-a-plat/design/05-regles-responsive.md` section 8.

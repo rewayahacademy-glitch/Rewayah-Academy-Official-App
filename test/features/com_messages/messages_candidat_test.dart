@@ -362,10 +362,14 @@ void main() {
       );
     });
 
+    // PE-D1 (relecture de la PR 657) : la regle K-59 n'est pas elargie. Un
+    // refus dont le sens n'est pas connu reste un echec ordinaire, avec
+    // « Reessayer » (42501 est desormais un refus connu, dit par sa phrase :
+    // `messages_metier_supabase_fiable_test.dart`).
     test('tout autre refus reste un echec ordinaire', () async {
       final MessagesMetierSupabase p = adaptateur(
         (String f, Map<String, dynamic> a) async =>
-            throw const PostgrestException(message: 'refus', code: '42501'),
+            throw const PostgrestException(message: 'refus', code: 'P0001'),
       );
       await expectLater(
         p.envoyer(fil, 'Bonjour', 'cle-1'),

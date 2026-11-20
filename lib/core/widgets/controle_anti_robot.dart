@@ -115,7 +115,9 @@ class _ControleAntiRobotState extends State<ControleAntiRobot> {
                   // La case garde une place minime tant qu'elle est cachee : le
                   // widget de Cloudflare doit rester dans la page pour travailler.
                   // Sur la largeur du champ (taille `flexible` de Cloudflare, 300
-                  // au moins).
+                  // au moins) : l'element HTML est en bloc et rogne a cette
+                  // place (`styleHoteTurnstile`, PE-CASE-VERIFICATION) ; il ne
+                  // deborde plus sur le bouton quand la place se referme.
                   //
                   // PE-A5 (20/11/2026) : JAMAIS d'opacite nulle ici. Flutter ne
                   // peint pas l'enfant d'une opacite 0 (`RenderAnimatedOpacity`,

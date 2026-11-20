@@ -4,6 +4,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/communications/communications_supabase.dart';
+import 'package:rewayah_academy/core/widgets/fil_discussion.dart'
+    show EnvoiRefuse;
 import 'package:rewayah_academy/features/com_annonces/annonces_supabase.dart';
 import 'package:rewayah_academy/features/com_annonces/port_annonces.dart';
 import 'package:rewayah_academy/features/com_messages/messages_metier_supabase.dart';
@@ -107,7 +109,8 @@ void main() {
       expect(fil.messages.single.auteur.nomAffiche, 'Administration');
       expect(fil.messages.single.envoyeLe, DateTime.utc(2026, 10, 16, 8));
       expect(fil.attention.nonLus, 2);
-      expect(faux.appels.single.$1, 'com_lire_fil');
+      // PE-D1 : le fil se lit par sa page la plus recente.
+      expect(faux.appels.single.$1, 'com_lire_fil_page');
     });
 
     test('fil refuse ou identifiant non uuid : null', () async {
@@ -272,9 +275,11 @@ void main() {
         expect(estUuid(k1! as String), isTrue);
         expect(faux.appels[0].$2['p_texte'], 'Salam');
         faux.erreur = const PostgrestException(message: 'x', code: '42501');
+        // PE-D1 : le refus est propage par sa vraie phrase (EnvoiRefuse),
+        // jamais reessaye.
         expect(
           port.envoyer(_fil, 'Salam', 'cle-ecran-2'),
-          throwsA(isA<PostgrestException>()),
+          throwsA(isA<EnvoiRefuse>()),
         );
       },
     );

@@ -183,6 +183,39 @@ void main() {
       // La case garde une place (un point), donc elle est peinte.
       expect(tester.getSize(rendu).height, greaterThan(0));
     });
+
+    // PE-CASE-VERIFICATION (20/11/2026) : la case avait 300 de large sous un
+    // champ de 358 (390 de large), et « Succes ! » recouvrait le bouton.
+    testWidgets('la place de la case a la largeur exacte du champ', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        page: const ConnexionPage(),
+        cle: const _Cle('0xCleDuSite'),
+        fabrique: () => _ControleurJetons(rendre: false),
+      );
+      final Rect champ = tester.getRect(find.byType(TextField).first);
+      final Rect place = tester.getRect(find.byType(RenduTurnstile));
+      expect(place.width, champ.width);
+      expect(place.left, champ.left);
+    });
+
+    test('l element HTML : en bloc, rogne a sa place, jamais retire', () {
+      final String style = styleHoteTurnstile(rayon: 12);
+      // En bloc : la taille `flexible` de Cloudflare prend toute la largeur.
+      expect(style, contains('display:block'));
+      expect(style, isNot(contains('flex')));
+      expect(style, isNot(contains('justify-content')));
+      expect(style, contains('width:100%'));
+      // Rogne : rien ne deborde sur le bouton et les liens du dessous.
+      expect(style, contains('overflow:hidden'));
+      expect(style, contains('border-radius:12px'));
+      // Jamais retire de la page : la verification ne tournerait plus.
+      expect(style, isNot(contains('opacity')));
+      expect(style, isNot(contains('visibility')));
+      expect(style, isNot(contains('display:none')));
+    });
   });
 
   group('la sortie de secours', () {

@@ -1227,6 +1227,29 @@
     "cadreNonPublie": "Sending your application will be possible once the religious and educational framework is published."
   },
   "connexion": {
+    "praxis": {
+      "scene": "Praxis welcomes you at the door of the academy",
+      "bonjour": "Hello, welcome.",
+      "adresseEtPorte": "Your address, and I open the door for you.",
+      "parfait": "Perfect.",
+      "adresse": "The @ is missing from the address.",
+      "adresseIncomplete": "This address is not complete.",
+      "envoi": "I am sending your link.",
+      "envoye": "It is on its way. Check your email.",
+      "attenteLongue": "Still nothing? I can send it again.",
+      "tropEssais": "Too many requests at once. A short break.",
+      "horsLigne": "No Internet connection.",
+      "retourLigne": "The connection is back.",
+      "reseauLent": "This is taking a little while. I keep sending.",
+      "serveur": "It is not you, it is us.",
+      "googleOuverte": "Choose your Google account.",
+      "googleRefuse": "This account has no invitation yet.",
+      "session": "Your session has ended. Shall we sign in again?",
+      "toucherOui": "Yes?",
+      "toucherChatouille": "That tickles!",
+      "toucherLa": "I am here",
+      "toucherBonjour": "Hello!"
+    },
     "candidat": {
       "titre": "Your teacher application",
       "phrase": "You are arriving through Rewayah Academy's invitation. Your application is waiting: enter the address that received this email, and we will send your sign-in link there."
@@ -1253,6 +1276,7 @@
     "courrielIndice": "you@example.com",
     "motDePasseDemo": "Demo password",
     "envoyerLien": "Get the link",
+    "envoiEnCours": "Sending the link…",
     "entrerDemo": "Enter the demo",
     "introDemo": "Demo mode: no link will be sent. You go straight in, without email.",
     "essayerDemo": "Try the demo",
@@ -1534,7 +1558,8 @@
       "libelle": "Your name in Latin letters",
       "raison": "For lists, certificates and exchanges with the academy.",
       "aide": "Here is our suggestion. Correct it if your name is not written this way.",
-      "erreur": "Write your name using Latin alphabet letters (a, b, c) to continue."
+      "erreur": "Write your name using Latin alphabet letters (a, b, c) to continue.",
+      "court": "Name in Latin letters"
     }
   },
   "protectionEnfants": {
@@ -1833,7 +1858,12 @@
     "photoFormat": "This file is not accepted: a photo is submitted as JPEG, PNG or WebP. Choose another photo.",
     "heicNonConverti": "This iPhone photo (HEIC) cannot be converted on this device. Open this page on your iPhone and choose the photo again, or save it as JPEG first.",
     "tropLourd": "This file is larger than {taille} MB. Retake the photo at a lower quality, then choose it again.",
-    "formatsPiece": "A JPEG or PNG photo, {taille} MB at most. An iPhone photo is converted before it is sent."
+    "formatsPiece": "A JPEG or PNG photo, {taille} MB at most. An iPhone photo is converted before it is sent.",
+    "echecIndisponible": "Rewayah could not save your photo right now, even after two more tries. Your photo is still selected: try again in a few minutes.",
+    "echecReseau": "Your photo did not reach Rewayah, even after two more tries: this device's internet connection is down or too slow. Your photo is still selected: try again when the connection is back, or switch to another network (Wi-Fi, for example).",
+    "echecSession": "Your session has expired: Rewayah cannot save your photo without it. Sign out, sign back in with your email address, then choose the photo again.",
+    "echecRefus": "Rewayah refused this upload for your account: trying again would give the same result. Write to the academy management so that they can look into it.",
+    "echecAutre": "Saving your photo did not complete, for a reason the app cannot name. Your photo is still selected: try again; if it happens again, write to the academy management."
   },
   "kyc": {
     "titre": "Your ID document",
@@ -1854,13 +1884,14 @@
     "envoyer": "Send my document",
     "envoiEnCours": "Sending",
     "deposee": "Document received",
-    "erreur": "The upload did not complete. Try again in a moment.",
     "erreurFormat": "This file was not accepted: only JPEG or PNG photos are. Take a photo of your document, then choose that photo.",
-    "erreurReseau": "The upload did not complete: your request may not have reached Rewayah. Tap \"Send my document\" again in a moment.",
     "contenuNonConforme": "This file does not open as a photo: it may be damaged, or of another type that was renamed. Choose a JPEG or PNG photo of your ID document.",
     "memeNom": "Send a document that bears exactly the name written in your account.",
     "tropVolumineux": "This photo is larger than {taille} MB. Retake it at a lower quality.",
-    "manqueType": "First choose the document you are submitting."
+    "manqueType": "First choose the document you are submitting.",
+    "enCoursTitre": "Sending your document",
+    "enCours": "Keep this page open. If the internet connection drops, the app tries again on its own, twice.",
+    "echecTitre": "Your document has not been sent yet"
   },
   "appareils": {
     "titre": "Devices",
@@ -2770,7 +2801,34 @@
         "entretienPlanifie": "Interview scheduled: the decision comes after the interview.",
         "decisionAttendue": "Interview held: the decision is waiting for you."
       },
-      "photoAgrandir": "View {deNom} photo full size"
+      "photoAgrandir": "View {deNom} photo full size",
+      "tete": {
+        "manque": "What is missing",
+        "manqueRien": "Nothing, on their side",
+        "elements": {
+          "compte": "Their account",
+          "questionnaire": "The questionnaire",
+          "pays_versement": "The payment country"
+        },
+        "piece": "ID document",
+        "pieceValeurs": {
+          "verifiee": "Verified",
+          "aVerifier": "Uploaded, to be checked",
+          "absente": "Not uploaded yet",
+          "aRedeposer": "Refused, to be uploaded again",
+          "compteAbsent": "No account yet"
+        },
+        "connexion": "Last sign-in",
+        "connexionAucune": "No sign-in",
+        "aujourdhui": "Today",
+        "hier": "Yesterday",
+        "anciennete": "Application received",
+        "ilYa(plural)": {
+          "one": "{n} day ago",
+          "other": "{n} days ago"
+        },
+        "accueillirPiece": "“{geste}” needs a verified ID document: check it first."
+      }
     },
     "file": {
       "outils": "Tools",
@@ -3097,6 +3155,116 @@
       },
       "nonOuvert": "The card to share is not available yet. Come back to this page later."
     },
+    "accueil": {
+      "onglets": {
+        "dossier": "File",
+        "messages": "Messages",
+        "academie": "Academy"
+      },
+      "etapes": {
+        "position": "Step {n} of {total}",
+        "faite": "done",
+        "enCours": "in progress",
+        "aVenir": "to come",
+        "lecture": "{position}, {nom}, {etat}",
+        "detail1": "You send your answers and your documents. The academy reads them.",
+        "detail2": "A video interview with the academy, at the time you choose.",
+        "detail3": "Your teacher space opens.",
+        "ensuiteACompleter": "Next: the academy reads your application.",
+        "ensuiteEnExamen": "Next: if your application is selected, we get to know each other in an interview.",
+        "ensuiteConnaissance": "Next: after the interview, the academy gives you its answer here.",
+        "ensuiteEquipe": "Next: your teacher space opens."
+      },
+      "aFaire": {
+        "titre": "To do now",
+        "rienTitre": "Nothing to do for now",
+        "rien": "You have nothing to do. We will write to you here as soon as there is news.",
+        "majorite": "First say whether you are 18 or older, in the card above.",
+        "cadre": "Read and accept the religious and teaching framework.",
+        "accords": "Read and accept the contract and our agreements.",
+        "piece": "Upload your identity document.",
+        "reponses": "Answer the questions, then send your application.",
+        "entretien": "Choose the time of your interview.",
+        "corriger": "Redo the item the academy asks you to correct."
+      },
+      "lignes": {
+        "titre": "Your file, item by item",
+        "afficher": "Show details: {element}",
+        "masquer": "Hide details: {element}",
+        "cadreDetail": "The framework says what the academy teaches and how. You read it in full, then you accept it.",
+        "accordsDetail": "The teacher contract, the notice about quality visits and the code of conduct. You read and accept them on a single page.",
+        "pieceDetail": "A clear photo of your passport or identity card, still valid. Example: the page with your photo, whole and without glare.",
+        "photoDetail": "A photo of you, facing the camera. It introduces you to families, only with your consent.",
+        "reponsesDetail": "Your languages, your recitation, your availability and your payout. You can save and come back later."
+      },
+      "praxis": {
+        "pieceRefusee": "Your identity document was not accepted. Please upload a new one.",
+        "reste(plural, param=n)": {
+          "one": "{n} item is still to be completed in your file.",
+          "other": "{n} items are still to be completed in your file."
+        }
+      },
+      "annonce": {
+        "ligne": "New: {titre}",
+        "ranger": "Put away the announcement: {titre}",
+        "rangee": "Announcement put away in Messages, Announcements section."
+      },
+      "etat": {
+        "perime": "Your file could not be updated. What you see dates from your last reading. Try again in a moment.",
+        "horsLigne": "You are offline. What you see dates from your last reading; try again once the connection is back."
+      },
+      "messages": {
+        "intro": "Write to the academy: it answers you here.",
+        "vide": "Messaging will open here as soon as your application is recorded.",
+        "sections": {"libelle": "Message sections", "messages": "Messages", "annonces": "Announcements", "savoir": "Good to know"},
+        "nonLus(plural, param=n)": {"one": "{n} unread message", "other": "{n} unread messages"},
+        "annonces": {"lire": "Read the announcement: {titre}", "vide": "No announcement for now. The management's announcements will appear here."},
+        "savoir": {"intro": "Answers to candidates' questions, once the management publishes them."}
+      },
+      "academie": {
+        "titre": "The academy",
+        "annoncesVide": "No announcement for now. The academy's announcements will appear here.",
+        "savoirTitre": "What you need to know",
+        "remuneration": "A teacher's pay",
+        "cours": "How lessons run",
+        "entretiens": "How interviews are organised",
+        "bientot": "Will appear here when the management makes it public.",
+        "reglages": "Settings",
+        "reglagesLegende": "Language, payout, withdrawing the application"
+      },
+      "retrait": {
+        "arret": "The academy will stop reviewing your file.",
+        "entretien": "Your interview will be cancelled. If you resume your application, you will choose a new one.",
+        "rienEfface": "Your answers and your documents will stay recorded.",
+        "pause": "Your file is on pause. If you withdraw it now, you will not be able to resume it yourself: you will have to write to the academy, which alone will be able to reopen it.",
+        "reprise(plural, param=n)": {
+          "one": "You will be able to resume it yourself for {n} day, from the File tab.",
+          "other": "You will be able to resume it yourself for {n} days, from the File tab."
+        },
+        "apres": "After that, only the academy will be able to reopen it.",
+        "garder": "No, I continue",
+        "confirmer": "Yes, withdraw my application",
+        "fait(plural, param=n)": {
+          "one": "Application withdrawn. You have {n} day to resume it.",
+          "other": "Application withdrawn. You have {n} days to resume it."
+        },
+        "faitSansDelai": "Application withdrawn."
+      },
+      "reprise": {
+        "possible": "You withdrew your application. You can resume it yourself until {date} at {heure}. Your answers and your documents are still recorded.",
+        "bouton": "Resume my application",
+        "faite": "Your application is resumed. Your answers and your documents are still recorded.",
+        "delaiDepasse": "The time to resume it yourself has passed. Only the academy can reopen it: write to it from the Messages tab.",
+        "enPause": "Your file was on pause when you withdrew it: you cannot resume it yourself. Only the academy can reopen it: write to it from the Messages tab.",
+        "origineInconnue": "Your application is withdrawn. Write to us from the Messages tab to resume it.",
+        "parDirection": "This withdrawal was recorded by the academy. Only the academy can reopen your application: write to it from the Messages tab.",
+        "controles": "An item of your file changed since your withdrawal. Only the academy can reopen your application: write to it from the Messages tab.",
+        "echec": "The resumption did not go through. Nothing changed: try again in a moment.",
+        "incertain": "Your resumption may not have reached Rewayah. Try again: it will not be recorded twice.",
+        "horsLigne": "You can resume once the connection is back.",
+        "conflit": "Your application changed since this page was opened. Read it again, then retry."
+      }
+    },
     "retrait": {
       "lien": "Withdraw my application",
       "question": "Withdraw your application?",
@@ -3143,6 +3311,7 @@
       "conditionsNonCharge": "The pay terms could not be loaded.",
       "envoyee": "Your application has been sent. The academy will notify you here if it needs to be completed.",
       "envoyeeLe": "Sent on {date}.",
+      "identiteTitre": "Your name and city",
       "etatVersement": "Payment method: {etat}",
       "retourDossier": "Back to my file",
       "complementCarte": "The academy asks you to complete this part.",
@@ -3271,8 +3440,51 @@
         "rechercheAide": "Riwaya name",
         "aucune": "No riwaya matches.",
         "retour": "Back to the riwayat offered",
-        "toutes": "I recite all the riwayat",
-        "toutesDescription": "The twenty riwayat of the ten readings. This answer replaces the others."
+        "dix": "I recite the ten qiraat",
+        "dixDescription": "The ten readings of the Quran, with their twenty riwayat.",
+        "sept": "I recite the seven qiraat",
+        "septDescription": "The seven readings of the Quran, with their fourteen riwayat.",
+        "une": "I recite a single riwaya",
+        "uneDescription": "You choose which one, for example Hafs or Warsh.",
+        "quelques": "I recite a few riwayat",
+        "quelquesDescription": "You choose them reader by reader.",
+        "titreUne": "Which riwaya do you recite?",
+        "titreQuelques": "Tap each riwaya you recite.",
+        "rechercheLecteur": "Search for a reader or a riwaya",
+        "rechercheLecteurAide": "Name of the reader or the riwaya",
+        "lecteurs": {
+          "nafi": "Nafi",
+          "ibnKathir": "Ibn Kathir",
+          "abuAmr": "Abu Amr",
+          "ibnAmir": "Ibn Amir",
+          "asim": "Asim",
+          "hamza": "Hamza",
+          "kisai": "Al-Kisai",
+          "abuJafar": "Abu Jafar",
+          "yaqub": "Yaqub",
+          "khalaf": "Khalaf, the tenth reader"
+        }
+      },
+      "juz": {
+        "nombre": "I have memorised a precise number of juz",
+        "nombreDescription": "From 1 to 29 whole juz, out of the thirty of the Quran.",
+        "nombreExplication": "This level is checked during the interview.",
+        "nombreExemple": "you have memorised twelve juz: choose 12.",
+        "compteur": "Number of juz memorised",
+        "choisir": "Choose a number",
+        "moins": "One juz less",
+        "plus": "One juz more",
+        "valeur(param=n)": {
+          "one": "{n} juz",
+          "other": "{n} juz"
+        },
+        "ancienne": "Your saved answer: \"{reponse}\". It is still valid. To give the exact number, tap a number below."
+      },
+      "aides": {
+        "ijazaTitre": "What is an ijaza?",
+        "ijazaTexte": "An ijaza is a written authorisation that a sheikh gives you after hearing you recite the whole Quran before him, or the part it names. It states the riwaya (for example Hafs from Asim) and the chain of teachers who pass it on, the sanad. During the interview, you are asked to show it on video: you have nothing to send now. Without an ijaza, you can still apply.",
+        "juzTitre": "What is a juz?",
+        "juzTexte": "The Quran is divided into thirty parts of equal length: the juz. Count only the juz you can recite in full, from memory."
       },
       "fuseau": {
         "heureChezVous": "Is it {heure} where you are?",
@@ -4256,6 +4468,7 @@
             "other": "{n} applications will not be affected"
           },
           "etAutres": "and {n} others",
+          "reporteesEnFin": "These applications stay selected, at the end of the selection: the next action will first cover the following ones.",
           "effetPause": "The applications concerned do not move forward until the pause is lifted.",
           "effetLever": "The applications concerned resume where they had stopped.",
           "effetRefuser": "The applications concerned are closed. You can reopen them one by one.",
@@ -4276,7 +4489,14 @@
             "etat": "This action is not possible from the status \"{etat}\".",
             "conflit": "It changed in the meantime.",
             "erreurServeur": "The server could not process it. Try again from its file.",
-            "inconnue": "The server refused this action."
+            "inconnue": "The server refused this action.",
+            "controle": "Not yet admissible: \"{controle}\" is not met.",
+            "controles": "An admission check is not met.",
+            "sansCompte": "This person has no account yet: no conversation is possible.",
+            "conversationPause": "Their application is paused: no conversation is possible.",
+            "conversationEtat": "Its status no longer allows writing in the application conversation.",
+            "elementNonPermis": "This item cannot be requested at its stage.",
+            "dejaEnvoye": "This same message was already sent to them by the management in the last 24 hours: it is not sent a second time."
           },
           "rapport": {
             "titre": "Result",
@@ -4298,7 +4518,18 @@
             "ligneExclue": "Excluded",
             "ligneRefusee": "Refused",
             "sansNom": "Application without a readable name"
-          }
+          },
+          "effetAdmettre": "The applications concerned move to the Verification and interview room. Each person with an address receives the email inviting them to the interview, and a notice in the app.",
+          "effetComplement": "Each application concerned waits for the same item. The person sees the request when opening the app: no email or notice is sent.",
+          "effetEcrire": "Each person concerned receives the same message in their conversation with the management. Nothing else changes.",
+          "motifCommunComplement": "The same item and the same reason apply to all the applications concerned.",
+          "element": "What is requested",
+          "elementAide": "A single item for the whole batch. If a stage does not allow it, the result will say so line by line.",
+          "elementManquant": "Choose what is requested.",
+          "message": "Message",
+          "messageAide": "The same message goes to each person concerned, on behalf of the management.",
+          "messageManquant": "Write the message.",
+          "elementAucunCommun": "No item can be requested at the stage of all these applications. Select applications from the same room."
         },
         "erreurs": {
           "titre": "Processing refused",
@@ -4306,9 +4537,13 @@
           "aucunEligible": "No application in the selection can receive this action. Nothing was done.",
           "nonGroupable": "This action cannot be done for several applications at once. Open each one's file to do it.",
           "cleReutilisee": "This request has already been used for another action. Close this window and start again.",
+          "cleReutiliseeEcrire": "The first sending may have gone out, with the previous message: its answer had not arrived. Open the candidates' conversations to check before starting again.",
+          "cleReutiliseeIncertaine": "The first sending may have gone out, with the previous choices: its answer had not arrived. Check the applications in the list before starting again.",
           "horsPortee": "An application in the selection is outside your access. Nothing was done. Refresh the preview.",
           "lectureApercu": "The preview could not be read. Nothing was done. Try again."
-        }
+        },
+        "ecrire": "Write",
+        "parTranche": "This action covers the first {n}, in list order. The other {reste} remain to be handled afterwards."
       },
       "titre": "Applications",
       "sousTitre": "Teaching applications, from invitation to the Ready-to-teach room.",
@@ -4380,12 +4615,18 @@
           "accord": "Agreement to be contacted",
           "accordDonne": "Agreement given",
           "accordAbsent": "Answered without agreement"
-        }
+        },
+        "dossier": "File",
+        "dossierComplet": "Nothing missing",
+        "dossierIncomplet": "Something missing",
+        "pilePraxis": "Praxis pile",
+        "etiquettePraxis": "Praxis label"
       },
       "tri": {
         "titre": "Sort by",
         "activite": "Last activity",
-        "reception": "Date received"
+        "reception": "Date received",
+        "anciennete": "Longest waiting"
       },
       "total": {
         "one": "{n} application",
@@ -4426,7 +4667,14 @@
         "phrase": "Choose the action to run on these applications.",
         "agir": "Act on the selection",
         "relacher": "Release all",
-        "horsLigne": "Actions can be run when the connection returns."
+        "horsLigne": "Actions can be run when the connection returns.",
+        "page": "Select this page",
+        "pageRetenue": {"one": "The application on this page is selected.", "other": "The {n} applications on this page are selected."},
+        "tous": {"one": "Select the result", "other": "Select all {n} results"},
+        "tousRetenus": {"one": "The filter's result is selected.", "other": "All {n} results of the filter are selected."},
+        "tousPlafond": "The first {plafond} results out of {n} are selected.",
+        "lectureTous": "Reading all results.",
+        "echecTous": "The results could not be read. The selection has not changed."
       },
       "vide": "No application yet",
       "videDetail": "An application appears here as soon as the person signs up through the website link or with an invitation.",
@@ -7195,7 +7443,8 @@
         "voirPlus": "Show the next files",
         "erreur": "Praxis's work could not be read. Try again in a moment.",
         "horsLigne": "Praxis's work is not loaded yet. Reload it.",
-        "permission": "Praxis's work is for the management only."
+        "permission": "Praxis's work is for the management only.",
+        "voirListe": "Handle these files in the list"
       },
       "avis": {
         "titre": "Praxis's opinion",
@@ -10186,7 +10435,6 @@
       "changer": "Change the photo",
       "alternatif": "Your public photo",
       "succes": "The photo is saved.",
-      "echec": "The photo is not confirmed. Tap “Use this photo” again in a moment.",
       "enregistree": "Your photo is saved. You can replace it at any time.",
       "selectionEchec": "The photo could not be opened. Check access to the device's photos, then try again.",
       "horsLigne": "The photo can be sent when the connection is back."
@@ -12237,6 +12485,7 @@
     }
   },
   "formulaire": {
+    "courrielPropose(param=adresse)": "Did you mean {adresse}?",
     "motif": {
       "manque": "The reason is missing: choose one from the list, or tap \"Other\" and write it.",
       "autreVide": "You chose \"Other\": write the reason in a few words.",
@@ -12996,6 +13245,9 @@
         "autre": "Other subject"
       },
       "panneau": {
+        "fichiersPartiels": "Only files from messages already loaded are listed.",
+        "fichiersAucunCharge": "No files in the messages already loaded; there are older messages.",
+        "chargerPrecedents": "Load earlier messages",
         "objets": "About",
         "participants": "Participants",
         "fichiers": "@:com.socle.lexique.fichiersPartages",
@@ -13009,7 +13261,11 @@
         }
       },
       "fil": {
-        "lectureSeule": "You can read this conversation. Replying is not open to you here."
+        "lectureSeule": "You can read this conversation. Replying is not open to you here.",
+        "anciensChargement": "Loading earlier messages",
+        "anciensEchec": "Earlier messages did not load.",
+        "refusFerme": "You can no longer write in this conversation.",
+        "refusTexte": "This message is empty or too long: 5,000 characters at most."
       },
       "images": {
         "joindre": "Attach an image",

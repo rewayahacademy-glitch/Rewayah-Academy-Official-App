@@ -269,11 +269,13 @@ DetailCandidature detailTest({
   bool complementEnCours = false,
   List<String>? gestes,
   MajoriteCandidature majorite = MajoriteCandidature.nonServie,
+  String? nomLatin,
 }) => DetailCandidature(
   ligne: LigneCandidature(
     id: id,
     reference: reference ?? 'CAND-${id.toUpperCase().padLeft(6, '0')}',
     nomComplet: nom,
+    nomLatin: nomLatin,
     type: 'enseignant',
     etape: etape,
     etat: etat,
@@ -599,8 +601,69 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
   /// Les lectures de liste, dans l'ordre.
   final List<AppelLister> appels = <AppelLister>[];
 
+  /// PE-LISTE-CANDIDATURES : la pile de Praxis de chaque candidature (par
+  /// identifiant), son etiquette, et les dossiers complets.
+  final Map<String, String> pilesPraxis = <String, String>{};
+
+  /// L'etiquette de Praxis de chaque candidature (par identifiant).
+  final Map<String, String> etiquettesPraxis = <String, String>{};
+
+  /// Les candidatures dont le dossier est complet (identifiants).
+  final Set<String> dossiersComplets = <String>{};
+
+  /// PE-LISTE-CANDIDATURES : le premier controle d'admission faux de chaque
+  /// candidature (par identifiant) ; absente, elle passe les controles.
+  final Map<String, String> controlesAdmissionFaux = <String, String>{};
+
+  /// Les candidatures sans compte (aucune conversation possible).
+  final Set<String> sansCompte = <String>{};
+
+  /// Les selections de tous les resultats demandees, dans l'ordre.
+  final List<AppelLister> appelsSelection = <AppelLister>[];
+
+  /// Ce que rend `selectionnerTout()` au plus (le plafond du serveur).
+  int plafondSelection = 1000;
+
   /// Le nombre d'appels a `capacites()`.
   int appelsCapacites = 0;
+
+  @override
+  Future<SelectionCandidatures> selectionnerTout({
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  }) async {
+    appelsSelection.add(AppelLister(filtre, tri, 1));
+    final List<LigneCandidature> filtrees = _filtrees(filtre, tri);
+    return SelectionCandidatures(
+      total: filtrees.length,
+      ids: <String>[
+        for (final LigneCandidature l in filtrees.take(plafondSelection)) l.id,
+      ],
+      plafond: plafondSelection,
+    );
+  }
+
+  List<LigneCandidature> _filtrees(
+    FiltreCandidatures filtre,
+    TriCandidatures tri,
+  ) {
+    final List<LigneCandidature> portee = <LigneCandidature>[
+      ...lignes,
+      for (final DetailCandidature d in details.values)
+        if (!lignes.any((LigneCandidature l) => l.id == d.ligne.id)) d.ligne,
+    ];
+    return <LigneCandidature>[
+      for (final LigneCandidature l in portee)
+        if (_garde(l, filtre) && _gardePraxis(l, filtre)) l,
+    ]..sort((LigneCandidature a, LigneCandidature b) => _comparer(a, b, tri));
+  }
+
+  bool _gardePraxis(LigneCandidature l, FiltreCandidatures f) =>
+      (f.pilePraxis == null || pilesPraxis[l.id] == f.pilePraxis) &&
+      (f.etiquettePraxis == null ||
+          etiquettesPraxis[l.id] == f.etiquettePraxis) &&
+      (f.dossierComplet == null ||
+          dossiersComplets.contains(l.id) == f.dossierComplet);
 
   @override
   Future<CapacitesCandidatures> capacites() async {
@@ -627,15 +690,7 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     if (a != null) {
       await a.future;
     }
-    final List<LigneCandidature> portee = <LigneCandidature>[
-      ...lignes,
-      for (final DetailCandidature d in details.values)
-        if (!lignes.any((LigneCandidature l) => l.id == d.ligne.id)) d.ligne,
-    ];
-    final List<LigneCandidature> filtrees = <LigneCandidature>[
-      for (final LigneCandidature l in portee)
-        if (_garde(l, filtre)) l,
-    ]..sort((LigneCandidature a, LigneCandidature b) => _comparer(a, b, tri));
+    final List<LigneCandidature> filtrees = _filtrees(filtre, tri);
     final int debut = (page - 1) * taillePage;
     final List<LigneCandidature> cette = debut >= filtrees.length
         ? <LigneCandidature>[]
@@ -661,12 +716,18 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
       },
       compteursAlertes: alertes ?? _alertesDuServeur(),
       // NOUVEAU-LISTE : les nouvelles en cours, sans les autres filtres.
-      compteurNouveaux: portee
-          .where(
-            (LigneCandidature l) =>
-                l.nouveau && l.issue == IssueCandidature.enCours,
-          )
-          .length,
+      compteurNouveaux:
+          <LigneCandidature>[
+                ...lignes,
+                for (final DetailCandidature d in details.values)
+                  if (!lignes.any((LigneCandidature l) => l.id == d.ligne.id))
+                    d.ligne,
+              ]
+              .where(
+                (LigneCandidature l) =>
+                    l.nouveau && l.issue == IssueCandidature.enCours,
+              )
+              .length,
     );
   }
 
@@ -806,7 +867,7 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
   /// La raison pour laquelle le serveur exclut [l] d'un lot de [geste], ou
   /// `null` : elle est eligible. Les regles de `candidature_gestes_regles`
   /// pour les trois gestes du lot.
-  static ({String raison, String? detail})? _exclusion(
+  ({String raison, String? detail})? _exclusion(
     LigneCandidature l,
     GesteLot geste,
   ) {
@@ -835,6 +896,34 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
           return (raison: 'transition_interdite', detail: 'etat');
         }
         if (l.enPause) return (raison: 'transition_interdite', detail: 'pause');
+      case GesteLot.admettre:
+        // Regle 10 : Salle d'examen, en examen, hors pause ; les controles
+        // d'admission sont joues par [refusAdmission].
+        if (!enCours ||
+            l.etape != EtapeCandidature.prequalification ||
+            l.etat != EtatCandidature.enExamen) {
+          return (raison: 'transition_interdite', detail: 'etat');
+        }
+        if (l.enPause) return (raison: 'transition_interdite', detail: 'pause');
+        final String? controle = controlesAdmissionFaux[l.id];
+        if (controle != null) {
+          return (raison: 'controles_non_satisfaits', detail: controle);
+        }
+      case GesteLot.demanderComplement:
+        if (!enCours ||
+            (l.etape != EtapeCandidature.prequalification &&
+                l.etape != EtapeCandidature.verifications)) {
+          return (raison: 'transition_interdite', detail: 'etat');
+        }
+        if (l.enPause) return (raison: 'transition_interdite', detail: 'pause');
+      case GesteLot.ecrire:
+        if (!enCours || l.etape == EtapeCandidature.confirmee) {
+          return (raison: 'sans_conversation', detail: 'etat');
+        }
+        if (l.enPause) return (raison: 'sans_conversation', detail: 'pause');
+        if (sansCompte.contains(l.id)) {
+          return (raison: 'sans_conversation', detail: 'sans_compte');
+        }
     }
     return null;
   }
@@ -892,13 +981,20 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
             issue: l.issue,
             enPause: l.enPause,
             version: _versionDuLot(l.id),
+            // PE-LISTE-CANDIDATURES : les elements que l'etape accepte.
+            elementsPermis: geste == GesteLot.demanderComplement
+                ? (l.etape == EtapeCandidature.verifications
+                      ? capacitesRendues.listes.complementSalleVerification
+                      : capacitesRendues.listes.complementSalleExamen)
+                : null,
           ),
         );
       } else {
         exclus.add(
           ExclusLot(
             id: l.id,
-            raison: RaisonExclusion.transitionInterdite,
+            raison: RaisonExclusion.depuisSql(x.raison),
+            detail: x.detail,
             reference: l.reference,
             nomComplet: l.nomComplet,
             etape: l.etape,
@@ -912,7 +1008,8 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     }
     return ApercuLot(
       geste: geste,
-      motifRequis: geste != GesteLot.leverPause,
+      // Comme le serveur : ni la reprise ni l'admission ne demandent de motif.
+      motifRequis: geste != GesteLot.leverPause && geste != GesteLot.admettre,
       // Comme le serveur : seuls la pause et le refus lisent un modele ; la
       // dispense envoie sa categorie par le meme argument, sans le declarer.
       modeleRequis:
@@ -949,9 +1046,14 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
     if (e != null && !perdu) {
       Error.throwWithStackTrace(e, StackTrace.current);
     }
-    if (demande.geste != GesteLot.leverPause) {
+    // Comme le serveur : ni la reprise ni l'admission ne portent de motif ;
+    // ecrire et l'admission ne portent pas de modele.
+    if (demande.geste != GesteLot.leverPause &&
+        demande.geste != GesteLot.admettre) {
       if ((demande.motif ?? '').trim().isEmpty) throw const MotifRequis();
-      if (demande.modele == null) throw const ModeleRequis();
+      if (demande.geste != GesteLot.ecrire && demande.modele == null) {
+        throw const ModeleRequis();
+      }
     }
     final List<String> eligibles = <String>[
       for (final String id in demande.ids.toSet())
@@ -1043,22 +1145,33 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
       GesteLot.leverPause => false,
       GesteLot.refuser => l.enPause,
       GesteLot.dispenserEntretien => l.enPause,
+      GesteLot.admettre ||
+      GesteLot.demanderComplement ||
+      GesteLot.ecrire => l.enPause,
     };
-    final EtatCandidature? etatApres = geste == GesteLot.dispenserEntretien
-        ? EtatCandidature.decisionEnAttente
-        : l.etat;
+    final EtatCandidature? etatApres = switch (geste) {
+      GesteLot.dispenserEntretien => EtatCandidature.decisionEnAttente,
+      GesteLot.admettre => EtatCandidature.entretienAPlanifier,
+      GesteLot.demanderComplement
+          when l.etape == EtapeCandidature.prequalification =>
+        EtatCandidature.aCompleter,
+      _ => l.etat,
+    };
+    final EtapeCandidature? etapeApres = geste == GesteLot.admettre
+        ? EtapeCandidature.verifications
+        : l.etape;
     lignes[i] = LigneCandidature(
       id: l.id,
       reference: l.reference,
       nomComplet: l.nomComplet,
       type: l.type,
-      etape: l.etape,
+      etape: etapeApres,
       etat: etatApres,
       issue: issueApres,
       enPause: enPauseApres,
       // Le serveur recalcule les gestes de la ligne apres le geste.
       gestes: gestesFauxServeur(
-        etape: l.etape,
+        etape: etapeApres,
         etat: etatApres,
         issue: issueApres,
         enPause: enPauseApres,
@@ -1143,6 +1256,9 @@ class FauxCandidaturesDirection implements PortCandidaturesDirection {
       a.recueLe ?? a.derniereActivite,
     ),
     TriCandidatures.nom => a.nomComplet.compareTo(b.nomComplet),
+    TriCandidatures.ancienne => a.derniereActivite.compareTo(
+      b.derniereActivite,
+    ),
   };
 }
 
@@ -1163,6 +1279,14 @@ class CandidaturesDirectionIndisponible implements PortCandidaturesDirection {
     required TriCandidatures tri,
     required int page,
   }) => Future<PageCandidatures>.error(
+    const CapaciteIndisponible(dependanceFileCandidatures),
+  );
+
+  @override
+  Future<SelectionCandidatures> selectionnerTout({
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  }) => Future<SelectionCandidatures>.error(
     const CapaciteIndisponible(dependanceFileCandidatures),
   );
 
