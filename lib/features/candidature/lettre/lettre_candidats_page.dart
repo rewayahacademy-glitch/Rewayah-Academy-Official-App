@@ -32,7 +32,6 @@ import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
 import '../../../core/widgets/setting_row.dart';
 import '../lecture_page.dart';
-import 'interactions_guide.dart';
 import 'port_lettre.dart';
 import 'praxis_lettre.dart';
 import 'texte_lettre.dart';
@@ -381,7 +380,6 @@ class _EtatContenu extends State<ContenuLettre> {
           Ecart.vLg,
           CorpsLettre(brut: parties[k].corps),
           Ecart.vMd,
-          InteractionsPartie(code: parties[k].code),
           Align(
             alignment: AlignmentDirectional.centerStart,
             child: LienFleche(

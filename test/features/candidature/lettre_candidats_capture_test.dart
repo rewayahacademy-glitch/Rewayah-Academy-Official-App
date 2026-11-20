@@ -9,7 +9,6 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/session_state.dart';
-import 'package:rewayah_academy/features/candidature/lettre/interactions_guide.dart';
 import 'package:rewayah_academy/features/candidature/lettre/lettre_candidats_page.dart';
 import 'package:rewayah_academy/features/candidature/lettre/port_lettre.dart';
 
@@ -57,7 +56,6 @@ Future<void> _monter(
           etat: etatCandidat(candidature: candidatureAFaire()),
         ),
         sessionProvider.overrideWith(_Candidat.new),
-        portInteractionsProvider.overrideWithValue(FauxPortInteractions()),
         portLettreProvider.overrideWithValue(
           FauxPortLettre(
             reponse: accordsFaits
@@ -106,21 +104,6 @@ void main() {
           );
           await stabiliser(tester);
           await capturerVue(tester, 'lettre-candidats/paie-$nom');
-          await tester.scrollUntilVisible(
-            find.byKey(InteractionsPartie.cleJaime('p4')),
-            300,
-            scrollable: find
-                .descendant(
-                  of: find.byKey(LettreCandidatsPage.cleDefilement),
-                  matching: find.byType(Scrollable),
-                )
-                .first,
-          );
-          await stabiliser(tester);
-          await capturerVue(tester, 'lettre-candidats/avis-$nom');
-          await tester.tap(find.byKey(InteractionsPartie.cleCommenter('p4')));
-          await stabiliser(tester);
-          await capturerVue(tester, 'lettre-candidats/commentaire-$nom');
         });
         testWidgets('verrou-$nom', (WidgetTester tester) async {
           await tester.runAsync(() => LocaleSettings.setLocale(langue));

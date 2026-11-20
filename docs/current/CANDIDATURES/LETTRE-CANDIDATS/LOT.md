@@ -177,13 +177,16 @@ désaccord « aide » ; il signale un passage à reformuler, pas une humeur.
 `port_lettre.dart` ; les tables, les fonctions, l'adaptateur, l'écran de la direction et les outils de
 Praxis sont hors de ma zone (garde-fou) : proposés au pilote, sur sa branche empilée.
 
-**Côté lecteur, fait sur la branche (20/11, 23 h 30)** : port `PortInteractionsGuide` dans
-`port_lettre.dart` (forme JSON en tête de la section), indisponible par défaut ; boutons « J'aime » et
+**Côté lecteur, fait sur une branche à part, `claude/guide-interactions` (20/11, 23 h 30 ; à la
+demande du pilote, pour que la PR de la lecture ne porte aucun bouton sans serveur)** : port
+`PortInteractionsGuide` dans `port_interactions_guide.dart` (forme JSON en tête de la section), indisponible par défaut ; boutons « J'aime » et
 « Pas clair » sous chaque partie, l'avis s'affiche tout de suite et revient en arrière si le serveur
 refuse ; « Commenter cette partie » ouvre le fil privé du lecteur (ce qu'il a écrit, les réponses de
 la direction et de Praxis, un champ, « Envoyer mon commentaire »). Rien ne s'affiche tant que le
-serveur des interactions n'est pas branché. Tests sur un faux serveur ; captures `avis-*` et
-`commentaire-*` dans `docs/current/captures/E2E/lettre-candidats/`.
+serveur des interactions n'est pas branché. Tests sur un faux serveur. Le pilote prend le serveur
+(lot 2) après la fusion de la lecture (lot 1), et pose d'abord au directeur la question de la
+messagerie : un commentaire ouvre-t-il un fil de la messagerie existante (`MESSAGERIE-MATRICE.md`),
+plutôt qu'un second circuit ?
 
 **Correction (20/11, 23 h 30)** : jusqu'ici, Praxis ne suivait pas la lecture : `PageShell` fait
 défiler toute la tête avec une page défilante, et il disparaissait en haut. La page garde maintenant sa
