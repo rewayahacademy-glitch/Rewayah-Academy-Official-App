@@ -24,6 +24,7 @@ import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/domain/enums.dart';
 import '../../core/dossier/etat_dossier.dart';
 import '../../core/dossier/service_dossier.dart';
+import '../../core/fraicheur/avis_ephemere.dart';
 import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
@@ -37,6 +38,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_etape.dart' show RangeeEtape;
 import 'majorite_etape.dart';
+import 'reprise_candidature.dart';
 
 /// Vrai quand le portail montre l'etat de la candidature plutot que les cinq
 /// etats du dossier : en Salle d'examen, ou apres un refus ou un retrait. En
@@ -515,17 +517,66 @@ class StatutCandidature extends StatelessWidget {
   );
 }
 
-/// Le lien discret « Retirer ma candidature » (CAND-03), avec sa confirmation.
+/// Ce que le retrait veut dire, dit AVANT le geste (PE-A6, directeur,
+/// 19/11/2026 : « a condition que le candidat comprenne par l'ecran ce qui lui
+/// arrive ; jamais de silence »).
+///
+/// [reprise] est ce que le serveur dit de la reprise ; `null` tant qu'il ne le
+/// dit pas (migration non installee, lecture en echec) : l'ecran ne promet
+/// alors aucun delai et garde la phrase d'avant.
+String explicationRetrait(CandidatureDossier c, RepriseCandidature? reprise) {
+  final r = t.recrutement.retrait;
+  final bool entretien = c.etat == EtatCandidature.entretienPlanifie;
+  if (reprise == null) {
+    // En Salle d'examen, jamais un mot d'entretien (ce ne serait pas vrai).
+    return entretien ? r.consequenceEntretien : r.consequence;
+  }
+  final e = t.recrutement.accueil.retrait;
+  // En pause (posee par la direction) : le retrait ne se defait pas par la
+  // personne (le serveur refuse la reprise, `retrait_en_pause`) ; aucun delai
+  // n'est promis, l'ecran dit qu'il faudra ecrire a l'academie.
+  if (c.enPause) {
+    return <String>[
+      e.arret,
+      if (entretien) e.entretien,
+      e.pause,
+      e.rienEfface,
+    ].join('\n\n');
+  }
+  return <String>[
+    e.arret,
+    if (entretien) e.entretien,
+    e.rienEfface,
+    e.reprise(n: reprise.delaiJours),
+    e.apres,
+  ].join('\n\n');
+}
+
+/// Le lien discret « Retirer ma candidature » (CAND-03), avec l'ecran qui
+/// explique le retrait avant de le confirmer (PE-A6).
 ///
 /// Rendu seulement tant que la candidature peut etre retiree (`peutRetirer`,
 /// lu au serveur) et que le port existe. Hors ligne, le lien n'est pas rendu :
 /// une note dit quand il le sera.
 class LienRetraitCandidature extends ConsumerStatefulWidget {
-  /// Cree le lien.
-  const LienRetraitCandidature({required this.candidature, super.key});
+  /// Cree le lien. [onRetire] est appele apres un retrait confirme par le
+  /// serveur (l'accueil ramene alors a l'onglet Dossier).
+  const LienRetraitCandidature({
+    required this.candidature,
+    super.key,
+    this.onRetire,
+    this.alignerEnDebut = false,
+  });
 
   /// La candidature.
   final CandidatureDossier candidature;
+
+  /// Appele apres un retrait reussi.
+  final VoidCallback? onRetire;
+
+  /// Vrai : le lien et ses messages s'alignent au debut (dans un reglage) ;
+  /// faux : au centre (le pied d'une page).
+  final bool alignerEnDebut;
 
   /// La cle du lien.
   static const Key lienKey = ValueKey<String>('retrait-lien');
@@ -554,15 +605,19 @@ class _LienRetraitCandidatureState
     }
     final r = t.recrutement.retrait;
     final CandidatureDossier c = widget.candidature;
-    // L'effet se dit avant le geste ; en Salle d'examen, jamais un mot
-    // d'entretien (ce ne serait pas vrai).
+    // Ce que le serveur dit de la reprise, deja lu par le lien ; rien si la
+    // lecture manque (aucun delai n'est alors promis).
+    final AsyncValue<RepriseCandidature> lue = ref.read(
+      repriseCandidatureProvider,
+    );
+    final RepriseCandidature? reprise = lue.hasValue ? lue.requireValue : null;
+    // L'effet se dit avant le geste.
     final bool confirme = await ConfirmDestructive.demander(
       context,
       question: r.question,
-      consequence: c.etat == EtatCandidature.entretienPlanifie
-          ? r.consequenceEntretien
-          : r.consequence,
-      libelleConfirmer: r.confirmer,
+      consequence: explicationRetrait(c, reprise),
+      libelleConfirmer: t.recrutement.accueil.retrait.confirmer,
+      libelleAnnuler: t.recrutement.accueil.retrait.garder,
     );
     if (!confirme || !mounted) {
       return;
@@ -576,9 +631,22 @@ class _LienRetraitCandidatureState
     try {
       await port.retirer(versionAttendue: c.version, cleIdempotence: cle);
       // Le retrait ne s'affiche qu'apres la reponse : le portail relit l'etat.
-      ref.invalidate(etatDossierProvider);
+      ref
+        ..invalidate(etatDossierProvider)
+        ..invalidate(repriseCandidatureProvider);
+      // Jamais de silence : un avis dit que c'est fait, et le delai quand le
+      // serveur l'a donne.
+      final e = t.recrutement.accueil.retrait;
+      ref
+          .read(avisEphemereProvider.notifier)
+          .dire(
+            reprise == null || c.enPause
+                ? e.faitSansDelai
+                : e.fait(n: reprise.delaiJours),
+          );
       if (mounted) {
         setState(() => _enCours = false);
+        widget.onRetire?.call();
       }
     } on ConflitCandidature {
       _cle = null;
@@ -617,11 +685,18 @@ class _LienRetraitCandidatureState
       return const SizedBox.shrink();
     }
     final bool horsLigne = ref.watch(horsLigneProvider).value ?? false;
+    // Lue des que le lien est montre : l'explication s'ouvre sans attendre.
+    ref.watch(repriseCandidatureProvider);
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette palette = AppPalette.of(context);
+    final TextAlign alignement = widget.alignerEnDebut
+        ? TextAlign.start
+        : TextAlign.center;
     return Column(
       mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.center,
+      crossAxisAlignment: widget.alignerEnDebut
+          ? CrossAxisAlignment.start
+          : CrossAxisAlignment.center,
       children: <Widget>[
         if (_message != null) ...<Widget>[
           Semantics(
@@ -629,7 +704,7 @@ class _LienRetraitCandidatureState
             child: Text(
               _message!,
               key: LienRetraitCandidature.messageKey,
-              textAlign: TextAlign.center,
+              textAlign: alignement,
               style: palette.inkAlert.applyTo(
                 textes.bodyMedium ?? const TextStyle(),
               ),
@@ -641,7 +716,7 @@ class _LienRetraitCandidatureState
           Text(
             t.recrutement.retrait.horsLigne,
             key: LienRetraitCandidature.noteKey,
-            textAlign: TextAlign.center,
+            textAlign: alignement,
             style: palette.inkMuted.applyTo(
               textes.bodyMedium ?? const TextStyle(),
             ),

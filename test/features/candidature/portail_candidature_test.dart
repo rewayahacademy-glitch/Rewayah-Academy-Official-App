@@ -20,6 +20,12 @@ import 'hote_candidature.dart';
 
 Finder _texte(String t) => find.text(t);
 
+/// Deplie la ligne [code] du dossier : depuis le 20/11/2026 (directeur,
+/// « lignes du dossier simples »), ce que le serveur dit d'un element (piece
+/// recue, accord a envoyer...) se lit en depliant sa ligne.
+Future<void> _deplier(WidgetTester tester, String code) =>
+    toucherCle(tester, 'dossier-ligne-$code');
+
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
 
 /// Touche un texte, apres l'avoir amene a l'ecran (le pied peut le couvrir).
@@ -31,8 +37,9 @@ Future<void> _toucherTexte(WidgetTester tester, Finder f) async {
 }
 
 /// Confirme le retrait : le bouton de la feuille est le dernier de l'arbre.
+/// PE-A6 : « Oui, retirer ma candidature » (et « Non, je continue »).
 Future<void> _confirmerRetrait(WidgetTester tester) async {
-  await tester.tap(_texte(t.recrutement.retrait.confirmer).last);
+  await tester.tap(_texte(t.recrutement.accueil.retrait.confirmer).last);
   await tester.pumpAndSettle();
 }
 
@@ -103,8 +110,11 @@ void main() {
         accordsFaits: false,
         pieceDeposee: false,
       );
-      expect(_texte(t.recrutement.portail.toutIci), findsOneWidget);
-      expect(_texte(t.recrutement.portail.listeTitre), findsOneWidget);
+      // ACCUEIL-CANDIDAT (pilote, 20/11/2026, retours du directeur sur la
+      // planche) : ecran allege, ni phrase « Tout se fait ici », ni titre de
+      // section ; les elements se lisent dans les lignes.
+      expect(_texte(t.recrutement.portail.toutIci), findsNothing);
+      expect(_texte(t.recrutement.portail.listeTitre), findsNothing);
       expect(_texte(t.recrutement.portail.elementAccords), findsOneWidget);
       expect(_texte(t.recrutement.portail.elementPiece), findsOneWidget);
       expect(_texte(t.recrutement.portail.etatADeposer), findsOneWidget);
@@ -134,7 +144,8 @@ void main() {
         expect(_texte(t.recrutement.portail.completer), findsOneWidget);
         expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(3));
         expect(_texte(t.recrutement.portail.elementReponses), findsOneWidget);
-        // INCIDENT-CANDIDATS : la piece recue se dit en mots.
+        // INCIDENT-CANDIDATS : la piece recue se dit en mots, ligne depliee.
+        await _deplier(tester, 'piece');
         expect(_texte(t.recrutement.portail.pieceRecue), findsOneWidget);
         verifierUnSeulBoutonPlein(tester);
       },
@@ -277,6 +288,7 @@ void main() {
         accordPublicationSigne: false,
       );
       expect(_texte(t.recrutement.portail.etatAAjouter), findsNothing);
+      await _deplier(tester, 'photo');
       expect(_texte(t.recrutement.portail.accordAEnvoyer), findsOneWidget);
     });
 
@@ -289,6 +301,7 @@ void main() {
           photoPosee: true,
           accordPublicationSigne: true,
         );
+        await _deplier(tester, 'photo');
         expect(_texte(t.recrutement.portail.photoRecue), findsOneWidget);
       },
     );
@@ -456,7 +469,10 @@ void main() {
     ) async {
       await _portail(tester, _enExamen);
       expect(_texte(t.recrutement.portail.enExamenTitre), findsOneWidget);
-      expect(_texte(t.recrutement.portail.enExamen), findsOneWidget);
+      // ACCUEIL-CANDIDAT (20/11/2026) : la phrase qui redisait la carte
+      // « Rien a faire pour l'instant » est retiree ; la carte le dit.
+      expect(_texte(t.recrutement.portail.enExamen), findsNothing);
+      expect(_texte(t.recrutement.accueil.aFaire.rien), findsOneWidget);
       expect(_texte(t.recrutement.portail.completer), findsNothing);
       expect(_cle('portail-versement'), findsNothing);
     });
@@ -698,7 +714,10 @@ void main() {
         );
         expect(find.textContaining('10/01/2027'), findsOneWidget);
         expect(_texte(t.recrutement.portail.libreDePartir), findsOneWidget);
-        // Le retrait reste possible en pause.
+        // Le retrait reste possible en pause (PE-A6 : dans les reglages de
+        // l'onglet Academie, plus au pied de l'accueil).
+        expect(_cle('retrait-lien'), findsNothing);
+        await versLeRetrait(tester);
         expect(_cle('retrait-lien'), findsOneWidget);
       },
     );
@@ -763,12 +782,16 @@ void main() {
     ) async {
       final FauxMaCandidature port = FauxMaCandidature();
       await _portail(tester, candidatureAFaire(), port: port);
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       expect(_texte(t.recrutement.retrait.question), findsOneWidget);
+      // Sans lecture du serveur sur la reprise, aucun delai n'est promis :
+      // la phrase d'avant.
       expect(_texte(t.recrutement.retrait.consequence), findsOneWidget);
-      await tester.tap(_texte(t.commun.annuler));
+      await tester.tap(_texte(t.recrutement.accueil.retrait.garder));
       await tester.pumpAndSettle();
       expect(port.retraits, isEmpty);
+      await versOnglet(tester, t.recrutement.accueil.onglets.dossier);
       expect(_texte(t.recrutement.portail.aCompleterTitre), findsOneWidget);
     });
 
@@ -781,6 +804,7 @@ void main() {
           candidatureAFaire(),
           port: port,
         );
+        await versLeRetrait(tester);
         await toucherCle(tester, 'retrait-lien');
         // Le serveur retire, puis le dossier le dit.
         dossier.etatRendu = etatCandidat(
@@ -790,7 +814,11 @@ void main() {
         expect(port.retraits, hasLength(1));
         expect(port.retraits.single.$1, 3);
         expect(port.retraits.single.$2, startsWith('cand-'));
+        // PE-A6 : apres le retrait, l'accueil ramene a l'onglet Dossier.
         expect(_texte(t.recrutement.portail.retireeTitre), findsOneWidget);
+        expect(_cle('retrait-lien'), findsNothing);
+        await versOnglet(tester, t.recrutement.accueil.onglets.academie);
+        await toucherCle(tester, 'academie-reglages');
         expect(_cle('retrait-lien'), findsNothing);
       },
     );
@@ -807,6 +835,7 @@ void main() {
           version: 5,
         ),
       );
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       expect(
         _texte(t.recrutement.retrait.consequenceEntretien),
@@ -843,6 +872,7 @@ void main() {
         final FauxMaCandidature port = FauxMaCandidature()
           ..erreurRetrait = erreur;
         await _portail(tester, candidatureAFaire(), port: port);
+        await versLeRetrait(tester);
         await toucherCle(tester, 'retrait-lien');
         await _confirmerRetrait(tester);
         expect(_cle('retrait-message'), findsOneWidget);
@@ -857,6 +887,7 @@ void main() {
       final FauxMaCandidature port = FauxMaCandidature()
         ..erreurRetrait = const HorsLigneCandidature();
       await _portail(tester, candidatureAFaire(), port: port);
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       await _confirmerRetrait(tester);
       port.erreurRetrait = null;
@@ -872,6 +903,7 @@ void main() {
       final FauxMaCandidature port = FauxMaCandidature()
         ..erreurRetrait = const ConflitCandidature(9);
       await _portail(tester, candidatureAFaire(), port: port);
+      await versLeRetrait(tester);
       await toucherCle(tester, 'retrait-lien');
       await _confirmerRetrait(tester);
       port.erreurRetrait = null;
@@ -885,6 +917,7 @@ void main() {
     ) async {
       final FauxMaCandidature port = FauxMaCandidature();
       await _portail(tester, candidatureAFaire(), port: port, horsLigne: true);
+      await versLeRetrait(tester);
       expect(_cle('retrait-lien'), findsNothing);
       expect(_cle('retrait-hors-ligne'), findsOneWidget);
       expect(port.retraits, isEmpty);
@@ -921,6 +954,9 @@ void main() {
           );
           expect(tester.takeException(), isNull);
           expect(_cle('portail-titre'), findsOneWidget);
+          // PE-A6 : le retrait vit dans les reglages de l'onglet Academie.
+          await versLeRetrait(tester);
+          expect(tester.takeException(), isNull);
           expect(_cle('retrait-lien'), findsOneWidget);
         },
       );
@@ -1061,6 +1097,8 @@ void main() {
         ),
         findsOneWidget,
       );
+      await _deplier(tester, 'piece');
+      await _deplier(tester, 'photo');
       expect(_texte(p.pieceDemandee), findsOneWidget);
       expect(_texte(p.photoDemandee), findsOneWidget);
       expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
@@ -1169,6 +1207,7 @@ void main() {
         candidatureAFaire(),
         statutPiece: StatutPiece.refusee,
       );
+      await _deplier(tester, 'piece');
       expect(
         _texte(
           t.attente.refuseDetail(element: t.recrutement.portail.elementPiece),
