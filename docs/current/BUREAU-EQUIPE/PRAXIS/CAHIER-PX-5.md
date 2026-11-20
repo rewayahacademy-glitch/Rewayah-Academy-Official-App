@@ -250,3 +250,28 @@ Après, en lecture seule :
 11. Avant d'annoncer la correction au directeur : le directeur ouvre, dans la boîte de Praxis, une conversation de
     candidature à l'étape `verifications` et vérifie que `dossier.etape` vaut `verifications` et que
     `informe_de_l_etape` est juste. C'est la preuve en production. Sans elle, rien n'est « fait ».
+
+## 8. Relecture adverse (20/11/2026)
+
+- **Migration inchangée** : empreintes d'entrée et de sortie du §2 confirmées. Les neuf empreintes d'entrée sont celles de la
+  production (lecture seule du 20/11) ; aucune colonne, fonction, contrainte ni index neuf n'y existe ; aucune migration
+  `praxis_px5` n'y est enregistrée ; 13 questions sans réponse, aucune retirée.
+- **Fusion de `main` (PR 645)** : la migration `20261130400000_confidentialite_version_v2.sql` sera installée en production
+  AVANT PX-5 (numéro plus petit). Rejoué dans les deux ordres : sans effet l'une sur l'autre (objets disjoints).
+- **Rejeu complet** (Postgres 16, stub, toutes les migrations dans l'ordre réel de la production, chaque scénario sur une copie
+  neuve) : 361 verts sur 364 ; les 3 rouges le sont aussi sans PX-5 (`calendrier_pauses`, `cand_l1b_concurrence`,
+  `cand_l3_concurrence`). `scenarios_praxis_px5` : 67 sur 67.
+- **Essais d'attaque** (hors dépôt) : 32 sur 32 (portes, bornes, fuites de `dossier`, `fil` de `lire`, pagination, retrait,
+  idempotence). Concurrence : le script du lot (5 passent, 15 refusées, 100), et une variante : 20 sessions avec la même clé
+  d'idempotence (1 passe, 19 rejouées, 99), puis 20 avec des clés distinctes (1 passe, 1 `ouverture_recente`, 18
+  `plafond_ouvertures`, 100).
+- **Tests du connecteur** : `praxis_test.ts` exécuté sous Node (assertions de `node:assert` à la place de `jsr:@std/assert`,
+  pas sous Deno) : 14 sur 14.
+- **Correctif de texte (`outils.ts`)** : avec `sans_impression`, `etiquette` ou `tri = vision`, noter une impression entre deux
+  pages déplace les lignes ; « decalage + lignes rendues » saute alors des dossiers. La description dit maintenant de reprendre
+  à `decalage = 0`. La pagination ne garantit ni doublon ni trou que si rien ne bouge entre deux appels.
+- **Question retirée qui bloque sa conversation** : acceptée telle quelle. Aucune solution sans mot d'effacement n'est sûre :
+  un second index ne relâche pas le premier, et poser `repondue_le` au retrait obligerait (CHECK
+  `praxis_questions_reponse_coherente`) à inscrire une fausse « réponse » et un faux répondant. La vraie correction est de
+  créer l'index `WHERE repondue_le IS NULL AND retiree_le IS NULL`, puis de retirer l'ancien : elle demande une décision
+  datée du directeur pour un `DROP INDEX`.
