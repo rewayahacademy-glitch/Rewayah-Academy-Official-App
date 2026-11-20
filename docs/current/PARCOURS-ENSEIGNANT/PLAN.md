@@ -1058,3 +1058,25 @@ direction avec le contexte de la personne : besoin du travail, risque de connexi
 recevoir un versement, nombre de créneaux offerts. Règle retenue : **le contexte éclaire, il ne
 juge pas** ; aucun pays n'écarte quelqu'un, aucune accusation, jamais ; la décision reste à la
 direction. Porté par le lot PX-4 (champs `besoin`, `risque_connexion`, `risque_versement`).
+
+### 17.8 Empathie élargie, entretien écrit, modèles moins coûteux (directeur, 20/11/2026)
+
+- **Empathie** : les exemples du directeur n'étaient que des exemples (« c'est toi l'IA, creuse les
+  scénarios »). Le contexte d'un dossier est une liste ouverte d'éléments (thème, constat, source,
+  effet : atout, risque, à vérifier). Thèmes suggérés : besoin du travail, connexion et électricité,
+  moyen de recevoir un versement, disponibilité et fuseau, charge de famille ou autre emploi,
+  expérience avec les enfants ou les débutants, langues réellement parlées, matériel, constance
+  dans les échanges, ton et patience à l'écrit, motivation, ancienneté, ce qu'il apporte de rare.
+  Jamais : religion pratiquée, ethnie, santé, opinion, accusation ; le pays n'est qu'un fait de
+  contexte, jamais un motif.
+- **Entretien écrit** : trop de candidats pour les voir tous en vidéo. Praxis les en dispense et
+  leur pose quelques questions simples par écrit, adaptées au dossier, pour dire s'ils peuvent être
+  utiles, dans quelle mesure et dans quelle situation. Cinq questions au plus par envoi, une seule
+  série ouverte, une seule relance. La dispense et toute décision restent une proposition validée
+  par la direction. Porté par PX-4. **Limite à dire** : l'écrit ne prouve ni la récitation ni la
+  voix ; la vidéo ou un enregistrement reste à prévoir pour ceux que l'écrit retient.
+- **Modèles** : les sous-agents et les routines de Praxis tournent sur un modèle moins coûteux.
+  Fait le 20/11 à 02:25 UTC pour les deux routines de Praxis. Les six agents déjà lancés finissent
+  sur leur modèle ; tout nouvel agent part sur le modèle moins coûteux.
+- Cause du premier passage arrêté à 19 conversations : la consigne lit 20 conversations par
+  passage. Les suivantes sont prises au passage horaire suivant.
