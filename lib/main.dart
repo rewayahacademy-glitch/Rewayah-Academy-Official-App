@@ -1064,6 +1064,9 @@ List<Override> _surchargesAppReelle() => <Override>[
       appelRpcSupabase(Supabase.instance.client),
       libelles: const LibellesCommunicationSlang(),
       fonctions: appelFonctionSupabase(Supabase.instance.client),
+      // PE-D1 : un envoi refuse faute de session demande de se reconnecter.
+      sessionOuverte: () =>
+          Supabase.instance.client.auth.currentSession != null,
     ),
   ),
   // MESSAGES-CANDIDAT (CAND-Q06) : l'identifiant de ma candidature, pour

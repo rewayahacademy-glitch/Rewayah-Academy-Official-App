@@ -41858,6 +41858,15 @@ class Traductions$com$messages$panneau$fr {
 
 	// Translations
 
+	/// fr: 'Seuls les fichiers des messages déjà chargés sont listés.'
+	String get fichiersPartiels => 'Seuls les fichiers des messages déjà chargés sont listés.';
+
+	/// fr: 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.'
+	String get fichiersAucunCharge => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.';
+
+	/// fr: 'Charger les messages précédents'
+	String get chargerPrecedents => 'Charger les messages précédents';
+
 	/// fr: 'À propos de'
 	String get objets => 'À propos de';
 
@@ -41889,6 +41898,18 @@ class Traductions$com$messages$fil$fr {
 
 	/// fr: 'Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.'
 	String get lectureSeule => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.';
+
+	/// fr: 'Chargement des messages précédents'
+	String get anciensChargement => 'Chargement des messages précédents';
+
+	/// fr: 'Les messages précédents ne se sont pas chargés.'
+	String get anciensEchec => 'Les messages précédents ne se sont pas chargés.';
+
+	/// fr: 'Vous ne pouvez plus écrire dans cette conversation.'
+	String get refusFerme => 'Vous ne pouvez plus écrire dans cette conversation.';
+
+	/// fr: 'Ce message est vide ou trop long : 5 000 caractères au plus.'
+	String get refusTexte => 'Ce message est vide ou trop long : 5 000 caractères au plus.';
 }
 
 // Path: com.messages.images
@@ -67890,6 +67911,9 @@ extension on Traductions {
 			'com.messages.types.candidature' => 'Candidature',
 			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
+			'com.messages.panneau.fichiersPartiels' => 'Seuls les fichiers des messages déjà chargés sont listés.',
+			'com.messages.panneau.fichiersAucunCharge' => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.',
+			'com.messages.panneau.chargerPrecedents' => 'Charger les messages précédents',
 			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -67900,6 +67924,10 @@ extension on Traductions {
 			'com.messages.panneau.officiel.mention' => 'Assistant de l\'académie · IA',
 			'com.messages.panneau.officiel.phrase' => 'Il répond à vos messages, vous guide pas à pas et confie à l\'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction.',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
+			'com.messages.fil.anciensChargement' => 'Chargement des messages précédents',
+			'com.messages.fil.anciensEchec' => 'Les messages précédents ne se sont pas chargés.',
+			'com.messages.fil.refusFerme' => 'Vous ne pouvez plus écrire dans cette conversation.',
+			'com.messages.fil.refusTexte' => 'Ce message est vide ou trop long : 5 000 caractères au plus.',
 			'com.messages.images.joindre' => 'Joindre une image',
 			'com.messages.images.prendrePhoto' => 'Prendre une photo',
 			'com.messages.images.choisirGalerie' => 'Choisir dans la galerie',
@@ -67999,6 +68027,8 @@ extension on Traductions {
 			'com.vocal.composer.autoriser' => 'Autoriser le microphone',
 			'com.vocal.composer.annuler' => 'Annuler',
 			'com.vocal.composer.refuse' => 'Le microphone n\'est pas autorisé pour Rewayah.',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.refuseAide' => 'Pour envoyer un message vocal, autorisez le microphone dans les réglages de votre appareil, puis revenez ici.',
 			'com.vocal.composer.fermer' => 'Fermer',
 			'com.vocal.composer.enregistrement' => 'Enregistrement en cours',
@@ -68006,8 +68036,6 @@ extension on Traductions {
 			'com.vocal.composer.reprise' => 'Enregistrement repris',
 			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Moins de ${seuil} avant la limite de ${max}',
 			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Durée maximale atteinte (${max}). Écoutez votre message, puis envoyez-le ou supprimez-le.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} sur ${max}',
 			'com.vocal.composer.preEcoute' => 'Pré-écoute',
 			'com.vocal.composer.preEcouteAide' => 'Écoutez votre message avant de l\'envoyer. Rien ne part sans votre accord.',
@@ -68513,6 +68541,8 @@ extension on Traductions {
 			'com.annonces.publieur.nonConfirmee' => 'Cette annonce n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Réessayez : elle ne partira qu\'une fois.',
 			'com.annonces.publieur.horsLigne' => 'Cette annonce n\'est pas encore confirmée. Réessayez dès que l\'envoi est de nouveau possible.',
 			'com.annonces.publieur.indisponible' => 'La publication des annonces n\'est pas encore disponible. Revenez plus tard.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.aucuneCibleTitre' => 'Aucun destinataire ouvert',
 			'com.annonces.publieur.aucuneCible' => 'Vous ne pouvez publier pour aucun destinataire pour le moment. Demandez l\'accès à la direction.',
 			'com.annonces.publieur.classeRefuseeTitre' => 'Publication réservée',
@@ -68520,8 +68550,6 @@ extension on Traductions {
 			'com.annonces.administration.nouvelle' => 'Nouvelle annonce',
 			'com.annonces.administration.demo' => 'Démonstration',
 			'com.annonces.administration.demoDetail' => 'Données de démonstration : aucun chiffre réel.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.horsLigne' => 'Vous êtes hors ligne. Les annonces ne peuvent pas être actualisées.',
 			'com.annonces.administration.indicateurs.titre' => 'Indicateurs des communications',
 			'com.annonces.administration.indicateurs.publiees' => 'Annonces publiées',
@@ -69027,6 +69055,8 @@ extension on Traductions {
 			'comptable.paiements.ecart.annuler' => 'Annuler',
 			'comptable.paiements.ecart.envoye' => ({required Object date}) => 'Écart signalé le ${date}. Le montant reste celui de la source jusqu\'au recalcul.',
 			'comptable.paiements.ecart.erreurEnvoi' => 'Le signalement n\'a pas abouti. Réessayez : il ne sera enregistré qu\'une fois.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.titre' => 'Paiements à effectuer',
 			'comptable.paiements.sousTitre' => 'Montants calculés à la source : ici on vérifie et on paie, on ne modifie rien.',
 			'comptable.paiements.detailTitre' => 'Détail du paiement',
@@ -69034,8 +69064,6 @@ extension on Traductions {
 			'comptable.tresorerie.coffresTitre' => 'Coffres',
 			'comptable.tresorerie.coffresPhrase' => 'Où l\'argent est affecté. Une somme protégée n\'est jamais comptée comme libre.',
 			'comptable.tresorerie.coffreProtege' => 'Protégé',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.coffreNonProtege' => 'Non protégé',
 			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part} % de la trésorerie détenue',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Règle d\'usage : ${regle}',
@@ -69541,6 +69569,8 @@ extension on Traductions {
 			'comptable.direction.suffixeJours' => 'jours',
 			'comptable.direction.suffixePourcent' => '%',
 			'comptable.direction.erreurNombre' => 'Saisissez un nombre entier supérieur à zéro.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.erreurPourcentage' => 'Saisissez un pourcentage supérieur à zéro et au plus égal à 100, avec une décimale au plus.',
 			'comptable.direction.erreurMontant' => 'Saisissez un montant supérieur à zéro.',
 			'comptable.direction.reservePanneau.intro' => 'Vous fixez la politique ; le Comptable la lit et l\'exécute. Chaque enregistrement crée une nouvelle version, conservée dans l\'historique.',
@@ -69548,8 +69578,6 @@ extension on Traductions {
 			'comptable.direction.reservePanneau.objectifDetail' => 'Ce que la Réserve stratégique doit atteindre.',
 			'comptable.direction.reservePanneau.modeFixe' => 'Montant fixe',
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'Une somme précise que vous choisissez.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.modeMois' => 'Couverture en mois',
 			'comptable.direction.reservePanneau.modeMoisDetail' => 'Un nombre de mois de charges essentielles.',
 			'comptable.direction.reservePanneau.montantCible' => 'Montant cible',
@@ -70055,6 +70083,8 @@ extension on Traductions {
 			'avis.form.note.lue' => ({required Object n}) => 'Note : ${n} sur 5',
 			'avis.form.note.surCinq' => ({required Object n}) => '${n} sur 5',
 			'avis.form.note.erreur' => 'Choisissez une note de 1 à 5 étoiles.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.titreAvis.libelle' => 'Titre (facultatif)',
 			'avis.form.titreAvis.aide' => 'Une phrase courte qui résume votre avis. 80 caractères au plus.',
 			'avis.form.titreAvis.erreur' => 'Corrigez le titre : 80 caractères au plus.',
@@ -70062,8 +70092,6 @@ extension on Traductions {
 			'avis.form.texte.aide' => 'Ce qui vous a plu, ce que vous avez appris, ce qui pourrait être mieux. Au moins 20 caractères.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Caractères : ${n} sur ${max}',
 			'avis.form.texte.erreur' => 'Écrivez entre 20 et 1500 caractères.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.accord.libelle' => 'J\'accepte que cet avis, mon nom affiché, mon pays et la date soient publiés sur le site de Rewayah Academy.',
 			'avis.form.accord.erreur' => 'Acceptez la publication en cochant la case, sinon votre avis ne peut pas être envoyé.',
 			'avis.form.lecture' => ({required Object courriel}) => 'Votre avis sera lu par la direction avant d\'être publié. Pour le faire retirer plus tard, écrivez à ${courriel}.',
@@ -70569,6 +70597,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'Nom du classeur',
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'Nom de l\'onglet',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'Le nom du fichier ne dit pas l\'onglet. Indiquez-le pour continuer.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'Un nom ne peut pas être vide, dépasser 200 signes ni contenir la barre verticale. Corrigez-le pour continuer.',
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'Choisissez d\'abord un fichier pour pouvoir l\'analyser.',
 			'candidatsFlux.importFormulaires.depot.analyser' => 'Analyser le fichier',
@@ -70576,8 +70606,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.depot.horsLigne' => 'L\'analyse pourra se faire quand la connexion reviendra.',
 			'candidatsFlux.importFormulaires.depot.vide' => 'Ce fichier ne contient aucune ligne à importer.',
 			'candidatsFlux.importFormulaires.depot.videAide' => 'Vérifiez que vous avez exporté la bonne feuille.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.fichier.titre' => 'Fichier illisible',
 			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'Ce fichier n\'a pas pu être lu, ligne ${ligne} : ${cause}.',
 			'candidatsFlux.importFormulaires.fichier.illisible' => ({required Object cause}) => 'Ce fichier n\'a pas pu être lu : ${cause}.',
@@ -71083,6 +71111,8 @@ extension on Traductions {
 			'suiviAttente.cloture.titreRefusee' => 'Votre demande n\'a pas été retenue',
 			'suiviAttente.cloture.titreRetiree' => 'Cette demande est retirée',
 			'suiviAttente.cloture.titreClose' => 'Cette demande est close',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.motif.retraitFamille' => 'Vous avez retiré cette demande.',
 			'suiviAttente.cloture.motif.offreRetiree' => 'L\'académie a retiré ce créneau de ses offres.',
 			'suiviAttente.cloture.motif.classeNonConstituee' => 'La classe de ce créneau n\'a pas pu être constituée.',
@@ -71090,8 +71120,6 @@ extension on Traductions {
 			'suiviAttente.cloture.motif.dejaEnClasse' => 'Cet élève a déjà une place en classe : la demande n\'est plus nécessaire.',
 			'suiviAttente.cloture.motif.inconnu' => 'Cette demande est close.',
 			'suiviAttente.cloture.suite' => 'Vous pouvez choisir un autre créneau.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.cloture.autreCreneau' => 'Choisir un autre créneau',
 			'suiviAttente.cloture.simple.refusee' => 'Ta demande n\'a pas été retenue. Ton tuteur peut choisir un autre créneau.',
 			'suiviAttente.cloture.simple.retiree' => 'Cette demande est retirée.',

@@ -20463,6 +20463,9 @@ class _Traductions$com$messages$panneau$en extends Traductions$com$messages$pann
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String get fichiersPartiels => 'Only files from messages already loaded are listed.';
+	@override String get fichiersAucunCharge => 'No files in the messages already loaded; there are older messages.';
+	@override String get chargerPrecedents => 'Load earlier messages';
 	@override String get objets => 'About';
 	@override String get participants => 'Participants';
 	@override String get fichiers => _root.com.socle.lexique.fichiersPartages;
@@ -20480,6 +20483,10 @@ class _Traductions$com$messages$fil$en extends Traductions$com$messages$fil$fr {
 
 	// Translations
 	@override String get lectureSeule => 'You can read this conversation. Replying is not open to you here.';
+	@override String get anciensChargement => 'Loading earlier messages';
+	@override String get anciensEchec => 'Earlier messages did not load.';
+	@override String get refusFerme => 'You can no longer write in this conversation.';
+	@override String get refusTexte => 'This message is empty or too long: 5,000 characters at most.';
 }
 
 // Path: com.messages.images
@@ -39630,6 +39637,9 @@ extension on TraductionsEn {
 			'com.messages.types.candidature' => 'Application',
 			'com.messages.types.profilPaiement' => 'Payment profile',
 			'com.messages.types.autre' => 'Other subject',
+			'com.messages.panneau.fichiersPartiels' => 'Only files from messages already loaded are listed.',
+			'com.messages.panneau.fichiersAucunCharge' => 'No files in the messages already loaded; there are older messages.',
+			'com.messages.panneau.chargerPrecedents' => 'Load earlier messages',
 			'com.messages.panneau.objets' => 'About',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -39640,6 +39650,10 @@ extension on TraductionsEn {
 			'com.messages.panneau.officiel.mention' => 'Academy assistant · AI',
 			'com.messages.panneau.officiel.phrase' => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
+			'com.messages.fil.anciensChargement' => 'Loading earlier messages',
+			'com.messages.fil.anciensEchec' => 'Earlier messages did not load.',
+			'com.messages.fil.refusFerme' => 'You can no longer write in this conversation.',
+			'com.messages.fil.refusTexte' => 'This message is empty or too long: 5,000 characters at most.',
 			'com.messages.images.joindre' => 'Attach an image',
 			'com.messages.images.prendrePhoto' => 'Take a photo',
 			'com.messages.images.choisirGalerie' => 'Choose from the gallery',
@@ -39739,6 +39753,8 @@ extension on TraductionsEn {
 			'com.vocal.composer.autoriser' => 'Allow the microphone',
 			'com.vocal.composer.annuler' => 'Cancel',
 			'com.vocal.composer.refuse' => 'The microphone is not allowed for Rewayah.',
+			_ => null,
+		} ?? switch (path) {
 			'com.vocal.composer.refuseAide' => 'To send a voice message, allow the microphone in your device settings, then come back here.',
 			'com.vocal.composer.fermer' => 'Close',
 			'com.vocal.composer.enregistrement' => 'Recording in progress',
@@ -39746,8 +39762,6 @@ extension on TraductionsEn {
 			'com.vocal.composer.reprise' => 'Recording resumed',
 			'com.vocal.composer.limiteProche' => ({required Object seuil, required Object max}) => 'Less than ${seuil} before the limit of ${max}',
 			'com.vocal.composer.limiteAtteinte' => ({required Object max}) => 'Maximum length reached (${max}). Listen to your message, then send it or delete it.',
-			_ => null,
-		} ?? switch (path) {
 			'com.vocal.composer.ecoule' => ({required Object ecoule, required Object max}) => '${ecoule} of ${max}',
 			'com.vocal.composer.preEcoute' => 'Preview',
 			'com.vocal.composer.preEcouteAide' => 'Listen to your message before sending it. Nothing is sent without your agreement.',
@@ -40253,6 +40267,8 @@ extension on TraductionsEn {
 			'com.annonces.publieur.nonConfirmee' => 'This announcement is not confirmed yet: it may not have reached Rewayah. Try again: it will go out only once.',
 			'com.annonces.publieur.horsLigne' => 'This announcement is not confirmed yet. Try again as soon as sending is possible again.',
 			'com.annonces.publieur.indisponible' => 'Publishing announcements is not available yet. Come back later.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.publieur.aucuneCibleTitre' => 'No recipient open',
 			'com.annonces.publieur.aucuneCible' => 'You cannot publish for any recipient for now. Ask the management for access.',
 			'com.annonces.publieur.classeRefuseeTitre' => 'Publishing reserved',
@@ -40260,8 +40276,6 @@ extension on TraductionsEn {
 			'com.annonces.administration.nouvelle' => 'New announcement',
 			'com.annonces.administration.demo' => 'Demo',
 			'com.annonces.administration.demoDetail' => 'Demo data: no real figures.',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.horsLigne' => 'You are offline. Announcements cannot be refreshed.',
 			'com.annonces.administration.indicateurs.titre' => 'Communications indicators',
 			'com.annonces.administration.indicateurs.publiees' => 'Announcements published',
@@ -40767,6 +40781,8 @@ extension on TraductionsEn {
 			'comptable.paiements.ecart.annuler' => 'Cancel',
 			'comptable.paiements.ecart.envoye' => ({required Object date}) => 'Discrepancy reported on ${date}. The amount stays the source\'s until recalculation.',
 			'comptable.paiements.ecart.erreurEnvoi' => 'The report did not go through. Try again: it will be recorded only once.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.paiements.titre' => 'Payments to make',
 			'comptable.paiements.sousTitre' => 'Amounts calculated at the source: here you check and pay, you change nothing.',
 			'comptable.paiements.detailTitre' => 'Payment details',
@@ -40774,8 +40790,6 @@ extension on TraductionsEn {
 			'comptable.tresorerie.coffresTitre' => 'Vaults',
 			'comptable.tresorerie.coffresPhrase' => 'Where the money is allocated. A protected sum is never counted as free.',
 			'comptable.tresorerie.coffreProtege' => 'Protected',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.coffreNonProtege' => 'Not protected',
 			'comptable.tresorerie.partDetenue' => ({required Object part}) => '${part}% of the cash held',
 			'comptable.tresorerie.regleUsage' => ({required Object regle}) => 'Usage rule: ${regle}',
@@ -41281,6 +41295,8 @@ extension on TraductionsEn {
 			'comptable.direction.suffixeJours' => 'days',
 			'comptable.direction.suffixePourcent' => '%',
 			'comptable.direction.erreurNombre' => 'Enter a whole number greater than zero.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.erreurPourcentage' => 'Enter a percentage greater than zero and at most 100, with at most one decimal.',
 			'comptable.direction.erreurMontant' => 'Enter an amount greater than zero.',
 			'comptable.direction.reservePanneau.intro' => 'You set the policy; the Accountant reads and carries it out. Each save creates a new version, kept in the history.',
@@ -41288,8 +41304,6 @@ extension on TraductionsEn {
 			'comptable.direction.reservePanneau.objectifDetail' => 'What the Strategic reserve must reach.',
 			'comptable.direction.reservePanneau.modeFixe' => 'Fixed amount',
 			'comptable.direction.reservePanneau.modeFixeDetail' => 'A precise sum you choose.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.reservePanneau.modeMois' => 'Coverage in months',
 			'comptable.direction.reservePanneau.modeMoisDetail' => 'A number of months of essential expenses.',
 			'comptable.direction.reservePanneau.montantCible' => 'Target amount',
@@ -41795,6 +41809,8 @@ extension on TraductionsEn {
 			'avis.form.note.lue' => ({required Object n}) => 'Rating: ${n} out of 5',
 			'avis.form.note.surCinq' => ({required Object n}) => '${n} out of 5',
 			'avis.form.note.erreur' => 'Choose a rating from 1 to 5 stars.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.titreAvis.libelle' => 'Title (optional)',
 			'avis.form.titreAvis.aide' => 'A short sentence that sums up your feedback. 80 characters at most.',
 			'avis.form.titreAvis.erreur' => 'Fix the title: 80 characters at most.',
@@ -41802,8 +41818,6 @@ extension on TraductionsEn {
 			'avis.form.texte.aide' => 'What you liked, what you learned, what could be better. At least 20 characters.',
 			'avis.form.texte.compteur' => ({required Object n, required Object max}) => 'Characters: ${n} of ${max}',
 			'avis.form.texte.erreur' => 'Write between 20 and 1500 characters.',
-			_ => null,
-		} ?? switch (path) {
 			'avis.form.accord.libelle' => 'I agree that this feedback, my display name, my country and the date be published on the Rewayah Academy website.',
 			'avis.form.accord.erreur' => 'Accept publication by ticking the box, otherwise your feedback cannot be sent.',
 			'avis.form.lecture' => ({required Object courriel}) => 'Your feedback will be read by the management before being published. To have it removed later, write to ${courriel}.',
@@ -42309,6 +42323,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'Workbook name',
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'Tab name',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'The file name does not give the tab. Enter it to continue.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'A name cannot be empty, exceed 200 characters or contain the vertical bar. Correct it to continue.',
 			'candidatsFlux.importFormulaires.depot.manqueFichier' => 'First choose a file so it can be analyzed.',
 			'candidatsFlux.importFormulaires.depot.analyser' => 'Analyze the file',
@@ -42316,8 +42332,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.depot.horsLigne' => 'The analysis can be done when the connection returns.',
 			'candidatsFlux.importFormulaires.depot.vide' => 'This file contains no row to import.',
 			'candidatsFlux.importFormulaires.depot.videAide' => 'Check that you exported the right sheet.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.fichier.titre' => 'Unreadable file',
 			'candidatsFlux.importFormulaires.fichier.illisibleLigne' => ({required Object ligne, required Object cause}) => 'This file could not be read, row ${ligne}: ${cause}.',
 			'candidatsFlux.importFormulaires.fichier.illisible' => ({required Object cause}) => 'This file could not be read: ${cause}.',
@@ -42823,6 +42837,8 @@ extension on TraductionsEn {
 			'suiviAttente.cloture.titreRefusee' => 'Your request was not accepted',
 			'suiviAttente.cloture.titreRetiree' => 'This request is withdrawn',
 			'suiviAttente.cloture.titreClose' => 'This request is closed',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.cloture.motif.retraitFamille' => 'You withdrew this request.',
 			'suiviAttente.cloture.motif.offreRetiree' => 'The academy removed this slot from its offers.',
 			'suiviAttente.cloture.motif.classeNonConstituee' => 'The class for this slot could not be formed.',
@@ -42830,8 +42846,6 @@ extension on TraductionsEn {
 			'suiviAttente.cloture.motif.dejaEnClasse' => 'This student already has a place in a class: the request is no longer needed.',
 			'suiviAttente.cloture.motif.inconnu' => 'This request is closed.',
 			'suiviAttente.cloture.suite' => 'You can choose another slot.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.cloture.autreCreneau' => 'Choose another slot',
 			'suiviAttente.cloture.simple.refusee' => 'Your request was not accepted. Your guardian can choose another slot.',
 			'suiviAttente.cloture.simple.retiree' => 'This request is withdrawn.',
