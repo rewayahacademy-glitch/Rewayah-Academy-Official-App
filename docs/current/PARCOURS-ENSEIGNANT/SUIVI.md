@@ -58,13 +58,13 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 
 | | Lot | Contenu | Déjà commencé ailleurs | Statut |
 | :-- | :--- | :--- | :--- | :--- |
-| [ ] | PE-C1 | Un seul dossier : les onze entrées du §3.1 mènent à l'écran A ; « Fichiers à valider » devient une file ; la même carte d'aperçu partout (A1, A2) | BE-0c, BE-1c dans main | pas commencé |
+| [ ] | PE-C1 | Un seul dossier : les onze entrées du §3.1 mènent à l'écran A ; « Fichiers à valider » devient une file ; la même carte d'aperçu partout (A1, A2) | BE-0c, BE-1c dans main | PR ouverte (#639), **partiel** : messagerie et liste des enseignants ouvrent A ; Comptes, Espace de traitement et notifications mènent encore à B (bloqué : le serveur ne donne pas la candidature depuis un profil) |
 | [ ] | PE-C2 | Synthèse en tête : ce qui manque, pièce vérifiée ou non, dernière connexion, ancienneté ; accepter exige la pièce vérifiée (A7) | vérifier `accueil_separe` en production ; Q4 | pas commencé |
 | [ ] | PE-C3 | La pièce d'identité toujours affichée de la même façon (§3.2) | PIECE-DANS-DOSSIER (#532) | pas commencé |
 | [ ] | PE-C4 | Liste : tri de l'ancien au récent ; filtres « dossier complet » et « dernière connexion » ; « sélectionner les N résultats » ; gestes groupés utiles (admettre, accueillir, demander un complément, écrire, épingler) avec aperçu avant d'exécuter | lots serveur `executer_lot_candidats` ; vague 3 du bureau | pas commencé |
 | [ ] | PE-C5 | Épingler un profil : marque qui le suit partout, vue « Épinglés », gestes groupés (inviter, écrire au groupe) (manuscrit, partie 3) | rien | pas commencé |
 | [ ] | PE-C6 | Tableau de bord refait : À faire, Ce qui a changé, Santé ; chaque chiffre ouvre sa liste filtrée (A5) | `DASH_STRATEGIE.md` à relire ; références du directeur | pas commencé |
-| [ ] | PE-C7 | En-tête : icônes fixes, panneaux légers (messages avec réponse rapide, notifications, annonces), recherche qui trouve les personnes (A6) | | pas commencé |
+| [ ] | PE-C7 | En-tête : icônes fixes, panneaux légers (messages avec réponse rapide, notifications, annonces), recherche qui trouve les personnes (A6) | | PR ouverte (#639), partiel : l’icône des messages reste à zéro ; panneaux légers et recherche non faits |
 | [ ] | PE-C8 | Trois pages : Accueil, Personnes, Messages ; le reste dans « Plus » ; types de personnes en vues d'une seule liste ; famille qui se déplie (A3, A4) | LP-1 à LP-7 (`SPEC-LISTE-PERSONNES`) | pas commencé |
 | [ ] | PE-C9 | Lenteur du bureau : pages pour les comptes et la file des pièces, conversations lues une fois, selon PE-P1 (§3.7) | `STRATEGIE-BASE-ECONOME` | pas commencé |
 | [ ] | PE-C10 | « Demander un complément » s'ouvre avec tous les éléments manquants déjà cochés ; on décoche ce qu'on veut (§12.1) | R15 (liste des éléments) | pas commencé |
@@ -76,7 +76,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-D1 | Messagerie : rapprochement par clé d'envoi (plus de copie en échec qui reste), réessai automatique, chargement par pages (§4.1) | `MESSAGERIE-CHECKLIST.md` | pas commencé |
 | [ ] | PE-D2 | Supprimer un message, pour moi et pour tous (A14) | Q5 | pas commencé |
 | [ ] | PE-D3 | **Le composant des feuilles** : 90 % de hauteur au plus, poignée toujours atteignable, filtres en pleine largeur, « Effacer » visible ; puis revue des feuilles les plus employées (§4.3) | R17 (`FormeModale.panneau`) | pas commencé |
-| [ ] | PE-D4 | Retour et glissement : un détail s'empile, le retour revient d'où l'on vient, y compris dans le bureau (§3.6, §4.3) | `DECISION-MOUVEMENT` | pas commencé |
+| [ ] | PE-D4 | Retour et glissement : un détail s'empile, le retour revient d'où l'on vient, y compris dans le bureau (§3.6, §4.3) | `DECISION-MOUVEMENT` | PR ouverte (#639), bureau seulement ; précédent et suivant non faits |
 | [ ] | PE-D5 | Profil dans la conversation = la carte d'aperçu de PE-C1, avec ses gestes | PE-C1 | pas commencé |
 | [ ] | PE-D6 | Annonces : « Annoncer à ces N personnes » depuis la liste filtrée ou la sélection (A15) | PE-C4 | pas commencé |
 | [ ] | PE-D7 | Aperçu de lien, PDF lisible dans la conversation | | pas commencé |
@@ -84,7 +84,7 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 | [ ] | PE-D9 | Mise à jour : « Maintenant » ou « Plus tard », puis automatique à la prochaine ouverture ; l'avis reste (§12.2) | | pas commencé |
 | [ ] | PE-D10 | Gestes de glissement : retour par glissement, glisser une ligne pour agir, glisser pour répondre (§12.2) | PE-D4 | pas commencé |
 | [ ] | PE-D11 | Texte copiable sans menu « Tout sélectionner » au moindre toucher (§12.2) | à reproduire sur le téléphone du directeur | pas commencé |
-| [ ] | PE-D12 | **Tirer vers le bas pour actualiser**, partout, dans le composant de page commun ; et le bouton figé après la validation d'une pièce (régression) (§12.2) | | pas commencé |
+| [ ] | PE-D12 | **Tirer vers le bas pour actualiser**, partout, dans le composant de page commun ; et le bouton figé après la validation d'une pièce (régression) (§12.2) | | PR ouverte (#639), partiel : délai du bouton figé ; tirer pour actualiser non fait |
 
 ## Vague E. L'espace de l'enseignant
 
@@ -128,3 +128,4 @@ directeur du 19/11 : **l'espace de l'élève**, qui viendra après.
 - 20/11/2026 : tableau de bord écrit en vrai Flutter et remis au directeur (plan §16) ; non confirmé. Règles ajoutées : pas de bulles comme structure, style familier perfectionné, aucune couleur hors palette. Réponse sur l'installation hors boutiques (Android, Windows) inscrite au §16.3.
 - 20/11/2026 : le directeur valide la maquette du tableau de bord (« on valide cette maquette pour aller vite ») et ordonne de lancer les chantiers. Écrits : `CONTRAT-NAVIGATION.md` et `PLAN-DE-LANCEMENT.md`. Quatre agents lancés : RACINE (`claude/pe-racine` : PE-D8, PE-D9, PE-D11), ENTRÉE (`claude/pe-entree` : PE-A2, PE-A3, PE-A9 écran), BUREAU-NAV (`claude/pe-bureau-nav` : PE-C1, PE-D4, PE-C7, PE-D12), VIVANT (`claude/pe-vivant` : PE-F7, PE-F4, PE-C6). Statut de ces lots : en cours.
 - 20/11/2026 : ordre du directeur de mettre Praxis au travail (plan §17). Lu en production : Praxis allumé et autonome, mais en mode essai (2 conversations, données réelles fermées, 5 messages par heure). Fait : consigne de la routine horaire complétée, point du jour créé, chantier serveur PRAXIS-TRAVAIL lancé (`claude/praxis-travail`). Reste au directeur : trois interrupteurs à l'écran. Consigne 26 écrite.
+- 20/11/2026 (02:30 UTC) : rapport de BUREAU-NAV (PR #639), testé en local seulement. Bloqué côté serveur : ajouter la référence de candidature à la lecture des comptes et à `read_kyc_documents`, et envoyer `/admin/personnes/candidatures/<référence>` comme destination des notifications (à mettre dans la série de migrations). Praxis : premier passage réel terminé à 02:16 UTC, 19 conversations sur 35, 19 messages, 0 refus, 7 questions à la direction, 3 propositions ; 16 conversations encore en attente.
