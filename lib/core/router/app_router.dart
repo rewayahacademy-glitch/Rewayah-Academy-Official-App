@@ -680,7 +680,7 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
       GoRouteSure(
         path: Routes.lettreEnseignants,
         builder: (BuildContext _, GoRouterState _) =>
-            const LettreCandidatsPage(),
+            const _LecturePartagee(child: LettreCandidatsPage()),
       ),
       // Le portail d'attente et ses pages. Le sous-arbre entier est ouvert a
       // un compte en attente, la racine seule ne suffirait pas.
@@ -3400,6 +3400,21 @@ RoleEspaceGroupe _roleEspaceGroupePour(AppRole? role) => switch (role) {
 ///
 /// Aucune destination n'est active ici : `indexActif` est nul, et le chrome
 /// rend alors ses entrees sans en surligner aucune.
+/// LETTRE-CANDIDATS : une page a lire par un lien partage. Un compte actif
+/// la lit dans la coquille de son role (barre laterale, WEB-BUREAU B1) ; un
+/// candidat en attente, sans coquille, comme ses autres pages d'attente.
+class _LecturePartagee extends ConsumerWidget {
+  const _LecturePartagee({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.watch(sessionProvider).porte == PorteAcces.actif
+      ? _CoquilleSecondaire(chemin: Routes.lettreEnseignants, child: child)
+      : child;
+}
+
 class _CoquilleSecondaire extends ConsumerWidget {
   const _CoquilleSecondaire({
     required this.child,

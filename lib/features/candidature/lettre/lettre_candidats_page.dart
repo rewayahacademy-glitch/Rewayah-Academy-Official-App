@@ -131,8 +131,17 @@ class _EtatLettre extends ConsumerState<LettreCandidatsPage> {
     key: LettreCandidatsPage.cle,
     titre: t.recrutement.lettre.titre,
     onRetour: _retour,
+    // La bande de Praxis a la largeur de la lecture (WEB-BUREAU B4).
     enteteSecondaire: guide
-        ? PraxisLettre(moment: _moment, secousses: _secousses)
+        ? Align(
+            alignment: AlignmentDirectional.topCenter,
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(
+                maxWidth: AppPage.largeurLecture,
+              ),
+              child: PraxisLettre(moment: _moment, secousses: _secousses),
+            ),
+          )
         : null,
     child: Align(
       alignment: AlignmentDirectional.topCenter,
