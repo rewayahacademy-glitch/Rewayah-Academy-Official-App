@@ -31,6 +31,9 @@ String? _motMemorisation(String code) {
     'moins_10_juz' => v.moins_10_juz,
     'de_10_a_29_juz' => v.de_10_a_29_juz,
     'coran_entier' => v.coran_entier,
+    // PE-B1 : un nombre exact de juz (`juz_12` : « 12 juz »).
+    _ when RegExp(r'^juz_([1-9]|1[0-9]|2[0-9])$').hasMatch(code) =>
+      t.recrutement.parcours.juz.valeur(n: int.parse(code.substring(4))),
     _ => null,
   };
 }

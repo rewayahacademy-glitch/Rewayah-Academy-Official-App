@@ -31,7 +31,9 @@ export interface PorteLiberation {
   /// Le code est valide pour cette adresse ET aucun compte ne la tient
   /// (`invitation_compte_autoriser`).
   autoriser(type: 'equipe' | 'candidat', code: string, adresse: string): Promise<boolean>
-  creerCompte(adresse: string): Promise<'cree' | 'existe' | 'echec'>
+  /// PE-A1 : `langue` (celle du courriel) devient user_metadata.langue du compte neuf : Supabase Auth
+  /// ecrit alors le lien de connexion dans cette langue.
+  creerCompte(adresse: string, langue?: string): Promise<'cree' | 'existe' | 'echec'>
   consommer(type: 'equipe' | 'candidat', code: string, adresse: string): Promise<boolean>
 }
 
@@ -51,6 +53,7 @@ export async function preparerAdresseInvitee(
   donnees: Record<string, unknown>,
   adresse: string,
   porte: PorteLiberation,
+  langue?: string,
 ): Promise<'rien' | 'preparee' | 'echec'> {
   const types = MODELES[modele]
   const code = typeof donnees.code === 'string' ? donnees.code.trim() : ''
@@ -69,7 +72,7 @@ export async function preparerAdresseInvitee(
     }
   }
   if (valide === null) return ancien !== null ? 'echec' : 'rien'
-  const creation = await porte.creerCompte(adresse)
+  const creation = await porte.creerCompte(adresse, langue)
   if (creation === 'echec') return 'echec'
   if (creation === 'cree' && !(await porte.consommer(valide, code, adresse))) {
     console.error('invitation : code non consomme apres creation', valide)
@@ -105,8 +108,9 @@ export function porteLiberationReelle(db: SupabaseClient): PorteLiberation {
       })
       return !error && data === true
     },
-    async creerCompte(adresse) {
-      const { error } = await db.auth.admin.createUser({ email: adresse.trim().toLowerCase(), email_confirm: true })
+    async creerCompte(adresse, langue) {
+      const metadonnees = langue && /^[a-z]{2,3}$/.test(langue) ? { user_metadata: { langue } } : {}
+      const { error } = await db.auth.admin.createUser({ email: adresse.trim().toLowerCase(), email_confirm: true, ...metadonnees })
       if (!error) return 'cree'
       const code = (error as { code?: string }).code ?? ''
       if (code === 'email_exists' || code === 'user_already_exists') return 'existe'

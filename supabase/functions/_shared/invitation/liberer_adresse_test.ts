@@ -25,8 +25,8 @@ function porte(opts: {
       appels.push(`autoriser:${type}`)
       return Promise.resolve(autorise)
     },
-    creerCompte: (a) => {
-      appels.push(`creer:${a}`)
+    creerCompte: (a, langue) => {
+      appels.push(langue ? `creer:${a}:${langue}` : `creer:${a}`)
       return Promise.resolve(creation)
     },
     consommer: (type) => {
@@ -108,4 +108,12 @@ Deno.test('autres modeles (foyer, rappels...) ou sans code : jamais de recherche
   const { p, appels } = porte({ ancien: ANCIEN })
   assertEquals(await preparerAdresseInvitee('invitation_enseignant', {}, 'x@example.com', p), 'rien')
   assertEquals(appels, [])
+})
+
+// PE-A1 (20/11/2026) : le compte neuf recoit la langue du courriel, pour que le lien de connexion de Supabase
+// Auth soit ecrit dans cette langue.
+Deno.test('compte neuf : la langue du courriel lui est transmise', async () => {
+  const { p, appels } = porte({})
+  assertEquals(await preparerAdresseInvitee('invitation_candidat_importe', donnees, prof, p, 'ar'), 'preparee')
+  assertEquals(appels.includes(`creer:${prof}:ar`), true)
 })

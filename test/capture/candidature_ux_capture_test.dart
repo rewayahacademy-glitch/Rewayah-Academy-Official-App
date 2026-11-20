@@ -110,7 +110,8 @@ void main() {
           await _monter(tester, taille);
           await repondreAvant(tester, 'riwayat');
           await _photo(tester, 'riwayat_${langue}_$nom');
-          await toucherCle(tester, 'option-riwayat-toutes');
+          // PE-B1 : « toutes » est devenue « les dix qiraat » (Q3, 19/11).
+          await toucherCle(tester, 'option-riwayat-dix');
           await _photo(tester, 'riwayat-toutes_${langue}_$nom');
         });
       }
