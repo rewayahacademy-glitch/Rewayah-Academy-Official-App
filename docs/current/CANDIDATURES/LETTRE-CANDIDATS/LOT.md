@@ -11,10 +11,22 @@ n'est en production ni prouvé par le directeur.
 - Page : `lib/features/candidature/lettre/` (page, corps, Praxis), route `Routes.lettreEnseignants`
   (`/lire/lettre-enseignants`), entrée dans « À savoir » du candidat. Le texte est dans
   `assets/i18n/*.i18n.json` sous `recrutement.lettre`.
-- **Le lien se partage** (question du directeur, 20/11) : toute personne connectée l'ouvre, candidat en
-  attente comme compte actif de n'importe quel rôle ; sans connexion, la connexion puis retour à la
-  page ; compte suspendu refusé (`deciderRedirection`, sous-arbre `Routes.lecture`). La page reste dans
-  l'application, rien n'est public.
+- **Qui la lit** (directeur, 20/11 : « seulement les enseignants et les candidats qui ont complété
+  les consentements […] Ça doit se faire aussi côté serveur ») : le routeur n'ouvre `/lire` qu'au rôle
+  enseignant (actif, ou candidat en attente) ; la famille, l'élève, la direction et un compte suspendu
+  sont refusés ; sans connexion, la connexion puis retour à la page. Le lien se partage donc entre
+  enseignants et candidats, et la page reste dans l'application.
+- **Contrôle serveur : à faire, hors de ma zone.** Aujourd'hui le texte est compilé dans
+  l'application. Il faut le servir par le serveur :
+  1. une table des textes internes (clé `lettre_candidats`, langue, version, parties en JSON), sous
+     RLS, aucune lecture directe ;
+  2. une fonction `lire_lettre_candidats(langue)` qui rend les parties **seulement** si l'appelant a le
+     rôle enseignant et soit un compte actif, soit une candidature dont le contrat, le code de conduite
+     et l'engagement religieux publié sont acceptés à leur version requise ; sinon, la liste de ce qui
+     manque, sans texte ;
+  3. un adaptateur `*_supabase.dart` et un port, puis la page lit ce port ; les parties sortent des
+     fichiers de traduction (seule la tête de page y reste).
+  Le garde-fou refuse à un agent d'écran `supabase/` et les adaptateurs : à confier par le pilote.
 - **Un seul Praxis** (directeur, 20/11 : « il ne doit pas apparaître plusieurs fois sur la même
   viewport, il est en haut, il saute et rebondit avec le scroll ») : dans la tête fixe de la page
   (`PageShell.enteteSecondaire`), il change de phrase avec la partie lue et saute à chaque changement
@@ -26,7 +38,9 @@ n'est en production ni prouvé par le directeur.
   l'application (règle « zéro emoji » contrôlée par la CI) ; « groupes » remplacé par « cas » (mot
   interdit) ; une bande fixe en haut de page, petite, sur ordre du directeur malgré
   `DECISION-DEFILEMENT-2026-11-01` (« rien de gros collé au-dessus du contenu »).
-- Encore ouverts : l'emplacement dans l'espace enseignant (rien n'y est construit) ; la ligne « La paie
+- **Toute règle de la lettre absente de l'application ou contraire** : `REGLES-NOUVELLES.md` (25 lignes).
+- Encore ouverts : l'entrée dans l'espace enseignant (l'espace existe et sert en production depuis
+  près de deux mois ; l'emplacement est à choisir avec le pilote, qui coordonne le branchement) ; la ligne « La paie
   d'un enseignant : s'affichera ici… » de « À savoir » contredit maintenant la lettre (zone de la
   session « Parcours candidat enseignant », prévenue) ; le montrer aux élèves et aux familles donnerait
   les montants de la paie, ce que la décision du 22/10 réservait aux pourcentages.

@@ -31,8 +31,10 @@ import '../../../core/session/session_state.dart';
 import '../../../core/theme/app_palette.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/widgets/action_principale.dart';
+import '../../../core/widgets/carte_lignes.dart';
 import '../../../core/widgets/lien_fleche.dart';
 import '../../../core/widgets/page_shell.dart';
+import '../../../core/widgets/setting_row.dart';
 import '../lecture_page.dart';
 import 'praxis_lettre.dart';
 import 'texte_lettre.dart';
@@ -350,16 +352,19 @@ class _EtatContenu extends State<ContenuLettre> {
           ),
         ),
         Ecart.vSm,
-        for (int k = 0; k < parties.length; k++)
-          Align(
-            alignment: AlignmentDirectional.centerStart,
-            child: LienFleche(
-              alignerEnDebut: true,
-              libelle: '${numero(k)}${parties[k].$1}',
-              libelleSemantique: l.allerA(titre: parties[k].$1),
-              onPress: () => _aller(_parties[k]),
-            ),
-          ),
+        // Le sommaire : une seule carte a lignes fines, une ligne par partie,
+        // alignee au debut (K-55, comme les reglages).
+        CarteLignes(
+          lignes: <Widget>[
+            for (int k = 0; k < parties.length; k++)
+              SettingRow(
+                title: '${numero(k)}${parties[k].$1}',
+                lien: true,
+                libelleSemantique: l.allerA(titre: parties[k].$1),
+                onPress: () => _aller(_parties[k]),
+              ),
+          ],
+        ),
         for (int k = 0; k < parties.length; k++) ...<Widget>[
           Ecart.vSection,
           Semantics(

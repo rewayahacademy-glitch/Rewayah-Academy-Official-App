@@ -238,21 +238,31 @@ void main() {
       );
     });
 
-    test('tout compte actif l\'ouvre, quel que soit son role', () {
-      for (final AppRole r in <AppRole>[
-        AppRole.teacher,
-        AppRole.guardian,
-        AppRole.admin,
-      ]) {
+    test('seul l\'enseignant actif l\'ouvre ; famille et direction non', () {
+      expect(
+        decider(_session(AccountStatus.active), Routes.lettreEnseignants),
+        isNull,
+      );
+      for (final AppRole r in <AppRole>[AppRole.guardian, AppRole.admin]) {
         expect(
           decider(
             _session(AccountStatus.active, role: r),
             Routes.lettreEnseignants,
           ),
-          isNull,
+          isNotNull,
           reason: r.name,
         );
       }
+    });
+
+    test('une famille en attente ne l\'ouvre pas', () {
+      expect(
+        decider(
+          _session(AccountStatus.pendingKyc, role: AppRole.guardian),
+          Routes.lettreEnseignants,
+        ),
+        Routes.attente,
+      );
     });
   });
 }
