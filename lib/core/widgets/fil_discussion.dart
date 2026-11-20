@@ -3002,6 +3002,8 @@ class _Saisie extends StatelessWidget {
   Widget _zone({required bool aidePeinte}) => ZoneSaisie(
     cleChamp: FilDiscussion.champKey,
     pilule: true,
+    // PE-D11 : le message s'ecrit dans le sens du texte tape.
+    sensDeLaFrappe: true,
     controleur: champ,
     noeud: noeudChamp,
     libelle: textes.libelleChamp,

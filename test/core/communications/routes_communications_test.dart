@@ -125,6 +125,15 @@ class _DeuxEspacesControle extends EspacesCompteControleur {
 Finder _dans(Key cle, Finder cible) =>
     find.descendant(of: find.byKey(cle), matching: cible);
 
+/// BUREAU-NAV (contrat §2) : l'icone des Messages de la direction, toujours
+/// dans l'en-tete, compteur a zero compris.
+const Key _cleMessagesAdmin = ValueKey<String>('admin-messages-non-lus');
+
+/// La cloche des notifications, et non l'icone des Messages (meme composant).
+final Finder _clocheNotifications = find.byWidgetPredicate(
+  (Widget w) => w is ClocheNotifications && w.key != _cleMessagesAdmin,
+);
+
 void main() {
   group('Chaque route Communications resout vers son ecran', () {
     // (chemin, role, ecran, destination active de la barre ou null).
@@ -497,7 +506,16 @@ void main() {
           ),
         );
         expect(icone(AppIcons.studio), findsOneWidget);
-        expect(icone(AppIcons.discussion), findsNothing);
+        // BUREAU-NAV (contrat §2) : la seule icone de discussion est celle des
+        // Messages, toujours posee dans l'en-tete ; Le Studio ne l'emprunte pas.
+        expect(
+          find.descendant(
+            of: find.byKey(_cleMessagesAdmin),
+            matching: icone(AppIcons.discussion),
+          ),
+          findsOneWidget,
+        );
+        expect(icone(AppIcons.discussion), findsOneWidget);
       });
     }
 
@@ -538,7 +556,7 @@ void main() {
         Routes.admin,
         taille: const Size(390, 844),
       );
-      final Finder cloche = find.byType(ClocheNotifications);
+      final Finder cloche = _clocheNotifications;
       expect(cloche, findsOneWidget);
       expect(
         find.descendant(of: find.byType(EntetePage), matching: cloche),
@@ -557,9 +575,8 @@ void main() {
   });
 
   group('COM-F-Q5 : la cloche se montre active sur sa propre page', () {
-    bool actif(WidgetTester tester) => tester
-        .widget<ClocheNotifications>(find.byType(ClocheNotifications))
-        .actif;
+    bool actif(WidgetTester tester) =>
+        tester.widget<ClocheNotifications>(_clocheNotifications).actif;
     int? ongletActif(WidgetTester tester) =>
         tester.widget<NavShell>(find.byType(NavShell)).indexActif;
 
@@ -757,7 +774,9 @@ void main() {
         await _monterAdmin(tester, Routes.admin, taille: const Size(320, 640));
         expect(champ(), findsNothing);
         expect(find.bySemanticsLabel(t.nav.admin.recherche), findsOneWidget);
-        expect(find.byType(ClocheNotifications), findsOneWidget);
+        expect(_clocheNotifications, findsOneWidget);
+        // BUREAU-NAV (contrat §2) : l'icone des messages reste, a zero aussi.
+        expect(find.byKey(_cleMessagesAdmin), findsOneWidget);
         expect(tester.takeException(), isNull);
       },
     );
