@@ -344,12 +344,14 @@ SELECT pg_temp.vrai((SELECT array_agg(p.oid::regprocedure::text ORDER BY p.prona
           -- PX-4 (20261130200000) : quatre outils neufs, et eux seuls : boite_candidats, dossier, noter_impression, ouvrir (ordre des noms).
           'praxis_boite(text,text,integer)', 'praxis_boite_candidats(text,text,integer,integer)',
           'praxis_calendrier_ajouter(text,text,text,date,text,uuid)',
-          'praxis_calendrier_lire(text,date,date)',
+          'praxis_calendrier_lire(text,date,date)', 'praxis_cle_valide(text)',
           -- PX-SUIVI (20261129930000) : demander a l'equipe, marquer la question utilisee, lire ses reponses (ordre des noms).
           'praxis_demander_equipe(text,uuid,text)', 'praxis_dossier(text,text)',
           'praxis_ecrire(text,uuid,text,uuid)', 'praxis_etat(text)',
           'praxis_fil(text,uuid,integer)', 'praxis_lire(text,text,jsonb,integer)',
           'praxis_noter_impression(text,text,text,jsonb,jsonb,jsonb,text,text,uuid)', 'praxis_noter_refus(text,text)',
+          'praxis_oauth_demander(text,text,text,text,text,text)', 'praxis_oauth_echanger(text,text,text,text)',
+          'praxis_oauth_enregistrer(text,text[])', 'praxis_oauth_renouveler(text,text)',
           -- PX-3 (20261130100000, revue independante du 20/11/2026) : les QUATRE outils neufs, et eux seuls : cloturer et fixer un
           -- objectif, lire les objectifs, ranger un dossier dans une pile (ordre des noms). Toute autre fonction praxis_* reste rouge.
           'praxis_objectif_clore(text,uuid,text,text)', 'praxis_objectif_fixer(text,text,date,text,integer,uuid)',
@@ -395,6 +397,12 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT n.nspname || '.' || p.pr
           'public.direction_praxis_valider>private.praxis_propositions',
           'public.direction_praxis_revoquer_cle>private.praxis_cles', 'public.praxis_calendrier_ajouter>private.praxis_calendrier',
           'public.praxis_preparer>private.praxis_propositions',
+          -- PX-OAUTH 2b : les trois tables du serveur d'autorisation et les cles qu'il emet ou revoque (une cle nee d'une connexion).
+          'private.praxis_oauth_emettre_cle>private.praxis_cles', 'private.praxis_oauth_revoquer_connexion>private.praxis_cles',
+          'private.praxis_oauth_revoquer_connexion>private.praxis_oauth_connexions',
+          'public.direction_praxis_oauth_decider>private.praxis_oauth_demandes', 'public.praxis_oauth_demander>private.praxis_oauth_demandes',
+          'public.praxis_oauth_echanger>private.praxis_oauth_connexions', 'public.praxis_oauth_echanger>private.praxis_oauth_demandes',
+          'public.praxis_oauth_enregistrer>private.praxis_oauth_clients', 'public.praxis_oauth_renouveler>private.praxis_oauth_connexions',
           -- PRAXIS-ROUTINE (20261129900000) : la routine note la fin de son tir.
           'public.praxis_terminer>private.praxis_tirs',
           -- PX-SUIVI : les questions a l'equipe (poser, repondre, marquer utilisee).
@@ -433,7 +441,12 @@ SELECT pg_temp.vrai((SELECT coalesce(array_agg(DISTINCT lower(m[1]) ORDER BY low
           'private.gestes_regles_de_la_ligne', 'private.praxis_gestes_ligne', 'private.praxis_propositions',
           -- PRAXIS-ROUTINE : la table des tirs de la routine (INSERT INTO private.praxis_tirs (...)).
           'private.praxis_tirs', 'private.praxis_questions',
-          'private.praxis_propositions_expirer', 'public.admettre_salle_verification', 'public.demander_complement_candidat',
+          'private.praxis_propositions_expirer',
+          -- PX-OAUTH 2b : les tables et aides du serveur d'autorisation (b64url, urlenc, rappels, emetteur valide, emettre et revoquer).
+          'private.praxis_oauth_b64url', 'private.praxis_oauth_clients', 'private.praxis_oauth_connexions', 'private.praxis_oauth_demandes',
+          'private.praxis_oauth_emetteur_valide', 'private.praxis_oauth_emettre_cle', 'private.praxis_oauth_rappels',
+          'private.praxis_oauth_revoquer_connexion', 'private.praxis_oauth_urlenc',
+          'public.admettre_salle_verification', 'public.demander_complement_candidat',
           'public.planifier_entretien',
           -- PX-3 : ce que les fonctions neuves ou retouchees appellent en plus, et rien d'autre : les controles du dossier (la fonction
           -- de lire_candidature, lue, jamais copiee), les trois aides privees neuves, les deux tables neuves (INSERT INTO ... (...)), et la
@@ -472,6 +485,7 @@ SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identi
           'praxis_boite_candidats(p_cle text, p_filtre text, p_jours integer, p_limite integer)',
           'praxis_calendrier_ajouter(p_cle text, p_sujet text, p_public text, p_date date, p_recurrence text, p_cle_idempotence uuid)',
           'praxis_calendrier_lire(p_cle text, p_du date, p_au date)',
+          'praxis_cle_valide(p_cle text)',
           -- PX-SUIVI : la question a l'equipe est un texte BORNE (300 signes, resume par Praxis), jamais une requete.
           'praxis_demander_equipe(p_cle text, p_fil uuid, p_question text)',
           -- PX-4 : lire tout un dossier (une reference CAND-…, validee par un motif).
@@ -488,6 +502,11 @@ SELECT pg_temp.vrai((SELECT array_agg(p.proname || '(' || pg_get_function_identi
           -- (scenarios_praxis_dossier_complet.sql). Aucun n'est une requete.
           'praxis_noter_impression(p_cle text, p_candidature text, p_etiquette text, p_notes jsonb, p_contexte jsonb, p_synthese jsonb, p_texte text, p_confiance text, p_cle_idempotence uuid)',
           'praxis_noter_refus(p_cle text, p_outil text)',
+          -- PX-OAUTH 2b : le serveur d'autorisation ; AUCUN jsonb, AUCUN argument de requete : des textes bornes (client, rappel, code, verifier,
+          -- challenge, etat, scope, refresh) valides un a un dans le corps contre des formes fermees.
+          'praxis_oauth_demander(p_client text, p_rappel text, p_challenge text, p_methode text, p_etat text, p_scope text)',
+          'praxis_oauth_echanger(p_client text, p_code text, p_rappel text, p_verifier text)',
+          'praxis_oauth_enregistrer(p_nom text, p_rappels text[])', 'praxis_oauth_renouveler(p_client text, p_refresh text)',
           -- PX-3 : aucun jsonb, aucune requete. Les textes sont des champs BORNES ecrits par Praxis (note 300, libelle 200, raison 200) ;
           -- periode, etat et pile sont des listes fermees ; la candidature est une reference (CAND-…), jamais un identifiant interne.
           'praxis_objectif_clore(p_cle text, p_objectif uuid, p_etat text, p_note text)',

@@ -81,6 +81,11 @@ declare
     -- direction_praxis_etat est STABLE et ne laisse aucune trace : hors de cette liste.
     'direction_praxis_journal(integer,bigint)',
     'direction_praxis_revoquer_cle(uuid,text,uuid)',
+    -- PX-OAUTH 2b (17/11) : la decision de la page de consentement (« Autoriser » ou « Refuser » une connexion de claude.ai). Administrateur au
+    -- compte valide, double verification (aal2), une demande a la fois (verrou de ligne). Elle n'ecrit que private.praxis_oauth_demandes (le
+    -- condense d'un code a usage unique, jamais le code) et une ligne d'audit (praxis_oauth_decision : la decision et le client, jamais le code).
+    -- direction_praxis_oauth_lire est STABLE (lecture seule) : hors de cette liste.
+    'direction_praxis_oauth_decider(uuid,boolean)',
     -- BE-2a-1 (16/11) : les missions. Qui peut appeler : la direction seulement, garde positive public.app_role() = 'admin',
     -- public.app_account_valid() et auth.jwt() ->> 'aal' = 'aal2'. Ce que chaque porte ecrit : une ligne de private.missions,
     -- de private.mission_attributions ou de private.mission_journal, plus une ligne d'audit (log_sensitive_access).
