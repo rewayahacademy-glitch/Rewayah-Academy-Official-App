@@ -18,7 +18,6 @@ import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/version/bandeau_nouvelle_version.dart';
 import 'package:rewayah_academy/core/version/nouvelle_version.dart';
 import 'package:rewayah_academy/features/candidature/cadre_religieux_page.dart';
-import 'package:rewayah_academy/features/com_messages/bandeau_messages_hors_direct.dart';
 
 import 'outil_capture.dart';
 
@@ -64,7 +63,6 @@ void main() {
                   body: ListView(
                     padding: const EdgeInsets.all(AppSpacing.lg),
                     children: <Widget>[
-                      const BandeauMessagesHorsDirect(ecartApres: Ecart.vLg),
                       for (int i = 0; i < 12; i++)
                         Padding(
                           padding: const EdgeInsets.only(bottom: AppSpacing.lg),

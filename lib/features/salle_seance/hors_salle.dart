@@ -132,6 +132,8 @@ class _BandeauSonBloqueEtat extends ConsumerState<BandeauSonBloqueHorsSalle> {
               message: t.salle.sonBloque,
               icone: AppIcons.avertissement.repos,
               onFermer: () => setState(() => _ferme = true),
+              // Il ne part pas seul : il porte sa croix.
+              croix: true,
               actions: <Widget>[
                 LienFleche(
                   key: BandeauSonBloqueHorsSalle.cleActiver,
