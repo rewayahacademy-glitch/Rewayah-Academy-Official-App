@@ -29,7 +29,9 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/session/session_controleur.dart';
 import 'package:rewayah_academy/core/session/source_session.dart';
+import 'package:rewayah_academy/core/theme/app_spacing.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/vivant/entree/scene_entree.dart';
 import 'package:rewayah_academy/core/widgets/action_principale.dart';
 import 'package:rewayah_academy/core/widgets/controle_anti_robot.dart';
 import 'package:rewayah_academy/features/connexion/connexion_page.dart';
@@ -251,6 +253,95 @@ void main() {
         });
       }
     }
+  });
+
+  group('aucun noeud d accessibilite ne recouvre le formulaire', () {
+    // Dans le navigateur, un noeud d'accessibilite pose sur la case passe
+    // au-dessus de sa vue HTML : elle ne peut plus etre cochee.
+    Rect surEcran(SemanticsNode noeud) {
+      Rect r = noeud.rect;
+      SemanticsNode? n = noeud;
+      while (n != null) {
+        final Matrix4? m = n.transform;
+        if (m != null) r = MatrixUtils.transformRect(m, r);
+        n = n.parent;
+      }
+      return r;
+    }
+
+    for (final Size vue in <Size>[const Size(390, 844), const Size(1440, 900)]) {
+      for (final TextDirection sens in TextDirection.values) {
+        testWidgets('${vue.width.toInt()} px, ${sens.name}', (
+          WidgetTester tester,
+        ) async {
+          final SemanticsHandle poignee = tester.ensureSemantics();
+          await _monter(tester, vue: vue, sens: sens, controle: true);
+          for (int i = 0; i < 4; i++) {
+            await _passer(tester, 4000);
+            final SemanticsNode scene = tester.getSemantics(
+              find.bySemanticsLabel(t.connexion.praxis.scene),
+            );
+            final Rect image = surEcran(scene);
+            expect(image.isEmpty, isFalse, reason: 'la scene reste annoncee');
+            expect(
+              image.width < vue.width || image.height < vue.height,
+              isTrue,
+              reason: 'l annonce de la scene couvre tout l ecran',
+            );
+            for (final Finder cible in <Finder>[
+              find.byKey(ControleAntiRobot.cleControle),
+              find.byKey(_cleCourriel),
+              _plein,
+            ]) {
+              final Rect r = tester.getRect(cible);
+              final Rect commun = image.intersect(r);
+              expect(
+                commun.width <= 0.5 || commun.height <= 0.5,
+                isTrue,
+                reason:
+                    'l annonce de la scene ($image) recouvre $cible ($r)',
+              );
+            }
+          }
+          poignee.dispose();
+        });
+      }
+    }
+  });
+
+  group('la scene suit la mise en page quand Praxis dort', () {
+    testWidgets('l ecran change de taille : le ciel suit la feuille', (
+      WidgetTester tester,
+    ) async {
+      await _monter(tester);
+      await _passer(tester, 30000);
+      expect(_etat(tester).regie.eveillee, isFalse);
+      for (final Size taille in <Size>[
+        const Size(390, 620),
+        const Size(700, 390),
+        const Size(390, 844),
+      ]) {
+        tester.view.physicalSize = taille;
+        // La mise en page, la mesure du formulaire, puis sa prise en compte.
+        await tester.pump();
+        await tester.pump();
+        await tester.pump();
+        final Geo geo = _etat(tester).regie.th.geo;
+        expect(geo.taille, taille);
+        // Le calque du premier plan descend jusqu'au contenu de la feuille :
+        // la hauteur de la scene moins le recouvrement, plus la marge du haut.
+        expect(
+          tester.getRect(find.byKey(_cleCalque)).height,
+          moreOrLessEquals(
+            geo.hautScene - recouvrementFeuilleEntree + AppSpacing.xxl,
+            epsilon: 0.5,
+          ),
+          reason: 'le ciel peint ne suit pas la feuille a $taille',
+        );
+        // Aucune animation n'est relancee.
+        expect(_etat(tester).regie.eveillee, isFalse);
+      }
+    });
   });
 
   group('la scene ne tourne pas en continu', () {

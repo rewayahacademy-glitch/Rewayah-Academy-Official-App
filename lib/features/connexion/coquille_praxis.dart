@@ -45,6 +45,9 @@ const double hauteurCarteEntree = 560;
 /// Ce dont la feuille recouvre le bas de la scene, sur telephone (maquette).
 const double recouvrementFeuilleEntree = 26;
 
+/// La largeur que demande la verification anti-robot (Cloudflare).
+const double _largeurCase = 300;
+
 /// La largeur du contenu de la feuille sur une tablette tenue droite.
 const double _largeurContenuFeuille = AppPage.largeurDialogue;
 
@@ -309,6 +312,11 @@ class CoquillePraxisState extends State<CoquillePraxis>
           // 840, mesures en largeur utile (le texte agrandi ramene a la
           // feuille du telephone).
           _large = contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
+          // La geometrie suit la mise en page meme quand Praxis dort (aucune
+          // horloge ne la recalcule alors) : la feuille qui change de hauteur,
+          // l'ecran qui tourne, le clavier qui s'ouvre. Cette construction
+          // repeint la scene ; aucune animation n'est relancee.
+          regie.th.geo = _cadrer(regie.th.cam.x);
           final Widget contenu = _Mesure(
             key: _cleContenu,
             surTaille: _mesurer,
@@ -330,21 +338,35 @@ class CoquillePraxisState extends State<CoquillePraxis>
     );
   }
 
-  /// Le decor : la porte du logo (la marque de la page, annoncee par son
-  /// nom : il n'y a plus de logo horizontal en tete, la porte le remplace),
-  /// sa lumiere et la route.
+  /// Le decor : la porte du logo, sa lumiere et la route. Il est peint sur
+  /// tout l'ecran, mais **sans noeud d'accessibilite** : un noeud plein ecran
+  /// passerait, dans le navigateur, au-dessus de la vue HTML de la
+  /// verification anti-robot, qui ne pourrait plus etre cochee. La scene est
+  /// annoncee par [_annonce], bornee a la zone libre.
   Widget _decor() => RepaintBoundary(
-    child: Semantics(
-      key: const ValueKey<String>('entree-marque'),
-      container: true,
-      label: t.commun.marque,
+    child: ExcludeSemantics(
+      child: CustomPaint(
+        key: _cleDecor,
+        painter: DecorPeintre(regie.th),
+        child: const SizedBox.expand(),
+      ),
+    ),
+  );
+
+  /// L'annonce de la scene aux lecteurs d'ecran : la marque de la page (la
+  /// porte du logo la remplace en tete) puis l'image, dans [zone], la partie
+  /// de la scene que le formulaire ne recouvre pas. Jamais au-dessus de lui.
+  Widget _annonce(Rect zone) => Positioned.fromRect(
+    rect: zone,
+    child: IgnorePointer(
       child: Semantics(
+        key: const ValueKey<String>('entree-marque'),
         container: true,
-        image: true,
-        label: t.connexion.praxis.scene,
-        child: CustomPaint(
-          key: _cleDecor,
-          painter: DecorPeintre(regie.th),
+        label: t.commun.marque,
+        child: Semantics(
+          container: true,
+          image: true,
+          label: t.connexion.praxis.scene,
           child: const SizedBox.expand(),
         ),
       ),
@@ -369,6 +391,9 @@ class CoquillePraxisState extends State<CoquillePraxis>
   Widget _telephone(AppPalette palette, Widget contenu) {
     final double h = _taille.height;
     final double haut = _hautScene - recouvrementFeuilleEntree;
+    final double margeCote = _taille.width < _largeurCase + 2 * AppSpacing.xxl
+        ? AppSpacing.sm
+        : AppSpacing.xxl;
     return SingleChildScrollView(
       child: Stack(
         children: <Widget>[
@@ -379,6 +404,7 @@ class CoquillePraxisState extends State<CoquillePraxis>
             height: h,
             child: _decor(),
           ),
+          _annonce(Rect.fromLTWH(0, 0, _taille.width, haut)),
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -403,10 +429,13 @@ class CoquillePraxisState extends State<CoquillePraxis>
                         maxWidth: _largeurContenuFeuille,
                       ),
                       child: Padding(
-                        padding: const EdgeInsetsDirectional.fromSTEB(
+                        // Sur un ecran tres etroit, les marges de cote se
+                        // resserrent : la verification anti-robot demande 300
+                        // points de large (320 - 2 x 8 = 304).
+                        padding: EdgeInsetsDirectional.fromSTEB(
+                          margeCote,
                           AppSpacing.xxl,
-                          AppSpacing.xxl,
-                          AppSpacing.xxl,
+                          margeCote,
                           AppSpacing.xl,
                         ),
                         child: contenu,
@@ -435,6 +464,7 @@ class CoquillePraxisState extends State<CoquillePraxis>
     return Stack(
       children: <Widget>[
         Positioned.fill(child: _decor()),
+        _annonce(zone),
         Positioned.fill(
           child: SingleChildScrollView(
             child: ConstrainedBox(

@@ -116,6 +116,16 @@ ScenePraxis sceneEntree(
   }
   switch (situation) {
     case SituationEntree.arrivee:
+      if (th.reduit) {
+        // « Reduire les effets » : l'etat final d'emblee, la phrase utile
+        // posee entiere, aucun geste.
+        px
+          ..faire(Geste.aucun)
+          ..poser(Expr.sourire)
+          ..regarder(0, 0);
+        await th.parler(dit.adresseEtPorte, g, tenir: 2);
+        break;
+      }
       px
         ..faire(Geste.salut)
         ..poser(Expr.sourire);

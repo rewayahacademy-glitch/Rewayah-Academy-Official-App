@@ -543,7 +543,7 @@ class Theatre extends ChangeNotifier {
     final double garde = tenir ?? math.max(2.0, 0.9 + 0.34 * mots.length);
     final Parole pa = Parole(mots, dernier + 0.5 + garde, Completer<void>());
     parole = pa;
-    px.parle = true;
+    px.parle = !reduit;
     return pa.fini.future;
   }
 
@@ -553,11 +553,15 @@ class Theatre extends ChangeNotifier {
     pa.age += dt;
     for (int i = 0; i < pa.mots.length; i++) {
       final MotVol m = pa.mots[i];
-      if (!m.ne && pa.age >= m.debut) {
+      // Sous « Réduire les effets », la phrase est posée entière, d'emblée.
+      if (!m.ne && (reduit || pa.age >= m.debut)) {
         m.ne = true;
         m.naissance = bouchePraxis;
         m.t.cible = 1;
-        if (reduit) m.t.k = 60;
+        if (reduit) {
+          m.t.x = 1;
+          m.t.v = 0;
+        }
       }
       if (!m.part && pa.age >= pa.depart + i * 0.07) {
         m.part = true;
