@@ -38,6 +38,7 @@ import 'dart:ui' show FlutterView;
 
 import 'package:flutter/material.dart';
 
+import '../../core/communications/communications_supabase.dart' show cleServeur;
 import '../../core/communications/lecture_fil_communication.dart';
 import '../../core/communications/port_brouillons.dart';
 import '../../core/communications/textes_fil_communication.dart';
@@ -79,7 +80,12 @@ class FilContextuel extends StatefulWidget {
     this.onOuvrirMessages,
     this.onFermer,
     this.barreFixe = false,
+    this.onPlusAnciens,
   });
+
+  /// PE-D1 (chargement par pages) : les messages qui precedent le message
+  /// [avantId] (le plus ancien montre), ou `null` : le fil rendu est entier.
+  final Future<PageMessagesFil> Function(String avantId)? onPlusAnciens;
 
   /// IMAGES-MESSAGERIE : les adresses des images du fil, ou `null`.
   final SourceImagesFil? images;
@@ -158,10 +164,60 @@ class _FilContextuelState extends State<FilContextuel>
   /// Les cles d'idempotence, par identifiant local de bulle
   /// (`FilDiscussion.onEnvoyerMessage`, COM-FUS) : chaque bulle a SA cle,
   /// rejouee a son « Reessayer » ; le serveur ne compte pas deux fois le
-  /// meme message. Deux bulles au meme texte ont deux cles (R-COM-13). La
-  /// cle est oubliee a l'accuse.
+  /// meme message. Deux bulles au meme texte ont deux cles (R-COM-13).
+  /// PE-D1 : la cle est gardee apres l'accuse (la copie confirmee peut revenir
+  /// plus tard), et retrouvee par la cle que le serveur rend
+  /// ([_localParCleServeur]) : c'est elle, jamais le texte, qui rapproche la
+  /// bulle locale de son message.
   final Map<String, String> _cles = <String, String>{};
+  final Map<String, String> _localParCleServeur = <String, String>{};
   int _compteur = 0;
+
+  /// PE-D1 : les messages plus anciens deja charges en remontant, et s'il en
+  /// reste ; `null` tant qu'aucune page precedente n'a ete lue (le fil rendu
+  /// le dit alors).
+  final List<MessageCommunication> _anciens = <MessageCommunication>[];
+  bool? _plusAnciensCharges;
+
+  String _cleDe(String idLocal) => _cles.putIfAbsent(idLocal, () {
+    final String cle =
+        '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
+        '${_compteur++}';
+    _localParCleServeur[cleServeur(cle)] = idLocal;
+    return cle;
+  });
+
+  /// Tous les messages connus : les pages anciennes, puis le fil rendu ; un
+  /// message n'y figure qu'une fois.
+  List<MessageCommunication> get _tousLesMessages {
+    if (_anciens.isEmpty) return widget.fil.messages;
+    final Set<String> recents = <String>{
+      for (final MessageCommunication m in widget.fil.messages) m.id,
+    };
+    return <MessageCommunication>[
+      for (final MessageCommunication m in _anciens)
+        if (!recents.contains(m.id)) m,
+      ...widget.fil.messages,
+    ];
+  }
+
+  bool get _plusAnciens => _plusAnciensCharges ?? widget.fil.plusAnciens;
+
+  Future<void> _chargerAnciens() async {
+    final Future<PageMessagesFil> Function(String)? charger =
+        widget.onPlusAnciens;
+    final List<MessageCommunication> connus = _tousLesMessages;
+    if (charger == null || connus.isEmpty) return;
+    final PageMessagesFil page = await charger(connus.first.id);
+    if (!mounted) return;
+    setState(() {
+      _anciens.insertAll(0, <MessageCommunication>[
+        for (final MessageCommunication m in page.messages)
+          if (!connus.any((MessageCommunication c) => c.id == m.id)) m,
+      ]);
+      _plusAnciensCharges = page.plusAnciens;
+    });
+  }
 
   /// Les cles des vocaux de ce fil, une par vocal (COM-BR-02).
   late final ClesVocales _clesVocales = ClesVocales(
@@ -248,16 +304,8 @@ class _FilContextuelState extends State<FilContextuel>
     });
   }
 
-  Future<void> _envoyer(String idLocal, String texte) async {
-    final String cle = _cles.putIfAbsent(
-      idLocal,
-      () =>
-          '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
-          '${_compteur++}',
-    );
-    await widget.onEnvoyer(texte, cle);
-    _cles.remove(idLocal);
-  }
+  Future<void> _envoyer(String idLocal, String texte) =>
+      widget.onEnvoyer(texte, _cleDe(idLocal));
 
   /// IMAGES-MESSAGERIE : envoie le message [texte] avec [image], sous la cle
   /// de sa bulle (rejouee au « Reessayer »).
@@ -267,14 +315,7 @@ class _FilContextuelState extends State<FilContextuel>
     ImagePrete image,
     ProgressionImage progression,
   ) async {
-    final String cle = _cles.putIfAbsent(
-      idLocal,
-      () =>
-          '${widget.fil.id}-${DateTime.now().microsecondsSinceEpoch}-'
-          '${_compteur++}',
-    );
-    await widget.onEnvoyerImage!(texte, cle, image, progression);
-    _cles.remove(idLocal);
+    await widget.onEnvoyerImage!(texte, _cleDe(idLocal), image, progression);
   }
 
   /// Envoie [vocal] par [envoi] sous sa cle ; a l'accuse, sa bulle entre
@@ -325,6 +366,10 @@ class _FilContextuelState extends State<FilContextuel>
           child: NotificationListener<ScrollNotification>(
             onNotification: _surDefilement,
             child: FilDiscussion(
+              plusAnciens: _plusAnciens,
+              onPlusAnciens: widget.onPlusAnciens == null
+                  ? null
+                  : _chargerAnciens,
               pleinEcran: true,
               afficherAuteur: _estGroupe,
               defilement: _defilement,
@@ -377,9 +422,10 @@ class _FilContextuelState extends State<FilContextuel>
     final Widget compacte = EnteteFilContexte.duFil(fil, compacte: true);
     final Widget? suite = EnteteFilContexte.badgeDuFil(fil);
     final List<MessageFil> connus = <MessageFil>[
-      for (final MessageCommunication m in fil.messages)
+      for (final MessageCommunication m in _tousLesMessages)
         messageFilDe(
           m,
+          idLocal: _localParCleServeur[m.cleIdempotence],
           // #Ra_staff (directeur, 14/11/2026) : les liens https d'un message
           // de l'equipe s'ouvrent ; ceux des autres restent du texte.
           complement: complementAvecLiens(
@@ -397,6 +443,8 @@ class _FilContextuelState extends State<FilContextuel>
     if (!widget.ecritureOuverte || !fil.peut(CapaciteFil.ecrire)) {
       // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
       return FilDiscussion(
+        plusAnciens: _plusAnciens,
+        onPlusAnciens: widget.onPlusAnciens == null ? null : _chargerAnciens,
         afficherAuteur: _estGroupe,
         prendTeteDePage: _prendTete,
         defilement: _defilement,
@@ -416,6 +464,8 @@ class _FilContextuelState extends State<FilContextuel>
     final Future<void> Function(EnregistrementVocal, String)? vocal =
         widget.onEnvoyerVocal;
     return FilDiscussion(
+      plusAnciens: _plusAnciens,
+      onPlusAnciens: widget.onPlusAnciens == null ? null : _chargerAnciens,
       afficherAuteur: _estGroupe,
       prendTeteDePage: _prendTete,
       defilement: _defilement,

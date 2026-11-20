@@ -109,7 +109,7 @@ import 'avatar_tile.dart' show AppAvatar;
 import 'bouton_icone.dart';
 import 'empty_state.dart';
 import 'espace_travail_adaptatif.dart';
-import 'lien_fleche.dart' show EncreLienSurFond;
+import 'lien_fleche.dart' show EncreLienSurFond, LienFleche;
 import 'menu_actions.dart';
 import 'menu_commun.dart' show MenuAncreControleur;
 import 'page_shell.dart';
@@ -198,7 +198,21 @@ class MessageFil {
     this.coeurs = 0,
     this.aimeParMoi = false,
     this.avatarAuteur,
+    this.idLocal,
+    this.cleEnvoiConnue = false,
   });
+
+  /// PE-D1 (MESSAGERIE-FIABLE) : l'identifiant de la bulle locale dont ce
+  /// message est la copie confirmee, retrouve par la CLE D'ENVOI que le serveur
+  /// rend (jamais par le texte) ; `null` sinon. La bulle locale s'efface devant
+  /// lui, quel que soit son etat (en cours, en echec) : le message est parti.
+  final String? idLocal;
+
+  /// PE-D1 : vrai quand le serveur a rendu la cle d'envoi de ce message (un
+  /// message de soi lu par `com_lire_fil_page`). Il n'est alors jamais
+  /// rapproche d'une bulle locale par son texte : deux messages au meme texte
+  /// restent deux messages.
+  final bool cleEnvoiConnue;
 
   /// PX-BULLE (directeur, 17/11/2026) : l'avatar d'un compte officiel (Praxis)
   /// qui parle, de [AppAvatar.petit] de diametre, ou `null` : une bulle
@@ -344,6 +358,22 @@ class EnvoiRefuse implements Exception {
   final String phrase;
 }
 
+/// PE-D1 (MESSAGERIE-FIABLE) : un envoi coupe en route (reseau, delai
+/// depasse), sans reponse du serveur. Le fil le reessaie seul, sous la meme
+/// cle d'envoi ([FilDiscussion.delaisReessai]), puis propose « Reessayer » :
+/// jamais deux messages, puisque la cle est la meme. Un refus du serveur, lui,
+/// est un [EnvoiRefuse] et n'est jamais reessaye.
+class EnvoiCoupe implements Exception {
+  /// Cree la coupure ; [cause] sert au journal seulement, jamais a l'ecran.
+  const EnvoiCoupe([this.cause]);
+
+  /// L'erreur d'origine.
+  final Object? cause;
+
+  @override
+  String toString() => 'EnvoiCoupe($cause)';
+}
+
 enum EtatEnvoiMessage {
   /// L'envoi n'a pas encore repondu.
   enCours,
@@ -407,6 +437,10 @@ class _MessageLocal {
     EtatAnticipe.echec => EtatEnvoiMessage.echec,
   };
 
+  /// PE-D1 : la copie confirmee de ce message est revenue du serveur (meme cle
+  /// d'envoi) : la bulle s'efface et les essais automatiques s'arretent.
+  bool vuSurServeur = false;
+
   /// La phrase du refus quand l'envoi est refuse pour une cause que
   /// reessayer ne change pas (K-59) ; `null` : echec ordinaire. Notee par
   /// l'envoi lui-meme (voir `_envoyer`), avant que l'outil ne passe la bulle
@@ -463,6 +497,9 @@ class FilDiscussion extends StatefulWidget {
     this.onAnnulerImage,
     this.choisirImage = choisirImageSysteme,
     this.deuxChoixPhoto,
+    this.plusAnciens = false,
+    this.onPlusAnciens,
+    this.delaisReessai = delaisReessaiParDefaut,
   }) : assert(
          lectureSeule != null || onEnvoyer != null || onEnvoyerMessage != null,
          'FilDiscussion demande onEnvoyer, onEnvoyerMessage ou lectureSeule.',
@@ -506,6 +543,34 @@ class FilDiscussion extends StatefulWidget {
 
   /// Les textes du fil.
   final TextesFilDiscussion textes;
+
+  /// PE-D1 (chargement par pages) : il reste des messages plus anciens que
+  /// [messages] sur le serveur. Le haut du fil porte alors une rangee
+  /// « Chargement des messages precedents », et [onPlusAnciens] est appele
+  /// quand la lecture s'en approche.
+  final bool plusAnciens;
+
+  /// PE-D1 : charge la page precedente ; le futur se termine quand l'ecran a
+  /// ajoute ses messages en tete de [messages], et echoue sinon (« Les
+  /// messages precedents ne se sont pas charges. », « Reessayer »). La
+  /// position de lecture ne saute pas. `null` : rien a charger.
+  final Future<void> Function()? onPlusAnciens;
+
+  /// PE-D1 (reessai automatique) : les attentes entre deux essais d'un envoi
+  /// coupe ([EnvoiCoupe]), sous la meme cle ; vide : aucun essai automatique.
+  /// Seulement pour [onEnvoyerMessage] (une cle par bulle) : [onEnvoyer] n'a
+  /// pas de cle, un nouvel essai pourrait doubler le message.
+  final List<Duration> delaisReessai;
+
+  /// Les attentes par defaut : trois essais de plus, en douze secondes.
+  static const List<Duration> delaisReessaiParDefaut = <Duration>[
+    Duration(seconds: 1),
+    Duration(seconds: 3),
+    Duration(seconds: 8),
+  ];
+
+  /// La rangee des messages precedents (chargement ou echec), pour les tests.
+  static const Key clePlusAnciens = ValueKey<String>('fil-discussion-anciens');
 
   /// L'envoi d'un texte : le futur se termine sur la reponse, et echoue si
   /// le message n'est pas parti. Ignore si [onEnvoyerMessage] est donne.
@@ -775,7 +840,17 @@ class _FilDiscussionState extends State<FilDiscussion> {
   // dans une conversation vide, ce besoin venait avec le retour du serveur du
   // premier message envoye, qui passait alors pour « present a l'ouverture »
   // et gardait sa bulle locale a cote (deux bulles).
+  // PE-D1 : une page plus ancienne chargee ensuite y entre aussi (ses messages
+  // etaient la avant l'ouverture, ils ne sont ni annonces ni rapproches).
   late final Set<String> _presentsALOuverture;
+
+  /// PE-D1 : la page precedente est demandee, ou sa derniere demande a echoue.
+  bool _anciensEnCours = false;
+  bool _anciensEchec = false;
+
+  /// PE-D1 : la longueur de la liste avant l'arrivee de la page precedente
+  /// (liste non inversee) : la lecture est recalee d'autant, sans saut.
+  double? _etendueAvantAnciens;
 
   /// Le panneau vocal occupe-t-il la saisie (R-04) ?
   bool _vocalOuvert = false;
@@ -830,6 +905,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _allerEnBas(false);
       _montrerSaisie();
+      _verifierAnciensApresImage();
     });
   }
 
@@ -948,11 +1024,25 @@ class _FilDiscussionState extends State<FilDiscussion> {
         (String id, EtatCoeur _) => !_coeursEnVol.contains(id),
       );
       _lireMiniatures();
+      _accueillirAnciens(ancien.messages);
+      _rapprocherParCle();
+    }
+    if (ancien.plusAnciens != widget.plusAnciens ||
+        !identical(ancien.messages, widget.messages)) {
+      _verifierAnciensApresImage();
     }
     // MESSAGERIE-TEMPS-REEL (14/11/2026) : un message arrive en direct
     // descend la lecture jusqu'a lui, si elle etait deja en bas (un lecteur
-    // remonte dans l'historique n'est pas deplace).
-    if (widget.messages.length > ancien.messages.length &&
+    // remonte dans l'historique n'est pas deplace). PE-D1 : « arrive » se lit
+    // au dernier message (une page plus ancienne allonge aussi la liste).
+    final String? dernierAvant = ancien.messages.isEmpty
+        ? null
+        : ancien.messages.last.id;
+    final String? dernierApres = widget.messages.isEmpty
+        ? null
+        : widget.messages.last.id;
+    if (dernierApres != null &&
+        dernierApres != dernierAvant &&
         _defilement.hasClients) {
       final ScrollPosition p = _defilement.position;
       final double distanceDuBas = widget.pleinEcran
@@ -969,6 +1059,172 @@ class _FilDiscussionState extends State<FilDiscussion> {
         if (_saisieDansListe) _allerEnBas(false);
       });
     }
+  }
+
+  /// PE-D1 : des messages sont arrives AVANT le premier deja connu (page
+  /// precedente) : ils comptent comme presents a l'ouverture, et la lecture
+  /// d'une liste non inversee est recalee de leur hauteur (aucun saut).
+  void _accueillirAnciens(List<MessageFil> avant) {
+    if (avant.isEmpty || widget.messages.isEmpty) return;
+    final String premier = avant.first.id;
+    final int rang = widget.messages.indexWhere(
+      (MessageFil m) => m.id == premier,
+    );
+    if (rang <= 0) return;
+    for (int i = 0; i < rang; i++) {
+      _presentsALOuverture.add(widget.messages[i].id);
+    }
+    final double? etendue = _etendueAvantAnciens;
+    _etendueAvantAnciens = null;
+    if (widget.pleinEcran || etendue == null) return;
+    // Liste non inversee : ce qui s'ajoute en haut pousse la lecture vers le
+    // bas ; on la remonte d'autant. La liste est paresseuse : sa longueur se
+    // precise quand les nouvelles bulles se mesurent, d'ou quelques reprises.
+    void recaler(double reference, int reprises) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted || !_defilement.hasClients) return;
+        final ScrollPosition p = _defilement.position;
+        final double ecart = p.maxScrollExtent - reference;
+        if (ecart != 0) p.jumpTo(math.max(0, p.pixels + ecart));
+        if (reprises > 0) recaler(p.maxScrollExtent, reprises - 1);
+      });
+    }
+
+    recaler(etendue, 2);
+  }
+
+  /// PE-D1 (rapprochement par cle d'envoi) : une bulle locale dont la copie
+  /// confirmee est revenue du serveur (meme cle, [MessageFil.idLocal]) est
+  /// finie, quel que soit son etat : ses essais s'arretent, son brouillon
+  /// s'efface comme a un accuse, et elle ne s'affiche plus (voir [build]).
+  void _rapprocherParCle() {
+    final Set<String> revenus = <String>{
+      for (final MessageFil m in widget.messages)
+        if (m.idLocal case final String id) id,
+    };
+    if (revenus.isEmpty) return;
+    final CleBrouillon? cle = widget.cleBrouillon;
+    final PersistanceBrouillon? persistance = _persistance;
+    for (final _MessageLocal m in _locaux) {
+      if (m.vuSurServeur || !revenus.contains(m.id)) continue;
+      m.vuSurServeur = true;
+      if (m.etat == EtatEnvoiMessage.envoye) continue;
+      _effacerBrouillonDe(m, cle, persistance);
+      if (cle != null) persistance?.terminerEnvoi(cle, m.brut, accuse: true);
+    }
+  }
+
+  /// PE-D1 : la liste des messages ecoute sa lecture (defilement et
+  /// changement de taille) pour demander la page precedente a temps.
+  Widget _ecouterAnciens(Widget liste) =>
+      NotificationListener<ScrollMetricsNotification>(
+        onNotification: (ScrollMetricsNotification n) =>
+            _surDefilementAnciens(n.asScrollUpdate()),
+        child: NotificationListener<ScrollNotification>(
+          onNotification: _surDefilementAnciens,
+          child: liste,
+        ),
+      );
+
+  /// PE-D1 : apres une image, si la liste est trop courte pour defiler (ou deja
+  /// pres du haut), la page precedente est demandee sans attendre un geste.
+  void _verifierAnciensApresImage() {
+    if (!widget.plusAnciens || widget.onPlusAnciens == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !_defilement.hasClients) return;
+      final ScrollPosition p = _defilement.position;
+      if (!p.hasContentDimensions) return;
+      final double reste = widget.pleinEcran ? p.extentAfter : p.extentBefore;
+      if (reste <= p.viewportDimension / 2) _chargerAnciens();
+    });
+  }
+
+  /// PE-D1 : la lecture approche du plus ancien message montre : la page
+  /// precedente est demandee (une fois a la fois ; apres un echec, seulement
+  /// par « Reessayer »).
+  bool _surDefilementAnciens(ScrollNotification n) {
+    if (n.depth != 0) return false;
+    final ScrollMetrics m = n.metrics;
+    final double resteVersLesAnciens = widget.pleinEcran
+        ? m.extentAfter
+        : m.extentBefore;
+    if (resteVersLesAnciens <= m.viewportDimension / 2) {
+      _chargerAnciens();
+    }
+    return false;
+  }
+
+  void _chargerAnciens({bool force = false}) {
+    final Future<void> Function()? charger = widget.onPlusAnciens;
+    if (charger == null || !widget.plusAnciens || _anciensEnCours) return;
+    if (_anciensEchec && !force) return;
+    _etendueAvantAnciens = _defilement.hasClients
+        ? _defilement.position.maxScrollExtent
+        : null;
+    // Hors construction : la notification arrive pendant la mise en page.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      setState(() {
+        _anciensEnCours = true;
+        _anciensEchec = false;
+      });
+      charger().then<void>(
+        (_) {
+          if (mounted) setState(() => _anciensEnCours = false);
+        },
+        onError: (Object _) {
+          _etendueAvantAnciens = null;
+          if (!mounted) return;
+          setState(() {
+            _anciensEnCours = false;
+            _anciensEchec = true;
+          });
+        },
+      );
+    });
+    _anciensEnCours = true;
+  }
+
+  /// PE-D1 : la rangee du haut du fil quand il reste des messages plus
+  /// anciens : un cercle et sa phrase pendant le chargement, ou la phrase de
+  /// l'echec et « Reessayer ». `null` : rien a charger.
+  Widget? _rangeeAnciens(BuildContext context) {
+    if (!widget.plusAnciens || widget.onPlusAnciens == null) return null;
+    final TextTheme styles = Theme.of(context).textTheme;
+    final AppPalette palette = AppPalette.of(context);
+    final m = t.com.messages.fil;
+    final Widget contenu = _anciensEchec
+        ? Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text(
+                m.anciensEchec,
+                textAlign: TextAlign.center,
+                style: palette.inkMuted.applyTo(
+                  styles.bodySmall ?? const TextStyle(),
+                ),
+              ),
+              LienFleche(
+                libelle: widget.textes.reessayer,
+                fleche: false,
+                onPress: () => _chargerAnciens(force: true),
+              ),
+            ],
+          )
+        : Semantics(
+            label: m.anciensChargement,
+            child: const ExcludeSemantics(
+              child: SizedBox.square(
+                dimension: AppSpacing.xl,
+                child: CircularProgressIndicator(strokeWidth: 2),
+              ),
+            ),
+          );
+    return Padding(
+      key: FilDiscussion.clePlusAnciens,
+      padding: const EdgeInsets.symmetric(vertical: AppSpacing.sm),
+      child: Center(child: contenu),
+    );
   }
 
   @override
@@ -1268,13 +1524,27 @@ class _FilDiscussionState extends State<FilDiscussion> {
           // cause est dit par sa phrase, sans « Reessayer » ; tout autre
           // echec reste ordinaire.
           m.refus = null;
-          try {
-            await (identifie != null
-                ? identifie(cle, texte)
-                : widget.onEnvoyer!(texte));
-          } on EnvoiRefuse catch (e) {
-            m.refus = e.phrase;
-            rethrow;
+          // PE-D1 : un envoi coupe est reessaye seul, sous la meme cle ; un
+          // refus du serveur ne l'est jamais. Si la copie confirmee revient
+          // entre deux essais (relecture du fil), l'envoi est fini.
+          final List<Duration> attentes = identifie == null
+              ? const <Duration>[]
+              : widget.delaisReessai;
+          for (int essai = 0; ; essai++) {
+            try {
+              await (identifie != null
+                  ? identifie(cle, texte)
+                  : widget.onEnvoyer!(texte));
+              return;
+            } on EnvoiRefuse catch (e) {
+              m.refus = e.phrase;
+              rethrow;
+            } on EnvoiCoupe {
+              if (m.vuSurServeur) return;
+              if (essai >= attentes.length) rethrow;
+            }
+            await Future<void>.delayed(attentes[essai]);
+            if (m.vuSurServeur) return;
           }
         },
       ),
@@ -1429,6 +1699,7 @@ class _FilDiscussionState extends State<FilDiscussion> {
       key: _cleZoneSaisie,
       child: zoneSaisie(reduite: false),
     );
+    final Widget? anciens = _rangeeAnciens(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: <Widget>[
@@ -1438,21 +1709,29 @@ class _FilDiscussionState extends State<FilDiscussion> {
           // bulles recues, de bord a bord.
           child: ColoredBox(
             color: AppPalette.of(context).fondFil.background,
-            child: CustomScrollView(
-              controller: _defilement,
-              reverse: true,
-              slivers: <Widget>[
-                SliverPadding(
-                  padding: const EdgeInsets.symmetric(vertical: AppSpacing.md),
-                  // Construites au fur et a mesure du defilement ; la liste
-                  // etant inversee, l'element 0 est le dernier message.
-                  sliver: SliverList.builder(
-                    itemCount: lignes.length,
-                    itemBuilder: (BuildContext _, int i) =>
-                        _item(lignes, lignes.length - 1 - i),
+            child: _ecouterAnciens(
+              CustomScrollView(
+                controller: _defilement,
+                reverse: true,
+                slivers: <Widget>[
+                  SliverPadding(
+                    padding: const EdgeInsets.symmetric(
+                      vertical: AppSpacing.md,
+                    ),
+                    // Construites au fur et a mesure du defilement ; la liste
+                    // etant inversee, l'element 0 est le dernier message.
+                    // PE-D1 : la rangee des messages precedents est la
+                    // derniere, donc en haut ; une page qui s'ajoute la ne
+                    // deplace pas la lecture (la liste est ancree en bas).
+                    sliver: SliverList.builder(
+                      itemCount: lignes.length + (anciens == null ? 0 : 1),
+                      itemBuilder: (BuildContext _, int i) => i < lignes.length
+                          ? _item(lignes, lignes.length - 1 - i)
+                          : anciens!,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -1794,9 +2073,22 @@ class _FilDiscussionState extends State<FilDiscussion> {
     // deux fois) : le serveur renvoie souvent le message AVANT que l'envoi
     // ait repondu ; la bulle encore « en cours » s'efface donc aussi devant
     // lui, puisque son retour prouve qu'il est arrive.
+    // PE-D1 (MESSAGERIE-FIABLE) : quand le serveur rend la cle d'envoi, le
+    // rapprochement se fait par elle seule ([MessageFil.idLocal]) : la bulle
+    // locale s'efface devant sa copie confirmee, MEME en echec (le message
+    // etait en fait parti), et un message au meme texte n'efface rien.
+    // Le texte ne sert plus que pour un serveur qui ne rend pas la cle.
+    final Set<String> revenusParCle = <String>{
+      for (final MessageFil m in widget.messages)
+        if (m.idLocal case final String id) id,
+    };
     final List<String> revenusDuServeur = <String>[
       for (final MessageFil m in widget.messages)
-        if (m.deSoi && m.image == null && !_presentsALOuverture.contains(m.id))
+        if (m.deSoi &&
+            m.image == null &&
+            !m.cleEnvoiConnue &&
+            m.idLocal == null &&
+            !_presentsALOuverture.contains(m.id))
           m.texte.trim(),
     ];
     // IMAGES-CORRECTIF : une bulle d'image garde l'identifiant du message
@@ -1808,12 +2100,14 @@ class _FilDiscussionState extends State<FilDiscussion> {
     };
     final List<_MessageLocal> locauxMontres = <_MessageLocal>[
       for (final _MessageLocal m in _locaux)
-        if (m.source != null
-            ? !(m.etat == EtatEnvoiMessage.envoye &&
-                  serveur[m.idMessage]?.image?.etat ==
-                      EtatImageMessage.confirmee)
-            : m.etat == EtatEnvoiMessage.echec ||
-                  !revenusDuServeur.remove(m.texte.trim()))
+        if (!(m.source == null &&
+                (m.vuSurServeur || revenusParCle.contains(m.id))) &&
+            (m.source != null
+                ? !(m.etat == EtatEnvoiMessage.envoye &&
+                      serveur[m.idMessage]?.image?.etat ==
+                          EtatImageMessage.confirmee)
+                : m.etat == EtatEnvoiMessage.echec ||
+                      !revenusDuServeur.remove(m.texte.trim())))
           m,
     ];
     final Set<String> masques = <String>{
@@ -1966,6 +2260,9 @@ class _FilDiscussionState extends State<FilDiscussion> {
             ?suite
           else if (entete != null && enteteDefilante)
             entete,
+          // PE-D1 : la rangee des messages precedents, juste avant le plus
+          // ancien message montre.
+          ?_rangeeAnciens(context),
         ];
         // COM-RC tour 3 (R-02) : quand l'en-tete defile (texte agrandi, vue
         // basse), la saisie defile aussi, apres le dernier message. Bornee
@@ -2014,40 +2311,42 @@ class _FilDiscussionState extends State<FilDiscussion> {
               key: FilDiscussion.cleMessages,
               child: ColoredBox(
                 color: AppPalette.of(context).fondFil.background,
-                child: CustomScrollView(
-                  controller: _defilement,
-                  slivers: <Widget>[
-                    // BULLES-MESSAGERIE : les bulles se construisent au fil du
-                    // defilement ; l'en-tete qui defile les precede.
-                    SliverList.builder(
-                      itemCount: debut.length + lignes.length,
-                      itemBuilder: (BuildContext _, int i) => i < debut.length
-                          ? Padding(
-                              padding: const EdgeInsets.only(
-                                bottom: AppSpacing.md,
+                child: _ecouterAnciens(
+                  CustomScrollView(
+                    controller: _defilement,
+                    slivers: <Widget>[
+                      // BULLES-MESSAGERIE : les bulles se construisent au fil du
+                      // defilement ; l'en-tete qui defile les precede.
+                      SliverList.builder(
+                        itemCount: debut.length + lignes.length,
+                        itemBuilder: (BuildContext _, int i) => i < debut.length
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                  bottom: AppSpacing.md,
+                                ),
+                                child: debut[i],
+                              )
+                            : _item(
+                                lignes,
+                                i - debut.length,
+                                apresEntete: debut.isNotEmpty,
                               ),
-                              child: debut[i],
-                            )
-                          : _item(
-                              lignes,
-                              i - debut.length,
-                              apresEntete: debut.isNotEmpty,
-                            ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: saisieDansListe
-                          ? Padding(
-                              padding: const EdgeInsets.only(
-                                top: AppSpacing.lg,
-                              ),
-                              child: KeyedSubtree(
-                                key: FilDiscussion.cleSaisie,
-                                child: saisie,
-                              ),
-                            )
-                          : Ecart.vLg,
-                    ),
-                  ],
+                      ),
+                      SliverToBoxAdapter(
+                        child: saisieDansListe
+                            ? Padding(
+                                padding: const EdgeInsets.only(
+                                  top: AppSpacing.lg,
+                                ),
+                                child: KeyedSubtree(
+                                  key: FilDiscussion.cleSaisie,
+                                  child: saisie,
+                                ),
+                              )
+                            : Ecart.vLg,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ),

@@ -20243,6 +20243,11 @@ class _Traductions$com$messages$fil$en extends Traductions$com$messages$fil$fr {
 
 	// Translations
 	@override String get lectureSeule => 'You can read this conversation. Replying is not open to you here.';
+	@override String get anciensChargement => 'Loading earlier messages';
+	@override String get anciensEchec => 'Earlier messages did not load.';
+	@override String get refusFerme => 'You can no longer write in this conversation.';
+	@override String get refusTexte => 'This message is empty or too long: 5,000 characters at most.';
+	@override String get refusAutre => 'This message was not accepted.';
 }
 
 // Path: com.messages.images
@@ -39227,6 +39232,11 @@ extension on TraductionsEn {
 			'com.messages.panneau.officiel.mention' => 'Academy assistant · AI',
 			'com.messages.panneau.officiel.phrase' => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
+			'com.messages.fil.anciensChargement' => 'Loading earlier messages',
+			'com.messages.fil.anciensEchec' => 'Earlier messages did not load.',
+			'com.messages.fil.refusFerme' => 'You can no longer write in this conversation.',
+			'com.messages.fil.refusTexte' => 'This message is empty or too long: 5,000 characters at most.',
+			'com.messages.fil.refusAutre' => 'This message was not accepted.',
 			'com.messages.images.joindre' => 'Attach an image',
 			'com.messages.images.prendrePhoto' => 'Take a photo',
 			'com.messages.images.choisirGalerie' => 'Choose from the gallery',
@@ -39449,13 +39459,13 @@ extension on TraductionsEn {
 			'com.communaute.signalement.politique.sollicitation' => 'Commercial solicitation is not allowed in this space.',
 			'com.communaute.signalement.motifManquant' => 'Choose a reason to send the report.',
 			'com.communaute.composer.nouvelle' => 'New post',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.composer.contexte' => 'Share a question, a method or a resource useful for teaching.',
 			'com.communaute.composer.categorie' => 'Category',
 			'com.communaute.composer.categorieManquante' => 'Choose a category to publish.',
 			'com.communaute.composer.champTitre' => 'Title',
 			'com.communaute.composer.aideTitre' => 'The subject in a few words',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.composer.titreManquant' => 'Write a title to publish.',
 			'com.communaute.composer.champTexte' => 'Text',
 			'com.communaute.composer.aideTexte' => 'Your question or your feedback from experience',
@@ -39963,13 +39973,13 @@ extension on TraductionsEn {
 			'com.annonces.demo.roles.controleur' => 'Reviewer',
 			'com.annonces.demo.classeNour' => 'An-Nour class',
 			'com.annonces.demo.classeFajr' => 'Al-Fajr class',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.enseignante' => 'Class teacher',
 			'com.annonces.demo.f.adminStudioMention' => 'Studio: a discussion in the Programmes channel mentions you',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio: new reply to your message about the spring programme',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio: a decision is requested on the lesson 4 material',
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio: the review of the Tajwid material is assigned to you',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioInterne' => 'Internal announcement from the Studio team: team meeting Thursday at 6 pm',
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio: a material is ready for the An-Nour class',
 			'com.annonces.demo.f.annonceNourTitre' => 'End-of-term recitation in front of the families',
@@ -40477,13 +40487,13 @@ extension on TraductionsEn {
 			'comptable.encaissements.moyen' => 'Payment method',
 			'comptable.encaissements.foyer' => 'Household',
 			'comptable.encaissements.date' => 'Date',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.etat' => 'Status',
 			'comptable.encaissements.devise' => 'Currency',
 			'comptable.encaissements.affectation' => 'Allocation by profile',
 			'comptable.encaissements.affectationAucune' => 'The source returned no allocation for this collection.',
 			'comptable.encaissements.rapprochement' => 'Reconciliation',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rapprochementAucun' => 'Not reconciled yet',
 			'comptable.encaissements.ouvrirRapprochement' => 'Open the reconciliation',
 			'comptable.encaissements.confirmeNote' => '"Confirmed" appears only after the provider\'s confirmation.',
@@ -40991,13 +41001,13 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Cancel this outflow?',
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => '${beneficiaire}\'s outflow will not go out. The cancellation is written in the log.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Cancel the outflow',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Keep the outflow',
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Outflow cancelled.',
 			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'The cancellation is not confirmed: the request may not have reached Rewayah. Read the list again before trying again.',
 			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
 			'comptable.direction.delegationPanneau.exceptionsDetail' => 'Settings specific to one delegation. An exception ceiling is always lower than that of the general policy, never higher.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionsVide' => 'No exception: the general policy applies to all delegations.',
 			'comptable.direction.delegationPanneau.exceptionAjouter' => 'Add an exception',
 			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Edit the exception for ${libelle}',
@@ -41505,13 +41515,13 @@ extension on TraductionsEn {
 			'avis.admin.liens.etat.plein' => 'Full',
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Reviews received: ${recus} of ${max}',
 			'avis.admin.liens.fin' => ({required Object date}) => 'Ends on ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.cree' => ({required Object date}) => 'Created on ${date}',
 			'avis.admin.liens.fermer' => 'Close the link',
 			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'Close the link "${nom}"?',
 			'avis.admin.liens.fermerConsequence' => 'People who open this link will see that it is closed and can no longer send reviews. Reviews already received stay. A closed link cannot be reopened.',
 			'avis.admin.liens.fermerAction' => 'Close the link',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermerRester' => 'Change nothing',
 			'avis.admin.liens.fermeOk' => 'The link is closed.',
 			'avis.admin.liens.fermeEchec' => 'The closing is not confirmed. The list is reloaded: check the state of the link.',
@@ -42019,13 +42029,13 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.champ.contact' => 'Phone or email',
 			'candidatsFlux.importFormulaires.controle.question' => 'Are there rows to correct?',
 			'candidatsFlux.importFormulaires.controle.explication' => 'A row to correct is not imported. Correct it in the workbook, export the file again, then replay the import: rows already imported are not added twice.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.aucune' => 'No error or warning in this file.',
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'Every row could be read.',
 			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'To correct',
 			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'These rows will not be imported.',
 			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'To look at',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'These rows are imported, with a point to check.',
 			'candidatsFlux.importFormulaires.controle.ignorees.titre' => 'Ignored',
 			'candidatsFlux.importFormulaires.controle.ignorees.aide' => 'Empty rows or rows repeated identically.',
@@ -42533,13 +42543,13 @@ extension on TraductionsEn {
 			'calendrier.sections.pauses' => 'Breaks',
 			'calendrier.indisponible' => 'The calendar could not be opened: the request may not have reached Rewayah. Try again in a moment.',
 			'calendrier.refusNouvelleDateFermee' => 'The date is not set: the class is closed that day. Choose another day, or remove the closure for this class.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.intro' => 'The dates of the year, entered by the management each year. Only published dates take effect: a closure moves back the deadline of the stages concerned and sets aside the sessions that have not yet started on those days. Days are counted in Makkah time.',
 			'calendrier.dates.ajouter' => 'Add a date',
 			'calendrier.dates.erreur' => 'The dates could not be loaded: the request may not have reached Rewayah. Try again in a moment.',
 			'calendrier.dates.videTitre' => 'No date entered',
 			'calendrier.dates.videDetail' => 'Add the year\'s closures, recitation meetings and assessment dates.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.type.fermeture' => 'Closure',
 			'calendrier.dates.type.rencontre' => 'Recitation meeting',
 			'calendrier.dates.type.evaluation' => 'Assessment',

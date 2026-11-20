@@ -141,7 +141,12 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
     if (!mounted || widget.filId != id) return;
     final FilMetier? fil = lu.value;
     if (fil == null || fil.id != id) return;
-    final bool nouveau = fil.messages.length > avant.messages.length;
+    // PE-D1 : le fil rendu n'est que sa page la plus recente ; un message
+    // arrive se lit au dernier message, pas au nombre.
+    final bool nouveau =
+        fil.messages.isNotEmpty &&
+        (avant.messages.isEmpty ||
+            fil.messages.last.id != avant.messages.last.id);
     setState(() => _fil = AsyncValue<FilMetier?>.data(fil));
     if (nouveau) unawaited(_marquerLu(id));
   }
@@ -238,6 +243,15 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
                 ?.peut(CapaciteCommunication.ecrireDansFil) ??
             false,
         onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
+        // PE-D1 : les messages plus anciens se chargent en remontant, si le port
+        // sait lire par pages.
+        onPlusAnciens: switch (_port) {
+          final PortPagesFil pages => (String avantId) => pages.messagesAvant(
+            fil.id,
+            avantId,
+          ),
+          _ => null,
+        },
         images: imagesDuFil(ref, fil.id).source,
         onAimer: imagesDuFil(ref, fil.id).aimer,
         onEnvoyerImage: imagesDuFil(ref, fil.id).envoyer,

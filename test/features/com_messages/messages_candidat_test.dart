@@ -362,14 +362,23 @@ void main() {
       );
     });
 
-    test('tout autre refus reste un echec ordinaire', () async {
+    // PE-D1 MESSAGERIE-FIABLE (20/11/2026) : un autre refus du serveur n'est
+    // plus un echec ordinaire (« Reessayer » n'y changerait rien) : il se dit
+    // par sa vraie phrase, jamais reessaye.
+    test('tout autre refus se dit par sa vraie phrase', () async {
       final MessagesMetierSupabase p = adaptateur(
         (String f, Map<String, dynamic> a) async =>
             throw const PostgrestException(message: 'refus', code: '42501'),
       );
       await expectLater(
         p.envoyer(fil, 'Bonjour', 'cle-1'),
-        throwsA(isA<PostgrestException>()),
+        throwsA(
+          isA<EnvoiRefuse>().having(
+            (EnvoiRefuse e) => e.phrase,
+            'phrase',
+            t.com.messages.fil.refusFerme,
+          ),
+        ),
       );
     });
 

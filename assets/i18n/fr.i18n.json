@@ -12991,7 +12991,12 @@
         }
       },
       "fil": {
-        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."
+        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.",
+        "anciensChargement": "Chargement des messages précédents",
+        "anciensEchec": "Les messages précédents ne se sont pas chargés.",
+        "refusFerme": "Vous ne pouvez plus écrire dans cette conversation.",
+        "refusTexte": "Ce message est vide ou trop long : 5 000 caractères au plus.",
+        "refusAutre": "Ce message n'a pas été accepté."
       },
       "images": {
         "joindre": "Joindre une image",

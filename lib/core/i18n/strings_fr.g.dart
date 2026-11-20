@@ -41464,6 +41464,21 @@ class Traductions$com$messages$fil$fr {
 
 	/// fr: 'Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.'
 	String get lectureSeule => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.';
+
+	/// fr: 'Chargement des messages précédents'
+	String get anciensChargement => 'Chargement des messages précédents';
+
+	/// fr: 'Les messages précédents ne se sont pas chargés.'
+	String get anciensEchec => 'Les messages précédents ne se sont pas chargés.';
+
+	/// fr: 'Vous ne pouvez plus écrire dans cette conversation.'
+	String get refusFerme => 'Vous ne pouvez plus écrire dans cette conversation.';
+
+	/// fr: 'Ce message est vide ou trop long : 5 000 caractères au plus.'
+	String get refusTexte => 'Ce message est vide ou trop long : 5 000 caractères au plus.';
+
+	/// fr: 'Ce message n'a pas été accepté.'
+	String get refusAutre => 'Ce message n\'a pas été accepté.';
 }
 
 // Path: com.messages.images
@@ -67243,6 +67258,11 @@ extension on Traductions {
 			'com.messages.panneau.officiel.mention' => 'Assistant de l\'académie · IA',
 			'com.messages.panneau.officiel.phrase' => 'Il répond à vos messages, vous guide pas à pas et confie à l\'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction.',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
+			'com.messages.fil.anciensChargement' => 'Chargement des messages précédents',
+			'com.messages.fil.anciensEchec' => 'Les messages précédents ne se sont pas chargés.',
+			'com.messages.fil.refusFerme' => 'Vous ne pouvez plus écrire dans cette conversation.',
+			'com.messages.fil.refusTexte' => 'Ce message est vide ou trop long : 5 000 caractères au plus.',
+			'com.messages.fil.refusAutre' => 'Ce message n\'a pas été accepté.',
 			'com.messages.images.joindre' => 'Joindre une image',
 			'com.messages.images.prendrePhoto' => 'Prendre une photo',
 			'com.messages.images.choisirGalerie' => 'Choisir dans la galerie',
@@ -67465,13 +67485,13 @@ extension on Traductions {
 			'com.communaute.signalement.politique.sollicitation' => 'La sollicitation commerciale n\'est pas autorisée dans cet espace.',
 			'com.communaute.signalement.motifManquant' => 'Choisissez un motif pour envoyer le signalement.',
 			'com.communaute.composer.nouvelle' => 'Nouvelle publication',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.composer.contexte' => 'Partagez une question, une méthode ou une ressource utile à l\'enseignement.',
 			'com.communaute.composer.categorie' => 'Catégorie',
 			'com.communaute.composer.categorieManquante' => 'Choisissez une catégorie pour publier.',
 			'com.communaute.composer.champTitre' => 'Titre',
 			'com.communaute.composer.aideTitre' => 'Le sujet en quelques mots',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.composer.titreManquant' => 'Écrivez un titre pour publier.',
 			'com.communaute.composer.champTexte' => 'Texte',
 			'com.communaute.composer.aideTexte' => 'Votre question ou votre retour d\'expérience',
@@ -67979,13 +67999,13 @@ extension on Traductions {
 			'com.annonces.demo.roles.controleur' => 'Contrôleur',
 			'com.annonces.demo.classeNour' => 'Classe An-Nour',
 			'com.annonces.demo.classeFajr' => 'Classe Al-Fajr',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.demo.enseignante' => 'Enseignante de la classe',
 			'com.annonces.demo.f.adminStudioMention' => 'Studio : une discussion du canal Programmes vous mentionne',
 			'com.annonces.demo.f.adminStudioReponse' => 'Studio : nouvelle réponse à votre message sur le programme de printemps',
 			'com.annonces.demo.f.adminStudioDecision' => 'Studio : une décision est demandée sur le support de la leçon 4',
 			'com.annonces.demo.f.adminStudioAssigne' => 'Studio : la relecture du support de Tajwid vous est assignée',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.demo.f.adminStudioInterne' => 'Annonce interne de l\'équipe Studio : réunion d\'équipe jeudi à 18 h',
 			'com.annonces.demo.f.adminStudioContexte' => 'Studio : un support est prêt pour la classe An-Nour',
 			'com.annonces.demo.f.annonceNourTitre' => 'Récitation de fin de trimestre devant les familles',
@@ -68493,13 +68513,13 @@ extension on Traductions {
 			'comptable.encaissements.moyen' => 'Moyen de paiement',
 			'comptable.encaissements.foyer' => 'Foyer',
 			'comptable.encaissements.date' => 'Date',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.etat' => 'État',
 			'comptable.encaissements.devise' => 'Devise',
 			'comptable.encaissements.affectation' => 'Affectation par profil',
 			'comptable.encaissements.affectationAucune' => 'La source n\'a rendu aucune affectation pour cet encaissement.',
 			'comptable.encaissements.rapprochement' => 'Rapprochement',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.encaissements.rapprochementAucun' => 'Pas encore rapproché',
 			'comptable.encaissements.ouvrirRapprochement' => 'Ouvrir le rapprochement',
 			'comptable.encaissements.confirmeNote' => '« Confirmé » s\'affiche seulement après la confirmation du prestataire.',
@@ -69007,13 +69027,13 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortieAnnulerTitre' => 'Annuler cette sortie ?',
 			'comptable.direction.delegationPanneau.sortieAnnulerPhrase' => ({required Object beneficiaire}) => 'La sortie de ${beneficiaire} ne partira pas. L\'annulation est inscrite au journal.',
 			'comptable.direction.delegationPanneau.sortieAnnulerConfirmer' => 'Annuler la sortie',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sortieGarder' => 'Garder la sortie',
 			'comptable.direction.delegationPanneau.sortieAnnulee' => 'Sortie annulée.',
 			'comptable.direction.delegationPanneau.sortieAnnulationEchec' => 'L\'annulation n\'est pas confirmée : la demande n\'est peut-être pas parvenue jusqu\'à Rewayah. Relisez la liste avant de réessayer.',
 			'comptable.direction.delegationPanneau.exceptionsTitre' => 'Exceptions',
 			'comptable.direction.delegationPanneau.exceptionsDetail' => 'Réglages propres à une délégation. Un plafond d\'exception est toujours plus bas que celui de la politique générale, jamais plus haut.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.exceptionsVide' => 'Aucune exception : la politique générale s\'applique à toutes les délégations.',
 			'comptable.direction.delegationPanneau.exceptionAjouter' => 'Ajouter une exception',
 			'comptable.direction.delegationPanneau.exceptionModifier' => ({required Object libelle}) => 'Modifier l\'exception de ${libelle}',
@@ -69521,13 +69541,13 @@ extension on Traductions {
 			'avis.admin.liens.etat.plein' => 'Complet',
 			'avis.admin.liens.recus' => ({required Object recus, required Object max}) => 'Avis reçus : ${recus} sur ${max}',
 			'avis.admin.liens.fin' => ({required Object date}) => 'Fin le ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.liens.cree' => ({required Object date}) => 'Créé le ${date}',
 			'avis.admin.liens.fermer' => 'Fermer le lien',
 			'avis.admin.liens.fermerQuestion' => ({required Object nom}) => 'Fermer le lien « ${nom} » ?',
 			'avis.admin.liens.fermerConsequence' => 'Les personnes qui ouvriront ce lien verront qu\'il est fermé et ne pourront plus envoyer d\'avis. Les avis déjà reçus restent. Un lien fermé ne se rouvre pas.',
 			'avis.admin.liens.fermerAction' => 'Fermer le lien',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.liens.fermerRester' => 'Ne rien changer',
 			'avis.admin.liens.fermeOk' => 'Le lien est fermé.',
 			'avis.admin.liens.fermeEchec' => 'La fermeture n\'est pas confirmée. La liste est relue : vérifiez l\'état du lien.',
@@ -70035,13 +70055,13 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.contact' => 'Téléphone ou courriel',
 			'candidatsFlux.importFormulaires.controle.question' => 'Y a-t-il des lignes à corriger ?',
 			'candidatsFlux.importFormulaires.controle.explication' => 'Une ligne à corriger n\'est pas importée. Corrigez-la dans le classeur, exportez de nouveau le fichier, puis rejouez l\'import : les lignes déjà importées ne sont pas ajoutées deux fois.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.aucune' => 'Aucune erreur ni avertissement dans ce fichier.',
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'Chaque ligne a pu être lue.',
 			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'À corriger',
 			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'Ces lignes ne seront pas importées.',
 			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'À regarder',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'Ces lignes sont importées, avec un point à vérifier.',
 			'candidatsFlux.importFormulaires.controle.ignorees.titre' => 'Ignorées',
 			'candidatsFlux.importFormulaires.controle.ignorees.aide' => 'Lignes vides ou répétées à l\'identique.',
@@ -70549,13 +70569,13 @@ extension on Traductions {
 			'calendrier.sections.pauses' => 'Pauses',
 			'calendrier.indisponible' => 'Le calendrier n\'a pas pu être ouvert : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.refusNouvelleDateFermee' => 'La date n\'est pas fixée : la classe est fermée ce jour-là. Choisissez un autre jour, ou retirez la fermeture pour cette classe.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.intro' => 'Les dates de l\'année, saisies par la direction chaque année. Seules les dates publiées agissent : une fermeture recule la date limite des étapes concernées et met de côté les séances qui n\'ont pas encore commencé ces jours-là. Les jours se comptent à l\'heure de La Mecque.',
 			'calendrier.dates.ajouter' => 'Ajouter une date',
 			'calendrier.dates.erreur' => 'Les dates n\'ont pas pu être lues : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'calendrier.dates.videTitre' => 'Aucune date saisie',
 			'calendrier.dates.videDetail' => 'Ajoutez les fermetures de l\'année, les rencontres de récitation et les dates d\'évaluation.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.type.fermeture' => 'Fermeture',
 			'calendrier.dates.type.rencontre' => 'Rencontre de récitation',
 			'calendrier.dates.type.evaluation' => 'Évaluation',

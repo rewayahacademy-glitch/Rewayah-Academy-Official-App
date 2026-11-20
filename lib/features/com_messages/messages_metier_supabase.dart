@@ -22,7 +22,7 @@ import '../../core/communications/phrases_images.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/theme/app_delais.dart';
-import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
+import '../../core/widgets/fil_discussion.dart' show EnvoiCoupe, EnvoiRefuse;
 import 'fonctions_images_messages.dart';
 import 'port_messages_metier.dart';
 
@@ -41,7 +41,7 @@ const Set<TypeObjetLie> _typesServeur = <TypeObjetLie>{
 };
 
 /// Les Messages metier servis par Supabase.
-class MessagesMetierSupabase implements PortMessagesMetier {
+class MessagesMetierSupabase implements PortMessagesMetier, PortPagesFil {
   /// Cree l'adaptateur sur un appel RPC (le client de l'application, par
   /// [appelRpcSupabase], ou un faux dans les tests).
   MessagesMetierSupabase(
@@ -142,10 +142,73 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     }
   }
 
+  /// PE-D1 : vrai quand le serveur ne connait pas encore `com_lire_fil_page`
+  /// (migration 20261130960000 pas installee) : le fil se lit d'un bloc, par
+  /// `com_lire_fil`, comme avant.
+  bool _sansPages = false;
+
   @override
   Future<FilMetier?> fil(String filId) async {
     if (!estUuid(filId)) return null;
+    if (!_sansPages) {
+      try {
+        return await _filOuNullSansRepli('com_lire_fil_page', <String, dynamic>{
+          'p_fil_id': filId,
+          'p_limite': PortPagesFil.taillePage,
+        });
+      } on _FonctionAbsente {
+        _sansPages = true;
+      }
+    }
     return _filOuNull('com_lire_fil', <String, dynamic>{'p_fil_id': filId});
+  }
+
+  /// Comme [_filOuNull], mais une fonction absente du serveur leve
+  /// [_FonctionAbsente] au lieu de passer pour un refus.
+  Future<FilMetier?> _filOuNullSansRepli(
+    String fonction,
+    Map<String, dynamic> p,
+  ) async {
+    final Object? v;
+    _generation += 1;
+    try {
+      v = await _appel(fonction, p);
+    } on PostgrestException catch (e) {
+      if (e.code == 'PGRST202' || e.code == '42883') {
+        throw const _FonctionAbsente();
+      }
+      if (estRefusOuAbsence(e)) return null;
+      rethrow;
+    } finally {
+      _generation += 1;
+    }
+    return v == null ? null : filMetierJson(objetJson(v), libelles);
+  }
+
+  @override
+  Future<PageMessagesFil> messagesAvant(
+    String filId,
+    String avantId, {
+    int limite = PortPagesFil.taillePage,
+  }) async {
+    if (!estUuid(filId) || !estUuid(avantId) || _sansPages) {
+      return PageMessagesFil(
+        messages: const <MessageCommunication>[],
+        plusAnciens: false,
+      );
+    }
+    final FilMetier? page = await _filOuNullSansRepli(
+      'com_lire_fil_page',
+      <String, dynamic>{
+        'p_fil_id': filId,
+        'p_avant': avantId,
+        'p_limite': limite,
+      },
+    );
+    return PageMessagesFil(
+      messages: page?.messages ?? const <MessageCommunication>[],
+      plusAnciens: page?.plusAnciens ?? false,
+    );
   }
 
   @override
@@ -236,13 +299,13 @@ class MessagesMetierSupabase implements PortMessagesMetier {
         'p_texte': message,
         'p_cle_idempotence': cleServeur(cle),
       });
-    } on PostgrestException catch (e) {
-      // MESSAGES-CANDIDAT : la limite de 30 messages par jour d'un candidat
-      // (SQLSTATE 53400) se dit, sans « Reessayer » qui ne changerait rien.
-      if (e.code == '53400') {
-        throw EnvoiRefuse(t.com.messages.candidature.plafond);
-      }
-      rethrow;
+    } on Object catch (e) {
+      // PE-D1 : un refus du serveur se dit par sa vraie phrase et n'est jamais
+      // reessaye ; une coupure en route est reessayee seule par le fil, sous
+      // la meme cle (jamais deux messages).
+      final Exception? classe = echecEnvoiMessage(e);
+      if (classe == null) rethrow;
+      throw classe;
     } finally {
       _generation += 1;
     }
@@ -457,6 +520,54 @@ class MessagesMetierSupabase implements PortMessagesMetier {
   }
 }
 
+/// PE-D1 : la fonction n'existe pas encore sur le serveur.
+class _FonctionAbsente implements Exception {
+  const _FonctionAbsente();
+}
+
+/// PE-D1 (MESSAGERIE-FIABLE) : ce que devient une erreur de
+/// `com_envoyer_message` pour le fil.
+///
+/// - le serveur a repondu par un refus : [EnvoiRefuse], sa vraie phrase (plus
+///   le droit d'ecrire ou conversation fermee, texte vide ou trop long, limite
+///   du jour d'un candidat), jamais « connexion », jamais reessaye ;
+/// - aucune reponse (reseau coupe, delai depasse, passerelle en panne,
+///   session a renouveler) : [EnvoiCoupe], reessaye par le fil sous la meme
+///   cle.
+///
+/// `null` : une autre erreur, laissee telle quelle (echec ordinaire).
+Exception? echecEnvoiMessage(Object e) {
+  if (e is EnvoiRefuse) return e;
+  if (e is EnvoiCoupe) return e;
+  final m = t.com.messages;
+  if (e is PostgrestException) {
+    final String code = e.code ?? '';
+    // Un statut HTTP a trois chiffres (passerelle), jamais un SQLSTATE a cinq
+    // (42501 est un refus, pas une panne).
+    final int? http = code.length == 3 ? int.tryParse(code) : null;
+    if (code.isEmpty ||
+        (http != null && (http >= 500 || http == 408 || http == 429)) ||
+        code.startsWith('PGRST3')) {
+      return EnvoiCoupe(e);
+    }
+    return switch (code) {
+      '53400' => EnvoiRefuse(m.candidature.plafond),
+      '42501' => EnvoiRefuse(m.fil.refusFerme),
+      '22023' || '23514' => EnvoiRefuse(m.fil.refusTexte),
+      _ => EnvoiRefuse(m.fil.refusAutre),
+    };
+  }
+  final String type = e.runtimeType.toString();
+  if (e is TimeoutException ||
+      type.contains('ClientException') ||
+      type.contains('SocketException') ||
+      type.contains('HandshakeException') ||
+      type.contains('AuthRetryableFetchException')) {
+    return EnvoiCoupe(e);
+  }
+  return null;
+}
+
 IndicateurAttention _attention(Object? nonLus) {
   final int n = nonLus is int && nonLus > 0 ? nonLus : 0;
   return n == 0
@@ -539,6 +650,8 @@ FilMetier filMetierJson(
               ? m['coeurs'] as int
               : 0,
           aimeParMoi: m['aime_par_moi'] == true,
+          // PE-D1 : rendue par `com_lire_fil_page`, pour mes messages seuls.
+          cleIdempotence: texteOptionnel(m, 'cle_idempotence'),
         ),
     ],
     attention: _attention(fil['non_lus']),
@@ -546,5 +659,6 @@ FilMetier filMetierJson(
       if (fil['peut_ecrire'] == true) CapaciteFil.ecrire,
     },
     luParAutresLe: instantOptionnel(fil, 'lu_par_autres_le'),
+    plusAnciens: fil['plus_anciens'] == true,
   );
 }
