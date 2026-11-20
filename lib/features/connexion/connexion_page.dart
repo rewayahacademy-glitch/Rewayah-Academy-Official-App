@@ -1137,7 +1137,7 @@ class _LienEnvoye extends StatelessWidget {
         // ONBOARDING-BOUCLE (14/11/2026) : le code du message, saisi dans ce
         // navigateur, ouvre la session meme si le lien s'ouvre ailleurs.
         Ecart.vXl,
-        SaisieCodeCourriel(courriel: courriel),
+        SaisieCodeCourriel(courriel: courriel, surCarte: true),
         Ecart.vXxl,
         // ALIGN-RENVOI (04/11/2026) : le bouton seul a la largeur du champ,
         // sur ordinateur comme sur telephone (meme regle que CONNEXION-ALIGN).

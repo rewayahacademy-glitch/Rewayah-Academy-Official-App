@@ -38,10 +38,18 @@ String chiffresDuCode(String saisie) {
 /// Le champ « code recu » et son bouton, sous l'ecran « lien envoye ».
 class SaisieCodeCourriel extends ConsumerStatefulWidget {
   /// Cree le bloc pour l'adresse a laquelle le lien est parti.
-  const SaisieCodeCourriel({required this.courriel, super.key});
+  const SaisieCodeCourriel({
+    required this.courriel,
+    this.surCarte = false,
+    super.key,
+  });
 
   /// L'adresse a laquelle le courriel est parti.
   final String courriel;
+
+  /// ENTREE-PRAXIS : pose sur la carte de la page d'entree (le champ creux de
+  /// la maquette, le bouton violet plein).
+  final bool surCarte;
 
   /// La cle du champ du code (tests).
   static const Key cleChamp = ValueKey<String>('connexion-code-champ');
@@ -131,6 +139,7 @@ class _SaisieCodeState extends ConsumerState<SaisieCodeCourriel> {
         Ecart.vLg,
         ChampEntree(
           cle: 'connexion-code-champ',
+          surCarte: widget.surCarte,
           etiquette: t.connexion.code.etiquette,
           indice: t.connexion.code.indice,
           controleur: _code,
@@ -146,6 +155,7 @@ class _SaisieCodeState extends ConsumerState<SaisieCodeCourriel> {
           libelle: t.connexion.code.valider,
           onPress: () => unawaited(_valider()),
           enCours: _enCours,
+          affirmee: widget.surCarte,
           pleineLargeur: true,
         ),
       ],

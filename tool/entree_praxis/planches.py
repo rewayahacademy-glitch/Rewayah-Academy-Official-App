@@ -60,6 +60,9 @@ def main():
         fmt = nom.split("-")[0]
         langue = nom.split("--")[0].split("-")[2]
         suite = sorted(glob.glob(os.path.join(maq, nom + "-[0-9][0-9].png")))
+        if len(suite) < 5:
+            print(nom, ": suite de la maquette incomplete, planche sautee")
+            continue
         m1, m2 = choisir(suite, fmt, langue)
         H = 844 if fmt == "tel" else 620
         p = [hauteur(x, H) for x in (m1, Image.open(a1), m2, Image.open(a2))]

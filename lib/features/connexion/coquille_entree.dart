@@ -485,6 +485,11 @@ class ChampEntree extends StatelessWidget {
                   ? null
                   : (String _) => onSoumettre!(),
               keyboardType: clavier,
+              // ENTREE-PRAXIS (maquette) : une adresse s'ecrit de gauche a
+              // droite, meme dans une page en arabe (invite comprise).
+              textDirection: clavier == TextInputType.emailAddress
+                  ? TextDirection.ltr
+                  : null,
               autofillHints: autofill,
               obscureText: masque,
               // Mot de passe : ni copier ni coller (directeur, 07/11/2026).
@@ -494,6 +499,9 @@ class ChampEntree extends StatelessWidget {
                   : TextInputAction.go,
               decoration: InputDecoration(
                 hintText: indice,
+                hintTextDirection: clavier == TextInputType.emailAddress
+                    ? TextDirection.ltr
+                    : null,
                 errorText: surCarte ? null : erreur,
                 error: erreurCarte == null ? null : const SizedBox.shrink(),
                 errorMaxLines: 4,
