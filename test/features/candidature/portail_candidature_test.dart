@@ -20,6 +20,12 @@ import 'hote_candidature.dart';
 
 Finder _texte(String t) => find.text(t);
 
+/// Deplie la ligne [code] du dossier : depuis le 20/11/2026 (directeur,
+/// « lignes du dossier simples »), ce que le serveur dit d'un element (piece
+/// recue, accord a envoyer...) se lit en depliant sa ligne.
+Future<void> _deplier(WidgetTester tester, String code) =>
+    toucherCle(tester, 'dossier-ligne-$code');
+
 Finder _cle(String cle) => find.byKey(ValueKey<String>(cle));
 
 /// Touche un texte, apres l'avoir amene a l'ecran (le pied peut le couvrir).
@@ -138,7 +144,8 @@ void main() {
         expect(_texte(t.recrutement.portail.completer), findsOneWidget);
         expect(_texte(t.recrutement.portail.etatFait), findsNWidgets(3));
         expect(_texte(t.recrutement.portail.elementReponses), findsOneWidget);
-        // INCIDENT-CANDIDATS : la piece recue se dit en mots.
+        // INCIDENT-CANDIDATS : la piece recue se dit en mots, ligne depliee.
+        await _deplier(tester, 'piece');
         expect(_texte(t.recrutement.portail.pieceRecue), findsOneWidget);
         verifierUnSeulBoutonPlein(tester);
       },
@@ -281,6 +288,7 @@ void main() {
         accordPublicationSigne: false,
       );
       expect(_texte(t.recrutement.portail.etatAAjouter), findsNothing);
+      await _deplier(tester, 'photo');
       expect(_texte(t.recrutement.portail.accordAEnvoyer), findsOneWidget);
     });
 
@@ -293,6 +301,7 @@ void main() {
           photoPosee: true,
           accordPublicationSigne: true,
         );
+        await _deplier(tester, 'photo');
         expect(_texte(t.recrutement.portail.photoRecue), findsOneWidget);
       },
     );
@@ -1088,6 +1097,8 @@ void main() {
         ),
         findsOneWidget,
       );
+      await _deplier(tester, 'piece');
+      await _deplier(tester, 'photo');
       expect(_texte(p.pieceDemandee), findsOneWidget);
       expect(_texte(p.photoDemandee), findsOneWidget);
       expect(_texte(t.attente.deposerLaPiece), findsOneWidget);
@@ -1196,6 +1207,7 @@ void main() {
         candidatureAFaire(),
         statutPiece: StatutPiece.refusee,
       );
+      await _deplier(tester, 'piece');
       expect(
         _texte(
           t.attente.refuseDetail(element: t.recrutement.portail.elementPiece),

@@ -3160,7 +3160,7 @@
         "vide": "La messagerie s'ouvrira ici dès que votre candidature sera enregistrée.",
         "sections": {"libelle": "Rubriques des messages", "messages": "Messages", "annonces": "Annonces", "savoir": "À savoir"},
         "nonLus(plural, param=n)": {"one": "{n} message non lu", "other": "{n} messages non lus"},
-        "annonces": {"lire": "Lire l'annonce : {titre}", "vide": "Aucune annonce pour l'instant. Les annonces de la direction s'afficheront ici."},
+        "annonces": {"lire": "Lire l'annonce\u00a0: {titre}", "vide": "Aucune annonce pour l'instant. Les annonces de la direction s'afficheront ici."},
         "savoir": {"intro": "Les réponses aux questions des candidats, quand la direction les publiera."}
       },
       "academie": {

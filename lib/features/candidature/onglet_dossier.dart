@@ -635,12 +635,29 @@ class _EtatLigneDepliable extends State<LigneDepliable> {
           child: _ouverte
               ? Padding(
                   padding: const EdgeInsets.only(top: AppSpacing.sm),
-                  child: Text(
-                    l.legende == null ? l.detail : '${l.legende}\n${l.detail}',
-                    key: OngletDossier.cleDetail(l.code),
-                    style: palette.inkMuted.applyTo(
-                      textes.bodyMedium ?? const TextStyle(),
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      // Ce que le serveur dit de cet element (piece recue,
+                      // accord a envoyer...), puis ce qu'il est.
+                      if (l.legende != null) ...<Widget>[
+                        Text(
+                          l.legende!,
+                          style: palette.inkStrong.applyTo(
+                            textes.bodyMedium ?? const TextStyle(),
+                          ),
+                        ),
+                        Ecart.vXs,
+                      ],
+                      Text(
+                        l.detail,
+                        key: OngletDossier.cleDetail(l.code),
+                        style: palette.inkMuted.applyTo(
+                          textes.bodyMedium ?? const TextStyle(),
+                        ),
+                      ),
+                    ],
                   ),
                 )
               : const SizedBox(width: double.infinity),

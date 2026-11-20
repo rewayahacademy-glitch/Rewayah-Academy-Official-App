@@ -49081,7 +49081,7 @@ class Traductions$recrutement$accueil$messages$annonces$fr {
 	// Translations
 
 	/// fr: 'Lire l'annonce : {titre}'
-	String lire({required Object titre}) => 'Lire l\'annonce : ${titre}';
+	String lire({required Object titre}) => 'Lire l\'annonce : ${titre}';
 
 	/// fr: 'Aucune annonce pour l'instant. Les annonces de la direction s'afficheront ici.'
 	String get vide => 'Aucune annonce pour l\'instant. Les annonces de la direction s\'afficheront ici.';
@@ -59793,7 +59793,7 @@ extension on Traductions {
 			'recrutement.accueil.messages.sections.annonces' => 'Annonces',
 			'recrutement.accueil.messages.sections.savoir' => 'À savoir',
 			'recrutement.accueil.messages.nonLus' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: '${n} message non lu', other: '${n} messages non lus', ), 
-			'recrutement.accueil.messages.annonces.lire' => ({required Object titre}) => 'Lire l\'annonce : ${titre}',
+			'recrutement.accueil.messages.annonces.lire' => ({required Object titre}) => 'Lire l\'annonce : ${titre}',
 			'recrutement.accueil.messages.annonces.vide' => 'Aucune annonce pour l\'instant. Les annonces de la direction s\'afficheront ici.',
 			'recrutement.accueil.messages.savoir.intro' => 'Les réponses aux questions des candidats, quand la direction les publiera.',
 			'recrutement.accueil.academie.titre' => 'L\'académie',
