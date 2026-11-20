@@ -77,3 +77,18 @@ Salle ouverte 20 min avant (`PARCOURS-OUVERTURE-2026-11-01.md`) ; avertissement 
 - **Interface** : session « Parcours candidat enseignant » (accueil du candidat, #662).
 - **Praxis animé** : le pilote de l'équipe (Praxis, secrétaire IA).
 - Si la page n'est pas prête : maquette hors de l'application, montrée au directeur, puis transport.
+
+## Maquette (20/11/2026)
+
+Hors application, en attente de la page : https://claude.ai/artifact/4HDGDYh15w9cS5EEkifcu5.
+Sources dans `maquette/` : `template.html` + `build.py` produisent `lettre-candidats.html` depuis `LETTRE-fr.md`
+(`python3 build.py LETTRE-fr.md template.html lettre-candidats.html`). Praxis y est dessiné en SVG d'après la fiche
+de `praxis-rewayah` §2, pour la maquette seulement : dans l'application, on utilise le composant du dépôt, jamais ce dessin.
+Les phrases de Praxis et ses gestes par partie sont des propositions.
+
+Réponse de la session « Parcours candidat enseignant » (20/11) : une ligne dans « À savoir » ouvre une page dédiée,
+fichier neuf `lib/features/candidature/lettre_candidats_page.dart` avec sa route ; `a_savoir_candidat.dart` modifiable
+pour cette seule ligne ; prévenir avant de toucher `accueil_candidat.dart`, `messages_candidat.dart`, `attente_page.dart` ;
+textes fr, en, ar ; Praxis par `AvatarPraxisCandidat` (`praxis_candidat.dart`), Praxis de référence avec la PR 664.
+Verrou : aucune lecture « accords requis acceptés » vérifiée ; piste `public.etat_dossier()`, sinon migration à partir
+de `20261130970000`. Espace enseignant : rien de construit ni de validé, question au directeur.
