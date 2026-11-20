@@ -19,7 +19,7 @@
 //      « Malinke (mandinka) », chacune avec « Rewayah propose des cours dans
 //      cette langue » ;
 //   4. controles dans la base locale : la porte (lien public), la version de
-//      confidentialite acceptee (2026-11-v1), la langue, les reponses.
+//      confidentialite acceptee (2026-11-v2), la langue, les reponses.
 //
 // Quatre passages : 390 et 1440 de large, en francais et en arabe (langue du
 // navigateur, puis langue choisie au recapitulatif).
@@ -75,8 +75,8 @@ async function etape(a, nom) {
 
 // --- Amorce locale ----------------------------------------------------------
 sql(`update public.app_config set value = 'true'::jsonb where key = 'candidatures.inscription_publique_ouverte'`);
-controle(un(`select value #>> '{}' from public.app_config where key = 'candidatures.confidentialite_version'`) === '2026-11-v1',
-  'réglage serveur de confidentialité à 2026-11-v1 (migration 20261110310000)');
+controle(un(`select value #>> '{}' from public.app_config where key = 'candidatures.confidentialite_version'`) === '2026-11-v2',
+  'réglage serveur de confidentialité à 2026-11-v2 (migration 20261130400000)');
 
 /// Le lien direct du candidat, tel que le courriel « lien_inscription » le
 /// porte (supabase/functions/_shared/courriel/modeles_fr.ts, meme lien dans
@@ -157,7 +157,7 @@ async function passage({ largeur, langue, entree }) {
   await taper(a.page, `input[aria-label="${texte(langue, 'inscription.telephone.numeroCourt')}"]`, '622 12 34 56');
   await toucher(a, exact(langue, 'commun.continuer'), 'Continuer (téléphone)');
   await etape(a, 'recapitulatif');
-  controle(Boolean(await trouverTexte(a.page, /2026-11-v1/, 5000)), `${largeur} ${langue} : version 2026-11-v1 affichée au récapitulatif`);
+  controle(Boolean(await trouverTexte(a.page, /2026-11-v2/, 5000)), `${largeur} ${langue} : version 2026-11-v2 affichée au récapitulatif`);
   // La langue de l'application, choisie ici : celle du passage.
   await toucher(a, debut(langue, langue === 'ar' ? 'inscription.langue.arabe' : 'inscription.langue.francais'),
     'langue de l\'application', { role: 'radio', pause: 1500 });
@@ -204,7 +204,7 @@ async function passage({ largeur, langue, entree }) {
   // 4. La base locale.
   const id = un(`select id from auth.users where email = '${courriel}'`);
   const accord = un(`select version || '/' || porte from public.candidat_accords_confidentialite where profile_id = '${id}'`);
-  controle(accord === '2026-11-v1/lien_public', `${largeur} ${langue} : accord de confidentialité 2026-11-v1, porte lien_public`, accord);
+  controle(accord === '2026-11-v2/lien_public', `${largeur} ${langue} : accord de confidentialité 2026-11-v2, porte lien_public`, accord);
   const langueEnregistree = un(`select coalesce(langue, 'null') from public.candidatures where profile_id = '${id}'`);
   controle(langueEnregistree === langue, `${largeur} ${langue} : langue de la candidature`, langueEnregistree);
   const reponses = un(`select r.questionnaire_version || ' ' || (r.reponses -> 'langueMaternelle')::text || ' '

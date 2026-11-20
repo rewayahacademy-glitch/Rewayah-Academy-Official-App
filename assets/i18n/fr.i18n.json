@@ -15339,7 +15339,8 @@
           "- Suivre la présence et la progression.",
           "- Facturer l'abonnement.",
           "- Protéger les élèves et contrôler la qualité des séances.",
-          "- Réparer les pannes."
+          "- Réparer les pannes.",
+          "- Répondre plus vite à vos messages, avec l'aide d'un assistant numérique (voir le point 4)."
         ]
       },
       "s4": {
@@ -15347,7 +15348,8 @@
         "blocs": [
           "Une famille ne voit que ses propres informations. Les informations d'un enfant ne sont jamais publiques et ne sont jamais montrées aux autres familles.",
           "L'enseignant voit ses élèves et ses Classes. La direction voit ce qu'il faut pour gérer les inscriptions, les Classes et les paiements. Ces accès sont réglés côté serveur.",
-          "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal."
+          "Un contrôleur qualité peut assister aux séances. Les accès sensibles sont inscrits dans un journal.",
+          "Un assistant numérique, appelé Praxis, aide l'académie à répondre aux familles et aux candidats dans la messagerie de l'application. Son profil indique qu'il s'agit d'une intelligence artificielle. L'académie est aidée par un assistant IA. Il lit votre candidature et vos messages, à l'exception de vos coordonnées, de votre pièce d'identité, de votre photo et de vos informations de versement. Il peut vous écrire, vous poser des questions sur votre parcours et votre façon d'enseigner, et préparer un avis pour la direction. Toute décision sur votre candidature est prise par la direction. Il ne lit aucune conversation où un enfant participe, ni les pièces d'identité, ni les paiements. Il n'écrit jamais à un enfant et n'envoie aucun courriel. Il travaille sous la responsabilité de la direction, qui peut l'arrêter à tout moment."
         ]
       },
       "s5": {
@@ -15362,7 +15364,8 @@
         "titre": "6. Où sont vos informations",
         "blocs": [
           "Nous utilisons un hébergeur de pages web, une base de données avec la connexion des comptes, un service de visio, un stockage privé pour les fichiers, un prestataire de paiement et un service de rapports d'erreurs. Ils traitent vos informations pour nous, pour ces seules raisons.",
-          "Pour protéger la connexion contre les robots, nous utilisons Cloudflare Turnstile (Cloudflare, Inc.). Au moment de la vérification, Cloudflare traite votre adresse IP et des informations techniques sur votre navigateur, uniquement pour ce contrôle et sans cookie publicitaire. Base légale\u00a0: notre intérêt légitime à sécuriser le service."
+          "Pour protéger la connexion contre les robots, nous utilisons Cloudflare Turnstile (Cloudflare, Inc.). Au moment de la vérification, Cloudflare traite votre adresse IP et des informations techniques sur votre navigateur, uniquement pour ce contrôle et sans cookie publicitaire. Base légale\u00a0: notre intérêt légitime à sécuriser le service.",
+          "Pour lire et répondre, l'assistant s'appuie sur un fournisseur d'intelligence artificielle. Aujourd'hui, il s'agit d'Anthropic PBC (Claude), entreprise établie aux États-Unis. L'académie peut aussi recourir, aux mêmes conditions, à Google LLC (Gemini) ou à OpenAI (ChatGPT), établies aux États-Unis\u00a0; le fournisseur utilisé est toujours indiqué ici. Les messages que l'assistant lit sont transmis au fournisseur pour cette seule raison. Ils ne servent pas à entraîner ses modèles et sont effacés chez lui au plus tard après 30 jours. Ce transfert hors de l'Union européenne est encadré par les clauses contractuelles types de la Commission européenne. Nous gardons pendant 12 mois une trace de ce que l'assistant a envoyé, jamais du texte des messages que vous écrivez. La base légale est notre intérêt légitime à vous répondre rapidement."
         ]
       },
       "s7": {
@@ -15377,6 +15380,7 @@
           "- Voir les informations que nous avons sur vous.",
           "- Les corriger.",
           "- Demander leur suppression ou limiter leur usage.",
+          "Vous pouvez à tout moment demander à parler à l'équipe\u00a0: une personne reprend la conversation et l'assistant ne vous répond plus dans celle-ci.",
           "Écrivez-nous. Nous vérifions d'abord que c'est bien vous, ou le tuteur de l'élève. Vous pouvez aussi vous adresser à l'autorité de protection des données de votre pays."
         ]
       },

@@ -22104,6 +22104,7 @@ class _Traductions$juridique$confidentialite$s3$en extends Traductions$juridique
 		'- To invoice the subscription.',
 		'- To protect the students and review the quality of sessions.',
 		'- To repair outages.',
+		'- To answer your messages faster, with the help of a digital assistant (see point 4).',
 	];
 }
 
@@ -22119,6 +22120,7 @@ class _Traductions$juridique$confidentialite$s4$en extends Traductions$juridique
 		'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
 		'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
 		'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
+		'A digital assistant, called Praxis, helps the academy answer families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. The academy is helped by an AI assistant. It reads your application and your messages, except your contact details, your identity document, your photo and your payment details. It may write to you, ask you questions about your background and your way of teaching, and prepare an opinion for the management. Every decision on your application is made by the management. It reads no conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no email. It works under the responsibility of the management, which can stop it at any time.',
 	];
 }
 
@@ -22148,6 +22150,7 @@ class _Traductions$juridique$confidentialite$s6$en extends Traductions$juridique
 	@override List<String> get blocs => [
 		'We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.',
 		'To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.',
+		'To read and answer, the assistant relies on an artificial intelligence provider. Today, this is Anthropic PBC (Claude), a company established in the United States. The academy may also use, under the same conditions, Google LLC (Gemini) or OpenAI (ChatGPT), both established in the United States; the provider in use is always stated here. The messages the assistant reads are sent to the provider for this reason only. They are not used to train its models and are deleted on its side after 30 days at the latest. This transfer outside the European Union is governed by the standard contractual clauses of the European Commission. We keep for 12 months a record of what the assistant sent, never of the text of the messages you write. The legal basis is our legitimate interest in answering you quickly.',
 	];
 }
 
@@ -22176,6 +22179,7 @@ class _Traductions$juridique$confidentialite$s8$en extends Traductions$juridique
 		'- To see the information we hold about you.',
 		'- To correct it.',
 		'- To ask for its deletion or to limit its use.',
+		'You may at any time ask to speak to the team: a person takes over the conversation and the assistant no longer answers you in it.',
 		'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
 	];
 }
@@ -40938,10 +40942,12 @@ extension on TraductionsEn {
 			'juridique.confidentialite.s3.blocs.2' => '- To invoice the subscription.',
 			'juridique.confidentialite.s3.blocs.3' => '- To protect the students and review the quality of sessions.',
 			'juridique.confidentialite.s3.blocs.4' => '- To repair outages.',
+			'juridique.confidentialite.s3.blocs.5' => '- To answer your messages faster, with the help of a digital assistant (see point 4).',
 			'juridique.confidentialite.s4.titre' => '4. Who sees what',
 			'juridique.confidentialite.s4.blocs.0' => 'A family sees only its own information. A child\'s information is never public and is never shown to other families.',
 			'juridique.confidentialite.s4.blocs.1' => 'The Teacher sees their students and their Classes. The management sees what is needed to manage registrations, Classes and payments. These accesses are enforced on the server side.',
 			'juridique.confidentialite.s4.blocs.2' => 'A quality reviewer may attend sessions. Sensitive accesses are recorded in a log.',
+			'juridique.confidentialite.s4.blocs.3' => 'A digital assistant, called Praxis, helps the academy answer families and candidates in the app\'s messaging. Its profile states that it is an artificial intelligence. The academy is helped by an AI assistant. It reads your application and your messages, except your contact details, your identity document, your photo and your payment details. It may write to you, ask you questions about your background and your way of teaching, and prepare an opinion for the management. Every decision on your application is made by the management. It reads no conversation in which a child takes part, nor identity documents, nor payments. It never writes to a child and sends no email. It works under the responsibility of the management, which can stop it at any time.',
 			'juridique.confidentialite.s5.titre' => '5. Live sessions and recording',
 			'juridique.confidentialite.s5.blocs.0' => 'Video goes through a specialist service. Access to a session is given by the server, for that session only and for a short time.',
 			'juridique.confidentialite.s5.blocs.1' => 'Today, the app does not record classes. If recording returns, we shall tell you beforehand why, how long it is kept and who can access it, and we shall ask for your agreement.',
@@ -40949,13 +40955,15 @@ extension on TraductionsEn {
 			'juridique.confidentialite.s6.titre' => '6. Where your information is',
 			'juridique.confidentialite.s6.blocs.0' => 'We use a web page host, a database with account sign-in, a video service, private storage for files, a payment provider and an error reporting service. They process your information for us, for these reasons only.',
 			'juridique.confidentialite.s6.blocs.1' => 'To protect sign-in against bots, we use Cloudflare Turnstile (Cloudflare, Inc.). At the time of verification, Cloudflare processes your IP address and technical information about your browser, solely for this check and without any advertising cookie. Legal basis: our legitimate interest in securing the service.',
+			'juridique.confidentialite.s6.blocs.2' => 'To read and answer, the assistant relies on an artificial intelligence provider. Today, this is Anthropic PBC (Claude), a company established in the United States. The academy may also use, under the same conditions, Google LLC (Gemini) or OpenAI (ChatGPT), both established in the United States; the provider in use is always stated here. The messages the assistant reads are sent to the provider for this reason only. They are not used to train its models and are deleted on its side after 30 days at the latest. This transfer outside the European Union is governed by the standard contractual clauses of the European Commission. We keep for 12 months a record of what the assistant sent, never of the text of the messages you write. The legal basis is our legitimate interest in answering you quickly.',
 			'juridique.confidentialite.s7.titre' => '7. How long',
 			'juridique.confidentialite.s7.blocs.0' => 'We keep each type of information for the time needed, no longer. A Teacher\'s ID document is deleted at the end of a fixed period. A deletion may be frozen in the event of a dispute.',
 			'juridique.confidentialite.s8.titre' => '8. Your rights',
 			'juridique.confidentialite.s8.blocs.0' => '- To see the information we hold about you.',
 			'juridique.confidentialite.s8.blocs.1' => '- To correct it.',
 			'juridique.confidentialite.s8.blocs.2' => '- To ask for its deletion or to limit its use.',
-			'juridique.confidentialite.s8.blocs.3' => 'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
+			'juridique.confidentialite.s8.blocs.3' => 'You may at any time ask to speak to the team: a person takes over the conversation and the assistant no longer answers you in it.',
+			'juridique.confidentialite.s8.blocs.4' => 'Write to us. We first check that it is you, or the student\'s Guardian. You may also contact the data protection authority of your country.',
 			'juridique.confidentialite.s9.titre' => '9. Security',
 			'juridique.confidentialite.s9.blocs.0' => 'Access rules are enforced by the server. ID documents are in a private space, separate from photos. No protection is absolute: if you see a problem, write to us.',
 			'juridique.confidentialite.s10.titre' => '10. Children',
@@ -41277,12 +41285,12 @@ extension on TraductionsEn {
 			'admissions.refuser' => 'Refuse the request',
 			'admissions.refuserContexte' => 'Choose the sentence the person will receive, then write the reason for the management. The person never sees the reason.',
 			'admissions.refuserQuestion' => ({required Object deNom}) => 'Refuse ${deNom}\'s request?',
+			_ => null,
+		} ?? switch (path) {
 			'admissions.refuserConsequence' => 'The person receives a "We cannot proceed" email. The refusal can be undone for seven days.',
 			'admissions.motifInterne' => 'Reason, for the management',
 			'admissions.motifInterneAide' => 'It stays in the request\'s log.',
 			'admissions.precisionsContexte' => 'The request goes to "to complete". The person receives your message by email and finds it on their waiting page.',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.precisionsMessage' => 'What is missing',
 			'admissions.precisionsAide' => 'One or two sentences, in simple words.',
 			'admissions.precisionsEnvoyer' => 'Send the request for clarification',
@@ -41791,12 +41799,12 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'including ${n} person who received the end-of-October waiting email', other: 'including ${n} people who received the end-of-October waiting email', ), 
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copy the sign-up link',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Personal sign-up link',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'This person did not leave an email address. Enter the one they will use to create their account: it is saved on their answer, and the code works only with it. No email is sent: you pass the link on yourself.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'The person\'s email address',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Prepare the link',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.code' => 'Personal code',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.lien' => 'Personal link',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.echeance' => ({required Object date}) => 'Valid until ${date}, once, with this address only.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.copier' => 'Copy the link',
@@ -42305,12 +42313,12 @@ extension on TraductionsEn {
 			'calendrier.pauses.terminerChamp' => 'Last day of the break',
 			'calendrier.pauses.terminerEnvoyer' => 'End the break',
 			'calendrier.pauses.finInitiale' => ({required Object date}) => 'Original end: ${date}',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.pauses.termineePar' => ({required Object nom}) => 'Ended early by ${nom}',
 			'calendrier.pauses.refus.motifRequis' => 'A reason of at least three letters is required.',
 			'calendrier.pauses.refus.dejaDecidee' => 'This request has already been answered. Reload the list.',
 			'calendrier.pauses.refus.debutPasse' => 'The month has already started: this break can no longer be accepted. You can refuse it.',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.refus.datesInvalides' => 'The last day must be today or later, within a year.',
 			'calendrier.pauses.refus.exceptionTropLongue' => ({required Object mois}) => 'An exceptional break lasts ${mois} months at most. Shorten it; you can then grant a new one.',
 			'calendrier.pauses.refus.nonTerminable' => 'This break is already ended or is not an exceptional break.',

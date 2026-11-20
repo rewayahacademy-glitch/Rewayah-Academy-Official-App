@@ -1057,7 +1057,7 @@ void main() {
         expect(ligne, findsOneWidget);
         expect(
           tester.widget<Text>(ligne).data,
-          'Version 2026-11-v1, texte du 2 novembre 2026',
+          'Version 2026-11-v2, texte du 20 novembre 2026',
         );
         await _cocherEtCreer(tester);
         expect(
@@ -1104,7 +1104,7 @@ void main() {
         );
         expect(
           hote.candidat.appels.single.versionConfidentialite,
-          '2026-11-v1',
+          '2026-11-v2',
         );
       },
     );
@@ -1365,7 +1365,7 @@ void main() {
       'confidentialite perimee ou indisponible : une phrase, aucune creation',
       (WidgetTester tester) async {
         final FauxInscriptionCandidat candidat = FauxInscriptionCandidat()
-          ..versionAttendue = '2026-11-v2';
+          ..versionAttendue = '2026-11-v3';
         await versLaCreation(tester, candidat);
         await _cocherEtCreer(tester);
         expect(
