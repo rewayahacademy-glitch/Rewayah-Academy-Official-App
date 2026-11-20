@@ -381,6 +381,7 @@ class ChampEntree extends StatelessWidget {
     this.onChanged,
     this.masque = false,
     this.obligatoire = false,
+    this.surCarte = false,
     super.key,
   });
 
@@ -390,6 +391,12 @@ class ChampEntree extends StatelessWidget {
   /// lecteur d'ecran dit « champ obligatoire ». Faux par defaut : rendu
   /// inchange.
   final bool obligatoire;
+
+  /// ENTREE-PRAXIS (maquette « Praxis vous accueille ») : le champ est pose
+  /// sur une carte du theme courant (clair ou sombre), et non sur la marque :
+  /// il prend le theme de la page, et son erreur se dit dans un encart sous
+  /// lui (la vraie cause, en une phrase), le filet du champ passant a l'alerte.
+  final bool surCarte;
 
   /// La cle du `TextField`, lue par les tests.
   final String cle;
@@ -426,11 +433,14 @@ class ChampEntree extends StatelessWidget {
     final TextTheme textes = Theme.of(context).textTheme;
     final AppPalette page = AppPalette.of(context);
     final AppPalette claire = AppPalette.claire();
-    final ThemeData champ = AppTheme.depuis(
-      claire.copyWith(surfaceSunken: claire.surfaceRaised),
-      AppMetriques.of(context).mode,
-      Brightness.light,
-    );
+    final ThemeData champ = surCarte
+        ? Theme.of(context)
+        : AppTheme.depuis(
+            claire.copyWith(surfaceSunken: claire.surfaceRaised),
+            AppMetriques.of(context).mode,
+            Brightness.light,
+          );
+    final String? erreurCarte = surCarte ? erreur : null;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -467,7 +477,8 @@ class ChampEntree extends StatelessWidget {
                   : TextInputAction.go,
               decoration: InputDecoration(
                 hintText: indice,
-                errorText: erreur,
+                errorText: surCarte ? null : erreur,
+                error: erreurCarte == null ? null : const SizedBox.shrink(),
                 errorMaxLines: 4,
                 errorStyle: page.inkAlert.applyTo(
                   textes.bodySmall ?? const TextStyle(),
@@ -476,6 +487,34 @@ class ChampEntree extends StatelessWidget {
             ),
           ),
         ),
+        if (erreurCarte != null) ...<Widget>[
+          Ecart.vMd,
+          Semantics(
+            liveRegion: true,
+            child: DecoratedBox(
+              decoration: ShapeDecoration(
+                color: page.washAlert.background,
+                shape: const RoundedSuperellipseBorder(
+                  borderRadius: BorderRadius.all(
+                    Radius.circular(AppRadius.md),
+                  ),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: AppSpacing.lg,
+                  vertical: AppSpacing.md,
+                ),
+                child: Text(
+                  erreurCarte,
+                  style: page.washAlert.applyTo(
+                    textes.bodyMedium ?? const TextStyle(),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ],
     );
   }

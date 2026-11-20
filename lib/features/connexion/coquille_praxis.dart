@@ -55,6 +55,7 @@ class CoquillePraxis extends StatefulWidget {
     required this.formulaire,
     required this.situation,
     this.pied = const <Widget>[],
+    this.pli,
     this.texteSaisi = '',
     this.adresseComplete = false,
     super.key,
@@ -66,6 +67,12 @@ class CoquillePraxis extends StatefulWidget {
 
   /// Les liens du bas, sous le formulaire.
   final List<Widget> pied;
+
+  /// La cle du dernier element que le premier ecran doit montrer sur
+  /// telephone (dans la maquette : le bouton Google). La scene prend la place
+  /// que laisse le formulaire jusqu'a lui ; ce qui suit vient en faisant
+  /// defiler la page. Nul : tout le formulaire compte.
+  final GlobalKey? pli;
 
   /// Ce qui se passe sur la page : Praxis joue la scene qui lui correspond.
   final SituationEntree situation;
@@ -88,11 +95,12 @@ class CoquillePraxisState extends State<CoquillePraxis>
   final ReactionsToucher _reactions = ReactionsToucher();
   final GlobalKey _cleDecor = GlobalKey();
   final GlobalKey _cleFeuille = GlobalKey();
+  final GlobalKey _cleContenu = GlobalKey();
 
   /// La hauteur du contenu du formulaire, mesuree ; une estimation avant la
   /// premiere mesure (titre, onglets, champ, trois boutons, liens).
-  double _besoin = 460;
-  double _besoinLisse = 460;
+  double _besoin = 400;
+  double _besoinLisse = 400;
   bool _mesure = false;
 
   Size _taille = Size.zero;
@@ -243,12 +251,28 @@ class CoquillePraxisState extends State<CoquillePraxis>
     }
   }
 
+  /// La hauteur du formulaire a montrer : jusqu'au pli s'il est pose, plus
+  /// la marge du haut de la feuille et un palier sous le pli.
+  double _hauteurUtile(Size taille) {
+    final RenderObject? pli = widget.pli?.currentContext?.findRenderObject();
+    final RenderObject? contenu = _cleContenu.currentContext
+        ?.findRenderObject();
+    if (pli is RenderBox && contenu is RenderBox && pli.attached) {
+      final double bas = pli
+          .localToGlobal(Offset(0, pli.size.height), ancestor: contenu)
+          .dy;
+      return bas + AppSpacing.xxl + AppSpacing.lg;
+    }
+    return taille.height + AppSpacing.xxl + AppSpacing.xl;
+  }
+
   void _mesurer(Size taille) {
-    if ((taille.height - _besoin).abs() < 0.5) return;
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (!mounted) return;
+      final double utile = _hauteurUtile(taille);
+      if ((utile - _besoin).abs() < 0.5) return;
       setState(() {
-        _besoin = taille.height;
+        _besoin = utile;
         // La premiere mesure se pose d'un coup ; sous mouvement reduit et
         // quand Praxis dort, les suivantes aussi.
         if (!_mesure || regie.reduit || !regie.eveillee) _besoinLisse = _besoin;
@@ -280,6 +304,7 @@ class CoquillePraxisState extends State<CoquillePraxis>
           // feuille du telephone).
           _large = contraintes.maxWidth / facteur >= AppGabarit.seuilEtendu;
           final Widget contenu = _Mesure(
+            key: _cleContenu,
             surTaille: _mesurer,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -371,7 +396,9 @@ class CoquillePraxisState extends State<CoquillePraxis>
               ),
             ],
           ),
-          _calque(Rect.fromLTWH(0, 0, _taille.width, haut)),
+          // Le calque descend jusqu'au contenu de la feuille (sa marge du
+          // haut, vide) : la main qui montre le champ n'est pas coupee.
+          _calque(Rect.fromLTWH(0, 0, _taille.width, haut + AppSpacing.xxl)),
         ],
       ),
     );
@@ -460,7 +487,7 @@ class _CalquePeintre extends CustomPainter {
 
 /// Mesure son enfant et le dit a [surTaille] quand sa taille change.
 class _Mesure extends SingleChildRenderObjectWidget {
-  const _Mesure({required this.surTaille, required super.child});
+  const _Mesure({required this.surTaille, required super.child, super.key});
 
   final ValueChanged<Size> surTaille;
 

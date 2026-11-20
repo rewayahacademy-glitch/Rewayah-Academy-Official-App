@@ -172,6 +172,11 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
   /// reelle : adresse, attente, reseau, invitation, serveur), ou nul.
   SituationEntree? _praxisErreur;
 
+  /// ENTREE-PRAXIS : le dernier bouton du premier ecran (Google). La scene
+  /// de Praxis prend la place que laisse le formulaire jusqu'a lui ; le reste
+  /// (appareil d'un eleve, liens du bas) vient en faisant defiler la page.
+  final GlobalKey _pli = GlobalKey(debugLabel: 'entree-praxis-pli');
+
   /// ENTREE-PRAXIS : la fenetre de Google vient d'etre demandee.
   bool _googleDemande = false;
 
@@ -587,10 +592,12 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     });
     return CoquillePraxis(
       situation: _situation,
+      pli: _pli,
       texteSaisi: _courriel.text,
       adresseComplete: courrielPlausible(_courriel.text),
       formulaire: (bool bureau) => _envoye
           ? _LienEnvoye(
+              pli: _pli,
               controle: controle(_renvoi),
               courriel: _courriel.text.trim(),
               renvoi: _renvoi,
@@ -606,6 +613,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             )
           : _Saisie(
               bureau: bureau,
+              pli: _pli,
               lienAilleurs: _lienAilleurs,
               controle: controle(_envoi),
               courriel: _courriel,
@@ -708,6 +716,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
 class _Saisie extends StatelessWidget {
   const _Saisie({
     required this.bureau,
+    required this.pli,
     required this.lienAilleurs,
     required this.controle,
     required this.courriel,
@@ -734,6 +743,9 @@ class _Saisie extends StatelessWidget {
   /// Vrai dans le volet du formulaire sur ordinateur : boutons a la largeur
   /// de leur contenu, au bord de fin.
   final bool bureau;
+
+  /// ENTREE-PRAXIS : la cle du dernier bouton du premier ecran.
+  final GlobalKey pli;
 
   /// FN-111 : le lien de connexion a ete ouvert sur un autre appareil ou dans
   /// un autre navigateur ; la page le dit avant tout le reste.
@@ -898,6 +910,8 @@ class _Saisie extends StatelessWidget {
         Ecart.vXl,
         ChampEntree(
           cle: 'connexion-courriel',
+          // ENTREE-PRAXIS : sur la carte, dans le theme de la page.
+          surCarte: true,
           etiquette: t.connexion.courriel,
           indice: t.connexion.courrielIndice,
           controleur: courriel,
@@ -990,6 +1004,7 @@ class _Saisie extends StatelessWidget {
           secondaire: demo
               ? null
               : ActionPrincipale(
+                  key: pli,
                   libelle: t.connexion.avecGoogle,
                   onPress: onGoogle,
                   niveau: NiveauAction.secondaire,
@@ -1028,6 +1043,7 @@ class _Saisie extends StatelessWidget {
 
 class _LienEnvoye extends StatelessWidget {
   const _LienEnvoye({
+    required this.pli,
     required this.controle,
     required this.courriel,
     required this.renvoi,
@@ -1037,6 +1053,9 @@ class _LienEnvoye extends StatelessWidget {
     required this.onChangerAdresse,
     required this.onProbleme,
   });
+
+  /// ENTREE-PRAXIS : la cle du dernier bouton du premier ecran.
+  final GlobalKey pli;
 
   /// Le controle anti-robot, ou nul (aucun controle : l'ecran d'avant).
   final Widget? controle;
@@ -1091,13 +1110,16 @@ class _LienEnvoye extends StatelessWidget {
         Ecart.vXxl,
         // ALIGN-RENVOI (04/11/2026) : le bouton seul a la largeur du champ,
         // sur ordinateur comme sur telephone (meme regle que CONNEXION-ALIGN).
-        ActionPrincipale(
-          key: const ValueKey<String>('connexion-renvoyer'),
-          libelle: t.connexion.renvoyer,
-          onPress: onRenvoyer,
-          enCours: renvoi,
-          niveau: NiveauAction.secondaire,
-          pleineLargeur: true,
+        KeyedSubtree(
+          key: pli,
+          child: ActionPrincipale(
+            key: const ValueKey<String>('connexion-renvoyer'),
+            libelle: t.connexion.renvoyer,
+            onPress: onRenvoyer,
+            enCours: renvoi,
+            niveau: NiveauAction.secondaire,
+            pleineLargeur: true,
+          ),
         ),
         // CAPTCHA-PLACE : la case se pose juste sous le bouton.
         ?controle,
