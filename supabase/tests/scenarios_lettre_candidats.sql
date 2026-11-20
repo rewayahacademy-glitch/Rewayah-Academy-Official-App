@@ -174,14 +174,14 @@ SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('fr'), 'fr'), '
 
 -- 9. Langues (enseignant actif) ------------------------------------------------------------------------------------------------
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('ar'), 'ar')
-  AND public.lire_lettre_candidats('ar') -> 'parties' -> 0 ->> 'titre' = 'لماذا تصلك هذه الرسالة',
+  AND public.lire_lettre_candidats('ar') -> 'parties' -> 0 ->> 'titre' = 'لماذا يصلك هذا الدليل',
   'langue ar : la lettre en arabe');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('en'), 'en')
-  AND public.lire_lettre_candidats('en') -> 'parties' -> 0 ->> 'titre' = 'Why you are receiving this letter',
+  AND public.lire_lettre_candidats('en') -> 'parties' -> 0 ->> 'titre' = 'Why you are receiving this guide',
   'langue en : la lettre en anglais');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats(' en-GB '), 'en'), 'langue en-GB : l''anglais');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats('es'), 'fr')
-  AND public.lire_lettre_candidats('es') -> 'parties' -> 0 ->> 'titre' = 'Pourquoi vous recevez cette lettre',
+  AND public.lire_lettre_candidats('es') -> 'parties' -> 0 ->> 'titre' = 'Pourquoi vous recevez ce guide',
   'langue inconnue (es) : repli sur le francais');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats(NULL), 'fr'), 'langue nulle : le francais');
 SELECT pg_temp.vrai(pg_temp.ouverte(public.lire_lettre_candidats(''), 'fr'), 'langue vide : le francais');

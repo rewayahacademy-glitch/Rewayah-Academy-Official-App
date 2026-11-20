@@ -8,6 +8,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show Override;
 import 'package:flutter_test/flutter_test.dart';
@@ -110,11 +111,16 @@ Future<GoRouter> _monter(WidgetTester tester, String depart) async {
       overrides: _surcharges(),
       child: TranslationProvider(
         child: Consumer(
-          builder: (BuildContext _, WidgetRef ref, Widget? _) {
+          builder: (BuildContext contexte, WidgetRef ref, Widget? _) {
             routeur = ref.read(routeurProvider);
             routeur.go(depart);
+            // La langue courante et ses delegues : l'arabe se lit de droite a
+            // gauche (capture LETTRE-SERVEUR).
             return MaterialApp.router(
               theme: AppTheme.pour(InterfaceMode.standard, Brightness.light),
+              locale: TranslationProvider.of(contexte).flutterLocale,
+              supportedLocales: AppLocaleUtils.supportedLocales,
+              localizationsDelegates: GlobalMaterialLocalizations.delegates,
               routerConfig: routeur,
             );
           },

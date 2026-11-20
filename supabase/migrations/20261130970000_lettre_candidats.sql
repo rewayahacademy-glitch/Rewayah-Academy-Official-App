@@ -62,14 +62,14 @@ REVOKE ALL ON private.lettre_candidats_parties FROM PUBLIC, anon, authenticated,
 -- fr : 14 parties, version 2026-11-20.
 INSERT INTO private.lettre_candidats_parties (langue, version, rang, code, titre, corps) VALUES
 ('fr', '2026-11-20', 1, 'p1',
- $lettre_texte$Pourquoi vous recevez cette lettre$lettre_texte$,
+ $lettre_texte$Pourquoi vous recevez ce guide$lettre_texte$,
  $lettre_texte$Assalamu alaykum wa rahmatullahi wa barakatuh.
 
 Le Prophète ﷺ a dit : « خيركم من تعلّم القرآن وعلّمه », « le meilleur d'entre vous est celui qui apprend le Coran et l'enseigne » (rapporté par al-Bukhârî). Les gens du Coran ont un rang à part. Celui qui l'enseigne porte la parole d'Allah jusqu'au cœur d'un enfant.
 
 Ce travail est payé, et c'est normal. Mais sa vraie récompense est auprès d'Allah. Gardez cette intention en lisant tout ce qui suit.
 
-Vous lisez cette lettre parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.
+Vous lisez ce guide parce que vous vous êtes inscrit, de vous-même, pour enseigner à Rewayah Academy, et que vous avez accepté nos conditions.
 
 Vous êtes venu sans connaître notre nom, ni la paie, ni les personnes derrière l'académie. Nous n'avions rien dit, et c'était voulu. Vous êtes venu quand même. Cela nous a touchés.
 
@@ -377,14 +377,14 @@ La direction de Rewayah Academy
 -- en : 14 parties, version 2026-11-20.
 INSERT INTO private.lettre_candidats_parties (langue, version, rang, code, titre, corps) VALUES
 ('en', '2026-11-20', 1, 'p1',
- $lettre_texte$Why you are receiving this letter$lettre_texte$,
+ $lettre_texte$Why you are receiving this guide$lettre_texte$,
  $lettre_texte$Assalamu alaykum wa rahmatullahi wa barakatuh.
 
 The Prophet ﷺ said: « خيركم من تعلّم القرآن وعلّمه », "the best of you are those who learn the Qur'an and teach it" (reported by al-Bukhari). The people of the Qur'an have a special rank. The one who teaches it carries the word of Allah to the heart of a child.
 
 This work is paid, and that is normal. But its true reward is with Allah. Keep this intention as you read everything below.
 
-You are reading this letter because you signed up, by your own choice, to teach at Rewayah Academy, and you accepted our conditions.
+You are reading this guide because you signed up, by your own choice, to teach at Rewayah Academy, and you accepted our conditions.
 
 You came without knowing our name, the pay, or the people behind the academy. We did not tell you anything, and we did this on purpose. You came anyway. This touched us.
 
@@ -692,14 +692,14 @@ The management of Rewayah Academy
 -- ar : 14 parties, version 2026-11-20.
 INSERT INTO private.lettre_candidats_parties (langue, version, rang, code, titre, corps) VALUES
 ('ar', '2026-11-20', 1, 'p1',
- $lettre_texte$لماذا تصلك هذه الرسالة$lettre_texte$,
+ $lettre_texte$لماذا يصلك هذا الدليل$lettre_texte$,
  $lettre_texte$السلام عليكم ورحمة الله وبركاته.
 
 قال النبي ﷺ: «خيركم من تعلّم القرآن وعلّمه» (رواه البخاري). لأهل القرآن منزلة خاصة. ومن يعلّمه يحمل كلام الله إلى قلب طفل.
 
 هذا العمل مأجور، وهذا أمر طبيعي. لكن ثوابه الحقيقي عند الله. فاستحضر هذه النية وأنت تقرأ كل ما يأتي.
 
-أنت تقرأ هذه الرسالة لأنك سجّلت، باختيارك، لتعلّم في أكاديمية الرواية، ووافقت على شروطنا.
+أنت تقرأ هذا الدليل لأنك سجّلت، باختيارك، لتعلّم في أكاديمية الرواية، ووافقت على شروطنا.
 
 جئت ولم تكن تعرف اسمنا، ولا الراتب، ولا الأشخاص الذين يقفون وراء الأكاديمية. لم نقل شيئًا، وكان ذلك مقصودًا. ومع ذلك جئت. وهذا أثّر فينا.
 
