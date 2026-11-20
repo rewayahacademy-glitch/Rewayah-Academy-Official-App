@@ -27,9 +27,11 @@
 --   5. elle controle : plus aucun message vise, declencheur actif, copie complete, dates justes.
 --
 -- GARDES : aucun message vise (base de test, base deja traitee) : rien n'est retire, la migration passe. Plus
--- de 100 messages vises (l'inventaire en compte 100 au plus) : erreur, rien n'est retire. Un message vise qui
--- n'est pas de Praxis, qui porte un coeur ou une image, ou dont la conversation a recu un message de la
--- personne apres lui : erreur, rien n'est retire. private.praxis_ouvertures n'est pas touchee : elle garde la
+-- de 97 messages vises (l'inventaire en compte 97 sans reponse ; ce nombre ne peut que baisser) : erreur, rien
+-- n'est retire. Un message vise envoye apres l'inventaire (20/11/2026, 10:45 UTC), qui n'est pas de Praxis, qui
+-- porte un coeur ou une image, ou dont la conversation a recu un message de la personne apres lui : erreur,
+-- rien n'est retire. Les tables des conversations et des messages sont verrouillees le temps du bloc (une
+-- fraction de seconde) : aucune reponse ne peut arriver entre la selection et le retrait. private.praxis_ouvertures n'est pas touchee : elle garde la
 -- trace que ces personnes ont ete contactees (et empeche un nouvel entretien automatique).
 --
 -- Mots d'effacement : 1 DELETE (sur ordre explicite du directeur), 0 DROP, 0 TRUNCATE.
@@ -69,6 +71,14 @@ DECLARE
   v_qui uuid;
   v_fil uuid;
 BEGIN
+  -- Rien ne bouge entre la selection et le retrait (relecture adverse du 20/11 : sans ces verrous, une reponse
+  -- arrivee pendant l'execution n'etait pas vue et son entretien etait retire quand meme). Les envois verrouillent
+  -- la conversation puis inserent le message : on prend donc com_fils d'abord, en mode exclusif, puis
+  -- com_messages. Si un envoi en cours ne rend pas la main en 5 secondes, la migration echoue sans rien changer.
+  SET LOCAL lock_timeout = '5s';
+  LOCK TABLE public.com_fils IN EXCLUSIVE MODE;
+  LOCK TABLE public.com_messages IN SHARE ROW EXCLUSIVE MODE;
+
   -- Les messages vises : le message de chaque ouverture d'entretien ecrit auquel la personne de la conversation
   -- n'a pas repondu (aucun message d'elle apres l'entretien).
   SELECT pg_catalog.array_agg(DISTINCT e.message_id), pg_catalog.array_agg(DISTINCT e.fil_id),
@@ -86,8 +96,14 @@ BEGIN
     RAISE NOTICE 'RETRAIT-ENTRETIENS-PRAXIS : aucun message vise, rien a retirer';
     RETURN;
   END IF;
-  IF v_n > 100 THEN
-    RAISE EXCEPTION 'RETRAIT-ENTRETIENS-PRAXIS : % messages vises, 100 au plus attendus (inventaire du 20/11) : rien n''est retire', v_n;
+  IF v_n > 97 THEN
+    RAISE EXCEPTION 'RETRAIT-ENTRETIENS-PRAXIS : % messages vises, 97 au plus attendus (inventaire du 20/11) : rien n''est retire', v_n;
+  END IF;
+  -- Aucun entretien envoye apres l'inventaire : il n'aurait ete vu par personne avant son retrait.
+  SELECT pg_catalog.count(*)::integer INTO v_compte FROM public.com_messages m
+   WHERE m.id = ANY (v_cibles) AND m.envoye_le > timestamptz '2026-11-20 10:45:00+00';
+  IF v_compte <> 0 THEN
+    RAISE EXCEPTION 'RETRAIT-ENTRETIENS-PRAXIS : % messages vises ont ete envoyes apres l''inventaire : rien n''est retire', v_compte;
   END IF;
   IF v_praxis IS NULL THEN
     RAISE EXCEPTION 'RETRAIT-ENTRETIENS-PRAXIS : compte Praxis introuvable : rien n''est retire';
