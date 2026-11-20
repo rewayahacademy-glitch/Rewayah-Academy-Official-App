@@ -23,9 +23,6 @@ import '../../core/widgets/lien_fleche.dart';
 
 /// Un emplacement nomme de la rubrique.
 enum EmplacementSavoir {
-  /// La paie d'un enseignant.
-  paie,
-
   /// Le deroulement des cours.
   cours,
 
@@ -36,7 +33,6 @@ enum EmplacementSavoir {
   String get nom {
     final a = t.recrutement.accueil.academie;
     return switch (this) {
-      EmplacementSavoir.paie => a.remuneration,
       EmplacementSavoir.cours => a.cours,
       EmplacementSavoir.entretiens => a.entretiens,
     };
@@ -44,7 +40,6 @@ enum EmplacementSavoir {
 
   /// L'icone de l'emplacement.
   AppIcon get icone => switch (this) {
-    EmplacementSavoir.paie => AppIcons.paiements,
     EmplacementSavoir.cours => AppIcons.cours,
     EmplacementSavoir.entretiens => AppIcons.discussion,
   };

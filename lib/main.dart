@@ -58,6 +58,7 @@ import 'core/candidature/entretiens_temps_reel.dart';
 import 'core/candidature/import_candidatures_supabase.dart';
 import 'core/candidature/inscription_candidat_supabase.dart';
 import 'core/candidature/invitations_personnelles_supabase.dart';
+import 'core/candidature/lettre_supabase.dart';
 import 'core/candidature/ma_candidature_supabase.dart';
 import 'core/candidature/nom_latin_supabase.dart';
 import 'core/candidature/photo_dossier_candidat.dart';
@@ -257,6 +258,7 @@ import 'features/accueil_adulte/port_espace_adulte.dart';
 import 'features/admin_invitations/familles_importees.dart';
 import 'features/admin_invitations/familles_importees_supabase.dart';
 import 'features/bienvenue_enseignant/prerequis_enseignant_supabase.dart';
+import 'features/candidature/lettre/port_lettre.dart';
 import 'features/com_annonces/annonces_direction_supabase.dart';
 import 'features/com_annonces/annonces_supabase.dart';
 import 'features/com_annonces/port_annonces.dart';
@@ -574,6 +576,11 @@ List<Override> _surchargesAppReelle() => <Override>[
   // CAND-NOM-LATIN : le nom en lettres latines du candidat, confirme par lui.
   portNomLatinProvider.overrideWithValue(
     NomLatinSupabase(Supabase.instance.client),
+  ),
+  // LETTRE-SERVEUR : la lettre aux candidats enseignants, rendue par le
+  // serveur a qui a le droit de la lire (`lire_lettre_candidats`).
+  portLettreProvider.overrideWithValue(
+    LettreSupabase(Supabase.instance.client),
   ),
   portTirageControleProvider.overrideWithValue(
     PortTirageControleSupabase(Supabase.instance.client),
