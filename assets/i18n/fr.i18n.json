@@ -5232,6 +5232,37 @@
       "sansDonnees": "l'import des inscriptions"
     },
     "tableau": {
+      "vivant": {
+        "bonjour": "Bonjour.",
+        "bonApresMidi": "Bon après-midi.",
+        "bonsoir": "Bonsoir.",
+        "praxisCreneaux": {
+          "one": "{n} candidat attend un entretien et aucun créneau n'est ouvert.",
+          "other": "{n} candidats attendent un entretien et aucun créneau n'est ouvert."
+        },
+        "praxisPieces": {
+          "one": "{n} pièce d'identité attend votre validation.",
+          "other": "{n} pièces d'identité attendent votre validation."
+        },
+        "praxisDossiers": {
+          "one": "{n} dossier d'identité attend votre validation.",
+          "other": "{n} dossiers d'identité attendent votre validation."
+        },
+        "praxisDemandes": {
+          "one": "{n} demande attend votre réponse.",
+          "other": "{n} demandes attendent votre réponse."
+        },
+        "praxisMessages": {
+          "one": "{n} conversation attend votre lecture.",
+          "other": "{n} conversations attendent votre lecture."
+        },
+        "ouvrirCreneaux": "Ouvrir des créneaux",
+        "parcoursTitre": "Le parcours des candidats",
+        "parcoursAide": "Chaque case est large comme le nombre de ses candidats.",
+        "messagesNonLus": "Conversations non lues",
+        "courriels": "Courriels envoyés en 24 heures",
+        "courrielsSur": "sur {max}"
+      },
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",
       "dossiersDetail": "Ouvrir la file, le plus ancien en premier.",

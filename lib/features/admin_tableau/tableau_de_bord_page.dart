@@ -9,6 +9,9 @@ import '../../core/admin/service_admin.dart';
 import '../../core/admin/sous_liens_coquille.dart';
 import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
+import '../../core/candidature/attentes_recrutement.dart';
+import '../../core/candidature/modeles_candidature.dart';
+import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/dossier/service_validation.dart';
 import '../../core/i18n/isolat_bidi.dart' show enTeteArabe;
@@ -27,7 +30,10 @@ import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
 import '../alertes/section_alertes.dart';
+import '../com_messages/non_lus_messages.dart';
 import 'activite_recente.dart';
+import 'bento_vivant.dart';
+import 'phrase_praxis.dart';
 import 'tuiles_compteur.dart';
 
 /// `ADM-01` : le centre de commande.
@@ -147,6 +153,47 @@ class TableauDeBordPage extends ConsumerWidget {
         !(alertes ?? const <Alerte>[]).any(
           (Alerte a) => a.gravite != GraviteAlerte.info,
         );
+
+    // VIVANT (20/11/2026) : le haut de la page en bento vivant. Chaque case
+    // lit une lecture qui existe deja ; une lecture absente (capacite
+    // indisponible : `hasValue` faux) n'affiche pas sa case. Praxis dit le
+    // blocage du moment, calcule sur ces seuls compteurs (`phrase_praxis`),
+    // et porte desormais la phrase calme.
+    final AttentesRecrutement? attentes = ref
+        .watch(attentesRecrutementProvider)
+        .value;
+    final EtatFileCourriels? courriels = ref
+        .watch(etatFileCourrielsProvider)
+        .value;
+    final int? messagesNonLus = ref.watch(nonLusMessagesProvider).value;
+    final int? dossiersAffiches = dossiers.hasValue
+        ? RevueDossiersDepuisValidation.enseignantsSeulement(
+            dossiers.requireValue,
+          ).length
+        : valeurs?.dossiersEnAttente;
+    final Widget vivant = indicateurs.hasValue
+        ? BentoVivant(
+            maintenant: maintenant,
+            attentes: attentes,
+            courriels: courriels,
+            messagesNonLus: messagesNonLus,
+            phrase: PhrasePraxis.depuis(
+              calme: calme,
+              entretiensAPlanifier: attentes
+                  ?.etat(EtatCandidature.entretienAPlanifier)
+                  .nombre,
+              creneauxOuverts: attentes?.creneauxOuverts,
+              pieces: attentes?.pieceAValider.nombre,
+              dossiers: dossiersAffiches,
+              demandes: valeurs?.demandesEnAttente,
+              messages: messagesNonLus,
+            ),
+          )
+        // En erreur, la phrase des compteurs suffit ; en chargement, la
+        // forme de la grande case, pour que la page ne saute pas.
+        : indicateurs.hasError
+        ? const SizedBox.shrink()
+        : const Skeleton.tuileBento(hauteur: 160);
 
     // 1. AGIR ET SAVOIR : les compteurs, rendus des que la lecture aboutit,
     // zeros compris (D8). Les getters, jamais le type d'execution : Riverpod 3
@@ -326,18 +373,21 @@ class TableauDeBordPage extends ConsumerWidget {
       ],
     );
 
+    // ALERTE-1 : une alerte urgente va en tete, avant tout ; puis le bento
+    // vivant, sur toute la largeur de la page.
+    final List<Widget> tete = <Widget>[
+      if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
+      vivant,
+      if (!indicateurs.hasError) Ecart.vXxl,
+    ];
+
     final Widget principal = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
         // ALERTE-1 : une alerte urgente va en tete, avant les compteurs ;
         // sans urgence, la section suit les compteurs.
-        if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
         compteurs,
-        if (calme) ...<Widget>[
-          Ecart.vLg,
-          Text(t.admin.tableau.calme, style: textes.bodyMedium),
-        ],
         if (!urgence) ...<Widget>[Ecart.vXxl, sectionAlertes],
       ],
     );
@@ -373,6 +423,7 @@ class TableauDeBordPage extends ConsumerWidget {
             return Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: <Widget>[
+                ...tete,
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
@@ -394,6 +445,7 @@ class TableauDeBordPage extends ConsumerWidget {
           return Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
+              ...tete,
               principal,
               Ecart.vXxl,
               const ActiviteRecente(),
