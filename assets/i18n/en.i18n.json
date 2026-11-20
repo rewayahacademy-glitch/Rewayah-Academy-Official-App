@@ -5296,7 +5296,16 @@
         "parcoursAide": "Each tile is as wide as its number of applicants.",
         "messagesNonLus": "Unread conversations",
         "courriels": "Emails sent in 24 hours",
-        "courrielsSur": "out of {max}"
+        "courrielsSur": "out of {max}",
+        "piecesAide": "Flip through the cards. Tap one to open the file.",
+        "pieceAide": "Tap the card to open the file.",
+        "piecesVide": "No ID document is waiting.",
+        "pieceIdentite": "ID document",
+        "ouvrirDossierDe": "Open the file of {nom}",
+        "piecePrecedente": "Previous document",
+        "pieceSuivante": "Next document",
+        "piecePosition": "{rang} of {total}",
+        "joursInitiales": ["M", "T", "W", "T", "F", "S", "S"]
       },
       "titre": "Command centre",
       "dossiers": "Files to validate",

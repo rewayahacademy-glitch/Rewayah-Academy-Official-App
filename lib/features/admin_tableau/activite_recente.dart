@@ -8,6 +8,7 @@ import '../../core/router/routes.dart';
 import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/widgets/avatar_nom.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/skeleton.dart';
 import '../admin_journal/journal_page.dart' show libelleEvenement;
@@ -41,7 +42,13 @@ final FutureProvider<List<EntreeJournal>> activiteRecenteProvider =
 /// restent justes (D11).
 class ActiviteRecente extends ConsumerWidget {
   /// Cree la case.
-  const ActiviteRecente({super.key});
+  const ActiviteRecente({super.key, this.deuxColonnes = false});
+
+  /// La case est large : les lignes vont sur deux colonnes.
+  final bool deuxColonnes;
+
+  /// La cle de la phrase d'echec.
+  static const Key cleEchec = ValueKey<String>('vivant-activite-echec');
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -56,50 +63,109 @@ class ActiviteRecente extends ConsumerWidget {
     final TextStyle doux = palette.inkMuted.applyTo(
       textes.bodySmall ?? const TextStyle(),
     );
+    final Widget voirTout = LienFleche(
+      libelle: t.admin.tableau.activite.voirTout,
+      onPress: () => GoRouter.of(context).go(Routes.adminSecuriteAuditJournal),
+    );
+    // Une ligne : qui (son visage), ce qui a change, quand.
+    Widget ligne(EntreeJournal e) => Padding(
+      padding: const EdgeInsets.only(bottom: AppSpacing.md),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          AvatarNom(
+            prenom: _qui(e),
+            disposition: DispositionAvatar.vertical,
+            diametre: AppAvatar.petit,
+            afficherNom: false,
+          ),
+          Ecart.hMd,
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  libelleEvenement(e.typeEvenement),
+                  style: textes.bodyMedium,
+                ),
+                Text(
+                  t.admin.tableau.activite.ligne(
+                    qui: _qui(e),
+                    quand: t.admin.journal.horodatage(
+                      date: _date(chezMoi(e.survenuLe)),
+                      heure: _heure(e.survenuLe),
+                    ),
+                  ),
+                  style: doux,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
     final List<Widget> corps;
     if (entrees.hasValue) {
-      final List<EntreeJournal> lues = entrees.requireValue;
-      corps = lues.isEmpty
-          ? <Widget>[Text(t.admin.tableau.activite.vide, style: doux)]
-          : <Widget>[
-              for (final EntreeJournal e in lues.take(lignesActiviteRecente))
-                Padding(
-                  padding: const EdgeInsets.only(bottom: AppSpacing.sm),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        libelleEvenement(e.typeEvenement),
-                        style: textes.bodyMedium,
-                      ),
-                      Text(
-                        t.admin.tableau.activite.ligne(
-                          qui: _qui(e),
-                          quand: t.admin.journal.horodatage(
-                            date: _date(chezMoi(e.survenuLe)),
-                            heure: _heure(e.survenuLe),
-                          ),
-                        ),
-                        style: doux,
-                      ),
-                    ],
-                  ),
+      final List<EntreeJournal> lues = entrees.requireValue
+          .take(lignesActiviteRecente)
+          .toList();
+      if (lues.isEmpty) {
+        corps = <Widget>[
+          Text(t.admin.tableau.activite.vide, style: doux),
+          voirTout,
+        ];
+      } else if (deuxColonnes && lues.length > 1) {
+        // Deux colonnes : la seconde finit par le lien vers le journal.
+        final int moitie = (lues.length + 1) ~/ 2;
+        corps = <Widget>[
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    for (final EntreeJournal e in lues.take(moitie)) ligne(e),
+                  ],
                 ),
-            ];
+              ),
+              Ecart.hXl,
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: <Widget>[
+                    for (final EntreeJournal e in lues.skip(moitie)) ligne(e),
+                    voirTout,
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ];
+      } else {
+        corps = <Widget>[
+          for (final EntreeJournal e in lues) ligne(e),
+          voirTout,
+        ];
+      }
     } else if (entrees.hasError) {
+      // Calme : une phrase vraie, dans l'encre douce, et « Réessayer ». Une
+      // erreur ici n'emporte que cette case ; ce n'est pas une alerte.
       corps = <Widget>[
         Text(
           t.admin.tableau.activite.erreur,
-          style: palette.inkAlert.applyTo(
-            textes.bodySmall ?? const TextStyle(),
-          ),
+          key: ActiviteRecente.cleEchec,
+          style: doux,
         ),
         LienFleche(
           libelle: t.commun.reessayer,
           fleche: false,
           onPress: () => ref.invalidate(activiteRecenteProvider),
         ),
+        voirTout,
       ];
     } else {
       corps = const <Widget>[Skeleton.liste(lignes: lignesActiviteRecente)];
@@ -122,13 +188,8 @@ class ActiviteRecente extends ConsumerWidget {
                 t.admin.tableau.vivant.activiteTitre,
                 style: textes.titleMedium,
               ),
-              Ecart.vSm,
+              Ecart.vMd,
               ...corps,
-              LienFleche(
-                libelle: t.admin.tableau.activite.voirTout,
-                onPress: () =>
-                    GoRouter.of(context).go(Routes.adminSecuriteAuditJournal),
-              ),
             ],
           ),
         ),

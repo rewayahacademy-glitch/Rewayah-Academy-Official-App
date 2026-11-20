@@ -18,6 +18,7 @@ import 'package:rewayah_academy/core/widgets/pile_cartes.dart';
 import 'package:rewayah_academy/core/widgets/setting_row.dart';
 import 'package:rewayah_academy/core/widgets/stat_tile.dart';
 import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
+import 'package:rewayah_academy/features/admin_tableau/heros_praxis.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/compte/compte_page.dart';
 
@@ -38,8 +39,9 @@ bool _estCarte(Widget w) =>
     w is CarteGroupee ||
     w is SettingRow ||
     // VIVANT (20/11/2026) : les cases du bento de l'accueil de la direction
-    // sont des cartes de contenu comme les autres.
-    w is CaseVivante;
+    // sont des cartes de contenu comme les autres, la case de Praxis aussi.
+    w is CaseVivante ||
+    w is HerosPraxis;
 
 bool _estPastille(Widget w) =>
     w is AppCard && w.marge != null && w.marge! < AppSpacing.lg;

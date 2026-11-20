@@ -76,7 +76,8 @@ class _PeintreEau extends CustomPainter {
     if (niveau <= 0) return;
     final double y0 = s.height * (1 - niveau);
     Path vague(double phase, double ampleur, double dy) {
-      final Path p = Path()..moveTo(0, s.height);
+      // Un point sous le cadre : aucune couture avec ce qui suit dessous.
+      final Path p = Path()..moveTo(0, s.height + 1);
       for (double x = 0; x <= s.width + 6; x += 6) {
         p.lineTo(
           x,
@@ -87,7 +88,7 @@ class _PeintreEau extends CustomPainter {
         );
       }
       return p
-        ..lineTo(s.width, s.height)
+        ..lineTo(s.width + 6, s.height + 1)
         ..close();
     }
 

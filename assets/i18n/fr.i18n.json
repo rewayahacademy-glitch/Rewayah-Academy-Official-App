@@ -5296,7 +5296,16 @@
         "parcoursAide": "Chaque case est large comme le nombre de ses candidats.",
         "messagesNonLus": "Conversations non lues",
         "courriels": "Courriels envoyés en 24 heures",
-        "courrielsSur": "sur {max}"
+        "courrielsSur": "sur {max}",
+        "piecesAide": "Feuilletez les cartes. Touchez-en une pour ouvrir le dossier.",
+        "pieceAide": "Touchez la carte pour ouvrir le dossier.",
+        "piecesVide": "Aucune pièce d'identité n'attend.",
+        "pieceIdentite": "Pièce d'identité",
+        "ouvrirDossierDe": "Ouvrir le dossier de {nom}",
+        "piecePrecedente": "Pièce précédente",
+        "pieceSuivante": "Pièce suivante",
+        "piecePosition": "{rang} sur {total}",
+        "joursInitiales": ["L", "M", "M", "J", "V", "S", "D"]
       },
       "titre": "Centre de commande",
       "dossiers": "Dossiers à valider",

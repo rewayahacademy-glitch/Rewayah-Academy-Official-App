@@ -28,11 +28,11 @@ class Ressort {
   /// La position ou il va se poser.
   double cible;
 
-  /// La force de rappel.
-  final double raideur;
+  /// La force de rappel. Modifiable : un depart se fait plus mou qu'un retour.
+  double raideur;
 
   /// L'amortissement.
-  final double frein;
+  double frein;
 
   /// Pose : assez pres de la cible et assez lent pour ne plus se voir.
   bool get repos => (x - cible).abs() < 0.001 && v.abs() < 0.01;

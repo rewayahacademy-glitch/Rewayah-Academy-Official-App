@@ -293,30 +293,57 @@ void main() {
     expect(tiroir.selectedIndex, domaines.indexOf(AdminDomaine.personnes));
   });
 
-  testWidgets(
-    'Accueil : la case des dossiers, avec le plus ancien, ouvre la file',
-    (WidgetTester tester) async {
-      final GoRouter routeur = await _monter(
-        tester,
-        const Size(1440, 900),
-        Routes.admin,
-      );
-      // VIVANT : la case « Dossiers à valider » dit le plus ancien
-      // (« Prenom · anciennete ») et, touchee, ouvre la file. Les lignes par
-      // nom de l'ancienne tuile (D4 (a)) n'existent plus.
-      final Finder lignes = find.descendant(
-        of: find.byKey(BentoVivant.cleDossiers),
-        matching: find.textContaining(' · '),
-      );
-      expect(lignes, findsOneWidget);
+  testWidgets('Accueil : la 2e ligne de dossier ouvre ce dossier-la', (
+    WidgetTester tester,
+  ) async {
+    final GoRouter routeur = await _monter(
+      tester,
+      const Size(1440, 900),
+      Routes.admin,
+    );
+    // DASH-ADM-1, retabli dans VIVANT : les lignes sont celles de la case
+    // « Dossiers à valider » (« Prenom · anciennete »), chacune vers son
+    // dossier (D4 (a) ; contrat de navigation §2).
+    final Finder lignes = find.descendant(
+      of: find.byKey(BentoVivant.cleDossiers),
+      matching: find.textContaining(' · '),
+    );
+    expect(lignes, findsAtLeastNWidgets(2));
+    String prenomDe(int i) =>
+        tester.widget<Text>(lignes.at(i)).data!.split(' · ').first.trim();
+    final String premier = prenomDe(0);
+    final String second = prenomDe(1);
+    expect(second, isNot(premier));
 
-      await tester.ensureVisible(lignes);
-      await tester.tap(lignes);
-      await _stabiliser(tester);
+    await tester.ensureVisible(lignes.at(1));
+    await tester.tap(lignes.at(1));
+    await _stabiliser(tester);
 
-      expect(_chemin(routeur), Routes.adminPersonnesDossiers);
-    },
-  );
+    expect(_chemin(routeur), Routes.adminPersonnesDossiers);
+    // Le titre du dossier ouvert est le nom complet de la 2e ligne, pas
+    // celui du premier de la file.
+    Finder titreCommencantPar(String prenom) => find.byWidgetPredicate(
+      (Widget w) => w is Text && (w.data?.startsWith('$prenom ') ?? false),
+    );
+    // L5 des listes : le dossier s'ouvre en page, titre « Dossier de/d'{nom} »
+    // de la 2e ligne ; la liste (et le premier) n'est plus a cote.
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) =>
+            w is Text &&
+            (w.data?.startsWith(RegExp("Dossier d(e |')$second ")) ?? false),
+      ),
+      findsOneWidget,
+    );
+    expect(titreCommencantPar(premier), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (Widget w) => w is Text && (w.data?.startsWith('DEMO-D') ?? false),
+      ),
+      // AD-6 : l'identifiant immuable n'est plus affiche dans le detail.
+      findsNothing,
+    );
+  });
 
   testWidgets('1440 : Recherche de l en-tete mene a la route trouvee', (
     WidgetTester tester,

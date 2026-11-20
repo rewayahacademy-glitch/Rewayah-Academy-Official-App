@@ -254,7 +254,7 @@ void main() {
       expect(find.text(t.admin.tableau.demandes), findsOneWidget);
     });
 
-    testWidgets('le plus ancien dossier, avec son anciennete', (
+    testWidgets('les trois plus anciens dossiers, chacun avec son anciennete', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -272,17 +272,19 @@ void main() {
 
       final List<String> lus = <String>[
         for (final Text texte in tester.widgetList<Text>(
-          find.textContaining(' · '),
+          find.descendant(
+            of: find.byKey(BentoVivant.cleDossiers),
+            matching: find.textContaining(' · '),
+          ),
         ))
           texte.data ?? '',
       ];
-      // VIVANT : la case dit le plus ancien ; les autres restent dans la
-      // file qu'elle ouvre.
+      // Du plus ancien au plus recent ; le quatrieme reste dans la file.
       expect(lus, <String>[
         'Ancien · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 7))}',
+        'Milieu · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 3))}',
+        'Hier · ${t.admin.tableau.attenteUnJour}',
       ]);
-      expect(find.textContaining('Milieu'), findsNothing);
-      expect(find.textContaining('Hier'), findsNothing);
       expect(find.textContaining('Recent'), findsNothing);
     });
 
@@ -362,10 +364,11 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('la case des dossiers, touchee sur le nom du plus ancien, '
-        'ouvre la file', (WidgetTester tester) async {
-      // VIVANT : une case, un geste. Les liens par nom de l'ancienne tuile
-      // n'existent plus ; le nom du plus ancien fait partie de la case.
+    testWidgets('un nom de l apercu ouvre SON dossier, pas la file', (
+      WidgetTester tester,
+    ) async {
+      // Modification UX n°2, conservee par l'exception D4 (a) ; contrat de
+      // navigation §2 : une personne ouvre son dossier.
       await monterRoutant(
         tester,
         admin: FauxServiceAdmin()
@@ -377,11 +380,10 @@ void main() {
           ],
       );
 
-      expect(find.textContaining('Second'), findsNothing);
-      await tester.tap(find.textContaining('Premier'));
+      await tester.tap(find.textContaining('Second'));
       await tester.pumpAndSettle();
 
-      expect(find.text('ADM-02 null'), findsOneWidget);
+      expect(find.text('ADM-02 p-doc2'), findsOneWidget);
     });
 
     testWidgets('le chiffre des dossiers ouvre la file entiere', (

@@ -12,9 +12,11 @@ import 'package:rewayah_academy/core/accessibilite/mode_accessibilite.dart';
 import 'package:rewayah_academy/core/theme/app_radius.dart';
 import 'package:rewayah_academy/core/vivant/niveau_eau.dart';
 import 'package:rewayah_academy/core/vivant/nombre_rouleaux.dart';
+import 'package:rewayah_academy/core/vivant/pile_feuilletee.dart';
 import 'package:rewayah_academy/core/vivant/praxis_vivant.dart';
 import 'package:rewayah_academy/core/vivant/ressort.dart';
 import 'package:rewayah_academy/core/vivant/surface_penchee.dart';
+import 'package:rewayah_academy/core/vivant/texte_qui_s_ecrit.dart';
 import 'package:rewayah_academy/core/vivant/toucher_vivant.dart';
 
 import '../../support/harnais.dart';
@@ -221,17 +223,37 @@ void main() {
   });
 
   group('PraxisVivant', () {
-    testWidgets('tombe, rebondit, se pose, puis se tait', (
+    // Le temps vecu avance d'au plus 32 ms par image : 850 images de 32 ms
+    // font vingt-sept secondes, la veille (vingt secondes) puis le temps de
+    // se poser.
+    Future<void> vivre(WidgetTester tester, {int images = 850}) async {
+      for (int i = 0; i < images; i++) {
+        await tester.pump(const Duration(milliseconds: 32));
+      }
+    }
+
+    testWidgets('tombe, rebondit, vit, puis s endort et se tait', (
       WidgetTester tester,
     ) async {
+      final GlobalKey<EtatPraxisVivant> cle = GlobalKey<EtatPraxisVivant>();
       await tester.pumpWidget(
-        hote(const Center(child: PraxisVivant(humeur: HumeurPraxis.heureux))),
+        hote(
+          Center(
+            child: PraxisVivant(key: cle, humeur: HumeurPraxis.heureux),
+          ),
+        ),
       );
       await tester.pump();
       await tester.pump();
       expect(_rappels(), greaterThan(0), reason: 'il arrive en tombant');
-      await _laisserVivre(tester, images: 600);
-      expect(_rappels(), 0, reason: 'au repos, aucun ticker actif');
+      // Pose, il vit encore : il respire et cligne tant qu'il est eveille.
+      await vivre(tester, images: 200);
+      expect(_rappels(), greaterThan(0), reason: 'eveille, il respire');
+      expect(cle.currentState!.endormi, isFalse);
+      // Vingt secondes sans geste : il dort, plus aucune image.
+      await vivre(tester);
+      expect(cle.currentState!.endormi, isTrue);
+      expect(_rappels(), 0, reason: 'endormi, aucun ticker actif');
       expect(tester.takeException(), isNull);
     });
 
@@ -247,33 +269,95 @@ void main() {
             ),
           ),
         );
-        await _laisserVivre(tester, images: 600);
-        expect(_rappels(), 0, reason: 'humeur $h : au repos, il se tait');
+        await vivre(tester);
+        expect(_rappels(), 0, reason: 'humeur $h : endormi, il se tait');
       }
       cle.currentState!.non();
       await tester.pump();
       await tester.pump();
       expect(_rappels(), greaterThan(0));
-      await _laisserVivre(tester, images: 400);
+      await vivre(tester);
       expect(_rappels(), 0, reason: 'apres le « non », il se tait');
       cle.currentState!.cligner();
-      await _laisserVivre(tester, images: 200);
+      await tester.pump();
+      expect(_rappels(), greaterThan(0), reason: 'le clin le reveille');
+      await vivre(tester);
       expect(_rappels(), 0, reason: 'apres le clin, il se tait');
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('un geste du pointeur le reveille', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey<EtatPraxisVivant> cle = GlobalKey<EtatPraxisVivant>();
+      final ValueNotifier<Offset> regard = ValueNotifier<Offset>(Offset.zero);
+      addTearDown(regard.dispose);
+      await tester.pumpWidget(
+        hote(
+          Center(
+            child: PraxisVivant(key: cle, tombe: false, regard: regard),
+          ),
+        ),
+      );
+      await vivre(tester);
+      expect(cle.currentState!.endormi, isTrue);
+      regard.value = const Offset(40, 60);
+      await tester.pump();
+      await tester.pump();
+      expect(cle.currentState!.endormi, isFalse);
+      expect(_rappels(), greaterThan(0), reason: 'reveille, il revit');
+      await vivre(tester);
+      expect(_rappels(), 0);
+    });
+
+    testWidgets('assis, il parle, se tait, s endort : aucune erreur', (
+      WidgetTester tester,
+    ) async {
+      Widget monter({required bool parle}) => hote(
+        Center(
+          child: PraxisVivant(
+            humeur: HumeurPraxis.soucieux,
+            assis: true,
+            parle: parle,
+            tombe: false,
+          ),
+        ),
+      );
+      await tester.pumpWidget(monter(parle: true));
+      await vivre(tester, images: 60);
+      expect(_rappels(), greaterThan(0));
+      await tester.pumpWidget(monter(parle: false));
+      await vivre(tester);
+      expect(_rappels(), 0);
+      expect(tester.takeException(), isNull);
+      // La ligne d'assise est dans le dessin, sous le corps : les pieds
+      // pendent dessous.
+      expect(
+        PraxisVivant.assisePour(200),
+        lessThan(PraxisVivant.hauteurPour(200)),
+      );
+      expect(PraxisVivant.assisePour(200), greaterThan(100));
     });
 
     testWidgets('effets reduits : pose d emblee, aucune image animee', (
       WidgetTester tester,
     ) async {
+      final GlobalKey<EtatPraxisVivant> cle = GlobalKey<EtatPraxisVivant>();
       await tester.pumpWidget(
         hote(
           _reduit(
-            const Center(child: PraxisVivant(humeur: HumeurPraxis.pleure)),
+            Center(
+              child: PraxisVivant(key: cle, humeur: HumeurPraxis.pleure),
+            ),
           ),
         ),
       );
       await tester.pump();
       await tester.pump();
+      expect(_rappels(), 0);
+      // Fige, il ne s'endort pas : ses yeux gardent leur dessin.
+      await tester.pump(const Duration(seconds: 30));
+      expect(cle.currentState!.endormi, isFalse);
       expect(_rappels(), 0);
     });
 
@@ -290,6 +374,177 @@ void main() {
         ),
         findsWidgets,
       );
+    });
+  });
+
+  group('TexteQuiSEcrit', () {
+    const String phrase = 'Cinq candidats attendent un entretien.';
+    const TextStyle style = TextStyle(fontSize: 16, color: Color(0xFF110E20));
+
+    testWidgets(
+      'la phrase s ecrit, previent, puis devient un texte ordinaire',
+      (WidgetTester tester) async {
+        final List<bool> etats = <bool>[];
+        await tester.pumpWidget(
+          hote(
+            Center(
+              child: TexteQuiSEcrit(
+                phrase,
+                style: style,
+                onEcriture: etats.add,
+              ),
+            ),
+          ),
+        );
+        await tester.pump();
+        await tester.pump(const Duration(milliseconds: 32));
+        await tester.pump(const Duration(milliseconds: 32));
+        // En cours : la suite de la phrase est posee mais invisible (deux
+        // parts : ecrite, a venir) ; le lecteur d'ecran lit deja la phrase.
+        expect(etats, <bool>[true]);
+        expect(tester.widget<Text>(find.text(phrase)).data, isNull);
+        expect(find.bySemanticsLabel(phrase), findsOneWidget);
+        final double hauteur = tester
+            .getSize(find.byType(TexteQuiSEcrit))
+            .height;
+        await _laisserVivre(tester);
+        expect(etats, <bool>[true, false]);
+        expect(tester.widget<Text>(find.text(phrase)).data, phrase);
+        // La place etait reservee : rien n'a saute.
+        expect(tester.getSize(find.byType(TexteQuiSEcrit)).height, hauteur);
+        expect(_rappels(), 0, reason: 'ecrite, elle ne bouge plus');
+      },
+    );
+
+    testWidgets('effets reduits : la phrase entiere, d emblee', (
+      WidgetTester tester,
+    ) async {
+      await tester.pumpWidget(
+        hote(
+          _reduit(const Center(child: TexteQuiSEcrit(phrase, style: style))),
+        ),
+      );
+      await tester.pump();
+      await tester.pump();
+      expect(find.text(phrase), findsOneWidget);
+      expect(_rappels(), 0);
+    });
+  });
+
+  group('PileFeuilletee', () {
+    Widget pile(
+      GlobalKey<EtatPileFeuilletee> cle,
+      List<int> dessus, {
+      int nombre = 3,
+      List<int>? touches,
+    }) => Center(
+      child: SizedBox(
+        width: 260,
+        child: PileFeuilletee(
+          key: cle,
+          nombre: nombre,
+          onDessus: dessus.add,
+          constructeur: (BuildContext _, int i, {required bool dessus}) =>
+              GestureDetector(
+                onTap: dessus ? () => touches?.add(i) : null,
+                child: SizedBox(
+                  height: 120,
+                  child: ColoredBox(
+                    color: const Color(0xFFFFFFFF),
+                    child: Center(child: Text('carte $i')),
+                  ),
+                ),
+              ),
+        ),
+      ),
+    );
+
+    testWidgets('glissee assez loin, la carte passe dessous et la suivante '
+        'monte ; puis tout se tait', (WidgetTester tester) async {
+      final GlobalKey<EtatPileFeuilletee> cle = GlobalKey<EtatPileFeuilletee>();
+      final List<int> dessus = <int>[];
+      await tester.pumpWidget(hote(pile(cle, dessus)));
+      // Trois cartes se voient, celle du dessus est la premiere.
+      expect(find.text('carte 0'), findsOneWidget);
+      expect(find.text('carte 1'), findsOneWidget);
+      expect(find.text('carte 2'), findsOneWidget);
+      await tester.drag(find.text('carte 0'), const Offset(180, 0));
+      await _laisserVivre(tester);
+      expect(dessus, <int>[1]);
+      expect(cle.currentState!.dessus, 1);
+      expect(_rappels(), 0);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('lachee trop pres, la carte revient', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey<EtatPileFeuilletee> cle = GlobalKey<EtatPileFeuilletee>();
+      final List<int> dessus = <int>[];
+      await tester.pumpWidget(hote(pile(cle, dessus)));
+      final Offset avant = tester.getCenter(find.text('carte 0'));
+      await tester.drag(find.text('carte 0'), const Offset(60, 0));
+      await _laisserVivre(tester);
+      expect(dessus, isEmpty);
+      expect(cle.currentState!.dessus, 0);
+      expect(tester.getCenter(find.text('carte 0')).dx, closeTo(avant.dx, 0.5));
+      expect(_rappels(), 0);
+    });
+
+    testWidgets('suivante, precedente : on tourne dans la pile', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey<EtatPileFeuilletee> cle = GlobalKey<EtatPileFeuilletee>();
+      final List<int> dessus = <int>[];
+      await tester.pumpWidget(hote(pile(cle, dessus)));
+      cle.currentState!.suivante();
+      await _laisserVivre(tester);
+      cle.currentState!.suivante();
+      await _laisserVivre(tester);
+      cle.currentState!.suivante();
+      await _laisserVivre(tester);
+      expect(dessus, <int>[1, 2, 0]);
+      cle.currentState!.precedente();
+      await _laisserVivre(tester);
+      expect(dessus.last, 2);
+      expect(_rappels(), 0);
+    });
+
+    testWidgets('feuilleter ne decide rien ; toucher la carte du dessus agit', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey<EtatPileFeuilletee> cle = GlobalKey<EtatPileFeuilletee>();
+      final List<int> touches = <int>[];
+      await tester.pumpWidget(hote(pile(cle, <int>[], touches: touches)));
+      await tester.drag(find.text('carte 0'), const Offset(-180, 0));
+      await _laisserVivre(tester);
+      expect(touches, isEmpty, reason: 'un glissement n est pas un toucher');
+      await tester.tap(find.text('carte 1'));
+      expect(touches, <int>[1]);
+    });
+
+    testWidgets('une seule carte : elle ne part pas', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey<EtatPileFeuilletee> cle = GlobalKey<EtatPileFeuilletee>();
+      final List<int> dessus = <int>[];
+      await tester.pumpWidget(hote(pile(cle, dessus, nombre: 1)));
+      await tester.drag(find.text('carte 0'), const Offset(200, 0));
+      await _laisserVivre(tester);
+      expect(dessus, isEmpty);
+      expect(find.text('carte 0'), findsOneWidget);
+    });
+
+    testWidgets('effets reduits : la carte change sans mouvement', (
+      WidgetTester tester,
+    ) async {
+      final GlobalKey<EtatPileFeuilletee> cle = GlobalKey<EtatPileFeuilletee>();
+      final List<int> dessus = <int>[];
+      await tester.pumpWidget(hote(_reduit(pile(cle, dessus))));
+      cle.currentState!.suivante();
+      await tester.pump();
+      expect(dessus, <int>[1]);
+      expect(_rappels(), 0, reason: 'aucune image animee en mode reduit');
     });
   });
 }
