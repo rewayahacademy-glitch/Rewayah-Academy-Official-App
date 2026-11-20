@@ -191,9 +191,18 @@ class SessionState {
   bool get aUneAideEleve => role == AppRole.student;
 
   /// La barre de l'eleve adulte (lot B2 : Aujourd'hui, Apprendre, Suivi,
-  /// Profil), la meme condition que la coquille eleve d'`app_router.dart`. Une
-  /// page de la barre s'intitule comme son onglet en la lisant.
-  bool get barreEleveAdulte => role == AppRole.student && eleveAutonome;
+  /// Profil). Une page de la barre s'intitule comme son onglet en la lisant.
+  bool get barreEleveAdulte =>
+      barreEleveAdultePour(role, eleveAutonome: eleveAutonome);
+
+  /// BARRE-UNE-SOURCE (dette du 11/11/2026, reprise par PE-E3) : la seule
+  /// regle qui choisit la barre de l'eleve adulte, lue par la coquille du
+  /// routeur (pour son role) et par [barreEleveAdulte] (pour la session).
+  /// Plus aucune copie de la condition.
+  static bool barreEleveAdultePour(
+    AppRole? role, {
+    required bool eleveAutonome,
+  }) => role == AppRole.student && eleveAutonome;
 
   /// La capacite de lire le Coran dans le lecteur dedie : l'eleve, et
   /// l'adulte eleve autonome servi par le serveur (C-24).

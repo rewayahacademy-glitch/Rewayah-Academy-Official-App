@@ -19,10 +19,14 @@
 //   4. **Le rapport ligne par ligne** : reussies, exclues, refusees par le
 //      serveur. **Rien n'est dit reussi avant la reponse du serveur.**
 //
-// Le serveur ne sait grouper que trois gestes (mettre en pause, lever la pause,
-// refuser) et plafonne a 200 candidatures. Les huit autres se font un par un : la
-// barre de la page le dit, la feuille n'en offre aucun. Un lot dont l'apercu a
-// change (`jeton_perime`) ne part pas : il faut un nouvel apercu.
+// Le serveur groupe mettre en pause, lever la pause, refuser, dispenser
+// d'entretien et, depuis PE-LISTE-CANDIDATURES (20/11/2026), admettre en salle
+// de verification, demander un complement (un element pour tout le lot) et
+// ecrire (un message dans la conversation de chaque personne) ; il plafonne a
+// 200 candidatures. Les autres gestes se font un par un : la barre de la page le
+// dit, la feuille n'en offre aucun. Un lot dont l'apercu a change
+// (`jeton_perime`) ne part pas : il faut un nouvel apercu. C'est une action
+// sensible (DECISION-FLUIDITE) : rien n'est dit fait avant le rapport du serveur.
 library;
 
 import 'package:flutter/material.dart';
@@ -65,6 +69,11 @@ String libelleGesteLot(GesteLot geste) => switch (geste) {
   GesteLot.dispenserEntretien => libelleGeste(
     GesteCandidature.dispenserEntretien,
   ),
+  GesteLot.admettre => libelleGeste(GesteCandidature.admettreVerifications),
+  GesteLot.demanderComplement => libelleGeste(
+    GesteCandidature.demanderComplement,
+  ),
+  GesteLot.ecrire => t.admin.candidatures.lot.ecrire,
 };
 
 /// Ce que dit la direction d'une candidature exclue d'un apercu, en mots.
@@ -80,8 +89,11 @@ String raisonExclusion(ExclusLot e, GesteLot geste) {
         return switch (geste) {
           GesteLot.mettreEnPause => r.dejaEnPause,
           GesteLot.leverPause => r.pasEnPause,
-          GesteLot.refuser => r.pause,
-          GesteLot.dispenserEntretien => r.pause,
+          GesteLot.refuser ||
+          GesteLot.dispenserEntretien ||
+          GesteLot.admettre ||
+          GesteLot.demanderComplement => r.pause,
+          GesteLot.ecrire => r.conversationPause,
         };
       }
       return r.etat(
@@ -92,6 +104,20 @@ String raisonExclusion(ExclusLot e, GesteLot geste) {
           etat: e.etat,
         ),
       );
+    // PE-LISTE-CANDIDATURES : le controle d'admission faux, nomme ; la
+    // conversation impossible, et pourquoi.
+    case RaisonExclusion.controlesNonSatisfaits:
+      return e.detail == null
+          ? r.controles
+          : r.controle(controle: libelleControle(e.detail!));
+    case RaisonExclusion.sansConversation:
+      return switch (e.detail) {
+        'sans_compte' => r.sansCompte,
+        'pause' => r.conversationPause,
+        _ => r.conversationEtat,
+      };
+    case RaisonExclusion.elementNonPermis:
+      return r.elementNonPermis;
     case RaisonExclusion.inconnue:
       return r.inconnue;
   }
@@ -128,6 +154,16 @@ String raisonLigneRapport(
       return r.conflit;
     case 'erreur_serveur':
       return r.erreurServeur;
+    case 'controles_non_satisfaits':
+      return e != null ? raisonExclusion(e, geste) : r.controles;
+    case 'sans_conversation':
+      return e != null ? raisonExclusion(e, geste) : r.conversationEtat;
+    case 'elements_invalides':
+    case 'element_non_permis':
+      return r.elementNonPermis;
+    // PE-LISTE-CANDIDATURES : le meme texte, au meme candidat, le meme jour.
+    case 'deja_envoye':
+      return r.dejaEnvoye;
     default:
       return r.inconnue;
   }
@@ -145,6 +181,7 @@ Future<RapportLot?> ouvrirFeuilleLot(
   required List<String> ids,
   required CapacitesCandidatures capacites,
   required ValueChanged<RapportLot> onRapport,
+  ValueChanged<List<String>>? onAucunEligible,
 }) => AppBottomSheet.ouvrir<RapportLot>(
   context,
   titre: libelleGesteLot(geste),
@@ -153,6 +190,7 @@ Future<RapportLot?> ouvrirFeuilleLot(
     ids: ids,
     capacites: capacites,
     onRapport: onRapport,
+    onAucunEligible: onAucunEligible,
     onFermer: (RapportLot? r) => Navigator.of(contexte).pop(r),
   ),
 );
@@ -166,6 +204,7 @@ class FeuilleLot extends ConsumerStatefulWidget {
     required this.capacites,
     required this.onRapport,
     required this.onFermer,
+    this.onAucunEligible,
     super.key,
   });
 
@@ -183,6 +222,12 @@ class FeuilleLot extends ConsumerStatefulWidget {
 
   /// La feuille se ferme, avec le rapport ou `null`.
   final ValueChanged<RapportLot?> onFermer;
+
+  /// Relecture adverse de la PR 658 (R2) : l'apercu ne retient aucune
+  /// candidature de ce lot. La page passe alors ces candidatures en fin de
+  /// selection, pour que le lot suivant porte sur d'autres. `null` quand il
+  /// n'y a rien au-dela de ce lot : la feuille n'en dit rien.
+  final ValueChanged<List<String>>? onAucunEligible;
 
   /// La cle de la feuille.
   static const Key cle = ValueKey<String>('feuille-lot');
@@ -234,6 +279,12 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
   RefusLot? _refusLot;
   Object? _autre;
 
+  /// Le serveur a refuse la cle (`cle_idempotence_reutilisee`) alors que
+  /// l'essai precedent etait incertain : le premier envoi est peut-etre parti,
+  /// avec le contenu d'avant. L'ecran le dit et invite a verifier avant de
+  /// recommencer (relecture adverse de la PR 658, R4).
+  bool _premierPeutEtreParti = false;
+
   /// La cle d'idempotence du lot en cours : neuve a chaque demande, gardee
   /// seulement pour rejouer un essai non confirme.
   String? _cle;
@@ -275,16 +326,41 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       );
       if (!mounted) return;
       setState(() => _apercu = apercu);
+      if (apercu.nombre == 0) widget.onAucunEligible?.call(widget.ids);
     } on Object catch (e) {
       if (!mounted) return;
       setState(() => _erreurApercu = e);
     }
   }
 
-  /// Un champ change : c'est une autre demande, avec une autre cle.
+  /// Vrai apres une issue incertaine (pas de reponse du serveur, panne que
+  /// l'on ne sait pas dire) : le lot a pu partir. Pour les trois gestes neufs
+  /// (voir [_empreinteCouvreContenu]), la cle est alors GARDEE meme si un champ
+  /// change : rejouee telle quelle, le serveur rend le premier rapport ; avec
+  /// un autre texte, il la refuse (`cle_idempotence_reutilisee`) au lieu
+  /// d'envoyer une seconde fois.
+  bool _incertain = false;
+
+  /// Vrai quand le serveur compare aussi le contenu (motif et modele) a la
+  /// cle du lot : admettre, demander un complement, ecrire. Pour mettre en
+  /// pause, lever la pause, refuser et dispenser, la cle ne couvre que le geste
+  /// et les candidatures : la meme cle avec un autre motif ou un autre modele
+  /// rendrait en silence le premier rapport (relecture adverse de la PR 658,
+  /// R1). Ces gestes gardent donc le comportement d'avant : un champ change,
+  /// une cle neuve, et le serveur dit `jeton_perime` si le premier est passe.
+  bool get _empreinteCouvreContenu => switch (_geste) {
+    GesteLot.admettre || GesteLot.demanderComplement || GesteLot.ecrire => true,
+    GesteLot.mettreEnPause ||
+    GesteLot.leverPause ||
+    GesteLot.refuser ||
+    GesteLot.dispenserEntretien => false,
+  };
+
+  /// Un champ change : c'est une autre demande, avec une autre cle, sauf apres
+  /// une issue incertaine d'un geste neuf (voir [_incertain]).
   void _modifie(VoidCallback changement) => setState(() {
     changement();
-    _cle = null;
+    if (!(_incertain && _empreinteCouvreContenu)) _cle = null;
     if (_refusGeste is GesteNonConfirme) {
       _refusGeste = null;
     }
@@ -295,6 +371,50 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
   List<String> get _modelesPermis => _geste == GesteLot.refuser
       ? widget.capacites.listes.modelesRefus
       : widget.capacites.listes.modelesPause;
+
+  /// PE-LISTE-CANDIDATURES : un complement en lot demande UN element, choisi
+  /// dans les listes fermees du serveur (les deux salles), parmi celles qui ont
+  /// un mot ; la cloture n'est pas un element a demander.
+  bool get _complement => _geste == GesteLot.demanderComplement;
+
+  ///
+  /// Le serveur rend, pour chaque eligible, les elements que son etape
+  /// accepte : seuls ceux de TOUS les eligibles sont proposes, si bien que le
+  /// nombre annonce est celui qui reussira (un autre element rend le lot
+  /// perime au serveur). Un serveur qui ne les rend pas : les listes fermees.
+  List<String> get _elementsPermis {
+    final List<EligibleLot> eligibles =
+        _apercu?.eligibles ?? const <EligibleLot>[];
+    final bool parLigne =
+        eligibles.isNotEmpty &&
+        eligibles.every((EligibleLot e) => e.elementsPermis != null);
+    final Iterable<String> codes = parLigne
+        ? eligibles
+              .map((EligibleLot e) => e.elementsPermis!.toSet())
+              .reduce((Set<String> a, Set<String> b) => a.intersection(b))
+        : <String>{
+            ...widget.capacites.listes.complementSalleExamen,
+            ...widget.capacites.listes.complementSalleVerification,
+          };
+    // L'ordre des listes fermees du serveur, pour une feuille stable.
+    final List<String> ordre = <String>[
+      ...widget.capacites.listes.complementSalleExamen,
+      ...widget.capacites.listes.complementSalleVerification,
+      ...codes,
+    ];
+    final Set<String> retenus = codes.toSet();
+    return <String>[
+      for (final String code in <String>{...ordre})
+        if (retenus.contains(code) &&
+            code != 'complement_clos' &&
+            libelleElementComplement(code) != null)
+          code,
+    ];
+  }
+
+  /// PE-LISTE-CANDIDATURES : ecrire porte un message pour la personne, et non
+  /// un motif interne.
+  bool get _ecrire => _geste == GesteLot.ecrire;
 
   int? get _nombreSaisi => int.tryParse(_nombre.text.trim());
 
@@ -310,6 +430,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
     if (a.motifRequis && _motif.text.trim().isEmpty) return false;
     if (a.modeleRequis && _modele == null) return false;
     if (_categorieRequise && _modele == null) return false;
+    if (_complement && _modele == null) return false;
     return _nombreJuste;
   }
 
@@ -317,7 +438,8 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
   /// dit et n'offre aucun bouton qui ne puisse pas aboutir.
   bool get _servi => _apercu == null
       ? false
-      : !(_apercu!.modeleRequis && _modelesPermis.isEmpty);
+      : !(_apercu!.modeleRequis && _modelesPermis.isEmpty) &&
+            !(_complement && _elementsPermis.isEmpty);
 
   // --- Envoi --------------------------------------------------------------
 
@@ -351,7 +473,9 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
           nombreConfirme: _nombreSaisi!,
           cleIdempotence: cle,
           motif: apercu.motifRequis ? _motif.text.trim() : null,
-          modele: apercu.modeleRequis || _categorieRequise ? _modele : null,
+          modele: apercu.modeleRequis || _categorieRequise || _complement
+              ? _modele
+              : null,
           repriseLe: _geste == GesteLot.mettreEnPause ? _reprise : null,
         ),
       );
@@ -360,6 +484,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = false;
         _rapport = rapport;
       });
     } on GesteNonConfirme catch (e) {
@@ -367,12 +492,15 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = true;
         _refusGeste = e;
       });
     } on RefusLot catch (e) {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _premierPeutEtreParti = e is CleLotReutilisee && _incertain;
+        _incertain = false;
         _refusLot = e;
         // Un refus nomme n'a rien ecrit : un nouvel essai est une autre demande.
         _cle = null;
@@ -381,6 +509,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = false;
         _refusGeste = e;
         _cle = null;
       });
@@ -388,6 +517,7 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       if (!mounted) return;
       setState(() {
         _enCours = false;
+        _incertain = true;
         _autre = e;
         // Une panne que l'on ne sait pas dire : le lot a pu partir. La meme cle
         // est gardee : si le premier est passe, le serveur rend son rapport.
@@ -503,6 +633,10 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       _texte(_effet()),
       Ecart.vLg,
       ..._rendreApercu(context, apercu),
+      if (apercu.nombre == 0 && widget.onAucunEligible != null) ...<Widget>[
+        Ecart.vLg,
+        _texte(f.reporteesEnFin),
+      ],
       if (apercu.nombre > 0 && !aRelire) ...<Widget>[
         ..._champs(context, apercu),
       ],
@@ -540,6 +674,9 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
       GesteLot.leverPause => f.effetLever,
       GesteLot.refuser => f.effetRefuser,
       GesteLot.dispenserEntretien => f.effetDispenser,
+      GesteLot.admettre => f.effetAdmettre,
+      GesteLot.demanderComplement => f.effetComplement,
+      GesteLot.ecrire => f.effetEcrire,
     };
   }
 
@@ -640,11 +777,46 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
     final l = t.admin.candidatures.lot.feuille;
     final List<String> modeles = _modelesPermis;
     return <Widget>[
-      if (a.motifRequis || a.modeleRequis) ...<Widget>[
+      if ((a.motifRequis || a.modeleRequis) && !_ecrire) ...<Widget>[
         Ecart.vLg,
         // La dispense ne porte aucun message pour la personne : sa phrase
         // commune ne parle pas de message.
-        _texte(_categorieRequise ? l.motifCommunDispense : l.motifCommun),
+        _texte(
+          _categorieRequise
+              ? l.motifCommunDispense
+              : _complement
+              ? l.motifCommunComplement
+              : l.motifCommun,
+        ),
+      ],
+      if (_complement) ...<Widget>[
+        Ecart.vLg,
+        _titreChamp(l.element),
+        Ecart.vSm,
+        if (_elementsPermis.isEmpty)
+          _texte(l.elementAucunCommun)
+        else ...<Widget>[
+          ChoiceCardGroup(
+            autoriserSaisieLibre: false,
+            options: <OptionChoix>[
+              for (final String code in _elementsPermis)
+                OptionChoix(
+                  cle: ValueKey<String>('element-$code'),
+                  valeur: code,
+                  libelle: libelleElementComplement(code)!,
+                ),
+            ],
+            valeurInitiale: _modele == null
+                ? null
+                : ReponseChoix(valeurs: <String>{_modele!}),
+            onChange: (ReponseChoix r) => _modifie(() {
+              _modele = r.valeurs.isEmpty ? null : r.valeurs.first;
+            }),
+          ),
+          Ecart.vSm,
+          _texte(l.elementAide),
+          if (_tente && _modele == null) _erreurChamp(l.elementManquant),
+        ],
       ],
       if (a.modeleRequis) ...<Widget>[
         Ecart.vLg,
@@ -714,9 +886,15 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
         ZoneSaisie(
           cleChamp: FeuilleLot.cleMotif,
           controleur: _motif,
-          libelle: f.motif,
-          explication: a.modeleRequis ? f.motifAide : f.motifSeul,
-          erreur: _tente && _motif.text.trim().isEmpty ? f.motifManquant : null,
+          libelle: _ecrire ? l.message : f.motif,
+          explication: _ecrire
+              ? l.messageAide
+              : a.modeleRequis
+              ? f.motifAide
+              : f.motifSeul,
+          erreur: _tente && _motif.text.trim().isEmpty
+              ? (_ecrire ? l.messageManquant : f.motifManquant)
+              : null,
           minLignes: 3,
           onChanged: (String _) => _modifie(() {}),
         ),
@@ -782,7 +960,12 @@ class _EtatFeuilleLot extends ConsumerState<FeuilleLot> {
               ? t.admin.candidatures.lot.feuille.nombreFaux(n: 0)
               : t.admin.candidatures.lot.feuille.nombreFaux(n: nombre),
         GesteNonGroupable() => e.nonGroupable,
-        CleLotReutilisee() => e.cleReutilisee,
+        CleLotReutilisee() =>
+          !_premierPeutEtreParti
+              ? e.cleReutilisee
+              : _geste == GesteLot.ecrire
+              ? e.cleReutiliseeEcrire
+              : e.cleReutiliseeIncertaine,
       };
     } else if (autre is CandidatureHorsPortee) {
       titre = e.titre;

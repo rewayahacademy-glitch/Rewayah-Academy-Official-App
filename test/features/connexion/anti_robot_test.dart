@@ -291,11 +291,13 @@ void main() {
       expect(find.text(t.commun.reessayer), findsOneWidget);
       await _envoyer(tester, t.connexion.envoyerLien);
       expect(auth.liensEnvoyes, isEmpty);
-      expect(find.text(t.connexion.controle.erreur), findsWidgets);
-      expect(
-        t.connexion.controle.erreur,
-        "La vérification n'a pas abouti. Réessayez.",
-      );
+      // PE-A5 : la phrase dit quoi faire, une seule fois, sous le bouton,
+      // avec « Reessayer », « Recharger la page » et le rappel de Google.
+      expect(find.text(t.connexion.controle.erreur), findsOneWidget);
+      expect(find.text(t.commun.reessayer), findsOneWidget);
+      expect(find.byKey(ControleAntiRobot.cleRecharger), findsOneWidget);
+      expect(find.text(t.connexion.controle.autreCheminGoogle), findsOneWidget);
+      expect(t.connexion.controle.erreur, contains('rechargez la page'));
     });
 
     testWidgets('jeton attendu au-dela du delai : rien ne part', (
@@ -327,25 +329,26 @@ void main() {
       expect(find.text(t.connexion.controle.erreur), findsOneWidget);
     });
 
-    testWidgets('refus du serveur (captcha_failed) : la meme phrase', (
-      WidgetTester tester,
-    ) async {
-      final FauxServiceAuth auth = FauxServiceAuth()
-        ..erreurAJeter = const AuthApiException(
-          'captcha protection: request disallowed (timeout-or-duplicate)',
-          statusCode: '400',
-          code: 'captcha_failed',
+    testWidgets(
+      'refus du serveur (captcha_failed) : il se dit, avec quoi faire',
+      (WidgetTester tester) async {
+        final FauxServiceAuth auth = FauxServiceAuth()
+          ..erreurAJeter = const AuthApiException(
+            'captcha protection: request disallowed (timeout-or-duplicate)',
+            statusCode: '400',
+            code: 'captcha_failed',
+          );
+        await _monter(
+          tester,
+          auth: auth,
+          page: const ConnexionPage(),
+          cle: _Cle('0xCleDuSite'),
+          fabrique: _ControleurJetons.new,
         );
-      await _monter(
-        tester,
-        auth: auth,
-        page: const ConnexionPage(),
-        cle: _Cle('0xCleDuSite'),
-        fabrique: _ControleurJetons.new,
-      );
-      await _envoyer(tester, t.connexion.envoyerLien);
-      expect(find.text(t.connexion.controle.erreur), findsOneWidget);
-    });
+        await _envoyer(tester, t.connexion.envoyerLien);
+        expect(find.text(t.connexion.controle.refuse), findsOneWidget);
+      },
+    );
 
     testWidgets('recuperation : le jeton part avec la demande', (
       WidgetTester tester,
@@ -540,7 +543,7 @@ void main() {
     );
     expect(
       phraseEchecEnvoi(IssueEnvoiLien.verificationNonAboutie),
-      t.connexion.controle.erreur,
+      t.connexion.controle.refuse,
     );
     unawaited(Future<void>.value());
   });

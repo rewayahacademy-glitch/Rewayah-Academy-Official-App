@@ -77,6 +77,9 @@ declare
     -- PX-5 (20261130300000) : le plafond des ouvertures de dialogue de Praxis (100 par 5 heures a l'installation) ; admin, aal2, une
     -- ligne d'audit (praxis_regle_ouvertures). Elle n'ecrit que private.praxis_reglages : ni message, ni dossier, ni compte.
     'direction_praxis_regler_ouvertures(integer,integer)',
+    -- PX-6 (20261130800000) : les jours pendant lesquels une conversation reste a la direction, et la reouverture des entretiens
+    -- ecrits de Praxis ; admin, aal2, une ligne d'audit (praxis_regle_conversations). Elle n'ecrit que private.praxis_reglages.
+    'direction_praxis_regler_conversations(integer,boolean)',
     'direction_praxis_valider(uuid,integer,text,uuid[])',
     -- PX-3 (17/11) : « Ce que Praxis a envoye », LECTURE de la direction, administrateur au compte valide (la double
     -- verification n'est pas exigee pour lire). Elle n'ecrit qu'une ligne d'audit (public.log_sensitive_access, action
@@ -352,6 +355,9 @@ declare
     'lister_a_prevenir_candidats(boolean,integer)',
     'lister_formulaires_importes(jsonb,integer)',
     'lister_candidatures(jsonb,text,integer)',
+    -- PE-LISTE-CANDIDATURES (20/11) : « Selectionner les N resultats », corps engendre depuis lister_candidatures
+    -- (meme garde positive admin ou mission ET app_account_valid, meme audit).
+    'selection_resultats_file(jsonb,text)',
     -- LP-1 (16/11) : la liste des enseignants, meme garde et meme audit que lister_candidatures.
     'lister_enseignants(jsonb,text,integer)',
     -- BE-1g (16/11) : la direction dispense une candidature de l'entretien (garde positive direction active, moteur des gestes : motif ecrit, categorie, version, cle ; ecrit la dispense, annule un entretien planifie).
@@ -486,6 +492,10 @@ declare
     'renoncer_intention_horaire(uuid,text)',
     'repondre_invitation_conjoint(text,uuid)',
     'reprendre_alimentation_tresorerie()',
+    -- PE-A6 REPRISE-CANDIDATURE (20/11) : le candidat enseignant reprend lui-meme sa candidature retiree, pendant 7 jours.
+    -- Garde positive : session et titulaire d'une candidature (private.candidature_du_titulaire, compte valide), sinon 42501 ;
+    -- par le moteur (version attendue, cle d'idempotence) ; n'ecrit que SA candidature (issue, version, evenement, audit).
+    'reprise_candidat(integer,text)',
     -- CAND-L2A1 (22/10) : retrait par le candidat (transition 17), titulaire de la candidature (moteur).
     'retrait_candidat(integer,text)',
     -- PAYS-VERSEMENT (20261127000300, 15/11/2026) : le candidat change le pays de son compte de versement apres l'envoi. Garde positive : titulaire d'une candidature en cours (private.candidature_du_titulaire, compte non supprime, statut pending_kyc, provisional_active ou active, acces non expire), sinon 42501 ; etat de la candidature controle ; pays dans la liste ISO. Ecrit UN document de reponses du titulaire, remet ses coordonnees a valider, une ligne de journal ; jamais d'effacement ni de refus. Meme garde que retrait_candidat.

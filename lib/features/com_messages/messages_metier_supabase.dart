@@ -14,7 +14,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthRetryableFetchException, PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
@@ -22,7 +23,8 @@ import '../../core/communications/phrases_images.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/observabilite/journal_dev.dart';
 import '../../core/theme/app_delais.dart';
-import '../../core/widgets/fil_discussion.dart' show EnvoiRefuse;
+import '../../core/widgets/fil_discussion.dart'
+    show EnvoiCoupe, EnvoiNonConfirme, EnvoiRefuse;
 import 'fonctions_images_messages.dart';
 import 'port_messages_metier.dart';
 
@@ -41,7 +43,7 @@ const Set<TypeObjetLie> _typesServeur = <TypeObjetLie>{
 };
 
 /// Les Messages metier servis par Supabase.
-class MessagesMetierSupabase implements PortMessagesMetier {
+class MessagesMetierSupabase implements PortMessagesMetier, PortPagesFil {
   /// Cree l'adaptateur sur un appel RPC (le client de l'application, par
   /// [appelRpcSupabase], ou un faux dans les tests).
   MessagesMetierSupabase(
@@ -49,9 +51,16 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     required this.libelles,
     AppelFonction? fonctions,
     http.Client? transport,
+    this.sessionOuverte,
     // ignore: prefer_initializing_formals
   }) : _fonctions = fonctions,
        _transport = transport ?? http.Client();
+
+  /// PE-D1 (relecture adverse 2) : vrai tant que la personne a une session,
+  /// lu a l'echec d'un envoi ; `null` : inconnu (tests, faux). Sans session,
+  /// le client appelle en anonyme et le serveur repond 42501 : ce n'est pas
+  /// une conversation fermee, la personne doit se reconnecter.
+  final bool Function()? sessionOuverte;
 
   final AppelRpc _appel;
 
@@ -142,10 +151,73 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     }
   }
 
+  /// PE-D1 : vrai quand le serveur ne connait pas encore `com_lire_fil_page`
+  /// (migration 20261130960000 pas installee) : le fil se lit d'un bloc, par
+  /// `com_lire_fil`, comme avant.
+  bool _sansPages = false;
+
   @override
   Future<FilMetier?> fil(String filId) async {
     if (!estUuid(filId)) return null;
+    if (!_sansPages) {
+      try {
+        return await _filOuNullSansRepli('com_lire_fil_page', <String, dynamic>{
+          'p_fil_id': filId,
+          'p_limite': PortPagesFil.taillePage,
+        });
+      } on _FonctionAbsente {
+        _sansPages = true;
+      }
+    }
     return _filOuNull('com_lire_fil', <String, dynamic>{'p_fil_id': filId});
+  }
+
+  /// Comme [_filOuNull], mais une fonction absente du serveur leve
+  /// [_FonctionAbsente] au lieu de passer pour un refus.
+  Future<FilMetier?> _filOuNullSansRepli(
+    String fonction,
+    Map<String, dynamic> p,
+  ) async {
+    final Object? v;
+    _generation += 1;
+    try {
+      v = await _appel(fonction, p);
+    } on PostgrestException catch (e) {
+      if (e.code == 'PGRST202' || e.code == '42883') {
+        throw const _FonctionAbsente();
+      }
+      if (estRefusOuAbsence(e)) return null;
+      rethrow;
+    } finally {
+      _generation += 1;
+    }
+    return v == null ? null : filMetierJson(objetJson(v), libelles);
+  }
+
+  @override
+  Future<PageMessagesFil> messagesAvant(
+    String filId,
+    String avantId, {
+    int limite = PortPagesFil.taillePage,
+  }) async {
+    if (!estUuid(filId) || !estUuid(avantId) || _sansPages) {
+      return PageMessagesFil(
+        messages: const <MessageCommunication>[],
+        plusAnciens: false,
+      );
+    }
+    final FilMetier? page = await _filOuNullSansRepli(
+      'com_lire_fil_page',
+      <String, dynamic>{
+        'p_fil_id': filId,
+        'p_avant': avantId,
+        'p_limite': limite,
+      },
+    );
+    return PageMessagesFil(
+      messages: page?.messages ?? const <MessageCommunication>[],
+      plusAnciens: page?.plusAnciens ?? false,
+    );
   }
 
   @override
@@ -231,18 +303,27 @@ class MessagesMetierSupabase implements PortMessagesMetier {
     final Object? reponse;
     _generation += 1;
     try {
+      // PE-D1 : un envoi qui ne repond pas finit en coupure (reessayee sous
+      // la meme cle), jamais en attente sans fin.
       reponse = await _appel('com_envoyer_message', <String, dynamic>{
         'p_fil_id': filId,
         'p_texte': message,
         'p_cle_idempotence': cleServeur(cle),
-      });
-    } on PostgrestException catch (e) {
-      // MESSAGES-CANDIDAT : la limite de 30 messages par jour d'un candidat
-      // (SQLSTATE 53400) se dit, sans « Reessayer » qui ne changerait rien.
-      if (e.code == '53400') {
-        throw EnvoiRefuse(t.com.messages.candidature.plafond);
+      }).timeout(AppDelais.requeteMax);
+    } on Object catch (e) {
+      // PE-D1 : un refus du serveur se dit par sa vraie phrase et n'est jamais
+      // reessaye ; une coupure en route est reessayee seule par le fil, sous
+      // la meme cle (jamais deux messages).
+      // Session finie (deconnexion ailleurs, jeton qui ne se renouvelle
+      // plus) : un echec ordinaire, brouillon garde et « Reessayer », avec la
+      // phrase qui demande de se reconnecter, jamais « conversation fermee ».
+      final bool Function()? session = sessionOuverte;
+      if (session != null && !session()) {
+        throw EnvoiNonConfirme(t.commun.etats.sessionExpiree.phrase);
       }
-      rethrow;
+      final Exception? classe = echecEnvoiMessage(e);
+      if (classe == null) rethrow;
+      throw classe;
     } finally {
       _generation += 1;
     }
@@ -457,6 +538,73 @@ class MessagesMetierSupabase implements PortMessagesMetier {
   }
 }
 
+/// PE-D1 : la fonction n'existe pas encore sur le serveur.
+class _FonctionAbsente implements Exception {
+  const _FonctionAbsente();
+}
+
+/// PE-D1 (MESSAGERIE-FIABLE) : ce que devient une erreur de
+/// `com_envoyer_message` pour le fil.
+///
+/// - un refus CONNU du serveur (`com_envoyer_message` et
+///   `com_envoyer_message_interne` ne levent que ceux-la) : [EnvoiRefuse], sa
+///   vraie phrase, jamais reessaye ni dit « connexion » : 42501 (plus le droit
+///   d'ecrire, conversation fermee), 22023 et 23514 (texte vide ou trop long),
+///   53400 (limite du jour d'un candidat) ;
+/// - une panne passagere (aucune reponse, delai depasse, passerelle en 5xx,
+///   session a renouveler, base surchargee, requete annulee, conflit de
+///   verrou, connexion perdue) : [EnvoiCoupe], reessaye par le fil sous la
+///   meme cle (jamais deux messages) ;
+/// - tout autre code : `null`, l'erreur reste un echec ordinaire, avec
+///   « Reessayer » et le brouillon garde (la regle K-59 n'est pas elargie).
+///
+/// Le classement se fait par TYPE (`is`), jamais par le nom du type : le nom
+/// est illisible dans le JavaScript minifie de l'application web.
+Exception? echecEnvoiMessage(Object e) {
+  if (e is EnvoiRefuse) return e;
+  if (e is EnvoiCoupe) return e;
+  final m = t.com.messages;
+  if (e is PostgrestException) {
+    final String code = e.code ?? '';
+    switch (code) {
+      case '53400':
+        return EnvoiRefuse(m.candidature.plafond);
+      case '42501':
+        return EnvoiRefuse(m.fil.refusFerme);
+      case '22023' || '23514':
+        return EnvoiRefuse(m.fil.refusTexte);
+    }
+    return codePassager(code) ? EnvoiCoupe(e) : null;
+  }
+  if (e is TimeoutException ||
+      e is http.ClientException ||
+      e is AuthRetryableFetchException) {
+    return EnvoiCoupe(e);
+  }
+  return null;
+}
+
+/// PE-D1 : vrai pour un code d'erreur de PostgREST ou de Postgres qui dit une
+/// panne passagere, qu'un nouvel essai sous la meme cle peut lever.
+bool codePassager(String code) {
+  if (code.isEmpty) return true;
+  // Un statut HTTP a trois chiffres (passerelle), jamais un SQLSTATE a cinq.
+  final int? statut = code.length == 3 ? int.tryParse(code) : null;
+  if (statut != null) return statut >= 500 || statut == 408 || statut == 429;
+  return const <String>{
+        // PostgREST : base injoignable, connexion perdue, delai du pool.
+        'PGRST000', 'PGRST001', 'PGRST002', 'PGRST003',
+        // Requete annulee (delai), serialisation, verrou mortel, trop de
+        // connexions, verrou non obtenu.
+        '57014', '40001', '40P01', '53300', '55P03',
+      }.contains(code) ||
+      // Session a renouveler (jeton expire), connexion perdue (classe 08),
+      // arret du serveur (57P01 a 57P03).
+      code.startsWith('PGRST3') ||
+      code.startsWith('08') ||
+      code.startsWith('57P');
+}
+
 IndicateurAttention _attention(Object? nonLus) {
   final int n = nonLus is int && nonLus > 0 ? nonLus : 0;
   return n == 0
@@ -539,6 +687,8 @@ FilMetier filMetierJson(
               ? m['coeurs'] as int
               : 0,
           aimeParMoi: m['aime_par_moi'] == true,
+          // PE-D1 : rendue par `com_lire_fil_page`, pour mes messages seuls.
+          cleIdempotence: texteOptionnel(m, 'cle_idempotence'),
         ),
     ],
     attention: _attention(fil['non_lus']),
@@ -546,5 +696,6 @@ FilMetier filMetierJson(
       if (fil['peut_ecrire'] == true) CapaciteFil.ecrire,
     },
     luParAutresLe: instantOptionnel(fil, 'lu_par_autres_le'),
+    plusAnciens: fil['plus_anciens'] == true,
   );
 }

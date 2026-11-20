@@ -1293,7 +1293,13 @@
     "controle": {
       "libelle": "Security check",
       "chargement": "Security check in progress.",
-      "erreur": "The check did not complete. Try again.",
+      "erreur": "The security check did not complete. Tap \"Try again\"; if it fails again, reload the page.",
+      "erreurNavigateur": "The security check does not work in this browser. Open the page in Chrome or Safari (not inside a messaging app), turn off any ad blocker, then tap \"Try again\".",
+      "erreurHorloge": "The security check rejects your device's time. Set the date and time to \"automatic\", then tap \"Try again\".",
+      "erreurReglage": "The security check is not working right now because of a setting on our side. Try again later.",
+      "refuse": "The security check was not accepted. Tap the button again in a few seconds; if it happens again, reload the page.",
+      "autreCheminGoogle": "You can also continue with Google: that way does not go through this check.",
+      "rechargerPage": "Reload the page",
       "horsLigne": "The check cannot be done right now. Try again when the connection is back."
     },
     "probleme": "Link expired or never received?",
@@ -3118,6 +3124,116 @@
       },
       "nonOuvert": "The card to share is not available yet. Come back to this page later."
     },
+    "accueil": {
+      "onglets": {
+        "dossier": "File",
+        "messages": "Messages",
+        "academie": "Academy"
+      },
+      "etapes": {
+        "position": "Step {n} of {total}",
+        "faite": "done",
+        "enCours": "in progress",
+        "aVenir": "to come",
+        "lecture": "{position}, {nom}, {etat}",
+        "detail1": "You send your answers and your documents. The academy reads them.",
+        "detail2": "A video interview with the academy, at the time you choose.",
+        "detail3": "Your teacher space opens.",
+        "ensuiteACompleter": "Next: the academy reads your application.",
+        "ensuiteEnExamen": "Next: if your application is selected, we get to know each other in an interview.",
+        "ensuiteConnaissance": "Next: after the interview, the academy gives you its answer here.",
+        "ensuiteEquipe": "Next: your teacher space opens."
+      },
+      "aFaire": {
+        "titre": "To do now",
+        "rienTitre": "Nothing to do for now",
+        "rien": "You have nothing to do. We will write to you here as soon as there is news.",
+        "majorite": "First say whether you are 18 or older, in the card above.",
+        "cadre": "Read and accept the religious and teaching framework.",
+        "accords": "Read and accept the contract and our agreements.",
+        "piece": "Upload your identity document.",
+        "reponses": "Answer the questions, then send your application.",
+        "entretien": "Choose the time of your interview.",
+        "corriger": "Redo the item the academy asks you to correct."
+      },
+      "lignes": {
+        "titre": "Your file, item by item",
+        "afficher": "Show details: {element}",
+        "masquer": "Hide details: {element}",
+        "cadreDetail": "The framework says what the academy teaches and how. You read it in full, then you accept it.",
+        "accordsDetail": "The teacher contract, the notice about quality visits and the code of conduct. You read and accept them on a single page.",
+        "pieceDetail": "A clear photo of your passport or identity card, still valid. Example: the page with your photo, whole and without glare.",
+        "photoDetail": "A photo of you, facing the camera. It introduces you to families, only with your consent.",
+        "reponsesDetail": "Your languages, your recitation, your availability and your payout. You can save and come back later."
+      },
+      "praxis": {
+        "pieceRefusee": "Your identity document was not accepted. Please upload a new one.",
+        "reste(plural, param=n)": {
+          "one": "{n} item is still to be completed in your file.",
+          "other": "{n} items are still to be completed in your file."
+        }
+      },
+      "annonce": {
+        "ligne": "New: {titre}",
+        "ranger": "Put away the announcement: {titre}",
+        "rangee": "Announcement put away in Messages, Announcements section."
+      },
+      "etat": {
+        "perime": "Your file could not be updated. What you see dates from your last reading. Try again in a moment.",
+        "horsLigne": "You are offline. What you see dates from your last reading; try again once the connection is back."
+      },
+      "messages": {
+        "intro": "Write to the academy: it answers you here.",
+        "vide": "Messaging will open here as soon as your application is recorded.",
+        "sections": {"libelle": "Message sections", "messages": "Messages", "annonces": "Announcements", "savoir": "Good to know"},
+        "nonLus(plural, param=n)": {"one": "{n} unread message", "other": "{n} unread messages"},
+        "annonces": {"lire": "Read the announcement: {titre}", "vide": "No announcement for now. The management's announcements will appear here."},
+        "savoir": {"intro": "Answers to candidates' questions, once the management publishes them."}
+      },
+      "academie": {
+        "titre": "The academy",
+        "annoncesVide": "No announcement for now. The academy's announcements will appear here.",
+        "savoirTitre": "What you need to know",
+        "remuneration": "A teacher's pay",
+        "cours": "How lessons run",
+        "entretiens": "How interviews are organised",
+        "bientot": "Will appear here when the management makes it public.",
+        "reglages": "Settings",
+        "reglagesLegende": "Language, payout, withdrawing the application"
+      },
+      "retrait": {
+        "arret": "The academy will stop reviewing your file.",
+        "entretien": "Your interview will be cancelled. If you resume your application, you will choose a new one.",
+        "rienEfface": "Your answers and your documents will stay recorded.",
+        "pause": "Your file is on pause. If you withdraw it now, you will not be able to resume it yourself: you will have to write to the academy, which alone will be able to reopen it.",
+        "reprise(plural, param=n)": {
+          "one": "You will be able to resume it yourself for {n} day, from the File tab.",
+          "other": "You will be able to resume it yourself for {n} days, from the File tab."
+        },
+        "apres": "After that, only the academy will be able to reopen it.",
+        "garder": "No, I continue",
+        "confirmer": "Yes, withdraw my application",
+        "fait(plural, param=n)": {
+          "one": "Application withdrawn. You have {n} day to resume it.",
+          "other": "Application withdrawn. You have {n} days to resume it."
+        },
+        "faitSansDelai": "Application withdrawn."
+      },
+      "reprise": {
+        "possible": "You withdrew your application. You can resume it yourself until {date} at {heure}. Your answers and your documents are still recorded.",
+        "bouton": "Resume my application",
+        "faite": "Your application is resumed. Your answers and your documents are still recorded.",
+        "delaiDepasse": "The time to resume it yourself has passed. Only the academy can reopen it: write to it from the Messages tab.",
+        "enPause": "Your file was on pause when you withdrew it: you cannot resume it yourself. Only the academy can reopen it: write to it from the Messages tab.",
+        "origineInconnue": "Your application is withdrawn. Write to us from the Messages tab to resume it.",
+        "parDirection": "This withdrawal was recorded by the academy. Only the academy can reopen your application: write to it from the Messages tab.",
+        "controles": "An item of your file changed since your withdrawal. Only the academy can reopen your application: write to it from the Messages tab.",
+        "echec": "The resumption did not go through. Nothing changed: try again in a moment.",
+        "incertain": "Your resumption may not have reached Rewayah. Try again: it will not be recorded twice.",
+        "horsLigne": "You can resume once the connection is back.",
+        "conflit": "Your application changed since this page was opened. Read it again, then retry."
+      }
+    },
     "retrait": {
       "lien": "Withdraw my application",
       "question": "Withdraw your application?",
@@ -4277,6 +4393,7 @@
             "other": "{n} applications will not be affected"
           },
           "etAutres": "and {n} others",
+          "reporteesEnFin": "These applications stay selected, at the end of the selection: the next action will first cover the following ones.",
           "effetPause": "The applications concerned do not move forward until the pause is lifted.",
           "effetLever": "The applications concerned resume where they had stopped.",
           "effetRefuser": "The applications concerned are closed. You can reopen them one by one.",
@@ -4297,7 +4414,14 @@
             "etat": "This action is not possible from the status \"{etat}\".",
             "conflit": "It changed in the meantime.",
             "erreurServeur": "The server could not process it. Try again from its file.",
-            "inconnue": "The server refused this action."
+            "inconnue": "The server refused this action.",
+            "controle": "Not yet admissible: \"{controle}\" is not met.",
+            "controles": "An admission check is not met.",
+            "sansCompte": "This person has no account yet: no conversation is possible.",
+            "conversationPause": "Their application is paused: no conversation is possible.",
+            "conversationEtat": "Its status no longer allows writing in the application conversation.",
+            "elementNonPermis": "This item cannot be requested at its stage.",
+            "dejaEnvoye": "This same message was already sent to them by the management in the last 24 hours: it is not sent a second time."
           },
           "rapport": {
             "titre": "Result",
@@ -4319,7 +4443,18 @@
             "ligneExclue": "Excluded",
             "ligneRefusee": "Refused",
             "sansNom": "Application without a readable name"
-          }
+          },
+          "effetAdmettre": "The applications concerned move to the Verification and interview room. Each person with an address receives the email inviting them to the interview, and a notice in the app.",
+          "effetComplement": "Each application concerned waits for the same item. The person sees the request when opening the app: no email or notice is sent.",
+          "effetEcrire": "Each person concerned receives the same message in their conversation with the management. Nothing else changes.",
+          "motifCommunComplement": "The same item and the same reason apply to all the applications concerned.",
+          "element": "What is requested",
+          "elementAide": "A single item for the whole batch. If a stage does not allow it, the result will say so line by line.",
+          "elementManquant": "Choose what is requested.",
+          "message": "Message",
+          "messageAide": "The same message goes to each person concerned, on behalf of the management.",
+          "messageManquant": "Write the message.",
+          "elementAucunCommun": "No item can be requested at the stage of all these applications. Select applications from the same room."
         },
         "erreurs": {
           "titre": "Processing refused",
@@ -4327,9 +4462,13 @@
           "aucunEligible": "No application in the selection can receive this action. Nothing was done.",
           "nonGroupable": "This action cannot be done for several applications at once. Open each one's file to do it.",
           "cleReutilisee": "This request has already been used for another action. Close this window and start again.",
+          "cleReutiliseeEcrire": "The first sending may have gone out, with the previous message: its answer had not arrived. Open the candidates' conversations to check before starting again.",
+          "cleReutiliseeIncertaine": "The first sending may have gone out, with the previous choices: its answer had not arrived. Check the applications in the list before starting again.",
           "horsPortee": "An application in the selection is outside your access. Nothing was done. Refresh the preview.",
           "lectureApercu": "The preview could not be read. Nothing was done. Try again."
-        }
+        },
+        "ecrire": "Write",
+        "parTranche": "This action covers the first {n}, in list order. The other {reste} remain to be handled afterwards."
       },
       "titre": "Applications",
       "sousTitre": "Teaching applications, from invitation to the Ready-to-teach room.",
@@ -4401,12 +4540,18 @@
           "accord": "Agreement to be contacted",
           "accordDonne": "Agreement given",
           "accordAbsent": "Answered without agreement"
-        }
+        },
+        "dossier": "File",
+        "dossierComplet": "Nothing missing",
+        "dossierIncomplet": "Something missing",
+        "pilePraxis": "Praxis pile",
+        "etiquettePraxis": "Praxis label"
       },
       "tri": {
         "titre": "Sort by",
         "activite": "Last activity",
-        "reception": "Date received"
+        "reception": "Date received",
+        "anciennete": "Longest waiting"
       },
       "total": {
         "one": "{n} application",
@@ -4447,7 +4592,14 @@
         "phrase": "Choose the action to run on these applications.",
         "agir": "Act on the selection",
         "relacher": "Release all",
-        "horsLigne": "Actions can be run when the connection returns."
+        "horsLigne": "Actions can be run when the connection returns.",
+        "page": "Select this page",
+        "pageRetenue": {"one": "The application on this page is selected.", "other": "The {n} applications on this page are selected."},
+        "tous": {"one": "Select the result", "other": "Select all {n} results"},
+        "tousRetenus": {"one": "The filter's result is selected.", "other": "All {n} results of the filter are selected."},
+        "tousPlafond": "The first {plafond} results out of {n} are selected.",
+        "lectureTous": "Reading all results.",
+        "echecTous": "The results could not be read. The selection has not changed."
       },
       "vide": "No application yet",
       "videDetail": "An application appears here as soon as the person signs up through the website link or with an invitation.",
@@ -7216,7 +7368,8 @@
         "voirPlus": "Show the next files",
         "erreur": "Praxis's work could not be read. Try again in a moment.",
         "horsLigne": "Praxis's work is not loaded yet. Reload it.",
-        "permission": "Praxis's work is for the management only."
+        "permission": "Praxis's work is for the management only.",
+        "voirListe": "Handle these files in the list"
       },
       "avis": {
         "titre": "Praxis's opinion",
@@ -13017,6 +13170,9 @@
         "autre": "Other subject"
       },
       "panneau": {
+        "fichiersPartiels": "Only files from messages already loaded are listed.",
+        "fichiersAucunCharge": "No files in the messages already loaded; there are older messages.",
+        "chargerPrecedents": "Load earlier messages",
         "objets": "About",
         "participants": "Participants",
         "fichiers": "@:com.socle.lexique.fichiersPartages",
@@ -13030,7 +13186,11 @@
         }
       },
       "fil": {
-        "lectureSeule": "You can read this conversation. Replying is not open to you here."
+        "lectureSeule": "You can read this conversation. Replying is not open to you here.",
+        "anciensChargement": "Loading earlier messages",
+        "anciensEchec": "Earlier messages did not load.",
+        "refusFerme": "You can no longer write in this conversation.",
+        "refusTexte": "This message is empty or too long: 5,000 characters at most."
       },
       "images": {
         "joindre": "Attach an image",

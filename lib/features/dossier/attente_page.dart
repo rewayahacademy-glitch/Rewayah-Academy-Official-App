@@ -22,6 +22,7 @@ import '../../core/widgets/groupe_reglages.dart';
 import '../../core/widgets/lien_fleche.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/skeleton.dart';
+import '../candidature/accueil_candidat.dart';
 import '../candidature/carte_entretien_proche.dart';
 import '../candidature/pays_versement_portail.dart';
 import '../candidature/portail_candidature.dart';
@@ -140,6 +141,18 @@ class _AttentePageState extends ConsumerState<AttentePage> {
           unawaited(ref.read(sourceSessionProvider).rafraichir());
         }
       });
+    }
+    // PE-B4 (directeur, 19/11/2026, PARCOURS-ENSEIGNANT A9) : un candidat
+    // enseignant a son accueil a trois onglets (Dossier, Messages, Academie),
+    // dans `features/candidature`. La page ne lui garde que le compte suspendu.
+    // Familles, eleve adulte et compte sans candidature : la page d'avant,
+    // inchangee. « Candidat enseignant » se lit sur ce que le serveur rend (le
+    // dossier porte une candidature et n'est pas celui d'un titulaire de
+    // foyer), comme `candidatEnseignant` ci-dessus.
+    if (lu != null &&
+        candidature != null &&
+        lu.etape != EtapeDossier.suspendu) {
+      return AccueilCandidat(etat: etat, onRelire: _relire);
     }
     final ({String libelle, String chemin})? actionCand = vueCand
         ? prochaineCandidature(lu.candidature, dossier: lu)

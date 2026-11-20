@@ -17,6 +17,7 @@ import 'package:rewayah_academy/features/partage_offre/carte_partage.dart';
 
 import '../../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../../fixtures/partage_offre/faux_partage_offre.dart';
+import '../../support/destination_nav.dart';
 import '../../support/garde_interface.dart';
 import '../candidature/hote_candidature.dart';
 import 'hote_partage.dart';
@@ -41,7 +42,9 @@ Future<void> _portail(
   FauxGenrePartageur? lectureGenre,
 }) => monterPartage(
   tester,
-  depart: Routes.attente,
+  // PE-B4 (20/11/2026) : la tuile de partage vit dans l'onglet Academie de
+  // l'accueil du candidat.
+  depart: '${Routes.attente}?onglet=academie',
   candidature: candidature,
   sansLien: sansLien,
   taille: taille,
@@ -210,14 +213,19 @@ void main() {
       (WidgetTester tester) async {
         await _portail(tester, candidatureAFaire());
         verifierUnSeulBoutonPlein(tester);
-        final int pleins = find
+        // PE-B4 : la tuile vit dans l'onglet Academie, qui n'a aucun bouton
+        // plein ; l'unique action pleine reste sur l'onglet Dossier.
+        int pleins() => find
             .byWidgetPredicate(
               (Widget w) =>
                   w is ActionPrincipale && w.niveau == NiveauAction.principale,
             )
             .evaluate()
             .length;
-        expect(pleins, 1);
+        expect(pleins(), 0);
+        await tester.tap(destinationNav(t.recrutement.accueil.onglets.dossier));
+        await tester.pumpAndSettle();
+        expect(pleins(), 1);
         // En examen : aucune action pleine, la tuile n'en cree pas non plus.
         await _portail(tester, _enExamen);
         verifierUnSeulBoutonPlein(tester);
@@ -250,15 +258,22 @@ void main() {
       WidgetTester tester,
     ) async {
       await _portail(tester, candidatureAFaire());
+      // PE-B4 (20/11/2026) : l'etat et sa prochaine action sont sur l'onglet
+      // Dossier, sans la tuile ; elle vit dans l'onglet Academie, sous son
+      // titre. Depuis le 20/11 (directeur), les annonces et « A savoir » sont
+      // dans l'onglet Messages : la tuile ouvre l'onglet Academie.
       final double tuile = tester.getTopLeft(_cle('portail-partage')).dy;
       expect(
-        tester.getTopLeft(find.text(t.recrutement.portail.aCompleterTitre)).dy,
+        tester
+            .getBottomLeft(find.text(t.recrutement.accueil.academie.titre))
+            .dy,
         lessThan(tuile),
       );
-      expect(
-        tester.getBottomLeft(find.text(t.recrutement.portail.completer)).dy,
-        lessThan(tuile),
-      );
+      await tester.tap(destinationNav(t.recrutement.accueil.onglets.dossier));
+      await tester.pumpAndSettle();
+      expect(find.text(t.recrutement.portail.aCompleterTitre), findsOneWidget);
+      expect(find.text(t.recrutement.portail.completer), findsOneWidget);
+      expect(_cle('portail-partage'), findsNothing);
     });
 
     testWidgets('en pause : la tuile reste proposee', (

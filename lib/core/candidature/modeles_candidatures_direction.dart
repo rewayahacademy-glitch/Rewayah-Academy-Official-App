@@ -189,7 +189,7 @@ class ListesGestes {
   final List<String> codesClotureComplement;
 }
 
-/// Les trois clefs de tri que le serveur sait servir.
+/// Les clefs de tri que le serveur sait servir.
 enum TriCandidatures {
   /// La derniere activite d'abord (defaut du serveur).
   activite('activite'),
@@ -198,7 +198,11 @@ enum TriCandidatures {
   recente('recente'),
 
   /// Le nom, par ordre alphabetique.
-  nom('nom');
+  nom('nom'),
+
+  /// PE-LISTE-CANDIDATURES (20/11/2026) : la derniere activite la plus
+  /// ancienne d'abord (celle qui attend depuis le plus longtemps).
+  ancienne('ancienne');
 
   const TriCandidatures(this.valeurSql);
 
@@ -237,6 +241,9 @@ class FiltreCandidatures {
     this.joursMin,
     this.majorite,
     this.nouveau,
+    this.dossierComplet,
+    this.pilePraxis,
+    this.etiquettePraxis,
   });
 
   /// Le texte cherche : nom partiel, reference `CAND-` exacte, courriel exact.
@@ -326,6 +333,19 @@ class FiltreCandidatures {
   /// faux, les autres. Calcule au serveur.
   final bool? nouveau;
 
+  /// PE-LISTE-CANDIDATURES : vrai, le candidat n'a plus rien a fournir ;
+  /// faux, il lui manque au moins une chose. Calcule au serveur.
+  final bool? dossierComplet;
+
+  /// PE-LISTE-CANDIDATURES : la pile courante ou Praxis a range le dossier
+  /// (valeur du serveur : `pret_a_decider`, `incomplet`, `a_regarder`,
+  /// `sans_nouvelles`).
+  final String? pilePraxis;
+
+  /// PE-LISTE-CANDIDATURES : l'etiquette de l'impression courante de Praxis
+  /// (valeur du serveur : `pepite`, `solide`, `a_creuser`, `reserve`).
+  final String? etiquettePraxis;
+
   /// Le texte cherche, sans les blancs de bord.
   String get rechercheNette => recherche.trim();
 
@@ -374,7 +394,10 @@ class FiltreCandidatures {
       heureMax == null &&
       joursMin == null &&
       majorite == null &&
-      nouveau == null;
+      nouveau == null &&
+      dossierComplet == null &&
+      pilePraxis == null &&
+      etiquettePraxis == null;
 
   /// Le nombre d'axes poses (la recherche compte pour un).
   int get nombreAxes =>
@@ -401,7 +424,10 @@ class FiltreCandidatures {
       (heureMax == null ? 0 : 1) +
       (joursMin == null ? 0 : 1) +
       (majorite == null ? 0 : 1) +
-      (nouveau == null ? 0 : 1);
+      (nouveau == null ? 0 : 1) +
+      (dossierComplet == null ? 0 : 1) +
+      (pilePraxis == null ? 0 : 1) +
+      (etiquettePraxis == null ? 0 : 1);
 
   /// Le meme filtre, un axe change. Une fonction par axe rend `null` possible
   /// (« tous »).
@@ -430,6 +456,9 @@ class FiltreCandidatures {
     int? Function()? joursMin,
     String? Function()? majorite,
     bool? Function()? nouveau,
+    bool? Function()? dossierComplet,
+    String? Function()? pilePraxis,
+    String? Function()? etiquettePraxis,
   }) => FiltreCandidatures(
     recherche: recherche ?? this.recherche,
     etape: etape == null ? this.etape : etape(),
@@ -467,6 +496,13 @@ class FiltreCandidatures {
     joursMin: joursMin == null ? this.joursMin : joursMin(),
     majorite: majorite == null ? this.majorite : majorite(),
     nouveau: nouveau == null ? this.nouveau : nouveau(),
+    dossierComplet: dossierComplet == null
+        ? this.dossierComplet
+        : dossierComplet(),
+    pilePraxis: pilePraxis == null ? this.pilePraxis : pilePraxis(),
+    etiquettePraxis: etiquettePraxis == null
+        ? this.etiquettePraxis
+        : etiquettePraxis(),
   );
 
   /// Le meme filtre sans aucun axe : « Effacer les filtres ».
@@ -498,7 +534,10 @@ class FiltreCandidatures {
       other.heureMax == heureMax &&
       other.joursMin == joursMin &&
       other.majorite == majorite &&
-      other.nouveau == nouveau;
+      other.nouveau == nouveau &&
+      other.dossierComplet == dossierComplet &&
+      other.pilePraxis == pilePraxis &&
+      other.etiquettePraxis == etiquettePraxis;
 
   @override
   int get hashCode => Object.hashAll(<Object?>[
@@ -526,7 +565,55 @@ class FiltreCandidatures {
     joursMin,
     majorite,
     nouveau,
+    dossierComplet,
+    pilePraxis,
+    etiquettePraxis,
   ]);
+}
+
+/// « Selectionner les N resultats » (PE-LISTE-CANDIDATURES) : ce que le serveur
+/// rend pour le filtre en cours (`selection_resultats_file`). [total] est le
+/// nombre exact ; [ids] suit l'ordre de la liste et s'arrete a [plafond].
+@immutable
+class SelectionCandidatures {
+  /// Cree la selection.
+  const SelectionCandidatures({
+    required this.total,
+    required this.ids,
+    this.plafond = 1000,
+  });
+
+  /// Lit la reponse du serveur. Une reponse sans total ni liste est illisible.
+  factory SelectionCandidatures.depuisJson(Object? brut) {
+    if (brut is! Map) {
+      throw const FormatException('Selection attendue.');
+    }
+    final Object? total = brut['total'];
+    final Object? ids = brut['ids'];
+    if (total is! int || total < 0 || ids is! List) {
+      throw const FormatException('Selection illisible.');
+    }
+    return SelectionCandidatures(
+      total: total,
+      ids: List<String>.unmodifiable(<String>[
+        for (final Object? x in ids)
+          if (x is String && x.isNotEmpty) x,
+      ]),
+      plafond: brut['plafond'] is int ? brut['plafond'] as int : 1000,
+    );
+  }
+
+  /// Le nombre exact de resultats du filtre.
+  final int total;
+
+  /// Les identifiants, dans l'ordre de la liste, [plafond] au plus.
+  final List<String> ids;
+
+  /// Le nombre d'identifiants que le serveur rend au plus.
+  final int plafond;
+
+  /// Vrai : tous les resultats sont dans [ids].
+  bool get complete => ids.length >= total;
 }
 
 /// La requete d'une page de la file : le filtre, le tri et la page (a partir de

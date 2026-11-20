@@ -237,10 +237,7 @@ void main() {
     );
     await tester.pumpAndSettle();
     expect(
-      find.descendant(
-        of: _bulle('p1'),
-        matching: find.byType(ImagePraxis),
-      ),
+      find.descendant(of: _bulle('p1'), matching: find.byType(ImagePraxis)),
       findsOneWidget,
     );
     expect(
