@@ -480,10 +480,11 @@ void main() {
 
     for (final (Key, String, String) cas in <(Key, String, String)>[
       (
-        // La carte du dessus : la plus ancienne de la file, lue en entier.
+        // La carte du dessus : la plus ancienne de la file (tri du serveur) ;
+        // le dossier garde la file et son tri pour proposer le suivant.
         CasePieces.cleCarte,
         'carte de la pile (le dossier de la personne, dans sa file)',
-        '/admin/personnes/candidatures/RA-26-6031?issue=enCours&pause=non&piece=oui&depuis=liste',
+        '/admin/personnes/candidatures/RA-26-6031?issue=enCours&pause=non&piece=oui&tri=ancienne&depuis=liste',
       ),
       (
         CasePieces.cleNombre,
@@ -1041,8 +1042,8 @@ void main() {
               ),
             ))
               a.prenom,
-          ],
-          <String>['Page Une', 'Page Deux'],
+          ]..sort(),
+          <String>['Page Deux', 'Page Une'],
         );
         expect(
           find.byKey(

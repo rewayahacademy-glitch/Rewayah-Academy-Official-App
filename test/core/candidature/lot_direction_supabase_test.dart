@@ -207,11 +207,16 @@ void main() {
         'refuser',
       );
       expect(GesteLot.depuisGeste(GesteCandidature.refuser), GesteLot.refuser);
-      // Les autres gestes ne se groupent pas : aucune valeur de lot.
+      // PE-LISTE-CANDIDATURES : l'admission se groupe desormais.
       expect(
         GesteLot.depuisGeste(GesteCandidature.admettreVerifications),
-        isNull,
+        GesteLot.admettre,
       );
+      expect(
+        parametresApercuLot(GesteLot.admettre, <String>['c1']).$2['p_geste'],
+        'admettre',
+      );
+      // Les autres gestes ne se groupent pas : aucune valeur de lot.
       expect(GesteLot.depuisGeste(GesteCandidature.rouvrir), isNull);
       expect(GesteLot.depuisSql('mettre_en_pause'), GesteLot.mettreEnPause);
     });
