@@ -3471,7 +3471,7 @@ class _Traductions$connexion$praxis$en extends Traductions$connexion$praxis$fr {
 	@override String get tropEssais => 'Too many requests at once. A short break.';
 	@override String get horsLigne => 'No Internet connection.';
 	@override String get retourLigne => 'The connection is back.';
-	@override String get reseauLent => 'The network is slow. I keep sending.';
+	@override String get reseauLent => 'This is taking a little while. I keep sending.';
 	@override String get serveur => 'It is not you, it is us.';
 	@override String get googleOuverte => 'Choose your Google account.';
 	@override String get googleRefuse => 'This account has no invitation yet.';
@@ -29734,7 +29734,7 @@ extension on TraductionsEn {
 			'connexion.praxis.tropEssais' => 'Too many requests at once. A short break.',
 			'connexion.praxis.horsLigne' => 'No Internet connection.',
 			'connexion.praxis.retourLigne' => 'The connection is back.',
-			'connexion.praxis.reseauLent' => 'The network is slow. I keep sending.',
+			'connexion.praxis.reseauLent' => 'This is taking a little while. I keep sending.',
 			'connexion.praxis.serveur' => 'It is not you, it is us.',
 			'connexion.praxis.googleOuverte' => 'Choose your Google account.',
 			'connexion.praxis.googleRefuse' => 'This account has no invitation yet.',

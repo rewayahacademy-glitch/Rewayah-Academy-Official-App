@@ -9235,7 +9235,7 @@ class _Traductions$connexion$praxis$ar extends Traductions$connexion$praxis$fr {
 	@override String get tropEssais => 'طلبات كثيرة دفعة واحدة. لنسترح قليلًا';
 	@override String get horsLigne => 'انقطع الاتصال بالإنترنت';
 	@override String get retourLigne => 'عاد الاتصال';
-	@override String get reseauLent => 'الشبكة بطيئة. ما زلت أحاول الإرسال';
+	@override String get reseauLent => 'يأخذ الأمر بعض الوقت. ما زلت أحاول الإرسال';
 	@override String get serveur => 'الخطأ من عندنا، لا من عندك';
 	@override String get googleOuverte => 'اختر حسابك في Google';
 	@override String get googleRefuse => 'هذا الحساب لم تصله دعوة بعد';
@@ -39454,7 +39454,7 @@ extension on TraductionsAr {
 			'connexion.praxis.tropEssais' => 'طلبات كثيرة دفعة واحدة. لنسترح قليلًا',
 			'connexion.praxis.horsLigne' => 'انقطع الاتصال بالإنترنت',
 			'connexion.praxis.retourLigne' => 'عاد الاتصال',
-			'connexion.praxis.reseauLent' => 'الشبكة بطيئة. ما زلت أحاول الإرسال',
+			'connexion.praxis.reseauLent' => 'يأخذ الأمر بعض الوقت. ما زلت أحاول الإرسال',
 			'connexion.praxis.serveur' => 'الخطأ من عندنا، لا من عندك',
 			'connexion.praxis.googleOuverte' => 'اختر حسابك في Google',
 			'connexion.praxis.googleRefuse' => 'هذا الحساب لم تصله دعوة بعد',

@@ -6569,8 +6569,8 @@ class Traductions$connexion$praxis$fr {
 	/// fr: 'La connexion est revenue.'
 	String get retourLigne => 'La connexion est revenue.';
 
-	/// fr: 'Le réseau est lent. Je continue d'envoyer.'
-	String get reseauLent => 'Le réseau est lent. Je continue d\'envoyer.';
+	/// fr: 'Ça prend un peu de temps. Je continue d'envoyer.'
+	String get reseauLent => 'Ça prend un peu de temps. Je continue d\'envoyer.';
 
 	/// fr: 'Ce n'est pas vous, c'est nous.'
 	String get serveur => 'Ce n\'est pas vous, c\'est nous.';
@@ -57878,7 +57878,7 @@ extension on Traductions {
 			'connexion.praxis.tropEssais' => 'Trop de demandes d\'un coup. Une petite pause.',
 			'connexion.praxis.horsLigne' => 'Plus de connexion Internet.',
 			'connexion.praxis.retourLigne' => 'La connexion est revenue.',
-			'connexion.praxis.reseauLent' => 'Le réseau est lent. Je continue d\'envoyer.',
+			'connexion.praxis.reseauLent' => 'Ça prend un peu de temps. Je continue d\'envoyer.',
 			'connexion.praxis.serveur' => 'Ce n\'est pas vous, c\'est nous.',
 			'connexion.praxis.googleOuverte' => 'Choisissez votre compte Google.',
 			'connexion.praxis.googleRefuse' => 'Ce compte n\'a pas encore d\'invitation.',

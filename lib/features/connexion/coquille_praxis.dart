@@ -330,14 +330,23 @@ class CoquillePraxisState extends State<CoquillePraxis>
     );
   }
 
+  /// Le decor : la porte du logo (la marque de la page, annoncee par son
+  /// nom : il n'y a plus de logo horizontal en tete, la porte le remplace),
+  /// sa lumiere et la route.
   Widget _decor() => RepaintBoundary(
     child: Semantics(
-      image: true,
-      label: t.connexion.praxis.scene,
-      child: CustomPaint(
-        key: _cleDecor,
-        painter: DecorPeintre(regie.th),
-        child: const SizedBox.expand(),
+      key: const ValueKey<String>('entree-marque'),
+      container: true,
+      label: t.commun.marque,
+      child: Semantics(
+        container: true,
+        image: true,
+        label: t.connexion.praxis.scene,
+        child: CustomPaint(
+          key: _cleDecor,
+          painter: DecorPeintre(regie.th),
+          child: const SizedBox.expand(),
+        ),
       ),
     ),
   );
