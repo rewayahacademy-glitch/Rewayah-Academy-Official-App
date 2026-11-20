@@ -3139,6 +3139,13 @@
         "photoDetail": "Une photo de vous, de face. Elle sert à vous présenter aux familles, seulement avec votre accord.",
         "reponsesDetail": "Vos langues, votre récitation, vos disponibilités et votre versement. Vous pouvez enregistrer et revenir plus tard."
       },
+      "praxis": {
+        "pieceRefusee": "Votre pièce d'identité n'a pas été acceptée. Déposez-en une nouvelle.",
+        "reste(plural, param=n)": {
+          "one": "Il reste {n} élément à terminer dans votre dossier.",
+          "other": "Il reste {n} éléments à terminer dans votre dossier."
+        }
+      },
       "annonce": {
         "ligne": "Nouveau\u00a0: {titre}",
         "ranger": "Ranger l'annonce : {titre}",

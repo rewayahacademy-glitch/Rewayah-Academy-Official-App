@@ -3139,6 +3139,13 @@
         "photoDetail": "A photo of you, facing the camera. It introduces you to families, only with your consent.",
         "reponsesDetail": "Your languages, your recitation, your availability and your payout. You can save and come back later."
       },
+      "praxis": {
+        "pieceRefusee": "Your identity document was not accepted. Please upload a new one.",
+        "reste(plural, param=n)": {
+          "one": "{n} item is still to be completed in your file.",
+          "other": "{n} items are still to be completed in your file."
+        }
+      },
       "annonce": {
         "ligne": "New: {titre}",
         "ranger": "Put away the announcement: {titre}",

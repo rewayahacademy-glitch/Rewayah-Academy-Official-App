@@ -11537,6 +11537,7 @@ class _Traductions$recrutement$accueil$ar extends Traductions$recrutement$accuei
 	@override late final _Traductions$recrutement$accueil$etapes$ar etapes = _Traductions$recrutement$accueil$etapes$ar._(_root);
 	@override late final _Traductions$recrutement$accueil$aFaire$ar aFaire = _Traductions$recrutement$accueil$aFaire$ar._(_root);
 	@override late final _Traductions$recrutement$accueil$lignes$ar lignes = _Traductions$recrutement$accueil$lignes$ar._(_root);
+	@override late final _Traductions$recrutement$accueil$praxis$ar praxis = _Traductions$recrutement$accueil$praxis$ar._(_root);
 	@override late final _Traductions$recrutement$accueil$annonce$ar annonce = _Traductions$recrutement$accueil$annonce$ar._(_root);
 	@override late final _Traductions$recrutement$accueil$etat$ar etat = _Traductions$recrutement$accueil$etat$ar._(_root);
 	@override late final _Traductions$recrutement$accueil$messages$ar messages = _Traductions$recrutement$accueil$messages$ar._(_root);
@@ -22356,6 +22357,24 @@ class _Traductions$recrutement$accueil$lignes$ar extends Traductions$recrutement
 	@override String get pieceDetail => 'صورة واضحة لجواز سفرك أو بطاقة هويتك، سارية الصلاحية. مثال: الصفحة التي فيها صورتك، كاملة ومن غير انعكاس.';
 	@override String get photoDetail => 'صورة لك من الأمام. تُعرَّف بها للأسر، بموافقتك فقط.';
 	@override String get reponsesDetail => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.';
+}
+
+// Path: recrutement.accueil.praxis
+class _Traductions$recrutement$accueil$praxis$ar extends Traductions$recrutement$accueil$praxis$fr {
+	_Traductions$recrutement$accueil$praxis$ar._(TraductionsAr root) : this._root = root, super.internal(root);
+
+	final TraductionsAr _root; // ignore: unused_field
+
+	// Translations
+	@override String get pieceRefusee => 'لم تُقبل وثيقة هويتك. أرسل وثيقة جديدة.';
+	@override String reste({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
+		zero: 'لم يبقَ شيء في ملفك.',
+		one: 'بقي عنصر واحد لإتمام ملفك.',
+		two: 'بقي عنصران لإتمام ملفك.',
+		few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.',
+		many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.',
+		other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.',
+	);
 }
 
 // Path: recrutement.accueil.annonce
@@ -41519,6 +41538,8 @@ extension on TraductionsAr {
 			'recrutement.accueil.lignes.pieceDetail' => 'صورة واضحة لجواز سفرك أو بطاقة هويتك، سارية الصلاحية. مثال: الصفحة التي فيها صورتك، كاملة ومن غير انعكاس.',
 			'recrutement.accueil.lignes.photoDetail' => 'صورة لك من الأمام. تُعرَّف بها للأسر، بموافقتك فقط.',
 			'recrutement.accueil.lignes.reponsesDetail' => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.',
+			'recrutement.accueil.praxis.pieceRefusee' => 'لم تُقبل وثيقة هويتك. أرسل وثيقة جديدة.',
+			'recrutement.accueil.praxis.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ شيء في ملفك.', one: 'بقي عنصر واحد لإتمام ملفك.', two: 'بقي عنصران لإتمام ملفك.', few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.', many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.', other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.', ), 
 			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'جديد: ⁨${titre}⁩',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩',
 			'recrutement.accueil.annonce.rangee' => 'نُقل الإعلان إلى تبويب الأكاديمية.',
@@ -41654,10 +41675,10 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.ps' => 'البشتو',
 			'recrutement.parcours.langues.ur' => 'الأردية',
 			'recrutement.parcours.langues.om' => 'الأورومو',
-			'recrutement.parcours.langues.am' => 'الأمهرية',
-			'recrutement.parcours.langues.yo' => 'اليوروبا',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.langues.am' => 'الأمهرية',
+			'recrutement.parcours.langues.yo' => 'اليوروبا',
 			'recrutement.parcours.langues.bn' => 'البنغالية',
 			'recrutement.parcours.langues.fa' => 'الفارسية',
 			'recrutement.parcours.langues.id' => 'الإندونيسية',
@@ -42168,10 +42189,10 @@ extension on TraductionsAr {
 			'argent.transparence.posteSemantique' => ({required Object poste, required Object part}) => '⁨${poste}⁩: ⁨${part}⁩ من دفعة الطالب',
 			'argent.transparence.estimation' => ({required Object enfants, required Object adultes}) => 'هذه النسب تقدير، محسوب على أساس ⁨${enfants}⁩ طفلًا و⁨${adultes}⁩ بالغًا، كلٌّ منهم بالسعر الكامل وحاضر في كل حصة. وتُراجَع مع كل إصدار جديد للأسعار.',
 			'argent.transparence.magasinsTitre' => 'لماذا لا يوجد التطبيق على App Store ولا على Google Play',
-			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
-			'argent.transparence.taxesTitre' => 'الضرائب',
 			_ => null,
 		} ?? switch (path) {
+			'argent.transparence.magasinsPhrase' => 'تأخذ هذه المتاجر من 15 إلى 30 ٪ من كل دفعة. ولا تستطيع الأكاديمية تحمّل هذه الرسوم دون رفع أسعارها. لذلك يتم الدفع عبر الويب.',
+			'argent.transparence.taxesTitre' => 'الضرائب',
 			'argent.transparence.taxesPhrase' => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.',
 			'argent.transparence.hausseTitre' => 'قد ترتفع الأسعار',
 			'argent.transparence.haussePhrase' => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.',
@@ -42682,10 +42703,10 @@ extension on TraductionsAr {
 			'admissions.etat.refusee' => 'مرفوض',
 			'admissions.etat.retiree' => 'مسحوب',
 			'admissions.accepter' => ({required Object deNom}) => 'قبول طلب ⁨${deNom}⁩',
-			'admissions.accepterConsequence' => 'يُفتح حسابه وتُرسل فورًا رسالة «قُبل طلبك». تُنشأ ملفات الأطفال عند أول دخول له، بإجابات الطلب.',
-			'admissions.demanderPrecisions' => 'طلب توضيحات',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.accepterConsequence' => 'يُفتح حسابه وتُرسل فورًا رسالة «قُبل طلبك». تُنشأ ملفات الأطفال عند أول دخول له، بإجابات الطلب.',
+			'admissions.demanderPrecisions' => 'طلب توضيحات',
 			'admissions.contacter' => ({required Object nom}) => 'الكتابة إلى ⁨${nom}⁩',
 			'admissions.refuser' => 'رفض الطلب',
 			'admissions.refuserContexte' => 'اختر الجملة التي سيتلقاها الشخص، ثم اكتب السبب للإدارة. لا يرى الشخص السبب أبدًا.',
@@ -43196,10 +43217,10 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.titre' => 'لا حصيلة للمقارنة',
 			'candidatsFlux.importFormulaires.comptes.attendus.aucun.description' => 'تؤكدون بالاعتماد على المعاينة.',
 			'candidatsFlux.importFormulaires.comptes.attendus.lignes' => 'الأسطر المتوقعة',
-			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'الأشخاص المتوقعون',
-			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.comptes.attendus.personnes' => 'الأشخاص المتوقعون',
+			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.',
 			'candidatsFlux.importFormulaires.comptes.choisir' => 'حدّدوا الحصيلة التي تقارنون بها للمتابعة.',
 			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.',
 			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'فرق يحتاج إلى تحقق',
@@ -43710,10 +43731,10 @@ extension on TraductionsAr {
 			'calendrier.dates.notification.annoncee.une' => ({required Object du, required Object au, required Object quand}) => 'الأكاديمية مغلقة من ⁨${du}⁩ إلى ⁨${au}⁩. لن تُعقد الحصة المقررة في ⁨${quand}⁩.',
 			'calendrier.dates.notification.annoncee.plusieurs' => ({required Object du, required Object au, required Object n, required Object quand}) => 'الأكاديمية مغلقة من ⁨${du}⁩ إلى ⁨${au}⁩. الحصص التي لن تُعقد: ⁨${n}⁩، ومنها حصة ⁨${quand}⁩.',
 			'calendrier.dates.notification.levee.une' => ({required Object quand}) => 'سُحب إغلاق الأكاديمية. أُعيدت الحصة المقررة في ⁨${quand}⁩.',
-			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'سُحب إغلاق الأكاديمية. الحصص المُعادة: ⁨${n}⁩، ومنها حصة ⁨${quand}⁩.',
-			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'سُحب إغلاق الأكاديمية، لكن الحصة المقررة في ⁨${quand}⁩ لن تُعقد.',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.dates.notification.levee.plusieurs' => ({required Object n, required Object quand}) => 'سُحب إغلاق الأكاديمية. الحصص المُعادة: ⁨${n}⁩، ومنها حصة ⁨${quand}⁩.',
+			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'سُحب إغلاق الأكاديمية، لكن الحصة المقررة في ⁨${quand}⁩ لن تُعقد.',
 			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'سُحب إغلاق الأكاديمية، لكن بعض الحصص لن تُعقد: ⁨${n}⁩، ومنها حصة ⁨${quand}⁩.',
 			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'سُحب إغلاق الأكاديمية. الحصص المُعادة: ⁨${retablies}⁩. الحصص التي لن تُعقد: ⁨${abandonnees}⁩. افتح الفصل لرؤيتها.',
 			'calendrier.dates.concernees.titre' => 'الحصص المعنية',

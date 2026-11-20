@@ -29,6 +29,7 @@ import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_radius.dart';
 import '../../core/theme/app_spacing.dart';
+import '../../core/vivant/praxis_vivant.dart';
 import '../../core/vivant/ressort.dart';
 import '../../core/vivant/toucher_vivant.dart';
 import '../../core/widgets/action_principale.dart';
@@ -199,6 +200,12 @@ class OngletDossier extends ConsumerWidget {
           CarteReprise(candidature: c),
         ] else if (!lu.fermee) ...<Widget>[
           Ecart.vLg,
+          // Praxis, en petit : UNE information urgente, ou rien.
+          if (PraxisDuDossier.urgence(dossier, lu)
+              case final String urgent) ...[
+            PraxisDuDossier(phrase: urgent, soucieux: pieceRefusee(dossier)),
+            Ecart.vMd,
+          ],
           // UN seul « a faire maintenant », ou « rien a faire ».
           if (action != null)
             CarteAFaire(
@@ -427,6 +434,73 @@ class _EtatCarteAFaire extends State<CarteAFaire>
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Praxis sur l'accueil du candidat (directeur, 20/11/2026) : present, en
+/// plus petit que sur les autres ecrans, pour pointer UNE information
+/// urgente. Il ne dit que des faits rendus par le serveur pour ce candidat ;
+/// rien quand il n'y a rien a dire. Le dessin est celui de `PraxisVivant`
+/// (reference de la competence praxis-rewayah), employe sans le modifier ;
+/// il se tait seul, et ne bouge pas sous « Reduire les effets ».
+class PraxisDuDossier extends StatelessWidget {
+  /// Cree la ligne. [soucieux] : un blocage a signaler.
+  const PraxisDuDossier({
+    required this.phrase,
+    super.key,
+    this.soucieux = false,
+  });
+
+  /// Ce qu'il dit : un fait, en une phrase.
+  final String phrase;
+
+  /// Vrai quand l'information est un blocage.
+  final bool soucieux;
+
+  /// La cle de la ligne.
+  static const Key cle = ValueKey<String>('dossier-praxis');
+
+  /// La largeur de Praxis ici (120 ailleurs).
+  static const double taille = AppSpacing.section;
+
+  /// L'information la plus urgente de [d], ou `null` quand il n'y a rien a
+  /// dire. Dans l'ordre : une piece refusee, puis ce qui reste a terminer.
+  static String? urgence(EtatDossier d, LectureDossier lu) {
+    if (lu.fermee || lu.retiree) return null;
+    final p = t.recrutement.accueil.praxis;
+    if (pieceRefusee(d)) return p.pieceRefusee;
+    final int reste = lu.lignes
+        .where((LigneDossier l) => l.etat == EtatLigne.aFaire)
+        .length;
+    return reste > 0 ? p.reste(n: reste) : null;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
+    return Row(
+      key: cle,
+      children: <Widget>[
+        ExcludeSemantics(
+          child: PraxisVivant(
+            taille: taille,
+            // Pose a sa place : a cette taille, une chute passerait sur la
+            // ligne d'etapes.
+            tombe: false,
+            humeur: soucieux ? HumeurPraxis.soucieux : HumeurPraxis.calme,
+          ),
+        ),
+        Ecart.hMd,
+        Expanded(
+          child: Text(
+            phrase,
+            style: palette.inkStrong.applyTo(
+              Theme.of(context).textTheme.bodyMedium ?? const TextStyle(),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

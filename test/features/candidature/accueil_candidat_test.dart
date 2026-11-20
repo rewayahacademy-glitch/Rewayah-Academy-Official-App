@@ -606,6 +606,29 @@ void main() {
       );
     });
 
+    testWidgets('Praxis : une seule information, un fait du dossier ; rien '
+        'quand il n y a rien a dire', (WidgetTester tester) async {
+      // Deux elements restent : il le dit.
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        accordsFaits: false,
+        pieceDeposee: false,
+      );
+      expect(find.byKey(PraxisDuDossier.cle), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byKey(PraxisDuDossier.cle),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+      );
+      await tester.pumpWidget(const SizedBox.shrink());
+      // Une candidature retiree : il n'a rien a dire, il n'est pas la.
+      await _accueil(tester, _retiree, reprise: _Reprise(_repriseOuverte()));
+      expect(find.byKey(PraxisDuDossier.cle), findsNothing);
+    });
+
     testWidgets('un seul « a faire maintenant », avec son seul bouton', (
       WidgetTester tester,
     ) async {
@@ -1199,6 +1222,30 @@ void main() {
       await tester.ensureVisible(find.byKey(OngletDossier.cleDetail('piece')));
       await tester.pumpAndSettle();
       await capturerVue(tester, '$d/etat-contenu-ligne-depliee');
+    });
+
+    // Praxis s'endort apres vingt secondes sans geste (regle de la brique) :
+    // les autres captures, prises apres l'attente du banc, le montrent
+    // endormi. Celle-ci le montre a l'arrivee, eveille.
+    testWidgets('dossier a l arrivee, Praxis eveille', (
+      WidgetTester tester,
+    ) async {
+      await monter(
+        tester,
+        langue: AppLocale.fr,
+        theme: ThemeMode.light,
+        taille: const Size(390, 844),
+        accordsFaits: false,
+        attendre: false,
+      );
+      await tester.pump();
+      // Deux secondes et demie : tout est pose, Praxis est eveille.
+      for (int i = 0; i < 25; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(find.byKey(PraxisDuDossier.cle), findsOneWidget);
+      await capturerVue(tester, '$d/dossier-390-arrivee-praxis');
+      await tester.pumpAndSettle();
     });
 
     testWidgets('etat rien a faire', (WidgetTester tester) async {
