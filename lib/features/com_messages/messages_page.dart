@@ -50,6 +50,7 @@ import 'barre_conversation.dart';
 import 'fil_contextuel.dart';
 import 'images_du_fil.dart';
 import 'liste_fils.dart';
+import 'memoire_pages_fil.dart';
 import 'panneau_contexte_fil.dart';
 import 'port_messages_metier.dart';
 import 'recherche_fils.dart';
@@ -241,12 +242,40 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
 
   PortMessagesMetier get _port => ref.read(portMessagesMetierProvider);
 
+  /// PE-D1 : la memoire des messages du fil ouvert, partagee par le fil et le
+  /// panneau de contexte ; une nouvelle a chaque fil.
+  MemoirePagesFil? _memoire;
+
+  MemoirePagesFil _memoireDe(FilMetier fil) {
+    final MemoirePagesFil? actuelle = _memoire;
+    if (actuelle != null && _memoireFil == fil.id) {
+      return actuelle..recevoir(fil);
+    }
+    // L'ancienne est liberee apres l'image : le fil qui l'ecoute se demonte.
+    if (actuelle != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) => actuelle.dispose());
+    }
+    _memoireFil = fil.id;
+    return _memoire = MemoirePagesFil(
+      lire: switch (_port) {
+        final PortPagesFil pages => (String avantId) => pages.messagesAvant(
+          fil.id,
+          avantId,
+        ),
+        _ => null,
+      },
+    )..recevoir(fil);
+  }
+
+  String? _memoireFil;
+
   /// MESSAGERIE-TEMPS-REEL : le porteur du fil a l'ecran, garde pour le
   /// fermer au demontage (le `ref` n'y est plus lisible).
   late final FilAfficheControleur _filAffiche;
 
   @override
   void dispose() {
+    _memoire?.dispose();
     for (final ActionAnticipee a in _lectures.values) {
       a.dispose();
     }
@@ -406,10 +435,18 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
     }
   }
 
-  Future<void> _envoyer(String filId, String texte, String cle) async {
-    await _port.envoyer(filId, texte, cle);
+  /// PE-D1 : [port] est lu a la construction du fil, pas a l'envoi : un
+  /// reessai automatique peut partir apres que la page a ete quittee (le
+  /// `ref` n'y est plus lisible), et doit aboutir quand meme.
+  Future<void> _envoyer(
+    PortMessagesMetier port,
+    String filId,
+    String texte,
+    String cle,
+  ) async {
+    await port.envoyer(filId, texte, cle);
     // L'apercu et l'ordre de la liste suivent le message confirme.
-    unawaited(_chargerListe(silencieux: true));
+    if (mounted) unawaited(_chargerListe(silencieux: true));
   }
 
   /// L'envoi d'un vocal (COM-FUS) : par le port des vocaux (COM-BR-03),
@@ -516,6 +553,7 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
           : PanneauContexteFil(
               key: ValueKey<String>('panneau-${fil.id}'),
               fil: fil,
+              memoire: _memoireDe(fil),
               onOuvrirObjet: widget.onOuvrirObjet,
             ),
     );
@@ -612,16 +650,17 @@ class _EspaceMessagesMetierState extends ConsumerState<EspaceMessagesMetier> {
               .value
               ?.peut(CapaciteCommunication.ecrireDansFil) ??
           false,
-      onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
+      onEnvoyer: switch (_port) {
+        final PortMessagesMetier port => (String texte, String cle) => _envoyer(
+          port,
+          fil.id,
+          texte,
+          cle,
+        ),
+      },
       // PE-D1 : les messages plus anciens se chargent en remontant, si le port
       // sait lire par pages.
-      onPlusAnciens: switch (_port) {
-        final PortPagesFil pages => (String avantId) => pages.messagesAvant(
-          fil.id,
-          avantId,
-        ),
-        _ => null,
-      },
+      memoire: _memoireDe(fil),
       onRetour: widget.onRetourFil,
       pleinEcran: widget.pleinEcran,
       images: imagesDuFil(ref, fil.id).source,

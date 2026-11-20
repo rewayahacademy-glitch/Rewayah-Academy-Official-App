@@ -54,6 +54,7 @@ import '../com_vocal/port_enregistreur_vocal.dart';
 import 'barre_conversation.dart';
 import 'entete_fil_contexte.dart';
 import 'liens_message_staff.dart';
+import 'memoire_pages_fil.dart';
 import 'port_messages_metier.dart';
 
 /// La cle du brouillon du champ d'un fil metier.
@@ -81,7 +82,13 @@ class FilContextuel extends StatefulWidget {
     this.onFermer,
     this.barreFixe = false,
     this.onPlusAnciens,
+    this.memoire,
   });
+
+  /// PE-D1 : la memoire des messages de la conversation, partagee avec le
+  /// panneau de contexte (« Fichiers partages ») ; `null` : le fil a la sienne,
+  /// qui lit les pages anciennes par [onPlusAnciens].
+  final MemoirePagesFil? memoire;
 
   /// PE-D1 (chargement par pages) : les messages qui precedent le message
   /// [avantId] (le plus ancien montre), ou `null` : le fil rendu est entier.
@@ -173,11 +180,13 @@ class _FilContextuelState extends State<FilContextuel>
   final Map<String, String> _localParCleServeur = <String, String>{};
   int _compteur = 0;
 
-  /// PE-D1 : les messages plus anciens deja charges en remontant, et s'il en
-  /// reste ; `null` tant qu'aucune page precedente n'a ete lue (le fil rendu
-  /// le dit alors).
-  final List<MessageCommunication> _anciens = <MessageCommunication>[];
-  bool? _plusAnciensCharges;
+  /// PE-D1 : la memoire des messages de la conversation ouverte (pages
+  /// anciennes, et messages sortis de la page la plus recente a une
+  /// relecture) : celle de la page, ou la sienne.
+  MemoirePagesFil? _memoirePropre;
+  MemoirePagesFil get _memoire =>
+      widget.memoire ??
+      (_memoirePropre ??= MemoirePagesFil(lire: widget.onPlusAnciens));
 
   String _cleDe(String idLocal) => _cles.putIfAbsent(idLocal, () {
     final String cle =
@@ -187,36 +196,19 @@ class _FilContextuelState extends State<FilContextuel>
     return cle;
   });
 
-  /// Tous les messages connus : les pages anciennes, puis le fil rendu ; un
-  /// message n'y figure qu'une fois.
-  List<MessageCommunication> get _tousLesMessages {
-    if (_anciens.isEmpty) return widget.fil.messages;
-    final Set<String> recents = <String>{
-      for (final MessageCommunication m in widget.fil.messages) m.id,
-    };
-    return <MessageCommunication>[
-      for (final MessageCommunication m in _anciens)
-        if (!recents.contains(m.id)) m,
-      ...widget.fil.messages,
-    ];
-  }
+  /// Tous les messages connus, sans doublon : aucun message deja affiche ne
+  /// quitte l'ecran tant que la conversation est ouverte.
+  List<MessageCommunication> get _tousLesMessages =>
+      (_memoire..recevoir(widget.fil)).messages;
 
-  bool get _plusAnciens => _plusAnciensCharges ?? widget.fil.plusAnciens;
+  bool get _plusAnciens => (_memoire..recevoir(widget.fil)).plusAnciens;
 
-  Future<void> _chargerAnciens() async {
-    final Future<PageMessagesFil> Function(String)? charger =
-        widget.onPlusAnciens;
-    final List<MessageCommunication> connus = _tousLesMessages;
-    if (charger == null || connus.isEmpty) return;
-    final PageMessagesFil page = await charger(connus.first.id);
-    if (!mounted) return;
-    setState(() {
-      _anciens.insertAll(0, <MessageCommunication>[
-        for (final MessageCommunication m in page.messages)
-          if (!connus.any((MessageCommunication c) => c.id == m.id)) m,
-      ]);
-      _plusAnciensCharges = page.plusAnciens;
-    });
+  bool get _litParPages => _memoire.lire != null;
+
+  Future<void> _chargerAnciens() => _memoire.chargerAnciens();
+
+  void _surMemoire() {
+    if (mounted) setState(() {});
   }
 
   /// Les cles des vocaux de ce fil, une par vocal (COM-BR-02).
@@ -259,6 +251,21 @@ class _FilContextuelState extends State<FilContextuel>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    _memoire
+      ..recevoir(widget.fil)
+      ..addListener(_surMemoire);
+  }
+
+  @override
+  void didUpdateWidget(FilContextuel ancien) {
+    super.didUpdateWidget(ancien);
+    if (!identical(ancien.memoire, widget.memoire)) {
+      (ancien.memoire ?? _memoirePropre)?.removeListener(_surMemoire);
+      _memoire.addListener(_surMemoire);
+    }
+    // PE-D1 : la relecture ne rend que la page la plus recente ; les messages
+    // qui en sortent restent dans la memoire.
+    _memoire.recevoir(widget.fil);
   }
 
   @override
@@ -269,6 +276,8 @@ class _FilContextuelState extends State<FilContextuel>
 
   @override
   void dispose() {
+    _memoire.removeListener(_surMemoire);
+    _memoirePropre?.dispose();
     WidgetsBinding.instance.removeObserver(this);
     _defilement.dispose();
     super.dispose();
@@ -367,9 +376,7 @@ class _FilContextuelState extends State<FilContextuel>
             onNotification: _surDefilement,
             child: FilDiscussion(
               plusAnciens: _plusAnciens,
-              onPlusAnciens: widget.onPlusAnciens == null
-                  ? null
-                  : _chargerAnciens,
+              onPlusAnciens: _litParPages ? _chargerAnciens : null,
               pleinEcran: true,
               afficherAuteur: _estGroupe,
               defilement: _defilement,
@@ -444,7 +451,7 @@ class _FilContextuelState extends State<FilContextuel>
       // Lecture seule : le meme fil, sans champ ; la phrase dit la limite.
       return FilDiscussion(
         plusAnciens: _plusAnciens,
-        onPlusAnciens: widget.onPlusAnciens == null ? null : _chargerAnciens,
+        onPlusAnciens: _litParPages ? _chargerAnciens : null,
         afficherAuteur: _estGroupe,
         prendTeteDePage: _prendTete,
         defilement: _defilement,
@@ -465,7 +472,7 @@ class _FilContextuelState extends State<FilContextuel>
         widget.onEnvoyerVocal;
     return FilDiscussion(
       plusAnciens: _plusAnciens,
-      onPlusAnciens: widget.onPlusAnciens == null ? null : _chargerAnciens,
+      onPlusAnciens: _litParPages ? _chargerAnciens : null,
       afficherAuteur: _estGroupe,
       prendTeteDePage: _prendTete,
       defilement: _defilement,

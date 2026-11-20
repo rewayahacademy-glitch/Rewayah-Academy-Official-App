@@ -1106,6 +1106,10 @@ class _FilDiscussionState extends State<FilDiscussion> {
     final CleBrouillon? cle = widget.cleBrouillon;
     final PersistanceBrouillon? persistance = _persistance;
     for (final _MessageLocal m in _locaux) {
+      // Une bulle d'image suit son message par son identifiant ([idMessage])
+      // jusqu'a l'image confirmee : sa legende reste a l'ecran si le depot
+      // echoue apres le retour du message.
+      if (m.source != null) continue;
       if (m.vuSurServeur || !revenus.contains(m.id)) continue;
       m.vuSurServeur = true;
       if (m.etat == EtatEnvoiMessage.envoye) continue;

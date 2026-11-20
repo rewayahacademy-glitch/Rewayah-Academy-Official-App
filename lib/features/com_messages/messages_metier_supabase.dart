@@ -14,7 +14,8 @@ import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:http/http.dart' as http;
-import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthRetryableFetchException, PostgrestException;
 
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/communications/communications_supabase.dart';
@@ -294,11 +295,13 @@ class MessagesMetierSupabase implements PortMessagesMetier, PortPagesFil {
     final Object? reponse;
     _generation += 1;
     try {
+      // PE-D1 : un envoi qui ne repond pas finit en coupure (reessayee sous
+      // la meme cle), jamais en attente sans fin.
       reponse = await _appel('com_envoyer_message', <String, dynamic>{
         'p_fil_id': filId,
         'p_texte': message,
         'p_cle_idempotence': cleServeur(cle),
-      });
+      }).timeout(AppDelais.requeteMax);
     } on Object catch (e) {
       // PE-D1 : un refus du serveur se dit par sa vraie phrase et n'est jamais
       // reessaye ; une coupure en route est reessayee seule par le fil, sous
@@ -528,44 +531,63 @@ class _FonctionAbsente implements Exception {
 /// PE-D1 (MESSAGERIE-FIABLE) : ce que devient une erreur de
 /// `com_envoyer_message` pour le fil.
 ///
-/// - le serveur a repondu par un refus : [EnvoiRefuse], sa vraie phrase (plus
-///   le droit d'ecrire ou conversation fermee, texte vide ou trop long, limite
-///   du jour d'un candidat), jamais « connexion », jamais reessaye ;
-/// - aucune reponse (reseau coupe, delai depasse, passerelle en panne,
-///   session a renouveler) : [EnvoiCoupe], reessaye par le fil sous la meme
-///   cle.
+/// - un refus CONNU du serveur (`com_envoyer_message` et
+///   `com_envoyer_message_interne` ne levent que ceux-la) : [EnvoiRefuse], sa
+///   vraie phrase, jamais reessaye ni dit « connexion » : 42501 (plus le droit
+///   d'ecrire, conversation fermee), 22023 et 23514 (texte vide ou trop long),
+///   53400 (limite du jour d'un candidat) ;
+/// - une panne passagere (aucune reponse, delai depasse, passerelle en 5xx,
+///   session a renouveler, base surchargee, requete annulee, conflit de
+///   verrou, connexion perdue) : [EnvoiCoupe], reessaye par le fil sous la
+///   meme cle (jamais deux messages) ;
+/// - tout autre code : `null`, l'erreur reste un echec ordinaire, avec
+///   « Reessayer » et le brouillon garde (la regle K-59 n'est pas elargie).
 ///
-/// `null` : une autre erreur, laissee telle quelle (echec ordinaire).
+/// Le classement se fait par TYPE (`is`), jamais par le nom du type : le nom
+/// est illisible dans le JavaScript minifie de l'application web.
 Exception? echecEnvoiMessage(Object e) {
   if (e is EnvoiRefuse) return e;
   if (e is EnvoiCoupe) return e;
   final m = t.com.messages;
   if (e is PostgrestException) {
     final String code = e.code ?? '';
-    // Un statut HTTP a trois chiffres (passerelle), jamais un SQLSTATE a cinq
-    // (42501 est un refus, pas une panne).
-    final int? http = code.length == 3 ? int.tryParse(code) : null;
-    if (code.isEmpty ||
-        (http != null && (http >= 500 || http == 408 || http == 429)) ||
-        code.startsWith('PGRST3')) {
-      return EnvoiCoupe(e);
+    switch (code) {
+      case '53400':
+        return EnvoiRefuse(m.candidature.plafond);
+      case '42501':
+        return EnvoiRefuse(m.fil.refusFerme);
+      case '22023' || '23514':
+        return EnvoiRefuse(m.fil.refusTexte);
     }
-    return switch (code) {
-      '53400' => EnvoiRefuse(m.candidature.plafond),
-      '42501' => EnvoiRefuse(m.fil.refusFerme),
-      '22023' || '23514' => EnvoiRefuse(m.fil.refusTexte),
-      _ => EnvoiRefuse(m.fil.refusAutre),
-    };
+    return codePassager(code) ? EnvoiCoupe(e) : null;
   }
-  final String type = e.runtimeType.toString();
   if (e is TimeoutException ||
-      type.contains('ClientException') ||
-      type.contains('SocketException') ||
-      type.contains('HandshakeException') ||
-      type.contains('AuthRetryableFetchException')) {
+      e is http.ClientException ||
+      e is AuthRetryableFetchException) {
     return EnvoiCoupe(e);
   }
   return null;
+}
+
+/// PE-D1 : vrai pour un code d'erreur de PostgREST ou de Postgres qui dit une
+/// panne passagere, qu'un nouvel essai sous la meme cle peut lever.
+bool codePassager(String code) {
+  if (code.isEmpty) return true;
+  // Un statut HTTP a trois chiffres (passerelle), jamais un SQLSTATE a cinq.
+  final int? statut = code.length == 3 ? int.tryParse(code) : null;
+  if (statut != null) return statut >= 500 || statut == 408 || statut == 429;
+  return const <String>{
+        // PostgREST : base injoignable, connexion perdue, delai du pool.
+        'PGRST000', 'PGRST001', 'PGRST002', 'PGRST003',
+        // Requete annulee (delai), serialisation, verrou mortel, trop de
+        // connexions, verrou non obtenu.
+        '57014', '40001', '40P01', '53300', '55P03',
+      }.contains(code) ||
+      // Session a renouveler (jeton expire), connexion perdue (classe 08),
+      // arret du serveur (57P01 a 57P03).
+      code.startsWith('PGRST3') ||
+      code.startsWith('08') ||
+      code.startsWith('57P');
 }
 
 IndicateurAttention _attention(Object? nonLus) {

@@ -20232,6 +20232,9 @@ class _Traductions$com$messages$panneau$en extends Traductions$com$messages$pann
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String get fichiersPartiels => 'Only files from messages already loaded are listed.';
+	@override String get fichiersAucunCharge => 'No files in the messages already loaded; there are older messages.';
+	@override String get chargerPrecedents => 'Load earlier messages';
 	@override String get objets => 'About';
 	@override String get participants => 'Participants';
 	@override String get fichiers => _root.com.socle.lexique.fichiersPartages;
@@ -20253,7 +20256,6 @@ class _Traductions$com$messages$fil$en extends Traductions$com$messages$fil$fr {
 	@override String get anciensEchec => 'Earlier messages did not load.';
 	@override String get refusFerme => 'You can no longer write in this conversation.';
 	@override String get refusTexte => 'This message is empty or too long: 5,000 characters at most.';
-	@override String get refusAutre => 'This message was not accepted.';
 }
 
 // Path: com.messages.images
@@ -39234,6 +39236,9 @@ extension on TraductionsEn {
 			'com.messages.types.candidature' => 'Application',
 			'com.messages.types.profilPaiement' => 'Payment profile',
 			'com.messages.types.autre' => 'Other subject',
+			'com.messages.panneau.fichiersPartiels' => 'Only files from messages already loaded are listed.',
+			'com.messages.panneau.fichiersAucunCharge' => 'No files in the messages already loaded; there are older messages.',
+			'com.messages.panneau.chargerPrecedents' => 'Load earlier messages',
 			'com.messages.panneau.objets' => 'About',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -39248,7 +39253,6 @@ extension on TraductionsEn {
 			'com.messages.fil.anciensEchec' => 'Earlier messages did not load.',
 			'com.messages.fil.refusFerme' => 'You can no longer write in this conversation.',
 			'com.messages.fil.refusTexte' => 'This message is empty or too long: 5,000 characters at most.',
-			'com.messages.fil.refusAutre' => 'This message was not accepted.',
 			'com.messages.images.joindre' => 'Attach an image',
 			'com.messages.images.prendrePhoto' => 'Take a photo',
 			'com.messages.images.choisirGalerie' => 'Choose from the gallery',
@@ -39463,10 +39467,10 @@ extension on TraductionsEn {
 			'com.communaute.reponses.nonConfirmee' => 'This reply is not confirmed yet: it may not have reached Rewayah. Send it again in a moment.',
 			'com.communaute.reponses.refusee' => 'Refused by the Community policy',
 			'com.communaute.reponses.reessayer' => 'Send the reply again',
-			'com.communaute.reponses.indisponible' => 'Replies are not available here yet.',
-			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions on ${nom}\'s reply',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.reponses.indisponible' => 'Replies are not available here yet.',
+			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions on ${nom}\'s reply',
 			'com.communaute.reponses.signaler' => 'Report the reply',
 			'com.communaute.reponses.signalee' => 'You reported this reply.',
 			'com.communaute.signalement.politique.publicite' => 'Advertising is not allowed in the Teachers community.',
@@ -39977,10 +39981,10 @@ extension on TraductionsEn {
 			'com.annonces.introuvableTitre' => 'This announcement is no longer available',
 			'com.annonces.introuvablePhrase' => 'It may have been withdrawn from the class. Go back to your notifications.',
 			'com.annonces.demo.detail' => 'Demo outside production: fictional data, nothing is sent.',
-			'com.annonces.demo.choisirRole' => 'Choose the role to show',
-			'com.annonces.demo.roles.tuteur' => 'Family',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demo.choisirRole' => 'Choose the role to show',
+			'com.annonces.demo.roles.tuteur' => 'Family',
 			'com.annonces.demo.roles.enseignant' => 'Teacher',
 			'com.annonces.demo.roles.adulte' => 'Adult student',
 			'com.annonces.demo.roles.admin' => 'Management',
@@ -40491,10 +40495,10 @@ extension on TraductionsEn {
 			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Open the details of ${famille}\'s collection',
 			'comptable.encaissements.fermerDetail' => 'Close the details',
 			'comptable.encaissements.brut' => 'Gross amount',
-			'comptable.encaissements.frais' => 'Provider fees',
-			'comptable.encaissements.net' => 'Net received',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.frais' => 'Provider fees',
+			'comptable.encaissements.net' => 'Net received',
 			'comptable.encaissements.fraisSource' => 'Fees and exchange supplied by the provider, never recalculated here.',
 			'comptable.encaissements.reference' => 'Reference',
 			'comptable.encaissements.prestataire' => 'Provider',
@@ -41005,10 +41009,10 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sortiesTitre' => 'Pending outflows',
 			'comptable.direction.delegationPanneau.sortiesDetail' => 'An outflow above the per-transaction ceiling waits for a security delay before going out. You can cancel it until then.',
 			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Security delay: ${heures} h',
-			'comptable.direction.delegationPanneau.sortiesVide' => 'No pending outflow.',
-			'comptable.direction.delegationPanneau.sortiesErreur' => 'The pending outflows could not be read: the read may not have reached Rewayah. Try again in a moment.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.sortiesVide' => 'No pending outflow.',
+			'comptable.direction.delegationPanneau.sortiesErreur' => 'The pending outflows could not be read: the read may not have reached Rewayah. Try again in a moment.',
 			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · goes out on ${date}',
 			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Cancel',
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Cancel ${beneficiaire}\'s outflow',
@@ -41519,10 +41523,10 @@ extension on TraductionsEn {
 			'avis.admin.liens.creeAdresse' => 'Link address',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valid until ${date}.',
 			'avis.admin.liens.copier' => 'Copy the link',
-			'avis.admin.liens.copie' => 'Link copied.',
-			'avis.admin.liens.creeFermer' => 'I copied the link',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.liens.copie' => 'Link copied.',
+			'avis.admin.liens.creeFermer' => 'I copied the link',
 			'avis.admin.liens.etat.ouvert' => 'Open',
 			'avis.admin.liens.etat.ferme' => 'Closed',
 			'avis.admin.liens.etat.expire' => 'Expired',
@@ -42033,10 +42037,10 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.champ.heures' => 'Hours per week',
 			'candidatsFlux.importFormulaires.champ.heuresAide' => 'Converted into a number of classes wanted.',
 			'candidatsFlux.importFormulaires.champ.debut' => 'Possible start',
-			'candidatsFlux.importFormulaires.champ.debutAide' => 'Optional.',
-			'candidatsFlux.importFormulaires.champ.whatsapp' => 'Agreement to be contacted on WhatsApp',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.champ.debutAide' => 'Optional.',
+			'candidatsFlux.importFormulaires.champ.whatsapp' => 'Agreement to be contacted on WhatsApp',
 			'candidatsFlux.importFormulaires.champ.whatsappAide' => 'Applies to this contact only.',
 			'candidatsFlux.importFormulaires.champ.courriel' => 'Email',
 			'candidatsFlux.importFormulaires.champ.courrielAide' => 'Used to recognize the person when they sign up. Never shown here.',
@@ -42547,10 +42551,10 @@ extension on TraductionsEn {
 			'journalSorties.reglages.journalDetail' => 'Turn on only after the director has validated the agreement texts. Once on, the guardian and the adult student see the agreement page in their Account.',
 			'journalSorties.reglages.delai' => 'Delay before leaving the room',
 			'journalSorties.reglages.delaiDetail' => 'The time a student is given outside the app before they leave the room.',
-			'journalSorties.reglages.bornes' => 'From 5 to 600 seconds.',
-			'journalSorties.reglages.unite' => ({required Object n}) => '${n} s',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.reglages.bornes' => 'From 5 to 600 seconds.',
+			'journalSorties.reglages.unite' => ({required Object n}) => '${n} s',
 			'calendrier.titre' => 'Calendar',
 			'calendrier.sections.libelle' => 'Calendar sections',
 			'calendrier.sections.dates' => 'Academy dates',

@@ -12,10 +12,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:rewayah_academy/core/communications/libelles_communication_slang.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
+import 'package:rewayah_academy/core/theme/app_delais.dart';
 import 'package:rewayah_academy/core/widgets/fil_discussion.dart';
 import 'package:rewayah_academy/features/com_messages/messages_metier_supabase.dart';
 import 'package:rewayah_academy/features/com_messages/port_messages_metier.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
+import 'package:supabase_flutter/supabase_flutter.dart'
+    show AuthRetryableFetchException, PostgrestException;
 
 const String _fil = '7c400000-0000-4000-8000-0000000000f9';
 const String _cle = '7c400000-0000-4000-8000-00000000c1e1';
@@ -68,6 +70,15 @@ Map<String, dynamic> _filJson({bool plus = true}) => <String, dynamic>{
     },
   ],
 };
+
+/// Une coupure du client HTTP sous un nom quelconque (comme apres
+/// minification) : elle reste une coupure.
+class _CoupureAuNomQuelconque extends http.ClientException {
+  _CoupureAuNomQuelconque() : super('coupe');
+}
+
+/// Un type au nom trompeur qui n'est PAS une coupure.
+class _ClientExceptionPourLeNom implements Exception {}
 
 class _Faux {
   final List<(String, Map<String, dynamic>)> appels =
@@ -172,28 +183,86 @@ void main() {
       expect((e as EnvoiRefuse).phrase, m.candidature.plafond);
     });
 
-    test('autre refus du serveur : une phrase, jamais « connexion »', () async {
+    test('code inconnu : echec ordinaire (« Reessayer »), jamais un refus '
+        'invente', () async {
       final Object e = await echec(
         const PostgrestException(message: 'x', code: 'P0001'),
       );
-      expect((e as EnvoiRefuse).phrase, m.fil.refusAutre);
-      expect(e.phrase.toLowerCase(), isNot(contains('connexion')));
+      expect(e, isA<PostgrestException>());
     });
 
-    test('reseau coupe, delai, passerelle 503 : coupure reessayable', () async {
+    test('pannes passageres connues : coupure reessayable', () async {
+      for (final String code in <String>[
+        '',
+        '503',
+        '504',
+        '408',
+        '429',
+        'PGRST000',
+        'PGRST001',
+        'PGRST002',
+        'PGRST003',
+        'PGRST301',
+        '57014',
+        '40001',
+        '40P01',
+        '53300',
+        '08006',
+        '57P01',
+        '55P03',
+      ]) {
+        expect(
+          await echec(PostgrestException(message: 'panne', code: code)),
+          isA<EnvoiCoupe>(),
+          reason: code,
+        );
+      }
+    });
+
+    test('jamais un statut a trois chiffres lu dans un SQLSTATE', () {
+      expect(codePassager('42501'), isFalse);
+      expect(codePassager('500'), isTrue);
+      expect(codePassager('404'), isFalse);
+    });
+
+    test('reseau coupe, delai : coupure, classee par type et non par nom '
+        '(le nom est illisible en JavaScript minifie)', () async {
+      expect(await echec(_CoupureAuNomQuelconque()), isA<EnvoiCoupe>());
       expect(
         await echec(http.ClientException('Failed to fetch')),
         isA<EnvoiCoupe>(),
       );
       expect(await echec(TimeoutException('lent')), isA<EnvoiCoupe>());
       expect(
-        await echec(const PostgrestException(message: 'x', code: '503')),
+        await echec(AuthRetryableFetchException(message: 'reseau')),
         isA<EnvoiCoupe>(),
       );
+      // Un type dont le NOM ressemble a une coupure, mais qui n'en est pas
+      // une : echec ordinaire.
       expect(
-        await echec(const PostgrestException(message: 'jwt', code: 'PGRST301')),
-        isA<EnvoiCoupe>(),
+        await echec(_ClientExceptionPourLeNom()),
+        isA<_ClientExceptionPourLeNom>(),
       );
+    });
+
+    testWidgets('un envoi qui ne repond pas finit en coupure', (
+      WidgetTester tester,
+    ) async {
+      final Completer<Object?> jamais = Completer<Object?>();
+      final MessagesMetierSupabase port = MessagesMetierSupabase(
+        (String f, Map<String, dynamic> p) => jamais.future,
+        libelles: const LibellesCommunicationSlang(),
+      );
+      Object? erreur;
+      unawaited(
+        port
+            .envoyer(_fil, 'Bonjour', 'cle-ecran')
+            .then<void>((_) {}, onError: (Object e) => erreur = e),
+      );
+      await tester.pump(AppDelais.requeteMax - const Duration(seconds: 1));
+      expect(erreur, isNull);
+      await tester.pump(const Duration(seconds: 2));
+      expect(erreur, isA<EnvoiCoupe>());
     });
 
     test('la cle d ecran donne toujours la meme cle serveur', () async {

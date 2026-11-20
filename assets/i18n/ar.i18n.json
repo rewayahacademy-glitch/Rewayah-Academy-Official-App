@@ -4288,6 +4288,9 @@
         "autre": "موضوع آخر"
       },
       "panneau": {
+        "fichiersPartiels": "تظهر هنا ملفات الرسائل المحمَّلة فقط.",
+        "fichiersAucunCharge": "لا ملفات في الرسائل المحمَّلة؛ توجد رسائل أقدم.",
+        "chargerPrecedents": "تحميل الرسائل السابقة",
         "objets": "بخصوص",
         "participants": "المشاركون",
         "fichiers": "@:com.socle.lexique.fichiersPartages",
@@ -4305,8 +4308,7 @@
         "anciensChargement": "جارٍ تحميل الرسائل السابقة",
         "anciensEchec": "لم تُحمَّل الرسائل السابقة.",
         "refusFerme": "لم يعد بإمكانك الكتابة في هذه المحادثة.",
-        "refusTexte": "هذه الرسالة فارغة أو طويلة جدًا: 5000 حرف على الأكثر.",
-        "refusAutre": "لم تُقبَل هذه الرسالة."
+        "refusTexte": "هذه الرسالة فارغة أو طويلة جدًا: 5000 حرف على الأكثر."
       },
       "images": {
         "joindre": "إرفاق صورة",

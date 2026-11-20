@@ -65,6 +65,7 @@ class ServeurFiable
   Future<void> preparer({
     int anciens = 0,
     AppLocale langue = AppLocale.fr,
+    Set<int> avecPiece = const <int>{},
   }) async {
     _modele = (await demo.fil(filId))!;
     soi = _modele.participants.firstWhere((Participant p) => p.estSoi);
@@ -79,9 +80,33 @@ class ServeurFiable
               : 'Message fictif $i',
           envoyeLe: maintenantTest.subtract(Duration(minutes: 400 - i)),
           cleIdempotence: i.isEven ? 'cle-ancienne-$i' : null,
+          piecesJointes: <PieceJointe>[
+            if (avecPiece.contains(i))
+              PieceJointe(
+                reference: ReferencePieceJointe('piece-$i'),
+                nom: 'document-$i.pdf',
+                nature: NaturePieceJointe.document,
+                typeLisible: 'PDF',
+              ),
+          ],
         ),
       );
     }
+  }
+
+  int _arrivees = 0;
+
+  /// Un message de l'autre partie arrive sur le serveur.
+  void arrive(String texte) {
+    _arrivees++;
+    messages.add(
+      MessageCommunication(
+        id: 'arrive-$_arrivees',
+        auteur: autre,
+        texte: texte,
+        envoyeLe: maintenantTest.add(Duration(minutes: _arrivees)),
+      ),
+    );
   }
 
   FilMetier _fil(List<MessageCommunication> page, bool plus) => FilMetier(

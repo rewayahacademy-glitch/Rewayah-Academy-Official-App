@@ -161,9 +161,6 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
     if (mounted) widget.onLu?.call();
   }
 
-  Future<void> _envoyer(String filId, String texte, String cle) =>
-      _port.envoyer(filId, texte, cle);
-
   Future<void> _envoyerVocal(
     String filId,
     EnregistrementVocal vocal,
@@ -242,7 +239,14 @@ class _FilEnPlaceState extends ConsumerState<FilEnPlace> {
                 .value
                 ?.peut(CapaciteCommunication.ecrireDansFil) ??
             false,
-        onEnvoyer: (String texte, String cle) => _envoyer(fil.id, texte, cle),
+        // PE-D1 : le port est lu ici, pas a l'envoi : un reessai automatique
+        // peut partir apres que la conversation a ete quittee.
+        onEnvoyer: switch (_port) {
+          final PortMessagesMetier port => (
+            String texte,
+            String cle,
+          ) => port.envoyer(fil.id, texte, cle),
+        },
         // PE-D1 : les messages plus anciens se chargent en remontant, si le port
         // sait lire par pages.
         onPlusAnciens: switch (_port) {

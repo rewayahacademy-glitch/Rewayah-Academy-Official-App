@@ -41451,6 +41451,15 @@ class Traductions$com$messages$panneau$fr {
 
 	// Translations
 
+	/// fr: 'Seuls les fichiers des messages déjà chargés sont listés.'
+	String get fichiersPartiels => 'Seuls les fichiers des messages déjà chargés sont listés.';
+
+	/// fr: 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.'
+	String get fichiersAucunCharge => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.';
+
+	/// fr: 'Charger les messages précédents'
+	String get chargerPrecedents => 'Charger les messages précédents';
+
 	/// fr: 'À propos de'
 	String get objets => 'À propos de';
 
@@ -41494,9 +41503,6 @@ class Traductions$com$messages$fil$fr {
 
 	/// fr: 'Ce message est vide ou trop long : 5 000 caractères au plus.'
 	String get refusTexte => 'Ce message est vide ou trop long : 5 000 caractères au plus.';
-
-	/// fr: 'Ce message n'a pas été accepté.'
-	String get refusAutre => 'Ce message n\'a pas été accepté.';
 }
 
 // Path: com.messages.images
@@ -67272,6 +67278,9 @@ extension on Traductions {
 			'com.messages.types.candidature' => 'Candidature',
 			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
+			'com.messages.panneau.fichiersPartiels' => 'Seuls les fichiers des messages déjà chargés sont listés.',
+			'com.messages.panneau.fichiersAucunCharge' => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.',
+			'com.messages.panneau.chargerPrecedents' => 'Charger les messages précédents',
 			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -67286,7 +67295,6 @@ extension on Traductions {
 			'com.messages.fil.anciensEchec' => 'Les messages précédents ne se sont pas chargés.',
 			'com.messages.fil.refusFerme' => 'Vous ne pouvez plus écrire dans cette conversation.',
 			'com.messages.fil.refusTexte' => 'Ce message est vide ou trop long : 5 000 caractères au plus.',
-			'com.messages.fil.refusAutre' => 'Ce message n\'a pas été accepté.',
 			'com.messages.images.joindre' => 'Joindre une image',
 			'com.messages.images.prendrePhoto' => 'Prendre une photo',
 			'com.messages.images.choisirGalerie' => 'Choisir dans la galerie',
@@ -67501,10 +67509,10 @@ extension on Traductions {
 			'com.communaute.reponses.nonConfirmee' => 'Cette réponse n\'est pas encore confirmée : il est possible qu\'elle ne soit pas parvenue jusqu\'à Rewayah. Renvoyez-la dans un instant.',
 			'com.communaute.reponses.refusee' => 'Refusée par la politique de la Communauté',
 			'com.communaute.reponses.reessayer' => 'Renvoyer la réponse',
-			'com.communaute.reponses.indisponible' => 'Les réponses ne sont pas encore disponibles ici.',
-			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions sur la réponse de ${nom}',
 			_ => null,
 		} ?? switch (path) {
+			'com.communaute.reponses.indisponible' => 'Les réponses ne sont pas encore disponibles ici.',
+			'com.communaute.reponses.menu' => ({required Object nom}) => 'Actions sur la réponse de ${nom}',
 			'com.communaute.reponses.signaler' => 'Signaler la réponse',
 			'com.communaute.reponses.signalee' => 'Vous avez signalé cette réponse.',
 			'com.communaute.signalement.politique.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
@@ -68015,10 +68023,10 @@ extension on Traductions {
 			'com.annonces.introuvableTitre' => 'Cette annonce n\'est plus disponible',
 			'com.annonces.introuvablePhrase' => 'Elle a peut-être été retirée de la classe. Revenez à vos notifications.',
 			'com.annonces.demo.detail' => 'Démonstration hors production : données fictives, rien n\'est envoyé.',
-			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
-			'com.annonces.demo.roles.tuteur' => 'Famille',
 			_ => null,
 		} ?? switch (path) {
+			'com.annonces.demo.choisirRole' => 'Choisissez le rôle à montrer',
+			'com.annonces.demo.roles.tuteur' => 'Famille',
 			'com.annonces.demo.roles.enseignant' => 'Enseignant',
 			'com.annonces.demo.roles.adulte' => 'Élève adulte',
 			'com.annonces.demo.roles.admin' => 'Direction',
@@ -68529,10 +68537,10 @@ extension on Traductions {
 			'comptable.encaissements.ouvrirDetailLecteur' => ({required Object famille}) => 'Ouvrir le détail de l\'encaissement de ${famille}',
 			'comptable.encaissements.fermerDetail' => 'Fermer le détail',
 			'comptable.encaissements.brut' => 'Montant brut',
-			'comptable.encaissements.frais' => 'Frais du prestataire',
-			'comptable.encaissements.net' => 'Net reçu',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.encaissements.frais' => 'Frais du prestataire',
+			'comptable.encaissements.net' => 'Net reçu',
 			'comptable.encaissements.fraisSource' => 'Frais et change communiqués par le prestataire, jamais recalculés ici.',
 			'comptable.encaissements.reference' => 'Référence',
 			'comptable.encaissements.prestataire' => 'Prestataire',
@@ -69043,10 +69051,10 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.sortiesTitre' => 'Sorties en attente',
 			'comptable.direction.delegationPanneau.sortiesDetail' => 'Une sortie au-dessus du plafond par transaction attend un délai de sécurité avant de partir. Vous pouvez l\'annuler d\'ici là.',
 			'comptable.direction.delegationPanneau.sortiesDelai' => ({required Object heures}) => 'Délai de sécurité : ${heures} h',
-			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
-			'comptable.direction.delegationPanneau.sortiesErreur' => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			_ => null,
 		} ?? switch (path) {
+			'comptable.direction.delegationPanneau.sortiesVide' => 'Aucune sortie en attente.',
+			'comptable.direction.delegationPanneau.sortiesErreur' => 'Les sorties en attente n\'ont pas pu être lues : il est possible que la lecture ne soit pas parvenue jusqu\'à Rewayah. Réessayez dans un instant.',
 			'comptable.direction.delegationPanneau.sortiePart' => ({required Object objet, required Object date}) => '${objet} · part le ${date}',
 			'comptable.direction.delegationPanneau.sortieAnnuler' => 'Annuler',
 			'comptable.direction.delegationPanneau.sortieAnnulerNom' => ({required Object beneficiaire}) => 'Annuler la sortie de ${beneficiaire}',
@@ -69557,10 +69565,10 @@ extension on Traductions {
 			'avis.admin.liens.creeAdresse' => 'Adresse du lien',
 			'avis.admin.liens.creeValable' => ({required Object date}) => 'Valable jusqu\'au ${date}.',
 			'avis.admin.liens.copier' => 'Copier le lien',
-			'avis.admin.liens.copie' => 'Lien copié.',
-			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.liens.copie' => 'Lien copié.',
+			'avis.admin.liens.creeFermer' => 'J\'ai copié le lien',
 			'avis.admin.liens.etat.ouvert' => 'Ouvert',
 			'avis.admin.liens.etat.ferme' => 'Fermé',
 			'avis.admin.liens.etat.expire' => 'Expiré',
@@ -70071,10 +70079,10 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.champ.heures' => 'Heures par semaine',
 			'candidatsFlux.importFormulaires.champ.heuresAide' => 'Converties en nombre de classes souhaitées.',
 			'candidatsFlux.importFormulaires.champ.debut' => 'Début possible',
-			'candidatsFlux.importFormulaires.champ.debutAide' => 'Facultatif.',
-			'candidatsFlux.importFormulaires.champ.whatsapp' => 'Accord de contact par WhatsApp',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.champ.debutAide' => 'Facultatif.',
+			'candidatsFlux.importFormulaires.champ.whatsapp' => 'Accord de contact par WhatsApp',
 			'candidatsFlux.importFormulaires.champ.whatsappAide' => 'Vaut pour ce contact seulement.',
 			'candidatsFlux.importFormulaires.champ.courriel' => 'Courriel',
 			'candidatsFlux.importFormulaires.champ.courrielAide' => 'Sert à reconnaître la personne à son inscription. Jamais montré ici.',
@@ -70585,10 +70593,10 @@ extension on Traductions {
 			'journalSorties.reglages.journalDetail' => 'N\'allumez qu\'après la validation des textes de l\'accord par le directeur. Allumé, le tuteur et l\'élève adulte voient la page de l\'accord dans leur Compte.',
 			'journalSorties.reglages.delai' => 'Délai avant la sortie de la salle',
 			'journalSorties.reglages.delaiDetail' => 'Le temps laissé à l\'élève hors de l\'application avant qu\'il sorte de la salle.',
-			'journalSorties.reglages.bornes' => 'De 5 à 600 secondes.',
-			'journalSorties.reglages.unite' => ({required Object n}) => '${n} s',
 			_ => null,
 		} ?? switch (path) {
+			'journalSorties.reglages.bornes' => 'De 5 à 600 secondes.',
+			'journalSorties.reglages.unite' => ({required Object n}) => '${n} s',
 			'calendrier.titre' => 'Calendrier',
 			'calendrier.sections.libelle' => 'Sections du calendrier',
 			'calendrier.sections.dates' => 'Dates de l\'académie',
