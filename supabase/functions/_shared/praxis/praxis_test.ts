@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'demander_equipe', 'ecrire', 'etat', 'fil', 'lire', 'objectif_clore', 'objectif_fixer', 'objectifs_lire', 'preparer', 'question_traitee', 'ranger', 'rendre_compte', 'reponses_equipe', 'terminer'])
+  assertEquals(noms, ['annoncer', 'boite', 'boite_candidats', 'calendrier_ajouter', 'calendrier_lire', 'demander_equipe', 'dossier', 'ecrire', 'etat', 'fil', 'lire', 'noter_impression', 'objectif_clore', 'objectif_fixer', 'objectifs_lire', 'ouvrir', 'preparer', 'question_traitee', 'ranger', 'rendre_compte', 'reponses_equipe', 'terminer'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
