@@ -11,6 +11,8 @@
 // vraie, et le geste utile ; une panne passagere est d'abord reessayee seule
 // (`depot_resilient.dart`).
 
+import 'dart:async';
+
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Pourquoi un depot n'a pas abouti.
@@ -57,6 +59,18 @@ class SessionAbsente implements Exception {
   String toString() => 'SessionAbsente';
 }
 
+/// PE-B10 (relecture du 20/11, B1 et B2) : la confirmation `kyc-confirme` a
+/// rendu 401 ou 403 a chaque essai alors que la session de l'appareil est
+/// presente. Ces statuts viennent d'une panne (base ou authentification
+/// injoignable, fonction deployee avant le 503), pas d'un refus.
+class ConfirmationIndisponible implements Exception {
+  /// Cree l'erreur.
+  const ConfirmationIndisponible();
+
+  @override
+  String toString() => 'ConfirmationIndisponible';
+}
+
 /// FN-101 : le contenu de la piece deposee ne correspond pas a son type, dit
 /// par la fonction `kyc-confirme` (HTTP 422). La ligne `kyc_documents` n'est
 /// pas inseree : la policy exige la confirmation (migration 20261110800000).
@@ -79,6 +93,9 @@ CauseEchecDepot? _depuisStatut(int statut) {
 
 bool _jeton(String detail) =>
     detail.contains('jwt') ||
+    // Relecture du 20/11 (M3) : l'expiration lue par le stockage arrive aussi
+    // sous `error: "Unauthorized"`, avec ce message.
+    detail.contains('claim timestamp check failed') ||
     detail.contains('invalid token') ||
     detail.contains('token expired') ||
     detail.contains('not authenticated');
@@ -86,6 +103,7 @@ bool _jeton(String detail) =>
 /// La cause lue dans l'erreur levee par le depot.
 CauseEchecDepot causeEchecDepot(Object erreur) {
   if (erreur is ContenuPieceNonConforme) return CauseEchecDepot.contenu;
+  if (erreur is ConfirmationIndisponible) return CauseEchecDepot.indisponible;
   if (erreur is SessionAbsente || erreur is AuthException) {
     return CauseEchecDepot.session;
   }
@@ -126,6 +144,7 @@ CauseEchecDepot causeEchecDepot(Object erreur) {
     }
     return CauseEchecDepot.autre;
   }
+  if (erreur is TimeoutException) return CauseEchecDepot.reseau;
   final String type = erreur.runtimeType.toString();
   if (type.contains('ClientException') ||
       type.contains('SocketException') ||

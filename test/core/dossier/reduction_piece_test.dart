@@ -130,4 +130,36 @@ void main() {
       );
     },
   );
+
+  test('relecture M4 : une photo HEIC convertie mais trop lourde est reduite '
+      'a partir du JPEG converti', () async {
+    final Uint8List heic = Uint8List(12 * 1024 * 1024)
+      ..setAll(0, 'xxxxftypheic'.codeUnits);
+    final Uint8List jpegLourd = _jpegDe(max + 10);
+    Uint8List? recu;
+    final _Reducteur r = _Reducteur((_, _) => max - 1);
+    final PieceAEnvoyer p = await preparerPiece(
+      heic,
+      TypePiece.passeport,
+      (Uint8List _, {required int coteMax}) async => jpegLourd,
+      reduire:
+          (
+            Uint8List source, {
+            required int coteMax,
+            required double qualite,
+            required bool couleur,
+          }) {
+            recu = source;
+            return r.call(
+              source,
+              coteMax: coteMax,
+              qualite: qualite,
+              couleur: couleur,
+            );
+          },
+    );
+    expect(identical(recu, jpegLourd), isTrue, reason: 'le JPEG converti');
+    expect(p.extension, 'jpg');
+    expect(p.octets.length, max - 1);
+  });
 }

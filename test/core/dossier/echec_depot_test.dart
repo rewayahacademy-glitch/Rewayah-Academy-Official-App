@@ -1,4 +1,6 @@
 // N4 : la cause d'un depot de piece qui n'a pas abouti (K-59).
+import 'dart:async';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:rewayah_academy/core/dossier/echec_depot.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
@@ -100,6 +102,44 @@ void main() {
       CauseEchecDepot.refuse,
     );
     expect(causePassagere(CauseEchecDepot.refuse), isFalse);
+  });
+
+  test('relecture M3 : expiration lue par le stockage sous « Unauthorized » : '
+      'session, pas refus', () {
+    expect(
+      causeEchecDepot(
+        const StorageException(
+          '"exp" claim timestamp check failed',
+          statusCode: '403',
+          error: 'Unauthorized',
+        ),
+      ),
+      CauseEchecDepot.session,
+    );
+    expect(
+      causeEchecDepot(
+        const StorageException(
+          '"exp" claim timestamp check failed',
+          statusCode: '400',
+          error: 'InvalidJWT',
+        ),
+      ),
+      CauseEchecDepot.session,
+    );
+  });
+
+  test('relecture B1, B2 : confirmation en panne : indisponible, passager '
+      'au sens de la phrase', () {
+    expect(
+      causeEchecDepot(const ConfirmationIndisponible()),
+      CauseEchecDepot.indisponible,
+    );
+  });
+
+  test('relecture M2 : un delai depasse est une coupure', () {
+    final CauseEchecDepot cause = causeEchecDepot(TimeoutException('x'));
+    expect(cause, CauseEchecDepot.reseau);
+    expect(causePassagere(cause), isTrue);
   });
 
   test('toute autre cause reste dite comme telle', () {

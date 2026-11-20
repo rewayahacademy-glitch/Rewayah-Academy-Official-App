@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/echec_depot.dart';
 import 'package:rewayah_academy/core/dossier/selecteur_fichier.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -130,7 +131,7 @@ void main() {
 
         for (final (String nom, Object erreur) in <(String, Object)>[
           ('indisponible', const StorageException('x', statusCode: '544')),
-          ('session', const FunctionException(status: 401)),
+          ('session', const SessionAbsente()),
         ]) {
           testWidgets('echec $nom $s', (WidgetTester tester) async {
             await tester.runAsync(() => LocaleSettings.setLocale(langue));

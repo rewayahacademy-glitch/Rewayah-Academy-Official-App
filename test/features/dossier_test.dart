@@ -765,13 +765,18 @@ void main() {
             () => t.fichiers.echecReseau,
           ),
           (
-            'session expiree (401)',
-            const FunctionException(status: 401),
+            'session absente',
+            const SessionAbsente(),
             () => t.fichiers.echecSession,
           ),
           (
-            'refus du serveur (403)',
-            const FunctionException(status: 403),
+            'confirmation en panne (401 ou 403 a chaque essai)',
+            const ConfirmationIndisponible(),
+            () => t.fichiers.echecIndisponible,
+          ),
+          (
+            'refus de la base (42501)',
+            const PostgrestException(message: 'refus', code: '42501'),
             () => t.fichiers.echecRefus,
           ),
         ]) {

@@ -1,5 +1,6 @@
 // PE-B10 : un depot qui survit a une panne passagere, sans jamais creer deux
 // fichiers ni deux lignes pour un meme depot.
+import 'dart:async';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -10,6 +11,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/dossier/depot_resilient.dart';
 import 'package:rewayah_academy/core/dossier/echec_depot.dart';
 import 'package:rewayah_academy/core/dossier/service_dossier.dart';
+import 'package:rewayah_academy/core/photos/photo_personne.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 Future<void> _sansAttente(int _) async {}
@@ -124,25 +126,72 @@ void main() {
       expect(appels, 1);
     });
 
+    test('relecture S1 : une session refusee n est ni rafraichie ni '
+        'reessayee', () async {
+      int appels = 0;
+      await expectLater(
+        avecNouveauxEssais<void>(() async {
+          appels++;
+          throw const StorageException('jwt expired', statusCode: '400');
+        }, attendre: _sansAttente),
+        throwsA(isA<StorageException>()),
+      );
+      expect(appels, 1);
+    });
+
     test(
-      'une session refusee est rafraichie une fois, puis reessayee',
+      'relecture M2 : un essai bloque depasse son delai et se reessaie',
       () async {
         int appels = 0;
-        int rafraichissements = 0;
         await avecNouveauxEssais<void>(
-          () async {
+          () {
             appels++;
-            if (appels == 1) throw const FunctionException(status: 401);
+            // Le premier essai ne repond jamais ; le second aboutit.
+            return appels == 1
+                ? Completer<void>().future
+                : Future<void>.value();
           },
           attendre: _sansAttente,
-          rafraichir: () async {
-            rafraichissements++;
-            return true;
-          },
+          delai: const Duration(milliseconds: 20),
         );
-        expect((appels, rafraichissements), (2, 1));
+        expect(appels, 2);
       },
     );
+
+    test(
+      'relecture M2 : bloque a chaque essai, l erreur est une coupure',
+      () async {
+        Object? erreur;
+        try {
+          await avecNouveauxEssais<void>(
+            () => Completer<void>().future,
+            attendre: _sansAttente,
+            delai: const Duration(milliseconds: 10),
+          );
+        } on Object catch (e) {
+          erreur = e;
+        }
+        expect(erreur, isA<TimeoutException>());
+        expect(causeEchecDepot(erreur!), CauseEchecDepot.reseau);
+      },
+    );
+
+    test('409 au premier essai n est pas compte comme reussi', () async {
+      await expectLater(
+        avecNouveauxEssais<void>(
+          () async {
+            throw const StorageException(
+              'The resource already exists',
+              statusCode: '409',
+              error: 'Duplicate',
+            );
+          },
+          attendre: _sansAttente,
+          dejaFait: (_) {},
+        ),
+        throwsA(isA<StorageException>()),
+      );
+    });
 
     test('« existe deja » a un nouvel essai vaut succes', () async {
       int appels = 0;
@@ -235,6 +284,60 @@ void main() {
       );
     });
 
+    test('relecture B1 : 403 de la confirmation (base en panne) : deux '
+        'nouveaux essais, puis « indisponible », jamais « refus »', () async {
+      final _Faux faux = _Faux((String chemin, int rang, http.Request r) {
+        if (chemin == '/functions/v1/kyc-confirme') {
+          return _ok('{"error":"confirmation refusee"}', 403);
+        }
+        return _ok('{"Key":"k"}');
+      });
+      final SupabaseClient c = await _client(faux);
+      Object? erreur;
+      try {
+        await ServiceDossierSupabase(
+          c,
+          attendre: _sansAttente,
+        ).deposerPiece(_piece);
+      } on Object catch (e) {
+        erreur = e;
+      }
+      expect(erreur, isA<ConfirmationIndisponible>());
+      expect(causeEchecDepot(erreur!), CauseEchecDepot.indisponible);
+      expect(
+        faux.chemins.where(
+          (String p) => p == 'POST /functions/v1/kyc-confirme',
+        ),
+        hasLength(1 + nouveauxEssaisDepot),
+      );
+      expect(faux.corps, isEmpty, reason: 'aucune ligne sans confirmation');
+    });
+
+    test('relecture B2 : 401 de la confirmation puis 200 : le depot aboutit, '
+        'sans aucun rafraichissement de session', () async {
+      final _Faux faux = _Faux((String chemin, int rang, http.Request r) {
+        if (chemin == '/functions/v1/kyc-confirme') {
+          return rang == 1
+              ? _ok('{"error":"authentification requise"}', 401)
+              : _ok('{"confirme":true}');
+        }
+        if (chemin == '/rest/v1/kyc_documents') return _ok('', 201);
+        return _ok('{"Key":"k"}');
+      });
+      final SupabaseClient c = await _client(faux);
+      await ServiceDossierSupabase(
+        c,
+        attendre: _sansAttente,
+      ).deposerPiece(_piece);
+      expect(faux.corps, hasLength(1));
+      expect(
+        faux.chemins.where((String p) => p.contains('/auth/v1/token')),
+        isEmpty,
+        reason: 'S1 : aucun refreshSession force',
+      );
+      expect(c.auth.currentSession, isNotNull);
+    });
+
     test('le type annonce au seau vient de l extension retenue', () {
       expect(_piece.typeMime, 'image/jpeg');
       expect(
@@ -268,4 +371,33 @@ void main() {
       expect(faux.corps, isEmpty);
     });
   });
+
+  test(
+    'relecture S2 : la lecture du seau de ma photo se reessaie aussi',
+    () async {
+      final _PhotosEnPanne port = _PhotosEnPanne();
+      final String seau = await seauDeMaPhoto(
+        port,
+        'moi',
+        attendre: _sansAttente,
+      );
+      expect(port.appels, 2);
+      expect(seau, 'photos_enseignants');
+    },
+  );
+}
+
+class _PhotosEnPanne extends PhotosNeutres {
+  int appels = 0;
+
+  @override
+  Future<Map<String, SourcePhoto>> sources(List<String> profileIds) async {
+    appels++;
+    if (appels == 1) {
+      throw const PostgrestException(message: 'indisponible', code: '503');
+    }
+    return <String, SourcePhoto>{
+      'moi': const SourcePhoto(seau: 'photos_enseignants', cle: null),
+    };
+  }
 }

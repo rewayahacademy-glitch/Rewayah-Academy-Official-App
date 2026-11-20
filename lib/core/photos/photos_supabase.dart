@@ -76,10 +76,18 @@ class PhotosSupabase implements PortPhotos {
   }
 
   @override
+  ///
+  /// PE-B10 (relecture du 20/11, S2) : la pose remplace la cle de la photo
+  /// (idempotente) ; elle se reessaie seule sur une panne passagere, comme
+  /// celle du candidat.
   Future<SourcePhoto?> poserMaPhoto(String? cle) async => lignes(
-    await _client.rpc<Object?>(
-      'poser_ma_photo',
-      params: <String, dynamic>{'p_cle': cle},
+    await avecNouveauxEssais<Object?>(
+      () => _client.rpc<Object?>(
+        'poser_ma_photo',
+        params: <String, dynamic>{'p_cle': cle},
+      ),
+      attendre: attendre,
+      delai: delaiEtapeCourte,
     ),
   ).values.firstOrNull;
 
@@ -104,7 +112,7 @@ class PhotosSupabase implements PortPhotos {
         params: <String, dynamic>{'p_cle': cle},
       ),
       attendre: attendre,
-      rafraichir: () => rafraichirSession(_client),
+      delai: delaiEtapeCourte,
     ),
   ).values.firstOrNull;
 

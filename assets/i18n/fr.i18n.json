@@ -1861,8 +1861,8 @@
     "echecIndisponible": "Rewayah n'a pas pu enregistrer votre photo pour le moment, même après deux nouveaux essais. Votre photo reste choisie\u00a0: réessayez dans quelques minutes.",
     "echecReseau": "Votre photo n'est pas parvenue jusqu'à Rewayah, même après deux nouveaux essais\u00a0: la connexion internet de cet appareil est coupée ou trop lente. Votre photo reste choisie\u00a0: réessayez quand la connexion revient, ou passez sur un autre réseau (Wi-Fi par exemple).",
     "echecSession": "Votre session a expiré\u00a0: Rewayah ne peut pas enregistrer votre photo sans elle. Déconnectez-vous, reconnectez-vous avec votre adresse, puis choisissez de nouveau la photo.",
-    "echecRefus": "Rewayah a refusé ce dépôt pour votre compte\u00a0: un nouvel essai donnerait le même résultat. Écrivez à la direction depuis votre dossier pour qu'elle regarde.",
-    "echecAutre": "L'enregistrement de votre photo n'a pas abouti, pour une raison que l'application ne sait pas nommer. Votre photo reste choisie\u00a0: réessayez\u00a0; si cela recommence, écrivez à la direction depuis votre dossier."
+    "echecRefus": "Rewayah a refusé ce dépôt pour votre compte\u00a0: un nouvel essai donnerait le même résultat. Écrivez à la direction pour qu'elle regarde.",
+    "echecAutre": "L'enregistrement de votre photo n'a pas abouti, pour une raison que l'application ne sait pas nommer. Votre photo reste choisie\u00a0: réessayez\u00a0; si cela recommence, écrivez à la direction."
   },
   "kyc": {
     "titre": "Votre pièce d'identité",

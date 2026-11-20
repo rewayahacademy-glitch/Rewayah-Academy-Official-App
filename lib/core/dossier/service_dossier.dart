@@ -256,10 +256,21 @@ class ServiceDossierSupabase implements ServiceDossier {
           body: <String, dynamic>{'object_key': cle},
         ),
         attendre: attendre,
-        rafraichir: () => rafraichirSession(_client),
+        delai: delaiEtapeCourte,
+        // Relecture du 20/11 (B1, B2) : pour CETTE etape, 401 et 403 viennent
+        // d'une panne (authentification ou base injoignable), pas d'un refus :
+        // ils se reessaient comme une coupure.
+        passagere: (Object e) =>
+            _confirmationRefuseeParPanne(e) ||
+            causePassagere(causeEchecDepot(e)),
       );
     } on FunctionException catch (e) {
       if (e.status == 422) throw const ContenuPieceNonConforme();
+      if (_confirmationRefuseeParPanne(e)) {
+        // La phrase de session ne sort que si la session manque vraiment.
+        if (_client.auth.currentSession == null) throw const SessionAbsente();
+        throw const ConfirmationIndisponible();
+      }
       rethrow;
     }
 
@@ -278,11 +289,17 @@ class ServiceDossierSupabase implements ServiceDossier {
         'object_key': cle,
       }),
       attendre: attendre,
-      rafraichir: () => rafraichirSession(_client),
+      delai: delaiEtapeCourte,
       dejaFait: (_) {},
     );
   }
 }
+
+/// 401 ou 403 rendus par `kyc-confirme` : une panne d'authentification ou de
+/// base (la fonction deployee avant PE-B10 les rend ainsi), jamais un refus
+/// metier atteignable depuis l'application.
+bool _confirmationRefuseeParPanne(Object e) =>
+    e is FunctionException && (e.status == 401 || e.status == 403);
 
 /// Le service de dossier employe par l'application.
 final Provider<ServiceDossier> serviceDossierProvider =

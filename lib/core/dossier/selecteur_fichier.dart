@@ -110,7 +110,26 @@ Future<PieceAEnvoyer> preparerPiece(
         octets.lengthInBytes > sourcePieceMaxOctets) {
       rethrow;
     }
-    final Uint8List? reduite = await reduirePiece(octets, reduire);
+    // Relecture du 20/11 (M4) : une photo HEIC deja convertie en JPEG mais
+    // encore trop lourde se reduit a partir du JPEG converti (le navigateur
+    // ne sait pas toujours lire le HEIC).
+    Uint8List source = octets;
+    if (formatDepuisOctets(octets) == FormatFichier.heic) {
+      Uint8List? jpeg;
+      try {
+        jpeg = await convertir(
+          octets,
+          coteMax: SorteFichier.piece.coteMaxConversion,
+        );
+      } on Object {
+        jpeg = null;
+      }
+      if (jpeg == null || formatDepuisOctets(jpeg) != FormatFichier.jpeg) {
+        rethrow;
+      }
+      source = jpeg;
+    }
+    final Uint8List? reduite = await reduirePiece(source, reduire);
     if (reduite == null) rethrow;
     pret = FichierPret(octets: reduite, format: FormatFichier.jpeg);
   }

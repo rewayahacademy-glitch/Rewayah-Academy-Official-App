@@ -1861,8 +1861,8 @@
     "echecIndisponible": "Rewayah could not save your photo right now, even after two more tries. Your photo is still selected: try again in a few minutes.",
     "echecReseau": "Your photo did not reach Rewayah, even after two more tries: this device's internet connection is down or too slow. Your photo is still selected: try again when the connection is back, or switch to another network (Wi-Fi, for example).",
     "echecSession": "Your session has expired: Rewayah cannot save your photo without it. Sign out, sign back in with your email address, then choose the photo again.",
-    "echecRefus": "Rewayah refused this upload for your account: trying again would give the same result. Write to the academy management from your application so that they can look into it.",
-    "echecAutre": "Saving your photo did not complete, for a reason the app cannot name. Your photo is still selected: try again; if it happens again, write to the academy management from your application."
+    "echecRefus": "Rewayah refused this upload for your account: trying again would give the same result. Write to the academy management so that they can look into it.",
+    "echecAutre": "Saving your photo did not complete, for a reason the app cannot name. Your photo is still selected: try again; if it happens again, write to the academy management."
   },
   "kyc": {
     "titre": "Your ID document",
