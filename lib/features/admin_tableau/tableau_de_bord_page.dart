@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,7 +8,10 @@ import '../../core/admin/sous_liens_coquille.dart';
 import '../../core/alertes/alerte.dart';
 import '../../core/alertes/port_alertes.dart';
 import '../../core/candidature/attentes_recrutement.dart';
+import '../../core/candidature/creneaux_direction.dart';
 import '../../core/candidature/modeles_candidature.dart';
+import '../../core/candidature/modeles_candidatures_direction.dart';
+import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/candidature/port_prevenir_candidats.dart';
 import '../../core/capacites/revue_dossiers_depuis_validation.dart';
 import '../../core/dossier/service_validation.dart';
@@ -22,10 +23,7 @@ import '../../core/tc_groupe/libelles_tc_groupe.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/carte_lignes.dart';
-import '../../core/widgets/data_collection.dart';
-import '../../core/widgets/grille_bento.dart';
 import '../../core/widgets/halo_lumiere.dart';
-import '../../core/widgets/lumiere_autour.dart';
 import '../../core/widgets/page_shell.dart';
 import '../../core/widgets/setting_row.dart';
 import '../../core/widgets/skeleton.dart';
@@ -33,8 +31,8 @@ import '../alertes/section_alertes.dart';
 import '../com_messages/non_lus_messages.dart';
 import 'activite_recente.dart';
 import 'bento_vivant.dart';
+import 'dernier_non_lu.dart';
 import 'phrase_praxis.dart';
-import 'tuiles_compteur.dart';
 
 /// `ADM-01` : le centre de commande.
 ///
@@ -52,16 +50,8 @@ class TableauDeBordPage extends ConsumerWidget {
   /// changerait de resultat selon l'heure a laquelle la CI le lance.
   final DateTime Function() horloge;
 
-  /// Largeur de la colonne « Activite recente » sur bureau : celle de la file
-  /// du contrat D (DESIGN-GOV §4 bis.4).
-  static const double largeurActivite = 336;
-
-  /// En dessous, la grille Bento n'aurait plus ses quatre colonnes
-  /// (`GrilleBento`, 600) : l'activite passe sous les tuiles.
-  static const double largeurPrincipaleMin = GrilleBento.seuilQuatreColonnes;
-
-  /// La date du jour, au bord de fin de l'en-tete (bureau seulement).
-  static const Key cleDate = ValueKey<String>('adm01-date');
+  /// La date du jour, dans la case de Praxis (tablette et ordinateur).
+  static const Key cleDate = BentoVivant.cleDate;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -93,20 +83,6 @@ class TableauDeBordPage extends ConsumerWidget {
           (DossierAValider a, DossierAValider b) =>
               a.deposeLe.compareTo(b.deposeLe),
         );
-    final List<LigneApercu> apercu = <LigneApercu>[
-      for (final DossierAValider d in plusAnciens.take(3))
-        LigneApercu(
-          '${d.libelleCourt} · ${_anciennete(maintenant, d.deposeLe)}',
-          onPress: () =>
-              // BE-LISTE : `push`, le retour ramene a l'Accueil.
-              unawaited(
-                GoRouter.of(
-                  context,
-                ).push<void>(Routes.adminPersonnesDossiers, extra: d.profilId),
-              ),
-        ),
-    ];
-
     // ALERTE-1 : une alerte urgente va en tete de la page, au-dessus de tout
     // autre contenu, jusqu'a son traitement. Sans alerte urgente, la section
     // suit les compteurs (D2 : agir, savoir, aller). Lit la capacite (le flux
@@ -154,11 +130,10 @@ class TableauDeBordPage extends ConsumerWidget {
           (Alerte a) => a.gravite != GraviteAlerte.info,
         );
 
-    // VIVANT (20/11/2026) : le haut de la page en bento vivant. Chaque case
+    // VIVANT (20/11/2026) : une seule page, une seule grammaire. Chaque case
     // lit une lecture qui existe deja ; une lecture absente (capacite
     // indisponible : `hasValue` faux) n'affiche pas sa case. Praxis dit le
-    // blocage du moment, calcule sur ces seuls compteurs (`phrase_praxis`),
-    // et porte desormais la phrase calme.
+    // blocage du moment, calcule sur ces seuls compteurs (`phrase_praxis`).
     final AttentesRecrutement? attentes = ref
         .watch(attentesRecrutementProvider)
         .value;
@@ -166,17 +141,53 @@ class TableauDeBordPage extends ConsumerWidget {
         .watch(etatFileCourrielsProvider)
         .value;
     final int? messagesNonLus = ref.watch(nonLusMessagesProvider).value;
+    final (String, String)? dernierMessage = (messagesNonLus ?? 0) > 0
+        ? ref.watch(dernierNonLuProvider).value
+        : null;
+    // Les creneaux ne se lisent que la ou le recrutement se lit.
+    final List<CreneauDirection>? creneaux = attentes == null
+        ? null
+        : ref.watch(creneauxDirectionProvider).value;
+    // La premiere personne de la file des pieces : lue seulement quand une
+    // piece attend (chaque lecture de la file est journalisee au serveur).
+    final LigneCandidature? piece = (attentes?.pieceAValider.nombre ?? 0) > 0
+        ? ref
+              .watch(pageCandidaturesProvider(requetePieces))
+              .value
+              ?.lignes
+              .firstOrNull
+        : null;
     final int? dossiersAffiches = dossiers.hasValue
         ? RevueDossiersDepuisValidation.enseignantsSeulement(
             dossiers.requireValue,
           ).length
         : valeurs?.dossiersEnAttente;
+    final DossierAValider? plusAncien = plusAnciens.firstOrNull;
     final Widget vivant = indicateurs.hasValue
         ? BentoVivant(
             maintenant: maintenant,
+            indicateurs: indicateurs.requireValue,
+            dossiers: dossiersAffiches ?? 0,
+            // K-47 : un nom d'enseignant, comme la file qu'ouvre la case. La
+            // file illisible (genre du lecteur inconnu) n'emporte que le nom.
+            dossierDetail: dossiers.hasError
+                ? t.admin.tableau.apercuErreur
+                : plusAncien == null
+                ? null
+                : '${plusAncien.libelleCourt} · '
+                      '${_anciennete(maintenant, plusAncien.deposeLe)}',
+            activite: const ActiviteRecente(),
             attentes: attentes,
             courriels: courriels,
+            creneaux: creneaux,
+            piece: piece,
             messagesNonLus: messagesNonLus,
+            dernierMessage: dernierMessage,
+            date: _dateDuJour(maintenant),
+            lumieres: <MotifDirection, NatureHalo?>{
+              for (final MotifDirection m in MotifDirection.values)
+                m: lumiere(m),
+            },
             phrase: PhrasePraxis.depuis(
               calme: calme,
               entretiensAPlanifier: attentes
@@ -189,53 +200,25 @@ class TableauDeBordPage extends ConsumerWidget {
               messages: messagesNonLus,
             ),
           )
-        // En erreur, la phrase des compteurs suffit ; en chargement, la
-        // forme de la grande case, pour que la page ne saute pas.
-        : indicateurs.hasError
-        ? const SizedBox.shrink()
-        : const Skeleton.tuileBento(hauteur: 160);
-
-    // 1. AGIR ET SAVOIR : les compteurs, rendus des que la lecture aboutit,
-    // zeros compris (D8). Les getters, jamais le type d'execution : Riverpod 3
-    // relance un provider en echec tout seul, et l'etat repasse par
-    // `AsyncLoading` en conservant `hasError`.
-    final Widget compteurs = indicateurs.hasValue
-        ? _Compteurs(
-            indicateurs: indicateurs.requireValue,
-            lumieres: <MotifDirection, NatureHalo?>{
-              for (final MotifDirection m in MotifDirection.values)
-                m: lumiere(m),
-            },
-            apercu: apercu,
-            // La file passe par `read_kyc_documents()`, qui refuse la lecture
-            // quand le genre du lecteur est inconnu. Ce refus n'emporte que
-            // les noms : le chiffre vient d'une autre fonction et reste juste
-            // (D11, erreur par source).
-            apercuErreur: dossiers.hasError
-                ? t.admin.tableau.apercuErreur
-                : null,
-            // m1 (AD-NETTOYAGE) : la tuile compte comme la liste « A traiter »
-            // (enseignants seulement, meme cache). Tant que la liste n'est pas
-            // lue, le compteur serveur reste la valeur (il compte encore les
-            // tuteurs : BR-1.c).
-            dossiersEnAttente: dossiers.hasValue
-                ? RevueDossiersDepuisValidation.enseignantsSeulement(
-                    dossiers.requireValue,
-                  ).length
-                : null,
-          )
         : indicateurs.hasError
         // Une seule source pour les six chiffres : une phrase a la place de
-        // toute la grille, jamais des tuiles a 0 (D10). L'encre d'alerte,
-        // jamais la paire : `surfaceAlert` ecrit en blanc, illisible sur la
-        // page.
-        ? Text(
-            t.admin.tableau.compteursErreur,
-            style: palette.inkAlert.applyTo(
-              textes.bodySmall ?? const TextStyle(),
-            ),
+        // toute la grille, jamais des cases a 0 (D10). L'encre d'alerte,
+        // jamais la paire : `surfaceAlert` ecrit en blanc.
+        ? Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            spacing: AppSpacing.lg,
+            children: <Widget>[
+              Text(
+                t.admin.tableau.compteursErreur,
+                style: palette.inkAlert.applyTo(
+                  textes.bodySmall ?? const TextStyle(),
+                ),
+              ),
+              const ActiviteRecente(),
+            ],
           )
-        : const _SqueletteCompteurs();
+        // La forme de la grille, pour que la page ne saute pas (D11).
+        : const _SqueletteBento();
 
     // 3. ALLER : les raccourcis vers Operations, Personnes et Securite.
     //
@@ -373,86 +356,25 @@ class TableauDeBordPage extends ConsumerWidget {
       ],
     );
 
-    // ALERTE-1 : une alerte urgente va en tete, avant tout ; puis le bento
-    // vivant, sur toute la largeur de la page.
-    final List<Widget> tete = <Widget>[
-      if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
-      vivant,
-      if (!indicateurs.hasError) Ecart.vXxl,
-    ];
-
-    final Widget principal = Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      mainAxisSize: MainAxisSize.min,
-      children: <Widget>[
-        // ALERTE-1 : une alerte urgente va en tete, avant les compteurs ;
-        // sans urgence, la section suit les compteurs.
-        compteurs,
-        if (!urgence) ...<Widget>[Ecart.vXxl, sectionAlertes],
-      ],
-    );
+    // La liste de raccourcis ne reste qu'au telephone, ou le tiroir n'a pas
+    // de sous-liens ; sur tablette et ordinateur, le panneau de navigation
+    // les porte (NAV-SOUS-LIENS, puis VIVANT : « une seule page »).
+    final bool raccourcisVisibles =
+        !raccourcisDansPanneau &&
+        MediaQuery.sizeOf(context).width < BentoVivant.seuilDeux;
 
     return PageShell(
-      titre: t.admin.tableau.titre,
-      // AD-X (ADMIN-SHELL-01) : le sous-titre de l'image du directeur, et la
-      // date du jour au bord de fin sur bureau. La salutation de l'image
-      // n'est pas reprise : un titre d'ecran ne se souhaite pas la bienvenue.
-      sousTitre: t.admin.tableau.sousTitre,
-      actionsEntete: <Widget>[
-        if (DataCollection.enTableau(context))
-          Text(
-            _dateDuJour(maintenant),
-            key: TableauDeBordPage.cleDate,
-            style: palette.inkMuted.applyTo(
-              textes.bodyMedium ?? const TextStyle(),
-            ),
-          ),
-      ],
-      child: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints contraintes) {
-          // 2. SAVOIR CE QUI S'EST PASSE : l'activite recente. Colonne de fin
-          // de 336 (la file du contrat D) quand la place le permet, sous les
-          // tuiles sinon ; jamais deux colonnes a 200 % de texte.
-          final bool deuxColonnes =
-              MediaQuery.textScalerOf(context).scale(1) < 2 &&
-              contraintes.maxWidth >=
-                  TableauDeBordPage.largeurActivite +
-                      AppSpacing.xxl +
-                      TableauDeBordPage.largeurPrincipaleMin;
-          if (deuxColonnes) {
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: <Widget>[
-                ...tete,
-                Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    Expanded(child: principal),
-                    Ecart.hXxl,
-                    const SizedBox(
-                      width: TableauDeBordPage.largeurActivite,
-                      child: ActiviteRecente(),
-                    ),
-                  ],
-                ),
-                if (!raccourcisDansPanneau) ...<Widget>[
-                  Ecart.vXxxl,
-                  raccourcis,
-                ],
-              ],
-            );
-          }
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              ...tete,
-              principal,
-              Ecart.vXxl,
-              const ActiviteRecente(),
-              if (!raccourcisDansPanneau) ...<Widget>[Ecart.vXxl, raccourcis],
-            ],
-          );
-        },
+      // VIVANT : plus de titre ni de sous-titre, la case de Praxis est
+      // l'en-tete de la page (« Bonjour. » y est le titre lu en premier).
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: <Widget>[
+          // ALERTE-1 : une alerte urgente va en tete, avant tout.
+          if (urgence) ...<Widget>[sectionAlertes, Ecart.vXxl],
+          vivant,
+          if (!urgence) ...<Widget>[Ecart.vXxl, sectionAlertes],
+          if (raccourcisVisibles) ...<Widget>[Ecart.vXxl, raccourcis],
+        ],
       ),
     );
   }
@@ -468,148 +390,33 @@ String _dateDuJour(DateTime jour) => enTeteArabe(
   ),
 );
 
-/// Les memes tuiles que [_Compteurs], vides, le temps de la premiere lecture
-/// (D11, DESIGN-GOV §4 bis.6 regle 3) : la page ne saute pas quand les
-/// chiffres arrivent.
-class _SqueletteCompteurs extends StatelessWidget {
-  const _SqueletteCompteurs();
+/// La forme de la grille le temps de la premiere lecture : la grande case,
+/// puis deux rangs de cases (D11, DESIGN-GOV §4 bis.6 regle 3).
+class _SqueletteBento extends StatelessWidget {
+  const _SqueletteBento();
 
   @override
-  Widget build(BuildContext context) {
-    Widget bloc() => LayoutBuilder(
-      builder: (BuildContext context, BoxConstraints c) => Skeleton.tuileBento(
-        hauteur: c.hasBoundedHeight
-            ? c.maxHeight
-            : GrilleBento.hauteurLignePour(
-                MediaQuery.textScalerOf(context).scale(1),
-              ),
+  Widget build(BuildContext context) => const Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    spacing: AppSpacing.lg,
+    children: <Widget>[
+      Skeleton.tuileBento(hauteur: 240),
+      Row(
+        spacing: AppSpacing.lg,
+        children: <Widget>[
+          Expanded(child: Skeleton.tuileBento()),
+          Expanded(child: Skeleton.tuileBento()),
+        ],
       ),
-    );
-    return GrilleBento(
-      tuiles: <TuileBento>[
-        for (final (EtendueBento etendue, EtendueBento? large) in _etendues)
-          TuileBento(etendue: etendue, etendueLarge: large, child: bloc()),
-      ],
-    );
-  }
-}
-
-/// L'etendue des cinq tuiles, sur deux colonnes puis sur quatre : une seule
-/// source pour la grille et son squelette.
-const List<(EtendueBento, EtendueBento?)> _etendues =
-    <(EtendueBento, EtendueBento?)>[
-      (EtendueBento.grande, null),
-      (EtendueBento.haute, null),
-      (EtendueBento.carree, null),
-      (EtendueBento.carree, null),
-      (EtendueBento.large, EtendueBento(4, 1)),
-    ];
-
-/// Les six compteurs en cinq tuiles Bento (BENTO-1, DASH_STRATEGIE §3.1).
-///
-/// **Jamais un damier.** La taille d'une tuile suit l'urgence de ce qu'elle
-/// compte : « Dossiers a valider » est la grande tuile, avec les trois plus
-/// anciens ; « Demandes a trancher » la tuile haute ; les deux suivants des
-/// carres ; « Incidents et acces » une seule tuile large en bas, qui garde ses
-/// deux chiffres quelles que soient leurs valeurs (D3 : cinq indicateurs dans
-/// tous les cas).
-///
-/// Quatre portent vers un ecran d'action (dossiers, demandes, regroupements,
-/// rapports manquants). Incidents et acces echus n'ont encore aucune page qui
-/// s'ouvre filtree sur ce qu'ils comptent (DASH-ADM-INC, DASH-ADM-ECHUS) : une
-/// tuile sans appui est un rapport, jamais un bouton grise (D9).
-class _Compteurs extends StatelessWidget {
-  const _Compteurs({
-    required this.indicateurs,
-    this.apercu = const <LigneApercu>[],
-    this.apercuErreur,
-    this.dossiersEnAttente,
-    this.lumieres = const <MotifDirection, NatureHalo?>{},
-  });
-
-  final IndicateursAdmin indicateurs;
-
-  /// Le nombre de dossiers de la tuile, quand la liste est lue (enseignants
-  /// seulement, comme la liste « A traiter », m1 d'AD-NETTOYAGE) ; sinon le
-  /// compteur du serveur.
-  final int? dossiersEnAttente;
-
-  /// Les lumieres des tuiles (LUMIERE-ACCUEILS 4), par motif.
-  final Map<MotifDirection, NatureHalo?> lumieres;
-
-  /// Les plus anciens dossiers, nom et delai, chacun vers son dossier.
-  final List<LigneApercu> apercu;
-
-  /// La phrase a la place des noms quand la file n'a pas pu etre lue.
-  final String? apercuErreur;
-
-  @override
-  Widget build(BuildContext context) {
-    final List<Widget> contenus = <Widget>[
-      // Le plus urgent : la grande tuile. Le chiffre mene a la file, chaque
-      // nom a son dossier.
-      LumiereAutour(
-        nature: lumieres[MotifDirection.dossiers],
-        child: TuileCompteur(
-          valeur: dossiersEnAttente ?? indicateurs.dossiersEnAttente,
-          libelle: t.admin.tableau.dossiers,
-          detail: t.admin.tableau.dossiersDetail,
-          apercu: apercu,
-          apercuErreur: apercuErreur,
-          enLigne: true,
-          onPress: () => GoRouter.of(context).go(Routes.adminPersonnesDossiers),
-        ),
+      Row(
+        spacing: AppSpacing.lg,
+        children: <Widget>[
+          Expanded(child: Skeleton.tuileBento()),
+          Expanded(child: Skeleton.tuileBento()),
+        ],
       ),
-      LumiereAutour(
-        nature: lumieres[MotifDirection.demandes],
-        child: TuileCompteur(
-          valeur: indicateurs.demandesEnAttente,
-          libelle: t.admin.tableau.demandes,
-          detail: t.admin.tableau.demandesDetail,
-          onPress: () =>
-              GoRouter.of(context).go(Routes.adminOperationsDemandes),
-        ),
-      ),
-      TuileCompteur(
-        valeur: indicateurs.foyersSansEnseignant,
-        libelle: t.admin.tableau.foyers,
-        onPress: () =>
-            GoRouter.of(context).go(Routes.adminOperationsRegroupements),
-      ),
-      TuileCompteur(
-        valeur: indicateurs.rapportsManquants,
-        libelle: t.admin.tableau.rapports,
-        // Branche le 19 septembre 2026 : Pedagogie > Qualite (ADM-14)
-        // affiche le groupe « Rapport manquant » ouvert par defaut.
-        onPress: () => GoRouter.of(context).go(Routes.adminPedagogieQualite),
-      ),
-      LumiereAutour(
-        nature: lumieres[MotifDirection.incidents],
-        child: TuileDouble(
-          titre: t.admin.tableau.incidentsEtAcces,
-          gauche: (indicateurs.incidents24h, t.admin.tableau.incidents),
-          droite: (indicateurs.comptesEchus, t.admin.tableau.comptes),
-          // DASH-ADM-ECHUS : Comptes s'ouvre filtre sur les acces echus.
-          // DASH-ADM-INC : la page des incidents liste les seances que compte
-          // le chiffre (D9).
-          onPressGauche: () =>
-              GoRouter.of(context).go(Routes.adminSecuriteAuditIncidents),
-          onPressDroite: () =>
-              GoRouter.of(context).go(Routes.adminPersonnesComptesEchus),
-        ),
-      ),
-    ];
-    return GrilleBento(
-      tuiles: <TuileBento>[
-        for (int i = 0; i < _etendues.length; i++)
-          TuileBento(
-            etendue: _etendues[i].$1,
-            etendueLarge: _etendues[i].$2,
-            child: contenus[i],
-          ),
-      ],
-    );
-  }
+    ],
+  );
 }
 
 /// Depuis quand une ligne attend, dit en jours, jamais en heures : une ligne

@@ -10,14 +10,19 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:rewayah_academy/core/admin/service_admin.dart';
 import 'package:rewayah_academy/core/candidature/attentes_recrutement.dart';
+import 'package:rewayah_academy/core/candidature/creneaux_direction.dart';
 import 'package:rewayah_academy/core/candidature/modeles_candidature.dart';
+import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.dart';
+import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/candidature/port_prevenir_candidats.dart';
 import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/vivant/niveau_eau.dart';
 import 'package:rewayah_academy/core/vivant/praxis_vivant.dart';
+import 'package:rewayah_academy/features/admin_tableau/activite_recente.dart';
 import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
+import 'package:rewayah_academy/features/admin_tableau/dernier_non_lu.dart';
 import 'package:rewayah_academy/features/admin_tableau/phrase_praxis.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 import 'package:rewayah_academy/features/com_messages/non_lus_messages.dart';
@@ -65,8 +70,48 @@ List<Override> _surcharges({
     FauxServiceAdmin()..indicateursRendus = indicateurs,
   ),
   serviceValidationProvider.overrideWithValue(FauxServiceValidation()),
-  if (attentes != null)
+  if (attentes != null) ...<Override>[
     attentesRecrutementProvider.overrideWith((_) async => attentes),
+    // Deux creneaux libres demain, un reserve apres-demain (qui ne compte
+    // pas), aucun les autres jours.
+    creneauxDirectionProvider.overrideWith(
+      (_) async => <CreneauDirection>[
+        for (final (int, int, EtatCreneau) c in <(int, int, EtatCreneau)>[
+          (1, 10, EtatCreneau.libre),
+          (1, 15, EtatCreneau.libre),
+          (2, 10, EtatCreneau.reserve),
+        ])
+          CreneauDirection(
+            id: 'c${c.$1}-${c.$2}',
+            cote: 'male',
+            debut: DateTime(2026, 11, 20 + c.$1, c.$2),
+            fin: DateTime(2026, 11, 20 + c.$1, c.$2 + 1),
+            langues: const <String>['fr'],
+            participants: 1,
+            fondateurs: 1,
+            etat: c.$3,
+          ),
+      ],
+    ),
+    pageCandidaturesProvider(requetePieces).overrideWith(
+      (_) async => PageCandidatures.depuisJson(const <String, Object?>{
+        'total': 3,
+        'page': 1,
+        'taillePage': 25,
+        'lignes': <Object?>[
+          <String, Object?>{
+            'id': 'cand-1',
+            'reference': 'RA-26-4817',
+            'nomComplet': 'Personne De Test',
+            'issue': 'en_cours',
+          },
+        ],
+      }),
+    ),
+  ],
+  dernierNonLuProvider.overrideWith(
+    (_) async => messages > 0 ? ('Personne De Test', 'Premiere ligne') : null,
+  ),
   if (courriels != null)
     etatFileCourrielsProvider.overrideWith((_) async => courriels),
   nonLusMessagesProvider.overrideWith((_) async => messages),
@@ -333,8 +378,8 @@ void main() {
     for (final (Key, String, String) cas in <(Key, String, String)>[
       (
         BentoVivant.clePieces,
-        'pieces',
-        '/admin/personnes/candidatures?issue=enCours&pause=non&piece=oui',
+        'pieces (le dossier de la personne, dans sa file)',
+        '/admin/personnes/candidatures/RA-26-4817?issue=enCours&pause=non&piece=oui&depuis=liste',
       ),
       (
         BentoVivant.cleEtat(EtatCandidature.enExamen),
@@ -343,11 +388,16 @@ void main() {
       ),
       (BentoVivant.cleMessages, 'messages', Routes.adminCommunicationsMessages),
       (BentoVivant.cleCourriels, 'courriels', Routes.adminOperationsCourriels),
+      (BentoVivant.cleDossiers, 'dossiers', Routes.adminPersonnesDossiers),
+      (BentoVivant.cleDemandes, 'demandes', Routes.adminOperationsDemandes),
+      (BentoVivant.cleEleves, 'eleves', Routes.adminOperationsRegroupements),
+      (BentoVivant.cleCahiers, 'cahiers', Routes.adminPedagogieQualite),
       (
-        BentoVivant.cleHeros,
-        'Praxis (creneaux)',
-        Routes.adminPersonnesCreneauxEntretien,
+        BentoVivant.cleIncidents,
+        'incidents',
+        Routes.adminSecuriteAuditIncidents,
       ),
+      (BentoVivant.cleEchus, 'acces echus', Routes.adminPersonnesComptesEchus),
     ]) {
       testWidgets('toucher la case ${cas.$2} ouvre ${cas.$3}, empilee', (
         WidgetTester tester,
@@ -368,6 +418,8 @@ void main() {
           ),
         );
         await _vivre(tester);
+        await tester.ensureVisible(find.byKey(cas.$1));
+        await _vivre(tester, 5);
         await tester.tap(find.byKey(cas.$1));
         await _vivre(tester, 10);
         expect(find.text('ALLE ${cas.$3}'), findsOneWidget);
@@ -379,6 +431,195 @@ void main() {
       });
     }
 
+    testWidgets('les gestes de Praxis : creneaux, pieces, messages', (
+      WidgetTester tester,
+    ) async {
+      final v = t.admin.tableau.vivant;
+      for (final (String, String) cas in <(String, String)>[
+        (v.ouvrirCreneaux, Routes.adminPersonnesCreneauxEntretien),
+        (
+          v.verifierPieces(n: 3),
+          '/admin/personnes/candidatures?issue=enCours&pause=non&piece=oui',
+        ),
+        (v.repondreMessages(n: 7), Routes.adminCommunicationsMessages),
+      ]) {
+        fixerVueCapture(tester, const Size(1440, 1600), 1);
+        await tester.pumpWidget(
+          _routant(
+            _surcharges(
+              attentes: _attentes(),
+              courriels: const EtatFileCourriels(
+                parJour: 900,
+                partis24h: 412,
+                enAttente: 0,
+                joursEstimes: 0,
+              ),
+              messages: 7,
+            ),
+          ),
+        );
+        await _vivre(tester);
+        await tester.tap(find.text(cas.$1));
+        await _vivre(tester, 10);
+        expect(find.text('ALLE ${cas.$2}'), findsOneWidget);
+        await tester.pumpWidget(const SizedBox());
+      }
+    });
+
+    testWidgets('la semaine des creneaux : sept jours, pleins seulement ou un '
+        'creneau est libre', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(1440, 1600), 1);
+      await tester.pumpWidget(
+        hote(_page(), surcharges: _surcharges(attentes: _attentes())),
+      );
+      await _vivre(tester);
+      for (int i = 0; i < 7; i++) {
+        expect(find.byKey(BentoVivant.cleJour(i)), findsOneWidget);
+      }
+      Finder nombre(int jour, String n) => find.descendant(
+        of: find.byKey(BentoVivant.cleJour(jour)),
+        matching: find.text(n),
+      );
+      // Demain : deux creneaux libres. Apres-demain : un creneau reserve, qui
+      // ne compte pas. Aujourd'hui : rien.
+      expect(nombre(1, '2'), findsOneWidget);
+      expect(nombre(2, '1'), findsNothing);
+      expect(
+        find.descendant(
+          of: find.byKey(BentoVivant.cleJour(0)),
+          matching: find.byType(Text),
+        ),
+        findsOneWidget,
+        reason: 'un jour vide ne porte que sa lettre',
+      );
+    });
+
+    testWidgets('sans lecture du recrutement : ni semaine ni geste invente', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(1440, 1400), 1);
+      await tester.pumpWidget(hote(_page(), surcharges: _surcharges()));
+      await _vivre(tester);
+      expect(find.byKey(BentoVivant.cleJour(0)), findsNothing);
+      expect(find.text(t.admin.tableau.vivant.ouvrirCreneaux), findsNothing);
+      expect(find.byKey(BentoVivant.cleCadenas), findsNothing);
+    });
+
+    testWidgets('le cadenas ferme le passage tant qu aucun creneau n est '
+        'ouvert', (WidgetTester tester) async {
+      fixerVueCapture(tester, const Size(1440, 1600), 1);
+      await tester.pumpWidget(
+        hote(_page(), surcharges: _surcharges(attentes: _attentes())),
+      );
+      await _vivre(tester);
+      final Rect cadenas = tester.getRect(find.byKey(BentoVivant.cleCadenas));
+      expect(
+        cadenas.left,
+        greaterThanOrEqualTo(
+          tester
+              .getRect(
+                find.byKey(
+                  BentoVivant.cleEtat(EtatCandidature.entretienAPlanifier),
+                ),
+              )
+              .right,
+        ),
+      );
+      expect(
+        cadenas.right,
+        lessThanOrEqualTo(
+          tester
+              .getRect(
+                find.byKey(
+                  BentoVivant.cleEtat(EtatCandidature.entretienPlanifie),
+                ),
+              )
+              .left,
+        ),
+      );
+      await tester.pumpWidget(const SizedBox());
+      await tester.pumpWidget(
+        hote(
+          _page(),
+          surcharges: _surcharges(attentes: _attentes(creneaux: 2)),
+        ),
+      );
+      await _vivre(tester);
+      expect(find.byKey(BentoVivant.cleCadenas), findsNothing);
+      expect(find.text(t.admin.tableau.vivant.ouvrirCreneaux), findsNothing);
+    });
+
+    testWidgets('une seule page : ni titre d ecran ni liste de raccourcis sur '
+        'ordinateur, aucun nombre affiche deux fois', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(1440, 1800), 1);
+      await tester.pumpWidget(
+        hote(
+          _page(),
+          surcharges: _surcharges(
+            attentes: _attentes(),
+            courriels: const EtatFileCourriels(
+              parJour: 900,
+              partis24h: 412,
+              enAttente: 0,
+              joursEstimes: 0,
+            ),
+            messages: 7,
+          ),
+        ),
+      );
+      await _vivre(tester);
+      expect(find.text(t.admin.tableau.titre), findsNothing);
+      expect(find.text(t.admin.tableau.sousTitre), findsNothing);
+      expect(find.text(t.admin.tableau.outilsTraitement), findsNothing);
+      // Chaque libelle de compteur une fois, dans sa case.
+      for (final (Key, String, String) cas in <(Key, String, String)>[
+        (BentoVivant.cleDossiers, t.admin.tableau.dossiers, '0'),
+        (BentoVivant.cleDemandes, t.admin.tableau.demandes, '4'),
+        (BentoVivant.cleEleves, t.admin.tableau.foyers, '2'),
+        (BentoVivant.cleCahiers, t.admin.tableau.rapports, '1'),
+        (BentoVivant.cleIncidents, t.admin.tableau.incidents, '0'),
+        (BentoVivant.cleEchus, t.admin.tableau.comptes, '0'),
+      ]) {
+        expect(find.text(cas.$2), findsOneWidget);
+        expect(
+          find.descendant(of: find.byKey(cas.$1), matching: find.text(cas.$3)),
+          findsOneWidget,
+        );
+      }
+      // La personne de la file des pieces, et le dernier message non lu.
+      expect(
+        find.descendant(
+          of: find.byKey(BentoVivant.clePieces),
+          matching: find.text('Personne De Test'),
+        ),
+        findsOneWidget,
+      );
+      expect(
+        find.descendant(
+          of: find.byKey(BentoVivant.cleMessages),
+          matching: find.text('Personne De Test · Premiere ligne'),
+        ),
+        findsOneWidget,
+      );
+      expect(find.byType(ActiviteRecente), findsOneWidget);
+      expect(find.text(t.admin.tableau.vivant.activiteTitre), findsOneWidget);
+      expect(find.byKey(BentoVivant.cleDate), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('au telephone : la liste de raccourcis reste, la date non', (
+      WidgetTester tester,
+    ) async {
+      fixerVueCapture(tester, const Size(400, 4000), 1);
+      await tester.pumpWidget(hote(_page(), surcharges: _surcharges()));
+      await _vivre(tester);
+      expect(find.text(t.admin.tableau.outilsTraitement), findsOneWidget);
+      expect(find.byKey(BentoVivant.cleDate), findsNothing);
+      expect(tester.takeException(), isNull);
+    });
+
     for (final (double, String) cas in <(double, String)>[
       (1440, 'quatre colonnes'),
       (820, 'deux colonnes'),
@@ -387,7 +628,7 @@ void main() {
       for (final TextDirection sens in TextDirection.values) {
         testWidgets('${cas.$1.round()} points, ${sens.name} : ${cas.$2}, '
             'rien ne deborde', (WidgetTester tester) async {
-          fixerVueCapture(tester, Size(cas.$1, 2600), 1);
+          fixerVueCapture(tester, Size(cas.$1, 4200), 1);
           await tester.pumpWidget(
             hoteRoutant(
               depart: '/',
@@ -442,12 +683,12 @@ void main() {
     () {
       setUpAll(chargerPolicesDuDepot);
       for (final (Size, ThemeMode, String) cas in <(Size, ThemeMode, String)>[
-        (const Size(1440, 1500), ThemeMode.light, 'accueil_1440_clair'),
-        (const Size(1440, 1500), ThemeMode.dark, 'accueil_1440_sombre'),
-        (const Size(820, 1900), ThemeMode.light, 'accueil_820_clair'),
-        (const Size(820, 1900), ThemeMode.dark, 'accueil_820_sombre'),
-        (const Size(400, 3000), ThemeMode.light, 'accueil_400_clair'),
-        (const Size(400, 3000), ThemeMode.dark, 'accueil_400_sombre'),
+        (const Size(1440, 1400), ThemeMode.light, 'accueil_1440_clair'),
+        (const Size(1440, 1400), ThemeMode.dark, 'accueil_1440_sombre'),
+        (const Size(820, 2000), ThemeMode.light, 'accueil_820_clair'),
+        (const Size(820, 2000), ThemeMode.dark, 'accueil_820_sombre'),
+        (const Size(400, 4200), ThemeMode.light, 'accueil_400_clair'),
+        (const Size(400, 4200), ThemeMode.dark, 'accueil_400_sombre'),
       ]) {
         testWidgets(cas.$3, (WidgetTester tester) async {
           fixerVueCapture(tester, cas.$1, 1);

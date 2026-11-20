@@ -5233,6 +5233,16 @@
     },
     "tableau": {
       "vivant": {
+        "verifierPieces": {
+          "one": "Check the document",
+          "other": "Check the {n} documents"
+        },
+        "repondreMessages": {
+          "one": "Answer the message",
+          "other": "Answer the {n} messages"
+        },
+        "activiteTitre": "What changed",
+        "semaineCreneaux": "Interview slots over the next seven days",
         "bonjour": "Good morning.",
         "bonApresMidi": "Good afternoon.",
         "bonsoir": "Good evening.",

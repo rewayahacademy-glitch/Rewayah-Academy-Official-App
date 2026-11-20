@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
 
 import '../capture/outil_capture.dart' hide stabiliser;
 import '../support/harnais.dart' show FausseSourceSession;
@@ -131,10 +132,19 @@ void main() {
     WidgetTester tester,
   ) async {
     LocaleSettings.setLocaleSync(AppLocale.fr);
-    final String titreFr = t.admin.tableau.titre;
+    // VIVANT : la page n'a plus de titre ; on verifie qu'aucun libelle
+    // francais de ses cases n'y reste.
+    final List<String> libellesFr = <String>[
+      t.admin.tableau.titre,
+      t.admin.tableau.dossiers,
+      t.admin.tableau.demandes,
+      t.admin.tableau.vivant.activiteTitre,
+    ];
     await LocaleSettings.setLocale(AppLocale.ar);
     await _monter(tester, Routes.admin);
-    expect(find.text(t.admin.tableau.titre), findsWidgets);
-    expect(find.text(titreFr), findsNothing);
+    expect(find.byType(TableauDeBordPage), findsOneWidget);
+    for (final String fr in libellesFr) {
+      expect(find.text(fr), findsNothing);
+    }
   });
 }

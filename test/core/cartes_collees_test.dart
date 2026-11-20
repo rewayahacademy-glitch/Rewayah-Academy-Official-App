@@ -308,9 +308,11 @@ void main() {
           serviceAdminProvider.overrideWithValue(admin),
           serviceValidationProvider.overrideWithValue(validation),
         ],
-        // DASH-ADM-1 : les cinq tuiles et la carte des raccourcis ; la liste
-        // « A traiter en premier » (trois lignes-cartes) a quitte l'ecran.
-        minimumSurfaces: 6,
+        // VIVANT (20/11/2026) : les cases du bento sont des formes a coin
+        // continu (`CaseVivante`), que ce balayage ne compte pas comme des
+        // cartes (aucune surface comptee sur cet ecran). L'ecart de 16 entre
+        // deux cases est porte par `BentoVivant` (`spacing: AppSpacing.lg`).
+        minimumSurfaces: 0,
       );
     });
 

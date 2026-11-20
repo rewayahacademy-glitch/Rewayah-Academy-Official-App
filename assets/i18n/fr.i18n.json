@@ -5233,6 +5233,16 @@
     },
     "tableau": {
       "vivant": {
+        "verifierPieces": {
+          "one": "Vérifier la pièce",
+          "other": "Vérifier les {n} pièces"
+        },
+        "repondreMessages": {
+          "one": "Répondre au message",
+          "other": "Répondre aux {n} messages"
+        },
+        "activiteTitre": "Ce qui a changé",
+        "semaineCreneaux": "Créneaux d'entretien des sept prochains jours",
         "bonjour": "Bonjour.",
         "bonApresMidi": "Bon après-midi.",
         "bonsoir": "Bonsoir.",

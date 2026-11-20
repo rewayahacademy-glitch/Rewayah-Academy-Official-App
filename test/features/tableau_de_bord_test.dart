@@ -16,13 +16,12 @@ import 'package:rewayah_academy/core/matching/service_matching.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/tc_groupe/libelles_tc_groupe.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
-import 'package:rewayah_academy/core/widgets/grille_bento.dart';
 import 'package:rewayah_academy/core/widgets/halo_lumiere.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
 import 'package:rewayah_academy/core/widgets/skeleton.dart';
 import 'package:rewayah_academy/features/admin_tableau/activite_recente.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
 import 'package:rewayah_academy/features/admin_tableau/tableau_de_bord_page.dart';
-import 'package:rewayah_academy/features/admin_tableau/tuiles_compteur.dart';
 
 import '../capture/outil_capture.dart'
     show
@@ -111,6 +110,12 @@ Future<void> _monter(
   await tester.pumpAndSettle();
 }
 
+/// Les formes de cases du squelette de la grille (hors squelettes de lignes).
+int _formesDeCases(WidgetTester tester) => tester
+    .widgetList<Skeleton>(find.byType(Skeleton))
+    .where((Skeleton s) => s.lignes == 1)
+    .length;
+
 /// Fait defiler jusqu'a un libelle, comme l'administrateur le ferait.
 Future<void> _allerA(WidgetTester tester, Finder cible) async {
   await tester.scrollUntilVisible(
@@ -138,15 +143,9 @@ void main() {
     );
     await tester.pump();
 
-    // Un bloc par tuile (DASH-ADM-1), dans la grille. La section Alertes
-    // (ALERTE-1) a son propre squelette de lignes, hors de la grille.
-    expect(
-      find.descendant(
-        of: find.byType(GrilleBento),
-        matching: find.byType(Skeleton),
-      ),
-      findsNWidgets(5),
-    );
+    // VIVANT : la forme de la grille (la grande case, puis quatre cases).
+    // La section Alertes (ALERTE-1) a son propre squelette de lignes.
+    expect(_formesDeCases(tester), 5);
     expect(find.text(t.commun.chargement), findsNothing);
 
     reponse.complete(_indicateurs());
@@ -255,7 +254,7 @@ void main() {
       expect(find.text(t.admin.tableau.demandes), findsOneWidget);
     });
 
-    testWidgets('les trois plus anciens dossiers, chacun avec son anciennete', (
+    testWidgets('le plus ancien dossier, avec son anciennete', (
       WidgetTester tester,
     ) async {
       await _monter(
@@ -277,12 +276,13 @@ void main() {
         ))
           texte.data ?? '',
       ];
-      // Du plus ancien au plus recent ; le quatrieme reste dans la file.
+      // VIVANT : la case dit le plus ancien ; les autres restent dans la
+      // file qu'elle ouvre.
       expect(lus, <String>[
         'Ancien · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 7))}',
-        'Milieu · ${LibellesGroupe.insecable(t.admin.tableau.attenteJours(jours: 3))}',
-        'Hier · ${t.admin.tableau.attenteUnJour}',
       ]);
+      expect(find.textContaining('Milieu'), findsNothing);
+      expect(find.textContaining('Hier'), findsNothing);
       expect(find.textContaining('Recent'), findsNothing);
     });
 
@@ -362,10 +362,10 @@ void main() {
       await tester.pumpAndSettle();
     }
 
-    testWidgets('un nom de l apercu ouvre SON dossier, pas la file', (
-      WidgetTester tester,
-    ) async {
-      // Modification UX n°2, conservee par l'exception D4 (a).
+    testWidgets('la case des dossiers, touchee sur le nom du plus ancien, '
+        'ouvre la file', (WidgetTester tester) async {
+      // VIVANT : une case, un geste. Les liens par nom de l'ancienne tuile
+      // n'existent plus ; le nom du plus ancien fait partie de la case.
       await monterRoutant(
         tester,
         admin: FauxServiceAdmin()
@@ -377,10 +377,11 @@ void main() {
           ],
       );
 
-      await tester.tap(find.textContaining('Second'));
+      expect(find.textContaining('Second'), findsNothing);
+      await tester.tap(find.textContaining('Premier'));
       await tester.pumpAndSettle();
 
-      expect(find.text('ADM-02 p-doc2'), findsOneWidget);
+      expect(find.text('ADM-02 null'), findsOneWidget);
     });
 
     testWidgets('le chiffre des dossiers ouvre la file entiere', (
@@ -416,6 +417,10 @@ void main() {
           (() => t.admin.tableau.comptes, 'ADM-08 echus'),
         ]) {
       testWidgets('un tap ouvre ${cas.$2}', (WidgetTester tester) async {
+        // VIVANT : la liste de raccourcis ne reste qu'au telephone.
+        tester.view.physicalSize = const Size(390, 900);
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
         await monterRoutant(
           tester,
           admin: FauxServiceAdmin()..indicateursRendus = _indicateurs(),
@@ -434,42 +439,39 @@ void main() {
       _indicateurs(incidents: 3, comptes: 2),
       _indicateurs(incidents: 3),
     ]) {
-      testWidgets('Incidents et acces : une seule tuile, ses deux chiffres '
+      testWidgets('Incidents et acces : deux cases, chacune son chiffre '
           '(${valeurs.incidents24h} / ${valeurs.comptesEchus})', (
         WidgetTester tester,
       ) async {
-        // D3 : cinq indicateurs dans tous les cas ; la tuile ne s'eclate
-        // plus en deux quand l'un des chiffres n'est pas nul.
+        // VIVANT : la tuile double devient deux cases-chiffres, toujours
+        // presentes quelles que soient leurs valeurs (D3, I9).
         await _monter(
           tester,
           admin: FauxServiceAdmin()..indicateursRendus = valeurs,
         );
 
-        expect(find.text(t.admin.tableau.incidentsEtAcces), findsOneWidget);
-        expect(find.byType(TuileDouble), findsOneWidget);
-        final Finder double = find.byType(TuileDouble);
-        for (final String libelle in <String>[
-          t.admin.tableau.incidents,
-          t.admin.tableau.comptes,
+        for (final (Key, String, int) c in <(Key, String, int)>[
+          (
+            BentoVivant.cleIncidents,
+            t.admin.tableau.incidents,
+            valeurs.incidents24h,
+          ),
+          (BentoVivant.cleEchus, t.admin.tableau.comptes, valeurs.comptesEchus),
         ]) {
+          final Finder laCase = find.byKey(c.$1);
+          expect(laCase, findsOneWidget);
           expect(
-            find.descendant(of: double, matching: find.text(libelle)),
+            find.descendant(of: laCase, matching: find.text(c.$2)),
             findsOneWidget,
           );
-        }
-        // DASH-ADM-ECHUS et DASH-ADM-INC : les deux chiffres mènent à la
-        // page qui liste ce qu'ils comptent (D9).
-        final Finder appuis = find.descendant(
-          of: double,
-          matching: find.byType(Pressable),
-        );
-        expect(appuis, findsNWidgets(2));
-        for (final String libelle in <String>[
-          t.admin.tableau.comptes,
-          t.admin.tableau.incidents,
-        ]) {
           expect(
-            find.descendant(of: appuis, matching: find.text(libelle)),
+            find.descendant(of: laCase, matching: find.text('${c.$3}')),
+            findsOneWidget,
+          );
+          // DASH-ADM-ECHUS et DASH-ADM-INC : chaque case mene a la page qui
+          // liste ce qu'elle compte (D9) : un seul appui par case.
+          expect(
+            find.descendant(of: laCase, matching: find.byType(Pressable)),
             findsOneWidget,
           );
         }
@@ -529,15 +531,9 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 300));
 
-      // Cinq blocs, un par tuile, dans une GrilleBento : la page ne saute
-      // pas quand les chiffres arrivent (D11).
-      expect(
-        find.descendant(
-          of: find.byType(GrilleBento),
-          matching: find.byType(Skeleton),
-        ),
-        findsNWidgets(5),
-      );
+      // VIVANT : cinq formes de cases (la grande, puis quatre) : la page ne
+      // saute pas quand les chiffres arrivent (D11).
+      expect(_formesDeCases(tester), 5);
 
       reponse.complete(_indicateurs());
       await tester.pumpAndSettle();
@@ -634,20 +630,21 @@ void main() {
           await tester.pumpAndSettle();
 
           expect(tester.takeException(), isNull);
-          final Finder grille = find.byType(GrilleBento);
+          final Finder grille = find.byType(BentoVivant);
           expect(grille, findsOneWidget);
-          // La mesure porte sur quelque chose : les noms et la tuile double.
+          // La mesure porte sur quelque chose : un nom et la case des
+          // incidents.
           expect(
             find.descendant(
               of: grille,
-              matching: find.textContaining('Mariama'),
+              matching: find.textContaining('Abdourahmane'),
             ),
             findsOneWidget,
           );
           expect(
             find.descendant(
               of: grille,
-              matching: find.text(t.admin.tableau.incidentsEtAcces),
+              matching: find.text(t.admin.tableau.incidents),
             ),
             findsOneWidget,
           );

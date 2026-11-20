@@ -1,12 +1,14 @@
-// VIVANT (directeur, 20/11/2026) : le haut de l'accueil de la direction en
-// bento vivant. Une grande case sombre ou Praxis, assis sur le bord, dit le
-// blocage du moment ; une case haute (les pieces a valider) ; deux petites
-// (conversations non lues, courriels du jour en niveau d'eau) ; puis le
-// parcours des candidats, chaque case large comme son groupe.
+// VIVANT (directeur, 20/11/2026) : l'accueil de la direction, une seule page
+// et une seule grammaire. Une grande case sombre ou Praxis, assis sur le
+// bord, dit le blocage du moment, montre les sept prochains jours de creneaux
+// d'entretien et propose les gestes ; une case haute (les pieces a valider) ;
+// deux petites (conversations non lues, courriels des 24 heures en niveau
+// d'eau) ; le parcours des candidats, chaque case large comme son nombre ;
+// les cases-chiffres de l'academie ; la case large « Ce qui a changé ».
 //
 // **Donnees reelles uniquement.** Chaque case lit une lecture serveur qui
 // existe deja ; une case sans lecture (capacite indisponible, echec) ne
-// s'affiche pas. Aucun nombre d'exemple.
+// s'affiche pas. Aucun nombre d'exemple, aucun nombre affiche deux fois.
 //
 // Contrat de navigation §2 : une case qui porte un nombre ouvre la liste deja
 // filtree, empilee (`push`), le filtre dans l'adresse.
@@ -16,7 +18,10 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../core/accueil/signaux_accueils.dart';
+import '../../core/admin/service_admin.dart';
 import '../../core/candidature/attentes_recrutement.dart';
+import '../../core/candidature/creneaux_direction.dart';
 import '../../core/candidature/modeles_candidature.dart';
 import '../../core/candidature/modeles_candidatures_direction.dart';
 import '../../core/candidature/port_prevenir_candidats.dart';
@@ -33,6 +38,10 @@ import '../../core/vivant/nombre_rouleaux.dart';
 import '../../core/vivant/praxis_vivant.dart';
 import '../../core/vivant/surface_penchee.dart';
 import '../../core/vivant/toucher_vivant.dart';
+import '../../core/widgets/avatar_nom.dart';
+import '../../core/widgets/halo_lumiere.dart';
+import '../../core/widgets/lien_fleche.dart';
+import '../../core/widgets/lumiere_autour.dart';
 import '../admin_candidatures/adresse_candidatures.dart';
 import '../admin_candidatures/files_candidatures.dart' show depuisQuand;
 import 'phrase_praxis.dart';
@@ -60,23 +69,49 @@ const FiltreCandidatures filtrePieces = FiltreCandidatures(
   issue: IssueCandidature.enCours,
 );
 
-/// Le haut de l'accueil, en bento vivant.
+/// La requete de la file des pieces a valider (meme tri que la liste).
+const RequeteCandidatures requetePieces = RequeteCandidatures(
+  filtre: filtrePieces,
+);
+
+/// L'accueil de la direction, en bento vivant.
 class BentoVivant extends StatefulWidget {
   /// Cree le bento.
   const BentoVivant({
     required this.phrase,
     required this.maintenant,
+    required this.indicateurs,
+    required this.dossiers,
+    required this.activite,
     super.key,
+    this.dossierDetail,
     this.attentes,
     this.messagesNonLus,
+    this.dernierMessage,
     this.courriels,
+    this.creneaux,
+    this.piece,
+    this.date,
+    this.lumieres = const <MotifDirection, NatureHalo?>{},
   });
 
   /// Ce que dit Praxis.
   final PhrasePraxis phrase;
 
-  /// L'instant courant (salutation, anciennete).
+  /// L'instant courant (salutation, anciennete, semaine).
   final DateTime maintenant;
+
+  /// Les six compteurs de l'academie, lus au serveur.
+  final IndicateursAdmin indicateurs;
+
+  /// Les dossiers d'identite a valider (ceux de la file affichee).
+  final int dossiers;
+
+  /// Le plus ancien dossier d'identite (nom et anciennete), s'il est lu.
+  final String? dossierDetail;
+
+  /// La case large « Ce qui a changé ».
+  final Widget activite;
 
   /// Les attentes du recrutement ; `null` : non lues, leurs cases ne
   /// s'affichent pas.
@@ -86,8 +121,24 @@ class BentoVivant extends StatefulWidget {
   /// lecture rend 0 quand elle n'aboutit pas : un 0 n'y est pas une preuve).
   final int? messagesNonLus;
 
+  /// Le dernier message non lu : qui, puis sa premiere ligne.
+  final (String, String)? dernierMessage;
+
   /// L'etat de la file des courriels ; `null` : non lu.
   final EtatFileCourriels? courriels;
+
+  /// Les creneaux d'entretien a venir ; `null` : non lus, la semaine ne
+  /// s'affiche pas.
+  final List<CreneauDirection>? creneaux;
+
+  /// La premiere candidature de la file des pieces a valider, si elle est lue.
+  final LigneCandidature? piece;
+
+  /// La date du jour, sur grand ecran.
+  final String? date;
+
+  /// Les lumieres des cases (LUMIERE-ACCUEILS 4), par motif.
+  final Map<MotifDirection, NatureHalo?> lumieres;
 
   /// La largeur a partir de laquelle la grille a quatre colonnes.
   static const double seuilQuatre = 960;
@@ -95,8 +146,18 @@ class BentoVivant extends StatefulWidget {
   /// La largeur a partir de laquelle la grille a deux colonnes.
   static const double seuilDeux = 600;
 
+  /// En dessous (telephone etroit, ou texte tres agrandi), les cases-chiffres
+  /// ne vont plus par deux : une par ligne, aucun mot coupe.
+  static const double seuilPaires = 300;
+
   /// La case sombre de Praxis.
   static const Key cleHeros = ValueKey<String>('vivant-heros');
+
+  /// La date du jour, dans la case de Praxis.
+  static const Key cleDate = ValueKey<String>('adm01-date');
+
+  /// Le jour [i] (0 : aujourd'hui) de la semaine des creneaux.
+  static Key cleJour(int i) => ValueKey<String>('vivant-jour-$i');
 
   /// La case des pieces a valider.
   static const Key clePieces = ValueKey<String>('vivant-pieces');
@@ -104,8 +165,29 @@ class BentoVivant extends StatefulWidget {
   /// La case des conversations non lues.
   static const Key cleMessages = ValueKey<String>('vivant-messages');
 
-  /// La case des courriels du jour.
+  /// La case des courriels des 24 heures.
   static const Key cleCourriels = ValueKey<String>('vivant-courriels');
+
+  /// Les cases-chiffres de l'academie.
+  static const Key cleDossiers = ValueKey<String>('vivant-dossiers');
+
+  /// « Demandes à trancher ».
+  static const Key cleDemandes = ValueKey<String>('vivant-demandes');
+
+  /// « Élèves sans enseignant ».
+  static const Key cleEleves = ValueKey<String>('vivant-eleves');
+
+  /// « Cahiers manquants ».
+  static const Key cleCahiers = ValueKey<String>('vivant-cahiers');
+
+  /// « Incidents (24 h) ».
+  static const Key cleIncidents = ValueKey<String>('vivant-incidents');
+
+  /// « Accès échus ».
+  static const Key cleEchus = ValueKey<String>('vivant-echus');
+
+  /// Le cadenas entre « Entretien à planifier » et « Entretien planifié ».
+  static const Key cleCadenas = ValueKey<String>('vivant-cadenas');
 
   /// La case d'un etat du parcours.
   static Key cleEtat(EtatCandidature e) =>
@@ -134,35 +216,19 @@ class _EtatBentoVivant extends State<BentoVivant> {
     final AttentesRecrutement? attentes = widget.attentes;
     final int messages = widget.messagesNonLus ?? 0;
     final EtatFileCourriels? courriels = widget.courriels;
+    final IndicateursAdmin ind = widget.indicateurs;
+    final LigneCandidature? piece = widget.piece;
+    final (String, String)? dernier = widget.dernierMessage;
     final v = t.admin.tableau.vivant;
-
-    final Widget heros = _Heros(
-      key: BentoVivant.cleHeros,
-      phrase: widget.phrase,
-      heure: widget.maintenant.hour,
-      attentes: attentes,
-      regard: _regard,
-      onPress: switch (widget.phrase.sujet) {
-        SujetPraxis.creneaux => () => _ouvrir(
-          Routes.adminPersonnesCreneauxEntretien,
-        ),
-        SujetPraxis.pieces => () => _ouvrir(
-          adresseCandidaturesFiltree(filtrePieces),
-        ),
-        SujetPraxis.dossiers => () => _ouvrir(Routes.adminPersonnesDossiers),
-        SujetPraxis.demandes => () => _ouvrir(Routes.adminOperationsDemandes),
-        SujetPraxis.messages => () => _ouvrir(
-          Routes.adminCommunicationsMessages,
-        ),
-        SujetPraxis.calme || SujetPraxis.silence => null,
-      },
-    );
+    final tb = t.admin.tableau;
+    final String adressePieces = adresseCandidaturesFiltree(filtrePieces);
+    final int nbPieces = attentes?.pieceAValider.nombre ?? 0;
 
     final Widget? pieces = attentes == null
         ? null
         : CaseNombre(
             key: BentoVivant.clePieces,
-            nombre: attentes.pieceAValider.nombre,
+            nombre: nbPieces,
             libelle: t.admin.candidatures.attentes.pieceAValider,
             detail: depuisQuand(
               attentes.pieceAValider.plusAncien,
@@ -170,7 +236,20 @@ class _EtatBentoVivant extends State<BentoVivant> {
             ),
             icone: AppIcons.dossiers,
             paire: palette.washAccent,
-            onPress: () => _ouvrir(adresseCandidaturesFiltree(filtrePieces)),
+            filet: nbPieces == 0,
+            // Une personne : son nom en carte, et le toucher ouvre son
+            // dossier complet, dans la file des pieces.
+            personne: piece == null
+                ? null
+                : (piece.nomComplet, piece.paysResidence),
+            onPress: () => _ouvrir(
+              piece == null
+                  ? adressePieces
+                  : Routes.adminPersonnesCandidaturePour(
+                      piece.reference,
+                      fileDeLaListe: requeteEnAdresse(requetePieces),
+                    ),
+            ),
           );
     final Widget? caseMessages = messages <= 0
         ? null
@@ -178,6 +257,8 @@ class _EtatBentoVivant extends State<BentoVivant> {
             key: BentoVivant.cleMessages,
             nombre: messages,
             libelle: v.messagesNonLus,
+            detail: dernier == null ? null : '${dernier.$1} · ${dernier.$2}',
+            detailSurUneLigne: true,
             icone: AppIcons.envoyerMessage,
             // L'accent plein : violet en clair, lavande en sombre.
             paire: palette.surfacePrimary,
@@ -199,10 +280,117 @@ class _EtatBentoVivant extends State<BentoVivant> {
           );
     final List<Widget> petites = <Widget>[?caseMessages, ?caseCourriels];
 
+    // Les cases-chiffres de l'academie. Discretes a zero (un filet), une
+    // teinte seulement quand le nombre demande un geste ; l'alerte franche
+    // est reservee aux incidents.
+    Widget chiffre(
+      Key cle,
+      int n,
+      String libelle,
+      AppIcon icone,
+      String adresse, {
+      String? detail,
+      bool alerte = false,
+      MotifDirection? motif,
+    }) {
+      final Widget c = CaseNombre(
+        key: cle,
+        nombre: n,
+        libelle: libelle,
+        detail: detail,
+        icone: icone,
+        paire: alerte ? palette.washAlert : palette.washWarning,
+        filet: n == 0,
+        onPress: () => _ouvrir(adresse),
+      );
+      return motif == null
+          ? c
+          : LumiereAutour(
+              nature: widget.lumieres[motif],
+              arrondi: AppRadius.arrondiLg,
+              child: c,
+            );
+    }
+
+    final List<Widget> chiffres = <Widget>[
+      chiffre(
+        BentoVivant.cleDossiers,
+        widget.dossiers,
+        tb.dossiers,
+        AppIcons.dossiers,
+        Routes.adminPersonnesDossiers,
+        detail: widget.dossierDetail,
+        motif: MotifDirection.dossiers,
+      ),
+      chiffre(
+        BentoVivant.cleDemandes,
+        ind.demandesEnAttente,
+        tb.demandes,
+        AppIcons.attribution,
+        Routes.adminOperationsDemandes,
+        motif: MotifDirection.demandes,
+      ),
+      chiffre(
+        BentoVivant.cleEleves,
+        ind.foyersSansEnseignant,
+        tb.foyers,
+        AppIcons.classes,
+        Routes.adminOperationsRegroupements,
+      ),
+      chiffre(
+        BentoVivant.cleCahiers,
+        ind.rapportsManquants,
+        tb.rapports,
+        AppIcons.historique,
+        Routes.adminPedagogieQualite,
+      ),
+      chiffre(
+        BentoVivant.cleIncidents,
+        ind.incidents24h,
+        tb.incidents,
+        AppIcons.oeil,
+        Routes.adminSecuriteAuditIncidents,
+        alerte: true,
+        motif: MotifDirection.incidents,
+      ),
+      chiffre(
+        BentoVivant.cleEchus,
+        ind.comptesEchus,
+        tb.comptes,
+        AppIcons.verrou,
+        Routes.adminPersonnesComptesEchus,
+      ),
+    ];
+
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints c) {
-        final bool quatre = c.maxWidth >= BentoVivant.seuilQuatre;
-        final bool deux = c.maxWidth >= BentoVivant.seuilDeux;
+        // Un texte agrandi a besoin de cases plus larges : la largeur compte
+        // a l'echelle du texte (x2 a 1440 : une colonne, comme avant).
+        final double utile =
+            c.maxWidth / MediaQuery.textScalerOf(context).scale(1);
+        final bool quatre = utile >= BentoVivant.seuilQuatre;
+        final bool deux = utile >= BentoVivant.seuilDeux;
+        final Widget heros = _Heros(
+          key: BentoVivant.cleHeros,
+          phrase: widget.phrase,
+          maintenant: widget.maintenant,
+          attentes: attentes,
+          creneaux: widget.creneaux,
+          regard: _regard,
+          grand: deux,
+          date: deux ? widget.date : null,
+          gestes: <(String, String)>[
+            if (attentes != null && attentes.creneauxOuverts == 0)
+              (v.ouvrirCreneaux, Routes.adminPersonnesCreneauxEntretien),
+            if (nbPieces > 0) (v.verifierPieces(n: nbPieces), adressePieces),
+            if (messages > 0)
+              (
+                v.repondreMessages(n: messages),
+                Routes.adminCommunicationsMessages,
+              ),
+          ],
+          onOuvrir: _ouvrir,
+        );
         final Widget? colonnePetites = petites.isEmpty
             ? null
             : Column(
@@ -212,6 +400,9 @@ class _EtatBentoVivant extends State<BentoVivant> {
                   for (final Widget p in petites) Expanded(child: p),
                 ],
               );
+        _Rang paire(int i) => _Rang(
+          cases: <(int, Widget)>[(1, chiffres[i]), (1, chiffres[i + 1])],
+        );
         final List<Widget> blocs = <Widget>[
           // La place de Praxis, assis sur le bord de sa case.
           const SizedBox(height: _Heros.assise),
@@ -240,6 +431,25 @@ class _EtatBentoVivant extends State<BentoVivant> {
               enLigne: deux,
               onOuvrir: _ouvrir,
             ),
+          if (quatre) ...<Widget>[
+            _Rang(
+              cases: <(int, Widget)>[
+                for (final Widget x in chiffres.take(4)) (1, x),
+              ],
+            ),
+            _Rang(
+              cases: <(int, Widget)>[
+                (1, chiffres[4]),
+                (1, chiffres[5]),
+                (2, widget.activite),
+              ],
+            ),
+          ] else if (utile >= BentoVivant.seuilPaires) ...<Widget>[
+            paire(0),
+            paire(2),
+            paire(4),
+            widget.activite,
+          ] else ...<Widget>[...chiffres, widget.activite],
         ];
         return MouseRegion(
           onHover: (PointerEvent e) => _regard.value = e.position,
@@ -254,7 +464,8 @@ class _EtatBentoVivant extends State<BentoVivant> {
   }
 }
 
-/// Un rang de cases de meme hauteur : celle de la plus haute.
+/// Un rang de cases de meme hauteur : celle de la plus haute. Une part de 0
+/// garde la largeur de son contenu (le cadenas du parcours).
 class _Rang extends StatelessWidget {
   const _Rang({required this.cases});
 
@@ -267,7 +478,7 @@ class _Rang extends StatelessWidget {
       spacing: AppSpacing.lg,
       children: <Widget>[
         for (final (int flex, Widget enfant) in cases)
-          Expanded(flex: flex, child: enfant),
+          if (flex == 0) enfant else Expanded(flex: flex, child: enfant),
       ],
     ),
   );
@@ -310,7 +521,7 @@ class CaseVivante extends StatelessWidget {
   /// Le niveau d'eau (0 a 1) ; `null` : pas d'eau.
   final double? niveau;
 
-  /// Un filet au lieu d'un fond (case vide).
+  /// Un filet au lieu d'un fond (case discrete : rien n'attend).
   final bool filet;
 
   /// La hauteur minimale.
@@ -381,10 +592,12 @@ class CaseNombre extends StatelessWidget {
     required this.paire,
     super.key,
     this.detail,
+    this.detailSurUneLigne = false,
     this.onPress,
     this.niveau,
     this.filet = false,
     this.alerte,
+    this.personne,
   });
 
   /// Le nombre.
@@ -393,8 +606,11 @@ class CaseNombre extends StatelessWidget {
   /// Ce qu'il compte.
   final String libelle;
 
-  /// Une precision (anciennete, plafond).
+  /// Une precision (anciennete, plafond, dernier message).
   final String? detail;
+
+  /// La precision tient sur une ligne, coupee au besoin.
+  final bool detailSurUneLigne;
 
   /// L'icone, en haut au bord de fin.
   final AppIcon icone;
@@ -408,27 +624,39 @@ class CaseNombre extends StatelessWidget {
   /// Le niveau d'eau.
   final double? niveau;
 
-  /// Case vide : un filet, pas de fond.
+  /// Case discrete : un filet, pas de fond (rien n'attend).
   final bool filet;
 
   /// Une phrase d'alerte, avec un cadenas (jamais la couleur seule).
   final String? alerte;
 
+  /// Une personne en carte : son nom, et une ligne (son pays).
+  final (String, String?)? personne;
+
   @override
   Widget build(BuildContext context) {
+    final AppPalette palette = AppPalette.of(context);
     final TextTheme textes = Theme.of(context).textTheme;
-    final Color encre = paire.onBackground;
-    final TextStyle petit = AppTypography.graisse(
-      (textes.bodySmall ?? const TextStyle()).copyWith(color: encre),
-      FontWeight.w600,
+    // Sur un filet, la case est posee sur la page : l'encre de la page.
+    final Color encre = filet
+        ? palette.surfaceCanvas.onBackground
+        : paire.onBackground;
+    final TextStyle petit = (textes.bodySmall ?? const TextStyle()).copyWith(
+      color: encre,
     );
     final String? precision = alerte ?? detail;
+    final (String, String?)? qui = personne;
     return CaseVivante(
       paire: paire,
       onPress: onPress,
       niveau: niveau,
       filet: filet,
-      libelleSemantique: <String>['$nombre', libelle, ?precision].join(', '),
+      libelleSemantique: <String>[
+        '$nombre',
+        libelle,
+        ?precision,
+        ?qui?.$1,
+      ].join(', '),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -457,13 +685,41 @@ class CaseNombre extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
-                Text(libelle, style: petit),
+                if (qui != null) ...<Widget>[
+                  // La personne, en carte dans la case : rayon interieur =
+                  // rayon de la case moins sa marge.
+                  DecoratedBox(
+                    decoration: ShapeDecoration(
+                      color: palette.surfaceRaised.background,
+                      shape: AppRadius.coinContinu(
+                        AppRadius.interieur(
+                          CaseVivante.rayon,
+                          CaseVivante.marge,
+                        ),
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(AppSpacing.sm),
+                      child: AvatarNom(
+                        prenom: qui.$1,
+                        role: qui.$2,
+                        disposition: DispositionAvatar.enLigne,
+                        diametre: AppAvatar.petit,
+                      ),
+                    ),
+                  ),
+                  Ecart.vMd,
+                ],
+                Text(
+                  libelle,
+                  style: AppTypography.graisse(petit, FontWeight.w600),
+                ),
                 if (precision != null)
                   Text(
                     precision,
-                    style: (textes.bodySmall ?? const TextStyle()).copyWith(
-                      color: encre,
-                    ),
+                    style: petit,
+                    maxLines: detailSurUneLigne ? 1 : null,
+                    overflow: detailSurUneLigne ? TextOverflow.ellipsis : null,
                   ),
               ],
             ),
@@ -474,17 +730,22 @@ class CaseNombre extends StatelessWidget {
   }
 }
 
-/// La grande case sombre : Praxis est assis sur son bord et dit le blocage du
-/// moment. Sombre dans les deux themes ; le texte d'accent y est la lavande,
-/// jamais le violet.
+/// La grande case sombre : l'en-tete de la page. Praxis est assis sur son
+/// bord et dit le blocage du moment ; dessous, les sept prochains jours de
+/// creneaux d'entretien, puis les gestes. Sombre dans les deux themes ; le
+/// texte d'accent y est la lavande, jamais le violet.
 class _Heros extends StatelessWidget {
   const _Heros({
     required this.phrase,
-    required this.heure,
+    required this.maintenant,
     required this.regard,
+    required this.grand,
+    required this.gestes,
+    required this.onOuvrir,
     super.key,
     this.attentes,
-    this.onPress,
+    this.creneaux,
+    this.date,
   });
 
   /// La largeur de Praxis.
@@ -493,11 +754,18 @@ class _Heros extends StatelessWidget {
   /// La part de Praxis qui depasse au-dessus de la case.
   static const double assise = 48;
 
+  /// La taille de « Bonjour. » sur tablette et ordinateur (maquette : 48).
+  static const double tailleSalut = 44;
+
   final PhrasePraxis phrase;
-  final int heure;
+  final DateTime maintenant;
   final ValueNotifier<Offset> regard;
+  final bool grand;
+  final List<(String, String)> gestes;
+  final ValueChanged<String> onOuvrir;
   final AttentesRecrutement? attentes;
-  final VoidCallback? onPress;
+  final List<CreneauDirection>? creneaux;
+  final String? date;
 
   @override
   Widget build(BuildContext context) {
@@ -514,22 +782,38 @@ class _Heros extends StatelessWidget {
     final Color lavande = sombre
         ? paire.onBackground
         : claire.surfaceActionDouce.background;
+    final TextStyle petit = (textes.bodySmall ?? const TextStyle()).copyWith(
+      color: lavande,
+    );
     final String? texte = phrase.texte;
     final AttentesRecrutement? a = attentes;
+    final List<CreneauDirection>? liste = creneaux;
+    final String? jour = date;
+    final int heure = maintenant.hour;
     final String salut = heure < 12
         ? v.bonjour
         : heure < 18
         ? v.bonApresMidi
         : v.bonsoir;
+    // Praxis est assis au-dessus du coin de fin : le haut du texte lui laisse
+    // sa place, rien ne passe sous lui.
+    // Au telephone, Praxis est plus petit et la phrase passe sous lui, sur
+    // toute la largeur : aucun mot coupe a 320 en texte x2.
+    final double largeurPraxis = grand ? taillePraxis : 80;
+    final EdgeInsetsDirectional placePraxis = EdgeInsetsDirectional.only(
+      end: largeurPraxis + AppSpacing.lg,
+    );
+    final TextStyle styleSalut = paire.applyTo(
+      (grand ? textes.headlineLarge : textes.headlineMedium) ??
+          const TextStyle(),
+    );
     return Stack(
       clipBehavior: Clip.none,
       fit: StackFit.passthrough,
       children: <Widget>[
         CaseVivante(
           paire: paire,
-          onPress: onPress,
           hauteurMin: 160,
-          libelleSemantique: <String>[salut, ?texte].join(' '),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -538,25 +822,37 @@ class _Heros extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsetsDirectional.only(
-                      end: taillePraxis + AppSpacing.lg,
+                  if (jour != null)
+                    Padding(
+                      padding: placePraxis,
+                      child: Text(jour, key: BentoVivant.cleDate, style: petit),
                     ),
-                    child: Text(
-                      salut,
-                      style: paire.applyTo(
-                        textes.titleLarge ?? const TextStyle(),
+                  Padding(
+                    padding: placePraxis,
+                    child: Semantics(
+                      header: true,
+                      // Une seule ligne, reduite si la place manque a cote
+                      // de Praxis : « Bon après-midi. » ne se coupe jamais.
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        alignment: AlignmentDirectional.centerStart,
+                        child: Text(
+                          salut,
+                          maxLines: 1,
+                          style: grand
+                              ? styleSalut.copyWith(
+                                  fontSize: tailleSalut,
+                                  height: 1.1,
+                                )
+                              : styleSalut,
+                        ),
                       ),
                     ),
                   ),
                   if (texte != null) ...<Widget>[
-                    Ecart.vMd,
-                    // Praxis est assis au-dessus : le texte lui laisse sa
-                    // place, rien ne passe sous lui.
+                    Ecart.vSm,
                     Padding(
-                      padding: const EdgeInsetsDirectional.only(
-                        end: taillePraxis + AppSpacing.lg,
-                      ),
+                      padding: grand ? placePraxis : EdgeInsets.zero,
                       child: Text(
                         texte,
                         style: (textes.bodyLarge ?? const TextStyle()).copyWith(
@@ -567,20 +863,46 @@ class _Heros extends StatelessWidget {
                   ],
                 ],
               ),
-              if (a != null)
-                Padding(
-                  padding: const EdgeInsets.only(top: AppSpacing.lg),
-                  child: Text(
-                    a.creneauxOuverts == 0
-                        ? t.admin.candidatures.attentes.aucunCreneau
-                        : t.admin.candidatures.attentes.creneauxOuverts(
-                            n: a.creneauxOuverts,
-                          ),
-                    style: (textes.bodySmall ?? const TextStyle()).copyWith(
-                      color: lavande,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: <Widget>[
+                  if (a != null || liste != null) Ecart.vXl,
+                  if (a != null)
+                    Text(
+                      a.creneauxOuverts == 0
+                          ? t.admin.candidatures.attentes.aucunCreneau
+                          : t.admin.candidatures.attentes.creneauxOuverts(
+                              n: a.creneauxOuverts,
+                            ),
+                      style: AppTypography.graisse(petit, FontWeight.w600),
                     ),
-                  ),
-                ),
+                  if (liste != null) ...<Widget>[
+                    Ecart.vSm,
+                    _Semaine(
+                      creneaux: liste,
+                      maintenant: maintenant,
+                      paire: paire,
+                      lavande: lavande,
+                    ),
+                  ],
+                  if (gestes.isNotEmpty) ...<Widget>[
+                    Ecart.vSm,
+                    Wrap(
+                      spacing: AppSpacing.lg,
+                      children: <Widget>[
+                        for (final (String libelle, String adresse) in gestes)
+                          LienFleche(
+                            libelle: libelle,
+                            encre: (TextStyle base) =>
+                                base.copyWith(color: lavande),
+                            onPress: () => onOuvrir(adresse),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
             ],
           ),
         ),
@@ -590,7 +912,7 @@ class _Heros extends StatelessWidget {
           child: IgnorePointer(
             child: PraxisVivant(
               humeur: phrase.humeur,
-              taille: taillePraxis,
+              taille: largeurPraxis,
               regard: regard,
             ),
           ),
@@ -600,9 +922,99 @@ class _Heros extends StatelessWidget {
   }
 }
 
-/// Le parcours des candidats : une case par etat, large comme son groupe,
+/// Les sept prochains jours de creneaux d'entretien : un jour sans creneau
+/// libre reste vide (un filet) ; un jour ouvert est plein et porte son nombre
+/// (jamais la couleur seule).
+class _Semaine extends StatelessWidget {
+  const _Semaine({
+    required this.creneaux,
+    required this.maintenant,
+    required this.paire,
+    required this.lavande,
+  });
+
+  final List<CreneauDirection> creneaux;
+  final DateTime maintenant;
+  final AppColorPair paire;
+  final Color lavande;
+
+  @override
+  Widget build(BuildContext context) {
+    final TextTheme textes = Theme.of(context).textTheme;
+    final DateTime jour0 = DateTime(
+      maintenant.year,
+      maintenant.month,
+      maintenant.day,
+    );
+    int libres(DateTime jour) => creneaux
+        .where(
+          (CreneauDirection c) =>
+              c.etat == EtatCreneau.libre &&
+              c.debut.year == jour.year &&
+              c.debut.month == jour.month &&
+              c.debut.day == jour.day &&
+              c.debut.isAfter(maintenant),
+        )
+        .length;
+    return Semantics(
+      label: t.admin.tableau.vivant.semaineCreneaux,
+      child: Wrap(
+        spacing: AppSpacing.sm,
+        runSpacing: AppSpacing.sm,
+        children: <Widget>[
+          for (int i = 0; i < 7; i++)
+            () {
+              final DateTime jour = DateTime(
+                jour0.year,
+                jour0.month,
+                jour0.day + i,
+              );
+              final int n = libres(jour);
+              final bool ouvert = n > 0;
+              final Color encre = ouvert ? paire.background : lavande;
+              final TextStyle style = AppTypography.graisse(
+                (textes.labelMedium ?? const TextStyle()).copyWith(
+                  color: encre,
+                ),
+                FontWeight.w700,
+              );
+              return SizedBox(
+                key: BentoVivant.cleJour(i),
+                width: AppSpacing.section,
+                height: AppSpacing.titreEcran,
+                child: DecoratedBox(
+                  decoration: ShapeDecoration(
+                    color: ouvert ? lavande : null,
+                    shape: AppRadius.coinContinu(
+                      AppRadius.sm,
+                      bordure: ouvert
+                          ? BorderSide.none
+                          : BorderSide(color: lavande.withValues(alpha: 0.35)),
+                    ),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Text(
+                        t.commun.dates.jours[jour.weekday - 1].characters.first,
+                        style: style,
+                      ),
+                      if (ouvert) Text('$n', style: style),
+                    ],
+                  ),
+                ),
+              );
+            }(),
+        ],
+      ),
+    );
+  }
+}
+
+/// Le parcours des candidats : une case par etat, large comme son nombre,
 /// remplie comme un niveau d'eau. La ou rien ne passe (des entretiens a
-/// planifier, aucun creneau ouvert), la case le dit avec un cadenas.
+/// planifier, aucun creneau ouvert), la case le dit et un cadenas ferme le
+/// passage vers « Entretien planifié ».
 class ParcoursCandidats extends StatelessWidget {
   /// Cree le parcours.
   const ParcoursCandidats({
@@ -644,6 +1056,9 @@ class ParcoursCandidats extends StatelessWidget {
       1,
       (int m, EtatCandidature x) => math.max(m, attentes.etat(x).nombre),
     );
+    final bool ferme =
+        attentes.etat(EtatCandidature.entretienAPlanifier).nombre > 0 &&
+        attentes.creneauxOuverts == 0;
     String nom(EtatCandidature x) => switch (x) {
       EtatCandidature.aCompleter => e.aCompleter,
       EtatCandidature.enExamen => e.enExamen,
@@ -652,17 +1067,24 @@ class ParcoursCandidats extends StatelessWidget {
       EtatCandidature.entretienPlanifie => e.entretienPlanifie,
       EtatCandidature.decisionEnAttente => e.decisionEnAttente,
     };
+    final Widget cadenas = Center(
+      child: Icon(
+        AppIcons.verrou.repos,
+        key: BentoVivant.cleCadenas,
+        size: AppSpacing.xxl,
+        color: palette.inkAlert.applyTo(const TextStyle()).color,
+        semanticLabel: t.admin.candidatures.attentes.aucunCreneau,
+      ),
+    );
     final List<(int, Widget)> cases = <(int, Widget)>[
-      for (final EtatCandidature x in etats)
+      for (final EtatCandidature x in etats) ...<(int, Widget)>[
+        if (ferme && x == EtatCandidature.entretienPlanifie) (0, cadenas),
         () {
           final Attente at = attentes.etat(x);
-          final bool bloque =
-              x == EtatCandidature.entretienAPlanifier &&
-              at.nombre > 0 &&
-              attentes.creneauxOuverts == 0;
+          final bool bloque = ferme && x == EtatCandidature.entretienAPlanifier;
           final double part = math.sqrt(at.nombre / plusGrand);
           return (
-            // Large comme son groupe, sans jamais devenir illisible.
+            // Large comme son nombre, sans jamais devenir illisible.
             (math.max(0.62, part) * 100).round(),
             CaseNombre(
               key: BentoVivant.cleEtat(x),
@@ -681,6 +1103,7 @@ class ParcoursCandidats extends StatelessWidget {
             ),
           );
         }(),
+      ],
     ];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,

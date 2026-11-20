@@ -1,7 +1,7 @@
-// SANS-BARRE-FIXE, decision (i) du pilote (07/11) : les lignes d'apercu
-// touchables d'une tuile compteur ne s'affichent que si elles tiennent a
-// l'echelle 1. Sinon la tuile reste un seul lien vers la file, jamais reduite
-// sous la cible de 48 (AD-11, androidTapTargetGuideline).
+// SANS-BARRE-FIXE, decision (i) du pilote (07/11), puis VIVANT (20/11) : une
+// case de l'accueil est un seul lien vers sa file, jamais reduit sous la
+// cible de 48 (AD-11, androidTapTargetGuideline). Les lignes d'apercu
+// touchables de l'ancienne tuile compteur n'existent plus sur cette page.
 //
 // Depuis la vraie coque admin en demonstration (donnees de test).
 
@@ -14,7 +14,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/widgets/pressable.dart';
-import 'package:rewayah_academy/features/admin_tableau/tuiles_compteur.dart';
+import 'package:rewayah_academy/features/admin_tableau/bento_vivant.dart';
 
 import '../../capture/outil_capture.dart';
 import '../../support/demo/dossiers_demo.dart';
@@ -56,9 +56,9 @@ Future<void> _monter(WidgetTester tester, Size taille) async {
 Future<List<(int, List<double>, double)>> _mesurer(WidgetTester tester) async {
   final List<(int, List<double>, double)> mesures =
       <(int, List<double>, double)>[];
-  final int n = find.byType(TuileCompteur).evaluate().length;
+  final int n = find.byType(CaseNombre).evaluate().length;
   for (int i = 0; i < n; i++) {
-    final Finder tuile = find.byType(TuileCompteur).at(i);
+    final Finder tuile = find.byType(CaseNombre).at(i);
     await tester.ensureVisible(tuile);
     await _stab(tester);
     final Finder appuis = find
@@ -80,7 +80,7 @@ void main() {
   // Comme AD-11 : la police de test par defaut, plus large que celle du
   // depot, la ou l'apercu ne tient pas a 320.
 
-  testWidgets('320x640 : aucune ligne d apercu, la tuile entiere fait 48', (
+  testWidgets('320x640 : aucune ligne d apercu, la case entiere fait 48', (
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(320, 640));
@@ -98,15 +98,16 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
-  testWidgets('1440x900 : les lignes d apercu restent, chacune a 48', (
+  testWidgets('1440x900 : chaque case est un seul lien d au moins 48', (
     WidgetTester tester,
   ) async {
     await _monter(tester, const Size(1440, 900));
     final List<(int, List<double>, double)> mesures = await _mesurer(tester);
-    // La mesure porte sur quelque chose : au moins une tuile montre ses
-    // lignes a cote de son lien.
-    expect(mesures.any(((int, List<double>, double) m) => m.$1 > 1), isTrue);
-    for (final (int _, List<double> hauteurs, double _) in mesures) {
+    // VIVANT : une case, un geste. Les lignes d'apercu de l'ancienne tuile
+    // n'existent plus ; chaque case reste un seul lien d'au moins 48.
+    expect(mesures, isNotEmpty);
+    for (final (int appuis, List<double> hauteurs, double _) in mesures) {
+      expect(appuis, 1);
       for (final double h in hauteurs) {
         expect(h, greaterThanOrEqualTo(48));
       }
