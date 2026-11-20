@@ -3177,7 +3177,8 @@
       "retrait": {
         "arret": "L'académie arrêtera d'étudier votre dossier.",
         "entretien": "Votre entretien sera annulé. Si vous reprenez votre candidature, vous en choisirez un nouveau.",
-        "rienEfface": "Rien ne sera effacé : vos réponses et vos documents resteront enregistrés.",
+        "rienEfface": "Vos réponses et vos documents resteront enregistrés.",
+        "pause": "Votre dossier est en pause. Si vous le retirez maintenant, vous ne pourrez pas le reprendre vous-même : il faudra écrire à l'académie, qui seule pourra le rouvrir.",
         "reprise(plural, param=n)": {
           "one": "Vous pourrez la reprendre vous-même pendant {n} jour, depuis l'onglet Dossier.",
           "other": "Vous pourrez la reprendre vous-même pendant {n} jours, depuis l'onglet Dossier."
@@ -3192,10 +3193,12 @@
         "faitSansDelai": "Candidature retirée."
       },
       "reprise": {
-        "possible": "Vous avez retiré votre candidature. Vous pouvez la reprendre vous-même jusqu'au {date}. Rien n'a été effacé.",
+        "possible": "Vous avez retiré votre candidature. Vous pouvez la reprendre vous-même jusqu'au {date} à {heure}. Vos réponses et vos documents sont toujours enregistrés.",
         "bouton": "Reprendre ma candidature",
-        "faite": "Votre candidature est reprise. Rien n'est perdu.",
+        "faite": "Votre candidature est reprise. Vos réponses et vos documents sont toujours enregistrés.",
         "delaiDepasse": "Le délai pour la reprendre vous-même est passé. Seule l'académie peut la rouvrir : écrivez-lui depuis l'onglet Messages.",
+        "enPause": "Votre dossier était en pause quand vous l'avez retiré : vous ne pouvez pas le reprendre vous-même. Seule l'académie peut le rouvrir : écrivez-lui depuis l'onglet Messages.",
+        "origineInconnue": "Votre candidature est retirée. Écrivez-nous depuis l'onglet Messages pour la reprendre.",
         "parDirection": "Ce retrait a été enregistré par l'académie. Seule l'académie peut rouvrir votre candidature : écrivez-lui depuis l'onglet Messages.",
         "controles": "Un élément de votre dossier a changé depuis votre retrait. Seule l'académie peut rouvrir votre candidature : écrivez-lui depuis l'onglet Messages.",
         "echec": "La reprise n'a pas abouti. Rien n'a changé : réessayez dans un instant.",

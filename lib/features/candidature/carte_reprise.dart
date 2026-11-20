@@ -13,14 +13,15 @@ import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/dossier/service_dossier.dart';
 import '../../core/fraicheur/avis_ephemere.dart';
-import '../../core/i18n/isolat_bidi.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/reseau/service_reseau.dart';
+import '../../core/tc_horloge/mon_horloge.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/skeleton.dart';
+import '../suivi_foyer/filtres_historique.dart';
 import 'reprise_candidature.dart';
 
 /// PE-A6 : la candidature retiree. Pendant 7 jours, le candidat la reprend
@@ -118,15 +119,22 @@ class _EtatCarteReprise extends ConsumerState<CarteReprise> {
     return switch (raison) {
       RaisonRepriseFermee.delaiDepasse => r.delaiDepasse,
       RaisonRepriseFermee.retraitParLaDirection => r.parDirection,
+      RaisonRepriseFermee.origineInconnue => r.origineInconnue,
+      RaisonRepriseFermee.retraitEnPause => r.enPause,
       RaisonRepriseFermee.controles => r.controles,
       RaisonRepriseFermee.type => t.recrutement.portail.retiree,
     };
   }
 
-  static String _jour(DateTime d) => isolerSens(
-    '${d.day.toString().padLeft(2, '0')}/'
-    '${d.month.toString().padLeft(2, '0')}/${d.year}',
-  );
+  /// La limite exacte rendue par le serveur, au jour ET a l'heure, a l'heure
+  /// de la personne (HEURES-PROFIL : [chezMoi]), dans sa langue.
+  static String _limite(DateTime instant) {
+    final DateTime murale = chezMoi(instant);
+    return t.recrutement.accueil.reprise.possible(
+      date: dateCourte(murale),
+      heure: heureMinute(murale),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -150,7 +158,7 @@ class _EtatCarteReprise extends ConsumerState<CarteReprise> {
         reprise.possible &&
         jusquAu != null;
     final String phrase = possible
-        ? r.possible(date: _jour(jusquAu))
+        ? _limite(jusquAu)
         : reprise?.raison == null
         // Sans lecture du serveur : la phrase d'avant, qui reste vraie.
         ? t.recrutement.portail.retiree

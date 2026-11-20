@@ -532,6 +532,17 @@ String explicationRetrait(CandidatureDossier c, RepriseCandidature? reprise) {
     return entretien ? r.consequenceEntretien : r.consequence;
   }
   final e = t.recrutement.accueil.retrait;
+  // En pause (posee par la direction) : le retrait ne se defait pas par la
+  // personne (le serveur refuse la reprise, `retrait_en_pause`) ; aucun delai
+  // n'est promis, l'ecran dit qu'il faudra ecrire a l'academie.
+  if (c.enPause) {
+    return <String>[
+      e.arret,
+      if (entretien) e.entretien,
+      e.pause,
+      e.rienEfface,
+    ].join('\n\n');
+  }
   return <String>[
     e.arret,
     if (entretien) e.entretien,
@@ -629,7 +640,9 @@ class _LienRetraitCandidatureState
       ref
           .read(avisEphemereProvider.notifier)
           .dire(
-            reprise == null ? e.faitSansDelai : e.fait(n: reprise.delaiJours),
+            reprise == null || c.enPause
+                ? e.faitSansDelai
+                : e.fait(n: reprise.delaiJours),
           );
       if (mounted) {
         setState(() => _enCours = false);

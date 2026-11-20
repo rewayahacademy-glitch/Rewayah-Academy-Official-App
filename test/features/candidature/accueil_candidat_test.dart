@@ -178,9 +178,38 @@ RepriseCandidature _repriseOuverte({int jours = 7}) => RepriseCandidature(
   retiree: true,
   possible: true,
   delaiJours: jours,
-  retireeLe: DateTime(2026, 11, 20, 10),
-  repriseJusquAu: DateTime(2026, 11, 27, 10),
+  retireeLe: DateTime(2026, 11, 20, 18, 42),
+  // Une limite qui n'est pas a l'heure ronde : l'ecran dit le jour ET
+  // l'heure exacts rendus par le serveur.
+  repriseJusquAu: DateTime(2026, 11, 27, 18, 42),
 );
+
+/// Les messages du candidat, qui se lisent : apres `marquerLu`, la liste des
+/// fils rend 0 message non lu pour ce fil (comme le serveur).
+class _MessagesQuiSeLisent extends FauxMessagesMetier {
+  _MessagesQuiSeLisent({required super.fils, required super.conversations});
+
+  final List<String> lus = <String>[];
+
+  @override
+  Future<void> marquerLu(String filId) async {
+    lus.add(filId);
+  }
+
+  @override
+  Future<List<ResumeFil>> fils() async => <ResumeFil>[
+    for (final ResumeFil f in await super.fils())
+      lus.contains(f.id)
+          ? ResumeFil(
+              id: f.id,
+              objet: f.objet,
+              interlocuteurs: f.interlocuteurs,
+              apercu: f.apercu,
+              dernierMessageLe: f.dernierMessageLe,
+            )
+          : f,
+  ];
+}
 
 const RepriseCandidature _enCours = RepriseCandidature(
   retiree: false,
@@ -209,6 +238,7 @@ Future<FauxServiceDossier> _accueil(
   bool avecMessagerie = false,
   bool filOuvert = true,
   int nonLus = 2,
+  bool lectureRemetAZero = false,
 }) async {
   final FauxServiceDossier dossier = FauxServiceDossier()
     ..etatRendu = etatCandidat(
@@ -275,7 +305,9 @@ Future<FauxServiceDossier> _accueil(
         // direction, deux messages a lire.
         if (avecMessagerie && idCandidature != null) ...<Override>[
           portMessagesMetierProvider.overrideWithValue(
-            FauxMessagesMetier(
+            (lectureRemetAZero
+                ? _MessagesQuiSeLisent.new
+                : FauxMessagesMetier.new)(
               fils: <FilMetier>[
                 if (filOuvert)
                   filAvec(
@@ -478,6 +510,43 @@ void main() {
         find.byKey(NavShell.cleCompteur(OngletCandidat.academie.chemin)),
         findsNothing,
       );
+    });
+
+    testWidgets('la barre : lire la conversation remet le nombre a zero', (
+      WidgetTester tester,
+    ) async {
+      await _accueil(
+        tester,
+        candidatureAFaire(),
+        avecMessagerie: true,
+        nonLus: 3,
+        lectureRemetAZero: true,
+      );
+      final Finder pastille = find.byKey(
+        NavShell.cleCompteur(OngletCandidat.messages.chemin),
+      );
+      expect(
+        find.descendant(of: pastille, matching: find.text('3')),
+        findsOneWidget,
+      );
+      // Ouvrir la rubrique Messages ouvre la conversation, qui se marque lue.
+      await versOnglet(tester, t.recrutement.accueil.onglets.messages);
+      expect(find.byKey(FilEnPlace.cle), findsOneWidget);
+      final _MessagesQuiSeLisent port = ProviderScope.containerOf(
+        tester.element(find.byType(AccueilCandidat)),
+      ).read(portMessagesMetierProvider) as _MessagesQuiSeLisent;
+      expect(port.lus, <String>['fil-cand']);
+      // Le nombre est relu : plus de pastille, plus rien dans la voix.
+      expect(pastille, findsNothing);
+      expect(
+        find.bySemanticsLabel(
+          RegExp(t.recrutement.accueil.messages.nonLus(n: 3)),
+        ),
+        findsNothing,
+      );
+      // Revenir a Dossier ne la fait pas revenir.
+      await versOnglet(tester, t.recrutement.accueil.onglets.dossier);
+      expect(pastille, findsNothing);
     });
 
     testWidgets('la barre : aucun message non lu, aucune pastille', (
@@ -1062,6 +1131,102 @@ void main() {
       );
     });
 
+    testWidgets('en pause : l explication dit que le retrait ne se defait pas '
+        'par la personne, aucun delai promis', (WidgetTester tester) async {
+      final FauxMaCandidature port = FauxMaCandidature();
+      await _accueil(
+        tester,
+        const CandidatureDossier(
+          existe: true,
+          etape: EtapeCandidature.prequalification,
+          etat: EtatCandidature.aCompleter,
+          enPause: true,
+          version: 4,
+        ),
+        port: port,
+        reprise: _Reprise(_enCours),
+      );
+      await versLeRetrait(tester);
+      await toucherCle(tester, 'retrait-lien');
+      final e = t.recrutement.accueil.retrait;
+      expect(find.textContaining(e.pause), findsOneWidget);
+      expect(find.textContaining(e.arret), findsOneWidget);
+      expect(find.textContaining(e.reprise(n: 7)), findsNothing);
+      expect(find.textContaining(e.apres), findsNothing);
+      // Le texte d'avant (« Rien ne sera efface ») n'est dit nulle part.
+      expect(find.textContaining('Rien ne sera effacé'), findsNothing);
+      await tester.tap(_texte(e.garder));
+      await tester.pumpAndSettle();
+      expect(port.retraits, isEmpty);
+    });
+
+    testWidgets('en pause, confirme : l avis ne promet aucun delai, la carte '
+        'ne propose pas la reprise et dit pourquoi', (
+      WidgetTester tester,
+    ) async {
+      final FauxMaCandidature port = FauxMaCandidature();
+      final _Reprise reprise = _Reprise(_enCours);
+      final FauxServiceDossier dossier = await _accueil(
+        tester,
+        const CandidatureDossier(
+          existe: true,
+          etape: EtapeCandidature.prequalification,
+          etat: EtatCandidature.aCompleter,
+          enPause: true,
+          version: 4,
+        ),
+        port: port,
+        reprise: reprise,
+        avecAvis: true,
+      );
+      await versLeRetrait(tester);
+      await toucherCle(tester, 'retrait-lien');
+      dossier.etatRendu = etatCandidat(
+        candidature: port.candidatureApresRetrait,
+      );
+      // Ce que le serveur rend apres un retrait qui a leve la pause.
+      reprise.lue = RepriseCandidature(
+        retiree: true,
+        possible: false,
+        delaiJours: 7,
+        retireeLe: DateTime(2026, 11, 20, 18, 42),
+        raison: RaisonRepriseFermee.retraitEnPause,
+      );
+      await tester.tap(_texte(t.recrutement.accueil.retrait.confirmer).last);
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 600));
+      expect(port.retraits, hasLength(1));
+      expect(
+        _texte(t.recrutement.accueil.retrait.faitSansDelai),
+        findsOneWidget,
+      );
+      expect(_texte(t.recrutement.accueil.retrait.fait(n: 7)), findsNothing);
+      await tester.pump(const Duration(seconds: 4));
+      await tester.pumpAndSettle();
+      expect(_texte(t.recrutement.accueil.reprise.enPause), findsOneWidget);
+      expect(find.byKey(CarteReprise.cleBouton), findsNothing);
+      expect(find.byType(ActionPrincipale), findsNothing);
+    });
+
+    testWidgets('la date limite : le jour et l heure du serveur, dans la '
+        'langue de la personne (arabe)', (WidgetTester tester) async {
+      await tester.runAsync(() => LocaleSettings.setLocale(AppLocale.ar));
+      await _accueil(
+        tester,
+        _retiree,
+        reprise: _Reprise(_repriseOuverte()),
+        direction: TextDirection.rtl,
+      );
+      final String phrase = tester
+          .widget<Text>(find.byKey(CarteReprise.clePhrase))
+          .data!;
+      expect(phrase, contains('نوفمبر'));
+      expect(phrase, contains('18:42'));
+      expect(phrase, contains('27'));
+      expect(phrase, contains('2026'));
+      expect(phrase, isNot(contains('nov.')));
+    });
+
     testWidgets('confirmer : un avis dit le delai, retour a Dossier, reprise', (
       WidgetTester tester,
     ) async {
@@ -1092,7 +1257,16 @@ void main() {
       expect(_adresse(tester), Routes.attente);
       expect(_texte(t.recrutement.portail.retireeTitre), findsOneWidget);
       expect(find.byKey(CarteReprise.cleBouton), findsOneWidget);
-      expect(find.textContaining('27/11/2026'), findsOneWidget);
+      // La limite exacte du serveur, au jour et a l'heure.
+      expect(
+        _texte(
+          t.recrutement.accueil.reprise.possible(
+            date: '27 nov. 2026',
+            heure: '18:42',
+          ),
+        ),
+        findsOneWidget,
+      );
       verifierUnSeulBoutonPlein(tester);
     });
 
@@ -1142,6 +1316,16 @@ void main() {
             'un element a change',
             RaisonRepriseFermee.controles,
             () => t.recrutement.accueil.reprise.controles,
+          ),
+          (
+            'retrait pendant une pause',
+            RaisonRepriseFermee.retraitEnPause,
+            () => t.recrutement.accueil.reprise.enPause,
+          ),
+          (
+            'origine du retrait inconnue',
+            RaisonRepriseFermee.origineInconnue,
+            () => t.recrutement.accueil.reprise.origineInconnue,
           ),
         ]) {
       testWidgets('reprise fermee ($nom) : la raison, aucun bouton', (

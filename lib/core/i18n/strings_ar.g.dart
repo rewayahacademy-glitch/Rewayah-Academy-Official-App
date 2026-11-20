@@ -22493,7 +22493,8 @@ class _Traductions$recrutement$accueil$retrait$ar extends Traductions$recrutemen
 	// Translations
 	@override String get arret => 'ستتوقف الأكاديمية عن دراسة ملفك.';
 	@override String get entretien => 'سيُلغى موعد مقابلتك. إن استأنفت طلب ترشحك فستختار موعدًا جديدًا.';
-	@override String get rienEfface => 'لن يُمحى شيء: إجاباتك ووثائقك ستبقى محفوظة.';
+	@override String get rienEfface => 'إجاباتك ووثائقك ستبقى محفوظة.';
+	@override String get pause => 'ملفك متوقف مؤقتًا. إن سحبته الآن فلن تستطيع استئنافه بنفسك: عليك أن تكتب إلى الأكاديمية، فهي وحدها تستطيع إعادة فتحه.';
 	@override String reprise({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n,
 		zero: 'سيمكنك استئنافه بنفسك في اليوم نفسه، من تبويب الملف.',
 		one: 'سيمكنك استئنافه بنفسك خلال يوم واحد، من تبويب الملف.',
@@ -22523,10 +22524,12 @@ class _Traductions$recrutement$accueil$reprise$ar extends Traductions$recrutemen
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String possible({required Object date}) => 'لقد سحبت طلب ترشحك. يمكنك استئنافه بنفسك حتى ⁨${date}⁩. لم يُمحَ شيء.';
+	@override String possible({required Object date, required Object heure}) => 'لقد سحبت طلب ترشحك. يمكنك استئنافه بنفسك حتى ⁨${date}⁩ الساعة ⁨${heure}⁩. إجاباتك ووثائقك ما زالت محفوظة.';
 	@override String get bouton => 'استئناف طلب ترشحي';
-	@override String get faite => 'استؤنف طلب ترشحك. لم يضع شيء.';
+	@override String get faite => 'استؤنف طلب ترشحك. إجاباتك ووثائقك ما زالت محفوظة.';
 	@override String get delaiDepasse => 'انقضت مدة استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.';
+	@override String get enPause => 'كان ملفك متوقفًا مؤقتًا حين سحبته: لا تستطيع استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.';
+	@override String get origineInconnue => 'طلب ترشحك مسحوب. اكتب إلينا من تبويب الرسائل لاستئنافه.';
 	@override String get parDirection => 'هذا السحب سجّلته الأكاديمية. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.';
 	@override String get controles => 'تغيّر عنصر في ملفك منذ السحب. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.';
 	@override String get echec => 'لم يكتمل الاستئناف. لم يتغيّر شيء: أعد المحاولة بعد لحظة.';
@@ -41720,17 +41723,20 @@ extension on TraductionsAr {
 			'recrutement.accueil.academie.reglagesLegende' => 'اللغة، صرف المستحقات، سحب طلب الترشح',
 			'recrutement.accueil.retrait.arret' => 'ستتوقف الأكاديمية عن دراسة ملفك.',
 			'recrutement.accueil.retrait.entretien' => 'سيُلغى موعد مقابلتك. إن استأنفت طلب ترشحك فستختار موعدًا جديدًا.',
-			'recrutement.accueil.retrait.rienEfface' => 'لن يُمحى شيء: إجاباتك ووثائقك ستبقى محفوظة.',
+			'recrutement.accueil.retrait.rienEfface' => 'إجاباتك ووثائقك ستبقى محفوظة.',
+			'recrutement.accueil.retrait.pause' => 'ملفك متوقف مؤقتًا. إن سحبته الآن فلن تستطيع استئنافه بنفسك: عليك أن تكتب إلى الأكاديمية، فهي وحدها تستطيع إعادة فتحه.',
 			'recrutement.accueil.retrait.reprise' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سيمكنك استئنافه بنفسك في اليوم نفسه، من تبويب الملف.', one: 'سيمكنك استئنافه بنفسك خلال يوم واحد، من تبويب الملف.', two: 'سيمكنك استئنافه بنفسك خلال يومين، من تبويب الملف.', few: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ أيام، من تبويب الملف.', many: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يومًا، من تبويب الملف.', other: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يوم، من تبويب الملف.', ), 
 			'recrutement.accueil.retrait.apres' => 'بعد هذه المدة، وحدها الأكاديمية ستستطيع إعادة فتحه.',
 			'recrutement.accueil.retrait.garder' => 'لا، أواصل',
 			'recrutement.accueil.retrait.confirmer' => 'نعم، اسحب طلب ترشحي',
 			'recrutement.accueil.retrait.fait' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سُحب طلب الترشح. يمكنك استئنافه اليوم.', one: 'سُحب طلب الترشح. أمامك يوم واحد لاستئنافه.', two: 'سُحب طلب الترشح. أمامك يومان لاستئنافه.', few: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ أيام لاستئنافه.', many: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ يومًا لاستئنافه.', other: 'سُحب طلب الترشح. أمامك ⁨${n}⁩ يوم لاستئنافه.', ), 
 			'recrutement.accueil.retrait.faitSansDelai' => 'سُحب طلب الترشح.',
-			'recrutement.accueil.reprise.possible' => ({required Object date}) => 'لقد سحبت طلب ترشحك. يمكنك استئنافه بنفسك حتى ⁨${date}⁩. لم يُمحَ شيء.',
+			'recrutement.accueil.reprise.possible' => ({required Object date, required Object heure}) => 'لقد سحبت طلب ترشحك. يمكنك استئنافه بنفسك حتى ⁨${date}⁩ الساعة ⁨${heure}⁩. إجاباتك ووثائقك ما زالت محفوظة.',
 			'recrutement.accueil.reprise.bouton' => 'استئناف طلب ترشحي',
-			'recrutement.accueil.reprise.faite' => 'استؤنف طلب ترشحك. لم يضع شيء.',
+			'recrutement.accueil.reprise.faite' => 'استؤنف طلب ترشحك. إجاباتك ووثائقك ما زالت محفوظة.',
 			'recrutement.accueil.reprise.delaiDepasse' => 'انقضت مدة استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.',
+			'recrutement.accueil.reprise.enPause' => 'كان ملفك متوقفًا مؤقتًا حين سحبته: لا تستطيع استئنافه بنفسك. وحدها الأكاديمية تستطيع إعادة فتحه: اكتب إليها من تبويب الرسائل.',
+			'recrutement.accueil.reprise.origineInconnue' => 'طلب ترشحك مسحوب. اكتب إلينا من تبويب الرسائل لاستئنافه.',
 			'recrutement.accueil.reprise.parDirection' => 'هذا السحب سجّلته الأكاديمية. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.',
 			'recrutement.accueil.reprise.controles' => 'تغيّر عنصر في ملفك منذ السحب. وحدها الأكاديمية تستطيع إعادة فتح طلب ترشحك: اكتب إليها من تبويب الرسائل.',
 			'recrutement.accueil.reprise.echec' => 'لم يكتمل الاستئناف. لم يتغيّر شيء: أعد المحاولة بعد لحظة.',
@@ -41782,11 +41788,11 @@ extension on TraductionsAr {
 			'recrutement.questionnaire.envoyeeLe' => ({required Object date}) => 'أُرسل في ⁨${date}⁩.',
 			'recrutement.questionnaire.etatVersement' => ({required Object etat}) => 'وسيلة صرف الراتب: ⁨${etat}⁩',
 			'recrutement.questionnaire.retourDossier' => 'العودة إلى ملفي',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.questionnaire.complementCarte' => 'تطلب منك الأكاديمية استكمال هذا الجزء.',
 			'recrutement.questionnaire.moyenValide' => 'تتلقى راتبك بوسيلة تعتمدها أكاديمية الرواية.',
 			'recrutement.questionnaire.continuite' => 'بقبولك هذه الشروط تلتزم بتولّي فصلك في الأيام نفسها وفي الساعات نفسها كل أسبوع.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.questionnaire.plagesChevauchent' => 'تتداخل أوقات تفرّغك في اليوم نفسه. راجعها ثم أعد إرسال طلب ترشحك.',
 			'recrutement.parcours.choisir' => 'اختر إجابة للمتابعة.',
 			'recrutement.parcours.choisirPlusieurs' => 'اختر إجابة واحدة على الأقل للمتابعة.',
@@ -42296,11 +42302,11 @@ extension on TraductionsAr {
 			'recrutement.talents.erreurs.conflit' => 'تغيّرت إجاباتك منذ فتح هذه الصفحة (من جهاز آخر مثلًا). راجعها ثم احفظ من جديد.',
 			'recrutement.talents.erreurs.desactivee' => 'لم تعد إحدى المهارات التي اخترتها مقترحة، وقد أُزيلت من اختيارك. راجع إجاباتك ثم احفظ من جديد.',
 			'recrutement.talents.erreurs.invalides' => 'إحدى إجاباتك تحتاج إلى مراجعة. راجعها ثم احفظ من جديد.',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.talents.erreurs.incertain' => 'قد لا تكون إجاباتك قد وصلت إلى أكاديمية الرواية. أعد المحاولة: لن تُسجَّل مرتين.',
 			'recrutement.talents.erreurs.horsLigne' => 'سيمكن حفظ إجاباتك لاحقًا، عند عودة الاتصال.',
 			'recrutement.talents.erreurs.echec' => 'لم يكتمل حفظ إجاباتك. أعد المحاولة بعد لحظة.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.erreurs.retraitIncertain' => 'قد لا يكون طلب السحب قد وصل إلى أكاديمية الرواية. أعد المحاولة: لن يتم مرتين.',
 			'recrutement.talents.erreurs.retraitHorsLigne' => 'سيمكن السحب لاحقًا، عند عودة الاتصال.',
 			'recrutement.talents.erreurs.retraitEchec' => 'لم يكتمل السحب. أعد المحاولة بعد لحظة.',
@@ -42810,11 +42816,11 @@ extension on TraductionsAr {
 			'courriels.admin.file.champs.destinataire' => 'إلى',
 			'courriels.admin.file.champs.categorie' => 'الفئة',
 			'courriels.admin.file.champs.origine' => 'المصدر',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.file.champs.creeLe' => 'وُضعت في الطابور يوم',
 			'courriels.admin.file.champs.envoyeLe' => 'أُرسلت يوم',
 			'courriels.admin.file.champs.tentatives' => 'المحاولات',
-			_ => null,
-		} ?? switch (path) {
 			'courriels.admin.file.champs.motifEchec' => 'آخر خطأ',
 			'courriels.admin.file.champs.langue' => 'اللغة',
 			'courriels.admin.file.actualiser' => 'تحديث',
@@ -43324,11 +43330,11 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.controle.question' => 'هل توجد أسطر تحتاج إلى تصحيح؟',
 			'candidatsFlux.importFormulaires.controle.explication' => 'لا يُستورد السطر الذي يحتاج إلى تصحيح. صحّحوه في المصنّف ثم صدّروا الملف من جديد وأعيدوا الاستيراد: لا تُضاف الأسطر المستوردة سابقًا مرتين.',
 			'candidatsFlux.importFormulaires.controle.aucune' => 'لا أخطاء ولا تنبيهات في هذا الملف.',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.aucuneAide' => 'أمكن قراءة كل سطر.',
 			'candidatsFlux.importFormulaires.controle.aCorriger.titre' => 'تحتاج إلى تصحيح',
 			'candidatsFlux.importFormulaires.controle.aCorriger.aide' => 'لن تُستورد هذه الأسطر.',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.controle.avertissements.titre' => 'للمراجعة',
 			'candidatsFlux.importFormulaires.controle.avertissements.aide' => 'تُستورد هذه الأسطر مع نقطة تحتاج إلى تحقق.',
 			'candidatsFlux.importFormulaires.controle.ignorees.titre' => 'متجاهَلة',
@@ -43838,11 +43844,11 @@ extension on TraductionsAr {
 			'calendrier.indisponible' => 'التقويم غير متاح حاليًا. أعد تحميل الصفحة ثم حاول مرة أخرى.',
 			'calendrier.refusNouvelleDateFermee' => 'لم يُحدَّد الموعد: الفصل مغلق في ذلك اليوم. اختر يومًا آخر، أو اسحب الإغلاق عن هذا الفصل.',
 			'calendrier.dates.intro' => 'تواريخ السنة، تدخلها الإدارة كل عام. التواريخ المنشورة وحدها تسري: الإغلاق يؤخّر الموعد النهائي للمراحل المعنية ويُبعد الحصص التي لم تبدأ بعد في تلك الأيام. تُحسب الأيام بتوقيت مكة المكرمة.',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.ajouter' => 'إضافة تاريخ',
 			'calendrier.dates.erreur' => 'تعذّرت قراءة التواريخ. تحقّق من الاتصال ثم حاول مرة أخرى.',
 			'calendrier.dates.videTitre' => 'لا توجد تواريخ مدخلة',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.dates.videDetail' => 'أضف عطل السنة ولقاءات التلاوة وتواريخ التقييم.',
 			'calendrier.dates.type.fermeture' => 'إغلاق',
 			'calendrier.dates.type.rencontre' => 'لقاء تلاوة',

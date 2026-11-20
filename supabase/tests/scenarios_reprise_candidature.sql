@@ -7,7 +7,10 @@
 -- 7 jours la reprise est refusee et le dit ; (e) un retrait consigne par la direction ne se reprend pas par la
 -- personne ; (f) une candidature en cours ne se « reprend » pas ; (g) en salle 2, un controle de la reouverture
 -- faux (versement, cadre) refuse la reprise sans rien ecrire ; (h) une demande de famille est refusee ; (i) un
--- compte sans candidature, une session absente ; (j) droits, et etat_dossier() seule lecture ; (k) la direction rouvre toujours apres le delai.
+-- compte sans candidature, une session absente ; (j) droits, et etat_dossier() seule lecture ; (k) la direction rouvre toujours apres le delai ;
+-- (p) un retrait pendant une pause posee par la direction ne se reprend pas par la personne : la pause n'est jamais levee
+-- par le candidat seul, la direction rouvre ; (u) une candidature retiree sans evenement du moteur : origine inconnue,
+-- rien n'est affirme sur qui a retire, aucune reprise.
 -- Chaque controle leve 'REPRISE ROUGE : ...' s'il echoue. A rejouer sur une base NEUVE ; le scenario annule tout.
 BEGIN;
 
@@ -105,17 +108,19 @@ GRANT EXECUTE ON FUNCTION pg_temp.qui(uuid, text, text), pg_temp.ok(text), pg_te
 -- ------------------------------------------------------------
 -- a1 direction (homme). Candidats hommes :
 -- 01, 02, 03, 04 en salle 1, a completer ; 06 en salle 2, entretien a planifier (versement et cadre non verifies) ;
+-- 07 en salle 1, mis en pause par la direction puis retire par la personne ; 08 retire sans evenement du moteur
+-- (origine inconnue, comme une ligne d'avant le moteur) ;
 -- 05 une demande de type famille deja retiree (le compte de la fixture reste un compte simple : seul le type de la
 -- demande est lu par la reprise) ; 09 un compte sans candidature.
 SET LOCAL session_replication_role = replica;
 INSERT INTO auth.users (id, email)
 SELECT pg_temp.p(s), 'rp-' || s || '@test.invalid'
-FROM unnest(ARRAY['a1', '01', '02', '03', '04', '05', '06', '09']) AS s;
+FROM unnest(ARRAY['a1', '01', '02', '03', '04', '05', '06', '07', '08', '09']) AS s;
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
 VALUES (pg_temp.p('a1'), 'RP-ADM-0001', 'admin', 'Direction', 'Un', 'active', 'male');
 INSERT INTO public.profiles (id, immutable_id, role, first_name, last_name, account_status, gender)
 SELECT pg_temp.p(s), 'RP-ENS-00' || s, 'teacher', 'Essai' || s, 'Fictif', 'pending_kyc', 'male'
-FROM unnest(ARRAY['01', '02', '03', '04', '05', '06', '09']) AS s;
+FROM unnest(ARRAY['01', '02', '03', '04', '05', '06', '07', '08', '09']) AS s;
 INSERT INTO public.candidatures (id, type_code, profile_id, genre, nom_complet, etape, etat, issue, source)
 SELECT pg_temp.c(v.s), v.type_code, pg_temp.p(v.s), 'male', 'Fixture ' || v.s, v.etape, v.etat, v.issue, 'lien_public'
 FROM (VALUES
@@ -124,7 +129,9 @@ FROM (VALUES
   ('03', 'enseignant', 'prequalification', 'a_completer', 'en_cours'),
   ('04', 'enseignant', 'prequalification', 'a_completer', 'en_cours'),
   ('05', 'famille', 'recue', NULL, 'retiree'),
-  ('06', 'enseignant', 'verifications', 'entretien_a_planifier', 'en_cours')) AS v(s, type_code, etape, etat, issue);
+  ('06', 'enseignant', 'verifications', 'entretien_a_planifier', 'en_cours'),
+  ('07', 'enseignant', 'prequalification', 'a_completer', 'en_cours'),
+  ('08', 'enseignant', 'prequalification', 'a_completer', 'retiree')) AS v(s, type_code, etape, etat, issue);
 SET LOCAL session_replication_role = origin;
 
 -- ------------------------------------------------------------
@@ -218,6 +225,63 @@ SELECT pg_temp.en('k-rouvrir', pg_temp.p('a1'), 'admin', pg_catalog.format(
   'cle-reprise-rouvrir-02'));
 SELECT pg_temp.vrai(NOT (pg_temp.r('k-rouvrir') ? 'erreur') AND pg_temp.issue('02') = 'en_cours',
   'k1 : apres le delai, la direction rouvre comme avant');
+
+-- ------------------------------------------------------------
+-- (p) Retrait pendant une pause posee par la direction
+-- ------------------------------------------------------------
+SELECT pg_temp.en('p-pause', pg_temp.p('a1'), 'admin', pg_catalog.format(
+  'SELECT public.mettre_en_pause_candidat(%L, %L, %L, %L, %s, %L)', pg_temp.c('07'), 'Motif', 'pause_general',
+  ((now() AT TIME ZONE 'UTC')::date + 60)::text, pg_temp.v('07'), 'cle-reprise-pause-07'));
+SELECT pg_temp.vrai(NOT (pg_temp.r('p-pause') ? 'erreur')
+  AND (SELECT en_pause FROM public.candidatures WHERE id = pg_temp.c('07')),
+  'p0 : la direction met le dossier en pause');
+SELECT pg_temp.en('p-retrait', pg_temp.p('07'), 'teacher', pg_catalog.format(
+  'SELECT public.retrait_candidat(%s, %L)', pg_temp.v('07'), 'cle-reprise-retrait-07'));
+SELECT pg_temp.vrai(pg_temp.issue('07') = 'retiree'
+  AND EXISTS (SELECT 1 FROM public.candidature_evenements e
+               WHERE e.candidature_id = pg_temp.c('07') AND e.details ->> 'geste' = 'retirer'
+                 AND e.details ->> 'pauseLevee' = 'true'),
+  'p1 : le retrait pendant la pause est enregistre, l''evenement dit qu''il a leve la pause');
+SELECT pg_temp.en('p-lue', pg_temp.p('07'), 'teacher', $q$SELECT public.etat_dossier() -> 'candidature' -> 'reprise'$q$);
+SELECT pg_temp.vrai(
+  NOT (pg_temp.r('p-lue') ->> 'possible')::boolean AND pg_temp.r('p-lue') ->> 'raison' = 'retrait_en_pause'
+  AND NOT (pg_temp.r('p-lue') ? 'repriseJusquAu') AND (pg_temp.r('p-lue') ->> 'parLeCandidat')::boolean,
+  'p2 : retire pendant une pause, la lecture dit « retrait en pause » et ne promet aucune date');
+SELECT pg_temp.en('p-reprise', pg_temp.p('07'), 'teacher', pg_catalog.format(
+  'SELECT public.reprise_candidat(%s, %L)', pg_temp.v('07'), 'cle-reprise-07'));
+SELECT pg_temp.vrai(
+  pg_temp.r('p-reprise') ->> 'erreur' = 'reprise_fermee' AND pg_temp.r('p-reprise') ->> 'raison' = 'retrait_en_pause'
+  AND pg_temp.issue('07') = 'retiree' AND pg_temp.reprises('07') = 0,
+  'p3 : la reprise est refusee (retrait en pause), rien n''est ecrit');
+SELECT pg_temp.vrai(
+  NOT EXISTS (SELECT 1 FROM public.candidatures c WHERE c.id = pg_temp.c('07') AND c.issue = 'en_cours'
+                 AND NOT c.en_pause)
+  AND NOT EXISTS (SELECT 1 FROM public.candidature_evenements e
+                   WHERE e.candidature_id = pg_temp.c('07') AND e.auteur_id = pg_temp.p('07')
+                     AND e.issue_apres = 'en_cours'),
+  'p4 : le candidat seul n''a jamais remis en cours, hors pause, un dossier que la direction avait mis en pause');
+SELECT pg_temp.en('p-rouvrir', pg_temp.p('a1'), 'admin', pg_catalog.format(
+  'SELECT public.rouvrir_candidat(%L, %L, %s, %L)', pg_temp.c('07'), 'Demande du candidat', pg_temp.v('07'),
+  'cle-reprise-rouvrir-07'));
+SELECT pg_temp.vrai(NOT (pg_temp.r('p-rouvrir') ? 'erreur') AND pg_temp.issue('07') = 'en_cours',
+  'p5 : la direction rouvre ce dossier par son geste existant (rouvrir_candidat)');
+
+-- ------------------------------------------------------------
+-- (u) Retrait d'origine inconnue (aucun evenement du moteur)
+-- ------------------------------------------------------------
+SELECT pg_temp.en('u-lue', pg_temp.p('08'), 'teacher', $q$SELECT public.etat_dossier() -> 'candidature' -> 'reprise'$q$);
+SELECT pg_temp.vrai(
+  NOT (pg_temp.r('u-lue') ->> 'possible')::boolean
+  AND pg_temp.r('u-lue') ->> 'raison' = 'retrait_origine_inconnue'
+  AND NOT (pg_temp.r('u-lue') ? 'repriseJusquAu') AND NOT (pg_temp.r('u-lue') ? 'retireeLe'),
+  'u1 : sans evenement du moteur, la lecture dit « origine inconnue », sans date ni auteur');
+SELECT pg_temp.en('u-reprise', pg_temp.p('08'), 'teacher', pg_catalog.format(
+  'SELECT public.reprise_candidat(%s, %L)', pg_temp.v('08'), 'cle-reprise-08'));
+SELECT pg_temp.vrai(
+  pg_temp.r('u-reprise') ->> 'erreur' = 'reprise_fermee'
+  AND pg_temp.r('u-reprise') ->> 'raison' = 'retrait_origine_inconnue'
+  AND pg_temp.issue('08') = 'retiree' AND pg_temp.reprises('08') = 0,
+  'u2 : sans evenement du moteur, la reprise est refusee, rien n''est ecrit');
 
 -- ------------------------------------------------------------
 -- (e) Retrait consigne par la direction

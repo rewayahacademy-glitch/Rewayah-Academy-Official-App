@@ -6,8 +6,10 @@
 -- Aujourd'hui seule la direction rouvre (public.rouvrir_candidat, transition 19).
 --
 -- Ce que ce fichier ajoute : le candidat enseignant qui a retire LUI-MEME sa candidature peut la reprendre lui-meme
--- pendant 7 jours. Apres 7 jours, ou si le retrait a ete consigne par la direction, rien ne change : seule la
--- direction rouvre, comme avant.
+-- pendant 7 jours. Apres 7 jours, si le retrait a ete consigne par la direction, si son origine n'est pas connue
+-- (aucun evenement du moteur), ou si le retrait a leve une pause posee par la direction, rien ne change : seule la
+-- direction rouvre, comme avant (public.rouvrir_candidat, transition 19 ; la pause se repose alors par
+-- public.mettre_en_pause_candidat si la direction le veut).
 --
 --   1. une regle de plus dans private.candidature_gestes_regles : le geste `reprendre`, auteur `candidat`, depuis
 --      l'issue `retiree`, vers `en_cours` (la meme cible que `rouvrir`, la meme transition 19 : c'est une reouverture,
@@ -15,12 +17,13 @@
 --      l'entretien annule par le declencheur de 20261129460000, qui a deja ramene « entretien planifie » a
 --      « entretien a planifier » ;
 --   2. private.candidature_reprise_delai() : les 7 jours, a un seul endroit ;
---   3. private.candidature_dernier_retrait(uuid) : la date du dernier retrait et qui l'a fait, lus dans
---      public.candidature_evenements (l'evenement de la transition 17, ecrit par le moteur) ;
+--   3. private.candidature_dernier_retrait(uuid) : la date du dernier retrait, qui l'a fait et s'il a leve une
+--      pause, lus dans public.candidature_evenements (l'evenement de la transition 17, ecrit par le moteur ;
+--      details.pauseLevee, pose par public.retrait_candidat) ;
 --   4. private.candidature_reprise(candidatures) et une cle de plus, `reprise`, dans le bloc candidature de
 --      public.etat_dossier() (private.candidature_etat_candidat()) : la lecture, pour l'ecran. Elle dit le delai,
 --      et pour une candidature retiree jusqu'a quand elle se reprend, ou sinon pourquoi (delai passe, retrait fait
---      par la direction, un element a change). L'ecran n'en deduit rien : il affiche. Aucune fonction publique de
+--      par la direction, origine du retrait inconnue, retrait pendant une pause, un element a change). L'ecran n'en deduit rien : il affiche. Aucune fonction publique de
 --      lecture n'est ajoutee : etat_dossier() reste la seule lecture de l'etat du candidat (contrat des ports,
 --      section 3 ; scenarios CAND-L2A1, L2A2 et L3) ;
 --   5. public.reprise_candidat(integer, text) : le geste, par le moteur (version attendue, cle d'idempotence,
@@ -116,15 +119,17 @@ REVOKE ALL ON FUNCTION private.candidature_reprise_delai() FROM PUBLIC, anon, au
 -- 3. Le dernier retrait d'une candidature
 -- ============================================================
 -- L'evenement de la transition 17, ecrit par le moteur (details.geste = retirer, details.auteur = candidat ou
--- direction). Aucune ligne : la candidature n'a jamais ete retiree par le moteur.
+-- direction, details.pauseLevee = vrai quand le retrait a leve une pause). Aucune ligne : la candidature n'a jamais
+-- ete retiree par le moteur (origine du retrait inconnue).
 CREATE FUNCTION private.candidature_dernier_retrait(p_candidature uuid)
-RETURNS TABLE (retiree_le timestamptz, par_le_candidat boolean)
+RETURNS TABLE (retiree_le timestamptz, par_le_candidat boolean, pause_levee boolean)
 LANGUAGE sql
 STABLE
 SECURITY INVOKER
 SET search_path = ''
 AS $function$
-  SELECT e.cree_le, coalesce(e.details ->> 'auteur' = 'candidat', false)
+  SELECT e.cree_le, coalesce(e.details ->> 'auteur' = 'candidat', false),
+         coalesce(e.details ->> 'pauseLevee' = 'true', false)
     FROM public.candidature_evenements e
    WHERE e.candidature_id = p_candidature
      AND e.type = 'transition'
@@ -142,8 +147,10 @@ REVOKE ALL ON FUNCTION private.candidature_dernier_retrait(uuid)
 -- ============================================================
 -- Rend toujours `delaiJours` (l'ecran qui explique le retrait le dit AVANT le geste). Quand la candidature est
 -- retiree : `retireeLe`, `parLeCandidat`, `repriseJusquAu`, `possible` et, si elle ne se reprend pas, `raison` :
--- `type`, `retrait_par_la_direction`, `delai_depasse` ou `controles_non_satisfaits`. Jamais un motif interne ni le
--- detail d'un controle.
+-- `type`, `retrait_origine_inconnue` (aucun evenement du moteur : on ne dit pas qui a retire),
+-- `retrait_par_la_direction`, `retrait_en_pause` (le retrait a leve une pause posee par la direction : la reprise
+-- par la personne leverait cette pause), `delai_depasse` ou `controles_non_satisfaits`. Jamais un motif interne ni
+-- le detail d'un controle.
 CREATE FUNCTION private.candidature_reprise(c public.candidatures)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -156,15 +163,19 @@ DECLARE
   v_jours integer := (pg_catalog.date_part('day', private.candidature_reprise_delai()))::integer;
   v_le timestamptz;
   v_par boolean;
+  v_pause boolean;
   v_raison text;
 BEGIN
   IF c.id IS NULL OR c.issue IS DISTINCT FROM 'retiree' THEN
     RETURN pg_catalog.jsonb_build_object('delaiJours', v_jours);
   END IF;
-  SELECT r.retiree_le, r.par_le_candidat INTO v_le, v_par FROM private.candidature_dernier_retrait(c.id) r;
+  SELECT r.retiree_le, r.par_le_candidat, r.pause_levee INTO v_le, v_par, v_pause
+    FROM private.candidature_dernier_retrait(c.id) r;
   v_raison := CASE
     WHEN c.type_code IS DISTINCT FROM 'enseignant' THEN 'type'
-    WHEN v_le IS NULL OR NOT coalesce(v_par, false) THEN 'retrait_par_la_direction'
+    WHEN v_le IS NULL THEN 'retrait_origine_inconnue'
+    WHEN NOT coalesce(v_par, false) THEN 'retrait_par_la_direction'
+    WHEN coalesce(v_pause, true) THEN 'retrait_en_pause'
     WHEN pg_catalog.clock_timestamp() >= v_le + v_delai THEN 'delai_depasse'
     WHEN (private.candidature_regle(c, 'reprendre', 'candidat', NULL, false)).geste IS NULL
       THEN 'controles_non_satisfaits'
@@ -175,7 +186,8 @@ BEGIN
     'delaiJours', v_jours,
     'retireeLe', private.cand_instant(v_le),
     'parLeCandidat', coalesce(v_par, false),
-    'repriseJusquAu', CASE WHEN coalesce(v_par, false) THEN private.cand_instant(v_le + v_delai) END,
+    'repriseJusquAu', CASE WHEN coalesce(v_par, false) AND NOT coalesce(v_pause, true)
+      THEN private.cand_instant(v_le + v_delai) END,
     'possible', v_raison IS NULL,
     'raison', v_raison));
 END;
@@ -343,7 +355,8 @@ $function$;
 -- ============================================================
 -- Rend le bloc candidature relu (comme public.retrait_candidat), le premier resultat rejoue sous la meme cle, ou un
 -- refus rendu : `conflit_candidature`, `transition_interdite` (la candidature n'est pas retiree), `reprise_fermee`
--- avec sa `raison` (`type`, `retrait_par_la_direction`, `delai_depasse`), `controles_non_satisfaits`.
+-- avec sa `raison` (`type`, `retrait_origine_inconnue`, `retrait_par_la_direction`, `retrait_en_pause`,
+-- `delai_depasse`), `controles_non_satisfaits`.
 CREATE FUNCTION public.reprise_candidat(p_version_attendue integer, p_cle_idempotence text)
 RETURNS jsonb
 LANGUAGE plpgsql
@@ -359,6 +372,7 @@ DECLARE
   v_delai interval := private.candidature_reprise_delai();
   v_le timestamptz;
   v_par boolean;
+  v_pause boolean;
   v_controles jsonb;
   v_faux jsonb;
 BEGIN
@@ -377,10 +391,19 @@ BEGIN
     RETURN v_o;
   END IF;
   SELECT c.* INTO v_c FROM public.candidatures c WHERE c.id = v_id;
-  SELECT r.retiree_le, r.par_le_candidat INTO v_le, v_par FROM private.candidature_dernier_retrait(v_id) r;
-  -- Seul un retrait fait par la personne elle-meme se reprend par elle.
-  IF NOT coalesce(v_le IS NOT NULL AND v_par, false) THEN
+  SELECT r.retiree_le, r.par_le_candidat, r.pause_levee INTO v_le, v_par, v_pause
+    FROM private.candidature_dernier_retrait(v_id) r;
+  -- Seul un retrait fait par la personne elle-meme, connu du moteur, se reprend par elle.
+  IF v_le IS NULL THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'reprise_fermee', 'raison', 'retrait_origine_inconnue');
+  END IF;
+  IF NOT coalesce(v_par, false) THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'reprise_fermee', 'raison', 'retrait_par_la_direction');
+  END IF;
+  -- Un retrait qui a leve une pause posee par la direction ne se defait pas par la personne : la reprise leverait
+  -- cette pause. Seule la direction rouvre (public.rouvrir_candidat), et repose la pause si elle le veut.
+  IF coalesce(v_pause, true) THEN
+    RETURN pg_catalog.jsonb_build_object('erreur', 'reprise_fermee', 'raison', 'retrait_en_pause');
   END IF;
   IF NOT coalesce(pg_catalog.clock_timestamp() < v_le + v_delai, false) THEN
     RETURN pg_catalog.jsonb_build_object('erreur', 'reprise_fermee', 'raison', 'delai_depasse',
@@ -413,7 +436,7 @@ DO $f86$
 BEGIN
   EXECUTE pg_catalog.format('COMMENT ON FUNCTION public.reprise_candidat(integer, text) IS %L',
     pg_catalog.format(
-      'F86 candidate allowlist: signature=public.reprise_candidat(integer,text); md5_functiondef=%s; guard_type=POSITIVE_CANDIDATE_SELF_ENGINE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-20. REPRISE-CANDIDATURE (PE-A6) : titulaire d une candidature d enseignant au compte valide, sinon 42501 ; par le moteur (version attendue, cle d idempotence, evenement, audit) ; seulement une candidature retiree par la personne elle-meme depuis moins de 7 jours, sous les controles de la reouverture (D7) ; puis recalcul du versement ; un refus est rendu, rien n est ecrit. Must-pass: supabase/tests/scenarios_reprise_candidature.sql.',
+      'F86 candidate allowlist: signature=public.reprise_candidat(integer,text); md5_functiondef=%s; guard_type=POSITIVE_CANDIDATE_SELF_ENGINE; owner=postgres; search_path=""; reviewer=Claude a relire; date=2026-11-20. REPRISE-CANDIDATURE (PE-A6) : titulaire d une candidature d enseignant au compte valide, sinon 42501 ; par le moteur (version attendue, cle d idempotence, evenement, audit) ; seulement une candidature retiree par la personne elle-meme depuis moins de 7 jours, hors retrait qui a leve une pause, sous les controles de la reouverture (D7) ; puis recalcul du versement ; un refus est rendu, rien n est ecrit. Must-pass: supabase/tests/scenarios_reprise_candidature.sql.',
       pg_catalog.md5(pg_catalog.pg_get_functiondef('public.reprise_candidat(integer,text)'::regprocedure))));
 END;
 $f86$;

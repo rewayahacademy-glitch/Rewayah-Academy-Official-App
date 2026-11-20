@@ -38,6 +38,14 @@ enum RaisonRepriseFermee {
   /// Le retrait a ete consigne par la direction.
   retraitParLaDirection('retrait_par_la_direction'),
 
+  /// L'origine du retrait n'est pas connue (aucun evenement du moteur) : rien
+  /// n'est affirme sur qui l'a fait.
+  origineInconnue('retrait_origine_inconnue'),
+
+  /// Le retrait a leve une pause posee par la direction : le reprendre
+  /// leverait cette pause, seule la direction rouvre.
+  retraitEnPause('retrait_en_pause'),
+
   /// Les 7 jours sont passes.
   delaiDepasse('delai_depasse'),
 
