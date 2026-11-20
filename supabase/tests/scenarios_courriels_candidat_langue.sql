@@ -1,4 +1,4 @@
--- PE-A1 (lot COURRIELS-CANDIDAT, 20/11/2026) : migration 20261130940000.
+-- PE-A1 (lot COURRIELS-CANDIDAT, 20/11/2026) : migration 20261130966000.
 --
 -- La langue d'un courriel de candidat :
 --   a. un compte sans langue choisie mais dont la candidature est en arabe : le courriel part en arabe ;

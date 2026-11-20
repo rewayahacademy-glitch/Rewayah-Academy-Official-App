@@ -12,7 +12,7 @@ Supabase (projet de production, *Authentication → Emails → Templates*). Aucu
   envoi réel après le collage doit le confirmer : demander un lien de connexion avec un compte dont la langue est l’arabe.
 - Le corps ne change pas : les fichiers `supabase/templates/*.html` du dépôt sont déjà ramifiés par langue. Si le corps collé en
   production n’est pas celui du dépôt, coller aussi le fichier `supabase/templates/<message>.html` correspondant, en entier.
-- La langue lue est `user_metadata.langue`. La migration `20261130940000_courriels_langue_candidat.sql` l’écrit pour chaque compte
+- La langue lue est `user_metadata.langue`. La migration `20261130966000_courriels_langue_candidat.sql` l’écrit pour chaque compte
   dont la langue est connue (choisie dans le compte, sinon celle de sa candidature). Un compte **tout neuf** créé par « recevoir un
   lien » depuis l’application n’a pas encore de langue : il faut que l’application la passe à `signInWithOtp` (hors de ce lot, voir la PR).
 
