@@ -1,5 +1,6 @@
 -- PRAXIS PX-6 (20/11/2026) : Praxis ne repond plus a la place de la direction, et les entretiens ecrits sont suspendus.
--- Bati sur PX-5 (20261130300000, installe en production le 20/11/2026), memes conventions, memes gardes.
+-- Bati sur PX-5 (20261130300000, installe en production le 20/11/2026) et apres 20261130700000 (retrait des entretiens ecrits restes
+-- sans reponse), memes conventions, memes gardes.
 --
 -- LE PROBLEME (mesure en production, lecture seule, 20/11/2026) : sur 54 reponses de Praxis, 20 s'adressaient a une personne qui repondait a
 -- un message de la direction (le plus souvent un simple remerciement apres une information donnee par le directeur) ; sur 100 entretiens
@@ -20,10 +21,12 @@
 --   3. `fil` (praxis_fil) : rend `tenue_par_la_direction`, et pour chaque message un champ `de` (praxis, direction, interlocuteur, autre).
 --      Avant PX-6, seul auteur.role ('equipe') distinguait un message de la direction, dont le texte etait range sous contenu_tiers
 --      exactement comme celui de la personne : le champ `de` le dit en un mot. Rien d'existant n'est retire.
---   4. `ecrire` (praxis_ecrire) : refuse `fil_de_la_direction` quand la conversation est tenue par la direction. Exception UNIQUE : une
---      question de Praxis sur CETTE conversation, repondue par la direction (canal prive, private.praxis_questions), pas encore marquee
---      utilisee (question_traitee), et la direction n'a rien ecrit dans la conversation depuis sa reponse. Les refus existants
---      (repris_par_equipe, raison_requise, plafond_fil, plafond) passent avant ou apres sans changement.
+--   4. `ecrire` (praxis_ecrire) : refuse `fil_de_la_direction` quand la conversation est tenue par la direction, SANS EXCEPTION
+--      (decision du pilote, 20/11/2026, apres relecture : une exception fondee sur les reponses privees de la direction s'ouvrait aussi
+--      pour « ne reponds pas, je m'en occupe ») ; la reponse privee de la direction y est portee par la direction elle-meme, ou par Praxis
+--      quand la conversation n'est plus tenue. Les refus existants (repris_par_equipe, raison_requise, plafond_fil, plafond) passent avant
+--      ou apres sans changement. `rendre_compte` : `laisse_en_attente` ne compte plus une conversation tenue par la direction (meme regle
+--      que `attend`).
 --   5. `ouvrir` (praxis_ouvrir, via private.praxis_ouverture_refus) : `direction_recente` vaut pour TOUTES les raisons (felicitations
 --      comprises) et suit le meme reglage de N jours (au lieu de 48 heures) : la direction a ecrit dans la conversation depuis moins de N jours.
 --   6. Les ENTRETIENS ECRITS sont SUSPENDUS : les raisons entretien_ecrit et relance_entretien de `ouvrir` sont refusees
@@ -58,6 +61,7 @@
 --   * public.praxis_dossier(text, text)                   <- 20261130200000 (PX-4). Appelant : l'outil `dossier` (point 8 seulement).
 --   * public.praxis_boite_candidats(text, text, integer, integer) <- 20261130200000 (PX-4). Appelant : l'outil `boite_candidats` (point 8).
 --   * public.praxis_etat(text)                            <- 20261130300000 (PX-5). Appelant : l'outil `etat`.
+--   * public.praxis_rendre_compte(text, integer)          <- 20261130100000 (PX-3, travail). Appelant : l'outil `rendre_compte`.
 -- Rien n'est allume par cette migration (actif, autonome, donnees_reelles ne changent pas). Sans BEGIN ni COMMIT de premier niveau.
 
 DO $preflight$
@@ -94,7 +98,7 @@ BEGIN
       ('public.praxis_boite_candidats(text,text,integer,integer)', '6506de3129e7cf0c41984061ce6c3690'),
       -- Non remplacees, mais leur comportement en depend.
       ('public.praxis_ouvrir(text,text,text,text,uuid)', '9400c10b892383999a9a020a7f1395db'),
-      ('public.praxis_question_traitee(text,uuid)', 'c82fa9d7658120f1fbce9608e552fe65'),
+      ('public.praxis_rendre_compte(text,integer)', '8e5b2b14363669074b1dd4e7e60c1371'),
       ('private.praxis_est_equipe(uuid,uuid)', '35dc52fea5840c71a81873f640efcd1a')) AS t(f, md5) LOOP
     IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p WHERE p.oid = v.f::pg_catalog.regprocedure) IS DISTINCT FROM v.md5 THEN
       RAISE EXCEPTION 'PX-6 : la definition de % n''est pas celle attendue ; rien n''est modifie', v.f;
@@ -408,14 +412,9 @@ BEGIN
   END IF;
   -- PX-6 (directeur, 20/11/2026 : « ne repondre qu'aux messages et non aux annonces ») : une conversation TENUE PAR LA DIRECTION (le
   -- dernier message de l'academie est d'un membre de la direction et date de moins de N jours, private.praxis_tenue_par_direction) est
-  -- refusee, quel que soit son type. Exception UNIQUE : Praxis transmet une reponse que la direction lui a donnee par le canal prive des
-  -- questions pour CETTE conversation (private.praxis_questions : repondue, pas encore marquee utilisee par question_traitee, et la
-  -- direction n'a rien ecrit dans la conversation depuis sa reponse).
-  IF v_refus IS NULL AND private.praxis_tenue_par_direction(p_fil) AND NOT EXISTS (
-       SELECT 1 FROM private.praxis_questions q
-        WHERE q.fil_id = p_fil AND q.repondue_le IS NOT NULL AND q.utilisee_le IS NULL
-          AND NOT EXISTS (SELECT 1 FROM public.com_messages m
-                           WHERE m.fil_id = p_fil AND m.envoye_le > q.repondue_le AND private.praxis_est_equipe(m.auteur_id, p_fil))) THEN
+  -- refusee, quel que soit son type, SANS EXCEPTION (decision du pilote, 20/11/2026) : une reponse privee de la direction y est portee
+  -- par la direction elle-meme, ou par Praxis quand la conversation n'est plus tenue.
+  IF v_refus IS NULL AND private.praxis_tenue_par_direction(p_fil) THEN
     v_refus := 'fil_de_la_direction';
   END IF;
   IF v_refus IS NULL THEN
@@ -905,6 +904,62 @@ BEGIN
 END;
 $function$;
 
+-- 4.8 public.praxis_rendre_compte(text,integer) (corps de la derniere definition, ajouts marques PX-6).
+CREATE OR REPLACE FUNCTION public.praxis_rendre_compte(p_cle text, p_heures integer DEFAULT 24)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_debut timestamptz := pg_catalog.clock_timestamp();
+  v_p record;
+  v_envois jsonb;
+  v_refus integer;
+BEGIN
+  SELECT * INTO v_p FROM private.praxis_porte(p_cle);
+  IF v_p.cause IS NOT NULL THEN
+    IF v_p.cle_id IS NOT NULL THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'rendre_compte', v_p.cause_interne, NULL, NULL, NULL, v_debut);
+    END IF;
+    RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
+  END IF;
+  IF p_heures IS NULL OR p_heures NOT BETWEEN 1 AND 168 THEN
+    PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'rendre_compte', 'parametre', NULL, NULL, NULL, v_debut);
+    RETURN pg_catalog.jsonb_build_object('erreur', 'parametre');
+  END IF;
+  SELECT coalesce(pg_catalog.jsonb_agg(pg_catalog.jsonb_build_object(
+           'outil', j.outil, 'fil', j.fil_id, 'extrait', pg_catalog.left(j.texte_envoye, 300), 'heure', j.cree_le)
+           ORDER BY j.cree_le DESC), '[]'::jsonb) INTO v_envois
+    FROM (SELECT * FROM private.praxis_journal x
+           WHERE x.outil IN ('ecrire', 'annoncer') AND x.issue = 'ok'
+             AND (coalesce(pg_catalog.cardinality(private.praxis_essai()), 0) = 0 OR x.fil_id = ANY (private.praxis_essai()))
+             AND x.cree_le > pg_catalog.clock_timestamp() - pg_catalog.make_interval(hours => p_heures)
+           ORDER BY x.cree_le DESC LIMIT 50) j;
+  SELECT pg_catalog.count(*)::integer INTO v_refus FROM private.praxis_journal x
+   WHERE x.outil IN ('ecrire', 'annoncer') AND x.issue <> 'ok' AND x.issue <> 'rejoue'
+     AND x.cree_le > pg_catalog.clock_timestamp() - pg_catalog.make_interval(hours => p_heures);
+  PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'rendre_compte', 'ok', NULL, NULL, NULL, v_debut);
+  RETURN pg_catalog.jsonb_build_object('envoye', v_envois, 'refuses', v_refus,
+    -- PX-3 : les objectifs encore ouverts (les textes de Praxis) et le nombre de propositions qui attendent la direction (de ses cotes).
+    'objectifs_ouverts', private.praxis_objectifs_json('ouvert', 20),
+    'propositions_en_attente', (SELECT pg_catalog.count(*)::integer FROM private.praxis_propositions pp
+                                  JOIN public.candidatures pc ON pc.id = pp.candidature_id
+                                 WHERE pp.statut = 'proposee' AND pp.expire_le > pg_catalog.clock_timestamp()
+                                   AND pc.genre = ANY (v_p.cotes)),
+    'laisse_en_attente', (SELECT pg_catalog.count(*)::integer FROM (
+        SELECT f.id FROM public.com_fils f
+         WHERE f.partie_b_nature = 'equipe' AND f.type_objet = ANY (private.praxis_types_fil())
+           AND (coalesce(pg_catalog.cardinality(private.praxis_essai()), 0) = 0 OR f.id = ANY (private.praxis_essai()))
+         ORDER BY coalesce(f.dernier_message_le, f.cree_le) DESC, f.id LIMIT 200) r
+        WHERE private.praxis_fil_refus(r.id, v_p.cotes) IS NULL
+          -- PX-6 : une conversation tenue par la direction n'attend pas Praxis (meme regle que le filtre `attend` de `boite`).
+          AND NOT private.praxis_tenue_par_direction(r.id)
+          AND private.praxis_est_partie_a((SELECT m.auteur_id FROM public.com_messages m
+                WHERE m.fil_id = r.id ORDER BY m.envoye_le DESC, m.id DESC LIMIT 1), r.id)));
+END;
+$function$;
+
 -- ====================================================================================================================
 -- 5. DROITS. Porte de la direction : authenticated (garde d'administrateur aal2 dans la fonction). Aide privee : personne. Les fonctions
 -- remplacees gardent leurs droits (CREATE OR REPLACE) ; le controle final le verifie.
@@ -925,7 +980,7 @@ BEGIN
   -- Les outils remplaces : service_role seul, SECURITY DEFINER, search_path vide, proprietaire postgres, et le corps porte PX-6.
   FOREACH v IN ARRAY ARRAY['public.praxis_boite(text,text,integer)', 'public.praxis_fil(text,uuid,integer)',
       'public.praxis_ecrire(text,uuid,text,uuid)', 'public.praxis_etat(text)', 'public.praxis_dossier(text,text)',
-      'public.praxis_boite_candidats(text,text,integer,integer)'] LOOP
+      'public.praxis_boite_candidats(text,text,integer,integer)', 'public.praxis_rendre_compte(text,integer)'] LOOP
     IF NOT pg_catalog.has_function_privilege('service_role', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('anon', v, 'EXECUTE') OR pg_catalog.has_function_privilege('authenticated', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('agent_ro', v, 'EXECUTE')

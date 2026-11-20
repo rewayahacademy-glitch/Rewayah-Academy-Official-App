@@ -1,5 +1,5 @@
 -- PRAXIS PX-6 (migration 20261130800000, 20/11/2026) : Praxis ne repond plus a la place de la direction (une conversation TENUE PAR LA
--- DIRECTION sort de `boite` attend, `ecrire` la refuse `fil_de_la_direction`, sauf pour transmettre une reponse privee de la direction),
+-- DIRECTION sort de `boite` attend et de `laisse_en_attente`, `ecrire` la refuse `fil_de_la_direction` sans exception),
 -- `direction_recente` vaut pour toutes les raisons de `ouvrir` sur N jours, les entretiens ecrits sont suspendus (reouverture par la
 -- direction seule), et une serie d'entretien dont le message a disparu n'est plus annoncee ni relancee (les limites la comptent toujours).
 -- Chaque verification est isolee ; le fichier se termine par la liste ok / ROUGE puis echoue s'il reste un ROUGE. Les aides du debut sont
@@ -258,27 +258,34 @@ SELECT pg_temp.verif_annule('4 ECRIRE : la direction a ecrit il y a plus de N jo
   SELECT pg_temp.ecrire('12', '120') ->> 'ok' = 'true' $$);
 SELECT pg_temp.verif_annule('4 ECRIRE : Praxis a ecrit apres la direction, puis la candidate repond (c13) : Praxis peut repondre', 'SELECT 1', $$
   SELECT pg_temp.ecrire('13', '130') ->> 'ok' = 'true' $$);
-SELECT pg_temp.verif('4 ECRIRE : c14 sans reponse de la direction a la question privee : refus fil_de_la_direction', $$
+-- Pas d'exception (decision du pilote, 20/11/2026) : meme une reponse privee de la direction a une question de Praxis sur c14 ne lui permet
+-- pas d'ecrire tant que la conversation est tenue.
+SELECT pg_temp.verif('4 ECRIRE : c14 tenue par la direction : refus fil_de_la_direction', $$
   SELECT pg_temp.ecrire('14', '140') ->> 'erreur' = 'fil_de_la_direction' $$);
--- Le canal prive : Praxis demande a la direction (demander_equipe), la direction repond dans l'application (direction_praxis_repondre).
 SELECT pg_temp.garde('q14', pg_temp.srv(format('SELECT public.praxis_demander_equipe(%L, %L::uuid, %L)', pg_temp.k('both'), pg_temp.f('14'),
   'La candidate demande le jour de son entretien.')));
-SELECT pg_temp.verif('4 ECRIRE : une question posee mais pas encore repondue n''ouvre pas l''exception', $$
+SELECT pg_temp.verif('4 ECRIRE : Praxis signale en prive (demander_equipe passe) ; ecrire reste refuse', $$
   SELECT pg_temp.lu('q14') ->> 'ok' = 'true' AND pg_temp.ecrire('14', '141') ->> 'erreur' = 'fil_de_la_direction' $$);
 SELECT pg_temp.garde('r14', pg_temp.en(pg_temp.u('2'), 'admin', format('SELECT public.direction_praxis_repondre(%L::uuid, %L)',
-  pg_temp.lu('q14') ->> 'id', 'Son entretien est mardi a 18 h.')));
-SELECT pg_temp.verif_annule('4 ECRIRE exception : la direction a repondu par le canal prive : Praxis transmet (c14), puis question_traitee', 'SELECT 1', $$
-  SELECT pg_temp.ecrire('14', '142') ->> 'ok' = 'true'
-     AND pg_temp.srv(format('SELECT public.praxis_question_traitee(%L, %L::uuid)', pg_temp.k('both'), pg_temp.lu('q14') ->> 'id')) ->> 'ok' = 'true' $$);
-SELECT pg_temp.verif_annule('4 ECRIRE exception : une reponse deja utilisee (question_traitee) ne rouvre pas la conversation tenue', $$
-  UPDATE private.praxis_questions SET utilisee_le = clock_timestamp() WHERE id = (pg_temp.lu('q14') ->> 'id')::uuid $$, $$
+  pg_temp.lu('q14') ->> 'id', 'Ne reponds pas, je m''en occupe.')));
+SELECT pg_temp.verif('4 ECRIRE sans exception : la direction a repondu en prive : toujours refuse, rien n''est ecrit', $$
+  SELECT EXISTS (SELECT 1 FROM private.praxis_questions q WHERE q.id = (pg_temp.lu('q14') ->> 'id')::uuid AND q.repondue_le IS NOT NULL)
+     AND pg_temp.ecrire('14', '142') ->> 'erreur' = 'fil_de_la_direction'
+     AND pg_temp.n($q$public.com_messages m WHERE m.fil_id = pg_temp.f('14')$q$) = 2 $$);
+SELECT pg_temp.verif_annule('4 ECRIRE sans exception : une question retiree puis repondue ne rouvre rien non plus', $$
+  UPDATE private.praxis_questions SET retiree_le = clock_timestamp(), retiree_motif = 'sans_objet' WHERE id = (pg_temp.lu('q14') ->> 'id')::uuid $$, $$
   SELECT pg_temp.ecrire('14', '143') ->> 'erreur' = 'fil_de_la_direction' $$);
-SELECT pg_temp.verif_annule('4 ECRIRE exception : la direction a ecrit dans la conversation APRES sa reponse privee : refus', $$
-  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le)
-  VALUES (pg_temp.f('14'), pg_temp.u('2'), pg_temp.idem('144'), 'La direction repond elle-meme.', clock_timestamp() + interval '1 second') $$, $$
-  SELECT pg_temp.ecrire('14', '145') ->> 'erreur' = 'fil_de_la_direction' $$);
-SELECT pg_temp.verif_annule('4 ECRIRE exception : une reponse a une question d''une AUTRE conversation n''ouvre pas c10', 'SELECT 1', $$
-  SELECT pg_temp.ecrire('10', '146') ->> 'erreur' = 'fil_de_la_direction' $$);
+SELECT pg_temp.verif_annule('4 ECRIRE : quand la conversation n''est plus tenue (N = 1 jour), Praxis peut transmettre a c14', $$
+  UPDATE private.praxis_reglages SET direction_tient_jours = 1 $$, $$
+  SELECT pg_temp.ecrire('14', '144') ->> 'ok' = 'true' $$);
+
+-- ===== 4 bis. RENDRE_COMPTE : laisse_en_attente suit `attend` =====
+SELECT pg_temp.verif('4 bis RENDRE_COMPTE : laisse_en_attente ne compte pas les conversations tenues par la direction (c11, c12, c13 seulement)', $$
+  SELECT (pg_temp.srv(format('SELECT public.praxis_rendre_compte(%L, 24)', pg_temp.k('both'))) ->> 'laisse_en_attente')::int = 3
+     AND jsonb_array_length(pg_temp.boite('attend') -> 'fils') = 3 $$);
+SELECT pg_temp.verif_annule('4 bis RENDRE_COMPTE : a N = 1 jour, c10 et c14 attendent de nouveau (5)', $$
+  UPDATE private.praxis_reglages SET direction_tient_jours = 1 $$, $$
+  SELECT (pg_temp.srv(format('SELECT public.praxis_rendre_compte(%L, 24)', pg_temp.k('both'))) ->> 'laisse_en_attente')::int = 5 $$);
 
 -- ===== 5. OUVRIR : direction_recente pour toutes les raisons, sur N jours =====
 SELECT pg_temp.verif('5 OUVRIR : la direction a ecrit il y a 3 jours (c15) : question, relance et felicitations refusees direction_recente', $$

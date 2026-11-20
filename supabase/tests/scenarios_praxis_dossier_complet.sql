@@ -540,6 +540,13 @@ SELECT pg_temp.verif('ECRIRE sans raison : refuse quand la personne n''a jamais 
   SELECT pg_temp.ecrire('both', (pg_temp.lu('o16') ->> 'fil')::uuid, '310') ->> 'erreur' = 'raison_requise'
      AND pg_temp.ecrire('both', pg_temp.f('20'), '311') ->> 'erreur' = 'fil_de_la_direction'
      AND (SELECT count(*) FROM public.com_messages m WHERE m.fil_id = pg_temp.f('20')) = 1 $$);
+-- PX-6 : la branche « la direction a repondu APRES la personne » de raison_requise reste prouvee, sur une conversation qui n'est plus tenue
+-- par la direction (N regle a 1 jour ; la direction a repondu a c10 il y a 2 jours, apres son message d'il y a 5 jours).
+SELECT pg_temp.verif_annule('ECRIRE sans raison : la direction a repondu apres la personne (c10, hors des N jours) : raison_requise', $$
+  UPDATE private.praxis_reglages SET direction_tient_jours = 1;
+  INSERT INTO public.com_messages (fil_id, auteur_id, cle_idempotence, texte, envoye_le)
+  VALUES (pg_temp.f('10'), pg_temp.u('2'), pg_temp.idem('312'), 'La direction repond.', clock_timestamp() - interval '2 days') $$, $$
+  SELECT NOT private.praxis_tenue_par_direction(pg_temp.f('10')) AND pg_temp.ecrire('both', pg_temp.f('10'), '313') ->> 'erreur' = 'raison_requise' $$);
 SELECT pg_temp.verif('OUVRIR nuit : refuse entre 21 h et 8 h a l''heure du candidat', $$
   SELECT pg_temp.ouvrir('both', '17', 'relance', '320') ->> 'erreur' = 'heure_tardive' AND pg_temp.ouvrir('both', '17', 'question', '321') ->> 'erreur' = 'heure_tardive'
      AND NOT EXISTS (SELECT 1 FROM public.com_fils f WHERE f.objet_id = pg_temp.c('17')) $$);
