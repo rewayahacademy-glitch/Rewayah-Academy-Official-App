@@ -1185,3 +1185,20 @@ attend des maquettes. Lot PE-F8, statut : maquette en cours ; rien dans l'applic
   convenue : s'écrire avant chaque `apply_migration` ; cette session tient Praxis et sa routine.
 - La machine de travail a redémarré vers 03:45 UTC ; quatre agents relancés (VIVANT, maquette de
   Praxis, PX-5, confidentialité).
+
+### 18.4 Maquette « Praxis vous accueille » remise ; PX-5 en relecture ; tableau de bord (20/11, 04:20 UTC)
+
+- **Maquette remise au directeur** (lot PE-F8), en vrai Flutter : https://claude.ai/artifact/CXALUGYpeADocWySMVvu8Z .
+  Trois écrans (connexion, chargement, mise à jour), téléphone et ordinateur, clair et sombre,
+  français et arabe, animations réduites. Sources : `scratchpad/bureau/lib/main_entree.dart` et
+  `entree_*.dart` (hors dépôt). **Non prouvé** : la fluidité (machine sans carte graphique) ; les
+  phrases arabes de Praxis ne sont pas relues ; le logo sert de décor, ce que son README ne prévoit
+  pas : à valider par le directeur. Rien n'est dans l'application.
+- **PX-5 = PR #646** (`claude/praxis-px5`, migration `20261130300000_praxis_px5.sql`) : écrit, 67
+  vérifications vertes en local, zéro mot destructeur ; relecture adverse lancée. Point ouvert : une
+  question retirée par Praxis bloque encore sa conversation pour une nouvelle question (index
+  unique existant, non réécrit pour éviter un DROP INDEX).
+- **Tableau de bord, PR #642** : première étape acceptée par le pilote sous réserve de CI verte ;
+  second lot à faire pour rejoindre la maquette (Praxis assis sur sa case, pile de pièces à glisser,
+  visages du parcours, retrait de l'ancienne carte « Alertes » et de l'ancienne liste de
+  raccourcis, le nom d'un enseignant ouvre son dossier, test arabe à renforcer).
