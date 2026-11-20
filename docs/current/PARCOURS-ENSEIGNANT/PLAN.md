@@ -1202,3 +1202,23 @@ attend des maquettes. Lot PE-F8, statut : maquette en cours ; rien dans l'applic
   second lot à faire pour rejoindre la maquette (Praxis assis sur sa case, pile de pièces à glisser,
   visages du parcours, retrait de l'ancienne carte « Alertes » et de l'ancienne liste de
   raccourcis, le nom d'un enseignant ouvre son dossier, test arabe à renforcer).
+
+### 18.5 Retours du directeur sur la maquette « Praxis vous accueille » (20/11, 04:30 UTC)
+
+« Toujours jolie », mais version 2 exigée. Ses mots : « donner plus de réalisme ; tes lumières sont
+à refaire pour plus de naturalisme ; mouvements fluides, bon angle, effet de la lumière sur
+l'espace et sur le personnage ; conserver les couleurs de l'app ; bien penser tous les scénarios de
+scène pour le personnage. » Cinq commentaires sur la page :
+1. « Toutes les lumières sont ratées et pourtant c'est le plus facile à faire. »
+2. Les lumières restent entre la lavande, le blanc et le violet (pas d'ambre) ; « la lumière est
+   saccadée, je préfère un halo fluide qui ne se casse pas en anneaux ».
+3. « Tu as détruit le bonnet de Praxis : le bonnet est rentré dans le visage » ; plus de réalisme.
+4. « شكرا على صبرك est mal choisi : على انتظارك. Attention à la traduction mot à mot. »
+5. « Ne supprime pas Google auth. »
+
+Règles qui en sortent, pour tout écran où Praxis apparaît : une seule source de lumière cohérente
+(liseré de contre-jour, ombre portée qui suit la source, nappe sur le sol) ; halos en un seul
+dégradé doux, jamais en cercles empilés ; aucune teinte hors de la palette ; la toque ne traverse
+jamais le visage ; l'animation avance selon le temps réel ; les phrases arabes se relisent comme un
+arabophone les dirait ; l'écran de connexion garde Google et le lien par courriel. Version 2 de la
+maquette en cours, à republier à la même adresse.
