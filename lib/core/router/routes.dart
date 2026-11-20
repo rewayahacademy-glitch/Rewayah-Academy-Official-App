@@ -904,6 +904,22 @@ abstract final class Routes {
   static const String adminPersonnesCreneauxEntretien =
       '/admin/personnes/candidatures/creneaux';
 
+  /// PRAXIS-VISIBLE (20/11/2026) : le travail de Praxis sur les dossiers
+  /// (piles, avis, objectifs). Chemin statique sous
+  /// [adminPersonnesCandidatures], declare AVANT [adminPersonnesCandidature]
+  /// dans le routeur (R5). Filtres dans l'adresse : `pile`, `etiquette`.
+  static const String adminPersonnesTravailPraxis =
+      '/admin/personnes/candidatures/praxis';
+
+  /// Le chemin de la page du travail de Praxis, filtres [requete] compris.
+  static String adminPersonnesTravailPraxisPour(Map<String, String> requete) =>
+      requete.isEmpty
+      ? adminPersonnesTravailPraxis
+      : Uri(
+          path: adminPersonnesTravailPraxis,
+          queryParameters: requete,
+        ).toString();
+
   /// Le chemin de la candidature de reference [reference].
   ///
   /// BE-SUIVANT : [fileDeLaListe] est l'adresse de la liste d'ou l'on ouvre le
