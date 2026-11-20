@@ -1516,7 +1516,7 @@ abstract final class Routes {
   static const String lecture = '/lire';
 
   /// La lettre aux candidats enseignants (paie, heures, attente, regles).
-  static const String lettreEnseignants = '$lecture/lettre-enseignants';
+  static const String lettreEnseignants = '$lecture/guide-enseignant';
 
   /// L'adresse du formulaire d'avis pour [jeton].
   static String avisPour(String jeton) => '$avis/${Uri.encodeComponent(jeton)}';

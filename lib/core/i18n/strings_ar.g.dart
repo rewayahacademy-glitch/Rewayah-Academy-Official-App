@@ -11157,16 +11157,17 @@ class _Traductions$recrutement$lettre$ar extends Traductions$recrutement$lettre$
 	@override String get sommaire => 'المحتويات';
 	@override String get revenirSommaire => 'العودة إلى المحتويات';
 	@override String allerA({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩';
-	@override String get entree => 'اقرأ الرسالة الموجّهة إلى المرشحين للتعليم';
+	@override String get entree => 'افتح دليل المعلّم';
 	@override String get entreeLegende => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا';
-	@override String get verrouTitre => 'تُفتح هذه الرسالة بعد قبول اتفاقياتك';
+	@override String get verrouTitre => 'يُفتح هذا الدليل بعد قبول اتفاقياتك';
 	@override String get verrouIntro => 'لقراءتها، بقي عليك قبول:';
 	@override String get manqueContrat => 'عقد المعلّم';
 	@override String get manqueConduite => 'ميثاق السلوك';
 	@override String get manqueCadre => 'الالتزام الديني';
 	@override String get completer => 'قبول اتفاقياتي';
-	@override String get nonCharge => 'تعذّر فتح الرسالة.';
-	@override String get reservee => 'هذه الرسالة خاصة بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.';
+	@override String get nonCharge => 'تعذّر فتح الدليل.';
+	@override String get reservee => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.';
+	@override String get nom => 'دليل المعلّم';
 	@override String get praxisNom => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)';
 	@override late final _Traductions$recrutement$lettre$praxis$ar praxis = _Traductions$recrutement$lettre$praxis$ar._(_root);
 }
@@ -22176,7 +22177,7 @@ class _Traductions$recrutement$lettre$praxis$ar extends Traductions$recrutement$
 	final TraductionsAr _root; // ignore: unused_field
 
 	// Translations
-	@override String get accueil => 'مرحبًا! أنا Praxis. سأرافقك في هذه الرسالة. خذ وقتك.';
+	@override String get accueil => 'مرحبًا! أنا Praxis. سأرافقك في هذا الدليل. خذ وقتك.';
 	@override String get paie => 'هنا الأرقام الحقيقية. انظر إلى الجدول، كل شيء فيه.';
 	@override String get retard => 'تذكّر ثلاثة أرقام: 3 و8 و11 دقيقة.';
 	@override String get attente => 'قد يطول الانتظار. واصل أنشطتك، وتابع رسائلك.';
@@ -41534,18 +41535,19 @@ extension on TraductionsAr {
 			'recrutement.lettre.sommaire' => 'المحتويات',
 			'recrutement.lettre.revenirSommaire' => 'العودة إلى المحتويات',
 			'recrutement.lettre.allerA' => ({required Object titre}) => 'الانتقال إلى الجزء: ⁨${titre}⁩',
-			'recrutement.lettre.entree' => 'اقرأ الرسالة الموجّهة إلى المرشحين للتعليم',
+			'recrutement.lettre.entree' => 'افتح دليل المعلّم',
 			'recrutement.lettre.entreeLegende' => 'الراتب، وساعات العمل، وانتظار الفصل، وقواعدنا',
-			'recrutement.lettre.verrouTitre' => 'تُفتح هذه الرسالة بعد قبول اتفاقياتك',
+			'recrutement.lettre.verrouTitre' => 'يُفتح هذا الدليل بعد قبول اتفاقياتك',
 			'recrutement.lettre.verrouIntro' => 'لقراءتها، بقي عليك قبول:',
 			'recrutement.lettre.manqueContrat' => 'عقد المعلّم',
 			'recrutement.lettre.manqueConduite' => 'ميثاق السلوك',
 			'recrutement.lettre.manqueCadre' => 'الالتزام الديني',
 			'recrutement.lettre.completer' => 'قبول اتفاقياتي',
-			'recrutement.lettre.nonCharge' => 'تعذّر فتح الرسالة.',
-			'recrutement.lettre.reservee' => 'هذه الرسالة خاصة بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.',
+			'recrutement.lettre.nonCharge' => 'تعذّر فتح الدليل.',
+			'recrutement.lettre.reservee' => 'هذا الدليل خاص بمعلّمي الأكاديمية وبالمرشحين الذين قُبلت اتفاقياتهم.',
+			'recrutement.lettre.nom' => 'دليل المعلّم',
 			'recrutement.lettre.praxisNom' => 'Praxis، مساعد الأكاديمية (ذكاء اصطناعي)',
-			'recrutement.lettre.praxis.accueil' => 'مرحبًا! أنا Praxis. سأرافقك في هذه الرسالة. خذ وقتك.',
+			'recrutement.lettre.praxis.accueil' => 'مرحبًا! أنا Praxis. سأرافقك في هذا الدليل. خذ وقتك.',
 			'recrutement.lettre.praxis.paie' => 'هنا الأرقام الحقيقية. انظر إلى الجدول، كل شيء فيه.',
 			'recrutement.lettre.praxis.retard' => 'تذكّر ثلاثة أرقام: 3 و8 و11 دقيقة.',
 			'recrutement.lettre.praxis.attente' => 'قد يطول الانتظار. واصل أنشطتك، وتابع رسائلك.',
@@ -41990,9 +41992,9 @@ extension on TraductionsAr {
 			'recrutement.accueil.academie.reglages' => 'الإعدادات',
 			'recrutement.accueil.academie.reglagesLegende' => 'اللغة، صرف المستحقات، سحب طلب الترشح',
 			'recrutement.accueil.retrait.arret' => 'ستتوقف الأكاديمية عن دراسة ملفك.',
-			'recrutement.accueil.retrait.entretien' => 'سيُلغى موعد مقابلتك. إن استأنفت طلب ترشحك فستختار موعدًا جديدًا.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.accueil.retrait.entretien' => 'سيُلغى موعد مقابلتك. إن استأنفت طلب ترشحك فستختار موعدًا جديدًا.',
 			'recrutement.accueil.retrait.rienEfface' => 'إجاباتك ووثائقك ستبقى محفوظة.',
 			'recrutement.accueil.retrait.pause' => 'ملفك متوقف مؤقتًا. إن سحبته الآن فلن تستطيع استئنافه بنفسك: عليك أن تكتب إلى الأكاديمية، فهي وحدها تستطيع إعادة فتحه.',
 			'recrutement.accueil.retrait.reprise' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'سيمكنك استئنافه بنفسك في اليوم نفسه، من تبويب الملف.', one: 'سيمكنك استئنافه بنفسك خلال يوم واحد، من تبويب الملف.', two: 'سيمكنك استئنافه بنفسك خلال يومين، من تبويب الملف.', few: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ أيام، من تبويب الملف.', many: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يومًا، من تبويب الملف.', other: 'سيمكنك استئنافه بنفسك خلال ⁨${n}⁩ يوم، من تبويب الملف.', ), 
@@ -42504,9 +42506,9 @@ extension on TraductionsAr {
 			'recrutement.talents.c.publicite_en_ligne.description' => 'إعداد حملات إعلانية على الإنترنت ومتابعتها.',
 			'recrutement.talents.c.publicite_en_ligne.exemple' => 'تحديد الجمهور المستهدف، إطلاق حملة، متابعة النتائج',
 			'recrutement.talents.c.traduction.libelle' => 'الترجمة',
-			'recrutement.talents.c.traduction.description' => 'نقل النصوص من لغة إلى أخرى.',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.talents.c.traduction.description' => 'نقل النصوص من لغة إلى أخرى.',
 			'recrutement.talents.c.traduction.exemple' => 'رسائل إلى الأسر، ترجمة نصية لمقاطع الفيديو، نص من الموقع',
 			'recrutement.talents.c.assistanat.libelle' => 'المساعدة الإدارية ومساعدة الإدارة',
 			'recrutement.talents.c.assistanat.description' => 'مساعدة الإدارة على تنظيم عملها اليومي.',
@@ -43018,9 +43020,9 @@ extension on TraductionsAr {
 			'avis.admin.motifs.doublon' => 'تكرار',
 			'avis.admin.motifs.demande' => 'طلب من صاحب الرأي',
 			'avis.admin.retour.publie' => 'نُشر الرأي.',
-			'avis.admin.retour.refuse' => 'رُفض الرأي.',
 			_ => null,
 		} ?? switch (path) {
+			'avis.admin.retour.refuse' => 'رُفض الرأي.',
 			'avis.admin.retour.retire' => 'سُحب الرأي.',
 			'avis.admin.retour.etatChange' => 'لم يعد هذا الرأي في الحالة المتوقعة. تم تحديث القائمة.',
 			'avis.admin.retour.introuvable' => 'هذا الرأي لم يعد موجودًا. تم تحديث القائمة.',
@@ -43532,9 +43534,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.colonnes.nonLueAide' => 'لا يستعمل الاستيراد هذا العمود.',
 			'candidatsFlux.importFormulaires.colonnes.choisir' => ({required Object n}) => 'ماذا يحتوي العمود ⁨${n}⁩؟',
 			'candidatsFlux.importFormulaires.colonnes.sansTitre' => 'عمود بلا عنوان',
-			'candidatsFlux.importFormulaires.colonnes.choixActuel' => 'الاختيار الحالي',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.colonnes.choixActuel' => 'الاختيار الحالي',
 			'candidatsFlux.importFormulaires.colonnes.nePasLire' => 'عدم قراءة هذا العمود',
 			'candidatsFlux.importFormulaires.colonnes.nePasLireAide' => 'يتجاهل الاستيراد محتواه.',
 			'candidatsFlux.importFormulaires.colonnes.fermer' => 'إغلاق هذا الاختيار',
@@ -44046,9 +44048,9 @@ extension on TraductionsAr {
 			'suiviAttente.enseignant.peutSePresenter' => 'يمكن لمعلمك أن يعرّف بنفسه لأسر الفصل برسالة في الرسائل.',
 			'suiviAttente.vide.message' => 'لم تختر فصلًا بعد.',
 			'suiviAttente.vide.invitation' => 'اختر فصلًا: تتابعك الأكاديمية بعد ذلك مرحلة بمرحلة.',
-			'suiviAttente.vide.action' => 'اختيار فصل',
 			_ => null,
 		} ?? switch (path) {
+			'suiviAttente.vide.action' => 'اختيار فصل',
 			'suiviAttente.vide.messageSimple' => 'لا يوجد طلب فصل لك بعد.',
 			'suiviAttente.vide.invitationSimple' => 'يمكن لولي أمرك تقديم طلب.',
 			'suiviAttente.erreur' => 'تعذّرت قراءة متابعة طلبك. يحدث هذا غالبًا بسبب الاتصال. حاول مرة أخرى بعد قليل.',

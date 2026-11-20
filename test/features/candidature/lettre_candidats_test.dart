@@ -99,12 +99,24 @@ void main() {
       await tester.scrollUntilVisible(
         find.byKey(ContenuLettre.clePartie(4)),
         400,
-        scrollable: find.byType(Scrollable).first,
+        scrollable: find
+            .descendant(
+              of: find.byKey(LettreCandidatsPage.cleDefilement),
+              matching: find.byType(Scrollable),
+            )
+            .first,
       );
-      await tester.drag(find.byType(Scrollable).first, const Offset(0, -200));
+      await tester.drag(
+        find.byKey(LettreCandidatsPage.cleDefilement),
+        const Offset(0, -200),
+      );
       await tester.pumpAndSettle();
       expect(find.text(t.recrutement.lettre.praxis.paie), findsOneWidget);
       expect(find.byType(AvatarPraxisCandidat), findsOneWidget);
+      // Il est reste en haut de l'ecran : la tete ne defile pas avec le corps.
+      final Rect praxis = tester.getRect(find.byType(PraxisLettre));
+      expect(praxis.top, greaterThanOrEqualTo(0));
+      expect(praxis.bottom, lessThan(844 / 3));
     });
 
     testWidgets(

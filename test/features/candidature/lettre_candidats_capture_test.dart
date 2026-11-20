@@ -95,7 +95,12 @@ void main() {
           await tester.scrollUntilVisible(
             find.byKey(ContenuLettre.clePartie(4)),
             400,
-            scrollable: find.byType(Scrollable).first,
+            scrollable: find
+                .descendant(
+                  of: find.byKey(LettreCandidatsPage.cleDefilement),
+                  matching: find.byType(Scrollable),
+                )
+                .first,
           );
           await stabiliser(tester);
           await capturerVue(tester, 'lettre-candidats/paie-$nom');

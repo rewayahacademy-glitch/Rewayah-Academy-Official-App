@@ -60,6 +60,9 @@ class LettreCandidatsPage extends ConsumerStatefulWidget {
   /// La cle du verrou.
   static const Key cleVerrou = ValueKey<String>('lettre-verrou');
 
+  /// La cle de la zone qui defile sous la tete fixe.
+  static const Key cleDefilement = ValueKey<String>('lettre-defilement');
+
   /// La cle de la phrase « reservee aux enseignants ».
   static const Key cleReservee = ValueKey<String>('lettre-reservee');
 
@@ -89,30 +92,48 @@ class _EtatLettre extends ConsumerState<LettreCandidatsPage> {
     }
   }
 
-  Widget _page({required Widget corps, bool guide = false}) => PageShell(
-    key: LettreCandidatsPage.cle,
-    titre: t.recrutement.lettre.titre,
-    onRetour: _retour,
-    // La bande de Praxis a la largeur de la lecture (WEB-BUREAU B4).
-    enteteSecondaire: guide
-        ? Align(
-            alignment: AlignmentDirectional.topCenter,
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(
-                maxWidth: AppPage.largeurLecture,
-              ),
-              child: PraxisLettre(moment: _moment, secousses: _secousses),
-            ),
-          )
-        : null,
-    child: Align(
+  // Praxis suit la lecture (directeur, 20/11 : « il est en haut, il saute et
+  // rebondit avec le scroll pour suivre ») : quand il est la, la tete de la
+  // page (titre court et bande de Praxis, sous les 160 points de WEB-BUREAU
+  // B6) reste fixe et le corps defile seul, avec la seule barre de
+  // defilement de l'ecran. Ecart date a DECISION-DEFILEMENT, sur ordre du
+  // directeur : `REGLES-NOUVELLES.md`, I4.
+  Widget _page({required Widget corps, bool guide = false}) {
+    final Widget lecture = Align(
       alignment: AlignmentDirectional.topCenter,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: AppPage.largeurLecture),
         child: corps,
       ),
-    ),
-  );
+    );
+    return PageShell(
+      key: LettreCandidatsPage.cle,
+      titre: t.recrutement.lettre.nom,
+      onRetour: _retour,
+      defilante: !guide,
+      // La bande de Praxis a la largeur de la lecture (WEB-BUREAU B4).
+      enteteSecondaire: guide
+          ? Align(
+              alignment: AlignmentDirectional.topCenter,
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(
+                  maxWidth: AppPage.largeurLecture,
+                ),
+                child: PraxisLettre(moment: _moment, secousses: _secousses),
+              ),
+            )
+          : null,
+      child: guide
+          ? SingleChildScrollView(
+              key: LettreCandidatsPage.cleDefilement,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: <Widget>[lecture, Ecart.vSection],
+              ),
+            )
+          : lecture,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -299,6 +320,16 @@ class _EtatContenu extends State<ContenuLettre> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
+        Semantics(
+          header: true,
+          child: Text(
+            insecables(l.titre),
+            style: palette.inkStrong.applyTo(
+              textes.titleMedium ?? const TextStyle(),
+            ),
+          ),
+        ),
+        Ecart.vSm,
         Text(
           insecables(l.chapeau),
           style: palette.inkStrong.applyTo(
