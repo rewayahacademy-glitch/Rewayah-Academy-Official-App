@@ -91,6 +91,7 @@ import 'invitations_personnelles.dart';
 import 'libelles_candidatures.dart';
 import 'ligne_candidature.dart';
 import 'lot_candidatures.dart';
+import 'marque_travail_praxis.dart';
 import 'menu_ligne_candidature.dart';
 import 'prevenir_candidats.dart';
 
@@ -1127,6 +1128,9 @@ class _CandidaturesPageEtat extends ConsumerState<CandidaturesPage> {
           // SALLE2-ENTRETIEN (directeur, 14/11/2026) : les entretiens du jour
           // et leur porte, en tete de la file.
           const EntretiensDuJour(ficheOuverte: true),
+          // PRAXIS-VISIBLE : le lien vers le travail de Praxis (piles, avis,
+          // objectifs), avec le nombre de dossiers ranges ; rien sans lecture.
+          if (commandes) const LienTravailPraxis(),
           if (_ouverture != null) ...<Widget>[
             Semantics(
               liveRegion: true,

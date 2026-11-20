@@ -7070,6 +7070,9 @@ class _Traductions$admin$praxis$en extends Traductions$admin$praxis$fr {
 	@override String refuseCause({required Object cause}) => 'Refused: ${cause}';
 	@override String get sansTexte => 'Nothing was written.';
 	@override late final _Traductions$admin$praxis$cause$en cause = _Traductions$admin$praxis$cause$en._(_root);
+	@override late final _Traductions$admin$praxis$travail$en travail = _Traductions$admin$praxis$travail$en._(_root);
+	@override late final _Traductions$admin$praxis$avis$en avis = _Traductions$admin$praxis$avis$en._(_root);
+	@override late final _Traductions$admin$praxis$objectifs$en objectifs = _Traductions$admin$praxis$objectifs$en._(_root);
 }
 
 // Path: admin.notifications
@@ -16734,6 +16737,110 @@ class _Traductions$admin$praxis$cause$en extends Traductions$admin$praxis$cause$
 	@override String get autre => 'unknown cause';
 }
 
+// Path: admin.praxis.travail
+class _Traductions$admin$praxis$travail$en extends Traductions$admin$praxis$travail$fr {
+	_Traductions$admin$praxis$travail$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Praxis\'s work';
+	@override String get lien => 'Praxis\'s work';
+	@override String lienDetail({required Object n}) => 'Files sorted by Praxis: ${n}';
+	@override String get intro => 'What Praxis, the management\'s assistant, has done on teacher applicants\' files: the pile it puts each file in, and its opinion.';
+	@override String get rappel => 'An opinion from the assistant, not a decision.';
+	@override String get dossiers => 'Files sorted and read';
+	@override String get pile => 'Pile';
+	@override String get toutesPiles => 'All piles';
+	@override String get etiquette => 'Label';
+	@override String get toutesEtiquettes => 'All labels';
+	@override late final _Traductions$admin$praxis$travail$piles$en piles = _Traductions$admin$praxis$travail$piles$en._(_root);
+	@override late final _Traductions$admin$praxis$travail$etiquettes$en etiquettes = _Traductions$admin$praxis$travail$etiquettes$en._(_root);
+	@override String nombre({required Object n}) => 'Files shown: ${n}';
+	@override String get colonneNom => 'Applicant';
+	@override String get colonnePile => 'Pile';
+	@override String get colonneEtiquette => 'Label';
+	@override String get colonneRaison => 'Reason given by Praxis';
+	@override String get colonneDate => 'Seen on';
+	@override String get pasLu => 'Not read yet';
+	@override String get pasRange => 'Not sorted';
+	@override String marque({required Object quoi}) => 'Praxis: ${quoi}';
+	@override String get vide => 'Praxis has not sorted or read any file yet.';
+	@override String get videDetail => 'Files will appear here as soon as Praxis sorts them.';
+	@override String get aucunResultat => 'No file matches these filters.';
+	@override String get aucunResultatDetail => 'Choose another pile or another label.';
+	@override String get effacer => 'Clear filters';
+	@override String get voirPlus => 'Show the next files';
+	@override String get erreur => 'Praxis\'s work could not be read. Try again in a moment.';
+	@override String get horsLigne => 'Praxis\'s work is not loaded yet. Reload it.';
+	@override String get permission => 'Praxis\'s work is for the management only.';
+}
+
+// Path: admin.praxis.avis
+class _Traductions$admin$praxis$avis$en extends Traductions$admin$praxis$avis$fr {
+	_Traductions$admin$praxis$avis$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Praxis\'s opinion';
+	@override String get rappel => 'An opinion from the assistant, not a decision.';
+	@override String get pasLu => 'Praxis has not read this file yet.';
+	@override String confiance({required Object niveau}) => 'Confidence: ${niveau}';
+	@override late final _Traductions$admin$praxis$avis$confiances$en confiances = _Traductions$admin$praxis$avis$confiances$en._(_root);
+	@override String get criteres => 'Criteria rated';
+	@override late final _Traductions$admin$praxis$avis$critere$en critere = _Traductions$admin$praxis$avis$critere$en._(_root);
+	@override String note({required Object critere, required Object note}) => '${critere}: ${note} out of 5';
+	@override String get synthese => 'Summary';
+	@override String utilePour({required Object texte}) => 'Useful for: ${texte}';
+	@override String situation({required Object texte}) => 'In which situation: ${texte}';
+	@override String reserves({required Object texte}) => 'Reservations: ${texte}';
+	@override String get videoOui => 'Video: yes';
+	@override String get videoNon => 'Video: no';
+	@override String videoOuiParce({required Object texte}) => 'Video: yes, because ${texte}';
+	@override String videoNonParce({required Object texte}) => 'Video: no, because ${texte}';
+	@override String videoParce({required Object texte}) => 'Video: ${texte}';
+	@override String get contexte => 'Context';
+	@override late final _Traductions$admin$praxis$avis$effets$en effets = _Traductions$admin$praxis$avis$effets$en._(_root);
+	@override String source({required Object source}) => 'Source: ${source}';
+	@override String get texte => 'What Praxis wrote';
+	@override String notee({required Object date, required Object heure}) => 'Opinion noted on ${date} at ${heure}';
+	@override String get rangement => 'Praxis\'s pile';
+	@override String pile({required Object pile}) => 'Sorted into: ${pile}';
+	@override String rangeLe({required Object date, required Object heure}) => 'Sorted on ${date} at ${heure}';
+	@override String get pasRange => 'Praxis has not sorted this file yet.';
+	@override String get erreur => 'Praxis\'s opinion could not be read. Try again in a moment.';
+	@override String get horsLigne => 'Praxis\'s opinion is not loaded yet. Reload it.';
+}
+
+// Path: admin.praxis.objectifs
+class _Traductions$admin$praxis$objectifs$en extends Traductions$admin$praxis$objectifs$fr {
+	_Traductions$admin$praxis$objectifs$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get titre => 'Praxis\'s goals';
+	@override String get intro => 'The goals Praxis sets itself for the day and for the week. It sets and closes them itself.';
+	@override String get jour => 'Goals for the day';
+	@override String get semaine => 'Goals for the week';
+	@override String get clos => 'Recently closed goals';
+	@override String cible({required Object n}) => 'Target: ${n}';
+	@override String pourLe({required Object date}) => 'For ${date}';
+	@override String semaineDu({required Object date}) => 'Week of ${date}';
+	@override String get echu => 'Period over';
+	@override String get ouvert => 'Open';
+	@override String get atteint => 'Reached';
+	@override String get abandonne => 'Dropped';
+	@override String closLe({required Object date}) => 'Closed on ${date}';
+	@override String get aucunJour => 'No open goal for the day.';
+	@override String get aucunSemaine => 'No open goal for the week.';
+	@override String get aucun => 'Praxis has not set any goal yet.';
+	@override String get aucunDetail => 'Its goals for the day and the week will appear here.';
+	@override String get erreur => 'Praxis\'s goals could not be read. Try again in a moment.';
+	@override String get horsLigne => 'Praxis\'s goals are not loaded yet. Reload them.';
+}
+
 // Path: admin.finance.vue
 class _Traductions$admin$finance$vue$en extends Traductions$admin$finance$vue$fr {
 	_Traductions$admin$finance$vue$en._(TraductionsEn root) : this._root = root, super.internal(root);
@@ -25299,6 +25406,70 @@ class _Traductions$admin$praxis$propositions$geste$en extends Traductions$admin$
 	@override String get demanderComplement => 'Ask for more information';
 	@override String get planifierEntretien => 'Schedule an interview';
 	@override String get admettreVerifications => 'Admit to the verification room';
+}
+
+// Path: admin.praxis.travail.piles
+class _Traductions$admin$praxis$travail$piles$en extends Traductions$admin$praxis$travail$piles$fr {
+	_Traductions$admin$praxis$travail$piles$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pretADecider => 'Ready to decide';
+	@override String get incomplet => 'Incomplete';
+	@override String get sansNouvelles => 'No news';
+	@override String get aRegarder => 'To look at';
+}
+
+// Path: admin.praxis.travail.etiquettes
+class _Traductions$admin$praxis$travail$etiquettes$en extends Traductions$admin$praxis$travail$etiquettes$fr {
+	_Traductions$admin$praxis$travail$etiquettes$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get pepite => 'Gem';
+	@override String get solide => 'Solid';
+	@override String get aCreuser => 'To dig into';
+	@override String get reserve => 'Reservations';
+}
+
+// Path: admin.praxis.avis.confiances
+class _Traductions$admin$praxis$avis$confiances$en extends Traductions$admin$praxis$avis$confiances$fr {
+	_Traductions$admin$praxis$avis$confiances$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get faible => 'low';
+	@override String get moyenne => 'medium';
+	@override String get forte => 'high';
+}
+
+// Path: admin.praxis.avis.critere
+class _Traductions$admin$praxis$avis$critere$en extends Traductions$admin$praxis$avis$critere$fr {
+	_Traductions$admin$praxis$avis$critere$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get maitrise => 'Mastery';
+	@override String get pedagogie => 'Teaching';
+	@override String get vision => 'Vision';
+	@override String get comportement => 'Conduct';
+	@override String get disponibilite => 'Availability';
+}
+
+// Path: admin.praxis.avis.effets
+class _Traductions$admin$praxis$avis$effets$en extends Traductions$admin$praxis$avis$effets$fr {
+	_Traductions$admin$praxis$avis$effets$en._(TraductionsEn root) : this._root = root, super.internal(root);
+
+	final TraductionsEn _root; // ignore: unused_field
+
+	// Translations
+	@override String get atout => 'Strength';
+	@override String get risque => 'Risk';
+	@override String get aVerifier => 'To check';
 }
 
 // Path: admin.finance.vue.alerte
@@ -34122,6 +34293,97 @@ extension on TraductionsEn {
 			'admin.praxis.cause.autonomeRequis' => 'autonomous mode required',
 			'admin.praxis.cause.refusee' => 'refused by the messaging',
 			'admin.praxis.cause.autre' => 'unknown cause',
+			'admin.praxis.travail.titre' => 'Praxis\'s work',
+			'admin.praxis.travail.lien' => 'Praxis\'s work',
+			'admin.praxis.travail.lienDetail' => ({required Object n}) => 'Files sorted by Praxis: ${n}',
+			'admin.praxis.travail.intro' => 'What Praxis, the management\'s assistant, has done on teacher applicants\' files: the pile it puts each file in, and its opinion.',
+			'admin.praxis.travail.rappel' => 'An opinion from the assistant, not a decision.',
+			'admin.praxis.travail.dossiers' => 'Files sorted and read',
+			'admin.praxis.travail.pile' => 'Pile',
+			'admin.praxis.travail.toutesPiles' => 'All piles',
+			'admin.praxis.travail.etiquette' => 'Label',
+			'admin.praxis.travail.toutesEtiquettes' => 'All labels',
+			'admin.praxis.travail.piles.pretADecider' => 'Ready to decide',
+			'admin.praxis.travail.piles.incomplet' => 'Incomplete',
+			'admin.praxis.travail.piles.sansNouvelles' => 'No news',
+			'admin.praxis.travail.piles.aRegarder' => 'To look at',
+			'admin.praxis.travail.etiquettes.pepite' => 'Gem',
+			'admin.praxis.travail.etiquettes.solide' => 'Solid',
+			'admin.praxis.travail.etiquettes.aCreuser' => 'To dig into',
+			'admin.praxis.travail.etiquettes.reserve' => 'Reservations',
+			'admin.praxis.travail.nombre' => ({required Object n}) => 'Files shown: ${n}',
+			'admin.praxis.travail.colonneNom' => 'Applicant',
+			'admin.praxis.travail.colonnePile' => 'Pile',
+			'admin.praxis.travail.colonneEtiquette' => 'Label',
+			'admin.praxis.travail.colonneRaison' => 'Reason given by Praxis',
+			'admin.praxis.travail.colonneDate' => 'Seen on',
+			'admin.praxis.travail.pasLu' => 'Not read yet',
+			'admin.praxis.travail.pasRange' => 'Not sorted',
+			'admin.praxis.travail.marque' => ({required Object quoi}) => 'Praxis: ${quoi}',
+			'admin.praxis.travail.vide' => 'Praxis has not sorted or read any file yet.',
+			'admin.praxis.travail.videDetail' => 'Files will appear here as soon as Praxis sorts them.',
+			'admin.praxis.travail.aucunResultat' => 'No file matches these filters.',
+			'admin.praxis.travail.aucunResultatDetail' => 'Choose another pile or another label.',
+			'admin.praxis.travail.effacer' => 'Clear filters',
+			'admin.praxis.travail.voirPlus' => 'Show the next files',
+			'admin.praxis.travail.erreur' => 'Praxis\'s work could not be read. Try again in a moment.',
+			'admin.praxis.travail.horsLigne' => 'Praxis\'s work is not loaded yet. Reload it.',
+			'admin.praxis.travail.permission' => 'Praxis\'s work is for the management only.',
+			'admin.praxis.avis.titre' => 'Praxis\'s opinion',
+			'admin.praxis.avis.rappel' => 'An opinion from the assistant, not a decision.',
+			'admin.praxis.avis.pasLu' => 'Praxis has not read this file yet.',
+			'admin.praxis.avis.confiance' => ({required Object niveau}) => 'Confidence: ${niveau}',
+			'admin.praxis.avis.confiances.faible' => 'low',
+			'admin.praxis.avis.confiances.moyenne' => 'medium',
+			'admin.praxis.avis.confiances.forte' => 'high',
+			'admin.praxis.avis.criteres' => 'Criteria rated',
+			'admin.praxis.avis.critere.maitrise' => 'Mastery',
+			'admin.praxis.avis.critere.pedagogie' => 'Teaching',
+			'admin.praxis.avis.critere.vision' => 'Vision',
+			'admin.praxis.avis.critere.comportement' => 'Conduct',
+			'admin.praxis.avis.critere.disponibilite' => 'Availability',
+			'admin.praxis.avis.note' => ({required Object critere, required Object note}) => '${critere}: ${note} out of 5',
+			'admin.praxis.avis.synthese' => 'Summary',
+			'admin.praxis.avis.utilePour' => ({required Object texte}) => 'Useful for: ${texte}',
+			'admin.praxis.avis.situation' => ({required Object texte}) => 'In which situation: ${texte}',
+			'admin.praxis.avis.reserves' => ({required Object texte}) => 'Reservations: ${texte}',
+			'admin.praxis.avis.videoOui' => 'Video: yes',
+			'admin.praxis.avis.videoNon' => 'Video: no',
+			'admin.praxis.avis.videoOuiParce' => ({required Object texte}) => 'Video: yes, because ${texte}',
+			'admin.praxis.avis.videoNonParce' => ({required Object texte}) => 'Video: no, because ${texte}',
+			'admin.praxis.avis.videoParce' => ({required Object texte}) => 'Video: ${texte}',
+			'admin.praxis.avis.contexte' => 'Context',
+			'admin.praxis.avis.effets.atout' => 'Strength',
+			'admin.praxis.avis.effets.risque' => 'Risk',
+			'admin.praxis.avis.effets.aVerifier' => 'To check',
+			'admin.praxis.avis.source' => ({required Object source}) => 'Source: ${source}',
+			'admin.praxis.avis.texte' => 'What Praxis wrote',
+			'admin.praxis.avis.notee' => ({required Object date, required Object heure}) => 'Opinion noted on ${date} at ${heure}',
+			'admin.praxis.avis.rangement' => 'Praxis\'s pile',
+			'admin.praxis.avis.pile' => ({required Object pile}) => 'Sorted into: ${pile}',
+			'admin.praxis.avis.rangeLe' => ({required Object date, required Object heure}) => 'Sorted on ${date} at ${heure}',
+			'admin.praxis.avis.pasRange' => 'Praxis has not sorted this file yet.',
+			'admin.praxis.avis.erreur' => 'Praxis\'s opinion could not be read. Try again in a moment.',
+			'admin.praxis.avis.horsLigne' => 'Praxis\'s opinion is not loaded yet. Reload it.',
+			'admin.praxis.objectifs.titre' => 'Praxis\'s goals',
+			'admin.praxis.objectifs.intro' => 'The goals Praxis sets itself for the day and for the week. It sets and closes them itself.',
+			'admin.praxis.objectifs.jour' => 'Goals for the day',
+			'admin.praxis.objectifs.semaine' => 'Goals for the week',
+			'admin.praxis.objectifs.clos' => 'Recently closed goals',
+			'admin.praxis.objectifs.cible' => ({required Object n}) => 'Target: ${n}',
+			'admin.praxis.objectifs.pourLe' => ({required Object date}) => 'For ${date}',
+			'admin.praxis.objectifs.semaineDu' => ({required Object date}) => 'Week of ${date}',
+			'admin.praxis.objectifs.echu' => 'Period over',
+			'admin.praxis.objectifs.ouvert' => 'Open',
+			'admin.praxis.objectifs.atteint' => 'Reached',
+			'admin.praxis.objectifs.abandonne' => 'Dropped',
+			'admin.praxis.objectifs.closLe' => ({required Object date}) => 'Closed on ${date}',
+			'admin.praxis.objectifs.aucunJour' => 'No open goal for the day.',
+			'admin.praxis.objectifs.aucunSemaine' => 'No open goal for the week.',
+			'admin.praxis.objectifs.aucun' => 'Praxis has not set any goal yet.',
+			'admin.praxis.objectifs.aucunDetail' => 'Its goals for the day and the week will appear here.',
+			'admin.praxis.objectifs.erreur' => 'Praxis\'s goals could not be read. Try again in a moment.',
+			'admin.praxis.objectifs.horsLigne' => 'Praxis\'s goals are not loaded yet. Reload them.',
 			'admin.notifications.titre' => 'Notifications',
 			'admin.notifications.vide' => 'No notification',
 			'admin.notifications.videDetail' => 'Nothing to report for now.',
@@ -34512,6 +34774,8 @@ extension on TraductionsEn {
 			'admin.finance.pai.rembOui' => 'Yes, refund',
 			'admin.finance.pai.rembSansRetour' => 'The money goes to the payment provider, and this refund cannot be cancelled.',
 			'admin.finance.pai.rembQuestion' => ({required Object montant, required Object prenom}) => 'Refund ${montant} to ${prenom}?',
+			_ => null,
+		} ?? switch (path) {
 			'admin.finance.pai.rembRien' => 'Nothing to give back on this payment.',
 			'admin.finance.pai.rembReglePrepaiement' => 'Plan paid in advance: months begun are due at the normal monthly price, with no discount; the rest is returned.',
 			'admin.finance.pai.rembRegleDelai' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Paid less than a day ago: what was paid is returned, minus the sessions attended.', other: 'Paid less than ${jours} days ago: what was paid is returned, minus the sessions attended.', ), 
@@ -34603,8 +34867,6 @@ extension on TraductionsEn {
 			'admin.finance.autres.intro' => 'Internet allowance, bonuses and missions of this month, paid with the pay.',
 			'admin.finance.autres.vide' => 'No other earnings for this month.',
 			'admin.finance.autres.attribuer' => 'Grant a bonus, a mission or the Internet allowance',
-			_ => null,
-		} ?? switch (path) {
 			'admin.finance.autres.feuilleTitre' => ({required Object nom}) => 'Other earnings for ${nom}',
 			'admin.finance.autres.feuilleIntro' => 'This amount is paid at the end of the month with the pay. The teacher sees it on "My earnings".',
 			'admin.finance.autres.natureChoix' => 'Nature',
@@ -35026,6 +35288,8 @@ extension on TraductionsEn {
 			'admin.bibliotheque.fiche.actions.nouvelleVersion' => 'Create a new version',
 			'admin.bibliotheque.fiche.actions.completerDroits' => 'Complete the rights',
 			'admin.bibliotheque.fiche.actions.associer' => 'Link to classes',
+			_ => null,
+		} ?? switch (path) {
 			'admin.bibliotheque.fiche.actions.retirer' => 'Withdraw from the catalogue',
 			'admin.bibliotheque.fiche.nouvelleVersionOk' => 'New version created as a draft.',
 			'admin.bibliotheque.fiche.nouvelleVersionEchec' => 'The new version could not be confirmed. Try again.',
@@ -35117,8 +35381,6 @@ extension on TraductionsEn {
 			'admin.bibliotheque.import.erreurs.creation' => 'The draft could not be created. Try again.',
 			'admin.bibliotheque.import.erreurs.droits' => 'The rights could not be saved. Try again.',
 			'admin.bibliotheque.import.erreurs.session' => 'Your session has expired: nothing was submitted. Sign in again, then try again.',
-			_ => null,
-		} ?? switch (path) {
 			'admin.bibliotheque.import.erreurs.stockage' => 'The academy\'s file storage refused the upload. It is not your connection: it is a server setting. Try once more; if it happens again, this setting must be fixed before any new upload.',
 			'admin.bibliotheque.import.erreurs.envoi' => 'The file upload got no answer, while the server is responding. Most likely: file storage does not yet accept uploads from this address, and it is a server setting; otherwise, the connection dropped during the upload. Try once more; if it happens again, it is the setting that needs fixing.',
 			'admin.bibliotheque.import.erreurs.service' => 'The upload did not go through: the answer received is not the one expected. It is not your connection, and nothing was saved. Try again in a few minutes; if it happens again, the upload service needs checking.',
@@ -35540,6 +35802,8 @@ extension on TraductionsEn {
 			'parcours.etatClasseEnFormationDetail' => ({required num minimum}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(minimum, one: 'A class starts once there is ${minimum} student. We will let you know as soon as it is confirmed.', other: 'A class starts once there are ${minimum} students. We will let you know as soon as it is confirmed.', ), 
 			'avatar.sansPhoto' => 'No photo yet',
 			'nav.eleve.accueil' => 'Home',
+			_ => null,
+		} ?? switch (path) {
 			'nav.eleve.maClasse' => 'My class',
 			'nav.eleve.coran' => 'Quran',
 			'nav.eleve.monEspace' => 'My space',
@@ -35631,8 +35895,6 @@ extension on TraductionsEn {
 			'compte.donnees.copie.horsLigne' => 'Download your data as soon as the network is back.',
 			'compte.donnees.copie.refuse' => 'This account cannot download a copy.',
 			'compte.donnees.suppression.titre' => 'Delete my account',
-			_ => null,
-		} ?? switch (path) {
 			'compte.donnees.suppression.intro' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'The management reviews your request after a cooling-off period of ${n} day. You can cancel it during that time.', other: 'The management reviews your request after a cooling-off period of ${n} days. You can cancel it during that time.', ), 
 			'compte.donnees.suppression.effacement' => 'Once the request is processed, your name, your contact details and your photo are erased. You can no longer sign in.',
 			'compte.donnees.suppression.conservation' => 'Invoices and payments are kept for accounting. Your student ID is never reassigned.',
@@ -36054,6 +36316,8 @@ extension on TraductionsEn {
 			'notifications.evenements.seanceTermineeTravail' => ({required Object travail}) => 'Work to prepare: ${travail}',
 			'notifications.evenements.seanceTermineeAucunTravail' => 'No work to prepare.',
 			'notifications.evenements.seanceTermineePresents' => ({required num n, required Object total}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: '${n} student present out of ${total}.', other: '${n} students present out of ${total}.', ), 
+			_ => null,
+		} ?? switch (path) {
 			'notifications.evenements.seanceTermineeCahierAttend' => 'The handover notebook is waiting for your information.',
 			'notifications.evenements.seanceTermineeCahierDepose' => 'Notebook submitted, thank you.',
 			'notifications.evenements.seanceTermineePhrases' => ({required Object premiere, required Object suite}) => '${premiere} ${suite}',
@@ -36145,8 +36409,6 @@ extension on TraductionsEn {
 			'eleve.accueil.prochainDansJours' => ({required num jours}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(jours, one: 'Your next class is in ${jours} day.', other: 'Your next class is in ${jours} days.', ), 
 			'eleve.accueil.entreeSePrepare' => 'Your entry is getting ready. Try again in a moment.',
 			'eleve.coran.titre' => 'The Quran',
-			_ => null,
-		} ?? switch (path) {
 			'eleve.coran.juz' => ({required Object juz}) => 'Juz ${juz}',
 			'eleve.coran.mecquoise' => 'Revealed in Makkah',
 			'eleve.coran.medinoise' => 'Revealed in Madinah',
@@ -36568,6 +36830,8 @@ extension on TraductionsEn {
 			'enseignant.bienvenue.horsLigne' => 'Your slots can be saved when the connection is back.',
 			'enseignant.bienvenue.dossierIncomplet' => 'Your file is not approved yet.',
 			'enseignant.bienvenue.dossierIncompletDetail' => 'The waiting page tells you what remains to be provided.',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.bienvenue.versAttente' => 'See my file',
 			'enseignant.bienvenue.erreur' => 'Your profile could not be loaded. Try again in a moment.',
 			'enseignant.photo.titre' => 'Professional photo',
@@ -36659,8 +36923,6 @@ extension on TraductionsEn {
 			'enseignant.journee.rejoindreSalle' => 'Join the room',
 			'enseignant.journee.rejoindreSalleLecteur' => ({required Object classe}) => 'Join the room of class ${classe}',
 			'enseignant.journee.remplirCahier' => 'Fill in the handover notebook',
-			_ => null,
-		} ?? switch (path) {
 			'enseignant.journee.remplirCahierLecteur' => ({required Object classe}) => 'Fill in the handover notebook of class ${classe}',
 			'enseignant.journee.cahierObligatoire' => ({required Object classe}) => 'Required: the handover notebook ${classe} is filled in once a week for each student.',
 			'enseignant.journee.cahierObligatoireSeance' => ({required Object classe}) => 'Required: the handover notebook ${classe} is filled in after each session, for each student.',
@@ -37082,6 +37344,8 @@ extension on TraductionsEn {
 			'enseignant.revenus.taux' => 'Effective hourly rate',
 			'enseignant.revenus.tauxValeur' => ({required Object montant}) => '${montant} per hour',
 			'enseignant.revenus.type' => 'Type',
+			_ => null,
+		} ?? switch (path) {
 			'enseignant.revenus.typeEnfants' => 'Children',
 			'enseignant.revenus.typeDebutants' => 'Beginner children',
 			'enseignant.revenus.typeAdultes' => 'Adults',
@@ -37173,8 +37437,6 @@ extension on TraductionsEn {
 			'controleur.historique.ajouterComplement' => 'Add an addendum',
 			'controleur.complement.bandeau' => 'This addendum will be added to the existing report.',
 			'controleur.complement.questionMotif' => 'Why are you adding this addendum?',
-			_ => null,
-		} ?? switch (path) {
 			'controleur.complement.contexteMotif' => 'Optional: the reason helps the administration read the addendum. The original report does not change.',
 			'controleur.complement.precision' => 'Clarification',
 			'controleur.complement.precisionAide' => 'When a detail is missing · it completes the report without changing anything in it',
@@ -37596,6 +37858,8 @@ extension on TraductionsEn {
 			'tc.outils.marquer.aide' => 'Choose what this passage calls for.',
 			'tc.outils.marquer.retirer' => 'Remove the marker',
 			'tc.outils.revision.titre' => 'To prepare',
+			_ => null,
+		} ?? switch (path) {
 			'tc.outils.revision.aide' => 'The selected passage becomes work to prepare.',
 			'tc.outils.revision.groupeEntier' => 'Whole class',
 			'tc.outils.revision.consigne' => 'Short instruction (optional)',
@@ -37687,8 +37951,6 @@ extension on TraductionsEn {
 			'tc.observation.explication.ecouteDetail' => 'You hear the teacher and the students who speak, including your child.',
 			'tc.observation.explication.sansMedia' => 'No microphone or camera',
 			'tc.observation.explication.sansMediaDetail' => 'Your microphone and camera stay off so as not to interrupt the class.',
-			_ => null,
-		} ?? switch (path) {
 			'tc.observation.explication.revenir' => 'If another student is reciting during your first visit, you can come back later to listen to your child.',
 			'tc.observation.explication.ecourtee' => 'A visit left before the end counts as a whole visit: unused time is not carried over.',
 			'tc.observation.explication.sansIntervenir' => 'To protect concentration, you observe without intervening.',
@@ -38110,6 +38372,8 @@ extension on TraductionsEn {
 			'adulte.acceptation.notification' => ({required Object prenom}) => '${prenom} invites you to join their family plan.',
 			'adulte.acceptation.titre' => ({required Object dePrenom}) => 'Join ${dePrenom}\'s family plan',
 			'adulte.acceptation.faisonsTitre' => 'What we do',
+			_ => null,
+		} ?? switch (path) {
 			'adulte.acceptation.faisons' => ({required Object prenom}) => '${prenom} invites you to their family plan. If you accept, your account is linked to their household. Your account stays yours. Nothing is merged.',
 			'adulte.acceptation.pourquoiTitre' => 'Why',
 			'adulte.acceptation.pourquoiElle' => ({required Object prenom}) => '${prenom} manages the household and pays for its members. To pay for your classes, she must see your balance.',
@@ -38201,8 +38465,6 @@ extension on TraductionsEn {
 			'adulte.reprise.deposeeLe' => 'Submitted on',
 			'adulte.reprise.etat' => 'Status',
 			'adulte.reprise.etats.deposee' => 'Submitted',
-			_ => null,
-		} ?? switch (path) {
 			'adulte.reprise.etats.refuseeParTitulaire' => 'Refused by the account holder',
 			'adulte.reprise.etats.attenteAdministration' => 'Pending the administration',
 			'adulte.reprise.etats.validee' => 'Approved',
@@ -38624,6 +38886,8 @@ extension on TraductionsEn {
 			'argent.periode.aucune' => 'No funded period',
 			'argent.allocation.credite' => 'Credited',
 			'argent.moyen.webStripe' => 'Bank card',
+			_ => null,
+		} ?? switch (path) {
 			'argent.moyen.webStripeDetail' => 'Payment on the web. Nothing is charged before you confirm.',
 			'argent.soldes.total' => 'Total balances (read-only)',
 			'argent.soldes.totalDetail' => 'A read-only view: each balance stays that of its profile.',
@@ -38715,8 +38979,6 @@ extension on TraductionsEn {
 			'com.socle.composants.composer.aucunMessage' => 'Write the first message of this conversation: it will appear here.',
 			'com.socle.composants.etats.chargement' => 'Loading',
 			'com.socle.composants.etats.videTitre' => 'Nothing here yet',
-			_ => null,
-		} ?? switch (path) {
 			'com.socle.composants.etats.erreurTitre' => 'This content could not be loaded.',
 			'com.socle.composants.etats.erreur' => 'The request may not have reached Rewayah. Try again in a moment.',
 			'com.socle.composants.etats.reessayer' => 'Try again',
@@ -39138,6 +39400,8 @@ extension on TraductionsEn {
 			'com.communaute.demo.lienAffilie' => 'Affiliate link blocked',
 			'com.communaute.demo.vente' => 'Sale blocked',
 			'com.communaute.demo.signalementNonConfirme' => 'Report not confirmed',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.demo.choisir' => 'Choose a situation to try, seen by a teacher.',
 			'com.communaute.demo.aujourdhui' => 'Today, with the shortcut',
 			'com.communaute.demo.nominal' => 'Six posts',
@@ -39229,8 +39493,6 @@ extension on TraductionsEn {
 			'com.studio.aujourdhui.modules.classes' => 'Classes',
 			'com.studio.aujourdhui.modules.admissions' => 'Admissions',
 			'com.studio.aujourdhui.modules.demandes' => 'Requests',
-			_ => null,
-		} ?? switch (path) {
 			'com.studio.aujourdhui.modules.communications' => 'Communications administration',
 			'com.studio.aujourdhui.acces.messages' => _root.com.socle.lexique.messagesMetier,
 			'com.studio.aujourdhui.acces.messagesDetail' => 'Conversations with families, teachers and reviewers',
@@ -39652,6 +39914,8 @@ extension on TraductionsEn {
 			'com.annonces.demo.f.controleurReponse' => 'Administration\'s reply to your report',
 			'com.annonces.titre' => 'Announcements',
 			'comptable.nav.aujourdhui' => 'Today',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.nav.paiements' => 'Payments',
 			'comptable.nav.tresorerie' => 'Cash position',
 			'comptable.nav.compte' => 'Account',
@@ -39743,8 +40007,6 @@ extension on TraductionsEn {
 			'comptable.statuts.paiement.calcule' => 'Calculated',
 			'comptable.statuts.paiement.aVerifier' => 'To check',
 			'comptable.statuts.paiement.infosManquantes' => 'Payment info missing',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.statuts.paiement.verificationRequise' => 'Payment verification required',
 			'comptable.statuts.paiement.pretAPayer' => 'Ready to pay',
 			'comptable.statuts.paiement.validationRequise' => 'Additional validation required',
@@ -40166,6 +40428,8 @@ extension on TraductionsEn {
 			'comptable.encaissements.rap.rapprocherLecteur' => ({required Object libelle}) => 'Reconcile with ${libelle}',
 			'comptable.encaissements.rap.doublonTitre' => 'Potential duplicate',
 			'comptable.encaissements.rap.doublonPhrase' => 'This transaction looks like another already received. Check before reconciling: a duplicate is never validated silently.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.encaissements.rap.marquerDoublon' => 'Mark as duplicate',
 			'comptable.encaissements.rap.resultat' => ({required Object etat}) => 'Status returned by the source: ${etat}',
 			'comptable.encaissements.rap.erreurEnvoi' => 'We do not know whether the operation was taken into account. Refresh the list before trying again.',
@@ -40257,8 +40521,6 @@ extension on TraductionsEn {
 			'comptable.beneficiaires.profilTitre' => 'Payment profile',
 			'comptable.beneficiaires.recevoir.rubrique' => 'Payments',
 			'comptable.beneficiaires.recevoir.ligneDetail' => 'Your payment methods, managed by you alone.',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.beneficiaires.recevoir.noticeDetail' => 'Add a payment method so that the academy can pay you your next payment.',
 			'comptable.beneficiaires.recevoir.phraseAucunMoyen' => 'You have no payment method yet. Add one to receive your payments.',
 			'comptable.beneficiaires.recevoir.phraseIncomplet' => 'Your payment method is incomplete. Complete it to receive your next payment.',
@@ -40680,6 +40942,8 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.sensibleLieOperateurDetail' => 'A payment to a person linked to the payment operator.',
 			'comptable.direction.delegationPanneau.sensibleFournisseur' => 'Provider unavailable',
 			'comptable.direction.delegationPanneau.sensibleFournisseurDetail' => 'A payment whose payment provider is unavailable.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.sensibleManuelle' => 'Manual obligation not approved',
 			'comptable.direction.delegationPanneau.sensibleManuelleDetail' => 'An obligation entered by hand and not yet approved.',
 			'comptable.direction.titre' => 'Reserve and delegation',
@@ -40771,8 +41035,6 @@ extension on TraductionsEn {
 			'recherche.etats.vide.phrase' => 'Try another word or a filter.',
 			'recherche.etats.vide.action' => 'Change the search',
 			'recherche.etats.domaineIndisponible.titre' => 'Search in this area is unavailable.',
-			_ => null,
-		} ?? switch (path) {
 			'recherche.etats.domaineIndisponible.phrase' => 'The other categories stay available.',
 			'recherche.etats.domaineIndisponible.action' => 'Try this area again',
 			'recherche.etats.erreur.titre' => 'Unable to perform the search.',
@@ -41194,6 +41456,8 @@ extension on TraductionsEn {
 			'courriels.admin.ecrire.corpsAide' => 'Plain text, 5000 characters at most. An empty line makes a new paragraph.',
 			'courriels.admin.ecrire.traduction' => 'Each recipient receives it in their language: the message is translated automatically when sent.',
 			'courriels.admin.ecrire.envoyer' => 'Send the message',
+			_ => null,
+		} ?? switch (path) {
 			'courriels.admin.ecrire.erreurCategories' => 'The categories could not be loaded. Try again.',
 			'courriels.admin.ecrire.sansDonneesCategories' => 'The categories could not be loaded',
 			'courriels.admin.ecrire.pasDeCategorie' => 'No category is active: it is not possible to write for now.',
@@ -41285,8 +41549,6 @@ extension on TraductionsEn {
 			'admissions.refuser' => 'Refuse the request',
 			'admissions.refuserContexte' => 'Choose the sentence the person will receive, then write the reason for the management. The person never sees the reason.',
 			'admissions.refuserQuestion' => ({required Object deNom}) => 'Refuse ${deNom}\'s request?',
-			_ => null,
-		} ?? switch (path) {
 			'admissions.refuserConsequence' => 'The person receives a "We cannot proceed" email. The refusal can be undone for seven days.',
 			'admissions.motifInterne' => 'Reason, for the management',
 			'admissions.motifInterneAide' => 'It stays in the request\'s log.',
@@ -41708,6 +41970,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.avertissement.moinsDe3Heures' => 'less than 3 hours a week: that does not make a class, for the person to fill in',
 			'candidatsFlux.importFormulaires.avertissement.creneauxContradictoires' => 'contradictory time slots, kept as they are',
 			'candidatsFlux.importFormulaires.comptes.question' => 'Are these the numbers you expected?',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.comptes.explication' => 'Here is what Rewayah counted in the file. Compare with your own count before confirming.',
 			'candidatsFlux.importFormulaires.comptes.nouvelles' => 'New',
 			'candidatsFlux.importFormulaires.comptes.nouvellesAide' => 'Not known yet: they will be saved.',
@@ -41799,8 +42063,6 @@ extension on TraductionsEn {
 			'candidatsFlux.invitationsPersonnelles.varianteA' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'including ${n} person who received the end-of-October waiting email', other: 'including ${n} people who received the end-of-October waiting email', ), 
 			'candidatsFlux.invitationsPersonnelles.lienCopie.action' => 'Copy the sign-up link',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.titre' => 'Personal sign-up link',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.invitationsPersonnelles.lienCopie.contexte' => 'This person did not leave an email address. Enter the one they will use to create their account: it is saved on their answer, and the code works only with it. No email is sent: you pass the link on yourself.',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.champ' => 'The person\'s email address',
 			'candidatsFlux.invitationsPersonnelles.lienCopie.preparer' => 'Prepare the link',
@@ -42222,6 +42484,8 @@ extension on TraductionsEn {
 			'calendrier.dates.feuille.aideTitre' => 'The title families will read.',
 			'calendrier.dates.feuille.champPortee' => 'Who it is for',
 			'calendrier.dates.feuille.champTranche' => 'Age group',
+			_ => null,
+		} ?? switch (path) {
 			'calendrier.dates.feuille.champClasse' => 'Class',
 			'calendrier.dates.feuille.champDu' => 'First day',
 			'calendrier.dates.feuille.champAu' => 'Last day',
@@ -42313,8 +42577,6 @@ extension on TraductionsEn {
 			'calendrier.pauses.terminerChamp' => 'Last day of the break',
 			'calendrier.pauses.terminerEnvoyer' => 'End the break',
 			'calendrier.pauses.finInitiale' => ({required Object date}) => 'Original end: ${date}',
-			_ => null,
-		} ?? switch (path) {
 			'calendrier.pauses.termineePar' => ({required Object nom}) => 'Ended early by ${nom}',
 			'calendrier.pauses.refus.motifRequis' => 'A reason of at least three letters is required.',
 			'calendrier.pauses.refus.dejaDecidee' => 'This request has already been answered. Reload the list.',

@@ -27,6 +27,8 @@ import '../../features/admin_candidature/creneaux_entretien_page.dart'
     deferred as d_creneaux_entretien_page;
 import '../../features/admin_candidatures/candidatures_page.dart'
     deferred as d_candidatures_page;
+import '../../features/admin_candidatures/travail_praxis_page.dart'
+    deferred as d_travail_praxis_page;
 import '../../features/admin_comptes/comptes_page.dart'
     deferred as d_comptes_page;
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart'
@@ -348,6 +350,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_creneaux_entretien_page', d_creneaux_entretien_page.loadLibrary),
   ('d_calendrier_page', d_calendrier_page.loadLibrary),
   ('d_candidatures_page', d_candidatures_page.loadLibrary),
+  ('d_travail_praxis_page', d_travail_praxis_page.loadLibrary),
   ('d_enseignants_page', d_enseignants_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
@@ -2335,6 +2338,24 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_creneaux_entretien_page',
             charger: d_creneaux_entretien_page.loadLibrary,
             construire: () => d_creneaux_entretien_page.CreneauxEntretienPage(),
+          ),
+        ),
+      ),
+      // PRAXIS-VISIBLE : le travail de Praxis (piles, avis, objectifs),
+      // chemin statique AVANT ADM-21 (R5). Filtres dans l'adresse ; une ligne
+      // ouvre le dossier, empile : le retour ramene ici, filtres gardes.
+      GoRouteSure(
+        path: Routes.adminPersonnesTravailPraxis,
+        builder: (BuildContext contexte, GoRouterState etat) => _CoquilleAdmin(
+          domaine: AdminDomaine.personnes,
+          child: PageDifferee(
+            cle: 'd_travail_praxis_page',
+            charger: d_travail_praxis_page.loadLibrary,
+            construire: () => d_travail_praxis_page.TravailPraxisPage(
+              requete: etat.uri.queryParameters,
+              ouvrirDossier: (String reference) => GoRouter.of(contexte)
+                  .push<void>(Routes.adminPersonnesCandidaturePour(reference)),
+            ),
           ),
         ),
       ),

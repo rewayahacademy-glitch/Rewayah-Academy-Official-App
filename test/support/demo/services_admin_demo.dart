@@ -21,6 +21,7 @@ import 'package:rewayah_academy/core/agent/propositions_praxis.dart';
 import 'package:rewayah_academy/core/agent/questions_praxis.dart';
 import 'package:rewayah_academy/core/agent/service_agent.dart';
 import 'package:rewayah_academy/core/agent/service_praxis.dart';
+import 'package:rewayah_academy/core/agent/travail_praxis.dart';
 import 'package:rewayah_academy/core/auth/service_auth.dart';
 import 'package:rewayah_academy/core/capacites/capacite_indisponible.dart';
 import 'package:rewayah_academy/core/controle/service_controle.dart';
@@ -32,6 +33,7 @@ import 'package:rewayah_academy/features/admin_observations/annuaire_observation
 
 import '../faux_service_questions_praxis.dart';
 import '../propositions_praxis_vides.dart';
+import '../travail_praxis_vide.dart';
 
 /// La dependance nommee par tout service neutralise de la demonstration.
 const String dependanceDemoAdmin = 'AD-BR-DEMO';
@@ -193,6 +195,9 @@ List<Override> surchargesServicesAdminIndisponibles({
     serviceQuestionsPraxisProvider.overrideWithValue(
       const QuestionsPraxisVides(),
     ),
+  // PRAXIS-VISIBLE : rien de range ni de lu, aucun objectif.
+  if (!sauf.contains(serviceTravailPraxisProvider))
+    serviceTravailPraxisProvider.overrideWithValue(const TravailPraxisVide()),
   if (!sauf.contains(annuaireObservationsProvider))
     annuaireObservationsProvider.overrideWithValue(
       const AnnuaireObservationsDemo(),
@@ -224,6 +229,7 @@ final List<Provider<Object>> providersServicesAdmin = <Provider<Object>>[
   servicePraxisProvider,
   servicePropositionsPraxisProvider,
   serviceQuestionsPraxisProvider,
+  serviceTravailPraxisProvider,
   annuaireObservationsProvider,
   portPolitiqueObservationProvider,
 ];
