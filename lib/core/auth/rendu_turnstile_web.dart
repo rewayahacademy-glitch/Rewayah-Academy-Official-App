@@ -115,8 +115,12 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
       ..['callback'] = ((JSString jeton) {
         widget.controleur.recevoirJeton(jeton.toDart);
       }).toJS
-      ..['error-callback'] = (() {
-        widget.controleur.signalerErreur();
+      // PE-A5 : le code d'erreur de Cloudflare dit la cause (navigateur,
+      // heure de l'appareil, reglage) ; l'ecran en tire sa phrase.
+      ..['error-callback'] = ((JSAny? code) {
+        widget.controleur.signalerErreur(
+          code: code.isA<JSString>() ? (code! as JSString).toDart : null,
+        );
       }).toJS
       ..['expired-callback'] = (() {
         widget.controleur.signalerExpiration();
@@ -136,6 +140,9 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
     }
   }
 
+  /// Un nouveau tour de verification. PE-A5 : apres un echec, le widget est
+  /// retire puis rendu a neuf (un `reset` sur un widget en panne rendait la
+  /// meme panne) ; apres un envoi reussi, un `reset` suffit.
   void _relancer() {
     final JSObject? turnstile = globalContext['turnstile'] as JSObject?;
     final JSAny? id = _widgetId;
@@ -144,7 +151,14 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
       return;
     }
     try {
-      turnstile.callMethod<JSAny?>('reset'.toJS, id);
+      if (widget.controleur.echecs > 0) {
+        turnstile.callMethod<JSAny?>('remove'.toJS, id);
+        _widgetId = null;
+        _monte = false;
+        unawaited(_monter());
+      } else {
+        turnstile.callMethod<JSAny?>('reset'.toJS, id);
+      }
     } on Object {
       widget.controleur.signalerErreur();
     }
