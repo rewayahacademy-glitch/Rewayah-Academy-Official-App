@@ -377,6 +377,10 @@ SELECT pg_temp.verif('OBJECTIF semaine : range sous son lundi ; 3 ouverts par se
      AND pg_temp.fixer('both', 'semaine', date_trunc('week', current_date::timestamp)::date, 'S2.', '411') ->> 'ok' = 'true'
      AND pg_temp.fixer('both', 'semaine', current_date, 'S3.', '412') ->> 'ok' = 'true'
      AND pg_temp.fixer('both', 'semaine', date_trunc('week', current_date::timestamp)::date, 'S4.', '413') ->> 'erreur' = 'plafond_objectifs' $$);
+-- Revue du 20/11/2026 : la semaine PRECEDENTE (la veille du lundi en cours) est refusee, quel que soit le jour de la semaine.
+SELECT pg_temp.verif('OBJECTIF semaine passee : la veille du lundi de la semaine en cours est refusee `parametre`, rien d''ecrit', $$
+  SELECT pg_temp.fixer('both', 'semaine', date_trunc('week', current_date::timestamp)::date - 1, 'Semaine passee.', '414') ->> 'erreur' = 'parametre'
+     AND NOT EXISTS (SELECT 1 FROM private.praxis_objectifs o WHERE o.libelle = 'Semaine passee.') $$);
 SELECT pg_temp.verif('OBJECTIF refus : periode hors liste, date trop loin, libelle vide, libelle trop long, cible hors bornes', $$
   SELECT pg_temp.fixer('both', 'mois', current_date, 'x', '420') ->> 'erreur' = 'parametre'
      AND pg_temp.fixer('both', 'jour', current_date + 30, 'x', '421') ->> 'erreur' = 'parametre'

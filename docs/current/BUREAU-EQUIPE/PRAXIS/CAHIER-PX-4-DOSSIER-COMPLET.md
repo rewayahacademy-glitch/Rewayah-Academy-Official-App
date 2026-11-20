@@ -33,17 +33,30 @@ Migration : `supabase/migrations/20261130200000_praxis_dossier_complet.sql`. Sc�
   d'interrogation.
 - **Les dossiers sans majorité attestée sont fermés à `dossier`** : tous les candidats importés sans compte le sont.
   C'est l'ordre (« de majorité non attestée : fermés ») ; cela peut laisser une grande partie de la file illisible.
-- **`scenarios_sec1_praxis.sql` reste ROUGE à une vérification qui ne vient pas de ce lot** : « R1 : aucun EXECUTE
-  dynamique » cherche le mot `execute` sans tenir compte de la casse, et deux fonctions de PX-3 le portent dans un
-  commentaire en français (`praxis_gestes_ligne`, `direction_praxis_valider`). Non modifié (c'est un garde-fou : au
-  pilote de trancher). Avec cette seule vérification rendue sensible à la casse, sur une copie jetée, tout le fichier
-  est vert. `scenarios_px2_preparer.sql` reste rouge pour la raison déjà dite par le cahier PX-3 (mots `piece`, `photo`).
+- **L'ordre « Praxis doit pouvoir agir seul » (directeur, 20/11, reçu en fin de lot) n'est PAS livré, sauf un point.**
+  - Non fait : le réglage `gestes_autonomes` et l'application directe de `admettre_verifications` et
+    `demander_complement` par Praxis. Les portes de ces gestes (`admettre_salle_verification`,
+    `demander_complement_candidat`) exigent la session d'une direction (rôle, MFA, côté) ; Praxis n'a pas de session.
+    Les lui ouvrir demande de décider sous quelle identité le geste s'écrit, comment la direction l'annule, et de
+    réécrire `praxis_preparer` et la règle « Praxis prépare, la direction valide » (SECURITE-PRAXIS, `interdits` de
+    `etat`). C'est un changement de sécurité : il lui faut son lot, sa relecture, et une décision datée. Rien n'en est
+    écrit ici.
+  - Déjà vrai dans ce lot : **l'entretien écrit et les relances partent sans validation** (`ouvrir` les envoie
+    lui-même, dans les limites du §5). Aucun réglage ne les allume ni ne les éteint séparément.
+  - Non fait : `questions_ouvertes` et `retirer_question`. Une question retirée par Praxis demande un statut neuf dans
+    `private.praxis_questions`, dont l'index « une question ouverte par fil » et les lectures de la direction
+    dépendent : à faire avec le point précédent.
+  - Fait : `etat` rend `ouverturesRestantesJour` (25 par 24 heures, moins les questions, relances et entretiens écrits
+    déjà envoyés). Le plafond est par jour, pas par heure ; le plafond horaire reste `plafondRestantHeure`.
+- **Fusion avec la revue de PX-3** (`cc2b1e4c`) faite : les trois empreintes d'entrée sont inchangées après cette
+  revue ; `scenarios_sec1_praxis.sql` et `scenarios_px2_preparer.sql` sont verts, avec les ajouts de PX-4 par-dessus
+  ceux de la revue.
 - **Les tests Deno ne sont pas lancés** (pas de `deno`). `outils.ts` passe `tsc --strict`. `praxis_test.ts` : la liste
   des noms d'outils est mise à jour, aucun cas neuf n'est écrit.
 - **Aucun écran** ne lit `direction_praxis_impressions`. **La routine ne connaît pas ces outils** (`ROUTINE-PRAXIS.md`
   non modifié, hors zone).
 - **Pile `pepite`** : non ajoutée aux rangements (il aurait fallu réécrire un CHECK) ; l'étiquette suffit.
-- Budget dépassé : le lot a pris bien plus que 80 minutes (deux précisions reçues en cours de route).
+- Budget dépassé : le lot a pris bien plus que 80 minutes (quatre précisions reçues en cours de route).
 
 ## 1. Ce qui est livré
 
@@ -55,7 +68,11 @@ Migration : `supabase/migrations/20261130200000_praxis_dossier_complet.sql`. Sc�
 | 4 | `lire` (filtres) | `praxis_lire` remplacée |
 | + | entretien écrit | raisons `entretien_ecrit`, `relance_entretien` de `ouvrir` ; filtre `a_interroger` |
 
-Scénario : 92 vérifications isolées, plus 9 refus d'appel ; toutes vertes en local (Postgres 16).
+Scénario : 93 vérifications isolées, plus 9 refus d'appel ; toutes vertes en local (Postgres 16). Régression verte :
+`scenarios_sec1_praxis`, `sec1_praxis_ar7`, `px2_preparer`, `px2_annuaire_agent`, `praxis_travail`, `praxis_candidats`,
+`praxis_routine_pouls`, `praxis_purge_journal`, `cand_autres_competences`, `messages_candidat`, `com_back_1_messagerie`,
+`com_compte_officiel`, `candidats_flux`, `cand_l2a2_gestes_direction`, `messagerie_push`, `messagerie_temps_reel`. Les
+autres scénarios du dépôt n'ont pas été rejoués.
 
 ## 2. `dossier` : ce qui est rendu, ce qui ne l'est jamais
 
@@ -151,14 +168,16 @@ Filtres neufs : `etiquette`, `sans_impression` (booléen), `ijaza` (`oui`, `pret
 
 ## 8. Décisions prises, et pourquoi
 
-1. Trois fonctions remplacées, corps recopié par `pg_get_functiondef` sur la base rejouée, empreinte contrôlée, ajouts
-   marqués `PX-4` : `praxis_lire` (de PX-3), `praxis_ecrire` (de `20261129910000`), `praxis_noter_refus` (de PX-3).
+1. Quatre fonctions remplacées, corps recopié par `pg_get_functiondef` sur la base rejouée, empreinte contrôlée, ajouts
+   marqués `PX-4` : `praxis_lire` (de PX-3), `praxis_ecrire` (de `20261129910000`), `praxis_noter_refus` (de PX-3),
+   `praxis_etat` (du socle `20261129600000` : une clé de plus dans la réponse).
 2. Zéro mot d'effacement : aucune contrainte existante n'est réécrite.
 3. Une table des ouvertures, parce que le journal est purgé à douze mois et ne peut pas porter « 3 en tout ».
 4. Toutes les limites dans une seule fonction, lue par la boîte (pour dire `permis`) et par `ouvrir` (pour refuser).
 5. Listes blanches mises à jour, chacune commentée : `scenarios_praxis_travail.sql` (clé `impression`),
-   `scenarios_cand_autres_competences.sql` (`praxis_dossier` lit les autres compétences),
-   `scenarios_sec1_praxis.sql` (R2, R4, AR-10, R1 : les outils de PX-4 et ceux que PX-3 n'avait pas ajoutés).
+   `scenarios_cand_autres_competences.sql` (`praxis_dossier` lit les autres compétences), `scenarios_px2_preparer.sql`
+   (clé `impression`, avec un contrôle de sa forme),
+   `scenarios_sec1_praxis.sql` (R2, R4, AR-10, R1 : les outils, tables et appels de PX-4).
 
 ## 9. Confidentialité
 
@@ -178,15 +197,16 @@ publication effective de ce texte dans l'application n'a pas été vérifiée ic
 Avant, en lecture seule :
 1. `schema_migrations` contient `20261130100000` (PX-3) et pas `20261130200000`.
 2. Empreintes `md5(prosrc)` : `praxis_lire` `85ff7182883d73d39d3bb51298b2f75b`, `praxis_ecrire`
-   `d224d33664646855a7b79a28c6dbddc3`, `praxis_noter_refus` `d13a327123e66d50ccc51c617ba8d1ee`.
+   `d224d33664646855a7b79a28c6dbddc3`, `praxis_noter_refus` `d13a327123e66d50ccc51c617ba8d1ee`, `praxis_etat`
+   `bf52d55ef6b922b12fbf92afa5022529`.
 3. `private.praxis_impressions` et `private.praxis_ouvertures` n'existent pas.
 4. Compter les mots d'effacement du fichier : zéro.
 
 Après :
 5. Les deux tables : RLS active, aucune politique, aucun droit client, zéro ligne.
-6. `has_function_privilege` : les quatre outils neufs et les trois remplacés pour `service_role` seul ;
+6. `has_function_privilege` : les quatre outils neufs et les quatre remplacés pour `service_role` seul ;
    `direction_praxis_impressions` pour `authenticated` seul ; les sept aides privées pour personne.
-7. Les trois fonctions remplacées : `SECURITY DEFINER`, propriétaire `postgres`, `search_path` vide.
+7. Les quatre fonctions remplacées : `SECURITY DEFINER`, propriétaire `postgres`, `search_path` vide.
 8. `private.praxis_reglages` inchangé.
 9. Déployer `praxis-mcp` ; `tools/list` rend 22 outils.
 10. Mettre à jour la consigne de la routine et le texte de confidentialité avant d'ouvrir.

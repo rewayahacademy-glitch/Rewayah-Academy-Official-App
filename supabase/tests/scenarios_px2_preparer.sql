@@ -137,12 +137,48 @@ SELECT pg_temp.vrai((SELECT donnees_reelles FROM private.praxis_reglages) AND (S
 SELECT pg_temp.srv(format('SELECT public.praxis_lire(%L, ''candidatures'', ''{}'', 50)', :'cle_a')) AS lu \gset
 SELECT pg_temp.vrai(jsonb_array_length(:'lu'::jsonb -> 'lignes') = 4 AND (:'lu'::jsonb ->> 'total')::int = 4,
   '2 : la vue candidatures rend les 4 enseignants (pas la famille)');
-SELECT pg_temp.vrai(:'lu'::text !~* '(@|secret|0699|\+33|telephone|courriel|email|piece|photo|note|motif|montant|paiement|iban)',
-  '2 : aucune reponse ne contient courriel, telephone, piece, photo, note, motif ni montant');
+-- PX-3 (20261130100000, revue independante du 20/11/2026). praxis_lire rend en plus, par ligne, deux listes de CODES : `manquants` et
+-- `attend_direction`. Deux de ces codes s'appellent `piece_identite` et `photo` : ils disent QU'IL MANQUE une piece ou une photo, ils ne
+-- sont ni la piece ni la photo. Le controle n'est donc pas relache, il est decoupe en deux, chacun aussi strict qu'avant :
+--   (a) TOUT le reste de la reponse (chaque ligne privee de ces deux listes, plus l'enveloppe) reste soumis au MEME motif interdit,
+--       mot pour mot : ni courriel, ni telephone, ni piece, ni photo, ni note, ni motif, ni montant dans aucun autre champ ;
+--   (b) les deux listes sont des tableaux de textes pris dans des listes FERMEES ecrites ici (les codes du complement du moteur, plus
+--       `compte` et `questionnaire` ; pour la direction : cinq codes). Une valeur libre, un nom de fichier, une adresse, un chemin de
+--       piece ou de photo n'est dans aucune des deux listes et serait rouge.
+SELECT pg_temp.vrai((SELECT (:'lu'::jsonb - 'lignes')::text || coalesce(string_agg((l - 'manquants' - 'attend_direction')::text, ' '), '')
+                       FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l)
+                    !~* '(@|secret|0699|\+33|telephone|courriel|email|piece|photo|note|motif|montant|paiement|iban)',
+  '2 : aucune reponse ne contient courriel, telephone, piece, photo, note, motif ni montant (hors des deux listes de codes, controlees a part)');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
+    WHERE jsonb_typeof(l -> 'manquants') IS DISTINCT FROM 'array' OR jsonb_typeof(l -> 'attend_direction') IS DISTINCT FROM 'array'
+       OR EXISTS (SELECT 1 FROM jsonb_array_elements(l -> 'manquants') e
+                   WHERE jsonb_typeof(e) <> 'string'
+                      OR (e #>> '{}') <> ALL (ARRAY['compte', 'questionnaire', 'langues', 'recitation', 'disponibilites', 'publics', 'versement',
+                                                    'cadre_religieux', 'contrat', 'avis', 'code_conduite', 'piece_identite', 'photo',
+                                                    'accord_publication', 'pays_versement']))
+       OR EXISTS (SELECT 1 FROM jsonb_array_elements(l -> 'attend_direction') e
+                   WHERE jsonb_typeof(e) <> 'string'
+                      OR (e #>> '{}') <> ALL (ARRAY['cadre_religieux', 'piece_identite', 'questionnaire', 'versement', 'autre']))),
+  '2 (PX-3) : manquants et attend_direction ne portent que des CODES de listes fermees (piece_identite et photo sont des codes, jamais une piece ni une photo)');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
+    WHERE jsonb_typeof(l -> 'complet') IS DISTINCT FROM 'boolean' OR jsonb_typeof(l -> 'a_une_conversation') IS DISTINCT FROM 'boolean'
+       OR jsonb_typeof(l -> 'jours_sans_activite_candidat') NOT IN ('number', 'null')
+       OR NOT (jsonb_typeof(l -> 'pile') = 'null'
+               OR l ->> 'pile' IN ('pret_a_decider', 'incomplet', 'a_regarder', 'sans_nouvelles'))),
+  '2 (PX-3) : complet et a_une_conversation sont des booleens, jours_sans_activite_candidat un nombre, pile un code de liste fermee ou rien');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
     WHERE (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l) k)
-          <> ARRAY['attente_jours', 'complement_en_cours', 'contenu_tiers', 'cote', 'etape', 'etat', 'gestes', 'langue', 'reference']),
+          -- PX-3 : six cles de plus, et elles seules (a_une_conversation, attend_direction, complet, jours_sans_activite_candidat,
+          -- manquants, pile). Toute autre cle reste rouge.
+          <> ARRAY['a_une_conversation', 'attend_direction', 'attente_jours', 'complement_en_cours', 'complet', 'contenu_tiers', 'cote',
+                   -- PX-4 (20261130200000) : une cle de plus, et elle seule : `impression`, l'avis de Praxis (ci-dessous).
+                   'etape', 'etat', 'gestes', 'impression', 'jours_sans_activite_candidat', 'langue', 'manquants', 'pile', 'reference']),
   '2 : les cles de chaque ligne sont une liste fermee');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
+    WHERE NOT (jsonb_typeof(l -> 'impression') = 'null'
+               OR (jsonb_typeof(l -> 'impression') = 'object'
+                   AND (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l -> 'impression') k) = ARRAY['confiance', 'etiquette', 'vision']))),
+  '2 (PX-4) : impression est vide, ou un objet a trois cles (etiquette, note de vision, confiance) : aucun texte, aucune donnee de personne');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
     WHERE (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(l -> 'contenu_tiers') k) <> ARRAY['prenom']
        OR l ->> 'prenom' IS NOT NULL),

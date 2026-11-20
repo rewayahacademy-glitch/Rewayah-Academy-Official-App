@@ -27,6 +27,7 @@
 --       et que la direction n'a pas repondu depuis dans la conversation (sinon `raison_requise`), et 2 messages de suite au plus (3 avant).
 --       Les autres types de conversation ne changent pas.
 --   * public.praxis_noter_refus(text, text)            <- 20261130100000 (PX-3). Appelant : praxis-mcp (refus de parametre).
+--   * public.praxis_etat(text)                         <- 20261129600000 (socle). Appelant : l'outil `etat`. Une cle de plus dans la reponse.
 -- Tout le reste est NEUF. Rien n'est allume par cette migration. Sans BEGIN ni COMMIT de premier niveau.
 
 DO $preflight$
@@ -49,7 +50,8 @@ BEGIN
   FOR v IN SELECT * FROM (VALUES
       ('public.praxis_lire(text,text,jsonb,integer)', '85ff7182883d73d39d3bb51298b2f75b'),
       ('public.praxis_ecrire(text,uuid,text,uuid)', 'd224d33664646855a7b79a28c6dbddc3'),
-      ('public.praxis_noter_refus(text,text)', 'd13a327123e66d50ccc51c617ba8d1ee')) AS t(f, md5) LOOP
+      ('public.praxis_noter_refus(text,text)', 'd13a327123e66d50ccc51c617ba8d1ee'),
+      ('public.praxis_etat(text)', 'bf52d55ef6b922b12fbf92afa5022529')) AS t(f, md5) LOOP
     IF (SELECT pg_catalog.md5(p.prosrc) FROM pg_catalog.pg_proc p WHERE p.oid = v.f::pg_catalog.regprocedure) IS DISTINCT FROM v.md5 THEN
       RAISE EXCEPTION 'PX-4 : la definition de % n''est pas celle attendue ; rien n''est modifie', v.f;
     END IF;
@@ -848,7 +850,7 @@ END;
 $f$;
 
 -- ====================================================================================================================
--- 6. Les trois fonctions existantes, remplacees (empreintes controlees au preflight). Chaque ajout porte le mot PX-4.
+-- 6. Les quatre fonctions existantes, remplacees (empreintes controlees au preflight). Chaque ajout porte le mot PX-4.
 -- ====================================================================================================================
 -- 6.1 praxis_lire : filtres de la recherche des meilleurs, tri par vision, `impression` sur chaque ligne.
 CREATE OR REPLACE FUNCTION public.praxis_lire(p_cle text, p_vue text, p_filtre jsonb DEFAULT '{}'::jsonb, p_limite integer DEFAULT 20)
@@ -1164,6 +1166,52 @@ BEGIN
 END;
 $function$;
 
+-- 6.4 praxis_etat : + ouverturesRestantesJour (le plafond des ouvertures de dialogue, lisible par Praxis).
+CREATE OR REPLACE FUNCTION public.praxis_etat(p_cle text)
+ RETURNS jsonb
+ LANGUAGE plpgsql
+ SECURITY DEFINER
+ SET search_path TO ''
+AS $function$
+DECLARE
+  v_debut timestamptz := pg_catalog.clock_timestamp();
+  v_p record;
+  v_plafond integer;
+  v_envoyes integer;
+  v_annonces integer;
+BEGIN
+  SELECT * INTO v_p FROM private.praxis_porte(p_cle);
+  IF v_p.cause IS NOT NULL AND v_p.cause IS DISTINCT FROM 'eteint' THEN
+    IF v_p.cle_id IS NOT NULL THEN
+      PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'etat', v_p.cause_interne, NULL, NULL, NULL, v_debut);
+    END IF;
+    RETURN pg_catalog.jsonb_build_object('erreur', v_p.cause);
+  END IF;
+  SELECT r.envois_par_heure INTO v_plafond FROM private.praxis_reglages r;
+  SELECT pg_catalog.count(*)::integer INTO v_envoyes FROM private.praxis_journal j
+   WHERE j.outil = 'ecrire' AND j.issue = 'ok' AND j.cree_le > pg_catalog.clock_timestamp() - interval '1 hour';
+  SELECT pg_catalog.count(*)::integer INTO v_annonces FROM private.praxis_journal j
+   WHERE j.outil = 'annoncer' AND j.issue = 'ok' AND j.cree_le > pg_catalog.clock_timestamp() - interval '24 hours';
+  PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'etat', CASE WHEN v_p.cause IS NULL THEN 'ok' ELSE v_p.cause END,
+                               NULL, NULL, NULL, v_debut);
+  RETURN pg_catalog.jsonb_build_object(
+    'actif', v_p.cause IS NULL,
+    'mode', CASE v_p.usage WHEN 'routine' THEN 'autonome' ELSE 'dirige' END,
+    'cotes', pg_catalog.to_jsonb(v_p.cotes),
+    'plafondRestantHeure', greatest(v_plafond - v_envoyes, 0),
+    'annoncesRestantesJour', greatest(2 - v_annonces, 0),
+    -- PX-4 : ce qu'il reste des ouvertures de dialogue (questions, relances, entretiens ecrits : 25 par 24 heures, au total) ; les
+    -- felicitations ne comptent pas ; chaque ouverture compte aussi dans plafondRestantHeure.
+    'ouverturesRestantesJour', greatest(25 - (SELECT pg_catalog.count(*)::integer FROM private.praxis_ouvertures o
+                                               WHERE o.raison IN ('question', 'relance', 'entretien_ecrit', 'relance_entretien')
+                                                 AND o.ouverte_le > pg_catalog.clock_timestamp() - interval '24 hours'), 0),
+    'interdits', pg_catalog.jsonb_build_array(
+      'refuser une personne', 'supprimer', 'deplacer de l''argent', 'changer un droit ou un role',
+      'lire une piece d''identite', 'modifier le garde-fou, ses reglages ou ses cles',
+      'ecrire a un mineur', 'creer un fil', 'ecrire hors d''un fil de l''academie', 'envoyer un courriel'));
+END;
+$function$;
+
 -- ====================================================================================================================
 -- 7. DROITS. Outils : service_role seul. Lecture de la direction : authenticated (garde d'administrateur dans la fonction). Aides : personne.
 -- ====================================================================================================================
@@ -1205,7 +1253,7 @@ BEGIN
   FOREACH v IN ARRAY ARRAY['public.praxis_dossier(text,text)', 'public.praxis_noter_impression(text,text,text,jsonb,jsonb,jsonb,text,text,uuid)',
                            'public.praxis_boite_candidats(text,text,integer,integer)', 'public.praxis_ouvrir(text,text,text,text,uuid)',
                            'public.praxis_lire(text,text,jsonb,integer)', 'public.praxis_ecrire(text,uuid,text,uuid)',
-                           'public.praxis_noter_refus(text,text)'] LOOP
+                           'public.praxis_noter_refus(text,text)', 'public.praxis_etat(text)'] LOOP
     IF NOT pg_catalog.has_function_privilege('service_role', v, 'EXECUTE') OR pg_catalog.has_function_privilege('anon', v, 'EXECUTE')
        OR pg_catalog.has_function_privilege('authenticated', v, 'EXECUTE')
        OR NOT (SELECT p.prosecdef AND p.proconfig @> ARRAY['search_path=""'] FROM pg_catalog.pg_proc p

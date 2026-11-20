@@ -649,6 +649,10 @@ SELECT pg_temp.verif('ENTRETIEN ne decide rien : l''etape et l''etat du dossier 
   SELECT (SELECT c.etape = 'verifications' AND c.etat = 'entretien_a_planifier' FROM public.candidatures c WHERE c.id = pg_temp.c('21'))
      AND NOT EXISTS (SELECT 1 FROM private.praxis_propositions) AND NOT EXISTS (SELECT 1 FROM public.candidature_dispenses_entretien)
      AND (SELECT count(*) FROM public.candidature_evenements) = 4 $$);
+SELECT pg_temp.verif('ETAT : le plafond des ouvertures est lisible (25 par 24 heures, moins les questions, relances et entretiens envoyes)', $$
+  SELECT (e ->> 'ouverturesRestantesJour')::int = 25 - (SELECT count(*) FROM private.praxis_ouvertures o WHERE o.raison <> 'felicitations')::int
+     AND (e ->> 'ouverturesRestantesJour')::int = 22 AND e ? 'plafondRestantHeure' AND e ? 'annoncesRestantesJour' AND e ->> 'actif' = 'true'
+    FROM (SELECT pg_temp.srv(format('SELECT public.praxis_etat(%L)', pg_temp.k('both'))) AS e) x $$);
 SELECT pg_temp.verif('JOURNAL dialogue : chaque refus de l''ouverture laisse une ligne sous ecrire', $$
   SELECT (SELECT count(DISTINCT j.issue) FROM private.praxis_journal j WHERE j.outil = 'ecrire' AND j.issue IN ('ok', 'rejoue', 'ouverture_recente', 'raison_requise',
             'heure_tardive', 'direction_recente', 'relance_sans_objet', 'candidature_inconnue', 'parametre', 'longueur', 'plafond_fil',
