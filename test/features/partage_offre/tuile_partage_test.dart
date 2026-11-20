@@ -259,14 +259,13 @@ void main() {
     ) async {
       await _portail(tester, candidatureAFaire());
       // PE-B4 (20/11/2026) : l'etat et sa prochaine action sont sur l'onglet
-      // Dossier, sans la tuile ; elle vit dans l'onglet Academie, sous les
-      // annonces et « Ce qu'il faut savoir », jamais au-dessus.
+      // Dossier, sans la tuile ; elle vit dans l'onglet Academie, sous son
+      // titre. Depuis le 20/11 (directeur), les annonces et « A savoir » sont
+      // dans l'onglet Messages : la tuile ouvre l'onglet Academie.
       final double tuile = tester.getTopLeft(_cle('portail-partage')).dy;
       expect(
         tester
-            .getBottomLeft(
-              find.text(t.recrutement.accueil.academie.savoirTitre),
-            )
+            .getBottomLeft(find.text(t.recrutement.accueil.academie.titre))
             .dy,
         lessThan(tuile),
       );
