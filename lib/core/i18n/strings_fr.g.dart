@@ -41581,6 +41581,15 @@ class Traductions$com$messages$panneau$fr {
 
 	// Translations
 
+	/// fr: 'Seuls les fichiers des messages déjà chargés sont listés.'
+	String get fichiersPartiels => 'Seuls les fichiers des messages déjà chargés sont listés.';
+
+	/// fr: 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.'
+	String get fichiersAucunCharge => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.';
+
+	/// fr: 'Charger les messages précédents'
+	String get chargerPrecedents => 'Charger les messages précédents';
+
 	/// fr: 'À propos de'
 	String get objets => 'À propos de';
 
@@ -41612,6 +41621,18 @@ class Traductions$com$messages$fil$fr {
 
 	/// fr: 'Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.'
 	String get lectureSeule => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.';
+
+	/// fr: 'Chargement des messages précédents'
+	String get anciensChargement => 'Chargement des messages précédents';
+
+	/// fr: 'Les messages précédents ne se sont pas chargés.'
+	String get anciensEchec => 'Les messages précédents ne se sont pas chargés.';
+
+	/// fr: 'Vous ne pouvez plus écrire dans cette conversation.'
+	String get refusFerme => 'Vous ne pouvez plus écrire dans cette conversation.';
+
+	/// fr: 'Ce message est vide ou trop long : 5 000 caractères au plus.'
+	String get refusTexte => 'Ce message est vide ou trop long : 5 000 caractères au plus.';
 }
 
 // Path: com.messages.images
@@ -67508,6 +67529,9 @@ extension on Traductions {
 			'com.messages.types.candidature' => 'Candidature',
 			'com.messages.types.profilPaiement' => 'Profil de paiement',
 			'com.messages.types.autre' => 'Autre sujet',
+			'com.messages.panneau.fichiersPartiels' => 'Seuls les fichiers des messages déjà chargés sont listés.',
+			'com.messages.panneau.fichiersAucunCharge' => 'Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.',
+			'com.messages.panneau.chargerPrecedents' => 'Charger les messages précédents',
 			'com.messages.panneau.objets' => 'À propos de',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -67518,6 +67542,10 @@ extension on Traductions {
 			'com.messages.panneau.officiel.mention' => 'Assistant de l\'académie · IA',
 			'com.messages.panneau.officiel.phrase' => 'Il répond à vos messages, vous guide pas à pas et confie à l\'équipe tout ce qui demande une personne. Il travaille sous la responsabilité de la direction.',
 			'com.messages.fil.lectureSeule' => 'Vous pouvez lire cette conversation. La réponse n\'y est pas ouverte pour vous.',
+			'com.messages.fil.anciensChargement' => 'Chargement des messages précédents',
+			'com.messages.fil.anciensEchec' => 'Les messages précédents ne se sont pas chargés.',
+			'com.messages.fil.refusFerme' => 'Vous ne pouvez plus écrire dans cette conversation.',
+			'com.messages.fil.refusTexte' => 'Ce message est vide ou trop long : 5 000 caractères au plus.',
 			'com.messages.images.joindre' => 'Joindre une image',
 			'com.messages.images.prendrePhoto' => 'Prendre une photo',
 			'com.messages.images.choisirGalerie' => 'Choisir dans la galerie',
@@ -67674,6 +67702,8 @@ extension on Traductions {
 			'com.communaute.garde.aide' => 'Aucune publicité. Aucun lien affilié. Aucune vente.',
 			'com.communaute.garde.avertissement' => 'Cette publication semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de publier.',
 			'com.communaute.garde.bloqueAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.garde.bloqueVente' => 'La vente de produits ou de services n\'est pas autorisée dans cet espace.',
 			'com.communaute.garde.titreAvertissement' => 'Publication à revoir',
 			'com.communaute.garde.titreBlocage' => 'Publication bloquée',
@@ -67681,8 +67711,6 @@ extension on Traductions {
 			'com.communaute.garde.liensTitre' => 'Liens de la publication',
 			'com.communaute.garde.consigneBlocage' => 'Modifiez la publication, puis publiez-la de nouveau.',
 			'com.communaute.garde.panne' => 'La vérification de ce contenu n\'est pas confirmée : il est possible que la demande ne soit pas parvenue jusqu\'à Rewayah. Rien n\'a été publié ; réessayez dans un instant.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.garde.reponse.avertissement' => 'Cette réponse semble contenir une promotion commerciale. Retirez le lien, le code ou l\'offre avant de l\'envoyer.',
 			'com.communaute.garde.reponse.liensTitre' => 'Liens de la réponse',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Modifiez la réponse, puis envoyez-la de nouveau.',
@@ -68188,6 +68216,8 @@ extension on Traductions {
 			'com.annonces.administration.moderation.indisponible' => 'La modération n\'est pas encore disponible. Revenez plus tard.',
 			'com.annonces.administration.moderation.videTitre' => 'Aucun contenu à examiner',
 			'com.annonces.administration.moderation.vide' => 'Les signalements de la Communauté enseignants arrivent ici.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.refuseTitre' => 'File réservée à la modération',
 			'com.annonces.administration.moderation.refuse' => 'Seules les personnes chargées de la modération voient cette file.',
 			'com.annonces.administration.moderation.choisirTitre' => 'Aucun signalement ouvert',
@@ -68195,8 +68225,6 @@ extension on Traductions {
 			'com.annonces.administration.moderation.sansAction' => 'Aucune action de modération ne vous est ouverte sur ce contenu.',
 			'com.annonces.administration.moderation.sansSanction' => 'Aucune sanction de compte n\'est appliquée automatiquement.',
 			'com.annonces.administration.moderation.politique' => 'Politique anti-promotion',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Examiner ${objet}, motif ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'La publicité n\'est pas autorisée dans la Communauté enseignants.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Les liens affiliés ne sont pas autorisés dans la Communauté enseignants.',
@@ -68702,6 +68730,8 @@ extension on Traductions {
 			'comptable.tresorerie.historiqueVide' => 'Aucun mouvement entre coffres enregistré.',
 			'comptable.tresorerie.transfert.titre' => 'Mouvement entre coffres',
 			'comptable.tresorerie.transfert.choix' => 'Mouvement permis par la politique',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
 			'comptable.tresorerie.transfert.delegable' => 'Vers une protection : exécuté selon votre délégation.',
 			'comptable.tresorerie.transfert.sensible' => 'Validation supplémentaire requise : une autre personne décide, rien ne sort du coffre avant.',
@@ -68709,8 +68739,6 @@ extension on Traductions {
 			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'En unités entières, ${devise}.',
 			'comptable.tresorerie.transfert.montantPropose' => 'Montant proposé par la politique',
 			'comptable.tresorerie.transfert.utiliserPropose' => 'Utiliser le montant proposé',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.erreurMontant' => 'Saisissez un montant entier supérieur à zéro.',
 			'comptable.tresorerie.transfert.verifier' => 'Vérifier le mouvement',
 			'comptable.tresorerie.transfert.recapPhrase' => 'Vérifiez le montant exact avant d\'envoyer.',
@@ -69216,6 +69244,8 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'Le montant maximal d\'un seul paiement.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Plafond par lot',
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'Le montant maximal d\'un lot de paiements.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondPeriode' => 'Plafond cumulé par période',
 			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'Le total maximal sur la période ; il empêche de contourner un plafond en fractionnant.',
 			'comptable.direction.delegationPanneau.plafondIndice' => 'Aucun plafond',
@@ -69223,8 +69253,6 @@ extension on Traductions {
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Retrait de la Réserve stratégique',
 			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Interdit au Comptable sans validation.',
 			'comptable.direction.delegationPanneau.premierPaiement' => 'Premier paiement d\'un bénéficiaire',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.premierPaiementDetail' => 'Le premier paiement vers un bénéficiaire demande une seconde validation.',
 			'comptable.direction.delegationPanneau.coordonnees' => 'Coordonnées modifiées récemment',
 			'comptable.direction.delegationPanneau.coordonneesDetail' => 'Un paiement vers des coordonnées modifiées récemment demande une seconde validation.',
@@ -69730,6 +69758,8 @@ extension on Traductions {
 			'avis.admin.indisponibleTitre' => 'Avis indisponibles',
 			'avis.admin.indisponiblePhrase' => 'Cette fonction sera disponible au branchement serveur.',
 			'avis.admin.champs.lien' => 'Lien',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.champs.pays' => 'Pays',
 			'avis.admin.champs.depuis' => 'Avec nous depuis',
 			'avis.admin.champs.qualite' => 'Vous êtes',
@@ -69737,8 +69767,6 @@ extension on Traductions {
 			'avis.admin.champs.accord' => 'Accord de publication',
 			'avis.admin.champs.motif' => 'Motif',
 			'avis.admin.champs.modere' => 'Décision du',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.champs.publie' => 'Publié le',
 			'avis.admin.actions.publier' => 'Publier',
 			'avis.admin.actions.refuser' => 'Refuser',
@@ -70244,6 +70272,8 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.doublons.option.recente.titre' => ({required Object ligne}) => 'Garder la plus récente (ligne ${ligne})',
 			'candidatsFlux.importFormulaires.doublons.option.recente.description' => 'Les autres lignes restent dans l\'historique, rien n\'est effacé. C\'est ce que Rewayah fait sans votre choix.',
 			'candidatsFlux.importFormulaires.doublons.option.base.titre' => 'Garder la ligne déjà enregistrée',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'Un import précédent a déjà retenu une ligne pour cette personne. Les lignes de ce fichier restent dans l\'historique.',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'Garder votre choix précédent',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.distinctes' => 'Vous avez déjà indiqué que ce sont des personnes distinctes.',
@@ -70251,8 +70281,6 @@ extension on Traductions {
 			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'Garder plutôt la ligne ${ligne}',
 			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'Cette ligne devient la réponse de la personne. Les autres passent dans l\'historique.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'Personnes distinctes',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'À choisir si ces lignes viennent de personnes différentes qui partagent un contact. Chacune garde sa réponse.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'deux personnes d\'une même famille qui ont répondu avec le même numéro',
 			'candidatsFlux.importFormulaires.analyse.echec' => 'L\'analyse n\'a pas abouti.',
@@ -70758,6 +70786,8 @@ extension on Traductions {
 			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyid ${nom}, votre enseignant de la classe « ${classe} ». Je suis heureux de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
 			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Bonjour, je suis Sayyida ${nom}, votre enseignante de la classe « ${classe} ». Je suis heureuse de commencer avec vous. Écrivez-moi ici si vous avez une question. À très bientôt.',
 			'suiviAttente.mePresenter.champ' => 'Votre message',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.mePresenter.rappel' => 'Ce message est lu par les tuteurs des élèves mineurs et par les élèves adultes. Il n\'est jamais envoyé à un mineur. N\'échangez ni téléphone ni adresse : tout passe par l\'application.',
 			'suiviAttente.mePresenter.envoyer' => 'Envoyer aux familles',
 			'suiviAttente.mePresenter.envoye' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('fr'))(n, one: 'Message envoyé à ${n} famille.', other: 'Message envoyé à ${n} familles.', ), 
@@ -70765,8 +70795,6 @@ extension on Traductions {
 			'suiviAttente.mePresenter.aucune' => 'Aucune famille de cette classe ne peut recevoir de message pour le moment.',
 			'suiviAttente.mePresenter.echec' => 'Le message n\'est pas confirmé pour certaines familles : il n\'est peut-être pas parvenu jusqu\'à elles. Réessayez : celles qui l\'ont reçu ne le reçoivent pas deux fois.',
 			'suiviAttente.mePresenter.chargement' => 'Chargement des familles de la classe',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.mePresenter.erreur' => 'Les familles de la classe n\'ont pas pu être lues. Réessayez dans un instant.',
 			'suiviAttente.mePresenter.vide' => 'Écrivez un message avant de l\'envoyer.',
 			'journalSorties.texte.titre' => 'Les sorties de l\'application pendant le cours',

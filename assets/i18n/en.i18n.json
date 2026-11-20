@@ -13056,6 +13056,9 @@
         "autre": "Other subject"
       },
       "panneau": {
+        "fichiersPartiels": "Only files from messages already loaded are listed.",
+        "fichiersAucunCharge": "No files in the messages already loaded; there are older messages.",
+        "chargerPrecedents": "Load earlier messages",
         "objets": "About",
         "participants": "Participants",
         "fichiers": "@:com.socle.lexique.fichiersPartages",
@@ -13069,7 +13072,11 @@
         }
       },
       "fil": {
-        "lectureSeule": "You can read this conversation. Replying is not open to you here."
+        "lectureSeule": "You can read this conversation. Replying is not open to you here.",
+        "anciensChargement": "Loading earlier messages",
+        "anciensEchec": "Earlier messages did not load.",
+        "refusFerme": "You can no longer write in this conversation.",
+        "refusTexte": "This message is empty or too long: 5,000 characters at most."
       },
       "images": {
         "joindre": "Attach an image",

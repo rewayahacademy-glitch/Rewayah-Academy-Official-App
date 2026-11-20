@@ -20288,6 +20288,9 @@ class _Traductions$com$messages$panneau$en extends Traductions$com$messages$pann
 	final TraductionsEn _root; // ignore: unused_field
 
 	// Translations
+	@override String get fichiersPartiels => 'Only files from messages already loaded are listed.';
+	@override String get fichiersAucunCharge => 'No files in the messages already loaded; there are older messages.';
+	@override String get chargerPrecedents => 'Load earlier messages';
 	@override String get objets => 'About';
 	@override String get participants => 'Participants';
 	@override String get fichiers => _root.com.socle.lexique.fichiersPartages;
@@ -20305,6 +20308,10 @@ class _Traductions$com$messages$fil$en extends Traductions$com$messages$fil$fr {
 
 	// Translations
 	@override String get lectureSeule => 'You can read this conversation. Replying is not open to you here.';
+	@override String get anciensChargement => 'Loading earlier messages';
+	@override String get anciensEchec => 'Earlier messages did not load.';
+	@override String get refusFerme => 'You can no longer write in this conversation.';
+	@override String get refusTexte => 'This message is empty or too long: 5,000 characters at most.';
 }
 
 // Path: com.messages.images
@@ -39364,6 +39371,9 @@ extension on TraductionsEn {
 			'com.messages.types.candidature' => 'Application',
 			'com.messages.types.profilPaiement' => 'Payment profile',
 			'com.messages.types.autre' => 'Other subject',
+			'com.messages.panneau.fichiersPartiels' => 'Only files from messages already loaded are listed.',
+			'com.messages.panneau.fichiersAucunCharge' => 'No files in the messages already loaded; there are older messages.',
+			'com.messages.panneau.chargerPrecedents' => 'Load earlier messages',
 			'com.messages.panneau.objets' => 'About',
 			'com.messages.panneau.participants' => 'Participants',
 			'com.messages.panneau.fichiers' => _root.com.socle.lexique.fichiersPartages,
@@ -39374,6 +39384,10 @@ extension on TraductionsEn {
 			'com.messages.panneau.officiel.mention' => 'Academy assistant · AI',
 			'com.messages.panneau.officiel.phrase' => 'It answers your messages, guides you step by step and hands anything that needs a person over to the team. It works under the responsibility of the management.',
 			'com.messages.fil.lectureSeule' => 'You can read this conversation. Replying is not open to you here.',
+			'com.messages.fil.anciensChargement' => 'Loading earlier messages',
+			'com.messages.fil.anciensEchec' => 'Earlier messages did not load.',
+			'com.messages.fil.refusFerme' => 'You can no longer write in this conversation.',
+			'com.messages.fil.refusTexte' => 'This message is empty or too long: 5,000 characters at most.',
 			'com.messages.images.joindre' => 'Attach an image',
 			'com.messages.images.prendrePhoto' => 'Take a photo',
 			'com.messages.images.choisirGalerie' => 'Choose from the gallery',
@@ -39530,6 +39544,8 @@ extension on TraductionsEn {
 			'com.communaute.garde.aide' => 'No advertising. No affiliate links. No sales.',
 			'com.communaute.garde.avertissement' => 'This post seems to contain a commercial promotion. Remove the link, code or offer before publishing.',
 			'com.communaute.garde.bloqueAffilie' => 'Affiliate links are not allowed in the Teachers community.',
+			_ => null,
+		} ?? switch (path) {
 			'com.communaute.garde.bloqueVente' => 'Selling products or services is not allowed in this space.',
 			'com.communaute.garde.titreAvertissement' => 'Post to review',
 			'com.communaute.garde.titreBlocage' => 'Post blocked',
@@ -39537,8 +39553,6 @@ extension on TraductionsEn {
 			'com.communaute.garde.liensTitre' => 'Post links',
 			'com.communaute.garde.consigneBlocage' => 'Edit the post, then publish it again.',
 			'com.communaute.garde.panne' => 'The check of this content is not confirmed: the request may not have reached Rewayah. Nothing was published; try again in a moment.',
-			_ => null,
-		} ?? switch (path) {
 			'com.communaute.garde.reponse.avertissement' => 'This reply seems to contain a commercial promotion. Remove the link, code or offer before sending it.',
 			'com.communaute.garde.reponse.liensTitre' => 'Reply links',
 			'com.communaute.garde.reponse.consigneBlocage' => 'Edit the reply, then send it again.',
@@ -40044,6 +40058,8 @@ extension on TraductionsEn {
 			'com.annonces.administration.moderation.indisponible' => 'Moderation is not available yet. Come back later.',
 			'com.annonces.administration.moderation.videTitre' => 'No content to review',
 			'com.annonces.administration.moderation.vide' => 'Reports from the Teachers community arrive here.',
+			_ => null,
+		} ?? switch (path) {
 			'com.annonces.administration.moderation.refuseTitre' => 'Queue reserved for moderation',
 			'com.annonces.administration.moderation.refuse' => 'Only the people in charge of moderation see this queue.',
 			'com.annonces.administration.moderation.choisirTitre' => 'No report open',
@@ -40051,8 +40067,6 @@ extension on TraductionsEn {
 			'com.annonces.administration.moderation.sansAction' => 'No moderation action is open to you on this content.',
 			'com.annonces.administration.moderation.sansSanction' => 'No account sanction is applied automatically.',
 			'com.annonces.administration.moderation.politique' => 'Anti-promotion policy',
-			_ => null,
-		} ?? switch (path) {
 			'com.annonces.administration.moderation.ouvrirSemantique' => ({required Object objet, required Object motif}) => 'Review ${objet}, reason ${motif}',
 			'com.annonces.administration.moderation.regleMotif.publicite' => 'Advertising is not allowed in the Teachers community.',
 			'com.annonces.administration.moderation.regleMotif.lienAffilie' => 'Affiliate links are not allowed in the Teachers community.',
@@ -40558,6 +40572,8 @@ extension on TraductionsEn {
 			'comptable.tresorerie.historiqueVide' => 'No movement between vaults recorded.',
 			'comptable.tresorerie.transfert.titre' => 'Movement between vaults',
 			'comptable.tresorerie.transfert.choix' => 'Movement allowed by the policy',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.tresorerie.transfert.couple' => ({required Object origine, required Object destination}) => '${origine} → ${destination}',
 			'comptable.tresorerie.transfert.delegable' => 'Towards a protection: executed according to your delegation.',
 			'comptable.tresorerie.transfert.sensible' => 'Additional validation required: another person decides, nothing leaves the vault before.',
@@ -40565,8 +40581,6 @@ extension on TraductionsEn {
 			'comptable.tresorerie.transfert.montantAide' => ({required Object devise}) => 'In whole units, ${devise}.',
 			'comptable.tresorerie.transfert.montantPropose' => 'Amount proposed by the policy',
 			'comptable.tresorerie.transfert.utiliserPropose' => 'Use the proposed amount',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.tresorerie.transfert.erreurMontant' => 'Enter a whole amount greater than zero.',
 			'comptable.tresorerie.transfert.verifier' => 'Check the movement',
 			'comptable.tresorerie.transfert.recapPhrase' => 'Check the exact amount before sending.',
@@ -41072,6 +41086,8 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.plafondTransactionDetail' => 'The maximum amount of a single payment.',
 			'comptable.direction.delegationPanneau.plafondLot' => 'Ceiling per batch',
 			'comptable.direction.delegationPanneau.plafondLotDetail' => 'The maximum amount of a batch of payments.',
+			_ => null,
+		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.plafondPeriode' => 'Cumulative ceiling per period',
 			'comptable.direction.delegationPanneau.plafondPeriodeDetail' => 'The maximum total over the period; it prevents getting around a ceiling by splitting.',
 			'comptable.direction.delegationPanneau.plafondIndice' => 'No ceiling',
@@ -41079,8 +41095,6 @@ extension on TraductionsEn {
 			'comptable.direction.delegationPanneau.retraitReserve' => 'Strategic reserve withdrawal',
 			'comptable.direction.delegationPanneau.retraitReserveDetail' => 'Forbidden to the Accountant without validation.',
 			'comptable.direction.delegationPanneau.premierPaiement' => 'First payment to a beneficiary',
-			_ => null,
-		} ?? switch (path) {
 			'comptable.direction.delegationPanneau.premierPaiementDetail' => 'The first payment to a beneficiary requires a second validation.',
 			'comptable.direction.delegationPanneau.coordonnees' => 'Details recently changed',
 			'comptable.direction.delegationPanneau.coordonneesDetail' => 'A payment to recently changed details requires a second validation.',
@@ -41586,6 +41600,8 @@ extension on TraductionsEn {
 			'avis.admin.indisponibleTitre' => 'Reviews unavailable',
 			'avis.admin.indisponiblePhrase' => 'This feature will be available once the server is connected.',
 			'avis.admin.champs.lien' => 'Link',
+			_ => null,
+		} ?? switch (path) {
 			'avis.admin.champs.pays' => 'Country',
 			'avis.admin.champs.depuis' => 'With us since',
 			'avis.admin.champs.qualite' => 'You are',
@@ -41593,8 +41609,6 @@ extension on TraductionsEn {
 			'avis.admin.champs.accord' => 'Publication agreement',
 			'avis.admin.champs.motif' => 'Reason',
 			'avis.admin.champs.modere' => 'Decision on',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.champs.publie' => 'Published on',
 			'avis.admin.actions.publier' => 'Publish',
 			'avis.admin.actions.refuser' => 'Refuse',
@@ -42100,6 +42114,8 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.option.recente.titre' => ({required Object ligne}) => 'Keep the most recent (row ${ligne})',
 			'candidatsFlux.importFormulaires.doublons.option.recente.description' => 'The other rows stay in the history, nothing is deleted. This is what Rewayah does without your choice.',
 			'candidatsFlux.importFormulaires.doublons.option.base.titre' => 'Keep the row already saved',
+			_ => null,
+		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.base.description' => 'A previous import already kept a row for this person. The rows in this file stay in the history.',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.titre' => 'Keep your previous choice',
 			'candidatsFlux.importFormulaires.doublons.option.enregistre.distinctes' => 'You already said these are different people.',
@@ -42107,8 +42123,6 @@ extension on TraductionsEn {
 			'candidatsFlux.importFormulaires.doublons.option.ligne.titre' => ({required Object ligne}) => 'Keep row ${ligne} instead',
 			'candidatsFlux.importFormulaires.doublons.option.ligne.description' => 'This row becomes the person\'s answer. The others go into the history.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.titre' => 'Different people',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.description' => 'Choose this if these rows come from different people who share a contact. Each keeps their answer.',
 			'candidatsFlux.importFormulaires.doublons.option.distinctes.exemple' => 'two people from the same family who answered with the same number',
 			'candidatsFlux.importFormulaires.analyse.echec' => 'The analysis did not go through.',
@@ -42614,6 +42628,8 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.messageSayyid' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyid ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
 			'suiviAttente.mePresenter.messageSayyida' => ({required Object nom, required Object classe}) => 'Hello, I am Sayyida ${nom}, your teacher for the class "${classe}". I am glad to begin with you. Write to me here if you have a question. See you soon.',
 			'suiviAttente.mePresenter.champ' => 'Your message',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.mePresenter.rappel' => 'This message is read by the guardians of minor students and by adult students. It is never sent to a minor. Do not exchange phone numbers or addresses: everything goes through the app.',
 			'suiviAttente.mePresenter.envoyer' => 'Send to the families',
 			'suiviAttente.mePresenter.envoye' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('en'))(n, one: 'Message sent to ${n} family.', other: 'Message sent to ${n} families.', ), 
@@ -42621,8 +42637,6 @@ extension on TraductionsEn {
 			'suiviAttente.mePresenter.aucune' => 'No family in this class can receive a message right now.',
 			'suiviAttente.mePresenter.echec' => 'The message is not confirmed for some families: it may not have reached them. Try again: those who received it do not receive it twice.',
 			'suiviAttente.mePresenter.chargement' => 'Loading the families of the class',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.mePresenter.erreur' => 'The families of the class could not be loaded. Try again in a moment.',
 			'suiviAttente.mePresenter.vide' => 'Write a message before sending it.',
 			'journalSorties.texte.titre' => 'Leaving the app during class',

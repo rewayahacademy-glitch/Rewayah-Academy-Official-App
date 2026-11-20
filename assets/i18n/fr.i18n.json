@@ -13044,6 +13044,9 @@
         "autre": "Autre sujet"
       },
       "panneau": {
+        "fichiersPartiels": "Seuls les fichiers des messages déjà chargés sont listés.",
+        "fichiersAucunCharge": "Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.",
+        "chargerPrecedents": "Charger les messages précédents",
         "objets": "À propos de",
         "participants": "Participants",
         "fichiers": "@:com.socle.lexique.fichiersPartages",
@@ -13057,7 +13060,11 @@
         }
       },
       "fil": {
-        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."
+        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.",
+        "anciensChargement": "Chargement des messages précédents",
+        "anciensEchec": "Les messages précédents ne se sont pas chargés.",
+        "refusFerme": "Vous ne pouvez plus écrire dans cette conversation.",
+        "refusTexte": "Ce message est vide ou trop long : 5 000 caractères au plus."
       },
       "images": {
         "joindre": "Joindre une image",
