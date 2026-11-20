@@ -730,6 +730,13 @@ Citations : « arrête de toujours me dire "cause inexpliquée" alors que tu as 
 - L'agent cherche la cause dans le code avant de répondre. S'il ne peut pas conclure, il donne l'hypothèse la plus probable, la preuve de code qui la soutient, et ce qu'il fait ensuite. Il ne s'arrête pas à « cause inconnue ».
 - Ce que le directeur doit lire ou valider lui est remis comme une page lisible dans la conversation (maquette qui marche, page illustrée). Les fichiers `.md` du dépôt sont la mémoire des agents.
 
+### Consigne 26 (20/11/2026) : le pilote débloque, et lance en parallèle ce qui est complémentaire
+
+Citation : « Pour les garde-fous il n'y en a pas, c'est toi le pilote, alors fais tout pour débloquer et avancer vite ; si c'est possible de lancer des choses complémentaires en parallèle tu peux le faire. »
+
+- La session que le directeur désigne comme pilote ouvre les PR, relit, installe les migrations et peut dépasser quatre agents quand les zones sont séparées.
+- Interprétation du pilote du 20/11 (à corriger par le directeur s'il le veut) : cela ne couvre pas les interrupteurs de Praxis (fin de l'essai, données réelles, plafonds), que le directeur garde à son doigt, ni une fusion dans `main`, qui met en production et reste sa décision, PR par PR.
+
 ## 9. Autres
 
 **X1. Lire son dernier message en entier avant de répondre.**

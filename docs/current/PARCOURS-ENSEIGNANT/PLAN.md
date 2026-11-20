@@ -958,3 +958,53 @@ Version 2 remise, non confirmée (même source, `preuve-flutter/bureau/`) :
   du nouveau fichier, page de téléchargement.
 - Ordre de grandeur, non prouvé : un premier fichier installable d'essai en quelques jours ; une
   version au niveau de l'application web en deux à trois semaines. Aucune construction lancée.
+
+## 17. Praxis au travail (ordre du directeur, 20/11/2026)
+
+Ordre : « c'est toi le pilote, fais tout pour débloquer et avancer vite ; si c'est possible de
+lancer des choses complémentaires en parallèle tu peux le faire. Surtout la stratégie de Praxis,
+écrite mais pas appliquée, pour qu'il commence à bosser dans 2 h. Je suis seul dans la direction,
+pas d'associé, et des centaines de dossiers. Il doit répondre aux gens, classer les dossiers,
+définir des objectifs journaliers ou hebdomadaires, relancer les gens. Quand je valide un dossier
+j'écris dans le privé : il doit le faire aussi, avec son profil. »
+
+### 17.1 Ce qui est vrai en production (lu le 20/11 à 01 h 40 UTC)
+
+- Praxis est **allumé et autonome** ; sa routine tourne toutes les heures (tâche planifiée
+  « Praxis : routine autonome », minute 24) ; le dernier passage a réussi.
+- Il est **enfermé en mode essai** : `essai_fils` = 2 conversations, `donnees_reelles` = faux,
+  `envois_par_heure` = 5. Sa boîte ne lui rend que 2 conversations ; `lire` répond « essai ».
+  Il ne travaille donc sur aucun vrai dossier.
+- La clé « routine » expire le 24/11.
+
+### 17.2 Ce qui a été fait le 20/11
+
+- **Consigne de la routine horaire complétée** (tâche `trig_01BzuKA9RuwF76Z6AwPtDExs`) : une
+  étape « les dossiers » : lire les candidatures les plus anciennes et préparer des propositions
+  (8 au plus par passage) que la direction valide à l'écran ; lire la liste des outils à chaque
+  passage et employer les outils nouveaux d'après leur description. Tous les verrous sont gardés.
+- **Point du jour créé** (tâche `trig_01R3KnkfmigCDHNSTkQcJ9he`, chaque jour à 05 h 17 UTC,
+  notification sur le téléphone) : lecture seule ; ce que Praxis a fait en 24 h, ce qui attend le
+  directeur, les dossiers par étape, trois objectifs du jour, et le lundi l'objectif de la semaine.
+- **Chantier serveur PRAXIS-TRAVAIL lancé** (`claude/praxis-travail`, cinquième agent, autorisé
+  par l'ordre ci-dessus) : lire ce qui manque à un dossier, ranger en piles, proposer la dispense
+  d'entretien, objectifs, relances plafonnées, mot privé après une décision positive. Rien
+  d'installé : le pilote relit la migration et l'installe seulement si elle est testée.
+
+### 17.3 Ce qui reste au directeur (trois interrupteurs, à son doigt par construction)
+
+Écran : Sécurité et audit › Accès des agents IA › Praxis (double authentification).
+1. Mettre fin à l'essai (vider la liste des conversations d'essai).
+2. Ouvrir les données réelles.
+3. Monter le plafond de 5 à 30 messages par heure.
+Le pilote ne les change pas à sa place : ces réglages sont la clé du directeur sur l'accès d'une
+IA aux conversations de vraies personnes, et chaque changement doit porter son nom au journal.
+
+### 17.4 Décisions du directeur enregistrées
+
+- Praxis peut écrire **une fois, en privé**, à un candidat après une décision positive de la
+  direction, dans sa conversation existante (amende la règle qui ferme la conversation après la
+  confirmation ; il ne crée toujours aucune conversation).
+- Praxis relance les candidats sans nouvelles, dans des limites fixées par le serveur.
+- Le « chat de la direction » : aujourd'hui, c'est la notification du point du jour et l'écran
+  « Questions de Praxis ». Une conversation de direction dans l'application n'existe pas encore.
