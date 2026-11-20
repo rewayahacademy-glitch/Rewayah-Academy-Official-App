@@ -504,6 +504,9 @@ SELECT pg_temp.vrai(pg_temp.citeurs() = ARRAY[
     'public.lire_candidature',
     'public.lire_catalogue_competences',
     'public.lister_candidatures',
+    -- PX-4 (20/11/2026, ordre du directeur : Praxis lit « tout le contexte d'un dossier », autres talents compris) : l'outil `dossier`
+    -- du secretaire IA lit les domaines, le niveau, la disponibilite et l'accord. Toujours ni controle, ni paiement, ni transition.
+    'public.praxis_dossier',
     'public.retirer_autres_competences',
     -- BE-S1 (16/11) : voisins_candidature rejoue le filtre de competences de la liste.
     'public.voisins_candidature'],

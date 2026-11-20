@@ -7,6 +7,7 @@ import 'core/accessibilite/mode_accessibilite.dart';
 import 'core/communications/veille_messages.dart';
 import 'core/domain/enums.dart';
 import 'core/fraicheur/avis_ephemere.dart';
+import 'core/fraicheur/avis_flottant.dart';
 import 'core/fraicheur/relecture_page.dart';
 import 'core/fraicheur/veille_fraicheur.dart';
 import 'core/i18n/strings.g.dart';
@@ -21,7 +22,6 @@ import 'core/theme/app_palette.dart';
 import 'core/theme/app_theme.dart';
 import 'core/version/bandeau_nouvelle_version.dart';
 import 'core/widgets/bandeau_observation.dart';
-import 'core/widgets/selection_racine.dart';
 import 'features/compte/correction_nom.dart';
 import 'features/salle_seance/barre_seance_en_direct.dart';
 import 'features/salle_seance/hors_salle.dart';
@@ -109,52 +109,71 @@ class RewayahApp extends ConsumerWidget {
         // navigateur montrait le fond creme de `web/index.html` : un flash
         // clair a chaque changement d'ecran en mode sombre.
         final Color fond = AppPalette.of(context).surfaceCanvas.background;
-        // Lot demarrage (25/10/2026) : « nouvelle version prete » coiffe
-        // l'ecran courant, quel qu'il soit, comme le bandeau d'observation ;
-        // il ne prend aucune place tant qu'il n'a rien a dire.
-        // Selection du texte (directeur, 07/11/2026) : un seul `SelectionArea`,
-        // ici, pour tous les ecrans ; `TexteProtege` en retire les secrets.
-        return SelectionRacine(
+        // PE-D11 (directeur, 19/11/2026, cause prouvee : PLAN §14.1) : plus
+        // de `SelectionArea` global. Il ajoutait un appui long a chaque
+        // toucher, boutons compris (« Tout selectionner » au moindre
+        // toucher), et sa selection ne s'effacait jamais. Ce qui se lit se
+        // selectionne localement, par `TexteSelectionnable`.
+        // `Overlay.wrap` : les infobulles et menus poses ici, hors du
+        // `Navigator`, gardent une couche ou s'afficher.
+        return Overlay.wrap(
           child: ReglageMouvement(
             child: ColoredBox(
               color: fond,
-              child: Column(
-                children: <Widget>[
-                  const BandeauNouvelleVersion(),
-                  // Un avis court (« Cette classe n'existe plus. »), meme place,
-                  // meme registre, retire de lui-meme.
+              // PE-D8 (directeur, 19/11/2026 : « rien ne pousse la page ») :
+              // la nouvelle version et les avis courts (« Vous avez recu un
+              // nouveau message. », « Cette classe n'existe plus. ») flottent
+              // en haut, par-dessus l'ecran, au lieu de le decaler.
+              child: CoucheAvis(
+                avis: <Widget>[
+                  BandeauNouvelleVersion(
+                    enSeance: () => routeur
+                        .routerDelegate
+                        .currentConfiguration
+                        .uri
+                        .path
+                        .startsWith('/salle'),
+                  ),
                   const BandeauAvisEphemere(),
-                  // NOTIF-DEFAUT : la demande des notifications, une fois par appareil.
+                  // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le son
+                  // bloque, salle reduite.
+                  BandeauSonBloqueHorsSalle(routeur: routeur),
+                  // NOTIF-DEFAUT : la demande des notifications, une fois par
+                  // appareil.
                   const BandeauInvitationPush(),
+                  // L'observation reste visible tant qu'elle dure, posee
+                  // par-dessus, sans croix.
                   if (observation != null)
                     BandeauObservation(observation: observation),
-                  // HORS-SALLE-1 (directeur, 12/11/2026 au soir) : le son
-                  // bloque, salle reduite ; l'eleve sorti pendant son absence
-                  // hors de l'application retrouve l'ecran du retour.
-                  BandeauSonBloqueHorsSalle(routeur: routeur),
-                  RetourHorsApplication(routeur: routeur),
-                  // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
-                  // relire au retour sur un onglet ou dans l'application.
-                  // Directeur, 31/10/2026 : « Seance toujours en direct » sur
-                  // tous les ecrans hors de la salle, tant que l'appel continue.
-                  Expanded(
-                    child: BarreSeanceEnDirect(
-                      routeur: routeur,
-                      child: RelectureGenerale(
-                        // FIL-ARIANE (06/11/2026) : l'arbre des routes du role,
-                        // lu une fois ici, pour le fil de chaque `PageShell`.
-                        child: ContexteFilAriane(
-                          plan: planFilPour(session),
-                          // NOM-PROPRE (14/11/2026) : un nom a corriger
-                          // passe avant tout le reste.
-                          child: GardeNomPropre(
-                            child: rendu ?? const SizedBox.shrink(),
+                ],
+                child: Column(
+                  children: <Widget>[
+                    // L'eleve sorti pendant son absence hors de l'application
+                    // retrouve l'ecran du retour (ne rend rien).
+                    RetourHorsApplication(routeur: routeur),
+                    // R3 (30/10/2026) : tirer pour rafraichir (`PageShell`) et
+                    // relire au retour sur un onglet ou dans l'application.
+                    // Directeur, 31/10/2026 : « Seance toujours en direct » sur
+                    // tous les ecrans hors de la salle, tant que l'appel continue.
+                    Expanded(
+                      child: BarreSeanceEnDirect(
+                        routeur: routeur,
+                        child: RelectureGenerale(
+                          // FIL-ARIANE (06/11/2026) : l'arbre des routes du role,
+                          // lu une fois ici, pour le fil de chaque `PageShell`.
+                          child: ContexteFilAriane(
+                            plan: planFilPour(session),
+                            // NOM-PROPRE (14/11/2026) : un nom a corriger
+                            // passe avant tout le reste.
+                            child: GardeNomPropre(
+                              child: rendu ?? const SizedBox.shrink(),
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),

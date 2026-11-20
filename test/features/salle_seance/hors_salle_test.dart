@@ -13,6 +13,7 @@ import 'package:rewayah_academy/core/domain/enums.dart';
 import 'package:rewayah_academy/core/enseignant/modeles_enseignant.dart';
 import 'package:rewayah_academy/core/enseignant/service_enseignant.dart'
     show groupesEnseignantProvider, seancesEnseignantProvider;
+import 'package:rewayah_academy/core/fraicheur/avis_flottant.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/presence/service_presence.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
@@ -145,13 +146,18 @@ Future<BancHorsSalle> monterHorsSalle(
               supportedLocales: AppLocaleUtils.supportedLocales,
               localizationsDelegates: GlobalMaterialLocalizations.delegates,
               routerConfig: routeur,
-              // Comme `app.dart` : les deux pieces au-dessus des routes.
-              builder: (BuildContext _, Widget? rendu) => Column(
-                children: <Widget>[
-                  BandeauSonBloqueHorsSalle(routeur: routeur),
-                  RetourHorsApplication(routeur: routeur),
-                  Expanded(child: rendu ?? const SizedBox.shrink()),
-                ],
+              // Comme `app.dart` (PE-D8, 19/11/2026) : le son bloque est un
+              // avis flottant par-dessus les routes, le retour reste au-dessus.
+              builder: (BuildContext _, Widget? rendu) => Overlay.wrap(
+                child: CoucheAvis(
+                  avis: <Widget>[BandeauSonBloqueHorsSalle(routeur: routeur)],
+                  child: Column(
+                    children: <Widget>[
+                      RetourHorsApplication(routeur: routeur),
+                      Expanded(child: rendu ?? const SizedBox.shrink()),
+                    ],
+                  ),
+                ),
               ),
             ),
           ),
