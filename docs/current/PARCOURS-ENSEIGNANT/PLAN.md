@@ -1271,3 +1271,41 @@ Ce qui répond aux retours du §18.5 et du §18.6 :
 - Phrases arabes à relire par le directeur : « تمام. تفضّل معي », « هذا يدغدغني! », « لحظات وننتهي »,
   « بدأنا. اترك الأمر لي », « اختر حسابك في Google » ; tout est au masculin générique.
 - Images par seconde sur ses appareils : non prouvées.
+
+### 18.8 Retour du directeur sur la version 2 ; Praxis devient un personnage de référence (20/11, 10:35 UTC)
+
+Commentaire du directeur sur la maquette « Praxis vous accueille » version 2 (20/11/2026, 10:07 UTC) :
+
+- « Seule problème c'est le rectangle blanc à l'arrière de l'arc de la porte, il doit être assimilé à
+  la lumière, mais aussi ses extrémités (bas) doivent être collées à la route comme une seule ligne
+  continue qui ne casse pas, et qui ne s'arrête pas. »
+- « Il faut aussi écrire une skill bien détaillée de tout le processus de création / recréation de
+  praxis car son corps a changé avec l'ajout des membres, le bonnet aussi a changé […] praxis doit
+  rester cohérent parce qu'il sera le visage de la communication sur les réseaux sociaux et dans le
+  chat, et l'app. D'ailleurs il faudra modifier son avatar de profil dans l'app dès maintenant avec
+  son nouveau visage et ses mouvements. La skill doit être installée partout […] »
+
+Lecture du pilote (la sienne, pas une phrase du directeur) : « seul problème » vaut accord sur le reste
+de la version 2 ; le Praxis en volume devient donc le dessin de référence.
+
+Fait le jour même :
+
+- **Porte (version 3, même adresse)** : le vide de l'arche suit exactement la découpe du logo et se
+  ferme sur le cercle du disque (plus rien ne dépasse) ; il est peint en dégradé de lumière ; les deux
+  pieds de l'arche blanche descendent au sol et deviennent les bordures de la route, droites jusqu'au
+  bord de l'écran ; la route a la largeur de la porte à la porte et sa largeur d'avant au premier
+  plan ; la porte est centrée sur l'axe de la route. Vérifié sur images fixes (téléphone et ordinateur,
+  clair, sombre, hors connexion), pas en mouvement.
+- **Compétence `praxis-rewayah`** (PR #649) : règles datées, fiche de construction mesurée, couleurs,
+  expressions, gestes, mouvement, lumière, marche à suivre, interdits ; code du dessin de référence et
+  planches rangés dans la compétence (la maquette ne vivait que dans un dossier provisoire). Ligne
+  ajoutée à `CLAUDE.md`. Fichier empaqueté remis au directeur pour son compte claude.ai (chat, design) :
+  **une session ne peut pas l'y installer**.
+- **Avatar** (PR #649) : portrait du Praxis de référence, image fixe ; l'image d'origine est gardée.
+  Fond violet proposé par le pilote, fond lilas pâle prêt.
+- **Lot PRAXIS-CANON-VIVANT lancé** (branche `claude/praxis-canon-vivant`) : le personnage animé de
+  l'application rejoint le dessin de référence, l'avatar devient vivant à partir de 40 points.
+
+Non fait, non prouvé : l'avatar ne bouge pas encore ; deux dessins de Praxis coexistent dans
+l'application tant que le lot ci-dessus n'est pas fusionné ; rien de tout cela n'est vu par le
+directeur en production.
