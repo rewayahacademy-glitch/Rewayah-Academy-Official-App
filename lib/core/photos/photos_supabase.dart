@@ -4,6 +4,16 @@
 // que le serveur rend pour la personne ; la politique du seau n'autorise que
 // son propre dossier (`avatar_ecriture_soi`, `photos_enseignants_ecriture`)
 // ou celui d'un enfant de son foyer.
+//
+// PERSONNES-PERF (20/11/2026) : une liste de 50 personnes posait 50 appels
+// `photos_personnes` (un par avatar ; 7 555 appels en 24 h en production). Les
+// demandes faites dans la meme tache (la construction d'une image de l'ecran)
+// sont regroupees en UN appel, et une demande deja partie pour une personne
+// est rejointe au lieu d'etre refaite. Ce que rend [PhotosSupabase.sources]
+// ne change pas : le serveur filtre toujours chaque personne (droit de voir sa
+// photo), une personne sans photo visible reste absente de la reponse.
+
+import 'dart:async';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -34,15 +44,27 @@ class PhotosSupabase implements PortPhotos {
     };
   }
 
+  /// Le regroupement des demandes, un par client (l'adaptateur reste `const`).
+  static final Expando<RegroupementPhotos> _regroupements =
+      Expando<RegroupementPhotos>('photos_personnes');
+
   @override
-  Future<Map<String, SourcePhoto>> sources(List<String> profileIds) async {
-    if (profileIds.isEmpty) return const <String, SourcePhoto>{};
-    return lignes(
-      await _client.rpc<Object?>(
-        'photos_personnes',
-        params: <String, dynamic>{'p_ids': profileIds},
-      ),
-    );
+  Future<Map<String, SourcePhoto>> sources(List<String> profileIds) {
+    if (profileIds.isEmpty) {
+      return Future<Map<String, SourcePhoto>>.value(
+        const <String, SourcePhoto>{},
+      );
+    }
+    final RegroupementPhotos regroupement = _regroupements[_client] ??=
+        RegroupementPhotos(
+          (List<String> ids) async => lignes(
+            await _client.rpc<Object?>(
+              'photos_personnes',
+              params: <String, dynamic>{'p_ids': ids},
+            ),
+          ),
+        );
+    return regroupement.demander(profileIds);
   }
 
   @override
@@ -100,4 +122,77 @@ class PhotosSupabase implements PortPhotos {
   @override
   Future<bool> peutPoserMaPhoto() async =>
       await _client.rpc<Object?>('photo_adulte_moi') == true;
+}
+
+/// Regroupe les demandes de photos faites dans la meme tache en un seul appel
+/// au serveur, et rejoint une demande deja en vol pour la meme personne.
+///
+/// Public pour les tests. [lire] recoit des identifiants distincts et rend les
+/// sources trouvees (une personne sans photo visible n'y est pas).
+class RegroupementPhotos {
+  /// Cree le regroupement sur la lecture [lire].
+  RegroupementPhotos(this.lire);
+
+  /// La lecture d'un lot d'identifiants.
+  final Future<Map<String, SourcePhoto>> Function(List<String> ids) lire;
+
+  /// Les personnes demandees, pas encore parties au serveur.
+  final Map<String, Completer<SourcePhoto?>> _enAttente =
+      <String, Completer<SourcePhoto?>>{};
+
+  /// Les personnes parties au serveur, reponse pas encore arrivee.
+  final Map<String, Future<SourcePhoto?>> _enVol =
+      <String, Future<SourcePhoto?>>{};
+
+  bool _planifie = false;
+
+  /// Les sources de [ids] : rendues par un appel commun aux demandes de la
+  /// meme tache.
+  Future<Map<String, SourcePhoto>> demander(List<String> ids) async {
+    final List<String> distincts = ids.toSet().toList();
+    final List<Future<SourcePhoto?>> attentes = <Future<SourcePhoto?>>[
+      for (final String id in distincts) _une(id),
+    ];
+    final List<SourcePhoto?> trouvees = await Future.wait(attentes);
+    return <String, SourcePhoto>{
+      for (int i = 0; i < distincts.length; i++)
+        if (trouvees[i] case final SourcePhoto s) distincts[i]: s,
+    };
+  }
+
+  Future<SourcePhoto?> _une(String id) {
+    final Future<SourcePhoto?>? deja = _enVol[id] ?? _enAttente[id]?.future;
+    if (deja != null) return deja;
+    final Completer<SourcePhoto?> attente = Completer<SourcePhoto?>();
+    _enAttente[id] = attente;
+    if (!_planifie) {
+      _planifie = true;
+      scheduleMicrotask(() => unawaited(_partir()));
+    }
+    return attente.future;
+  }
+
+  Future<void> _partir() async {
+    _planifie = false;
+    final Map<String, Completer<SourcePhoto?>> lot =
+        Map<String, Completer<SourcePhoto?>>.of(_enAttente);
+    _enAttente.clear();
+    for (final MapEntry<String, Completer<SourcePhoto?>> e in lot.entries) {
+      _enVol[e.key] = e.value.future;
+    }
+    try {
+      final Map<String, SourcePhoto> lues = await lire(lot.keys.toList());
+      for (final MapEntry<String, Completer<SourcePhoto?>> e in lot.entries) {
+        e.value.complete(lues[e.key]);
+      }
+    } on Object catch (erreur, pile) {
+      for (final Completer<SourcePhoto?> c in lot.values) {
+        c.completeError(erreur, pile);
+      }
+    } finally {
+      _enVol.removeWhere(
+        (String id, Future<SourcePhoto?> _) => lot.containsKey(id),
+      );
+    }
+  }
 }
