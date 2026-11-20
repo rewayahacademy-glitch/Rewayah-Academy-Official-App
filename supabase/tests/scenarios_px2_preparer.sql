@@ -145,10 +145,16 @@ SELECT pg_temp.vrai(jsonb_array_length(:'lu'::jsonb -> 'lignes') = 4 AND (:'lu':
 --   (b) les deux listes sont des tableaux de textes pris dans des listes FERMEES ecrites ici (les codes du complement du moteur, plus
 --       `compte` et `questionnaire` ; pour la direction : cinq codes). Une valeur libre, un nom de fichier, une adresse, un chemin de
 --       piece ou de photo n'est dans aucune des deux listes et serait rouge.
-SELECT pg_temp.vrai((SELECT (:'lu'::jsonb - 'lignes')::text || coalesce(string_agg((l - 'manquants' - 'attend_direction')::text, ' '), '')
+-- PX-5 : `fil` est un IDENTIFIANT (uuid aleatoire, dont les chiffres pourraient former par hasard un motif du controle) : il est retire du
+-- texte controle et verifie a part, juste apres : un uuid ou null, rien d'autre.
+SELECT pg_temp.vrai((SELECT (:'lu'::jsonb - 'lignes')::text || coalesce(string_agg((l - 'manquants' - 'attend_direction' - 'fil')::text, ' '), '')
                        FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l)
                     !~* '(@|secret|0699|\+33|telephone|courriel|email|piece|photo|note|motif|montant|paiement|iban)',
   '2 : aucune reponse ne contient courriel, telephone, piece, photo, note, motif ni montant (hors des deux listes de codes, controlees a part)');
+SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
+    WHERE NOT (jsonb_typeof(l -> 'fil') = 'null'
+               OR (jsonb_typeof(l -> 'fil') = 'string' AND l ->> 'fil' ~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$'))),
+  '2 (PX-5) : fil est un identifiant de conversation (uuid) ou null, rien d''autre');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
     WHERE jsonb_typeof(l -> 'manquants') IS DISTINCT FROM 'array' OR jsonb_typeof(l -> 'attend_direction') IS DISTINCT FROM 'array'
        OR EXISTS (SELECT 1 FROM jsonb_array_elements(l -> 'manquants') e
@@ -172,7 +178,8 @@ SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb 
           -- manquants, pile). Toute autre cle reste rouge.
           <> ARRAY['a_une_conversation', 'attend_direction', 'attente_jours', 'complement_en_cours', 'complet', 'contenu_tiers', 'cote',
                    -- PX-4 (20261130200000) : une cle de plus, et elle seule : `impression`, l'avis de Praxis (ci-dessous).
-                   'etape', 'etat', 'gestes', 'impression', 'jours_sans_activite_candidat', 'langue', 'manquants', 'pile', 'reference']),
+                   -- PX-5 (20261130300000) : une cle de plus, et elle seule : `fil` (un uuid ou null, controle a part ci-dessous).
+                   'etape', 'etat', 'fil', 'gestes', 'impression', 'jours_sans_activite_candidat', 'langue', 'manquants', 'pile', 'reference']),
   '2 : les cles de chaque ligne sont une liste fermee');
 SELECT pg_temp.vrai(NOT EXISTS (SELECT 1 FROM jsonb_array_elements(:'lu'::jsonb -> 'lignes') l
     WHERE NOT (jsonb_typeof(l -> 'impression') = 'null'
