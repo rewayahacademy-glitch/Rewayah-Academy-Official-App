@@ -77,13 +77,14 @@ AS $f$
 $f$;
 
 -- Les dernieres reponses envoyees du questionnaire (une candidature peut en avoir plusieurs versions : la plus recente fait foi).
+-- Revue PX-4 : JAMAIS un brouillon (ce que le candidat n'a pas encore envoye), comme le controle d'admission (cand_l2a2).
 CREATE FUNCTION private.praxis_reponses(p_candidature uuid)
 RETURNS jsonb
 LANGUAGE sql
 STABLE
 SET search_path = ''
 AS $f$
-  SELECT r.reponses FROM public.candidature_reponses r WHERE r.candidature_id = p_candidature
+  SELECT r.reponses FROM public.candidature_reponses r WHERE r.candidature_id = p_candidature AND NOT r.brouillon
    ORDER BY r.soumis_le DESC, r.id DESC LIMIT 1;
 $f$;
 
@@ -563,7 +564,9 @@ BEGIN
     RETURN pg_catalog.jsonb_build_object('erreur', 'plafond_dossiers');
   END IF;
 
-  SELECT r.* INTO v_rep FROM public.candidature_reponses r WHERE r.candidature_id = v_c.id ORDER BY r.soumis_le DESC, r.id DESC LIMIT 1;
+  -- Revue PX-4 : le dernier questionnaire ENVOYE, jamais un brouillon (meme regle que private.praxis_reponses).
+  SELECT r.* INTO v_rep FROM public.candidature_reponses r WHERE r.candidature_id = v_c.id AND NOT r.brouillon
+   ORDER BY r.soumis_le DESC, r.id DESC LIMIT 1;
   IF v_c.profile_id IS NOT NULL THEN
     v_fil := private.praxis_fil_candidature(v_c);
     v_fil_lisible := v_fil IS NOT NULL AND private.praxis_fil_refus(v_fil, v_p.cotes) IS NULL;
@@ -809,6 +812,11 @@ BEGIN
     PERFORM private.praxis_noter(v_p.cle_id, v_p.emise_par, 'ecrire', 'longueur', NULL, NULL, NULL, v_debut);
     RETURN pg_catalog.jsonb_build_object('erreur', 'longueur');
   END IF;
+  -- Revue PX-4 : le verrou de la conversation existante AVANT celui des envois, dans l'ordre de `ecrire` (fil, puis envois). L'ordre
+  -- inverse fait un interblocage quand deux cles ecrivent en meme temps dans la meme conversation (prouve sur un Postgres local).
+  PERFORM 1 FROM public.com_fils f
+   WHERE f.id = (SELECT private.praxis_fil_candidature(c) FROM public.candidatures c WHERE c.reference = p_candidature)
+     FOR UPDATE;
   -- Le verrou des envois de Praxis (le meme que `ecrire`) : les plafonds se comptent sans course.
   PERFORM pg_catalog.pg_advisory_xact_lock(pg_catalog.hashtextextended('praxis-envois', 0));
   -- Rejeu : la meme cle d'idempotence, rien d'ecrit.

@@ -191,6 +191,10 @@ INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, 
    "debutPossible": "immediat", "publics": ["6_9", "adultes"], "paysResidence": "MA", "paysVersement": "MA",
    "compteBancaire": true, "operateurs": ["OPERATEURSECRET"], "moyensAccessibles": ["MOYENSECRET"]}'::jsonb, 'candidat', now() - interval '6 days'),
  (pg_temp.c('16'), 'salle-examen-2', '{"languesExplication": ["en"], "riwayat": ["hafs"], "ijazaPresentable": "non", "publics": ["adultes"]}'::jsonb, 'candidat', now() - interval '10 days');
+-- Revue PX-4 : un BROUILLON de c10, plus recent que son envoi, avec d'autres valeurs : il n'est jamais lu (ni par dossier, ni par les filtres).
+INSERT INTO public.candidature_reponses (candidature_id, questionnaire_version, reponses, source, soumis_le, brouillon, envoye_le) VALUES
+ (pg_temp.c('10'), 'salle-examen-2', '{"langueMaternelle": "BROUILLONSECRET", "ijazaPresentable": "non", "paysVersement": "XX"}'::jsonb, 'candidat',
+  now() - interval '5 days 1 hour', true, NULL);
 INSERT INTO public.candidature_evenements (candidature_id, type, etape_avant, etape_apres, auteur_id, motif_interne, details, cree_le) VALUES
  (pg_temp.c('10'), 'transition', 'invitee', 'prequalification', pg_temp.u('2'), 'MOTIFSECRET de la direction', '{"geste": "inviter", "auteur": "direction"}', now() - interval '8 days'),
  (pg_temp.c('10'), 'lecture_contact', NULL, NULL, pg_temp.u('2'), NULL, '{}', now() - interval '7 days'),
@@ -306,6 +310,10 @@ SELECT pg_temp.verif('DOSSIER passant : toutes les reponses utiles, sous contenu
      AND r ->> 'classesSouhaitees' = '2' AND r ->> 'debutPossible' = 'immediat' AND r -> 'publics' = '["6_9", "adultes"]' AND r ->> 'paysResidence' = 'MA'
      AND d -> 'contenu_tiers' ->> 'prenom' = 'Prenomdix' AND NOT d ? 'questionnaire'
     FROM (SELECT pg_temp.lu('d10') AS d, pg_temp.lu('d10') -> 'contenu_tiers' -> 'questionnaire' -> 'reponses' AS r) x $$);
+SELECT pg_temp.verif('DOSSIER brouillon : le questionnaire non envoye n''est jamais lu (revue PX-4)', $$
+  SELECT pg_temp.lu('d10')::text !~ 'BROUILLONSECRET' AND pg_temp.lu('d10') -> 'versement' ->> 'pays' = 'MA'
+     AND pg_temp.lu('d10') -> 'contenu_tiers' -> 'questionnaire' ->> 'soumis_le' IS NOT NULL
+     AND (pg_temp.lu('d10') -> 'contenu_tiers' -> 'questionnaire' ->> 'soumis_le')::timestamptz < now() - interval '5 days 12 hours' $$);
 SELECT pg_temp.verif('DOSSIER passant : versement = pays et possible, rien d''autre', $$
   SELECT pg_temp.lu('d10') -> 'versement' = '{"pays": "MA", "possible": "inconnu"}'::jsonb $$);
 SELECT pg_temp.verif('DOSSIER passant : ce qui manque, les gestes, l''historique (types et dates, sans lecture de contact)', $$
