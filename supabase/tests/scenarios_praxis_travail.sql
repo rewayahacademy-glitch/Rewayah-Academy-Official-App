@@ -241,7 +241,8 @@ SELECT pg_temp.verif('LIRE sans compte : la candidature recue sans compte manque
 SELECT pg_temp.verif('LIRE sobre : les cles d''une ligne sont la liste fermee', $$
   SELECT (SELECT array_agg(k ORDER BY k) FROM jsonb_object_keys(pg_temp.lu('l10')) k)
        = ARRAY['a_une_conversation', 'attend_direction', 'attente_jours', 'complement_en_cours', 'complet', 'contenu_tiers', 'cote', 'etape', 'etat',
-               'gestes', 'jours_sans_activite_candidat', 'langue', 'manquants', 'pile', 'reference'] $$);
+               -- PX-4 (20261130200000) : + `impression` (etiquette, note de vision, confiance de l'impression de Praxis ; aucune donnee de personne).
+               'gestes', 'impression', 'jours_sans_activite_candidat', 'langue', 'manquants', 'pile', 'reference'] $$);
 SELECT pg_temp.verif('LIRE sobre : ni courriel, ni nom de famille, ni identifiant de compte dans la vue', $$
   SELECT pg_temp.srv(format('SELECT public.praxis_lire(%L, ''candidatures'', ''{}''::jsonb, 50)', pg_temp.k('both')))::text !~* '(test\.invalid|Nomsecret|5c1a0000)' $$);
 SELECT pg_temp.verif('LIRE cote : la cle femme ne voit pas le candidat homme', $$ SELECT pg_temp.ligne('fem', '11') IS NULL AND pg_temp.ligne('fem', '10') IS NOT NULL $$);
