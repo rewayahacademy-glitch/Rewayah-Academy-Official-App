@@ -1166,6 +1166,7 @@ class _Traductions$connexion$ar extends Traductions$connexion$fr {
 	@override String get courrielIndice => 'name@example.com';
 	@override String get motDePasseDemo => 'كلمة مرور العرض التجريبي';
 	@override String get envoyerLien => 'استلام الرابط';
+	@override String get envoiEnCours => 'جارٍ إرسال الرابط…';
 	@override String get entrerDemo => 'الدخول إلى العرض التجريبي';
 	@override String get introDemo => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.';
 	@override String get essayerDemo => 'تجربة العرض التجريبي';
@@ -39485,6 +39486,7 @@ extension on TraductionsAr {
 			'connexion.courrielIndice' => 'name@example.com',
 			'connexion.motDePasseDemo' => 'كلمة مرور العرض التجريبي',
 			'connexion.envoyerLien' => 'استلام الرابط',
+			'connexion.envoiEnCours' => 'جارٍ إرسال الرابط…',
 			'connexion.entrerDemo' => 'الدخول إلى العرض التجريبي',
 			'connexion.introDemo' => 'وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.',
 			'connexion.essayerDemo' => 'تجربة العرض التجريبي',
@@ -39503,9 +39505,9 @@ extension on TraductionsAr {
 			'connexion.code.titre' => 'أو أدخل الرمز الذي وصلك',
 			'connexion.code.aide' => 'تحتوي الرسالة أيضًا على رمز من 6 أرقام. أدخله هنا: يعمل حتى لو فُتح الرابط في متصفح آخر.',
 			'connexion.code.etiquette' => 'رمز الرسالة',
-			'connexion.code.indice' => '6 أرقام',
 			_ => null,
 		} ?? switch (path) {
+			'connexion.code.indice' => '6 أرقام',
 			'connexion.code.valider' => 'تأكيد الرمز',
 			'connexion.code.erreurLongueur' => 'ينقصك بعض الأرقام: الرمز من 6 أرقام. انسخه من أحدث رسالة.',
 			'connexion.code.erreurCode' => 'هذا الرمز غير صحيح أو لم يعد صالحًا. تحقق من أحدث رسالة، أو اطلب رابطًا جديدًا.',
@@ -40017,9 +40019,9 @@ extension on TraductionsAr {
 			'adulte.recharge.resultat.attentePhrase' => 'لم تؤكد جهة الدفع بعد. لا تتغير الأرصدة إلا بعد تأكيدها.',
 			'adulte.recharge.resultat.attenteBandeauTitre' => 'لا تدفع مرة ثانية.',
 			'adulte.recharge.resultat.attenteBandeauPhrase' => 'ربما تمت هذه الدفعة بالفعل. أعد التحميل بعد لحظات لترى حالتها.',
-			'adulte.recharge.resultat.confirmeTitre' => 'تم تأكيد الدفعة',
 			_ => null,
 		} ?? switch (path) {
+			'adulte.recharge.resultat.confirmeTitre' => 'تم تأكيد الدفعة',
 			'adulte.recharge.resultat.confirmePhrase' => 'تم تأكيد الدفعة. ستُحدَّث الأرصدة.',
 			'adulte.recharge.resultat.allocationPhrase' => 'جارٍ تحديث الأرصدة...',
 			'adulte.recharge.resultat.terminePhrase' => ({required Object montant}) => 'تمت دفعتك البالغة ⁨${montant}⁩ ووُزِّعت على الملفات المحددة.',
@@ -40531,9 +40533,9 @@ extension on TraductionsAr {
 			'contrat.titre' => 'ما توقّع عليه',
 			'contrat.intro' => 'نقطتان أهم من غيرهما. هما مكتوبتان هنا بوضوح بدل أن تكونا وسط نص طويل.',
 			'contrat.pointEnregistrement' => 'سوف يتم تسجيل صوتيات الدروس والاحتفاظ بها خلال 30 يوما قبل حذفها. ولا يستمع إليها أحد سوى الأشخاص المرخصين لهم لغرض التحقيق والمراقبة، ويتم تسجيل كل العمليات في سجل المنصة بما في ذلك اسم المستمع والتاريخ.',
-			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
 			_ => null,
 		} ?? switch (path) {
+			'contrat.pointControle' => 'يمكن لمراقب جودة أن يحضر درسًا دون أن يُرى. تذكّر القاعة بذلك باستمرار، سواء جرت الزيارة أم لا.',
 			'contrat.pointCoordonnees' => 'لا ترى أبدًا بيانات اتصال أسرة: لا الاسم الكامل، ولا البريد الإلكتروني، ولا الهاتف.',
 			'contrat.lireTexte' => 'قراءة النص كاملًا',
 			'contrat.accepter' => 'قرأت وأوافق',
@@ -41045,9 +41047,9 @@ extension on TraductionsAr {
 			'recherche.domaines.personnes' => 'الأشخاص',
 			'recherche.domaines.enseignants' => 'المعلّمون',
 			'recherche.domaines.pedagogie' => 'الطلاب',
-			'recherche.domaines.controle' => 'المراقبة',
 			_ => null,
 		} ?? switch (path) {
+			'recherche.domaines.controle' => 'المراقبة',
 			'recherche.domaines.finances' => 'المالية',
 			'recherche.domaines.fils' => 'المحادثات',
 			'recherche.domaines.remplacements' => 'الاستبدالات',
@@ -41559,9 +41561,9 @@ extension on TraductionsAr {
 			'recrutement.parcours.langues.yo' => 'اليوروبا',
 			'recrutement.parcours.langues.bn' => 'البنغالية',
 			'recrutement.parcours.langues.fa' => 'الفارسية',
-			'recrutement.parcours.langues.id' => 'الإندونيسية',
 			_ => null,
 		} ?? switch (path) {
+			'recrutement.parcours.langues.id' => 'الإندونيسية',
 			'recrutement.parcours.langues.so' => 'الصومالية',
 			'recrutement.parcours.langues.hi' => 'الهندية',
 			'recrutement.parcours.langues.uz' => 'الأوزبكية',
@@ -42073,9 +42075,9 @@ extension on TraductionsAr {
 			'argent.transparence.taxesTitre' => 'الضرائب',
 			'argent.transparence.taxesPhrase' => 'أسعارنا دون احتساب الضرائب. وضريبة بلدكم، حين تكون مستحقة، تُضاف إلى الدفعة وتعود كاملة إلى الدولة: وهي غير واردة في هذا التوزيع.',
 			'argent.transparence.hausseTitre' => 'قد ترتفع الأسعار',
-			'argent.transparence.haussePhrase' => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.',
 			_ => null,
 		} ?? switch (path) {
+			'argent.transparence.haussePhrase' => 'تعتمد أسعارنا على كلفة الخدمات التي نستعملها وعلى التضخم. وإذا ارتفعت هذه الكلفة، فستضطر الأكاديمية إلى تعديل أسعارها. وستُعلمكم بذلك قبل الدفعة التالية، ويمكنكم التوقف إذا لم يناسبكم السعر الجديد.',
 			'argent.transparence.montantsTitre' => 'المبالغ الدقيقة',
 			'argent.transparence.montantsPhrase' => 'لا تعرض هذه الصفحة إلا النسب المئوية: فالمبالغ تتغير كل شهر بحسب عدد الطلاب. ومن أراد المبالغ الدقيقة فليطلبها من الإدارة.',
 			'argent.transparence.indisponibleTitre' => 'تعذّرت قراءة توزيع الأسعار',
@@ -42587,9 +42589,9 @@ extension on TraductionsAr {
 			'admissions.demanderPrecisions' => 'طلب توضيحات',
 			'admissions.contacter' => ({required Object nom}) => 'الكتابة إلى ⁨${nom}⁩',
 			'admissions.refuser' => 'رفض الطلب',
-			'admissions.refuserContexte' => 'اختر الجملة التي سيتلقاها الشخص، ثم اكتب السبب للإدارة. لا يرى الشخص السبب أبدًا.',
 			_ => null,
 		} ?? switch (path) {
+			'admissions.refuserContexte' => 'اختر الجملة التي سيتلقاها الشخص، ثم اكتب السبب للإدارة. لا يرى الشخص السبب أبدًا.',
 			'admissions.refuserQuestion' => ({required Object deNom}) => 'رفض طلب ⁨${deNom}⁩؟',
 			'admissions.refuserConsequence' => 'يتلقى الشخص رسالة «لا يمكننا متابعة طلبك». يمكن إلغاء الرفض خلال سبعة أيام.',
 			'admissions.motifInterne' => 'السبب، للإدارة',
@@ -43101,9 +43103,9 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.comptes.attendus.aide' => 'عدد صحيح. اتركوا فارغًا ما لا تقارنونه.',
 			'candidatsFlux.importFormulaires.comptes.choisir' => 'حدّدوا الحصيلة التي تقارنون بها للمتابعة.',
 			'candidatsFlux.importFormulaires.comptes.saisirNombre' => 'أدخلوا عددًا واحدًا على الأقل للمتابعة.',
-			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'فرق يحتاج إلى تحقق',
 			_ => null,
 		} ?? switch (path) {
+			'candidatsFlux.importFormulaires.comptes.ecartTitre' => 'فرق يحتاج إلى تحقق',
 			'candidatsFlux.importFormulaires.comptes.ecart' => ({required Object attendu, required Object lu}) => 'فرق عن الأعداد المتوقعة: المتوقع ⁨${attendu}⁩، المقروء ⁨${lu}⁩. تحققوا قبل التأكيد؛ يمكنكم الاستيراد رغم ذلك.',
 			'candidatsFlux.importFormulaires.comptes.accord' => 'الأعداد تطابق ما كنتم تتوقعونه.',
 			'candidatsFlux.importFormulaires.unite.lignes' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لا أسطر', one: 'سطر واحد', two: 'سطران', few: '⁨${n}⁩ أسطر', many: '⁨${n}⁩ سطرًا', other: '⁨${n}⁩ سطر', ), 
@@ -43615,9 +43617,9 @@ extension on TraductionsAr {
 			'calendrier.dates.notification.levee.abandonUne' => ({required Object quand}) => 'سُحب إغلاق الأكاديمية، لكن الحصة المقررة في ⁨${quand}⁩ لن تُعقد.',
 			'calendrier.dates.notification.levee.abandonPlusieurs' => ({required Object n, required Object quand}) => 'سُحب إغلاق الأكاديمية، لكن بعض الحصص لن تُعقد: ⁨${n}⁩، ومنها حصة ⁨${quand}⁩.',
 			'calendrier.dates.notification.levee.mixte' => ({required Object retablies, required Object abandonnees}) => 'سُحب إغلاق الأكاديمية. الحصص المُعادة: ⁨${retablies}⁩. الحصص التي لن تُعقد: ⁨${abandonnees}⁩. افتح الفصل لرؤيتها.',
-			'calendrier.dates.concernees.titre' => 'الحصص المعنية',
 			_ => null,
 		} ?? switch (path) {
+			'calendrier.dates.concernees.titre' => 'الحصص المعنية',
 			'calendrier.dates.concernees.heureMecque' => 'الأيام والساعات بتوقيت مكة المكرمة.',
 			'calendrier.dates.concernees.ligne' => ({required Object classe, required Object quand, required Object enseignant}) => '⁨${classe}⁩، ⁨${quand}⁩، ⁨${enseignant}⁩',
 			'calendrier.dates.concernees.deCote' => 'مُبعدة',

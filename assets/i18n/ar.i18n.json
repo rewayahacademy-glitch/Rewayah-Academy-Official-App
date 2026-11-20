@@ -12340,6 +12340,7 @@
     "courrielIndice": "name@example.com",
     "motDePasseDemo": "كلمة مرور العرض التجريبي",
     "envoyerLien": "استلام الرابط",
+    "envoiEnCours": "جارٍ إرسال الرابط…",
     "entrerDemo": "الدخول إلى العرض التجريبي",
     "introDemo": "وضع العرض التجريبي: لن يُرسل أي رابط. ستدخل مباشرة دون بريد إلكتروني.",
     "essayerDemo": "تجربة العرض التجريبي",

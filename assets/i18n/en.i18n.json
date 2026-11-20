@@ -1276,6 +1276,7 @@
     "courrielIndice": "you@example.com",
     "motDePasseDemo": "Demo password",
     "envoyerLien": "Get the link",
+    "envoiEnCours": "Sending the link…",
     "entrerDemo": "Enter the demo",
     "introDemo": "Demo mode: no link will be sent. You go straight in, without email.",
     "essayerDemo": "Try the demo",

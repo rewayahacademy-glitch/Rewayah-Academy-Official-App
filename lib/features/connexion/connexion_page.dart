@@ -1020,6 +1020,9 @@ class _Saisie extends StatelessWidget {
                 : t.connexion.envoyerLien,
             onPress: onSoumettre,
             enCours: envoi,
+            // ENTREE-PRAXIS (maquette, pilote 20/11) : pendant l'envoi, le
+            // bouton reste plein et violet et dit « Envoi du lien… ».
+            libelleAttente: versLien ? t.connexion.envoiEnCours : null,
             // Sur la marque, l'aplat blanc a encre violette ; sur le volet
             // caramel, le violet a encre blanche (fiche, sections 3 et 4).
             affirmee: true,
@@ -1037,6 +1040,8 @@ class _Saisie extends StatelessWidget {
                   libelle: t.connexion.avecGoogle,
                   onPress: onGoogle,
                   niveau: NiveauAction.secondaire,
+                  // ENTREE-PRAXIS : le filet pale de la maquette.
+                  filetPale: true,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
                   // ENTREE-PRAXIS : les boutons sont empiles, chacun a la
@@ -1061,6 +1066,8 @@ class _Saisie extends StatelessWidget {
                   libelle: t.connexion.appareilEleve,
                   onPress: onEleve,
                   niveau: NiveauAction.secondaire,
+                  // Le meme filet que Google, juste au-dessus.
+                  filetPale: true,
                   pleineLargeur: true,
                   margeHorizontaleReduite: true,
                   libelleReduit: false,
