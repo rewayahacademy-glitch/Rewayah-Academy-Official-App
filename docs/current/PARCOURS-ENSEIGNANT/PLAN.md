@@ -1222,3 +1222,22 @@ dégradé doux, jamais en cercles empilés ; aucune teinte hors de la palette ; 
 jamais le visage ; l'animation avance selon le temps réel ; les phrases arabes se relisent comme un
 arabophone les dirait ; l'écran de connexion garde Google et le lien par courriel. Version 2 de la
 maquette en cours, à republier à la même adresse.
+
+### 18.6 Décisions du directeur du 20/11/2026 (05:00 UTC)
+
+- **Les yeux de Praxis sont sa signature : on ne les change pas.** « Oui pour l'ajout des membres
+  et de la bouche, mais pas pour le changement des yeux. » Vaut pour toute maquette et tout écran :
+  le dessin des yeux d'origine reste reconnaissable à tout instant ; les expressions passent par la
+  bouche, la tête, la toque, les mains, la posture.
+- **Les effets complexes (tableau de bord, mouvement, lumière, Praxis animé) sont faits par le
+  pilote ou par le modèle le plus capable**, pas par les modèles moins coûteux, qui gardent les
+  petites tâches. Avant de fusionner un écran, le pilote regarde le rendu et le compare à la
+  maquette validée (l'avis flottant du lot RACINE a été fusionné sans ce regard : faute relevée par
+  le directeur sur capture).
+- **L'avis « Messages pas en direct… toutes les 30 secondes » est supprimé** (« inutile »). L'avis
+  flottant reprend la forme de la maquette validée : petite pilule centrée, surface inverse, point
+  d'accent, chute avec léger rebond, départ seul après trois secondes (branche
+  `claude/pe-avis-discret`).
+- **Le salut de Praxis** : il ne répond « وعليكم السلام » qu'à quelqu'un qui vient de saluer ; si la
+  personne répondait elle-même à un salut, il ouvre par « السلام عليكم ورحمة الله وبركاته » ; il ne
+  redit pas comme une nouvelle ce que la direction a déjà annoncé (consigne de la routine, 04:56 UTC).
