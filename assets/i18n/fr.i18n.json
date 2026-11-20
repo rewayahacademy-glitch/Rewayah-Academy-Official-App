@@ -12995,7 +12995,7 @@
         "anciensChargement": "Chargement des messages précédents",
         "anciensEchec": "Les messages précédents ne se sont pas chargés.",
         "refusFerme": "Vous ne pouvez plus écrire dans cette conversation.",
-        "refusTexte": "Ce message est vide ou trop long : 5 000 caractères au plus.",
+        "refusTexte": "Ce message est vide ou trop long : 5 000 caractères au plus.",
         "refusAutre": "Ce message n'a pas été accepté."
       },
       "images": {

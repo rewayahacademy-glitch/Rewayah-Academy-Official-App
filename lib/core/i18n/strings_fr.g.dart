@@ -41475,7 +41475,7 @@ class Traductions$com$messages$fil$fr {
 	String get refusFerme => 'Vous ne pouvez plus écrire dans cette conversation.';
 
 	/// fr: 'Ce message est vide ou trop long : 5 000 caractères au plus.'
-	String get refusTexte => 'Ce message est vide ou trop long : 5 000 caractères au plus.';
+	String get refusTexte => 'Ce message est vide ou trop long : 5 000 caractères au plus.';
 
 	/// fr: 'Ce message n'a pas été accepté.'
 	String get refusAutre => 'Ce message n\'a pas été accepté.';
@@ -67261,7 +67261,7 @@ extension on Traductions {
 			'com.messages.fil.anciensChargement' => 'Chargement des messages précédents',
 			'com.messages.fil.anciensEchec' => 'Les messages précédents ne se sont pas chargés.',
 			'com.messages.fil.refusFerme' => 'Vous ne pouvez plus écrire dans cette conversation.',
-			'com.messages.fil.refusTexte' => 'Ce message est vide ou trop long : 5 000 caractères au plus.',
+			'com.messages.fil.refusTexte' => 'Ce message est vide ou trop long : 5 000 caractères au plus.',
 			'com.messages.fil.refusAutre' => 'Ce message n\'a pas été accepté.',
 			'com.messages.images.joindre' => 'Joindre une image',
 			'com.messages.images.prendrePhoto' => 'Prendre une photo',
