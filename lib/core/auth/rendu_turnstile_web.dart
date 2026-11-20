@@ -12,6 +12,7 @@ import 'dart:ui_web' as ui_web;
 
 import 'package:flutter/widgets.dart';
 
+import '../theme/app_radius.dart';
 import 'anti_robot.dart';
 
 /// Le delai au-dela duquel le script de Cloudflare est tenu pour injoignable.
@@ -60,8 +61,11 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
       'createElement'.toJS,
       'div'.toJS,
     );
-    (hote['style']! as JSObject)['cssText'] = 'width:100%;height:100%;display:flex;justify-content:center;align-items:center;'
-        .toJS;
+    // PE-CASE-VERIFICATION : en bloc (la largeur du champ), rogne a sa place
+    // (rien ne deborde), aux coins des champs ; voir `styleHoteTurnstile`.
+    (hote['style']! as JSObject)['cssText'] = styleHoteTurnstile(
+      rayon: AppRadius.sm,
+    ).toJS;
     _hote = hote;
     ui_web.platformViewRegistry.registerViewFactory(_type, (int _) => hote);
     widget.controleur.brancher(_relancer);
@@ -115,8 +119,12 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
       ..['callback'] = ((JSString jeton) {
         widget.controleur.recevoirJeton(jeton.toDart);
       }).toJS
-      ..['error-callback'] = (() {
-        widget.controleur.signalerErreur();
+      // PE-A5 : le code d'erreur de Cloudflare dit la cause (navigateur,
+      // heure de l'appareil, reglage) ; l'ecran en tire sa phrase.
+      ..['error-callback'] = ((JSAny? code) {
+        widget.controleur.signalerErreur(
+          code: code.isA<JSString>() ? (code! as JSString).toDart : null,
+        );
       }).toJS
       ..['expired-callback'] = (() {
         widget.controleur.signalerExpiration();
@@ -136,6 +144,9 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
     }
   }
 
+  /// Un nouveau tour de verification. PE-A5 : apres un echec, le widget est
+  /// retire puis rendu a neuf (un `reset` sur un widget en panne rendait la
+  /// meme panne) ; apres un envoi reussi, un `reset` suffit.
   void _relancer() {
     final JSObject? turnstile = globalContext['turnstile'] as JSObject?;
     final JSAny? id = _widgetId;
@@ -144,7 +155,14 @@ class _RenduTurnstileState extends State<RenduTurnstile> {
       return;
     }
     try {
-      turnstile.callMethod<JSAny?>('reset'.toJS, id);
+      if (widget.controleur.echecs > 0) {
+        turnstile.callMethod<JSAny?>('remove'.toJS, id);
+        _widgetId = null;
+        _monte = false;
+        unawaited(_monter());
+      } else {
+        turnstile.callMethod<JSAny?>('reset'.toJS, id);
+      }
     } on Object {
       widget.controleur.signalerErreur();
     }

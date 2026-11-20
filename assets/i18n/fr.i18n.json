@@ -1293,7 +1293,13 @@
     "controle": {
       "libelle": "Vérification de sécurité",
       "chargement": "Vérification de sécurité en cours.",
-      "erreur": "La vérification n'a pas abouti. Réessayez.",
+      "erreur": "La vérification de sécurité n'a pas abouti. Touchez « Réessayer » ; si elle échoue encore, rechargez la page.",
+      "erreurNavigateur": "La vérification de sécurité ne passe pas dans ce navigateur. Ouvrez la page dans Chrome ou Safari (pas dans une application de messagerie), coupez un éventuel bloqueur de publicité, puis touchez « Réessayer ».",
+      "erreurHorloge": "La vérification de sécurité refuse l'heure de votre appareil. Réglez la date et l'heure sur « automatique », puis touchez « Réessayer ».",
+      "erreurReglage": "La vérification de sécurité ne fonctionne pas pour l'instant, à cause d'un réglage de notre côté. Réessayez plus tard.",
+      "refuse": "La vérification de sécurité n'a pas été acceptée. Touchez de nouveau le bouton dans quelques secondes ; si cela recommence, rechargez la page.",
+      "autreCheminGoogle": "Vous pouvez aussi continuer avec Google : ce chemin ne passe pas par cette vérification.",
+      "rechargerPage": "Recharger la page",
       "horsLigne": "La vérification ne peut pas se faire pour l'instant. Réessayez quand la connexion sera revenue."
     },
     "probleme": "Lien expiré ou jamais reçu\u00a0?",
@@ -3091,6 +3097,116 @@
       },
       "nonOuvert": "La carte à partager n'est pas encore disponible. Revenez sur cette page plus tard."
     },
+    "accueil": {
+      "onglets": {
+        "dossier": "Dossier",
+        "messages": "Messages",
+        "academie": "Académie"
+      },
+      "etapes": {
+        "position": "Étape {n} sur {total}",
+        "faite": "faite",
+        "enCours": "en cours",
+        "aVenir": "à venir",
+        "lecture": "{position}, {nom}, {etat}",
+        "detail1": "Vous envoyez vos réponses et vos documents. L'académie les lit.",
+        "detail2": "Un entretien en visio avec l'académie, au moment que vous choisissez.",
+        "detail3": "Votre espace d'enseignant s'ouvre.",
+        "ensuiteACompleter": "Ensuite : l'académie lit votre candidature.",
+        "ensuiteEnExamen": "Ensuite : si votre candidature est retenue, nous faisons connaissance en entretien.",
+        "ensuiteConnaissance": "Ensuite : après l'entretien, l'académie vous donne sa réponse ici.",
+        "ensuiteEquipe": "Ensuite : votre espace d'enseignant s'ouvre."
+      },
+      "aFaire": {
+        "titre": "À faire maintenant",
+        "rienTitre": "Rien à faire pour l'instant",
+        "rien": "Vous n'avez rien à faire. Nous vous écrirons ici dès qu'il y a du nouveau.",
+        "majorite": "Dites d'abord si vous avez 18 ans ou plus, dans la carte ci-dessus.",
+        "cadre": "Lisez et acceptez le cadre religieux et pédagogique.",
+        "accords": "Lisez et acceptez le contrat et nos accords.",
+        "piece": "Déposez votre pièce d'identité.",
+        "reponses": "Répondez aux questions, puis envoyez votre candidature.",
+        "entretien": "Choisissez le moment de votre entretien.",
+        "corriger": "Reprenez l'élément que l'académie vous demande de corriger."
+      },
+      "lignes": {
+        "titre": "Votre dossier, élément par élément",
+        "afficher": "Afficher le détail : {element}",
+        "masquer": "Masquer le détail : {element}",
+        "cadreDetail": "Le cadre dit ce que l'académie enseigne et comment. Vous le lisez en entier, puis vous l'acceptez.",
+        "accordsDetail": "Le contrat d'enseignant, l'avis sur les visites de contrôle et le code de conduite. Vous les lisez et vous les acceptez sur une seule page.",
+        "pieceDetail": "Une photo nette de votre passeport ou de votre carte d'identité, en cours de validité. Exemple : la page qui porte votre photo, entière et sans reflet.",
+        "photoDetail": "Une photo de vous, de face. Elle sert à vous présenter aux familles, seulement avec votre accord.",
+        "reponsesDetail": "Vos langues, votre récitation, vos disponibilités et votre versement. Vous pouvez enregistrer et revenir plus tard."
+      },
+      "praxis": {
+        "pieceRefusee": "Votre pièce d'identité n'a pas été acceptée. Déposez-en une nouvelle.",
+        "reste(plural, param=n)": {
+          "one": "Il reste {n} élément à terminer dans votre dossier.",
+          "other": "Il reste {n} éléments à terminer dans votre dossier."
+        }
+      },
+      "annonce": {
+        "ligne": "Nouveau\u00a0: {titre}",
+        "ranger": "Ranger l'annonce : {titre}",
+        "rangee": "Annonce rangée dans Messages, rubrique Annonces."
+      },
+      "etat": {
+        "perime": "Votre dossier n'a pas pu être mis à jour. Ce que vous voyez date de votre dernière lecture. Réessayez dans un instant.",
+        "horsLigne": "Vous n'êtes pas connecté. Ce que vous voyez date de votre dernière lecture ; réessayez une fois la connexion revenue."
+      },
+      "messages": {
+        "intro": "Écrivez à l'académie : elle vous répond ici.",
+        "vide": "La messagerie s'ouvrira ici dès que votre candidature sera enregistrée.",
+        "sections": {"libelle": "Rubriques des messages", "messages": "Messages", "annonces": "Annonces", "savoir": "À savoir"},
+        "nonLus(plural, param=n)": {"one": "{n} message non lu", "other": "{n} messages non lus"},
+        "annonces": {"lire": "Lire l'annonce\u00a0: {titre}", "vide": "Aucune annonce pour l'instant. Les annonces de la direction s'afficheront ici."},
+        "savoir": {"intro": "Les réponses aux questions des candidats, quand la direction les publiera."}
+      },
+      "academie": {
+        "titre": "L'académie",
+        "annoncesVide": "Aucune annonce pour l'instant. Les annonces de l'académie s'afficheront ici.",
+        "savoirTitre": "Ce qu'il faut savoir",
+        "remuneration": "La paie d'un enseignant",
+        "cours": "Le déroulement des cours",
+        "entretiens": "L'organisation des entretiens",
+        "bientot": "S'affichera ici quand la direction le rendra public.",
+        "reglages": "Réglages",
+        "reglagesLegende": "Langue, versement, retrait de la candidature"
+      },
+      "retrait": {
+        "arret": "L'académie arrêtera d'étudier votre dossier.",
+        "entretien": "Votre entretien sera annulé. Si vous reprenez votre candidature, vous en choisirez un nouveau.",
+        "rienEfface": "Vos réponses et vos documents resteront enregistrés.",
+        "pause": "Votre dossier est en pause. Si vous le retirez maintenant, vous ne pourrez pas le reprendre vous-même : il faudra écrire à l'académie, qui seule pourra le rouvrir.",
+        "reprise(plural, param=n)": {
+          "one": "Vous pourrez la reprendre vous-même pendant {n} jour, depuis l'onglet Dossier.",
+          "other": "Vous pourrez la reprendre vous-même pendant {n} jours, depuis l'onglet Dossier."
+        },
+        "apres": "Après ce délai, seule l'académie pourra la rouvrir.",
+        "garder": "Non, je continue",
+        "confirmer": "Oui, retirer ma candidature",
+        "fait(plural, param=n)": {
+          "one": "Candidature retirée. Vous avez {n} jour pour la reprendre.",
+          "other": "Candidature retirée. Vous avez {n} jours pour la reprendre."
+        },
+        "faitSansDelai": "Candidature retirée."
+      },
+      "reprise": {
+        "possible": "Vous avez retiré votre candidature. Vous pouvez la reprendre vous-même jusqu'au {date} à {heure}. Vos réponses et vos documents sont toujours enregistrés.",
+        "bouton": "Reprendre ma candidature",
+        "faite": "Votre candidature est reprise. Vos réponses et vos documents sont toujours enregistrés.",
+        "delaiDepasse": "Le délai pour la reprendre vous-même est passé. Seule l'académie peut la rouvrir : écrivez-lui depuis l'onglet Messages.",
+        "enPause": "Votre dossier était en pause quand vous l'avez retiré : vous ne pouvez pas le reprendre vous-même. Seule l'académie peut le rouvrir : écrivez-lui depuis l'onglet Messages.",
+        "origineInconnue": "Votre candidature est retirée. Écrivez-nous depuis l'onglet Messages pour la reprendre.",
+        "parDirection": "Ce retrait a été enregistré par l'académie. Seule l'académie peut rouvrir votre candidature : écrivez-lui depuis l'onglet Messages.",
+        "controles": "Un élément de votre dossier a changé depuis votre retrait. Seule l'académie peut rouvrir votre candidature : écrivez-lui depuis l'onglet Messages.",
+        "echec": "La reprise n'a pas abouti. Rien n'a changé : réessayez dans un instant.",
+        "incertain": "Il est possible que votre reprise ne soit pas parvenue jusqu'à Rewayah. Réessayez : elle ne sera pas enregistrée deux fois.",
+        "horsLigne": "La reprise pourra être faite quand la connexion reviendra.",
+        "conflit": "Votre candidature a changé depuis l'ouverture de cette page. Relisez-la, puis réessayez."
+      }
+    },
     "retrait": {
       "lien": "Retirer ma candidature",
       "question": "Retirer votre candidature\u00a0?",
@@ -4250,6 +4366,7 @@
             "other": "{n} candidatures ne seront pas concernées"
           },
           "etAutres": "et {n} autres",
+          "reporteesEnFin": "Ces candidatures restent retenues, en fin de sélection : le prochain geste portera d'abord sur les suivantes.",
           "effetPause": "Les candidatures concernées n'avancent plus tant que la pause n'est pas levée.",
           "effetLever": "Les candidatures concernées reprennent là où elles s'étaient arrêtées.",
           "effetRefuser": "Les candidatures concernées sont fermées. Vous pourrez les rouvrir une à une.",
@@ -4270,7 +4387,14 @@
             "etat": "Ce geste n'est pas possible depuis l'état « {etat} ».",
             "conflit": "Elle a changé entre-temps.",
             "erreurServeur": "Le serveur n'a pas pu la traiter. Réessayez depuis son dossier.",
-            "inconnue": "Le serveur a refusé ce geste."
+            "inconnue": "Le serveur a refusé ce geste.",
+            "controle": "Pas encore admissible\u00a0: «\u00a0{controle}\u00a0» n'est pas rempli.",
+            "controles": "Un contrôle d'admission n'est pas satisfait.",
+            "sansCompte": "Cette personne n'a pas encore de compte\u00a0: aucune conversation n'est possible.",
+            "conversationPause": "Sa candidature est en pause\u00a0: aucune conversation n'est possible.",
+            "conversationEtat": "Son état ne permet plus d'écrire dans la conversation de candidature.",
+            "elementNonPermis": "Cet élément ne se demande pas à son étape.",
+            "dejaEnvoye": "Ce même message lui a déjà été envoyé par la direction dans les dernières 24 heures : il ne part pas une seconde fois."
           },
           "rapport": {
             "titre": "Résultat",
@@ -4292,7 +4416,18 @@
             "ligneExclue": "Exclue",
             "ligneRefusee": "Refusée",
             "sansNom": "Candidature sans nom lisible"
-          }
+          },
+          "effetAdmettre": "Les candidatures concernées passent en Salle de vérification et d'entretien. Chaque personne qui a une adresse reçoit le courriel qui l'invite à l'entretien, et un avis dans l'application.",
+          "effetComplement": "Chaque candidature concernée attend le même élément. La personne voit la demande en ouvrant l'application : aucun courriel ni avis ne part.",
+          "effetEcrire": "Chaque personne concernée reçoit le même message dans sa conversation avec la direction. Rien d'autre ne change.",
+          "motifCommunComplement": "Le même élément et le même motif valent pour toutes les candidatures concernées.",
+          "element": "Ce qui est demandé",
+          "elementAide": "Un seul élément pour tout le lot. Si une étape ne le permet pas, le résultat le dira ligne par ligne.",
+          "elementManquant": "Choisissez ce qui est demandé.",
+          "message": "Message",
+          "messageAide": "Le même message part à chaque personne concernée, au nom de la direction.",
+          "messageManquant": "Écrivez le message.",
+          "elementAucunCommun": "Aucun élément ne se demande à l'étape de toutes ces candidatures. Retenez des candidatures d'une même salle."
         },
         "erreurs": {
           "titre": "Traitement refusé",
@@ -4300,9 +4435,13 @@
           "aucunEligible": "Aucune candidature de la sélection ne peut recevoir ce geste. Rien n'a été fait.",
           "nonGroupable": "Ce geste ne se fait pas pour plusieurs candidatures à la fois. Ouvrez le dossier de chacune pour le faire.",
           "cleReutilisee": "Cette demande a déjà servi à une autre action. Fermez cette fenêtre et recommencez.",
+          "cleReutiliseeEcrire": "Le premier envoi est peut-être parti, avec le message d'avant : sa réponse n'était pas arrivée. Ouvrez les conversations des candidats pour le vérifier avant de recommencer.",
+          "cleReutiliseeIncertaine": "Le premier envoi est peut-être parti, avec les choix d'avant : sa réponse n'était pas arrivée. Vérifiez les candidatures dans la liste avant de recommencer.",
           "horsPortee": "Une candidature de la sélection est hors de votre accès. Rien n'a été fait. Actualisez l'aperçu.",
           "lectureApercu": "L'aperçu n'a pas pu être lu. Rien n'a été fait. Réessayez."
-        }
+        },
+        "ecrire": "Écrire",
+        "parTranche": "Ce geste porte sur les {n} premières, dans l'ordre de la liste. Les {reste} autres restent à traiter ensuite."
       },
       "titre": "Candidatures",
       "sousTitre": "Les candidatures d'enseignement, de l'invitation à la Salle des prêts à enseigner.",
@@ -4374,12 +4513,18 @@
           "accord": "Accord de contact",
           "accordDonne": "Accord donné",
           "accordAbsent": "Répondu sans accord"
-        }
+        },
+        "dossier": "Dossier",
+        "dossierComplet": "Rien ne manque",
+        "dossierIncomplet": "Il manque quelque chose",
+        "pilePraxis": "Pile de Praxis",
+        "etiquettePraxis": "Étiquette de Praxis"
       },
       "tri": {
         "titre": "Trier par",
         "activite": "Dernière activité",
-        "reception": "Date de réception"
+        "reception": "Date de réception",
+        "anciennete": "Attente la plus longue"
       },
       "total": {
         "one": "{n} candidature",
@@ -4420,7 +4565,14 @@
         "phrase": "Choisissez l'action à lancer sur ces candidatures.",
         "agir": "Agir sur la sélection",
         "relacher": "Tout relâcher",
-        "horsLigne": "Les actions pourront être lancées quand la connexion reviendra."
+        "horsLigne": "Les actions pourront être lancées quand la connexion reviendra.",
+        "page": "Sélectionner la page",
+        "pageRetenue": {"one": "La candidature de cette page est sélectionnée.", "other": "Les {n} candidatures de cette page sont sélectionnées."},
+        "tous": {"one": "Sélectionner le résultat", "other": "Sélectionner les {n} résultats"},
+        "tousRetenus": {"one": "Le résultat du filtre est sélectionné.", "other": "Les {n} résultats du filtre sont sélectionnés."},
+        "tousPlafond": "Les {plafond} premiers résultats sur {n} sont sélectionnés.",
+        "lectureTous": "Lecture de tous les résultats.",
+        "echecTous": "Les résultats n'ont pas pu être lus. La sélection n'a pas changé."
       },
       "vide": "Aucune candidature pour le moment",
       "videDetail": "Une candidature apparaît ici dès que la personne s'inscrit par le lien du site ou avec une invitation.",
@@ -7282,7 +7434,8 @@
         "voirPlus": "Afficher les dossiers suivants",
         "erreur": "Le travail de Praxis n'a pas pu être lu. Réessayez dans un instant.",
         "horsLigne": "Le travail de Praxis n'est pas encore chargé. Rechargez-le.",
-        "permission": "Le travail de Praxis est réservé à la direction."
+        "permission": "Le travail de Praxis est réservé à la direction.",
+        "voirListe": "Traiter ces dossiers dans la liste"
       },
       "avis": {
         "titre": "L'avis de Praxis",
@@ -12978,6 +13131,9 @@
         "autre": "Autre sujet"
       },
       "panneau": {
+        "fichiersPartiels": "Seuls les fichiers des messages déjà chargés sont listés.",
+        "fichiersAucunCharge": "Aucun fichier dans les messages déjà chargés ; il en reste de plus anciens.",
+        "chargerPrecedents": "Charger les messages précédents",
         "objets": "À propos de",
         "participants": "Participants",
         "fichiers": "@:com.socle.lexique.fichiersPartages",
@@ -12991,7 +13147,11 @@
         }
       },
       "fil": {
-        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous."
+        "lectureSeule": "Vous pouvez lire cette conversation. La réponse n'y est pas ouverte pour vous.",
+        "anciensChargement": "Chargement des messages précédents",
+        "anciensEchec": "Les messages précédents ne se sont pas chargés.",
+        "refusFerme": "Vous ne pouvez plus écrire dans cette conversation.",
+        "refusTexte": "Ce message est vide ou trop long : 5 000 caractères au plus."
       },
       "images": {
         "joindre": "Joindre une image",

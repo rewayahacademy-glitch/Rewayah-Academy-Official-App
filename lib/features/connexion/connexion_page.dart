@@ -301,15 +301,22 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
 
   /// Le jeton du controle pour un envoi. Nul et vrai : aucun controle pose.
   /// Nul et faux : un controle est pose et n'a pas abouti.
+  /// PE-A5 : une cle nulle est relue avant l'envoi ([cleTurnstilePourEnvoi]).
   Future<({String? jeton, bool ok})> _jetonControle() async {
-    if (_cleControle == null) return (jeton: null, ok: true);
+    if (await cleTurnstilePourEnvoi(ref) == null) {
+      return (jeton: null, ok: true);
+    }
     final String? jeton = await _controle.jetonPourEnvoi();
     return (jeton: jeton, ok: jeton != null);
   }
 
-  /// Apres un envoi : le jeton est use, un autre est demande.
+  /// Apres un envoi : le jeton est use, un autre est demande. PE-A5 : sans
+  /// jeton (verification en echec), rien n'est relance : l'echec reste dit
+  /// sous le bouton, avec ses issues.
   void _apresEnvoi() {
-    if (_cleControle != null) _controle.apresEnvoi();
+    if (_cleControle != null && _controle.etat == EtatAntiRobot.pret) {
+      _controle.apresEnvoi();
+    }
   }
 
   /// Vrai quand l'ecran propose le champ de mot de passe de demonstration.
@@ -350,10 +357,8 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     });
     try {
       final ({String? jeton, bool ok}) controle = await _jetonControle();
-      if (!controle.ok) {
-        if (mounted) setState(() => _erreur = t.connexion.controle.erreur);
-        return;
-      }
+      // PE-A5 : l'echec et ses issues se disent sous le bouton (controle).
+      if (!controle.ok) return;
       await _ouvrirCompteInvite();
       await ref
           .read(serviceAuthProvider)
@@ -389,12 +394,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
     });
     try {
       final ({String? jeton, bool ok}) controle = await _jetonControle();
-      if (!controle.ok) {
-        if (mounted) {
-          setState(() => _erreurRenvoi = t.connexion.controle.erreur);
-        }
-        return;
-      }
+      if (!controle.ok) return;
       await _ouvrirCompteInvite();
       await ref
           .read(serviceAuthProvider)
@@ -505,6 +505,7 @@ class _ConnexionPageState extends ConsumerState<ConnexionPage> {
             cle: cle,
             controleur: _controle,
             envoiEnCours: enCours,
+            googlePropose: !_envoye && !_demo,
           );
     return CoquilleEntree(
       formulaire: (bool bureau) => _envoye

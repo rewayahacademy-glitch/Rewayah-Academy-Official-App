@@ -1792,8 +1792,10 @@ SELECT pg_temp.vrai((SELECT string_agg(DISTINCT transition::text, ',' ORDER BY t
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE pause <> 'interdite' AND geste NOT LIKE '%admission')
     = 'lever_pause,refuser,retirer'
   -- V1-b (03/11) : le candidat planifie aussi son entretien, en reservant un creneau.
+  -- PE-A6 REPRISE-CANDIDATURE (20/11, migration 20261130910000) : le candidat reprend lui-meme sa candidature retiree
+  -- (transition 19, sans motif pour lui).
   AND (SELECT string_agg(geste, ',' ORDER BY geste) FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (auteurs) AND geste NOT LIKE '%admission')
-    = 'enregistrer_reponses,envoyer_reponses,planifier_entretien,retirer'
+    = 'enregistrer_reponses,envoyer_reponses,planifier_entretien,reprendre,retirer'
   AND NOT EXISTS (SELECT 1 FROM private.candidature_gestes_regles WHERE 'candidat' = ANY (motif_requis)),
   'regles : motif exige ou la section 4.2 le dit (7, 12, 15, 16, 17 direction, 18 pose, 19, 20, 21, 23, 25, 44, 45, 46, 47, 48) ; en pause seuls lever, refuser, retirer');
 
@@ -1911,7 +1913,8 @@ BEGIN
   -- BE-1h (16/11) : refaire_entretien ; COMPLEMENT-SALLE-EXAMEN (17/11) : trois variantes de plus, trente-trois.
   -- APRES-CONFIRMEE (17/11) : deux variantes de plus, trente-cinq.
   -- DEPLACER-ENTRETIEN (17/11) : une variante de plus, trente-six.
-  PERFORM pg_temp.vrai(v_n = 36, 'L2-9 : les trente-six variantes de la table des regles');
+  -- PE-A6 REPRISE-CANDIDATURE (20/11) : reprendre (candidat, issue retiree) : trente-sept.
+  PERFORM pg_temp.vrai(v_n = 37, 'L2-9 : les trente-sept variantes de la table des regles');
 END $l2_9$;
 
 -- Un geste de la direction de bout en bout par le moteur (c10) : refus avec
@@ -2425,8 +2428,8 @@ SELECT pg_temp.vrai(pg_temp.lu('cond3') = '{"disponible": false}'::jsonb
 
 DO $fin$
 BEGIN
-  IF current_setting('test.n')::int <> 475 THEN
-    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 475 attendus (418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11 + 6 de refaire_entretien, 16/11 + 18 de COMPLEMENT-SALLE-EXAMEN, 17/11 : 3 variantes a motif x 6 + 12 d''APRES-CONFIRMEE, 17/11 : 2 variantes a motif x 6 + 6 de deplacer_entretien, 17/11)', current_setting('test.n');
+  IF current_setting('test.n')::int <> 476 THEN
+    RAISE EXCEPTION 'CAND-L2A1 ROUGE : % controles executes, 476 attendus (1 de reprendre, PE-A6, 20/11 : la regle refusee en pause + 418 + com_ma_candidature + 2 PHOTO-FIGEE, 08/11 + 6 de debloquer_versement, 16/11 + 6 de dispenser_entretien, 16/11 + 6 de refaire_entretien, 16/11 + 18 de COMPLEMENT-SALLE-EXAMEN, 17/11 : 3 variantes a motif x 6 + 12 d''APRES-CONFIRMEE, 17/11 : 2 variantes a motif x 6 + 6 de deplacer_entretien, 17/11)', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A1 : % controles verts', current_setting('test.n');
 END $fin$;

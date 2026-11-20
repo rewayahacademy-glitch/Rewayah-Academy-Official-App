@@ -535,7 +535,17 @@ void main() {
           ),
         );
         expect(find.byType(CartePartage), findsNothing, reason: '$issue');
-        expect(find.text(t.attente.seDeconnecter), findsOneWidget);
+        // PE-B4 (20/11/2026) : le portail est l'accueil du candidat ; son
+        // onglet Dossier dit l'issue (« Se deconnecter » vit dans Academie).
+        expect(
+          find.text(
+            issue == IssueCandidature.refusee
+                ? t.recrutement.portail.refuseeTitre
+                : t.recrutement.portail.retireeTitre,
+          ),
+          findsOneWidget,
+          reason: '$issue',
+        );
       }
     });
 

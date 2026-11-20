@@ -60,6 +60,15 @@ abstract interface class PortCandidaturesDirection {
     required int page,
   });
 
+  /// « Selectionner les N resultats » (PE-LISTE-CANDIDATURES) : le nombre
+  /// exact et les identifiants de tous les resultats de [filtre], dans l'ordre
+  /// de [tri], meme portee que [lister]. Journalise cote serveur.
+  /// `CapaciteIndisponible('CAND-BR-02')` tant que le serveur ne la sert pas.
+  Future<SelectionCandidatures> selectionnerTout({
+    required FiltreCandidatures filtre,
+    required TriCandidatures tri,
+  });
+
   /// Le dossier d'une candidature, dans la portee de genre du lecteur.
   ///
   /// [CandidatureHorsPortee] quand elle est de l'autre cote (le serveur trace la

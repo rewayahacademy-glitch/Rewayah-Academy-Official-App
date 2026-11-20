@@ -58,12 +58,12 @@ enum FormeModale {
 /// a 3) : le titre et le corps defilent ensemble, dans la seule barre de
 /// defilement de la surface. Un contenu qui tient dans l'ecran donne une
 /// surface a sa hauteur, comme avant. Un contenu qui ne tient pas fait prendre
-/// a la surface toute la hauteur que lui laisse la route (feuille plein ecran
-/// au telephone, pleine hauteur bornee en largeur a la tablette, boite pleine
-/// hauteur de la fenetre au bureau, marges du gabarit) : elle **est** alors
-/// l'ecran, et rien ne defile dans un cadre pose au milieu. Seule une barre
-/// fine reste en haut : la poignee, et la croix « Fermer » quand elle existe.
-/// La zone [actions], deja collee au pied, y reste.
+/// a la surface toute la hauteur que lui laisse la route (feuille a 90 % de
+/// l'ecran au telephone et a la tablette depuis PE-D3, boite pleine hauteur
+/// de la fenetre au bureau, marges du gabarit) : le titre et le corps y
+/// defilent d'un seul tenant, et rien ne defile dans un cadre pose au milieu.
+/// Seule une barre fine reste en haut : la poignee, et la croix « Fermer »
+/// quand elle existe. La zone [actions], deja collee au pied, y reste.
 ///
 /// Le motif de mouvement est celui de `docs/archive/2026-09-pre-remise-a-plat/design/04-systeme-mouvement.md`
 /// section 3 : 280 ms a l'ouverture, 200 ms a la fermeture, voile a 0,32
@@ -164,6 +164,14 @@ class AppBottomSheet extends StatefulWidget {
       ),
     ),
   );
+
+  /// PE-D3 : la part de la hauteur de l'ecran qu'une feuille ne depasse
+  /// jamais (Material 3 et Apple HIG : la page reste visible au-dessus).
+  static const double partHauteurMax = 0.9;
+
+  /// La hauteur maximale d'une feuille sur un ecran haut de [hauteurEcran].
+  static double hauteurMaxFeuille(double hauteurEcran) =>
+      hauteurEcran * partHauteurMax;
 
   /// Largeur de la poignee de glissement.
   static const double largeurPoignee = AppSpacing.section;
@@ -303,9 +311,16 @@ class AppBottomSheet extends StatefulWidget {
       // Le voile du theme, sombre dans les deux themes (voir plus haut).
       barrierColor: palette.voile,
       // Tablette : la feuille garde sa forme mais ne s'etire plus.
-      constraints: forme == FormeModale.feuilleBornee
-          ? const BoxConstraints(maxWidth: AppPage.largeurDialogue)
-          : null,
+      // PE-D3 (directeur, 19/11/2026 ; contrat de navigation §1) : jamais
+      // plus de 90 % de la hauteur de l'ecran. Au-dessus, la page voilee
+      // reste visible (un toucher la ferme) et la poignee ne passe jamais
+      // sous la barre d'etat : elle reste a portee du pouce.
+      constraints: BoxConstraints(
+        maxWidth: forme == FormeModale.feuilleBornee
+            ? AppPage.largeurDialogue
+            : double.infinity,
+        maxHeight: hauteurMaxFeuille(MediaQuery.sizeOf(context).height),
+      ),
       // L'ombre et le filet viennent d'AppElevation, sur la surface elle-meme
       // (voir `build`) : le `Material` de la feuille ne fait que clipper les
       // coins.
@@ -530,7 +545,17 @@ class _AppBottomSheetEtat extends State<AppBottomSheet> {
         ombres: AppElevation.niveau3(palette.ombre),
       ),
       child: Padding(
-        padding: EdgeInsets.all(dialogue ? AppSpacing.xxl : metriques.marge),
+        // PE-D3 : au telephone, le pied de la feuille (ses actions) reste
+        // au-dessus de la zone systeme (barre de gestes, indicateur
+        // d'accueil) ; clavier ouvert, cette zone vaut zero.
+        padding: dialogue
+            ? const EdgeInsets.all(AppSpacing.xxl)
+            : EdgeInsetsDirectional.fromSTEB(
+                metriques.marge,
+                metriques.marge,
+                metriques.marge,
+                metriques.marge + MediaQuery.paddingOf(context).bottom,
+              ),
         child: _defilerSiBasse(
           basse,
           Column(

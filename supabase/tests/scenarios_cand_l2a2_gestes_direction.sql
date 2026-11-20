@@ -364,7 +364,8 @@ BEGIN
     'la cle des jetons de lot : une ligne engendree par la base, 64 signes au moins');
   -- Les regles de l'admission (lot C, gestes *_admission) ont leur scenario.
   PERFORM pg_temp.vrai((SELECT count(*) FROM private.candidature_gestes_regles
-                         WHERE geste NOT LIKE '%admission') = 36,
+                         WHERE geste NOT LIKE '%admission') = 37,
+    -- PE-A6 REPRISE-CANDIDATURE (20261130910000, 20/11) : reprendre, transition 19, auteur candidat, soit 37.
     -- V1-b (03/11) : planifier_entretien variante 2, auteur candidat (reservation d'un creneau).
     -- VERSEMENT-QUESTIONS (16/11, transition 44), BE-1g (16/11, transition 45) et BE-1h REFAIRE-ENTRETIEN
     -- (17/11, migration 20261129700000, transition 46) : trois regles de direction de plus, soit 30 ;
@@ -1127,7 +1128,9 @@ DO $non_groupable$
 DECLARE
   g text;
 BEGIN
-  FOREACH g IN ARRAY ARRAY['inviter', 'consigner_prevenu', 'admettre_verifications', 'demander_complement', 'rouvrir',
+  -- PE-LISTE-CANDIDATURES (20261130930000, 20/11/2026) : admettre_verifications et demander_complement se groupent
+  -- desormais (scenarios_pe_liste_candidatures.sql) ; les autres restent refuses.
+  FOREACH g IN ARRAY ARRAY['inviter', 'consigner_prevenu', 'rouvrir',
                            'confirmer_moyen_paiement', 'geste_inconnu'] LOOP
     PERFORM pg_temp.vrai(pg_temp.en(pg_temp.p('a1'), 'admin', pg_catalog.format(
         $$SELECT public.apercu_lot_candidats(%L, pg_temp.ids('lot10'))$$, g))
@@ -1945,8 +1948,10 @@ BEGIN
   -- 237 depuis SALLE-1 (07/11) : le courriel retenu_entretien de l'admission.
   -- 238 depuis NOTIF-RETENU (08/11) : la notification de la meme admission.
   -- 239 : et son echec n'empeche pas l'admission.
-  IF current_setting('test.n')::int <> 239 THEN
-    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 239 attendus', current_setting('test.n');
+  -- 237 : PE-LISTE-CANDIDATURES (20/11/2026) retire deux gestes de la boucle geste_non_groupable (admettre_verifications
+  -- et demander_complement se groupent ; leurs controles sont dans scenarios_pe_liste_candidatures.sql).
+  IF current_setting('test.n')::int <> 237 THEN
+    RAISE EXCEPTION 'CAND-L2A2 ROUGE : % controles executes, 237 attendus', current_setting('test.n');
   END IF;
   RAISE NOTICE 'CAND-L2A2 : % controles verts', current_setting('test.n');
 END $fin$;
