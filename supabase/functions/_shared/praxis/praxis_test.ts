@@ -82,7 +82,7 @@ Deno.test('R2 : tools/list est la liste blanche exacte, sans alerter_responsable
   const { porte } = faux()
   const l = await (await traiter(requete({ jsonrpc: '2.0', id: 1, method: 'tools/list' }), porte)).json()
   const noms = l.result.tools.map((t: { name: string }) => t.name).sort()
-  assertEquals(noms, ['annoncer', 'boite', 'calendrier_ajouter', 'calendrier_lire', 'demander_equipe', 'ecrire', 'etat', 'fil', 'lire', 'preparer', 'question_traitee', 'rendre_compte', 'reponses_equipe', 'terminer'])
+  assertEquals(noms, ['annoncer', 'boite', 'boite_candidats', 'calendrier_ajouter', 'calendrier_lire', 'demander_equipe', 'dossier', 'ecrire', 'etat', 'fil', 'lire', 'noter_impression', 'objectif_clore', 'objectif_fixer', 'objectifs_lire', 'ouvrir', 'preparer', 'question_traitee', 'ranger', 'rendre_compte', 'reponses_equipe', 'terminer'])
   for (const t of l.result.tools) assertEquals(t.inputSchema.additionalProperties, false)
   const fonctions = OUTILS.map((o) => o.fonction).sort()
   assertEquals(new Set(fonctions).size, fonctions.length) // une fonction par outil
@@ -130,6 +130,18 @@ Deno.test('R1 : tout parametre hors schema est refuse avant la base', async () =
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: 'demain', duree_minutes: 30, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'planifier_entretien', candidature: 'CAND-00001', debut: '2026-12-01T10:00:00Z', duree_minutes: 5, texte: 'x', cle_idempotence: UUID2 }],
     ['preparer', { geste: 'admettre_verifications', candidature: 'CAND-00001', texte: 'x'.repeat(1001), cle_idempotence: UUID2 }],
+    // PX-3 : dispense, ranger, objectifs
+    ['preparer', { geste: 'dispenser_entretien', candidature: 'CAND-00001', categorie: 'ami', motif: 'm', texte: 'x', cle_idempotence: UUID2 }], // categorie hors liste
+    ['ranger', { candidature: 'CAND-00001', pile: 'refuses', raison: 'r', cle_idempotence: UUID2 }], // pile hors liste
+    ['ranger', { candidature: 'CAND-00001', pile: 'incomplet', raison: 'r'.repeat(201), cle_idempotence: UUID2 }],
+    ['ranger', { candidature: 'CAND-00001', pile: 'incomplet', raison: 'r' }], // cle d'idempotence absente
+    ['ranger', { candidature: UUID1, pile: 'incomplet', raison: 'r', cle_idempotence: UUID2 }], // jamais un identifiant interne
+    ['objectif_fixer', { periode: 'mois', date: '2026-12-01', libelle: 'l', cle_idempotence: UUID2 }],
+    ['objectif_fixer', { periode: 'jour', date: '2026-12-01', libelle: 'l'.repeat(201), cle_idempotence: UUID2 }],
+    ['objectif_fixer', { periode: 'jour', date: '2026-12-01', libelle: 'l', cible: 0, cle_idempotence: UUID2 }],
+    ['objectif_clore', { objectif: UUID1, etat: 'ouvert' }],
+    ['objectif_clore', { objectif: 'x', etat: 'atteint' }],
+    ['objectifs_lire', { etat: 'supprimes' }],
     // PX-SUIVI : demander_equipe, reponses_equipe, question_traitee
     ['demander_equipe', { fil: UUID1 }], // question absente
     ['demander_equipe', { question: 'Q ?' }], // conversation absente

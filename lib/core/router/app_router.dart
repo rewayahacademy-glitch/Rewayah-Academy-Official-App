@@ -326,6 +326,7 @@ import 'etats_routeur.dart';
 import 'go_route_sure.dart';
 import 'page_differee.dart';
 import 'redirection.dart';
+import 'retour_bureau.dart';
 import 'routes.dart';
 
 /// Les ecrans charges a la demande par ce routeur (lot ouverture rapide,
@@ -3449,8 +3450,15 @@ class _CoquilleSecondaire extends ConsumerWidget {
         onCompte: () => aller(Routes.compte),
         // P1 : la deconnexion dans le menu du compte, en haut a droite.
         onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
-        // Retour vers l'Accueil admin partout (spec section 26 ter, Q14).
-        onRetour: () => aller(Routes.admin),
+        // BUREAU-NAV : une page du compte empilee se retire ; sinon l'Accueil.
+        onRetour: () {
+          final GoRouter routeur = GoRouter.of(context);
+          if (routeur.canPop()) {
+            routeur.pop();
+          } else {
+            aller(Routes.admin);
+          }
+        },
         // COM-F : la cloche et Le Studio, comme sur toute page admin. Le
         // Studio n'est montre que s'il a un serveur (PORTS-DIRECTION).
         onNotifications: () => aller(Routes.adminNotifications),
@@ -3873,110 +3881,139 @@ class _CoquilleAdmin extends ConsumerWidget {
             .value ??
         false;
 
-    return RaccourciRecherche(
-      actif: rechercheServie && !associe,
-      child: AdminShell(
-        onRechercheMetier: rechercheServie && !associe
-            ? () => aller(Routes.recherche)
-            : null,
-        domaines: associe
-            ? const <AdminDomaine>[AdminDomaine.personnes]
-            : domainesAdmin(voitDirection: voitDirection),
-        domaineActif: domaine,
-        onAller: aller,
-        onCompte: () => aller(Routes.compte),
-        // P1 : la deconnexion dans le menu du compte, en haut a droite.
-        onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
-        // Retour vers l'Accueil sur toute page admin sauf l'Accueil lui-meme
-        // (spec section 26 ter, Q14).
-        onRetour: domaine == AdminDomaine.accueil && !sousPage
-            ? null
-            : () => aller(Routes.admin),
-        cloche: urgentes == null || associe
-            ? null
-            : ClocheNotifications(
-                // Une seule cloche dans l'en-tete, celle des notifications :
-                // les alertes ont leur propre icone (garde-cap, 06/11/2026).
-                icone: AppIcons.avertissement,
-                onPress: () => aller(Routes.adminAlertes),
-                actif: surAlertes,
-                nonLues: urgentes,
-                libelleSemantique: switch (urgentes) {
-                  0 => t.alertes.cloche,
-                  1 => t.alertes.clocheUneUrgente,
-                  _ => t.alertes.clocheUrgentes(nombre: urgentes),
-                },
-              ),
-        messages: associe || (messagesNonLus == 0 && !surMessages)
-            ? null
-            : ClocheNotifications(
-                key: const ValueKey<String>('admin-messages-non-lus'),
-                icone: AppIcons.discussion,
-                onPress: () => aller(Routes.adminCommunicationsMessages),
-                actif: surMessages,
-                nonLues: messagesNonLus,
-                libelleSemantique: messagesNonLus == 0
-                    ? t.com.messages.direct.icone
-                    : messagesNonLus == 1
-                    ? t.com.messages.direct.iconeUnNonLu
-                    : t.com.messages.direct.iconeNonLus(nombre: messagesNonLus),
-              ),
-        // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
-        // sous l'Accueil : le Centre de commande et la page des alertes
-        // montrent deja l'alerte en tete (D7, une information une fois).
-        // Pose seulement quand une alerte urgente est ouverte ; fige en haut
-        // par la coquille, hors de la zone qui defile (ALERTE-1b).
-        bandeau:
-            associe || domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
-            ? null
-            : BandeauAlerteUrgente(onOuvrir: () => aller(Routes.adminAlertes)),
-        // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
-        // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
-        // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
-        // role.
-        onNotifications: associe
-            ? null
-            : () => aller(Routes.adminNotifications),
-        notificationsActives: notificationsOuvertes,
-        // PORTS-DIRECTION : le Studio n'est montre que s'il a un serveur.
-        onStudio: !associe && ref.watch(studioOuvertProvider)
-            ? () => aller(Routes.adminStudio)
-            : null,
-        // NAV-SOUS-LIENS (14/11/2026) : les pages de chaque domaine dans le
-        // panneau (tablette et ordinateur), avec les memes interrupteurs que
-        // les pages (PORTS-DIRECTION). La politique KYC n'y est pas : savoir
-        // qui peut la regler demande de lire la politique, et la coquille ne
-        // lit rien de plus sur chaque page ; quand elle s'ouvre a quelqu'un,
-        // les pages de Configuration gardent leur selecteur (le panneau ne
-        // porte pas toutes leurs sections).
-        sousLiens: associe
-            ? <AdminDomaine, List<SousLien>>{
-                AdminDomaine.personnes: <SousLien>[
-                  (
-                    libelle: t.admin.candidatures.titre,
-                    chemin: Routes.adminPersonnesCandidatures,
+    // BUREAU-NAV (contrat §4) : la touche retour du systeme fait comme la
+    // fleche. Ce qui est le plus proche se ferme d'abord (une boite, le detail
+    // d'une liste, une page empilee : le navigateur et les `PopScope` des
+    // pages decident) ; seulement quand rien ne s'est ferme (bas de la pile :
+    // lien direct, rechargement, onglet), le parent logique au lieu de
+    // quitter. Sur l'Accueil, rien ne change (au telephone, on quitte).
+    return BackButtonListener(
+      onBackButtonPressed: () async {
+        if (domaine == AdminDomaine.accueil && !sousPage) return false;
+        if (!(ModalRoute.of(context)?.isCurrent ?? true)) return false;
+        if (await Navigator.of(context).maybePop()) return true;
+        if (!context.mounted) return true;
+        retourBureau(context);
+        return true;
+      },
+      child: RaccourciRecherche(
+        actif: rechercheServie && !associe,
+        child: AdminShell(
+          onRechercheMetier: rechercheServie && !associe
+              ? () => aller(Routes.recherche)
+              : null,
+          domaines: associe
+              ? const <AdminDomaine>[AdminDomaine.personnes]
+              : domainesAdmin(voitDirection: voitDirection),
+          domaineActif: domaine,
+          onAller: aller,
+          onCompte: () => aller(Routes.compte),
+          // P1 : la deconnexion dans le menu du compte, en haut a droite.
+          onDeconnexion: () => unawaited(seDeconnecter(context, ref)),
+          // BUREAU-NAV (contrat de navigation, §4 et §5) : le retour ramene
+          // d'ou l'on vient. Une page empilee est retiree (la precedente
+          // revient avec son adresse, donc ses filtres) ; sinon (lien direct,
+          // rechargement, onglet de la barre laterale) le parent logique, et
+          // l'Accueil a la racine d'une rubrique. Aucun retour sur l'Accueil.
+          onRetour: domaine == AdminDomaine.accueil && !sousPage
+              ? null
+              : () => retourBureau(context),
+          cloche: urgentes == null || associe
+              ? null
+              : ClocheNotifications(
+                  // Une seule cloche dans l'en-tete, celle des notifications :
+                  // les alertes ont leur propre icone (garde-cap, 06/11/2026).
+                  icone: AppIcons.avertissement,
+                  onPress: () => aller(Routes.adminAlertes),
+                  actif: surAlertes,
+                  nonLues: urgentes,
+                  libelleSemantique: switch (urgentes) {
+                    0 => t.alertes.cloche,
+                    1 => t.alertes.clocheUneUrgente,
+                    _ => t.alertes.clocheUrgentes(nombre: urgentes),
+                  },
+                ),
+          // BUREAU-NAV (contrat §2, PE-C7) : l'icone des messages reste a sa
+          // place, compteur a zero compris ; seul l'associe ne l'a pas.
+          messages: associe
+              ? null
+              : ClocheNotifications(
+                  key: const ValueKey<String>('admin-messages-non-lus'),
+                  icone: AppIcons.discussion,
+                  onPress: () => aller(Routes.adminCommunicationsMessages),
+                  actif: surMessages,
+                  nonLues: messagesNonLus,
+                  libelleSemantique: messagesNonLus == 0
+                      ? t.com.messages.direct.icone
+                      : messagesNonLus == 1
+                      ? t.com.messages.direct.iconeUnNonLu
+                      : t.com.messages.direct.iconeNonLus(
+                          nombre: messagesNonLus,
+                        ),
+                ),
+          // Le bandeau d'alerte urgente, en tete de toute page ouverte, sauf
+          // sous l'Accueil : le Centre de commande et la page des alertes
+          // montrent deja l'alerte en tete (D7, une information une fois).
+          // Pose seulement quand une alerte urgente est ouverte ; fige en haut
+          // par la coquille, hors de la zone qui defile (ALERTE-1b).
+          bandeau:
+              associe || domaine == AdminDomaine.accueil || (urgentes ?? 0) == 0
+              ? null
+              : BandeauAlerteUrgente(
+                  onOuvrir: () => aller(Routes.adminAlertes),
+                ),
+          // COM-F : la cloche mene a la `NotificationsPage` existante, l'action
+          // « Le Studio » au Studio (Q1). Posees par la route, sous le prefixe
+          // `/admin` que la garde reserve a l'admin : la coquille ne lit aucun
+          // role.
+          onNotifications: associe
+              ? null
+              : () => aller(Routes.adminNotifications),
+          notificationsActives: notificationsOuvertes,
+          // PORTS-DIRECTION : le Studio n'est montre que s'il a un serveur.
+          onStudio: !associe && ref.watch(studioOuvertProvider)
+              ? () => aller(Routes.adminStudio)
+              : null,
+          // NAV-SOUS-LIENS (14/11/2026) : les pages de chaque domaine dans le
+          // panneau (tablette et ordinateur), avec les memes interrupteurs que
+          // les pages (PORTS-DIRECTION). La politique KYC n'y est pas : savoir
+          // qui peut la regler demande de lire la politique, et la coquille ne
+          // lit rien de plus sur chaque page ; quand elle s'ouvre a quelqu'un,
+          // les pages de Configuration gardent leur selecteur (le panneau ne
+          // porte pas toutes leurs sections).
+          sousLiens: associe
+              ? <AdminDomaine, List<SousLien>>{
+                  AdminDomaine.personnes: <SousLien>[
+                    (
+                      libelle: t.admin.candidatures.titre,
+                      chemin: Routes.adminPersonnesCandidatures,
+                    ),
+                  ],
+                }
+              : sousLiensAdmin(
+                  vueGlobaleFinance: ref.watch(
+                    vueGlobaleFinanceOuverteProvider,
                   ),
-                ],
-              }
-            : sousLiensAdmin(
-                vueGlobaleFinance: ref.watch(vueGlobaleFinanceOuverteProvider),
-                reserveDelegation: ref.watch(reserveDelegationOuverteProvider),
-              ),
-        cheminCourant: adresseRouteurSur(context)?.path,
-        // MESSAGERIE-PLEIN-ECRAN : au telephone, une conversation ouverte
-        // porte sa propre barre ; la coquille s'efface.
-        conversationOuverte: Routes.estConversationOuverte(
-          adresseRouteurSur(context)?.path ?? '',
+                  reserveDelegation: ref.watch(
+                    reserveDelegationOuverteProvider,
+                  ),
+                ),
+          cheminCourant: adresseRouteurSur(context)?.path,
+          // MESSAGERIE-PLEIN-ECRAN : au telephone, une conversation ouverte
+          // porte sa propre barre ; la coquille s'efface.
+          conversationOuverte: Routes.estConversationOuverte(
+            adresseRouteurSur(context)?.path ?? '',
+          ),
+          // BE-2b : la coquille annonce aux pages celles qu'elle laisse ouvrir
+          // (navigation par role, la barriere reste la RLS) ; une page ne lit
+          // jamais le role.
+          child: associe
+              ? PagesOuvertesCoquille(
+                  chemins: const <String>{Routes.adminPersonnesCandidatures},
+                  child: child,
+                )
+              : child,
         ),
-        // BE-2b : la coquille annonce aux pages celles qu'elle laisse ouvrir
-        // (navigation par role, la barriere reste la RLS) ; une page ne lit
-        // jamais le role.
-        child: associe
-            ? PagesOuvertesCoquille(
-                chemins: const <String>{Routes.adminPersonnesCandidatures},
-                child: child,
-              )
-            : child,
       ),
     );
   }
