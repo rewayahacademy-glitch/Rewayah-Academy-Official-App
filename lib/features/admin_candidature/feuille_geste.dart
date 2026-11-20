@@ -38,6 +38,7 @@ import '../../core/candidature/port_ma_candidature.dart'
 import '../../core/capacites/capacite_indisponible.dart';
 import '../../core/capacites/permission_insuffisante.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_delais.dart';
 import '../../core/theme/app_gabarit.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
@@ -472,8 +473,17 @@ class _EtatFeuille extends ConsumerState<FeuilleGeste> {
       if (port == null) {
         throw const CapaciteIndisponible(dependanceGestesCandidature);
       }
-      final ResultatGeste resultat = await port.geste(_demande());
+      // PE-D12 : jamais un bouton qui tourne sans fin. Au-dela du delai, le
+      // geste est « non confirme » (la meme cle est gardee, « Reessayer » le
+      // rejoue sans le refaire).
+      final ResultatGeste resultat = await port
+          .geste(_demande())
+          .timeout(
+            AppDelais.requeteMax,
+            onTimeout: () => throw const GesteNonConfirme(),
+          );
       if (!mounted) return;
+      setState(() => _enCours = false);
       widget.onFini(
         SortieFeuille(IssueFeuille.fait, _geste, rejoue: resultat.rejoue),
       );
