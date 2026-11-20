@@ -35,7 +35,8 @@ enum HumeurPraxis {
   /// La tete penchee, une main au menton, la bouche en rond.
   curieux,
 
-  /// Un blocage a signaler : la bouche tombe, la tete se baisse.
+  /// Un blocage a signaler : la bouche se ferme, serieuse, la tete se baisse
+  /// un peu. Jamais un visage triste.
   soucieux,
 
   /// Les larmes partent des yeux et tombent sous le visage.
@@ -310,8 +311,11 @@ class EtatPraxisVivant extends State<PraxisVivant>
         ouvre = 0.3;
         penche = 0.12;
       case HumeurPraxis.soucieux:
-        sourire = -0.6;
-        large = 0.85;
+        // Serieux, pas triste : il accueille la direction chaque jour, et un
+        // blocage qui dure ne doit pas lui donner un visage abattu (pilote,
+        // 20/11/2026). La bouche tombante reste a [HumeurPraxis.pleure].
+        sourire = -0.12;
+        large = 0.8;
         penche = -0.05;
       case HumeurPraxis.pleure:
         sourire = -0.8;
