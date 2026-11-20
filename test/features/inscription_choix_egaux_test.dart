@@ -11,6 +11,7 @@ import 'package:rewayah_academy/features/inscription/etapes/usage_etape.dart';
 
 import '../capture/outil_capture.dart' show chargerPolicesDuDepot;
 import '../support/harnais.dart';
+import 'inscription/portes_aide.dart';
 
 Future<(Rect, Rect)> _titres(
   WidgetTester tester,
@@ -30,6 +31,8 @@ Future<(Rect, Rect)> _titres(
     ),
   );
   await tester.pumpAndSettle();
+  // PE-A3 : les deux cartes suivent la porte « Apprendre ».
+  await passerApprendre(tester);
   expect(tester.takeException(), isNull);
   return (
     tester.getRect(find.text(t.inscription.usage.moiTitre)),

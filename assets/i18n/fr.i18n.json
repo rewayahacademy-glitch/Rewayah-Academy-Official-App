@@ -1218,6 +1218,10 @@
     "cadreNonPublie": "L'envoi de votre candidature sera possible quand le cadre religieux et pédagogique sera publié."
   },
   "connexion": {
+    "candidat": {
+      "titre": "Votre candidature d'enseignant",
+      "phrase": "Vous arrivez par l'invitation de Rewayah Academy. Votre candidature vous attend\u00a0: écrivez l'adresse qui a reçu ce courriel, nous y envoyons votre lien pour entrer."
+    },
     "titre": "Se connecter",
     "sessionTermineeTitre": "Vous avez été déconnecté",
     "sessionTermineePhrase": "Votre session a pris fin\u00a0: ce compte, ou un autre, s'est connecté ailleurs, dans ce navigateur ou sur un autre appareil. Reconnectez-vous ici. Pour utiliser deux comptes en même temps, ouvrez le second dans une fenêtre de navigation privée ou sur un autre appareil.",
@@ -1441,6 +1445,18 @@
       "enseignantPostuler": "Vous souhaitez enseigner à Rewayah\u00a0?",
       "deposerCandidature": "Déposer ma candidature",
       "postulerIci": "Vous voulez enseigner chez nous\u00a0? Postulez ici"
+    },
+    "porte": {
+      "question": "Que venez-vous faire à Rewayah Academy\u00a0?",
+      "explication": "Choisissez votre espace. Vous ne verrez ensuite que les questions de cet espace.",
+      "apprendreTitre": "Apprendre",
+      "apprendreDescription": "Suivre les cours de l'académie, pour vous ou pour votre enfant. Vous direz ensuite pour qui.",
+      "apprendreExemple": "vous apprenez la récitation, ou vous inscrivez votre fille de 9 ans.",
+      "enseignerTitre": "Enseigner",
+      "enseignerDescription": "Déposer votre candidature d'enseignant. L'académie l'étudie avant toute classe.",
+      "enseignerExemple": "vous avez reçu une invitation de l'académie par courriel.",
+      "espaceEnseignant": "Candidature d'enseignant",
+      "espaceEleve": "Inscription d'un élève"
     },
     "recap": {
       "usage": "Type de compte",
