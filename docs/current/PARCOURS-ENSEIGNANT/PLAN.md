@@ -1241,3 +1241,33 @@ maquette en cours, à republier à la même adresse.
 - **Le salut de Praxis** : il ne répond « وعليكم السلام » qu'à quelqu'un qui vient de saluer ; si la
   personne répondait elle-même à un salut, il ouvre par « السلام عليكم ورحمة الله وبركاته » ; il ne
   redit pas comme une nouvelle ce que la direction a déjà annoncé (consigne de la routine, 04:56 UTC).
+
+### 18.7 Maquette « Praxis vous accueille », version 2 remise (20/11, 07:05 UTC)
+
+Republiée à la même adresse (lot PE-F8, maquette hors dépôt, en vrai Flutter). Statut : remise au
+directeur, **non vue ni validée par lui** ; jamais vue bouger en temps réel par le pilote (la machine
+de construction n'a pas de carte graphique : jugée sur images fixes et séquences au ralenti).
+
+Ce qui répond aux retours du §18.5 et du §18.6 :
+
+- **Lumière** : une seule source, la porte du logo ; chaque halo est un seul dégradé continu (plus
+  d'anneaux), couleurs limitées au blanc, au lilas, à la lavande et au violet ; ombre portée de Praxis
+  qui s'allonge quand il s'éloigne de la porte ; hors connexion, la porte s'éteint et la scène s'assombrit.
+- **Toque** : construite en volume sur le crâne ; elle ne descend plus dans le visage.
+- **Yeux** : ceux du Praxis d'origine, trait pour trait. Le pilote a retiré avant publication deux
+  ajouts de l'agent que le directeur n'avait pas autorisés : des sourcils dans sept expressions et des
+  yeux agrandis à l'étonnement. Les yeux ne font que cligner. Planche « origine | maquette » vérifiée.
+- **Google** conservé (bouton, fenêtre figurée, fermée sans choisir, compte non invité).
+- **Scénarios** : 20 situations de connexion, 3 de chargement, 8 de mise à jour (23 phrases d'attente),
+  6 réactions au toucher. « شكرًا على انتظارك » corrigé.
+
+Écarts connus, à juger par le directeur :
+
+- Praxis n'est pas au tiers supérieur de la scène (ses yeux sont vers 63 à 78 % de la hauteur) : plus
+  haut, il cachait la porte, donc la source de lumière.
+- La calotte noire de la toque est plus grande que dans le dessin d'origine.
+- Petit téléphone avec message d'erreur : scène réduite, une phrase sur deux lignes touche le bas du logo.
+- Thème sombre : logo en lavande et non en blanc.
+- Phrases arabes à relire par le directeur : « تمام. تفضّل معي », « هذا يدغدغني! », « لحظات وننتهي »,
+  « بدأنا. اترك الأمر لي », « اختر حسابك في Google » ; tout est au masculin générique.
+- Images par seconde sur ses appareils : non prouvées.
