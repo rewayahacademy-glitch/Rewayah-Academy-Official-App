@@ -20,6 +20,7 @@ import 'package:rewayah_academy/core/candidature/modeles_candidatures_direction.
     show LigneCandidature;
 import 'package:rewayah_academy/core/candidature/port_candidatures_direction.dart';
 import 'package:rewayah_academy/core/domain/enums.dart';
+import 'package:rewayah_academy/core/dossier/service_validation.dart';
 import 'package:rewayah_academy/core/enseignants/modeles_enseignants.dart';
 import 'package:rewayah_academy/core/enseignants/port_enseignants.dart';
 import 'package:rewayah_academy/core/i18n/strings.g.dart';
@@ -84,6 +85,15 @@ final List<CompteAdmin> _comptes = <CompteAdmin>[
   _compte(51, AppRole.accountant),
 ];
 
+PhaseEnseignant _phase(int i) => switch (i % 6) {
+  4 => PhaseEnseignant.enPoste,
+  5 => PhaseEnseignant.accueil,
+  3 when i > 8 => PhaseEnseignant.disponible,
+  _ => PhaseEnseignant.candidat,
+};
+
+// Dix-huit dossiers fictifs, chacun a son nom : deux personnes de meme nom
+// se liraient comme un doublon sur la planche.
 final List<LigneEnseignant> _enseignants = <LigneEnseignant>[
   for (int i = 0; i < 18; i++)
     LigneEnseignant(
@@ -91,13 +101,44 @@ final List<LigneEnseignant> _enseignants = <LigneEnseignant>[
         id: 'c$i',
         reference: 'CAND-${10000 + i}',
         nom:
-            '${_prenoms[(i + 2) % _prenoms.length]} ${_noms[i % _noms.length]}',
-        etape: i % 5 == 4
-            ? EtapeCandidature.confirmee
-            : EtapeCandidature.prequalification,
+            '${_prenoms[(i + 2) % _prenoms.length]} '
+            '${_noms[(i + i ~/ 12) % _noms.length]}',
+        etape: _phase(i) == PhaseEnseignant.candidat
+            ? EtapeCandidature.prequalification
+            : EtapeCandidature.confirmee,
+        // Un dossier confirme n'a plus d'etat d'examen ; les candidats sont
+        // « en examen » ou « a completer » : un filtre pose se voit dans la
+        // liste et dans le compteur.
+        etat: _phase(i) != PhaseEnseignant.candidat
+            ? null
+            : (i % 3 == 0
+                  ? EtatCandidature.aCompleter
+                  : EtatCandidature.enExamen),
       ),
-      phase: i % 5 == 4 ? PhaseEnseignant.enPoste : PhaseEnseignant.candidat,
-      quiAttend: i % 5 == 4 ? null : (i.isEven ? 'direction' : 'candidat'),
+      phase: _phase(i),
+      quiAttend: switch (_phase(i)) {
+        PhaseEnseignant.candidat => i.isEven ? 'direction' : 'candidat',
+        PhaseEnseignant.accueil => 'enseignant',
+        _ => null,
+      },
+    ),
+];
+
+/// Les pieces a verifier (etape d), personnes fictives.
+final List<DossierAValider> _pieces = <DossierAValider>[
+  for (int i = 0; i < 4; i++)
+    DossierAValider(
+      documentId: 'doc-$i',
+      profilId: 'pp-$i',
+      type: null,
+      cleObjet: null,
+      deposeLe: DateTime.now().subtract(Duration(days: 2 + i)),
+      prenom: _prenoms[(i + 6) % _prenoms.length],
+      nom: _noms[i % _noms.length],
+      identifiantImmuable: 'RA-26-${7700 + i}',
+      role: AppRole.teacher,
+      candidatureId: i.isEven ? 'c$i' : null,
+      candidatureReference: i.isEven ? 'CAND-${10000 + i}' : null,
     ),
 ];
 
@@ -126,12 +167,24 @@ class _Enseignants implements PortEnseignants {
     required FiltreEnseignants filtre,
     required TriEnseignants tri,
     required int page,
-  }) async => PageEnseignants(
-    lignes: _enseignants,
-    total: 608,
-    page: 1,
-    taillePage: 50,
-  );
+  }) async {
+    final List<LigneEnseignant> lignes = <LigneEnseignant>[
+      for (final LigneEnseignant l in _enseignants)
+        if (filtre.phase == null || l.phase == filtre.phase) l,
+    ];
+    return PageEnseignants(
+      lignes: lignes,
+      total: lignes.length,
+      page: 1,
+      taillePage: 50,
+      compteurs: CompteursEnseignants(
+        parPhase: <PhaseEnseignant, int>{
+          for (final PhaseEnseignant p in PhaseEnseignant.values)
+            p: _enseignants.where((LigneEnseignant l) => l.phase == p).length,
+        },
+      ),
+    );
+  }
 }
 
 Future<void> _monter(
@@ -147,6 +200,7 @@ Future<void> _monter(
         ...surchargesDemoAdmin(environnement: 'staging'),
         comptesProvider.overrideWith((Ref ref) async => _comptes),
         portEnseignantsProvider.overrideWithValue(_Enseignants()),
+        piecesAVerifierProvider.overrideWith((Ref ref) async => _pieces),
         portCandidaturesDirectionProvider.overrideWithValue(
           FauxCandidaturesDirection(
             capacitesRendues: capacitesGestes,
@@ -161,7 +215,7 @@ Future<void> _monter(
                     reference: l.dossier.reference,
                     nom:
                         '${_prenoms[(i + 2) % _prenoms.length]} '
-                        '${_noms[i % _noms.length]}',
+                        '${_noms[(i + i ~/ 12) % _noms.length]}',
                     recueLe: DateTime.now().subtract(const Duration(days: 12)),
                   ),
                 ),
@@ -282,6 +336,50 @@ void main() {
             telephone,
             ThemeMode.light,
             AppLocale.en,
+          ),
+          // Etape (d) : les vues de l'onglet des enseignants.
+          (
+            'vue_candidats_1440_fr_clair',
+            '$base?onglet=enseignants&vue=candidats&etat=enExamen'
+                '&element=CAND-10001',
+            bureau,
+            ThemeMode.light,
+            AppLocale.fr,
+          ),
+          (
+            'vue_actifs_1440_ar_clair',
+            '$base?onglet=enseignants&vue=actifs&element=CAND-10004',
+            bureau,
+            ThemeMode.light,
+            AppLocale.ar,
+          ),
+          (
+            'vue_candidats_390_fr_clair',
+            '$base?onglet=enseignants&vue=candidats&etat=aCompleter',
+            telephone,
+            ThemeMode.light,
+            AppLocale.fr,
+          ),
+          (
+            'vue_pieces_390_ar_clair',
+            '$base?onglet=enseignants&vue=pieces',
+            telephone,
+            ThemeMode.light,
+            AppLocale.ar,
+          ),
+          (
+            'vue_accueil_1440_en_sombre',
+            '$base?onglet=enseignants&vue=accueil&element=CAND-10005',
+            bureau,
+            ThemeMode.dark,
+            AppLocale.en,
+          ),
+          (
+            'vue_pieces_1440_fr_clair',
+            '$base?onglet=enseignants&vue=pieces&element=RA-26-7700',
+            bureau,
+            ThemeMode.light,
+            AppLocale.fr,
           ),
           (
             'familles_1024_fr_clair',

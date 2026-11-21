@@ -27,6 +27,7 @@ import '../../core/candidature/modeles_lot_candidatures.dart';
 import '../../core/candidature/port_candidatures_direction.dart';
 import '../../core/candidature/synthese_candidature.dart';
 import '../../core/i18n/strings.g.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_palette.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
@@ -39,6 +40,9 @@ import '../../core/widgets/status_pill.dart';
 import '../admin_candidature/geste_de_ligne.dart';
 import '../admin_candidature/gestes_proposes.dart';
 import '../admin_candidature/libelles_candidature.dart';
+import '../admin_candidature/navigation_dossier.dart'
+    show ReglagePasserAuSuivant;
+import '../admin_candidature/suivant_dossier.dart' show passerAuSuivantProvider;
 import '../admin_candidature/synthese_tete_dossier.dart';
 import '../admin_candidatures/libelles_candidatures.dart';
 import '../admin_candidatures/lot_candidatures.dart';
@@ -52,8 +56,18 @@ class ApercuCandidatPersonnes extends ConsumerStatefulWidget {
     required this.ligne,
     required this.onOuvrirDossier,
     this.onChange,
+    this.onSuivant,
     super.key,
   });
+
+  /// Etape (d) : ouvre l'apercu de la personne suivante de la liste, ou `null`
+  /// en fin de liste. Apres une decision enregistree, l'apercu y passe seul
+  /// quand le reglage « Passer au suivant apres une decision » est actif (le
+  /// meme reglage que le dossier complet).
+  final VoidCallback? onSuivant;
+
+  /// La cle de « Rester sur ce dossier ».
+  static const Key cleRester = ValueKey<String>('personnes-apercu-rester');
 
   /// La ligne de la liste (le dossier).
   final LigneCandidature ligne;
@@ -98,6 +112,23 @@ class _ApercuCandidatPersonnesState
   /// Le dossier se lit avant la feuille : le bouton le montre, pas au-dela.
   bool _lecture = false;
 
+  /// Le passage au suivant attend son instant (la phrase reste lisible).
+  Timer? _passage;
+
+  @override
+  void dispose() {
+    _passage?.cancel();
+    super.dispose();
+  }
+
+  /// Reste sur ce dossier : le suivant ne s'ouvre pas. La decision, elle, est
+  /// deja enregistree ; la liste se relit.
+  void _rester() {
+    _passage?.cancel();
+    setState(() => _passage = null);
+    widget.onChange?.call();
+  }
+
   Future<void> _geste(GesteCandidature geste, CapacitesCandidatures c) async {
     if (_enCours) return;
     setState(() {
@@ -117,15 +148,30 @@ class _ApercuCandidatPersonnesState
       },
     );
     if (!mounted) return;
+    // Decision enregistree, reglage actif, une personne suit : l'apercu passe
+    // a elle apres un instant. La liste ne se relit qu'apres : relue avant,
+    // la personne traitee pourrait sortir du filtre et l'apercu se vider.
+    final VoidCallback? suivant = widget.onSuivant;
+    final bool passer =
+        r.issue == IssueGesteDeLigne.fait &&
+        suivant != null &&
+        ref.read(passerAuSuivantProvider);
     if (r.aRelire) {
       ref.invalidate(apercuCandidatureProvider(widget.ligne.id));
-      widget.onChange?.call();
+      if (!passer) widget.onChange?.call();
     }
     setState(() {
       _enCours = false;
       _lecture = false;
-      _message = r.message;
+      _message = passer ? t.recrutement.suivant.decisionEnregistree : r.message;
       _echec = r.echec;
+      if (passer) {
+        _passage = Timer(AppMouvement.retourLocalMaintien, () {
+          if (!mounted) return;
+          suivant();
+          widget.onChange?.call();
+        });
+      }
     });
   }
 
@@ -262,6 +308,24 @@ class _ApercuCandidatPersonnesState
               ),
           ],
         ),
+        if (_passage != null) ...<Widget>[
+          Ecart.vSm,
+          Align(
+            alignment: AlignmentDirectional.centerStart,
+            child: LienFleche(
+              key: ApercuCandidatPersonnes.cleRester,
+              libelle: t.recrutement.suivant.rester,
+              fleche: false,
+              alignerEnDebut: true,
+              onPress: _rester,
+            ),
+          ),
+        ],
+        // Le meme reglage que le dossier complet : automatique ou manuel.
+        if (widget.onSuivant != null) ...<Widget>[
+          Ecart.vLg,
+          const ReglagePasserAuSuivant(),
+        ],
         Ecart.vMd,
         Align(
           alignment: AlignmentDirectional.centerStart,

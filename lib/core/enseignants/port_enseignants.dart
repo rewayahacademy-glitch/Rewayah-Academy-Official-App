@@ -8,6 +8,7 @@ library;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart' show FutureProviderFamily;
 
+import '../candidature/modeles_candidature_detail.dart' show VoisinsCandidature;
 import '../capacites/capacite_indisponible.dart';
 import 'modeles_enseignants.dart';
 
@@ -22,6 +23,20 @@ abstract interface class PortEnseignants {
     required FiltreEnseignants filtre,
     required TriEnseignants tri,
     required int page,
+  });
+}
+
+/// PERSONNES-UNE-PAGE (d) : les voisins d'un enseignant dans la liste
+/// (`voisins_enseignant`, migration 20261130969000), aux memes filtres et au
+/// meme tri que [PortEnseignants.lister]. Une interface a part : un port qui
+/// ne la porte pas (avant le branchement, ou dans un test) n'affiche
+/// simplement ni rang ni suivant.
+abstract interface class PortVoisinsEnseignant {
+  /// Le precedent, le suivant, le rang et le total de [reference] (`CAND-…`).
+  Future<VoisinsCandidature> voisins(
+    String reference, {
+    required FiltreEnseignants filtre,
+    required TriEnseignants tri,
   });
 }
 

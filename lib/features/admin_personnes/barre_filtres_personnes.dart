@@ -4,6 +4,11 @@
 // compteur (« 37 sur 563 »). Rien ne s'applique derriere une boite : seuls le
 // compteur et les puces changent en haut.
 //
+// Etape (d) : quand les types ont une famille (les 26 filtres des candidats),
+// le menu a trois niveaux : la famille, le type, la valeur (codes `f:`, `t:`,
+// `v:`). Un type a plusieurs valeurs (les jours) ajoute ou retire la valeur
+// touchee ; sa puce les dit toutes.
+//
 // Composants du core, sans copie : `ChampRecherche`, `MenuFiltre` (le meme
 // bouton rouvre sa liste sur les valeurs du type choisi), `FiltresActifs`.
 library;
@@ -85,6 +90,24 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
   /// Le type dont le menu montre les valeurs, le temps de sa reouverture.
   String? _type;
 
+  /// La famille dont le menu montre les types, le temps de sa reouverture.
+  String? _famille;
+
+  /// Rouvre le menu sur le niveau que [poser] vient de choisir.
+  void _rouvrir(VoidCallback poser) {
+    setState(poser);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _menu.ouvrir();
+      // La liste ouverte garde son niveau ; le bouton, lui, revient au
+      // premier niveau pour la prochaine fois (meme si on ferme sans choisir).
+      setState(() {
+        _type = null;
+        _famille = null;
+      });
+    });
+  }
+
   @override
   void didUpdateWidget(BarreFiltresPersonnes ancien) {
     super.didUpdateWidget(ancien);
@@ -111,20 +134,27 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
 
   void _choisir(String? code) {
     if (code == null) return;
-    final List<String> parts = code.split(':');
-    if (parts.first == 't') {
-      // Le type est choisi : le meme bouton rouvre sa liste sur les valeurs.
-      setState(() => _type = parts[1]);
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        if (!mounted) return;
-        _menu.ouvrir();
-        // La liste ouverte garde ses valeurs ; le bouton, lui, revient aux
-        // types pour la prochaine fois (meme si on ferme sans choisir).
-        setState(() => _type = null);
-      });
+    final int coupe = code.indexOf(':');
+    final String niveau = code.substring(0, coupe);
+    final String reste = code.substring(coupe + 1);
+    if (niveau == 'f') {
+      // La famille est choisie : le meme bouton rouvre sa liste sur ses types.
+      _rouvrir(() => _famille = reste);
       return;
     }
-    widget.onFiltre(parts[1], parts[2]);
+    if (niveau == 't') {
+      // Le type est choisi : le meme bouton rouvre sa liste sur les valeurs.
+      _rouvrir(() => _type = reste);
+      return;
+    }
+    final int coupeValeur = reste.indexOf(':');
+    final String cle = reste.substring(0, coupeValeur);
+    final String valeur = reste.substring(coupeValeur + 1);
+    final TypeFiltrePersonnes? type = widget.types
+        .where((TypeFiltrePersonnes x) => x.cle == cle)
+        .firstOrNull;
+    if (type == null) return;
+    widget.onFiltre(cle, type.apresChoix(widget.filtres[cle], valeur));
   }
 
   @override
@@ -136,17 +166,28 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
     final TypeFiltrePersonnes? ouvert = widget.types
         .where((TypeFiltrePersonnes x) => x.cle == _type)
         .firstOrNull;
-    final List<EntreeFiltre<String>> entrees = ouvert == null
+    // Les familles, dans l'ordre de leur premier type ; aucune : deux niveaux.
+    final List<String> familles = <String>{
+      for (final TypeFiltrePersonnes x in widget.types)
+        if (x.famille case final String f) f,
+    }.toList(growable: false);
+    final List<EntreeFiltre<String>> entrees = ouvert != null
         ? <EntreeFiltre<String>>[
-            for (final TypeFiltrePersonnes x in widget.types)
-              EntreeFiltre<String>(valeur: 't:${x.cle}', libelle: x.libelle),
-          ]
-        : <EntreeFiltre<String>>[
             for (final ValeurFiltre v in ouvert.valeurs)
               EntreeFiltre<String>(
                 valeur: 'v:${ouvert.cle}:${v.code}',
                 libelle: p.puce(type: ouvert.libelle, valeur: v.libelle),
               ),
+          ]
+        : _famille == null && familles.isNotEmpty
+        ? <EntreeFiltre<String>>[
+            for (final String f in familles)
+              EntreeFiltre<String>(valeur: 'f:$f', libelle: f),
+          ]
+        : <EntreeFiltre<String>>[
+            for (final TypeFiltrePersonnes x in widget.types)
+              if (_famille == null || x.famille == _famille)
+                EntreeFiltre<String>(valeur: 't:${x.cle}', libelle: x.libelle),
           ];
     final List<FiltreActif> actifs = <FiltreActif>[
       for (final TypeFiltrePersonnes x in widget.types)
@@ -189,13 +230,14 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
         if (empile) ...<Widget>[
           champ,
           Ecart.vSm,
-          Align(alignment: AlignmentDirectional.centerStart, child: menu),
+          // Une vue sans type de filtre n'a pas de bouton « Filtrer par ».
+          if (widget.types.isNotEmpty)
+            Align(alignment: AlignmentDirectional.centerStart, child: menu),
         ] else
           Row(
             children: <Widget>[
               Expanded(child: champ),
-              Ecart.hSm,
-              menu,
+              if (widget.types.isNotEmpty) ...<Widget>[Ecart.hSm, menu],
             ],
           ),
         Ecart.vSm,
