@@ -42083,6 +42083,8 @@ extension on TraductionsAr {
 			'recrutement.partage.enregistrer' => 'حفظ الصورة',
 			'recrutement.partage.copier' => 'نسخ الرابط',
 			'recrutement.partage.lien' => ({required Object lien}) => 'رابط العرض: ⁨${lien}⁩',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.partage.sansMenu' => 'لا يتيح هذا الجهاز المشاركة المباشرة. احفظ الصورة لترسلها بنفسك، أو انسخ الرابط.',
 			'recrutement.partage.lienSeul' => 'يشارك هذا الجهاز الرابط دون الصورة. احفظ الصورة إن أردت إرسالها أيضًا.',
 			'recrutement.partage.fait.partage' => 'تمت مشاركة البطاقة.',
@@ -42109,8 +42111,6 @@ extension on TraductionsAr {
 			'recrutement.accueil.etapes.ensuiteConnaissance' => 'بعد ذلك: تبلّغك الأكاديمية جوابها هنا بعد المقابلة.',
 			'recrutement.accueil.etapes.ensuiteEquipe' => 'بعد ذلك: يُفتح لك فضاء المعلّم.',
 			'recrutement.accueil.aFaire.titre' => 'المطلوب الآن',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.accueil.aFaire.rienTitre' => 'لا شيء مطلوب منك الآن',
 			'recrutement.accueil.aFaire.rien' => 'ليس عليك شيء الآن. سنكتب لك هنا فور وجود جديد.',
 			'recrutement.accueil.aFaire.majorite' => 'أخبرنا أولًا هل بلغت 18 سنة أو أكثر، في البطاقة أعلاه.',
@@ -42130,8 +42130,6 @@ extension on TraductionsAr {
 			'recrutement.accueil.lignes.reponsesDetail' => 'لغاتك وتلاوتك وأوقاتك المتاحة وطريقة صرف مستحقاتك. يمكنك الحفظ والعودة لاحقًا.',
 			'recrutement.accueil.praxis.pieceRefusee' => 'لم تُقبل وثيقة هويتك. أرسل وثيقة جديدة.',
 			'recrutement.accueil.praxis.reste' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم يبقَ شيء في ملفك.', one: 'بقي عنصر واحد لإتمام ملفك.', two: 'بقي عنصران لإتمام ملفك.', few: 'بقيت ⁨${n}⁩ عناصر لإتمام ملفك.', many: 'بقي ⁨${n}⁩ عنصرًا لإتمام ملفك.', other: 'بقي ⁨${n}⁩ عنصر لإتمام ملفك.', ), 
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.accueil.annonce.ligne' => ({required Object titre}) => 'جديد: ⁨${titre}⁩',
 			'recrutement.accueil.annonce.ranger' => ({required Object titre}) => 'حفظ الإعلان: ⁨${titre}⁩',
 			'recrutement.accueil.annonce.rangee' => 'نُقل الإعلان إلى الرسائل، قسم الإعلانات.',
@@ -42599,6 +42597,8 @@ extension on TraductionsAr {
 			'recrutement.parcours.q.compteBancaire.options.non.explication' => 'يمكنك حينئذ اختيار وسيلة دفع عبر الهاتف إن وُجدت في بلدك.',
 			'recrutement.parcours.q.compteBancaire.options.non.exemple' => 'تستقبل المال وترسله بهاتفك فقط.',
 			'recrutement.parcours.q.operateurs.titre' => 'ما وسائل الدفع عبر الهاتف التي تستخدمها؟',
+			_ => null,
+		} ?? switch (path) {
 			'recrutement.parcours.q.operateurs.explication' => 'هذه هي الوسائل التي أكّدتها الأكاديمية في بلدك. اختر ما تستخدمه، إن وُجد.',
 			'recrutement.parcours.q.operateurs.court' => 'وسائل الدفع عبر الهاتف',
 			'recrutement.parcours.q.moyensAccessibles.titre' => 'ما وسائل الدفع الشائعة حيث تعيش؟',
@@ -42625,8 +42625,6 @@ extension on TraductionsAr {
 			'recrutement.talents.tuile.enregistre' => 'إجاباتك محفوظة. يمكنك تعديلها.',
 			'recrutement.talents.tuile.enregistreClose' => 'إجاباتك محفوظة. يمكنك سحبها.',
 			'recrutement.talents.intro.texte' => 'تنمو الأكاديمية، وستحتاج إلى من يساعدها في التنظيم ومرافقة الأسر ومسك الحسابات والتعريف بها. إن كان لديك ما تُتقنه غير التدريس فأخبرنا به: سنتواصل معك أولًا قبل نشر أي إعلان.',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.intro.facultatif.titre' => 'اختياري',
 			'recrutement.talents.intro.facultatif.texte' => 'لا يغيّر ذلك شيئًا في طلب ترشحك للتدريس.',
 			'recrutement.talents.intro.usage.titre' => 'ماذا نفعل بإجاباتك',
@@ -42646,8 +42644,6 @@ extension on TraductionsAr {
 			'recrutement.talents.competences.choisies' => ({required num n}) => (_root.$meta.cardinalResolver ?? PluralResolvers.cardinal('ar'))(n, zero: 'لم تختر أي مهارة', one: 'مهارة واحدة مختارة', two: 'مهارتان مختارتان', few: '⁨${n}⁩ مهارات مختارة', many: '⁨${n}⁩ مهارة مختارة', other: '⁨${n}⁩ مهارة مختارة', ), 
 			'recrutement.talents.competences.nonProposee' => 'لم تعد هذه المهارة مقترحة. يمكنك الإبقاء عليها أو إلغاء اختيارها.',
 			'recrutement.talents.competences.autreChamp' => 'مجالك، في بضع كلمات',
-			_ => null,
-		} ?? switch (path) {
 			'recrutement.talents.competences.autreAide' => 'يكفي سطر واحد.',
 			'recrutement.talents.competences.manque' => 'اختر مهارة واحدة على الأقل للمتابعة.',
 			'recrutement.talents.competences.autreVide' => 'اكتب في بضع كلمات ما هو المجال، أو ألغِ اختيار «مجال آخر».',
@@ -43115,6 +43111,8 @@ extension on TraductionsAr {
 			'avis.form.regles.horsSujet' => 'كلامًا خارج الموضوع',
 			'avis.form.regles.doublon' => 'تكرارًا لرأي وصل من قبل',
 			'avis.form.regles.donnees' => 'لا تكتب اسم طفل ولا بريدًا إلكترونيًا ولا رقم هاتف.',
+			_ => null,
+		} ?? switch (path) {
 			'avis.form.regles.publie' => 'يُنشر الرأي المحترم حتى لو كان ناقدًا. ترفض الإدارة فقط الإهانة، وبيانات طرف ثالث، والإعلان، والكلام خارج الموضوع، والتكرار.',
 			'avis.form.envoyer' => 'إرسال رأيي',
 			'avis.form.aCorriger' => 'بعض الحقول تحتاج إلى تصحيح قبل الإرسال.',
@@ -43141,8 +43139,6 @@ extension on TraductionsAr {
 			'avis.admin.statut.publie' => 'منشور',
 			'avis.admin.statut.refuse' => 'مرفوض',
 			'avis.admin.statut.retire' => 'مسحوب',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.filtre.tous' => 'الكل',
 			'avis.admin.filtre.enAttente' => 'قيد الانتظار',
 			'avis.admin.filtre.publie' => 'المنشورة',
@@ -43162,8 +43158,6 @@ extension on TraductionsAr {
 			'avis.admin.champs.depose' => 'تاريخ الإرسال',
 			'avis.admin.champs.accord' => 'الموافقة على النشر',
 			'avis.admin.champs.motif' => 'السبب',
-			_ => null,
-		} ?? switch (path) {
 			'avis.admin.champs.modere' => 'تاريخ القرار',
 			'avis.admin.champs.publie' => 'تاريخ النشر',
 			'avis.admin.actions.publier' => 'نشر',
@@ -43631,6 +43625,8 @@ extension on TraductionsAr {
 			'souratesRetirables.aide' => 'السور المعتمدة في هذا الفصل التي يمكنك سحبها.',
 			'souratesRetirables.vide' => 'لا توجد سورة معتمدة للسحب في هذا الفصل.',
 			'souratesRetirables.erreur' => 'تعذّرت قراءة سور هذا الفصل. أعد المحاولة.',
+			_ => null,
+		} ?? switch (path) {
 			'souratesRetirables.ligne' => ({required Object eleve, required Object sourate}) => '⁨${eleve}⁩ · ⁨${sourate}⁩',
 			'souratesRetirables.jusqua' => ({required Object heure}) => 'ممكن حتى ⁨${heure}⁩',
 			'souratesRetirables.jusquaDemain' => ({required Object heure}) => 'ممكن حتى الغد، ⁨${heure}⁩',
@@ -43657,8 +43653,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.pas.controle' => 'الأخطاء',
 			'candidatsFlux.importFormulaires.pas.comptes' => 'الأعداد',
 			'candidatsFlux.importFormulaires.pas.confirmation' => 'التأكيد',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.pas.rapport' => 'التقرير',
 			'candidatsFlux.importFormulaires.pas.surTotal' => ({required Object n, required Object total}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩',
 			'candidatsFlux.importFormulaires.pas.surTotalNomme' => ({required Object n, required Object total, required Object nom}) => 'الخطوة ⁨${n}⁩ من ⁨${total}⁩: ⁨${nom}⁩',
@@ -43678,8 +43672,6 @@ extension on TraductionsAr {
 			'candidatsFlux.importFormulaires.depot.noms.corriger' => 'تصحيح الاسمين',
 			'candidatsFlux.importFormulaires.depot.noms.garder' => 'إبقاء الاسمين',
 			'candidatsFlux.importFormulaires.depot.noms.classeur' => 'اسم المصنّف',
-			_ => null,
-		} ?? switch (path) {
 			'candidatsFlux.importFormulaires.depot.noms.onglet' => 'اسم الورقة',
 			'candidatsFlux.importFormulaires.depot.noms.ongletManquant' => 'اسم الملف لا يذكر الورقة. اذكروها للمتابعة.',
 			'candidatsFlux.importFormulaires.depot.noms.invalide' => 'لا يجوز أن يكون الاسم فارغًا أو أطول من 200 حرف أو أن يحتوي الخط العمودي. صحّحوه للمتابعة.',
@@ -44147,6 +44139,8 @@ extension on TraductionsAr {
 			'suiviAttente.tu.pretAVenir' => 'يُعلن موعد أول حصة بعد تعيين المعلم.',
 			'suiviAttente.tu.premierCoursPasse' => ({required Object quand}) => 'كانت أول حصة لك في ⁨${quand}⁩.',
 			'suiviAttente.tu.premierCoursPetit' => 'أول حصة لك قريبة. يخبرك ولي أمرك بموعدها.',
+			_ => null,
+		} ?? switch (path) {
 			'suiviAttente.tu.premierCoursPassePetit' => 'انتهت أول حصة لك.',
 			'suiviAttente.tu.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
 			'suiviAttente.tu.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصل ولي أمرك إشعار بذلك.',
@@ -44173,8 +44167,6 @@ extension on TraductionsAr {
 			'suiviAttente.dit.formationListeAttente' => 'جميع فصول هذا الموعد ممتلئة. ينتظر طلبك أن يُفتح مقعد.',
 			'suiviAttente.dit.formationFait' => 'اجتمع طلاب الفصل.',
 			'suiviAttente.dit.formationAVenir' => 'تجمع الأكاديمية طلاب الفصل بعد استلام الطلب.',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.dit.confirmeeFait' => 'تم تأكيد فصلك.',
 			'suiviAttente.dit.confirmeeFaitNom' => ({required Object classe}) => 'تم تأكيد فصلك «⁨${classe}⁩».',
 			'suiviAttente.dit.confirmeeAVenir' => 'تؤكد الأكاديمية الفصل عندما يجتمع طلابه.',
@@ -44194,8 +44186,6 @@ extension on TraductionsAr {
 			'suiviAttente.delai.depasse' => 'يستغرق تكوين فصلك وقتًا أطول من المتوقع.',
 			'suiviAttente.changement' => ({required Object date}) => 'تغيّر موعد الفصل في ⁨${date}⁩. وصلك إشعار بذلك.',
 			'suiviAttente.cloture.titreRefusee' => 'لم يُقبل طلبك',
-			_ => null,
-		} ?? switch (path) {
 			'suiviAttente.cloture.titreRetiree' => 'تم سحب هذا الطلب',
 			'suiviAttente.cloture.titreClose' => 'أُغلق هذا الطلب',
 			'suiviAttente.cloture.motif.retraitFamille' => 'تم سحب هذا الطلب من طرفك.',
