@@ -28,6 +28,7 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/router/app_router.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
 import 'package:rewayah_academy/core/theme/app_theme.dart';
+import 'package:rewayah_academy/core/widgets/case_a_cocher.dart';
 
 import '../fixtures/candidature/faux_candidatures_direction.dart';
 import '../support/demo/mode_demonstration.dart';
@@ -53,7 +54,9 @@ CompteAdmin _compte(int i, AppRole role) => CompteAdmin(
   profilId: 'p-$i',
   identifiant: 'RA-26-${4100 + i}',
   prenom: _prenoms[i % _prenoms.length],
-  nom: _noms[(i * 3) % _noms.length],
+  // Chaque compte a son nom : deux comptes de meme nom se liraient comme un
+  // doublon sur la planche.
+  nom: _noms[(i * 3 + i ~/ 12) % _noms.length],
   role: role,
   etat: i % 7 == 3
       ? AccountStatus.pendingKyc
@@ -271,6 +274,20 @@ void main() {
   });
   tearDown(() => LocaleSettings.setLocale(AppLocale.fr));
 
+  test('le jeu de demonstration ne porte pas deux fois le meme nom', () {
+    for (final AppRole role in AppRole.values) {
+      final List<String> noms = <String>[
+        for (final CompteAdmin c in _comptes)
+          if (c.role == role) c.libelle,
+      ];
+      expect(noms.toSet(), hasLength(noms.length), reason: '$role : $noms');
+    }
+    final List<String> dossiers = <String>[
+      for (final LigneEnseignant l in _enseignants) l.dossier.nomComplet,
+    ];
+    expect(dossiers.toSet(), hasLength(dossiers.length));
+  });
+
   group('PERSONNES (b) : la page unique', skip: sautSansCapture, () {
     const String base = Routes.adminPersonnes;
     const Size bureau = Size(1440, 900);
@@ -431,6 +448,47 @@ void main() {
         await LocaleSettings.setLocale(c.$5);
         fixerVueCapture(tester, c.$3, c.$3.width < 500 ? 2 : 1);
         await _monter(tester, c.$2, mode: c.$4);
+        debugPrint('PNG ${await capturer(tester, 'personnes_${c.$1}')}');
+      });
+    }
+  });
+
+  // Etape (f) point 2 : menu par ligne, cases, barre du lot, tri.
+  group('PERSONNES (f2) : selection, lot, tri', skip: sautSansCapture, () {
+    const String base = Routes.adminPersonnes;
+    const Size bureau = Size(1440, 900);
+    const Size telephone = Size(390, 844);
+    const String candidats =
+        '$base?onglet=enseignants&vue=candidats&tri=recente';
+    const String eleves = '$base?onglet=eleves&tri=-nom';
+    for (final (String, String, Size, AppLocale) c
+        in <(String, String, Size, AppLocale)>[
+          ('lot_candidats_1440_fr', candidats, bureau, AppLocale.fr),
+          ('lot_candidats_1440_ar', candidats, bureau, AppLocale.ar),
+          ('lot_candidats_390_fr', candidats, telephone, AppLocale.fr),
+          ('lot_candidats_390_ar', candidats, telephone, AppLocale.ar),
+          ('lot_eleves_1440_fr', eleves, bureau, AppLocale.fr),
+          ('lot_eleves_390_ar', eleves, telephone, AppLocale.ar),
+        ]) {
+      testWidgets('personnes ${c.$1}', (WidgetTester tester) async {
+        await LocaleSettings.setLocale(c.$4);
+        fixerVueCapture(tester, c.$3, c.$3.width < 500 ? 2 : 1);
+        await _monter(tester, c.$2, mode: ThemeMode.light);
+        // Deux lignes cochees : la barre de ce qui est retenu apparait.
+        final Finder cases = find.byType(CaseACocher);
+        final int n = cases.evaluate().length;
+        expect(n, greaterThan(2));
+        await tester.tap(cases.at(n > 3 ? 1 : 0));
+        await stabiliser(tester);
+        // Au telephone, la barre des comptes vient en tete : la seconde
+        // case peut etre sortie de l'ecran.
+        final int m = find.byType(CaseACocher).evaluate().length;
+        if (m > 0) {
+          await tester.tap(
+            find.byType(CaseACocher).at((n > 3 ? 2 : 1).clamp(0, m - 1)),
+          );
+        }
+        await stabiliser(tester);
         debugPrint('PNG ${await capturer(tester, 'personnes_${c.$1}')}');
       });
     }

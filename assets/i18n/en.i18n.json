@@ -4404,6 +4404,7 @@
   },
   "admin": {
     "personnesPage": {
+      "triInverse": "{colonne}, reverse order",
       "typeAcces": "Access",
       "vueCandidats": "Applicants",
       "vueAccueil": "Onboarding",
@@ -4532,6 +4533,7 @@
         },
         "dontPage": "of which {n} on this page",
         "avecDont": "{selection}, {dont}",
+        "autresActions": "More actions",
         "autresGestes": "The other actions are done one by one, from the row or the file.",
         "refuser": "Decline",
         "plafond": "You can keep at most {n} applications at a time.",

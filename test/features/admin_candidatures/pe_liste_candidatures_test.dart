@@ -24,6 +24,7 @@ import 'package:rewayah_academy/features/admin_candidatures/feuille_filtres.dart
 import 'package:rewayah_academy/features/admin_candidatures/lot_candidatures.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
+import '../../support/barre_lot.dart';
 import '../../support/monter_recrutement.dart';
 import 'hote_candidatures.dart';
 
@@ -64,8 +65,11 @@ Future<void> _toutRetenir(WidgetTester tester) async {
 }
 
 Future<void> _ouvrirLot(WidgetTester tester, GesteLot geste) async {
-  final Finder op = find.byKey(CandidaturesPage.cleOperationLot(geste));
-  await tester.ensureVisible(op);
+  final Finder op = await operationDeLot(
+    tester,
+    CandidaturesPage.cleOperationLot(geste),
+    geste,
+  );
   await tester.tap(op);
   await laisser(tester);
 }

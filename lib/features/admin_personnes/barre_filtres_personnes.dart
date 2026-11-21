@@ -40,8 +40,17 @@ class BarreFiltresPersonnes extends StatefulWidget {
     required this.onToutEffacer,
     this.affiches,
     this.total,
+    this.tri,
+    this.triActif,
     super.key,
   });
+
+  /// Le bouton « Trier par » de la liste, ou `null`.
+  final Widget? tri;
+
+  /// Le tri pose, dit en puce comme un filtre (retirable), ou `null` :
+  /// l'ordre par defaut.
+  final FiltreActif? triActif;
 
   /// Les types de filtre de l'onglet ouvert.
   final List<TypeFiltrePersonnes> types;
@@ -75,6 +84,10 @@ class BarreFiltresPersonnes extends StatefulWidget {
 
   /// La cle du compteur.
   static const Key cleCompteur = ValueKey<String>('personnes-compteur');
+
+  /// En dessous de cette largeur, le champ, « Filtrer par » et « Trier par »
+  /// ne tiennent plus sur une rangee.
+  static const double _largeurUneRangee = 340;
 
   @override
   State<BarreFiltresPersonnes> createState() => _BarreFiltresPersonnesState();
@@ -196,6 +209,7 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
             libelle: p.puce(type: x.libelle, valeur: valeur),
             onRetirer: () => widget.onFiltre(x.cle, null),
           ),
+      ?widget.triActif,
     ];
     final int? n = widget.affiches;
     final int? total = widget.total;
@@ -227,19 +241,46 @@ class _BarreFiltresPersonnesState extends State<BarreFiltresPersonnes> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
       children: <Widget>[
-        if (empile) ...<Widget>[
-          champ,
-          Ecart.vSm,
-          // Une vue sans type de filtre n'a pas de bouton « Filtrer par ».
-          if (widget.types.isNotEmpty)
-            Align(alignment: AlignmentDirectional.centerStart, child: menu),
-        ] else
-          Row(
-            children: <Widget>[
-              Expanded(child: champ),
-              if (widget.types.isNotEmpty) ...<Widget>[Ecart.hSm, menu],
-            ],
-          ),
+        // Le champ, « Filtrer par » et « Trier par » sur une rangee ; texte
+        // agrandi ou largeur trop courte pour les trois (320 points) : le
+        // champ, puis les deux boutons dessous.
+        LayoutBuilder(
+          builder: (BuildContext _, BoxConstraints c) {
+            final Widget? tri = widget.tri;
+            final bool dessous =
+                empile ||
+                (tri != null &&
+                    c.maxWidth < BarreFiltresPersonnes._largeurUneRangee);
+            if (!dessous) {
+              return Row(
+                children: <Widget>[
+                  Expanded(child: champ),
+                  if (widget.types.isNotEmpty) ...<Widget>[Ecart.hSm, menu],
+                  if (tri != null) ...<Widget>[Ecart.hSm, tri],
+                ],
+              );
+            }
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                champ,
+                // Une vue sans type de filtre n'a pas de bouton « Filtrer
+                // par ».
+                if (widget.types.isNotEmpty || tri != null) ...<Widget>[
+                  Ecart.vSm,
+                  Row(
+                    children: <Widget>[
+                      if (widget.types.isNotEmpty) Flexible(child: menu),
+                      if (widget.types.isNotEmpty && tri != null) Ecart.hSm,
+                      ?tri,
+                    ],
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
         Ecart.vSm,
         // Le compteur dit ce qui a change : a la taille du texte courant,
         // toujours a la meme place (sous la recherche, avant les puces), meme

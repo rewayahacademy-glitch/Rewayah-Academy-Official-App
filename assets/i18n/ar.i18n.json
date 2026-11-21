@@ -5277,6 +5277,7 @@
   },
   "admin": {
     "personnesPage": {
+      "triInverse": "⁨{colonne}⁩، بترتيب معكوس",
       "typeAcces": "الوصول",
       "vueCandidats": "المترشحون",
       "vueAccueil": "في الاستقبال",
@@ -5429,6 +5430,7 @@
         },
         "dontPage": "منها ⁨{n}⁩ في هذه الصفحة",
         "avecDont": "⁨{selection}⁩، ⁨{dont}⁩",
+        "autresActions": "إجراءات أخرى",
         "autresGestes": "تُنفَّذ الإجراءات الأخرى واحدًا واحدًا، من السطر أو من الملف.",
         "refuser": "رفض",
         "plafond": "يمكنكم تحديد ⁨{n}⁩ طلب ترشح على الأكثر في المرة الواحدة.",
