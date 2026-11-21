@@ -31,6 +31,28 @@ export function depuisHtml(h: string): string {
 
 export type Traducteur = (textes: string[], source: string, cible: string) => Promise<string[]>
 
+/// Vrai quand les passages en arabe sont a proteger : ni le texte ni sa traduction ne sont en arabe.
+export const protegerArabe = (source: string, cible: string): boolean => cible !== 'ar' && source !== 'ar'
+
+/// Rend la langue d'ecriture d'un texte (code ISO 639-1, `fr`, `en`, `ar`...).
+export type Detecteur = (texte: string) => Promise<string>
+
+/// Le detecteur Google (meme cle). Une erreur remonte : la traduction est rejouee plus tard.
+export const detecteurGoogle: Detecteur = async (texte) => {
+  const cle = Deno.env.get('GOOGLE_TRADUCTION_CLE')
+  if (!cle) throw new Error('configuration absente : GOOGLE_TRADUCTION_CLE')
+  const r = await fetch(`${API}/detect?key=${encodeURIComponent(cle)}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ q: [texte] }),
+  })
+  if (!r.ok) throw new Error(`detection ${r.status}`)
+  const corps = await r.json()
+  const langue = corps?.data?.detections?.[0]?.[0]?.language
+  if (typeof langue !== 'string' || langue === '' || langue === 'und') throw new Error('langue non detectee')
+  return langue.toLowerCase().split('-')[0]
+}
+
 /// Le traducteur Google. Une erreur remonte : l'envoi est rejoue plus tard
 /// (5 essais), jamais parti dans une autre langue que celle du destinataire.
 export const traducteurGoogle: Traducteur = async (textes, source, cible) => {
@@ -39,7 +61,11 @@ export const traducteurGoogle: Traducteur = async (textes, source, cible) => {
   const r = await fetch(`${API}?key=${encodeURIComponent(cle)}`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ q: textes.map((t) => versHtml(t, cible !== 'ar')), source, target: cible, format: 'html' }),
+    // L'arabe n'est protege que dans un texte qui n'est pas ecrit en arabe (ANNONCES-SERVEUR, 21/11/2026 :
+    // une annonce ecrite en arabe se traduit vers le francais et l'anglais, sinon rien ne serait traduit).
+    body: JSON.stringify({
+      q: textes.map((t) => versHtml(t, protegerArabe(source, cible))), source, target: cible, format: 'html',
+    }),
   })
   if (!r.ok) throw new Error(`traduction ${r.status}`)
   const corps = await r.json()

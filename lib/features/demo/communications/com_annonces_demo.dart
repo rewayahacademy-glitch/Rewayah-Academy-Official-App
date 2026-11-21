@@ -1060,10 +1060,20 @@ class AnnoncesDirectionDemonstration implements PortAnnoncesDirection {
   }
 
   @override
-  Future<List<AnnonceRecue>> mesAnnonces() async => recues;
+  Future<PageAnnonces> mesAnnonces({
+    int limite = 20,
+    DateTime? avant,
+    bool fermees = false,
+  }) async => PageAnnonces(annonces: recues);
 
   @override
   Future<void> marquerVue(String id) async {}
+
+  @override
+  Future<void> fermer(String id) async {}
+
+  @override
+  Future<void> rouvrir(String id) async {}
 }
 
 /// Les capacites Communications ouvertes en demonstration : publier,
@@ -1099,7 +1109,9 @@ List<Override> surchargesAdministrationDemo({
           cle.split(',').where((String c) => c.isNotEmpty).toSet(),
         ),
       ),
-      mesAnnoncesProvider.overrideWith((Ref _) => d.mesAnnonces()),
+      mesAnnoncesProvider.overrideWith(
+        (Ref _) async => (await d.mesAnnonces()).annonces,
+      ),
     ];
   }(),
   annoncesAdministrationProvider.overrideWith(
