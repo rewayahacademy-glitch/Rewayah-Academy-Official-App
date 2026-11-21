@@ -157,6 +157,8 @@ List<({String libelle, String chemin})> ciblesRechercheAdmin({
   ),
   if (studio)
     (libelle: t.com.socle.navigation.studio, chemin: Routes.adminStudio),
+  // CHIFFRES-ACADEMIE : trouvable a toutes les largeurs, telephone compris.
+  (libelle: t.admin.chiffres.lien, chemin: Routes.adminOperationsChiffres),
 ];
 
 /// Les cinq fonctions pairs du domaine Pedagogie, dans l'ordre d'affichage
@@ -475,6 +477,8 @@ Map<AdminDomaine, List<SousLien>> sousLiensAdmin({
         chemin: Routes.adminOperationsCourriels,
       ),
       (libelle: t.avis.admin.outil, chemin: Routes.adminOperationsAvis),
+      // CHIFFRES-ACADEMIE : une entree discrete, la derniere du domaine.
+      (libelle: t.admin.chiffres.lien, chemin: Routes.adminOperationsChiffres),
     ],
     AdminDomaine.personnes: ongletsPersonnes(),
     AdminDomaine.pedagogie: ongletsPedagogie(),

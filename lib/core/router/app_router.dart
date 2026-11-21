@@ -29,6 +29,8 @@ import '../../features/admin_candidatures/candidatures_page.dart'
     deferred as d_candidatures_page;
 import '../../features/admin_candidatures/travail_praxis_page.dart'
     deferred as d_travail_praxis_page;
+import '../../features/admin_chiffres/chiffres_academie_page.dart'
+    deferred as d_chiffres_page;
 import '../../features/admin_comptes/comptes_page.dart'
     deferred as d_comptes_page;
 import '../../features/admin_configuration_conservation_donnees/conservation_donnees_page.dart'
@@ -357,6 +359,7 @@ final List<MorceauDiffere> morceauxDifferesRouteur = <MorceauDiffere>[
   ('d_enseignants_page', d_enseignants_page.loadLibrary),
   ('d_personnes_page', d_personnes_page.loadLibrary),
   ('d_catalogue_page', d_catalogue_page.loadLibrary),
+  ('d_chiffres_page', d_chiffres_page.loadLibrary),
   ('d_communaute_page', d_communaute_page.loadLibrary),
   ('d_comptes_page', d_comptes_page.loadLibrary),
   ('d_conservation_donnees_page', d_conservation_donnees_page.loadLibrary),
@@ -2016,6 +2019,19 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             cle: 'd_pilotage_page',
             charger: d_pilotage_page.loadLibrary,
             construire: () => d_pilotage_page.PilotagePage(),
+          ),
+        ),
+      ),
+      // CHIFFRES-ACADEMIE : la vitrine en chiffres, atteinte par le dernier
+      // sous-lien d'Operations et par la recherche de la barre superieure.
+      GoRouteSure(
+        path: Routes.adminOperationsChiffres,
+        builder: (BuildContext _, GoRouterState _) => _CoquilleAdmin(
+          domaine: AdminDomaine.operations,
+          child: PageDifferee(
+            cle: 'd_chiffres_page',
+            charger: d_chiffres_page.loadLibrary,
+            construire: () => d_chiffres_page.ChiffresAcademiePage(),
           ),
         ),
       ),
