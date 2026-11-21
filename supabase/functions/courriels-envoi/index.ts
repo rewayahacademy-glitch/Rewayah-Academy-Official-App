@@ -3,6 +3,9 @@
 // manuel. Ouverte sans JWT (config.toml) : la porte est le secret partage
 // `COURRIELS_ENVOI_SECRET`, en en-tete `x-courriels-secret`, compare en temps
 // constant. La cle de service ne sert qu'aux deux RPC du travailleur.
+//
+// ANNONCES-SERVEUR (21/11/2026) : au meme passage, et avant les courriels, les annonces generales en attente
+// sont traduites (fr, en, ar ; 10 s au plus). Un echec de la traduction n'arrete jamais les courriels.
 
 import { clientService, json, refus } from '../_shared/clients.ts'
 import { composer } from '../_shared/courriel/gabarit.ts'
@@ -10,6 +13,7 @@ import { rendre } from '../_shared/courriel/modeles.ts'
 import { porteLiberationReelle, preparerAdresseInvitee } from '../_shared/invitation/liberer_adresse.ts'
 import { traduireContenu } from '../_shared/courriel/traduction.ts'
 import { envoyer, lienUnClic } from '../_shared/courriel/transport.ts'
+import { type Bilan, traduireAnnonces } from '../_shared/annonces/traduire_annonces.ts'
 
 function egal(a: string, b: string): boolean {
   const x = new TextEncoder().encode(a)
@@ -44,6 +48,14 @@ Deno.serve(async (req) => {
   const debut = Date.now()
   let envoyes = 0
   let echecs = 0
+
+  let annonces: Bilan | { erreur: string } = { traduites: 0, echecs: 0 }
+  try {
+    annonces = await traduireAnnonces(db, { budgetMs: 10_000 })
+  } catch (e) {
+    annonces = { erreur: String((e as Error).message ?? e) }
+    console.error(`annonces : ${annonces.erreur}`)
+  }
 
   // Des lots de 20 tant qu'il en reste, sans depasser 40 s (la fonction en a 150).
   while (Date.now() - debut < 40_000) {
@@ -92,5 +104,5 @@ Deno.serve(async (req) => {
       if (e2) console.error(`consigner ${l.id} : ${e2.message}`)
     }
   }
-  return json({ envoyes, echecs })
+  return json({ envoyes, echecs, annonces })
 })
