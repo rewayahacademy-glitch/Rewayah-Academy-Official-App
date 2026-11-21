@@ -108,6 +108,20 @@ Future<void> choisirSection(WidgetTester tester, String libelle) async {
       await tester.pumpAndSettle();
     }
   }
+  // PERSONNES-UNE-PAGE (b) : « Personnes » ouvre la page unique ; ses
+  // anciennes pages se choisissent dans son menu « Autres pages ».
+  final Finder autresPages = find.byKey(
+    const ValueKey<String>('personnes-autres-pages'),
+  );
+  if (_dansSelecteur(libelle).evaluate().isEmpty &&
+      autresPages.evaluate().isNotEmpty) {
+    await tester.ensureVisible(autresPages);
+    await tester.tap(autresPages);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(libelle).last);
+    await tester.pumpAndSettle();
+    return;
+  }
   final Finder segment = _dansSelecteur(libelle);
   final Finder menu = find.descendant(
     of: selecteurSection,

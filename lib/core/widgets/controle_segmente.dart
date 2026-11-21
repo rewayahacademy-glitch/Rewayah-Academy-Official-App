@@ -16,7 +16,15 @@ class Segment<T> {
     required this.libelle,
     this.icone,
     this.apercu,
+    this.libelleCourt,
   });
+
+  /// PERSONNES-UNE-PAGE (pilote, 21/11/2026) : un mot court (« Equipe » pour
+  /// « Direction et equipe (3) ») pose sous l'icone quand le libelle entier
+  /// ne tient pas : deux icones voisines ne se distinguent jamais par le seul
+  /// dessin. Le libelle entier reste lu par le lecteur d'ecran. `null` par
+  /// defaut : rien ne change ailleurs.
+  final String? libelleCourt;
 
   /// Une icone posee au-dessus du libelle (soleil, lune) : elle ne remplace
   /// jamais le libelle, l'etat ne repose pas sur le seul pictogramme.
@@ -57,7 +65,32 @@ class ControleSegmente<T> extends StatelessWidget {
     super.key,
     this.rectangle = false,
     this.dense = false,
+    this.iconesSeules = false,
+    this.motsCourts = false,
   });
+
+  /// Avec [iconesSeules] : le [Segment.libelleCourt] de chaque segment est
+  /// pose sous son icone (le libelle entier reste lu). L'appelant ne le
+  /// demande que si ces mots tiennent ([largeurMotCourt]). Faux par defaut.
+  final bool motsCourts;
+
+  /// La marge laterale d'un segment en mots courts, des deux cotes : 4 de
+  /// piste et 4 de marge interieure.
+  static const double margeMotCourt = 2 * (AppSpacing.xs + AppSpacing.xs);
+
+  /// Le style d'un mot court : plus petit que le libelle d'un onglet.
+  /// La reduction qu'un mot court accepte pour tenir : un dixieme au plus.
+  static const double reductionMotCourt = 0.9;
+
+  static TextStyle styleMotCourt(BuildContext context) =>
+      Theme.of(context).textTheme.labelMedium ?? const TextStyle();
+
+  /// PERSONNES-UNE-PAGE (b) (directeur, 20/11/2026 : des icones sur les
+  /// onglets, « pour etre plus reconnaissable ») : quand les mots ne tiennent
+  /// pas, un segment **qui porte une icone** la montre seule ; son nom reste
+  /// dit au lecteur d'ecran et en infobulle. Un segment sans icone garde son
+  /// mot. Faux par defaut : rien ne change ailleurs.
+  final bool iconesSeules;
 
   /// Vrai : un petit rectangle a coins arrondis (`AppRadius.md`) au lieu de la
   /// pilule, pour les segments qui portent une icone au-dessus du libelle
@@ -110,6 +143,10 @@ class ControleSegmente<T> extends StatelessWidget {
                     ? AppRadius.arrondiSm
                     : AppRadius.arrondiFull,
                 dense: dense,
+                iconeSeule: iconesSeules && segment.icone != null,
+                motCourt: iconesSeules && motsCourts && segment.icone != null
+                    ? segment.libelleCourt
+                    : null,
               ),
             ),
         ],
@@ -141,7 +178,15 @@ class _Segment<T> extends StatelessWidget {
     required this.onChange,
     required this.arrondi,
     required this.dense,
+    this.iconeSeule = false,
+    this.motCourt,
   });
+
+  /// L'icone sans le mot ; le mot reste lu et en infobulle.
+  final bool iconeSeule;
+
+  /// Le mot court pose sous l'icone, ou `null` (l'icone seule).
+  final String? motCourt;
 
   final Segment<T> segment;
 
@@ -199,7 +244,7 @@ class _Segment<T> extends StatelessWidget {
                 // d'etre coupe, sans toucher le contour de la pastille
                 // (relecture COUPE-MOTS-1 : a 4, « Systeme » le touchait).
                 padding: EdgeInsets.symmetric(
-                  horizontal: AppSpacing.sm,
+                  horizontal: motCourt == null ? AppSpacing.sm : AppSpacing.xs,
                   vertical: dense ? 0 : AppSpacing.sm,
                 ),
                 child: Column(
@@ -221,19 +266,54 @@ class _Segment<T> extends StatelessWidget {
                               : palette.inkMuted.applyTo(base).color,
                         ),
                       ),
-                      Ecart.vXs,
+                      if (!iconeSeule || motCourt != null) Ecart.vXs,
                     ],
-                    // COUPE-MOTS-1 point 6 : les segments ont la meme
-                    // largeur ; l'echelle est bornee par le mot le plus long
-                    // de TOUS, pour que les voisins gardent la meme taille.
-                    TexteSansCoupure(
-                      segment.libelle,
-                      voisins: voisins,
-                      textAlign: TextAlign.center,
-                      style: selectionne
-                          ? palette.washAccent.applyTo(base)
-                          : palette.inkMuted.applyTo(base),
-                    ),
+                    if (motCourt case final String court)
+                      // Le mot court se voit, le libelle entier se lit.
+                      Semantics(
+                        label: segment.libelle,
+                        child: ExcludeSemantics(
+                          // Une ligne ; reduit d'un dixieme au plus (l'appelant
+                          // ne demande les mots que s'ils tiennent ainsi).
+                          child: FittedBox(
+                            fit: BoxFit.scaleDown,
+                            child: Text(
+                              court,
+                              maxLines: 1,
+                              softWrap: false,
+                              textAlign: TextAlign.center,
+                              style: selectionne
+                                  ? palette.washAccent.applyTo(
+                                      ControleSegmente.styleMotCourt(contexte),
+                                    )
+                                  : palette.inkMuted.applyTo(
+                                      ControleSegmente.styleMotCourt(contexte),
+                                    ),
+                            ),
+                          ),
+                        ),
+                      )
+                    else if (iconeSeule)
+                      // Le nom, pour le lecteur d'ecran et au survol.
+                      Tooltip(
+                        message: segment.libelle,
+                        child: Semantics(
+                          label: segment.libelle,
+                          child: const SizedBox.shrink(),
+                        ),
+                      )
+                    else
+                      // COUPE-MOTS-1 point 6 : les segments ont la meme
+                      // largeur ; l'echelle est bornee par le mot le plus long
+                      // de TOUS, pour que les voisins gardent la meme taille.
+                      TexteSansCoupure(
+                        segment.libelle,
+                        voisins: voisins,
+                        textAlign: TextAlign.center,
+                        style: selectionne
+                            ? palette.washAccent.applyTo(base)
+                            : palette.inkMuted.applyTo(base),
+                      ),
                   ],
                 ),
               ),
