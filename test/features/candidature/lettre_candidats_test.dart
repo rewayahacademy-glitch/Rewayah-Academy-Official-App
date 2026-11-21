@@ -460,7 +460,7 @@ void main() {
       // serveur.
       const Map<String, String> phrases = <String, String>{
         'fr': 'Douze élèves s',
-        'en': 'Twelve students sign up',
+        'en': 'Twelve students enrol',
         'ar': 'اثنا عشر طالبًا',
       };
       for (final MapEntry<String, String> e in phrases.entries) {
