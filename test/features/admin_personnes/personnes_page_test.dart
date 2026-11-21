@@ -22,12 +22,14 @@ import 'package:rewayah_academy/core/i18n/strings.g.dart';
 import 'package:rewayah_academy/core/icons/app_icons.dart';
 import 'package:rewayah_academy/core/reseau/service_reseau.dart';
 import 'package:rewayah_academy/core/router/routes.dart';
+import 'package:rewayah_academy/core/widgets/puce_filtre_actif.dart';
 import 'package:rewayah_academy/features/admin_candidature/feuille_geste.dart';
 import 'package:rewayah_academy/features/admin_candidature/synthese_tete_dossier.dart';
 import 'package:rewayah_academy/features/admin_candidatures/libelles_candidatures.dart'
     show nomAffiche;
 import 'package:rewayah_academy/features/admin_comptes/apercu_compte.dart';
 import 'package:rewayah_academy/features/admin_personnes/apercu_candidat.dart';
+import 'package:rewayah_academy/features/admin_personnes/barre_filtres_personnes.dart';
 import 'package:rewayah_academy/features/admin_personnes/personnes_page.dart';
 
 import '../../fixtures/candidature/faux_candidatures_direction.dart';
@@ -45,6 +47,9 @@ class _Comptes implements ServiceComptes {
       echec ? throw StateError('panne') : _liste;
 }
 
+/// Les filtres que la page a demandes au serveur, dans l'ordre.
+final List<FiltreEnseignants> _filtresDemandes = <FiltreEnseignants>[];
+
 class _Enseignants implements PortEnseignants {
   const _Enseignants(this._lignes);
 
@@ -55,7 +60,12 @@ class _Enseignants implements PortEnseignants {
     required FiltreEnseignants filtre,
     required TriEnseignants tri,
     required int page,
-  }) async => PageEnseignants(
+  }) async {
+    _filtresDemandes.add(filtre);
+    return _page();
+  }
+
+  PageEnseignants _page() => PageEnseignants(
     lignes: _lignes,
     total: _lignes.length,
     page: 1,
@@ -63,13 +73,18 @@ class _Enseignants implements PortEnseignants {
   );
 }
 
-CompteAdmin _compte(String id, String prenom, AppRole role) => CompteAdmin(
+CompteAdmin _compte(
+  String id,
+  String prenom,
+  AppRole role, {
+  AccountStatus etat = AccountStatus.active,
+}) => CompteAdmin(
   profilId: id,
   identifiant: 'RA-26-41$id',
   prenom: prenom,
   nom: 'Essai',
   role: role,
-  etat: AccountStatus.active,
+  etat: etat,
   inscritLe: DateTime.now().subtract(const Duration(days: 12)),
   accesJusquAu: null,
   foyerId: null,
@@ -116,6 +131,7 @@ Future<void> _monter(
   tester.view.physicalSize = taille;
   addTearDown(tester.view.reset);
   _dossiers.clear();
+  _filtresDemandes.clear();
   await tester.pumpWidget(
     hoteRoutant(
       depart: adresse,
@@ -359,6 +375,144 @@ void main() {
     await tester.pumpAndSettle();
     expect(_adresse, '/admin/personnes?onglet=familles');
     expect(find.text('Driss Essai'), findsWidgets);
+  });
+
+  group('filtre unique et recherche (etape c)', () {
+    Future<void> filtrerPar(
+      WidgetTester tester,
+      String type,
+      String valeur,
+    ) async {
+      await tester.tap(find.byKey(BarreFiltresPersonnes.cleFiltrer));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(type).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text(valeur).last);
+      await tester.pumpAndSettle();
+    }
+
+    String compteur(WidgetTester tester) => tester
+        .widget<Text>(find.byKey(BarreFiltresPersonnes.cleCompteur))
+        .data!;
+
+    testWidgets('« Filtrer par », le type, la valeur : une puce, le compteur, '
+        'le filtre dans l\'adresse ; la puce se retire', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=eleves',
+        comptes: <CompteAdmin>[
+          ..._comptes,
+          _compte('9', 'Zahra', AppRole.student, etat: AccountStatus.disabled),
+        ],
+      );
+      expect(compteur(tester), '4 sur 4');
+
+      await filtrerPar(tester, 'État', 'État\u00a0: Suspendu');
+
+      expect(_adresse, contains('etat=suspendu'));
+      expect(compteur(tester), '1 sur 4');
+      expect(find.text('Zahra Essai'), findsWidgets);
+      expect(find.text('Amina Essai'), findsNothing);
+      // L'onglet garde le nombre de la liste entiere.
+      expect(find.text('Élèves (4)'), findsOneWidget);
+      // La puce dit le type et la valeur, et se retire.
+      final Finder puce = find.byType(PuceFiltreActif);
+      expect(puce, findsOneWidget);
+      await tester.tap(puce);
+      await tester.pumpAndSettle();
+      expect(_adresse, isNot(contains('etat=')));
+      expect(compteur(tester), '4 sur 4');
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('la recherche filtre la liste, vit dans l\'adresse, et « Tout '
+        'effacer » retire filtre et recherche', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=eleves&etat=actif',
+      );
+      await tester.enterText(
+        find.byKey(BarreFiltresPersonnes.cleRecherche),
+        'bil',
+      );
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+
+      expect(_adresse, contains('q=bil'));
+      expect(_adresse, contains('etat=actif'));
+      expect(compteur(tester), '1 sur 3');
+      expect(find.text('Bilal Essai'), findsWidgets);
+      expect(find.text('Amina Essai'), findsNothing);
+      // La saisie n'a pas ete perdue par la relecture.
+      expect(find.text('bil'), findsOneWidget);
+
+      await tester.tap(find.byKey(FiltresActifs.cleToutEffacer));
+      await tester.pumpAndSettle();
+      expect(_adresse, isNot(contains('q=')));
+      expect(_adresse, isNot(contains('etat=')));
+      expect(compteur(tester), '3 sur 3');
+      expect(find.text('bil'), findsNothing);
+    });
+
+    testWidgets(
+      'aucun resultat : une phrase qui dit quoi faire, les onglets et '
+      'la barre restent',
+      (WidgetTester tester) async {
+        await _monter(
+          tester,
+          adresse: '/admin/personnes?onglet=eleves&q=introuvable',
+        );
+        expect(find.text(t.admin.personnesPage.aucunResultat), findsOneWidget);
+        expect(find.byKey(PersonnesPage.cleOnglets), findsOneWidget);
+        expect(find.byKey(BarreFiltresPersonnes.cleFiltrer), findsOneWidget);
+        expect(compteur(tester), '0 sur 3');
+      },
+    );
+
+    testWidgets('enseignants : la phase et la recherche sont demandees au '
+        'serveur', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=enseignants&phase=accueil&q=far',
+      );
+      expect(
+        _filtresDemandes.any(
+          (FiltreEnseignants f) =>
+              f.phase == PhaseEnseignant.accueil && f.recherche == 'far',
+        ),
+        isTrue,
+      );
+      expect(find.byType(PuceFiltreActif), findsOneWidget);
+    });
+
+    testWidgets('une valeur inconnue dans l\'adresse ne pose aucun filtre ; '
+        'changer d\'onglet oublie les filtres', (WidgetTester tester) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=eleves&etat=nimporte&age=enfant',
+      );
+      expect(find.byType(PuceFiltreActif), findsOneWidget);
+      await tester.tap(find.text('Familles (1)'));
+      await tester.pumpAndSettle();
+      expect(_adresse, isNot(contains('age=')));
+      expect(find.byType(PuceFiltreActif), findsNothing);
+    });
+
+    testWidgets('telephone : la barre tient, le filtre se pose', (
+      WidgetTester tester,
+    ) async {
+      await _monter(
+        tester,
+        adresse: '/admin/personnes?onglet=eleves',
+        taille: const Size(390, 844),
+      );
+      await filtrerPar(tester, 'Âge', 'Âge\u00a0: Enfant');
+      expect(_adresse, contains('age=enfant'));
+      expect(compteur(tester), '3 sur 3');
+      expect(tester.takeException(), isNull);
+    });
   });
 
   testWidgets('vide : une phrase, pas une liste', (WidgetTester tester) async {
