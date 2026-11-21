@@ -1774,16 +1774,46 @@ class _PersonnesPageEtat extends ConsumerState<PersonnesPage>
   }
 
   /// Ouvre la verification de la piece : dans le dossier de candidature quand
-  /// le compte en a un (la piece s'y decide), sinon dans « Dossiers a
-  /// valider ».
+  /// le compte en a un (la piece s'y decide), sinon la revue de la piece
+  /// elle-meme (celle de « Dossiers a valider »), empilee sur cette page :
+  /// la fermer ramene ici, vue « Pieces a verifier », la liste relue.
   void _ouvrirPiece(BuildContext context, DossierAValider d) {
     final String? reference = d.candidatureReference;
     final String? id = d.candidatureId;
-    if (reference != null && id != null && referenceDossierValide(reference)) {
-      _ouvrir(context, Routes.adminPersonnesCandidaturePour(reference), id);
-    } else {
-      _ouvrir(context, Routes.adminPersonnesDossiers, d.profilId);
+    final bool dossier =
+        reference != null && id != null && referenceDossierValide(reference);
+    final String chemin = dossier
+        ? Routes.adminPersonnesCandidaturePour(reference)
+        : Routes.adminPersonnesDossiers;
+    final void Function(String, String)? ouvrir = ouvrirDossier;
+    if (ouvrir != null) {
+      ouvrir(chemin, dossier ? id : d.profilId);
+      return;
     }
+    // L'adresse de cette page, pour y revenir apres un rechargement de la
+    // revue (jamais un nom : onglet, vue, filtres, cle de la personne).
+    final String ici = Uri(
+      path: Routes.adminPersonnes,
+      queryParameters: requete.isEmpty ? null : requete,
+    ).toString();
+    unawaited(
+      GoRouter.of(context)
+          .push<Object?>(
+            chemin,
+            extra: dossier ? id : (profilId: d.profilId, retour: ici),
+          )
+          .then((Object? rendu) {
+            if (!mounted) return;
+            // La piece a pu etre decidee : la vue se relit.
+            ref.invalidate(piecesAVerifierProvider);
+            if (rendu is String && rendu.isNotEmpty) {
+              setState(() => _retour = null);
+              WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+                if (mounted) setState(() => _retour = rendu);
+              });
+            }
+          }),
+    );
   }
 
   Widget _apercu(

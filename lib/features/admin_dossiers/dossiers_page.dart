@@ -2,11 +2,13 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../core/admin/admin_domaine.dart';
 import '../../core/capacites/port_revue_dossiers.dart';
 import '../../core/i18n/strings.g.dart';
 import '../../core/icons/app_icons.dart';
+import '../../core/theme/app_mouvement.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../core/widgets/action_principale.dart';
 import '../../core/widgets/bloc_asynchrone.dart';
@@ -45,10 +47,21 @@ const double largeurDetailDossier = 728;
 /// dans le dossier, avec ses verifications.
 class DossiersPage extends ConsumerStatefulWidget {
   /// Cree l'ecran de validation.
-  const DossiersPage({super.key, this.profilId, this.horloge = DateTime.now});
+  const DossiersPage({
+    super.key,
+    this.profilId,
+    this.retour,
+    this.horloge = DateTime.now,
+  });
 
   /// Le dossier a ouvrir (ligne de l'Accueil), passe par `extra`.
   final String? profilId;
+
+  /// PERSONNES-UNE-PAGE (f3) : l'adresse de la page d'ou [profilId] a ete
+  /// ouvert (« Personnes », vue « Pieces a verifier »). Non nulle : la page ne
+  /// montre que la revue de cette piece, et la fermer (retour, decision,
+  /// dossier retire) ramene a cette adresse, jamais a la file des dossiers.
+  final String? retour;
 
   /// D'ou vient l'instant courant : « Aujourd'hui » et « Hier » se comptent
   /// en jours.
@@ -78,6 +91,7 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
 
   @override
   void dispose() {
+    _attenteRetour?.cancel();
     _focusTitre.dispose();
     super.dispose();
   }
@@ -98,6 +112,52 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
     }
   }
 
+  /// Ce que la derniere decision a dit, rendu a la page d'origine ([retour]).
+  String? _messageDecision;
+
+  /// Rend la main a la page d'origine : la page empilee se retire (avec la
+  /// phrase de la decision), sinon on va a son adresse (rechargement).
+  /// Vrai des que le retour a l'origine est parti : il ne part qu'une fois.
+  bool _retourEnCours = false;
+
+  /// L'attente avant le retour qui suit une decision.
+  Timer? _attenteRetour;
+
+  /// [attente] : apres une decision, le temps que sa surface (02D, 02E) finisse
+  /// de se fermer ; la revue reste a l'ecran jusque-la (la surface lit encore
+  /// le motif que la revue detient).
+  void _revenirALOrigine({Duration attente = Duration.zero}) {
+    final String? origine = widget.retour;
+    if (origine == null || _retourEnCours) return;
+    _retourEnCours = true;
+    void partir() {
+      if (!mounted) return;
+      final GoRouter? routeur = GoRouter.maybeOf(context);
+      if (routeur == null) return;
+      // La selection ne survit pas a cette page : « Dossiers a valider »
+      // rouvrirait sinon sur ce dossier.
+      ref.read(selectionDossierProvider.notifier).retirer();
+      final ModalRoute<Object?>? page = ModalRoute.of(context);
+      if (page != null && !page.isCurrent) {
+        Navigator.of(context).popUntil((Route<Object?> r) => r == page);
+      }
+      if (routeur.canPop()) {
+        routeur.pop(_messageDecision);
+      } else {
+        routeur.go(origine);
+      }
+    }
+
+    // Apres l'image en cours : jamais un retrait de page pendant un rendu.
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (attente == Duration.zero) {
+        partir();
+      } else {
+        _attenteRetour = Timer(attente, partir);
+      }
+    });
+  }
+
   void _fermerDetail() {
     setState(() => _retourDetail = true);
     ref.read(selectionDossierProvider.notifier).fermerDetail();
@@ -109,6 +169,13 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
   void _apresDecision(String id, String message) {
     // Le retour local, apres confirmation serveur seulement. Remis a nul
     // d'abord : deux decisions de suite rejouent l'apparition.
+    if (widget.retour != null) {
+      // Ouverte depuis « Personnes » : la phrase y sera dite, la file relue.
+      _messageDecision = message;
+      actualiserDossiers(ref);
+      _revenirALOrigine(attente: AppMouvement.plafond);
+      return;
+    }
     setState(() => _retour = null);
     WidgetsBinding.instance.addPostFrameCallback((Duration _) {
       if (mounted) {
@@ -157,6 +224,32 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
     // Les decisions en cours sont portees par la page (pas par la feuille
     // ni par la revue) : leur suivi survit a la fermeture des surfaces.
     ref.listen(decisionsDossiersProvider, (Object? _, Object? _) {});
+    // Ouverte depuis « Personnes » : des que la revue se ferme (retour,
+    // decision, dossier qui n'est plus dans la file), on y revient.
+    ref.listen(selectionDossierProvider, (
+      SelectionDossier? avant,
+      SelectionDossier apres,
+    ) {
+      if (widget.retour == null ||
+          !(avant?.detailOuvert ?? false) ||
+          apres.detailOuvert) {
+        return;
+      }
+      final String? cible = widget.profilId;
+      if (!apres.autoFaite && cible != null) {
+        // La selection s'est remise a zero toute seule (la session vient
+        // d'etre lue) : personne n'a ferme la revue, on la rouvre.
+        WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+          if (mounted) {
+            ref
+                .read(selectionDossierProvider.notifier)
+                .choisir(cible, ouvrir: true);
+          }
+        });
+        return;
+      }
+      _revenirALOrigine();
+    });
     final SelectionDossier selection = ref.watch(selectionDossierProvider);
     final List<DossierEnFile> elements =
         ref.watch(fileDossiersProvider).value?.elements ?? <DossierEnFile>[];
@@ -170,7 +263,17 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
           _fermerDetail();
         }
       },
-      child: detailOuvert ? _detail(id, elements) : _liste(selection, id),
+      child: detailOuvert
+          ? _detail(id, elements)
+          : widget.retour != null
+          // Ouverte depuis « Personnes » : jamais la file des dossiers, meme
+          // le temps d'une image (avant l'ouverture, apres la fermeture).
+          ? PageShell(
+              titre: t.dossiers.titre,
+              onRetour: _revenirALOrigine,
+              child: const SqueletteDetail(),
+            )
+          : _liste(selection, id),
     );
   }
 
@@ -188,7 +291,10 @@ class _DossiersPageState extends ConsumerState<DossiersPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisSize: MainAxisSize.min,
         children: <Widget>[
-          SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 0),
+          // Ouverte depuis « Personnes », la revue est une page fille : pas
+          // de sections a cote d'elle.
+          if (widget.retour == null)
+            SousNavigationDomaine(onglets: ongletsPersonnes(), indexActif: 0),
           const BandeauExceptionKyc(),
         ],
       ),

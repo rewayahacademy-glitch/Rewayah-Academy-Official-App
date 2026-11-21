@@ -2459,6 +2459,13 @@ final Provider<GoRouter> routeurProvider = Provider<GoRouter>((Ref ref) {
             construire: () => d_dossiers_page.DossiersPage(
               profilId: switch (etat.extra) {
                 final String id => id,
+                (profilId: final String id, retour: String _) => id,
+                _ => null,
+              },
+              // PERSONNES-UNE-PAGE (f3) : la piece ouverte depuis la page
+              // « Personnes » ; fermer y ramene, pas a la file des dossiers.
+              retour: switch (etat.extra) {
+                (profilId: String _, retour: final String retour) => retour,
                 _ => null,
               },
             ),

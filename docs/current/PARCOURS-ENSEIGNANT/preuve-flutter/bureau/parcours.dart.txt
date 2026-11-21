@@ -1,0 +1,244 @@
+// Le parcours des candidats : des tuiles familières, mais vivantes. Chaque tuile est large comme
+// son nombre de personnes, se remplit comme un niveau d'eau, et laisse passer des points vers la
+// suivante. Là où rien ne passe, une barrière fermée : le blocage se voit sans lire un chiffre.
+import 'dart:math' as math;
+
+import 'package:flutter/material.dart';
+
+import 'vivant.dart';
+
+class Bassin {
+  Bassin(this.nom, this.nb, {this.bloque = false, this.remous = false, this.ancien = ''});
+  final String nom, ancien;
+  int nb; // -1 : personne encore
+  bool bloque;
+  final bool remous;
+}
+
+class Parcours extends StatefulWidget {
+  const Parcours({super.key, required this.bassins, required this.choisi, required this.surChoix, required this.hauteur, required this.surOuvrir});
+  final List<Bassin> bassins; // 0 à compléter, 1 en examen, 2 entretien à planifier, 3 entretien choisi, 4 versement
+  final int? choisi;
+  final ValueChanged<int> surChoix;
+  final double hauteur;
+  final VoidCallback surOuvrir;
+  @override
+  State<Parcours> createState() => ParcoursState();
+}
+
+class ParcoursState extends State<Parcours> with SingleTickerProviderStateMixin<Parcours>, Vivant<Parcours> {
+  static const double creux = 44;
+  final List<R> largeur = <R>[for (int i = 0; i < 4; i++) R(0, k: 170, c: 17)];
+  final List<R> niveau = <R>[for (int i = 0; i < 5; i++) R(0, k: 22, c: 6)];
+  final List<R> saut = <R>[for (int i = 0; i < 5; i++) R(0, k: 300, c: 10)];
+  final R barriere = R(0, k: 120, c: 9); // 0 fermée, 1 levée
+  bool pret = false;
+  @override
+  Iterable<R> get ressorts => <R>[...largeur, ...niveau, ...saut, barriere];
+  @override
+  bool get toujours => true; // les points avancent doucement tant que le parcours est à l'écran
+
+  @override
+  void initState() {
+    super.initState();
+    reveil();
+  }
+
+  void secouer(int i) {
+    saut[i].v += 4;
+    niveau[i].v += 0.6;
+  }
+
+  double _part(int i) {
+    final int n = widget.bassins[i].nb;
+    return (n < 0 ? 0.62 : math.max(0.62, math.sqrt(n / 206))) * (widget.choisi == i ? 1.22 : 1);
+  }
+
+  @override
+  void surPas(double dt) {
+    barriere.cible = widget.bassins[2].bloque ? 0 : 1;
+    for (int i = 0; i < 5; i++) {
+      final int n = widget.bassins[i].nb;
+      niveau[i].cible = n <= 0 ? 0 : (i == 4 ? 0.2 : 0.14 + 0.34 * math.min(1, n / 206));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(builder: (BuildContext context, BoxConstraints bc) {
+        final bool large = bc.maxWidth >= 720;
+        if (!large) return _etroit();
+        final double total = bc.maxWidth - creux * 3;
+        final double somme = <int>[0, 1, 2, 3].fold<double>(0, (double s, int i) => s + _part(i));
+        final List<double> x = <double>[];
+        double pos = 0;
+        for (int i = 0; i < 4; i++) {
+          largeur[i].cible = total * _part(i) / somme;
+          if (!pret) largeur[i].x = largeur[i].cible;
+          x.add(pos);
+          pos += largeur[i].x + creux;
+        }
+        pret = true;
+        final double h = widget.hauteur;
+        return SizedBox(
+          height: h + 86,
+          child: Stack(clipBehavior: Clip.none, children: <Widget>[
+            Positioned.fill(child: IgnorePointer(child: CustomPaint(painter: _LiensPeintre(this, x, h)))),
+            for (int i = 0; i < 4; i++) Positioned(left: x[i], width: largeur[i].x, top: 0, height: h, child: _tuile(i)),
+            // Le versement : une tuile plus petite, accrochée sous « En examen ».
+            Positioned(left: x[1] + 28, width: math.min(260, largeur[1].x - 28), top: h + 26, height: 60, child: _tuile(4, petite: true)),
+            // La barrière entre « à planifier » et « choisi ».
+            Positioned(
+              left: x[3] - creux / 2 - 23,
+              top: h / 2 - 23,
+              child: Touche(
+                surTouche: widget.bassins[2].bloque ? widget.surOuvrir : null,
+                child: Container(
+                  width: 46,
+                  height: 46,
+                  decoration: BoxDecoration(color: Color.lerp(T.corail, T.vert, barriere.x.clamp(0, 1)), shape: BoxShape.circle, boxShadow: <BoxShadow>[BoxShadow(color: T.ombre, blurRadius: 14, offset: const Offset(0, 6))]),
+                  child: Transform.rotate(
+                    angle: -barriere.x * 0.5,
+                    child: Icon(barriere.cible == 0 ? Icons.lock_outline_rounded : Icons.lock_open_rounded, size: 21, color: T.s ? T.nuit : Colors.white),
+                  ),
+                ),
+              ),
+            ),
+          ]),
+        );
+      });
+
+  Widget _etroit() => Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: <Widget>[
+        for (final int i in const <int>[0, 1, 4, 2, 3]) ...<Widget>[
+          if (i != 0)
+            SizedBox(
+              height: 30,
+              child: Center(
+                child: i == 3
+                    ? Icon(widget.bassins[2].bloque ? Icons.lock_outline_rounded : Icons.lock_open_rounded, size: 20, color: widget.bassins[2].bloque ? T.corail : T.vert)
+                    : Icon(Icons.keyboard_arrow_down_rounded, size: 22, color: T.doux),
+              ),
+            ),
+          Padding(padding: EdgeInsets.only(left: i == 4 ? 40 : 0), child: SizedBox(height: i == 4 ? 60 : 118, child: _tuile(i, petite: i == 4))),
+        ],
+      ]);
+
+  Widget _tuile(int i, {bool petite = false}) {
+    final Bassin b = widget.bassins[i];
+    final bool vide = b.nb < 0, choisie = widget.choisi == i;
+    final Color teinte = b.bloque ? T.corail : (b.remous ? T.ambre : T.accent);
+    final double r = petite ? 22 : 34;
+    return Transform.translate(
+      offset: Offset(0, -saut[i].x * 6),
+      child: Penche(
+        force: 0.035,
+        child: Touche(
+          fond: 0.97,
+          surTouche: () => widget.surChoix(i),
+          child: Container(
+            clipBehavior: Clip.antiAlias,
+            decoration: ShapeDecoration(
+              color: vide ? Colors.transparent : (b.bloque ? T.corailPale : (b.remous ? T.ambrePale : T.pale)),
+              shape: RoundedSuperellipseBorder(borderRadius: BorderRadius.all(Radius.circular(r)), side: BorderSide(color: vide ? T.filet : (choisie ? teinte : Colors.transparent), width: 2)),
+            ),
+            child: Stack(children: <Widget>[
+              if (!vide) Positioned.fill(child: CustomPaint(painter: NiveauPeintre(niveau[i].x.clamp(0, 0.9), temps + i * 1.7, teinte))),
+              Padding(
+                padding: EdgeInsets.all(petite ? 12 : 18),
+                child: petite
+                    ? Row(children: <Widget>[
+                        Rouleau(b.nb, style: titre(24)),
+                        const SizedBox(width: 10),
+                        Expanded(child: Text(b.nom, style: texte(13, poids: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                      ])
+                    : Column(crossAxisAlignment: CrossAxisAlignment.start, children: <Widget>[
+                        Text(b.nom, style: texte(13, poids: FontWeight.w600, couleur: vide ? T.doux : T.encre), maxLines: 1, overflow: TextOverflow.ellipsis),
+                        const SizedBox(height: 2),
+                        vide ? Text('0', style: titre(44, couleur: T.doux)) : Rouleau(b.nb, style: titre(44)),
+                        const Spacer(),
+                        if (vide)
+                          Text('Personne encore', style: texte(12, couleur: T.doux))
+                        else
+                          Row(children: <Widget>[
+                            // Les plus anciens du groupe, en visages.
+                            SizedBox(
+                              width: 66,
+                              height: 28,
+                              child: Stack(children: <Widget>[
+                                for (int k = 2; k >= 0; k--) Positioned(left: k * 19, child: Visage(const <String>['Amina B', 'Youssouf D', 'Khadija M', 'Ibrahim S', 'Salma T'][(i + k) % 5], taille: 28, teinte: i + k, bord: true)),
+                              ]),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(child: Text(b.bloque ? 'Aucun créneau ouvert' : b.ancien, style: texte(12, poids: FontWeight.w600, couleur: T.s ? T.nuit : Colors.white), maxLines: 1, overflow: TextOverflow.ellipsis)),
+                          ]),
+                      ]),
+              ),
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Le niveau d'une tuile : une surface d'eau qui respire.
+class NiveauPeintre extends CustomPainter {
+  NiveauPeintre(this.n, this.t, this.c);
+  final double n, t;
+  final Color c;
+  @override
+  void paint(Canvas canvas, Size s) {
+    final double y0 = s.height * (1 - n);
+    Path vague(double phase, double amp, double dy) {
+      final Path p = Path()..moveTo(0, s.height);
+      for (double x = 0; x <= s.width + 6; x += 6) {
+        p.lineTo(x, y0 + dy + math.sin(x / 90 + phase) * amp + math.sin(x / 37 - phase * 1.4) * amp * 0.4);
+      }
+      return p..lineTo(s.width, s.height)..close();
+    }
+
+    canvas.drawPath(vague(t * 0.9, 4, -5), Paint()..color = c.withValues(alpha: 0.35));
+    canvas.drawPath(vague(-t * 1.3, 3, 0), Paint()..color = c);
+  }
+
+  @override
+  bool shouldRepaint(NiveauPeintre o) => true;
+}
+
+/// Les liens entre les tuiles : des points qui passent, ou qui s'entassent devant la barrière.
+class _LiensPeintre extends CustomPainter {
+  _LiensPeintre(this.s, this.x, this.h);
+  final ParcoursState s;
+  final List<double> x;
+  final double h;
+  @override
+  void paint(Canvas c, Size t) {
+    final double y = h / 2, creux = ParcoursState.creux;
+    final Paint rail = Paint()
+      ..color = T.filet
+      ..strokeWidth = 3
+      ..strokeCap = StrokeCap.round;
+    for (int i = 0; i < 3; i++) {
+      final double a = x[i] + s.largeur[i].x + 5, b = x[i + 1] - 5;
+      c.drawLine(Offset(a, y), Offset(b, y), rail);
+      final bool ferme = i == 2 && s.barriere.x < 0.5;
+      for (int k = 0; k < 3; k++) {
+        if (ferme) {
+          // Devant la barrière fermée : les points piétinent.
+          c.drawCircle(Offset(a + 4 + k * 5.5 + math.sin(s.temps * 3 + k) * 1.2, y + (k - 1) * 7.0), 3, Paint()..color = T.corail);
+        } else {
+          final double p = (s.temps * 0.45 + k / 3 + i * 0.21) % 1;
+          c.drawCircle(Offset(a + (b - a) * p, y + math.sin(p * math.pi) * -5), 3.2 * math.sin(p * math.pi) + 0.8, Paint()..color = i == 2 ? T.vert : T.accent);
+        }
+      }
+    }
+    // Le lien vers le versement.
+    final double vx = x[1] + 28 + 22;
+    c.drawLine(Offset(vx, h + 5), Offset(vx, h + 21), rail);
+    final double p = (s.temps * 0.35) % 1;
+    c.drawCircle(Offset(vx, h + 5 + 16 * p), 2.6, Paint()..color = T.ambre);
+    if (creux < 0) return;
+  }
+
+  @override
+  bool shouldRepaint(_LiensPeintre o) => true;
+}
