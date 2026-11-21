@@ -180,7 +180,9 @@ class Geo {
         top = h * 0.075;
         tProche = h * 0.33;
         yProche = h * 0.905;
-        xProche = rtl ? carte.right + tProche * 0.62 : carte.left - tProche * 0.62;
+        // Il s'arrête à côté de la carte, assez loin pour que la main qui montre le champ tienne
+        // entre lui et elle sans la toucher.
+        xProche = rtl ? carte.right + tProche * 0.68 : carte.left - tProche * 0.68;
         demiLargeur = 1.0;
       case CadreScene.largePlein:
         champ = Offset.zero & taille;
@@ -233,11 +235,13 @@ class Geo {
   late final Offset porte, lueur, fuite;
   late final double _cos, _fuit, _fuite2;
 
-  /// Paramètre interne du peintre : vrai (B, retenu), la porte est vue de trois quarts quand la
-  /// route part en biais, et les traverses de la route fuient avec elle ; faux (A), la porte fait
-  /// face à l'image et les traverses restent horizontales. Pour revenir à A :
-  /// `--dart-define=PORTE_TROIS_QUARTS=false`, ou `defaultValue: false` ici.
-  static const bool troisQuarts = bool.fromEnvironment('PORTE_TROIS_QUARTS', defaultValue: true);
+  /// Paramètre interne du peintre : faux (A, retenu), la porte fait face à l'image et les traverses
+  /// de la route restent horizontales ; vrai (B), la porte est vue de trois quarts quand la route
+  /// part en biais, et les traverses fuient avec elle. Directeur, 20/11/2026, sur la variante B en
+  /// production : « le logo a été déformé à cause de la perspective, donc supprime cet effet
+  /// d'angle ». Le disque du logo reste rond : B ne s'essaie plus que par
+  /// `--dart-define=PORTE_TROIS_QUARTS=true`.
+  static const bool troisQuarts = bool.fromEnvironment('PORTE_TROIS_QUARTS');
 
   /// Vrai quand la porte est vue de trois quarts (route en biais, variante B).
   bool get deBiais => _fuit != 0;
@@ -406,6 +410,7 @@ class Theatre extends ChangeNotifier {
       ..lnZ = geo.lnZ
       ..hc = geo.hc
       ..reduit = reduit;
+    _viser();
     px.pas(dt);
     cam.cible = reduit ? 1 : cl(px.q);
     for (final R r in <R>[eclat, inonde, clavier, cam, ...dalles]) {
@@ -445,6 +450,32 @@ class Theatre extends ChangeNotifier {
   Offset versEcran(Offset unite) => piedPraxis + (unite - const Offset(100, 206)) * (largeurPraxis / 200);
   Offset get bouchePraxis => versEcran(px.bouche);
   Offset get centrePraxis => versEcran(Offset(100, 108 + px.hauteurCorps));
+
+  /// Ce que Praxis montre quand il pointe : le champ de l'adresse (ou, sans champ, la carte du
+  /// formulaire), dans le repère de la scène. L'écran le donne ; nul : il montre vers le bas.
+  Offset? cible;
+
+  /// Règle son geste sur [cible] : la direction, de son corps vers elle, et l'allonge de la main.
+  /// Formulaire sous lui (téléphone) : droit vers le bas, le geste d'origine. Formulaire à côté
+  /// (ordinateur) : la main de ce côté se lève vers le champ, le doigt dans l'axe du champ ; elle
+  /// monte au plus à 0,72 radian (au-delà, elle entrerait dans la toque) et s'arrête avant la
+  /// carte, qu'elle ne touche pas.
+  void _viser() {
+    px
+      ..vise = const Offset(0, 1)
+      ..allonge = 112;
+    final Offset? c = cible;
+    if (c == null) return;
+    final Offset centre = centrePraxis, d = c - centre;
+    if (d.dy >= d.dx.abs() || d.dx.abs() < 1) return;
+    final double a = cl(math.atan2(d.dy, d.dx.abs()), -0.72, 0.6);
+    px.vise = Offset(d.dx.sign * math.cos(a), math.sin(a));
+    if (geo.cadre != CadreScene.large) return;
+    // La place libre jusqu'à la carte, en unités du dessin ; le doigt (27), son rebond (5) et sa
+    // lueur (12) y tiennent.
+    final double libre = ((d.dx > 0 ? geo.carte.left - centre.dx : centre.dx - geo.carte.right) - 8) / (largeurPraxis / 200);
+    px.allonge = cl((libre - 12) / math.cos(a) - 32, 96, 128);
+  }
 
   Eclairage get eclairage {
     final Offset d = geo.lueur - centrePraxis;
@@ -1013,29 +1044,44 @@ class DecorPeintre extends CustomPainter {
     final Offset pied = g.solZ(zb, px.lat.x);
     final double force = Teinte.ombreForce * op;
     final double saut = cl(-px.y / 200 * 2.4);
-    // Portée : la porte est derrière lui, l'ombre vient vers nous. Sa longueur suit la distance
-    // réelle à la porte (source à 4,2 hauteurs de Praxis) ; elle s'élargit en s'éloignant de lui.
+    // Portée : la porte est derrière lui, l'ombre vient vers nous, dans l'axe porte → Praxis.
+    // Directeur, 20/11/2026 : « vu que Praxis a la lumière sur le dos, l'ombre doit changer de
+    // grandeur et d'intensité : plus il s'éloigne de la porte, moins l'ombre est grande, car il
+    // s'éloigne de la source de la lumière. » Sa longueur à l'écran et sa force décroissent donc
+    // d'un seul trait avec le chemin parcouru (q : 0 à la porte, 1 au premier plan), jusqu'à une
+    // ombre courte et légère à l'arrivée. L'ancienne longueur, mesurée en profondeur réelle,
+    // croissait avec la distance à la porte : arrivé au premier plan, l'ombre passait devant
+    // l'œil, s'élargissait sans fin à l'écran et, la route partant en biais, filait sous la carte
+    // du formulaire.
     final ui.Shader? tex = Atelier.ombreTexture;
+    final double loin = 1 - cl(px.q);
+    // Elle naît quand il sort de la lumière de la porte, sans attendre qu'il ait pris ses couleurs.
+    // Sa force va de celle d'une ombre franche (0,85), près de la porte, à la force ordinaire des
+    // ombres du thème, à l'arrivée.
+    final double forceP = (Teinte.ombreForce + (0.85 - Teinte.ombreForce) * loin) * px.opacite * lisse2(0, 0.14, px.q);
     final double portee = cl(0.12 + 0.88 * lum) * (1 - 0.35 * saut);
-    if (tex != null && force * portee > 0.01) {
-      final double depuisPorte = math.max(0.0001, g.Z - zb);
-      final double z0 = zb * 1.035, longueur = depuisPorte / 3.2 + zb * 0.035;
+    if (tex != null && forceP * portee > 0.01) {
+      final double z0 = zb * 1.035;
+      // La longueur, à l'écran, en largeurs du Praxis du premier plan ; puis la profondeur du bout.
+      final double longueur = z0 - 1 / (1 / zb + g.tProche * (0.26 + 1.1 * loin) / g.H);
+      // À l'ordinateur, aucun bord de l'ombre ne passe du côté de la carte du formulaire.
+      final double? borne = g.cadre == CadreScene.large ? (g.rtl ? g.carte.right + 8 : g.carte.left - 8) : null;
       const int n = 16;
       final Float32List pos = Float32List((n + 1) * 4), uv = Float32List((n + 1) * 4);
       final Int32List cs = Int32List((n + 1) * 2);
-      final int teinte = Teinte.ombre.withValues(alpha: cl(force * portee)).toARGB32();
+      final int teinte = Teinte.ombre.withValues(alpha: cl(forceP * portee)).toARGB32();
       int k = 0;
       for (int i = 0; i <= n; i++) {
         final double t = i / n;
         final double z = z0 - t * longueur;
-        if (z < 0.3) break;
-        final double ecart = (g.Z - z) / depuisPorte;
-        // Les deux bords de l'ombre suivent la traverse, comme les dalles.
-        final double demi = 0.43 * math.min(2.4, ecart) * (1 + 0.5 * t);
-        final Offset o1 = g.solZ(z, px.lat.x * ecart - demi), o2 = g.solZ(z, px.lat.x * ecart + demi);
-        pos[k * 4] = o1.dx;
+        // Les deux bords de l'ombre suivent la traverse, comme les dalles ; elle s'évase davantage
+        // près de la porte.
+        final double demi = 0.43 * (1 + (0.2 + 0.5 * loin) * t);
+        final Offset o1 = g.solZ(z, px.lat.x - demi), o2 = g.solZ(z, px.lat.x + demi);
+        double dansLaZone(double x) => borne == null ? x : (g.rtl ? math.max(x, borne) : math.min(x, borne));
+        pos[k * 4] = dansLaZone(o1.dx);
         pos[k * 4 + 1] = o1.dy;
-        pos[k * 4 + 2] = o2.dx;
+        pos[k * 4 + 2] = dansLaZone(o2.dx);
         pos[k * 4 + 3] = o2.dy;
         uv[k * 4] = 0;
         uv[k * 4 + 1] = t * Atelier.ombreH;
