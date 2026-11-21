@@ -4356,6 +4356,8 @@
   },
   "admin": {
     "personnesPage": {
+      "compteFamille": "Cette personne a un compte de famille : il se supprime depuis l'onglet Familles.",
+      "listeDAvant": "Liste d'avant : {nom}",
       "triInverse": "{colonne}, ordre inverse",
       "typeAcces": "Accès",
       "vueCandidats": "Candidats",
@@ -4372,7 +4374,7 @@
       "typeNouveau": "Nouveaux dossiers",
       "typeDomaine": "Domaine",
       "verifierPiece": "Vérifier la pièce d'identité",
-      "autresPages": "Autres pages de Personnes",
+      "autresPages": "Outils",
       "ongletEquipe": "Direction et équipe",
       "ongletEquipeCourt": "Équipe",
       "filtrerPar": "Filtrer par",

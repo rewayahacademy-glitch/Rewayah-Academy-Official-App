@@ -547,4 +547,24 @@ void main() {
       });
     }
   });
+
+  // Etape (e) : la barre laterale reduite et le menu « Outils » ouvert.
+  group('PERSONNES (e) : menu et outils', skip: sautSansCapture, () {
+    const String page = '${Routes.adminPersonnes}?onglet=enseignants';
+    for (final (String, Size, AppLocale) c in <(String, Size, AppLocale)>[
+      ('outils_1440_fr', const Size(1440, 900), AppLocale.fr),
+      ('outils_1440_ar', const Size(1440, 900), AppLocale.ar),
+      ('outils_390_fr', const Size(390, 844), AppLocale.fr),
+      ('outils_390_ar', const Size(390, 844), AppLocale.ar),
+    ]) {
+      testWidgets('personnes ${c.$1}', (WidgetTester tester) async {
+        await LocaleSettings.setLocale(c.$3);
+        fixerVueCapture(tester, c.$2, c.$2.width < 500 ? 2 : 1);
+        await _monter(tester, page, mode: ThemeMode.light);
+        await tester.tap(find.byKey(PersonnesPage.cleAutresPages));
+        await stabiliser(tester);
+        debugPrint('PNG ${await capturer(tester, 'personnes_${c.$1}')}');
+      });
+    }
+  });
 }

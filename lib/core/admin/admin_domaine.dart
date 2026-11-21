@@ -272,6 +272,21 @@ List<({String libelle, String chemin})> ongletsOperations() =>
       (libelle: t.admin.groupes.titre, chemin: Routes.adminOperationsGroupes),
     ];
 
+/// PERSONNES-UNE-PAGE, etape (e) (pilote, 21/11/2026) : ce que la barre
+/// laterale montre sous « Personnes ». La page unique porte les listes de
+/// personnes ; il ne reste ici que les outils qui n'en sont pas une.
+List<({String libelle, String chemin})> outilsPersonnes() =>
+    <({String libelle, String chemin})>[
+      (
+        libelle: t.admin.importInscriptions.onglet,
+        chemin: Routes.adminPersonnesImport,
+      ),
+      (
+        libelle: t.admin.suppressions.onglet,
+        chemin: Routes.adminPersonnesSuppressions,
+      ),
+    ];
+
 /// Toutes les pages d'Operations, celles du panneau de la direction
 /// (`sousLiensAdmin`), pour le selecteur de pages des ecrans d'Operations.
 ///
@@ -490,7 +505,7 @@ Map<AdminDomaine, List<SousLien>> sousLiensAdmin({
       // CHIFFRES-ACADEMIE : une entree discrete, la derniere du domaine.
       (libelle: t.admin.chiffres.lien, chemin: Routes.adminOperationsChiffres),
     ],
-    AdminDomaine.personnes: ongletsPersonnes(),
+    AdminDomaine.personnes: outilsPersonnes(),
     AdminDomaine.pedagogie: ongletsPedagogie(),
     AdminDomaine.finance: <SousLien>[
       for (final SousLien lien in finance)

@@ -5277,6 +5277,8 @@
   },
   "admin": {
     "personnesPage": {
+      "compteFamille": "لهذا الشخص حساب عائلة: يُحذف من تبويب العائلات.",
+      "listeDAvant": "القائمة السابقة: ⁨{nom}⁩",
       "triInverse": "⁨{colonne}⁩، بترتيب معكوس",
       "typeAcces": "الوصول",
       "vueCandidats": "المترشحون",
@@ -5293,7 +5295,7 @@
       "typeNouveau": "الملفات الجديدة",
       "typeDomaine": "المجال",
       "verifierPiece": "التحقق من وثيقة الهوية",
-      "autresPages": "صفحات الأشخاص الأخرى",
+      "autresPages": "الأدوات",
       "ongletEquipe": "الإدارة والفريق",
       "ongletEquipeCourt": "الفريق",
       "filtrerPar": "تصفية حسب",

@@ -123,15 +123,15 @@ void main() {
       findsOneWidget,
     );
 
-    // NAV-SOUS-LIENS : Personnes ouvre le menu de ses pages ; la premiere
-    // est celle ou menait le domaine.
+    // NAV-SOUS-LIENS : Personnes ouvre le menu de ses pages. PERSONNES-UNE-
+    // PAGE (e) : il n'y reste qu'Importer et Suppressions.
     await tester.tap(
       _dans(AdminShell.railKey, find.byTooltip(AdminDomaine.personnes.libelle)),
     );
     await _stabiliser(tester);
-    await tester.tap(find.text(t.dossiers.titre).last);
+    await tester.tap(find.text(t.admin.importInscriptions.onglet).last);
     await _stabiliser(tester);
-    expect(_chemin(routeur), Routes.adminPersonnesDossiers);
+    expect(_chemin(routeur), Routes.adminPersonnesImport);
 
     await tester.tap(
       _dans(AdminShell.railKey, find.byTooltip(AdminDomaine.accueil.libelle)),
@@ -281,8 +281,15 @@ void main() {
     // L5 des listes : plus de sous-titre (§5 quater.3), la liste est la page.
     expect(find.text(t.dossiers.file.actualiser), findsOneWidget);
 
-    // Cinq fonctions sous Personnes depuis IMM-ACCUEIL-FRONT : le selecteur
-    // devient un menu quand elles ne tiennent plus en ligne.
+    // PERSONNES-UNE-PAGE (e) : l'ancienne liste des Comptes s'ouvre depuis
+    // le menu « Outils » de la page Personnes.
+    await tester.tap(
+      _dans(
+        AdminShell.barreLateraleKey,
+        find.text(AdminDomaine.personnes.libelle),
+      ),
+    );
+    await _stabiliser(tester);
     await choisirSection(tester, t.admin.comptes.titre);
     await _stabiliser(tester);
     expect(_chemin(routeur), Routes.adminPersonnesComptes);

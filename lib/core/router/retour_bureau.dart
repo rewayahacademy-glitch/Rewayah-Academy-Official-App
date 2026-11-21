@@ -42,7 +42,8 @@ void retourBureau(BuildContext context) {
 /// fonction ne sert qu'apres un rechargement ou un lien direct : la pile est
 /// alors reconstruite par l'arbre (le parent logique), jamais dans le vide.
 ///
-/// - Une page de detail (`/admin/personnes/candidatures/CAND-…`) : sa liste.
+/// - Une page de detail (`/admin/personnes/candidatures/CAND-…`) : sa liste ;
+///   ouverte depuis la page « Personnes » (sa file porte `vue`), cette page.
 ///   Quand l'adresse porte la file d'ou l'on vient (`depuis=liste`, BE-SUIVANT),
 ///   la liste rouvre avec ce filtre et ce tri.
 /// - Une page plus profonde qu'un onglet : son parent nomme dans l'arbre.
@@ -59,6 +60,13 @@ String? retourLogiqueBureau({required Uri adresse, PlanFil? plan}) {
       if (adresse.queryParameters['depuis'] == 'liste')
         ...adresse.queryParameters,
     }..remove('depuis');
+    // PERSONNES-UNE-PAGE (e) : ouvert depuis la page « Personnes », le
+    // dossier y revient (onglet, vue, filtres, personne).
+    final String? versPersonnes = adressePersonnesDeLaFile(
+      file,
+      page.substring(page.lastIndexOf('/') + 1),
+    );
+    if (versPersonnes != null) return versPersonnes;
     return file.isEmpty
         ? candidatures
         : Uri(path: candidatures, queryParameters: file).toString();
@@ -70,7 +78,17 @@ String? retourLogiqueBureau({required Uri adresse, PlanFil? plan}) {
   // elle-meme) ; la racine d'une rubrique mene a l'Accueil (§4, point 4).
   // Remonter a la rubrique rouvrirait souvent la meme page (`/admin/personnes`
   // redirige vers Candidatures).
-  if (ancetres.length <= 1) return Routes.admin;
+  if (ancetres.length <= 1) {
+    // PERSONNES-UNE-PAGE (e) : une page secondaire de « Personnes » (outil,
+    // liste d'avant) revient a la page mere, plus a l'Accueil. La liste des
+    // candidatures fait exception : c'est la seule page de l'associe, qui ne
+    // peut pas lire « Personnes ».
+    if (page.startsWith('${Routes.adminPersonnes}/') &&
+        page != Routes.adminPersonnesCandidatures) {
+      return Routes.adminPersonnes;
+    }
+    return Routes.admin;
+  }
   return ancetres.last.chemin ?? Routes.admin;
 }
 
