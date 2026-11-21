@@ -105,6 +105,11 @@ declare
     -- 42501 ; pas app_account_valid(), qui refuserait les candidats en attente (pending_kyc) qui lisent le guide. N'ecrit
     -- qu'une ligne de private.guide_avis, celle de l'appelant. Relue par l'agent du lot le 21/11/2026.
     'donner_avis_guide(text,text)',
+    -- GUIDE-COMMENTAIRES (21/11) : le lecteur du guide ecrit dans son fil prive (garde : celle de la lecture du guide, comme
+    -- donner_avis_guide) ; la direction repond (garde positive app_role() = 'admin' ET app_account_valid()). N'ecrivent
+    -- qu'une ligne de private.guide_commentaires. Relues par l'agent du lot le 21/11/2026.
+    'commenter_guide(text,text)',
+    'repondre_commentaire_guide(uuid,text)',
     'creer_mission(text,text[],uuid)',
     'retirer_mission(uuid,text,uuid)',
     'agent_pre_request()',

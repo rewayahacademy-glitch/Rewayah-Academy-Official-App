@@ -877,6 +877,10 @@ abstract final class Routes {
   /// l'academie », la vitrine en chiffres, sous Operations.
   static const String adminOperationsChiffres = '/admin/operations/chiffres';
 
+  /// GUIDE-COMMENTAIRES (21/11/2026) : les commentaires du guide de
+  /// l'enseignant, lus et repondus par la direction, sous Operations.
+  static const String adminOperationsGuide = '/admin/operations/guide';
+
   /// DASH-ADM-PLANNING : le planning de la direction, les seances de la
   /// semaine toutes classes confondues. Atteint depuis l'Accueil.
   static const String adminOperationsPlanning = '/admin/operations/planning';
